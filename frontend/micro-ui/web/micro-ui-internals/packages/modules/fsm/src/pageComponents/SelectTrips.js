@@ -82,7 +82,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
   }
   //console.log(formdata)
   function setValue(value, input) {
-    onSelect(config.key, { ...formData[config.key], [input]: value });
+    value && input && onSelect(config.key, { ...formData[config.key], [input]: value });
   }
   useEffect(() => {
     (async () => {
@@ -90,7 +90,21 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
         setVehicle({ label: formData?.tripData?.vehicleType?.capacity });
       }
 
-      if (formData?.propertyType && formData?.subtype && formData?.address && formData?.tripData?.vehicleType?.capacity) {
+      if (
+        formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" &&
+        formData.tripData.noOfTrips &&
+        formData.tripData.amountPerTrip
+      ) {
+        setValue({
+          amount: formData.tripData.amountPerTrip * formData.tripData.noOfTrips,
+        });
+      } else if (
+        formData?.propertyType &&
+        formData?.subtype &&
+        formData?.address &&
+        formData?.tripData?.vehicleType?.capacity &&
+        formData?.address?.propertyLocation?.code === "WITHIN_ULB_LIMITS"
+      ) {
         const capacity = formData?.tripData?.vehicleType.capacity;
         const { slum: slumDetails } = formData.address;
         const slum = slumDetails ? "YES" : "NO";
@@ -116,7 +130,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
         }
       }
     })();
-  }, [formData?.propertyType, formData?.subtype, formData?.address, formData?.tripData?.vehicleType?.capacity, formData?.tripData?.noOfTrips]);
+  }, [formData?.propertyType, formData?.subtype, formData?.address, formData?.tripData?.vehicleType?.capacity, formData?.tripData?.noOfTrips, formData?.address?.propertyLocation?.code]);
 
   return isVehicleMenuLoading && isDsoLoading ? (
     <Loader />

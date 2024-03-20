@@ -10,7 +10,7 @@ import {
   PTLinks,
   PTComponents,
 } from "@upyog/digit-ui-module-pt";
-import { MCollectModule, MCollectLinks, initMCollectComponents } from "@egovernments/digit-ui-module-mcollect";
+import { MCollectModule, MCollectLinks, initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
 import { initDSSComponents } from "@upyog/digit-ui-module-dss";
 import {
   PaymentModule,
@@ -22,7 +22,7 @@ import { initLibraries } from "@egovernments/digit-ui-libraries";
 import {
   HRMSModule,
   initHRMSComponents,
-} from "@egovernments/digit-ui-module-hrms";
+} from "@upyog/digit-ui-module-hrms";
 import {
   TLModule,
   TLLinks,
@@ -30,7 +30,7 @@ import {
 } from "@upyog/digit-ui-module-tl";
 import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
 import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
-import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
+import { initNOCComponents } from "@upyog/digit-ui-module-noc";
 import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
 import { initWSComponents } from "@upyog/digit-ui-module-ws";
 // import { initCustomisationComponents } from "./Customisations";

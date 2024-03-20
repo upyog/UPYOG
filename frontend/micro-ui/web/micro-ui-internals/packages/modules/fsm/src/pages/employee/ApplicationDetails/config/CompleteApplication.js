@@ -3,10 +3,9 @@ import { DatePicker } from "@egovernments/digit-ui-react-components";
 import { RadioButtons } from "@egovernments/digit-ui-react-components";
 
 
-export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTrips, applicationCreatedTime = 0, receivedPaymentType, action, module }) => ({
+export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTrips, applicationCreatedTime = 0, action, module }) => ({
 
   label: {
-    heading: `ES_FSM_ACTION_TITLE_${action}`,
     submit: `CS_COMMON_${action}`,
     cancel: "CS_COMMON_CLOSE",
   },
@@ -70,30 +69,6 @@ export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTri
             submitBarLabel: "CS_COMMON_NEXT",
           },
           nextStep: "property-type",
-        },
-        {
-          label: t("ES_FSM_ACTION_ROAD_WIDTH"),
-          type: "number",
-          isMandatory: true,
-          populators: {
-            name: "roadWidth",
-            validation: {
-              required: true,
-            },
-          },
-          disable: false,
-        },
-        {
-          label: t("ES_FSM_ACTION_DISTANCE_FROM_ROAD"),
-          type: "number",
-          isMandatory: true,
-          populators: {
-            name: "distancefromroad",
-            validation: {
-              required: true,
-            },
-          },
-          disable: false,
         },
         {
           label: "ES_NEW_APPLICATION_PROPERTY_TYPE",
@@ -172,7 +147,7 @@ export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTri
           disable: true,
           // disable: customizationConfig ? !customizationConfig?.noOfTrips?.override : true,
         },
-        module !== "FSM_ZERO_PAY_SERVICE" && {
+        /*module !== "FSM_ZERO_PAY_SERVICE" && {
           label: "FSM_PAYMENT_RECEIVED",
           isMandatory: true,
           type: "custom",
@@ -199,7 +174,7 @@ export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTri
               />
             ),
           },
-        },
+        }, */
       ],
     },
   ],

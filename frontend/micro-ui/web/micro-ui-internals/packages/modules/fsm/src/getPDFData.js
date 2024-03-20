@@ -9,6 +9,17 @@ const getSlumName = (application, t) => {
   }
   return application?.slum?.i18nKey ? t(`${application?.slum?.i18nKey}`) : "N/A";
 };
+/*
+const getDistanceofPitFromRoad = (distancefromroad) => {
+   if (!distancefromroad) 
+    return "N/A";
+    return distancefromroad;};
+   
+const getRoadWidth = (roadWidth) => {
+   if (!roadWidth) 
+    return "N/A"; 
+  return roadWidth;};
+*/
 
 const getApplicationVehicleCapacity = (vehicleCapacity) => {
   if (!vehicleCapacity) return "N/A";
