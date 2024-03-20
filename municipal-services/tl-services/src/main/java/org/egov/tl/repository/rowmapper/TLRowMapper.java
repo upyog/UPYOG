@@ -1,5 +1,7 @@
 package org.egov.tl.repository.rowmapper;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.tl.web.models.*;
@@ -79,7 +81,12 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
 
                 tradeLicenseMap.put(id,currentTradeLicense);
             }
-            addChildrenToProperty(rs, currentTradeLicense);
+            try {
+				addChildrenToProperty(rs, currentTradeLicense);
+			} catch (JsonProcessingException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
         }
 
@@ -89,7 +96,7 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
 
 
 
-    private void addChildrenToProperty(ResultSet rs, TradeLicense tradeLicense) throws SQLException {
+    private void addChildrenToProperty(ResultSet rs, TradeLicense tradeLicense) throws SQLException, JsonMappingException, JsonProcessingException {
 
         String tenantId = tradeLicense.getTenantId();
         String tradeLicenseDetailId = rs.getString("tld_id");
@@ -227,6 +234,12 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
                     .userActive(rs.getBoolean("useractive"))
                     .institutionId(rs.getString("institutionid"))
                     .build();
+        
+        PGobject pgObj = (PGobject) rs.getObject("oadditionaldetails");
+        if(pgObj!=null){
+            JsonNode additionalDetail = mapper.readTree(pgObj.getValue());
+            owner.setAdditionalDetails(additionalDetail);
+        }
             tradeLicense.getTradeLicenseDetail().addOwnersItem(owner);
         }
 

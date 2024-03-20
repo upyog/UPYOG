@@ -60,14 +60,7 @@ public class CustomIndexRequestDecoratorImpl implements CustomIndexRequestDecora
 
             // Method for enriching information in base document structure
             ingestUtil.enrichMetaDataInBaseDocumentStructureForDataIngest(baseDocumentStructure, ingestData);
-
-            // Prepare base document structure
-            keyNames.forEach(name -> {
-                if(!(metricsData.get(name) instanceof ArrayNode)){
-                    Object convertedValue = jsonProcessorUtil.convertJsonNodeToNativeType(metricsData.get(name));
-                    jsonProcessorUtil.addAppropriateBoxedTypeValueToBaseDocument(baseDocumentStructure, name, convertedValue);
-                }
-            });
+            
             log.info("Base structure - " + baseDocumentStructure.toString());
 
             // Creates a map of groupByMetric vs ( map of bucketName vs ( map of (flattenedFieldName vs bucketValue) ) )
@@ -83,11 +76,14 @@ public class CustomIndexRequestDecoratorImpl implements CustomIndexRequestDecora
                         }
                         String flattenedFieldName = name + "For" + ingestUtil.capitalizeFieldName(groupByMetric);
                         //log.info(flattenedFieldName);
+                        String usagecat=null;
                         for(JsonNode bucketNode : currentNode.get("buckets")) {
-                            if (!flattenedValuesToBeInserted.get(groupByMetricInCamelCase).containsKey(bucketNode.get("name").asText())){
-                                flattenedValuesToBeInserted.get(groupByMetricInCamelCase).put(bucketNode.get("name").asText(), new HashMap<>());
+                        	if(currentNode.get("groupBy").asText().equalsIgnoreCase("usageCategory") || currentNode.get("groupBy").asText().equalsIgnoreCase("usageType"))
+                        			usagecat=toCamelCase(bucketNode.get("name").asText());
+                            if (!flattenedValuesToBeInserted.get(groupByMetricInCamelCase).containsKey(usagecat)){
+                                flattenedValuesToBeInserted.get(groupByMetricInCamelCase).put(usagecat, new HashMap<>());
                             }
-                            flattenedValuesToBeInserted.get(groupByMetricInCamelCase).get(bucketNode.get("name").asText()).put(flattenedFieldName, jsonProcessorUtil.convertJsonNodeToNativeType(bucketNode.get("value")));
+                            flattenedValuesToBeInserted.get(groupByMetricInCamelCase).get(usagecat).put(flattenedFieldName, jsonProcessorUtil.convertJsonNodeToNativeType(bucketNode.get("value")));
                         }
                     }
                 }
@@ -119,10 +115,18 @@ public class CustomIndexRequestDecoratorImpl implements CustomIndexRequestDecora
                     currentStructure.remove(groupByCategory);
                 });
             });
+            
+            
+         // Prepare base document structure
+            keyNames.forEach(name -> {
+                if(!(metricsData.get(name) instanceof ArrayNode)){
+                    Object convertedValue = jsonProcessorUtil.convertJsonNodeToNativeType(metricsData.get(name));
+                    jsonProcessorUtil.addAppropriateBoxedTypeValueToBaseDocument(baseDocumentStructure, name, convertedValue);
+                }
+            });
             // If metrics data does not have any group by clauses, flattening is not required and base document can be indexed directly.
-            if(CollectionUtils.isEmpty(finalDocumentsToBeIndexed)){
                 finalDocumentsToBeIndexed.add(baseDocumentStructure);
-            }
+            
             log.info(finalDocumentsToBeIndexed.toString());
         }catch(JsonProcessingException e){
             throw new CustomException("EG_PAYLOAD_READ_ERR", "Error occured while processing ingest data");
@@ -214,5 +218,32 @@ public class CustomIndexRequestDecoratorImpl implements CustomIndexRequestDecora
         log.info("Flattening incoming request took: " + (endTime - startTime) + " ms");
         return finalDocumentsToBeIndexed;
     }
+    
+    public static String toCamelCase(String str)
+	{
+	    if (str == null || str.isEmpty()) {
+        return str;
+	    }
+		str = new String (str.trim());
+		StringBuilder converted = new StringBuilder();
+
+        boolean convertNext = true;
+            
+        for (char ch : str.toCharArray()) {
+        	if (Character.isSpaceChar(ch)){
+            convertNext = true;
+        	} 
+        	else if (convertNext) {
+            ch = Character.toTitleCase(ch);
+            convertNext = false;
+        	} 
+        	else {
+            ch = Character.toLowerCase(ch);
+        	}
+        converted.append(ch);
+        }
+        return converted.toString();
+	}
+
 
 }

@@ -5,6 +5,7 @@ import java.util.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.*;
 import org.egov.common.contract.request.Role;
@@ -40,6 +41,9 @@ public class OwnerInfo extends User  {
         @SafeHtml
         @JsonProperty("institutionId")
         private String institutionId;
+        
+        @JsonProperty("additionalDetails")
+        private JsonNode additionalDetails = null;
 
         @JsonProperty("documents")
         @Valid
@@ -93,7 +97,7 @@ public class OwnerInfo extends User  {
                          String lastModifiedBy, Long lastModifiedDate, String otpReference, String tenantId,
                          Boolean isPrimaryOwner, Double ownerShipPercentage, String ownerType,
                          String institutionId,List<Document> documents,RelationshipEnum relationship,
-                         Boolean userActive) {
+                         Boolean userActive,JsonNode additionalDetails) {
                 super(id,uuid, userName, password, salutation, name, gender, mobileNumber, emailId, altContactNumber, pan, aadhaarNumber, permanentAddress, permanentCity, permanentPincode, correspondenceCity, correspondencePincode, correspondenceAddress, active, dob, pwdExpiryDate, locale, type, signature, accountLocked, roles, fatherOrHusbandName, bloodGroup, identificationMark, photo, createdBy, createdDate, lastModifiedBy, lastModifiedDate, otpReference, tenantId);
                 this.isPrimaryOwner = isPrimaryOwner;
                 this.ownerShipPercentage = ownerShipPercentage;
@@ -102,7 +106,8 @@ public class OwnerInfo extends User  {
                 this.relationship=relationship;
                 this.institutionId=institutionId;
                 this.documents=documents;
-        }
+                this.additionalDetails=additionalDetails;
+                }
 
         public OwnerInfo addDocumentsItem(Document documentsItem) {
                 if (this.documents == null) {
@@ -163,6 +168,7 @@ public class OwnerInfo extends User  {
                 this.setEmailId(user.getEmailId());
                 this.setRoles(addRoles(user.getRoles()));
                 this.setUuid(user.getUuid());
+
         }
 
         public void addCitizenDetail(User user){
