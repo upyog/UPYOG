@@ -2,8 +2,6 @@ import { Surveys } from "../../services/elements/Surveys";
 import { useQuery } from "react-query";
 
 const useCfdefinitionsearch = (filters, config) => {
-  console.log(config,"useCfdefinitionsearch")
-  console.log(filters,"oooo")
   return useQuery([`search_surveys`,filters.Pagination,filters.ServiceDefinitionCriteria], () => Surveys.cfdefinitionsearch(filters), { ...config });
 };
 
