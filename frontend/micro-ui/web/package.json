@@ -26,7 +26,7 @@
     "@upyog/digit-ui-module-noc": "1.7.3",
     "@upyog/digit-ui-module-pgr": "1.7.3",
     "@upyog/digit-ui-module-pt": "1.7.2",
-    "@egovernments/digit-ui-module-receipts": "1.7.2",
+    "@upyog/digit-ui-module-receipts": "1.7.3",
     "@upyog/digit-ui-module-tl": "1.7.2",
     "@upyog/digit-ui-module-ws": "1.7.3",
     "@egovernments/digit-ui-react-components": "1.7.2",

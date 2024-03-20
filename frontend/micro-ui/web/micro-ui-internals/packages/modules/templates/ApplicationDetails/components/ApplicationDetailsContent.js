@@ -135,7 +135,7 @@ function ApplicationDetailsContent({
       return <TLCaption data={caption} OpenImage={OpenImage} privacy={privacy} />;
     } else {
       const caption = {
-        date: convertEpochToDateDMY(applicationData?.auditDetails?.lastModifiedTime),
+        date: checkpoint?.auditDetails?.lastModified,
         // name: checkpoint?.assigner?.name,
         name: checkpoint?.assignes?.[0]?.name,
         // mobileNumber: checkpoint?.assigner?.mobileNumber,
@@ -215,7 +215,6 @@ function ApplicationDetailsContent({
         return ""
     }
   }
-  console.log("applicationDetails?.applicationDetails",applicationDetails?.applicationDetails)
   return (
     <Card style={{ position: "relative" }} className={"employeeCard-override"}>
       {/* For UM-4418 changes */}

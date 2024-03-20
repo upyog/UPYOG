@@ -28,7 +28,7 @@ import {
   TLLinks,
   initTLComponents,
 } from "@upyog/digit-ui-module-tl";
-import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
+import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-receipts";
 import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
 import { initNOCComponents } from "@upyog/digit-ui-module-noc";
 import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
