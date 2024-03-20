@@ -42,33 +42,17 @@ package org.egov.demand;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.concurrent.TimeUnit;
-
-import org.cache2k.extra.spring.SpringCache2kCacheManager;
 import org.egov.tracer.config.TracerConfiguration;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 @SpringBootApplication
-@EnableCaching
 @Import({ TracerConfiguration.class })
 public class BillingServiceApplication {
-
-	@Value("${cache.expiry.taxheads.minutes}")
-	private long taxHeadsCacheExpiry;
 
 	@Bean
 	@Primary
@@ -88,16 +72,6 @@ public class BillingServiceApplication {
 		converter.setObjectMapper(mapper);
 		return converter;
 	}
-
-	@Bean
-	@Profile("!test")
-	public CacheManager cacheManager() {
-		return new SpringCache2kCacheManager()
-				.addCaches(b->b.name("businessServiceDetails").expireAfterWrite(taxHeadsCacheExpiry, TimeUnit.MINUTES).entryCapacity(50))
-				.addCaches(b->b.name("taxHeadResponse").expireAfterWrite(taxHeadsCacheExpiry, TimeUnit.MINUTES).entryCapacity(50))
-				.addCaches(b->b.name("taxPeriodResponse").expireAfterWrite(taxHeadsCacheExpiry, TimeUnit.MINUTES).entryCapacity(50))
-				.addCaches(b->b.name("mdmsCache").expireAfterWrite(taxHeadsCacheExpiry, TimeUnit.MINUTES).entryCapacity(50));
-			}
 
 	public static void main(String[] args) {
 		SpringApplication.run(BillingServiceApplication.class, args);
