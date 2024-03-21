@@ -34,8 +34,8 @@ import { initNOCComponents } from "@upyog/digit-ui-module-noc";
 import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
 import { initWSComponents } from "@upyog/digit-ui-module-ws";
 // import { initCustomisationComponents } from "./Customisations";
-import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
-import { initBillsComponents } from "@egovernments/digit-ui-module-bills";
+import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
+import { initBillsComponents } from "@upyog/digit-ui-module-bills";
 // import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
 
 initLibraries();
