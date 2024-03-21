@@ -1,11 +1,13 @@
 package org.egov.bpa.calculator.services;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import org.egov.bpa.calculator.config.BPACalculatorConfig;
 import org.egov.bpa.calculator.kafka.broker.BPACalculatorProducer;
 import org.egov.bpa.calculator.utils.BPACalculatorConstants;
@@ -168,8 +170,8 @@ public class CalculationService {
 		BigDecimal boundayWallLength=new BigDecimal(node.get("boundaryWallLength"));
 		BigDecimal area=new BigDecimal(node.get("area"));
 		
-		totalTax=boundayWallLength.multiply(BigDecimal.valueOf(2.5)).add(area.multiply(BigDecimal.valueOf(9)).multiply(BigDecimal.valueOf(2.5)));
-		estimate.setEstimateAmount(totalTax.abs());
+		totalTax=boundayWallLength.multiply(BigDecimal.valueOf(2.5)).add(area.multiply(BigDecimal.valueOf(2.5)));
+		estimate.setEstimateAmount(totalTax.setScale(0, RoundingMode.HALF_UP));
 		estimate.setCategory(Category.FEE);
 
 		String taxHeadCode = utils.getTaxHeadCode(calulationCriteria.getBpa().getBusinessService(), calulationCriteria.getFeeType());
