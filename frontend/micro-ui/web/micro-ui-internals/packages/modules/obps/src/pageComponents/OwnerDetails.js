@@ -19,6 +19,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     const [isPrimaryOwner, setisPrimaryOwner] = useState(false);
     const [gender, setGender] = useState(formData?.owners?.gender);
     const [mobileNumber, setMobileNumber] = useState(formData?.owners?.mobileNumber || "");
+    const [emailId, setEmail] = useState(formData?.owners?.emailId || "");
     const [showToast, setShowToast] = useState(null);
     const [isDisable, setIsDisable] = useState(false);
     let Webview = !Digit.Utils.browser.isMobile();
@@ -329,6 +330,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.additionalDetails.area  = (formData?.data.edcrDetails.planDetail.planInformation.plotArea).toString()||  "NA";
                 payload.additionalDetails.height  = (formData?.data.edcrDetails.planDetail.blocks[0].building.buildingHeight).toString() || "NA";
                 payload.additionalDetails.usage  = formData?.data.occupancyType  || "NA";
+                payload.additionalDetails.builtUpArea =(formData?.data.edcrDetails.planDetail.blocks[0].building.totalBuitUpArea).toString();
 
                 if (formData?.data?.holdingNumber) payload.additionalDetails.holdingNo = formData?.data?.holdingNumber;
                 if (formData?.data?.registrationDetails) payload.additionalDetails.registrationDetails = formData?.data?.registrationDetails;
@@ -545,7 +547,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                                             type: "emailId",
                                             title: t("TL_EMAIL_ID_ERROR_MESSAGE"),
                                         })}
-                                        disabled={true}
+                                        //disabled={true}
                                     />
                                     {ismultiple && (
                                         <CheckBox
