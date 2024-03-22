@@ -1,4 +1,4 @@
-import { Loader, RemoveableTag } from "@egovernments/digit-ui-react-components";
+import { Loader, RemoveableTag } from "@upyog/digit-ui-react-components";
 import React, { useContext, useMemo, useState, Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
@@ -43,6 +43,12 @@ const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleC
           return acc;
         }, []);
   }, [response]);
+  const totalValue= useMemo(()=>{
+    if(chartData){
+      return chartData.reduce((total, entry)=> total+entry.value,0);
+    }
+    return 0;
+  }, [chartData])
 
   const renderLegend = (value) => (
     <span style={{ fontSize: "14px", color: "#505A5F" }}>{t(`COMMON_MASTERS_${value && Digit.Utils.locale.getTransformedLocale(value)}`)}</span>
@@ -146,7 +152,20 @@ const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleC
     setdrillDownId(null);
     setPieSelected(null);
   }, [id]);
-
+  const CustomLegend=({payload, totalValue})=>{
+    return (
+      <div>
+        {payload.map((entry, index)=>(
+          <div key={`legend-${index}`} style={{display:'flex', alignItems:'center', marginBottom: 5}}>
+            <div style={{width: 10, height:10, backgroundColor: entry.color, marginRight: 5}}/>
+            <span style={{fontSize: 14, color: '#505ASF', marginRight: 10}}>
+              {`${entry.value}:${(entry?.payload?.percent  * 100).toFixed(1)}% (${Digit.Utils.dss.formatter(entry?.payload?.value, entry?.payload?.payload?.symbol, value?.denomination, true, t)} )`}
+            </span>
+            </div>
+        ))}
+     </div>
+    );
+  };
   if (isLoading) {
     return <Loader />;
   }
@@ -195,6 +214,7 @@ const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleC
               ))}
             </Pie>
             <Tooltip content={renderTooltip} />
+            <Legend content={CustomLegend}/>
            
           </PieChart>
         </ResponsiveContainer>

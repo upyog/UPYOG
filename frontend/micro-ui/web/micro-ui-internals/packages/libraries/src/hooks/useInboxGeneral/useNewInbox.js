@@ -24,7 +24,6 @@ const inboxConfig = (tenantId, filters) => ({
     fetchFilters: filterFunctions.PTR,
     _searchFn: () => PTRService.search({ tenantId, filters }),
   },
-  
   FSM: {
     services: ["FSM"],
     searchResponseKey: "fsm",

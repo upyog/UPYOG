@@ -1,4 +1,4 @@
-import { FormComposer, Header, Toast } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Header, Toast } from "@upyog/digit-ui-react-components";
 import cloneDeep from "lodash/cloneDeep";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -16,9 +16,13 @@ const ReNewApplication = (props) => {
   const { t } = useTranslation();
   const [canSubmit, setSubmitValve] = useState(false);
   let { data: newConfig, isLoading } = Digit.Hooks.tl.useMDMS.getFormConfig(tenantId?.split?.(".")?.[0], {});
-  const { 
-    data: propertyDetails
-  } = Digit.Hooks.pt.usePropertySearch({ filters: { propertyIds: propertyId }, tenantId: tenantId }, { filters: { propertyIds: propertyId  }, tenantId: tenantId });
+  let propertyDetails;
+  if(applicationData?.tradeLicenseDetail?.structureType.split('.')[0]==="IMMOVABLE"){
+    const { 
+      data: propertydetails
+    } = Digit.Hooks.pt.usePropertySearch({ filters: { propertyIds: propertyId }, tenantId: tenantId });
+    propertyDetails= propertydetails;   
+}
 
   const history = useHistory();
   // delete
@@ -155,9 +159,9 @@ const ReNewApplication = (props) => {
     ownershipCategory: ownershipCategory,
     owners:  getOwners(applicationData)|| [],
     documents: { documents: applicationData?.tradeLicenseDetail?.applicationDocuments || [] },
-    cptId: {id: propertyId},
-    cpt: {details:propertyDetails?.Properties?.[0]}
-    // applicationData: cloneDeep(props?.location?.state?.applicationData)
+    cptId: {  id :applicationData?.tradeLicenseDetail?.structureType.split('.')[0]==="IMMOVABLE" ? propertyId : ""},
+    cpt: {details: applicationData?.tradeLicenseDetail?.structureType.split('.')[0]==="IMMOVABLE" ? propertyDetails?.Properties?.[0] : ""},
+    applicationData: cloneDeep(props?.location?.state?.applicationData)
   };
 
   const closeToast = () => {

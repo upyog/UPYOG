@@ -1,4 +1,4 @@
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 import React, { Fragment, useContext, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -159,16 +159,13 @@ const CustomBarChart = ({
     filters: value?.filters,
     moduleLevel: value?.moduleLevel || moduleCode,
   });
-  console.log("hhhhhhhh",data)
   const chartData = useMemo(() => {
     if (!response) return null;
-    console.log("ressssssssss",response?.responseData)
     let possibleValues = ["pttopPerformingStatesRevenue","ptbottomPerformingStatesRevenue","tltopPerformingStatesRevenue","tlbottomPerformingStatesRevenue","obpstopPerformingStatesRevenue","obpsbottomPerformingStatesRevenue","noctopPerformingStatesRevenue","nocbottomPerformingStatesRevenue","wstopPerformingStatesRevenue","wsbottomPerformingStatesRevenue","OverviewtopPerformingStates","OverviewbottomPerformingStates"]
    
     setChartDenomination("number");
     const dd = response?.responseData?.data?.map((bar) => {
       let plotValue = bar?.plots?.[0].value || 0;
-      console.log("barrrrrrr",plotValue,data)
       let type =""
       if(possibleValues.includes(data?.id))
       {

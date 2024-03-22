@@ -29,6 +29,7 @@ import { ReportsService } from "./services/elements/Reports";
 import HrmsService from "./services/elements/HRMS";
 import { InboxGeneral } from "./services/elements/InboxService";
 import EventsServices from "./services/elements/Events";
+import { DigiLockerService } from "./services/elements/DigiLocker";
 
 import ShareFiles from "./services/molecules/ShareFiles";
 import { GetServiceDefinitions } from "./services/molecules/ServiceDefinitions";
@@ -53,6 +54,8 @@ import { PTRService } from "./services/elements/PTR";
 
 
 import {CustomService} from "./services/elements/CustomService";    
+   
+
 
 const setupLibraries = (Library, props) => {
   window.Digit = window.Digit || {};
@@ -65,8 +68,6 @@ const initLibraries = () => {
   setupLibraries("PersistantStorage", PersistantStorage);
   setupLibraries("UserService", UserService);
   setupLibraries("ULBService", ULBService);
-  setupLibraries("PTRService", PTRService); 
-
   setupLibraries("Config", { mergeConfig });
   setupLibraries("Services", { useStore });
   setupLibraries("Enums", Enums);
@@ -80,6 +81,7 @@ const initLibraries = () => {
   setupLibraries("CFService", CFService);
   setupLibraries("CustomService", CustomService);
   setupLibraries("TLService", TLService);
+  setupLibraries("DigiLockerService",DigiLockerService)
   setupLibraries("Surveys", Surveys);
   setupLibraries("HRMSService", HrmsService);
   setupLibraries("ReceiptsService", ReceiptsService);
@@ -114,6 +116,7 @@ const initLibraries = () => {
   setupLibraries("AccessControlService", AccessControlService);
   setupLibraries("BillServices", BillServices);
   setupLibraries("AuditService",AuditService);
+  setupLibraries("PTRService", PTRService);
   return new Promise((resolve) => {
     initI18n(resolve);
   });

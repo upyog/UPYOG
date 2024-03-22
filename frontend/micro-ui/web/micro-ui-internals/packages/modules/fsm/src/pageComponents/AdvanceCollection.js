@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { LabelFieldPair, CardLabel, TextInput, Dropdown, Loader, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, Dropdown, Loader, CardLabelError } from "@upyog/digit-ui-react-components";
 import { useParams, useLocation } from "react-router-dom";
 
 const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFieldStyle }) => {
@@ -33,6 +33,7 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
       name: "advanceAmount",
       validation: {
         isRequired: true,
+        disabled: true,
         min: "0",
         pattern: `^[0-9]+`,
         title: t("ES_NEW_APPLICATION_AMOUNT_INVALID"),
@@ -70,6 +71,7 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
 
         if (billSlab?.price || billSlab?.price === 0) {
           const totaltripAmount = billSlab.price * formData.tripData.noOfTrips;
+          const isTotalAmountOdd=totaltripAmount %2 !==0;
 
           const { advanceAmount: advanceBalanceAmount } = await Digit.FSMService.advanceBalanceCalculate(tenantId, {
             totalTripAmount: totaltripAmount,
@@ -80,7 +82,7 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
           setAdvanceAmounts(advanceBalanceAmount);
           !url.includes("modify") || (url.includes("modify") && advanceBalanceAmount > formData?.advancepaymentPreference?.advanceAmount)
             ? setValue({
-                advanceAmount: advanceBalanceAmount,
+                advanceAmount: (isTotalAmountOdd ? Math.ceil(advanceBalanceAmount) : advanceBalanceAmount) ,
               })
             : null;
           setError(false);

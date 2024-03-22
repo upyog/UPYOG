@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { LabelFieldPair, CardLabel, TextInput, CardLabelError, Dropdown } from "@egovernments/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, CardLabelError, Dropdown } from "@upyog/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 
 const SelectName = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
@@ -33,7 +33,18 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
       },
       componentInFront: <div className="employee-card-input employee-card-input--front">+91</div>,
       isMandatory: true,
-    }
+    },
+    {
+      label: "ES_NEW_APPLICATION_MAIL_ID",
+      type: "text",
+      name: "emailId",
+      validation: {
+        //isRequired: true,
+        pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$",
+        title: t("CORE_COMMON_EMAIL_ID_INVALID"),
+      },
+      isMandatory:false,
+    },
   ];
 
   useEffect(() => {

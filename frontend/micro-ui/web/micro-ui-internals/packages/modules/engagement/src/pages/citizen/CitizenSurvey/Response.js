@@ -1,4 +1,4 @@
-import { Banner, Card, Loader, CardText, ActionBar, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Banner, Card, Loader, CardText, ActionBar, SubmitBar } from "@upyog/digit-ui-react-components";
 import { useQueryClient } from "react-query";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";

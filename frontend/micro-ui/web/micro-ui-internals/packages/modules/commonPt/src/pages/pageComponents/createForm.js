@@ -1,4 +1,4 @@
-import { FormComposer, Loader, Dropdown, Localities, Header, Toast } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Loader, Dropdown, Localities, Header, Toast } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useRouteMatch,useLocation } from "react-router-dom";
@@ -24,6 +24,10 @@ const CreatePropertyForm = ({ config, onSelect,value, userType, redirectUrl }) =
   if(window.location.href.includes("obps"))
   {
     allCities = Digit.SessionStorage.get("OBPS_TENANTS")
+  }
+  if(window.location.href.includes("fsm"))
+  {
+    allCities = Digit.SessionStorage.get("FSM_TENANTS")
   }
   const [formValue, setFormValue] = useState("");
   const [cityCode, setCityCode] = useState("");

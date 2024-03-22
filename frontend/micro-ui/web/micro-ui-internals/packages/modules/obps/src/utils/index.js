@@ -708,8 +708,18 @@ export const printPdf = (blob) => {
   }
 };
 
-export const downloadAndPrintReciept = async (bussinessService, consumerCode, tenantId, mode = "download", pdfKey = "consolidatedreceipt") => {
-  const response = await Digit.OBPSService.receipt_download(bussinessService, consumerCode, tenantId, { pdfKey: pdfKey });
+export const downloadAndPrintReciept = async (bussinessService, consumerCode, tenantId,payments , mode = "download", pdfKey = "bpa-receipt") => {
+  let response=null;
+  console.log("payments",payments)
+    if (payments[0]?.fileStoreId ) {
+       response = { filestoreIds: [payments[0]?.fileStoreId] };      
+    }
+  else{
+    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: payments  }, "bpa-receipt");
+     //response = await Digit.OBPSService.receipt_download(bussinessService, consumerCode, tenantId, { pdfKey: pdfKey });
+  }
+  const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+  window.open(fileStore[response?.filestoreIds[0]], "_blank");
   const responseStatus = parseInt(response.status, 10);
   if (responseStatus === 201 || responseStatus === 200) {
     let fileName =

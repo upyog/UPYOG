@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, Loader, Row, StatusTable, SubmitBar, DownloadPrefixIcon } from "@egovernments/digit-ui-react-components";
+import { Banner, Card, CardText, Loader, Row, StatusTable, SubmitBar, DownloadPrefixIcon } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
@@ -38,10 +38,12 @@ export const convertEpochToDate = (dateEpoch) => {
   );
   
   const { isLoading, data, isError } = Digit.Hooks.usePaymentUpdate({ egId }, business_service, {
+    
     retry: false,
     staleTime: Infinity,
     refetchOnWindowFocus: false,
   });
+  console.log("datatatataty",data)
 
   const { label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService: business_service }, { enabled: false });
 
@@ -152,6 +154,7 @@ export const convertEpochToDate = (dateEpoch) => {
   };
 
   const printReciept = async () => {
+    let generatePdfKeyForWs="ws-onetime-receipt";
     if (printing) return;
     setPrinting(true);
     let paymentArray=[];
@@ -206,10 +209,16 @@ export const convertEpochToDate = (dateEpoch) => {
           }
           payments.Payments[0].additionalDetails=details;
           paymentArray[0]=payments.Payments[0]
-          console.log("paymentArray",paymentArray)
-           response = await Digit.PaymentService.generatePdf(state, { Payments: paymentArray }, generatePdfKey);
+          console.log("generatedpdfkey",generatePdfKey)
+          if(business_service=="WS" || business_service=="SW"){
+            response = await Digit.PaymentService.generatePdf(state, { Payments: [{...paymentData}] }, generatePdfKeyForWs);
+          }
+          else{
+            response = await Digit.PaymentService.generatePdf(state, { Payments: [{...paymentData}] }, generatePdfKey);
+          }
+          
         }       
-    }  
+    }
     const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
     if (fileStore && fileStore[response.filestoreIds[0]]) {
       window.open(fileStore[response.filestoreIds[0]], "_blank");
@@ -471,7 +480,7 @@ export const convertEpochToDate = (dateEpoch) => {
             assessmentYearForReceipt=fromDate+"-"+toDate;
          
           
-      payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.map(ele => {
+            payments.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.map(ele => {
          
         if(ele.taxHeadCode == "PT_TAX")
         {tax=ele.adjustedAmount;
@@ -523,7 +532,7 @@ export const convertEpochToDate = (dateEpoch) => {
       "adhoc_penalty":adhoc_penalty,
       "adhoc_rebate":adhoc_rebate,
       "roundoff":roundoff,
-      "total": payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].amountPaid
+      "total": payments.Payments[0].paymentDetails[0].bill.billDetails[0].amountPaid
   
       };
       taxRow={
@@ -539,7 +548,7 @@ export const convertEpochToDate = (dateEpoch) => {
         "adhoc_penalty":adhoc_penaltyT,
         "adhoc_rebate":adhoc_rebateT,
         "roundoff":roundoffT,
-        "total": payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].amount
+        "total": payments.Payments[0].paymentDetails[0].bill.billDetails[0].amount
       };
       arrearArray.push(arrearRow);
       taxArray.push(taxRow);
@@ -583,7 +592,7 @@ export const convertEpochToDate = (dateEpoch) => {
         applicationNumber={paymentData?.paymentDetails[0].receiptNumber}
         successful={true}
       />
-      <CardText>{t(`${bannerText}_DETAIL`)}</CardText>
+      <CardText></CardText>
       <StatusTable>
         <Row rowContainerStyle={rowContainerStyle} last label={t(label)} text={applicationNo} />
         {/** TODO : move this key and value into the hook based on business Service */}
@@ -592,7 +601,7 @@ export const convertEpochToDate = (dateEpoch) => {
             rowContainerStyle={rowContainerStyle}
             last
             label={t("CS_PAYMENT_BILLING_PERIOD")}
-            text={getBillingPeriod(reciept_data?.paymentDetails[0]?.bill?.billDetails[0])}
+            text={getBillingPeriod(paymentData?.paymentDetails[0]?.bill?.billDetails[0])}
           />
         )}
 
@@ -601,7 +610,7 @@ export const convertEpochToDate = (dateEpoch) => {
             rowContainerStyle={rowContainerStyle}
             last
             label={t("CS_PAYMENT_AMOUNT_PENDING")}
-            text={(reciept_data?.paymentDetails?.[0]?.totalDue && reciept_data?.paymentDetails?.[0]?.totalAmountPaid ) ? `₹ ${reciept_data?.paymentDetails?.[0]?.totalDue - reciept_data?.paymentDetails?.[0]?.totalAmountPaid}` : `₹ ${0}`}
+            text={paymentData?.totalDue-paymentData?.totalAmountPaid || (reciept_data?.paymentDetails?.[0]?.totalDue && reciept_data?.paymentDetails?.[0]?.totalAmountPaid ) ? `₹ ${reciept_data?.paymentDetails?.[0]?.totalDue - reciept_data?.paymentDetails?.[0]?.totalAmountPaid}` : `₹ ${0}`}
           />
         )}
 
@@ -610,7 +619,7 @@ export const convertEpochToDate = (dateEpoch) => {
           rowContainerStyle={rowContainerStyle}
           last
           label={t(ommitRupeeSymbol ? "CS_PAYMENT_AMOUNT_PAID_WITHOUT_SYMBOL" : "CS_PAYMENT_AMOUNT_PAID")}
-          text={reciept_data?.paymentDetails?.[0]?.totalAmountPaid ? ("₹ " +  reciept_data?.paymentDetails?.[0]?.totalAmountPaid) : `₹ 0` }
+          text={paymentData?.totalAmountPaid ||( reciept_data?.paymentDetails?.[0]?.totalAmountPaid ? ("₹ " +  reciept_data?.paymentDetails?.[0]?.totalAmountPaid) : `₹ 0`) }
         />
         {(business_service !== "PT" || workflw) && (
           <Row

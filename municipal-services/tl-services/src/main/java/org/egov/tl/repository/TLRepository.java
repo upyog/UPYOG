@@ -92,6 +92,7 @@ public class TLRepository {
      * @param tradeLicenseRequest The tradeLciense create request
      */
     public void save(TradeLicenseRequest tradeLicenseRequest) {
+    	log.info("going to persist " +tradeLicenseRequest);
         producer.push(config.getSaveTopic(), tradeLicenseRequest);
     }
     /**

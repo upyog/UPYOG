@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getVehicleType } from "../utils";
-import { LabelFieldPair, CardLabel, TextInput, Dropdown, Loader, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, Dropdown, Loader, CardLabelError } from "@upyog/digit-ui-react-components";
 import { useLocation, useParams } from "react-router-dom";
 
 const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
@@ -81,7 +81,9 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
   }
 
   function setValue(object) {
-    onSelect(config.key, { ...formData[config.key], ...object });
+    let a = {...formData[config.key],...object}
+    console.log("config.key",config.key,a)
+    onSelect(config.key,  a);
   }
   useEffect(() => {
     (async () => {
@@ -98,7 +100,7 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
           capacity,
           slum,
         });
-
+        console.log("billingDetails",billingDetails)
         const billSlab = billingDetails?.billingSlab?.length && billingDetails?.billingSlab[0];
         if (billSlab?.price || billSlab?.price === 0) {
           setValue({
