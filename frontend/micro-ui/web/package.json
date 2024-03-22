@@ -11,7 +11,8 @@
     "micro-ui-internals/packages/modules/commonPt",
     "micro-ui-internals/packages/modules/dss",
     "micro-ui-internals/packages/modules/pt",
-    "micro-ui-internals/packages/modules/obps"
+    "micro-ui-internals/packages/modules/obps",
+    "micro-ui-internals/packages/modules/ptr"
   ],
   "engines": {
     "node": ">=14"
@@ -36,6 +37,7 @@
     "@upyog/digit-ui-module-tl": "1.7.0-beta.8",
     "@upyog/digit-ui-module-ws": "1.7.0-beta.12",
     "@upyog/digit-ui-react-components": "1.7.0-beta.4",
+    "@upyog-niua/upyog-ui-module-ptr": "1.0.7",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",

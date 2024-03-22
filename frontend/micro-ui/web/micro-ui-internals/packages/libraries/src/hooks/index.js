@@ -252,6 +252,19 @@ import useToCheckPrivacyEnablement from "./ws/useToCheckPrivacyEnablement";
 import useWSConfigMDMS from "./ws/useWSConfigMDMS";
 import useFeedBackSearch from "./useFeedBackSearch";
 
+import usePetMDMS from "./ptr/usePetMDMS";
+import useBreedTypeMDMS from "./ptr/useBreedTypeMDMS";
+import usePTRCreateAPI from "./ptr/usePTRCreateAPI";
+import usePTRPetMDMS from "./ptr/usePTRPetMDMS";
+import usePTRGenderMDMS from "./ptr/usePTRGenderMDMS";
+import usePTRSearch from "./ptr/usePTRSearch";
+import usePtrApplicationDetail from "./ptr/usePtrApplicationDetail";
+import usePTRApplicationAction from "./ptr/usePTRApplicationAction";
+import useServiceSearchPTR from "./ptr/useServiceSearchPTR";
+import usePetDocumentSearch from "./ptr/usePetDocumentSearch";
+import useMyPetPayments from "./ptr/useMyPetPayments";
+import useTenantsPTR from "./ptr/useTenants";
+
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
 
@@ -314,6 +327,22 @@ const fsm = {
   useVehicleTripCreate,
   useVendorSearch,
   useAdvanceBalanceCalulation,
+};
+const ptr = {
+  usePetMDMS,
+  usePTRPetMDMS,
+  useBreedTypeMDMS,
+  usePTRCreateAPI,
+  usePTRApplicationAction,
+  usePTRGenderMDMS,
+  usePTRSearch,
+  usePtrApplicationDetail,
+  // useTenantsPTR,
+  useServiceSearchPTR,
+  usePetDocumentSearch,
+  useMyPetPayments,
+  useTenants: useTenantsPTR
+ 
 };
 
 const pt = {
@@ -538,6 +567,7 @@ const Hooks = {
   pgr,
   fsm,
   pt,
+  ptr,
   dss,
   mcollect,
   hrms,

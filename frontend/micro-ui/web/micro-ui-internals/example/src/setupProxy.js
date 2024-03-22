@@ -69,8 +69,6 @@ module.exports = function (app) {
     "/billing-service/bill/v2/_fetchbill",
     "/collection-services/payments/pet-services/_search",
     "/requester-services-dx"
-   
-
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

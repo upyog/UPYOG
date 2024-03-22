@@ -1,0 +1,143 @@
+curl --location 'https://dev.digit.org/egov-workflow-v2/egov-wf/businessservice/_create' \
+--header 'Content-Type: application/json' \
+--data '{
+    "RequestInfo": {
+        "apiId": "Rainmaker",
+        "action": "",
+        "did": 1,
+        "key": "",
+        "msgId": "20170310130900|en_IN",
+        "requesterId": "",
+        "ts": 1513579888683,
+        "ver": ".01",
+        "authToken": "b39181b1-5c6b-484a-b825-6be2f62012b8"
+    },
+    "BusinessServices": [
+        {
+            "tenantId": "pg",
+            "businessService": "ptr",
+            "business": "pet-services",
+            "businessServiceSla": null,
+            "states": [
+                {
+                    "sla": null,
+                    "state": null,
+                    "applicationStatus": null,
+                    "docUploadRequired": true,
+                    "isStartState": true,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "APPLY",
+                            "nextState": "APPLIED",
+                            "roles": [
+                                "CITIZEN",
+                                "PTR_CEMP"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "APPLIED",
+                    "applicationStatus": "APPLIED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "action": "VERIFY",
+                            "nextState": "DOCVERIFIED",
+                            "roles": [
+                                "EMPLOYEE",
+                                "PTR_CEMP",
+                                "PTR_VERIFIER"
+                            ]
+                        },
+                        {
+                            "action": "REJECT",
+                            "nextState": "REJECTED",
+                            "roles": [
+                                "EMPLOYEE",
+                                "PTR_CEMP",
+                                "PTR_VERIFIER"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "DOCVERIFIED",
+                    "applicationStatus": "DOCVERIFIED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "action": "APPROVE",
+                            "nextState": "APPROVED",
+                            "roles": [
+                                "EMPLOYEE",
+                                "PTR_CEMP",
+                                "PTR_APPROVER"
+                            ]
+                        },
+                        {
+                            "action": "REJECT",
+                            "nextState": "REJECTED",
+                            "roles": [
+                                "EMPLOYEE",
+                                "PTR_CEMP",
+                                "PTR_APPROVER"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "APPROVED",
+                    "applicationStatus": "APPROVED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "action": "PAY",
+                            "nextState": "REGISTRATIONCOMPLETED",
+                            "roles": [
+                                "SYSTEM_PAYMENT",
+                                "CITIZEN",
+                                "EMPLOYEE",
+                                "PTR_CEMP"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "REJECTED",
+                    "applicationStatus": "REJECTED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": null
+                },
+                {
+                    "sla": null,
+                    "state": "REGISTRATIONCOMPLETED",
+                    "applicationStatus": "REGISTRATIONCOMPLETED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": null
+                }
+            ]
+        }
+    ]
+}'

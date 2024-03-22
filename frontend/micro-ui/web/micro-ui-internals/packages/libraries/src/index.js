@@ -50,6 +50,8 @@ import { NOCSearch } from "./services/molecules/NOC/Search";
 import AccessControlService from "./services/elements/Access";
 import BillServices from "./services/elements/Bill";
 import { CFService } from "./services/elements/CF";
+import { PTRService } from "./services/elements/PTR";     
+
 
 import {CustomService} from "./services/elements/CustomService";    
    
@@ -114,6 +116,7 @@ const initLibraries = () => {
   setupLibraries("AccessControlService", AccessControlService);
   setupLibraries("BillServices", BillServices);
   setupLibraries("AuditService",AuditService);
+  setupLibraries("PTRService", PTRService);
   return new Promise((resolve) => {
     initI18n(resolve);
   });

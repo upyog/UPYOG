@@ -2,6 +2,7 @@ package org.egov.inbox.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -187,7 +188,12 @@ public class WorkflowService {
 			url.append("&status=").append(StringUtils.arrayToDelimitedString(criteria.getStatus().toArray(),","));
 		}
 		
-		if(!CollectionUtils.isEmpty(criteria.getBusinessIds())) {
+		if(!CollectionUtils.isEmpty(criteria.getBusinessIds())&& criteria.getBusinessService().toString().contains("ptr")) {
+			List<String> sortedBusinessIds = criteria.getBusinessIds().stream()
+		            .sorted(Comparator.reverseOrder()).limit(200).collect(Collectors.toList());
+			url.append("&businessIds=").append(StringUtils.arrayToDelimitedString(sortedBusinessIds.toArray(),","));
+		}
+		if(!CollectionUtils.isEmpty(criteria.getBusinessIds())&& !criteria.getBusinessService().toString().contains("ptr")) {
 			url.append("&businessIds=").append(StringUtils.arrayToDelimitedString(criteria.getBusinessIds().toArray(),","));
 		}
 		
