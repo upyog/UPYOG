@@ -66,6 +66,8 @@ import PTComments from "./pageComponents/Mutate/Comments";
 import IsMutationPending from "./pageComponents/Mutate/IsMutationPending";
 import UnderStateAquire from "./pageComponents/Mutate/underStateAquire";
 import PropertyMarketValue from "./pageComponents/Mutate/PropertyMarketValue";
+import PTReasonForTransfer from "./pageComponents/Mutate/ReasonForTransfer";
+import PTRegistrationDocument from "./pageComponents/Mutate/RegistrationDocument";
 import TransferProof from "./pageComponents/Mutate/transferReasonDocument";
 import UpdateNumber from "./pages/citizen/MyProperties/updateNumber";
 import EmployeeUpdateOwnerNumber from "./pages/employee/updateNumber";
@@ -144,6 +146,8 @@ const componentsToRegister = {
   PTComments,
   IsMutationPending,
   PropertyMarketValue,
+  PTReasonForTransfer,
+  PTRegistrationDocument,
   UnderStateAquire,
   TransferProof,
   UpdateNumber,
@@ -157,6 +161,7 @@ const componentsToRegister = {
   PTPropertyDetails: PropertyDetails,
   PTAssessmentDetails: AssessmentDetails,
   PTEditApplication: EditApplication,
+  PTResponse: Response,
   PTTransferOwnership: TransferOwnership,
   PTDocsRequired: DocsRequired,
   PTCreateProperty: CreateProperty,
