@@ -29,7 +29,7 @@ public class WMSContractAgreementApplication {
 	 
 	
 	@JsonProperty("agreementInfo")
-	//private AgreementInfo agreementInfo = null;
+	
 	
 	  @Valid 
 	  private List<AgreementInfo> agreementInfo = null;
@@ -50,7 +50,7 @@ public class WMSContractAgreementApplication {
 	 */
 	
 	@JsonProperty("contractors")
-	private Contractors contractors = null;
+	private List<Contractors> contractors = null;
 	
 	@JsonProperty("party2Witness")
 	private List<Party2Witness> party2Witness = null;
@@ -127,6 +127,15 @@ public class WMSContractAgreementApplication {
         //if(this.agreementInfo.stream().filter(x-> x.getAgreementName().equalsIgnoreCase(agreementInfoItem.getAgreementName())) == null)
         if (!this.party2Witness.stream().anyMatch(x -> x.getPwId().equalsIgnoreCase(party2WitnessItem.getPwId())))    
         this.party2Witness.add(party2WitnessItem);
+        return this;
+    }
+	
+	public WMSContractAgreementApplication addContractors(Contractors contractorsItem) {
+        if(this.contractors==null)
+            this.contractors = new ArrayList<>();
+        //if(this.agreementInfo.stream().filter(x-> x.getAgreementName().equalsIgnoreCase(agreementInfoItem.getAgreementName())) == null)
+        if (!this.contractors.stream().anyMatch(x -> x.getConId().equalsIgnoreCase(contractorsItem.getConId())))    
+        this.contractors.add(contractorsItem);
         return this;
     }
 	
