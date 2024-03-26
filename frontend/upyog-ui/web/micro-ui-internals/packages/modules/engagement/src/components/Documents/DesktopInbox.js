@@ -20,7 +20,7 @@ const getDocumentDetailsPath = (document) => {
 
 const GetCell = (value) => <span className="cell-text styled-cell">{value}</span>;
 const getDocumentDetails = (value = "", link, t) => <span className="document-table-docs-columns"><Link className="link" to={link} >{value.length ? value : t('CE_DOCUMENT_TITLE')}</Link></span>
-const getDocumentCell = (name = "mSeva", link, docLink, t) => (
+const getDocumentCell = (name = "Ey-Seva", link, docLink, t) => (
   <span className="document-table-docs-columns" >
     {link?.length ? <span className="link" onClick={() => openUploadedDocument(link, name)} > {t('CE_DOCUMENT_VIEW_LINK')} </span> : null}
     {docLink.length ? <span className="link" onClick={() => openDocumentLink(docLink, name)}> {t('CE_DOCUMENT_OPEN_LINK')} </span> : null}

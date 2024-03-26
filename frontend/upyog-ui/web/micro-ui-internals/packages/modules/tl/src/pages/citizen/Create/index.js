@@ -14,14 +14,17 @@ const CreateTradeLicence = ({ parentRoute }) => {
   const history = useHistory();
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("TL_CREATE_TRADE", {});
+  console.log("TL params f",params)
   let isReneworEditTrade = window.location.href.includes("/renew-trade/") || window.location.href.includes("/edit-application/")
 
   const stateId = Digit.ULBService.getStateId();
   let { data: newConfig, isLoading } = Digit.Hooks.tl.useMDMS.getFormConfig(stateId, {});
 
   const goNext = (skipStep, index, isAddMultiple, key, isPTCreateSkip) => {
+    console.log("skipStep, index, isAddMultiple, key, isPTCreateSkip ",skipStep, index, isAddMultiple, key, isPTCreateSkip)
     let currentPath = pathname.split("/").pop(),
       nextPage;
+      debugger
     let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
     let { isCreateEnabled : enableCreate = true } = config.find((routeObj) => routeObj.route === currentPath);
     if (typeof nextStep == "object" && nextStep != null) {
@@ -97,6 +100,8 @@ const CreateTradeLicence = ({ parentRoute }) => {
   };
 
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
+  console.log("onSelect TLInfo key, data, skipStep, index, isAddMultiple = false",{key, data, skipStep, index, isAddMultiple})
+
     if(key === "formData")
     setParams({...data})
     else{

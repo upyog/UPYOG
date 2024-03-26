@@ -21,6 +21,7 @@ const TextArea = (props) => {
       maxLength={props.maxLength} 
       autoComplete="off"
       disabled={props.disabled}
+      defaultValue={props.defaultValue}
     ></textarea>
     {  <p className="cell-text">{props.hintText}</p>}
     </React.Fragment>

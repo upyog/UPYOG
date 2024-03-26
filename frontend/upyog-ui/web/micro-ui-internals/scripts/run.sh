@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MODULES=( "components" "common" "core" "libraries" "example" )
+MODULES=( "components" "common" "core" "libraries" "wmsMain" "wms" )
 
 RUNARGS=()
 BUILDARGS=()

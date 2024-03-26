@@ -2,12 +2,12 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,react
 
 ### eGov ###
-packages/css/example/index.css
+packages/css/work-management-system/index.css
 package-lock.json
 locales/
 build/
 packages/**/dist/
-
+UPYOG/business-services/
 # yarn #
 .yarn
 .yarnrc.yml

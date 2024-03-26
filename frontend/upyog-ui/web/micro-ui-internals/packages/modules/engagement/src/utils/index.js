@@ -23,7 +23,7 @@ export const getFileUrl = async (fileStoreId) => {
     if (response?.data?.fileStoreIds?.length > 0) {
       const url = response.data.fileStoreIds[0]?.url;
       if (url.includes(".jpg") || url.includes(".png")) {
-        const arr = url.split(",");
+        const arr = url?.split(",");
         const [original, large, medium, small] = arr;
         return original;
       }

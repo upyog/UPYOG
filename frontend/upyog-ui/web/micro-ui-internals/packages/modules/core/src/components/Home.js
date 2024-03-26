@@ -7,6 +7,8 @@ import {
   Loader,
   MCollectIcon,
   OBPSIcon,
+
+  WMSIcon,
   PGRIcon,
   PTIcon,
   TLIcon,
@@ -41,6 +43,8 @@ export const processLinkData = (newData, code, t) => {
     ];
     //RAIN-7297
     roleBasedLoginRoutes.map(({ role, from, loginLink, dashoardLink }) => {
+      console.log(role);
+      console.log(dashoardLink)
       if (Digit.UserService.hasAccess(role))
         newObj?.links?.push({
           link: from,
@@ -73,6 +77,8 @@ const iconSelector = (code) => {
       return <TLIcon className="fill-path-primary-main" />;
     case "OBPS":
       return <OBPSIcon className="fill-path-primary-main" />;
+    case "WMS":
+      return <WMSIcon className="fill-path-primary-main" />;
     case "Bills":
       return <BillsIcon className="fill-path-primary-main" />;
     default:
@@ -80,6 +86,7 @@ const iconSelector = (code) => {
   }
 };
 const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => {
+  console.log(modules);
   const paymentModule = modules.filter(({ code }) => code === "Payment")[0];
   const moduleArr = modules.filter(({ code }) => code !== "Payment");
   const moduleArray = [paymentModule, ...moduleArr];

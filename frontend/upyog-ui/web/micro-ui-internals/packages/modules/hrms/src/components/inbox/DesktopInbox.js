@@ -156,15 +156,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
             businessService={props.businessService}
           />
           <div>
-            {
-              <FilterComponent
-                defaultSearchParams={props.defaultSearchParams}
-                onFilterChange={props.onFilterChange}
-                searchParams={props.searchParams}
-                type="desktop"
-                tenantIds={tenantIds}
-              />
-            }
+            
           </div>
         </div>
       )}

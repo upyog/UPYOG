@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useGlobalFilter, usePagination, useRowSelect, useSortBy, useTable } from "react-table";
 import { ArrowBack, ArrowForward, ArrowToFirst, ArrowToLast, SortDown, SortUp } from "./svgindex";
+import CheckBox from "./CheckBox";
 
 const noop = () => {};
 
@@ -27,13 +28,15 @@ const Table = ({
   onFirstPage,
   isPaginationRequired = true,
   sortParams = [],
-  showAutoSerialNo=false,
-  customTableWrapperClassName="",
-  styles={},
+  showAutoSerialNo = false,
+  customTableWrapperClassName = "",
+  styles = {},
   tableTopComponent,
   tableRef,
-  isReportTable=false,
+  isReportTable = false,
   inboxStyles,
+  showCheckbox = false,
+  setSelectData
 }) => {
   const {
     getTableProps,
@@ -51,7 +54,11 @@ const Table = ({
     previousPage,
     setPageSize,
     setGlobalFilter,
-    state: { pageIndex, pageSize, sortBy, globalFilter },
+
+    // selectedFlatRows,
+    state: { pageIndex, pageSize, sortBy, globalFilter, selectedRowIds },
+    toggleAllRowsSelected,
+    toggleRowSelected,
   } = useTable(
     {
       columns,
@@ -79,7 +86,6 @@ const Table = ({
     usePagination,
     useRowSelect
   );
-
   useEffect(() => {
     onSort(sortBy);
   }, [onSort, sortBy]);
@@ -88,70 +94,140 @@ const Table = ({
 
   const tref = useRef();
   
+  var [selectedRows,setSelectedRows] = useState([]);
+  const handleSelectAll=()=>{
+    const item= rows?.map(row=>row.original)
+    setSelectedRows(item)
+  }
+  const handleDeselectAll=()=>{
+    removeItemInLocalStorage()
+    setSelectedRows([])
+  }
+  const handleSelectRow=(rowData)=>{
+    setSelectedRows((prev)=>(
+      prev.map(item=>item.uid).includes(rowData.original.uid)
+      ? prev.filter(item=>item.uid!=rowData.original.uid)
+      : [...selectedRows,rowData.original]
+    ))
+  }
+
+  const setItemInLocalStorage=()=>{
+    localStorage.setItem("selectedRows",JSON.stringify(selectedRows))
+  }
+  const removeItemInLocalStorage=()=>{
+    localStorage.removeItem("selectedRows")
+    
+  }
+  const getItemInLocalStorage=()=>{
+    return !localStorage.getItem("selectedRows")?[]:JSON.parse(localStorage.getItem("selectedRows"));
+  }
+
+useEffect(()=>{
+  let rowsSelected=getItemInLocalStorage()
+  setSelectedRows(rowsSelected)
+},[])
+useEffect(()=>{
+  setItemInLocalStorage()
+  if(setSelectData!==undefined){
+  setSelectData(selectedRows)
+}
+},[selectedRows])
+
+  // const isSomeRowsSelected = rows.some((row) => selectedRowIds[row.id]);
+  // const isAllRowsSelected = rows.every((row) => selectedRowIds[row.id]);
+
   return (
     <React.Fragment>
-    <div ref={tref} style={tref.current && tref.current.offsetWidth < tref.current.scrollWidth ? {...inboxStyles}: {}}>
-    <span className={customTableWrapperClassName}>
-    {tableTopComponent ? tableTopComponent:null}
-      <table className={className} {...getTableProps()} style={styles} ref={tableRef}>
-         
-        <thead>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-             {showAutoSerialNo&& <th style={{  verticalAlign: "top"}}>
-              {showAutoSerialNo&& typeof showAutoSerialNo =="string"?t(showAutoSerialNo):t("TB_SNO")}
-              </th>}
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())} style={{ verticalAlign: "top" }}>
-                  {column.render("Header")}
-                  <span>{column.isSorted ? column.isSortedDesc ? <SortDown /> : <SortUp /> : ""}</span>
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {page.map((row, i) => {
-            // rows.slice(0, 10).map((row, i) => {
-            prepareRow(row);
-            return (
-              <tr {...row.getRowProps()}>
-              {showAutoSerialNo&&  <td >
-              {i+1}
-              </td>}
-                {row.cells.map((cell) => {
+      <div ref={tref} style={tref.current && tref.current.offsetWidth < tref.current.scrollWidth ? { ...inboxStyles } : {}}>
+        <span className={customTableWrapperClassName}>
+          <div style={{ "justify-content": "space-between", "overflow-x": "auto" }}>
+            {tableTopComponent ? tableTopComponent : null}
+            <table className={className} {...getTableProps()} style={styles} ref={tableRef}>
+              <thead>
+                {headerGroups.map((headerGroup) => (
+                  <tr {...headerGroup.getHeaderGroupProps()}>
+                    {showAutoSerialNo && (
+                      <th style={{ verticalAlign: "top" }}>
+                        {showAutoSerialNo && typeof showAutoSerialNo == "string" ? t(showAutoSerialNo) : t("TB_SNO")}
+                      </th>
+                    )}
+                    {showCheckbox && (
+                      <th>
+                        {/* <CheckBox
+                          onChange={handleSelectAll}
+                          checked={rows.length > 0 && rows.every((row) => selectedRowIds[row.id])}
+                          // checked={isAllRowsSelected}
+                          // indeterminate={isSomeRowsSelected && !isAllRowsSelected}
+                        /> */}
+<button type="button" onClick={handleSelectAll}>Select All</button>
+<button type="button" onClick={handleDeselectAll}>Deselect All</button>
+
+                      </th>
+                    )}
+                    {headerGroup.headers.map((column) => (
+                      <th {...column.getHeaderProps(column.getSortByToggleProps())} style={{ verticalAlign: "top" }}>
+                        {column.render("Header")}
+                        <span>{column.isSorted ? column.isSortedDesc ? <SortDown /> : <SortUp /> : ""}</span>
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody {...getTableBodyProps()}>
+                {page.map((row, i) => {
+                  // rows.slice(0, 10).map((row, i) => {
+                  console.log("5===row?.original.uid ", 5 === row?.original.uid);
+                  prepareRow(row);
                   return (
-                    <td
-                      // style={{ padding: "20px 18px", fontSize: "16px", borderTop: "1px solid grey", textAlign: "left", verticalAlign: "middle" }}
-                      {...cell.getCellProps([
-                        // {
-                        //   className: cell.column.className,
-                        //   style: cell.column.style,
-                        // },
-                        // getColumnProps(cell.column),
-                        getCellProps(cell),
-                      ])}
-                    >
-                      {cell.attachment_link ? (
-                        <a style={{ color: "#1D70B8" }} href={cell.attachment_link}>
-                          {cell.render("Cell")}
-                        </a>
-                      ) : (
-                        <React.Fragment> {cell.render("Cell")} </React.Fragment>
+                    <tr {...row.getRowProps()}>
+                      {showAutoSerialNo && <td>{i + 1}</td>}
+                      {showCheckbox && (
+                        <td style={{ padding: "20px 18px" }}>
+                          <CheckBox
+                            onClick={() => {
+                              handleSelectRow(row);
+                            }}
+                            checked={selectedRows.map((rowId)=>rowId.uid).includes(row?.original.uid)}
+                            // checked={arrayOfUID.includes(row?.original.uid)}
+                          />
+                        </td>
                       )}
-                    </td>
+                      {row.cells.map((cell) => {
+                        return (
+                          <td
+                            // style={{ padding: "20px 18px", fontSize: "16px", borderTop: "1px solid grey", textAlign: "left", verticalAlign: "middle" }}
+                            {...cell.getCellProps([
+                              // {
+                              //   className: cell.column.className,
+                              //   style: cell.column.style,
+                              // },
+                              // getColumnProps(cell.column),
+                              getCellProps(cell),
+                            ])}
+                          >
+                            {cell.attachment_link ? (
+                              <a style={{ color: "#1D70B8" }} href={cell.attachment_link}>
+                                {cell.render("Cell")}
+                              </a>
+                            ) : (
+                              <React.Fragment> {cell.render("Cell")} </React.Fragment>
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
                   );
                 })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      </span>
+              </tbody>
+            </table>
+          </div>
+        </span>
       </div>
       {isPaginationRequired && (
-        <div className="pagination dss-white-pre" >
+        <div className="pagination dss-white-pre">
           {`${t("CS_COMMON_ROWS_PER_PAGE")} :`}
+          {/*  {`${t("Rows per page")} :`}*/}
+
           <select
             className="cp"
             value={pageSize}
@@ -172,17 +248,17 @@ const Table = ({
                 ? (currentPage + 1) * pageSizeLimit > totalRecords
                   ? totalRecords
                   : (currentPage + 1) * pageSizeLimit
-                : (pageIndex * pageSize + page?.length)}{" "}
+                : pageIndex * pageSize + page?.length}{" "}
               {/* {(pageIndex + 1) * pageSizeLimit > rows.length ? rows.length : (pageIndex + 1) * pageSizeLimit}{" "} */}
               {totalRecords ? `of ${manualPagination ? totalRecords : rows.length}` : ""}
             </span>{" "}
           </span>
           {/* to go to first and last page we need to do a manual pagination , it can be updated later*/}
-          {!manualPagination&& pageIndex!=0 &&<ArrowToFirst onClick={() => gotoPage(0)} className={"cp"} />}
+          {!manualPagination && pageIndex != 0 && <ArrowToFirst onClick={() => gotoPage(0)} className={"cp"} />}
           {canPreviousPage && manualPagination && onFirstPage && <ArrowToFirst onClick={() => manualPagination && onFirstPage()} className={"cp"} />}
           {canPreviousPage && <ArrowBack onClick={() => (manualPagination ? onPrevPage() : previousPage())} className={"cp"} />}
           {canNextPage && <ArrowForward onClick={() => (manualPagination ? onNextPage() : nextPage())} className={"cp"} />}
-          {!manualPagination&& pageIndex != pageCount-1 && <ArrowToLast onClick={() => gotoPage(pageCount-1 )} className={"cp"} />}
+          {!manualPagination && pageIndex != pageCount - 1 && <ArrowToLast onClick={() => gotoPage(pageCount - 1)} className={"cp"} />}
           {rows.length == pageSizeLimit && canNextPage && manualPagination && onLastPage && (
             <ArrowToLast onClick={() => manualPagination && onLastPage()} className={"cp"} />
           )}

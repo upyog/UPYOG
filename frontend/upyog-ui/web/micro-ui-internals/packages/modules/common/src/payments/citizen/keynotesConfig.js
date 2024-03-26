@@ -82,7 +82,7 @@ export const getKeyNotesConfig = (businessService, t) => {
           last
 
           You will be redirected to a third-party payment gateway.
-          mSeva does not save any credit or debit card details
+          Ey-Seva does not save any credit or debit card details
 
           label={t("CS_PAYMENT_TRANSANCTION_DATE")}
           text={transactionDate && new Date(transactionDate).toLocaleDateString("in")}

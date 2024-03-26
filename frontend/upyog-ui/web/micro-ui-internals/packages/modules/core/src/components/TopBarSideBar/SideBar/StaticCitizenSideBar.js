@@ -10,6 +10,7 @@ import {
   CollectionIcon,
   PTIcon,
   OBPSIcon,
+  WMSIcon,
   PGRIcon,
   FSMIcon,
   WSICon,
@@ -77,6 +78,7 @@ const Profile = ({ info, stateName, t }) => (
 const IconsObject = {
   CommonPTIcon: <PTIcon className="icon" />,
   OBPSIcon: <OBPSIcon className="icon" />,
+  WMSIcon: <WMSIcon className="icon" />,
   propertyIcon: <PropertyHouse className="icon" />,
   TLIcon: <CaseIcon className="icon" />,
   PGRIcon: <PGRIcon className="icon" />,
@@ -135,7 +137,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   const filteredTenantContact = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
 
   let menuItems = [...SideBarMenu(t, showProfilePage, redirectToLoginPage, isEmployee, storeData, tenantId)];
-  console.log("menuItems",menuItems)
+  //console.log("menuItems",menuItems)
 
   menuItems = menuItems.filter((item) => item.element !== "LANGUAGE");
 
@@ -222,10 +224,10 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
       }
     });
      menuItems= menuItems.map((item,index) =>{
-      console.log("item",item)
+      //console.log("item",item)
       if(item.hasOwnProperty("link"))
       {
-        console.log("itemee",item,index)
+        //console.log("itemee",item,index)
         item.link = item.link.replace("digit-ui", "upyog-ui");
       }
       
@@ -233,7 +235,96 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
       return item
       
     })
-
+/* 
+    var tmp={
+      "type": "link",
+      "text": "WMS",
+      "links": [
+          {
+              "id": 10001,
+              "name": "WMS_CITIZEN_HOME_VIEW_APP_BY_CITIZEN_LABEL",
+              "url": "upyog-ui-card",
+              "displayName": "View applications by Citizen",
+              "orderNumber": 1,
+              "parentModule": "WMS",
+              "enabled": true,
+              "serviceCode": "",
+              "code": "",
+              "path": "",
+              "navigationURL": "/upyog-ui/citizen/wms/my-applications",
+              "leftIcon": "WMSIcon",
+              "rightIcon": "",
+              "queryParams": "",
+              "sidebar": "digit-ui-links",
+              "sidebarURL": "/digit-ui/citizen/wms-home",
+              "link": "/upyog-ui/citizen/wms/my-applications",
+              "i18nKey": "Masters"
+          },
+          {
+              "id": 10002,
+              "name": "WMS_CITIZEN_HOME_STAKEHOLDER_LOGIN_LABEL",
+              "url": "upyog-ui-card",
+              "displayName": "Register as a Stakeholder",
+              "orderNumber": 2,
+              "parentModule": "BR",
+              "enabled": true,
+              "serviceCode": "",
+              "code": "",
+              "path": "",
+              "navigationURL": "/upyog-ui/citizen/br/stakeholder/apply/stakeholder-docs-required",
+              "leftIcon": "BRIcon",
+              "rightIcon": "",
+              "queryParams": "",
+              "sidebar": "digit-ui-links",
+              "sidebarURL": "/digit-ui/citizen/br-home",
+              "link": "/upyog-ui/citizen/br/stakeholder/apply/stakeholder-docs-required",
+              "i18nKey": "Register as a Stakeholder"
+          },
+          {
+              "id": 10003,
+              "name": "WMS_CITIZEN_HOME_ARCHITECT_LOGIN_LABEL",
+              "url": "upyog-ui-card",
+              "displayName": "Registered Architect Login",
+              "orderNumber": 3,
+              "parentModule": "BR",
+              "enabled": true,
+              "serviceCode": "",
+              "code": "",
+              "path": "",
+              "navigationURL": "/upyog-ui/citizen/br/home",
+              "leftIcon": "BRIcon",
+              "rightIcon": "",
+              "queryParams": "",
+              "sidebar": "digit-ui-links",
+              "sidebarURL": "/digit-ui/citizen/br-home",
+              "link": "/upyog-ui/citizen/br/home",
+              "i18nKey": "Registered Architect Login"
+          },
+          {
+              "id": 10004,
+              "name": "BR_FAQ_S",
+              "url": "upyog-ui-card",
+              "displayName": "FAQs",
+              "orderNumber": 8,
+              "parentModule": "BR",
+              "enabled": true,
+              "serviceCode": "",
+              "code": "",
+              "path": "",
+              "navigationURL": "/upyog-ui/citizen/br-faq",
+              "leftIcon": "TLIcon",
+              "rightIcon": "",
+              "queryParams": "",
+              "sidebar": "digit-ui-links",
+              "sidebarURL": "/digit-ui/citizen/br-home",
+              "link": "/upyog-ui/citizen/br-faq",
+              "i18nKey": "FAQs"
+          }
+      ],
+      "icon": "WMSIcon",
+      "link": "/upyog-ui/citizen/wms-home"
+  };
+  menuItems.push(tmp); */
 
   return (
     <React.Fragment>

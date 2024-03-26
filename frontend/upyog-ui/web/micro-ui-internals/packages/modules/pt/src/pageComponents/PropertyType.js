@@ -13,7 +13,8 @@ import { useLocation } from "react-router-dom";
 import { stringReplaceAll } from "../utils";
 import Timeline from "../components/TLTimeline";
 
-const PropertyType = ({ t, config, onSelect, userType, formData, setError, clearErrors, formState, onBlur }) => {
+const PropertyType = ({ t, config, onSelect, userType, formData, setError, clearErrors, formState, onBlur, propertTypeTest="propertTypeTest"}) => {
+  console.log("property Type")
   const [BuildingType, setBuildingType] = useState(formData?.PropertyType);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();

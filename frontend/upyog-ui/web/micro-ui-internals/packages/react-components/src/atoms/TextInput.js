@@ -88,6 +88,7 @@ const TextInput = (props) => {
         )}
         {props.type === "date" && <DatePicker {...props} date={date} setDate={setDate} data={data} />}
         {props.signature ? props.signatureImg : null}
+        <p className="text-red-500" style={{ ...props.errorStyle}}>{props?.errorMessage}</p>
       </div>
     </React.Fragment>
   );
