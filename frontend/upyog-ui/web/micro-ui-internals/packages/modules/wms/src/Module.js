@@ -324,6 +324,8 @@ import MeasurementBookDate from "./pageComponents/RAFB/MeasurementBookDate";
 import MeasurementBookno from "./pageComponents/RAFB/MeasurementBookno";
 import MeasurementBookAmount from "./pageComponents/RAFB/MeasurementBookAmount";
 import TenderEntryDetail from "./pages/citizen/TE/detail/TenderEntryDetail";
+import WMSrafbAcknowledgement from "./pages/citizen/RAFB/Create/WMSrafbAcknowledgement";
+
 
 
 const componentsToRegister = {  
@@ -622,7 +624,8 @@ SelectMeasurementBook,
 MeasurementBookDate,
 MeasurementBookno,
 MeasurementBookAmount,
-TenderEntryDetail
+TenderEntryDetail,
+WMSrafbAcknowledgement
 };
 
 

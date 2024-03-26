@@ -5,8 +5,8 @@ const createProxy = createProxyMiddleware({
   // target: process.env.REACT_APP_PROXY_API,
   // target: process.env.REACT_APP_PROXY_API || "https://qa.digit.org",
   //target:"https://test.wontract.com",//https://upyog-sandbox.niua.org" ,
-  target:"https://test.wontract.com" ,
-  // target:"https://upyog-sandbox.niua.org" ,
+  // target:"https://test.wontract.com" ,
+  target:"https://upyog-sandbox.niua.org" ,
   changeOrigin: true,  
   secure: false,
   https: true 

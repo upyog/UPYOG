@@ -322,6 +322,7 @@ import useWSConfigMDMS from "./ws/useWSConfigMDMS";
 import useFeedBackSearch from "./useFeedBackSearch";
 import useTenantsWMS from "./wms/useTenants";
 import useWmsRAFBGet from "./wms/RAFB/useWmsRAFBGet";
+import useWmsRAFBCreate from "./wms/RAFB/useWmsRAFBCreate";
 
 
 const pgr = {
@@ -643,7 +644,8 @@ const wms = {
   useWmsGenderMDMS,
   useWmsMDMS,
   rafb:{
-    useWmsRAFBGet
+    useWmsRAFBGet,
+    useWmsRAFBCreate
   },
   
   

@@ -73412,8 +73412,114 @@ export const LocalizationService = {
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
-        
-        
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_SUMMARY",
+            "message": "Summary",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_CHECK_CHECK_YOUR_ANSWERS",
+            "message": "Check Your Answers",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_CHECK_CHECK_YOUR_ANSWERS_TEXT",
+            "message": "If you want to modify any value, click on change in the respective step. It will redirect you to the concerned step where you can make your changes.",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_COMMON_BUTTON_SUBMIT",
+            "message": "SUBMIT",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_FINAL_DECLARATION_MESSAGE",
+            "message": "I hereby declare and affirm that the above-furnished information is true and correct and nothing has been concealed therefrom. I am also aware of the fact that in case this information is found false/incorrect, the authorities are at liberty to initiate recovery of amount/interest/penalty/fine as provided in Punjab Municipal Act 1911 or Punjab Municipal Corporation Act 1976.",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_FINAL_RA_BILL_DATE",
+            "message": "RA Bill Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_FINAL_RA_BILL_NO",
+            "message": "RA Bill No",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_FINAL_RA_BILL_AMOUNT",
+            "message": "RA Bill Amount",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_FINAL_TAX_AMOUNT",
+            "message": "Tax Amount",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_MB_SELECT",
+            "message": "Select",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_MB_DATE",
+            "message": "Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_MB_NO",
+            "message": "Bill No",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_MB_AMMOUNT",
+            "message": "Amount",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_TENDER_WORK_NAME",
+            "message": "Work Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_TENDER_ESTIMATED_WORK_COST",
+            "message": "Estimated Work Cost",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_TENDER_TENDER_TYPE",
+            "message": "Tender Type",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_TENDER_PERCENTAGE_TYPE",
+            "message": "Percentage Type",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_TENDER_AMOUNT",
+            "message": "Amount",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
         
         
 

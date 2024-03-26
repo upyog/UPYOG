@@ -124,6 +124,7 @@ const CitizenApp = ({ path, url, userType }) => {
   const WmsRAFBEdit = Digit?.ComponentRegistryService?.getComponent("WmsRAFBEdit");
   const WmsRAFBDetail = Digit?.ComponentRegistryService?.getComponent("WmsRAFBDetail");
   const WmsRAFBList = Digit?.ComponentRegistryService?.getComponent("WmsRAFBList");
+  // const WMSCheckPage = Digit?.ComponentRegistryService?.getComponent("WMSCheckPage");
   const TenderEntryDetail = Digit?.ComponentRegistryService?.getComponent("TenderEntryDetail");
   
   
@@ -291,6 +292,8 @@ const CitizenApp = ({ path, url, userType }) => {
             <PrivateRoute path={`${path}/running-account/edit/:tenantId/:id`} component={() => <WmsRAFBEdit />} />
             <PrivateRoute path={`${path}/running-account/detail/:tenantId/:id`} component={() => <WmsRAFBDetail />} />
             <PrivateRoute path={`${path}/running-account/list`} component={() => <WmsRAFBList filterComponent="FINAL_BILL_SEARCH_FILTER"  initialStates={inboxInitialState} isInbox={true} />} />
+            {/* <PrivateRoute path={`${path}/running-account/check`} component={() => <WMSCheckPage />} /> */}
+            
         </div>
         </AppContainer>
       </Switch>

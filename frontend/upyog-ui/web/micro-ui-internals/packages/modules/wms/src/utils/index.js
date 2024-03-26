@@ -174,3 +174,154 @@ export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
 export const sortDropdownNames = (options, optionkey, locilizationkey) => {
   return options.sort((a, b) => locilizationkey(a[optionkey]).localeCompare(locilizationkey(b[optionkey])));
 };
+
+/*   method to convert collected details to proeprty create object */
+export const convertToProperty = (data = {}) => {
+  let isResdential = data.isResdential;
+  let propertyType = data.PropertyType;
+  let selfOccupied = data.selfOccupied;
+  let Subusagetypeofrentedarea = data.Subusagetypeofrentedarea || null;
+  let subusagetype = data.subusagetype || null;
+  let IsAnyPartOfThisFloorUnOccupied = data.IsAnyPartOfThisFloorUnOccupied || null;
+  let builtUpArea = data?.floordetails?.builtUpArea || null;
+  let noOfFloors = data?.noOfFloors;
+  let noOofBasements = data?.noOofBasements;
+  let unit = data?.units;
+  let basement1 = Array.isArray(data?.units) && data?.units["-1"] ? data?.units["-1"] : null;
+  let basement2 = Array.isArray(data?.units) && data?.units["-2"] ? data?.units["-2"] : null;
+  data = setDocumentDetails(data);
+  data = setOwnerDetails(data);
+  data = setAddressDetails(data);
+  data = setPropertyDetails(data);
+
+  const formdata = {
+    Property: {
+      tenantId: data.tenantId,
+      address: data.address,
+
+      ownershipCategory: data?.ownershipCategory?.value,
+      owners: data.owners,
+      institution: data.institution || null,
+
+      documents: data.documents || [],
+      ...data.propertyDetails,
+
+      additionalDetails: {
+        inflammable: false,
+        heightAbove36Feet: false,
+        isResdential: isResdential,
+        propertyType: propertyType,
+        selfOccupied: selfOccupied,
+        Subusagetypeofrentedarea: Subusagetypeofrentedarea,
+        subusagetype: subusagetype,
+        IsAnyPartOfThisFloorUnOccupied: IsAnyPartOfThisFloorUnOccupied,
+        builtUpArea: builtUpArea,
+        noOfFloors: noOfFloors,
+        noOofBasements: noOofBasements,
+        unit: unit,
+        basement1: basement1,
+        basement2: basement2,
+      },
+
+      creationReason: getCreationReason(data),
+      source: "MUNICIPAL_RECORDS",
+      channel: "CITIZEN",
+    },
+  };
+  return formdata;
+};
+
+export const convertToUpdateProperty = (data = {}, t) => {
+  let isResdential = data.isResdential;
+  let propertyType = data.PropertyType;
+  let selfOccupied = data.selfOccupied;
+  let Subusagetypeofrentedarea = data.Subusagetypeofrentedarea || null;
+  let subusagetype = data.subusagetype || null;
+  let IsAnyPartOfThisFloorUnOccupied = data.IsAnyPartOfThisFloorUnOccupied || null;
+  let builtUpArea = data?.floordetails?.builtUpArea || null;
+  let noOfFloors = data?.noOfFloors;
+  let noOofBasements = data?.noOofBasements;
+  let unit = data?.units;
+  data.units = data?.units?.map((ob) => {return({
+    ...ob, unitType : ob?.unitType?.code
+  })})
+  let basement1 = Array.isArray(data?.units) && data?.units["-1"] ? data?.units["-1"] : null;
+  let basement2 = Array.isArray(data?.units) && data?.units["-2"] ? data?.units["-2"] : null;
+  data = setAddressDetails(data);
+  data = setUpdateOwnerDetails(data);
+  data = setUpdatedDocumentDetails(data);
+  data = setPropertyDetails(data);
+  data.address.city = data.address.city ? data.address.city : t(`TENANT_TENANTS_${stringReplaceAll(data?.tenantId.toUpperCase(),".","_")}`);
+
+  const formdata = {
+    Property: {
+      id: data.id,
+      accountId: data.accountId,
+      acknowldgementNumber: data.acknowldgementNumber,
+      propertyId: data.propertyId,
+      status: data.status || "INWORKFLOW",
+      tenantId: data.tenantId,
+      address: data.address,
+
+      ownershipCategory: data?.ownershipCategory?.value,
+      owners: data.owners,
+      institution: data.institution || null,
+
+      documents: data.documents || [],
+      ...data.propertyDetails,
+
+      additionalDetails: {
+        inflammable: false,
+        heightAbove36Feet: false,
+        isResdential: isResdential,
+        propertyType: propertyType,
+        selfOccupied: selfOccupied,
+        Subusagetypeofrentedarea: Subusagetypeofrentedarea,
+        subusagetype: subusagetype,
+        IsAnyPartOfThisFloorUnOccupied: IsAnyPartOfThisFloorUnOccupied,
+        builtUpArea: builtUpArea,
+        noOfFloors: noOfFloors,
+        noOofBasements: noOofBasements,
+        unit: unit,
+        basement1: basement1,
+        basement2: basement2,
+      },
+
+      creationReason: getCreationReason(data),
+      source: "MUNICIPAL_RECORDS",
+      channel: "CITIZEN",
+      workflow: getWorkflow(data),
+    },
+  };
+
+  let propertyInitialObject = JSON.parse(sessionStorage.getItem("propertyInitialObject"));
+  if (checkArrayLength(propertyInitialObject?.units) && checkIsAnArray(formdata.Property?.units) && data?.isEditProperty) {
+    propertyInitialObject.units = propertyInitialObject.units.filter((unit) => unit.active);
+    let oldUnits = propertyInitialObject.units.map((unit) => {
+      return { ...unit, active: false };
+    });
+    formdata.Property?.units.push(...oldUnits);
+  }
+  /* if (
+    checkArrayLength(propertyInitialObject?.owners) &&
+    checkIsAnArray(formdata.Property?.owners) &&
+    data?.isEditProperty &&
+    data.isUpdateProperty == false
+  ) {
+    propertyInitialObject.owners = propertyInitialObject.owners.filter((owner) => owner.status === "ACTIVE");
+    let oldOwners = propertyInitialObject.owners.map((owner) => {
+      return { ...owner, status: "INACTIVE" };
+    });
+    formdata.Property?.owners.push(...oldOwners);
+  } else {
+    formdata.Property.owners = [...propertyInitialObject.owners];
+  } */
+
+  if (checkArrayLength(propertyInitialObject?.owners) && checkIsAnArray(formdata.Property?.owners)) {
+    formdata.Property.owners = [...propertyInitialObject.owners];
+  }
+  if (propertyInitialObject?.auditDetails) {
+    formdata.Property["auditDetails"] = { ...propertyInitialObject.auditDetails };
+  }
+  return formdata;
+};

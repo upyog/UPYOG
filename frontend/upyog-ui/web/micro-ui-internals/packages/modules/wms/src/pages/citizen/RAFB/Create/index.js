@@ -12,6 +12,7 @@ const WmsRAFBCreate=()=>{
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const history = useHistory();
+  console.log("match ",match)
 
   //################# TL code start
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("WMS_RUNNING_BILL", {});
@@ -113,6 +114,9 @@ const WmsRAFBCreate=()=>{
     nextPage = `${match.path}/${nextStep}`;
     redirectWithHistory(nextPage);
   };
+  const createProperty = async () => {
+    history.push(`${match.path}/acknowledgement`);
+  };
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
     console.log("onSelect TLInfo key, data, skipStep, index, isAddMultiple = false",{key, data, skipStep, index, isAddMultiple})
       alert("handleSelect")
@@ -133,6 +137,11 @@ const WmsRAFBCreate=()=>{
     
     const handleSkip = () => {};
 
+    const onSuccess = () => {
+      clearParams();
+      queryClient.invalidateQueries("PT_CREATE_PROPERTY");
+    };
+
 //RAFBConfig.js file setup
 // let { data: newConfig, isLoading } = Digit.Hooks.tl.useMDMS.getFormConfig(stateId, {});
 // newConfig = newConfig ? newConfig : newConfigWMS;
@@ -146,7 +155,8 @@ sessionStorage.setItem("skipenabled",skipenabled);
 config.indexRoute = "ProjectName";
 
 const CheckPage = Digit?.ComponentRegistryService?.getComponent("WMSCheckPage");
-// const TLAcknowledgement = Digit?.ComponentRegistryService?.getComponent("TLAcknowledgement");
+const WMSrafbAcknowledgement = Digit?.ComponentRegistryService?.getComponent("WMSrafbAcknowledgement");
+
 //################# TL code end
 return(<div>
         <Switch>
@@ -171,13 +181,16 @@ return(<div>
       })}
       <Route path={`${match.path}/check`}>
         <CheckPage 
-        // onSubmit={createProperty}
-        //  value={params}
+        onSubmit={createProperty}
+         value={params}
           />
       </Route>
-      {/* <Route path={`${match.path}/acknowledgement`}>
-        <TLAcknowledgement data={params} onSuccess={onSuccess} onUpdateSuccess={onUpdateSuccess} />
-      </Route> */}
+       <Route path={`${match.path}/acknowledgement`}>
+        <WMSrafbAcknowledgement data={params} onSuccess={onSuccess} 
+        // onUpdateSuccess={onUpdateSuccess}
+         />
+      </Route> 
+
       <Route>
         <Redirect to={`${match.path}/${config.indexRoute}`} />
       </Route>

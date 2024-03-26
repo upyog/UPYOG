@@ -1126,7 +1126,18 @@ TenderEntry:{
           auth: true,
           userService: true,
           // params: { tenantId },
-        })
+        }),
+        createPreviousBill: (data, tenantId) =>
+        // console.log("true data useWmsRAFBCreate WMS ",data),
+        Request({
+          data: data,
+          url: Urls.wms.Running_Account_Final_Bill.createPreviousBill,
+          useCache: false,
+          method: "POST",
+          auth: true,
+          userService: true,
+          // params: { tenantId },
+        }),
     }
 };
 

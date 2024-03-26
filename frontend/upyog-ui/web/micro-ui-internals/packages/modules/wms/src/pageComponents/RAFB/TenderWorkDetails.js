@@ -60,8 +60,7 @@ console.log("tenderDetails ",{"workName":TenderWorkDetail?.workName,"estimatedWo
         t={t}
         // isDisabled={tenderDetails?.workName}
       >
-        <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_WORK_NAME")}`}</CardLabel>
-        {/* <div>Tender Work Details</div>  */}
+        <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_TENDER_WORK_NAME")}`}</CardLabel>
         <TextInput
           t={t}
           isMandatory={false}
@@ -73,7 +72,7 @@ console.log("tenderDetails ",{"workName":TenderWorkDetail?.workName,"estimatedWo
           disable={true}
           {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
         />
-        <CardLabel>{`${t("Estimated Work Cost")}`}</CardLabel>
+        <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_TENDER_ESTIMATED_WORK_COST")}`}</CardLabel>
         <TextInput
           t={t}
           isMandatory={false}
@@ -85,7 +84,7 @@ console.log("tenderDetails ",{"workName":TenderWorkDetail?.workName,"estimatedWo
           disable={true}
           {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
         />
-        <CardLabel>{`${t("Tender Type")}`}</CardLabel>
+        <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_TENDER_TENDER_TYPE")}`}</CardLabel>
         <TextInput
           t={t}
           isMandatory={false}
@@ -97,7 +96,7 @@ console.log("tenderDetails ",{"workName":TenderWorkDetail?.workName,"estimatedWo
           disable={true}
           {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
         />
-        <CardLabel>{`${t("Percentage Type")}`}</CardLabel>
+        <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_TENDER_PERCENTAGE_TYPE")}`}</CardLabel>
         <TextInput
           t={t}
           isMandatory={false}
@@ -109,7 +108,7 @@ console.log("tenderDetails ",{"workName":TenderWorkDetail?.workName,"estimatedWo
           disable={true}
           {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
         />
-        <CardLabel>{`${t("Amount")}`}</CardLabel>
+        <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_TENDER_AMOUNT")}`}</CardLabel>
         <TextInput
           t={t}
           isMandatory={false}

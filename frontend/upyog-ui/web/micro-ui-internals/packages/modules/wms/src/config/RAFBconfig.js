@@ -220,7 +220,7 @@ export const newConfig = [
         },
         withoutLabel: true,
         key: "RABillTaxDetail",
-        nextStep: "PreviewPage",
+        nextStep: null,
         type: "component",
         hideInEmployee: true,
       }
