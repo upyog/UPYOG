@@ -14,6 +14,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @Setter
 @Builder
 @ToString
+@NoArgsConstructor
 public class UserSearchCriteria {
 
     private List<Long> id;
