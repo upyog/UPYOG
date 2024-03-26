@@ -1,4 +1,4 @@
-CREATE TABLE eg_user (
+CREATE TABLE IF NOT EXISTS eg_user (
     id bigint NOT NULL,
     title character varying(8),
     salutation character varying(5),

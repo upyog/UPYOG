@@ -471,7 +471,7 @@ public class UserService {
         }
         /* decrypt here */
         /* the reason for decryption here is the otp service requires decrypted username */
-        user = encryptionDecryptionUtil.decryptObject(user, "User", User.class, requestInfo);
+        user = encryptionDecryptionUtil.decryptObject(user, "UserListSelf", User.class, requestInfo);
         user.setOtpReference(request.getOtpReference());
         validateOtp(user);
         validatePassword(request.getNewPassword());
