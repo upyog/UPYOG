@@ -1188,8 +1188,8 @@ public class CreateVoucher {
 			Transaxtion txnList[] = new Transaxtion[transactions.size()];
 			txnList = transactions.toArray(txnList);
 			final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-			//if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(vh.getVoucherDate())))---Pankaj Changes
-			//	throw new ApplicationRuntimeException("Voucher creation Failed");--Pankaj Changes
+			if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(vh.getVoucherDate())))
+				throw new ApplicationRuntimeException("Voucher creation Failed");
 			
 			// Generating EVENT to push the generated voucher to ES index.
 			finDashboardService.publishEvent(FinanceEventType.voucherCreateOrUpdate, vh);
