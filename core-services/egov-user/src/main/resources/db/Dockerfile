@@ -1,4 +1,4 @@
-FROM flyway/flyway:7.1
+FROM flyway/flyway:10.10.0
 
 COPY ./migration/ddl /flyway/sql
 
