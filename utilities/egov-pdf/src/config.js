@@ -75,7 +75,7 @@ module.exports = {
     sw: process.env.EGOV_WNS_HOST || HOST
   },
   paths: {
-    pdf_create: "/pdf-service/v1/_createnosave",
+    pdf_create: "/pdf-service/v1/_create",
     epass_search: "/tl-services/v1/_search",
     tl_search: "/tl-services/v1/_search",
     pt_search: "/property-services/property/_search",
