@@ -69,7 +69,7 @@ const OBPSAcknowledgement = ({ data, onSuccess }) => {
   );
    const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
-
+  sessionStorage.removeItem("Digit_OBPS_PT")
   useEffect(() => {
     try {
       let tenantid = data?.address?.city ? data.address?.city?.code : tenantId;
