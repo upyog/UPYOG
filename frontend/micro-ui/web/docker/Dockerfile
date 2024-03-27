@@ -17,6 +17,7 @@ RUN yarn add @upyog/digit-ui-module-obps
 RUN yarn add @upyog/digit-ui-module-common
 RUN yarn add @upyog/digit-ui-module-ws
 RUN yarn add @upyog/digit-ui-module-commonpt
+RUN yarn add @upyog-niua/upyog-ui-module-ptr
 ARG WORK_DIR
 WORKDIR /app
 ENV NODE_OPTIONS "--max-old-space-size=4096"
