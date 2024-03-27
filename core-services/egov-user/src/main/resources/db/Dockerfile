@@ -1,4 +1,4 @@
-FROM boxfuse/flyway:6.0.0-beta2
+FROM boxfuse/flyway:latest
 
 COPY ./migration/ddl /flyway/sql
 
