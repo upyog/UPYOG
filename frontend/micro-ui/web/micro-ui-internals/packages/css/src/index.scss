@@ -766,27 +766,3 @@ min-height: calc(100vh - 8em);
   }
 }
 
-.privacy-icon-2 {
-  cursor: pointer;
-}
-.privacy-icon-2:hover {
-  path {
-    fill: none;
-  }
-}
-
-.audit-card {
-  width: 80%;
-  margin-left: -260px;
-  margin-right: -27%;
-  max-height: 120px;
-  margin-top: 90px;
-}
-.fsm-inline-style {
-  background: #fafafa;
-  border: 1px solid #d6d5d4;
-  border-radius: 4px;
-  padding: 16px;
-  margin-bottom: 40px;
-  width: 90%;
-}

@@ -81,12 +81,6 @@ export const NewApplication = ({ parentUrl, heading }) => {
     }
   };
 
-  // useEffect(() => {
-  //   (async () => {
-
-  //   })();
-  // }, [propertyType, subType, vehicle]);
-
   const onSubmit = (data) => {
     const applicationChannel = data.channel;
     const sanitationtype = data?.pitType?.code;

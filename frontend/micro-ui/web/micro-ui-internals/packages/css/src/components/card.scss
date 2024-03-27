@@ -127,7 +127,7 @@
   }
 }
 .employeeCard.fsm {
-  margin-bottom: 16px !important;
+  margin-bottom: 64px !important;
   margin-left: 0px !important;
   margin-right: 16px !important; }
 .header-wrap {
@@ -168,6 +168,7 @@
 
 .submit-bar-disabled {
   @apply h-10 bg-primary-main text-center w-full outline-none opacity-50;
+  background-color: #882636 !important;
 
   &:focus {
     @apply outline-none;
@@ -175,6 +176,7 @@
 
   header {
     @apply font-rc font-medium text-legend text-white leading-10;
+    line-height: 2rem !important;
   }
 }
 
@@ -182,6 +184,8 @@
   .submit-bar,
   .submit-bar-disabled {
     width: 240px;
+    background-color: #882636 !important;
+    height: 2rem !important
   }
 
   .card {
@@ -334,7 +338,7 @@
   }
   .home-page-info-banner-wrap {
     max-width: 45%;
-    min-width: 40%;
+    min-width: 100%;
     margin-left: 0;
     margin-right: 24px;
     margin-bottom: 24px;
@@ -360,7 +364,7 @@
 .BPAemployeeCard {
   margin-left: 0px !important;
   margin-right: 0px !important;
-  margin-bottom: 64px !important;
+  margin-bottom: 0px !important;
 }
 
 .employee-application-details {
@@ -389,4 +393,20 @@
   position: unset !important;
   margin: 0 !important;
   width: 100% !important;
+}
+
+.language-selector .submit-bar, .submit-bar-disabled{
+  background-color: #5a1166 !important;
+}
+
+.owner-details{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: space-between
+}
+
+.owner-details-child{
+  width: 50%;
 }

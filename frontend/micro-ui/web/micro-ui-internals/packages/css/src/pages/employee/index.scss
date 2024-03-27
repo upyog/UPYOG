@@ -1,17 +1,14 @@
 @import "./login.scss";
-
 /* TODO: convert using tailwind */
 .employee {
   .breadcrumb {
     @apply ml-sm mb-lg;
   }
-
   .ground-container {
     margin-bottom: 56px;
     margin-left: 0px;
     @apply flex flex-col;
   }
-
   .card-home {
     font-size: 16px;
     padding: 0 0 16px 0;
@@ -19,12 +16,10 @@
     display: inline-block;
     margin: 8px auto;
   }
-
   .home-action-cards {
     height: auto !important;
     min-height: 263px;
   }
-
   .topbar {
     position: fixed;
     top: 0;
@@ -72,63 +67,56 @@
     padding-top: 88px;
   }
 
-  .submit-bar header {
-    height: 2rem !important;
-    line-height: 2rem !important;
-  }
+.submit-bar header{
+  height: 2rem !important;
+  line-height: 2rem !important;
+} 
 
   .loginContainer {
     padding-top: 88px;
     position: relative;
   }
 
-  .loginnn {
-    position: relative;
-    max-width: 100%;
-    width: 100%;
-    min-width: 100%;
-  }
-
-  .loginnn .img {
-    position: absolute;
-    background-size: cover;
-    width: 100%;
-    max-width: 100%;
-    max-height: 100%;
-  }
-
-  .logoNiua {
-    display: flex;
-    width: 100%;
-    position: absolute;
-  }
-
-  .logoNiua .img {
-    width: 15%;
-    height: 15%;
-  }
-
-  .upyogLogo {
-    width: 100% !important;
-  }
-
-  .login-logo-wrapper {
+.loginnn{
+  position: relative;
+  max-width: 100%;
+  width: 100%;
+  min-width: 100%;
+}
+.loginnn .img{
+  position: absolute;
+  background-size: cover;
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+.logoNiua{
+  display: flex;
+  width: 100%;
+  position: absolute;
+}
+.logoNiua .img{
+  width: 15%;
+  height: 15%;
+}
+.upyogLogo{
+  width: 100% !important;
+}
+.login-logo-wrapper{
     min-width: 100%;
     height: 100%;
     position: absolute;
     display: flex;
     flex-direction: row;
-  }
-
-  .loginConference {
+}
+.loginConference{
     position: relative;
     height: 100%;
     width: 100%;
     font-weight: 700;
 
-  }
-
-  .login-banner-wrapper {
+}
+.login-banner-wrapper{
     position: relative;
     color: white;
     float: right;
@@ -138,7 +126,7 @@
     margin-right: 2%;
     text-align: right;
     font-family: none;
-  }
+}
 
   .react-time-picker {
     width: 100%;
@@ -168,32 +156,26 @@
     padding-left: 8px;
   }
 }
-
-#login-conference-table {
-  position: absolute;
-  z-index: 1;
-  width: 36vw;
-  height: 62vh;
-  margin-top: 20vh;
-  margin-left: 2vw;
+#login-conference-table{
+  position:absolute;
+   z-index:1;
+   width:36vw;
+   height:62vh;
+   margin-top:20vh;
+   margin-left: 2vw;
 }
-
-.banner-slogan {
+.banner-slogan{
   padding-top: 10%;
 }
-
-.psuedo-banner span {
+.psuedo-banner span{
   color: #fdd049;
-}
-
-.login-banner-wrapper .psuedo-banner {
+} 
+.login-banner-wrapper .psuedo-banner{
   font-size: 2.2rem;
 }
-
-.login-banner-wrapper .banner-slogan {
+.login-banner-wrapper .banner-slogan{
   font-size: 1.5rem;
 }
-
 .citizen {
   .main {
     padding-top: 82px;
@@ -201,7 +183,6 @@
     display: flex !important;
   }
 }
-
 .citizen,
 .employee {
   .sidebar {
@@ -211,7 +192,6 @@
     color: #ffffff;
     margin-top: 80px;
     z-index: 999;
-    background: #22394d;
     transition: 0.3s ease all;
     white-space: nowrap;
     height: calc(100vh - 36px);
@@ -225,7 +205,6 @@
       cursor: pointer;
       display: flex;
       align-items: center;
-
       .tooltip {
         margin-left: 16px;
       }
@@ -236,11 +215,9 @@
       height: 24px;
       fill: #ffffff;
     }
-
     a {
       display: flex;
     }
-
     .sidebar-link {
       display: flex;
       color: #ffffff;
@@ -248,28 +225,23 @@
       align-items: center;
       padding: 20px;
       font-size: 14px;
-
       &.active {
         color: #a82227 !important;
 
         border-right: 4px solid #a82227;
-
         svg {
           fill: #a82227 !important;
         }
       }
-
       .employee-search-input {
         border: none;
         outline: none;
         background-color: rgba(0, 0, 0, 0);
         margin-left: 13px;
       }
-
       .custom-link {
         .tooltip {
           margin-left: 16px;
-
           span {
             margin-left: unset !important;
             left: unset !important;
@@ -288,25 +260,21 @@
         background-color: #486480;
 
         cursor: pointer;
-
         svg {
           fill: #a82227 !important;
         }
       }
-
       .search-icon-wrapper {
         svg {
           fill: #ffffff !important;
           width: 21px;
           height: 21px;
-
           path {
             fill: #ffffff !important;
           }
         }
       }
     }
-
     .dropdown-link {
       height: 40px;
       display: flex;
@@ -315,41 +283,34 @@
       text-decoration: none;
       color: #ffffff;
       font-size: 14px;
-
       .actions {
         .tooltiptext {
           left: unset;
           right: 1%;
         }
       }
-
       svg {
         width: 20px;
         height: 20px;
         fill: #ffffff;
       }
-
       &:hover {
         color: #fe7a51 !important;
         background-color: #486480;
         cursor: pointer;
-
         svg {
           fill: #fe7a51 !important;
         }
       }
-
       &.active {
         color: #a82227 !important;
 
         border-right: 4px solid #a82227;
-
         svg {
           fill: #a82227 !important;
         }
       }
     }
-
     span {
       margin-left: 16px;
       text-overflow: ellipsis;
@@ -452,7 +413,6 @@
   .sidebar {
     margin-top: 54px;
     min-width: 200px;
-
     .actions {
       display: flex;
       align-items: center;
@@ -469,27 +429,22 @@
   }
 }
 
-.RightMostTopBarOptions {
+.RightMostTopBarOptions{
   @apply flex float-right;
   display: flex;
-
-  .EventNotificationWrapper {
+  .EventNotificationWrapper{
     @apply relative cursor-pointer;
-
-    span {
+    span{
       top: -10px;
       right: -10px;
       @apply absolute bg-error h-5 w-5 rounded-full text-center;
-
       p {
         line-height: 20px;
       }
     }
   }
-
   .select-wrap {
     margin-bottom: unset;
-
     svg {
       fill: #ffffff;
     }
@@ -530,39 +485,33 @@
   margin: auto !important;
 }
 
-.mb-50 {
+.mb-50{
   margin-bottom: 50px;
 }
-
-.mb-25 {
+.mb-25{
   margin-bottom: 25px;
 }
-
 @media (min-width: 640px) {
   .employee {
     .ground-container {
       margin-left: 0px !important;
       @apply block ml-md;
     }
-
     .breadcrumb {
       @apply mb-lg;
       margin-left: 0;
     }
-
     .card-home {
       width: 270px;
       margin-right: 10px;
       margin-bottom: 10px;
     }
-
     .card-home-hrms {
       width: 405px;
       padding: 0px;
       margin-right: 16px;
       margin-bottom: 16px;
     }
-
     .main {
       display: flex;
       flex-direction: column;
@@ -570,7 +519,6 @@
       margin-left: 64px;
       width: calc(100%-83px);
     }
-
     .citizen-home-container {
       display: flex;
       flex-direction: unset !important;
@@ -579,11 +527,9 @@
       padding-top: 58px;
     }
   }
-
-  #main-img {
-    content: url("https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/employee-login.png");
-  }
-
+  #main-img{      
+    content:url("https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/employee-login.png");
+} 
   .citizen {
     .main {
       width: 100%;
@@ -593,177 +539,87 @@
       display: flex !important;
     }
 
-    .center-container {}
+    .center-container {
+    }
   }
-
+ 
 }
 
-@media only screen and (max-width:950px) {
-  #main-img {
-    content: url("https://i.postimg.cc/9Q7jT6Dd/Banner-Image-2.png");
+@media only screen and (max-width:950px){
+  #main-img{      
+    content:url("https://i.postimg.cc/9Q7jT6Dd/Banner-Image-2.png");
   }
-
-  #login-conference-table {
-    position: relative;
-    z-index: 1;
-    width: 75%;
-    height: 115%;
-    margin: 12%;
-    margin-top: 25%
-  }
-
-  .loginConference {
+ #login-conference-table{
+  position:relative;
+   z-index:1;
+   width:75%;
+   height:115%;
+   margin:12%;
+   margin-top:25%
+}
+.loginConference{
     position: absolute;
     height: 100%;
     width: 100%;
     font-weight: 700;
     display: flex;
     flex-direction: column;
-  }
-
-  .employee .login-banner-wrapper {
-    padding-top: 0vh;
-
-  }
-
-  .psuedo-banner {
-    font-size: 4vw;
-  }
-
-  .banner-slogan {
-    font-size: 3.5vw;
-  }
+}
+.employee .login-banner-wrapper{
+  padding-top: 0vh;
+  
+}
+.psuedo-banner{
+  font-size: 4vw;
+}
+.banner-slogan{
+  font-size: 3.5vw;
+}
 }
 
-@media screen and (min-width:768) {
+@media screen and (min-width:768){
 
-  #login-conference-table {
-    position: absolute;
-    z-index: 1;
-    width: 40%;
-    height: 30%;
-    margin: 12%;
-    margin-top: 25%
-  }
+   #login-conference-table{
+  position:absolute;
+   z-index:1;
+   width:40%;
+   height:30%;
+   margin:12%;
+   margin-top:25%
+} 
 }
-
-@media only screen and (max-width:500px) {
-  #main-img {
-    content: url("https://i.postimg.cc/9Q7jT6Dd/Banner-Image-2.png");
+@media only screen and (max-width:500px){
+  #main-img{      
+    content:url("https://i.postimg.cc/9Q7jT6Dd/Banner-Image-2.png");
   }
-
-  #login-conference-table {
-    position: relative;
-    z-index: 1;
-    width: 75%;
-    height: 80%;
-    margin: 12%;
-    margin-top: 25%
-  }
-
-  .loginConference {
+ #login-conference-table{
+  position:relative;
+   z-index:1;
+   width:75%;
+   height:80%;
+   margin:12%;
+   margin-top:25%
+}
+.loginConference{
     position: absolute;
     height: 100%;
     width: 100%;
     font-weight: 700;
     display: flex;
     flex-direction: column;
-  }
-
-  .employee .psuedo-banner {
-    font-size: 1.2rem;
-  }
-
-  .employee .banner-slogan {
-    font-size: 0.8rem;
-  }
 }
-
-@media only screen and (min-width:300px) {
-  .employee .card-home {
-    height: 220px;
-    box-shadow: #32325d14 0px 50px 100px -20px, rgb(0 0 0 / 18%) 0px 30px 60px -30px, #0a254038 0px -2px 6px 0px inset;
-    border-radius: 12px;
-  }
+.employee .psuedo-banner{
+  font-size: 1.2rem;
 }
-
-
-.fullWidth {
-  width: 100%;
+.employee .banner-slogan{
+  font-size: 0.8rem;
 }
-
-.multi-select-container {
-  .disposal-text {
-    @apply font-bold;
-  }
-
-  .disposal-info {
-    @apply my-md ml-sm;
-  }
-
-  .disposal-action-bar {
-    @apply flex justify-between items-center;
-  }
 }
-
-@screen dt {
-  .d-grid {
-    display: grid;
-    grid-template-columns: 250px 250px 250px 250px;
-    column-gap: 10px;
-    row-gap: 2px;
-    margin-left: -12px;
-  }
+@media only screen and (min-width:300px)
+{
+.employee .card-home{
+height: 220px;
+box-shadow: #32325d14 0px 50px 100px -20px, rgb(0 0 0 / 18%) 0px 30px 60px -30px, #0a254038 0px -2px 6px 0px inset;
+border-radius: 12px;
 }
-
-.m-auto {
-  margin: auto !important;
-}
-
-.mb-50 {
-  margin-bottom: 50px;
-}
-
-.mb-25 {
-  margin-bottom: 25px;
-}
-
-.back-wrapper {
-  display: flex;
-  justify-content: space-between;
-
-  .top-back-btn {
-    margin-bottom: 0px;
-    color: #ffffff;
-    margin-right: 1em;
-
-    & svg {
-      fill: #ffffff;
-    }
-  }
-
-  .hambuger-back-wrapper {
-    display: flex;
-
-    @media (min-width: 780px) {
-      .hamburger-span {
-        display: none;
-      }
-    }
-  }
-}
-
-@screen dt {
-  .back-wrapper {
-    margin-right: 2rem;
-    margin-left: 2rem;
-  }
-}
-
-.user-profile {
-  @media (min-width: 780px) {
-    width: calc(100% - 219px);
-    margin-left: 16px;
-    margin-right: 16px;
-  }
 }
