@@ -22,34 +22,35 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
     let code =window.location.href.split("=")[1].split("&")[0]
     let TokenReq = {
       code_verifier: sessionStorage.getItem("code_verfier_register"),
-      code: code, module: "REGISTER"
+      code: code, module: "REGISTER",
+      redirect_uri: "https://upyog.niua.org/digit-ui/citizen/login/otp",
     }
     console.log("token",code,TokenReq,sessionStorage.getItem("code_verfier_register"))
-   // const data = await Digit.DigiLockerService.token({TokenReq })
+    const data = await Digit.DigiLockerService.token({TokenReq })
+   registerUser(data)
+  // fetch('https://api.digitallocker.gov.in/public/oauth2/1/token', {
+  //   method: 'POST',
+  //   mode: 'cors',
+  //   headers: {
+  //     'Content-Type': 'application/x-www-form-urlencoded',
+  //     "Access-Control-Allow-Origin": "*",
+  //     "Access-Control-Allow-Methods": "PUT, DELETE,POST"
+  //   },
+  //   body: new URLSearchParams({
+  //     'code': code,
+  //     'grant_type': "authorization_code",
+  //     'client_id': "YN77ADDADE",
+  //     "client_secret": "71abd480b5811ab72277",
+  //     "redirect_uri": "https://upyog.niua.org/digit-ui/citizen/login/otp",
+  //     "code_verifier": sessionStorage.getItem("code_verfier_register")
+  //   })
+  // }) .then(response =>
+  //   {response.json().then(data => (
 
-  fetch('https://api.digitallocker.gov.in/public/oauth2/1/token', {
-    method: 'POST',
-    mode: 'cors',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "PUT, DELETE,POST"
-    },
-    body: new URLSearchParams({
-      'code': code,
-      'grant_type': "authorization_code",
-      'client_id': "YN77ADDADE",
-      "client_secret": "71abd480b5811ab72277",
-      "redirect_uri": "https://upyog.niua.org/digit-ui/citizen/login/otp",
-      "code_verifier": sessionStorage.getItem("code_verfier_register")
-    })
-  }) .then(response =>
-    {response.json().then(data => (
-
-      registerUser(data)
+      
     
 
-    ))})
+  //   ))})
 
 
     //console.log("datadatadata",data,newData)
