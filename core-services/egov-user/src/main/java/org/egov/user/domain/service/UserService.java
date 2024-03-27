@@ -135,7 +135,7 @@ public class UserService {
                 .type(userType)
                 .build();
 
-        if (isEmpty(userName) || isEmpty(tenantId) || isNull(userType)) {
+        if (!isEmpty(userName) || isEmpty(tenantId) || isNull(userType)) {
             log.error("Invalid lookup, mandatory fields are absent");
             throw new UserNotFoundException(userSearchCriteria);
         }
@@ -220,7 +220,7 @@ public class UserService {
         user.validateNewUser(createUserValidateName);
         conditionallyValidateOtp(user);
         /* encrypt here */
-        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+        user = encryptionDecryptionUtil.encryptObject(user, "UserSearchCriteria", User.class);
         validateUserUniqueness(user);
         if (isEmpty(user.getPassword())) {
             user.setPassword(UUID.randomUUID().toString());
