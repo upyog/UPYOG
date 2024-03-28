@@ -1,5 +1,5 @@
 
-CREATE TABLE egbs_bill_v1
+CREATE TABLE IF NOT EXISTS egbs_bill_v1
 (
     id character varying(64) NOT NULL,
     tenantid character varying(250) NOT NULL,
@@ -20,7 +20,7 @@ CREATE INDEX IF NOT EXISTS idx_egbs_bill_v1_id ON egbs_bill_v1(id);
 CREATE INDEX IF NOT EXISTS idx_egbs_bill_v1_isactive ON egbs_bill_v1(isactive);
 CREATE INDEX IF NOT EXISTS idx_egbs_bill_v1_tenantid ON egbs_bill_v1(tenantid);
 
-CREATE TABLE egbs_billdetail_v1
+CREATE TABLE IF NOT EXISTS egbs_billdetail_v1
 (
     id character varying(64) NOT NULL,
     tenantid character varying(250) NOT NULL,
@@ -56,7 +56,7 @@ CREATE INDEX IF NOT EXISTS idx_egbs_billdetail_v1_businessservice ON egbs_billde
 CREATE INDEX IF NOT EXISTS idx_egbs_billdetail_v1_consumercode ON egbs_billdetail_v1(consumercode);
 CREATE INDEX IF NOT EXISTS idx_egbs_billdetail_v1_tenantid ON egbs_billdetail_v1(tenantid);
 
-CREATE TABLE egbs_billaccountdetail_v1
+CREATE TABLE IF NOT EXISTS egbs_billaccountdetail_v1
 (
     id character varying(64) NOT NULL,
     tenantid character varying(250) NOT NULL,

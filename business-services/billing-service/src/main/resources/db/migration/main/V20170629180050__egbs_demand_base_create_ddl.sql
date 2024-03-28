@@ -1,9 +1,9 @@
 
-CREATE SEQUENCE seq_egbs_demand;
+CREATE SEQUENCE IF NOT EXISTS seq_egbs_demand;
 
-CREATE SEQUENCE seq_egbs_demanddetail;
+CREATE SEQUENCE IF NOT EXISTS seq_egbs_demanddetail;
 
-CREATE TABLE egbs_demand
+CREATE TABLE IF NOT EXISTS egbs_demand
 (
 
 id character varying(64) NOT NULL,
@@ -36,7 +36,7 @@ CONSTRAINT pk_egbs_demand PRIMARY KEY (id,tenantid)
 );
 
 
-CREATE TABLE egbs_demanddetail
+CREATE TABLE IF NOT EXISTS egbs_demanddetail
 (
 
  id character varying(64) NOT NULL,

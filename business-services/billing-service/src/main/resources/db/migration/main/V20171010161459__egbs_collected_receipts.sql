@@ -1,6 +1,6 @@
-﻿create sequence seq_egbs_collectedreceipts;
+﻿create sequence IF NOT EXISTS seq_egbs_collectedreceipts;
 
-CREATE TABLE egbs_collectedreceipts
+CREATE TABLE IF NOT EXISTS egbs_collectedreceipts
 (
   id character varying(64) NOT NULL,
   businessservice character varying(256) NOT NULL,

@@ -1,6 +1,6 @@
 -- TaxPeriod --
 
-CREATE TABLE egbs_taxperiod
+CREATE TABLE IF NOT EXISTS egbs_taxperiod
 (
   id character varying(64) NOT NULL,
   service character varying(100) NOT NULL,
@@ -17,12 +17,12 @@ CREATE TABLE egbs_taxperiod
   CONSTRAINT unq_service_code UNIQUE (service, code, tenantid)
 );
 
-CREATE SEQUENCE seq_egbs_taxperiod;
+CREATE SEQUENCE IF NOT EXISTS seq_egbs_taxperiod;
 
 
 -- BusinessServiceDetail --
 
-CREATE TABLE egbs_business_service_details
+CREATE TABLE IF NOT EXISTS egbs_business_service_details
 (
   id character varying(64) NOT NULL,
   businessservice character varying(250) NOT NULL,
@@ -39,6 +39,6 @@ CREATE TABLE egbs_business_service_details
   CONSTRAINT unq_businessservice UNIQUE (businessservice, tenantid)
 );
 
-CREATE SEQUENCE seq_egbs_business_srvc_details;
+CREATE SEQUENCE IF NOT EXISTS seq_egbs_business_srvc_details;
 
 

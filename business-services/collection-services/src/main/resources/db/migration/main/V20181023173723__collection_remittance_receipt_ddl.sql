@@ -1,4 +1,4 @@
-CREATE TABLE egcl_remittancereceipt
+CREATE TABLE IF NOT EXISTS egcl_remittancereceipt
 (
   id character varying(250) NOT NULL,
   remittance character varying(250) NOT NULL,

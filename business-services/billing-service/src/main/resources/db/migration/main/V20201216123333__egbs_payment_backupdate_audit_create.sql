@@ -1,4 +1,4 @@
-CREATE TABLE egbs_payment_backupdate_audit 
+CREATE TABLE IF NOT EXISTS egbs_payment_backupdate_audit 
 (
     paymentid character varying(256) NOT NULL,
     
@@ -9,5 +9,5 @@ CREATE TABLE egbs_payment_backupdate_audit
 	errorMessage character varying
 );
 
-CREATE UNIQUE INDEX uk_egbs_payment_backupdate_audit ON egbs_payment_backupdate_audit (paymentid, isreceiptcancellation) WHERE isbackupdatesuccess='TRUE';
+CREATE UNIQUE INDEX IF NOT EXISTS uk_egbs_payment_backupdate_audit ON egbs_payment_backupdate_audit (paymentid, isreceiptcancellation) WHERE isbackupdatesuccess='TRUE';
  

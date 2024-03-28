@@ -1,5 +1,5 @@
-CREATE SEQUENCE seq_egbs_bill;
-CREATE TABLE egbs_bill
+CREATE SEQUENCE IF NOT EXISTS seq_egbs_bill;
+CREATE TABLE IF NOT EXISTS egbs_bill
 (
  id character varying(64) NOT NULL,
 
@@ -27,9 +27,9 @@ CREATE TABLE egbs_bill
 );
 
 
-CREATE SEQUENCE seq_egbs_billdetail;
-CREATE SEQUENCE seq_egbs_billnumber;
-CREATE TABLE egbs_billdetail
+CREATE SEQUENCE IF NOT EXISTS seq_egbs_billdetail;
+CREATE SEQUENCE IF NOT EXISTS seq_egbs_billnumber;
+CREATE TABLE IF NOT EXISTS egbs_billdetail
 (
 
  id character varying(64) NOT NULL,
@@ -80,8 +80,8 @@ CREATE TABLE egbs_billdetail
 );
 
 
-CREATE SEQUENCE seq_egbs_billaccountdetail;
-CREATE TABLE egbs_billaccountdetail
+CREATE SEQUENCE IF NOT EXISTS seq_egbs_billaccountdetail;
+CREATE TABLE IF NOT EXISTS egbs_billaccountdetail
 (
 
  id character varying(64) NOT NULL,

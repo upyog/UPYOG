@@ -1,8 +1,8 @@
-DROP TABLE IF EXISTS egcl_bankaccountservicemapping;
+-- -- DROP TABLEIF EXISTS egcl_bankaccountservicemapping;
 
-DROP SEQUENCE IF EXISTS seq_egcl_bankaccountservicemapping;
+-- DROP SEQUENCE IF EXISTS seq_egcl_bankaccountservicemapping;
 
-CREATE TABLE egcl_bankaccountservicemapping
+CREATE TABLE IF EXISTS egcl_bankaccountservicemapping
 (
   id bigint NOT NULL,
   businessdetails character varying(12) NOT NULL,
