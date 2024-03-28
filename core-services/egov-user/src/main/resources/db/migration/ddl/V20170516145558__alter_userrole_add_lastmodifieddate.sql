@@ -1,0 +1,1 @@
+alter table  eg_userrole add column IF NOT EXISTS lastmodifieddate TIMESTAMP default now();
