@@ -1,4 +1,4 @@
-FROM palamgarg/flywayupyog:01
+FROM upyogio/flyway:4.1.2
 
 COPY ./migration/ddl /flyway/sql
 
