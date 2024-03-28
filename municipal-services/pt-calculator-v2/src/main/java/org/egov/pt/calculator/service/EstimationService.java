@@ -120,10 +120,13 @@ import org.egov.pt.calculator.web.models.property.Property;
 import org.egov.pt.calculator.web.models.property.PropertyDetail;
 import org.egov.pt.calculator.web.models.property.RequestInfoWrapper;
 import org.egov.pt.calculator.web.models.property.Unit;
+import org.egov.pt.calculator.web.models.propertyV2.AssessmentResponseV2;
+import org.egov.pt.calculator.web.models.propertyV2.AssessmentV2;
 import org.egov.pt.calculator.web.models.propertyV2.PropertyV2;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
@@ -193,12 +196,8 @@ public class EstimationService {
 	@Value("${pt.mutation.deadline.month}")
 	private String deadLineAfterMutationDocDate;
 
-
-
 	@Value("${customization.pbfirecesslogic:false}")
 	Boolean usePBFirecessLogic;
-
-
 
 	/**
 	 * Calculates tax and creates demand for the given assessment number
@@ -244,13 +243,26 @@ public class EstimationService {
 	 * @return CalculationRes calculation object containing all the tax for the given criteria.
 	 */
 	public CalculationRes getTaxCalculation(CalculationReq request) {
-
+		assessmentdata(request);
 		CalculationCriteria criteria = request.getCalculationCriteria().get(0);
 		Property property = criteria.getProperty();
 		PropertyDetail detail = property.getPropertyDetails().get(0);
 		calcValidator.validatePropertyForCalculation(detail);
 		Map<String,Object> masterMap = mDataService.getMasterMap(request);
 		return new CalculationRes(new ResponseInfo(), Collections.singletonList(getCalculation(request.getRequestInfo(), criteria, masterMap)));
+	}
+	
+	public void assessmentdata(CalculationReq request)
+	{
+		CalculationCriteria criteria = request.getCalculationCriteria().get(0);
+		Property property = criteria.getProperty();
+		String authURL = new StringBuilder().append(configs.getAssessmentServiceHost()).append(configs.getAssessmentSearchEndpoint())
+				.append(URL_PARAMS_SEPARATER).append("propertyIds=").append(property.getPropertyId()).append(SEPARATER)
+				.append("tenantId=").append(property.getTenantId()).toString();
+		AssessmentResponseV2 assessmentResponseV2=restTemplate.postForObject(authURL,request.getRequestInfo(),AssessmentResponseV2.class);
+		List<AssessmentV2> propertylist=assessmentResponseV2.getAssessments().stream().filter(t->t.getFinancialYear().equalsIgnoreCase(criteria.getFinancialYear())).collect(Collectors.toList());
+		if(propertylist.size()>0)
+			throw new CustomException("ASESSMENT_ERROR","Property assessment is already completed for this property for the financial year "+criteria.getFinancialYear());
 	}
 
 	/**
@@ -281,6 +293,7 @@ public class EstimationService {
 			enrichmentService.enrichDemandPeriod(criteria,assessmentYear,masterMap);
 
 		List<BillingSlab> filteredBillingSlabs = getSlabsFiltered(property,criteria,requestInfo);
+		
 
 		Map<String, Map<String, List<Object>>> propertyBasedExemptionMasterMap = new HashMap<>();
 		Map<String, JSONArray> timeBasedExemptionMasterMap = new HashMap<>();
@@ -527,7 +540,6 @@ public class EstimationService {
 			searchKey=detail.getUsageCategoryMajor();
 		}
 			
-
 		String assessmentYear = detail.getFinancialYear();
 
 		Map<String, Object> applicableOwnerUsageTypeRate = mDataService.getApplicableMaster(assessmentYear,
