@@ -54,10 +54,14 @@ public class RedirectController {
     	{
     		txnId = formData.get(PgConstants.PG_TXN_IN_LABEL).get(0);
     		if(txnId==null)
-    			txnId=returnURL.split("PgConstants.PG_TXN_IN_LABEL"+"=")[1];
+    			txnId=returnURL.split(PgConstants.PG_TXN_IN_LABEL+"=")[1];
     	}
-    	else
+    	else if(formData.get(PgConstants.PG_TXN_IN_LABEL_NTTDATA)!=null)
     		txnId = formData.get(PgConstants.PG_TXN_IN_LABEL_NTTDATA).get(0); 
+    	else
+    	{
+    		txnId=returnURL.split(PgConstants.PG_TXN_IN_LABEL+"=")[1];
+    	}
 
         //MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
         log.info("returnUrl in redirect::::"+returnURL);
