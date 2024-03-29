@@ -1,3 +1,6 @@
+--alter table  eg_user DROP constraint IF  EXISTS  eg_user_pkey ;
+--alter table  eg_user add constraint   eg_user_pkey primary key (id,tenantid);
+
 alter table  eg_address add column IF NOT EXISTS userid_bak bigint;
 update  eg_address set userid_bak=userid;
 -- alter table  eg_address drop column  userid;
@@ -20,5 +23,4 @@ alter table  eg_user add column IF NOT EXISTS id bigint;
 update  eg_user set id=id_bak;
 -- alter table  eg_user drop column  id_bak;
 alter table  eg_user alter column id  set not null;
-alter table  eg_user add constraint IF NOT EXISTS  eg_user_pkey primary key (id,tenantid);
 
