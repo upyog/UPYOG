@@ -86,13 +86,13 @@ const OBPSAcknowledgement = ({ data, onSuccess }) => {
       mutation1.mutate(formdata, {
         onSuccess,
       });
-      sessionStorage.clear("Malbafees")
-      sessionStorage.clear("WaterCharges")
-      sessionStorage.clear("GaushalaFees")
-      sessionStorage.clear("LabourCess")
-      sessionStorage.clear("otherCharges")
-      sessionStorage.clear("lessAdjusment")
-      sessionStorage.clear("development")
+       sessionStorage.removeItem("Malbafees")
+      sessionStorage.removeItem("WaterCharges")
+      sessionStorage.removeItem("GaushalaFees")
+      sessionStorage.removeItem("LabourCess")
+      sessionStorage.removeItem("otherCharges")
+      sessionStorage.removeItem("lessAdjusment")
+      sessionStorage.removeItem("development")
       
     } catch (err) {
     }
