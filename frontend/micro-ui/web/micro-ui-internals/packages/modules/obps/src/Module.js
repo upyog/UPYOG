@@ -15,6 +15,7 @@ import ScrutinyDetails from "./pageComponents/ScrutinyDetails";
 import OwnerDetails from "./pageComponents/OwnerDetails";
 import DocumentDetails from "./pageComponents/DocumentDetails";
 import NOCDetails from "./pageComponents/NOCDetails";
+import NOCNumber from "./pageComponents/NOCNumber";
 import LocationDetails from "./pageComponents/LocationDetails";
 import StakeholderDocsRequired  from "./pageComponents/StakeholderDocsRequired";
 import GIS from "./pageComponents/GIS";
@@ -115,6 +116,7 @@ const componentsToRegister = {
   OwnerDetails,
   DocumentDetails,
   NOCDetails,
+  NOCNumber,
   LocationDetails,
   GIS,
   OCEDCRDocsRequired,
