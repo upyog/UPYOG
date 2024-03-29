@@ -40,7 +40,7 @@ subDistrict:{
 },
 areaType:{
   type:"string"
-}
+},
     offset: {
       type: "string",
       pattern: "[0-9]"
