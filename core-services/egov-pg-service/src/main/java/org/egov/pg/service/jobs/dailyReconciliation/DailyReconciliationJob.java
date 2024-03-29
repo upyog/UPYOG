@@ -31,6 +31,7 @@ public class DailyReconciliationJob implements Job {
     @PostConstruct
     public void init() {
         User userInfo = User.builder()
+        		//.uuid("DAILY_RECONC_JOB")
                 .uuid(appProperties.getEgovPgReconciliationSystemUserUuid())
                 .type("SYSTEM")
                 .roles(Collections.emptyList()).id(0L).build();

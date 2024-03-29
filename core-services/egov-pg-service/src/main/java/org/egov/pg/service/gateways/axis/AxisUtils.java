@@ -117,7 +117,6 @@ class AxisUtils {
             }
 
         } catch (UnsupportedEncodingException e) {
-        	e.printStackTrace();
             log.error("Exception while splitting query: " + e.getMessage());
         }
         return query_pairs;

@@ -32,7 +32,7 @@ public class BankAccountRepository {
     public BankAccount getBankAccountsById( RequestInfo requestInfo, String tenantId, String businessService) {
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("tenantId", tenantId);
-        queryParams.add("businessService", businessService);
+ 		queryParams.add("businessService", businessService);
 
         String uri = UriComponentsBuilder
                 .fromHttpUrl(appProperties.getBankAccountHost())
