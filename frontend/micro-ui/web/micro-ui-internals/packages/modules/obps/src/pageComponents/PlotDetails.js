@@ -11,7 +11,13 @@ const PlotDetails = ({ formData, onSelect, config }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const checkingFlow = formData?.uiFlow?.flow;
   const state = Digit.ULBService.getStateId();
-  let [isNextDisabled,setIsNextDisabled] =useState(true);
+  let [isNextDisabled,setIsNextDisabled] =useState(false);
+  useEffect(() => {
+    if(checkingFlow==="BPA"){
+      setIsNextDisabled(true);
+    }
+  }, [checkingFlow]);
+
   const { data, isLoading } = Digit.Hooks.obps.useScrutinyDetails(state, formData?.data?.scrutinyNumber)
   
   const handleSubmit = (data) => {
