@@ -32,6 +32,15 @@ const FireNOCSearchRequest = {
     fireNOCType: {
       type: "string"
     },
+    city:{
+      type:"string"
+    },
+subDistrict:{
+  type:"string"
+},
+areaType:{
+  type:"string"
+},
     offset: {
       type: "string",
       pattern: "[0-9]"

@@ -124,8 +124,16 @@ const fireNocBuildingsRowMapper = (row, mapper = []) => {
     tenantId: row.tenantid,
     name: row.buildingname,
     usageType: row.usagetype,
+    usageSubType:row.usagesubtype,
     uoms: fireNocUomsRowMapper(row),
-    applicationDocuments: fireNocApplicationDocumentsRowMapper(row)
+    applicationDocuments: fireNocApplicationDocumentsRowMapper(row),
+    landArea: intConversion(row.landarea),
+    totalCoveredArea:intConversion(row.totalcoveredarea),
+    parkingArea:intConversion(row.parkingarea),
+    leftSurrounding:row.leftsurrounding,
+    rightSurrounding:row.rightsurrounding,
+    frontSurrounding:row.frontsurrounding,
+    backSurrounding:row.backsurrounding
   };
   if (buildingIndex != -1) {
     buildingObject.uoms = fireNocUomsRowMapper(
