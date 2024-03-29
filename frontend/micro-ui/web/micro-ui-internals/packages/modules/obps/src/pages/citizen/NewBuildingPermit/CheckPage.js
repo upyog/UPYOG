@@ -330,6 +330,7 @@ console.log("mdmsData",mdmsData,mdmsData?.MalbaCharges?.BPA[1].rate,plotArea)
             style={{ width: "100px", display: "inline" }}
             onClick={() => routeTo(`${routeLink}/noc-details`)}
           />
+       <Row className="border-none" label={t(`BPA_NOC_NUMBER`)} text={value?.additionalDetails?.nocNumber} />   
       {nocDocuments && nocDocuments?.NocDetails.map((noc, index) => (
         <div key={`noc-${index}`} style={nocDocuments?.NocDetails?.length > 1 ?{ marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "960px", minWidth: "280px" } : {}}>
         <CardSectionHeader style={{marginBottom: "24px"}}>{`${t(`BPA_${noc?.nocType}_HEADER`)}`}</CardSectionHeader>

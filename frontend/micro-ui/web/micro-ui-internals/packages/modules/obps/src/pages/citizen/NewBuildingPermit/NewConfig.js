@@ -116,13 +116,33 @@ export const newConfig1=[
     {
         "route": "owner-details",
         "component": "OwnerDetails",
-        "nextStep": "document-details",
+        "nextStep": "noc-number",
         "key": "owners",
         "texts": {
             "headerCaption": "BPA_OWNER_AND_DOCUMENT_DETAILS_LABEL",
             "header": "BPA_APPLICANT_DETAILS_HEADER",
             "submitBarLabel": "CS_COMMON_NEXT"
         }
+    },
+    {
+        "route": "noc-number",
+        "component": "NOCNumber",
+        "nextStep": "document-details",
+        "key": "nocnumber",
+        "texts": {
+            "headerCaption": "BPA_NOC_NUMBER_DETAILS",
+            "header": "",
+            "submitBarLabel": "CS_COMMON_NEXT"
+        },
+        "inputs": [
+            {
+                "label": "BPA_NOC_NUMBER",
+                "type": "text",
+                "validation": {},
+                "name": "nocNumber"
+            }
+        ]
+
     },
     {
         "route": "document-details",
