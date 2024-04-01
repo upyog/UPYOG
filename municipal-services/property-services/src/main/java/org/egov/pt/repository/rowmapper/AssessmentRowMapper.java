@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.pt.models.Assessment;
+import org.egov.pt.models.Assessment.ModeOfPayment;
 import org.egov.pt.models.Assessment.Source;
 import org.egov.pt.models.AuditDetails;
 import org.egov.pt.models.Document;
@@ -49,6 +50,7 @@ public class AssessmentRowMapper implements ResultSetExtractor<List<Assessment>>
 						.assessmentDate(rs.getLong("ass_assessmentdate"))
 						.financialYear(rs.getString("ass_financialyear"))
 						.propertyId(rs.getString("ass_propertyid"))
+						.modeOfPayment(ModeOfPayment.fromValue(rs.getString("ass_modeofpayment")))
 						.source(Source.fromValue(rs.getString("ass_source")))
 						.unitUsageList(new ArrayList<>())
 						.documents(new HashSet<>()).build();
