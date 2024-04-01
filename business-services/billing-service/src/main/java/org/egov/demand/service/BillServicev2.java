@@ -55,6 +55,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -157,6 +158,7 @@ public class BillServicev2 {
 	@Autowired
 	private ObjectMapper mapper;
 	
+	@Autowired
 	private RestTemplate restTemplate;
 
 	@Value("${kafka.topics.cancel.bill.topic.name}")
@@ -550,7 +552,7 @@ public class BillServicev2 {
 	 * @return
 	 */
 	private BillDetailV2 getBillDetailForDemand(Demand demand, Map<String, TaxHeadMaster> taxHeadMap, String billDetailId, RequestInfo requestInfo) {
-		
+		String modeOfpayment = null;
 		Long startPeriod = demand.getTaxPeriodFrom();
 		Long endPeriod = demand.getTaxPeriodTo();
 		String tenantId = demand.getTenantId();
@@ -575,9 +577,26 @@ public class BillServicev2 {
 			/* Total tax and collection for the whole demand/bill-detail */
 			totalAmountForDemand = totalAmountForDemand.add(amountForAccDeatil);
 		}
-
-		Date date=new Date(startPeriod);
-		System.out.println(date.getYear());
+		
+		//Getting Financial year from Demand
+		Date startDate = new Date(startPeriod);
+		Date endDate = new Date(endPeriod);
+		Calendar c = Calendar.getInstance();
+		c.setTime(startDate);
+		StringBuilder financialYearFromDemand = new StringBuilder();
+		financialYearFromDemand.append(c.get(Calendar.YEAR));
+		financialYearFromDemand.append("-");
+		c.setTime(endDate);
+		//current Date
+		
+		Date currentDate = new Date(System.currentTimeMillis()*1000);
+		c.setTime(currentDate);
+		Integer cuurentMonth = c.get(Calendar.MONTH);
+		Integer currentyear =  c.get(Calendar.YEAR);
+		Integer b= c.get(Calendar.YEAR);
+		financialYearFromDemand.append(b.toString().substring(2,4));
+		
+		
 		
 		String authURL = new StringBuilder().append(appProps.getAssessmentServiceHost()).append(appProps.getAssessmentSearchEndpoint())
 				.append(URL_PARAMS_SEPARATER).append("propertyIds=").append(propertyId).append(URL_PARAM_SEPERATOR)
@@ -585,7 +604,76 @@ public class BillServicev2 {
 		
 		
 		AssessmentResponseV2 assessmentResponseV2=restTemplate.postForObject(authURL, requestInfo, AssessmentResponseV2.class);
-		//List<AssessmentV2> assessmentV2=assessmentResponseV2.getAssessments().stream().filter(t->t.getFinancialYear().equalsIgnoreCase())
+		AssessmentV2 assessmentV2=assessmentResponseV2.getAssessments().stream().filter(t->t.getFinancialYear().equalsIgnoreCase(financialYearFromDemand.toString())).collect(Collectors.toList()).get(0);
+		
+		if(null==assessmentV2.getModeOfPayment()) {
+			throw new CustomException("INVALID_MODE_OF_PAYMENT", "Mode Of Payment Not found for the assesment");
+			
+		}
+		
+		Set<Integer> q1 = new HashSet<>();
+		Set<Integer> q2 = new HashSet<>();
+		Set<Integer> q3 = new HashSet<>();
+		Set<Integer> q4 = new HashSet<>();
+		
+		Set<Integer> h1 = new HashSet<>();
+		Set<Integer> h2 = new HashSet<>();
+
+		q1 =  Set.of(Integer.valueOf(4),(Integer.valueOf(5)),(Integer.valueOf(6)));
+		q2 =  Set.of(Integer.valueOf(7),(Integer.valueOf(8)),(Integer.valueOf(9)));
+		q3 =  Set.of(Integer.valueOf(10),(Integer.valueOf(11)),(Integer.valueOf(12)));
+		q4 =  Set.of(Integer.valueOf(1),(Integer.valueOf(2)),(Integer.valueOf(3)));
+		
+		
+		h1 =  Set.of(Integer.valueOf(4),(Integer.valueOf(5)),(Integer.valueOf(6)),Integer.valueOf(7),(Integer.valueOf(8)),(Integer.valueOf(9)));
+		h2 =  Set.of(Integer.valueOf(10),(Integer.valueOf(11)),(Integer.valueOf(12)),Integer.valueOf(1),(Integer.valueOf(2)),(Integer.valueOf(3)));
+		
+		String quarter = null;
+		String expiryDate = null;
+		
+		
+		
+		switch (assessmentV2.getModeOfPayment().toString()) {
+		case "QUARTERLY":
+			if(q1.contains(cuurentMonth)) {
+				quarter="q1";
+				expiryDate="30-06-"+currentyear;
+			}
+			else if(q2.contains(cuurentMonth))
+			{
+				quarter="q2";
+				expiryDate="30-09-"+currentyear;
+			}
+			else if(q3.contains(cuurentMonth))
+			{
+				quarter="q3";
+				expiryDate="31-12-"+currentyear;
+			}
+			else if(q4.contains(cuurentMonth))
+			{
+				quarter="q4";
+				expiryDate="31-03-"+currentyear;
+			}
+			break;
+		case "HALFYEARLY":
+			if(h1.contains(cuurentMonth)) {
+				quarter="h1";
+				expiryDate="30-09-"+currentyear;
+			}
+			else if(h2.contains(cuurentMonth))
+			{
+				quarter="h2";
+				expiryDate="31-12-"+currentyear;
+			}
+			
+			break;
+					
+		case "YEARLY":
+			expiryDate="31-12-"+currentyear;
+			break;
+		default:
+			break;
+		}
 		
 		
 		Long billExpiryDate = getExpiryDateForDemand(demand);
