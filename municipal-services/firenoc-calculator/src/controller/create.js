@@ -110,11 +110,17 @@ const createValidate = async (body, errors, header) => {
             "SINGLESLAB and MULTIPLESLAB calculation type should have toUOM and fromUOM"
         }
       ];
-    if (!some(Buildingtypes, ["code", billingSlab.buildingUsageType])) {
+      let buildingSubUsageTypes=[];
+      Buildingtypes.map((buildingType)=>{
+        buildingSubUsageTypes.push(...buildingType.BuildingSubType);
+      })
+    if (!some(buildingSubUsageTypes, ["code", billingSlab.buildingUsageType])) {
+      console.log("sub usage types",buildingSubUsageTypes);
+      console.log(" usage type",billingSlab.buildingUsageType);
       errors = [
         ...errors,
         {
-          message: "Building usage type is invallid!"
+          message: "Building usage sub type is invallid!"
         }
       ];
     }

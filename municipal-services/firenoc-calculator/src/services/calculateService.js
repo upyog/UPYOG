@@ -115,11 +115,11 @@ const calculateForSingleReq = async (
     const adhocRebateEstimate = calculateAdhocRebate(calculateCriteria);
     calculation.taxHeadEstimates.push(adhocRebateEstimate);
   }
-  const taxEstimate = calculateTaxes(mdmsConfig, calculation);
-  calculation.taxHeadEstimates.push(taxEstimate);
+ // const taxEstimate = calculateTaxes(mdmsConfig, calculation);
+ // calculation.taxHeadEstimates.push(taxEstimate);
 
-  const roundoffEstimate = calculateRoundOff(calculation);
-  calculation.taxHeadEstimates.push(roundoffEstimate);
+  //const roundoffEstimate = calculateRoundOff(calculation);
+  //calculation.taxHeadEstimates.push(roundoffEstimate);
   return calculation;
 };
 
@@ -140,16 +140,17 @@ const calculateNOCFee = async (
   ) {
     let buidingnocfee = 0;
     searchReqParam.buildingUsageType =
-      calculateCriteria.fireNOC.fireNOCDetails.buildings[i].usageType;
+      calculateCriteria.fireNOC.fireNOCDetails.buildings[i].usageSubType;
     let uoms = calculateCriteria.fireNOC.fireNOCDetails.buildings[
       i
     ].uoms.filter(uom => {
       return uom.isActiveUom;
     });
-    for (let uomindex = 0; uomindex < uoms.length; uomindex++) {
-      searchReqParam.uom = uoms[uomindex].code;
+    //for (let uomindex = 0; uomindex < uoms.length; uomindex++) {
+      searchReqParam.uom = "HEIGHT_OF_BUILDING";
       if (mdmsConfig.CALCULATON_TYPE !== "FLAT")
         searchReqParam.uomValue = uoms[uomindex].value;
+	
       const billingslabs = await searchService(searchReqParam, {}, pool);
       let errors = [];
       if (billingslabs.length > 1) {
@@ -176,7 +177,7 @@ const calculateNOCFee = async (
           billingslabs[0].rate * Number(searchReqParam.uomValue)
         );
       }
-    }
+   // }
     if (mdmsConfig.CALCULATON_TYPE !== "FLAT") {
       const minimumFee =
         searchReqParam.fireNOCType === "NEW"
