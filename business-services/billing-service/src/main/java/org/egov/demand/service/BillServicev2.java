@@ -53,6 +53,7 @@ import static org.egov.demand.util.Constants.URL_PARAMS_SEPARATER;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -611,22 +612,27 @@ public class BillServicev2 {
 			
 		}
 		
-		Set<Integer> q1 = new HashSet<>();
-		Set<Integer> q2 = new HashSet<>();
-		Set<Integer> q3 = new HashSet<>();
-		Set<Integer> q4 = new HashSet<>();
+		Set<Integer> q1 = new HashSet<>(Arrays.asList(4,5,6));
+		Set<Integer> q2 = new HashSet<>(Arrays.asList(7,8,9));
+		Set<Integer> q3 = new HashSet<>(Arrays.asList(10,11,12));
+		Set<Integer> q4 = new HashSet<>(Arrays.asList(1,2,3));
 		
-		Set<Integer> h1 = new HashSet<>();
-		Set<Integer> h2 = new HashSet<>();
+		Set<Integer> h1 = new HashSet<>(Arrays.asList(4,5,6,7,8,9));
+		Set<Integer> h2 = new HashSet<>(Arrays.asList(10,11,12,1,2,3));
 
-		q1 =  Set.of(Integer.valueOf(4),(Integer.valueOf(5)),(Integer.valueOf(6)));
-		q2 =  Set.of(Integer.valueOf(7),(Integer.valueOf(8)),(Integer.valueOf(9)));
-		q3 =  Set.of(Integer.valueOf(10),(Integer.valueOf(11)),(Integer.valueOf(12)));
-		q4 =  Set.of(Integer.valueOf(1),(Integer.valueOf(2)),(Integer.valueOf(3)));
-		
-		
-		h1 =  Set.of(Integer.valueOf(4),(Integer.valueOf(5)),(Integer.valueOf(6)),Integer.valueOf(7),(Integer.valueOf(8)),(Integer.valueOf(9)));
-		h2 =  Set.of(Integer.valueOf(10),(Integer.valueOf(11)),(Integer.valueOf(12)),Integer.valueOf(1),(Integer.valueOf(2)),(Integer.valueOf(3)));
+		/*
+		 * q1 = Set.of(Integer.valueOf(4),(Integer.valueOf(5)),(Integer.valueOf(6))); q2
+		 * = Set.of(Integer.valueOf(7),(Integer.valueOf(8)),(Integer.valueOf(9))); q3 =
+		 * Set.of(Integer.valueOf(10),(Integer.valueOf(11)),(Integer.valueOf(12))); q4 =
+		 * Set.of(Integer.valueOf(1),(Integer.valueOf(2)),(Integer.valueOf(3)));
+		 * 
+		 * 
+		 * h1 =
+		 * Set.of(Integer.valueOf(4),(Integer.valueOf(5)),(Integer.valueOf(6)),Integer.
+		 * valueOf(7),(Integer.valueOf(8)),(Integer.valueOf(9))); h2 =
+		 * Set.of(Integer.valueOf(10),(Integer.valueOf(11)),(Integer.valueOf(12)),
+		 * Integer.valueOf(1),(Integer.valueOf(2)),(Integer.valueOf(3)));
+		 */
 		
 		String quarter = null;
 		String expiryDate = null;
