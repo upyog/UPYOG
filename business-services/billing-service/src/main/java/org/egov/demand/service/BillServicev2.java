@@ -624,21 +624,8 @@ public class BillServicev2 {
 		Set<Integer> h1 = new HashSet<>(Arrays.asList(4,5,6,7,8,9));
 		Set<Integer> h2 = new HashSet<>(Arrays.asList(10,11,12,1,2,3));
 
-		/*
-		 * q1 = Set.of(Integer.valueOf(4),(Integer.valueOf(5)),(Integer.valueOf(6))); q2
-		 * = Set.of(Integer.valueOf(7),(Integer.valueOf(8)),(Integer.valueOf(9))); q3 =
-		 * Set.of(Integer.valueOf(10),(Integer.valueOf(11)),(Integer.valueOf(12))); q4 =
-		 * Set.of(Integer.valueOf(1),(Integer.valueOf(2)),(Integer.valueOf(3)));
-		 * 
-		 * 
-		 * h1 =
-		 * Set.of(Integer.valueOf(4),(Integer.valueOf(5)),(Integer.valueOf(6)),Integer.
-		 * valueOf(7),(Integer.valueOf(8)),(Integer.valueOf(9))); h2 =
-		 * Set.of(Integer.valueOf(10),(Integer.valueOf(11)),(Integer.valueOf(12)),
-		 * Integer.valueOf(1),(Integer.valueOf(2)),(Integer.valueOf(3)));
-		 */
 		
-		String quarter = null;
+		String paymentPeriod = null;
 		String expiryDate = null;
 		BigDecimal newTotalAmountForModeOfPayment = new BigDecimal(0);
 		
@@ -646,22 +633,22 @@ public class BillServicev2 {
 		switch (assessmentV2.getModeOfPayment().toString()) {
 		case "QUARTERLY":
 			if(q1.contains(cuurentMonth)) {
-				quarter="Q1";
+				paymentPeriod="Q1";
 				expiryDate="30-06-"+currentyear;
 			}
 			else if(q2.contains(cuurentMonth))
 			{
-				quarter="Q2";
+				paymentPeriod="Q2";
 				expiryDate="30-09-"+currentyear;
 			}
 			else if(q3.contains(cuurentMonth))
 			{
-				quarter="Q3";
+				paymentPeriod="Q3";
 				expiryDate="31-12-"+currentyear;
 			}
 			else if(q4.contains(cuurentMonth))
 			{
-				quarter="Q4";
+				paymentPeriod="Q4";
 				expiryDate="31-03-"+currentyear;
 			}
 			newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
@@ -670,12 +657,12 @@ public class BillServicev2 {
 			break;
 		case "HALFYEARLY":
 			if(h1.contains(cuurentMonth)) {
-				quarter="H1";
+				paymentPeriod="H1";
 				expiryDate="30-09-"+currentyear;
 			}
 			else if(h2.contains(cuurentMonth))
 			{
-				quarter="H2";
+				paymentPeriod="H2";
 				expiryDate="31-12-"+currentyear;
 			}
 			
@@ -685,6 +672,7 @@ public class BillServicev2 {
 			break;
 					
 		case "YEARLY":
+			paymentPeriod="YR";
 			expiryDate="31-12-"+currentyear;
 			break;
 		default:
@@ -714,6 +702,7 @@ public class BillServicev2 {
 				.fromPeriod(startPeriod)
 				.toPeriod(endPeriod)
 				.tenantId(tenantId)
+				.paymentPeriod(paymentPeriod)
 				.additionalDetails(demand.getAdditionalDetails())
 				.build();
 	}

@@ -152,6 +152,7 @@ public class BillRepositoryV2 {
 				ps.setObject(23, null);
 				ps.setLong(24, billDetail.getExpiryDate());
 				ps.setObject(25,util.getPGObject(billDetail.getAdditionalDetails()));
+				ps.setObject(26,billDetail.getPaymentPeriod());
 			}
 
 			@Override

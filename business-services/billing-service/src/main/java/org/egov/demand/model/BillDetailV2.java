@@ -52,6 +52,9 @@ public class BillDetailV2 {
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;
 
+	@JsonProperty("paymentPeriod")
+	private String paymentPeriod;
+	
 	@JsonProperty("billAccountDetails")
 	@Valid
 	private List<BillAccountDetailV2> billAccountDetails;
