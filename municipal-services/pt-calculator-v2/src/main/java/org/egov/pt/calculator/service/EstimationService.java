@@ -1,9 +1,75 @@
 package org.egov.pt.calculator.service;
 
+import static org.egov.pt.calculator.util.CalculatorConstants.ADHOC_PENALTY;
+import static org.egov.pt.calculator.util.CalculatorConstants.ADHOC_REBATE;
+import static org.egov.pt.calculator.util.CalculatorConstants.BILLING_SLAB_MATCH_AREA;
+import static org.egov.pt.calculator.util.CalculatorConstants.BILLING_SLAB_MATCH_ERROR_CODE;
+import static org.egov.pt.calculator.util.CalculatorConstants.BILLING_SLAB_MATCH_ERROR_MESSAGE;
+import static org.egov.pt.calculator.util.CalculatorConstants.BILLING_SLAB_MATCH_FLOOR;
+import static org.egov.pt.calculator.util.CalculatorConstants.BILLING_SLAB_MATCH_USAGE_DETAIL;
+import static org.egov.pt.calculator.util.CalculatorConstants.BILLING_SLAB_SEARCH_FAILED;
+import static org.egov.pt.calculator.util.CalculatorConstants.BILLING_SLAB_SEARCH_FAILED_MSG;
+import static org.egov.pt.calculator.util.CalculatorConstants.BUSINESSSERVICE_FIELD_FOR_SEARCH_URL;
+import static org.egov.pt.calculator.util.CalculatorConstants.CONSUMER_CODE_SEARCH_FIELD_NAME;
+import static org.egov.pt.calculator.util.CalculatorConstants.DEMAND_CREATE_FAILED;
+import static org.egov.pt.calculator.util.CalculatorConstants.DEMAND_CREATE_FAILED_MSG;
+import static org.egov.pt.calculator.util.CalculatorConstants.DEMAND_UPDATE_FAILED;
+import static org.egov.pt.calculator.util.CalculatorConstants.DEMAND_UPDATE_FAILED_MSG;
+import static org.egov.pt.calculator.util.CalculatorConstants.DOCUMENT_DATE;
+import static org.egov.pt.calculator.util.CalculatorConstants.EG_PT_DEPRECIATING_ASSESSMENT_ERROR;
+import static org.egov.pt.calculator.util.CalculatorConstants.EG_PT_DEPRECIATING_ASSESSMENT_ERROR_MSG_ESTIMATE;
+import static org.egov.pt.calculator.util.CalculatorConstants.EG_PT_ESTIMATE_ARV_NULL;
+import static org.egov.pt.calculator.util.CalculatorConstants.EG_PT_ESTIMATE_ARV_NULL_MSG;
+import static org.egov.pt.calculator.util.CalculatorConstants.EXEMPTION_FIELD_NAME;
+import static org.egov.pt.calculator.util.CalculatorConstants.FINANCIALYEAR_MASTER_KEY;
+import static org.egov.pt.calculator.util.CalculatorConstants.FINANCIAL_YEAR_ENDING_DATE;
+import static org.egov.pt.calculator.util.CalculatorConstants.FINANCIAL_YEAR_STARTING_DATE;
+import static org.egov.pt.calculator.util.CalculatorConstants.MARKET_VALUE;
+import static org.egov.pt.calculator.util.CalculatorConstants.MUTATION_PAYMENT_PERIOD_IN_MONTH;
+import static org.egov.pt.calculator.util.CalculatorConstants.OWNER_STATUS_ACTIVE;
+import static org.egov.pt.calculator.util.CalculatorConstants.OWNER_TYPE_MASTER;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADHOC_PENALTY;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADHOC_REBATE;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADHOC_REBATE_INVALID_AMOUNT;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADHOC_REBATE_INVALID_AMOUNT_MSG;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADVANCE_CARRYFORWARD;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_CANCER_CESS;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_ESTIMATE_BILLINGSLABS_UNMATCH;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_ESTIMATE_BILLINGSLABS_UNMATCH_MSG;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_ESTIMATE_BILLINGSLABS_UNMATCH_VACANCT;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_ESTIMATE_BILLINGSLABS_UNMATCH_VACANT_MSG;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_ESTIMATE_BILLINGSLABS_UNMATCH_replace_id;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_FIRE_CESS;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_OWNER_EXEMPTION;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_TAX;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_TIME_INTEREST;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_TIME_PENALTY;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_TIME_REBATE;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_TYPE_VACANT_LAND;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_UNIT_USAGE_EXEMPTION;
+import static org.egov.pt.calculator.util.CalculatorConstants.SEPARATER;
+import static org.egov.pt.calculator.util.CalculatorConstants.SERVICE_FIELD_FOR_SEARCH_URL;
+import static org.egov.pt.calculator.util.CalculatorConstants.SERVICE_FIELD_VALUE_PT_MUTATION;
+import static org.egov.pt.calculator.util.CalculatorConstants.TAXHEADMASTER_MASTER_KEY;
+import static org.egov.pt.calculator.util.CalculatorConstants.TENANT_ID_FIELD_FOR_SEARCH_URL;
+import static org.egov.pt.calculator.util.CalculatorConstants.URL_PARAMS_SEPARATER;
+import static org.egov.pt.calculator.util.CalculatorConstants.USAGE_DETAIL_MASTER;
+import static org.egov.pt.calculator.util.CalculatorConstants.USAGE_MAJOR_MASTER;
+import static org.egov.pt.calculator.util.CalculatorConstants.USAGE_MINOR_MASTER;
+import static org.egov.pt.calculator.util.CalculatorConstants.USAGE_SUB_MINOR_MASTER;
+
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +83,8 @@ import org.egov.pt.calculator.util.CalculatorUtils;
 import org.egov.pt.calculator.util.Configurations;
 import org.egov.pt.calculator.util.PBFirecessUtils;
 import org.egov.pt.calculator.validator.CalculationValidator;
+import org.egov.pt.calculator.web.models.BillingSlab;
+
 import org.egov.pt.calculator.web.models.*;
 import org.egov.pt.calculator.web.models.BillingSlabSearchCriteria;
 import org.egov.pt.calculator.web.models.collections.Payment;
@@ -25,18 +93,37 @@ import org.egov.pt.calculator.web.models.Calculation;
 import org.egov.pt.calculator.web.models.CalculationCriteria;
 import org.egov.pt.calculator.web.models.CalculationReq;
 import org.egov.pt.calculator.web.models.CalculationRes;
+import org.egov.pt.calculator.web.models.MutationBillingSlab;
+import org.egov.pt.calculator.web.models.MutationBillingSlabRes;
+import org.egov.pt.calculator.web.models.MutationBillingSlabSearchCriteria;
 import org.egov.pt.calculator.web.models.TaxHeadEstimate;
+import org.egov.pt.calculator.web.models.collections.Payment;
 import org.egov.pt.calculator.web.models.demand.Category;
+import org.egov.pt.calculator.web.models.demand.Demand;
+import org.egov.pt.calculator.web.models.demand.DemandDetail;
+import org.egov.pt.calculator.web.models.demand.DemandRequest;
+import org.egov.pt.calculator.web.models.demand.DemandResponse;
 import org.egov.pt.calculator.web.models.demand.TaxHeadMaster;
-import org.egov.pt.calculator.web.models.property.*;
-import org.egov.pt.calculator.web.models.propertyV2.AssessmentResponseV2;
+import org.egov.pt.calculator.web.models.demand.TaxPeriod;
+import org.egov.pt.calculator.web.models.demand.TaxPeriodResponse;
+import org.egov.pt.calculator.web.models.property.OwnerInfo;
+import org.egov.pt.calculator.web.models.property.Property;
+import org.egov.pt.calculator.web.models.property.PropertyDetail;
+import org.egov.pt.calculator.web.models.property.RequestInfoWrapper;
+import org.egov.pt.calculator.web.models.property.Unit;
+import org.egov.pt.calculator.web.models.propertyV2.AssessmentRequestV2;
 import org.egov.pt.calculator.web.models.propertyV2.PropertyV2;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -96,6 +183,9 @@ public class EstimationService {
 	private ObjectMapper mapper;
 
 
+	@Value("${customization.unbuiltarea.prorated:true}")
+	Boolean unBuiltAreaProrated;
+
 
 	@Value("${customization.pbfirecesslogic:false}")
 	Boolean usePBFirecessLogic;
@@ -131,12 +221,41 @@ public class EstimationService {
 			PropertyDetail detail = property.getPropertyDetails().get(0);
 			calcValidator.validatePropertyForCalculation(detail);
 			String assessmentNumber = detail.getAssessmentNumber();
-			Calculation calculation = getCalculation(requestInfo, criteria,masterMap);
+			Demand demand=utils.getLatestDemandForCurrentFinancialYear(requestInfo,criteria);
+			Calculation calculation = getCalculation(requestInfo, criteria,demand,masterMap);
+		
+		//	Calculation calculation = getCalculation(requestInfo, criteria,masterMap);
 			calculation.setServiceNumber(property.getPropertyId());
 			calculationPropertyMap.put(assessmentNumber, calculation);
 		}
 		return calculationPropertyMap;
 	}
+/**
+	 * Method to estimate the tax to be paid for given property
+	 * will be called by estimate api
+	 *
+	 * @param request incoming calculation request containing the criteria.
+	 * @return CalculationRes calculation object containing all the tax for the given criteria.
+	 */
+    @SuppressWarnings("unchecked")
+	public CalculationRes getTaxCalculation(CalculationReq request,AssessmentRequestV2 assessmentRequestV2) {
+
+        CalculationCriteria criteria = request.getCalculationCriteria().get(0);
+        Property property = criteria.getProperty();
+        PropertyDetail detail = property.getPropertyDetails().get(0);
+        calcValidator.validatePropertyForCalculation(detail);
+        Map<String,Object> masterMap = mDataService.getMasterMap(request);
+        if(assessmentRequestV2!=null){
+        Map<String,Map<String, Object>>finicialYears=(Map<String, Map<String, Object>>) masterMap.get(FINANCIALYEAR_MASTER_KEY);
+        Long startingDateForFinicialYear=  Long.valueOf(finicialYears.get(assessmentRequestV2.getAssessment().getFinancialYear()).get("startingDate").toString());
+        log.info("starting date is" +startingDateForFinicialYear);
+        criteria.setFromDate(startingDateForFinicialYear); 
+        Long endingDateForFinicialYear=  Long.valueOf(finicialYears.get(assessmentRequestV2.getAssessment().getFinancialYear()).get("endingDate").toString());
+        criteria.setToDate(endingDateForFinicialYear);
+        }
+        Demand demand=utils.getLatestDemandForCurrentFinancialYear(request.getRequestInfo(),request.getCalculationCriteria().get(0));
+        return new CalculationRes(new ResponseInfo(), Collections.singletonList(getCalculation(request.getRequestInfo(), criteria,demand, masterMap)));
+    }
 
 	/**
 	 * Method to estimate the tax to be paid for given property
@@ -155,6 +274,186 @@ public class EstimationService {
         return new CalculationRes(new ResponseInfo(), Collections.singletonList(getCalculation(request.getRequestInfo(), criteria, masterMap)));
     }
 
+/**
+	 * Generates a List of Tax head estimates with tax head code,
+	 * tax head category and the amount to be collected for the key.
+     *
+     * @param criteria criteria based on which calculation will be done.
+     * @param requestInfo request info from incoming request.
+	 * @return Map<String, Double>
+	 */
+	private Map<String,List> getEstimationMap(CalculationCriteria criteria, RequestInfo requestInfo, Map<String, Object> masterMap,Demand demand) {
+
+		BigDecimal taxAmt = BigDecimal.ZERO;
+		BigDecimal commercialTaxAmt=BigDecimal.ZERO;
+		BigDecimal usageExemption = BigDecimal.ZERO;
+		Property property = criteria.getProperty();
+		PropertyDetail detail = property.getPropertyDetails().get(0);
+		String assessmentYear = detail.getFinancialYear();
+		String tenantId = property.getTenantId();
+
+		if(criteria.getFromDate()==null || criteria.getToDate()==null)
+            enrichmentService.enrichDemandPeriod(criteria,assessmentYear,masterMap);
+
+        List<BillingSlab> filteredBillingSlabs = getSlabsFiltered(property, requestInfo);
+
+		Map<String, Map<String, List<Object>>> propertyBasedExemptionMasterMap = new HashMap<>();
+		Map<String, JSONArray> timeBasedExemptionMasterMap = new HashMap<>();
+		mDataService.setPropertyMasterValues(requestInfo, tenantId, propertyBasedExemptionMasterMap,
+				timeBasedExemptionMasterMap);
+
+		List<String> billingSlabIds = new LinkedList<>();
+		HashMap<Unit, BillingSlab> unitSlabMapping = new HashMap<>();
+		List<Unit> groundFloorUnits = new LinkedList<>();
+
+		/*
+		 * by default land should get only one slab from database per tenantId
+		 */
+		if (PT_TYPE_VACANT_LAND.equalsIgnoreCase(detail.getPropertyType()) && filteredBillingSlabs.size() != 1)
+			throw new CustomException(PT_ESTIMATE_BILLINGSLABS_UNMATCH_VACANCT,PT_ESTIMATE_BILLINGSLABS_UNMATCH_VACANT_MSG
+					.replace("{count}",String.valueOf(filteredBillingSlabs.size())));
+
+		else if (PT_TYPE_VACANT_LAND.equalsIgnoreCase(detail.getPropertyType())) {
+			taxAmt = taxAmt.add(BigDecimal.valueOf(filteredBillingSlabs.get(0).getUnitRate() * detail.getLandArea()));
+		} else {
+
+			double unBuiltRate = 0.0;
+			int groundUnitsCount = 0;
+			Double groundUnitsArea = 0.0;
+			int i = 0;
+            List<Unit> activeUnits=detail.getUnits().stream().filter(unit->unit.getActive()==true)
+            		.collect(Collectors.toList());
+            
+			for (Unit unit : activeUnits) {
+				BillingSlab slab = getSlabForCalc(filteredBillingSlabs, unit);
+				BigDecimal currentUnitTax = getTaxForUnit(slab, unit,assessmentYear);
+				
+				billingSlabIds.add(slab.getId()+"|"+i);
+				unitSlabMapping.put(unit, slab);
+				if((unit.getOccupancyType().equalsIgnoreCase("RENTED") || unit.getOccupancyType().equalsIgnoreCase("PG")) && unit.getAdditionalDetails() != null && unit.getAdditionalDetails().has("rentedformonths"))
+				{ 	
+					BigDecimal  noofmonths=BigDecimal.valueOf(Double.parseDouble(unit.getAdditionalDetails().get("rentedformonths").toString()));
+					if(noofmonths.compareTo(BigDecimal.valueOf(12)) < 0 )
+					{
+					String occ=unit.getAdditionalDetails().has("usageForDueMonths")?unit.getAdditionalDetails().get("usageForDueMonths").toString():"SELFOCCUPIED";
+					unit.setOccupancyType(occ.substring(1).substring(0,occ.length()-2));
+					BigDecimal restMonths=	BigDecimal.valueOf(12).subtract(noofmonths);
+					slab = getSlabForCalc(filteredBillingSlabs, unit);
+					BigDecimal tax=BigDecimal.valueOf(Math.round(getTaxForUnit(slab, unit,assessmentYear).doubleValue()));
+					BigDecimal addTax=tax.multiply(restMonths).divide(BigDecimal.valueOf(12),2, RoundingMode.HALF_UP);
+					currentUnitTax =currentUnitTax.add(addTax);
+					billingSlabIds.add(slab.getId()+"|"+i);
+					unitSlabMapping.put(unit, slab);
+					}	
+				}	/*
+								 * counting the number of units & total area in ground floor for unbuilt area
+				 * tax calculation
+				 */
+				if (unit.getFloorNo().equalsIgnoreCase("0")) {
+					groundUnitsCount += 1;
+					groundUnitsArea += unit.getUnitArea();
+					groundFloorUnits.add(unit);
+					if (null != slab.getUnBuiltUnitRate())
+						unBuiltRate += slab.getUnBuiltUnitRate();
+				}
+				taxAmt = taxAmt.add(currentUnitTax);
+				if(unit.getUsageCategoryMajor().startsWith("RESIDENTIAL")==false) // if unit is NONRESIDENTIAL
+					commercialTaxAmt=commercialTaxAmt.add(currentUnitTax);
+				
+				
+				usageExemption = usageExemption
+						.add(getExemption(unit, currentUnitTax, assessmentYear, propertyBasedExemptionMasterMap));
+				i++;
+			}	
+			/*
+			 * making call to get unbuilt area tax estimate
+			 */
+			//taxAmt = taxAmt.add(getUnBuiltRate(detail, unBuiltRate, groundUnitsCount, groundUnitsArea));
+			HashMap<Unit, BigDecimal> unBuiltRateCalc = getUnBuiltRate(assessmentYear,detail, unitSlabMapping, groundFloorUnits, groundUnitsArea);
+
+			/*
+			 * making call to get unbuilt area tax estimate
+			 */
+			// all unbuilt area taxAmt
+			BigDecimal unBuiltTax=unBuiltRateCalc.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+			taxAmt = taxAmt.add(unBuiltTax);
+		
+			// unBuiltRateCalc contains map with unbuiltareas of units where as we are need commercial unbuilt unit tax also for FireCess
+			BigDecimal commercialUnbuiltTax=BigDecimal.ZERO;			
+			Iterator <Map.Entry<Unit, BigDecimal>> entries =unBuiltRateCalc.entrySet().iterator();
+			while (entries.hasNext()) {
+			    Map.Entry<Unit, BigDecimal> entry = entries.next();
+			    if(entry.getKey().getUsageCategoryMajor().startsWith("RESIDENTIAL")==false )
+			    	commercialUnbuiltTax=commercialUnbuiltTax.add(entry.getValue());
+			}
+			
+			
+			
+		//	->(((Unit)k.getUsageCategoryDetail().startsWith("RESIDENTIAL"))==false?(commercialUnbuiltTax= commercialUnbuiltTax.add(v)):"");
+			// Now commercial Unbuilt Tax is present in commercialUnbuiltTax 
+			
+			commercialTaxAmt=commercialTaxAmt.add(commercialUnbuiltTax).setScale(2,BigDecimal.ROUND_HALF_UP); // complete Commercial Tax Amount
+			
+			/*
+			 * special case to handle property with one unit
+			 */
+//			if (detail.getUnits().size() == 1)
+//				usageExemption = getExemption(detail.getUnits().get(0), taxAmt, assessmentYear,
+//						propertyBasedExemptionMasterMap);
+			
+			for (Map.Entry<Unit,BigDecimal> e: unBuiltRateCalc.entrySet()) {
+				BigDecimal ue = getExemption(e.getKey(), e.getValue(), assessmentYear, propertyBasedExemptionMasterMap);
+				usageExemption = usageExemption.add(ue);
+			}
+		}
+
+		List<TaxHeadEstimate> taxHeadEstimates =  getEstimatesForTax(requestInfo,taxAmt, usageExemption, property, propertyBasedExemptionMasterMap,
+				timeBasedExemptionMasterMap,masterMap,demand,commercialTaxAmt);
+
+		
+		//Add Additional Rebate (if given in application.Properties for given FY)
+		
+				String additional_rebate=null;
+				String aditional_rebate_upto_fy=null;
+				try
+				{
+				Resource resource = new ClassPathResource("/application.properties");
+			    Properties props = PropertiesLoaderUtils.loadProperties(resource);
+			    additional_rebate= props.containsKey("ADDITIONAL_REBATE_PERCENT")?props.getProperty("ADDITIONAL_REBATE_PERCENT"):null;
+			    aditional_rebate_upto_fy= props.containsKey("ADDITIONAL_REBATE_UPTO_FY") ? props.getProperty("ADDITIONAL_REBATE_UPTO_FY"):null;
+				}
+				catch(Exception ex)
+				{
+					additional_rebate=null;
+					aditional_rebate_upto_fy=null;
+				}
+				
+				if(additional_rebate!=null && (aditional_rebate_upto_fy!=null?assessmentYear.compareTo(aditional_rebate_upto_fy)<=0:true) ) //if additionalRebate is to be given and (if additionaRebate to be given uptoFY and assessmentYear is less than uptoFY)  
+					{
+					// additional Rebate to be given on nettax payable (sum of all taxes excluding FireCess and CancerCess)
+					   BigDecimal nettax=new BigDecimal(0);
+					   for (TaxHeadEstimate t : taxHeadEstimates)
+						if(!t.getTaxHeadCode().equals("PT_FIRE_CESS") && !t.getTaxHeadCode().equals("PT_CANCER_CESS"))
+						   nettax=nettax.add(t.getEstimateAmount());
+					   
+					   BigDecimal AdditionalRebateAmount=nettax.multiply(new BigDecimal(additional_rebate).divide(new BigDecimal(100.0))).setScale(2,BigDecimal.ROUND_UP);
+					   //updating TaxHeadCode with key "PT_TIME_REBATE" to add AdditionalRebate
+					   
+					   //List<TaxHeadEstimate>  c= taxHeadEstimates.stream().map(i -> (i.getTaxHeadCode()==""?i.setEstimateAmount(i.getEstimateAmount().add(AdditionalRebateAmount)):i.setEstimateAmount(i.getEstimateAmount()));
+					   for (TaxHeadEstimate t : taxHeadEstimates)
+						   if(t.getTaxHeadCode().equals("PT_TIME_REBATE"))
+							   t.setEstimateAmount(t.getEstimateAmount().subtract(AdditionalRebateAmount));
+						   		
+					   
+					}
+		
+		Map<String,List> estimatesAndBillingSlabs = new HashMap<>();
+		estimatesAndBillingSlabs.put("estimates",taxHeadEstimates);
+		estimatesAndBillingSlabs.put("billingSlabIds",billingSlabIds);
+
+		return estimatesAndBillingSlabs;
+
+	}
 	/**
 	 * Generates a List of Tax head estimates with tax head code,
 	 * tax head category and the amount to be collected for the key.

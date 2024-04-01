@@ -12,6 +12,7 @@ import org.egov.pt.calculator.web.models.BillingSlabSearchCriteria;
 import org.egov.pt.calculator.web.models.MutationBillingSlab;
 import org.egov.pt.calculator.web.models.MutationBillingSlabSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -36,14 +37,16 @@ public class PTCalculatorDBRepository {
 	@Autowired
 	private MutationBillingSlabRowMapper mutationBillingSlabRowMapper;
 	
+	@Cacheable(value = "billingSlabs", sync = true)
 	public List<BillingSlab> searchBillingSlab(BillingSlabSearchCriteria billingSlabSearcCriteria) {
 		
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = billingSlabQueryBuilder.getBillingSlabSearchQuery(billingSlabSearcCriteria, preparedStmtList);
-		log.info("Query: "+query);
+		log.debug("Query: "+query);
 		return jdbcTemplate.query(query, preparedStmtList.toArray(), billingSlabRowMapper);
 	}
 
+	@Cacheable(value = "mutationBillingSlabs", sync = true)
 	public List<MutationBillingSlab> searchMutationBillingSlab(MutationBillingSlabSearchCriteria billingSlabSearchCriteria){
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = mutationBillingSlabQueryBuilder.getBillingSlabSearchQuery(billingSlabSearchCriteria, preparedStmtList);
