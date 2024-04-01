@@ -1,17 +1,17 @@
 
-DROP TABLE IF EXISTS  eg_pg_qrtz_fired_triggers;
-DROP TABLE IF EXISTS  eg_pg_qrtz_PAUSED_TRIGGER_GRPS;
-DROP TABLE IF EXISTS  eg_pg_qrtz_SCHEDULER_STATE;
-DROP TABLE IF EXISTS  eg_pg_qrtz_LOCKS;
-DROP TABLE IF EXISTS  eg_pg_qrtz_simple_triggers;
-DROP TABLE IF EXISTS  eg_pg_qrtz_cron_triggers;
-DROP TABLE IF EXISTS  eg_pg_qrtz_simprop_triggers;
-DROP TABLE IF EXISTS  eg_pg_qrtz_BLOB_TRIGGERS;
-DROP TABLE IF EXISTS  eg_pg_qrtz_triggers;
-DROP TABLE IF EXISTS  eg_pg_qrtz_job_details;
-DROP TABLE IF EXISTS  eg_pg_qrtz_calendars;
+-- DROP TABLE IF EXISTS  eg_pg_qrtz_fired_triggers;
+-- DROP TABLE IF EXISTS  eg_pg_qrtz_PAUSED_TRIGGER_GRPS;
+-- DROP TABLE IF EXISTS  eg_pg_qrtz_SCHEDULER_STATE;
+-- DROP TABLE IF EXISTS  eg_pg_qrtz_LOCKS;
+-- DROP TABLE F EXISTS  eg_pg_qrtz_simple_triggers;
+-- DROP TABLE IF EXISTS  eg_pg_qrtz_cron_triggers;
+-- DROP TABLE IF EXISTS  eg_pg_qrtz_simprop_triggers;
+-- DROP TABLE IF EXISTS  eg_pg_qrtz_BLOB_TRIGGERS;
+-- DROP TABLE IF EXISTS  eg_pg_qrtz_triggers;
+-- DROP TABLE IF EXISTS  eg_pg_qrtz_job_details;
+-- DROP TABLE IF EXISTS  eg_pg_qrtz_calendars;
 
-CREATE TABLE eg_pg_qrtz_job_details
+CREATE TABLE IF NOT EXISTS  eg_pg_qrtz_job_details
   (
     SCHED_NAME VARCHAR(120) NOT NULL,
     JOB_NAME  VARCHAR(200) NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE eg_pg_qrtz_job_details
     PRIMARY KEY (SCHED_NAME,JOB_NAME,JOB_GROUP)
 );
 
-CREATE TABLE eg_pg_qrtz_triggers
+CREATE TABLE IF NOT EXISTS eg_pg_qrtz_triggers
   (
     SCHED_NAME VARCHAR(120) NOT NULL,
     TRIGGER_NAME VARCHAR(200) NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE eg_pg_qrtz_triggers
 	REFERENCES eg_pg_qrtz_JOB_DETAILS(SCHED_NAME,JOB_NAME,JOB_GROUP)
 );
 
-CREATE TABLE eg_pg_qrtz_simple_triggers
+CREATE TABLE IF NOT EXISTS eg_pg_qrtz_simple_triggers
   (
     SCHED_NAME VARCHAR(120) NOT NULL,
     TRIGGER_NAME VARCHAR(200) NOT NULL,
@@ -62,7 +62,7 @@ CREATE TABLE eg_pg_qrtz_simple_triggers
 	REFERENCES eg_pg_qrtz_TRIGGERS(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP)
 );
 
-CREATE TABLE eg_pg_qrtz_cron_triggers
+CREATE TABLE IF NOT EXISTS eg_pg_qrtz_cron_triggers
   (
     SCHED_NAME VARCHAR(120) NOT NULL,
     TRIGGER_NAME VARCHAR(200) NOT NULL,
@@ -74,7 +74,7 @@ CREATE TABLE eg_pg_qrtz_cron_triggers
 	REFERENCES eg_pg_qrtz_TRIGGERS(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP)
 );
 
-CREATE TABLE eg_pg_qrtz_simprop_triggers
+CREATE TABLE IF NOT EXISTS eg_pg_qrtz_simprop_triggers
   (
     SCHED_NAME VARCHAR(120) NOT NULL,
     TRIGGER_NAME VARCHAR(200) NOT NULL,
@@ -95,7 +95,7 @@ CREATE TABLE eg_pg_qrtz_simprop_triggers
     REFERENCES eg_pg_qrtz_TRIGGERS(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP)
 );
 
-CREATE TABLE eg_pg_qrtz_blob_triggers
+CREATE TABLE IF NOT EXISTS eg_pg_qrtz_blob_triggers
   (
     SCHED_NAME VARCHAR(120) NOT NULL,
     TRIGGER_NAME VARCHAR(200) NOT NULL,
@@ -106,7 +106,7 @@ CREATE TABLE eg_pg_qrtz_blob_triggers
         REFERENCES eg_pg_qrtz_TRIGGERS(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP)
 );
 
-CREATE TABLE eg_pg_qrtz_calendars
+CREATE TABLE IF NOT EXISTS eg_pg_qrtz_calendars
   (
     SCHED_NAME VARCHAR(120) NOT NULL,
     CALENDAR_NAME  VARCHAR(200) NOT NULL,
@@ -115,14 +115,14 @@ CREATE TABLE eg_pg_qrtz_calendars
 );
 
 
-CREATE TABLE eg_pg_qrtz_paused_trigger_grps
+CREATE TABLE IF NOT EXISTS eg_pg_qrtz_paused_trigger_grps
   (
     SCHED_NAME VARCHAR(120) NOT NULL,
     TRIGGER_GROUP  VARCHAR(200) NOT NULL,
     PRIMARY KEY (SCHED_NAME,TRIGGER_GROUP)
 );
 
-CREATE TABLE eg_pg_qrtz_fired_triggers
+CREATE TABLE IF NOT EXISTS eg_pg_qrtz_fired_triggers
   (
     SCHED_NAME VARCHAR(120) NOT NULL,
     ENTRY_ID VARCHAR(95) NOT NULL,
@@ -140,7 +140,7 @@ CREATE TABLE eg_pg_qrtz_fired_triggers
     PRIMARY KEY (SCHED_NAME,ENTRY_ID)
 );
 
-CREATE TABLE eg_pg_qrtz_scheduler_state
+CREATE TABLE IF NOT EXISTS eg_pg_qrtz_scheduler_state
   (
     SCHED_NAME VARCHAR(120) NOT NULL,
     INSTANCE_NAME VARCHAR(200) NOT NULL,
@@ -149,35 +149,35 @@ CREATE TABLE eg_pg_qrtz_scheduler_state
     PRIMARY KEY (SCHED_NAME,INSTANCE_NAME)
 );
 
-CREATE TABLE eg_pg_qrtz_locks
+CREATE TABLE IF NOT EXISTS eg_pg_qrtz_locks
   (
     SCHED_NAME VARCHAR(120) NOT NULL,
     LOCK_NAME  VARCHAR(40) NOT NULL,
     PRIMARY KEY (SCHED_NAME,LOCK_NAME)
 );
 
-create index idx_eg_pg_qrtz_j_req_recovery on eg_pg_qrtz_job_details(SCHED_NAME,REQUESTS_RECOVERY);
-create index idx_eg_pg_qrtz_j_grp on eg_pg_qrtz_job_details(SCHED_NAME,JOB_GROUP);
+create index IF NOT EXISTS idx_eg_pg_qrtz_j_req_recovery on eg_pg_qrtz_job_details(SCHED_NAME,REQUESTS_RECOVERY);
+create index IF NOT EXISTS idx_eg_pg_qrtz_j_grp on eg_pg_qrtz_job_details(SCHED_NAME,JOB_GROUP);
 
-create index idx_eg_pg_qrtz_t_j on eg_pg_qrtz_triggers(SCHED_NAME,JOB_NAME,JOB_GROUP);
-create index idx_eg_pg_qrtz_t_jg on eg_pg_qrtz_triggers(SCHED_NAME,JOB_GROUP);
-create index idx_eg_pg_qrtz_t_c on eg_pg_qrtz_triggers(SCHED_NAME,CALENDAR_NAME);
-create index idx_eg_pg_qrtz_t_g on eg_pg_qrtz_triggers(SCHED_NAME,TRIGGER_GROUP);
-create index idx_eg_pg_qrtz_t_state on eg_pg_qrtz_triggers(SCHED_NAME,TRIGGER_STATE);
-create index idx_eg_pg_qrtz_t_n_state on eg_pg_qrtz_triggers(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP,TRIGGER_STATE);
-create index idx_eg_pg_qrtz_t_n_g_state on eg_pg_qrtz_triggers(SCHED_NAME,TRIGGER_GROUP,TRIGGER_STATE);
-create index idx_eg_pg_qrtz_t_next_fire_time on eg_pg_qrtz_triggers(SCHED_NAME,NEXT_FIRE_TIME);
-create index idx_eg_pg_qrtz_t_nft_st on eg_pg_qrtz_triggers(SCHED_NAME,TRIGGER_STATE,NEXT_FIRE_TIME);
-create index idx_eg_pg_qrtz_t_nft_misfire on eg_pg_qrtz_triggers(SCHED_NAME,MISFIRE_INSTR,NEXT_FIRE_TIME);
-create index idx_eg_pg_qrtz_t_nft_st_misfire on eg_pg_qrtz_triggers(SCHED_NAME,MISFIRE_INSTR,NEXT_FIRE_TIME,TRIGGER_STATE);
-create index idx_eg_pg_qrtz_t_nft_st_misfire_grp on eg_pg_qrtz_triggers(SCHED_NAME,MISFIRE_INSTR,NEXT_FIRE_TIME,TRIGGER_GROUP,TRIGGER_STATE);
+create index IF NOT EXISTS idx_eg_pg_qrtz_t_j on eg_pg_qrtz_triggers(SCHED_NAME,JOB_NAME,JOB_GROUP);
+create index IF NOT EXISTS idx_eg_pg_qrtz_t_jg on eg_pg_qrtz_triggers(SCHED_NAME,JOB_GROUP);
+create index IF NOT EXISTS idx_eg_pg_qrtz_t_c on eg_pg_qrtz_triggers(SCHED_NAME,CALENDAR_NAME);
+create index IF NOT EXISTS idx_eg_pg_qrtz_t_g on eg_pg_qrtz_triggers(SCHED_NAME,TRIGGER_GROUP);
+create index IF NOT EXISTS idx_eg_pg_qrtz_t_state on eg_pg_qrtz_triggers(SCHED_NAME,TRIGGER_STATE);
+create index IF NOT EXISTS idx_eg_pg_qrtz_t_n_state on eg_pg_qrtz_triggers(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP,TRIGGER_STATE);
+create index IF NOT EXISTS idx_eg_pg_qrtz_t_n_g_state on eg_pg_qrtz_triggers(SCHED_NAME,TRIGGER_GROUP,TRIGGER_STATE);
+create index IF NOT EXISTS idx_eg_pg_qrtz_t_next_fire_time on eg_pg_qrtz_triggers(SCHED_NAME,NEXT_FIRE_TIME);
+create index IF NOT EXISTS idx_eg_pg_qrtz_t_nft_st on eg_pg_qrtz_triggers(SCHED_NAME,TRIGGER_STATE,NEXT_FIRE_TIME);
+create index IF NOT EXISTS idx_eg_pg_qrtz_t_nft_misfire on eg_pg_qrtz_triggers(SCHED_NAME,MISFIRE_INSTR,NEXT_FIRE_TIME);
+create index IF NOT EXISTS idx_eg_pg_qrtz_t_nft_st_misfire on eg_pg_qrtz_triggers(SCHED_NAME,MISFIRE_INSTR,NEXT_FIRE_TIME,TRIGGER_STATE);
+create index IF NOT EXISTS idx_eg_pg_qrtz_t_nft_st_misfire_grp on eg_pg_qrtz_triggers(SCHED_NAME,MISFIRE_INSTR,NEXT_FIRE_TIME,TRIGGER_GROUP,TRIGGER_STATE);
 
-create index idx_eg_pg_qrtz_ft_trig_inst_name on eg_pg_qrtz_fired_triggers(SCHED_NAME,INSTANCE_NAME);
-create index idx_eg_pg_qrtz_ft_inst_job_req_rcvry on eg_pg_qrtz_fired_triggers(SCHED_NAME,INSTANCE_NAME,REQUESTS_RECOVERY);
-create index idx_eg_pg_qrtz_ft_j_g on eg_pg_qrtz_fired_triggers(SCHED_NAME,JOB_NAME,JOB_GROUP);
-create index idx_eg_pg_qrtz_ft_jg on eg_pg_qrtz_fired_triggers(SCHED_NAME,JOB_GROUP);
-create index idx_eg_pg_qrtz_ft_t_g on eg_pg_qrtz_fired_triggers(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP);
-create index idx_eg_pg_qrtz_ft_tg on eg_pg_qrtz_fired_triggers(SCHED_NAME,TRIGGER_GROUP);
+create index IF NOT EXISTS idx_eg_pg_qrtz_ft_trig_inst_name on eg_pg_qrtz_fired_triggers(SCHED_NAME,INSTANCE_NAME);
+create index IF NOT EXISTS idx_eg_pg_qrtz_ft_inst_job_req_rcvry on eg_pg_qrtz_fired_triggers(SCHED_NAME,INSTANCE_NAME,REQUESTS_RECOVERY);
+create index IF NOT EXISTS idx_eg_pg_qrtz_ft_j_g on eg_pg_qrtz_fired_triggers(SCHED_NAME,JOB_NAME,JOB_GROUP);
+create index IF NOT EXISTS idx_eg_pg_qrtz_ft_jg on eg_pg_qrtz_fired_triggers(SCHED_NAME,JOB_GROUP);
+create index IF NOT EXISTS idx_eg_pg_qrtz_ft_t_g on eg_pg_qrtz_fired_triggers(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP);
+create index IF NOT EXISTS idx_eg_pg_qrtz_ft_tg on eg_pg_qrtz_fired_triggers(SCHED_NAME,TRIGGER_GROUP);
 
 
 commit;

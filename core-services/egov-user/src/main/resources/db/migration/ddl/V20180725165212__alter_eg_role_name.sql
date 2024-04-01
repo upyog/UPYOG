@@ -1,1 +1,1 @@
-alter table  eg_role ALTER COLUMN IF NOT EXISTS  name TYPE VARCHAR(128);
+alter table  eg_role ALTER COLUMN   name TYPE VARCHAR(128);

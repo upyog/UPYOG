@@ -32,6 +32,7 @@ public class EarlyReconciliationJob implements Job {
     @PostConstruct
     public void init() {
         User userInfo = User.builder()
+         //.uuid("EARLY_RECONC_JOB")
                 .uuid(appProperties.getEgovPgReconciliationSystemUserUuid())
                 .type("SYSTEM")
                 .roles(Collections.emptyList()).id(0L).build();

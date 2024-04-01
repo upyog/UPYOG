@@ -1,7 +1,7 @@
-DROP TABLE IF EXISTS  eg_pg_transactions;
-DROP TABLE IF EXISTS  eg_pg_transactions_dump;
+-- DROP TABLE IF EXISTS  eg_pg_transactions;
+-- DROP TABLE IF EXISTS  eg_pg_transactions_dump;
 
-CREATE TABLE "eg_pg_transactions" (
+CREATE TABLE IF NOt EXISTS   "eg_pg_transactions" (
 	"txn_id" VARCHAR(128) NOT NULL,
 	"txn_amount" NUMERIC(15,2) NOT NULL,
 	"txn_status" VARCHAR(64) NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE "eg_pg_transactions" (
 	PRIMARY KEY ("txn_id")
 );
 
-CREATE TABLE "eg_pg_transactions_dump" (
+CREATE TABLE IF NOT EXISTS  "eg_pg_transactions_dump" (
 	"txn_id" VARCHAR(128) NOT NULL,
 	"txn_request" varchar NULL,
 	"txn_response" JSONB NULL,
