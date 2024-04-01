@@ -66,9 +66,9 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
   }
   },[])
   const registerUser = async (response) => {
-    console.log("registerUser",response)
+    console.log("registerUser",response?.TokenRes)
     const data = {
-      dob: response?.TokenRes?.dob.substring(0, 2) +"/"+response?.dob.substring(2,4)+"/"+response?.dob.substring(4, 8),
+      dob: response?.TokenRes?.dob.substring(0, 2) +"/"+response?.TokenRes?.substring(2,4)+"/"+response?.TokenRes?.dob.substring(4, 8),
       mobileNumber: response?.TokenRes?.mobile,
       name: response?.TokenRes?.name,
       tenantId: "pg",
