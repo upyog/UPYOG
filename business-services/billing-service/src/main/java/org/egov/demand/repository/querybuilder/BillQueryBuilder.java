@@ -132,6 +132,11 @@ public class BillQueryBuilder {
 			selectQuery.append(" AND bd.billno = ?");
 			preparedStatementValues.add(searchBill.getBillNumber());
 		}
+		
+		if (searchBill.getDemandId() != null) {
+			selectQuery.append(" AND bd.demandid = ?");
+			preparedStatementValues.add(searchBill.getDemandId());
+		}
 
 		if (!CollectionUtils.isEmpty(searchBill.getConsumerCode())) {
 			selectQuery.append(" AND bd.consumercode IN (");

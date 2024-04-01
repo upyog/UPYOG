@@ -202,4 +202,11 @@ public class ApplicationProperties {
 
 	@Value("${egov.assessmentservice.search.endpoint}")
 	private String	assessmentSearchEndpoint;
+	
+	@Value("${egov.pgservice.search.endpoint}")
+	private String pgSeriviceEndpoint;
+	
+	@Value("${egov.pgservice.host}")
+	private String pgSeriviceHost;
+	
 }

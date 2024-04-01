@@ -87,6 +87,9 @@ import org.egov.demand.model.DemandDetail;
 import org.egov.demand.model.GenerateBillCriteria;
 import org.egov.demand.model.TaxHeadMaster;
 import org.egov.demand.model.TaxHeadMasterCriteria;
+import org.egov.demand.model.Transaction;
+import org.egov.demand.model.TransactionRequest;
+import org.egov.demand.model.TransactionResponse;
 import org.egov.demand.model.UpdateBillCriteria;
 import org.egov.demand.model.UpdateBillRequest;
 import org.egov.demand.producer.Producer;
@@ -603,12 +606,16 @@ public class BillServicev2 {
 		
 		
 		
-		String authURL = new StringBuilder().append(appProps.getAssessmentServiceHost()).append(appProps.getAssessmentSearchEndpoint())
+		String assesmentUrl = new StringBuilder().append(appProps.getAssessmentServiceHost()).append(appProps.getAssessmentSearchEndpoint())
 				.append(URL_PARAMS_SEPARATER).append("propertyIds=").append(propertyId).append(URL_PARAM_SEPERATOR)
 				.append("tenantId=").append(tenantId).toString();
 		
+		String transactiontUrl = new StringBuilder().append(appProps.getPgSeriviceHost()).append(appProps.getPgSeriviceEndpoint())
+				.append(URL_PARAMS_SEPARATER).append("propertyIds=").append(propertyId).append(URL_PARAM_SEPERATOR)
+				.append("tenantId=").append(tenantId).toString();
 		
-		AssessmentResponseV2 assessmentResponseV2=restTemplate.postForObject(authURL, requestInfo, AssessmentResponseV2.class);
+		TransactionRequest transactionRequest = null;
+		AssessmentResponseV2 assessmentResponseV2=restTemplate.postForObject(assesmentUrl, requestInfo, AssessmentResponseV2.class);
 		AssessmentV2 assessmentV2=assessmentResponseV2.getAssessments().stream().filter(t->t.getFinancialYear().equalsIgnoreCase(financialYearFromDemand.toString())).collect(Collectors.toList()).get(0);
 		
 		if(null==assessmentV2.getModeOfPayment()) {
@@ -629,6 +636,27 @@ public class BillServicev2 {
 		String expiryDate = null;
 		BigDecimal newTotalAmountForModeOfPayment = new BigDecimal(0);
 		
+		BillSearchCriteria billCriteria = new BillSearchCriteria();
+		billCriteria.setTenantId(demand.getTenantId());
+		billCriteria.setDemandId(demand.getId());
+		List<Transaction> transactionForBills = new ArrayList<>();
+		Map<String,String> quaterCheckMap = new HashMap<>();
+		List<BillV2> bills = billRepository.findBill(billCriteria);
+		Map<String, Transaction> transactionMap = new HashMap<>();
+		for(BillV2 bl:bills) {
+			transactionRequest = new TransactionRequest();
+			transactionRequest.setRequestInfo(requestInfo);
+			Transaction tr = new Transaction();
+			tr.setBillId(bl.getId());
+			transactionRequest.setTransaction(tr);
+			TransactionResponse tres = restTemplate.postForObject(assesmentUrl, transactionRequest, TransactionResponse.class);
+			if(null!=tres.getTransactions()) {
+				transactionMap.put(bl.getId(), tres.getTransactions().get(0));
+				transactionForBills = tres.getTransactions();
+			}
+			
+			
+		}
 		
 		switch (assessmentV2.getModeOfPayment().toString()) {
 		case "QUARTERLY":
@@ -652,6 +680,9 @@ public class BillServicev2 {
 				expiryDate="31-03-"+currentyear;
 			}
 			newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+			
+			//Check For Previous Pending Bills 
+			
 			totalAmountForDemand = newTotalAmountForModeOfPayment;
 			
 			break;
