@@ -243,7 +243,7 @@ public class EstimationService {
 	 * @return CalculationRes calculation object containing all the tax for the given criteria.
 	 */
 	public CalculationRes getTaxCalculation(CalculationReq request) {
-		assessmentdata(request);
+		checkAssessmentIsDone(request);
 		CalculationCriteria criteria = request.getCalculationCriteria().get(0);
 		Property property = criteria.getProperty();
 		PropertyDetail detail = property.getPropertyDetails().get(0);
@@ -252,7 +252,7 @@ public class EstimationService {
 		return new CalculationRes(new ResponseInfo(), Collections.singletonList(getCalculation(request.getRequestInfo(), criteria, masterMap)));
 	}
 	
-	public void assessmentdata(CalculationReq request)
+	public void checkAssessmentIsDone(CalculationReq request)
 	{
 		CalculationCriteria criteria = request.getCalculationCriteria().get(0);
 		Property property = criteria.getProperty();
@@ -315,6 +315,7 @@ public class EstimationService {
 
 		else if (PT_TYPE_VACANT_LAND.equalsIgnoreCase(detail.getPropertyType())) {
 			taxAmt = taxAmt.add(BigDecimal.valueOf(filteredBillingSlabs.get(0).getUnitRate() * detail.getLandArea()));
+			billingSlabIds.add(filteredBillingSlabs.get(0).getId()+"|"+1);
 
 			/*
 			 * taxHeadEstimate = getBiilinfEstimatesForTax(requestInfo,taxAmt,
@@ -330,7 +331,7 @@ public class EstimationService {
 			//AGE OF PROPERTY
 			taxAmt=getApplicableTaxForRoadType(taxAmt,propertyBasedExemptionMasterMap,detail,detail.getPropertyType());
 			taxAmt = getApplicableTaxForAgeOfProperty(taxAmt,propertyBasedExemptionMasterMap,detail,detail.getPropertyType(),null);
-			taxAmt=getApplicableTaxForOwnerUsageCategory(usageExemption, propertyBasedExemptionMasterMap, detail,null);
+			taxAmt=getApplicableTaxForOwnerUsageCategory(taxAmt, propertyBasedExemptionMasterMap, detail,null);
 
 		} else {
 

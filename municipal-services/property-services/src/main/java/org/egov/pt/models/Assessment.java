@@ -61,6 +61,10 @@ public class Assessment {
 
 	@JsonProperty("source")
 	private Source source ;
+	
+	@NotNull
+	@JsonProperty("modeOfPayment")
+	private ModeOfPayment modeOfPayment; 
 
 	@JsonProperty("unitUsageList")
 	@Valid
@@ -116,7 +120,39 @@ public class Assessment {
 			return null;
 		}
 	}
+	
+	public enum ModeOfPayment {
 
+		YEARLY("YEARLY"),
+
+		QUARTERLY("QUARTERLY"),
+
+		HALFYEARLY("HALFYEARLY"),
+
+		FIELD_SURVEY("FIELD_SURVEY");
+
+		private String value;
+
+		ModeOfPayment(String value) {
+			this.value = value;
+		}
+
+		@Override
+		@JsonValue
+		public String toString() {
+			return String.valueOf(value);
+		}
+
+		@JsonCreator
+		public static Source fromValue(String text) {
+			for (Source b : Source.values()) {
+				if (String.valueOf(b.value).equalsIgnoreCase(text)) {
+					return b;
+				}
+			}
+			return null;
+		}
+	}
 	public Assessment addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {
 			this.documents = new HashSet<>();

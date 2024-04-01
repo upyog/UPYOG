@@ -226,6 +226,8 @@ public class BillServicev2 {
 			billCriteria.setConsumerCode(new HashSet<>());
 		BillResponseV2 res = searchBill(billCriteria.toBillSearchCriteria(), requestInfo);
 		List<BillV2> bills = res.getBill();
+		
+		
 
 		/* 
 		 * If no existing bills found then Generate new bill 
@@ -260,7 +262,7 @@ public class BillServicev2 {
 		
 		for (Entry<String, BillV2> entry : consumerCodeAndBillMap.entrySet()) {
 			BillV2 bill = entry.getValue();
-
+			System.out.println(System.currentTimeMillis());
 			for (BillDetailV2 billDetail : bill.getBillDetails()) {
 				if (billDetail.getExpiryDate().compareTo(System.currentTimeMillis()) < 0) {
 					isBillExpired = true;
