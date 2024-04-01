@@ -48,8 +48,10 @@ import static org.egov.demand.util.Constants.URL_NOT_CONFIGURED_FOR_DEMAND_UPDAT
 import static org.egov.demand.util.Constants.URL_NOT_CONFIGURED_REPLACE_TEXT;
 import static org.egov.demand.util.Constants.URL_PARAMS_FOR_SERVICE_BASED_DEMAND_APIS;
 import static org.egov.demand.util.Constants.URL_PARAM_SEPERATOR;
+import static org.egov.demand.util.Constants.URL_PARAMS_SEPARATER;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -67,6 +69,8 @@ import java.util.stream.Stream;
 import org.egov.common.contract.request.PlainAccessRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.demand.config.ApplicationProperties;
+import org.egov.demand.model.AssessmentResponseV2;
+import org.egov.demand.model.AssessmentV2;
 import org.egov.demand.model.BillAccountDetailV2;
 import org.egov.demand.model.BillDetailV2;
 import org.egov.demand.model.BillSearchCriteria;
@@ -104,6 +108,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -151,6 +156,8 @@ public class BillServicev2 {
 	
 	@Autowired
 	private ObjectMapper mapper;
+	
+	private RestTemplate restTemplate;
 
 	@Value("${kafka.topics.cancel.bill.topic.name}")
 	private String billCancelTopic;
@@ -484,7 +491,7 @@ public class BillServicev2 {
 
 					minimumAmtPayableForBill = minimumAmtPayableForBill.add(demand.getMinimumAmountPayable());
 					String billDetailId = UUID.randomUUID().toString();
-					BillDetailV2 billDetail = getBillDetailForDemand(demand, taxHeadMap, billDetailId);
+					BillDetailV2 billDetail = getBillDetailForDemand(demand, taxHeadMap, billDetailId,requestInfo);
 					billDetail.setBillId(billId);
 					billDetail.setId(billDetailId);
 					billDetails.add(billDetail);
@@ -518,6 +525,7 @@ public class BillServicev2 {
 		return bills;
 	}
 
+	
 	private List<String> getBillNumbers(RequestInfo requestInfo, String tenantId, String module, int count) {
 
 		String billNumberFormat = appProps.getBillNumberFormat();
@@ -537,15 +545,17 @@ public class BillServicev2 {
 	 *  
 	 * @param demand
 	 * @param taxHeadMap
+	 * @param requestInfo 
 	 * @param businessDetailMap
 	 * @return
 	 */
-	private BillDetailV2 getBillDetailForDemand(Demand demand, Map<String, TaxHeadMaster> taxHeadMap, String billDetailId) {
+	private BillDetailV2 getBillDetailForDemand(Demand demand, Map<String, TaxHeadMaster> taxHeadMap, String billDetailId, RequestInfo requestInfo) {
 		
 		Long startPeriod = demand.getTaxPeriodFrom();
 		Long endPeriod = demand.getTaxPeriodTo();
 		String tenantId = demand.getTenantId();
-
+		String propertyId=demand.getConsumerCode();
+		
 		BigDecimal totalAmountForDemand = BigDecimal.ZERO;
 		
 
@@ -566,6 +576,17 @@ public class BillServicev2 {
 			totalAmountForDemand = totalAmountForDemand.add(amountForAccDeatil);
 		}
 
+		Date date=new Date(startPeriod);
+		System.out.println(date.getYear());
+		
+		String authURL = new StringBuilder().append(appProps.getAssessmentServiceHost()).append(appProps.getAssessmentSearchEndpoint())
+				.append(URL_PARAMS_SEPARATER).append("propertyIds=").append(propertyId).append(URL_PARAM_SEPERATOR)
+				.append("tenantId=").append(tenantId).toString();
+		
+		
+		AssessmentResponseV2 assessmentResponseV2=restTemplate.postForObject(authURL, requestInfo, AssessmentResponseV2.class);
+		//List<AssessmentV2> assessmentV2=assessmentResponseV2.getAssessments().stream().filter(t->t.getFinancialYear().equalsIgnoreCase())
+		
 		
 		Long billExpiryDate = getExpiryDateForDemand(demand);
 		

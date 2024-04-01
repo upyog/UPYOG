@@ -162,6 +162,8 @@ public class Constants {
 
 	public static final String URL_PARAM_SEPERATOR = "&";
 	
+	public static final String URL_PARAMS_SEPARATER = "?";
+	
 	public static final String RESPONSEINFO_STRING = "ResponseInfo";
 	
 	public static final String MESSAGE_STRING = "Message";
