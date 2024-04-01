@@ -144,8 +144,8 @@ public class Assessment {
 		}
 
 		@JsonCreator
-		public static Source fromValue(String text) {
-			for (Source b : Source.values()) {
+		public static ModeOfPayment fromValue(String text) {
+			for (ModeOfPayment b : ModeOfPayment.values()) {
 				if (String.valueOf(b.value).equalsIgnoreCase(text)) {
 					return b;
 				}
