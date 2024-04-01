@@ -52,6 +52,8 @@ import static org.egov.demand.util.Constants.URL_PARAMS_SEPARATER;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -272,7 +274,6 @@ public class BillServicev2 {
 		
 		for (Entry<String, BillV2> entry : consumerCodeAndBillMap.entrySet()) {
 			BillV2 bill = entry.getValue();
-			System.out.println(System.currentTimeMillis());
 			for (BillDetailV2 billDetail : bill.getBillDetails()) {
 				if (billDetail.getExpiryDate().compareTo(System.currentTimeMillis()) < 0) {
 					isBillExpired = true;
@@ -587,14 +588,17 @@ public class BillServicev2 {
 		StringBuilder financialYearFromDemand = new StringBuilder();
 		financialYearFromDemand.append(c.get(Calendar.YEAR));
 		financialYearFromDemand.append("-");
+		c = Calendar.getInstance();
 		c.setTime(endDate);
 		//current Date
 		
-		Date currentDate = new Date(System.currentTimeMillis()*1000);
-		c.setTime(currentDate);
-		Integer cuurentMonth = c.get(Calendar.MONTH);
-		Integer currentyear =  c.get(Calendar.YEAR);
-		Integer b= c.get(Calendar.YEAR);
+		Date currentDate = new Date(System.currentTimeMillis());
+		Calendar crd = Calendar.getInstance();
+		crd.setTime(currentDate);
+		Integer cuurentMonth = crd.get(Calendar.MONTH)+1;
+		Integer currentyear =  crd.get(Calendar.YEAR);
+		
+		Integer b= crd.get(Calendar.YEAR);
 		financialYearFromDemand.append(b.toString().substring(2,4));
 		
 		
@@ -636,41 +640,47 @@ public class BillServicev2 {
 		
 		String quarter = null;
 		String expiryDate = null;
-		
+		BigDecimal newTotalAmountForModeOfPayment = new BigDecimal(0);
 		
 		
 		switch (assessmentV2.getModeOfPayment().toString()) {
 		case "QUARTERLY":
 			if(q1.contains(cuurentMonth)) {
-				quarter="q1";
+				quarter="Q1";
 				expiryDate="30-06-"+currentyear;
 			}
 			else if(q2.contains(cuurentMonth))
 			{
-				quarter="q2";
+				quarter="Q2";
 				expiryDate="30-09-"+currentyear;
 			}
 			else if(q3.contains(cuurentMonth))
 			{
-				quarter="q3";
+				quarter="Q3";
 				expiryDate="31-12-"+currentyear;
 			}
 			else if(q4.contains(cuurentMonth))
 			{
-				quarter="q4";
+				quarter="Q4";
 				expiryDate="31-03-"+currentyear;
 			}
+			newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+			totalAmountForDemand = newTotalAmountForModeOfPayment;
+			
 			break;
 		case "HALFYEARLY":
 			if(h1.contains(cuurentMonth)) {
-				quarter="h1";
+				quarter="H1";
 				expiryDate="30-09-"+currentyear;
 			}
 			else if(h2.contains(cuurentMonth))
 			{
-				quarter="h2";
+				quarter="H2";
 				expiryDate="31-12-"+currentyear;
 			}
+			
+			newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(2));
+			totalAmountForDemand = newTotalAmountForModeOfPayment;
 			
 			break;
 					
@@ -681,8 +691,20 @@ public class BillServicev2 {
 			break;
 		}
 		
+		Calendar datexp = Calendar.getInstance();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		
-		Long billExpiryDate = getExpiryDateForDemand(demand);
+		try {
+			java.util.Date parsedDate =  dateFormat.parse(expiryDate);
+			datexp.setTime(parsedDate);
+			datexp.set(datexp.get(Calendar.YEAR), datexp.get(Calendar.MONTH), datexp.get(Calendar.DATE), 23, 59, 59);
+		} catch (ParseException e) {
+			
+			e.printStackTrace();
+		}
+		
+		//Long billExpiryDate = getExpiryDateForDemand(demand);
+		Long billExpiryDate = datexp.getTimeInMillis();
 		
 		return BillDetailV2.builder()
 				.billAccountDetails(new ArrayList<>(taxCodeAccountdetailMap.values()))
