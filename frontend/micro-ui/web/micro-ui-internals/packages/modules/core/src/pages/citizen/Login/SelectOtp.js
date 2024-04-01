@@ -68,12 +68,13 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
   const registerUser = async (response) => {
     console.log("registerUser",response)
     const data = {
-      dob: response?.dob.substring(0, 2) +"/"+response?.dob.substring(2,4)+"/"+response?.dob.substring(4, 8),
-      mobileNumber: response.mobile,
-      name: response.name,
+      dob: response?.TokenRes?.dob.substring(0, 2) +"/"+response?.dob.substring(2,4)+"/"+response?.dob.substring(4, 8),
+      mobileNumber: response?.TokenRes?.mobile,
+      name: response?.TokenRes?.name,
       tenantId: "pg",
       userType: getUserType(),
     };
+      sessionStorage.setItem("userName",response?.TokenRes?.mobile)
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
       if (!err) {
         history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
@@ -81,7 +82,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
       }
       else {
         const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } })
-        sessionStorage.setItem("userName",response.mobile)
+        sessionStorage.setItem("userName",response?.TokenRes?.mobile)
       }
   }; 
   const handleResendOtp = () => {
