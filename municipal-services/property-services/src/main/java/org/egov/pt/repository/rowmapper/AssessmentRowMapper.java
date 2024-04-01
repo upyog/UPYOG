@@ -50,7 +50,8 @@ public class AssessmentRowMapper implements ResultSetExtractor<List<Assessment>>
 						.assessmentDate(rs.getLong("ass_assessmentdate"))
 						.financialYear(rs.getString("ass_financialyear"))
 						.propertyId(rs.getString("ass_propertyid"))
-						.modeOfPayment(ModeOfPayment.fromValue(rs.getString("ass_modeofpayment")))
+						.modeOfPayment(null!=rs.getString("ass_modeofpayment") && 
+						!rs.getString("ass_modeofpayment").isEmpty()?ModeOfPayment.fromValue(rs.getString("ass_modeofpayment")):null)
 						.source(Source.fromValue(rs.getString("ass_source")))
 						.unitUsageList(new ArrayList<>())
 						.documents(new HashSet<>()).build();
