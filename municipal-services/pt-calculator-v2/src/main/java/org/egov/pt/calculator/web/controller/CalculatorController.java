@@ -40,7 +40,8 @@ public class CalculatorController {
 
 	@PostMapping("/_estimate")
 	public ResponseEntity<CalculationRes> getTaxEstimation(@RequestBody @Valid CalculationReq calculationReq) {
-		return new ResponseEntity<>(calculatorService.getTaxCalculation(calculationReq), HttpStatus.OK);
+	return new ResponseEntity<>(calculatorService.getTaxCalculation(calculationReq,null), HttpStatus.OK);
+	//return new ResponseEntity<>(calculatorService.getTaxCalculation(calculationReq), HttpStatus.OK);
 	}
 
 	@PostMapping("/_calculate")
@@ -63,6 +64,13 @@ public class CalculatorController {
 	@PostMapping("/mutation/_calculate")
 	public ResponseEntity<Map<String, Calculation>> mutationCalculator(@RequestBody @Valid PropertyRequestV2 request) {
 		return new ResponseEntity<>(calculatorService.mutationCalculator(request.getProperty(), request.getRequestInfo()), HttpStatus.OK);
+	}
+	
+	@PostMapping("/_updatedemandForAssessmentCancel")
+	public ResponseEntity<DemandResponse> updateDemandForAssessmentCancel(@RequestBody BillCriteriaReq billCriteriaReq) {
+		RequestInfoWrapper requestInfoWrapper= new RequestInfoWrapper();
+		requestInfoWrapper.setRequestInfo(billCriteriaReq.getRequestInfo());
+		return new ResponseEntity<>(demandService.updateDemandsForAssessmentCancel(billCriteriaReq.getGetBillCriteria().get(0), requestInfoWrapper), HttpStatus.OK);
 	}
 
 }

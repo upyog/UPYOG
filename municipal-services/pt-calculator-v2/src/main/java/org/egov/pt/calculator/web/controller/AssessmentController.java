@@ -46,4 +46,11 @@ public class AssessmentController {
 		return new ResponseEntity<>("Re-Assessment done generated for the configured tenants.", HttpStatus.CREATED);
 	}
 	
+	@PostMapping("/cancelassessment/_job")
+	public ResponseEntity<Object> cancelAssessment(@Valid @RequestBody CreateAssessmentRequest assessmentRequest) {
+
+		assessmentService.cancelAssessmentsForFY(assessmentRequest);
+		return new ResponseEntity<>("Cancel-Assessment done generated for the configured tenants.", HttpStatus.CREATED);
+	}
+	
 }

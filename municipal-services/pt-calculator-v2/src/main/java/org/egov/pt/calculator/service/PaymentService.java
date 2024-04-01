@@ -37,7 +37,8 @@ public class PaymentService {
 
 	@Autowired
     private ObjectMapper mapper;
-
+    @Autowired
+ private CalculatorUtils utils;
     @Autowired
     private Configurations configurations;
 
