@@ -1,16 +1,17 @@
 import { useQuery } from "react-query";
 import { MdmsService } from "../../services/elements/MDMS";
+import { MdmsServiceV2 } from "../../services/elements/MDMSV2";
 
 const useMDMS = (tenantId, moduleCode, type, config = {}, payload = []) => {
   const queryConfig = { staleTime: Infinity, ...config };
   const useDocumentMapping = () => {
-    return useQuery('DOCUMENT_MAPPING', () => MdmsService.getDocumentTypes(tenantId, moduleCode, type), queryConfig);
-  }
+    return useQuery("DOCUMENT_MAPPING", () => MdmsServiceV2.getDocumentTypes(tenantId, moduleCode, type), queryConfig);
+  };
   const useTradeTypetoRoleMapping = () => {
-    return useQuery('ROLE_DOCUMENT_MAPPING', () => MdmsService.getTradeTypeRoleTypes(tenantId, moduleCode, type), queryConfig);
-  }
+    return useQuery("ROLE_DOCUMENT_MAPPING", () => MdmsServiceV2.getTradeTypeRoleTypes(tenantId, moduleCode, type), queryConfig);
+  };
   const _default = () => {
-    return useQuery([tenantId, moduleCode, type], () => MdmsService.getMultipleTypes(tenantId, moduleCode, type), config);
+    return useQuery([tenantId, moduleCode, type], () => MdmsServiceV2.getMultipleTypes(tenantId, moduleCode, type), config);
   };
 
   switch (type) {
@@ -21,6 +22,6 @@ const useMDMS = (tenantId, moduleCode, type, config = {}, payload = []) => {
     default:
       return _default();
   }
-}
+};
 
-export default useMDMS; 
+export default useMDMS;
