@@ -28,7 +28,7 @@ const NewApplication = () => {
     { filters: { propertyIds: propertyId }, tenantId: tenantId },
     { filters: { propertyIds: propertyId }, tenantId: tenantId, enabled: propertyId ? true : false }
   );
-  console.log("pd123", propertyDetails)
+  //console.log("pd123", propertyDetails)
 
   useEffect(() => {
     !propertyId && setPropertyId(sessionFormData?.cpt?.details?.propertyId);
