@@ -1,5 +1,5 @@
 {
-    "name": "@egovernments/digit-ui-module-engagement",
+    "name": "@upyog/digit-ui-module-engagement",
     "version": "1.7.2",
     "license": "MIT",
     "main": "dist/index.js",
@@ -26,6 +26,6 @@
         "react-query": "3.6.1",
         "react-router-dom": "5.3.0",
         "react-time-picker": "4.2.1",
-        "recharts": "^2.0.9"
+        "recharts": "2.0.9"
     }
 }

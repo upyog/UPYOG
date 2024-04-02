@@ -13,9 +13,12 @@ const CheckSlum = ({ t, config, onSelect, userType, formData }) => {
 
   const onSkip = () => onSelect();
   function goNext() {
-    sessionStorage.removeItem("Digit.total_amount")
+    sessionStorage.removeItem("Digit.total_amount");
     onSelect(config.key, { slumArea });
   }
+  useEffect(() => {
+    if (formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT") onSkip();
+  }, [formData]);
 
   return (
     <React.Fragment>

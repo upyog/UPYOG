@@ -140,12 +140,6 @@ const SelectRating = ({ parentRoute }) => {
         name: "comments",
         className: "Hello",
       },
-      {
-        type: "text",
-        label: t("CS_NO_TRIPS"),
-        name: "noOfTrips",
-        className: "Hello",
-      },
     ],
   };
   return (

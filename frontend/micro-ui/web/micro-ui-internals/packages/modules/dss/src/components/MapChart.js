@@ -40,6 +40,8 @@ const getColor = (current) => {
         return COLOR_RANGE[0];
       case "OnBoarded":
         return COLOR_RANGE[1];
+      case "UnderImplementation":
+        return COLOR_RANGE[2];
       case "None":
         return DEFAULT_COLOR;
       default:

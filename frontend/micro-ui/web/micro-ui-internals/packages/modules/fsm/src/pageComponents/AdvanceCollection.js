@@ -38,7 +38,7 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
         title: t("ES_NEW_APPLICATION_AMOUNT_INVALID"),
       },
 
-      default: formData?.advanceAmount,
+      default: url.includes("modify") ? applicationData?.advanceAmount : formData?.advanceAmount,
       isMandatory: true,
     },
   ];
@@ -56,7 +56,13 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
         setVehicle({ label: formData?.tripData?.vehicleType?.capacity });
       }
 
-      if (formData?.propertyType && formData?.subtype && formData?.address && formData?.tripData?.vehicleType?.capacity) {
+      if (
+        formData?.propertyType &&
+        formData?.subtype &&
+        formData?.address &&
+        formData?.tripData?.vehicleType?.capacity &&
+        formData?.address?.propertyLocation?.code === "WITHIN_ULB_LIMITS"
+      ) {
         const capacity = formData?.tripData?.vehicleType.capacity;
         const { slum: slumDetails } = formData.address;
         const slum = slumDetails ? "YES" : "NO";
@@ -78,11 +84,11 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
           Digit.SessionStorage.set("advance_amount", advanceBalanceAmount);
           setTotalAmount(totaltripAmount);
           setAdvanceAmounts(advanceBalanceAmount);
-          !url.includes("modify") || (url.includes("modify") && advanceBalanceAmount > formData?.advancepaymentPreference?.advanceAmount)
-            ? setValue({
-                advanceAmount: advanceBalanceAmount,
-              })
-            : null;
+          if (!url.includes("modify") || (url.includes("modify") && advanceBalanceAmount > formData?.advancepaymentPreference?.advanceAmount)) {
+            setValue({
+              advanceAmount: advanceBalanceAmount,
+            });
+          }
           setError(false);
         } else {
           sessionStorage.removeItem("Digit.total_amount");
@@ -92,6 +98,37 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
       }
     })();
   }, [formData?.propertyType, formData?.subtype, formData?.address?.slum, formData?.tripData?.vehicleType?.capacity, formData?.tripData?.noOfTrips]);
+
+  useEffect(() => {
+    (async () => {
+      if (formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" && formData.tripData.noOfTrips && formData.tripData.amountPerTrip) {
+        const totaltripAmount = formData.tripData.amountPerTrip * formData.tripData.noOfTrips;
+
+        const { advanceAmount: advanceBalanceAmount } = await Digit.FSMService.advanceBalanceCalculate(tenantId, {
+          totalTripAmount: totaltripAmount,
+        });
+        Digit.SessionStorage.set("total_amount", totaltripAmount);
+        Digit.SessionStorage.set("advance_amount", advanceBalanceAmount);
+        setTotalAmount(totaltripAmount);
+        setAdvanceAmounts(advanceBalanceAmount);
+        if (formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" && url.includes("modify")) {
+          setValue({
+            advanceAmount: 0,
+          });
+        } else if (
+          !url.includes("modify") ||
+          url.includes("modify") ||
+          (formData?.advancepaymentPreference?.advanceAmount > 0 && advanceBalanceAmount > formData?.advancepaymentPreference?.advanceAmount)
+        ) {
+          setValue({
+            advanceAmount: advanceBalanceAmount,
+          });
+        }
+
+        setError(false);
+      }
+    })();
+  }, [formData.tripData.noOfTrips, formData.tripData.amountPerTrip]);
   return isVehicleMenuLoading && isDsoLoading ? (
     <Loader />
   ) : (
@@ -99,7 +136,6 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
       {formData?.tripData?.amountPerTrip !== 0 &&
         inputs?.map((input, index) => {
           let currentValue = formData && formData[config.key] && formData[config.key][input.name];
-
           return (
             <React.Fragment key={index}>
               <LabelFieldPair key={index}>
@@ -110,15 +146,17 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
                 <div className="field">
                   <TextInput
                     disabled={
-                      (url.includes("modify") && formData?.advancepaymentPreference?.advanceAmount === 0) || AdvanceAmount === TotalAmount
-                        ? true
+                      url.includes("modify")
+                        ? formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" && applicationData?.advanceAmount > 0
+                          ? false
+                          : true
                         : false
                     }
                     type={input.type}
                     key={input.name}
                     style={FSMTextFieldStyle}
                     onChange={(e) => setAdvanceAmount(e.target.value)}
-                    value={input.default ? input.default : formData && formData[config.key] ? formData[config.key][input.name] : null}
+                    value={formData && formData[config.key] ? formData[config.key][input.name] : applicationData?.advanceAmount}
                     {...input.validation}
                   />
                   {currentValue > TotalAmount && (
@@ -132,11 +170,11 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
                     </CardLabelError>
                   )}
                   {url.includes("modify-application") &&
-                    Number(AdvanceAmount) === 0 &&
                     applicationData?.advanceAmount > 0 &&
+                    Number(formData?.tripData?.amountPerTrip) > 0 &&
                     Number(currentValue) === 0 && (
                       <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "14px", marginBottom: "0px" }}>
-                        {t("FSM_ADVANCE_AMOUNT_NOT_ZERO")}
+                        {t("FSM_ADVANCE_AMOUNT_LESS_THAN_AMOUNT_PER_TRIP")}
                       </CardLabelError>
                     )}
                 </div>

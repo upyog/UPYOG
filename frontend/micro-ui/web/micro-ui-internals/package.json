@@ -2,11 +2,12 @@
   "name": "egovernments",
   "version": "1.5.4",
   "main": "index.js",
-  "workspaces": [
+  "workspaces":  [
     "packages/libraries",
     "packages/css",
     "example",
-    "packages/react-components"
+    "packages/react-components",
+    "packages/modules/*"   
   ],
   "license": "MIT",
   "private": true,

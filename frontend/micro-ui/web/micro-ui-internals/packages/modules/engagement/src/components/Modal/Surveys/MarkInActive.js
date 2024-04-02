@@ -24,7 +24,7 @@ const ConfirmationQuestion = ({ t, title }) => (
   <div className="confirmation_box">
     <span>
       {" "}
-      {t("CONFIRM_INACTIVE_SURVEY_MSG_NEW")} <b>{` ${title}`}</b>{t("CONFIRM_INACTIVE_SURVEY_MSG_TO_INACTIVE")}
+      {t("CONFIRM_INACTIVE_SURVEY_MSG_NEW")} <b>{` ${title} `}</b>{t("CONFIRM_INACTIVE_SURVEY_MSG_TO_INACTIVE")}
       <br />
       <br />
       {t("CONFIRM_INACTIVE_SURVEY_WARN_MSG")}

@@ -65,7 +65,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
     }
   };
 
-  const { data: mdmsData, isLoading } = Digit.Hooks.useCommonMDMSV2(
+  const { data: mdmsData, isLoading } = Digit.Hooks.useCommonMDMS(
     Digit.ULBService.getStateId(),
     "PropertyTax",
     ["Floor", "OccupancyType", "UsageCategory"],

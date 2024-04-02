@@ -7,7 +7,7 @@ msg() {
 }
 
 # msg "Pre-building all packages"
-# yarn build
+yarn
 # sleep 5
 
 # msg "Building and publishing css"

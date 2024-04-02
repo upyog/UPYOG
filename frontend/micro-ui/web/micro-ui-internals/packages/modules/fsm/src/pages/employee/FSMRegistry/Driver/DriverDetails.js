@@ -111,6 +111,8 @@ const DriverDetails = (props) => {
         return setShowModal(true);
       case "EDIT":
         return history.push("/digit-ui/employee/fsm/registry/modify-driver/" + dsoId);
+      case "HOME":
+        return history.push("/digit-ui/employee/fsm/registry?selectedTabs=DRIVER");
       default:
         break;
     }

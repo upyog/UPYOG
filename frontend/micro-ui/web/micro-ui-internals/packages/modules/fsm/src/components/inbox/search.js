@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   TextInput,
@@ -27,6 +27,8 @@ const SearchApplication = ({ onSearch, type, onClose, isFstpOperator, searchFiel
   const mobileView = innerWidth <= 640;
   const FSTP = Digit.UserService.hasAccess("FSM_EMP_FSTPO") || false;
   const watchSearch = watch(["applicationNos", "mobileNumber", "fromDate", "toDate"]);
+  const [isReady, setIsReady] = useState(false);
+
 
   const onSubmitInput = (data) => {
     if (!data.mobileNumber) {
@@ -131,10 +133,12 @@ const SearchApplication = ({ onSearch, type, onClose, isFstpOperator, searchFiel
                 </span>
               </div>
             )}
-            <div className={"complaint-input-container"} style={{ width: "100%", "display":"grid" }}>
+            <div className={FSTP ? "complaint-input-container for-pt for-search" : "complaint-input-container"} style={{ width: "100%" }}>
               {searchFields?.map((input, index) => (
                 <span key={index} className={index === 0 ? "complaint-input" : "mobile-input"}>
-                  <Label>{input.label}</Label>
+                  <Label>
+                    {input.label} {input.labelChildren && input.labelChildren}
+                  </Label>
                   {getFields(input)}{" "}
                 </span>
               ))}

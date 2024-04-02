@@ -66,6 +66,11 @@ const SelectSlumName = ({ config, onSelect, t, userType, formData }) => {
     }
   }, [slumDataLoading, formData?.address?.locality?.code]);
 
+  useEffect(() => {
+    if (formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT")
+      onSkip();
+  }, [formData?.address?.propertyLocation?.code]);
+  
   function selectSlum(value) {
     setSlum(value);
     onSelect(config.key, { ...formData[config.key], slum: value.code });
@@ -83,10 +88,12 @@ const SelectSlumName = ({ config, onSelect, t, userType, formData }) => {
   if (slumDataLoading) return <Loader />;
 
   return userType === "employee" ? (
+    formData?.address?.propertyLocation !== "FROM_GRAM_PANCHAYAT" && (
     <LabelFieldPair>
       <CardLabel className="card-label-smaller">{t("ES_NEW_APPLICATION_SLUM_NAME")}</CardLabel>
       <Dropdown t={t} option={slumMenu} className="form-field" optionKey="i18nKey" id="slum" selected={slum} select={selectSlum} />
     </LabelFieldPair>
+    )
   ) : (
     <React.Fragment>
       <Timeline currentStep={1} flow="APPLY" />

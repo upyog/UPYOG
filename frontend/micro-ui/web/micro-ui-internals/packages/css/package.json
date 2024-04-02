@@ -1,6 +1,6 @@
 {
   "name": "@upyog-niua/upyog-css",
-  "version": "1.0.11",
+  "version": "1.8.0",
   "license": "MIT",
   "main": "dist/index.css",
   "author": "Jagankumar <jagan.kumar@egov.org.in>",
@@ -12,7 +12,7 @@
   },
   "scripts": {
     "start": "gulp build",
-    "build:prod": "NODE_ENV=production gulp build",
+    "build:prod": "gulp build",
     "prepublish": "yarn build:prod",
     "deploy": "gulp && cp -R svg example && cp -R img example && gh-pages -d example"
   },
