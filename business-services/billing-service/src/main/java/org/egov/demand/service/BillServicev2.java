@@ -564,6 +564,7 @@ public class BillServicev2 {
 		String propertyId=demand.getConsumerCode();
 		
 		BigDecimal totalAmountForDemand = BigDecimal.ZERO;
+		boolean billsFound=false;
 		
 
 		/*
@@ -618,6 +619,18 @@ public class BillServicev2 {
 		AssessmentResponseV2 assessmentResponseV2=restTemplate.postForObject(assesmentUrl, requestInfo, AssessmentResponseV2.class);
 		AssessmentV2 assessmentV2=assessmentResponseV2.getAssessments().stream().filter(t->t.getFinancialYear().equalsIgnoreCase(financialYearFromDemand.toString())).collect(Collectors.toList()).get(0);
 		
+		
+		
+		transactionRequest  = new TransactionRequest();
+		transactionRequest.setRequestInfo(requestInfo);
+		
+		Transaction trt = new Transaction();
+		trt.setBillId("a2a31193-9c29-416a-a9c4-f2e44e98e893");
+		transactionRequest.setTransaction(trt);;
+		TransactionResponse tresTest = restTemplate.postForObject(transactiontUrl, transactionRequest, TransactionResponse.class);
+		
+		
+		
 		if(null==assessmentV2.getModeOfPayment()) {
 			throw new CustomException("INVALID_MODE_OF_PAYMENT", "Mode Of Payment Not found for the assesment");
 			
@@ -639,51 +652,103 @@ public class BillServicev2 {
 		BillSearchCriteria billCriteria = new BillSearchCriteria();
 		billCriteria.setTenantId(demand.getTenantId());
 		billCriteria.setDemandId(demand.getId());
-		List<Transaction> transactionForBills = new ArrayList<>();
-		Map<String,String> quaterCheckMap = new HashMap<>();
+		List<Transaction> transactionForQuaterBills = new ArrayList<>();
+		List<Transaction> transactionForHalfYearBills = new ArrayList<>();
+		Map<String,String> quaterCheckMap = null;
+		Map<String, Transaction> transactionMapForQuater = new HashMap<>();
+		Map<String, Transaction> transactionMapForHalfYearly = new HashMap<>();
+		
+		Map<String, String> transactionStatusForQuater = new HashMap<>();
+		Map<String, String> transactionStatusForHalfYearly = new HashMap<>();
+		
 		List<BillV2> bills = billRepository.findBill(billCriteria);
-		Map<String, Transaction> transactionMap = new HashMap<>();
-		for(BillV2 bl:bills) {
-			transactionRequest = new TransactionRequest();
-			transactionRequest.setRequestInfo(requestInfo);
-			Transaction tr = new Transaction();
-			tr.setBillId(bl.getId());
-			transactionRequest.setTransaction(tr);
-			TransactionResponse tres = restTemplate.postForObject(assesmentUrl, transactionRequest, TransactionResponse.class);
-			if(null!=tres.getTransactions()) {
-				transactionMap.put(bl.getId(), tres.getTransactions().get(0));
-				transactionForBills = tres.getTransactions();
+		if(null!=bills) {
+			quaterCheckMap = new HashMap<>();
+			billsFound =true;
+			for(BillV2 bl:bills) {
+				transactionRequest = new TransactionRequest();
+				transactionRequest.setRequestInfo(requestInfo);
+				Transaction tr = new Transaction();
+				tr.setBillId(bl.getId());
+				transactionRequest.setTransaction(tr);
+				TransactionResponse tres = restTemplate.postForObject(transactiontUrl, transactionRequest, TransactionResponse.class);
+				if(null!=tres.getTransactions()) {
+					if(assessmentV2.getModeOfPayment().toString().equalsIgnoreCase("QUARTERLY")) {
+						if(!tres.getTransactions().get(0).getTxnStatus().equals(Transaction.TxnStatusEnum.SUCCESS)){
+							transactionMapForQuater.put(bl.getId(), tres.getTransactions().get(0));
+							transactionForQuaterBills = tres.getTransactions();
+							transactionStatusForQuater.put(bl.getBillDetails().get(0).getPaymentPeriod(),"FAILED");
+						}else {
+							transactionStatusForQuater.put(bl.getBillDetails().get(0).getPaymentPeriod(),"SUCCESS");
+						}
+					}
+					if(assessmentV2.getModeOfPayment().toString().equalsIgnoreCase("HALFYEARLY")) {
+						transactionMapForHalfYearly.put(bl.getId(), tres.getTransactions().get(0));
+						transactionForHalfYearBills = tres.getTransactions();
+					}
+					
+				}	
 			}
-			
 			
 		}
 		
 		switch (assessmentV2.getModeOfPayment().toString()) {
 		case "QUARTERLY":
+			
 			if(q1.contains(cuurentMonth)) {
 				paymentPeriod="Q1";
 				expiryDate="30-06-"+currentyear;
+				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+				totalAmountForDemand = newTotalAmountForModeOfPayment;
 			}
 			else if(q2.contains(cuurentMonth))
 			{
 				paymentPeriod="Q2";
 				expiryDate="30-09-"+currentyear;
+				if(billsFound) {
+					if(null!=transactionStatusForQuater &&
+							(!transactionStatusForQuater.containsKey("Q1")
+									||transactionStatusForQuater.get("Q1").equalsIgnoreCase("FAILED")  )) {
+						newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+						totalAmountForDemand = newTotalAmountForModeOfPayment.multiply(new BigDecimal(2));
+					}else {
+						newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+						
+					}
+				}else {
+					newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+					totalAmountForDemand = newTotalAmountForModeOfPayment.multiply(new BigDecimal(2));
+				}
 			}
 			else if(q3.contains(cuurentMonth))
 			{
 				paymentPeriod="Q3";
 				expiryDate="31-12-"+currentyear;
+				if(billsFound) {
+					
+					if(null!=transactionStatusForQuater &&
+							(!transactionStatusForQuater.containsKey("Q1")
+									||transactionStatusForQuater.get("Q1").equalsIgnoreCase("FAILED")  )) {
+						newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+						totalAmountForDemand = newTotalAmountForModeOfPayment.multiply(new BigDecimal(2));
+					}else {
+						newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+						
+					}
+				}else {
+					newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+					totalAmountForDemand = newTotalAmountForModeOfPayment.multiply(new BigDecimal(3));
+				}
 			}
 			else if(q4.contains(cuurentMonth))
 			{
 				paymentPeriod="Q4";
 				expiryDate="31-03-"+currentyear;
+				
+				if(billsFound) {
+					
+				}
 			}
-			newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
-			
-			//Check For Previous Pending Bills 
-			
-			totalAmountForDemand = newTotalAmountForModeOfPayment;
 			
 			break;
 		case "HALFYEARLY":
@@ -870,8 +935,8 @@ public class BillServicev2 {
 	
 	public BillResponseV2 create(BillRequestV2 billRequest) {
 
-		if (!CollectionUtils.isEmpty(billRequest.getBills()))
-			billRepository.saveBill(billRequest);
+		//if (!CollectionUtils.isEmpty(billRequest.getBills()))
+			//billRepository.saveBill(billRequest);
 		return getBillResponse(billRequest.getBills());
 	}
 	
