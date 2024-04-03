@@ -1,12 +1,13 @@
 import { useQuery } from "react-query";
 import { MdmsService } from "../../services/elements/MDMS";
+import { MdmsServiceV2 } from "../../services/elements/MDMSV2";
 
 const SearchMdmsTypes = {
   useApplicationTypes: (tenantId) =>
     useQuery(
       [tenantId, "BPA_MDMS_APPLICATION_STATUS"],
       () =>
-        MdmsService.getDataByCriteria(
+        MdmsServiceV2.getDataByCriteria(
           tenantId,
           {
             details: {
@@ -26,20 +27,22 @@ const SearchMdmsTypes = {
           "BPA"
         ),
       {
-        select: (data) =>{
-          return [...data?.BPA?.ApplicationType?.map((type) => ({
+        select: (data) => {
+          return [
+            ...data?.BPA?.ApplicationType?.map((type) => ({
               code: type.code,
               i18nKey: `WF_BPA_${type.code}`,
-            }))]
+            })),
+          ];
         },
       }
     ),
 
-    useServiceTypes: (tenantId) =>
+  useServiceTypes: (tenantId) =>
     useQuery(
       [tenantId, "BPA_MDMS_SERVICE_STATUS"],
       () =>
-        MdmsService.getDataByCriteria(
+        MdmsServiceV2.getDataByCriteria(
           tenantId,
           {
             details: {
@@ -59,21 +62,23 @@ const SearchMdmsTypes = {
           "BPA"
         ),
       {
-        select: (data) =>{
-          return [...data?.BPA?.ServiceType?.map((type) => ({
-            code: type.code,
-            i18nKey: `BPA_SERVICETYPE_${type.code}`,
-            applicationType: type.applicationType,
-          }))]
+        select: (data) => {
+          return [
+            ...data?.BPA?.ServiceType?.map((type) => ({
+              code: type.code,
+              i18nKey: `BPA_SERVICETYPE_${type.code}`,
+              applicationType: type.applicationType,
+            })),
+          ];
         },
       }
     ),
 
-    useBPAREGServiceTypes: (tenantId) =>
+  useBPAREGServiceTypes: (tenantId) =>
     useQuery(
       [tenantId, "BPAREG_MDMS_SERVICE_STATUS"],
       () =>
-        MdmsService.getDataByCriteria(
+        MdmsServiceV2.getDataByCriteria(
           tenantId,
           {
             details: {
@@ -93,20 +98,22 @@ const SearchMdmsTypes = {
           "StakeholderRegistraition"
         ),
       {
-        select: (data) =>{
-          return [...data?.StakeholderRegistraition?.TradeTypetoRoleMapping?.map((type) => ({
-            code: type.tradeType?.split(".")[0],
-            i18nKey: `TRADELICENSE_TRADETYPE_${type.tradeType?.split(".")[0]}`,
-          }))]
+        select: (data) => {
+          return [
+            ...data?.StakeholderRegistraition?.TradeTypetoRoleMapping?.map((type) => ({
+              code: type.tradeType?.split(".")[0],
+              i18nKey: `TRADELICENSE_TRADETYPE_${type.tradeType?.split(".")[0]}`,
+            })),
+          ];
         },
       }
     ),
 
-    useBPAServiceTypes: (tenantId) =>
-     useQuery(
+  useBPAServiceTypes: (tenantId) =>
+    useQuery(
       [tenantId, "BPA_MDMS_SERVICE_STATUS"],
       () =>
-        MdmsService.getDataByCriteria(
+        MdmsServiceV2.getDataByCriteria(
           tenantId,
           {
             details: {
@@ -126,28 +133,29 @@ const SearchMdmsTypes = {
           "BPA"
         ),
       {
-        select: (data) =>{
-        return [...data?.BPA?.BPAAppicationMapping?.filter(function (currentObject){
-          const userInfos = sessionStorage.getItem("Digit.citizen.userRequestObject");
-          const userInfo = userInfos ? JSON.parse(userInfos) : {};
-          const userInformation = userInfo?.value?.info;
-        let flag = 0;
-        currentObject?.roles?.map((bpaRole) => {
-          // const found = Digit.UserService.getUser()?.info?.roles.some(role => role?.code === bpaRole )
-          const found = userInformation?.roles.some(role => role?.code === bpaRole )
-          if(found == true)
-          flag = 1;
-        })
-        if(flag == 1) return true;
-        else return false;
-      }).map((type) => ({
-        code: type.code,
-        i18nKey: `BPA_SERVICETYPE_${type.code}`,
-        applicationType: type.applicationType,
-      }))]
+        select: (data) => {
+          return [
+            ...data?.BPA?.BPAAppicationMapping?.filter(function (currentObject) {
+              const userInfos = sessionStorage.getItem("Digit.citizen.userRequestObject");
+              const userInfo = userInfos ? JSON.parse(userInfos) : {};
+              const userInformation = userInfo?.value?.info;
+              let flag = 0;
+              currentObject?.roles?.map((bpaRole) => {
+                // const found = Digit.UserService.getUser()?.info?.roles.some(role => role?.code === bpaRole )
+                const found = userInformation?.roles.some((role) => role?.code === bpaRole);
+                if (found == true) flag = 1;
+              });
+              if (flag == 1) return true;
+              else return false;
+            }).map((type) => ({
+              code: type.code,
+              i18nKey: `BPA_SERVICETYPE_${type.code}`,
+              applicationType: type.applicationType,
+            })),
+          ];
         },
       }
-    ), 
+    ),
 
   getFormConfig: (tenantId, config) =>
     useQuery(
@@ -163,23 +171,23 @@ const SearchMdmsTypes = {
                   moduleName: "BPA",
                   masterDetails: [
                     {
-                      "name": "BuildingPermitConfig"
+                      name: "BuildingPermitConfig",
                     },
                     {
-                      "name": "EdcrConfig"
+                      name: "EdcrConfig",
                     },
                     {
-                      "name": "InspectionReportConfig"
+                      name: "InspectionReportConfig",
                     },
                     {
-                      "name": "OCBuildingPermitConfig"
+                      name: "OCBuildingPermitConfig",
                     },
                     {
-                      "name": "OCEdcrConfig"
+                      name: "OCEdcrConfig",
                     },
                     {
-                      "name": "StakeholderConfig"
-                    }
+                      name: "StakeholderConfig",
+                    },
                   ],
                 },
               ],
