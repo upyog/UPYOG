@@ -135,7 +135,7 @@ public class UserService {
                 .type(userType)
                 .build();
 
-        if (!isEmpty(userName) || isEmpty(tenantId) || isNull(userType)) {
+        if (isEmpty(userName) || isEmpty(tenantId) || isNull(userType)) {
             log.error("Invalid lookup, mandatory fields are absent");
             throw new UserNotFoundException(userSearchCriteria);
         }
