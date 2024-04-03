@@ -150,13 +150,13 @@ public class User {
 	@Valid
 	private List<Role> roles;
 
-	@NotNull
+	// @NotNull
 	@SafeHtml
 	@Size(max = 100)
 	@JsonProperty("fatherOrHusbandName")
 	private String fatherOrHusbandName;
 
-	@NotNull
+	// @NotNull
 	@JsonProperty("relationship")
 	private GuardianRelation relationship;
 
