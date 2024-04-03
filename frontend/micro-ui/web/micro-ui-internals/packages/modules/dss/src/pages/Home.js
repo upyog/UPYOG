@@ -162,7 +162,21 @@ const HorBarChart = ({ data, setselectState = "" }) => {
         date.setMonth(date.getMonth() - 1);
     }    
     console.log("months",months,data);
+    if(data?.[0])
+    {
+      let plotsss =  data[0].plots.map((data,index)=>
+        {
+         return {...data , name: months[index]}
+        })
+        data[0].plots = plotsss.reverse()
+        let plotulb =  data[1].plots.map((data,index)=>
+        {
+         return {...data , name: months[index]}
+        })
+        data[1].plots = plotulb.reverse()
+    }  
     let result = {};
+
     for (let i = 0; i < data?.length; i++) {
       const row = data[i];
       for (let j = 0; j < row.plots.length; j++) {
