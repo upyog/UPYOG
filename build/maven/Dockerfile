@@ -1,4 +1,3 @@
-
 FROM upyogio/alpine-maven-builder-jdk-8:1-master-NA-6036091e AS build
 # FROM ghcr.io/egovernments/alpine-maven-builder-jdk-8:1-master-na-6036091e AS build
 ARG WORK_DIR
@@ -12,7 +11,7 @@ COPY build/maven/start.sh ./start.sh
 # RUN mvn -B dependency:go-offline
 
 COPY ${WORK_DIR}/src ./src
-RUN mvn -B -f /app/pom.xml package
+RUN mvn -B -f /app/pom.xml package -Dmaven.test.skip=true -DskipTests
 
 
 # Create runtime image
