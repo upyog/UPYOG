@@ -75,10 +75,9 @@ public class JacksonUtils {
             return null;
 
         for(String path : filterPaths) {
-        	if(path.equalsIgnoreCase("userName"))
-        	{
-        		path="username";
-        	}
+			/*
+			 * if(path.equalsIgnoreCase("userName")) { path="username"; }
+			 */
             JsonNode singlePathFilterNode = filterJsonNodeForPath(jsonNode, path);
             filteredNode = merge(singlePathFilterNode, filteredNode);
         }
