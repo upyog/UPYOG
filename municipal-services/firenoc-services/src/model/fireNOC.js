@@ -183,6 +183,16 @@ const Address = {
         "City of the address. Can be represented by the tenantid itself",
       type: "string",
       valid_htmlData: true,
+ },
+    areatype: {
+      description:
+        "area type either it is urban or rural",
+      type: "string"
+    },
+    subdistrict: {
+      description:
+        "subdistrict incase of rural area type",
+      type: "string"
     },
     pincode: {
       type: "string",
@@ -206,7 +216,7 @@ const Address = {
       type: "string",
       description: "Street Name",
       valid_htmlData: true,
-      maxLength: 64,
+      maxLength: 254,
       minLength: 2
     },
     locality: {
@@ -403,11 +413,44 @@ const Buildings = {
       description: "building usage type",
       valid_buildingType: true
     },
+    usageSubType: {
+      type: "string",
+      description: "building usage sub type",
+    },
     uoms: {
       type: "array",
       items: BuildingUOM,
       minItems: 1
     },
+    leftSurrounding:{
+      type:"string",
+      description:"Premises Surrounding left"
+    },
+    rightSurrounding:{
+      type:"string",
+      description:"Premises Surrounding right"
+    },
+    frontSurrounding:{
+      type:"string",
+      description:"Premises Surrounding front"
+    },
+    backSurrounding:{
+      type:"string",
+      description:"Premises Surrounding back"
+    },
+    landArea:{
+      type:"number",
+      description:"Land area"
+    },
+    totalCoveredArea:{
+      type:"number",
+      description:"Total covered area"
+    },
+    parkingArea:{
+      type:"number",
+      description:"Parking area"
+    } ,
+    
     applicationDocuments: {
       description:
         "1. List of all the required documents. 2. Application can be submitted without required document 3. Once all the document submitted then only application submition process will be completed. 4. Mandatry application documents for a fireNOC type and fireNOC subtype are defined under ApplicationDocument master which is defined under MDMS.",
@@ -415,7 +458,7 @@ const Buildings = {
       items: Document
     }
   },
-  required: [/*"tenantId",*/ "usageType", "name", "uoms"]
+  required: [/*"tenantId",*/ "usageType", "name", "uoms","landArea","totalCoveredArea"]
 };
 
 const FireNOCDetails = {
@@ -624,6 +667,10 @@ const FireNOC = {
       type: "integer",
       // format: "int64",
       description: "Applied Date of the fire NOC as epoch"
+    },
+    isLegacy: {
+      type: "boolean",
+      description: "Firenoc is created in system or not"
     },
     fireNOCDetails: FireNOCDetails,
     auditDetails: AuditDetails

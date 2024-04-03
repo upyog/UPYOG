@@ -89,8 +89,8 @@ public class ChallanValidator {
 
         List<String> localityCodes = getLocalityCodes(challan.getTenantId(), request.getRequestInfo());
 
-        if(!localityCodes.contains(challan.getAddress().getLocality().getCode()))
-         	errorMap.put("Invalid Locality", "Locality details are invalid");
+//		if (!localityCodes.contains(challan.getAddress().getLocality().getCode()))
+//			errorMap.put("Invalid Locality", "Locality details are invalid");
 
         if(!currentTaxHeadCodes.isEmpty() && !requiredTaxHeadCodes.isEmpty()){
         	if(!currentTaxHeadCodes.containsAll(requiredTaxHeadCodes))
