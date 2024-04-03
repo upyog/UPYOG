@@ -26,7 +26,11 @@ import java.util.Map;
 @Builder
 @ToString
 public class Transaction {
-
+@SafeHtml
+@JsonProperty("businessService")
+	@NotNull
+	@Size(min = 1)
+	private String businessService;
     @SafeHtml
     @JsonProperty("tenantId")
     @NotNull

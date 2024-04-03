@@ -1,4 +1,4 @@
-CREATE TABLE eg_user (
+CREATE TABLE IF NOT EXISTS eg_user (
     id bigint NOT NULL,
     title character varying(8),
     salutation character varying(5),
@@ -31,11 +31,11 @@ CREATE TABLE eg_user (
     tenantid character varying(256) not null
 );
 
-CREATE SEQUENCE seq_eg_user
+CREATE SEQUENCE IF NOT EXISTS seq_eg_user
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-ALTER TABLE eg_user ADD CONSTRAINT eg_user_pkey PRIMARY KEY (id);
-ALTER TABLE eg_user ADD CONSTRAINT eg_user_user_name_key UNIQUE (username);
+--alter table  eg_user ADD CONSTRAINT IF NOT EXISTS eg_user_pkey PRIMARY KEY (id);
+--alter table  eg_user ADD CONSTRAINT IF NOT EXISTS eg_user_user_name_key UNIQUE (username);

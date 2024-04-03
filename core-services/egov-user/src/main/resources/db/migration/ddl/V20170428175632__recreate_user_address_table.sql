@@ -1,4 +1,4 @@
-CREATE TABLE eg_user_address (
+CREATE TABLE IF NOT EXISTS eg_user_address (
      id bigint NOT NULL,
      version numeric DEFAULT 0,
      createddate timestamp NOT NULL,
@@ -13,11 +13,11 @@ CREATE TABLE eg_user_address (
      tenantid VARCHAR(256) NOT NULL
   );
 
-ALTER TABLE eg_user_address ADD CONSTRAINT eg_user_address_pkey PRIMARY KEY (id);
+--alter table  eg_user_address ADD CONSTRAINT IF NOT EXISTS eg_user_address_pkey PRIMARY KEY (id);
 
-ALTER TABLE eg_user_address ADD CONSTRAINT eg_user_address_user_fkey FOREIGN KEY (userid, tenantid)
-REFERENCES eg_user ON DELETE CASCADE;
+--alter table  eg_user_address ADD CONSTRAINT IF NOT EXISTS eg_user_address_user_fkey FOREIGN KEY (userid, tenantid)
+-- REFERENCES eg_user ON DELETE CASCADE;
 
-ALTER TABLE eg_user_address ADD CONSTRAINT eg_user_address_type_unique UNIQUE (userid, tenantid, type);
+--alter table  eg_user_address ADD CONSTRAINT IF NOT EXISTS eg_user_address_type_unique UNIQUE (userid, tenantid, type);
 
-CREATE SEQUENCE seq_eg_user_address START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
+CREATE SEQUENCE IF NOT EXISTS seq_eg_user_address START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;

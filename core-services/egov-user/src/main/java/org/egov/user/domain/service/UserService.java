@@ -135,14 +135,14 @@ public class UserService {
                 .type(userType)
                 .build();
 
-        if (isEmpty(userName) || isEmpty(tenantId) || isNull(userType)) {
+        if (!isEmpty(userName) || isEmpty(tenantId) || isNull(userType)) {
             log.error("Invalid lookup, mandatory fields are absent");
             throw new UserNotFoundException(userSearchCriteria);
         }
 
         /* encrypt here */
 
-        userSearchCriteria = encryptionDecryptionUtil.encryptObject(userSearchCriteria, "User", UserSearchCriteria.class);
+        userSearchCriteria = encryptionDecryptionUtil.encryptObject(userSearchCriteria, "UserSearchCriteria", UserSearchCriteria.class);
         List<User> users = userRepository.findAll(userSearchCriteria);
 
         if (users.isEmpty())
@@ -192,8 +192,8 @@ public class UserService {
         if(searchCriteria.getMobileNumber()!=null) {
         	altmobnumber = searchCriteria.getMobileNumber();
         }
-
-        searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "User", UserSearchCriteria.class);
+      //  org.egov.user.domain.model.User user= encryptionDecryptionUtil.encryptObject(searchCriteria, "User", User.class);
+        searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "UserSearchCriteria", UserSearchCriteria.class);
         
         if(altmobnumber!=null) {
         	searchCriteria.setAlternatemobilenumber(altmobnumber);
@@ -203,7 +203,7 @@ public class UserService {
 
         /* decrypt here / final reponse decrypted*/
 
-        list = encryptionDecryptionUtil.decryptObject(list, null, User.class, requestInfo);
+        list = encryptionDecryptionUtil.decryptObject(list, "UserListSelf", User.class, requestInfo);
 
         setFileStoreUrlsByFileStoreIds(list);
         return list;
@@ -220,7 +220,7 @@ public class UserService {
         user.validateNewUser(createUserValidateName);
         conditionallyValidateOtp(user);
         /* encrypt here */
-        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+        user = encryptionDecryptionUtil.encryptObject(user, "UserSearchCriteria", User.class);
         validateUserUniqueness(user);
         if (isEmpty(user.getPassword())) {
             user.setPassword(UUID.randomUUID().toString());
@@ -231,7 +231,7 @@ public class UserService {
         user.setDefaultPasswordExpiry(defaultPasswordExpiryInDays);
         user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
         User persistedNewUser = persistNewUser(user);
-        return encryptionDecryptionUtil.decryptObject(persistedNewUser, "UserSelf", User.class, requestInfo);
+        return encryptionDecryptionUtil.decryptObject(persistedNewUser, null, User.class, requestInfo);
 
         /* decrypt here  because encrypted data coming from DB*/
 
@@ -292,7 +292,7 @@ public class UserService {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            headers.set("Authorization", "Basic ZWdvdi11c2VyLWNsaWVudDo=");
+            headers.set("Authorization", "Basic ZWdvdi11c2VyLWNsaWVudDplZ292LXVzZXItc2VjcmV0");
             MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
             map.add("username", user.getUsername());
             if (!isEmpty(password))
@@ -367,7 +367,7 @@ public class UserService {
             resetFailedLoginAttempts(user);
 
         User encryptedUpdatedUserfromDB = getUserByUuid(user.getUuid());
-        User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);
+        User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "User", User.class, requestInfo);
         return decryptedupdatedUserfromDB;
     }
 
@@ -419,9 +419,7 @@ public class UserService {
         userRepository.update(user, existingUser,requestInfo.getUserInfo().getId(), requestInfo.getUserInfo().getUuid() );
         User updatedUser = getUserByUuid(user.getUuid());
         
-        /* decrypt here */
-        existingUser = encryptionDecryptionUtil.decryptObject(existingUser, "UserSelf", User.class, requestInfo);
-        updatedUser = encryptionDecryptionUtil.decryptObject(updatedUser, "UserSelf", User.class, requestInfo);
+        updatedUser = encryptionDecryptionUtil.decryptObject(updatedUser, "User", User.class, requestInfo);
 
         setFileStoreUrlsByFileStoreIds(Collections.singletonList(updatedUser));
         String oldEmail = existingUser.getEmailId();
@@ -473,7 +471,7 @@ public class UserService {
         }
         /* decrypt here */
         /* the reason for decryption here is the otp service requires decrypted username */
-        user = encryptionDecryptionUtil.decryptObject(user, "User", User.class, requestInfo);
+        user = encryptionDecryptionUtil.decryptObject(user, "UserListSelf", User.class, requestInfo);
         user.setOtpReference(request.getOtpReference());
         validateOtp(user);
         validatePassword(request.getNewPassword());

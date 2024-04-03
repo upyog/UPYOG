@@ -47,8 +47,12 @@ public class EnrichmentService {
         Transaction transaction = transactionRequest.getTransaction();
         RequestInfo requestInfo = transactionRequest.getRequestInfo();
 
-        BankAccount bankAccount = bankAccountRepository.getBankAccountsById(requestInfo, transaction.getTenantId());
-        transaction.setAdditionalFields(singletonMap(TransactionAdditionalFields.BANK_ACCOUNT_NUMBER, bankAccount.getAccountNumber()));
+        BankAccount bankAccount = bankAccountRepository.getBankAccountsById(requestInfo, transaction.getTenantId(), transaction.getBusinessService());
+        String accountWithSeprator = bankAccount.getAccountNumber();
+        String accountNumber=accountWithSeprator;
+        if(accountWithSeprator.contains("/"))
+        accountNumber = accountWithSeprator.substring(accountWithSeprator.lastIndexOf("/")+1);
+        transaction.setAdditionalFields(singletonMap(TransactionAdditionalFields.BANK_ACCOUNT_NUMBER, accountNumber));
 
         // Generate ID from ID Gen service and assign to txn object
         String txnId = idGenService.generateTxnId(transactionRequest);
@@ -105,6 +109,7 @@ public class EnrichmentService {
         newTxn.setConsumerCode(currentTxnStatus.getConsumerCode());
         newTxn.setTxnStatusMsg(currentTxnStatus.getTxnStatusMsg());
         newTxn.setReceipt(currentTxnStatus.getReceipt());
+        newTxn.setBusinessService(currentTxnStatus.getBusinessService());
 
     }
 

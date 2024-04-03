@@ -3,7 +3,7 @@ package org.egov.user.domain.model;
 import lombok.*;
 
 import java.util.Date;
-
+@NoArgsConstructor
 @Getter
 @Setter
 @Builder

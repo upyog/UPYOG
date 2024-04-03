@@ -41,7 +41,7 @@ public class TokenService {
 
         String originalOtp = randomNumeric(otpConfiguration.getOtpLength());
         String encryptedOtp = originalOtp;
-
+        log.info ("OTP "+encryptedOtp);
         if (otpConfiguration.isEncryptOTP()){
             encryptedOtp = passwordEncoder.encode(originalOtp);
         }

@@ -1,4 +1,4 @@
-CREATE TABLE eg_role (
+CREATE TABLE IF NOT EXISTS eg_role (
     id serial NOT NULL primary key,
     name character varying(32) NOT NULL,
     code character varying(50) NOT NULL,

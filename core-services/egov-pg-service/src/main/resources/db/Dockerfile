@@ -1,13 +1,13 @@
-FROM upyogio/flyway:4.1.2
+FROM egovio/flyway:10.7.1
 
 COPY ./migration/main /flyway/sql
 
-COPY ./migration/dev /flyway/dev
+#COPY ./migration/dev /flyway/dev
 
-COPY ./migration/seed /flyway/seed
+#COPY ./migration/seed /flyway/seed
 
 COPY migrate.sh /usr/bin/migrate.sh
 
 RUN chmod +x /usr/bin/migrate.sh
 
-CMD ["/usr/bin/migrate.sh"]
+ENTRYPOINT ["/usr/bin/migrate.sh"]

@@ -1,4 +1,4 @@
-ALTER TABLE eg_user ADD COLUMN accountlockeddate bigint;
+alter table  eg_user ADD COLUMN IF NOT EXISTS accountlockeddate bigint;
 CREATE TABLE IF NOT EXISTS eg_user_login_failed_attempts (
     user_uuid character varying(64) NOT NULL,
     ip character varying(46),

@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.egov.user.domain.model.Role;
+import lombok.NoArgsConstructor;
 
+import org.egov.user.domain.model.Role;
+@NoArgsConstructor
 @Getter
 @Builder
 @AllArgsConstructor

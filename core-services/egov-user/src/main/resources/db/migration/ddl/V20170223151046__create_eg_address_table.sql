@@ -1,4 +1,4 @@
-CREATE TABLE eg_address (
+CREATE TABLE IF NOT EXISTS eg_address (
     housenobldgapt character varying(32),
     subdistrict character varying(100),
     postoffice character varying(100),
