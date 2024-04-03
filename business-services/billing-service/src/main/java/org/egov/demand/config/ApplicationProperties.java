@@ -195,4 +195,17 @@ public class ApplicationProperties {
 
 	@Value("${statelevel.rolecode.excluded.list}")
 	private List<String> statelevelRolecodeExclusionList;
+    
+    @Value("${egov.shortener.url}")
+    private String egovShortenerUrl;
+    
+    @Value("${notification.url}")
+	private String notificationUrl;
+    
+    @Value("${notification.sms.link}")
+	private String smsNotificationLink;
+
+    @Value("${egov.shortener.host}")
+   	private String shortenerHost;
+    
 }
