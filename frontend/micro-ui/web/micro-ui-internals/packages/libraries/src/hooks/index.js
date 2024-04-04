@@ -179,6 +179,9 @@ import useServiceTypeFromApplicationType from "./obps/useServiceTypeFromApplicat
 import useBusinessServiceBasedOnServiceType from "./obps/useBusinessServiceBasedOnServiceType";
 import useBusinessServiceData from "./obps/useBusinessServiceData";
 import useBPATaxDocuments from "./obps/useBPATaxDocuments";
+import useDistricts from "./obps/useDistricts";
+import useULBList from "./obps/useULBList";
+
 
 import useEventInbox from "./events/useEventInbox";
 import useEventDetails from "./events/useEventDetails";
@@ -447,6 +450,8 @@ const obps = {
   useBusinessServiceBasedOnServiceType,
   useBusinessServiceData,
   useBPATaxDocuments,
+  useDistricts,
+  useULBList
 };
 
 const events = {

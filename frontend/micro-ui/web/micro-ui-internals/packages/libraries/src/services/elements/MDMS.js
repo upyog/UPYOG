@@ -287,6 +287,38 @@ const getApplicationChannelCriteria = (tenantId, moduleCode) => ({
     ],
   },
 });
+const getdistricttype = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Districts",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getulbtype = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Ulb",
+          },
+        ],
+      },
+    ],
+  },
+});
 
 const getPropertyTypeCriteria = (tenantId, moduleCode, type) => ({
   type,
@@ -374,6 +406,45 @@ const PTRBreedType = (MdmsRes) => {
   });
 };
 ///////////
+
+const getdistrict = (MdmsRes) => {
+  return MdmsRes["BPA"].Districts.filter((Districts) => Districts.active).map((districtDetails) => {
+    return {
+      ...districtDetails,
+      i18nKey: `BPA_DISTRICT_${districtDetails.code}`,
+    };
+  });
+  //return MdmsRes;
+};
+
+const getulb = (MdmsRes) => {
+  return MdmsRes["BPA"].Ulb.filter((Ulb) => Ulb.active).map((ulbDetails) => {
+    return {
+      ...ulbDetails,
+      i18nKey: `BPA_DISTRICT_${ulbDetails.code}`,
+    };
+  });
+  //return MdmsRes;
+};
+/////////////
+
+const BPADistrict = (MdmsRes) => {
+  MdmsRes["BPA"].Districts.filter((Districts) => Districts.active).map((districts) => {
+    return {
+      ...districts,
+      i18nKey: `BPA_DISTRICTS_${districts.code}`,
+    };
+  });
+};
+const BPAUlb = (MdmsRes) => {
+  MdmsRes["BPA"].Ulb.filter((Ulb) => Ulb.active).map((ulblist) => {
+    return {
+      ...ulblist,
+      i18nKey: `BPA_ULB_${ulblist.code}`,
+    };
+  });
+};
+/////////////
 
 const getCommonFieldsCriteria = (tenantId, moduleCode, type) => ({
   type,
@@ -1122,7 +1193,7 @@ const GetPropertyType = (MdmsRes) =>
     i18nKey: `PROPERTYTYPE_MASTERS_${item.code}`,
     code: item.code,
   }));
-
+ 
 const GetPropertySubtype = (MdmsRes) =>
   MdmsRes["FSM"].PropertyType.filter((property) => property.active && property.propertyType).map((item) => ({
     ...item,
@@ -1534,6 +1605,20 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
 
     case "PTRBreedType":
       return PTRBreedType(MdmsRes);
+
+    case "Districts":
+    return getdistrict(MdmsRes);
+
+    case "Ulb":
+      return getulb(MdmsRes);
+
+    case "BPADistrict":
+      return BPADistrict(MdmsRes);
+    case "BPAUlb":
+      return BPAUlb(MdmsRes);
+
+   
+
    
 
 
@@ -1679,12 +1764,26 @@ export const MdmsService = {
     return MdmsService.getDataByCriteria(tenantId, getPetDocumentsRequiredScreenCategory(tenantId, moduleCode), moduleCode);
   },
 
+  getdistrict: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getdistricttype(tenantId, moduleCode, type), moduleCode);
+  },
+  getulb: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getulbtype(tenantId, moduleCode, type), moduleCode);
+  },
+
+
   getPetType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getPetTypeList(tenantId, moduleCode, type), moduleCode);
   },
 
   getBreedType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getBreedTypeList(tenantId, moduleCode, type), moduleCode);
+  },
+  BPADistrict: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getdistricttype(tenantId, moduleCode, type), moduleCode);
+  },
+  BPAUlb: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getulbtype(tenantId, moduleCode, type), moduleCode);
   },
   PTRGenderType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getGenderTypeList(tenantId, moduleCode, type), moduleCode);
