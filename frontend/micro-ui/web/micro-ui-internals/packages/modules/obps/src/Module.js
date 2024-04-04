@@ -12,6 +12,7 @@ import BasicDetails from "./pageComponents/BasicDetails";
 import DocsRequired from "./pageComponents/DocsRequired";
 import PlotDetails from "./pageComponents/PlotDetails";
 import ScrutinyDetails from "./pageComponents/ScrutinyDetails";
+import BPANewBuildingdetails from "./pageComponents/BPANewBuildingdetails"
 import OwnerDetails from "./pageComponents/OwnerDetails";
 import DocumentDetails from "./pageComponents/DocumentDetails";
 import NOCDetails from "./pageComponents/NOCDetails";
@@ -19,6 +20,7 @@ import NOCNumber from "./pageComponents/NOCNumber";
 import LocationDetails from "./pageComponents/LocationDetails";
 import StakeholderDocsRequired  from "./pageComponents/StakeholderDocsRequired";
 import GIS from "./pageComponents/GIS";
+
 import OCEDCRDocsRequired from "./pageComponents/OCEDCRDocsRequired";
 import OCeDCRScrutiny from "./pageComponents/OCeDCRScrutiny";
 import OCUploadPlanDiagram from "./pageComponents/OCUploadPlanDiagram";
@@ -57,6 +59,12 @@ import BPAAcknowledgement from "./pages/citizen/NewBuildingPermit/OBPSAcknowledg
 import OCBPAAcknowledgement from "./pages/citizen/OCBuildingPermit/OBPSAcknowledgement";
 import OCSendBackAcknowledgement from "./pages/citizen/OCSendBackToCitizen/Acknowledgement";
 import StakeholderAcknowledgement from "./pages/citizen/StakeholderRegistration/StakeholderAcknowledgement";
+
+
+
+
+
+
  
 
 const OBPSModule = ({ stateCode, userType, tenants }) => {
@@ -113,6 +121,7 @@ const componentsToRegister = {
   DocsRequired,
   PlotDetails,
   ScrutinyDetails,
+  BPANewBuildingdetails,
   OwnerDetails,
   DocumentDetails,
   NOCDetails,
@@ -155,7 +164,10 @@ const componentsToRegister = {
   ObpsOCSendBackToCitizen : OCSendBackToCitizen,
   ObpsEdcrInbox : EdcrInbox,
   ObpsEmpApplicationDetail : EmpApplicationDetail,
-  ObpsEmployeeBpaApplicationDetail : EmployeeBpaApplicationDetail
+  ObpsEmployeeBpaApplicationDetail : EmployeeBpaApplicationDetail,
+ 
+  
+   
 }
 
 export const initOBPSComponents = () => {

@@ -93,6 +93,8 @@ fetchBillData();
     { enabled: acknowledgementIds ? true : false }
   );
 
+  
+
   if (!pet_details.workflow) {
     let workflow = {
       id: null,
@@ -173,7 +175,9 @@ fetchBillData();
       label: t("PTR_FEE_RECIEPT"),
       onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
     });
-  if (data?.ResponseInfo?.status === "successful")
+
+    
+  if (reciept_data?.Payments[0]?.paymentStatus === "DEPOSITED")
     dowloadOptions.push({
       label: t("PTR_CERTIFICATE"),
       onClick: () => printCertificate(),

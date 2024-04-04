@@ -5,9 +5,21 @@ import Timeline from "../components/Timeline";
 
 const PlotDetails = ({ formData, onSelect, config }) => {
   const { t } = useTranslation();
-  const [holdingNumber, setHoldingNumber] = useState("");
   const [boundaryWallLength, setBoundaryWallLength] = useState("");
   const [registrationDetails, setRegistrationDetails] = useState("");
+  const [wardnumber, setWardNumber] = useState("");
+  const [zonenumber, setZoneNumber] = useState("");
+  const [khasraNumber, setkhasraNumber] = useState("");
+  const [architectid, setarchitectid] = useState("");
+  const [bathnumber, setbathnumber] = useState("");
+  const [kitchenNumber, setkitchenNumber] = useState("");
+  const [approxinhabitants, setapproxinhabitants] = useState("");
+  const [distancefromsewer, setdistancefromsewer] = useState("");
+  const [sourceofwater, setsourceofwater] = useState("");
+  const [materialused, setmaterialused] = useState("");
+  const [materialusedinfloor, setmaterialusedinfloor] = useState("");
+  const [materialusedinroofs, setmaterialusedinroofs] = useState("");
+  const [propertyuid, setpropertyuid] = useState("");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const checkingFlow = formData?.uiFlow?.flow;
   const state = Digit.ULBService.getStateId();

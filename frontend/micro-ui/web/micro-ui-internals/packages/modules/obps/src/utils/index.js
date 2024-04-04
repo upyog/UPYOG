@@ -169,28 +169,47 @@ export const getBPAFormData = async (data, mdmsData, history, t) => {
 export const getDocumentforBPA = (docs, PrevStateDocs) => {
   let document = [];
   docs &&
-    docs.map((ob) => {
-      if (ob.id) {
-        document.push({
-          documentType: ob.documentType,
-          fileStoreId: ob.fileStoreId,
-          fileStore: ob.fileStoreId,
-          fileName: "",
-          fileUrl: "",
-          additionalDetails: {},
-          id: ob.id,
-        });
-      } else {
-        document.push({
-          documentType: ob.documentType,
-          fileStoreId: ob.fileStoreId,
-          fileStore: ob.fileStoreId,
-          fileName: "",
-          fileUrl: "",
-          additionalDetails: {},
-        });
+  docs.map((ob) => {
+    console.log("ob",ob);
+    if (ob.id) {
+      let docObject = {
+        documentType: ob.documentType,
+        fileStoreId: ob.fileStoreId,
+        fileStore: ob.fileStoreId,
+        fileName: "",
+        fileUrl: "",
+        additionalDetails: {},
+        id: ob.id,
+      };
+    
+      if (ob.documentType === "SITEPHOTOGRAPH.ONE") {
+        docObject.additionalDetails = {
+          latitude: ob?.additionalDetails?.latitude,
+          longitude: ob?.additionalDetails?.longitude,
+        };
       }
-    });
+    
+      document.push(docObject);
+    } else {
+      let docObject = {
+        documentType: ob.documentType,
+        fileStoreId: ob.fileStoreId,
+        fileStore: ob.fileStoreId,
+        fileName: "",
+        fileUrl: "",
+        additionalDetails: {},
+      };
+    
+      if (ob.documentType === "SITEPHOTOGRAPH.ONE") {
+        docObject.additionalDetails = {
+          latitude: ob?.additionalDetails?.latitude,
+          longitude: ob?.additionalDetails?.longitude,
+        };
+      }
+    
+      document.push(docObject);
+    }
+  });
   document = [...document, ...(PrevStateDocs ? PrevStateDocs : [])];
   return document;
 };
