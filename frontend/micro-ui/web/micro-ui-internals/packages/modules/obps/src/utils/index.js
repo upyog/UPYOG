@@ -177,7 +177,10 @@ export const getDocumentforBPA = (docs, PrevStateDocs) => {
           fileStore: ob.fileStoreId,
           fileName: "",
           fileUrl: "",
-          additionalDetails: {},
+          additionalDetails: {
+            latitude: ob?.additionalDetails?.latitude,
+            longitude: ob?.additionalDetails?.longitude,
+          },
           id: ob.id,
         });
       } else {
@@ -187,7 +190,10 @@ export const getDocumentforBPA = (docs, PrevStateDocs) => {
           fileStore: ob.fileStoreId,
           fileName: "",
           fileUrl: "",
-          additionalDetails: {},
+          additionalDetails: {
+            latitude: ob?.additionalDetails?.latitude,
+            longitude: ob?.additionalDetails?.longitude,
+          },
         });
       }
     });
