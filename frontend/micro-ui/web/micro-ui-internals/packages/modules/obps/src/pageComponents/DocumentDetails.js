@@ -402,12 +402,18 @@ const SelectDocument = React.memo(function MyComponent({
             /> 
         {doc?.uploadedDocuments?.length && <DocumentsPreview isSendBackFlow={true} documents={doc?.uploadedDocuments} />}
 
-        {latitude !== null && longitude !== null && (
+        {doc?.code === "SITEPHOTOGRAPH.ONE" && (
+            latitude !== null && longitude !== null ? (
                 <div>
                     <p>Latitude: {latitude}</p>
                     <p>Longitude: {longitude}</p>
                 </div>
+            ): 
+            (
+              <p style={{ color: 'red' }}>Please upload a Photo with Location details.</p>
+             )
         )}
+       
         </div>
     );
     });
