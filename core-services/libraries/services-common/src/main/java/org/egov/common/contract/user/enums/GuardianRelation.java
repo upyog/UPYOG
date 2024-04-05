@@ -41,5 +41,5 @@
 package org.egov.common.contract.user.enums;
 
 public enum GuardianRelation {
-    FATHER, MOTHER, HUSBAND, OTHER;
+     Father, Mother, Husband, Other;
 }
