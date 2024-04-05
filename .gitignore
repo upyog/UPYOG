@@ -3,3 +3,6 @@ frontend/micro-ui-internals/node_modules/*
 .idea
 index.lock
 *.bak
+municipal-services/firenoc-calculator/package-lock.json
+core-services/xstate-chatbot/nodejs/src/messege.js
+core-services/xstate-chatbot/nodejs/package-lock.json

@@ -96,7 +96,7 @@ class PGRService {
     if(cityAndLocality.city=="Sahibzada Ajit Singh Nagar")
     {
       cityAndLocality.city="Mohali";
-    }
+}
     let matchedCity = null;
     let matchedCityMessageBundle = null;
     for(let city of cities) {

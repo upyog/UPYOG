@@ -604,8 +604,8 @@ let messageBundle = {
     seweragePayment:{
       en_IN: "Bill Payment Successful ✅\n\nThe sewerage connection bill for *{{consumerCode}}* has been paid by *{{name}}* *{{payerNumber}}*\n\nThe transaction number is *{{transaction_number}}*.\n\nWe are happy to serve you 😃",
       hi_IN: "बिल भुगतान सफल ✅\n\n*{{consumerCode}}* के लिए सीवरेज कनेक्शन बिल का भुगतान *{{name}}* *{{payerNumber}}* द्वारा किया गया है।\n\nआपका ट्रांजेक्शन नंबर *{{transaction_number}}* है।\n\nहम आपकी सेवा करके खुश हैं। 😃"
-    }
-  },
+    },
+  
   paymentFail:{
     en_IN: "Sorry 😥!  The Payment Transaction has failed due to authentication failure.\n\nYour transaction reference number is {{transaction_number}}.\n\nTo go back to the main menu, type and send mseva.",
     hi_IN: "क्क्षमा करें 😥! प्रमाणीकरण विफलता के कारण भुगतान लेनदेन विफल हो गया है।\n\nआपकी लेन-देन संदर्भ संख्या {{transaction_number}} है।\n\nमुख्य मेनू पर वापस जाने के लिए, टाइप करें और mseva भेजें।",

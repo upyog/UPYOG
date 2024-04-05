@@ -310,7 +310,7 @@ class ReceiptService {
       return Payments['Payments'];
       
     }
-
+  }
     async findreceiptsList(user,service,locale){ 
       let requestBody = {
         RequestInfo: {
