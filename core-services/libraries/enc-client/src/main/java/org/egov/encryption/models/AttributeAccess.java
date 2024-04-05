@@ -7,20 +7,12 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
-@ToString
 public class AttributeAccess {
 
-    private Attribute attribute;
-    private AccessType accessType;
+    private String attribute = null;
 
-    public AttributeAccess(Attribute attribute) {
-        this.attribute = attribute;
-        this.accessType = AccessType.PLAIN;
-    }
+    private Visibility firstLevelVisibility = null;
 
-    @Override
-    public String toString() {
-        return attribute + ", AccessType : " + accessType;
-    }
+    private Visibility secondLevelVisibility = null;
+
 }
