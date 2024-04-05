@@ -206,6 +206,7 @@ public class TranslationService {
         calculationCriteria.put("property", propertyMap);
         calculationCriteria.put("tenantId", property.getTenantId());
         calculationCriteria.put("financialYear",assessmentRequestV2.getAssessment().getFinancialYear());
+        calculationCriteria.put("modeOfPayment", assessmentRequestV2.getAssessment().getModeOfPayment());
         Map<String, Object> calculationReq = new HashMap<>();
         calculationReq.put("RequestInfo", requestInfo);
         calculationReq.put("CalculationCriteria", Collections.singletonList(calculationCriteria));

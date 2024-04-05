@@ -20,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class TransactionResponse {
 
     @JsonProperty("ResponseInfo")

@@ -69,8 +69,8 @@ public class AssessmentNotificationService {
 
         Property property = properties.get(0);
         unmaskingUtil.getOwnerDetailsUnmasked(property,requestInfo);
-
-        BillResponse billResponse = billingService.fetchBill(property, requestInfo);
+        System.out.println("assessment:"+assessment);
+        BillResponse billResponse = billingService.fetchBill(property, requestInfo,assessment);
         BigDecimal dueAmount = billResponse.getBill().get(0).getTotalAmount();
 
         List<String> configuredChannelNamesForAssessment =  util.fetchChannelList(new RequestInfo(), tenantId, PT_BUSINESSSERVICE, ACTION_FOR_ASSESSMENT);
@@ -233,6 +233,7 @@ public class AssessmentNotificationService {
     private String customize(Assessment assessment, Property property, String msgCode, String localizationMessages){
 
         String messageTemplate = util.getMessageTemplate(msgCode, localizationMessages);
+        System.out.println("messageTemplate::"+messageTemplate);
 
         if(messageTemplate.contains(NOTIFICATION_ASSESSMENTNUMBER))
             messageTemplate = messageTemplate.replace(NOTIFICATION_ASSESSMENTNUMBER, assessment.getAssessmentNumber());
@@ -262,6 +263,7 @@ public class AssessmentNotificationService {
             messageTemplate = messageTemplate.replace(NOTIFICATION_PAYMENT_LINK,util.getShortenedUrl(finalPath));
         }
 
+        System.out.println("messageTemplate::"+messageTemplate);
         return messageTemplate;
     }
 

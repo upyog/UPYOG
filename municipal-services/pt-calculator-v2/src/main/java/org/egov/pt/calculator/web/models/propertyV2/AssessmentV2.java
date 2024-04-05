@@ -71,6 +71,9 @@ public class AssessmentV2 {
 	private AuditDetails auditDetails ;
 
 
+	@NotNull
+	@JsonProperty("modeOfPayment")
+	private ModeOfPayment modeOfPayment;
 
 	public enum Source {
 
@@ -97,6 +100,37 @@ public class AssessmentV2 {
 		@JsonCreator
 		public static Source fromValue(String text) {
 			for (Source b : Source.values()) {
+				if (String.valueOf(b.value).equalsIgnoreCase(text)) {
+					return b;
+				}
+			}
+			return null;
+		}
+	}
+	
+	public enum ModeOfPayment {
+
+		YEARLY("YEARLY"),
+
+		QUARTERLY("QUARTERLY"),
+
+		HALFYEARLY("HALFYEARLY");
+		
+		private String value;
+
+		ModeOfPayment(String value) {
+			this.value = value;
+		}
+
+		@Override
+		@JsonValue
+		public String toString() {
+			return String.valueOf(value);
+		}
+
+		@JsonCreator
+		public static ModeOfPayment fromValue(String text) {
+			for (ModeOfPayment b : ModeOfPayment.values()) {
 				if (String.valueOf(b.value).equalsIgnoreCase(text)) {
 					return b;
 				}

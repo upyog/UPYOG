@@ -67,7 +67,8 @@ import static org.egov.pt.calculator.util.CalculatorConstants.PT_SPECIAL_EXEMPTI
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_ROAD_TYPE_TAX;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_STRUCTURE_TYPE_TAX;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_AGE_FACTOR_TAX;
-import static org.egov.pt.calculator.util.CalculatorConstants.PT_PAYBLE_TAX;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_COMPLEMENTARY_REBATE;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_MODEOFPAYMENT_REBATE;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -192,7 +193,7 @@ public class EstimationService {
 
 	@Autowired
 	private ObjectMapper mapper;
-	
+
 	@Value("${pt.mutation.deadline.month}")
 	private String deadLineAfterMutationDocDate;
 
@@ -251,7 +252,7 @@ public class EstimationService {
 		Map<String,Object> masterMap = mDataService.getMasterMap(request);
 		return new CalculationRes(new ResponseInfo(), Collections.singletonList(getCalculation(request.getRequestInfo(), criteria, masterMap)));
 	}
-	
+
 	public void checkAssessmentIsDone(CalculationReq request)
 	{
 		CalculationCriteria criteria = request.getCalculationCriteria().get(0);
@@ -259,6 +260,7 @@ public class EstimationService {
 		String authURL = new StringBuilder().append(configs.getAssessmentServiceHost()).append(configs.getAssessmentSearchEndpoint())
 				.append(URL_PARAMS_SEPARATER).append("propertyIds=").append(property.getPropertyId()).append(SEPARATER)
 				.append("tenantId=").append(property.getTenantId()).toString();
+		System.out.println("request::"+request.getRequestInfo());
 		AssessmentResponseV2 assessmentResponseV2=restTemplate.postForObject(authURL,request.getRequestInfo(),AssessmentResponseV2.class);
 		List<AssessmentV2> propertylist=assessmentResponseV2.getAssessments().stream().filter(t->t.getFinancialYear().equalsIgnoreCase(criteria.getFinancialYear())).collect(Collectors.toList());
 		if(propertylist.size()>0)
@@ -293,7 +295,7 @@ public class EstimationService {
 			enrichmentService.enrichDemandPeriod(criteria,assessmentYear,masterMap);
 
 		List<BillingSlab> filteredBillingSlabs = getSlabsFiltered(property,criteria,requestInfo);
-		
+
 
 		Map<String, Map<String, List<Object>>> propertyBasedExemptionMasterMap = new HashMap<>();
 		Map<String, JSONArray> timeBasedExemptionMasterMap = new HashMap<>();
@@ -374,7 +376,7 @@ public class EstimationService {
 				 * counting the number of units & total area in ground floor for unbuilt area
 				 * tax calculation
 				 */
-				
+
 				//Ground Floor area is deducted as ground floor is connected to vacant land
 				if (unit.getFloorNo().equalsIgnoreCase("0")) {
 					groundUnitsCount += 1;
@@ -396,7 +398,7 @@ public class EstimationService {
 
 			BigDecimal unbuiltAmount = getUnBuiltRate(detail, unBuiltRate, groundUnitsCount, groundUnitsArea);
 			BigDecimal unbuiltarea=getUnBuiltAre(detail, unBuiltRate, groundUnitsCount, groundUnitsArea);
-			
+
 
 			/*
 			 * taxHeadEstimate = getBiilinfEstimatesForTax(requestInfo,unbuiltarea,
@@ -536,11 +538,11 @@ public class EstimationService {
 		if(unit!=null) {
 			searchKey=unit.getUsageCategoryMajor();
 		}
-			
+
 		else {
 			searchKey=detail.getUsageCategoryMajor();
 		}
-			
+
 		String assessmentYear = detail.getFinancialYear();
 
 		Map<String, Object> applicableOwnerUsageTypeRate = mDataService.getApplicableMaster(assessmentYear,
@@ -923,12 +925,11 @@ public class EstimationService {
 			switch (category) {
 
 			case TAX:
-				//taxAmt = taxAmt.add(estimate.getEstimateAmount());	
 
+				taxAmt = taxAmt.add(estimate.getEstimateAmount());	
 				if(estimate.getTaxHeadCode().equalsIgnoreCase(PT_TAX))
 				{
 					ptTax = ptTax.add(estimate.getEstimateAmount());
-					taxAmt = taxAmt.add(estimate.getEstimateAmount());
 				}
 
 
@@ -951,31 +952,52 @@ public class EstimationService {
 				break;
 			}
 		}
-
-		BigDecimal paybletax=BigDecimal.ZERO;
-
-		//totalAmount=new BigDecimal(200).setScale(2,2);
-
-
-		paybletax=taxAmt.multiply(new BigDecimal(92)).divide(new
-				BigDecimal(100)).setScale(2, 2).negate();
-
-
-		if(taxAmt.compareTo(new BigDecimal(600)) > 0) 
-			taxAmt=taxAmt.multiply(new BigDecimal(8)).divide(new
-					BigDecimal(100)).setScale(2, 2);
 		
-		if(exemption.compareTo(BigDecimal.ZERO)==0) {
-			if(taxAmt.compareTo(new BigDecimal(600)) < 0) { 
+		BigDecimal modeofpayment_rebate=BigDecimal.ZERO;
+		BigDecimal updatedtaxammount=BigDecimal.ZERO;
+		switch (criteria.getModeOfPayment()) {
+		case "QUARTERLY":
+			modeofpayment_rebate=taxAmt.multiply(new BigDecimal(3).divide(new BigDecimal(100)).negate());
+			modeofpayment_rebate=modeofpayment_rebate.setScale(2,2);
+			updatedtaxammount=taxAmt.add(modeofpayment_rebate);
+			break;
+			
+		case "HALFYEARLY":
+			modeofpayment_rebate=taxAmt.multiply(new BigDecimal(6).divide(new BigDecimal(100)).negate());
+			modeofpayment_rebate=modeofpayment_rebate.setScale(2,2);
+			updatedtaxammount=taxAmt.add(modeofpayment_rebate);
+			break;
+			
+		case "YEARLY":
+			modeofpayment_rebate=taxAmt.multiply(new BigDecimal(10).divide(new BigDecimal(100)).negate());
+			modeofpayment_rebate=modeofpayment_rebate.setScale(2,2);
+			updatedtaxammount=taxAmt.add(modeofpayment_rebate);
+			break;
 
-				paybletax=taxAmt.subtract(new BigDecimal(600)).negate().setScale(2,2); 
-				taxAmt=new BigDecimal(600);
-			}
+		default:
+			break;
 		}
 
 		
-		TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(taxAmt.add(penalty), rebate.add(exemption));
+		BigDecimal complementary_rebate=BigDecimal.ZERO;
+		complementary_rebate=updatedtaxammount.multiply(new BigDecimal(92).divide(new BigDecimal(100)).negate());
+		complementary_rebate=complementary_rebate.setScale(2,2);
+
+		//if(taxAmt.compareTo(new BigDecimal(600)) > 0) 
+		//taxAmt=taxAmt.multiply(new BigDecimal(8)).divide(new BigDecimal(100)).setScale(2,2);
+
+		/*
+		 * final BigDecimal NewtaxAmmount=taxAmt; estimates.stream().forEach(t-> {
+		 * if(t.getTaxHeadCode().equalsIgnoreCase("PT_TAX"))
+		 * t.setEstimateAmount(NewtaxAmmount);
+		 * 
+		 * });
+		 */
+		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MODEOFPAYMENT_REBATE).category(Category.REBATE).estimateAmount( modeofpayment_rebate).build());
+		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_COMPLEMENTARY_REBATE).category(Category.REBATE).estimateAmount( complementary_rebate).build());
 		
+		TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(taxAmt.add(penalty), rebate.add(exemption).add(complementary_rebate).add(modeofpayment_rebate));
+
 		if (null != decimalEstimate) {
 			decimalEstimate.setCategory(taxHeadCategoryMap.get(decimalEstimate.getTaxHeadCode()));
 			estimates.add(decimalEstimate);
@@ -984,19 +1006,13 @@ public class EstimationService {
 			else
 				rebate = rebate.add(decimalEstimate.getEstimateAmount());
 		}
+		
+		BigDecimal totalAmount = taxAmt.add(penalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
 
-		final BigDecimal NewtaxAmmount=taxAmt;
-		estimates.stream().forEach(t->
-		{
-			if(t.getTaxHeadCode().equalsIgnoreCase("PT_TAX")) 
-				t.setEstimateAmount(NewtaxAmmount);
-			
-		});
-
-		BigDecimal totalAmount = taxAmt.add(penalty).add(rebate).add(exemption);
-
-		//estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_PAYBLE_TAX).category(Category.DEFICIT).estimateAmount( paybletax).build());
-
+		if(exemption.compareTo(BigDecimal.ZERO)==0) {
+			if(totalAmount.compareTo(new BigDecimal(600)) < 0)  
+				totalAmount=new BigDecimal(600);
+		}
 		// false in the argument represents that the demand shouldn't be updated from this call
 		Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(requestInfo,criteria);
 		BigDecimal collectedAmtForOldDemand = demandService.getCarryForwardAndCancelOldDemand(ptTax, criteria, requestInfo,oldDemand, false);
@@ -1662,9 +1678,9 @@ public class EstimationService {
 		Long deadlineDate = getDeadlineDate(docDate,mutationPaymentPeriodInMonth);
 
 		if (deadlineDate < System.currentTimeMillis()) {
-				penaltyAmt = mDataService.calculateApplicablesNew(taxAmt, penalty);
+			penaltyAmt = mDataService.calculateApplicablesNew(taxAmt, penalty);
 		}
-			
+
 		return penaltyAmt;
 	}
 	/**

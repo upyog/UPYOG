@@ -57,7 +57,9 @@ public class CalculatorConstants {
 	
 	public static final String PT_ROAD_TYPE = "PT_ROAD_TYPE";
 	
-	public static final String PT_PAYBLE_TAX="PT_PAYBLE_TAX";
+	public static final String PT_COMPLEMENTARY_REBATE="PT_COMPLEMENTARY_REBATE";
+	
+	public static final String PT_MODEOFPAYMENT_REBATE="PT_MODEOFPAYMENT_REBATE";
 	
 	public static final String CALCULTED_ROAD_TYPE_TAX_WITH_TAX_AMT = "CALCULTED_ROAD_TYPE_TAX_WITH_TAX_AMT";
 
