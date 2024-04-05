@@ -155,7 +155,7 @@ class DummyPGRService {
                 "department": "Streetlights",
                 "slaHours": 336,
                 "menuPath": "StreetLights",
-                "active": false,
+                "active": true,
                 "order": 1
             },
             {
@@ -164,7 +164,7 @@ class DummyPGRService {
                 "department": "DEPT_1",
                 "slaHours": 336,
                 "menuPath": "StreetLights",
-                "active": true,
+                "active": false,
                 "order": 2
             },
             {
@@ -622,51 +622,68 @@ class DummyPGRService {
         this.complaintCategoriesMessageBundle = {
           StreetLights: {
             en_IN : "Streetlights",
-            hi_IN : "सड़क की बत्तियाँ"
+            hi_IN : "स्ट्रीटलाइट्स",
+            pa_IN : "ਸਟ੍ਰੀਟ ਲਾਈਟਾਂ"
           },
           Garbage: {
             en_IN : "Garbage",
-            hi_IN : "कचरा"
+            hi_IN : "कचरा",
+            pa_IN : "ਕੂੜਾ ਕਰਕਟ"
           }, 
           Drains: {
             en_IN : "Drains",
-            hi_IN : "नालियों"
+            hi_IN : "नालियां",
+            pa_IN : "ਨਾਲੀਆਂ"
           },
           WaterandSewage: {
             en_IN : "Water and Sewage",
-            hi_IN : "पानी और सीवेज"
+            hi_IN : "पानी और सीवेज",
+            pa_IN : "ਪਾਣੀ ਅਤੇ ਸੀਵਰੇਜ"
           },
           RoadsAndFootpaths: {
             en_IN : "Roads and Footpaths",
-            hi_IN : "सड़कें और फुटपाथ"
+            hi_IN : "सड़कें और फुटपाथ",
+            pa_IN : "ਸੜਕਾਂ ਅਤੇ ਫੁੱਟਪਾਥ"
           },
           Mosquitos: {
             en_IN : "Mosquitos",
-            hi_IN : "मच्छर"
+            hi_IN : "मच्छर",
+            pa_IN : "ਮੱਛਰ"
           },
           Animals: {
             en_IN : "Animals",
-            hi_IN : "जानवरों"
+            hi_IN : "पशु",
+            pa_IN : "ਜਾਨਵਰ"
           },
           PublicToilets: {
             en_IN : "Public Toilets",
-            hi_IN : "सार्वजनिक शौंचालय"
+            hi_IN : "सार्वजनिक शौचालय",
+            pa_IN : "ਜਨਤਕ ਟਾਇਲਟ"
           },
           LandViolations: {
             en_IN : "Land violations",
-            hi_IN : "भूमि का उल्लंघन"
+            hi_IN : "भूमि उल्लंघन",
+            pa_IN : "ਜ਼ਮੀਨ ਦੀ ਉਲੰਘਣਾ"
           },
           Trees: {
             en_IN : "Trees",
-            hi_IN : "पेड़"
+            hi_IN : "पेड़",
+            pa_IN : "ਰੁੱਖ"
           },
           OpenDefecation: {
             en_IN : "Open defecation",
-            hi_IN : "खुले में शौच जाना"
+            hi_IN : "खुले में शौच",
+            pa_IN : "ਖੁੱਲਾ ਟੱਪਣਾ"
           },
           Parks: {
             en_IN : "Parks",
-            hi_IN : "पार्क"
+            hi_IN : "पार्क",
+            pa_IN : "ਪਾਰਕ"
+          },
+          Others: {
+            en_IN : "Others",
+            hi_IN : "अन्य",
+            pa_IN : "ਹੋਰ"
           }
         }
     } // constructor

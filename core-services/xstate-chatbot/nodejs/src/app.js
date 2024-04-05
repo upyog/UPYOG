@@ -2,7 +2,7 @@ const express = require('express'),
   bodyParser = require('body-parser'),
   envVariables = require('./env-variables'),
   port = envVariables.port;
-
+  const { createProxyMiddleware } = require('http-proxy-middleware');
 const createAppServer = () => {
 const app = express();
     app.use((req, res, next) => {
@@ -18,6 +18,9 @@ const app = express();
     app.use(bodyParser.urlencoded({ limit: '10mb', extended: true, parameterLimit: 50000 }));
     // app.use(cookieParser());
     app.use(envVariables.contextPath, require('./channel/routes'));
+    app.use(createProxyMiddleware('/', // replace with your endpoint
+        { target: 'https://msewapunjab.niua.org/' } // replace with your target
+    ));
     module.exports = app;
     return app;
 }

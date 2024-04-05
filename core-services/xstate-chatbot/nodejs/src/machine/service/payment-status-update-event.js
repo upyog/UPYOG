@@ -97,7 +97,7 @@ class PaymentStatusUpdateEventFormatter{
         key = 'consolidatedreceipt';
    
 
-      let pdfUrl = config.egovServices.externalHost + 'pdf-service/v1/_create';
+      let pdfUrl = config.egovServices.egovServicesHost + 'pdf-service/v1/_create';
       pdfUrl = pdfUrl + '?key='+key+ '&tenantId=' + tenantId;
 
       let msgId = request.RequestInfo.msgId.split('|');
@@ -105,13 +105,21 @@ class PaymentStatusUpdateEventFormatter{
 
       let requestBody = {
         RequestInfo: {
-          authToken: request.RequestInfo.authToken,
+          authToken: user.authToken,
           msgId: msgId,
           userInfo: user.userInfo
         },
         Payments:[]
       };
       requestBody.Payments.push(payment);
+      console.log("Before PT receipt custom changes: " + JSON.stringify(requestBody));
+
+      if(businessService === 'PT'){
+        this.ptreceipt(requestBody);
+      }
+      console.log("After PT receipt custom changes: " + JSON.stringify(requestBody));
+      console.log("URL: "+ pdfUrl);
+      console.log("user token: "+ user.authToken);
 
       let options = {
         method: 'POST',
@@ -129,7 +137,7 @@ class PaymentStatusUpdateEventFormatter{
         };
         let extraInfo = {
           whatsAppBusinessNumber: config.whatsAppBusinessNumber.slice(2),
-          fileName: consumerCode
+          fileName: key
         };
 
         if(isOwner){
@@ -189,6 +197,129 @@ class PaymentStatusUpdateEventFormatter{
 
   }
 
+convertEpochToDate (dateEpoch ) {
+    const dateFromApi = new Date(dateEpoch);
+    let month = dateFromApi.getMonth() + 1;
+    let day = dateFromApi.getDate();
+    let year = dateFromApi.getFullYear();
+    month = (month > 9 ? "" : "0") + month;
+    day = (day > 9 ? "" : "0") + day;
+    return `${day}/${month}/${year}`;
+  };
+
+
+  ptreceipt(payloadReceiptDetails)
+{
+  let assessmentYear="",assessmentYearForReceipt="";
+      let count=0;
+      if(payloadReceiptDetails.Payments[0].paymentDetails[0].businessService=="PT"){
+          let arrearRow={};  let arrearArray=[];
+  let roundoff=0,tax=0,firecess=0,cancercess=0,penalty=0,rebate=0,interest=0,usage_exemption=0,special_category_exemption=0,adhoc_penalty=0,adhoc_rebate=0,total=0;
+          payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails.map(element => {
+
+          if(element.amount >0 || element.amountPaid>0)
+          { count=count+1;
+            let toDate=this.convertEpochToDate(element.toPeriod).split("/")[2];
+            let fromDate=this.convertEpochToDate(element.fromPeriod).split("/")[2];
+            assessmentYear=assessmentYear==""?fromDate+"-"+toDate+"(Rs."+element.amountPaid+")":assessmentYear+","+fromDate+"-"+toDate+"(Rs."+element.amountPaid+")";
+         assessmentYearForReceipt=fromDate+"-"+toDate;
+    element.billAccountDetails.map(ele => {
+    if(ele.taxHeadCode == "PT_TAX")
+    {tax=ele.adjustedAmount;}
+    else if(ele.taxHeadCode == "PT_TIME_REBATE")
+    {rebate=ele.adjustedAmount;}
+    else if(ele.taxHeadCode == "PT_CANCER_CESS")
+    {cancercess=ele.adjustedAmount;}
+    else if(ele.taxHeadCode == "PT_FIRE_CESS")
+    {firecess=ele.adjustedAmount;}
+    else if(ele.taxHeadCode == "PT_TIME_INTEREST")
+    {interest=ele.adjustedAmount;}
+    else if(ele.taxHeadCode == "PT_TIME_PENALTY")
+    {penalty=ele.adjustedAmount;}
+    else if(ele.taxHeadCode == "PT_OWNER_EXEMPTION")
+    {special_category_exemption=ele.adjustedAmount;}
+    else if(ele.taxHeadCode == "PT_ROUNDOFF")
+    {roundoff=ele.adjustedAmount;}
+    else if(ele.taxHeadCode == "PT_UNIT_USAGE_EXEMPTION")
+    {usage_exemption=ele.adjustedAmount;}
+    else if(ele.taxHeadCode == "PT_ADHOC_PENALTY")
+    {adhoc_penalty=ele.adjustedAmount;}
+    else if(ele.taxHeadCode == "PT_ADHOC_REBATE")
+    {adhoc_rebate=ele.adjustedAmount;}
+    //total=total+ele.adjustedAmount;
+    });
+  arrearRow={
+  "year":assessmentYearForReceipt,
+  "tax":tax,
+  "firecess":firecess,
+  "cancercess":cancercess,
+  "penalty":penalty,
+  "rebate": rebate,
+  "interest":interest,
+  "usage_exemption":usage_exemption,
+  "special_category_exemption": special_category_exemption,
+  "adhoc_penalty":adhoc_penalty,
+  "adhoc_rebate":adhoc_rebate,
+  "roundoff":roundoff,
+  "total":element.amountPaid
+  };
+  arrearArray.push(arrearRow);
+            }
+          });
+        if(count==0){  total=0;
+          let index=payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails.length;
+          let toDate=this.convertEpochToDate( payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].toPeriod).split("/")[2];
+          let fromDate=this.convertEpochToDate( payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].fromPeriod).split("/")[2];
+          assessmentYear=assessmentYear==""?fromDate+"-"+toDate:assessmentYear+","+fromDate+"-"+toDate;
+          assessmentYearForReceipt=fromDate+"-"+toDate;
+          payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.map(ele => {
+            if(ele.taxHeadCode == "PT_TAX")
+            {tax=ele.adjustedAmount;}
+            else if(ele.taxHeadCode == "PT_TIME_REBATE")
+            {rebate=ele.adjustedAmount;}
+            else if(ele.taxHeadCode == "PT_CANCER_CESS")
+            {cancercess=ele.adjustedAmount;}
+            else if(ele.taxHeadCode == "PT_FIRE_CESS")
+            {firecess=ele.adjustedAmount;}
+            else if(ele.taxHeadCode == "PT_TIME_INTEREST")
+            {interest=ele.adjustedAmount;}
+            else if(ele.taxHeadCode == "PT_TIME_PENALTY")
+            {penalty=ele.adjustedAmount;}
+            else if(ele.taxHeadCode == "PT_OWNER_EXEMPTION")
+            {special_category_exemption=ele.adjustedAmount;}
+            else if(ele.taxHeadCode == "PT_ROUNDOFF")
+            {roundoff=ele.adjustedAmount;}
+            else if(ele.taxHeadCode == "PT_UNIT_USAGE_EXEMPTION")
+            {usage_exemption=ele.adjustedAmount;}
+            else if(ele.taxHeadCode == "PT_ADHOC_PENALTY")
+            {adhoc_penalty=ele.adjustedAmount;}
+            else if(ele.taxHeadCode == "PT_ADHOC_REBATE")
+            {adhoc_rebate=ele.adjustedAmount;}
+            total=total+ele.adjustedAmount;
+            });
+          arrearRow={
+          "year":assessmentYearForReceipt,
+          "tax":tax,
+          "firecess":firecess,
+          "cancercess":cancercess,
+          "penalty":penalty,
+          "interest":interest,
+          "usage_exemption":usage_exemption,
+          "special_category_exemption": special_category_exemption,
+          "adhoc_penalty":adhoc_penalty,
+          "adhoc_rebate":adhoc_rebate,
+          "roundoff":roundoff,
+          "total":total
+          };
+          arrearArray.push(arrearRow);
+        }
+          const details = {
+            "assessmentYears": assessmentYear,
+        "arrearArray":arrearArray
+            }
+            payloadReceiptDetails.Payments[0].paymentDetails[0].additionalDetails=details; 
+        }
+    }
   async prepareSucessMessage(payment, locale, isOwner){
     let templateList;
     let params=[];
@@ -458,8 +589,10 @@ class PaymentStatusUpdateEventFormatter{
 
 let messageBundle = {
   paymentSucess:{
-    en_IN: "Bill Payment Successful ✅\n\nYour transaction number is *{{transaction_number}}*.\n\nYou can download the payment receipt from above.\n\n[Payment receipt in PDF format is attached with message]\n\nWe are happy to serve you 😃",
-    hi_IN: "धन्यवाद😃! आपने mSeva पंजाब के माध्यम से अपने बिल का सफलतापूर्वक भुगतान किया है। आपका ट्रांजेक्शन नंबर *{{transaction_number}}* है। \n\n कृपया अपने संदर्भ के लिए संलग्न रसीद प्राप्त करें। 😃",
+    en_IN: "Bill Payment Successful ✅\n\nYour transaction number is {{transaction_number}}.\n\nYou can download the payment receipt from above.\n\n[Payment receipt in PDF format is attached with message]\n\nWe are happy to serve you 😃",
+    hi_IN: "बिल भुगतान सफल ✅\n\nआपका ट्रांजेक्शन नंबर है: {{transaction_number}}.\n\nYou can download the payment receipt from above.\n\n[Payment receipt in PDF format is attached with message]\n\nWe are happy to serve you 😃",
+    hi_IN: "धन्यवाद😃! आपने mSeva पंजाब के माध्यम से अपने बिल का सफलतापूर्वक भुगतान किया है। आपका ट्रांजेक्शन नंबर {{transaction_number}} है। \n\n कृपया अपने संदर्भ के लिए संलग्न रसीद प्राप्त करें।"
+	},
     propertyPayment:{
       en_IN: "Bill Payment Successful ✅\n\nThe property tax for *{{consumerCode}}* has been paid by *{{name}}* *{{payerNumber}}*\n\nThe transaction number is *{{transaction_number}}*.\n\nWe are happy to serve you 😃",
       hi_IN: "बिल भुगतान सफल ✅\n\n*{{consumerCode}}* के लिए संपत्ति कर का भुगतान *{{name}}* *{{payerNumber}}* द्वारा किया गया है।\n\nआपका ट्रांजेक्शन नंबर *{{transaction_number}}* है।\n\nहम आपकी सेवा करके खुश हैं। 😃"
@@ -474,20 +607,23 @@ let messageBundle = {
     }
   },
   paymentFail:{
-    en_IN: "Sorry 😥!  The Payment Transaction has failed due to authentication failure.\n\nYour transaction reference number is *{{transaction_number}}*.\n\nTo go back to the main menu, type and send mseva.",
-    hi_IN: "क्षमा करें 😥! प्रमाणीकरण विफलता के कारण भुगतान लेनदेन विफल हो गया है। आपका लेन-देन संदर्भ संख्या *{{transaction_number}}* है।\n\nमुख्य मेनू पर वापस जाने के लिए, टाइप करें और mseva भेजें।"
+    en_IN: "Sorry 😥!  The Payment Transaction has failed due to authentication failure.\n\nYour transaction reference number is {{transaction_number}}.\n\nTo go back to the main menu, type and send mseva.",
+    hi_IN: "क्क्षमा करें 😥! प्रमाणीकरण विफलता के कारण भुगतान लेनदेन विफल हो गया है।\n\nआपकी लेन-देन संदर्भ संख्या {{transaction_number}} है।\n\nमुख्य मेनू पर वापस जाने के लिए, टाइप करें और mseva भेजें।",
+    pa_IN: "ਮਾਫ ਕਰਨਾ 😥! ਪ੍ਰਮਾਣਿਕਤਾ ਅਸਫਲ ਹੋਣ ਕਾਰਨ ਭੁਗਤਾਨ ਸੌਦਾ ਅਸਫਲ ਹੋ ਗਿਆ ਹੈ.\n\nਤੁਹਾਡਾ ਲੈਣ-ਦੇਣ ਦਾ ਹਵਾਲਾ ਨੰਬਰ {{transaction_number}} ਹੈ.\n\nਮੁੱਖ ਮੀਨੂੰ ਤੇ ਵਾਪਸ ਜਾਣ ਲਈ, ਟਾਈਪ ਕਰੋ ਅਤੇ ਮੇਲ ਭੇਜੋ."
   },
   wait:{
     en_IN: "Please wait while your receipt is being generated.",
-    hi_IN: "कृपया प्रतीक्षा करें जब तक कि आपकी रसीद उत्पन्न न हो जाए।"
+    hi_IN: "कृपया प्रतीक्षा करें जब तक आपकी रसीद तैयार की जा रही है।.",
+    pa_IN: "ਕਿਰਪਾ ਕਰਕੇ ਉਡੀਕ ਕਰੋ ਜਦੋਂ ਤੁਹਾਡੀ ਰਸੀਦ ਤਿਆਰ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ."
   },
   registration:{
-    en_IN: 'If you want to receive {{service}} bill alerts for *{{consumerCode}}* on this mobile number type and send *1*\n\nElse type and send *2*',
+    en_IN: 'If you want to receive {{service}} bill alerts for {{consumerCode}} on this mobile number type and send *1*\n\nElse type and send *2*',
     hi_IN: 'यदि आप इस मोबाइल नंबर प्रकार पर {{उपभोक्ता कोड}} के लिए बिल अलर्ट प्राप्त करना चाहते हैं और भेजें *1*\n\nअन्यथा टाइप करें और *2* भेजें'
   },
   endStatement:{
     en_IN: "👉 To go back to the main menu, type and send mseva.",
-    hi_IN: "👉 मुख्य मेनू पर वापस जाने के लिए, टाइप करें और mseva भेजें।"
+    hi_IN: '👉 मुख्य मेनू पर वापस जाने के लिए, टाइप करें और mseva भेजें।',
+    pa_IN: '👉 ਮੁੱਖ ਮੀਨੂੰ ਤੇ ਵਾਪਸ ਜਾਣ ਲਈ, ਟਾਈਪ ਕਰੋ ਅਤੇ ਮੇਲ ਭੇਜੋ.'
   }
 
 };
