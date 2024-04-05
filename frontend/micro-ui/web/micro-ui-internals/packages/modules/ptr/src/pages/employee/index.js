@@ -80,7 +80,7 @@ const EmployeeApp = ({ path, url, userType }) => {
                 useNewInboxAPI={true}
                 parentRoute={path}
                 businessService="ptr"
-                filterComponent="PT_INBOX_FILTER"
+                filterComponent="PTR_INBOX_FILTER"
                 initialStates={inboxInitialState}
                 isInbox={true}
               />
