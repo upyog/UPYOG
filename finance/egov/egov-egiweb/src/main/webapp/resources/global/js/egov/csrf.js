@@ -49,11 +49,14 @@ const token = jQuery("meta[name='_csrf']") && jQuery("meta[name='_csrf']").attr(
     ? jQuery("meta[name='_csrf']").attr("content") : null;
 const header = jQuery("meta[name='_csrf_header']") && jQuery("meta[name='_csrf_header']").attr("content") !== ''
     ? jQuery("meta[name='_csrf_header']").attr("content") : null;
-$(document).ajaxSend(function (e, xhr, options) {
+
+jQuery(document).ready(function ($) {
+	
+	$(document).ajaxSend(function (e, xhr, options) {
     if (token && header)
         xhr.setRequestHeader(header, token);
-});
-jQuery(document).ready(function () {
+    });
+	
     var tokenExist = tokenName && tokenVal;
     jQuery("form").submit(function () {
         if (tokenExist)
