@@ -2,16 +2,18 @@ package org.egov.encryption.audit;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.encryption.config.DecryptionPolicyConfiguration;
 import org.egov.encryption.config.EncProperties;
 import org.egov.encryption.models.AuditObject;
+import org.egov.encryption.models.UniqueIdentifier;
 import org.egov.encryption.producer.Producer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -23,28 +25,35 @@ public class AuditService {
     private EncProperties encProperties;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private DecryptionPolicyConfiguration decryptionPolicyConfiguration;
 
-    public void audit(JsonNode data, User user) {
+    public void audit(JsonNode json, String model, String purpose, RequestInfo requestInfo) {
+        User user = requestInfo.getUserInfo();
+
         AuditObject auditObject = AuditObject.builder().build();
-        auditObject.setData(data);
+        auditObject.setId(UUID.randomUUID().toString());
         auditObject.setTimestamp(System.currentTimeMillis());
         auditObject.setUserId(user.getUuid());
-        auditObject.setId(UUID.randomUUID().toString());
+        auditObject.setModel(model);
+        auditObject.setPurpose(purpose);
 
-        producer.push(encProperties.getAuditTopicName(), auditObject.getId(), objectMapper.valueToTree(auditObject).toString());
-    }
+        if (requestInfo.getPlainAccessRequest() != null) {
+            auditObject.setPlainAccessRequest(requestInfo.getPlainAccessRequest());
+        }
 
-    public void audit(String userId, Long timestamp, String purpose, JsonNode abacParams, JsonNode data) {
-        ObjectNode auditObject = objectMapper.createObjectNode();
+        UniqueIdentifier uniqueIdentifier =
+                decryptionPolicyConfiguration.getUniqueIdentifierForModel(model);
+        List<String> entityIds = new ArrayList<>();
+        for (JsonNode node : json) {
+        	if(node.at(uniqueIdentifier.getJsonPath())!=null) {
+            String nodeUuid = node.at(uniqueIdentifier.getJsonPath()).asText();
+            entityIds.add(nodeUuid);
+        	}
+        }
+        auditObject.setEntityIds(entityIds);
 
-        auditObject.set("id", TextNode.valueOf(UUID.randomUUID().toString()));
-        auditObject.set("userId", TextNode.valueOf(userId));
-        auditObject.set("timestamp", LongNode.valueOf(timestamp));
-        auditObject.set("purpose", TextNode.valueOf(purpose));
-        auditObject.set("abacParams", abacParams);
-        auditObject.set("data", data);
-
-        producer.push(encProperties.getAuditTopicName(), auditObject.get("id").asText(), auditObject);
+        producer.push(encProperties.getAuditTopicName(), auditObject.getId(), auditObject);
     }
 
 }

@@ -2,19 +2,24 @@ package org.egov.tracer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.kafka.listener.LoggingErrorHandler;
+import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import java.util.List;
+
 @Component
 @Slf4j
-public class KafkaConsumerErrorHandler extends LoggingErrorHandler {
+public class KafkaConsumerErrorHandler extends LoggingErrorHandler  {
 
-	@Autowired
-	private ExceptionAdvise exceptionAdvise;
+    @Autowired
+    private ExceptionAdvise exceptionAdvise;
 
     @Value("${tracer.errorsPublish}")
     private boolean sendErrorsToKafka;
