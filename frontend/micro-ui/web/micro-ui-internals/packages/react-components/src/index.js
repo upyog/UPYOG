@@ -173,6 +173,7 @@ import {
   FirenocIcon,
   InfoIcon,
   LoginIcon,
+  PTRIcon,
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -333,6 +334,7 @@ export {
   MultiSelectDropdown,
   CaseIcon,
   PTIcon,
+  PTRIcon,
   DocumentIcon,
   DocumentIconSolid,
   PMBIconSolid,

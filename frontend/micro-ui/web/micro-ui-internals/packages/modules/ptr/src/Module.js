@@ -1,4 +1,4 @@
-import { Header, CitizenHomeCard, PTIcon } from "@upyog/digit-ui-react-components";
+import { Header, CitizenHomeCard, PTRIcon } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
@@ -133,13 +133,13 @@ export const PTRLinks = ({ matchPath, userType }) => {
     },
   ];
 
-  return <CitizenHomeCard header={t("ACTION_TEST_PTR")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
+  return <CitizenHomeCard header={t("ACTION_TEST_PTR")} links={links} Icon={() => <PTRIcon className="fill-path-primary-main" />} />;
 };
 
 export const PTRComponents = {
   PTRCard,
   PTRModule,
   PTRLinks,
-  PT_INBOX_FILTER: (props) => <InboxFilter {...props} />,
+  PTR_INBOX_FILTER: (props) => <InboxFilter {...props} />,
   PTRInboxTableConfig: TableConfig,
 };

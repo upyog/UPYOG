@@ -14,6 +14,7 @@ import {
   WhatsNewCard,
   OBPSIcon,
   WSICon,
+  PTRIcon
 } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -81,6 +82,11 @@ const Home = () => {
         name: t(citizenServicesObj?.props?.[2]?.label),
         Icon: <CaseIcon className="fill-path-primary-main" />,
         onClick: () => history.push(citizenServicesObj?.props?.[2]?.navigationUrl),
+      },
+      {
+        name: t(citizenServicesObj?.props?.[1]?.label),
+        Icon: <PTRIcon className="fill-path-primary-main" />,
+        onClick: () => history.push(citizenServicesObj?.props?.[1]?.navigationUrl),
       },
       // {
       //     name: t("ACTION_TEST_WATER_AND_SEWERAGE"),
