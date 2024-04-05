@@ -1,6 +1,5 @@
 package org.egov.encryption.models;
 
-
 import lombok.*;
 
 @Getter
@@ -8,12 +7,14 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"jsonPath"})
-@ToString
 public class Attribute {
 
-    private String jsonPath;
-    private String maskingTechnique;
-    private String type;
+    private String name = null;
+
+    private String jsonPath = null;
+
+    private String patternId = null;
+
+    private Visibility defaultVisibility = null;
 
 }

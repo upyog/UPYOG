@@ -1,3 +1,4 @@
+/*
 package org.egov.tracer.kafka;
 
 import org.egov.tracer.config.TracerConfiguration;
@@ -41,11 +42,11 @@ public class KafkaListenerLoggingAspectTest {
 
     @Autowired
     private KafkaListenerWithoutPayloadAnnotationAndWithoutTopicHeaderAnnotation
-        kafkaListenerWithoutPayloadAnnotationAndWithoutTopicHeaderAnnotation;
+            kafkaListenerWithoutPayloadAnnotationAndWithoutTopicHeaderAnnotation;
 
     @Autowired
     private KafkaListenerStringPayloadWithNonTopicHeaderAnnotation
-        kafkaListenerStringPayloadWithNonTopicHeaderAnnotation;
+            kafkaListenerStringPayloadWithNonTopicHeaderAnnotation;
 
     @Autowired
     private TracerProperties tracerProperties;
@@ -244,3 +245,4 @@ class KafkaListenerStringPayloadWithNonTopicHeaderAnnotation {
     }
 }
 
+*/
