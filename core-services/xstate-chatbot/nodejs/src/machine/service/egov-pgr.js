@@ -93,6 +93,10 @@ class PGRService {
     let latlng = geocode.substring(1, geocode.length - 1); // Remove braces
     let cityAndLocality = await getCityAndLocality(latlng);
     let { cities, messageBundle } = await this.fetchCities(tenantId);
+    if(cityAndLocality.city=="Sahibzada Ajit Singh Nagar")
+    {
+      cityAndLocality.city="Mohali";
+    }
     let matchedCity = null;
     let matchedCityMessageBundle = null;
     for(let city of cities) {

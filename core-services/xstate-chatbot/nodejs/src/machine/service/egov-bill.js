@@ -21,11 +21,13 @@ class BillService {
     let messageBundle = {
       WS: {
         en_IN: 'Water and Sewerage',
-        hi_IN: 'पानी और सीवरेज बिल'
+        hi_IN: 'पानी और सीवरेज',
+        pa_IN: 'ਪਾਣੀ ਅਤੇ ਸੀਵਰੇਜ'
       },
       PT: {
         en_IN: 'Property Tax',
-        hi_IN: 'संपत्ति कर'
+        hi_IN: 'संपत्ति कर',
+        pa_IN: 'ਜਾਇਦਾਦ ਟੈਕਸ'
       },
       TL: {
         en_IN: 'Trade License Fees',
@@ -125,8 +127,8 @@ class BillService {
         hi_IN: 'कनेक्शन नंबर'
       };
       example = {
-       en_IN: '(Connection No must be in format\nWS/XXX/XX-XX/XXXXX)',
-       hi_IN: '(कनेक्शन नंबर WS/XXX/XX-XX/XXXXX प्रारूप में होना चाहिए)'
+       en_IN: '(Connection Number must be in format\nXXXXXXXXXX OR WS/XXX/XX-XX/XXXXX)',
+       hi_IN: '(कनेक्शन नंबर nXXXXXXXXXX OR WS/XXX/XX-XX/XXXXX प्रारूप में होना चाहिए)'
       }
     }
 
@@ -136,8 +138,9 @@ class BillService {
         hi_IN: 'संपत्ति आईडी'
       };
       example = {
-       en_IN: '(Property ID must be in format\nPB-PT-XXXX-XX-XX-XXXXX)',
-       hi_IN: '(प्रॉपर्टी आईडी प्रारूप में होनी चाहिए\nPB-PT-XXXX-XX-XX-XXXXX)'
+       en_IN: '(Property ID must be in format\nPT-xxxx-xxxxxx)',
+       hi_IN: '(संपत्ति आईडी\nPT-xxxx-xxxxxx प्रारूप में होनी चाहिए)',
+       pa_IN: '(ਪ੍ਰਾਪਰਟੀ ID ਫਾਰਮੈਟ\nPT-xxxx-xxxxxx ਵਿੱਚ ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ)'
       }
     }
 
@@ -188,10 +191,10 @@ class BillService {
     }
 
     if(searchParamOption === 'consumerNumber' || searchParamOption === 'propertyId' || searchParamOption === 'connectionNumber'){
-        if(service === 'PT'){
-          let regexp = new RegExp(state+'-PT-\\d{4}-\\d{2}-\\d{2}-\\d+$');
-          return regexp.test(paramInput);
-        }
+        // if(service === 'PT'){
+        //   let regexp = new RegExp(state+'-PT-\\d{4}-\\d{2}-\\d{2}-\\d+$');
+        //   return regexp.test(paramInput);
+        // }
         if(service === 'WS'){
           //todo
           let regexp = new RegExp('^(WS|SW)/\\d{3}/\\d{4}-\\d{2}/\\d+$');

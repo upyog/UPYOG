@@ -79,7 +79,16 @@ class UserService {
 
   async createUser(mobileNumber, tenantId) {
     let requestBody = {
-      RequestInfo: {},
+      RequestInfo: {
+        "apiId": "Rainmaker",
+      "ver": ".01",
+      "ts": "",
+      "action": "_create",
+      "did": "1",
+      "key": "",
+      "msgId": "20170310130900|en_IN",
+      "authToken": null
+      },
       User: {
         otpReference: config.userService.userServiceHardCodedPassword,
         permamnentCity: tenantId,

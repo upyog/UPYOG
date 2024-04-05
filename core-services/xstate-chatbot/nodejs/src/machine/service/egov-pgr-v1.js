@@ -97,6 +97,11 @@ class PGRV1Service {
     let matchedCityMessageBundle = null;
     for(let city of cities) {
       let cityName = messageBundle[city]['en_IN'];
+       console.log(cityName);
+       if(cityAndLocality.city=="Sahibzada Ajit Singh Nagar")
+     {
+      cityAndLocality.city="Mohali";
+     }
       if(cityName.toLowerCase() == cityAndLocality.city.toLowerCase()) {
         matchedCity = city;
         matchedCityMessageBundle = messageBundle[city];
