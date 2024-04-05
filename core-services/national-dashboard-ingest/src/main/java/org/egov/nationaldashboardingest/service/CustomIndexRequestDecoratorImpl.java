@@ -76,14 +76,16 @@ public class CustomIndexRequestDecoratorImpl implements CustomIndexRequestDecora
                         }
                         String flattenedFieldName = name + "For" + ingestUtil.capitalizeFieldName(groupByMetric);
                         //log.info(flattenedFieldName);
-                        String usagecat=null;
+                        String val=null;
                         for(JsonNode bucketNode : currentNode.get("buckets")) {
                         	if(currentNode.get("groupBy").asText().equalsIgnoreCase("usageCategory") || currentNode.get("groupBy").asText().equalsIgnoreCase("usageType"))
-                        			usagecat=toCamelCase(bucketNode.get("name").asText());
-                            if (!flattenedValuesToBeInserted.get(groupByMetricInCamelCase).containsKey(usagecat)){
-                                flattenedValuesToBeInserted.get(groupByMetricInCamelCase).put(usagecat, new HashMap<>());
+                        			val=toCamelCase(bucketNode.get("name").asText());
+                        	else
+                        		val=bucketNode.get("name").asText();
+                            if (!flattenedValuesToBeInserted.get(groupByMetricInCamelCase).containsKey(val)){
+                                flattenedValuesToBeInserted.get(groupByMetricInCamelCase).put(val, new HashMap<>());
                             }
-                            flattenedValuesToBeInserted.get(groupByMetricInCamelCase).get(usagecat).put(flattenedFieldName, jsonProcessorUtil.convertJsonNodeToNativeType(bucketNode.get("value")));
+                            flattenedValuesToBeInserted.get(groupByMetricInCamelCase).get(val).put(flattenedFieldName, jsonProcessorUtil.convertJsonNodeToNativeType(bucketNode.get("value")));
                         }
                     }
                 }
