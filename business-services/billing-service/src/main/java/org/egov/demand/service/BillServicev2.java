@@ -999,8 +999,8 @@ public class BillServicev2 {
 
 	public BillResponseV2 create(BillRequestV2 billRequest) {
 
-		//if (!CollectionUtils.isEmpty(billRequest.getBills()))
-		//billRepository.saveBill(billRequest);
+		if (!CollectionUtils.isEmpty(billRequest.getBills()))
+		billRepository.saveBill(billRequest);
 		return getBillResponse(billRequest.getBills());
 	}
 
