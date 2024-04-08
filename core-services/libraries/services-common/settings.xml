@@ -13,8 +13,8 @@
     <servers>
         <server>
             <id>repo.egovernments.org</id>
-            <username>${nexus.user}</username>
-            <password>${nexus.password}</password>
+            <username>deployment</username>
+            <password>egovnexus7918</password>
         </server>
     </servers>
     <pluginGroups>
