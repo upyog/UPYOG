@@ -29,6 +29,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class BPA   {
   @SafeHtml
   @JsonProperty("id")
@@ -49,6 +50,10 @@ public class BPA   {
   @SafeHtml
   @JsonProperty("edcrNumber")
   private String edcrNumber = null;
+  
+  @SafeHtml
+  @JsonProperty("applicationType")
+  private String applicationType = null;
 
   @SafeHtml
   @JsonProperty("riskType")
@@ -432,6 +437,7 @@ public class BPA   {
     this.additionalDetails = additionalDetails;
   }
 
+  
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -496,4 +502,12 @@ public class BPA   {
     }
     return o.toString().replace("\n", "\n    ");
   }
+
+public String getApplicationType() {
+	return applicationType;
+}
+
+public void setApplicationType(String applicationType) {
+	this.applicationType = applicationType;
+}
 }
