@@ -48,7 +48,6 @@ public class BPA   {
   @JsonProperty("edcrNumber")
   private String edcrNumber = null;
 
-  @SafeHtml
   @JsonProperty("applicationType")
   private String applicationType = null;
   
