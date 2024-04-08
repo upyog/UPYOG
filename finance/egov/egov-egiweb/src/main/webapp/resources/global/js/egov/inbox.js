@@ -48,7 +48,7 @@
 
 jQuery(document).ready(function($){
 	
-	$(window).unload(function(){
+	$(window).on("unload", function(){
 		parent.window.opener.inboxloadmethod();
 	});
 	
