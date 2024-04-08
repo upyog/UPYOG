@@ -86,6 +86,27 @@
                 <target>1.8</target>
             </configuration>
         </plugin>
+        
+        <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-deploy-plugin</artifactId>
+    <version>3.0.0-M1</version>
+    <executions>
+        <execution>
+            <id>deploy-jar-file</id>
+            <phase>deploy</phase>
+            <goals>
+                <goal>deploy-file</goal>
+            </goals>
+            <configuration>
+                <file>${basedir}/target/${name}-${version}-${env}.jar</file>
+                <url>http://pmidc-nexus.lgpunjab.gov.in/nexus/content/groups/public/</url>
+                <repositoryId>jenkins-maven-uploads</repositoryId>
+                <packaging>jar</packaging>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
     </plugins>
   </build>
 </project>
