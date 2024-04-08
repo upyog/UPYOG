@@ -12,6 +12,7 @@ import org.egov.bpa.calculator.web.models.AuditDetails;
 import org.egov.bpa.calculator.web.models.Document;
 import org.egov.bpa.calculator.web.models.landinfo.LandInfo;
 import org.egov.bpa.calculator.web.models.landinfo.Workflow;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -47,6 +48,10 @@ public class BPA   {
   @JsonProperty("edcrNumber")
   private String edcrNumber = null;
 
+  @SafeHtml
+  @JsonProperty("applicationType")
+  private String applicationType = null;
+  
   @JsonProperty("riskType")
   private String riskType = null;
   
@@ -425,6 +430,7 @@ public class BPA   {
     this.additionalDetails = additionalDetails;
   }
 
+  
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -489,4 +495,12 @@ public class BPA   {
     }
     return o.toString().replace("\n", "\n    ");
   }
+
+public String getApplicationType() {
+	return applicationType;
+}
+
+public void setApplicationType(String applicationType) {
+	this.applicationType = applicationType;
+}
 }
