@@ -532,7 +532,7 @@ export const OBPSService = {
       asSectionHeader: true,
       isCommon: true,
       values: [
-        { title: "BPA_BOUNDARY_PLOT_AREA_LABEL", value: `${edcr?.planDetail?.planInformation?.plotArea}`, isNotTranslated: true, isUnit: "BPA_SQ_FT_LABEL" },
+        { title: "BPA_BOUNDARY_PLOT_AREA_LABEL", value: `${edcr?.planDetail?.planInformation?.plotArea}`, isNotTranslated: true, isUnit: "BPA_SQ_YARDS_LABEL" },
         { title: "BPA_PLOT_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.plotNo || "NA", isNotTranslated: true  },
         { title: "BPA_KHATHA_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.khataNo || "NA", isNotTranslated: true  },
         { title: "BPA_HOLDING_NUMBER_LABEL", value: BPA?.additionalDetails?.holdingNo || "NA", isNotTranslated: true  },
@@ -579,7 +579,7 @@ export const OBPSService = {
       additionalDetails: {
         values: [
           { title: "BPA_APP_DETAILS_DEMOLITION_DETAILS_LABEL", value : " ", isHeader: true},
-          { title: "BPA_APPLICATION_DEMOLITION_AREA_LABEL", value: edcr?.planDetail?.planInformation?.demolitionArea, isUnit: "BPA_SQ_MTRS_LABEL" } 
+          { title: "BPA_APPLICATION_DEMOLITION_AREA_LABEL", value: edcr?.planDetail?.planInformation?.demolitionArea, isUnit: "BPA_SQ_YARDS_LABEL" } 
         ],
         scruntinyDetails: []
       }

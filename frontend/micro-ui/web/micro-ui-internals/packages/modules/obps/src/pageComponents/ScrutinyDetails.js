@@ -351,7 +351,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             label={t("BPA_APPLICATION_DEMOLITION_AREA_LABEL")}
             text={
               data?.planDetail?.planInformation?.demolitionArea
-                ? `${data?.planDetail?.planInformation?.demolitionArea} ${t("BPA_SQ_MTRS_LABEL")}`
+                ? `${data?.planDetail?.planInformation?.demolitionArea} ${t("BPA_SQ_YARDS_LABEL")}`
                 : t("CS_NA")
             }
           ></Row>
