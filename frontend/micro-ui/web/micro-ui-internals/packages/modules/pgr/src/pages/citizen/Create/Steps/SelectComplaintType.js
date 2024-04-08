@@ -25,7 +25,7 @@ const SelectComplaintType = ({ t, config, onSelect, value }) => {
 
   function selectedValue(value) {
     setComplaintType(value);
-    // SessionStorage.set("complaintType", value);
+    window.Digit.SessionStorage.set("complaintType", value);
   }
   return (
     <TypeSelectCard
