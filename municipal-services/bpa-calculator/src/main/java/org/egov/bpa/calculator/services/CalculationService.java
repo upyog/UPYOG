@@ -157,7 +157,7 @@ public class CalculationService {
 			calulationCriteria.setFeeType(BPACalculatorConstants.LOW_RISK_PERMIT_FEE_TYPE);
 
 		} 
-		else if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_APL_FEETYPE))
+		else if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_APL_FEETYPE) && calulationCriteria.getBpa().getApplicationType().equalsIgnoreCase("BUILDING_PLAN_SCRUTINY"))
 		{	
 			@SuppressWarnings("unchecked")
 			Map<String,String> node=(Map<String, String>)calulationCriteria.getBpa().getAdditionalDetails();
@@ -179,7 +179,7 @@ public class CalculationService {
 		estimates.add(estimate);
 		}
 		
-		else if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE))
+		else if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE) && calulationCriteria.getBpa().getApplicationType().equalsIgnoreCase("BUILDING_PLAN_SCRUTINY"))
 		{	
 			@SuppressWarnings("unchecked")
 			Map<String,Map<String,String>> node=(Map<String, Map<String,String>>)calulationCriteria.getBpa().getAdditionalDetails();
