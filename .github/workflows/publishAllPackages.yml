@@ -2,7 +2,9 @@ name: Node.js Publish UI Packages
 
 on:
   push:
-    branches: [ 'UM-6756' ]
+
+    branches: [ 'digit2.9' ]
+
     paths:
       - 'frontend/micro-ui/web/micro-ui-internals/**'
 
