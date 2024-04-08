@@ -284,6 +284,15 @@ public class TLValidator {
                     Long currentToDate = license.getValidTo();
                     Long existingFromDate = searchObj.getValidFrom();
                     Long existingToDate = searchObj.getValidTo();
+                       ///////////////////////////////////Temporary fix renewal for 2024-25 as frontend payload was not giving correct FY 2024-25 epoch 
+                    //if(currentToDate <= existingToDate && currentToDate==1706772599000L)
+                    //{
+                    //	license.setValidTo(1743422290000L);   //TEMPORARY URGENCY FIX FOR RENEWAL 2024-25
+                    //	license.setValidFrom(1706772599000L);  //TEMPORARY URGENCY FIX FOR RENEWAL 2024-25
+                    //}
+                    //////// TEMP FIX END HERE (TO UNDO THIS FIX, REMOVE ABOVE CODE)
+                    
+                   // if(!license.getAction().equals(TLConstants.ACTION_CANCEL)) {
                     if(currentFromDate < existingToDate){
                         throw new CustomException("INVALID FROM DATE","ValidFrom should be greater than the previous applications ValidTo Date");
                     }
@@ -295,8 +304,14 @@ public class TLValidator {
                     }
                     if(currentFromDate > currentToDate){
                         throw new CustomException("INVALID FROM DATE","ValidFrom cannot be greater than ValidTo Date");
-                    }          
+                    }  
+                    
+                    
                    
+               // }else if(license.getTradeLicenseDetail().getChannel() != null && ChannelEnum.RENEWAL.toString().equalsIgnoreCase(license.getTradeLicenseDetail().getChannel().toString())) {
+               // 	log.info("#Ingoring the date validation for the INWORKFLOW RENEWAL application from V1 "
+               // 			+ "License Number: " + license.getLicenseNumber() + "Appllication Number: " + license.getApplicationNumber());
+                	
                 }else{
                     throw new CustomException("RENEWAL ERROR","The license applied for renewal is not present in the repository");
                 }
@@ -573,6 +588,13 @@ public class TLValidator {
         if(requestInfo.getUserInfo().getType().equalsIgnoreCase("EMPLOYEE" )&& criteria.tenantIdOnly())
             throw new CustomException("INVALID SEARCH","Search based only on tenantId is not allowed");
 
+       // if(!requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN" )&& !criteria.tenantIdOnly()
+        //        && criteria.getTenantId()==null)
+          //  throw new CustomException("INVALID SEARCH","TenantId is mandatory in search");
+
+     //   if(requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN" ) && !criteria.isEmpty()
+       //         && !criteria.tenantIdOnly() && criteria.getTenantId()==null)
+         //   throw new CustomException("INVALID SEARCH","TenantId is mandatory in search");
         /*if(requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN" )&& criteria.tenantIdOnly())
             throw new CustomException("INVALID SEARCH","Search only on tenantId is not allowed");*/
 
