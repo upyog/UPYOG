@@ -179,7 +179,7 @@ public class CalculationService {
 		estimates.add(estimate);
 		}
 		
-		else if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE) && calulationCriteria.getBpa().getApplicationType().equalsIgnoreCase("BUILDING_PLAN_SCRUTINY"))
+		else if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE) && calulationCriteria.getBpa().getBusinessService().equalsIgnoreCase("BPA"))
 		{	
 			@SuppressWarnings("unchecked")
 			Map<String,Map<String,String>> node=(Map<String, Map<String,String>>)calulationCriteria.getBpa().getAdditionalDetails();
