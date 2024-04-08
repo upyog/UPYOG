@@ -7,7 +7,7 @@
         <mirror>
             <id>nexus</id>
             <mirrorOf>central</mirrorOf>
-            <url>https://nexus-repo.egovernments.org/nexus/content/groups/public/</url>
+            <url>http://pmidc-nexus.lgpunjab.gov.in/nexus/content/groups/public/</url>
         </mirror>
     </mirrors>
     <servers>
