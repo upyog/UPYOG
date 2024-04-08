@@ -65,7 +65,7 @@ public class ProcessInstance {
 
     public ProcessInstance addDocumentsItem(Document documentsItem) {
         if (this.documents == null) {
-            this.documents = new ArrayList<ProcessInstance>();
+            this.documents = new ArrayList<Document>();
         }
         if (!this.documents.contains(documentsItem))
             this.documents.add(documentsItem);
