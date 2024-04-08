@@ -1,7 +1,7 @@
 FROM egovio/alpine-maven-builder-jdk-8:1-master-NA-6036091e AS build
 ARG WORK_DIR
-ARG nexusUsername
-ARG nexusPassword
+ARG nexusUsername=deployment
+ARG nexusPassword=egovnexus7918
 WORKDIR /app
 # copy the project files
 COPY ${WORK_DIR}/pom.xml ./pom.xml
