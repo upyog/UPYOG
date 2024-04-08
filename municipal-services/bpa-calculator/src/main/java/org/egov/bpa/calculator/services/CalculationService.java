@@ -164,13 +164,13 @@ public class CalculationService {
 		
 			if(!node.containsKey("boundaryWallLength"))
 				throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "Boundary Wall length should not be null");
-			if(!node.containsKey("area"))
-				throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "Area should not be null!!");
+			if(!node.containsKey("builtUpArea"))
+				throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "builtUpArea should not be null!!");
 
 		BigDecimal boundayWallLength=new BigDecimal(node.get("boundaryWallLength"));
-		BigDecimal area=new BigDecimal(node.get("area"));
+		BigDecimal area=new BigDecimal(node.get("builtUpArea"));
 		
-		totalTax=boundayWallLength.multiply(BigDecimal.valueOf(2.5)).add(area.multiply(BigDecimal.valueOf(2.5)));
+		totalTax=boundayWallLength.multiply(BigDecimal.valueOf(2.5)).add(area.multiply(BigDecimal.valueOf(9)).multiply(BigDecimal.valueOf(2.5)));
 		estimate.setEstimateAmount(totalTax.setScale(0, RoundingMode.HALF_UP));
 		estimate.setCategory(Category.FEE);
 
