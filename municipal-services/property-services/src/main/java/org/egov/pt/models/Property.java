@@ -114,6 +114,9 @@ public class Property extends PropertyInfo {
 	@Builder.Default
 	@JsonProperty("isOldDataEncryptionRequest")
 	private boolean isOldDataEncryptionRequest = false;
+	
+	@JsonProperty("amalgamatedProperty")
+	private List<AmalgamtedProperty> amalgamatedProperty;
 
 	@Builder
 	public Property(String id, String propertyId, String surveyId, List<String> linkedProperties, String tenantId,

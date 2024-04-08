@@ -33,6 +33,7 @@ import org.egov.pt.service.WorkflowService;
 import org.egov.pt.util.EncryptionDecryptionUtil;
 import  org.egov.pt.util.PTConstants;
 import org.egov.pt.util.PropertyUtil;
+import org.egov.pt.util.UnmaskingUtil;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,10 @@ public class PropertyValidator {
 
 	@Autowired
 	EncryptionDecryptionUtil encryptionDecryptionUtil;
+	
+	
+	@Autowired
+	private UnmaskingUtil unmaskingUtil;
 
 	/**
 	 * Validate the masterData and ctizenInfo of the given propertyRequest
@@ -247,6 +252,9 @@ public class PropertyValidator {
 		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
 	}
+	
+	
+	
 
 	/**
 	 * Validates common criteria of update and mutation

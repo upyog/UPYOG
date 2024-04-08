@@ -30,6 +30,7 @@ import org.springframework.util.ObjectUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
@@ -49,6 +50,10 @@ public class EnrichmentService {
 
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private ObjectMapper mapper;
+	
+	
 
 
 
@@ -161,6 +166,73 @@ public class EnrichmentService {
 		property.setAuditDetails(auditDetails);
 		property.setAccountId(propertyFromDb.getAccountId());
        
+		property.setAdditionalDetails(
+				propertyutil.jsonMerge(propertyFromDb.getAdditionalDetails(), property.getAdditionalDetails()));
+    }
+    
+    
+    public void enrichUpdateRequestForAmalgamation(PropertyRequest request,Property propertyFromDb) {
+    	
+    	Property property = request.getProperty();
+        RequestInfo requestInfo = request.getRequestInfo();
+        AuditDetails auditDetailsForUpdate = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid().toString(), true);
+        propertyFromDb.setAuditDetails(auditDetailsForUpdate);
+        
+        
+		Boolean isWfEnabled = config.getIsWorkflowEnabled();
+		Boolean iswfStarting = propertyFromDb.getStatus().equals(Status.ACTIVE);
+
+		if (!isWfEnabled) {
+
+			property.setStatus(Status.ACTIVE);
+			property.getAddress().setId(propertyFromDb.getAddress().getId());
+
+		} else if (isWfEnabled && iswfStarting) {
+
+			enrichPropertyForNewWf(requestInfo, property, false);
+			
+			@SuppressWarnings("unchecked")
+			Map<String, Object> additionalDetails = mapper.convertValue(propertyFromDb.getAdditionalDetails(), Map.class);
+			additionalDetails.put("createdFromProperty", property.getPropertyId());
+			JsonNode node=mapper.convertValue(additionalDetails, JsonNode.class);
+			property.setAdditionalDetails(node);
+		
+		}
+		
+		if (!CollectionUtils.isEmpty(property.getDocuments()))
+			property.getDocuments().forEach(doc -> {
+
+				if (doc.getId() == null) {
+					doc.setId(UUID.randomUUID().toString());
+					doc.setStatus(Status.ACTIVE);
+				}
+			});
+				
+	    	if (!CollectionUtils.isEmpty(property.getUnits()))
+			property.getUnits().forEach(unit -> {
+
+				if (unit.getId() == null) {
+					unit.setId(UUID.randomUUID().toString());
+					unit.setActive(true);
+				}
+			});
+				
+		Institution institute = property.getInstitution();
+		if (!ObjectUtils.isEmpty(institute) && null == institute.getId())
+			property.getInstitution().setId(UUID.randomUUID().toString());
+
+		AuditDetails auditDetails = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid().toString(), true);
+		property.setAuditDetails(auditDetails);
+		property.setAccountId(propertyFromDb.getAccountId());
+       
+		//Setting The Property ID
+		
+		@SuppressWarnings("unchecked")
+		Map<String, Object> additionalDetails = mapper.convertValue(propertyFromDb.getAdditionalDetails(), Map.class);
+		additionalDetails.put("amalgamtedProperty", request.getProperty().getAmalgamatedProperty());
+		JsonNode node=mapper.convertValue(additionalDetails, JsonNode.class);
+		propertyFromDb.setAdditionalDetails(node);
+		
 		property.setAdditionalDetails(
 				propertyutil.jsonMerge(propertyFromDb.getAdditionalDetails(), property.getAdditionalDetails()));
     }
@@ -324,6 +396,9 @@ public class EnrichmentService {
 			ackNo = propertyutil.getIdList(requestInfo, property.getTenantId(), config.getMutationIdGenName(), config.getMutationIdGenFormat(), 1).get(0);
 		} else
 			ackNo = propertyutil.getIdList(requestInfo, property.getTenantId(), config.getAckIdGenName(), config.getAckIdGenFormat(), 1).get(0);
+		
+		String pId = propertyutil.getIdList(requestInfo, property.getTenantId(), config.getPropertyIdGenName(), config.getPropertyIdGenFormat(), 1).get(0);
+		property.setPropertyId(pId);
 		property.setId(UUID.randomUUID().toString());
 		property.setAcknowldgementNumber(ackNo);
 		

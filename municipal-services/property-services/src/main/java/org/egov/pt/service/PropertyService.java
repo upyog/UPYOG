@@ -13,6 +13,7 @@ import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.models.AmalgamtedProperty;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
@@ -85,6 +86,9 @@ public class PropertyService {
 
 	@Autowired
 	EncryptionDecryptionUtil encryptionDecryptionUtil;
+	
+	@Autowired
+	private PropertyUtil propertyUtil;
 
 	/**
 	 * Enriches the Request and pushes to the Queue
@@ -141,6 +145,7 @@ public class PropertyService {
 
 		boolean isRequestForOwnerMutation = CreationReason.MUTATION.equals(request.getProperty().getCreationReason());
 		boolean isRequestForBifurcation = CreationReason.BIFURCATION.equals(request.getProperty().getCreationReason());
+		boolean isRequestForAmalgamation = CreationReason.AMALGAMATION.equals(request.getProperty().getCreationReason());
 		
 		boolean isNumberDifferent = checkIsRequestForMobileNumberUpdate(request, propertyFromSearch);
 
@@ -150,6 +155,9 @@ public class PropertyService {
 			processOwnerBifurcation(request, propertyFromSearch);
 		else if(isNumberDifferent)
 			processMobileNumberUpdate(request, propertyFromSearch);
+		else if(isRequestForAmalgamation)
+			processPropertyUpdateForAmalgamation(request, propertyFromSearch);
+		
 		else
 			processPropertyUpdate(request, propertyFromSearch);
 
@@ -233,7 +241,8 @@ public class PropertyService {
 			request.getProperty().setOwners(util.getCopyOfOwners(propertyFromSearch.getOwners()));
 		}
 
-
+		//check for Property Ids;
+		
 		enrichmentService.enrichAssignes(request.getProperty());
 		enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
 
@@ -274,6 +283,102 @@ public class PropertyService {
 			 * If no workflow then update property directly with mutation information
 			 */
 			producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+		}
+	}
+	
+	
+	private void processPropertyUpdateForAmalgamation(PropertyRequest request, Property propertyFromSearch) {
+		
+		if(null==request.getProperty().getAmalgamatedProperty() ||request.getProperty().getAmalgamatedProperty().isEmpty() )
+			throw new CustomException("INVALID_AMALGAMATION_PROPERTY","Invalid Property for Amalgamtion");
+		
+		Set<Property>validPropertyListToBeAmalgamated = new HashSet();
+		PropertyRequest amalPropertiesToBeCheckedRequest = null;
+		Property propertyForAmalgamation = null;
+		Property propertyFromSearchAmalgamation= null;
+		for(AmalgamtedProperty a:request.getProperty().getAmalgamatedProperty()) {
+			amalPropertiesToBeCheckedRequest = new PropertyRequest();
+			propertyForAmalgamation = new Property();
+			propertyFromSearchAmalgamation = new Property();
+			
+			propertyForAmalgamation.setPropertyId(a.getPropertyId());
+			propertyForAmalgamation.setTenantId(a.getTenantId());;
+			
+			amalPropertiesToBeCheckedRequest.setProperty(propertyForAmalgamation);
+			amalPropertiesToBeCheckedRequest.setRequestInfo(request.getRequestInfo());
+			
+			propertyFromSearchAmalgamation = unmaskingUtil.getPropertyUnmaskedForAmalgamation(amalPropertiesToBeCheckedRequest);
+			amalPropertiesToBeCheckedRequest.setProperty(propertyFromSearchAmalgamation);
+			if (propertyFromSearchAmalgamation.getStatus().equals(Status.ACTIVE)) {
+			Boolean isBillUnpaid = propertyUtil.isBillUnpaid(propertyFromSearchAmalgamation.getPropertyId(), propertyFromSearchAmalgamation.getTenantId(), request.getRequestInfo());
+			if (isBillUnpaid)
+				throw new CustomException("EG_PT_AMALGAMATION_UNPAID_CHILD_ERROR", "Child Property has to be completely paid for before initiating the Amalgamation process");
+			}else {
+				throw new CustomException("EG_PT_AMALGAMATION_INACTIVE_CHILD_ERROR", "Child Property has to be in ACTIVE state");
+			}
+			a.setProperty(propertyFromSearchAmalgamation);
+			validPropertyListToBeAmalgamated.add(propertyFromSearchAmalgamation);
+		}
+		propertyValidator.validateRequestForUpdate(request, propertyFromSearch);
+		
+		if (propertyFromSearch.getStatus().equals(Status.ACTIVE)) {
+		Boolean isBillUnpaid = propertyUtil.isBillUnpaid(propertyFromSearch.getPropertyId(), propertyFromSearch.getTenantId(), request.getRequestInfo());
+		if (isBillUnpaid)
+			throw new CustomException("EG_PT_AMALGAMATION_UNPAID_PARENT_ERROR", "Parent Property has to be completely paid for before initiating the Amalgamation process");
+		}else {
+			throw new CustomException("EG_PT_AMALGAMATION_INACTIVE_PARENT_ERROR", "Parent Property has to be in ACTIVE state");
+		}
+		if (CreationReason.CREATE.equals(request.getProperty().getCreationReason())) {
+			userService.createUser(request);
+		} else if (request.getProperty().getSource().toString().equals("WS")
+				&& CreationReason.UPDATE.equals(request.getProperty().getCreationReason())) {
+			userService.updateUser(request);
+		} else {
+			request.getProperty().setOwners(util.getCopyOfOwners(propertyFromSearch.getOwners()));
+		}
+
+		//check for Property Ids;
+		
+		enrichmentService.enrichAssignes(request.getProperty());
+		enrichmentService.enrichUpdateRequestForAmalgamation(request, propertyFromSearch);
+
+		PropertyRequest OldPropertyRequest = PropertyRequest.builder()
+				.requestInfo(request.getRequestInfo())
+				.property(propertyFromSearch)
+				.build();
+
+		util.mergeAdditionalDetails(request, propertyFromSearch);
+
+		if(config.getIsWorkflowEnabled()) {
+
+			State state = wfService.updateWorkflow(request, CreationReason.UPDATE);
+
+			if (state.getIsStartState() == true
+					&& state.getApplicationStatus().equalsIgnoreCase(Status.INWORKFLOW.toString())
+					&& !propertyFromSearch.getStatus().equals(Status.INWORKFLOW)) {
+
+				propertyFromSearch.setStatus(Status.INACTIVE);
+				//producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), OldPropertyRequest);
+				util.saveOldUuidToRequest(request, propertyFromSearch.getId());
+				//producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+
+			} else if (state.getIsTerminateState()
+					&& !state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString())) {
+
+				terminateWorkflowAndReInstatePreviousRecord(request, propertyFromSearch);
+			}else {
+				/*
+				 * If property is In Workflow then continue
+				 */
+				//producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+			}
+
+		} else {
+
+			/*
+			 * If no workflow then update property directly with mutation information
+			 */
+		//	producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
 		}
 	}
 	
