@@ -15,11 +15,17 @@
 	<version>2.1.5-PB-SNAPSHOT</version>
 	<distributionManagement>
 		<snapshotRepository>
-			<id>repo.egovernments.org</id>
+			<id>repo.digit.org</id>
 			<name>eGov ERP Snapshots Repository</name>
 			<url>
-				http://pmidc-nexus.lgpunjab.gov.in//nexus/content/repositories/snapshots/</url>
+				https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
+		<repository>
+			<id>repo.egovernments.org</id>
+			<name>eGov ERP Releases Repository</name>
+			<url>
+				https://nexus-repo.egovernments.org/nexus/content/repositories/releases/</url>
+		</repository>
 	</distributionManagement>
 	<properties>
 		<log4j2.version>2.17.1</log4j2.version>
@@ -27,7 +33,7 @@
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.version>3.3.9</maven.version>
-		<lombok.version>1.18.8</lombok.version>
+		<lombok.version>1.18.28</lombok.version>
 		<commons-lang-version>2.6</commons-lang-version>
 	</properties>
 	<dependencies>
@@ -53,6 +59,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<version>1.18.28</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -92,45 +99,27 @@
 		</dependency>
 	</dependencies>
 	<repositories>
-		<repository>
+			<repository>
 			<id>repo.egovernments.org</id>
 			<name>eGov DIGIT Releases Repository</name>
 			<url>
-				http://pmidc-nexus.lgpunjab.gov.in/nexus/content/repositories/snapshots/</url>
+				https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
 			<id>snapshots.repo.egovernments.org</id>
 			<name>eGov ERP Snapshots Repository</name>
 			<url>
-				http://pmidc-nexus.lgpunjab.gov.in/nexus/content/repositories/snapshots/</url>
+				https://pmidc-nexus.lgpunjab.gov.in/nexus/content/repositories/snapshots/</url>
 		</repository>
 	</repositories>
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>repackage</goal>
-						</goals>
-						<configuration>
-							<classifier>exec</classifier>
-						</configuration>
-					</execution>
-				</executions>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-						<exclude>
-							<groupId>org.springframework.boot</groupId>
-							<artifactId>spring-boot-devtools</artifactId>
-						</exclude>
-					</excludes>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 		</plugins>
