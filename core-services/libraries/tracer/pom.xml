@@ -16,11 +16,17 @@
 	<description>Assist in tracing http and message queue flows</description>
 	<distributionManagement>
 		<snapshotRepository>
-			<id>repo.egovernments.org</id>
+			<id>repo.digit.org</id>
 			<name>eGov ERP Snapshots Repository</name>
 			<url>
-				https://pmidc-nexus.lgpunjab.gov.in//nexus/content/repositories/snapshots/</url>
+				https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
+		<repository>
+			<id>repo.egovernments.org</id>
+			<name>eGov ERP Releases Repository</name>
+			<url>
+				https://nexus-repo.egovernments.org/nexus/content/repositories/releases/</url>
+		</repository>
 	</distributionManagement>
 	<properties>
 		<log4j2.version>2.17.1</log4j2.version>
@@ -131,13 +137,11 @@
 		</dependency>
 	</dependencies>
 	<repositories>
-
 		<repository>
 			<id>repo.egovernments.org</id>
 			<name>eGov DIGIT Releases Repository</name>
-
 			<url>
-				https://pmidc-nexus.lgpunjab.gov.in/nexus/content/repositories/snapshots/</url>
+				https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
 			<id>snapshots.repo.egovernments.org</id>
@@ -145,7 +149,6 @@
 			<url>
 				https://pmidc-nexus.lgpunjab.gov.in/nexus/content/repositories/snapshots/</url>
 		</repository>
-
 	</repositories>
 	<build>
 		<plugins>
