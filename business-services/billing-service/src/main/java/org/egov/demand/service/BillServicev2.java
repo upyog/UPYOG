@@ -635,7 +635,7 @@ public class BillServicev2 {
 		if(!assessmentResponseV2.getAssessments().isEmpty())
 		{
 			assessmentV2=assessmentResponseV2.getAssessments().stream().filter(t->t.getFinancialYear().equalsIgnoreCase(financialYearFromDemand.toString())).collect(Collectors.toList()).get(0);
-			if(null==assessmentV2.getModeOfPayment()) {
+			if(null==assessmentV2.getModeOfPayment() || StringUtils.isEmpty(assessmentV2.getModeOfPayment())) {
 				throw new CustomException("INVALID_MODE_OF_PAYMENT", "Mode Of Payment Not found for the assesment");
 
 			}
@@ -684,7 +684,7 @@ public class BillServicev2 {
 				TransactionResponse tres = restTemplate.postForObject(transactiontUrl+bl.getId(), transactionRequest, TransactionResponse.class);
 				List<Transaction> failedtransactions=tres.getTransactions().stream().filter(t->t.getTxnStatus().equals(Transaction.TxnStatusEnum.FAILURE)).collect(Collectors.toList());
 				List<Transaction> alltrnasactions=tres.getTransactions();
-				if(null!=failedtransactions) {
+				if(null!=failedtransactions && !failedtransactions.isEmpty() ) {
 					if(assessmentV2.getModeOfPayment().toString().equalsIgnoreCase(QUARTERLY)) {
 						failedtransactionMapForQuater.put(bl.getBillDetails().get(0).getPaymentPeriod(), new BigDecimal(failedtransactions.get(0).getTxnAmount()));
 					}

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.pt.models.Address;
+import org.egov.pt.models.AmalgamatedProperty;
 import org.egov.pt.models.AuditDetails;
 import org.egov.pt.models.ConstructionDetail;
 import org.egov.pt.models.Document;
@@ -26,6 +27,7 @@ import org.egov.pt.models.enums.Channel;
 import org.egov.pt.models.enums.CreationReason;
 import org.egov.pt.models.enums.Relationship;
 import org.egov.pt.models.enums.Status;
+import org.egov.pt.util.PTConstants;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,7 +104,15 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 						.exemption(rs.getString("exemption"))
 						.build();
 
-
+				
+				@SuppressWarnings("unchecked")
+				Map<String, Object> additionalDetails = mapper.convertValue(currentProperty.getAdditionalDetails(), Map.class);
+				if(additionalDetails.containsKey(PTConstants.AMALGAMATED_PROPERTY) &&null!=additionalDetails.get(PTConstants.AMALGAMATED_PROPERTY)) {
+					//List<AmalgamtedProperty> pro =  (List<AmalgamtedProperty>) mapper.convertValue(additionalDetails.get("amalgamtedProperty"), AmalgamtedProperty.class);
+					//currentProperty.setAmalgamatedProperty(pro);
+				}
+				
+				
 				setPropertyInfo(currentProperty, rs, tenanId, propertyUuId, linkedProperties, address);
 
 				addChildrenToProperty(rs, currentProperty);

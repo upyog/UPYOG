@@ -380,5 +380,9 @@ public class PropertyConfiguration {
 
     @Value("${persister.update.property.audit.oldData.topic}")
     private String updatePropertyAuditEncTopic;
+    
+    
+    @Value("${persister.update.property.amalgamation.inactive}")
+    private String updatePropertyForDeactivaingForAmalgamationTopic;
 
 }

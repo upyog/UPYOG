@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 @Getter
-public class AmalgamtedProperty {
+public class AmalgamatedProperty {
 	@JsonProperty("tenantId")
 	private String tenantId;
 	@JsonProperty("propertyId")

@@ -39,7 +39,8 @@ import com.jayway.jsonpath.JsonPath;
 public class EnrichmentService {
 
 
-    @Autowired
+   
+	@Autowired
     private PropertyUtil propertyutil;
 
     @Autowired
@@ -186,6 +187,13 @@ public class EnrichmentService {
 
 			property.setStatus(Status.ACTIVE);
 			property.getAddress().setId(propertyFromDb.getAddress().getId());
+			
+			@SuppressWarnings("unchecked")
+			Map<String, Object> additionalDetails = mapper.convertValue(propertyFromDb.getAdditionalDetails(), Map.class);
+			additionalDetails.put(PTConstants.CREATED_FROM_PROPERTY, propertyFromDb.getPropertyId());
+			additionalDetails.put(PTConstants.AMALGAMATED_PROPERTY, property.getAmalgamatedProperty());
+			JsonNode node=mapper.convertValue(additionalDetails, JsonNode.class);
+			property.setAdditionalDetails(node);
 
 		} else if (isWfEnabled && iswfStarting) {
 
@@ -193,7 +201,8 @@ public class EnrichmentService {
 			
 			@SuppressWarnings("unchecked")
 			Map<String, Object> additionalDetails = mapper.convertValue(propertyFromDb.getAdditionalDetails(), Map.class);
-			additionalDetails.put("createdFromProperty", property.getPropertyId());
+			additionalDetails.put(PTConstants.CREATED_FROM_PROPERTY, propertyFromDb.getPropertyId());
+			additionalDetails.put(PTConstants.AMALGAMATED_PROPERTY, property.getAmalgamatedProperty());
 			JsonNode node=mapper.convertValue(additionalDetails, JsonNode.class);
 			property.setAdditionalDetails(node);
 		
@@ -227,11 +236,14 @@ public class EnrichmentService {
        
 		//Setting The Property ID
 		
-		@SuppressWarnings("unchecked")
-		Map<String, Object> additionalDetails = mapper.convertValue(propertyFromDb.getAdditionalDetails(), Map.class);
-		additionalDetails.put("amalgamtedProperty", request.getProperty().getAmalgamatedProperty());
-		JsonNode node=mapper.convertValue(additionalDetails, JsonNode.class);
-		propertyFromDb.setAdditionalDetails(node);
+		/*
+		 * @SuppressWarnings("unchecked") Map<String, Object> additionalDetails =
+		 * mapper.convertValue(propertyFromDb.getAdditionalDetails(), Map.class);
+		 * additionalDetails.put("amalgamtedProperty",
+		 * request.getProperty().getAmalgamatedProperty()); JsonNode
+		 * node=mapper.convertValue(additionalDetails, JsonNode.class);
+		 * propertyFromDb.setAdditionalDetails(node);
+		 */
 		
 		property.setAdditionalDetails(
 				propertyutil.jsonMerge(propertyFromDb.getAdditionalDetails(), property.getAdditionalDetails()));

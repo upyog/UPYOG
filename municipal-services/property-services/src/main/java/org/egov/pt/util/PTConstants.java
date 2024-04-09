@@ -461,6 +461,11 @@ public class PTConstants {
     public static final String CREATIONREASON_REPLACE = "$creationReason";
 
     public static final String TRANSACTIONID_REPLACE = "{TRANSACTION_ID}";
+    
+    public static final String AMALGAMATED_PROPERTY = "amalgamatedProperty";
+
+    public static final String CREATED_FROM_PROPERTY = "createdFromProperty";
+
 
 }
 
