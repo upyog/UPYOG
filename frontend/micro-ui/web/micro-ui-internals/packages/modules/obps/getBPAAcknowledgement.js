@@ -93,7 +93,7 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                 values: [
                     { 
                         title: t("BPA_BOUNDARY_PLOT_AREA_LABEL"),
-                        value: `${application?.data?.edcrDetails?.planDetail?.planInformation?.plotArea} sq.ft` || "NA"
+                        value: `${application?.data?.edcrDetails?.planDetail?.planInformation?.plotArea} sq yd` || "NA"
                     },
                     { 
                         title: t("BPA_PLOT_NUMBER_LABEL"), 
@@ -113,7 +113,7 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                     },
                     { 
                         title: t("BPA_APPLICATION_DEMOLITION_AREA_LABEL"), 
-                        value: t(`${application?.data?.edcrDetails?.planDetail?.planInformation?.demolitionArea} sq.mtrs`) || "NA"
+                        value: t(`${application?.data?.edcrDetails?.planDetail?.planInformation?.demolitionArea} sq yd`) || "NA"
                     } 
                 ]
              },

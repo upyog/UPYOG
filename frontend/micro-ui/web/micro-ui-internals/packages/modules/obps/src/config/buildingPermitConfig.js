@@ -44,7 +44,7 @@ export const newConfig = [
             name: "registrationDetails"
           },
           {
-            label: "BPA_BOUNDARY_WALL_LENGTH_LABEL",
+            label: "BPA_BOUNDARY_WALL_LENGTH_LABEL_INPUT",
             type: "text",
             validation: {},
             name: "boundaryWallLength"
