@@ -142,7 +142,7 @@
 			<id>repo.egovernments.org</id>
 			<name>eGov DIGIT Releases Repository</name>
 			<url>
-				https://pmidc-nexus.lgpunjab.gov.in/nexus/content/repositories/snapshots/</url>
+				https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
 			<id>snapshots.repo.egovernments.org</id>
