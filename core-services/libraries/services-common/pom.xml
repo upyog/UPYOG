@@ -9,12 +9,12 @@
   <description>Shared classes among services</description>
   <distributionManagement>
     <repository>
-      <id>nexus</id>
+      <id>repo.egovernments.org</id>
       <name>eGov ERP Releases Repository</name>
       <url>http://pmidc-nexus.lgpunjab.gov.in/nexus/content/groups/public/</url>
     </repository>
     <snapshotRepository>
-      <id>nexus</id>
+      <id>repo.egovernments.org</id>
       <name>eGov ERP Snapshots Repository</name>
       <url>http://pmidc-nexus.lgpunjab.gov.in/nexus/content/groups/public/</url>
     </snapshotRepository>
@@ -87,7 +87,7 @@
             </configuration>
         </plugin>
         
-        <plugin>
+       <!-- <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-deploy-plugin</artifactId>
     <version>3.0.0-M1</version>
@@ -106,7 +106,7 @@
             </configuration>
         </execution>
     </executions>
-</plugin>
+</plugin>-->
     </plugins>
   </build>
 </project>
