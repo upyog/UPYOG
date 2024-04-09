@@ -87,7 +87,7 @@
             </configuration>
         </plugin>
         
-        <plugin>
+        <!--plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-deploy-plugin</artifactId>
     <version>3.0.0-M1</version>
@@ -100,13 +100,13 @@
             </goals>
             <configuration>
                 <file>${basedir}/target/${name}-${version}-${env}.jar</file>
-                <url>http://pmidc-nexus.lgpunjab.gov.in/nexus/content/groups/public/</url>
+                <url>http://pmidc-nexus.lgpunjab.gov.in/nexus/content/groups/public/org/egov/services/services-common/</url>
                 <repositoryId>jenkins-maven-uploads</repositoryId>
                 <packaging>jar</packaging>
             </configuration>
         </execution>
     </executions>
-</plugin>
+</plugin-->
     </plugins>
   </build>
 </project>
