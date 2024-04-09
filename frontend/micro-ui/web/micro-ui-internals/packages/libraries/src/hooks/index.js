@@ -21,6 +21,7 @@ import { useUserSearch } from "./userSearch";
 import { useApplicationsForBusinessServiceSearch } from "./useApplicationForBillSearch";
 import useBoundaryLocalities from "./useLocalities";
 import useCommonMDMS from "./useMDMS";
+import useCommonMDMSV2 from "./useMDMSV2";
 import useCustomMDMS from "./useCustomMDMS";
 import useCustomAPIHook from "./useCustomAPIHook";
 import useInboxGeneral from "./useInboxGeneral/useInboxGeneral";
@@ -521,6 +522,7 @@ const Hooks = {
   useEmployeeSearch,
   useBoundaryLocalities,
   useCommonMDMS,
+  useCommonMDMSV2,
   useApplicationStatusGeneral,
   useModuleTenants,
   useRecieptSearch,
