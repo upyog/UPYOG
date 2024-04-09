@@ -124,6 +124,41 @@ public class PropertyValidator {
 		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
 	}
+	
+	
+	public void validateCreateRequestForBiFurcation(PropertyRequest request) {
+
+		Property property = request.getProperty();
+		if (null == property.getParentPropertyId() || StringUtils.isEmpty(property.getParentPropertyId()))
+			throw new CustomException("INVALID_PARENT_FOR_BIFURCATION",
+					"Provide valid parent property id for Bifurcation");
+		// Check Parent Exist in the system
+		Property prop = null;
+		PropertyRequest parentToBeCheckedRequest = null;
+		parentToBeCheckedRequest = new PropertyRequest();
+		prop = new Property();
+		prop.setPropertyId(property.getParentPropertyId());
+		prop.setTenantId(property.getTenantId());
+		;
+		parentToBeCheckedRequest.setProperty(prop);
+		parentToBeCheckedRequest.setRequestInfo(request.getRequestInfo());
+		prop = null;
+		prop = unmaskingUtil.getPropertyUnmaskedForAmalgamation(parentToBeCheckedRequest);
+		request.getProperty().setParentPropertyId(prop.getId());
+		parentToBeCheckedRequest.setProperty(prop);
+		if (!prop.getStatus().equals(Status.INWORKFLOW)) {
+
+			Boolean isBillUnpaid = propertyUtil.isBillUnpaid(prop.getPropertyId(), prop.getTenantId(),
+					request.getRequestInfo());
+			if (isBillUnpaid)
+				throw new CustomException("INVALID_PARENT_FOR_BIFURCATION_PENDING PAYMENT",
+						"Parent Property has to be completely paid for before initiating the Bifurcation process");
+		} else {
+			throw new CustomException("INVALID_PARENT_FOR_BIFURCATION",
+					"Provided parent property id for Bifurcation is in Workflow State");
+		}
+
+	}
 
 
 	private void validatePropertyAddressFields(PropertyRequest request, Map<String, String> errorMap) {

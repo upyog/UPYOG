@@ -101,7 +101,17 @@ public class PropertyService {
 
 		propertyValidator.validateCreateRequest(request);
 		enrichmentService.enrichCreateRequest(request);
+		//Validate For BiFurcation
+		if(request.getProperty().getCreationReason().equals(CreationReason.BIFURCATION)) {
+			propertyValidator.validateCreateRequestForBiFurcation(request);
+		}
+		
+		if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
+			processPropertyCreateForAmalgamation(request);
+		}
 		userService.createUser(request);
+		
+		
 		if (config.getIsWorkflowEnabled()
 				&& !request.getProperty().getCreationReason().equals(CreationReason.DATA_UPLOAD)) {
 			wfService.updateWorkflow(request, request.getProperty().getCreationReason());
@@ -119,7 +129,15 @@ public class PropertyService {
 		*
 		*/
 		//Push data after encryption
-		producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+		//producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+		
+		if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
+			producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForAmalgamationTopic(), request);
+		}
+		
+		if(request.getProperty().getCreationReason().equals(CreationReason.BIFURCATION)) {
+			producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForBifurcationTopic(), request);
+		}
 		request.getProperty().setWorkflow(request.getProperty().getWorkflow());
 
 		/* decrypt here */
@@ -285,6 +303,56 @@ public class PropertyService {
 			 */
 			producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
 		}
+	}
+	
+	
+	
+	private void processPropertyCreateForAmalgamation(PropertyRequest request) {
+		if (null == request.getProperty().getAmalgamatedProperty()
+				|| request.getProperty().getAmalgamatedProperty().isEmpty())
+			throw new CustomException("INVALID_AMALGAMATION_PROPERTY", "Invalid Property for Amalgamtion");
+
+		Set<String> validPropertyListToBeAmalgamatedIds = new HashSet();
+		PropertyRequest amalPropertiesToBeCheckedRequest = null;
+		Property propertyForAmalgamation = null;
+		Property propertyFromSearchAmalgamation = null;
+		for (AmalgamatedProperty a : request.getProperty().getAmalgamatedProperty()) {
+			amalPropertiesToBeCheckedRequest = new PropertyRequest();
+			propertyForAmalgamation = new Property();
+			propertyFromSearchAmalgamation = new Property();
+
+			propertyForAmalgamation.setPropertyId(a.getPropertyId());
+			propertyForAmalgamation.setTenantId(a.getTenantId());
+			;
+
+			amalPropertiesToBeCheckedRequest.setProperty(propertyForAmalgamation);
+			amalPropertiesToBeCheckedRequest.setRequestInfo(request.getRequestInfo());
+
+			propertyFromSearchAmalgamation = unmaskingUtil
+					.getPropertyUnmaskedForAmalgamation(amalPropertiesToBeCheckedRequest);
+			amalPropertiesToBeCheckedRequest.setProperty(propertyFromSearchAmalgamation);
+			if (propertyFromSearchAmalgamation.getStatus().equals(Status.ACTIVE)) {
+				Boolean isBillUnpaid = propertyUtil.isBillUnpaid(propertyFromSearchAmalgamation.getPropertyId(),
+						propertyFromSearchAmalgamation.getTenantId(), request.getRequestInfo());
+				if (isBillUnpaid)
+					throw new CustomException("EG_PT_AMALGAMATION_UNPAID_CHILD_ERROR",
+							"Child Property has to be completely paid for before initiating the Amalgamation process");
+			} else {
+				throw new CustomException("EG_PT_AMALGAMATION_INACTIVE_CHILD_ERROR",
+						"Child Property has to be in ACTIVE state");
+			}
+			a.setProperty(propertyFromSearchAmalgamation);
+			validPropertyListToBeAmalgamatedIds.add(propertyFromSearchAmalgamation.getId());
+		}
+		
+		
+		@SuppressWarnings("unchecked")
+		Map<String, Object> additionalDetails = mapper.convertValue(request.getProperty().getAdditionalDetails(), Map.class);
+		additionalDetails.put(PTConstants.CREATED_FROM_PROPERTY, request.getProperty().getAmalgamatedProperty().stream().map(x->x.getPropertyId()).collect(Collectors.toList()));
+		additionalDetails.put(PTConstants.AMALGAMATED_CREATED_IDS_PROPERTY, validPropertyListToBeAmalgamatedIds);
+		additionalDetails.put(PTConstants.AMALGAMATED_PROPERTY, request.getProperty().getAmalgamatedProperty());
+		JsonNode node=mapper.convertValue(additionalDetails, JsonNode.class);
+		request.getProperty().setAdditionalDetails(node);
 	}
 	
 	

@@ -465,6 +465,8 @@ public class PTConstants {
     public static final String AMALGAMATED_PROPERTY = "amalgamatedProperty";
 
     public static final String CREATED_FROM_PROPERTY = "createdFromProperty";
+    
+    public static final String AMALGAMATED_CREATED_IDS_PROPERTY = "amagamtedFromPropertyIds";
 
 
 }

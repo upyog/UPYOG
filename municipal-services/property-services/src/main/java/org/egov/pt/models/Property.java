@@ -117,6 +117,14 @@ public class Property extends PropertyInfo {
 	
 	@JsonProperty("amalgamatedProperty")
 	private List<AmalgamatedProperty> amalgamatedProperty;
+	
+	@JsonProperty("parentPropertyId")
+	private String  parentPropertyId;
+	
+	@JsonProperty("isPartOfProperty")
+	private boolean  isPartOfProperty;
+	
+	
 
 	@Builder
 	public Property(String id, String propertyId, String surveyId, List<String> linkedProperties, String tenantId,
@@ -124,7 +132,8 @@ public class Property extends PropertyInfo {
 			String propertyType, String ownershipCategory, List<OwnerInfo> owners, Institution institution,
 			CreationReason creationReason, String usageCategory, Long noOfFloors, Double landArea,
 			BigDecimal superBuiltUpArea, Source source, Channel channel, List<Document> documents, List<Unit> units,
-			JsonNode additionalDetails, AuditDetails auditDetails, ProcessInstance workflow,String exemption) {
+			JsonNode additionalDetails, AuditDetails auditDetails, ProcessInstance workflow,String exemption,
+			String parentPropertyId,boolean isPartOfProperty ) {
 		super(id, propertyId, surveyId, linkedProperties, tenantId, accountId, oldPropertyId, status, address);
 		this.acknowldgementNumber = acknowldgementNumber;
 		this.propertyType = propertyType;
@@ -144,6 +153,8 @@ public class Property extends PropertyInfo {
 		this.auditDetails = auditDetails;
 		this.workflow = workflow;
 		this.exemption= exemption;
+		this.isPartOfProperty = isPartOfProperty;
+		this.parentPropertyId= parentPropertyId;
 	}
 
 	public Property addOwnersItem(OwnerInfo ownersItem) {
