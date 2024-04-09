@@ -87,13 +87,13 @@
             </configuration>
         </plugin>
         
-        <!--plugin>
+        <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-deploy-plugin</artifactId>
     <version>3.0.0-M1</version>
     <executions>
         <execution>
-            <id>deploy-jar-file</id>
+            <id>nexus</id>
             <phase>deploy</phase>
             <goals>
                 <goal>deploy-file</goal>
@@ -106,7 +106,7 @@
             </configuration>
         </execution>
     </executions>
-</plugin-->
+</plugin>
     </plugins>
   </build>
 </project>
