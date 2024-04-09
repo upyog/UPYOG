@@ -108,9 +108,9 @@ const NavigationDrawer = ({
         })}
         <div style={{ width: '100%', display: 'flex', flexFlow: 'column' }}>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <img style={{ display: "inline-flex", height: '1em' ,cursor:'pointer'}} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
+          {/* <img style={{ display: "inline-flex", height: '1em' ,cursor:'pointer'}} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
               window.open('https://www.digit.org/', '_blank').focus();
-            }}></img>
+            }}></img> */}
           </div>
         </div>
       </div>
