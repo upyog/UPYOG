@@ -100,7 +100,7 @@
             </goals>
             <configuration>
                 <file>${basedir}/target/${name}-${version}-${env}.jar</file>
-                <url>http://pmidc-nexus.lgpunjab.gov.in/nexus/content/groups/public/org/egov/services/services-common/</url>
+                <url>http://pmidc-nexus.lgpunjab.gov.in/nexus/content/groups/public/</url>
                 <repositoryId>jenkins-maven-uploads</repositoryId>
                 <packaging>jar</packaging>
             </configuration>
