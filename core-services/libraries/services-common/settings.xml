@@ -12,7 +12,7 @@
     </mirrors>
     <servers>
         <server>
-            <id>nexus</id>
+            <id>repo.egovernments.org</id>
             <username>deployment</username>
             <password>egovnexus7918</password>
         </server>
