@@ -141,7 +141,10 @@ public class TLRepository {
         if(CollectionUtils.isEmpty(tradeLicenses))
             return;
         tradeLicenses.forEach(license -> {
+//	try{
+//	   if(!CollectionUtils.isEmpty(license.getTradeLicenseDetail().getOwners())) 
             license.getTradeLicenseDetail().getOwners().sort(Comparator.comparing(User::getUuid));
+	//   if(!CollectionUtils.isEmpty(license.getTradeLicenseDetail().getTradeUnits())) 	
             license.getTradeLicenseDetail().getTradeUnits().sort(Comparator.comparing(TradeUnit::getId));
             if(!CollectionUtils.isEmpty(license.getTradeLicenseDetail().getAccessories()))
                 license.getTradeLicenseDetail().getAccessories().sort(Comparator.comparing(Accessory::getId));
@@ -151,8 +154,14 @@ public class TLRepository {
                 Collections.reverse(applnDocuments);
                 license.getTradeLicenseDetail().setApplicationDocuments(applnDocuments);
             }
+    //        if(!CollectionUtils.isEmpty(license.getTradeLicenseDetail().getApplicationDocuments()))
+    //            license.getTradeLicenseDetail().getApplicationDocuments().sort(Comparator.comparing(Document::getId));
             if(!CollectionUtils.isEmpty(license.getTradeLicenseDetail().getVerificationDocuments()))
                 license.getTradeLicenseDetail().getVerificationDocuments().sort(Comparator.comparing(Document::getId));
+//	} catch (Exception e) {
+//		log.info("sortChildObjectsById: " + license.toString());
+//		e.printStackTrace();
+//	}
         });
     }
 
@@ -167,9 +176,32 @@ public class TLRepository {
 
     public List<String> fetchTradeLicenseIds(TradeLicenseSearchCriteria criteria){
 
+  //  	String query ="SELECT id from eg_tl_tradelicense ";
         List<Object> preparedStmtList = new ArrayList<>();
         preparedStmtList.add(criteria.getOffset());
         preparedStmtList.add(criteria.getLimit());
+     //   if(!StringUtils.isEmpty(criteria.getTenantId())) {
+     //  	System.out.println(criteria.getTenantId());
+     //  	query=query+" where tenantid= '"+criteria.getTenantId()+"'";
+     //   }
+
+//if(!StringUtils.isEmpty(criteria.getTenantId()) && (criteria.getFromDate()!=null && criteria.getFromDate()>0) && (criteria.getToDate()!=null && criteria.getToDate()>0) ) {
+ //       	query=query+" AND  createdtime between "+ criteria.getFromDate()+" AND "+criteria.getToDate();
+ //       }else  if((criteria.getFromDate()!=null && criteria.getFromDate()>0) && (criteria.getToDate()!=null && criteria.getToDate()>0)){
+ //       	query=query+" where createdtime between "+ criteria.getFromDate()+" AND "+criteria.getToDate();
+ //       }
+        
+ //       query=query+" ORDER BY createdtime offset " +
+ //               " ? " +
+ //               " limit ? ";
+//	 System.out.println("SQL : "+query);
+      /*  "SELECT id from eg_tl_tradelicense ORDER BY createdtime offset " +
+        " ? " +
+        "limit ? "*/
+  //      return jdbcTemplate.query(query,
+    //            preparedStmtList.toArray(),
+      //          new SingleColumnRowMapper<>(String.class));
+
 
         return jdbcTemplate.query("SELECT id from eg_tl_tradelicense ORDER BY createdtime offset " +
                         " ? " +

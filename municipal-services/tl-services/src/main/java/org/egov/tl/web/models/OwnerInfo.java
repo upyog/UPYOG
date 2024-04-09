@@ -49,9 +49,9 @@ public class OwnerInfo extends User  {
         private Boolean userActive;
 
         public enum RelationshipEnum {
-                FATHER("FATHER"),
+                Father("Father"),
 
-                HUSBAND("HUSBAND");
+                Husband("Husband");
 
                 private String value;
 

@@ -14,6 +14,8 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+//import org.springframework.util.StringUtils;
+
 import com.jayway.jsonpath.JsonPath;
 
 import java.util.*;
@@ -102,15 +104,29 @@ public class EnrichmentService {
             
             if(tradeLicense.getApplicationType() !=null && tradeLicense.getApplicationType().toString().equals(TLConstants.APPLICATION_TYPE_RENEWAL)){
                 if(tradeLicense.getAction().equalsIgnoreCase(ACTION_APPLY) || tradeLicense.getAction().equalsIgnoreCase(TLConstants.TL_ACTION_INITIATE)){
+                //	if(tradeLicense.getTradeLicenseDetail().getApplicationDocuments()!=null){
                     tradeLicense.getTradeLicenseDetail().getApplicationDocuments().forEach(document -> {
                         document.setId(UUID.randomUUID().toString());
                         document.setActive(true);
                     });
+              //  	}
                 }
                                
             }
 
+      //     if(tradeLicense.getApplicationType().toString().equalsIgnoreCase("RENEWAL") && tradeLicense.getWorkflowCode().toString().equalsIgnoreCase("EDITRENEWAL")) {
             tradeLicense.getTradeLicenseDetail().getOwners().forEach(owner -> {
+                //owner.setUserActive(true);
+      //          if (!CollectionUtils.isEmpty(owner.getDocuments()))
+      //              owner.getDocuments().forEach(document -> {
+     //                   document.setId(UUID.randomUUID().toString());
+     //                   document.setActive(true);
+     //               });
+     //       });}
+
+     //       else 
+    //        { 
+   //             tradeLicense.getTradeLicenseDetail().getOwners().forEach(owner -> {
                 owner.setUserActive(true);
                 if (!CollectionUtils.isEmpty(owner.getDocuments()))
                     owner.getDocuments().forEach(document -> {
@@ -118,6 +134,7 @@ public class EnrichmentService {
                         document.setActive(true);
                     });
             });
+		
 
             if (tradeLicense.getTradeLicenseDetail().getSubOwnerShipCategory().contains(config.getInstitutional())) {
                 tradeLicense.getTradeLicenseDetail().getInstitution().setId(UUID.randomUUID().toString());
@@ -599,8 +616,4 @@ public class EnrichmentService {
                     license.setAssignee(new LinkedList<>(assignes));
             }
     }
-
-
-
-
 }

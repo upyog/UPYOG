@@ -154,6 +154,9 @@ public class PaymentNotificationService {
                         List<String> configuredChannelNames = (List<String>) configuredChannelList.get(action);
 
                         String localizationMessages = bpaNotificationUtil.getLocalizationMessages(license.getTenantId(), requestInfo);
+ //                       PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
+   //                     String totalAmountPaid = paymentRequest.getPayment().getTotalAmountPaid().toString();
+     //                   Map<String, String> mobileNumberToOwner = new HashMap<>();
                         String locMessage = bpaNotificationUtil.getMessageTemplate(NOTIFICATION_PENDINGDOCVERIFICATION, localizationMessages);
                         String message = bpaNotificationUtil.getReplacedMessage(license, locMessage);
 
@@ -224,8 +227,11 @@ public class PaymentNotificationService {
 
             List<SMSRequest> totalSMS = new LinkedList<>();
             totalSMS.addAll(ownersSMSRequest);
-            totalSMS.add(payerSMSRequest);
-
+          //  String payerMobileNumber=valMap.get(payerMobileNumberKey);
+          //  long count= license.getTradeLicenseDetail().getOwners().stream().filter(owner->owner.getMobileNumber().equals(payerMobileNumber)).count();
+          //  if(count==0){
+                totalSMS.add(payerSMSRequest);
+          //  }
             return totalSMS;
     }
 
@@ -339,6 +345,4 @@ public class PaymentNotificationService {
         return licenses.get(0);
 
     }
-
-
 }
