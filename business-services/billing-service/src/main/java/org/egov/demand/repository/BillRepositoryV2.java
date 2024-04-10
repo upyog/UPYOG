@@ -22,6 +22,7 @@ import org.egov.demand.repository.rowmapper.BillRowMapperV2;
 import org.egov.demand.util.Util;
 import org.egov.demand.web.contract.BillRequestV2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -45,6 +46,9 @@ public class BillRepositoryV2 {
 	
 	@Autowired
 	private BillRowMapperV2 searchBillRowMapper;
+	
+	@Value("${manipur.partpayment.allowed}")
+	boolean partPaymentAllowed;
 	
 	public List<BillV2> findBill(BillSearchCriteria billCriteria){
 		
@@ -138,6 +142,7 @@ public class BillRepositoryV2 {
 				ps.setObject(15, billDetail.getAmount());
 				// apportioning logic does not reside in billing service anymore 
 				ps.setBoolean(16, false);
+				// Allowed or not logic 
 				ps.setObject(17, null);
 				ps.setString(18, null);
 				ps.setString(19, auditDetails.getCreatedBy());
@@ -147,6 +152,7 @@ public class BillRepositoryV2 {
 				ps.setObject(23, null);
 				ps.setLong(24, billDetail.getExpiryDate());
 				ps.setObject(25,util.getPGObject(billDetail.getAdditionalDetails()));
+				ps.setObject(26,billDetail.getPaymentPeriod());
 			}
 
 			@Override

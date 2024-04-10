@@ -111,7 +111,7 @@ public class MDMSService {
             }
         }
         log.info("MasterName... " + masterName + "isStateLevelConfiguration.." + isStateLevel);
-        if (ulbLevel == null && isStateLevel) {
+        if (ulbLevel == null || isStateLevel) {
             if (stateLevel.get(moduleName) != null) {
                 return stateLevel.get(moduleName).get(masterName);
             } else {

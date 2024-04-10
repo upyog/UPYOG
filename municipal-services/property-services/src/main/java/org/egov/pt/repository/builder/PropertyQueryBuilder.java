@@ -11,6 +11,7 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 @Component
 public class PropertyQueryBuilder {
@@ -39,7 +40,7 @@ public class PropertyQueryBuilder {
 	 // Select query
 	
 	private static String propertySelectValues = "property.id as pid, property.propertyid, property.tenantid as ptenantid, surveyid, accountid, oldpropertyid, property.status as propertystatus, acknowldgementnumber, propertytype, ownershipcategory,property.usagecategory as pusagecategory, creationreason, nooffloors, landarea, property.superbuiltuparea as propertysbpa, linkedproperties, source, channel, property.createdby as pcreatedby, property.lastmodifiedby as plastmodifiedby, property.createdtime as pcreatedtime,"
-			+ " property.lastmodifiedtime as plastmodifiedtime, property.additionaldetails as padditionaldetails,property.exemption as exemption, (CASE WHEN property.status='ACTIVE' then 0 WHEN property.status='INWORKFLOW' then 1 WHEN property.status='INACTIVE' then 2 ELSE 3 END) as statusorder, ";
+			+ " property.lastmodifiedtime as plastmodifiedtime, property.additionaldetails as padditionaldetails,property.exemption as exemption, (CASE WHEN property.status='ACTIVE' then 0 WHEN property.status='INWORKFLOW' then 1 WHEN property.status='INACTIVE' then 2 ELSE 3 END) as statusorder,parentpropertyid,ispartofproperty, ";
 
 	private static String addressSelectValues = "address.tenantid as adresstenantid, address.id as addressid, address.propertyid as addresspid, latitude, longitude, doorno, plotno, buildingname, street, landmark, city, pincode, locality, district, region, state, country, address.createdby as addresscreatedby, address.lastmodifiedby as addresslastmodifiedby, address.createdtime as addresscreatedtime, address.lastmodifiedtime as addresslastmodifiedtime, address.additionaldetails as addressadditionaldetails,town_name, ward_no, leikai_name, village, patta_no, proper_house_no, common_name_of_building, principal_road_name, sub_side_road_name, type_of_road, dag_no, " ;
 
@@ -47,7 +48,7 @@ public class PropertyQueryBuilder {
 
 	private static String propertyDocSelectValues = "pdoc.id as pdocid, pdoc.tenantid as pdoctenantid, pdoc.entityid as pdocentityid, pdoc.documenttype as pdoctype, pdoc.filestoreid as pdocfilestore, pdoc.documentuid as pdocuid, pdoc.status as pdocstatus, ";
 
-	private static String ownerSelectValues = "owner.tenantid as owntenantid, ownerInfoUuid, owner.propertyid as ownpropertyid, userid, owner.status as ownstatus, isprimaryowner, ownertype, ownershippercentage, owner.institutionid as owninstitutionid, relationship, owner.createdby as owncreatedby, owner.createdtime as owncreatedtime,owner.lastmodifiedby as ownlastmodifiedby, owner.lastmodifiedtime as ownlastmodifiedtime, ";
+	private static String ownerSelectValues = "owner.tenantid as owntenantid, ownerInfoUuid, owner.propertyid as ownpropertyid, userid, owner.status as ownstatus, isprimaryowner, ownertype, ownershippercentage, owner.institutionid as owninstitutionid, relationship, owner.createdby as owncreatedby, owner.createdtime as owncreatedtime,owner.lastmodifiedby as ownlastmodifiedby, owner.lastmodifiedtime as ownlastmodifiedtime, owner.isaownerdead as isownerdead, owner.dateofdeath as dateofdeath, ";
 
 	private static String ownerDocSelectValues = " owndoc.id as owndocid, owndoc.tenantid as owndoctenantid, owndoc.entityid as owndocentityId, owndoc.documenttype as owndoctype, owndoc.filestoreid as owndocfilestore, owndoc.documentuid as owndocuid, owndoc.status as owndocstatus, ";
 	
@@ -282,6 +283,26 @@ public class PropertyQueryBuilder {
 			addClauseIfRequired(preparedStmtList,builder);
 			builder.append("property.oldpropertyid IN (").append(createQuery(oldpropertyids)).append(")");
 			addToPreparedStatement(preparedStmtList, oldpropertyids);
+		}
+		
+		if (!CollectionUtils.isEmpty(oldpropertyids)) {
+
+			addClauseIfRequired(preparedStmtList,builder);
+			builder.append("property.oldpropertyid IN (").append(createQuery(oldpropertyids)).append(")");
+			addToPreparedStatement(preparedStmtList, oldpropertyids);
+		}
+		
+		if (!StringUtils.isEmpty(criteria.getParentPropertyId())) {
+
+			addClauseIfRequired(preparedStmtList,builder);
+			builder.append("property.parentPropertyId IN ('").append(criteria.getParentPropertyId()).append("')");
+		}
+		
+		if (criteria.getIsPartOfProperty()) {
+
+			addClauseIfRequired(preparedStmtList,builder);
+			builder.append("property.ispartofproperty =?");
+			preparedStmtList.add(criteria.getIsPartOfProperty());
 		}
 		
 		/* 

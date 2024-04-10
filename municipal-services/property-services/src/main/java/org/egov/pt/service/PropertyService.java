@@ -13,6 +13,7 @@ import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.models.AmalgamatedProperty;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
@@ -35,6 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 
@@ -85,6 +87,9 @@ public class PropertyService {
 
 	@Autowired
 	EncryptionDecryptionUtil encryptionDecryptionUtil;
+	
+	@Autowired
+	private PropertyUtil propertyUtil;
 
 	/**
 	 * Enriches the Request and pushes to the Queue
@@ -96,7 +101,17 @@ public class PropertyService {
 
 		propertyValidator.validateCreateRequest(request);
 		enrichmentService.enrichCreateRequest(request);
+		//Validate For BiFurcation
+		if(request.getProperty().getCreationReason().equals(CreationReason.BIFURCATION)) {
+			propertyValidator.validateCreateRequestForBiFurcation(request);
+		}
+		
+		if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
+			processPropertyCreateForAmalgamation(request);
+		}
 		userService.createUser(request);
+		
+		
 		if (config.getIsWorkflowEnabled()
 				&& !request.getProperty().getCreationReason().equals(CreationReason.DATA_UPLOAD)) {
 			wfService.updateWorkflow(request, request.getProperty().getCreationReason());
@@ -114,7 +129,15 @@ public class PropertyService {
 		*
 		*/
 		//Push data after encryption
-		producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+		//producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+		
+		if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
+			producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForAmalgamationTopic(), request);
+		}
+		
+		if(request.getProperty().getCreationReason().equals(CreationReason.BIFURCATION)) {
+			producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForBifurcationTopic(), request);
+		}
 		request.getProperty().setWorkflow(request.getProperty().getWorkflow());
 
 		/* decrypt here */
@@ -140,14 +163,20 @@ public class PropertyService {
 		propertyValidator.validateCommonUpdateInformation(request, propertyFromSearch);
 
 		boolean isRequestForOwnerMutation = CreationReason.MUTATION.equals(request.getProperty().getCreationReason());
+		boolean isRequestForBifurcation = CreationReason.BIFURCATION.equals(request.getProperty().getCreationReason());
+		boolean isRequestForAmalgamation = CreationReason.AMALGAMATION.equals(request.getProperty().getCreationReason());
 		
 		boolean isNumberDifferent = checkIsRequestForMobileNumberUpdate(request, propertyFromSearch);
 
 		if (isRequestForOwnerMutation)
 			processOwnerMutation(request, propertyFromSearch);
+		else if(isRequestForBifurcation)
+			processOwnerBifurcation(request, propertyFromSearch);
 		else if(isNumberDifferent)
 			processMobileNumberUpdate(request, propertyFromSearch);
-			
+		else if(isRequestForAmalgamation)
+			processPropertyUpdateForAmalgamation(request, propertyFromSearch);
+		
 		else
 			processPropertyUpdate(request, propertyFromSearch);
 
@@ -231,7 +260,8 @@ public class PropertyService {
 			request.getProperty().setOwners(util.getCopyOfOwners(propertyFromSearch.getOwners()));
 		}
 
-
+		//check for Property Ids;
+		
 		enrichmentService.enrichAssignes(request.getProperty());
 		enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
 
@@ -259,6 +289,155 @@ public class PropertyService {
 					&& !state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString())) {
 
 				terminateWorkflowAndReInstatePreviousRecord(request, propertyFromSearch);
+			}else {
+				/*
+				 * If property is In Workflow then continue
+				 */
+				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+			}
+
+		} else {
+
+			/*
+			 * If no workflow then update property directly with mutation information
+			 */
+			producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+		}
+	}
+	
+	
+	
+	private void processPropertyCreateForAmalgamation(PropertyRequest request) {
+		if (null == request.getProperty().getAmalgamatedProperty()
+				|| request.getProperty().getAmalgamatedProperty().isEmpty())
+			throw new CustomException("INVALID_AMALGAMATION_PROPERTY", "Invalid Property for Amalgamtion");
+
+		Set<String> validPropertyListToBeAmalgamatedIds = new HashSet();
+		PropertyRequest amalPropertiesToBeCheckedRequest = null;
+		Property propertyForAmalgamation = null;
+		Property propertyFromSearchAmalgamation = null;
+		for (AmalgamatedProperty a : request.getProperty().getAmalgamatedProperty()) {
+			amalPropertiesToBeCheckedRequest = new PropertyRequest();
+			propertyForAmalgamation = new Property();
+			propertyFromSearchAmalgamation = new Property();
+
+			propertyForAmalgamation.setPropertyId(a.getPropertyId());
+			propertyForAmalgamation.setTenantId(a.getTenantId());
+			;
+
+			amalPropertiesToBeCheckedRequest.setProperty(propertyForAmalgamation);
+			amalPropertiesToBeCheckedRequest.setRequestInfo(request.getRequestInfo());
+
+			propertyFromSearchAmalgamation = unmaskingUtil
+					.getPropertyUnmaskedForAmalgamation(amalPropertiesToBeCheckedRequest);
+			amalPropertiesToBeCheckedRequest.setProperty(propertyFromSearchAmalgamation);
+			if (propertyFromSearchAmalgamation.getStatus().equals(Status.ACTIVE)) {
+				Boolean isBillUnpaid = propertyUtil.isBillUnpaid(propertyFromSearchAmalgamation.getPropertyId(),
+						propertyFromSearchAmalgamation.getTenantId(), request.getRequestInfo());
+				if (isBillUnpaid)
+					throw new CustomException("EG_PT_AMALGAMATION_UNPAID_CHILD_ERROR",
+							"Child Property has to be completely paid for before initiating the Amalgamation process");
+			} else {
+				throw new CustomException("EG_PT_AMALGAMATION_INACTIVE_CHILD_ERROR",
+						"Child Property has to be in ACTIVE state");
+			}
+			a.setProperty(propertyFromSearchAmalgamation);
+			validPropertyListToBeAmalgamatedIds.add(propertyFromSearchAmalgamation.getId());
+		}
+		
+		
+		@SuppressWarnings("unchecked")
+		Map<String, Object> additionalDetails = mapper.convertValue(request.getProperty().getAdditionalDetails(), Map.class);
+		additionalDetails.put(PTConstants.CREATED_FROM_PROPERTY, request.getProperty().getAmalgamatedProperty().stream().map(x->x.getPropertyId()).collect(Collectors.toList()));
+		additionalDetails.put(PTConstants.AMALGAMATED_CREATED_IDS_PROPERTY, validPropertyListToBeAmalgamatedIds);
+		additionalDetails.put(PTConstants.AMALGAMATED_PROPERTY, request.getProperty().getAmalgamatedProperty());
+		JsonNode node=mapper.convertValue(additionalDetails, JsonNode.class);
+		request.getProperty().setAdditionalDetails(node);
+	}
+	
+	
+	private void processPropertyUpdateForAmalgamation(PropertyRequest request, Property propertyFromSearch) {
+		
+		if(null==request.getProperty().getAmalgamatedProperty() ||request.getProperty().getAmalgamatedProperty().isEmpty() )
+			throw new CustomException("INVALID_AMALGAMATION_PROPERTY","Invalid Property for Amalgamtion");
+		
+		Set<Property>validPropertyListToBeAmalgamated = new HashSet();
+		PropertyRequest amalPropertiesToBeCheckedRequest = null;
+		Property propertyForAmalgamation = null;
+		Property propertyFromSearchAmalgamation= null;
+		for(AmalgamatedProperty a:request.getProperty().getAmalgamatedProperty()) {
+			amalPropertiesToBeCheckedRequest = new PropertyRequest();
+			propertyForAmalgamation = new Property();
+			propertyFromSearchAmalgamation = new Property();
+			
+			propertyForAmalgamation.setPropertyId(a.getPropertyId());
+			propertyForAmalgamation.setTenantId(a.getTenantId());;
+			
+			amalPropertiesToBeCheckedRequest.setProperty(propertyForAmalgamation);
+			amalPropertiesToBeCheckedRequest.setRequestInfo(request.getRequestInfo());
+			
+			propertyFromSearchAmalgamation = unmaskingUtil.getPropertyUnmaskedForAmalgamation(amalPropertiesToBeCheckedRequest);
+			amalPropertiesToBeCheckedRequest.setProperty(propertyFromSearchAmalgamation);
+			if (propertyFromSearchAmalgamation.getStatus().equals(Status.ACTIVE)) {
+			Boolean isBillUnpaid = propertyUtil.isBillUnpaid(propertyFromSearchAmalgamation.getPropertyId(), propertyFromSearchAmalgamation.getTenantId(), request.getRequestInfo());
+			if (isBillUnpaid)
+				throw new CustomException("EG_PT_AMALGAMATION_UNPAID_CHILD_ERROR", "Child Property has to be completely paid for before initiating the Amalgamation process");
+			}else {
+				throw new CustomException("EG_PT_AMALGAMATION_INACTIVE_CHILD_ERROR", "Child Property has to be in ACTIVE state");
+			}
+			a.setProperty(propertyFromSearchAmalgamation);
+			validPropertyListToBeAmalgamated.add(propertyFromSearchAmalgamation);
+		}
+		propertyValidator.validateRequestForUpdate(request, propertyFromSearch);
+		
+		if (propertyFromSearch.getStatus().equals(Status.ACTIVE)) {
+		Boolean isBillUnpaid = propertyUtil.isBillUnpaid(propertyFromSearch.getPropertyId(), propertyFromSearch.getTenantId(), request.getRequestInfo());
+		if (isBillUnpaid)
+			throw new CustomException("EG_PT_AMALGAMATION_UNPAID_PARENT_ERROR", "Parent Property has to be completely paid for before initiating the Amalgamation process");
+		}else {
+			throw new CustomException("EG_PT_AMALGAMATION_INACTIVE_PARENT_ERROR", "Parent Property has to be in ACTIVE state");
+		}
+		if (CreationReason.CREATE.equals(request.getProperty().getCreationReason())) {
+			userService.createUser(request);
+		} else if (request.getProperty().getSource().toString().equals("WS")
+				&& CreationReason.UPDATE.equals(request.getProperty().getCreationReason())) {
+			userService.updateUser(request);
+		} else {
+			request.getProperty().setOwners(util.getCopyOfOwners(propertyFromSearch.getOwners()));
+		}
+
+		//check for Property Ids;
+		
+		enrichmentService.enrichAssignes(request.getProperty());
+		enrichmentService.enrichUpdateRequestForAmalgamation(request, propertyFromSearch);
+
+		PropertyRequest OldPropertyRequest = PropertyRequest.builder()
+				.requestInfo(request.getRequestInfo())
+				.property(propertyFromSearch)
+				.build();
+
+		util.mergeAdditionalDetails(request, propertyFromSearch);
+		
+		
+		if(config.getIsWorkflowEnabled()) {
+
+			State state = wfService.updateWorkflow(request, CreationReason.UPDATE);
+
+			if (state.getIsStartState() == true
+					&& state.getApplicationStatus().equalsIgnoreCase(Status.INWORKFLOW.toString())
+					&& !propertyFromSearch.getStatus().equals(Status.INWORKFLOW)) {
+
+				propertyFromSearch.setStatus(Status.INACTIVE);
+				OldPropertyRequest.getProperty().setStatus(Status.INACTIVE);
+				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), OldPropertyRequest);
+				util.saveOldUuidToRequest(request, propertyFromSearch.getId());
+				producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+				producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForAmalgamationTopic(), request);
+
+			} else if (state.getIsTerminateState()
+					&& !state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString())) {
+
+				terminateWorkflowAndReInstatePreviousRecordForAmalgamation(request, propertyFromSearch);
 			}else {
 				/*
 				 * If property is In Workflow then continue
@@ -354,6 +533,62 @@ public class PropertyService {
 		}
 	}
 
+	
+	private void processOwnerBifurcation(PropertyRequest request, Property propertyFromSearch) {
+
+		propertyValidator.validateBifurcation(request, propertyFromSearch);
+		userService.createUserForMutation(request, !propertyFromSearch.getStatus().equals(Status.INWORKFLOW));
+		enrichmentService.enrichAssignes(request.getProperty());
+		enrichmentService.enrichBiFurcationRequest(request, propertyFromSearch);
+		//calculatorService.calculateMutationFee(request.getRequestInfo(), request.getProperty());
+
+		// TODO FIX ME block property changes FIXME
+		util.mergeAdditionalDetails(request, propertyFromSearch);
+		PropertyRequest oldPropertyRequest = PropertyRequest.builder()
+				.requestInfo(request.getRequestInfo())
+				.property(propertyFromSearch)
+				.build();
+
+		if (config.getIsMutationWorkflowEnabled()) {
+
+			State state = wfService.updateWorkflow(request, CreationReason.MUTATION);
+
+			/*
+			 * updating property from search to INACTIVE status
+			 *
+			 * to create new entry for new Mutation
+			 */
+			if (state.getIsStartState() == true
+					&& state.getApplicationStatus().equalsIgnoreCase(Status.INWORKFLOW.toString())
+					&& !propertyFromSearch.getStatus().equals(Status.INWORKFLOW)) {
+
+				propertyFromSearch.setStatus(Status.INACTIVE);
+				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), oldPropertyRequest);
+
+				util.saveOldUuidToRequest(request, propertyFromSearch.getId());
+				/* save new record */
+				producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+
+			} else if (state.getIsTerminateState()
+					&& !state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString())) {
+
+				terminateWorkflowAndReInstatePreviousRecord(request, propertyFromSearch);
+			} else {
+				/*
+				 * If property is In Workflow then continue
+				 */
+				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+			}
+
+		} else {
+
+			/*
+			 * If no workflow then update property directly with mutation information
+			 */
+			producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+		}
+	}
+
 	private void terminateWorkflowAndReInstatePreviousRecord(PropertyRequest request, Property propertyFromSearch) {
 
 		/* current record being rejected */
@@ -376,6 +611,45 @@ public class PropertyService {
 		Property previousPropertyToBeReInstated = searchProperty(criteria, request.getRequestInfo()).get(0);
 		previousPropertyToBeReInstated.setAuditDetails(util.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid().toString(), true));
 		previousPropertyToBeReInstated.setStatus(Status.ACTIVE);
+		request.setProperty(previousPropertyToBeReInstated);
+
+		producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+	}
+	
+	private void terminateWorkflowAndReInstatePreviousRecordForAmalgamation(PropertyRequest request, Property propertyFromSearch) {
+
+		/* current record being rejected */
+		producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+
+		/* Previous record set to ACTIVE */
+		@SuppressWarnings("unchecked")
+		Map<String, Object> additionalDetails = mapper.convertValue(propertyFromSearch.getAdditionalDetails(), Map.class);
+		if(null == additionalDetails)
+			return;
+
+		String propertyUuId = (String) additionalDetails.get(PTConstants.PREVIOUS_PROPERTY_PREVIOUD_UUID);
+		if(StringUtils.isEmpty(propertyUuId))
+			return;
+
+		PropertyCriteria criteria = PropertyCriteria.builder()
+				.uuids(Sets.newHashSet(propertyUuId))
+				.isSearchInternal(true)
+				.tenantId(propertyFromSearch.getTenantId()).build();
+		Property previousPropertyToBeReInstated = searchProperty(criteria, request.getRequestInfo()).get(0);
+		previousPropertyToBeReInstated.setAuditDetails(util.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid().toString(), true));
+		previousPropertyToBeReInstated.setStatus(Status.ACTIVE);
+		@SuppressWarnings("unchecked")
+		Map<String, Object> additionalDetailsForAmal = mapper.convertValue(previousPropertyToBeReInstated.getAdditionalDetails(), Map.class);
+		if(additionalDetailsForAmal.containsKey("createdFromProperty")) {
+			additionalDetailsForAmal.put("createdFromProperty", null);
+			
+		}
+		if(additionalDetailsForAmal.containsKey("amalgamatedProperty")) {
+			additionalDetailsForAmal.put("amalgamatedProperty", null);
+		}
+		JsonNode node=mapper.convertValue(additionalDetailsForAmal, JsonNode.class);
+		
+		previousPropertyToBeReInstated.setAdditionalDetails(node);
 		request.setProperty(previousPropertyToBeReInstated);
 
 		producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);

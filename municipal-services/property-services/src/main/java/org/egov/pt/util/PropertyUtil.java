@@ -162,6 +162,18 @@ public class PropertyUtil extends CommonUtils {
 
 			case MUTATION :
 				break;
+			
+			case BIFURCATION :
+					wf.setBusinessService(configs.getCreatePTWfName());
+					wf.setModuleName(configs.getPropertyModuleName());
+					wf.setAction("OPEN");
+				break;
+			
+			case AMALGAMATION :
+				wf.setBusinessService(configs.getCreatePTWfName());
+				wf.setModuleName(configs.getPropertyModuleName());
+				wf.setAction("OPEN");
+			break;
 
 			default:
 				break;

@@ -94,6 +94,12 @@ public class PropertyConfiguration {
 
     @Value("${egov.idgen.mutation.format}")
     private String mutationIdGenFormat;
+    
+    
+    @Value("${egov.idgen.bifurcation.name}")
+    private String bifurcationIdGenName;
+    @Value("${egov.idgen.bifurcation.format}")
+    private String bifurcationIdGenFormat;
 
     @Value("${egov.idgen.assm.name}")
     private String assessmentIdGenName;
@@ -374,5 +380,12 @@ public class PropertyConfiguration {
 
     @Value("${persister.update.property.audit.oldData.topic}")
     private String updatePropertyAuditEncTopic;
+    
+    
+    @Value("${persister.update.property.amalgamation.inactive}")
+    private String updatePropertyForDeactivaingForAmalgamationTopic;
+    
+    @Value("${persister.update.property.bifurcation.inactive}")
+    private String updatePropertyForDeactivaingForBifurcationTopic;
 
 }

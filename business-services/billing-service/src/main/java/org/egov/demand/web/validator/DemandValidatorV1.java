@@ -242,7 +242,7 @@ public class DemandValidatorV1 {
 		 * Getting the list of tax periods belonging to the current business service
 		 */
 		List<TaxPeriod> taxPeriods = taxPeriodBusinessMap.get(demand.getBusinessService());
-
+		
 
 		if (taxPeriods != null) {
 

@@ -62,6 +62,19 @@ public class UnmaskingUtil {
 		return propertyFromSearch;
 	}
 	
+		public Property getPropertyUnmaskedForAmalgamation(PropertyRequest request) {
+		
+			Property propertyFromRequest = request.getProperty(); 
+	        PropertyCriteria criteria = validator.getPropertyCriteriaForSearch(request);
+	        List<Property> propertiesFromSearchResponse = service.searchProperty(criteria, request.getRequestInfo());
+			if (CollectionUtils.isEmpty(propertiesFromSearchResponse)) {
+				throw new CustomException("EG_PT_PROPERTY_NOT_FOUND", "The property to be updated does not exist in the system");
+			}
+			Property propertyFromSearch = propertiesFromSearchResponse.get(0);
+			getOwnerDetailsUnmasked(propertyFromSearch, request.getRequestInfo());
+			return propertyFromSearch;
+	}
+	
 	public void getOwnerDetailsUnmasked (Property property, RequestInfo requestInfo) {
 		
 		PlainAccessRequest apiPlainAccessRequest = requestInfo.getPlainAccessRequest();

@@ -30,6 +30,7 @@ import org.springframework.util.ObjectUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
@@ -38,7 +39,8 @@ import com.jayway.jsonpath.JsonPath;
 public class EnrichmentService {
 
 
-    @Autowired
+   
+	@Autowired
     private PropertyUtil propertyutil;
 
     @Autowired
@@ -49,6 +51,10 @@ public class EnrichmentService {
 
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private ObjectMapper mapper;
+	
+	
 
 
 
@@ -164,6 +170,84 @@ public class EnrichmentService {
 		property.setAdditionalDetails(
 				propertyutil.jsonMerge(propertyFromDb.getAdditionalDetails(), property.getAdditionalDetails()));
     }
+    
+    
+    public void enrichUpdateRequestForAmalgamation(PropertyRequest request,Property propertyFromDb) {
+    	
+    	Property property = request.getProperty();
+        RequestInfo requestInfo = request.getRequestInfo();
+        AuditDetails auditDetailsForUpdate = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid().toString(), true);
+        propertyFromDb.setAuditDetails(auditDetailsForUpdate);
+        
+        
+		Boolean isWfEnabled = config.getIsWorkflowEnabled();
+		Boolean iswfStarting = propertyFromDb.getStatus().equals(Status.ACTIVE);
+
+		if (!isWfEnabled) {
+
+			property.setStatus(Status.ACTIVE);
+			property.getAddress().setId(propertyFromDb.getAddress().getId());
+			
+			@SuppressWarnings("unchecked")
+			Map<String, Object> additionalDetails = mapper.convertValue(propertyFromDb.getAdditionalDetails(), Map.class);
+			additionalDetails.put(PTConstants.CREATED_FROM_PROPERTY, propertyFromDb.getPropertyId());
+			additionalDetails.put(PTConstants.AMALGAMATED_PROPERTY, property.getAmalgamatedProperty());
+			JsonNode node=mapper.convertValue(additionalDetails, JsonNode.class);
+			property.setAdditionalDetails(node);
+
+		} else if (isWfEnabled && iswfStarting) {
+
+			enrichPropertyForNewWf(requestInfo, property, false);
+			
+			@SuppressWarnings("unchecked")
+			Map<String, Object> additionalDetails = mapper.convertValue(propertyFromDb.getAdditionalDetails(), Map.class);
+			additionalDetails.put(PTConstants.CREATED_FROM_PROPERTY, propertyFromDb.getPropertyId());
+			additionalDetails.put(PTConstants.AMALGAMATED_PROPERTY, property.getAmalgamatedProperty());
+			JsonNode node=mapper.convertValue(additionalDetails, JsonNode.class);
+			property.setAdditionalDetails(node);
+		
+		}
+		
+		if (!CollectionUtils.isEmpty(property.getDocuments()))
+			property.getDocuments().forEach(doc -> {
+
+				if (doc.getId() == null) {
+					doc.setId(UUID.randomUUID().toString());
+					doc.setStatus(Status.ACTIVE);
+				}
+			});
+				
+	    	if (!CollectionUtils.isEmpty(property.getUnits()))
+			property.getUnits().forEach(unit -> {
+
+				if (unit.getId() == null) {
+					unit.setId(UUID.randomUUID().toString());
+					unit.setActive(true);
+				}
+			});
+				
+		Institution institute = property.getInstitution();
+		if (!ObjectUtils.isEmpty(institute) && null == institute.getId())
+			property.getInstitution().setId(UUID.randomUUID().toString());
+
+		AuditDetails auditDetails = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid().toString(), true);
+		property.setAuditDetails(auditDetails);
+		property.setAccountId(propertyFromDb.getAccountId());
+       
+		//Setting The Property ID
+		
+		/*
+		 * @SuppressWarnings("unchecked") Map<String, Object> additionalDetails =
+		 * mapper.convertValue(propertyFromDb.getAdditionalDetails(), Map.class);
+		 * additionalDetails.put("amalgamtedProperty",
+		 * request.getProperty().getAmalgamatedProperty()); JsonNode
+		 * node=mapper.convertValue(additionalDetails, JsonNode.class);
+		 * propertyFromDb.setAdditionalDetails(node);
+		 */
+		
+		property.setAdditionalDetails(
+				propertyutil.jsonMerge(propertyFromDb.getAdditionalDetails(), property.getAdditionalDetails()));
+    }
 
 
 
@@ -270,6 +354,45 @@ public class EnrichmentService {
 		 AuditDetails auditDetails = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid().toString(), true);
 		 property.setAuditDetails(auditDetails);
 	}
+	
+	
+	public void enrichBiFurcationRequest(PropertyRequest request, Property propertyFromSearch) {
+
+		RequestInfo requestInfo = request.getRequestInfo();
+		Property property = request.getProperty();
+		Boolean isWfEnabled = config.getIsMutationWorkflowEnabled();
+		Boolean iswfStarting = propertyFromSearch.getStatus().equals(Status.ACTIVE);
+		AuditDetails auditDetailsForUpdate = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid().toString(), true);
+		propertyFromSearch.setAuditDetails(auditDetailsForUpdate);
+
+		if (!isWfEnabled) {
+
+			property.setStatus(Status.ACTIVE);
+
+		} else if (isWfEnabled && iswfStarting) {
+
+			enrichPropertyForBifurcation(requestInfo, property);
+		}
+
+		property.getOwners().forEach(owner -> {
+
+			if (owner.getOwnerInfoUuid() == null) {
+				
+				owner.setOwnerInfoUuid(UUID.randomUUID().toString());
+				owner.setStatus(Status.ACTIVE);
+			}
+
+			if (!CollectionUtils.isEmpty(owner.getDocuments()))
+				owner.getDocuments().forEach(doc -> {
+					if (doc.getId() == null) {
+						doc.setId(UUID.randomUUID().toString());
+						doc.setStatus(Status.ACTIVE);
+					}
+				});
+		});
+		 AuditDetails auditDetails = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid().toString(), true);
+		 property.setAuditDetails(auditDetails);
+	}
 
 	/**
 	 * enrich property as new entry for workflow validation
@@ -285,6 +408,19 @@ public class EnrichmentService {
 			ackNo = propertyutil.getIdList(requestInfo, property.getTenantId(), config.getMutationIdGenName(), config.getMutationIdGenFormat(), 1).get(0);
 		} else
 			ackNo = propertyutil.getIdList(requestInfo, property.getTenantId(), config.getAckIdGenName(), config.getAckIdGenFormat(), 1).get(0);
+		
+		String pId = propertyutil.getIdList(requestInfo, property.getTenantId(), config.getPropertyIdGenName(), config.getPropertyIdGenFormat(), 1).get(0);
+		property.setPropertyId(pId);
+		property.setId(UUID.randomUUID().toString());
+		property.setAcknowldgementNumber(ackNo);
+		
+		enrichUuidsForNewUpdate(requestInfo, property);
+	}
+	
+	private void enrichPropertyForBifurcation(RequestInfo requestInfo, Property property) {
+		
+		String ackNo;
+		ackNo = propertyutil.getIdList(requestInfo, property.getTenantId(), config.getBifurcationIdGenName(), config.getBifurcationIdGenFormat(), 1).get(0);
 		property.setId(UUID.randomUUID().toString());
 		property.setAcknowldgementNumber(ackNo);
 		
@@ -316,7 +452,7 @@ public class EnrichmentService {
 			property.getUnits().forEach(unit -> {
 
 				unit.setId(UUID.randomUUID().toString());
-				unit.setActive(true);
+				unit.setActive(unit.getActive());
 			});
 		
 		property.getOwners().forEach(owner -> {

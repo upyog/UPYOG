@@ -18,7 +18,7 @@ serviceMaps:
         type: JSON
         dbType: JSONB
 
-    - query: INSERT INTO eg_pt_property (id, propertyid, tenantid, surveyid, accountid, oldpropertyid, status, acknowldgementnumber, propertytype, ownershipcategory, usagecategory, creationreason, nooffloors, landarea, superbuiltuparea, linkedproperties, source,  channel, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_pt_property (id, propertyid, tenantid, surveyid, accountid, oldpropertyid, status, acknowldgementnumber, propertytype, ownershipcategory, usagecategory, creationreason, nooffloors, landarea, superbuiltuparea, linkedproperties, source,  channel, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails,exemption) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);
       basePath: Property
       jsonMaps:
 
@@ -71,6 +71,8 @@ serviceMaps:
       - jsonPath: $.Property.additionalDetails
         type: JSON
         dbType: JSONB
+
+      - jsonPath: $.Property.exemption
 
 
     - query: INSERT INTO eg_pt_owner(ownerinfouuid, tenantid, propertyid, userid, status, isprimaryowner, ownertype, ownershippercentage, institutionid, relationship, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
@@ -187,7 +189,7 @@ serviceMaps:
       - jsonPath: $.Property.auditDetails.lastModifiedTime
 
 
-    - query: INSERT INTO eg_pt_address(tenantid, id, propertyid, doorno, plotno, buildingname, street, landmark, city, pincode, locality, district, region, state, country, latitude, longitude, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails,dag_no,district_name,town_name,ward_no,village,patta_no,proper_house_no,common_name_of_building,principal_road_name,sub_side_road_name,landmark_name,others) VALUES (?, ?,?,?,?,?,?,?,?,?,?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);
+    - query: INSERT INTO eg_pt_address(tenantid, id, propertyid, doorno, plotno, buildingname, street, landmark, city, pincode, locality, district, region, state, country, latitude, longitude, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails,dag_no,district_name,town_name,ward_no,village,patta_no,proper_house_no,common_name_of_building,principal_road_name,sub_side_road_name,landmark_name,others,type_of_road) VALUES (?, ?,?,?,?,?,?,?,?,?,?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?);
       basePath: Property.address
       jsonMaps:
 
@@ -260,10 +262,12 @@ serviceMaps:
       - jsonPath: $.Property.address.landmarkName
       
       - jsonPath: $.Property.address.others
+
+      - jsonPath: $.Property.address.typeOfRoad.code
         
 
 
-    - query: INSERT INTO eg_pt_unit(id, tenantid, propertyid, floorno, unittype, usagecategory, occupancytype, occupancydate, carpetarea, builtuparea, plintharea, superbuiltuparea, arv, constructiontype, constructiondate, dimensions, active, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_pt_unit(id, tenantid, propertyid, floorno, unittype, usagecategory, occupancytype, occupancydate, carpetarea, builtuparea, plintharea, superbuiltuparea, arv, constructiontype, constructiondate, dimensions, active, createdby, createdtime, lastmodifiedby, lastmodifiedtime,structuretype,ageofproperty) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?);
       basePath: Property.units.*
       jsonMaps:
 
@@ -310,6 +314,10 @@ serviceMaps:
       - jsonPath: $.Property.auditDetails.lastModifiedBy
 
       - jsonPath: $.Property.auditDetails.lastModifiedTime
+
+      - jsonPath: $.Property.units.*.structureType
+
+      - jsonPath: $.Property.units.*.ageOfProperty
 
   - version: 1.0
     description: Update property EG_PT_PROPERTY ltable
@@ -367,6 +375,7 @@ serviceMaps:
       - jsonPath: $.Property.id
 
       - jsonPath: $.Property.tenantId
+
 
 
     - query: INSERT INTO eg_pt_owner (ownerinfouuid, tenantid, propertyid, userid, status, isprimaryowner, ownertype, ownershippercentage, institutionid, relationship, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (userid, propertyid) DO UPDATE SET status=EXCLUDED.status, isprimaryowner=EXCLUDED.isprimaryowner, ownertype=EXCLUDED.ownertype, ownershippercentage=EXCLUDED.ownershippercentage, institutionid=EXCLUDED.institutionid, relationship=EXCLUDED.relationship, lastmodifiedby=EXCLUDED.lastModifiedby, lastmodifiedtime=EXCLUDED.lastmodifiedtime;
@@ -597,3 +606,20 @@ serviceMaps:
       - jsonPath: $.Property.auditDetails.createdTime
 
       - jsonPath: $.Property.auditDetails.lastModifiedTime
+
+  
+  
+  - version: 1.0
+    description: Update  in  EG_PT_PROPERTY table in case of amalgamation
+    fromTopic: update-property-amalgamation
+    isTransaction: true
+    queryMaps:
+
+
+    - query: UPDATE eg_pt_property SET  status='INACTIVE' WHERE Id=? AND tenantId=?;
+      basePath: $.Property.amalgamatedProperty.*
+      jsonMaps:
+
+      - jsonPath: $.Property.amalgamatedProperty[*].property.id
+
+      - jsonPath: $.Property.amalgamatedProperty[*].property.tenantId

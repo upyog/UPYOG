@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
@@ -25,9 +26,12 @@ import org.egov.pt.web.contracts.AssessmentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.egov.tracer.model.CustomException;
 
 @Service
 public class AssessmentService {
+
+	private static final String URL_PARAMS_SEPARATER = "&";
 
 	private AssessmentValidator validator;
 
@@ -77,7 +81,23 @@ public class AssessmentService {
 		Property property = utils.getPropertyForAssessment(request);
 		validator.validateAssessmentCreate(request, property);
 		assessmentEnrichmentService.enrichAssessmentCreate(request);
+		
+		//For Checking Assesmnt Done for the year
+		
+		AssessmentSearchCriteria crt = new AssessmentSearchCriteria();
+		Set<String>propertyIds = new HashSet<>();
+		propertyIds.add(property.getPropertyId());
+		crt.setPropertyIds(propertyIds);
+		crt.setFinancialYear(request.getAssessment().getFinancialYear());
+		crt.setStatus(Status.ACTIVE);
+		
+		
+		List<Assessment> earlierAssesmentForTheFinancialYear =  searchAssessments(crt);
+		if(earlierAssesmentForTheFinancialYear.size()>0)
+			throw new CustomException("ASSESMENT_EXCEPTION","Property assessment is already completed for this property for the financial year "+crt.getFinancialYear());
+		
 
+		
 		if(config.getIsAssessmentWorkflowEnabled()){
 			assessmentEnrichmentService.enrichWorkflowForInitiation(request);
 			ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(request.getRequestInfo(),
@@ -88,6 +108,7 @@ public class AssessmentService {
 		else {
 			calculationService.calculateTax(request, property);
 		}
+		System.out.println("it was here");
 		producer.push(props.getCreateAssessmentTopic(), request);
 
 		return request.getAssessment();

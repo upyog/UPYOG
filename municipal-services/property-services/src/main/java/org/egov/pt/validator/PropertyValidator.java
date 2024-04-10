@@ -33,6 +33,7 @@ import org.egov.pt.service.WorkflowService;
 import org.egov.pt.util.EncryptionDecryptionUtil;
 import  org.egov.pt.util.PTConstants;
 import org.egov.pt.util.PropertyUtil;
+import org.egov.pt.util.UnmaskingUtil;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,10 @@ public class PropertyValidator {
 
 	@Autowired
 	EncryptionDecryptionUtil encryptionDecryptionUtil;
+
+
+	@Autowired
+	private UnmaskingUtil unmaskingUtil;
 
 	/**
 	 * Validate the masterData and ctizenInfo of the given propertyRequest
@@ -118,6 +123,41 @@ public class PropertyValidator {
 
 		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
+	}
+
+
+	public void validateCreateRequestForBiFurcation(PropertyRequest request) {
+
+		Property property = request.getProperty();
+		if (null == property.getParentPropertyId() || StringUtils.isEmpty(property.getParentPropertyId()))
+			throw new CustomException("INVALID_PARENT_FOR_BIFURCATION",
+					"Provide valid parent property id for Bifurcation");
+		// Check Parent Exist in the system
+		Property prop = null;
+		PropertyRequest parentToBeCheckedRequest = null;
+		parentToBeCheckedRequest = new PropertyRequest();
+		prop = new Property();
+		prop.setPropertyId(property.getParentPropertyId());
+		prop.setTenantId(property.getTenantId());
+		;
+		parentToBeCheckedRequest.setProperty(prop);
+		parentToBeCheckedRequest.setRequestInfo(request.getRequestInfo());
+		prop = null;
+		prop = unmaskingUtil.getPropertyUnmaskedForAmalgamation(parentToBeCheckedRequest);
+		request.getProperty().setParentPropertyId(prop.getId());
+		parentToBeCheckedRequest.setProperty(prop);
+		if (!prop.getStatus().equals(Status.INWORKFLOW)) {
+
+			Boolean isBillUnpaid = propertyUtil.isBillUnpaid(prop.getPropertyId(), prop.getTenantId(),
+					request.getRequestInfo());
+			if (isBillUnpaid)
+				throw new CustomException("INVALID_PARENT_FOR_BIFURCATION_PENDING PAYMENT",
+						"Parent Property has to be completely paid for before initiating the Bifurcation process");
+		} else {
+			throw new CustomException("INVALID_PARENT_FOR_BIFURCATION",
+					"Provided parent property id for Bifurcation is in Workflow State");
+		}
+
 	}
 
 
@@ -247,6 +287,9 @@ public class PropertyValidator {
 		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
 	}
+
+
+
 
 	/**
 	 * Validates common criteria of update and mutation
@@ -526,6 +569,7 @@ public class PropertyValidator {
 		if(ObjectUtils.isEmpty(institution))
 			return;
 
+		//In case institutional only , In manipur no institutional ownership category 
 		if (!property.getOwnershipCategory().contains("INSTITUTIONAL")) {
 
 			errorMap.put("INVALID INSTITUTION OBJECT",
@@ -762,6 +806,8 @@ public class PropertyValidator {
 		Boolean isNullStatusFound = false;
 		Boolean isNewOWnerAdded = false;
 		Boolean isOwnerCancelled = false;
+		Boolean isOwnerDead=false;
+		String dateofdeath=null;
 		Set<Status> statusSet = new HashSet<>();
 		Set<String> searchOwnerUuids = propertyFromSearch.getOwners().stream().map(OwnerInfo::getUuid).collect(Collectors.toSet());
 		List<String> uuidsNotFound = new ArrayList<String>();
@@ -792,6 +838,15 @@ public class PropertyValidator {
 
 			if (owner.getUuid() != null && !searchOwnerUuids.contains(owner.getUuid()))
 				uuidsNotFound.add(owner.getUuid());
+
+			if(owner.getStatus().equals(Status.INACTIVE))
+			{
+				if(owner.getIsOwnerdead())
+					isOwnerDead=true;
+			}
+
+			if(isOwnerDead)
+				dateofdeath=owner.getDateofDeath();
 		}
 
 		if(activeMobileNumberPlusNameOwnerMap.values().stream().anyMatch(valueCount -> valueCount > 1))
@@ -812,6 +867,12 @@ public class PropertyValidator {
 
 			if (isOwnerCancelled && property.getOwners().size() == 1)
 				errorMap.put("EG_PT_MUTATION_OWNER_REMOVAL_ERROR", "Single owner of a property cannot be deactivated or removed in a mutation request");
+			
+			if(isOwnerDead)
+			{
+				if(StringUtils.isEmpty(dateofdeath))
+						errorMap.put("EG_PT_MUTATION_OWNER_DATEOFDEATH_ERROR", "if owner is dead date of death is required");
+			}
 		}
 
 		if (StringUtils.isEmpty(reasonForTransfer) || StringUtils.isEmpty(docNo) || ObjectUtils.isEmpty(docDate) || ObjectUtils.isEmpty(docVal) || ObjectUtils.isEmpty(marketVal)) {
@@ -916,6 +977,180 @@ public class PropertyValidator {
 		}
 
 		if(!property.getStatus().equals(Status.ACTIVE)) {throw new CustomException("EG_PT_ALTERNATE_INACTIVE","Alternate number details cannot be updated if status is not active");}
+	}
+
+	//BiFurcation Process
+	public void validateBifurcation(PropertyRequest request, Property propertyFromSearch) {
+
+		Map<String, String> errorMap = new HashMap<>();
+		Property property = request.getProperty();
+		ProcessInstance workFlow = property.getWorkflow();
+
+		String reasonForTransfer = null;
+		String docNo = null;
+		Long docDate = null;
+		Double docVal = null;
+		Double marketVal = null;
+
+		if (!propertyFromSearch.getStatus().equals(Status.INWORKFLOW)) {
+
+			Boolean isBillUnpaid = propertyUtil.isBillUnpaid(propertyFromSearch.getPropertyId(), propertyFromSearch.getTenantId(), request.getRequestInfo());
+			if (isBillUnpaid)
+				throw new CustomException("EG_PT_BIFURCATION_UNPAID_ERROR", "Property has to be completely paid for before initiating the bifurcation process");
+		}
+
+		@SuppressWarnings("unchecked")
+		Map<String, Object> additionalDetails = mapper.convertValue(property.getAdditionalDetails(), Map.class);
+		try {
+
+			reasonForTransfer = (String) additionalDetails.get("reasonForTransfer");
+			docNo = (String) additionalDetails.get("documentNumber");
+
+			String docDateString = String.valueOf(additionalDetails.get("documentDate"));
+			if(!StringUtils.isEmpty(docDateString) && !"null".equalsIgnoreCase(docDateString))
+				docDate = Long.valueOf(docDateString);
+
+			String docValString = String.valueOf(additionalDetails.get("documentValue"));
+			if(!StringUtils.isEmpty(docValString) && !"null".equalsIgnoreCase(docValString))
+				docVal = Double.valueOf(docValString);
+
+
+
+		} catch (PathNotFoundException e) {
+			throw new CustomException("EG_PT_MUTATION_FIELDS_ERROR", "Mandatory fields Missing for BIFURCATION, please provide the following information in additionalDetails : "
+					+ "reasonForTransfer, documentNumber, documentDate");
+		} catch (Exception e) {
+			throw new CustomException("EG_PT_ADDITIONALDETAILS_PARSING_ERROR", e.toString());
+		}
+
+		List<String> fieldsUpdated = diffService.getUpdatedFields(property, propertyFromSearch, PTConstants.MUTATION_PROCESS_CONSTANT);
+		// only editable field in mutation other than owners, additional details.
+		fieldsUpdated.remove("ownershipCategory");
+
+		if (configs.getIsMutationWorkflowEnabled()) {
+			if (request.getProperty().getWorkflow() == null)
+				throw new CustomException("EG_PT_UPDATE_WF_ERROR", "Workflow information is mandatory for mutation process");
+
+			if (property.getWorkflow().getAction().equalsIgnoreCase(configs.getMutationOpenState())
+					&& propertyFromSearch.getStatus().equals(Status.ACTIVE)) {
+				fieldsUpdated.remove("creationReason");
+			}
+		}else {
+			/*
+			 * if workflow is diabled then creationreason will change for every request
+			 */
+			fieldsUpdated.remove("creationReason");
+		}
+
+		if (!CollectionUtils.isEmpty(fieldsUpdated))
+			throw new CustomException("EG_PT_MUTATION_ERROR",
+					"The property mutation doesnt allow change of these fields " + fieldsUpdated);
+
+
+		Boolean isNullStatusFound = false;
+		Boolean isNewOWnerAdded = false;
+		Boolean isOwnerCancelled = false;
+		Set<Status> statusSet = new HashSet<>();
+		Set<String> searchOwnerUuids = propertyFromSearch.getOwners().stream().map(OwnerInfo::getUuid).collect(Collectors.toSet());
+		List<String> uuidsNotFound = new ArrayList<String>();
+		Map<String, Integer> activeMobileNumberPlusNameOwnerMap = new HashMap<>();
+
+		for (OwnerInfo owner : property.getOwners()) {
+
+			if (owner.getStatus() == Status.ACTIVE) {
+
+				String key = owner.getMobileNumber() + owner.getName();
+				if (activeMobileNumberPlusNameOwnerMap.get(key) == null) {
+					activeMobileNumberPlusNameOwnerMap.put(key, 1);
+				} else {
+					Integer val = activeMobileNumberPlusNameOwnerMap.get(key);
+					activeMobileNumberPlusNameOwnerMap.put(key, val++);
+				}
+			}
+
+			if (StringUtils.isEmpty(owner.getStatus())) {
+				isNullStatusFound = true;
+			}
+
+			statusSet.add(owner.getStatus());
+			if (owner.getUuid() == null && owner.getStatus().equals(Status.ACTIVE))
+				isNewOWnerAdded = true;
+			else if (owner.getStatus().equals(Status.INACTIVE))
+				isOwnerCancelled = true;
+
+			if (owner.getUuid() != null && !searchOwnerUuids.contains(owner.getUuid()))
+				uuidsNotFound.add(owner.getUuid());
+		}
+
+		if(activeMobileNumberPlusNameOwnerMap.values().stream().anyMatch(valueCount -> valueCount > 1))
+			errorMap.put("EG_PT_MUTATION_DUPLICATE_OWNER_ERROR", "Active Owner object with combination of name and mobilenumber is repated in the update Request");
+
+		if (isNullStatusFound)
+			errorMap.put("EG_PT_MUTATION_ALL_OWNER_STATUS_NULL_ERROR", "Status of the owner objects cannot be null, please make the status either ACTIVE or INACTIVE");
+
+		if (!statusSet.contains(Status.ACTIVE))
+			errorMap.put("EG_PT_MUTATION_ALL_OWNER_INACTIVE_ERROR", "At the least one owner object should be ACTIVE");
+
+		if (!propertyFromSearch.getStatus().equals(Status.INWORKFLOW)) {
+
+			//&& !isOwnerCancelled
+			if (!isNewOWnerAdded ) {
+				errorMap.put("EG_PT_BIFURCATION_OWNER_ERROR_NO_NEW_OWNER", "Please add at least one new owner");
+			}
+
+			if (isOwnerCancelled)
+				errorMap.put("EG_PT_BIFURCATION_OWNER_ERROR_CANNOT_INACTIVE_PREVIOUS_OWNER", "Previous owner status cannot be changed in Bifurcation, can be processed through MUTATION");
+
+			if (isOwnerCancelled && property.getOwners().size() == 1)
+				errorMap.put("EG_PT_BIFURCATION_OWNER_ERROR_NO_ACTIVE_OWNER", "Single owner of a property cannot be deactivated or removed in a bifurcation request");
+		}
+
+		if (StringUtils.isEmpty(reasonForTransfer) || StringUtils.isEmpty(docNo) || ObjectUtils.isEmpty(docDate)) {
+			throw new CustomException("EG_PT_MUTATION_FIELDS_ERROR", "mandatory fields Missing for bifurcation, please provide the following information : "
+					+ "reasonForTransfer, documentNumber, documentDate");
+		}
+
+		if(configs.getIsMutationWorkflowEnabled() && (ObjectUtils.isEmpty(workFlow.getAction()) || ObjectUtils.isEmpty(workFlow.getModuleName()) ||
+				ObjectUtils.isEmpty(workFlow.getBusinessService())))
+			errorMap.put("EG_PT_MUTATION_WF_FIELDS_ERROR", "mandatory fields Missing in workflow Object for Mutation please provide the following information : "
+					+ "action, moduleName and BusinessService");
+
+		List<String> masterNames = new ArrayList<>(Arrays.asList(PTConstants.MDMS_PT_MUTATIONREASON));
+		Map<String, List<String>> codes = propertyUtil.getAttributeValues(property.getTenantId(), PTConstants.MDMS_PT_MOD_NAME,
+				masterNames, "$.*.code", PTConstants.JSONPATH_CODES, request.getRequestInfo());
+
+		if (null != codes) {
+			validateMDMSData(masterNames, codes);
+		} else {
+			errorMap.put("MASTER_FETCH_FAILED", "Couldn't fetch master data for validation");
+		}
+
+		if (!codes.get(PTConstants.MDMS_PT_MUTATIONREASON).contains(reasonForTransfer))
+			errorMap.put("EG_PT_MT_REASON_ERROR",
+					"The reason for tranfer provided is invalid, please provide a valid mdms data");
+
+
+		Boolean isDocsEmpty = CollectionUtils.isEmpty(property.getDocuments());
+		Boolean isTransferDocPresent = false;
+		if (!isDocsEmpty) {
+
+			isTransferDocPresent = property.getDocuments().stream().map(doc -> doc.getDocumentType().toUpperCase())
+					.collect(Collectors.toSet()).contains(reasonForTransfer.toUpperCase());
+		}
+
+		if (isDocsEmpty || !isTransferDocPresent) {
+
+			errorMap.put("EG_PT_MT_DOCS_ERROR",
+					"Mandatory documents mising for the muation reason : " + reasonForTransfer);
+		}
+
+		if (propertyFromSearch.getStatus().equals(Status.INWORKFLOW)
+				&& property.getWorkflow().getAction().equalsIgnoreCase(configs.getMutationOpenState()))
+			errorMap.put("EG_PT_MUTATION_WF_ACTION_ERROR", "Invalid action, OPEN action cannot be applied on an active workflow ");
+
+		if (!CollectionUtils.isEmpty(errorMap))
+			throw new CustomException(errorMap);
+
 	}
 
 }

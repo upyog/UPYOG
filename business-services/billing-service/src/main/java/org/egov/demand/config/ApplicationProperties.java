@@ -195,4 +195,18 @@ public class ApplicationProperties {
 
 	@Value("${statelevel.rolecode.excluded.list}")
 	private List<String> statelevelRolecodeExclusionList;
+	
+	//assessment service
+	@Value("${egov.assessmentservice.host}")
+	private String assessmentServiceHost;
+
+	@Value("${egov.assessmentservice.search.endpoint}")
+	private String	assessmentSearchEndpoint;
+	
+	@Value("${egov.pgservice.search.endpoint}")
+	private String pgSeriviceEndpoint;
+	
+	@Value("${egov.pgservice.host}")
+	private String pgSeriviceHost;
+	
 }

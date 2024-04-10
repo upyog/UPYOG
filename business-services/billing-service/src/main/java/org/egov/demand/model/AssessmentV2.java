@@ -1,54 +1,43 @@
-package org.egov.pt.models;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import org.egov.pt.models.enums.Channel;
-import org.egov.pt.models.enums.Status;
-import org.egov.pt.models.workflow.ProcessInstance;
+package org.egov.demand.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JsonNode;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.SafeHtml;
+
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Assessment {
+public class AssessmentV2 {
 
 
-	@SafeHtml
 	@JsonProperty("id")
 	private String id ;
 
 	@JsonProperty("tenantId")
-	@SafeHtml
 	@NotNull
 	private String tenantId ;
 
-	@SafeHtml
 	@JsonProperty("assessmentNumber")
 	private String assessmentNumber ;
 
 	@JsonProperty("financialYear")
-	@SafeHtml
 	@NotNull
 	private String financialYear ;
 
 	@JsonProperty("propertyId")
-	@SafeHtml
 	@NotNull
 	private String propertyId;
 
@@ -57,35 +46,67 @@ public class Assessment {
 	private Long assessmentDate ;
 
 	@JsonProperty("status")
-	private Status status ;
+	private String status ;
 
 	@JsonProperty("source")
-	private Source source ;
-	
 	@NotNull
-	@JsonProperty("modeOfPayment")
-	private ModeOfPayment modeOfPayment; 
+	private Source source ;
 
 	@JsonProperty("unitUsageList")
 	@Valid
 	private List<UnitUsage> unitUsageList ;
 
-	@JsonProperty("documents")
+	@JsonProperty("documentV2s")
 	@Valid
-	private Set<Document> documents ;
+	private Set<DocumentV2> documents ;
 
 	@JsonProperty("additionalDetails")
 	private JsonNode additionalDetails ;
 
 	@JsonProperty("channel")
-	private Channel channel ;
+	private String channel ;
 
 
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails ;
+	
+	@NotNull
+	@JsonProperty("modeOfPayment")
+	private ModeOfPayment modeOfPayment;
+	
+	public enum ModeOfPayment {
 
-	@JsonProperty("workflow")
-	private ProcessInstance workflow;
+		YEARLY("YEARLY"),
+
+		QUARTERLY("QUARTERLY"),
+
+		HALFYEARLY("HALFYEARLY"),
+
+		FIELD_SURVEY("FIELD_SURVEY");
+
+		private String value;
+
+		ModeOfPayment(String value) {
+			this.value = value;
+		}
+
+		@Override
+		@JsonValue
+		public String toString() {
+			return String.valueOf(value);
+		}
+
+		@JsonCreator
+		public static ModeOfPayment fromValue(String text) {
+			for (ModeOfPayment b : ModeOfPayment.values()) {
+				if (String.valueOf(b.value).equalsIgnoreCase(text)) {
+					return b;
+				}
+			}
+			return null;
+		}
+	}
+
 
 
 	public enum Source {
@@ -120,40 +141,8 @@ public class Assessment {
 			return null;
 		}
 	}
-	
-	public enum ModeOfPayment {
 
-		YEARLY("YEARLY"),
-
-		QUARTERLY("QUARTERLY"),
-
-		HALFYEARLY("HALFYEARLY"),
-
-		FIELD_SURVEY("FIELD_SURVEY");
-
-		private String value;
-
-		ModeOfPayment(String value) {
-			this.value = value;
-		}
-
-		@Override
-		@JsonValue
-		public String toString() {
-			return String.valueOf(value);
-		}
-
-		@JsonCreator
-		public static ModeOfPayment fromValue(String text) {
-			for (ModeOfPayment b : ModeOfPayment.values()) {
-				if (String.valueOf(b.value).equalsIgnoreCase(text)) {
-					return b;
-				}
-			}
-			return null;
-		}
-	}
-	public Assessment addDocumentsItem(Document documentsItem) {
+	public AssessmentV2 addDocumentsItem(DocumentV2 documentsItem) {
 		if (this.documents == null) {
 			this.documents = new HashSet<>();
 		}

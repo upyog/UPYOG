@@ -84,8 +84,10 @@ public class TranslationService {
         String[] propertyTypeMasterData = property.getPropertyType().split("\\.");
         String propertyType = null,propertySubType = null;
         propertyType = propertyTypeMasterData[0];
-        if(propertyTypeMasterData.length > 1)
-            propertySubType = propertyTypeMasterData[1];
+		/*
+		 * if(propertyTypeMasterData.length > 1) propertySubType =
+		 * propertyTypeMasterData[1];
+		 */
 
         String[] usageCategoryMasterData = null;
         String usageCategoryMajor = null,usageCategoryMinor = null;
@@ -132,36 +134,40 @@ public class TranslationService {
             Map<String, Object> owner = mapper.convertValue(ownerInfo,  new TypeReference<Map<String, Object>>() {});
             owners.add(owner);
         });
-
+      
         List<Map<String, Object>> units = new LinkedList<>();
 
         if(!CollectionUtils.isEmpty(property.getUnits()))
             property.getUnits().forEach(unit -> {
-                Map<String, Object> unitMap = new HashMap<>();
-                unitMap.put("id",unit.getId());
-                unitMap.put("floorNo", unit.getFloorNo());
-                unitMap.put("unitArea", unit.getConstructionDetail().getBuiltUpArea());
-                unitMap.put("arv", unit.getArv());
-                unitMap.put("occupancyType", unit.getOccupancyType());
-                unitMap.put("structureType", unit.getStructureType());
-                unitMap.put("ageOfProperty", unit.getAgeOfProperty());
+            	
+            	if(unit.getActive()) {
+            		 Map<String, Object> unitMap = new HashMap<>();
+                     unitMap.put("id",unit.getId());
+                     unitMap.put("floorNo", unit.getFloorNo());
+                     unitMap.put("unitArea", unit.getConstructionDetail().getBuiltUpArea());
+                     unitMap.put("arv", unit.getArv());
+                     unitMap.put("occupancyType", unit.getOccupancyType());
+                     unitMap.put("structureType", unit.getStructureType());
+                     unitMap.put("ageOfProperty", unit.getAgeOfProperty());
 
-                String[] masterData = unit.getUsageCategory().split("\\.");
+                     String[] masterData = unit.getUsageCategory().split("\\.");
 
-                if(masterData.length >= 1)
-                    unitMap.put("usageCategoryMajor", masterData[0]);
+                     if(masterData.length >= 1)
+                         unitMap.put("usageCategoryMajor", masterData[0]);
 
-                if(masterData.length >= 2)
-                    unitMap.put("usageCategoryMinor", masterData[1]);
+                     if(masterData.length >= 2)
+                         unitMap.put("usageCategoryMinor", masterData[1]);
 
-                if(masterData.length >= 3)
-                    unitMap.put("usageCategorySubMinor", masterData[2]);
+                     if(masterData.length >= 3)
+                         unitMap.put("usageCategorySubMinor", masterData[2]);
 
-                if(masterData.length >= 4)
-                    unitMap.put("usageCategoryDetail",masterData[3]);
+                     if(masterData.length >= 4)
+                         unitMap.put("usageCategoryDetail",masterData[3]);
 
-                unitMap.put("additionalDetails", unit.getAdditionalDetails());
-                units.add(unitMap);
+                     unitMap.put("additionalDetails", unit.getAdditionalDetails());
+                     units.add(unitMap);
+            	}
+               
 
             });
 
@@ -200,6 +206,7 @@ public class TranslationService {
         calculationCriteria.put("property", propertyMap);
         calculationCriteria.put("tenantId", property.getTenantId());
         calculationCriteria.put("financialYear",assessmentRequestV2.getAssessment().getFinancialYear());
+        calculationCriteria.put("modeOfPayment", assessmentRequestV2.getAssessment().getModeOfPayment());
         Map<String, Object> calculationReq = new HashMap<>();
         calculationReq.put("RequestInfo", requestInfo);
         calculationReq.put("CalculationCriteria", Collections.singletonList(calculationCriteria));
