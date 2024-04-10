@@ -46,7 +46,7 @@ const SelectWorkName = ({ t, config, onSelect, value, userType, formData, digitT
   if (isLoading) {
     return <Loader></Loader>
   }
-
+console.log("WorkName ",WorkName)
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline /> : null}

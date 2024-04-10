@@ -342,24 +342,24 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             <Row
               label={t("WMS_RUNNING_ACCOUNT_FINAL_BILL_PROJECT_NAME")}
               text={`${ProjectInfo?.ProjectName ? `${ProjectInfo?.ProjectName}` : ""}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"edit"}/ProjectName`} />}
+              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"add"}/ProjectName`} />}
             />
             <Row
               label={t("WMS_RUNNING_ACCOUNT_FINAL_BILL_WORK_NAME")}
               text={` ${ProjectInfo?.WorkName ? `${ProjectInfo?.WorkName}` : ""}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"edit"}/work-name`} />}
+              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"add"}/work-name`} />}
             />
             <Row
               label={t("WMS_RUNNING_ACCOUNT_FINAL_BILL_WORK_ORDER_NO")}
               text={`${ProjectInfo?.WorkOrderNo ? `${ProjectInfo?.WorkOrderNo}` : ""}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"edit"}/work-order-no`} />}
+              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"add"}/work-order-no`} />}
             />
           </StatusTable>
 
           <div>
             <CardSubHeader>{t("WMS_RUNNING_ACCOUNT_FINAL_BILL_PREVIOUS_RUNNING_BILL_INFORMATION")}</CardSubHeader>
             <div style={{ textAlign: "right" }}>
-              <ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"edit"}/previous-running-bill`} />
+              <ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"add"}/previous-running-bill`} />
             </div>
             <div style={{ overflow: "scroll" }}>
               <Table
@@ -387,22 +387,22 @@ const CheckPage = ({ onSubmit, value = {} }) => {
               <Row
                 label={t("WMS_RUNNING_ACCOUNT_FINAL_BILL_MB_SELECT")}
                 text={`${mbNotPaid?.i18nKey ? `${mbNotPaid?.i18nKey}` : ""}`}
-                actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"edit"}/select-measurement-book`} />}
+                // actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"add"}/select-measurement-book`} />}
               />
               <Row
                 label={t("WMS_RUNNING_ACCOUNT_FINAL_BILL_MB_DATE")}
                 text={` ${mbNotPaid?.mbDate ? `${mbNotPaid?.mbDate}` : ""}`}
-                // actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"edit"}/measurement-book-date`} />}
+                actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"add"}/measurement-book-date`} />}
               />
               <Row
                 label={t("WMS_RUNNING_ACCOUNT_FINAL_BILL_MB_NO")}
                 text={`${mbNotPaid?.mbNumber ? `${mbNotPaid?.mbNumber}` : ""}`}
-                // actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"edit"}/measurement-book-no`} />}
+                // actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"add"}/measurement-book-no`} />}
               />
               <Row
                 label={t("WMS_RUNNING_ACCOUNT_FINAL_BILL_MB_AMMOUNT")}
                 text={`${mbNotPaid?.amount ? `${mbNotPaid?.amount}` : ""}`}
-                // actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"edit"}/measurement-book-amount`} />}
+                // actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"add"}/measurement-book-amount`} />}
               />
             </StatusTable>
           </div>
@@ -413,27 +413,27 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             <Row
               label={t("WMS_RUNNING_ACCOUNT_FINAL_BILL_TENDER_WORK_NAME")}
               text={`${TenderWorkDetail?.workName ? `${TenderWorkDetail?.workName}` : ""}`}
-              // actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"edit"}/select-measurement-book`} />}
+              // actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"add"}/select-measurement-book`} />}
             />
             <Row
               label={t("WMS_RUNNING_ACCOUNT_FINAL_BILL_TENDER_ESTIMATED_WORK_COST")}
               text={` ${TenderWorkDetail?.estimatedWorkCost ? `${TenderWorkDetail?.estimatedWorkCost}` : ""}`}
-              // actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"edit"}/measurement-book-date`} />}
+              // actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"add"}/measurement-book-date`} />}
             />
             <Row
               label={t("WMS_RUNNING_ACCOUNT_FINAL_BILL_TENDER_TENDER_TYPE")}
               text={`${TenderWorkDetail?.tenderType ? `${TenderWorkDetail?.tenderType}` : ""}`}
-              // actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"edit"}/measurement-book-no`} />}
+              // actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"add"}/measurement-book-no`} />}
             />
             <Row
               label={t("WMS_RUNNING_ACCOUNT_FINAL_BILL_TENDER_PERCENTAGE_TYPE")}
               text={`${TenderWorkDetail?.percentageType ? `${TenderWorkDetail?.percentageType}` : ""}`}
-              // actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"edit"}/measurement-book-amount`} />}
+              // actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"add"}/measurement-book-amount`} />}
             />
             <Row
               label={t("WMS_RUNNING_ACCOUNT_FINAL_BILL_TENDER_AMOUNT")}
               text={`${TenderWorkDetail?.amount ? `${TenderWorkDetail?.amount}` : ""}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"edit"}/measurement-book-amount`} />}
+              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"add"}/measurement-book-amount`} />}
             />
           </StatusTable>
           </div>
@@ -441,7 +441,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
           <div>
             <CardSubHeader>{t("WMS_RUNNING_ACCOUNT_FINAL_BILL_WITHHELD_DEDUCTIONS_DETAILS")}</CardSubHeader>
             <div style={{ textAlign: "right" }}>
-              <ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"edit"}/withheld-deductions-details`} />
+              <ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"add"}/withheld-deductions-details`} />
             </div>
             <div style={{ overflow: "scroll" }}>
               <Table
@@ -466,7 +466,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
           <div>
             <CardSubHeader>{t("WMS_RUNNING_ACCOUNT_FINAL_BILL_RA_BILL_TAX_DETAILS")}</CardSubHeader>
             <div style={{ textAlign: "right" }}>
-              <ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"edit"}/ra-bills-tax-details`} />
+              <ActionButton jumpTo={`/upyog-ui/citizen/wms/running-account/${"add"}/ra-bills-tax-details`} />
             </div>
             <div style={{ overflow: "scroll" }}>
               <Table

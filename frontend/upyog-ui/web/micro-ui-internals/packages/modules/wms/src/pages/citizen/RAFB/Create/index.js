@@ -15,7 +15,7 @@ const WmsRAFBCreate=()=>{
   console.log("match ",match)
 
   //################# TL code start
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("WMS_RUNNING_BILL", {});
+  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("WMS_RUNNING_BILL_CREATE", {});
   console.log("params ",params)
   let config = [];
   let isReneworEditTrade = window.location.href.includes("/renew-trade/") || window.location.href.includes("/edit-application/")

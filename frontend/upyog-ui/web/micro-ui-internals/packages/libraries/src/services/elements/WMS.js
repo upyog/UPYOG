@@ -1127,6 +1127,17 @@ TenderEntry:{
           userService: true,
           // params: { tenantId },
         }),
+        getSinglePreviousBill: (tenantId) =>
+          // console.log("bankList sttepr single data WMS tenantId "),
+         Request({
+          // url: Urls.wms.Contractor_Agreement.createFake/tenantId,
+          url: Urls.wms.Running_Account_Final_Bill.getPreviousBill+"/"+tenantId,
+          useCache: false,
+          method: "GET",
+          auth: true,
+          userService: true,
+          // params: { tenantId },
+        }),
         createPreviousBill: (data, tenantId) =>
         // console.log("true data useWmsRAFBCreate WMS ",data),
         Request({
@@ -1137,6 +1148,31 @@ TenderEntry:{
           auth: true,
           userService: true,
           // params: { tenantId },
+        }),
+        editPreviousBill: (data,id,tenantId) =>
+        // {
+        // console.log("true data editPreviousBill WMS ",data, tenantId ,id),
+        Request({
+          data: data,
+          url: Urls.wms.Running_Account_Final_Bill.editPreviousBill+"/"+id,
+          useCache: false,
+          method: "PUT",
+          auth: true,
+          userService: true,
+          // params: { tenantId },
+        })
+      // }
+      ,
+
+        update: (data, tenantId) =>
+        Request({
+          data: data,
+          url: Urls.wms.SORApplications.update+"/"+data.sor_id,
+          useCache: false,
+          method: "PUT",
+          auth: true,
+          userService: false,
+          params: {  },
         }),
     }
 };

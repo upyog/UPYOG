@@ -34,18 +34,138 @@ const BannerPicker = (props) => {
   );
 };
 
-const WMSrafbAcknowledgement = ({ data, onSuccess }) => {
-  console.log("WMS Acknowledgement data ",data)
-  console.log("WMS Acknowledgement !data  ",Boolean(data))
-  console.log("WMS Acknowledgement data data?.address?.city ",data?.address?.city)
+const WMSrafbAcknowledgement = ({ data1, onSuccess }) => {
+//   console.log("WMS Acknowledgement data ",data)
+//   console.log("WMS Acknowledgement !data  ",Boolean(data))
+//   console.log("WMS Acknowledgement data data?.address?.city ",data?.address?.city)
+  let data={
+    "ProjectInfo": {
+        "ProjectName": {
+            "code": "OWNER.ADDRESSPROOF.ELECTRICITYBILL",
+            "active": true,
+            "i18nKey": "OWNER_ADDRESSPROOF_ELECTRICITYBILL"
+        },
+        "WorkName": "abc siyaram kumar again update 234",
+        "WorkOrderNo": "123 dfg again update 65564545"
+    },
+    "previous_bill": {
+        "0": []
+    },
+    "mbNotPaid": {
+        "i18nKey": "Measurement Book B",
+        "mbDate": "2024-01-09",
+        "mbNumber": "MB0002",
+        "amount": "234545"
+    },
+    "undefined": {},
+    "TenderWorkDetail": {
+        "workName": "ABC",
+        "estimatedWorkCost": "1234543",
+        "tenderType": "Tender Type A",
+        "percentageType": "10",
+        "amount": "34567"
+    },
+    "withheldDeductionsDetail": {
+        "withheldDeductionsDetail": [
+            {
+                "taxcategory": {
+                    "i18nKey": "10"
+                },
+                "remark": "Test 1",
+                "amount": "12345"
+            },
+            {
+                "taxcategory": {
+                    "i18nKey": "20"
+                },
+                "remark": "Test 2",
+                "amount": "23456"
+            }
+        ]
+    },
+    "RABillTaxDetail": {
+        "RABillTaxDetail": [
+            {
+                "taxcategory": {
+                    "i18nKey_0": "10"
+                },
+                "addition_deduction": {
+                    "i18nKey_1": "40"
+                },
+                "amount_percentage": {
+                    "i18nKey_2": "70"
+                },
+                "percentageValue": "5",
+                "amount": "100",
+                "total": "105"
+            },
+            {
+                "taxcategory": {
+                    "i18nKey_0": "20"
+                },
+                "addition_deduction": {
+                    "i18nKey_1": "50"
+                },
+                "amount_percentage": {
+                    "i18nKey_2": "80"
+                },
+                "percentageValue": "10",
+                "amount": "200",
+                "total": "220"
+            },
+            {
+                "taxcategory": {
+                    "i18nKey_0": "30"
+                },
+                "addition_deduction": {
+                    "i18nKey_1": "60"
+                },
+                "amount_percentage": {
+                    "i18nKey_2": "90"
+                },
+                "percentageValue": "15",
+                "amount": "300",
+                "total": "345"
+            }
+        ]
+    },
+    "RequestInfo": {
+        "apiId": "Rainmaker",
+        "authToken": "70d7c98f-a66c-461b-ba94-b6c3cc0dcb15",
+        "userInfo": {
+            "id": 1681,
+            "uuid": "2bef105b-eff3-479a-8aad-64c2b5354070",
+            "userName": "8080808080",
+            "name": "Archt",
+            "mobileNumber": "8080808080",
+            "emailId": "Arch@test.com",
+            "locale": null,
+            "type": "CITIZEN",
+            "roles": [
+                {
+                    "name": "Citizen",
+                    "code": "CITIZEN",
+                    "tenantId": "pg"
+                }
+            ],
+            "active": true,
+            "tenantId": "pg",
+            "permanentCity": "pg.citya"
+        },
+        "msgId": "1712563440975|en_IN",
+        "plainAccessRequest": {}
+    }
+};
+console.log("WMS Acknowledgement data1 ",data1)
+
   const { t } = useTranslation();
   const isPropertyMutation = window.location.href.includes("property-mutation");
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.wms.rafb.useWmsRAFBCreate(
-    tenantId,
-    // Boolean(data) ? data : tenantId,
+  const mutation = Digit.Hooks.wms.rafb.useWmsRAFBUpdate(
+    tenantId,1
+    // ,Boolean(data) ? data : tenantId,
     // data?.address?.city ? data.address?.city?.code : tenantId,
-    !window.location.href.includes("edit-application") && !isPropertyMutation
+    // !window.location.href.includes("edit-application") && !isPropertyMutation
   );
   console.log(" sdasdsa mutation",mutation)
   console.log(" sdasdsa tenantId",tenantId)
@@ -69,7 +189,6 @@ const WMSrafbAcknowledgement = ({ data, onSuccess }) => {
 
 }
     // data.id="200"
-    console.log("data with id ",data)
     try{
       mutation.mutate(data, {
              onSuccess,

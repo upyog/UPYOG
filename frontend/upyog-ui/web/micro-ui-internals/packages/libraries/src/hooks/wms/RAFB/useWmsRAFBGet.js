@@ -1,22 +1,22 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import WMSService from "../../../services/elements/WMS";
-const useWmsRAFBGet = (tenantId,type, config = {}) => {
+const useWmsRAFBGet = (id,type, config = {}) => {
  const getPreviousBill=()=>{    console.log("bankList sttepr single data lists")
-  return useQuery(["WMS_RAFB_GET_PREVIOUS_BILL", tenantId], () => WMSService.RunningAccountFinalBill.getPreviousBill(), config);
+  return useQuery(["WMS_RAFB_GET_PREVIOUS_BILL", id], () => WMSService.RunningAccountFinalBill.getPreviousBill(), config);
 };
-// const CAList = ()=>{
-//     return useQuery(["WMS_CA_GET_LIST", tenantId], () => WMSService.ContractorAgreement.getSingleFake(tenantId), config);// fake data
-// };
+const CAList = ()=>{
+    return useQuery(["WMS_RAFB_GET_SINGLE_LIST", id], () => WMSService.RunningAccountFinalBill.getSinglePreviousBill(id), config);// fake data
+};
 // const CAUpdate = ()=>{
-//   return useMutation((data) => WMSService.ContractorAgreement.updateFake(data,tenantId), config);
+//   return useMutation((data) => WMSService.ContractorAgreement.updateFake(data,id), config);
 
 // }
 
 switch(type){
   case "getPriviousBill":
     return getPreviousBill();
-  // case "CASingleList":
-  //   return CAList();
+  case "getPriviousSingleList":
+    return CAList();
   // case "CAUpdate":
   //   return CAUpdate();
 }

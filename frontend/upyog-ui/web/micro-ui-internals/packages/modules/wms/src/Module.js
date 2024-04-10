@@ -325,6 +325,7 @@ import MeasurementBookno from "./pageComponents/RAFB/MeasurementBookno";
 import MeasurementBookAmount from "./pageComponents/RAFB/MeasurementBookAmount";
 import TenderEntryDetail from "./pages/citizen/TE/detail/TenderEntryDetail";
 import WMSrafbAcknowledgement from "./pages/citizen/RAFB/Create/WMSrafbAcknowledgement";
+import WMSrafbEditAcknowledgement from "./pages/citizen/RAFB/Edit/WMSrafbAcknowledgement";
 
 
 
@@ -625,7 +626,8 @@ MeasurementBookDate,
 MeasurementBookno,
 MeasurementBookAmount,
 TenderEntryDetail,
-WMSrafbAcknowledgement
+WMSrafbAcknowledgement,
+WMSrafbEditAcknowledgement
 };
 
 

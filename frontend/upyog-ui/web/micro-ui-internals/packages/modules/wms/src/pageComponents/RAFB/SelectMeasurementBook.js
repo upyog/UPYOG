@@ -28,9 +28,7 @@ const SelectMeasurementBook = ({ t, config, onSelect, value, userType, formData,
 
   const isEditProperty = formData?.isEditProperty || false;
 
-  const [dropdownValue, setDropdownValue] = useState(
-    !isMutation ? formData?.address?.documents?.ProofOfAddress?.documentType || null : formData?.[config.key]?.documentType
-  );
+  const [dropdownValue, setDropdownValue] = useState(formData?.mbNotPaid?.i18nKey?{"i18nKey":formData?.mbNotPaid?.i18nKey}:{});
   console.log("dropdownValue ",dropdownValue);
   const [error, setError] = useState(null);
   

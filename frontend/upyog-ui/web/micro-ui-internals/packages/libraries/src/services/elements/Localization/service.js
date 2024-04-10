@@ -73520,6 +73520,13 @@ export const LocalizationService = {
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_ACKNOWLEDGEMENT",
+            "message": "WMS RAFB ACKNOWLEDGEMENT",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        }
+        
         
         
 

@@ -365,7 +365,8 @@ wms:{
 
     Running_Account_Final_Bill: {
       getPreviousBill: "http://localhost:5000/previousBill",
-      createPreviousBill: "http://localhost:5000/previousBill"
+      createPreviousBill: "http://localhost:5000/previousBill",
+      editPreviousBill:"http://localhost:5000/previousBill"
     }
   },
   access_control: "/access/v1/actions/mdms/_get",

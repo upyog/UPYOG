@@ -29,8 +29,9 @@ const SelectProjectName = ({ t, config, onSelect, value, userType, formData, dig
   const isEditProperty = formData?.isEditProperty || false;
 
   const [dropdownValue, setDropdownValue] = useState(
-    !isMutation ? formData?.address?.documents?.ProofOfAddress?.documentType || null : formData?.[config.key]?.documentType
+    formData?.ProjectInfo?.ProjectName ? formData?.ProjectInfo?.ProjectName:{}
   );
+
   console.log("dropdownValue ",dropdownValue);
   const [error, setError] = useState(null);
   let dropdownData = [];
@@ -128,6 +129,7 @@ const SelectProjectName = ({ t, config, onSelect, value, userType, formData, dig
           t={t}
           isMandatory={false}
           option={dropdownData}
+          value={dropdownValue}
           selected={dropdownValue}
           optionKey="i18nKey"
           select={setTypeOfDropdownValue}

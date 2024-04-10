@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ActionBar, Card, CardSubHeader, DocumentSVG, Header, Loader, Menu, Row, StatusTable, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { useHistory, useParams } from "react-router-dom";
 
 
 const WmsRAFBDetail = () => {
   const { t } = useTranslation();
+  const { tenantId,id } = useParams();
+  console.log("tenantId ",tenantId,id)
+  const history = useHistory();
   const isMobile = window.Digit.Utils.browser.isMobile();
 //   const { isLoading, isError, error, data, ...rest } = Digit.Hooks.wms.sor.useWmsSorSearch({ sor_id: sorId }, tenantId, null, isupdate);
 
@@ -39,7 +43,9 @@ const WmsRAFBDetail = () => {
         </div>
       ) : null}
       <ActionBar>
-        <SubmitBar label={t("WMS_COMMON_TAKE_ACTION")} onSubmit={() => history.push(`/upyog-ui/citizen/wms/sor-edit/${data?.[0]?.sor_id}`)} />
+        {/* <SubmitBar label={t("WMS_COMMON_TAKE_ACTION")} onSubmit={() => history.push(`/upyog-ui/citizen/wms/running-account/detail/${"pg"}/:id/${data?.[0]?.sor_id}`)} /> */}
+        {/* <SubmitBar label={t("WMS_COMMON_TAKE_ACTION")} onSubmit={() => history.push(`/upyog-ui/citizen/wms/running-account/edit/:${tenantId}/:${id}`)} /> */}
+        <SubmitBar label={t("WMS_COMMON_TAKE_ACTION")} onSubmit={() => history.push(`/upyog-ui/citizen/wms/running-account/edit/pg/114`)} />
       </ActionBar>
     </React.Fragment>
   );

@@ -323,6 +323,8 @@ import useFeedBackSearch from "./useFeedBackSearch";
 import useTenantsWMS from "./wms/useTenants";
 import useWmsRAFBGet from "./wms/RAFB/useWmsRAFBGet";
 import useWmsRAFBCreate from "./wms/RAFB/useWmsRAFBCreate";
+import useWmsRAFBUpdate from "./wms/RAFB/useWmsRAFBUpdate";
+
 
 
 const pgr = {
@@ -645,7 +647,8 @@ const wms = {
   useWmsMDMS,
   rafb:{
     useWmsRAFBGet,
-    useWmsRAFBCreate
+    useWmsRAFBCreate,
+    useWmsRAFBUpdate
   },
   
   
