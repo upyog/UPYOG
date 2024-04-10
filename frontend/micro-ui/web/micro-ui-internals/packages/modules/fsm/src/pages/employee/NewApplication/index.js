@@ -44,20 +44,24 @@ export const NewApplication = ({ parentUrl, heading }) => {
   const onFormValueChange = (setValue, formData) => {
     console.log("ProID", formData)
     if (
-      
+      formData?.pitType!==undefined &&
+      formData?.tripData?.vehicleType &&
+      formData?.tripData?.roadWidth!==undefined &&
+      formData?.tripData?.distancefromroad!==undefined &&
+      formData?. address?.street &&
+      formData?.address?.doorNo &&
       formData?.propertyType &&
       formData?.subtype &&
       formData?.address?.locality?.code || formData?.cpt?.details?.address?.locality?.code &&
       formData?.tripData?.vehicleType &&
       formData?.channel &&
       formData?.pitType &&
-      formData?.tripData?.roadWidth &&
-      formData?.tripData?.distancefromroad &&
-      formData?. address?.street &&
-      formData?.address?.doorNo &&
+      
+      
       (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0 || formData?.tripData?.undefined?.amountPerTrip)
     ) {
       setSubmitValve(true);
+      console.log("cansub", canSubmit)
       const pitDetailValues = formData?.pitDetail ? Object.values(formData?.pitDetail).filter((value) => value > 0) : null;
       let max = Digit.SessionStorage.get("total_amount");
       let min = Digit.SessionStorage.get("advance_amount");
@@ -162,6 +166,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
       },
       workflow: null,
     };
+    console.log("formdataa", formData)
 
     window.Digit.SessionStorage.set("propertyType", null);
     window.Digit.SessionStorage.set("subType", null);
