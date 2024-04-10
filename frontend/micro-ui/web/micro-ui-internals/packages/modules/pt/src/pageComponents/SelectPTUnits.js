@@ -306,7 +306,6 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
                 isMandatory={config.isMandatory}
                 option={[
                   ...(mdmsData?.UsageCategory ? mdmsData?.UsageCategory : []),
-                  { code: "RESIDENTIAL", i18nKey: "PROPERTYTAX_BILLING_SLAB_RESIDENTIAL" },
                 ]}
                 selected={field?.usageCategory}
                 select={(e) => selectUsageCategory(index, e)}

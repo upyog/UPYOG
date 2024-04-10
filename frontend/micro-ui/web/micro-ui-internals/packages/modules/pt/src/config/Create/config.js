@@ -235,8 +235,22 @@ export const newConfig =[
                     },
                     "key": "units",
                     "withoutLabel": true,
-                    "nextStep": "pincode",
+                    "nextStep": "usageCategory",
                     "hideInEmployee": true
+                },
+                {
+                    "route": "usageCategory",
+                    "component": "UsageCategoryVacantLand",
+                    "texts": {
+                        "headerCaption": "",
+                        "header": "",
+                        "cardText": "PT_FLAT_DETAILS_DESC",
+                        "submitBarLabel": "PT_COMMON_NEXT"
+                    },
+                    "withoutLabel": true,
+                    "key": "usageCategory",
+                    "nextStep": "pincode",
+                    "type": "component"
                 },
                 {
                     "type": "component",

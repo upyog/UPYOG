@@ -5,6 +5,7 @@ import { shouldHideBackButton } from "../../utils";
 import Search from "../employee/Search";
 import { useTranslation } from "react-i18next";
 import { PTMyPayments } from "./MyPayments";
+import AmalgamationCitizen from "./Amalgamate";
 
 const hideBackButtonConfig = [
   { screenPath: "property/new-application/acknowledgement" },
@@ -27,10 +28,11 @@ const App = () => {
   const PTMyApplications = Digit?.ComponentRegistryService?.getComponent("PTMyApplications");
   const MyProperties = Digit?.ComponentRegistryService?.getComponent("PTMyProperties");
   const MutateProperty = Digit?.ComponentRegistryService?.getComponent("PTMutateProperty");
+  const AmalgamateProperty = Digit?.ComponentRegistryService?.getComponent("PTAmalgamateProperty");
   const PropertyInformation = Digit?.ComponentRegistryService?.getComponent("PropertyInformation");
   const PropertyOwnerHistory = Digit?.ComponentRegistryService?.getComponent("PropertyOwnerHistory");
   const AssessmentDetails = Digit?.ComponentRegistryService?.getComponent("PTAssessmentDetails");
-
+  console.log("AmalgamateProperty==",AmalgamateProperty)
   return (
     <span className={"pt-citizen"}>
       <Switch>
@@ -45,6 +47,8 @@ const App = () => {
           <PrivateRoute path={`${path}/property/my-properties`} component={MyProperties}></PrivateRoute>
           <PrivateRoute path={`${path}/property/my-payments`} component={PTMyPayments}></PrivateRoute>
           <PrivateRoute path={`${path}/property/property-mutation`} component={MutateProperty}></PrivateRoute>
+          <PrivateRoute path={`${path}/property/property-amalgamation/search-property`} component={AmalgamationCitizen}></PrivateRoute>
+
           <PrivateRoute path={`${path}/property/properties/:propertyIds`} component={PropertyInformation}></PrivateRoute>
           {/* <PrivateRoute path={`${path}/property/transfer-ownership`} component={MutateProperty}></PrivateRoute> */}
           <PrivateRoute path={`${path}/property/owner-history/:tenantId/:propertyIds`} component={PropertyOwnerHistory}></PrivateRoute>

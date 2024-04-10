@@ -1,4 +1,4 @@
-export const newConfigMutate = [
+export const newConfigAmalgamate = [
   {
     head: "PT_MUTATION_TRANSFEROR_DETAILS",
     body: [
@@ -95,11 +95,11 @@ export const newConfigMutate = [
         key: "searchResult",
         nextStep: "transferer-details",
         nextStep: "info",
-        action: "MUTATION",
+        action: "AMALGAMATION",
         hideInEmployee: true,
         texts: {
           header: "CS_SEARCH_RESULTS",
-          actionButtonLabel: "PT_OWNERSHIP_TRANSFER",
+          actionButtonLabel: "AMALGAMATION/SEPARATION",
           nextText: "PT_COMMON_NEXT",
         },
         labels: [
@@ -201,7 +201,7 @@ export const newConfigMutate = [
       },
       // ownership or transferee
 
-      // mutation starts here
+      // MUTATION starts here
     ],
   },
   {
