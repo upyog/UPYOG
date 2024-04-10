@@ -55,7 +55,7 @@ const fetchComplaintDetails = async (tenantId, id) => {
   const { service, workflow } = (await Digit.PGRService.search(tenantId, { serviceRequestId: id })).ServiceWrappers[0] || {};
   Digit.SessionStorage.set("complaintDetails", { service, workflow });
   if (service && workflow && serviceDefs) {
-    const complaintType = serviceDefs.filter((def) => def.serviceCode === service.serviceCode)[0].menuPath.toUpperCase();
+    const complaintType = serviceDefs.filter((def) => def.serviceCode === service.serviceCode)[0]?.menuPath?.toUpperCase();
     const ids = workflow.verificationDocuments
       ? workflow.verificationDocuments.filter((doc) => doc.documentType === "PHOTO").map((photo) => photo.fileStoreId || photo.id)
       : null;
