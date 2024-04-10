@@ -111,7 +111,7 @@ public class UserRepositoryTest {
         User user = userRepository.findAll(UserSearchCriteria.builder().userName("bigcat399")
                 .tenantId("ap.public").type(UserType.EMPLOYEE).build()).get(0);
         assertThat(user.getId().equals(1l));
-        assertThat(user.getUsername().equals("bigcat399"));
+        assertThat(user.getUserName().equals("bigcat399"));
         assertThat(user.getMobileNumber().equals("9731123456"));
         assertThat(user.getEmailId().equals("kay.alexander@example.com"));
         assertThat(user.getTenantId().equals("ap.public"));
@@ -124,7 +124,7 @@ public class UserRepositoryTest {
         final Set<Role> roles = new HashSet<>();
         final String roleCode = "EMP";
         roles.add(Role.builder().code(roleCode).tenantId("ap.public").build());
-        User domainUser = User.builder().roles(roles).name("test1").username("TestUserName").password("password")
+        User domainUser = User.builder().roles(roles).name("test1").userName("TestUserName").password("password")
                 .emailId("Test@gmail.com").aadhaarNumber("AadharNumber").mobileNumber("1234567890").active(true)
                 .gender(Gender.FEMALE).bloodGroup(BloodGroup.A_NEGATIVE).accountLocked(true).loggedInUserId(10l)
                 .createdBy(10l).tenantId("ap.public").build();
@@ -133,7 +133,7 @@ public class UserRepositoryTest {
         assertThat(actualUser != null);
         assertThat(actualUser.getId().equals(1l));
         assertThat(actualUser.getRoles().size() == 1l);
-        assertThat(actualUser.getUsername().equals("TestUserName"));
+        assertThat(actualUser.getUserName().equals("TestUserName"));
         assertThat(actualUser.getEmailId().equals("Test@gmail.com"));
         assertThat(actualUser.getAadhaarNumber().equals("AadharNumber"));
         assertThat(actualUser.getMobileNumber().equals("1234567890"));
@@ -153,14 +153,14 @@ public class UserRepositoryTest {
         final String roleCode = "EMP";
         roles.add(Role.builder().code(roleCode).tenantId("ap.public").build());
         User domainUser = User.builder().roles(roles)
-                .username("TestUserName").password("password").tenantId("ap.public")
+                .userName("TestUserName").password("password").tenantId("ap.public")
                 .correspondenceAddress(correspondenceAddress).build();
         User actualUser = userRepository.create(domainUser);
 
         assertThat(actualUser != null);
         assertThat(actualUser.getId().equals(1l));
         assertThat(actualUser.getRoles().size() == 1l);
-        assertThat(actualUser.getUsername().equals("TestUserName"));
+        assertThat(actualUser.getUserName().equals("TestUserName"));
         assertThat(actualUser.getTenantId().equals("ap.public"));
         assertThat(actualUser.getCorrespondenceAddress() != null);
         assertThat(actualUser.getCorrespondenceAddress().getAddressType().toString().equals("CORRESPONDENCE"));
@@ -179,14 +179,14 @@ public class UserRepositoryTest {
         final String roleCode = "EMP";
         roles.add(Role.builder().code(roleCode).tenantId("ap.public").build());
         User domainUser = User.builder().roles(roles)
-                .username("TestUserName").password("password").tenantId("ap.public").permanentAddress(permanentAddress)
+                .userName("TestUserName").password("password").tenantId("ap.public").permanentAddress(permanentAddress)
                 .build();
         User actualUser = userRepository.create(domainUser);
 
         assertThat(actualUser != null);
         assertThat(actualUser.getId().equals(1l));
         assertThat(actualUser.getRoles().size() == 1l);
-        assertThat(actualUser.getUsername().equals("TestUserName"));
+        assertThat(actualUser.getUserName().equals("TestUserName"));
         assertThat(actualUser.getTenantId().equals("ap.public"));
         assertThat(actualUser.getPermanentAddress() != null);
         assertThat(actualUser.getPermanentAddress().getAddressType().toString().equals("PERMANENT"));
@@ -215,7 +215,7 @@ public class UserRepositoryTest {
         roles.add(org.egov.user.domain.model.Role.builder().code(roleCode).tenantId("ap.public").build());
         final String rawPassword = "rawPassword";
         User domainUser = User.builder().roles(roles)
-                .username("Test UserName").password(rawPassword).tenantId("ap.public").build();
+                .userName("Test UserName").password(rawPassword).tenantId("ap.public").build();
         User actualUser = userRepository.create(domainUser);
         assertThat(actualUser != null);
         assertThat(actualUser.getId().equals(1l));
@@ -230,7 +230,7 @@ public class UserRepositoryTest {
         final Set<Role> roles = new HashSet<>();
         roles.add(Role.builder().code("EMP").tenantId("ap.public").build());
         roles.add(Role.builder().code("EADMIN").tenantId("ap.public").build());
-        User domainUser = User.builder().roles(roles).username("Test UserName").password("pasword")
+        User domainUser = User.builder().roles(roles).userName("Test UserName").password("pasword")
                 .tenantId("ap.public").build();
         User actualUser = userRepository.create(domainUser);
         assertThat(actualUser != null);
@@ -348,7 +348,7 @@ public class UserRepositoryTest {
         final Set<Role> roles = new HashSet<>();
         final String roleCode = "EMP";
         roles.add(Role.builder().code(roleCode).build());
-        User domainUser = User.builder().roles(roles).name("test1").id(1L).username("TestUserName").password("password")
+        User domainUser = User.builder().roles(roles).name("test1").id(1L).userName("TestUserName").password("password")
                 .emailId("Test@gmail.com").aadhaarNumber("AadharNumber").mobileNumber("1234567890").active(true)
                 .gender(Gender.FEMALE).bloodGroup(BloodGroup.A_NEGATIVE).accountLocked(true).loggedInUserId(10L)
                 .createdBy(10L).tenantId("ap.public").build();
@@ -360,7 +360,7 @@ public class UserRepositoryTest {
         assertThat(actualUser != null);
         assertThat(actualUser.getId().equals(1L));
         assertThat(actualUser.getRoles().size() == 1L);
-        assertThat(actualUser.getUsername().equals("TestUserName"));
+        assertThat(actualUser.getUserName().equals("TestUserName"));
         assertThat(actualUser.getEmailId().equals("Test@gmail.com"));
         assertThat(actualUser.getAadhaarNumber().equals("AadharNumber"));
         assertThat(actualUser.getGender().toString().equals("FEMALE"));

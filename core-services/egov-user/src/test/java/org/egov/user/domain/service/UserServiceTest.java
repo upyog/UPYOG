@@ -147,7 +147,7 @@ public class UserServiceTest {
         userService = new UserService(userRepository, otpRepository, fileRepository, passwordEncoder,
                 encryptionDecryptionUtil, tokenStore, DEFAULT_PASSWORD_EXPIRY_IN_DAYS,
                 true, false, pwdRegex, pwdMaxLength, pwdMinLength);
-        org.egov.user.domain.model.User domainUser = User.builder().username("TestUser").name("Test").active(true)
+        org.egov.user.domain.model.User domainUser = User.builder().userName("TestUser").name("Test").active(true)
                 .tenantId("default").mobileNumber("123456789").type(UserType.CITIZEN).build();
         userService.createCitizen(domainUser, getValidRequestInfo());
     }
@@ -276,7 +276,7 @@ public class UserServiceTest {
 
 //	@Ignore
 ////	@Test(expected = DuplicateUserNameException.class)
-////	public void test_should_throw_error_when_username_exists_while_updating() throws Exception {
+////	public void test_should_throw_error_when_userName_exists_while_updating() throws Exception {
 ////		User domainUser = validDomainUser(false);
 ////		when(userRepository.isUserPresent(any(String.class), any(String.class))).thenReturn(true);
 ////
@@ -322,7 +322,7 @@ public class UserServiceTest {
 
     @Test(expected = UserProfileUpdateDeniedException.class)
     public void test_should_throw_exception_when_logged_in_user_is_different_from_user_being_updated() {
-        final User user = User.builder().id(12L).username("xyz").uuid("zyz").type(UserType.CITIZEN).loggedInUserId(11L)
+        final User user = User.builder().id(12L).userName("xyz").uuid("zyz").type(UserType.CITIZEN).loggedInUserId(11L)
                 .tenantId
                         ("default").build();
         when(encryptionDecryptionUtil.encryptObject(user, "User", User.class)).thenReturn(user);
@@ -342,7 +342,7 @@ public class UserServiceTest {
                 .newPassword("newPassword")
                 .existingPassword("existingPassword")
                 .build();
-        User user = User.builder().username("xyz").tenantId("default").type(UserType.CITIZEN).build();
+        User user = User.builder().userName("xyz").tenantId("default").type(UserType.CITIZEN).build();
         when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(user));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
@@ -356,7 +356,7 @@ public class UserServiceTest {
         userService = new UserService(userRepository, otpRepository, fileRepository, passwordEncoder,
                 encryptionDecryptionUtil, tokenStore, DEFAULT_PASSWORD_EXPIRY_IN_DAYS,
                 true, isEmployeeLoginOtpBased, pwdRegex, pwdMaxLength, pwdMinLength);
-        User user = User.builder().username("xyz").tenantId("default").type(UserType.CITIZEN).build();
+        User user = User.builder().userName("xyz").tenantId("default").type(UserType.CITIZEN).build();
         when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(user));
         final LoggedInUserUpdatePasswordRequest updatePasswordRequest = LoggedInUserUpdatePasswordRequest.builder()
                 .userName("xyz")
@@ -374,7 +374,7 @@ public class UserServiceTest {
         userService = new UserService(userRepository, otpRepository, fileRepository, passwordEncoder,
                 encryptionDecryptionUtil, tokenStore, DEFAULT_PASSWORD_EXPIRY_IN_DAYS,
                 false, true, pwdRegex, pwdMaxLength, pwdMinLength);
-        User user = User.builder().username("xyz").tenantId("default").type(UserType.EMPLOYEE).build();
+        User user = User.builder().userName("xyz").tenantId("default").type(UserType.EMPLOYEE).build();
         when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(user));
         final LoggedInUserUpdatePasswordRequest updatePasswordRequest = LoggedInUserUpdatePasswordRequest.builder()
                 .userName("xyz")
@@ -405,7 +405,7 @@ public class UserServiceTest {
                 .newPassword("newPassword")
                 .existingPassword("existingPassword")
                 .build();
-        User user = User.builder().username("xyz").tenantId("default").type(UserType.CITIZEN).password("existingPasswordEncoded").build();
+        User user = User.builder().userName("xyz").tenantId("default").type(UserType.CITIZEN).password("existingPasswordEncoded").build();
         when(passwordEncoder.matches("wrongPassword", "existingPasswordEncoded")).thenReturn(false);
         when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(user));
 
@@ -422,7 +422,7 @@ public class UserServiceTest {
                 .existingPassword("existingPassword")
                 .build();
         Long id =(long) 123;
-        User domainUser = User.builder().id(id).username("xyz").tenantId("default").type(UserType.CITIZEN).password("existingPasswordEncoded").build();
+        User domainUser = User.builder().id(id).userName("xyz").tenantId("default").type(UserType.CITIZEN).password("existingPasswordEncoded").build();
         when(passwordEncoder.matches("existingPassword", "existingPasswordEncoded")).thenReturn(true);
         when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(domainUser));
 
@@ -583,7 +583,7 @@ public class UserServiceTest {
     }
 
     private org.egov.user.domain.model.User validDomainUser(boolean otpValidationMandatory) {
-        return User.builder().username("supandi_rocks").name("Supandi").gender(Gender.MALE).type(UserType.CITIZEN)
+        return User.builder().userName("supandi_rocks").name("Supandi").gender(Gender.MALE).type(UserType.CITIZEN)
                 .active(Boolean.TRUE).mobileNumber("9988776655").tenantId("tenantId").otpReference("12312")
                 .password("P@ssw0rd").roles(Collections.singleton(Role.builder().code("roleCode1").build()))
                 .accountLocked(false).otpValidationMandatory(otpValidationMandatory).build();
@@ -601,6 +601,6 @@ public class UserServiceTest {
     }
 
     private User getUserObject() {
-        return User.builder().id(ID.get(0)).emailId(EMAIL).username(USER_NAME).build();
+        return User.builder().id(ID.get(0)).emailId(EMAIL).userName(USER_NAME).build();
     }
 }

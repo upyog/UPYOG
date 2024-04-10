@@ -194,7 +194,7 @@ public class UserControllerTest {
     @Ignore
     public void test_should_update_user_details() throws Exception {
 
-        org.egov.user.domain.model.User userRequest = org.egov.user.domain.model.User.builder().name("foo").username("userName").dob(new Date("04/08/1986")).guardian("name of relative").build();
+        org.egov.user.domain.model.User userRequest = org.egov.user.domain.model.User.builder().name("foo").userName("userName").dob(new Date("04/08/1986")).guardian("name of relative").build();
         when(userService.updateWithoutOtpValidation(any(org.egov.user.domain.model.User.class), any())).thenReturn
                 (userRequest);
         mockMvc.perform(post("/users/112/_updatenovalidate")
@@ -211,7 +211,7 @@ public class UserControllerTest {
     public void test_should_create_citizen() throws Exception {
         final Date expectedDate = toDate(LocalDateTime.of(1986, 8, 4, 5, 30));
         final org.egov.user.domain.model.User user = org.egov.user.domain.model.User.builder()
-                .username("userName")
+                .userName("userName")
                 .name("foo")
                 .dob(expectedDate)
                 .guardian("name of relative")
@@ -231,7 +231,7 @@ public class UserControllerTest {
     public void test_should_create_user_without_otp_validation() throws Exception {
         final Date expectedDate = toDate(LocalDateTime.of(1986, 8, 4, 0, 0));
         final org.egov.user.domain.model.User expectedUser = org.egov.user.domain.model.User.builder()
-                .username("userName")
+                .userName("userName")
                 .name("foo")
                 .dob(expectedDate)
                 .guardian("name of relative")
@@ -249,7 +249,7 @@ public class UserControllerTest {
 
         final org.egov.user.domain.model.User actualUser = argumentCaptor.getValue();
         assertEquals("foo", actualUser.getName());
-        assertEquals("userName", actualUser.getUsername());
+        assertEquals("userName", actualUser.getUserName());
         assertEquals("name of relative", actualUser.getGuardian());
     }
 
@@ -295,7 +295,7 @@ public class UserControllerTest {
         org.egov.user.domain.model.User user = org.egov.user.domain.model.User.builder()
                 .id(1L)
                 .tenantId("")
-                .username("userName")
+                .userName("userName")
                 .title("title")
                 .password("password")
                 .salutation("salutation")

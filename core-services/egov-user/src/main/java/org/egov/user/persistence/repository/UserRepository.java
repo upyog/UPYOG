@@ -180,7 +180,7 @@ public class UserRepository {
 
         Map<String, Object> updateuserInputs = new HashMap<>();
 
-        updateuserInputs.put("username", oldUser.getUsername());
+        updateuserInputs.put("username", oldUser.getUserName());
         updateuserInputs.put("type", oldUser.getType().toString());
         updateuserInputs.put("tenantid", oldUser.getTenantId());
         updateuserInputs.put("AadhaarNumber", user.getAadhaarNumber());
@@ -509,7 +509,7 @@ public class UserRepository {
         userInputs.put("salutation", entityUser.getSalutation());
         userInputs.put("dob", entityUser.getDob());
         userInputs.put("locale", entityUser.getLocale());
-        userInputs.put("username", entityUser.getUsername());
+        userInputs.put("username", entityUser.getUserName());
         userInputs.put("password", entityUser.getPassword());
         userInputs.put("pwdexpirydate", entityUser.getPasswordExpiryDate());
         userInputs.put("mobilenumber", entityUser.getMobileNumber());

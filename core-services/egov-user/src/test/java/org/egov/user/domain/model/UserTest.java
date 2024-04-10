@@ -18,7 +18,7 @@ public class UserTest {
     public void testUserWithEmptyNameIsInvalid() throws Exception {
         User user = User.builder()
                 .mobileNumber("8899776655")
-                .username("foolan_devi")
+                .userName("foolan_devi")
                 .active(Boolean.TRUE)
                 .gender(Gender.FEMALE)
                 .type(UserType.CITIZEN)
@@ -45,7 +45,7 @@ public class UserTest {
     @Test(expected = InvalidUserCreateException.class)
     public void testUserWithEmptyMobileIsInvalid() throws Exception {
         User user = User.builder()
-                .username("foolan_devi")
+                .userName("foolan_devi")
                 .name("foolan")
                 .active(Boolean.TRUE)
                 .gender(Gender.FEMALE)
@@ -60,7 +60,7 @@ public class UserTest {
     @Test(expected = InvalidUserCreateException.class)
     public void testUserWithEmptyTypeIsInvalid() throws Exception {
         User user = User.builder()
-                .username("foolan_devi")
+                .userName("foolan_devi")
                 .name("foolan")
                 .mobileNumber("9988776655")
                 .active(Boolean.TRUE)
@@ -74,7 +74,7 @@ public class UserTest {
     @Test(expected = InvalidUserCreateException.class)
     public void test_should_throw_exception_when_tenant_id_is_not_present() {
         User user = User.builder()
-                .username("foolan_devi")
+                .userName("foolan_devi")
                 .name("foolan")
                 .mobileNumber("9988776655")
                 .active(Boolean.TRUE)
@@ -90,7 +90,7 @@ public class UserTest {
     @Test(expected = InvalidUserCreateException.class)
     public void test_should_throw_exception_when_roles_is_not_present() {
         User user = User.builder()
-                .username("foolan_devi")
+                .userName("foolan_devi")
                 .name("foolan")
                 .mobileNumber("9988776655")
                 .active(Boolean.TRUE)
@@ -110,7 +110,7 @@ public class UserTest {
         final Role role2 = Role.builder().code(null).build();
 
         User user = User.builder()
-                .username("foolan_devi")
+                .userName("foolan_devi")
                 .name("foolan")
                 .mobileNumber("9988776655")
                 .active(Boolean.TRUE)
@@ -246,7 +246,7 @@ public class UserTest {
     public void test_should_not_throw_exception_on_user_create_with_all_mandatory_fields() {
         final Role role1 = Role.builder().code("roleCode1").build();
         User user = User.builder()
-                .username("foolan_devi")
+                .userName("foolan_devi")
                 .name("foolan")
                 .mobileNumber("9988776655")
                 .password("password")
@@ -312,7 +312,7 @@ public class UserTest {
         Role role1 = Role.builder().code("roleCode1").build();
         Role role2 = Role.builder().code("roleCode2").build();
         User user = User.builder()
-                .username("userName")
+                .userName("userName")
                 .mobileNumber("mobileNumber")
                 .password("password")
                 .passwordExpiryDate(new Date())
@@ -321,7 +321,7 @@ public class UserTest {
 
         user.nullifySensitiveFields();
 
-        assertNull(user.getUsername());
+        assertNull(user.getUserName());
         assertNull(user.getMobileNumber());
         assertNull(user.getPassword());
         assertNull(user.getPasswordExpiryDate());

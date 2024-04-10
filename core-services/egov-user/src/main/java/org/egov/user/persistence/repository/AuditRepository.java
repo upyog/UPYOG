@@ -46,7 +46,7 @@ public class AuditRepository {
     	auditInputs.put("id", oldUser.getId());
         auditInputs.put("uuid", oldUser.getUuid());
     	
-    	auditInputs.put("username", oldUser.getUsername());
+    	auditInputs.put("username", oldUser.getUserName());
         auditInputs.put("type", oldUser.getType().toString());
         auditInputs.put("tenantid", oldUser.getTenantId());
         auditInputs.put("aadhaarnumber", oldUser.getAadhaarNumber());

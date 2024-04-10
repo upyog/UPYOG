@@ -238,9 +238,9 @@ public class UserService {
     }
 
     private void validateUserUniqueness(User user) {
-        if (userRepository.isUserPresent(user.getUsername(), getStateLevelTenantForCitizen(user.getTenantId(), user
+        if (userRepository.isUserPresent(user.getUserName(), getStateLevelTenantForCitizen(user.getTenantId(), user
                 .getType()), user.getType()))
-            throw new DuplicateUserNameException(UserSearchCriteria.builder().userName(user.getUsername()).type(user
+            throw new DuplicateUserNameException(UserSearchCriteria.builder().userName(user.getUserName()).type(user
                     .getType()).tenantId(user.getTenantId()).build());
     }
 
@@ -265,10 +265,10 @@ public class UserService {
 
     private void validateAndEnrichCitizen(User user) {
         log.info("Validating User........");
-        if (isCitizenLoginOtpBased && !StringUtils.isNumeric(user.getUsername()))
+        if (isCitizenLoginOtpBased && !StringUtils.isNumeric(user.getUserName()))
             throw new UserNameNotValidException();
         else if (isCitizenLoginOtpBased)
-            user.setMobileNumber(user.getUsername());
+            user.setMobileNumber(user.getUserName());
         if (!isCitizenLoginOtpBased)
             validatePassword(user.getPassword());
         user.setRoleToCitizen();
@@ -294,7 +294,7 @@ public class UserService {
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             headers.set("Authorization", "Basic ZWdvdi11c2VyLWNsaWVudDplZ292LXVzZXItc2VjcmV0");
             MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-            map.add("username", user.getUsername());
+            map.add("username", user.getUserName());
             if (!isEmpty(password))
                 map.add("password", password);
             else
@@ -373,7 +373,7 @@ public class UserService {
 
     public void removeTokensByUser(User user) {
         Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientIdAndUserName(USER_CLIENT_ID,
-                user.getUsername());
+                user.getUserName());
 
         for (OAuth2AccessToken token : tokens) {
             if (token.getAdditionalInformation() != null && token.getAdditionalInformation().containsKey("UserRequest")) {
@@ -381,7 +381,7 @@ public class UserService {
                     org.egov.user.web.contract.auth.User userInfo =
                             (org.egov.user.web.contract.auth.User) token.getAdditionalInformation().get(
                                     "UserRequest");
-                    if (user.getUsername().equalsIgnoreCase(userInfo.getUserName()) && user.getTenantId().equalsIgnoreCase(userInfo.getTenantId())
+                    if (user.getUserName().equalsIgnoreCase(userInfo.getUserName()) && user.getTenantId().equalsIgnoreCase(userInfo.getTenantId())
                             && user.getType().equals(UserType.fromValue(userInfo.getType())))
                         tokenStore.removeAccessToken(token);
                 }
