@@ -168,12 +168,15 @@ public class TransactionValidator {
 	private void isUserDetailPresent(TransactionRequest transactionRequest, Map<String, String> errorMap) {
 
 
-		String authToken=transactionRequest.getRequestInfo().getAuthToken();
-		String authURL = String.format("%s%s", authServiceHost, authServiceUri); 
-		final HttpHeaders headers = new HttpHeaders(); 
-		headers.add("access_token",authToken); 
-		org.egov.common.contract.request.User userinfo=restTemplate.postForObject(authURL, headers,org.egov.common.contract.request.User.class);
-		transactionRequest.getRequestInfo().setUserInfo(userinfo);
+		if(transactionRequest.getRequestInfo().getUserInfo()==null)
+		{
+			String authToken=transactionRequest.getRequestInfo().getAuthToken();
+			String authURL = String.format("%s%s", authServiceHost, authServiceUri); 
+			final HttpHeaders headers = new HttpHeaders(); 
+			headers.add("access_token",authToken); 
+			org.egov.common.contract.request.User userinfo=restTemplate.postForObject(authURL, headers,org.egov.common.contract.request.User.class);
+			transactionRequest.getRequestInfo().setUserInfo(userinfo);
+		}
 		
 		User user = transactionRequest.getRequestInfo().getUserInfo();
 		
@@ -185,9 +188,6 @@ public class TransactionValidator {
 		 * newuser.setUserName(userinfo.getUserName()); newuser.setId(userinfo.getId());
 		 * transactionRequest.getTransaction().setUser(newuser);
 		 */
-		
-		System.out.println("transactionRequest::"+transactionRequest);
-		
 
 		if (isNull(user) || isNull(user.getUuid()) || isEmpty(user.getName()) || isNull(user.getUserName()) ||
 				isNull(user.getTenantId()) || isNull(user.getMobileNumber()))

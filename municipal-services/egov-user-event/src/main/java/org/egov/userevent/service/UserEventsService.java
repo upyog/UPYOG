@@ -576,37 +576,36 @@ public class UserEventsService {
 				utils.buildRecepientListForSearch(criteria);
 			}
 		}
-
-		String authToken=requestInfo.getAuthToken();
-		String authURL = String.format("%s%s", authServiceHost, authServiceUri);
-		final HttpHeaders headers = new HttpHeaders();
-		headers.add("access_token", authToken);
-		User user=restTemplate.postForObject(authURL, headers, User.class);
-		System.out.println(user);
-		org.egov.common.contract.request.User u = new org.egov.common.contract.request.User();
-		u.setEmailId(user.getEmailId());
-		u.setId(user.getId());
-		u.setMobileNumber(user.getMobileNumber());
-		u.setName(user.getName());
-		List<Role> r = new ArrayList<>();
-		for(org.egov.userevent.web.contract.Role rl : user.getRoles()) {
-			Role rln = new Role();
-			rln.setCode(rl.getCode());
-			//rln.setId(rl.getCode());
-			rln.setName(rl.getName());
-			r.add(rln);
+		
+		if(requestInfo.getUserInfo()==null)
+		{
+			String authToken=requestInfo.getAuthToken();
+			String authURL = String.format("%s%s", authServiceHost, authServiceUri);
+			final HttpHeaders headers = new HttpHeaders();
+			headers.add("access_token", authToken);
+			User user=restTemplate.postForObject(authURL, headers, User.class);
+			System.out.println(user);
+			org.egov.common.contract.request.User u = new org.egov.common.contract.request.User();
+			u.setEmailId(user.getEmailId());
+			u.setId(user.getId());
+			u.setMobileNumber(user.getMobileNumber());
+			u.setName(user.getName());
+			List<Role> r = new ArrayList<>();
+			for(org.egov.userevent.web.contract.Role rl : user.getRoles()) {
+				Role rln = new Role();
+				rln.setCode(rl.getCode());
+				//rln.setId(rl.getCode());
+				rln.setName(rl.getName());
+				r.add(rln);
+			}
+			u.setRoles(r);
+			u.setType(user.getType());
+			requestInfo.setUserInfo(u);
+			String userid=user.getId().toString();
+			List<String> userids = new ArrayList<String>(Arrays.asList(userid));
+			criteria.setUserids(userids);
 		}
-		u.setRoles(r);
-		u.setType(user.getType());
-		requestInfo.setUserInfo(u);
-		String userid=user.getId().toString();
-		List<String> userids = new ArrayList<String>(Arrays.asList(userid));
-		criteria.setUserids(userids);
-		//System.out.println("requestInfo"+requestInfo);
-		//System.out.println("authToken"+authToken);
-		//System.out.println("authToken"+authToken);
-		//System.out.println("authURL"+authURL);
-		//System.out.println(userids);
+		
 
 		log.info("recepeients: " + criteria.getRecepients());
 		log.info("Search Criteria: " + criteria);
