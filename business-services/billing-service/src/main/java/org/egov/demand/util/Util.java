@@ -252,12 +252,15 @@ public class Util {
 	 */
 	public void validateTenantIdForUserType(String tenantId, RequestInfo requestInfo) {
 
-		String authToken=requestInfo.getAuthToken();
-		String authURL = String.format("%s%s", authServiceHost, authServiceUri);
-		final HttpHeaders headers = new HttpHeaders();
-		headers.add("access_token", authToken);
-		org.egov.common.contract.request.User user=restTemplate.postForObject(authURL, headers, org.egov.common.contract.request.User.class);
-		requestInfo.setUserInfo(user);
+		if(requestInfo.getUserInfo()==null)
+		{
+			String authToken=requestInfo.getAuthToken();
+			String authURL = String.format("%s%s", authServiceHost, authServiceUri);
+			final HttpHeaders headers = new HttpHeaders();
+			headers.add("access_token", authToken);
+			org.egov.common.contract.request.User user=restTemplate.postForObject(authURL, headers, org.egov.common.contract.request.User.class);
+			requestInfo.setUserInfo(user);
+		}
 		
 		String userType = requestInfo.getUserInfo().getType();
 
