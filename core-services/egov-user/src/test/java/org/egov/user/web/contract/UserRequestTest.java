@@ -20,7 +20,7 @@ public class UserRequestTest {
         UserRequest userRequestContract = new UserRequest(domainUser);
 
         assertThat(userRequestContract.getId()).isEqualTo(domainUser.getId());
-        assertThat(userRequestContract.getUserName()).isEqualTo(domainUser.getUsername());
+        assertThat(userRequestContract.getUserName()).isEqualTo(domainUser.getUserName());
         assertThat(userRequestContract.getSalutation()).isEqualTo(domainUser.getSalutation());
         assertThat(userRequestContract.getName()).isEqualTo(domainUser.getName());
         assertThat(userRequestContract.getGender()).isEqualTo(domainUser.getGender().toString());
@@ -65,7 +65,7 @@ public class UserRequestTest {
         String expectedDate = c.getTime().toString();
 
         assertEquals("Kroorveer", userForCreate.getName());
-        assertEquals("yakku", userForCreate.getUsername());
+        assertEquals("yakku", userForCreate.getUserName());
         assertEquals("Dr.", userForCreate.getSalutation());
         assertEquals("8967452310", userForCreate.getMobileNumber());
         assertEquals("kroorkool@maildrop.cc", userForCreate.getEmailId());
@@ -142,7 +142,7 @@ public class UserRequestTest {
 
         return User.builder()
                 .id(1L)
-                .username("userName")
+                .userName("userName")
                 .salutation("salutation")
                 .name("name")
                 .gender(Gender.FEMALE)

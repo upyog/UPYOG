@@ -102,7 +102,7 @@ public class CustomPreAuthenticatedProvider implements AuthenticationProvider {
 
 
     private org.egov.user.web.contract.auth.User getUser(User user) {
-        org.egov.user.web.contract.auth.User authUser =  org.egov.user.web.contract.auth.User.builder().id(user.getId()).userName(user.getUsername()).uuid(user.getUuid())
+        org.egov.user.web.contract.auth.User authUser =  org.egov.user.web.contract.auth.User.builder().id(user.getId()).userName(user.getUserName()).uuid(user.getUuid())
                 .name(user.getName()).mobileNumber(user.getMobileNumber()).emailId(user.getEmailId())
                 .locale(user.getLocale()).active(user.getActive()).type(user.getType().name())
                 .roles(toAuthRole(user.getRoles())).tenantId(user.getTenantId())

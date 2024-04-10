@@ -80,6 +80,7 @@
                     <artifactId>kafka-clients</artifactId>
                 </exclusion>
             </exclusions>
+         
         </dependency>
         <dependency>
             <groupId>org.springframework.kafka</groupId>

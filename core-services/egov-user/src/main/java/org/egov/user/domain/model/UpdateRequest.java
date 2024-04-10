@@ -71,7 +71,7 @@ public class UpdateRequest {
     public UpdateRequest(User user) {
 
         this.id = user.getId();
-        this.userName = user.getUsername();
+        this.userName = user.getUserName();
         this.salutation = user.getSalutation();
         this.name = user.getName();
         this.gender = user.getGender() != null ? user.getGender().toString() : null;
@@ -138,7 +138,7 @@ public class UpdateRequest {
                 .uuid(this.uuid)
                 .id(this.id)
                 .name(this.name)
-                .username(this.userName)
+                .userName(this.userName)
                 .salutation(this.salutation)
                 .mobileNumber(this.mobileNumber)
                 .emailId(this.emailId)

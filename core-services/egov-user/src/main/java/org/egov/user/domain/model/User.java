@@ -39,7 +39,7 @@ public class User {
     @Pattern(regexp = UserServiceConstants.PATTERN_TENANT)
     @Size(max = 50)
     private String tenantId;
-    private String username;
+    private String userName;
     private String title;
     private String password;
     private String salutation;
@@ -167,7 +167,7 @@ public class User {
 
     @JsonIgnore
     public boolean isUsernameAbsent() {
-        return isEmpty(username);
+        return isEmpty(userName);
     }
 
     @JsonIgnore
@@ -191,7 +191,7 @@ public class User {
     }
 
     public void nullifySensitiveFields() {
-        username = null;
+        userName = null;
         type = null;
         mobileNumber = null;
         password = null;

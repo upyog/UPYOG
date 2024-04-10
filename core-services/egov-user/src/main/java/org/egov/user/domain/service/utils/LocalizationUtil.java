@@ -1,20 +1,20 @@
 package org.egov.user.domain.service.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import com.jayway.jsonpath.JsonPath;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import com.jayway.jsonpath.JsonPath;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-import lombok.extern.slf4j.Slf4j;
 
-@Component	
+
+@Component
 @Slf4j
 
 public class LocalizationUtil {

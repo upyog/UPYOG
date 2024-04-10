@@ -71,7 +71,7 @@ public class UserSearchResponseContent {
     public UserSearchResponseContent(User user) {
 
         this.id = user.getId();
-        this.userName = user.getUsername();
+        this.userName = user.getUserName();
         this.salutation = user.getSalutation();
         this.name = user.getName();
         this.gender = user.getGender() != null ? user.getGender().toString() : null;

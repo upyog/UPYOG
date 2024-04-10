@@ -118,7 +118,7 @@ public class UserRequestControllerTest {
         return User.builder()
                 .id(12L)
                 .name("Jamaal Bhai")
-                .username("jamaalbhai")
+                .userName("jamaalbhai")
                 .salutation("dawakhana@charminar")
                 .gender(Gender.MALE)
                 .mobileNumber("9988776655")
