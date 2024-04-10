@@ -74,8 +74,8 @@ public class PropertyValidator {
 
 	@Autowired
 	EncryptionDecryptionUtil encryptionDecryptionUtil;
-	
-	
+
+
 	@Autowired
 	private UnmaskingUtil unmaskingUtil;
 
@@ -124,8 +124,8 @@ public class PropertyValidator {
 		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
 	}
-	
-	
+
+
 	public void validateCreateRequestForBiFurcation(PropertyRequest request) {
 
 		Property property = request.getProperty();
@@ -287,9 +287,9 @@ public class PropertyValidator {
 		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
 	}
-	
-	
-	
+
+
+
 
 	/**
 	 * Validates common criteria of update and mutation
@@ -806,6 +806,8 @@ public class PropertyValidator {
 		Boolean isNullStatusFound = false;
 		Boolean isNewOWnerAdded = false;
 		Boolean isOwnerCancelled = false;
+		Boolean isOwnerDead=false;
+		String dateofdeath=null;
 		Set<Status> statusSet = new HashSet<>();
 		Set<String> searchOwnerUuids = propertyFromSearch.getOwners().stream().map(OwnerInfo::getUuid).collect(Collectors.toSet());
 		List<String> uuidsNotFound = new ArrayList<String>();
@@ -836,6 +838,15 @@ public class PropertyValidator {
 
 			if (owner.getUuid() != null && !searchOwnerUuids.contains(owner.getUuid()))
 				uuidsNotFound.add(owner.getUuid());
+
+			if(owner.getStatus().equals(Status.INACTIVE))
+			{
+				if(owner.getIsOwnerdead())
+					isOwnerDead=true;
+			}
+
+			if(isOwnerDead)
+				dateofdeath=owner.getDateofDeath();
 		}
 
 		if(activeMobileNumberPlusNameOwnerMap.values().stream().anyMatch(valueCount -> valueCount > 1))
@@ -856,6 +867,12 @@ public class PropertyValidator {
 
 			if (isOwnerCancelled && property.getOwners().size() == 1)
 				errorMap.put("EG_PT_MUTATION_OWNER_REMOVAL_ERROR", "Single owner of a property cannot be deactivated or removed in a mutation request");
+			
+			if(isOwnerDead)
+			{
+				if(StringUtils.isEmpty(dateofdeath))
+						errorMap.put("EG_PT_MUTATION_OWNER_DATEOFDEATH_ERROR", "if owner is dead date of death is required");
+			}
 		}
 
 		if (StringUtils.isEmpty(reasonForTransfer) || StringUtils.isEmpty(docNo) || ObjectUtils.isEmpty(docDate) || ObjectUtils.isEmpty(docVal) || ObjectUtils.isEmpty(marketVal)) {
@@ -961,7 +978,7 @@ public class PropertyValidator {
 
 		if(!property.getStatus().equals(Status.ACTIVE)) {throw new CustomException("EG_PT_ALTERNATE_INACTIVE","Alternate number details cannot be updated if status is not active");}
 	}
-	
+
 	//BiFurcation Process
 	public void validateBifurcation(PropertyRequest request, Property propertyFromSearch) {
 
@@ -981,7 +998,7 @@ public class PropertyValidator {
 			if (isBillUnpaid)
 				throw new CustomException("EG_PT_BIFURCATION_UNPAID_ERROR", "Property has to be completely paid for before initiating the bifurcation process");
 		}
-		
+
 		@SuppressWarnings("unchecked")
 		Map<String, Object> additionalDetails = mapper.convertValue(property.getAdditionalDetails(), Map.class);
 		try {
@@ -997,7 +1014,7 @@ public class PropertyValidator {
 			if(!StringUtils.isEmpty(docValString) && !"null".equalsIgnoreCase(docValString))
 				docVal = Double.valueOf(docValString);
 
-			
+
 
 		} catch (PathNotFoundException e) {
 			throw new CustomException("EG_PT_MUTATION_FIELDS_ERROR", "Mandatory fields Missing for BIFURCATION, please provide the following information in additionalDetails : "
@@ -1029,7 +1046,7 @@ public class PropertyValidator {
 			throw new CustomException("EG_PT_MUTATION_ERROR",
 					"The property mutation doesnt allow change of these fields " + fieldsUpdated);
 
-	
+
 		Boolean isNullStatusFound = false;
 		Boolean isNewOWnerAdded = false;
 		Boolean isOwnerCancelled = false;
@@ -1080,7 +1097,7 @@ public class PropertyValidator {
 			if (!isNewOWnerAdded ) {
 				errorMap.put("EG_PT_BIFURCATION_OWNER_ERROR_NO_NEW_OWNER", "Please add at least one new owner");
 			}
-			
+
 			if (isOwnerCancelled)
 				errorMap.put("EG_PT_BIFURCATION_OWNER_ERROR_CANNOT_INACTIVE_PREVIOUS_OWNER", "Previous owner status cannot be changed in Bifurcation, can be processed through MUTATION");
 
@@ -1133,7 +1150,7 @@ public class PropertyValidator {
 
 		if (!CollectionUtils.isEmpty(errorMap))
 			throw new CustomException(errorMap);
-	
+
 	}
 
 }
