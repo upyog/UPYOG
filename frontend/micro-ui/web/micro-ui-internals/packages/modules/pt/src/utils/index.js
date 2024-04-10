@@ -255,7 +255,7 @@ const getUsageType = (data) => {
   if (data?.isResdential?.code == "RESIDENTIAL") {
     return data?.isResdential?.code;
   } else {
-    return data?.usageCategoryMajor?.code;
+    return data?.usageCategory?.code;
   }
 };
 
@@ -555,6 +555,7 @@ export const setPropertyDetails = (data) => {
 
 /*   method to convert collected details to proeprty create object */
 export const convertToProperty = (data = {}) => {
+  console.log("convertToProperty=",data);
   let isResdential = data.isResdential;
   let propertyType = data.PropertyType;
   let selfOccupied = data.selfOccupied;
@@ -578,9 +579,11 @@ export const convertToProperty = (data = {}) => {
       tenantId: data.tenantId,
       address: data.address,
       exemption: data.exemption,
+      usageCategory: data?.usageCategory?.code || '',
 
       ownershipCategory: data?.ownershipCategory?.value,
       owners: data.owners,
+
       institution: data.institution || null,
 
       documents: data.documents || [],
@@ -772,6 +775,7 @@ export const setUpdatedDocumentDetails = (data) => {
   return data;
 };
 export const convertToUpdateProperty = (data = {}, t) => {
+  console.log("convertToUpdateProperty==",data)
   let isResdential = data.isResdential;
   let propertyType = data.PropertyType;
   let selfOccupied = data.selfOccupied;
@@ -804,6 +808,7 @@ export const convertToUpdateProperty = (data = {}, t) => {
       tenantId: data.tenantId,
       address: data.address,
       exemption: data.exemption,
+      usageCategory: data?.usageCategory?.code || '',
       ownershipCategory: data?.ownershipCategory?.value,
       owners: data.owners,
       institution: data.institution || null,

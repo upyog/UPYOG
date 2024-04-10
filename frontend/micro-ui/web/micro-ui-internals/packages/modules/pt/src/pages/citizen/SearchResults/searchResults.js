@@ -5,7 +5,8 @@ import { useHistory, Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 
-const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation, onSelect, config, clearParams = () => {} }) => {
+const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation, isAmalgamation, onSelect, config, clearParams = () => {} }) => {
+  console.log("=====",template,actionButtonLabel)
   const { t } = useTranslation();
   const modalRef = useRef();
   const { mobileNumber, propertyIds, oldPropertyIds, locality, city,doorNo,name, PToffset } = Digit.Hooks.useQueryParams();
@@ -91,6 +92,11 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
 
   const onSubmit = (data) => {
     if (isMutation) {
+      let property = result?.data?.Properties?.filter?.((e) => e.propertyId === data.property_id)[0];
+      if (Number(data.total_due) > 0) {
+        setShowModal(data);
+      } else onSelect(config.key, { data, property });
+    } else if(isAmalgamation) {
       let property = result?.data?.Properties?.filter?.((e) => e.propertyId === data.property_id)[0];
       if (Number(data.total_due) > 0) {
         setShowModal(data);

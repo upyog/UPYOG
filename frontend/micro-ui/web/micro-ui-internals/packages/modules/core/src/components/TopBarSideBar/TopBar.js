@@ -100,6 +100,7 @@ const TopBar = ({
     );
   }
   const loggedin = userDetails?.access_token ? true : false;
+  console.log("profilePic==",profilePic)
   return (
     <div className="topbar">
       {mobileView ? <Hamburger handleClick={toggleSidebar} color="#9E9E9E" /> : null}
@@ -138,6 +139,7 @@ const TopBar = ({
                   style={mobileView ? { right: 0 } : {}}
                   optionCardStyles={{ overflow: "revert" }}
                   customSelector={
+                    
                     profilePic == null ? (
                       <TextToImg name={userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"} />
                     ) : (

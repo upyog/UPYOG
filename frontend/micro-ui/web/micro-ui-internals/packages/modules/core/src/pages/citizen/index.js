@@ -127,7 +127,7 @@ const Home = ({
               )}
               {/* <Links key={index} matchPath={`/digit-ui/citizen/${code.toLowerCase()}`} userType={"citizen"} /> */}
             </div>
-            <StaticDynamicCard moduleCode={code?.toUpperCase()}/>
+            {/* <StaticDynamicCard moduleCode={code?.toUpperCase()}/> */}
           </div>
         </Route>
         <Route key={"faq" + index} path={`${path}/${code.toLowerCase()}-faq`}>

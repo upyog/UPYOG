@@ -1,4 +1,4 @@
-import { Loader, Modal, FormComposer } from "@egovernments/digit-ui-react-components";
+import { Loader, Modal, FormComposer, Dropdown } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 
 import { configPTRejectApplication, configPTVerifyApplication, configPTApproverApplication, configPTAssessProperty } from "../config";
@@ -54,10 +54,13 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [error, setError] = useState(null);
   const [financialYears, setFinancialYears] = useState([]);
   const [selectedFinancialYear, setSelectedFinancialYear] = useState(null);
+  const [modeOfPayments, setmodeOfPayments] = useState([{code: 'YEARLY', name: 'YEARLY'},{code: 'HALFYEARLY', name: 'HALFYEARLY'},{code: 'QUARTERLY', name: 'QUARTERLY'}]);
+  const [selectedModeofPayment, setSelectedModeofPayment] = useState(null);
   const [disableActionSubmit, setDisableActionSubmit] = useState(false);
 
   useEffect(() => {
     if (financialYearsData && financialYearsData["egf-master"]) {
+      console.log("=====",financialYearsData["egf-master"]?.["FinancialYear"]);
       setFinancialYears(financialYearsData["egf-master"]?.["FinancialYear"]);
     }
   }, [financialYearsData]);
@@ -116,6 +119,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         customFunctionToExecute: action?.customFunctionToExecute,
         Assessment: {
           financialYear: selectedFinancialYear?.name,
+          modeOfPayment: selectedModeofPayment?.name,
           propertyId: applicationData?.propertyId,
           tenantId,
           source: applicationData?.source,
@@ -136,6 +140,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
             financialYears,
             selectedFinancialYear,
             setSelectedFinancialYear,
+            modeOfPayments,
+            selectedModeofPayment,
+            setSelectedModeofPayment
           })
         );
       } else {
@@ -154,7 +161,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         );
       }
     }
-  }, [action, approvers, financialYears, selectedFinancialYear, uploadedFile]);
+  }, [action, approvers, financialYears, selectedFinancialYear,modeOfPayments,selectedModeofPayment, uploadedFile]);
 
   return action && config.form ? (
     <Modal
@@ -164,7 +171,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       actionCancelOnSubmit={closeModal}
       actionSaveLabel={t(config.label.submit)}
       actionSaveOnSubmit={() => {}}
-      isDisabled={!action.showFinancialYearsModal ? PTALoading || (action?.docUploadRequired && !uploadedFile) : !selectedFinancialYear}
+      isDisabled={!action.showFinancialYearsModal ? PTALoading || (action?.docUploadRequired && !uploadedFile) : !selectedFinancialYear || !selectedModeofPayment}
       formId="modal-action"
     >
       {financialYearsLoading ? (

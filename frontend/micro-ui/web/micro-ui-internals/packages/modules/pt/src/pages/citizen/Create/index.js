@@ -1,5 +1,5 @@
 import { Loader } from "@egovernments/digit-ui-react-components";
-import React ,{Fragment}from "react";
+import React ,{Fragment, useState}from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
@@ -10,9 +10,17 @@ const CreateProperty = ({ parentRoute }) => {
   const match = useRouteMatch();
   const { t } = useTranslation();
   const { pathname } = useLocation();
+  const  location = useLocation();
   const history = useHistory();
+  console.log("history==",history,location)
   const stateId = Digit.ULBService.getStateId();
   let config = [];
+  const [amalgamationState, setAmalgamationState] = useState(location?.state ? location.state : null);
+  // let amalgamationState = null;
+  // if(location.state) {
+  //   setAmalgamationState(location.state)
+  // }
+  console.log("amalgamationState===",amalgamationState)
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PT_CREATE_PROPERTY", {});
   let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig");
   const goNext = (skipStep, index, isAddMultiple, key) => {
@@ -116,7 +124,7 @@ const CreateProperty = ({ parentRoute }) => {
     history.push(`${match.path}/acknowledgement`);
   };
 
-  function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
+  function handleSelect(key, data, skipStep, index, isAddMultiple = false) {    
     if (key === "owners") {
       let owners = params.owners || [];
       owners[index] = data;
@@ -129,6 +137,11 @@ const CreateProperty = ({ parentRoute }) => {
       setParams({ ...params, units });
     } else {
       setParams({ ...params, ...{ [key]: { ...params[key], ...data } } });
+      // console.log("params=========",params)
+      // if(amalgamationState && amalgamationState?.action=='Amalgamation') {
+      //   setParams({ ...params, ...{ ['amalgamationDetails']: 'kkk' } });
+      // }
+      
     }
     console.log("------",skipStep, index, isAddMultiple, key)
     goNext(skipStep, index, isAddMultiple, key);
@@ -158,13 +171,23 @@ const CreateProperty = ({ parentRoute }) => {
   const PTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTAcknowledgement");
   console.log("config==",config)
   return (
-    <Switch>
+    <div>
+      {amalgamationState && 
+      <div>
+        <div>Amalgamated Properties:</div>
+        {amalgamationState?.propertyDetails && amalgamationState.propertyDetails.map((e)=>(
+          <div>Property Id: {e?.property_id}</div>
+        ))}  
+      </div>}
+      <Switch>
+      
       {config.map((routeObj, index) => {
         const { component, texts, inputs, key } = routeObj;
         // console.log("routeObj==",routeObj)
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
           <Route path={`${match.path}/${routeObj.route}`} key={index}>
+            <div>hiii</div>
             <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} />
           </Route>
         );
@@ -179,6 +202,8 @@ const CreateProperty = ({ parentRoute }) => {
         <Redirect to={`${match.path}/${config.indexRoute}`} />
       </Route>
     </Switch>
+    </div>
+    
   );
 };
 

@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const ButtonSelector = (props) => {
+  console.log("ButtonSelector",props)
   let theme = "selector-button-primary";
   switch (props.theme) {
     case "border":

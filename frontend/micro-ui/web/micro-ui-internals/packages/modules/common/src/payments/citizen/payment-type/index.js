@@ -104,6 +104,7 @@ export const SelectPaymentType = (props) => {
               curr[d[0]] = d[1];
               return curr;
             }, {});
+            console.log("gatewayParam==",gatewayParam)
           var newForm = $("<form>", {
             action: gatewayParam.txURL,
             method: "POST",
@@ -153,9 +154,7 @@ export const SelectPaymentType = (props) => {
           }
           $(document.body).append(newForm);
           newForm.submit();
-
-
-          // makePayment(gatewayParam.txURL,formdata);
+          makePayment(gatewayParam.txURL,formdata);
 
         } catch (e) {
           console.log("Error in payment redirect ", e);

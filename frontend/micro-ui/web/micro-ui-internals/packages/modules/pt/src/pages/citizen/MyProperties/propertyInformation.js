@@ -268,7 +268,7 @@ const handleClick=()=>{
   }
   const closeModal = () => {
     console.log("closeModal")
-    setshowModal(true)
+    setshowModal(false)
   };
 
   const closeWarningPopup = () => {
@@ -428,11 +428,11 @@ const handleClick=()=>{
             )}
           </div>
           <div>
-          {property?.status === "ACTIVE" && !enableAudit && (
+          {/* {property?.status === "ACTIVE" && !enableAudit && (
             <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>               
             <button className="submit-bar" type="button" onClick={handleClickOnPtPgr} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("PT_PGR")}</button>
             </div>              
-            )}
+            )} */}
             {property?.status === "ACTIVE" && !enableAudit && (
               <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
                 <Link to={{ pathname: `/digit-ui/citizen/pt/property/edit-application/action=UPDATE/${property.propertyId}` }}>

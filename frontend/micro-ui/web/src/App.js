@@ -11,7 +11,7 @@ import {
   PTComponents,
 } from "@egovernments/digit-ui-module-pt";
 import { MCollectModule, MCollectLinks, initMCollectComponents } from "@egovernments/digit-ui-module-mcollect";
-import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
+// import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 import {
   PaymentModule,
   PaymentLinks,
@@ -82,7 +82,7 @@ window.Digit.ComponentRegistryService.setupRegistry({
 
 initPGRComponents();
 initFSMComponents();
-initDSSComponents();
+// initDSSComponents();
 initMCollectComponents();
 // initHRMSComponents();
 initTLComponents();

@@ -62,7 +62,7 @@ const PropertyPhoto = ({ t, config, onSelect, userType, formData }) => {
     })();
   }, [file]);
   const checkMutatePT = window.location.href.includes("citizen/pt/property/property-mutation/") ? (
-    <Timeline currentStep={3} flow="PT_MUTATE" />
+    <Timeline currentStep={5} flow="PT_MUTATE" />
   ) : (
     <Timeline currentStep={5} />
   );

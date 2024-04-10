@@ -61,6 +61,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     owners,
     isEditProperty,
     isUpdateProperty,
+    usageCategory,
     exemption
   } = value;
   const typeOfApplication = !isEditProperty && !isUpdateProperty ? `new-application` : `edit-application`;
@@ -86,7 +87,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   };
   return (
     <React.Fragment>
-     {window.location.href.includes("/citizen") ? <Timeline currentStep={5}/> : null}
+     {window.location.href.includes("/citizen") ? <Timeline currentStep={6}/> : null}
     <Card>
       <CardHeader>{t("PT_CHECK_CHECK_YOUR_ANSWERS")}</CardHeader>
       <div>

@@ -51,8 +51,10 @@ import SearchPropertyComponent from "./pages/citizen/SearchProperty";
 import SearchResultsComponent from "./pages/citizen/SearchResults";
 import EditProperty from "./pages/citizen/EditProperty";
 import MutateProperty from "./pages/citizen/Mutate";
+import AmalgamateProperty from "./pages/citizen/Amalgamate";
 import ExemptionDetails from "./pageComponents/ExemptionDetails"
-import PropertyPhoto from "./pageComponents/PropertyPhoto"
+import PropertyPhoto from "./pageComponents/PropertyPhoto";
+import UsageCategoryVacantLand from "./pageComponents/UsageCategoryVacantLand"
 
 import PropertyInformation from "./pages/citizen/MyProperties/propertyInformation";
 import PTWFCaption from "./pageComponents/PTWFCaption";
@@ -168,6 +170,7 @@ const componentsToRegister = {
   PTSearchResultsComponent: SearchResultsComponent,
   PTEditProperty: EditProperty,
   PTMutateProperty: MutateProperty,
+  PTAmalgamateProperty: AmalgamateProperty,
   //PTCitizenFeedbackPopUp,
   // PTCitizenFeedback,
   // PTAcknowledgementCF,
@@ -176,7 +179,8 @@ const componentsToRegister = {
   CitizenFeedback,
   PTSelectLandmark,
   ExemptionDetails,
-  PropertyPhoto
+  PropertyPhoto,
+  UsageCategoryVacantLand
 };
 
 const addComponentsToRegistry = () => {
@@ -247,6 +251,10 @@ export const PTLinks = ({ matchPath, userType }) => {
     {
       link: `${matchPath}/property/property-mutation`,
       i18nKey: t("PT_PROPERTY_MUTATION"),
+    },
+    {
+      link: `${matchPath}/property/property-amalgamation`,
+      i18nKey: t("PT_PROPERTY_AMALGAMATION_SEPERATION"),
     },
     {
       link: `${matchPath}/howItWorks`,

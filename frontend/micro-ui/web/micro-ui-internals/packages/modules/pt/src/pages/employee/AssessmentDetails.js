@@ -34,10 +34,10 @@ const AssessmentDetails = () => {
   const fourth_temp=useRef();
   
   const getPropertyTypeLocale = (value) => {
-    return `PROPERTYTAX_BILLING_SLAB_${value?.split(".")[0]}`;
+    return `PROPERTYTAX_${value?.split(".")[0]}`;
   };
   
-  const getPropertySubtypeLocale = (value) => `PROPERTYTAX_BILLING_SLAB_${value}`;  
+  const getPropertySubtypeLocale = (value) => `PROPERTYTAX_${value}`;  
 
   let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.pt.useApplicationDetail(t, tenantId, propertyId);
   const { isLoading: assessmentLoading, mutate: assessmentMutate } = Digit.Hooks.pt.usePropertyAssessment(tenantId);
@@ -411,9 +411,9 @@ const Penality_menu=[
                   taxHeadEstimatesCalculation: ptCalculationEstimateData?.Calculation[0],
                 },
               },
-              {
-                belowComponent:()=><LinkLabel onClick={()=>{showPopUp(true)}} style={isMobile ? {color:"#208f74",marginLeft:"0px"} : {color:"#208f74"}}>{t("PT_ADD_REBATE_PENALITY")}</LinkLabel>
-              },
+              // {
+              //   belowComponent:()=><LinkLabel onClick={()=>{showPopUp(true)}} style={isMobile ? {color:"#208f74",marginLeft:"0px"} : {color:"#208f74"}}>{t("PT_ADD_REBATE_PENALITY")}</LinkLabel>
+              // },
               {
                 title: "PT_ASSESMENT_INFO_SUB_HEADER",
                 values: [
@@ -439,8 +439,7 @@ const Penality_menu=[
                         },
                         {
                           title: "PT_ASSESSMENT_UNIT_USAGE_TYPE",
-                          value: `PROPERTYTAX_BILLING_SLAB_${
-                            unit?.usageCategory != "RESIDENTIAL" ? unit?.usageCategory?.split(".")[1] : unit?.usageCategory
+                          value: `PROPERTYTAX_${ unit?.usageCategory
                           }`,
                         },
                         {
