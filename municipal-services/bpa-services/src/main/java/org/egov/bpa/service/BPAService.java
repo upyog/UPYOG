@@ -133,7 +133,7 @@ public class BPAService {
 		}
 		enrichmentService.enrichBPACreateRequest(bpaRequest, mdmsData, values);
 		wfIntegrator.callWorkFlow(bpaRequest);
-		nocService.createNocRequest(bpaRequest, mdmsData);
+		//nocService.createNocRequest(bpaRequest, mdmsData);
 		this.addCalculation(applicationType, bpaRequest);
 		repository.save(bpaRequest);
 		return bpaRequest.getBPA();

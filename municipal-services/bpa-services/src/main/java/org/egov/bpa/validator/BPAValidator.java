@@ -631,7 +631,8 @@ public class BPAValidator {
 		if(b &&  obj.get("usage").toString().equalsIgnoreCase("Residential"))
 		{
 			BigDecimal height=new BigDecimal(obj.get("height").toString());
-			BigDecimal area=new BigDecimal(obj.get("area").toString());
+			//convert area to sq yard for validation
+			BigDecimal area=new BigDecimal(obj.get("area").toString()).multiply(BigDecimal.valueOf(1.19599));
 			if(height.intValue()>15)
 				throw new CustomException(null,"Height should not be more than 15 metres");
 		

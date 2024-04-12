@@ -168,9 +168,9 @@ public class CalculationService {
 				throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "builtUpArea should not be null!!");
 
 		BigDecimal boundayWallLength=new BigDecimal(node.get("boundaryWallLength"));
-		BigDecimal area=new BigDecimal(node.get("builtUpArea"));
+		BigDecimal area=new BigDecimal(node.get("builtUpArea")).multiply(BigDecimal.valueOf(10.7639));
 		
-		totalTax=boundayWallLength.multiply(BigDecimal.valueOf(2.5)).add(area.multiply(BigDecimal.valueOf(9)).multiply(BigDecimal.valueOf(2.5)));
+		totalTax=boundayWallLength.multiply(BigDecimal.valueOf(2.5)).add(area.multiply(BigDecimal.valueOf(2.5)));
 		estimate.setEstimateAmount(totalTax.setScale(0, RoundingMode.HALF_UP));
 		estimate.setCategory(Category.FEE);
 
