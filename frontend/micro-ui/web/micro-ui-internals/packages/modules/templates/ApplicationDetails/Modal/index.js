@@ -9,6 +9,7 @@ import WNSActionModal from "./WNSActionModal";
 
 const ActionModal = (props) => {
   if (props?.businessService.includes("PT")) {
+    console.log("propsprops==",props)
     return <PTActionModal {...props} />;
   }
 

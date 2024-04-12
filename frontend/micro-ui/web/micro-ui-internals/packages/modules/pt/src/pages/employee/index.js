@@ -19,7 +19,7 @@ const EmployeeApp = ({ path, url, userType }) => {
   const inboxInitialState = {
     searchParams: {
       uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
-      services: ["PT.CREATE"], //, "PT.MUTATION", "PT.UPDATE"
+      services: ["PT.CREATE", "PT.MUTATION", "PT.UPDATE"], //, "PT.MUTATION", "PT.UPDATE"
       applicationStatus: [],
       locality: [],
     },

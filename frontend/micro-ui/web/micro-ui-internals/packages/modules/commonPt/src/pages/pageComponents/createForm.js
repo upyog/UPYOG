@@ -99,7 +99,6 @@ const CreatePropertyForm = ({ config, onSelect,value, userType, redirectUrl }) =
   const getHeaderLabel = () => {
     let url = window.location.href;
     let moduleName = url?.split("=")?.[1]?.split("/")?.[3];
-    debugger;
     if (moduleName) return t(`ES_COMMON_CREATE_PROPERTY_HEADER_${moduleName?.toUpperCase()}`);
     else return t('ES_COMMON_CREATE_PROPERTY_HEADER');
   }

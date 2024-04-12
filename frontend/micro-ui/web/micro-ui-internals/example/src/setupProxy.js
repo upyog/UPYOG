@@ -70,6 +70,14 @@ const assetseHRMS = createProxyMiddleware({
   target: process.env.REACT_APP_PROXY_API_HRMS || "https://dev.digit.org",
   changeOrigin: true,
 });
+const collectionService = createProxyMiddleware({
+  target: process.env.REACT_APP_PROXY_API_COLLECTION_SERVICE || "https://dev.digit.org",
+  changeOrigin: true,
+})
+const pgService = createProxyMiddleware({
+  target: process.env.REACT_APP_PROXY_API_PAYMENT_GATEWAY || "https://dev.digit.org",
+  changeOrigin: true,
+});
 
 
 module.exports = function (app) {
@@ -86,9 +94,9 @@ module.exports = function (app) {
     // "/user",
     "/fsm",
     // "/billing-service",
-    "/collection-services",
+    // "/collection-services",
     "/pdf-service",
-    "/pg-service",
+    // "/pg-service",
     "/vehicle",
     "/vendor",
     // "/property-services",
@@ -141,6 +149,8 @@ module.exports = function (app) {
   ["/service-request"].forEach((location)=> app.use(location, assetseServiceRequest));
   ["/inbox/v1/_search"].forEach((location)=> app.use(location, assetseInboxSearch));
   ["/egov-hrms"].forEach((location)=> app.use(location, assetseHRMS));
+  ["/collection-services"].forEach((location)=> app.use(location, collectionService));
+  ["/pg-services"].forEach((location)=> app.use(location, pgService));
   
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

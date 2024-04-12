@@ -197,9 +197,13 @@ const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
   );
   const [typeOfRoad, setTypeOfRoad] = useState();
   useEffect(() => {
-    setTypeOfRoad(formData?.address?.typeOfRoad);
+    setTypeOfRoad({i18nKey: `PROPERTYTAX_ROADTYPE_${formData?.address?.typeOfRoad?.code}`,
+    code: formData?.address?.typeOfRoad?.code});
+    
+    
   }, [formData?.address?.typeOfRoad]);
   function selectTypeOfRoad(value) {
+    console.log("selectTypeOfRoad=",value)
     setTypeOfRoad(value);
   }
   function onSubmit(data) {
@@ -239,7 +243,7 @@ const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
         optionKey="i18nKey"
         isMandatory={true}
         option={mdmsData?.TypeOfRoad}
-        selected={ formData?.address.typeOfRoad}
+        selected={typeOfRoad}
         select={(e) => selectTypeOfRoad(e)}
         
       />
