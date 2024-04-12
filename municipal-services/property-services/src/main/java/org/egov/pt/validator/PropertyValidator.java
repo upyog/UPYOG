@@ -144,7 +144,8 @@ public class PropertyValidator {
 		parentToBeCheckedRequest.setRequestInfo(request.getRequestInfo());
 		prop = null;
 		prop = unmaskingUtil.getPropertyUnmaskedForAmalgamation(parentToBeCheckedRequest);
-		request.getProperty().setParentPropertyId(prop.getId());
+		request.getProperty().setParentPropertyUuId(prop.getId());
+		request.getProperty().setParentPropertyId(prop.getPropertyId());
 		parentToBeCheckedRequest.setProperty(prop);
 		if (!prop.getStatus().equals(Status.INWORKFLOW)) {
 

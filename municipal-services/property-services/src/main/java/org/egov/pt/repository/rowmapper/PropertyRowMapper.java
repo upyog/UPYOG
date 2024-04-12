@@ -103,15 +103,18 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 						.exemption(rs.getString("exemption"))
 						.parentPropertyId(rs.getString("parentpropertyid"))
 						.isPartOfProperty(null!=rs.getString("ispartofproperty")?rs.getBoolean("ispartofproperty"):false)
+						.parentPropertyUuId(rs.getString("parentpropertyuuid"))
 						.build();
 
 				
 				@SuppressWarnings("unchecked")
 				Map<String, Object> additionalDetails = mapper.convertValue(currentProperty.getAdditionalDetails(), Map.class);
 				if(additionalDetails.containsKey("amalgamatedProperty") &&null!=additionalDetails.get("amalgamatedProperty")) {
-					//List<AmalgamtedProperty> pro =  (List<AmalgamtedProperty>) mapper.convertValue(additionalDetails.get("amalgamtedProperty"), AmalgamtedProperty.class);
-					//currentProperty.setAmalgamatedProperty(pro);
+					@SuppressWarnings("unchecked")
+					List<AmalgamatedProperty> amalgamatedProperties = (List<AmalgamatedProperty>) additionalDetails.get("amalgamatedProperty");
+					currentProperty.setAmalgamatedProperty(amalgamatedProperties);
 				}
+				
 				
 				
 				setPropertyInfo(currentProperty, rs, tenanId, propertyUuId, linkedProperties, address);
