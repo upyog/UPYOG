@@ -399,6 +399,9 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 let nameOfAchitect = sessionStorage.getItem("BPA_ARCHITECT_NAME");
                 let parsedArchitectName = nameOfAchitect ? JSON.parse(nameOfAchitect) : "ARCHITECT";
                 payload.additionalDetails.typeOfArchitect = parsedArchitectName;
+                payload.additionalDetails.stakeholderName=JSON.parse(sessionStorage.getItem("BPA_STAKEHOLDER_NAME"))
+                payload.additionalDetails.stakeholderRegistrationNumber=JSON.parse(sessionStorage.getItem("BPA_STAKEHOLDER_REGISTRATION_NUMBER"));
+                payload.additionalDetails.stakeholderAddress=JSON.parse(sessionStorage.getItem("BPA_STAKEHOLDER_ADDRESS"))
                 let isSelfCertificationRequired=sessionStorage.getItem("isSelfCertificationRequired");
                 if(isSelfCertificationRequired==="undefined"){
                     isSelfCertificationRequired="false";

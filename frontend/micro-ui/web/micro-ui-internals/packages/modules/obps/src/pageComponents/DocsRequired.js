@@ -35,13 +35,19 @@ const DocsRequired = ({ onSelect, onSkip, config }) => {
   }
 
   useEffect(() => {
-    let architectName = "", isDone = true;
+    let architectName = "", stakeholderRegistrationNumber="", stakeholderName="", stakeholderAddress="",isDone = true;
     let isSelfCertificationRequired;
     for (let i = 0; i < LicenseData?.Licenses?.length; i++) {
       if (LicenseData?.Licenses?.[i]?.status === "APPROVED" && isDone) {
         isDone = false;
         architectName = LicenseData?.Licenses?.[i]?.tradeLicenseDetail?.tradeUnits?.[0]?.tradeType?.split('.')[0] || "ARCHITECT";
+        stakeholderRegistrationNumber = LicenseData?.Licenses?.[i]?.applicationNumber ;
+        stakeholderName=LicenseData?.Licenses?.[i]?.tradeLicenseDetail?.owners[0]?.name;
+        stakeholderAddress=LicenseData?.Licenses?.[i]?.tradeLicenseDetail?.owners[0]?.permanentAddress;
         sessionStorage.setItem("BPA_ARCHITECT_NAME", JSON.stringify(architectName));
+        sessionStorage.setItem("BPA_STAKEHOLDER_REGISTRATION_NUMBER", JSON.stringify(stakeholderRegistrationNumber));
+        sessionStorage.setItem("BPA_STAKEHOLDER_NAME", JSON.stringify(stakeholderName));
+        sessionStorage.setItem("BPA_STAKEHOLDER_ADDRESS", JSON.stringify(stakeholderAddress));
         isSelfCertificationRequired=LicenseData?.Licenses?.[i]?.tradeLicenseDetail.additionalDetail.isSelfCertificationRequired;
         sessionStorage.setItem("isSelfCertificationRequired", JSON.stringify(isSelfCertificationRequired));
       }
