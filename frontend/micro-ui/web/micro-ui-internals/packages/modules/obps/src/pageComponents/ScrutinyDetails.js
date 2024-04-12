@@ -252,7 +252,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             label={t("BPA_TOTAL_BUILT_UP_AREA_HEADER")}
             text={
               data?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea
-                ? `${data?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea} ${t("BPA_SQ_YARDS_LABEL")}`
+                ? `${data?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea} ${t("BPA_SQ_MTRS_LABEL")}`
                 : t("NA")
             }
           ></Row>
@@ -351,7 +351,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             label={t("BPA_APPLICATION_DEMOLITION_AREA_LABEL")}
             text={
               data?.planDetail?.planInformation?.demolitionArea
-                ? `${data?.planDetail?.planInformation?.demolitionArea} ${t("BPA_SQ_YARDS_LABEL")}`
+                ? `${data?.planDetail?.planInformation?.demolitionArea} ${t("BPA_SQ_MTRS_LABEL")}`
                 : t("CS_NA")
             }
           ></Row>
