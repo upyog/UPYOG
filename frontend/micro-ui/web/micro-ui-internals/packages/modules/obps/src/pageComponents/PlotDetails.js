@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import Timeline from "../components/Timeline";
 
 const PlotDetails = ({ formData, onSelect, config }) => {
+  const isEditApplication =  window.location.href.includes("editApplication");
   const { t } = useTranslation();
   const [boundaryWallLength, setBoundaryWallLength] = useState("");
   const [registrationDetails, setRegistrationDetails] = useState("");
@@ -27,6 +28,16 @@ const PlotDetails = ({ formData, onSelect, config }) => {
   useEffect(() => {
     if(checkingFlow==="BPA"){
       setIsNextDisabled(true);
+    }
+    if(formData?.additionalDetails?.boundaryWallLength || formData?.data?.boundaryWallLength){
+      setIsNextDisabled(false);
+    }
+    if(isEditApplication){
+      config.inputs.forEach(ob=>{
+        if(ob.name=="boundaryWallLength"){
+          ob.disable=true;
+        }
+      })
     }
   }, [checkingFlow]);
 

@@ -33,8 +33,15 @@ import {
     const { data, address, owners, nocDocuments, documents, additionalDetails, subOccupancy,PrevStateDocuments,PrevStateNocDocuments,applicationNo } = value;
     const isEditApplication = window.location.href.includes("editApplication");
     useEffect(()=>{
-console.log("mdmsData",mdmsData,sessionStorage.getItem("plotArea"),typeof(sessionStorage.getItem("plotArea")))
-let plotArea = parseInt(sessionStorage.getItem("plotArea")) 
+      if(isEditApplication){
+        setDevelopment(value?.additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES);
+        sessionStorage.setItem("development",value?.additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES);
+        setOtherCharges(value?.additionalDetails?.selfCertificationCharges?.BPA_OTHER_CHARGES);
+        sessionStorage.setItem("otherCharges",value?.additionalDetails?.selfCertificationCharges?.BPA_OTHER_CHARGES);
+        setLessAdjusment(value?.additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT);
+        sessionStorage.setItem("lessAdjusment",value?.additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT);
+      }
+let plotArea = parseInt(sessionStorage.getItem("plotArea")) || datafromAPI?.planDetail?.planInformation?.plotArea || value?.additionalDetails?.area;
 const LabourCess = plotArea > 909 ?mdmsData?.BPA?.LabourCess[1].rate * plotArea : 0
  const GaushalaFees =  mdmsData?.BPA?.GaushalaFees[0].rate  
  const Malbafees = (plotArea <=500 ?mdmsData?.BPA?.MalbaCharges[0].rate :plotArea >500 && plotArea <=1000 ?mdmsData?.BPA?.MalbaCharges?.[1].rate :mdmsData?.BPA?.MalbaCharges[2].rate || 500)
@@ -46,8 +53,7 @@ setGaushalaFees(GaushalaFees)
 setLabourCess(LabourCess)
 setMalbafees(Malbafees)
 setWaterCharges(Malbafees/2)
-console.log("mdmsData",mdmsData,mdmsData?.MalbaCharges?.BPA[1].rate,plotArea)
-},[mdmsData])
+},[mdmsData,value?.additionalDetails])
       // for application documents
       let improvedDoc = [];
       PrevStateDocuments?.map(preDoc => { improvedDoc.push({...preDoc, module: "OBPS"}) });
@@ -88,8 +94,9 @@ console.log("mdmsData",mdmsData,mdmsData?.MalbaCharges?.BPA[1].rate,plotArea)
           retry: false,
         }
       );
-
-      value.additionalDetails.P1charges=paymentDetails?.Bill[0].billDetails[0].amount;
+      if(!isEditApplication){
+        value.additionalDetails.P1charges=paymentDetails?.Bill[0]?.billDetails[0]?.amount;
+      }
       const sendbacktocitizenApp = window.location.href.includes("sendbacktocitizen");
       let routeLink = `/digit-ui/citizen/obps/bpa/${additionalDetails?.applicationType.toLowerCase()}/${additionalDetails?.serviceType.toLowerCase()}`;
       if (isEditApplication) routeLink = `/digit-ui/citizen/obps/editApplication/bpa/${value?.tenantId}/${value?.applicationNo}`;
@@ -357,7 +364,7 @@ console.log("mdmsData",mdmsData,mdmsData?.MalbaCharges?.BPA[1].rate,plotArea)
       ))} */}
        {/* <Row className="border-none" label={t(`BPA_COMMON_TOTAL_AMT`)} text={`₹ ${paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}`} /> */}
        <CardSubHeader>{t("BPA_P1_SUMMARY_FEE_EST")}</CardSubHeader> 
-       <Row className="border-none" label={t(`BPA_COMMON_P1_AMT`)} text={`₹ ${paymentDetails?.Bill[0].billDetails[0].amount}`} />
+       <Row className="border-none" label={t(`BPA_COMMON_P1_AMT`)} text={`₹ ${value?.additionalDetails?.P1charges || paymentDetails?.Bill[0]?.billDetails[0]?.amount}`} />
        <CardSubHeader>{t("BPA_P2_SUMMARY_FEE_EST")}</CardSubHeader> 
        
        <Row className="border-none" label={t(`BPA_COMMON_MALBA_AMT`)} text={`₹ ${malbafees}`} />
@@ -372,6 +379,7 @@ console.log("mdmsData",mdmsData,mdmsData?.MalbaCharges?.BPA[1].rate,plotArea)
               isMandatory={false}
               optionKey="i18nKey"
               name="email"
+              defaultValue={value?.additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES || ""}
               value={development}
               onChange={(e) => {setDevelopment(e.target.value),sessionStorage.setItem("development",e.target.value)}}
               //disable={userInfo?.info?.emailId && !isOpenLinkFlow ? true : false}
@@ -385,6 +393,7 @@ console.log("mdmsData",mdmsData,mdmsData?.MalbaCharges?.BPA[1].rate,plotArea)
               isMandatory={false}
               optionKey="i18nKey"
               name="email"
+              defaultValue={value?.additionalDetails?.selfCertificationCharges?.BPA_OTHER_CHARGES || ""}
               value={otherCharges}
               onChange={(e) => {setOtherCharges(e.target.value),sessionStorage.setItem("otherCharges",e.target.value)}}
               //disable={userInfo?.info?.emailId && !isOpenLinkFlow ? true : false}
@@ -398,6 +407,7 @@ console.log("mdmsData",mdmsData,mdmsData?.MalbaCharges?.BPA[1].rate,plotArea)
               isMandatory={false}
               optionKey="i18nKey"
               name="email"
+              defaultValue={value?.additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT || ""}
               value={lessAdjusment}
               onChange={(e) => {setLessAdjusment(e.target.value),sessionStorage.setItem("lessAdjusment",e.target.value)}}
               //disable={userInfo?.info?.emailId && !isOpenLinkFlow ? true : false}
@@ -409,7 +419,7 @@ console.log("mdmsData",mdmsData,mdmsData?.MalbaCharges?.BPA[1].rate,plotArea)
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
       {/* <CardHeader>{t("BPA_COMMON_TOTAL_AMT")}</CardHeader> 
       <CardHeader>₹ {paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}</CardHeader>  */}
-      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmit} disabled={!development || !otherCharges || !lessAdjusment} id/>
+      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmit} disabled={(!isEditApplication) && (!development||!otherCharges||!lessAdjusment)} id/>
       </Card>
     </React.Fragment>
     );
