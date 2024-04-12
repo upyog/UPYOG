@@ -108,7 +108,7 @@ public class AssessmentService {
 		else {
 			calculationService.calculateTax(request, property);
 		}
-		System.out.println("it was here");
+		
 		producer.push(props.getCreateAssessmentTopic(), request);
 
 		return request.getAssessment();
