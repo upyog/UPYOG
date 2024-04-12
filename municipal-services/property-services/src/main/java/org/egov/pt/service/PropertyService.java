@@ -129,7 +129,7 @@ public class PropertyService {
 		*
 		*/
 		//Push data after encryption
-		//producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+		producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
 		
 		if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
 			producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForAmalgamationTopic(), request);
@@ -171,11 +171,11 @@ public class PropertyService {
 		if (isRequestForOwnerMutation)
 			processOwnerMutation(request, propertyFromSearch);
 		else if(isRequestForBifurcation)
-			processOwnerBifurcation(request, propertyFromSearch);
+			processPropertyUpdateBifurcation(request, propertyFromSearch);
 		else if(isNumberDifferent)
 			processMobileNumberUpdate(request, propertyFromSearch);
 		else if(isRequestForAmalgamation)
-			processPropertyUpdateForAmalgamation(request, propertyFromSearch);
+			processPropertyUpdateAmalgamation(request, propertyFromSearch);
 		
 		else
 			processPropertyUpdate(request, propertyFromSearch);
@@ -305,6 +305,120 @@ public class PropertyService {
 		}
 	}
 	
+	private void processPropertyUpdateAmalgamation(PropertyRequest request, Property propertyFromSearch) {
+
+		propertyValidator.validateRequestForUpdate(request, propertyFromSearch);
+		if (CreationReason.CREATE.equals(request.getProperty().getCreationReason())) {
+			userService.createUser(request);
+		} else if (request.getProperty().getSource().toString().equals("WS")
+				&& CreationReason.UPDATE.equals(request.getProperty().getCreationReason())) {
+			userService.updateUser(request);
+		} else {
+			request.getProperty().setOwners(util.getCopyOfOwners(propertyFromSearch.getOwners()));
+		}
+
+		//check for Property Ids;
+		
+		enrichmentService.enrichAssignes(request.getProperty());
+		enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
+
+		PropertyRequest OldPropertyRequest = PropertyRequest.builder()
+				.requestInfo(request.getRequestInfo())
+				.property(propertyFromSearch)
+				.build();
+
+		util.mergeAdditionalDetails(request, propertyFromSearch);
+
+		if(config.getIsWorkflowEnabled()) {
+
+			State state = wfService.updateWorkflow(request, CreationReason.UPDATE);
+
+			if (state.getIsStartState() == true
+					&& state.getApplicationStatus().equalsIgnoreCase(Status.INWORKFLOW.toString())
+					&& !propertyFromSearch.getStatus().equals(Status.INWORKFLOW)) {
+
+				propertyFromSearch.setStatus(Status.INACTIVE);
+				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), OldPropertyRequest);
+				util.saveOldUuidToRequest(request, propertyFromSearch.getId());
+				producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+
+			} else if (state.getIsTerminateState()
+					&& !state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString())) {
+
+				terminateWorkflowAndReInstatePreviousRecordForAmalgamation(request, propertyFromSearch);
+			}else {
+				/*
+				 * If property is In Workflow then continue
+				 */
+				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+			}
+
+		} else {
+
+			/*
+			 * If no workflow then update property directly with mutation information
+			 */
+			producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+		}
+	}
+	
+	
+	private void processPropertyUpdateBifurcation(PropertyRequest request, Property propertyFromSearch) {
+
+		propertyValidator.validateRequestForUpdate(request, propertyFromSearch);
+		if (CreationReason.CREATE.equals(request.getProperty().getCreationReason())) {
+			userService.createUser(request);
+		} else if (request.getProperty().getSource().toString().equals("WS")
+				&& CreationReason.UPDATE.equals(request.getProperty().getCreationReason())) {
+			userService.updateUser(request);
+		} else {
+			request.getProperty().setOwners(util.getCopyOfOwners(propertyFromSearch.getOwners()));
+		}
+
+		//check for Property Ids;
+		
+		enrichmentService.enrichAssignes(request.getProperty());
+		enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
+
+		PropertyRequest OldPropertyRequest = PropertyRequest.builder()
+				.requestInfo(request.getRequestInfo())
+				.property(propertyFromSearch)
+				.build();
+
+		util.mergeAdditionalDetails(request, propertyFromSearch);
+
+		if(config.getIsWorkflowEnabled()) {
+
+			State state = wfService.updateWorkflow(request, CreationReason.UPDATE);
+
+			if (state.getIsStartState() == true
+					&& state.getApplicationStatus().equalsIgnoreCase(Status.INWORKFLOW.toString())
+					&& !propertyFromSearch.getStatus().equals(Status.INWORKFLOW)) {
+
+				propertyFromSearch.setStatus(Status.INACTIVE);
+				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), OldPropertyRequest);
+				util.saveOldUuidToRequest(request, propertyFromSearch.getId());
+				producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+
+			} else if (state.getIsTerminateState()
+					&& !state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString())) {
+
+				terminateWorkflowAndReInstatePreviousRecordForBifurcation(request, propertyFromSearch);
+			}else {
+				/*
+				 * If property is In Workflow then continue
+				 */
+				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+			}
+
+		} else {
+
+			/*
+			 * If no workflow then update property directly with mutation information
+			 */
+			producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+		}
+	}
 	
 	
 	private void processPropertyCreateForAmalgamation(PropertyRequest request) {
@@ -589,6 +703,28 @@ public class PropertyService {
 		}
 	}
 
+	private void terminateWorkflowAndReInstatePreviousRecordForBifurcation(PropertyRequest request, Property propertyFromSearch) {
+
+		/* current record being rejected */
+		String parentProperty = propertyFromSearch.getParentPropertyId();
+		
+		PropertyCriteria criteria = PropertyCriteria.builder()
+				.uuids(Sets.newHashSet(parentProperty))
+				.isSearchInternal(true)
+				.tenantId(propertyFromSearch.getTenantId()).build();
+		Property previousPropertyToBeReInstated = searchProperty(criteria, request.getRequestInfo()).get(0);
+		
+		previousPropertyToBeReInstated.setAuditDetails(util.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid().toString(), true));
+		previousPropertyToBeReInstated.setStatus(Status.ACTIVE);
+		
+		//For Updating the child property to inactive
+		producer.push(config.getUpdatePropertyForDeactivaingForBifurcationTopic(), propertyFromSearch);
+		
+		//For Updating the parent property to active
+		producer.push(config.getUpdateParentPropertyForBifurcation(), previousPropertyToBeReInstated);
+		
+	}
+	
 	private void terminateWorkflowAndReInstatePreviousRecord(PropertyRequest request, Property propertyFromSearch) {
 
 		/* current record being rejected */
@@ -619,40 +755,23 @@ public class PropertyService {
 	private void terminateWorkflowAndReInstatePreviousRecordForAmalgamation(PropertyRequest request, Property propertyFromSearch) {
 
 		/* current record being rejected */
-		producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+		//producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
 
 		/* Previous record set to ACTIVE */
 		@SuppressWarnings("unchecked")
 		Map<String, Object> additionalDetails = mapper.convertValue(propertyFromSearch.getAdditionalDetails(), Map.class);
 		if(null == additionalDetails)
 			return;
-
-		String propertyUuId = (String) additionalDetails.get(PTConstants.PREVIOUS_PROPERTY_PREVIOUD_UUID);
-		if(StringUtils.isEmpty(propertyUuId))
-			return;
-
-		PropertyCriteria criteria = PropertyCriteria.builder()
-				.uuids(Sets.newHashSet(propertyUuId))
-				.isSearchInternal(true)
-				.tenantId(propertyFromSearch.getTenantId()).build();
-		Property previousPropertyToBeReInstated = searchProperty(criteria, request.getRequestInfo()).get(0);
-		previousPropertyToBeReInstated.setAuditDetails(util.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid().toString(), true));
-		previousPropertyToBeReInstated.setStatus(Status.ACTIVE);
-		@SuppressWarnings("unchecked")
-		Map<String, Object> additionalDetailsForAmal = mapper.convertValue(previousPropertyToBeReInstated.getAdditionalDetails(), Map.class);
-		if(additionalDetailsForAmal.containsKey("createdFromProperty")) {
-			additionalDetailsForAmal.put("createdFromProperty", null);
-			
-		}
-		if(additionalDetailsForAmal.containsKey("amalgamatedProperty")) {
-			additionalDetailsForAmal.put("amalgamatedProperty", null);
-		}
-		JsonNode node=mapper.convertValue(additionalDetailsForAmal, JsonNode.class);
 		
-		previousPropertyToBeReInstated.setAdditionalDetails(node);
-		request.setProperty(previousPropertyToBeReInstated);
-
-		producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+		PropertyRequest OldPropertyRequest = PropertyRequest.builder()
+				.requestInfo(request.getRequestInfo())
+				.property(propertyFromSearch)
+				.build();
+		@SuppressWarnings("unchecked")
+		List<AmalgamatedProperty> amalgamatedProperties = (List<AmalgamatedProperty>) additionalDetails.get("amalgamatedProperty");
+		propertyFromSearch.setAmalgamatedProperty(amalgamatedProperties);
+		producer.push(config.getUpdateAmalgamatedPropertyInactive(), request);
+		producer.push(config.getUpdateAmalgamatedPropertyToActive(), OldPropertyRequest);
 	}
 
 	/**

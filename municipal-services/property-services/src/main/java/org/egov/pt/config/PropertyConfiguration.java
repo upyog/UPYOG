@@ -387,5 +387,14 @@ public class PropertyConfiguration {
     
     @Value("${persister.update.property.bifurcation.inactive}")
     private String updatePropertyForDeactivaingForBifurcationTopic;
+    
+    @Value("${persister.update.parent.property.bifurcation}")
+    private String updateParentPropertyForBifurcation;
+    
+    @Value("${persister.update.parent.property.active.amalgamation}")
+    private String updateAmalgamatedPropertyToActive;
+    
+    @Value("${persister.update.parent.property.inactive.amalgamation}")
+    private String updateAmalgamatedPropertyInactive;
 
 }
