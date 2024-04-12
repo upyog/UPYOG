@@ -27,7 +27,6 @@ import org.egov.pt.models.enums.Channel;
 import org.egov.pt.models.enums.CreationReason;
 import org.egov.pt.models.enums.Relationship;
 import org.egov.pt.models.enums.Status;
-import org.egov.pt.util.PTConstants;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,12 +101,14 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 						.institution(institute)
 						.landArea(landArea)
 						.exemption(rs.getString("exemption"))
+						.parentPropertyId(rs.getString("parentpropertyid"))
+						.isPartOfProperty(null!=rs.getString("ispartofproperty")?rs.getBoolean("ispartofproperty"):false)
 						.build();
 
 				
 				@SuppressWarnings("unchecked")
 				Map<String, Object> additionalDetails = mapper.convertValue(currentProperty.getAdditionalDetails(), Map.class);
-				if(additionalDetails.containsKey(PTConstants.AMALGAMATED_PROPERTY) &&null!=additionalDetails.get(PTConstants.AMALGAMATED_PROPERTY)) {
+				if(additionalDetails.containsKey("amalgamatedProperty") &&null!=additionalDetails.get("amalgamatedProperty")) {
 					//List<AmalgamtedProperty> pro =  (List<AmalgamtedProperty>) mapper.convertValue(additionalDetails.get("amalgamtedProperty"), AmalgamtedProperty.class);
 					//currentProperty.setAmalgamatedProperty(pro);
 				}
