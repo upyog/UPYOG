@@ -157,7 +157,7 @@ const BPASendToArchitect = ({ parentRoute }) => {
         setParams({ ...params, ...bpaEditDetails });
       }
     }
-  }, [bpaData,data1,mdmsData,nocdata]);
+  }, [bpaData,data1,mdmsData,nocdata,params]);
 
 
   const goNext = (skipStep) => {
