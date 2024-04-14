@@ -1,25 +1,37 @@
 package org.egov.echallan.util;
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.ReadContext;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.*;
 
+import org.egov.echallan.model.*;
+import org.egov.echallan.producer.Producer;
+import org.egov.echallan.web.models.collection.PaymentResponse;
+import org.egov.echallan.web.models.uservevents.EventRequest;
+import org.egov.mdms.model.MasterDetail;
+import org.egov.mdms.model.MdmsCriteria;
+import org.egov.mdms.model.MdmsCriteriaReq;
+import org.egov.mdms.model.ModuleDetail;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.echallan.config.ChallanConfiguration;
-import org.egov.echallan.model.Challan;
-import org.egov.echallan.model.RequestInfoWrapper;
 import org.egov.echallan.repository.ServiceRequestRepository;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.egov.echallan.util.ChallanConstants.*;
 
 
 import java.math.BigDecimal;
 import java.util.*;
+
+import static com.jayway.jsonpath.Criteria.where;
+import static com.jayway.jsonpath.Filter.filter;
+import static org.egov.echallan.util.ChallanConstants.*;
+import static org.springframework.util.StringUtils.capitalize;
 
 
 @Component
@@ -36,24 +48,30 @@ public class NotificationUtil {
 	public static final String LOCALIZATION_TEMPLATEID_JSONPATH = "$.messages[0].templateId";
 	public static final String MSG_KEY="message";
 	public static final String TEMPLATE_KEY="templateId";
-//	private static final String CREATE_CODE = "echallan.create.sms";
-//	private static final String UPDATE_CODE = "echallan.update.sms";
-//	private static final String CANCEL_CODE = "echallan.cancel.sms";
+	private static final String CREATE_CODE = "echallan.create.sms";
+	private static final String UPDATE_CODE = "echallan.update.sms";
+	private static final String CANCEL_CODE = "echallan.cancel.sms";
 	private ChallanConfiguration config;
 
 	private ServiceRequestRepository serviceRequestRepository;
 
 	private RestTemplate restTemplate;
 
+	private Producer producer;
+
+	@Autowired
+	private ObjectMapper mapper;
+
 	@Autowired
 	public NotificationUtil(ChallanConfiguration config, ServiceRequestRepository serviceRequestRepository,
-			RestTemplate restTemplate) {
+			RestTemplate restTemplate, Producer producer) {
 		this.config = config;
 		this.serviceRequestRepository = serviceRequestRepository;
 		this.restTemplate = restTemplate;
+		this.producer=producer;
 	}
 
-
+/*
 	public HashMap<String, String> getCustomizedMsg(RequestInfo requestInfo, Challan challan ) {
 		HashMap<String, String> msgDetail  = fetchContentFromLocalization(requestInfo,challan.getTenantId(),MODULE,CREATE_CODE);
 		msgDetail.put(MSG_KEY, getCreateMsg(requestInfo,challan,msgDetail.get(MSG_KEY)));
@@ -80,7 +98,7 @@ public class NotificationUtil {
 	     message = message.replace("<service>", businessMsg.get(MSG_KEY));
 	     return message;
 	}
-	
+	*/
 	private String getReplacedMsg(RequestInfo requestInfo,Challan challan, String message) {
 		if (challan.getApplicationStatus() != Challan.StatusEnum.CANCELLED) {
 			String billDetails = getBillDetails(requestInfo, challan);
@@ -161,6 +179,29 @@ public class NotificationUtil {
 			return url;
 		}
 		else return res;
+	}
+
+	/**
+	 * Extracts message for the specific code
+	 * 
+	 * @param notificationCode
+	 *            The code for which message is required
+	 * @param localizationMessage
+	 *            The localization messages
+	 * @return message for the specific code
+	 */
+	private String getMessageTemplate(String notificationCode, String localizationMessage) {
+		String path = "$..messages[?(@.code==\"{}\")].message";
+		path = path.replace("{}", notificationCode);
+		System.out.println("notificationCode=="+notificationCode);
+		String message = null;
+		try {
+			Object messageObj = JsonPath.parse(localizationMessage).read(path);
+			message = ((ArrayList<String>) messageObj).get(0);
+		} catch (Exception e) {
+			log.warn("Fetching from localization failed", e);
+		}
+		return message;
 	}
 
 	/**
@@ -422,31 +463,7 @@ public class NotificationUtil {
 		return message;
 	}
 
-	/**
-	 * Extracts message for the specific code
-	 *
-	 * @param notificationCode
-	 *            The code for which message is required
-	 * @param localizationMessage
-	 *            The localization messages
-	 * @return message for the specific code
-	 */
-	@SuppressWarnings("rawtypes")
-	public String getMessageTemplate(String notificationCode, String localizationMessage) {
-		String path = "$..messages[?(@.code==\"{}\")].message";
-		path = path.replace("{}", notificationCode);
-		String message = null;
-		try {
-			List data = JsonPath.parse(localizationMessage).read(path);
-			if (!CollectionUtils.isEmpty(data))
-				message = data.get(0).toString();
-			else
-				log.error("Fetching from localization failed with code " + notificationCode);
-		} catch (Exception e) {
-			log.warn("Fetching from localization failed", e);
-		}
-		return message;
-	}
+	
 
 	public String getRecepitDownloadLink(ChallanRequest challanRequest, PaymentResponse paymentResponse, String mobileno) {
 

@@ -176,7 +176,13 @@ public class ChallanConfiguration {
     @Value("${egov.user.event.notification.enabled}")
     private Boolean isUserEventEnabled;
 
-     
+    // Email
+    @Value("${kafka.topics.notification.email}")
+    private String emailNotifTopic;
+
+    @Value("${notification.email.enabled}")
+    private Boolean isEmailNotificationEnabled;
+    
     @Value("${kafka.topics.receipt.cancel.name}")
     private String receiptCancelTopic;
 
@@ -186,4 +192,23 @@ public class ChallanConfiguration {
     @Value("${egov.locality.search.endpoint}")
     private String fetchBoundaryEndpoint;
 
-    }
+    @Value("${state.level.tenant.id}")
+    public String stateLevelTenantId;
+
+    //collection
+    @Value("${egov.collection.service.host}")
+    private String collectionServiceHost;
+
+    @Value("${egov.collection.service.search.endpoint}")
+    private String collectionServiceSearchEndPoint;
+
+    @Value("${egov.download.receipt.link}")
+    private String receiptDownloadLink;
+    
+    @Value("${egov.dynamicdata.period}")
+    private String numberOfMonths;
+    
+    @Value("${egov.challan.validity}")
+    private String challanValidity;
+
+}

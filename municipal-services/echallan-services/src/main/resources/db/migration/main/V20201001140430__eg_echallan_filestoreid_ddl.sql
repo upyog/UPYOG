@@ -1,1 +1,1 @@
-ALTER TABLE eg_echallan ADD COLUMN filestoreid character varying(256);
+ALTER TABLE eg_echallan ADD COLUMN  IF NOT EXISTS filestoreid character varying(256);

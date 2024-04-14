@@ -1,4 +1,4 @@
-CREATE TABLE eg_echallan(
+CREATE TABLE  IF NOT EXISTS eg_echallan(
   id character varying(64),
   accountid character varying(64),
   tenantId character varying(64),
@@ -17,7 +17,7 @@ CREATE TABLE eg_echallan(
   CONSTRAINT uk_eg_echallan UNIQUE (id)      
 );
 
-CREATE TABLE eg_challan_address(
+CREATE TABLE  IF NOT EXISTS eg_challan_address(
     id character varying(64),
     tenantId character varying(64),
     doorNo character varying(64),
