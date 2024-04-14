@@ -1,37 +1,25 @@
 package org.egov.echallan.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.*;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.ReadContext;
 
-import org.egov.echallan.model.*;
-import org.egov.echallan.producer.Producer;
-import org.egov.echallan.web.models.collection.PaymentResponse;
-import org.egov.echallan.web.models.uservevents.EventRequest;
-import org.egov.mdms.model.MasterDetail;
-import org.egov.mdms.model.MdmsCriteria;
-import org.egov.mdms.model.MdmsCriteriaReq;
-import org.egov.mdms.model.ModuleDetail;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.echallan.config.ChallanConfiguration;
+import org.egov.echallan.model.Challan;
+import org.egov.echallan.model.RequestInfoWrapper;
 import org.egov.echallan.repository.ServiceRequestRepository;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.egov.echallan.util.ChallanConstants.*;
 
 
 import java.math.BigDecimal;
 import java.util.*;
-
-import static com.jayway.jsonpath.Criteria.where;
-import static com.jayway.jsonpath.Filter.filter;
-import static org.egov.echallan.util.ChallanConstants.*;
-import static org.springframework.util.StringUtils.capitalize;
 
 
 @Component
@@ -57,21 +45,41 @@ public class NotificationUtil {
 
 	private RestTemplate restTemplate;
 
-	private Producer producer;
-
-	@Autowired
-	private ObjectMapper mapper;
-
 	@Autowired
 	public NotificationUtil(ChallanConfiguration config, ServiceRequestRepository serviceRequestRepository,
-			RestTemplate restTemplate, Producer producer) {
+			RestTemplate restTemplate) {
 		this.config = config;
 		this.serviceRequestRepository = serviceRequestRepository;
 		this.restTemplate = restTemplate;
-		this.producer=producer;
 	}
 
 
+	public HashMap<String, String> getCustomizedMsg(RequestInfo requestInfo, Challan challan ) {
+		HashMap<String, String> msgDetail  = fetchContentFromLocalization(requestInfo,challan.getTenantId(),MODULE,CREATE_CODE);
+		msgDetail.put(MSG_KEY, getCreateMsg(requestInfo,challan,msgDetail.get(MSG_KEY)));
+		return msgDetail;
+	}
+	
+	
+	public HashMap<String, String> getCustomizedMsgForUpdate(RequestInfo requestInfo, Challan challan ) {
+		HashMap<String, String> msgDetail  =  fetchContentFromLocalization(requestInfo,challan.getTenantId(),MODULE,UPDATE_CODE);
+		msgDetail.put(MSG_KEY, getCreateMsg(requestInfo,challan,msgDetail.get(MSG_KEY)));
+		return msgDetail;
+	}
+	
+	public HashMap<String, String> getCustomizedMsgForCancel(RequestInfo requestInfo, Challan challan ) {
+		HashMap<String, String> msgDetail  =  fetchContentFromLocalization(requestInfo,challan.getTenantId(),MODULE,CANCEL_CODE);
+		msgDetail.put(MSG_KEY, getCancelMsg(requestInfo,challan,msgDetail.get(MSG_KEY)));
+		return msgDetail;
+	}
+
+	private String getCancelMsg(RequestInfo requestInfo,Challan challan, String message) {
+		 HashMap<String, String> businessMsg  =  fetchContentFromLocalization(requestInfo,challan.getTenantId(),MODULE,formatCodes(challan.getBusinessService()));
+		 message = message.replace("<citizen>",challan.getCitizen().getName());
+	     message = message.replace("<challanno>", challan.getChallanNo());
+	     message = message.replace("<service>", businessMsg.get(MSG_KEY));
+	     return message;
+	}
 	
 	private String getReplacedMsg(RequestInfo requestInfo,Challan challan, String message) {
 		if (challan.getApplicationStatus() != Challan.StatusEnum.CANCELLED) {
@@ -174,7 +182,8 @@ public class NotificationUtil {
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getLocalizationHost()).append(config.getLocalizationContextPath())
 				.append(config.getLocalizationSearchEndpoint()).append("?").append("locale=").append(locale)
-				.append("&tenantId=").append(tenantId).append("&module=").append(MODULE);
+				.append("&tenantId=").append(tenantId).append("&module=").append(MODULE)
+				.append("&codes=").append(CODES);
 
 		return uri;
 	}
