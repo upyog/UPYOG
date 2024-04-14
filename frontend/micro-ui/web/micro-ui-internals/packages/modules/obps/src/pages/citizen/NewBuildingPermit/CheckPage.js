@@ -335,10 +335,10 @@ setWaterCharges(Malbafees/2)
           <LinkButton
             label={<EditIcon style={{ marginTop: "-10px", float: "right", position: "relative", bottom: "32px" }} />}
             style={{ width: "100px", display: "inline" }}
-            onClick={() => routeTo(`${routeLink}/noc-details`)}
+            onClick={() => routeTo(`${routeLink}/noc-number`)}
           />
        <Row className="border-none" label={t(`BPA_NOC_NUMBER`)} text={value?.additionalDetails?.nocNumber} />   
-      {nocDocuments && nocDocuments?.NocDetails.map((noc, index) => (
+      {/* {nocDocuments && nocDocuments?.NocDetails.map((noc, index) => (
         <div key={`noc-${index}`} style={nocDocuments?.NocDetails?.length > 1 ?{ marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "960px", minWidth: "280px" } : {}}>
         <CardSectionHeader style={{marginBottom: "24px"}}>{`${t(`BPA_${noc?.nocType}_HEADER`)}`}</CardSectionHeader>
         <StatusTable>
@@ -351,7 +351,7 @@ setWaterCharges(Malbafees/2)
           {<DocumentsPreview documents={getOrderDocuments(nocAppDocs?.filter(data => data?.documentType?.includes(noc?.nocType?.split("_")?.[0])), true)} svgStyles = {{}} isSendBackFlow = {false} isHrLine = {true} titleStyles ={{fontSize: "18px", lineHeight: "24px", "fontWeight": 700, marginBottom: "10px"}}/>}
         </StatusTable>
       </div>
-      ))}
+      ))} */}
       </StatusTable>
       </Card>
       <Card style={{paddingRight:"16px"}}>

@@ -342,7 +342,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.additionalDetails.height  = (formData?.data.edcrDetails.planDetail.blocks[0].building.buildingHeight).toString() || "NA";
                 payload.additionalDetails.usage  = formData?.data.occupancyType  || "NA";
                 payload.additionalDetails.builtUpArea =(formData?.data.edcrDetails.planDetail.blocks[0].building.totalBuitUpArea).toString();
-
+                payload.additionalDetails.nocNumber=(formData?.nocnumber?.nocNumber).toString();
                 
                 if (formData?.data?.registrationDetails) payload.additionalDetails.registrationDetails = formData?.data?.registrationDetails;
                 if (formData?.data?.applicationType) payload.additionalDetails.applicationType = formData?.data?.applicationType;
@@ -412,10 +412,11 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     if(formData?.data.edcrDetails.planDetail.blocks[0].building.buildingHeight > 15){
                         alert("Height should not be more than 15 metres");
                     }
-                    else if((parsedArchitectName=="ARCHITECT" || parsedArchitectName=="ENGINEER") && formData?.data.edcrDetails.planDetail.planInformation.plotArea>500){
+                    //converting plot area which is in square meters to square yards by multiplying 1.196
+                    else if((parsedArchitectName=="ARCHITECT" || parsedArchitectName=="ENGINEER") && (formData?.data.edcrDetails.planDetail.planInformation.plotArea*1.196) >500){
                             alert("Architect/Engineer can apply for area less then 500 sq. yards. in self declaration")
                         }
-                    else if((parsedArchitectName=="DESIGNER" || parsedArchitectName=="SUPERVISOR") && formData?.data.edcrDetails.planDetail.planInformation.plotArea>250){
+                    else if((parsedArchitectName=="DESIGNER" || parsedArchitectName=="SUPERVISOR") && (formData?.data.edcrDetails.planDetail.planInformation.plotArea*1.196)>250){
                             alert("Designer/Supervisor can apply for area less then 500 sq. yards. in self declaration")
                         }
                     else{

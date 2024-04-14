@@ -3,7 +3,19 @@ export const newConfig1=[
         "route": "docs-required",
         "component": "DocsRequired",
         "key": "data",
-        "nextStep": "basic-details"
+        "nextStep": "noc-number"
+    },
+    {
+        "route": "noc-number",
+        "component": "NOCNumber",
+        "nextStep": "basic-details",
+        "key": "nocnumber",
+        "texts": {
+            "headerCaption": "BPA_NOC_NUMBER_DETAILS",
+            "header": "",
+            "submitBarLabel": "CS_COMMON_NEXT"
+        }
+
     },
     {
         "route": "basic-details",
@@ -208,7 +220,7 @@ export const newConfig1=[
     {
         "route": "owner-details",
         "component": "OwnerDetails",
-        "nextStep": "noc-number",
+        "nextStep": "document-details",
         "key": "owners",
         "texts": {
             "headerCaption": "BPA_OWNER_AND_DOCUMENT_DETAILS_LABEL",
@@ -217,29 +229,9 @@ export const newConfig1=[
         }
     },
     {
-        "route": "noc-number",
-        "component": "NOCNumber",
-        "nextStep": "document-details",
-        "key": "nocnumber",
-        "texts": {
-            "headerCaption": "BPA_NOC_NUMBER_DETAILS",
-            "header": "",
-            "submitBarLabel": "CS_COMMON_NEXT"
-        },
-        "inputs": [
-            {
-                "label": "BPA_NOC_NUMBER",
-                "type": "text",
-                "validation": {},
-                "name": "nocNumber"
-            }
-        ]
-
-    },
-    {
         "route": "document-details",
         "component": "DocumentDetails",
-        "nextStep": "noc-details",
+        "nextStep": null,
         "key": "documents",
         "texts": {
             "headerCaption": "BPA_OWNER_AND_DOCUMENT_DETAILS_LABEL",
@@ -247,16 +239,16 @@ export const newConfig1=[
             "submitBarLabel": "CS_COMMON_NEXT"
         }
     },
-    {
-        "route": "noc-details",
-        "component": "NOCDetails",
-        "nextStep": null,
-        "key": "nocDocuments",
-        "texts": {
-            "headerCaption": "BPA_NOC_DETAILS_SUMMARY",
-            "header": "",
-            "submitBarLabel": "CS_COMMON_NEXT",
-            "skipText": "CORE_COMMON_SKIP_CONTINUE"
-        }
-    }
+    // {
+    //     "route": "noc-details",
+    //     "component": "NOCDetails",
+    //     "nextStep": null,
+    //     "key": "nocDocuments",
+    //     "texts": {
+    //         "headerCaption": "BPA_NOC_DETAILS_SUMMARY",
+    //         "header": "",
+    //         "submitBarLabel": "CS_COMMON_NEXT",
+    //         "skipText": "CORE_COMMON_SKIP_CONTINUE"
+    //     }
+    // }
 ]
