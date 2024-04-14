@@ -82,32 +82,29 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
+ <repositories>
+		<repository>
+			<id>repo.egovernments.org</id>
+			<name>eGov DIGIT Releases Repository</name>
+			<url>
+				https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
+		</repository>
+		<repository>
+			<id>snapshots.repo.egovernments.org</id>
+			<name>eGov ERP Snapshots Repository</name>
+			<url>
+				https://pmidc-nexus.lgpunjab.gov.in/nexus/content/repositories/snapshots/</url>
+		</repository>
+	</repositories>
     <build>
         <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+          
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                <source>1.8</source>
+                <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>
