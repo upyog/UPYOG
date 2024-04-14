@@ -4,8 +4,10 @@ ARG nexusUsername=deployment
 ARG nexusPassword=egovnexus7918
 WORKDIR /app
 
-#InstallMaven
-RUN# copy the project files
+# Install Maven
+RUN apk add --no-cache maven
+
+# copy the project files
 COPY ${WORK_DIR}/pom.xml ./pom.xml
 COPY ${WORK_DIR}/settings.xml ./settings.xml
 # COPY build/maven/settings.xml ./settings.xml
