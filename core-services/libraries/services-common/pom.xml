@@ -14,23 +14,21 @@
   <version>1.1.1-SNAPSHOT</version>
   <name>services-common</name>
   <description>Shared classes among services</description>
-  <!--distributionManagement>
-  	<repository>
-		<id>repo.digit.org</id>
-		<name>eGov DIGIT Releases Repository</name>
-		<url>https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
-	</repository>
-    <repository>
-      <id>repo.digit.org</id>
-      <name>eGov ERP Releases Repository</name>
-      <url>https://nexus-repo.digit.org/nexus/content/repositories/releases/</url>
-    </repository>
-    <snapshotRepository>
-      <id>repo.digit.org</id>
-      <name>eGov ERP Snapshots Repository</name>
-      <url>https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement-->
+ <distributionManagement>
+   
+   <snapshotRepository>
+			<id>repo.digit.org</id>
+			<name>eGov ERP Snapshots Repository</name>
+			<url>
+				https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+		<repository>
+			<id>repo.egovernments.org</id>
+			<name>eGov ERP Releases Repository</name>
+			<url>
+				https://nexus-repo.egovernments.org/nexus/content/repositories/releases/</url>
+		</repository>
+  </distributionManagement>
   <properties>
     <log4j2.version>2.17.1</log4j2.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -72,18 +70,20 @@
       <scope>compile</scope>
     </dependency>
   </dependencies>
-  	<!--repositories>
+   <repositories>
 		<repository>
 			<id>repo.egovernments.org</id>
 			<name>eGov DIGIT Releases Repository</name>
-			<url>https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
+			<url>
+				https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
 			<id>snapshots.repo.egovernments.org</id>
 			<name>eGov ERP Snapshots Repository</name>
-			<url>https://nexus-repo.egovernments.org/nexus/content/repositories/snapshots/</url>
+			<url>
+				https://pmidc-nexus.lgpunjab.gov.in/nexus/content/repositories/snapshots/</url>
 		</repository>
-	</repositories-->
+	</repositories>
   <build>
     <plugins>
       <plugin>
