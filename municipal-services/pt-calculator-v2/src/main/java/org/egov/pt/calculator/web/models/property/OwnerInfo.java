@@ -52,9 +52,9 @@ public class OwnerInfo extends User  {
         private Set<Document> documents;
 
         public enum RelationshipEnum {
-                FATHER("FATHER"),
+                Father("Father"),
 
-                HUSBAND("HUSBAND");
+                Husband("Husband");
 
                 private String value;
 
