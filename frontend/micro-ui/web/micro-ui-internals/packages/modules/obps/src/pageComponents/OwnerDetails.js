@@ -413,10 +413,10 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         alert("Height should not be more than 15 metres");
                     }
                     //converting plot area which is in square meters to square yards by multiplying 1.196
-                    else if((parsedArchitectName=="ARCHITECT" || parsedArchitectName=="ENGINEER") && (formData?.data.edcrDetails.planDetail.planInformation.plotArea*1.196) >500){
+                    else if((parsedArchitectName=="ARCHITECT" || parsedArchitectName=="ENGINEER") && (formData?.data.edcrDetails.planDetail.planInformation.plotArea*1.19599) >500){
                             alert("Architect/Engineer can apply for area less then 500 sq. yards. in self declaration")
                         }
-                    else if((parsedArchitectName=="DESIGNER" || parsedArchitectName=="SUPERVISOR") && (formData?.data.edcrDetails.planDetail.planInformation.plotArea*1.196)>250){
+                    else if((parsedArchitectName=="DESIGNER" || parsedArchitectName=="SUPERVISOR") && (formData?.data.edcrDetails.planDetail.planInformation.plotArea*1.19599)>250){
                             alert("Designer/Supervisor can apply for area less then 500 sq. yards. in self declaration")
                         }
                     else{
