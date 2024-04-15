@@ -230,7 +230,8 @@ const Address = {
       required: ["code"]
     }
   },
-  required: ["locality", "city"]
+ // required: ["locality", "city"]
+  required: ["city"]
 };
 
 const BuildingUOM = {
