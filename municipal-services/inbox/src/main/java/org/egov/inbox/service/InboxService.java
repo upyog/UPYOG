@@ -238,7 +238,10 @@ public class InboxService {
                         statuses.add(StatusIdNameMap.get(status));
                     });
                     moduleSearchCriteria.put(applicationStatusParam, StringUtils.arrayToDelimitedString(statuses.toArray(), ","));
-                } else {
+                }
+                else if(criteria.getProcessSearchCriteria().getBusinessService().get(0).equalsIgnoreCase("ASMT"))
+                	moduleSearchCriteria.put(applicationStatusParam, "ACTIVE");
+                else {
                     moduleSearchCriteria.put(applicationStatusParam,
                             StringUtils.arrayToDelimitedString(StatusIdNameMap.values().toArray(), ","));
                 }
@@ -1041,6 +1044,7 @@ public class InboxService {
 					.append(moduleSearchCriteria.get(param).toString());
 				} else if(null != moduleSearchCriteria.get(param)) {
 					url.append("&").append(param).append("=").append(moduleSearchCriteria.get(param).toString());
+					log.info("\nmoduleSearchCriteria URL :::: " + moduleSearchCriteria);
 				}
 			}
 		});
