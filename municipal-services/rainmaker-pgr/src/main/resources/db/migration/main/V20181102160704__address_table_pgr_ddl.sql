@@ -1,4 +1,4 @@
-CREATE TABLE eg_pgr_address(
+CREATE TABLE IF NOT EXISTS eg_pgr_address(
 
   uuid varchar(256),
   housenoandstreetname  varchar(32),

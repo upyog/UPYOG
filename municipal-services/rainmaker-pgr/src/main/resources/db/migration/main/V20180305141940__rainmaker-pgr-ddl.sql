@@ -1,13 +1,13 @@
-DROP SEQUENCE IF EXISTS seq_eg_pgr_serviceRequestId;
+--DROP SEQUENCE IF EXISTS seq_eg_pgr_serviceRequestId;
 
-DROP TABLE IF EXISTS eg_pgr_media;
-DROP TABLE IF EXISTS eg_pgr_comment;
-DROP TABLE IF EXISTS eg_pgr_serviceReq_audit;
-DROP TABLE IF EXISTS eg_pgr_serviceReq;
+--DROP TABLE IF EXISTS eg_pgr_media;
+--DROP TABLE IF EXISTS eg_pgr_comment;
+--DROP TABLE IF EXISTS eg_pgr_serviceReq_audit;
+--DROP TABLE IF EXISTS eg_pgr_serviceReq;
 
-CREATE SEQUENCE seq_eg_pgr_serviceRequestId;
+CREATE SEQUENCE IF NOT EXISTS seq_eg_pgr_serviceRequestId;
 
-CREATE TABLE eg_pgr_serviceReq(
+CREATE TABLE IF NOT EXISTS eg_pgr_serviceReq(
 
   tenantId character varying(256),
   serviceCode character varying(256) NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE eg_pgr_serviceReq(
 );
 
 
-CREATE TABLE eg_pgr_media(
+CREATE TABLE IF NOT EXISTS eg_pgr_media(
 
   id character varying(256),
   by character varying(256) NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE eg_pgr_media(
   CONSTRAINT fk_eg_pgr_media FOREIGN KEY (tenantId,serviceRequestId) REFERENCES eg_pgr_serviceReq(tenantId,serviceRequestId)
 );
 
-CREATE TABLE eg_pgr_comment(
+CREATE TABLE IF NOT EXISTS eg_pgr_comment(
 
   id character varying(256),
   by character varying(256) NOT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE eg_pgr_comment(
   CONSTRAINT fk_eg_pgr_media FOREIGN KEY (tenantId,serviceRequestId) REFERENCES eg_pgr_serviceReq(tenantId,serviceRequestId)
 );
 
-CREATE TABLE eg_pgr_servicereq_audit
+CREATE TABLE IF NOT EXISTS eg_pgr_servicereq_audit
 (
     id SERIAL,
     tenantid character varying(256),

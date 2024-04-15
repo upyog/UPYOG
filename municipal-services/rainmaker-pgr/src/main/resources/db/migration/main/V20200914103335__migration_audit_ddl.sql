@@ -1,4 +1,4 @@
-CREATE TABLE eg_pgr_migration_audit(
+CREATE TABLE IF NOT EXISTS eg_pgr_migration_audit(
 
 tenantId character varying(256),
 currentOffset INT,
