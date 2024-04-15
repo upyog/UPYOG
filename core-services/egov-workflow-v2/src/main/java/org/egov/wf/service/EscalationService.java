@@ -77,10 +77,17 @@ public class EscalationService {
     private void processEscalation(RequestInfo requestInfo, Escalation escalation, List<String> tenantIds){
 
     	log.info("checking UUID");
+    	String stateUUID=null;
         for(String tenantId: tenantIds){
 
+        	if(escalation.getStatus().contains(",") && escalation.getBusinessService().equalsIgnoreCase("BPA"))
+        	{
+        		stateUUID = escalationUtil.getStatusUUID(escalation.getStatus().split(",")[0], tenantId, escalation.getBusinessService());
+        		stateUUID = stateUUID.concat(",").concat(escalationUtil.getStatusUUID(escalation.getStatus().split(",")[1], tenantId, escalation.getBusinessService()));
 
-            String stateUUID = escalationUtil.getStatusUUID(escalation.getStatus(), tenantId, escalation.getBusinessService());
+        	}	
+        	else
+        		stateUUID = escalationUtil.getStatusUUID(escalation.getStatus(), tenantId, escalation.getBusinessService());
 
             EscalationSearchCriteria criteria = EscalationSearchCriteria.builder().tenantId(tenantId)
                                                 .status(stateUUID)
@@ -92,6 +99,9 @@ public class EscalationService {
 
 
             List<String> businessIds = escalationRepository.getBusinessIds(criteria);
+            
+            if(escalation.getBusinessService().equalsIgnoreCase("BPA"))
+            	businessIds=escalationRepository.getBusinessFilteredIds(criteria,businessIds);
             Integer numberOfBusinessIds = businessIds.size();
             Integer batchSize = config.getEscalationBatchSize();
 
