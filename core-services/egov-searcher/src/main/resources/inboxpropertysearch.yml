@@ -166,13 +166,13 @@ SearchDefinitions:
       query:
         baseQuery: Select row_to_json(result) from
           (
-          select DISTINCT(property.acknowldgementnumber),pi.createdtime from eg_pt_property as property
+          select DISTINCT(asmt.assessmentnumber),pi.createdtime from eg_pt_asmt_assessment asmt inner join eg_pt_property property on property.propertyid =asmt.propertyid
           INNER JOIN eg_pt_owner owner ON property.id = owner.propertyid
           INNER JOIN eg_pt_address ptadd ON ptadd.propertyid = property.id
-          INNER JOIN eg_wf_processinstance_v2 pi ON pi.businessid in (select assessmentnumber from eg_pt_asmt_assessment where propertyid=property.propertyid)
+          INNER JOIN eg_wf_processinstance_v2 pi ON pi.businessid = asmt.assessmentnumber
           LEFT JOIN eg_wf_assignee_v2 assg ON pi.id = assg.processinstanceid
           $where
-          AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid in (select assessmentnumber from eg_pt_asmt_assessment where propertyid=property.propertyid) GROUP BY wf.businessid)
+          AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = asmt.assessmentnumber GROUP BY wf.businessid)
           order by pi.createdtime asc $pagination
           ) result
         groupBy:
@@ -219,13 +219,13 @@ SearchDefinitions:
       query:
         baseQuery: SELECT row_to_json(TotalCount) from (SELECT COUNT(result) from
           (
-          select DISTINCT(property.acknowldgementnumber),pi.createdtime from eg_pt_property as property
+          select DISTINCT(property.acknowldgementnumber),pi.createdtime from eg_pt_asmt_assessment asmt inner join eg_pt_property property on property.propertyid =asmt.propertyid
           INNER JOIN eg_pt_owner owner ON property.id = owner.propertyid
           INNER JOIN eg_pt_address ptadd ON ptadd.propertyid = property.id
-          INNER JOIN eg_wf_processinstance_v2 pi ON pi.businessid in (select assessmentnumber from eg_pt_asmt_assessment where propertyid=property.propertyid)
+          INNER JOIN eg_wf_processinstance_v2 pi ON pi.businessid = asmt.assessmentnumber
           LEFT JOIN eg_wf_assignee_v2 assg ON pi.id = assg.processinstanceid
           $where
-          AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid in (select assessmentnumber from eg_pt_asmt_assessment where propertyid=property.propertyid) GROUP BY wf.businessid)
+          AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = asmt.assessmentnumber GROUP BY wf.businessid)
           order by pi.createdtime asc
           ) result) TotalCount
         groupBy:
