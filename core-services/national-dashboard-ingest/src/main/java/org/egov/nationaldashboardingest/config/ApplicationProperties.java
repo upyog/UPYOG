@@ -59,4 +59,7 @@ public class ApplicationProperties {
 
     @Value("#{${national.dashboard.usageTypeNOC}}")
     private List<String> nationalDashboardUsageTypeNOC;
+
+    @Value("${national.dashboard.legacy.version}")
+    private Boolean isLegacyVersionES;
 }
