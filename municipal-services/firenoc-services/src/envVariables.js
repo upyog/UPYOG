@@ -50,7 +50,7 @@ const envVariables = {
   //location service configurations
   EGOV_LOCATION_HOST: process.env.EGOV_LOCATION_HOST || "http://localhost:8090",
   EGOV_LOCATION_CONTEXT_PATH:
-    process.env.EGOV_LOCATION_CONTEXT_PATH || "/egov-location/location/v11/",
+    process.env.EGOV_LOCATION_CONTEXT_PATH || "/egov-location/location/v11",
   EGOV_LOCATION_SEARCH_ENDPOINT:
     process.env.EGOV_LOCATION_SEARCH_ENDPOINT || "/boundarys/_search",
   EGOV_LOCATION_HIERARCHY_TYPE_CODE: process.env.EGOV_LOCATION || "REVENUE",
