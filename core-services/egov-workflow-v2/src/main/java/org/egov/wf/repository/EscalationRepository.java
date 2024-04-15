@@ -37,8 +37,19 @@ public class EscalationRepository {
 
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getEscalationQuery(criteria, preparedStmtList);
+        if(criteria.getBusinessService().equalsIgnoreCase("BPA"))
+        	query=queryBuilder.getEscalationQueryForBPA(criteria, preparedStmtList);
         List<String> businessIds = jdbcTemplate.query(query, preparedStmtList.toArray(),  new SingleColumnRowMapper<>(String.class));
         return  businessIds;
+
+    }
+    
+    public List<String> getBusinessFilteredIds(EscalationSearchCriteria criteria,List<String> businessIds){
+
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getEscalationQueryFiltered(criteria,businessIds, preparedStmtList);
+        List<String> businessIdsFiltered = jdbcTemplate.query(query, preparedStmtList.toArray(),  new SingleColumnRowMapper<>(String.class));
+        return  businessIdsFiltered;
 
     }
 
