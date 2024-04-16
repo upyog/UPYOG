@@ -91,7 +91,7 @@ const getAssignerDetails = (instance, nextStep, moduleCode) => {
 export const WorkflowService = {
   init: (stateCode, businessServices) => {
     return Request({
-      url: Urls.WorkFlow,
+      url: `${Urls.WorkFlow}?tenantId=${Digit.ULBService.getCitizenCurrentTenant()}`,
       useCache: true,
       method: "POST",
       params: { tenantId: stateCode, businessServices },

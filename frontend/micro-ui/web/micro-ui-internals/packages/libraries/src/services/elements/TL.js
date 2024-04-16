@@ -15,7 +15,7 @@ export const TLService = {
     }),
   search: (details) =>
     Request({
-      url: Urls.tl.search,
+      url: `${Urls.tl.search}?tenantId=${Digit.ULBService.getCitizenCurrentTenant()}`,
       useCache: false,
       setTimeParam: false,
       userService: true,
