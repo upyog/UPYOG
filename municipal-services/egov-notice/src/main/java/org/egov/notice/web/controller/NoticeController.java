@@ -11,9 +11,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.egov.notice.service.DSSInboxFilterService;
 import org.egov.notice.service.ElasticSearchService;
 import org.egov.notice.service.InboxService;
+import org.egov.notice.service.NoticeService;
 import org.egov.notice.util.ResponseInfoFactory;
 import org.egov.notice.web.model.InboxRequest;
 import org.egov.notice.web.model.InboxResponse;
+import org.egov.notice.web.model.NoticeRequest;
+import org.egov.notice.web.model.NoticeResponse;
 import org.egov.notice.web.model.dss.InboxMetricCriteria;
 import org.egov.notice.web.model.elasticsearch.InboxElasticSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,13 +47,16 @@ public class NoticeController {
 	@Autowired
 	private ElasticSearchService elasticSearchService;
 	
+	@Autowired
+	NoticeService noticeService;
+	
 	
 	@PostMapping(value = "/_save")
-	public ResponseEntity<InboxResponse> search( @RequestBody  InboxRequest inboxRequest) {
-		InboxResponse response = inboxService.fetchInboxData(inboxRequest.getInbox(),inboxRequest.getRequestInfo());
+	public ResponseEntity<NoticeResponse> search( @RequestBody  NoticeRequest noticeRequest) {
+		NoticeResponse response = noticeService.saveNoticeData(noticeRequest.getNotice(),noticeRequest.getRequestInfo());
 		
 		response.setResponseInfo(
-				responseInfoFactory.createResponseInfoFromRequestInfo(inboxRequest.getRequestInfo(), true));
+				responseInfoFactory.createResponseInfoFromRequestInfoCommonContract(noticeRequest.getRequestInfo(), true));
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 

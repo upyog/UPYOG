@@ -45,7 +45,7 @@ public class NoticeConfiguration {
 
 	@Value("${workflow.process.count.path}")
 	private String processCountPath;
-	
+
 	@Value("${workflow.process.nearing.sla.count.path}")
 	private String nearingSlaProcessCountPath;
 
@@ -57,25 +57,25 @@ public class NoticeConfiguration {
 
 	@Value("${egov.searcher.fsm.dsoid.path}")
 	private String fsmInboxDSoIDEndpoint;
-	
+
 	@Value("${egov.vehicle.host}")
 	private String vehicleHost;
-	
+
 	@Value("${vehicle.search.path}")
 	private String vehicleSearchPath;
-	
+
 	@Value("${vehicle.fetchApplicationStatusCount.path}")
 	private String vehicleApplicationStatusCountPath;
-	
+
 	@Value("${vehicle.searchTrip.path}")
 	private String vehicleSearchTripPath;
-	
+
 	@Value("${egov.fsm.host}")
 	private String fsmHost;
 
 	@Value("${egov.fsm.fetchApplicationIds.path}")
 	private String fetchApplicationIds;
-	
+
 	@Value("#{${bs.businesscode.service.search}}")
 	private Map<String, Map<String, String>> bsServiceSearchMapping;
 
@@ -133,5 +133,17 @@ public class NoticeConfiguration {
 
 	@Value("${es.search.default.sort.order}")
 	private String defaultSortOrder;
-}
 
+	@Value("${egov.idgen.host}")
+	private String idGenHost;
+
+	@Value("${egov.idgen.path}")
+	private String idGenPath;
+
+	@Value("${egov.idgen.ack.name}")
+	private String ackIdGenName;
+
+	@Value("${egov.idgen.ack.format}")
+	private String ackIdGenFormat;
+	
+}

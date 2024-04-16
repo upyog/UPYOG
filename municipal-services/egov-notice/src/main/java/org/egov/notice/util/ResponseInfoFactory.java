@@ -22,4 +22,19 @@ public class ResponseInfoFactory {
         return ResponseInfo.builder().apiId(apiId).ver(ver).ts(ts).resMsgId(resMsgId).msgId(msgId).resMsgId(resMsgId)
                 .status(responseStatus).build();
     }
+    
+    public ResponseInfo createResponseInfoFromRequestInfoCommonContract(final RequestInfo requestInfo, final Boolean success) {
+
+        final String apiId = requestInfo != null ? requestInfo.getApiId() : StringUtils.EMPTY;
+        final String ver = requestInfo != null ? requestInfo.getVer() : StringUtils.EMPTY;
+        Long ts = null;
+        if (requestInfo != null)
+            ts = requestInfo.getTs();
+        final String resMsgId = "uief87324";
+        final String msgId = requestInfo != null ? requestInfo.getMsgId() : StringUtils.EMPTY;
+        final String responseStatus = success ? "successful" : "failed";
+
+        return ResponseInfo.builder().apiId(apiId).ver(ver).ts(ts).resMsgId(resMsgId).msgId(msgId).resMsgId(resMsgId)
+                .status(responseStatus).build();
+    }
 }

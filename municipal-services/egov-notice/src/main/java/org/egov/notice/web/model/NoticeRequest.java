@@ -20,7 +20,7 @@ import lombok.Setter;;
 @Setter
 public class NoticeRequest   {
   @JsonProperty("RequestInfo")
-  private org.egov.notice.web.model.RequestInfo RequestInfo;
+  private  RequestInfo requestInfo;
 
   @Valid
   @JsonProperty("notice")
