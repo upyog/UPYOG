@@ -319,7 +319,7 @@ const OwnerInfo = {
     relationship: {
       type: "string",
       description: "Relationship with owner.",
-      enum: ["FATHER", "HUSBAND"]
+      enum: ["Father", "Husband"]
     },
     documents: {
       description: "Document of the owner.",
