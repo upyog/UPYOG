@@ -69,7 +69,7 @@ const envVariables = {
   EGOV_USER_USERNAME_PREFIX: process.env.EGOV_USER_USERNAME_PREFIX || "FN-",
 
   //idgen service configurations
-  EGOV_IDGEN_HOST: process.env.EGOV_IDGEN_HOST || "http://localhost:8087",
+  EGOV_IDGEN_HOST: process.env.EGOV_IDGEN_HOST || "http://egov-idgen:8080",
   EGOV_IDGEN_CONTEXT_PATH: process.env.EGOV_IDGEN_CONTEXT_PATH || "/egov-idgen",
   EGOV_IDGEN_GENERATE_ENPOINT:
     process.env.EGOV_IDGEN_GENERATE_ENPOINT || "/id/_generate",
