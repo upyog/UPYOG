@@ -34,21 +34,24 @@ public class ServiceRequestRepository {
 	 * @param request
 	 * @return
 	 */
-	public Object fetchResult(StringBuilder uri, Object request) {
+	public Optional<Object> fetchResult(StringBuilder uri, Object request) {
+
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		Object response = null;
-		//log.debug("URI: " + uri.toString());
+		log.info("URI: "+uri.toString());
 		try {
-			//log.debug("Request: " + mapper.writeValueAsString(request));
+			log.info("Request: "+mapper.writeValueAsString(request));
 			response = restTemplate.postForObject(uri.toString(), request, Map.class);
 		} catch (HttpClientErrorException e) {
-			//log.error("External Service threw an Exception: ", e);
+			
+			log.error("External Service threw an Exception: ", e);
 			throw new ServiceCallException(e.getResponseBodyAsString());
 		} catch (Exception e) {
-			//log.error("Exception while fetching from searcher: ", e);
-			throw new ServiceCallException(e.getMessage());
+			
+			log.error("Exception while fetching from external service: ", e);
+			throw new CustomException("REST_CALL_EXCEPTION : "+uri.toString(),e.getMessage());
 		}
-
-		return response;
+		return Optional.ofNullable(response);
 	}
 	
 	/**

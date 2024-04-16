@@ -146,4 +146,10 @@ public class NoticeConfiguration {
 	@Value("${egov.idgen.ack.format}")
 	private String ackIdGenFormat;
 	
+	@Value("${egov.idgen.notice.name}")
+	private String noticeidname;
+	
+	@Value("${egov.idgen.notice.format}")
+	private String noticeformat;
+	
 }

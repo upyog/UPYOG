@@ -1,15 +1,33 @@
 package org.egov.notice.service;
 
+import org.egov.notice.config.NoticeConfiguration;
 import org.egov.notice.enums.NoticeType;
+import org.egov.notice.producer.NoticeProducer;
+import org.egov.notice.util.CommonUtils;
 import org.egov.notice.web.model.Notice;
 import org.egov.notice.web.model.NoticeResponse;
 import org.egov.tracer.model.CustomException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.cedarsoftware.util.StringUtilities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.common.contract.request.RequestInfo;
 
+
+
 public class NoticeService {
+	
+	@Autowired
+	EnrichmentService enrichmentService;
+	
+	@Autowired
+	NoticeProducer noticeProducer;
+	
+	@Autowired
+	NoticeConfiguration noticeconfig;
 	
 	public NoticeResponse saveNoticeData(Notice noticeFromRequest,RequestInfo requestInfo)
 	{
@@ -17,9 +35,12 @@ public class NoticeService {
 		if(noticeFromRequest.getNoticeType().equals(NoticeType.REC_MIS_DEF_RET))
 		{
 			validateForRecMistakeDefectiveReturn(noticeFromRequest);
-			
-			
+			enrichmentService.enrichCreateRequest(noticeFromRequest,requestInfo);
+			noticeProducer.push(null, response);
 		}
+		List<Notice> noticresponse=new ArrayList<Notice>();
+		noticresponse.add(noticeFromRequest);
+		response.setNotice(noticresponse);
 		return response;
 	}
 

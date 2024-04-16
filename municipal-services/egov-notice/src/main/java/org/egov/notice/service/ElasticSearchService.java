@@ -72,7 +72,7 @@ public class ElasticSearchService {
         userSearchRequest.put("tenantId", config.getParentLevelTenantId());
         userSearchRequest.put("roleCodes", Collections.singletonList(INTERNALMICROSERVICEROLE_CODE));
         try {
-            LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(uri, userSearchRequest);
+            LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(uri, userSearchRequest).get();
             List<LinkedHashMap<String, Object>> users = (List<LinkedHashMap<String, Object>>) responseMap.get("user");
             System.out.println(users);
             if(users.size()==0) {
@@ -104,7 +104,7 @@ public class ElasticSearchService {
         uri.append(config.getUserHost()).append(config.getUserCreateEndpoint()); // URL for user create call
 
         try {
-            LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(uri, userCreateRequest);
+            LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(uri, userCreateRequest).get();
             List<LinkedHashMap<String, Object>> users = (List<LinkedHashMap<String, Object>>) responseMap.get("user");
             internalMicroserviceRoleUuid = (String) users.get(0).get("uuid");
         }catch (Exception e) {
@@ -292,7 +292,7 @@ public class ElasticSearchService {
         UserDetailResponse userDetailResponse = null;
 
         try {
-            LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(uri, userSearchRequest);
+            LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(uri, userSearchRequest).get();
             List<LinkedHashMap<String, Object>> users = (List<LinkedHashMap<String, Object>>) responseMap.get("user");
             if(null != users) {
                 users.forEach( user -> {
@@ -355,7 +355,7 @@ public class ElasticSearchService {
         userSearchRequest.put("uuid",uuids);
         UserDetailResponse userDetailResponse = null;
         try {
-            LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(uri, userSearchRequest);
+            LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(uri, userSearchRequest).get();
 
             List<LinkedHashMap<String, Object>> users = (List<LinkedHashMap<String, Object>>) responseMap.get("user");
             String dobFormat = "yyyy-MM-dd";
