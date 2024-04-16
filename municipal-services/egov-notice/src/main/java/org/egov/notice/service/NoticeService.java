@@ -8,6 +8,7 @@ import org.egov.notice.web.model.Notice;
 import org.egov.notice.web.model.NoticeResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.cedarsoftware.util.StringUtilities;
 
@@ -17,7 +18,7 @@ import java.util.List;
 import org.egov.common.contract.request.RequestInfo;
 
 
-
+@Service
 public class NoticeService {
 	
 	@Autowired
@@ -36,9 +37,10 @@ public class NoticeService {
 		{
 			validateForRecMistakeDefectiveReturn(noticeFromRequest);
 			enrichmentService.enrichCreateRequest(noticeFromRequest,requestInfo);
-			noticeProducer.push(null, response);
+//		/	noticeProducer.push(null, response);
 		}
 		List<Notice> noticresponse=new ArrayList<Notice>();
+		response=new NoticeResponse();
 		noticresponse.add(noticeFromRequest);
 		response.setNotice(noticresponse);
 		return response;

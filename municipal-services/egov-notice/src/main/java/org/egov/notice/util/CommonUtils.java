@@ -24,6 +24,7 @@ import org.egov.notice.web.model.IdRequest;
 import org.egov.notice.web.model.IdResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -34,6 +35,7 @@ import com.jayway.jsonpath.JsonPath;
 import lombok.Getter;
 
 @Getter
+@Component
 public class CommonUtils {
 
 	

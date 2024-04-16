@@ -60,4 +60,7 @@ public class Notice {
 	
 	@JsonProperty("place")
 	private String place;
+	
+	@JsonProperty("AuditDetails")
+	private AuditDetails auditDetails;
 }

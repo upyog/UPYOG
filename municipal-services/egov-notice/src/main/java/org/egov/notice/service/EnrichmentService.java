@@ -1,13 +1,18 @@
 package org.egov.notice.service;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.notice.config.NoticeConfiguration;
 import org.egov.notice.util.CommonUtils;
 import org.egov.notice.web.model.Notice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import com.cedarsoftware.util.StringUtilities;
+
+@Service
 public class EnrichmentService {
 	
 	@Autowired
@@ -19,7 +24,12 @@ public class EnrichmentService {
 	public void enrichCreateRequest(Notice noticerequest, RequestInfo requestInfo)
 	{
 		setIdgenIds(noticerequest,requestInfo);
+		setCommentIds(noticerequest);
+	}
+
+	private void setCommentIds(Notice noticerequest) {
 		
+		noticerequest.getNoticeComment().stream().filter(x-> StringUtilities.isEmpty(x.getUuid())).forEach(x-> x.setUuid(UUID.randomUUID().toString()));
 	}
 
 	private void setIdgenIds(Notice noticerequest, RequestInfo requestInfo) {

@@ -8,9 +8,9 @@ import javax.validation.Valid;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import org.egov.notice.service.DSSInboxFilterService;
-import org.egov.notice.service.ElasticSearchService;
-import org.egov.notice.service.InboxService;
+
+
+
 import org.egov.notice.service.NoticeService;
 import org.egov.notice.util.ResponseInfoFactory;
 import org.egov.notice.web.model.InboxRequest;
@@ -34,18 +34,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1")
 public class NoticeController {
 	
-	@Autowired
-	private InboxService inboxService;
+	
 	
 	
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
 
-	@Autowired
-	private DSSInboxFilterService dssInboxService;
+	
 
-	@Autowired
-	private ElasticSearchService elasticSearchService;
 	
 	@Autowired
 	NoticeService noticeService;
