@@ -25,6 +25,8 @@ public class EnrichmentService {
 	{
 		setIdgenIds(noticerequest,requestInfo);
 		setCommentIds(noticerequest);
+		//true for create
+		noticeutil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 	}
 
 	private void setCommentIds(Notice noticerequest) {
