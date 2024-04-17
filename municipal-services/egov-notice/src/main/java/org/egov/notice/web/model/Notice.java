@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.notice.web.model.workflow.ProcessInstance;
+import org.elasticsearch.common.inject.PrivateBinder;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -60,6 +61,36 @@ public class Notice {
 	
 	@JsonProperty("place")
 	private String place;
+	
+	@JsonProperty("perticulars")
+	private String particulars;
+	
+	@JsonProperty("asreturnfiled")
+	private String asreturnFiled;
+	
+	@JsonProperty("aspermunispality")
+	private String asperMunispality;
+	
+	@JsonProperty("resolutionon")
+	private String resolutionOn;
+	
+	@JsonProperty("dated")
+	private String dated;
+	
+	@JsonProperty("designation")
+	private String designation;
+	
+	@JsonProperty("authorisedpersonname")
+	private String authorisedpersonName;
+	
+	@JsonProperty("mobilenumber")
+	private String mobilenumber;
+	
+	@JsonProperty("penaltyamount")
+	private int penaltyAmount;
+	
+	@JsonProperty("appealno")
+	private String appealNo;
 	
 	@JsonProperty("AuditDetails")
 	private AuditDetails auditDetails;

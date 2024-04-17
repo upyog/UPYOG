@@ -31,21 +31,6 @@ public class NoticeConfiguration {
 		TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
 	}
 
-
-	
-
-
-
-
-	@Value("${egov.mdms.host}")
-	private String mdmsHost;
-
-	@Value("${egov.mdms.search.endpoint}")
-	private String mdmsSearchEndPoint;
-
-	
-	
-
 	@Value("${egov.idgen.host}")
 	private String idGenHost;
 
