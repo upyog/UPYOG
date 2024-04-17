@@ -33,7 +33,6 @@ public class NoticeService {
 
 	public Notice saveNoticeData(NoticeRequest noticeRequest)
 	{
-
 		validateForRecMistakeDefectiveReturn(noticeRequest.getNotice());
 		enrichmentService.enrichCreateRequest(noticeRequest);
 		noticeProducer.push(noticeconfig.getSavenoticetopic(), noticeRequest);

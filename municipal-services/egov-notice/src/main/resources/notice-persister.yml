@@ -7,7 +7,7 @@ serviceMaps:
     isTransaction: true
     queryMaps:
 
-    - query: INSERT INTO eg_pt_notice(noticeType,tenantId,uuid,noticeNumber,name,address,propertyId,assessmentYear,acknowledgementNumber,dateOfAnnualRet,entryDate,entryTime,place,particulars,asreturnfiled,aspermunispality,resolutionon,dated,designation,authorisedpersonname,mobilenumber,penaltyamount,appealno) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+    - query: INSERT INTO eg_pt_notice(noticeType,tenantId,uuid,noticeNumber,name,address,propertyId,assessmentYear,acknowledgementNumber,dateOfAnnualRet,entryDate,entryTime,place,perticulars,asreturnfiled,aspermunispality,resolutionon,dated,designation,authorisedpersonname,mobilenumber,penaltyamount,appealno,createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
       basePath: $.Notice
       jsonMaps:
 
@@ -56,10 +56,18 @@ serviceMaps:
       - jsonPath: $.Notice.penaltyAmount
 
       - jsonPath: $.Notice.appealNo
+      
+      - jsonPath: $.Notice.auditDetails.createdBy
+
+      - jsonPath: $.Notice.auditDetails.createdTime
+
+      - jsonPath: $.Notice.auditDetails.lastModifiedBy
+
+      - jsonPath: $.Notice.auditDetails.lastModifiedTime
 
 
 
-    - query: INSERT INTO eg_pt_notice_comment (uuid,noticeid,comment) VALUES (?,?,?);
+    - query: INSERT INTO eg_pt_notice_comment (uuid,noticeid,comment,createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?,?,?,?,?,?,?);
       basePath: Notice.NoticeComment.*
       jsonMaps:
 
@@ -68,6 +76,14 @@ serviceMaps:
       - jsonPath: $.Notice.noticeuuid
 
       - jsonPath: $.Notice.NoticeComment.*.comment
+      
+      - jsonPath: $.Notice.NoticeComment.*.auditDetails.createdBy
+
+      - jsonPath: $.Notice.NoticeComment.*.auditDetails.createdTime
+
+      - jsonPath: $.Notice.NoticeComment.*.auditDetails.lastModifiedBy
+
+      - jsonPath: $.Notice.NoticeComment.*.auditDetails.lastModifiedTime
 
       
 

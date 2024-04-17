@@ -92,6 +92,6 @@ public class Notice {
 	@JsonProperty("appealNo")
 	private String appealNo;
 	
-	@JsonProperty("AuditDetails")
+	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;
 }
