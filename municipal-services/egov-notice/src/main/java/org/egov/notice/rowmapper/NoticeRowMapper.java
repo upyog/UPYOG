@@ -45,9 +45,10 @@ public class NoticeRowMapper implements ResultSetExtractor<List<Notice>> {
 						.tenantId(rs.getString("tenantid"))
 						.noticeNumber(rs.getString("noticenumber"))
 						.address(rs.getString("address"))
-						.propertyId(rs.getString(""))
+						.propertyId(rs.getString("propertyid"))
 						.acknowledgementNumber(rs.getString(""))
 						.assessmentYear(rs.getString(""))
+						.name(rs.getString("username"))
 						.noticeComment(new ArrayList<>()).build();
 
 				
@@ -58,9 +59,9 @@ public class NoticeRowMapper implements ResultSetExtractor<List<Notice>> {
 				
 
 
-				AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("ass_createdby"))
-						.createdTime(rs.getLong("ass_createdtime")).lastModifiedBy(rs.getString("ass_lastmodifiedby"))
-						.lastModifiedTime(rs.getLong("ass_lastmodifiedtime")).build();
+				AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("nt_cb"))
+						.createdTime(rs.getLong("nt_ct")).lastModifiedBy(rs.getString("nt_lmb"))
+						.lastModifiedTime(rs.getLong("nt_lmt")).build();
 				notice.setAuditDetails(auditDetails);
 
 				noticeMap.put(notice.getNoticeuuid(), notice);
@@ -73,12 +74,12 @@ public class NoticeRowMapper implements ResultSetExtractor<List<Notice>> {
 
 
 	private NoticeComment getNoticeComment(ResultSet rs) throws SQLException {
-		if(null == rs.getString("us_id"))
+		if(null == rs.getString("noticeid"))
 			return null;
-
-		org.egov.notice.web.model.AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("us_createdby"))
-				.createdTime(rs.getLong("us_createdtime")).lastModifiedBy(rs.getString("us_lastmodifiedby"))
-				.lastModifiedTime(rs.getLong("us_lastmodifiedtime")).build();
+		
+		org.egov.notice.web.model.AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("cm_cb"))
+				.createdTime(rs.getLong("cm_ct")).lastModifiedBy(rs.getString("cm_lmb"))
+				.lastModifiedTime(rs.getLong("cm_lmt")).build();
 
 
 		return NoticeComment.builder().uuid(rs.getString("uuid"))
