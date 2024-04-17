@@ -46,8 +46,8 @@ public class NoticeRowMapper implements ResultSetExtractor<List<Notice>> {
 						.noticeNumber(rs.getString("noticenumber"))
 						.address(rs.getString("address"))
 						.propertyId(rs.getString("propertyid"))
-						.acknowledgementNumber(rs.getString(""))
-						.assessmentYear(rs.getString(""))
+						.acknowledgementNumber(rs.getString("propertyid"))
+						.assessmentYear(rs.getString("propertyid"))
 						.name(rs.getString("username"))
 						.noticeComment(new ArrayList<>()).build();
 
@@ -66,6 +66,8 @@ public class NoticeRowMapper implements ResultSetExtractor<List<Notice>> {
 
 				noticeMap.put(notice.getNoticeuuid(), notice);
 			}
+			else
+			addcommentnotice(rs,notice);
 		}
 
 		return new ArrayList<>(noticeMap.values());
@@ -88,6 +90,21 @@ public class NoticeRowMapper implements ResultSetExtractor<List<Notice>> {
 				.build();
 	}
 
+	private void addcommentnotice(ResultSet rs,Notice notice) throws SQLException
+	{
+		
+		org.egov.notice.web.model.AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("cm_cb"))
+				.createdTime(rs.getLong("cm_ct")).lastModifiedBy(rs.getString("cm_lmb"))
+				.lastModifiedTime(rs.getLong("cm_lmt")).build();
+
+
+		NoticeComment comment= NoticeComment.builder().uuid(rs.getString("uuid"))
+				.comment(rs.getString("comment"))
+				.auditDetails(auditDetails)
+				.build();
+		 
+		 notice.getNoticeComment().add(comment);
+	}
 
 
 	

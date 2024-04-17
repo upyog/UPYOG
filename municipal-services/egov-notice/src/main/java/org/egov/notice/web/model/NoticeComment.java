@@ -17,8 +17,6 @@ public class NoticeComment {
 	
 	private String uuid;
 	private String comment;
-	@JsonProperty("AuditDetails")
-	private AuditDetails  auditDetails;
 	
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;

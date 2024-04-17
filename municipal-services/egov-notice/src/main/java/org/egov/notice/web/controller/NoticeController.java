@@ -1,6 +1,7 @@
 package org.egov.notice.web.controller;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -47,11 +48,17 @@ public class NoticeController {
 	
 	
 	@PostMapping(value = "/_save")
-	public ResponseEntity<NoticeResponse> search( @RequestBody  NoticeRequest noticeRequest) {
+	public ResponseEntity<NoticeResponse> save( @RequestBody  NoticeRequest noticeRequest) {
 		Notice notice = noticeService.saveNoticeData(noticeRequest);
 		ResponseInfo resinfo=responseInfoFactory.createResponseInfoFromRequestInfoCommonContract(noticeRequest.getRequestInfo(), true);
 		NoticeResponse response=NoticeResponse.builder().notice(Arrays.asList(notice)).responseInfo(resinfo).build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	@PostMapping(value="/_search")
+	public void search() throws SQLException
+	{
+		noticeService.getsearchdata();
 	}
 
 	
