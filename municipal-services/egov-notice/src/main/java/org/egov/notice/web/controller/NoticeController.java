@@ -8,13 +8,12 @@ import javax.validation.Valid;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-
-
-
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.notice.service.NoticeService;
 import org.egov.notice.util.ResponseInfoFactory;
 import org.egov.notice.web.model.InboxRequest;
 import org.egov.notice.web.model.InboxResponse;
+import org.egov.notice.web.model.Notice;
 import org.egov.notice.web.model.NoticeRequest;
 import org.egov.notice.web.model.NoticeResponse;
 import org.egov.notice.web.model.dss.InboxMetricCriteria;
@@ -49,10 +48,9 @@ public class NoticeController {
 	
 	@PostMapping(value = "/_save")
 	public ResponseEntity<NoticeResponse> search( @RequestBody  NoticeRequest noticeRequest) {
-		NoticeResponse response = noticeService.saveNoticeData(noticeRequest);
-		
-		response.setResponseInfo(
-				responseInfoFactory.createResponseInfoFromRequestInfoCommonContract(noticeRequest.getRequestInfo(), true));
+		Notice notice = noticeService.saveNoticeData(noticeRequest);
+		ResponseInfo resinfo=responseInfoFactory.createResponseInfoFromRequestInfoCommonContract(noticeRequest.getRequestInfo(), true);
+		NoticeResponse response=NoticeResponse.builder().notice(Arrays.asList(notice)).responseInfo(resinfo).build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
