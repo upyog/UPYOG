@@ -37,12 +37,15 @@ public class NoticeService {
 		{
 			validateForRecMistakeDefectiveReturn(noticeFromRequest);
 			enrichmentService.enrichCreateRequest(noticeFromRequest,requestInfo);
-//		/	noticeProducer.push(null, response);
+			System.out.println("noticeFromRequest::"+noticeFromRequest);
+			//noticeProducer.push(noticeconfig.getSavenoticetopic(), noticeFromRequest);
+			
 		}
 		List<Notice> noticresponse=new ArrayList<Notice>();
 		response=new NoticeResponse();
 		noticresponse.add(noticeFromRequest);
 		response.setNotice(noticresponse);
+		noticeProducer.push(noticeconfig.getSavenoticetopic(), response);
 		return response;
 	}
 

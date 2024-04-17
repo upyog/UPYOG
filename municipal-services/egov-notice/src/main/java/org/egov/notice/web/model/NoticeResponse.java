@@ -18,7 +18,7 @@ public class NoticeResponse {
 	@JsonbProperty("responseInfo")
 	private ResponseInfo responseInfo;
 	
-	@JsonbProperty("notice")
+	@JsonbProperty("Notice")
 	List<Notice> notice;
 
 }

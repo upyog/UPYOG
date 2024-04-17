@@ -23,7 +23,7 @@ public class NoticeRequest   {
   private  RequestInfo requestInfo;
 
   @Valid
-  @JsonProperty("notice")
+  @JsonProperty("Notice")
   private Notice notice ;
 
 

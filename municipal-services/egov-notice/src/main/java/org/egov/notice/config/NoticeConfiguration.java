@@ -49,4 +49,7 @@ public class NoticeConfiguration {
 	@Value("${egov.idgen.notice.format}")
 	private String noticeformat;
 	
+	@Value("${persister.save.notice.topic}")
+	private String savenoticetopic;
+	
 }
