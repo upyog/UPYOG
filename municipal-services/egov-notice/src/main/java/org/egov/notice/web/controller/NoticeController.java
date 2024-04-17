@@ -49,7 +49,7 @@ public class NoticeController {
 	
 	@PostMapping(value = "/_save")
 	public ResponseEntity<NoticeResponse> search( @RequestBody  NoticeRequest noticeRequest) {
-		NoticeResponse response = noticeService.saveNoticeData(noticeRequest.getNotice(),noticeRequest.getRequestInfo());
+		NoticeResponse response = noticeService.saveNoticeData(noticeRequest);
 		
 		response.setResponseInfo(
 				responseInfoFactory.createResponseInfoFromRequestInfoCommonContract(noticeRequest.getRequestInfo(), true));

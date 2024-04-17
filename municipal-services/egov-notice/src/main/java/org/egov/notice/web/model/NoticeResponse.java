@@ -7,6 +7,8 @@ import javax.json.bind.annotation.JsonbProperty;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,10 +17,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NoticeResponse {
-	@JsonbProperty("responseInfo")
+	@JsonProperty("responseInfo")
 	private ResponseInfo responseInfo;
 	
-	@JsonbProperty("Notice")
+	@JsonProperty("Notice")
 	List<Notice> notice;
 
 }

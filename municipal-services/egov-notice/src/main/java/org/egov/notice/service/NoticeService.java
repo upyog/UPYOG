@@ -5,6 +5,7 @@ import org.egov.notice.enums.NoticeType;
 import org.egov.notice.producer.NoticeProducer;
 import org.egov.notice.util.CommonUtils;
 import org.egov.notice.web.model.Notice;
+import org.egov.notice.web.model.NoticeRequest;
 import org.egov.notice.web.model.NoticeResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,22 +31,24 @@ public class NoticeService {
 	@Autowired
 	NoticeConfiguration noticeconfig;
 	
-	public NoticeResponse saveNoticeData(Notice noticeFromRequest,RequestInfo requestInfo)
+	public NoticeResponse saveNoticeData(NoticeRequest noticeRequest)
 	{
 		NoticeResponse response = null;
+		Notice noticeFromRequest = noticeRequest.getNotice();
 		if(noticeFromRequest.getNoticeType().equals(NoticeType.REC_MIS_DEF_RET))
 		{
 			validateForRecMistakeDefectiveReturn(noticeFromRequest);
-			enrichmentService.enrichCreateRequest(noticeFromRequest,requestInfo);
+			enrichmentService.enrichCreateRequest(noticeFromRequest,noticeRequest.getRequestInfo());
+			noticeRequest.setNotice(noticeFromRequest);
 			System.out.println("noticeFromRequest::"+noticeFromRequest);
-			//noticeProducer.push(noticeconfig.getSavenoticetopic(), noticeFromRequest);
+			noticeProducer.push(noticeconfig.getSavenoticetopic(), noticeRequest);
 			
 		}
 		List<Notice> noticresponse=new ArrayList<Notice>();
 		response=new NoticeResponse();
 		noticresponse.add(noticeFromRequest);
 		response.setNotice(noticresponse);
-		noticeProducer.push(noticeconfig.getSavenoticetopic(), response);
+		//noticeProducer.push(noticeconfig.getSavenoticetopic(), response);
 		return response;
 	}
 

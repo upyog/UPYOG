@@ -32,7 +32,7 @@ public class Notice {
 	@JsonProperty("noticeNumber")
 	private String noticeNumber;
 	
-	@JsonProperty("noticeComment")
+	@JsonProperty("NoticeComment")
 	private List<NoticeComment>noticeComment;
 	
 	@JsonProperty("name")
@@ -62,16 +62,16 @@ public class Notice {
 	@JsonProperty("place")
 	private String place;
 	
-	@JsonProperty("perticulars")
+	@JsonProperty("particulars")
 	private String particulars;
 	
-	@JsonProperty("asreturnfiled")
+	@JsonProperty("asreturnFiled")
 	private String asreturnFiled;
 	
-	@JsonProperty("aspermunispality")
+	@JsonProperty("asperMunispality")
 	private String asperMunispality;
 	
-	@JsonProperty("resolutionon")
+	@JsonProperty("resolutionOn")
 	private String resolutionOn;
 	
 	@JsonProperty("dated")
@@ -80,16 +80,16 @@ public class Notice {
 	@JsonProperty("designation")
 	private String designation;
 	
-	@JsonProperty("authorisedpersonname")
+	@JsonProperty("authorisedpersonName")
 	private String authorisedpersonName;
 	
 	@JsonProperty("mobilenumber")
 	private String mobilenumber;
 	
-	@JsonProperty("penaltyamount")
+	@JsonProperty("penaltyAmount")
 	private int penaltyAmount;
 	
-	@JsonProperty("appealno")
+	@JsonProperty("appealNo")
 	private String appealNo;
 	
 	@JsonProperty("AuditDetails")
