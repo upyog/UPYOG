@@ -20,4 +20,7 @@ public class NoticeComment {
 	@JsonProperty("AuditDetails")
 	private AuditDetails  auditDetails;
 	
+	@JsonProperty("auditDetails")
+	private AuditDetails auditDetails;
+	
 }
