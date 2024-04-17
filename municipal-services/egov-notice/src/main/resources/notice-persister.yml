@@ -1,0 +1,76 @@
+serviceMaps:
+  serviceName: Notice-services
+  mappings:
+  - version: 1.0
+    description: Persists assessment details to eg_pt_asmt_assessment table
+    fromTopic: save-pt-notice
+    isTransaction: true
+    queryMaps:
+
+    - query: INSERT INTO eg_pt_notice(noticeType,tenantId,uuid,noticeNumber,name,address,propertyId,assessmentYear,acknowledgementNumber,dateOfAnnualRet,entryDate,entryTime,place,particulars,asreturnfiled,aspermunispality,resolutionon,dated,designation,authorisedpersonname,mobilenumber,penaltyamount,appealno) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+      basePath: $.Notice
+      jsonMaps:
+
+      - jsonPath: $.Notice.noticeType
+
+      - jsonPath: $.Notice.tenantId
+
+      - jsonPath: $.Notice.noticeuuid
+
+      - jsonPath: $.Notice.noticeNumber
+
+      - jsonPath: $.Notice.name
+
+      - jsonPath: $.Notice.address
+
+      - jsonPath: $.Notice.propertyId
+
+      - jsonPath: $.Notice.assessmentYear
+
+      - jsonPath: $.Notice.acknowledgementNumber
+
+      - jsonPath: $.Notice.dateOfAnnualRet
+
+      - jsonPath: $.Notice.entryDate
+
+      - jsonPath: $.Notice.entryTime
+
+      - jsonPath: $.Notice.place
+
+      - jsonPath: $.Notice.particulars
+
+      - jsonPath: $.Notice.asreturnFiled
+
+      - jsonPath: $.Notice.asperMunispality
+
+      - jsonPath: $.Notice.resolutionOn
+
+      - jsonPath: $.Notice.dated
+
+      - jsonPath: $.Notice.designation
+
+      - jsonPath: $.Notice.authorisedpersonName
+
+      - jsonPath: $.Notice.mobilenumber
+
+      - jsonPath: $.Notice.penaltyAmount
+
+      - jsonPath: $.Notice.appealNo
+
+
+
+    - query: INSERT INTO eg_pt_notice_comment (uuid,noticeid,comment) VALUES (?,?,?);
+      basePath: Notice.NoticeComment.*
+      jsonMaps:
+
+      - jsonPath: $.Notice.NoticeComment.*.uuid
+
+      - jsonPath: $.Notice.noticeuuid
+
+      - jsonPath: $.Notice.NoticeComment.*.comment
+
+      
+
+      
+
+
