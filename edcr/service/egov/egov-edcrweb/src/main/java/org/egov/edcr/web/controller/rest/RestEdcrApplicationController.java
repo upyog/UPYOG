@@ -213,8 +213,6 @@ public class RestEdcrApplicationController {
             @RequestParam("edcrRequest") String edcrRequest, final HttpServletRequest request) throws Exception {
         String userInfo = request.getHeader(USER_INFO_HEADER_NAME);
         LOGGER.info("###User Info####"+userInfo);
-
-        System.out.println("here++++");
         EdcrDetail edcrDetail = new EdcrDetail();
         EdcrRequest edcr = new EdcrRequest();
         if (!isValidJson(edcrRequest) || (userInfo != null && !isValidJson(userInfo))) {
@@ -292,16 +290,14 @@ public class RestEdcrApplicationController {
         }
         return getSuccessResponse(Arrays.asList(edcrDetail), edcr.getRequestInfo());
     }
-    
-    @PostMapping(value = "/anonymousScrutinize", consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE,
+
+     @PostMapping(value = "/anonymousScrutinize", consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE,
             MediaType.MULTIPART_FORM_DATA_VALUE }, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> anonymousScrutinize(@RequestPart("planFile") MultipartFile planFile,
             @RequestParam("edcrRequest") String edcrRequest, final HttpServletRequest request) throws Exception {
         String userInfo = request.getHeader(USER_INFO_HEADER_NAME);
         LOGGER.info("###User Info####"+userInfo);
-
-        System.out.println("here++++");
         EdcrDetail edcrDetail = new EdcrDetail();
         EdcrRequest edcr = new EdcrRequest();
         if (!isValidJson(edcrRequest) || (userInfo != null && !isValidJson(userInfo))) {
