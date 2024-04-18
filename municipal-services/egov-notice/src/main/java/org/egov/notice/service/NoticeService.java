@@ -49,22 +49,14 @@ public class NoticeService {
 	}
 
 	private void validateForRecMistakeDefectiveReturn(Notice noticeFromRequest) {
-		if(StringUtilities.isEmpty(noticeFromRequest.getAcknowledgementNumber())) {
+		if(StringUtilities.isEmpty(noticeFromRequest.getAcknowledgementNumber())) 
 			throw new CustomException("INVALID_ACK_NUM", "Invalid Acknowledgement Number");
 
-		}
-		if(StringUtilities.isEmpty(noticeFromRequest.getAssessmentYear())) {
-			throw new CustomException("INVALID_ASMT_YEAR", "Invalid Assessment Year");
+		if(StringUtilities.isEmpty(noticeFromRequest.getAssessmentYear()))
+			throw new CustomException("INVALID_ASMT_YEAR", "Invalid Assessment Year");	
 
-		}	
-
-		if(StringUtilities.isEmpty(noticeFromRequest.getPropertyId())) {
+		if(StringUtilities.isEmpty(noticeFromRequest.getPropertyId()))
 			throw new CustomException("INVALID_PROP_NUM", "Invalid Property Id or UPIN");
-
-		}
-
-
-
 
 	}
 	
@@ -72,7 +64,7 @@ public class NoticeService {
 	{
 		List<Notice> notice;
 		if(noticeCriteria.isAudit() && CollectionUtils.isEmpty(noticeCriteria.getNoticenumber()))
-			throw new CustomException("EG_PT_NOTICE_AUDIT_ERROR", "Audit can only be provided for a single Noticenumber");
+			throw new CustomException("EG_PT_NOTICE_AUDIT_ERROR", "Audit can only be provided for Noticenumbers");
 		
 		if(CollectionUtils.isEmpty(noticeCriteria.getTenantIds()))
 			throw new CustomException("EG_PT_NOTICE_TANENTID_ERROR","Please provide tanentID for search result");

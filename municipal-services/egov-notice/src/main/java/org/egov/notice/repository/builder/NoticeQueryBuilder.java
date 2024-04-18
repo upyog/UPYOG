@@ -11,21 +11,21 @@ import org.springframework.util.CollectionUtils;
 
 @Component
 public class NoticeQueryBuilder {
-	
+
 	@Autowired
 	NoticeConfiguration noticeConfiguration;
-	
+
 	private static String noticesearchquery="select nt.noticetype ,nt.tenantid ,nt.uuid ,nt.noticenumber ,nt.\"name\"  as username,nt.address ,nt.propertyid,nt.assessmentyear,nt.acknowledgementnumber,nt.dateofannualret,nt.entrydate,nt.entrytime,nt.place,nt.perticulars,nt.asreturnfiled,nt.aspermunispality,nt.resolutionon,nt.dated,nt.designation,nt.authorisedpersonname,nt.mobilenumber,nt.penaltyamount,nt.appealno,epnc.\"comment\", epnc.noticeid from public.eg_pt_notice nt inner join eg_pt_notice_comment epnc on epnc.noticeid = nt.uuid";
 	private static String noticesearchwithauditquery="select nt.noticetype ,nt.tenantid ,nt.uuid ,nt.noticenumber ,nt.\"name\"  as username,nt.address ,nt.propertyid,nt.assessmentyear,nt.acknowledgementnumber,nt.dateofannualret,nt.entrydate,nt.entrytime,nt.place,nt.perticulars,nt.asreturnfiled,nt.aspermunispality,nt.resolutionon,nt.dated,nt.designation,nt.authorisedpersonname,nt.mobilenumber,nt.penaltyamount,nt.appealno,nt.createdby as nt_cb,nt.createdtime as nt_ct,nt.lastmodifiedby as nt_lmb,nt.lastmodifiedtime as nt_lmt,epnc.\"comment\", epnc.noticeid, epnc.createdby as cm_cb, epnc.createdtime as cm_ct, epnc.lastmodifiedby as cm_lmb, epnc.lastmodifiedtime as cm_lmt from public.eg_pt_notice nt inner join eg_pt_notice_comment epnc on epnc.noticeid = nt.uuid";
-	
+
 	private final String paginationAuditWrapper = "SELECT * FROM "
 			+ "(SELECT *, DENSE_RANK() OVER (ORDER BY nt_lmb DESC, noticenumber) offset_ FROM " + "({})" + " result) result_offset "
 			+ "WHERE offset_ > ? AND offset_ <= ?";
-	
+
 	private final String paginationWrapper = "SELECT * FROM "
 			+ "(SELECT *, DENSE_RANK() OVER (ORDER BY entrydate DESC, noticenumber) offset_ FROM " + "({})" + " result) result_offset "
 			+ "WHERE offset_ > ? AND offset_ <= ?";
-	
+
 	public String noticesearchquery(NoticeCriteria noticeCriteria, List<Object> preparedStmtList) {
 		// TODO Auto-generated method stub
 		StringBuilder builder;
@@ -33,7 +33,7 @@ public class NoticeQueryBuilder {
 			builder=new StringBuilder(noticesearchwithauditquery);
 		else
 			builder=new StringBuilder(noticesearchquery);
-		
+
 		if(!CollectionUtils.isEmpty(noticeCriteria.getTenantIds()))
 		{
 			Set<String> tenantIds=noticeCriteria.getTenantIds();
@@ -63,7 +63,7 @@ public class NoticeQueryBuilder {
 			builder.append("nt.acknowledgementnumber IN (").append(createQuery(acknowledgementIds)).append(")");
 			addToPreparedStatement(preparedStmtList,acknowledgementIds);
 		}
-		
+
 		return addPaginationWrapper(builder.toString(), preparedStmtList, noticeCriteria);
 	}
 
@@ -93,17 +93,16 @@ public class NoticeQueryBuilder {
 		else {
 			builder.append(" AND ");
 		}
-		
+
 	}
-	
-private String addPaginationWrapper(String query, List<Object> preparedStmtList, NoticeCriteria noticeCriteria) {
-		
-		
+
+	private String addPaginationWrapper(String query, List<Object> preparedStmtList, NoticeCriteria noticeCriteria) {
+
 		Long limit = noticeConfiguration.getDefaultLimit();
 		Long offset = noticeConfiguration.getDefaultOffset();
 		String finalQuery;
 		if(noticeCriteria.isAudit())
-			 finalQuery = paginationAuditWrapper.replace("{}", query);
+			finalQuery = paginationAuditWrapper.replace("{}", query);
 		else
 			finalQuery = paginationWrapper.replace("{}", query);
 
