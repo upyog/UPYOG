@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader,SubmitBar } from "@upyog/digit-ui-react-components";
 
 import ActionModal from "./Modal";
 
@@ -13,6 +13,7 @@ import ApplicationDetailsActionBar from "./components/ApplicationDetailsActionBa
 import ApplicationDetailsWarningPopup from "./components/ApplicationDetailsWarningPopup";
 
 const ApplicationDetails = (props) => {
+  let isEditApplication=window.location.href.includes("editApplication") && window.location.href.includes("bpa") ;
     const tenantId = Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
   const { t } = useTranslation();
@@ -58,6 +59,9 @@ const ApplicationDetails = (props) => {
 
   function onActionSelect(action) {
     if (action) {
+      if(action?.action=="EDIT"){
+        window.location.assign(window.location.href.split("bpa")[0]+"editApplication/bpa"+window.location.href.split("bpa")[1]);
+      }
       if(action?.isToast){
         setShowToast({ key: "error", error: { message: action?.toastMessage } });
         setTimeout(closeToast, 5000);
@@ -76,7 +80,7 @@ const ApplicationDetails = (props) => {
         else {
           window.location.assign(`${window.location.origin}/digit-ui/employee/payment/collect/${action?.redirectionUrll?.pathname}`);
         }
-      } else if (!action?.redirectionUrl) {
+      } else if (!action?.redirectionUrl && action?.action!="EDIT") {
         setShowModal(true);
       } else {
         history.push({
@@ -189,6 +193,28 @@ const ApplicationDetails = (props) => {
   if (isLoading || isEnableLoader) {
     return <Loader />;
   }
+  const onSubmit =async(data)=> {
+    const bpaApplicationDetails = await Digit.OBPSService.BPASearch(tenantId, {applicationNo: applicationData?.applicationNo});
+    const bpaDetails={
+      BPA:bpaApplicationDetails.BPA[0]
+    }
+    //bpaDetails.BPA.riskType="HIGH"
+    bpaDetails.BPA.workflow={
+                "action": "EDIT",
+                "assignes": [],
+                "comments": null,
+                "varificationDocuments": null
+            }
+    bpaDetails.BPA.additionalDetails.selfCertificationCharges.BPA_DEVELOPMENT_CHARGES=sessionStorage.getItem("development");
+    bpaDetails.BPA.additionalDetails.selfCertificationCharges.BPA_OTHER_CHARGES=sessionStorage.getItem("otherCharges");
+    bpaDetails.BPA.additionalDetails.selfCertificationCharges.BPA_LESS_ADJUSMENT_PLOT=sessionStorage.getItem("lessAdjusment");
+    if (!bpaDetails.BPA.additionalDetails.selfCertificationCharges.BPA_DEVELOPMENT_CHARGES || !bpaDetails.BPA.additionalDetails.selfCertificationCharges.BPA_OTHER_CHARGES || !bpaDetails.BPA.additionalDetails.selfCertificationCharges.BPA_LESS_ADJUSMENT_PLOT ){
+      alert("Please fill P2 Manual Fees");}
+    else{
+        const response = await Digit.OBPSService.update(bpaDetails, tenantId); 
+        window.location.assign(window.location.href.split("/editApplication")[0]+window.location.href.split("editApplication")[1]);
+          }    
+  };
 
   return (
     <React.Fragment>
@@ -235,7 +261,8 @@ const ApplicationDetails = (props) => {
             />
           ) : null}
           <ApplicationDetailsToast t={t} showToast={showToast} closeToast={closeToast} businessService={businessService} />
-          <ApplicationDetailsActionBar
+          {!isEditApplication?  (
+            <ApplicationDetailsActionBar
             workflowDetails={workflowDetails}
             displayMenu={displayMenu}
             onActionSelect={onActionSelect}
@@ -245,6 +272,9 @@ const ApplicationDetails = (props) => {
             ActionBarStyle={ActionBarStyle}
             MenuStyle={MenuStyle}
           />
+          ):(<div >
+            <SubmitBar style={{ marginRight:20}} label={t("BPA_EDIT_UPDATE")} onSubmit={onSubmit}  id/>
+            </div>)}          
         </React.Fragment>
       ) : (
         <Loader />
