@@ -298,6 +298,8 @@ public class RestEdcrApplicationController {
             @RequestParam("edcrRequest") String edcrRequest, final HttpServletRequest request) throws Exception {
         String userInfo = request.getHeader(USER_INFO_HEADER_NAME);
         LOGGER.info("###User Info####"+userInfo);
+        LOGGER.info("###User Info####"+userInfo);
+        
         EdcrDetail edcrDetail = new EdcrDetail();
         EdcrRequest edcr = new EdcrRequest();
         if (!isValidJson(edcrRequest) || (userInfo != null && !isValidJson(userInfo))) {
