@@ -291,6 +291,93 @@ public class RestEdcrApplicationController {
         return getSuccessResponse(Arrays.asList(edcrDetail), edcr.getRequestInfo());
     }
 
+     @PostMapping(value = "/anonymousScrutinize", consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE,
+            MediaType.MULTIPART_FORM_DATA_VALUE }, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<?> anonymousScrutinize(@RequestPart("planFile") MultipartFile planFile,
+            @RequestParam("edcrRequest") String edcrRequest, final HttpServletRequest request) throws Exception {
+        String userInfo = request.getHeader(USER_INFO_HEADER_NAME);
+        LOGGER.info("###User Info####"+userInfo);
+        LOGGER.info("info"+userInfo);
+        
+        EdcrDetail edcrDetail = new EdcrDetail();
+        EdcrRequest edcr = new EdcrRequest();
+        if (!isValidJson(edcrRequest) || (userInfo != null && !isValidJson(userInfo))) {
+            ErrorResponse error = new ErrorResponse(INCORRECT_REQUEST, INVALID_JSON_FORMAT,
+                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+        try {
+            List<ErrorDetail> errorResponses = new ArrayList<ErrorDetail>();
+            edcr = new ObjectMapper().readValue(edcrRequest, EdcrRequest.class);
+            if(userInfo != null) {
+                UserInfo userInfoReq = new ObjectMapper().readValue(userInfo, UserInfo.class);
+                UserInfo enrichUser = new UserInfo();
+                enrichUser.setId(userInfoReq.getId());
+                enrichUser.setUuid(userInfoReq.getUuid());
+                enrichUser.setMobile(userInfoReq.getMobile());
+                enrichUser.setTenantId(userInfoReq.getTenantId());
+                edcr.getRequestInfo().setUserInfo(enrichUser);
+            }
+            ErrorDetail edcRes = edcrValidator.validate(edcr);
+            if (edcRes != null && StringUtils.isNotBlank(edcRes.getErrorMessage()))
+                return new ResponseEntity<>(edcRes, HttpStatus.BAD_REQUEST);
+            List<ErrorDetail> errors = edcrRestService.validateEdcrMandatoryFields(edcr);
+            if (!errors.isEmpty())
+                return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+
+            String applicationType = edcr.getAppliactionType();
+            String serviceType = edcr.getApplicationSubType();
+            Map<String, List<Object>> masterData = new HashMap<>();
+            Boolean mdmsEnabled = mdmsConfiguration.getMdmsEnabled();
+            if (mdmsEnabled != null && mdmsEnabled) {
+                Object mdmsData = bpaMdmsUtil.mDMSCall(new RequestInfo(), edcr.getTenantId());
+                HashMap<String, String> data = new HashMap<>();
+                data.put("applicationType", applicationType);
+                data.put("serviceType", serviceType);
+                masterData = mDMSValidator.getAttributeValues(mdmsData, "BPA");
+                List<ErrorDetail> mdmsErrors = mDMSValidator.validateMdmsData(masterData, data);
+                if (!mdmsErrors.isEmpty())
+                    return new ResponseEntity<>(mdmsErrors, HttpStatus.BAD_REQUEST);
+
+                if ("BUILDING_OC_PLAN_SCRUTINY".equalsIgnoreCase(applicationType)) {
+                    edcr.setAppliactionType(ApplicationType.OCCUPANCY_CERTIFICATE.toString());
+                    errorResponses = edcrRestService.validateScrutinizeOcRequest(edcr, planFile);
+                } else if ("BUILDING_PLAN_SCRUTINY".equalsIgnoreCase(applicationType)) {
+                    ErrorDetail validateEdcrRequest = edcrRestService.validateEdcrRequest(edcr, planFile);
+                    if (validateEdcrRequest != null)
+                        errorResponses = Arrays.asList(validateEdcrRequest);
+
+                    edcr.setAppliactionType(ApplicationType.PERMIT.toString());
+                }
+
+            } else {
+                if ("BUILDING_OC_PLAN_SCRUTINY".equalsIgnoreCase(applicationType)) {
+                    edcr.setAppliactionType(ApplicationType.OCCUPANCY_CERTIFICATE.toString());
+                    errorResponses = (edcrRestService.validateScrutinizeOcRequest(edcr, planFile));
+                } else if ("BUILDING_PLAN_SCRUTINY".equalsIgnoreCase(applicationType)) {
+                    ErrorDetail validateEdcrRequest = edcrRestService.validateEdcrRequest(edcr, planFile);
+                    if (validateEdcrRequest != null)
+                        errorResponses = Arrays.asList(validateEdcrRequest);
+
+                    edcr.setAppliactionType(ApplicationType.PERMIT.toString());
+                }
+            }
+
+            if (!errorResponses.isEmpty())
+                return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
+            else {
+                edcrDetail = edcrRestService.createEdcr(edcr, planFile, masterData);
+            }
+
+        } catch (IOException e) {
+            ErrorResponse error = new ErrorResponse(INCORRECT_REQUEST, e.getLocalizedMessage(),
+                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+        return getSuccessResponse(Arrays.asList(edcrDetail), edcr.getRequestInfo());
+    }
+
     @PostMapping(value = "/scrutinydetails", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> scrutinyDetails(@ModelAttribute EdcrRequest edcrRequest,
