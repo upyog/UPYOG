@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Home redirection to swagger api documentation 
  */
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/notice")
 public class NoticeController {
 	
 	
