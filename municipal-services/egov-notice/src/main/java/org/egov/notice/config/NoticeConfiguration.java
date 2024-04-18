@@ -52,4 +52,13 @@ public class NoticeConfiguration {
 	@Value("${persister.save.notice.topic}")
 	private String savenoticetopic;
 	
+	@Value("${nt.search.pagination.default.limit}")
+	private long defaultLimit;
+	
+	@Value("${nt.search.pagination.default.offset}")
+    private Long defaultOffset;
+    
+    @Value("${nt.search.pagination.max.search.limit}")
+    private Long maxSearchLimit;
+	
 }

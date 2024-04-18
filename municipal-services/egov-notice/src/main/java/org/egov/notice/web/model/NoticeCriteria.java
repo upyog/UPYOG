@@ -10,12 +10,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
 public class NoticeCriteria {
 	
 	private Set<String> propertyIds;
@@ -27,5 +25,9 @@ public class NoticeCriteria {
 	private Set<String> noticenumber;
 	
 	private boolean audit;
+	
+	private Long offset;
+
+	private Long limit;
 
 }
