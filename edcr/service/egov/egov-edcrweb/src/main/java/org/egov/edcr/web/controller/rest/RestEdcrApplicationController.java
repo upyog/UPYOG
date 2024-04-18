@@ -298,7 +298,7 @@ public class RestEdcrApplicationController {
             @RequestParam("edcrRequest") String edcrRequest, final HttpServletRequest request) throws Exception {
         String userInfo = request.getHeader(USER_INFO_HEADER_NAME);
         LOGGER.info("###User Info####"+userInfo);
-        LOGGER.info("###User Info####"+userInfo);
+        LOGGER.info("info"+userInfo);
         
         EdcrDetail edcrDetail = new EdcrDetail();
         EdcrRequest edcr = new EdcrRequest();
