@@ -6,16 +6,20 @@ import org.egov.notice.producer.NoticeProducer;
 import org.egov.notice.repository.NoticeRepository;
 import org.egov.notice.util.CommonUtils;
 import org.egov.notice.web.model.Notice;
+import org.egov.notice.web.model.NoticeCriteria;
 import org.egov.notice.web.model.NoticeRequest;
 import org.egov.notice.web.model.NoticeResponse;
+import org.egov.notice.web.model.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.cedarsoftware.util.StringUtilities;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -64,9 +68,18 @@ public class NoticeService {
 
 	}
 	
-	public List<Notice> getsearchdata() throws SQLException
+	public List<Notice> searchNotice(NoticeCriteria noticeCriteria, RequestInfoWrapper requestInfoWrapper)
 	{
-		return noticeRepository.getnotices();
+		List<Notice> notice;
+		if(noticeCriteria.isAudit() && CollectionUtils.isEmpty(noticeCriteria.getNoticenumber()))
+			throw new CustomException("EG_PT_NOTICE_AUDIT_ERROR", "Audit can only be provided for a single Noticenumber");
+		
+		if(CollectionUtils.isEmpty(noticeCriteria.getTenantIds()))
+			throw new CustomException("EG_PT_NOTICE_TANENTID_ERROR","Please provide tanentID for search result");
+		
+		else
+			notice=noticeRepository.getnotices(noticeCriteria);
+		return notice;
 	}
 
 }

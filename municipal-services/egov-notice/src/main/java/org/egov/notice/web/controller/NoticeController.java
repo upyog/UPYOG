@@ -1,27 +1,20 @@
 package org.egov.notice.web.controller;
 
-import java.math.BigDecimal;
-import java.sql.SQLException;
+
 import java.util.Arrays;
-import java.util.Map;
-
-import javax.validation.Valid;
-
-import com.fasterxml.jackson.databind.JsonNode;
-
+import java.util.List;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.notice.service.NoticeService;
 import org.egov.notice.util.ResponseInfoFactory;
-import org.egov.notice.web.model.InboxRequest;
-import org.egov.notice.web.model.InboxResponse;
 import org.egov.notice.web.model.Notice;
+import org.egov.notice.web.model.NoticeCriteria;
 import org.egov.notice.web.model.NoticeRequest;
 import org.egov.notice.web.model.NoticeResponse;
-import org.egov.notice.web.model.dss.InboxMetricCriteria;
-import org.egov.notice.web.model.elasticsearch.InboxElasticSearchRequest;
+import org.egov.notice.web.model.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,9 +49,12 @@ public class NoticeController {
 	}
 	
 	@PostMapping(value="/_search")
-	public void search() throws SQLException
+	public ResponseEntity<NoticeResponse> search(@RequestBody RequestInfoWrapper requestInfoWrapper,@ModelAttribute NoticeCriteria noticeCriteria)
 	{
-		noticeService.getsearchdata();
+		List<Notice> notices;
+		notices=noticeService.searchNotice(noticeCriteria,requestInfoWrapper);
+		NoticeResponse noticeResponse=NoticeResponse.builder().responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true)).notice(notices).build();
+		return new ResponseEntity<>(noticeResponse, HttpStatus.OK);
 	}
 
 	

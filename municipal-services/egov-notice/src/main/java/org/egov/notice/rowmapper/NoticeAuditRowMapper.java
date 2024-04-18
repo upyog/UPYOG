@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class NoticeRowMapper implements ResultSetExtractor<List<Notice>> {
+public class NoticeAuditRowMapper implements ResultSetExtractor<List<Notice>> {
 
 
 	@Autowired
@@ -70,6 +70,10 @@ public class NoticeRowMapper implements ResultSetExtractor<List<Notice>> {
 				if(noticeComment!=null)
 					notice.getNoticeComment().add(noticeComment);
 				
+				AuditDetails auditDetails=getauditdetails(rs);
+				if(auditDetails!=null)
+				notice.setAuditDetails(auditDetails);
+
 				noticeMap.put(notice.getNoticeuuid(), notice);
 			}
 			else
@@ -85,21 +89,41 @@ public class NoticeRowMapper implements ResultSetExtractor<List<Notice>> {
 		if(null == rs.getString("noticeid"))
 			return null;
 
+		AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("cm_cb"))
+				.createdTime(rs.getLong("cm_ct")).lastModifiedBy(rs.getString("cm_lmb"))
+				.lastModifiedTime(rs.getLong("cm_lmt")).build();
+
+
 		return NoticeComment.builder().uuid(rs.getString("uuid"))
 				.comment(rs.getString("comment"))
+				.auditDetails(auditDetails)
 				.build();
 	}
 
 	private void addcommentnotice(ResultSet rs,Notice notice) throws SQLException
 	{
 
+		AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("cm_cb"))
+				.createdTime(rs.getLong("cm_ct")).lastModifiedBy(rs.getString("cm_lmb"))
+				.lastModifiedTime(rs.getLong("cm_lmt")).build();
+
+
 		NoticeComment comment= NoticeComment.builder().uuid(rs.getString("uuid"))
 				.comment(rs.getString("comment"))
+				.auditDetails(auditDetails)
 				.build();
 
 		notice.getNoticeComment().add(comment);
 	}
 	
+	private AuditDetails getauditdetails(ResultSet rs) throws SQLException
+	{
+		AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("nt_cb"))
+				.createdTime(rs.getLong("nt_ct")).lastModifiedBy(rs.getString("nt_lmb"))
+				.lastModifiedTime(rs.getLong("nt_lmt")).build();
+		
+		return auditDetails;
+	}
 
 
 

@@ -1,13 +1,7 @@
 package org.egov.notice.web.model;
 
 import java.util.List;
-import java.util.Map;
-
-import org.egov.notice.web.model.workflow.ProcessInstance;
-import org.elasticsearch.common.inject.PrivateBinder;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -87,7 +81,7 @@ public class Notice {
 	private String mobilenumber;
 	
 	@JsonProperty("penaltyAmount")
-	private int penaltyAmount;
+	private String penaltyAmount;
 	
 	@JsonProperty("appealNo")
 	private String appealNo;

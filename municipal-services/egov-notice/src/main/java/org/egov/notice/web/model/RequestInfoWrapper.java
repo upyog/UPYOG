@@ -19,5 +19,5 @@ import lombok.Setter;
 public class RequestInfoWrapper {
 
 	@JsonProperty("RequestInfo")
-	private org.egov.notice.web.model.RequestInfo requestInfo;
+	private RequestInfo requestInfo;
 }
