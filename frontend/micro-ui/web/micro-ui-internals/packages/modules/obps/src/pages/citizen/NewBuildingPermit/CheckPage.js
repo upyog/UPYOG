@@ -379,7 +379,7 @@ setWaterCharges(Malbafees/2)
               isMandatory={false}
               optionKey="i18nKey"
               name="email"
-              defaultValue={value?.additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES || ""}
+              defaultValue={value?.additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES }
               value={development}
               onChange={(e) => {setDevelopment(e.target.value),sessionStorage.setItem("development",e.target.value)}}
               //disable={userInfo?.info?.emailId && !isOpenLinkFlow ? true : false}
@@ -393,7 +393,7 @@ setWaterCharges(Malbafees/2)
               isMandatory={false}
               optionKey="i18nKey"
               name="email"
-              defaultValue={value?.additionalDetails?.selfCertificationCharges?.BPA_OTHER_CHARGES || ""}
+              defaultValue={value?.additionalDetails?.selfCertificationCharges?.BPA_OTHER_CHARGES }
               value={otherCharges}
               onChange={(e) => {setOtherCharges(e.target.value),sessionStorage.setItem("otherCharges",e.target.value)}}
               //disable={userInfo?.info?.emailId && !isOpenLinkFlow ? true : false}
@@ -407,7 +407,7 @@ setWaterCharges(Malbafees/2)
               isMandatory={false}
               optionKey="i18nKey"
               name="email"
-              defaultValue={value?.additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT || ""}
+              defaultValue={value?.additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT }
               value={lessAdjusment}
               onChange={(e) => {setLessAdjusment(e.target.value),sessionStorage.setItem("lessAdjusment",e.target.value)}}
               //disable={userInfo?.info?.emailId && !isOpenLinkFlow ? true : false}
@@ -419,7 +419,7 @@ setWaterCharges(Malbafees/2)
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
       {/* <CardHeader>{t("BPA_COMMON_TOTAL_AMT")}</CardHeader> 
       <CardHeader>₹ {paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}</CardHeader>  */}
-      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmit} disabled={(!isEditApplication) && (!development||!otherCharges||!lessAdjusment)} id/>
+      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmit} disabled={ (!development||!otherCharges||!lessAdjusment)} id/>
       </Card>
     </React.Fragment>
     );

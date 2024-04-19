@@ -206,7 +206,7 @@ function SelectDocument({
       <LabelFieldPair style={{width :"100%"}}>
         <CardLabel className="card-label-smaller" style={{width :"100%"}}>
           {doc?.documentType != "OLDLICENCENO" ?
-            `${t(`${doc?.documentType.replaceAll(".", "_")}`)}*` :
+            `${t(`${doc?.documentType.replaceAll(".", "_")}`)}` :
             `${t(`${doc?.documentType.replaceAll(".", "_")}`)}`}
         </CardLabel>
         <div className="field" style={{ width: "100%" }}>
