@@ -124,6 +124,9 @@ public class Property extends PropertyInfo {
 	@JsonProperty("isPartOfProperty")
 	private boolean  isPartOfProperty;
 	
+	@JsonProperty("parentPropertyUuId")
+	private String  parentPropertyUuId;
+	
 	
 
 	@Builder
@@ -133,7 +136,7 @@ public class Property extends PropertyInfo {
 			CreationReason creationReason, String usageCategory, Long noOfFloors, Double landArea,
 			BigDecimal superBuiltUpArea, Source source, Channel channel, List<Document> documents, List<Unit> units,
 			JsonNode additionalDetails, AuditDetails auditDetails, ProcessInstance workflow,String exemption,
-			String parentPropertyId,boolean isPartOfProperty ) {
+			String parentPropertyId,boolean isPartOfProperty,String parentPropertyUuId ) {
 		super(id, propertyId, surveyId, linkedProperties, tenantId, accountId, oldPropertyId, status, address);
 		this.acknowldgementNumber = acknowldgementNumber;
 		this.propertyType = propertyType;
@@ -155,6 +158,7 @@ public class Property extends PropertyInfo {
 		this.exemption= exemption;
 		this.isPartOfProperty = isPartOfProperty;
 		this.parentPropertyId= parentPropertyId;
+		this.parentPropertyUuId=parentPropertyUuId; 
 	}
 
 	public Property addOwnersItem(OwnerInfo ownersItem) {

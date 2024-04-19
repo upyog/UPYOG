@@ -718,10 +718,20 @@ public class PropertyService {
 		previousPropertyToBeReInstated.setStatus(Status.ACTIVE);
 		
 		//For Updating the child property to inactive
-		producer.push(config.getUpdatePropertyForDeactivaingForBifurcationTopic(), propertyFromSearch);
+		propertyFromSearch.setStatus(Status.INACTIVE);
+		PropertyRequest prosearch = PropertyRequest.builder()
+				.requestInfo(request.getRequestInfo())
+				.property(propertyFromSearch)
+				.build();
+		producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForBifurcationTopic(), prosearch);
 		
+		
+		PropertyRequest proReInstate = PropertyRequest.builder()
+				.requestInfo(request.getRequestInfo())
+				.property(propertyFromSearch)
+				.build();
 		//For Updating the parent property to active
-		producer.push(config.getUpdateParentPropertyForBifurcation(), previousPropertyToBeReInstated);
+		producer.pushAfterEncrytpion(config.getUpdateParentPropertyForBifurcation(), proReInstate);
 		
 	}
 	
