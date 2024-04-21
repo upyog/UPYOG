@@ -1,4 +1,4 @@
-CREATE TABLE eg_pt_mutation_billingslab
+CREATE TABLE IF NOT EXISTS  eg_pt_mutation_billingslab
 (
     id character varying(64) NOT NULL,
     tenantid character varying(256) NOT NULL,

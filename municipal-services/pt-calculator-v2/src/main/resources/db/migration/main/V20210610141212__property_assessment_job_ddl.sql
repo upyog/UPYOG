@@ -1,5 +1,5 @@
 
-CREATE TABLE eg_pt_assessment_job(
+CREATE TABLE IF NOT EXISTS eg_pt_assessment_job(
 id character varying,
 assessmentnumber  character varying,
 propertyid  character varying,
