@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -189,5 +190,17 @@ public class Property extends PropertyInfo{
 		this.occupancyDate = builder.occupancyDate;
 		this.propertyDetails = builder.propertyDetails;
 
+	}
+
+	@Builder
+	public Property(String id, String propertyId, String tenantId, String oldPropertyId, StatusEnum status,
+			Address address, String acknowldgementNumber, String propertyType, String ownershipCategory) {
+		super(propertyId, tenantId, acknowldgementNumber, oldPropertyId, status, address);
+
+		this.propertyId = propertyId;
+		this.address = address;
+		this.status = status;
+		this.acknowldgementNumber = acknowldgementNumber;
+		this.tenantId = tenantId;
 	}
 }

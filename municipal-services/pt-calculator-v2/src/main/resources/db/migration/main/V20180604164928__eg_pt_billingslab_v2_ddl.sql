@@ -1,4 +1,4 @@
-CREATE TABLE eg_pt_billingslab_v2(
+CREATE TABLE IF NOT EXISTS eg_pt_billingslab_v2(
 
   id character varying(64),
   tenantId character varying(256),

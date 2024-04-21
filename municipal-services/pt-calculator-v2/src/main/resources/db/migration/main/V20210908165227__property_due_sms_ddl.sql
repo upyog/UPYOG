@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS eg_pt_due_sms(
+CREATE TABLE eg_pt_due_sms(
 propertyid character varying,
 finyear character varying,
 ownername character varying,

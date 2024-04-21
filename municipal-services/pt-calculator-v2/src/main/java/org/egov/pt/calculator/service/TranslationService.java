@@ -2,6 +2,9 @@ package org.egov.pt.calculator.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.calculator.repository.Repository;
 import org.egov.pt.calculator.web.models.CalculationReq;
@@ -21,6 +24,7 @@ import java.util.stream.Collectors;
 import static org.egov.pt.calculator.util.CalculatorConstants.*;
 
 @Service
+@Slf4j
 public class TranslationService {
 
 
@@ -107,6 +111,9 @@ public class TranslationService {
         propertyDetail.put("usageCategoryMinor", usageCategoryMinor);
         propertyDetail.put("ownershipCategory", ownershipCategory);
         propertyDetail.put("subOwnershipCategory", subOwnershipCategory);
+        if(property.getAdditionalDetails()!=null) {
+        	propertyDetail.put("additionalDetails", property.getAdditionalDetails());
+        }
 
         // propertyDetail.put("adhocExemption", );
         // propertyDetail.put("adhocPenalty",);
@@ -128,6 +135,7 @@ public class TranslationService {
                 unitMap.put("unitArea", unit.getConstructionDetail().getBuiltUpArea());
                 unitMap.put("arv", unit.getArv());
                 unitMap.put("occupancyType", unit.getOccupancyType());
+                unitMap.put("active", unit.getActive());
 
                 String[] masterData = unit.getUsageCategory().split("\\.");
 
@@ -143,7 +151,11 @@ public class TranslationService {
                 if(masterData.length >= 4)
                     unitMap.put("usageCategoryDetail",masterData[3]);
 
+                if(unit.getAdditionalDetails()!=null)
                 unitMap.put("additionalDetails", unit.getAdditionalDetails());
+                else
+                	unitMap.put("additionalDetails", null);
+
                 units.add(unitMap);
 
             });
@@ -168,6 +180,7 @@ public class TranslationService {
                 if(assessment.getAdditionalDetails().get(ADHOC_PENALTY_REASON_KEY)!=null)
                     propertyDetail.put("adhocPenaltyReason", assessment.getAdditionalDetails().get(ADHOC_PENALTY_REASON_KEY).asText());
             } catch (Exception e){
+                e.printStackTrace();
                 throw new CustomException("PARSING_ERROR","Failed to parse additional details in translation");
             }
 

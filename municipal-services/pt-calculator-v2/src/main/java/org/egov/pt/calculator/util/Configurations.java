@@ -47,6 +47,12 @@ public class Configurations {
 	@Value("${egov.assessmentservice.search.endpoint}")
 	private String	assessmentSearchEndpoint;
 	
+	
+	
+	@Value("${egov.assessmentservice.cancel.endpoint}")
+	private String	assessmentCancelEndpoint;
+	
+	
 	// billing service
 	@Value("${egov.billingservice.host}")
 	private String billingServiceHost;
@@ -65,6 +71,7 @@ public class Configurations {
 	
 	@Value("${egov.demand.search.endpoint}")
 	private String demandSearchEndPoint;
+	
 	
 	@Value("${egov.bill.gen.endpoint}")
 	private String billGenEndPoint;
@@ -90,6 +97,10 @@ public class Configurations {
 	
 	@Value("${billingslab.value.occupancytype.rented}")
 	private String occupancyTypeRented;
+	
+
+	
+
 	
 	@Value("${billingslab.value.arv.percent}")
 	private Double arvPercent;
@@ -170,6 +181,7 @@ public class Configurations {
 	@Value("${egov.localization.search.endpoint}")	
 	private String localizationSearchEndpoint;	
 	
-
+	 @Value("${kafka.whatsapp.adoption.data.topic}")
+	 private String kafkaWhatsappAdoptionDataTopic;
 
 }

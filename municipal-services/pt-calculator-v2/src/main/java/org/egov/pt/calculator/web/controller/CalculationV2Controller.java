@@ -36,7 +36,15 @@ public class CalculationV2Controller {
     public ResponseEntity<CalculationRes> getTaxEstimation(@RequestBody @Valid AssessmentRequestV2 assessmentRequestV2) {
 
         CalculationReq calculationReq = translationService.translate(assessmentRequestV2);
-        return new ResponseEntity<>(estimationService.getTaxCalculation(calculationReq), HttpStatus.OK);
+        return new ResponseEntity<>(estimationService.getTaxCalculation(calculationReq,assessmentRequestV2), HttpStatus.OK);
+
+    }
+
+    @PostMapping("/_translate")
+    public ResponseEntity<CalculationReq> getCalculationRequestBody(@RequestBody @Valid AssessmentRequestV2 assessmentRequestV2) {
+
+        CalculationReq calculationReq = translationService.translate(assessmentRequestV2);
+        return new ResponseEntity<>(calculationReq, HttpStatus.OK);
 
     }
 
