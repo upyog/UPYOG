@@ -269,6 +269,7 @@ const uploadFiles = async (
     convertedListDocDefinition = [...listDocDefinition];
   }
 
+  logger.info("count :"+convertedListDocDefinition.length);
   convertedListDocDefinition.forEach(function (docDefinition, i) {
     // making copy because createPdfKitDocument function modifies passed object and this object is used
     // in multiple places
@@ -297,7 +298,10 @@ const uploadFiles = async (
       fileStoreAPICall(filename, tenantId, data)
         .then((result) => {
           listOfFilestoreIds.push(result);
+          logger.info("listOfFilestoreIds size :" + listOfFilestoreIds.length)
+
           if (!isconsolidated) {
+            logger.info("Not consolidated")
             dbInsertSingleRecords.push({
               jobid,
               id: uuidv4(),
@@ -778,15 +782,15 @@ dataConfigUrls &&
           } else {
             data = JSON.parse(data);
             dataConfigMap[data.key] = data;
-            /*if (data.fromTopic != null) {
+            if (data.fromTopic != null) {
               topicKeyMap[data.fromTopic] = data.key;
               topic.push(data.fromTopic);
-            }*/
+            }
             i++;
-            // if (i == datafileLength) {
-            //   topic.push(envVariables.KAFKA_RECEIVE_CREATE_JOB_TOPIC)
-            //   listenConsumer(topic);
-            // }
+             if (i == datafileLength) {
+               topic.push(envVariables.KAFKA_RECEIVE_CREATE_JOB_TOPIC)
+               listenConsumer(topic);
+             }
             logger.info("loaded dataconfig: file:///" + item);
           }
         } catch (error) {
@@ -1275,6 +1279,7 @@ const prepareBulk = async (
   );
   if (Array.isArray(moduleObjectsArray) && moduleObjectsArray.length > 0) {
     totalobjectcount = moduleObjectsArray.length;
+    logger.info("No of input objects: " + totalobjectcount);
     for (var i = 0, len = moduleObjectsArray.length; i < len; i++) {
       let moduleObject = moduleObjectsArray[i];
       let entityKey = getValue(
@@ -1319,9 +1324,9 @@ const prepareBulk = async (
         if(!locale)
           locale = envVariables.DEFAULT_LOCALISATION_LOCALE;
 
-        if(defaultFontMapping[locale] != 'default')
-         formatconfigCopy.defaultStyle.font = defaultFontMapping[locale];
-
+        if(defaultFontMapping[locale] != 'default'){
+          formatconfigCopy.defaultStyle.font = defaultFontMapping[locale];
+        }
         formatconfigCopy["content"] = formatObjectArrayObject;
         formatConfigByFile.push(formatconfigCopy);
         formatObjectArrayObject = [];

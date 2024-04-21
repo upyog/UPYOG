@@ -1,4 +1,5 @@
 import axios from "axios";
+import logger from "../config/logger";
 import envVariables from "../EnvironmentVariables";
 import get from "lodash/get";
 const NodeCache = require("node-cache");

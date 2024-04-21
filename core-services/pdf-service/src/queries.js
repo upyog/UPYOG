@@ -1,6 +1,7 @@
 const { Pool } = require('pg');
 import logger from "./config/logger";
 import producer from "./kafka/producer";
+import consumer from "./kafka/consumer";
 import envVariables from "./EnvironmentVariables";
 import PDFMerger from 'pdf-merger-js';
 import { fileStoreAPICall, getFilestoreUrl } from "./utils/fileStoreAPICall";

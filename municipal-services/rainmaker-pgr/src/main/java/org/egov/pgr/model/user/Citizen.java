@@ -21,12 +21,12 @@ public class Citizen {
 	private Long id;
 	private String uuid;
 	
-	@Pattern(regexp="^[a-zA-Z. ]*$")
+	
 	@Size(max=30)
 	private String name;
 	
 	@JsonProperty("permanentAddress")
-	@Pattern(regexp = "^[a-zA-Z0-9!@#.,/: ()&'-]*$")
+	
 	@Size(max=160)
 	private String address;
 	
