@@ -242,12 +242,12 @@ const commonApplicantInformation = () => {
             {
               labelName: "Father",
               labelKey: "NOC_APPLICANT_RELATIONSHIP_FATHER_RADIOBUTTON",
-              value: "FATHER"
+              value: "Father"
             },
             {
               label: "Husband",
               labelKey: "NOC_APPLICANT_RELATIONSHIP_HUSBAND_RADIOBUTTON",
-              value: "HUSBAND"
+              value: "Husband"
             }
           ],
           jsonPath:
