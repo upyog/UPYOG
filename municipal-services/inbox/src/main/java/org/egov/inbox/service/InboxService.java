@@ -8,6 +8,7 @@ import static org.egov.inbox.util.BpaConstants.MOBILE_NUMBER_PARAM;
 import static org.egov.inbox.util.BpaConstants.OFFSET_PARAM;
 import static org.egov.inbox.util.BpaConstants.STATUS_ID;
 import static org.egov.inbox.util.BpaConstants.STATUS_PARAM;
+import static org.egov.inbox.util.BpaConstants.ASSIGNEE_PARAM;
 import static org.egov.inbox.util.DSSConstants.*;
 import static org.egov.inbox.util.FSMConstants.APPLICATIONSTATUS;
 import static org.egov.inbox.util.FSMConstants.CITIZEN_FEEDBACK_PENDING_STATE;
@@ -32,6 +33,7 @@ import static org.egov.inbox.util.TLConstants.TL;
 import static org.egov.inbox.util.SWConstants.SW;
 import static org.egov.inbox.util.BSConstants.*;
 import static org.egov.inbox.util.WSConstants.WS;
+import static org.egov.inbox.util.PTRConstants.PTR;
 
 import java.util.*;
 import java.util.function.Function;
@@ -96,6 +98,9 @@ public class InboxService {
 
     @Autowired
     private PtInboxFilterService ptInboxFilterService;
+    
+    @Autowired
+    private PtrInboxFilterService ptrInboxFilterService;
 
     @Autowired
     private TLInboxFilterService tlInboxFilterService;
@@ -152,7 +157,12 @@ public class InboxService {
         Integer totalCount = 0;
         if(!(processCriteria.getModuleName().equals(SW) || processCriteria.getModuleName().equals(WS)))
             totalCount = workflowService.getProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
-        Integer nearingSlaProcessCount = workflowService.getNearingSlaProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
+//        Integer nearingSlaProcessCount = workflowService.getNearingSlaProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
+        Integer nearingSlaProcessCount =  0;
+        if(!(processCriteria.getModuleName().equals(PTR) || processCriteria.getModuleName().equals(PT))) {
+        	nearingSlaProcessCount = workflowService.getNearingSlaProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
+        }
+        
         List<String> inputStatuses = new ArrayList<>();
         if (!CollectionUtils.isEmpty(processCriteria.getStatus()))
             inputStatuses = new ArrayList<>(processCriteria.getStatus());
@@ -345,6 +355,21 @@ public class InboxService {
                     isSearchResultEmpty = true;
                 }
             }
+            
+            if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(PTR)) {
+
+                List<String> applicationNumbers = ptrInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
+                        StatusIdNameMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                    moduleSearchCriteria.put(ACKNOWLEDGEMENT_IDS_PARAM, applicationNumbers);
+                    businessKeys.addAll(applicationNumbers);
+                    moduleSearchCriteria.remove(LOCALITY_PARAM);
+                    moduleSearchCriteria.remove(OFFSET_PARAM);
+                } else {
+                    isSearchResultEmpty = true;
+                }
+            }//for pet service
+            
             if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && ( processCriteria.getModuleName().equals(TL)
                     || processCriteria.getModuleName().equals(BPAREG))) {
                 totalCount = tlInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
@@ -1022,7 +1047,11 @@ public class InboxService {
         }
         StringBuilder url = new StringBuilder(srvMap.get("searchPath"));
         url.append("?tenantId=").append(tenantId);
-       
+        if(moduleSearchCriteria.containsKey("status")) { // for pet-service
+     	   if(businessServiceName.contains("ptr")) {
+     		   moduleSearchCriteria.remove("status");
+        }
+        }//for pet-service
         Set<String> searchParams = moduleSearchCriteria.keySet();
         
 		searchParams.forEach((param) -> {

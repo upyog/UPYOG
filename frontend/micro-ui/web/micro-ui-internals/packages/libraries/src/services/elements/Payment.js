@@ -52,7 +52,7 @@ export const PaymentService = {
   getReciept: (tenantId, businessservice, filters = {}) =>
     Request({
       url:
-        businessservice && businessservice !== "BPAREG"
+        businessservice && businessservice !== "BPAREG" || businessservice && businessservice !== "TL"
           ? `${Urls.payment.print_reciept}/${businessservice}/_search`
           : `${Urls.payment.print_reciept}/_search`,
       useCache: false,

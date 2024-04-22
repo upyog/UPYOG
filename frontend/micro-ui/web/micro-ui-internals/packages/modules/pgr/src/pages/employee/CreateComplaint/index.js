@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { Dropdown } from "@egovernments/digit-ui-react-components";
+import { Dropdown, Loader } from "@upyog/digit-ui-react-components";
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { useQueryClient } from "react-query";
 
@@ -17,9 +17,11 @@ const propetyData=localStorage.getItem("pgrProperty")
   const [complaintType, setComplaintType] = useState(JSON?.parse(sessionStorage.getItem("complaintType")) || {});
   const [subTypeMenu, setSubTypeMenu] = useState([]);
   const [subType, setSubType] = useState(JSON?.parse(sessionStorage.getItem("subType")) || {});
+  const [priorityLevel, setPriorityLevel]=useState(JSON?.parse(sessionStorage.getItem("PriorityLevel"))||{})
   const [pincode, setPincode] = useState("");
   const [mobileNumber, setMobileNumber] = useState(sessionStorage.getItem("mobileNumber") || "");
   const [fullName, setFullName] = useState(sessionStorage.getItem("name") || "");
+  const [emailId, setEmail] = useState(sessionStorage.getItem("emailId") || "");
   const [selectedCity, setSelectedCity] = useState(getCities()[0] ? getCities()[0] : null);
 const [propertyId, setPropertyId]= useState("")
 const [description, setDescription] = useState("")
@@ -41,18 +43,37 @@ const [description, setDescription] = useState("")
   const [params, setParams] = useState({});
   const tenantId = window.Digit.SessionStorage.get("Employee.tenantId");
   const menu = Digit.Hooks.pgr.useComplaintTypes({ stateCode: tenantId });
+ const  priorityMenu= 
+  [
+    {
+      "name": "LOW",
+      "code": "LOW",
+      "active": true
+    },
+    {
+      "name": "MEDIUM",
+      "code": "MEDIUM",
+      "active": true
+    },
+    {
+      "name": "HIGH",
+      "code": "HIGH",
+      "active": true
+    }
+
+  ]
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const history = useHistory();
   const serviceDefinitions = Digit.GetServiceDefinitions;
   const client = useQueryClient();
   useEffect(() => {
-    if (complaintType?.key && subType?.key && selectedCity?.code && selectedLocality?.code) {
+    if (complaintType?.key && subType?.key && selectedCity?.code && selectedLocality?.code && priorityLevel?.code ) {
       setSubmitValve(true);
     } else {
       setSubmitValve(false);
     }
-  }, [complaintType, subType, selectedCity, selectedLocality]);
+  }, [complaintType, subType, priorityLevel, selectedCity, selectedLocality]);
 
   useEffect(() => {
     setLocalities(fetchedLocalities);
@@ -90,6 +111,11 @@ const [description, setDescription] = useState("")
       }
     }
   }
+  async function selectedPriorityLevel(value){
+    sessionStorage.setItem("priorityLevel", JSON.stringify(value))
+    setPriorityLevel(value);
+    //setPriorityMenu(await serviceDefinitions.getSubMen)
+  }
 
   function selectedSubType(value) {
     sessionStorage.setItem("subType",JSON.stringify(value))
@@ -124,9 +150,11 @@ const [description, setDescription] = useState("")
     const landmark = data?.landmark;
     const { key } = subType;
     const complaintType = key;
+    //const prioritylevel=priorityLevel.code;
     const mobileNumber = data?.mobileNumber;
     const name = data?.name;
-    const formData = { ...data, cityCode, city, district, region, localityCode, localityName, landmark, complaintType, mobileNumber, name };
+    const emailId=data?.emailId;
+    const formData = { ...data, cityCode, city, district, region, localityCode, localityName, landmark, complaintType, priorityLevel, mobileNumber, name,emailId};
     await dispatch(createComplaint(formData));
     await client.refetchQueries(["fetchInboxData"]);
     localStorage.removeItem("pgrProperty");
@@ -150,6 +178,10 @@ const [description, setDescription] = useState("")
   const handleName = (event) => {
     const { value } = event.target;
     setFullName(value);
+  };
+  const handleEmail = (event) => {
+    const { value } = event.target;
+    setEmail(value);
   };
   const handleDescription = (event) => {
     const { value } = event.target;
@@ -194,6 +226,21 @@ const [description, setDescription] = useState("")
             error: t("CS_ADDCOMPLAINT_NAME_ERROR"),
           },
         },
+        {
+          label: t("ES_MAIL_ID"),
+          isMandatory: false,
+          type: "text",
+          value:emailId,
+          populators: {
+            name: "emailId",
+            onChange: handleEmail,
+            validation: {
+              //required: true,
+              pattern: /[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+            },
+            error: t("CS_ADDCOMPLAINT_EMAIL_ERROR"),
+          },
+        },
       ],
     },
     {
@@ -211,6 +258,14 @@ const [description, setDescription] = useState("")
           type: "dropdown",
           menu: { ...subTypeMenu },
           populators: <Dropdown option={subTypeMenu} optionKey="name" id="complaintSubType" selected={subType} select={selectedSubType} />,
+        },
+        {
+          
+         label: t("CS_COMPLAINT_DETAILS_COMPLAINT_PRIORITY_LEVEL"),
+            isMandatory: true,
+            type: "dropdown",
+            populators: <Dropdown option={priorityMenu} optionKey="name" id="priorityLevel" selected={priorityLevel} select={selectedPriorityLevel} />,
+          
         },
         {
           //label: t("WS_COMMON_PROPERTY_DETAILS"),

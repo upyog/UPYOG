@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { TypeSelectCard } from "@egovernments/digit-ui-react-components";
-import { Dropdown } from "@egovernments/digit-ui-react-components";
+import { TypeSelectCard } from "@upyog/digit-ui-react-components";
+import { Dropdown } from "@upyog/digit-ui-react-components";
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { useQueryClient } from "react-query";
 import { FormComposer } from "../../../../components/FormComposer";
@@ -18,11 +18,16 @@ const SelectComplaintType = ({ t, config, onSelect, value }) => {
     const { subType } = value;
     return subType ? subType : {};
   });
+  const [priorityLevel, setPriorityLevel]=useState(()=>{
+    const {priorityLevel}=value;
+    return priorityLevel? priorityLevel:{};
+  })
   const goNext = () => {
     console.log("complaintType",complaintType)
     sessionStorage.setItem("complaintType",JSON.stringify(complaintType))
-    onSelect({ subType });
+    onSelect({ subType , priorityLevel});
   };
+
 
   const textParams = config.texts;
   const valuenew= {
@@ -30,6 +35,26 @@ const SelectComplaintType = ({ t, config, onSelect, value }) => {
     name :"Property Tax"}
 
   const menu = Digit.Hooks.pgr.useComplaintTypes({ stateCode: Digit.ULBService.getCurrentTenantId() });
+  const  priorityMenu= 
+  [
+    {
+      "name": "LOW",
+      "code": "LOW",
+      "active": true
+    },
+    {
+      "name": "MEDIUM",
+      "code": "MEDIUM",
+      "active": true
+    },
+    {
+      "name": "HIGH",
+      "code": "HIGH",
+      "active": true
+    }
+
+  ]
+  const prioritylevel=priorityLevel.code;
   const cities = Digit.Hooks.pgr.useTenants();
   const [subTypeMenu, setSubTypeMenu] = useState([]);
   const pttype=sessionStorage.getItem("type")
@@ -64,6 +89,14 @@ const SelectComplaintType = ({ t, config, onSelect, value }) => {
           menu: { ...subTypeMenu },
           populators: <Dropdown option={subTypeMenu} optionKey="name" id="complaintSubType" selected={subType} select={selectedSubType} />,
         },
+        {
+          
+          label: t("CS_COMPLAINT_DETAILS_COMPLAINT_PRIORITY_LEVEL"),
+             isMandatory: true,
+             type: "dropdown",
+             populators: <Dropdown option={priorityMenu} optionKey="name" id="priorityLevel" selected={priorityLevel} select={selectedPriorityLevel} />,
+           
+         },
         
       ],
      
@@ -81,6 +114,11 @@ const SelectComplaintType = ({ t, config, onSelect, value }) => {
         setSubTypeMenu(await serviceDefinitions.getSubMenu("pg.citya", value, t));
       }
     }
+  }
+  async function selectedPriorityLevel(value){
+    sessionStorage.setItem("priorityLevel", JSON.stringify(value))
+    setPriorityLevel(value);
+    //setPriorityMenu(await serviceDefinitions.getSubMen)
   }
 
   return (

@@ -451,6 +451,66 @@ const getDocumentRequiredScreenCategory = (tenantId, moduleCode) => ({
     ],
   },
 });
+const getPetDocumentsRequiredScreenCategory = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Documents",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getPetTypeList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "PetType",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getBreedTypeList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "BreedType",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+//##############################################
+const getPetDocumentsRequiredScreen = (MdmsRes) => {
+  MdmsRes["PetService"].Documents.filter((Documents) => Documents.active).map((dropdownData) => {
+    return {
+      ...Documents,
+      i18nKey: `${dropdownData.code}`,
+    };
+  });
+};
+//######################
 
 const getDefaultMapConfig = (tenantId, moduleCode) => ({
   details: {
@@ -1069,6 +1129,56 @@ const GetPropertyOwnerShipCategory = (MdmsRes) =>
     };
   });
 
+  const getPetType = (MdmsRes) => {
+    return MdmsRes["PetService"].PetType.filter((PetType) => PetType.active).map((petDetails) => {
+      return {
+        ...petDetails,
+        i18nKey: `PTR_PET_TYPE_${petDetails.code}`,
+      };
+    });
+    //return MdmsRes;
+  };
+  
+  const getBreedType = (MdmsRes) => {
+    return MdmsRes["PetService"].BreedType.filter((BreedType) => BreedType.active).map((breedDetails) => {
+      return {
+        ...breedDetails,
+        i18nKey: `PTR_BREED_TYPE_${breedDetails.code}`,
+      };
+    });
+    //return MdmsRes;
+  };
+  
+  const PTRGenderType = (MdmsRes) => {
+    MdmsRes["common-masters"].GenderType.filter((GenderType) => GenderType.active).map((ptrgenders) => {
+      return {
+        ...ptrgenders,
+        i18nKey: `PTR_GENDER_${ptrgenders.code}`,
+      };
+    });
+  };
+  /////////////////
+  
+  ///////////
+  const PTRPetType = (MdmsRes) => {
+    MdmsRes["PetService"].PetType.filter((PetType) => PetType.active).map((petone) => {
+      return {
+        ...petone,
+        i18nKey: `PTR_PET_${petone.code}`,
+      };
+    });
+  };
+  
+  const PTRBreedType = (MdmsRes) => {
+    MdmsRes["PetService"].BreedType.filter((BreedType) => BreedType.active).map((breedone) => {
+      return {
+        ...breedone,
+        i18nKey:  `PTR_PET_TYPE_${breedone.code}`,
+      };
+    });
+  };
+  ///////////
+
 const GetTradeOwnerShipCategory = (MdmsRes) =>
   MdmsRes["common-masters"].OwnerShipCategory.filter((ownerShip) => ownerShip.active).map((ownerShipDetails) => {
     return {
@@ -1407,6 +1517,21 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
       return GetTripNumber(MdmsRes);
     case "ReceivedPaymentType":
       return GetReceivedPaymentType(MdmsRes);
+    case "Documents":
+      return getPetDocumentsRequiredScreen(MdmsRes);
+    case "PetType":
+      return getPetType(MdmsRes); 
+    case "BreedType":
+      return getBreedType(MdmsRes); 
+    case "PTRGendertype":
+      return PTRGenderType(MdmsRes);
+
+    case "PTRPetType":
+      return PTRPetType(MdmsRes);
+
+    case "PTRBreedType":
+      return PTRBreedType(MdmsRes);
+     
     default:
       return MdmsRes;
   }
@@ -1542,6 +1667,27 @@ export const MdmsService = {
   },
   getPaymentRules: (tenantId, filter) => {
     return MdmsService.call(tenantId, getBillingServiceForBusinessServiceCriteria(filter));
+  },
+  getPetDocumentsRequiredScreen: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getPetDocumentsRequiredScreenCategory(tenantId, moduleCode), moduleCode);
+  },
+
+  getPetType: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getPetTypeList(tenantId, moduleCode, type), moduleCode);
+  },
+
+  getBreedType: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getBreedTypeList(tenantId, moduleCode, type), moduleCode);
+  },
+  PTRGenderType: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getGenderTypeList(tenantId, moduleCode, type), moduleCode);
+  },
+  PTRPetType: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getPetTypeList(tenantId, moduleCode, type), moduleCode);
+  },
+
+  PTRBreedType: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getBreedTypeList(tenantId, moduleCode, type), moduleCode);
   },
 
   getCustomizationConfig: (tenantId, moduleCode) => {

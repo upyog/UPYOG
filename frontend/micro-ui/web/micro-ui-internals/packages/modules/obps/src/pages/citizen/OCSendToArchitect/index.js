@@ -1,4 +1,4 @@
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
@@ -49,6 +49,7 @@ const getBPAEditDetails = async (data, APIScrutinyDetails,mdmsData,nocdata,t,OCD
     applicationDate: data?.auditDetails?.createdTime,
     applicationType: APIScrutinyDetails?.appliactionType,
     holdingNumber: data?.additionalDetails?.holdingNo,
+    boundaryWallLength: data?.additionalDetails?.boundaryWallLength,
     bpaData:OCData,
     occupancyType: APIScrutinyDetails?.planDetail?.planInformation?.occupancy,
     registrationDetails: data?.additionalDetails?.registrationDetails,

@@ -1,4 +1,4 @@
-import { DetailsCard, Loader, Table, Modal } from "@egovernments/digit-ui-react-components";
+import { DetailsCard, Loader, Table, Modal } from "@upyog/digit-ui-react-components";
 import React, { memo, useMemo, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import PropertyInvalidMobileNumber from "../../pages/citizen/MyProperties/PropertyInvalidMobileNumber";
@@ -113,7 +113,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast,ptSearchConf
       {
         Header: t("PT_COMMON_TABLE_COL_OWNER_NAME"),
         disableSortBy: true,
-        Cell: ({ row }) => GetCell(`${row.original.owners.map((ob) => ob.name).join(",")}` || ""),
+        Cell: ({ row }) => GetCell(row.original.owners.additionalDetails!==null ? `${row?.original?.owners.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence).map((ob) => ob.name).join(",")}`: `${row.original.owners.map((ob) => ob.name).join(",")}` || ""),
       },
       {
         Header: t("ES_INBOX_LOCALITY"),

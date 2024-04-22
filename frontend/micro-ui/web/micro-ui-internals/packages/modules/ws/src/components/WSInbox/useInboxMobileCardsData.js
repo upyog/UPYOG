@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { SearchField, RadioButtons } from "@egovernments/digit-ui-react-components";
+import { SearchField, RadioButtons } from "@upyog/digit-ui-react-components";
 import { Controller, useFormContext } from "react-hook-form";
 import { Link } from "react-router-dom";
 

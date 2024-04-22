@@ -1,4 +1,4 @@
-import { Header, MultiLink } from "@egovernments/digit-ui-react-components";
+import { Header, LinkButton, MultiLink } from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,7 @@ const ApplicationDetails = () => {
   const [enableAudit, setEnableAudit] = useState(false);
   const [businessService, setBusinessService] = useState("PT.CREATE");
   sessionStorage.setItem("applicationNoinAppDetails",propertyId);
-
+  const [viewTimeline, setViewTimeline]=useState(false);
   const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.pt.useApplicationDetail(t, tenantId, propertyId);
 
   const {
@@ -72,7 +72,7 @@ const ApplicationDetails = () => {
 
   useEffect(() => {
     if (applicationDetails) {
-      applicationDetails.applicationDetails[2].additionalDetails.owners= applicationDetails?.applicationDetails?.[2]?.additionalDetails?.owners?.reverse()    
+      appDetailsToShow?.applicationData?.owners.sort((item, item2) => { return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence })
       setAppDetailsToShow(_.cloneDeep(applicationDetails));
       if (applicationDetails?.applicationData?.status !== "ACTIVE" && applicationDetails?.applicationData?.creationReason === "MUTATION") {
         setEnableAudit(true);
@@ -187,7 +187,13 @@ const ApplicationDetails = () => {
     onClick: () => handleDownloadPdf(),
   };
   let dowloadOptions = [propertyDetailsPDF];
-
+  const handleViewTimeline=()=>{
+    setViewTimeline(true);
+      const timelineSection=document.getElementById('timeline');
+      if(timelineSection){
+        timelineSection.scrollIntoView({behavior: 'smooth'});
+      } 
+  };
  if (applicationDetails?.applicationData?.creationReason === "MUTATION"){  
    return(
     <MutationApplicationDetails 
@@ -217,13 +223,18 @@ const ApplicationDetails = () => {
       applicationDetails?.applicationDetails[1].values.push(obj)
     }
   }
+
+  const reversedOwners= Array.isArray(appDetailsToShow?.applicationData?.owners) ? appDetailsToShow?.applicationData?.owners.slice().reverse(): [];
   if (appDetailsToShow?.applicationData) {
-    appDetailsToShow?.applicationData?.owners.sort((item, item2) => { return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence })
+    appDetailsToShow?.applicationDetails?.[3]?.additionalDetails?.owners.sort(() => { return appDetailsToShow?.applicationDetails?.[3]?.additionalDetails?.owners})
   }
   return (
     <div>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
       <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("PT_APPLICATION_TITLE")}</Header>
+      <div style={{display:"flex", alignItems:'center', color:"#A52A2A"}}>
+      <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
+      </div>
       {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper employee-mulitlink-main-div"
@@ -242,6 +253,7 @@ const ApplicationDetails = () => {
         isDataLoading={isLoading}
         applicationData={appDetailsToShow?.applicationData}
         mutate={mutate}
+        id={"timeline"}
         workflowDetails={workflowDetails}
         businessService={businessService}
         moduleCode="PT"

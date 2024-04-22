@@ -1,5 +1,5 @@
 import React, { Fragment, useState,useEffect, useCallback, useMemo } from "react";
-import { SearchForm, Table, Card, Loader, Header,Toast } from "@egovernments/digit-ui-react-components";
+import { SearchForm, Table, Card, Loader, Header,Toast } from "@upyog/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import SearchFields from "./SearchFields";
 import { useTranslation } from "react-i18next";
@@ -120,7 +120,7 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
         Header: t("WS_COMMON_TABLE_COL_OWN_NAME_LABEL"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(row?.original?.connectionHolders?.map((owner) => owner?.name).join(",") ? row?.original?.connectionHolders?.map((owner) => owner?.name).join(",") : `${row.original?.["owner"] || "NA"}`);
+          return GetCell(row?.original?.connectionHolders?.map((owner) => owner?.name).join(",") ? row?.original?.connectionHolders?.map((owner) => owner?.name).join(",") : `${row.original?.["ownerNames"] || "NA"}`);
         },
       },
       {

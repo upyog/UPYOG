@@ -1,6 +1,6 @@
 import React from "react";
-import { DatePicker } from "@egovernments/digit-ui-react-components";
-import { RadioButtons } from "@egovernments/digit-ui-react-components";
+import { DatePicker } from "@upyog/digit-ui-react-components";
+import { RadioButtons } from "@upyog/digit-ui-react-components";
 
 
 export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTrips, applicationCreatedTime = 0, receivedPaymentType, action, module }) => ({
@@ -55,22 +55,75 @@ export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTri
             error: `${t("ES_FSM_ACTION_INVALID_WASTE_VOLUME")} ${vehicleCapacity} ${t("CS_COMMON_LITRES")}`,
           },
         },
+        {   
+          head: "",
+          body: [
+        
         {
-          label: "ES_NEW_APPLICATION_PROPERTY_ID",
-          isMandatory: true,
           type: "component",
-          route: "property-id",
-          key: "propertyID",
-          component: "SelectPropertyID",
-          disable: true,
-          texts: {
-            headerCaption: "",
-            header: "CS_FILE_APPLICATION_PROPERTY_ID",
-            cardText: "CS_FILE_APPLICATION_PROPERTY_ID_TEXT",
-            submitBarLabel: "CS_COMMON_NEXT",
-          },
-          nextStep: "property-type",
+          route: "search-property",
+          isMandatory: true,
+          component: "CPTSearchProperty", 
+          key: "cptsearchproperty",
+          withoutLabel: true,
+          nextStep: 'search-results',
+          hideInEmployee: true,
         },
+        {
+          type: "component",
+          route: "search-results",
+          isMandatory: true,
+          component: "CPTSearchResults", 
+          key: "cptsearchresults",
+          withoutLabel: true,
+          nextStep: 'property-type',
+          hideInEmployee: true,
+        },
+        {
+          type: "component",
+          route: "create-property", 
+          isMandatory: true,
+          component: "CPTCreateProperty", 
+          key: "cptcreateproperty",
+          withoutLabel: true,
+          isSkipEnabled : true,
+          nextStep: 'acknowledge-create-property',
+          hideInEmployee: true,
+        },
+        {
+          type: "component",
+          route: "acknowledge-create-property", 
+          isMandatory: true,
+          component: "CPTAcknowledgement", 
+          key: "cptacknowledgement",
+          withoutLabel: true,
+          nextStep: 'property-type',
+          hideInEmployee: true,
+        },
+        {
+          type: "component",
+          route: "property-details",
+          isMandatory: true,
+          component: "CPTPropertyDetails", 
+          key: "propertydetails",
+          withoutLabel: true,
+          nextStep: 'property-type',
+          hideInEmployee: true,
+        },
+      ],
+  },
+  {
+    head: "FSM_NEW_APPLICATION_PROPERTY",
+    body: [
+      {
+        component: "CPTPropertySearchNSummary",
+        withoutLabel: true,
+        key: "cpt",
+        type: "component",
+        hideInCitizen: true
+      }
+    ]
+  },      
         {
           label: t("ES_FSM_ACTION_ROAD_WIDTH"),
           type: "number",
