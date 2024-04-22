@@ -132,6 +132,10 @@ public class PropertyRepository {
 			{
 				builder.append(" where tenantid IN (").append(createQuery(tenantIds)).append(")");
 				addToPreparedStatement(preparedStmtList, tenantIds);
+}else if(!ObjectUtils.isEmpty(criteria.getTenantId()))
+			{
+				builder.append(" where tenantid=?");
+				preparedStmtList.add(criteria.getTenantId());
 			}
 		}
 		else

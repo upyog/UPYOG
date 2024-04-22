@@ -562,6 +562,7 @@ public class MigrationService {
                 try{
                     propertyMigrationValidator.validatePropertyCreateRequest(request,masters,errorMap);
                 } catch (Exception e) {
+                	e.printStackTrace();
                     log.error("Error while migrating prperty data of " + property.getPropertyId(), e);
                 }
 
@@ -886,6 +887,7 @@ public class MigrationService {
                     assessment.setAdditionalDetails(null);
 
             } catch (IllegalArgumentException e) {
+                e.printStackTrace();
                 throw new CustomException("PARSING_ERROR","Failed to parse additional details in translation");
             }
         }
@@ -902,6 +904,7 @@ public class MigrationService {
                     assessment.setAdditionalDetails(null);
 
             } catch (IllegalArgumentException e) {
+                e.printStackTrace();
                 throw new CustomException("PARSING_ERROR","Failed to parse additional details in translation");
             }
 

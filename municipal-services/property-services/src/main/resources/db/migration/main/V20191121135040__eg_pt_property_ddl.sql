@@ -1,14 +1,14 @@
-DROP TABLE IF EXISTS eg_pt_document;
-DROP TABLE IF EXISTS eg_pt_address;
-DROP TABLE IF EXISTS eg_pt_owner;
-DROP TABLE IF EXISTS eg_pt_institution;
-DROP TABLE IF EXISTS eg_pt_unit;
-DROP TABLE IF EXISTS eg_pt_property;
-DROP TABLE IF EXISTS eg_pt_property_audit;
+--DROP TABLE IF EXISTS eg_pt_document;
+--DROP TABLE IF EXISTS eg_pt_address;
+--DROP TABLE IF EXISTS eg_pt_owner;
+--DROP TABLE IF EXISTS eg_pt_institution;
+--DROP TABLE IF EXISTS eg_pt_unit;
+--DROP TABLE IF EXISTS eg_pt_property;
+--DROP TABLE IF EXISTS eg_pt_property_audit;
 
 --> Property table
 
-CREATE TABLE eg_pt_property (
+CREATE TABLE IF NOT EXISTS eg_pt_property (
 
    id                   CHARACTER VARYING (128) NOT NULL,
    propertyid           CHARACTER VARYING (256),
@@ -46,7 +46,7 @@ CREATE INDEX IF NOT EXISTS index_eg_pt_property_status	        	 ON eg_pt_proper
 
 --> Institution
 
-CREATE TABLE eg_pt_institution (
+CREATE TABLE IF NOT EXISTS eg_pt_institution (
 
   id               			CHARACTER VARYING (128) NOT NULL,
   propertyid       			CHARACTER VARYING (256) NOT NULL,
@@ -68,7 +68,7 @@ CREATE INDEX IF NOT EXISTS index_eg_pt_institution_tenantid ON eg_pt_property (t
 
 --> Owner 
 
-CREATE TABLE eg_pt_owner (
+CREATE TABLE IF NOT EXISTS eg_pt_owner (
 
   ownerinfouuid		  	CHARACTER VARYING (256) NOT NULL,
   tenantid            	CHARACTER VARYING (256) NOT NULL,
@@ -95,7 +95,7 @@ CREATE INDEX IF NOT EXISTS index_eg_pt_owner_tenantid   ON eg_pt_owner (tenantid
 
   --> document table
 
-CREATE TABLE eg_pt_document (
+CREATE TABLE IF NOT EXISTS eg_pt_document (
 
   id               CHARACTER VARYING (128) NOT NULL,
   tenantId         CHARACTER VARYING (256) NOT NULL,
@@ -117,7 +117,7 @@ CREATE INDEX IF NOT EXISTS index_eg_pt_document_tenantid ON eg_pt_document (tena
 
 --> address
 
-CREATE TABLE eg_pt_address (
+CREATE TABLE IF NOT EXISTS eg_pt_address (
 
   tenantId          CHARACTER VARYING(256)  NOT NULL,
   id                CHARACTER VARYING(256)  NOT NULL,
@@ -149,7 +149,7 @@ CREATE TABLE eg_pt_address (
 CREATE INDEX IF NOT EXISTS index_eg_pt_address_tenantid  ON eg_pt_address (tenantid);
 
 
-CREATE TABLE eg_pt_unit (
+CREATE TABLE IF NOT EXISTS eg_pt_unit (
 
   id               	CHARACTER VARYING(128) 	NOT NULL, 
   tenantId         	CHARACTER VARYING(256) 	NOT NULL,
@@ -180,7 +180,7 @@ CREATE TABLE eg_pt_unit (
 CREATE INDEX IF NOT EXISTS index_eg_pt_unit_tenantId ON  eg_pt_unit (tenantId);
 
 
-CREATE TABLE eg_pt_property_audit (
+CREATE TABLE IF NOT EXISTS eg_pt_property_audit (
 
 audituuid			CHARACTER VARYING(128) 	NOT NULL,
 propertyid			CHARACTER VARYING(128) 	NOT NULL,

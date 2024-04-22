@@ -8,6 +8,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -73,7 +74,7 @@ public class Unit {
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;
 
-	@Digits(integer = 10, fraction = 2)
+	@Digits(integer = 12, fraction = 2)
 	@JsonProperty("arv")
 	private BigDecimal arv;
 

@@ -1,10 +1,10 @@
-DROP TABLE IF EXISTS eg_pt_asmt_document;
-DROP TABLE IF EXISTS eg_pt_asmt_unitusage;
-DROP TABLE IF EXISTS eg_pt_asmt_assessment;
-DROP TABLE IF EXISTS eg_pt_asmt_unitusage_audit;
-DROP TABLE IF EXISTS eg_pt_asmt_assessment_audit;
+--DROP TABLE IF EXISTS eg_pt_asmt_document;
+--DROP TABLE IF EXISTS eg_pt_asmt_unitusage;
+--DROP TABLE IF EXISTS eg_pt_asmt_assessment;
+--DROP TABLE IF EXISTS eg_pt_asmt_unitusage_audit;
+--DROP TABLE IF EXISTS eg_pt_asmt_assessment_audit;
 
-CREATE TABLE eg_pt_asmt_assessment (
+CREATE TABLE IF NOT EXISTS eg_pt_asmt_assessment (
 
   id character varying(256) NOT NULL,
   tenantId character varying(256) NOT NULL,
@@ -30,7 +30,7 @@ CREATE INDEX IF NOT EXISTS index_eg_pt_asmt_assessment_assessmentNumber ON  eg_p
 CREATE INDEX IF NOT EXISTS index_eg_pt_asmt_assessment_propertyId ON  eg_pt_asmt_assessment (propertyId);
 
 
-CREATE TABLE eg_pt_asmt_unitusage (
+CREATE TABLE IF NOT EXISTS eg_pt_asmt_unitusage (
 
   tenantId character varying(256) NOT NULL,
   id character varying(256) NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE eg_pt_asmt_unitusage (
 );
 
 
-CREATE TABLE eg_pt_asmt_assessment_audit (
+CREATE TABLE IF NOT EXISTS eg_pt_asmt_assessment_audit (
 
    id character varying(256) NOT NULL,
    tenantId character varying(256) NOT NULL,
@@ -74,7 +74,7 @@ CREATE TABLE eg_pt_asmt_assessment_audit (
 
 
 
-CREATE TABLE eg_pt_asmt_unitusage_audit (
+CREATE TABLE IF NOT EXISTS eg_pt_asmt_unitusage_audit (
 
     tenantId character varying(256) NOT NULL,
     id character varying(256) NOT NULL,
@@ -93,7 +93,7 @@ CREATE TABLE eg_pt_asmt_unitusage_audit (
 );
 
 
-CREATE TABLE eg_pt_asmt_document (
+CREATE TABLE IF NOT EXISTS eg_pt_asmt_document (
 
   id               CHARACTER VARYING (128) NOT NULL,
   tenantId         CHARACTER VARYING (256) NOT NULL,

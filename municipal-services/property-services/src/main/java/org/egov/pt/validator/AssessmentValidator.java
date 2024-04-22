@@ -1,5 +1,8 @@
 package org.egov.pt.validator;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -170,7 +173,10 @@ public class AssessmentValidator {
 		if(!checkIfPropertyExists(assessmentReq.getRequestInfo(), assessment.getPropertyId(), assessment.getTenantId())) {
 			throw new CustomException("PROPERTY_NOT_FOUND", "You're trying to assess a non-existing property.");
 		}
-		if (assessment.getAssessmentDate() > new Date().getTime()) {
+
+		LocalDate assessmentDate = Instant.ofEpochMilli(assessment.getAssessmentDate()).atZone(ZoneId.of("UTC"))
+				.toLocalDate();
+		if (assessmentDate.compareTo(LocalDate.now()) > 0) {
 			errorMap.put(ErrorConstants.ASSMENT_DATE_FUTURE_ERROR_CODE, ErrorConstants.ASSMENT_DATE_FUTURE_ERROR_MSG);
 		}
 
