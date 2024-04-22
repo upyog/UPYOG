@@ -150,6 +150,8 @@ const BpaApplicationDetail = () => {
       case "SEND_TO_ARCHITECT":
       case "APPLY":
       case "SKIP_PAYMENT":
+      case "POST_PAYMENT_APPROVE":
+      case "POST_PAYMENT_APPLY":
         setShowModal(true);
     }
   }, [selectedAction]);
