@@ -22,6 +22,7 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
     clearSuccessData();
     clearError();
   }, []);
+
   var defaultValues = {
     channel: channelMenu.filter((channel) => channel.code === applicationData.source)[0],
     applicationData: {
@@ -38,8 +39,11 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
           : undefined,
       vehicleType: { capacity: applicationData?.vehicleCapacity },
       vehicleCapacity: applicationData?.vehicleCapacity,
+      distancefromroad:applicationData?.additionalDetails?.distancefromroad,
+      roadWidth:applicationData?.additionalDetails?.roadWidth
     },
     propertyType: applicationData.propertyUsage.split(".")[0],
+    propertyID: applicationData?.additionalDetails?.propertyID,
     subtype: applicationData.propertyUsage,
     address: {
       pincode: applicationData.address.pincode,
@@ -246,6 +250,8 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
   }
 
   const configs = [...preFields, ...commonFields];
+
+  console.log(configs,"configs");
 
   return (
     // <>
