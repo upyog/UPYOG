@@ -26,8 +26,12 @@ public class AssessmentQueryBuilder {
 			+ "us.createdtime as us_createdtime, us.lastmodifiedby as us_lastmodifiedby, us.lastmodifiedtime as us_lastmodifiedtime, "
 			+ "doc.id as doc_id, doc.entityid as doc_entityid, doc.documentType as doc_documenttype, doc.fileStoreId as doc_filestoreid, doc.documentuid as doc_documentuid, "
 			+ "doc.status as doc_status, doc.tenantid as doc_tenantid, "
-			+ "doc.createdby as doc_createdby, doc.createdtime as doc_createdtime, doc.lastmodifiedby as doc_lastmodifiedby, doc.lastmodifiedtime as doc_lastmodifiedtime " 
-			+ "FROM eg_pt_asmt_assessment asmt LEFT OUTER JOIN eg_pt_asmt_unitusage us ON asmt.id = us.assessmentId LEFT OUTER JOIN eg_pt_asmt_document doc ON asmt.id = doc.entityid ";
+			+ "doc.createdby as doc_createdby, doc.createdtime as doc_createdtime, doc.lastmodifiedby as doc_lastmodifiedby, doc.lastmodifiedtime as doc_lastmodifiedtime," 
+			+"property.id as pid,"
+			+"owner.tenantid as owntenantid, ownerInfoUuid, owner.propertyid as ownpropertyid, userid, owner.status as ownstatus, isprimaryowner, ownertype, ownershippercentage, owner.institutionid as owninstitutionid, relationship, owner.createdby as owncreatedby, owner.createdtime as owncreatedtime,owner.lastmodifiedby as ownlastmodifiedby, owner.lastmodifiedtime as ownlastmodifiedtime, owner.isaownerdead as isownerdead, owner.dateofdeath as dateofdeath "
+			+ "FROM eg_pt_asmt_assessment asmt LEFT OUTER JOIN eg_pt_asmt_unitusage us ON asmt.id = us.assessmentId LEFT OUTER JOIN eg_pt_asmt_document doc ON asmt.id = doc.entityid "
+			+"INNER JOIN EG_PT_PROPERTY property ON asmt.propertyId=property.propertyid "
+			+"INNER JOIN EG_PT_OWNER owner ON property.id=owner.propertyid";
 	
 	
 	private final String paginationWrapper = "SELECT * FROM "

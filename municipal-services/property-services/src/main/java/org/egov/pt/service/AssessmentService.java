@@ -8,25 +8,31 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Assessment;
 import org.egov.pt.models.AssessmentSearchCriteria;
+import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.enums.Status;
+import org.egov.pt.models.user.UserDetailResponse;
+import org.egov.pt.models.user.UserSearchRequest;
 import org.egov.pt.models.workflow.BusinessService;
 import org.egov.pt.models.workflow.ProcessInstanceRequest;
 import org.egov.pt.models.workflow.State;
 import org.egov.pt.producer.PropertyProducer;
 import org.egov.pt.repository.AssessmentRepository;
 import org.egov.pt.util.AssessmentUtils;
+import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.validator.AssessmentValidator;
 import org.egov.pt.web.contracts.AssessmentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.egov.tracer.model.CustomException;
+import org.json.JSONObject;
 
 @Service
 public class AssessmentService {
@@ -52,6 +58,12 @@ public class AssessmentService {
 	private WorkflowService workflowService;
 
 	private CalculationService calculationService;
+	
+	@Autowired
+	private PropertyUtil util;
+	
+	@Autowired
+    private UserService userService;
 
 
 	@Autowired
@@ -92,7 +104,7 @@ public class AssessmentService {
 		crt.setStatus(Status.ACTIVE);
 		
 		
-		List<Assessment> earlierAssesmentForTheFinancialYear =  searchAssessments(crt);
+		List<Assessment> earlierAssesmentForTheFinancialYear =  searchAssessments(crt, request.getRequestInfo());
 		if(earlierAssesmentForTheFinancialYear.size()>0)
 			throw new CustomException("ASSESMENT_EXCEPTION","Property assessment is already completed for this property for the financial year "+crt.getFinancialYear());
 		
@@ -184,8 +196,27 @@ public class AssessmentService {
 		return request.getAssessment();
 	}
 
-	public List<Assessment> searchAssessments(AssessmentSearchCriteria criteria){
-		return repository.getAssessments(criteria);
+	public List<Assessment> searchAssessments(AssessmentSearchCriteria criteria, RequestInfo requestInfo){
+		
+		List<Assessment> assessments;
+		assessments=repository.getAssessments(criteria);
+		boolean isInternal=false;
+		
+		Boolean isOpenSearch = isInternal ? false : util.isPropertySearchOpen(requestInfo.getUserInfo());
+		
+		if (CollectionUtils.isEmpty(assessments))
+			return Collections.emptyList();
+		
+		Set<String> ownerIds = assessments.stream().map(Assessment::getOwners).flatMap(List::stream)
+				.map(OwnerInfo::getUuid).collect(Collectors.toSet());
+		
+		UserSearchRequest userSearchRequest = userService.getBaseUserSearchRequest(criteria.getTenantId(), requestInfo);
+		userSearchRequest.setUuid(ownerIds);
+		UserDetailResponse userDetailResponse = userService.getUser(userSearchRequest);
+			
+		util.enrichAssesmentOwner(userDetailResponse, assessments, isOpenSearch);
+		
+		return assessments;
 	}
 
 	public List<Assessment> getAssessmenPlainSearch(AssessmentSearchCriteria criteria) {
