@@ -250,8 +250,7 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
   }
 
   const configs = [...preFields, ...commonFields];
-
-
+  console.log(configs,"configs");
   return (
     // <>
     //   <div style={{ marginLeft: "15px" }}>
