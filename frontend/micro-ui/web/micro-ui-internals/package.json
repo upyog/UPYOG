@@ -49,7 +49,7 @@
     "buildD:commonPt": "cd packages/modules/commonPt && yarn build",
     "buildD:core": "cd packages/modules/core && yarn build",
     "buildD:pgr": "cd packages/modules/pgr && yarn build",
-    "build:fsm": "cd packages/modules/fsm && yarn build",
+    "buildD:fsm": "cd packages/modules/fsm && yarn build",
     "buildD:dss": "cd packages/modules/dss && yarn build",
     "buildD:mcollect": "cd packages/modules/mCollect && yarn build",
     "buildD:receipts": "cd packages/modules/receipts && yarn build",

@@ -4,7 +4,7 @@ import {
   initPGRComponents,
   PGRReducers,
 } from "@upyog/digit-ui-module-pgr";
-import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
+import { initFSMComponents } from "@egovernments/digit-ui-module-fsm";
 import {
   PTModule,
   PTLinks,

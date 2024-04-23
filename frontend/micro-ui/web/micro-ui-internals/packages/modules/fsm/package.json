@@ -1,5 +1,5 @@
 {
-  "name": "@upyog/digit-ui-module-fsm",
+  "name": "@egovernments/digit-ui-module-fsm",
   "version": "1.7.3",
   "license": "MIT",
   "main": "dist/index.js",
