@@ -112,6 +112,8 @@ public class BPAConstants {
 	public static final String ACTION_APPLY = "APPLY";
 
 	public static final String ACTION_APPROVE = "APPROVE";
+	
+	public static final String ACTION_POST_PAY_APPROVE = "POST_PAYMENT_APPROVE";
 
 	public static final String ACTION_FORWORD = "FORWARD";
 

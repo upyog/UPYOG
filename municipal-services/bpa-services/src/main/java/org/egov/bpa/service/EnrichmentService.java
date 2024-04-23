@@ -384,7 +384,7 @@ public class EnrichmentService {
 
 		} else if (wf != null && (wf.getAction().equalsIgnoreCase(BPAConstants.ACTION_SEND_TO_ARCHITECT)
 				|| (bpa.getStatus().equalsIgnoreCase(BPAConstants.STATUS_CITIZEN_APPROVAL_INPROCESS)
-						&& wf.getAction().equalsIgnoreCase(BPAConstants.ACTION_APPROVE)))) {
+						&& (wf.getAction().equalsIgnoreCase(BPAConstants.ACTION_APPROVE) || wf.getAction().equalsIgnoreCase(BPAConstants.ACTION_POST_PAY_APPROVE) ) ))) {
 			// Adding creator of BPA(Licensee)
 			if (bpa.getAccountId() != null)
 				assignes.add(bpa.getAccountId());
