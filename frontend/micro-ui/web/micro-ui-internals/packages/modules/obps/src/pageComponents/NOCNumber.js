@@ -1,22 +1,17 @@
 import React, { useState,useEffect } from "react";
-import { FormStep} from "@upyog/digit-ui-react-components";
+import { FormStep,SearchIcon,TextInput } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 
 const NOCNumber = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {
     const [nocNumber,setValueNoc]=useState(formData?.additionalDetails?.nocNumber || formData?.nocnumber?.nocNumber ||"");
     const tenantId = Digit.ULBService.getCurrentTenantId();
-
-    useEffect(()=>{
-        if(formData?.additionalDetails?.nocNumber || formData?.nocnumber?.nocNumber){
-            setValueNoc(formData?.additionalDetails?.nocNumber || formData?.nocnumber?.nocNumber);
-        }
-    },[formData]);
+    let Webview = !Digit.Utils.browser.isMobile();
 
     function onChange(data) {
-        setValueNoc(data.target.value);              
+        setValueNoc(data.target.value);        
       }
 
-      function onClick(){
+      function onClick(e){
         console.log("inside_search")
       }
 
@@ -32,19 +27,22 @@ const NOCNumber = ({ t, config, onSelect, userType, formData, setError: setFormE
                     config={config}
                     onSelect={handleSubmit}
                     isDisabled={ !nocNumber }
-                    
-                >
-                    
-                    <input
-                    class="card-input"
-                    type="text"
-                    value={nocNumber}
-                    onChange={onChange}
-                    style={{marginBottom:'10px'}}
-                    defaultValues={formData?.nocnumber?.nocNumber || formData?.additionalDetails?.nocNumber}
-                    />
-                    <button onClick={onClick} style={{alignSelf:'flex-start',backgroundColor:'marron'}}></button>
-                <span  onClick={onClick} style={{alignSelf:'flex-start', marginBottom:'5px', backgroundColor:'maroon', border:'1px solid marron',color:'white',padding:'5px 10px',borderRadius:'3px',cursor:'pointer'}}>SEARCH NOC</span> 
+                    > 
+                    <div className="field-container">
+                    <TextInput
+                      //style={{ background: "#FAFAFA", marginLeft:"25px"}}
+                      class="card-input"
+                      type={"text"}
+                      t={t}
+                      isMandatory={false}
+                      optionKey="i18nKey"
+                      name="nocNumber"
+                      value={nocNumber}
+                      onChange={(e) => onChange( e)}
+                      defaultValue={formData?.nocnumber?.nocNumber || formData?.additionalDetails?.nocNumber}
+                      />                       
+                    <div style={{ position: "relative", zIndex: "100", right: "20px", marginTop: "-24px", marginRight:Webview?"-20px":"-20px" }} onClick={(e) => onClick( e)}> <SearchIcon /> </div>
+                    </div>
                 </FormStep> 
         </div>
 
