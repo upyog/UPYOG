@@ -251,7 +251,6 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
 
   const configs = [...preFields, ...commonFields];
 
-  console.log(configs,"configs");
 
   return (
     // <>
