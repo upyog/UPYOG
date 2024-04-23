@@ -37,7 +37,17 @@ public class CalculationService {
              throw new CustomException("CALCULATION_ERROR","The calculation object is coming null from calculation service");
      }
 
+ public void calculateTaxForCancel(AssessmentRequest assessmentRequest, Property property){
      
+         StringBuilder uri = new StringBuilder(config.getCalculationHost())
+			        		 .append(config.getCalculationContextPath())
+			                 .append(config.getUpdateDemandEndpoint());
+
+         Map<String, Object> billObj = translationService.translateForDemand(assessmentRequest, property);
+         Object response = serviceRequestRepository.fetchResult(uri,billObj);
+         if(response == null)
+             throw new CustomException("CALCULATION_ERROR","The calculation object is coming null from calculation service");
+     }
 
      /**
       * Calculates the mutation fee

@@ -1,1 +1,1 @@
-alter table eg_pt_assessment add column active boolean default true;
+alter table eg_pt_assessment add column IF NOT EXISTS active boolean default true;

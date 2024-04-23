@@ -5,9 +5,12 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.pt.models.Assessment;
 import org.egov.pt.models.AssessmentSearchCriteria;
+import org.egov.pt.models.collection.Bill.StatusEnum;
+import org.egov.pt.models.enums.Status;
 import org.egov.pt.service.AssessmentService;
 import org.egov.pt.util.ResponseInfoFactory;
 import org.egov.pt.web.contracts.AssessmentRequest;
@@ -44,6 +47,22 @@ public class AssessmentController {
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
 
+	@PostMapping("/_cancel")
+	public  ResponseEntity<AssessmentResponse> cancel(@Valid @RequestBody AssessmentRequest request) {
+		Assessment assessment = request.getAssessment();
+		RequestInfo requestInfo = request.getRequestInfo();
+		//Property property = utils.getPropertyForAssessment(request);
+		String fy=assessment.getFinancialYear();
+		String pid=assessment.getPropertyId();
+		//debug.log("Request received to cancel assessment fy "+fy +" for property "+pid);
+		assessment=assessmentService.cancelAssessment(request);
+		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
+		AssessmentResponse response = AssessmentResponse.builder()
+				.assessments(Arrays.asList(assessment))
+				.responseInfo(resInfo)
+				.build();
+		return new ResponseEntity<>(response, HttpStatus.CREATED);
+	}
 	
 	@PostMapping("/_update")
 	public ResponseEntity<AssessmentResponse> update(@Valid @RequestBody AssessmentRequest assessmentRequest) {

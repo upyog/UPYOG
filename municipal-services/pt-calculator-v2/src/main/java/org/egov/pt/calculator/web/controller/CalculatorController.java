@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.egov.pt.calculator.service.DemandService;
 import org.egov.pt.calculator.service.EstimationService;
 import org.egov.pt.calculator.service.PayService;
+import org.egov.pt.calculator.web.models.BillCriteriaReq;
 import org.egov.pt.calculator.web.models.Calculation;
 import org.egov.pt.calculator.web.models.CalculationReq;
 import org.egov.pt.calculator.web.models.CalculationRes;
@@ -63,6 +64,13 @@ public class CalculatorController {
 	@PostMapping("/mutation/_calculate")
 	public ResponseEntity<Map<String, Calculation>> mutationCalculator(@RequestBody @Valid PropertyRequestV2 request) {
 		return new ResponseEntity<>(calculatorService.mutationCalculator(request.getProperty(), request.getRequestInfo()), HttpStatus.OK);
+	}
+	
+	@PostMapping("/_updatedemandForAssessmentCancel")
+	public ResponseEntity<DemandResponse> updateDemandForAssessmentCancel(@RequestBody BillCriteriaReq billCriteriaReq) {
+		RequestInfoWrapper requestInfoWrapper= new RequestInfoWrapper();
+		requestInfoWrapper.setRequestInfo(billCriteriaReq.getRequestInfo());
+		return new ResponseEntity<>(demandService.updateDemandsForAssessmentCancel(billCriteriaReq.getGetBillCriteria().get(0), requestInfoWrapper), HttpStatus.OK);
 	}
 
 }

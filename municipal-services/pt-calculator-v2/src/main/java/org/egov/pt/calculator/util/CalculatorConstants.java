@@ -61,7 +61,7 @@ public class CalculatorConstants {
 
 	public static final String ADHOC_REBATE_REASON_KEY = "adhocExemptionReason";
 	
-	public static final String ALLOWED_RECEIPT_STATUS = "APPROVED,REMITTED";
+	public static final String ALLOWED_RECEIPT_STATUS = "DEPOSITED,NEW,APPROVED,REMITTED";
 
 	public static final List<String> TAXES_TO_BE_CONSIDERD_WHEN_CALUCLATING_REBATE_AND_PENALTY = Collections.unmodifiableList(Arrays
 			.asList(PT_TAX));
@@ -223,6 +223,7 @@ public class CalculatorConstants {
 	public static final String CONSUMER_CODE_SEARCH_FIELD_NAME = "consumerCode=";
 
 	public static final String CONSUMER_CODE_SEARCH_FIELD_NAME_PAYMENT = "consumerCodes=";
+	public static final String BUSINESS_SERVICE_SEARCH_FIELD_NAME = "businessService=";
 
 
 	public static final String DEMAND_ID_SEARCH_FIELD_NAME = "demandId=";
@@ -304,6 +305,9 @@ public class CalculatorConstants {
 	public static final String EG_PT_INVALID_DEMAND_ERROR = "EG_PT_INVALID_DEMAND_ERROR";
 	public static final String EG_PT_INVALID_DEMAND_ERROR_MSG = " Bill cannot be generated for previous assessments in a year, please use the latest assesmment to pay";
 
+	
+	public static final String EG_PT_DEMAND_COLLECTED_ERROR = "EG_PT_DEMAND_COLLECTED_ERROR";
+	public static final String EG_PT_DEMAND_COLLECTED_ERROR_MSG = "Demand of this assessments is paid. Please cancel respective receipt first and then cancel Assessment ";
     public static final Long TIMEZONE_OFFSET = 19800000l;
 
     public static final String BILLINGSLAB_KEY = "calculationDescription";
@@ -341,6 +345,8 @@ public static final String ASSESSMENT_CONFIG_MASTER = "assessmentconfig";
 	
 	public static final String RE_ASSESSMENT_CONFIG_MASTER = "reassessmentconfig";
 
+	public static final String CANCEL_ASSESSMENT_CONFIG_MASTER = "cancelassessmentconfig";
+
 	public static final String MODULE_TENANT = "tenant";
 	
 	public static final String NO_TENANT_CONFIGURED_FOR_ASSESSMENT_JOB = "No tenant is configured to create assessments";
@@ -348,6 +354,8 @@ public static final String ASSESSMENT_CONFIG_MASTER = "assessmentconfig";
 	public static final String MDMS_ASSESSMENT_JOB_CONFIG_PATH = "$.MdmsRes.tenant.assessmentconfig[?(@.enabled==true)]";
 	
 	public static final String MDMS_RE_ASSESSMENT_JOB_CONFIG_PATH = "$.MdmsRes.tenant.reassessmentconfig";
+
+	public static final String MDMS_CANCEL_ASSESSMENT_JOB_CONFIG_PATH = "$.MdmsRes.tenant.cancelassessmentconfig[?(@.enabled==true)]";
 
 
 	public static final String FINANCIALYEAR_KEY = "financialyear";

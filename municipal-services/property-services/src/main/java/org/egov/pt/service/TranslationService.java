@@ -1,6 +1,7 @@
 package org.egov.pt.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -33,6 +34,28 @@ public class TranslationService {
         this.mapper = mapper;
     }
 
+    public Map<String, Object> translateForDemand(AssessmentRequest assessmentRequest, Property property){
+    	 RequestInfo requestInfo = assessmentRequest.getRequestInfo();
+         Assessment assessment = assessmentRequest.getAssessment();
+         List<String> CC=new ArrayList<String>();  
+
+         CC.add(0, property.getPropertyId());
+         
+         Map<String, Object> getBillCriteria = new HashMap<>();
+         getBillCriteria.put("propertyId",property.getPropertyId());
+         getBillCriteria.put("tenantId", property.getTenantId());
+         getBillCriteria.put("assessmentNumber",assessment.getAssessmentNumber());
+         getBillCriteria.put("assessmentYear",assessment.getFinancialYear());
+         getBillCriteria.put("consumerCodes",CC);
+       
+         Map<String, Object> billCriteriaReq = new HashMap<>();
+         billCriteriaReq.put("RequestInfo", requestInfo);
+         billCriteriaReq.put("GetBillCriteria", Collections.singletonList(getBillCriteria));
+
+         return billCriteriaReq;
+  
+    	
+    }
 
     public Map<String, Object> translate(AssessmentRequest assessmentRequest, Property property){
 
@@ -98,6 +121,9 @@ public class TranslationService {
         propertyDetail.put("propertySubType", propertySubType);
         propertyDetail.put("assessmentNumber", assessment.getAssessmentNumber());
         propertyDetail.put("assessmentDate", assessment.getAssessmentDate());
+        if(property.getAdditionalDetails()!=null) {
+        	propertyDetail.put("additionalDetails", property.getAdditionalDetails());
+        }
 
         if(assessment.getAdditionalDetails()!=null){
 
@@ -119,6 +145,7 @@ public class TranslationService {
                 if(assessment.getAdditionalDetails().get(ADHOC_PENALTY_REASON)!=null)
                     propertyDetail.put("adhocPenaltyReason", assessment.getAdditionalDetails().get(ADHOC_PENALTY_REASON).asText());
             } catch (Exception e){
+                e.printStackTrace();
                 throw new CustomException("PARSING_ERROR","Failed to parse additional details in translation");
             }
 
@@ -141,7 +168,7 @@ public class TranslationService {
                 unitMap.put("unitArea", unit.getConstructionDetail().getBuiltUpArea());
                 unitMap.put("arv", unit.getArv());
                 unitMap.put("occupancyType", unit.getOccupancyType());
-
+                unitMap.put("active", unit.getActive());
                 String[] masterData = unit.getUsageCategory().split("\\.");
 
                 if(masterData.length >= 1)

@@ -163,6 +163,70 @@ public class AssessmentService {
 		return request.getAssessment();
 	}
 
+	
+	public Assessment cancelAssessment(AssessmentRequest request) {
+
+		Assessment assessment = request.getAssessment();
+		RequestInfo requestInfo = request.getRequestInfo();
+		Property property = utils.getPropertyForAssessment(request);
+		//assessmentEnrichmentService.enrichAssessmentUpdate(request, property);
+		Assessment assessmentFromSearch = repository.getAssessmentFromDB(request.getAssessment());
+		Boolean isWorkflowTriggered = isWorkflowTriggered(request.getAssessment(),assessmentFromSearch);
+		validator.validateAssessmentUpdate(request, assessmentFromSearch, property, isWorkflowTriggered);
+		request.getAssessment().setStatus(Status.CANCELLED);
+		if ((request.getAssessment().getStatus().equals(Status.INWORKFLOW) || isWorkflowTriggered)
+				&& config.getIsAssessmentWorkflowEnabled()){
+
+			BusinessService businessService = workflowService.getBusinessService(request.getAssessment().getTenantId(),
+												ASSESSMENT_BUSINESSSERVICE,request.getRequestInfo());
+
+			assessmentEnrichmentService.enrichAssessmentProcessInstance(request, property);
+
+			Boolean isStateUpdatable = workflowService.isStateUpdatable(request.getAssessment().getWorkflow().getState().getState(),businessService);
+
+			if(isStateUpdatable){
+
+				assessmentEnrichmentService.enrichAssessmentUpdate(request, property);
+				/*
+				calculationService.getMutationFee();
+				producer.push(topic1,request);*/
+			}
+			ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(requestInfo, Collections.singletonList(assessment.getWorkflow()));
+			State state = workflowService.callWorkFlow(workflowRequest);
+			String status = state.getApplicationStatus();
+			request.getAssessment().getWorkflow().setState(state);
+			//assessmentEnrichmentService.enrichStatus(status, assessment, businessService);
+			assessment.setStatus(Status.fromValue(status));
+			if(assessment.getWorkflow().getState().getState().equalsIgnoreCase(config.getDemandTriggerState()))
+				calculationService.calculateTax(request, property);
+
+			producer.push(props.getUpdateAssessmentTopic(), request);
+
+
+			/*
+				*
+				* if(stateIsUpdatable){
+				*
+				*
+				*  }
+				*
+				*  else {
+				*  	producer.push(stateUpdateTopic, request);
+				*
+				*  }
+				*
+				*
+				* */
+
+
+		}
+		else if(!config.getIsAssessmentWorkflowEnabled()){
+			calculationService.calculateTaxForCancel(request, property);
+			producer.push(props.getUpdateAssessmentTopic(), request);
+		}
+		return request.getAssessment();
+	}
+	
 	public List<Assessment> searchAssessments(AssessmentSearchCriteria criteria){
 		return repository.getAssessments(criteria);
 	}

@@ -9,8 +9,8 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.pt.calculator.web.models.property.AuditDetails;
 import org.egov.pt.calculator.web.models.property.Channel;
-import org.egov.pt.calculator.web.models.propertyV2.AssessmentV2.Source;
 import org.egov.pt.calculator.web.models.propertyV2.DocumentV2;
+import org.egov.pt.calculator.web.models.propertyV2.AssessmentV2.Source;
 import org.egov.pt.calculator.web.models.propertyV2.UnitUsage;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -50,7 +50,7 @@ public class Assessment {
 	private Long assessmentDate;
 
 	@JsonProperty("status")
-	private String status;
+	private Status status;
 
 	@JsonProperty("source")
 	private Source source;

@@ -24,6 +24,7 @@ import org.egov.pt.calculator.web.models.demand.TaxPeriodResponse;
 import org.egov.pt.calculator.web.models.property.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,6 +57,7 @@ public class MasterDataService {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked") 
+	@Cacheable(value = "financialYear", key = "{#assessmentYear, #tenantId}", sync = true)
 	public Map<String, Object> getFinancialYear(RequestInfo requestInfo, String assessmentYear, String tenantId) {
 
 		MdmsCriteriaReq mdmsCriteriaReq = calculatorUtils.getFinancialYearRequest(requestInfo, assessmentYear, tenantId);
@@ -76,6 +78,7 @@ public class MasterDataService {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
+	@Cacheable(value = "financialYears", key = "{#assessmentYears, #tenantId}", sync = true)
 	public Map<String,Map<String, Object>> getFinancialYear(String tenantId,RequestInfo requestInfo,Set<String> assessmentYears) {
 		MdmsCriteriaReq mdmsCriteriaReq = calculatorUtils.getFinancialYearRequest(requestInfo, assessmentYears, tenantId);
 		StringBuilder url = calculatorUtils.getMdmsSearchUrl();
@@ -101,6 +104,7 @@ public class MasterDataService {
 	 * @param tenantId
 	 * @return
 	 */
+	@Cacheable(value = "taxHeadMaster", key = "{#tenantId}", sync = true)
 	public List<TaxHeadMaster> getTaxHeadMasterMap(RequestInfo requestInfo, String tenantId) {
 
 		StringBuilder uri = calculatorUtils.getTaxHeadSearchUrl(tenantId);
@@ -116,6 +120,7 @@ public class MasterDataService {
 	 * @param tenantId
 	 * @return
 	 */
+	@Cacheable(value = "taxPeriod", key = "{#tenantId}", sync = true)
 	public List<TaxPeriod> getTaxPeriodList(RequestInfo requestInfo, String tenantId) {
 
 		StringBuilder uri = calculatorUtils.getTaxPeriodSearchUrl(tenantId);

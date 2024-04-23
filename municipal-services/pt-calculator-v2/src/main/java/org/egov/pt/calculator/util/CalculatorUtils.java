@@ -29,6 +29,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -56,6 +57,7 @@ import org.egov.pt.calculator.web.models.GetBillCriteria;
 import org.egov.pt.calculator.web.models.ReceiptSearchCriteria;
 import org.egov.pt.calculator.web.models.collections.Payment;
 import org.egov.pt.calculator.web.models.collections.PaymentDetail;
+import org.egov.pt.calculator.web.models.collections.PaymentSearchCriteria;
 import org.egov.pt.calculator.web.models.demand.*;
 import org.egov.pt.calculator.web.models.property.AuditDetails;
 import org.egov.pt.calculator.web.models.property.OwnerInfo;
@@ -68,6 +70,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import static org.egov.pt.calculator.util.CalculatorConstants.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -260,7 +263,22 @@ public class CalculatorUtils {
                 .append(CalculatorConstants.SEPARATER).append(STATUS_FIELD_FOR_SEARCH_URL)
                 .append(ALLOWED_RECEIPT_STATUS);
     }
+	/**
+	 * Returns the Receipt search Url with tenantId, cosumerCode,service name and
+	 * tax period parameters
+	 *
+	 * @param criteria
+	 * @return
+	 */
+	public StringBuilder getPaymentSearchUrl(PaymentSearchCriteria criteria) {
 
+		return new StringBuilder().append(configurations.getCollectionServiceHost())
+				.append(configurations.getPaymentSearchEndpoint()).append(URL_PARAMS_SEPARATER)
+				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(criteria.getTenantId()).append(SEPARATER)
+				.append(CONSUMER_CODE_SEARCH_FIELD_NAME_PAYMENT).append(StringUtils.join(criteria.getConsumerCodes(),","))
+				.append(CalculatorConstants.SEPARATER).append(STATUS_FIELD_FOR_SEARCH_URL)
+				.append(ALLOWED_RECEIPT_STATUS);
+	}
 
     /**
      * method to create demandsearch url with demand criteria
@@ -447,6 +465,37 @@ public class CalculatorUtils {
         return query.toString();
     }
 
+	
+	/**
+	 * method to create billsearch url with demand criteria
+	 *
+	 * @param getBillCriteria
+	 * @return
+	 */
+	public StringBuilder getBillSearchUrl(GetBillCriteria getBillCriteria) {
+		StringBuilder builder = new StringBuilder();
+		if (CollectionUtils.isEmpty(getBillCriteria.getConsumerCodes())) {
+			builder = builder.append(configurations.getBillingServiceHost())
+					.append(configurations.getBillSearchEndPoint()).append(URL_PARAMS_SEPARATER)
+					.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(getBillCriteria.getTenantId()).append(SEPARATER)
+					.append(CONSUMER_CODE_SEARCH_FIELD_NAME).append(getBillCriteria.getPropertyId()).append(SEPARATER)
+					.append(BUSINESS_SERVICE_SEARCH_FIELD_NAME).append("PT");
+		} else {
+
+			builder = builder.append(configurations.getBillingServiceHost())
+					.append(configurations.getBillSearchEndPoint()).append(URL_PARAMS_SEPARATER)
+					.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(getBillCriteria.getTenantId()).append(SEPARATER)
+					.append(CONSUMER_CODE_SEARCH_FIELD_NAME)
+					.append(StringUtils.join(getBillCriteria.getConsumerCodes(), ",")).append(SEPARATER)
+					.append(BUSINESS_SERVICE_SEARCH_FIELD_NAME).append("PT");
+
+		}
+		if (getBillCriteria.getFromDate() != null && getBillCriteria.getToDate() != null)
+			builder = builder.append(DEMAND_START_DATE_PARAM).append(getBillCriteria.getFromDate()).append(SEPARATER)
+					.append(DEMAND_END_DATE_PARAM).append(getBillCriteria.getToDate()).append(SEPARATER);
+
+		return builder;
+	}
     /**
      * Query to fetch latest assessment for the given criteria
      *
@@ -578,6 +627,41 @@ public class CalculatorUtils {
      * @param payment
      * @return
      */
+     public BigDecimal getTaxAmtFromPaymentForApplicablesGeneration(Payment payment, TaxPeriod taxPeriod,BigDecimal actualTax) {
+		BigDecimal taxAmt = BigDecimal.ZERO;
+		BigDecimal amtPaid = BigDecimal.ZERO;
+
+		List<BillAccountDetail> billAccountDetails = new LinkedList<>();
+        if(payment!=null) {
+		payment.getPaymentDetails().forEach(paymentDetail -> {
+			if (paymentDetail.getBusinessService().equalsIgnoreCase(SERVICE_FIELD_VALUE_PT)) {
+				paymentDetail.getBill().getBillDetails().forEach(billDetail -> {
+					if (billDetail.getFromPeriod().equals(taxPeriod.getFromDate())
+							&& billDetail.getToPeriod().equals(taxPeriod.getToDate())) {
+						billAccountDetails.addAll(billDetail.getBillAccountDetails());
+					}
+				});
+			}
+		});
+
+		if(billAccountDetails.isEmpty()){
+			return actualTax;
+		}
+		for (BillAccountDetail detail : billAccountDetails) {
+			if (TAXES_TO_BE_CONSIDERD.contains(detail.getTaxHeadCode())) {
+				taxAmt = taxAmt.add(detail.getAmount());
+				amtPaid = amtPaid.add(detail.getAdjustedAmount());
+			}
+		}
+		if(actualTax.compareTo(taxAmt) > 0 )
+ 		return actualTax.subtract(amtPaid);
+		else
+			return taxAmt.subtract(amtPaid);
+        }else {
+        	return BigDecimal.ZERO;
+        }
+	}
+
     public BigDecimal getTaxAmtFromPaymentForApplicablesGeneration(Payment payment, TaxPeriod taxPeriod) {
         BigDecimal taxAmt = BigDecimal.ZERO;
         BigDecimal amtPaid = BigDecimal.ZERO;
@@ -642,13 +726,85 @@ public class CalculatorUtils {
         return isDepreciationAllowed;
     }
 
+	/**
+	 * @param requestInfo
+	 * @param calculationCriteria
+	 * @return
+	 */
+	public Demand getLatestDemandForCurrentFinancialYear(RequestInfo requestInfo,
+			CalculationCriteria calculationCriteria) {
+
+		DemandSearchCriteria criteria = new DemandSearchCriteria();
+		criteria.setFromDate(calculationCriteria.getFromDate());
+		criteria.setToDate(calculationCriteria.getToDate());
+		criteria.setTenantId(calculationCriteria.getTenantId());
+		criteria.setPropertyId(calculationCriteria.getProperty().getPropertyId());
+
+		DemandResponse res = mapper.convertValue(
+				repository.fetchResult(getDemandSearchUrl(criteria), new RequestInfoWrapper(requestInfo)),
+				DemandResponse.class);
+
+		List<Demand> demands = res.getDemands();
+
+		if (demands != null && demands.size() > 0) {
+
+			Comparator<Demand> comparator = Comparator.comparing(h -> h.getAuditDetails().getCreatedTime());
+			demands.sort(comparator.reversed());
+
+			BigDecimal totalCollectedAmount = demands.get(0).getDemandDetails().stream()
+					.map(d -> d.getCollectionAmount()).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+			if (totalCollectedAmount.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) != 0) {
+				// The total collected amount is fractional most probably because of previous
+				// round off dropping prior to BS/CS 1.1 release
+				throw new CustomException("INVALID_COLLECT_AMOUNT",
+						"The collected amount is fractional, please contact support for data correction");
+			}
+			return demands.get(0);
+
+		} else {
+
+			return null;
+		}
+	}
 
     /**
      * @param requestInfo
      * @param calculationCriteria
      * @return
      */
-    public Demand getLatestDemandForCurrentFinancialYear(RequestInfo requestInfo, CalculationCriteria calculationCriteria) {
+     	public List<Demand> getDemandForCurrentFinancialYear(RequestInfo requestInfo,
+			CalculationCriteria calculationCriteria) {
+
+		DemandSearchCriteria criteria = new DemandSearchCriteria();
+		criteria.setFromDate(calculationCriteria.getFromDate());
+		criteria.setToDate(calculationCriteria.getToDate());
+		criteria.setTenantId(calculationCriteria.getTenantId());
+		criteria.setPropertyId(calculationCriteria.getProperty().getPropertyId());
+
+		DemandResponse res = mapper.convertValue(
+				repository.fetchResult(getDemandSearchUrl(criteria), new RequestInfoWrapper(requestInfo)),
+				DemandResponse.class);
+		if (res.getDemands() != null && res.getDemands().size() > 0) {
+
+			BigDecimal totalCollectedAmount = res.getDemands().get(0).getDemandDetails().stream()
+					.map(d -> d.getCollectionAmount()).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+			if (totalCollectedAmount.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) != 0) {
+				// The total collected amount is fractional most probably because of previous
+				// round off dropping prior to BS/CS 1.1 release
+				throw new CustomException("INVALID_COLLECT_AMOUNT",
+						"The collected amount is fractional, please contact support for data correction");
+			}
+
+			return res.getDemands();
+		} else {
+
+			return null;
+		}
+	}
+
+    public Demand getLatestDemandForCurrentFinancialYear2(RequestInfo requestInfo, CalculationCriteria calculationCriteria) {
 
         DemandSearchCriteria criteria = new DemandSearchCriteria();
         criteria.setFromDate(calculationCriteria.getFromDate());
@@ -818,6 +974,18 @@ public class CalculatorUtils {
 	public MdmsCriteriaReq getReAssessmentConfigRequest(RequestInfo requestInfo, String tenantId) {
 
 		MasterDetail mstrDetail = MasterDetail.builder().name(CalculatorConstants.RE_ASSESSMENT_CONFIG_MASTER)
+				.build();
+		ModuleDetail moduleDetail = ModuleDetail.builder().moduleName("tenant")
+				.masterDetails(Arrays.asList(mstrDetail)).build();
+		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(moduleDetail)).tenantId(tenantId)
+				.build();
+		return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+	}
+	
+	public MdmsCriteriaReq getCancelAssessmentConfigRequest(RequestInfo requestInfo, String tenantId) {
+
+		MasterDetail mstrDetail = MasterDetail.builder().name(CalculatorConstants.CANCEL_ASSESSMENT_CONFIG_MASTER)
+				.filter("[?(@.enabled==true)]")
 				.build();
 		ModuleDetail moduleDetail = ModuleDetail.builder().moduleName("tenant")
 				.masterDetails(Arrays.asList(mstrDetail)).build();

@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Document;

@@ -1,1 +1,1 @@
-DROP TABLE eg_pt_alternatenumbers;
+-- DROP TABLE eg_pt_alternatenumbers;

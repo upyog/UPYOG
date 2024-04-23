@@ -89,15 +89,24 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 						.creationReason(CreationReason.fromValue(rs.getString("creationReason")))
 						.additionalDetails(getadditionalDetail(rs, "padditionalDetails"))
 						.acknowldgementNumber(rs.getString("acknowldgementNumber"))
+						.status(Status.fromValue(rs.getString("propertystatus")))
 						.ownershipCategory(rs.getString("ownershipcategory"))
 						.channel(Channel.fromValue(rs.getString("channel")))
 						.superBuiltUpArea(rs.getBigDecimal("propertysbpa"))
 						.usageCategory(rs.getString("pusagecategory"))
+						.oldPropertyId(rs.getString("oldPropertyId"))
 						.propertyType(rs.getString("propertytype"))
+						.propertyId(rs.getString("propertyid"))
+						.accountId(rs.getString("accountid"))
 						.noOfFloors(rs.getLong("noOfFloors"))
+						.surveyId(rs.getString("surveyId"))
+						.linkedProperties(linkedProperties)
 						.auditDetails(auditdetails)
 						.institution(institute)
 						.landArea(landArea)
+						.tenantId(tenanId)
+						.id(propertyUuId)
+						.address(address)
 						.build();
 
 
@@ -167,6 +176,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 			arv = arv.stripTrailingZeros();
 
 		Unit unit = Unit.builder()
+				.additionalDetails(getadditionalDetail(rs, "unitadditionaldetails"))
 				.occupancyType(rs.getString("occupancyType"))
 				.usageCategory(rs.getString("unitusageCategory"))
 				.occupancyDate(rs.getLong("occupancyDate"))

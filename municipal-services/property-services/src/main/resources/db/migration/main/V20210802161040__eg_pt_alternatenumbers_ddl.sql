@@ -1,4 +1,4 @@
-CREATE TABLE eg_pt_alternatenumbers(
+CREATE TABLE IF NOT EXISTS eg_pt_alternatenumbers(
 
    id                   CHARACTER VARYING (128) NOT NULL,
    uuid                 CHARACTER VARYING (128) NOT NULL,

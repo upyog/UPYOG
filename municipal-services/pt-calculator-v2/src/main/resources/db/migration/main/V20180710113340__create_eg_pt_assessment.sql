@@ -1,4 +1,4 @@
-CREATE TABLE eg_pt_assessment
+CREATE TABLE IF NOT EXISTS eg_pt_assessment
 (
 
   uuid character varying(64),

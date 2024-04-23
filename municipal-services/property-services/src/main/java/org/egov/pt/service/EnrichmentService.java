@@ -80,6 +80,8 @@ public class EnrichmentService {
 			property.getUnits().forEach(unit -> {
 
 				unit.setId(UUID.randomUUID().toString());
+			
+				if (unit.getActive() == null)
 				unit.setActive(true);
 			});
 		
@@ -291,6 +293,7 @@ public class EnrichmentService {
 			property.getUnits().forEach(unit -> {
 
 				unit.setId(UUID.randomUUID().toString());
+				if (unit.getActive() == null)
 				unit.setActive(true);
 			});
 		

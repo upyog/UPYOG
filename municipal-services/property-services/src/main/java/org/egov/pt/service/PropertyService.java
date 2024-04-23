@@ -219,13 +219,15 @@ public class PropertyService {
 		List <OwnerInfo> ownersFromRequest = request.getProperty().getOwners();
 		
 		Boolean isNumberDifferent = false;
-		
+if(!request.getProperty().getCreationReason().equals(CreationReason.MUTATION))
+{
 		for(OwnerInfo owner : ownersFromRequest) {
 			if(uuidToMobileNumber.containsKey(owner.getUuid()) && !uuidToMobileNumber.get(owner.getUuid()).equals(owner.getMobileNumber())) {
 				isNumberDifferent = true;
 				break;
 			}
 		}
+}
 		
 		return isNumberDifferent;
 	}
@@ -339,7 +341,7 @@ public class PropertyService {
 		userService.createUserForMutation(request, !propertyFromSearch.getStatus().equals(Status.INWORKFLOW));
 		enrichmentService.enrichAssignes(request.getProperty());
 		enrichmentService.enrichMutationRequest(request, propertyFromSearch);
-		calculatorService.calculateMutationFee(request.getRequestInfo(), request.getProperty());
+	//	calculatorService.calculateMutationFee(request.getRequestInfo(), request.getProperty());
 
 		// TODO FIX ME block property changes FIXME
 		util.mergeAdditionalDetails(request, propertyFromSearch);

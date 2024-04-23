@@ -31,13 +31,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class PaymentService {
 
-
+	
 	@Autowired
     private Repository repository;
-
+    	
 	@Autowired
     private ObjectMapper mapper;
-
+    	
     @Autowired
     private Configurations configurations;
 
@@ -64,7 +64,7 @@ public class PaymentService {
      * @param property
      * @param requestInfoWrapper
      * @return
-     */
+     */	
     public List<Payment> getPaymentsFromProperty(Property property, RequestInfoWrapper requestInfoWrapper) {
         PaymentSearchCriteria criteria = new PaymentSearchCriteria();
         criteria.setTenantId(property.getTenantId());
