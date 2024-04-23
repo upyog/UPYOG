@@ -75,6 +75,7 @@ public class ActionValidator {
 			List<Role> roles = requestInfo.getUserInfo().getRoles();
 			List<String> validActions = new LinkedList<>();
 			log.info("roles are" +roles);
+			log.info("Actions are" +actions);
 			roles.forEach(role -> {
 				actions.forEach(action -> {
 					if (action.getRoles().contains(role.getCode())) {
