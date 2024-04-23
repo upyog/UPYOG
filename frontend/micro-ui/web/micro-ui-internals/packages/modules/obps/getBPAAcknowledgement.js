@@ -121,14 +121,9 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                 title: t(`BPA_NOC_DETAILS_SUMMARY`) , 
                 values: [
                     {
-                      title: t(`BPA_${application?.nocDocuments?.NocDetails[0]?.nocType}_LABEL`),
-                      value: application?.nocDocuments?.NocDetails[0]?.applicationNo || "NA", 
-                    },
-                    {
-                        title: t(`BPA_${application?.nocDocuments?.NocDetails[1]?.nocType}_LABEL`),
-                        value: application?.nocDocuments?.NocDetails[1]?.applicationNo || "NA",
-                      
-                    },
+                      title: t(`BPA_NOC_NUMBER`),
+                      value: application?.additionalDetails?.nocNumber || "NA", 
+                    }
                     
                 ],    
              },

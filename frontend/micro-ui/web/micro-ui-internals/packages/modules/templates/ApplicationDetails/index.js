@@ -24,7 +24,7 @@ const ApplicationDetails = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [isEnableLoader, setIsEnableLoader] = useState(false);
   const [isWarningPop, setWarningPopUp] = useState(false);
-
+  const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(state, "BPA", ["RiskTypeComputation"]);
   const {
     applicationDetails,
     showToast,
@@ -195,10 +195,15 @@ const ApplicationDetails = (props) => {
   }
   const onSubmit =async(data)=> {
     const bpaApplicationDetails = await Digit.OBPSService.BPASearch(tenantId, {applicationNo: applicationData?.applicationNo});
+    const riskType = Digit.Utils.obps.calculateRiskType(
+      mdmsData?.BPA?.RiskTypeComputation,
+      applicationDetails?.edcrDetails?.planDetail?.plot?.area,
+      applicationDetails?.edcrDetails?.planDetail?.blocks
+    );
     const bpaDetails={
       BPA:bpaApplicationDetails.BPA[0]
     }
-    //bpaDetails.BPA.riskType="HIGH"
+    bpaDetails.BPA.riskType=riskType
     bpaDetails.BPA.workflow={
                 "action": "EDIT",
                 "assignes": [],
