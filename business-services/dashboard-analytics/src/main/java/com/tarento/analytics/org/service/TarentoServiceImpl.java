@@ -106,9 +106,8 @@ public class TarentoServiceImpl implements ClientService {
                 boolean isRequestContainsInterval = null == request.getRequestDate() ? false : (request.getRequestDate().getInterval() != null && !request.getRequestDate().getInterval().isEmpty());
                 String interval = isRequestContainsInterval ? request.getRequestDate().getInterval() : (isDefaultPresent ? chartNode.get(Constants.JsonPaths.INTERVAL).asText() : "");
                 System.out.println(indexName);
-                if(!indexName.contains("*")&&interval!=null){
+                if(indexName.contains("*")&&interval!=null){
                 	indexName = indexName.replace("*", interval);
-//                    indexName = "pt-national-dashboard-week";
                 }
                 ((ObjectNode) query).put(Constants.JsonPaths.INDEX_NAME, indexName);
 //                nodes.set(indexName, aggrResponse);
