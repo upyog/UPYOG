@@ -556,44 +556,28 @@ public class PropertyValidator {
 	 * @param requestInfo
 	 */
     public void validatePropertyCriteria(PropertyCriteria criteria,RequestInfo requestInfo) {
-    	
-		List<String> allowedParams = null;
+List<String> allowedParams = null;
 		
 		User user = requestInfo.getUserInfo();
 		String userType = user.getType();
 		Boolean isUserCitizen = "CITIZEN".equalsIgnoreCase(userType);
-
-		// Safeguards against the possibility of inbox search being performed when inbox search has been disabled at service level
-		if(!configs.getIsInboxSearchAllowed() && criteria.getIsInboxSearch()){
-			throw new CustomException("EG_PT_INVALID_SEARCH", "Inbox search has been disabled for property service");
+		
+		if(propertyUtil.isPropertySearchOpen(user)) {
+			
+			if(StringUtils.isEmpty(criteria.getLocality()))
+					throw new CustomException("EG_PT_INVALID_SEARCH"," locality is mandatory for open search");
 		}
 		
-		if (propertyUtil.isPropertySearchOpen(user) && !criteria.getIsRequestForCount()) {
-
-			if (StringUtils.isEmpty(criteria.getMobileNumber()) && CollectionUtils.isEmpty(criteria.getPropertyIds()))
-				throw new CustomException("EG_PT_INVALID_SEARCH",
-						"PropertyId OR MobileNumber are mandatory for open search");
-		}
-
-		if ((criteria.getFromDate() != null && criteria.getToDate() == null) || (criteria.getToDate() != null && criteria.getFromDate() == null))
-			throw new CustomException("EG_PT_INVALID_SEARCH", "Search is mandatory for both fromDate and toDate : " + userType);
-
+		
 		Boolean isCriteriaEmpty = CollectionUtils.isEmpty(criteria.getOldpropertyids())
 				&& CollectionUtils.isEmpty(criteria.getAcknowledgementIds())
 				&& CollectionUtils.isEmpty(criteria.getPropertyIds())
 				&& CollectionUtils.isEmpty(criteria.getOwnerIds()) 
 				&& CollectionUtils.isEmpty(criteria.getUuids())
 				&& null == criteria.getMobileNumber()
-				&& null == criteria.getName()
-				&& null == criteria.getDocumentNumbers()
-				&& null == criteria.getPropertyType()
-				&& null == criteria.getDoorNo()
-				&& null == criteria.getOldPropertyId()
-				&& null == criteria.getLocality()
-				&& (null == criteria.getFromDate() && null == criteria.getToDate());
+				&& null == criteria.getName();
 		
 		if (isUserCitizen) {
-			criteria.setIsCitizen(true);
 			
 			if (isCriteriaEmpty)
 				criteria.setMobileNumber(user.getMobileNumber());
@@ -626,7 +610,7 @@ public class PropertyValidator {
 
         if(!CollectionUtils.isEmpty(criteria.getOwnerIds()) && !allowedParams.contains("ownerids"))
             throw new CustomException("EG_PT_INVALID_SEARCH","Search based on ownerId is not available for : " + userType);
-    }
+        }
 
 	/**
 	 * Validates if the mobileNumber is 10 digit and starts with 5 or greater
