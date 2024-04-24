@@ -90,31 +90,26 @@ public class TarentoServiceImpl implements ClientService {
 		ObjectNode chartNode = (ObjectNode) node.get(internalChartId);
 		// added pivot code from here
 		ArrayNode queries = (ArrayNode) chartNode.get(Constants.JsonPaths.QUERIES);
-        queries.forEach(query -> {
-            String module = query.get(Constants.JsonPaths.MODULE).asText();
-            if (request.getModuleLevel().equals(Constants.Modules.HOME_REVENUE) ||
-                    request.getModuleLevel().equals(Constants.Modules.HOME_SERVICES) ||
-                    query.get(Constants.JsonPaths.MODULE).asText().equals(Constants.Modules.COMMON) ||
-                    request.getModuleLevel().equals(module)) {
-
-                String indexName = query.get(Constants.JsonPaths.INDEX_NAME).asText();
-                
-                // intercept request + _search operation
-//                ObjectNode aggrResponse = aggrResponseBuilder(plotName, requestDto, query, indexName, interval);
-                boolean isDefaultPresent = false;
-//                = chartType.equals(ChartType.LINE) && chartNode.get(Constants.JsonPaths.INTERVAL) != null;
-                boolean isRequestContainsInterval = null == request.getRequestDate() ? false : (request.getRequestDate().getInterval() != null && !request.getRequestDate().getInterval().isEmpty());
-                String interval = isRequestContainsInterval ? request.getRequestDate().getInterval() : (isDefaultPresent ? chartNode.get(Constants.JsonPaths.INTERVAL).asText() : "");
-                System.out.println(indexName);
-                if(indexName.contains("*")&&interval!=null){
-                	indexName = indexName.replace("*", interval);
-                }
-                ((ObjectNode) query).put(Constants.JsonPaths.INDEX_NAME, indexName);
-//                nodes.set(indexName, aggrResponse);
-//                aggrObjectNode.set(Constants.JsonPaths.AGGREGATIONS, nodes);
-            }
-		((ObjectNode) chartNode).put(Constants.JsonPaths.QUERIES, queries);
-        });
+	        queries.forEach(query -> {
+	            String module = query.get(Constants.JsonPaths.MODULE).asText();
+	            String indexName = "";
+	            if (request.getModuleLevel().equals(Constants.Modules.HOME_REVENUE) ||
+	                    request.getModuleLevel().equals(Constants.Modules.HOME_SERVICES) ||
+	                    query.get(Constants.JsonPaths.MODULE).asText().equals(Constants.Modules.COMMON) ||
+	                    request.getModuleLevel().equals(module)) {
+	
+	                indexName = query.get(Constants.JsonPaths.INDEX_NAME).asText();
+	                boolean isDefaultPresent = false;
+	                boolean isRequestContainsInterval = null == request.getRequestDate() ? false : (request.getRequestDate().getInterval() != null && !request.getRequestDate().getInterval().isEmpty());
+	                String interval = isRequestContainsInterval ? request.getRequestDate().getInterval() : (isDefaultPresent ? chartNode.get(Constants.JsonPaths.INTERVAL).asText() : "");
+	                if(indexName.contains("*")&&interval!=null){
+	                	indexName = indexName.replace("*", interval);
+	                }
+	            }
+	            ((ObjectNode) query).put(Constants.JsonPaths.INDEX_NAME, indexName);
+	            
+	        });
+	        ((ObjectNode) chartNode).put(Constants.JsonPaths.QUERIES, queries);
 		InsightsConfiguration insightsConfig = null;
 		if(chartNode.get(Constants.JsonPaths.INSIGHT) != null) { 
 			insightsConfig = mapper.treeToValue(chartNode.get(Constants.JsonPaths.INSIGHT), InsightsConfiguration.class);
