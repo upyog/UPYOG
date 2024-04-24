@@ -67,8 +67,8 @@ const AssessmentDetails = () => {
     ptCalculationEstimateMutate({ Assessment: AssessmentData });
     }, []);
     useEffect(()=>{
-      setPenalty(parseInt(ptCalculationEstimateData?.Calculation[0].taxHeadEstimates[6].estimateAmount))
-      setRebate(parseInt(ptCalculationEstimateData?.Calculation[0].taxHeadEstimates[5].estimateAmount))
+      setPenalty(parseInt(ptCalculationEstimateData?.Calculation[0]?.taxHeadEstimates[6]?.estimateAmount))
+      setRebate(parseInt(ptCalculationEstimateData?.Calculation[0]?.taxHeadEstimates[5]?.estimateAmount))
     },[ptCalculationEstimateLoading])
   useEffect(() => {
     if (applicationDetails) setAppDetailsToShow(_.cloneDeep(applicationDetails));
@@ -189,7 +189,7 @@ function change(){
           let additionalPenality=first;
           ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6]={
             "taxHeadCode": "PT_TIME_PENALTY",
-            "estimateAmount":  ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6].estimateAmount=first+penalty,
+            "estimateAmount":  ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6].estimateAmount+first+penalty,
             "category": "TAX"
         }
         // AssessmentData.additionalDetails={
@@ -210,7 +210,7 @@ function change(){
           let additionalPenality=first;
           ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6]={
             "taxHeadCode": "PT_TIME_PENALTY",
-            "estimateAmount": ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6]?.estimateAmount+first+penalty,
+            "estimateAmount": ptCalculationEstimateData?.Calculation[0]?.taxHeadEstimates[6]?.estimateAmount+first+penalty,
             "category": "TAX"
         }
         // AssessmentData.additionalDetails={
@@ -233,7 +233,7 @@ function change(){
         if(second<total_amount){
           ptCalculationEstimateData.Calculation[0].taxHeadEstimates[5]={
             "taxHeadCode": "PT_TIME_REBATE",
-            "estimateAmount": ptCalculationEstimateData.Calculation[0].taxHeadEstimates[5].estimateAmount=second+rebate,
+            "estimateAmount": ptCalculationEstimateData?.Calculation[0]?.taxHeadEstimates[5]?.estimateAmount+second+rebate,
             "category": "TAX"
         }
         // AssessmentData.additionalDetails={
@@ -254,7 +254,7 @@ function change(){
         if(second<total_amount){
           ptCalculationEstimateData.Calculation[0].taxHeadEstimates[5]={
             "taxHeadCode": "PT_TIME_REBATE",
-            "estimateAmount": ptCalculationEstimateData.Calculation[0].taxHeadEstimates[5]?.estimateAmount-second-rebate,
+            "estimateAmount": ptCalculationEstimateData?.Calculation[0]?.taxHeadEstimates[5]?.estimateAmount-second-rebate,
             "category": "TAX"
         }
         // AssessmentData.additionalDetails={

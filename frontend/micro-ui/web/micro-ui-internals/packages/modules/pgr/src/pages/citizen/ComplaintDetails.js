@@ -132,9 +132,9 @@ const ComplaintDetailsPage = (props) => {
   return (
     <React.Fragment>
       <div className="complaint-summary">
-        <Header>{t(`${LOCALIZATION_KEY.CS_HEADER}_COMPLAINT_SUMMARY`)}</Header>
+        <Header>{t(`${LOCALIZATION_KEY?.CS_HEADER}_COMPLAINT_SUMMARY`)}</Header>
 
-        {Object.keys(complaintDetails).length > 0 ? (
+        {complaintDetails && Object.keys(complaintDetails).length > 0 ? (
           <React.Fragment>
             <Card>
               <CardSubHeader>{t(`SERVICEDEFS.${complaintDetails.audit.serviceCode.toUpperCase()}`)}</CardSubHeader>
