@@ -114,8 +114,8 @@ public class TarentoServiceImpl implements ClientService {
 //                nodes.set(indexName, aggrResponse);
 //                aggrObjectNode.set(Constants.JsonPaths.AGGREGATIONS, nodes);
             }
+		((ObjectNode) chartNode).put(Constants.JsonPaths.QUERIES, queries);
         });
-        ((ObjectNode) chartNode).put(Constants.JsonPaths.QUERIES, queries);
 		InsightsConfiguration insightsConfig = null;
 		if(chartNode.get(Constants.JsonPaths.INSIGHT) != null) { 
 			insightsConfig = mapper.treeToValue(chartNode.get(Constants.JsonPaths.INSIGHT), InsightsConfiguration.class);
