@@ -507,9 +507,10 @@ public class BPAValidator {
 								throw new CustomException(BPAErrorConstants.BPA_UNKNOWN_DOCS, BPAErrorConstants.BPA_UNKNOWN_DOCS_MSG);
 							}
 						}
-//					} else {
-//						throw new CustomException(BPAErrorConstants.BPA_UNKNOWN_DOCS, BPAErrorConstants.BPA_UNKNOWN_DOCS_MSG);
-//					}
+					} 
+//					else {
+////						throw new CustomException(BPAErrorConstants.BPA_UNKNOWN_DOCS, BPAErrorConstants.BPA_UNKNOWN_DOCS_MSG);
+////					}
 				} else {
 					throw new CustomException(BPAErrorConstants.BPA_UNKNOWN_DOCS, BPAErrorConstants.BPA_UNKNOWN_DOCS_MSG);
 				}
