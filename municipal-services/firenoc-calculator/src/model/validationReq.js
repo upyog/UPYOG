@@ -194,7 +194,7 @@ const Address = {
     street: {
       type: "string",
       description: "Street Name",
-      maxLength: 64,
+      maxLength: 254,
       minLength: 2
     }
   }
@@ -273,7 +273,7 @@ const OwnerInfo = {
       description:
         "Type of owner, based on this option Exemptions will be applied. This is master data defined in mdms.",
       maxLength: 256,
-      minLength: 4
+      minLength: 3
     },
     relationship: {
       type: "string",

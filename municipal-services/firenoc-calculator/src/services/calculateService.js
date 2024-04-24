@@ -132,19 +132,31 @@ const calculateNOCFee = async (
     i < calculateCriteria.fireNOC.fireNOCDetails.buildings.length;
     i++
   ) {
-    let buidingnocfee = 0;
-    searchReqParam.buildingUsageType =
-      calculateCriteria.fireNOC.fireNOCDetails.buildings[i].usageSubType;
+    let buidingnocfee = 0; let usage=calculateCriteria.fireNOC.fireNOCDetails.buildings[i].usageType+"."+calculateCriteria.fireNOC.fireNOCDetails.buildings[i].usageSubType;
+    searchReqParam.buildingUsageType =usage;
+    
     let uoms = calculateCriteria.fireNOC.fireNOCDetails.buildings[
       i
     ].uoms.filter(uom => {
       return uom.isActiveUom;
     });
     //for (let uomindex = 0; uomindex < uoms.length; uomindex++) {
-      searchReqParam.uom = "HEIGHT_OF_BUILDING";
-      if (mdmsConfig.CALCULATON_TYPE !== "FLAT")
-        searchReqParam.uomValue = uoms[uomindex].value;
-      const billingslabs = await searchService(searchReqParam, {}, pool);
+    
+    for(let j=0;j<uoms.length;j++)
+    { 
+      if(uoms[j].code=='HEIGHT_OF_BUILDING')
+      {   
+        searchReqParam.height = uoms[j].value;
+      }
+    }
+      //searchReqParam.uomValue = uoms[uomindex].value;
+     //searchReqParam.uomValue ="HEIGHT_OF_BUILDING";
+    let landArea=calculateCriteria.fireNOC.fireNOCDetails.buildings[i].landArea;
+    let AREA_SQYD=landArea* 1.19599;   let AREA_ACRE = landArea * 0.000247105;
+    searchReqParam.areaSQYD=AREA_SQYD; searchReqParam.areaACRE=AREA_ACRE;
+
+    const billingslabs = await searchService(searchReqParam, {}, pool);
+      console.log("billingslabs",billingslabs);
       let errors = [];
       if (billingslabs.length > 1) {
         errors = [...errors, { message: "More than 1 billingslabs!" }];
@@ -162,22 +174,61 @@ const calculateNOCFee = async (
         });
         return;
       }
-
-      if (mdmsConfig.CALCULATON_TYPE === "FLAT") {
-        buidingnocfee += Number(billingslabs[0].rate);
-      } else {
-        buidingnocfee += Number(
-          billingslabs[0].rate * Number(searchReqParam.uomValue)
-        );
+      if( billingslabs[0].calculationType==="FLAT"){
+      let fullrate = Number(billingslabs[0].rate);
+          if (calculateCriteria.fireNOC.fireNOCDetails.fireNOCType === "PROVISIONAL")
+            buidingnocfee= Math.round((fullrate * billingslabs[0].provisional_percentage) / 100.0);
+          else if (calculateCriteria.fireNOC.fireNOCDetails.fireNOCType === "RENEWAL" || calculateCriteria.fireNOC.fireNOCDetails.fireNOCType === "RENEW")
+            buidingnocfee= Math.round((fullrate * billingslabs[0].renew_percentage) / 100.0);
+          else
+            buidingnocfee= Math.round((fullrate * billingslabs[0].new_percentage) / 100.0);
       }
-  //  }
-    if (mdmsConfig.CALCULATON_TYPE !== "FLAT") {
-      const minimumFee =
-        searchReqParam.fireNOCType === "NEW"
-          ? mdmsConfig.MINIMUM_NEW
-          : mdmsConfig.MINIMUM_PROVISIONAL;
-      buidingnocfee = Math.max(buidingnocfee, minimumFee);
-    }
+      else  
+      {
+          let area;
+                if ( billingslabs[0].areauom === "SQYD")
+                    area = AREA_SQYD;
+                else
+                    area = AREA_ACRE;
+                    
+                    let fullrate = Number(billingslabs[0].rate);
+                    let fee_per_unit = Number(billingslabs[0].feeperunitrate);
+    
+                    
+    
+                    let fee = fullrate + ((Math.round(area*2)/2) * fee_per_unit); // if unit is above 0.5 then treat full unit otherwise half e.g. 3.4 ACRE will be treated as 3.5 unit and 3.6 ACRE will be treated as 4 unit multiplier
+                    let max_fee = Number(billingslabs[0].maxfee);
+                    let min_fee =Number(billingslabs[0].minfee);
+    
+    
+                    if (fee > max_fee)
+                        fee = max_fee;
+                    else if (fee < min_fee)
+                        fee = min_fee;
+    
+                   if (calculateCriteria.fireNOC.fireNOCDetails.fireNOCType === "PROVISIONAL")
+                   buidingnocfee= Math.round((fee * billingslabs[0].provisional_percentage) / 100.0);
+                    else if (calculateCriteria.fireNOC.fireNOCDetails.fireNOCType === "RENEWAL" || calculateCriteria.fireNOC.fireNOCDetails.fireNOCType === "RENEW")
+                    buidingnocfee= Math.round((fee * billingslabs[0].renew_percentage) / 100.0);
+                    else
+                    buidingnocfee= Math.round((fee * billingslabs[0].new_percentage) / 100.0);
+
+      }
+  //     if (mdmsConfig.CALCULATON_TYPE === "FLAT") {
+  //       buidingnocfee += Number(billingslabs[0].rate);
+  //     } else {
+  //       buidingnocfee += Number(
+  //         billingslabs[0].rate * Number(searchReqParam.uomValue)
+  //       );
+  //     }
+  //  // }
+  //   if (mdmsConfig.CALCULATON_TYPE !== "FLAT") {
+  //     const minimumFee =
+  //       searchReqParam.fireNOCType === "NEW"
+  //         ? mdmsConfig.MINIMUM_NEW
+  //         : mdmsConfig.MINIMUM_PROVISIONAL;
+  //     buidingnocfee = Math.max(buidingnocfee, minimumFee);
+  //   }
 
     buidingnocfees.push(buidingnocfee);
   }
