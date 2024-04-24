@@ -210,7 +210,7 @@ public class PropertyQueryBuilder {
 			throw new CustomException("EG_PT_SEARCH_ERROR"," No criteria given for the property search");
 		
 		StringBuilder builder;
-		Boolean appendAndQuery = false;
+		//Boolean appendAndQuery = false;
 
 		if (onlyIds)
 			builder = new StringBuilder(ID_QUERY);
@@ -229,7 +229,7 @@ public class PropertyQueryBuilder {
 				addClauseIfRequired(preparedStmtList,builder);
 				builder.append("property.tenantid IN (").append(createQuery(tenantIds)).append(")");
 				addToPreparedStatement(preparedStmtList,tenantIds);
-				appendAndQuery = true;
+		//		appendAndQuery = true;
 			}
 		}
 		else
@@ -237,7 +237,7 @@ public class PropertyQueryBuilder {
 			String tenantId = criteria.getTenantId();
 			
 			if (tenantId != null) {
-				appendAndQuery = true;
+		//		appendAndQuery = true;
 				if (tenantId.equalsIgnoreCase(config.getStateLevelTenantId())) {
 					addClauseIfRequired(preparedStmtList,builder);
 					builder.append(" property.tenantId LIKE ? ");
@@ -260,7 +260,7 @@ public class PropertyQueryBuilder {
 			builder.append("property.createdTime BETWEEN ? AND ?");
 			preparedStmtList.add(criteria.getFromDate());
 			preparedStmtList.add(criteria.getToDate());
-			appendAndQuery = true;
+	//		appendAndQuery = true;
 		}
 		else
 		{
@@ -292,7 +292,7 @@ public class PropertyQueryBuilder {
 		Set<String> documentNumberList = criteria.getDocumentNumbers();
 
 		if(!CollectionUtils.isEmpty(documentNumberList)){
-				if(appendAndQuery)
+		//		if(appendAndQuery)
 				builder.append(AND_QUERY);
 			addClauseIfRequired(preparedStmtList, builder);
 			builder.append(" property.status='ACTIVE' and owndoc.status='ACTIVE' and owndoc.documentuid  IN ( ").append(createQuery(documentNumberList)).append(" )");
@@ -301,12 +301,12 @@ public class PropertyQueryBuilder {
 		
 		
 		if (null != criteria.getLocality()) {
-	if(appendAndQuery)
+	//if(appendAndQuery)
 				builder.append(AND_QUERY);
 			addClauseIfRequired(preparedStmtList,builder);
 			builder.append("address.locality = ?");
 			preparedStmtList.add(criteria.getLocality());
-		appendAndQuery= true;
+	//	appendAndQuery= true;
 		}
 		if (null != criteria.getDoorNo()) {
 
@@ -319,42 +319,42 @@ public class PropertyQueryBuilder {
 		if (!CollectionUtils.isEmpty(propertyIds)) {
 
 			addClauseIfRequired(preparedStmtList,builder);
-if(appendAndQuery)
-				builder.append(AND_QUERY);
+			//if(appendAndQuery)
+				//builder.append(AND_QUERY);
 			builder.append("property.propertyid IN (").append(createQuery(propertyIds)).append(")");
 			addToPreparedStatementWithUpperCase(preparedStmtList, propertyIds);
-			appendAndQuery= true;
+		//	appendAndQuery= true;
 		}
 		
 		Set<String> acknowledgementIds = criteria.getAcknowledgementIds();
 		if (!CollectionUtils.isEmpty(acknowledgementIds)) {
 
 			addClauseIfRequired(preparedStmtList,builder);
-if(appendAndQuery)
-				builder.append(AND_QUERY);
+			//if(appendAndQuery)
+			//	builder.append(AND_QUERY);
 			builder.append("property.acknowldgementnumber IN (").append(createQuery(acknowledgementIds)).append(")");
 			addToPreparedStatementWithUpperCase(preparedStmtList, acknowledgementIds);
-			appendAndQuery= true;
+		//	appendAndQuery= true;
 		}
 		
 		Set<String> uuids = criteria.getUuids();
 		if (!CollectionUtils.isEmpty(uuids)) {
-if(appendAndQuery)
-				builder.append(AND_QUERY);
+			//if(appendAndQuery)
+		//		builder.append(AND_QUERY);
 			addClauseIfRequired(preparedStmtList,builder);
 			builder.append("property.id IN (").append(createQuery(uuids)).append(")");
 			addToPreparedStatement(preparedStmtList, uuids);
-			appendAndQuery= true;
+		//	appendAndQuery= true;
 		}
 
 		Set<String> oldpropertyids = criteria.getOldpropertyids();
 		if (!CollectionUtils.isEmpty(oldpropertyids)) {
-if(appendAndQuery)
-				builder.append(AND_QUERY);
+//if(appendAndQuery)
+				//builder.append(AND_QUERY);
 			addClauseIfRequired(preparedStmtList,builder);
 			builder.append("property.oldpropertyid IN (").append(createQuery(oldpropertyids)).append(")");
 			addToPreparedStatement(preparedStmtList, oldpropertyids);
-			appendAndQuery= true;
+			//appendAndQuery= true;
 		}
 		
 		/* 
@@ -384,7 +384,7 @@ if(appendAndQuery)
 			throw new CustomException("EG_PT_SEARCH_ERROR"," No propertyid or uuid given for the property Bulk search");
 
 		StringBuilder builder = new StringBuilder(QUERY);
-		Boolean appendAndQuery = false;
+	//	Boolean appendAndQuery = false;
 		if(isPlainSearch)
 		{
 			Set<String> tenantIds = criteria.getTenantIds();
@@ -433,22 +433,22 @@ if(appendAndQuery)
 		Set<String> propertyIds = criteria.getPropertyIds();
 		if (!CollectionUtils.isEmpty(propertyIds)) {
 			addClauseIfRequired(preparedStmtList,builder);
-	if(appendAndQuery)
+	//if(appendAndQuery)
 				builder.append(AND_QUERY);
 			builder.append("property.propertyid IN (").append(createQuery(propertyIds)).append(")");
 			addToPreparedStatementWithUpperCase(preparedStmtList, propertyIds);
-			appendAndQuery= true;
+	//		appendAndQuery= true;
 		}
 
 		Set<String> uuids = criteria.getUuids();
 		if (!CollectionUtils.isEmpty(uuids)) {
 
 			addClauseIfRequired(preparedStmtList,builder);
-if(appendAndQuery)
+//if(appendAndQuery)
 				builder.append(AND_QUERY);
 			builder.append("property.id IN (").append(createQuery(uuids)).append(")");
 			addToPreparedStatement(preparedStmtList, uuids);
-			appendAndQuery= true;
+		//	appendAndQuery= true;
 		}
 		return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
 	}
