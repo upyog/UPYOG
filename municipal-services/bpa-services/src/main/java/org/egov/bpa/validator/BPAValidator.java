@@ -330,7 +330,7 @@ public class BPAValidator {
 		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
 		log.debug("applicationType is " + edcrResponse.get(BPAConstants.APPLICATIONTYPE));
         log.debug("serviceType is " + edcrResponse.get(BPAConstants.SERVICETYPE));
-        
+
 		validateQuestions(mdmsData, bpa, wfState, edcrResponse);
 		validateFIDocTypes(mdmsData, bpa, wfState, edcrResponse);
 	}
@@ -362,6 +362,7 @@ public class BPAValidator {
 			if (!CollectionUtils.isEmpty(mdmsQns)) {
 				if (bpa.getAdditionalDetails() != null) {
 					List checkListFromReq = (List) ((Map) bpa.getAdditionalDetails()).get(wfState.toLowerCase());
+					
 					if (!CollectionUtils.isEmpty(checkListFromReq)) {
 						for (int i = 0; i < checkListFromReq.size(); i++) {
 							// MultiItem framework adding isDeleted object to
@@ -412,9 +413,10 @@ public class BPAValidator {
 										BPAErrorConstants.BPA_UNKNOWN_QUESTIONS_MSG);
 							}
 						}
-					} else {
-						throw new CustomException(BPAErrorConstants.BPA_UNKNOWN_QUESTIONS, BPAErrorConstants.BPA_UNKNOWN_QUESTIONS_MSG);
-					}
+					} 
+//					else {
+//						throw new CustomException(BPAErrorConstants.BPA_UNKNOWN_QUESTIONS, BPAErrorConstants.BPA_UNKNOWN_QUESTIONS_MSG);
+//					}
 				} else {
 					throw new CustomException(BPAErrorConstants.BPA_UNKNOWN_QUESTIONS, BPAErrorConstants.BPA_UNKNOWN_QUESTIONS_MSG);
 				}
@@ -505,9 +507,9 @@ public class BPAValidator {
 								throw new CustomException(BPAErrorConstants.BPA_UNKNOWN_DOCS, BPAErrorConstants.BPA_UNKNOWN_DOCS_MSG);
 							}
 						}
-					} else {
-						throw new CustomException(BPAErrorConstants.BPA_UNKNOWN_DOCS, BPAErrorConstants.BPA_UNKNOWN_DOCS_MSG);
-					}
+//					} else {
+//						throw new CustomException(BPAErrorConstants.BPA_UNKNOWN_DOCS, BPAErrorConstants.BPA_UNKNOWN_DOCS_MSG);
+//					}
 				} else {
 					throw new CustomException(BPAErrorConstants.BPA_UNKNOWN_DOCS, BPAErrorConstants.BPA_UNKNOWN_DOCS_MSG);
 				}
