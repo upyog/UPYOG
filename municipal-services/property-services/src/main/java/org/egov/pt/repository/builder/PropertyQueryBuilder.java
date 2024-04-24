@@ -78,7 +78,7 @@ public class PropertyQueryBuilder {
 
 			+   " FROM EG_PT_PROPERTY property " 
 			
-			+   INNER_JOIN +  " EG_PT_ADDRESS address         ON property.id = address.propertyid " 
+			+   INNER_JOIN +  " EG_PT_ADDRESS address ON property.id = address.propertyid " 
 			
 			+   LEFT_JOIN  +  " EG_PT_INSTITUTION institution ON property.id = institution.propertyid " 
 			
@@ -88,7 +88,7 @@ public class PropertyQueryBuilder {
 			
 			+   LEFT_JOIN  +  " EG_PT_DOCUMENT owndoc         ON owner.ownerinfouuid = owndoc.entityid "
 			
-			+	LEFT_JOIN  +  " EG_PT_UNIT unit		          ON property.id =  unit.propertyid ";
+			+	LEFT_JOIN  +  " EG_PT_UNIT unit ON property.id =  unit.propertyid ";
 	
 
 	private static final String ID_QUERY = SELECT
@@ -105,7 +105,7 @@ public class PropertyQueryBuilder {
 
 			+   LEFT_JOIN  +  " EG_PT_DOCUMENT owndoc         ON owner.ownerinfouuid = owndoc.entityid "
 
-			+	LEFT_JOIN  +  " EG_PT_UNIT unit		          ON property.id =  unit.propertyid ";
+			+	LEFT_JOIN  +  " EG_PT_UNIT unit ON property.id =  unit.propertyid ";
 	
 	private static final String COUNT_QUERY = SELECT
 
@@ -121,7 +121,7 @@ public class PropertyQueryBuilder {
 
 			+   LEFT_JOIN  +  " EG_PT_DOCUMENT owndoc         ON owner.ownerinfouuid = owndoc.entityid "
 
-			+	LEFT_JOIN  +  " EG_PT_UNIT unit		          ON property.id =  unit.propertyid ";
+			+	LEFT_JOIN  +  " EG_PT_UNIT unit ON property.id =  unit.propertyid ";
 	
 
 	private final String paginationWrapper = "SELECT * FROM "
@@ -156,7 +156,7 @@ public class PropertyQueryBuilder {
 	{
 		
 	Boolean isEmpty = null == criteria.getLocality() ||
-				 null == criteria.getPropertyType() || criteria.getTenantId()==null;
+ null == criteria.getPropertyType() || criteria.getTenantId()==null;
 	
 	if(isEmpty)
 		throw new CustomException("EG_PT_SEARCH_ERROR"," Please provide tenant, locality, propertyType for the property search for defaulter notice");
@@ -358,8 +358,8 @@ public class PropertyQueryBuilder {
 		}
 		
 		/* 
-		 * Condition to evaluate if owner is active.
-		 * Inactive owners should never be shown in results
+ * Condition to evaluate if owner is active.
+ * Inactive owners should never be shown in results
 		*/
 		
 		addClauseIfRequired(preparedStmtList,builder);
