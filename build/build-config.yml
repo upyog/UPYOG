@@ -212,7 +212,7 @@ config:
     build:
       - work-dir: "core-services/egov-telemetry"
         image-name: "egov-telemetry"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "core-services/egov-telemetry/telemetry/Dockerfile"
 
   - name: "builds/upyog/core-services/egov-user"
     build:
