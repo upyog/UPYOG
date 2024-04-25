@@ -846,7 +846,10 @@ public class BillServicev2 {
 
 		//Long billExpiryDate = getExpiryDateForDemand(demand);
 		Long billExpiryDate = datexp.getTimeInMillis();
-
+		
+		
+		totalAmountForDemand = roundOfDecimals(totalAmountForDemand);
+		
 		return BillDetailV2.builder()
 				.billAccountDetails(new ArrayList<>(taxCodeAccountdetailMap.values()))
 				.amount(totalAmountForDemand)
@@ -872,6 +875,32 @@ public class BillServicev2 {
 	 * 
 	 * @return expiryDate
 	 */
+	
+	
+	
+	public BigDecimal roundOfDecimals(BigDecimal totalAmount ) {
+		BigDecimal roundOffPos = BigDecimal.ZERO;
+		BigDecimal roundOffNeg = BigDecimal.ZERO;
+
+		
+		BigDecimal roundOffAmount = totalAmount.setScale(2, 2);
+		BigDecimal reminder = roundOffAmount.remainder(BigDecimal.ONE);
+
+		if (reminder.doubleValue() >= 0.5) {
+			roundOffPos = roundOffPos.add(BigDecimal.ONE.subtract(reminder));
+			totalAmount = totalAmount.add(roundOffPos);
+			totalAmount =totalAmount.setScale(2, 2);
+		
+		}
+			
+		else if (reminder.doubleValue() < 0.5) {
+			roundOffNeg = roundOffNeg.add(reminder).negate();
+			totalAmount =totalAmount.add(roundOffNeg);
+			totalAmount =totalAmount.setScale(2, 2);
+		}
+		return totalAmount;
+			
+	}
 	private Long getExpiryDateForDemand(Demand demand) {
 
 		Long billExpiryPeriod = demand.getBillExpiryTime();
