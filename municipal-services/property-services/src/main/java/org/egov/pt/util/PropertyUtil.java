@@ -16,6 +16,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.models.Assessment;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.enums.CreationReason;
@@ -75,6 +76,33 @@ public class PropertyUtil extends CommonUtils {
 					log.info("OWNER SEARCH ERROR",
 							"The owner with UUID : \"" + owner.getUuid() + "\" for the property with Id \""
 									+ property.getPropertyId() + "\" is not present in user search response");
+				else {
+
+					OwnerInfo info = userIdToOwnerMap.get(owner.getUuid());
+					if (isSearchOpen) {
+						owner.addUserDetail(getMaskedOwnerInfo(info));
+					} else {
+						owner.addUserDetail(info);
+					}
+				}
+			});
+		});
+	}
+	
+	public void enrichAssesmentOwner(UserDetailResponse userDetailResponse, List<Assessment> assessments, Boolean isSearchOpen) {
+
+		List<OwnerInfo> users = userDetailResponse.getUser();
+		Map<String, OwnerInfo> userIdToOwnerMap = new HashMap<>();
+		users.forEach(user -> userIdToOwnerMap.put(user.getUuid(), user));
+
+		assessments.forEach(assessment -> {
+
+			assessment.getOwners().forEach(owner -> {
+
+				if (userIdToOwnerMap.get(owner.getUuid()) == null)
+					log.info("OWNER SEARCH ERROR",
+							"The owner with UUID : \"" + owner.getUuid() + "\" for the property with Id \""
+									+ assessment.getPropertyId() + "\" is not present in user search response");
 				else {
 
 					OwnerInfo info = userIdToOwnerMap.get(owner.getUuid());

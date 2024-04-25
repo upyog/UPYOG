@@ -1,5 +1,6 @@
 package org.egov.pt.models;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -80,6 +81,9 @@ public class Assessment {
 	@JsonProperty("channel")
 	private Channel channel ;
 
+	@JsonProperty("owners")
+	@Valid
+	private List<OwnerInfo> owners;
 
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails ;
@@ -158,6 +162,16 @@ public class Assessment {
 			this.documents = new HashSet<>();
 		}
 		this.documents.add(documentsItem);
+		return this;
+	}
+	
+	public Assessment addOwnersItem(OwnerInfo ownersItem) {
+		if (this.owners == null) {
+			this.owners = new ArrayList<>();
+		}
+
+		if (null != ownersItem)
+			this.owners.add(ownersItem);
 		return this;
 	}
 

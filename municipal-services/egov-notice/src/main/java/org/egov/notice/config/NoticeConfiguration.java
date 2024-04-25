@@ -1,7 +1,6 @@
 package org.egov.notice.config;
 
-import java.util.List;
-import java.util.Map;
+
 import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;

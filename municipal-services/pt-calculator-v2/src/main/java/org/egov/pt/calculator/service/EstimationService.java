@@ -86,6 +86,8 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.validation.Valid;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
@@ -244,7 +246,8 @@ public class EstimationService {
 	 * @return CalculationRes calculation object containing all the tax for the given criteria.
 	 */
 	public CalculationRes getTaxCalculation(CalculationReq request) {
-		checkAssessmentIsDone(request);
+		if(request.getRequestInfo().getUserInfo().getType().equals("CITIZEN"))
+			checkAssessmentIsDone(request);
 		CalculationCriteria criteria = request.getCalculationCriteria().get(0);
 		Property property = criteria.getProperty();
 		PropertyDetail detail = property.getPropertyDetails().get(0);
@@ -260,8 +263,8 @@ public class EstimationService {
 		String authURL = new StringBuilder().append(configs.getAssessmentServiceHost()).append(configs.getAssessmentSearchEndpoint())
 				.append(URL_PARAMS_SEPARATER).append("propertyIds=").append(property.getPropertyId()).append(SEPARATER)
 				.append("tenantId=").append(property.getTenantId()).toString();
-		System.out.println("request::"+request.getRequestInfo());
-		AssessmentResponseV2 assessmentResponseV2=restTemplate.postForObject(authURL,request.getRequestInfo(),AssessmentResponseV2.class);
+		RequestInfoWrapper requestInfoWrapper=RequestInfoWrapper.builder().requestInfo(request.getRequestInfo()).build();
+		AssessmentResponseV2 assessmentResponseV2=restTemplate.postForObject(authURL,requestInfoWrapper,AssessmentResponseV2.class);
 		List<AssessmentV2> propertylist=assessmentResponseV2.getAssessments().stream().filter(t->t.getFinancialYear().equalsIgnoreCase(criteria.getFinancialYear())).collect(Collectors.toList());
 		if(propertylist.size()>0)
 			throw new CustomException("ASESSMENT_ERROR","Property assessment is already completed for this property for the financial year "+criteria.getFinancialYear());
@@ -952,7 +955,7 @@ public class EstimationService {
 				break;
 			}
 		}
-		
+
 		BigDecimal modeofpayment_rebate=BigDecimal.ZERO;
 		BigDecimal updatedtaxammount=BigDecimal.ZERO;
 		switch (criteria.getModeOfPayment()) {
@@ -961,13 +964,13 @@ public class EstimationService {
 			modeofpayment_rebate=modeofpayment_rebate.setScale(2,2);
 			updatedtaxammount=taxAmt.add(modeofpayment_rebate);
 			break;
-			
+
 		case "HALFYEARLY":
 			modeofpayment_rebate=taxAmt.multiply(new BigDecimal(6).divide(new BigDecimal(100)).negate());
 			modeofpayment_rebate=modeofpayment_rebate.setScale(2,2);
 			updatedtaxammount=taxAmt.add(modeofpayment_rebate);
 			break;
-			
+
 		case "YEARLY":
 			modeofpayment_rebate=taxAmt.multiply(new BigDecimal(10).divide(new BigDecimal(100)).negate());
 			modeofpayment_rebate=modeofpayment_rebate.setScale(2,2);
@@ -978,7 +981,7 @@ public class EstimationService {
 			break;
 		}
 
-		
+
 		BigDecimal complementary_rebate=BigDecimal.ZERO;
 		complementary_rebate=updatedtaxammount.multiply(new BigDecimal(92).divide(new BigDecimal(100)).negate());
 		complementary_rebate=complementary_rebate.setScale(2,2);
@@ -995,7 +998,7 @@ public class EstimationService {
 		 */
 		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MODEOFPAYMENT_REBATE).category(Category.REBATE).estimateAmount( modeofpayment_rebate).build());
 		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_COMPLEMENTARY_REBATE).category(Category.REBATE).estimateAmount( complementary_rebate).build());
-		
+
 		TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(taxAmt.add(penalty), rebate.add(exemption).add(complementary_rebate).add(modeofpayment_rebate));
 
 		if (null != decimalEstimate) {
@@ -1006,7 +1009,7 @@ public class EstimationService {
 			else
 				rebate = rebate.add(decimalEstimate.getEstimateAmount());
 		}
-		
+
 		BigDecimal totalAmount = taxAmt.add(penalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
 
 		if(exemption.compareTo(BigDecimal.ZERO)==0) {

@@ -37,7 +37,6 @@ public class NoticeQueryBuilder {
 		if(!CollectionUtils.isEmpty(noticeCriteria.getTenantIds()))
 		{
 			Set<String> tenantIds=noticeCriteria.getTenantIds();
-			System.out.println("tenantIds::"+tenantIds);
 			addClauseIfRequired(preparedStmtList,builder);
 			builder.append("nt.tenantid IN (").append(createQuery(tenantIds)).append(")");
 			addToPreparedStatement(preparedStmtList,tenantIds);

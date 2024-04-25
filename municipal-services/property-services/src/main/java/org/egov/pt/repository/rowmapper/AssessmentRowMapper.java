@@ -14,6 +14,8 @@ import org.egov.pt.models.Assessment.ModeOfPayment;
 import org.egov.pt.models.Assessment.Source;
 import org.egov.pt.models.AuditDetails;
 import org.egov.pt.models.Document;
+import org.egov.pt.models.OwnerInfo;
+import org.egov.pt.models.Property;
 import org.egov.pt.models.UnitUsage;
 import org.egov.pt.models.enums.Status;
 import org.egov.tracer.model.CustomException;
@@ -22,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -73,6 +76,9 @@ public class AssessmentRowMapper implements ResultSetExtractor<List<Assessment>>
 				Document document = getDocument(rs);
 				if(document!=null)
 					assessment.getDocuments().add(document);
+				
+				addOwnerToAssesment(rs, assessment);
+				
 
 
 				AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("ass_createdby"))
@@ -128,6 +134,23 @@ public class AssessmentRowMapper implements ResultSetExtractor<List<Assessment>>
 				.fileStoreId(rs.getString("doc_filestoreid"))
 				.auditDetails(auditDetails)
 				.build();
+	}
+
+	private void addOwnerToAssesment(ResultSet rs,Assessment assessment) throws SQLException {
+
+		String uuid = rs.getString("userid");
+
+		OwnerInfo owner = OwnerInfo.builder()
+				.status(Status.fromValue(rs.getString("ownstatus")))
+				.institutionId(rs.getString("owninstitutionid"))
+				.ownerInfoUuid(rs.getString("ownerInfoUuid"))
+				.tenantId(rs.getString("owntenantid"))
+				.ownerType(rs.getString("ownerType"))
+				.uuid(uuid)
+				.build();
+		
+		if(owner!=null)
+			assessment.addOwnersItem(owner);
 	}
 
 
