@@ -66,6 +66,14 @@ public class StorageService {
 
 	@Value("${isAlfrescoEnabled}")
 	private boolean isAlfrescoEnabled;
+	
+	
+	@Value("${isS3Enabled}")
+	private boolean isS3Enabled;
+	
+	
+	@Value("${minio.source}")
+	private String minioSource;
 
 
 
@@ -106,6 +114,11 @@ public class StorageService {
 			if(isAlfrescoEnabled) {
 				fileSource = "alfresco";
 			}
+			if(isS3Enabled) {
+				fileSource = minioSource;
+			}
+			
+			
 			FileLocation fileLocation = new FileLocation(id, module, tag, tenantId, fileName, fileSource,null);
 			try {
 				inputStreamAsString = IOUtils.toString(file.getInputStream(), fileStoreConfig.getImageCharsetType());
