@@ -176,7 +176,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 			arv = arv.stripTrailingZeros();
 
 		Unit unit = Unit.builder()
-				.additionalDetails(getadditionalDetail(rs, "additionaldetails"))
+				.additionalDetails(getadditionalDetail(rs, "unitadditionaldetails"))
 				.occupancyType(rs.getString("occupancyType"))
 				.usageCategory(rs.getString("unitusageCategory"))
 				.occupancyDate(rs.getLong("occupancyDate"))
