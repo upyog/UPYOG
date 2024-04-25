@@ -24,6 +24,33 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails }
     else if (data?.value) return data?.value;
     else t("NA");
   }
+  function setOtherChargesVal(value) {
+    if(/^[0-9]*$/.test(value)){
+      setOtherCharges(value);
+      sessionStorage.setItem("otherCharges",e.target.value)
+    }
+    else{
+      //alert("Please enter numbers")
+    }      
+}
+  function setDevelopmentVal(value) {
+    if(/^[0-9]*$/.test(value)){
+      setDevelopment(value);
+      sessionStorage.setItem("development",e.target.value)
+    }
+    else{
+      //alert("Please enter numbers")
+    }      
+  }
+  function setLessAdjusmentVal(value) {
+  if(/^[0-9]*$/.test(value)){
+    setLessAdjusment(value);
+    sessionStorage.setItem("lessAdjusment",e.target.value)
+  }
+  else{
+    //alert("Please enter numbers")
+  }      
+  }
   return (
     <Fragment>
       {!scrutinyDetails?.isChecklist && <div style={{ background: "#FAFAFA", border: "1px solid #D6D5D4", padding: "8px", borderRadius: "4px", maxWidth: "950px" }}>
@@ -60,7 +87,8 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails }
               defaultValue={additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES || ""}
               value={development}
               disabled={!isEditApplication}
-              onChange={(e) => {setDevelopment(e.target.value),sessionStorage.setItem("development",e.target.value)}}
+              onChange={(e) => {setDevelopmentVal(e.target.value)}}
+              {...{ required: true, pattern: "^[0-9]*$", type: "text" }}
               />
               <CardLabel>{t("BPA_COMMON_OTHER_AMT")}</CardLabel>
             <TextInput
@@ -72,10 +100,8 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails }
               defaultValue={additionalDetails?.selfCertificationCharges?.BPA_OTHER_CHARGES || ""}
               value={otherCharges}
               disabled={!isEditApplication}
-              onChange={(e) => {setOtherCharges(e.target.value),sessionStorage.setItem("otherCharges",e.target.value)}}
-              //disable={userInfo?.info?.emailId && !isOpenLinkFlow ? true : false}
-              //disable={editScreen}
-              //{...{ required: true, pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", type: "email", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
+              onChange={(e) => {setOtherChargesVal(e.target.value)}}
+              {...{ required: true, pattern: "^[0-9]*$", type: "text" }}
             />
             <CardLabel>{t("BPA_COMMON_LESS_AMT")}</CardLabel>
             <TextInput
@@ -87,7 +113,8 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails }
               defaultValue={additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT || ""}
               value={lessAdjusment}
               disabled={!isEditApplication}
-              onChange={(e) => {setLessAdjusment(e.target.value),sessionStorage.setItem("lessAdjusment",e.target.value)}}
+              onChange={(e) => {setLessAdjusmentVal(e.target.value)}}
+              {...{ required: true, pattern: "^[0-9]*$", type: "text" }}
             />
           </div>
           }          
