@@ -27,7 +27,7 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails }
   function setOtherChargesVal(value) {
     if(/^[0-9]*$/.test(value)){
       setOtherCharges(value);
-      sessionStorage.setItem("otherCharges",e.target.value)
+      sessionStorage.setItem("otherCharges",value)
     }
     else{
       //alert("Please enter numbers")
@@ -36,7 +36,7 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails }
   function setDevelopmentVal(value) {
     if(/^[0-9]*$/.test(value)){
       setDevelopment(value);
-      sessionStorage.setItem("development",e.target.value)
+      sessionStorage.setItem("development",value)
     }
     else{
       //alert("Please enter numbers")
@@ -45,7 +45,7 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails }
   function setLessAdjusmentVal(value) {
   if(/^[0-9]*$/.test(value)){
     setLessAdjusment(value);
-    sessionStorage.setItem("lessAdjusment",e.target.value)
+    sessionStorage.setItem("lessAdjusment",value)
   }
   else{
     //alert("Please enter numbers")
