@@ -1,4 +1,4 @@
-FROM node:18.20-alpinee
+FROM node:18.20-alpine
 RUN apk update && apk add curl git ca-certificates openssl
 RUN adduser -u 1001 -h /home/sunbird/ -D sunbird
 USER sunbird
