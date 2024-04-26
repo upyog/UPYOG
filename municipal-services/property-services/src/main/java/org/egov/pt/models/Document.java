@@ -10,9 +10,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.SafeHtml;
+import lombok.Setter;
 
+import org.hibernate.validator.constraints.SafeHtml;
+@Getter
+@Setter
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

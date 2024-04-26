@@ -526,11 +526,14 @@ if(!request.getProperty().getCreationReason().equals(CreationReason.MUTATION))
 		}
 
 		/* Decrypt here */
-		 if(criteria.getIsSearchInternal())
-			return encryptionDecryptionUtil.decryptObject(properties, PTConstants.PROPERTY_DECRYPT_MODEL, Property.class, requestInfo);
-		else if(!criteria.getIsRequestForOldDataEncryption())
-			return encryptionDecryptionUtil.decryptObject(properties, PTConstants.PROPERTY_MODEL, Property.class, requestInfo);
-
+		/*
+		 * if(criteria.getIsSearchInternal()) return
+		 * encryptionDecryptionUtil.decryptObject(properties,
+		 * PTConstants.PROPERTY_DECRYPT_MODEL, Property.class, requestInfo); else
+		 * if(!criteria.getIsRequestForOldDataEncryption()) return
+		 * encryptionDecryptionUtil.decryptObject(properties,
+		 * PTConstants.PROPERTY_MODEL, Property.class, requestInfo);
+		 */
 		return properties;
 	}
 
