@@ -199,9 +199,9 @@ public class PropertyValidator {
 		objectsAdded.removeAll(Arrays.asList("TextNode", "Role", "NullNode", "LongNode", "JsonNodeFactory", "IntNode",
 				"ProcessInstance"));
 
-		if (!isstateUpdatable && (!CollectionUtils.isEmpty(objectsAdded) || !CollectionUtils.isEmpty(fieldsUpdated)))
+	/*	if (!isstateUpdatable && (!CollectionUtils.isEmpty(objectsAdded) || !CollectionUtils.isEmpty(fieldsUpdated)))
 			throw new CustomException("EG_PT_WF_UPDATE_ERROR",
-					"The current state of workflow does not allow changes to property");
+					"The current state of workflow does not allow changes to property");*/
 		
 	    
         /*
@@ -233,6 +233,7 @@ public class PropertyValidator {
 		validateIds(request, errorMap);
 		validateMobileNumber(request, errorMap);
 
+       
 
 		CreationReason reason = property.getCreationReason();
 		if (!propertyFromSearch.getStatus().equals(Status.ACTIVE)
@@ -649,9 +650,9 @@ List<String> allowedParams = null;
 		
 		if (!propertyFromSearch.getStatus().equals(Status.INWORKFLOW)) {
 
-			Boolean isBillUnpaid = propertyUtil.isBillUnpaid(propertyFromSearch.getPropertyId(), propertyFromSearch.getTenantId(), request.getRequestInfo());
-			if (isBillUnpaid)
-				throw new CustomException("EG_PT_MUTATION_UNPAID_ERROR", "Property has to be completely paid for before initiating the mutation process");
+//			Boolean isBillUnpaid = propertyUtil.isBillUnpaid(propertyFromSearch.getPropertyId(), propertyFromSearch.getTenantId(), request.getRequestInfo());
+//			if (isBillUnpaid)
+//				throw new CustomException("EG_PT_MUTATION_UNPAID_ERROR", "Property has to be completely paid for before initiating the mutation process");
 		}
 		
 		List<String> fieldsUpdated = diffService.getUpdatedFields(property, propertyFromSearch, PTConstants.MUTATION_PROCESS_CONSTANT);
@@ -673,9 +674,9 @@ List<String> allowedParams = null;
 			fieldsUpdated.remove("creationReason");
 		}
 
-		if (!CollectionUtils.isEmpty(fieldsUpdated))
-			throw new CustomException("EG_PT_MUTATION_ERROR",
-					"The property mutation doesnt allow change of these fields " + fieldsUpdated);
+//		if (!CollectionUtils.isEmpty(fieldsUpdated))
+//			throw new CustomException("EG_PT_MUTATION_ERROR",
+//					"The property mutation doesnt allow change of these fields " + fieldsUpdated);
 
 		@SuppressWarnings("unchecked")
 		Map<String, Object> additionalDetails = mapper.convertValue(property.getAdditionalDetails(), Map.class);
@@ -747,6 +748,9 @@ List<String> allowedParams = null;
 		if (!statusSet.contains(Status.ACTIVE))
 			errorMap.put("EG_PT_MUTATION_ALL_OWNER_INACTIVE_ERROR", "At the least one owner object should be ACTIVE");
 
+		if (!CollectionUtils.isEmpty(uuidsNotFound))
+			errorMap.put("EG_PT_UPDATE_OWNER_ERROR", "Invalid owners found in request : " + uuidsNotFound);
+
 		if (!propertyFromSearch.getStatus().equals(Status.INWORKFLOW)) {
 			
 
@@ -793,8 +797,8 @@ List<String> allowedParams = null;
 
 		if (isDocsEmpty || !isTransferDocPresent) {
 
-			errorMap.put("EG_PT_MT_DOCS_ERROR",
-					"Mandatory documents mising for the muation reason : " + reasonForTransfer);
+//			errorMap.put("EG_PT_MT_DOCS_ERROR",
+//					"Mandatory documents mising for the muation reason : " + reasonForTransfer);
 		}
 
 		if (propertyFromSearch.getStatus().equals(Status.INWORKFLOW)
