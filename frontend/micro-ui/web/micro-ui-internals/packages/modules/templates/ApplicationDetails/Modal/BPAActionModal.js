@@ -47,9 +47,11 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [error, setError] = useState(null);
   const [selectedFinancialYear, setSelectedFinancialYear] = useState(null);
   const mobileView = Digit.Utils.browser.isMobile() ? true : false;
+  const [setDateTime,setDateTimeVal]=useState(true);
 
   useEffect(() => {
     setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
+    getfeildInspection(applicationData);
   }, [approverData]);
 
   function selectFile(e) {
@@ -128,7 +130,10 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           time: ob?.InspectionTime,
         })
       })
-      inspectionOb = inspectionOb.filter((ob) => ob.docs && ob.docs.length>0);
+      if(!inspectionOb?.[inspectionOb?.length-1]?.date && !inspectionOb?.[inspectionOb?.length-1]?.time){
+        setDateTimeVal(false);
+      }
+      inspectionOb = inspectionOb.filter((ob) => ob.date && ob.time);
     } else {
       sessionStorage.removeItem("INSPECTION_DATA")
     }
@@ -238,10 +243,15 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           }
       })
     }
-
-    submitAction({
-      BPA:applicationData
-    }, nocData?.length > 0 ? nocData : false, {isStakeholder: false, bpa: true});
+    if(setDateTime){
+      submitAction({
+        BPA:applicationData
+      }, nocData?.length > 0 ? nocData : false, {isStakeholder: false, bpa: true});
+    }
+    else{
+      closeModal();
+      alert("Please fill Inspection Date and Time");      
+    }    
   }
 
 
