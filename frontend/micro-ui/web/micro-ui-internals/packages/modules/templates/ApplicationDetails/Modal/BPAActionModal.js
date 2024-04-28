@@ -47,11 +47,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [error, setError] = useState(null);
   const [selectedFinancialYear, setSelectedFinancialYear] = useState(null);
   const mobileView = Digit.Utils.browser.isMobile() ? true : false;
-  const [setDateTime,setDateTimeVal]=useState(true);
 
   useEffect(() => {
     setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
-    getfeildInspection(applicationData);
   }, [approverData]);
 
   function selectFile(e) {
@@ -119,7 +117,19 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     if (data?.additionalDetails?.fieldinspection_pending?.length > 0) {
       inspectionOb = data?.additionalDetails?.fieldinspection_pending
     }
+    inspectionOb = inspectionOb.filter(obj => {
+      // Check if the object has the date field
+      if (!obj.date) return false;
+  
+      // Get today's date
+      const today = new Date();
+      // Extract date from the object and convert it to a Date object
+      const objDate = new Date(obj.date);
+      // Compare the object's date with today's date
+      return objDate <= today;
+  });
 
+  
     if(data.status == "FIELDINSPECTION_INPROGRESS") {
       formdata = JSON.parse(sessionStorage.getItem("INSPECTION_DATA"));
       formdata?.length > 0 && formdata.map((ob,ind) => {
@@ -130,10 +140,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           time: ob?.InspectionTime,
         })
       })
-      if(!inspectionOb?.[inspectionOb?.length-1]?.date && !inspectionOb?.[inspectionOb?.length-1]?.time){
-        setDateTimeVal(false);
-      }
+      console.log("FIELDINSPECTION_INPROGRESS",inspectionOb)
       inspectionOb = inspectionOb.filter((ob) => ob.date && ob.time);
+      console.log("inspectionObinspectionOb",inspectionOb)
     } else {
       sessionStorage.removeItem("INSPECTION_DATA")
     }
@@ -243,17 +252,28 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           }
       })
     }
-    if(setDateTime){
-      submitAction({
-        BPA:applicationData
-      }, nocData?.length > 0 ? nocData : false, {isStakeholder: false, bpa: true});
-    }
-    else{
-      closeModal();
-      alert("Please fill Inspection Date and Time");      
-    }    
-  }
+    if(applicationData.status == "FIELDINSPECTION_INPROGRESS") {
+      let formdata = JSON.parse(sessionStorage.getItem("INSPECTION_DATA"));
+      formdata?.length > 0 && formdata.map((ob,ind) => {
 
+        ob.InspectionDate && ob.InspectionTime ?  submitAction({
+          BPA:applicationData
+        }, nocData?.length > 0 ? nocData : false, {isStakeholder: false, bpa: true}) : closeModalNew()
+        console.log(" ob.InspectionDate && ob.InspectionTime", ob.InspectionDate , ob.InspectionTime)
+    } )
+  }
+  else 
+  {
+    submitAction({
+      BPA:applicationData
+    }, nocData?.length > 0 ? nocData : false, {isStakeholder: false, bpa: true})
+    
+  }
+  }
+  const closeModalNew = ()=>{
+    closeModal()
+    alert("Please fill Inspection Date and Time")
+  }
 
   useEffect(() => {
     if (action) {
