@@ -128,7 +128,7 @@ const envVariables = {
     process.env.EGOV_LOCALIZATION_STATE_LEVEL || true,
 
   // default state // IDEA:
-  EGOV_DEFAULT_STATE_ID: process.env.EGOV_DEFAULT_STATE_ID || "pg",
+  EGOV_DEFAULT_STATE_ID: process.env.EGOV_DEFAULT_STATE_ID || "pb",
 
   //pagination configurations
   EGOV_FN_DEFAULT_OFFSET: process.env.EGOV_FN_DEFAULT_OFFSET || 0,
