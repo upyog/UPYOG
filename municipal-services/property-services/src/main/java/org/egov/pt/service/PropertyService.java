@@ -188,9 +188,13 @@ public class PropertyService {
 		request.getProperty().setWorkflow(null);
 
 		//Push PLAIN data to fuzzy search index
-		PropertyRequest fuzzyPropertyRequest = new PropertyRequest(request.getRequestInfo(),request.getProperty());
-		fuzzyPropertyRequest.setProperty(encryptionDecryptionUtil.decryptObject(request.getProperty(), PTConstants.PROPERTY_DECRYPT_MODEL,
-				Property.class, request.getRequestInfo()));
+		/*
+		 * PropertyRequest fuzzyPropertyRequest = new
+		 * PropertyRequest(request.getRequestInfo(),request.getProperty());
+		 * fuzzyPropertyRequest.setProperty(encryptionDecryptionUtil.decryptObject(
+		 * request.getProperty(), PTConstants.PROPERTY_DECRYPT_MODEL, Property.class,
+		 * request.getRequestInfo()));
+		 */
 
 		/* Fix this.
 		 * For FUZZY-search, This code to be un-commented when privacy is enabled
@@ -201,7 +205,8 @@ public class PropertyService {
 		*/
 
 		/* decrypt here */
-		return encryptionDecryptionUtil.decryptObject(request.getProperty(), PTConstants.PROPERTY_MODEL, Property.class, request.getRequestInfo());
+		return request.getProperty();
+		//return encryptionDecryptionUtil.decryptObject(request.getProperty(), PTConstants.PROPERTY_MODEL, Property.class, request.getRequestInfo());
 	}
 	
 	/*
