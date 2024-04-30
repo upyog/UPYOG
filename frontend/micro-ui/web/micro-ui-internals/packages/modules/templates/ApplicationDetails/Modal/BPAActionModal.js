@@ -209,6 +209,10 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     if (!sessionStorage.getItem("development") || !sessionStorage.getItem("otherCharges") || !sessionStorage.getItem("lessAdjusment") ){
       closeModal()
       alert("Please fill P2 Manual Fees");}
+    else if(parseInt(sessionStorage.getItem("lessAdjusment"))>(parseInt(sessionStorage.getItem("development"))+parseInt(sessionStorage.getItem("otherCharges"))+parseInt(applicationData?.additionalDetails?.selfCertificationCharges?.BPA_MALBA_CHARGES)+parseInt(applicationData?.additionalDetails?.selfCertificationCharges?.BPA_LABOUR_CESS)+parseInt(applicationData?.additionalDetails?.selfCertificationCharges?.BPA_WATER_CHARGES)+parseInt(applicationData?.additionalDetails?.selfCertificationCharges?.BPA_GAUSHALA_CHARGES_CESS))){
+      closeModal()
+      alert("Enterd Less Adjustment amount is invalid");
+    }
     else{
     applicationData.additionalDetails.selfCertificationCharges.BPA_DEVELOPMENT_CHARGES=sessionStorage.getItem("development");
     applicationData.additionalDetails.selfCertificationCharges.BPA_OTHER_CHARGES=sessionStorage.getItem("otherCharges");
