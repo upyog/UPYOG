@@ -204,6 +204,13 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         ]
         : null,
     };
+    if (!sessionStorage.getItem("development") || !sessionStorage.getItem("otherCharges") || !sessionStorage.getItem("lessAdjusment") ){
+      closeModal()
+      alert("Please fill P2 Manual Fees");}
+    else{
+    applicationData.additionalDetails.selfCertificationCharges.BPA_DEVELOPMENT_CHARGES=sessionStorage.getItem("development");
+    applicationData.additionalDetails.selfCertificationCharges.BPA_OTHER_CHARGES=sessionStorage.getItem("otherCharges");
+    applicationData.additionalDetails.selfCertificationCharges.BPA_LESS_ADJUSMENT_PLOT=sessionStorage.getItem("lessAdjusment");
 
     const nocDetails = applicationDetails?.nocData?.map(noc => {
       const uploadedDocuments = Digit.SessionStorage.get(noc?.nocType) || [];
@@ -266,9 +273,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   {
     submitAction({
       BPA:applicationData
-    }, nocData?.length > 0 ? nocData : false, {isStakeholder: false, bpa: true})
-    
+    }, nocData?.length > 0 ? nocData : false, {isStakeholder: false, bpa: true})    
   }
+    }    
   }
   const closeModalNew = ()=>{
     closeModal()
