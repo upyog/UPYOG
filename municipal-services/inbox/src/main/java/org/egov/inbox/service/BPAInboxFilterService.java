@@ -72,7 +72,7 @@ public class BPAInboxFilterService {
     private ServiceRequestRepository serviceRequestRepository;
 
     public List<String> fetchApplicationNumbersFromSearcher(InboxSearchCriteria criteria,
-            HashMap<String, String> StatusIdNameMap, org.egov.inbox.web.model.RequestInfo requestInfo) {
+            HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
         List<String> applicationNumbers = new ArrayList<>();
         HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
         ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
@@ -95,7 +95,7 @@ public class BPAInboxFilterService {
                 return new ArrayList<>();
             }
         } else {
-            List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(org.egov.inbox.web.model.Role::getCode).collect(Collectors.toList());
+            List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
             if(roles.contains(CITIZEN)) {
                 userUUIDs.add(requestInfo.getUserInfo().getUuid());
                 citizenRoles = roles;
@@ -148,7 +148,7 @@ public class BPAInboxFilterService {
     }
 
     private Map<String, Object> getSearchCriteria(InboxSearchCriteria criteria, Map<String, String> statusIdNameMap,
-            org.egov.inbox.web.model.RequestInfo requestInfo, Map<String, Object> moduleSearchCriteria,
+            RequestInfo requestInfo, Map<String, Object> moduleSearchCriteria,
             ProcessInstanceSearchCriteria processCriteria, List<String> userUUIDs, List<String> userRoles) {
         Map<String, Object> searchCriteria = new HashMap<>();
 
@@ -194,7 +194,7 @@ public class BPAInboxFilterService {
     }
 
     public Integer fetchApplicationCountFromSearcher(InboxSearchCriteria criteria,
-            HashMap<String, String> StatusIdNameMap, org.egov.inbox.web.model.RequestInfo requestInfo) {
+            HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
         Integer totalCount = 0;
         HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
         ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
@@ -217,7 +217,7 @@ public class BPAInboxFilterService {
                 return 0;
             }
         } else {
-            List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(org.egov.inbox.web.model.Role::getCode).collect(Collectors.toList());
+            List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
             if(roles.contains(CITIZEN)) {
                 userUUIDs.add(requestInfo.getUserInfo().getUuid());
                 citizenRoles = roles;
@@ -253,7 +253,7 @@ public class BPAInboxFilterService {
         return totalCount;
     }
 
-    private Map<String, List<String>> fetchUserUUID(String mobileNumber, org.egov.inbox.web.model.RequestInfo requestInfo, String tenantId) {
+    private Map<String, List<String>> fetchUserUUID(String mobileNumber, RequestInfo requestInfo, String tenantId) {
         Map<String, List<String>> userDetails = new ConcurrentHashMap<>();
         StringBuilder uri = new StringBuilder();
         uri.append(userHost).append(userSearchEndpoint);
@@ -278,9 +278,9 @@ public class BPAInboxFilterService {
         return userDetails;
     }
 
-    private boolean citizenHasStakeholderRoles(org.egov.inbox.web.model.RequestInfo requestInfo, List<String> citizenRoles) {
+    private boolean citizenHasStakeholderRoles(RequestInfo requestInfo, List<String> citizenRoles) {
         if (citizenRoles.isEmpty())
-            citizenRoles = requestInfo.getUserInfo().getRoles().stream().map(org.egov.inbox.web.model.Role::getCode)
+            citizenRoles = requestInfo.getUserInfo().getRoles().stream().map(Role::getCode)
                     .collect(Collectors.toList());
         if (!citizenRoles.isEmpty() && citizenRoles.size() > 1 && citizenRoles.contains(CITIZEN))
             return true;
@@ -288,7 +288,7 @@ public class BPAInboxFilterService {
     }
 
     public List<Map<String, String>> fetchTenantWiseApplicationNumbersForCitizenInboxFromSearcher(InboxSearchCriteria criteria,
-            Map<String, String> statusIdNameMap, org.egov.inbox.web.model.RequestInfo requestInfo) {
+            Map<String, String> statusIdNameMap, RequestInfo requestInfo) {
         List<Map<String, String>> tenantWiseApplns = new ArrayList<>();
         HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
         ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
@@ -310,7 +310,7 @@ public class BPAInboxFilterService {
             isSearchResultEmpty = !isUserPresentForGivenMobileNumber;
             if (Boolean.TRUE.equals(isSearchResultEmpty)) {
                 userUUIDs.add(requestInfo.getUserInfo().getUuid());
-                List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(org.egov.inbox.web.model.Role::getCode).collect(Collectors.toList());
+                List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
                 citizenRoles.addAll(roles);
             }
         } /*

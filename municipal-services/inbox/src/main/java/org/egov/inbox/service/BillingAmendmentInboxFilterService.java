@@ -58,7 +58,7 @@ public class BillingAmendmentInboxFilterService {
 	private ServiceRequestRepository serviceRequestRepository;
 
 	public Map<String, List<String>> fetchConsumerNumbersFromSearcher(InboxSearchCriteria criteria,
-			HashMap<String, String> StatusIdNameMap, org.egov.inbox.web.model.RequestInfo requestInfo) {
+			HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
 		List<String> consumerCodes = new ArrayList<>();
 		List<String> amendmentIds = new ArrayList<>();
 		Map<String, List<String>> map = new HashMap();
@@ -167,7 +167,7 @@ public class BillingAmendmentInboxFilterService {
 	}
 
 	public Integer fetchApplicationCountFromSearcher(InboxSearchCriteria criteria,
-			HashMap<String, String> StatusIdNameMap, org.egov.inbox.web.model.RequestInfo requestInfo) {
+			HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
 		Integer totalCount = 0;
 		HashMap moduleSearchCriteria = criteria.getModuleSearchCriteria();
 		ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
@@ -254,7 +254,7 @@ public class BillingAmendmentInboxFilterService {
 		return totalCount;
 	}
 
-	private List<String> fetchUserUUID(String mobileNumber, org.egov.inbox.web.model.RequestInfo requestInfo, String tenantId) {
+	private List<String> fetchUserUUID(String mobileNumber, RequestInfo requestInfo, String tenantId) {
 		StringBuilder uri = new StringBuilder();
 		uri.append(userHost).append(userSearchEndpoint);
 		Map<String, Object> userSearchRequest = new HashMap<>();

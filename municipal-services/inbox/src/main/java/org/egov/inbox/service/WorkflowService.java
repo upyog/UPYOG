@@ -49,7 +49,7 @@ public class WorkflowService {
 		this.mapper = mapper;
 	}
 
-	public Integer getProcessCount(String tenantId, org.egov.inbox.web.model.RequestInfo requestInfo, ProcessInstanceSearchCriteria criteria) {
+	public Integer getProcessCount(String tenantId, RequestInfo requestInfo, ProcessInstanceSearchCriteria criteria) {
 		List<String> listOfBusinessServices = new ArrayList<>(criteria.getBusinessService());
 		Integer processCount = 0;
 		for(String businessSrv : listOfBusinessServices) {
@@ -73,7 +73,7 @@ public class WorkflowService {
 		return processCount;
 	}
 	
-	public Integer getNearingSlaProcessCount(String tenantId, org.egov.inbox.web.model.RequestInfo requestInfo, ProcessInstanceSearchCriteria criteria) {
+	public Integer getNearingSlaProcessCount(String tenantId, RequestInfo requestInfo, ProcessInstanceSearchCriteria criteria) {
 		List<String> listOfBusinessServices = new ArrayList<>(criteria.getBusinessService());
 		Integer processCount = 0;
 		for(String businessSrv : listOfBusinessServices) {
@@ -97,7 +97,7 @@ public class WorkflowService {
 		return processCount;
 	}
 	
-        public List<HashMap<String, Object>> getProcessStatusCount(org.egov.inbox.web.model.RequestInfo requestInfo,
+        public List<HashMap<String, Object>> getProcessStatusCount(RequestInfo requestInfo,
                 ProcessInstanceSearchCriteria criteria) {
             List<String> listOfBusinessServices = new ArrayList<>(criteria.getBusinessService());
             List<HashMap<String, Object>> finalResponse = null;
@@ -107,7 +107,7 @@ public class WorkflowService {
                 url.append(config.getProcessStatusCountPath());
                 criteria.setIsProcessCountCall(true);
                 // For BPA having large request, so that it was sending from the body
-                List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(org.egov.inbox.web.model.Role::getCode).collect(Collectors.toList());
+                List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
                 if ((!ObjectUtils.isEmpty(criteria.getModuleName()) && !criteria.getModuleName().equalsIgnoreCase(BpaConstants.BPA)) 
                         || (!ObjectUtils.isEmpty(criteria.getModuleName()) && 
                         		criteria.getModuleName().equalsIgnoreCase(BpaConstants.BPA) && !roles.contains(BpaConstants.CITIZEN)))
@@ -140,7 +140,7 @@ public class WorkflowService {
             return finalResponse;
         }
 	
-	public ProcessInstanceResponse getProcessInstance(ProcessInstanceSearchCriteria criteria, org.egov.inbox.web.model.RequestInfo requestInfo) {
+	public ProcessInstanceResponse getProcessInstance(ProcessInstanceSearchCriteria criteria, RequestInfo requestInfo) {
 		StringBuilder url = new StringBuilder(config.getWorkflowHost());
 		url.append( config.getProcessSearchPath());
 		url = this.buildWorkflowUrl(criteria, url, Boolean.FALSE);
@@ -168,7 +168,7 @@ public class WorkflowService {
 	 * 				businessService code
 	 * @return BusinessService for the the given tenantId
 	 */
-	public BusinessService getBusinessService(String tenantId, org.egov.inbox.web.model.RequestInfo requestInfo, String businessServceName) {
+	public BusinessService getBusinessService(String tenantId, RequestInfo requestInfo, String businessServceName) {
 		StringBuilder url = getSearchURLWithParams(tenantId, businessServceName);
 		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 		Object result = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
@@ -254,7 +254,7 @@ public class WorkflowService {
      * @return List of status on which user from requestInfo can take action upon
      */
 
-    public HashMap<String,String> getActionableStatusesForRole(org.egov.inbox.web.model.RequestInfo requestInfo, List<BusinessService> businessServices,ProcessInstanceSearchCriteria criteria){
+    public HashMap<String,String> getActionableStatusesForRole(RequestInfo requestInfo, List<BusinessService> businessServices,ProcessInstanceSearchCriteria criteria){
 
         String tenantId;
         List<String> userRoleCodes;
@@ -297,7 +297,7 @@ public class WorkflowService {
      * @param requestInfo RequestInfo of the request
      * @return Map of tenantId to roles for user in the requestInfo
      */
-    public Map<String,List<String>> getTenantIdToUserRolesMap(org.egov.inbox.web.model.RequestInfo requestInfo){
+    public Map<String,List<String>> getTenantIdToUserRolesMap(RequestInfo requestInfo){
         Map<String,List<String>> tenantIdToUserRoles = new HashMap<>();
         requestInfo.getUserInfo().getRoles().forEach(role -> {
             if(tenantIdToUserRoles.containsKey(role.getTenantId())){

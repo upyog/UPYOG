@@ -20,7 +20,7 @@ import lombok.Setter;;
 @Setter
 public class InboxRequest   {
   @JsonProperty("RequestInfo")
-  private org.egov.inbox.web.model.RequestInfo RequestInfo;
+  private RequestInfo RequestInfo;
 
   @Valid
   @JsonProperty("inbox")

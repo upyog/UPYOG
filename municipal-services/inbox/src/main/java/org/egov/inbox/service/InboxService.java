@@ -135,7 +135,7 @@ public class InboxService {
 		this.workflowService = workflowService;
 	}
 
-	public InboxResponse fetchInboxData(InboxSearchCriteria criteria, org.egov.inbox.web.model.RequestInfo requestInfo) {
+	public InboxResponse fetchInboxData(InboxSearchCriteria criteria, RequestInfo requestInfo) {
 
 		ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
 		HashMap moduleSearchCriteria = criteria.getModuleSearchCriteria();
@@ -182,7 +182,7 @@ public class InboxService {
 		processCriteria.setStatus(null);
 
 		List<HashMap<String, Object>> bpaCitizenStatusCountMap = new ArrayList<HashMap<String,Object>>();
-		List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(org.egov.inbox.web.model.Role::getCode).collect(Collectors.toList());
+		List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
 
 		String moduleName = processCriteria.getModuleName();
 		/*
@@ -866,7 +866,7 @@ public class InboxService {
 		return null;
 	}
 
-	public List<String> fetchVehicleStateMap(List<String> inputStatuses, org.egov.inbox.web.model.RequestInfo requestInfo, String tenantId,Integer limit,Integer offSet) {
+	public List<String> fetchVehicleStateMap(List<String> inputStatuses, RequestInfo requestInfo, String tenantId,Integer limit,Integer offSet) {
 		VehicleTripSearchCriteria vehicleTripSearchCriteria = new VehicleTripSearchCriteria();
 		vehicleTripSearchCriteria.setApplicationStatus(inputStatuses);
 		vehicleTripSearchCriteria.setTenantId(tenantId);
@@ -894,14 +894,14 @@ public class InboxService {
 	 * @return
 	 * Description : Fetch the vehicle_trip_detail by list of reference no.
 	 */
-	private List<VehicleTripDetail> fetchVehicleStatusForApplication(List<String> requiredApplications,org.egov.inbox.web.model.RequestInfo requestInfo, String tenantId) {
+	private List<VehicleTripDetail> fetchVehicleStatusForApplication(List<String> requiredApplications,RequestInfo requestInfo, String tenantId) {
 		VehicleTripSearchCriteria vehicleTripSearchCriteria = new VehicleTripSearchCriteria();
 		vehicleTripSearchCriteria.setApplicationNos(requiredApplications);
 		vehicleTripSearchCriteria.setTenantId(tenantId);
 		return fetchVehicleTripDetailsByReferenceNo(vehicleTripSearchCriteria,requestInfo);
 	}
 
-	public List<VehicleTripDetail> fetchVehicleTripDetailsByReferenceNo(VehicleTripSearchCriteria vehicleTripSearchCriteria, org.egov.inbox.web.model.RequestInfo requestInfo) {
+	public List<VehicleTripDetail> fetchVehicleTripDetailsByReferenceNo(VehicleTripSearchCriteria vehicleTripSearchCriteria,RequestInfo requestInfo) {
 		StringBuilder url = new StringBuilder(config.getVehicleHost());
 		url.append( config.getVehicleSearchTripPath());
 		Object result = serviceRequestRepository.fetchResult(url, vehicleTripSearchCriteria);
@@ -945,7 +945,7 @@ public class InboxService {
 		}
 	}
 
-	private List<Map<String, Object>> fetchVehicleTripResponse(InboxSearchCriteria criteria, org.egov.inbox.web.model.RequestInfo requestInfo,List<String> applicationStatus) {
+	private List<Map<String, Object>> fetchVehicleTripResponse(InboxSearchCriteria criteria, RequestInfo requestInfo,List<String> applicationStatus) {
 
 		VehicleSearchCriteria vehicleTripSearchCriteria = new VehicleSearchCriteria();
 
@@ -965,7 +965,7 @@ public class InboxService {
 		return vehicleResponse;
 	}
 
-	public VehicleCustomResponse fetchApplicationCount(VehicleSearchCriteria criteria, org.egov.inbox.web.model.RequestInfo requestInfo) {
+	public VehicleCustomResponse fetchApplicationCount(VehicleSearchCriteria criteria, RequestInfo requestInfo) {
 		StringBuilder url = new StringBuilder(config.getVehicleHost());
 		url.append( config.getVehicleApplicationStatusCountPath());
 		Object result = serviceRequestRepository.fetchResult(url, criteria);
@@ -1014,7 +1014,7 @@ public class InboxService {
 	}
 
 	private JSONArray fetchModuleObjects(HashMap moduleSearchCriteria, List<String> businessServiceName, String tenantId,
-			org.egov.inbox.web.model.RequestInfo requestInfo, Map<String, String> srvMap) {
+			RequestInfo requestInfo, Map<String, String> srvMap) {
 		JSONArray resutls = null;
 
 		if (CollectionUtils.isEmpty(srvMap) || StringUtils.isEmpty(srvMap.get("searchPath"))) {
@@ -1138,7 +1138,7 @@ public class InboxService {
 	}
 
 	private JSONArray fetchModuleSearchObjects(HashMap moduleSearchCriteria, List<String> businessServiceName,
-			String tenantId, org.egov.inbox.web.model.RequestInfo requestInfo, Map<String, String> srvMap) {
+			String tenantId, RequestInfo requestInfo, Map<String, String> srvMap) {
 		JSONArray results = null;
 
 		if (CollectionUtils.isEmpty(srvMap) || StringUtils.isEmpty(srvMap.get("searchPath"))) {
