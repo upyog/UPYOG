@@ -14,7 +14,7 @@
     "@upyog-niua/upyog-css": "1.0.10",
     "@egovernments/digit-ui-libraries": "1.7.2",
     "@upyog/digit-ui-module-bills": "1.7.2",
-    "@egovernments/digit-ui-module-common": "1.7.2",
+    "@egovernments/digit-ui-module-common": "1.7.3",
     "@egovernments/digit-ui-module-core": "1.7.2",
     "@upyog/digit-ui-module-engagement": "1.7.2",
     "@upyog/digit-ui-module-dss": "1.7.3",
