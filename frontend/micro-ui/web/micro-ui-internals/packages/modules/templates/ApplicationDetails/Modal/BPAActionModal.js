@@ -23,7 +23,7 @@ const CloseBtn = (props) => {
   );
 };
 
-const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationDetails, applicationData, businessService, moduleCode,workflowDetails }) => {
+const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationDetails, applicationData, businessService, moduleCode,workflowDetails,blockReason }) => {
   const mutation1 = Digit.Hooks.obps.useObpsAPI(
       applicationData?.landInfo?.address?.city ? applicationData?.landInfo?.address?.city : tenantId,
       false
@@ -41,7 +41,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [config, setConfig] = useState({});
   const [defaultValues, setDefaultValues] = useState({});
   const [approvers, setApprovers] = useState([]);
+  const [blockReasonFiltered, setFilteredBlockReason] = useState([]);
   const [selectedApprover, setSelectedApprover] = useState({});
+  const [selectedBlockReason, setBlockReason] = useState({});
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [error, setError] = useState(null);
@@ -174,7 +176,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     applicationData = {
       ...applicationData,
       documents: getDocuments(applicationData),
-      additionalDetails: {...applicationData?.additionalDetails, fieldinspection_pending:getfeildInspection(applicationData), pendingapproval: getPendingApprovals() },
+      additionalDetails: {...applicationData?.additionalDetails, fieldinspection_pending:getfeildInspection(applicationData), pendingapproval: getPendingApprovals(),blockingReason:selectedBlockReason?.name  },
        workflow:{
         action: action?.action,
         comment: data?.comments?.length > 0 ? data?.comments : null,
@@ -283,6 +285,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   }
 
   useEffect(() => {
+    setFilteredBlockReason(blockReason?.map((blockReason) => ({ code: blockReason?.code, name: blockReason?.value })));
     if (action) {
       setConfig(
         configBPAApproverApplication({
@@ -291,12 +294,15 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           approvers,
           selectedApprover,
           setSelectedApprover,
+          selectedBlockReason,
+          setBlockReason,
           selectFile,
           uploadedFile,
           setUploadedFile,
           businessService,
           assigneeLabel: "WF_ASSIGNEE_NAME_LABEL",
-          error
+          error,
+          blockReasonFiltered
         })
       );
     }

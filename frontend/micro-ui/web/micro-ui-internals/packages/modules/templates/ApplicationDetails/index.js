@@ -16,6 +16,7 @@ const ApplicationDetails = (props) => {
   let isEditApplication=window.location.href.includes("editApplication") && window.location.href.includes("bpa") ;
     const tenantId = Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
+  const { isLoadingg, data: blockReason } = Digit.Hooks.obps.useMDMS(state, "BPA", ["BlockReason"]);
   const { t } = useTranslation();
   const history = useHistory();
   let { id: applicationNumber } = useParams();
@@ -254,6 +255,7 @@ const ApplicationDetails = (props) => {
               businessService={businessService}
               workflowDetails={workflowDetails}
               moduleCode={moduleCode}
+              blockReason={blockReason?.BPA?.BlockReason}
             />
           ) : null}
           {isWarningPop ? (
