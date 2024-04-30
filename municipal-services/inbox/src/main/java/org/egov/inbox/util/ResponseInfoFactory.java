@@ -8,7 +8,7 @@ import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 
 @Component
 public class ResponseInfoFactory {
-    public ResponseInfo createResponseInfoFromRequestInfo(final org.egov.inbox.web.model.RequestInfo requestInfo, final Boolean success) {
+    public ResponseInfo createResponseInfoFromRequestInfo(final RequestInfo requestInfo, final Boolean success) {
 
         final String apiId = requestInfo != null ? requestInfo.getApiId() : StringUtils.EMPTY;
         final String ver = requestInfo != null ? requestInfo.getVer() : StringUtils.EMPTY;

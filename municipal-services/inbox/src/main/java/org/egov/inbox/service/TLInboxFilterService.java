@@ -53,7 +53,7 @@ public class TLInboxFilterService {
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
 
-    public List<String> fetchApplicationNumbersFromSearcher(InboxSearchCriteria criteria, HashMap<String, String> StatusIdNameMap, org.egov.inbox.web.model.RequestInfo requestInfo){
+    public List<String> fetchApplicationNumbersFromSearcher(InboxSearchCriteria criteria, HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo){
         List<String> acknowledgementNumbers = new ArrayList<>();
         HashMap moduleSearchCriteria = criteria.getModuleSearchCriteria();
         ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
@@ -136,9 +136,9 @@ public class TLInboxFilterService {
         return  acknowledgementNumbers;
     }
 
-    private HashMap setUserWhenMobileNoIsEmptyForStakeholderRegOfCitizen(InboxSearchCriteria criteria, org.egov.inbox.web.model.RequestInfo requestInfo,
+    private HashMap setUserWhenMobileNoIsEmptyForStakeholderRegOfCitizen(InboxSearchCriteria criteria, RequestInfo requestInfo,
             HashMap moduleSearchCriteria, ProcessInstanceSearchCriteria processCriteria) {
-        List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(org.egov.inbox.web.model.Role::getCode).collect(Collectors.toList());
+        List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
         if(processCriteria.getModuleName().equals(BPAREG) && roles.contains(BpaConstants.CITIZEN)) {
             if (moduleSearchCriteria == null || moduleSearchCriteria.isEmpty() || !moduleSearchCriteria.containsKey(MOBILE_NUMBER_PARAM)) {
                 moduleSearchCriteria = new HashMap<>();
@@ -149,7 +149,7 @@ public class TLInboxFilterService {
         return moduleSearchCriteria;
     }
 
-    public Integer fetchApplicationCountFromSearcher(InboxSearchCriteria criteria, HashMap<String, String> StatusIdNameMap, org.egov.inbox.web.model.RequestInfo requestInfo){
+    public Integer fetchApplicationCountFromSearcher(InboxSearchCriteria criteria, HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo){
         Integer totalCount = 0;
         HashMap moduleSearchCriteria = criteria.getModuleSearchCriteria();
         ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
@@ -223,7 +223,7 @@ public class TLInboxFilterService {
     }
 
 
-    private List<String> fetchUserUUID(String mobileNumber, org.egov.inbox.web.model.RequestInfo requestInfo, String tenantId) {
+    private List<String> fetchUserUUID(String mobileNumber, RequestInfo requestInfo, String tenantId) {
         StringBuilder uri = new StringBuilder();
         uri.append(userHost).append(userSearchEndpoint);
         Map<String, Object> userSearchRequest = new HashMap<>();
