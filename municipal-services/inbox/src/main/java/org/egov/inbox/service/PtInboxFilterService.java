@@ -55,7 +55,7 @@ public class PtInboxFilterService {
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
 
-	public List<String> fetchAcknowledgementIdsFromSearcher(InboxSearchCriteria criteria, HashMap<String, String> StatusIdNameMap, org.egov.inbox.web.model.RequestInfo requestInfo){
+	public List<String> fetchAcknowledgementIdsFromSearcher(InboxSearchCriteria criteria, HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo){
 		List<String> acknowledgementNumbers = new ArrayList<>();
 		HashMap moduleSearchCriteria = criteria.getModuleSearchCriteria();
 		ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
@@ -146,7 +146,7 @@ public class PtInboxFilterService {
 		return  acknowledgementNumbers;
 	}
 
-	public Integer fetchAcknowledgementIdsCountFromSearcher(InboxSearchCriteria criteria, HashMap<String, String> StatusIdNameMap, org.egov.inbox.web.model.RequestInfo requestInfo){
+	public Integer fetchAcknowledgementIdsCountFromSearcher(InboxSearchCriteria criteria, HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo){
 		Integer totalCount = 0;
 		HashMap moduleSearchCriteria = criteria.getModuleSearchCriteria();
 		ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
@@ -226,7 +226,7 @@ public class PtInboxFilterService {
 	}
 
 
-	private List<String> fetchUserUUID(String mobileNumber, org.egov.inbox.web.model.RequestInfo requestInfo, String tenantId) {
+	private List<String> fetchUserUUID(String mobileNumber, RequestInfo requestInfo, String tenantId) {
 		StringBuilder uri = new StringBuilder();
 		uri.append(userHost).append(userSearchEndpoint);
 		Map<String, Object> userSearchRequest = new HashMap<>();

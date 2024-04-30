@@ -68,7 +68,7 @@ public class NOCInboxFilterService {
     private ServiceRequestRepository serviceRequestRepository;
 
     public List<String> fetchApplicationNumbersFromSearcher(InboxSearchCriteria criteria,
-            HashMap<String, String> StatusIdNameMap, org.egov.inbox.web.model.RequestInfo requestInfo) {
+            HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
         List<String> applicationNumbers = new ArrayList<>();
         HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
         ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
@@ -122,7 +122,7 @@ public class NOCInboxFilterService {
     }
 
     private Map<String, Object> getSearchCriteria(InboxSearchCriteria criteria, HashMap<String, String> StatusIdNameMap,
-            org.egov.inbox.web.model.RequestInfo requestInfo, HashMap<String, Object> moduleSearchCriteria,
+            RequestInfo requestInfo, HashMap<String, Object> moduleSearchCriteria,
             ProcessInstanceSearchCriteria processCriteria, List<String> userUUIDs) {
         Map<String, Object> searchCriteria = new HashMap<>();
 
@@ -161,7 +161,7 @@ public class NOCInboxFilterService {
     }
 
     public Integer fetchApplicationCountFromSearcher(InboxSearchCriteria criteria,
-            HashMap<String, String> StatusIdNameMap, org.egov.inbox.web.model.RequestInfo requestInfo) {
+            HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
         Integer totalCount = 0;
         HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
         ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
@@ -199,7 +199,7 @@ public class NOCInboxFilterService {
         return totalCount;
     }
 
-    private List<String> fetchUserUUID(String mobileNumber, org.egov.inbox.web.model.RequestInfo requestInfo, String tenantId) {
+    private List<String> fetchUserUUID(String mobileNumber, RequestInfo requestInfo, String tenantId) {
         StringBuilder uri = new StringBuilder();
         List<String> uuids = new ArrayList<>();
         uri.append(userHost).append(userSearchEndpoint);
