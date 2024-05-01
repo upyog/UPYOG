@@ -498,7 +498,7 @@ if(!request.getProperty().getCreationReason().equals(CreationReason.MUTATION))
 		List<Property> properties;
 		/* encrypt here */
 		if(!criteria.getIsRequestForOldDataEncryption())
-			criteria = encryptionDecryptionUtil.encryptObject(criteria, PTConstants.PROPERTY_MODEL, PropertyCriteria.class);
+			//criteria = encryptionDecryptionUtil.encryptObject(criteria, PTConstants.PROPERTY_MODEL, PropertyCriteria.class);
 
 		/*
 		 * throw error if audit request is with no proeprty id or multiple propertyids
