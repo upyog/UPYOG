@@ -155,7 +155,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       if (action?.showFinancialYearsModal) {
    
         let currentFinYr = getCurrentFinancialYear();
-        setSelectedModeofPayment(null)
+        // setSelectedModeofPayment(null)
         if(selectedFinancialYear && selectedFinancialYear.name == currentFinYr) {
           modeOfPayments = [{code: 'YEARLY', name: 'YEARLY'},{code: 'HALFYEARLY', name: 'HALFYEARLY'},{code: 'QUARTERLY', name: 'QUARTERLY'}]
         } else {
@@ -200,7 +200,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       actionCancelOnSubmit={closeModal}
       actionSaveLabel={t(config.label.submit)}
       actionSaveOnSubmit={() => {}}
-      isDisabled={!action.showFinancialYearsModal ? PTALoading || (action?.docUploadRequired && !uploadedFile) : !selectedFinancialYear || !selectedModeofPayment}
+      isDisabled={!action.showFinancialYearsModal ? PTALoading : !selectedFinancialYear || !selectedModeofPayment}
       formId="modal-action"
     >
       {financialYearsLoading ? (
@@ -214,7 +214,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           onSubmit={submit}
           defaultValues={defaultValues}
           formId="modal-action"
-          // isDisabled={!action.showFinancialYearsModal ? PTALoading || (!action?.isTerminateState && !selectedApprover?.uuid) : !selectedFinancialYear}
+          isDisabled={!action.showFinancialYearsModal ? PTALoading || (!action?.isTerminateState && !selectedApprover?.uuid) : !selectedFinancialYear}
         />
       )}
     </Modal>
