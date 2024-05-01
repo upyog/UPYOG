@@ -121,12 +121,16 @@ public class PropertyService {
 		*
 		*/
 		//Push data after encryption
-		producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
-		request.getProperty().setWorkflow(null);
+	//	producer.push(config.getSavePropertyTopic(), request);
+	//	request.getProperty().setWorkflow(null);
 
 		/* decrypt here */
-		return encryptionDecryptionUtil.decryptObject(request.getProperty(), PTConstants.PROPERTY_MODEL, Property.class, request.getRequestInfo());
+	//	return encryptionDecryptionUtil.decryptObject(request.getProperty(), PTConstants.PROPERTY_MODEL, Property.class, request.getRequestInfo());
 		//return request.getProperty();
+		
+		producer.push(config.getSavePropertyTopic(), request);
+		request.getProperty().setWorkflow(null);
+		return request.getProperty();
 	}
 
 	/**
@@ -251,7 +255,7 @@ if(!request.getProperty().getCreationReason().equals(CreationReason.MUTATION))
 				
 				enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
 				util.mergeAdditionalDetails(request, propertyFromSearch);
-				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);		
+				producer.push(config.getUpdatePropertyTopic(), request);		
 	}
 
 	/**
@@ -292,9 +296,9 @@ if(!request.getProperty().getCreationReason().equals(CreationReason.MUTATION))
 					&& !propertyFromSearch.getStatus().equals(Status.INWORKFLOW)) {
 
 				propertyFromSearch.setStatus(Status.INACTIVE);
-				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), OldPropertyRequest);
+				producer.push(config.getUpdatePropertyTopic(), OldPropertyRequest);
 				util.saveOldUuidToRequest(request, propertyFromSearch.getId());
-				producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+				producer.push(config.getSavePropertyTopic(), request);
 
 			} else if (state.getIsTerminateState()
 					&& !state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString())) {
@@ -304,7 +308,7 @@ if(!request.getProperty().getCreationReason().equals(CreationReason.MUTATION))
 				/*
 				 * If property is In Workflow then continue
 				 */
-				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+				producer.push(config.getUpdatePropertyTopic(), request);
 			}
 
 		} else {
@@ -312,7 +316,7 @@ if(!request.getProperty().getCreationReason().equals(CreationReason.MUTATION))
 			/*
 			 * If no workflow then update property directly with mutation information
 			 */
-			producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+			producer.push(config.getUpdatePropertyTopic(), request);
 		}
 	}
 	
@@ -369,11 +373,11 @@ if(!request.getProperty().getCreationReason().equals(CreationReason.MUTATION))
 					&& !propertyFromSearch.getStatus().equals(Status.INWORKFLOW)) {
 
 				propertyFromSearch.setStatus(Status.INACTIVE);
-				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), oldPropertyRequest);
+				producer.push(config.getUpdatePropertyTopic(), oldPropertyRequest);
 
 				util.saveOldUuidToRequest(request, propertyFromSearch.getId());
 				/* save new record */
-				producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+				producer.push(config.getSavePropertyTopic(), request);
 
 			} else if (state.getIsTerminateState()
 					&& !state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString())) {
@@ -383,7 +387,7 @@ if(!request.getProperty().getCreationReason().equals(CreationReason.MUTATION))
 				/*
 				 * If property is In Workflow then continue
 				 */
-				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+				producer.push(config.getUpdatePropertyTopic(), request);
 			}
 
 		} else {
@@ -391,14 +395,14 @@ if(!request.getProperty().getCreationReason().equals(CreationReason.MUTATION))
 			/*
 			 * If no workflow then update property directly with mutation information
 			 */
-			producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+			producer.push(config.getUpdatePropertyTopic(), request);
 		}
 	}
 
 	private void terminateWorkflowAndReInstatePreviousRecord(PropertyRequest request, Property propertyFromSearch) {
 
 		/* current record being rejected */
-		producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+		producer.push(config.getUpdatePropertyTopic(), request);
 
 		/* Previous record set to ACTIVE */
 		@SuppressWarnings("unchecked")
@@ -419,7 +423,7 @@ if(!request.getProperty().getCreationReason().equals(CreationReason.MUTATION))
 		previousPropertyToBeReInstated.setStatus(Status.ACTIVE);
 		request.setProperty(previousPropertyToBeReInstated);
 
-		producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+		producer.push(config.getUpdatePropertyTopic(), request);
 	}
 	
 	
@@ -635,7 +639,7 @@ if(!request.getProperty().getCreationReason().equals(CreationReason.MUTATION))
 		//enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
 		util.mergeAdditionalDetails(request, propertyFromSearch);
 		
-		producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+		producer.push(config.getUpdatePropertyTopic(), request);
 		
 		request.getProperty().setWorkflow(null);
 		
