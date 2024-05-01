@@ -71,7 +71,7 @@ const WSDocsRequired = ({ onSelect, userType, onSkip, config }) => {
   return (
     <div style={{ margin: "16px" }}>
       <div>
-        <Header styles={{ fontSize: "32px", marginLeft: "18px", display: "flex", justifyContent: "space-between", marginRight: "12px" }}>
+        <Header styles={{ fontSize: "24px", marginLeft: "18px", display: "flex", justifyContent: "space-between", marginRight: "12px" }}>
           <div>
             {t("WS_WATER_AND_SEWERAGE_NEW_CONNECTION_LABEL")}
           </div>

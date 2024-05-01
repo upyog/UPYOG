@@ -568,6 +568,19 @@ export const convertToProperty = (data = {}) => {
   let unit = data?.units;
   let basement1 = Array.isArray(data?.units) && data?.units["-1"] ? data?.units["-1"] : null;
   let basement2 = Array.isArray(data?.units) && data?.units["-2"] ? data?.units["-2"] : null;
+  let amalgamationDetails = null;
+  if(data?.amalgamationDetails && data?.amalgamationDetails?.action == "Amalgamation" && data?.amalgamationDetails?.propertyDetails.length>0) {
+    let arr=[];
+    data?.amalgamationDetails?.propertyDetails.map((e)=>{
+      let obj = {};
+      obj['propertyId'] = e.property_id;
+      obj['tenantId'] = e.tenantId;
+      arr.push(obj)
+    })
+    
+    amalgamationDetails = arr
+  };
+  let isPartOfProperty = data?.isPartOfProperty;
   data = setDocumentDetails(data);
   data = setOwnerDetails(data);
   data = setAddressDetails(data);
@@ -587,6 +600,8 @@ export const convertToProperty = (data = {}) => {
       institution: data.institution || null,
 
       documents: data.documents || [],
+      amalgamatedProperty: amalgamationDetails,
+      isPartOfProperty: isPartOfProperty,
       ...data.propertyDetails,
 
       additionalDetails: {
@@ -604,9 +619,10 @@ export const convertToProperty = (data = {}) => {
         unit: unit,
         basement1: basement1,
         basement2: basement2,
+        
       },
 
-      creationReason: getCreationReason(data),
+      creationReason: data?.amalgamationDetails && data?.amalgamationDetails?.action == "Amalgamation" ? 'AMALGAMATION' : getCreationReason(data),
       source: "MUNICIPAL_RECORDS",
       channel: "CITIZEN",
     },
@@ -797,6 +813,7 @@ export const convertToUpdateProperty = (data = {}, t) => {
   data = setPropertyDetails(data);
   data = setExemptionDetails(data);
   data.address.city = data.address.city ? data.address.city : t(`TENANT_TENANTS_${stringReplaceAll(data?.tenantId.toUpperCase(),".","_")}`);
+  let isPartOfProperty = data?.isPartOfProperty;
 
   const formdata = {
     Property: {
@@ -812,6 +829,7 @@ export const convertToUpdateProperty = (data = {}, t) => {
       ownershipCategory: data?.ownershipCategory?.value,
       owners: data.owners,
       institution: data.institution || null,
+      isPartOfProperty: isPartOfProperty,
 
       documents: data.documents || [],
       ...data.propertyDetails,

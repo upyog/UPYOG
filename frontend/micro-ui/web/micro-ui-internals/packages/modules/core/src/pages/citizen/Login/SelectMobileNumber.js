@@ -66,7 +66,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
           label={checkLabels()}
           value={isCheckBox}
           checked={isCheckBox}
-          style={{ marginTop: "5px", marginLeft: "55px" }}
+          style={{ marginTop: "-5px", marginLeft: "40px" }}
           styles={{marginBottom: "30px"}}
           onChange={setTermsAndPolicyDetails}
         />

@@ -51,7 +51,7 @@ const WSDisconnectionDocsRequired = ({ userType }) => {
 
   return (
     <div style={{ margin: "16px" }}>
-      <Header styles={{fontSize: "32px", marginLeft: "18px"}}>{t("WS_WATER_AND_SEWERAGE_DISCONNECTION")}</Header>
+      <Header styles={{fontSize: "24px", marginLeft: "18px"}}>{t("WS_WATER_AND_SEWERAGE_DISCONNECTION")}</Header>
       <Card >
         {wsDocsLoading ?
           <Loader /> :

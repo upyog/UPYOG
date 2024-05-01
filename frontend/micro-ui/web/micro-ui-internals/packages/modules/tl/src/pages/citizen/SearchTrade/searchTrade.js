@@ -138,7 +138,7 @@ const SearchTrade = ({ config: propsConfig, onSelect }) => {
         heading={propsConfig.texts.header}
         text={propsConfig.texts.text}
         cardStyle={{ margin: "auto" }}
-        headingStyle={{ fontSize: "32px", marginBottom: "16px", fontFamily: "Roboto Condensed,sans-serif" }}
+        headingStyle={{ fontSize: "24px", marginBottom: "16px", fontFamily: "Roboto Condensed,sans-serif" }}
         isDisabled={!canSubmit}
         defaultValues={{mobileNumber:defaultMobileno}}
         onFormValueChange={onFormValueChange}

@@ -26,6 +26,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import LogoutDialog from "../../Dialog/LogoutDialog";
 import ChangeCity from "../../ChangeCity";
+import { useRef } from "react";
 
 const defaultImage =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAADUCAMAAACs0e/bAAAAM1BMVEXK0eL" +
@@ -94,6 +95,8 @@ const IconsObject = {
   LoginIcon: <LoginIcon className="icon" />,
 };
 const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
+  const sidebarRef = useRef(null);
+  const { isLoading, data } = Digit.Hooks.useAccessControl();
   const { t } = useTranslation();
   const history = useHistory();
   const location = useLocation();
@@ -118,7 +121,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   const handleOnCancel = () => {
     setShowDialog(false);
   };
-
+  // Digit.Hooks.useClickOutside(node, open ? onClose : null, open);
   if (islinkDataLoading || !isFetched) {
     return <Loader />;
   }
@@ -222,6 +225,43 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
       }
     });
 
+  //   useEffect(() => {
+  //   if (isLoading) {
+  //     return <Loader />;
+  //   }
+  //   console.log("sidebarRef===",sidebarRef)
+  //   if(sidebarRef && sidebarRef.current) {
+  //     sidebarRef?.current?.style.cursor = "pointer";
+  //     collapseNav();
+  //   }
+  // }, [isLoading]);
+
+   const expandNav = () => {
+    sidebarRef.current.style.width = "220px";
+    sidebarRef.current.style.overflowY = "scroll";
+
+    sidebarRef.current.querySelectorAll(".dropdown-link").forEach((element) => {
+      element.style.display = "flex";
+    });
+    sidebarRef.current.querySelectorAll(".label-text").forEach((element) => {
+      element.style.display = "flex";
+    });
+   };
+   const collapseNav = () => {
+    sidebarRef.current.style.width = "55px";
+    sidebarRef.current.style.overflowY = "hidden";
+
+    sidebarRef.current.querySelectorAll(".dropdown-link").forEach((element) => {
+      element.style.display = "none";
+    });
+    sidebarRef.current.querySelectorAll(".label-text").forEach((element) => {
+      element.style.display = "none";
+    });
+    sidebarRef.current.querySelectorAll(".actions").forEach((element) => {
+      element.style.padding = "0";
+    });
+  };
+  console.log("menuItems222222==",menuItems)
   return (
     <React.Fragment>
       <div>
@@ -234,16 +274,12 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
             pointerzevents: "auto",
           }}
         ></div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            height: isMobile ? "calc(100vh - 56px)" : "auto",
-            zIndex: "99",
-          }}
+        <div className="SideBarStatic" onMouseOver={expandNav} onMouseLeave={collapseNav}
+          ref={sidebarRef}
+          
         >
           {profileItem}
-          <div className="drawer-desktop" style={{"backgroundColor":"white"}}>
+          <div className="drawer-desktop">
             {menuItems?.map((item, index) => (
               <div className={`sidebar-list ${pathname === item?.link || pathname === item?.sidebarURL ? "active" : ""}`} key={index}>
                 <MenuItem item={item} />

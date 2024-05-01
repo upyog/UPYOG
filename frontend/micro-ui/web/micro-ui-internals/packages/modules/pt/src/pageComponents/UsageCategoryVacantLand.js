@@ -16,7 +16,7 @@ const UsageCategoryVacantLand = ({ t, config, onSelect, userType, formData }) =>
   const isUpdateProperty = formData?.isUpdateProperty || false;
   const isEditProperty = formData?.isEditProperty || false;
   const [UsageCategory, setUsageCategory] = useState(
-    formData?.usageCategory ? {i18nKey: `PROPERTYTAX_${formData.usageCategory}`,code: formData.usageCategory,} : ''
+    formData?.usageCategory ? {i18nKey: `PROPERTYTAX_${formData.usageCategory?.code}`,code: formData.usageCategory.code} : ''
   );
 
   const { data: mdmsData, isLoading } = Digit.Hooks.useCommonMDMS(

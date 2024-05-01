@@ -105,6 +105,7 @@ import useMyPropertyPayments from "./pt/useMyPropertyPayments";
 import useGenericViewProperty from "./pt/useGenericViewProperty";
 import useRatingAndFeedbackMDMS from "./pt/useRatingAndFeedbackMDMS";
 import useServiceSearchCF from "./pt/useServiceSearchCF";
+import usePropertyAssessmentSearch from "./pt/usePropertyAssessmentSearch";
 
 import useDssMdms from "./dss/useMDMS";
 import useDashboardConfig from "./dss/useDashboardConfig";
@@ -316,6 +317,7 @@ const pt = {
   usePropertySearchWithDue,
   usePropertyAPI,
   usePropertyCreateNUpdateAPI,
+  usePropertyAssessmentSearch,
   usePropertyDocumentSearch,
   useTenants: useTenantsPT,
   useApplicationDetail: usePtApplicationDetail,

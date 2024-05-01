@@ -26,8 +26,8 @@ const Home = () => {
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
   const { data: { stateInfo, uiHomePage } = {}, isLoading } = Digit.Hooks.useStore.getInitData();
   let isMobile = window.Digit.Utils.browser.isMobile();
-  if(window.Digit.SessionStorage.get("TL_CREATE_TRADE")) window.Digit.SessionStorage.set("TL_CREATE_TRADE",{})
-   
+  if (window.Digit.SessionStorage.get("TL_CREATE_TRADE")) window.Digit.SessionStorage.set("TL_CREATE_TRADE", {})
+
   const conditionsToDisableNotificationCountTrigger = () => {
     if (Digit.UserService?.getUser()?.info?.type === "EMPLOYEE") return false;
     if (!Digit.UserService?.getUser()?.access_token) return false;
@@ -133,20 +133,31 @@ const Home = () => {
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="HomePageContainer" style={{width:"100%"}}>
+    <div className="HomePageContainer" style={{ width: "100%" }}>
       {/* <div className="SideBarStatic">
         <StaticCitizenSideBar />
       </div> */}
       <div className="HomePageWrapper">
         {<div className="BannerWithSearch">
-          {isMobile ? <img src={"http://216.48.176.229/static/2.png"} /> : <img src={"http://216.48.176.229/static/2.png"} />}
+          <div class="container">
+          </div>
+          {/* {isMobile ? <img src={"https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Kangla-Sha.png"} /> : <img src={"https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Kangla-Sha.png"} />} */}
           {/* <div className="Search">
             <StandaloneSearchBar placeholder={t("CS_COMMON_SEARCH_PLACEHOLDER")} />
           </div> */}
           <div className="ServicesSection">
-          <CardBasedOptions style={{marginTop:"-30px"}} {...allCitizenServicesProps} />
-          <CardBasedOptions style={isMobile ? {marginTop:"-30px"} : {marginTop:"-30px"}} {...allInfoAndUpdatesProps} />
-        </div>
+            <div role="button" tabindex="0" class="pt-card-main" onClick={()=> history.push(citizenServicesObj?.props?.[1]?.navigationUrl)}>
+              <img src="https://cdn.ksmart.lsgkerala.gov.in/common/webpage/services/property_tax.webp" loading="lazy" alt="img" class="pt-card-img1" />
+              <div class="pt-card-mn2">
+                <div class="">
+                  <img src="https://cdn.ksmart.lsgkerala.gov.in/ui/web-portal/assets/propertyTax-407e902e.svg" alt="https://cdn.ksmart.lsgkerala.gov.in/ui/web-portal/assets/propertyTax-407e902e.svg" class="pt-img2" />
+                </div>
+                </div>
+                  <p style={{fontSize: "16px", fontWeight: "600", textAlign: "center"}}>Property Tax</p>
+                </div>
+            {/* <CardBasedOptions style={{marginTop:"-30px"}} {...allCitizenServicesProps} /> */}
+            {/* <CardBasedOptions style={isMobile ? {marginTop:"-30px"} : {marginTop:"-30px"}} {...allInfoAndUpdatesProps} /> */}
+          </div>
         </div>}
 
 
@@ -160,7 +171,7 @@ const Home = () => {
           </div>
         )} */}
 
-        {conditionsToDisableNotificationCountTrigger() ? (
+        {/* {conditionsToDisableNotificationCountTrigger() ? (
           EventsDataLoading ? (
             <Loader />
           ) : (
@@ -172,7 +183,7 @@ const Home = () => {
               <WhatsNewCard {...EventsData?.[0]} />
             </div>
           )
-        ) : null}
+        ) : null} */}
       </div>
     </div>
   );

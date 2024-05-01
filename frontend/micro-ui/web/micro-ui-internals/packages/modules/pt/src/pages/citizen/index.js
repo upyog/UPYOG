@@ -32,6 +32,11 @@ const App = () => {
   const PropertyInformation = Digit?.ComponentRegistryService?.getComponent("PropertyInformation");
   const PropertyOwnerHistory = Digit?.ComponentRegistryService?.getComponent("PropertyOwnerHistory");
   const AssessmentDetails = Digit?.ComponentRegistryService?.getComponent("PTAssessmentDetails");
+  const SearchAssessmentComponent = Digit?.ComponentRegistryService?.getComponent("PTSearchAssessmentComponent");
+  const SearchAssessmentResultsComponent = Digit?.ComponentRegistryService?.getComponent("PTSearchAssessmentResultsComponent");
+
+
+
   console.log("AmalgamateProperty==",AmalgamateProperty)
   return (
     <span className={"pt-citizen"}>
@@ -48,6 +53,8 @@ const App = () => {
           <PrivateRoute path={`${path}/property/my-payments`} component={PTMyPayments}></PrivateRoute>
           <PrivateRoute path={`${path}/property/property-mutation`} component={MutateProperty}></PrivateRoute>
           <PrivateRoute path={`${path}/property/property-amalgamation/search-property`} component={AmalgamationCitizen}></PrivateRoute>
+          <Route path={`${path}/property/property-assessment/search-assessment`} component={SearchAssessmentComponent} />
+          <Route path={`${path}/property/property-assessment/search-assessment-results`} component={SearchAssessmentResultsComponent} />
 
           <PrivateRoute path={`${path}/property/properties/:propertyIds`} component={PropertyInformation}></PrivateRoute>
           {/* <PrivateRoute path={`${path}/property/transfer-ownership`} component={MutateProperty}></PrivateRoute> */}

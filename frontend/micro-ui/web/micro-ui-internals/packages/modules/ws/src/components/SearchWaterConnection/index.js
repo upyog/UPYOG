@@ -199,7 +199,7 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
 
   return (
     <>
-      <Header styles={{ fontSize: "32px" }}>
+      <Header styles={{ fontSize: "24px" }}>
         {businessService === "WS" ? t("WS_WATER_SEARCH_CONNECTION_SUB_HEADER") : t("WS_SEWERAGE_SEARCH_CONNECTION_SUB_HEADER")}
       </Header>
       <SearchForm className="ws-custom-wrapper" onSubmit={onSubmit} handleSubmit={handleSubmit}>

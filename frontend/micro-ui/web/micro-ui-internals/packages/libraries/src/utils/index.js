@@ -204,7 +204,7 @@ const BPAAccess = () => {
 const ptAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
-  const ptRoles = ["PT_APPROVER", "PT_CEMP", "PT_DOC_VERIFIER", "PT_FIELD_INSPECTOR"];
+  const ptRoles = ["PT_APPROVER", "PT_CEMP", "PT_DOC_VERIFIER", "PT_FIELD_INSPECTOR", "ASSIGNING_OFFICER"];
 
   const PT_ACCESS = userRoles?.filter((role) => ptRoles?.includes(role));
 

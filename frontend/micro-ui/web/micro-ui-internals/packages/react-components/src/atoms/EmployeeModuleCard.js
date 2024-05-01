@@ -50,6 +50,7 @@ import { Link } from "react-router-dom";
 //   );
 // };
 const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen = false, className, styles, FsmHideCount }) => {
+  console.log("EmployeeModuleCard==",kpis,moduleName)
   return (
     <div className={className ? "employeeCard card-home customEmployeeCard" : "employeeCard card-home customEmployeeCard"} style={className ? {} : styles}>
       <div className="employeeCustomCard" style={{ width: "100%", height: "85%", position: "relative" }}>

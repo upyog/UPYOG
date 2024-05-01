@@ -150,7 +150,7 @@ module.exports = function (app) {
   ["/inbox/v1/_search"].forEach((location)=> app.use(location, assetseInboxSearch));
   ["/egov-hrms"].forEach((location)=> app.use(location, assetseHRMS));
   ["/collection-services"].forEach((location)=> app.use(location, collectionService));
-  ["/pg-services"].forEach((location)=> app.use(location, pgService));
+  ["/pg-service"].forEach((location)=> app.use(location, pgService));
   
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

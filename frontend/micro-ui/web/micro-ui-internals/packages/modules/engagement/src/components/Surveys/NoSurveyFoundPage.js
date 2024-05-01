@@ -52,7 +52,7 @@ const NoSurveyFoundPage = ({t}) => {
             <defs>
             </defs>
         </svg>
-        <h style={{color:"#505A5F", fontWeight:"400", fontFamily:"Roboto", marginLeft:"10%", lineHeight:"3"}}>{t("SURVEY_ENDED_MESSAGE")}</h>
+        <h style={{color:"#505A5F", fontWeight:"400", fontFamily:"Open Sans", marginLeft:"10%", lineHeight:"3"}}>{t("SURVEY_ENDED_MESSAGE")}</h>
         </div>
         <ActionBar>
         <Link to={"/digit-ui/citizen"}>

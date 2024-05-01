@@ -30,6 +30,9 @@ const PTApplicationDetails = () => {
   const [billAmount, setBillAmount] = useState(null);
   const [billStatus, setBillStatus] = useState(null);
 
+  const assessmentData = Digit.PTService.assessmentSearch({ tenantId, filters: { assessmentNumbers:'MN-AS-2024-04-14-000289' } });
+  console.log("assessmentData===",assessmentData)
+
   let serviceSearchArgs = {
     tenantId : tenantId,
     code: [`PT_${data?.Properties?.[0]?.creationReason}`], 
@@ -245,7 +248,7 @@ const PTApplicationDetails = () => {
     <React.Fragment>
       <div>
         <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
-          <Header styles={{ fontSize: "32px" }}>{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
+          <Header styles={{ fontSize: "24px" }}>{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper"

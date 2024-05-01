@@ -102,59 +102,75 @@ const TopBar = ({
   const loggedin = userDetails?.access_token ? true : false;
   console.log("profilePic==",profilePic)
   return (
-    <div className="topbar">
-      {mobileView ? <Hamburger handleClick={toggleSidebar} color="#9E9E9E" /> : null}
-      <img className="city" src="http://216.48.176.229/static/8.png" />
-      <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-        {loggedin &&
-          (cityDetails?.city?.ulbGrade ? (
-            <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block" } : {}}>
-              {t(cityDetails?.i18nKey).toUpperCase()}{" "}
-              {t(`ULBGRADE_${cityDetails?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`).toUpperCase()}
-            </p>
-          ) : (
-            <img className="state" src={logoUrl} />
-          ))}
-        {!loggedin && (
-          <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block" } : {}}>
-            {t(`MYCITY_${stateInfo?.code?.toUpperCase()}_LABEL`)} {t(`MYCITY_STATECODE_LABEL`)}
-          </p>
-        )}
-        {!mobileView && (
-          <div className={mobileView ? "right" : "flex-right right w-80 column-gap-15"} style={!loggedin ? { width: "80%" } : {}}>
-            <div className="left">
-              {!window.location.href.includes("employee/user/login") && !window.location.href.includes("employee/user/language-selection") && (
-                <ChangeCity dropdown={true} t={t} />
-              )}
-            </div>
-            <div className="left">{showLanguageChange && <ChangeLanguage dropdown={true} />}</div>
-            {userDetails?.access_token && (
-              <div className="left">
-                <Dropdown
-                  option={userOptions}
-                  optionKey={"name"}
-                  select={handleUserDropdownSelection}
-                  showArrow={true}
-                  freeze={true}
-                  style={mobileView ? { right: 0 } : {}}
-                  optionCardStyles={{ overflow: "revert" }}
-                  customSelector={
+    <div>
+        <TopBarComponent
+          img={stateInfo?.logoUrlWhite}
+          isMobile={true}
+          toggleSidebar={updateSidebar}
+          logoUrl={stateInfo?.logoUrlWhite}
+          onLogout={handleLogout}
+          userDetails={userDetails}
+          notificationCount={unreadNotificationCount < 99 ? unreadNotificationCount : 99}
+          notificationCountLoaded={notificationCountLoaded}
+          cityOfCitizenShownBesideLogo={t(CitizenHomePageTenantId)}
+          onNotificationIconClick={onNotificationIconClick}
+          hideNotificationIconOnSomeUrlsWhenNotLoggedIn={urlsToDisableNotificationIcon(pathname)}
+          changeLanguage={!mobileView ? <ChangeLanguage dropdown={true} /> : null}
+        />
+      </div>
+    // <div className="topbar">
+    //   {mobileView ? <Hamburger handleClick={toggleSidebar} color="#9E9E9E" /> : null}
+    //   <img className="city" src="http://216.48.176.229/static/8.png" />
+    //   <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+    //     {loggedin &&
+    //       (cityDetails?.city?.ulbGrade ? (
+    //         <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block" } : {}}>
+    //           {t(cityDetails?.i18nKey).toUpperCase()}{" "}
+    //           {t(`ULBGRADE_${cityDetails?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`).toUpperCase()}
+    //         </p>
+    //       ) : (
+    //         <img className="state" src={logoUrl} />
+    //       ))}
+    //     {!loggedin && (
+    //       <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block" } : {}}>
+    //         {t(`MYCITY_${stateInfo?.code?.toUpperCase()}_LABEL`)} {t(`MYCITY_STATECODE_LABEL`)}
+    //       </p>
+    //     )}
+    //     {!mobileView && (
+    //       <div className={mobileView ? "right" : "flex-right right w-80 column-gap-15"} style={!loggedin ? { width: "80%" } : {}}>
+    //         <div className="left">
+    //           {!window.location.href.includes("employee/user/login") && !window.location.href.includes("employee/user/login") && (
+    //             <ChangeCity dropdown={true} t={t} />
+    //           )}
+    //         </div>
+    //         <div className="left">{showLanguageChange && <ChangeLanguage dropdown={true} />}</div>
+    //         {userDetails?.access_token && (
+    //           <div className="left">
+    //             <Dropdown
+    //               option={userOptions}
+    //               optionKey={"name"}
+    //               select={handleUserDropdownSelection}
+    //               showArrow={true}
+    //               freeze={true}
+    //               style={mobileView ? { right: 0 } : {}}
+    //               optionCardStyles={{ overflow: "revert" }}
+    //               customSelector={
                     
-                    profilePic == null ? (
-                      <TextToImg name={userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"} />
-                    ) : (
-                      <div></div>
-                      // <img src="http://216.48.176.229/static/8.png" style={{ height: "48px", width: "48px", borderRadius: "50%" }} />
-                    )
-                  }
-                />
-              </div>
-            )}
-            <img className="state" src="http://216.48.176.229/static/8.png" />
-          </div>
-        )}
-      </span>
-    </div>
+    //                 (profilePic == null || profilePic == "") ? (
+    //                   <TextToImg name={userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"} />
+    //                 ) : (
+    //                   <div></div>
+    //                   // <img src="http://216.48.176.229/static/8.png" style={{ height: "48px", width: "48px", borderRadius: "50%" }} />
+    //                 )
+    //               }
+    //             />
+    //           </div>
+    //         )}
+    //         <img className="state" src="http://216.48.176.229/static/8.png" />
+    //       </div>
+    //     )}
+    //   </span>
+    // </div>
   );
 };
 

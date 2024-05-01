@@ -20,8 +20,8 @@ const CreateProperty = ({ parentRoute }) => {
   // if(location.state) {
   //   setAmalgamationState(location.state)
   // }
-  console.log("amalgamationState===",amalgamationState)
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PT_CREATE_PROPERTY", {});
+  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PT_CREATE_PROPERTY", {} );
+
   let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig");
   const goNext = (skipStep, index, isAddMultiple, key) => {
     let currentPath = pathname.split("/").pop(),
@@ -120,11 +120,19 @@ const CreateProperty = ({ parentRoute }) => {
       queryClient.invalidateQueries("PT_CREATE_PROPERTY");
     }
 
-  const createProperty = async () => {
+  const createProperty = async (key, data, skipStep, index, isAddMultiple = false) => {
+    setParams({ ...params, ...{ [key]: data } });
     history.push(`${match.path}/acknowledgement`);
   };
+  // if(amalgamationState && amalgamationState?.action=='Amalgamation') {
+  //   // handleSelect('amalgamationDetails', amalgamationState, undefined, undefined,false)
+  //   debugger
+  //   if(params && !params['amalgamationDetails'])
+  //   setParams({ ...params, ...{ ['amalgamationDetails']: { ...params['amalgamationDetails'], ...amalgamationState } } });
+  //   // setParams({ ...params, ...{ ['amalgamationDetails']: { ...params['amalgamationDetails'], amalgamationState }} });
+  // }
 
-  function handleSelect(key, data, skipStep, index, isAddMultiple = false) {    
+  function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
     if (key === "owners") {
       let owners = params.owners || [];
       owners[index] = data;
@@ -136,14 +144,8 @@ const CreateProperty = ({ parentRoute }) => {
 
       setParams({ ...params, units });
     } else {
-      setParams({ ...params, ...{ [key]: { ...params[key], ...data } } });
-      // console.log("params=========",params)
-      // if(amalgamationState && amalgamationState?.action=='Amalgamation') {
-      //   setParams({ ...params, ...{ ['amalgamationDetails']: 'kkk' } });
-      // }
-      
+      setParams({ ...params, ...{ [key]: { ...params[key], ...data } } });      
     }
-    console.log("------",skipStep, index, isAddMultiple, key)
     goNext(skipStep, index, isAddMultiple, key);
   }
 
@@ -161,24 +163,15 @@ const CreateProperty = ({ parentRoute }) => {
   // commonFields=newConfig;
   /* use newConfig instead of commonFields for local development in case needed */
   commonFields = newConfig;
-  console.log("commonFields11==",commonFields)
   commonFields.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });
-  console.log("commonFields22==",commonFields)
   config.indexRoute = "info";
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("PTCheckPage");
   const PTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTAcknowledgement");
-  console.log("config==",config)
+
   return (
     <div>
-      {amalgamationState && 
-      <div>
-        <div>Amalgamated Properties:</div>
-        {amalgamationState?.propertyDetails && amalgamationState.propertyDetails.map((e)=>(
-          <div>Property Id: {e?.property_id}</div>
-        ))}  
-      </div>}
       <Switch>
       
       {config.map((routeObj, index) => {
@@ -187,8 +180,9 @@ const CreateProperty = ({ parentRoute }) => {
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
           <Route path={`${match.path}/${routeObj.route}`} key={index}>
-            <div>hiii</div>
-            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} />
+            { amalgamationState && <Component config={{ texts, inputs, key, amalgamationState }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} /> }
+            { !amalgamationState && <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} /> }
+
           </Route>
         );
       })}

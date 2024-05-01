@@ -68,6 +68,8 @@ const AmalgamationCitizen = (props) => {
         .join(", "),
       total_due: payment[property?.propertyId]?.total_due || 0,
       bil_due__date: payment[property?.propertyId]?.bil_due__date || t("N/A"),
+      total_due: payment[property?.propertyId]?.total_due || 0,
+      tenantId: property?.tenantId,
     };
   });
   console.log("searchResults==",searchResults)
@@ -85,7 +87,7 @@ const AmalgamationCitizen = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
   };
   const Close = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red">
       <path d="M0 0h24v24H0V0z" fill="none" />
       <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
     </svg>
@@ -143,10 +145,10 @@ const AmalgamationCitizen = (props) => {
   
   return (
     <React.Fragment>
-      <div style={{marginTop: '16px', marginBottom: '16px',backgroundColor: 'white', padding: '20px', maxWidth: '960px'}}>
-        <span>Properties for Amalgamtion</span>
-        <span style={{float: 'right'}}><button onClick={(e)=>onShowModal(true)}>Add Property</button></span>
-        <div>
+      <div style={{marginTop: '16px', marginBottom: '16px',backgroundColor: '#ffffff9e', padding: '20px', maxWidth: '960px', borderRadius: "6px"}}>
+        <span style={{fontSize: '20px', fontWeight: 'bold'}}>Properties for Amalgamtion</span>
+        <span style={{float: 'right'}}><button style={{textDecoration: 'underline', color: "#208f74", fontStyle: 'italic'}} onClick={(e)=>onShowModal(true)}>Add Property</button></span>
+        <div style={{marginTop: '20px'}}>
           {propertyDetails && propertyDetails.length>0 && 
               propertyDetails.map((result, i)=>
                 (
@@ -177,9 +179,9 @@ const AmalgamationCitizen = (props) => {
                 </Card>
               ))}
               <div style={{height: '30px', marginTop: '20px'}}>
-                <button style={{float: 'right'}} className="selector-button-primary" type="submit" form="modal-action" onClick={(e)=>onAmalgamate()}>
+                {propertyDetails && propertyDetails.length>0 && (<button style={{float: 'right'}} className="selector-button-primary" type="submit" form="modal-action" onClick={(e)=>onAmalgamate()}>
                   <h2 style={{width: '100%'}}>Amalgamate</h2>
-                </button>
+                </button>)}
               </div>
         </div>
         
@@ -191,8 +193,9 @@ const AmalgamationCitizen = (props) => {
           actionSaveOnSubmit={() => {}}
           formId="modal-action"
           isDisabled={false}
+          popupStyles={{width: "50%"}}
         >
-          <div>
+          <div style={{padding: "0 20px"}}>
             {/* <div className="filter-label">{t("PT_SELECT_CITY")}</div>
             <Dropdown option={allCities} optionKey="i18nKey" value={city} select={setCity} t={t} /> */}
             <div>
@@ -204,7 +207,7 @@ const AmalgamationCitizen = (props) => {
               <div className="field">
                 <div className="field-container">
                   <div className="text-input text-input-width field">
-                    <input type="text" name="propertyIds" className="employee-card-input false focus-visible undefined" autoComplete="off" value={propertyId} onChange={(e) => {
+                    <input type="text" name="propertyIds" placeholder="Enter Property Id" className="employee-card-input false focus-visible undefined" autoComplete="off" value={propertyId} onChange={(e) => {
                         onSetPropertyId(e)
                       }}/>
                   </div>
