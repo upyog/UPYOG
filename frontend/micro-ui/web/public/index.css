@@ -2389,7 +2389,7 @@ img, video {
   --text-opacity:1;
   color: #0b0c0c;
   color: rgba(11, 12, 12, var(--text-opacity));
-  /* height: 3.5rem !important; */
+  height: 3.5rem !important;
   margin-bottom: 16px !important;
   line-height: 2rem !important; }
 
