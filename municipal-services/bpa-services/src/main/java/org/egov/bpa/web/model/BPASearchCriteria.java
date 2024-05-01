@@ -72,6 +72,9 @@ public class BPASearchCriteria {
     @JsonProperty("locality")
     private String locality;
     
+    @JsonProperty("name")
+    private String name;
+    
     @JsonProperty("applicationType")
     private String applicationType;
     
