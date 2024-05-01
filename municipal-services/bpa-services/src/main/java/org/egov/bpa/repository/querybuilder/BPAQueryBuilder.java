@@ -91,8 +91,8 @@ public class BPAQueryBuilder {
         	else
         	{
         		addClauseIfRequired(preparedStmtList, builder);
-                builder.append(" bpa.applicationNo LIKE '%").append(applicationNo).append("%')");
-                preparedStmtList.add(criteria.getTenantId());        		
+                builder.append(" bpa.applicationNo LIKE ?");
+                preparedStmtList.add('%' + applicationNo + '%');
         	}
         }
 
