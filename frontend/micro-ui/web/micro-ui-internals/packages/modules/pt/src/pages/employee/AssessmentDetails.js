@@ -637,11 +637,11 @@ const Penality_menu=[
     </Modal>}
       {!queryClient.getQueryData(["PT_ASSESSMENT", propertyId, location?.state?.Assessment?.financialYear]) ? (
         <ActionBar>
-          <SubmitBar label={t("PT_ASSESS_PROPERTY_BUTTON")} onSubmit={handleAssessment} />
+          <SubmitBar style={{float: "right"}} label={t("PT_ASSESS_PROPERTY_BUTTON")} onSubmit={handleAssessment} />
         </ActionBar>
       ) : (
         <ActionBar>
-          <SubmitBar disabled={paymentDetails?.data?.Bill?.[0]?.totalAmount > 0 ? false : true} label={t("PT_PROCEED_PAYMENT")} onSubmit={proceeedToPay} />
+          <SubmitBar style={{float: "right"}} disabled={paymentDetails?.data?.Bill?.[0]?.totalAmount > 0 ? false : true} label={t("PT_PROCEED_PAYMENT")} onSubmit={proceeedToPay} />
         </ActionBar>
       )}
     </div>
