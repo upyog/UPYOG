@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const CitizenHomeCard = ({ header, links = [], state, Icon, Info, isInfo = false, styles }) => {
   console.log("links==",links)
   return (
-    <div className="CitizenHomeCard" style={styles ? styles : {}}>
+    <div className="citizen-homecard-cls" style={styles ? styles : {}}>
       <div className="header">
         <h2>{header}</h2>
         <Icon />
@@ -17,9 +17,13 @@ const CitizenHomeCard = ({ header, links = [], state, Icon, Info, isInfo = false
               e?.parentModule?.toUpperCase() == "DEATH" ||
               e?.parentModule?.toUpperCase() == "FIRENOC") ?
               <a href={e.link}>{e.i18nKey}</a> :
-              <Link key={i} to={{ pathname: e.link, state: e.state }}>
-                {e.i18nKey}
-              </Link>
+              <div>
+                {(e.cardIcon && <img src={e.cardIcon} className="citizen-card-img" />)}
+                <Link key={i} to={{ pathname: e.link, state: e.state }} className="citizen-card-txt">
+                  {e.i18nKey}
+                </Link>
+              </div>
+              
             }
           </div>
         ))}

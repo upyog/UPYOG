@@ -141,7 +141,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   return isLoading || isStoreLoading ? (
     <Loader />
   ) : (
-    <Background>
+    <Background backgroundClass={'loginBackgroundCls'}>
       <div className="employeeBackbuttonAlign">
         <BackButton variant="white" style={{ borderBottom: "none" }} />
       </div>
@@ -158,8 +158,10 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
         onSecondayActionClick={onForgotPassword}
         heading={propsConfig.texts.header}
         headingStyle={{ textAlign: "center" }}
+        headingLogo={'true'}
         cardStyle={{ margin: "auto", minWidth: "408px" }}
         className="loginFormStyleEmployee"
+        formStyle={{position: "absolute",right: "0", top: "40px"}}
         buttonStyle={{ maxWidth: "100%", width: "100%" ,backgroundColor:"#5a1166"}}
       >
         {/* <Header /> */}

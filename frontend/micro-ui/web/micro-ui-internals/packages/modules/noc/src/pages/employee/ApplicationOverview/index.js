@@ -214,7 +214,7 @@ const ApplicationOverview = () => {
   return (
     <div className={"employee-main-application-details"}>
       <div>
-        <Header styles={{fontSize: "32px"}}>{t("NOC_APP_OVER_VIEW_HEADER")}</Header>
+        <Header styles={{fontSize: "24px"}}>{t("NOC_APP_OVER_VIEW_HEADER")}</Header>
       </div>
       <ApplicationDetailsTemplate
         applicationDetails={appDetails}

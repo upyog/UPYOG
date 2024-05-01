@@ -178,7 +178,7 @@ const SelectPaymentType = (props) => {
             onSelect={setPaymentType}
             options={[optionFirst, optionSecound]}
             optionsKey="name"
-            inputStyle={{ marginTop: "11px" }}
+            // inputStyle={{ marginTop: "px" }}
             innerStyles={{ display: "flex" }}
           />
           <div style={{ position: "relative" }}>
@@ -211,7 +211,7 @@ const SelectPaymentType = (props) => {
               label={checkLabels()}
               value={isCheckBox}
               checked={isCheckBox}
-              style={{ marginTop: "5px", marginLeft: "55px" }}
+              style={{ marginTop: "-5px", marginLeft: "40px" }}
               styles={{marginBottom: "30px"}}
               onChange={setTermsAndPolicyDetails}
             />

@@ -84,7 +84,7 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSReSubmitDiscon
 
   return(
     <React.Fragment>
-    <Header styles={{fontSize:"32px"}}>{t("WS_COMMON_SUMMARY")}</Header>
+    <Header styles={{fontSize:"24px"}}>{t("WS_COMMON_SUMMARY")}</Header>
     <DisconnectTimeline currentStep={3} />
   
     <Card style={{paddingRight:"16px"}}>

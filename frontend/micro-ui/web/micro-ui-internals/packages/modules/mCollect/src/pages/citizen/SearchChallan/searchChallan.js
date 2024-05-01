@@ -86,7 +86,7 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
         heading={propsConfig.texts.header}
         text={propsConfig.texts.text}
         cardStyle={{ margin: "auto" }}
-        headingStyle={{ fontSize: "32px", marginBottom: "16px" }}
+        headingStyle={{ fontSize: "24px", marginBottom: "16px" }}
       > */}
       <FormStep
         config={propsConfig}
@@ -94,7 +94,7 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
         heading={propsConfig.texts.header}
         text={propsConfig.texts.text}
         cardStyle={{ margin: "auto",maxWidth:"960px" }}
-        headingStyle={{ fontSize: "32px", marginBottom: "16px" }}
+        headingStyle={{ fontSize: "24px", marginBottom: "16px" }}
         onSelect={onChallanSearch}
         componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
         isDisabled={!Servicecateogry || !city.code}

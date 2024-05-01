@@ -49,6 +49,9 @@ import { MyProperties } from "./pages/citizen/MyProperties";
 import PTApplicationDetails from "./pages/citizen/PTApplicationDetails";
 import SearchPropertyComponent from "./pages/citizen/SearchProperty";
 import SearchResultsComponent from "./pages/citizen/SearchResults";
+import SearchAssessmentComponent from "./pages/citizen/SearchAssessment";
+import SearchAssessmentResultsComponent from "./pages/citizen/SearchAssessmentResult";
+
 import EditProperty from "./pages/citizen/EditProperty";
 import MutateProperty from "./pages/citizen/Mutate";
 import AmalgamateProperty from "./pages/citizen/Amalgamate";
@@ -168,6 +171,10 @@ const componentsToRegister = {
   PTApplicationDetails: PTApplicationDetails,
   PTSearchPropertyComponent: SearchPropertyComponent,
   PTSearchResultsComponent: SearchResultsComponent,
+
+  PTSearchAssessmentComponent: SearchAssessmentComponent,
+  PTSearchAssessmentResultsComponent: SearchAssessmentResultsComponent,
+
   PTEditProperty: EditProperty,
   PTMutateProperty: MutateProperty,
   PTAmalgamateProperty: AmalgamateProperty,

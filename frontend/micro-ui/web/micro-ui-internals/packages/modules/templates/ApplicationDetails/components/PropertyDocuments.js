@@ -39,7 +39,7 @@ function PropertyDocuments({ documents, svgStyles = {}, isSendBackFlow=false }) 
 
   const checkLocation = window.location.href.includes("employee/tl") || window.location.href.includes("/obps") || window.location.href.includes("employee/ws");
   const isStakeholderApplication = window.location.href.includes("stakeholder");
-
+console.log("documents==",documents)
   return (
     <div style={{ marginTop: "19px" }}>
       {!isStakeholderApplication && documents?.map((document, index) => (
@@ -47,13 +47,13 @@ function PropertyDocuments({ documents, svgStyles = {}, isSendBackFlow=false }) 
           {document?.title ? <CardSubHeader style={checkLocation ? { marginTop: "32px", marginBottom: "18px", color: "#0B0C0C, 100%", fontSize: "24px", lineHeight: "30px" } : { marginTop: "32px", marginBottom: "8px", color: "#505A5F", fontSize: "24px" }}>{t(document?.title)}</CardSubHeader>: null}
           <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start" }}>
             {document?.values && document?.values.length>0 ? document?.values?.map((value, index) => (
-              <a target="_" href={pdfFiles[value.fileStoreId]?.split(",")[0]} style={{ minWidth: "80px", marginRight: "10px", maxWidth: "100px", height: "auto" }} key={index}>
+              ( value.fileStoreId ? (<a target="_" href={pdfFiles[value.fileStoreId]?.split(",")[0]} style={{ minWidth: "80px", marginRight: "10px", maxWidth: "100px", height: "auto" }} key={index}>
                 <div style={{ display: "flex", justifyContent: "center" }}>
                   <PDFSvg />
                 </div>
                 <p style={checkLocation ? { marginTop: "8px", fontWeight: "bold", fontSize: "16px", lineHeight: "19px", color: "#505A5F", textAlign: "center" } : { marginTop: "8px", fontWeight: "bold" }}>{t(value?.title)}</p>
                {isSendBackFlow? value?.documentType?.includes("NOC")?<p style={{textAlign:"center"}}>{t(value?.documentType.split(".")[1])}</p> :<p style={{textAlign:"center"}}>{t(value?.documentType)}</p>:""}
-              </a>
+              </a>) : null )
             )):!(window.location.href.includes("citizen"))&& <div><p>{t("BPA_NO_DOCUMENTS_UPLOADED_LABEL")}</p></div>}
           </div>
         </React.Fragment>

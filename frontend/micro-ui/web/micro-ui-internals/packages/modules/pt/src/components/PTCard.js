@@ -4,13 +4,38 @@ import { useTranslation } from "react-i18next";
 import { EmployeeModuleCard, PropertyHouse } from "@egovernments/digit-ui-react-components";
 
 const PTCard = () => {
+  console.log("PTCard")
   const { t } = useTranslation();
+  const parseValue = (value) => {
+    try {
+      return JSON.parse(value)
+    } catch (e) {
+      return value
+    }
+  }
+  const getFromStorage = (key) => {
+    const value = window.localStorage.getItem(key);
+    return value && value !== "undefined" ? parseValue(value) : null;
+  }
+  const employeeToken = getFromStorage("Employee.token")
+  const employeeInfo = getFromStorage("Employee.user-info")
+  const getUserDetails = (access_token, info) => ({ token: access_token, access_token, info })
+
+  const userDetails = getUserDetails(employeeToken, employeeInfo)
+  
+  console.log("userDetailsPTCard===",userDetails)
+  let userRole='';
+  if(userDetails && userDetails.info && userDetails.info?.roles) {
+    userDetails.info.roles.map((role)=>{
+      if(role?.code == "ASSIGNING_OFFICER") userRole = role.code;
+    })
+  }
 
   const [total, setTotal] = useState("-");
   const { data, isLoading, isFetching, isSuccess } = Digit.Hooks.useNewInboxGeneral({
     tenantId: Digit.ULBService.getCurrentTenantId(),
     ModuleCode: "PT",
-    filters: { limit: 10, offset: 0, services: ["PT.CREATE", "PT.MUTATION", "PT.UPDATE"] },
+    filters: { limit: 10, offset: 0, services: userRole && userRole=='ASSIGNING_OFFICER' ? ["ASMT"] : ["PT.CREATE", "PT.MUTATION", "PT.UPDATE"]},
     config: {
       select: (data) => {
         return {totalCount:data?.totalCount,nearingSlaCount:data?.nearingSlaCount} || "-";
@@ -56,16 +81,22 @@ const PTCard = () => {
         label: t("ES_TITLE_INBOX"),
         link: `/digit-ui/employee/pt/inbox`,
       },
+      // {
+        
+      //   count: total?.nearingSlaCount,
+      //   label: t("TOTAL_NEARING_SLA"),
+      //   link: `/digit-ui/employee/pt/inbox`,
+      // },
       {
         
-        count: total?.nearingSlaCount,
-        label: t("TOTAL_NEARING_SLA"),
-        link: `/digit-ui/employee/pt/inbox`,
+        count: 7,
+        label: t("Notices"),
+        link: `/digit-ui/employee/pt/notices`,
       }
     ],
     links:links.filter(link=>!link?.role||PT_CEMP),
   };
-
+  console.log("propsForModuleCard--",propsForModuleCard)
   return <EmployeeModuleCard {...propsForModuleCard} />;
 };
 

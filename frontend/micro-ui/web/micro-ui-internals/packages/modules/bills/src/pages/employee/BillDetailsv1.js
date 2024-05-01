@@ -74,7 +74,7 @@ const BillDetailsv1 = (props) => {
     return (
         <>
             <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-                <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("ABG_BILL_DETAILS_HEADER")}</Header>
+                <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "24px" }}>{t("ABG_BILL_DETAILS_HEADER")}</Header>
             </div>
             {fetchedBill && !isLoading ?<Card style={{ position: "relative" }} className={"employeeCard-override"}>
                 <>
