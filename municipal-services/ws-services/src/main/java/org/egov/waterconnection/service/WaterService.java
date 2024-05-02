@@ -11,8 +11,11 @@ import org.egov.waterconnection.web.models.WaterConnectionResponse;
 public interface WaterService {
 
 	List<WaterConnection> createWaterConnection(WaterConnectionRequest waterConnectionRequest);
+	
+		List<WaterConnection> createWaterConnection(WaterConnectionRequest waterConnectionRequest, Boolean isMigration);
 
 	List<WaterConnection> search(SearchCriteria criteria, RequestInfo requestInfo);
+    void disConnectWaterConnection(String connectionNo,RequestInfo requestInfo,String tenantId);
 
 	Integer countAllWaterApplications(SearchCriteria criteria, RequestInfo requestInfo);
 

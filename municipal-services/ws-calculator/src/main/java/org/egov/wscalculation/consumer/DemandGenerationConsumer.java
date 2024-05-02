@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.validator.WSCalculationWorkflowValidator;
 import org.egov.wscalculation.web.models.*;
 import org.egov.wscalculation.web.models.CalculationReq;
@@ -43,7 +44,8 @@ public class DemandGenerationConsumer {
 	@Value("${kafka.topics.bulk.bill.generation.audit}")
 	private String bulkBillGenAuditTopic;
 
-	
+	@Autowired
+	private WSCalculationWorkflowValidator wsCalulationWorkflowValidator;
 	/**
 	 * Listen the topic for processing the batch records.
 	 * 
@@ -63,7 +65,50 @@ public class DemandGenerationConsumer {
 		}
 	}
 
+	/**
+	 * Listens on the dead letter topic of the bulk request and processes every
+	 * record individually and pushes failed records on error topic
+	 * 
+	 * @param records
+	 *            failed batch processing
+	 */
+	@KafkaListener(topics = {
+			"${persister.demand.based.dead.letter.topic.batch}" }, containerFactory = "kafkaListenerContainerFactory")
+	public void listenDeadLetterTopic(final List<Message<?>> records) {
+		CalculationReq calculationReq = mapper.convertValue(records.get(0).getPayload(), CalculationReq.class);
+		Map<String, Object> masterMap = mDataService.loadMasterData(calculationReq.getRequestInfo(),
+				calculationReq.getCalculationCriteria().get(0).getTenantId());
+		records.forEach(record -> {
+			try {
+				log.info("Consuming record on dead letter topic : " + mapper.writeValueAsString(record));
+				CalculationReq calcReq = mapper.convertValue(record.getPayload(), CalculationReq.class);
 
+				calcReq.getCalculationCriteria().forEach(calcCriteria -> {
+					CalculationReq request = CalculationReq.builder().calculationCriteria(Arrays.asList(calcCriteria))
+							.requestInfo(calculationReq.getRequestInfo()).isconnectionCalculation(true)
+							.taxPeriodFrom(calcCriteria.getFrom()).taxPeriodTo(calcCriteria.getTo()).build();
+					try {
+						log.info("Generating Demand for Criteria : " + mapper.writeValueAsString(calcCriteria));
+						// processing single
+						generateDemandInBatch(request, masterMap, config.getDeadLetterTopicSingle());
+					} catch (final Exception e) {
+						StringBuilder builder = new StringBuilder();
+						try {
+							builder.append("Error while generating Demand for Criteria: ")
+									.append(mapper.writeValueAsString(calcCriteria));
+						} catch (JsonProcessingException e1) {
+							e1.printStackTrace();
+						}
+						log.error(builder.toString(), e);
+					}
+				});
+			} catch (final Exception e) {
+				StringBuilder builder = new StringBuilder();
+				builder.append("Error while listening to value: ").append(record).append(" on dead letter topic.");
+				log.error(builder.toString(), e);
+			}
+		});
+	}
 
 	/**
 	 * Generate demand in bulk on given criteria

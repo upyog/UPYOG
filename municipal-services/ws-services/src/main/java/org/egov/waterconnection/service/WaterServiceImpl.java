@@ -288,6 +288,36 @@ public class WaterServiceImpl implements WaterService {
 		criteria.setIsCountCall(Boolean.TRUE);
 		return getWaterConnectionsCount(criteria, requestInfo);
 	}
+	
+		@Override
+	public List<WaterConnection> searchWaterConnectionPlainSearch(SearchCriteria criteria, RequestInfo requestInfo) {
+		List<WaterConnection> waterConnectionList = getWaterConnectionPlainSearch(criteria, requestInfo);
+		return waterConnectionList;
+	}
+	
+	List<WaterConnection> getWaterConnectionPlainSearch(SearchCriteria criteria, RequestInfo requestInfo) {
+		
+		if(criteria.getLimit()==null) {
+			criteria.setLimit(config.getDefaultLimit());
+		}
+		else if (criteria.getLimit() != null && criteria.getLimit() > config.getMaxLimit()) {
+			criteria.setLimit(config.getMaxLimit());				
+		}
+		
+		if(criteria.getOffset()==null)
+			criteria.setOffset(config.getDefaultOffset());
+		
+		List<String> ids = waterDao.fetchWaterConnectionIds(criteria);
+        if (ids.isEmpty())
+            return Collections.emptyList();
+        
+        SearchCriteria newCriteria = new SearchCriteria();
+		newCriteria.setIds(new HashSet<>(ids));
+        
+        List<WaterConnection> waterConnectionList = waterDao.getPlainWaterConnectionSearch(newCriteria);
+        return waterConnectionList;
+	}
+	
 
 	/**
 	 *
@@ -589,6 +619,8 @@ public class WaterServiceImpl implements WaterService {
 
 		// setting oldApplication Flag
 		markOldApplication(waterConnectionRequest);
+		// check for edit and send edit notification
+		waterDaoImpl.pushForEditNotification(waterConnectionRequest);
 		enrichmentService.postForMeterReading(waterConnectionRequest, WCConstants.MODIFY_CONNECTION);
 
 		/* decrypt here */
@@ -613,6 +645,47 @@ public class WaterServiceImpl implements WaterService {
 		}
 	}
 
+	@Override
+	public void disConnectWaterConnection(String connectionNo, RequestInfo requestInfo, String tenantId) {
+		// TODO Auto-generated method stub
+		WaterConnectionRequest connectionRequest = new WaterConnectionRequest();
+		connectionRequest.setRequestInfo(requestInfo);
+		WaterConnection waterConnection = new WaterConnection();
+		waterConnection.setConnectionNo(connectionNo);
+		waterConnection.setTenantId(tenantId);
+		connectionRequest.setWaterConnection(waterConnection);
+		List<WaterConnection> waterConnectionList = getAllWaterApplications(connectionRequest);
+		List<WaterConnection> activeWaterConnections = waterConnectionList.stream()
+				.filter(connection -> connection.getStatus().toString().equalsIgnoreCase(WCConstants.ACTIVE_STATUS)
+						&& !connection.getOldApplication())
+				.collect(Collectors.toList());
+		validateDisconnectWaterConnection(waterConnectionList, connectionNo, requestInfo, tenantId,
+				activeWaterConnections);
+		waterDaoImpl.updateWaterApplicationStatus(activeWaterConnections.get(0).getId(), WCConstants.INACTIVE_STATUS);
+		
+
+	}
+	
+	private void validateDisconnectWaterConnection(List<WaterConnection> waterConnectionList, String connectionNo,
+			RequestInfo requestInfo, String tenantId, List<WaterConnection> activeWaterConnectionList) {
+
+		if (activeWaterConnectionList.size() != 1) {
+			throw new CustomException("EG_WS_DISCONNECTION_ERROR", WCConstants.ACTIVE_ERROR_MESSAGE);
+		}
+
+		if (!CollectionUtils.isEmpty(waterConnectionList)) {
+			workflowService.validateInProgressWF(waterConnectionList, requestInfo, connectionNo);
+		}
+
+		boolean isBillUnpaid = waterServiceUtil.isBillUnpaid(connectionNo, tenantId, requestInfo);
+
+		if (isBillUnpaid)
+			throw new CustomException("EG_WS_DISCONNECTION_ERROR", WCConstants.DUES_ERROR_MESSAGE);
+
+	}
+
+
+	
 	public WaterConnectionResponse plainSearch(SearchCriteria criteria, RequestInfo requestInfo) {
 		criteria.setIsSkipLevelSearch(Boolean.TRUE);
 		WaterConnectionResponse waterConnection = getWaterConnectionsListForPlainSearch(criteria, requestInfo);

@@ -314,6 +314,32 @@ public class WaterServicesUtil {
 	public boolean isModifyConnectionRequest(WaterConnectionRequest waterConnectionRequest) {
 		return !StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getConnectionNo());
 	}
+	
+	public Boolean isBillUnpaid(String connectionNo, String tenantId, RequestInfo request) {
+
+		Object res = null;
+
+		StringBuilder uri = new StringBuilder(config.getBusinesserviceHost())
+				.append(config.getFetchBillEndPoint())
+				.append("?tenantId=").append(tenantId)
+				.append("&consumerCode=").append(connectionNo)
+				.append("&businessService=").append(WCConstants.WATER_SERVICE_BUSINESS_ID);
+
+		try {
+			res = serviceRequestRepository.fetchResult(uri, new RequestInfoWrapper(request));
+		} catch (ServiceCallException e) {
+
+			if(!(e.getError().contains(WCConstants.BILL_NO_DEMAND_ERROR_CODE) || e.getError().contains(WCConstants.BILL_NO_PAYABLE_DEMAND_ERROR_CODE)))
+				throw e;
+		}
+
+		if (res != null) {
+			JsonNode node = objectMapper.convertValue(res, JsonNode.class);
+			Double amount = node.at(WCConstants.BILL_AMOUNT_PATH).asDouble();
+			return amount > 0;
+		}
+		return false;
+	}
 
 	public boolean isModifyConnectionRequestForNotification(WaterConnectionRequest waterConnectionRequest) {
 		if(waterConnectionRequest.getWaterConnection().getApplicationType().equalsIgnoreCase(WCConstants.MODIFY_WATER_CONNECTION))

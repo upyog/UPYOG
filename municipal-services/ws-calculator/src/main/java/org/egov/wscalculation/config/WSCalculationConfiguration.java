@@ -100,7 +100,7 @@ public class WSCalculationConfiguration {
 
 	 @Value("${ws.calculator.demand.failed}")
 	 private String onDemandsFailure;
-
+	 
 	 
 	//Localization
 	@Value("${egov.localization.host}")

@@ -166,6 +166,16 @@ public class WaterDaoImpl implements WaterDao {
 				&& userInfo.getRoles().stream().map(Role::getCode).collect(Collectors.toSet()).contains("ANONYMOUS");
 	}
 	
+	public void updateWaterApplicationStatus(String id, String status) {
+		
+		Object[] params = { status, id};
+		
+		int[] types = {Types.VARCHAR, Types.VARCHAR};
+		
+		jdbcTemplate.update(WsQueryBuilder.UPDATE_DISCONNECT_STATUS, params, types);
+		 
+	}
+	
 	@Override
 	public WaterConnectionResponse getWaterConnectionListForPlainSearch(SearchCriteria criteria, RequestInfo requestInfo) {
 
@@ -243,7 +253,15 @@ public class WaterDaoImpl implements WaterDao {
 	public void updateEncryptionStatus(EncryptionCount encryptionCount) {
 		waterConnectionProducer.push(encryptionStatusTopic, encryptionCount);
 	}
-
+	@Override
+	public List<WaterConnection> getPlainWaterConnectionSearch(SearchCriteria criteria) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = wsQueryBuilder.getWCPlainSearchQuery(criteria, preparedStmtList);
+        log.info("Query: " + query +  "\n preparedStmtList:"+ preparedStmtList);
+      
+        List<WaterConnection> waterconnection =  jdbcTemplate.query(query, preparedStmtList.toArray(), waterRowMapper);
+        return waterconnection;
+    }
 	/* Method to find the last execution details in dB */
 	@Override
 	public EncryptionCount getLastExecutionDetail(SearchCriteria criteria) {

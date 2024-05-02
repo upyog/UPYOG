@@ -81,6 +81,22 @@ public class DemandRepository {
             throw new CustomException("EG_WS_PARSING_ERROR","Failed to parse response of update demand");
         }
     }
+    
+	
+	/**
+	 * Fetches demand from DB based on a map of business code and set of consumer codes
+	 * 
+	 * @param businessConsumercodeMap
+	 * @param tenantId
+	 * @return
+	 */
+	public List<Demand> getDemandsForConsumerCodes(Set<String> businessConsumercodes, String tenantId) {
+
+		List<Object> presparedStmtList = new ArrayList<>();
+		String sql = demandQueryBuilder.getDemandQueryForConsumerCodes(businessConsumercodes, presparedStmtList,
+				tenantId);
+		return jdbcTemplate.query(sql, presparedStmtList.toArray(), demandRowMapper);
+	}
 
 
 }

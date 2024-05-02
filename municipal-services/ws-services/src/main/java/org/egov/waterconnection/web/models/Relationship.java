@@ -10,7 +10,11 @@ public enum Relationship {
   
   FATHER("FATHER"),
   
-  HUSBAND("HUSBAND");
+  HUSBAND("HUSBAND"),
+  
+  MOTHER("MOTHER"),
+  
+  OTHER("OTHER");
 
   private String value;
 

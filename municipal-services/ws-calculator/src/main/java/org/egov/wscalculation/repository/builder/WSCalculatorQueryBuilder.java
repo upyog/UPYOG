@@ -330,5 +330,4 @@ public class WSCalculatorQueryBuilder {
 		preparedStatement.add(billingPeriod);
 		return query.toString();
 	}
-
 }

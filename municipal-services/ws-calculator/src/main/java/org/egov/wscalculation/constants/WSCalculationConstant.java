@@ -147,16 +147,25 @@ public class WSCalculationConstant {
 	public static final String noOfTapsConst = "No. of taps";
 
 	public static final String pipeSizeConst = "Pipe Size";
+	
+	public static final String plotBasedConst = "PLOT_BASED";
 
 	public static final String BILLING_PERIOD = "billingPeriod";
+	
+	public static final String SCHEDULER_BILLING_PERIOD = "schedulerBillingPeriod";
 
 	public static final String ConnectionType = "connectionType";
 
 	public static final String JSONPATH_ROOT_FOR_BilingPeriod = "$.MdmsRes.ws-services-masters.billingPeriod";
+	
+//	public static final String JSONPATH_ROOT_FOR_SCHEDULER_BilingPeriod = "$.MdmsRes.ws-services-masters.schedulerBillingPeriod";
+
 
 	public static final String Quaterly_Billing_Period = "quarterly";
 
 	public static final String Monthly_Billing_Period = "monthly";
+
+        public static final String Annual_Billing_Period = "annualy";
 
 	public static final String Billing_Cycle_String = "billingCycle";
 
@@ -223,7 +232,13 @@ public class WSCalculationConstant {
 
 	public static final String WS_METER_CHARGE = "WS_METER_CHARGE";
 	
+	public static final String WS_SECURITY_DEPOSIT= "WS_SECURITY_DEPOSIT";
+	
+	public static final String WS_SECURITY_CHARGE_CONST = "securityCharge";
+	
 	public static final String WS_SECURITY_CHARGE = "WS_SECURITY_CHARGE";
+	
+	public static final String WS_CONNECTION_FEE_CONST = "connectionFee";
 	
 	public static final String WS_OTHER_CHARGE = "WS_OTHER_CHARGE";
 	
@@ -265,7 +280,17 @@ public class WSCalculationConstant {
 	
 	public static final String WS_TIME_ADHOC_REBATE = "WS_TIME_ADHOC_REBATE";
 
-	public static final String MDMS_CACHE_KEY = "WSMasterData";
+	public static final String "WS_COMPOSITION_FEE";
+	
+	public static final String COMPOSITION_FEE_CONST = "compositionFee";
+	
+        public static final String connectionCategory = "connectionCategory";
+	
+	public static final String  USER_CHARGES_CONST = "userCharges";
+	
+	public static final String  USER_CHARGES = "WS_USER_CHARGE";
+	
+	public static final String OTHER_FEE="WS_OTHER_FEE";
 
 	//Notification
 	public static final String CHANNEL_NAME_SMS = "SMS";
@@ -277,17 +302,48 @@ public class WSCalculationConstant {
 	public static final String MODULECONSTANT = "module";
 
 	public static final String ACTION = "action";
+	
+	public static final String BREAKDOWN= "Breakdown";
 
 	public static final String CHANNEL_LIST = "channelList";
 
 	public static final String CHANNEL = "Channel";
 
 	public static final String ACTION_FOR_DEMAND = "DEMAND";
+	
+	public static final String INITIATED_CONST = "INITIATED";
+	
+	public static final String INPROGRESS_CONST = "INPROGRESS";
+	
+	public static final String COMPLETED_CONST = "COMPLETED";
+	
+	public static final String ACTIVE = "ACTIVE";
+	
+    public static final String EG_WS_CAL_JSON_EXCEPTION_KEY = "EG_WS_CAL_JSON_EXCEPTION";
+    
+    public static final String EG_WS_CAL_JSON_EXCEPTION_MSG = "Exception occured while parsing additional details";
+    
+	public static final String WS_BILL_SCHEDULER_TRANSACTION = "Bill Generation";
 
 	public static final String ACTION_FOR_BILL = "BILL";
+	public static final String PROPERTY_SUB_DOMESTIC_TYPE_MIXED = "USAGE_DOM_NA";
+	public static final String PROPERTY_SUB_COMMERCIAL_TYPE_MIXED = "USAGE_COMM_NA";
 	
+	public static final String UNIT_USAGE_TYPE_KEY = "unitUsageType";
+	
+	public static final String CONNECTION_ACTIVATED = "CONNECTION_ACTIVATED";
+	
+	public static final String WS_NO_BILLING_PERIOD = "WS_NO_BILLING_PERIOD";
+	
+	public static final String WS_NO_BILLING_PERIOD_MSG = "No billin period is active or not defined";
+	
+    public static final String WS_DUPLICATE_BILL_SCHEDULER = "WS_DUPLICATE_BILL_SCHEDULER";
 	
 	public static final String ADHOC_PENALTY_REASON = "adhocPenaltyReason";
+	
+	public static final String MODULE_NAME_BILLINGSERVICE = "BillingService";
+	
+	public static final String TAXPERIOD_MASTERNAME = "TaxPeriod";
 
 	public static final String ADHOC_PENALTY_COMMENT = "adhocPenaltyComment";
 
@@ -354,4 +410,11 @@ public class WSCalculationConstant {
 
 	public static final String DISCONNECT_WATER_CONNECTION = "DISCONNECT_WATER_CONNECTION";
 
+	public static final String FAILURE = "Failure";
+	
+	public static final String SUCCESS_MESSAGE = "Bill is generated successfully for consumercode: ";
+	
+	public static final String FAILURE_MESSAGE = "Bill already paid or Error in bill generation for consumercode: ";
+	
+	
 }
