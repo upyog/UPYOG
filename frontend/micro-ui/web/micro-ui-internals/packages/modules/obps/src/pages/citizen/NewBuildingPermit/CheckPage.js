@@ -187,6 +187,16 @@ setWaterCharges(Malbafees/2)
       return <Loader />
     }
 
+    function onSubmitCheck(){
+      if(development && otherCharges && lessAdjusment){
+      if(parseInt(lessAdjusment)>(parseInt(development)+parseInt(otherCharges)+parseInt(malbafees)+parseInt(labourCess)+parseInt(waterCharges)+parseInt(gaushalaFees))){
+        alert("Enterd Less Adjustment amount is invalid");
+      }
+      else{
+        onSubmit();
+      }
+    }}
+
     function setOtherChargesVal(value) {
       if(/^[0-9]*$/.test(value)){
         setOtherCharges(value);
@@ -446,7 +456,7 @@ setWaterCharges(Malbafees/2)
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
       {/* <CardHeader>{t("BPA_COMMON_TOTAL_AMT")}</CardHeader> 
       <CardHeader>₹ {paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}</CardHeader>  */}
-      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmit} disabled={ (!development||!otherCharges||!lessAdjusment)} id/>
+      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmitCheck} disabled={ (!development||!otherCharges||!lessAdjusment)} id/>
       </Card>
     </React.Fragment>
     );
