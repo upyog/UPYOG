@@ -1,5 +1,6 @@
 package org.egov.waterconnection.repository;
 
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;

@@ -280,7 +280,7 @@ public class WSCalculationConstant {
 	
 	public static final String WS_TIME_ADHOC_REBATE = "WS_TIME_ADHOC_REBATE";
 
-	public static final String "WS_COMPOSITION_FEE";
+	public static final String WS_COMPOSITION_FEE="WS_COMPOSITION_FEE";
 	
 	public static final String COMPOSITION_FEE_CONST = "compositionFee";
 	

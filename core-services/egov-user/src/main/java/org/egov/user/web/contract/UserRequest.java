@@ -92,8 +92,8 @@ public class UserRequest {
     @Size(max = 50)
     private String correspondenceCity;
 
-    @Pattern(regexp = UserServiceConstants.PATTERN_PINCODE)
-    @Size(max = 10)
+    //@Pattern(regexp = UserServiceConstants.PATTERN_PINCODE)
+   // @Size(max = 10)
     private String correspondencePinCode;
     private Boolean active;
 

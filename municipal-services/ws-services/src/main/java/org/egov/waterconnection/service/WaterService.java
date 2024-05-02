@@ -22,5 +22,5 @@ public interface WaterService {
 	List<WaterConnection> updateWaterConnection(WaterConnectionRequest waterConnectionRequest);
 	
 	WaterConnectionResponse plainSearch(SearchCriteria criteria, RequestInfo requestInfo);
-
+	public List<WaterConnection> searchWaterConnectionPlainSearch(SearchCriteria criteria, RequestInfo requestInfo);
 }
