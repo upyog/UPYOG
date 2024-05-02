@@ -94,7 +94,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   }
 
   const getCardSubHeadrStyles = () => {
-    return { fontSize: "24px", fontWeight: "700", lineHeight: "28px", margin: "20px 0px 16px 0px" }
+    return { fontSize: "16px", fontWeight: "700", lineHeight: "28px", margin: "20px 0px 16px 0px" }
   }
 
   let documentDate = t("CS_NA");

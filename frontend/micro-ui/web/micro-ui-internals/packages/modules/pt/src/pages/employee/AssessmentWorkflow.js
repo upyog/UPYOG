@@ -9,14 +9,14 @@ import TransfererDetails from "../../pageComponents/Mutate/TransfererDetails";
 import MutationApplicationDetails from "./MutationApplicatinDetails";
 import getPTAcknowledgementData from "../../getPTAcknowledgementData";
 
-const assessmentDataSearch =async (tenantId)=>{
-    const assData = await Digit.PTService.assessmentSearch({ tenantId, filters: { assessmentNumbers:'MN-AS-2024-04-14-000289' } });
-    console.log("assData===",assData)
-    return assData?.Assessments;
-} 
+// const assessmentDataSearch =async (tenantId)=>{
+//     const assData = await Digit.PTService.assessmentSearch({ tenantId, filters: { assessmentNumbers:'MN-AS-2024-04-14-000289' } });
+//     console.log("assData===",assData)
+//     return assData?.Assessments;
+// } 
 
-const setBillData = async (tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData, updateassmentSearchData) => {
-    const assessmentData = await Digit.PTService.assessmentSearch({ tenantId, filters: { assessmentNumbers:'MN-AS-2024-04-14-000289' } });
+const setBillData = async (tenantId, assessmentId, updatefetchBillData, updateCanFetchBillData, updateassmentSearchData) => {
+    const assessmentData = await Digit.PTService.assessmentSearch({ tenantId, filters: { assessmentNumbers:assessmentId } });
     let billData = {};
     if (assessmentData?.Assessments?.length > 0) {
         updateassmentSearchData(assessmentData?.Assessments)
@@ -204,7 +204,7 @@ console.log("applicationDetails===",applicationDetails)
   return (
     <div>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-      <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "24px" }}>{t("PT_APPLICATION_TITLE")}</Header>
+      <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "16px" }}>{t("PT_APPLICATION_TITLE")}</Header>
       {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper employee-mulitlink-main-div"

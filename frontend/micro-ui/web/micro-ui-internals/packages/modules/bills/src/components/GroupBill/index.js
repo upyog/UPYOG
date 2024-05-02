@@ -226,7 +226,7 @@ const GroupBills = ({ tenantId, onSubmit, data, count, isLoading, resultOk,servi
     return (
         <>
             <div className="custom-group-merge-container employee-application-details">
-                 <Header styles={{ fontSize: "24px" }}>
+                 <Header styles={{ fontSize: "16px" }}>
                     {t("ABG_COMMON_HEADER")}
                 </Header>
                 {data && data?.length >= 0 && (

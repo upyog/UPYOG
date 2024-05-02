@@ -54,7 +54,7 @@ const PermissionCheck = ({ permissions, t }) => {
 
   return (
     <div>
-      <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t("BPA_PERMIT_CONDITIONS")}</CardSubHeader>
+      <CardSubHeader style={{ marginBottom: "16px", fontSize: "16px" }}>{t("BPA_PERMIT_CONDITIONS")}</CardSubHeader>
       {approvalChecks?.map((permission, index) => (
         <CheckBox
           key={index}

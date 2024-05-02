@@ -21,7 +21,7 @@ const EDCRAcknowledgement = (props) => {
           info={""}
           successful={false}
           infoStyles={{ fontSize: "18px", lineHeight: "21px", fontWeight: "bold", textAlign: "center", padding: "0px 15px" }}
-          applicationNumberStyles={{ fontSize: "24px", lineHeight: "28px", fontWeight: "bold", marginTop: "10px" }}
+          applicationNumberStyles={{ fontSize: "16px", lineHeight: "28px", fontWeight: "bold", marginTop: "10px" }}
           style={{ width: "100%", padding: "10px" }}
         />
         <div style={{ padding: "10px", paddingBottom: "10px" }}>
@@ -72,7 +72,7 @@ const EDCRAcknowledgement = (props) => {
             info={t("EDCR_SCRUTINY_NUMBER_LABEL")}
             successful={true}
             infoStyles={{ fontSize: "18px", lineHeight: "21px", fontWeight: "bold", textAlign: "center", padding: "0px 15px" }}
-            applicationNumberStyles={{ fontSize: "24px", lineHeight: "28px", fontWeight: "bold", marginTop: "10px" }}
+            applicationNumberStyles={{ fontSize: "16px", lineHeight: "28px", fontWeight: "bold", marginTop: "10px" }}
             style={{width: "100%", padding: "10px"}}
           />
           <CardText style={{ padding: "0px 8px", marginBottom: "10px" }}>{`${t("PDF_STATIC_LABEL_CONSOLIDATED_BILL_CONSUMER_ID_TL")} - ${edcrData?.applicationNumber}`}</CardText>
@@ -101,7 +101,7 @@ const EDCRAcknowledgement = (props) => {
             info={""}
             successful={false}
             infoStyles={{ fontSize: "18px", lineHeight: "21px", fontWeight: "bold", textAlign: "center", padding: "0px 15px" }}
-            applicationNumberStyles={{ fontSize: "24px", lineHeight: "28px", fontWeight: "bold", marginTop: "10px" }}
+            applicationNumberStyles={{ fontSize: "16px", lineHeight: "28px", fontWeight: "bold", marginTop: "10px" }}
             style={{width: "100%", padding: "10px"}}
           />
           <CardText style={{ padding: "0px 8px", marginBottom: "10px" }}>{t("EDCR_ACKNOWLEDGEMENT_REJECTED_MESSAGE_TEXT_LABEL")}</CardText>

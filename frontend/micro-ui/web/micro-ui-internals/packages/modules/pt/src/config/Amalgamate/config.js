@@ -107,7 +107,7 @@ export const newConfigAmalgamate = [
             label: "PT_TOTAL_DUES",
             key: "total_due",
             noteStyle: {
-              fontSize: "24px",
+              fontSize: "16px",
               fontWeight: "bold",
             },
             // notePrefix: "₹ ",
