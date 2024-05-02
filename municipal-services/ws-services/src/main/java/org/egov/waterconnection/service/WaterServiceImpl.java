@@ -1,9 +1,20 @@
 package org.egov.waterconnection.service;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.PlainAccessRequest;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.waterconnection.web.models.users.UserSearchRequest;
+import org.egov.waterconnection.web.models.users.UserDetailResponse;
+import org.egov.waterconnection.util.WaterServicesUtil;
+
 import org.egov.tracer.model.CustomException;
 import org.egov.waterconnection.config.WSConfiguration;
 import org.egov.waterconnection.constants.WCConstants;
@@ -29,7 +40,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.egov.waterconnection.constants.WCConstants.*;
@@ -620,7 +630,7 @@ public class WaterServiceImpl implements WaterService {
 		// setting oldApplication Flag
 		markOldApplication(waterConnectionRequest);
 		// check for edit and send edit notification
-		waterDaoImpl.pushForEditNotification(waterConnectionRequest);
+		waterDaoImpl.pushForEditNotification(waterConnectionRequest, isStateUpdatable);
 		enrichmentService.postForMeterReading(waterConnectionRequest, WCConstants.MODIFY_CONNECTION);
 
 		/* decrypt here */
@@ -779,6 +789,13 @@ public class WaterServiceImpl implements WaterService {
 			waterConnection.setConnectionHolders(encryptionDecryptionUtil.decryptObject(connectionHolders, WNS_OWNER_ENCRYPTION_MODEL, OwnerInfo.class, requestInfo));
 
 		return waterConnection;
+	}
+
+	@Override
+	public List<WaterConnection> createWaterConnection(WaterConnectionRequest waterConnectionRequest,
+			Boolean isMigration) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

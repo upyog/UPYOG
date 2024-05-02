@@ -276,5 +276,11 @@ public class WaterDaoImpl implements WaterDao {
 		EncryptionCount encryptionCount = jdbcTemplate.query(query, preparedStatement.toArray(), encryptionCountRowMapper);
 		return encryptionCount;
 	}
+
+	@Override
+	public List<String> fetchWaterConnectionIds(SearchCriteria criteria) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }
