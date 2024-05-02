@@ -17,13 +17,42 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
   function onSave() {}
 
   function goNext() {
-    onSelect();
+    console.log("config========next===",config)
+    if(config && config?.amalgamationState && config?.amalgamationState?.action == "Amalgamation") {
+      onSelect('amalgamationDetails', config?.amalgamationState);
+    } else {
+      onSelect();
+    }
+    
   }
+  let isAmalgamation = false;
+  let amalgamationDetails = {};
+  if(config && config?.amalgamationState && config?.amalgamationState?.propertyDetails) {
+    isAmalgamation = true;
+    amalgamationDetails =  config?.amalgamationState
+  }
+  console.log("config========next===",config)
+  const isMobile = window.Digit.Utils.browser.isMobile();
 
   return (
     <React.Fragment>
+      <div>
+        {isAmalgamation &&
+          <div style={isMobile ? {} : { maxWidth: "960px", minWidth: "640px", marginRight: "auto", padding: '15px', background: '#cde2e4',marginBottom : '5px', borderRadius: "6px", color: "#01504c" }}>
+          <div style={{fontWeight: 'bold', fontSize: '18px'}}>Amalgamation Property Details</div>
+          {amalgamationDetails && amalgamationDetails?.propertyDetails && amalgamationDetails?.propertyDetails.length>0 && 
+          amalgamationDetails.propertyDetails.map((e)=> (
+          <div>
+            <span style={{fontWeight: 'bold'}}>Property ID: </span><span>{e.property_id} | </span>
+            <span style={{fontWeight: 'bold'}}>Owner Name: </span><span>{e.owner_name} | </span>
+            <span style={{fontWeight: 'bold'}}>Owner Mobile No.: </span><span>{e.owner_mobile}</span>
+          </div>
+          ))}
+        </div>
+        }
+      </div>
       <Card>
-        <CardHeader>{!config.isMutation ? t("PT_DOC_REQ_SCREEN_HEADER") : t("PT_REQIURED_DOC_TRANSFER_OWNERSHIP")}</CardHeader>
+        <CardHeader>{config.isMutation ? t("PT_REQIURED_DOC_TRANSFER_OWNERSHIP") : isAmalgamation ? 'Property Amalgamation' : t("PT_DOC_REQ_SCREEN_HEADER")}</CardHeader>
         <div>
           <CardText className={"primaryColor"}>{t("PT_DOC_REQ_SCREEN_SUB_HEADER")}</CardText>
           <CardText className={"primaryColor"}>{t("PT_DOC_REQ_SCREEN_TEXT")}</CardText>
@@ -61,7 +90,7 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
           </div>
         </div>
         <span>
-          <SubmitBar label={t("PT_COMMON_NEXT")} onSubmit={onSelect} />
+          <SubmitBar label={t("PT_COMMON_NEXT")} onSubmit={goNext} />
         </span>
       </Card>
     </React.Fragment>

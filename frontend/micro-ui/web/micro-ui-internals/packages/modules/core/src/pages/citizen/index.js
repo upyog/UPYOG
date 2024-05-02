@@ -1,4 +1,4 @@
-import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute } from "@egovernments/digit-ui-react-components";
+import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute, Loader } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Switch, useRouteMatch, useHistory, Link } from "react-router-dom";
@@ -18,6 +18,9 @@ import StaticDynamicCard from "./StaticDynamicComponent/StaticDynamicCard";
 import AcknowledgementCF from "../../components/AcknowledgementCF";
 import CitizenFeedback from "../../components/CitizenFeedback";
 import Search from "./SearchApp";
+import './cityzenCustomStyle.css';
+import { useRef } from "react";
+import { useEffect } from "react";
 const sidebarHiddenFor = [
   "digit-ui/citizen/register/name",
   "/digit-ui/citizen/select-language",
@@ -78,6 +81,9 @@ const Home = ({
   const handleClickOnWhatsApp = (obj) => {
     window.open(obj);
   };
+  const sidebarRef = useRef();
+
+  
 
   const hideSidebar = sidebarHiddenFor.some((e) => window.location.href.includes(e));
   const appRoutes = modules.map(({ code, tenants }, index) => {
@@ -98,13 +104,14 @@ const Home = ({
         return a.orderNumber - b.orderNumber;
       });
     // }
+    console.log("mdmsDataObj===",mdmsDataObj)
     return (
       <React.Fragment>
         <Route key={index} path={`${path}/${code.toLowerCase()}-home`}>
           <div className="moduleLinkHomePage">
-            <img src={ "http://216.48.176.229/static/2.png"||bannerImage || stateInfo?.bannerUrl} alt="noimagefound" />
-            <BackButton className="moduleLinkHomePageBackButton" />
-            <h1>{t("MODULE_" + code.toUpperCase())}</h1>
+            {/* <img src={ "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Kangla-Sha.png"||bannerImage || stateInfo?.bannerUrl} alt="noimagefound" /> */}
+            {/* <BackButton className="moduleLinkHomePageBackButton" />
+            <h1>{t("MODULE_" + code.toUpperCase())}</h1> */}
             <div className="moduleLinkHomePageModuleLinks">
               {mdmsDataObj && (
                 <CitizenHomeCard
@@ -130,18 +137,57 @@ const Home = ({
             {/* <StaticDynamicCard moduleCode={code?.toUpperCase()}/> */}
           </div>
         </Route>
-        <Route key={"faq" + index} path={`${path}/${code.toLowerCase()}-faq`}>
+        {/* <Route key={"faq" + index} path={`${path}/${code.toLowerCase()}-faq`}>
           <FAQsSection module={code?.toUpperCase()} />
         </Route>
         <Route key={"hiw" + index} path={`${path}/${code.toLowerCase()}-how-it-works`}>
           <HowItWorks module={code?.toUpperCase()} />
-        </Route>
+        </Route> */}
       </React.Fragment>
     );
   });
 
+
+  // useEffect(() => {
+  //   if (islinkDataLoading) {
+  //     return <Loader />;
+  //   }
+  //   console.log("sidebarRef===",sidebarRef)
+  //   if(hideSidebar && sidebarRef && sidebarRef.current) {
+  //     sidebarRef?.current?.style.cursor = "pointer";
+  //     collapseNav();
+  //   }
+  // }, [islinkDataLoading]);
+
+  // const expandNav = () => {
+  //   sidebarRef.current.style.width = "260px";
+  //   sidebarRef.current.style.overflow = "auto";
+
+  //   sidebarRef.current.querySelectorAll(".dropdown-link").forEach((element) => {
+  //     element.style.display = "flex";
+  //   });
+  //   sidebarRef.current.querySelectorAll(".label-text").forEach((element) => {
+  //     element.style.display = "flex";
+  //   });
+  // };
+  // const collapseNav = () => {
+  //   sidebarRef.current.style.width = "55px";
+  //   sidebarRef.current.style.overflow = "hidden";
+
+  //   sidebarRef.current.querySelectorAll(".dropdown-link").forEach((element) => {
+  //     element.style.display = "none";
+  //   });
+  //   sidebarRef.current.querySelectorAll(".label-text").forEach((element) => {
+  //     element.style.display = "none";
+  //   });
+  //   sidebarRef.current.querySelectorAll(".actions").forEach((element) => {
+  //     element.style.padding = "0";
+  //   });
+  // };
+
   return (
     <div className={classname}>
+      <div className="citizen-main">
       <TopBarSideBar
         t={t}
         stateInfo={stateInfo}
@@ -158,7 +204,9 @@ const Home = ({
 
       <div className={`main center-container citizen-home-container mb-25`}>
         {hideSidebar ? null : (
-          <div className="SideBarStatic">
+          <div>
+           {/* ref={sidebarRef} onMouseOver={expandNav} onMouseLeave={collapseNav}> */}
+            {/* className="SideBarStatic" */}
             <StaticCitizenSideBar linkData={linkData} islinkDataLoading={islinkDataLoading} />
           </div>
         )}
@@ -217,9 +265,10 @@ const Home = ({
           </ErrorBoundary>
         </Switch>
       </div>
+      </div>
 
-      <div style={{ width: '100%', position: 'fixed', bottom: 0,backgroundColor:"white",textAlign:"center" }}>
-        <div style={{ display: 'flex', justifyContent: 'center', color:"black" }}>
+      <div style={{ width: '100%', position: 'fixed', bottom: 0,backgroundColor:"white",textAlign:"center", zIndex: "99" }}>
+        <div style={{ display: 'flex', justifyContent: 'center', color:"black", boxShadow: "2px 2px 2px 2px" }}>
           <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
           <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px"}}>|</span>
           <a style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a>
@@ -234,6 +283,7 @@ const Home = ({
           <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
           </div>
       </div>
+      
     </div>
   );
 };

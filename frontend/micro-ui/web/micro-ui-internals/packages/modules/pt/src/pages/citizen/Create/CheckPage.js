@@ -9,7 +9,7 @@ import {
   StatusTable,
   SubmitBar
 } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import {
@@ -32,9 +32,6 @@ const ActionButton = ({ jumpTo }) => {
 const CheckPage = ({ onSubmit, value = {} }) => {
   const { t } = useTranslation();
   const history = useHistory();
-
-  console.log("value===",value)
-
   const {
     address,
     isResdential,
@@ -85,6 +82,18 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   const setdeclarationhandler = () => {
     setAgree(!agree);
   };
+  const [isPartOfProperty, setIsPartOfProperty] = useState(
+    value?.isPartOfProperty ? true : false
+  );;
+  const onSetIsApportion = (e) => {
+    setIsPartOfProperty(e.target.checked);
+  };
+  useEffect(() => {
+    setIsPartOfProperty(!isPartOfProperty);
+  }, [value?.isPartOfProperty]);
+  const onclickSubmit = ()=>{
+    onSubmit('isPartOfProperty', isPartOfProperty);
+  }
   return (
     <React.Fragment>
      {window.location.href.includes("/citizen") ? <Timeline currentStep={6}/> : null}
@@ -605,15 +614,21 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             </StatusTable>
           </div>
         )} 
-        
+        <CheckBox
+          label={t("Is this property is a protion of property?")}
+          onChange={onSetIsApportion}
+          styles={{ height: "auto",paddingBottom: '10px' }}
+          //disabled={!agree}
+        />
         <CheckBox
           label={t("PT_FINAL_DECLARATION_MESSAGE")}
           onChange={setdeclarationhandler}
           styles={{ height: "auto" }}
           //disabled={!agree}
         />
+        
       </div>
-      <SubmitBar label={t("PT_COMMON_BUTTON_SUBMIT")} onSubmit={onSubmit} disabled={!agree} />
+      <SubmitBar label={t("PT_COMMON_BUTTON_SUBMIT")} onSubmit={onclickSubmit} disabled={!agree} />
     </Card>
    </React.Fragment>
   );

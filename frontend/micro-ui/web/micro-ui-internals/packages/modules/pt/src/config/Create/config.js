@@ -243,8 +243,8 @@ export const newConfig =[
                     "component": "UsageCategoryVacantLand",
                     "texts": {
                         "headerCaption": "",
-                        "header": "",
-                        "cardText": "PT_FLAT_DETAILS_DESC",
+                        "header": "PT_USAGE_CATEGORY",
+                        "cardText": "",
                         "submitBarLabel": "PT_COMMON_NEXT"
                     },
                     "withoutLabel": true,

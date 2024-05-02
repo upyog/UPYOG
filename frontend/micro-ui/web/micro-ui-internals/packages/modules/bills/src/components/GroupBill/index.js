@@ -226,7 +226,7 @@ const GroupBills = ({ tenantId, onSubmit, data, count, isLoading, resultOk,servi
     return (
         <>
             <div className="custom-group-merge-container employee-application-details">
-                 <Header styles={{ fontSize: "32px" }}>
+                 <Header styles={{ fontSize: "24px" }}>
                     {t("ABG_COMMON_HEADER")}
                 </Header>
                 {data && data?.length >= 0 && (
@@ -254,7 +254,7 @@ const GroupBills = ({ tenantId, onSubmit, data, count, isLoading, resultOk,servi
   </Card>):(
             isLoading===false && data  &&
                 <div style={{ backgroundColor: "white" }}>
-                    <div className="sideContent" style={{ float: "left", padding:"20px 10px", fontSize:"24px", fontWeight:"700", fontFamily:"Roboto"}}>
+                    <div className="sideContent" style={{ float: "left", padding:"20px 10px", fontSize:"24px", fontWeight:"700", fontFamily:"Open Sans"}}>
                         {t("ABG_SEARCH_RESULTS_HEADER")}
                     </div>
                     {/* <div className="sideContent" style={{ float: "right", padding: "10px 30px" }}>

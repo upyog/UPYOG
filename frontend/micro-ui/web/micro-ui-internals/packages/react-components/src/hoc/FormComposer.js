@@ -310,7 +310,6 @@ export const FormComposer = (props) => {
     if (props.noBoxShadow) styles = { ...styles, boxShadow: "none" };
     return styles;
   };
-  console.log("props====",props)
   const isDisabled = props.isDisabled || false;
   const checkKeyDown = (e) => {
     const keyCode = e.keyCode ? e.keyCode : e.key ? e.key : e.which;
@@ -318,12 +317,11 @@ export const FormComposer = (props) => {
       e.preventDefault();
     }
   };
-  console.log("FormCOmposer--",props)
   return (
-    <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)} id={props.formId} className={props.className}>
+    <form onSubmit={handleSubmit(onSubmit)} style={props?.formStyle} onKeyDown={(e) => checkKeyDown(e)} id={props.formId} className={props.className}>
       <Card style={getCardStyles()} className={props?.cardClassName ? props.cardClassName : ""}>
         {!props.childrenAtTheBottom && props.children}
-        {props.heading && <CardSubHeader style={{ ...props.headingStyle }}> {props.heading} </CardSubHeader>}
+        {props.heading && <CardSubHeader style={{ ...props.headingStyle }} headingLogo={props?.headingLogo}> {props.heading} </CardSubHeader>}
         {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>}
         {props.text && <CardText>{props.text}</CardText>}
         {formFields}

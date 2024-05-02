@@ -355,7 +355,7 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
   return (
     <React.Fragment>
       <div className="cardHeaderWithOptions" style={{ marginRight: "auto" }}>
-      <Header styles={{fontSize: "32px", marginLeft: "12px"}}>{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
+      <Header styles={{fontSize: "24px", marginLeft: "12px"}}>{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
       <div>
           <div>
           {dowloadOptions && dowloadOptions.length > 0 && <MultiLink

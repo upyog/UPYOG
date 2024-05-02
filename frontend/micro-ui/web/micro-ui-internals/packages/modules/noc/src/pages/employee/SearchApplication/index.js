@@ -63,7 +63,7 @@ const Search = ({ path }) => {
   const { data, isLoading, isSuccess, error } = Digit.Hooks.noc.useNOCSearchApplication(tenantId,filters,{});
   return (
     <div>
-      <CardHeader styles={!isMobile ? {fontSize: "32px", fontWeight: "700"} : {fontSize: "32px", fontWeight: "700", paddingLeft: "10px"}}>{t("ACTION_TEST_SEARCH_NOC_APPLICATION")}</CardHeader>
+      <CardHeader styles={!isMobile ? {fontSize: "24px", fontWeight: "700"} : {fontSize: "24px", fontWeight: "700", paddingLeft: "10px"}}>{t("ACTION_TEST_SEARCH_NOC_APPLICATION")}</CardHeader>
       <Search
         t={t}
         tenantId={tenantId}

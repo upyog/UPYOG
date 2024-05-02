@@ -201,7 +201,7 @@ const ApplicationDetails = () => {
   return (
     <div>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-      <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("PT_APPLICATION_TITLE")}</Header>
+      <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "24px" }}>{t("PT_APPLICATION_TITLE")}</Header>
       {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper employee-mulitlink-main-div"
@@ -229,6 +229,7 @@ const ApplicationDetails = () => {
         timelineStatusPrefix={"ES_PT_COMMON_STATUS_"}
         forcedActionPrefix={"WF_EMPLOYEE_PT.CREATE"}
         statusAttribute={"state"}
+        ActionBarStyle={{float: "right"}}
         MenuStyle={{ color: "#FFFFFF", fontSize: "18px" }}
       />
     

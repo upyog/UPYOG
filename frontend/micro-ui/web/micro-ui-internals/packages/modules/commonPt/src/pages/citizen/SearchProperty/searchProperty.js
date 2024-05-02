@@ -71,6 +71,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
         el.style.boxShadow = "none";
         el.style.marginBottom = "16px";
         el.style.textAlign = "left";
+        el.style.background = "none";
         el.style.zIndex = "0";
       } else {
         setTimeout(() => {
@@ -510,7 +511,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
   }
 
   return (
-    <div style={{ marginTop: "16px", marginBottom: "16px" ,backgroundColor:"white", maxWidth:"960px"}}>
+    <div style={{ marginTop: "16px", marginBottom: "16px" ,backgroundColor:"#ffffff9e", maxWidth:"960px", borderRadius: "6px"}}>
       <FormComposer
         onSubmit={onPropertySearch}
         noBoxShadow
@@ -519,11 +520,11 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
         label={propsConfig.texts.submitButtonLabel}
         heading={t(propsConfig.texts.header)}
         text={t(propsConfig.texts.text)}
-        headingStyle={{ fontSize: "32px", marginBottom: "16px", fontFamily: "Roboto Condensed,sans-serif" }}
+        headingStyle={{ fontSize: "24px", marginBottom: "16px", fontFamily: "Roboto Condensed,sans-serif" }}
         onFormValueChange={onFormValueChange}
         cardStyle={{marginBottom:"0",maxWidth:"960px"}}
       ></FormComposer>
-      <span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
+      <span className="link" style={isMobile ? {display:"flex", justifyContent:"center", marginLeft: "14px", color: "#b77212"} : {display:"flex", justifyContent:"left", marginLeft: "14px", color: "#b77212", marginTop: "-21px"}}>
         <Link to={window.location.href.includes("/ws/")?"/digit-ui/citizen/ws/create-application/create-property" : (window.location.href.includes("/tl/tradelicence/") ? "/digit-ui/citizen/tl/tradelicence/new-application/create-property" : "/digit-ui/citizen/commonpt/property/new-application")}>{t("CPT_REG_NEW_PROPERTY")}</Link>
       </span>
       {showToast && (

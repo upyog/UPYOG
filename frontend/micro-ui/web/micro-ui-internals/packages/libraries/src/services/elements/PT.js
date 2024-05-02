@@ -71,6 +71,27 @@ export const PTService = {
       userService: true,
       params: { tenantId, ...filters },
     }),
+  assessmentUpdate: (details, tenantId) =>
+    Request({
+      url: Urls.pt.assessment_update,
+      data: details,
+      useCache: false,
+      setTimeParam: false,
+      userService: true,
+      method: "POST",
+      params: {tenantId},
+      auth: true,
+    }),
+  // assessmentUpdate: ({ tenantId }) =>
+  //   Request({
+  //     url: Urls.pt.assessment_update,
+  //     useCache: false,
+  //     method: "POST",
+  //     auth: true,
+  //     userService: true,
+  //     params: { tenantId },
+  //   }),
+    
   paymentsearch: ({ tenantId, filters, auth }) =>
     Request({
       url: Urls.pt.payment_search,

@@ -14,9 +14,34 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
     return com;
   });
 
+  const parseValue = (value) => {
+    try {
+      return JSON.parse(value)
+    } catch (e) {
+      return value
+    }
+  }
+  const getFromStorage = (key) => {
+    const value = window.localStorage.getItem(key);
+    return value && value !== "undefined" ? parseValue(value) : null;
+  }
+  const employeeToken = getFromStorage("Employee.token")
+  const employeeInfo = getFromStorage("Employee.user-info")
+  const getUserDetails = (access_token, info) => ({ token: access_token, access_token, info })
+
+  const userDetails = getUserDetails(employeeToken, employeeInfo)
+  
+  console.log("userDetailsPTCard===",userDetails)
+  let userRole='';
+  if(userDetails && userDetails.info && userDetails.info?.roles) {
+    userDetails.info.roles.map((role)=>{
+      if(role?.code == "ASSIGNING_OFFICER") userRole = role.code;
+    })
+  }
+
   const [clearSearchCalled, setClearSearchCalled] = useState(false);
 
-  const columns = React.useMemo(() => (props.isSearch ? tableConfig.searchColumns(props) : tableConfig.inboxColumns(props) || []), []);
+  const columns = React.useMemo(() => userRole && userRole=='ASSIGNING_OFFICER' ? (tableConfig.inboxColumnsAssessment(props) || []) : (props.isSearch ? tableConfig.searchColumns(props) : tableConfig.inboxColumns(props) || []), []);
 
   let result;
   if (props.isLoading) {
