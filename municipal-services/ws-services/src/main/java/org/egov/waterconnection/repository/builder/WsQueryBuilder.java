@@ -85,6 +85,8 @@ public class WsQueryBuilder {
 	
 	private static final String ORDER_BY_COUNT_CLAUSE= " ORDER BY appCreatedDate DESC";
 
+	public static final String UPDATE_DISCONNECT_STATUS="update eg_ws_connection set status=? where id=?";
+	
 	private static final String LATEST_EXECUTED_MIGRATION_QUERY = "select * from eg_ws_enc_audit where tenantid = ? order by createdTime desc limit 1;";
 
 	/**
@@ -428,5 +430,19 @@ public class WsQueryBuilder {
 		preparedStatement.add(criteria.getTenantId());
 		return LATEST_EXECUTED_MIGRATION_QUERY;
 	}
+	
+	public String getWCPlainSearchQuery(SearchCriteria criteria, List<Object> preparedStmtList) {
+        StringBuilder builder = new StringBuilder(WATER_SEARCH_QUERY);
+
+        Set<String> ids = criteria.getIds();
+        if (!CollectionUtils.isEmpty(ids)) {
+            addClauseIfRequired(preparedStmtList,builder);
+            builder.append(" conn.id IN (").append(createQuery(ids)).append(")");
+            addToPreparedStatement(preparedStmtList, ids);
+        }
+
+        return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
+
+    }
 
 }
