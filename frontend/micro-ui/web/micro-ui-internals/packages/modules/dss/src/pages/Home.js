@@ -412,7 +412,7 @@ const Home = ({ stateCode }) => {
                         {item?.charts?.[0]?.chartType == "map" && (
                           <div className="dss-card-header" style={{ width: "45%" }}>
                             {Icon(row.vizArray?.[1]?.name)}
-                            <p style={{ marginLeft: "20px", fontSize: "24px", fontFamily: "Roboto, sans-serif", fontWeight: 500, color: "#000000" }}>
+                            <p style={{ marginLeft: "20px", fontSize: "16px", fontFamily: "Roboto, sans-serif", fontWeight: 500, color: "#000000" }}>
                               {selectedState === ""
                                 ? t(row.vizArray?.[1]?.name)
                                 : t(`${Digit.Utils.locale.getTransformedLocale(selectedState)}_${row.vizArray?.[1]?.name}`)}

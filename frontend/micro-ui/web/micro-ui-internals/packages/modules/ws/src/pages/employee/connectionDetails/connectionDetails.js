@@ -257,7 +257,7 @@ const GetConnectionDetails = () => {
     <Fragment>
       <div>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-          <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "24px" }}>{t("WS_CONNECTION_DETAILS")}</Header>
+          <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "16px" }}>{t("WS_CONNECTION_DETAILS")}</Header>
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper employee-mulitlink-main-div"

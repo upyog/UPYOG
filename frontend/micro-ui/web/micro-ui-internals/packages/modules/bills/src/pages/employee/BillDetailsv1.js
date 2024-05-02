@@ -74,7 +74,7 @@ const BillDetailsv1 = (props) => {
     return (
         <>
             <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-                <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "24px" }}>{t("ABG_BILL_DETAILS_HEADER")}</Header>
+                <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "16px" }}>{t("ABG_BILL_DETAILS_HEADER")}</Header>
             </div>
             {fetchedBill && !isLoading ?<Card style={{ position: "relative" }} className={"employeeCard-override"}>
                 <>
@@ -128,14 +128,14 @@ const BillDetailsv1 = (props) => {
                     <React.Fragment key={index}>
                         <div >
                             {index === 0 && !detail.asSectionHeader ? (
-                                <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(detail.title)}</CardSubHeader>
+                                <CardSubHeader style={{ marginBottom: "16px", fontSize: "16px" }}>{t(detail.title)}</CardSubHeader>
                             ) : (
                                 <React.Fragment>
                                     <CardSectionHeader
                                         style={
                                             index == 0 && checkLocation
-                                                ? { marginBottom: "16px", fontSize: "24px" }
-                                                : { marginBottom: "16px", marginTop: "32px", fontSize: "24px" }
+                                                ? { marginBottom: "16px", fontSize: "16px" }
+                                                : { marginBottom: "16px", marginTop: "32px", fontSize: "16px" }
                                         }
                                     >
                                         {isNocLocation ? `${t(detail.title)}` : t(detail.title)}

@@ -53,7 +53,7 @@ const BannerPicker = (props) => {
       applicationNumber={props.data?.BPA[0].applicationNo}
       info={props.isSuccess ? getApplicationNoLabel(props) : ""}
       successful={props.isSuccess}
-      headerStyles={{fontSize: "24px"}}
+      headerStyles={{fontSize: "16px"}}
     />
   );
 };

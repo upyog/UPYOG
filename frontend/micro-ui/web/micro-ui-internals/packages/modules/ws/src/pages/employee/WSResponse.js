@@ -102,7 +102,7 @@ const WSResponse = (props) => {
           infoOne={filters?.applicationNumber1 ? t("WS_SEWERAGE_APPLICATION_NUMBER_LABEL") : ""}
           successful={true}
           style={{ padding: "10px" }}
-          headerStyles={{ fontSize: "24px" }}
+          headerStyles={{ fontSize: "16px" }}
           infoOneStyles={{ paddingTop: "20px" }}
         />
         <CardText style={{ paddingBottom: "10px", marginBottom: "10px" }}>{t("WS_MESSAGE_SUB_DESCRIPTION_LABEL")}</CardText>

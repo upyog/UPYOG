@@ -396,7 +396,7 @@ const BpaApplicationDetail = () => {
   return (
     <Fragment>
       <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
-        <Header styles={{fontSize: "24px", marginLeft: "10px"}}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
+        <Header styles={{fontSize: "16px", marginLeft: "10px"}}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
         {dowloadOptions && dowloadOptions.length > 0 && <MultiLink
           className="multilinkWrapper"
           onHeadClick={() => setShowOptions(!showOptions)}
@@ -411,7 +411,7 @@ const BpaApplicationDetail = () => {
           <div>
             {!detail?.isNotAllowed ? <Card key={index} style={!detail?.additionalDetails?.fiReport && detail?.title === "" ? { marginTop: "-30px" } : {}}>
 
-              {!detail?.isTitleVisible ? <CardSubHeader style={{fontSize: "24px"}}>{t(detail?.title)}</CardSubHeader> : null}
+              {!detail?.isTitleVisible ? <CardSubHeader style={{fontSize: "16px"}}>{t(detail?.title)}</CardSubHeader> : null}
               
               <div style={detail?.isBackGroundColor ? { marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "950px", minWidth: "280px" } : {}}>
 

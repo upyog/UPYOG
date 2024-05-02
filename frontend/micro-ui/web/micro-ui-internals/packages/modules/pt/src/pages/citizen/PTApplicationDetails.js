@@ -30,8 +30,6 @@ const PTApplicationDetails = () => {
   const [billAmount, setBillAmount] = useState(null);
   const [billStatus, setBillStatus] = useState(null);
 
-  const assessmentData = Digit.PTService.assessmentSearch({ tenantId, filters: { assessmentNumbers:'MN-AS-2024-04-14-000289' } });
-  console.log("assessmentData===",assessmentData)
 
   let serviceSearchArgs = {
     tenantId : tenantId,
@@ -248,7 +246,7 @@ const PTApplicationDetails = () => {
     <React.Fragment>
       <div>
         <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
-          <Header styles={{ fontSize: "24px" }}>{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
+          <Header styles={{ fontSize: "16px" }}>{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper"
@@ -283,7 +281,7 @@ const PTApplicationDetails = () => {
               </React.Fragment>
             )}
           </StatusTable>
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_PROPERTY_ADDRESS_SUB_HEADER")}</CardSubHeader>
+          <CardSubHeader style={{ fontSize: "16px" }}>{t("PT_PROPERTY_ADDRESS_SUB_HEADER")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_PINCODE")} text={property?.address?.pincode || t("CS_NA")} />
             <Row className="border-none" label={t("PT_COMMON_CITY")} text={property?.address?.city || t("CS_NA")} />
@@ -302,7 +300,7 @@ const PTApplicationDetails = () => {
 
           {isPropertyTransfer ? (
             <React.Fragment>
-              <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_MUTATION_TRANSFEROR_DETAILS")}</CardSubHeader>
+              <CardSubHeader style={{ fontSize: "16px" }}>{t("PT_MUTATION_TRANSFEROR_DETAILS")}</CardSubHeader>
               <div>
                 {Array.isArray(transferorOwners) &&
                   transferorOwners.map((owner, index) => (
@@ -330,7 +328,7 @@ const PTApplicationDetails = () => {
                   ))}
               </div>
 
-              <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_MUTATION_TRANSFEREE_DETAILS")}</CardSubHeader>
+              <CardSubHeader style={{ fontSize: "16px" }}>{t("PT_MUTATION_TRANSFEREE_DETAILS")}</CardSubHeader>
               {isInstitution ? (
                 <div>
                   {Array.isArray(transfereeOwners) &&
@@ -398,7 +396,7 @@ const PTApplicationDetails = () => {
                     ))}
                 </div>
               )}
-              <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_MUTATION_DETAILS")}</CardSubHeader>
+              <CardSubHeader style={{ fontSize: "16px" }}>{t("PT_MUTATION_DETAILS")}</CardSubHeader>
               <StatusTable>
                 <Row
                   className="border-none"
@@ -414,7 +412,7 @@ const PTApplicationDetails = () => {
                 <Row className="border-none" label={t("PT_DETAILS_GOV_AQUISITION")} text={t("CS_NA")} />
               </StatusTable>
 
-              <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_REGISTRATION_DETAILS")}</CardSubHeader>
+              <CardSubHeader style={{ fontSize: "16px" }}>{t("PT_REGISTRATION_DETAILS")}</CardSubHeader>
               <StatusTable>
                 <Row
                   className="border-none"
@@ -430,7 +428,7 @@ const PTApplicationDetails = () => {
             </React.Fragment>
           ) : (
             <React.Fragment>
-              <CardSubHeader style={{ fontSize: "24px" }}> {t("PT_PROPERTY_ASSESSMENT_DETAILS_HEADER")}</CardSubHeader>
+              <CardSubHeader style={{ fontSize: "16px" }}> {t("PT_PROPERTY_ASSESSMENT_DETAILS_HEADER")}</CardSubHeader>
               <StatusTable>
                 <Row
                   className="border-none"
@@ -501,7 +499,7 @@ const PTApplicationDetails = () => {
                     </div>
                   ))}
               </div>
-              <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
+              <CardSubHeader style={{ fontSize: "16px" }}>{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
               <div>
                 {Array.isArray(owners) &&
                   owners.map((owner, index) => (
@@ -533,7 +531,7 @@ const PTApplicationDetails = () => {
             </React.Fragment>
           )}
 
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_COMMON_DOCS")}</CardSubHeader>
+          <CardSubHeader style={{ fontSize: "16px" }}>{t("PT_COMMON_DOCS")}</CardSubHeader>
           <div>
             {Array.isArray(docs) ? (
               docs.length > 0 && <PropertyDocument property={property}></PropertyDocument>

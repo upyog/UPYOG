@@ -225,7 +225,7 @@ const SearchApplication = ({ showTable, showLoader, isLoading, tenantId, t, onSu
         data &&
         data.length > 0 && (
           <div style={{ backgroundColor: "white" }}>
-            <div className="sideContent" style={{ float: "left", padding: "20px 10px", fontSize: "24px", fontWeight: "700", fontFamily: "Open Sans" }}>
+            <div className="sideContent" style={{ float: "left", padding: "20px 10px", fontSize: "16px", fontWeight: "700", fontFamily: "Open Sans" }}>
               {t("ABG_SEARCH_RESULTS_HEADER")}
             </div>
             <div className="sideContent" style={{ float: "right", padding: "10px 30px" }}>

@@ -38,7 +38,7 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
     <React.Fragment>
       <div>
         {isAmalgamation &&
-          <div style={isMobile ? {} : { maxWidth: "960px", minWidth: "640px", marginRight: "auto", padding: '15px', background: '#cde2e4',marginBottom : '5px', borderRadius: "6px", color: "#01504c" }}>
+          <div style={isMobile ? {} : { maxWidth: "960px", minWidth: "640px", marginRight: "auto", padding: '15px', background: '#cde2e4',marginBottom : '5px', borderRadius: "6px", color: "#0f4f9e" }}>
           <div style={{fontWeight: 'bold', fontSize: '18px'}}>Amalgamation Property Details</div>
           {amalgamationDetails && amalgamationDetails?.propertyDetails && amalgamationDetails?.propertyDetails.length>0 && 
           amalgamationDetails.propertyDetails.map((e)=> (

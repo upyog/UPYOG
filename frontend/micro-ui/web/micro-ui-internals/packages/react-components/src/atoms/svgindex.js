@@ -57,13 +57,13 @@ const ArrowForward = ({ className, onClick }) => (
 
 const ArrowToFirst = ({ className, onClick }) => (
   <svg width="18px" height="18px" viewBox="0 0 13 12" fill="black" xmlns="http://www.w3.org/2000/svg" className={className} onClick={onClick}>
-    <path d="M12.41 10.59L7.82 6L12.41 1.41L11 0L5 6L11 12L12.41 10.59ZM0 0H2V12H0V0Z" fill="#01504c"></path>
+    <path d="M12.41 10.59L7.82 6L12.41 1.41L11 0L5 6L11 12L12.41 10.59ZM0 0H2V12H0V0Z" fill="#0f4f9e"></path>
   </svg>
 );
 
 const ArrowToLast = ({ className, onClick }) => (
   <svg width="18px" height="18px" viewBox="0 0 13 12" fill="black" xmlns="http://www.w3.org/2000/svg" className={className} onClick={onClick}>
-    <path d="M0.589844 1.41L5.17984 6L0.589844 10.59L1.99984 12L7.99984 6L1.99984 0L0.589844 1.41ZM10.9998 0H12.9998V12H10.9998V0Z" fill="#01504c" />
+    <path d="M0.589844 1.41L5.17984 6L0.589844 10.59L1.99984 12L7.99984 6L1.99984 0L0.589844 1.41ZM10.9998 0H12.9998V12H10.9998V0Z" fill="#0f4f9e" />
   </svg>
 );
 
@@ -260,7 +260,7 @@ const DocumentSVG = () => (
   <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M46.6667 6.6665H20C16.3334 6.6665 13.3667 9.6665 13.3667 13.3332L13.3334 66.6665C13.3334 70.3332 16.3 73.3332 19.9667 73.3332H60C63.6667 73.3332 66.6667 70.3332 66.6667 66.6665V26.6665L46.6667 6.6665ZM53.3334 59.9998H26.6667V53.3332H53.3334V59.9998ZM53.3334 46.6665H26.6667V39.9998H53.3334V46.6665ZM43.3334 29.9998V11.6665L61.6667 29.9998H43.3334Z"
-      fill="#01504c"
+      fill="#0f4f9e"
     />
   </svg>
 );
@@ -275,7 +275,7 @@ const PDFSvg = ({
   <svg {...{ className, width, height, style, viewBox }} fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M46.6667 6.6665H20C16.3334 6.6665 13.3667 9.6665 13.3667 13.3332L13.3334 66.6665C13.3334 70.3332 16.3 73.3332 19.9667 73.3332H60C63.6667 73.3332 66.6667 70.3332 66.6667 66.6665V26.6665L46.6667 6.6665ZM53.3334 59.9998H26.6667V53.3332H53.3334V59.9998ZM53.3334 46.6665H26.6667V39.9998H53.3334V46.6665ZM43.3334 29.9998V11.6665L61.6667 29.9998H43.3334Z"
-      fill="#01504c"
+      fill="#0f4f9e"
     />
   </svg>
 );
@@ -329,7 +329,7 @@ const FilterSvg = ({ className }) => (
 
 const SortSvg = ({ className }) => (
   <svg width="24" height="16" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-    <path d="M8 16H24V13.3333H8V16ZM0 0V2.66667H24V0H0ZM8 9.33333H24V6.66667H8V9.33333Z" fill="#01504c" />
+    <path d="M8 16H24V13.3333H8V16ZM0 0V2.66667H24V0H0ZM8 9.33333H24V6.66667H8V9.33333Z" fill="#0f4f9e" />
   </svg>
 );
 
@@ -470,7 +470,7 @@ const DownloadIcon = ({ styles, className, onClick }) => (
   >
     <path
       d="M18.8337 8.5H13.5003V0.5H5.50033V8.5H0.166992L9.50033 17.8333L18.8337 8.5ZM0.166992 20.5V23.1667H18.8337V20.5H0.166992Z"
-      fill="#01504c"
+      fill="#0f4f9e"
     />
   </svg>
 );
@@ -996,7 +996,7 @@ const PrintBtnCommon = () => (
   <svg width="41" height="41" viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M32.1663 13.8333H8.83301C6.06634 13.8333 3.83301 16.0667 3.83301 18.8333V28.8333H10.4997V35.5H30.4997V28.8333H37.1663V18.8333C37.1663 16.0667 34.933 13.8333 32.1663 13.8333ZM27.1663 32.1667H13.833V23.8333H27.1663V32.1667ZM32.1663 20.5C31.2497 20.5 30.4997 19.75 30.4997 18.8333C30.4997 17.9167 31.2497 17.1667 32.1663 17.1667C33.083 17.1667 33.833 17.9167 33.833 18.8333C33.833 19.75 33.083 20.5 32.1663 20.5ZM30.4997 5.5H10.4997V12.1667H30.4997V5.5Z"
-      fill="#01504c"
+      fill="#0f4f9e"
     />
   </svg>
 );

@@ -178,7 +178,7 @@ const CancelBills = ({ tenantId, onSubmit, data, count,isLoading,resultOk }) => 
 
     return (
         <>
-            <Header styles={{ fontSize: "24px" }}>
+            <Header styles={{ fontSize: "16px" }}>
                 {t("ABG_CANCEL_BILL")}
             </Header>
             < Card className={"card-search-heading"}>
