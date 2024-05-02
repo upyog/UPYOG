@@ -75,12 +75,12 @@ public class UserRequest {
     private String permanentAddress;
 
     @SafeHtml
-    @Pattern(regexp = UserServiceConstants.PATTERN_CITY)
+   // @Pattern(regexp = UserServiceConstants.PATTERN_CITY)
     @Size(max = 50)
     private String permanentCity;
 
     @SafeHtml
-    @Pattern(regexp = UserServiceConstants.PATTERN_PINCODE)
+  //  @Pattern(regexp = UserServiceConstants.PATTERN_PINCODE)
     @Size(max = 10)
     private String permanentPinCode;
 
@@ -88,7 +88,7 @@ public class UserRequest {
     @Size(max = 300)
     private String correspondenceAddress;
 
-    @Pattern(regexp = UserServiceConstants.PATTERN_CITY)
+    //@Pattern(regexp = UserServiceConstants.PATTERN_CITY)
     @Size(max = 50)
     private String correspondenceCity;
 
