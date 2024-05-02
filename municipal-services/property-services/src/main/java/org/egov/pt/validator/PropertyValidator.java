@@ -842,7 +842,7 @@ public class PropertyValidator {
 
 			if(owner.getStatus().equals(Status.INACTIVE))
 			{
-				if(owner.getIsOwnerdead())
+				if(null!=owner.getIsOwnerdead()&&!StringUtils.isEmpty(owner.getIsOwnerdead()) && owner.getIsOwnerdead())
 					isOwnerDead=true;
 			}
 
