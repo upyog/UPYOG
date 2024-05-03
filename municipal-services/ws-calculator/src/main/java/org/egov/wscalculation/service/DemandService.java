@@ -173,7 +173,127 @@ public class DemandService {
 			createdDemands = updateDemandForCalculation(request.getRequestInfo(), updateCalculations, fromDate, toDate,isForConnectionNo, request.getIsDisconnectionRequest(),request.getIsReconnectionRequest());
 		return createdDemands;
 	}
-	
+	/**
+	 * Creates or updates Demand
+	 * 
+	 * @param requestInfo  The RequestInfo of the calculation request
+	 * @param calculations The Calculation Objects for which demand has to be
+	 *                     generated or updated
+	 */
+	public List<Demand> generateDemandForBillingCycleInBulk(CalculationReq request, List<Calculation> calculations,
+			Map<String, Object> masterMap, boolean isForConnectionNo) {
+
+		boolean isDemandAvailable = false;
+		List<Demand> createDemands = new ArrayList<>();
+		List<Demand> updateDemands = new ArrayList<>();
+		List<Demand> demandRes = new ArrayList<>();
+
+		try {
+		if (!CollectionUtils.isEmpty(calculations)) {
+			for (Calculation calculation : calculations) {		
+				// Collect required parameters for demand search
+				String tenantId = calculation.getTenantId();
+				Long fromDateSearch = null;
+				Long toDateSearch = null;
+				String consumerCodes;
+				if (isForConnectionNo) {
+					fromDateSearch = calculation.getFrom();
+					toDateSearch = calculation.getTo();
+					consumerCodes = calculation.getConnectionNo();
+				} else {
+					consumerCodes = calculation.getApplicationNO();
+				}
+
+				isDemandAvailable = waterCalculatorDao.isConnectionDemandAvailableForBillingCycle(tenantId, fromDateSearch, toDateSearch, consumerCodes);
+
+				log.info("isDemandAvailable: {} for consumercode: {}, taxperiod from: {} and To: {}", isDemandAvailable, consumerCodes, fromDateSearch, toDateSearch);
+				// If demand already exists add it updateCalculations else
+				if (!isDemandAvailable)
+					createDemands.add(createDemandForNonMeteredInBulk(request.getRequestInfo(), calculation, masterMap, isForConnectionNo,
+							fromDateSearch, toDateSearch));
+				else
+					updateDemands.add(createDemandForNonMeteredInBulk(request.getRequestInfo(), calculation, masterMap, isForConnectionNo,
+							toDateSearch, toDateSearch));
+			}
+		}
+
+		//Save the bulk demands for metered connections
+		if (!createDemands.isEmpty()) {
+			log.info("Creating Non metered Demands list size: {} and Demand Object: {}" , createDemands.size(), mapper.writeValueAsString(createDemands));
+			demandRes.addAll(demandRepository.saveDemand(request.getRequestInfo(), createDemands));
+
+		}
+		//Save the bulk demands for non metered connections
+		if(!updateDemands.isEmpty()) {
+			log.info("Updating Non metered Demands list size: {} and Demand Object: {}" , updateDemands.size(), mapper.writeValueAsString(updateDemands));
+			demandRes.addAll(demandRepository.updateDemand(request.getRequestInfo(), updateDemands));
+
+		}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return demandRes;
+	}
+	/**
+	 * 
+	 * @param requestInfo  RequestInfo
+	 * @param calculations List of Calculation
+	 * @param masterMap    Master MDMS Data
+	 * @return Returns list of demands
+	 */
+	private Demand createDemandForNonMeteredInBulk(RequestInfo requestInfo, Calculation calculation,
+			Map<String, Object> masterMap, boolean isForConnectionNO, long taxPeriodFrom, long taxPeriodTo) {
+
+			WaterConnection connection = calculation.getWaterConnection();
+			if (connection == null) {
+				throw new CustomException("INVALID_WATER_CONNECTION",
+						"Demand cannot be generated for "
+								+ (isForConnectionNO ? calculation.getConnectionNo() : calculation.getApplicationNO())
+								+ " Water Connection with this number does not exist ");
+			}
+			WaterConnectionRequest waterConnectionRequest = WaterConnectionRequest.builder().waterConnection(connection)
+					.requestInfo(requestInfo).build();
+			
+			log.info("waterConnectionRequest: {}",waterConnectionRequest);
+			Property property = wsCalculationUtil.getProperty(waterConnectionRequest);
+			log.info("Property: {}",property);
+			
+			String tenantId = calculation.getTenantId();
+			String consumerCode = isForConnectionNO ? calculation.getConnectionNo() : calculation.getApplicationNO();
+			User owner = property.getOwners().get(0).toCommonUser();
+			if (!CollectionUtils.isEmpty(waterConnectionRequest.getWaterConnection().getConnectionHolders())) {
+				owner = waterConnectionRequest.getWaterConnection().getConnectionHolders().get(0).toCommonUser();
+			}
+			List<DemandDetail> demandDetails = new LinkedList<>();
+			calculation.getTaxHeadEstimates().forEach(taxHeadEstimate -> {
+				demandDetails.add(DemandDetail.builder().taxAmount(taxHeadEstimate.getEstimateAmount())
+						.taxHeadMasterCode(taxHeadEstimate.getTaxHeadCode()).collectionAmount(BigDecimal.ZERO)
+						.tenantId(tenantId).build());
+			});
+			@SuppressWarnings("unchecked")
+			Map<String, Object> financialYearMaster = (Map<String, Object>) masterMap
+					.get(WSCalculationConstant.BILLING_PERIOD);
+
+			if (taxPeriodFrom == 0 && taxPeriodTo == 0) {
+				taxPeriodFrom = (Long) financialYearMaster.get(WSCalculationConstant.STARTING_DATE_APPLICABLES);
+				taxPeriodTo = (Long) financialYearMaster.get(WSCalculationConstant.ENDING_DATE_APPLICABLES);
+			}
+			Long expiryDaysInmillies = (Long) financialYearMaster.get(WSCalculationConstant.Demand_Expiry_Date_String);
+			//Long expiryDate = System.currentTimeMillis() + expiryDaysInmillies;
+
+			BigDecimal minimumPayableAmount = calculation.getTotalAmount();
+			String businessService = isForConnectionNO ? configs.getBusinessService()
+					: WSCalculationConstant.ONE_TIME_FEE_SERVICE_FIELD;
+
+			addRoundOffTaxHead(calculation.getTenantId(), demandDetails);
+			Demand demand = Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner)
+						.minimumAmountPayable(minimumPayableAmount).tenantId(tenantId).taxPeriodFrom(taxPeriodFrom)
+						.taxPeriodTo(taxPeriodTo).consumerType("waterConnection").businessService(businessService)
+						.status(StatusEnum.valueOf("ACTIVE")).billExpiryTime(expiryDaysInmillies).build();
+						
+		return demand;
+	}
 	/**
 	 * 
 	 * @param calculationReq - calculation request object
@@ -1072,7 +1192,29 @@ public class DemandService {
 		return notificationSent;
 	}
 
-	
+	public List<String> fetchBillSchedulerSingle(Set<String> consumerCodes,String tenantId, RequestInfo requestInfo) {
+		List<String> consumercodesFromRes = new ArrayList<>() ;
+		for (String consumerCode : consumerCodes) {
+
+			try {
+				
+				StringBuilder fetchBillURL = calculatorUtils.getFetchBillURL(tenantId, consumerCode);
+
+				Object result = serviceRequestRepository.fetchResult(fetchBillURL, RequestInfoWrapper.builder().requestInfo(requestInfo).build());
+				log.info("Bills generated for the consumercodes: {}", fetchBillURL);
+				BillResponseV2 billResponse = mapper.convertValue(result, BillResponseV2.class);
+				List<BillV2> bills = billResponse.getBill();
+				if(bills != null && !bills.isEmpty()) {
+					consumercodesFromRes.addAll(bills.stream().map(BillV2::getConsumerCode).collect(Collectors.toList()));
+					log.info("Bill generated successfully for consumercode: {}, TenantId: {}" ,consumerCode, tenantId);
+				}
+
+			} catch (Exception ex) {
+				log.error("Fetch Bill Error For tenantId:{} consumercode: {} and Exception is: {}",tenantId,consumerCodes, ex);
+			}
+		}
+		return consumercodesFromRes;
+	}
 	public boolean fetchBill(List<Demand> demandResponse, RequestInfo requestInfo,Map<String, Object> masterMap) {
 		boolean notificationSent = false;
 		List<Demand> errorMap = new ArrayList<>();

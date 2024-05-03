@@ -46,7 +46,8 @@ public class DemandGenerationConsumer {
 	
 	@Autowired
 	private WSCalculationConfiguration config;
-
+	@Autowired
+	private WSCalculationServiceImpl wSCalculationServiceImpl;
 	@Value("${kafka.topics.bulk.bill.generation.audit}")
 	private String bulkBillGenAuditTopic;
 
@@ -114,6 +115,35 @@ public class DemandGenerationConsumer {
 				log.error(builder.toString(), e);
 			}
 		});
+	}
+	/**
+	 * Generate demand in bulk on given criteria
+	 * 
+	 * @param request
+	 *            Calculation request
+	 * @param masterMap
+	 *            master data
+	 * @param errorTopic
+	 *            error topic
+	 */
+	private void generateDemandInBatch(CalculationReq request, Map<String, Object> masterMap, String errorTopic) {
+		try {
+//			for(CalculationCriteria criteria : request.getCalculationCriteria()){
+//				Boolean genratedemand = true;
+////				Application validation removing for migrated connection as of now 
+////				wsCalulationWorkflowValidator.applicationValidation(request.getRequestInfo(),criteria.getTenantId(),criteria.getConnectionNo(),genratedemand);
+//			}
+			wSCalculationServiceImpl.bulkDemandGeneration(request, masterMap);
+			String connectionNoStrings = request.getCalculationCriteria().stream()
+					.map(criteria -> criteria.getConnectionNo()).collect(Collectors.toSet()).toString();
+			StringBuilder str = new StringBuilder("Demand generated Successfully. For records : ")
+					.append(connectionNoStrings);
+			log.info(str.toString());
+		} catch (Exception ex) {
+			log.error("Demand generation error: ", ex);
+			producer.push(errorTopic, request);
+		}
+
 	}
 
 	/**
