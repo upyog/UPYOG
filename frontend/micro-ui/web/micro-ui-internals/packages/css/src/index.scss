@@ -186,7 +186,7 @@
 }
 
 .clear-search-label {
-  color: #208f74;
+  color: #0f4f9e;
   cursor: pointer;
 }
 
@@ -208,7 +208,7 @@
   @apply flex mb-sm;
 
   .download-button {
-    color: #208f74;
+    color: #0f4f9e;
     margin-left: 8px;
     white-space: nowrap;
 
@@ -216,7 +216,7 @@
 }
 
 .check-page-link-button {
-  color: #208f74 !important;
+  color: #0f4f9e !important;
 }
 
 .pt-application-download-btn {
@@ -239,7 +239,7 @@
   gap: 10px;
 
   svg {
-    fill: #208f74;
+    fill: #0f4f9e;
   }
 
   color: #5a1166;
@@ -540,7 +540,7 @@ input[type="number"] {
       padding: 8px 24px;
       color: white;
       cursor: pointer;
-      background-color: #208f74;
+      background-color: #0f4f9e;
     }
   }
 }
@@ -733,7 +733,7 @@ min-height: calc(100vh - 8em);
     background-color:#d7aefc !important;
 }
 .icon-banner-employee svg{
-  background-color:#208f74 !important;
+  background-color:#0f4f9e !important;
   width: 40px;
   height: 40px;
 }

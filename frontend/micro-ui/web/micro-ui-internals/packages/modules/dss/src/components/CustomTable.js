@@ -323,7 +323,7 @@ const CustomTable = ({ data = {}, onSearch, setChartData, setChartDenomination, 
           if (response?.responseData?.drillDownChartId !== "none" && filter !== undefined) {
             return (
               <span
-                style={{ color: "#208f74", cursor: "pointer" }}
+                style={{ color: "#0f4f9e", cursor: "pointer" }}
                 onClick={() =>
                   getDrilldownCharts(
                     cellValue?.includes("DSS_TB_") ? row?.original?.key : cellValue,

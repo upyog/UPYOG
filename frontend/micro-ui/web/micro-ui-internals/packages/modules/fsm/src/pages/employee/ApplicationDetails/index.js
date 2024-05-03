@@ -232,7 +232,7 @@ const ApplicationDetails = (props) => {
           <Card className="fsm" style={{ position: "relative" }}>
             {/* {!DSO && (
               <LinkButton
-                label={<span style={{ color: "#208f74", marginLeft: "8px" }}>{t("ES_APPLICATION_DETAILS_VIEW_AUDIT_TRAIL")}</span>}
+                label={<span style={{ color: "#0f4f9e", marginLeft: "8px" }}>{t("ES_APPLICATION_DETAILS_VIEW_AUDIT_TRAIL")}</span>}
                 style={{ position: "absolute", top: 0, right: 20 }}
                 onClick={() => {
                   history.push(props.parentRoute + "/application-audit/" + applicationNumber);

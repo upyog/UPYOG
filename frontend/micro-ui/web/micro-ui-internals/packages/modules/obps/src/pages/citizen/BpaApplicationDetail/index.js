@@ -376,7 +376,7 @@ const BpaApplicationDetail = () => {
     return (
       <div>
         <span>{`${t("BPA_I_AGREE_THE_LABEL")} `}</span>
-        <span style={{color: "#208f74", cursor: "pointer"}} onClick={() => setShowTermsModal(!showTermsModal)}>{t(`BPA_TERMS_AND_CONDITIONS_LABEL`)}</span>
+        <span style={{color: "#0f4f9e", cursor: "pointer"}} onClick={() => setShowTermsModal(!showTermsModal)}>{t(`BPA_TERMS_AND_CONDITIONS_LABEL`)}</span>
       </div>
     )
   }
@@ -419,7 +419,7 @@ const BpaApplicationDetail = () => {
                 {/* to get common values */}
                 {(detail?.isCommon && detail?.values?.length > 0) ? detail?.values?.map((value) => {
                   if (value?.isUnit) return <Row className="border-none" label={t(value?.title)} text={value?.value ? `${getTranslatedValues(value?.value, value?.isNotTranslated)} ${t(value?.isUnit)}` : t("CS_NA")} />
-                  if (value?.isLink) return <Row className="border-none" label={t(value?.title)} text={<div><Link to={value?.to}><span className="link" style={{color: "#208f74"}}>{value?.value}</span></Link></div>} />
+                  if (value?.isLink) return <Row className="border-none" label={t(value?.title)} text={<div><Link to={value?.to}><span className="link" style={{color: "#0f4f9e"}}>{value?.value}</span></Link></div>} />
                   else return <Row className="border-none" label={t(value?.title)} text={getTranslatedValues(value?.value, value?.isNotTranslated) || t("CS_NA")} />
                 }) : null}
                 {/* to get additional common values */}
