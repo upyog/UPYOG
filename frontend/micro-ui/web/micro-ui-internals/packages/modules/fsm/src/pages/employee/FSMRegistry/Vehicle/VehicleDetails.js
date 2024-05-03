@@ -322,11 +322,11 @@ const VehicleDetails = (props) => {
                         <>
                           <div className={`${index === detail?.values?.length - 1 ? "row last" : "row"} border-none`}>
                             <h2>{t(value.title)}</h2>
-                            <div className="value" style={{ color: "#208f74", display: "flex" }}>
+                            <div className="value" style={{ color: "#0f4f9e", display: "flex" }}>
                               {t(value.value) || "N/A"}
                               {value.value === "ES_FSM_REGISTRY_DETAILS_ADD_VENDOR" && (
                                 <span onClick={() => onActionSelect("ADD_VENDOR")}>
-                                  <AddIcon className="" fill="#208f74" styles={{ cursor: "pointer", marginLeft: "20px", height: "24px" }} />
+                                  <AddIcon className="" fill="#0f4f9e" styles={{ cursor: "pointer", marginLeft: "20px", height: "24px" }} />
                                 </span>
                               )}
                               {value.value != "ES_FSM_REGISTRY_DETAILS_ADD_VENDOR" && (
@@ -336,7 +336,7 @@ const VehicleDetails = (props) => {
                               )}
                               {value.value != "ES_FSM_REGISTRY_DETAILS_ADD_VENDOR" && (
                                 <span onClick={() => onActionSelect("DELETE_VENDOR")}>
-                                  <DeleteIcon className="delete" fill="#208f74" style={{ cursor: "pointer", marginLeft: "20px" }} />
+                                  <DeleteIcon className="delete" fill="#0f4f9e" style={{ cursor: "pointer", marginLeft: "20px" }} />
                                 </span>
                               )}
                             </div>

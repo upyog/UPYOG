@@ -29,7 +29,7 @@ const Acknowledgement = (props) => {
           info={bpaBusinessService == "BPA" ? t("BPA_PERMIT_APPLICATION_NUMBER_LABEL") : t("BPA_OCCUPANCY_CERTIFICATE_APPLICATION_NUMBER_LABEL")}
           successful={true}
           style={{ padding: "10px" }}
-          headerStyles={{fontSize: "24px"}}
+          headerStyles={{fontSize: "16px"}}
         />
         <CardText>{getAppAction == "BPA_SUBMIT_APP" ? t(`BPA_SUBMIT_SUB_HEADER_${bpaBusinessService}_${bpaAction}_${typeOfArchitect ? typeOfArchitect : "ARCHITECT"}_${stringReplaceAll(bpaStatus," ","_").toUpperCase()}`) : t(`BPA_SUB_HEADER_${bpaBusinessService}_${bpaAction}_${typeOfArchitect ? typeOfArchitect : "ARCHITECT"}_${stringReplaceAll(bpaStatus," ","_").toUpperCase()}`)}</CardText>
         <div style={{ marginTop: "12px", padding: "10px" }}>

@@ -615,7 +615,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
           </div>
         )} 
         <CheckBox
-          label={t("Is this property is a protion of property?")}
+          label={t("Is this property is a portion of property?")}
           onChange={onSetIsApportion}
           styles={{ height: "auto",paddingBottom: '10px' }}
           //disabled={!agree}

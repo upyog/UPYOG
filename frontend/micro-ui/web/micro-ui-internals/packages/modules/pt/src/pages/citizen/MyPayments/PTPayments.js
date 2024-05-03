@@ -9,7 +9,7 @@ const PTPayments = ({ application }) => {
   return (
     <Card>
       <KeyNote
-        noteStyle={{ fontSize: "24px", fontWeight: "700" }}
+        noteStyle={{ fontSize: "16px", fontWeight: "700" }}
         keyValue={t("CS_PAYMENT_AMOUNT_PAID_WITHOUT_SYMBOL")}
         note={`₹ ${application?.paymentDetails?.[0]?.totalAmountPaid}`}
       />

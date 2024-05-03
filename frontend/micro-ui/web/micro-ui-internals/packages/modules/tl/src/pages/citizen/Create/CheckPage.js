@@ -105,7 +105,7 @@ const WrapCheckPage = ({ onSubmit, value }) => {
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={4} /> : null}
 
-      <Header styles={{ fontSize: "24px" }}>{t("TL_COMMON_SUMMARY")}</Header>
+      <Header styles={{ fontSize: "16px" }}>{t("TL_COMMON_SUMMARY")}</Header>
       <Card style={{ paddingRight: "16px" }}>
         <CardHeader styles={{ fontSize: "28px" }}>{t("TL_LOCALIZATION_TRADE_DETAILS")}</CardHeader>
         <StatusTable>

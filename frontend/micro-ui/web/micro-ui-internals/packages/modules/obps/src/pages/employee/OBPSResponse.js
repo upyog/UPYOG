@@ -85,13 +85,13 @@ const OBPSResponse = (props) => {
             info={getApplicationNoLabel()}
             successful={applicationData?.status == "PERMIT REVOCATION" || applicationData?.status == "REJECTED" ? false : true}
             style={{ padding: "10px" }}
-            headerStyles={{ fontSize: "24px", wordBreak: "break-word" }}
+            headerStyles={{ fontSize: "16px", wordBreak: "break-word" }}
           />
           <CardText style={{ paddingBottom: "10px", marginBottom: "10px" }}>{getSubHeaderMessage()}</CardText>
           {applicationData?.status == "PERMIT REVOCATION" ?
             <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} onClick={printReciept}>
               <svg width="20" height="23" viewBox="0 0 20 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M19.3334 8H14V0H6.00002V8H0.666687L10 17.3333L19.3334 8ZM0.666687 20V22.6667H19.3334V20H0.666687Z" fill="#208f74" />
+                <path d="M19.3334 8H14V0H6.00002V8H0.666687L10 17.3333L19.3334 8ZM0.666687 20V22.6667H19.3334V20H0.666687Z" fill="#0f4f9e" />
               </svg>
               {t("BPA_REVOCATION_PDF_LABEL")}
             </div> : null
@@ -124,7 +124,7 @@ const OBPSResponse = (props) => {
                       />
                       <Link to={`/digit-ui/employee`} >
                         {/* <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} /> */}
-                        <span style={{ color: "#208f74", margin: "0px 10px" }}>{t("CORE_COMMON_GO_TO_HOME")}</span>
+                        <span style={{ color: "#0f4f9e", margin: "0px 10px" }}>{t("CORE_COMMON_GO_TO_HOME")}</span>
                       </Link>
                     </div> : <SubmitBar
                       label={t("CORE_COMMON_GO_TO_HOME")}

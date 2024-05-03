@@ -232,22 +232,22 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   return (
     <div className="citizen-form-wrapper">
       <div>
-        <div style={{marginBottom: "20%", fontStyle: 'italic', fontSize: '20px', WebkitTextFillColor: 'transparent', background: 'linear-gradient(to right, #2521f3, #028a30, #7f5f05, #9e8e03)', WebkitBackgroundClip: 'text'}}>
+        <div style={{marginBottom: "20%", fontStyle: 'italic', fontSize: '22px', WebkitTextFillColor: 'transparent', background: 'linear-gradient(to right, rgb(247 247 251), rgb(226 249 5), rgb(233 233 233), rgb(13 13 13)) text', WebkitBackgroundClip: 'text', fontWeight: "600"}}>
           <div> Simplify, Pay, Thrive: </div>
           <div> Let Your Property Tax Portal Lead the Way! </div>
         </div>
         
         <div>
-          <img src="https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Khongjom_War_Memorial.png" style={{width: '150px', height: '200px', display: 'inline', boxShadow: '0px 0px 0px 5px white'}}/>
-          <img src="https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Kangla-Museum.png" style={{width: '150px', height: '200px', display: 'inline', boxShadow: '0px 0px 0px 5px white', marginLeft: '20px'}}/>
-          <img src="https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Lainingthou_Sanamahi_Temple.png" style={{width: '150px', height: '200px', display: 'inline', boxShadow: '0px 0px 0px 5px white', marginLeft: '20px'}}/>
+          {/* <img src="https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Khongjom_War_Memorial.png" style={{width: '150px', height: '200px', display: 'inline', boxShadow: '0px 0px 0px 5px white'}}/> */}
+          <img src="https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Kangla-Museum.png" style={{width: '340px', height: '200px', display: 'inline', boxShadow: '0px 0px 0px 5px white', position: "relative", left: "40px", top: "-120px"}}/>
+          <img src="https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Lainingthou_Sanamahi_Temple.png" style={{width: '340px', height: '200px', display: 'inline', boxShadow: '0px 0px 0px 5px white', marginLeft: '20px', position: "relative", left: "-80px"}}/>
 
         </div>
         
       </div>
       
       <Switch>
-        <AppContainer style={{position: "relative", right: "-40%", width: '410px'}}>
+        <AppContainer style={{ right: "-10%", width: '410px', marginTop: "48px", marginLeft: "100px"}}>
           {/* <BackButton /> */}
           <Route path={`${path}`} exact>
             <SelectMobileNumber

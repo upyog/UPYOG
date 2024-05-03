@@ -10,7 +10,7 @@ const BannerPicker = (props) => {
   message={props.message} 
   applicationNumber={props?.applicationNumber}
   successful={props.isSuccess} style={{ padding: "10px" }}
-  headerStyles={{ fontSize: "24px" }}
+  headerStyles={{ fontSize: "16px" }}
   infoOneStyles={{ paddingTop: "20px" }}/>;
 };
 

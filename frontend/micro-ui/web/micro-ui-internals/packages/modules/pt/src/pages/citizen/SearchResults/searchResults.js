@@ -153,7 +153,7 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
             <KeyNote
               keyValue={t("PT_AMOUNT_DUE")}
               note={`₹ ${modalData?.total_due?.toLocaleString("en-IN")}`}
-              noteStyle={{ fontSize: "24px", fontWeight: "bold" }}
+              noteStyle={{ fontSize: "16px", fontWeight: "bold" }}
             />
             <p>
               {t("PT_YOU_HAVE") +

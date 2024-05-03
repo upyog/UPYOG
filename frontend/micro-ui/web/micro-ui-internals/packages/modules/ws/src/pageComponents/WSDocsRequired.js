@@ -71,12 +71,12 @@ const WSDocsRequired = ({ onSelect, userType, onSkip, config }) => {
   return (
     <div style={{ margin: "16px" }}>
       <div>
-        <Header styles={{ fontSize: "24px", marginLeft: "18px", display: "flex", justifyContent: "space-between", marginRight: "12px" }}>
+        <Header styles={{ fontSize: "16px", marginLeft: "18px", display: "flex", justifyContent: "space-between", marginRight: "12px" }}>
           <div>
             {t("WS_WATER_AND_SEWERAGE_NEW_CONNECTION_LABEL")}
           </div>
           <div onClick={printDiv} style={{cursor: "pointer", display: "flex"}}>
-            <PrintBtnCommon /><div style={{fontSize: "24px", fontWeight: "400", color: "#0B0C0C"}}>{"Print"}</div>
+            <PrintBtnCommon /><div style={{fontSize: "16px", fontWeight: "400", color: "#0B0C0C"}}>{"Print"}</div>
           </div>
         </Header>
       </div>
@@ -86,7 +86,7 @@ const WSDocsRequired = ({ onSelect, userType, onSkip, config }) => {
             <div id="documents-div">
             {wsDocs?.Documents?.map((doc, index) => (
               <div key={index} style={{ marginTop: "16px" }}>
-                <CardSectionHeader style={{ marginBottom: "16px", lineHeight: "28px", fontSize: "24px" }}>{t(doc?.code.replace('.', '_'))}</CardSectionHeader>
+                <CardSectionHeader style={{ marginBottom: "16px", lineHeight: "28px", fontSize: "16px" }}>{t(doc?.code.replace('.', '_'))}</CardSectionHeader>
                 {doc.dropdownData && doc.dropdownData.length > 1 && <p style={{ lineHeight: "24px", fontSize: "16px" }}>{t(`${doc?.code.replace('.', '_')}_DESCRIPTION`)}</p>}
                 <div style={{ margin: "16px 0", lineHeight: "18px", fontSize: "16px" }}>
                   {doc?.dropdownData?.map((value, idx) => <p style={{ fontWeight: "bold", lineHeight: "32px" }}>{`${idx + 1}. ${t(value?.i18nKey)}`}</p>)}

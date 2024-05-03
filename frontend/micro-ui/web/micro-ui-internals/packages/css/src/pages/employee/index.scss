@@ -54,7 +54,7 @@
       margin-top: 12px;
 
       .user-img-txt {
-        background: #208f74;
+        background: #0f4f9e;
         padding: 10px 15px;
         border-radius: 50%;
         color: white;
@@ -198,7 +198,7 @@
     padding-bottom: 5rem;
     background-blend-mode: lighten;
     background-size: cover;
-    background-color: #208f74 !important;
+    background-color: #0f4f9e !important;
 
 
     .actions {
@@ -226,9 +226,9 @@
       padding: 20px;
       font-size: 14px;
       &.active {
-        color: #208f74 !important;
+        color: #0f4f9e !important;
 
-        border-right: 4px solid #208f74;
+        border-right: 4px solid #0f4f9e;
         svg {
           fill: #ffffff !important;
         }
@@ -256,12 +256,12 @@
       }
 
       &:hover {
-        color: #208f74 !important;
+        color: #0f4f9e !important;
         background-color: #486480;
 
         cursor: pointer;
         svg {
-          fill: #208f74 !important;
+          fill: #0f4f9e !important;
         }
       }
       .search-icon-wrapper {
@@ -303,11 +303,11 @@
         }
       }
       &.active {
-        color: #208f74 !important;
+        color: #0f4f9e !important;
 
-        border-right: 4px solid #208f74;
+        border-right: 4px solid #0f4f9e;
         svg {
-          fill: #208f74 !important;
+          fill: #0f4f9e !important;
         }
       }
     }

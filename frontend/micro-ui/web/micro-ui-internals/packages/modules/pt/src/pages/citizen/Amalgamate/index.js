@@ -147,7 +147,7 @@ const AmalgamationCitizen = (props) => {
     <React.Fragment>
       <div style={{marginTop: '16px', marginBottom: '16px',backgroundColor: '#ffffff9e', padding: '20px', maxWidth: '960px', borderRadius: "6px"}}>
         <span style={{fontSize: '20px', fontWeight: 'bold'}}>Properties for Amalgamtion</span>
-        <span style={{float: 'right'}}><button style={{textDecoration: 'underline', color: "#208f74", fontStyle: 'italic'}} onClick={(e)=>onShowModal(true)}>Add Property</button></span>
+        <span style={{float: 'right'}}><button style={{textDecoration: 'underline', color: "#0f4f9e", fontStyle: 'italic'}} onClick={(e)=>onShowModal(true)}>Add Property</button></span>
         <div style={{marginTop: '20px'}}>
           {propertyDetails && propertyDetails.length>0 && 
               propertyDetails.map((result, i)=>
