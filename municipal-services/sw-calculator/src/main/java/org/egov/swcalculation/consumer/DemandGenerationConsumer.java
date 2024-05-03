@@ -3,6 +3,7 @@ package org.egov.swcalculation.consumer;
 import java.util.*;
 
 import org.egov.swcalculation.validator.SWCalculationWorkflowValidator;
+import org.egov.swcalculation.config.SWCalculationConfiguration;
 import org.egov.swcalculation.web.models.CalculationCriteria;
 import org.egov.swcalculation.web.models.CalculationReq;
 import org.egov.swcalculation.producer.SWCalculationProducer;
@@ -39,6 +40,9 @@ public class DemandGenerationConsumer {
 
 	@Autowired
 	private SWCalculationWorkflowValidator swCalculationWorkflowValidator;
+	
+	@Autowired
+	private SWCalculationConfiguration config;
 	
 	@Value("${kafka.topics.bulk.bill.generation.audit}")
 	private String bulkBillGenAuditTopic;
@@ -88,7 +92,7 @@ public class DemandGenerationConsumer {
 		});
 		CalculationReq request = CalculationReq.builder().calculationCriteria(calculationCriteria)
 				.requestInfo(calculationReq.getRequestInfo()).isconnectionCalculation(true).build();
-		generateDemandInBatch(request, masterMap, config.getDeadLetterTopicBatch());
+		generateDemandInBatch(request);
 		log.info("Number of batch records:  " + records.size());
 	}
 	
@@ -116,7 +120,7 @@ public class DemandGenerationConsumer {
 					try {
 						log.info("Generating Demand for Criteria : " + calcCriteria);
 						// processing single
-						generateDemandInBatch(request, masterMap, config.getDeadLetterTopicSingle());
+						generateDemandInBatch(request);
 					} catch (final Exception e) {
 						StringBuilder builder = new StringBuilder();
 						builder.append("Error while generating Demand for Criteria: ").append(calcCriteria);
