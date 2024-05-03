@@ -251,6 +251,15 @@ public class SWCalculationConstant {
 	public static final String SW_METER_CHARGE = "SW_METER_CHARGE";
 
 	public static final String SW_SECURITY_CHARGE = "SW_SECURITY_CHARGE";
+	
+	public static final String SW_SECURITY_DEPOSIT = "SW_SECURITY_DEPOSIT";
+	
+	public static final String SW_SECURITY_DEPOSIT_CONST = "securityDeposit";
+
+	public static final String SW_CONNECTION_FEE = "SW_CONNECTION_FEE";
+
+	public static final String SW_CONNECTION_FEE_CONST = "connectionFee";
+    public static final String OTHER_FEE_CONST = "othersFee";
 
 	public static final String SW_OTHER_CHARGE = "SW_OTHER_CHARGE";
 
@@ -263,6 +272,8 @@ public class SWCalculationConstant {
 	public static final String METER_COST_CONST = "meterCost";
 
 	public static final String OTHER_CHARGE_CONST = "other";
+	
+	public static final String connectionCategory = "connectionCategory";
 
 	public static final String TAX_PERCENTAGE_CONST = "taxpercentage";
 	
@@ -300,6 +311,56 @@ public class SWCalculationConstant {
 
 	public static final String PROPERTY_MASTER_MODULE = "PropertyTax";
 
+	public static final String CUSTOM = "CUSTOM";
+
+	public static final String CUSTOM_BILL_AMOUNT = "billingAmount";
+
+	public static final String ACTIVE = "Active";
+
+	public static final String WATER_SUBUSAGE_TYPE = "waterSubUsageType";
+	
+	public static final String SW_BILL_SCHEDULER_TRANSACTION = "Bill Generation";
+	
+	public static final String plotBasedConst = "PLOT_BASED";
+	
+	public static final String PROPERTY_TYPE_MIXED = "MIXED";
+	
+	public static final String UNIT_USAGE_TYPE_KEY = "unitUsageType";
+	
+	public static final String INITIATED_CONST = "INITIATED";
+
+	public static final String INPROGRESS_CONST = "INPROGRESS";
+
+	public static final String COMPLETED_CONST = "COMPLETED";
+
+    public static final String EG_SW_CAL_JSON_EXCEPTION_KEY = "EG_SW_CAL_JSON_EXCEPTION";
+
+    public static final String EG_SW_CAL_JSON_EXCEPTION_MSG = "Exception occured while parsing additional details";
+
+	public static final String CONNECTION_ACTIVATED = "CONNECTION_ACTIVATED";
+
+	public static final String SW_NO_BILLING_PERIOD = "SW_NO_BILLING_PERIOD";
+	
+	public static final String SW_NO_BILLING_PERIOD_MSG = "No billin period is active or not defined";
+	
+    public static final String SW_DUPLICATE_BILL_SCHEDULER = "SW_DUPLICATE_BILL_SCHEDULER";
+	
+	public static final String SW_DUPLICATE_BILL_SCHEDULER_MSG = "Bills are already scheduled for the locality ";
+	
+	public static final String MODULE_NAME_BILLINGSERVICE = "BillingService";
+	
+	public static final String TAXPERIOD_MASTERNAME = "TaxPeriod";
+
+	public static final String MDMS_NO_FILTER_TAXPERIOD = "$.MdmsRes.BillingService.TaxPeriod.*";
+	
+	public static final String SUCCESS = "Success";
+
+	public static final String USER_CHARGES = "SW_USER_CHARGE";
+	
+	public static final String OTHER_FEE = "SW_OTHER_FEE";
+
+	public static final String BILLINGTYPE = "billingType";
+
 	public static final String ADHOC_PENALTY_REASON = "adhocPenaltyReason";
 
 	public static final String ADHOC_PENALTY_COMMENT = "adhocPenaltyComment";
@@ -326,6 +387,12 @@ public class SWCalculationConstant {
 
 	//Notification
 	public static final String CHANNEL_NAME_SMS = "SMS";
+	
+	public static final String FAILURE = "Failure";
+
+	public static final String SUCCESS_MESSAGE = "Bill is generated successfully for consumer number: ";
+
+	public static final String FAILURE_MESSAGE = "Bill already paid or Error in bill generation";
 
 	public static final String CHANNEL_NAME_EVENT = "EVENT";
 
