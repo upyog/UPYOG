@@ -880,7 +880,7 @@ img, video {
     height: 24px; }
 
 .h1 {
-  font-size: 24px;
+  font-size: 20px;
   line-height: 32px;
   --text-opacity:1;
   color: #0b0c0c;
@@ -1569,7 +1569,7 @@ img, video {
   height: 3rem;
   --bg-opacity:1;
   background-color: #0f4f9e;
-  background-color: rgba(32, 143, 116, var(--bg-opacity));
+  background-color: #0f4f9e;
   text-align: center;
   width: 100%;
   outline: 2px solid transparent;
@@ -1622,6 +1622,7 @@ img, video {
       font-size: 16px;
       font-style: italic;
       line-height: 24px; 
+      margin-bottom: 5px;
     }
     .card .card-link, .card-emp .card-link {
       text-align: left; }
@@ -1642,7 +1643,8 @@ img, video {
       margin-bottom: 40px; }
     .employeeCard .card-section-header {
       margin-bottom: 40px;
-      font-size: 24px;
+      color: #0f4f9e;
+      font-size: 20px;
       line-height: 32px; }
     .employeeCard .card-section-sub-text {
       --text-opacity:1;
@@ -1894,7 +1896,7 @@ img, video {
   /* height: 2rem; */
   --bg-opacity:1;
   /* background-color: #0f4f9e;
-  background-color: rgba(32, 143, 116, var(--bg-opacity)); */
+  background-color: #0f4f9e; */
   text-align: center;
   background-image:  linear-gradient(358deg, #01458e, #03103f);
   border-color: #464646;
@@ -2647,8 +2649,8 @@ img, video {
   display: -ms-flexbox;
   display: flex;
   padding-bottom: 8px;
-  margin-bottom: 8px; 
-  margin-left: -76px;
+  /* margin-bottom: 8px;  */
+  margin-left: -0px;
 }
   .employee-data-table .row span {
     width: 70%;
@@ -2704,7 +2706,7 @@ img, video {
     border-style: solid;
     --bg-opacity:1;
     background-color: #0f4f9e;
-    background-color: rgba(32, 143, 116, var(--bg-opacity)); }
+    background-color: #0f4f9e; }
   .checkpoint-done header {
     margin-left: 16px; }
     .checkpoint-done header p {
@@ -2841,15 +2843,15 @@ img, video {
   margin-bottom: 24px; }
 
 .input-otp-wrap {
-  margin-bottom: 24px; }
+  margin-bottom: 5px; }
   .input-otp-wrap input, .input-otp-wrap .checkbox-wrap .input-emp, .checkbox-wrap .input-otp-wrap .input-emp {
     --border-opacity:1;
     border: 1px solid #464646;
     border-color: rgba(70, 70, 70, var(--border-opacity));
     outline: 2px solid transparent;
     outline-offset: 2px;
-    height: 2.5rem;
-    width: 2.5rem;
+    height: 3.5rem;
+    width: 3.5rem;
     font-size: 16px;
     line-height: 20px;
     --text-opacity:1;
@@ -3142,7 +3144,7 @@ img, video {
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.16);
     left: 0;
     max-width: none;
-    z-index: 999;
+    z-index: 9999;
     position: fixed;
     bottom: 0;
     --bg-opacity:1;
@@ -3861,7 +3863,7 @@ img, video {
 
 .cp {
   cursor: pointer; 
-  color: white;
+  /* color: white; */
 }
   .cp .hamburger {
     display: none; }
@@ -3975,7 +3977,7 @@ video::-webkit-media-controls-panel {
 
 .customBtn-selected {
   background-color: #0f4f9e;
-  background-color: rgba(32, 143, 116, var(--bg-opacity));
+  background-color: #0f4f9e;
   color: #fff;
   color: rgba(255, 255, 255, var(--text-opacity));
   font-weight: 500; }
@@ -4105,7 +4107,7 @@ video::-webkit-media-controls-panel {
 
 .filter-header p {
   font-weight: 700;
-  font-size: 24px;
+  font-size: 20px;
   line-height: 1;
   margin: 0 12px 20px 8px; }
 
@@ -4377,12 +4379,12 @@ video::-webkit-media-controls-panel {
     margin-bottom: 25px; }
     .summary-wrapper .blocks p:only-child {
       font-weight: 700;
-      font-size: 24px; }
+      font-size: 20px; }
     .summary-wrapper .blocks div {
       margin-right: 25px; }
       .summary-wrapper .blocks div p:not(:first-child) {
         font-weight: 700;
-        font-size: 24px; }
+        font-size: 20px; }
 
 .summary-card-margin {
   margin: 0 24px 20px 0 !important; }
@@ -4407,8 +4409,9 @@ video::-webkit-media-controls-panel {
   font-size: 16px;
   line-height: 24px;
   --text-opacity:1;
-  color: #22ab89;
-  color: rgba(34, 171, 137, var(--text-opacity)); }
+  color: #0f4f9e;
+  /* color: rgba(34, 171, 137, var(--text-opacity));  */
+}
 
 .multilink-optionWrap {
   right: 0;
@@ -4683,7 +4686,7 @@ video::-webkit-media-controls-panel {
     display: -ms-flexbox;
     display: flex;
     font-weight: 700;
-    font-size: 24px;
+    font-size: 20px;
     line-height: 32px;
     --text-opacity:1;
     color: #0b0c0c;
@@ -5173,7 +5176,7 @@ video::-webkit-media-controls-panel {
 .EventCalendarView .MonthViewInEventCalendar {
   --bg-opacity:1;
   background-color: #0f4f9e;
-  background-color: rgba(32, 143, 116, var(--bg-opacity));
+  background-color: #0f4f9e;
   font-size: 19px;
   line-height: 23px;
   --text-opacity:1;
@@ -5188,7 +5191,7 @@ video::-webkit-media-controls-panel {
   --bg-opacity:1;
   background-color: #eee;
   background-color: rgba(238, 238, 238, var(--bg-opacity));
-  font-size: 24px;
+  font-size: 20px;
   line-height: 32px;
   font-weight: 700;
   --text-opacity:1;
@@ -5289,7 +5292,7 @@ video::-webkit-media-controls-panel {
       width: 1.5rem;
       height: 1rem; }
     .popupModalHeading .headingIconAndLabel h3 {
-      font-size: 24px;
+      font-size: 20px;
       line-height: 32px;
       font-weight: 700; }
   .popupModalHeading .popupResetFormButton {
@@ -5823,7 +5826,7 @@ video::-webkit-media-controls-panel {
   font-size: 19px; }
 
 .employeeCard .card-sub-header {
-  font-size: 24px; }
+  font-size: 20px; }
 
 .employeeForgotPassword .employeeCard .card-label, .loginFormStyleEmployee .employeeCard .card-label {
   font-weight: 600 !important;
@@ -5890,7 +5893,7 @@ video::-webkit-media-controls-panel {
   display: none; }
 
 .employeeChangePassword .employeeCard .employee-card-sub-header, .employeeForgotPassword .employeeCard .employee-card-sub-header, .loginFormStyleEmployee .employeeCard .employee-card-sub-header {
-  font-size: 24px !important;
+  font-size: 20px !important;
   line-height: 28px !important;
   margin-bottom: 0 !important; }
 
@@ -6341,7 +6344,7 @@ video::-webkit-media-controls-panel {
 
 .link {
   --text-opacity:1;
-  color: #ffffff;
+  color: #0f4f9e;
   cursor: pointer;
   font-style: italic;
   font-size: 16px;
@@ -6463,7 +6466,7 @@ video::-webkit-media-controls-panel {
   .citizen .main {
     width: 100%;
     /* height: 100vh; */
-    padding-top: 87px;
+    padding-top: 90px;
     min-height: calc(100vh - 20px);
     margin-bottom: 18px !important;
     /* display: -webkit-box !important; */
@@ -6759,7 +6762,7 @@ video::-webkit-media-controls-panel {
       height: 56px;
       --bg-opacity:1;
       background-color: #0f4f9e;
-      background-color: rgba(32, 143, 116, var(--bg-opacity));
+      background-color: #0f4f9e;
       padding: 12px;
       border-radius: 4px; }
       .complaint-links-container .header .logo svg {
@@ -6807,7 +6810,7 @@ video::-webkit-media-controls-panel {
       height: 2rem;
       --bg-opacity:1;
       background-color: #0f4f9e;
-      background-color: rgba(32, 143, 116, var(--bg-opacity));
+      background-color: #0f4f9e;
       border-radius: 9999px;
       margin-left: 4px;
       background-color: #0f4f9e !important; }
@@ -6835,7 +6838,7 @@ video::-webkit-media-controls-panel {
   place-content: space-between;
   margin-bottom: 16px; }
   .MobilePopupHeadingWrapper h2 {
-    font-size: 24px;
+    font-size: 20px;
     line-height: 32px;
     font-weight: 700; }
 
@@ -6889,7 +6892,7 @@ video::-webkit-media-controls-panel {
       display: none; }
   .filter-form .filter-card .filter-label {
     font-weight: 700;
-    font-size: 24px;
+    font-size: 20px;
     line-height: 32px;
     display: -webkit-box;
     display: -ms-flexbox;
@@ -7005,7 +7008,7 @@ video::-webkit-media-controls-panel {
   padding: 8px;
   --bg-opacity:1;
   background-color: #0f4f9e;
-  background-color: rgba(32, 143, 116, var(--bg-opacity));
+  background-color: #0f4f9e;
   border-radius: 9999px;
   color: #fff;
   color: rgba(255, 255, 255, var(--text-opacity));
@@ -7032,12 +7035,12 @@ video::-webkit-media-controls-panel {
       .complaint-links-container .header .logo {
         --bg-opacity:1;
         background-color: #0f4f9e;
-        background-color: rgba(32, 143, 116, var(--bg-opacity));
+        background-color: #0f4f9e;
         padding: 12px;
         border-radius: 4px; }
       .complaint-links-container .header .text {
         padding-left: 16px;
-        font-size: 24px;
+        font-size: 20px;
         line-height: 32px;
         font-weight: 700; }
     .complaint-links-container .body {
@@ -7293,7 +7296,7 @@ video::-webkit-media-controls-panel {
         .groupBill-custom .custom-group-merge-container .header .logo svg path {
           fill: #0f4f9e; }
       .groupBill-custom .custom-group-merge-container .header .h1 {
-        font-size: 24px;
+        font-size: 20px;
         line-height: 28px;
         font-weight: 400;
         color: #0f4f9e; }
@@ -7680,7 +7683,7 @@ video::-webkit-media-controls-panel {
   -ms-flex-align: center;
   align-items: center; }
   .dss-card-header p {
-    font-size: 24px;
+    font-size: 20px;
     font-family: Roboto,sans-serif;
     font-weight: 500;
     color: #000; }
@@ -7699,7 +7702,7 @@ video::-webkit-media-controls-panel {
   .dss-insight-card .p3 {
     font-weight: 400; }
   .dss-insight-card .p2 {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 500;
     color: #000; }
   .dss-insight-card .color-green {
@@ -8270,7 +8273,7 @@ body {
     grid-gap: 0 !important;
     gap: 0 !important; }
   .notice_and_circular_heading_mb header {
-    font-size: 24px !important;
+    font-size: 20px !important;
     line-height: 28px;
     margin-right: 100px; }
   .notice_and_circular_caption .card-caption {
@@ -8649,7 +8652,7 @@ body {
     border-color: rgba(214, 213, 212, var(--border-opacity)); }
 
 .surveydetailsform-wrapper .heading, .surveyformslist_wrapper .heading {
-  font-size: 24px;
+  font-size: 20px;
   line-height: 32px;
   font-weight: 500;
   padding-top: 16px;
@@ -9522,7 +9525,7 @@ input[type=number], .checkbox-wrap .input-emp[type=number] {
   padding: 1rem;
   font-weight: 700;
   color: #0b0c0c;
-  font-size: 24px;
+  font-size: 20px;
   margin-bottom: 1rem; }
 
 .privacy-icon {

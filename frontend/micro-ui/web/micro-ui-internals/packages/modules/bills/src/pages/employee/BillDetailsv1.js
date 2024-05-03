@@ -170,7 +170,7 @@ const BillDetailsv1 = (props) => {
                                                         window.location.href.includes("tl") || window.location.href.includes("ws") || window.location.href.includes("bills") ? (
                                                             <div style={{ width: "200%" }}>
                                                                 <Link to={value?.to}>
-                                                                    <span className="link" style={{ color: "#208f74" }}>
+                                                                    <span className="link" style={{ color: "#0f4f9e" }}>
                                                                         {t(value?.title)}
                                                                     </span>
                                                                 </Link>
@@ -184,7 +184,7 @@ const BillDetailsv1 = (props) => {
                                                     text={
                                                         <div>
                                                             <Link to={value?.to}>
-                                                                <span className="link" style={{ color: "#208f74" }}>
+                                                                <span className="link" style={{ color: "#0f4f9e" }}>
                                                                     {value?.value}
                                                                 </span>
                                                             </Link>
