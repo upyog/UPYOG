@@ -217,6 +217,8 @@ public class WSCalculationConstant {
 	
 	public static final String WC_ROADTYPE_MASTER = "RoadType";
 	
+	public static final String SUCCESS = "Success";
+	
 	
 	
 	/**
@@ -415,6 +417,8 @@ public class WSCalculationConstant {
 	public static final String SUCCESS_MESSAGE = "Bill is generated successfully for consumercode: ";
 	
 	public static final String FAILURE_MESSAGE = "Bill already paid or Error in bill generation for consumercode: ";
+
+	public static final String WS_DUPLICATE_BILL_SCHEDULER_MSG = "WS_DUPLICATE_BILL_SCHEDULER_MSG";
 	
 	
 }

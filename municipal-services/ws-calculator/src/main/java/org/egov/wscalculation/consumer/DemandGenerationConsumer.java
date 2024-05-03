@@ -34,12 +34,18 @@ public class DemandGenerationConsumer {
 
 	@Autowired
 	private ObjectMapper mapper;
+	
+	@Autowired
+	private MasterDataService mstrDataService;
 
 	@Autowired
 	private BulkDemandAndBillGenService bulkDemandAndBillGenService;
 
 	@Autowired
 	private WSCalculationProducer producer;
+	
+	@Autowired
+	private WSCalculationConfiguration config;
 
 	@Value("${kafka.topics.bulk.bill.generation.audit}")
 	private String bulkBillGenAuditTopic;
@@ -76,7 +82,7 @@ public class DemandGenerationConsumer {
 			"${persister.demand.based.dead.letter.topic.batch}" }, containerFactory = "kafkaListenerContainerFactory")
 	public void listenDeadLetterTopic(final List<Message<?>> records) {
 		CalculationReq calculationReq = mapper.convertValue(records.get(0).getPayload(), CalculationReq.class);
-		Map<String, Object> masterMap = mDataService.loadMasterData(calculationReq.getRequestInfo(),
+		Map<String, Object> masterMap = mstrDataService.loadMasterData(calculationReq.getRequestInfo(),
 				calculationReq.getCalculationCriteria().get(0).getTenantId());
 		records.forEach(record -> {
 			try {

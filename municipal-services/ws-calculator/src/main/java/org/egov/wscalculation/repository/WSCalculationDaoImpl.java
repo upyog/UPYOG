@@ -187,4 +187,20 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 		long count = jdbcTemplate.queryForObject(query, Integer.class);
 		return count;
 	}
+	@Override
+	public List<String> getConnectionsNoByLocality(String tenantId, String connectionType, String locality) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Long searchLastDemandGenFromDate(String consumerCode, String tenantId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Boolean isConnectionDemandAvailableForBillingCycle(String tenantId, Long taxPeriodFrom, Long taxPeriodTo,
+			String consumerCode) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

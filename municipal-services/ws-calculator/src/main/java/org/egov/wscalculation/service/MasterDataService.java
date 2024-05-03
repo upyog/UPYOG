@@ -471,7 +471,6 @@ public class MasterDataService {
 	 * @param tenantId TenantId
 	 * @return all masters that is needed for calculation and demand generation.
 	 */
-	@Cacheable(value = WSCalculationConstant.MDMS_CACHE_KEY , sync = true)
 	public Map<String, Object> loadMasterData(RequestInfo requestInfo, String tenantId) {
 		Map<String, Object> master = getMasterMap(requestInfo, tenantId, WSCalculationConstant.SERVICE_FIELD_VALUE_WS);
 		loadBillingSlabsAndTimeBasedExemptions(requestInfo, tenantId, master);

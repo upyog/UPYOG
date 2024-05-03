@@ -1,6 +1,8 @@
 package org.egov.wscalculation.repository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -11,10 +13,10 @@ import org.egov.wscalculation.web.models.DemandNotificationObj;
 import org.egov.wscalculation.web.models.DemandRequest;
 import org.egov.wscalculation.web.models.DemandResponse;
 import org.egov.wscalculation.producer.WSCalculationProducer;
-
-
-
+import org.egov.wscalculation.repository.builder.DemandQueryBuilder;
+import org.egov.wscalculation.repository.rowmapper.DemandRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +38,12 @@ public class DemandRepository {
 
     @Autowired
     private WSCalculationProducer wsCalculationProducer;
+    
+    @Autowired
+    private DemandQueryBuilder demandQueryBuilder;
+    
+    @Autowired
+    private DemandRowMapper demandRowMapper;
 
     /**
      * Creates demand
@@ -95,7 +103,7 @@ public class DemandRepository {
 		List<Object> presparedStmtList = new ArrayList<>();
 		String sql = demandQueryBuilder.getDemandQueryForConsumerCodes(businessConsumercodes, presparedStmtList,
 				tenantId);
-		return jdbcTemplate.query(sql, presparedStmtList.toArray(), demandRowMapper);
+		return JdbcTemplate.query(sql, presparedStmtList.toArray(), demandRowMapper);
 	}
 
 
