@@ -236,7 +236,7 @@ public class PayGovGateway implements Gateway {
             
             if (moduleCode.startsWith("PT"))
             {
-                moduleCode = "MNPT001";
+                moduleCode = "MMPTBTEST01";
             }
             else if (moduleCode.startsWith("SW"))
             {
