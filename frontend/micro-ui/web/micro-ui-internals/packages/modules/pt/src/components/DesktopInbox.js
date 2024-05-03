@@ -74,7 +74,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
           return {
             style: {
               minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
-              padding: "20px 18px",
+              // padding: "20px 18px",
               fontSize: "16px",
             },
           };
@@ -125,7 +125,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
           searchParams={props.searchParams}
           clearSearch={() => setClearSearchCalled(true)}
         />
-        <div className="result" style={{ marginLeft: !props?.isSearch ? "24px" : "", flex: 1 }}>
+        <div className="result" style={{ marginLeft: !props?.isSearch ? "24px" : "", flex: 1, width: "100%" }}>
           {result}
         </div>
       </div>

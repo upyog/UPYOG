@@ -7098,7 +7098,8 @@ video::-webkit-media-controls-panel {
     display: -ms-flexbox;
     display: flex; }
     .inbox-container .filters-container {
-      width: 270px; }
+      /* width: 270px;  */
+    }
       .inbox-container .filters-container .filter {
         margin-top: 16px; }
         .inbox-container .filters-container .filter .filter-card {
@@ -7133,7 +7134,7 @@ video::-webkit-media-controls-panel {
         --bg-opacity:1;
         background-color: #fff;
         background-color: rgba(255, 255, 255, var(--bg-opacity));
-        padding: 16px; }
+        padding: 0 16px 0 16px; }
         .inbox-container .search-container .search-complaint-container .complaint-header {
           -webkit-box-pack: justify;
           -ms-flex-pack: justify;
@@ -8015,7 +8016,10 @@ body {
     .HomePageWrapper .WhatsAppBanner img {
       height: 20vw; }
   .moduleLinkHomePage img {
-    min-width: 70vw; }
+    min-width: 70vw; 
+    border: 1px solid #0f4f9e;
+    box-shadow: 0px 2px 0px 0.4px #0f4f9e;
+  }
   .moduleLinkHomePage h1 {
     top: calc(10vw + 40px);
     left: 15.8rem; }
@@ -9637,7 +9641,7 @@ input[type=number], .checkbox-wrap .input-emp[type=number] {
     padding: 10px; */
     margin: 10px 10px 0px 5px;
     text-align: center;
-    height: 125px;
+    height: 160px;
     /* padding-top: 15%; */
     border-radius: 6px;
   }
@@ -9672,12 +9676,12 @@ input[type=number], .checkbox-wrap .input-emp[type=number] {
 }
 
 .citizen-card-img {
-    height: 120px !important;
+    height: 150px !important;
     /* width: 72px !important; */
     min-width: 100% !important;
     top: -32px;
     /* position: relative; */
-    padding: 9px;
+    padding: 32px;
     background: #ffffff;
     border-radius: 6px;
 }
