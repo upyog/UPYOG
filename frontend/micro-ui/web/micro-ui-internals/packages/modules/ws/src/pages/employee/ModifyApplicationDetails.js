@@ -222,7 +222,7 @@ const ModifyApplicationDetails = () => {
     <Fragment>
       <div className={"employee-main-application-details"}>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-          <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "24px" }}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
+          <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "16px" }}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
 
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink

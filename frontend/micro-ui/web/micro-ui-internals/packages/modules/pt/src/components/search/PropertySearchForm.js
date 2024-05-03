@@ -83,7 +83,7 @@ const SearchPTID = ({ tenantId, t, onSubmit, onReset, searchBy, PTSearchFields, 
 
        <div className="pt-search-action" >
          <SearchField  className="pt-search-action-reset">
-         <p style={{color:"#208f74"}}
+         <p style={{color:"#0f4f9e"}}
             onClick={() => {
               onReset({});
             }}

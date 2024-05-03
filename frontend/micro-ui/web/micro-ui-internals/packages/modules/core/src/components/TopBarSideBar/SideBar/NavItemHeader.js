@@ -72,7 +72,7 @@ const NavItemHeader = props => {
          <div className={`sidebar-link ${expanded ? "active": ""}`} style={{width:item?.nested ?"240px":"260px",overflow:"auto"}}>{!item?.nested && leftIcon}
          <div className='actions' style={{padding:"0px",marginRight:"auto"}}>
          <div data-tip="React-tooltip" data-for={`jk-side-${getModuleName}`}>
-        <span style={{color:expanded ? "#208f74":""}}>{trimModuleName}</span>
+        <span style={{color:expanded ? "#0f4f9e":""}}>{trimModuleName}</span>
         {trimModuleName?.includes("...") && <ReactTooltip textColor="white" backgroundColor="grey" place="right" type="info" effect="solid" id={`jk-side-${getModuleName}`}>
                     {t(`ACTION_TEST_${getModuleName}`)}
                   </ReactTooltip>}

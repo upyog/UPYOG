@@ -123,11 +123,11 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
         </div>
       </LabelFieldPair>
       <span onClick={() => history.push(`/digit-ui/employee/commonpt/search?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
-        <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#208f74", display: "inline-block" }} />
+        <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#0f4f9e", display: "inline-block" }} />
       </span>
       &nbsp; | &nbsp;
       <span onClick={() => history.push(`/digit-ui/employee/commonpt/new-application?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
-        <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#208f74", display: "inline-block" }} />
+        <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#0f4f9e", display: "inline-block" }} />
       </span>
       {propertyDetails && propertyDetails?.Properties.length ? (
         <React.Fragment>
@@ -179,7 +179,7 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
             <Link to={`/digit-ui/employee/commonpt/view-property?propertyId=${propertyId}&tenantId=${tenantId}&from=${window.location.pathname?.includes("employee/ws/new-application") ? "ES_COMMON_WS_NEW_CONNECTION" : window.location.pathname?.includes("employee/ws/modify-application") ?"WS_MODIFY_CONNECTION_BUTTON": window.location.pathname?.includes("employee/tl/new-application")
         ?"ES_TITLE_NEW_TRADE_LICESE_APPLICATION"
         :"WF_EMPLOYEE_NEWTL_RENEWAL_SUBMIT_BUTTON"}`}>
-            <LinkButton label={t("CPT_COMPLETE_PROPERTY_DETAILS")} style={{ color: "#208f74", textAlign: "Left" }} />
+            <LinkButton label={t("CPT_COMPLETE_PROPERTY_DETAILS")} style={{ color: "#0f4f9e", textAlign: "Left" }} />
           </Link>
         </React.Fragment>
       ) : null}

@@ -43,7 +43,7 @@ const TopBar = ({
             // {"https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/Upyog-logo.png" || "https://cdn.jsdelivr.net/npm/@egovernments/digit-ui-css@1.0.7/img/m_seva_white_logo.png"}
             alt="UPYOG"
           />
-           <div className='header-txt' style={{marginLeft: 15, color: "#01504c"}}>
+           <div className='header-txt' style={{marginLeft: 15, color: "#0f4f9e"}}>
               <span style={{fontSize: 16, fontWeight: 600}}>MUNICIPAL ADMINISTRATION,</span>
               <div style={{fontSize: 16, fontWeight: 600}}>HOUSING AND URBAN DEVELOPMENT</div>
               <div style={{fontSize: 14}}>GOVERNMENT OF MANIPUR</div>
@@ -73,7 +73,7 @@ const TopBar = ({
           alt="mSeva"
           style={{marginLeft:"10px"}}
         />
-        <div className='header-txt' style={{marginLeft: 15,color: "#01504c"}}>
+        <div className='header-txt' style={{marginLeft: 15,color: "#0f4f9e"}}>
             <span style={{fontSize: 16, fontWeight: 600}}>MANIPUR MUNICIPALITY</span>
             <div style={{fontSize: 16, fontWeight: 600}}>PROPERTY TAX BOARD</div>
           <div style={{fontSize: 14}}>GOVERNMENT OF MANIPUR</div>

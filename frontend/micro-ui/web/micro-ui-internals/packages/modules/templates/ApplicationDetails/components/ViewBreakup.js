@@ -39,7 +39,7 @@ const ViewBreakup = ({ wsAdditionalDetails, workflowDetails }) => {
         <Fragment>
             <div style={{ lineHeight: "19px", maxWidth: "950px", minWidth: "280px" }}>
                 {wsAdditionalDetails?.additionalDetails?.isViewBreakup ? <div onClick={(e) => onPopupOpen()} style={{ marginTop: "12px" }}>
-                    <span style={{ cursor: "pointer", color: "#208f74" }}>{t("WS_PAYMENT_VIEW_BREAKUP")}</span>
+                    <span style={{ cursor: "pointer", color: "#0f4f9e" }}>{t("WS_PAYMENT_VIEW_BREAKUP")}</span>
                 </div> : null
                 }
                 {popup &&
@@ -55,14 +55,14 @@ const ViewBreakup = ({ wsAdditionalDetails, workflowDetails }) => {
                             <CardSectionHeader style={{ margin: "10px 0px" }}>{t("WS_APPLICATION_FEE_HEADER")}</CardSectionHeader>
                             {breakUpData?.billSlabData?.FEE?.map(data => <Row className="border-none" rowContainerStyle={{ margin: "0px" }} labelStyle={{ width: "50%" }} key={`${data?.taxHeadCode}`} label={`${t(`${data?.taxHeadCode}`)}`} text={<span>&#8377;{Number(data?.amount) || 0}</span>} textStyle={{ textAlign: "right" }} />)}
                             <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", marginBottom: "10px" }} />
-                            <Row className="border-none" rowContainerStyle={{ margin: "0px" }} labelStyle={{ width: "50%" }} key={`PDF_STATIC_LABEL_CONSOLIDATED_TLAPP_TOTAL_AMOUNT1`} label={`${t(`PDF_STATIC_LABEL_CONSOLIDATED_TLAPP_TOTAL_AMOUNT`)}`} text={<span>&#8377;{Number(breakUpData?.fee) || 0}</span>} textStyle={{ textAlign: "right", fontWeight: "700", fontSize: "24px" }} />
+                            <Row className="border-none" rowContainerStyle={{ margin: "0px" }} labelStyle={{ width: "50%" }} key={`PDF_STATIC_LABEL_CONSOLIDATED_TLAPP_TOTAL_AMOUNT1`} label={`${t(`PDF_STATIC_LABEL_CONSOLIDATED_TLAPP_TOTAL_AMOUNT`)}`} text={<span>&#8377;{Number(breakUpData?.fee) || 0}</span>} textStyle={{ textAlign: "right", fontWeight: "700", fontSize: "16px" }} />
                             <CardSectionHeader style={{ margin: "10px 0px" }}>{t("WS_SERVICE_FEE_HEADER")}</CardSectionHeader>
                             {breakUpData?.billSlabData?.CHARGES?.map(data => <Row className="border-none" rowContainerStyle={{ margin: "0px" }} labelStyle={{ width: "50%" }} key={`${data?.taxHeadCode}`} label={`${t(`${data?.taxHeadCode}`)}`} text={<span>&#8377;{Number(data?.amount) || 0}</span>} textStyle={{ textAlign: "right" }} />)}
                             <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", marginBottom: "10px" }} />
-                            <Row className="border-none" rowContainerStyle={{ margin: "0px" }} labelStyle={{ width: "50%" }} key={`PDF_STATIC_LABEL_CONSOLIDATED_TLAPP_TOTAL_AMOUNT2`} label={`${t(`PDF_STATIC_LABEL_CONSOLIDATED_TLAPP_TOTAL_AMOUNT`)}`} text={<span>&#8377;{Number(breakUpData?.charge) || 0}</span>} textStyle={{ textAlign: "right", fontWeight: "700", fontSize: "24px" }} />
+                            <Row className="border-none" rowContainerStyle={{ margin: "0px" }} labelStyle={{ width: "50%" }} key={`PDF_STATIC_LABEL_CONSOLIDATED_TLAPP_TOTAL_AMOUNT2`} label={`${t(`PDF_STATIC_LABEL_CONSOLIDATED_TLAPP_TOTAL_AMOUNT`)}`} text={<span>&#8377;{Number(breakUpData?.charge) || 0}</span>} textStyle={{ textAlign: "right", fontWeight: "700", fontSize: "16px" }} />
                             {breakUpData?.billSlabData?.TAX?.map(data => <Row className="border-none" rowContainerStyle={{ margin: "0px" }} labelStyle={{ width: "50%" }} key={`${data?.taxHeadCode}`} label={`${t(`${data?.taxHeadCode}`)}`} text={<span>&#8377;{Number(data?.amount) || 0}</span>} textStyle={{ textAlign: "right" }} />)}
                             <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", marginBottom: "10px" }} />
-                            <Row className="border-none" rowContainerStyle={{ margin: "0px" }} labelStyle={{ width: "50%" }} key={`PDF_STATIC_LABEL_CONSOLIDATED_TLAPP_TOTAL_AMOUNT3`} label={`${t(`PDF_STATIC_LABEL_CONSOLIDATED_TLAPP_TOTAL_AMOUNT`)}`} text={<span>&#8377;{Number(breakUpData?.totalAmount) || 0}</span>} textStyle={{ textAlign: "right", fontWeight: "700", fontSize: "24px" }} />
+                            <Row className="border-none" rowContainerStyle={{ margin: "0px" }} labelStyle={{ width: "50%" }} key={`PDF_STATIC_LABEL_CONSOLIDATED_TLAPP_TOTAL_AMOUNT3`} label={`${t(`PDF_STATIC_LABEL_CONSOLIDATED_TLAPP_TOTAL_AMOUNT`)}`} text={<span>&#8377;{Number(breakUpData?.totalAmount) || 0}</span>} textStyle={{ textAlign: "right", fontWeight: "700", fontSize: "16px" }} />
                         </StatusTable>}
                     </Modal>}
             </div>

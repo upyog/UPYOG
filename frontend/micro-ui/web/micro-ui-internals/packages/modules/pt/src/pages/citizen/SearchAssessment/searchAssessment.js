@@ -299,7 +299,7 @@ const SearchAssessment = ({ config: propsConfig, onSelect }) => {
         label={propsConfig.texts.submitButtonLabel}
         heading={t(propsConfig.texts.header)}
         text={t(propsConfig.texts.text)}
-        headingStyle={{ fontSize: "24px", marginBottom: "16px", fontFamily: "Roboto Condensed,sans-serif" }}
+        headingStyle={{ fontSize: "16px", marginBottom: "16px", fontFamily: "Roboto Condensed,sans-serif" }}
         onFormValueChange={onFormValueChange}
         cardStyle={{marginBottom:"0"}}
       ></FormComposer>

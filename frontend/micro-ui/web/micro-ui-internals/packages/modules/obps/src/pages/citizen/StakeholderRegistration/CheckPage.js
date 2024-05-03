@@ -60,7 +60,7 @@ const CheckPage = ({ onSubmit, value }) => {
         <div>
           {isopenlink && <BackButton style={{ border: "none" }}>{t("CS_COMMON_BACK")}</BackButton>}
           <Timeline currentStep={4} flow="STAKEHOLDER" />
-          <Header styles={{ fontSize: "24px", marginLeft: "10px" }}>{t("BPA_STEPPER_SUMMARY_HEADER")}</Header>
+          <Header styles={{ fontSize: "16px", marginLeft: "10px" }}>{t("BPA_STEPPER_SUMMARY_HEADER")}</Header>
           <Card style={{ paddingRight: "16px" }}>
             <StatusTable>
               <Row
@@ -72,7 +72,7 @@ const CheckPage = ({ onSubmit, value }) => {
           </Card>
           <Card style={{ paddingRight: "16px" }}>
           <StatusTable>
-            <CardHeader styles={{ fontSize: "24px" }}>{t(`BPA_LICENSE_DETAILS_LABEL`)}</CardHeader>
+            <CardHeader styles={{ fontSize: "16px" }}>{t(`BPA_LICENSE_DETAILS_LABEL`)}</CardHeader>
             <LinkButton
               label={<EditIcon style={{ marginTop: "-15px", float: "right", position: "relative", bottom: "32px" }} />}
               style={{ width: "100px", display: "inline" }}
@@ -91,7 +91,7 @@ const CheckPage = ({ onSubmit, value }) => {
           </Card>
           <Card style={{ paddingRight: "16px" }}>
           <StatusTable>
-            <CardHeader styles={{ fontSize: "24px" }}>{t(`BPA_LICENSE_DET_CAPTION`)}</CardHeader>
+            <CardHeader styles={{ fontSize: "16px" }}>{t(`BPA_LICENSE_DET_CAPTION`)}</CardHeader>
             <LinkButton
               label={<EditIcon style={{ marginTop: "-15px", float: "right", position: "relative", bottom: "32px" }} />}
               style={{ width: "100px", display: "inline" }}
@@ -112,7 +112,7 @@ const CheckPage = ({ onSubmit, value }) => {
           <Card style={{ paddingRight: "16px" }}>
           <StatusTable>
             <div style={{ marginRight: "24px" }}>
-              <CardHeader styles={{ fontSize: "24px" }}>{t(`BPA_LICENSEE_PERMANENT_LABEL`)}</CardHeader>
+              <CardHeader styles={{ fontSize: "16px" }}>{t(`BPA_LICENSEE_PERMANENT_LABEL`)}</CardHeader>
             </div>
             <LinkButton
               label={<EditIcon style={{ marginTop: "-15px", float: "right", position: "relative", bottom: "32px" }} />}
@@ -125,7 +125,7 @@ const CheckPage = ({ onSubmit, value }) => {
           <Card style={{ paddingRight: "16px" }}>
           <StatusTable>
             <div style={{ marginRight: "24px" }}>
-              <CardHeader styles={{ fontSize: "24px" }}>{t(`BPA_COMMUNICATION_ADDRESS_HEADER_DETAILS`)}</CardHeader>
+              <CardHeader styles={{ fontSize: "16px" }}>{t(`BPA_COMMUNICATION_ADDRESS_HEADER_DETAILS`)}</CardHeader>
             </div>
             <LinkButton
               label={<EditIcon style={{ marginTop: "-15px", float: "right", position: "relative", bottom: "32px" }} />}
@@ -137,7 +137,7 @@ const CheckPage = ({ onSubmit, value }) => {
           </Card>
           <Card style={{ paddingRight: "16px" }}>
           <StatusTable>
-            <CardHeader styles={{ fontSize: "24px" }}>{t("BPA_DOC_DETAILS_SUMMARY")}</CardHeader>
+            <CardHeader styles={{ fontSize: "16px" }}>{t("BPA_DOC_DETAILS_SUMMARY")}</CardHeader>
             <LinkButton
               label={<EditIcon style={{ marginTop: "-15px", float: "right", position: "relative", bottom: "32px" }} />}
               style={{ width: "100px", display: "inline" }}
@@ -160,7 +160,7 @@ const CheckPage = ({ onSubmit, value }) => {
           </StatusTable>
           </Card>
           <Card style={{ paddingRight: "16px" }}>
-            <CardHeader styles={{ fontSize: "24px" }}>{t("BPA_SUMMARY_FEE_EST")}</CardHeader>
+            <CardHeader styles={{ fontSize: "16px" }}>{t("BPA_SUMMARY_FEE_EST")}</CardHeader>
             <StatusTable>
               {paymentDetails?.billResponse?.Bill[0]?.billDetails[0]?.billAccountDetails.map((bill, index) => (
                 <div key={index}>
@@ -174,7 +174,7 @@ const CheckPage = ({ onSubmit, value }) => {
               />
             </StatusTable>
             <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />
-            <CardHeader styles={{ fontSize: "24px" }}>{t("BPA_COMMON_TOTAL_AMT")}</CardHeader>
+            <CardHeader styles={{ fontSize: "16px" }}>{t("BPA_COMMON_TOTAL_AMT")}</CardHeader>
             <CardHeader>₹ {paymentDetails?.billResponse?.Bill?.[0]?.billDetails[0]?.amount}</CardHeader>
             <SubmitBar
               label={t("CS_COMMON_SUBMIT")}

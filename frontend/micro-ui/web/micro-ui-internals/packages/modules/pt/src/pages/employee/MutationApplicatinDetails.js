@@ -251,11 +251,11 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
     const previousActiveProperty = propertiesAudit.filter(property => property.status == 'ACTIVE').sort((x, y) => y.auditDetails.lastModifiedTime - x.auditDetails.lastModifiedTime)[propertyIndex];
     // Removed filter(property => property.status == 'ACTIVE') condition to match result in qa env
     // const previousActiveProperty = propertiesAudit.sort((x, y) => y.auditDetails.lastModifiedTime - x.auditDetails.lastModifiedTime)[propertyIndex];
-    property.ownershipCategoryInit = previousActiveProperty.ownershipCategory;
-    property.ownersInit = previousActiveProperty.owners.filter(owner => owner.status == "ACTIVE");
+    property.ownershipCategoryInit = previousActiveProperty?.ownershipCategory;
+    property.ownersInit = previousActiveProperty?.owners.filter(owner => owner.status == "ACTIVE");
 
-    if (property.ownershipCategoryInit.startsWith("INSTITUTION")) {
-      property.institutionInit = previousActiveProperty.institution;
+    if (property?.ownershipCategoryInit?.startsWith("INSTITUTION")) {
+      property.institutionInit = previousActiveProperty?.institution;
     }
   }
 
@@ -349,13 +349,13 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
   });
 
   const getCardSubHeadrStyles = () => {
-    return { fontSize: "24px", fontWeight: "700", lineHeight: "28px", margin: "20px 0px" }
+    return { fontSize: "16px", fontWeight: "700", lineHeight: "28px", margin: "20px 0px", color: "#0f4f9e" }
   }
 
   return (
     <React.Fragment>
       <div className="cardHeaderWithOptions" style={{ marginRight: "auto" }}>
-      <Header styles={{fontSize: "24px", marginLeft: "12px"}}>{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
+      <Header styles={{fontSize: "16px", marginLeft: "12px"}}>{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
       <div>
           <div>
           {dowloadOptions && dowloadOptions.length > 0 && <MultiLink
@@ -521,6 +521,7 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
             onActionSelect={onActionSelect}
             setDisplayMenu={setDisplayMenu}
             businessService={businessService}
+            ActionBarStyle={{float: "right"}}
             forcedActionPrefix={"WF_EMPLOYEE_PT.CREATE"}
           />
         </Card>

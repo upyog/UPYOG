@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import ArrearTable from "./arrear-table";
 
 const styles = {
-  buttonStyle: { display: "flex", justifyContent: "flex-end", color: "#208f74" },
+  buttonStyle: { display: "flex", justifyContent: "flex-end", color: "#0f4f9e" },
   headerStyle: {
     marginTop: "10px",
     fontSize: "16px",

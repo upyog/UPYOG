@@ -28,7 +28,7 @@ const BannerPicker = (props) => {
       info={props.isSuccess ? props.t("BPA_NEW_STAKEHOLDER_REGISTRATION_APP_LABEL") : ""}
       successful={props.isSuccess}
       style={{ padding: "10px" }}
-      headerStyles={{ fontSize: "24px" }}
+      headerStyles={{ fontSize: "16px" }}
     />
   );
 };
