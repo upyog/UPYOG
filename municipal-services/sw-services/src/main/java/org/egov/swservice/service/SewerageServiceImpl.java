@@ -1,6 +1,12 @@
 package org.egov.swservice.service;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.egov.common.contract.request.PlainAccessRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.swservice.config.SWConfiguration;
@@ -10,6 +16,7 @@ import org.egov.swservice.util.EncryptionDecryptionUtil;
 import org.egov.swservice.util.SWConstants;
 import org.egov.swservice.util.SewerageServicesUtil;
 import org.egov.swservice.util.UnmaskingUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.swservice.validator.ActionValidator;
 import org.egov.swservice.validator.MDMSValidator;
 import org.egov.swservice.validator.SewerageConnectionValidator;
@@ -647,6 +654,27 @@ public class SewerageServiceImpl implements SewerageService {
 			}
 		}
 	}
+	
+	@Override
+	public void disConnectSewerageConnection(String connectionNo, RequestInfo requestInfo, String tenantId) {
+		// TODO Auto-generated method stub
+		SewerageConnectionRequest connectionRequest = new SewerageConnectionRequest();
+		connectionRequest.setRequestInfo(requestInfo);
+		SewerageConnection sewerageConnection = new SewerageConnection();
+		sewerageConnection.setConnectionNo(connectionNo);
+		sewerageConnection.setTenantId(tenantId);
+		connectionRequest.setSewerageConnection(sewerageConnection);
+		List<SewerageConnection> waterConnectionList = getAllSewerageApplications(connectionRequest);
+		List<SewerageConnection> activeWaterConnections = waterConnectionList.stream()
+				.filter(connection -> connection.getStatus().toString().equalsIgnoreCase(SWConstants.ACTIVE_STATUS)
+						&& !connection.getOldApplication())
+				.collect(Collectors.toList());
+		validateDisconnectSewerageConnection(waterConnectionList, connectionNo, requestInfo, tenantId,
+				activeWaterConnections);
+		sewerageDaoImpl.updateSewerageApplicationStatus(activeWaterConnections.get(0).getId(), SWConstants.INACTIVE_STATUS);
+		
+
+	}
 
 	/**
 	 * Encrypts sewerageConnection details
@@ -696,4 +724,36 @@ public class SewerageServiceImpl implements SewerageService {
 
 		return sewerageConnection;
 	}
+	
+		private void validateDisconnectSewerageConnection(List<SewerageConnection> waterConnectionList, String connectionNo,
+			RequestInfo requestInfo, String tenantId, List<SewerageConnection> activeWaterConnectionList) {
+
+		if (activeWaterConnectionList.size() != 1) {
+			throw new CustomException("EG_WS_DISCONNECTION_ERROR",SWConstants.ACTIVE_ERROR_MESSAGE);
+		}
+
+		if (!CollectionUtils.isEmpty(waterConnectionList)) {
+			workflowService.validateInProgressWF(waterConnectionList, requestInfo, connectionNo);
+		}
+
+		boolean isBillUnpaid = sewerageServicesUtil.isBillUnpaid(connectionNo, tenantId, requestInfo);
+
+		if (isBillUnpaid)
+			throw new CustomException("EG_WS_DISCONNECTION_ERROR", SWConstants.DUES_ERROR_MESSAGE);
+
+	}
+
+		@Override
+		public List<SewerageConnection> createSewerageConnection(SewerageConnectionRequest sewarageConnectionRequest,
+				Boolean isMigration) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public List<SewerageConnection> searchSewerageConnectionPlainSearch(SearchCriteria criteria,
+				RequestInfo requestInfo) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 }

@@ -1,5 +1,6 @@
 package org.egov.swservice.repository;
 
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,7 +24,9 @@ import org.egov.swservice.web.models.SewerageConnectionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.ObjectUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -108,6 +111,8 @@ public class SewerageDaoImpl implements SewerageDao {
 
 	public void updateSewerageConnection(SewerageConnectionRequest sewerageConnectionRequest,
 			boolean isStateUpdatable) {
+		log.info("SW application state updatable flag:" + isStateUpdatable);
+		log.info("SW application request before update:" + sewerageConnectionRequest);
 		String reqAction = sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction();
 		if (isStateUpdatable) {
 			if (SWConstants.EXECUTE_DISCONNECTION.equalsIgnoreCase(reqAction)) {
@@ -181,6 +186,16 @@ public class SewerageDaoImpl implements SewerageDao {
 		sewarageConnectionProducer.push(updateOldDataEncTopic, sewerageConnectionRequest);
 
 	}
+	
+	public void updateSewerageApplicationStatus(String id, String status) {
+
+		Object[] params = { status, id };
+
+		int[] types = { Types.VARCHAR, Types.VARCHAR };
+
+		jdbcTemplate.update(SWQueryBuilder.UPDATE_DISCONNECT_STATUS, params, types);
+
+	}
 
 	/* Method to find the total count of applications present in dB */
 	@Override
@@ -212,5 +227,45 @@ public class SewerageDaoImpl implements SewerageDao {
 		EncryptionCount encryptionCount = jdbcTemplate.query(query, preparedStatement.toArray(), encryptionCountRowMapper);
 		return encryptionCount;
 	}
+	
+	@Override
+	public List<String> fetchSewerageConnectionIds(SearchCriteria criteria){
+
+//        List<Object> preparedStmtList = new ArrayList<>();
+//        preparedStmtList.add(criteria.getTenantId());
+//        preparedStmtList.add(criteria.getOffset());
+//        preparedStmtList.add(criteria.getLimit());
+//
+//        return jdbcTemplate.query("SELECT id from eg_sw_connection where tenantid=? ORDER BY createdtime offset " +
+//                        " ? " +
+//                        "limit ? ",
+//                preparedStmtList.toArray(),
+//                new SingleColumnRowMapper<>(String.class));
+		
+		 	List<Object> preparedStmtList = new ArrayList<>();
+			String basequery = "select id from eg_sw_connection";
+			StringBuilder builder = new StringBuilder(basequery);
+
+			if(!ObjectUtils.isEmpty(criteria.getTenantId())){
+					builder.append(" where tenantid=?");
+					preparedStmtList.add(criteria.getTenantId());
+				}
+
+			String orderbyClause = " order by lastmodifiedtime,id offset ? limit ?";
+			builder.append(orderbyClause);
+			preparedStmtList.add(criteria.getOffset());
+			preparedStmtList.add(criteria.getLimit());
+			return jdbcTemplate.query(builder.toString(), preparedStmtList.toArray(), new SingleColumnRowMapper<>(String.class));
+		
+    }
+    
+    @Override
+	public List<SewerageConnection> getPlainSewerageConnectionSearch(SearchCriteria criteria) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = swQueryBuilder.getSCPlainSearchQuery(criteria, preparedStmtList);
+        log.info("Query: " + query);
+        List<SewerageConnection> sewerageconnection =  jdbcTemplate.query(query, preparedStmtList.toArray(), sewarageRowMapper);
+        return sewerageconnection;
+    }
 
 }

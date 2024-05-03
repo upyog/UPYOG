@@ -26,12 +26,12 @@ public class SWConfiguration {
 
     @Value("${egov.sewerageservice.pagination.max.limit}")
     private Integer maxLimit;
+    
+    @Value("${egov.idgen.scid.format}")
+    private String sewerageIdGenFormat;
 
     @Value("${egov.idgen.scid.name}")
     private String sewerageIdGenName;
-
-    @Value("${egov.idgen.scid.format}")
-    private String sewerageIdGenFormat;
 
     @Value("${egov.idgen.scapid.name}")
     private String sewerageApplicationIdGenName;
@@ -234,5 +234,8 @@ public class SWConfiguration {
 
     @Value("${egov.fetch.bill.endpoint}")
     private String fetchBillEndPoint;
+    
+    @Value("${egov.billing.service.host}")
+	private String businesserviceHost;
 
 }
