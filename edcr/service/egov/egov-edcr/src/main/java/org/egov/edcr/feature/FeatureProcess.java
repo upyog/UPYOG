@@ -70,11 +70,15 @@ public abstract class FeatureProcess {
 	public static final String PERMISSIBLE = "Permissible";
 	public static final String DESCRIPTION = "Description";
 	public static final String RULE_NO = "Byelaw";
+	public static final String FLOOR_NO = "Floor";
 	public static final String DISTANCE = "Distance";
 	public static final String VERIFIED = "Verified";
 	public static final String ACTION = "Action";
 	public static final String AREA_TYPE = "Area Type";
+	public static final String PLOT_AREA = "Plot Area";
+	public static final String MAX_PERMISSIBLE = "Max Permissible";
 	public static final String ROAD_WIDTH = "Road Width";
+	public static final String MIN_REQUIRED = "Min Required";
 
 	public abstract Map<String, Date> getAmendments();
 

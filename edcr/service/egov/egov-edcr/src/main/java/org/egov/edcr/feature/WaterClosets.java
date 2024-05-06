@@ -88,9 +88,22 @@ public class WaterClosets extends FeatureProcess {
 		scrutinyDetail.addColumnHeading(4, PROVIDED);
 		scrutinyDetail.addColumnHeading(5, STATUS);
 
+		
+		ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
+		scrutinyDetail1.setKey("Water Closets Ventilation");
+		scrutinyDetail1.addColumnHeading(1, RULE_NO);
+		scrutinyDetail1.addColumnHeading(2, DESCRIPTION);
+		scrutinyDetail1.addColumnHeading(3, REQUIRED);
+		scrutinyDetail1.addColumnHeading(4, PROVIDED);
+		scrutinyDetail1.addColumnHeading(5, STATUS);
+
 		Map<String, String> details = new HashMap<>();
+		Map<String, String> details1 = new HashMap<>();
 		details.put(RULE_NO, RULE_41_IV);
 		details.put(DESCRIPTION, WATERCLOSETS_DESCRIPTION);
+		
+		details1.put(RULE_NO, RULE_41_IV);
+		details1.put(DESCRIPTION, WATERCLOSETS_DESCRIPTION);
 
 		BigDecimal minHeight = BigDecimal.ZERO, totalArea = BigDecimal.ZERO, minWidth = BigDecimal.ZERO;
 
@@ -122,12 +135,40 @@ public class WaterClosets extends FeatureProcess {
 								}
 							}
 						}
+						
+						//Added by Neha for Water closet Ventilation
+						
+						if (!f.getWaterClosetVentilation().getMeasurements().isEmpty() 
+								&& f.getWaterClosetVentilation().getMeasurements() != null) {
+							
+							BigDecimal totalVentilationArea = f.getWaterClosetVentilation().getMeasurements().stream()
+									.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
+							
+							if (totalVentilationArea.compareTo(new BigDecimal(0.3)) >= 0) {
+//								
+									details1.put(REQUIRED, " 0.3 ");
+									details1.put(PROVIDED, " Water Closet Ventilation area " + totalVentilationArea 
+											);
+									details1.put(STATUS, Result.Accepted.getResultVal());
+									scrutinyDetail1.getDetail().add(details1);
+									pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
+
+								} 
+									else {
+									details1.put(REQUIRED, "0.3");
+									details1.put(PROVIDED, " Water Closet Ventilation area " + totalVentilationArea 
+											);
+									details1.put(STATUS, Result.Not_Accepted.getResultVal());
+									scrutinyDetail1.getDetail().add(details1);
+									pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
+								}
+						}
 
 						if (minHeight.compareTo(new BigDecimal(2.4)) >= 0
-								&& totalArea.compareTo(new BigDecimal(1.2)) >= 0
-								&& minWidth.compareTo(new BigDecimal(1)) >= 0) {
+								&& totalArea.compareTo(new BigDecimal(1.1)) >= 0
+								&& minWidth.compareTo(new BigDecimal(0.9)) >= 0) {
 
-							details.put(REQUIRED, "Height >= 2.4, Total Area >= 1.2, Width >= 1");
+							details.put(REQUIRED, "Height >= 2.4, Total Area >= 1.1, Width >= 0.9");
 							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
 									+ ", Width >= " + minWidth);
 							details.put(STATUS, Result.Accepted.getResultVal());
@@ -135,7 +176,7 @@ public class WaterClosets extends FeatureProcess {
 							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
 						} else {
-							details.put(REQUIRED, "Height >= 2.4, Total Area >= 1.2, Width >= 1");
+							details.put(REQUIRED, "Height >= 2.4, Total Area >= 1.1, Width >= 0.9");
 							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
 									+ ", Width >= " + minWidth);
 							details.put(STATUS, Result.Not_Accepted.getResultVal());

@@ -106,12 +106,18 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
     history.push("/digit-ui/citizen/login");
     closeSidebar();
   };
+
+  const redirectToScrutinyPage = () => {
+    // localStorage.clear();
+    // sessionStorage.clear();
+    history.push("/digit-ui/citizen/core/edcr/scrutiny");
+  };
   if (islinkDataLoading || isLoading || !isFetched) {
     return <Loader />;
   }
   const filteredTenantContact = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
 
-  let menuItems = [...SideBarMenu(t, closeSidebar, redirectToLoginPage, isEmployee, storeData, tenantId)];
+  let menuItems = [...SideBarMenu(t, closeSidebar, redirectToLoginPage, redirectToScrutinyPage, isEmployee, storeData, tenantId)];
   let profileItem;
   if (isFetched && user && user.access_token) {
     profileItem = <Profile info={user?.info} stateName={stateInfo?.name} t={t} />;

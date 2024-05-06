@@ -20,6 +20,10 @@ import CitizenFeedback from "../../components/CitizenFeedback";
 import Search from "./SearchApp";
 import QRCode from "./QRCode";
 import ChallanQRCode from "./ChallanQRCode";
+import EDCRScrutiny from "./Home/EdcrScrutiny";
+import { newConfig as newConfigEDCR  } from "../../config/edcrConfig";
+import CreateEDCR1 from "./Home/EDCR";
+import EDCRAcknowledgement1 from "./Home/EDCR/EDCRAcknowledgement1";
 const sidebarHiddenFor = [
   "digit-ui/citizen/register/name",
   "/digit-ui/citizen/select-language",
@@ -79,7 +83,9 @@ const Home = ({
   const handleClickOnWhatsApp = (obj) => {
     window.open(obj);
   };
-
+  const stateId = Digit.ULBService.getStateId();
+  let { data: newConfig } = Digit.Hooks.obps.SearchMdmsTypes.getFormConfig(stateId, []);
+  newConfig = newConfig?.EdcrConfig ? newConfig?.EdcrConfig : newConfigEDCR;
   const hideSidebar = sidebarHiddenFor.some((e) => window.location.href.includes(e));
   const appRoutes = modules.map(({ code, tenants }, index) => {
     const Module = Digit.ComponentRegistryService.getComponent(`${code}Module`);
@@ -175,7 +181,7 @@ const Home = ({
           <Route exact path={`${path}/select-language`}>
             <LanguageSelection />
           </Route>
-
+          
           <Route exact path={`${path}/select-location`}>
             <LocationSelection />
           </Route>
@@ -200,6 +206,7 @@ const Home = ({
           <Route path={`${path}/login`}>
             <Login stateCode={stateCode} />
           </Route>
+          
 
           <Route path={`${path}/register`}>
             <Login stateCode={stateCode} isUserRegistered={false} />
@@ -217,6 +224,16 @@ const Home = ({
           </Route>
           <Route path={`${path}/challan/details`}>
          <ChallanQRCode></ChallanQRCode>
+          </Route>
+          <Route path={`/digit-ui/citizen/core/edcr/scrutiny`}>
+            {/* <EDCRScrutiny config={newConfigEDCR} isSubmitBtnDisable={false}/>
+            
+            */}
+              <CreateEDCR1/>
+          </Route>
+          <Route path={`/digit-ui/citizen/core/edcr/scrutiny/acknowledgement`}>
+           
+              <EDCRAcknowledgement1/>
           </Route>
           <ErrorBoundary initData={initData}>
             {appRoutes}

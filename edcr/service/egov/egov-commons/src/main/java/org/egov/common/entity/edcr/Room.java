@@ -61,8 +61,11 @@ public class Room {
     private List<Measurement> rooms = new ArrayList<>();
 
     private MeasurementWithHeight lightAndVentilation = new MeasurementWithHeight();
+    private MeasurementWithHeight bathVentilation = new MeasurementWithHeight();
 
     private List<Occupancy> mezzanineAreas = new ArrayList<>();
+
+    private List<Measurement> waterClosetVentialtion = new ArrayList<>();
 
     public List<RoomHeight> getHeights() {
         return heightOfRooms;
@@ -113,7 +116,26 @@ public class Room {
     public void setLightAndVentilation(MeasurementWithHeight lightAndVentilation) {
         this.lightAndVentilation = lightAndVentilation;
     }
+    
+    public MeasurementWithHeight getBathVentilation() {
+        return bathVentilation;
+    }
 
+    /**
+     * @param lightAndVentilation the lightAndVentilation to set
+     */
+    public void setVentilation(MeasurementWithHeight bathVentilation) {
+        this.bathVentilation = bathVentilation;
+    }
+
+    
+    public List<Measurement> getWaterClosetVentilation() {
+		return waterClosetVentialtion;
+	}
+
+	public void setWaterClosetVentilation(List<Measurement> waterClosetVentialtion) {
+		this.waterClosetVentialtion = waterClosetVentialtion;
+	}
     public List<Measurement> getRooms() {
         return rooms;
     }
