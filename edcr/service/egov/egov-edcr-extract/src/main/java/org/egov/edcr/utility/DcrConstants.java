@@ -40,6 +40,7 @@ public class DcrConstants {
     public static final String WASTEDISPOSAL_DEFINED_KEY = "WASTEDISPOSAL_DEFINED";
     public static final String OBJECTNOTDEFINED_DESC = " Not defined in the plan.";
     public static final String EXPECTEDRESULT = "msg.result.expected.actual";
+    public static final String FLOOR_HEIGHT_DESC = "Floor height";
 
     public static final String OBJECTDEFINED = "msg.object.defined";
     public static final String OBJECTNOTDEFINED = "msg.error.not.defined";

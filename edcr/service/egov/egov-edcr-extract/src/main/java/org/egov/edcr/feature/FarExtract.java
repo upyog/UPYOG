@@ -40,6 +40,9 @@ import org.egov.edcr.entity.blackbox.PlanDetail;
 import org.egov.edcr.entity.blackbox.StairDetail;
 import org.egov.edcr.service.LayerNames;
 import org.egov.edcr.utility.DcrConstants;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.edcr.utility.DcrConstants.FLOOR_HEIGHT_DESC;
 import org.egov.edcr.utility.Util;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
@@ -534,7 +537,40 @@ public class FarExtract extends FeatureExtract {
                 + layerNames.getLayerName("LAYER_NAME_FLOOR_NAME_PREFIX") + floor.getNumber() + "_"
                 + layerNames.getLayerName("LAYER_NAME_FLOOR_HEIGHT_PREFIX");
         List<BigDecimal> flrHeights = Util.getListOfDimensionValueByLayer(pl, floorHeightLayerName);
-        floor.setFloorHeights(flrHeights);
+    	String isStiltFloor = Util.getMtextByLayerName(pl.getDoc(), floorHeightLayerName, "STILT_FLR_HT");
+    	
+    	if (!isBlank(isStiltFloor)) {
+			if (isStiltFloor.contains("=")) {
+				isStiltFloor = isStiltFloor.split("=")[1] != null
+						? isStiltFloor.split("=")[1].replaceAll("[^\\d.]", "")
+						: "";
+			} else
+				isStiltFloor = isStiltFloor.replaceAll("[^\\d.]", "");
+
+			if (!isBlank(isStiltFloor)) {
+				
+				if(isStiltFloor.equals("Yes")) {
+					
+				floor.setIsStiltFloor(true);
+				}
+				else {
+					floor.setIsStiltFloor(false);
+				}
+				
+			}
+	
+			
+		}else {
+			pl.addError(floorHeightLayerName + "STILT_FLR_HT",
+					" Stilt Floor height is not defined in layer " + floorHeightLayerName);
+		}
+
+        
+   		 if (!flrHeights.isEmpty()) {
+   			floor.setFloorHeights(flrHeights);
+   		} else {
+   			pl.addError(FLOOR_HEIGHT_DESC, getLocaleMessage(OBJECTNOTDEFINED, FLOOR_HEIGHT_DESC + floor.getNumber()));
+   		}
     }
 
     @Override
