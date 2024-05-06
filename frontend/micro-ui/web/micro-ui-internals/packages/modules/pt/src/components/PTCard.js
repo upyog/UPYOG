@@ -52,23 +52,25 @@ const PTCard = () => {
     return null;
   }
   const links=[
-    {
-      count: isLoading ? "-" : total?.totalCount,
-      label: t("ES_COMMON_INBOX"),
-      link: `/digit-ui/employee/pt/inbox`,
-    },
-    {
-      label: t("ES_TITLE_NEW_REGISTRATION"),
-      link: `/digit-ui/employee/pt/new-application`,
-      role: "PT_CEMP"
-    },
+    // {
+    //   count: isLoading ? "-" : total?.totalCount,
+    //   label: t("ES_COMMON_INBOX"),
+    //   link: `/digit-ui/employee/pt/inbox`,
+    // },
+    // {
+    //   label: t("ES_TITLE_NEW_REGISTRATION"),
+    //   link: `/digit-ui/employee/pt/new-application`,
+    //   role: "PT_CEMP"
+    // },
     {
       label: t("SEARCH_PROPERTY"),
       link: `/digit-ui/employee/pt/search`,
+      image: "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/MyApplication.png",
     },
     {
       label: t("ES_COMMON_APPLICATION_SEARCH"),
       link: `/digit-ui/employee/pt/application-search`,
+      image: "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Property-Transfer.png",
     },
   ]
   const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
@@ -80,6 +82,7 @@ const PTCard = () => {
         count: total?.totalCount,
         label: t("ES_TITLE_INBOX"),
         link: `/digit-ui/employee/pt/inbox`,
+        image: "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/MyProperty.png",
       },
       // {
         
@@ -92,6 +95,7 @@ const PTCard = () => {
         count: 7,
         label: t("Notices"),
         link: `/digit-ui/employee/pt/notices`,
+        image: "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/My-Payments.png",
       }
     ],
     links:links.filter(link=>!link?.role||PT_CEMP),
