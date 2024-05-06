@@ -23,7 +23,7 @@ const CloseBtn = (props) => {
   );
 };
 
-const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationDetails, applicationData, businessService, moduleCode,workflowDetails }) => {
+const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationDetails, applicationData, businessService, moduleCode,workflowDetails,blockReason }) => {
   const mutation1 = Digit.Hooks.obps.useObpsAPI(
       applicationData?.landInfo?.address?.city ? applicationData?.landInfo?.address?.city : tenantId,
       false
@@ -41,7 +41,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [config, setConfig] = useState({});
   const [defaultValues, setDefaultValues] = useState({});
   const [approvers, setApprovers] = useState([]);
+  const [blockReasonFiltered, setFilteredBlockReason] = useState([]);
   const [selectedApprover, setSelectedApprover] = useState({});
+  const [selectedBlockReason, setBlockReason] = useState({});
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [error, setError] = useState(null);
@@ -117,7 +119,19 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     if (data?.additionalDetails?.fieldinspection_pending?.length > 0) {
       inspectionOb = data?.additionalDetails?.fieldinspection_pending
     }
+    inspectionOb = inspectionOb.filter(obj => {
+      // Check if the object has the date field
+      if (!obj.date) return false;
+  
+      // Get today's date
+      const today = new Date();
+      // Extract date from the object and convert it to a Date object
+      const objDate = new Date(obj.date);
+      // Compare the object's date with today's date
+      return objDate <= today;
+  });
 
+  
     if(data.status == "FIELDINSPECTION_INPROGRESS") {
       formdata = JSON.parse(sessionStorage.getItem("INSPECTION_DATA"));
       formdata?.length > 0 && formdata.map((ob,ind) => {
@@ -128,7 +142,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           time: ob?.InspectionTime,
         })
       })
-      inspectionOb = inspectionOb.filter((ob) => ob.docs && ob.docs.length>0);
+      console.log("FIELDINSPECTION_INPROGRESS",inspectionOb)
+      inspectionOb = inspectionOb.filter((ob) => ob.date && ob.time);
+      console.log("inspectionObinspectionOb",inspectionOb)
     } else {
       sessionStorage.removeItem("INSPECTION_DATA")
     }
@@ -160,7 +176,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     applicationData = {
       ...applicationData,
       documents: getDocuments(applicationData),
-      additionalDetails: {...applicationData?.additionalDetails, fieldinspection_pending:getfeildInspection(applicationData), pendingapproval: getPendingApprovals() },
+      additionalDetails: {...applicationData?.additionalDetails, fieldinspection_pending:getfeildInspection(applicationData), pendingapproval: getPendingApprovals(),blockingReason:selectedBlockReason?.name  },
        workflow:{
         action: action?.action,
         comment: data?.comments?.length > 0 ? data?.comments : null,
@@ -190,6 +206,17 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         ]
         : null,
     };
+    if (!sessionStorage.getItem("development") || !sessionStorage.getItem("otherCharges") || !sessionStorage.getItem("lessAdjusment") ){
+      closeModal()
+      alert("Please fill P2 Manual Fees");}
+    else if(parseInt(sessionStorage.getItem("lessAdjusment"))>(parseInt(sessionStorage.getItem("development"))+parseInt(sessionStorage.getItem("otherCharges"))+parseInt(applicationData?.additionalDetails?.selfCertificationCharges?.BPA_MALBA_CHARGES)+parseInt(applicationData?.additionalDetails?.selfCertificationCharges?.BPA_LABOUR_CESS)+parseInt(applicationData?.additionalDetails?.selfCertificationCharges?.BPA_WATER_CHARGES)+parseInt(applicationData?.additionalDetails?.selfCertificationCharges?.BPA_GAUSHALA_CHARGES_CESS))){
+      closeModal()
+      alert("Enterd Less Adjustment amount is invalid");
+    }
+    else{
+    applicationData.additionalDetails.selfCertificationCharges.BPA_DEVELOPMENT_CHARGES=sessionStorage.getItem("development");
+    applicationData.additionalDetails.selfCertificationCharges.BPA_OTHER_CHARGES=sessionStorage.getItem("otherCharges");
+    applicationData.additionalDetails.selfCertificationCharges.BPA_LESS_ADJUSMENT_PLOT=sessionStorage.getItem("lessAdjusment");
 
     const nocDetails = applicationDetails?.nocData?.map(noc => {
       const uploadedDocuments = Digit.SessionStorage.get(noc?.nocType) || [];
@@ -238,14 +265,31 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           }
       })
     }
+    if(applicationData.status == "FIELDINSPECTION_INPROGRESS") {
+      let formdata = JSON.parse(sessionStorage.getItem("INSPECTION_DATA"));
+      formdata?.length > 0 && formdata.map((ob,ind) => {
 
+        ob.InspectionDate && ob.InspectionTime ?  submitAction({
+          BPA:applicationData
+        }, nocData?.length > 0 ? nocData : false, {isStakeholder: false, bpa: true}) : closeModalNew()
+        console.log(" ob.InspectionDate && ob.InspectionTime", ob.InspectionDate , ob.InspectionTime)
+    } )
+  }
+  else 
+  {
     submitAction({
       BPA:applicationData
-    }, nocData?.length > 0 ? nocData : false, {isStakeholder: false, bpa: true});
+    }, nocData?.length > 0 ? nocData : false, {isStakeholder: false, bpa: true})    
+  }
+    }    
+  }
+  const closeModalNew = ()=>{
+    closeModal()
+    alert("Please fill Inspection Date and Time")
   }
 
-
   useEffect(() => {
+    setFilteredBlockReason(blockReason?.map((blockReason) => ({ code: blockReason?.code, name: blockReason?.value })));
     if (action) {
       setConfig(
         configBPAApproverApplication({
@@ -254,12 +298,15 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           approvers,
           selectedApprover,
           setSelectedApprover,
+          selectedBlockReason,
+          setBlockReason,
           selectFile,
           uploadedFile,
           setUploadedFile,
           businessService,
           assigneeLabel: "WF_ASSIGNEE_NAME_LABEL",
-          error
+          error,
+          blockReasonFiltered
         })
       );
     }

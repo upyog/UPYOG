@@ -1,5 +1,6 @@
 package org.egov.bpa.repository.querybuilder;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -54,6 +55,14 @@ public class BPAQueryBuilder {
                 preparedStmtList.add(criteria.getTenantId());
             }
         }
+        
+        if (criteria.getName() != null) {
+          
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" bpa.applicationNo LIKE '%").append(criteria.getName()).append("%')");
+            preparedStmtList.add(criteria.getName());
+            
+        }
 
         List<String> ids = criteria.getIds();
         if (!CollectionUtils.isEmpty(ids)) {
@@ -71,11 +80,20 @@ public class BPAQueryBuilder {
         }
 
         String applicationNo = criteria.getApplicationNo();
-        if (applicationNo != null) {
-            List<String> applicationNos = Arrays.asList(applicationNo.split(","));
+        if (applicationNo != null) {
+        	List<String> applicationNos=new ArrayList<String>();
+        	if(applicationNo.contains(",")) {
+        		applicationNos = Arrays.asList(applicationNo.split(","));
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" bpa.applicationNo IN (").append(createQuery(applicationNos)).append(")");
             addToPreparedStatement(preparedStmtList, applicationNos);
+        	}
+        	else
+        	{
+        		addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" bpa.applicationNo LIKE ?");
+                preparedStmtList.add('%' + applicationNo + '%');
+        	}
         }
 
         String approvalNo = criteria.getApprovalNo();

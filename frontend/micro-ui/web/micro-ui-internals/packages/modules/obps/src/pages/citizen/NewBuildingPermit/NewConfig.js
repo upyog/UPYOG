@@ -45,7 +45,11 @@ export const newConfig1=[
             {
                 "label": "BPA_BOUNDARY_WALL_LENGTH_LABEL_INPUT",
                 "type": "text",
-                "validation": {},
+                "validation": {
+                    "pattern":"^[0-9]*$",
+                    "title": "Enter in Numbers[0-9]",
+                    "required": true
+                },
                 "name": "boundaryWallLength"
             },
             {

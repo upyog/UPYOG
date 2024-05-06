@@ -49,7 +49,7 @@ function ApplicationDetailsContent({
   isInfoLabel = false
 }) {
   const { t } = useTranslation();
-  
+  let isEditApplication=window.location.href.includes("editApplication") && window.location.href.includes("bpa") ; 
 const ownersSequences= applicationDetails?.applicationData?.owners
 console.log("appl", applicationDetails)
 
@@ -350,7 +350,7 @@ console.log("appl", applicationDetails)
           </div>
           {detail?.belowComponent && <detail.belowComponent />}
           {detail?.additionalDetails?.inspectionReport && (
-            <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} paymentsList={paymentsList} />
+            <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} paymentsList={paymentsList} additionalDetails={applicationDetails?.applicationData?.additionalDetails} applicationData={applicationDetails?.applicationData} />
           )}
           {applicationDetails?.applicationData?.additionalDetails?.fieldinspection_pending?.length > 0 && detail?.additionalDetails?.fiReport && (
             <InspectionReport fiReport={applicationDetails?.applicationData?.additionalDetails?.fieldinspection_pending} />
@@ -370,7 +370,7 @@ console.log("appl", applicationDetails)
           {detail?.additionalDetails?.owners && <PropertyOwners owners={detail?.additionalDetails?.owners} />}
           {detail?.additionalDetails?.units && <TLTradeUnits units={detail?.additionalDetails?.units} />}
           {detail?.additionalDetails?.accessories && <TLTradeAccessories units={detail?.additionalDetails?.accessories} />}
-          {detail?.additionalDetails?.permissions && workflowDetails?.data?.nextActions?.length > 0 && (
+          {!isEditApplication && detail?.additionalDetails?.permissions && workflowDetails?.data?.nextActions?.length > 0 && (
             <PermissionCheck applicationData={applicationDetails?.applicationData} t={t} permissions={detail?.additionalDetails?.permissions} />
           )}
           {detail?.additionalDetails?.obpsDocuments && (

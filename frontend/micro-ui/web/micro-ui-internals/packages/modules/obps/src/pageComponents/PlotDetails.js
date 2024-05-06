@@ -25,14 +25,7 @@ const PlotDetails = ({ formData, onSelect, config }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const checkingFlow = formData?.uiFlow?.flow;
   const state = Digit.ULBService.getStateId();
-  let [isNextDisabled,setIsNextDisabled] =useState(false);
   useEffect(() => {
-    if(checkingFlow==="BPA"){
-      setIsNextDisabled(true);
-    }
-    if(formData?.additionalDetails?.boundaryWallLength || formData?.data?.boundaryWallLength){
-      setIsNextDisabled(false);
-    }
     if(isEditApplication){
       const newConfig={
         ...config,
@@ -59,18 +52,10 @@ const PlotDetails = ({ formData, onSelect, config }) => {
     return <Loader />;
   }
 
-function onChange(data){
-  if(data.target.name=="boundaryWallLength" && isNaN(parseInt(data.target.value))==false)  {
-    setIsNextDisabled(false);
-  }
-  else if(data.target.name=="boundaryWallLength" && isNaN(parseInt(data.target.value))==true){
-    setIsNextDisabled(true);
-  }
-}
   return (
     <div>
       <Timeline flow= {checkingFlow === "OCBPA" ? "OCBPA" : ""}/>
-      <FormStep config={editConfig} onSelect={handleSubmit} childrenAtTheBottom={false} t={t} _defaultValues={formData?.data} onSkip={onSkip} onChange={onChange} isDisabled={isNextDisabled}>
+      <FormStep config={editConfig} onSelect={handleSubmit} childrenAtTheBottom={false} t={t} _defaultValues={formData?.data} onSkip={onSkip} >
         <StatusTable>
           <Row className="border-none" label={t(`BPA_BOUNDARY_PLOT_AREA_LABEL`)} text={data?.planDetail?.planInformation?.plotArea ? `${data?.planDetail?.planInformation?.plotArea} ${t(`BPA_SQ_MTRS_LABEL`)}` : "NA"} />
           <Row className="border-none" label={t(`BPA_PLOT_NUMBER_LABEL`)} text={data?.planDetail?.planInformation?.plotNo} />

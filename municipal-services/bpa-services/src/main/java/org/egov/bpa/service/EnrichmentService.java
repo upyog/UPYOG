@@ -97,11 +97,18 @@ public class EnrichmentService {
 		bpaRequest.getBPA().setAccountId(bpaRequest.getBPA().getAuditDetails().getCreatedBy());
 		String applicationType = values.get(BPAConstants.APPLICATIONTYPE);
 		if (applicationType.equalsIgnoreCase(BPAConstants.BUILDING_PLAN)) {
-			if (!bpaRequest.getBPA().getRiskType().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)) {
-				bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_MODULE_CODE);
-			} else {
-				bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_LOW_MODULE_CODE);
-			}
+//			if (!bpaRequest.getBPA().getRiskType().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)) {
+
+//			bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_MODULE_CODE);
+
+//		} else {
+
+//			bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_LOW_MODULE_CODE);
+
+//		}
+
+		bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_MODULE_CODE);
+
 		} else {
 			bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_OC_MODULE_CODE);
 			bpaRequest.getBPA().setLandId(values.get("landId"));
@@ -384,7 +391,7 @@ public class EnrichmentService {
 
 		} else if (wf != null && (wf.getAction().equalsIgnoreCase(BPAConstants.ACTION_SEND_TO_ARCHITECT)
 				|| (bpa.getStatus().equalsIgnoreCase(BPAConstants.STATUS_CITIZEN_APPROVAL_INPROCESS)
-						&& wf.getAction().equalsIgnoreCase(BPAConstants.ACTION_APPROVE)))) {
+						&& (wf.getAction().equalsIgnoreCase(BPAConstants.ACTION_APPROVE) || wf.getAction().equalsIgnoreCase(BPAConstants.ACTION_POST_PAY_APPROVE) ) ))) {
 			// Adding creator of BPA(Licensee)
 			if (bpa.getAccountId() != null)
 				assignes.add(bpa.getAccountId());

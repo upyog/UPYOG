@@ -187,6 +187,43 @@ setWaterCharges(Malbafees/2)
       return <Loader />
     }
 
+    function onSubmitCheck(){
+      if(development && otherCharges && lessAdjusment){
+      if(parseInt(lessAdjusment)>(parseInt(development)+parseInt(otherCharges)+parseInt(malbafees)+parseInt(labourCess)+parseInt(waterCharges)+parseInt(gaushalaFees))){
+        alert("Enterd Less Adjustment amount is invalid");
+      }
+      else{
+        onSubmit();
+      }
+    }}
+
+    function setOtherChargesVal(value) {
+      if(/^[0-9]*$/.test(value)){
+        setOtherCharges(value);
+        sessionStorage.setItem("otherCharges",value)
+      }
+      else{
+        //alert("Please enter numbers")
+      }      
+  }
+    function setDevelopmentVal(value) {
+      if(/^[0-9]*$/.test(value)){
+        setDevelopment(value);
+        sessionStorage.setItem("development",value)
+      }
+      else{
+        //alert("Please enter numbers")
+      }      
+    }
+    function setLessAdjusmentVal(value) {
+    if(/^[0-9]*$/.test(value)){
+      setLessAdjusment(value);
+      sessionStorage.setItem("lessAdjusment",value)
+    }
+    else{
+      //alert("Please enter numbers")
+    }      
+    }
 
     return (
     <React.Fragment>
@@ -378,13 +415,13 @@ setWaterCharges(Malbafees/2)
               type={"text"}
               isMandatory={false}
               optionKey="i18nKey"
-              name="email"
-              defaultValue={value?.additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES || ""}
+              name="development"
+              defaultValue={value?.additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES }
               value={development}
-              onChange={(e) => {setDevelopment(e.target.value),sessionStorage.setItem("development",e.target.value)}}
+              onChange={(e) => {setDevelopmentVal(e.target.value)}}
               //disable={userInfo?.info?.emailId && !isOpenLinkFlow ? true : false}
               //disable={editScreen}
-              //{...{ required: true, pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", type: "email", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
+              {...{ required: true, pattern: "^[0-9]*$" }}
             />
                <CardLabel>{t("BPA_COMMON_OTHER_AMT")}</CardLabel>
             <TextInput
@@ -392,13 +429,13 @@ setWaterCharges(Malbafees/2)
               type={"text"}
               isMandatory={false}
               optionKey="i18nKey"
-              name="email"
-              defaultValue={value?.additionalDetails?.selfCertificationCharges?.BPA_OTHER_CHARGES || ""}
+              name="otherCharges"
+              defaultValue={value?.additionalDetails?.selfCertificationCharges?.BPA_OTHER_CHARGES }
               value={otherCharges}
-              onChange={(e) => {setOtherCharges(e.target.value),sessionStorage.setItem("otherCharges",e.target.value)}}
+              onChange={(e) => {setOtherChargesVal(e.target.value)}}
               //disable={userInfo?.info?.emailId && !isOpenLinkFlow ? true : false}
               //disable={editScreen}
-              //{...{ required: true, pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", type: "email", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
+              {...{ required: true, pattern: /^[0-9]*$/ }}
             />
                 <CardLabel>{t("BPA_COMMON_LESS_AMT")}</CardLabel>
             <TextInput
@@ -406,20 +443,20 @@ setWaterCharges(Malbafees/2)
               type={"text"}
               isMandatory={false}
               optionKey="i18nKey"
-              name="email"
-              defaultValue={value?.additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT || ""}
+              name="lessAdjusment"
+              defaultValue={value?.additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT }
               value={lessAdjusment}
-              onChange={(e) => {setLessAdjusment(e.target.value),sessionStorage.setItem("lessAdjusment",e.target.value)}}
+              onChange={(e) => {setLessAdjusmentVal(e.target.value)}}
               //disable={userInfo?.info?.emailId && !isOpenLinkFlow ? true : false}
               //disable={editScreen}
-              //{...{ required: true, pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", type: "email", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
+              {...{ required: true, pattern: "^[0-9]*$" }}
             />
        
        </StatusTable>
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
       {/* <CardHeader>{t("BPA_COMMON_TOTAL_AMT")}</CardHeader> 
       <CardHeader>₹ {paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}</CardHeader>  */}
-      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmit} disabled={(!isEditApplication) && (!development||!otherCharges||!lessAdjusment)} id/>
+      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmitCheck} disabled={ (!development||!otherCharges||!lessAdjusment)} id/>
       </Card>
     </React.Fragment>
     );
