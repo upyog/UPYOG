@@ -123,20 +123,22 @@ public class BathRoom extends FeatureProcess {
 							}
 						}
 
-						if (minHeight.compareTo(new BigDecimal(2.4)) >= 0
-								&& totalArea.compareTo(new BigDecimal(1.8)) >= 0
+						if(
+					//	(minHeight.compareTo(new BigDecimal(2.4)) >= 0
+							//	&& 
+								totalArea.compareTo(new BigDecimal(1.8)) >= 0
 								&& minWidth.compareTo(new BigDecimal(1.2)) >= 0) {
 
-							details.put(REQUIRED, "Height >= 2.4, Total Area >= 1.8, Width >= 1.2");
-							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
+							details.put(REQUIRED," Total Area >= 1.8, Width >= 1.2");
+							details.put(PROVIDED, " Total Area >= " + totalArea
 									+ ", Width >= " + minWidth);
 							details.put(STATUS, Result.Accepted.getResultVal());
 							scrutinyDetail.getDetail().add(details);
 							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
 						} else {
-							details.put(REQUIRED, "Height >= 2.4, Total Area >= 1.8, Width >= 1.2");
-							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
+							details.put(REQUIRED, ", Total Area >= 1.8, Width >= 1.2");
+							details.put(PROVIDED,   ", Total Area >= " + totalArea
 									+ ", Width >= " + minWidth);
 							details.put(STATUS, Result.Not_Accepted.getResultVal());
 							scrutinyDetail.getDetail().add(details);

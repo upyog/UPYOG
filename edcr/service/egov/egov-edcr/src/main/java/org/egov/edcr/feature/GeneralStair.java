@@ -183,7 +183,7 @@ public class GeneralStair extends FeatureProcess {
 
             if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
                 minWidth = Util.roundOffTwoDecimal(landingWidth);
-                BigDecimal minimumWidth = getRequiredWidth(block, mostRestrictiveOccupancyType);
+                BigDecimal minimumWidth = getRequiredLandingWidth(block, mostRestrictiveOccupancyType);
 
                 if (minWidth.compareTo(minimumWidth) >= 0) {
                     valid = true;
@@ -353,7 +353,7 @@ public class GeneralStair extends FeatureProcess {
             return BigDecimal.ONE;
         } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
                 && DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-            return BigDecimal.valueOf(1.25);
+            return BigDecimal.valueOf(0.76);
         } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
                 && DxfFileConstants.B.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
             return BigDecimal.valueOf(1.5);
@@ -361,6 +361,17 @@ public class GeneralStair extends FeatureProcess {
                 && DxfFileConstants.D.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
             return BigDecimal.valueOf(2);
         } else {
+            return BigDecimal.valueOf(1.5);
+        }
+    }
+    
+    private BigDecimal getRequiredLandingWidth(Block block, OccupancyTypeHelper mostRestrictiveOccupancyType) {
+      
+        if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+                && DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+            return BigDecimal.valueOf(1);
+        }
+     else {
             return BigDecimal.valueOf(1.5);
         }
     }
@@ -426,12 +437,15 @@ public class GeneralStair extends FeatureProcess {
         return minTread;
     }
 
-    private BigDecimal getRequiredTread(OccupancyTypeHelper mostRestrictiveOccupancyType) {
-        if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getSubtype() != null
-                && DxfFileConstants.A_AF.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())) {
+	private BigDecimal getRequiredTread(OccupancyTypeHelper mostRestrictiveOccupancyType) {
+        if (mostRestrictiveOccupancyType != null
+        		//&& mostRestrictiveOccupancyType.getSubtype() != null
+                //&& DxfFileConstants.A_AF.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())) {
+        	 && DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
             return BigDecimal.valueOf(0.25);
         } else {
-            return BigDecimal.valueOf(0.3);
+           // return BigDecimal.valueOf(0.3);
+        	return null;
         }
     }
 
