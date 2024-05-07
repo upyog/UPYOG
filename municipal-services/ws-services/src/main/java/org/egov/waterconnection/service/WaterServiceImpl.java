@@ -90,8 +90,8 @@ public class WaterServiceImpl implements WaterService {
 	@Autowired
 	private WaterServicesUtil wsUtil;
 
-	@Autowired
-	EncryptionDecryptionUtil encryptionDecryptionUtil;
+	//@Autowired
+	//EncryptionDecryptionUtil encryptionDecryptionUtil;
 
 	@Autowired
 	private PaymentUpdateService paymentUpdateService;
@@ -151,25 +151,35 @@ public class WaterServiceImpl implements WaterService {
 			wfIntegrator.callWorkFlow(waterConnectionRequest, property);
 
 		/* encrypt here */
-		waterConnectionRequest.setWaterConnection(encryptConnectionDetails(waterConnectionRequest.getWaterConnection()));
+	//	waterConnectionRequest.setWaterConnection(encryptConnectionDetails(waterConnectionRequest.getWaterConnection()));
 		/* encrypt here for connection holder details */
-		waterConnectionRequest.setWaterConnection(encryptConnectionHolderDetails(waterConnectionRequest.getWaterConnection()));
+	//	waterConnectionRequest.setWaterConnection(encryptConnectionHolderDetails(waterConnectionRequest.getWaterConnection()));
 
 		waterDao.saveWaterConnection(waterConnectionRequest);
 
 		/* decrypt here */
-		waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnectionRequest.getWaterConnection(), WNS_ENCRYPTION_MODEL, WaterConnection.class, waterConnectionRequest.getRequestInfo()));
+	//	waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnectionRequest.getWaterConnection(), WNS_ENCRYPTION_MODEL, WaterConnection.class, waterConnectionRequest.getRequestInfo()));
 		//PlumberInfo masked during Create call of New Application
-		if (reqType == 0)
-			waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnectionRequest.getWaterConnection(), WNS_PLUMBER_ENCRYPTION_MODEL, WaterConnection.class, waterConnectionRequest.getRequestInfo()));
+//		if (reqType == 0)
+	//		waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnectionRequest.getWaterConnection(), WNS_PLUMBER_ENCRYPTION_MODEL, WaterConnection.class, waterConnectionRequest.getRequestInfo()));
 		//PlumberInfo unmasked during create call of Disconnect/Modify Applications
-		else
-			waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnectionRequest.getWaterConnection(), "WnSConnectionPlumberDecrypDisabled", WaterConnection.class, waterConnectionRequest.getRequestInfo()));
+//		else
+	//		waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnectionRequest.getWaterConnection(), "WnSConnectionPlumberDecrypDisabled", WaterConnection.class, waterConnectionRequest.getRequestInfo()));
 
-		List<OwnerInfo> connectionHolders = waterConnectionRequest.getWaterConnection().getConnectionHolders();
-		if (!CollectionUtils.isEmpty(connectionHolders))
-			waterConnectionRequest.getWaterConnection().setConnectionHolders(encryptionDecryptionUtil.decryptObject(connectionHolders, WNS_OWNER_ENCRYPTION_MODEL, OwnerInfo.class, waterConnectionRequest.getRequestInfo()));
-
+		
+		
+		
+		
+		
+		/*
+		 * List<OwnerInfo> connectionHolders =
+		 * waterConnectionRequest.getWaterConnection().getConnectionHolders(); if
+		 * (!CollectionUtils.isEmpty(connectionHolders))
+		 * waterConnectionRequest.getWaterConnection().setConnectionHolders(
+		 * encryptionDecryptionUtil.decryptObject(connectionHolders,
+		 * WNS_OWNER_ENCRYPTION_MODEL, OwnerInfo.class,
+		 * waterConnectionRequest.getRequestInfo()));
+		 */
 		return Arrays.asList(waterConnectionRequest.getWaterConnection());
 	}
 
@@ -264,7 +274,7 @@ public class WaterServiceImpl implements WaterService {
 		requestInfo.setPlainAccessRequest(apiPlainAccessRequest);
 		/* decrypt here */
 		if (criteria.getIsInternalCall()) {
-			waterConnectionList = encryptionDecryptionUtil.decryptObject(waterConnectionList, "WnSConnectionPlumberDecrypDisabled", WaterConnection.class, requestInfo);
+		//	waterConnectionList = encryptionDecryptionUtil.decryptObject(waterConnectionList, "WnSConnectionPlumberDecrypDisabled", WaterConnection.class, requestInfo);
 			requestInfo.setPlainAccessRequest(apiPlainAccessRequestCopy);
 			return waterConnectionList;//encryptionDecryptionUtil.decryptObject(waterConnectionList, "WnSConnectionDecrypDisabled", WaterConnection.class, requestInfo);
 		}
@@ -371,8 +381,8 @@ public class WaterServiceImpl implements WaterService {
 		WaterConnection searchResult = getConnectionForUpdateRequest(waterConnectionRequest.getWaterConnection().getId(), waterConnectionRequest.getRequestInfo());
 
 		boolean isPlumberSwapped = unmaskingUtil.getUnmaskedPlumberInfo(waterConnectionRequest.getWaterConnection().getPlumberInfo(), searchResult.getPlumberInfo());
-		if (isPlumberSwapped)
-			waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnectionRequest.getWaterConnection(), "WnSConnectionPlumberDecrypDisabled", WaterConnection.class, waterConnectionRequest.getRequestInfo()));
+		//if (isPlumberSwapped)
+		//	waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnectionRequest.getWaterConnection(), "WnSConnectionPlumberDecrypDisabled", WaterConnection.class, waterConnectionRequest.getRequestInfo()));
 
 		String previousApplicationStatus = workflowService.getApplicationStatus(waterConnectionRequest.getRequestInfo(),
 				waterConnectionRequest.getWaterConnection().getApplicationNo(),
@@ -433,8 +443,8 @@ public class WaterServiceImpl implements WaterService {
 		WaterConnection searchResult = getConnectionForUpdateRequest(waterConnectionRequest.getWaterConnection().getId(), waterConnectionRequest.getRequestInfo());
 
 		boolean isPlumberSwapped = unmaskingUtil.getUnmaskedPlumberInfo(waterConnectionRequest.getWaterConnection().getPlumberInfo(), searchResult.getPlumberInfo());
-		if (isPlumberSwapped)
-			waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnectionRequest.getWaterConnection(), "WnSConnectionPlumberDecrypDisabled", WaterConnection.class, waterConnectionRequest.getRequestInfo()));
+	//	if (isPlumberSwapped)
+		//	waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnectionRequest.getWaterConnection(), "WnSConnectionPlumberDecrypDisabled", WaterConnection.class, waterConnectionRequest.getRequestInfo()));
 
 		String previousApplicationStatus = workflowService.getApplicationStatus(waterConnectionRequest.getRequestInfo(),
 				waterConnectionRequest.getWaterConnection().getApplicationNo(),
@@ -504,8 +514,8 @@ public class WaterServiceImpl implements WaterService {
 		WaterConnection searchResult = getConnectionForUpdateRequest(waterConnectionRequest.getWaterConnection().getId(), waterConnectionRequest.getRequestInfo());
 
 		boolean isPlumberSwapped = unmaskingUtil.getUnmaskedPlumberInfo(waterConnectionRequest.getWaterConnection().getPlumberInfo(), searchResult.getPlumberInfo());
-		if (isPlumberSwapped)
-			waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnectionRequest.getWaterConnection(), "WnSConnectionPlumberDecrypDisabled", WaterConnection.class, waterConnectionRequest.getRequestInfo()));
+	//	if (isPlumberSwapped)
+		//	waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnectionRequest.getWaterConnection(), "WnSConnectionPlumberDecrypDisabled", WaterConnection.class, waterConnectionRequest.getRequestInfo()));
 
 		String previousApplicationStatus = workflowService.getApplicationStatus(waterConnectionRequest.getRequestInfo(),
 				waterConnectionRequest.getWaterConnection().getApplicationNo(),
@@ -602,8 +612,8 @@ public class WaterServiceImpl implements WaterService {
 				waterConnectionRequest.getWaterConnection().getId(), waterConnectionRequest.getRequestInfo());
 
 		boolean isPlumberSwapped = unmaskingUtil.getUnmaskedPlumberInfo(waterConnectionRequest.getWaterConnection().getPlumberInfo(), searchResult.getPlumberInfo());
-		if (isPlumberSwapped)
-			waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnectionRequest.getWaterConnection(), "WnSConnectionPlumberDecrypDisabled", WaterConnection.class, waterConnectionRequest.getRequestInfo()));
+	//	if (isPlumberSwapped)
+		//	waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnectionRequest.getWaterConnection(), "WnSConnectionPlumberDecrypDisabled", WaterConnection.class, waterConnectionRequest.getRequestInfo()));
 
 		Property property = validateProperty.getOrValidateProperty(waterConnectionRequest);
 		validateProperty.validatePropertyFields(property,waterConnectionRequest.getRequestInfo());
@@ -750,8 +760,8 @@ public class WaterServiceImpl implements WaterService {
 	 */
 	private WaterConnection encryptConnectionDetails(WaterConnection waterConnection) {
 		/* encrypt here */
-		waterConnection = encryptionDecryptionUtil.encryptObject(waterConnection, WNS_ENCRYPTION_MODEL, WaterConnection.class);
-		waterConnection = encryptionDecryptionUtil.encryptObject(waterConnection, WNS_PLUMBER_ENCRYPTION_MODEL, WaterConnection.class);
+	//	waterConnection = encryptionDecryptionUtil.encryptObject(waterConnection, WNS_ENCRYPTION_MODEL, WaterConnection.class);
+	//	waterConnection = encryptionDecryptionUtil.encryptObject(waterConnection, WNS_PLUMBER_ENCRYPTION_MODEL, WaterConnection.class);
 		return waterConnection;
 	}
 
@@ -767,7 +777,7 @@ public class WaterServiceImpl implements WaterService {
 		if (!CollectionUtils.isEmpty(connectionHolders)) {
 			int k = 0;
 			for (OwnerInfo holderInfo : connectionHolders) {
-				waterConnection.getConnectionHolders().set(k, encryptionDecryptionUtil.encryptObject(holderInfo, WNS_OWNER_ENCRYPTION_MODEL, OwnerInfo.class));
+			//	waterConnection.getConnectionHolders().set(k, encryptionDecryptionUtil.encryptObject(holderInfo, WNS_OWNER_ENCRYPTION_MODEL, OwnerInfo.class));
 				k++;
 			}
 		}
@@ -782,11 +792,11 @@ public class WaterServiceImpl implements WaterService {
 	 */
 	private WaterConnection decryptConnectionDetails(WaterConnection waterConnection, RequestInfo requestInfo) {
 		/* decrypt here */
-		waterConnection = encryptionDecryptionUtil.decryptObject(waterConnection, WNS_ENCRYPTION_MODEL, WaterConnection.class, requestInfo);
-		waterConnection = encryptionDecryptionUtil.decryptObject(waterConnection, WNS_PLUMBER_ENCRYPTION_MODEL, WaterConnection.class, requestInfo);
+	//	waterConnection = encryptionDecryptionUtil.decryptObject(waterConnection, WNS_ENCRYPTION_MODEL, WaterConnection.class, requestInfo);
+	//	waterConnection = encryptionDecryptionUtil.decryptObject(waterConnection, WNS_PLUMBER_ENCRYPTION_MODEL, WaterConnection.class, requestInfo);
 		List<OwnerInfo> connectionHolders = waterConnection.getConnectionHolders();
-		if (!CollectionUtils.isEmpty(connectionHolders))
-			waterConnection.setConnectionHolders(encryptionDecryptionUtil.decryptObject(connectionHolders, WNS_OWNER_ENCRYPTION_MODEL, OwnerInfo.class, requestInfo));
+		//if (!CollectionUtils.isEmpty(connectionHolders))
+		//	waterConnection.setConnectionHolders(encryptionDecryptionUtil.decryptObject(connectionHolders, WNS_OWNER_ENCRYPTION_MODEL, OwnerInfo.class, requestInfo));
 
 		return waterConnection;
 	}
