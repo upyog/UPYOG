@@ -238,8 +238,8 @@ public class WaterServiceImpl implements WaterService {
 			}
 		}
 		/* encrypt here */
-		criteria = encryptionDecryptionUtil.encryptObject(criteria, WNS_ENCRYPTION_MODEL, SearchCriteria.class);
-		criteria = encryptionDecryptionUtil.encryptObject(criteria, WNS_PLUMBER_ENCRYPTION_MODEL, SearchCriteria.class);
+	//	criteria = encryptionDecryptionUtil.encryptObject(criteria, WNS_ENCRYPTION_MODEL, SearchCriteria.class);
+	//	criteria = encryptionDecryptionUtil.encryptObject(criteria, WNS_PLUMBER_ENCRYPTION_MODEL, SearchCriteria.class);
 
 		waterConnectionList = getWaterConnectionsList(criteria, requestInfo);
 		log.info("connection after search" +waterConnectionList.size() );
@@ -266,11 +266,11 @@ public class WaterServiceImpl implements WaterService {
 		if (criteria.getIsInternalCall()) {
 			waterConnectionList = encryptionDecryptionUtil.decryptObject(waterConnectionList, "WnSConnectionPlumberDecrypDisabled", WaterConnection.class, requestInfo);
 			requestInfo.setPlainAccessRequest(apiPlainAccessRequestCopy);
-			return encryptionDecryptionUtil.decryptObject(waterConnectionList, "WnSConnectionDecrypDisabled", WaterConnection.class, requestInfo);
+			return waterConnectionList;//encryptionDecryptionUtil.decryptObject(waterConnectionList, "WnSConnectionDecrypDisabled", WaterConnection.class, requestInfo);
 		}
-		waterConnectionList = encryptionDecryptionUtil.decryptObject(waterConnectionList, WNS_PLUMBER_ENCRYPTION_MODEL, WaterConnection.class, requestInfo);
+		//waterConnectionList = encryptionDecryptionUtil.decryptObject(waterConnectionList, WNS_PLUMBER_ENCRYPTION_MODEL, WaterConnection.class, requestInfo);
 		requestInfo.setPlainAccessRequest(apiPlainAccessRequestCopy);
-		return encryptionDecryptionUtil.decryptObject(waterConnectionList, WNS_ENCRYPTION_MODEL, WaterConnection.class, requestInfo);
+		return waterConnectionList;//encryptionDecryptionUtil.decryptObject(waterConnectionList, WNS_ENCRYPTION_MODEL, WaterConnection.class, requestInfo);
 	}
 
 	/**
