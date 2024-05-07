@@ -65,15 +65,15 @@ public class EnrichmentService {
             transaction.setAdditionalDetails(objectMapper.convertValue(additionDetailsMap,Object.class));
         }
         
-        String[] callbackurl=transaction.getCallbackUrl().split("\\?");
+        //String[] callbackurl=transaction.getCallbackUrl().split("\\?");
         
         String uri = UriComponentsBuilder
-                .fromHttpUrl(callbackurl[0])
+                .fromHttpUrl(transaction.getCallbackUrl())
                 .queryParams(new LinkedMultiValueMap<>(singletonMap(PgConstants.PG_TXN_IN_LABEL,
                         Collections.singletonList(txnId))))
                 .build()
                 .toUriString();
-        uri= uri.concat("&").concat(callbackurl[1]);
+        //uri= uri.concat("&").concat(callbackurl[1]);
         transaction.setCallbackUrl(uri);
 
         AuditDetails auditDetails = AuditDetails.builder()
