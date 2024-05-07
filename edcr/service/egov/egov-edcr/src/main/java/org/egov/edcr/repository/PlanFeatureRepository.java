@@ -79,7 +79,7 @@ import org.egov.edcr.feature.GeneralStair;
 import org.egov.edcr.feature.GlassFacadeOpening;
 import org.egov.edcr.feature.GovtBuildingDistance;
 import org.egov.edcr.feature.GuardRoom;
-import org.egov.edcr.feature.HabitationRoom;
+
 import org.egov.edcr.feature.HeadRoom;
 import org.egov.edcr.feature.HeightOfRoom;
 import org.egov.edcr.feature.InfoCommsTechService;
@@ -211,9 +211,7 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(HeightOfRoom.class);
         features.add(pf);
         
-        pf = new PlanFeature(HabitationRoom.class);
-        features.add(pf);
-        
+       
         pf = new PlanFeature(StoreRoom.class);
         features.add(pf);
 
@@ -301,8 +299,8 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(RecreationalSpace.class);
         features.add(pf);
 
-        pf = new PlanFeature(TravelDistanceToExit.class);
-        features.add(pf);
+//        pf = new PlanFeature(TravelDistanceToExit.class);
+//        features.add(pf);
 
         pf = new PlanFeature(AdditionalFeature.class);
         features.add(pf);

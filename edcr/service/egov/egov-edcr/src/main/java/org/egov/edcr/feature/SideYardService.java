@@ -187,12 +187,17 @@ public class SideYardService extends GeneralRule {
                     if (setback.getSideYard1() != null
                             && setback.getSideYard1().getMean().compareTo(BigDecimal.ZERO) > 0) {
                         sideYard1 = setback.getSideYard1();
+                    }else {
+                    	exemptSideYardForAAndF(pl, block, sideYard1Result, sideYard2Result);
                     }
                     if (setback.getSideYard2() != null
                             && setback.getSideYard2().getMean().compareTo(BigDecimal.ZERO) > 0) {
                         sideYard2 = setback.getSideYard2();
                     }
-
+                    	else {
+                        	exemptSideYardForAAndF(pl, block, sideYard1Result, sideYard2Result);
+                        }
+                    
                     BigDecimal buildingHeight;
                     if (sideYard1 != null || sideYard2 != null) {
                         // If there is changes in height of building, then consider the maximum height
@@ -515,6 +520,11 @@ public class SideYardService extends GeneralRule {
                 if (pl.getErrors().containsValue("BLK_" + block.getNumber() + "_LVL_0_SIDE_SETBACK2 not defined in the plan.")) {
                     pl.getErrors().remove("", "BLK_" + block.getNumber() + "_LVL_0_SIDE_SETBACK2 not defined in the plan.");
                 }
+                if (pl.getErrors().containsValue(
+    					"Side Setback 1 of block" + block.getNumber() + "at level zero  not defined in the plan.")) {
+    				pl.getErrors().remove("",
+    						"Side Setback 1 of block" + block.getNumber() + "at level zero  not defined in the plan.");
+    			}
 
             }
 
