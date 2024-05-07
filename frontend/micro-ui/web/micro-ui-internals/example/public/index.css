@@ -1014,11 +1014,12 @@ img, video {
   --bg-opacity:1;
   /* background-color: #224d47; */
   /* background-color: rgba(34, 77, 71, var(--bg-opacity)); */
-  border-bottom: 1px solid;
+  /* border-bottom: 1px solid; */
   padding: 10px;
   width: 100%;
   position: fixed;
   z-index: 9999; 
+  border-radius: 0;
 }
 /* .main-header.scrolled .navbar {
   background-color: #b3dbe0;
@@ -7939,7 +7940,7 @@ body {
     width: 219px;
     /* background: #fff; */
     background-image: linear-gradient(358deg, #01458e, #03103f);
-    margin-top: -26px; 
+    margin-top: -2px; 
     height: 85vh;
     overflow-y: scroll;
     position: fixed;
@@ -9619,6 +9620,10 @@ input[type=number], .checkbox-wrap .input-emp[type=number] {
   }
   .pt-card-img1 {
     height: 120px !important;
+  }
+  .pt-emp-card-img1 {
+    height: 100px !important;
+    width: 240px;
   }
   .pt-card-mn2 {
     display: flex;

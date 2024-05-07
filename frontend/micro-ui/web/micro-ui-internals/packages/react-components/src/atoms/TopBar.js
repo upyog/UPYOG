@@ -29,7 +29,7 @@ const TopBar = ({
   //     return <BackButton className="top-back-btn" />;
   //   }
   // };
-  console.log("hambuger-back-wrapper==",cityOfCitizenShownBesideLogo)
+  console.log("hambuger-back-wrapper==",cityOfCitizenShownBesideLogo,hideNotificationIconOnSomeUrlsWhenNotLoggedIn)
   return (
     <div className="navbar">
       <div className="center-container back-wrapper" style={{display:"flex",justifyContent:"space-between"}}>
@@ -55,7 +55,7 @@ const TopBar = ({
 
         <div className="RightMostTopBarOptions">
           {/* {!hideNotificationIconOnSomeUrlsWhenNotLoggedIn ? changeLanguage : null} */}
-          {!hideNotificationIconOnSomeUrlsWhenNotLoggedIn ? (
+          {!hideNotificationIconOnSomeUrlsWhenNotLoggedIn && window.location.href.includes("citizen") ? (
             <div className="EventNotificationWrapper" onClick={onNotificationIconClick}>
               {notificationCountLoaded && notificationCount ? (
                 <span>
