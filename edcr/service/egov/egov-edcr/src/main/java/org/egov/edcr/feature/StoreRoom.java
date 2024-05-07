@@ -101,7 +101,7 @@ public class StoreRoom extends FeatureProcess {
     private static final String FLOOR = "Floor";
     private static final String ROOM_HEIGHT_NOTDEFINED = "Room height is not defined in layer ";
     private static final String LAYER_ROOM_HEIGHT = "BLK_%s_FLR_%s_%s";
-    private static final Logger LOG = LogManager.getLogger(HabitationRoom.class);
+    private static final Logger LOG = LogManager.getLogger(StoreRoom.class);
 
     @Override
     public Plan validate(Plan pl) {
