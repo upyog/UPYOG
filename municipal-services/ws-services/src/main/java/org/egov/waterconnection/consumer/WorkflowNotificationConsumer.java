@@ -70,12 +70,12 @@ public class WorkflowNotificationConsumer {
 			if(!isCitizenRole) {
 				waterConnection.setConnectionHolders(encryptionDecryptionUtil.decryptObject(waterConnection.getConnectionHolders(),
 						WNS_OWNER_PLAIN_DECRYPTION_MODEL, OwnerInfo.class, waterConnectionRequest.getRequestInfo()));
-				waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnection,
-						WNS_PLUMBER_PLAIN_DECRYPTION_MODEL, WaterConnection.class, waterConnectionRequest.getRequestInfo()));
+				//waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnection,
+					//	WNS_PLUMBER_PLAIN_DECRYPTION_MODEL, WaterConnection.class, waterConnectionRequest.getRequestInfo()));
 			}
 			log.info("waterConnectionRequest is "+ waterConnectionRequest);
 
-			if (!waterConnectionRequest.isOldDataEncryptionRequest())
+			//if (!waterConnectionRequest.isOldDataEncryptionRequest())
 				workflowNotificationService.process(waterConnectionRequest, topic);
 		} catch (Exception ex) {
 			StringBuilder builder = new StringBuilder("Error while listening to value: ").append(record)
