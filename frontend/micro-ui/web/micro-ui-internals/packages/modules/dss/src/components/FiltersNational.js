@@ -1,6 +1,7 @@
 import { CloseSvg, FilterIcon, MultiSelectDropdown, RefreshIcon } from "@egovernments/digit-ui-react-components";
 import React, { useContext, useEffect, useState } from "react";
 import DateRange from "./DateRange";
+import SelectCustomDateRange from "./selectCustomDateRange";
 import FilterContext from "./FilterContext";
 import Switch from "./Switch";
 
@@ -71,7 +72,8 @@ const Filters = ({
       )}
       {showDateRange && (
         <div className="filters-input">
-          <DateRange onFilterChange={handleFilterChange} values={value?.range} t={t} />
+          <SelectCustomDateRange onFilterChange={handleFilterChange} values={value?.range} t={t} />
+          {/* <DateRange onFilterChange={handleFilterChange} values={value?.range} t={t} /> */}
         </div>
       )}
       <div className="filters-input">
