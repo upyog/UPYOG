@@ -536,41 +536,41 @@ public class FarExtract extends FeatureExtract {
         String floorHeightLayerName = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + block.getNumber() + "_"
                 + layerNames.getLayerName("LAYER_NAME_FLOOR_NAME_PREFIX") + floor.getNumber() + "_"
                 + layerNames.getLayerName("LAYER_NAME_FLOOR_HEIGHT_PREFIX");
-        List<BigDecimal> flrHeights = Util.getListOfDimensionValueByLayer(pl, floorHeightLayerName);
-    	String isStiltFloor = Util.getMtextByLayerName(pl.getDoc(), floorHeightLayerName, "STILT_FLR_HT");
-    	
-    	if (!isBlank(isStiltFloor)) {
-			if (isStiltFloor.contains("=")) {
-				isStiltFloor = isStiltFloor.split("=")[1] != null
-						? isStiltFloor.split("=")[1].replaceAll("[^\\d.]", "")
-						: "";
-			} else
-				isStiltFloor = isStiltFloor.replaceAll("[^\\d.]", "");
-
-			if (!isBlank(isStiltFloor)) {
-				
-				if(isStiltFloor.equals("Yes")) {
-					
-				floor.setIsStiltFloor(true);
-				}
-				else {
-					floor.setIsStiltFloor(false);
-				}
-				
-			}
-	
-			
-		}else {
-			pl.addError(floorHeightLayerName + "STILT_FLR_HT",
-					" Stilt Floor height is not defined in layer " + floorHeightLayerName);
-		}
-
-        
-   		 if (!flrHeights.isEmpty()) {
-   			floor.setFloorHeights(flrHeights);
-   		} else {
-   			pl.addError(FLOOR_HEIGHT_DESC, getLocaleMessage(OBJECTNOTDEFINED, FLOOR_HEIGHT_DESC + floor.getNumber()));
-   		}
+       // List<BigDecimal> flrHeights = Util.getListOfDimensionValueByLayer(pl, floorHeightLayerName);
+//    	String isStiltFloor = Util.getMtextByLayerName(pl.getDoc(), floorHeightLayerName, "STILT_FLR_HT");
+//    	
+//    	if (!isBlank(isStiltFloor)) {
+//			if (isStiltFloor.contains("=")) {
+//				isStiltFloor = isStiltFloor.split("=")[1] != null
+//						? isStiltFloor.split("=")[1].replaceAll("[^\\d.]", "")
+//						: "";
+//			} else
+//				isStiltFloor = isStiltFloor.replaceAll("[^\\d.]", "");
+//
+//			if (!isBlank(isStiltFloor)) {
+//				
+//				if(isStiltFloor.equals("Yes")) {
+//					
+//				floor.setIsStiltFloor(true);
+//				}
+//				else {
+//					floor.setIsStiltFloor(false);
+//				}
+//				
+//			}
+//	
+//			
+//		}else {
+//			pl.addError(floorHeightLayerName + "STILT_FLR_HT",
+//					" Stilt Floor height is not defined in layer " + floorHeightLayerName);
+//		}
+//
+//        
+//   		 if (!flrHeights.isEmpty()) {
+//   			floor.setFloorHeights(flrHeights);
+//   		} else {
+//   			pl.addError(FLOOR_HEIGHT_DESC, getLocaleMessage(OBJECTNOTDEFINED, FLOOR_HEIGHT_DESC + floor.getNumber()));
+//   		}
     }
 
     @Override
