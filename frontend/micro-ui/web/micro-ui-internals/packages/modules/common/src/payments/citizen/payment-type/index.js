@@ -91,6 +91,7 @@ export const SelectPaymentType = (props) => {
       const data = await Digit.PaymentService.createCitizenReciept(billDetails?.tenantId, filterData);
       // console.log("createCitizenReciept==",data,d)
       // debugger
+      console.log("=========",JSON.stringify(data));
       const redirectUrl = data?.Transaction?.redirectUrl;
       if (d?.paymentType == "AXIS") {
         window.location = redirectUrl;
@@ -108,7 +109,7 @@ export const SelectPaymentType = (props) => {
               curr[d[0]] = d[1];
               return curr;
             }, {});
-            console.log("gatewayParam==",gatewayParam)
+            console.log("gatewayParam==",JSON.stringify(gatewayParam))
           var newForm = $("<form>", {
             action: gatewayParam.txURL,
             method: "POST",
@@ -156,6 +157,7 @@ export const SelectPaymentType = (props) => {
               })
             );
           }
+          console.log("newForm===",newForm)
           $(document.body).append(newForm);
           newForm.submit();
           makePayment(gatewayParam.txURL,formdata);
@@ -165,7 +167,7 @@ export const SelectPaymentType = (props) => {
           //window.location = redirectionUrl;
         }
       }
-      window.location = redirectUrl;
+      // window.location = redirectUrl;
     } catch (error) {
       let messageToShow = "CS_PAYMENT_UNKNOWN_ERROR_ON_SERVER";
       if (error.response?.data?.Errors?.[0]) {
