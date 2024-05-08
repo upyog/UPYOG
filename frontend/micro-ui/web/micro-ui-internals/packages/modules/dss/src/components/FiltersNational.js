@@ -1,7 +1,7 @@
 import { CloseSvg, FilterIcon, MultiSelectDropdown, RefreshIcon } from "@egovernments/digit-ui-react-components";
 import React, { useContext, useEffect, useState } from "react";
 import DateRange from "./DateRange";
-import SelectCustomDateRange from "./selectCustomDateRange";
+import SelectCustomDateRange from "./SelectCustomDateRange";
 import FilterContext from "./FilterContext";
 import Switch from "./Switch";
 
