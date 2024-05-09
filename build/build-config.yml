@@ -803,4 +803,11 @@ config:
         image-name: requester-services-dx
         dockerfile: build/maven/Dockerfile        
         
+  - name: "builds/upyog/municipal-services/asset-services"
+    build:
+      - work-dir: "municipal-services/asset-services"
+        image-name: "asset-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/asset-services/src/main/resources/db"
+        image-name: "asset-services-db" 
    
