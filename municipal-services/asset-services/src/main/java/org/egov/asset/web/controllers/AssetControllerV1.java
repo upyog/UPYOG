@@ -1,21 +1,17 @@
 package org.egov.asset.web.controllers;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.egov.asset.service.AssetService;
 import org.egov.asset.util.ResponseInfoFactory;
 import org.egov.asset.web.models.Asset;
-import org.egov.asset.web.models.AssetSearchCriteria;
 import org.egov.asset.web.models.AssetRequest;
 import org.egov.asset.web.models.AssetResponse;
-import org.egov.asset.web.models.RequestInfo;
+import org.egov.asset.web.models.AssetSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +20,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.ApiParam;
@@ -37,8 +30,6 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/asset-services")
 public class AssetControllerV1 {
 
-	private final ObjectMapper objectMapper;
-
 	private final HttpServletRequest request;
 	
 	@Autowired
@@ -48,8 +39,7 @@ public class AssetControllerV1 {
 	AssetService assetService;
 
 	@Autowired
-	public AssetControllerV1(ObjectMapper objectMapper, HttpServletRequest request) {
-		this.objectMapper = objectMapper;
+	public AssetControllerV1( HttpServletRequest request) {
 		this.request = request;
 	}
 
