@@ -149,8 +149,8 @@ public class GeneralStair extends FeatureProcess {
                     }
                 }
 
-                if (block.getBuilding().getFloors().size() > 1
-                        && !stairAbsent.isEmpty()) {
+                if (
+                        !stairAbsent.isEmpty()) {
                     for (String error : stairAbsent) {
                         errors.put("General Stair " + error,
                                 "General stair not defined in " + error);
@@ -158,8 +158,8 @@ public class GeneralStair extends FeatureProcess {
                     }
                 }
 
-                if (block.getBuilding().getFloors().size() > 1
-                        && generalStairCount == 0) {
+                if (
+                         generalStairCount == 0) {
                     errors.put("General Stair not defined in blk " + block.getNumber(),
                             "General Stair not defined in block " + block.getNumber()
                                     + ", it is mandatory for building with floors more than one.");
@@ -346,12 +346,14 @@ public class GeneralStair extends FeatureProcess {
         } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
                 && DxfFileConstants.A_AF_GH.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
             return BigDecimal.valueOf(0.75);
-        } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
-                && DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
-                && block.getBuilding().getBuildingHeight().compareTo(BigDecimal.valueOf(10)) <= 0
-                && block.getBuilding().getFloorsAboveGround().compareTo(BigDecimal.valueOf(3)) <= 0) {
-            return BigDecimal.ONE;
-        } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+        }
+        //else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+//                && DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
+//                && block.getBuilding().getBuildingHeight().compareTo(BigDecimal.valueOf(10)) <= 0
+//                && block.getBuilding().getFloorsAboveGround().compareTo(BigDecimal.valueOf(3)) <= 0) {
+//            return BigDecimal.ONE;
+//        }
+        else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
                 && DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
             return BigDecimal.valueOf(0.76);
         } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
@@ -369,7 +371,7 @@ public class GeneralStair extends FeatureProcess {
       
         if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
                 && DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-            return BigDecimal.valueOf(1);
+            return BigDecimal.valueOf(0.76);
         }
      else {
             return BigDecimal.valueOf(1.5);
