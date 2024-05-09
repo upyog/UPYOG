@@ -1,9 +1,5 @@
 package org.egov.asset.web.models;
 
-import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
-import javax.persistence.Id;
-
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -40,7 +36,6 @@ public class Address   {
         @JsonProperty("longitude")
         private Double longitude = null;
         
-        @Id
         @JsonProperty("addressId")
         private String addressId = null;
 
@@ -74,7 +69,6 @@ public class Address   {
         @JsonProperty("street")
         private String street = null;
 
-        @Embedded
         @JsonProperty("locality")
         private Boundary locality = null;
 
