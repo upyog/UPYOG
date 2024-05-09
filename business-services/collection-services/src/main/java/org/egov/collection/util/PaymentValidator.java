@@ -99,7 +99,7 @@ public class PaymentValidator {
             validateIPaymentForBillPresent(payments,errorMap);
         }
 
-        validateIFSCCode(paymentRequest);
+        //validateIFSCCode(paymentRequest);
         // Loop through all bill details [one for each service], and perform various
         // validations
         for (PaymentDetail paymentDetail : paymentDetails) {
@@ -491,7 +491,7 @@ public class PaymentValidator {
 	 * @param errorMap
 	 */
 
-	private void validateIFSCCode(PaymentRequest paymentRequest) {
+    private void validateIFSCCode(PaymentRequest paymentRequest) {
 		// TODO Auto-generated method stub
 		JsonNode razorPayIfscSearchResponse = null;
 		if (paymentRequest.getPayment().getIfscCode() != null) {
