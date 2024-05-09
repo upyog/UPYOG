@@ -103,44 +103,58 @@ public class PropertyService {
 		enrichmentService.enrichCreateRequest(request);
 		//Validate For BiFurcation
 		if(request.getProperty().getCreationReason().equals(CreationReason.BIFURCATION)) {
+			
 			propertyValidator.validateCreateRequestForBiFurcation(request);
-		}
-		
-		if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
-			processPropertyCreateForAmalgamation(request);
-		}
-		userService.createUser(request);
-		
-		
-		if (config.getIsWorkflowEnabled()
-				&& !request.getProperty().getCreationReason().equals(CreationReason.DATA_UPLOAD)) {
-			wfService.updateWorkflow(request, request.getProperty().getCreationReason());
+			
+			
+			userService.createUser(request);
+			
+			if (config.getIsWorkflowEnabled()
+					&& !request.getProperty().getCreationReason().equals(CreationReason.DATA_UPLOAD)) {
+				wfService.updateWorkflow(request, request.getProperty().getCreationReason());
 
-		} else {
+			} else {
 
-			request.getProperty().setStatus(Status.ACTIVE);
-		}
-
-		/* Fix this.
-		 * For FUZZY-search, This code to be un-commented when privacy is enabled
-		 
-		//Push PLAIN data to fuzzy search index
-		producer.push(config.getSavePropertyFuzzyTopic(), request);
-		*
-		*/
-		//Push data after encryption
-		producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
-		
-		if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
-			producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForAmalgamationTopic(), request);
-		}
-		
-		if(request.getProperty().getCreationReason().equals(CreationReason.BIFURCATION)) {
+				request.getProperty().setStatus(Status.ACTIVE);
+			}
+			producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
 			producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForBifurcationTopic(), request);
-		}
-		request.getProperty().setWorkflow(request.getProperty().getWorkflow());
+		}else {
+			
+			if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
+				processPropertyCreateForAmalgamation(request);
+			}
+			userService.createUser(request);
+			
+			
+			if (config.getIsWorkflowEnabled()
+					&& !request.getProperty().getCreationReason().equals(CreationReason.DATA_UPLOAD)) {
+				wfService.updateWorkflow(request, request.getProperty().getCreationReason());
 
-		/* decrypt here */
+			} else {
+
+				request.getProperty().setStatus(Status.ACTIVE);
+			}
+
+			/* Fix this.
+			 * For FUZZY-search, This code to be un-commented when privacy is enabled
+			 
+			//Push PLAIN data to fuzzy search index
+			producer.push(config.getSavePropertyFuzzyTopic(), request);
+			*
+			*/
+			//Push data after encryption
+			producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+			
+			if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
+				producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForAmalgamationTopic(), request);
+			}
+			request.getProperty().setWorkflow(request.getProperty().getWorkflow());
+
+			/* decrypt here */
+			
+		}
+		
 		return encryptionDecryptionUtil.decryptObject(request.getProperty(), PTConstants.PROPERTY_MODEL, Property.class, request.getRequestInfo());
 		//return request.getProperty();
 	}
