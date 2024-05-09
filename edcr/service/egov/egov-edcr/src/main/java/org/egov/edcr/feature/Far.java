@@ -930,7 +930,7 @@ public class Far extends FeatureProcess {
 		LOG.info("Type of area: " + typeOfArea);
 		System.out.println("Type of area: " + typeOfArea);
 		// Start Rule updated by Bimal on 14 March 2024
-		if (typeOfArea.equalsIgnoreCase(OLD)) {
+		
 			if (plotArea.compareTo(BigDecimal.ZERO) < 0) {
 				errors.put("Plot Area Error:", "Plot area cannot be less than 0.");
 				pl.addErrors(errors);
@@ -970,50 +970,50 @@ public class Far extends FeatureProcess {
 				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_25.doubleValue());
 				expectedResult = "<= 1.25";
 			}
-		}
+		
 
-		if (typeOfArea.equalsIgnoreCase(NEW)) {
-
-			if (plotArea.compareTo(BigDecimal.ZERO) < 0) {
-				errors.put("Plot Area Error:", "Plot area cannot be less than 0.");
-				pl.addErrors(errors);
-			} else if (plotArea.compareTo(PLOT_AREA_UP_TO_100_SQM) <= 0) {
-				isAccepted = far.compareTo(FAR_UP_TO_2_00) <= 0;
-				LOG.info("FAR_UP_TO_2_00: " + isAccepted);
-				pl.getFarDetails().setPermissableFar(FAR_UP_TO_2_00.doubleValue());
-				expectedResult = "<= 2.00";
-			} else if (plotArea.compareTo(PLOT_AREA_100_150_SQM) <= 0) {
-				isAccepted = far.compareTo(FAR_UP_TO_1_90) <= 0;
-				LOG.info("FAR_UP_TO_1_90: " + isAccepted);
-				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_90.doubleValue());
-				expectedResult = "<= 1.90";
-			} else if (plotArea.compareTo(PLOT_AREA_150_200_SQM) <= 0) {
-				isAccepted = far.compareTo(FAR_UP_TO_1_75) <= 0;
-				LOG.info("FAR_UP_TO_1_75: " + isAccepted);
-				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_75.doubleValue());
-				expectedResult = "<= 1.75";
-			} else if (plotArea.compareTo(PLOT_AREA_200_300_SQM) <= 0) {
-				isAccepted = far.compareTo(FAR_UP_TO_1_65) <= 0;
-				LOG.info("FAR_UP_TO_1_65: " + isAccepted);
-				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_65.doubleValue());
-				expectedResult = "<= 1.65";
-			} else if (plotArea.compareTo(PLOT_AREA_300_500_SQM) <= 0) {
-				isAccepted = far.compareTo(FAR_UP_TO_1_50) <= 0;
-				LOG.info("FAR_UP_TO_1_50: " + isAccepted);
-				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_50.doubleValue());
-				expectedResult = "<= 1.50";
-			} else if (plotArea.compareTo(PLOT_AREA_500_1000_SQM) <= 0) {
-				isAccepted = far.compareTo(FAR_UP_TO_1_50) <= 0;
-				LOG.info("FAR_UP_TO_1_50 2nd: " + isAccepted);
-				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_50.doubleValue());
-				expectedResult = "<= 1.50";
-			} else {
-				isAccepted = far.compareTo(FAR_UP_TO_1_25) <= 0;
-				LOG.info("FAR_UP_TO_1_25: " + isAccepted);
-				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_25.doubleValue());
-				expectedResult = "<= 1.25";
-			}
-		}
+//		if (typeOfArea.equalsIgnoreCase(NEW)) {
+//
+//			if (plotArea.compareTo(BigDecimal.ZERO) < 0) {
+//				errors.put("Plot Area Error:", "Plot area cannot be less than 0.");
+//				pl.addErrors(errors);
+//			} else if (plotArea.compareTo(PLOT_AREA_UP_TO_100_SQM) <= 0) {
+//				isAccepted = far.compareTo(FAR_UP_TO_2_00) <= 0;
+//				LOG.info("FAR_UP_TO_2_00: " + isAccepted);
+//				pl.getFarDetails().setPermissableFar(FAR_UP_TO_2_00.doubleValue());
+//				expectedResult = "<= 2.00";
+//			} else if (plotArea.compareTo(PLOT_AREA_100_150_SQM) <= 0) {
+//				isAccepted = far.compareTo(FAR_UP_TO_1_90) <= 0;
+//				LOG.info("FAR_UP_TO_1_90: " + isAccepted);
+//				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_90.doubleValue());
+//				expectedResult = "<= 1.90";
+//			} else if (plotArea.compareTo(PLOT_AREA_150_200_SQM) <= 0) {
+//				isAccepted = far.compareTo(FAR_UP_TO_1_75) <= 0;
+//				LOG.info("FAR_UP_TO_1_75: " + isAccepted);
+//				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_75.doubleValue());
+//				expectedResult = "<= 1.75";
+//			} else if (plotArea.compareTo(PLOT_AREA_200_300_SQM) <= 0) {
+//				isAccepted = far.compareTo(FAR_UP_TO_1_65) <= 0;
+//				LOG.info("FAR_UP_TO_1_65: " + isAccepted);
+//				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_65.doubleValue());
+//				expectedResult = "<= 1.65";
+//			} else if (plotArea.compareTo(PLOT_AREA_300_500_SQM) <= 0) {
+//				isAccepted = far.compareTo(FAR_UP_TO_1_50) <= 0;
+//				LOG.info("FAR_UP_TO_1_50: " + isAccepted);
+//				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_50.doubleValue());
+//				expectedResult = "<= 1.50";
+//			} else if (plotArea.compareTo(PLOT_AREA_500_1000_SQM) <= 0) {
+//				isAccepted = far.compareTo(FAR_UP_TO_1_50) <= 0;
+//				LOG.info("FAR_UP_TO_1_50 2nd: " + isAccepted);
+//				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_50.doubleValue());
+//				expectedResult = "<= 1.50";
+//			} else {
+//				isAccepted = far.compareTo(FAR_UP_TO_1_25) <= 0;
+//				LOG.info("FAR_UP_TO_1_25: " + isAccepted);
+//				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_25.doubleValue());
+//				expectedResult = "<= 1.25";
+//			}
+//		}
 		// End Rule updated by Bimal on 14 March 2024
 
 		// Old rules commented by Bimal on 14 March 2024
