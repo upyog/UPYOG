@@ -3,9 +3,11 @@ import {
   differenceInDays,
   endOfDay,
   format,
+  startOfWeek,
+  endOfWeek
 } from "date-fns";
 import React, { useEffect, Fragment, useMemo, useRef, useState } from "react";
-import { createStaticRanges, DateRangePicker } from "react-date-range";
+import { createStaticRanges, DateRangePicker, DateRange } from "react-date-range";
 
 function isEndDateFocused(focusNumber) {
   return focusNumber === 1;
@@ -18,7 +20,12 @@ function isStartDateFocused(focusNumber) {
 const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [focusedRange, setFocusedRange] = useState([0, 0]);
-  const [selectionRange, setSelectionRange] = useState(values);
+  const [selectionRange, setSelectionRange] = useState({
+    "startDate": new Date(),
+    "endDate": new Date(),
+    "interval": "",
+    "title": ""
+  });
   const [rangeType, setRangeType] = useState("week");
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [startYearRange,setStartYearRange] = useState(new Date().getFullYear());
@@ -32,13 +39,6 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
   const [calender, setCalender] = useState()
 
   useEffect(()=>{
-    const startElement = document.getElementsByClassName(`range-box ${calenderDataStartDate}`)[0];
-    if (startElement){
-      // startElement.style.backgroundColor = "yellow";
-      // startElement.style.color = "black"; 
-      // startElement.style.fontWeight = "bold";
-      startElement.classList.add('selected');
-    }
     if (calenderDataEndDate){
       let selection={
         "startDate": rangeType === "month"?"":new Date(calenderDataStartDate,3, 1),
@@ -48,33 +48,14 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
       };
 
       if(rangeType === "year"){
-        for (let i = calenderDataStartDate; i <= calenderDataEndDate; i++) {
-          let element = document.getElementsByClassName(`range-box ${i}`)[0];
-          element.style.backgroundColor = "yellow";
-          element.style.color = "black";
-          element.style.fontWeight = "bold";
-        }
-      }else{
+        
+      }else if (rangeType === "month"){
         let [tempStartYear, tempStartMonth] = calenderDataStartDate.split('-');
         let [tempEndYear, tempEndMonth] = calenderDataEndDate.split('-');
-        let months = {
-          "Jan": 0,
-          "Feb": 1,
-          "Mar": 2,
-          "Apr": 3,
-          "May": 4,
-          "Jun": 5,
-          "Jul": 6,
-          "Aug": 7,
-          "Sep": 8,
-          "Oct": 9,
-          "Nov": 10,
-          "Dec": 11
-        };
+        let months = {"Jan": 0,"Feb": 1,"Mar": 2,"Apr": 3,"May": 4,"Jun": 5,"Jul": 6,"Aug": 7,"Sep": 8,"Oct": 9,"Nov": 10,"Dec": 11};
         selection.startDate = new Date(tempStartYear,months[tempStartMonth], 1);
         selection.endDate = new Date(tempEndYear,months[tempEndMonth], 1);
       }
-
       setTimeout(() => {
         setIsModalOpen(false);
         setSelectionRange(selection);
@@ -83,7 +64,6 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
   },[calenderDataStartDate,calenderDataEndDate])
 
   const wrapperRef = useRef(null);
-
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -122,21 +102,37 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
   };
 
   const handleSelect = (ranges, e) => {
+    let { range1 } = ranges;
+    let selection ={
+      "startDate":startOfWeek(range1.startDate),
+      "endDate": endOfWeek(range1.endDate),
+      "interval": "week",
+      "title": ""
+    };
 
+    if (!calenderDataStartDate && !calenderDataEndDate){
+      setCalenderDataStartDate(selection.startDate);
+    }else if (calenderDataStartDate && !calenderDataEndDate){
+      setCalenderDataStartDate(selection.endDate);
+      setTimeout(() => {
+        setIsModalOpen(false);
+        setSelectionRange(selection);
+      }, 200);
+
+    }else if (calenderDataStartDate && calenderDataEndDate){
+      setCalenderDataStartDate(selection.startDate);
+      setCalenderDataStartDate(undefined);
+    }
+      
+    setSelectionRange(selection);
+    console.log(isStartDateFocused(focusedRange[1]))
   };
 
   const selectRangeType = (value) => {
     setRangeType(value);
+    setCalenderDataStartDate(undefined);
+    setCalenderDataEndDate(undefined);
   }
-
-  const handleFocusChange = (focusedRange) => {
-    const [rangeIndex, rangeStep] = focusedRange;
-    setFocusedRange(focusedRange);
-  };
-
-  const handleClose = () => {
-    setIsModalOpen(false);
-  };
 
   const decreaseYearRange = () =>{
     let tempStartYearRange = startYearRange;
@@ -198,52 +194,31 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
     setCalenderDataEndDate(tempCalenderData.endDate);
   }
 
-  // useEffect(()=>{
-  //   let type = rangeType;
-  //   let year = startYearRange;
-  //   let dispayRange = [];
-  //   if (type === "month"){
-  //     let monthList = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  //     monthList.map((ele,index)=>{
-  //       let className;
-  //       dispayRange.push(
-  //         <div className={`range-box ${monthCurrentYear}-${ele}`} onClick={(e)=>{onMonthSelect(e)}} style={{width: "50px",height: "50px",margin: "10px",lineHeight: "50px",textAlign: "center",border: "1px solid",cursor: "pointer",backgroundColor: className === "selected" ? "yellow" : "white",color: className === "selected" ? "black" : "inherit",fontWeight: className === "selected" ? "bold" : "normal"}}>
-  //           {ele}
-  //         </div>
-  //       )
-  //     })
-
-  //   }else if (type === "year"){
-  //     let currentYear = endYearRange;
-  //     for (year;year<=currentYear;year++){
-  //       let className;
-  //       if (calenderDataStartDate && year === calenderDataStartDate){
-  //         className = "selected";
-  //       }
-  //       if (calenderData?.endDate && year >= calenderDataStartDate && year <= calenderData.endDate){
-  //         className = "selected";
-  //       }
-  //       dispayRange.push(
-  //         <div className={`range-box ${className} ${year}`} onClick={(e)=>{onYearsSelect(e,year)}} style={{width: "50px",height: "50px",margin: "10px",lineHeight: "50px",textAlign: "center",border: "1px solid",cursor: "pointer",backgroundColor: className === "selected" ? "yellow" : "white",color: className === "selected" ? "black" : "inherit",fontWeight: className === "selected" ? "bold" : "normal"}}>
-  //           {year}
-  //         </div>
-  //       )
-  //     }
-  //   }
-
-  //   let calender = <div className="show-display-range" style={{display:"flex", width: "425px", flexWrap:"wrap"}}>{dispayRange}</div>;
-  //   setCalender(calender)
-  // },[rangeType])
-
-  const displayDateRangeOption = (type, year) =>{
+  useEffect(()=>{
+    let type = rangeType;
+    let year = startYearRange;
     let dispayRange = [];
+    let months = {"Jan": 0,"Feb": 1,"Mar": 2,"Apr": 3,"May": 4,"Jun": 5,"Jul": 6,"Aug": 7,"Sep": 8,"Oct": 9,"Nov": 10,"Dec": 11};
     if (type === "month"){
       let monthList = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
       monthList.map((ele,index)=>{
         let className;
-
+        if (calenderDataStartDate === `${monthCurrentYear}-${ele}` || calenderDataEndDate === `${monthCurrentYear}-${ele}`){
+          className = "selected";
+        }
+        if (calenderDataEndDate){
+          let [tempStartYear, tempStartMonth] = calenderDataStartDate.split('-');
+          let [tempEndYear, tempEndMonth] = calenderDataEndDate.split('-');
+          let [tempCurrentYear, tempCurrentMonth] = `${monthCurrentYear}-${ele}`.split('-');
+          let startDate = new Date(tempStartYear,months[tempStartMonth], 1);
+          let endDate = new Date(tempEndYear,months[tempEndMonth], 1);
+          let currentDate = new Date(tempCurrentYear,months[tempCurrentMonth], 1);
+          if (currentDate>startDate && currentDate<endDate){
+            className = "selected";
+          }
+        }
         dispayRange.push(
-          <div className={`range-box ${monthCurrentYear}-${ele}`} onClick={(e)=>{onMonthSelect(e)}} style={{width: "50px",height: "50px",margin: "10px",lineHeight: "50px",textAlign: "center",border: "1px solid",cursor: "pointer",backgroundColor: className === "selected" ? "yellow" : "white",color: className === "selected" ? "black" : "inherit",fontWeight: className === "selected" ? "bold" : "normal"}}>
+          <div className={`range-box ${className} ${monthCurrentYear}-${ele}`} onClick={(e)=>{onMonthSelect(e)}} style={{width: "50px",height: "50px",margin: "10px",lineHeight: "50px",textAlign: "center",border: "1px solid",cursor: "pointer",backgroundColor: className === "selected" ? "yellow" : "white",color: className === "selected" ? "black" : "inherit",fontWeight: className === "selected" ? "bold" : "normal"}}>
             {ele}
           </div>
         )
@@ -253,7 +228,7 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
       let currentYear = endYearRange;
       for (year;year<=currentYear;year++){
         let className;
-        if (calenderDataStartDate && year === calenderDataStartDate){
+        if (calenderDataStartDate && year == calenderDataStartDate){
           className = "selected";
         }
         if (calenderData?.endDate && year >= calenderDataStartDate && year <= calenderData.endDate){
@@ -266,11 +241,10 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
         )
       }
     }
-
-    return <div className="show-display-range" style={{display:"flex", width: "425px", flexWrap:"wrap"}}>{dispayRange}</div>;
-
-  }
-  
+    let calender = <div className="show-display-range" style={{display:"flex", width: "425px", flexWrap:"wrap"}}>{dispayRange}</div>;
+    setCalender(calender)
+  },[rangeType,startYearRange,endYearRange,calenderDataStartDate,calenderDataEndDate,monthCurrentYear])
+ 
   return (
     <>
       <div className="mbsm">{t(`ES_DSS_DATE_RANGE`)}</div>
@@ -302,24 +276,28 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
               <div className="rdrCalendarWrapper rdrDateRangeWrapper">
                 <div className="rdrDateDisplayWrapper">
                   {/* Condition for Week Type Date Range */}
-                  {rangeType === "" ?
-                    <div className="rdrDateDisplay" >
-                      <span className="rdrDateInput rdrDateDisplayItem rdrDateDisplayItemActive">
-                        Apr 1, 2024
-                      </span>
-                      <span className="rdrDateInput rdrDateDisplayItem">
-                        Apr 10, 2024
-                      </span>
-                    </div> : ""}
+                  {console.log(selectionRange,"selectionRange")}
+                  {rangeType === "week" ?
+                    <React.Fragment>
+                      <DateRange
+                        editableDateInputs={true}
+                        onChange={handleSelect}
+                        moveRangeOnFirstSelection={false}
+                        ranges={[selectionRange]}
+                        
+                      />
+                        
+                    </React.Fragment> 
+                    : ""}
                   {/* Condition for Months Type Date Range */}
                   {rangeType === "month" ?
                     <React.Fragment>
                       <div className="rdrDateDisplay">
                         <span className="rdrDateInput rdrDateDisplayItem rdrDateDisplayItemActive" style={{height:"20px"}}>
-                        calenderDataStartDate
+                          {calenderDataStartDate}
                         </span>
                         <span className="rdrDateInput rdrDateDisplayItem rdrDateDisplayItemActive" style={{height:"20px"}}>
-                          Apr 10, 2024
+                          {calenderDataEndDate}
                         </span>
                       </div>
                       <div>
@@ -328,8 +306,7 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
                           <span className="rdrMonthAndYearPickers">{monthCurrentYear}</span>
                           <button type="button" className="rdrNextPrevButton rdrNextButton" onClick={()=>onMonthYearChange("+")}><i></i></button>
                         </div>
-                        {displayDateRangeOption(rangeType)}
-                        {/* {calender} */}
+                        {calender}
                       </div>
                     </React.Fragment> : ""}
                   {/* Condition for Year Type Date Range */}
@@ -349,8 +326,7 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
                           <span className="rdrMonthAndYearPickers">{startYearRange} - {endYearRange}</span>
                           <button type="button" className="rdrNextPrevButton rdrNextButton" onClick={()=>increaseYearRange()}><i></i></button>
                         </div>
-                        {displayDateRangeOption(rangeType, startYearRange)}
-                        {/* {calender} */}
+                        {calender}
                       </div>
                     </React.Fragment> : ""}
                 </div>
