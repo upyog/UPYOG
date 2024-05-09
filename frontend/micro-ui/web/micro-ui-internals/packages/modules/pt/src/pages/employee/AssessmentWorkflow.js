@@ -235,6 +235,7 @@ console.log("applicationDetails===",applicationDetails)
         forcedActionPrefix={"WF_EMPLOYEE_ASMT"}
         statusAttribute={"state"}
         MenuStyle={{ color: "#FFFFFF", fontSize: "18px" }}
+        ActionBarStyle={{float: "right"}}
       />
     
     </div>

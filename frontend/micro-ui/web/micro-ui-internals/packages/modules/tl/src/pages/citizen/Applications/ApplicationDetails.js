@@ -37,6 +37,7 @@ const TLApplicationDetails = () => {
   const isMobile = window.Digit.Utils.browser.isMobile();
   let multiBoxStyle = {
     border: "groove",
+    borderRadius: "6px",
     background: "#FAFAFA",
     borderRadius: "4px",
     paddingInline: "10px",
