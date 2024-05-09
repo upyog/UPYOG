@@ -178,7 +178,7 @@ public class InboxService {
 			processCriteria.setStatus(null);
 		}
 		// Since we want the whole status count map regardless of the status filter and assignee filter being passed
-		processCriteria.setAssignee(null);
+		processCriteria.setAssignee(assigneeUuid.toString());
 		processCriteria.setStatus(null);
 
 		List<HashMap<String, Object>> bpaCitizenStatusCountMap = new ArrayList<HashMap<String,Object>>();
