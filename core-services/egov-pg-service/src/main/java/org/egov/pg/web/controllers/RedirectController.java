@@ -60,6 +60,7 @@ public class RedirectController {
          */
         String gateway = null;
         if(!params.isEmpty()) {
+        	//TEst
            // List<String> txnId = params.get(PgConstants.PG_TXN_IN_LABEL);
             TransactionCriteria critria = new TransactionCriteria();
             String txn = formData.get(PgConstants.PG_TXN_IN_LABEL).get(0);
