@@ -173,6 +173,7 @@ import {
   FirenocIcon,
   InfoIcon,
   LoginIcon,
+  PTRIcon,
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -456,5 +457,6 @@ export {
   FirenocIcon,
   InfoIcon,
   LoginIcon,
-  CitizenConsentForm
+  CitizenConsentForm,
+  PTRIcon,
 };

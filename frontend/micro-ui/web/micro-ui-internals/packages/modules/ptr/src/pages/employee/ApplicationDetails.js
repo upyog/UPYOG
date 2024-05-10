@@ -132,7 +132,10 @@
       };
 
 
-      if (reciept_data?.Payments[0]?.instrumentStatus === "APPROVED")
+      console.log("reciept_data",reciept_data);
+
+
+      if (reciept_data?.Payments[0]?.paymentStatus === "DEPOSITED")
       dowloadOptions.push({
         label: t("PTR_CERTIFICATE"),
         onClick: () => printCertificate(),
