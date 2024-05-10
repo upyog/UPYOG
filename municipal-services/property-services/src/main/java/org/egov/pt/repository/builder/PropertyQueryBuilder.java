@@ -36,6 +36,8 @@ public class PropertyQueryBuilder {
 											+ "INNER JOIN (SELECT propertyid, min(statusorder) as minorder FROM propertyresult GROUP BY propertyid) as minresult "
 											+ "ON minresult.propertyid=propertyresult.propertyid AND minresult.minorder=propertyresult.statusorder";
 	
+	
+	private static String PROPERTY_BIFURCATION_QUERY = "select * from eg_pt_bifurcation where parent_property= ";
 
 	 // Select query
 	
@@ -417,6 +419,17 @@ public class PropertyQueryBuilder {
 
 		return propertyIdQuery.toString();
 	}
+	
+	
+	
+	
+	public String getBifurcationPropertyIdsQuery( String parentPropertyId) {
+		StringBuilder propertyIdQuery = new StringBuilder(PROPERTY_BIFURCATION_QUERY);
+		propertyIdQuery.append("'"+parentPropertyId+"'");
+		propertyIdQuery.append(" ORDER BY createdtime DESC");
+		return propertyIdQuery.toString();
+	}
+
 
 	private String createQuery(Set<String> ids) {
 		StringBuilder builder = new StringBuilder();

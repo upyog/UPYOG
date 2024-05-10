@@ -60,17 +60,20 @@ public class PropertyBifurcationRowMapper implements ResultSetExtractor<List<Pro
 			if (null == currentProperty) {
 				
 				currentProperty = PropertyBifurcation.builder()
-						.propertyDetails(getadditionalDetail(rs, "propertyDetails"))
-						.parentPropertyId(rs.getString("parentpropertyid"))
-						.id(rs.getString("ispartofproperty"))
+						.propertyDetails(getadditionalDetail(rs, "property_details"))
+						.parentPropertyId(rs.getString("parent_property"))
+						.id(rs.getInt("id"))
+						.createdTime(rs.getInt("createdtime"))
+						.maxBifurcation(rs.getInt("max_bifurcation"))
 						.build();
 
 				
 				@SuppressWarnings("unchecked")
-				Map<String, Object> additionalDetails = mapper.convertValue(currentProperty.getPropertyDetails(), Map.class);
-				if(additionalDetails.containsKey("propertyRequest") &&null!=additionalDetails.get("propertyRequest")) {
+				Property additionalDetails = mapper.convertValue(currentProperty.getPropertyDetails(), Property.class);
+				if(null!=additionalDetails) {
 					@SuppressWarnings("unchecked")
-					PropertyRequest propertyRequest = (PropertyRequest) additionalDetails.get("propertyRequest");
+					PropertyRequest propertyRequest = new PropertyRequest();
+					propertyRequest.setProperty(additionalDetails);
 					currentProperty.setPropertyRequest(propertyRequest);
 				}
 				

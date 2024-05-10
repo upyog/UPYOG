@@ -127,6 +127,9 @@ public class Property extends PropertyInfo {
 	@JsonProperty("parentPropertyUuId")
 	private String  parentPropertyUuId;
 	
+	@JsonProperty("maxBifurcation")
+	private Integer maxBifurcation;
+	
 	
 
 	@Builder
