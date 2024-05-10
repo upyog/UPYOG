@@ -18,10 +18,12 @@ import org.egov.pt.models.user.User;
 import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.user.UserSearchRequest;
 import org.egov.pt.models.PropertyAudit;
+import org.egov.pt.models.PropertyBifurcation;
 import org.egov.pt.repository.builder.PropertyQueryBuilder;
 import org.egov.pt.repository.rowmapper.EncryptionCountRowMapper;
 import org.egov.pt.repository.rowmapper.OpenPropertyRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyAuditRowMapper;
+import org.egov.pt.repository.rowmapper.PropertyBifurcationRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyAuditEncRowMapper;
 import org.egov.pt.service.UserService;
@@ -65,6 +67,9 @@ public class PropertyRepository {
 
 	@Autowired
 	private PropertyAuditEncRowMapper propertyAuditEncRowMapper;
+	
+	@Autowired
+	private PropertyBifurcationRowMapper propertyBifurcationRowMapper;
     
 	public List<String> getPropertyIds(Set<String> ownerIds, String tenantId) {
 
@@ -295,5 +300,15 @@ public class PropertyRepository {
 
 		String query = queryBuilder.getpropertyAuditEncQuery();
 		return jdbcTemplate.query(query, criteria.getPropertyIds().toArray(), propertyAuditEncRowMapper);
+	}
+	
+	public List<PropertyBifurcation> getBifurcationProperties(String parentProperty) {
+		String query = queryBuilder.getBifurcationPropertyIdsQuery(parentProperty);
+
+		log.info("\nQuery executed:" + query);
+		if (query == null)
+			return null;
+		List<PropertyBifurcation> bifurlist = jdbcTemplate.query(query,  propertyBifurcationRowMapper);
+		return bifurlist;
 	}
 }

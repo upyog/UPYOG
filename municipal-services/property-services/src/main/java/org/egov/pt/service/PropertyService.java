@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -16,6 +17,7 @@ import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.AmalgamatedProperty;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
+import org.egov.pt.models.PropertyBifurcation;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.enums.CreationReason;
 import org.egov.pt.models.enums.Status;
@@ -103,44 +105,74 @@ public class PropertyService {
 		enrichmentService.enrichCreateRequest(request);
 		//Validate For BiFurcation
 		if(request.getProperty().getCreationReason().equals(CreationReason.BIFURCATION)) {
+			
+			
+			Integer  maxBifurcation  = request.getProperty().getMaxBifurcation();
+			if(null==maxBifurcation) {
+				throw new CustomException("INVALID_BIFURCATION_NUMBER","Invalid Maximum Bifurcation");
+				
+			}
+			if(maxBifurcation<2) {
+				throw new CustomException("INVALID_BIFURCATION_MIN_NUMBER","Invalid Bifurcation number minimum  2");
+			}
 			propertyValidator.validateCreateRequestForBiFurcation(request);
-		}
-		
-		if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
-			processPropertyCreateForAmalgamation(request);
-		}
-		userService.createUser(request);
-		
-		
-		if (config.getIsWorkflowEnabled()
-				&& !request.getProperty().getCreationReason().equals(CreationReason.DATA_UPLOAD)) {
-			wfService.updateWorkflow(request, request.getProperty().getCreationReason());
+			
+			List<PropertyBifurcation> bifurList = repository.getBifurcationProperties(request.getProperty().getParentPropertyId());
+			
+			bifurList  = bifurList.stream().sorted((x,y)->y.getCreatedTime().compareTo(x.getCreatedTime())).collect(Collectors.toList());
+			Integer dbMaxBifur = bifurList.get(0).getMaxBifurcation();
+			if(dbMaxBifur== bifurList.size()+1) {
+				//Process all request and save to db else 
+			}
+			//Property p  = bifurList.get(0).getPropertyDetails();
+			//userService.createUser(request);
+			
+			if (config.getIsWorkflowEnabled()	&& !request.getProperty().getCreationReason().equals(CreationReason.DATA_UPLOAD)) {
+				//wfService.updateWorkflow(request, request.getProperty().getCreationReason());
 
-		} else {
+			} else {
 
-			request.getProperty().setStatus(Status.ACTIVE);
+				request.getProperty().setStatus(Status.ACTIVE);
+			}
+			
+		//	producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+		//	producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForBifurcationTopic(), request);
+		}else {
+			
+			if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
+				processPropertyCreateForAmalgamation(request);
+			}
+			userService.createUser(request);
+			
+			
+			if (config.getIsWorkflowEnabled()
+					&& !request.getProperty().getCreationReason().equals(CreationReason.DATA_UPLOAD)) {
+				wfService.updateWorkflow(request, request.getProperty().getCreationReason());
+
+			} else {
+
+				request.getProperty().setStatus(Status.ACTIVE);
+			}
+
+			/* Fix this.
+			 * For FUZZY-search, This code to be un-commented when privacy is enabled
+			 
+			//Push PLAIN data to fuzzy search index
+			producer.push(config.getSavePropertyFuzzyTopic(), request);
+			*
+			*/
+			//Push data after encryption
+			producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+			
+			if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
+				producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForAmalgamationTopic(), request);
+			}
+			request.getProperty().setWorkflow(request.getProperty().getWorkflow());
+
+			/* decrypt here */
+			
 		}
-
-		/* Fix this.
-		 * For FUZZY-search, This code to be un-commented when privacy is enabled
-		 
-		//Push PLAIN data to fuzzy search index
-		producer.push(config.getSavePropertyFuzzyTopic(), request);
-		*
-		*/
-		//Push data after encryption
-		producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
 		
-		if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
-			producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForAmalgamationTopic(), request);
-		}
-		
-		if(request.getProperty().getCreationReason().equals(CreationReason.BIFURCATION)) {
-			producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForBifurcationTopic(), request);
-		}
-		request.getProperty().setWorkflow(request.getProperty().getWorkflow());
-
-		/* decrypt here */
 		return encryptionDecryptionUtil.decryptObject(request.getProperty(), PTConstants.PROPERTY_MODEL, Property.class, request.getRequestInfo());
 		//return request.getProperty();
 	}
