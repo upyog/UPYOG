@@ -60,7 +60,7 @@ const ApplicationDetails = (props) => {
 
   function onActionSelect(action) {
     if (action) {
-      if(action?.action=="EDIT"){
+      if(action?.action=="EDIT" && window.location.href.includes("bpa")){
         window.location.assign(window.location.href.split("bpa")[0]+"editApplication/bpa"+window.location.href.split("bpa")[1]);
       }
       if(action?.isToast){
@@ -109,6 +109,9 @@ const ApplicationDetails = (props) => {
     if(data?.Property?.workflow?.comment?.length == 0 || data?.Licenses?.[0]?.comment?.length == 0 || data?.WaterConnection?.comment?.length == 0 || data?.SewerageConnection?.comment?.length == 0 || data?.BPA?.comment?.length == 0)
     {
      alert("Please fill in the comments before submitting")
+    }
+    else if( data?.BPA?.businessService=="BPA" && !data?.BPA?.additionalDetails?.blockingReason && data?.BPA?.workflow?.action=="BLOCK"){
+      alert("Please select Blocking reason")
     }
     else{
       setIsEnableLoader(true);
