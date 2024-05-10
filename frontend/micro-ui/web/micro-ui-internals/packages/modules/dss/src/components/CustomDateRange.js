@@ -54,7 +54,7 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
         let [tempEndYear, tempEndMonth] = calenderDataEndDate.split('-');
         let months = {"Jan": 0,"Feb": 1,"Mar": 2,"Apr": 3,"May": 4,"Jun": 5,"Jul": 6,"Aug": 7,"Sep": 8,"Oct": 9,"Nov": 10,"Dec": 11};
         selection.startDate = new Date(tempStartYear,months[tempStartMonth], 1);
-        selection.endDate = new Date(tempEndYear,months[tempEndMonth], 1);
+        selection.endDate = new Date(tempEndYear,months[tempEndMonth]+1, 0);
       }
       setTimeout(() => {
         setIsModalOpen(false);
