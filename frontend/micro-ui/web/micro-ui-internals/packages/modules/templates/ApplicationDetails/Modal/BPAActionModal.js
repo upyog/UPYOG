@@ -304,7 +304,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           uploadedFile,
           setUploadedFile,
           businessService,
-          assigneeLabel: "WF_ASSIGNEE_NAME_LABEL",
+          assigneeLabel: "WF_ASSIGNEE_NAME_LABEL_BPA",
           error,
           blockReasonFiltered
         })
