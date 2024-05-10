@@ -104,8 +104,9 @@ public class PropertyService {
 		propertyValidator.validateCreateRequest(request);
 		enrichmentService.enrichCreateRequest(request);
 		//Validate For BiFurcation
+		List<PropertyBifurcation> bifurList = null;
 		if(request.getProperty().getCreationReason().equals(CreationReason.BIFURCATION)) {
-			
+			Property prpertyFromRequest = request.getProperty();
 			Integer  maxBifurcation  = request.getProperty().getMaxBifurcation();
 			if(null==maxBifurcation) {
 				throw new CustomException("INVALID_BIFURCATION_NUMBER","Invalid Maximum Bifurcation number");
@@ -116,35 +117,45 @@ public class PropertyService {
 			}
 			propertyValidator.validateCreateRequestForBiFurcation(request);
 			
-			List<PropertyBifurcation> bifurList = repository.getBifurcationProperties(request.getProperty().getParentPropertyId());
-			
-			bifurList  = bifurList.stream().sorted((x,y)->y.getCreatedTime().compareTo(x.getCreatedTime())).collect(Collectors.toList());
-			Integer dbMaxBifur = bifurList.get(0).getMaxBifurcation();
-
-			//Property p  = bifurList.get(0).getPropertyDetails();
-			if(dbMaxBifur== bifurList.size()+1) {
-				//Process all request and save to db else
-				for(int i=0;i<bifurList.size();i++)
-				{
-					if(dbMaxBifur!=bifurList.get(i).getMaxBifurcation())
-					{
-						throw new CustomException("INVALID_BIFURCATION_NUMBER_MATCH","Bifurcation number should be "+dbMaxBifur+"");
-					}
-					JsonNode node=bifurList.get(i).getPropertyDetails();
-					Property prop=mapper.convertValue(node, Property.class);
-					request.setProperty(prop);
-					//userService.createUser(request);
+			bifurList= repository.getBifurcationProperties(request.getProperty().getParentPropertyId());
+			if(null!=bifurList && bifurList.size()>0) {
+				
+				bifurList  = bifurList.stream().sorted((x,y)->y.getCreatedTime().compareTo(x.getCreatedTime())).collect(Collectors.toList());
+				Integer dbMaxBifur = bifurList.get(0).getMaxBifurcation();
+				request.getProperty().setMaxBifurcation(bifurList.size());
+				if(dbMaxBifur== bifurList.size()+1) {
+					
+					//Saving the current request Property before changing the request to set property from DB
+					userService.createUser(request);
 					if(config.getIsWorkflowEnabled())
 					{
-						//wfService.updateWorkflow(request, request.getProperty().getCreationReason());
-					}
-					else {
+						wfService.updateWorkflow(request, request.getProperty().getCreationReason());
+					}else {
 						request.getProperty().setStatus(Status.ACTIVE);
 					}
-					//producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
-				}
-			} 
-		//	producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForBifurcationTopic(), request);
+					
+					producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+					
+					for(PropertyBifurcation b: bifurList)
+					{
+						request.setProperty(b.getPropertyRequest().getProperty());
+						userService.createUser(request);
+						if(config.getIsWorkflowEnabled())
+						{
+							wfService.updateWorkflow(request, request.getProperty().getCreationReason());
+						}
+						else {
+							request.getProperty().setStatus(Status.ACTIVE);
+						}
+						producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+					}
+					
+					producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForBifurcationTopic(), request);
+				} 
+			}else {
+				producer.pushAfterEncrytpion(config.getSaveBifurcationTopic(), request);
+			}
+				
 		}else {
 			
 			if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
