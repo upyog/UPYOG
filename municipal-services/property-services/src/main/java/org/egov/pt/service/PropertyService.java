@@ -106,14 +106,13 @@ public class PropertyService {
 		//Validate For BiFurcation
 		if(request.getProperty().getCreationReason().equals(CreationReason.BIFURCATION)) {
 			
-			
 			Integer  maxBifurcation  = request.getProperty().getMaxBifurcation();
 			if(null==maxBifurcation) {
-				throw new CustomException("INVALID_BIFURCATION_NUMBER","Invalid Maximum Bifurcation");
+				throw new CustomException("INVALID_BIFURCATION_NUMBER","Invalid Maximum Bifurcation number");
 				
 			}
 			if(maxBifurcation<2) {
-				throw new CustomException("INVALID_BIFURCATION_MIN_NUMBER","Invalid Bifurcation number minimum  2");
+				throw new CustomException("INVALID_BIFURCATION_MIN_NUMBER","minimum Bifurcation number should be 2");
 			}
 			propertyValidator.validateCreateRequestForBiFurcation(request);
 			
@@ -121,21 +120,30 @@ public class PropertyService {
 			
 			bifurList  = bifurList.stream().sorted((x,y)->y.getCreatedTime().compareTo(x.getCreatedTime())).collect(Collectors.toList());
 			Integer dbMaxBifur = bifurList.get(0).getMaxBifurcation();
-			if(dbMaxBifur== bifurList.size()+1) {
-				//Process all request and save to db else 
-			}
+
 			//Property p  = bifurList.get(0).getPropertyDetails();
-			//userService.createUser(request);
-			
-			if (config.getIsWorkflowEnabled()	&& !request.getProperty().getCreationReason().equals(CreationReason.DATA_UPLOAD)) {
-				//wfService.updateWorkflow(request, request.getProperty().getCreationReason());
-
-			} else {
-
-				request.getProperty().setStatus(Status.ACTIVE);
-			}
-			
-		//	producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+			if(dbMaxBifur== bifurList.size()+1) {
+				//Process all request and save to db else
+				for(int i=0;i<bifurList.size();i++)
+				{
+					if(dbMaxBifur!=bifurList.get(i).getMaxBifurcation())
+					{
+						throw new CustomException("INVALID_BIFURCATION_NUMBER_MATCH","Bifurcation number should be "+dbMaxBifur+"");
+					}
+					JsonNode node=bifurList.get(i).getPropertyDetails();
+					Property prop=mapper.convertValue(node, Property.class);
+					request.setProperty(prop);
+					//userService.createUser(request);
+					if(config.getIsWorkflowEnabled())
+					{
+						//wfService.updateWorkflow(request, request.getProperty().getCreationReason());
+					}
+					else {
+						request.getProperty().setStatus(Status.ACTIVE);
+					}
+					//producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+				}
+			} 
 		//	producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForBifurcationTopic(), request);
 		}else {
 			
