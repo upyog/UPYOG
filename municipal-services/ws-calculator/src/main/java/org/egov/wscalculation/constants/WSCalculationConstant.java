@@ -396,7 +396,7 @@ public class WSCalculationConstant {
 
 	public static final String NEW_WATER_CONNECTION = "NEW_WATER_CONNECTION";
 
-	public static final String NEWWATER_BUSINESS_SERVICE = "NewWS1";
+	public static final String NEWWATER_BUSINESS_SERVICE = "WS";
 
 	public static final String MODIFY_BUSINESS_SERVICE = "ModifyWSConnection";
 
