@@ -41,7 +41,11 @@ const getMohallaLocale = (value = "", tenantId = "") => {
   };
   const capitalize = (text) => text.substr(0, 1).toUpperCase() + text.substr(1);
   const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ");
+  
+
   const getBPAAcknowledgement=async(application,tenantInfo,t)=>{
+    const user = Digit.UserService.getUser();
+    
     
     const owner=application?.landInfo?.owners
     return{
@@ -114,7 +118,15 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                     { 
                         title: t("BPA_APPLICATION_DEMOLITION_AREA_LABEL"), 
                         value: t(`${application?.data?.edcrDetails?.planDetail?.planInformation?.demolitionArea} sq mtrs`) || "NA"
-                    } 
+                    },
+                    { 
+                        title: t("BPA_WARD_NUMBER_LABEL"), 
+                        value: application?.additionalDetails?.wardnumber || "NA" 
+                    },
+                    { 
+                        title: t("BPA_KHASRA_NUMBER_LABEL"), 
+                        value: application?.additionalDetails?.khasraNumber || "NA" 
+                    }   
                 ]
              },
              {
@@ -154,6 +166,29 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                 ]
             },
             {
+                title: t("BPA_ARCHITECT_DETAILS"),
+                values: [
+                    {  
+                        title: t("BPA_ARCHITECT_NAME"), 
+                        value: user?.info?.name || "NA"
+                    },
+                    { 
+                        title: t("BPA_ARCHITECT_MOBILE_NUMBER"), 
+                        value: user?.info?.mobileNumber || "NA"
+                    },
+                    { 
+                        title: t("BPA_ARCHITECT_ID"), 
+                        value: application?.additionalDetails?.architectid || "NA" 
+                    },
+                    { 
+                        title: t("BPA_ARCHITECT_EMAIL"), 
+                        value: user?.info?.emailId || "NA" 
+                    },
+
+                ]
+
+            },
+            {
                 title : t("BPA_NEW_TRADE_DETAILS_HEADER_DETAILS"),
                 values:[
                     { 
@@ -178,6 +213,60 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                     }
                 ]
             },
+            {
+                title: t("BPA_COLONY_DETAILS"),
+                values: [
+                    { 
+                        title: t("BPA_APPROVED_COLONY"),
+                        value: application?.additionalDetails?.approvedColony || "NA"
+                    },
+                    { 
+                        title: t("BPA_MASTER_PLAN"), 
+                        value: application?.additionalDetails?.masterPlan || "NA"                     
+                    },
+                    { 
+                        title: t("BPA_DISTRICT"), 
+                        value: application?.additionalDetails?.District || "NA"                     
+                    },
+                    { 
+                        title: t("BPA_ULB_NAME"), 
+                        value: application?.additionalDetails?.UlbName || "NA" 
+                    },
+                    { 
+                        title: t("BPA_BUILDING_STATUS"), 
+                        value: application?.additionalDetails?.buildingStatus || "NA" 
+                    },
+                    { 
+                        title: t("BPA_SCHEMES"), 
+                        value: application?.additionalDetails?.schemes || "NA"                     
+                    },
+                    { 
+                        title: t("BPA_SCHEMES_TYPE"), 
+                        value: application?.additionalDetails?.schemesselection || "NA"                     
+                    },
+                    { 
+                        title: t("BPA_PURCHASED_FAR"), 
+                        value: application?.additionalDetails?.purchasedFAR || "NA" 
+                    },
+                    { 
+                        title: t("BPA_GREEN_BUIDINGS"), 
+                        value: application?.additionalDetails?.greenbuilding || "NA" 
+                    },
+                    { 
+                        title: t("BPA_RESTRICTED_AREA"), 
+                        value: application?.additionalDetails?.restrictedArea || "NA" 
+                    },
+                    { 
+                        title: t("BPA_PROPOSED_SITE_TYPE"), 
+                        value: application?.additionalDetails?.proposedSite || "NA" 
+                    },
+                    { 
+                        title: t("BPA_CORE_AREA"), 
+                        value: application?.additionalDetails?.coreArea || "NA" 
+                    }, 
+                ]
+             },
+            
             
             
         ]

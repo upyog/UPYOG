@@ -166,50 +166,107 @@ export const getBPAFormData = async (data, mdmsData, history, t) => {
   }
 };
 
+// export const getDocumentforBPA = (docs, PrevStateDocs) => {
+//   let document = [];
+//   docs &&
+//   docs.map((ob) => {
+//     console.log("ob",ob);
+//     if (ob.id) {
+//       let docObject = {
+//         documentType: ob.documentType,
+//         fileStoreId: ob.fileStoreId,
+//         fileStore: ob.fileStoreId,
+//         fileName: "",
+//         fileUrl: "",
+//         additionalDetails: {},
+//         id: ob.id,
+//       };
+    
+//       if (ob.documentType === "SITEPHOTOGRAPH.ONE") {
+//         docObject.additionalDetails = {
+//           latitude: ob?.additionalDetails?.latitude,
+//           longitude: ob?.additionalDetails?.longitude,
+//         };
+//       }
+    
+//       document.push(docObject);
+//     } else {
+//       let docObject = {
+//         documentType: ob.documentType,
+//         fileStoreId: ob.fileStoreId,
+//         fileStore: ob.fileStoreId,
+//         fileName: "",
+//         fileUrl: "",
+//         additionalDetails: {},
+//       };
+    
+//       if (ob.documentType === "SITEPHOTOGRAPH.ONE") {
+//         docObject.additionalDetails = {
+//           latitude: ob?.additionalDetails?.latitude,
+//           longitude: ob?.additionalDetails?.longitude,
+//         };
+//       }
+    
+//       document.push(docObject);
+//     }
+//   });
+//   document = [...document, ...(PrevStateDocs ? PrevStateDocs : [])];
+//   return document;
+// };
 export const getDocumentforBPA = (docs, PrevStateDocs) => {
   let document = [];
+
+  const architectConsentForm = {
+    documentType: "ARCHITECT.UNDERTAKING",
+    fileStoreId: sessionStorage.getItem("ArchitectConsentdocFilestoreid"),
+    fileStore: sessionStorage.getItem("ArchitectConsentdocFilestoreid"),
+  };
+
   docs &&
-  docs.map((ob) => {
-    console.log("ob",ob);
-    if (ob.id) {
-      let docObject = {
-        documentType: ob.documentType,
-        fileStoreId: ob.fileStoreId,
-        fileStore: ob.fileStoreId,
-        fileName: "",
-        fileUrl: "",
-        additionalDetails: {},
-        id: ob.id,
-      };
-    
-      if (ob.documentType === "SITEPHOTOGRAPH.ONE") {
-        docObject.additionalDetails = {
-          latitude: ob?.additionalDetails?.latitude,
-          longitude: ob?.additionalDetails?.longitude,
+    docs.map((ob) => {
+      console.log("ob", ob);
+      let docObject;
+
+      if (ob.id) {
+        docObject = {
+          documentType: ob.documentType,
+          fileStoreId: ob.fileStoreId,
+          fileStore: ob.fileStoreId,
+          fileName: "",
+          fileUrl: "",
+          additionalDetails: {},
+          id: ob.id,
         };
-      }
-    
-      document.push(docObject);
-    } else {
-      let docObject = {
-        documentType: ob.documentType,
-        fileStoreId: ob.fileStoreId,
-        fileStore: ob.fileStoreId,
-        fileName: "",
-        fileUrl: "",
-        additionalDetails: {},
-      };
-    
-      if (ob.documentType === "SITEPHOTOGRAPH.ONE") {
-        docObject.additionalDetails = {
-          latitude: ob?.additionalDetails?.latitude,
-          longitude: ob?.additionalDetails?.longitude,
+
+        if (ob.documentType === "SITEPHOTOGRAPH.ONE") {
+          docObject.additionalDetails = {
+            latitude: ob?.additionalDetails?.latitude,
+            longitude: ob?.additionalDetails?.longitude,
+          };
+        }
+      } else {
+        docObject = {
+          documentType: ob.documentType,
+          fileStoreId: ob.fileStoreId,
+          fileStore: ob.fileStoreId,
+          fileName: "",
+          fileUrl: "",
+          additionalDetails: {},
         };
+
+        if (ob.documentType === "SITEPHOTOGRAPH.ONE") {
+          docObject.additionalDetails = {
+            latitude: ob?.additionalDetails?.latitude,
+            longitude: ob?.additionalDetails?.longitude,
+          };
+        }
       }
-    
+
       document.push(docObject);
-    }
-  });
+    });
+    
+  document.push(architectConsentForm);
+
   document = [...document, ...(PrevStateDocs ? PrevStateDocs : [])];
   return document;
 };
@@ -440,6 +497,11 @@ export const convertToBPAObject = (data, isOCBPA = false, isSendBackTOCitizen = 
         holdingNo: data?.data?.holdingNumber ? data?.data?.holdingNumber : data?.additionalDetails?.holdingNo,
         boundaryWallLength:data?.data?.boundaryWallLength ? data?.data?.boundaryWallLength : data?.additionalDetails?.boundaryWallLength , 
         registrationDetails: data?.data?.registrationDetails ? data?.data?.registrationDetails : data?.additionalDetails?.registrationDetails,
+        architectconsentdocument: {
+          "documentType": "Architect Consent Form",
+          "fileStoreId": sessionStorage.getItem("ArchitectConsentform"),
+          "fileStore": sessionStorage.getItem("ArchitectConsentform"),
+        }
       },
       applicationType: "BUILDING_PLAN_SCRUTINY",
       serviceType: "NEW_CONSTRUCTION",

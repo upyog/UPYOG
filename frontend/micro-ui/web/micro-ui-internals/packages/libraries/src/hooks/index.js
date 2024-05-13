@@ -181,6 +181,7 @@ import useBusinessServiceData from "./obps/useBusinessServiceData";
 import useBPATaxDocuments from "./obps/useBPATaxDocuments";
 import useDistricts from "./obps/useDistricts";
 import useULBList from "./obps/useULBList";
+import useUlbType from "./obps/useUlbType";
 
 
 import useEventInbox from "./events/useEventInbox";
@@ -451,7 +452,8 @@ const obps = {
   useBusinessServiceData,
   useBPATaxDocuments,
   useDistricts,
-  useULBList
+  useULBList,
+  useUlbType
 };
 
 const events = {

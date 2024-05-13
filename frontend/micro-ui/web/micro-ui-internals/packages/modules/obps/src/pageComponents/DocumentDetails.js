@@ -96,7 +96,8 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
                     isDisabled={window.location.href.includes("editApplication")||window.location.href.includes("sendbacktocitizen")?false:enableSubmit}
                     onAdd={onAdd}
                 >
-                    {bpaTaxDocuments?.map((document, index) => {
+                    {/* {bpaTaxDocuments?.map((document, index) => { */}
+                    {bpaTaxDocuments?.filter(document => document.code !== "ARCHITECT.UNDERTAKING" && document.code !== "CITIZEN.UNDERTAKING").map((document, index) => {
                         return (
                             <div style={{ background: "#FAFAFA", border: "1px solid #D6D5D4", padding: "8px", borderRadius: "4px", maxWidth:"600px", minWidth: "280px", marginBottom:"15px", paddingTop:"15px" }}>
                             <SelectDocument
