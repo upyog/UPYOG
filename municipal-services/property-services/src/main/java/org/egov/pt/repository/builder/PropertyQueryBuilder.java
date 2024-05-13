@@ -24,6 +24,12 @@ public class PropertyQueryBuilder {
 	private static final String LEFT_JOIN  =  "LEFT OUTER JOIN";
 	private static final String AND_QUERY = " AND ";
 	
+	
+	public final static String INSERT_BIFURCATION_DETAILS_QUERY = "INSERT INTO eg_pt_bifurcation"
+			+"(parent_property,property_details, max_bifurcation, createdtime, id)"
+			+"VALUES(?, ? ::jsonb, ?, ?, ?)";
+    
+	
 	private static String PROEPRTY_AUDIT_QUERY = "select property from eg_pt_property_audit where propertyid=?";
 
 	private static String PROPERTY_AUDIT_ENC_QUERY = "select * from eg_pt_property_audit where propertyid=?";

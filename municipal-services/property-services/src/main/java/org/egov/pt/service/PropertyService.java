@@ -39,6 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
@@ -116,10 +117,14 @@ public class PropertyService {
 				throw new CustomException("INVALID_BIFURCATION_MIN_NUMBER","minimum Bifurcation number should be 2");
 			}
 			propertyValidator.validateCreateRequestForBiFurcation(request);
-			
-			producer.pushAfterEncrytpion(config.getSaveBifurcationTopic(), request);
-			bifurList= repository.getBifurcationProperties(request.getProperty().getParentPropertyId());
-		
+			try {
+				repository.savebifurcation(request);
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				log.info("Exception for save bifurcation data"+e);
+			}
+			//producer.pushAfterEncrytpion(config.getSaveBifurcationTopic(), request);
 			bifurList= repository.getBifurcationProperties(request.getProperty().getParentPropertyId());
 			if(null!=bifurList && bifurList.size()>0) {
 				

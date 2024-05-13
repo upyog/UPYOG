@@ -1,10 +1,15 @@
 
 package org.egov.pt.repository;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,13 +33,22 @@ import org.egov.pt.repository.rowmapper.PropertyRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyAuditEncRowMapper;
 import org.egov.pt.service.UserService;
 import org.egov.pt.util.PropertyUtil;
+import org.egov.pt.web.contracts.PropertyRequest;
+import org.json.JSONObject;
+import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 
 @Slf4j
@@ -70,6 +84,9 @@ public class PropertyRepository {
 	
 	@Autowired
 	private PropertyBifurcationRowMapper propertyBifurcationRowMapper;
+	
+	@Autowired
+	private ObjectMapper mapper;
     
 	public List<String> getPropertyIds(Set<String> ownerIds, String tenantId) {
 
@@ -310,5 +327,29 @@ public class PropertyRepository {
 			return null;
 		List<PropertyBifurcation> bifurlist = jdbcTemplate.query(query,  propertyBifurcationRowMapper);
 		return bifurlist;
+	}
+	
+	@Transactional
+	public void savebifurcation(PropertyRequest request) throws JsonProcessingException
+	{
+		String idquery="select nextval('seq_eg_pt_registry_audit')";
+		Integer id=jdbcTemplate.queryForObject(idquery, Integer.class);
+		
+		String createdtimequery="SELECT extract(epoch from now())";
+		Integer createdtime=jdbcTemplate.queryForObject(createdtimequery, Integer.class);
+		String json = mapper.writeValueAsString(request.getProperty());
+		
+		jdbcTemplate.update(PropertyQueryBuilder.INSERT_BIFURCATION_DETAILS_QUERY, new PreparedStatementSetter() {
+			
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				// TODO Auto-generated method stub
+				ps.setString(1, request.getProperty().getParentPropertyId());
+				ps.setString(2,json);
+				ps.setInt(3, request.getProperty().getMaxBifurcation());
+				ps.setInt(4, createdtime);
+				ps.setInt(5, id);
+			}
+		});
 	}
 }
