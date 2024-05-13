@@ -11,7 +11,7 @@ const getRequest = (type, code, requestDate, filters, moduleLevel = "", addlFilt
       return acc;
     }, {});
   
-    requestDate.interval = JSON.parse(sessionStorage.getItem("customDateFilter")).filterType;
+    requestDate.interval = JSON.parse(sessionStorage.getItem("customDateFilter"))?.filterType;
   return {
     aggregationRequestDto: {
       visualizationType: type.toUpperCase(),
