@@ -34,6 +34,7 @@ import org.egov.pt.util.EncryptionDecryptionUtil;
 import  org.egov.pt.util.PTConstants;
 import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.util.UnmaskingUtil;
+import org.egov.pt.web.contracts.AppealRequest;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1152,6 +1153,14 @@ public class PropertyValidator {
 		if (!CollectionUtils.isEmpty(errorMap))
 			throw new CustomException(errorMap);
 
+	}
+	
+	
+	public void validateAppealCreateRequest(AppealRequest request) {
+
+		if(StringUtils.isEmpty(request.getAppeal().getPropertyId())) {
+			throw new CustomException("INVALID_UPIN","INvalid PropertyId Passed");
+		}
 	}
 
 }

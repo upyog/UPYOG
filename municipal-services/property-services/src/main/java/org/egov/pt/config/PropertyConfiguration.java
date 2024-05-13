@@ -402,5 +402,9 @@ public class PropertyConfiguration {
     
     @Value("${persister.update.property.bifurcation.child.inactive}")
     private String bifurcationChildInactive;
+    
+    @Value("${persister.save.appeal.topic}")
+    private String saveAppealTopic;
+    
 
 }
