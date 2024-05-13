@@ -92,6 +92,7 @@ public class WaterServicesUtil {
 		HashSet<String> propertyIds = new HashSet<>();
 		propertyIds.add(waterConnectionRequest.getWaterConnection().getPropertyId());
 		propertyCriteria.setPropertyIds(propertyIds);
+		propertyCriteria.setTenantId(waterConnectionRequest.getWaterConnection().getTenantId());
 		if (waterConnectionRequest.getRequestInfo().getUserInfo() != null
 				&& "EMPLOYEE".equalsIgnoreCase(waterConnectionRequest.getRequestInfo().getUserInfo().getType())) {
 			propertyCriteria.setTenantId(waterConnectionRequest.getWaterConnection().getTenantId());
@@ -100,7 +101,7 @@ public class WaterServicesUtil {
 				&& "SYSTEM".equalsIgnoreCase(waterConnectionRequest.getRequestInfo().getUserInfo().getType())
 		        && "INTERNAL_MICROSERVICE_ROLE".equalsIgnoreCase(waterConnectionRequest.getRequestInfo().getUserInfo().getRoles().get(0).getCode()) )
 		{
-			propertyCriteria.setTenantId(waterConnectionRequest.getWaterConnection().getTenantId());
+			
 		}
 		if (waterConnectionRequest.getRequestInfo().getUserInfo() != null
 				&& "SYSTEM".equalsIgnoreCase(waterConnectionRequest.getRequestInfo().getUserInfo().getType())
