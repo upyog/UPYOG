@@ -48,6 +48,9 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
       };
 
       if(rangeType === "year"){
+        if (calenderDataStartDate === calenderDataEndDate){
+          selection.endDate = new Date(parseInt(calenderDataEndDate)+1, 2, 31);
+        }
         
       }else if (rangeType === "month"){
         let [tempStartYear, tempStartMonth] = calenderDataStartDate.split('-');
@@ -60,6 +63,7 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
         filterType : rangeType
       }
       sessionStorage.setItem("customDateFilter",JSON.stringify(customDateFilter))
+      console.log(selection.startDate, "----",  selection.endDate )
       setTimeout(() => {
         setIsModalOpen(false);
         setSelectionRange(selection);
