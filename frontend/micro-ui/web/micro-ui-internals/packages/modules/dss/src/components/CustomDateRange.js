@@ -26,7 +26,7 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
     "interval": "",
     "title": ""
   });
-  const [rangeType, setRangeType] = useState("week");
+  const [rangeType, setRangeType] = useState("year");
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [startYearRange,setStartYearRange] = useState(new Date().getFullYear());
   const [monthCurrentYear, setMonthCurrentYear] = useState(new Date().getFullYear());
@@ -56,6 +56,10 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
         selection.startDate = new Date(tempStartYear,months[tempStartMonth], 1);
         selection.endDate = new Date(tempEndYear,months[tempEndMonth]+1, 0);
       }
+      let customDateFilter = {
+        filterType : rangeType
+      }
+      sessionStorage.setItem("customDateFilter",JSON.stringify(customDateFilter))
       setTimeout(() => {
         setIsModalOpen(false);
         setSelectionRange(selection);
@@ -114,6 +118,10 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
       setCalenderDataStartDate(selection.startDate);
     }else if (calenderDataStartDate && !calenderDataEndDate){
       setCalenderDataStartDate(selection.endDate);
+      let customDateFilter = {
+        filterType : rangeType
+      }
+      sessionStorage.setItem("customDateFilter",JSON.stringify(customDateFilter))
       setTimeout(() => {
         setIsModalOpen(false);
         setSelectionRange(selection);
@@ -263,13 +271,13 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
           <div className="options-card" style={{ overflow: "visible", width: "unset", maxWidth: "unset" }}>
             <div className="rdrDateRangePickerWrapper pickerShadow">
               <div className="rdrDefinedRangesWrapper" style={{width:"110px"}}>
-                <button type="button" className="rdrStaticRange" onClick={() => { selectRangeType("week") }}>
+                <button type="button" className="rdrStaticRange" style={{fontWeight:rangeType==="week"?"bold":"normal"}} onClick={() => { selectRangeType("week") }}>
                   <span tabindex="-1" className="rdrStaticRangeLabel">By Weeks</span>
                 </button>
-                <button type="button" className="rdrStaticRange" onClick={() => { selectRangeType("month") }}>
+                <button type="button" className="rdrStaticRange" style={{fontWeight:rangeType==="month"?"bold":"normal"}} onClick={() => { selectRangeType("month") }}>
                   <span tabindex="-1" className="rdrStaticRangeLabel">By Months</span>
                 </button>
-                <button type="button" className="rdrStaticRange" onClick={() => { selectRangeType("year") }}>
+                <button type="button" className="rdrStaticRange" style={{fontWeight:rangeType==="year"?"bold":"normal"}} onClick={() => { selectRangeType("year") }}>
                   <span tabindex="-1" className="rdrStaticRangeLabel">By Years</span>
                 </button>
               </div>
