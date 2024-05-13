@@ -34,6 +34,7 @@ import org.egov.pt.validator.PropertyValidator;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.xml.BeanDefinitionDocumentReader;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -106,7 +107,6 @@ public class PropertyService {
 		//Validate For BiFurcation
 		List<PropertyBifurcation> bifurList = null;
 		if(request.getProperty().getCreationReason().equals(CreationReason.BIFURCATION)) {
-			Property prpertyFromRequest = request.getProperty();
 			Integer  maxBifurcation  = request.getProperty().getMaxBifurcation();
 			if(null==maxBifurcation) {
 				throw new CustomException("INVALID_BIFURCATION_NUMBER","Invalid Maximum Bifurcation number");
@@ -117,24 +117,17 @@ public class PropertyService {
 			}
 			propertyValidator.validateCreateRequestForBiFurcation(request);
 			
+			producer.pushAfterEncrytpion(config.getSaveBifurcationTopic(), request);
+			bifurList= repository.getBifurcationProperties(request.getProperty().getParentPropertyId());
+		
 			bifurList= repository.getBifurcationProperties(request.getProperty().getParentPropertyId());
 			if(null!=bifurList && bifurList.size()>0) {
 				
-				bifurList  = bifurList.stream().sorted((x,y)->y.getCreatedTime().compareTo(x.getCreatedTime())).collect(Collectors.toList());
+				
+				bifurList  = bifurList.stream().sorted((x,y)->x.getCreatedTime().compareTo(y.getCreatedTime())).collect(Collectors.toList());
 				Integer dbMaxBifur = bifurList.get(0).getMaxBifurcation();
-				request.getProperty().setMaxBifurcation(bifurList.size());
-				if(dbMaxBifur== bifurList.size()+1) {
-					
-					//Saving the current request Property before changing the request to set property from DB
-					userService.createUser(request);
-					if(config.getIsWorkflowEnabled())
-					{
-						wfService.updateWorkflow(request, request.getProperty().getCreationReason());
-					}else {
-						request.getProperty().setStatus(Status.ACTIVE);
-					}
-					
-					producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+				request.getProperty().setBifurcationCount(bifurList.size());
+				if(dbMaxBifur== bifurList.size()) {
 					
 					for(PropertyBifurcation b: bifurList)
 					{
@@ -149,12 +142,15 @@ public class PropertyService {
 						}
 						producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
 					}
-					
+					//Deactivating Parent
+					request.getProperty().setBifurcationCount(bifurList.size());
 					producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForBifurcationTopic(), request);
 				} 
 			}else {
-				producer.pushAfterEncrytpion(config.getSaveBifurcationTopic(), request);
+				request.getProperty().setBifurcationCount(bifurList.size());
 			}
+				
+			
 				
 		}else {
 			
@@ -757,16 +753,19 @@ public class PropertyService {
 	private void terminateWorkflowAndReInstatePreviousRecordForBifurcation(PropertyRequest request, Property propertyFromSearch) {
 
 		/* current record being rejected */
-		String parentProperty = propertyFromSearch.getParentPropertyId();
-		
-		PropertyCriteria criteria = PropertyCriteria.builder()
-				.uuids(Sets.newHashSet(parentProperty))
-				.isSearchInternal(true)
-				.tenantId(propertyFromSearch.getTenantId()).build();
-		Property previousPropertyToBeReInstated = searchProperty(criteria, request.getRequestInfo()).get(0);
-		
-		previousPropertyToBeReInstated.setAuditDetails(util.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid().toString(), true));
-		previousPropertyToBeReInstated.setStatus(Status.ACTIVE);
+		/*
+		 * String parentProperty = propertyFromSearch.getParentPropertyId();
+		 * 
+		 * PropertyCriteria criteria = PropertyCriteria.builder()
+		 * .propertyIds(Sets.newHashSet(parentProperty)) .isSearchInternal(true)
+		 * .tenantId(propertyFromSearch.getTenantId()).build(); //Parent Property
+		 * Property previousPropertyToBeReInstated = searchProperty(criteria,
+		 * request.getRequestInfo()).get(0);
+		 * 
+		 * previousPropertyToBeReInstated.setAuditDetails(util.getAuditDetails(request.
+		 * getRequestInfo().getUserInfo().getUuid().toString(), true));
+		 * previousPropertyToBeReInstated.setStatus(Status.ACTIVE);
+		 */
 		
 		//For Updating the child property to inactive
 		propertyFromSearch.setStatus(Status.INACTIVE);
@@ -774,7 +773,7 @@ public class PropertyService {
 				.requestInfo(request.getRequestInfo())
 				.property(propertyFromSearch)
 				.build();
-		producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForBifurcationTopic(), prosearch);
+		producer.pushAfterEncrytpion(config.getBifurcationChildInactive(), prosearch);
 		
 		
 		PropertyRequest proReInstate = PropertyRequest.builder()

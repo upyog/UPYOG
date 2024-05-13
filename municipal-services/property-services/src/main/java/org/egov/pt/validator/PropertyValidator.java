@@ -147,7 +147,7 @@ public class PropertyValidator {
 		request.getProperty().setParentPropertyUuId(prop.getId());
 		request.getProperty().setParentPropertyId(prop.getPropertyId());
 		parentToBeCheckedRequest.setProperty(prop);
-		if (!prop.getStatus().equals(Status.INWORKFLOW)) {
+		if (prop.getStatus().equals(Status.ACTIVE)) {
 
 			Boolean isBillUnpaid = propertyUtil.isBillUnpaid(prop.getPropertyId(), prop.getTenantId(),
 					request.getRequestInfo());
@@ -156,7 +156,7 @@ public class PropertyValidator {
 						"Parent Property has to be completely paid for before initiating the Bifurcation process");
 		} else {
 			throw new CustomException("INVALID_PARENT_FOR_BIFURCATION",
-					"Provided parent property id for Bifurcation is in Workflow State");
+					"Provided parent property id for Bifurcation is in INACTIVE State");
 		}
 
 	}
