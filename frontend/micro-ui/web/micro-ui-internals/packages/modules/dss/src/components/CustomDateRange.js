@@ -303,7 +303,7 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
                   {/* Condition for Months Type Date Range */}
                   {rangeType === "month" ?
                     <React.Fragment>
-                      <div className="rdrDateDisplay" style={{height:"30px"}}>
+                      <div className="rdrDateDisplay" style={{height:"30px", lineHeight: "30px", color: "#7d888d"}}>
                         <span className="rdrDateInput rdrDateDisplayItem rdrDateDisplayItemActive" style={{ borderRadius: "4px", boxShadow: "0 1px 2px 0 rgba(35, 57, 66, 0.21)", border: "none"}}>
                           {calenderDataStartDate}
                         </span>
@@ -323,7 +323,7 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
                   {/* Condition for Year Type Date Range */}
                   {rangeType === "year" ?
                     <React.Fragment>
-                      <div className="rdrDateDisplay" style={{height:"30px"}}>
+                      <div className="rdrDateDisplay" style={{height:"30px", lineHeight: "30px", color: "#7d888d"}}>
                         <span className="rdrDateInput rdrDateDisplayItem rdrDateDisplayItemActive" style={{ borderRadius: "4px",boxShadow: "0 1px 2px 0 rgba(35, 57, 66, 0.21)", border: "none"}}>
                           {calenderDataStartDate}
                         </span>
