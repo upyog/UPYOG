@@ -110,7 +110,7 @@ public class AppealService {
 		
 		if(config.getIsWorkflowEnabled())
 		{
-			wfService.updateWorkflowForAppeal(request, CreationReason.APPEAL);
+			wfService.updateWorkflowForAppeal(request, request.getAppeal().getCreationReason());
 		}
 		else {
 			request.getAppeal().setStatus(Status.ACTIVE);
@@ -146,23 +146,6 @@ public class AppealService {
 		propertyValidator.validateAppealUpdateRequest(request);
 		enrichmentService.enrichAppealForUpdateRequest(request);
 		propertyValidator.validateAppealWorkFlowRequestForAppeal(request,appeal.get(0));
-		
-		State state = wfService.updateWorkflowForAppeal(request, CreationReason.APPEAL);
-
-		if (state.getIsStartState() == true
-				&& state.getApplicationStatus().equalsIgnoreCase(Status.INWORKFLOW.toString())
-				&& !propertyFromSearch.getStatus().equals(Status.INWORKFLOW)) {
-
-			propertyFromSearch.setStatus(Status.INACTIVE);
-			producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), OldPropertyRequest);
-			util.saveOldUuidToRequest(request, propertyFromSearch.getId());
-			producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
-
-		} else if (state.getIsTerminateState()
-				&& !state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString())) {
-
-			terminateWorkflowAndReInstatePreviousRecord(request, propertyFromSearch);
-		}
 		
 		return request.getAppeal();
 	}
