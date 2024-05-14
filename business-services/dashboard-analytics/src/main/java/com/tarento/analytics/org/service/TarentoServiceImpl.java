@@ -102,8 +102,8 @@ public class TarentoServiceImpl implements ClientService {
 	                boolean isDefaultPresent = false;
 	                boolean isRequestContainsInterval = null == request.getRequestDate() ? false : (request.getRequestDate().getInterval() != null && !request.getRequestDate().getInterval().isEmpty());
 	                String interval = isRequestContainsInterval ? request.getRequestDate().getInterval() : (isDefaultPresent ? chartNode.get(Constants.JsonPaths.INTERVAL).asText() : "");
-	                logger.info("interval :: ",interval);
-					logger.info("VisualizationCode :: ",request.getVisualizationCode());
+	                logger.info("interval :: {} "+interval);
+					logger.info("VisualizationCode :: {} "+request.getVisualizationCode());
 					if(indexName.contains("*")&&interval!=null){
 	                	indexName = indexName.replace("*", interval);
 	                }else if(indexName.contains("*")&&interval==null){
