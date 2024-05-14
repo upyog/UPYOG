@@ -84,6 +84,14 @@ public class EnrichmentService {
 		enrichUuidsForAppealCreate(requestInfo, appeal);
 		setIdgenIdsForAppeal(request);
 	}
+	
+	
+	public void enrichAppealForUpdateRequest(AppealRequest request) {
+		
+		
+		enrichUuidsForAppealUpdate(request);
+		
+	}
 
 	private void enrichUuidsForPropertyCreate(RequestInfo requestInfo, Property property) {
 		
@@ -139,6 +147,25 @@ private void enrichUuidsForAppealCreate(RequestInfo requestInfo, Appeal appeal) 
 				doc.setStatus(Status.ACTIVE);
 			});
 	}
+
+
+private void enrichUuidsForAppealUpdate(AppealRequest request) {
+	
+	RequestInfo requestInfo = request.getRequestInfo();
+	 Appeal appeal = request.getAppeal();
+	AuditDetails propertyAuditDetails = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+	
+	if (!CollectionUtils.isEmpty(appeal.getDocuments()))
+		appeal.getDocuments().forEach(doc -> {
+			if(null==doc.getId()) {
+				doc.setId(UUID.randomUUID().toString());
+				doc.setStatus(Status.ACTIVE);
+			}
+				
+		});
+	
+	appeal.setAuditDetails(propertyAuditDetails);
+}
 
     /**
      * Assigns UUID for new fields that are added and sets propertyDetail and address id from propertyId

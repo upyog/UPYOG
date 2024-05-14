@@ -80,12 +80,12 @@ public class AppealController {
 
 
     @PostMapping("/_update")
-    public ResponseEntity<PropertyResponse> update(@Valid @RequestBody PropertyRequest propertyRequest) {
+    public ResponseEntity<AppealResponse> update(@Valid @RequestBody AppealRequest appealRequest) {
 
-        Property property = propertyService.updateProperty(propertyRequest);
-        ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(propertyRequest.getRequestInfo(), true);
-        PropertyResponse response = PropertyResponse.builder()
-                .properties(Arrays.asList(property))
+        Appeal appeal = appealService.updateProperty(appealRequest);
+        ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(appealRequest.getRequestInfo(), true);
+        AppealResponse response = AppealResponse.builder()
+                .Appeals(Arrays.asList(appeal))
                 .responseInfo(resInfo)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);

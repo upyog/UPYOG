@@ -15,7 +15,9 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Address;
+import org.egov.pt.models.Appeal;
 import org.egov.pt.models.AppealCriteria;
+import org.egov.pt.models.Assessment;
 import org.egov.pt.models.ConstructionDetail;
 import org.egov.pt.models.GeoLocation;
 import org.egov.pt.models.Institution;
@@ -1183,6 +1185,49 @@ public class PropertyValidator {
 		if(StringUtils.isEmpty(request.getAppeal().getPropertyId())) {
 			throw new CustomException("INVALID_UPIN","INvalid PropertyId Passed");
 		}
+	}
+	
+	public void validateAppealUpdateRequest(AppealRequest request) {
+
+		if(StringUtils.isEmpty(request.getAppeal().getPropertyId())) {
+			throw new CustomException("INVALID_UPIN","INvalid PropertyId Passed");
+		}
+	}
+	
+	
+	public void validateAppealWorkFlowRequestForAppeal(AppealRequest request,Appeal appealFromDb) {
+
+
+
+		Appeal appeal = request.getAppeal();
+		Map<String, String> errorMap = new HashMap<>();
+
+		if( appeal.getWorkflow()==null)
+			errorMap.put("INVALID_REQUEST","Workflow object is invalid");
+
+		if( appeal.getWorkflow()!=null && appeal.getWorkflow().getAction()==null)
+			errorMap.put("INVALID_REQUEST","Workflow object is invalid");
+
+		if(appealFromDb!=null && appealFromDb.getStatus().equals(Status.INWORKFLOW)){
+			if(!appeal.getStatus().equals(Status.INWORKFLOW))
+				throw new CustomException("INVALID_STATUS","The status of the assessment is incorrect");
+
+			if(appeal.getWorkflow()==null)
+				errorMap.put("INVALID_REQUEST","The workflow object is not valid");
+			else {
+				if(appeal.getWorkflow().getAction()==null)
+					errorMap.put("INVALID_REQUEST","Action cannot be null");
+			}
+		}
+
+		if(appeal.getStatus().equals(Status.INWORKFLOW) && appeal.getWorkflow()==null){
+			errorMap.put("INVALID_REQUEST","Workflow cannot be null");
+		}
+
+		if(!CollectionUtils.isEmpty(errorMap))
+			throw new CustomException(errorMap);
+
+	
 	}
 
 }

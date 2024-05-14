@@ -134,8 +134,20 @@ public class AppealService {
 	 * @param request PropertyRequest containing list of properties to be update
 	 * @return List of updated properties
 	 */
-	public Appeal updateProperty(PropertyRequest request) {
-		return null;
+	public Appeal updateProperty(AppealRequest request) {
+		
+		AppealCriteria criteria = new AppealCriteria();
+		criteria.setPropertyIds(Set.of(request.getAppeal().getPropertyId()));
+		//Update for single object
+		List<Appeal> appeal = searchAppeal(criteria);
+		if(null==appeal || appeal.isEmpty()) {
+			throw new CustomException("INVALID_PROPERTY","No Appeals found for this property");
+		}
+		propertyValidator.validateAppealUpdateRequest(request);
+		enrichmentService.enrichAppealForUpdateRequest(request);
+		propertyValidator.validateAppealWorkFlowRequestForAppeal(request,appeal.get(0));
+		
+		return request.getAppeal();
 	}
 
 	
