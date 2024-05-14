@@ -16,6 +16,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.AmalgamatedProperty;
 import org.egov.pt.models.Appeal;
+import org.egov.pt.models.AppealCriteria;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyBifurcation;
@@ -135,6 +136,17 @@ public class AppealService {
 	 */
 	public Appeal updateProperty(PropertyRequest request) {
 		return null;
+	}
+	
+	
+	public List<Appeal> searchAppeal(AppealCriteria appealCriteria) {
+
+		List<Appeal> appeals;
+		if(CollectionUtils.isEmpty(appealCriteria.getPropertyIds()))
+			throw new CustomException("EG_PT_APPEAL_ERROR", "No property id for search");
+		
+		appeals = repository.getAppeal(appealCriteria);
+		return appeals;
 	}
 	
 	

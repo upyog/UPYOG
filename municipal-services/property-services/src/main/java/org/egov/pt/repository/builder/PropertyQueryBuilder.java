@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.models.AppealCriteria;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.enums.Status;
 import org.egov.tracer.model.CustomException;
@@ -28,8 +29,10 @@ public class PropertyQueryBuilder {
 	public final static String INSERT_BIFURCATION_DETAILS_QUERY = "INSERT INTO eg_pt_bifurcation"
 			+"(parent_property,property_details, max_bifurcation, createdtime, id)"
 			+"VALUES(?, ? ::jsonb, ?, ?, ?)";
-    
 	
+	public final static String appealselectquery="SELECT id, propertyid, status, creationreason, acknowldgementnumber, tenantid"
+												 +" FROM eg_pt_property_appeal";
+
 	private static String PROEPRTY_AUDIT_QUERY = "select property from eg_pt_property_audit where propertyid=?";
 
 	private static String PROPERTY_AUDIT_ENC_QUERY = "select * from eg_pt_property_audit where propertyid=?";
@@ -436,6 +439,29 @@ public class PropertyQueryBuilder {
 		return propertyIdQuery.toString();
 	}
 
+	
+	public String getAppealsearchQuery(AppealCriteria appealCriteria, List<Object> preparedStmtList)
+	{
+		StringBuilder builder=new StringBuilder(appealselectquery);
+		
+		String tenantId = appealCriteria.getTenantId();
+		if(tenantId!=null)
+		{
+			addClauseIfRequired(preparedStmtList,builder);
+			builder.append("tenantid= ?");
+			preparedStmtList.add(tenantId);
+		}
+		Set<String> propertyId = appealCriteria.getPropertyIds();
+		if(propertyId!=null)
+		{
+			addClauseIfRequired(preparedStmtList,builder);
+			builder.append("propertyid IN (").append(createQuery(propertyId)).append(")");
+			addToPreparedStatementWithUpperCase(preparedStmtList, propertyId);
+		}
+		
+		return builder.toString();
+		
+	}
 
 	private String createQuery(Set<String> ids) {
 		StringBuilder builder = new StringBuilder();

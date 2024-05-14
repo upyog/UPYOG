@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.pt.models.Appeal;
+import org.egov.pt.models.AppealCriteria;
 import org.egov.pt.models.EncryptionCount;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
@@ -25,6 +27,7 @@ import org.egov.pt.models.user.UserSearchRequest;
 import org.egov.pt.models.PropertyAudit;
 import org.egov.pt.models.PropertyBifurcation;
 import org.egov.pt.repository.builder.PropertyQueryBuilder;
+import org.egov.pt.repository.rowmapper.AppealRowMapper;
 import org.egov.pt.repository.rowmapper.EncryptionCountRowMapper;
 import org.egov.pt.repository.rowmapper.OpenPropertyRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyAuditRowMapper;
@@ -63,6 +66,9 @@ public class PropertyRepository {
 
 	@Autowired
 	private PropertyRowMapper rowMapper;
+	
+	@Autowired
+	private AppealRowMapper appealRowMapper;
 	
 	@Autowired
 	private OpenPropertyRowMapper openRowMapper;
@@ -351,5 +357,13 @@ public class PropertyRepository {
 				ps.setInt(5, id);
 			}
 		});
+	}
+	
+	public List<Appeal> getAppeal(AppealCriteria appealCriteria) {
+
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = queryBuilder.getAppealsearchQuery(appealCriteria, preparedStmtList);
+		System.out.println("query::"+query);
+		return jdbcTemplate.query(query, preparedStmtList.toArray(), appealRowMapper);
 	}
 }

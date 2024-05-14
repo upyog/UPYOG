@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Appeal;
+import org.egov.pt.models.AppealCriteria;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.oldProperty.OldPropertyCriteria;
@@ -91,32 +92,20 @@ public class AppealController {
     }
 
     @PostMapping("/_search")
-    public ResponseEntity<PropertyResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
-                                                   @Valid @ModelAttribute PropertyCriteria propertyCriteria) {
+    public ResponseEntity<AppealResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+                                                   @Valid @ModelAttribute AppealCriteria appealCriteria) {
 
-        // If inbox search has been disallowed at config level or if inbox search is allowed but the current search is NOT, from inbox service validate the search criteria.
-        if(!configs.getIsInboxSearchAllowed() || !propertyCriteria.getIsInboxSearch()){
-            propertyValidator.validatePropertyCriteria(propertyCriteria, requestInfoWrapper.getRequestInfo());
-        }
+    	List<Appeal> appeals = null;
+ 
+    	appeals = appealService.searchAppeal(appealCriteria);
         
-    	List<Property> properties = null;
-    	Integer count = 0;
-        
-        if (propertyCriteria.getIsRequestForCount()) {
-        	count = propertyService.count(requestInfoWrapper.getRequestInfo(), propertyCriteria);
-        	
-        }else {
-        	 properties = propertyService.searchProperty(propertyCriteria,requestInfoWrapper.getRequestInfo());
-        }
-        
-        PropertyResponse response = PropertyResponse.builder()
+    	AppealResponse appealResponse = AppealResponse.builder()
         		.responseInfo(
                         responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
-        		.properties(properties)
-        		.count(count)
+        		.Appeals(appeals)
                 .build();
         
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(appealResponse, HttpStatus.OK);
     }
 
 
