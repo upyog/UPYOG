@@ -71,6 +71,7 @@ public class TarentoServiceImpl implements ClientService {
 	@Cacheable(value="versions", key="#request.hashKey")
 	public AggregateDto getAggregatedData(AggregateRequestDto request, List<RoleDto> roles) throws AINException, IOException {
 		// Read visualization Code
+		logger.info("inside Tarento AggregateDto");
 		String internalChartId = request.getVisualizationCode();
 		ObjectNode aggrObjectNode = JsonNodeFactory.instance.objectNode();
 		ObjectNode insightAggrObjectNode = JsonNodeFactory.instance.objectNode();
@@ -173,6 +174,7 @@ public class TarentoServiceImpl implements ClientService {
 	 *                 be fetched from  AggregateRequestDto
 	 */
 	private void executeConfiguredQueries(ObjectNode chartNode, ObjectNode aggrObjectNode, ObjectNode nodes, AggregateRequestDto request, String interval) {
+		logger.info("nodes :: {}"+nodes);
 		preHandle(request, chartNode, mdmsApiMappings);
 
 		ArrayNode queries = (ArrayNode) chartNode.get(Constants.JsonPaths.QUERIES);
@@ -185,6 +187,7 @@ public class TarentoServiceImpl implements ClientService {
 					request.getModuleLevel().equals(module)) {
 				
 				String indexName = query.get(Constants.JsonPaths.INDEX_NAME).asText();
+				logger.info("indexName in  executeConfiguredQueries:: {}"+indexName);
 				ObjectNode objectNode = queryService.getChartConfigurationQuery(request, query, indexName, interval);
 				try {
 					JsonNode aggrNode = restService.search(indexName,objectNode.toString());
