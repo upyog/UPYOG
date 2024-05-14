@@ -196,15 +196,4 @@ public class Property extends PropertyInfo {
 		return this;
 	}
 	
-	
-	public Appeal addDocumentsItemAppeal(Document documentsItem) {
-		if (this.documents == null) {
-			this.documents = new ArrayList<>();
-		}
-
-		if (null != documentsItem)
-			this.documents.add(documentsItem);
-		return this;
-	}
-
 }

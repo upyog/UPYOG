@@ -108,7 +108,4 @@ public class AppealController {
         return new ResponseEntity<>(appealResponse, HttpStatus.OK);
     }
 
-
-
-
 }
