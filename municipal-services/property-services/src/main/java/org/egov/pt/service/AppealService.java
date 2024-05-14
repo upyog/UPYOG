@@ -137,6 +137,11 @@ public class AppealService {
 	public Appeal updateProperty(PropertyRequest request) {
 		return null;
 	}
+
+	public List<Appeal> searchProperty(@Valid AppealCriteria appealCriteria, RequestInfo requestInfo) {
+		repository.getAppeals(appealCriteria);
+		return null;
+	}
 	
 	
 	public List<Appeal> searchAppeal(AppealCriteria appealCriteria) {

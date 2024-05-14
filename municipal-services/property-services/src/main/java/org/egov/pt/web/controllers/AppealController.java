@@ -103,7 +103,7 @@ public class AppealController {
         		.responseInfo(
                         responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
         		.Appeals(appeals)
-                .build();
+        		.build();
         
         return new ResponseEntity<>(appealResponse, HttpStatus.OK);
     }

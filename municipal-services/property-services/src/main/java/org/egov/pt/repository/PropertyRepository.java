@@ -91,6 +91,7 @@ public class PropertyRepository {
 	@Autowired
 	private PropertyBifurcationRowMapper propertyBifurcationRowMapper;
 	
+	
 	@Autowired
 	private ObjectMapper mapper;
     
@@ -364,6 +365,7 @@ public class PropertyRepository {
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = queryBuilder.getAppealsearchQuery(appealCriteria, preparedStmtList);
 		System.out.println("query::"+query);
+
 		return jdbcTemplate.query(query, preparedStmtList.toArray(), appealRowMapper);
 	}
 }

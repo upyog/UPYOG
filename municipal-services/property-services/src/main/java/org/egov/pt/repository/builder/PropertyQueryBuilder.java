@@ -45,6 +45,10 @@ public class PropertyQueryBuilder {
 											+ "INNER JOIN (SELECT propertyid, min(statusorder) as minorder FROM propertyresult GROUP BY propertyid) as minresult "
 											+ "ON minresult.propertyid=propertyresult.propertyid AND minresult.minorder=propertyresult.statusorder";
 	
+	private static String WITH_CLAUSE_QUERY_APPEAL = " WITH propertyresult AS ({replace}) SELECT * FROM propertyresult "
+			+ "INNER JOIN (SELECT appealid, min(statusorder) as minorder FROM propertyresult GROUP BY appealid) as minresult "
+			+ "ON minresult.appealid=propertyresult.appealid AND minresult.minorder=propertyresult.statusorder";
+	
 	
 	private static String PROPERTY_BIFURCATION_QUERY = "select * from eg_pt_bifurcation where parent_property= ";
 
@@ -52,13 +56,20 @@ public class PropertyQueryBuilder {
 	
 	private static String propertySelectValues = "property.id as pid, property.propertyid, property.tenantid as ptenantid, surveyid, accountid, oldpropertyid, property.status as propertystatus, acknowldgementnumber, propertytype, ownershipcategory,property.usagecategory as pusagecategory, creationreason, nooffloors, landarea, property.superbuiltuparea as propertysbpa, linkedproperties, source, channel, property.createdby as pcreatedby, property.lastmodifiedby as plastmodifiedby, property.createdtime as pcreatedtime,"
 			+ " property.lastmodifiedtime as plastmodifiedtime, property.additionaldetails as padditionaldetails,property.exemption as exemption, (CASE WHEN property.status='ACTIVE' then 0 WHEN property.status='INWORKFLOW' then 1 WHEN property.status='INACTIVE' then 2 ELSE 3 END) as statusorder,parentpropertyid,ispartofproperty,parentpropertyuuid, ";
+	
 
+	 private static String appealSelectValues = "appeal.id as apid, appeal.propertyid, appeal.tenantid as ptenantid, property.status as propertystatus, acknowldgementnumber, creationreason, property.createdby as pcreatedby, appeal.lastmodifiedby as aplastmodifiedby, appeal.createdtime as apcreatedtime,"
+	            + " appeal.lastmodifiedtime as plastmodifiedtime, (CASE WHEN appeal.status='ACTIVE' then 0 WHEN appeal.status='INWORKFLOW' then 1 WHEN appeal.status='INACTIVE' then 2 ELSE 3 END) as statusorder, ";
+	
+	
 	private static String addressSelectValues = "address.tenantid as adresstenantid, address.id as addressid, address.propertyid as addresspid, latitude, longitude, doorno, plotno, buildingname, street, landmark, city, pincode, locality, district, region, state, country, address.createdby as addresscreatedby, address.lastmodifiedby as addresslastmodifiedby, address.createdtime as addresscreatedtime, address.lastmodifiedtime as addresslastmodifiedtime, address.additionaldetails as addressadditionaldetails,town_name, ward_no, leikai_name, village, patta_no, proper_house_no, common_name_of_building, principal_road_name, sub_side_road_name, type_of_road, dag_no, " ;
 
 	private static String institutionSelectValues = "institution.id as institutionid,institution.propertyid as institutionpid, institution.tenantid as institutiontenantid, institution.name as institutionname, institution.type as institutiontype, designation, nameofauthorizedperson, institution.createdby as institutioncreatedby, institution.lastmodifiedby as institutionlastmodifiedby, institution.createdtime as institutioncreatedtime, institution.lastmodifiedtime as institutionlastmodifiedtime, ";
 
 	private static String propertyDocSelectValues = "pdoc.id as pdocid, pdoc.tenantid as pdoctenantid, pdoc.entityid as pdocentityid, pdoc.documenttype as pdoctype, pdoc.filestoreid as pdocfilestore, pdoc.documentuid as pdocuid, pdoc.status as pdocstatus, ";
 
+	private static String appealDocSelectValues = "pdoc.id as pdocid, pdoc.tenantid as pdoctenantid, pdoc.entityid as pdocentityid, pdoc.documenttype as pdoctype, pdoc.filestoreid as pdocfilestore, pdoc.documentuid as pdocuid, pdoc.status as pdocstatus, ";
+	
 	private static String ownerSelectValues = "owner.tenantid as owntenantid, ownerInfoUuid, owner.propertyid as ownpropertyid, userid, owner.status as ownstatus, isprimaryowner, ownertype, ownershippercentage, owner.institutionid as owninstitutionid, relationship, owner.createdby as owncreatedby, owner.createdtime as owncreatedtime,owner.lastmodifiedby as ownlastmodifiedby, owner.lastmodifiedtime as ownlastmodifiedtime, owner.isaownerdead as isownerdead, owner.dateofdeath as dateofdeath, ";
 
 	private static String ownerDocSelectValues = " owndoc.id as owndocid, owndoc.tenantid as owndoctenantid, owndoc.entityid as owndocentityId, owndoc.documenttype as owndoctype, owndoc.filestoreid as owndocfilestore, owndoc.documentuid as owndocuid, owndoc.status as owndocstatus, ";
@@ -136,8 +147,41 @@ public class PropertyQueryBuilder {
 			+ "WHERE offset_ > ? AND offset_ <= ?";
 
 	private static final String LATEST_EXECUTED_MIGRATION_QUERY = "select * from eg_pt_enc_audit where tenantid = ? order by createdTime desc limit 1;";
+	
+	
+private static final String APPEAL_QUERY = SELECT 
+			
+			+	appealSelectValues    
+			
+			+   propertyDocSelectValues
+
+			+   " FROM EG_PT_PROPERTY_APPEAL appeal " 
+			
+			+   LEFT_JOIN  +  " EG_PT_DOCUMENT pdoc   ON appeal.id = pdoc.entityid ";
 
 	private String addPaginationWrapper(String query, List<Object> preparedStmtList, PropertyCriteria criteria) {
+		
+		
+		Long limit = config.getDefaultLimit();
+		Long offset = config.getDefaultOffset();
+		String finalQuery = paginationWrapper.replace("{}", query);
+
+		if (criteria.getLimit() != null && criteria.getLimit() <= config.getMaxSearchLimit())
+			limit = criteria.getLimit();
+
+		if (criteria.getLimit() != null && criteria.getLimit() > config.getMaxSearchLimit())
+			limit = config.getMaxSearchLimit();
+
+		if (criteria.getOffset() != null)
+			offset = criteria.getOffset();
+
+		preparedStmtList.add(offset);
+		preparedStmtList.add(limit + offset);
+
+		return finalQuery;
+	}
+	
+private String appealAddPaginationWrapper(String query, List<Object> preparedStmtList, AppealCriteria criteria) {
 		
 		
 		Long limit = config.getDefaultLimit();
@@ -332,6 +376,80 @@ public class PropertyQueryBuilder {
 		else 
 			return addPaginationWrapper(withClauseQuery, preparedStmtList, criteria);
 	}
+	
+	
+	
+	
+	public String getAppealSearchQuery(AppealCriteria criteria, List<Object> preparedStmtList) {
+
+		Boolean isEmpty = CollectionUtils.isEmpty(criteria.getPropertyIds())
+				|| CollectionUtils.isEmpty(criteria.getAcknowledgementNumbers());
+		
+		if(isEmpty)
+			throw new CustomException("EG_PT_APPEAL_SEARCH_ERROR"," No criteria given for the property search");
+		
+		StringBuilder builder;
+
+		
+			builder = new StringBuilder(APPEAL_QUERY);
+
+		
+			String tenantId = criteria.getTenantId();
+			
+			if (tenantId != null) {
+				if (tenantId.equalsIgnoreCase(config.getStateLevelTenantId())) {
+					addClauseIfRequired(preparedStmtList,builder);
+					builder.append(" property.tenantId LIKE ? ");
+					preparedStmtList.add(tenantId + '%');
+				} else {
+					addClauseIfRequired(preparedStmtList,builder);
+					builder.append(" property.tenantId= ? ");
+					preparedStmtList.add(tenantId);
+				}
+			}
+		
+		
+		/*
+		 * Set<String> statusStringList = new HashSet<>(); if
+		 * (!CollectionUtils.isEmpty(criteria.getStatus())) {
+		 * criteria.getStatus().forEach(status -> {
+		 * statusStringList.add(status.toString()); });
+		 * addClauseIfRequired(preparedStmtList,builder);
+		 * builder.append(" property.status IN ( ")
+		 * .append(createQuery(statusStringList)) .append(" )");
+		 * addToPreparedStatement(preparedStmtList, statusStringList); }
+		 */
+
+		
+
+		Set<String> propertyIds = criteria.getPropertyIds();
+		if (!CollectionUtils.isEmpty(propertyIds)) {
+
+			addClauseIfRequired(preparedStmtList,builder);
+			builder.append("property.propertyid IN (").append(createQuery(propertyIds)).append(")");
+			addToPreparedStatementWithUpperCase(preparedStmtList, propertyIds);
+		}
+		
+		Set<String> acknowledgementIds = criteria.getAcknowledgementNumbers();
+		if (!CollectionUtils.isEmpty(acknowledgementIds)) {
+
+			addClauseIfRequired(preparedStmtList,builder);
+			builder.append("property.acknowldgementnumber IN (").append(createQuery(acknowledgementIds)).append(")");
+			addToPreparedStatementWithUpperCase(preparedStmtList, acknowledgementIds);
+		}
+		
+		Set<String> uuids = criteria.getUuids();
+		if (!CollectionUtils.isEmpty(uuids)) {
+
+			addClauseIfRequired(preparedStmtList,builder);
+			builder.append("property.id IN (").append(createQuery(uuids)).append(")");
+			addToPreparedStatement(preparedStmtList, uuids);
+		}
+
+			String withClauseQuery = WITH_CLAUSE_QUERY_APPEAL.replace(REPLACE_STRING, builder);
+			return appealAddPaginationWrapper(withClauseQuery, preparedStmtList, criteria);
+	}
+
 
 
 	public String getPropertyQueryForBulkSearch(PropertyCriteria criteria, List<Object> preparedStmtList,Boolean isPlainSearch) {

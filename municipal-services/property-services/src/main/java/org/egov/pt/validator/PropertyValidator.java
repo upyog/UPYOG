@@ -15,6 +15,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Address;
+import org.egov.pt.models.AppealCriteria;
 import org.egov.pt.models.ConstructionDetail;
 import org.egov.pt.models.GeoLocation;
 import org.egov.pt.models.Institution;
@@ -712,6 +713,27 @@ public class PropertyValidator {
 
 		if(!CollectionUtils.isEmpty(criteria.getOwnerIds()) && !allowedParams.contains("ownerids"))
 			throw new CustomException("EG_PT_INVALID_SEARCH","Search based on ownerId is not available for : " + userType);
+	}
+	
+	
+	
+	public void validateAppealCriteria(AppealCriteria criteria,RequestInfo requestInfo) {
+
+		List<String> allowedParams = null;
+
+		User user = requestInfo.getUserInfo();
+		String userType = user.getType();
+		Boolean isUserCitizen = "CITIZEN".equalsIgnoreCase(userType);
+
+			if(criteria.getTenantId() == null)
+				throw new CustomException("EG_PT_INVALID_SEARCH"," TenantId is mandatory for search by " + userType);
+
+		
+		if(CollectionUtils.isEmpty(criteria.getPropertyIds()) || CollectionUtils.isEmpty(criteria.getAcknowledgementNumbers()))
+			throw new CustomException("EG_PT_INVALID_SEARCH","Search based on ids Property ids or Acknowledgement number ");
+
+		
+
 	}
 
 	/**

@@ -3,6 +3,12 @@ package org.egov.pt.repository.rowmapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,14 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Component
 public class AppealRowMapper implements ResultSetExtractor<List<Appeal>>{
 
 	@Autowired
 	private ObjectMapper mapper;
-	
+
 	@Override
 	public List<Appeal> extractData(ResultSet rs) throws SQLException, DataAccessException {
 		// TODO Auto-generated method stub
@@ -30,7 +36,7 @@ public class AppealRowMapper implements ResultSetExtractor<List<Appeal>>{
 			String appealUuId = rs.getString("id");
 			Appeal currentAppeal = appealMap.get(appealUuId);
 			String tenanId = rs.getString("tenantid");
-			
+
 			if(null==currentAppeal)
 			{
 				currentAppeal=Appeal.builder()
@@ -40,12 +46,11 @@ public class AppealRowMapper implements ResultSetExtractor<List<Appeal>>{
 						.acknowldgementNumber(rs.getString("acknowldgementnumber"))
 						.tenantId(tenanId)
 						.build();
-				
+
 				appealMap.put(appealUuId, currentAppeal);
-						
+
 			}
 		}
 		return new ArrayList<>(appealMap.values());
 	}
-
 }

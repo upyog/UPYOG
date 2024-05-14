@@ -132,6 +132,12 @@ private void enrichUuidsForAppealCreate(RequestInfo requestInfo, Appeal appeal) 
 		AuditDetails propertyAuditDetails = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 		appeal.setId(UUID.randomUUID().toString());
 		appeal.setAuditDetails(propertyAuditDetails);
+		
+		if (!CollectionUtils.isEmpty(appeal.getDocuments()))
+			appeal.getDocuments().forEach(doc -> {
+				doc.setId(UUID.randomUUID().toString());
+				doc.setStatus(Status.ACTIVE);
+			});
 	}
 
     /**
@@ -527,7 +533,7 @@ private void enrichUuidsForAppealCreate(RequestInfo requestInfo, Appeal appeal) 
 		
 		String pId = propertyutil.getIdList(requestInfo, tenantId, config.getPropertyIdGenName(), config.getPropertyIdGenFormat(), 1).get(0);
 		String ackNo = propertyutil.getIdList(requestInfo, tenantId, config.getAckIdGenName(), config.getAckIdGenFormat(), 1).get(0);
-		appeal.setPropertyId(pId);
+		appeal.setAppealId(pId);
 		appeal.setAcknowldgementNumber(ackNo);
 	}
 
