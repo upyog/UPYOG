@@ -236,7 +236,7 @@ public class PropertyUtil extends CommonUtils {
 
 			
 			case APPEAL :
-				wf.setBusinessService(configs.getCreatePTWfName());
+				wf.setBusinessService(configs.getAppealCreateWorkflowName());
 				wf.setModuleName(configs.getPropertyModuleName());
 				wf.setAction("OPEN");
 			break;

@@ -406,5 +406,9 @@ public class PropertyConfiguration {
     @Value("${persister.save.appeal.topic}")
     private String saveAppealTopic;
     
+    
+    @Value("${appeal.create.wf.name}")
+    private String appealCreateWorkflowName;
+    
 
 }
