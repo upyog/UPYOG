@@ -16,6 +16,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.AmalgamatedProperty;
 import org.egov.pt.models.Appeal;
+import org.egov.pt.models.AppealCriteria;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyBifurcation;
@@ -134,6 +135,11 @@ public class AppealService {
 	 * @return List of updated properties
 	 */
 	public Appeal updateProperty(PropertyRequest request) {
+		return null;
+	}
+
+	public List<Appeal> searchProperty(@Valid AppealCriteria appealCriteria, RequestInfo requestInfo) {
+		repository.getAppeals(appealCriteria);
 		return null;
 	}
 	

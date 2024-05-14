@@ -195,5 +195,16 @@ public class Property extends PropertyInfo {
 			this.documents.add(documentsItem);
 		return this;
 	}
+	
+	
+	public Appeal addDocumentsItemAppeal(Document documentsItem) {
+		if (this.documents == null) {
+			this.documents = new ArrayList<>();
+		}
+
+		if (null != documentsItem)
+			this.documents.add(documentsItem);
+		return this;
+	}
 
 }
