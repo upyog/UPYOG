@@ -25,6 +25,7 @@ import org.egov.pt.models.enums.CreationReason;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.user.UserSearchRequest;
+import org.egov.pt.models.workflow.ProcessInstanceRequest;
 import org.egov.pt.models.workflow.State;
 import org.egov.pt.producer.PropertyProducer;
 import org.egov.pt.repository.PropertyRepository;
@@ -96,7 +97,9 @@ public class AppealService {
 	
 	@Autowired
 	private PropertyUtil propertyUtil;
-
+	
+	@Autowired
+	private WorkflowService workflowService;
 	/**
 	 * Enriches the Request and pushes to the Queue
 	 *
@@ -110,7 +113,7 @@ public class AppealService {
 		
 		if(config.getIsWorkflowEnabled())
 		{
-			wfService.updateWorkflowForAppeal(request, request.getAppeal().getCreationReason());
+			wfService.updateWorkflowForAppeal(request, CreationReason.APPEAL);
 		}
 		else {
 			request.getAppeal().setStatus(Status.ACTIVE);
@@ -123,7 +126,7 @@ public class AppealService {
 	}
 
 	/**
-	 * Updates the property
+	 * Updates the 
 	 *
 	 * handles multiple processes
 	 *
@@ -143,9 +146,32 @@ public class AppealService {
 		if(null==appeal || appeal.isEmpty()) {
 			throw new CustomException("INVALID_PROPERTY","No Appeals found for this property");
 		}
+		Appeal appFromDb = appeal.get(0);
 		propertyValidator.validateAppealUpdateRequest(request);
 		enrichmentService.enrichAppealForUpdateRequest(request);
 		propertyValidator.validateAppealWorkFlowRequestForAppeal(request,appeal.get(0));
+		//State state = wfService.updateWorkflowForAppeal(request, CreationReason.APPEAL);
+		
+		ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(request.getRequestInfo(), Collections.singletonList(request.getAppeal().getWorkflow()));
+		State state = workflowService.callWorkFlow(workflowRequest);
+		if( request.getAppeal().getStatus().equals(Status.INWORKFLOW) &&
+				request.getAppeal().getStatus().equals(state.getApplicationStatus().equals(Status.INWORKFLOW.toString()))) {
+			
+		//	System.out.println("In normal update");
+		}
+		else if (state.getIsTerminateState() && !state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString())) {
+			//Failed 
+			request.getAppeal().setStatus(Status.REJECTED);
+			producer.push(config.getAppealUpdateTopic(), request);
+		}
+		else {
+			//success
+			request.getAppeal().setStatus(Status.ACTIVE);
+			producer.push(config.getAppealUpdateTopic(), request);
+			
+		}
+		
+		
 		
 		return request.getAppeal();
 	}

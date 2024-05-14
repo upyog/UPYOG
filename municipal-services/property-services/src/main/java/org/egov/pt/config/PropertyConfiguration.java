@@ -410,5 +410,10 @@ public class PropertyConfiguration {
     @Value("${appeal.create.wf.name}")
     private String appealCreateWorkflowName;
     
+    
+    @Value("${persister.update.appeal.topic}")
+    private String appealUpdateTopic;
+    
+    
 
 }
