@@ -268,3 +268,105 @@ SearchDefinitions:
         jsonFormat: {"ResponseInfo": {},"TotalCount": {}}
         outJsonPath: $.TotalCount
         responseInfoPath: $.ResponseInfo
+    - name: inboxappealsearchcount
+      query:
+        baseQuery: SELECT row_to_json(TotalCount) from (SELECT COUNT(result) from
+          (
+          select DISTINCT(appeal.acknowldgementnumber),pi.createdtime from eg_pt_property_appeal appeal
+          INNER JOIN eg_wf_processinstance_v2 pi ON pi.businessid = appeal.acknowldgementnumber
+          LEFT JOIN eg_wf_assignee_v2 assg ON pi.id = assg.processinstanceid
+          $where
+          AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = appeal.acknowldgementnumber GROUP BY wf.businessid)
+          order by pi.createdtime asc
+          ) result) TotalCount
+        groupBy:
+        orderBy:
+      searchParams:
+        condition: AND
+        params:
+          - name: appeal.tenantid
+            isMandatory: true
+            jsonPath: $.searchCriteria.tenantId
+          - name: appeal.propertyid
+            isMandatory: false
+            jsonPath: $.searchCriteria.propertyId
+          - name: property.oldPropertyId
+            isMandatory: false
+            jsonPath: $.searchCriteria.oldPropertyId
+          - name: ptadd.locality
+            isMandatory: false
+            jsonPath: $.searchCriteria.locality
+          - name: assg.assignee
+            isMandatory: false
+            jsonPath: $.searchCriteria.assignee
+          - name: pi.status
+            isMandatory: false
+            jsonPath: $.searchCriteria.status
+          - name: property.acknowldgementnumber
+            isMandatory: false
+            jsonPath: $.searchCriteria.applicationNumber
+          - name: owner.userid
+            isMandatory: false
+            jsonPath: $.searchCriteria.userid
+          - name: pi.businessservice
+            isMandatory: false
+            jsonPath: $.searchCriteria.businessservice
+        pagination:
+          noOfRecords: $.searchCriteria.noOfRecords
+          offset: $.searchCriteria.offset
+
+      output:
+        jsonFormat: {"ResponseInfo": {},"TotalCount": {}}
+        outJsonPath: $.TotalCount
+        responseInfoPath: $.ResponseInfo
+    - name: inboxappealsearch
+      query:
+        baseQuery: Select row_to_json(result) from
+          (
+          select DISTINCT(appeal.acknowldgementnumber),pi.createdtime from eg_pt_property_appeal appeal
+          INNER JOIN eg_wf_processinstance_v2 pi ON pi.businessid = appeal.acknowldgementnumber
+          LEFT JOIN eg_wf_assignee_v2 assg ON pi.id = assg.processinstanceid
+          $where
+          AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = appeal.acknowldgementnumber GROUP BY wf.businessid)
+          order by pi.createdtime asc $pagination
+          ) result
+        groupBy:
+        orderBy:
+      searchParams:
+        condition: AND
+        params:
+          - name: appeal.tenantid
+            isMandatory: true
+            jsonPath: $.searchCriteria.tenantId
+          - name: appeal.propertyid
+            isMandatory: false
+            jsonPath: $.searchCriteria.propertyId
+          - name: property.oldPropertyId
+            isMandatory: false
+            jsonPath: $.searchCriteria.oldPropertyId
+          - name: ptadd.locality
+            isMandatory: false
+            jsonPath: $.searchCriteria.locality
+          - name: assg.assignee
+            isMandatory: false
+            jsonPath: $.searchCriteria.assignee
+          - name: pi.status
+            isMandatory: false
+            jsonPath: $.searchCriteria.status
+          - name: property.acknowldgementnumber
+            isMandatory: false
+            jsonPath: $.searchCriteria.applicationNumber
+          - name: owner.userid
+            isMandatory: false
+            jsonPath: $.searchCriteria.userid
+          - name: pi.businessservice
+            isMandatory: false
+            jsonPath: $.searchCriteria.businessservice
+        pagination:
+          noOfRecords: $.searchCriteria.noOfRecords
+          offset: $.searchCriteria.offset
+
+      output:
+        jsonFormat: {"ResponseInfo": {},"Properties": []}
+        outJsonPath: $.Properties
+        responseInfoPath: $.ResponseInfo
