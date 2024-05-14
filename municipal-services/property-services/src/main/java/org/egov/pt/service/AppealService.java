@@ -140,7 +140,7 @@ public class AppealService {
 	public Appeal updateProperty(AppealRequest request) {
 		
 		AppealCriteria criteria = new AppealCriteria();
-		criteria.setPropertyIds(Set.of(request.getAppeal().getPropertyId()));
+		criteria.setPropertyIds(Sets.newHashSet(request.getAppeal().getPropertyId()));
 		//Update for single object
 		List<Appeal> appeal = searchAppeal(criteria);
 		if(null==appeal || appeal.isEmpty()) {

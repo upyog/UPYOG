@@ -558,7 +558,7 @@ private void enrichUuidsForAppealUpdate(AppealRequest request) {
 		RequestInfo requestInfo = request.getRequestInfo();
 
 		
-		String pId = propertyutil.getIdList(requestInfo, tenantId, config.getPropertyIdGenName(), config.getPropertyIdGenFormat(), 1).get(0);
+		String pId = propertyutil.getIdList(requestInfo, tenantId, config.getPropertyIdGenName(), config.getAppealidformat(), 1).get(0);
 		String ackNo = propertyutil.getIdList(requestInfo, tenantId, config.getAckIdGenName(), config.getAckIdGenFormat(), 1).get(0);
 		appeal.setAppealId(pId);
 		appeal.setAcknowldgementNumber(ackNo);
