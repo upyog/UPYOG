@@ -30,7 +30,7 @@ public class PropertyQueryBuilder {
 			+"(parent_property,property_details, max_bifurcation, createdtime, id)"
 			+"VALUES(?, ? ::jsonb, ?, ?, ?)";
 	
-	public final static String appealselectvalue="appeal.id as appealid, appeal.propertyid, appeal.status, appeal.creationreason, appeal.acknowldgementnumber, appeal.tenantid as tenantid,";
+	public final static String appealselectvalue="appeal.id as appealid, appeal.propertyid, appeal.status, appeal.creationreason, appeal.acknowldgementnumber,(CASE WHEN appeal.status='ACTIVE' then 0 WHEN appeal.status='INWORKFLOW' then 1 WHEN appeal.status='INACTIVE' then 2 ELSE 3 END) as statusorder, appeal.tenantid as tenantid,";
 
 	private static String PROEPRTY_AUDIT_QUERY = "select property from eg_pt_property_audit where propertyid=?";
 
@@ -571,6 +571,13 @@ private String appealAddPaginationWrapper(String query, List<Object> preparedStm
 			addToPreparedStatementWithUpperCase(preparedStmtList, propertyId);
 		}
 		
+		Set<String> acknowledgementIds=appealCriteria.getAcknowledgementNumbers();
+		if(acknowledgementIds!=null)
+		{
+			addClauseIfRequired(preparedStmtList,builder);
+			builder.append("appeal.acknowldgementnumber IN (").append(createQuery(acknowledgementIds)).append(")");
+			addToPreparedStatementWithUpperCase(preparedStmtList, acknowledgementIds);
+		}
 		return builder.toString();
 		
 	}

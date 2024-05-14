@@ -139,11 +139,7 @@ public class AppealService {
 	}
 
 	public List<Appeal> searchAppeal(AppealCriteria appealCriteria) {
-
 		List<Appeal> appeals;
-		if(CollectionUtils.isEmpty(appealCriteria.getPropertyIds()))
-			throw new CustomException("EG_PT_APPEAL_ERROR", "No property id for search");
-		
 		appeals = repository.getAppeal(appealCriteria);
 		return appeals;
 	}
