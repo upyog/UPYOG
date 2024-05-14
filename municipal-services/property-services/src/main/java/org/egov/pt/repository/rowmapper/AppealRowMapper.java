@@ -14,11 +14,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.pt.models.Appeal;
+import org.egov.pt.models.Document;
+import org.egov.pt.models.Property;
 import org.egov.pt.models.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
@@ -33,7 +37,7 @@ public class AppealRowMapper implements ResultSetExtractor<List<Appeal>>{
 		Map<String, Appeal> appealMap = new LinkedHashMap<>();
 		while(rs.next())
 		{
-			String appealUuId = rs.getString("id");
+			String appealUuId = rs.getString("appealid");
 			Appeal currentAppeal = appealMap.get(appealUuId);
 			String tenanId = rs.getString("tenantid");
 
@@ -47,10 +51,37 @@ public class AppealRowMapper implements ResultSetExtractor<List<Appeal>>{
 						.tenantId(tenanId)
 						.build();
 
+				addDocToAppeal(rs, currentAppeal);
 				appealMap.put(appealUuId, currentAppeal);
 
 			}
 		}
 		return new ArrayList<>(appealMap.values());
+	}
+	
+	private void addDocToAppeal(ResultSet rs, Appeal appeal) throws SQLException {
+
+		String docId = rs.getString("pdocid");
+		String entityId = rs.getString("pdocentityid");
+		List<Document> docs = appeal.getDocuments();
+		
+		if (!(docId != null && entityId.equals(appeal.getId())))
+			return;
+
+		if (!CollectionUtils.isEmpty(docs))
+			for (Document doc : docs) {
+				if (doc.getId().equals(docId))
+					return;
+			}
+
+		Document doc =  Document.builder()
+			.status(Status.fromValue(rs.getString("pdocstatus")))
+			.documentType(rs.getString("pdoctype"))
+			.fileStoreId(rs.getString("pdocfileStore"))
+			.documentUid(rs.getString("pdocuid"))
+			.id(docId)
+			.build();
+		
+		appeal.addDocumentsItem(doc);
 	}
 }

@@ -1,5 +1,6 @@
 package org.egov.pt.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -65,6 +66,17 @@ public class Appeal {
 	@JsonProperty("appealId")
 	@SafeHtml
 	private String appealId;
+	
+	
+	public Appeal addDocumentsItem(Document documentsItem) {
+		if (this.documents == null) {
+			this.documents = new ArrayList<>();
+		}
+
+		if (null != documentsItem)
+			this.documents.add(documentsItem);
+		return this;
+	}
 	
 	
 

@@ -30,8 +30,7 @@ public class PropertyQueryBuilder {
 			+"(parent_property,property_details, max_bifurcation, createdtime, id)"
 			+"VALUES(?, ? ::jsonb, ?, ?, ?)";
 	
-	public final static String appealselectquery="SELECT id, propertyid, status, creationreason, acknowldgementnumber, tenantid"
-												 +" FROM eg_pt_property_appeal";
+	public final static String appealselectvalue="appeal.id as appealid, appeal.propertyid, appeal.status, appeal.creationreason, appeal.acknowldgementnumber, appeal.tenantid as tenantid,";
 
 	private static String PROEPRTY_AUDIT_QUERY = "select property from eg_pt_property_audit where propertyid=?";
 
@@ -57,18 +56,13 @@ public class PropertyQueryBuilder {
 	private static String propertySelectValues = "property.id as pid, property.propertyid, property.tenantid as ptenantid, surveyid, accountid, oldpropertyid, property.status as propertystatus, acknowldgementnumber, propertytype, ownershipcategory,property.usagecategory as pusagecategory, creationreason, nooffloors, landarea, property.superbuiltuparea as propertysbpa, linkedproperties, source, channel, property.createdby as pcreatedby, property.lastmodifiedby as plastmodifiedby, property.createdtime as pcreatedtime,"
 			+ " property.lastmodifiedtime as plastmodifiedtime, property.additionaldetails as padditionaldetails,property.exemption as exemption, (CASE WHEN property.status='ACTIVE' then 0 WHEN property.status='INWORKFLOW' then 1 WHEN property.status='INACTIVE' then 2 ELSE 3 END) as statusorder,parentpropertyid,ispartofproperty,parentpropertyuuid, ";
 	
-
-	 private static String appealSelectValues = "appeal.id as apid, appeal.propertyid, appeal.tenantid as ptenantid, property.status as propertystatus, acknowldgementnumber, creationreason, property.createdby as pcreatedby, appeal.lastmodifiedby as aplastmodifiedby, appeal.createdtime as apcreatedtime,"
-	            + " appeal.lastmodifiedtime as plastmodifiedtime, (CASE WHEN appeal.status='ACTIVE' then 0 WHEN appeal.status='INWORKFLOW' then 1 WHEN appeal.status='INACTIVE' then 2 ELSE 3 END) as statusorder, ";
-	
-	
 	private static String addressSelectValues = "address.tenantid as adresstenantid, address.id as addressid, address.propertyid as addresspid, latitude, longitude, doorno, plotno, buildingname, street, landmark, city, pincode, locality, district, region, state, country, address.createdby as addresscreatedby, address.lastmodifiedby as addresslastmodifiedby, address.createdtime as addresscreatedtime, address.lastmodifiedtime as addresslastmodifiedtime, address.additionaldetails as addressadditionaldetails,town_name, ward_no, leikai_name, village, patta_no, proper_house_no, common_name_of_building, principal_road_name, sub_side_road_name, type_of_road, dag_no, " ;
 
 	private static String institutionSelectValues = "institution.id as institutionid,institution.propertyid as institutionpid, institution.tenantid as institutiontenantid, institution.name as institutionname, institution.type as institutiontype, designation, nameofauthorizedperson, institution.createdby as institutioncreatedby, institution.lastmodifiedby as institutionlastmodifiedby, institution.createdtime as institutioncreatedtime, institution.lastmodifiedtime as institutionlastmodifiedtime, ";
 
 	private static String propertyDocSelectValues = "pdoc.id as pdocid, pdoc.tenantid as pdoctenantid, pdoc.entityid as pdocentityid, pdoc.documenttype as pdoctype, pdoc.filestoreid as pdocfilestore, pdoc.documentuid as pdocuid, pdoc.status as pdocstatus, ";
 
-	private static String appealDocSelectValues = "pdoc.id as pdocid, pdoc.tenantid as pdoctenantid, pdoc.entityid as pdocentityid, pdoc.documenttype as pdoctype, pdoc.filestoreid as pdocfilestore, pdoc.documentuid as pdocuid, pdoc.status as pdocstatus, ";
+	private static String appealDocSelectValues = "pdoc.id as pdocid, pdoc.tenantid as pdoctenantid, pdoc.entityid as pdocentityid, pdoc.documenttype as pdoctype, pdoc.filestoreid as pdocfilestore, pdoc.documentuid as pdocuid, pdoc.status as pdocstatus ";
 	
 	private static String ownerSelectValues = "owner.tenantid as owntenantid, ownerInfoUuid, owner.propertyid as ownpropertyid, userid, owner.status as ownstatus, isprimaryowner, ownertype, ownershippercentage, owner.institutionid as owninstitutionid, relationship, owner.createdby as owncreatedby, owner.createdtime as owncreatedtime,owner.lastmodifiedby as ownlastmodifiedby, owner.lastmodifiedtime as ownlastmodifiedtime, owner.isaownerdead as isownerdead, owner.dateofdeath as dateofdeath, ";
 
@@ -151,13 +145,13 @@ public class PropertyQueryBuilder {
 	
 private static final String APPEAL_QUERY = SELECT 
 			
-			+	appealSelectValues    
+			+	appealselectvalue
 			
-			+   propertyDocSelectValues
+			+   appealDocSelectValues
 
-			+   " FROM EG_PT_PROPERTY_APPEAL appeal " 
+			+   " FROM eg_pt_property_appeal appeal " 
 			
-			+   LEFT_JOIN  +  " EG_PT_DOCUMENT pdoc   ON appeal.id = pdoc.entityid ";
+			+ INNER_JOIN +  " EG_PT_DOCUMENT pdoc   ON appeal.id = pdoc.entityid ";
 
 	private String addPaginationWrapper(String query, List<Object> preparedStmtList, PropertyCriteria criteria) {
 		
@@ -560,20 +554,20 @@ private String appealAddPaginationWrapper(String query, List<Object> preparedStm
 	
 	public String getAppealsearchQuery(AppealCriteria appealCriteria, List<Object> preparedStmtList)
 	{
-		StringBuilder builder=new StringBuilder(appealselectquery);
+		StringBuilder builder=new StringBuilder(APPEAL_QUERY);
 		
 		String tenantId = appealCriteria.getTenantId();
 		if(tenantId!=null)
 		{
 			addClauseIfRequired(preparedStmtList,builder);
-			builder.append("tenantid= ?");
+			builder.append("appeal.tenantid= ?");
 			preparedStmtList.add(tenantId);
 		}
 		Set<String> propertyId = appealCriteria.getPropertyIds();
 		if(propertyId!=null)
 		{
 			addClauseIfRequired(preparedStmtList,builder);
-			builder.append("propertyid IN (").append(createQuery(propertyId)).append(")");
+			builder.append("appeal.propertyid IN (").append(createQuery(propertyId)).append(")");
 			addToPreparedStatementWithUpperCase(preparedStmtList, propertyId);
 		}
 		

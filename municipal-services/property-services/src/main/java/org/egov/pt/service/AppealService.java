@@ -150,8 +150,6 @@ public class AppealService {
 		return request.getAppeal();
 	}
 
-	
-	
 	public List<Appeal> searchAppeal(AppealCriteria appealCriteria) {
 
 		List<Appeal> appeals;
