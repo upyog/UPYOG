@@ -320,6 +320,23 @@ const getulbtype = (tenantId, moduleCode, type) => ({
   },
 });
 
+const getulblist = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "UlbType",
+          },
+        ],
+      },
+    ],
+  },
+});
+
 const getPropertyTypeCriteria = (tenantId, moduleCode, type) => ({
   type,
   details: {
@@ -426,6 +443,16 @@ const getulb = (MdmsRes) => {
   });
   //return MdmsRes;
 };
+
+const getulbls = (MdmsRes) => {
+  return MdmsRes["BPA"].UlbType.filter((UlbType) => UlbType.active).map((ulbtypeDetails) => {
+    return {
+      ...ulbtypeDetails,
+      i18nKey: `BPA_ULB_LIST_${ulbtypeDetails.code}`,
+    };
+  });
+  //return MdmsRes;
+};
 /////////////
 
 const BPADistrict = (MdmsRes) => {
@@ -441,6 +468,15 @@ const BPAUlb = (MdmsRes) => {
     return {
       ...ulblist,
       i18nKey: `BPA_ULB_${ulblist.code}`,
+    };
+  });
+};
+
+const BPAUlbType = (MdmsRes) => {
+  MdmsRes["BPA"].UlbType.filter((UlbType) => UlbType.active).map((ulbtypelist) => {
+    return {
+      ...ulbtypelist,
+      i18nKey: `BPA_ULB_${ulbtypelist.code}`,
     };
   });
 };
@@ -1611,11 +1647,16 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
 
     case "Ulb":
       return getulb(MdmsRes);
+    case "UlbType":
+      return getulbls(MdmsRes);
 
     case "BPADistrict":
       return BPADistrict(MdmsRes);
     case "BPAUlb":
       return BPAUlb(MdmsRes);
+
+    case "BPAUlbType":
+      return BPAUlbType(MdmsRes);
 
    
 
@@ -1770,6 +1811,9 @@ export const MdmsService = {
   getulb: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getulbtype(tenantId, moduleCode, type), moduleCode);
   },
+  getulbls: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getulblist(tenantId, moduleCode, type), moduleCode);
+  },
 
 
   getPetType: (tenantId, moduleCode, type) => {
@@ -1785,6 +1829,11 @@ export const MdmsService = {
   BPAUlb: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getulbtype(tenantId, moduleCode, type), moduleCode);
   },
+  /////bpa
+  BPAUlbType: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getulblist(tenantId, moduleCode, type), moduleCode);
+  },
+  ////bpa
   PTRGenderType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getGenderTypeList(tenantId, moduleCode, type), moduleCode);
   },
