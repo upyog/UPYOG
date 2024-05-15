@@ -106,11 +106,11 @@ public class TarentoServiceImpl implements ClientService {
 	                logger.info("interval :: {} "+interval);
 					logger.info("VisualizationCode :: {} "+request.getVisualizationCode());
 					logger.info("Before constructing indexName :: {} "+indexName);
-					if(indexName.contains("*")&&interval!=null){
-	                	indexName = indexName.replace("*", interval);
-	                }else if(indexName.contains("*")&&interval==null){
-	                	indexName = indexName.replace("*", "month");
-	                }
+					if (indexName.contains("*") && !StringUtils.isBlank(interval)) {
+						indexName = indexName.replace("*", interval);
+					} else if (indexName.contains("*") && StringUtils.isBlank(interval)) {
+						indexName = indexName.replace("*", "month");
+					}
 					logger.info("after constructing indexName :: {} "+indexName);
 	            }
 	            logger.info("Before setting indexName to NODE :: {} "+indexName);
