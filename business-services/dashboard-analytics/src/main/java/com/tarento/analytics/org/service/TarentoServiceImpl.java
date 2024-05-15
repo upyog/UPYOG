@@ -126,6 +126,8 @@ public class TarentoServiceImpl implements ClientService {
 
 		executeConfiguredQueries(chartNode, aggrObjectNode, nodes, request, interval);
 		request.setChartNode(chartNode);
+		ArrayNode queriess = (ArrayNode) chartNode.get(Constants.JsonPaths.QUERIES);
+		logger.info("indexName after  executeConfiguredQueries - after line 127:: {}"+queriess.get(Constants.JsonPaths.INDEX_NAME).asText());
 		ResponseRecorder responseRecorder = new ResponseRecorder();
 		request.setResponseRecorder(responseRecorder);
 		
@@ -178,6 +180,7 @@ public class TarentoServiceImpl implements ClientService {
 		preHandle(request, chartNode, mdmsApiMappings);
 
 		ArrayNode queries = (ArrayNode) chartNode.get(Constants.JsonPaths.QUERIES);
+		logger.info("indexName inside  executeConfiguredQueries - after line 182:: {}"+queries.get(Constants.JsonPaths.INDEX_NAME).asText());
 		int randIndexCount = 1;
 		for(JsonNode query : queries) {
 			String module = query.get(Constants.JsonPaths.MODULE).asText();
