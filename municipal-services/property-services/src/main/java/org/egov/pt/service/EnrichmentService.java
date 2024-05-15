@@ -1,5 +1,6 @@
 package org.egov.pt.service;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -8,11 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Appeal;
 import org.egov.pt.models.AuditDetails;
+import org.egov.pt.models.Document;
 import org.egov.pt.models.Institution;
 import org.egov.pt.models.Locality;
 import org.egov.pt.models.OwnerInfo;
@@ -29,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -155,13 +160,18 @@ private void enrichUuidsForAppealUpdate(AppealRequest request) {
 	 Appeal appeal = request.getAppeal();
 	AuditDetails propertyAuditDetails = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 	
+	if(!CollectionUtils.isEmpty(appeal.getDocuments()))
+	{
+		List<Document> doc=request.getAppeal().getDocuments();
+		doc=doc.stream().filter(d->d.getId()==null || StringUtils.isEmpty(d.getId())).collect(Collectors.toList());
+		request.getAppeal().setDocuments(doc);
+	}
 	if (!CollectionUtils.isEmpty(appeal.getDocuments()))
 		appeal.getDocuments().forEach(doc -> {
 			if(null==doc.getId()) {
 				doc.setId(UUID.randomUUID().toString());
 				doc.setStatus(Status.ACTIVE);
-			}
-				
+			}	
 		});
 	
 	appeal.setAuditDetails(propertyAuditDetails);
