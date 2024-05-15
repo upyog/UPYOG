@@ -467,17 +467,24 @@ public class PropertyService {
 				String status = request.getProperty().getStatus().toString();
 				
 				List<PropertyBifurcation> bifurList= repository.getBifurcationProperties(request.getProperty().getParentPropertyId());
-				Integer Count = bifurList.stream().filter(x ->!x.isStatus()).collect(Collectors.toList()).size();
+				Integer Count = bifurList.stream()
+						.filter(x->!x.getChildpropertyuuid().equalsIgnoreCase(request.getProperty().getId()))
+						.filter(x ->!x.isStatus()).collect(Collectors.toList()).size();
 				
 				if(Count>0) {
 					request.getProperty().setStatus(Status.INACTIVE);
 					producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
 					//Update the status to true in bifurcation table for this property uuid
-					
-					
-					
+					PropertyBifurcation b = bifurList.stream()
+											.filter(x->x.getChildpropertyuuid().equalsIgnoreCase(request.getProperty().getId()))
+											.collect(Collectors.toList()).get(0);
+					b.setStatus(true);
+					//push this b 
+					producer.push(config.getUpdateChildStatusForBifurcation(), b);
 				}else {
 					producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+					producer.push(config.getUpdatePropertyStatusForBifurcationSuccess(), bifurList.stream()
+						.filter(x->!x.getChildpropertyuuid().equalsIgnoreCase(request.getProperty().getId())).collect(Collectors.toList()));
 				}
 			}
 

@@ -417,6 +417,12 @@ public class PropertyConfiguration {
     @Value("${egov.idgen.appeal.format}")
     private String appealidformat;
     
+    @Value("${persister.update.bifurcation.for.child.status}")
+    private String updateChildStatusForBifurcation;
+    
+    @Value("${persister.update.property.status.bifurcation.success}")
+    private String updatePropertyStatusForBifurcationSuccess;
+    
     
 
 }
