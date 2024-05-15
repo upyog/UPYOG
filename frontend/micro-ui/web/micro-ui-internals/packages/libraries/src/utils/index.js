@@ -223,6 +223,17 @@ const ptrAccess = () => {
   return PTR_ACCESS?.length > 0;
 };
 
+const assetAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const assetRoles = ["ASSET_INITIATOR","ASSET_VERIFIER"];
+
+  const ASSET_ACCESS = userRoles?.filter((role) => assetRoles?.includes(role));
+
+  return ASSET_ACCESS?.length > 0;
+};
+
 const tlAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
@@ -303,6 +314,7 @@ export default {
   pt,
   ptAccess,
   ptrAccess,
+  assetAccess,
   NOCAccess,
   mCollectAccess,
   receiptsAccess,
