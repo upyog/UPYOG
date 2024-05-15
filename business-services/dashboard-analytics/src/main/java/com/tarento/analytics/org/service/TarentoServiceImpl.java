@@ -105,12 +105,15 @@ public class TarentoServiceImpl implements ClientService {
 	                String interval = isRequestContainsInterval ? request.getRequestDate().getInterval() : (isDefaultPresent ? chartNode.get(Constants.JsonPaths.INTERVAL).asText() : "");
 	                logger.info("interval :: {} "+interval);
 					logger.info("VisualizationCode :: {} "+request.getVisualizationCode());
-					if(indexName.contains("*")&&interval!=null){
-	                	indexName = indexName.replace("*", interval);
-	                }else if(indexName.contains("*")&&interval==null){
-	                	indexName = indexName.replace("*", "month");
-	                }
+					logger.info("Before constructing indexName :: {} "+indexName);
+					if (indexName.contains("*") && !StringUtils.isBlank(interval)) {
+						indexName = indexName.replace("*", interval);
+					} else if (indexName.contains("*") && StringUtils.isBlank(interval)) {
+						indexName = indexName.replace("*", "month");
+					}
+					logger.info("after constructing indexName :: {} "+indexName);
 	            }
+	            logger.info("Before setting indexName to NODE :: {} "+indexName);
 	            ((ObjectNode) query).put(Constants.JsonPaths.INDEX_NAME, indexName);
 	            
 	        });
@@ -123,9 +126,14 @@ public class TarentoServiceImpl implements ClientService {
 		boolean isDefaultPresent = chartType.equals(ChartType.LINE) && chartNode.get(Constants.JsonPaths.INTERVAL)!=null;
 		boolean isRequestContainsInterval = null == request.getRequestDate() ? false : (request.getRequestDate().getInterval()!=null && !request.getRequestDate().getInterval().isEmpty()) ;
 		String interval = isRequestContainsInterval? request.getRequestDate().getInterval(): (isDefaultPresent ? chartNode.get(Constants.JsonPaths.INTERVAL).asText():"");
-
+		ObjectMapper mapper1 = new ObjectMapper();
+	    String json1 = mapper1.writerWithDefaultPrettyPrinter().writeValueAsString(chartNode);
+		logger.info("CHART NODE before  executeConfiguredQueries:: {}"+json1);
 		executeConfiguredQueries(chartNode, aggrObjectNode, nodes, request, interval);
 		request.setChartNode(chartNode);
+		ObjectMapper mapper = new ObjectMapper();
+	    String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(chartNode.get(Constants.JsonPaths.QUERIES));
+		logger.info("JSON NODE after  executeConfiguredQueries - after line 127:: {}"+json);
 		ResponseRecorder responseRecorder = new ResponseRecorder();
 		request.setResponseRecorder(responseRecorder);
 		
