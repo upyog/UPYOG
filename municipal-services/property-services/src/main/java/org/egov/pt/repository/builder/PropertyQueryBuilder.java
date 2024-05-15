@@ -30,7 +30,7 @@ public class PropertyQueryBuilder {
 			+"(parent_property,property_details, max_bifurcation, createdtime, id,status,childpropertyuuid)"
 			+"VALUES(?, ? ::jsonb, ?, ?, ? ,?,?)";
 	
-	public final static String appealselectvalue="appeal.id as appealid, appeal.propertyid, appeal.status, appeal.creationreason, appeal.acknowldgementnumber,(CASE WHEN appeal.status='ACTIVE' then 0 WHEN appeal.status='INWORKFLOW' then 1 WHEN appeal.status='INACTIVE' then 2 ELSE 3 END) as statusorder, appeal.tenantid as tenantid,";
+	public final static String appealselectvalue="appeal.id as id, appeal.propertyid, appeal.status, appeal.creationreason, appeal.acknowldgementnumber,(CASE WHEN appeal.status='ACTIVE' then 0 WHEN appeal.status='INWORKFLOW' then 1 WHEN appeal.status='INACTIVE' then 2 ELSE 3 END) as statusorder, appeal.tenantid as tenantid,appeal.appealid,appeal.propertyaddress,appeal.assesmnetyear,appeal.nameofassigningofficer,appeal.designation,appeal.ruleunderorderpassed,appeal.dateoforder,appeal.dateofservice,appeal.dateofpayment,appeal.copyofchallan,appeal.applicantaddress,appeal.reliefclaimed,appeal.statementoffacts,appeal.groundofappeal";
 
 	private static String PROEPRTY_AUDIT_QUERY = "select property from eg_pt_property_audit where propertyid=?";
 

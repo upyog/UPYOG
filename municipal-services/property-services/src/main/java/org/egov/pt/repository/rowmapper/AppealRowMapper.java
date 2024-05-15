@@ -37,7 +37,7 @@ public class AppealRowMapper implements ResultSetExtractor<List<Appeal>>{
 		Map<String, Appeal> appealMap = new LinkedHashMap<>();
 		while(rs.next())
 		{
-			String appealUuId = rs.getString("appealid");
+			String appealUuId = rs.getString("id");
 			Appeal currentAppeal = appealMap.get(appealUuId);
 			String tenanId = rs.getString("tenantid");
 
@@ -49,6 +49,20 @@ public class AppealRowMapper implements ResultSetExtractor<List<Appeal>>{
 						.status(Status.fromValue(rs.getString("status")))
 						.acknowldgementNumber(rs.getString("acknowldgementnumber"))
 						.tenantId(tenanId)
+						.appealId(rs.getString("appealid"))
+						.propertyaddress(rs.getString("propertyaddress"))
+						.assesmnetyear(rs.getString("assesmnetyear"))
+						.nameofassigningofficer(rs.getString("nameofassigningofficer"))
+						.designation(rs.getString("designation"))
+						.ruleunderorderpassed(rs.getString("ruleunderorderpassed"))
+						.dateoforder(rs.getString("dateoforder"))
+						.dateofservice(rs.getString("dateofservice"))
+						.dateofpayment(rs.getString("dateofpayment"))
+						.copyofchallan(rs.getString("copyofchallan"))
+						.applicantaddress(rs.getString("applicantaddress"))
+						.reliefclaimed("reliefclaimed")
+						.statementoffacts("statementoffacts")
+						.groundofappeal(rs.getString("groundofappeal"))
 						.build();
 
 				addDocToAppeal(rs, currentAppeal);
