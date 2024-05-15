@@ -68,7 +68,7 @@ public class TarentoServiceImpl implements ClientService {
 
 
 	@Override
-	@Cacheable(value="versions", key="#request.hashKey")
+	// @Cacheable(value="versions", key="#request.hashKey")
 	public AggregateDto getAggregatedData(AggregateRequestDto request, List<RoleDto> roles) throws AINException, IOException {
 		// Read visualization Code
 		logger.info("inside Tarento AggregateDto");
