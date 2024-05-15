@@ -67,6 +67,44 @@ public class Appeal {
 	@SafeHtml
 	private String appealId;
 	
+	@JsonProperty("propertyaddress")
+	private String propertyaddress;
+	
+	@JsonProperty("assesmnetyear")
+	private String assesmnetyear;
+	
+	@JsonProperty("nameofassigningofficer")
+	private String nameofassigningofficer;
+	
+	@JsonProperty("designation")
+	private String designation;
+	
+	@JsonProperty("ruleunderorderpassed")
+	private String ruleunderorderpassed;
+	
+	@JsonProperty("dateoforder")
+	private String dateoforder;
+	
+	@JsonProperty("dateofservice")
+	private String dateofservice;
+	
+	@JsonProperty("dateofpayment")
+	private String dateofpayment;
+	
+	@JsonProperty("copyofchallan")
+	private String copyofchallan;
+	
+	@JsonProperty("applicantaddress")
+	private String applicantaddress;
+	
+	@JsonProperty("reliefclaimed")
+	private String reliefclaimed;
+	
+	@JsonProperty("statementoffacts")
+	private String statementoffacts;
+	
+	@JsonProperty("groundofappeal")
+	private String groundofappeal;
 	
 	public Appeal addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {
