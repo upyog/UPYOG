@@ -244,7 +244,7 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 
 			TaxHeadCategory category = taxHeadCategoryMap.get(estimate.getTaxHeadCode());
 			estimate.setCategory(category);
-
+if(category!=null)
 			switch (category) {
 
 			case CHARGES:
