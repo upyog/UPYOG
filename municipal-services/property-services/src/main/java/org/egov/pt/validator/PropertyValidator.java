@@ -15,6 +15,9 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Address;
+import org.egov.pt.models.Appeal;
+import org.egov.pt.models.AppealCriteria;
+import org.egov.pt.models.Assessment;
 import org.egov.pt.models.ConstructionDetail;
 import org.egov.pt.models.GeoLocation;
 import org.egov.pt.models.Institution;
@@ -34,6 +37,7 @@ import org.egov.pt.util.EncryptionDecryptionUtil;
 import  org.egov.pt.util.PTConstants;
 import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.util.UnmaskingUtil;
+import org.egov.pt.web.contracts.AppealRequest;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,7 +151,7 @@ public class PropertyValidator {
 		request.getProperty().setParentPropertyUuId(prop.getId());
 		request.getProperty().setParentPropertyId(prop.getPropertyId());
 		parentToBeCheckedRequest.setProperty(prop);
-		if (!prop.getStatus().equals(Status.INWORKFLOW)) {
+		if (prop.getStatus().equals(Status.ACTIVE)) {
 
 			Boolean isBillUnpaid = propertyUtil.isBillUnpaid(prop.getPropertyId(), prop.getTenantId(),
 					request.getRequestInfo());
@@ -156,7 +160,7 @@ public class PropertyValidator {
 						"Parent Property has to be completely paid for before initiating the Bifurcation process");
 		} else {
 			throw new CustomException("INVALID_PARENT_FOR_BIFURCATION",
-					"Provided parent property id for Bifurcation is in Workflow State");
+					"Provided parent property id for Bifurcation is in INACTIVE State");
 		}
 
 	}
@@ -712,6 +716,27 @@ public class PropertyValidator {
 		if(!CollectionUtils.isEmpty(criteria.getOwnerIds()) && !allowedParams.contains("ownerids"))
 			throw new CustomException("EG_PT_INVALID_SEARCH","Search based on ownerId is not available for : " + userType);
 	}
+	
+	
+	
+	public void validateAppealCriteria(AppealCriteria criteria,RequestInfo requestInfo) {
+
+		List<String> allowedParams = null;
+
+		User user = requestInfo.getUserInfo();
+		String userType = user.getType();
+		Boolean isUserCitizen = "CITIZEN".equalsIgnoreCase(userType);
+
+			if(criteria.getTenantId() == null)
+				throw new CustomException("EG_PT_INVALID_SEARCH"," TenantId is mandatory for search by " + userType);
+
+		
+		if(CollectionUtils.isEmpty(criteria.getPropertyIds()) || CollectionUtils.isEmpty(criteria.getAcknowledgementNumbers()))
+			throw new CustomException("EG_PT_INVALID_SEARCH","Search based on ids Property ids or Acknowledgement number ");
+
+		
+
+	}
 
 	/**
 	 * Validates if the mobileNumber is 10 digit and starts with 5 or greater
@@ -1152,6 +1177,57 @@ public class PropertyValidator {
 		if (!CollectionUtils.isEmpty(errorMap))
 			throw new CustomException(errorMap);
 
+	}
+	
+	
+	public void validateAppealCreateRequest(AppealRequest request) {
+
+		if(StringUtils.isEmpty(request.getAppeal().getPropertyId())) {
+			throw new CustomException("INVALID_UPIN","INvalid PropertyId Passed");
+		}
+	}
+	
+	public void validateAppealUpdateRequest(AppealRequest request) {
+
+		if(StringUtils.isEmpty(request.getAppeal().getPropertyId())) {
+			throw new CustomException("INVALID_UPIN","INvalid PropertyId Passed");
+		}
+	}
+	
+	
+	public void validateAppealWorkFlowRequestForAppeal(AppealRequest request,Appeal appealFromDb) {
+
+
+
+		Appeal appeal = request.getAppeal();
+		Map<String, String> errorMap = new HashMap<>();
+
+		if( appeal.getWorkflow()==null)
+			errorMap.put("INVALID_REQUEST","Workflow object is invalid");
+
+		if( appeal.getWorkflow()!=null && appeal.getWorkflow().getAction()==null)
+			errorMap.put("INVALID_REQUEST","Workflow object is invalid");
+
+		if(appealFromDb!=null && appealFromDb.getStatus().equals(Status.INWORKFLOW)){
+			if(!appeal.getStatus().equals(Status.INWORKFLOW))
+				throw new CustomException("INVALID_STATUS","The status of the assessment is incorrect");
+
+			if(appeal.getWorkflow()==null)
+				errorMap.put("INVALID_REQUEST","The workflow object is not valid");
+			else {
+				if(appeal.getWorkflow().getAction()==null)
+					errorMap.put("INVALID_REQUEST","Action cannot be null");
+			}
+		}
+
+		if(appeal.getStatus().equals(Status.INWORKFLOW) && appeal.getWorkflow()==null){
+			errorMap.put("INVALID_REQUEST","Workflow cannot be null");
+		}
+
+		if(!CollectionUtils.isEmpty(errorMap))
+			throw new CustomException(errorMap);
+
+	
 	}
 
 }

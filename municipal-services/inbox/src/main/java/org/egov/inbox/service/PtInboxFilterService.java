@@ -48,6 +48,12 @@ public class PtInboxFilterService {
 
 	@Value("${egov.searcher.asmt.count.path}")
 	private String asmtInboxSearcherCountEndpoint;
+	
+	@Value("${egov.searcher.appeal.count.path}")
+	private String appealInboxSearcherCountEndpoint;
+	
+	@Value("${egov.searcher.appeal.search.path}")
+	private String appealInboxSearcherEndpoint;
 
 	@Autowired
 	private RestTemplate restTemplate;
@@ -130,6 +136,8 @@ public class PtInboxFilterService {
 			{
 				uri.append(searcherHost).append(asmtInboxSearcherEndpoint);
 			}
+			if(criteria.getProcessSearchCriteria().getBusinessService().get(0).equalsIgnoreCase("PT.APPEAL"))
+				uri.append(searcherHost).append(appealInboxSearcherEndpoint);
 			else {
 				uri.append(searcherHost).append(ptInboxSearcherEndpoint);
 			}
@@ -213,6 +221,8 @@ public class PtInboxFilterService {
 
 			if(criteria.getProcessSearchCriteria().getBusinessService().get(0).equalsIgnoreCase("ASMT"))
 				uri.append(searcherHost).append(asmtInboxSearcherCountEndpoint);
+			else if(criteria.getProcessSearchCriteria().getBusinessService().get(0).equalsIgnoreCase("PT.APPEAL"))
+				uri.append(searcherHost).append(appealInboxSearcherCountEndpoint);
 			else
 				uri.append(searcherHost).append(ptInboxSearcherCountEndpoint);
 

@@ -69,6 +69,7 @@ import static org.egov.pt.calculator.util.CalculatorConstants.PT_STRUCTURE_TYPE_
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_AGE_FACTOR_TAX;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_COMPLEMENTARY_REBATE;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_MODEOFPAYMENT_REBATE;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_MANDATORY_PAYMENT;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -1011,11 +1012,17 @@ public class EstimationService {
 		}
 
 		BigDecimal totalAmount = taxAmt.add(penalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
-
+		BigDecimal mandatorypay=BigDecimal.ZERO;
 		if(exemption.compareTo(BigDecimal.ZERO)==0) {
-			if(totalAmount.compareTo(new BigDecimal(600)) < 0)  
+			if(totalAmount.compareTo(new BigDecimal(600)) < 0)
+			{
+				mandatorypay=new BigDecimal(600).subtract(totalAmount);
+				estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MANDATORY_PAYMENT).category(Category.TAX).estimateAmount(mandatorypay).build());
 				totalAmount=new BigDecimal(600);
+			}
+				
 		}
+		
 		// false in the argument represents that the demand shouldn't be updated from this call
 		Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(requestInfo,criteria);
 		BigDecimal collectedAmtForOldDemand = demandService.getCarryForwardAndCancelOldDemand(ptTax, criteria, requestInfo,oldDemand, false);

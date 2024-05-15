@@ -16,6 +16,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.models.Appeal;
 import org.egov.pt.models.Assessment;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
@@ -25,6 +26,7 @@ import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.workflow.ProcessInstance;
 import org.egov.pt.models.workflow.ProcessInstanceRequest;
 import org.egov.pt.repository.ServiceRequestRepository;
+import org.egov.pt.web.contracts.AppealRequest;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.RequestInfoWrapper;
 import org.egov.tracer.model.ServiceCallException;
@@ -202,12 +204,48 @@ public class PropertyUtil extends CommonUtils {
 				wf.setModuleName(configs.getPropertyModuleName());
 				wf.setAction("OPEN");
 			break;
+			
+			case APPEAL :
+				wf.setBusinessService(configs.getCreatePTWfName());
+				wf.setModuleName(configs.getPropertyModuleName());
+				wf.setAction("OPEN");
+			break;
 
 			default:
 				break;
 		}
 
 		property.setWorkflow(wf);
+		return ProcessInstanceRequest.builder()
+				.processInstances(Arrays.asList(wf))
+				.requestInfo(request.getRequestInfo())
+				.build();
+	}
+	
+	
+	
+	public ProcessInstanceRequest getWfForAppealRegistry(AppealRequest request, CreationReason creationReasonForWorkflow) {
+
+		Appeal appeal = request.getAppeal();
+		ProcessInstance wf = null != appeal.getWorkflow() ? appeal.getWorkflow() : new ProcessInstance();
+
+		wf.setBusinessId(appeal.getAcknowldgementNumber());
+		wf.setTenantId(appeal.getTenantId());
+
+		switch (creationReasonForWorkflow) {
+
+			
+			case APPEAL :
+				wf.setBusinessService(configs.getAppealCreateWorkflowName());
+				wf.setModuleName(configs.getPropertyModuleName());
+				wf.setAction("OPEN");
+			break;
+
+			default:
+				break;
+		}
+
+		appeal.setWorkflow(wf);
 		return ProcessInstanceRequest.builder()
 				.processInstances(Arrays.asList(wf))
 				.requestInfo(request.getRequestInfo())

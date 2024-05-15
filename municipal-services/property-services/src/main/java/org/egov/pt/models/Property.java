@@ -18,6 +18,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 import org.javers.core.metamodel.annotation.DiffIgnore;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.AllArgsConstructor;
@@ -127,7 +128,11 @@ public class Property extends PropertyInfo {
 	@JsonProperty("parentPropertyUuId")
 	private String  parentPropertyUuId;
 	
+	@JsonProperty("maxBifurcation")
+	private Integer maxBifurcation;
 	
+	@JsonProperty("bifurcationCount")
+	private Integer bifurcationCount;
 
 	@Builder
 	public Property(String id, String propertyId, String surveyId, List<String> linkedProperties, String tenantId,
