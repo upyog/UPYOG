@@ -98,6 +98,10 @@ const Urls = {
     
   },
 
+  asset:{
+    create:"/asset-services/v1/assets/_create"
+  },
+
 
   dss: {
     dashboardConfig: "/dashboard-analytics/dashboard/getDashboardConfig",

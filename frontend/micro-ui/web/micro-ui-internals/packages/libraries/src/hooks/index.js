@@ -265,6 +265,13 @@ import usePetDocumentSearch from "./ptr/usePetDocumentSearch";
 import useMyPetPayments from "./ptr/useMyPetPayments";
 import useTenantsPTR from "./ptr/useTenants";
 
+import useAssetClassification from "./asset/useAssetClassification";
+import useAssetType from "./asset/useAssetType";
+import useAssetDocumentsMDMS from "./asset/useAssetDocumentsMDMS";
+import useAssetSubType from "./asset/useAssetSubType";
+import useAssetdetail from "./asset/useAssetdetail";
+import useAssetCreateAPI from "./asset/useAssetCreateAPI";
+
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
 
@@ -285,6 +292,15 @@ const pgr = {
   useComplaintStatusCount,
   useTradeLicenseBillingslab,
   useMDMS: usePGRMDMS,
+};
+
+const asset = {
+  useAssetClassification,
+  useAssetType,
+  useAssetDocumentsMDMS,
+  useAssetSubType,
+  useAssetdetail,
+  useAssetCreateAPI
 };
 
 
@@ -579,6 +595,7 @@ const Hooks = {
   survey,
   noc,
   ws,
+  asset,
   useCustomMDMS,
   useCustomAPIHook,
   reports,

@@ -1,0 +1,39 @@
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { EmployeeModuleCard, PropertyHouse } from "@upyog/digit-ui-react-components";
+
+const ASSETCard = () => {
+  const { t } = useTranslation();
+
+  
+
+  if (!Digit.Utils.assetAccess()) {
+    return null;
+  }
+  const links=[
+    
+    {
+      label: t("ASSET_ADD"),
+      link: `/digit-ui/employee/asset/assetservice/new-asset`,
+      role: "ASSET_INITIATOR",
+    },
+    // {
+    //   label: t("ASSET_CHECK"),
+    //   link: `/digit-ui/employee/asset/assetservice/my-assets`,
+    // },
+  ]
+  const ASSET_INITIATOR = Digit.UserService.hasAccess(["ASSET_INITIATOR","ASSET_VERIFIER"]) || false;
+  const propsForModuleCard = {
+    Icon: <PropertyHouse />,
+    moduleName: t("Asset Managemnet"),
+    kpis: [
+      
+    ],
+    links:links.filter(link=>!link?.role||ASSET_INITIATOR),
+  };
+
+  return <EmployeeModuleCard {...propsForModuleCard} />;
+};
+
+export default ASSETCard;

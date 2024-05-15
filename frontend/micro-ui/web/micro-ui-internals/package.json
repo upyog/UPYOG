@@ -12,7 +12,9 @@
     "packages/modules/commonPt",
     "packages/modules/dss",
     "packages/modules/pt",
-    "packages/modules/obps"
+    "packages/modules/obps",
+    "packages/modules/asset"
+
     
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
@@ -41,6 +43,7 @@
     "dev:receipts": "cd packages/modules/receipts && yarn start",
     "dev:tl": "cd packages/modules/tl && yarn start",
     "dev:ptr": "cd packages/modules/ptr && yarn start",
+    "dev:asset": "cd packages/modules/asset && yarn start",
     "dev:hrms": "cd packages/modules/hrms && yarn start",
     "dev:obps": "cd packages/modules/obps && yarn start",
     "dev:engagement": "cd packages/modules/engagement && yarn start",
@@ -65,6 +68,7 @@
     "buildD:hrms": "cd packages/modules/hrms && yarn build",
     "build:obps": "cd packages/modules/obps && yarn build",
     "buildD:ptr": "cd packages/modules/ptr && yarn build",
+    "build:asset": "cd packages/modules/asset && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
     "buildD:noc": "cd packages/modules/noc && yarn build",
     "buildD:ws": "cd packages/modules/ws && yarn build",
