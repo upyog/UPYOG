@@ -123,7 +123,9 @@ public class TarentoServiceImpl implements ClientService {
 		boolean isDefaultPresent = chartType.equals(ChartType.LINE) && chartNode.get(Constants.JsonPaths.INTERVAL)!=null;
 		boolean isRequestContainsInterval = null == request.getRequestDate() ? false : (request.getRequestDate().getInterval()!=null && !request.getRequestDate().getInterval().isEmpty()) ;
 		String interval = isRequestContainsInterval? request.getRequestDate().getInterval(): (isDefaultPresent ? chartNode.get(Constants.JsonPaths.INTERVAL).asText():"");
-
+		ObjectMapper mapper1 = new ObjectMapper();
+	    String json1 = mapper1.writerWithDefaultPrettyPrinter().writeValueAsString(chartNode);
+		logger.info("CHART NODE before  executeConfiguredQueries:: {}"+json1);
 		executeConfiguredQueries(chartNode, aggrObjectNode, nodes, request, interval);
 		request.setChartNode(chartNode);
 		ObjectMapper mapper = new ObjectMapper();
