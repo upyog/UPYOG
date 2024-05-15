@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -16,6 +17,7 @@ import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.AmalgamatedProperty;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
+import org.egov.pt.models.PropertyBifurcation;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.enums.CreationReason;
 import org.egov.pt.models.enums.Status;
@@ -32,10 +34,12 @@ import org.egov.pt.validator.PropertyValidator;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.xml.BeanDefinitionDocumentReader;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
@@ -102,45 +106,93 @@ public class PropertyService {
 		propertyValidator.validateCreateRequest(request);
 		enrichmentService.enrichCreateRequest(request);
 		//Validate For BiFurcation
+		List<PropertyBifurcation> bifurList = null;
 		if(request.getProperty().getCreationReason().equals(CreationReason.BIFURCATION)) {
+			Integer  maxBifurcation  = request.getProperty().getMaxBifurcation();
+			if(null==maxBifurcation) {
+				throw new CustomException("INVALID_BIFURCATION_NUMBER","Invalid Maximum Bifurcation number");
+				
+			}
+			if(maxBifurcation<2) {
+				throw new CustomException("INVALID_BIFURCATION_MIN_NUMBER","minimum Bifurcation number should be 2");
+			}
 			propertyValidator.validateCreateRequestForBiFurcation(request);
-		}
-		
-		if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
-			processPropertyCreateForAmalgamation(request);
-		}
-		userService.createUser(request);
-		
-		
-		if (config.getIsWorkflowEnabled()
-				&& !request.getProperty().getCreationReason().equals(CreationReason.DATA_UPLOAD)) {
-			wfService.updateWorkflow(request, request.getProperty().getCreationReason());
+			try {
+				repository.savebifurcation(request);
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				log.info("Exception for save bifurcation data"+e);
+			}
+			//producer.pushAfterEncrytpion(config.getSaveBifurcationTopic(), request);
+			bifurList= repository.getBifurcationProperties(request.getProperty().getParentPropertyId());
+			if(null!=bifurList && bifurList.size()>0) {
+				
+				
+				bifurList  = bifurList.stream().sorted((x,y)->x.getCreatedTime().compareTo(y.getCreatedTime())).collect(Collectors.toList());
+				Integer dbMaxBifur = bifurList.get(0).getMaxBifurcation();
+				request.getProperty().setBifurcationCount(bifurList.size());
+				if(dbMaxBifur== bifurList.size()) {
+					
+					for(PropertyBifurcation b: bifurList)
+					{
+						request.setProperty(b.getPropertyRequest().getProperty());
+						userService.createUser(request);
+						if(config.getIsWorkflowEnabled())
+						{
+							wfService.updateWorkflow(request, request.getProperty().getCreationReason());
+						}
+						else {
+							request.getProperty().setStatus(Status.ACTIVE);
+						}
+						producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+					}
+					//Deactivating Parent
+					request.getProperty().setBifurcationCount(bifurList.size());
+					producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForBifurcationTopic(), request);
+				} 
+			}else {
+				request.getProperty().setBifurcationCount(bifurList.size());
+			}
+				
+			
+				
+		}else {
+			
+			if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
+				processPropertyCreateForAmalgamation(request);
+			}
+			userService.createUser(request);
+			
+			
+			if (config.getIsWorkflowEnabled()
+					&& !request.getProperty().getCreationReason().equals(CreationReason.DATA_UPLOAD)) {
+				wfService.updateWorkflow(request, request.getProperty().getCreationReason());
 
-		} else {
+			} else {
 
-			request.getProperty().setStatus(Status.ACTIVE);
+				request.getProperty().setStatus(Status.ACTIVE);
+			}
+
+			/* Fix this.
+			 * For FUZZY-search, This code to be un-commented when privacy is enabled
+			 
+			//Push PLAIN data to fuzzy search index
+			producer.push(config.getSavePropertyFuzzyTopic(), request);
+			*
+			*/
+			//Push data after encryption
+			producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+			
+			if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
+				producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForAmalgamationTopic(), request);
+			}
+			request.getProperty().setWorkflow(request.getProperty().getWorkflow());
+
+			/* decrypt here */
+			
 		}
-
-		/* Fix this.
-		 * For FUZZY-search, This code to be un-commented when privacy is enabled
-		 
-		//Push PLAIN data to fuzzy search index
-		producer.push(config.getSavePropertyFuzzyTopic(), request);
-		*
-		*/
-		//Push data after encryption
-		producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
 		
-		if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
-			producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForAmalgamationTopic(), request);
-		}
-		
-		if(request.getProperty().getCreationReason().equals(CreationReason.BIFURCATION)) {
-			producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForBifurcationTopic(), request);
-		}
-		request.getProperty().setWorkflow(request.getProperty().getWorkflow());
-
-		/* decrypt here */
 		return encryptionDecryptionUtil.decryptObject(request.getProperty(), PTConstants.PROPERTY_MODEL, Property.class, request.getRequestInfo());
 		//return request.getProperty();
 	}
@@ -706,16 +758,19 @@ public class PropertyService {
 	private void terminateWorkflowAndReInstatePreviousRecordForBifurcation(PropertyRequest request, Property propertyFromSearch) {
 
 		/* current record being rejected */
-		String parentProperty = propertyFromSearch.getParentPropertyId();
-		
-		PropertyCriteria criteria = PropertyCriteria.builder()
-				.uuids(Sets.newHashSet(parentProperty))
-				.isSearchInternal(true)
-				.tenantId(propertyFromSearch.getTenantId()).build();
-		Property previousPropertyToBeReInstated = searchProperty(criteria, request.getRequestInfo()).get(0);
-		
-		previousPropertyToBeReInstated.setAuditDetails(util.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid().toString(), true));
-		previousPropertyToBeReInstated.setStatus(Status.ACTIVE);
+		/*
+		 * String parentProperty = propertyFromSearch.getParentPropertyId();
+		 * 
+		 * PropertyCriteria criteria = PropertyCriteria.builder()
+		 * .propertyIds(Sets.newHashSet(parentProperty)) .isSearchInternal(true)
+		 * .tenantId(propertyFromSearch.getTenantId()).build(); //Parent Property
+		 * Property previousPropertyToBeReInstated = searchProperty(criteria,
+		 * request.getRequestInfo()).get(0);
+		 * 
+		 * previousPropertyToBeReInstated.setAuditDetails(util.getAuditDetails(request.
+		 * getRequestInfo().getUserInfo().getUuid().toString(), true));
+		 * previousPropertyToBeReInstated.setStatus(Status.ACTIVE);
+		 */
 		
 		//For Updating the child property to inactive
 		propertyFromSearch.setStatus(Status.INACTIVE);
@@ -723,7 +778,7 @@ public class PropertyService {
 				.requestInfo(request.getRequestInfo())
 				.property(propertyFromSearch)
 				.build();
-		producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForBifurcationTopic(), prosearch);
+		producer.pushAfterEncrytpion(config.getBifurcationChildInactive(), prosearch);
 		
 		
 		PropertyRequest proReInstate = PropertyRequest.builder()

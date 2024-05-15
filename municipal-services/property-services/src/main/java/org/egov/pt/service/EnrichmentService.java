@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.models.Appeal;
 import org.egov.pt.models.AuditDetails;
 import org.egov.pt.models.Institution;
 import org.egov.pt.models.Locality;
@@ -22,6 +23,7 @@ import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.user.User;
 import org.egov.pt.util.PTConstants;
 import org.egov.pt.util.PropertyUtil;
+import org.egov.pt.web.contracts.AppealRequest;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,6 +75,23 @@ public class EnrichmentService {
 		enrichBoundary(property, requestInfo);
 		enrichRoadType(property, requestInfo);
 	}
+	
+	
+	public void enrichAppealCreateRequest(AppealRequest request) {
+		
+		Appeal appeal = request.getAppeal();
+		RequestInfo requestInfo = request.getRequestInfo();
+		enrichUuidsForAppealCreate(requestInfo, appeal);
+		setIdgenIdsForAppeal(request);
+	}
+	
+	
+	public void enrichAppealForUpdateRequest(AppealRequest request) {
+		
+		
+		enrichUuidsForAppealUpdate(request);
+		
+	}
 
 	private void enrichUuidsForPropertyCreate(RequestInfo requestInfo, Property property) {
 		
@@ -113,6 +132,40 @@ public class EnrichmentService {
 			owner.setStatus(Status.ACTIVE);
 		});
 	}
+	
+	
+	
+private void enrichUuidsForAppealCreate(RequestInfo requestInfo, Appeal appeal) {
+		
+		AuditDetails propertyAuditDetails = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+		appeal.setId(UUID.randomUUID().toString());
+		appeal.setAuditDetails(propertyAuditDetails);
+		
+		if (!CollectionUtils.isEmpty(appeal.getDocuments()))
+			appeal.getDocuments().forEach(doc -> {
+				doc.setId(UUID.randomUUID().toString());
+				doc.setStatus(Status.ACTIVE);
+			});
+	}
+
+
+private void enrichUuidsForAppealUpdate(AppealRequest request) {
+	
+	RequestInfo requestInfo = request.getRequestInfo();
+	 Appeal appeal = request.getAppeal();
+	AuditDetails propertyAuditDetails = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+	
+	if (!CollectionUtils.isEmpty(appeal.getDocuments()))
+		appeal.getDocuments().forEach(doc -> {
+			if(null==doc.getId()) {
+				doc.setId(UUID.randomUUID().toString());
+				doc.setStatus(Status.ACTIVE);
+			}
+				
+		});
+	
+	appeal.setAuditDetails(propertyAuditDetails);
+}
 
     /**
      * Assigns UUID for new fields that are added and sets propertyDetail and address id from propertyId
@@ -496,6 +549,20 @@ public class EnrichmentService {
                     property.getWorkflow().setAssignes(assignes);
             }
     }
+    
+    
+    private void setIdgenIdsForAppeal(AppealRequest request) {
+
+		Appeal appeal = request.getAppeal();
+		String tenantId = appeal.getTenantId();
+		RequestInfo requestInfo = request.getRequestInfo();
+
+		
+		String pId = propertyutil.getIdList(requestInfo, tenantId, config.getPropertyIdGenName(), config.getAppealidformat(), 1).get(0);
+		String ackNo = propertyutil.getIdList(requestInfo, tenantId, config.getAckIdGenName(), config.getAckIdGenFormat(), 1).get(0);
+		appeal.setAppealId(pId);
+		appeal.setAcknowldgementNumber(ackNo);
+	}
 
 
 }

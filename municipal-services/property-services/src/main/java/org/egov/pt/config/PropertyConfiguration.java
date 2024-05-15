@@ -396,5 +396,27 @@ public class PropertyConfiguration {
     
     @Value("${persister.update.parent.property.inactive.amalgamation}")
     private String updateAmalgamatedPropertyInactive;
+    
+    @Value("${persister.save.bifurcation.topic}")
+    private String saveBifurcationTopic;
+    
+    @Value("${persister.update.property.bifurcation.child.inactive}")
+    private String bifurcationChildInactive;
+    
+    @Value("${persister.save.appeal.topic}")
+    private String saveAppealTopic;
+    
+    
+    @Value("${appeal.create.wf.name}")
+    private String appealCreateWorkflowName;
+    
+    
+    @Value("${persister.update.appeal.topic}")
+    private String appealUpdateTopic;
+    
+    @Value("${egov.idgen.appeal.format}")
+    private String appealidformat;
+    
+    
 
 }
