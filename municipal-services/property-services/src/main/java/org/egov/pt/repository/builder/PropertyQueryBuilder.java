@@ -27,8 +27,8 @@ public class PropertyQueryBuilder {
 	
 	
 	public final static String INSERT_BIFURCATION_DETAILS_QUERY = "INSERT INTO eg_pt_bifurcation"
-			+"(parent_property,property_details, max_bifurcation, createdtime, id)"
-			+"VALUES(?, ? ::jsonb, ?, ?, ?)";
+			+"(parent_property,property_details, max_bifurcation, createdtime, id,status,childpropertyuuid)"
+			+"VALUES(?, ? ::jsonb, ?, ?, ? ,?,?)";
 	
 	public final static String appealselectvalue="appeal.id as appealid, appeal.propertyid, appeal.status, appeal.creationreason, appeal.acknowldgementnumber,(CASE WHEN appeal.status='ACTIVE' then 0 WHEN appeal.status='INWORKFLOW' then 1 WHEN appeal.status='INACTIVE' then 2 ELSE 3 END) as statusorder, appeal.tenantid as tenantid,";
 

@@ -40,7 +40,8 @@ import lombok.ToString;
 @Builder
 public class PropertyBifurcation  {
 
-	public PropertyBifurcation(Integer id, JsonNode propertyDetails, String parentPropertyId,Integer createdTime, PropertyRequest request,Integer maxBifurcation) {
+	public PropertyBifurcation(Integer id, JsonNode propertyDetails, String parentPropertyId,Integer createdTime, 
+			PropertyRequest request,Integer maxBifurcation, boolean status,String childpropertyuuid) {
 		super();
 		this.id = id;
 		this.propertyDetails = propertyDetails;
@@ -48,6 +49,8 @@ public class PropertyBifurcation  {
 		this.propertyRequest = request;
 		this.createdTime= createdTime;
 		this.maxBifurcation =  maxBifurcation;
+		this.status = status;
+		this.childpropertyuuid = childpropertyuuid;
 		
 	}
 
@@ -69,6 +72,9 @@ public class PropertyBifurcation  {
 	private PropertyRequest propertyRequest;
 	private Integer maxBifurcation;
 	
+	
+	private boolean status;
+	private String childpropertyuuid;
 	
 	
 	

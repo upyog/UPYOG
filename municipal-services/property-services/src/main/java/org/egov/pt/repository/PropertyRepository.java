@@ -345,6 +345,9 @@ public class PropertyRepository {
 		String createdtimequery="SELECT extract(epoch from now())";
 		Integer createdtime=jdbcTemplate.queryForObject(createdtimequery, Integer.class);
 		String json = mapper.writeValueAsString(request.getProperty());
+		String childpropertyuuid = request.getProperty().getId();
+		
+		boolean status = false;
 		
 		jdbcTemplate.update(PropertyQueryBuilder.INSERT_BIFURCATION_DETAILS_QUERY, new PreparedStatementSetter() {
 			
@@ -356,6 +359,8 @@ public class PropertyRepository {
 				ps.setInt(3, request.getProperty().getMaxBifurcation());
 				ps.setInt(4, createdtime);
 				ps.setInt(5, id);
+				ps.setBoolean(6, status);
+				ps.setString(7, childpropertyuuid);
 			}
 		});
 	}
