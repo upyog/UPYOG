@@ -105,12 +105,15 @@ public class TarentoServiceImpl implements ClientService {
 	                String interval = isRequestContainsInterval ? request.getRequestDate().getInterval() : (isDefaultPresent ? chartNode.get(Constants.JsonPaths.INTERVAL).asText() : "");
 	                logger.info("interval :: {} "+interval);
 					logger.info("VisualizationCode :: {} "+request.getVisualizationCode());
+					logger.info("Before constructing indexName :: {} "+indexName);
 					if(indexName.contains("*")&&interval!=null){
 	                	indexName = indexName.replace("*", interval);
 	                }else if(indexName.contains("*")&&interval==null){
 	                	indexName = indexName.replace("*", "month");
 	                }
+					logger.info("after constructing indexName :: {} "+indexName);
 	            }
+	            logger.info("Before setting indexName to NODE :: {} "+indexName);
 	            ((ObjectNode) query).put(Constants.JsonPaths.INDEX_NAME, indexName);
 	            
 	        });
