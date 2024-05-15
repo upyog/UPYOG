@@ -106,10 +106,10 @@ public class TarentoServiceImpl implements ClientService {
 	                logger.info("interval :: {} "+interval);
 					logger.info("VisualizationCode :: {} "+request.getVisualizationCode());
 					logger.info("Before constructing indexName :: {} "+indexName);
-					if (indexName.contains("*") && !StringUtils.isBlank(interval)) {
+					if (indexName.contains("*") || !StringUtils.isBlank(interval)) {
 						logger.info("entered into if block :: "+indexName);
 						indexName = indexName.replace("*", interval);
-					} else if (indexName.contains("*") && StringUtils.isBlank(interval)) {
+					} else if (indexName.contains("*") || StringUtils.isBlank(interval)) {
 						logger.info("entered into else if block :: "+indexName);
 						indexName = indexName.replace("*", "month");
 					}
