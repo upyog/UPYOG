@@ -135,7 +135,7 @@ public class DashboardController {
 		StringBuilder finalString = new StringBuilder(requestBodyString).append(headersString);
 		requestInfo.setHashKey(finalString.toString().hashCode());
 
-		logger.info("hashKey:: "+finalString.toString().hashCode())
+		logger.info("hashKey:: "+finalString.toString().hashCode());
 		Map<String, Object> headers = requestDto.getHeaders();
 		String response = "";
 		try {
