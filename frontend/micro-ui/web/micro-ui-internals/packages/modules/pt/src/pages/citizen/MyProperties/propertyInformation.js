@@ -334,7 +334,7 @@ const handleClick=()=>{
                   {(flrno !== unit?.floorNo ? (i = 1) : (i = i + 1)) && i === 1 && (
                     <CardSubHeader>{t(`PROPERTYTAX_FLOOR_${unit?.floorNo}`)}</CardSubHeader>
                   )}
-                  <div style={{ border: "groove", marginBottom:"10px" }}>
+                  <div style={{ border: "groove", marginBottom:"10px", borderRadius: "6px" }}>
                     <CardSubHeader>
                       {t("ES_APPLICATION_DETAILS_UNIT")} {i}
                     </CardSubHeader>
