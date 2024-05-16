@@ -18,7 +18,7 @@ public class EscalationQueryBuilder {
 
     private static final String BASE_QUERY_BPA = "select businessId from (" +
             "  SELECT *,RANK () OVER (PARTITION BY businessId ORDER BY createdtime  DESC) rank_number " +
-            " FROM eg_wf_processinstance_v2 WHERE businessservice = ? AND tenantid= ? AND action in ('PAY','POST_PAYMENT_APPLY') wf  WHERE rank_number = 1 ";
+            " FROM eg_wf_processinstance_v2 WHERE businessservice = ? AND tenantid= ? AND action in ('PAY','POST_PAYMENT_APPLY') ) wf  WHERE rank_number = 1 ";
 
     private static final String QUERY_BPA = "select businessId from eg_wf_processinstance_v2 where businessid in ( ";
 

@@ -50,9 +50,9 @@ public class WorkflowQueryBuilder {
     private static final String STATUS_COUNT_WRAPPER = "select  count(DISTINCT wf_id),cq.applicationStatus,cq.businessservice,cq.PI_STATUS as statusId from ({INTERNAL_QUERY}) as cq GROUP BY cq.applicationStatus,cq.businessservice,cq.PI_STATUS";
 
     
-    private static final String BASE_QUERY_BPA = "select businessId from (" +
+    private static final String BASE_QUERY_BPA = "select id from (" +
             "  SELECT *,RANK () OVER (PARTITION BY businessId ORDER BY createdtime  DESC) rank_number " +
-            " FROM eg_wf_processinstance_v2 WHERE businessservice = ? AND tenantid= ? AND action in ('PAY','POST_PAYMENT_APPLY') wf  WHERE rank_number = 1 ";
+            " FROM eg_wf_processinstance_v2 WHERE businessservice = ? AND tenantid= ? AND action in ('PAY','POST_PAYMENT_APPLY')) wf  WHERE rank_number = 1 ";
 
 
     private final String paginationWrapper = "SELECT * FROM "
