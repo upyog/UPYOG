@@ -24,8 +24,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(classes = {EscalationService.class})
-@ExtendWith(SpringExtension.class)
 class EscalationServiceTest {
     @MockBean
     private EscalationRepository escalationRepository;
