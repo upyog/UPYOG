@@ -1,5 +1,5 @@
 import {
-    Card, CardHeader, CardSubHeader, CardText,TextInput,CardLabel,
+    Card, CardHeader, CardSubHeader, CardText,TextInput,CardLabel,CheckBox, LabelFieldPair, UploadFile,
     CitizenInfoLabel, Header, LinkButton, Row, StatusTable, SubmitBar, Table, CardSectionHeader, EditIcon, PDFSvg, Loader
   } from "@upyog/digit-ui-react-components";
   import React,{ useEffect, useMemo, useState }  from "react";
@@ -8,6 +8,7 @@ import {
   import Timeline from "../../../components/Timeline";
   import { convertEpochToDateDMY, stringReplaceAll, getOrderDocuments } from "../../../utils";
   import DocumentsPreview from "../../../../../templates/ApplicationDetails/components/DocumentsPreview";
+  import Architectconcent from "./Architectconcent";
 
   const CheckPage = ({ onSubmit, value }) => {
     const [development, setDevelopment] = useState()
@@ -20,8 +21,10 @@ import {
     const { t } = useTranslation();
     const history = useHistory();
     const match = useRouteMatch();
-    let user = Digit.UserService.getUser();
+    const user = Digit.UserService.getUser();
+    
     const state = Digit.ULBService.getStateId();
+    
     const tenantId = user?.info?.permanentCity || value?.tenantId ||Digit.ULBService.getCurrentTenantId() ;
     const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(state, "BPA", ["GaushalaFees","MalbaCharges","LabourCess"]);
     let BusinessService;
@@ -30,8 +33,128 @@ import {
     else if(value.businessService === "BPA")
     BusinessService="BPA.NC_APP_FEE";
 
+
+    
     const { data, address, owners, nocDocuments, documents, additionalDetails, subOccupancy,PrevStateDocuments,PrevStateNocDocuments,applicationNo } = value;
     const isEditApplication = window.location.href.includes("editApplication");
+
+    
+
+    const [agree, setAgree] = useState(false);
+    const setdeclarationhandler = () => {
+      setAgree(!agree);
+    };
+
+    
+
+
+    const architectmobilenumber = user?.info?.mobileNumber
+    
+    
+    const [showTermsPopup, setShowTermsPopup] = useState(false);
+    const [showMobileInput, setShowMobileInput] = useState(false);
+    const [mobileNumber, setMobileNumber] = useState(architectmobilenumber || '');
+    const [showOTPInput, setShowOTPInput] = useState(false);
+    const [otp, setOTP] = useState('');
+    const [isOTPVerified, setIsOTPVerified] = useState(false);
+    const [otpError, setOTPError] = useState("");
+    const [otpVerifiedTimestamp, setOTPVerifiedTimestamp] = useState(null);
+    
+
+    const handleTermsLinkClick = () => {
+      if (isOTPVerified){
+        setShowTermsPopup(true);
+      }
+      else{
+        alert("Please verify yourself")
+      }
+      
+    }
+
+    const checkLabels = () => {
+      return (
+        <div>
+              {t("I_AGREE_TO_BELOW_UNDERTAKING")}
+              <LinkButton
+                label={t("DECLARATION_UNDER_SELF_CERTIFICATION_SCHEME")}
+                onClick={handleTermsLinkClick}
+              />
+        </div>
+      );
+    };
+
+    
+
+
+    
+    
+    
+
+    const handleVerifyClick = () => {
+      setShowMobileInput(true);
+    };
+
+    const handleMobileNumberChange = (e) => {
+      setMobileNumber(e.target.value);
+    };
+
+    const handleGetOTPClick = async () => {
+      // Call the Digit.UserService.sendOtp API to send the OTP
+      try {
+        const response = await Digit.UserService.sendOtp({otp:{mobileNumber:mobileNumber, tenantId: user?.info?.tenantId, userType: user?.info?.type, type: "login"}});
+        if (response.isSuccessful) {
+          setShowOTPInput(true);
+        } else {
+          // Handle error case if OTP sending fails
+          console.error("Error sending OTP Response is false:", response.error);
+          alert("Something Went Wrong")
+        }
+      } catch (error) {
+        console.error("Error sending OTP:", error);
+        alert("Something went wrong")
+      }
+    };
+
+   
+
+    const handleOTPChange = (e) => {
+      setOTP(e.target.value);
+    };
+
+    const requestData = {
+      username:mobileNumber,
+      password:otp,
+      tenantId: user?.info?.tenantId,
+      userType: user?.info?.type
+
+    };
+
+    const handleVerifyOTPClick = async () => {
+      // Call the API to verify the OTP
+      try {
+        const response = await Digit.UserService.authenticate(requestData);
+        if (response.ResponseInfo.status==="Access Token generated successfully") {
+          setIsOTPVerified(true);
+          setOTPError(t("BPA_OTP_VERIFIED"));
+          setOTPVerifiedTimestamp(new Date());
+        } else {
+          setIsOTPVerified(false);
+          setOTPError(t("BPA_WRONG_OTP"));
+        }
+      } catch (error) {
+        console.error("Error verifying OTP:", error);
+        alert("OTP Verification Error ")
+        setIsOTPVerified(false);
+        setOTPError(t("BPA_OTP_VERIFICATION_ERROR"));
+      }
+    };
+
+    const isValidMobileNumber = mobileNumber.length === 10 && /^[0-9]+$/.test(mobileNumber);
+
+    
+
+
+
     useEffect(()=>{
       if(isEditApplication){
         setDevelopment(value?.additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES);
@@ -172,6 +295,8 @@ setWaterCharges(Malbafees/2)
         location.href=jumpTo;
     }
 
+    
+
     function getBlockSubOccupancy(index){
       let subOccupancyString = "";
       let returnValueArray = [];
@@ -186,6 +311,16 @@ setWaterCharges(Malbafees/2)
     if (pdfLoading || isLoading) {
       return <Loader />
     }
+
+    function onSubmitCheck(){
+      if(development && otherCharges && lessAdjusment){
+      if(parseInt(lessAdjusment)>(parseInt(development)+parseInt(otherCharges)+parseInt(malbafees)+parseInt(labourCess)+parseInt(waterCharges)+parseInt(gaushalaFees))){
+        alert("Enterd Less Adjustment amount is invalid");
+      }
+      else{
+        onSubmit();
+      }
+    }}
 
     function setOtherChargesVal(value) {
       if(/^[0-9]*$/.test(value)){
@@ -249,6 +384,10 @@ setWaterCharges(Malbafees/2)
           <Row className="border-none" label={t(`BPA_HOLDING_NUMBER_LABEL`)} text={data?.holdingNumber || t("CS_NA")} />
           <Row className="border-none" label={t(`BPA_BOUNDARY_LAND_REG_DETAIL_LABEL`)} text={data?.registrationDetails || t("CS_NA")} />
           <Row className="border-none" label={t(`BPA_BOUNDARY_WALL_LENGTH_LABEL`)} text={data?.boundaryWallLength|| t("CS_NA")} />
+          <Row className="border-none" label={t(`BPA_KHASRA_NUMBER_LABEL`)} text={data?.khasraNumber|| t("CS_NA")} />
+          <Row className="border-none" label={t(`BPA_WARD_NUMBER_LABEL`)} text={data?.wardnumber|| t("CS_NA")} />
+
+
     </StatusTable>
     </Card>
     <Card style={{paddingRight:"16px"}}>
@@ -345,6 +484,31 @@ setWaterCharges(Malbafees/2)
         </div>))}
         </StatusTable>
       </Card>
+      
+
+      <Card style={{paddingRight:"16px"}}>
+        <StatusTable>
+        <CardHeader>{t("BPA_ADDITIONAL_BUILDING_DETAILS")}</CardHeader>
+        <Row className="border-none" label={t(`BPA_APPROVED_COLONY_LABEL`)} text={owners?.approvedColony?.code || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_ULB_TYPE_LABEL`)} text={owners?.Ulblisttype?.code || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_ULB_NAME_LABEL`)} text={owners?.UlbName?.code || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_DISTRICT_LABEL`)} text={owners?.District?.code || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_BUILDING_STATUS_LABEL`)} text={owners?.buildingStatus?.code || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_CORE_AREA_LABEL`)} text={owners?.coreArea?.code || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_PROPOSED_SITE_LABEL`)} text={owners?.proposedSite?.code || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_SCHEME_TYPE_LABEL`)} text={owners?.schemesselection?.code || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_SCHEME_NAME_LABEL`)} text={owners?.schemeName || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_TRANFERRED_SCHEME_LABEL`)} text={owners?.transferredscheme || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_PURCHASED_FAR_LABEL`)} text={owners?.purchasedFAR?.code || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_MASTER_PLAN_LABEL`)} text={owners?.masterPlan?.code || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_GREEN_BUILDING_LABEL`)} text={owners?.greenbuilding?.code || t("CS_NA")} />
+        </StatusTable>
+
+      </Card>
+      
+
+
+
       <Card style={{paddingRight:"16px"}}>
       <StatusTable>
         <CardHeader>{t("BPA_DOCUMENT_DETAILS_LABEL")}</CardHeader>
@@ -413,7 +577,7 @@ setWaterCharges(Malbafees/2)
               //disable={editScreen}
               {...{ required: true, pattern: "^[0-9]*$" }}
             />
-               <CardLabel>{t("BPA_COMMON_OTHER_AMT")}</CardLabel>
+            <CardLabel>{t("BPA_COMMON_OTHER_AMT")}</CardLabel>
             <TextInput
               t={t}
               type={"text"}
@@ -427,7 +591,7 @@ setWaterCharges(Malbafees/2)
               //disable={editScreen}
               {...{ required: true, pattern: /^[0-9]*$/ }}
             />
-                <CardLabel>{t("BPA_COMMON_LESS_AMT")}</CardLabel>
+            <CardLabel>{t("BPA_COMMON_LESS_AMT")}</CardLabel>
             <TextInput
               t={t}
               type={"text"}
@@ -443,10 +607,72 @@ setWaterCharges(Malbafees/2)
             />
        
        </StatusTable>
+       <br></br>
+
+       {value?.status==="INITIATED" && (
+       <div>
+        <CardLabel>{t("ARCHITECT_SHOULD_VERIFY_HIMSELF_BY_CLICKING_BELOW_BUTTON")}</CardLabel>
+        <SubmitBar label={t("BPA_VERIFY")} onSubmit={handleVerifyClick} />
+        <br></br>
+        {showMobileInput && (
+          <React.Fragment>
+            <br></br>
+          <CardLabel>{t("BPA_MOBILE_NUMBER")}</CardLabel>
+          <TextInput
+            t={t}
+            type="tel"
+            isMandatory={true}
+            optionKey="i18nKey"
+            name="mobileNumber"
+            value={mobileNumber}
+            onChange={handleMobileNumberChange}
+            {...{ required: true, pattern: "[0-9]{10}", type: "tel", title: t('CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID') }}
+          />
+    
+          <SubmitBar label={t("BPA_GET_OTP")} onSubmit={handleGetOTPClick} disabled={!isValidMobileNumber} />
+          </React.Fragment>
+          )}
+          {showOTPInput && (
+            <React.Fragment>
+              <br></br>
+              <CardLabel>{t('BPA_OTP')}</CardLabel>
+              <TextInput
+                t={t}
+                type="text"
+                isMandatory={true}
+                optionKey="i18nKey"
+                name="otp"
+                value={otp}
+                onChange={handleOTPChange}
+                {...{ required: true, pattern: "[0-9]{6}", type: "tel", title: t('BPA_INVALID_OTP') }}
+              />
+
+              <SubmitBar label={t("VERIFY_OTP")} onSubmit={handleVerifyOTPClick} />
+              {otpError && <CardLabel style={{ color: 'red' }}>{otpError}</CardLabel>}
+            </React.Fragment>
+          )}
+       </div>)}
+       <br></br>
+       <div>
+       <CheckBox
+          label={checkLabels()}
+          onChange={setdeclarationhandler}
+          styles={{ height: "auto" }}
+          //disabled={!agree}
+        />
+        
+        {showTermsPopup && (
+        <Architectconcent
+          showTermsPopup={showTermsPopup}
+          setShowTermsPopup={setShowTermsPopup}
+          otpVerifiedTimestamp={otpVerifiedTimestamp} // Pass timestamp as a prop
+        />
+      )}
+      </div>
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
       {/* <CardHeader>{t("BPA_COMMON_TOTAL_AMT")}</CardHeader> 
       <CardHeader>₹ {paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}</CardHeader>  */}
-      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmit} disabled={ (!development||!otherCharges||!lessAdjusment)} id/>
+      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmitCheck} disabled={ (!development||!otherCharges||!lessAdjusment || !agree || !isOTPVerified)} id/>
       </Card>
     </React.Fragment>
     );

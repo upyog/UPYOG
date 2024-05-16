@@ -10,16 +10,24 @@
       let validation = {};
       const [approvedColony, setapprovedColony] = useState(formData?.owners?.approvedColony || "");
       const [masterPlan, setmasterPlan] = useState(formData?.owners?.masterPlan || "");
-      const [district, setDistrict] = useState(formData?.owners?.district || "");
+      const [UlbName, setUlbName] = useState(formData?.owners?.UlbName || "");
       const [buildingStatus, setbuildingStatus] = useState(formData?.owners?.buildingStatus || "");
       const [schemes, setschemes] = useState(formData?.owners?.schemes || "");
       const [purchasedFAR, setpurchasedFAR] = useState(formData?.owners?.purchasedFAR || "");
       const [greenbuilding, setgreenbuilding] = useState(formData?.owners?.greenbuilding || "");
       const [restrictedArea, setrestrictedArea] = useState(formData?.owners?.restrictedArea || "");
-      const [ulbType, setulbType] = useState(formData?.owners?.ulbType || "");
+      const [District, setDistrict] = useState(formData?.owners?.District || "");
       const [proposedSite, setproposedSite] = useState(formData?.owners?.proposedSite || "");
       const [nameofApprovedcolony, setnameofApprovedcolony] = useState(formData?.owners?.nameofApprovedcolony || "");
       const [NocNumber, setNocNumber] = useState(formData?.owners?.NocNumber || "");
+      const [coreArea, setcoreArea] = useState(formData?.owners?.coreArea || "");
+      const [schemesselection, setschemesselection] = useState(formData?.owners?.schemesselection || "");
+      const [schemeName, setschemeName] = useState(formData?.owners?.schemeName || "");
+      const [transferredscheme, settransferredscheme] = useState("Pre-Approved Standard Designs" || "");
+      const [Ulblisttype, setUlblisttype] = useState(formData?.owners?.Ulblisttype || "");
+
+
+
 
 
       const approvedcolonyStatus = [
@@ -56,6 +64,17 @@
         }
       ]
 
+      const schemesselectiontype = [
+        {
+          code: "SCHEME",
+          i18nKey: "SCHEME"
+        },
+        {
+          code: "NON_SCHEME",
+          i18nKey: "NON SCHEME"
+        },
+      ]
+
       const forschemes = [
         {
           code: "TP_SCHEMES",
@@ -85,22 +104,32 @@
       const tenantId = Digit.ULBService.getCurrentTenantId();
       const stateId = Digit.ULBService.getStateId();
 
+      const { data: ULBLIST } = Digit.Hooks.obps.useUlbType(stateId, "BPA", "UlbType");
+
       const { data: Menu } = Digit.Hooks.obps.useDistricts(stateId, "BPA", "Districts");
       const { data: ULB } = Digit.Hooks.obps.useULBList(stateId, "BPA", "Ulb");
+
+      let ulblists = [];
 
       let menu = [];
       let ulb = [];
 
+      ULBLIST &&
+      ULBLIST.map((ulbtypelist) => {
+        ulblists.push({ i18nKey: `${ulbtypelist.code}`, code: `${ulbtypelist.code}`, value: `${ulbtypelist.name}` });
+        });
+
       Menu &&
         Menu.map((districts) => {
-          menu.push({ i18nKey: `BPA_DISTRICTS_${districts.code}`, code: `${districts.code}`, value: `${districts.name}` });
+          if(districts.UlbType == Ulblisttype?.code)
+          menu.push({ i18nKey: `${districts.code}`, code: `${districts.code}`, value: `${districts.name}` });
         });
 
         ULB &&
         ULB.map((ulblist) => {
-          if (ulblist.Districts == district?.code) {
+          if (ulblist.Districts == UlbName?.code) {
             ulb.push({
-              i18nKey: `BPA_ULB_${ulblist.code}`,
+              i18nKey: `${ulblist.code}`,
               code: `${ulblist.code}`,
               value: `${ulblist.name}`
             });
@@ -119,8 +148,17 @@
         setmasterPlan(e.target.value);
       }
 
-      function setdistrict(e) {
-        setDistrict(e.target.value);
+      function setcorearea(e) {
+        setcoreArea(e.target.value);
+      }
+
+
+      function setulbname(e) {
+        setUlbName(e.target.value);
+      }
+
+      function setulblisttype(e) {
+        setUlblisttype(e.target.value);
       }
 
       function setBuildingStatus(e) {
@@ -128,6 +166,10 @@
       }
       function setSchemes(e) {
         setschemes(e.target.value);
+      }
+
+      function setSchemeselection(e) {
+        setschemesselection(e.target.value);
       }
       function setPurchasedFAR(e) {
         setpurchasedFAR(e.target.value);
@@ -138,8 +180,8 @@
       function setRestrictedArea(e) {
         setrestrictedArea(e.target.value);
       }
-      function setUlbType(e) {
-        setulbType(e.target.value);
+      function setdistrict(e) {
+        setDistrict(e.target.value);
       }
       function setProposedSite(e) {
         setproposedSite(e.target.value);
@@ -153,11 +195,19 @@
         setNocNumber(e.target.value);
       }
 
+      function setSchemename(e) {
+        setschemeName(e.target.value);
+      }
+
+      function TransferredScheme(e){
+        settransferredscheme(e.target.value);
+      }
+
 
 
       const goNext = () => {
         let owners = formData.owners && formData.owners[index];
-        let ownerStep = { ...owners, approvedColony, district, ulbType, masterPlan, buildingStatus, schemes, purchasedFAR, greenbuilding, restrictedArea, proposedSite, nameofApprovedcolony, NocNumber };
+        let ownerStep = { ...owners, approvedColony, UlbName, Ulblisttype, District, masterPlan, coreArea, buildingStatus, schemes, schemesselection,  purchasedFAR, greenbuilding, restrictedArea, proposedSite, nameofApprovedcolony, schemeName, transferredscheme, NocNumber };
         let updatedFormData = { ...formData };
 
         // Check if owners array exists in formData if not , then it will add it 
@@ -189,6 +239,7 @@
                     name="nameofApprovedcolony"
                     value={nameofApprovedcolony}
                     onChange={setNameapprovedcolony}
+                    style={{ width: "86%" }}
                     ValidationRequired={false}
                     {...(validation = {
                       isRequired: true,
@@ -211,6 +262,7 @@
                     name="NocNumber"
                     value={NocNumber}
                     onChange={setnocNumber}
+                    style={{ width: "86%" }}
                     ValidationRequired={false}
                     {...(validation = {
                       isRequired: true,
@@ -225,6 +277,78 @@
           default:
             return null;
         }
+      }
+      
+      const renderschemedropdown = () => {
+        switch (schemes?.code) {
+          case "SCHEME":
+            return (
+              <>
+              <CardLabel>{`${t("BPA_SCHEMES_TYPE")}`}</CardLabel>
+              <Controller
+                control={control}
+                name={"schemesselection"}
+                defaultValue={schemesselection}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
+                render={(props) => (
+                  <Dropdown
+                    className="form-field"
+                    selected={schemesselection}
+                    select={setschemesselection}
+                    option={forschemes}
+                    optionKey="i18nKey"
+                    t={t}
+                  />
+                )}
+              />
+
+              <CardLabel>{`${t("BPA_SCHEME_NAME")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="schemeName"
+                value={schemeName}
+                onChange={setSchemename}
+                style={{ width: "86%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+
+              <CardLabel>{`${t("BPA_TRANSFERRED_SCHEME")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="transferredscheme"
+                value={transferredscheme}
+                onChange={TransferredScheme}
+                style={{ width: "86%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+
+              </>
+            );
+          case "NON_SCHEME":
+            return null;
+            
+          default:
+            return null;
+        }
+
       };
 
 
@@ -233,7 +357,7 @@
           <FormStep
             config={config} onSelect={goNext} onSkip={onSkip} t={t}
           
-            isDisabled={!approvedColony || !masterPlan || !district || !ulbType || !buildingStatus || !schemes || !purchasedFAR || !greenbuilding || !restrictedArea || !proposedSite/* || (approvedColony === "YES" && !nameofApprovedcolony) || (approvedColony === "NO" && !NocNumber)*/}
+            isDisabled={!approvedColony || !masterPlan || !coreArea || !Ulblisttype|| !UlbName || !buildingStatus || !schemes || !purchasedFAR || !greenbuilding || !restrictedArea || !proposedSite/* || (approvedColony === "YES" && !nameofApprovedcolony) || (approvedColony === "NO" && !NocNumber)*/}
           >
             <div>
               <CardLabel>{`${t("BPA_APPROVED_COLONY")}`}</CardLabel>
@@ -241,7 +365,7 @@
                 control={control}
                 name={"approvedColony"}
                 defaultValue={approvedColony}
-                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
                 render={(props) => (
                   <Dropdown
 
@@ -266,7 +390,7 @@
                 control={control}
                 name={"masterPlan"}
                 defaultValue={masterPlan}
-                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
                 render={(props) => (
                   <Dropdown
 
@@ -281,18 +405,58 @@
                 )}
 
               />
-            <CardLabel>{`${t("BPA_DISTRICT")}`}</CardLabel>
+               <CardLabel>{`${t("BPA_CORE_AREA")}`}</CardLabel>
               <Controller
                 control={control}
-                name={"district"}
-                defaultValue={district}
-                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                name={"coreArea"}
+                defaultValue={coreArea}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
                 render={(props) => (
                   <Dropdown
 
                     className="form-field"
-                    selected={district}
-                    select={setDistrict}
+                    selected={coreArea}
+                    select={setcoreArea}
+                    option={common}
+                    optionKey="i18nKey"
+                    t={t}
+                  />
+
+                )}
+
+              />
+
+              <CardLabel>{`${t("BPA_ULB_TYPE")}`}</CardLabel>
+              <Controller
+                control={control}
+                name={"Ulblisttype"}
+                defaultValue={Ulblisttype}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
+                render={(props) => (
+                  <Dropdown
+
+                    className="form-field"
+                    selected={Ulblisttype}
+                    select={setUlblisttype}
+                    option={ulblists}
+                    optionKey="i18nKey"
+                    t={t}
+                  />
+                )}
+                />
+
+            <CardLabel>{`${t("BPA_ULB_NAME")}`}</CardLabel>
+              <Controller
+                control={control}
+                name={"UlbName"}
+                defaultValue={UlbName}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
+                render={(props) => (
+                  <Dropdown
+
+                    className="form-field"
+                    selected={UlbName}
+                    select={setUlbName}
                     option={menu}
                     optionKey="i18nKey"
                     t={t}
@@ -300,18 +464,18 @@
                 )}
                 />
 
-              <CardLabel>{`${t("BPA_ULB_TYPE")}`}</CardLabel>
+              <CardLabel>{`${t("BPA_DISTRICT")}`}</CardLabel>
               <Controller  
                 control={control}
-                name={"ulbType"}
-                defaultValue={ulbType}
-                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                name={"District"}
+                defaultValue={District}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
                 render={(props) => (
                   <Dropdown
 
                     className="form-field"
-                    selected={ulbType}
-                    select={setulbType}
+                    selected={District}
+                    select={setDistrict}
                     option={ulb}
                     optionKey="i18nKey"
                     t={t}
@@ -323,7 +487,7 @@
                 control={control}
                 name={"buildingStatus"}
                 defaultValue={buildingStatus}
-                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
                 render={(props) => (
                   <Dropdown
 
@@ -341,25 +505,27 @@
                 control={control}
                 name={"schemes"}
                 defaultValue={schemes}
-                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
                 render={(props) => (
                   <Dropdown
 
                     className="form-field"
                     selected={schemes}
                     select={setschemes}
-                    option={forschemes}
+                    option={schemesselectiontype}
                     optionKey="i18nKey"
                     t={t}
                   />
                 )}
               />
+              {renderschemedropdown()}
+
               <CardLabel>{`${t("BPA_PURCHASED_FAR")}`}</CardLabel>
               <Controller
                 control={control}
                 name={"purchasedFAR"}
                 defaultValue={purchasedFAR}
-                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
                 render={(props) => (
                   <Dropdown
 
@@ -377,7 +543,7 @@
                 control={control}
                 name={"greenbuilding"}
                 defaultValue={greenbuilding}
-                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
                 render={(props) => (
                   <Dropdown
 
@@ -395,7 +561,7 @@
                 control={control}
                 name={"restrictedArea"}
                 defaultValue={restrictedArea}
-                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
                 render={(props) => (
                   <Dropdown
 
@@ -413,7 +579,7 @@
                 control={control}
                 name={"proposedSite"}
                 defaultValue={proposedSite}
-                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
                 render={(props) => (
                   <Dropdown
 

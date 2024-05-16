@@ -82,14 +82,14 @@ public class SetBackServiceExtract extends FeatureExtract {
                             + layerNames.getLayerName("LAYER_NAME_LEVEL_NAME_PREFIX") + setBack.getLevel() + "_"
                             + layerNames.getLayerName("LAYER_NAME_REAR_YARD");
                     setRearYardDetails(pl, doc, setBack, yardName);
-                    yardName = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + block.getName() + "_"
-                            + layerNames.getLayerName("LAYER_NAME_LEVEL_NAME_PREFIX") + setBack.getLevel() + "_"
-                            + layerNames.getLayerName("LAYER_NAME_SIDE_YARD_1");
-                    setSideYard1Details(pl, doc, setBack, yardName);
-                    yardName = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + block.getName() + "_"
-                            + layerNames.getLayerName("LAYER_NAME_LEVEL_NAME_PREFIX") + setBack.getLevel() + "_"
-                            + layerNames.getLayerName("LAYER_NAME_SIDE_YARD_2");
-                    setSideYard2Details(pl, doc, yardName, setBack);
+//                    yardName = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + block.getName() + "_"
+//                            + layerNames.getLayerName("LAYER_NAME_LEVEL_NAME_PREFIX") + setBack.getLevel() + "_"
+//                            + layerNames.getLayerName("LAYER_NAME_SIDE_YARD_1");
+                  //  setSideYard1Details(pl, doc, setBack, yardName);
+//                    yardName = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + block.getName() + "_"
+//                            + layerNames.getLayerName("LAYER_NAME_LEVEL_NAME_PREFIX") + setBack.getLevel() + "_"
+//                            + layerNames.getLayerName("LAYER_NAME_SIDE_YARD_2");
+                  //  setSideYard2Details(pl, doc, yardName, setBack);
                 }
         }
         pl.sortBlockByName();
@@ -167,14 +167,14 @@ public class SetBackServiceExtract extends FeatureExtract {
                                 + layerNames.getLayerName("LAYER_NAME_LEVEL_NAME_PREFIX") + setBack.getLevel() + "_"
                                 + layerNames.getLayerName("LAYER_NAME_BSMNT_REAR_YARD");
                 setRearYardDetails(pl, doc, setBack, bsmntYardName);
-                bsmntYardName = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + block.getNumber() + "_"
-                                + layerNames.getLayerName("LAYER_NAME_LEVEL_NAME_PREFIX") + setBack.getLevel() + "_"
-                                + layerNames.getLayerName("LAYER_NAME_BSMNT_SIDE_YARD_1");
-                setSideYard1Details(pl, doc, setBack, bsmntYardName);
-                bsmntYardName = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + block.getNumber() + "_"
-                                + layerNames.getLayerName("LAYER_NAME_LEVEL_NAME_PREFIX") + setBack.getLevel() + "_"
-                                + layerNames.getLayerName("LAYER_NAME_BSMNT_SIDE_YARD_2");
-                setSideYard2Details(pl, doc, bsmntYardName, setBack);
+//                bsmntYardName = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + block.getNumber() + "_"
+//                                + layerNames.getLayerName("LAYER_NAME_LEVEL_NAME_PREFIX") + setBack.getLevel() + "_"
+//                                + layerNames.getLayerName("LAYER_NAME_BSMNT_SIDE_YARD_1");
+              //  setSideYard1Details(pl, doc, setBack, bsmntYardName);
+//                bsmntYardName = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + block.getNumber() + "_"
+//                                + layerNames.getLayerName("LAYER_NAME_LEVEL_NAME_PREFIX") + setBack.getLevel() + "_"
+//                                + layerNames.getLayerName("LAYER_NAME_BSMNT_SIDE_YARD_2");
+               // setSideYard2Details(pl, doc, bsmntYardName, setBack);
         }
 
     private void setSideYard1Details(PlanDetail pl, DXFDocument doc, SetBack setBack, String yardName) {

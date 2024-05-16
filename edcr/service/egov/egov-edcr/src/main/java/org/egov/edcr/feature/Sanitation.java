@@ -391,9 +391,9 @@ public class Sanitation extends FeatureProcess {
                     if (type.getCarpetArea() != null && type.getCarpetArea().doubleValue() > 0) {
                         carpetArea = type.getCarpetArea().doubleValue();
                     } else {
-                        pl.addError("Invalid carpet area",
-                                "Carpet area is not calculated . Some thing wrong with builtup area");
-                        return;
+//                        pl.addError("Invalid carpet area",
+//                                "Carpet area is not calculated . Some thing wrong with builtup area");
+                        return ;
                     }
                     LOG.info(type.getType() + " area" + carpetArea);
 

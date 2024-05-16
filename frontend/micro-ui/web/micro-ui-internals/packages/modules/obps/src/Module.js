@@ -59,6 +59,8 @@ import BPAAcknowledgement from "./pages/citizen/NewBuildingPermit/OBPSAcknowledg
 import OCBPAAcknowledgement from "./pages/citizen/OCBuildingPermit/OBPSAcknowledgement";
 import OCSendBackAcknowledgement from "./pages/citizen/OCSendBackToCitizen/Acknowledgement";
 import StakeholderAcknowledgement from "./pages/citizen/StakeholderRegistration/StakeholderAcknowledgement";
+import Architectconcent from "./pages/citizen/NewBuildingPermit/Architectconcent";
+import CitizenConsent from "./pages/citizen/BpaApplicationDetail/CitizenConsent";
 
 
 
@@ -165,7 +167,8 @@ const componentsToRegister = {
   ObpsEdcrInbox : EdcrInbox,
   ObpsEmpApplicationDetail : EmpApplicationDetail,
   ObpsEmployeeBpaApplicationDetail : EmployeeBpaApplicationDetail,
- 
+  Architectconcent,
+  CitizenConsent
   
    
 }
