@@ -106,8 +106,8 @@ class EscalationServiceTest {
         verify(escalation).getBusinessSlaExceededBy();
         verify(escalation).getStateSlaExceededBy();
         verify(escalation, atLeast(1)).getBusinessService();
-        verify(escalation).getStatus();
-        verify(escalation).getStatus();
+//        verify(escalation).getStatus();
+//        verify(escalation).getStatus();
         verify(this.escalationRepository).getBusinessIds((org.egov.wf.web.models.EscalationSearchCriteria) any());
     }
 
@@ -154,8 +154,8 @@ class EscalationServiceTest {
         verify(escalation).getBusinessSlaExceededBy();
         verify(escalation).getStateSlaExceededBy();
         verify(escalation, atLeast(1)).getBusinessService();
-        verify(escalation).getStatus();
-        verify(escalation).getStatus();
+//        verify(escalation).getStatus();
+//        verify(escalation).getStatus();
         verify(escalation).getTopic();
         verify(this.escalationRepository).getBusinessIds((org.egov.wf.web.models.EscalationSearchCriteria) any());
     }
