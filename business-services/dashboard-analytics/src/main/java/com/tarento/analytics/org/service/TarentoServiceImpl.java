@@ -3,6 +3,7 @@ package com.tarento.analytics.org.service;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +26,6 @@ import com.tarento.analytics.dto.AggregateDto;
 import com.tarento.analytics.dto.AggregateRequestDto;
 import com.tarento.analytics.dto.CummulativeDataRequestDto;
 import com.tarento.analytics.dto.DashboardHeaderDto;
-import com.tarento.analytics.dto.Plot;
 import com.tarento.analytics.dto.RoleDto;
 import com.tarento.analytics.enums.ChartType;
 import com.tarento.analytics.exception.AINException;
@@ -85,6 +85,7 @@ public class TarentoServiceImpl implements ClientService {
 			filters.put("tenantId", filters.get("ulb"));
 		}
 		
+		Map<String, String> indexes = new HashMap<>();
 		
 		// Load Chart API configuration to Object Node for easy retrieval later
 		ObjectNode node = configurationLoader.get(Constants.ConfigurationFiles.CHART_API_CONFIG);
@@ -100,6 +101,7 @@ public class TarentoServiceImpl implements ClientService {
 	                    request.getModuleLevel().equals(module)) {
 	
 	                indexName = query.get(Constants.JsonPaths.INDEX_NAME).asText();
+	                String initialIndexName = indexName;
 	                boolean isDefaultPresent = false;
 	                boolean isRequestContainsInterval = null == request.getRequestDate() ? false : (request.getRequestDate().getInterval() != null && !request.getRequestDate().getInterval().isEmpty());
 	                String interval = isRequestContainsInterval ? request.getRequestDate().getInterval() : (isDefaultPresent ? chartNode.get(Constants.JsonPaths.INTERVAL).asText() : "");
@@ -113,6 +115,7 @@ public class TarentoServiceImpl implements ClientService {
 						logger.info("entered into else if block :: "+indexName);
 						indexName = indexName.replace("*", "month");
 					}
+					indexes.put(indexName, initialIndexName);
 					logger.info("after constructing indexName :: {} "+indexName);
 	            }
 	            logger.info("Before setting indexName to NODE :: {} "+indexName);
@@ -170,6 +173,14 @@ public class TarentoServiceImpl implements ClientService {
 				aggregateDto = insightsHandler.getInsights(aggregateDto, request.getVisualizationCode(), request.getModuleLevel(), insightsConfig,request.getResponseRecorder());
 			}
 		}
+		
+		if(!queries.isEmpty())
+			queries.forEach(query -> {
+	            String indexName = indexes.get(query.get(Constants.JsonPaths.INDEX_NAME).asText());
+	            logger.info("Index name from CHART NODE:::::::"+query.get(Constants.JsonPaths.INDEX_NAME).asText());
+	            logger.info("Index name from Map:::::::"+indexName);
+	            ((ObjectNode) query).put(Constants.JsonPaths.INDEX_NAME, indexName);
+	        });
 
 		return aggregateDto;
 	}
