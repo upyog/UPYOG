@@ -25,4 +25,7 @@ public class Inbox {
 	
 	@JsonProperty("serviceObject")
 	private Map<String,Object>	serviceObject;
+	
+	@JsonProperty("ProcessInstanceForBPA")
+	private ProcessInstance ProcessInstanceForBPA;
 }
