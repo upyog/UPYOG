@@ -1,6 +1,7 @@
 package org.egov.pt.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -469,7 +470,7 @@ public class PropertyService {
 				List<PropertyBifurcation> bifurList= repository.getBifurcationProperties(request.getProperty().getParentPropertyId());
 				Integer Count = bifurList.stream()
 						.filter(x->!x.getChildpropertyuuid().equalsIgnoreCase(request.getProperty().getId()))
-						.filter(x ->!x.isStatus()).collect(Collectors.toList()).size();
+						.filter(x ->!x.getStatus()).collect(Collectors.toList()).size();
 				
 				if(Count>0) {
 					request.getProperty().setStatus(Status.INACTIVE);
@@ -478,13 +479,25 @@ public class PropertyService {
 					PropertyBifurcation b = bifurList.stream()
 											.filter(x->x.getChildpropertyuuid().equalsIgnoreCase(request.getProperty().getId()))
 											.collect(Collectors.toList()).get(0);
+					boolean x =true;
 					b.setStatus(true);
-					//push this b 
-					producer.push(config.getUpdateChildStatusForBifurcation(), b);
+					
+					
+					request.getProperty().setPropertyBifurcations(Arrays.asList(b));
+					
+					System.out.println(request.getProperty().getPropertyBifurcations());
+				
+					producer.push(config.getUpdateChildStatusForBifurcation(), request);
 				}else {
+					/*
+					 * List<PropertyBifurcation> bf= bifurList.stream()
+					 * .filter(x->!x.getChildpropertyuuid().equalsIgnoreCase(request.getProperty().
+					 * getId())).collect(Collectors.toList());
+					 * request.getProperty().setPropertyBifurcations(bf); ;
+					 */
+					
 					producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
-					producer.push(config.getUpdatePropertyStatusForBifurcationSuccess(), bifurList.stream()
-						.filter(x->!x.getChildpropertyuuid().equalsIgnoreCase(request.getProperty().getId())).collect(Collectors.toList()));
+					producer.push(config.getUpdatePropertyStatusForBifurcationSuccess(),request );
 				}
 			}
 

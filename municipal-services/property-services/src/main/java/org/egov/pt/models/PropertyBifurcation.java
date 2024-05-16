@@ -41,7 +41,7 @@ import lombok.ToString;
 public class PropertyBifurcation  {
 
 	public PropertyBifurcation(Integer id, JsonNode propertyDetails, String parentPropertyId,Integer createdTime, 
-			PropertyRequest request,Integer maxBifurcation, boolean status,String childpropertyuuid) {
+			PropertyRequest request,Integer maxBifurcation, Boolean status,String childpropertyuuid) {
 		super();
 		this.id = id;
 		this.propertyDetails = propertyDetails;
@@ -72,8 +72,10 @@ public class PropertyBifurcation  {
 	private PropertyRequest propertyRequest;
 	private Integer maxBifurcation;
 	
+	@JsonProperty("status")
+	private Boolean status;
 	
-	private boolean status;
+	@JsonProperty("childpropertyUuid")
 	private String childpropertyuuid;
 	
 	
