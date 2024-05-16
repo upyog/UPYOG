@@ -56,25 +56,12 @@ public class SsoService {
 		HpSsoValidateToken hpSsoValidateToken = HpSsoValidateToken.builder().token(token)
 				.secret_key(constants.SECRET_KEY).service_id(constants.SERVICE_ID).build();
 		HpSsoValidateTokenResponse hpSsoValidateTokenResponse = getHpSsoValidateTokenResponse(hpSsoValidateToken);
-		log.info("#### for HP SSO token: " + token + " >>> hpSsoValidateTokenResponse is: "
-				+ hpSsoValidateTokenResponse);
+//		log.info("#### for HP SSO token: " + token + " >>> hpSsoValidateTokenResponse is: "+ hpSsoValidateTokenResponse);
 
 		if (null != hpSsoValidateTokenResponse) {
-
-			org.egov.user.web.errorhandlers.Error error = Error.builder()
-					.code(HttpStatus.OK.value())
-					.message(HttpStatus.OK.toString())
-					.description("Login successful.")
-					.build();
-			ErrorResponse successResponse = ErrorResponse.builder().responseInfo(null)
-					.error(error)
-					.build();
-//			do loging;
-//			send login response;
 			
-			response = new ResponseEntity<ErrorResponse>(successResponse, HttpStatus.OK);
 			User user = getUserFromSsoTokenResponse(hpSsoValidateTokenResponse);
-
+			
 			// we can use this api for user's extra details
 //			List<User> userInDb = userService.searchUsers(UserSearchCriteria.builder().mobileNumber(user.getMobileNumber()).build(), false, null);
 //			if (CollectionUtils.isEmpty(userInDb)) {
@@ -82,9 +69,14 @@ public class SsoService {
 //			}
 
 			checkAndCreateUserSso(hpSsoValidateTokenResponse, user);
-
-		}else {
 			
+//			do login;
+			Object loginResponse = userService.getLoginAccess(user, user.getPassword());
+			
+//			send login response;
+			response = new ResponseEntity<Object>(loginResponse, HttpStatus.OK);
+
+		}else {			
 			response = generateErrorResponse(HttpStatus.UNAUTHORIZED
 					,HttpStatus.UNAUTHORIZED.toString(), "Login failed.", null);
 		}
