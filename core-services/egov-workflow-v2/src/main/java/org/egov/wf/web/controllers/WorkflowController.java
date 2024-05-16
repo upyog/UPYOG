@@ -1,6 +1,7 @@
 package org.egov.wf.web.controllers;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -67,11 +68,25 @@ public class WorkflowController {
         public ResponseEntity<ProcessInstanceResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                               @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
         List<ProcessInstance> processInstances = workflowService.search(requestInfoWrapper.getRequestInfo(),criteria);
+        List<ProcessInstance> processInstancesForBPA = new ArrayList<ProcessInstance>();
+
+        if(criteria.getBusinessService().equalsIgnoreCase("BPA"))
+            processInstancesForBPA = workflowService.searchForBPA(requestInfoWrapper.getRequestInfo(),criteria);
+
         Integer count = workflowService.getUserBasedProcessInstancesCount(requestInfoWrapper.getRequestInfo(),criteria);
-            ProcessInstanceResponse response  = ProcessInstanceResponse.builder().processInstances(processInstances).totalCount(count).build();
+            ProcessInstanceResponse response  = ProcessInstanceResponse.builder().processInstances(processInstances).processInstancesBPA(processInstancesForBPA).totalCount(count).build();
                 return new ResponseEntity<>(response,HttpStatus.OK);
         }
 
+//        
+//        @RequestMapping(value="/process/_searchBPA", method = RequestMethod.POST)
+//        public ResponseEntity<ProcessInstanceResponse> searchBPA(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+//                                                              @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
+//        List<ProcessInstance> processInstances = workflowService.searchForBPA(requestInfoWrapper.getRequestInfo(),criteria);
+//        Integer count = workflowService.getUserBasedProcessInstancesCount(requestInfoWrapper.getRequestInfo(),criteria);
+//            ProcessInstanceResponse response  = ProcessInstanceResponse.builder().processInstances(processInstances).totalCount(count).build();
+//                return new ResponseEntity<>(response,HttpStatus.OK);
+//        }
     /**
      * Returns the count of records matching the given criteria
      * @param requestInfoWrapper
