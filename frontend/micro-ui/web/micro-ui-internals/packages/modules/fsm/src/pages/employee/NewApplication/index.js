@@ -42,7 +42,6 @@ export const NewApplication = ({ parentUrl, heading }) => {
   };
 
   const onFormValueChange = (setValue, formData) => {
-    console.log("ProID", formData)
     if (
       formData?. propertyID &&
       formData?.propertyType &&
@@ -188,7 +187,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
   }
 
   const configs = [...preFields, ...commonFields];
-
+  console.log(configs,"configs")
   return (
     <React.Fragment>
       <div style={{ marginLeft: "15px" }}>
