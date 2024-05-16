@@ -25,7 +25,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-
+@ContextConfiguration(classes = {EscalationController.class})
+@ExtendWith(SpringExtension.class)
 class EscalationControllerTest {
     @Autowired
     private EscalationController escalationController;

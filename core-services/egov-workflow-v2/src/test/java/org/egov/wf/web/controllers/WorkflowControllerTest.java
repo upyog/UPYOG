@@ -65,6 +65,8 @@ class WorkflowControllerTest {
                 .andExpect(MockMvcResultMatchers.content()
                         .string(
                                 "{\"ResponseInfo\":{\"apiId\":null,\"ver\":null,\"ts\":null,\"resMsgId\":null,\"msgId\":null,\"status\":null},"
-                                        + "\"ProcessInstances\":[],\"totalCount\":null}"));
+                                		+ "\"ProcessInstances\":[],\"ProcessInstancesBPA\":[],\"totalCount\":null}"));        
+        
+
     }
 }
