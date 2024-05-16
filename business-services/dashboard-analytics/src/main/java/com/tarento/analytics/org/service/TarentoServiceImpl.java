@@ -136,9 +136,6 @@ public class TarentoServiceImpl implements ClientService {
 		logger.info("CHART NODE before  executeConfiguredQueries:: {}"+json1);
 		executeConfiguredQueries(chartNode, aggrObjectNode, nodes, request, interval);
 		request.setChartNode(chartNode);
-		ObjectMapper mapper = new ObjectMapper();
-	    String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(chartNode.get(Constants.JsonPaths.QUERIES));
-		logger.info("JSON NODE after  executeConfiguredQueries - after line 127:: {}"+json);
 		ResponseRecorder responseRecorder = new ResponseRecorder();
 		request.setResponseRecorder(responseRecorder);
 		
@@ -177,11 +174,15 @@ public class TarentoServiceImpl implements ClientService {
 		if(!queries.isEmpty())
 			queries.forEach(query -> {
 	            String indexName = indexes.get(query.get(Constants.JsonPaths.INDEX_NAME).asText());
+	            logger.info("VisualizationCode During indexname reset :: {} "+request.getVisualizationCode());
 	            logger.info("Index name from CHART NODE:::::::"+query.get(Constants.JsonPaths.INDEX_NAME).asText());
 	            logger.info("Index name from Map:::::::"+indexName);
-	            ((ObjectNode) query).put(Constants.JsonPaths.INDEX_NAME, indexName);
+	            if(!StringUtils.isBlank(indexName))
+	            	((ObjectNode) query).put(Constants.JsonPaths.INDEX_NAME, indexName);
 	        });
-
+		ObjectMapper mapper = new ObjectMapper();
+	    String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(chartNode.get(Constants.JsonPaths.QUERIES));
+		logger.info("Index name after resetting CHART NODE :: {}"+json);
 		return aggregateDto;
 	}
 
