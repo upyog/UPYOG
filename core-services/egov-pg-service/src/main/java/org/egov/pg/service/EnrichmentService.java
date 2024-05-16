@@ -1,6 +1,7 @@
 package org.egov.pg.service;
 
 import static java.util.Collections.singletonMap;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -85,6 +86,12 @@ public class EnrichmentService {
                 .createdTime(System.currentTimeMillis())
                 .build();
         transaction.setAuditDetails(auditDetails);
+        try {
+			log.info(objectMapper.writeValueAsString(transaction));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     void enrichUpdateTransaction(TransactionRequest transactionRequest, Transaction newTxn) {
