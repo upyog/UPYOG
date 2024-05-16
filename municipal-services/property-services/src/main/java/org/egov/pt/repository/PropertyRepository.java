@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.models.Appeal;
 import org.egov.pt.models.AppealCriteria;
+import org.egov.pt.models.AuditDetails;
 import org.egov.pt.models.EncryptionCount;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
@@ -346,6 +347,10 @@ public class PropertyRepository {
 		Integer createdtime=jdbcTemplate.queryForObject(createdtimequery, Integer.class);
 		String json = mapper.writeValueAsString(request.getProperty());
 		String childpropertyuuid = request.getProperty().getId();
+		AuditDetails a = request.getProperty().getAuditDetails();
+		String lastmodifiedBy = a.getLastModifiedBy();
+		String createdBy = a.getCreatedBy();
+		Long lastModifiedTime = a.getLastModifiedTime();
 		
 		boolean status = false;
 		
@@ -361,6 +366,11 @@ public class PropertyRepository {
 				ps.setInt(5, id);
 				ps.setBoolean(6, status);
 				ps.setString(7, childpropertyuuid);
+				ps.setString(8, createdBy);
+				ps.setString(9,lastmodifiedBy);
+				ps.setLong(10, lastModifiedTime);
+				
+				;
 			}
 		});
 	}
