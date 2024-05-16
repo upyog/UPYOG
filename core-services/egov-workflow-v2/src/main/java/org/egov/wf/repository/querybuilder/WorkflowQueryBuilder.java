@@ -214,8 +214,9 @@ public class WorkflowQueryBuilder {
         preparedStmtList.add("BPA");
         preparedStmtList.add(criteria.getTenantId());
 
-		builder.append(" AND wf.businessid IN (").append(createQuery(criteria.getIds())).append(" )");
-		addToPreparedStatement(preparedStmtList, criteria.getIds());
+        if(criteria.getBusinessIds()!=null) {
+		builder.append(" AND wf.businessid IN (").append(createQuery(criteria.getBusinessIds())).append(" )");
+		addToPreparedStatement(preparedStmtList, criteria.getBusinessIds());}
 
         addPagination(builder,preparedStmtList,criteria);
 
