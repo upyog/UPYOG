@@ -515,9 +515,10 @@ public class IngestValidator {
         Set<String> uniquenessHash = new HashSet<>();
         IngestAckData hashedData = new IngestAckData();
         List<AckEntity> ackEntityList = new ArrayList<>();
-        if(data.getWard().contains(":"))
-        	 data.setWard(data.getWard().replace(":"," "));
+        
         ingestData.forEach(data -> {
+            if(data.getWard().contains(":"))
+        	 data.setWard(data.getWard().replace(":"," "));
             StringBuilder currKeyData = new StringBuilder();
             currKeyData.append(data.getDate()).append(":").append(data.getModule()).append(":").append(data.getWard()).append(":").append(data.getUlb()).append(":").append(data.getRegion()).append(":").append(data.getState());
             log.info("Current key data: " + currKeyData);
