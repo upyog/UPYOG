@@ -55,7 +55,9 @@ public class WorkflowController {
         @RequestMapping(value="/process/_transition", method = RequestMethod.POST)
         public ResponseEntity<ProcessInstanceResponse> processTransition(@Valid @RequestBody ProcessInstanceRequest processInstanceRequest) {
                 List<ProcessInstance> processInstances =  workflowService.transition(processInstanceRequest);
-                ProcessInstanceResponse response = ProcessInstanceResponse.builder().processInstances(processInstances)
+                List<ProcessInstance> processInstancesForBPA = new ArrayList<ProcessInstance>();
+
+                ProcessInstanceResponse response = ProcessInstanceResponse.builder().processInstances(processInstances).processInstancesBPA(processInstancesForBPA)
                         .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(processInstanceRequest.getRequestInfo(), true))
                         .build();
                 return new ResponseEntity<>(response,HttpStatus.OK);
@@ -104,9 +106,12 @@ public class WorkflowController {
     @RequestMapping(value="/escalate/_search", method = RequestMethod.POST)
     public ResponseEntity<ProcessInstanceResponse> searchEscalatedApplications(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                           @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
-        List<ProcessInstance> processInstances = workflowService.escalatedApplicationsSearch(requestInfoWrapper.getRequestInfo(),criteria);
-        Integer count = workflowService.countEscalatedApplications(requestInfoWrapper.getRequestInfo(),criteria);
-        ProcessInstanceResponse response  = ProcessInstanceResponse.builder().processInstances(processInstances).totalCount(count)
+        
+    	List<ProcessInstance> processInstances = workflowService.escalatedApplicationsSearch(requestInfoWrapper.getRequestInfo(),criteria);
+        List<ProcessInstance> processInstancesForBPA = new ArrayList<ProcessInstance>();
+
+    	Integer count = workflowService.countEscalatedApplications(requestInfoWrapper.getRequestInfo(),criteria);
+        ProcessInstanceResponse response  = ProcessInstanceResponse.builder().processInstances(processInstances).processInstancesBPA(processInstancesForBPA).totalCount(count)
                 .build();
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
