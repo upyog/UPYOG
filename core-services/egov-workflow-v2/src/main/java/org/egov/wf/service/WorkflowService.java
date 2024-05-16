@@ -109,6 +109,20 @@ public class WorkflowService {
         return processInstances;
     }
 
+    public List<ProcessInstance> searchForBPA(RequestInfo requestInfo,ProcessInstanceSearchCriteria criteria){
+        List<ProcessInstance> processInstances;
+        if(criteria.isNull())
+            processInstances = getUserBasedProcessInstances(requestInfo, criteria);
+        else processInstances = workflowRepository.getProcessInstancesForBPA(criteria);
+        if(CollectionUtils.isEmpty(processInstances))
+            return processInstances;
+
+        enrichmentService.enrichUsersFromSearch(requestInfo,processInstances);
+        List<ProcessStateAndAction> processStateAndActions = enrichmentService.enrichNextActionForSearch(requestInfo,processInstances);
+    //    workflowValidator.validateSearch(requestInfo,processStateAndActions);
+        enrichmentService.enrichAndUpdateSlaForSearch(processInstances);
+        return processInstances;
+    }
 
     public Integer count(RequestInfo requestInfo,ProcessInstanceSearchCriteria criteria){
         Integer count;
