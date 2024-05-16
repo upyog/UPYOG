@@ -26,9 +26,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jdk.internal.org.jline.utils.Log;
+import lombok.extern.slf4j.Slf4j;
+
 
 @RestController
 @RequestMapping("/egov-wf")
+@Slf4j
 public class WorkflowController {
 
 
@@ -72,7 +76,8 @@ public class WorkflowController {
         List<ProcessInstance> processInstances = workflowService.search(requestInfoWrapper.getRequestInfo(),criteria);
         List<ProcessInstance> processInstancesForBPA = new ArrayList<ProcessInstance>();
 
-        if(criteria.getBusinessService().equalsIgnoreCase("BPA"))
+        log.info(criteria.toString());
+        if((criteria.getBusinessService()!=null && criteria.getBusinessService().contains("BPA")) || (criteria.getModuleName()!=null && criteria.getModuleName().equalsIgnoreCase("bpa-services")))
             processInstancesForBPA = workflowService.searchForBPA(requestInfoWrapper.getRequestInfo(),criteria);
 
         Integer count = workflowService.getUserBasedProcessInstancesCount(requestInfoWrapper.getRequestInfo(),criteria);
