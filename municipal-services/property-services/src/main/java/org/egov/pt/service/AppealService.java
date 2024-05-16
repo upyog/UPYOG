@@ -52,13 +52,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class AppealService {
-	
+
 	@Autowired
 	private UnmaskingUtil unmaskingUtil;
 
 	@Autowired
 	private PropertyProducer producer;
-	
+
 	@Autowired
 	private NotificationService notifService;
 
@@ -94,10 +94,10 @@ public class AppealService {
 
 	@Autowired
 	EncryptionDecryptionUtil encryptionDecryptionUtil;
-	
+
 	@Autowired
 	private PropertyUtil propertyUtil;
-	
+
 	@Autowired
 	private WorkflowService workflowService;
 	/**
@@ -110,7 +110,7 @@ public class AppealService {
 
 		propertyValidator.validateAppealCreateRequest(request);
 		enrichmentService.enrichAppealCreateRequest(request);
-		
+
 		if(config.getIsWorkflowEnabled())
 		{
 			wfService.updateWorkflowForAppeal(request, CreationReason.APPEAL);
@@ -119,8 +119,8 @@ public class AppealService {
 			request.getAppeal().setStatus(Status.ACTIVE);
 		}
 		//Save Topic For Appeal
-		
-		
+
+
 		producer.push(config.getSaveAppealTopic(), request);
 		return request.getAppeal();
 	}
@@ -138,7 +138,7 @@ public class AppealService {
 	 * @return List of updated properties
 	 */
 	public Appeal updateProperty(AppealRequest request) {
-		
+
 		AppealCriteria criteria = new AppealCriteria();
 		criteria.setPropertyIds(Sets.newHashSet(request.getAppeal().getPropertyId()));
 		//Update for single object
@@ -151,28 +151,30 @@ public class AppealService {
 		enrichmentService.enrichAppealForUpdateRequest(request);
 		propertyValidator.validateAppealWorkFlowRequestForAppeal(request,appeal.get(0));
 		//State state = wfService.updateWorkflowForAppeal(request, CreationReason.APPEAL);
-		
+
 		ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(request.getRequestInfo(), Collections.singletonList(request.getAppeal().getWorkflow()));
 		State state = workflowService.callWorkFlow(workflowRequest);
-		if( request.getAppeal().getStatus().equals(Status.INWORKFLOW) &&
-				request.getAppeal().getStatus().equals(state.getApplicationStatus().equals(Status.INWORKFLOW.toString()))) {
-			
-		//	System.out.println("In normal update");
-		}
-		else if (state.getIsTerminateState() && !state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString())) {
-			//Failed 
-			request.getAppeal().setStatus(Status.REJECTED);
-			producer.push(config.getAppealUpdateTopic(), request);
-		}
-		else {
-			//success
-			request.getAppeal().setStatus(Status.ACTIVE);
-			producer.push(config.getAppealUpdateTopic(), request);
-			
-		}
-		
-		
-		
+		String status = state.getApplicationStatus();
+		request.getAppeal().getWorkflow().setState(state);
+		request.getAppeal().setStatus(Status.fromValue(status));
+		/*
+		 * if( request.getAppeal().getStatus().equals(Status.INWORKFLOW) &&
+		 * request.getAppeal().getStatus().equals(state.getApplicationStatus().equals(
+		 * Status.INWORKFLOW.toString()))) {
+		 * 
+		 * // System.out.println("In normal update"); } else if
+		 * (state.getIsTerminateState() &&
+		 * !state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString())) {
+		 * //Failed request.getAppeal().setStatus(Status.REJECTED);
+		 * producer.push(config.getAppealUpdateTopic(), request); } else { //success
+		 * request.getAppeal().setStatus(Status.ACTIVE);
+		 * producer.push(config.getAppealUpdateTopic(), request);
+		 * 
+		 * }
+		 */
+		producer.push(config.getAppealUpdateTopic(), request);
+
+
 		return request.getAppeal();
 	}
 
@@ -181,6 +183,6 @@ public class AppealService {
 		appeals = repository.getAppeal(appealCriteria);
 		return appeals;
 	}
-	
-	
+
+
 }

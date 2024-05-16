@@ -67,43 +67,43 @@ public class Appeal {
 	@SafeHtml
 	private String appealId;
 	
-	@JsonProperty("propertyaddress")
+	@JsonProperty("propertyAddress")
 	private String propertyaddress;
 	
-	@JsonProperty("assesmnetyear")
+	@JsonProperty("assessmentYear")
 	private String assesmnetyear;
 	
-	@JsonProperty("nameofassigningofficer")
+	@JsonProperty("nameOfAssessingOfficer")
 	private String nameofassigningofficer;
 	
-	@JsonProperty("designation")
+	@JsonProperty("assessingOfficerDesignation")
 	private String designation;
 	
-	@JsonProperty("ruleunderorderpassed")
+	@JsonProperty("ruleUnderOrderPassed")
 	private String ruleunderorderpassed;
 	
-	@JsonProperty("dateoforder")
+	@JsonProperty("dateOfOrder")
 	private String dateoforder;
 	
-	@JsonProperty("dateofservice")
+	@JsonProperty("dateOfService")
 	private String dateofservice;
 	
-	@JsonProperty("dateofpayment")
+	@JsonProperty("dateOfPayment")
 	private String dateofpayment;
 	
-	@JsonProperty("copyofchallan")
-	private String copyofchallan;
+	@JsonProperty("ownerName")
+	private String ownername;
 	
-	@JsonProperty("applicantaddress")
+	@JsonProperty("applicantAddress")
 	private String applicantaddress;
 	
-	@JsonProperty("reliefclaimed")
+	@JsonProperty("reliefClaimedInAppeal")
 	private String reliefclaimed;
 	
-	@JsonProperty("statementoffacts")
+	@JsonProperty("statementOfFacts")
 	private String statementoffacts;
 	
-	@JsonProperty("groundofappeal")
+	@JsonProperty("groundOfAppeal")
 	private String groundofappeal;
 	
 	public Appeal addDocumentsItem(Document documentsItem) {

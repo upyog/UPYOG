@@ -414,6 +414,9 @@ public class PropertyConfiguration {
     @Value("${persister.update.appeal.topic}")
     private String appealUpdateTopic;
     
+    @Value("{egov.idgen.appeal.name}")
+    private String appealidname;
+    
     @Value("${egov.idgen.appeal.format}")
     private String appealidformat;
     
