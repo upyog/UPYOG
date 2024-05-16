@@ -43,7 +43,16 @@ public class OrderByPriority implements ApportionV2 {
     @Override
     public List<TaxDetail> apportionPaidAmount(ApportionRequestV2 apportionRequestV2, Object masterData) {
         List<TaxDetail> taxDetails = apportionRequestV2.getTaxDetails();
+     String tenant=apportionRequestV2.getTenantid();
+        // taxDetails.sort(Comparator.comparing(TaxDetail::getFromPeriod));
+          if(tenant.contains("pb.amritsar") && (apportionRequestV2.getBusinessService().contains("WS")|| apportionRequestV2.getBusinessService().contains("SW")))
+        {
+        taxDetails.sort(Comparator.comparing(TaxDetail::getFromPeriod).reversed());
+        }
+
+        else{
         taxDetails.sort(Comparator.comparing(TaxDetail::getFromPeriod));
+            }
         BigDecimal remainingAmount = apportionRequestV2.getAmountPaid();
         BigDecimal amount;
         Boolean isAmountPositive;

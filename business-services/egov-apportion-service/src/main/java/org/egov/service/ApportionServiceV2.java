@@ -95,6 +95,7 @@ public class ApportionServiceV2 {
              */
 
             ApportionRequestV2 apportionRequestV2 = translationService.translate(bill);
+            apportionRequestV2.setTenantid(request.getTenantId());
             List<TaxDetail> taxDetails = apportion.apportionPaidAmount(apportionRequestV2, masterData);
             updateAdjustedAmountInBills(bill,taxDetails);
             addAdvanceIfExistForBill(billDetails,taxDetails);
@@ -155,7 +156,11 @@ public class ApportionServiceV2 {
         * has same businessService and consumerCode
         * */
         String businessKey = demands.get(0).getBusinessService();
-
+        String tenant = demands.get(0).getTenantId();
+        if (apportionRequestV2.getTenantid()=="" || apportionRequestV2.getTenantid()==null)
+        {
+        	apportionRequestV2.setTenantid(tenant);
+        }
         if (isApportionPresent(businessKey))
             apportion = getApportion(businessKey);
         else

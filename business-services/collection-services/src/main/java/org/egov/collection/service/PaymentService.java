@@ -21,7 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Slf4j
 @Service
 public class PaymentService {
 
@@ -38,6 +40,9 @@ public class PaymentService {
     private PaymentRepository paymentRepository;
 
     private CollectionProducer producer;
+
+    @Autowired
+	private ObjectMapper objectMapper;
 
 
     @Autowired
@@ -78,7 +83,36 @@ public class PaymentService {
             paymentSearchCriteria.setPayerIds(payerIds);
         }*/
         List<Payment> payments = paymentRepository.fetchPayments(paymentSearchCriteria);
+	if(null != paymentSearchCriteria.getBusinessService()){
+	if(paymentSearchCriteria.getBusinessService().equals("WS.ONE_TIME_FEE")|| paymentSearchCriteria.getBusinessService().equals("SW.ONE_TIME_FEE")) {  
+        List<String> usageCategory = paymentRepository.fetchUsageCategoryByApplicationno(paymentSearchCriteria.getConsumerCodes());
+        List<String> address = paymentRepository.fetchAddressByApplicationno(paymentSearchCriteria.getConsumerCodes());
+        payments.get(0).setUsageCategory(usageCategory.get(0));
+        payments.get(0).setAddress(address.get(0));
+	}  
+	}else if(null != paymentSearchCriteria.getReceiptNumbers()){
+		String receiptnumber = null;
+		 Iterator<String> iterate = paymentSearchCriteria.getReceiptNumbers().iterator();
+		 while(iterate.hasNext()) {
+			 receiptnumber =   iterate.next();			  
+		}	
+		String receipt[]=receiptnumber.split("/");
+     	String businessservice= receipt[0];
+     	 // if(businessservice.equals("WS")||businessservice.equals("SW")) {
+       //       setPropertyData(receiptnumber,payments);
+       //   }
+// 	if((businessservice.equals("WS")||businessservice.equals("SW") )|| payments.get(0).getAddress().isEmpty()) {
+//   	 List<String> usageCategory = paymentRepository.fetchUsageCategoryByApplicationnos(paymentSearchCriteria.getReceiptNumbers(),businessservice);
+//          List<String> address = paymentRepository.fetchAddressByApplicationnos(paymentSearchCriteria.getReceiptNumbers(),businessservice);
+//          List<String> propertyIds = paymentRepository.fetchPropertyid(paymentSearchCriteria.getReceiptNumbers(), businessservice);
 
+// //           setPropertyData(receiptnumber,payments);
+//          payments.get(0).setUsageCategory(usageCategory.get(0));
+//   		 payments.get(0).setAddress(address.get(0));
+//   		payments.get(0).setPropertyId(propertyIds.get(0));
+
+//    }
+	}
         return payments;
     }
     
@@ -101,7 +135,7 @@ public class PaymentService {
     @Transactional
     public Payment createPayment(PaymentRequest paymentRequest) {
     	
-        paymentEnricher.enrichPaymentPreValidate(paymentRequest);
+        paymentEnricher.enrichPaymentPreValidate(paymentRequest,false);
         paymentValidator.validatePaymentForCreate(paymentRequest);
         paymentEnricher.enrichPaymentPostValidate(paymentRequest);
 
@@ -121,6 +155,20 @@ public class PaymentService {
         return payment;
     }
 
+
+    private void setPropertyData(String receiptnumber,List<Payment> payments) {
+    	List<String> consumercode = paymentRepository.fetchConsumerCodeByReceiptNumber(receiptnumber);	
+    	String connectionno = consumercode.get(0);
+    	List<String> status = paymentRepository.fetchPropertyDetail(connectionno);		
+		HashMap<String, String> additionalDetail = new HashMap<>();		
+		 if(!StringUtils.isEmpty(status.get(0)))
+		additionalDetail.put("oldConnectionno", status.get(0));
+		 if(!StringUtils.isEmpty(status.get(1)))
+		additionalDetail.put("landArea", status.get(1));
+		 if(!StringUtils.isEmpty(status.get(2)))
+		additionalDetail.put("usageCategory", status.get(2));
+		payments.get(0).setPropertyDetail(additionalDetail);		
+	}
 
     /**
      * If Citizen is paying, the id of the logged in user becomes payer id.
@@ -185,7 +233,7 @@ public class PaymentService {
      */
     @Transactional
     public Payment vaidateProvisonalPayment(PaymentRequest paymentRequest) {
-        paymentEnricher.enrichPaymentPreValidate(paymentRequest);
+        paymentEnricher.enrichPaymentPreValidate(paymentRequest,false);
         paymentValidator.validatePaymentForCreate(paymentRequest);
         
         return paymentRequest.getPayment();
@@ -194,6 +242,9 @@ public class PaymentService {
     public List<Payment> plainSearch(PaymentSearchCriteria paymentSearchCriteria) {
         PaymentSearchCriteria searchCriteria = new PaymentSearchCriteria();
 
+	log.info("plainSearch Service BusinessServices"+paymentSearchCriteria.getBusinessServices() +"plainSearch Service Date "+
+        		 paymentSearchCriteria.getFromDate() +" to "+paymentSearchCriteria.getToDate() +"Teant IT "+paymentSearchCriteria.getTenantId()+" \"plainSearch Service BusinessServices\"+paymentSearchCriteria.getBusinessService():"+paymentSearchCriteria.getBusinessService());    
+	    
         if (applicationProperties.isPaymentsSearchPaginationEnabled()) {
             searchCriteria.setOffset(isNull(paymentSearchCriteria.getOffset()) ? 0 : paymentSearchCriteria.getOffset());
             searchCriteria.setLimit(isNull(paymentSearchCriteria.getLimit()) ? applicationProperties.getReceiptsSearchDefaultLimit() : paymentSearchCriteria.getLimit());
@@ -202,6 +253,30 @@ public class PaymentService {
             searchCriteria.setLimit(applicationProperties.getReceiptsSearchDefaultLimit());
         }
 
+        if(paymentSearchCriteria.getTenantId() != null) {
+        	searchCriteria.setTenantId(paymentSearchCriteria.getTenantId());
+        }
+        
+        if(paymentSearchCriteria.getBusinessServices() != null) {
+		 log.info("in PaymentService.java paymentSearchCriteria.getBusinessServices(): " + paymentSearchCriteria.getBusinessServices());
+        	searchCriteria.setBusinessServices(paymentSearchCriteria.getBusinessServices());
+        }
+        
+        if(paymentSearchCriteria.getBusinessService() != null) {
+   		 log.info("in PaymentService.java paymentSearchCriteria.getBusinessService(): " + paymentSearchCriteria.getBusinessService());
+           	searchCriteria.setBusinessService(paymentSearchCriteria.getBusinessService());
+          }
+           
+
+        
+        
+        if((paymentSearchCriteria.getFromDate() !=null && paymentSearchCriteria.getFromDate()>0 ) && (paymentSearchCriteria.getToDate() !=null && paymentSearchCriteria.getToDate()>0 ) )
+        {
+        	searchCriteria.setToDate(paymentSearchCriteria.getToDate());
+        	searchCriteria.setFromDate(paymentSearchCriteria.getFromDate());
+
+        }
+        
         List<String> ids = paymentRepository.fetchPaymentIds(searchCriteria);
         if (ids.isEmpty())
             return Collections.emptyList();
@@ -211,4 +286,28 @@ public class PaymentService {
     }
 
 
+    
+    @Transactional
+    public Payment createPaymentForWSMigration(PaymentRequest paymentRequest) {
+    	
+        paymentEnricher.enrichPaymentPreValidate(paymentRequest,true);
+        paymentValidator.validatePaymentForCreateWSMigration(paymentRequest);
+        paymentEnricher.enrichPaymentPostValidate(paymentRequest);
+
+        Payment payment = paymentRequest.getPayment();
+        Map<String, Bill> billIdToApportionedBill = apportionerService.apportionBill(paymentRequest);
+        paymentEnricher.enrichAdvanceTaxHead(new LinkedList<>(billIdToApportionedBill.values()));
+        setApportionedBillsToPayment(billIdToApportionedBill,payment);
+
+        String payerId = createUser(paymentRequest);
+        if(!StringUtils.isEmpty(payerId))
+            payment.setPayerId(payerId);
+        paymentRepository.savePayment(payment);
+
+       // producer.producer(applicationProperties.getCreatePaymentTopicName(), paymentRequest);
+
+
+        return payment;
+    }
+    
 }

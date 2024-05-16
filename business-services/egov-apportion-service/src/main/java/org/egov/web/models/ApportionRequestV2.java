@@ -18,6 +18,9 @@ public class ApportionRequestV2 {
     @JsonProperty("amountPaid")
     private BigDecimal amountPaid = null;
 
+    @JsonProperty("tenantid")
+    private String tenantid = null;
+    
     @JsonProperty("isAdvanceAllowed")
     private Boolean isAdvanceAllowed = null;
 
