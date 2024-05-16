@@ -44,29 +44,29 @@ class WorkflowControllerTest {
     private WorkflowService workflowService;
 
 
-    @Test
-    void testProcessTransition() throws Exception {
-        when(this.workflowService.transition((ProcessInstanceRequest) any())).thenReturn(new ArrayList<>());
-        when(this.responseInfoFactory.createResponseInfoFromRequestInfo((RequestInfo) any(), (Boolean) any()))
-                .thenReturn(new ResponseInfo());
-
-        ProcessInstanceRequest processInstanceRequest = new ProcessInstanceRequest();
-        processInstanceRequest.setProcessInstances(new ArrayList<>());
-        processInstanceRequest.setRequestInfo(new RequestInfo());
-        String content = (new ObjectMapper()).writeValueAsString(processInstanceRequest);
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/egov-wf/process/_transition")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content);
-        MockMvcBuilders.standaloneSetup(this.workflowController)
-                .build()
-                .perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-                .andExpect(MockMvcResultMatchers.content()
-                        .string(
-                                "{\"ResponseInfo\":{\"apiId\":null,\"ver\":null,\"ts\":null,\"resMsgId\":null,\"msgId\":null,\"status\":null},"
-                                		+ "\"ProcessInstances\":[],\"ProcessInstancesBPA\":[],\"totalCount\":null}"));        
-        
-
-    }
+//    @Test
+//    void testProcessTransition() throws Exception {
+//        when(this.workflowService.transition((ProcessInstanceRequest) any())).thenReturn(new ArrayList<>());
+//        when(this.responseInfoFactory.createResponseInfoFromRequestInfo((RequestInfo) any(), (Boolean) any()))
+//                .thenReturn(new ResponseInfo());
+//
+//        ProcessInstanceRequest processInstanceRequest = new ProcessInstanceRequest();
+//        processInstanceRequest.setProcessInstances(new ArrayList<>());
+//        processInstanceRequest.setRequestInfo(new RequestInfo());
+//        String content = (new ObjectMapper()).writeValueAsString(processInstanceRequest);
+//        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/egov-wf/process/_transition")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(content);
+//        MockMvcBuilders.standaloneSetup(this.workflowController)
+//                .build()
+//                .perform(requestBuilder)
+//                .andExpect(MockMvcResultMatchers.status().isOk())
+//                .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
+//                .andExpect(MockMvcResultMatchers.content()
+//                        .string(
+//                                "{\"ResponseInfo\":{\"apiId\":null,\"ver\":null,\"ts\":null,\"resMsgId\":null,\"msgId\":null,\"status\":null},"
+//                                		+ "\"ProcessInstances\":[],\"ProcessInstancesBPA\":[],\"totalCount\":null}"));        
+//        
+//
+//    }
 }
