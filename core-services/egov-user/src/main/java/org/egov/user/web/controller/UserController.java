@@ -220,9 +220,9 @@ public class UserController {
     }
     
     @PostMapping("/_landingPage")
-    private HpSsoValidateTokenResponse landingPage(@RequestParam(value = "token") String token){
-    	HpSsoValidateTokenResponse hpSsoValidateTokenResponse = ssoService.getHpSsoValidateTokenResponse(token);
-    	return hpSsoValidateTokenResponse;
+    private ResponseEntity<?> landingPage(@RequestParam(value = "token") String token){
+    	ResponseEntity<?> response = ssoService.getHpSsoValidateTokenResponse(token);
+    	return response;
     }
 
 }

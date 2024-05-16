@@ -41,6 +41,7 @@
 package org.egov.user.web.errorhandlers;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -61,6 +62,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
+@Builder
 public class ErrorResponse {
 
     @JsonProperty("ResponseInfo")
