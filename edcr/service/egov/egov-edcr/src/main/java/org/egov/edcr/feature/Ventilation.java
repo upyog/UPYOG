@@ -86,14 +86,26 @@ public class Ventilation extends FeatureProcess {
 			scrutinyDetail.addColumnHeading(3, REQUIRED);
 			scrutinyDetail.addColumnHeading(4, PROVIDED);
 			scrutinyDetail.addColumnHeading(5, STATUS);
+			
+			ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
+			scrutinyDetail1.setKey("Bath_Ventilation");
+			scrutinyDetail1.addColumnHeading(1, RULE_NO);
+			scrutinyDetail1.addColumnHeading(2, DESCRIPTION);
+			scrutinyDetail1.addColumnHeading(3, REQUIRED);
+			scrutinyDetail1.addColumnHeading(4, PROVIDED);
+			scrutinyDetail1.addColumnHeading(5, STATUS);
 
 			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
 					&& !b.getBuilding().getFloors().isEmpty()) {
 
 				for (Floor f : b.getBuilding().getFloors()) {
 					Map<String, String> details = new HashMap<>();
+					Map<String, String> details1 = new HashMap<>();
 					details.put(RULE_NO, RULE_43);
 					details.put(DESCRIPTION, LIGHT_VENTILATION_DESCRIPTION);
+					
+					details1.put(RULE_NO, RULE_43);
+					details1.put(DESCRIPTION, LIGHT_VENTILATION_DESCRIPTION);
 
 					if (f.getLightAndVentilation() != null && f.getLightAndVentilation().getMeasurements() != null
 							&& !f.getLightAndVentilation().getMeasurements().isEmpty()) {
@@ -143,6 +155,51 @@ public class Ventilation extends FeatureProcess {
 						 * pl.getReportOutput().getScrutinyDetails().add(
 						 * scrutinyDetail); }
 						 */
+					
+					
+					// Added by Neha 
+					// For bath ventilation
+					if (f.getBathVentilaion() != null && f.getBathVentilaion().getMeasurements() != null
+							&& !f.getBathVentilaion().getMeasurements().isEmpty()) {
+
+						BigDecimal totalVentilationArea = f.getBathVentilaion().getMeasurements().stream()
+								.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
+//						BigDecimal totalCarpetArea = f.getOccupancies().stream().map(Occupancy::getCarpetArea)
+//								.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+						if (totalVentilationArea.compareTo(new BigDecimal(0.3)) >= 0) {
+//							if (totalVentilationArea.compareTo(totalCarpetArea.divide(BigDecimal.valueOf(8)).setScale(2,
+//									BigDecimal.ROUND_HALF_UP)) >= 0)
+							//{
+								details1.put(REQUIRED, " 0.3 ");
+								details1.put(PROVIDED, "Bath Ventilation area " + totalVentilationArea + 
+										 " at floor " + f.getNumber());
+								details1.put(STATUS, Result.Accepted.getResultVal());
+								scrutinyDetail1.getDetail().add(details1);
+								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
+
+							} 
+								else {
+								details1.put(REQUIRED, "0.3");
+								details1.put(PROVIDED, "Bath Ventilation area " + totalVentilationArea + 
+										 " at floor " + f.getNumber());
+								details1.put(STATUS, Result.Not_Accepted.getResultVal());
+								scrutinyDetail1.getDetail().add(details1);
+								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
+							}
+						}
+							  else { 
+							  details1.put(REQUIRED,
+							  "0.3");
+							  details.put(PROVIDED,
+							  "Bath Ventilation area not defined in floor  " +
+							  f.getNumber()); details1.put(STATUS,
+							  Result.Not_Accepted.getResultVal());
+							  scrutinyDetail.getDetail().add(details1);
+							  pl.getReportOutput().getScrutinyDetails().add(
+							 scrutinyDetail1); }
+							
+					
 
 				}
 			}

@@ -350,7 +350,7 @@ console.log("appl", applicationDetails)
           </div>
           {detail?.belowComponent && <detail.belowComponent />}
           {detail?.additionalDetails?.inspectionReport && (
-            <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} paymentsList={paymentsList} additionalDetails={applicationDetails?.applicationData?.additionalDetails} />
+            <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} paymentsList={paymentsList} additionalDetails={applicationDetails?.applicationData?.additionalDetails} applicationData={applicationDetails?.applicationData} />
           )}
           {applicationDetails?.applicationData?.additionalDetails?.fieldinspection_pending?.length > 0 && detail?.additionalDetails?.fiReport && (
             <InspectionReport fiReport={applicationDetails?.applicationData?.additionalDetails?.fieldinspection_pending} />

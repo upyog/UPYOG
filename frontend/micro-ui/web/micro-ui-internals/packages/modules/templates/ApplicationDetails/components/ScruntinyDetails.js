@@ -2,11 +2,22 @@ import { StatusTable, Row, PDFSvg, CardLabel, CardSubHeader,TextInput  } from "@
 import React, { Fragment,useEffect,useState } from "react";
 import { useTranslation } from "react-i18next";
 
-const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails }) => {
-  const isEditApplication =  window.location.href.includes("editApplication") && window.location.href.includes("bpa") ;
+const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails,applicationData }) => {
+  const isEditApplication =  (window.location.href.includes("editApplication") || applicationData?.status=="FIELDINSPECTION_INPROGRESS") && window.location.href.includes("bpa") ;
   const [development, setDevelopment] = useState()
   const [otherCharges, setOtherCharges] = useState()
   const [lessAdjusment, setLessAdjusment] = useState()
+  const styles = {
+    buttonStyle: { display: "flex", justifyContent: "flex-start", color: "#a82227" },
+    headerStyle: {
+      marginTop: "10px",
+      fontSize: "16px",
+      fontWeight: "700",
+      lineHeight: "24px",
+      color: " rgba(11, 12, 12, var(--text-opacity))",
+    },
+  };
+  const [showSanctionFee, setShowSanctionFee] = useState(false);
   useEffect(()=>{    
       setDevelopment(additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES);
       sessionStorage.setItem("development",additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES);
@@ -68,15 +79,38 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails }
           </div>
           {window.location.href.includes("employee") && scrutinyDetails?.values[0]?.title=="BPA_APPL_FEES_DETAILS" && 
           <div>
+          {!showSanctionFee && (
+         <div style={styles.buttonStyle}>
+          <button
+            type="button"
+            onClick={() => {
+              setShowSanctionFee(true);
+            }}
+          >
+            {t("SHOW_P2_FEES_DETAILS")}
+          </button>
+        </div>
+      )}
+      {showSanctionFee && (
+        <div style={styles.buttonStyle}>
+          <button
+            type="button"
+            onClick={() => {
+              setShowSanctionFee(false);
+            }}
+          >
+            {t("HIDE_P2_FEES_DETAILS")}
+          </button>
+        </div>
+      )}
+      {showSanctionFee &&
+      <div>
           <CardSubHeader>{t("BPA_P2_SUMMARY_FEE_EST")}</CardSubHeader>        
             <Row className="border-none" label={t(`BPA_COMMON_MALBA_AMT`)} text={`₹ ${additionalDetails?.selfCertificationCharges?.BPA_MALBA_CHARGES}`} />
             <Row className="border-none" label={t(`BPA_COMMON_LABOUR_AMT`)} text={`₹ ${additionalDetails?.selfCertificationCharges?.BPA_LABOUR_CESS}`} />
             <Row className="border-none" label={t(`BPA_COMMON_WATER_AMT`)} text={`₹ ${additionalDetails?.selfCertificationCharges?.BPA_WATER_CHARGES}`} />
             <Row className="border-none" label={t(`BPA_COMMON_GAUSHALA_AMT`)} text={`₹ ${additionalDetails?.selfCertificationCharges?.BPA_GAUSHALA_CHARGES_CESS}`} />
             <CardSubHeader>{t("BPA_P2_SUMMARY_FEE_EST_MANUAL")}</CardSubHeader>
-            {/* <Row className="border-none" label={t(`BPA_COMMON_DEVELOPMENT_AMT`)} text={`₹ ${additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES}`} />
-            <Row className="border-none" label={t(`BPA_COMMON_OTHER_AMT`)} text={`₹ ${additionalDetails?.selfCertificationCharges?.BPA_OTHER_CHARGES}`} />
-            <Row className="border-none" label={t(`BPA_COMMON_LESS_AMT`)} text={`₹ ${additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT}`} /> */}
             <CardLabel>{t("BPA_COMMON_DEVELOPMENT_AMT")}</CardLabel>
             <TextInput
               t={t}
@@ -116,6 +150,7 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails }
               onChange={(e) => {setLessAdjusmentVal(e.target.value)}}
               {...{ required: true, pattern: "^[0-9]*$", type: "text" }}
             />
+            </div>}
           </div>
           }          
           <div>

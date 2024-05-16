@@ -76,7 +76,7 @@ public class BathRoomWaterClosets extends FeatureProcess {
 
 		return pl;
 	}
-
+//Method updated by Neha Sharma
 	@Override
 	public Plan process(Plan pl) {
 
@@ -127,10 +127,10 @@ public class BathRoomWaterClosets extends FeatureProcess {
 						}
 
 						if (minHeight.compareTo(new BigDecimal(2.4)) >= 0
-								&& totalArea.compareTo(new BigDecimal(2.8)) >= 0
-								&& minWidth.compareTo(new BigDecimal(1.2)) >= 0) {
+								&& totalArea.compareTo(new BigDecimal(1.1)) >= 0
+								&& minWidth.compareTo(new BigDecimal(0.9)) >= 0) {
 
-							details.put(REQUIRED, "Height >= 2.4, Total Area >= 2.8, Width >= 1.2");
+							details.put(REQUIRED, "Height >= 2.4, Total Area >= 1.1, Width >= 0.9");
 							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
 									+ ", Width >= " + minWidth);
 							details.put(STATUS, Result.Accepted.getResultVal());

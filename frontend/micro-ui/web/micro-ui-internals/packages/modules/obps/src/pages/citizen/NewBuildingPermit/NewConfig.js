@@ -76,7 +76,7 @@ export const newConfig1=[
             {
                 "label": "BPA_ARCHITECT_ID",
                 "type": "text",
-                "validation": {},
+                "validation": {"required": true},
                 "name": "architectid"
             },
             {
@@ -216,8 +216,7 @@ export const newConfig1=[
         "nextStep": "owner-details",
         "key": "owners",
         "texts": {
-            "headerCaption": "BPA_ADDITIONAL_BUILDING_DETAILS",
-            "header": "BPA_APPLICANT_DETAILS_HEADER",
+            "header": "BPA_ADDITIONAL_BUILDING_DETAILS",
             "submitBarLabel": "CS_COMMON_NEXT"
         }
     },

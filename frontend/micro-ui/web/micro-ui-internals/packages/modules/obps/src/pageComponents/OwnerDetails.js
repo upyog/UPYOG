@@ -371,10 +371,15 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 if (formData?.owners?.purchasedFAR?.code) payload.additionalDetails.purchasedFAR = formData?.owners?.purchasedFAR?.code;
                 if (formData?.owners?.restrictedArea?.code) payload.additionalDetails.restrictedArea = formData?.owners?.restrictedArea?.code;
                 if (formData?.owners?.schemes?.i18nKey) payload.additionalDetails.schemes = formData?.owners?.schemes?.i18nKey;
-                if (formData?.owners?.district?.code) payload.additionalDetails.district = formData?.owners?.district?.code;
-                if (formData?.owners?.ulbType?.code) payload.additionalDetails.ulbType = formData?.owners?.ulbType?.code;
+                if (formData?.owners?.UlbName?.code) payload.additionalDetails.UlbName = formData?.owners?.UlbName?.code;
+                if (formData?.owners?.District?.code) payload.additionalDetails.District = formData?.owners?.District?.code;
                 if (formData?.owners?.nameofApprovedcolony) payload.additionalDetails.nameofApprovedcolony = formData?.owners?.nameofApprovedcolony;
                 if (formData?.owners?.NocNumber) payload.additionalDetails.NocNumber = formData?.owners?.NocNumber;
+                if (formData?.owners?.coreArea?.code) payload.additionalDetails.coreArea = formData?.owners?.coreArea?.code;
+                if (formData?.owners?.schemesselection?.i18nKey) payload.additionalDetails.schemesselection = formData?.owners?.schemesselection?.i18nKey;
+                if (formData?.owners?.schemeName) payload.additionalDetails.schemeName = formData?.owners?.schemeName;
+                if (formData?.owners?.transferredscheme) payload.additionalDetails.transferredscheme = formData?.owners?.transferredscheme;
+                if (formData?.owners?.Ulblisttype?.code) payload.additionalDetails.Ulblisttype = formData?.owners?.Ulblisttype?.code;
 
                 
                 //For LandInfo
