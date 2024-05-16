@@ -133,6 +133,10 @@ public class Property extends PropertyInfo {
 	
 	@JsonProperty("bifurcationCount")
 	private Integer bifurcationCount;
+	
+	
+	@JsonProperty("propertyBifurcations")
+	List<PropertyBifurcation> propertyBifurcations;
 
 	@Builder
 	public Property(String id, String propertyId, String surveyId, List<String> linkedProperties, String tenantId,

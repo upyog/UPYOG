@@ -65,6 +65,8 @@ public class PropertyBifurcationRowMapper implements ResultSetExtractor<List<Pro
 						.id(rs.getInt("id"))
 						.createdTime(rs.getInt("createdtime"))
 						.maxBifurcation(rs.getInt("max_bifurcation"))
+						.status(rs.getBoolean("status"))
+						.childpropertyuuid(rs.getString("childpropertyuuid"))
 						.build();
 
 				
