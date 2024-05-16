@@ -127,7 +127,7 @@ public class DemandService {
 
 	@Autowired
 	private DemandValidatorV1 demandValidatorV1;
-	
+	Boolean ispaymentcompleted=false;
 	/**
 	 * Method to create new demand 
 	 * 
@@ -148,8 +148,11 @@ public class DemandService {
 		RequestInfo requestInfo = demandRequest.getRequestInfo();
 		List<Demand> demands = demandRequest.getDemands();
 		AuditDetails auditDetail = util.getAuditDetail(requestInfo);
+		log.info("requestInfo: {} and AuditDetails: {}", requestInfo, auditDetail);
+		log.info("AuditDetails tostring: {}", auditDetail.toString());
 		
-		List<AmendmentUpdate> amendmentUpdates = consumeAmendmentIfExists(demands, auditDetail);
+		List<AmendmentUpdate> amendmentUpdates = consumeAmendmentIfExists(demands,auditDetail);
+		
 		generateAndSetIdsForNewDemands(demands, auditDetail);
 
 		List<Demand> demandsToBeCreated = new ArrayList<>();
@@ -355,7 +358,15 @@ public class DemandService {
 		if (!CollectionUtils.isEmpty(demands) && !CollectionUtils.isEmpty(payers))
 			demands = demandEnrichmentUtil.enrichPayer(demands, payers);
 
-		return demands;
+		
+		
+		List<Demand> activeDemands=new ArrayList<Demand>();		
+
+		for (Demand d : demands) {
+			if(d.getStatus().toString().equalsIgnoreCase("ACTIVE"))
+				activeDemands.add(d); 
+		}
+		return activeDemands;
 	}
 
 	public void save(DemandRequest demandRequest) {
@@ -377,6 +388,10 @@ public class DemandService {
 	private void apportionAdvanceIfExist(DemandRequest demandRequest, DocumentContext mdmsData,List<Demand> demandToBeCreated,List<Demand> demandToBeUpdated){
 		List<Demand> demands = demandRequest.getDemands();
 		RequestInfo requestInfo = demandRequest.getRequestInfo();
+		int taxamnt =0;
+		int count=0;
+		int finalsvar=0;
+		int finalsadvance=0;
 
 		for(Demand demand : demands) {
 			String businessService = demand.getBusinessService();
@@ -392,7 +407,15 @@ public class DemandService {
 				demandToBeCreated.add(demand);
 				continue;
 			}
+			List<DemandDetail> newdemandDetail = demand.getDemandDetails();
+			 for (DemandDetail demandDetailnew : newdemandDetail) 
+		        {
+		            if ("WS_CHARGE".equals(demandDetailnew.getTaxHeadMasterCode())) 
+		            {
+		            	taxamnt= demandDetailnew.getTaxAmount().intValue();
 
+		            }
+		        }
 			// Fetch the demands containing advance amount
 			List<Demand> demandsToBeApportioned = getDemandsContainingAdvance(demandsFromSearch, mdmsData);
 
@@ -401,14 +424,86 @@ public class DemandService {
 				demandToBeCreated.add(demand);
 				continue;
 			}
+			if (businessService.equalsIgnoreCase("WS") || businessService.equalsIgnoreCase("SW")) {
+			if (finalsadvance==0 && count ==0)
+			{
+				for (Demand d1 : demandsToBeApportioned) 
+				{
+			        List<DemandDetail> d12 = d1.getDemandDetails();
+			        for (DemandDetail d123 : d12) 
+			        {
+			            if ("WS_ADVANCE_CARRYFORWARD".equals(d123.getTaxHeadMasterCode())) 
+			            {
+			            	finalsadvance = d123.getTaxAmount().intValue();
+			            		if(taxamnt+finalsadvance>0)
+			            			{
+			            		ispaymentcompleted=false;
+			            	}
+			            	else {
+			            		ispaymentcompleted=true;
+			            	}
 
+			            }
+			           
+			        }
+			    }
+				count=1;
+			}
+			
+			else if (finalsadvance<=0 && count ==1)
+			{
+				
+			        	if (finalsvar!=1)
+			        	{
+					      // System.out.print("Settling Advcance  ");
+					       finalsadvance = taxamnt+finalsadvance;
+					       
+					       if (finalsadvance==0)
+					       {
+					    	   finalsvar=1;
+					    	   ispaymentcompleted=false;
+					       }	
+					       else 
+					       {  ispaymentcompleted=true;
+					    	   finalsvar=0;
+					       }           	
+					      // System.out.println("txamt "+finalsadvance);
+					            	
+					   }
+		}
+
+			
+			
+			for (Demand demand12 : demandsToBeApportioned) {
+			
+			    List<DemandDetail> demandDetails23 = demand12.getDemandDetails();
+			    for (DemandDetail demandDetail45 : demandDetails23) {
+			        if ("WS_ADVANCE_CARRYFORWARD".equals(demandDetail45.getTaxHeadMasterCode())) {
+			        	BigDecimal tax=new BigDecimal(finalsadvance);
+			            demandDetail45.setTaxAmount(tax);
+			        }
+			    }
+			}
+			}
 			// The current demand is added to get apportioned
 			demandsToBeApportioned.add(demand);
 
 			DemandApportionRequest apportionRequest = DemandApportionRequest.builder().requestInfo(requestInfo).demands(demandsToBeApportioned).tenantId(tenantId).build();
+			try {
+				String apportionRequestStr = mapper.writeValueAsString(apportionRequest);
+				log.info("apportionRequest: {} and ApportionURL: {}", apportionRequestStr, util.getApportionURL());
+			}catch (Exception e) {e.printStackTrace();}
 
 			Object response = serviceRequestRepository.fetchResult(util.getApportionURL(), apportionRequest);
 			ApportionDemandResponse apportionDemandResponse = mapper.convertValue(response, ApportionDemandResponse.class);
+			apportionDemandResponse.getDemands().forEach(demandFromResponse -> {
+				
+				demandFromResponse.setIsPaymentCompleted(ispaymentcompleted);
+			});
+			try {
+				String apportionDemandResponseStr = mapper.writeValueAsString(apportionDemandResponse);
+				log.info("apportionDemandResponse: {} and ApportionURL: {}", apportionDemandResponseStr, util.getApportionURL());
+			}catch (Exception e) {e.printStackTrace();}
 
 			// Only the current demand is to be created rest all are to be updated
 			apportionDemandResponse.getDemands().forEach(demandFromResponse -> {

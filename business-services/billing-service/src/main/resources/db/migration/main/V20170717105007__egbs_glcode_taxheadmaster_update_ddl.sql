@@ -1,6 +1,6 @@
-DROP TABLE public.egbs_taxheadmaster;
+-- -- DROP TABLEpublic.egbs_taxheadmaster;
 
-CREATE TABLE egbs_taxheadmaster
+CREATE TABLE IF NOT EXISTS egbs_taxheadmaster
 (
   id character varying(64) NOT NULL,
   tenantid character varying(128) NOT NULL,
@@ -21,9 +21,9 @@ CREATE TABLE egbs_taxheadmaster
 );
 
 
-DROP TABLE public.egbs_glcodemaster;
+-- -- DROP TABLE IF NOT EXISTS public.egbs_glcodemaster;
 
-CREATE TABLE egbs_glcodemaster
+CREATE TABLE IF NOT EXISTS egbs_glcodemaster
 (
   id character varying(64) NOT NULL,
   tenantid character varying(128) NOT NULL,

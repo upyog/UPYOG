@@ -39,6 +39,7 @@ public class PaymentSearchCriteria {
     private Set<String> consumerCodes;
     
     private Set<String> businessServices;
+    private String businessService;
 
     private String transactionNumber;
 

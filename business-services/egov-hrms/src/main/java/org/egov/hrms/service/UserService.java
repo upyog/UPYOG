@@ -228,6 +228,7 @@ public class UserService {
 			return userDetailResponse;
 		}
 		catch(IllegalArgumentException  e) {
+			e.printStackTrace();
 			throw new CustomException("IllegalArgumentException","ObjectMapper not able to convertValue in userCall");
 		}
 	}

@@ -1,4 +1,4 @@
-CREATE TABLE egcl_remittance
+CREATE TABLE IF NOT EXISTS egcl_remittance
 (
   id character varying(250) NOT NULL,
   referencenumber character varying(50) NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE egcl_remittance
   CONSTRAINT pk_egcl_remittance PRIMARY KEY (id)
  );
  
- CREATE TABLE egcl_remittancedetails
+ CREATE TABLE IF NOT EXISTS egcl_remittancedetails
 (
   id character varying(250) NOT NULL,
   remittance character varying(250) NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE egcl_remittance
   CONSTRAINT pk_egcl_remittancedetails PRIMARY KEY (id)
  );
  
-  CREATE TABLE egcl_remittanceinstrument
+  CREATE TABLE IF NOT EXISTS egcl_remittanceinstrument
 (
   id character varying(250) NOT NULL,
   remittance character varying(250) NOT NULL,

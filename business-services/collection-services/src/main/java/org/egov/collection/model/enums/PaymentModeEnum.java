@@ -13,7 +13,8 @@ public enum PaymentModeEnum {
     ONLINE_NEFT("ONLINE_NEFT"),
     ONLINE_RTGS("ONLINE_RTGS"),
     POSTAL_ORDER("POSTAL_ORDER"),
-    CARD("CARD");
+    CARD("CARD"),
+    QR_CODE("QR_CODE");
 
 
     private String value;

@@ -1,1 +1,1 @@
-ALTER TABLE egbs_billaccountdetail ADD COLUMN cramounttobepaid numeric(12,2);
+ALTER TABLE  egbs_billaccountdetail ADD COLUMN IF NOT EXISTS cramounttobepaid numeric(12,2);

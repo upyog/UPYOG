@@ -1,4 +1,4 @@
-CREATE TABLE egcl_receiptheader_v1
+CREATE TABLE IF NOT EXISTS egcl_receiptheader_v1
 (
     id character varying(36)  NOT NULL,
     payername character varying(256) ,
@@ -53,7 +53,7 @@ CREATE TABLE egcl_receiptheader_v1
 );
 
 
-CREATE TABLE egcl_receiptdetails_v1
+CREATE TABLE IF NOT EXISTS egcl_receiptdetails_v1
 (
     id character varying(36)  NOT NULL,
     chartofaccount character varying ,
@@ -79,7 +79,7 @@ CREATE TABLE egcl_receiptdetails_v1
         ON DELETE CASCADE
 );
 
-CREATE TABLE egcl_receiptheader_v1_history
+CREATE TABLE IF NOT EXISTS egcl_receiptheader_v1_history
 (
     id character varying(36) ,
     payername character varying(256) ,
@@ -133,7 +133,7 @@ CREATE TABLE egcl_receiptheader_v1_history
     demandtodate bigint
 );
 
-CREATE TABLE egcl_receiptdetails_v1_history
+CREATE TABLE IF NOT EXISTS egcl_receiptdetails_v1_history
 (
     id character varying(36) ,
     chartofaccount character varying ,
@@ -155,7 +155,7 @@ CREATE TABLE egcl_receiptdetails_v1_history
     taxheadcode character varying(256) 
 );
 
-CREATE TABLE egcl_instrumentheader_v1
+CREATE TABLE IF NOT EXISTS egcl_instrumentheader_v1
 (
     id character varying(36)  NOT NULL,
     transactionnumber character varying(50)  NOT NULL,
@@ -184,7 +184,7 @@ CREATE TABLE egcl_instrumentheader_v1
     CONSTRAINT pk_egcl_instrumenthead_v1 PRIMARY KEY (id)
 );
 
-CREATE TABLE egcl_instrumentheader_v1_history
+CREATE TABLE IF NOT EXISTS egcl_instrumentheader_v1_history
 (
     id character varying(36) ,
     transactionnumber character varying(50) ,
@@ -213,7 +213,7 @@ CREATE TABLE egcl_instrumentheader_v1_history
     uuid character varying(256)  NOT NULL
 );
 
-CREATE TABLE egcl_receiptinstrument_v1
+CREATE TABLE IF NOT EXISTS egcl_receiptinstrument_v1
 (
     receiptheader character varying(36)  NOT NULL,
     instrumentheader character varying(36)  NOT NULL,

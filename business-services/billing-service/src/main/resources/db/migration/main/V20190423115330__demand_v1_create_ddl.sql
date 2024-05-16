@@ -1,4 +1,4 @@
-CREATE TABLE egbs_demand_v1
+CREATE TABLE IF NOT EXISTS egbs_demand_v1
 (
     id character varying(64) NOT NULL,
     consumercode character varying(250) NOT NULL,
@@ -28,7 +28,7 @@ CREATE INDEX IF NOT EXISTS idx_egbs_demand_v1_taxperiodfrom ON egbs_demand_v1(ta
 CREATE INDEX IF NOT EXISTS idx_egbs_demand_v1_taxperiodto ON egbs_demand_v1(taxperiodto);
 CREATE INDEX IF NOT EXISTS idx_egbs_demand_v1_tenantid ON egbs_demand_v1(tenantid);
 
-CREATE TABLE egbs_demanddetail_v1
+CREATE TABLE IF NOT EXISTS egbs_demanddetail_v1
 (
     id character varying(64) NOT NULL,
     demandid character varying(64) NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE egbs_demanddetail_v1
 CREATE INDEX IF NOT EXISTS idx_egbs_demanddetail_v1_tenantid ON egbs_demanddetail_v1(tenantid);
 CREATE INDEX IF NOT EXISTS idx_egbs_demanddetail_v1_demandid ON egbs_demanddetail_v1(demandid);
 
-CREATE TABLE egbs_demand_v1_audit
+CREATE TABLE IF NOT EXISTS egbs_demand_v1_audit
 (
     id character varying(64) NOT NULL,
     demandid character varying(64) NOT NULL,
@@ -67,7 +67,7 @@ CREATE TABLE egbs_demand_v1_audit
     CONSTRAINT pk_egbs_demand_v1_audit PRIMARY KEY (id, tenantid)
 );
 
-CREATE TABLE egbs_demanddetail_v1_audit
+CREATE TABLE IF NOT EXISTS egbs_demanddetail_v1_audit
 (
     id character varying(64) NOT NULL,
     demandid character varying(64) NOT NULL,

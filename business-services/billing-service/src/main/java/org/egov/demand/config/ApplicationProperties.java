@@ -192,7 +192,7 @@ public class ApplicationProperties {
     
     @Value("${amendment.id.format.name}")
     private String amendmentIdFormatName;
-
+	
 	@Value("${statelevel.rolecode.excluded.list}")
 	private List<String> statelevelRolecodeExclusionList;
     

@@ -99,7 +99,7 @@ public class PaymentValidator {
             validateIPaymentForBillPresent(payments,errorMap);
         }
 
-        validateIFSCCode(paymentRequest);
+        //validateIFSCCode(paymentRequest);
         // Loop through all bill details [one for each service], and perform various
         // validations
         for (PaymentDetail paymentDetail : paymentDetails) {
@@ -109,6 +109,40 @@ public class PaymentValidator {
             }
 
             validatePaymentDetailAgainstBill(payment.getPaymentMode().toString(),paymentDetail,errorMap);
+        }
+
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
+
+        return paymentRequest.getPayment();
+    }
+
+    public Payment validatePaymentForCreateWSMigration(PaymentRequest paymentRequest) {
+        Map<String, String> errorMap = new HashMap<>();
+        Payment payment = paymentRequest.getPayment();
+        List<PaymentDetail> paymentDetails = paymentRequest.getPayment().getPaymentDetails();
+        validateUserInfo(paymentRequest.getRequestInfo(), errorMap);
+        validateInstrument(paymentRequest.getPayment(),errorMap);
+        Set<String> billIds = payment.getPaymentDetails().stream().map(PaymentDetail :: getBillId).collect(Collectors.toSet());
+        
+        PaymentSearchCriteria criteria = PaymentSearchCriteria.builder().tenantId(payment.getTenantId())
+                .offset(0).limit(applicationProperties.getReceiptsSearchDefaultLimit()).billIds(billIds).build();
+
+        List<Payment> payments = paymentRepository.fetchPayments(criteria);
+        if (!payments.isEmpty()) {
+            validateIPaymentForBillPresent(payments,errorMap);
+        }
+
+        // Loop through all bill details [one for each service], and perform various
+        // validations
+        for (PaymentDetail paymentDetail : paymentDetails) {
+
+            if (StringUtils.isEmpty(paymentDetail.getBusinessService())) {
+                errorMap.put("INVALID_BUSINESS_DETAILS", "Business details code cannot be empty");
+            }
+
+            //Removing bill validation while doing the payment
+//            validatePaymentDetailAgainstBill(payment.getPaymentMode().toString(),paymentDetail,errorMap);
         }
 
         if (!errorMap.isEmpty())
@@ -491,7 +525,7 @@ public class PaymentValidator {
 	 * @param errorMap
 	 */
 
-	private void validateIFSCCode(PaymentRequest paymentRequest) {
+    private void validateIFSCCode(PaymentRequest paymentRequest) {
 		// TODO Auto-generated method stub
 		JsonNode razorPayIfscSearchResponse = null;
 		if (paymentRequest.getPayment().getIfscCode() != null) {
