@@ -29,7 +29,7 @@ import {
   initTLComponents,
 } from "@upyog/digit-ui-module-tl";
 import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-receipts";
-import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
+import { initOBPSComponents } from "@egovernments/digit-ui-module-obps";
 import { initNOCComponents } from "@upyog/digit-ui-module-noc";
 import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
 import { initWSComponents } from "@egovernments/digit-ui-module-ws";

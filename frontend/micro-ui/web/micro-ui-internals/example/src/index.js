@@ -16,7 +16,7 @@ import { initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
 import { initTLComponents } from "@upyog/digit-ui-module-tl";
 import { PaymentModule, PaymentLinks, paymentConfigs } from "@egovernments/digit-ui-module-common";
 import { HRMSModule } from "@upyog/digit-ui-module-hrms";
-import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
+import { initOBPSComponents } from "@egovernments/digit-ui-module-obps";
 import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
 import { initNOCComponents } from "@upyog/digit-ui-module-noc";
 import { initWSComponents } from "@egovernments/digit-ui-module-ws";
