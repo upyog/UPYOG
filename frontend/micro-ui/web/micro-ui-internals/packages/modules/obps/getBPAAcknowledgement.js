@@ -129,16 +129,15 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                     }   
                 ]
              },
-             {
-                title: t(`BPA_NOC_DETAILS_SUMMARY`) , 
-                values: [
-                    {
-                      title: t(`BPA_NOC_NUMBER`),
-                      value: application?.additionalDetails?.nocNumber || "NA", 
-                    }
-                    
-                ],    
-             },
+            //  {
+            //     title: t(`BPA_NOC_DETAILS_SUMMARY`) , 
+            //     values: [
+            //         {
+            //           title: t(`BPA_NOC_NUMBER`),
+            //           value: application?.additionalDetails?.nocNumber || "NA", 
+            //         }                    
+            //     ],    
+            //  },
              {
                 title: t("BPA_APPLICANT_DETAILS_HEADER"),
                 values:  [
