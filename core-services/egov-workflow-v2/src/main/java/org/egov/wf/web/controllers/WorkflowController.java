@@ -1,6 +1,7 @@
 package org.egov.wf.web.controllers;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,9 +26,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
 
 @RestController
 @RequestMapping("/egov-wf")
+@Slf4j
 public class WorkflowController {
 
 
@@ -54,7 +58,9 @@ public class WorkflowController {
         @RequestMapping(value="/process/_transition", method = RequestMethod.POST)
         public ResponseEntity<ProcessInstanceResponse> processTransition(@Valid @RequestBody ProcessInstanceRequest processInstanceRequest) {
                 List<ProcessInstance> processInstances =  workflowService.transition(processInstanceRequest);
-                ProcessInstanceResponse response = ProcessInstanceResponse.builder().processInstances(processInstances)
+                List<ProcessInstance> processInstancesForBPA = new ArrayList<ProcessInstance>();
+
+                ProcessInstanceResponse response = ProcessInstanceResponse.builder().processInstances(processInstances).processInstancesBPA(processInstancesForBPA)
                         .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(processInstanceRequest.getRequestInfo(), true))
                         .build();
                 return new ResponseEntity<>(response,HttpStatus.OK);
@@ -67,11 +73,26 @@ public class WorkflowController {
         public ResponseEntity<ProcessInstanceResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                               @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
         List<ProcessInstance> processInstances = workflowService.search(requestInfoWrapper.getRequestInfo(),criteria);
+        List<ProcessInstance> processInstancesForBPA = new ArrayList<ProcessInstance>();
+
+        log.info(criteria.toString());
+        if((criteria.getBusinessService()!=null && criteria.getBusinessService().contains("BPA")) || (criteria.getModuleName()!=null && criteria.getModuleName().equalsIgnoreCase("bpa-services")))
+            processInstancesForBPA = workflowService.searchForBPA(requestInfoWrapper.getRequestInfo(),criteria);
+
         Integer count = workflowService.getUserBasedProcessInstancesCount(requestInfoWrapper.getRequestInfo(),criteria);
-            ProcessInstanceResponse response  = ProcessInstanceResponse.builder().processInstances(processInstances).totalCount(count).build();
+            ProcessInstanceResponse response  = ProcessInstanceResponse.builder().processInstances(processInstances).processInstancesBPA(processInstancesForBPA).totalCount(count).build();
                 return new ResponseEntity<>(response,HttpStatus.OK);
         }
 
+//        
+//        @RequestMapping(value="/process/_searchBPA", method = RequestMethod.POST)
+//        public ResponseEntity<ProcessInstanceResponse> searchBPA(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+//                                                              @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
+//        List<ProcessInstance> processInstances = workflowService.searchForBPA(requestInfoWrapper.getRequestInfo(),criteria);
+//        Integer count = workflowService.getUserBasedProcessInstancesCount(requestInfoWrapper.getRequestInfo(),criteria);
+//            ProcessInstanceResponse response  = ProcessInstanceResponse.builder().processInstances(processInstances).totalCount(count).build();
+//                return new ResponseEntity<>(response,HttpStatus.OK);
+//        }
     /**
      * Returns the count of records matching the given criteria
      * @param requestInfoWrapper
@@ -89,9 +110,12 @@ public class WorkflowController {
     @RequestMapping(value="/escalate/_search", method = RequestMethod.POST)
     public ResponseEntity<ProcessInstanceResponse> searchEscalatedApplications(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                           @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
-        List<ProcessInstance> processInstances = workflowService.escalatedApplicationsSearch(requestInfoWrapper.getRequestInfo(),criteria);
-        Integer count = workflowService.countEscalatedApplications(requestInfoWrapper.getRequestInfo(),criteria);
-        ProcessInstanceResponse response  = ProcessInstanceResponse.builder().processInstances(processInstances).totalCount(count)
+        
+    	List<ProcessInstance> processInstances = workflowService.escalatedApplicationsSearch(requestInfoWrapper.getRequestInfo(),criteria);
+        List<ProcessInstance> processInstancesForBPA = new ArrayList<ProcessInstance>();
+
+    	Integer count = workflowService.countEscalatedApplications(requestInfoWrapper.getRequestInfo(),criteria);
+        ProcessInstanceResponse response  = ProcessInstanceResponse.builder().processInstances(processInstances).processInstancesBPA(processInstancesForBPA).totalCount(count)
                 .build();
         return new ResponseEntity<>(response,HttpStatus.OK);
     }

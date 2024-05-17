@@ -49,6 +49,11 @@ public class WorkflowQueryBuilder {
 
     private static final String STATUS_COUNT_WRAPPER = "select  count(DISTINCT wf_id),cq.applicationStatus,cq.businessservice,cq.PI_STATUS as statusId from ({INTERNAL_QUERY}) as cq GROUP BY cq.applicationStatus,cq.businessservice,cq.PI_STATUS";
 
+    
+    private static final String BASE_QUERY_BPA = "select id from (" +
+            "  SELECT *,RANK () OVER (PARTITION BY businessId ORDER BY createdtime  DESC) rank_number " +
+            " FROM eg_wf_processinstance_v2 WHERE businessservice = ? AND tenantid= ? AND action in ('PAY','POST_PAYMENT_APPLY')) wf  WHERE rank_number = 1 ";
+
 
     private final String paginationWrapper = "SELECT * FROM "
             + "(SELECT *, DENSE_RANK() OVER (ORDER BY wf_createdTime DESC,wf_id) offset_ FROM " + "({})"
@@ -200,6 +205,22 @@ public class WorkflowQueryBuilder {
         addPagination(with_query_builder,preparedStmtList,criteria);
 
         return with_query_builder.toString();
+    }
+    
+    
+    public String getProcessInstanceIdsForBPA(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
+    	StringBuilder builder = new StringBuilder(BASE_QUERY_BPA);
+        
+        preparedStmtList.add("BPA");
+        preparedStmtList.add(criteria.getTenantId());
+
+        if(criteria.getBusinessIds()!=null) {
+		builder.append(" AND wf.businessid IN (").append(createQuery(criteria.getBusinessIds())).append(" )");
+		addToPreparedStatement(preparedStmtList, criteria.getBusinessIds());}
+
+        addPagination(builder,preparedStmtList,criteria);
+
+        return builder.toString();
     }
 
 

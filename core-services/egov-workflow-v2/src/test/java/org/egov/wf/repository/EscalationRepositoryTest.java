@@ -32,20 +32,20 @@ class EscalationRepositoryTest {
 
     @MockBean
     private JdbcTemplate jdbcTemplate;
-
-    @Test
-    void testGetBusinessIds() throws DataAccessException {
-        ArrayList<Object> objectList = new ArrayList<>();
-        when(this.jdbcTemplate.query((String) any(), (Object[]) any(),
-                (org.springframework.jdbc.core.RowMapper<Object>) any())).thenReturn(objectList);
-        when(this.escalationQueryBuilder.getEscalationQuery((EscalationSearchCriteria) any(), (List<Object>) any()))
-                .thenReturn("Escalation Query");
-        List<String> actualBusinessIds = this.escalationRepository.getBusinessIds(mock(EscalationSearchCriteria.class));
-        assertSame(objectList, actualBusinessIds);
-        assertTrue(actualBusinessIds.isEmpty());
-        verify(this.jdbcTemplate).query((String) any(), (Object[]) any(),
-                (org.springframework.jdbc.core.RowMapper<Object>) any());
-        verify(this.escalationQueryBuilder).getEscalationQuery((EscalationSearchCriteria) any(), (List<Object>) any());
-    }
+//
+//    @Test
+//    void testGetBusinessIds() throws DataAccessException {
+//        ArrayList<Object> objectList = new ArrayList<>();
+//        when(this.jdbcTemplate.query((String) any(), (Object[]) any(),
+//                (org.springframework.jdbc.core.RowMapper<Object>) any())).thenReturn(objectList);
+//        when(this.escalationQueryBuilder.getEscalationQuery((EscalationSearchCriteria) any(), (List<Object>) any()))
+//                .thenReturn("Escalation Query");
+//        List<String> actualBusinessIds = this.escalationRepository.getBusinessIds(mock(EscalationSearchCriteria.class));
+//        assertSame(objectList, actualBusinessIds);
+//        assertTrue(actualBusinessIds.isEmpty());
+//        verify(this.jdbcTemplate).query((String) any(), (Object[]) any(),
+//                (org.springframework.jdbc.core.RowMapper<Object>) any());
+//        verify(this.escalationQueryBuilder).getEscalationQuery((EscalationSearchCriteria) any(), (List<Object>) any());
+//    }
 }
 

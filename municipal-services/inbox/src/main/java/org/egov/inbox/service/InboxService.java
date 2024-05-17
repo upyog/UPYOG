@@ -611,7 +611,11 @@ public class InboxService {
                         processInstanceRes.setProcessInstances(processInstance.getProcessInstances());
                     else
                         processInstanceRes.getProcessInstances().addAll(processInstance.getProcessInstances());
-                }
+
+                    if(processInstanceRes.getProcessInstancesBPA() == null)
+                        processInstanceRes.setProcessInstancesBPA(processInstance.getProcessInstancesBPA());
+                    else
+                        processInstanceRes.getProcessInstancesBPA().addAll(processInstance.getProcessInstancesBPA());}
                 processInstanceResponse = processInstanceRes;
             } else {
                 processInstanceResponse = workflowService.getProcessInstance(processCriteria, requestInfo);
@@ -625,6 +629,14 @@ public class InboxService {
                     processInstanceMap.put(processInstance.getBusinessId(), processInstance);
                 }
             }
+            
+            Map<String, ProcessInstance> processInstanceMapForBPA = new HashMap<>();
+            if(!CollectionUtils.isEmpty(processInstanceResponse.getProcessInstancesBPA())) {
+                for (ProcessInstance processInstance : processInstanceResponse.getProcessInstancesBPA()) {
+                	processInstanceMapForBPA.put(processInstance.getBusinessId(), processInstance);
+                }
+            }
+
 
             //Adding searched Items in Inbox result object for WS and SW
             if (moduleName.equals(WS) || moduleName.equals(SW)) {
@@ -649,12 +661,14 @@ public class InboxService {
                             	//For non- Bill Amendment Inbox search
                                 Inbox inbox = new Inbox();
                                 inbox.setProcessInstance(processInstanceMap.get(businessKey));
+                                inbox.setProcessInstanceForBPA(processInstanceMapForBPA.containsKey(businessKey)?processInstanceMapForBPA.get(businessKey):null);
                                 inbox.setBusinessObject(toMap((JSONObject) businessMap.get(businessKey)));
                                 inboxes.add(inbox);
                             } else {
                                 //When Bill Amendment objects are searched
                                 Inbox inbox = new Inbox();
                                 inbox.setProcessInstance(processInstanceMap.get(businessKey));
+                                inbox.setProcessInstanceForBPA(null);
                                 inbox.setBusinessObject(toMap((JSONObject) businessMap.get(businessKey)));
                                 inbox.setServiceObject(toMap(
                                         (JSONObject) serviceSearchMap.get(inbox.getBusinessObject().get("consumerCode"))));
@@ -670,6 +684,8 @@ public class InboxService {
 				businessKeys.forEach(businessKey -> {
 					Inbox inbox = new Inbox();
 					inbox.setProcessInstance(processInstanceMap.get(businessKey));
+                    inbox.setProcessInstanceForBPA(processInstanceMapForBPA.containsKey(businessKey)?processInstanceMapForBPA.get(businessKey):null);
+
 					inbox.setBusinessObject(toMap((JSONObject) businessMap.get(businessKey)));
 					inboxes.add(inbox);
 				});
@@ -679,6 +695,7 @@ public class InboxService {
 					Inbox inbox = new Inbox();
 
 					inbox.setProcessInstance(processInstanceMap.get(businessKey));
+					inbox.setProcessInstanceForBPA(null);
 					inbox.setBusinessObject(toMap((JSONObject) businessMap.get(businessKey)));
 					inbox.setServiceObject(toMap(
 							(JSONObject) serviceSearchMap.get(inbox.getBusinessObject().get("consumerCode"))));
@@ -717,6 +734,7 @@ public class InboxService {
                 processInstanceMap.keySet().forEach(pinstance -> {
                     Inbox inbox = new Inbox();
                     inbox.setProcessInstance(processInstanceMap.get(pinstance));
+                    inbox.setProcessInstanceForBPA(processInstanceMap.get(pinstance));
                     inbox.setBusinessObject(toMap((JSONObject) businessMap.get(pinstance)));
                     inboxes.add(inbox);
                 });

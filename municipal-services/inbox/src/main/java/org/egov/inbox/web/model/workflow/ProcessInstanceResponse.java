@@ -36,6 +36,10 @@ public class ProcessInstanceResponse {
         @JsonProperty("ProcessInstances")
         @Valid
         private List<ProcessInstance> processInstances;
+        
+        @JsonProperty("ProcessInstancesBPA")
+        @Valid
+        private List<ProcessInstance> processInstancesBPA = null;
 
         @JsonProperty("totalCount")
         private Integer totalCount;

@@ -56,6 +56,19 @@ public class WorKflowRepository {
         return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
     }
 
+    public List<ProcessInstance> getProcessInstancesForBPA(ProcessInstanceSearchCriteria criteria){
+        List<Object> preparedStmtList = new ArrayList<>();
+
+        List<String> ids = getProcessInstanceIdsForBPA(criteria);
+
+        if(CollectionUtils.isEmpty(ids))
+            return new LinkedList<>();
+
+        String query = queryBuilder.getProcessInstanceSearchQueryById(ids, preparedStmtList);
+        log.debug("query for status search: "+query+" params: "+preparedStmtList);
+
+        return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+    }
 
 
     /**
@@ -139,6 +152,16 @@ public class WorKflowRepository {
         log.info(preparedStmtList.toString());
         return jdbcTemplate.query(query, preparedStmtList.toArray(), new SingleColumnRowMapper<>(String.class));
     }
+    
+    
+    private List<String> getProcessInstanceIdsForBPA(ProcessInstanceSearchCriteria criteria) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getProcessInstanceIdsForBPA(criteria,preparedStmtList);
+        log.info(query);
+        log.info(preparedStmtList.toString());
+        return jdbcTemplate.query(query, preparedStmtList.toArray(), new SingleColumnRowMapper<>(String.class));
+    }
+
 
 
     public List<String> fetchEscalatedApplicationsBusinessIdsFromDb(RequestInfo requestInfo,ProcessInstanceSearchCriteria criteria) {
