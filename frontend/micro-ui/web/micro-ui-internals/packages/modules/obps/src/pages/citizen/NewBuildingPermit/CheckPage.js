@@ -1,6 +1,6 @@
 import {
     Card, CardHeader, CardSubHeader, CardText,TextInput,CardLabel,CheckBox, LabelFieldPair, UploadFile,
-    CitizenInfoLabel, Header, LinkButton, Row, StatusTable, SubmitBar, Table, CardSectionHeader, EditIcon, PDFSvg, Loader
+    CitizenInfoLabel, Header, LinkButton, Row, StatusTable, SubmitBar, Table, CardSectionHeader, EditIcon, PDFSvg, Loader,TextArea
   } from "@upyog/digit-ui-react-components";
   import React,{ useEffect, useMemo, useState }  from "react";
   import { useTranslation } from "react-i18next";
@@ -27,6 +27,14 @@ import {
     
     const tenantId = user?.info?.permanentCity || value?.tenantId ||Digit.ULBService.getCurrentTenantId() ;
     const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(state, "BPA", ["GaushalaFees","MalbaCharges","LabourCess"]);
+    const [otherChargesDisc, setOtherChargesDisc] = useState()
+    const [uploadedFile, setUploadedFile] = useState();
+    const [uploadedFileLess, setUploadedFileLess] = useState([]);
+    const [file, setFile] = useState();
+    const [uploadMessage, setUploadMessage] = useState("");
+    const [errorFile, setError] = useState(null);
+    const [docLessAdjustment, setDocuments] = useState({});
+    let acceptFormat = ".pdf"
     let BusinessService;
     if(value.businessService === "BPA_LOW")
     BusinessService="BPA.LOW_RISK_PERMIT_FEE";
@@ -151,11 +159,40 @@ import {
 
     const isValidMobileNumber = mobileNumber.length === 10 && /^[0-9]+$/.test(mobileNumber);
 
-    
-
+    useEffect(() => {
+      (async () => {
+        setError(null);
+        if (file&& file?.type) {
+          if(!(acceptFormat?.split(",")?.includes(`.${file?.type?.split("/")?.pop()}`)))
+          {
+            setError(t("PT_UPLOAD_FORMAT_NOT_SUPPORTED"));
+          }
+          else if (file.size >= 2000000) {
+            setError(t("PT_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
+          } else {
+            try {
+              const response = await Digit.UploadServices.Filestorage("property-upload", file, Digit.ULBService.getStateId());
+              if (response?.data?.files?.length > 0) {
+                setUploadedFileLess([...uploadedFileLess,{fileStoreId:response?.data?.files[0]?.fileStoreId, time:new Date()}]);
+              } else {
+                setError(t("PT_FILE_UPLOAD_ERROR"));
+              }
+            } catch (err) {
+            }
+          }
+        }
+      })();        
+    }, [file]);
+    useEffect(()=>{
+      sessionStorage.setItem("uploadedFileLess",JSON.stringify(uploadedFileLess));
+  },[uploadedFileLess])
 
 
     useEffect(()=>{
+      if (value?.additionalDetails?.lessAdjustmentFeeFiles?.length) {
+        const fileStoresIds = value?.additionalDetails?.lessAdjustmentFeeFiles.map((document,index) =>(index===value?.additionalDetails?.lessAdjustmentFeeFiles?.length-1 ? value?.additionalDetails?.lessAdjustmentFeeFiles[value?.additionalDetails?.lessAdjustmentFeeFiles?.length-1]?.fileStoreId : null));
+        Digit.UploadServices.Filefetch(fileStoresIds, state).then((res) => setDocuments(res?.data));
+      }
       if(isEditApplication){
         setDevelopment(value?.additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES);
         sessionStorage.setItem("development",value?.additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES);
@@ -163,6 +200,9 @@ import {
         sessionStorage.setItem("otherCharges",value?.additionalDetails?.selfCertificationCharges?.BPA_OTHER_CHARGES);
         setLessAdjusment(value?.additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT);
         sessionStorage.setItem("lessAdjusment",value?.additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT);
+        setOtherChargesDisc(value?.additionalDetails?.otherFeesDiscription);
+        sessionStorage.setItem("otherChargesDisc",value?.additionalDetails?.otherFeesDiscription);
+       setUploadedFileLess(value?.additionalDetails?.lessAdjustmentFeeFiles);
       }
 let plotArea = parseInt(sessionStorage.getItem("plotArea")) || datafromAPI?.planDetail?.planInformation?.plotArea || value?.additionalDetails?.area;
 const LabourCess = plotArea > 909 ?mdmsData?.BPA?.LabourCess[1].rate * plotArea : 0
@@ -349,6 +389,15 @@ setWaterCharges(Malbafees/2)
       //alert("Please enter numbers")
     }      
     }
+    function setOtherChargesDis(value) {
+      setOtherChargesDisc(value);
+      sessionStorage.setItem("otherChargesDisc",value)  ;
+}
+
+function selectfile(e) {
+      setUploadedFile(e.target.files[0]);
+      setFile(e.target.files[0]);
+   }
 
     return (
     <React.Fragment>
@@ -520,15 +569,15 @@ setWaterCharges(Malbafees/2)
         {<DocumentsPreview documents={getOrderDocuments(applicationDocs)} svgStyles = {{}} isSendBackFlow = {false} isHrLine = {true} titleStyles ={{fontSize: "18px", lineHeight: "24px", "fontWeight": 700, marginBottom: "10px"}}/>}
         </StatusTable>
       </Card>
-      <Card style={{paddingRight:"16px"}}>
-      <StatusTable>
+      {/*<Card style={{paddingRight:"16px"}}>
+       <StatusTable>
       <CardHeader>{t("BPA_NOC_DETAILS_SUMMARY")}</CardHeader>
           <LinkButton
             label={<EditIcon style={{ marginTop: "-10px", float: "right", position: "relative", bottom: "32px" }} />}
             style={{ width: "100px", display: "inline" }}
             onClick={() => routeTo(`${routeLink}/noc-number`)}
           />
-       <Row className="border-none" label={t(`BPA_NOC_NUMBER`)} text={value?.additionalDetails?.nocNumber} />   
+       <Row className="border-none" label={t(`BPA_NOC_NUMBER`)} text={value?.additionalDetails?.nocNumber} />    */}
       {/* {nocDocuments && nocDocuments?.NocDetails.map((noc, index) => (
         <div key={`noc-${index}`} style={nocDocuments?.NocDetails?.length > 1 ?{ marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "960px", minWidth: "280px" } : {}}>
         <CardSectionHeader style={{marginBottom: "24px"}}>{`${t(`BPA_${noc?.nocType}_HEADER`)}`}</CardSectionHeader>
@@ -543,8 +592,8 @@ setWaterCharges(Malbafees/2)
         </StatusTable>
       </div>
       ))} */}
-      </StatusTable>
-      </Card>
+      {/* </StatusTable>
+      </Card> */}
       <Card style={{paddingRight:"16px"}}>
       <CardSubHeader>{t("BPA_SUMMARY_FEE_EST")}</CardSubHeader> 
       <StatusTable>
@@ -591,6 +640,16 @@ setWaterCharges(Malbafees/2)
               //disable={editScreen}
               {...{ required: true, pattern: /^[0-9]*$/ }}
             />
+            <CardLabel>{t("BPA_COMMON_OTHER_AMT_DISCRIPTION")}</CardLabel>
+            <TextArea
+              t={t}
+              type={"text"}
+              name="otherChargesDiscription"
+              defaultValue={value?.additionalDetails?.otherFeesDiscription }
+              value={otherChargesDisc}
+              onChange={(e) => {setOtherChargesDis(e.target.value)}}
+              {...{ required: true }}
+            />
             <CardLabel>{t("BPA_COMMON_LESS_AMT")}</CardLabel>
             <TextInput
               t={t}
@@ -605,6 +664,29 @@ setWaterCharges(Malbafees/2)
               //disable={editScreen}
               {...{ required: true, pattern: "^[0-9]*$" }}
             />
+            <CardLabel>{t("BPA_COMMON_LESS_AMT_FILE")}</CardLabel>
+            <UploadFile
+                id={"noc-doc"}
+                style={{marginBottom:"200px"}}
+                onUpload={selectfile}
+                onDelete={() => {
+                    setUploadedFile(null);
+                    setFile("");
+                }}
+                message={uploadedFile ? `1 ${t(`FILEUPLOADED`)}` : t(`ES_NO_FILE_SELECTED_LABEL`)}
+                error={errorFile}
+                uploadMessage={uploadMessage}
+            />
+            {docLessAdjustment?.fileStoreIds?.length && 
+            <CardLabel style={{marginTop:"15px"}}>{t("BPA_COMMON_LESS_AMT_PREVIOUS_FILE")}</CardLabel>            
+            }
+            {docLessAdjustment?.fileStoreIds?.length &&             
+              <a   target="_blank" href={docLessAdjustment?.fileStoreIds[0]?.url}>
+              <PDFSvg />
+            </a>
+            }            
+            <Row className="border-none"></Row>
+       <Row  className="border-none" label={t(`BPA_P2_TOTAL_FEE`)} text={`₹ ${(parseInt(development)+parseInt(otherCharges)+parseInt(malbafees)+parseInt(labourCess)+parseInt(waterCharges)+parseInt(gaushalaFees))-parseInt(lessAdjusment)}`} />
        
        </StatusTable>
        <br></br>
@@ -672,7 +754,7 @@ setWaterCharges(Malbafees/2)
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
       {/* <CardHeader>{t("BPA_COMMON_TOTAL_AMT")}</CardHeader> 
       <CardHeader>₹ {paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}</CardHeader>  */}
-      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmitCheck} disabled={ (!development||!otherCharges||!lessAdjusment || !agree || !isOTPVerified)} id/>
+      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmitCheck} disabled={ (!development||!otherCharges||!lessAdjusment || !agree || !isOTPVerified || !otherChargesDisc)} id/>
       </Card>
     </React.Fragment>
     );

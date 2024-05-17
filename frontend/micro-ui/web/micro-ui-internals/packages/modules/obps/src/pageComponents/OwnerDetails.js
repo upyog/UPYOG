@@ -257,7 +257,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
                 if(found){
                     setCanmovenext(false);
-                    setownerRoleCheck(found);
+                    //setownerRoleCheck(found);
                     setShowToast({ key: "true", error: true, message: `BPA_OWNER_VALIDATION_${found?.code}` });
                     return;
                 }
@@ -342,7 +342,8 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.additionalDetails.height  = (formData?.data.edcrDetails.planDetail.blocks[0].building.buildingHeight).toString() || "NA";
                 payload.additionalDetails.usage  = formData?.data.occupancyType  || "NA";
                 payload.additionalDetails.builtUpArea =(formData?.data.edcrDetails.planDetail.blocks[0].building.totalBuitUpArea).toString();
-                payload.additionalDetails.nocNumber=(formData?.nocnumber?.nocNumber).toString();
+                //payload.additionalDetails.nocNumber=(formData?.nocnumber?.nocNumber).toString();
+                payload.additionalDetails.ownerName=conversionOwners.map(obj=>obj.name).join(',');
                 
                 if (formData?.data?.registrationDetails) payload.additionalDetails.registrationDetails = formData?.data?.registrationDetails;
                 if (formData?.data?.applicationType) payload.additionalDetails.applicationType = formData?.data?.applicationType;
@@ -380,7 +381,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 if (formData?.owners?.schemeName) payload.additionalDetails.schemeName = formData?.owners?.schemeName;
                 if (formData?.owners?.transferredscheme) payload.additionalDetails.transferredscheme = formData?.owners?.transferredscheme;
                 if (formData?.owners?.Ulblisttype?.code) payload.additionalDetails.Ulblisttype = formData?.owners?.Ulblisttype?.code;
-
+                if (formData?.owners?.uploadedFile) payload.additionalDetails.uploadedFileNoc = formData?.owners?.uploadedFile;
                 
                 //For LandInfo
                 payload.landInfo = {};
@@ -507,7 +508,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
     return (
         <div>
-        <Timeline currentStep={2} />
+        <Timeline currentStep={3} />
         <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={canmovenext || getCanMoveNextMultiple() || !ownershipCategory || isDisable} forcedError={t(error)}>   
             {!isLoading ?
                 <div style={{marginBottom: "10px"}}>

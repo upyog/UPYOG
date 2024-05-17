@@ -60,7 +60,7 @@ const ApplicationDetails = (props) => {
 
   function onActionSelect(action) {
     if (action) {
-      if(action?.action=="EDIT" && window.location.href.includes("bpa")){
+      if(action?.action=="EDIT PAY 2" && window.location.href.includes("bpa")){
         window.location.assign(window.location.href.split("bpa")[0]+"editApplication/bpa"+window.location.href.split("bpa")[1]);
       }
       if(action?.isToast){
@@ -81,7 +81,7 @@ const ApplicationDetails = (props) => {
         else {
           window.location.assign(`${window.location.origin}/digit-ui/employee/payment/collect/${action?.redirectionUrll?.pathname}`);
         }
-      } else if (!action?.redirectionUrl && action?.action!="EDIT") {
+      } else if (!action?.redirectionUrl && action?.action!="EDIT PAY 2") {
         setShowModal(true);
       } else {
         history.push({
@@ -217,6 +217,8 @@ const ApplicationDetails = (props) => {
     bpaDetails.BPA.additionalDetails.selfCertificationCharges.BPA_DEVELOPMENT_CHARGES=sessionStorage.getItem("development");
     bpaDetails.BPA.additionalDetails.selfCertificationCharges.BPA_OTHER_CHARGES=sessionStorage.getItem("otherCharges");
     bpaDetails.BPA.additionalDetails.selfCertificationCharges.BPA_LESS_ADJUSMENT_PLOT=sessionStorage.getItem("lessAdjusment");
+    bpaDetails.BPA.additionalDetails.otherFeesDiscription=sessionStorage.getItem("otherChargesDisc");
+    bpaDetails.BPA.additionalDetails.lessAdjustmentFeeFiles=JSON.parse(sessionStorage.getItem("uploadedFileLess"));
     if (!bpaDetails.BPA.additionalDetails.selfCertificationCharges.BPA_DEVELOPMENT_CHARGES || !bpaDetails.BPA.additionalDetails.selfCertificationCharges.BPA_OTHER_CHARGES || !bpaDetails.BPA.additionalDetails.selfCertificationCharges.BPA_LESS_ADJUSMENT_PLOT ){
       alert("Please fill P2 Manual Fees");}
     else if(parseInt(sessionStorage.getItem("lessAdjusment"))>(parseInt(sessionStorage.getItem("development"))+parseInt(sessionStorage.getItem("otherCharges"))+parseInt(bpaDetails?.BPA?.additionalDetails?.selfCertificationCharges?.BPA_MALBA_CHARGES)+parseInt(bpaDetails?.BPA?.additionalDetails?.selfCertificationCharges?.BPA_LABOUR_CESS)+parseInt(bpaDetails?.BPA?.additionalDetails?.selfCertificationCharges?.BPA_WATER_CHARGES)+parseInt(bpaDetails?.BPA?.additionalDetails?.selfCertificationCharges?.BPA_GAUSHALA_CHARGES_CESS))){

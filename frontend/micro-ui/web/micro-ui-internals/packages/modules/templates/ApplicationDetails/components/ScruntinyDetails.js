@@ -1,4 +1,4 @@
-import { StatusTable, Row, PDFSvg, CardLabel, CardSubHeader,TextInput  } from "@upyog/digit-ui-react-components";
+import { StatusTable, Row, PDFSvg, CardLabel, CardSubHeader,TextInput,TextArea,UploadFile } from "@upyog/digit-ui-react-components";
 import React, { Fragment,useEffect,useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -7,6 +7,15 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails,a
   const [development, setDevelopment] = useState()
   const [otherCharges, setOtherCharges] = useState()
   const [lessAdjusment, setLessAdjusment] = useState()
+  const state = Digit.ULBService.getStateId();
+  const [otherChargesDisc, setOtherChargesDisc] = useState()
+  const [uploadedFile, setUploadedFile] = useState();
+  const [uploadedFileLess, setUploadedFileLess] = useState([]);
+  const [file, setFile] = useState();
+  const [uploadMessage, setUploadMessage] = useState("");
+  const [errorFile, setError] = useState(null);
+  const [docLessAdjustment, setDocuments] = useState({});
+  let acceptFormat = ".pdf"
   const styles = {
     buttonStyle: { display: "flex", justifyContent: "flex-start", color: "#a82227" },
     headerStyle: {
@@ -18,13 +27,51 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails,a
     },
   };
   const [showSanctionFee, setShowSanctionFee] = useState(false);
-  useEffect(()=>{    
+
+  useEffect(() => {
+    (async () => {
+      setError(null);
+      if (file&& file?.type) {
+        if(!(acceptFormat?.split(",")?.includes(`.${file?.type?.split("/")?.pop()}`)))
+        {
+          setError(t("PT_UPLOAD_FORMAT_NOT_SUPPORTED"));
+        }
+        else if (file.size >= 2000000) {
+          setError(t("PT_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
+        } else {
+          try {
+            const response = await Digit.UploadServices.Filestorage("property-upload", file, Digit.ULBService.getStateId());
+            if (response?.data?.files?.length > 0) {
+              setUploadedFileLess([...uploadedFileLess,{fileStoreId:response?.data?.files[0]?.fileStoreId, time:new Date()}]);
+            } else {
+              setError(t("PT_FILE_UPLOAD_ERROR"));
+            }
+          } catch (err) {
+          }
+        }
+      }
+    })();        
+  }, [file]);
+
+
+  useEffect(()=>{
+    sessionStorage.setItem("uploadedFileLess",JSON.stringify(uploadedFileLess));
+},[uploadedFileLess])
+
+  useEffect(()=>{   
+    if (additionalDetails?.lessAdjustmentFeeFiles?.length) {
+      const fileStoresIds = additionalDetails?.lessAdjustmentFeeFiles.map((document,index) =>(index===additionalDetails?.lessAdjustmentFeeFiles?.length-1 ? additionalDetails?.lessAdjustmentFeeFiles[additionalDetails?.lessAdjustmentFeeFiles?.length-1]?.fileStoreId : null));
+      Digit.UploadServices.Filefetch(fileStoresIds, state).then((res) => setDocuments(res?.data));
+    } 
       setDevelopment(additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES);
       sessionStorage.setItem("development",additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES);
       setOtherCharges(additionalDetails?.selfCertificationCharges?.BPA_OTHER_CHARGES);
       sessionStorage.setItem("otherCharges",additionalDetails?.selfCertificationCharges?.BPA_OTHER_CHARGES);
       setLessAdjusment(additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT);
       sessionStorage.setItem("lessAdjusment",additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT);
+      setOtherChargesDisc(additionalDetails?.otherFeesDiscription);
+      sessionStorage.setItem("otherChargesDisc",additionalDetails?.otherFeesDiscription);
+      setUploadedFileLess(additionalDetails?.lessAdjustmentFeeFiles);
       },[additionalDetails])
 
   const { t } = useTranslation();
@@ -62,6 +109,16 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails,a
     //alert("Please enter numbers")
   }      
   }
+  function setOtherChargesDis(value) {
+    setOtherChargesDisc(value);
+    sessionStorage.setItem("otherChargesDisc",value)  ;
+}
+
+function selectfile(e) {
+    setUploadedFile(e.target.files[0]);
+    setFile(e.target.files[0]);
+ }
+
   return (
     <Fragment>
       {!scrutinyDetails?.isChecklist && <div style={{ background: "#FAFAFA", border: "1px solid #D6D5D4", padding: "8px", borderRadius: "4px", maxWidth: "950px" }}>
@@ -137,6 +194,17 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails,a
               onChange={(e) => {setOtherChargesVal(e.target.value)}}
               {...{ required: true, pattern: "^[0-9]*$", type: "text" }}
             />
+            <CardLabel>{t("BPA_COMMON_OTHER_AMT_DISCRIPTION")}</CardLabel>
+            <TextArea
+              t={t}
+              type={"text"}
+              name="otherChargesDiscription"
+              defaultValue={additionalDetails?.selfCertificationCharges?.BPA_COMMON_OTHER_AMT_DISCRIPTION }
+              value={otherChargesDisc}
+              disabled={!isEditApplication}
+              onChange={(e) => {setOtherChargesDis(e.target.value)}}
+              {...{ required: true }}
+            />
             <CardLabel>{t("BPA_COMMON_LESS_AMT")}</CardLabel>
             <TextInput
               t={t}
@@ -150,6 +218,30 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails,a
               onChange={(e) => {setLessAdjusmentVal(e.target.value)}}
               {...{ required: true, pattern: "^[0-9]*$", type: "text" }}
             />
+            <CardLabel>{t("BPA_COMMON_LESS_AMT_FILE")}</CardLabel>
+            <UploadFile
+                id={"noc-doc"}
+                style={{marginBottom:"200px"}}
+                onUpload={selectfile}
+                disabled={!isEditApplication}
+                onDelete={() => {
+                    setUploadedFile(null);
+                    setFile("");
+                }}
+                message={uploadedFile ? `1 ${t(`FILEUPLOADED`)}` : t(`ES_NO_FILE_SELECTED_LABEL`)}
+                error={errorFile}
+                uploadMessage={uploadMessage}
+            />
+            {docLessAdjustment?.fileStoreIds?.length && 
+            <CardLabel style={{marginTop:"15px"}}>{t("BPA_COMMON_LESS_AMT_PREVIOUS_FILE")}</CardLabel>            
+            }
+            {docLessAdjustment?.fileStoreIds?.length &&             
+              <a   target="_blank" href={docLessAdjustment?.fileStoreIds[docLessAdjustment?.fileStoreIds?.length-1]?.url}>
+              <PDFSvg />
+            </a>
+            }            
+            <Row className="border-none"></Row>
+       <Row  className="border-none" label={t(`BPA_P2_TOTAL_FEE`)} text={`₹ ${(parseInt(development)+parseInt(otherCharges)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_MALBA_CHARGES)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_LABOUR_CESS)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_WATER_CHARGES)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_GAUSHALA_CHARGES_CESS))-parseInt(lessAdjusment)}`} />
             </div>}
           </div>
           }          

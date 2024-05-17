@@ -217,6 +217,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     applicationData.additionalDetails.selfCertificationCharges.BPA_DEVELOPMENT_CHARGES=sessionStorage.getItem("development");
     applicationData.additionalDetails.selfCertificationCharges.BPA_OTHER_CHARGES=sessionStorage.getItem("otherCharges");
     applicationData.additionalDetails.selfCertificationCharges.BPA_LESS_ADJUSMENT_PLOT=sessionStorage.getItem("lessAdjusment");
+    applicationData.additionalDetails.otherFeesDiscription=sessionStorage.getItem("otherChargesDisc");
+    applicationData.additionalDetails.lessAdjustmentFeeFiles=JSON.parse(sessionStorage.getItem("uploadedFileLess"));
 
     const nocDetails = applicationDetails?.nocData?.map(noc => {
       const uploadedDocuments = Digit.SessionStorage.get(noc?.nocType) || [];
