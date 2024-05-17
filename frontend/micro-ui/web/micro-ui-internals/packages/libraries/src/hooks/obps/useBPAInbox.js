@@ -47,12 +47,13 @@ const useBPAInbox = ({ tenantId, filters, config={} }) => {
           table: data?.items.map( application => ({
               applicationId: application.businessObject.applicationNo || application.businessObject.applicationNumber,
               date: application.businessObject.auditDetails.createdTime,
+              submissionDate: application?.ProcessInstanceForBPA?.auditDetails?.createdTime ,
               businessService: application?.ProcessInstance?.businessService,
               applicationType: application?.businessObject?.additionalDetails?.applicationType ? `WF_BPA_${application?.businessObject?.additionalDetails?.applicationType}` : "-",
               locality: `${application.businessObject?.tenantId?.toUpperCase()?.split(".")?.join("_")}_REVENUE_${application.businessObject?.landInfo?.address?.locality?.code?.toUpperCase()}`,
               status: application?.ProcessInstance?.state?.state,
               state:  application?.ProcessInstance?.state?.state,
-              owner: application?.ProcessInstance?.assignes?.[0]?.name || "NA",
+              owner: application?.businessObject?.additionalDetails?.ownerName || "NA",
               sla: application?.businessObject?.status.match(/^(APPROVED)$/) ? "CS_NA" : Math.round(application.ProcessInstance?.businesssServiceSla / (24 * 60 * 60 * 1000))
           })),
           totalCount: data.totalCount,
