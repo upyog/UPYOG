@@ -3,9 +3,10 @@ import { getLocalities } from "../services/molecules/getLocalities";
 import { LocalityService } from "../services/elements/Localities";
 
 const useLocalities = (tenant, boundaryType = "admin", config, t) => {
-  return useQuery(["BOUNDARY_DATA", tenant, boundaryType], () => getLocalities[boundaryType?.toLowerCase()](tenant), {
+  boundaryType = boundaryType.toLocaleLowerCase();
+  return useQuery(["BOUNDARY_DATA", tenant, boundaryType], () => getLocalities[boundaryType](tenant), {
     select: (data) => {
-      return LocalityService.get(data).map((key) => {
+      return LocalityService?.get(data).map((key) => {
         return { ...key, i18nkey: t(key.i18nkey) };
       });
     },
