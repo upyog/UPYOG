@@ -67,6 +67,7 @@ module.exports = function (app) {
     "/pet-services/pet-registration/_search",
     "/pet-services/pet-registration/_update",
     "/asset-services/v1/assets/_create",
+    "/asset-services/v1/assets/_search",
     "/billing-service/bill/v2/_fetchbill",
     "/collection-services/payments/pet-services/_search",
     "/requester-services-dx"

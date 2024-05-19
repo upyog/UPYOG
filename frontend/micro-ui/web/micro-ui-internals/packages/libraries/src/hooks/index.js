@@ -271,6 +271,8 @@ import useAssetDocumentsMDMS from "./asset/useAssetDocumentsMDMS";
 import useAssetSubType from "./asset/useAssetSubType";
 import useAssetdetail from "./asset/useAssetdetail";
 import useAssetCreateAPI from "./asset/useAssetCreateAPI";
+import useAssetApplicationDetail from "./asset/useAssetApplicationDetail";
+import useASSETSearch from "./asset/useASSETSearch";
 
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
@@ -300,7 +302,9 @@ const asset = {
   useAssetDocumentsMDMS,
   useAssetSubType,
   useAssetdetail,
-  useAssetCreateAPI
+  useAssetCreateAPI,
+  useAssetApplicationDetail,
+  useASSETSearch
 };
 
 

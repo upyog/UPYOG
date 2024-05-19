@@ -16,6 +16,7 @@ const SearchApp = ({path}) => {
     const [showToast, setShowToast] = useState(null);
 
     function onSubmit (_data) {
+      console.log("serachchchhd",_data);
         var fromDate = new Date(_data?.fromDate)
         fromDate?.setSeconds(fromDate?.getSeconds() - 19800 )
         var toDate = new Date(_data?.toDate)
@@ -27,9 +28,9 @@ const SearchApp = ({path}) => {
         }
 
         let payload = Object.keys(data).filter( k => data[k] ).reduce( (acc, key) => ({...acc,  [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {} );
-        if(Object.entries(payload).length>0 && !payload.applicationNumber && !payload.creationReason && !payload.fromDate && !payload.mobileNumber && !payload.applicationNumber && !payload.status && !payload.toDate)
+        if(Object.entries(payload).length>0 && !payload.applicationNo && !payload.creationReason && !payload.fromDate && !payload.mobileNumber && !payload.applicationNo && !payload.status && !payload.toDate)
         setShowToast({ warning: true, label: "ERR_PTR_FILL_VALID_FIELDS" });
-        else if(Object.entries(payload).length>0 && (payload.creationReason || payload.status ) && (!payload.applicationNumber && !payload.fromDate && !payload.mobileNumber && !payload.applicationNumber && !payload.toDate))
+        else if(Object.entries(payload).length>0 && (payload.creationReason || payload.status ) && (!payload.applicationNo && !payload.fromDate && !payload.mobileNumber && !payload.applicationNo && !payload.toDate))
         setShowToast({ warning: true, label: "ERR_PROVIDE_MORE_PARAM_WITH_TYPE_STATUS" });
         else if(Object.entries(payload).length>0 && (payload.fromDate && !payload.toDate) || (!payload.fromDate && payload.toDate))
         setShowToast({ warning: true, label: "ERR_PROVIDE_BOTH_FORM_TO_DATE" });
@@ -41,12 +42,13 @@ const SearchApp = ({path}) => {
         enabled: !!( payload && Object.keys(payload).length > 0 )
     }
 
-    const { isLoading, isSuccess, isError, error, data: {PetRegistrationApplications: searchReult, Count: count} = {} } = Digit.Hooks.ptr.usePTRSearch(
+    const { isLoading, isSuccess, isError, error, data: {Assets: searchReult, Count: count} = {} } = Digit.Hooks.asset.useASSETSearch(
         { tenantId,
           filters: payload
         },
        config,
       );
+      console.log("searchReult",searchReult);
     return <React.Fragment>
         <ASSETSearchApplication t={t} isLoading={isLoading} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={  isSuccess && !isLoading ? (searchReult.length>0? searchReult : { display: "ES_COMMON_NO_DATA" } ):""} count={count} /> 
         {showToast && (

@@ -2,7 +2,8 @@ import { CardLabel, FormStep, LabelFieldPair, TextInput } from "@upyog/digit-ui-
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import Timeline from "../components/PTRTimeline";
+
+import Timeline from "../components/ASTTimeline";
 
 const AssetStreets = ({ t, config, onSelect, userType, formData, formState, setError, clearErrors }) => {
   

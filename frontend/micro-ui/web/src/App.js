@@ -34,7 +34,10 @@ import {
   PTRComponents,
 } from "@upyog-niua/upyog-ui-module-ptr";
 
-import { ASSETComponents, ASSETLinks, ASSETModule } from "@upyog-niua/upyog-ui-module-asset";
+import {  
+  ASSETModule, 
+  ASSETLinks,
+  ASSETComponents } from "@upyog-niua/upyog-ui-module-asset";
 import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-receipts";
 import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
 import { initNOCComponents } from "@upyog/digit-ui-module-noc";
@@ -43,7 +46,7 @@ import { initWSComponents } from "@upyog/digit-ui-module-ws";
 import { initCustomisationComponents } from "./Customisations";
 import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
 import { initBillsComponents } from "@upyog/digit-ui-module-bills";
-// import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
+
 
 initLibraries();
 

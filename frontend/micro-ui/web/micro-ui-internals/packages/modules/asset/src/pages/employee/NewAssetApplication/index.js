@@ -1,4 +1,4 @@
-import { FormComposer, Loader } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Loader } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -8,7 +8,8 @@ import { newConfig } from "../../../config/Create/Assetconfig";
 
 const NewAssetApplication = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  //const tenants = Digit.Hooks.pt.useTenants();
+  
+  
 
   const { t } = useTranslation();
   const [canSubmit, setSubmitValve] = useState(false);
@@ -19,7 +20,6 @@ const NewAssetApplication = () => {
    const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", { });
  
-  const { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(Digit.ULBService.getStateId(), "PropertyTax", "CommonFieldsConfig");
 
   useEffect(() => {
     setMutationHappened(false);
@@ -37,7 +37,7 @@ const NewAssetApplication = () => {
     console.log("dta for payload console", data);
     const formData = {
       accountId: "",
-      tenantId: "pg.citya",
+      tenantId: tenantId,
       assetBookRefNo: data?.assetcommonforall?.[0]?.BookPagereference,
       assetName: data?.assetcommonforall?.[0]?.AssetName,
       description: data?.assetcommonforall?.[0]?.Assetdescription,
@@ -83,16 +83,16 @@ const NewAssetApplication = () => {
 
   };
     
-console.log("checkinggggin ptrtrtr")
+
    
-  if (isLoading) {
-    return <Loader />;
-  }
+  // if (isLoading) {
+  //   return <Loader />;
+  // }
 
   /* use newConfig instead of commonFields for local development in case needed */
 
   
-  const configs = commonFields? newConfig: commonFields;    
+  const configs = newConfig;    
 
   
   return (

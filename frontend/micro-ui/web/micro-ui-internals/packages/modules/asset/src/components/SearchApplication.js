@@ -1,6 +1,6 @@
   import React, { useCallback, useMemo, useEffect } from "react"
   import { useForm, Controller } from "react-hook-form";
-  import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@egovernments/digit-ui-react-components";
+  import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@upyog/digit-ui-react-components";
   import { Link } from "react-router-dom";
 
   const ASSETSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
@@ -20,35 +20,23 @@
         register("sortOrder", "DESC")
       },[register])
       
-      const applicationStatuses = [
-          {
-              code: "ACTIVE",
-              i18nKey: "WF_PTR_ACTIVE"
-          },
-          {
-              code: "INACTIVE",
-              i18nKey: "WF_PTR_INACTIVE"
-          },
-          {
-              code: "INWORKFLOW",
-              i18nKey: "WF_PTR_INWORKFLOW"
-          },
-      ]
+      
 
       
       const GetCell = (value) => <span className="cell-text">{value}</span>;
       const columns = useMemo( () => ([
           
           {
-              Header: t("PTR_APPLICATION_NUMBER"),
-              accessor: "applicationNumber",
+              Header: t("AST_APPLICATION_NUMBER"),
+              accessor: "applicationNo",
               disableSortBy: true,
               Cell: ({ row }) => {
+                console.log("row in application",row);
                 return (
                   <div>
                     <span className="link">
-                      <Link to={`/digit-ui/employee/ptr/petservice/applicationsearch/application-details/${row.original["applicationNumber"]}`}>
-                        {row.original["applicationNumber"]}
+                      <Link to={`/digit-ui/employee/asset/assetservice/applicationsearch/application-details/${row.original?.["applicationNo"]}`}>
+                        {row.original?.["applicationNo"]}
                       </Link>
                     </span>
                   </div>
@@ -58,32 +46,32 @@
           
 
             {
-              Header: t("PTR_APPLICANT_NAME"),
+              Header: t("AST_ASSET_CATEGORY"),
               Cell: ( row ) => {
-                return GetCell(`${row?.row?.original?.["applicantName"]}`)
-                
+                console.log("rowwwww",row);
+                return GetCell(`${row?.row?.original?.["assetClassification"]}`)
               },
               disableSortBy: true,
             },
             {
-              Header: t("PTR_PET_TYPE"),
+              Header: t("AST_PARENT_CATEGORY"),
               Cell: ({ row }) => {
-                return GetCell(`${row.original?.petDetails?.["petType"]}`)
+                return GetCell(`${row?.original?.["assetParentCategory"]}`)
               },
               disableSortBy: true,
             
             },
             {
-              Header: t("PTR_BREED_TYPE"),
+              Header: t("AST_NAME"),
               Cell: ({ row }) => {
-                return GetCell(`${row.original?.petDetails?.["breedType"]}`)
+                return GetCell(`${row?.original?.["assetName"]}`)
               },
               disableSortBy: true,
             },
             {
-              Header: t("PTR_MOBILE_NUMBER"),
+              Header: t("AST_DEPARTMENT"),
               Cell: ({ row }) => {
-                return GetCell(`${row?.original?.["mobileNumber"]}`)
+                return GetCell(`${row?.original?.["department"]}`)
               },
               disableSortBy: true,
             },
@@ -113,21 +101,18 @@
       return <React.Fragment>
                   
                   <div>
-                  <Header>{t("PTR_SEARCH_PET_APPLICATIONS")}</Header>
+                  <Header>{t("ASSET_APPLICATIONS")}</Header>
                   < Card className={"card-search-heading"}>
                       <span style={{color:"#505A5F"}}>{t("Provide at least one parameter to search for an application")}</span>
                   </Card>
                   <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                   <SearchField>
-                      <label>{t("PTR_APPLICATION_NO_LABEL")}</label>
-                      <TextInput name="applicationNumber" inputRef={register({})} />
+                      <label>{t("ASSET_APPLICATION_ID")}</label>
+                      <TextInput name="applicationNo" inputRef={register({})} />
                   </SearchField>
+                 
                   <SearchField>
-                      <label>{t("PTR_SEARCH_PET_TYPE")}</label>
-                      <TextInput name="petType" inputRef={register({})} />
-                  </SearchField>
-                  <SearchField>
-                  <label>{t("PTR_OWNER_MOBILE_NO")}</label>
+                  <label>{t("ASSET_OWNER_MOBILE_NO")}</label>
                   <MobileNumber
                       name="mobileNumber"
                       inputRef={register({
@@ -151,30 +136,9 @@
                   />
                   <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
                   </SearchField>
+                 
                   <SearchField>
-                      <label>{t("PTR_SEARCH_BREED_TYPE")}</label>
-                      <TextInput name="breedType" inputRef={register({})} />
-                  </SearchField>
-                  <SearchField>
-                      <label>{t("PTR_PET_APPLICATION_STATUS")}</label>
-                      <Controller
-                              control={control}
-                              name="status"
-                              render={(props) => (
-                                  <Dropdown
-                                  selected={props.value}
-                                  select={props.onChange}
-                                  onBlur={props.onBlur}
-                                  option={applicationStatuses}
-                                  optionKey="i18nKey"
-                                  t={t}
-                                  disable={false}
-                                  />
-                              )}
-                              />
-                  </SearchField>
-                  <SearchField>
-                      <label>{t("PTR_FROM_DATE")}</label>
+                      <label>{t("ASSET_FROM_DATE")}</label>
                       <Controller
                           render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
                           name="fromDate"
@@ -182,7 +146,7 @@
                           />
                   </SearchField>
                   <SearchField>
-                      <label>{t("PTR_TO_DATE")}</label>
+                      <label>{t("ASSET_TO_DATE")}</label>
                       <Controller
                           render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
                           name="toDate"
@@ -194,13 +158,10 @@
                       <p style={{marginTop:"10px"}}
                       onClick={() => {
                           reset({ 
-                              applicationNumber: "", 
+                              applicationNo: "", 
                               fromDate: "", 
                               toDate: "",
-                              petType: "",
                               mobileNumber:"",
-                              status: "",
-                              breedType: "",
                               offset: 0,
                               limit: 10,
                               sortBy: "commencementDate",
@@ -230,7 +191,7 @@
                   getCellProps={(cellInfo) => {
                   return {
                       style: {
-                      minWidth: cellInfo.column.Header === t("PTR_INBOX_APPLICATION_NO") ? "240px" : "",
+                      minWidth: cellInfo.column.Header === t("ASSET_INBOX_APPLICATION_NO") ? "240px" : "",
                       padding: "20px 18px",
                       fontSize: "16px"
                     },
