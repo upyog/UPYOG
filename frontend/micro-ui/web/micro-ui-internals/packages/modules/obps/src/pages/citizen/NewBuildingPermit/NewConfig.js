@@ -3,20 +3,19 @@ export const newConfig1=[
         "route": "docs-required",
         "component": "DocsRequired",
         "key": "data",
-        "nextStep": "noc-number"
+        "nextStep": "basic-details"
     },
-    {
-        "route": "noc-number",
-        "component": "NOCNumber",
-        "nextStep": "basic-details",
-        "key": "nocnumber",
-        "texts": {
-            "headerCaption": "BPA_NOC_NUMBER_DETAILS",
-            "header": "",
-            "submitBarLabel": "CS_COMMON_NEXT"
-        }
-
-    },
+    // {
+    //     "route": "noc-number",
+    //     "component": "NOCNumber",
+    //     "nextStep": "basic-details",
+    //     "key": "nocnumber",
+    //     "texts": {
+    //         "headerCaption": "BPA_NOC_NUMBER_DETAILS",
+    //         "header": "",
+    //         "submitBarLabel": "CS_COMMON_NEXT"
+    //     }
+    // },
     {
         "route": "basic-details",
         "component": "BasicDetails",

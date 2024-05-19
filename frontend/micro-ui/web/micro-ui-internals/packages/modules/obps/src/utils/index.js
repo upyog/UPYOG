@@ -483,6 +483,8 @@ export const convertToBPAObject = (data, isOCBPA = false, isSendBackTOCitizen = 
       auditDetails: data?.auditDetails,
       additionalDetails: {
         ...data?.additionalDetails,
+        otherFeesDiscription:sessionStorage.getItem("otherChargesDisc"),
+        lessAdjustmentFeeFiles:JSON.parse(sessionStorage.getItem("uploadedFileLess")),
         selfCertificationCharges:{
           "BPA_MALBA_CHARGES" : sessionStorage.getItem("Malbafees"),
           "BPA_LABOUR_CESS": sessionStorage.getItem("LabourCess"),

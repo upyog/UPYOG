@@ -86,7 +86,7 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
 
     return (
         <div>
-            <Timeline currentStep={checkingFlow === "OCBPA" ? 3 : 2} flow= {checkingFlow === "OCBPA" ? "OCBPA" : ""}/>
+            <Timeline currentStep={checkingFlow === "OCBPA" ? 3 : 3} flow= {checkingFlow === "OCBPA" ? "OCBPA" : ""}/>
             {!isLoading ?
                 <FormStep
                     t={t}

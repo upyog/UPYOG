@@ -1,5 +1,6 @@
   import React, { useEffect, useState, Fragment  } from "react";
-  import { FormStep, TextInput, CardLabel, Dropdown } from "@upyog/digit-ui-react-components";
+  import { FormStep, TextInput, CardLabel, Dropdown,UploadFile,SearchIcon } from "@upyog/digit-ui-react-components";
+  import Timeline from "../components/Timeline";
   import { useLocation, useRouteMatch } from "react-router-dom";
   import { Controller, useForm } from "react-hook-form";
 
@@ -25,7 +26,36 @@
       const [schemeName, setschemeName] = useState(formData?.owners?.schemeName || "");
       const [transferredscheme, settransferredscheme] = useState("Pre-Approved Standard Designs" || "");
       const [Ulblisttype, setUlblisttype] = useState(formData?.owners?.Ulblisttype || "");
-
+      const [uploadedFile, setUploadedFile] = useState(formData?.owners?.uploadedFile);
+      const [file, setFile] = useState();
+      const [error, setError] = useState(null);
+      const [uploadMessage, setUploadMessage] = useState("");
+      let Webview = !Digit.Utils.browser.isMobile();
+      let acceptFormat = ".pdf"
+      useEffect(() => {
+        (async () => {
+          setError(null);
+          if (file&& file?.type) {
+            if(!(acceptFormat?.split(",")?.includes(`.${file?.type?.split("/")?.pop()}`)))
+            {
+              setError(t("PT_UPLOAD_FORMAT_NOT_SUPPORTED"));
+            }
+            else if (file.size >= 2000000) {
+              setError(t("PT_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
+            } else {
+              try {
+                const response = await Digit.UploadServices.Filestorage("property-upload", file, Digit.ULBService.getStateId());
+                if (response?.data?.files?.length > 0) {
+                  setUploadedFile(response?.data?.files[0]?.fileStoreId);
+                } else {
+                  setError(t("PT_FILE_UPLOAD_ERROR"));
+                }
+              } catch (err) {
+              }
+            }
+          }
+        })();        
+      }, [file]);
 
 
 
@@ -202,22 +232,34 @@
       function TransferredScheme(e){
         settransferredscheme(e.target.value);
       }
-
+      function selectfile(e) {
+        setUploadedFile(e.target.files[0]);
+        setFile(e.target.files[0]);
+     }
+      function onClick(e){
+        console.log("inside_NOC_search")
+      }
 
 
       const goNext = () => {
         let owners = formData.owners && formData.owners[index];
-        let ownerStep = { ...owners, approvedColony, UlbName, Ulblisttype, District, masterPlan, coreArea, buildingStatus, schemes, schemesselection,  purchasedFAR, greenbuilding, restrictedArea, proposedSite, nameofApprovedcolony, schemeName, transferredscheme, NocNumber };
+        let ownerStep = { ...owners, approvedColony, UlbName, Ulblisttype, District, masterPlan, coreArea, buildingStatus, schemes, schemesselection,  purchasedFAR, greenbuilding, restrictedArea, proposedSite, nameofApprovedcolony, schemeName, transferredscheme, NocNumber, uploadedFile };
         let updatedFormData = { ...formData };
 
         // Check if owners array exists in formData if not , then it will add it 
         if (!updatedFormData.owners) {
           updatedFormData.owners = [];
         }
-      
-        onSelect(config.key, { ...formData[config.key], ...ownerStep }, updatedFormData, false, index);
-
-      
+        if((approvedColony?.code=="NO") ) 
+        { if(NocNumber || uploadedFile || formData?.owners?.uploadedFile || formData?.owners?.NocNumber){
+          onSelect(config.key, { ...formData[config.key], ...ownerStep }, updatedFormData, false, index);          
+        }
+        else{
+          alert("Please fill NOC number or Upload NOC Document")
+        }  }
+        else{
+          onSelect(config.key, { ...formData[config.key], ...ownerStep }, updatedFormData, false, index);
+        }        
       };
 
     
@@ -253,25 +295,40 @@
           case "NO":
             return (
               <>
-                <CardLabel>{`${t("BPA_NOC_NUMBER")}`}</CardLabel>
+              <CardLabel>{`${t("BPA_NOC_NUMBER")}`}</CardLabel>
+              <div className="field-container">
                   <TextInput
                     t={t}
                     type={"text"}
                     isMandatory={false}
                     optionKey="i18nKey"
+                    defaultValue={formData?.owners?.NocNumber}
                     name="NocNumber"
                     value={NocNumber}
                     onChange={setnocNumber}
-                    style={{ width: "86%" }}
+                    //style={{ width: "86%" }}
                     ValidationRequired={false}
                     {...(validation = {
-                      isRequired: true,
+                      //isRequired: true,
                       pattern: "^[a-zA-Z0-9]*$",
                       type: "text",
                       title: t("TL_NAME_ERROR_MESSAGE"),
                   })}
                   />
-
+                <div style={{ position: "relative", zIndex: "100", right: "20px", marginTop: "-24px", marginRight:Webview?"-20px":"-20px" }} onClick={(e) => onClick( e)}> <SearchIcon /> </div>
+                </div>
+                <div style={{ position: "relative", fontWeight:"bold", left:"20px"}}>OR</div>
+                <UploadFile
+                id={"noc-doc"}
+                onUpload={selectfile}
+                onDelete={() => {
+                    setUploadedFile(null);
+                    setFile("");
+                }}
+                message={uploadedFile ? `1 ${t(`FILEUPLOADED`)}` : t(`ES_NO_FILE_SELECTED_LABEL`)}
+                error={error}
+                uploadMessage={uploadMessage}
+            />
               </>
             );
           default:
@@ -354,6 +411,7 @@
 
       return (
         <React.Fragment>
+          <Timeline currentStep={2} />
           <FormStep
             config={config} onSelect={goNext} onSkip={onSkip} t={t}
           
@@ -385,7 +443,7 @@
             
               
 
-              <CardLabel>{`${t("BPA_MASTER_PLAN")}`}</CardLabel>
+              <CardLabel style={{marginTop:"15px"}}>{`${t("BPA_MASTER_PLAN")}`}</CardLabel>
               <Controller
                 control={control}
                 name={"masterPlan"}

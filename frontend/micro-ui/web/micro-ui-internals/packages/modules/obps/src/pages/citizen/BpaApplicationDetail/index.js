@@ -675,7 +675,7 @@ const BpaApplicationDetail = () => {
                 {/* to get Fee values */}
                 {detail?.additionalDetails?.inspectionReport && detail?.isFeeDetails && <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} paymentsList={[]}/>}
                  {/*blocking reason*/}
-                {detail?.additionalDetails?.inspectionReport && detail?.isFeeDetails && (workflowDetails?.data?.actionState?.nextActions[0]?.state=="POST_PAYMENT_CITIZEN_APPROVAL_PENDING"|| workflowDetails?.data?.actionState?.state=="POST_PAYMENT_CITIZEN_APPROVAL_PENDING") &&
+                {detail?.additionalDetails?.inspectionReport && detail?.isFeeDetails && (workflowDetails?.data?.actionState?.nextActions[0]?.state=="POST_PAYMENT_CITIZEN_APPROVAL_PENDING"|| workflowDetails?.data?.actionState?.state=="POST_PAYMENT_CITIZEN_APPROVAL_PENDING" || workflowDetails?.data?.actionState?.state=="POST_PAYMENT_INPROGRESS") &&
                 <div style={ { marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "950px", minWidth: "280px"} }>
                   <Row className="border-none" label={t(`BLOCKING_REASON`)} labelStyle={{fontSize: "15px"}} text={data?.applicationData.additionalDetails.blockingReason || "NA"}> </Row>
                 </div>

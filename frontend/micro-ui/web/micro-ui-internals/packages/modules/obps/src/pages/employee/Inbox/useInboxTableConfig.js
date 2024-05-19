@@ -30,6 +30,11 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
             Cell: ({row}) => row.original?.["date"] ? GetCell(format(new Date(row.original?.["date"]), 'dd/MM/yyyy')) : ""
             },
         {
+                Header: t("CS_APPLICATION_DETAILS_SUBMISSION_DATE"),
+                accessor: "submissionDate",
+                Cell: ({row}) => row.original?.["submissionDate"] ? GetCell(format(new Date(row.original?.["submissionDate"]), 'dd/MM/yyyy')) : "NA"
+        },
+        {
             Header: t("ES_INBOX_LOCALITY"),
             accessor: (row) => t(row?.locality),
             disableSortBy: true,
@@ -40,7 +45,7 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
             disableSortBy: true,
         },
         {
-            Header: t("WF_INBOX_HEADER_CURRENT_OWNER"),
+            Header: t("WF_INBOX_HEADER_OWNER_NAME"),
             accessor: (row) => t(row?.owner),
             disableSortBy: true,
         },

@@ -333,6 +333,25 @@ const BpaApplicationDetail = () => {
           optionsClassName={"employee-options-btn-className"}
         />}
       </div>
+      <ApplicationDetailsTemplate
+        applicationDetails={data}
+        isLoading={isLoading}
+        isDataLoading={isLoading}
+        applicationData={data?.applicationData}
+        nocMutation={nocMutation}
+        mutate={mutate}
+        id={"timeline"}
+        workflowDetails={workflowDetails}
+        businessService={workflowDetails?.data?.applicationBusinessService ? workflowDetails?.data?.applicationBusinessService : data?.applicationData?.businessService}
+        moduleCode="BPA"
+        showToast={showToast}
+        ActionBarStyle={isMobile?{}:{paddingRight:"50px"}}
+        MenuStyle={isMobile?{}:{right:"50px"}}
+        setShowToast={setShowToast}
+        closeToast={closeToast}
+        statusAttribute={"state"}
+        timelineStatusPrefix={`WF_${workflowDetails?.data?.applicationBusinessService ? workflowDetails?.data?.applicationBusinessService : data?.applicationData?.businessService}_`}
+      />
       {data?.applicationData?.status === "FIELDINSPECTION_INPROGRESS" && (userInfo?.info?.roles.filter(role => role.code === "BPA_FIELD_INSPECTOR")).length>0 && <FormComposer
         heading={t("")}
         isDisabled={!canSubmit}
@@ -353,25 +372,6 @@ const BpaApplicationDetail = () => {
         className={"employeeCard-override"}
         cardClassName={"employeeCard-override"}
       />}
-      <ApplicationDetailsTemplate
-        applicationDetails={data}
-        isLoading={isLoading}
-        isDataLoading={isLoading}
-        applicationData={data?.applicationData}
-        nocMutation={nocMutation}
-        mutate={mutate}
-        id={"timeline"}
-        workflowDetails={workflowDetails}
-        businessService={workflowDetails?.data?.applicationBusinessService ? workflowDetails?.data?.applicationBusinessService : data?.applicationData?.businessService}
-        moduleCode="BPA"
-        showToast={showToast}
-        ActionBarStyle={isMobile?{}:{paddingRight:"50px"}}
-        MenuStyle={isMobile?{}:{right:"50px"}}
-        setShowToast={setShowToast}
-        closeToast={closeToast}
-        statusAttribute={"state"}
-        timelineStatusPrefix={`WF_${workflowDetails?.data?.applicationBusinessService ? workflowDetails?.data?.applicationBusinessService : data?.applicationData?.businessService}_`}
-      />
       </div>
     </Fragment>
   )
