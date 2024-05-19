@@ -3,7 +3,8 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
-import Timeline from "../components/PTRTimeline";
+
+import Timeline from "../components/ASTTimeline";
 
 const AssetAddress = ({ t, config, onSelect, userType, formData, setError, clearErrors, formState }) => {
   const allCities = Digit.Hooks.ptr.useTenants();

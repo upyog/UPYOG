@@ -1,14 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Header } from "@upyog/digit-ui-react-components";
-
-import PTRDesktopInbox from "../../components/PTRDesktopInbox";
+import ASTDesktopInbox from "../../components/ASTDesktopInbox";
 import MobileInbox from "../../components/MobileInbox";
 
 const Inbox = ({
   useNewInboxAPI,
   parentRoute,
-  moduleCode = "PTR",
+  moduleCode = "ASSET",
   initialStates = {},
   filterComponent,
   isInbox,
@@ -121,7 +120,7 @@ const Inbox = ({
           {isInbox && <Header>{t("ES_COMMON_INBOX")}</Header>}
          
           
-          <PTRDesktopInbox
+          <ASTDesktopInbox
             moduleCode={moduleCode}
             data={data}
             

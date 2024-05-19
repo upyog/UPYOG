@@ -153,13 +153,7 @@
 
       console.log("selelelele",selectedAssetCode);
 
-      // let assetComponent;
-
-      // if(selectedAssetCode === 'LAND') {
-      //   assetComponent = <AssetLand />
-      // } else if(selectedAssetCode === 'BUILDING') {
-      //   assetComponent = <AssetBuildings /> 
-      // }
+     
     
     
       return (

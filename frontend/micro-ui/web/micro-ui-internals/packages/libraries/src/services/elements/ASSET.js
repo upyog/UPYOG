@@ -14,6 +14,15 @@ export const ASSETService = {
       params: {},
       auth: true,
     }),
+    search: ({ tenantId, filters, auth }) =>
+      Request({
+        url: Urls.asset.search,
+        useCache: false,
+        method: "POST",
+        auth: auth === false ? auth : true,
+        userService: auth === false ? auth : true,
+        params: { tenantId, ...filters },
+      }),
     
 };
 

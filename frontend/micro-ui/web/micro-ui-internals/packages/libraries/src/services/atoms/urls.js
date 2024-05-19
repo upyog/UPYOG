@@ -99,7 +99,8 @@ const Urls = {
   },
 
   asset:{
-    create:"/asset-services/v1/assets/_create"
+    create:"/asset-services/v1/assets/_create",
+    search:"/asset-services/v1/assets/_search"
   },
 
 

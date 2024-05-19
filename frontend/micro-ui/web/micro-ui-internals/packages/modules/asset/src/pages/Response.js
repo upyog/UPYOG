@@ -57,8 +57,7 @@ const Response = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { state } = props.location;
 
-  // const mutation = Digit.Hooks.ptr.usePTRCreateAPI(tenantId, state.key !== "UPDATE");
-  // const mutation1 = Digit.Hooks.ptr.usePTRCreateAPI(tenantId, false);
+  
 
 
   const mutation = Digit.Hooks.asset.useAssetCreateAPI(tenantId, state.key !== "UPDATE");
@@ -67,10 +66,10 @@ const Response = (props) => {
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
 
-  const { isLoading: auditDataLoading, isError: isAuditError, data: auditData } = Digit.Hooks.ptr.usePTRSearch(
+  const { isLoading: auditDataLoading, isError: isAuditError, data: auditData } = Digit.Hooks.asset.useASSETSearch(
     {
       tenantId,
-      filters: { applicationNo: state.Asset.applicationNo, audit: true },
+      filters: { applicationNumber: state.Asset.applicationNo, audit: true },
     },
     { enabled: enableAudit, select: (data) => data.Asset?.filter((e) => e.status === "ACTIVE") }
   );

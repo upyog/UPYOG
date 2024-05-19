@@ -36,9 +36,9 @@ const EmployeeApp = ({ path, url, userType }) => {
      
     
       {
-        path: "/digit-ui/employee/asset/assetservice/my-assets",
+        path: "/digit-ui/employee/asset/assetservice/my-asset",
         content: t("ES_COMMON_APPLICATION_SEARCH"),
-        show: location.pathname.includes("asset/assetservice/my-assets") || location.pathname.includes("/asset/applicationsearch/application-details/") ? true : false,
+        show: location.pathname.includes("asset/assetservice/my-asset") || location.pathname.includes("/asset/assetservice/applicationsearch/application-details/") ? true : false,
       },
       
      
@@ -56,7 +56,7 @@ const EmployeeApp = ({ path, url, userType }) => {
   const Response = Digit?.ComponentRegistryService?.getComponent("AssetResponse");
   // const DocsRequired = Digit?.ComponentRegistryService?.getComponent("PTRDocsRequired");
   const isRes = window.location.href.includes("asset/response");
-  const isNewRegistration = window.location.href.includes("new-asset") || window.location.href.includes("modify-application") || window.location.href.includes("ptr/application-details");
+  const isNewRegistration = window.location.href.includes("new-asset") || window.location.href.includes("modify-application") || window.location.href.includes("asset/assetservice/application-details");
   return (
     <Switch>
       <React.Fragment>
@@ -70,7 +70,7 @@ const EmployeeApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/assetservice/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/assetservice/response`} component={(props) => <Response {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/assetservice/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />
-          <PrivateRoute path={`${path}/assetservice/my-assets`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/assetservice/my-asset`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
         </div>
       </React.Fragment>
     </Switch>
