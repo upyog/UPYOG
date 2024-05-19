@@ -1,0 +1,824 @@
+{
+    "key": "mcollect-challan",
+    "config": {
+        "defaultStyle": {
+            "font": "Cambay"
+        },
+        "content": [
+            {
+                "style": "noc-head",
+                "table": {
+                    "widths": [
+                        "33%",
+                        "33%",
+                        "33%"
+                    ],
+                    "body":  [
+                        [
+                            {
+                                "text": " ",
+                                "style": "receipt-logo-header"
+                            },
+                            {
+                                "text": "{{letter-header}}",
+                                "alignment": "center",
+                                "style": "receipt-logo-header"
+                            },
+                            {
+                                "text": " ",
+                                "alignment": "right",
+                                "color": "#484848",
+                                "style": "receipt-logo-header",
+                                "margin": [
+                                    0,
+                                    0,
+                                    -30,
+                                    0
+                                ]
+                            }
+                            
+                        ]
+                    ]
+                },
+                "layout": "noBorders"
+            },
+           
+            {
+                "style": "noc-table2",
+                "table": {
+                    "widths": [
+                        "*"
+                    ],
+                    "body": [
+                        [
+                            {
+                                "stack": [
+                                    {
+                                        "text": "{{cb-name}} {{mcGrade}}",
+                                        "alignment": "center",
+                                        "style": "receipt-logo-title-name"
+                                    },
+                                    {
+                                        "text": "{{form-number}}",
+                                        "alignment": "center",
+                                        "style": "receipt-logo-title"
+                                    },
+                                    {
+                                        "text": "{{challanStatus}}",
+                                        "style": "receipt-logo-title-status"
+                                    },
+                                    {
+                                        "text": "{{rule-number}}",
+                                        "alignment": "center",
+                                        "style": "receipt-logo-title"
+                                    },
+                                    {
+                                        "text": "{{challan}} / {{bill}}",
+                                        "alignment": "center",
+                                        "style": "receipt-logo-title"
+                                    }
+                                ],
+                                "border": [
+                                    true,
+                                    true,
+                                    true,
+                                    false
+                                ]
+                            }
+                        ],
+                        [
+                            {
+                                "stack": [
+                                    {
+                                        "table": {
+                                            "widths": [
+                                                "20%",
+                                                "30%",
+                                                "20%",
+                                                "30%"
+                                            ],
+                                            "body": [
+                                                [
+                                                    {
+                                                        "text": "{{challan_no}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value"
+                                                    },
+                                                    {
+                                                        "text": "{{challanNo}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value-down"
+                                                    },
+                                                    {
+                                                        "text": "{{challan_date}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value"
+                                                    },
+                                                    {
+                                                        "text": "{{challanDate}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value-down",
+                                                        "font": "Roboto"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "table": {
+                                            "widths": [
+                                                "20%",
+                                                "30%",
+                                                "20%",
+                                                "30%"
+                                            ],
+                                            "body": [
+                                                [
+                                                    {
+                                                        "text": "{{bill_no}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value"
+                                                    },
+                                                    {
+                                                        "text": "{{billNo}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value-down"
+                                                    },
+                                                    {
+                                                        "text": "{{bill_date}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value"
+                                                    },
+                                                    {
+                                                        "text": "{{billDate}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value-down",
+                                                        "font": "Roboto"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "table": {
+                                            "widths": [
+                                                "20%",
+                                                "30%",
+                                                "20%",
+                                                "30%"
+                                            ],
+                                            "body": [
+                                                [
+                                                    {
+                                                        "text": "{{service_category}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value"
+                                                    },
+                                                    {
+                                                        "text": "{{serviceCategory}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value-down"
+                                                    },
+                                                    {
+                                                        "text": "{{service_type}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value"
+                                                    },
+                                                    {
+                                                        "text": "{{serviceType}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value-down"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "table": {
+                                            "widths": [
+                                                "20%",
+                                                "30%",
+                                                "20%",
+                                                "30%"
+                                            ],
+                                            "body": [
+                                                [
+                                                    {
+                                                        "text": "{{validity_from}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value"
+                                                    },
+                                                    {
+                                                        "text": "{{fromPeriod}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value-down",
+                                                        "font": "Roboto"
+                                                    },
+                                                    {
+                                                        "text": "{{validity_to}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value"
+                                                    },
+                                                    {
+                                                        "text": "{{toPeriod}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value-down",
+                                                        "font": "Roboto"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "table": {
+                                            "widths": [
+                                                "20%",
+                                                "30%",
+                                                "20%",
+                                                "30%"
+                                            ],
+                                            "body": [
+                                                [
+                                                    {
+                                                        "text": "{{consumer_Name}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value"
+                                                    },
+                                                    {
+                                                        "text": "{{consumerName}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value-down"
+                                                    },
+                                                    {
+                                                        "text": "{{payer_contact}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value"
+                                                    },
+                                                    {
+                                                        "text": "{{payerContact}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value-down",
+                                                        "font": "Roboto"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "table": {
+                                            "widths": [
+                                                "19%",
+                                                "81%"
+                                            ],
+                                            "body": [
+                                                [
+                                                    {
+                                                        "text": "{{address_label}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value"
+                                                    },
+                                                    {
+                                                        "text": "{{doorHouseNo}}, {{buildingName}}, {{streetName}},{{pinCode}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value-down"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "table": {
+                                            "widths": [
+                                                "19%",
+                                                "81%"
+                                            ],
+                                            "body": [
+                                                [
+                                                    {
+                                                        "text": "{{remarks_label}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-table-value"
+                                                    },
+                                                    {
+                                                        "text": "{{challanRemarks}}",
+                                                        "border": [
+                                                            false,
+                                                            false,
+                                                            false,
+                                                            false
+                                                        ],
+                                                        "style": "receipt-logo-title-remarks-new"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "layout": {}
+            },
+            {
+                "style": "noc-table3",
+                "table": {
+                    "widths": [
+                        "*"
+                    ],
+                    "body": [
+                        [
+                            {
+                                "text": "{{total_amount}}",
+                                "border": [
+                                    true,
+                                    true,
+                                    true,
+                                    false
+                                ],
+                                "style": "receipt-table-value-total",
+                                "bold": false
+                            }
+                        ],
+                        [
+                            {
+                                "text": "{{Rs}} {{totalAmount}}",
+                                "border": [
+                                    true,
+                                    false,
+                                    true,
+                                    false
+                                ],
+                                "style": "receipt-table-value-total",
+                                "fontSize": 20
+                            }
+                        ]
+                    ]
+                },
+                "layout": {}
+            },
+            {
+                "style": "noc-table4",
+                "table": {
+                    "widths": [
+                        "60%",
+                        "30%",
+                        "10%"
+                    ],
+                    "body": [
+                        "{{#variable10}}[{\"text\": \"{{trade_license_tax}}\",\"border\": [true,false,false,false], \"style\": \"receipt-table-value-down\"},{\"text\": \"{{tradeLicenseTax}}\", \"border\": [false,false,false,false], \"style\": \"receipt-table-value-down\"},{ \"text\": \" \",\"border\": [false,false,true, false ]}]{{/variable10}}"
+                    ]
+                },
+                "layout": {}
+            },
+            {
+                "canvas": [
+                    {
+                        "type": "line",
+                        "x1": -25,
+                        "y1": 0,
+                        "x2": 345,
+                        "y2": 0,
+                        "lineWidth": 1
+                    }
+                ]
+            },
+            {
+                "style": "noc-table4",
+                "table": {
+                    "widths": [
+                        "60%",
+                        "30%",
+                        "10%"
+                    ],
+                    "body": [
+                        [
+                            {
+                                "text": "{{total_amount}}",
+                                "border": [
+                                    true,
+                                    false,
+                                    false,
+                                    true
+                                ],
+                                "bold": true,
+                                "style": "receipt-table-value-down"
+                            },
+                            {
+                                "text": "{{totalAmount}}",
+                                "border": [
+                                    false,
+                                    false,
+                                    false,
+                                    true
+                                ],
+                                "bold": true,
+                                "style": "receipt-table-value-down"
+                            },
+                            {
+                                "image": "{{qrcodeimage}}",
+                                "style": "receipt-table-value-total-Qr",
+                                "border": [
+                                    false,
+                                    false,
+                                    true,
+                                    true
+                                ],
+                                "width": 72,
+                                "height": 72
+                            }
+                        ]
+                    ]
+                },
+                "layout": {}
+            },
+            {
+                "table": {
+                    "widths": [
+                        "*"
+                    ],
+                    "body": [
+                        [
+                            {
+                                "style": "no-signature",
+                                "text": "{{no_signature}}"
+                            }
+                        ]
+                    ]
+                },
+                "layout": "noBorders"
+            }
+        ],
+        "styles": {
+            "noc-head": {
+                "margin": [
+                    -25,
+                    -30,
+                    0,
+                    1
+                ]
+            },
+            "qr-head": {
+                "margin": [
+                    0,
+                    30,
+                    0,
+                    1
+                ]
+            },
+            "noc-table3": {
+                "fontSize": 12,
+                "color": "#484848",
+                "margin": [
+                    -25,
+                    15,
+                    -25,
+                    -0
+                ]
+            },
+            "noc-table4": {
+                "fontSize": 12,
+                "color": "#484848",
+                "margin": [
+                    -25,
+                    0,
+                    -25,
+                    -0
+                ]
+            },
+            "no-signature": {
+                "fontSize": 12,
+                "margin": [
+                    -20,
+                    35,
+                    -10,
+                    0
+                ],
+                "color": "#484848"
+            },
+            "receipt-approver": {
+                "fontSize": 12,
+                "bold": true,
+                "margin": [
+                    -27,
+                    50,
+                    -10,
+                    0
+                ],
+                "color": "#484848"
+            },
+            "receipt-logo-title": {
+                "color": "#000000",
+                "bold": true,
+                "fontSize": 9,
+                "fontWeight": 500
+            },
+            "receipt-logo-title-name": {
+                "color": "#000000",
+                "bold": true,
+                "fontSize": 12,
+                "fontWeight": 500
+            },
+            "receipt-logo-header": {
+                "color": "#484848",
+                "fontSize": 9,
+                "bold": false,
+                "letterSpacing": 0.74,
+                "margin": [
+                    0,
+                    0,
+                    0,
+                    5
+                ]
+            },
+            "receipt-logo-title-status": {
+                "color": "#000000",
+                "alignment": "right",
+                "bold": true,
+                "fontSize": 13,
+                "fontWeight": 500,
+                "margin": [
+                    0,
+                    -22,
+                    60,
+                    0
+                ]
+            },
+            "receipt-logo-title-remarks": {
+                "color": "#000000",
+                "alignment": "right",
+                "bold": true,
+                "fontSize": 8,
+                "fontWeight": 500,
+                "margin": [
+                    0,
+                    -22,
+                    70,
+                    -10
+                ]
+            },
+            "receipt-logo-title-remarks-new": {
+                "color": "#000000",
+                "bold": true,
+                "fontSize": 10,
+                "fontWeight": 500,
+                "margin": [
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            },
+            "noc-table": {
+                "fontSize": 12,
+                "color": "#484848",
+                "margin": [
+                    -25,
+                    45,
+                    -8,
+                    -8
+                ]
+            },
+            "noc-table2": {
+                "fontSize": 12,
+                "color": "#484848",
+                "margin": [
+                    -25,
+                    18,
+                    -25,
+                    -8
+                ]
+            },
+            "receipt-table-value": {
+                "color": "#000000",
+                "bold": true,
+                "fontSize": 12,
+                "fontWeight": 500,
+                "margin": [
+                    3,
+                    5,
+                    0,
+                    5
+                ]
+            },
+            "receipt-table-value-total": {
+                "color": "#000000",
+                "bold": true,
+                "fontSize": 12,
+                "fontWeight": 500,
+                "alignment": "right",
+                "margin": [
+                    0,
+                    5,
+                    30,
+                    0
+                ]
+            },
+            "receipt-table-value-total-Qr": {
+                "alignment": "right",
+                "margin": [
+                    0,
+                    -40,
+                    10,
+                    0
+                ]
+            },
+            "receipt-table-value-down": {
+                "color": "#000000",
+                "bold": false,
+                "fontSize": 12,
+                "fontWeight": 400,
+                "alignment": "left",
+                "margin": [
+                    3,
+                    5,
+                    0,
+                    5
+                ]
+            },
+            "receipt-table-value2": {
+                "color": "#000000",
+                "bold": false,
+                "fontSize": 12,
+                "fontWeight": 500,
+                "margin": [
+                    3,
+                    0,
+                    0,
+                    0
+                ]
+            },
+            "receipt-table-value-cont": {
+                "color": "#000000",
+                "bold": false,
+                "fontSize": 11,
+                "fontWeight": 400,
+                "margin": [
+                    3,
+                    0,
+                    0,
+                    0
+                ]
+            },
+            "receipt-table": {
+                "color": "#484848",
+                "bold": true,
+                "fontSize": 12,
+                "fontWeight": 400,
+                "margin": [
+                    -30,
+                    5,
+                    0,
+                    0
+                ]
+            },
+            "receipt-table2": {
+                "color": "#000000",
+                "bold": true,
+                "fontSize": 12,
+                "fontWeight": 500,
+                "margin": [
+                    3,
+                    0,
+                    0,
+                    0
+                ]
+            },
+            "pt-disclaimer": {
+                "fontSize": 11,
+                "margin": [
+                    -27,
+                    0,
+                    -10,
+                    0
+                ],
+                "color": "#484848"
+            },
+            "pt-disclaimer-value": {
+                "fontSize": 10,
+                "margin": [
+                    2,
+                    5,
+                    0,
+                    0
+                ],
+                "color": "#484848"
+            }
+        }
+    }
+}

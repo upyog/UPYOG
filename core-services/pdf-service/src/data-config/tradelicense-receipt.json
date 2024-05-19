@@ -1,0 +1,747 @@
+{
+  "key": "tradelicense-receipt",
+  "DataConfigs": {
+    "serviceName": "rainmaker-common",
+    "version": "1.0.0",
+    "baseKeyPath": "$.Payments.*",
+    "entityIdPath":"$.id",
+    "isCommonTableBorderRequired": true,
+    "mappings": [
+      {
+        "topic": "common-pdf-generation-3",
+        "mappings": [
+          {
+            "direct": [
+              {
+                "variable": "payerName", 
+                "value": {
+                  "path": "$.payerName"
+                }
+              },
+              {
+                "variable": "payerAddress", 
+                "value": {
+                  "path": "$.payerAddress"
+                }
+              },
+              {
+                "variable": "user-name", 
+                "value": {
+                  "path": "$.userInfo.name"
+                },
+                "type":"selectFromRequestInfo"  
+              },
+              {
+                "variable": "userName", 
+                "value": {
+                  "path": "$.additionalDetails.collectedBy"
+                } 
+              },
+              {
+                "variable": "payerContact", 
+                "value": {
+                  "path": "$.mobileNumber"
+                }
+              },
+              {
+                "variable": "receiptNo", 
+                "value": {
+                  "path": "$.paymentDetails[0].receiptNumber"
+                }
+              },
+              {
+                "variable": "ifsc", 
+                "value": {
+                  "path": "$.ifscCode"
+                }
+              },
+              {
+                "variable": "bank", 
+                "value": {
+                  "path": "$.additionalDetails[0].bankName"
+                }
+              },
+              {
+                "variable": "branch", 
+                "value": {
+                  "path": "$.additionalDetails[0].branchName"
+                }
+              },
+              {
+                "variable": "add", 
+                "value": {
+                  "path": "$.paymentDetails[0].bill.billDetails[0].additionalDetails.address"
+                }
+              },
+              {
+                "variable": "serviceType", 
+                "value": {
+                  "path": "$.paymentDetails[0].businessService"
+                },
+                "localisation":{
+                  "required":true,
+                  "prefix":"MODULE",   
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "renewalTradeFee", 
+                "value": {
+                  "path": "$.paymentDetails[0].bill.billDetails[0].billAccountDetails[?(@.taxHeadCode == 'TL_RENEWAL_TAX')].amount"
+                }
+              },
+              {
+                "variable": "newTradeFee", 
+                "value": {
+                  "path": "$.paymentDetails[0].bill.billDetails[0].billAccountDetails[?(@.taxHeadCode == 'TL_TAX')].amount"
+                }
+              },
+              {
+                "variable": "renewalPenalty", 
+                "value": {
+                  "path": "$.paymentDetails[0].bill.billDetails[0].billAccountDetails[?(@.taxHeadCode == 'TL_RENEWAL_PENALTY')].amount"
+                }
+              },
+              {
+                "variable": "adhocRebate", 
+                "value": {
+                  "path": "$.paymentDetails[0].bill.billDetails[0].billAccountDetails[?(@.taxHeadCode == 'TL_ADHOC_REBATE')].amount"
+                }
+              },
+              {
+                "variable": "adhocPenalty", 
+                "value": {
+                  "path": "$.paymentDetails[0].bill.billDetails[0].billAccountDetails[?(@.taxHeadCode == 'TL_ADHOC_PENALTY')].amount"
+                }
+              },
+              {
+                "variable": "paidAmount", 
+                "value": {
+                  "path": "$.paymentDetails[0].totalAmountPaid"
+                }
+              },
+              {
+                "variable": "fromPeriod", 
+                "value": {
+                  "path": "$.paymentDetails[0].bill.billDetails[0].fromPeriod"
+                },
+                "type": "date"
+              },
+              {
+                "variable": "toPeriod", 
+                "value": {
+                  "path": "$.paymentDetails[0].bill.billDetails[0].toPeriod"
+                },
+                "type": "date"
+              },
+               {
+                "variable": "chequeNo", 
+                "value": {
+                  "path": "$.instrumentNumber"
+                }
+              },
+              {
+                "variable": "chequeDate", 
+                "value": {
+                  "path": "$.instrumentDate"
+                },
+                "type": "date"
+              },
+              {
+                "variable": "chequeNo", 
+                "value": {
+                  "path": "$.instrumentNumber"
+                }
+              },
+              {
+                "variable": "chequeDate", 
+                "value": {
+                  "path": "$.instrumentDate"
+                },
+                "type": "date"
+              },
+              {
+                "variable": "paymentMode", 
+                "value": {
+                  "path": "$.paymentMode"
+                },
+                "localisation":{
+                  "required":true,
+                  "prefix": "COMMON_MASTERS_PAYMENTMODE",
+                  "module": "rainmaker-common"
+               }
+              },
+              {
+                "variable": "G8ReceiptNo",
+                "value": {
+                  "path": "$.paymentDetails[0].manualReceiptNumber"
+                }
+              },
+              {
+                "variable": "G8ReceiptDate",
+                "value": {
+                  "path": "$.paymentDetails[0].manualReceiptDate"
+                },
+                "type": "date"
+              },
+              {
+                "variable": "paymentDate", 
+                "value": {
+                  "path": "$.transactionDate"
+                },
+                "type": "date"
+              },
+              {
+                "variable": "consumerID", 
+                "value": {
+                  "path": "$.paymentDetails[0].bill.consumerCode"
+                }
+              },
+              {
+                "variable": "transactionID", 
+                "value": {
+                  "path": "$.transactionNumber"
+                }
+              },
+              {
+                "variable": "dueAmount", 
+                "value": {
+                  "path": "$.paymentDetails[0].bill.totalAmount"
+                }
+              },
+              {
+                "variable": "payment_receipt",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_PAYMENT_RECEIPT"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "receipt_no",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_RECEIPT_NO"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "consumer_id",
+                "value": {
+                  "path": "$.paymentDetails[0].businessService"
+                },
+                "localisation":{
+                  "required":true,
+                  "prefix": "PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_CONSUMER_ID",
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "payment_date",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_PAYMENT_DATE"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "payer_name",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_PAYER_NAME"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "payer_contact",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_PAYER_CONTACT"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "service_type",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_SERVICE_TYPE"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "billing_period",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_BILLING_PERIOD"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "paid_amount",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_PAID_AMOUNT"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "pending_amount",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_PENDING_AMOUNT"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "payment_mode",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_PAYMENT_MODE"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "transaction_id",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_TRANSACTION_ID"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "g8_receipt_no",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_G8_RECEIPT_NO"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "g8_receipt_date",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_G8_RECEIPT_DATE"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "generated_by",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_GENERATED_BY"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "commissioner/eo",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_COMMISSIONER_EO"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "no_signature",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_NO_SIGNATURE"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "disclamer",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_DISCLAIMER"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "to",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_TO"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+               }
+              },
+              {
+                "variable": "Municipal_Corporation",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_MDMS_MUNICIPAL_CORPORATION"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+               }
+              }
+            ]
+          },
+          {
+            "derived": [
+               {
+                  "variable": "pendingAmount",
+                  "formula": "{{dueAmount}}-{{paidAmount}}"
+               },
+               {
+                "variable": "tradeFee",
+                "formula": "{{renewalTradeFee}}+{{newTradeFee}}"
+             }
+            ]
+         },
+          {
+            "externalAPI": [     
+              { 
+                "path": "http://egov-mdms-service:8080/egov-mdms-service/v1/_get",
+                  "queryParam": "moduleName=tenant&masterName=tenants&tenantId=pb&filter=%5B?(@.code=='{$.tenantId}')%5D",
+                  "apiRequest": null,
+                  "responseMapping":[
+                    {             
+                      "variable":"address",
+                      "value":"$.MdmsRes.tenant.tenants[0].address"
+                    },
+                    {
+                      "variable":"mcGrade",
+                      "value":"$.MdmsRes.tenant.tenants[0].city.ulbType"
+                    },
+                    {
+                      "variable":"phoneNumber",
+                      "value":"$.MdmsRes.tenant.tenants[0].contactNumber"
+                    },
+                    {
+                      "variable":"website",
+                      "value":"$.MdmsRes.tenant.tenants[0].domainUrl"
+                    },
+                    {
+                      "variable":"email",
+                      "value":"$.MdmsRes.tenant.tenants[0].emailId"
+                    },
+                    {
+                      "variable": "logoImage",                        
+                      "value":"$.MdmsRes.tenant.tenants[0].logoId",
+                      "type":"image"      
+                    },
+                    {
+                      "variable": "logo-header",
+                      "value":"$.MdmsRes.tenant.tenants[0].code",
+                      "localisation":{
+                        "required":true,
+                        "prefix": "TENANT_TENANTS",
+                        "module":"rainmaker-common"
+                        }
+                    }
+                  ]
+              },
+              
+              { 
+                "path": "http://egov-mdms-service:8080/egov-mdms-service/v1/_get",
+                "queryParam": "moduleName=tenant&masterName=footer&tenantId=pb&filter=%5B?(@.code=='{$.tenantId}' %26%26 @.service=='{$.paymentDetails[0].businessService}')%5D",
+                "apiRequest": null,
+                "responseMapping":[
+                  {
+                    "variable": "variable11",                        
+                    "value": "$.MdmsRes.tenant.footer[0].receiptFooterContent.*",
+                     "type":"array",
+                     "format":{                            
+                        "type":"string",
+                        "scema":[
+                           {
+                            "variable":"disclaimerContent",
+                            "value":"disclaimer",
+                            "type":"string",
+                            "localisation":{
+                              "required":true,
+                              "prefix": null,
+                              "module": "rainmaker-common"
+                           }
+                         }
+                        ]
+                    } 
+                 }
+                ]
+            },   
+                {
+                  "path": "http://tl-services.egov:8080/tl-services/v1/_search",
+                  "queryParam": "tenantId=$.tenantId,applicationNumber=$.paymentDetails[0].bill.consumerCode",
+                    "apiRequest": null,
+                    "responseMapping":[
+                        {            
+                        "variable":"applicationType",
+                        "value":"$.Licenses[0].applicationType"
+                      },
+                       {            
+                        "variable":"penaltyComments",
+                        "value":"$.Licenses[0].tradeLicenseDetail.additionalDetail.penaltyComments"
+                      },
+                      {            
+                        "variable":"rebateComments",
+                        "value":"$.Licenses[0].tradeLicenseDetail.additionalDetail.rebateComments"
+                      },
+                      {            
+                        "variable":"licenseNumber",
+                        "value":"$.Licenses[0].licenseNumber"
+                      },
+                      {            
+                        "variable":"oldLicenseNumber",
+                        "value":"$.Licenses[0].oldLicenseNumber"
+                      },
+                      {            
+                        "variable":"financialYear",
+                        "value":"$.Licenses[0].financialYear"
+                      },
+                      {            
+                        "variable":"tradeName",
+                        "value":"$.Licenses[0].tradeName"
+                      },{            
+                        "variable":"tradeBuilding",
+                        "value":"$.Licenses[0].tradeLicenseDetail.address.buildingName"
+                      },{            
+                        "variable":"tradeDoor",
+                        "value":"$.Licenses[0].tradeLicenseDetail.address.doorNo"
+                      },{            
+                        "variable":"tradeStreet",
+                        "value":"$.Licenses[0].tradeLicenseDetail.address.street"
+                      },
+                      {
+                        "variable":"adhocRebateReason",
+                        "value":"$.Licenses[0].tradeLicenseDetail.adhocExemptionReason",
+                          "localisation":{
+                          "required":true,
+                          "prefix": null,
+                          "module": "rainmaker-tl"
+                       }
+                      },
+                      {            
+                        "variable":"adhocPenaltyReason",
+                        "value":"$.Licenses[0].tradeLicenseDetail.adhocPenaltyReason",
+                          "localisation":{
+                          "required":true,
+                          "prefix": null,
+                          "module": "rainmaker-tl"
+                       }
+                      },
+                      {
+                        "variable": "structureType",
+                        "value":  "$.Licenses[0].tradeLicenseDetail.structureType",
+                        "localisation":{
+                          "required":true,
+                          "prefix": "COMMON_MASTERS_STRUCTURETYPE",
+                          "module": "rainmaker-tl",
+                          "isCategoryRequired":true
+                       }
+                    },
+                    {
+                      "variable": "structureSubType",
+                      "value":  "$.Licenses[0].tradeLicenseDetail.structureType",
+                      "localisation":{
+                        "required":true,
+                        "prefix": "COMMON_MASTERS_STRUCTURETYPE",
+                        "module": "rainmaker-tl",
+                        "isSubTypeRequired":true
+                     }
+                  },          
+                    {
+                      "variable": "variable_acc",                        
+                      "value": "$.Licenses[0].tradeLicenseDetail.accessories.*",                       
+                       "type":"array",
+                       "format":{                            
+                          "type":"string",
+                          "scema":[
+                            {
+                              "variable": "accesoryType",
+                              "value": "accessoryCategory",
+                              "type":"string",
+                              "localisation":{
+                                "required":true,
+                                "prefix": "TRADELICENSE_ACCESSORIESCATEGORY",
+                                "module": "rainmaker-tl"
+                              }
+                            },
+                            {
+                              "variable": "accessoryUomValue",
+                              "value": "uomValue",
+                              "type":"string"
+                            },
+                            
+                            {
+                                "variable": "uom",
+                                "value": "uom",
+                                "type":"string"
+                            },
+                            {
+                                "variable": "accessoryCount",
+                                "value": "count",
+                                "type":"string"
+                            }
+                         
+                          ]
+                      } 
+                   },
+                   {
+                    "variable": "variable_owners",                        
+                    "value": "$.Licenses[0].tradeLicenseDetail.owners[?(@.active== true && @.userActive== true)]",                       
+                     "type":"array",
+                     "format":{                            
+                        "type":"string",
+                        "scema":[
+                          {
+                            "variable": "name",
+                            "value": "name",
+                            "type":"string"
+                          },
+                          {
+                            "variable": "fatherOrHusbandName",
+                            "value": "fatherOrHusbandName",
+                            "type":"string"
+                          },
+                          
+                          {
+                              "variable": "permanentAddress",
+                              "value": "permanentAddress",
+                              "type":"string"
+                          },
+                          {
+                              "variable": "mobileNumber",
+                              "value": "mobileNumber",
+                              "type":"string"
+                          }
+                       
+                        ]
+                    } 
+                 },
+                    {
+                    "variable": "variable13",                        
+                    "value": "$.Licenses[0].tradeLicenseDetail.tradeUnits.*",                       
+                     "type":"array",
+                     "format":{                            
+                        "type":"string",
+                        "scema":[
+                          {
+                            "variable": "tradeCat",
+                            "value": "tradeType",
+                            "type":"string",
+                            "localisation":{
+                              "required":true,
+                              "prefix":"TRADELICENSE_TRADETYPE",
+                              "module": "rainmaker-tl",
+                              "isCategoryRequired":true
+                            }
+                          },
+                          {
+                            "variable": "tradeTyp",
+                            "value": "tradeType",
+                            "type":"string",
+                            "localisation":{
+                              "required":true,
+                              "prefix":"TRADELICENSE_TRADETYPE",
+                              "module": "rainmaker-tl",
+                              "isMainTypeRequired":true
+                            }
+                          },
+                          {
+                            "variable": "tradeSub",
+                            "value": "tradeType",
+                            "type":"string",
+                            "localisation":{
+                              "required":true,
+                              "prefix":"TRADELICENSE_TRADETYPE",
+                              "module": "rainmaker-tl",
+                              "isSubTypeRequired":true
+                            }
+                          }                
+                        ]
+                    } 
+                 }
+                    ]
+                },{ 
+                  "path": "http://egov-location:8080/egov-location/location/v11/boundarys/_search",
+                  "queryParam": "tenantId=$.tenantId,hierarchyTypeCode=REVENUE,boundaryType=Locality,codes=$.paymentDetails[0].bill.billDetails[0].additionalDetails.address",
+                    "apiRequest": null,
+                    "responseMapping":[
+                      {             
+                        "variable":"mohalla",
+                        "value":"$.TenantBoundary[0].boundary[0].name"
+                      }
+                    ]
+                }
+              ]
+           
+          }
+        ]
+      }
+    ]
+  }
+}

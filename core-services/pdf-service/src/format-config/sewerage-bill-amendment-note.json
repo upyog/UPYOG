@@ -1,0 +1,521 @@
+{
+  "key": "sw-bill-amendment-credit-note",
+  "config": {
+    "defaultStyle": {
+      "font": "Cambay"
+    },
+
+    "content": [
+      {
+        "style": "noc-head",
+        "table": {
+          "widths": [
+            60,
+            "*",
+            120
+          ],
+          "color":"#484848",
+          "body": [
+            [
+              {
+                "image": "{{logoImage}}",
+                "width": 50,
+                "height": 61.25
+              },
+              {
+                "stack": [
+                  {
+                    "text": "{{logo-header}} {{mcGrade}}",
+                    "style": "receipt-logo-header"
+                  },
+                  {
+                    "text": "{{note_type}}",
+                    "style": "receipt-logo-sub-header"
+                  }
+                ],
+                "alignment": "left",
+                "margin": [
+                  0,
+                  10,
+                  0,
+                  0
+                ]
+              },
+              {
+                "stack": [
+                  {
+                    "text": "{{address}}"
+                  },
+                  {
+                    "text": "{{phoneNumber}}"
+                  },
+                  {
+                    "text": "{{website}}"
+                  },
+                  {
+                    "text": "{{email}}"
+                  }
+                ],
+                "alignment": "right",
+                "color": "#484848",
+                "margin": [
+                  -100,
+                  0,
+                  -25,
+                  0
+                ]
+              }
+            ]
+          ]
+        },
+        "layout": "noBorders"
+      },
+
+      {
+        "style": "note-info",
+        "columns": [
+          {
+            "text": [
+              {
+                "text": "{{note_id}} ",
+                "bold": true
+              },
+              {
+                "text": "{{applicationNo}}",
+                "bold": false
+              }
+            ],
+            "alignment": "left"
+          },
+          {
+            "text": [
+              {
+                "text": "{{note_date}}",
+                "bold": true
+              },
+              {
+                "text": "{{date}}",
+                "bold": false
+              }
+            ],
+            "alignment": "right",
+            "margin": [
+              0,
+              0,
+              -10,
+              1
+            ]
+          }
+        ]
+      },
+
+      {
+        "style": "header",
+        "columns": [
+          {
+            "text": [
+              {
+                "text": "{{against}}",
+                "bold": true
+              }
+            ],
+            "alignment": "left"
+          }
+        ]
+      },
+      {
+        "style": "header-1",
+        "text": "{{user-name}}",
+        "alignment": "left"
+      },
+      {
+        "style": "header-1",
+        "text": "{{permanentAddress}}",
+        "alignment": "left"
+      },
+      {
+        "style": "header",
+        "text": " ",
+        "alignment": "left"
+      },
+
+      {
+        "style": "note-info-1",
+        "columns": [
+          {
+            "text": [
+              {
+                "text": "{{adjustment_amount_details}}",
+                "bold": true
+              }
+            ],
+            "alignment": "left"
+          },
+          {
+            "text": [
+              {
+                "text": "{{total_amount}}",
+                "bold": true
+              }
+            ],
+            "alignment": "right",
+            "margin": [
+              0,
+              0,
+              -200,
+              1
+            ]
+          },
+          {
+            "text": [
+              {
+                "text": "{{rs}} {{totalAmount}}",
+                "bold": true
+              }
+            ],
+            "alignment": "right",
+            "fontSize": 20,
+            "margin": [
+              0,
+              25,
+              -10,
+              1
+            ]
+          }
+        ]
+      },
+
+      {
+        "style": "ws-table",
+        "table": {
+          "widths": [
+            "70%"
+          ],
+          "body": [
+            [
+              {
+                "table": {
+                  "widths": [
+                    "10%",
+                    "30%",
+                    "30%"
+                  ],
+                  "body": [
+                    [
+                      {
+                        "text": "{{sl_no}}",
+                        "alignment": "center"
+                      },
+                      {
+                        "text": "{{tax_heads}}",
+                        "alignment": "left"
+                      },
+                      {
+                        "text": "{{reduced_amount}}",
+                        "alignment": "right"
+                      }
+                    ],
+                    [
+                      {
+                        "text": "1.",
+                        "alignment": "center"
+                      },
+                      {
+                        "text": "{{sewerage_charge}}",
+                        "alignment": "left"
+                      },
+                      {
+                        "text": "{{sewerageCharge}}",
+                        "alignment": "right"
+                      }
+                    ],
+                    [
+                      {
+                        "text": "2.",
+                        "alignment": "center"
+                      },
+                      {
+                        "text": "{{interest}}",
+                        "alignment": "left"
+                      },
+                      {
+                        "text": "{{sewerageInterest}}",
+                        "alignment": "right"
+                      }
+                    ],
+                    [
+                      {
+                        "text": "3.",
+                        "alignment": "center"
+                      },
+                      {
+                        "text": "{{penalty}}",
+                        "alignment": "left"
+                      },
+                      {
+                        "text": "{{seweragePenalty}}",
+                        "alignment": "right"
+                      }
+                    ],
+                    [
+                      {
+                        "text": " "
+                      },
+                      {
+                        "text": "{{total_amount}}",
+                        "alignment": "left"
+                      },
+                      {
+                        "text": "{{totalAmount}}",
+                        "alignment": "right"
+                      }
+                    ]
+                  ]
+                },
+                "border": [
+                  false,
+                  false,
+                  false,
+                  false
+                ]
+              }
+            ]
+          ]
+        },
+        "layout": {}
+      },
+
+      {
+        "style": "ws-table-1",
+        "table": {
+          "widths": [
+            "130%"
+          ],
+          "body": [
+            [
+              {
+                "table": {
+                  "widths": [
+                    "120%"
+                  ],
+                  "body": [
+                    [
+                      {
+                        "text": "{{box_note}}",
+                        "alignment": "left"
+                      }
+                    ]
+                  ]
+                },
+                "border": [
+                  false,
+                  false,
+                  false,
+                  false
+                ]
+              }
+            ]
+          ]
+        },
+        "layout": {}
+      },
+
+      {
+        "style": "header",
+        "text": " ",
+        "alignment": "left"
+      },
+
+      {
+        "style": "receipt-approver",
+        "columns": [
+          {
+            "text": [
+              {
+                "text": "{{generated_by}}: ",
+                "bold": true
+              },
+              {
+                "text": "{{user-name}}",
+                "bold": false
+              }
+            ],
+            "alignment": "left"
+          },
+          {
+            "text": [
+              {
+                "text": "{{commissioner/eo}}",
+                "bold": true
+              }
+            ],
+            "alignment": "right",
+            "margin": [
+              0,
+              0,
+              -10,
+              1
+            ]
+          }
+        ]
+      },
+
+      {
+        "style": "no-signature",
+        "text": "{{no_signature}}"
+      },
+
+      {
+        "style": "no-signature",
+        "text": "{{box_validity}}"
+      }
+    ],
+
+    "styles": {
+      "noc-head": {
+        "margin": [
+          -30,
+          -30,
+          0,
+          1
+        ]
+      },
+      "ws-head": {
+        "margin": [
+          -39,
+          -38,
+          -38,
+          0
+        ]
+      },
+      "receipt-logo-header": {
+        "color": "#000000",
+        "fontSize": 14,
+        "bold": true,
+        "letterSpacing": 0.74,
+        "margin": [
+          0,
+          0,
+          0,
+          5
+        ]
+      },
+      "ws-table": {
+        "fontSize": 12,
+        "color": "#484848",
+        "margin": [
+          -25,
+          18,
+          -8,
+          10
+        ]
+      },
+      "ws-table-1": {
+        "fontSize": 12,
+        "color": "#000000",
+        "margin": [
+          380,
+          -120,
+          20,
+          10
+        ]
+      },
+      "receipt-logo-sub-header": {
+        "color": "#000000",
+        "fontSize": 12,
+        "letterSpacing": 0.6
+      },
+      "receipt-table-value": {
+        "color": "#000000",
+        "bold": true,
+        "fontSize": 12,
+        "fontWeight": 500,
+        "margin": [
+          8,
+          8,
+          0,
+          8
+        ]
+      },
+      "receipt-table": {
+        "color": "#000000",
+        "bold": false,
+        "fontSize": 12,
+        "fontWeight": 400,
+        "margin": [
+          -10,
+          8,
+          0,
+          8
+        ]
+      },
+      "header": {
+        "color": "#000000",
+        "bold": true,
+        "fontSize": 12,
+        "fontWeight": 500,
+        "margin": [
+          -25,
+          15,
+          0,
+          -10
+        ]
+      },
+      "header-1": {
+        "color": "#000000",
+        "bold": false,
+        "fontSize": 12,
+        "fontWeight": 500,
+        "margin": [
+          -25,
+          15,
+          0,
+          -10
+        ]
+      },
+      "receipt-approver": {
+        "fontSize": 12,
+        "bold": true,
+        "margin": [
+          -27,
+          50,
+          -10,
+          0
+        ],
+        "color": "#484848"
+      },
+      "note-info": {
+        "fontSize": 12,
+        "bold": true,
+        "margin": [
+          -27,
+          10,
+          -10,
+          0
+        ],
+        "color": "#000000"
+      },
+      "note-info-1": {
+        "fontSize": 12,
+        "bold": true,
+        "margin": [
+          -27,
+          10,
+          -10,
+          -45
+        ],
+        "color": "#000000"
+      },
+      "no-signature": {
+        "fontSize": 12,
+        "margin": [
+          -27,
+          10,
+          -10,
+          0
+        ],
+        "color": "#484848"
+      }
+    }
+  }
+}

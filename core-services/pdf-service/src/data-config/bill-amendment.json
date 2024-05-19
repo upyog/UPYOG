@@ -1,0 +1,468 @@
+{
+  "key": "bill-amendment-summary",
+  "DataConfigs": {
+    "serviceName": "rainmaker-common",
+    "version": "1.0.0",
+    "baseKeyPath": "$.Amendments.*",
+    "entityIdPath":"$.id",
+    "isCommonTableBorderRequired": true,
+    "mappings": [
+      {
+        "topic": "common-pdf-generation-3",
+        "mappings": [
+          {
+            "direct": [
+              {
+                "variable": "payerName",
+                "value": {
+                  "path": "$.payerName"
+                }
+              },
+              {
+                "variable": "user-name",
+                "value": {
+                  "path": "$.userInfo.name"
+                },
+                "type":"selectFromRequestInfo"
+              },
+              {
+                "variable": "payerContact",
+                "value": {
+                  "path": "$.mobileNumber"
+                }
+              },
+              {
+                "variable": "paymentStatus",
+                "value": {
+                  "path": "$.paymentStatus"
+                }
+              },
+              {
+                "variable": "receiptNo",
+                "value": {
+                  "path": "$.paymentDetails[0].receiptNumber"
+                }
+              },
+              {
+                "variable": "bill_amendment_adjusted_amount",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_BILL_AMENDMENT_ADJUSTED_AMOUNT"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "prefix": null,
+                  "module": "rainmaker-common"
+                }
+              },
+              {
+                "variable": "serviceType",
+                "value": {
+                  "path": "$.businessService"
+                },
+                "localisation":{
+                  "required":true,
+                  "prefix":"MODULE",
+                  "module":"rainmaker-common"
+                }
+              },
+              {
+                "variable": "waterTax",
+                "value": {
+                  "path": "$.demandDetails[?(@.taxHeadMasterCode == 'OM.WATER_CONNECTION/DISCONNECTION_FEES_TAX')].taxAmount"
+                }
+              },
+              {
+                "variable": "water_cess",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_BILL_AMENDMENT_WATER_CESS"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "prefix": null,
+                  "module": "rainmaker-common"
+                }
+              },
+              {
+                "variable": "waterCess",
+                "value": {
+                  "path": "$.demandDetails[?(@.taxHeadMasterCode == 'WS_WATER_CESS')].taxAmount"
+                }
+              },
+              {
+                "variable": "interest",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_BILL_AMENDMENT_INTEREST"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "prefix": null,
+                  "module": "rainmaker-common"
+                }
+              },
+              {
+                "variable": "interestAmount",
+                "value": {
+                  "path": "$.demandDetails[?(@.taxHeadMasterCode == 'WS_TIME_INTEREST')].taxAmount"
+                }
+              },
+              {
+                "variable": "penalty",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_BILL_AMENDMENT_PENALTY"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "prefix": null,
+                  "module": "rainmaker-common"
+                }
+              },
+              {
+                "variable": "penaltyAmount",
+                "value": {
+                  "path": "$.demandDetails[?(@.taxHeadMasterCode == 'WS_ADHOC_PENALTY')].taxAmount"
+                }
+              },
+              {
+                "variable": "arrears",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_BILL_AMENDMENT_ARREARS"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "prefix": null,
+                  "module": "rainmaker-common"
+                }
+              },
+              {
+                "variable": "arrearsAmount",
+                "value": {
+                  "path": "$.demandDetails[?(@.taxHeadMasterCode == 'ARREARS_AMOUNT')].taxAmount"
+                }
+              },
+              {
+                "variable": "total_amount",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_BILL_AMENDMENT_TOTAL_AMOUNT"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "prefix": null,
+                  "module": "rainmaker-common"
+                }
+              },
+              {
+                "variable": "bill_amendment_application",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_BILL_AMENDMENT_APPLICATION"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "prefix": null,
+                  "module": "rainmaker-common"
+                }
+              },
+              {
+                "variable": "demand_revision_basis_details",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_BILL_AMENDMENT_DEM_REV_BAS_DET"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "prefix": null,
+                  "module": "rainmaker-common"
+                }
+              },
+              {
+                "variable": "demand_revision_basis",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_BILL_AMENDMENT_DEM_REV_BASIS"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "prefix": null,
+                  "module": "rainmaker-common"
+                }
+              },
+              {
+                "variable": "court_order_no",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_BILL_AMENDMENT_COURT_ORDER_NO"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "prefix": null,
+                  "module": "rainmaker-common"
+                }
+              },
+              {
+                "variable": "with_effect_from",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_BILL_AMENDMENT_WITH_EFFECT_FROM"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "prefix": null,
+                  "module": "rainmaker-common"
+                }
+              },
+              {
+                "variable": "demandRevisionBasis",
+                "value": {
+                  "path": "$.amendmentReason"
+                }
+              },
+              {
+                "variable": "courtOrderNo",
+                "value": {
+                  "path": "$.reasonDocumentNumber"
+                }
+              },
+              {
+                "variable": "withEffectFrom",
+                "value": {
+                  "path": "$.effectiveFrom"
+                }
+              },
+              {
+                "variable": "court_order",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_BILL_AMENDMENT_COURT_ORDER"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "prefix": null,
+                  "module": "rainmaker-common"
+                }
+              },
+              {
+                "variable": "self_declaration",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_BILL_AMENDMENT_SELF_DECLARATION"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "prefix": null,
+                  "module": "rainmaker-common"
+                }
+              },
+              {
+                "variable": "past_bills",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_BILL_AMENDMENT_PAST_BILLS"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "prefix": null,
+                  "module": "rainmaker-common"
+                }
+              },
+              {
+                "variable": "courtOrder",
+                "value": {
+                  "path": "$.transactionNumber"
+                }
+              },
+              {
+                "variable": "selfDeclaration",
+                "value": {
+                  "path": "$.transactionNumber"
+                }
+              },
+              {
+                "variable": "pastBills",
+                "value": {
+                  "path": "$.transactionNumber"
+                }
+              },
+              {
+                "variable": "applicationNo",
+                "value": {
+                  "path": "$.consumerCode"
+                }
+              },
+              {
+                "variable": "bill_amendment_application_number",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_BILL_AMENDMENT_APPLICATION_NUMBER"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+                }
+              },
+              {
+                "variable": "adjustment_amount_details",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_BILL_AMENDMENT_ADJUSTMENT_AMOUNT_DETAILS"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+                }
+
+              },
+              {
+                "variable": "sl_no",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_WS_CONSOLIDATED_ACKNOWELDGMENT_SERIAL_NO"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "prefix": null,
+                  "module": "rainmaker-common"
+                }
+              },
+              {
+                "variable": "tax_heads",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_BILL_AMENDMENT_TAX_HEADS"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "prefix": null,
+                  "module": "rainmaker-common"
+                }
+              },
+              {
+                "variable": "reduced_amount",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_BILL_AMENDMENT_REDUCED_AMOUNT"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "prefix": null,
+                  "module": "rainmaker-common"
+                }
+              },
+              {
+                "variable": "water_tax",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_BILL_AMENDMENT_WATER_TAX"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "prefix": null,
+                  "module": "rainmaker-common"
+                }
+              },
+              {
+                "variable": "Municipal_Corporation",
+                "value": {
+                  "path": "PDF_STATIC_LABEL_MDMS_MUNICIPAL_CORPORATION"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common"
+                }
+              }
+            ]
+          },
+          {
+            "derived": [
+              {
+                "variable": "totalAmount",
+                "formula": "{{arrearsAmount}}+{{penaltyAmount}}+{{interestAmount}}+{{waterCess}}+{{waterTax}}"
+              }
+            ]
+          },
+          {
+            "externalAPI": [
+              {
+                "path": "http://egov-mdms-service:8080/egov-mdms-service/v1/_get",
+                "queryParam": "moduleName=tenant&masterName=tenants&tenantId=pb&filter=%5B?(@.code=='{$.tenantId}')%5D",
+                "apiRequest": null,
+                "responseMapping":[
+                  {
+                    "variable":"address",
+                    "value":"$.MdmsRes.tenant.tenants[0].address"
+                  },
+                  {
+                    "variable":"phoneNumber",
+                    "value":"$.MdmsRes.tenant.tenants[0].contactNumber"
+                  },
+                  {
+                    "variable":"mcGrade",
+                    "value":"$.MdmsRes.tenant.tenants[0].city.pwssbGrade"
+                  },
+                  {
+                    "variable":"website",
+                    "value":"$.MdmsRes.tenant.tenants[0].domainUrl"
+                  },
+                  {
+                    "variable":"email",
+                    "value":"$.MdmsRes.tenant.tenants[0].emailId"
+                  },
+                  {
+                    "variable": "logoImage",
+                    "value":"$.MdmsRes.tenant.tenants[0].logoId",
+                    "type":"image"
+                  },
+                  {
+                    "variable": "logo-header",
+                    "value":"$.MdmsRes.tenant.tenants[0].code",
+                    "localisation":{
+                      "required":true,
+                      "prefix": "TENANT_TENANTS",
+                      "module":"rainmaker-common"
+                    }
+                  }
+                ]
+              },
+              {
+                "path": "http://egov-mdms-service:8080/egov-mdms-service/v1/_get",
+                "queryParam": "moduleName=tenant&masterName=footer&tenantId=pb&filter=%5B?(@.code=='{$.tenantId}' %26%26 @.service=='{$.businessService}')%5D",
+                "apiRequest": null,
+                "responseMapping":[
+                  {
+                    "variable": "variable11",
+                    "value": "$.MdmsRes.tenant.footer[0].receiptFooterContent.*",
+                    "type":"array",
+                    "format":{
+                      "type":"string",
+                      "scema":[
+                        {
+                          "variable":"disclaimerContent",
+                          "value":"disclaimer",
+                          "type":"string",
+                          "localisation":{
+                            "required":true,
+                            "prefix": null,
+                            "module": "rainmaker-common"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
