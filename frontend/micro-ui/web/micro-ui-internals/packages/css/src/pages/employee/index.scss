@@ -432,6 +432,8 @@
 .RightMostTopBarOptions{
   @apply flex float-right;
   display: flex;
+  width: 30%;
+  justify-content: space-between;
   .EventNotificationWrapper{
     @apply relative cursor-pointer;
     span{
@@ -445,6 +447,7 @@
   }
   .select-wrap {
     margin-bottom: unset;
+    margin-right: 2rem;
     svg {
       fill: #ffffff;
     }
@@ -540,6 +543,7 @@
     }
 
     .center-container {
+      width:100% !important;
     }
   }
  

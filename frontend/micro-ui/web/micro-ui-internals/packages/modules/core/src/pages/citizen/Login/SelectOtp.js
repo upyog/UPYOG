@@ -13,6 +13,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
   );
 
   const handleResendOtp = () => {
+  
     onResend();
     setTimeLeft(2);
   };

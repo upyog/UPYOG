@@ -16,7 +16,7 @@ import { initMCollectComponents } from "@egovernments/digit-ui-module-mcollect";
 import { initTLComponents } from "@upyog/digit-ui-module-tl";
 import { PaymentModule, PaymentLinks, paymentConfigs } from "@egovernments/digit-ui-module-common";
 //import { HRMSModule } from "@egovernments/digit-ui-module-hrms";
-import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
+//import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
 import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
 import { initWSComponents } from "@upyog/digit-ui-module-ws";
@@ -48,7 +48,6 @@ const enabledModules = [
   "TL",
   "Receipts",
   "Reports",
-  "OBPS",
   "Engagement",
   "NOC",
   "WS",
@@ -115,7 +114,7 @@ const initDigitUI = () => {
   initTLComponents();
   initReceiptsComponents();
   // initReportsComponents();
-  initOBPSComponents();
+  //initOBPSComponents();
   initEngagementComponents();
   initNOCComponents();
   initWSComponents();

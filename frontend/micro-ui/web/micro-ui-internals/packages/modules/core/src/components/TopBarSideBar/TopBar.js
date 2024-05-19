@@ -4,6 +4,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import ChangeCity from "../ChangeCity";
 import ChangeLanguage from "../ChangeLanguage";
 
+
 const TextToImg = (props) => (
   <span className="user-img-txt" onClick={props.toggleMenu} title={props.name}>
     {props?.name?.[0]?.toUpperCase()}
@@ -46,6 +47,7 @@ const TopBar = ({
   const { pathname } = useLocation();
 
   const conditionsToDisableNotificationCountTrigger = () => {
+    console.log("sdhsgd"+Digit.UserService?.getUser()?.info?.type )
     if (Digit.UserService?.getUser()?.info?.type === "EMPLOYEE") return false;
     if (Digit.UserService?.getUser()?.info?.type === "CITIZEN") {
       if (!CitizenHomePageTenantId) return false;
@@ -141,13 +143,15 @@ const TopBar = ({
                     profilePic == null ? (
                       <TextToImg name={userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"} />
                     ) : (
-                      <img src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/Upyog-logo.png" style={{ height: "48px", width: "48px", borderRadius: "50%" }} />
+                      <img src="https://github.com/dinternationalit/dtm/blob/main/src/images/logo.jpg" style={{ height: "48px", width: "48px", borderRadius: "50%" }} />
                     )
                   }
                 />
               </div>
             )}
-            <img className="state" src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/Upyog-logo.png" />
+            { 
+            //<img className="state" src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/Upyog-logo.png" />
+            }
           </div>
         )}
       </span>
