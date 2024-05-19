@@ -100,7 +100,7 @@ public class EscalationService {
 
             List<String> businessIds = escalationRepository.getBusinessIds(criteria);
             
-            if(escalation.getBusinessService().equalsIgnoreCase("BPA"))
+            if(escalation.getBusinessService().equalsIgnoreCase("BPA") && (businessIds !=null && businessIds.size()>0))
             	businessIds=escalationRepository.getBusinessFilteredIds(criteria,businessIds);
             Integer numberOfBusinessIds = businessIds.size();
             Integer batchSize = config.getEscalationBatchSize();
