@@ -5,11 +5,14 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.egov.swservice.service.SewerageEncryptionService;
+import org.egov.swservice.service.DocumentService;
+import org.egov.swservice.web.models.DocumentRequest;
 import org.egov.swservice.web.models.RequestInfoWrapper;
 import org.egov.swservice.web.models.SearchCriteria;
 import org.egov.swservice.web.models.SewerageConnection;
 import org.egov.swservice.web.models.SewerageConnectionRequest;
 import org.egov.swservice.web.models.SewerageConnectionResponse;
+import org.egov.swservice.util.SWConstants;
 import org.egov.swservice.service.SewerageService;
 import org.egov.swservice.util.ResponseInfoFactory;
 import org.egov.tracer.model.CustomException;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.Builder;
@@ -35,6 +39,9 @@ public class SewarageController {
 
 	@Autowired
     SewerageService sewarageService;
+    
+    @Autowired
+	private DocumentService documentService;
 
 	@Autowired
 	SewerageEncryptionService sewerageEncryptionService;
@@ -81,6 +88,13 @@ public class SewarageController {
 
 	}
 	
+	@RequestMapping(value = "/documents/_create", method = RequestMethod.POST)
+	public ResponseEntity<String> saveDocuments(@Valid @RequestBody DocumentRequest documentRequest) {
+
+		documentService.saveDocuments(documentRequest, documentRequest.getRequestInfo());
+		return new ResponseEntity<>("SW Connection FilestoreIds Saved", HttpStatus.CREATED);
+	}
+	
 	@RequestMapping(value = "/_plainsearch", method = RequestMethod.POST)
 	public ResponseEntity<SewerageConnectionResponse> plainSearch(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
 			@Valid @ModelAttribute SearchCriteria criteria) {
@@ -117,6 +131,13 @@ public class SewarageController {
 		sewerageConnectionResponse.setResponseInfo(
 				responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true));
 		return new ResponseEntity<>(sewerageConnectionResponse, HttpStatus.OK);*/
+	}
+	
+	@RequestMapping(value="/disconnect", method=RequestMethod.POST)
+	public ResponseEntity<String> disConnectSwerageConnection(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,@RequestParam String connectionNo,@RequestParam String tenantId ){
+		
+		sewarageService.disConnectSewerageConnection(connectionNo,requestInfoWrapper.getRequestInfo(),tenantId);
+		return new ResponseEntity<>(SWConstants.SUCCESS_DISCONNECT_MSG, HttpStatus.CREATED);
 	}
 
 }

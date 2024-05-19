@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
+//import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.User;
 import org.egov.swservice.config.SWConfiguration;
 import org.egov.swservice.util.NotificationUtil;
@@ -21,6 +21,7 @@ import org.egov.swservice.web.models.workflow.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

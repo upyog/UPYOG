@@ -15,19 +15,28 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.swcalculation.config.SWCalculationConfiguration;
 import org.egov.swcalculation.constants.SWCalculationConstant;
+import org.egov.swcalculation.producer.SWCalculationProducer;
+import org.egov.swcalculation.repository.BillGeneratorDao;
 import org.egov.swcalculation.repository.SewerageCalculatorDao;
 import org.egov.swcalculation.util.CalculatorUtils;
 import org.egov.swcalculation.util.SWCalculationUtil;
 import org.egov.swcalculation.util.SewerageCessUtil;
 import org.egov.swcalculation.web.models.AdhocTaxReq;
+import org.egov.swcalculation.web.models.BillGenerationSearchCriteria;
+import org.egov.swcalculation.web.models.BillGeneratorReq;
+import org.egov.swcalculation.web.models.BillScheduler;
+import org.egov.swcalculation.web.models.BillScheduler.StatusEnum;
 import org.egov.swcalculation.web.models.BulkBillCriteria;
 import org.egov.swcalculation.web.models.Calculation;
 import org.egov.swcalculation.web.models.CalculationCriteria;
@@ -35,12 +44,14 @@ import org.egov.swcalculation.web.models.CalculationReq;
 import org.egov.swcalculation.web.models.Demand;
 import org.egov.swcalculation.web.models.DemandDetail;
 import org.egov.swcalculation.web.models.Property;
+import org.egov.swcalculation.web.models.RequestInfoWrapper;
 import org.egov.swcalculation.web.models.SewerageConnection;
 import org.egov.swcalculation.web.models.SewerageConnectionRequest;
 import org.egov.swcalculation.web.models.TaxHeadCategory;
 import org.egov.swcalculation.web.models.TaxHeadEstimate;
 import org.egov.swcalculation.web.models.TaxHeadMaster;
 import org.egov.tracer.model.CustomException;
+import com.google.common.collect.ImmutableSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -74,10 +85,22 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 
 	@Autowired
 	private CalculatorUtils util;
+	
+	@Autowired
+	private BillGeneratorDao billGeneratorDao;
+
+	@Autowired
+	private SWCalculationProducer producer;
 
 
 	@Autowired
 	private ObjectMapper mapper;
+	
+	@Autowired
+	private SWCalculationConfiguration configs;
+	
+	@Autowired
+	private BillGeneratorService billGeneratorService;
 
 	@Autowired
 	private SewerageCessUtil sewerageCessUtil;
@@ -447,5 +470,89 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 		}
 		return sewerageCess;
 	}
+	
+	/**
+	 * Generate bill Based on Time (Monthly, Quarterly, Yearly)
+	 */
+	public void generateBillBasedLocality(RequestInfo requestInfo) {
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime date = LocalDateTime.now();
+		log.info("Time schedule start for water bill generation on : " + date.format(dateTimeFormatter));
+
+		BillGenerationSearchCriteria criteria = new BillGenerationSearchCriteria();
+		criteria.setStatus(SWCalculationConstant.INITIATED_CONST);
+
+		List<BillScheduler> billSchedularList = billGeneratorService.getBillGenerationDetails(criteria);
+		if (billSchedularList != null && billSchedularList.isEmpty())
+			return;
+		log.info("billSchedularList count : " + billSchedularList.size());
+		for (BillScheduler billSchedular : billSchedularList) {
+			try {
+				billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.INPROGRESS);
+
+				requestInfo.getUserInfo().setTenantId(billSchedular.getTenantId() != null ? billSchedular.getTenantId() : requestInfo.getUserInfo().getTenantId());
+				RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+
+				List<String> connectionNos = sewerageCalculatorDao.getConnectionsNoByLocality( billSchedular.getTenantId(), SWCalculationConstant.nonMeterdConnection, billSchedular.getLocality());
+
+				//testing purpose added three consumercodes
+//				connectionNos.add("0603000001");
+//				connectionNos.add("0603000002");
+//				connectionNos.add("0603009718");
+				
+				if (connectionNos == null || connectionNos.isEmpty()) {
+					billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.COMPLETED);
+					continue;
+				}
+
+				Collection<List<String>> partitionConectionNoList = partitionBasedOnSize(connectionNos, configs.getBulkBillGenerateCount());
+				int threadSleepCount = 1;
+				
+				log.info("partitionConectionNoList size: {}, Producer ConsumerCodes size : {} and BulkBillGenerateCount: {}",partitionConectionNoList.size(), connectionNos.size(), configs.getBulkBillGenerateCount());
+				int count = 1;
+
+				for (List<String>  conectionNoList : partitionConectionNoList) {
+
+					BillGeneratorReq billGeneraterReq = BillGeneratorReq
+							.builder()
+							.requestInfoWrapper(requestInfoWrapper)
+							.tenantId(billSchedular.getTenantId())
+							.consumerCodes(ImmutableSet.copyOf(conectionNoList))
+							.billSchedular(billSchedular)
+							.build();
+
+					producer.push(configs.getBillGenerateSchedulerTopic(), billGeneraterReq);
+					log.info("Bill Scheduler pushed connections size:{} to kafka topic of batch no: ", conectionNoList.size(), count++);
+
+					if(threadSleepCount == 2) {
+						//Pausing controller for every three batches.
+						Thread.sleep(10000);
+						threadSleepCount=1;
+					}
+					threadSleepCount++;
+				}
+				billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.COMPLETED);
+
+			}catch (Exception e) {
+				e.printStackTrace();
+				log.error("Execptio occured while generating bills for tenant"+billSchedular.getTenantId()+" and locality: "+billSchedular.getLocality());
+			}
+
+		}
+	}
+	
+	static <T> Collection<List<T>> partitionBasedOnSize(List<T> inputList, int size) {
+        final AtomicInteger counter = new AtomicInteger(0);
+        return inputList.stream()
+                    .collect(Collectors.groupingBy(s -> counter.getAndIncrement()/size))
+                    .values();
+	}
+
+	@Override
+	public void generateDemandBasedOnTimePeriod(RequestInfo requestInfo) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

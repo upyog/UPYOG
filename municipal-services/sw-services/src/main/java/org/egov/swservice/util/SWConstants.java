@@ -224,7 +224,7 @@ public class SWConstants {
 					"connectionCategory", "connectionType", "documentType", "fileStoreId", "licenseNo"));
 
 	public static final String SUBMIT_APPLICATION_CONST = "SUBMIT_APPLICATION";
-	
+
 	public static final List<String> IGNORE_CLASS_ADDED = Collections.unmodifiableList(Arrays.asList("PlumberInfo"));
 	
 	public static final String PENDING_FOR_CONNECTION_ACTIVATION = "PENDING_FOR_CONNECTION_ACTIVATION";
@@ -282,6 +282,16 @@ public class SWConstants {
 	public static final String SEARCH_TYPE_CONNECTION = "CONNECTION";
 
 	public static final long INVALID_CONEECTION_EXECUTION_DATE = 0L;
+	
+public static final String BILL_NO_DEMAND_ERROR_CODE = "EG_BS_BILL_NO_DEMANDS_FOUND";
+	
+	public static final String BILL_NO_PAYABLE_DEMAND_ERROR_CODE = "EG_BS_BILL_ZERO_TAX";
+	
+	public static final String BILL_AMOUNT_PATH = "/Bill/0/totalAmount";
+	
+	public static final String ACTIVE_STATUS="Active";
+	
+	public static final String DUES_ERROR_MESSAGE="Please collect pending dues before proceeding to disconnect the connection";
 
 	public static final String PENDING_APPROVAL_FOR_CONNECTION_CODE ="PENDING_APPROVAL_FOR_CONNECTION";
 
@@ -299,6 +309,8 @@ public class SWConstants {
 	public static final String CHANNEL_LIST = "channelList";
 
 	public static final String CHANNEL = "Channel";
+	
+	public static final String ACTIVE_ERROR_MESSAGE="Action can not be performed as the consumer is already inactive";
 	
 	public static final String ACTIVE = "ACTIVE";
 
@@ -345,6 +357,8 @@ public class SWConstants {
 	public static final String COUNTER_EMPLOYEE_ROLE_NAME = "SW Counter Employee";
 
 	public static final String COUNTER_EMPLOYEE_ROLE_CODE = "SW_CEMP";
+	
+//	public static final List<String> EDIT_NOTIFICATION_STATE = Collections.unmodifiableList(Arrays.asList(ACTION_INITIATE, SUBMIT_APPLICATION_CONST, ACTION_PAY));
 
 	public static final List<String> EDIT_NOTIFICATION_STATE = Collections.unmodifiableList(Arrays.asList(ACTION_INITIATE, SUBMIT_APPLICATION_CONST, ACTION_PAY, EXECUTE_DISCONNECTION, ACTIVATE_CONNECTION, APPROVE_CONNECTION));
 
@@ -361,5 +375,9 @@ public class SWConstants {
 	public static final String TENANTS_MASTER_ROOT = "tenants";
 
 	public static final String TENANTS_JSONPATH_ROOT = "$.MdmsRes.tenant.tenants";
+	
+	public static final String INACTIVE_STATUS = "Inactive";
+
+	public static final String SUCCESS_DISCONNECT_MSG = "Successfully disconnected sewerage connection";
 
 }

@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.egov.swcalculation.web.models.AuditDetails;
+
 import org.egov.swcalculation.web.models.SewerageConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,25 @@ public class EnrichmentService {
 
 	@Autowired
 	private ObjectMapper mapper;
+	
+	/**
+	 * Method to return auditDetails for create/update flows
+	 *
+	 * @param by
+	 *            - UUID of the User
+	 * @param isCreate
+	 *            - TRUE in case of create scenario and FALSE for modify
+	 *            scenario.
+	 * @return AuditDetails
+	 */
+	public AuditDetails getAuditDetails(String by, Boolean isCreate) {
+		Long time = System.currentTimeMillis();
+		if (isCreate)
+			return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time)
+					.build();
+		else
+			return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
+	}
 	
 	public List<SewerageConnection> filterConnections(List<SewerageConnection> connectionList) {
 		HashMap<String, SewerageConnection> connectionHashMap = new HashMap<>();

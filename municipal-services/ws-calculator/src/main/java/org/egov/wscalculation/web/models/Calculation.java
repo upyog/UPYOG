@@ -61,4 +61,10 @@ public class Calculation {
 	
 	@JsonProperty("connectionNo")
 	private String connectionNo;
+	
+	@JsonProperty("from")
+	private Long from;
+
+	@JsonProperty("to")
+	private Long to;
 }

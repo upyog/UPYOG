@@ -13,6 +13,16 @@ public class BillingSlab {
 	private String calculationAttribute = null;
 	private double minimumCharge;
 	private List<Slab> slabs = new ArrayList<>();
+	
+	private String waterSubUsageType;
+
+	public String getWaterSubUsageType() {
+		return waterSubUsageType;
+	}
+
+	public void setWaterSubUsageType(String waterSubUsageType) {
+		this.waterSubUsageType = waterSubUsageType;
+	}
 
 	public String getId() {
 		return id;

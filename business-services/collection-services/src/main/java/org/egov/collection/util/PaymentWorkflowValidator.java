@@ -60,18 +60,18 @@ public class PaymentWorkflowValidator {
 
         for (Payment payment: paymentsToProcess){
             for(PaymentDetail paymentDetail : payment.getPaymentDetails())
-                if(paymentsByConsumerCode.containsKey(paymentDetail.getBill().getConsumerCode()) &&
-                        paymentsByConsumerCode.get(paymentDetail.getBill().getConsumerCode()).getFirst().getId()
-                                .equalsIgnoreCase(payment.getId())){
+//                 if(paymentsByConsumerCode.containsKey(paymentDetail.getBill().getConsumerCode()) &&
+//                         paymentsByConsumerCode.get(paymentDetail.getBill().getConsumerCode()).getFirst().getId()
+//                                 .equalsIgnoreCase(payment.getId())){
                     paymentsByConsumerCode.get(paymentDetail.getBill().getConsumerCode()).removeFirst();
-                }
-                else {
-                    log.error("Payment not the latest payment for the consumer code {} , perform operation for {} first ",
-                            paymentDetail.getBill().getConsumerCode(),  paymentsByConsumerCode.get(paymentDetail.getBill().getConsumerCode()).getFirst()
-                                    .getId());
-                    errorMap.put("RECEIPT_WORKFLOW_ACTION_NOT_APPLICABLE", "Can only cancel / dishonour latest receipt " +
-                            "for a consumer code. Dishonour of receipt possible only after deposited! ");
-                }
+//                 }
+//                 else {
+//                     log.error("Payment not the latest payment for the consumer code {} , perform operation for {} first ",
+//                             paymentDetail.getBill().getConsumerCode(),  paymentsByConsumerCode.get(paymentDetail.getBill().getConsumerCode()).getFirst()
+//                                     .getId());
+//                     errorMap.put("RECEIPT_WORKFLOW_ACTION_NOT_APPLICABLE", "Can only cancel / dishonour latest receipt " +
+//                             "for a consumer code. Dishonour of receipt possible only after deposited! ");
+//                 }
 
         }
 

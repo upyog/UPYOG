@@ -47,6 +47,21 @@ public class SewerageFieldValidator implements SewerageActionValidator {
 		}
 	}
 	public void validateUpdateRequest(SewerageConnectionRequest sewerageConnectionRequest, Map<String, String> errorMap) {
+		String jsonString = sewerageConnectionRequest.getSewerageConnection().getAdditionalDetails().toString();
+
+
+		String[] keyValuePairs = jsonString.substring(1, jsonString.length() - 1).split(", "); // Remove the curly braces and split by comma followed by a space
+
+		String valueOfConnectionCategory = null;
+
+		for (String pair : keyValuePairs) {
+    		String[] keyValue = pair.split("=");
+    			if (keyValue[0].equals("connectionCategory")) {
+        			valueOfConnectionCategory = keyValue[1];
+        			break;
+    		}
+		}
+
 		if (SWConstants.ACTIVATE_CONNECTION_CONST.equalsIgnoreCase(
 				sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction())) {
 			if (StringUtils.isEmpty(sewerageConnectionRequest.getSewerageConnection().getConnectionType())) {

@@ -130,6 +130,18 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		return calculations;
 	}
 	
+	
+	/**
+	 * 
+	 * 
+	 * @param request - Calculation Request Object
+	 * @return List of calculation.
+	 */
+	public List<Calculation> bulkDemandGeneration(CalculationReq request, Map<String, Object> masterMap) {
+		List<Calculation> calculations = getCalculations(request, masterMap);
+		demandService.generateDemandForBillingCycleInBulk(request, calculations, masterMap, true);
+		return calculations;
+	}
 
 	/**
 	 * 
@@ -232,7 +244,7 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 
 			TaxHeadCategory category = taxHeadCategoryMap.get(estimate.getTaxHeadCode());
 			estimate.setCategory(category);
-
+if(category!=null)
 			switch (category) {
 
 			case CHARGES:

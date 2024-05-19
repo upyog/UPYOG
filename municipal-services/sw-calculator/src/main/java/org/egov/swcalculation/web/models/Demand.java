@@ -53,6 +53,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -105,6 +106,9 @@ public class Demand   {
 	
 	@JsonProperty("billExpiryTime")
 	private Long billExpiryTime;
+	
+    @Default
+    private Boolean isPaymentCompleted = false;
 
 	/**
 	 * Gets or Sets status

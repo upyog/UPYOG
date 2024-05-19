@@ -1,4 +1,4 @@
-CREATE TABLE egcl_payment (
+CREATE TABLE IF NOT EXISTS egcl_payment (
   	id VARCHAR(256) NOT NULL,
   	tenantId VARCHAR(256) NOT NULL,
   	totalDue numeric(12,2) NOT NULL,
@@ -33,7 +33,7 @@ CREATE INDEX IF NOT EXISTS idx_egcl_payment_mobileNumber ON egcl_payment(mobileN
 
 
 
-CREATE TABLE egcl_paymentDetail (
+CREATE TABLE IF NOT EXISTS egcl_paymentDetail (
     id VARCHAR(256) NOT NULL,
   	tenantId VARCHAR(256) NOT NULL,
   	paymentid VARCHAR(256) NOT NULL,
@@ -63,7 +63,7 @@ CREATE INDEX IF NOT EXISTS idx_egcl_paymentDetail_billId ON egcl_paymentDetail(b
 
 
 
-CREATE TABLE egcl_bill(
+CREATE TABLE IF NOT EXISTS egcl_bill(
         	id VARCHAR(256) NOT NULL,
         	status VARCHAR(256) NOT NULL,
         	isCancelled boolean,
@@ -91,7 +91,7 @@ CREATE TABLE egcl_bill(
 CREATE INDEX IF NOT EXISTS idx_egcl_bill_consumerCode ON egcl_bill(consumerCode);
 
 
-CREATE TABLE egcl_billdetial(
+CREATE TABLE IF NOT EXISTS egcl_billdetial(
         	id VARCHAR(256) NOT NULL,
 		    tenantId VARCHAR(256) NOT NULL,
 		    demandId VARCHAR(256) NOT NULL,
@@ -120,7 +120,7 @@ CREATE TABLE egcl_billdetial(
 
 
 
-CREATE TABLE egcl_billAccountDetail (
+CREATE TABLE IF NOT EXISTS egcl_billAccountDetail (
     id VARCHAR(256) NOT NULL,
   	tenantId VARCHAR(256) NOT NULL,
   	billDetailid VARCHAR(256) NOT NULL,
@@ -139,7 +139,7 @@ CREATE TABLE egcl_billAccountDetail (
 );
 
 
-CREATE TABLE egcl_payment_audit (
+CREATE TABLE IF NOT EXISTS egcl_payment_audit (
   		id VARCHAR(256) NOT NULL,
       	tenantId VARCHAR(256) NOT NULL,
       	totalDue numeric(12,2) NOT NULL,
@@ -167,7 +167,7 @@ CREATE TABLE egcl_payment_audit (
 );
 
 
-CREATE TABLE egcl_paymentDetail_audit (
+CREATE TABLE IF NOT EXISTS egcl_paymentDetail_audit (
     id VARCHAR(256) NOT NULL,
       	tenantId VARCHAR(256) NOT NULL,
       	paymentid VARCHAR(256) NOT NULL,
@@ -184,7 +184,7 @@ CREATE TABLE egcl_paymentDetail_audit (
 );
 
 
-CREATE TABLE egcl_bill_audit(
+CREATE TABLE IF NOT EXISTS egcl_bill_audit(
         	id VARCHAR(256) NOT NULL,
             status VARCHAR(256) NOT NULL,
             isCancelled boolean,
@@ -207,7 +207,7 @@ CREATE TABLE egcl_bill_audit(
 );
 
 
-CREATE TABLE egcl_billdetial_audit(
+CREATE TABLE IF NOT EXISTS egcl_billdetial_audit(
         	id VARCHAR(256) NOT NULL,
             tenantId VARCHAR(256) NOT NULL,
             demandId VARCHAR(256) NOT NULL,

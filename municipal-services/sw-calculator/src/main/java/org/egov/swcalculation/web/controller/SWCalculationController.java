@@ -21,6 +21,10 @@ import org.egov.swcalculation.web.models.DemandResponse;
 import org.egov.swcalculation.web.models.GetBillCriteria;
 import org.egov.swcalculation.web.models.RequestInfoWrapper;
 import org.egov.swcalculation.web.models.SewerageConnection;
+import org.egov.swcalculation.service.DemandService;
+import org.egov.swcalculation.service.SWCalculationService;
+import org.egov.swcalculation.service.SWCalculationServiceImpl;
+import org.egov.swcalculation.util.ResponseInfoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +32,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.Builder;
@@ -87,6 +92,11 @@ public class SWCalculationController {
 	@PostMapping("/_jobscheduler")
 	public void jobscheduler(@Valid @RequestBody BulkBillReq bulkBillReq) {
 		sWCalculationService.generateDemandBasedOnTimePeriod(bulkBillReq.getRequestInfo(), bulkBillReq.getBulkBillCriteria());
+	}
+	
+	@PostMapping("/_jobbillscheduler")
+	public void jobbillscheduler(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
+		sWCalculationService.generateBillBasedLocality(requestInfoWrapper.getRequestInfo());
 	}
 	
 

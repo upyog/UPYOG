@@ -77,7 +77,7 @@ public class WCConstants {
 	public static final String SERVICE_FIELD_VALUE_NOTIFICATION = "Water";
 
 	// Application Status For Notification
-	public static final String INITIATE_INITIATED = "INITIATE_INITIATED";
+	public static final String INITIATE_INITIATED = "SUBMIT_APPLICATION_PENDING_FOR_DOCUMENT_VERIFICATION";
 
 	public static final String REJECT_REJECTED = "REJECT_REJECTED";
 
@@ -143,7 +143,7 @@ public class WCConstants {
 					SEND_BACK_TO_CITIZEN_PENDING_FOR_CITIZEN_ACTION, SEND_BACK_FOR_DO_PENDING_FOR_DOCUMENT_VERIFICATION,
 					SEND_BACK_PENDING_FOR_FIELD_INSPECTION, VERIFY_AND_FORWORD_PENDING_FOR_FIELD_INSPECTION,
 					VERIFY_AND_FORWARD_PENDING_APPROVAL_FOR_CONNECTION, APPROVE_FOR_CONNECTION_PENDING_FOR_PAYMENT,
-					ACTIVATE_CONNECTION_CONNECTION_ACTIVATED,
+					PAY_PENDING_FOR_CONNECTION_ACTIVATION, ACTIVATE_CONNECTION_CONNECTION_ACTIVATED,
 					EDIT_PENDING_FOR_DOCUMENT_VERIFICATION, EDIT_PENDING_FOR_FIELD_INSPECTION,
 					SUBMIT_APPLICATION_STATUS_CODE, APPROVE_CONNECTION_STATUS_CODE,SEND_BACK_TO_CITIZEN_INITIATED,VERIFY_AND_FORWARD_PENDING_APPROVAL_FOR_DISCONNECTION,
 					APPROVE_FOR_DISCONNECTION_PENDING_FOR_PAYMENT,APPROVE_FOR_DISCONNECTION_PENDING_FOR_DISCONNECTION_EXECUTION,
@@ -313,10 +313,22 @@ public class WCConstants {
 	public static final String CHANNEL = "Channel";
 	
 	public static final String ACTIVE = "ACTIVE";
+	
+	public static final String BILL_NO_DEMAND_ERROR_CODE = "EG_BS_BILL_NO_DEMANDS_FOUND";
+	
+	public static final String ACTIVE_STATUS="Active";
+	
+	public static final String BILL_NO_PAYABLE_DEMAND_ERROR_CODE = "EG_BS_BILL_ZERO_TAX";
+	
+	public static final String BILL_AMOUNT_PATH = "/Bill/0/totalAmount";
+	
+	public static final String DUES_ERROR_MESSAGE="Please collect pending dues before proceeding to disconnect the connection";
 
 	public static final String EXECUTE_DISCONNECTION = "EXECUTE_DISCONNECTION";
 
 	public static final String APPROVE_DISCONNECTION_CONST = "APPROVE_FOR_DISCONNECTION";
+	
+	public static final String ACTIVE_ERROR_MESSAGE="Action can not be performed as the consumer is already inactive";
 	
 	public static final String RECONNECT_DISCONNECTION_CONST = "APPROVE_FOR_CONNECTION";
 
@@ -374,7 +386,10 @@ public class WCConstants {
 	public static final String TENANT_MASTER_MODULE = "tenant";
 
 	public static final String TENANTS_MASTER_ROOT = "tenants";
+	
+	public static final String INACTIVE_STATUS = "Inactive";
 
 	public static final String TENANTS_JSONPATH_ROOT = "$.MdmsRes.tenant.tenants";
 
+	public static final String SUCCESS_DISCONNECT_MSG = "Successfully disconnected water connection";
 }

@@ -43,16 +43,7 @@ public class PaymentQueryBuilder {
             " FROM egcl_payment py  " +
             " INNER JOIN egcl_paymentdetail pyd ON pyd.paymentid = py.id ";
     
-    public static final String SELECT_COUNT_PAYMENT_SQL = "SELECT count(distinct(py.id)) FROM egcl_payment py "
-    		+ "INNER JOIN egcl_paymentdetail pyd ON pyd.paymentid = py.id where pyd.businessservice= :businessservice and pyd.tenantid= :tenantid ";
-
-    /*public static final String ID_QUERY = "SELECT DISTINCT py.id as id,py.transactiondate as date " +
-            " FROM egcl_payment py  " +
-            " INNER JOIN egcl_paymentdetail pyd ON pyd.paymentid = py.id " +
-            " INNER JOIN egcl_bill bill ON bill.id = pyd.billid " +
-            " INNER JOIN egcl_billdetial bd ON bd.billid = bill.id " ;*/
-
-    public static final String ID_QUERY = "WITH py_filtered as (" +
+       public static final String ID_QUERY = "WITH py_filtered as (" +
             "select id from egcl_payment as py_inner {{WHERE_CLAUSE}} ) " +
             " SELECT py.id as id FROM py_filtered as py " +
             " INNER JOIN egcl_paymentdetail as pyd ON pyd.paymentid = py.id and pyd.tenantid {{operator}} :tenantId " +
@@ -144,6 +135,7 @@ public class PaymentQueryBuilder {
 
     public static final String FILESTOREID_UPDATE_PAYMENT_SQL = "UPDATE egcl_payment SET filestoreid=:filestoreid WHERE id=:id;";
 
+    public static final String FILESTOREID_UPDATE_NULL_PAYMENT_SQL = "UPDATE egcl_payment SET filestoreid=null WHERE id=:id;";
 
 
     // Payment update queries
@@ -178,7 +170,14 @@ public class PaymentQueryBuilder {
 			+ "LEFT OUTER JOIN egcl_billaccountdetail ad ON bd.id = ad.billdetailid AND bd.tenantid = ad.tenantid "
 			+ "WHERE b.id IN (:id);"; 
 
+ public static final String SELECT_COUNT_PAYMENT_SQL = "SELECT count(distinct(py.id)) FROM egcl_payment py "
+    		+ "INNER JOIN egcl_paymentdetail pyd ON pyd.paymentid = py.id where pyd.businessservice= :businessservice and pyd.tenantid= :tenantid ";
 
+    /*public static final String ID_QUERY = "SELECT DISTINCT py.id as id,py.transactiondate as date " +
+            " FROM egcl_payment py  " +
+            " INNER JOIN egcl_paymentdetail pyd ON pyd.paymentid = py.id " +
+            " INNER JOIN egcl_bill bill ON bill.id = pyd.billid " +
+            " INNER JOIN egcl_billdetial bd ON bd.billid = bill.id " ;*/
 	public static final String UPDATE_PAYMENT_BANKDETAIL_SQL = "UPDATE egcl_payment SET additionaldetails = jsonb_set(additionaldetails, '{bankDetails}', :additionaldetails, true) WHERE length(additionaldetails :: text) is not null and length(additionaldetails :: text) > 4  and jsonb_typeof( additionaldetails ::jsonb ) ='object' and ifsccode=:ifsccode ";
 	public static final String UPDATE_PAYMENT_BANKDETAIL_EMPTYADDTL_SQL = "UPDATE egcl_payment SET additionaldetails = :additionaldetails ::jsonb WHERE (length(additionaldetails :: text) is null or length(additionaldetails :: text) = 4) and ifsccode=:ifsccode ";
 	public static final String UPDATE_PAYMENT_BANKDETAIL_ARRAYADDTL_SQL = "UPDATE egcl_payment SET additionaldetails =  additionaldetails || :additionaldetails ::jsonb WHERE length(additionaldetails :: text) is not null and length(additionaldetails :: text) > 4  and jsonb_typeof(additionaldetails ::jsonb) ='array' and ifsccode=:ifsccode ";

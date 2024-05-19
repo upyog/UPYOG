@@ -48,6 +48,15 @@ public class BillDetailV2 {
 
 	@JsonProperty("toPeriod")
 	private Long toPeriod;
+	
+	@JsonProperty("businessService")
+	private String businessService;
+	
+	@JsonProperty("consumerCode")
+	private String consumerCode;
+	
+	@JsonProperty("totalAmount")
+	private BigDecimal totalAmount;
 
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;

@@ -39,6 +39,8 @@
  */
 package org.egov.demand.model;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,7 +48,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
+import org.egov.demand.model.enums.DemandStatus;
+import org.springframework.util.StringUtils;
 import org.egov.demand.model.BillV2.BillStatus;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -87,6 +90,10 @@ public class GenerateBillCriteria {
 	@Pattern(regexp = "^[0-9]{10}$", message = "MobileNumber should be 10 digit number")
 	private String mobileNumber;
 	
+	private Long periodFrom;
+	
+	private Long periodTo;
+	
 	public DemandCriteria toDemandCriteria() {
 		
 		Set<String> consumerCodeSet = new HashSet<>();
@@ -95,14 +102,18 @@ public class GenerateBillCriteria {
 		Set<String> demandIdSet = new HashSet<>();
 		demandIdSet.add(demandId);
 		
+		
 		return DemandCriteria.builder()
+				.status(DemandStatus.ACTIVE.toString())
 				.businessService(businessService)
 				.consumerCode(consumerCodeSet)
 				.mobileNumber(mobileNumber)
-				.isPaymentCompleted(false)
 				.demandId(demandIdSet)
 				.tenantId(tenantId)
+				.isPaymentCompleted(false)
 				.email(email)
+				.periodFrom(periodFrom)
+				.periodTo(periodTo)
 				.build();
 	}
 	
@@ -121,6 +132,8 @@ public class GenerateBillCriteria {
 				.tenantId(tenantId)
 				.isOrderBy(true)
 				.email(email)
+				.periodFrom(periodFrom)
+				.periodTo(periodTo)
 				.build();
 	}
 

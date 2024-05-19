@@ -59,9 +59,9 @@ public class WSConfiguration {
 
     @Value("${workflow.businessservice.search.path}")
     private String wfBusinessServiceSearchPath;
-
-    @Value("${workflow.process.search.path}")
-    private String wfProcessSearchPath;
+	
+	@Value("${workflow.process.search.path}")
+	private String wfProcessSearchPath;
 
     @Value("${is.external.workflow.enabled}")
     private Boolean isExternalWorkFlowEnabled;
@@ -111,6 +111,9 @@ public class WSConfiguration {
 
     @Value("${egov.waterservice.updatewaterconnection.topic}")
     private String onWaterUpdated;
+	
+	@Value("${egov.msg.download.receipt.link}")
+	private String receiptDownloadLink;
 
     @Value("${egov.user.event.notification.enabled}")
     private Boolean isUserEventsNotificationEnabled;
@@ -158,9 +161,6 @@ public class WSConfiguration {
 
     @Value("${ws.application.pay.link}")
     private String applicationPayLink;
-
-    @Value("${egov.msg.download.receipt.link}")
-    private String receiptDownloadLink;
 
     @Value("${egov.usr.events.download.receipt.link}")
     private String userEventReceiptDownloadLink;
@@ -253,8 +253,11 @@ public class WSConfiguration {
 
     @Value("${egov.billing.service.host}")
     private String billingServiceHost;
-
-    @Value("${egov.fetch.bill.endpoint}")
-    private String fetchBillEndPoint;
-
+	
+	@Value("${egov.billing.service.host}")
+	private String businesserviceHost;
+	
+	@Value("${egov.fetch.bill.endpoint}")
+	private String fetchBillEndPoint;
+	
 }

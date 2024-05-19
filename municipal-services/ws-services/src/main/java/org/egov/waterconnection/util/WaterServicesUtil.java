@@ -1,5 +1,6 @@
 package org.egov.waterconnection.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.minidev.json.JSONObject;
 import org.egov.common.contract.request.RequestInfo;
@@ -9,6 +10,7 @@ import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
+import org.egov.tracer.model.ServiceCallException;
 import org.egov.waterconnection.config.WSConfiguration;
 import org.egov.waterconnection.constants.WCConstants;
 import org.egov.waterconnection.repository.ServiceRequestRepository;
@@ -90,6 +92,7 @@ public class WaterServicesUtil {
 		HashSet<String> propertyIds = new HashSet<>();
 		propertyIds.add(waterConnectionRequest.getWaterConnection().getPropertyId());
 		propertyCriteria.setPropertyIds(propertyIds);
+//		propertyCriteria.setTenantId(waterConnectionRequest.getWaterConnection().getTenantId());
 		if (waterConnectionRequest.getRequestInfo().getUserInfo() != null
 				&& "EMPLOYEE".equalsIgnoreCase(waterConnectionRequest.getRequestInfo().getUserInfo().getType())) {
 			propertyCriteria.setTenantId(waterConnectionRequest.getWaterConnection().getTenantId());
@@ -98,7 +101,7 @@ public class WaterServicesUtil {
 				&& "SYSTEM".equalsIgnoreCase(waterConnectionRequest.getRequestInfo().getUserInfo().getType())
 		        && "INTERNAL_MICROSERVICE_ROLE".equalsIgnoreCase(waterConnectionRequest.getRequestInfo().getUserInfo().getRoles().get(0).getCode()) )
 		{
-			propertyCriteria.setTenantId(waterConnectionRequest.getWaterConnection().getTenantId());
+			
 		}
 		if (waterConnectionRequest.getRequestInfo().getUserInfo() != null
 				&& "SYSTEM".equalsIgnoreCase(waterConnectionRequest.getRequestInfo().getUserInfo().getType())
@@ -313,6 +316,32 @@ public class WaterServicesUtil {
 	
 	public boolean isModifyConnectionRequest(WaterConnectionRequest waterConnectionRequest) {
 		return !StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getConnectionNo());
+	}
+	
+	public Boolean isBillUnpaid(String connectionNo, String tenantId, RequestInfo request) {
+
+		Object res = null;
+
+		StringBuilder uri = new StringBuilder(config.getBusinesserviceHost())
+				.append(config.getFetchBillEndPoint())
+				.append("?tenantId=").append(tenantId)
+				.append("&consumerCode=").append(connectionNo)
+				.append("&businessService=").append(WCConstants.WATER_SERVICE_BUSINESS_ID);
+
+		try {
+			res = serviceRequestRepository.fetchResult(uri, new RequestInfoWrapper(request));
+		} catch (ServiceCallException e) {
+
+			if(!(e.getError().contains(WCConstants.BILL_NO_DEMAND_ERROR_CODE) || e.getError().contains(WCConstants.BILL_NO_PAYABLE_DEMAND_ERROR_CODE)))
+				throw e;
+		}
+
+		if (res != null) {
+			JsonNode node = objectMapper.convertValue(res, JsonNode.class);
+			Double amount = node.at(WCConstants.BILL_AMOUNT_PATH).asDouble();
+			return amount > 0;
+		}
+		return false;
 	}
 
 	public boolean isModifyConnectionRequestForNotification(WaterConnectionRequest waterConnectionRequest) {

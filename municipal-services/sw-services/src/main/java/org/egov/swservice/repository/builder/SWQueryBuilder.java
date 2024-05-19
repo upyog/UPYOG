@@ -69,7 +69,7 @@ public class SWQueryBuilder {
 			+ "eg_sw_roadcuttinginfo roadcuttingInfo ON roadcuttingInfo.swid = conn.id";
 
 	private static final String TOTAL_APPLICATIONS_COUNT_QUERY = "select count(*) from eg_sw_connection where tenantid = ?;";
-
+	public static final String UPDATE_DISCONNECT_STATUS="update eg_sw_connection set status=? where id=?";
 	private final String paginationWrapper = "SELECT * FROM " +
             "(SELECT *, DENSE_RANK() OVER (ORDER BY sc_appCreatedDate DESC) offset_ FROM " +
             "({})" +
@@ -303,10 +303,25 @@ public class SWQueryBuilder {
 		}
 		return builder.toString();
 	}
+	
+	private String createQuery(List<String> ids) {
+        StringBuilder builder = new StringBuilder();
+        int length = ids.size();
+        for( int i = 0; i< length; i++){
+            builder.append(" LOWER(?)");
+            if(i != length -1) builder.append(",");
+        }
+        return builder.toString();
+    }
 
 	private void addToPreparedStatement(List<Object> preparedStatement, Set<String> ids) {
 		preparedStatement.addAll(ids);
 	}
+	
+	private void addToPreparedStatement(List<Object> preparedStmtList,List<String> ids)
+    {
+        ids.forEach(id ->{ preparedStmtList.add(id);});
+    }
 
 
 	/**
@@ -321,14 +336,23 @@ public class SWQueryBuilder {
 	private String addPaginationWrapper(String query, List<Object> preparedStmtList, SearchCriteria criteria) {
 		Integer limit = config.getDefaultLimit();
 		Integer offset = config.getDefaultOffset();
+		
 		if (criteria.getLimit() == null && criteria.getOffset() == null)
 			limit = config.getMaxLimit();
 
 		if (criteria.getLimit() != null && criteria.getLimit() <= config.getDefaultLimit())
 			limit = criteria.getLimit();
 
-		if (criteria.getLimit() != null && criteria.getLimit() > config.getDefaultLimit())
-			limit = config.getDefaultLimit();
+		if (criteria.getLimit() != null && criteria.getLimit() > config.getMaxLimit())
+			limit = config.getMaxLimit();
+		
+		
+		
+//		if (criteria.getLimit() != null && criteria.getLimit() <= config.getDefaultLimit())
+//			limit = criteria.getLimit();
+//
+//		if (criteria.getLimit() != null && criteria.getLimit() > config.getDefaultOffset())
+//			limit = config.getDefaultLimit();
 
 		if (criteria.getOffset() != null)
 			offset = criteria.getOffset();
@@ -345,6 +369,20 @@ public class SWQueryBuilder {
 			queryString.append(" OR");
 		}
 	}
+	
+		public String getSCPlainSearchQuery(SearchCriteria criteria, List<Object> preparedStmtList) {
+        StringBuilder builder = new StringBuilder(SEWERAGE_SEARCH_QUERY);
+
+        Set<String> ids = criteria.getIds();
+        if (!CollectionUtils.isEmpty(ids)) {
+            addClauseIfRequired(preparedStmtList,builder);
+            builder.append(" conn.id IN (").append(createQuery(ids)).append(")");
+            addToPreparedStatement(preparedStmtList, ids);
+        }
+
+        return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
+
+    }
 	
 	public String getSearchQueryStringForPlainSearch(SearchCriteria criteria, List<Object> preparedStatement,
 			RequestInfo requestInfo) {

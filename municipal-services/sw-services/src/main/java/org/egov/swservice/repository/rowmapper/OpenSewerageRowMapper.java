@@ -4,18 +4,28 @@ import org.egov.swservice.util.SWConstants;
 import org.egov.swservice.web.models.*;
 import org.egov.swservice.web.models.Connection.StatusEnum;
 import org.egov.swservice.web.models.workflow.ProcessInstance;
+import org.egov.tracer.model.CustomException;
+import org.postgresql.util.PGobject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
 @Component
 public class OpenSewerageRowMapper implements ResultSetExtractor<List<SewerageConnection>> {
+	
+	@Autowired
+	private ObjectMapper mapper;
 	
 	@Override
     public List<SewerageConnection> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -44,6 +54,7 @@ public class OpenSewerageRowMapper implements ResultSetExtractor<List<SewerageCo
                 sewarageConnection.setChannel(rs.getString("channel"));
                 sewarageConnection.setDateEffectiveFrom(rs.getLong("dateEffectiveFrom"));
                 sewarageConnection.setPropertyId(rs.getString("property_id"));
+                sewarageConnection.setConnectionType(rs.getString("connectionType"));
 
                 AuditDetails auditdetails = AuditDetails.builder()
                         .createdBy(rs.getString("sw_createdBy"))

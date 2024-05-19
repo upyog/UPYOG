@@ -19,8 +19,13 @@ public interface WaterDao {
 	void updateOldWaterConnections(WaterConnectionRequest waterConnectionRequest);
 
 	Integer getTotalApplications(SearchCriteria criteria);
+	
+	List<String> fetchWaterConnectionIds(SearchCriteria criteria);
+	
 
 	void updateEncryptionStatus(EncryptionCount encryptionCount);
-
+	
+	List<WaterConnection> getPlainWaterConnectionSearch(SearchCriteria criteria);
+	
 	EncryptionCount getLastExecutionDetail(SearchCriteria criteria);
 }

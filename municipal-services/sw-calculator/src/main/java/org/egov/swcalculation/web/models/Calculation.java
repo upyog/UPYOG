@@ -60,4 +60,10 @@ public class Calculation {
 	
 	@JsonProperty("fee")
 	private BigDecimal fee;
+	
+	@JsonProperty("taxPeriodFrom")
+	private Long taxPeriodFrom;
+
+	@JsonProperty("taxPeriodTo")
+	private Long taxPeriodTo;
 }

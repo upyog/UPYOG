@@ -1,18 +1,18 @@
-DROP TABLE IF EXISTS "egcl_receiptheader" CASCADE;
-DROP INDEX IF EXISTS idx_rcpthd_consumercode;
-DROP INDEX IF EXISTS idx_rcpthd_createdby;
-DROP INDEX IF EXISTS idx_rcpthd_createddate;
-DROP INDEX IF EXISTS idx_rcpthd_mreceiptnumber;
-DROP INDEX IF EXISTS idx_rcpthd_refno;
-DROP INDEX IF EXISTS idx_rcpthd_business;
-DROP INDEX IF EXISTS idx_rcpthd_status;
-DROP TABLE IF EXISTS "egcl_receiptdetails";
-DROP TABLE IF EXISTS "egcl_receiptinstrument";
-DROP TABLE IF EXISTS "egcl_instrumentheader";
-DROP INDEX IF EXISTS idx_ins_transactionnumber;
+---- DROP TABLEIF NOT EXISTS "egcl_receiptheader" CASCADE;
+DROP INDEX IF  EXISTS idx_rcpthd_consumercode;
+DROP INDEX IF  EXISTS idx_rcpthd_createdby;
+DROP INDEX IF  EXISTS idx_rcpthd_createddate;
+DROP INDEX IF  EXISTS idx_rcpthd_mreceiptnumber;
+DROP INDEX IF  EXISTS idx_rcpthd_refno;
+DROP INDEX IF  EXISTS idx_rcpthd_business;
+DROP INDEX IF  EXISTS idx_rcpthd_status;
+---- DROP TABLEIF NOT EXISTS "egcl_receiptdetails";
+---- DROP TABLEIF NOT EXISTS "egcl_receiptinstrument";
+---- DROP TABLEIF NOT EXISTS "egcl_instrumentheader";
+DROP INDEX IF  EXISTS idx_ins_transactionnumber;
 
 
-CREATE TABLE "egcl_receiptheader" (
+CREATE TABLE IF NOT EXISTS "egcl_receiptheader" (
 	"id" VARCHAR(36) NOT NULL,
 	"payeename" VARCHAR(256) NULL DEFAULT NULL,
 	"payeeaddress" VARCHAR(1024) NULL DEFAULT NULL,
@@ -59,15 +59,15 @@ CREATE TABLE "egcl_receiptheader" (
 );
 
 
-CREATE INDEX idx_rcpthd_consumercode ON egcl_receiptheader(consumercode);
-CREATE INDEX idx_rcpthd_transactionid ON egcl_receiptheader(transactionid);
-CREATE INDEX idx_rcpthd_mreceiptnumber ON egcl_receiptheader(manualreceiptnumber);
-CREATE INDEX idx_rcpthd_refno ON egcl_receiptheader(referencenumber);
-CREATE INDEX idx_rcpthd_business ON egcl_receiptheader(businessdetails);
-CREATE INDEX idx_rcpthd_status ON egcl_receiptheader(status);
+CREATE INDEX IF NOT EXISTS idx_rcpthd_consumercode ON egcl_receiptheader(consumercode);
+CREATE INDEX IF NOT EXISTS idx_rcpthd_transactionid ON egcl_receiptheader(transactionid);
+CREATE INDEX IF NOT EXISTS idx_rcpthd_mreceiptnumber ON egcl_receiptheader(manualreceiptnumber);
+CREATE INDEX IF NOT EXISTS idx_rcpthd_refno ON egcl_receiptheader(referencenumber);
+CREATE INDEX IF NOT EXISTS idx_rcpthd_business ON egcl_receiptheader(businessdetails);
+CREATE INDEX IF NOT EXISTS idx_rcpthd_status ON egcl_receiptheader(status);
 
 
-CREATE TABLE "egcl_receiptdetails" (
+CREATE TABLE IF NOT EXISTS "egcl_receiptdetails" (
 	"id" VARCHAR(36) NOT NULL,
 	"chartofaccount" VARCHAR NOT NULL,
 	"dramount" NUMERIC(12,2) NULL DEFAULT NULL,
@@ -88,7 +88,7 @@ CREATE TABLE "egcl_receiptdetails" (
 );
 
 
-CREATE TABLE "egcl_instrumentheader" (
+CREATE TABLE IF NOT EXISTS "egcl_instrumentheader" (
   id VARCHAR(36) NOT NULL,
   transactionNumber varchar(50) NOT NULL,
   transactionDate BIGINT NOT NULL,
@@ -113,10 +113,10 @@ CREATE TABLE "egcl_instrumentheader" (
   CONSTRAINT pk_egcl_instrumenthead PRIMARY KEY (id)
 );
 
-CREATE INDEX idx_ins_transactionnumber ON egcl_instrumentheader(transactionNumber);
+CREATE INDEX IF NOT EXISTS idx_ins_transactionnumber ON egcl_instrumentheader(transactionNumber);
 
 
-CREATE TABLE EGCL_RECEIPTINSTRUMENT (
+CREATE TABLE IF NOT EXISTS EGCL_RECEIPTINSTRUMENT (
   RECEIPTHEADER VARCHAR(36) NOT NULL,
   INSTRUMENTHEADER VARCHAR(36) NOT NULL,
   CONSTRAINT FK_RCPTINST_RCPTHEAD FOREIGN KEY (RECEIPTHEADER)

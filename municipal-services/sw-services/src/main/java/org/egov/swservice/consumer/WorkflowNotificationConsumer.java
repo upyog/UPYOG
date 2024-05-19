@@ -11,6 +11,10 @@ import org.egov.swservice.web.models.OwnerInfo;
 import org.egov.swservice.web.models.SewerageConnection;
 import org.egov.swservice.web.models.SewerageConnectionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;

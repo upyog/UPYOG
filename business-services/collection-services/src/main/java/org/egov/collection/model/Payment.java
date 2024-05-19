@@ -81,7 +81,7 @@ public class Payment {
     @SafeHtml
     @Size(max=128)
     @NotNull
-    @Pattern(regexp = "^[a-zA-Z]+(([_\\-'`\\. ][a-zA-Z ])?[a-zA-Z]*)*$", message = "Invalid name. Only alphabets and special characters -, ',`, ., _")
+  //  @Pattern(regexp = "^[a-zA-Z]+(([_\\-'`\\. ][a-zA-Z ])?[a-zA-Z]*)*$", message = "Invalid name. Only alphabets and special characters -, ',`, ., _")
     @JsonProperty("paidBy")
     private String paidBy = null;
 
@@ -93,7 +93,7 @@ public class Payment {
 
     @SafeHtml
     @Size(max=128)
-    @Pattern(regexp = "^[a-zA-Z ]+(([_\\-'`\\. ][a-zA-Z ])?[a-zA-Z]*)*$", message = "Invalid name. Only alphabets and special characters -, ',`, ., _")
+    //@Pattern(regexp = "^[a-zA-Z ]+(([_\\-'`\\. ][a-zA-Z ])?[a-zA-Z]*)*$", message = "Invalid name. Only alphabets and special characters -, ',`, ., _")
     @JsonProperty("payerName")
     private String payerName = null;
 
@@ -120,6 +120,17 @@ public class Payment {
     @JsonProperty("fileStoreId")
     private String fileStoreId;
 
+	@JsonProperty("usageCategory")
+	private String usageCategory;
+	
+	@JsonProperty("address")
+	private String address;
+	
+	@JsonProperty("propertyDetail")
+	private HashMap<String, String> propertyDetail;
+
+	@JsonProperty("propertyid")
+        private String PropertyId = null;
 
     public Payment addpaymentDetailsItem(PaymentDetail paymentDetail) {
         if (this.paymentDetails == null) {

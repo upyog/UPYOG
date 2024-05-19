@@ -5,6 +5,8 @@ import static org.egov.demand.repository.querybuilder.AmendmentQueryBuilder.AMEN
 import static org.egov.demand.repository.querybuilder.AmendmentQueryBuilder.AMENDMENT_UPDATE_QUERY;
 import static org.egov.demand.repository.querybuilder.AmendmentQueryBuilder.DOCUMET_INSERT_QUERY;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +49,8 @@ public class AmendmentRepository {
 
 		namedJdbcTemplate.update(AMENDMENT_INSERT_QUERY, getAmendmentSqlParameter(amendmentRequest));
 		saveTaxDetail(amendment.getDemandDetails(), amendment.getId());
+		
+		if (amendment.getDocuments() != null && !amendment.getDocuments().isEmpty())
 		savedocs(amendment.getDocuments(), amendment.getId());
 	}
 	

@@ -55,8 +55,8 @@ public class CalculationReq  {
         @NotNull
         @JsonProperty("CalculationCriteria")
         private List<CalculationCriteria> calculationCriteria;
-
-
+        private long taxPeriodTo;
+        private long taxPeriodFrom;
         /*
          * Used by the bulk bill generator to send batch information through kafka
          */

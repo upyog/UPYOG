@@ -241,13 +241,68 @@ public class PaymentRepository {
 
     }
 
+    public void updateFileStoreIdToNull(Payment payment){
+
+     
+      List<MapSqlParameterSource> fileStoreIdSource = new ArrayList<>();
+	  
+      MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
+      sqlParameterSource.addValue("id",payment.getId());
+      fileStoreIdSource.add(sqlParameterSource);
+
+      namedParameterJdbcTemplate.batchUpdate(FILESTOREID_UPDATE_NULL_PAYMENT_SQL,fileStoreIdSource.toArray(new MapSqlParameterSource[0]));
+
+    }
+
     public List<String> fetchPaymentIds(PaymentSearchCriteria paymentSearchCriteria) {
 
+    	StringBuilder query = new StringBuilder("SELECT id from egcl_payment ");
+    	boolean whereCluaseApplied= false ;
+    	boolean isTenantPresent= true ;
         Map<String, Object> preparedStatementValues = new HashMap<>();
         preparedStatementValues.put("offset", paymentSearchCriteria.getOffset());
         preparedStatementValues.put("limit", paymentSearchCriteria.getLimit());
+        if(paymentSearchCriteria.getTenantId() != null && !paymentSearchCriteria.getTenantId().equals("pb")) {
+            query.append(" WHERE tenantid=:tenantid ");
+            preparedStatementValues.put("tenantid", paymentSearchCriteria.getTenantId());
+            whereCluaseApplied=true;
+        }else {
+        	isTenantPresent = false;
+		whereCluaseApplied=false;
+        	query.append(" WHERE id in (select paymentid from egcl_paymentdetail WHERE createdtime between :fromDate and :toDate) ");
+        	preparedStatementValues.put("fromDate", paymentSearchCriteria.getFromDate());
+                preparedStatementValues.put("toDate", paymentSearchCriteria.getToDate());
+        } 
+        
+        if(paymentSearchCriteria.getBusinessServices() != null && isTenantPresent && whereCluaseApplied) {
+        	if(whereCluaseApplied) {
+            	query.append(" AND id in (select paymentid from egcl_paymentdetail where tenantid=:tenantid AND businessservice=:businessservice) ");
+                preparedStatementValues.put("tenantid", paymentSearchCriteria.getTenantId());
+                preparedStatementValues.put("businessservice", paymentSearchCriteria.getBusinessServices());
 
-        return namedParameterJdbcTemplate.query("SELECT id from egcl_payment ORDER BY createdtime offset " + ":offset " + "limit :limit", preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+        	}
+        }
+        
+        if(paymentSearchCriteria.getBusinessService() != null && isTenantPresent && whereCluaseApplied) {
+            log.info("In side the repo before query: " + paymentSearchCriteria.getBusinessService() );
+           query.append(" AND id in (select paymentid from egcl_paymentdetail where tenantid=:tenantid AND businessservice=:businessservice) ");
+            preparedStatementValues.put("tenantid", paymentSearchCriteria.getTenantId());
+            preparedStatementValues.put("businessservice", paymentSearchCriteria.getBusinessService());
+        }
+        
+        if(paymentSearchCriteria.getFromDate() != null && isTenantPresent && whereCluaseApplied) {
+          log.info("In side the repo before query: " + paymentSearchCriteria.getBusinessService() );
+           query.append("  AND  createdtime between :fromDate and :toDate");
+           preparedStatementValues.put("fromDate", paymentSearchCriteria.getFromDate());
+           preparedStatementValues.put("toDate", paymentSearchCriteria.getToDate());
+
+       }
+     
+        
+        query.append(" ORDER BY createdtime offset " + ":offset " + "limit :limit"); 
+        
+        log.info("fetchPaymentIds query: " + query.toString() );
+        return namedParameterJdbcTemplate.query(query.toString(), preparedStatementValues, new SingleColumnRowMapper<>(String.class));
 
     }
 
@@ -255,6 +310,141 @@ public class PaymentRepository {
         Map<String, Object> preparedStatementValues = new HashMap<>();
         String query = paymentQueryBuilder.getIdQuery(paymentSearchCriteria, preparedStatementValues);
         return namedParameterJdbcTemplate.query(query, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+	}
+
+	public List<String> fetchPropertyDetail(String consumerCode) {
+		List<String> status = new ArrayList<String>();
+		List<String> oldConnectionno = fetchOldConnectionNo(consumerCode);
+		List<String> plotSize = fetchLandArea(consumerCode);
+		List<String> usageCategory = fetchUsageCategory(consumerCode);
+		if(oldConnectionno.size()>0)
+		status.add(oldConnectionno.get(0));
+		if(plotSize.size()>0)
+		status.add(plotSize.get(0));
+		if(usageCategory.size()>0)
+		status.add(usageCategory.get(0));		
+		return status;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public List<String> fetchOldConnectionNo(String consumerCode) {
+		List<String> res = new ArrayList<>();
+		String queryString = "select oldconnectionno from eg_ws_connection where connectionno='"+consumerCode+"'";
+		log.info("Query: " +queryString);
+		try {
+		//	res = jdbcTemplate.queryForList(queryString, String.class);
+			res = namedParameterJdbcTemplate.query(queryString, new SingleColumnRowMapper<>(String.class));
+		} catch (Exception ex) {
+			log.error("Exception while reading bill scheduler status" + ex.getMessage());
+		}
+		return res;
+	}
+	
+	public List<String> fetchLandArea(String consumerCode) {
+		List<String> res = new ArrayList<>();
+		Map<String, Object> preparedStatementValues = new HashMap<>();
+		String queryString = "select a2.landarea from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+				+ " where a1.connectionno = '"+consumerCode+"'";
+		log.info("Query: " +queryString);
+		try {
+			//res = jdbcTemplate.queryForList(queryString, String.class);
+			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+		} catch (Exception ex) {
+			log.error("Exception while reading bill scheduler status" + ex.getMessage());
+		}
+		return res;
+	}
+	
+	
+	
+	public List<String> fetchUsageCategory(String consumerCode) {
+		List<String> res = new ArrayList<>();
+		Map<String, Object> preparedStatementValues = new HashMap<>();
+		String queryString = "select a2.usagecategory from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+				+ " where a1.connectionno = '"+consumerCode+"'";
+		log.info("Query: " +queryString);
+		try {
+		//	res = jdbcTemplate.queryForList(queryString, String.class);
+			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+		} catch (Exception ex) {
+			log.error("Exception while reading bill scheduler status" + ex.getMessage());
+		}
+		return res;
+	}
+
+
+
+
+
+
+	
+    
+	public List<String> fetchUsageCategoryByApplicationno(Set<String> consumerCodes) {
+		List<String> res = new ArrayList<>();
+		String consumercode = null;
+		 Iterator<String> iterate = consumerCodes.iterator();
+		 while(iterate.hasNext()) {
+			    consumercode =   iterate.next();			  
+		}		
+		Map<String, Object> preparedStatementValues = new HashMap<>();
+		String queryString;
+		if (consumercode.contains("WS_AP")) {
+		    queryString = "select a2.usagecategory from eg_ws_connection a1 "
+				+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
+				+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
+				+ " where a1.applicationno='"+consumercode+"'";
+		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
+		} else {
+			queryString = "select a2.usagecategory from eg_sw_connection a1 "
+					+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
+					+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
+					+ " where a1.applicationno='"+consumercode+"'";
+			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
+		}
+		try {
+			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+		} catch (Exception ex) {
+			log.error("Exception while reading usage category" + ex.getMessage());
+		}
+		return res;
+	}
+	public List<String> fetchAddressByApplicationno(Set<String> consumerCodes) {
+		List<String> res = new ArrayList<>();
+		String consumercode = null;
+		 Iterator<String> iterate = consumerCodes.iterator();
+		 while(iterate.hasNext()) {
+			    consumercode =   iterate.next();			  
+		}
+		Map<String, Object> preparedStatementValues = new HashMap<>();
+		String queryString;
+		if (consumercode.contains("WS_AP")) {
+		 queryString = "select CONCAT(doorno,buildingname,city) as address from eg_ws_connection a1 "
+				+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
+				+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
+				+ " where a1.applicationno='"+consumercode+"'";
+		log.info("Query for fetchAddressByApplicationno: " +queryString);
+		}
+		else {
+			 queryString = "select CONCAT(doorno,buildingname,city) as address from eg_sw_connection a1 "
+						+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
+						+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
+						+ " where a1.applicationno='"+consumercode+"'";
+				log.info("Query for fetchAddressByApplicationno: " +queryString);
+		}
+		try {
+			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+		} catch (Exception ex) {
+			log.error("Exception while reading usage category" + ex.getMessage());
+		}
+		return res;
 	}
 
 	/**
@@ -268,7 +458,20 @@ public class PaymentRepository {
 				new SingleColumnRowMapper<>(String.class));
 
 	}
-
+public List<String> fetchConsumerCodeByReceiptNumber(String receiptnumber) {
+		List<String> res = new ArrayList<>();
+		Map<String, Object> preparedStatementValues = new HashMap<>();
+		String queryString = "select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill "
+				+ " where bill.id=pd.billid  "
+				+ " and pd.receiptnumber='"+receiptnumber+"'";
+		log.info("Query: " +queryString);
+		try {
+			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+		} catch (Exception ex) {
+			log.error("Exception while reading usage category" + ex.getMessage());
+		}
+		return res;
+	}
 	/**
 	 * API, All payments with @param ifsccode, additional details updated
 	 * with @param additionaldetails

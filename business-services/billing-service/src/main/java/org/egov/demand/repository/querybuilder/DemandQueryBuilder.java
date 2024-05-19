@@ -92,8 +92,8 @@ public class DemandQueryBuilder {
 
 	public static final String DEMAND_INSERT_QUERY = "INSERT INTO egbs_demand_v1 "
 			+ "(id,consumerCode,consumerType,businessService,payer,taxPeriodFrom,taxPeriodTo,"
-			+ "minimumAmountPayable,createdby,lastModifiedby,createdtime,lastModifiedtime,tenantid, status, additionaldetails, billexpirytime, fixedBillExpiryDate) "
-			+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+			+ "minimumAmountPayable,createdby,lastModifiedby,createdtime,lastModifiedtime,tenantid, status, additionaldetails, billexpirytime, fixedBillExpiryDate,ispaymentcompleted) "
+			+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
 	public static final String DEMAND_DETAIL_INSERT_QUERY = "INSERT INTO egbs_demanddetail_v1 "
 			+ "(id,demandid,taxHeadCode,taxamount,collectionamount,"
@@ -229,10 +229,10 @@ public class DemandQueryBuilder {
 	}
 
 	private static void addPagingClause(StringBuilder demandQueryBuilder, List<Object> preparedStatementValues) {
-//		demandQueryBuilder.append(" LIMIT ?");
-//		preparedStatementValues.add(500);
-//		demandQueryBuilder.append(" OFFSET ?");
-//		preparedStatementValues.add(0);
+		demandQueryBuilder.append(" LIMIT ?");
+		preparedStatementValues.add(500);
+		demandQueryBuilder.append(" OFFSET ?");
+		preparedStatementValues.add(0);
 	}
 
 	private static boolean addAndClause(StringBuilder queryString) {

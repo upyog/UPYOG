@@ -109,20 +109,7 @@ public class Bill {
     @JsonProperty("amountPaid")
     private BigDecimal amountPaid;
 
-    public Boolean addBillDetail(BillDetail billDetail) {
-
-        if (CollectionUtils.isEmpty(billDetails)) {
-
-            billDetails = new ArrayList<>();
-            return billDetails.add(billDetail);
-        } else {
-
-            if (!billDetails.contains(billDetail))
-                return billDetails.add(billDetail);
-            else
-                return false;
-        }
-    }
+   
 
     public enum StatusEnum {
         ACTIVE("ACTIVE"),
@@ -165,6 +152,19 @@ public class Bill {
         }
 
     }
+ public Boolean addBillDetail(BillDetail billDetail) {
 
+        if (CollectionUtils.isEmpty(billDetails)) {
+
+            billDetails = new ArrayList<>();
+            return billDetails.add(billDetail);
+        } else {
+
+            if (!billDetails.contains(billDetail))
+                return billDetails.add(billDetail);
+            else
+                return false;
+        }
+    }
 
 }

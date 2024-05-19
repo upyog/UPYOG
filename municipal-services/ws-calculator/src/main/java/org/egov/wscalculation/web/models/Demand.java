@@ -50,6 +50,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import org.egov.common.contract.request.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -73,6 +74,9 @@ public class Demand {
 
 	@JsonProperty("businessService")
 	private String businessService;
+	
+	@Default
+	private Boolean isPaymentCompleted = false;
 
 	@Valid
 	@JsonProperty("payer")

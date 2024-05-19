@@ -50,6 +50,7 @@ import org.egov.demand.web.contract.factory.ResponseFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -64,6 +65,7 @@ public class BusinessServDetailService {
     @Autowired
     private ResponseFactory responseInfoFactory;
 
+    @Cacheable(value = "businessServiceDetails", sync = true)
 	public BusinessServiceDetailResponse searchBusinessServiceDetails(
 			final BusinessServiceDetailCriteria businessServiceDetailCriteria, final RequestInfo requestInfo) {
 		

@@ -14,6 +14,7 @@ import org.egov.swservice.web.models.*;
 import org.egov.swservice.web.models.workflow.BusinessService;
 import org.egov.swservice.workflow.WorkflowService;
 import org.egov.tracer.model.CustomException;
+import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,11 @@ import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.minidev.json.JSONObject;
 
 @Component
 public class SewerageServicesUtil {
@@ -328,6 +334,32 @@ public class SewerageServicesUtil {
 	public StringBuilder getcollectionURL() {
 		StringBuilder builder = new StringBuilder();
 		return builder.append(config.getCollectionHost()).append(config.getPaymentSearch());
+	}
+	
+	public Boolean isBillUnpaid(String connectionNo, String tenantId, RequestInfo request) {
+
+		Object res = null;
+
+		StringBuilder uri = new StringBuilder(config.getBusinesserviceHost())
+				.append(config.getFetchBillEndPoint())
+				.append("?tenantId=").append(tenantId)
+				.append("&consumerCode=").append(connectionNo)
+				.append("&businessService=").append(SWConstants.SEWERAGE_SERVICE_BUSINESS_ID);
+
+		try {
+			res = serviceRequestRepository.fetchResult(uri, new RequestInfoWrapper(request));
+		} catch (ServiceCallException e) {
+
+			if(!(e.getError().contains(SWConstants.BILL_NO_DEMAND_ERROR_CODE) || e.getError().contains(SWConstants.BILL_NO_PAYABLE_DEMAND_ERROR_CODE)))
+				throw e;
+		}
+
+		if (res != null) {
+			JsonNode node = mapper.convertValue(res, JsonNode.class);
+			Double amount = node.at(SWConstants.BILL_AMOUNT_PATH).asDouble();
+			return amount > 0;
+		}
+		return false;
 	}
 
 }
