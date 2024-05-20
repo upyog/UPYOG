@@ -132,16 +132,17 @@ public class PtInboxFilterService {
 			if(moduleSearchCriteria.containsKey(SORT_ORDER_PARAM) && moduleSearchCriteria.get(SORT_ORDER_PARAM).equals(DESC_PARAM)){
 				uri.append(searcherHost).append(ptInboxSearcherDescEndpoint);
 			}
-			if(criteria.getProcessSearchCriteria().getBusinessService().get(0).equalsIgnoreCase("ASMT"))
+			else if(criteria.getProcessSearchCriteria().getBusinessService().get(0).equalsIgnoreCase("ASMT"))
 			{
 				uri.append(searcherHost).append(asmtInboxSearcherEndpoint);
 			}
-			if(criteria.getProcessSearchCriteria().getBusinessService().get(0).equalsIgnoreCase("PT.APPEAL"))
+			else if(criteria.getProcessSearchCriteria().getBusinessService().get(0).equalsIgnoreCase("PT.APPEAL"))
 				uri.append(searcherHost).append(appealInboxSearcherEndpoint);
 			else {
 				uri.append(searcherHost).append(ptInboxSearcherEndpoint);
 			}
 
+			
 			result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
 
 			//assessmentnumber
