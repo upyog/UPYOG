@@ -25,4 +25,36 @@ public class AssetUtil {
 		else
 			return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
 	}
+
+	public static String improveAssetID(String assetId, AssetRequest asset) {
+        if (asset == null || assetId == null || assetId.isEmpty()) {
+            return null;
+        }
+
+        String assetParentCategory = asset.getAsset().getAssetParentCategory();
+        if (assetParentCategory != null) {
+            switch (AssetType.valueOf(assetParentCategory)) {
+                case LAND:
+                    // Replace 'T' with 'L' in the asset ID
+                    assetId = assetId.replace("A", "L");
+                    break;
+                case BUILDING:
+                    // Replace 'T' with 'B' in the asset ID
+                    assetId = assetId.replace("A", "B");
+                    break;
+                case SERVICE:
+                    // Replace 'T' with 'B' in the asset ID
+                    assetId = assetId.replace("A", "S");
+                    break;
+                case OTHER:
+                    // Replace 'T' with 'B' in the asset ID
+                    assetId = assetId.replace("A", "O");
+                    break;
+                default:
+                    // No change for other asset types
+                    break;
+            }
+        }
+        return assetId;
+    }
 }
