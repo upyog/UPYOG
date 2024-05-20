@@ -92,6 +92,7 @@ public class PayGovGateway implements Gateway {
     private final String PAYGOV_MERCHENT_SECERET_KEY;
     private final String PAYGOV_MERCHENT_USER;
     private final String PAYGOV_MERCHENT_PASSWORD;
+    private final String EGOV_SERVER_HOSTNAME;
 
     /**
      * Initialize by populating all required config parameters
@@ -123,6 +124,7 @@ public class PayGovGateway implements Gateway {
 
         requestInfo = new RequestInfo("", "", 0L, "", "", "", "", "", "", null, userInfo);
         this.pgDetailRepository=pgDetailRepository;
+        EGOV_SERVER_HOSTNAME = environment.getRequiredProperty("egov.server.hostname");
     }
 
     @Override
@@ -151,6 +153,7 @@ public class PayGovGateway implements Gateway {
         queryMap.put(SERVICE_ID_KEY, getModuleCode(transaction));
         String domainName =  returnUrl.replaceAll("http(s)?://|www\\.|/.*", "");
         String citizenReturnURL = returnUrl.split(domainName)[1];
+        citizenReturnURL = EGOV_SERVER_HOSTNAME+citizenReturnURL;
         log.info("returnUrl::::"+getReturnUrl(citizenReturnURL, REDIRECT_URL));
         queryMap.put(SUCCESS_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
         queryMap.put(FAIL_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
@@ -366,6 +369,7 @@ public class PayGovGateway implements Gateway {
 
 
     private String getReturnUrl(String callbackUrl, String baseurl) {
+    	
         return UriComponentsBuilder.fromHttpUrl(baseurl).queryParam(ORIGINAL_RETURN_URL_KEY, callbackUrl).build().toUriString();
     }
 
