@@ -15,7 +15,6 @@ import org.egov.pg.web.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collections;
@@ -68,26 +67,12 @@ public class EnrichmentService {
         
         //String[] callbackurl=transaction.getCallbackUrl().split("\\?");
         
-		/*
-		 * String uri = UriComponentsBuilder .fromHttpUrl(transaction.getCallbackUrl())
-		 * .queryParams(new
-		 * LinkedMultiValueMap<>(singletonMap(PgConstants.PG_TXN_IN_LABEL,
-		 * Collections.singletonList(txnId)))) .build() .toUriString();
-		 */
-        
-        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap();
-		queryParams.put(PgConstants.PG_TXN_IN_LABEL, Collections.singletonList(transaction.getTxnId()));
-		// This is the UI call back URL.
-		queryParams.put(PgConstants.REDIRECT_URL, Collections.singletonList(transaction.getCallbackUrl()));
-
-		
-		//To be Updated
-		String uri = UriComponentsBuilder
-				.fromHttpUrl("https://mnptapp.manipurpropertytax.org/pg-service/transaction/v1/_redirect")
-				.queryParams(queryParams)
-				.build()
-				.toUriString();
-        
+        String uri = UriComponentsBuilder
+                .fromHttpUrl(transaction.getCallbackUrl())
+                .queryParams(new LinkedMultiValueMap<>(singletonMap(PgConstants.PG_TXN_IN_LABEL,
+                        Collections.singletonList(txnId))))
+                .build()
+                .toUriString();
         //uri= uri.concat("&").concat(callbackurl[1]);
         transaction.setCallbackUrl(uri);
 
