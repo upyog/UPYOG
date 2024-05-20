@@ -3,6 +3,7 @@ package org.egov.asset.util;
 import org.egov.asset.web.models.AuditDetails;
 import org.springframework.stereotype.Component;
 import org.egov.asset.web.models.AssetRequest;
+import org.egov.asset.web.models.AssetType;
 
 import lombok.extern.slf4j.Slf4j;
 
