@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.pt.models.Appeal;
+import org.egov.pt.models.AuditDetails;
 import org.egov.pt.models.Document;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.enums.Status;
@@ -37,18 +38,35 @@ public class AppealRowMapper implements ResultSetExtractor<List<Appeal>>{
 		Map<String, Appeal> appealMap = new LinkedHashMap<>();
 		while(rs.next())
 		{
-			String appealUuId = rs.getString("appealid");
+			String appealUuId = rs.getString("id");
 			Appeal currentAppeal = appealMap.get(appealUuId);
 			String tenanId = rs.getString("tenantid");
 
 			if(null==currentAppeal)
 			{
+				AuditDetails auditdetails = getauditdetails(rs, "Appeal");
+				
 				currentAppeal=Appeal.builder()
 						.id(appealUuId)
 						.propertyId(rs.getString("propertyid"))
 						.status(Status.fromValue(rs.getString("status")))
 						.acknowldgementNumber(rs.getString("acknowldgementnumber"))
 						.tenantId(tenanId)
+						.appealId(rs.getString("appealid"))
+						.propertyaddress(rs.getString("propertyaddress"))
+						.assesmnetyear(rs.getString("assesmnetyear"))
+						.nameofassigningofficer(rs.getString("nameofassigningofficer"))
+						.designation(rs.getString("designation"))
+						.ruleunderorderpassed(rs.getString("ruleunderorderpassed"))
+						.dateoforder(rs.getString("dateoforder"))
+						.dateofservice(rs.getString("dateofservice"))
+						.dateofpayment(rs.getString("dateofpayment"))
+						.ownername(rs.getString("ownername"))
+						.applicantaddress(rs.getString("applicantaddress"))
+						.reliefclaimed("reliefclaimed")
+						.statementoffacts("statementoffacts")
+						.groundofappeal(rs.getString("groundofappeal"))
+						.auditDetails(auditdetails)
 						.build();
 
 				addDocToAppeal(rs, currentAppeal);
@@ -58,13 +76,13 @@ public class AppealRowMapper implements ResultSetExtractor<List<Appeal>>{
 		}
 		return new ArrayList<>(appealMap.values());
 	}
-	
+
 	private void addDocToAppeal(ResultSet rs, Appeal appeal) throws SQLException {
 
 		String docId = rs.getString("pdocid");
 		String entityId = rs.getString("pdocentityid");
 		List<Document> docs = appeal.getDocuments();
-		
+
 		if (!(docId != null && entityId.equals(appeal.getId())))
 			return;
 
@@ -74,14 +92,38 @@ public class AppealRowMapper implements ResultSetExtractor<List<Appeal>>{
 					return;
 			}
 
-		Document doc =  Document.builder()
-			.status(Status.fromValue(rs.getString("pdocstatus")))
-			.documentType(rs.getString("pdoctype"))
-			.fileStoreId(rs.getString("pdocfileStore"))
-			.documentUid(rs.getString("pdocuid"))
-			.id(docId)
-			.build();
+		AuditDetails auditdetails = getauditdetails(rs, "Appeal");
 		
+		Document doc =  Document.builder()
+				.status(Status.fromValue(rs.getString("pdocstatus")))
+				.documentType(rs.getString("pdoctype"))
+				.fileStoreId(rs.getString("pdocfileStore"))
+				.documentUid(rs.getString("pdocuid"))
+				.id(docId)
+				.auditDetails(auditdetails)
+				.build();
+
 		appeal.addDocumentsItem(doc);
+	}
+
+	public AuditDetails getauditdetails(ResultSet rs, String source) throws SQLException
+	{
+		switch (source) {
+
+		case "Appeal":
+
+			Long lastModifiedTime = rs.getLong("lastmodifiedtime");
+			if (rs.wasNull()) {
+				lastModifiedTime = null;
+			}
+
+			return AuditDetails.builder().createdBy(rs.getString("createdby"))
+					.createdTime(rs.getLong("createdtime")).lastModifiedBy(rs.getString("lastmodifiedby"))
+					.lastModifiedTime(lastModifiedTime).build();
+
+		default: 
+			return null;
+
+		}
 	}
 }
