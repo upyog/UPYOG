@@ -27,10 +27,10 @@ public class PropertyQueryBuilder {
 	
 	
 	public final static String INSERT_BIFURCATION_DETAILS_QUERY = "INSERT INTO eg_pt_bifurcation"
-			+"(parent_property,property_details, max_bifurcation, createdtime, id)"
-			+"VALUES(?, ? ::jsonb, ?, ?, ?)";
+			+"(parent_property,property_details, max_bifurcation, createdtime, id,status,childpropertyuuid,createdby,lastmodifiedby,lastmodifiedtime)"
+			+"VALUES(?, ? ::jsonb, ?, ?, ? ,?,?,?,?,?)";
 	
-	public final static String appealselectvalue="appeal.id as appealid, appeal.propertyid, appeal.status, appeal.creationreason, appeal.acknowldgementnumber,(CASE WHEN appeal.status='ACTIVE' then 0 WHEN appeal.status='INWORKFLOW' then 1 WHEN appeal.status='INACTIVE' then 2 ELSE 3 END) as statusorder, appeal.tenantid as tenantid,";
+	public final static String appealselectvalue="appeal.id as id, appeal.propertyid, appeal.status, appeal.creationreason, appeal.acknowldgementnumber,appeal.appealid,(CASE WHEN appeal.status='ACTIVE' then 0 WHEN appeal.status='INWORKFLOW' then 1 WHEN appeal.status='INACTIVE' then 2 ELSE 3 END) as statusorder, appeal.tenantid as tenantid,appeal.propertyaddress,appeal.assesmnetyear,appeal.nameofassigningofficer,appeal.designation,appeal.ruleunderorderpassed,appeal.dateoforder,appeal.dateofservice,appeal.dateofpayment,appeal.ownername,appeal.applicantaddress,appeal.reliefclaimed,appeal.statementoffacts,appeal.groundofappeal,appeal.createdby,appeal.lastmodifiedby,appeal.createdtime,appeal.lastmodifiedtime,";
 
 	private static String PROEPRTY_AUDIT_QUERY = "select property from eg_pt_property_audit where propertyid=?";
 
@@ -62,7 +62,7 @@ public class PropertyQueryBuilder {
 
 	private static String propertyDocSelectValues = "pdoc.id as pdocid, pdoc.tenantid as pdoctenantid, pdoc.entityid as pdocentityid, pdoc.documenttype as pdoctype, pdoc.filestoreid as pdocfilestore, pdoc.documentuid as pdocuid, pdoc.status as pdocstatus, ";
 
-	private static String appealDocSelectValues = "pdoc.id as pdocid, pdoc.tenantid as pdoctenantid, pdoc.entityid as pdocentityid, pdoc.documenttype as pdoctype, pdoc.filestoreid as pdocfilestore, pdoc.documentuid as pdocuid, pdoc.status as pdocstatus ";
+	private static String appealDocSelectValues = "pdoc.id as pdocid, pdoc.tenantid as pdoctenantid, pdoc.entityid as pdocentityid, pdoc.documenttype as pdoctype, pdoc.filestoreid as pdocfilestore, pdoc.documentuid as pdocuid, pdoc.status as pdocstatus,pdoc.createdby,pdoc.lastmodifiedby,pdoc.createdtime,pdoc.lastmodifiedtime ";
 	
 	private static String ownerSelectValues = "owner.tenantid as owntenantid, ownerInfoUuid, owner.propertyid as ownpropertyid, userid, owner.status as ownstatus, isprimaryowner, ownertype, ownershippercentage, owner.institutionid as owninstitutionid, relationship, owner.createdby as owncreatedby, owner.createdtime as owncreatedtime,owner.lastmodifiedby as ownlastmodifiedby, owner.lastmodifiedtime as ownlastmodifiedtime, owner.isaownerdead as isownerdead, owner.dateofdeath as dateofdeath, ";
 
