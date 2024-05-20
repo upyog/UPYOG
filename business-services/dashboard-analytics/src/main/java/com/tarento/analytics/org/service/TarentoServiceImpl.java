@@ -110,6 +110,10 @@ public class TarentoServiceImpl implements ClientService {
 					logger.info("Before constructing indexName :: {} "+indexName);
 					if (indexName.contains("*") && !StringUtils.isBlank(interval)) {
 						logger.info("entered into if block :: "+indexName);
+						//if interval is coming as year changed to month to match data
+						if(interval.equals("year")){
+							interval = "month";
+						}
 						indexName = indexName.replace("*", interval);
 					} else if (indexName.contains("*") && StringUtils.isBlank(interval)) {
 						logger.info("entered into else if block :: "+indexName);
