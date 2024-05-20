@@ -16,7 +16,7 @@ import { initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
 import { initTLComponents } from "@upyog/digit-ui-module-tl";
 import { PaymentModule, PaymentLinks, paymentConfigs } from "@egovernments/digit-ui-module-common";
 import { HRMSModule } from "@upyog/digit-ui-module-hrms";
-import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
+import { initOBPSComponents } from "@egovernments/digit-ui-module-obps";
 import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
 import { initNOCComponents } from "@upyog/digit-ui-module-noc";
 import { initWSComponents } from "@upyog/digit-ui-module-ws";
@@ -60,16 +60,16 @@ const enabledModules = [
   "BillAmendment",
   "FireNoc",
   "Birth",
-  "Death"
+  "Death",
 ];
 
 const initTokens = (stateCode) => {
   const userType = window.sessionStorage.getItem("userType") || process.env.REACT_APP_USER_TYPE || "CITIZEN";
 
-  const token = window.localStorage.getItem("token")|| process.env[`REACT_APP_${userType}_TOKEN`];
- 
-  const citizenInfo = window.localStorage.getItem("Citizen.user-info")
- 
+  const token = window.localStorage.getItem("token") || process.env[`REACT_APP_${userType}_TOKEN`];
+
+  const citizenInfo = window.localStorage.getItem("Citizen.user-info");
+
   const citizenTenantId = window.localStorage.getItem("Citizen.tenant-id") || stateCode;
 
   const employeeInfo = window.localStorage.getItem("Employee.user-info");
