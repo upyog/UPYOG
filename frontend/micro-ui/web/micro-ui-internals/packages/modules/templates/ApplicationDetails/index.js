@@ -209,7 +209,7 @@ const ApplicationDetails = (props) => {
     }
     bpaDetails.BPA.riskType=riskType
     bpaDetails.BPA.workflow={
-                "action": "EDIT",
+                "action": "EDIT PAY 2",
                 "assignes": [],
                 "comments": null,
                 "varificationDocuments": null
