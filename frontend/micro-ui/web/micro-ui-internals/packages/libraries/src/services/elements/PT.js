@@ -91,6 +91,25 @@ export const PTService = {
   //     userService: true,
   //     params: { tenantId },
   //   }),
+  appealCreate: (details) =>
+    Request({
+      url: Urls.pt.appeal_create,
+      data: details,
+      useCache: false,
+      userService: true,
+      method: "POST",
+      params: { },
+      auth: true,
+    }),
+  appealSearch: ({ tenantId, filters }) =>
+    Request({
+      url: Urls.pt.appeal_search,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      params: { tenantId, ...filters },
+    }),
     
   paymentsearch: ({ tenantId, filters, auth }) =>
     Request({

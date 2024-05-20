@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { CardLabel, DatePicker, Dropdown, Header, Modal, TextInput } from "@egovernments/digit-ui-react-components";
 
 
-const NoticeForAssesment = (props) => {
+const NoticeToEnterPremises = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   const { t } = useTranslation();
@@ -11,13 +11,11 @@ const NoticeForAssesment = (props) => {
   const [selectedFinancialYear, setSelectedFinancialYear] = useState(null);
   const [submissionDate, setSubmissionDate] = useState();
 
-  const noticeList = [
-    { code: '1', name: 'Notice for rectification of mistakes in a Defective Return' },
-    { code: '2', name: 'Notice for Assessment' }
-  ]
   const [notice, setNotice] = useState();
   const [showModal, setShowModal] = useState(false)
-  const [showDateModal, setShowDateModal] = useState(false)
+  const [showDateModal, setShowDateModal] = useState(false);
+  const [showMobileModal, setShowMobileModal] = useState(false);
+  const [showPenaltyModal, setShowPenaltyModal] = useState(false);
   const handleChangeNotice = (value) => {
 
   }
@@ -38,14 +36,18 @@ const NoticeForAssesment = (props) => {
     setAcknowledgementNo(e.target.value)
   }
   const [returnFormData, setReturnFormData] = useState({
-    particulars: null,
-    asPerReturnFiled: null,
-    asPerMunicipality: null,
-    remarks: null
+    authorizedPersonName: null,
+    authorizedPersonDesignation: null
   });
   const [returnTimeFormData, setReturnTimeFormData] = useState({
     time: null,
     date: null
+  });
+  const [returnMobileFormData, setReturnMobileFormData] = useState({
+    mobileNo: null
+  });
+  const [returnPenaltyFormData, setReturnPenaltyFormData] = useState({
+    penaltyAmount: null
   });
   // const [particulars, setParticulars] = useState();
   // const [asPerReturnFiled, setAsPerReturnFiled] = useState();
@@ -87,7 +89,7 @@ const NoticeForAssesment = (props) => {
       setFinancialYears(financialYearsData["egf-master"]?.["FinancialYear"]);
     }
   }, [financialYearsData]);
-  const onAddTabData = (e) => {
+  const onEditNameAndDesg = (e) => {
     e.preventDefault();
     setShowModal(true)
   }
@@ -95,11 +97,25 @@ const NoticeForAssesment = (props) => {
     e.preventDefault();
     setShowDateModal(true)
   }
+  const onEditMobile = (e) => {
+    e.preventDefault();
+    setShowMobileModal(true)
+  }
+  const onEditPenalty = (e) => {
+    e.preventDefault();
+    setShowPenaltyModal(true)
+  }
   const closeModal=()=>{
     setShowModal(false)
   }
   const closeDateModal=()=>{
     setShowDateModal(false)
+  }
+  const closeMobileModal=()=>{
+    setShowMobileModal(false)
+  }
+  const closePenaltyModal=()=>{
+    setShowPenaltyModal(false)
   }
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
@@ -131,6 +147,32 @@ const NoticeForAssesment = (props) => {
   });
     setFieldError(newErrors);
   };
+  const handleChangeMobileReturn = (e) => {
+    const { name, value } = e.target;
+    setReturnMobileFormData({
+        ...returnMobileFormData,
+        [name]: value,
+    });
+    // validateForm(formData)
+    const newErrors = validateForm({
+      ...returnMobileFormData,
+      [name]: value,
+  });
+    setFieldError(newErrors);
+  };
+  const handleChangePenaltyReturn = (e) => {
+    const { name, value } = e.target;
+    setReturnPenaltyFormData({
+        ...returnPenaltyFormData,
+        [name]: value,
+    });
+    // validateForm(formData)
+    const newErrors = validateForm({
+      ...returnPenaltyFormData,
+      [name]: value,
+  });
+    setFieldError(newErrors);
+  };
   const handleChangeReturn = (e) => {
     const { name, value } = e.target;
     setReturnFormData({
@@ -156,43 +198,12 @@ const NoticeForAssesment = (props) => {
 
     return errors;
   };
-  const onSaveAndAdd = ()=>{
-    const newErrors = validateForm(returnFormData);
-    setFieldError(newErrors);
-    if (Object.keys(newErrors).length === 0) {
-        let obj = {
-          ...returnFormData
-        };
-        let list = tableList || [];
-        list.push(obj)
-        setTableList(list);
-        setReturnFormData({
-          particulars: null,
-          asPerReturnFiled: null,
-          asPerMunicipality: null,
-          remarks: null
-        });
-        // setShowModal(false);
-    } else {
-      return;
-    }
-  };
+  
   const onSave = ()=>{
     const newErrors = validateForm(returnFormData);
     setFieldError(newErrors);
     if (Object.keys(newErrors).length === 0) {
-        let obj = {
-          ...returnFormData
-        };
-        let list = tableList || [];
-        list.push(obj)
-        setTableList(list);
-        setReturnFormData({
-          particulars: null,
-          asPerReturnFiled: null,
-          asPerMunicipality: null,
-          remarks: null
-        });
+        
         setShowModal(false);
     } else {
       return;
@@ -204,6 +215,26 @@ const NoticeForAssesment = (props) => {
     setFieldError(newErrors);
     if (Object.keys(newErrors).length === 0) {
         setShowDateModal(false);
+    } else {
+      return;
+    }
+   
+  };
+  const onSaveMobileNo = ()=>{
+    const newErrors = validateForm(returnMobileFormData);
+    setFieldError(newErrors);
+    if (Object.keys(newErrors).length === 0) {
+        setShowMobileModal(false);
+    } else {
+      return;
+    }
+   
+  };
+  const onSavePenaltyAmount = ()=>{
+    const newErrors = validateForm(returnPenaltyFormData);
+    setFieldError(newErrors);
+    if (Object.keys(newErrors).length === 0) {
+        setShowPenaltyModal(false);
     } else {
       return;
     }
@@ -242,7 +273,7 @@ const NoticeForAssesment = (props) => {
         <div className="row">
           <form>
             <div id="form-print">
-            {<Header>{t("Notice For Assessment")}</Header>}
+            {<Header>{t("Notice to Enter Premises")}</Header>}
               <div className="row card" style={{ maxWidth: '100%' }}>
                 <div >
                   <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
@@ -300,18 +331,10 @@ const NoticeForAssesment = (props) => {
                 <div>
                   <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
                     <CardLabel>{`${t("Date of Submission of Annual Return")}`}</CardLabel>
-                    {/* <DatePicker
-                      isRequired={true}
-                      date={submissionDate}
-                      onChange={(d) => {
-                        setSubmissionDate(d);
-                      }}
-                    /> */}
+                    
                     <input
                       className={`employee-card-input ${props.disabled ? "disabled" : ""}`}
-                      // className={`${props.disabled ? "disabled" : ""}`}
                       style={{ width: "calc(100%-62px)" }}
-                      // style={{ right: "6px", zIndex: "100", top: 6, position: "absolute", opacity: 0, width: "100%" }}
                       value={submissionDate ? submissionDate : ""}
                       type="date"
                       onChange={(d) => {
@@ -328,52 +351,33 @@ const NoticeForAssesment = (props) => {
                 </div>
                 <hr />
                 <div style={{ marginTop: '20px' }}>
-                  <p><span style={{ fontWeight: 600 }}>Sub: Notice under Rule 33/ Rule 34 of Manipur Municipalities (Property Tax) Rules, 2019 </span>
+                  <p><span style={{ fontWeight: 600 }}>Sub: Notice under Rule 29 of Manipur Municipalities (Property Tax) Rules, 2019 </span>
                     <ul style={{ marginTop: '10px' }} className="notice-txt">
                       <li style={{ width: '60%', listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
-                        This is reference to the Property Tax Return field under Rule 17/Rule 18/Rule 19/ No Return filed under Rule 17/ Rectification of Mistakes under Rule 38
+                        Whereas it is necessary to verify the covered area/land area/identity of the owner or occupie of the property, and for this it is necessary to enter the property.
                       </li>
                       <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
-                        <div style={{ width: '60%', display: 'inline-flex' }}>
-                          The following information in the return appears to be incorrect / No return has been filed under Rule 17
+                        <div style={{ width: '60%' }}>
+                            You are here by informed that {returnFormData?.authorizedPersonName && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnFormData?.authorizedPersonName}</span>}{!returnFormData?.authorizedPersonName && <span>__________________</span>}[name of authorized person] designated as {returnFormData?.authorizedPersonDesignation && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnFormData?.authorizedPersonDesignation}</span>}{!returnFormData?.authorizedPersonDesignation && <span>__________________</span>} [exact designation of the search officer] has been authorized to enter your property for the above purpose.
                         </div>
                         
                         <div style={{ width: '40%', display: 'inline' }}>
-                          <button id="printPageButton" onClick={(e) => onAddTabData(e)} className="submit-bar"
+                          <button id="printPageButton" onClick={(e) => onEditNameAndDesg(e)} className="submit-bar"
                             style={{
                               color: 'white',
                               float: 'right',
-                              width: '10%'
+                              width: '10%',
+                              marginTop: "-60px"
                             }}
                           >
-                            + {t("Add")}
+                            + {t("Edit")}
                           </button>
                         </div>
                       </li>
-                      {tableList && tableList.length>0 && <li style={{ marginLeft: '16px', padding: '6px' }}>
-                        <div style={{ width: '100%' }}>
-                          <table style={{ width: '100%', border: '1px solid #b7b7b7'}}>
-                            <tr style={{background: '#eaeaea', lineHeight: '35px'}}>
-                              <th style={{paddingLeft: "10px"}}>Particulars</th>
-                              <th>As per Return Filed</th>
-                              <th>As per Municipality</th>
-                              <th>Remarks</th>
-                            </tr>
-                            {tableList.map((e)=>{
-                              console.log("tableList===",tableList);
-                              return (<tr>
-                                <td style={{paddingLeft: "10px"}}>{e?.particulars}</td>
-                                <td>{e.asPerReturnFiled}</td>
-                                <td>{e.asPerMunicipality}</td>
-                                <td>{e.remarks}</td>
-                              </tr>)
-                            })}
-                          </table>
-                        </div>
-                      </li>}
+
                       <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
                         <div style={{ width: '60%' }}>
-                          If therefore purpose to modify the Annual Property Value (APV) and the property tax on the basis of the information available with the municipality. In case, you disagree with the assessment and the process increase, you may case with all available records either in person or through and authorized representative on {returnTimeFormData?.date && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.date}</span>}{!returnTimeFormData?.date && <span>__________________</span>} at {returnTimeFormData?.time && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.time}</span>} {!returnTimeFormData?.time && <span>________________ </span>}in the chamber of the undersigned.
+                        {returnFormData?.authorizedPersonName && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnFormData?.authorizedPersonName}</span>}{!returnFormData?.authorizedPersonName && <span>__________________</span>} proposes to visit your premises on {returnTimeFormData?.date && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.date}</span>}{!returnTimeFormData?.date && <span>__________________</span>} at {returnTimeFormData?.time && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.time}</span>} {!returnTimeFormData?.time && <span>________________ </span>}in the chamber of the undersigned.
                         </div>
                         <div style={{ width: '40%', display: 'inline' }}>
                           <button id="printPageButton" onClick={(e) => onEditDate(e)} className="submit-bar"
@@ -381,15 +385,48 @@ const NoticeForAssesment = (props) => {
                               color: 'white',
                               float: 'right',
                               width: '10%',
-                              marginTop: "-80px"
+                              marginTop: "-40px"
                             }}
                           >
                             {t("Edit")}
                           </button>
                         </div>
                       </li>
-                      <li style={{ width: '60%', listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
-                        In case you fail to appear on the appointed date and time or otherwise explain why the APV and tax should not be assessed as above, the assessment will be frames under Rule 33/ Rule 34/ Rule 38 on the basis of the information available with the municipality as indicated above.
+
+                      <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
+                        <div style={{ width: '60%' }}>
+                          In case this is not convenient to you, you may kindly contact him at telephone number {returnMobileFormData?.mobileNo && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnMobileFormData?.mobileNo}</span>}{!returnMobileFormData?.mobileNo && <span>__________________</span>}, to fix a suitable time and date.
+                        </div>
+                        <div style={{ width: '40%', display: 'inline' }}>
+                          <button id="printPageButton" onClick={(e) => onEditMobile(e)} className="submit-bar"
+                            style={{
+                              color: 'white',
+                              float: 'right',
+                              width: '10%',
+                              marginTop: "-40px"
+                            }}
+                          >
+                            {t("Edit")}
+                          </button>
+                        </div>
+                      </li>
+
+                      <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
+                        <div style={{ width: '60%' }}>
+                          In the event, you fail to cooperate with the designated officer or fail to comply with the noyice, a penalty upto Rs {returnPenaltyFormData?.penaltyAmount && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnPenaltyFormData?.penaltyAmount}</span>}{!returnPenaltyFormData?.penaltyAmount && <span>__________________</span>} may be imposed under Rule 29 for each default.
+                        </div>
+                        <div style={{ width: '40%', display: 'inline' }}>
+                          <button id="printPageButton" onClick={(e) => onEditPenalty(e)} className="submit-bar"
+                            style={{
+                              color: 'white',
+                              float: 'right',
+                              width: '10%',
+                              marginTop: "-40px"
+                            }}
+                          >
+                            {t("Edit")}
+                          </button>
+                        </div>
                       </li>
                     </ul>
                   </p>
@@ -397,14 +434,14 @@ const NoticeForAssesment = (props) => {
               </div>
               <div className="card" style={{ maxWidth: '100%' }}>
                 <div className="row">
-                  <div className="" style={{display: "inline-block", width: "90%", paddingLeft: "15px"}}>
-                      <span>Date</span>
-                      <div>{new Date().toLocaleDateString()}</div>
-                  </div>
-                  <div className="" style={{display: "inline-block", width: "10%"}}>
-                    <span>Place</span>
-                    <div>Manipur</div>
-                  </div>
+                    <div className="" style={{display: "inline-block", width: "90%", paddingLeft: "15px"}}>
+                        <span>Date</span>
+                        <div>{new Date().toLocaleDateString()}</div>
+                    </div>
+                    <div className="" style={{display: "inline-block", width: "10%"}}>
+                        <span>Place</span>
+                        <div>Manipur</div>
+                    </div>
                 </div>
               </div>
             </div>
@@ -448,7 +485,7 @@ const NoticeForAssesment = (props) => {
         </div>
       </div>
       {showModal && <Modal
-          headerBarMain={<Heading label={t('Return appears to be incorrect')} />}
+          headerBarMain={<Heading label={t('Visiting Authority')} />}
           headerBarEnd={<CloseBtn onClick={closeModal} />}
           actionCancelOnSubmit={closeModal}
           hideSubmit={true}
@@ -462,45 +499,24 @@ const NoticeForAssesment = (props) => {
           <div className="row" style={{padding: "10px"}}>
               <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
                 
-                <label for="formControlInputParticulars" class="form-label">Particulars*</label>
-                <input type="text" className={fieldError.particulars ? "form-control error-message" : "form-control"} id="formControlInputParticulars" name="particulars" placeholder="Enter Particulars" value={returnFormData.particulars} onChange={handleChangeReturn} required />
-                {fieldError.particulars &&
+                <label for="formControlInputAuthorizedPersonName" class="form-label">Authorized Person Name*</label>
+                <input type="text" className={fieldError.authorizedPersonName ? "form-control error-message" : "form-control"} id="formControlInputAuthorizedPersonName" name="authorizedPersonName" placeholder="Enter Authorized Person Name" value={returnFormData.authorizedPersonName} onChange={handleChangeReturn} required />
+                {fieldError.authorizedPersonName &&
                         <span className="error-message">
-                            {fieldError.particulars}
+                            {fieldError.authorizedPersonName}
                         </span>
                     }
               </div>
               <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
-                
-                <label for="formControlInputAsPerReturnFiled" class="form-label">As per Return Filed*</label>
-                <input type="text" className={fieldError.asPerReturnFiled ? "form-control error-message" : "form-control"} id="formControlInputAsPerReturnFiled" name="asPerReturnFiled" placeholder="Enter As per Return Filed" value={returnFormData.asPerReturnFiled} onChange={handleChangeReturn} required />
-                {fieldError.asPerReturnFiled &&
+               
+                <label for="formControlInputAuthorizedPersonDesg" class="form-label">Authorized Person Designation*</label>
+                <input type="text" className={fieldError.authorizedPersonDesignation ? "form-control error-message" : "form-control"} id="formControlInputAuthorizedPersonDesg" name="authorizedPersonDesignation" placeholder="Enter Authorized Person Designation" value={returnFormData.authorizedPersonDesignation} onChange={handleChangeReturn} required />
+                {fieldError.authorizedPersonDesignation &&
                     <span className="error-message">
-                        {fieldError.asPerReturnFiled}
+                        {fieldError.authorizedPersonDesignation}
                     </span>
                 }
               </div>
-              <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
-                
-                <label for="formControlInputAsPerMunicipality" class="form-label">As per Municipality*</label>
-                <input type="text" className={fieldError.asPerMunicipality ? "form-control error-message" : "form-control"} id="formControlInputAsPerMunicipality" name="asPerMunicipality" placeholder="Enter As per Municipality" value={returnFormData.asPerMunicipality} onChange={handleChangeReturn} required />
-                {fieldError.asPerMunicipality &&
-                    <span className="error-message">
-                        {fieldError.asPerMunicipality}
-                    </span>
-                }
-              </div>
-              <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
-                
-                <label for="formControlInputReturnRemarks" class="form-label">Remarks*</label>
-                <input type="text" className={fieldError.remarks ? "form-control error-message" : "form-control"} id="formControlInputReturnRemarks" name="remarks" placeholder="Enter Remarks" value={returnFormData.remarks} onChange={handleChangeReturn} required />
-                {fieldError.remarks &&
-                    <span className="error-message">
-                        {fieldError.remarks}
-                    </span>
-                }
-              </div>
-
             </div>
             <div className="footer" style={{height: '30px', background: '#ebebeb'}}>
               <div style={{padding: '10px'}}>
@@ -516,17 +532,7 @@ const NoticeForAssesment = (props) => {
                     {t("Save")}
                   </button>
                 </div>
-                <div style={{ width: '40%', display: 'inline' }}>
-                  <button onClick={() => onSaveAndAdd()} className="submit-bar"
-                    style={{
-                      color: 'white',
-                      float: 'right',
-                      width: '30%'
-                    }}
-                  >
-                    {t("Save & Add")}
-                  </button>
-                </div>
+                
               </div>
               
             </div>
@@ -534,7 +540,7 @@ const NoticeForAssesment = (props) => {
         </Modal> }
 
         {showDateModal && <Modal
-          headerBarMain={<Heading label={t('Select Date & Time')} />}
+          headerBarMain={<Heading label={t('Visiting Time')} />}
           headerBarEnd={<CloseBtn onClick={closeDateModal} />}
           actionCancelOnSubmit={closeDateModal}
           hideSubmit={true}
@@ -610,8 +616,97 @@ const NoticeForAssesment = (props) => {
           </div>
         </Modal> }
 
+        {showMobileModal && <Modal
+          headerBarMain={<Heading label={t('Mobile/Telephone Number')} />}
+          headerBarEnd={<CloseBtn onClick={closeMobileModal} />}
+          actionCancelOnSubmit={closeMobileModal}
+          hideSubmit={true}
+          actionSaveOnSubmit={() => {}}
+          formId="modal-action"
+          isDisabled={false}
+          width={'60%'}
+        >
+          <div>
+            <div className="row" style={{padding: "10px"}}>
+              <div className="col-sm-12" style={{ width: '100%', marginRight: '10px', display: 'inline-block' }}>
+                
+                <label for="formControlInputReturnMobileNo" class="form-label">Mobile/Telephone No.*</label>
+                <input type="text" className={fieldError.mobileNo ? "form-control error-message" : "form-control"} id="formControlInputReturnMobileNo" name="mobileNo" placeholder="Enter Mobile/Telephone No." value={returnMobileFormData.mobileNo} onChange={handleChangeMobileReturn} required />
+                {fieldError.mobileNo &&
+                    <span className="error-message">
+                        {fieldError.mobileNo}
+                    </span>
+                }
+              </div>
+
+            </div>
+            
+            <div className="footer" style={{height: '30px', background: '#ebebeb'}}>
+              <div style={{padding: '10px'}}>
+                <div style={{ width: '40%', display: 'inline' }}>
+                  <button onClick={() => onSaveMobileNo()} className="submit-bar"
+                    style={{
+                      color: 'white',
+                      float: 'right',
+                      width: '20%',
+                      marginLeft: '10px'
+                    }}
+                  >
+                    {t("Save")}
+                  </button>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </Modal> }
+        {showPenaltyModal && <Modal
+          headerBarMain={<Heading label={t('Penalty Charges')} />}
+          headerBarEnd={<CloseBtn onClick={closePenaltyModal} />}
+          actionCancelOnSubmit={closePenaltyModal}
+          hideSubmit={true}
+          actionSaveOnSubmit={() => {}}
+          formId="modal-action"
+          isDisabled={false}
+          width={'60%'}
+        >
+          <div>
+            <div className="row" style={{padding: "10px"}}>
+              <div className="col-sm-12" style={{ width: '100%', marginRight: '10px', display: 'inline-block' }}>
+                
+                <label for="formControlInputReturnPenalty" class="form-label">Penalty Amount/Chanrges*</label>
+                <input type="text" className={fieldError.penaltyAmount ? "form-control error-message" : "form-control"} id="formControlInputReturnPenalty" name="penaltyAmount" placeholder="Enter Penalty Amount/Chanrges" value={returnPenaltyFormData.penaltyAmount} onChange={handleChangePenaltyReturn} required />
+                {fieldError.penaltyAmount &&
+                    <span className="error-message">
+                        {fieldError.penaltyAmount}
+                    </span>
+                }
+              </div>
+
+            </div>
+            
+            <div className="footer" style={{height: '30px', background: '#ebebeb'}}>
+              <div style={{padding: '10px'}}>
+                <div style={{ width: '40%', display: 'inline' }}>
+                  <button onClick={() => onSavePenaltyAmount()} className="submit-bar"
+                    style={{
+                      color: 'white',
+                      float: 'right',
+                      width: '20%',
+                      marginLeft: '10px'
+                    }}
+                  >
+                    {t("Save")}
+                  </button>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </Modal> }
+
     </div>
   );
 };
 
-export default NoticeForAssesment;
+export default NoticeToEnterPremises;

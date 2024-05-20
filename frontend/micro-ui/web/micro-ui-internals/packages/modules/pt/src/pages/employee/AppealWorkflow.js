@@ -8,66 +8,101 @@ import { newConfigMutate } from "../../config/Mutate/config";
 import TransfererDetails from "../../pageComponents/Mutate/TransfererDetails";
 import MutationApplicationDetails from "./MutationApplicatinDetails";
 import getPTAcknowledgementData from "../../getPTAcknowledgementData";
-import { data } from "jquery";
+
+// const assessmentDataSearch =async (tenantId)=>{
+//     const assData = await Digit.PTService.assessmentSearch({ tenantId, filters: { assessmentNumbers:'MN-AS-2024-04-14-000289' } });
+//     console.log("assData===",assData)
+//     return assData?.Assessments;
+// } 
+
+const setBillData = async (tenantId, appealId, updatefetchBillData, updateCanFetchBillData, updateassmentSearchData) => {
+    const assessmentData = await Digit.PTService.appealSearch({ tenantId, filters: { appealid:appealId } });
+    let billData = {};
+    console.log("Appeal Workflow===",assessmentData)
+    // if (assessmentData?.Assessments?.length > 0) {
+    //     updateassmentSearchData(assessmentData?.Assessments)
+    //   billData = await Digit.PaymentService.fetchBill(tenantId, {
+    //     businessService: "PT",
+    //     consumerCode: assessmentData?.Assessments[0].propertyId,
+    //   });
+    // }
+    // updatefetchBillData(billData);
+    // updateCanFetchBillData({
+    //   loading: false,
+    //   loaded: false,
+    //   canLoad: false,
+    // });
+  };
 
 
-const ApplicationDetails = () => {
+const AppealWorkflow = () => {
   const { t } = useTranslation();
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { tenants } = storeData || {};
-  const { id: propertyId } = useParams();
+  const { id: appealId } = useParams();
   const [showToast, setShowToast] = useState(null);
   const [appDetailsToShow, setAppDetailsToShow] = useState({});
   const [showOptions, setShowOptions] = useState(false);
   const [enableAudit, setEnableAudit] = useState(false);
-  const [businessService, setBusinessService] = useState("PT.CREATE");
+  const [businessService, setBusinessService] = useState("PT.APPEAL");
+  let propertyId;
+  const [billData, updateCanFetchBillData] = useState({
+    loading: false,
+    loaded: false,
+    canLoad: true,
+  });
+
+  const [fetchBillData, updatefetchBillData] = useState({});
+  const [assmentSearchData, updateassmentSearchData] = useState({});
+if(billData?.canLoad) {
+    setBillData(tenantId, appealId, updatefetchBillData, updateCanFetchBillData,updateassmentSearchData);
+
+}
+propertyId = assmentSearchData[0]?.propertyId || ''
+  console.log("updateassmentSearchData===",assmentSearchData);
+  console.log("updatefetchBillData===",fetchBillData)
+  console.log("updateCanFetchBillData===",billData)
+
   sessionStorage.setItem("applicationNoinAppDetails",propertyId);
-
+//   const assessmentSerachResult = Digit.PTService.assessmentSearch({ tenantId, filters: { assessmentNumbers:'MN-AS-2024-04-14-000289' } });
+//   console.log("assessmentSerachResult===",assessmentSerachResult);
+//   let assessmentData = assessmentDataSearch(tenantId);
+//     console.log("assessmentData===",assessmentData)
   const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.pt.useApplicationDetail(t, tenantId, propertyId);
-
+console.log("applicationDetails===",applicationDetails)
   const {
     isLoading: updatingApplication,
     isError: updateApplicationError,
     data: updateResponse,
     error: updateError,
     mutate,
-  } = Digit.Hooks.pt.useApplicationActions(tenantId);
+  } = Digit.Hooks.pt.useApplicationActions(tenantId, 'PT.APPEAL');
 
   let workflowDetails = Digit.Hooks.useWorkflowDetails({
     tenantId: applicationDetails?.tenantId || tenantId,
-    id: applicationDetails?.applicationData?.acknowldgementNumber,
+    id: appealId,
+    // applicationDetails?.applicationData?.acknowldgementNumber,
     moduleCode: businessService,
     role: "PT_CEMP",
   });
+  console.log("workflowDetails==",workflowDetails)
+//   const { isLoading: auditDataLoading, isError: isAuditError, data: auditData } = Digit.Hooks.pt.usePropertySearch(
+//     {
+//       tenantId,
+//       filters: { propertyIds: propertyId, audit: true },
+//     },
+//     { enabled: enableAudit, select: (data) => data.Properties?.filter((e) => e.status === "ACTIVE") }
+//   );
+//   const assessmentData = Digit.Hooks.pt.usePropertyAssessmentSearch(
+//     {
+//       tenantId,
+//       filters: { assessmentNumbers:'MN-AS-2024-04-14-000289' },
+//     },
+//     { enabled: enableAudit, select: (data) => data.Properties?.filter((e) => e.status === "ACTIVE") }
+//   );
 
-  const { isLoading: auditDataLoading, isError: isAuditError, data: auditData } = Digit.Hooks.pt.usePropertySearch(
-    {
-      tenantId,
-      filters: { propertyIds: propertyId, audit: true },
-    },
-    { enabled: enableAudit, select: (data) => data.Properties?.filter((e) => e.status === "ACTIVE") }
-  );
-  console.log("Application Details==", auditData)
-
-
-  const showTransfererDetails = React.useCallback(() => {
-    if (
-      auditData &&
-      Object.keys(appDetailsToShow).length &&
-      applicationDetails?.applicationData?.status !== "ACTIVE" &&
-      applicationDetails?.applicationData?.creationReason === "MUTATION" &&
-      !appDetailsToShow?.applicationDetails.find((e) => e.title === "PT_MUTATION_TRANSFEROR_DETAILS")
-    ) {
-      let applicationDetails = appDetailsToShow.applicationDetails?.filter((e) => e.title === "PT_OWNERSHIP_INFO_SUB_HEADER");
-      let compConfig = newConfigMutate.reduce((acc, el) => [...acc, ...el.body], []).find((e) => e.component === "TransfererDetails");
-      applicationDetails.unshift({
-        title: "PT_MUTATION_TRANSFEROR_DETAILS",
-        belowComponent: () => <TransfererDetails userType="employee" formData={{ originalData: auditData[0] }} config={compConfig} />,
-      });
-      setAppDetailsToShow({ ...appDetailsToShow, applicationDetails });
-    }
-  },[setAppDetailsToShow,appDetailsToShow,auditData,applicationDetails,auditData,newConfigMutate]);
+//   console.log("assessmentData===",assessmentData.Assessments)
 
   const closeToast = () => {
     setShowToast(null);
@@ -82,15 +117,9 @@ const ApplicationDetails = () => {
     }
   }, [applicationDetails]);
 
-  useEffect(() => {
-    showTransfererDetails();
-    if (appDetailsToShow?.applicationData?.status === "ACTIVE" && PT_CEMP&&businessService=="PT.CREATE") {
-       setBusinessService("PT.UPDATE");
-      }
-  }, [auditData, applicationDetails, appDetailsToShow]);
 
   useEffect(() => {
-    if (workflowDetails?.data?.applicationBusinessService && !(workflowDetails?.data?.applicationBusinessService === "PT.CREATE" && businessService === "PT.UPDATE")) {
+    if (workflowDetails?.data?.applicationBusinessService && !(workflowDetails?.data?.applicationBusinessService === "PT.APPEAL" && businessService === "PT.UPDATE")) {
       setBusinessService(workflowDetails?.data?.applicationBusinessService);
     }
   }, [workflowDetails.data]);
@@ -115,22 +144,6 @@ const ApplicationDetails = () => {
         },
       },
     };
-  }
-
-  if (
-    PT_CEMP &&
-    workflowDetails?.data?.actionState?.isStateUpdatable &&
-    !workflowDetails?.data?.actionState?.nextActions?.find((e) => e.action === "UPDATE")
-  ) {
-    if (!workflowDetails?.data?.actionState?.nextActions) workflowDetails.data.actionState.nextActions = [];
-    workflowDetails?.data?.actionState?.nextActions.push({
-      action: "UPDATE",
-      redirectionUrl: {
-        pathname: `/digit-ui/employee/pt/modify-application/${propertyId}`,
-        state: { workflow: { action: "REOPEN", moduleName: "PT", businessService } },
-      },
-      tenantId: Digit.ULBService.getStateId(),
-    });
   }
 
   if (!(appDetailsToShow?.applicationDetails?.[0]?.values?.[0].title === "PT_PROPERTY_APPLICATION_NO")) {
@@ -190,21 +203,10 @@ const ApplicationDetails = () => {
   };
   let dowloadOptions = [propertyDetailsPDF];
 
- if (applicationDetails?.applicationData?.creationReason === "MUTATION"){
-   return(
-    <MutationApplicationDetails 
-      propertyId = {propertyId}
-      acknowledgementIds={appDetailsToShow?.applicationData?.acknowldgementNumber}
-      workflowDetails={workflowDetails}
-      mutate={mutate}
-    />
-   )
- } 
-
   return (
     <div>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-      <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "16px" }}>{applicationDetails?.applicationData?.creationReason === "AMALGAMATION" ? "Property Amalgamation" : t("PT_APPLICATION_TITLE")}</Header>
+      <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "16px" }}>{t("PT_APPLICATION_TITLE")}</Header>
       {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper employee-mulitlink-main-div"
@@ -219,6 +221,7 @@ const ApplicationDetails = () => {
           </div>
       <ApplicationDetailsTemplate
         applicationDetails={appDetailsToShow}
+        assmentSearchData={assmentSearchData}
         isLoading={isLoading}
         isDataLoading={isLoading}
         applicationData={appDetailsToShow?.applicationData}
@@ -229,15 +232,16 @@ const ApplicationDetails = () => {
         showToast={showToast}
         setShowToast={setShowToast}
         closeToast={closeToast}
-        timelineStatusPrefix={"ES_PT_COMMON_STATUS_"}
-        forcedActionPrefix={"WF_EMPLOYEE_PT.CREATE"}
+        userRole={'ASSIGNING_OFFICER'}
+        timelineStatusPrefix={""}
+        forcedActionPrefix={"WF_EMPLOYEE_ASMT"}
         statusAttribute={"state"}
-        ActionBarStyle={{float: "right"}}
         MenuStyle={{ color: "#FFFFFF", fontSize: "18px" }}
+        ActionBarStyle={{float: "right"}}
       />
     
     </div>
   );
 };
 
-export default React.memo(ApplicationDetails);
+export default React.memo(AppealWorkflow);

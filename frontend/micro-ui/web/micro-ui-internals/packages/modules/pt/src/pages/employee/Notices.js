@@ -5,6 +5,12 @@ import { Dropdown, Header } from "@egovernments/digit-ui-react-components";
 import DesktopInbox from "../../components/DesktopInbox";
 import MobileInbox from "../../components/MobileInbox";
 import NoticeForAssesment from "./NoticeTemplates/NoticeForAssesment";
+import NoticeForRectification from "./NoticeTemplates/NoticeForRectification";
+import NoticeForReassessment from "./NoticeTemplates/NoticeForReassessment";
+import NoticeToEnterPremises from "./NoticeTemplates/NoticeToEnterPremises";
+import NoticeToFileReturn from "./NoticeTemplates/NoticeToFileReturn";
+import NoticeForHearing from "./NoticeTemplates/NoticeForHearing";
+import NoticeForImpositionOfPenalty from "./NoticeTemplates/NoticeForImpositionOfPenalty";
 
 const Notices = ({
   useNewInboxAPI,
@@ -89,7 +95,12 @@ const Notices = ({
   };
   const noticeList = [
     {code: '1', name: 'Notice for rectification of mistakes in a Defective Return'},
-    {code: '2', name: 'Notice for Assessment'}
+    {code: '2', name: 'Notice for Assessment'},
+    {code: '3', name: 'Notice for Re-Assessment'},
+    {code: '4', name: 'Notice to enter Premises'},
+    {code: '5', name: 'Notice to file Return'},
+    {code: '6', name: 'Notice for Hearing under Rule 39 / 40'},
+    {code: '7', name: 'Notice for Imposition of Penalty'}
   ]
   const [notice, setNotice] = useState();
   const handleChangeNotice=(value)=>{
@@ -135,8 +146,26 @@ const Notices = ({
             
           </div>
           <div>
+              {notice && notice.code=='1' && (
+                <NoticeForRectification notice={notice}></NoticeForRectification>
+              )}
               {notice && notice.code=='2' && (
                 <NoticeForAssesment notice={notice}></NoticeForAssesment>
+              )}
+              {notice && notice.code=='3' && (
+                <NoticeForReassessment notice={notice}></NoticeForReassessment>
+              )}
+              {notice && notice.code=='4' && (
+                <NoticeToEnterPremises notice={notice}></NoticeToEnterPremises>
+              )}
+              {notice && notice.code=='5' && (
+                <NoticeToFileReturn notice={notice}></NoticeToFileReturn>
+              )}
+              {notice && notice.code=='6' && (
+                <NoticeForHearing notice={notice}></NoticeForHearing>
+              )}
+              {notice && notice.code=='7' && (
+                <NoticeForImpositionOfPenalty notice={notice}></NoticeForImpositionOfPenalty>
               )}
             </div>
         </div>
