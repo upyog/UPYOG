@@ -583,8 +583,8 @@ private String appealAddPaginationWrapper(String query, List<Object> preparedStm
 		if(appealid!=null)
 		{
 			addClauseIfRequired(preparedStmtList,builder);
-			builder.append("appeal.appealid IN (").append(createQuery(acknowledgementIds)).append(")");
-			addToPreparedStatementWithUpperCase(preparedStmtList, acknowledgementIds);
+			builder.append("appeal.appealid IN (").append(createQuery(appealid)).append(")");
+			addToPreparedStatementWithUpperCase(preparedStmtList, appealid);
 		}
 		
 		return builder.toString();
