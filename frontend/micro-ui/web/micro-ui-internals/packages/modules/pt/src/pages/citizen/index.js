@@ -6,6 +6,7 @@ import Search from "../employee/Search";
 import { useTranslation } from "react-i18next";
 import { PTMyPayments } from "./MyPayments";
 import AmalgamationCitizen from "./Amalgamate";
+import CitizenAppeal from "./Appeal";
 
 const hideBackButtonConfig = [
   { screenPath: "property/new-application/acknowledgement" },
@@ -35,9 +36,6 @@ const App = () => {
   const SearchAssessmentComponent = Digit?.ComponentRegistryService?.getComponent("PTSearchAssessmentComponent");
   const SearchAssessmentResultsComponent = Digit?.ComponentRegistryService?.getComponent("PTSearchAssessmentResultsComponent");
 
-
-
-  console.log("AmalgamateProperty==",AmalgamateProperty)
   return (
     <span className={"pt-citizen"}>
       <Switch>
@@ -55,6 +53,7 @@ const App = () => {
           <PrivateRoute path={`${path}/property/property-amalgamation/search-property`} component={AmalgamationCitizen}></PrivateRoute>
           <Route path={`${path}/property/property-assessment/search-assessment`} component={SearchAssessmentComponent} />
           <Route path={`${path}/property/property-assessment/search-assessment-results`} component={SearchAssessmentResultsComponent} />
+          <PrivateRoute path={`${path}/property/appeal/:propertyIds`} component={CitizenAppeal}></PrivateRoute>
 
           <PrivateRoute path={`${path}/property/properties/:propertyIds`} component={PropertyInformation}></PrivateRoute>
           {/* <PrivateRoute path={`${path}/property/transfer-ownership`} component={MutateProperty}></PrivateRoute> */}

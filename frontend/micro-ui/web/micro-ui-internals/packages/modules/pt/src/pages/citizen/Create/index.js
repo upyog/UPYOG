@@ -46,7 +46,6 @@ const CreateProperty = ({ parentRoute }) => {
     }
     console.log("currentPath==",currentPath);
     let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
-    // debugger
     if (typeof nextStep == "object" && nextStep != null && isMultiple != false) {
       if (nextStep[sessionStorage.getItem("ownershipCategory")]) {
         nextStep = `${nextStep[sessionStorage.getItem("ownershipCategory")]}/${index}`;

@@ -10,7 +10,7 @@ import {
   StatusTable,
 } from "@egovernments/digit-ui-react-components";
 import { values } from "lodash";
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import BPADocuments from "./BPADocuments";
@@ -33,6 +33,12 @@ import DocumentsPreview from "./DocumentsPreview";
 import InfoDetails from "./InfoDetails";
 import ViewBreakup from"./ViewBreakup";
 
+const getParentPropertyDetails = async (tenantId, propertyId, updateparentPropertyDetails) => {
+  const oldPropertyData = await Digit.PTService.search({ tenantId, filters: { propertyIds: propertyId } })
+ 
+  updateparentPropertyDetails(oldPropertyData?.Properties || [])
+};
+
 function ApplicationDetailsContent({
   applicationDetails,
   workflowDetails,
@@ -47,6 +53,7 @@ function ApplicationDetailsContent({
   isInfoLabel = false
 }) {
   const { t } = useTranslation();
+  const [parentPropertyDetails, updateparentPropertyDetails] = useState([]);
 
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
@@ -177,7 +184,11 @@ function ApplicationDetailsContent({
         return ""
     }
   }
-  console.log("applicationDetails==",applicationDetails)
+  if(applicationDetails?.applicationData?.creationReason == "BIFURCATION" && applicationDetails?.applicationData?.parentPropertyId) {
+    getParentPropertyDetails(applicationDetails?.tenantId, applicationDetails?.applicationData?.parentPropertyId, updateparentPropertyDetails);
+
+  }
+  
   return (
     <div>
       {applicationDetails?.applicationData?.creationReason == "AMALGAMATION" &&
@@ -188,6 +199,17 @@ function ApplicationDetailsContent({
                 <span style={{fontWeight: 'bold'}}>Property ID: </span><span>{e.property?.propertyId || '-'} | </span>
                 <span style={{fontWeight: 'bold'}}>Owner Name: </span><span>{e.property?.owners[0].name || '-'} | </span>
                 <span style={{fontWeight: 'bold'}}>Owner Mobile No.: </span><span>{e.property?.owners[0].mobileNumber || '-'}</span>
+              </div>))}
+          </Card>
+        }
+        {applicationDetails?.applicationData?.creationReason == "BIFURCATION" &&
+          <Card className={"employeeCard-override"}>
+            <div style={{fontWeight: 'bold', fontSize: '18px', color: "#0f4f9e", marginBottom: "10px"}}>Separation Of Ownership Property Details</div>
+              {parentPropertyDetails && parentPropertyDetails.map((e, ind) => (
+              <div>
+                <span style={{fontWeight: 'bold'}}>Property ID: </span><span>{e?.propertyId || '-'} | </span>
+                <span style={{fontWeight: 'bold'}}>Owner Name: </span><span>{e?.owners[0].name || '-'} | </span>
+                <span style={{fontWeight: 'bold'}}>Owner Mobile No.: </span><span>{e?.owners[0].mobileNumber || '-'}</span>
               </div>))}
           </Card>
         }

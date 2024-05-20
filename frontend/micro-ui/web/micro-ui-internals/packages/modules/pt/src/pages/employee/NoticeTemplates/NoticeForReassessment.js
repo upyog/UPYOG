@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { CardLabel, DatePicker, Dropdown, Header, Modal, TextInput } from "@egovernments/digit-ui-react-components";
 
 
-const NoticeForAssesment = (props) => {
+const NoticeForReassessment = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   const { t } = useTranslation();
@@ -11,10 +11,6 @@ const NoticeForAssesment = (props) => {
   const [selectedFinancialYear, setSelectedFinancialYear] = useState(null);
   const [submissionDate, setSubmissionDate] = useState();
 
-  const noticeList = [
-    { code: '1', name: 'Notice for rectification of mistakes in a Defective Return' },
-    { code: '2', name: 'Notice for Assessment' }
-  ]
   const [notice, setNotice] = useState();
   const [showModal, setShowModal] = useState(false)
   const [showDateModal, setShowDateModal] = useState(false)
@@ -44,6 +40,8 @@ const NoticeForAssesment = (props) => {
     remarks: null
   });
   const [returnTimeFormData, setReturnTimeFormData] = useState({
+    resolutionNo: null,
+    resolutionDate: null,
     time: null,
     date: null
   });
@@ -242,7 +240,7 @@ const NoticeForAssesment = (props) => {
         <div className="row">
           <form>
             <div id="form-print">
-            {<Header>{t("Notice For Assessment")}</Header>}
+            {<Header>{t("Notice For Re-Assessment")}</Header>}
               <div className="row card" style={{ maxWidth: '100%' }}>
                 <div >
                   <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
@@ -300,18 +298,10 @@ const NoticeForAssesment = (props) => {
                 <div>
                   <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
                     <CardLabel>{`${t("Date of Submission of Annual Return")}`}</CardLabel>
-                    {/* <DatePicker
-                      isRequired={true}
-                      date={submissionDate}
-                      onChange={(d) => {
-                        setSubmissionDate(d);
-                      }}
-                    /> */}
+                   
                     <input
                       className={`employee-card-input ${props.disabled ? "disabled" : ""}`}
-                      // className={`${props.disabled ? "disabled" : ""}`}
                       style={{ width: "calc(100%-62px)" }}
-                      // style={{ right: "6px", zIndex: "100", top: 6, position: "absolute", opacity: 0, width: "100%" }}
                       value={submissionDate ? submissionDate : ""}
                       type="date"
                       onChange={(d) => {
@@ -328,14 +318,14 @@ const NoticeForAssesment = (props) => {
                 </div>
                 <hr />
                 <div style={{ marginTop: '20px' }}>
-                  <p><span style={{ fontWeight: 600 }}>Sub: Notice under Rule 33/ Rule 34 of Manipur Municipalities (Property Tax) Rules, 2019 </span>
+                  <p><span style={{ fontWeight: 600 }}>Sub: Notice under Rule 35 of Manipur Municipalities (Property Tax) Rules, 2019 </span>
                     <ul style={{ marginTop: '10px' }} className="notice-txt">
                       <li style={{ width: '60%', listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
-                        This is reference to the Property Tax Return field under Rule 17/Rule 18/Rule 19/ No Return filed under Rule 17/ Rectification of Mistakes under Rule 38
+                        This is reference to the completion of assessment and order passed under Rule 31/Rule 32/Rule 33/Rule 34 nevertheless, it had been detected there are instance of willful supperssion of information.
                       </li>
                       <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
                         <div style={{ width: '60%', display: 'inline-flex' }}>
-                          The following information in the return appears to be incorrect / No return has been filed under Rule 17
+                          The following information in the return appears to be incorrect / No return has been filed under Rule 17/ Rule 18/ Rule 19:
                         </div>
                         
                         <div style={{ width: '40%', display: 'inline' }}>
@@ -373,7 +363,7 @@ const NoticeForAssesment = (props) => {
                       </li>}
                       <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
                         <div style={{ width: '60%' }}>
-                          If therefore purpose to modify the Annual Property Value (APV) and the property tax on the basis of the information available with the municipality. In case, you disagree with the assessment and the process increase, you may case with all available records either in person or through and authorized representative on {returnTimeFormData?.date && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.date}</span>}{!returnTimeFormData?.date && <span>__________________</span>} at {returnTimeFormData?.time && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.time}</span>} {!returnTimeFormData?.time && <span>________________ </span>}in the chamber of the undersigned.
+                          If therefore purpose to initiate a re-assessment under Rule 35, which has the consent of the Board of Councilors vide Resolution no: {returnTimeFormData?.resolutionNo && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.resolutionNo}</span>}{!returnTimeFormData?.resolutionNo && <span>__________________</span>} dated {returnTimeFormData?.resolutionDate && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.resolutionDate}</span>} {!returnTimeFormData?.resolutionDate && <span>________________ </span>}. If therefore processed to the open the earlier assessment and modify the Annual Property Value(APV) and the Property tax on the basis of the information available with the municipality. In case, you disagree with the re-assessment and the proposed increase, you may present your case with all available records either in person or through an authorized representative on {returnTimeFormData?.date && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.date}</span>}{!returnTimeFormData?.date && <span>__________________</span>} at {returnTimeFormData?.time && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.time}</span>} {!returnTimeFormData?.time && <span>________________ </span>} in the chamber of the undersigned.
                         </div>
                         <div style={{ width: '40%', display: 'inline' }}>
                           <button id="printPageButton" onClick={(e) => onEditDate(e)} className="submit-bar"
@@ -389,7 +379,7 @@ const NoticeForAssesment = (props) => {
                         </div>
                       </li>
                       <li style={{ width: '60%', listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
-                        In case you fail to appear on the appointed date and time or otherwise explain why the APV and tax should not be assessed as above, the assessment will be frames under Rule 33/ Rule 34/ Rule 38 on the basis of the information available with the municipality as indicated above.
+                        In case you fail to appear on the appointed date and time or otherwise explain why the earlier assessment would not be re-openedand the APV and tax should not be assessed as above, the assessment will be frames under Rule 35 on the basis of the information available with the municipality as indicated above.
                       </li>
                     </ul>
                   </p>
@@ -397,14 +387,14 @@ const NoticeForAssesment = (props) => {
               </div>
               <div className="card" style={{ maxWidth: '100%' }}>
                 <div className="row">
-                  <div className="" style={{display: "inline-block", width: "90%", paddingLeft: "15px"}}>
-                      <span>Date</span>
-                      <div>{new Date().toLocaleDateString()}</div>
-                  </div>
-                  <div className="" style={{display: "inline-block", width: "10%"}}>
-                    <span>Place</span>
-                    <div>Manipur</div>
-                  </div>
+                    <div className="" style={{display: "inline-block", width: "90%", paddingLeft: "15px"}}>
+                        <span>Date</span>
+                        <div>{new Date().toLocaleDateString()}</div>
+                    </div>
+                    <div className="" style={{display: "inline-block", width: "10%"}}>
+                        <span>Place</span>
+                        <div>Manipur</div>
+                    </div>
                 </div>
               </div>
             </div>
@@ -545,20 +535,28 @@ const NoticeForAssesment = (props) => {
         >
           <div>
             <div className="row" style={{padding: "10px"}}>
+                <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
+                    
+                    <label for="formControlInputResolutionNo" class="form-label">Resolution No.*</label>
+                    <input type="text" className={fieldError.resolutionNo ? "form-control error-message" : "form-control"} id="formControlInputResolutionNo" name="resolutionNo" placeholder="Enter Resolution No." value={returnTimeFormData.resolutionNo} onChange={handleChangeTimeReturn} required />
+                    {fieldError.resolutionNo &&
+                        <span className="error-message">
+                            {fieldError.resolutionNo}
+                        </span>
+                    }
+                </div>
+                <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
+                    
+                    <label for="formControlInputResolutionDate" class="form-label">Resolution Date*</label>
+                    <input type="date" className={fieldError.resolutionDate ? "form-control error-message" : "form-control"} id="formControlInputResolutionDate" name="resolutionDate" placeholder="Enter Resolution Date" value={returnTimeFormData.resolutionDate} onChange={handleChangeTimeReturn} required />
+                    {fieldError.resolutionDate &&
+                        <span className="error-message">
+                            {fieldError.resolutionDate}
+                        </span>
+                    }
+                </div>
               <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
-                {/* <CardLabel>{`${t("Date")}`}</CardLabel>
-                <input
-                  className={`employee-card-input ${props.disabled ? "disabled" : ""}`}
-                  // className={`${props.disabled ? "disabled" : ""}`}
-                  style={{ width: "calc(100%-62px)" }}
-                  // style={{ right: "6px", zIndex: "100", top: 6, position: "absolute", opacity: 0, width: "100%" }}
-                  value={editDate ? editDate : ""}
-                  type="date"
-                  onChange={(d) => {
-                    setEditDate(d.target.value);
-                  }}
-                  required={false}
-                /> */}
+                
                 <label for="formControlInputReturnDate" class="form-label">Date*</label>
                 <input type="date" className={fieldError.date ? "form-control error-message" : "form-control"} id="formControlInputReturnDate" name="date" placeholder="Enter Date" value={returnTimeFormData.date} onChange={handleChangeTimeReturn} required />
                 {fieldError.date &&
@@ -568,17 +566,7 @@ const NoticeForAssesment = (props) => {
                 }
               </div>
               <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
-                {/* <CardLabel>{`${t("Time")}`}</CardLabel>
-                <TextInput
-                  style={{ background: "#FAFAFA" }}
-                  key={'time'}
-                  name={'time'}
-                  value={time}
-                  onChange={(e) => setTime(e.target.value)}
-                  isMandatory={true}
-                  disable={false}
-                  type={'number'}
-                /> */}
+                
                 <label for="formControlInputReturnTime" class="form-label">Time*</label>
                 <input type="time" className={fieldError.time ? "form-control error-message" : "form-control"} id="formControlInputReturnTime" name="time" placeholder="Enter Time" value={returnTimeFormData.time} onChange={handleChangeTimeReturn} required />
                 {fieldError.time &&
@@ -614,4 +602,4 @@ const NoticeForAssesment = (props) => {
   );
 };
 
-export default NoticeForAssesment;
+export default NoticeForReassessment;

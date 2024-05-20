@@ -35,13 +35,17 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
   let userRole='';
   if(userDetails && userDetails.info && userDetails.info?.roles) {
     userDetails.info.roles.map((role)=>{
-      if(role?.code == "ASSIGNING_OFFICER") userRole = role.code;
+      if(role?.code == "ASSIGNING_OFFICER") {
+        userRole = role.code;
+      } else if(role?.code == "EXECUTING_OFFICER") {
+        userRole = role.code;
+      }
     })
   }
 
   const [clearSearchCalled, setClearSearchCalled] = useState(false);
 
-  const columns = React.useMemo(() => userRole && userRole=='ASSIGNING_OFFICER' ? (tableConfig.inboxColumnsAssessment(props) || []) : (props.isSearch ? tableConfig.searchColumns(props) : tableConfig.inboxColumns(props) || []), []);
+  const columns = React.useMemo(() => userRole && userRole=='ASSIGNING_OFFICER' ? (tableConfig.inboxColumnsAssessment(props) || []) : userRole && userRole=='EXECUTING_OFFICER' ? (tableConfig.inboxColumnsAppeal(props) || []) : (props.isSearch ? tableConfig.searchColumns(props) : tableConfig.inboxColumns(props) || []), []);
 
   let result;
   if (props.isLoading) {

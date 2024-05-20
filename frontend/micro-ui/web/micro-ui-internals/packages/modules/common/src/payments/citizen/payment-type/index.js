@@ -90,7 +90,6 @@ export const SelectPaymentType = (props) => {
     try {
       const data = await Digit.PaymentService.createCitizenReciept(billDetails?.tenantId, filterData);
       // console.log("createCitizenReciept==",data,d)
-      // debugger
       console.log("=========",JSON.stringify(data));
       const redirectUrl = data?.Transaction?.redirectUrl;
       if (d?.paymentType == "AXIS") {
