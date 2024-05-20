@@ -116,7 +116,8 @@ public class PayGovGateway implements Gateway {
         CITIZEN_URL = environment.getRequiredProperty("egov.default.citizen.url");
         GATEWAY_URL = environment.getRequiredProperty("paygov.gateway.url");
         TX_DATE_FORMAT =environment.getRequiredProperty("paygov.dateformat");
-        User userInfo = User.builder()
+        
+                User userInfo = User.builder()
                 .uuid("PG_DETAIL_GET")
                 .type("SYSTEM")
                 .roles(Collections.emptyList()).id(0L).build();
@@ -149,11 +150,15 @@ public class PayGovGateway implements Gateway {
         String returnUrl = transaction.getCallbackUrl().replace(CITIZEN_URL, "");
 
         queryMap.put(SERVICE_ID_KEY, getModuleCode(transaction));
-        String domainName =  returnUrl.replaceAll("http(s)?://|www\\.|/.*", "");
-        String citizenReturnURL = returnUrl.split(domainName)[1];
-        log.info("returnUrl::::"+getReturnUrl(citizenReturnURL, REDIRECT_URL));
-        queryMap.put(SUCCESS_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
-        queryMap.put(FAIL_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
+      String domainName =  returnUrl.replaceAll("http(s)?://|www\\.|/.*", "");
+      
+        String citizenReturnURL = returnUrl.split(domainName)[2];
+        
+        domainName = "https://" + domainName;
+        
+        log.info("returnUrl::::"+getReturnUrl(citizenReturnURL, domainName, REDIRECT_URL));
+        queryMap.put(SUCCESS_URL_KEY, getReturnUrl(citizenReturnURL,domainName, REDIRECT_URL));
+        queryMap.put(FAIL_URL_KEY, getReturnUrl(citizenReturnURL,domainName, REDIRECT_URL));
         StringBuffer userDetail = new StringBuffer();
         if( transaction.getUser()!=null) {
             if(!StringUtils.isEmpty(transaction.getUser().getMobileNumber())) {
@@ -305,10 +310,10 @@ public class PayGovGateway implements Gateway {
             }
         }
 
-
-        log.info("returnUrl::::"+getReturnUrl(citizenReturnURL, REDIRECT_URL));
-        queryMap.put(SUCCESS_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
-        queryMap.put(FAIL_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
+        domainName = "https://" + domainName;
+        log.info("returnUrl::::"+getReturnUrl(citizenReturnURL,domainName, REDIRECT_URL));
+        queryMap.put(SUCCESS_URL_KEY, getReturnUrl(citizenReturnURL,domainName, REDIRECT_URL));
+        queryMap.put(FAIL_URL_KEY, getReturnUrl(citizenReturnURL,domainName, REDIRECT_URL));
         StringBuffer userDetail = new StringBuffer();
         if( transaction.getUser()!=null) {
             if(!StringUtils.isEmpty(transaction.getUser().getMobileNumber())) {
@@ -365,8 +370,8 @@ public class PayGovGateway implements Gateway {
 
 
 
-    private String getReturnUrl(String callbackUrl, String baseurl) {
-        return UriComponentsBuilder.fromHttpUrl(baseurl).queryParam(ORIGINAL_RETURN_URL_KEY, callbackUrl).build().toUriString();
+    private String getReturnUrl(String callbackUrl, String domainName, String baseurl) {
+        return UriComponentsBuilder.fromHttpUrl(baseurl).queryParam(ORIGINAL_RETURN_URL_KEY, domainName + callbackUrl).build().toUriString();
     }
 
     class RequestMsg{
