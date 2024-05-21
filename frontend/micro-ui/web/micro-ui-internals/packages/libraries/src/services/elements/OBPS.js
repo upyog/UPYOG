@@ -557,6 +557,8 @@ export const OBPSService = {
       }
     };
 
+    
+
     const buildingExtractionDetails = {
       title: "",
       isScrutinyDetails: true,
@@ -571,6 +573,8 @@ export const OBPSService = {
         scruntinyDetails: []
       }
     };
+
+    
 
     const demolitionAreaDetails = {
       title: "",
