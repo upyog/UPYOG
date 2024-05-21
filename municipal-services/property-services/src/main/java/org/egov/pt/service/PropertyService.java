@@ -458,47 +458,43 @@ public class PropertyService {
 
 				terminateWorkflowAndReInstatePreviousRecordForBifurcation(request, propertyFromSearch);
 			}else {
-				/*
-				 * If property is In Workflow then continue
-				 */
 				
-				//check all the child property status in bifurcation table.
-				
-				
-				String status = request.getProperty().getStatus().toString();
-				
-				List<PropertyBifurcation> bifurList= repository.getBifurcationProperties(request.getProperty().getParentPropertyId());
-				Integer Count = bifurList.stream()
-						.filter(x->!x.getChildpropertyuuid().equalsIgnoreCase(request.getProperty().getId()))
-						.filter(x ->!x.getStatus()).collect(Collectors.toList()).size();
-				
-				if(Count>0) {
-					request.getProperty().setStatus(Status.INACTIVE);
+				if(state.getApplicationStatus().equalsIgnoreCase(Status.INWORKFLOW.toString())) {
 					producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
-					//Update the status to true in bifurcation table for this property uuid
-					PropertyBifurcation b = bifurList.stream()
-											.filter(x->x.getChildpropertyuuid().equalsIgnoreCase(request.getProperty().getId()))
-											.collect(Collectors.toList()).get(0);
-					boolean x =true;
-					b.setStatus(true);
 					
-					
-					request.getProperty().setPropertyBifurcations(Arrays.asList(b));
-					
-					System.out.println(request.getProperty().getPropertyBifurcations());
-				
-					producer.push(config.getUpdateChildStatusForBifurcation(), request);
 				}else {
-					/*
-					 * List<PropertyBifurcation> bf= bifurList.stream()
-					 * .filter(x->!x.getChildpropertyuuid().equalsIgnoreCase(request.getProperty().
-					 * getId())).collect(Collectors.toList());
-					 * request.getProperty().setPropertyBifurcations(bf); ;
-					 */
+					List<PropertyBifurcation> bifurList= repository.getBifurcationProperties(request.getProperty().getParentPropertyId());
+					Integer Count = bifurList.stream()
+							.filter(x->!x.getChildpropertyuuid().equalsIgnoreCase(request.getProperty().getId()))
+							.filter(x ->!x.getStatus()).collect(Collectors.toList()).size();
 					
-					producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
-					producer.push(config.getUpdatePropertyStatusForBifurcationSuccess(),request );
+					if(Count>0 ) {
+						request.getProperty().setStatus(Status.INACTIVE);
+						producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+						//Update the status to true in bifurcation table for this property uuid
+						PropertyBifurcation b = bifurList.stream()
+												.filter(x->x.getChildpropertyuuid().equalsIgnoreCase(request.getProperty().getId()))
+												.collect(Collectors.toList()).get(0);
+						b.setStatus(true);
+
+						request.getProperty().setPropertyBifurcations(Arrays.asList(b));
+						producer.push(config.getUpdateChildStatusForBifurcation(), request);
+					}else {
+						producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+						producer.push(config.getUpdatePropertyStatusForBifurcationSuccess(),request );
+						for(PropertyBifurcation b:bifurList) {
+							b.setStatus(true);
+						}
+						
+						request.getProperty().setPropertyBifurcations(bifurList);
+						request.getProperty().setPropertyBifurcations(bifurList);
+						producer.push(config.getUpdateChildStatusForBifurcation(), request);
+						System.out.println(bifurList);
+					}
 				}
+				
+				
+				
 			}
 
 		} else {
