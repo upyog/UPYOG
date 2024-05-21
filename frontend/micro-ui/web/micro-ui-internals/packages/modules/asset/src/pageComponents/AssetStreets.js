@@ -21,7 +21,7 @@ const AssetStreets = ({ t, config, onSelect, userType, formData, formState, setE
   
     inputs = [
       {
-        label: "ASR_STREET_NAME",
+        label: "AST_STREET",
         type: "text",
         name: "street",
         validation: {
@@ -31,7 +31,7 @@ const AssetStreets = ({ t, config, onSelect, userType, formData, formState, setE
         },
       },
       {
-        label: "AST_HOUSE_NO",
+        label: "AST_DOOR_NO",
         type: "text",
         name: "doorNo",
         validation: {
@@ -40,18 +40,18 @@ const AssetStreets = ({ t, config, onSelect, userType, formData, formState, setE
           // title: t("CORE_COMMON_DOOR_INVALID"),
         },
       },
+      // {
+      //   label: "AST_HOUSE_NAME",
+      //   type: "text",
+      //   name: "buildingName",
+      //    validation: {
+      //     // pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
+      //     // // maxlength: 256,
+      //     // title: t("CORE_COMMON_DOOR_INVALID"),
+      //    },
+      // },
       {
-        label: "AST_HOUSE_NAME",
-        type: "text",
-        name: "buildingName",
-         validation: {
-          // pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-          // // maxlength: 256,
-          // title: t("CORE_COMMON_DOOR_INVALID"),
-         },
-      },
-      {
-        label: "AST_ADDRESS_LINE1",
+        label: "AST_ADDRESS_LINE_1",
         type: "text",
         name: "addressLine1",
          validation: {
@@ -61,7 +61,7 @@ const AssetStreets = ({ t, config, onSelect, userType, formData, formState, setE
          },
       },
       {
-        label: "AST_ADDRESS_LINE2",
+        label: "AST_ADDRESS_LINE_2",
         type: "text",
         name: "addressLine2",
          validation: {

@@ -194,7 +194,7 @@ import {
             ) : null}
   
             <LabelFieldPair>
-              <CardLabel className="card-label-smaller">{t("ASSET_CLASSIFICATION") + " *"}</CardLabel>
+              <CardLabel className="card-label-smaller">{t("AST_CATEGORY") + " *"}</CardLabel>
               <Controller
                 control={control}
                 name={"assetclassification"}
@@ -219,7 +219,7 @@ import {
             </LabelFieldPair>
             <CardLabelError style={errorStyle}>{localFormState.touched.assetclassification ? errors?.assetclassification?.message : ""}</CardLabelError>
             <LabelFieldPair>
-              <CardLabel className="card-label-smaller">{t("ASSET_PARENT_CATEGORY") + " *"}</CardLabel>
+              <CardLabel className="card-label-smaller">{t("AST_PARENT_CATEGORY") + " *"}</CardLabel>
               <Controller
                 control={control}
                 name={"assettype"}
@@ -240,7 +240,7 @@ import {
             </LabelFieldPair>
             <CardLabelError style={errorStyle}>{localFormState.touched.assettype ? errors?.assettype?.message : ""}</CardLabelError>
             <LabelFieldPair>
-              <CardLabel className="card-label-smaller">{t("ASSET_SUB_TYPE") + " *"}</CardLabel>
+              <CardLabel className="card-label-smaller">{t("AST_SUB_CATEGORY") + " *"}</CardLabel>
               <Controller
                 control={control}
                 name={"assetsubtype"}

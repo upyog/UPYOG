@@ -19,7 +19,7 @@ const AssetPincode = ({ t, config, onSelect, formData = {}, userType, register, 
   
   const inputs = [
     {
-      label: "AST_ADDRESS_PINCODE",
+      label: "AST_PINCODE",
       type: "text",
       name: "pincode",
       validation: {

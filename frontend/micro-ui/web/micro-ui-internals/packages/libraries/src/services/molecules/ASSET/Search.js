@@ -45,7 +45,6 @@ export const ASSETSearch = {
           { title: "AST_LOCALITY", value: response?.addressDetails?.locality?.name },
           { title: "AST_DOOR_NO", value: response?.addressDetails?.doorNo },
           { title: "AST_STREET", value: response?.addressDetails?.street },
-          { title: "AST_BUILDING_NAME", value: response?.addressDetails?.buildingName },
           { title: "AST_ADDRESS_LINE_1", value: response?.addressDetails?.addressLine1 },
           { title: "AST_ADDRESS_LINE_2", value: response?.addressDetails?.addressLine2 },
 
@@ -58,7 +57,7 @@ export const ASSETSearch = {
         title: "AST_DETAILS",
         asSectionHeader: true,
         values: [
-          ...(response?.assetParentCategory=== "Land"
+          ...(response?.assetParentCategory=== "LAND"
             ? [
                 { title: "AST_TYPE", value: response?.additionalDetails?.assetParentCategory },
                 { title: "AST_LAND_AREA", value: response?.additionalDetails?.Area },
