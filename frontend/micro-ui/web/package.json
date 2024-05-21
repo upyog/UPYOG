@@ -17,7 +17,7 @@
     "@egovernments/digit-ui-module-common": "1.7.3",
     "@egovernments/digit-ui-module-core": "1.7.2",
     "@upyog/digit-ui-module-engagement": "1.7.2",
-    "@egovernments/digit-ui-module-dss": "1.7.8",
+    "@egovernments/digit-ui-module-dss": "1.7.9",
     "@egovernments/digit-ui-module-fsm": "1.7.7",
     "@upyog/digit-ui-module-hrms": "1.7.3",
     "@upyog/digit-ui-module-mcollect": "1.7.3",

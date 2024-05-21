@@ -122,7 +122,7 @@ const MapChart = ({
   let data1 = !isLoading ? response?.responseData?.data?.filter((dat) => 
   {
     let totalCount = dat?.plots[3]?.value;
-    let liveCount = dat?.plots[4]?.value;
+    let liveCount = dat?.plots[4]?.value ;
     let live = dat?.plots[4]?.strValue > 0 ? true : true;
     DataObj[dat.headerName] = {
       ...DataObj?.[dat.headerName],
