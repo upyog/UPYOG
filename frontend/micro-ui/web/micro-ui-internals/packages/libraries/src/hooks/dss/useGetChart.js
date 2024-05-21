@@ -10,8 +10,12 @@ const getRequest = (type, code, requestDate, filters, moduleLevel = "", addlFilt
       acc[curr] = newFilter[curr];
       return acc;
     }, {});
+
+    // if (!requestDate.interval){
+    //   requestDate.interval = 'month'
+    // }
   
-    requestDate.interval = JSON.parse(sessionStorage.getItem("customDateFilter"))?.filterType;
+    requestDate.interval = JSON.parse(sessionStorage.getItem("customDateFilter"))?.filterType || "month";
   return {
     aggregationRequestDto: {
       visualizationType: type.toUpperCase(),
