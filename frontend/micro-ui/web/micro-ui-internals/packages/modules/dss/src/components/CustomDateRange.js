@@ -181,6 +181,12 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
       tempCalenderData.startDate = year;
     }else if (!calenderData.endDate){
       tempCalenderData.endDate = year;
+
+      if (tempCalenderData.endDate < calenderData.startDate){
+        tempCalenderData.endDate = calenderData.startDate;
+        tempCalenderData.startDate = year;
+      }
+
     }else if (calenderData.startDate && calenderData.endDate){
       tempCalenderData.startDate = year;
       tempCalenderData.endDate = null;
@@ -197,6 +203,12 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
       tempCalenderData.startDate = year;
     }else if (!calenderData.endDate){
       tempCalenderData.endDate = year;
+
+      if (tempCalenderData.endDate < calenderData.startDate){
+        tempCalenderData.endDate = calenderData.startDate;
+        tempCalenderData.startDate = year;
+      }
+
     }else if (calenderData.startDate && calenderData.endDate){
       tempCalenderData.startDate = year;
       tempCalenderData.endDate = null;
