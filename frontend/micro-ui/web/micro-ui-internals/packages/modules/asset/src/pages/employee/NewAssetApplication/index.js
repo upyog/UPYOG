@@ -42,7 +42,7 @@ const NewAssetApplication = () => {
       assetName: data?.assetcommonforall?.[0]?.AssetName,
       description: data?.assetcommonforall?.[0]?.Assetdescription,
       assetClassification:data?.assets[0]?.assetclassification?.value,
-      assetParentCategory: data?.assets[0]?.assettype?.value,
+      assetParentCategory: data?.assets[0]?.assettype?.code,
       department: data?.assetcommonforall?.[0]?.Department,
       applicationNo: "",
       approvalDate: "",
