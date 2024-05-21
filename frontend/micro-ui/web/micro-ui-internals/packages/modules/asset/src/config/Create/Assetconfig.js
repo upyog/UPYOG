@@ -20,7 +20,7 @@ export const newConfig =[
         ]
     },
     {
-        "head": "ES_TITILE_ASSET_COMMON_SELECTION",
+        "head": "AST_COMMON_TYPE",
         "body": [
             {
                 "component": "AssetCommonSelection",
@@ -33,7 +33,7 @@ export const newConfig =[
     },
 
     {
-        "head": "ASSET_LOCATION_DETAILS",
+        "head": "AST_LOCATION_DETAILS",
         "body": [
            
             {
@@ -65,7 +65,7 @@ export const newConfig =[
         ]
     },
     {
-        "head": "ES_TITILE_DOCUMENT_DETAILS",
+        "head": "AST_DOCUMENT_DETAILS",
         "body": [
             {
                 "component": "AssetDocuments",

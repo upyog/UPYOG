@@ -41,8 +41,8 @@
     
 
     
-      const { data: Asset_Type } = Digit.Hooks.asset.useAssetType(stateId, "ASSET", "assetParentCategory"); // hooks for Asset Parent Category
-      let asset_type = [];  //variable name for asset type
+      const { data: AST_Type } = Digit.Hooks.asset.useAssetType(stateId, "ASSET", "assetParentCategory"); // hooks for Asset Parent Category
+      let AST_type = [];  //variable name for asset type
 
       
 
@@ -50,18 +50,18 @@
     
     
     
-      Asset_Type &&
-      Asset_Type.map((asset_type_mdms) => {
-              asset_type.push({
-              i18nKey: `ASSET_TYPE_${asset_type_mdms.code}`,
-              code: `${asset_type_mdms.code}`,
-              value: `${asset_type_mdms.name}`
+      AST_Type &&
+      AST_Type.map((AST_type_mdms) => {
+              AST_type.push({
+              i18nKey: `AST_TYPE_${AST_type_mdms.code}`,
+              code: `${AST_type_mdms.code}`,
+              value: `${AST_type_mdms.name}`
             });
     
         });
 
-    // Asset_Type && Asset_Type.map((asset_type_mdms) => {
-    //     asset_type.push(`${asset_type_mdms.code}`);
+    // AST_Type && AST_Type.map((AST_type_mdms) => {
+    //     AST_type.push(`${AST_type_mdms.code}`);
     //   });
 
       useEffect(() => {
@@ -86,7 +86,7 @@
         setError,
         clearErrors,
         config,
-        asset_type,
+        AST_type,
       
       };
     
@@ -114,7 +114,7 @@
         setError,
         clearErrors,
         formState,
-        asset_type,
+        AST_type,
         setFocusIndex
       
     
@@ -167,7 +167,7 @@
               ) : null}
     
               <LabelFieldPair>
-                <CardLabel className="card-label-smaller">{t("ASSET_COMMON_TYPE") + " *"}</CardLabel>
+                <CardLabel className="card-label-smaller">{t("AST_COMMON_TYPE") + " *"}</CardLabel>
                 <Controller
                   control={control}
                   name={"assetcommonselection"}
@@ -179,7 +179,7 @@
                       selected={props.value}
                       select={props.onChange}
                       onBlur={props.onBlur}
-                      option={asset_type}
+                      option={AST_type}
                       optionKey="i18nKey"
                       t={t}
                     />
@@ -191,11 +191,12 @@
               {selectedAssetCode === "LAND" && (
                 <React.Fragment>
                   <br></br>
-                  <div style={{fontWeight: 'bold', fontSize: '24px'}}>{t("ASSET_GENERAL_DETAILS")}<br></br></div>
+                  <div style={{fontWeight: 'bold', fontSize: '24px'}}>{t("AST_LAND_DETAILS")}<br></br></div>
+                  <br></br>
 
                   
                 <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_LAND_TYPE") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_LAND_TYPE") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -226,7 +227,7 @@
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.LandType ? errors?.LandType?.message : ""}</CardLabelError>*/}
 
               <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_AREA_SIZE") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_LAND_AREA") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -257,7 +258,7 @@
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.Area ? errors?.Area?.message : ""}</CardLabelError>*/}
 
               <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_ACQUISTION_COST_BOOK_VALUE") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_ACQUISTION_COST_BOOK_VALUE") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -288,7 +289,7 @@
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.BookValue ? errors?.BookValue?.message : ""}</CardLabelError>*/}
 
               <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_DATE_DEED_EXECUTION") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_DATE_DEED_EXECUTION") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -319,7 +320,7 @@
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.DateofDeedExecution ? errors?.DateofDeedExecution?.message : ""}</CardLabelError>*/}
 
               <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_DATE_POSSESION") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_DATE_POSSESION") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -350,7 +351,7 @@
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.DateofPossesion ? errors?.DateofPossesion?.message : ""}</CardLabelError>*/}
 
               <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_FROM_DEED_TAKEN") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_FROM_DEED_TAKEN") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -381,7 +382,7 @@
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.FromWhomDeedTaken ? errors?.FromWhomDeedTaken?.message : ""}</CardLabelError>*/}
 
               <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_GOVT_ORDER_NO.") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_GOVT_ORDER_NUM") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -412,7 +413,7 @@
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.GovernmentorderNumber ? errors?.GovernmentorderNumber?.message : ""}</CardLabelError>*/}
 
               <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_COLLECTOR_ORDER_NO") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_COLLECT_ORDER_NUM") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -443,7 +444,7 @@
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.CollectororderNumber ? errors?.CollectororderNumber?.message : ""}</CardLabelError>*/}
 
               <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_COUNCIL_RESOLUTION_NO") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_COUNCIL_RES_NUM") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -474,7 +475,7 @@
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.CouncilResolutionNumber ? errors?.CouncilResolutionNumber?.message : ""}</CardLabelError>*/}
 
               <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_AWARD_NO") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_AWARD_NUMBER") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -505,7 +506,7 @@
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.AwardNumber ? errors?.AwardNumber?.message : ""}</CardLabelError>*/}
 
               <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_COI") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_COI") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -536,7 +537,7 @@
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.OandMCOI ? errors?.OandMCOI?.message : ""}</CardLabelError>*/}
 
               <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_TASK_DETAILS") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_OM_TASK") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -567,7 +568,7 @@
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.OandMTaskDetail ? errors?.OandMTaskDetail?.message : ""}</CardLabelError>*/}
 
               <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_TOTAL_COST") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_TOTAL_COST") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -598,7 +599,7 @@
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.Totalcost ? errors?.Totalcost?.message : ""}</CardLabelError>*/}
 
               <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_DEPRICIATION_RATE") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_DEPRICIATION_RATE") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -629,7 +630,7 @@
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.DepriciationRate ? errors?.DepriciationRate?.message : ""}</CardLabelError>*/}
 
               <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_COST_DEPRICIATION") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_COST_AFTER_DEPRICIAT") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -660,7 +661,7 @@
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.Costafterdepriciation ? errors?.Costafterdepriciation?.message : ""}</CardLabelError>*/}
 
               <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_CURRENT_VALUE") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_CURRENT_VALUE") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -691,7 +692,7 @@
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.Currentassetvalue ? errors?.Currentassetvalue?.message : ""}</CardLabelError>*/}
 
               <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_REVENUE_GENERATED") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_REVENUE_GENERATED") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -722,10 +723,10 @@
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.Revenuegeneratedbyasset ? errors?.Revenuegeneratedbyasset?.message : ""}</CardLabelError>*/}
 
               <br></br>
-              <div style={{fontWeight: 'bold', fontSize: '24px'}}>{t("ASSET_ADDITIONAL_DETAILS")}<br></br></div>
+              <div style={{fontWeight: 'bold', fontSize: '24px'}}>{t("AST_ADDITIONAL_DETAILS")}<br></br></div>
               <br></br> 
               <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_OSR_LAND") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_OSR_LAND") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -756,7 +757,7 @@
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.OSRLand ? errors?.OSRLand?.message : ""}</CardLabelError>*/}
 
               <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_FENCED_PROTECTION") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_FENCED") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -787,7 +788,7 @@
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.isitfenced ? errors?.isitfenced?.message : ""}</CardLabelError>*/}
 
               <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_ANY_BUITUP") + " *"}</CardLabel>
+                  <CardLabel className="card-label-smaller">{t("AST_ANY_BUILTUP") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -817,8 +818,8 @@
               </LabelFieldPair>
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.AnyBuiltup ? errors?.AnyBuiltup?.message : ""}</CardLabelError>*/}
 
-              <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{t("ASSET_TREES_TYPE") + " *"}</CardLabel>
+              {/* <LabelFieldPair>
+                  <CardLabel className="card-label-smaller">{t("AST_TREES_TYPE") + " *"}</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
@@ -845,12 +846,12 @@
                       )}
                   />
                   </div>
-              </LabelFieldPair>
+              </LabelFieldPair> */}
               {/*<CardLabelError style={errorStyle}>{localFormState.touched.TypeofTrees ? errors?.TypeofTrees?.message : ""}</CardLabelError>*/}
 
               
               <LabelFieldPair>
-                      <CardLabel className="card-label-smaller">{t("ASSET_BEING_USED") + " *"}</CardLabel>
+                      <CardLabel className="card-label-smaller">{t("AST_HOW_ASSET_USE") + " *"}</CardLabel>
                       <div className="field">
                       <Controller
                           control={control}
