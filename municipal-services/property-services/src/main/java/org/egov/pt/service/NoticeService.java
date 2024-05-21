@@ -58,7 +58,7 @@ public class NoticeService {
 		if(noticeCriteria.isAudit() && CollectionUtils.isEmpty(noticeCriteria.getNoticenumber()))
 			throw new CustomException("EG_PT_NOTICE_AUDIT_ERROR", "Audit can only be provided for Noticenumbers");
 		
-		if(CollectionUtils.isEmpty(noticeCriteria.getTenantIds()))
+		if(CollectionUtils.isEmpty(noticeCriteria.getTenantId()))
 			throw new CustomException("EG_PT_NOTICE_TANENTID_ERROR","Please provide tanentID for search result");
 		
 		else

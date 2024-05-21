@@ -2,6 +2,8 @@ package org.egov.pt.models;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,8 +16,9 @@ import lombok.NoArgsConstructor;
 public class NoticeCriteria {
 
 	private Set<String> propertyIds;
-
-	private Set<String> tenantIds;
+	
+	@JsonProperty("tenantId")
+	private Set<String> tenantId;
 	
 	private Set<String> acknowledgementIds;
 	
