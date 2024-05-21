@@ -485,11 +485,9 @@ public class PropertyService {
 						for(PropertyBifurcation b:bifurList) {
 							b.setStatus(true);
 						}
-						
-						request.getProperty().setPropertyBifurcations(bifurList);
 						request.getProperty().setPropertyBifurcations(bifurList);
 						producer.push(config.getUpdateChildStatusForBifurcation(), request);
-						System.out.println(bifurList);
+						
 					}
 				}
 				
