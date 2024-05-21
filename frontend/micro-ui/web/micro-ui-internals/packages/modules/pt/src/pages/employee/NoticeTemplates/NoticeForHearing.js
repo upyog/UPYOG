@@ -192,7 +192,23 @@ const NoticeForHearing = (props) => {
     
   }
   const onSubmit = () => {
-
+    e.preventDefault();
+    let noticeDetails = {
+      name: name,
+      propertyAddress: propertyAddress,
+      "propertyId": propertyId,
+      "acknowledgementNumber": acknowledgementNo,
+      assessmentDate: submissionDate,
+      "assessmentYear": selectedFinancialYear?.code,
+      "noticeType": "Notice to file Return",      
+      "tenantId": tenantId,      
+      "channel": "CITIZEN",
+      appealNo: returnFormData.appealNo,
+      appealDate: returnFormData.appealDate,
+      noticeDate: returnTimeFormData.date,
+      noticeTime: returnTimeFormData.time
+    }
+    props.submit(noticeDetails)
   }
   const onCancelNotice = () => {
     
@@ -373,7 +389,7 @@ const NoticeForHearing = (props) => {
                   </button>
                 </div>
                 <div style={{ display: 'inline' }}>
-                  <button onClick={() => onSubmit()} className="submit-bar"
+                  <button onClick={onSubmit} className="submit-bar"
                     style={{
                       color: 'white',
                       float: 'right',

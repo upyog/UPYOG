@@ -260,8 +260,27 @@ const NoticeToEnterPremises = (props) => {
     return false;
     
   }
-  const onSubmit = () => {
-
+  const onSubmit = (e) => {
+    e.preventDefault();
+    let noticeDetails = {
+      name: name,
+      propertyAddress: propertyAddress,
+      "propertyId": propertyId,
+      "acknowledgementNumber": acknowledgementNo,
+      assessmentDate: submissionDate,
+      "assessmentYear": selectedFinancialYear?.code,
+      "noticeType": "Notice to enter Premises",      
+      "tenantId": tenantId,      
+      "channel": "CITIZEN",
+      "noticeComment": tableList,
+      authorizedPersonName: returnFormData.authorizedPersonName,
+      authorizedPersonDesignation: returnFormData.authorizedPersonDesignation,
+      noticeDate: returnTimeFormData?.date,
+      noticeTime: returnTimeFormData?.time,
+      mobileNo: returnMobileFormData.mobileNo,
+      penaltyAmount: returnPenaltyFormData.penaltyAmount
+    }
+    props.submit(noticeDetails)
   }
   const onCancelNotice = () => {
     
@@ -469,7 +488,7 @@ const NoticeToEnterPremises = (props) => {
                   </button>
                 </div>
                 <div style={{ display: 'inline' }}>
-                  <button onClick={() => onSubmit()} className="submit-bar"
+                  <button onClick={onSubmit} className="submit-bar"
                     style={{
                       color: 'white',
                       float: 'right',
