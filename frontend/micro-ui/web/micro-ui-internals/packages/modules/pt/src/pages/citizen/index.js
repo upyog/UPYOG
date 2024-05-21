@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { PTMyPayments } from "./MyPayments";
 import AmalgamationCitizen from "./Amalgamate";
 import CitizenAppeal from "./Appeal";
+import MyNotices from "./MyNotices";
 
 const hideBackButtonConfig = [
   { screenPath: "property/new-application/acknowledgement" },
@@ -54,6 +55,7 @@ const App = () => {
           <Route path={`${path}/property/property-assessment/search-assessment`} component={SearchAssessmentComponent} />
           <Route path={`${path}/property/property-assessment/search-assessment-results`} component={SearchAssessmentResultsComponent} />
           <PrivateRoute path={`${path}/property/appeal/:propertyIds`} component={CitizenAppeal}></PrivateRoute>
+          <PrivateRoute path={`${path}/property/notices`} component={MyNotices}></PrivateRoute>
 
           <PrivateRoute path={`${path}/property/properties/:propertyIds`} component={PropertyInformation}></PrivateRoute>
           {/* <PrivateRoute path={`${path}/property/transfer-ownership`} component={MutateProperty}></PrivateRoute> */}
