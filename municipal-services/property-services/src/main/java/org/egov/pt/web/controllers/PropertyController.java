@@ -73,9 +73,11 @@ public class PropertyController {
     	{
     		if(!owner.getOwnerType().equals("NONE"))
     		{
+    		if(owner.getDocuments()!=null && !owner.getDocuments().isEmpty())
     			for(Document document:owner.getDocuments())
     				if(document.getDocumentType().contains("OWNER.SPECIALCATEGORYPROOF"))
     				{
+    					
     					PropertyCriteria propertyCriteria=new PropertyCriteria();
     					propertyCriteria.setTenantId(owner.getTenantId());
     					propertyCriteria.setDocumentNumbers(new HashSet<>(Arrays.asList(document.getDocumentUid())));
