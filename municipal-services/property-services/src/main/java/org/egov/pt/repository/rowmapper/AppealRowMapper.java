@@ -17,6 +17,7 @@ import org.egov.pt.models.Appeal;
 import org.egov.pt.models.AuditDetails;
 import org.egov.pt.models.Document;
 import org.egov.pt.models.Property;
+import org.egov.pt.models.enums.CreationReason;
 import org.egov.pt.models.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -66,6 +67,7 @@ public class AppealRowMapper implements ResultSetExtractor<List<Appeal>>{
 						.reliefclaimed("reliefclaimed")
 						.statementoffacts("statementoffacts")
 						.groundofappeal(rs.getString("groundofappeal"))
+						.creationReason(CreationReason.fromValue(rs.getString("creationReason")))
 						.auditDetails(auditdetails)
 						.build();
 
