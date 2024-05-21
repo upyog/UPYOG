@@ -85,6 +85,7 @@ const Urls = {
     cfsearch: "/service-request/service/v1/_search",
     appeal_create: "/property-services/appeal/_create",
     appeal_search: "/property-services/appeal/_search",
+    appeal_update: "/property-services/appeal/_update",
   },
 
   dss: {

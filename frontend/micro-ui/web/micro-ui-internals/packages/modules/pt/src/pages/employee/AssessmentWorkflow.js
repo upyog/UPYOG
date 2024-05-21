@@ -85,6 +85,7 @@ console.log("applicationDetails===",applicationDetails)
     moduleCode: businessService,
     role: "PT_CEMP",
   });
+  console.log("workflowDetails--Assessment==",workflowDetails);
   const { isLoading: auditDataLoading, isError: isAuditError, data: auditData } = Digit.Hooks.pt.usePropertySearch(
     {
       tenantId,
