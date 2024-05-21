@@ -37,6 +37,11 @@ const getParentPropertyDetails = async (tenantId, propertyId, updateparentProper
   const oldPropertyData = await Digit.PTService.search({ tenantId, filters: { propertyIds: propertyId } })
  
   updateparentPropertyDetails(oldPropertyData?.Properties || [])
+  updateParentPropertyFetchDetails({
+    loading: false,
+    loaded: false,
+    canLoad: false,
+  })
 };
 
 function ApplicationDetailsContent({
@@ -54,6 +59,11 @@ function ApplicationDetailsContent({
 }) {
   const { t } = useTranslation();
   const [parentPropertyDetails, updateparentPropertyDetails] = useState([]);
+  const [isPropertyDetails, updateParentPropertyFetchDetails] = useState({
+    loading: false,
+    loaded: false,
+    canLoad: true,
+  });
 
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
@@ -184,8 +194,8 @@ function ApplicationDetailsContent({
         return ""
     }
   }
-  if(applicationDetails?.applicationData?.creationReason == "BIFURCATION" && applicationDetails?.applicationData?.parentPropertyId) {
-    getParentPropertyDetails(applicationDetails?.tenantId, applicationDetails?.applicationData?.parentPropertyId, updateparentPropertyDetails);
+  if(applicationDetails?.applicationData?.creationReason == "BIFURCATION" && applicationDetails?.applicationData?.parentPropertyId && isPropertyDetails?.canLoad) {
+    getParentPropertyDetails(applicationDetails?.tenantId, applicationDetails?.applicationData?.parentPropertyId, updateparentPropertyDetails,updateParentPropertyFetchDetails);
 
   }
   

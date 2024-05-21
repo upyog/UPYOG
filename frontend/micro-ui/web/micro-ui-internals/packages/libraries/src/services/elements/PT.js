@@ -110,6 +110,17 @@ export const PTService = {
       userService: true,
       params: { tenantId, ...filters },
     }),
+    appealUpdate: (details, tenantId) =>
+      Request({
+        url: Urls.pt.appeal_update,
+        data: details,
+        useCache: false,
+        setTimeParam: false,
+        userService: true,
+        method: "POST",
+        params: {tenantId},
+        auth: true,
+      }),
     
   paymentsearch: ({ tenantId, filters, auth }) =>
     Request({

@@ -115,6 +115,13 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
               workflow,
             },
           });
+        } else if(userRole && userRole=='EXECUTING_OFFICER') {
+          submitAction({
+            Appeal: {
+              ...applicationData,
+              workflow,
+            },
+          });
         } else {
           submitAction({
             Property: {
