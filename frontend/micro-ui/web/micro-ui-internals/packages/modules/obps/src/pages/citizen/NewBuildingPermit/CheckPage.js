@@ -53,6 +53,13 @@ import {
       setAgree(!agree);
     };
 
+
+
+
+    
+
+    const Architectvalidations = sessionStorage.getItem("ArchitectConsentdocFilestoreid") ? true : false ;
+
     
 
 
@@ -754,7 +761,7 @@ function selectfile(e) {
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
       {/* <CardHeader>{t("BPA_COMMON_TOTAL_AMT")}</CardHeader> 
       <CardHeader>₹ {paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}</CardHeader>  */}
-      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmitCheck} disabled={ (!development||!otherCharges||!lessAdjusment || !agree || !isOTPVerified || !otherChargesDisc)} id/>
+      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmitCheck} disabled={ (!development||!otherCharges||!lessAdjusment || !agree || !isOTPVerified || !otherChargesDisc || !Architectvalidations)} id/>
       </Card>
     </React.Fragment>
     );

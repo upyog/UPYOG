@@ -153,6 +153,7 @@ const BpaApplicationDetail = () => {
   };
 
   const isValidMobileNumber = mobileNumber.length === 10 && /^[0-9]+$/.test(mobileNumber);
+  const citizenvalidations = sessionStorage.getItem("CitizenConsentdocFilestoreid") ? true : false ;
 
 
   let businessService = [];
@@ -304,8 +305,7 @@ const BpaApplicationDetail = () => {
     else return false;
   }
 
-  const Citizenconsentform = sessionStorage.getItem("CitizenConsentdocFilestoreid");
-  console.log("Citizenconsentform",Citizenconsentform);
+  
 
   // const submitAction = (workflow) => {
   //   setIsEnableLoader(true);
@@ -331,17 +331,32 @@ const BpaApplicationDetail = () => {
   //   );
   // }
 
+  
+
   const submitAction = (workflow) => {
     setIsEnableLoader(true);
   
-    // Create a new array with the existing documents and the new Citizenconsentform
+    // Check if "CITIZEN.UNDERTAKING" document already exists
+    const citizenUndertakingExists = data?.applicationData?.documents?.some(
+      (doc) => doc.documentType === "CITIZEN.UNDERTAKING"
+    );
+  
+    // Create a new array with the existing documents and the new Citizenconsentform (if it doesn't exist)
     const updatedDocuments = [
-      ...data?.applicationData?.documents,
-      {
-        documentType: "CITIZEN.UNDERTAKING",
-        fileStoreId: sessionStorage.getItem("CitizenConsentdocFilestoreid"),
-        fileStore: sessionStorage.getItem("CitizenConsentdocFilestoreid"),
-      },
+      ...data?.applicationData?.documents.filter(
+        (doc) => doc.documentType !== "CITIZEN.UNDERTAKING"
+      ),
+      ...(citizenUndertakingExists
+        ? data?.applicationData?.documents.filter(
+            (doc) => doc.documentType === "CITIZEN.UNDERTAKING"
+          )
+        : [
+            {
+              documentType: "CITIZEN.UNDERTAKING",
+              fileStoreId: sessionStorage.getItem("CitizenConsentdocFilestoreid"),
+              fileStore: sessionStorage.getItem("CitizenConsentdocFilestoreid"),
+            },
+          ]),
     ];
   
     // Update the applicationData object with the new documents array
@@ -715,7 +730,7 @@ const BpaApplicationDetail = () => {
                             onSelect={onActionSelect}
                           />
                         ) : null}
-                        <SubmitBar /*style={{ width: "100%" }}*/ disabled={checkForSubmitDisable(isFromSendBack, isTocAccepted) || (!agree || !isOTPVerified)} label={t("ES_COMMON_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+                        <SubmitBar /*style={{ width: "100%" }}*/ disabled={checkForSubmitDisable(isFromSendBack, isTocAccepted) || (!agree || !isOTPVerified || !citizenvalidations)} label={t("ES_COMMON_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
                       </div>
                     </ActionBar>
                   )}
