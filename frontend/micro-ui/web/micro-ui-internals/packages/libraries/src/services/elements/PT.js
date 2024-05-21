@@ -131,6 +131,15 @@ export const PTService = {
           params: { },
           auth: true,
         }),
+        noticeSearch: (filters, tenantId) =>
+          Request({
+            url: Urls.pt.notice_search,
+            useCache: false,
+            method: "POST",
+            auth: true,
+            userService: true,
+            params: { tenantId, ...filters },
+          }),
     
   paymentsearch: ({ tenantId, filters, auth }) =>
     Request({

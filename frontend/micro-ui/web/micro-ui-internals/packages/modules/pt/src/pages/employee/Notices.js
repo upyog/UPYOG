@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Dropdown, Header, Toast } from "@egovernments/digit-ui-react-components";
-
+import { Switch, useLocation, Link } from "react-router-dom";
 import DesktopInbox from "../../components/DesktopInbox";
 import MobileInbox from "../../components/MobileInbox";
 import NoticeForAssesment from "./NoticeTemplates/NoticeForAssesment";
@@ -38,7 +38,9 @@ const Notices = ({
   const [pageSize, setPageSize] = useState(initialStates.pageSize || 10);
   const [sortParams, setSortParams] = useState(initialStates.sortParams || [{ id: "createdTime", desc: false }]);
   const [searchParams, setSearchParams] = useState(initialStates.searchParams || {});
-  const [showToast, setShowToast] = useState(null)
+  const [showToast, setShowToast] = useState(null);
+  const location = useLocation();
+  console.log("location===",location)
 
   let isMobile = window.Digit.Utils.browser.isMobile();
   let paginationParams = isMobile
@@ -103,9 +105,17 @@ const Notices = ({
     {code: '6', name: 'Notice for Hearing under Rule 39 / 40'},
     {code: '7', name: 'Notice for Imposition of Penalty'}
   ]
+  
   const [notice, setNotice] = useState();
+  const [noticeData, setNoticeData] = useState();
   const handleChangeNotice=(value)=>{
     setNotice(value)
+  }
+  const [isLocation, setIsLocation] = useState(false)
+  if(location && location?.state?.status==="ACTIVE" && !isLocation){
+    setNotice({code: '6', name: 'Notice for Hearing under Rule 39 / 40'});
+    setNoticeData(location?.state);
+    setIsLocation(true);
   }
 
   const submit = async (e)=>{
@@ -133,32 +143,9 @@ const Notices = ({
     }
   }
 
-  if (rest?.data?.length !== null) {
-    if (isMobile) {
-      return (
-        <MobileInbox
-          data={data}
-          isLoading={hookLoading}
-          isSearch={!isInbox}
-          searchFields={searchFields}
-          onFilterChange={handleFilterChange}
-          onSearch={handleFilterChange}
-          onSort={handleSort}
-          parentRoute={parentRoute}
-          searchParams={searchParams}
-          sortParams={sortParams}
-          linkPrefix={`${parentRoute}/application-details/`}
-          tableConfig={rest?.tableConfig?res?.tableConfig:TableConfig(t)["PT"]}
-          filterComponent={filterComponent}
-          EmptyResultInboxComp={EmptyResultInboxComp}
-          useNewInboxAPI={useNewInboxAPI}
-        />
-        // <div></div>
-      );
-    } else {
       return (
         <div>
-          {isInbox && <Header>{t("NOTICES")}</Header>}
+          <Header>{t("NOTICES")}</Header>
           <div className="card" style={{maxWidth: "100%"}}>
             <div>
               <Dropdown
@@ -188,7 +175,7 @@ const Notices = ({
                 <NoticeToFileReturn notice={notice} submit={submit}></NoticeToFileReturn>
               )}
               {notice && notice.code=='6' && (
-                <NoticeForHearing notice={notice} submit={submit}></NoticeForHearing>
+                <NoticeForHearing notice={notice} submit={submit} noticeData={noticeData}></NoticeForHearing>
               )}
               {notice && notice.code=='7' && (
                 <NoticeForImpositionOfPenalty notice={notice} submit={submit}></NoticeForImpositionOfPenalty>
@@ -197,8 +184,6 @@ const Notices = ({
             {showToast && <Toast isDleteBtn={true} error={showToast?.key} label={showToast?.label} onClose={() => setShowToast(null)} />}
         </div>
       );
-    }
-  }
 };
 
 export default Notices;

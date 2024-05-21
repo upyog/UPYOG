@@ -8,8 +8,27 @@ const NoticeForHearing = (props) => {
 
   const { t } = useTranslation();
   const [financialYears, setFinancialYears] = useState([]);
-  const [selectedFinancialYear, setSelectedFinancialYear] = useState(null);
+  const [selectedFinancialYear, setSelectedFinancialYear] = useState(props?.noticeData && props?.noticeData.assessmentYear? {code: props?.noticeData.assessmentYear, name: props?.noticeData.assessmentYear} : null);
   const [submissionDate, setSubmissionDate] = useState();
+
+  const { isLoading: financialYearsLoading, data: financialYearsData } = Digit.Hooks.pt.useMDMS(
+    Digit.ULBService.getStateId(),
+    '',
+    "FINANCIAL_YEARLS",
+    {},
+    {
+      details: {
+        tenantId: Digit.ULBService.getStateId(),
+        moduleDetails: [{ moduleName: "egf-master", masterDetails: [{ name: "FinancialYear", filter: "[?(@.module == 'PT')]" }] }],
+      },
+    }
+  );
+  useEffect(() => {
+    if (financialYearsData && financialYearsData["egf-master"]) {
+      console.log("=====", financialYearsData["egf-master"]?.["FinancialYear"]);
+      setFinancialYears(financialYearsData["egf-master"]?.["FinancialYear"]);
+    }
+  }, [financialYearsData]);
 
   const [notice, setNotice] = useState();
   const [showModal, setShowModal] = useState(false)
@@ -17,24 +36,24 @@ const NoticeForHearing = (props) => {
   const handleChangeNotice = (value) => {
 
   }
-  const [name, setName] = useState();
+  const [name, setName] = useState(props?.noticeData?.ownerName ? props?.noticeData?.ownerName : null);
   const onChangeName = (e) => {
     setName(e.target?.value)
   }
-  const [propertyAddress, setPropertyAddress] = useState();
+  const [propertyAddress, setPropertyAddress] = useState(props?.noticeData?.propertyAddress ? props?.noticeData?.propertyAddress : null);
   const onChangePtAddress = (e) => {
     setPropertyAddress(e.target?.value)
   }
-  const [propertyId, setPropertyId] = useState();
+  const [propertyId, setPropertyId] = useState(props?.noticeData?.propertyId ? props?.noticeData?.propertyId : null);
   const onChangePtId = (e) => {
     setPropertyId(e.target?.value)
   }
-  const [acknowledgementNo, setAcknowledgementNo] = useState();
+  const [acknowledgementNo, setAcknowledgementNo] = useState(props?.noticeData?.acknowldgementNumber ? props?.noticeData?.acknowldgementNumber : null);
   const onChangeAcknowledgementNo=(e)=>{
     setAcknowledgementNo(e.target.value)
   }
   const [returnFormData, setReturnFormData] = useState({
-    appealNo: null,
+    appealNo: props?.noticeData?.appealId ? props?.noticeData?.appealId : null,
     appealDate: null
   });
   const [returnTimeFormData, setReturnTimeFormData] = useState({
@@ -63,24 +82,7 @@ const NoticeForHearing = (props) => {
     setRemarks(e.target.value)
   }
 
-  const { isLoading: financialYearsLoading, data: financialYearsData } = Digit.Hooks.pt.useMDMS(
-    Digit.ULBService.getStateId(),
-    '',
-    "FINANCIAL_YEARLS",
-    {},
-    {
-      details: {
-        tenantId: Digit.ULBService.getStateId(),
-        moduleDetails: [{ moduleName: "egf-master", masterDetails: [{ name: "FinancialYear", filter: "[?(@.module == 'PT')]" }] }],
-      },
-    }
-  );
-  useEffect(() => {
-    if (financialYearsData && financialYearsData["egf-master"]) {
-      console.log("=====", financialYearsData["egf-master"]?.["FinancialYear"]);
-      setFinancialYears(financialYearsData["egf-master"]?.["FinancialYear"]);
-    }
-  }, [financialYearsData]);
+ 
   const onAddTabData = (e) => {
     e.preventDefault();
     setShowModal(true)
@@ -191,7 +193,7 @@ const NoticeForHearing = (props) => {
     return false;
     
   }
-  const onSubmit = () => {
+  const onSubmit = (e) => {
     e.preventDefault();
     let noticeDetails = {
       name: name,
@@ -200,7 +202,7 @@ const NoticeForHearing = (props) => {
       "acknowledgementNumber": acknowledgementNo,
       assessmentDate: submissionDate,
       "assessmentYear": selectedFinancialYear?.code,
-      "noticeType": "Notice to file Return",      
+      "noticeType": "Notice for Hearing under Rule 39 / 40",      
       "tenantId": tenantId,      
       "channel": "CITIZEN",
       appealNo: returnFormData.appealNo,

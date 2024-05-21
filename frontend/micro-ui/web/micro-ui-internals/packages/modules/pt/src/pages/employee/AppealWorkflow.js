@@ -2,7 +2,7 @@ import { Header, MultiLink } from "@egovernments/digit-ui-react-components";
 import _, { forEach } from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 import { newConfigMutate } from "../../config/Mutate/config";
 import TransfererDetails from "../../pageComponents/Mutate/TransfererDetails";
@@ -69,6 +69,7 @@ const AppealWorkflow = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [enableAudit, setEnableAudit] = useState(false);
   const [businessService, setBusinessService] = useState("PT.APPEAL");
+  const history = useHistory();
 
   const [displayMenu, setDisplayMenu] = useState(false);
   const [selectedAction, setSelectedAction] = useState(null);
@@ -208,19 +209,13 @@ if(appealId && billData?.canLoad) {
           setTimeout(closeToast, 5000);
         },
         onSuccess: (data, variables) => {
+            console.log("data===",data)
           sessionStorage.removeItem("WS_SESSION_APPLICATION_DETAILS");
           setIsEnableLoader(false);
-          if (isOBPS?.bpa) {
-            data.selectedAction = selectedAction;
-            history.replace(`/digit-ui/employee/obps/response`, { data: data });
+          if(data?.Appeals[0]?.workflow?.action==="GENERATENOTICE") {
+            history.push({pathname:`/digit-ui/employee/pt/notices`,state: data?.Appeals[0]});
           }
-          if (isOBPS?.isStakeholder) {
-            data.selectedAction = selectedAction;
-            history.push(`/digit-ui/employee/obps/stakeholder-response`, { data: data });
-          }
-          if (isOBPS?.isNoc) {
-            history.push(`/digit-ui/employee/noc/response`, { data: data });
-          }
+          
           if (data?.Amendments?.length > 0 ){
             //RAIN-6981 instead just show a toast here with appropriate message
           //show toast here and return 
