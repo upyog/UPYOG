@@ -50,6 +50,10 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
     const [enableSubmit, setEnableSubmit] = useState(true)
     const [checkRequiredFields, setCheckRequiredFields] = useState(false);
     const checkingFlow = formData?.uiFlow?.flow;
+
+    const [isNextButtonDisabled, setIsNextButtonDisabled] = useState(false);
+
+
     const beforeUploadDocuments = cloneDeep(formData?.PrevStateDocuments || []);
     const {data: bpaTaxDocuments, isLoading} = Digit.Hooks.obps.useBPATaxDocuments(stateId, formData, beforeUploadDocuments || []);
     const handleSubmit = () => {
@@ -93,7 +97,8 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
                     config={config}
                     onSelect={handleSubmit}
                     onSkip={onSkip}
-                    isDisabled={window.location.href.includes("editApplication")||window.location.href.includes("sendbacktocitizen")?false:enableSubmit}
+                    // isDisabled={window.location.href.includes("editApplication")||window.location.href.includes("sendbacktocitizen")?false:enableSubmit}
+                    isDisabled={(window.location.href.includes("editApplication") || window.location.href.includes("sendbacktocitizen") ? false : enableSubmit) || isNextButtonDisabled}
                     onAdd={onAdd}
                 >
                     {/* {bpaTaxDocuments?.map((document, index) => { */}
@@ -111,6 +116,8 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
                                 setCheckRequiredFields={setCheckRequiredFields}
                                 formData={formData}
                                 beforeUploadDocuments={beforeUploadDocuments || []}
+                                isNextButtonDisabled={isNextButtonDisabled}
+                                setIsNextButtonDisabled={setIsNextButtonDisabled}
                             />
                             </div>
                         );
@@ -131,7 +138,8 @@ const SelectDocument = React.memo(function MyComponent({
     documents,
     setCheckRequiredFields,
     formData,
-    beforeUploadDocuments
+    beforeUploadDocuments,
+    setIsNextButtonDisabled // Add this line
 }) {
     const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0] || beforeUploadDocuments?.filter((item) => item?.documentType?.includes(doc?.code))[0];
     const tenantId = Digit.ULBService.getStateId(); //Digit.ULBService.getCurrentTenantId();
@@ -408,10 +416,14 @@ const SelectDocument = React.memo(function MyComponent({
                 <div>
                     <p>Latitude: {latitude}</p>
                     <p>Longitude: {longitude}</p>
+                    {setIsNextButtonDisabled(false)} {/* Enable the "Next" button */}
                 </div>
             ): 
             (
-              <p style={{ color: 'red' }}>Please upload a Photo with Location details.</p>
+                <div>
+                <p style={{ color: 'red' }}>Please upload a Photo with Location details.</p>
+                {setIsNextButtonDisabled(true)} {/* Disable the "Next" button */}
+                </div>
              )
         )}
        

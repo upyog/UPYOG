@@ -36,7 +36,8 @@
     const architectmobileNumber = user?.info.mobileNumber
     const [params] = Digit.Hooks.useSessionStorage("BUILDING_PERMIT", state?.edcrNumber ? { data: { scrutinyNumber: { edcrNumber: state?.edcrNumber } } } : {});
 
-    
+    const [isUploading, setIsUploading] = useState(false); // it will check whether the file upload is in process or not
+    const [isFileUploaded, setIsFileUploaded] = useState(false);
     const architectid = params?.additionalDetails?.architectid;
     const ownername = params?.owners?.owners?.[0]?.name;
     const architecttype = params?.additionalDetails?.typeOfArchitect;
@@ -120,6 +121,7 @@
 
     const uploadSelfDeclaration = async () => {
       try {
+        setIsUploading(true); // Set isUploading to true before starting the upload
         const doc = new jsPDF();
         const leftMargin = 15;
         const topMargin = 10;
@@ -166,11 +168,15 @@
     if (response?.data?.files?.length > 0) {
       alert("File Uploaded Successfully");
       sessionStorage.setItem("ArchitectConsentdocFilestoreid",response?.data?.files[0]?.fileStoreId);
+      setIsFileUploaded(true); // Set isFileUploaded to true on successful upload
     } else {
       alert("File Upload Failed"); 
     }
   } catch (error) {
     alert("Error Uploading PDF:", error); // Error handling
+  }
+  finally {
+    setIsUploading(false); // Set isUploading to false after the upload is complete
   }
 };
     
@@ -250,7 +256,7 @@
               <SubmitBar label={t("BPA_CLOSE")} onSubmit={closeModal} />
               <br></br>
               <br></br>
-              <SubmitBar label={t("BPA_UPLOAD")} onSubmit={uploadSelfDeclaration} />
+              <SubmitBar label={t("BPA_UPLOAD")} onSubmit={uploadSelfDeclaration} disabled={isUploading || isFileUploaded} />
             </div>
           </div>
         </Modal>
