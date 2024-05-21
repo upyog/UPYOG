@@ -272,9 +272,12 @@ public class PropertyValidator {
 		objectsAdded.removeAll(Arrays.asList("TextNode", "Role", "NullNode", "LongNode", "JsonNodeFactory", "IntNode",
 				"ProcessInstance"));
 
-		if (!isstateUpdatable && (!CollectionUtils.isEmpty(objectsAdded) || !CollectionUtils.isEmpty(fieldsUpdated)))
-			throw new CustomException("EG_PT_WF_UPDATE_ERROR",
-					"The current state of workflow does not allow changes to property");
+		/*
+		 * if (!isstateUpdatable && (!CollectionUtils.isEmpty(objectsAdded) ||
+		 * !CollectionUtils.isEmpty(fieldsUpdated))) throw new
+		 * CustomException("EG_PT_WF_UPDATE_ERROR",
+		 * "The current state of workflow does not allow changes to property");
+		 */
 
 
 		/*
