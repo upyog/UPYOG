@@ -19,14 +19,14 @@
 
     
 
-        serialNo: "",
+        // serialNo: "",
         BookPagereference: "",
-        AssetId: "",
+        // AssetId: "",
         AssetName: "",
         Assetdescription: "",
         Department : "",
 
-    key: Date.now(),
+        key: Date.now(),
     });
 
     const AssetCommonDetails = ({ config, onSelect, userType, formData, setError, formState, clearErrors }) => {
@@ -141,7 +141,7 @@
             ) : null}
 
     
-                <LabelFieldPair>
+                {/* <LabelFieldPair>
                     <CardLabel className="card-label-smaller">{t("ASSET_SERIAL_NO") + " *"}</CardLabel>
                     <div className="field">
                     <Controller
@@ -170,7 +170,7 @@
                     />
                     </div>
                 </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.serialNo ? errors?.serialNo?.message : ""}</CardLabelError>
+                <CardLabelError style={errorStyle}>{localFormState.touched.serialNo ? errors?.serialNo?.message : ""}</CardLabelError> */}
 
                 <LabelFieldPair>
                     <CardLabel className="card-label-smaller">{t("ASSET_BOOK_REFERENCE_NO") + " *"}</CardLabel>
@@ -203,7 +203,7 @@
                 </LabelFieldPair>
                 <CardLabelError style={errorStyle}>{localFormState.touched.BookPagereference ? errors?.BookPagereference?.message : ""}</CardLabelError>
 
-                <LabelFieldPair>
+                {/* <LabelFieldPair>
                     <CardLabel className="card-label-smaller">{t("ASSET_ID") + " *"}</CardLabel>
                     <div className="field">
                     <Controller
@@ -232,7 +232,7 @@
                     />
                     </div>
                 </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.AssetId ? errors?.AssetId?.message : ""}</CardLabelError>
+                <CardLabelError style={errorStyle}>{localFormState.touched.AssetId ? errors?.AssetId?.message : ""}</CardLabelError> */}
 
                 <LabelFieldPair>
                     <CardLabel className="card-label-smaller">{t("ASSET_NAME") + " *"}</CardLabel>

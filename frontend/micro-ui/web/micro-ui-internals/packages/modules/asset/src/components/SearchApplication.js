@@ -112,32 +112,6 @@
                   </SearchField>
                  
                   <SearchField>
-                  <label>{t("ASSET_OWNER_MOBILE_NO")}</label>
-                  <MobileNumber
-                      name="mobileNumber"
-                      inputRef={register({
-                      minLength: {
-                          value: 10,
-                          message: t("CORE_COMMON_MOBILE_ERROR"),
-                      },
-                      maxLength: {
-                          value: 10,
-                          message: t("CORE_COMMON_MOBILE_ERROR"),
-                      },
-                      pattern: {
-                      value: /[6789][0-9]{9}/,
-                      //type: "tel",
-                      message: t("CORE_COMMON_MOBILE_ERROR"),
-                      },
-                  })}
-                  type="number"
-                  componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
-                  //maxlength={10}
-                  />
-                  <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
-                  </SearchField>
-                 
-                  <SearchField>
                       <label>{t("ASSET_FROM_DATE")}</label>
                       <Controller
                           render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
@@ -161,7 +135,6 @@
                               applicationNo: "", 
                               fromDate: "", 
                               toDate: "",
-                              mobileNumber:"",
                               offset: 0,
                               limit: 10,
                               sortBy: "commencementDate",
