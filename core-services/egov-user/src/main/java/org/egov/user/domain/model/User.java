@@ -31,6 +31,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 @Setter
 @ToString
 @Builder(toBuilder = true)
+@NoArgsConstructor
 public class User {
 
     private Long id;
