@@ -1229,8 +1229,12 @@ public class PropertyValidator {
 
 		if(!CollectionUtils.isEmpty(errorMap))
 			throw new CustomException(errorMap);
-
-	
+		
+		request.getAppeal().getWorkflow().setBusinessService("PT.APPEAL");
+		request.getAppeal().getWorkflow().setTenantId(appealFromDb.getTenantId());
+		request.getAppeal().getWorkflow().setBusinessId(request.getAppeal().getAcknowldgementNumber());
+		State state = workflowService.getCurrentState(request.getRequestInfo(), appealFromDb.getTenantId(), request.getAppeal().getAcknowldgementNumber());
+		request.getAppeal().getWorkflow().setState(state);
 	}
 
 }
