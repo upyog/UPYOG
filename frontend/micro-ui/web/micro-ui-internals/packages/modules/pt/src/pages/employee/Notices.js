@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Dropdown, Header } from "@egovernments/digit-ui-react-components";
+import { Dropdown, Header, Toast } from "@egovernments/digit-ui-react-components";
 
 import DesktopInbox from "../../components/DesktopInbox";
 import MobileInbox from "../../components/MobileInbox";
@@ -38,6 +38,7 @@ const Notices = ({
   const [pageSize, setPageSize] = useState(initialStates.pageSize || 10);
   const [sortParams, setSortParams] = useState(initialStates.sortParams || [{ id: "createdTime", desc: false }]);
   const [searchParams, setSearchParams] = useState(initialStates.searchParams || {});
+  const [showToast, setShowToast] = useState(null)
 
   let isMobile = window.Digit.Utils.browser.isMobile();
   let paginationParams = isMobile
@@ -107,6 +108,31 @@ const Notices = ({
     setNotice(value)
   }
 
+  const submit = async (e)=>{
+    console.log("submit===",e)
+    try {
+      // TODO: change module in file storage
+      const response = await Digit.PTService.noticeCreate({notice:e});
+      console.log("response==",response)
+      if (response) {
+        setShowToast({
+          key: false,
+          label: `${t("Notice Generated Successfully.")}`
+        })
+      } else {
+          setShowToast({
+            key: true,
+            label: `${t("Something wrong!!!")}`
+          })
+      }
+    } catch (err) {
+      setShowToast({
+        key: true,
+        label: `${t("Something wrong!!!")}`
+      })
+    }
+  }
+
   if (rest?.data?.length !== null) {
     if (isMobile) {
       return (
@@ -133,7 +159,7 @@ const Notices = ({
       return (
         <div>
           {isInbox && <Header>{t("NOTICES")}</Header>}
-          <div className="card">
+          <div className="card" style={{maxWidth: "100%"}}>
             <div>
               <Dropdown
                 option={noticeList}
@@ -147,27 +173,28 @@ const Notices = ({
           </div>
           <div>
               {notice && notice.code=='1' && (
-                <NoticeForRectification notice={notice}></NoticeForRectification>
+                <NoticeForRectification notice={notice} submit={submit}></NoticeForRectification>
               )}
               {notice && notice.code=='2' && (
-                <NoticeForAssesment notice={notice}></NoticeForAssesment>
+                <NoticeForAssesment notice={notice} submit={submit}></NoticeForAssesment>
               )}
               {notice && notice.code=='3' && (
-                <NoticeForReassessment notice={notice}></NoticeForReassessment>
+                <NoticeForReassessment notice={notice} submit={submit}></NoticeForReassessment>
               )}
               {notice && notice.code=='4' && (
-                <NoticeToEnterPremises notice={notice}></NoticeToEnterPremises>
+                <NoticeToEnterPremises notice={notice} submit={submit}></NoticeToEnterPremises>
               )}
               {notice && notice.code=='5' && (
-                <NoticeToFileReturn notice={notice}></NoticeToFileReturn>
+                <NoticeToFileReturn notice={notice} submit={submit}></NoticeToFileReturn>
               )}
               {notice && notice.code=='6' && (
-                <NoticeForHearing notice={notice}></NoticeForHearing>
+                <NoticeForHearing notice={notice} submit={submit}></NoticeForHearing>
               )}
               {notice && notice.code=='7' && (
-                <NoticeForImpositionOfPenalty notice={notice}></NoticeForImpositionOfPenalty>
+                <NoticeForImpositionOfPenalty notice={notice} submit={submit}></NoticeForImpositionOfPenalty>
               )}
             </div>
+            {showToast && <Toast isDleteBtn={true} error={showToast?.key} label={showToast?.label} onClose={() => setShowToast(null)} />}
         </div>
       );
     }

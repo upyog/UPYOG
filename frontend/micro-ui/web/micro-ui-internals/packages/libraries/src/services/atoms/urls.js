@@ -86,6 +86,7 @@ const Urls = {
     appeal_create: "/property-services/appeal/_create",
     appeal_search: "/property-services/appeal/_search",
     appeal_update: "/property-services/appeal/_update",
+    notice_save: "/property-services/notice/_save",
   },
 
   dss: {

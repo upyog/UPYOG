@@ -228,7 +228,24 @@ const NoticeForReassessment = (props) => {
     
   }
   const onSubmit = () => {
-
+    e.preventDefault();
+    let noticeDetails = {
+      name: name,
+      propertyAddress: propertyAddress,
+      "propertyId": propertyId,
+      "acknowledgementNumber": acknowledgementNo,
+      assessmentDate: submissionDate,
+      "assessmentYear": selectedFinancialYear?.code,
+      "noticeType": "Notice for Re-Assessment",      
+      "tenantId": tenantId,      
+      "channel": "CITIZEN",
+      "noticeComment": tableList,
+      resolutionNo: returnTimeFormData.resolutionNo,
+      resolutionDate: returnTimeFormData.resolutionDate,
+      noticeDate: returnTimeFormData?.date,
+      noticeTime: returnTimeFormData?.time
+    }
+    props.submit(noticeDetails)
   }
   const onCancelNotice = () => {
     
@@ -422,7 +439,7 @@ const NoticeForReassessment = (props) => {
                   </button>
                 </div>
                 <div style={{ display: 'inline' }}>
-                  <button onClick={() => onSubmit()} className="submit-bar"
+                  <button onClick={onSubmit} className="submit-bar"
                     style={{
                       color: 'white',
                       float: 'right',
