@@ -426,6 +426,13 @@ public class PropertyConfiguration {
     @Value("${persister.update.property.status.bifurcation.success}")
     private String updatePropertyStatusForBifurcationSuccess;
     
+    @Value("${egov.idgen.notice.name}")
+	private String noticeidname;
+	
+	@Value("${egov.idgen.notice.format}")
+	private String noticeformat;
     
-
+	@Value("${persister.save.notice.topic}")
+	private String savenoticetopic;
+	    
 }
