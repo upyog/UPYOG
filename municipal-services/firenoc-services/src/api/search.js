@@ -29,10 +29,23 @@ export const searchApiResponse = async (request, next = {}) => {
     FireNOCs: []
   };
   const queryObj = JSON.parse(JSON.stringify(request.query));
-  var header = JSON.parse(JSON.stringify(request.headers));
+  const header = JSON.parse(JSON.stringify(request.headers));
 
-  console.log("request", request.query);
-  console.log("Query object:"+JSON.stringify(queryObj));
+  // Log and check tenantId
+  console.log("Received request with tenantId:", header.tenantid);
+  if (!header.tenantid) {
+    console.error("tenantId is undefined. Please provide a valid tenantId.");
+    next({
+      errorType: "custom",
+      errorReponse: {
+        ResponseInfo: requestInfoToResponseInfo(request.body.RequestInfo, true),
+        Errors: [{ "FIRE_NOC_INVALID_HEADER": "tenantId header is required" }]
+      }
+    });
+    return;
+  }
+
+  console.log("Query object:", JSON.stringify(queryObj));
   let errors = validateFireNOCSearchModel(queryObj);
 
   var isCentralInstance  = envVariables.IS_ENVIRONMENT_CENTRAL_INSTANCE;
