@@ -16,8 +16,12 @@ public class NoticeQueryBuilder {
 	@Autowired
 	PropertyConfiguration noticeConfiguration;
 
-	private static String noticesearchquery="select nt.noticetype ,nt.tenantid ,nt.uuid ,nt.noticenumber ,nt.\"name\"  as username,nt.address ,nt.propertyid,nt.assessmentyear,nt.acknowledgementnumber,nt.dateofannualret,nt.entrydate,nt.entrytime,nt.place,nt.perticulars,nt.asreturnfiled,nt.aspermunispality,nt.resolutionon,nt.dated,nt.designation,nt.authorisedpersonname,nt.mobilenumber,nt.penaltyamount,nt.appealno,epnc.\"comment\", epnc.noticeid from public.eg_pt_notice nt inner join eg_pt_notice_comment epnc on epnc.noticeid = nt.uuid";
-	private static String noticesearchwithauditquery="select nt.noticetype ,nt.tenantid ,nt.uuid ,nt.noticenumber ,nt.\"name\"  as username,nt.address ,nt.propertyid,nt.assessmentyear,nt.acknowledgementnumber,nt.dateofannualret,nt.entrydate,nt.entrytime,nt.place,nt.perticulars,nt.asreturnfiled,nt.aspermunispality,nt.resolutionon,nt.dated,nt.designation,nt.authorisedpersonname,nt.mobilenumber,nt.penaltyamount,nt.appealno,nt.createdby as nt_cb,nt.createdtime as nt_ct,nt.lastmodifiedby as nt_lmb,nt.lastmodifiedtime as nt_lmt,epnc.\"comment\", epnc.noticeid, epnc.createdby as cm_cb, epnc.createdtime as cm_ct, epnc.lastmodifiedby as cm_lmb, epnc.lastmodifiedtime as cm_lmt from public.eg_pt_notice nt inner join eg_pt_notice_comment epnc on epnc.noticeid = nt.uuid";
+	private static String noticesearchquery="select nt.noticetype ,nt.tenantid ,nt.uuid ,nt.noticenumber ,nt.\"name\"  as username,nt.address ,nt.propertyid,nt.assessmentyear,nt.acknowledgementnumber,nt.dateofannualret,nt.entrydate,nt.entrytime,nt.place,nt.perticulars,nt.asreturnfiled,nt.aspermunispality,nt.resolutionon,nt.dated,nt.designation,nt.authorisedpersonname,nt.mobilenumber,nt.penaltyamount,nt.appealno,epnc.\"comment\", epnc.noticeid from public.eg_pt_notice nt left join eg_pt_notice_comment epnc on epnc.noticeid = nt.uuid";
+	private static String noticesearchwithauditquery="select nt.noticetype ,nt.tenantid ,nt.uuid ,nt.noticenumber ,nt.\"name\"  as username,nt.address ,nt.propertyid,nt.assessmentyear,nt.acknowledgementnumber,nt.dateofannualret,nt.entrydate,nt.entrytime,nt.place,nt.perticulars,nt.asreturnfiled,nt.aspermunispality,nt.resolutionon,nt.dated,nt.designation,nt.authorisedpersonname,nt.mobilenumber,nt.penaltyamount,nt.appealno,nt.createdby as nt_cb,nt.createdtime as nt_ct,nt.lastmodifiedby as nt_lmb,nt.lastmodifiedtime as nt_lmt,epnc.\"comment\", epnc.noticeid, epnc.createdby as cm_cb, epnc.createdtime as cm_ct, epnc.lastmodifiedby as cm_lmb, epnc.lastmodifiedtime as cm_lmt from public.eg_pt_notice nt left join eg_pt_notice_comment epnc on epnc.noticeid = nt.uuid";
+
+	private static String noticesearchwitoutcommentquery="select nt.noticetype ,nt.tenantid ,nt.uuid ,nt.noticenumber ,nt.\"name\"  as username,nt.address ,nt.propertyid,nt.assessmentyear,nt.acknowledgementnumber,nt.dateofannualret,nt.entrydate,nt.entrytime,nt.place,nt.perticulars,nt.asreturnfiled,nt.aspermunispality,nt.resolutionon,nt.dated,nt.designation,nt.authorisedpersonname,nt.mobilenumber,nt.penaltyamount,nt.appealno  from public.eg_pt_notice nt ";
+	private static String noticesearchwithoutcommentauditquery="select nt.noticetype ,nt.tenantid ,nt.uuid ,nt.noticenumber ,nt.\"name\"  as username,nt.address ,nt.propertyid,nt.assessmentyear,nt.acknowledgementnumber,nt.dateofannualret,nt.entrydate,nt.entrytime,nt.place,nt.perticulars,nt.asreturnfiled,nt.aspermunispality,nt.resolutionon,nt.dated,nt.designation,nt.authorisedpersonname,nt.mobilenumber,nt.penaltyamount,nt.appealno,nt.createdby as nt_cb,nt.createdtime as nt_ct,nt.lastmodifiedby as nt_lmb,nt.lastmodifiedtime as nt_lmt from public.eg_pt_notice nt";
+
 
 	private final String paginationAuditWrapper = "SELECT * FROM "
 			+ "(SELECT *, DENSE_RANK() OVER (ORDER BY nt_lmb DESC, noticenumber) offset_ FROM " + "({})" + " result) result_offset "
@@ -34,6 +38,46 @@ public class NoticeQueryBuilder {
 			builder=new StringBuilder(noticesearchwithauditquery);
 		else
 			builder=new StringBuilder(noticesearchquery);
+
+		if(!CollectionUtils.isEmpty(noticeCriteria.getTenantId()))
+		{
+			Set<String> tenantIds=noticeCriteria.getTenantId();
+			addClauseIfRequired(preparedStmtList,builder);
+			builder.append("nt.tenantid IN (").append(createQuery(tenantIds)).append(")");
+			addToPreparedStatement(preparedStmtList,tenantIds);
+		}
+		if(!CollectionUtils.isEmpty(noticeCriteria.getNoticenumber()))
+		{
+			Set<String> noticeNumber=noticeCriteria.getNoticenumber();
+			addClauseIfRequired(preparedStmtList,builder);
+			builder.append("nt.noticenumber IN (").append(createQuery(noticeNumber)).append(")");
+			addToPreparedStatement(preparedStmtList,noticeNumber);
+		}
+		if(!CollectionUtils.isEmpty(noticeCriteria.getPropertyIds()))
+		{
+			Set<String> propertyIds=noticeCriteria.getPropertyIds();
+			addClauseIfRequired(preparedStmtList,builder);
+			builder.append("nt.propertyid IN (").append(createQuery(propertyIds)).append(")");
+			addToPreparedStatement(preparedStmtList,propertyIds);
+		}
+		if(!CollectionUtils.isEmpty(noticeCriteria.getAcknowledgementIds()))
+		{
+			Set<String> acknowledgementIds=noticeCriteria.getAcknowledgementIds();
+			addClauseIfRequired(preparedStmtList,builder);
+			builder.append("nt.acknowledgementnumber IN (").append(createQuery(acknowledgementIds)).append(")");
+			addToPreparedStatement(preparedStmtList,acknowledgementIds);
+		}
+
+		return addPaginationWrapper(builder.toString(), preparedStmtList, noticeCriteria);
+	}
+
+	public String noticesearchwitoutcommentquery(NoticeCriteria noticeCriteria, List<Object> preparedStmtList) {
+		// TODO Auto-generated method stub
+		StringBuilder builder;
+		if(noticeCriteria.isAudit())
+			builder=new StringBuilder(noticesearchwithoutcommentauditquery);
+		else
+			builder=new StringBuilder(noticesearchwitoutcommentquery);
 
 		if(!CollectionUtils.isEmpty(noticeCriteria.getTenantId()))
 		{
