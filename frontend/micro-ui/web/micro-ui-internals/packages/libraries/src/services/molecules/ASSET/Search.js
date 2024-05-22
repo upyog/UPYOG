@@ -29,9 +29,10 @@ export const ASSETSearch = {
           { title: "AST_BOOK_REF_SERIAL_NUM", value: response?.assetBookRefNo},
           { title: "AST_CATEGORY", value: response?.assetClassification },
           { title: "AST_PARENT_CATEGORY", value: response?.assetParentCategory},
-          { title: "AST_SUB_CATEGORY", value: response?.assetSubCategory },
-          { title: "AST_APPROVAL_DATE", value: response?.approvalDate},
-          { title: "AST_APPLICATION_DATE", value: response?.applicationDate },
+          { title: "AST_SUB_CATEGORY", value: response?.additionalDetails?.assetAssetSubCategory},
+
+          
+          
           
         ],
       },
@@ -40,9 +41,8 @@ export const ASSETSearch = {
         title: "AST_ADDRESS_DETAILS",
         asSectionHeader: true,
         values: [
-          { title: "AST_CITY", value: response?.addressDetails?.city },
           { title: "AST_PINCODE", value: response?.addressDetails?.pincode },
-          { title: "AST_LOCALITY", value: response?.addressDetails?.locality?.name },
+          { title: "MYCITY_CODE_LABEL", value: response?.addressDetails?.city },
           { title: "AST_DOOR_NO", value: response?.addressDetails?.doorNo },
           { title: "AST_STREET", value: response?.addressDetails?.street },
           { title: "AST_ADDRESS_LINE_1", value: response?.addressDetails?.addressLine1 },
@@ -79,12 +79,45 @@ export const ASSETSearch = {
 
               ]
             : []),
-          ...(response?.assetParentCategory === "BUILDINGS"
+          ...(response?.assetParentCategory === "BUILDING"
             ? [
-                // { title: "AST_CURRENT_VALUE", value: response?.additionalDetails?.currentassetvalue },
-                // { title: "AST_DEPRICIATION_RATE", value: response?.additionalDetails?.depriciationRate },
+              { title: "AST_TYPE", value: response?.additionalDetails?.assetParentCategory },
+              { title: "AST_PLINTH_AREA", value: response?.additionalDetails?.plintharea},
+              { title: "AST_PLOT_AREA", value: response?.additionalDetails?.plotarea },
+              { title: "AST_FLOORS_NO", value: response?.additionalDetails?.floorno },
+              { title: "AST_AREA_FLOOR", value: response?.additionalDetails?.floorarea },
+              { title: "AST_DIMENSIONS", value: response?.additionalDetails?.dimensions },
+              { title: "AST_TOTAL_COST", value: response?.additionalDetails?.Totalcost + " Rupees"},
+              { title: "AST_REVENUE_GENERATED", value: response?.additionalDetails?.Revenuegeneratedbyasset + " Rupees"},
+              { title: "AST_DEPRICIATION_RATE", value: response?.additionalDetails?.DepriciationRate },
+              { title: "AST_COST_AFTER_DEPRICIAT", value: response?.additionalDetails?.Costafterdepriciation + " Rupees"},
+              { title: "AST_CURRENT_VALUE", value: response?.additionalDetails?.Currentassetvalue + " Rupees"},
+              { title: "AST_BUILDING_NO", value: response?.additionalDetails?.Buildingsno},
+              { title: "AST_BOOK_VALUE", value: response?.additionalDetails?.BookValue + " Rupees"},
               ]
             : []),
+          
+          ...(response?.assetParentCategory === "SERVICE"
+          ? [
+            { title: "AST_TYPE", value: response?.additionalDetails?.assetAssetSubCategory },
+            { title: "AST_ROAD_TYPE", value: response?.additionalDetails?.RoadType },
+            { title: "AST_ROAD_WIDTH", value: response?.additionalDetails?.RoadWidth },
+            { title: "AST_SURFACE_TYPE", value: response?.additionalDetails?.SurfaceType},
+            { title: "AST_LAST_MAINTAINENCE", value: response?.additionalDetails?.LastMaintainence },
+            { title: "AST_NEXT_MAINTAINENCE", value: response?.additionalDetails?.NextMaintainence },
+            { title: "AST_PROTECTION_LENGTH", value: response?.additionalDetails?.ProtectionLength },
+            { title: "AST_PEDASTRIAN_CROSSING_NUMBER", value: response?.additionalDetails?.NumofPedastrianCross },
+            { title: "AST_METROSTATION_NUMBER", value: response?.additionalDetails?.NumofMetroStation },
+            { title: "AST_FOOTPATH_NUMBER", value: response?.additionalDetails?.NumofFootpath },
+            { title: "AST_BUSSTOP_NUMBER", value: response?.additionalDetails?.NumofBusStop },
+            { title: "AST_CYCLETRACK_LENGTH", value: response?.additionalDetails?.LengthofCycletrack },
+            { title: "AST_DRAINAGE_CHANNEL_LENGTH", value: response?.additionalDetails?.DrainageLength },
+            { title: "AST_TOTAL_COST", value: response?.additionalDetails?.Totalcost + " Rupees"},
+            { title: "AST_DEPRICIATION_RATE", value: response?.additionalDetails?.DepriciationRate },
+            { title: "AST_COST_AFTER_DEPRICIAT", value: response?.additionalDetails?.Costafterdepriciation + " Rupees"},
+            { title: "AST_BOOK_VALUE", value: response?.additionalDetails?.BookValue + " Rupees"},
+            ]
+          :[]),
         ],
       },
 

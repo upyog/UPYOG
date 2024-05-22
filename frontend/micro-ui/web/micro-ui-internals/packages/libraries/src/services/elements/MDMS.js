@@ -545,7 +545,7 @@ const getAssetSubParentList = (tenantId, moduleCode, type) => ({
         moduleName: moduleCode,
         masterDetails: [
           {
-            name: "assetSubCategory",
+            name: "assetCategory",
           },
         ],
       },
@@ -1196,7 +1196,7 @@ const GetPropertySubtype = (MdmsRes) =>
   };
   
   const getAssetSubParent = (MdmsRes) => {
-    return MdmsRes["ASSET"].assetSubCategory.filter((assetSubCategory) => assetSubCategory.active).map((assetsubparentDetails) => {
+    return MdmsRes["ASSET"].assetCategory.filter((assetCategory) => assetCategory.active).map((assetsubparentDetails) => {
       return {
         ...assetsubparentDetails,
         i18nKey: `ASSET_SUB_CLASSIFIED_${assetsubparentDetails.code}`,
@@ -1233,7 +1233,7 @@ const GetPropertySubtype = (MdmsRes) =>
   };
   
   const AssetSubTypeParent = (MdmsRes) => {
-    MdmsRes["ASSET"].assetSubCategory.filter((assetSubCategory) => assetSubCategory.active).map((asset_sub_type_mdms) => {
+    MdmsRes["ASSET"].assetCategory.filter((assetCategory) => assetCategory.active).map((asset_sub_type_mdms) => {
       return {
         ...asset_sub_type_mdms,
         i18nKey: `ASSET_SUB_PARENT_CATEGORY_${asset_sub_type_mdms.code}`,
@@ -1713,7 +1713,7 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
     case "assetParentCategory":
       return getAssetParent(MdmsRes);
 
-      case "assetSubCategory":
+      case "assetCategory":
       return getAssetSubParent(MdmsRes);
 
     case "AssetCommonDetail":

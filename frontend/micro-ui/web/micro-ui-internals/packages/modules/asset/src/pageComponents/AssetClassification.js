@@ -32,6 +32,8 @@ import {
     const { pathname } = useLocation();
     const [assets, setAssets] = useState(formData?.assets || [createAssetDetails()]);
 
+    console.log("Assets",assets);
+
     
     const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
   
@@ -42,12 +44,10 @@ import {
   
   
     const { data: Menu_Asset } = Digit.Hooks.asset.useAssetClassification(stateId, "ASSET", "assetClassification"); // hook for asset classification Type
-    console.log("Menu_Asset", Menu_Asset)  
   
     const { data: Asset_Type } = Digit.Hooks.asset.useAssetType(stateId, "ASSET", "assetParentCategory"); 
-    console.log("Asset_Type",Asset_Type);// hooks for Asset Parent Category
 
-    const { data: Asset_Sub_Type } = Digit.Hooks.asset.useAssetSubType(stateId, "ASSET", "assetSubCategory");  // hooks for Asset Parent Category
+    const { data: Asset_Sub_Type } = Digit.Hooks.asset.useAssetSubType(stateId, "ASSET", "assetCategory");  // hooks for Asset Parent Category
 
    
 
@@ -84,7 +84,7 @@ import {
 
       Asset_Sub_Type &&
       Asset_Sub_Type.map((asset_sub_type_mdms) => {
-          if (asset_sub_type_mdms.ParentCategory == assets[0]?.assettype?.code) {
+          if (asset_sub_type_mdms.assetParentCategory == assets[0]?.assettype?.code) {
               asset_sub_type.push({
               i18nKey: `ASSET_SUB_TYPE_${asset_sub_type_mdms.code}`,
               code: `${asset_sub_type_mdms.code}`,
@@ -93,13 +93,7 @@ import {
           }
     
         });
-    
-  
-  
-  
-  
-   
-  
+
     useEffect(() => {
       onSelect(config?.key, assets);
   
@@ -153,6 +147,8 @@ import {
     
   
     } = _props;
+
+    
   
     const [showToast, setShowToast] = useState(null);
     const {
@@ -260,7 +256,12 @@ import {
               />
             </LabelFieldPair>
             <CardLabelError style={errorStyle}>{localFormState.touched.assetsubtype ? errors?.assetsubtype?.message : ""}</CardLabelError>
+
+            {/* {asset_type?.[0]?.code==="LAND" && (
+
+            )} */}
   
+          
           
   
   
