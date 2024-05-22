@@ -10,7 +10,9 @@
     "packages/modules/common",
     "packages/modules/core",
     "packages/modules/dss",
-    "packages/modules/asset"
+    "packages/modules/asset",
+    "packages/modules/ew"
+
 
     
   ],
@@ -34,6 +36,7 @@
     "dev:commonPt": "cd packages/modules/commonPt && yarn start",
     "dev:core": "cd packages/modules/core && yarn start",
     "dev:pgr": "cd packages/modules/pgr && yarn start",
+    "dev:ew": "cd packages/modules/ew && yarn start",
     "dev:fsm": "cd packages/modules/fsm && yarn start",
     "dev:dss": "cd packages/modules/dss && yarn start",
     "dev:mcollect": "cd packages/modules/mCollect && yarn start",
@@ -66,6 +69,7 @@
     "buildD:obps": "cd packages/modules/obps && yarn build",
     "buildD:ptr": "cd packages/modules/ptr && yarn build",
     "build:asset": "cd packages/modules/asset && yarn build",
+    "build:ew": "cd packages/modules/ew && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
     "buildD:noc": "cd packages/modules/noc && yarn build",
     "buildD:ws": "cd packages/modules/ws && yarn build",
