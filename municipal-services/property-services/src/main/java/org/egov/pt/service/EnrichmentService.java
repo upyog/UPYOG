@@ -25,6 +25,7 @@ import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.TypeOfRoad;
+import org.egov.pt.models.enums.NoticeType;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.user.User;
 import org.egov.pt.util.CommonUtils;
@@ -63,10 +64,10 @@ public class EnrichmentService {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private ObjectMapper mapper;
-	
+
 	@Autowired
 	private NoticeUtils noticeutil;
 
@@ -99,12 +100,15 @@ public class EnrichmentService {
 		setIdgenIdsForAppeal(request);
 	}
 
+
 	public void enrichCreateNoticeRequest(NoticeRequest noticeRequest)
 	{
 		setIdgenIds(noticeRequest);
-		setCommentIds(noticeRequest.getNotice());
+		if(!noticeRequest.getNotice().getNoticeType().equals(NoticeType.NOTICE_FOR_HEARING) || !noticeRequest.getNotice().getNoticeType().equals(NoticeType.NOTICE_ENTER_PREMISE) || !noticeRequest.getNotice().getNoticeType().equals(NoticeType.NOTICE_FILE_RETURN) || !noticeRequest.getNotice().getNoticeType().equals(NoticeType.NOTICE_FOR_PENALTY))
+			setCommentIds(noticeRequest.getNotice());
 		noticeRequest.getNotice().setAuditDetails(noticeutil.getAuditDetails(noticeRequest.getRequestInfo().getUserInfo().getUuid(), true));
-		noticeRequest.getNotice().getNoticeComment().stream().forEach(audt->audt.setAuditDetails(noticeutil.getAuditDetails(noticeRequest.getRequestInfo().getUserInfo().getUuid(), true)));
+		if(!noticeRequest.getNotice().getNoticeType().equals(NoticeType.NOTICE_FOR_HEARING) || !noticeRequest.getNotice().getNoticeType().equals(NoticeType.NOTICE_ENTER_PREMISE) || !noticeRequest.getNotice().getNoticeType().equals(NoticeType.NOTICE_FILE_RETURN) || !noticeRequest.getNotice().getNoticeType().equals(NoticeType.NOTICE_FOR_PENALTY))
+			noticeRequest.getNotice().getNoticeComment().stream().forEach(audt->audt.setAuditDetails(noticeutil.getAuditDetails(noticeRequest.getRequestInfo().getUserInfo().getUuid(), true)));
 	}
 
 	private void setCommentIds(Notice noticerequest) {
