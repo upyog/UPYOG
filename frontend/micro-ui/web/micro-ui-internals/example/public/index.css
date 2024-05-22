@@ -9733,7 +9733,7 @@ a:focus, a:hover {
     display: none;
   }
   .assment-yr-cls {
-    top: -35px;
+    top: -35px !important;
   }
 }
 @media print {

@@ -11,6 +11,7 @@ import {
     CitizenInfoLabel,
     Dropdown,
     FormStep,
+    Header,
     LabelFieldPair,
     Loader,
     Modal,
@@ -29,6 +30,16 @@ import {
     )
   }
 
+  const getNotices = async (tenantId,setTableList, setUpdateNotice) => {
+    const response = await Digit.PTService.noticeSearch({},tenantId);
+    console.log("response==",response)
+    if (response && response?.Notice?.length>0) {
+        setTableList(response?.Notice);
+        
+    } 
+    setUpdateNotice({canLoad:false})
+  }
+
 const MyNotices = (props) => {
   const { t } = useTranslation();
   const match = useRouteMatch();
@@ -36,49 +47,52 @@ const MyNotices = (props) => {
   const history = useHistory();
 
   const [tableList, setTableList] = useState([]);
+  const [usdateNotice, setUpdateNotice] = useState({
+    canLoad: true
+  })
 //   const tenantId = Digit.ULBService.getCurrentTenantId();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
 
 //   const tenantId = window.localStorage.getItem("Citizen.tenant-id") || stateCode;
 
-  const onInit = async ()=>{
-    try {
-      // TODO: change module in file storage
-      const response = await Digit.PTService.noticeSearch({},tenantId);
-      console.log("response==",response)
-      if (response) {
-      } else {
-      }
-    } catch (err) {
-    }
+  
+  if(usdateNotice?.canLoad) {
+    getNotices(tenantId,setTableList,setUpdateNotice)
   }
 
-  onInit();
+  const gotoNotice = (el)=> {
+    console.log("gotoNotice===",el)
+    history.push({pathname: "/digit-ui/citizen/pt/property/notice/"+el?.noticeNumber, state: el})
+  }
   
   return (
     <React.Fragment>
-        <div className="row appeal-row-cls">
-                    <div className="col-sm-12">
-                    {tableList && tableList.length>0 &&
-                        <div style={{ width: '100%' }}>
-                          <table style={{ width: '100%', border: '1px solid #b7b7b7'}}>
-                            <tr style={{background: '#eaeaea', lineHeight: '35px'}}>
-                              <th style={{paddingLeft: "10px"}}>Sr. No.</th>
-                              <th>Document Type</th>
-                              <th>Document Name</th>
-                            </tr>
-                            {tableList.map((e, i)=>{
-                              return (<tr>
-                                <td style={{paddingLeft: "10px"}}>{i+1}</td>
-                                <td>{e?.documentType}</td>
-                                <td>{e?.documentName}</td>
-                              </tr>)
-                            })}
-                          </table>
-                        </div>}
-                    </div>
-                    
+        <Header>{t("My Notices")}</Header>
+        <div className="card">
+            <div className="row appeal-row-cls">
+                <div className="col-sm-12">
+                {tableList && tableList.length>0 &&
+                    <div style={{ width: '100%' }}>
+                        <table style={{ width: '100%', border: '1px solid #b7b7b7'}}>
+                        <tr style={{background: '#eaeaea', lineHeight: '35px'}}>
+                            <th style={{paddingLeft: "10px"}}>Sr. No.</th>
+                            <th>Notice No.</th>
+                            <th>Notice Type</th>
+                        </tr>
+                        {tableList.map((el, i)=>{
+                            return (<tr>
+                            <td style={{paddingLeft: "10px"}}>{i+1}</td>
+                            <td><a onClick={()=>gotoNotice(el)} style={{color: "#0f4f9e", cursor: "pointer"}}>{el?.noticeNumber}</a></td>
+                            <td>{el?.noticeType}</td>
+                            </tr>)
+                        })}
+                        </table>
+                    </div>}
                 </div>
+                
+            </div>
+        </div>
+        
     
     </React.Fragment>
   );
