@@ -13,7 +13,11 @@ public enum NoticeType {
 	
 	NOTICE_FOR_PENALTY("Notice for Imposition of Penalty"),
 	
-	REC_MIS_DEF_RET("RECTIFICATION OF MISTAKES IN A DEFECTIVE RETURN");
+	NOTICE_FOR_DEFECTIVE("Notice for rectification of mistakes in a Defective Return"),
+	
+	NOTICE_FOR_ASSESSMENT("Notice for Assessment"),
+	
+	NOTICE_FOR_REASSESSMENT("Notice for Re-Assessment");
 	
   private String value;
 
