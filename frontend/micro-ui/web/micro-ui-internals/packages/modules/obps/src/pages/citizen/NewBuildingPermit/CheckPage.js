@@ -375,7 +375,7 @@ setWaterCharges(Malbafees/2)
         sessionStorage.setItem("otherCharges",value)
       }
       else{
-        //alert("Please enter numbers")
+        alert("Please enter numbers")
       }      
   }
     function setDevelopmentVal(value) {
@@ -384,7 +384,7 @@ setWaterCharges(Malbafees/2)
         sessionStorage.setItem("development",value)
       }
       else{
-        //alert("Please enter numbers")
+        alert("Please enter numbers")
       }      
     }
     function setLessAdjusmentVal(value) {
@@ -393,7 +393,7 @@ setWaterCharges(Malbafees/2)
       sessionStorage.setItem("lessAdjusment",value)
     }
     else{
-      //alert("Please enter numbers")
+     alert("Please enter numbers")
     }      
     }
     function setOtherChargesDis(value) {
