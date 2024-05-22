@@ -3,6 +3,7 @@ package org.egov.edcr.service;
 import static org.egov.edcr.utility.DcrConstants.FILESTORE_MODULECODE;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -10,17 +11,24 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.math.BigDecimal;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
@@ -32,7 +40,6 @@ import org.egov.edcr.service.es.EdcrIndexService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.microservice.models.RequestInfo;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.hibernate.Session;
@@ -45,6 +52,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.aspose.cad.Image;
+import com.aspose.cad.imageoptions.PdfOptions;
 
 @Service
 @Transactional(readOnly = true)
@@ -254,23 +264,51 @@ public class EdcrApplicationService {
         return fileAsString;
     }
 
+
+    
+    //Edited by Neha to convert dxf to pdf
     private void updateFile(Plan pl, EdcrApplication edcrApplication) {
-        String readFile = readFile(edcrApplication.getSavedDxfFile());
-        String replace = readFile.replace("ENTITIES", "ENTITIES\n0\n" + pl.getAdditionsToDxf());
-        String newFile = edcrApplication.getDxfFile().getOriginalFilename().replace(".dxf", "_system_scrutinized.dxf");
-        File f = new File(newFile);
-        try (FileOutputStream fos = new FileOutputStream(f)) {
-            if (!f.exists())
-                f.createNewFile();
-            fos.write(replace.getBytes());
-            fos.flush();
-            FileStoreMapper fileStoreMapper = fileStoreService.store(f, f.getName(),
-                    edcrApplication.getDxfFile().getContentType(), FILESTORE_MODULECODE);
-            edcrApplication.getEdcrApplicationDetails().get(0).setScrutinizedDxfFileId(fileStoreMapper);
-        } catch (IOException e) {
-            LOG.error("Error occurred when reading file!!!!!", e);
-        }
-    }
+//		String readFile = readFile(edcrApplication.getSavedDxfFile());
+		String filePath = edcrApplication.getSavedDxfFile().getAbsolutePath();
+//		String replace = readFile.replace("ENTITIES", "ENTITIES\n0\n" + pl.getAdditionsToDxf());
+//        String newFile = edcrApplication.getDxfFile().getOriginalFilename().replace(".dxf", "_system_scrutinized.dxf");
+		String newFile = edcrApplication.getDxfFile().getOriginalFilename().replace(".dxf", "_system_scrutinized.pdf");
+		// Load the source CAD file
+		Image objImage = Image.load(filePath);
+
+		// Create an instance of PdfOptions
+		PdfOptions pdfOptions = new PdfOptions();
+
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+		// Export CAD to PDF
+//     		objImage.save("dwg-to-pdf.pdf", pdfOptions);
+		objImage.save(outputStream, pdfOptions);
+
+		byte[] pdfBytes = outputStream.toByteArray();
+
+		try (PDDocument document = PDDocument.load(pdfBytes)) {
+			byte[] modifiedPdfBytes;
+			
+				modifiedPdfBytes = outputStream.toByteArray();
+			
+			File f = new File(newFile);
+			try (FileOutputStream fos = new FileOutputStream(f)) {
+				if (!f.exists())
+					f.createNewFile();
+//            fos.write(replace.getBytes());
+				fos.write(modifiedPdfBytes);
+				fos.flush();
+				FileStoreMapper fileStoreMapper = fileStoreService.store(f, f.getName(),
+						edcrApplication.getDxfFile().getContentType(), FILESTORE_MODULECODE);
+				edcrApplication.getEdcrApplicationDetails().get(0).setScrutinizedDxfFileId(fileStoreMapper);
+			} catch (IOException e) {
+				LOG.error("Error occurred when reading file!!!!!", e);
+			}
+		} catch (IOException e) {
+			LOG.error("Error occurred when processing PDF!!!!!", e);
+		}
+	}
 
     @Transactional
     public EdcrApplication createRestEdcr(final EdcrApplication edcrApplication){

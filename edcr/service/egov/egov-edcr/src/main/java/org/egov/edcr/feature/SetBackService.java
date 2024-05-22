@@ -75,6 +75,8 @@ public class SetBackService extends FeatureProcess {
 
     @Autowired
     private RearYardService rearYardService;
+    
+    private static final BigDecimal TWO_HUNDRED = BigDecimal.valueOf(200);
 
     @Override
     public Plan validate(Plan pl) {
@@ -94,6 +96,7 @@ public class SetBackService extends FeatureProcess {
                         if (setback.getFrontYard() == null)
                             errors.put("frontyardNodeDefined",
                                     getLocaleMessage(OBJECTNOTDEFINED, " Front SetBack of " + block.getName() + "  at level zero "));
+                        if( pl.getPlot().getArea().compareTo(TWO_HUNDRED) > 0) {
                         if (setback.getRearYard() == null
                                 && !pl.getPlanInformation().getNocToAbutRearDesc().equalsIgnoreCase(DcrConstants.YES))
                             errors.put("rearyardNodeDefined",
@@ -105,7 +108,7 @@ public class SetBackService extends FeatureProcess {
 //                                && !pl.getPlanInformation().getNocToAbutSideDesc().equalsIgnoreCase(DcrConstants.YES))
 //                            errors.put("side2yardNodeDefined", getLocaleMessage(OBJECTNOTDEFINED,
 //                                    " Side Setback 2 of block " + block.getName() + " at level zero "));
-                    } else if (setback.getLevel() > 0) {
+                        } } else if (setback.getLevel() > 0) {
                         // height defined in level other than zero must contain height
                         if (setback.getFrontYard() != null && setback.getFrontYard().getHeight() == null)
                             errors.put("frontyardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Front Setback ",
@@ -158,7 +161,9 @@ public class SetBackService extends FeatureProcess {
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
 		if (depthOfPlot != null && depthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
 			frontYardService.processFrontYard(pl);
+			  if( pl.getPlot().getArea().compareTo(TWO_HUNDRED) > 0) {
 			rearYardService.processRearYard(pl);
+			  }
 		}
 
 //		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
