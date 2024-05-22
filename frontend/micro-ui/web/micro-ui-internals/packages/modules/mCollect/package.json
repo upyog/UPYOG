@@ -1,6 +1,6 @@
 {
-  "name": "@upyog/digit-ui-module-mcollect",
-  "version": "1.7.3",
+  "name": "@egovernments/digit-ui-module-mcollect",
+  "version": "1.7.4",
   "license": "MIT",
   "description": "Digit Misc Collections Module",
   "main": "dist/index.js",
