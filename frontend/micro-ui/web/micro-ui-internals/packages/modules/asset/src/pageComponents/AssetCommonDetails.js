@@ -176,28 +176,30 @@
                     <CardLabel className="card-label-smaller">{t("AST_BOOK_REF_SERIAL_NUM") + " *"}</CardLabel>
                     <div className="field">
                     <Controller
-                        control={control}
-                        name={"BookPagereference"}
-                        defaultValue={assetcommonforall?.BookPagereference}
-                        rules={{
-                        required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                        validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
-                        }}
-                        render={(props) => (
+                    control={control}
+                    name={"BookPagereference"}
+                    defaultValue={assetcommonforall?.BookPagereference}
+                    rules={{
+                        required: t("CORE\_COMMON\_REQUIRED\_ERRMSG"),
+                        validate: {
+                        pattern: (val) => /^[a-zA-Z0-9\s\/\[\]\*]+$/.test(val) || t("ERR\_DEFAULT\_INPUT\_FIELD\_MSG"),
+                        },
+                    }}
+                    render={(props) => (
                         <TextInput
-                            value={props.value}
-                            // disable={isEditScreen}
-                            autoFocus={focusIndex.index === assetcommonforall?.key && focusIndex.type === "BookPagereference"}
-                            onChange={(e) => {
+                        value={props.value}
+                        // disable={isEditScreen}
+                        autoFocus={focusIndex.index === assetcommonforall?.key && focusIndex.type === "BookPagereference"}
+                        onChange={(e) => {
                             props.onChange(e.target.value);
                             setFocusIndex({ index: assetcommonforall.key, type: "BookPagereference" });
-                            }}
-                            onBlur={(e) => {
+                        }}
+                        onBlur={(e) => {
                             setFocusIndex({ index: -1 });
                             props.onBlur(e);
-                            }}
+                        }}
                         />
-                        )}
+                    )}
                     />
                     </div>
                 </LabelFieldPair>

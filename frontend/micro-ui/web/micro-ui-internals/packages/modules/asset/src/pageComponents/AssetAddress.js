@@ -7,7 +7,8 @@ import { useLocation } from "react-router-dom";
 import Timeline from "../components/ASTTimeline";
 
 const AssetAddress = ({ t, config, onSelect, userType, formData, setError, clearErrors, formState }) => {
-  const allCities = Digit.Hooks.ptr.useTenants();
+  const allCities = Digit.Hooks.asset.useTenants();
+  console.log("allCities",allCities);
   let tenantId = Digit.ULBService.getCurrentTenantId();
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
@@ -18,8 +19,7 @@ const AssetAddress = ({ t, config, onSelect, userType, formData, setError, clear
   if (presentInModifyApplication) isEditAddress = true;
   
   const { pincode, city } = formData?.address || "";
-  const cities = [""]
-    // userType === "employee" ? allCities.filter((city) => city.code === tenantId) : pincode  ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode)) : allCities;
+  const cities = userType === "employee" ? allCities.filter((city) => city.code === tenantId) : pincode  ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode)) : allCities;
 
   const [selectedCity, setSelectedCity] = useState(() => {
     return formData?.address?.city || null;
@@ -53,6 +53,8 @@ const AssetAddress = ({ t, config, onSelect, userType, formData, setError, clear
       }
     }
   }, [cities]);
+
+  console.log("ciitititititit",cities);
 
   useEffect(() => {
     if (selectedCity && fetchedLocalities) {

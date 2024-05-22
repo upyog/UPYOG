@@ -273,6 +273,7 @@ import useAssetdetail from "./asset/useAssetdetail";
 import useAssetCreateAPI from "./asset/useAssetCreateAPI";
 import useAssetApplicationDetail from "./asset/useAssetApplicationDetail";
 import useASSETSearch from "./asset/useASSETSearch";
+import useTenantsASSET from "./asset/useTenants"
 
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
@@ -304,7 +305,8 @@ const asset = {
   useAssetdetail,
   useAssetCreateAPI,
   useAssetApplicationDetail,
-  useASSETSearch
+  useASSETSearch,
+  useTenants: useTenantsASSET
 };
 
 

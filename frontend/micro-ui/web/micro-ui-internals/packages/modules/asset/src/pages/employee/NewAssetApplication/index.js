@@ -57,7 +57,8 @@ const NewAssetApplication = () => {
         buildingName:data?.address?.buildingName,
         doorNo:data?.address?.doorNo,
         street:data?.address?.street,
-        city:"",
+        pincode:data?.address?.pincode,
+        city:data?.address?.city?.name,
         locality: { code: data?.address?.locality?.code, area: data?.address?.locality?.area },
 
       },
