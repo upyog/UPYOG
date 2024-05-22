@@ -9,7 +9,7 @@ const NoticeForHearing = (props) => {
   const { t } = useTranslation();
   const [financialYears, setFinancialYears] = useState([]);
   const [selectedFinancialYear, setSelectedFinancialYear] = useState(props?.noticeData && props?.noticeData.assessmentYear? {code: props?.noticeData.assessmentYear, name: props?.noticeData.assessmentYear} : null);
-  const [submissionDate, setSubmissionDate] = useState();
+  const [dateOfAnnualRet, setDateOfAnnualRet] = useState(props?.noticeData?.dateOfAnnualRet ? props?.noticeData?.dateOfAnnualRet : null);
 
   const { isLoading: financialYearsLoading, data: financialYearsData } = Digit.Hooks.pt.useMDMS(
     Digit.ULBService.getStateId(),
@@ -36,38 +36,34 @@ const NoticeForHearing = (props) => {
   const handleChangeNotice = (value) => {
 
   }
-  const [name, setName] = useState(props?.noticeData?.ownerName ? props?.noticeData?.ownerName : null);
+  const [name, setName] = useState(props?.noticeData?.ownerName ? props?.noticeData?.ownerName : props?.noticeData?.name ? props?.noticeData?.name : null);
   const onChangeName = (e) => {
     setName(e.target?.value)
   }
-  const [propertyAddress, setPropertyAddress] = useState(props?.noticeData?.propertyAddress ? props?.noticeData?.propertyAddress : null);
+  const [address, setAddress] = useState(props?.noticeData?.address ? props?.noticeData?.address : null);
   const onChangePtAddress = (e) => {
-    setPropertyAddress(e.target?.value)
+    setAddress(e.target?.value)
   }
   const [propertyId, setPropertyId] = useState(props?.noticeData?.propertyId ? props?.noticeData?.propertyId : null);
   const onChangePtId = (e) => {
     setPropertyId(e.target?.value)
   }
-  const [acknowledgementNo, setAcknowledgementNo] = useState(props?.noticeData?.acknowldgementNumber ? props?.noticeData?.acknowldgementNumber : null);
+  const [acknowledgementNumber, setAcknowledgementNumber] = useState(props?.noticeData?.acknowledgementNumber ? props?.noticeData?.acknowledgementNumber : null);
   const onChangeAcknowledgementNo=(e)=>{
-    setAcknowledgementNo(e.target.value)
+    setAcknowledgementNumber(e.target.value)
   }
   const [returnFormData, setReturnFormData] = useState({
-    appealNo: props?.noticeData?.appealId ? props?.noticeData?.appealId : null,
-    appealDate: null
+    appealNo: props?.noticeData?.appealId ? props?.noticeData?.appealId : props?.noticeData?.appealNo ? props?.noticeData?.appealNo : null,
+    dated:  props?.noticeData?.dated ? props?.noticeData?.dated : null
   });
   const [returnTimeFormData, setReturnTimeFormData] = useState({
-    time: null,
-    date: null
+    entryTime: props?.noticeData?.entryTime ? props?.noticeData?.entryTime : null,
+    entryDate: props?.noticeData?.entryDate ? props?.noticeData?.entryDate : null
   });
   // const [particulars, setParticulars] = useState();
   // const [asPerReturnFiled, setAsPerReturnFiled] = useState();
   // const [asPerMunicipality, setAsPerMunicipality] = useState();
   // const [remarks, setRemarks] = useState();
-  const [tableList, setTableList] = useState([]);
-  const [timeMeridian, setTimeMeridian] = useState('');
-  const [time, setTime] = useState();
-  const [editDate, setEditDate] = useState();
 
   const onChangeParticulars = (e)=>{
     setParticulars(e.target.value)
@@ -197,24 +193,26 @@ const NoticeForHearing = (props) => {
     e.preventDefault();
     let noticeDetails = {
       name: name,
-      propertyAddress: propertyAddress,
+      address: address,
       "propertyId": propertyId,
-      "acknowledgementNumber": acknowledgementNo,
-      assessmentDate: submissionDate,
+      "acknowledgementNumber": acknowledgementNumber,
+      dateOfAnnualRet: dateOfAnnualRet,
       "assessmentYear": selectedFinancialYear?.code,
       "noticeType": "Notice for Hearing under Rule 39 / 40",      
       "tenantId": tenantId,      
       "channel": "CITIZEN",
       appealNo: returnFormData.appealNo,
-      appealDate: returnFormData.appealDate,
-      noticeDate: returnTimeFormData.date,
-      noticeTime: returnTimeFormData.time
+      dated: returnFormData.dated,
+      entryDate: returnTimeFormData.entryDate,
+      entryTime: returnTimeFormData.entryTime
     }
     props.submit(noticeDetails)
   }
   const onCancelNotice = () => {
     
   }
+  const citizenStyle = props?.isCitizen ? { width: "100%" } : {};
+  const citizenStyleMaxWidth = props?.isCitizen ? {  } : {maxWidth: "100%"};
   return (
     <div>
       
@@ -223,7 +221,7 @@ const NoticeForHearing = (props) => {
           <form>
             <div id="form-print">
             {<Header>{t("Notice For Hearing under Rule 39 / 40")}</Header>}
-              <div className="row card" style={{ maxWidth: '100%' }}>
+              <div className="row card" style={{ ...citizenStyleMaxWidth }}>
                 <div >
                   <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
                     <CardLabel>{`${t("Name")}`}</CardLabel>
@@ -234,19 +232,19 @@ const NoticeForHearing = (props) => {
                       value={name}
                       onChange={(e) => onChangeName(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
                   <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
                     <CardLabel>{`${t("Property Address")}`}</CardLabel>
                     <TextInput
                       style={{ background: "#FAFAFA" }}
-                      key={'propertyAddress'}
-                      name={'propertyAddress'}
-                      value={propertyAddress}
+                      key={'address'}
+                      name={'address'}
+                      value={address}
                       onChange={(e) => onChangePtAddress(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
                 </div>
@@ -260,19 +258,19 @@ const NoticeForHearing = (props) => {
                       value={propertyId}
                       onChange={(e) => onChangePtId(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
                   <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
                     <CardLabel>{`${t("Return Acknowledgement Number")}`}</CardLabel>
                     <TextInput
                       style={{ background: "#FAFAFA" }}
-                      key={'acknowledgementNo'}
-                      name={'acknowledgementNo'}
-                      value={acknowledgementNo}
+                      key={'acknowledgementNumber'}
+                      name={'acknowledgementNumber'}
+                      value={acknowledgementNumber}
                       onChange={(e) => onChangeAcknowledgementNo(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
 
@@ -282,9 +280,9 @@ const NoticeForHearing = (props) => {
                     <CardLabel>{`${t("Date of Submission of Annual Return")}`}</CardLabel>
                     {/* <DatePicker
                       isRequired={true}
-                      date={submissionDate}
+                      date={dateOfAnnualRet}
                       onChange={(d) => {
-                        setSubmissionDate(d);
+                        setDateOfAnnualRet(d);
                       }}
                     /> */}
                     <input
@@ -292,17 +290,21 @@ const NoticeForHearing = (props) => {
                       // className={`${props.disabled ? "disabled" : ""}`}
                       style={{ width: "calc(100%-62px)" }}
                       // style={{ right: "6px", zIndex: "100", top: 6, position: "absolute", opacity: 0, width: "100%" }}
-                      value={submissionDate ? submissionDate : ""}
+                      value={dateOfAnnualRet ? dateOfAnnualRet : ""}
                       type="date"
                       onChange={(d) => {
-                        setSubmissionDate(d.target.value);
+                        setDateOfAnnualRet(d.target.value);
                       }}
                       required={false}
+                      readOnly={props?.isCitizen ? true : false}
+                      disabled={props?.isCitizen ? true : false}
                     />
                   </div>
                   <div className="col-sm-4 assment-yr-cls" style={{ width: '48%', display: 'inline-block', position: 'relative', top: '0px' }}>
                     <CardLabel>{`${t("Assessment Year")}`}</CardLabel>
-                    <Dropdown isMandatory optionCardStyles={{ zIndex: 111111 }} selected={selectedFinancialYear} optionKey="name" option={financialYears} select={setSelectedFinancialYear} t={t} />
+                    <Dropdown isMandatory optionCardStyles={{ zIndex: 111111 }} selected={selectedFinancialYear} optionKey="name" option={financialYears} select={setSelectedFinancialYear} t={t} 
+                    isDisabled={props?.isCitizen ? true : false}
+                    disable={props?.isCitizen ? true : false} />
 
                   </div>
                 </div>
@@ -312,11 +314,11 @@ const NoticeForHearing = (props) => {
                     <ul style={{ marginTop: '10px' }} className="notice-txt">
                       
                       <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
-                        <div style={{ width: '60%' }}>
-                            This is reference to your appeal under Rule 40 filed on {returnFormData?.appealDate && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnFormData?.appealDate}</span>}{!returnFormData?.appealDate && <span>__________________</span>} vide Appeal No. / Application No.: {returnFormData?.appealNo && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnFormData?.appealNo}</span>} {!returnFormData?.appealNo && <span>________________ </span>}
+                        <div style={{ width: '60%', ...citizenStyle }}>
+                            This is reference to your appeal under Rule 40 filed on {returnFormData?.dated && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnFormData?.dated}</span>}{!returnFormData?.dated && <span>__________________</span>} vide Appeal No. / Application No.: {returnFormData?.appealNo && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnFormData?.appealNo}</span>} {!returnFormData?.appealNo && <span>________________ </span>}
                         </div>
                         
-                        <div style={{ width: '40%', display: 'inline' }}>
+                        {!props?.isCitizen &&<div style={{ width: '40%', display: 'inline' }}>
                           <button id="printPageButton" onClick={(e) => onAddTabData(e)} className="submit-bar"
                             style={{
                               color: 'white',
@@ -327,14 +329,14 @@ const NoticeForHearing = (props) => {
                           >
                             + {t("Edit")}
                           </button>
-                        </div>
+                        </div>}
                       </li>
                       
                       <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
-                        <div style={{ width: '60%' }}>
-                          Your appeal/application had been admitted by the Municipal Appellate Tribunal/Executive officer and hence you may present your case with all available records either in person or through and authorized representative on {returnTimeFormData?.date && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.date}</span>}{!returnTimeFormData?.date && <span>__________________</span>} at {returnTimeFormData?.time && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.time}</span>} {!returnTimeFormData?.time && <span>________________ </span>} in the chamber of the undersigned.
+                        <div style={{ width: '60%', ...citizenStyle }}>
+                          Your appeal/application had been admitted by the Municipal Appellate Tribunal/Executive officer and hence you may present your case with all available records either in person or through and authorized representative on {returnTimeFormData?.entryDate && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.entryDate}</span>}{!returnTimeFormData?.entryDate && <span>__________________</span>} at {returnTimeFormData?.entryTime && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.entryTime}</span>} {!returnTimeFormData?.entryTime && <span>________________ </span>} in the chamber of the undersigned.
                         </div>
-                        <div style={{ width: '40%', display: 'inline' }}>
+                        {!props?.isCitizen && <div style={{ width: '40%', display: 'inline' }}>
                           <button id="printPageButton" onClick={(e) => onEditDate(e)} className="submit-bar"
                             style={{
                               color: 'white',
@@ -345,16 +347,16 @@ const NoticeForHearing = (props) => {
                           >
                             {t("Edit")}
                           </button>
-                        </div>
+                        </div>}
                       </li>
-                      <li style={{ width: '60%', listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
+                      <li style={{ width: '60%', listStyle: 'auto', marginLeft: '16px', padding: '6px', ...citizenStyle }}>
                         In case you fail to appear on the appointed date and time, the order on the application under Rule 39/ Rule 40 shall be passed on the bassis of information on record.
                       </li>
                     </ul>
                   </p>
                 </div>
               </div>
-              <div className="card" style={{ maxWidth: '100%' }}>
+              <div className="card" style={{ ...citizenStyleMaxWidth }}>
                 <div className="row">
                     <div className="" style={{display: "inline-block", width: "90%", paddingLeft: "15px"}}>
                         <span>Date</span>
@@ -368,7 +370,7 @@ const NoticeForHearing = (props) => {
               </div>
             </div>
             
-            <div className="card" style={{ maxWidth: '100%' }}>
+            <div className="card" style={{ ...citizenStyleMaxWidth }}>
               <div style={{display: 'inline-flex'}}>
                 <div style={{ width: '100%', display: 'inline' }}>
                   <button onClick={(e) => printDiv(e,'form-print')} className="submit-bar"
@@ -380,7 +382,7 @@ const NoticeForHearing = (props) => {
                     {t("Print")}
                   </button>
                 </div>
-                <div style={{  display: 'inline' }}>
+                {!props?.isCitizen && (<div style={{  display: 'inline' }}>
                   <button onClick={() => onCancelNotice()} className="submit-bar"
                     style={{
                       color: 'white',
@@ -389,8 +391,8 @@ const NoticeForHearing = (props) => {
                   >
                     {t("Cancel")}
                   </button>
-                </div>
-                <div style={{ display: 'inline' }}>
+                </div>)}
+                {!props?.isCitizen && (<div style={{ display: 'inline' }}>
                   <button onClick={onSubmit} className="submit-bar"
                     style={{
                       color: 'white',
@@ -400,7 +402,7 @@ const NoticeForHearing = (props) => {
                   >
                     {t("Submit")}
                   </button>
-                </div>
+                </div>)}
               </div>
             </div>
           </form>
@@ -431,10 +433,10 @@ const NoticeForHearing = (props) => {
               </div>
               <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
                 <label for="formControlInputAppealDate" class="form-label">Appeal Date*</label>
-                <input type="date" className={fieldError.appealDate ? "form-control error-message" : "form-control"} id="formControlInputAppealDate" name="appealDate" placeholder="Enter Appeal Date" value={returnFormData.appealDate} onChange={handleChangeReturn} required />
-                {fieldError.appealDate &&
+                <input type="date" className={fieldError.dated ? "form-control error-message" : "form-control"} id="formControlInputAppealDate" name="dated" placeholder="Enter Appeal Date" value={returnFormData.dated} onChange={handleChangeReturn} required />
+                {fieldError.dated &&
                         <span className="error-message">
-                            {fieldError.appealDate}
+                            {fieldError.dated}
                         </span>
                     }
               </div>
@@ -487,10 +489,10 @@ const NoticeForHearing = (props) => {
                   required={false}
                 /> */}
                 <label for="formControlInputReturnDate" class="form-label">Date*</label>
-                <input type="date" className={fieldError.date ? "form-control error-message" : "form-control"} id="formControlInputReturnDate" name="date" placeholder="Enter Date" value={returnTimeFormData.date} onChange={handleChangeTimeReturn} required />
-                {fieldError.date &&
+                <input type="date" className={fieldError.entryDate ? "form-control error-message" : "form-control"} id="formControlInputReturnDate" name="entryDate" placeholder="Enter Date" value={returnTimeFormData.entryDate} onChange={handleChangeTimeReturn} required />
+                {fieldError.entryDate &&
                     <span className="error-message">
-                        {fieldError.date}
+                        {fieldError.entryDate}
                     </span>
                 }
               </div>
@@ -507,10 +509,10 @@ const NoticeForHearing = (props) => {
                   type={'number'}
                 /> */}
                 <label for="formControlInputReturnTime" class="form-label">Time*</label>
-                <input type="time" className={fieldError.time ? "form-control error-message" : "form-control"} id="formControlInputReturnTime" name="time" placeholder="Enter Time" value={returnTimeFormData.time} onChange={handleChangeTimeReturn} required />
-                {fieldError.time &&
+                <input type="time" className={fieldError.entryTime ? "form-control error-message" : "form-control"} id="formControlInputReturnTime" name="entryTime" placeholder="Enter Time" value={returnTimeFormData.entryTime} onChange={handleChangeTimeReturn} required />
+                {fieldError.entryTime &&
                     <span className="error-message">
-                        {fieldError.time}
+                        {fieldError.entryTime}
                     </span>
                 }
               </div>

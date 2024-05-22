@@ -9,6 +9,8 @@ import AmalgamationCitizen from "./Amalgamate";
 import CitizenAppeal from "./Appeal";
 import MyNotices from "./MyNotices";
 
+import CitizenNotice from "./CitizenNotice"
+
 const hideBackButtonConfig = [
   { screenPath: "property/new-application/acknowledgement" },
   { screenPath: "property/edit-application/acknowledgement" },
@@ -56,6 +58,7 @@ const App = () => {
           <Route path={`${path}/property/property-assessment/search-assessment-results`} component={SearchAssessmentResultsComponent} />
           <PrivateRoute path={`${path}/property/appeal/:propertyIds`} component={CitizenAppeal}></PrivateRoute>
           <PrivateRoute path={`${path}/property/notices`} component={MyNotices}></PrivateRoute>
+          <PrivateRoute path={`${path}/property/notice/:noticeNo`} component={CitizenNotice}></PrivateRoute>
 
           <PrivateRoute path={`${path}/property/properties/:propertyIds`} component={PropertyInformation}></PrivateRoute>
           {/* <PrivateRoute path={`${path}/property/transfer-ownership`} component={MutateProperty}></PrivateRoute> */}
