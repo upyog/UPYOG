@@ -53,7 +53,7 @@ const AssetDocuments = ({ t, config, onSelect, userType, formData, setError: set
             document={document}
             action={action}
             t={t}
-            id={`ptr-document-${index}`}
+            id={`document-${index}`}
             error={error}
             setError={setError}
             setDocuments={setDocuments}
@@ -170,21 +170,7 @@ function AssetSelectDocument({
     }
   }, [uploadedFile, selectedDocument, isHidden]);
 
-  // useEffect(() => {
-  //   if (action === "update") {
-  //     const originalDoc = formData?.originalData?.documents?.filter((e) => e.documentType.includes(doc?.code))[0];
-  //     const docType = dropDownData
-  //       .filter((e) => e.code === originalDoc?.documentType)
-  //       .map((e) => ({ ...e, i18nKey: e?.code?.replaceAll(".", "_") }))[0];
-  //       //console.log("5555555555", docType);
-  //     if (!docType) setHidden(true);
-  //     else {
-  //       setSelectedDocument(docType);
-  //       setUploadedFile(originalDoc?.fileStoreId);
-  //     }
-  //   } else if (action === "create") {
-  //   }
-  // }, []);
+ 
 
   useEffect(() => {
     (async () => {

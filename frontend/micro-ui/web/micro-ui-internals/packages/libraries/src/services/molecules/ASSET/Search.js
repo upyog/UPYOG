@@ -71,8 +71,8 @@ export const ASSETSearch = {
                 { title: "AST_GOVT_ORDER_NUM", value: response?.additionalDetails?.GovernmentorderNumber },
                 { title: "AST_FROM_DEED_TAKEN", value: response?.additionalDetails?.FromWhomDeedTaken },
                 { title: "AST_HOW_ASSET_USE", value: response?.additionalDetails?.howassetbeingused },
-                { title: "AST_FENCED", value: response?.additionalDetails?.isitfenced },
-                { title: "AST_ANY_BUILTUP", value: response?.additionalDetails?.AnyBuiltup },
+                { title: "AST_FENCED", value: response?.additionalDetails?.isitfenced?.code },
+                { title: "AST_ANY_BUILTUP", value: response?.additionalDetails?.AnyBuiltup?.code },
                 { title: "AST_REVENUE_GENERATED", value: response?.additionalDetails?.Revenuegeneratedbyasset  + " Rupees"},
                 { title: "AST_TOTAL_COST", value: response?.additionalDetails?.Totalcost  + " Rupees"},
                 
@@ -100,9 +100,9 @@ export const ASSETSearch = {
           ...(response?.assetParentCategory === "SERVICE"
           ? [
             { title: "AST_TYPE", value: response?.additionalDetails?.assetAssetSubCategory },
-            { title: "AST_ROAD_TYPE", value: response?.additionalDetails?.RoadType },
+            { title: "AST_ROAD_TYPE", value: response?.additionalDetails?.RoadType?.code },
             { title: "AST_ROAD_WIDTH", value: response?.additionalDetails?.RoadWidth },
-            { title: "AST_SURFACE_TYPE", value: response?.additionalDetails?.SurfaceType},
+            { title: "AST_SURFACE_TYPE", value: response?.additionalDetails?.SurfaceType?.code},
             { title: "AST_LAST_MAINTAINENCE", value: response?.additionalDetails?.LastMaintainence },
             { title: "AST_NEXT_MAINTAINENCE", value: response?.additionalDetails?.NextMaintainence },
             { title: "AST_PROTECTION_LENGTH", value: response?.additionalDetails?.ProtectionLength },
@@ -118,6 +118,23 @@ export const ASSETSearch = {
             { title: "AST_BOOK_VALUE", value: response?.additionalDetails?.BookValue + " Rupees"},
             ]
           :[]),
+
+          ...(response?.additionalDetails?.assetAssetSubCategory === "Vehicles"
+          ? [
+            { title: "AST_TYPE", value: response?.additionalDetails?.assetAssetSubCategory },
+            { title: "AST_ACQUIRED_SOURCE", value: response?.additionalDetails?.acquiredFrom },
+            { title: "AST_ACQUISTION_DATE", value: response?.additionalDetails?.asquistionDate },
+            { title: "AST_CHASIS_NUMBER", value: response?.additionalDetails?.chasisNumber },
+            { title: "AST_ENGINE_NUMBER", value: response?.additionalDetails?.engineNumber },
+            { title: "AST_REGISTRATION_NUMBER ", value: response?.additionalDetails?.registrationNumber },
+            { title: "AST_PARKING_LOCATION", value: response?.additionalDetails?.parkingLocation },
+            { title: "AST_IMPROVEMENT_COST", value: response?.additionalDetails?.improvementCost + " Rupees"},
+            { title: "AST_TOTAL_COST", value: response?.additionalDetails?.Totalcost + " Rupees"},
+            { title: "AST_CURRENT_VALUE", value: response?.additionalDetails?.Currentassetvalue + " Rupees"},
+            { title: "AST_BOOK_VALUE", value: response?.additionalDetails?.BookValue + " Rupees"},
+          ]
+          :[]),
+
         ],
       },
 

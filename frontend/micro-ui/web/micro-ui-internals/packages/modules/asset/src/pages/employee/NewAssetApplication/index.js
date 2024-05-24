@@ -86,11 +86,7 @@ const NewAssetApplication = () => {
     
 
    
-  // if (isLoading) {
-  //   return <Loader />;
-  // }
-
-  /* use newConfig instead of commonFields for local development in case needed */
+  
 
   
   const configs = newConfig;    
