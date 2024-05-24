@@ -124,13 +124,13 @@ public class TradeLicenseService {
         /*
          * call workflow service if it's enable else uses internal workflow process
          */
-       switch(businessServicefromPath)
-       {
-           case businessService_TL:
-               if (config.getIsExternalWorkFlowEnabled())
-                   wfIntegrator.callWorkFlow(tradeLicenseRequest);
-               break;
-       }
+//       switch(businessServicefromPath)
+//       {
+//           case businessService_TL:
+//               if (config.getIsExternalWorkFlowEnabled())
+//                   wfIntegrator.callWorkFlow(tradeLicenseRequest);
+//               break;
+//       }
         repository.save(tradeLicenseRequest);
        
 
