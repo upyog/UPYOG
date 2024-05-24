@@ -30,8 +30,8 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 @Getter
 @Setter
 @ToString
-@Builder(toBuilder = true)
 @NoArgsConstructor
+@Builder(toBuilder = true)
 public class User {
 
     private Long id;
