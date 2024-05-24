@@ -25,7 +25,7 @@ const ASSETCard = () => {
   ]
   const ASSET_INITIATOR = Digit.UserService.hasAccess(["ASSET_INITIATOR","ASSET_VERIFIER"]) || false;
   const propsForModuleCard = {
-    Icon: <PropertyHouse />,
+    // Icon: <PropertyHouse />,
     moduleName: t("TITLE_ASSET_MANAGEMENT"),
     kpis: [
       
