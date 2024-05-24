@@ -31,7 +31,6 @@
               accessor: "applicationNo",
               disableSortBy: true,
               Cell: ({ row }) => {
-                console.log("row in application",row);
                 return (
                   <div>
                     <span className="link">
@@ -48,7 +47,6 @@
             {
               Header: t("AST_ASSET_CATEGORY"),
               Cell: ( row ) => {
-                console.log("rowwwww",row);
                 return GetCell(`${row?.row?.original?.["assetClassification"]}`)
               },
               disableSortBy: true,
@@ -107,12 +105,12 @@
                   </Card>
                   <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                   <SearchField>
-                      <label>{t("ASSET_APPLICATION_ID")}</label>
+                      <label>{t("AST_APPLICATION_ID")}</label>
                       <TextInput name="applicationNo" inputRef={register({})} />
                   </SearchField>
                  
                   <SearchField>
-                      <label>{t("ASSET_FROM_DATE")}</label>
+                      <label>{t("AST_FROM_DATE")}</label>
                       <Controller
                           render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
                           name="fromDate"
@@ -120,7 +118,7 @@
                           />
                   </SearchField>
                   <SearchField>
-                      <label>{t("ASSET_TO_DATE")}</label>
+                      <label>{t("AST_TO_DATE")}</label>
                       <Controller
                           render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
                           name="toDate"

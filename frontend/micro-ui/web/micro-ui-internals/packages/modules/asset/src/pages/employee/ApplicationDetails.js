@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
+// import getAssetAcknowledgementData from "../../getAssetAcknowledgementData";
 import getAssetAcknowledgementData from "../../getAssetAcknowledgementData";
 
 
@@ -19,7 +20,7 @@ const ApplicationDetails = () => {
   const [enableAudit, setEnableAudit] = useState(false);
   const [businessService, setBusinessService] = useState("asset-create");
 
-  
+  console.log("appDetailsToShow",appDetailsToShow);
   
 
   const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
@@ -58,7 +59,6 @@ const ApplicationDetails = () => {
       tenantId,
       filters: { applicationNo: applicationNo, audit: true },
     },
-    // { enabled: enableAudit, select: (data) => data.PetRegistrationApplications?.filter((e) => e.status === "ACTIVE") }
   );
 
 
@@ -80,9 +80,6 @@ const ApplicationDetails = () => {
 
     if (workflowDetails?.data?.applicationBusinessService && !(workflowDetails?.data?.applicationBusinessService === "ptr" && businessService === "ptr")) {
       setBusinessService(workflowDetails?.data?.applicationBusinessService);
-
-
-
     }
   }, [workflowDetails.data]);
 
@@ -91,15 +88,17 @@ const ApplicationDetails = () => {
 
 
   const handleDownloadPdf = async () => {
-    const PetRegistrationApplications = appDetailsToShow?.applicationData;
-    const tenantInfo = tenants.find((tenant) => tenant.code === PetRegistrationApplications.tenantId);
-    const data = await getAssetAcknowledgementData(PetRegistrationApplications.applicationData, tenantInfo, t);
+    const Assets = appDetailsToShow?.applicationData;
+    const tenantInfo = tenants.find((tenant) => tenant.code === Assets.tenantId);
+    const data = await getAssetAcknowledgementData(Assets.applicationData, tenantInfo, t);
+    // let response = await Digit.PaymentService.generatePdf(tenantId, { Asset: [appDetailsToShow?.applicationData?.applicationData] }, "asset-report");
+    // window.open(fileStore[response?.filestoreIds[0]], "_blank");
     Digit.Utils.pdf.generate(data);
   };
 
   const AssetDetailsPDF = {
     order: 1,
-    label: t("ASSET_APPLICATION"),
+    label: t("AST_REPORT"),
     onClick: () => handleDownloadPdf(),
   };
   let dowloadOptions = [AssetDetailsPDF];

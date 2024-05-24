@@ -26,18 +26,7 @@ export const newConfig =[
             },
         ]
     },
-    // {
-    //     // "head": "AST_COMMON_TYPE",
-    //     "body": [
-    //         {
-    //             "component": "AssetCommonSelection",
-    //             "withoutLabel": true,
-    //             "key": "assetscommon",
-    //             "type": "component",
-                
-    //         },
-    //     ]
-    // },
+    
 
     {
         "head": "AST_LOCATION_DETAILS",
