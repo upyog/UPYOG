@@ -30,6 +30,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 @Builder(toBuilder = true)
 public class User {
 

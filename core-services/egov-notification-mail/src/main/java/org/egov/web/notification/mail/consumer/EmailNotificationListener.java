@@ -2,6 +2,7 @@ package org.egov.web.notification.mail.consumer;
 
 import java.util.HashMap;
 
+import org.egov.web.notification.mail.consumer.contract.Email;
 import org.egov.web.notification.mail.consumer.contract.EmailRequest;
 import org.egov.web.notification.mail.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,21 @@ public class EmailNotificationListener {
     	//EmailRequest emailRequest = objectMapper.convertValue(record, EmailRequest.class);
         //emailService.sendEmail(emailRequest.getEmail());
         System.out.println("Printing Records for Kakfka Water topic");
+        
+      	
+
+    	try {
+			EmailRequest emailRequest = objectMapper.convertValue(record, EmailRequest.class);
+			emailService.sendEmail(emailRequest.getEmail());
+		} catch (IllegalArgumentException ex) {
+			Email emailRequest = objectMapper.convertValue(record, Email.class);
+	        emailService.sendEmail(emailRequest);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
+    	System.out.println("Printing Records for Kakfka Water topic");
+    	
         System.out.println("Recors is ================================"+record);
 
         
