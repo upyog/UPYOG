@@ -92,7 +92,7 @@ public class FrontYardService extends GeneralRule {
 	private static final String RULE_37_TWO_G = "37-2-G";
 	private static final String RULE_37_TWO_H = "37-2-H";
 	private static final String RULE_37_TWO_I = "37-2-I";
-	private static final String RULE_47 = "47";
+	private static final String RULE = "4.4.4";
 
 	private static final String MINIMUMLABEL = "Minimum distance ";
 	
@@ -290,7 +290,7 @@ public class FrontYardService extends GeneralRule {
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult,
 			HashMap<String, String> errors) {
 		Boolean valid = false;
-		String subRule = RULE_35;
+		String subRule = RULE;
 		String rule = FRONT_YARD_DESC;
 		BigDecimal meanVal = BigDecimal.ZERO;
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
@@ -391,7 +391,7 @@ public class FrontYardService extends GeneralRule {
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult,
 			HashMap<String, String> errors) {
 		Boolean valid = false;
-		String subRule = RULE_35;
+		String subRule = RULE;
 		String rule = FRONT_YARD_DESC;
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;
@@ -594,7 +594,7 @@ public class FrontYardService extends GeneralRule {
 			String frontYardFieldName, BigDecimal min, BigDecimal mean, OccupancyTypeHelper mostRestrictiveOccupancy,
 			FrontYardResult frontYardResult) {
 		Boolean valid = false;
-		String subRule = RULE_47;
+		String subRule = RULE;
 		String rule = FRONT_YARD_DESC;
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;

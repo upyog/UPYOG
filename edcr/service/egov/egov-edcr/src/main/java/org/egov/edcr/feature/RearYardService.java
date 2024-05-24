@@ -83,7 +83,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class RearYardService extends GeneralRule {
 	private static final Logger LOG = LogManager.getLogger(RearYardService.class);
-	private static final String RULE_35 = "35 Table-8";
+	private static final String RULE = "4.4.4";
 	private static final String RULE_36 = "36";
 	private static final String RULE_37_TWO_A = "37-2-A";
 	private static final String RULE_37_TWO_B = "37-2-B";
@@ -275,7 +275,7 @@ public class RearYardService extends GeneralRule {
 			OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult,
 			HashMap<String, String> errors) {
 		Boolean valid = false;
-		String subRule = RULE_35;
+		String subRule = RULE;
 		String rule = FRONT_YARD_DESC;
 		BigDecimal meanVal = BigDecimal.ZERO;
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
@@ -371,7 +371,7 @@ public class RearYardService extends GeneralRule {
 			final Plot plot, final String rearYardFieldName, final BigDecimal min, final BigDecimal mean,
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult,
 			BigDecimal buildingHeight) {
-		String subRule = RULE_35;
+		String subRule = RULE;
 		String rule = REAR_YARD_DESC;
 		Boolean valid = false;
 		BigDecimal minVal = BigDecimal.valueOf(0);
@@ -469,7 +469,7 @@ public class RearYardService extends GeneralRule {
 			Integer level, final Plot plot, final String rearYardFieldName, final BigDecimal min, final BigDecimal mean,
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult,
 			HashMap<String, String> errors) {
-		String subRule = RULE_35;
+		String subRule = RULE;
 		String rule = REAR_YARD_DESC;
 		Boolean valid = false;
 		BigDecimal minVal = BigDecimal.valueOf(0);
@@ -502,7 +502,7 @@ public class RearYardService extends GeneralRule {
 	private Boolean checkRearYardForIndustrial(SetBack setback, Building building, final Plan pl, Block block,
 			Integer level, final Plot plot, final String rearYardFieldName, final BigDecimal min, final BigDecimal mean,
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult) {
-		String subRule = RULE_35;
+		String subRule = RULE;
 		String rule = REAR_YARD_DESC;
 		Boolean valid = false;
 		BigDecimal minVal = BigDecimal.valueOf(0);
@@ -606,7 +606,7 @@ public class RearYardService extends GeneralRule {
 			Integer level, final Plot plot, final String rearYardFieldName, final BigDecimal min, final BigDecimal mean,
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult,
 			HashMap<String, String> errors) {
-		String subRule = RULE_35;
+		String subRule = RULE;
 		String rule = REAR_YARD_DESC;
 		Boolean valid = false;
 		BigDecimal minVal = BigDecimal.valueOf(0);

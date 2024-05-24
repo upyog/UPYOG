@@ -286,17 +286,17 @@ public class PlanReportService {
             AbstractColumn floorArea = ColumnBuilder.getNew().setColumnProperty("floorArea", BigDecimal.class.getName())
                     .setTitle("Floor Area in m²").setWidth(120).setStyle(reportService.getNumberStyle()).build();
             frb.addGlobalFooterVariable(floorArea, DJCalculation.SUM, reportService.getTotalNumberStyle());
-
-            AbstractColumn carpetArea = ColumnBuilder.getNew()
-                    .setColumnProperty("carpetArea", BigDecimal.class.getName()).setTitle("Carpet Area in m²")
-                    .setWidth(120).setStyle(reportService.getNumberStyle()).build();
-            frb.addGlobalFooterVariable(carpetArea, DJCalculation.SUM, reportService.getTotalNumberStyle());
+//
+//            AbstractColumn carpetArea = ColumnBuilder.getNew()
+//                    .setColumnProperty("carpetArea", BigDecimal.class.getName()).setTitle("Carpet Area in m²")
+//                    .setWidth(120).setStyle(reportService.getNumberStyle()).build();
+//            frb.addGlobalFooterVariable(carpetArea, DJCalculation.SUM, reportService.getTotalNumberStyle());
 
             frb.addColumn(floor);
             frb.addColumn(occupancy);
             frb.addColumn(builtUpArea);
             frb.addColumn(floorArea);
-            frb.addColumn(carpetArea);
+           // frb.addColumn(carpetArea);
 
             if (dcrReportBlockDetail.getBlockNo() != null) {
                 if (isProposed) {
@@ -327,7 +327,7 @@ public class PlanReportService {
                     }
 
                     AutoText autoText = new AutoText(text.toString(), AutoText.POSITION_FOOTER,
-                            HorizontalBandAlignment.LEFT, 530);
+                            HorizontalBandAlignment.LEFT, 410);
 
                     autoText.setHeight(40);
                     autoText.setStyle(reportService.getTotalNumberStyle());
@@ -384,14 +384,14 @@ public class PlanReportService {
                             BigDecimal.class.getName())
                     .setTitle("Floor Area in m²").setWidth(120).setStyle(reportService.getTotalNumberStyle()).build();
 
-            AbstractColumn carpetArea = ColumnBuilder.getNew()
-                    .setColumnProperty(isProposed ? "proposedCarpetArea" : "totalExistingCarpetArea",
-                            BigDecimal.class.getName())
-                    .setTitle("Carpet Area in m²").setWidth(120).setStyle(reportService.getTotalNumberStyle()).build();
+//            AbstractColumn carpetArea = ColumnBuilder.getNew()
+//                    .setColumnProperty(isProposed ? "proposedCarpetArea" : "totalExistingCarpetArea",
+//                            BigDecimal.class.getName())
+//                    .setTitle("Carpet Area in m²").setWidth(120).setStyle(reportService.getTotalNumberStyle()).build();
 
             frb.addColumn(builtUpArea);
             frb.addColumn(floorArea);
-            frb.addColumn(carpetArea);
+            //frb.addColumn(carpetArea);
 
             if (isProposed)
                 frb.setTitle("Total Proposed Areas");
@@ -443,9 +443,9 @@ public class PlanReportService {
                         .setColumnProperty("totalFloorArea", BigDecimal.class.getName()).setTitle("Floor Area in m²")
                         .setWidth(100).setStyle(reportService.getTotalNumberStyle()).build();
 
-                AbstractColumn carpetArea = ColumnBuilder.getNew()
-                        .setColumnProperty("totalCarpetArea", BigDecimal.class.getName()).setTitle("Carpet Area in m²")
-                        .setWidth(100).setStyle(reportService.getTotalNumberStyle()).build();
+//                AbstractColumn carpetArea = ColumnBuilder.getNew()
+//                        .setColumnProperty("totalCarpetArea", BigDecimal.class.getName()).setTitle("Carpet Area in m²")
+//                        .setWidth(100).setStyle(reportService.getTotalNumberStyle()).build();
 
                 AbstractColumn coverageArea = ColumnBuilder.getNew()
                         .setColumnProperty("totalCoverageArea", BigDecimal.class.getName()).setTitle("Covered Area in m²")
@@ -458,7 +458,7 @@ public class PlanReportService {
 
                 frb.addColumn(builtUpArea);
                 frb.addColumn(floorArea);
-                frb.addColumn(carpetArea);
+             //   frb.addColumn(carpetArea);
                 frb.addColumn(coverageArea);
                 frb.addColumn(constructedArea);
             } else {
@@ -470,9 +470,9 @@ public class PlanReportService {
                         .setColumnProperty("totalFloorArea", BigDecimal.class.getName()).setTitle("Floor Area in m²")
                         .setWidth(120).setStyle(reportService.getTotalNumberStyle()).build();
 
-                AbstractColumn carpetArea = ColumnBuilder.getNew()
-                        .setColumnProperty("totalCarpetArea", BigDecimal.class.getName()).setTitle("Carpet Area in m²")
-                        .setWidth(120).setStyle(reportService.getTotalNumberStyle()).build();
+//                AbstractColumn carpetArea = ColumnBuilder.getNew()
+//                        .setColumnProperty("totalCarpetArea", BigDecimal.class.getName()).setTitle("Carpet Area in m²")
+//                        .setWidth(120).setStyle(reportService.getTotalNumberStyle()).build();
 
                 AbstractColumn coverageArea = ColumnBuilder.getNew()
                         .setColumnProperty("totalCoverageArea", BigDecimal.class.getName()).setTitle("Covered Area in m²")
@@ -480,7 +480,7 @@ public class PlanReportService {
 
                 frb.addColumn(builtUpArea);
                 frb.addColumn(floorArea);
-                frb.addColumn(carpetArea);
+              //  frb.addColumn(carpetArea);
                 frb.addColumn(coverageArea);
             }
 
@@ -660,7 +660,7 @@ public class PlanReportService {
         valuesMap.put("blockCount",
                 plan.getBlocks() != null && !plan.getBlocks().isEmpty() ? plan.getBlocks().size() : 0);
         valuesMap.put("surrenderRoadArea", plan.getTotalSurrenderRoadArea());
-        String imageURL = ReportUtil.getImageURL("/egi/resources/global/images/digit-logo-black.png");
+        String imageURL = ReportUtil.getImageURL("/egi/resources/global/images/Upyog-logo.png");
         valuesMap.put("egovLogo", imageURL);
         valuesMap.put("cityLogo", cityService.getCityLogoURLByCurrentTenant());
 
@@ -1059,11 +1059,11 @@ public class PlanReportService {
                                                     ? occupancy.getFloorArea()
                                                             .subtract(occupancy.getExistingFloorArea())
                                                     : occupancy.getFloorArea());
-                                    dcrReportFloorDetail.setCarpetArea(
-                                            occupancy.getExistingCarpetArea().compareTo(BigDecimal.ZERO) > 0
-                                                    ? occupancy.getCarpetArea()
-                                                            .subtract(occupancy.getExistingCarpetArea())
-                                                    : occupancy.getCarpetArea());
+//                                    dcrReportFloorDetail.setCarpetArea(
+//                                            occupancy.getExistingCarpetArea().compareTo(BigDecimal.ZERO) > 0
+//                                                    ? occupancy.getCarpetArea()
+//                                                            .subtract(occupancy.getExistingCarpetArea())
+//                                                    : occupancy.getCarpetArea());
                                     if (dcrReportFloorDetail.getBuiltUpArea().compareTo(BigDecimal.ZERO) > 0) {
                                         dcrReportFloorDetails.add(dcrReportFloorDetail);
                                     }
@@ -1128,7 +1128,7 @@ public class PlanReportService {
                                         dcrReportFloorDetail.setOccupancy(occupancyName);
                                         dcrReportFloorDetail.setBuiltUpArea(occupancy.getExistingBuiltUpArea());
                                         dcrReportFloorDetail.setFloorArea(occupancy.getExistingFloorArea());
-                                        dcrReportFloorDetail.setCarpetArea(occupancy.getExistingCarpetArea());
+                                       // dcrReportFloorDetail.setCarpetArea(occupancy.getExistingCarpetArea());
                                         dcrReportFloorDetails.add(dcrReportFloorDetail);
                                     }
                                 }
