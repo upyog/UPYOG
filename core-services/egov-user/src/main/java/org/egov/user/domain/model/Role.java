@@ -9,6 +9,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @ToString
+@NoArgsConstructor
 @EqualsAndHashCode(of = {"code", "tenantId"})
 public class Role {
     private static final String CITIZEN = "CITIZEN";
