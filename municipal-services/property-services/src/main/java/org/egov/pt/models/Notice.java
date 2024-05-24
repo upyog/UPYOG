@@ -60,16 +60,7 @@ public class Notice {
 	
 	@JsonProperty("place")
 	private String place;
-	
-	@JsonProperty("particulars")
-	private String particulars;
-	
-	@JsonProperty("asreturnFiled")
-	private String asreturnFiled;
-	
-	@JsonProperty("asperMunispality")
-	private String asperMunispality;
-	
+		
 	@JsonProperty("resolutionOn")
 	private String resolutionOn;
 	
@@ -90,6 +81,27 @@ public class Notice {
 	
 	@JsonProperty("appealNo")
 	private String appealNo;
+	
+	@JsonProperty("Rule_23")
+	private Boolean rule_23;
+	
+	@JsonProperty("Rule_33")
+	private Boolean rule_33;
+	
+	@JsonProperty("Rule_34")
+	private Boolean rule_34;
+	
+	@JsonProperty("Rule_36")
+	private Boolean rule_36;
+	
+	@JsonProperty("FailedtoProduceNecessaryDocuments")
+	private Boolean failedtoproducenecessarydocuments;
+	
+	@JsonProperty("WillfullyfurnishesIncorrectInformation")
+	private Boolean willfullyfurnishesincorrectinformation;
+	
+	@JsonProperty("ObstructAnyAuthorityAppointed")
+	private Boolean obstructanyauthorityappointed;
 	
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;
