@@ -8,6 +8,7 @@ import java.util.Date;
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"code", "tenantId"})
