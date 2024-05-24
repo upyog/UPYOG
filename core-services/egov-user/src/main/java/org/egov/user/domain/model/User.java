@@ -32,7 +32,6 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 @ToString
 @NoArgsConstructor
 @Builder(toBuilder = true)
-@NoArgsConstructor
 public class User {
 
     private Long id;
