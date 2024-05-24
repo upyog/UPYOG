@@ -4,11 +4,24 @@ import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
 
 import EWCard from "./components/EWCard";
+import EWASTEProductDetails from "./pageComponents/EWASTEProductDetails";
+import EWASTEOwnerInfo from "./pageComponents/EWASTEOwnerInfo";
+import EWASTEProductList from "./components/EWASTEProductList";
+import EWASTEProductListElement from "./components/EWASTEProductListElement";
+import EWCheckPage from "./pages/citizen/Create/CheckPage";
+import EWCreate from "./pages/citizen/Create";
+import CitizenApp from "./pages/citizen";
 
 
 
-
-const componentsToRegister = {}
+const componentsToRegister = {
+  EWCreatewaste:EWCreate,
+  EWCheckPage,
+  EWASTEProductDetails,
+  EWASTEOwnerInfo,
+  EWASTEProductList,
+  EWASTEProductListElement
+}
 
 
 
@@ -21,6 +34,7 @@ const addComponentsToRegistry = () => {
   
   export const EWModule = ({ stateCode, userType, tenants }) => {
     const { path, url } = useRouteMatch();
+    console.log("this ai another path",path,url)
   
     const moduleCode = "EW";
     const language = Digit.StoreData.getCurrentLanguage();
@@ -42,10 +56,11 @@ const addComponentsToRegistry = () => {
     );
   
     if (userType === "employee") {
+
       return <EmployeeApp path={path} url={url} userType={userType} />;
     } else return <CitizenApp />;
   };
-  
+
   export const EWLinks = ({ matchPath, userType }) => {
     const { t } = useTranslation();
     const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("EW", {});
@@ -56,13 +71,13 @@ const addComponentsToRegistry = () => {
   
     const links = [
       
-    //   {
-    //     link: `${matchPath}/ptr/petservice/new-application`,
-    //     i18nKey: t("PTR_CREATE_PET_APPLICATION"),
-    //   },
+      // {
+      //   link: `${matchPath}/ew/ew-common/raiseRequest`,
+      //   i18nKey: t("EW_kuchbhi"),
+      // },
       
     //   {
-    //     link: `${matchPath}/ptr/petservice/my-application`,
+    //     link: `${matchPath}/ptr/petservice/my-applition`,
     //     i18nKey: t("PTR_MY_APPLICATIONS_HEADER"),
     //   },
       
