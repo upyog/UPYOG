@@ -20,13 +20,9 @@ const ApplicationDetails = () => {
   const [enableAudit, setEnableAudit] = useState(false);
   const [businessService, setBusinessService] = useState("asset-create");
 
-  console.log("appDetailsToShow",appDetailsToShow);
   
 
   const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
-  
-
-
 
 
   const {
@@ -35,7 +31,7 @@ const ApplicationDetails = () => {
     data: updateResponse,
     error: updateError,
     mutate,
-  } = Digit.Hooks.ptr.usePTRApplicationAction(tenantId);
+  } = Digit.Hooks.asset.useASSETApplicationAction(tenantId);
 
 
 
@@ -45,12 +41,8 @@ const ApplicationDetails = () => {
     tenantId: applicationDetails?.applicationData?.tenantId || tenantId,
     id: applicationDetails?.applicationData?.applicationData?.applicationNo,
     moduleCode: businessService,
-    role: "PT_CEMP",
+    role: ["ASSET_INITIATOR", "ASSET_VERIFIER", "ASSET_APPROVER"]
   });
-
-
-
-
 
 
 
@@ -78,7 +70,7 @@ const ApplicationDetails = () => {
 
   useEffect(() => {
 
-    if (workflowDetails?.data?.applicationBusinessService && !(workflowDetails?.data?.applicationBusinessService === "ptr" && businessService === "ptr")) {
+    if (workflowDetails?.data?.applicationBusinessService && !(workflowDetails?.data?.applicationBusinessService === "asset-create" && businessService === "asset-create")) {
       setBusinessService(workflowDetails?.data?.applicationBusinessService);
     }
   }, [workflowDetails.data]);
@@ -91,8 +83,6 @@ const ApplicationDetails = () => {
     const Assets = appDetailsToShow?.applicationData;
     const tenantInfo = tenants.find((tenant) => tenant.code === Assets.tenantId);
     const data = await getAssetAcknowledgementData(Assets.applicationData, tenantInfo, t);
-    // let response = await Digit.PaymentService.generatePdf(tenantId, { Asset: [appDetailsToShow?.applicationData?.applicationData] }, "asset-report");
-    // window.open(fileStore[response?.filestoreIds[0]], "_blank");
     Digit.Utils.pdf.generate(data);
   };
 
@@ -117,7 +107,7 @@ const ApplicationDetails = () => {
             options={dowloadOptions}
             downloadBtnClassName={"employee-download-btn-className"}
             optionsClassName={"employee-options-btn-className"}
-          // ref={menuRef}
+         
           />
         )}
       </div>
@@ -126,19 +116,19 @@ const ApplicationDetails = () => {
 
 
       <ApplicationDetailsTemplate
-        applicationDetails={appDetailsToShow}
+        applicationDetails={appDetailsToShow?.applicationData}
         isLoading={isLoading}
         isDataLoading={isLoading}
-        applicationData={appDetailsToShow?.applicationData}
+        applicationData={appDetailsToShow?.applicationData?.applicationData}  
         mutate={mutate}
-        // workflowDetails={workflowDetails}
+        workflowDetails={workflowDetails}
         businessService={businessService}
         moduleCode="ASSET"
         showToast={showToast}
         setShowToast={setShowToast}
         closeToast={closeToast}
-        timelineStatusPrefix={"ASSET_COMMON_STATUS_"}
-        forcedActionPrefix={"EMPLOYEE_PTR"}
+        timelineStatusPrefix={"AST_STATUS_"}
+        forcedActionPrefix={"AST"}
         statusAttribute={"state"}
         MenuStyle={{ color: "#FFFFFF", fontSize: "18px" }}
       />

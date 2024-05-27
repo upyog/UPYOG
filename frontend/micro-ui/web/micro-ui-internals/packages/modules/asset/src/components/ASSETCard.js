@@ -23,7 +23,7 @@ const ASSETCard = () => {
       link: `/digit-ui/employee/asset/assetservice/my-asset`,
     },
   ]
-  const ASSET_INITIATOR = Digit.UserService.hasAccess(["ASSET_INITIATOR","ASSET_VERIFIER"]) || false;
+  const ASSET_INITIATOR = Digit.UserService.hasAccess(["ASSET_INITIATOR","ASSET_VERIFIER", "ASSET_APPROVER"]) || false;
   const propsForModuleCard = {
     // Icon: <PropertyHouse />,
     moduleName: t("TITLE_ASSET_MANAGEMENT"),
