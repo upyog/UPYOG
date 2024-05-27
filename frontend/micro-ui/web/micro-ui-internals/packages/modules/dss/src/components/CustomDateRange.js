@@ -203,8 +203,14 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
       tempCalenderData.startDate = year;
     }else if (!calenderData.endDate){
       tempCalenderData.endDate = year;
+      let selection = {};
+      let [tempStartYear, tempStartMonth] = calenderData.startDate.split('-');
+      let [tempEndYear, tempEndMonth] = tempCalenderData.endDate.split('-');
+      let months = {"Jan": 0,"Feb": 1,"Mar": 2,"Apr": 3,"May": 4,"Jun": 5,"Jul": 6,"Aug": 7,"Sep": 8,"Oct": 9,"Nov": 10,"Dec": 11};
+      selection.startDate = new Date(tempStartYear,months[tempStartMonth], 1);
+      selection.endDate = new Date(tempEndYear,months[tempEndMonth]+1, 0);
 
-      if (tempCalenderData.endDate < calenderData.startDate){
+      if (selection.endDate < selection.startDate){
         tempCalenderData.endDate = calenderData.startDate;
         tempCalenderData.startDate = year;
       }
