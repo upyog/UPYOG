@@ -25,7 +25,7 @@ import {
 import { initOBPSComponents } from "@egovernments/digit-ui-module-obps";
 import { initNOCComponents } from "@upyog/digit-ui-module-noc";
 import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
-import { initWSComponents } from "@upyog/digit-ui-module-ws";
+import { initWSComponents } from "@egovernments/digit-ui-module-ws";
 // import { initCustomisationComponents } from "./Customisations";
 import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
 import { initBillsComponents } from "@upyog/digit-ui-module-bills";
