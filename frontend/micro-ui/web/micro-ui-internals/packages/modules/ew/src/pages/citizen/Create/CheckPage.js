@@ -41,10 +41,11 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     isEditPET,
     isUpdatePET,
     ownerKey,
+    ewdet
 
   } = value;
 
-  const typeOfApplication = !isEditPET && !isUpdatePET ? `new-application` : `edit-application`;
+  // const typeOfApplication = !isEditPET && !isUpdatePET ? `new-application` : `edit-application`;
 
 
   const [agree, setAgree] = useState(false);
@@ -53,7 +54,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   };
   return (
     <React.Fragment>
-      {window.location.href.includes("/citizen") ? <Timeline currentStep={3} /> : null}
+      {window.location.href.includes("/citizen") ? <Timeline currentStep={4} /> : null}
       <Card>
         <CardHeader>{t("EWASTE_CHECK_YOUR_DETAILS")}</CardHeader>
         <div>
@@ -67,31 +68,32 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             <Row
               label={t("EWASTE_APPLICANT_NAME")}
               text={`${t(checkForNA(ownerKey?.applicantName))}`}
-              actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/owners/`}${index}`} />}
+              actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/ew-common/raiseRequest/productdetails/`}`} />}
+              // actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/owners/`}${index}`} />}
             />
 
             <Row
               label={t("EWASTE_MOBILE_NUMBER")}
               text={`${t(checkForNA(ownerKey?.mobileNumber))}`}
-              actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/owners/`}${index}`} />}
+              actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/ew-common/raiseRequest/productdetails/`}`} />}
             />
 
             <Row
               label={t("EWASTE_LOCALITY")}
               text={`${t(checkForNA(ownerKey?.locality?.code))}`}
-              actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/owners/`}${index}`} />}
+              actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/ew-common/raiseRequest/productdetails/`}`} />}
             />
 
             <Row
               label={t("EWASTE_COMPLETE_ADDRESS")}
               text={`${t(checkForNA(ownerKey?.address))}`}
-              actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/owners/`}${index}`} />}
+              actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/ew-common/raiseRequest/productdetails/`}`} />}
             />
 
             <Row
               label={t("EWASTE_VENDOR_NAME")}
               text={`${t(checkForNA(ownerKey?.vendor?.code))}`}
-              actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/owners/`}${index}`} />}
+              actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/ew-common/raiseRequest/productdetails/`}`} />}
             />
 
           </StatusTable>
@@ -99,45 +101,28 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
           <CardSubHeader>{t("EWASTE_TITLE_PRODUCT_DETAILS")}</CardSubHeader>
           <br></br>
-          <p><i>!!Under Construction!!</i></p>
-          {/* <StatusTable>
+          {/* <p><i>!!Under Construction!!</i></p> */}
+          <StatusTable>
         <Row
-            label={t("PTR_SEARCH_PET_TYPE")}
-            text={`${t(checkForNA(pets?.petType?.value))}`}
-            actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details/`}${index}`} />}
+            label={t("EWASTE_SEARCH_PRODUCT_NAME")}
+            text={`${t(checkForNA(ewdet?.productName?.code))}`}
+            actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/ew-common/raiseRequest/productdetails/`}`} />}
         />
 
         <Row
-            label={t("PTR_SEARCH_BREED_TYPE")}
-            text={`${t(checkForNA(pets?.breedType?.value))}`}
-            actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details/`}${index}`} />}
+            label={t("EWASTE_SEARCH_QUANTITY")}
+            text={`${t(checkForNA(ewdet?.productQuantity))}`}
+            actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/ew-common/raiseRequest/productdetails/`}`} />}
         />
 
         <Row
-            label={t("PTR_PET_NAME")}
-            text={`${t(checkForNA(pets?.petName))}`}
-            actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details/`}${index}`} />}
+            label={t("EWASTE_SEARCH_TOTAL_PRICE")}
+            text={`${t(checkForNA(ewdet.productPrice))}`}
+            actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/ew-common/raiseRequest/productdetails/`}`} />}
         />
 
-        <Row
-            label={t("PTR_DOCTOR_NAME")}
-            text={`${t(checkForNA(pets?.doctorName))}`}
-            actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details/`}${index}`} />}
-        />
 
-        <Row
-            label={t("PTR_CLINIC_NAME")}
-            text={`${t(checkForNA(pets?.clinicName))}`}
-            actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details/`}${index}`} />}
-        />
-
-        <Row
-            label={t("PTR_VACCINATED_DATE")}
-            text={`${t(checkForNA(pets?.lastVaccineDate))}`}
-            actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details/`}${index}`} />}
-        />
-
-        </StatusTable> */}
+        </StatusTable>
           <br></br>
           {/* <CardSubHeader>{t("PTR_LOCATION_DETAILS")}</CardSubHeader>
         <br></br> */}
@@ -181,14 +166,14 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <br></br> */}
 
 
-          {/* <CheckBox
-          label={t("PTR_FINAL_DECLARATION_MESSAGE")}
+          <CheckBox
+          label={t("EWASTE_FINAL_DECLARATION_MESSAGE")}
           onChange={setdeclarationhandler}
           styles={{ height: "auto" }}
           //disabled={!agree}
-        /> */}
+        />
         </div>
-        <SubmitBar label={t("PTR_COMMON_BUTTON_SUBMIT")} onSubmit={onSubmit} disabled={!agree} />
+        <SubmitBar label={t("EWASTE_COMMON_BUTTON_SUBMIT")} onSubmit={onSubmit} disabled={!agree} />
       </Card>
     </React.Fragment>
   );

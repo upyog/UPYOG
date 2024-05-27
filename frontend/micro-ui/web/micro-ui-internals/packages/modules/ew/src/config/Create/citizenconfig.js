@@ -31,7 +31,7 @@ export const citizenConfig =
                     "isMandatory": true,
                     "hideInEmployee": true,
                     // "nextStep": "summary-ewaste",
-                    "nextStep": null,
+                    "nextStep": "vendor-details",
                     "texts": {
                         "submitBarLabel": "PTR_COMMON_NEXT",
                     }
@@ -39,23 +39,24 @@ export const citizenConfig =
             ],
         },
 
-        // {
-        //     "head": "EWASTE_TITLE_SUMMARY",
-        //     "body": [
-        //         {
-        //             "route": "summary-ewaste",
-        //             "component": "EWASTESummary",
-        //             "withoutLabel": true,
-        //             "key": "summaryKey",
-        //             "type": "component",
-        //             "isMandatory": true,
-        //             "hideInEmployee": true,
-        //             "nextStep": null,
-        //             "texts": {
-        //                 "submitBarLabel": "PTR_COMMON_NEXT",
-        //             }
-        //         },
-        //     ],
-        // },
+        {
+            "head": "EWASTE_TITLE_VENDOR_DETAILS",
+            "body": [
+                {
+                    "route": "vendor-details",
+                    "component": "EWASTEVendorDetails",
+                    "withoutLabel": true,
+                    "key": "vendorKey",
+                    "type": "component",
+                    "isMandatory": true,
+                    "hideInEmployee": true,
+                    // "nextStep": "summary-ewaste",
+                    "nextStep": null,
+                    "texts": {
+                        "submitBarLabel": "PTR_COMMON_NEXT",
+                    }
+                },
+            ],
+        },
 
     ];

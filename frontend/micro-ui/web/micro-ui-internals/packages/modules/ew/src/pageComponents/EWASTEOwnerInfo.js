@@ -5,7 +5,7 @@ import { useLocation, useRouteMatch } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import Timeline from "../components/EWASTETimeline";
 
-const PTRCitizenDetails
+const EWOwnerDetails
   = ({ t, config, onSelect, userType, formData, ownerIndex }) => {
     const { pathname: url } = useLocation();
 
@@ -16,28 +16,15 @@ const PTRCitizenDetails
     let validation = {};
 
     const [applicantName, setName] = useState((formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].applicantName) || formData?.ownerKey?.applicantName || "");
-    // const [emailId, setEmail] = useState((formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].emailId) || formData?.ownerKey?.emailId || "");
     const [mobileNumber, setMobileNumber] = useState(
       (formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].mobileNumber) || formData?.ownerKey?.mobileNumber || ""
     );
-    // const [alternateNumber, setAltMobileNumber] = useState(
-    //   (formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].alternateNumber) || formData?.ownerKey?.alternateNumber || ""
-    // );
-
-
-    // const [fatherName, setFatherOrHusbandName] = useState(
-    //   (formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].fatherName) || formData?.ownerKey?.fatherName || ""
-    // );
 
     const [locality, setLocality] = useState(
       (formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].locality) || formData?.ownerKey?.locality || ""
     );
     const [address, setAddress] = useState(
       (formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].address) || formData?.ownerKey?.address || ""
-    );
-
-    const [vendor, setVendor] = useState(
-      (formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].vendor) || formData?.ownerKey?.vendor || ""
     );
 
     const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -48,21 +35,12 @@ const PTRCitizenDetails
     function setOwnerName(e) {
       setName(e.target.value);
     }
-    function setOwnerEmail(e) {
-      setEmail(e.target.value);
-    }
 
 
     function setMobileNo(e) {
       setMobileNumber(e.target.value);
     }
 
-    // function setAltMobileNo(e) {
-    //   setAltMobileNumber(e.target.value);
-    // }
-    // function setGuardiansName(e) {
-    //   setFatherOrHusbandName(e.target.value);
-    // }
 
     function setaddress(e){
       setAddress(e.target.value);
@@ -87,24 +65,24 @@ const PTRCitizenDetails
       },
     ]
 
-    const roughvendor = [
-      {
-        code: "vendor a",
-        i18nKey: "vendor a"
-      },
-      {
-        code: "vendor b",
-        i18nKey: "vendor b"
-      },
-      {
-        code: "vendor c",
-        i18nKey: "vendor c"
-      },
-      {
-        code: "vendor d",
-        i18nKey: "vendor d"
-      }
-    ]
+    // const roughvendor = [
+    //   {
+    //     code: "vendor a",
+    //     i18nKey: "vendor a"
+    //   },
+    //   {
+    //     code: "vendor b",
+    //     i18nKey: "vendor b"
+    //   },
+    //   {
+    //     code: "vendor c",
+    //     i18nKey: "vendor c"
+    //   },
+    //   {
+    //     code: "vendor d",
+    //     i18nKey: "vendor d"
+    //   }
+    // ]
 
     // const goNext = () => {
     //   let owner = formData.ownerKey && formData.ownerKey[index];
@@ -123,11 +101,11 @@ const PTRCitizenDetails
       let owner = formData.ownerKey && formData.ownerKey[index];
       let ownerStep;
       if (userType === "citizen") {
-        ownerStep = { ...owner, applicantName, mobileNumber, locality, address, vendor};
+        ownerStep = { ...owner, applicantName, mobileNumber, locality, address};
         onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
       } else {
 
-        ownerStep = { ...owner, applicantName, mobileNumber, locality, address, vendor};
+        ownerStep = { ...owner, applicantName, mobileNumber, locality, address};
         onSelect(config.key, ownerStep, false, index);
       }
     };
@@ -141,7 +119,7 @@ const PTRCitizenDetails
       if (userType === "citizen") {
         goNext();
       }
-    }, [applicantName, mobileNumber, locality, address, vendor]);
+    }, [applicantName, mobileNumber, locality, address]);
 
 
 
@@ -233,7 +211,7 @@ const PTRCitizenDetails
               })}
             />
 
-            <CardLabel>{`${t("EWASTE_VENDOR_NAME")}`}</CardLabel>
+            {/* <CardLabel>{`${t("EWASTE_VENDOR_NAME")}`}</CardLabel>
             <Controller
               control={control}
               name={"vendor"}
@@ -249,45 +227,8 @@ const PTRCitizenDetails
                   t={t}
                 />
               )}
-            />
+            /> */}
 
-
-            {/* <CardLabel>{`${t("PTR_FATHER_HUSBAND_NAME")}`}</CardLabel>
-        <TextInput
-          t={t}
-          type={"text"}
-          isMandatory={false}
-          optionKey="i18nKey"
-          name="fatherName"
-          value={fatherName}
-          onChange={setGuardiansName}
-          ValidationRequired = {true}
-          {...(validation = {
-            isRequired: true,
-            pattern: "^[a-zA-Z-.`' ]*$",
-            type: "text",
-            title: t("PTR_NAME_ERROR_MESSAGE"),
-          })}
-        />
-
-        <CardLabel>{`${t("PTR_EMAIL_ID")}`}</CardLabel>
-        <TextInput
-          t={t}
-          type={"text"}
-          isMandatory={true}
-          optionKey="i18nKey"
-          name="emailId"
-          value={emailId}
-          onChange={setOwnerEmail}
-          ValidationRequired = {true}
-          {...(validation = {
-            isRequired: true,
-            pattern: "[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$",
-            type: "text",
-            title: t("PTR_NAME_ERROR_MESSAGE"),
-          })}
-        />
-         */}
 
           </div>
 
@@ -296,4 +237,4 @@ const PTRCitizenDetails
     );
   };
 
-export default PTRCitizenDetails;
+export default EWOwnerDetails;

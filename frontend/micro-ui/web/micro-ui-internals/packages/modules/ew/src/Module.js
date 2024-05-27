@@ -11,6 +11,7 @@ import EWASTEProductListElement from "./components/EWASTEProductListElement";
 import EWCheckPage from "./pages/citizen/Create/CheckPage";
 import EWCreate from "./pages/citizen/Create";
 import CitizenApp from "./pages/citizen";
+import EWASTEVendorDetails from "./pageComponents/EWASTEVendorDetails"
 
 
 
@@ -20,7 +21,8 @@ const componentsToRegister = {
   EWASTEProductDetails,
   EWASTEOwnerInfo,
   EWASTEProductList,
-  EWASTEProductListElement
+  EWASTEProductListElement,
+  EWASTEVendorDetails
 }
 
 

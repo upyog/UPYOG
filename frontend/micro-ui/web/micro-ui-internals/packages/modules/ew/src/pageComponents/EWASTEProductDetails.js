@@ -13,14 +13,14 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
     let index = window.location.href.charAt(window.location.href.length - 1);
     let validation = {};
 
-    const [productName, setProductName] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.petType) || formData?.ewdet?.petType || "");
+    const [productName, setProductName] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.productName) || formData?.ewdet?.productName || "");
     const [productQuantity, setProductQuantity] = useState("1");
     const [productPrice, setProductPrice] = useState("23");
 
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
 
-    console.log("the productdetails component is running");
+    // console.log("the productdetails component is running");
 
     // const { data: Menu } = Digit.Hooks.ptr.usePTRPetMDMS(stateId, "ewdetervice", "PetType");
 
