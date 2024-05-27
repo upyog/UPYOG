@@ -23,7 +23,7 @@ const EWVendorDetails
     const stateId = Digit.ULBService.getStateId();
     const { control } = useForm();
 
-
+    // static values are passed for vendor
     const roughvendor = [
       {
         code: "vendor a",
