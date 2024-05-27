@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
 public class GeneralStair extends FeatureProcess {
     private static final Logger LOG = LogManager.getLogger(GeneralStair.class);
     private static final String FLOOR = "Floor";
-    private static final String RULE42_5_II = "42-5-ii";
+    private static final String RULE = "4.4.4";
     private static final String EXPECTED_NO_OF_RISER = "12";
     private static final String NO_OF_RISER_DESCRIPTION = "Maximum no of risers required per flight for general stair %s flight %s";
     private static final String WIDTH_DESCRIPTION = "Minimum width for general stair %s flight %s";
@@ -193,14 +193,14 @@ public class GeneralStair extends FeatureProcess {
                         : " floor " + floor.getNumber();
 
                 if (valid) {
-                    setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
+                    setReportOutputDetailsFloorStairWise(plan, RULE, value,
                             String.format(WIDTH_LANDING_DESCRIPTION, generalStair.getNumber(),
                                     landing.getNumber()),
                             minimumWidth.toString(),
                             String.valueOf(minWidth), Result.Accepted.getResultVal(),
                             scrutinyDetailLanding);
                 } else {
-                    setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
+                    setReportOutputDetailsFloorStairWise(plan, RULE, value,
                             String.format(WIDTH_LANDING_DESCRIPTION, generalStair.getNumber(),
                                     landing.getNumber()),
                             minimumWidth.toString(),
@@ -327,11 +327,11 @@ public class GeneralStair extends FeatureProcess {
                     : " floor " + floor.getNumber();
 
             if (valid) {
-                setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
+                setReportOutputDetailsFloorStairWise(plan, RULE, value,
                         String.format(WIDTH_DESCRIPTION, generalStair.getNumber(), flight.getNumber()), minimumWidth.toString(),
                         String.valueOf(minFlightWidth), Result.Accepted.getResultVal(), scrutinyDetail2);
             } else {
-                setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
+                setReportOutputDetailsFloorStairWise(plan, RULE, value,
                         String.format(WIDTH_DESCRIPTION, generalStair.getNumber(), flight.getNumber()), minimumWidth.toString(),
                         String.valueOf(minFlightWidth), Result.Not_Accepted.getResultVal(), scrutinyDetail2);
             }
@@ -414,12 +414,12 @@ public class GeneralStair extends FeatureProcess {
                             ? (String) typicalFloorValues.get("typicalFloors")
                             : " floor " + floor.getNumber();
                     if (valid) {
-                        setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
+                        setReportOutputDetailsFloorStairWise(plan, RULE, value,
                                 String.format(TREAD_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
                                 requiredTread.toString(),
                                 String.valueOf(minTread), Result.Accepted.getResultVal(), scrutinyDetail3);
                     } else {
-                        setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
+                        setReportOutputDetailsFloorStairWise(plan, RULE, value,
                                 String.format(TREAD_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
                                 requiredTread.toString(),
                                 String.valueOf(minTread), Result.Not_Accepted.getResultVal(), scrutinyDetail3);
@@ -465,12 +465,12 @@ public class GeneralStair extends FeatureProcess {
                     ? (String) typicalFloorValues.get("typicalFloors")
                     : " floor " + floor.getNumber();
             if (valid) {
-                setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
+                setReportOutputDetailsFloorStairWise(plan, RULE, value,
                         String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
                         EXPECTED_NO_OF_RISER,
                         String.valueOf(noOfRises), Result.Accepted.getResultVal(), scrutinyDetail3);
             } else {
-                setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
+                setReportOutputDetailsFloorStairWise(plan, RULE, value,
                         String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
                         EXPECTED_NO_OF_RISER,
                         String.valueOf(noOfRises), Result.Not_Accepted.getResultVal(), scrutinyDetail3);
