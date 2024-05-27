@@ -10,14 +10,16 @@ const ProductList = ({ t, prlistName, prlistQuantity, prlistTotalprice }) => {
     const columns = [
         { Header: "Product Name", accessor: "name" },
         { Header: "Product Quantity", accessor: "quantity" },
-        { Header: "Product Price", accessor: "price" }
+        { Header: "Product Price", accessor: "price" },
+
     ]
 
     const data = prlistName?.map((p, index) => (
         {
             name: p.code,
             quantity: prlistQuantity[index].code,
-            price: prlistTotalprice[index].code
+            price: prlistTotalprice[index].code,
+            
         }
     )) || [];
 

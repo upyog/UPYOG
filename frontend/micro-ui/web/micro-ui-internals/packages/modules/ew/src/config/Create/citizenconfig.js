@@ -13,7 +13,7 @@ export const citizenConfig =
                     "hideInEmployee": true,
                     "isMandatory": true,
                     "texts": {
-                        "submitBarLabel": "PTR_COMMON_NEXT",
+                        "submitBarLabel": "EWASTE_COMMON_NEXT",
                     }
                 },
             ],
@@ -30,10 +30,9 @@ export const citizenConfig =
                     "type": "component",
                     "isMandatory": true,
                     "hideInEmployee": true,
-                    // "nextStep": "summary-ewaste",
                     "nextStep": "vendor-details",
                     "texts": {
-                        "submitBarLabel": "PTR_COMMON_NEXT",
+                        "submitBarLabel": "EWASTE_COMMON_NEXT",
                     }
                 },
             ],
@@ -53,7 +52,7 @@ export const citizenConfig =
                     // "nextStep": "summary-ewaste",
                     "nextStep": null,
                     "texts": {
-                        "submitBarLabel": "PTR_COMMON_NEXT",
+                        "submitBarLabel": "EWASTE_COMMON_NEXT",
                     }
                 },
             ],

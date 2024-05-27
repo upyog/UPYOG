@@ -14,8 +14,8 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
     let validation = {};
 
     const [productName, setProductName] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.productName) || formData?.ewdet?.productName || "");
-    const [productQuantity, setProductQuantity] = useState("1");
-    const [productPrice, setProductPrice] = useState("23");
+    const [productQuantity, setProductQuantity] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.productQuantity) || formData?.ewdet?.productQuantity || "");
+    const [productPrice, setProductPrice] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.productPrice) || formData?.ewdet?.productPrice || "");
 
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
