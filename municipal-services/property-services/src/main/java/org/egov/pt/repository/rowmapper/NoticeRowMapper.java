@@ -47,9 +47,6 @@ public class NoticeRowMapper implements ResultSetExtractor<List<Notice>>{
 						.entryDate(rs.getString("entrydate"))
 						.entryTime(rs.getString("entrytime"))
 						.place(rs.getString("place"))
-						.particulars(rs.getString("perticulars"))
-						.asreturnFiled(rs.getString("asreturnfiled"))
-						.asperMunispality(rs.getString("aspermunispality"))
 						.resolutionOn(rs.getString("resolutionon"))
 						.dated(rs.getString("dated"))
 						.designation(rs.getString("designation"))
@@ -57,6 +54,7 @@ public class NoticeRowMapper implements ResultSetExtractor<List<Notice>>{
 						.mobilenumber(rs.getString("mobilenumber"))
 						.penaltyAmount(rs.getString("penaltyamount"))
 						.appealNo(rs.getString("appealno"))
+						.rule_23(rs.getBoolean("rule_23"))
 						.noticeComment(new ArrayList<>()).build();
 
 
@@ -81,6 +79,10 @@ public class NoticeRowMapper implements ResultSetExtractor<List<Notice>>{
 
 		return NoticeComment.builder().uuid(rs.getString("uuid"))
 				.comment(rs.getString("comment"))
+				.particulars(rs.getString("particulars"))
+				.asreturnFiled(rs.getString("asperreturnfiled"))
+				.asperMunispality(rs.getString("aspermunicipality"))
+				.remarks(rs.getString("remarks"))
 				.build();
 	}
 
@@ -89,6 +91,10 @@ public class NoticeRowMapper implements ResultSetExtractor<List<Notice>>{
 
 		NoticeComment comment= NoticeComment.builder().uuid(rs.getString("uuid"))
 				.comment(rs.getString("comment"))
+				.particulars(rs.getString("particulars"))
+				.asreturnFiled(rs.getString("asperreturnfiled"))
+				.asperMunispality(rs.getString("aspermunicipality"))
+				.remarks(rs.getString("remarks"))
 				.build();
 
 		notice.getNoticeComment().add(comment);

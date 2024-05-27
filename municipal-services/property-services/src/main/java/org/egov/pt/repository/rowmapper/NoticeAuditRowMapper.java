@@ -47,9 +47,6 @@ public class NoticeAuditRowMapper implements ResultSetExtractor<List<Notice>>{
 						.entryDate(rs.getString("entrydate"))
 						.entryTime(rs.getString("entrytime"))
 						.place(rs.getString("place"))
-						.particulars(rs.getString("perticulars"))
-						.asreturnFiled(rs.getString("asreturnfiled"))
-						.asperMunispality(rs.getString("aspermunispality"))
 						.resolutionOn(rs.getString("resolutionon"))
 						.dated(rs.getString("dated"))
 						.designation(rs.getString("designation"))
@@ -57,8 +54,14 @@ public class NoticeAuditRowMapper implements ResultSetExtractor<List<Notice>>{
 						.mobilenumber(rs.getString("mobilenumber"))
 						.penaltyAmount(rs.getString("penaltyamount"))
 						.appealNo(rs.getString("appealno"))
+						.rule_23(rs.getBoolean("rule_23"))
+						.rule_33(rs.getBoolean("rule_33"))
+						.rule_34(rs.getBoolean("rule_34"))
+						.rule_36(rs.getBoolean("rule_36"))
+						.failedtoproducenecessarydocuments(rs.getBoolean("failedto_produce_necessary_documents"))
+						.willfullyfurnishesincorrectinformation(rs.getBoolean("willfully_furnishes_incorrect_information"))
+						.obstructanyauthorityappointed(rs.getBoolean("obstruct_any_authority_appointed"))
 						.noticeComment(new ArrayList<>()).build();
-
 
 				NoticeComment noticeComment = getNoticeComment(rs);
 				if(noticeComment!=null)
@@ -91,6 +94,10 @@ public class NoticeAuditRowMapper implements ResultSetExtractor<List<Notice>>{
 		return NoticeComment.builder().uuid(rs.getString("uuid"))
 				.comment(rs.getString("comment"))
 				.auditDetails(auditDetails)
+				.particulars(rs.getString("particulars"))
+				.asreturnFiled(rs.getString("asperreturnfiled"))
+				.asperMunispality(rs.getString("aspermunicipality"))
+				.remarks(rs.getString("remarks"))
 				.build();
 	}
 
@@ -105,6 +112,10 @@ public class NoticeAuditRowMapper implements ResultSetExtractor<List<Notice>>{
 		NoticeComment comment= NoticeComment.builder().uuid(rs.getString("uuid"))
 				.comment(rs.getString("comment"))
 				.auditDetails(auditDetails)
+				.particulars(rs.getString("particulars"))
+				.asreturnFiled(rs.getString("asperreturnfiled"))
+				.asperMunispality(rs.getString("aspermunicipality"))
+				.remarks(rs.getString("remarks"))
 				.build();
 
 		notice.getNoticeComment().add(comment);

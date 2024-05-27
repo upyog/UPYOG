@@ -17,6 +17,18 @@ public class NoticeComment {
 	private String uuid;
 	private String comment;
 	
+	@JsonProperty("particulars")
+	private String particulars;
+	
+	@JsonProperty("asPerReturnFiled")
+	private String asreturnFiled;
+	
+	@JsonProperty("asPerMunicipality")
+	private String asperMunispality;
+	
+	@JsonProperty("remarks")
+	private String remarks;
+	
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;
 
