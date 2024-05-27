@@ -13,14 +13,14 @@
     "@egovernments/digit-ui-module-common": "1.7.2",
     "@upyog/digit-ui-module-engagement": "1.7.2",
     "@upyog/digit-ui-module-fsm": "1.7.3",
-    "@upyog/digit-ui-module-mcollect": "1.7.3",
+    "@egovernments/digit-ui-module-mcollect": "1.7.4",
     "@upyog/digit-ui-module-noc": "1.7.3",
-    "@upyog/digit-ui-module-obps": "1.7.2",
+    "@egovernments/digit-ui-module-obps": "1.7.3",
     "@upyog/digit-ui-module-pgr": "1.7.9",
     "@upyog/digit-ui-module-pt": "1.7.8",
     "@upyog/digit-ui-module-receipts": "1.7.3",
     "@upyog/digit-ui-module-tl": "1.7.2",
-    "@upyog/digit-ui-module-ws": "1.7.3",
+    "@egovernments/digit-ui-module-ws": "1.7.4",
     "@upyog/digit-ui-module-bills": "1.7.2",
     "@upyog/digit-ui-module-commonpt": "1.7.2",
     "http-proxy-middleware": "^1.0.5",
@@ -32,7 +32,7 @@
   },
   "browserslist": [
     ">0.2%",
-   "not dead",
-   "not op_mini all"
- ]
+    "not dead",
+    "not op_mini all"
+  ]
 }
