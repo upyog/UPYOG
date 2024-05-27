@@ -5,7 +5,7 @@ import { DSSService } from "../../services/elements/DSS";
 const getRequest = (type, code, requestDate, filters, moduleLevel = "", addlFilter, indexKeyForEmptyModule) => {
   let newFilter = { ...{ ...filters, ...addlFilter } };
   let updatedFilter = Object.keys(newFilter)
-    .filter((ele) => newFilter[ele].length > 0)
+    .filter((ele) => newFilter[ele]?.length > 0)
     .reduce((acc, curr) => {
       acc[curr] = newFilter[curr];
       return acc;
