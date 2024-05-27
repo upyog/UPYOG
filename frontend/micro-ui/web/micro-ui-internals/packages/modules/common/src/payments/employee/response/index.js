@@ -42,7 +42,7 @@ export const SuccessfulPayment = (props) => {
     {},
     { enabled: businessService?.includes("BPA") ? true : false }
   );
-  console.log("data",data)
+  
   const FSM_EDITOR = Digit.UserService.hasAccess("FSM_EDITOR_EMP") || false;
 
   function onActionSelect(action) {
@@ -182,7 +182,7 @@ export const SuccessfulPayment = (props) => {
     id: data?.[0]?.applicationNo,
     moduleCode: "OBPS",
   });
-  console.log("wrkflow",workflowDetails)
+  
   const getPermitOccupancyOrderSearch = async (order, mode = "download") => {
     let queryObj = { applicationNo: data?.[0]?.applicationNo };
     let bpaResponse = await Digit.OBPSService.BPASearch(data?.[0]?.tenantId, queryObj);
@@ -213,7 +213,7 @@ export const SuccessfulPayment = (props) => {
     else{
       reqData.additionalDetails.permitData="The building plan falls under Lal Lakir"
     }
-    console.log("reqData",reqData)
+    
     let response = await Digit.PaymentService.generatePdf(bpaData?.tenantId, { Bpa: [reqData] }, order);
     const fileStore = await Digit.PaymentService.printReciept(bpaData?.tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
