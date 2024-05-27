@@ -176,7 +176,13 @@ export const SuccessfulPayment = (props) => {
       });
     }
   };
-
+ 
+  let workflowDetails = Digit.Hooks.useWorkflowDetails({
+    tenantId: data?.[0]?.tenantId,
+    id: data?.[0]?.applicationNo,
+    moduleCode: "OBPS",
+  });
+  console.log("wrkflow",workflowDetails)
   const getPermitOccupancyOrderSearch = async (order, mode = "download") => {
     let queryObj = { applicationNo: data?.[0]?.applicationNo };
     let bpaResponse = await Digit.OBPSService.BPASearch(data?.[0]?.tenantId, queryObj);
@@ -190,8 +196,12 @@ export const SuccessfulPayment = (props) => {
     let reqData = { ...bpaData, edcrDetail: [{ ...edcrData }] };
     const state = Digit.ULBService.getStateId();
 
-    if(bpaResponse?.BPA[0]?.status==="APPROVED"){
-      reqData.additionalDetails.submissionDate=bpaResponse?.BPA[0]?.auditDetails?.lastModifiedTime
+    let count=0;
+    for(let i=0;i<workflowDetails?.data?.processInstances?.length;i++){
+        if(workflowDetails?.data?.processInstances[i]?.action==="PAY" && count==0 ){
+          reqData.additionalDetails.submissionDate=workflowDetails?.data?.processInstances[i]?.auditDetails?.createdTime;
+          count=1;
+        }
     }
         
     if(reqData?.additionalDetails?.approvedColony=="NO"){
@@ -203,6 +213,7 @@ export const SuccessfulPayment = (props) => {
     else{
       reqData.additionalDetails.permitData="The building plan falls under Lal Lakir"
     }
+    console.log("reqData",reqData)
     let response = await Digit.PaymentService.generatePdf(bpaData?.tenantId, { Bpa: [reqData] }, order);
     const fileStore = await Digit.PaymentService.printReciept(bpaData?.tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
