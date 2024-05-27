@@ -4,17 +4,17 @@ export const newConfig =[
         "head": "ASSET_GENERAL_DETAILS",
         "body": [
             {
+                "component": "AssetClassification",
+                "withoutLabel": true,
+                "key": "assets",
+                "type": "component"
+            },
+            {
                 "route": "commonpage",
                 "component": "AssetCommonDetails",
                 "withoutLabel": true,
                 "key": "assetcommonforall",
                 "isMandatory": true,
-                "type": "component"
-            },
-            {
-                "component": "AssetClassification",
-                "withoutLabel": true,
-                "key": "assets",
                 "type": "component"
             },
             {
