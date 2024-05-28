@@ -25,8 +25,17 @@
       const [schemesselection, setschemesselection] = useState(formData?.owners?.schemesselection || "");
       const [schemeName, setschemeName] = useState(formData?.owners?.schemeName || "");
       const [transferredscheme, settransferredscheme] = useState("Pre-Approved Standard Designs" || "");
+      const [rating, setrating] = useState(formData?.owners?.rating || "");
+
+
       const [Ulblisttype, setUlblisttype] = useState(formData?.owners?.Ulblisttype || "");
       const [uploadedFile, setUploadedFile] = useState(formData?.owners?.uploadedFile);
+
+      const [greenuploadedFile, setGreenUploadedFile] = useState(formData?.owners?.greenuploadedFile);
+
+
+      const [files, setFiles] = useState();
+
       const [file, setFile] = useState();
       const [error, setError] = useState(null);
       const [uploadMessage, setUploadMessage] = useState("");
@@ -57,6 +66,32 @@
         })();        
       }, [file]);
 
+      useEffect(() => {
+        (async () => {
+          setError(null);
+          if (files&& files?.type) {
+            if(!(acceptFormat?.split(",")?.includes(`.${files?.type?.split("/")?.pop()}`)))
+            {
+              setError(t("PT_UPLOAD_FORMAT_NOT_SUPPORTED"));
+            }
+            else if (files.size >= 2000000) {
+              setError(t("PT_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
+            } else {
+              try {
+                const response = await Digit.UploadServices.Filestorage("property-upload", files, Digit.ULBService.getStateId());
+                if (response?.data?.files?.length > 0) {
+                  setGreenUploadedFile(response?.data?.files[0]?.fileStoreId);
+                } else {
+                  setError(t("PT_FILE_UPLOAD_ERROR"));
+                }
+              } catch (err) {
+              }
+            }
+          }
+        })();        
+      }, [files]);
+
+
 
 
 
@@ -74,6 +109,20 @@
           i18nKey: "LAL LAKEER"
         }
       ]
+      const ratingvalue = [
+        {
+          code: "PLATINUM",
+          i18nKey: "PLATINUM"
+        },
+        {
+          code: "GOLD",
+          i18nKey: "GOLD"
+        },
+        {
+          code: "BRONZE",
+          i18nKey: "BRONZE"
+        }
+      ]
 
       const common = [
         {
@@ -85,7 +134,6 @@
           i18nKey: "NO"
         }
       ]
-
       
       const Typeofproposedsite = [
         {
@@ -182,6 +230,10 @@
         setcoreArea(e.target.value);
       }
 
+      function setRatings(e) {
+        setrating(e.target.value)
+      }
+
 
       function setulbname(e) {
         setUlbName(e.target.value);
@@ -239,11 +291,15 @@
       function onClick(e){
         console.log("inside_NOC_search")
       }
+      function selectfiles(e) {
+        setGreenUploadedFile(e.target.files[0]);
+        setFiles(e.target.files[0]);
+     }
 
 
       const goNext = () => {
         let owners = formData.owners && formData.owners[index];
-        let ownerStep = { ...owners, approvedColony, UlbName, Ulblisttype, District, masterPlan, coreArea, buildingStatus, schemes, schemesselection,  purchasedFAR, greenbuilding, restrictedArea, proposedSite, nameofApprovedcolony, schemeName, transferredscheme, NocNumber, uploadedFile };
+        let ownerStep = { ...owners, approvedColony, UlbName, Ulblisttype, District, rating, masterPlan, coreArea, buildingStatus, schemes, schemesselection,  purchasedFAR, greenbuilding, restrictedArea, proposedSite, nameofApprovedcolony, schemeName, transferredscheme, NocNumber, uploadedFile,greenuploadedFile };
         let updatedFormData = { ...formData };
 
         // Check if owners array exists in formData if not , then it will add it 
@@ -257,6 +313,13 @@
         else{
           alert("Please fill NOC number or Upload NOC Document")
         }  }
+        if((greenbuilding?.code==="YES"))
+          { if(greenuploadedFile || formData?.owners?.greenuploadedFile){
+            onSelect(config.key, { ...formData[config.key], ...ownerStep }, updatedFormData, false, index);          
+          }
+          else{
+            alert("Please Upload Document")
+          }  }
         else{
           onSelect(config.key, { ...formData[config.key], ...ownerStep }, updatedFormData, false, index);
         }        
@@ -332,6 +395,52 @@
             />
               </>
             );
+          default:
+            return null;
+        }
+      }
+
+      const renderGreenbuildingfields = () => {
+        switch (greenbuilding?.code) {
+          case "YES":
+            return(
+            <>
+              <UploadFile
+                  id={"green-building-doc"}
+                  onUpload={selectfiles}
+                  onDelete={() => {
+                    setGreenUploadedFile(null);
+                    setFiles("");
+                  }}
+                  message={greenuploadedFile ? `1 ${t(`FILEUPLOADED`)}` : t(`ES_NO_FILE_SELECTED_LABEL`)}
+                  error={error}
+                  uploadMessage={uploadMessage}
+              />
+              <br></br>
+
+              <CardLabel>{`${t("BPA_SELECT_RATINGS")}`}</CardLabel>
+              <Controller
+                control={control}
+                name={"rating"}
+                defaultValue={rating}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
+                render={(props) => (
+                  <Dropdown
+                    className="form-field"
+                    selected={rating}
+                    select={setrating}
+                    option={ratingvalue}
+                    optionKey="i18nKey"
+                    t={t}
+                  />
+                )}
+              />
+
+            </>
+            );
+            case "NO":
+            return null;
+            
           default:
             return null;
         }
@@ -615,6 +724,8 @@
                   />
                 )}
               />
+              {renderGreenbuildingfields()}
+
               <CardLabel>{`${t("BPA_RESTRICTED_AREA")}`}</CardLabel>
               <Controller
                 control={control}
