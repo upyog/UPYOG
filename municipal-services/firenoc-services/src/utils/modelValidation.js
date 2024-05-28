@@ -104,6 +104,9 @@ export const validateFireNOCModel = (data, mdmsData) => {
 
 export const validateFireNOCSearchModel = data => {
   const ajv = getAjvInstance();
+  if (data === null) {
+    return true; 
+  }
   let validate = ajv.compile(fireNOCSearchSchema);
   var valid = validate(data);
   let errors = [];
