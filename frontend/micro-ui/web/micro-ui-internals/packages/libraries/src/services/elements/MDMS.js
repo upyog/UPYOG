@@ -227,6 +227,24 @@ const getApplicationChannelCriteria = (tenantId, moduleCode) => ({
   },
 });
 
+const getUrcConfigCriteria = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "UrcConfig",
+            filter: null,
+          },
+        ],
+      },
+    ],
+  },
+});
+
 const getPropertyTypeCriteria = (tenantId, moduleCode, type) => ({
   type,
   details: {
