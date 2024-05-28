@@ -92,7 +92,9 @@ export const validateFireNOCModel = (data, mdmsData) => {
   //   },
   //   errors: false
   // });
-
+  if (data === null) {
+    return true; 
+  }
   let validate = ajv.compile(fireNOCSchema);
   var valid = validate(data);
   let errors = [];
