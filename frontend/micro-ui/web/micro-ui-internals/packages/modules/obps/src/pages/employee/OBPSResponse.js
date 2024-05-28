@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, ActionBar, SubmitBar, Loader, LinkButton } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardText, ActionBar, SubmitBar, Loader, LinkButton } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { stringReplaceAll, getBusinessServices } from "../../utils";
@@ -9,7 +9,13 @@ const OBPSResponse = (props) => {
   const { state } = props.location;
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const bpaData = state?.data?.BPA?.[0];
+  let bpaData={}
+  if(state?.data?.response){
+    bpaData = state?.data?.response?.BPA?.[0];
+  }
+  else{
+    bpaData = state?.data?.BPA?.[0];
+  }
   const [applicationData, setApplicationData] = useState({});
   const [isLoader, setIsLoader] = useState(true);
   const history = useHistory();

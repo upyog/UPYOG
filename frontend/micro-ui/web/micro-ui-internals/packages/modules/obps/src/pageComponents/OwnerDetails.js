@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons,RadioOrSelect, LabelFieldPair, Dropdown, CheckBox, LinkButton, Loader, Toast, SearchIcon, DeleteIcon } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons,RadioOrSelect, LabelFieldPair, Dropdown, CheckBox, LinkButton, Loader, Toast, SearchIcon, DeleteIcon } from "@egovernments/digit-ui-react-components";
 import { stringReplaceAll, getPattern, convertDateTimeToEpoch, convertDateToEpoch } from "../utils";
 import Timeline from "../components/Timeline";
 import cloneDeep from "lodash/cloneDeep";
+import { PTService } from "../../../../libraries/src/services/elements/PT";
 
 const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     let validation = {};
@@ -310,6 +311,40 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         fatherOrHusbandName: "NAME"
                     })
                 });
+                let Property= {}
+                let createdProp={}
+                if(!formData?.cptId){
+                
+                    Property.tenantId= formData?.address?.city?.code,
+                    Property.landInfo = {};
+                    //For Address
+                    Property.address = {};
+                    if (formData?.address?.city?.code) Property.address.city = formData?.address?.city?.code;
+                    if (formData?.address?.locality?.code) Property.address.locality = { code: formData?.address?.locality?.code };
+                    if (formData?.address?.pincode) Property.address.pincode = formData?.address?.pincode;
+                    if (formData?.address?.landmark) Property.address.landmark = formData?.address?.landmark;
+                    if (formData?.address?.street) Property.address.street = formData?.address?.street;
+                    if (formData?.address?.geoLocation) Property.address.geoLocation = formData?.address?.geoLocation;
+                    Property.propertyType= "VACANT",
+                   // ...data.propertyDetails,
+                   Property.ownershipCategory= ownershipCategory.code,
+                   Property.usageCategory= formData?.data?.occupancyType.toUpperCase();
+                   Property.owners= conversionOwners.map(owner=>({
+                        ...owner,
+                     ownerType:"NONE",
+                      permanentaddress:"",
+                    })),
+                    Property.landArea=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea.toFixed(2);
+                    Property.noOfFloors=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalFloors;
+                    Property.additionalDetails= {
+                      isRainwaterHarvesting:false,
+                    },
+                    Property.creationReason= "CREATE";
+                    Property.source= "MUNICIPAL_RECORDS";
+                    Property.channel= "SYSTEM";
+                 
+                     createdProp = await PTService.create({Property, tenantId})
+              }
                 let payload = {};
                 payload.edcrNumber = formData?.edcrNumber?.edcrNumber ? formData?.edcrNumber?.edcrNumber :formData?.data?.scrutinyNumber?.edcrNumber;
                 payload.riskType = formData?.data?.riskType;
@@ -364,6 +399,10 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                             result.BPA[0].address.locality = formData.address.locality;
                             result.BPA[0].placeName = formData?.address?.placeName;
                             result.BPA[0].data = formData.data;
+                            result.BPA[0].additionalDetails.propertyID=formData?.cptId ?formData?.cptId?.id: createdProp?.Properties[0]?.propertyId ;
+                            if(createdProp?.Properties){
+                                result.BPA[0].additionalDetails.propertyAcknowldgementNumber=createdProp?.Properties[0]?.acknowldgementNumber;
+                            }
                             result.BPA[0].BlockIds = getBlockIds(result.BPA[0].landInfo.unit);
                             result.BPA[0].subOccupancy= formData?.subOccupancy;
                             result.BPA[0].uiFlow = formData?.uiFlow;
