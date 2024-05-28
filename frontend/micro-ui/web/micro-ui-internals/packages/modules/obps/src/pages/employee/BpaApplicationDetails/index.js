@@ -89,6 +89,27 @@ const BpaApplicationDetail = () => {
     let currentDate = new Date();
     data.applicationData.additionalDetails.runDate = convertDateToEpoch(currentDate.getFullYear() + '-' + (currentDate.getMonth() + 1) + '-' + currentDate.getDate());
     let requestData = {...data?.applicationData, edcrDetail:[{...data?.edcrDetails}]}
+
+    const state = Digit.ULBService.getStateId();
+    let count=0;
+
+    for(let i=0;i<workflowDetails?.data?.processInstances?.length;i++){
+        if(workflowDetails?.data?.processInstances[i]?.action==="PAY" && count==0 ){
+          requestData.additionalDetails.submissionDate=workflowDetails?.data?.processInstances[i]?.auditDetails?.createdTime;
+          count=1;
+        }
+    }
+    
+    if(requestData?.additionalDetails?.approvedColony=="NO"){
+      requestData.additionalDetails.permitData= "The plot has been officially regularized under No."+requestData?.additionalDetails?.NocNumber +"  dated dd/mm/yyyy, registered in the name of <name as per the NOC>. This regularization falls within the jurisdiction of "+ state +".Any form of misrepresentation of the NoC is strictly prohibited. Such misrepresentation renders the building plan null and void, and it will be regarded as an act of impersonation. Criminal proceedings will be initiated against the owner and concerned architect / engineer/ building designer / supervisor involved in such actions"
+    }
+    else if(requestData?.additionalDetails?.approvedColony=="YES" ){
+      requestData.additionalDetails.permitData="The building plan falls under approved colony "+requestData?.additionalDetails?.nameofApprovedcolony
+    }
+    else{
+      requestData.additionalDetails.permitData="The building plan falls under Lal Lakir"
+    }    
+
     let response = await Digit.PaymentService.generatePdf(tenantId, { Bpa: [requestData] }, order);
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");

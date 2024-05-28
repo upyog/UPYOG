@@ -306,7 +306,7 @@
                     name="NocNumber"
                     value={NocNumber}
                     onChange={setnocNumber}
-                    //style={{ width: "86%" }}
+                    style={{ width: "86%" }}
                     ValidationRequired={false}
                     {...(validation = {
                       //isRequired: true,
@@ -315,11 +315,12 @@
                       title: t("TL_NAME_ERROR_MESSAGE"),
                   })}
                   />
-                <div style={{ position: "relative", zIndex: "100", right: "20px", marginTop: "-24px", marginRight:Webview?"-20px":"-20px" }} onClick={(e) => onClick( e)}> <SearchIcon /> </div>
+                <div style={{ position: "relative", zIndex: "100", right: "95px", marginTop: "-24px", marginRight:Webview?"-20px":"-20px" }} onClick={(e) => onClick( e)}> <SearchIcon /> </div>
                 </div>
                 <div style={{ position: "relative", fontWeight:"bold", left:"20px"}}>OR</div>
                 <UploadFile
                 id={"noc-doc"}
+                style={{ width: "86%" }}
                 onUpload={selectfile}
                 onDelete={() => {
                     setUploadedFile(null);

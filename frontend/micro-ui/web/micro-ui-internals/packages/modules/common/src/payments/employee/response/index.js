@@ -42,6 +42,7 @@ export const SuccessfulPayment = (props) => {
     {},
     { enabled: businessService?.includes("BPA") ? true : false }
   );
+  
   const FSM_EDITOR = Digit.UserService.hasAccess("FSM_EDITOR_EMP") || false;
 
   function onActionSelect(action) {
@@ -175,7 +176,13 @@ export const SuccessfulPayment = (props) => {
       });
     }
   };
-
+ 
+  let workflowDetails = Digit.Hooks.useWorkflowDetails({
+    tenantId: data?.[0]?.tenantId,
+    id: data?.[0]?.applicationNo,
+    moduleCode: "OBPS",
+  });
+  
   const getPermitOccupancyOrderSearch = async (order, mode = "download") => {
     let queryObj = { applicationNo: data?.[0]?.applicationNo };
     let bpaResponse = await Digit.OBPSService.BPASearch(data?.[0]?.tenantId, queryObj);
@@ -187,6 +194,26 @@ export const SuccessfulPayment = (props) => {
       currentDate.getFullYear() + "-" + (currentDate.getMonth() + 1) + "-" + currentDate.getDate()
     );
     let reqData = { ...bpaData, edcrDetail: [{ ...edcrData }] };
+    const state = Digit.ULBService.getStateId();
+
+    let count=0;
+    for(let i=0;i<workflowDetails?.data?.processInstances?.length;i++){
+        if(workflowDetails?.data?.processInstances[i]?.action==="PAY" && count==0 ){
+          reqData.additionalDetails.submissionDate=workflowDetails?.data?.processInstances[i]?.auditDetails?.createdTime;
+          count=1;
+        }
+    }
+        
+    if(reqData?.additionalDetails?.approvedColony=="NO"){
+      reqData.additionalDetails.permitData= "The plot has been officially regularized under No."+reqData?.additionalDetails?.NocNumber +"  dated dd/mm/yyyy, registered in the name of <name as per the NOC>. This regularization falls within the jurisdiction of "+ state +".Any form of misrepresentation of the NoC is strictly prohibited. Such misrepresentation renders the building plan null and void, and it will be regarded as an act of impersonation. Criminal proceedings will be initiated against the owner and concerned architect / engineer/ building designer / supervisor involved in such actions"
+    }
+    else if(reqData?.additionalDetails?.approvedColony=="YES" ){
+      reqData.additionalDetails.permitData="The building plan falls under approved colony "+reqData?.additionalDetails?.nameofApprovedcolony
+    }
+    else{
+      reqData.additionalDetails.permitData="The building plan falls under Lal Lakir"
+    }
+    
     let response = await Digit.PaymentService.generatePdf(bpaData?.tenantId, { Bpa: [reqData] }, order);
     const fileStore = await Digit.PaymentService.printReciept(bpaData?.tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
