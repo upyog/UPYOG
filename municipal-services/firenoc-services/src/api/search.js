@@ -31,9 +31,12 @@ export const searchApiResponse = async (request, next = {}) => {
   const queryObj = JSON.parse(JSON.stringify(request.query));
   const header = JSON.parse(JSON.stringify(request.headers));
 
+  var isCentralInstance  = envVariables.IS_ENVIRONMENT_CENTRAL_INSTANCE;
+  if(typeof isCentralInstance =="string")
+  isCentralInstance = (isCentralInstance.toLowerCase() == "true");
   // Log and check tenantId
   console.log("Received request with tenantId:", header.tenantid);
-  if (!header.tenantid) {
+  if (isCentralInstance && !header.tenantid) {
     console.error("tenantId is undefined. Please provide a valid tenantId.");
     next({
       errorType: "custom",
@@ -48,9 +51,7 @@ export const searchApiResponse = async (request, next = {}) => {
   console.log("Query object:", JSON.stringify(queryObj));
   let errors = validateFireNOCSearchModel(queryObj);
 
-  var isCentralInstance  = envVariables.IS_ENVIRONMENT_CENTRAL_INSTANCE;
-  if(typeof isCentralInstance =="string")
-  isCentralInstance = (isCentralInstance.toLowerCase() == "true");
+  
 
   var stateLevelTenantIdLength = envVariables.STATE_LEVEL_TENANTID_LENGTH;
   if(typeof stateLevelTenantIdLength == "string")

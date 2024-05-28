@@ -176,7 +176,7 @@ const Address = {
     landmark: {
       description: "additional landmark to help locate the address",
       valid_htmlData: true,
-      type: "string"
+      type: ["string", "null"]
     },
     city: {
       description:
@@ -196,7 +196,7 @@ const Address = {
       description: "more address detail as may be needed"
     },
     buildingName: {
-      type: "string",
+      type: ["string", "null"],
       description: "Name of the building",
       valid_htmlData: true,
       maxLength: 64,
