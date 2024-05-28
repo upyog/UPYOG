@@ -45,14 +45,16 @@
     const architectid = data?.applicationData?.additionalDetails?.architectid
     const architecttype =  data?.applicationData?.additionalDetails?.typeOfArchitect
     const TimeStamp = otpVerifiedTimestamp;
+    
+    const ulbselection = data?. applicationData?.additionalDetails?.Ulblisttype === "MUNICIPAL_CORPORATION" ? "Commissioner" : "Executive Officer"
+
+
     const selfdeclarationform =
     `
-    To:
-
-    Executive Officer,
-    ${ulbname} 
-    ${district}
-
+    To,
+    ${ulbselection}
+    ULB ${ulbname} 
+    
     Dear Sir or Madam,
 
     I/We, Shri/Smt/Kum. ${ownername} under signed owner of land bearing Kh. No. ${khasranumber} of ULB ${ulbname}
@@ -77,11 +79,13 @@
     E-Naksha plan and nothing has been concealed thereof.
 
 
-    Name of Owner - ${ownername}
-    Mobile Number - ${ownermobileNumber}
-    Application Number - ${applicationnumber}
-    Email Id  - ${ownerEmail}
-    Signature - Verified By OTP at ${TimeStamp}
+    This Document is Verified By OTP at ${TimeStamp}
+
+
+                                                                        Name of Owner - ${ownername}
+                                                                        Mobile Number - ${ownermobileNumber}
+                                                                        Email Id  - ${ownerEmail}
+                                                                  
     `;
 
     const openModal = () => {
@@ -221,9 +225,11 @@
             <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word', textAlign: 'justify', fontFamily: 'Roboto, serif'}}>{selfdeclarationform}</pre>            
             
 
-            <div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
               <SubmitBar label={t("BPA_CLOSE")} onSubmit={closeModal} />
+            </div>
               <br></br>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
               <br></br>
               <SubmitBar label={t("BPA_UPLOAD")} onSubmit={uploadSelfDeclaration} disabled={isUploading || isFileUploaded} />
             </div>

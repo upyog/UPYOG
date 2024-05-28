@@ -5,6 +5,7 @@ import Timeline from "../components/Timeline";
 import cloneDeep from "lodash/cloneDeep";
 
 const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
+    console.log("formdatatstd",formData);
     let validation = {};
     sessionStorage.removeItem("currentPincode");
     let isedittrade = window.location.href.includes("edit-application");
@@ -382,7 +383,10 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 if (formData?.owners?.transferredscheme) payload.additionalDetails.transferredscheme = formData?.owners?.transferredscheme;
                 if (formData?.owners?.Ulblisttype?.code) payload.additionalDetails.Ulblisttype = formData?.owners?.Ulblisttype?.code;
                 if (formData?.owners?.uploadedFile) payload.additionalDetails.uploadedFileNoc = formData?.owners?.uploadedFile;
-                
+                if (formData?.owners?.rating?.code) payload.additionalDetails.rating = formData?.owners?.rating?.code;
+                if (formData?.owners?.greenuploadedFile) payload.additionalDetails.uploadedFileGreenBuilding = formData?.owners?.greenuploadedFile;
+
+
                 //For LandInfo
                 payload.landInfo = {};
                 //For Address

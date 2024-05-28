@@ -35,11 +35,11 @@
     const architecname = user?.info?.name;
     const architectmobileNumber = user?.info.mobileNumber
     const [params] = Digit.Hooks.useSessionStorage("BUILDING_PERMIT", state?.edcrNumber ? { data: { scrutinyNumber: { edcrNumber: state?.edcrNumber } } } : {});
-
     const [isUploading, setIsUploading] = useState(false); // it will check whether the file upload is in process or not
     const [isFileUploaded, setIsFileUploaded] = useState(false);
     const architectid = params?.additionalDetails?.architectid;
     const ownername = params?.owners?.owners?.[0]?.name;
+    const mobile = params?.owners?.owners?.[0]?.mobileNumber
     const architecttype = params?.additionalDetails?.typeOfArchitect;
     const khasranumber = params?.additionalDetails?.khasraNumber;
     const ulbname = params?.additionalDetails?.District;
@@ -47,7 +47,7 @@
     const ward = params?.additionalDetails?.wardnumber;
     const area = params?.additionalDetails?.area;
     const zone = params?.additionalDetails?.zonenumber;
-    const ulbgrade = params?.address?.city?.city?.ulbGrade
+    const ulbgrade = params?.additionalDetails?.Ulblisttype
     const TimeStamp = otpVerifiedTimestamp;
 
 
@@ -55,20 +55,18 @@
 
     const selfdeclarationform =
     `
-    To:
-
-    ${ulbgrade}
-    ULB ${ulbname} 
-    District ${district}
+   To,
+   ${ulbgrade}
+   ULB ${district} 
     
-    Dear Sir or Madam,
+   Dear Sir or Madam,
 
    I, under signed Shri/Smt/Kum ${architecname} (${architecttype}) having Registration No. ${architectid} is 
-   appointed by the ${ownername} for the development on land bearing Kh. No ${khasranumber} of ${ulbname},
-   Area ${area} (Sq.mts).
+   appointed by the ${ownername} Mobile number ${mobile} for the development on land bearing Kh. No
+   ${khasranumber} of ${ulbname}, Area ${area} (Sq.mts).
     
-   This site falls in ward number ${ward} zone number ${zone}  in the Master plan of ${district} and 
-   the proposed Residential/Commercial/Industrial construction is permissible in this area.
+   This site falls in ward number ${ward} zone number ${zone}  in the Master plan of ${district}
+   and the proposed Residential/Commercial/Industrial construction is permissible in this area.
   
    I am currently registered as ${architecttype} with the Competent Authority and empanelled 
    under Self-Certification Scheme.
@@ -102,10 +100,15 @@
    That above stated facts are true and all the requisite documents uploaded with this E-Naksha plan 
    have been signed by the owner/owners in my presence.
 
-    Architect Name - ${architecname} (${architecttype})
-    Architect Id - ${architectid}
-    Mobile Number - ${architectmobileNumber}
-    Signature - Verified By OTP at ${TimeStamp}
+
+   This Document is Verified By OTP at ${TimeStamp}
+
+
+                                                                                          Name of Professional - ${architecname} 
+                                                                                          Designation - ${architecttype}
+                                                                                          Architect Id - ${architectid}
+                                                                                          Mobile Number - ${architectmobileNumber}
+                                  
     `;
 
     const openModal = () => {
@@ -252,9 +255,11 @@
             <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word', textAlign: 'justify', fontFamily: 'Roboto, serif'}}>{selfdeclarationform}</pre>            
             
 
-            <div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
               <SubmitBar label={t("BPA_CLOSE")} onSubmit={closeModal} />
-              <br></br>
+            </div>
+            <br></br>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
               <br></br>
               <SubmitBar label={t("BPA_UPLOAD")} onSubmit={uploadSelfDeclaration} disabled={isUploading || isFileUploaded} />
             </div>
