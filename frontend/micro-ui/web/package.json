@@ -10,7 +10,10 @@
     "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/dss",
     "micro-ui-internals/packages/modules/asset",
-    "micro-ui-internals/packages/modules/ew"
+    "micro-ui-internals/packages/modules/ew",
+    "micro-ui-internals/packages/modules/ptr",
+    "micro-ui-internals/packages/modules/obps"
+
 
   ],
   "engines": {
