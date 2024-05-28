@@ -106,7 +106,7 @@ public class Parking extends FeatureProcess {
     private static final String SUB_RULE_34_1_DESCRIPTION = "Parking Slots Area";
     private static final String SUB_RULE_34_2 = "34-2";
     private static final String SUB_RULE_40_8 = "40-8";
-    private static final String SUB_RULE_40_11 = "40-11";
+    private static final String RULE = "Table 4.4.4";
     private static final String PARKING_MIN_AREA = "5 M x 2 M";
     private static final double PARKING_SLOT_WIDTH = 2;
     private static final double PARKING_SLOT_HEIGHT = 5;
@@ -126,8 +126,8 @@ public class Parking extends FeatureProcess {
     private static final double PARK_F = 0.30;
     private static final double PARK_VISITOR = 0.15;
     private static final String SUB_RULE_40 = "40";
-    private static final String SUB_RULE_40_2 = "40-2";
-    private static final String SUB_RULE_40_2_DESCRIPTION = "Parking space";
+    private static final String RULE_ = "4.4.4";
+    private static final String RULE__DESCRIPTION = "Parking space";
     private static final String SUB_RULE_40_10 = "40-10";
     private static final String SUB_RULE_40_10_DESCRIPTION = "Visitor’s Parking";
     public static final String OPEN_PARKING_DIM_DESC = "Open parking ECS dimension ";
@@ -380,13 +380,13 @@ public class Parking extends FeatureProcess {
         //checkDimensionForTwoWheelerParking(pl, helper);
        //  checkAreaForLoadUnloadSpaces(pl);
         if (totalProvidedCarParkArea.doubleValue() == 0) {
-            pl.addError(SUB_RULE_40_2_DESCRIPTION,
-                    getLocaleMessage("msg.error.not.defined", SUB_RULE_40_2_DESCRIPTION));
+            pl.addError(RULE__DESCRIPTION,
+                    getLocaleMessage("msg.error.not.defined", RULE__DESCRIPTION));
         } else if (requiredCarParkArea > 0 && totalProvidedCarParkingArea.compareTo(requiredCarParkingArea) < 0) {
-            setReportOutputDetails(pl, SUB_RULE_40_2, SUB_RULE_40_2_DESCRIPTION, requiredCarParkingArea + SQMTRS,
+            setReportOutputDetails(pl, RULE_, RULE__DESCRIPTION, requiredCarParkingArea + SQMTRS,
                     totalProvidedCarParkingArea + SQMTRS, Result.Not_Accepted.getResultVal());
         } else {
-            setReportOutputDetails(pl, SUB_RULE_40_2, SUB_RULE_40_2_DESCRIPTION, requiredCarParkingArea + SQMTRS,
+            setReportOutputDetails(pl, RULE_, RULE__DESCRIPTION, requiredCarParkingArea + SQMTRS,
                     totalProvidedCarParkingArea + SQMTRS, Result.Accepted.getResultVal());
         }
         if (requiredVisitorParkArea > 0 && providedVisitorParkArea.compareTo(requiredVisitorParkingArea) < 0) {
@@ -437,16 +437,16 @@ public class Parking extends FeatureProcess {
         if (maxHeightOfBuilding.compareTo(new BigDecimal(15)) >= 0
                 || (pl.getPlot() != null && pl.getPlot().getArea().compareTo(new BigDecimal(500)) > 0)) {
             if (pl.getParkingDetails().getValidSpecialSlots() == 0) {
-                pl.addError(SUB_RULE_40_11, getLocaleMessage(DcrConstants.OBJECTNOTDEFINED, SP_PARKING));
+                pl.addError(RULE, getLocaleMessage(DcrConstants.OBJECTNOTDEFINED, SP_PARKING));
             } else {
                 for (Measurement m : pl.getParkingDetails().getSpecial()) {
                     if (m.getMinimumSide().compareTo(new BigDecimal(0)) > 0
                             && m.getMinimumSide().compareTo(new BigDecimal(3.6)) >= 0) {
-                        setReportOutputDetails(pl, SUB_RULE_40_11, SP_PARKING, 1 + NUMBERS,
+                        setReportOutputDetails(pl, RULE, SP_PARKING, 1 + NUMBERS,
                                 pl.getParkingDetails().getValidSpecialSlots() + NUMBERS,
                                 Result.Accepted.getResultVal());
                     } else if (m.getMinimumSide().compareTo(new BigDecimal(0)) > 0) {
-                        setReportOutputDetails(pl, SUB_RULE_40_11, SP_PARKING, 1 + NUMBERS,
+                        setReportOutputDetails(pl, RULE, SP_PARKING, 1 + NUMBERS,
                                 pl.getParkingDetails().getValidSpecialSlots() + NUMBERS,
                                 Result.Not_Accepted.getResultVal());
                     }

@@ -80,7 +80,7 @@ public class AdditionalFeature extends FeatureProcess {
 
     private static final String RULE_38 = "38";
     private static final String RULE_39 = "39";
-    private static final String RULE_41_I_A = "41-i-a";
+    private static final String RULE = "4.4.4";
     private static final String RULE_41_I_B = "41-i-b";
     private static final String RULE_47 = "47";
     private static final String RULE_50 = "50";
@@ -609,7 +609,7 @@ public class AdditionalFeature extends FeatureProcess {
 
             if (errors.isEmpty()) {
                 Map<String, String> details = new HashMap<>();
-                details.put(RULE_NO, RULE_41_I_A);
+                details.put(RULE_NO, RULE);
                 details.put(DESCRIPTION, MIN_PLINTH_HEIGHT_DESC);
                 details.put(PERMISSIBLE, MIN_PLINTH_HEIGHT);
                 details.put(PROVIDED, String.valueOf(minPlinthHeight));

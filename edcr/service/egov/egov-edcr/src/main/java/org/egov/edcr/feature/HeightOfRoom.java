@@ -79,11 +79,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class HeightOfRoom extends FeatureProcess {
 
-    private static final String SUBRULE_41_II_A = "41-ii-a";
+    private static final String RULE = "4.4.4";
     private static final String SUBRULE_41_II_B = "41-ii-b";
 
-    private static final String SUBRULE_41_II_A_AC_DESC = "Minimum height of ac room";
-    private static final String SUBRULE_41_II_A_REGULAR_DESC = "Minimum height of regular room";
+    private static final String RULE_AC_DESC = "Minimum height of ac room";
+    private static final String RULE_REGULAR_DESC = "Minimum height of regular room";
     private static final String SUBRULE_41_II_B_AREA_DESC = "Total area of rooms";
     private static final String SUBRULE_41_II_B_TOTAL_WIDTH = "Minimum Width of room";
 
@@ -202,8 +202,8 @@ public class HeightOfRoom extends FeatureProcess {
 //                                    else
 //                                        minimumHeight = MINIMUM_HEIGHT_3;
 
-                                    subRule = SUBRULE_41_II_A;
-                                    subRuleDesc = SUBRULE_41_II_A_AC_DESC;
+                                    subRule = RULE;
+                                    subRuleDesc = RULE_AC_DESC;
                                     
                                     
                                     boolean valid = false;
@@ -279,8 +279,8 @@ public class HeightOfRoom extends FeatureProcess {
 //                                    else
 //                                        minimumHeight = MINIMUM_HEIGHT_3_6;
 
-                                    subRule = SUBRULE_41_II_A;
-                                    subRuleDesc = SUBRULE_41_II_A_REGULAR_DESC;
+                                    subRule = RULE;
+                                    subRuleDesc = RULE_REGULAR_DESC;
 
 
                                     boolean valid = false;

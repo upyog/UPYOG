@@ -456,7 +456,7 @@ function selectfile(e) {
         label={ <PDFSvg /> }
           onClick={() => routeTo(datafromAPI?.updatedDxfFile)}
        />
-       <p style={{ marginTop: "8px", marginBottom: "20px", textAlign:"Left", fontSize: "16px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>{t(`BPA_UPLOADED_PLAN_DXF`)}</p>
+       <p style={{ marginTop: "8px", marginBottom: "20px", textAlign:"Left", fontSize: "16px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>{t(`Uploaded Plan.pdf`)}</p>
       <CardSubHeader>{t("BPA_SCRUNTINY_REPORT_OUTPUT")}</CardSubHeader>
       <LinkButton
         label={ <PDFSvg /> }

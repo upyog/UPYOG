@@ -126,7 +126,7 @@ public class Far extends FeatureProcess {
 	private static final String VALIDATION_NEGATIVE_BUILTUP_AREA = "msg.error.negative.builtuparea.occupancy.floor";
 	private static final String VALIDATION_NEGATIVE_EXISTING_BUILTUP_AREA = "msg.error.negative.existing.builtuparea.occupancy.floor";
 	public static final String RULE_31_1 = "31-1";
-	public static final String RULE_38 = "38";
+	public static final String RULE = "4.4.4";
 
 	private static final BigDecimal POINTTWO = BigDecimal.valueOf(0.2);
 	private static final BigDecimal POINTFOUR = BigDecimal.valueOf(0.4);
@@ -1306,7 +1306,7 @@ public class Far extends FeatureProcess {
 		String actualResult = far.toString();
 
 		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_38);
+		details.put(RULE_NO, RULE);
 		details.put(OCCUPANCY, occupancyName);
 		details.put(AREA_TYPE, typeOfArea);
 		details.put(ROAD_WIDTH, roadWidth.toString());

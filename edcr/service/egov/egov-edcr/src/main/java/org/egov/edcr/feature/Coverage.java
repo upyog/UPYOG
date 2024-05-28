@@ -107,7 +107,7 @@ public class Coverage extends FeatureProcess {
 
 	public static final String RULE_38 = "38";
 	public static final String RULE_7_C_1 = "Table 7-C-1";
-	public static final String RULE_18_9 = "Table 18-9";
+	public static final String RULE = "4.4.4";
 	private static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
 	private static final BigDecimal ROAD_WIDTH_THIRTY_POINTFIVE = BigDecimal.valueOf(30.5);
 
@@ -264,7 +264,7 @@ public class Coverage extends FeatureProcess {
         } else if (plotArea.compareTo(BigDecimal.valueOf(300)) > 0 && plotArea.compareTo(BigDecimal.valueOf(500)) <= 0) {
             permissibleCoverage =  BigDecimal.valueOf(60); // 60% coverage for plot area 300-500 sqm
           //  Log.info("permissibleCoverage: for plotare: "+plotArea +"is: "+ permissibleCoverage);
-        } else if (plotArea.compareTo(BigDecimal.valueOf(500)) > 0 && plotArea.compareTo(BigDecimal.valueOf(100)) <= 0) {
+        } else if (plotArea.compareTo(BigDecimal.valueOf(500)) > 0 && plotArea.compareTo(BigDecimal.valueOf(1000)) <= 0) {
             permissibleCoverage =  BigDecimal.valueOf(50); // 50% coverage for plot area 500-1000 sqm
            // Log.info("permissibleCoverage: for plotare: "+plotArea +"is: "+ permissibleCoverage);
         } else {
@@ -352,7 +352,7 @@ public class Coverage extends FeatureProcess {
 		if (coverage.doubleValue() <= upperLimit.doubleValue() || occupancy.equalsIgnoreCase("Residential")
 				|| occupancy.equalsIgnoreCase("Mercantile / Commercial")) {
 			Map<String, String> details = new HashMap<>();
-			details.put(RULE_NO, RULE_18_9);
+			details.put(RULE_NO, RULE);
 		//	details.put(DEVELOPMENT_ZONE, developmentZone);
 
 			details.put(OCCUPANCY, occupancy);
@@ -369,7 +369,7 @@ public class Coverage extends FeatureProcess {
 
 		} else {
 			Map<String, String> details = new HashMap<>();
-			details.put(RULE_NO, RULE_18_9);
+			details.put(RULE_NO, RULE);
 		//	details.put(DEVELOPMENT_ZONE, developmentZone);
 			details.put(OCCUPANCY, occupancy);
 			details.put(PERMISSIBLE, expectedResult);
