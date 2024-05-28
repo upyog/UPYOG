@@ -782,7 +782,7 @@ const BpaApplicationDetail = () => {
       
      
 
-      {user?.info?.type==="CITIZEN" && (
+      {workflowDetails?.data?.actionState?.state ==="CITIZEN_APPROVAL_PENDING" && (
 
       <div>
         <Card>
