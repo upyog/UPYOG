@@ -2,6 +2,10 @@ package org.egov.pg.service;
 
 import org.egov.pg.models.Transaction;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
+import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 
@@ -57,4 +61,6 @@ public interface Gateway {
     String transactionIdKeyInResponse();
 
     String generateRedirectFormData(Transaction transaction );
+    Transaction getTransformedTransaction(String resp, Transaction currentStatus, String secretKey ) throws JsonParseException, JsonMappingException, IOException;
+  
 }

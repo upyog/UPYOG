@@ -1,24 +1,37 @@
 package org.egov.pg.service;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.pg.config.AppProperties;
+import org.egov.pg.constants.PgConstants;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.models.TransactionDump;
 import org.egov.pg.models.TransactionDumpRequest;
 import org.egov.pg.producer.Producer;
 import org.egov.pg.repository.TransactionRepository;
+import org.egov.pg.service.gateways.paygov.PayGovGatewayStatusResponse;
+import org.egov.pg.utils.Utils;
 import org.egov.pg.validator.TransactionValidator;
 import org.egov.pg.web.models.TransactionCriteria;
 import org.egov.pg.web.models.TransactionRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,6 +49,9 @@ public class TransactionService {
     private AppProperties appProperties;
     private TransactionRepository transactionRepository;
     private PaymentsService paymentsService;
+    
+    @Value("${paygov.merchant.secret.key}")
+    private String secretKey;
 
 
 
@@ -133,7 +149,7 @@ public class TransactionService {
      * @return Updated transaction
      */
     public List<Transaction> updateTransaction(RequestInfo requestInfo, Map<String, String> requestParams) {
-
+    	
         Transaction currentTxnStatus = validator.validateUpdateTxn(requestParams);
 
         log.debug(currentTxnStatus.toString());
@@ -168,5 +184,87 @@ public class TransactionService {
 
         return Collections.singletonList(newTxn);
     }
+    
+    
+    
+    
+    public String updateTransactionForPushResponse(HttpServletRequest req, HttpServletResponse resp) {
+    	
+    	RequestInfo requestInfo;
+    	User userInfo = User.builder()
+                .uuid(appProperties.getEgovPgReconciliationSystemUserUuid())
+                .type("SYSTEM")
+                .roles(Collections.emptyList()).id(0L).build();
+
+        requestInfo = new RequestInfo();
+        requestInfo.setUserInfo(userInfo);
+        String response="200|Y|SUCCESSFUL";
+    	try {
+    		
+    		Map<String, String> requestParams = new TreeMap<>() ;
+        	
+        	String message=req.getParameter("msg");
+        	String auth=req.getParameter("auth");
+        	
+        	//Set Fixed token For Authentication
+        	//Check Token Validation 
+        	//Throw Authentication Failure
+        	
+        	
+        	String transactionId= message.split("[|]")[4];
+        	requestParams.put("transactionId", transactionId );
+    		Transaction currentTxnStatus = validator.validateUpdateTxn(requestParams);
+    		Transaction newTxn = null;
+
+            if(validator.skipGateway(currentTxnStatus)) {
+                newTxn = currentTxnStatus;
+
+            } else{
+            	try {
+    				newTxn=	gatewayService.getTransanformedTransaction(message, currentTxnStatus, secretKey);
+    			} catch ( IOException e) {
+    				 response="400|N|"+"System Exception";
+    			} 
+                // Enrich the new transaction status before persisting
+                enrichmentService.enrichUpdateTransaction(new TransactionRequest(requestInfo, currentTxnStatus), newTxn);
+            }
+
+            // Check if transaction is successful, amount matches etc
+			
+			  if (validator.shouldGenerateReceipt(currentTxnStatus, newTxn)) {
+			  TransactionRequest request =
+			  TransactionRequest.builder().requestInfo(requestInfo).transaction(newTxn).
+			  build(); paymentsService.registerPayment(request); }
+			  
+			  TransactionDump dump = TransactionDump.builder().txnId(currentTxnStatus.getTxnId()).txnResponse(newTxn.getResponseJson()).auditDetails(newTxn.getAuditDetails()) .build();
+			  
+			  producer.push(appProperties.getUpdateTxnTopic(), new org.egov.pg.models.TransactionRequest(requestInfo, newTxn));
+			  producer.push(appProperties.getUpdateTxnDumpTopic(), new TransactionDumpRequest(requestInfo, dump));
+			 
+    	}
+        catch (CustomException e) {
+        	if(e.getCode().equals("MISSING_UPDATE_TXN_ID")) {
+        		 response="400|N|"+"Invalid Order id" ;
+        	}
+			 if(e.getCode().equals("CHECKSUM_VALIDATION_FAILED")){
+				 response="400|N|"+"Invalid Check Sum" ;
+			 }
+        	else {
+        		 response="400|N|"+"System Exception";
+        	}
+		}
+      
+        
+        
+       // For failed given from merchant 
+      
+       
+		return response;
+
+       // return Collections.singletonList(newTxn);
+    }
+    
+    
+    
 
 }

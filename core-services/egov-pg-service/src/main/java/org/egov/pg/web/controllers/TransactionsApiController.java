@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -109,6 +111,15 @@ public class TransactionsApiController {
         Set<String> gateways = gatewayService.getActiveGateways();
         log.debug("Available gateways : " + gateways);
         return new ResponseEntity<>(gateways, HttpStatus.OK);
+    }
+    
+    
+    @RequestMapping(value = "/gateway/v1/pushResponse", method = RequestMethod.POST)
+    public ResponseEntity<String> pushResponseApiForPG(HttpServletRequest req, HttpServletResponse resp) {
+
+         
+        //log.debug("Available gateways : " + gateways);
+        return new ResponseEntity<String>(transactionService.updateTransactionForPushResponse(req, resp), HttpStatus.OK);
     }
 
 }
