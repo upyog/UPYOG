@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardText, Loader } from "@egovernments/digit-ui-react-components";
+import { Card, CardHeader, CardText, Loader } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -13,7 +13,7 @@ export const TLList = () => {
   if (licenseno) filter1.licenseNumbers = licenseno;
   if (licenseno) filter1.tenantId = tenantID;
   if (!licenseno) filter1.mobileNumber = userInfo?.info?.mobileNumber;
-  filter1 = { ...filter1, tenantId: tenantId || tenantID, status: "APPROVED,CANCELLED,EXPIRED,MANUALEXPIRED" };
+  filter1 = { ...filter1, RenewalPending:true, tenantId: tenantId || tenantID, status: "APPROVED,CANCELLED,EXPIRED,MANUALEXPIRED" };
   const { isLoading, isError, error, data } = Digit.Hooks.tl.useTradeLicenseSearch({ filters: filter1 }, {});
   useEffect(() => {
     localStorage.setItem("TLAppSubmitEnabled", "true");

@@ -1,4 +1,4 @@
-import { CardLabel, Dropdown, FormStep, LinkButton, Loader, TextInput, DeleteIcon } from "@egovernments/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, LinkButton, Loader, TextInput, DeleteIcon } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState ,Fragment} from "react";
 import Timeline from "../components/TLTimeline";
 
@@ -466,30 +466,6 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
                   option={mdmsData?.OccupancyType}
                   selected={field?.occupancyType}
                   select={(e) => selectOccupancy(index, e)}
-                />
-              </div>
-              <CardLabel>{`${t("PT_STRUCTURE_TYPE")}*`}</CardLabel>
-              <div className={"form-pt-dropdown-only"}>
-                <Dropdown
-                  t={t}
-                  optionKey="i18nKey"
-                  isMandatory={config.isMandatory}
-                  option={structureType}
-                  selected={field?.structureType}
-                  placeholder={"Select structure type"}
-                  select={(e) => selectstructureType(index, e)}
-                />
-              </div>
-              <CardLabel>{`${t("PT_AGE_OF_PROPERTY")}*`}</CardLabel>
-              <div className={"form-pt-dropdown-only"}>
-                <Dropdown
-                  t={t}
-                  optionKey="i18nKey"
-                  isMandatory={config.isMandatory}
-                  option={ageOfProperty}
-                  selected={field?.ageOfProperty}
-                  placeholder={"Select Age of Property"}
-                  select={(e) => selectageOfProperty(index, e)}
                 />
               </div>
               {field?.occupancyType?.code && field.occupancyType.code.includes("RENTED") && (

@@ -4,7 +4,7 @@ import {
     TextInput,
     CardLabel,
     Toast
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 
 const WSSewerageConnectionDetails = ({ t, config, userType, onSelect, formData }) => {
@@ -60,6 +60,7 @@ const WSSewerageConnectionDetails = ({ t, config, userType, onSelect, formData }
                     gender: formData?.ConnectionHolderDetails?.gender?.code,
                     mobileNumber: formData?.ConnectionHolderDetails?.mobileNumber,
                     name: formData?.ConnectionHolderDetails?.name,
+                    emailId:formData?.ConnectionHolderDetails?.emailId,
                     ownerType: formData?.ConnectionHolderDetails?.specialCategoryType?.code || "NONE",
                     relationship: formData?.ConnectionHolderDetails?.relationship?.code,
                     sameAsPropertyAddress: false,
@@ -130,6 +131,7 @@ const WSSewerageConnectionDetails = ({ t, config, userType, onSelect, formData }
                     gender: formData?.ConnectionHolderDetails?.gender?.code,
                     mobileNumber: formData?.ConnectionHolderDetails?.mobileNumber,
                     name: formData?.ConnectionHolderDetails?.name,
+                    emailId: formData?.ConnectionHolderDetails?.emailId,
                     ownerType: formData?.ConnectionHolderDetails?.specialCategoryType?.code || "NONE",
                     relationship: formData?.ConnectionHolderDetails?.relationship?.code,
                     sameAsPropertyAddress: false,
@@ -184,6 +186,7 @@ const WSSewerageConnectionDetails = ({ t, config, userType, onSelect, formData }
                     gender: formData?.ConnectionHolderDetails?.gender?.code,
                     mobileNumber: formData?.ConnectionHolderDetails?.mobileNumber,
                     name: formData?.ConnectionHolderDetails?.name,
+                    emailId:formData?.ConnectionHolderDetails?.emailId,
                     ownerType: formData?.ConnectionHolderDetails?.specialCategoryType?.code || "NONE",
                     relationship: formData?.ConnectionHolderDetails?.relationship?.code,
                     sameAsPropertyAddress: false,

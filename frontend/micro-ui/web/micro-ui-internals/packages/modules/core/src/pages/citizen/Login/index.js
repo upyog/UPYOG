@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AppContainer, BackButton, Toast } from "@egovernments/digit-ui-react-components";
+import { AppContainer, BackButton, Toast } from "@upyog/digit-ui-react-components";
 import { Route, Switch, useHistory, useRouteMatch, useLocation } from "react-router-dom";
 import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
@@ -186,7 +186,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       const { mobileNumber, otp, name } = params;
       if (isUserRegistered) {
         const requestData = {
-          username: mobileNumber,
+          username: mobileNumber ? mobileNumber:sessionStorage.getItem("userName"),
           password: otp,
           tenantId: stateCode,
           userType: getUserType(),

@@ -1,11 +1,13 @@
-import { CardLabel, CardLabelDesc, Dropdown, FormStep ,UploadFile} from "@egovernments/digit-ui-react-components";
+import { CardLabel, CardLabelDesc, Dropdown, FormStep, UploadFile } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { stringReplaceAll } from "../utils";
 import Timeline from "../components/TLTimeline";
+import UploadFileDigiLocker from "../utils/UploadFile"
 
 const Proof = ({ t, config, onSelect, userType, formData }) => {
   //let index = window.location.href.charAt(window.location.href.length - 1);
+  const [digiLockerUpload,setDigilockerUpload] = useState(false)
   const { pathname: url } = useLocation();
   const isMutation = url.includes("property-mutation");
 
@@ -29,13 +31,14 @@ const Proof = ({ t, config, onSelect, userType, formData }) => {
   const docs = Documentsob?.PropertyTax?.Documents;
   const proofOfAddress = Array.isArray(docs) && docs.filter((doc) => doc.code.includes("ADDRESSPROOF"));
   if (proofOfAddress.length > 0) {
-    dropdownData = proofOfAddress[0]?.dropdownData;
+    dropdownData = proofOfAddress[0]?.dropdownData.filter((doc) => doc?.active == true);
     dropdownData.forEach((data) => {
       data.i18nKey = stringReplaceAll(data.code, ".", "_");
     });
   }
 
   function setTypeOfDropdownValue(dropdownValue) {
+    dropdownValue?.digiLockerFetch == true ?  setDigilockerUpload(true) : setDigilockerUpload(false),setUploadedFile(null)
     setDropdownValue(dropdownValue);
   }
 
@@ -114,7 +117,8 @@ const Proof = ({ t, config, onSelect, userType, formData }) => {
           select={setTypeOfDropdownValue}
           placeholder={t(`PT_MUTATION_SELECT_DOC_LABEL`)}
         />
-        <UploadFile
+        {digiLockerUpload ?
+        <UploadFileDigiLocker
           id={"pt-doc"}
           extraStyleName={"propertyCreate"}
           accept=".jpg,.png,.pdf"
@@ -124,7 +128,18 @@ const Proof = ({ t, config, onSelect, userType, formData }) => {
           }}
           message={uploadedFile ? `1 ${t(`PT_ACTION_FILEUPLOADED`)}` : t(`PT_ACTION_NO_FILEUPLOADED`)}
           error={error}
-        />
+        /> :<UploadFile
+        id={"pt-doc"}
+        extraStyleName={"propertyCreate"}
+        accept=".jpg,.png,.pdf"
+        onUpload={selectfile}
+        onDelete={() => {
+          setUploadedFile(null);
+        }}
+        message={uploadedFile ? `1 ${t(`PT_ACTION_FILEUPLOADED`)}` : t(`PT_ACTION_NO_FILEUPLOADED`)}
+        error={error}
+      /> }
+
         {error ? <div style={{ height: "20px", width: "100%", fontSize: "20px", color: "red", marginTop: "5px" }}>{error}</div> : ""}
         <div style={{ disabled: "true", height: "20px", width: "100%" }}></div>
       </FormStep>

@@ -68,7 +68,7 @@ export const CreateComplaint = () => {
 
   const submitComplaint = async () => {debugger
     if (paramState?.complaintType) {
-      const { city_complaint, locality_complaint, uploadedImages, complaintType, subType, details, ...values } = paramState;
+      const { city_complaint, locality_complaint, uploadedImages, complaintType, subType, prioritylevel, details, ...values } = paramState;
       const { code: cityCode, name: city } = city_complaint;
       const { code: localityCode, name: localityName } = locality_complaint;
       const storedpropertyid =sessionStorage.getItem("propertyid")
@@ -84,6 +84,7 @@ export const CreateComplaint = () => {
         complaintType: subType?.key,
         cityCode,
         city,
+        prioritylevel: prioritylevel ,
         description: details,
         district: city,
         region: city,

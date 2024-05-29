@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, KeyNote, Loader, SubmitBar, Header } from "@egovernments/digit-ui-react-components";
+import { Card, KeyNote, Loader, SubmitBar, Header } from "@upyog/digit-ui-react-components";
 import { Fragment } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { getBPAFormData } from "../../../utils/index";
@@ -152,6 +152,16 @@ const MyApplication = () => {
                 <SubmitBar label={t("TL_VIEW_DETAILS")} />
               </Link> :
                 <SubmitBar label={t("BPA_COMP_WORKFLOW")} onSubmit={() => getBPAREGFormData(application)} />}
+              {application.status==="PENDINGPAYMENT" ? (
+              <Link
+                to={{
+                  pathname : `/digit-ui/citizen/payment/collect/${application?.businessService}/${application?.applicationNumber}`,
+                }}>
+              <div style={{marginTop:"10px"}}>
+                <SubmitBar label ={t("COMMON_MAKE_PAYMENT")}/>
+              </div>
+              </Link>
+              ) : null}
             </Card>
           )
         } else {
@@ -172,6 +182,17 @@ const MyApplication = () => {
                     </Link> : <SubmitBar label={t("BPA_COMP_WORKFLOW")} onSubmit={() => getBPAFormData(application, mdmsData, history, t)} />}
                 </div>
               }
+              {application.status==="PENDINGPAYMENT" ? (
+              <Link
+                to={{
+                  pathname : `/digit-ui/citizen/payment/collect/${application?.businessService}/${application?.applicationNumber}`,
+
+                }}>
+              <div style={{marginTop:"10px"}}>
+                <SubmitBar label ={t("COMMON_MAKE_PAYMENT")}/>
+              </div>
+              </Link>
+              ) : null}
             </Card>
           )
         }

@@ -11,8 +11,9 @@ import {
   ActionBar,
   SubmitBar,
   MultiLink,
+  LinkButton,
   Toast
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { useParams, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
@@ -40,6 +41,7 @@ const ApplicationDetails = () => {
   const stateId = Digit.ULBService.getStateId();
   const isMobile = window.Digit.Utils.browser.isMobile();
   const [showOptions, setShowOptions] = useState(false);
+  const [viewTimeline, setViewTimeline]=useState(false);
   let filters = func.getQueryStringParams(location.search);
   const applicationNumber = filters?.applicationNumber;
   const serviceType = filters?.service;
@@ -357,9 +359,17 @@ const ApplicationDetails = () => {
   };
 
   async function getRecieptSearch(tenantId, payments, consumerCodes, receiptKey) {
-    let response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, receiptKey);
+    let response=null;
+    if(payments?.fileStoreId){
+       response = { filestoreIds: [payments?.fileStoreId] }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+    window.open(fileStore[response.filestoreIds[0]], "_blank");
+    }
+    else{
+    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, receiptKey);
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
+    }
   }
 
   const handleEstimateDownload = async () => {
@@ -411,7 +421,13 @@ const ApplicationDetails = () => {
     label: t("DOWNLOAD_RECEIPT_HEADER"),
     onClick: () => getRecieptSearch(applicationDetails?.applicationData?.tenantId ? applicationDetails?.applicationData?.tenantId : Digit.ULBService.getCurrentTenantId(), reciept_data?.Payments?.[0], applicationDetails?.applicationData?.applicationNo, receiptKey ),
   };
-  
+  const handleViewTimeline=()=>{
+    setViewTimeline(true);
+      const timelineSection=document.getElementById('timeline');
+      if(timelineSection){
+        timelineSection.scrollIntoView({behavior: 'smooth'});
+      } 
+  };
   const applicationFeeReceipt = {
     order: 4,
     label: t("WS_APLICATION_RECEIPT"),
@@ -460,7 +476,9 @@ const ApplicationDetails = () => {
       <div className={"employee-main-application-details"}>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
           <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
-
+          <div style={{display:"flex", alignItems:"center", color:"#A52A2A"}}>
+          <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
+          </div> 
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper employee-mulitlink-main-div"
@@ -473,13 +491,14 @@ const ApplicationDetails = () => {
             />
           )}
         </div>
-        
+
         <ApplicationDetailsTemplate
           applicationDetails={applicationDetails}
           isLoading={isLoading || isBillingServiceLoading || isCommonmastersLoading || isServicesMasterLoading }
           isDataLoading={isLoading || isBillingServiceLoading || isCommonmastersLoading || isServicesMasterLoading }
           applicationData={applicationDetails?.applicationData}
           mutate={mutate}
+          id={"timeline"}
           workflowDetails={workflowDetails}
           businessService={applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}
           moduleCode="WS"

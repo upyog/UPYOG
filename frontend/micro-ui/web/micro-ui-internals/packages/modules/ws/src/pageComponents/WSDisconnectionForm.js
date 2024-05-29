@@ -20,7 +20,7 @@ import {
   ActionBar,
   Dropdown,
   InfoIcon
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import DisconnectTimeline from "../components/DisconnectTimeline";
@@ -47,10 +47,12 @@ const WSDisconnectionForm = ({ t, config, onSelect, userType }) => {
   const [documents, setDocuments] = useState(applicationData.WSDisconnectionForm ? applicationData.WSDisconnectionForm.documents : []);
   const [error, setError] = useState(null);
   const [disconnectionTypeList, setDisconnectionTypeList] = useState([]);
+  const [disconnectionReasonList, setDisconnectionReasonList]=useState([]);
   const [checkRequiredFields, setCheckRequiredFields] = useState(false);
   const [isEnableLoader, setIsEnableLoader] = useState(false);
 
   const { isMdmsLoading, data: mdmsData } = Digit.Hooks.ws.useMDMS(stateCode, "ws-services-masters", ["disconnectionType"]);
+  const {loading, data: disconnectionReason} = Digit.Hooks.ws.useMDMS(stateCode,"ws-services-masters", ["DisconnectionReason"]);
   const { isLoading: wsDocsLoading, data: wsDocs } =  Digit.Hooks.ws.WSSearchMdmsTypes.useWSServicesMasters(stateCode, "DisconnectionDocuments");
   const {isLoading: slaLoading, data: slaData } = Digit.Hooks.ws.useDisconnectionWorkflow({tenantId});
   const isReSubmit = window.location.href.includes("resubmit");
@@ -103,6 +105,11 @@ const WSDisconnectionForm = ({ t, config, onSelect, userType }) => {
 
     setDisconnectionTypeList(disconnectionTypes);
   }, [mdmsData]);
+  useEffect(() => {
+    const disconnectionReasons = disconnectionReason?.["ws-services-masters"]?.DisconnectionReason || []; 
+    disconnectionReasons?.forEach(data => data.i18nKey = `WS_DISCONNECTIONTYPE_${stringReplaceAll(data?.code?.toUpperCase(), " ", "_")}`);
+      setDisconnectionReasonList(disconnectionReasons);
+  }, [disconnectionReason]);
 
   useEffect(() => {
     Digit.SessionStorage.set("WS_DISCONNECTION", {...applicationData, WSDisconnectionForm: disconnectionData});
@@ -208,7 +215,7 @@ const WSDisconnectionForm = ({ t, config, onSelect, userType }) => {
     
   } ;
 
-  if (isMdmsLoading || wsDocsLoading || isEnableLoader || slaLoading) return <Loader />
+  if (isMdmsLoading || wsDocsLoading || isEnableLoader || slaLoading || loading) return <Loader />
 
 
 if(userType === 'citizen') {
@@ -288,13 +295,16 @@ if(userType === 'citizen') {
           :""}
             <LabelFieldPair>
               <CardLabel className="card-label-smaller" style={{display: "inline"}}>{t("WS_DISCONNECTION_REASON")+ "*"}</CardLabel>              
-                <TextArea
+                <Dropdown
+                  option={disconnectionReasonList}
                   isMandatory={false}
                   optionKey="i18nKey"
                   t={t}
                   name={"reason"}
-                  value={disconnectionData.reason?.value}
-                  onChange={(e) => filedChange({code:"reason" , value:e.target.value})}
+                  value={disconnectionData.reason?.value?.code}
+                  selectedOption={disconnectionData.reason?.value}
+                  labelKey="WS_DISCONNECTION_REASON"
+                  select={(e) => filedChange({code:"reason" , value:e})}
                 />              
             </LabelFieldPair>
             <SubmitBar
@@ -427,13 +437,16 @@ console.log("disconnectionData",disconnectionData)
           <LabelFieldPair>
               <CardLabel style={{ marginTop: "-5px", fontWeight: "700", display: "inline" }} className="card-label-smaller">{t("WS_DISCONNECTION_REASON") + "*"}</CardLabel>              
               <div className="field">
-                <TextArea
+                <Dropdown
+                  option={disconnectionReasonList}
                   isMandatory={false}
                   optionKey="i18nKey"
                   t={t}
                   name={"reason"}
-                  value={disconnectionData.reason?.value}
-                  onChange={(e) => filedChange({code:"reason" , value:e.target.value})}
+                  value={disconnectionData.reason?.value?.code}
+                  selectedOption={disconnectionData.reason?.value}
+                  select={(e) => filedChange({code:"reason" , value:e})}
+                  labelKey="WS_DISCONNECTION_REASON"
                 />  
                 </div>            
           </LabelFieldPair>

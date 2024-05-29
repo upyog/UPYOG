@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Banner, CardText, SubmitBar, Loader, LinkButton, Toast, ActionBar, Menu } from "@egovernments/digit-ui-react-components";
+import { Card, Banner, CardText, SubmitBar, Loader, LinkButton, Toast, ActionBar, Menu } from "@upyog/digit-ui-react-components";
 import { Link, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
@@ -67,7 +67,7 @@ const Response = (props) => {
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("FSM_MUTATION_SUCCESS_DATA", false);
   const [displayMenu, setDisplayMenu] = useState(false);
   const [selectedAction, setSelectedAction] = useState(null);
-
+  sessionStorage.removeItem("Digit_FSM_PT")
   const onError = (error, variables) => {
     setErrorInfo(error?.response?.data?.Errors[0]?.code || error?.message || "ERROR");
     setMutationHappened(true);

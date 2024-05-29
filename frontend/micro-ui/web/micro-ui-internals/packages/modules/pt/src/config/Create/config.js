@@ -195,10 +195,25 @@ export const newConfig =[
                         "submitBarLabel": "PT_COMMONS_NEXT"
                     },
                     
-                    "nextStep": "uid",
+                    "nextStep": "PropertyStructureDetails",
                     
                     "withoutLabel": true
                     
+                },
+                {
+                    "type": "component",
+                    "route": "PropertyStructureDetails",
+                    "isMandatory": true,
+                    "component": "PropertyStructureDetails",
+                    "key": "propertyStructureDetails",
+                    "withoutLabel": true,
+                    "texts": {
+                        "headerCaption": "",
+                        "header": "PT_STRUCTURE_DETAILS",
+                        "cardText": "",
+                        "submitBarLabel": "PT_COMMONS_NEXT"
+                    },
+                    "nextStep": "uid"
                 },
                 {
                     "type": "component",

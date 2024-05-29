@@ -107,6 +107,7 @@ export const Search = {
         values: [
           { title: "ES_APPLICATION_DETAILS_APPLICANT_NAME", value: response?.citizen?.name },
           { title: "ES_APPLICATION_DETAILS_APPLICANT_MOBILE_NO", value: response?.citizen?.mobileNumber },
+          {title: "ES_APPLICATION_DETAILS_APPLICANT_EMAIL_ID", value: response?.citizen?.emailId },
           response?.paymentPreference && {
             title: "ES_FSM_PAYMENT_PREFERENCE",
             value: response?.paymentPreference ? `ES_ACTION_${response?.paymentPreference}` : "N/A",

@@ -11,11 +11,12 @@ import {
   BackButton,
   Loader,
   DatePicker
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import UploadDrawer from "./ImageUpload/UploadDrawer";
+import { subYears, format, differenceInYears } from "date-fns";
 
 const defaultImage =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAADUCAMAAACs0e/bAAAAM1BMVEXK0eL" +
@@ -49,12 +50,16 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   const userInfo = Digit.UserService.getUser()?.info || {};
   const [userDetails, setUserDetails] = useState(null);
   const [name, setName] = useState(userInfo?.name ? userInfo.name : "");
-  const [dob, setDob] = useState(userInfo?.dob? userInfo.dob: "");
+  const dateOfBirth= userDetails?.dob
+  console.log("ddd", dateOfBirth)
+  const formattedDob=(dateOfBirth!==undefined) ?format(new Date(dateOfBirth), 'MM/dd/yyyy') : ""
+  //const dateOfBirth1= (dateOfBirth!==undefined) ?dateOfBirth.split("-").reverse().join("-") : ""
+  const [dob, setDob] = useState(dateOfBirth);
   const [email, setEmail] = useState(userInfo?.emailId ? userInfo.emailId : "");
   const [gender, setGender] = useState(userDetails?.gender);
   const [city, setCity] = useState(userInfo?.permanentCity ? userInfo.permanentCity : cityDetails.name);
   const [mobileNumber, setMobileNo] = useState(userInfo?.mobileNumber ? userInfo.mobileNumber : "");
-  const [profilePic, setProfilePic] = useState(null);
+  const [profilePic, setProfilePic] = useState(userDetails?.photo ? userDetails?.photo : "");
   const [profileImg, setProfileImg] = useState("");
   const [openUploadSlide, setOpenUploadSide] = useState(false);
   const [changepassword, setChangepassword] = useState(false);
@@ -98,13 +103,16 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
     setLoading(false);
   }, [userDetails !== null]);
-  console.log("Details",userDetails)
 
   let validation = {};
   const editScreen = false; // To-do: Deubug and make me dynamic or remove if not needed
   const onClickAddPic = () => setOpenUploadSide(!openUploadSlide);
   const TogleforPassword = () => setChangepassword(!changepassword);
   const setGenderName = (value) => setGender(value);
+
+  const setUserDOB =(value)=> {
+      setDob(value);
+  }
   const closeFileUploadDrawer = () => setOpenUploadSide(false);
 
   const setUserName = (value) => {
@@ -184,7 +192,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
       const requestData = {
         ...userInfo,
         name,
-        dob,
+        dob: dob!== undefined ? dob.split("-").reverse().join("/") : "",
         gender: gender?.value,
         emailId: email,
         photo: profilePic,
@@ -227,10 +235,11 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
             info: {
               ...user.info,
               name,
-              dob,
+              //DOB,
               mobileNumber,
               emailId: email,
               permanentCity: city,
+              photo: profileImg
             },
           });
         }
@@ -438,7 +447,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
               <LabelFieldPair>
                 <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("CORE_COMMON_PROFILE_DOB")}`}*</CardLabel>
                 <div style={{ width: "100%", maxWidth:"960px" }}>
-                <DatePicker date={userDetails?.dob} disable={true}  />
+                <DatePicker date={dob || dateOfBirth} onChange={setUserDOB} disable={true} />
                   {errors?.userName && <CardLabelError> {errors?.userName?.message} </CardLabelError>}
                 </div>
               </LabelFieldPair>
@@ -454,7 +463,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                     name="email"
                     value={email}
                     onChange={(e)=>setUserEmailAddress(e.target.value)}
-                    disable={!editScreen}
+                    disable={editScreen}
                   />
                   {errors?.emailAddress && <CardLabelError> {errors?.emailAddress?.message} </CardLabelError>}
                 </div>
@@ -585,7 +594,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                   "CORE_COMMON_PROFILE_DOB"
                 )}`}</CardLabel>
                 <div style={{width: "100%"}}>
-                <DatePicker date={userDetails?.dob} disable={true}  />
+                <DatePicker date={dob || dateOfBirth} onChange={setUserDOB} disable={true}  />
                  {/* {errors?.emailAddress && <CardLabelError> {errors?.emailAddress?.message} </CardLabelError>} */}
                 </div>
               </LabelFieldPair>             

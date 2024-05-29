@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CitizenInfoLabel, Loader, Dropdown, FormStep, CardLabel, RadioOrSelect } from "@egovernments/digit-ui-react-components";
+import { CitizenInfoLabel, Loader, Dropdown, FormStep, CardLabel, RadioOrSelect } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/TLTimelineInFSM";
 import { useLocation } from "react-router-dom";
 
@@ -11,16 +11,44 @@ const SelectPropertyType = ({ config, onSelect, t, userType, formData }) => {
 
   const propertyTypesData = Digit.Hooks.fsm.useMDMS(stateId, "FSM", "PropertyType", { select });
 
+  //const usageType=formData?.cpt!=="undefined"? (formData?.cpt?.details?.usageCategory==="RESIDENTIAL" ? formData?.cpt?.details?.usageCategory: formData?.cpt?.details?.usageCategory.split('.')[1]):""
+  //const property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT")|| "{}")
+  let property = sessionStorage?.getItem("Digit_FSM_PT")
+if (property !== "undefined")
+{
+  property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
+}
+  const usageType = property?.propertyDetails?.usageCategory || property?.usageCategory
   const [propertyType, setPropertyType] = useState();
-
+useEffect(()=>{
+ if(userType === "employee" && property && propertyTypesData.data)
+    {
+      
+      let propertyType = []
+      
+      propertyType = propertyTypesData?.data.filter((city) => {
+          return city.code == usageType
+        })
+        console.log("SSSSSS",propertyType)
+        if(propertyType.length >0)
+        {
+          onSelect(config.key, propertyType[0].code)
+        }
+     
+    }
+},[])
   useEffect(() => {
+    if(property){
+      setPropertyType(usageType)
+    }
+    
     if (!propertyTypesData.isLoading && propertyTypesData.data) {
       const preFilledPropertyType = propertyTypesData.data.filter(
-        (propertyType) => propertyType.code === (formData?.propertyType?.code || formData?.propertyType)
+        (propertyType) => propertyType.code === (usageType||formData?.propertyType?.code || formData?.propertyType)
       )[0];
       setPropertyType(preFilledPropertyType);
     }
-  }, [formData?.propertyType, propertyTypesData.data]);
+  }, [property, formData?.propertyType, propertyTypesData.data]);
 
   const goNext = () => {
     sessionStorage.removeItem("Digit.total_amount");
