@@ -211,7 +211,17 @@ public class TransactionService {
         	//Throw Authentication Failure
         	
         	
-        	String transactionId= message.split("[|]")[4];
+        	
+        	//Chek transactionid location accrding to flag for S its 4 For F check the message
+        	
+        	String transactionId="";
+        	 if(message.split("[|]")[0].equalsIgnoreCase("S")) {
+        		 transactionId= message.split("[|]")[4];
+        	 }
+        	 else if(message.split("[|]")[0].equalsIgnoreCase("F")) {
+        		 transactionId= message.split("[|]")[2];
+        	 }
+        	
         	requestParams.put("transactionId", transactionId );
     		Transaction currentTxnStatus = validator.validateUpdateTxn(requestParams);
     		Transaction newTxn = null;
