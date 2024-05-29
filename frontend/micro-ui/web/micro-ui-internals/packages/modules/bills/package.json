@@ -1,6 +1,6 @@
 {
   "name": "@egovernments/digit-ui-module-bills",
-  "version": "1.7.13",
+  "version": "1.7.14",
   "description": "BILLS",
   "license": "MIT",
   "main": "dist/index.js",

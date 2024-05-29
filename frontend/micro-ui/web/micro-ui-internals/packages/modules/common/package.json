@@ -1,6 +1,6 @@
 {
   "name": "@egovernments/digit-ui-module-common",
-  "version": "1.7.13",
+  "version": "1.7.14",
   "license": "MIT",
   "description": "Digit Common Payment Module",
   "main": "dist/index.js",
