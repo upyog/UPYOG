@@ -45,6 +45,9 @@ const ApplicationDetails = () => {
   const serviceType = filters?.service;
   const menuRef = useRef();
 
+  console.log(userInfo.info.tenantId,"userInfoooooooooooo")
+  console.log(tenantId,"tenantId")
+
   sessionStorage.removeItem("Digit.PT_CREATE_EMP_WS_NEW_FORM");
   sessionStorage.removeItem("IsDetailsExists");
 
@@ -397,7 +400,7 @@ const ApplicationDetails = () => {
   const sanctionDownloadObject = {
     order: 2,
     label: t("WS_SANCTION_LETTER"),
-    onClick: () => getFiles([applicationDetails?.applicationData?.additionalDetails?.sanctionFileStoreId], tenantId),
+    onClick: () => getFiles([applicationDetails?.applicationData?.additionalDetails?.sanctionFileStoreId], userInfo.info.tenantId),
   };
 
   const applicationDownloadObject = {
