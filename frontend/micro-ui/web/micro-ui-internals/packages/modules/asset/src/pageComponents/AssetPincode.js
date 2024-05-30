@@ -8,7 +8,7 @@ const AssetPincode = ({ t, config, onSelect, formData = {}, userType, register, 
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
 
-  console.log("formData in oincode ",tenants);
+ 
 
   const [pincode, setPincode] = useState(() => {
     if (presentInModifyApplication && userType === "employee") return formData?.originalData?.address?.pincode || "";

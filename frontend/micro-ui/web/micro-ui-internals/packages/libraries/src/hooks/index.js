@@ -275,6 +275,7 @@ import useAssetApplicationDetail from "./asset/useAssetApplicationDetail";
 import useASSETSearch from "./asset/useASSETSearch";
 import useTenantsASSET from "./asset/useTenants"
 import useASSETApplicationAction from "./asset/useASSETApplicationAction";
+import useAssetparentSubType from "./asset/useAssetparentSubType";
 import useProductPriceMDMS from "./ew/useProductPriceMDMS";
 
 
@@ -313,6 +314,7 @@ const asset = {
   useAssetApplicationDetail,
   useASSETApplicationAction,
   useASSETSearch,
+  useAssetparentSubType,
   useTenants: useTenantsASSET
 };
 

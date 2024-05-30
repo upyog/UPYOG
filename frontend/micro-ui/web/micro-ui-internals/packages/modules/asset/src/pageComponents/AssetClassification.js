@@ -22,6 +22,7 @@ import {
     assetclassification: "",
     assettype: "",
     assetsubtype: "",
+    assetparentsubCategory: "",
   
     key: Date.now(),
   });
@@ -32,7 +33,7 @@ import {
     const { pathname } = useLocation();
     const [assets, setAssets] = useState(formData?.assets || [createAssetDetails()]);
 
-    console.log("Assets",assets);
+    
 
     
     const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
@@ -48,7 +49,10 @@ import {
     const { data: Asset_Type } = Digit.Hooks.asset.useAssetType(stateId, "ASSET", "assetParentCategory"); 
 
     const { data: Asset_Sub_Type } = Digit.Hooks.asset.useAssetSubType(stateId, "ASSET", "assetCategory");  // hooks for Asset Parent Category
+    
+    const { data: Asset_Parent_Sub_Type } = Digit.Hooks.asset.useAssetparentSubType(stateId, "ASSET", "assetSubCategory");
 
+    console.log("Asset_Parent_Sub_Type",Asset_Parent_Sub_Type);
    
 
     let menu_Asset = [];   //variable name for assetCalssification
@@ -56,6 +60,8 @@ import {
     let asset_type = [];  //variable name for asset type
 
     let asset_sub_type = [];  //variable name for asset sub  parent caregory
+
+    let asset_parent_sub_category = [];
     
 
     Menu_Asset &&
@@ -94,6 +100,18 @@ import {
     
         });
 
+        Asset_Parent_Sub_Type &&
+        Asset_Parent_Sub_Type.map((asset_parent_mdms) => {
+          if (asset_parent_mdms.assetCategory == assets[0]?.assetsubtype?.code) {
+            asset_parent_sub_category.push({
+              i18nKey: `${asset_parent_mdms.code}`,
+              code: `${asset_parent_mdms.code}`,
+              value: `${asset_parent_mdms.name}`
+            });
+          }
+    
+        });
+
     useEffect(() => {
       onSelect(config?.key, assets);
   
@@ -115,7 +133,8 @@ import {
       config,
       menu_Asset,
       asset_type,
-      asset_sub_type
+      asset_sub_type,
+      asset_parent_sub_category
     
     };
   
@@ -143,7 +162,8 @@ import {
       formState,
       menu_Asset,
       asset_type,
-      asset_sub_type
+      asset_sub_type,
+      asset_parent_sub_category
     
   
     } = _props;
@@ -257,10 +277,28 @@ import {
             </LabelFieldPair>
             <CardLabelError style={errorStyle}>{localFormState.touched.assetsubtype ? errors?.assetsubtype?.message : ""}</CardLabelError>
 
-            {/* {asset_type?.[0]?.code==="LAND" && (
+            <LabelFieldPair>
+              <CardLabel className="card-label-smaller">{t("AST_CATEGORY_SUB_CATEGORY") + " *"}</CardLabel>
+              <Controller
+                control={control}
+                name={"assetparentsubCategory"}
+                defaultValue={assets?.assetparentsubCategory}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                render={(props) => (
+                  <Dropdown
+                    className="form-field"
+                    selected={props.value}
+                    select={props.onChange}
+                    onBlur={props.onBlur}
+                    option={asset_parent_sub_category}
+                    optionKey="i18nKey"
+                    t={t}
+                  />
+                )}
+              />
+            </LabelFieldPair>
+            <CardLabelError style={errorStyle}>{localFormState.touched.assetparentsubCategory ? errors?.assetparentsubCategory?.message : ""}</CardLabelError>
 
-            )} */}
-  
           
           
   

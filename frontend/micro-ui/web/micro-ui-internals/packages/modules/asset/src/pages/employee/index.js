@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link, Switch, useLocation } from "react-router-dom";
 import { ASSETLinks } from "../../Module";
 import SearchApp from "./SearchApp";
+import SearchReport from "./SearchReport";
 
 
 const EmployeeApp = ({ path, url, userType }) => {
@@ -71,6 +72,8 @@ const EmployeeApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/assetservice/response`} component={(props) => <Response {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/assetservice/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />
           <PrivateRoute path={`${path}/assetservice/my-asset`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/assetservice/report`} component={(props) => <SearchReport {...props} parentRoute={path} />} />
+
         </div>
       </React.Fragment>
     </Switch>
