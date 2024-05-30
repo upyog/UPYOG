@@ -20,21 +20,19 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
 
-    // console.log("the productdetails component is running");
+    
 
-    // const { data: Menu } = Digit.Hooks.ptr.usePTRPetMDMS(stateId, "ewdetervice", "PetType");
+    const { data: Menu } = Digit.Hooks.ew.useProductPriceMDMS(stateId, "Ewaste", "ProductName");
 
-    // const { data: Breed_Type } = Digit.Hooks.ptr.useBreedTypeMDMS(stateId, "ewdetervice", "BreedType");  // hooks for breed type
+    let menu = []; 
+   
+    Menu?.Ewaste?.ProductName &&
+      Menu?.Ewaste?.ProductName.map((ewasteDetails) => {
+        menu.push({ i18nKey: `EWASTE_${ewasteDetails.code}`, code: `${ewasteDetails.code}`, value: `${ewasteDetails.name}` });
 
-    // let menu = [];   //variable name for pettype
-    // let breed_type = [];
-    // variable name for breedtype
+  });
 
-    // Menu &&
-    //   Menu.map((petone) => {
-    //     menu.push({ i18nKey: `PTR_PET_${petone.code}`, code: `${petone.code}`, value: `${petone.name}` });
-    //   });
-
+     
     const { control } = useForm();
 
 
@@ -135,12 +133,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
     const onSkip = () => onSelect();
 
 
-    // useEffect(() => {
-    //   if (userType === "citizen") {
-    //     goNext();
-    //   }
-    // }, [petType, breedType, petGender, petName, petAge, doctorName, lastVaccineDate]);
-
+    
         useEffect(() => {
       if (userType === "citizen") {
         goNext();
@@ -175,7 +168,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
                   className="form-field"
                   selected={productName}
                   select={setProductName}
-                  option={productNamerough}
+                  option={menu}
                   optionKey="i18nKey"
                   t={t}
                 />
