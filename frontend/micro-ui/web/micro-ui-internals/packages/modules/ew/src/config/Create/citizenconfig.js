@@ -50,12 +50,60 @@ export const citizenConfig =
                     "isMandatory": true,
                     "hideInEmployee": true,
                     // "nextStep": "summary-ewaste",
-                    "nextStep": null,
+                    "nextStep": "pincode",
                     "texts": {
                         "submitBarLabel": "EWASTE_COMMON_NEXT",
                     }
                 },
             ],
         },
+
+        {
+            "head": "EWASTE_LOCATION_DETAILS",
+            "body": 
+            [
+                {
+                "route": "pincode",
+                "component": "EWASTESelectPincode",
+                "texts": {
+                    
+                    "submitBarLabel": "EWASTE_COMMON_NEXT",
+                    "skipText": "CORE_COMMON_SKIP_CONTINUE",
+                },
+                "withoutLabel": true,
+                "key": "address",
+                "nextStep": "address",
+                "type": "component",
+                },
+
+                {
+                "route": "address",
+                "component": "EWASTESelectAddress",
+                "withoutLabel": true,
+                "texts": {
+                    
+                    "submitBarLabel": "EWASTE_COMMON_NEXT",
+                },
+                "key": "address",
+                "nextStep": "street",
+                "isMandatory": true,
+                "type": "component",
+                },
+
+                {
+                "type": "component",
+                "route": "street",
+                "component": "EWASTECitizenAddress",
+                "key": "address",
+                "withoutLabel": true,
+                "texts": {
+                    "submitBarLabel": "EWASTE_COMMON_NEXT",
+                },
+                "nextStep": null,
+                },
+
+                
+            ],
+            }
 
     ];

@@ -7,7 +7,6 @@ import { useTranslation } from "react-i18next";
 const hideBackButtonConfig = [];
 
 const App = () => {
-  console.log( "this is path");
   const { path, url, ...match } = useRouteMatch();
   const { t } = useTranslation();
   const inboxInitialState = {
