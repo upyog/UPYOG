@@ -22,6 +22,10 @@ const ASSETCard = () => {
       label: t("MY_ASSET_APPLICATION"),
       link: `/digit-ui/employee/asset/assetservice/my-asset`,
     },
+    {
+      label: t("AST_REPORT"),
+      link: `/digit-ui/employee/asset/assetservice/report`,
+    },
   ]
   const ASSET_INITIATOR = Digit.UserService.hasAccess(["ASSET_INITIATOR","ASSET_VERIFIER", "ASSET_APPROVER"]) || false;
   const propsForModuleCard = {

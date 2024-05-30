@@ -25,18 +25,19 @@ const CloseBtn = (props) => {
 };
 
 const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode }) => {
-
+console.log("action",action);
   
   const { data: approverData, isLoading: PTALoading } = Digit.Hooks.useEmployeeSearch(
-
     
     tenantId,
     {
-      roles: action?.roles?.map?.((e) => ({ code: e })),
+      roles: action?.roles?.[0]?.map?.((e) => ({ code: e })),
       isActive: true,
     },
     { enabled: !action?.isTerminateState }
   );
+
+  console.log("approverData",approverData)
 
 
 
