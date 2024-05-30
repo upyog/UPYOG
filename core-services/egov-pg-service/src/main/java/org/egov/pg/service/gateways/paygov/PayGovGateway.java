@@ -683,7 +683,7 @@ public class PayGovGateway implements Gateway {
         if (resp!=null) {
 
             //Validate the response against the checksum
-           // PayGovUtils.validateTransaction(resp, secretKey);
+            PayGovUtils.validateTransaction(resp, secretKey);
 
             String[] splitArray = resp.split("[|]");
             Transaction txStatus=null;
@@ -719,9 +719,9 @@ public class PayGovGateway implements Gateway {
                     statusResponse.setAdditionalInfo3(splitArray[++index]);
                     statusResponse.setAdditionalInfo4(splitArray[++index]);
                     statusResponse.setAdditionalInfo5(splitArray[++index]);
-                   // statusResponse.setErrorCode(splitArray[++index]);
-                   // statusResponse.setErrorDescription(splitArray[++index]);
-                   // statusResponse.setCheckSum(splitArray[++index]);
+                    statusResponse.setErrorCode(splitArray[++index]);
+                    statusResponse.setErrorDescription(splitArray[++index]);
+                    statusResponse.setCheckSum(splitArray[++index]);
                     //Build tx Response object
                     txStatus = Transaction.builder().txnId(currentStatus.getTxnId())
                             .txnAmount(Utils.formatAmtAsRupee(statusResponse.getTransactionAmount()))

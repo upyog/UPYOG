@@ -2,7 +2,9 @@ package org.egov.pg.service;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.pg.config.AppProperties;
 import org.egov.pg.constants.PgConstants;
 import org.egov.pg.models.Transaction;
@@ -30,9 +33,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonParser;
 
+import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -241,26 +250,57 @@ public class TransactionService {
 
             // Check if transaction is successful, amount matches etc
 			
-			  if (validator.shouldGenerateReceipt(currentTxnStatus, newTxn)) {
-			  TransactionRequest request =
-			  TransactionRequest.builder().requestInfo(requestInfo).transaction(newTxn).
+			
+			  try { if (validator.shouldGenerateReceipt(currentTxnStatus, newTxn)) {
+			  TransactionRequest request
+			  =TransactionRequest.builder().requestInfo(requestInfo).transaction(newTxn).
 			  build(); paymentsService.registerPayment(request); }
 			  
-			  TransactionDump dump = TransactionDump.builder().txnId(currentTxnStatus.getTxnId()).txnResponse(newTxn.getResponseJson()).auditDetails(newTxn.getAuditDetails()) .build();
+			  TransactionDump dump
+			  =TransactionDump.builder().txnId(currentTxnStatus.getTxnId()).txnResponse(
+			  newTxn.getResponseJson()).auditDetails(newTxn.getAuditDetails()) .build();
 			  
-			  producer.push(appProperties.getUpdateTxnTopic(), new org.egov.pg.models.TransactionRequest(requestInfo, newTxn));
-			  producer.push(appProperties.getUpdateTxnDumpTopic(), new TransactionDumpRequest(requestInfo, dump));
-			 
+			  producer.push(appProperties.getUpdateTxnTopic(), new
+			  org.egov.pg.models.TransactionRequest(requestInfo, newTxn));
+			  producer.push(appProperties.getUpdateTxnDumpTopic(), new
+			  TransactionDumpRequest(requestInfo, dump)); } catch (CustomException e) {
+			  if(e.getCode().equals("EXTERNAL_SERVICE_EXCEPTION")) {
+			  if(e.getMessage()!=null) {
+			  
+			  ObjectMapper map = new ObjectMapper();
+			  
+			  JsonNode node; try { node = map.readTree(e.getMessage()); JsonNode a =
+			  node.get("Errors").findParent("code");
+			  if(a.get("code").toString().replaceAll("\"","").equalsIgnoreCase(
+			  "BILL_ALREADY_PAID")) { response="200|Y|SUCCESSFUL" ; }else {
+			  response="400|N|"+"System Exception"; } } catch (JsonMappingException e1) {
+			  // TODO Auto-generated catch block e1.printStackTrace();
+			  response="400|N|"+"System Exception"; } catch (JsonProcessingException e1) {
+			  // TODO Auto-generated catch block e1.printStackTrace();
+			  response="400|N|"+"System Exception"; }
+			  
+			  
+			  
+			  }
+			  
+			  }
+			  
+			  
+			  else { response="400|N|"+"System Exception"; } }
+			 	 
     	}
         catch (CustomException e) {
         	if(e.getCode().equals("MISSING_UPDATE_TXN_ID")) {
         		 response="400|N|"+"Invalid Order id" ;
         	}
-			 if(e.getCode().equals("CHECKSUM_VALIDATION_FAILED")){
+        	else if(e.getCode().equals("CHECKSUM_VALIDATION_FAILED")){
 				 response="400|N|"+"Invalid Check Sum" ;
 			 }
+        	else if(e.getCode().equals("BILL_ALREADY_PAID")) {
+        		 response="200|Y|SUCCESSFUL" ;
+			 }
         	else {
-        		 response="400|N|"+"System Exception";
+        		 response="400|N|"+"System Exception2";
         	}
 		}
       
