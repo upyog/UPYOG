@@ -16,7 +16,7 @@ const EWCreate = ({ parentRoute }) => {
   const history = useHistory();
   const stateId = Digit.ULBService.getStateId();
   let config = [];
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PTR_CREATE_PET", {});
+  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("EWASTE_CREATE_PET", {});
   let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig"); //  PROPERTY CONFIG HOOK , just for commkonfeild config 
   const goNext = (skipStep, index, isAddMultiple, key) => {
     let currentPath = pathname.split("/").pop(),
@@ -95,7 +95,7 @@ const EWCreate = ({ parentRoute }) => {
 
   const onSuccess = () => {
     clearParams();
-    queryClient.invalidateQueries("PTR_CREATE_PET");
+    queryClient.invalidateQueries("EWASTE_CREATE_PET");
   };
   if (isLoading) {
     return <Loader />;

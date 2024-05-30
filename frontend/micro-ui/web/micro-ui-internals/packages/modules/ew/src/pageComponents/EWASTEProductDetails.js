@@ -14,8 +14,8 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
     let validation = {};
 
     const [productName, setProductName] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.productName) || formData?.ewdet?.productName || "");
-    const [productQuantity, setProductQuantity] = useState("1");
-    const [productPrice, setProductPrice] = useState("23");
+    const [productQuantity, setProductQuantity] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.productQuantity) || formData?.ewdet?.productQuantity || "1");
+    const productPrice = (formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.productPrice) || formData?.ewdet?.productPrice || "0.0";
 
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
@@ -42,6 +42,9 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
       setProductQuantity(e.target.value);
     }
 
+    function setproductPrice(e){
+      setProductPrice(e.target.value);
+    }
 
     const PPrice = [
       {
@@ -63,9 +66,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
       },
     ]
 
-    function setproductPrice(e){
-      setProductPrice(e.target.value);
-    }
+
 
     // var t = 0;
     // PPrice[0].map((pre) => {
@@ -106,9 +107,11 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
       }
     ]
 
-    const [prlistName, setPrlistName] = useState([])
-    const [prlistQuantity, setPrlistQuantity] = useState([])
-    const [prlistTotalprice, setPrlistTotalprice] = useState([])
+    const [prlistName, setPrlistName] = useState([]);
+    const [prlistQuantity, setPrlistQuantity] = useState([]);
+    const [prlistTotalprice, setPrlistTotalprice] = useState([]);
+
+    const prDetails = useState({})
 
     const handleAddProduct = () =>{
       setPrlistName([...prlistName, {code: productName.code, i18nKey: productName.i18nKey}])
@@ -117,7 +120,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
       // prlist.map((pr) => {
       //   console.log("product is" + pr.code);
       // })
-    }
+    };
 
     const goNext = () => {
       let owner = formData.ewdet && formData.ewdet[index];
@@ -203,7 +206,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
             />
 
 
-            <CardLabel>{`${t("EWASTE_TOTAL_PRICE")}`}</CardLabel>
+            <CardLabel>{`${t("EWASTE_UNIT_PRICE")}`}</CardLabel>
             <TextInput
               t={t}
               type={"text"}
@@ -212,7 +215,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
               name="productPrice"
               value={productPrice}
               disable={true}
-              onChange={setproductPrice}
+            //  onChange={setproductPrice}
               style={{ width: "86%" }}
               ValidationRequired={false}
               {...(validation = {

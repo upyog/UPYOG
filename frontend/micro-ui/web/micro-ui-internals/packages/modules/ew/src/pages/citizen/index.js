@@ -7,7 +7,6 @@ import { useTranslation } from "react-i18next";
 const hideBackButtonConfig = [];
 
 const App = () => {
-  console.log( "this is path");
   const { path, url, ...match } = useRouteMatch();
   const { t } = useTranslation();
   const inboxInitialState = {
@@ -21,7 +20,7 @@ const App = () => {
       <Switch>
         <AppContainer>
           {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
-          <PrivateRoute path={`${path}/ew-common/raiseRequest`} component={EWCreate} />
+          <PrivateRoute path={`${path}/raiseRequest`} component={EWCreate} />
           {/* <PrivateRoute path={`${path}/petservice/application/:acknowledgementIds/:tenantId`} component={PTRApplicationDetails}></PrivateRoute>
           <PrivateRoute path={`${path}/petservice/my-applications`} component={PTRMyApplications}></PrivateRoute> */}
           {/* <PrivateRoute path={`${path}/petservice/my-payments`} component={PTMyPayments}></PrivateRoute> */}
