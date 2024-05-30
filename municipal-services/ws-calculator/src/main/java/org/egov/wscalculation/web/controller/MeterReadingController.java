@@ -47,6 +47,18 @@ public class MeterReadingController {
 
 	}
 	
+	
+	@RequestMapping(value = "/_bulkReading", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<MeterReadingResponse> createBulkMeterReading(
+			@Valid @RequestBody MeterConnectionRequest meterConnectionRequest) {
+		List<MeterReading> meterReadings = meterService.createMeterReadingBulk(meterConnectionRequest);
+		MeterReadingResponse response = MeterReadingResponse.builder().meterReadings(meterReadings).responseInfo(
+				responseInfoFactory.createResponseInfoFromRequestInfo(meterConnectionRequest.getRequestInfo(), true))
+				.build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+
+	}
+	
 	@RequestMapping(value = "/_search", method = RequestMethod.POST)
 	public ResponseEntity<MeterReadingResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
 			@Valid @ModelAttribute MeterReadingSearchCriteria criteria) {

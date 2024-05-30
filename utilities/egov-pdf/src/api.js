@@ -125,11 +125,11 @@ async function search_payment(consumerCodes, tenantId, requestinfo, bussinessSer
 
   var searchEndpoint = config.paths.payment_search;
   searchEndpoint = searchEndpoint.replace(/\$module/g, bussinessService);
-  if (checkIfCitizen(requestinfo)) {
-    var mobileNumber = requestinfo.RequestInfo.userInfo.mobileNumber;
-    var userName = requestinfo.RequestInfo.userInfo.userName;
-    params["mobileNumber"] = mobileNumber || userName;
-  }
+  // if (checkIfCitizen(requestinfo)) {
+  //   var mobileNumber = requestinfo.RequestInfo.userInfo.mobileNumber;
+  //   var userName = requestinfo.RequestInfo.userInfo.userName;
+  //   params["mobileNumber"] = mobileNumber || userName;
+  // }
   return await axios({
     method: "post",
     url: url.resolve(config.host.payments, searchEndpoint),

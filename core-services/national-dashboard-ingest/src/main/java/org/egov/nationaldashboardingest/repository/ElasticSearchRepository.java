@@ -1,9 +1,9 @@
 package org.egov.nationaldashboardingest.repository;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.nationaldashboardingest.config.ApplicationProperties;
 import org.egov.nationaldashboardingest.producer.Producer;
@@ -18,9 +18,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Repository
@@ -96,13 +97,35 @@ public class ElasticSearchRepository {
     }
 
     public void pushDataToKafkaConnector(Map<String, List<JsonNode>> indexNameVsDocumentsToBeIndexed) {
-        /*indexNameVsDocumentsToBeIndexed.keySet().forEach(indexName -> {
-            for(JsonNode record : indexNameVsDocumentsToBeIndexed.get(indexName)) {
-                producer.push(indexName, record);
-            }
-        });*/
+//        indexNameVsDocumentsToBeIndexed.keySet().forEach(indexName -> {
+//            for(JsonNode record : indexNameVsDocumentsToBeIndexed.get(indexName)) {
+//                producer.push("persist-national-records", record);
+//            }
+//        });
+        
+    	List<List<JsonNode>> chunkList = new ArrayList<>();
+
         indexNameVsDocumentsToBeIndexed.keySet().forEach(indexName -> {
-            producer.push("persist-national-records", ProducerPOJO.builder().requestInfo(new RequestInfo()).records(indexNameVsDocumentsToBeIndexed.get(indexName)).build());
+        	List<JsonNode> records=indexNameVsDocumentsToBeIndexed.get(indexName);
+
+        	if(records.size()>=applicationProperties.getMaxDataSizeKafka())
+        	{
+        	int chunkSize=applicationProperties.getMaxDataSizeKafka();
+            for (int i = 0; i < records.size(); i += chunkSize) {
+                int end = Math.min(i + chunkSize, records.size());
+                chunkList.add(records.subList(i, end));
+            }
+            for(List<JsonNode> partitions:chunkList)
+            	producer.push("persist-national-records", ProducerPOJO.builder().requestInfo(new RequestInfo()).records(partitions).build());
+
+        	}
+        	else
+            	producer.push("persist-national-records", ProducerPOJO.builder().requestInfo(new RequestInfo()).records(indexNameVsDocumentsToBeIndexed.get(indexName)).build());
+
         });
+
+//        indexNameVsDocumentsToBeIndexed.keySet().forEach(indexName -> {
+//            producer.push("persist-national-records", ProducerPOJO.builder().requestInfo(new RequestInfo()).records(indexNameVsDocumentsToBeIndexed.get(indexName)).build());
+//        });
     }
 }

@@ -808,5 +808,11 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/pet-services/src/main/resources/db"
         image-name: "pet-services-db"        
+
+  - name: builds/upyog/dx-services/requester-services-dx
+    build:
+      - work-dir: dx-services/requester-services-dx
+        image-name: requester-services-dx
+        dockerfile: build/maven/Dockerfile        
         
    

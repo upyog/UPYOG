@@ -220,6 +220,10 @@ public class WSCalculationConstant {
 	public static final String WS_ONE_TIME_FEE = "WS_ONE_TIME_FEE";
 
 	public static final String WS_ROAD_CUTTING_CHARGE = "WS_ROAD_CUTTING_CHARGE";
+	
+	public static final String WS_ROAD_CUTTING_CHARGE_BREM = "WS_ROAD_CUTTING_CHARGE_BERMCUTTINGKATCHA";
+	
+	public static final String WS_ROAD_CUTTING_CHARGE_BMPREMIXROAD = "WS_ROAD_CUTTING_CHARGE_BMPREMIXROAD";
 
 	public static final String WS_METER_CHARGE = "WS_METER_CHARGE";
 	
@@ -257,7 +261,8 @@ public class WSCalculationConstant {
 	
 	public static final String ADHOC_REBATE = "adhocRebate";
 	
-	public static final Long APPLICATION_FEE_DEMAND_END_DATE = 157784760000L;
+	//public static final Long APPLICATION_FEE_DEMAND_END_DATE = 157784760000L;
+	public static final Long APPLICATION_FEE_DEMAND_END_DATE = 63072000000L;
 	
 	public static final Long APPLICATION_FEE_DEMAND_EXP_DATE = 220898664000L;
 	

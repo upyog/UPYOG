@@ -445,8 +445,8 @@ public class IngestValidator {
                 }
                 }
             }
-    		for (String migratedTenants: usageCategory) {
-    			isValid=usageList.contains(migratedTenants); 
+    		for (String uc: usageCategory) {
+    			isValid=usageList.contains(uc); 
     			if(!isValid)
     				break;
     			else
@@ -503,8 +503,8 @@ public class IngestValidator {
 
 
         Set < String > usageList = new HashSet < String > ();
-        for (Map < String, String > migratedTenants: jsonOutput) {
-            usageList.add(migratedTenants.get("code"));
+        for (Map < String, String > usageCat: jsonOutput) {
+            usageList.add(usageCat.get("code"));
         }
         return usageList;
     }

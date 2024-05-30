@@ -10,15 +10,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
@@ -31,6 +33,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.microservice.models.RequestInfo;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.hibernate.Session;
@@ -117,14 +120,13 @@ public class EdcrApplicationService {
         return applicationRes;
     }
 
-    private Plan callDcrProcess(EdcrApplication edcrApplication, String applicationType) {
+    private Plan callDcrProcess(EdcrApplication edcrApplication, String applicationType){
         Plan planDetail = new Plan();
         planDetail.setTenantId(ApplicationThreadLocals.getFullTenantID());
         planDetail = planService.process(edcrApplication, applicationType);
         updateFile(planDetail, edcrApplication);
         edcrApplication.getEdcrApplicationDetails().get(0).setTenantId(ApplicationThreadLocals.getFullTenantID());
         edcrApplicationDetailService.saveAll(edcrApplication.getEdcrApplicationDetails());
-
         return planDetail;
     }
 
@@ -274,7 +276,7 @@ public class EdcrApplicationService {
     }
 
     @Transactional
-    public EdcrApplication createRestEdcr(final EdcrApplication edcrApplication) {
+    public EdcrApplication createRestEdcr(final EdcrApplication edcrApplication){
         String comparisonDcrNo = edcrApplication.getEdcrApplicationDetails().get(0).getComparisonDcrNumber();
         if (edcrApplication.getApplicationDate() == null)
             edcrApplication.setApplicationDate(new Date());

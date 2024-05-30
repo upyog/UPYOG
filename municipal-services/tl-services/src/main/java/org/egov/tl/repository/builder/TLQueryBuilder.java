@@ -42,7 +42,7 @@ public class TLQueryBuilder {
             "tladdress.*,tlapldoc.*,tlverdoc.*,tlownerdoc.*,tlinsti.*,tl.id as tl_id,tl.tenantid as tl_tenantId,tl.lastModifiedTime as " +
             "tl_lastModifiedTime,tl.createdBy as tl_createdBy,tl.lastModifiedBy as tl_lastModifiedBy,tl.createdTime as " +
             "tl_createdTime,tl.filestoreid as tl_fileStoreId,tld.id as tld_id,tladdress.id as tl_ad_id,tld.createdBy as tld_createdBy," +
-            "tlowner.id as tlowner_uuid,tlowner.active as useractive," +
+            "tlowner.id as tlowner_uuid,tlowner.active as useractive,tlowner.additionalDetails as oadditionaldetails, " +
             "tld.createdTime as tld_createdTime,tld.lastModifiedBy as tld_lastModifiedBy,tld.createdTime as " +
             "tld_createdTime,tlunit.id as tl_un_id,tlunit.tradeType as tl_un_tradeType,tlunit.uom as tl_un_uom,tlunit.active as tl_un_active," +
             "tlunit.uomvalue as tl_un_uomvalue,tlacc.id as tl_acc_id,tlacc.uom as tl_acc_uom,tlacc.uomvalue as tl_acc_uomvalue,tlacc.active as tl_acc_active," +

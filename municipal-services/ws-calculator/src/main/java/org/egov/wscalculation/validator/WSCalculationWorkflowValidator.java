@@ -7,6 +7,7 @@ import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.constants.MRConstants;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.util.CalculatorUtil;
+import org.egov.wscalculation.web.models.MeterReading;
 import org.egov.wscalculation.web.models.Property;
 import org.egov.wscalculation.web.models.Status;
 import org.egov.wscalculation.web.models.WaterConnection;
@@ -58,6 +59,33 @@ public class WSCalculationWorkflowValidator {
 
         return genratedemand;
 	}
+	 
+	 
+	 public Boolean applicationValidationBulk(RequestInfo requestInfo,MeterReading mr, Boolean genratedemand){
+		    Map<String,String> errorMap = new HashMap<>();
+			 List<WaterConnection> waterConnectionList = util.getWaterConnection(requestInfo,mr.getConnectionNo(),mr.getTenantId());
+			 WaterConnection waterConnection = null;
+			 if(waterConnectionList != null){
+				 int size = waterConnectionList.size();
+				 waterConnection = waterConnectionList.get(size-1);
+
+				 String waterApplicationNumber = waterConnection.getApplicationNo();
+				 waterConnectionValidation(requestInfo, mr.getTenantId(), waterApplicationNumber, errorMap);
+
+				 String propertyId = waterConnection.getPropertyId();
+				 Property property = util.getProperty(requestInfo,mr.getTenantId(),propertyId);
+				 //String propertyApplicationNumber = property.getAcknowldgementNumber();
+				 propertyValidation(requestInfo,mr.getTenantId(),property,errorMap);
+			 }
+			 else{
+				 genratedemand=false;
+				 mr.setStatus("Water connection object is null");
+			 }
+
+	      
+	        return genratedemand;
+		}
+
 
 	public void waterConnectionValidation(RequestInfo requestInfo, String tenantId, String waterApplicationNumber,
 			Map<String, String> errorMap) {
