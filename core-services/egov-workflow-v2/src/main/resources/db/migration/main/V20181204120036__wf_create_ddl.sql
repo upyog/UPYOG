@@ -1,4 +1,4 @@
-CREATE TABLE eg_wf_processinstance_v2(
+CREATE TABLE  IF NOT EXISTS IF NOT EXISTS eg_wf_processinstance_v2(
 
     id character varying(64),
     tenantid character varying(128),
@@ -18,10 +18,10 @@ CREATE TABLE eg_wf_processinstance_v2(
     CONSTRAINT uk_eg_wf_processinstance UNIQUE (id)
 );
 
-CREATE UNIQUE INDEX idx_pi_wf_processinstance ON eg_wf_processinstance_v2 (businessId,lastModifiedTime);
+CREATE UNIQUE  INDEX   IF NOT EXISTS idx_pi_wf_processinstance ON eg_wf_processinstance_v2 (businessId,lastModifiedTime);
 
 
-CREATE TABLE eg_wf_Document_v2(
+CREATE TABLE  IF NOT EXISTS eg_wf_Document_v2(
     id character varying(64),
     tenantId character varying(64),
     documentType character varying(64),
@@ -42,7 +42,7 @@ CREATE TABLE eg_wf_Document_v2(
 );
 
 
-CREATE TABLE eg_wf_businessservice_v2
+CREATE TABLE  IF NOT EXISTS eg_wf_businessservice_v2
 (
   businessservice character varying(256) NOT NULL,
   business character varying(256) NOT NULL,
@@ -59,10 +59,10 @@ CREATE TABLE eg_wf_businessservice_v2
   CONSTRAINT uk_eg_wf_businessservice UNIQUE (tenantid,businessService)
 );
 
-CREATE UNIQUE INDEX idx_pi_wf_businessservice ON eg_wf_businessservice_v2 (businessservice);
+CREATE UNIQUE  INDEX   IF NOT EXISTS idx_pi_wf_businessservice ON eg_wf_businessservice_v2 (businessservice);
 
 
-CREATE TABLE eg_wf_state_v2
+CREATE TABLE  IF NOT EXISTS eg_wf_state_v2
 (
   uuid character varying(256) NOT NULL,
   tenantid character varying(256) NOT NULL,
@@ -85,9 +85,9 @@ CREATE TABLE eg_wf_state_v2
   ON DELETE CASCADE
 );
 
-CREATE UNIQUE INDEX idx_pi_wf_state ON eg_wf_state_v2 (state);
+CREATE UNIQUE  INDEX   IF NOT EXISTS idx_pi_wf_state ON eg_wf_state_v2 (state);
 
-CREATE TABLE eg_wf_action_v2
+CREATE TABLE  IF NOT EXISTS eg_wf_action_v2
 (
   uuid character varying(256) NOT NULL,
   tenantid character varying(256) NOT NULL,
@@ -107,6 +107,6 @@ CREATE TABLE eg_wf_action_v2
    ON DELETE CASCADE
 );
 
-CREATE INDEX idx_pi_wf_action ON eg_wf_action_v2 (action);
+CREATE INDEX   IF NOT EXISTSidx_pi_wf_action ON eg_wf_action_v2 (action);
 
 
