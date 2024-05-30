@@ -28,7 +28,7 @@
     "@upyog/digit-ui-module-pt": "1.7.8",
     "@upyog/digit-ui-module-receipts": "1.7.3",
     "@upyog/digit-ui-module-tl": "1.7.2",
-    "@egovernments/digit-ui-module-ws": "1.7.5",
+    "@egovernments/digit-ui-module-ws": "1.7.6",
     "@egovernments/digit-ui-react-components": "1.7.2",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
