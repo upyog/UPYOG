@@ -21,7 +21,7 @@ const App = () => {
       <Switch>
         <AppContainer>
           {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
-          <PrivateRoute path={`${path}/ew-common/raiseRequest`} component={EWCreate} />
+          <PrivateRoute path={`${path}/raiseRequest`} component={EWCreate} />
           {/* <PrivateRoute path={`${path}/petservice/application/:acknowledgementIds/:tenantId`} component={PTRApplicationDetails}></PrivateRoute>
           <PrivateRoute path={`${path}/petservice/my-applications`} component={PTRMyApplications}></PrivateRoute> */}
           {/* <PrivateRoute path={`${path}/petservice/my-payments`} component={PTMyPayments}></PrivateRoute> */}

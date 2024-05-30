@@ -501,6 +501,25 @@ const getBreedTypeList = (tenantId, moduleCode, type) => ({
   },
 });
 
+const getProductPriceList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "ProductName",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+
+
 ////////////////////////
 const getAssetClassificationList = (tenantId, moduleCode, type) => ({
   type,
@@ -1214,6 +1233,16 @@ const GetPropertySubtype = (MdmsRes) =>
     });
     //return MdmsRes;
   };   
+
+  const getProductPrice = (MdmsRes) => {
+    return MdmsRes["Ewaste"].ProductName.filter((ProductName) => ProductName.active).map((ewasteDetails) => {
+      return {
+        ...ewasteDetails,
+        i18nKey: `EWASTE_${ewasteDetails.code}`,
+      };
+    });
+    //return MdmsRes;
+  };   
   
   const Asset_Classification = (MdmsRes) => {
     MdmsRes["ASSET"].assetClassification.filter((assetClassification) => assetClassification.active).map((asset_mdms) => {
@@ -1320,6 +1349,9 @@ const GetPropertyOwnerShipCategory = (MdmsRes) =>
     });
     //return MdmsRes;
   };
+ 
+ 
+  
   
   const PTRGenderType = (MdmsRes) => {
     MdmsRes["common-masters"].GenderType.filter((GenderType) => GenderType.active).map((ptrgenders) => {
@@ -1349,6 +1381,8 @@ const GetPropertyOwnerShipCategory = (MdmsRes) =>
       };
     });
   };
+
+ 
   ///////////
 
 const GetTradeOwnerShipCategory = (MdmsRes) =>
@@ -1704,6 +1738,9 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
     case "PTRBreedType":
       return PTRBreedType(MdmsRes);
 
+    case "ProductName":
+      return getProductPrice(MdmsRes);
+  
     case "assetClassification":
       return getAssetClassification(MdmsRes); 
     
@@ -1912,6 +1949,7 @@ export const MdmsService = {
   getBreedType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getBreedTypeList(tenantId, moduleCode, type), moduleCode);
   },
+  
   PTRGenderType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getGenderTypeList(tenantId, moduleCode, type), moduleCode);
   },
@@ -1922,7 +1960,11 @@ export const MdmsService = {
   PTRBreedType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getBreedTypeList(tenantId, moduleCode, type), moduleCode);
   },
-
+  
+  EWProductPrice: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getProductPriceList(tenantId, moduleCode, type), moduleCode);
+  },
+ 
   getCustomizationConfig: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getConfig(tenantId, moduleCode), moduleCode);
   },

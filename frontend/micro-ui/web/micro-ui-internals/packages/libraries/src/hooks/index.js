@@ -275,6 +275,7 @@ import useAssetApplicationDetail from "./asset/useAssetApplicationDetail";
 import useASSETSearch from "./asset/useASSETSearch";
 import useTenantsASSET from "./asset/useTenants"
 import useASSETApplicationAction from "./asset/useASSETApplicationAction";
+import useProductPriceMDMS from "./ew/useProductPriceMDMS";
 
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
@@ -296,6 +297,10 @@ const pgr = {
   useComplaintStatusCount,
   useTradeLicenseBillingslab,
   useMDMS: usePGRMDMS,
+};
+
+const ew = {
+  useProductPriceMDMS
 };
 
 const asset = {
@@ -592,6 +597,7 @@ const Hooks = {
   fsm,
   pt,
   ptr,
+  ew,
   dss,
   mcollect,
   hrms,
