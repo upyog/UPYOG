@@ -152,6 +152,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
           prlistName={prlistName}
           setPrlistName={setPrlistName}
           prlistQuantity={prlistQuantity}
+          setPrlistQuantity={setPrlistQuantity}
           // prlistTotalprice={prlistTotalprice}
         />
       </div>
