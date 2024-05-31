@@ -171,6 +171,11 @@ const SelectDocument = React.memo(function MyComponent({
                     resolve({ latitude: latDecimal, longitude: lonDecimal });
                 } else {
                     resolve({ latitude: null, longitude: null });
+                    if (doc?.code === "SITEPHOTOGRAPH.ONE")
+                        {
+                        {alert("Please Upload a Photo with Location Details")}
+                    }
+                    else{null}
                 }
             });
         });
