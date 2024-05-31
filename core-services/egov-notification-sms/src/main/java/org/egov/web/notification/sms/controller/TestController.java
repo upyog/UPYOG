@@ -25,11 +25,11 @@ public class TestController {
 
         //Sms sms = new Sms(number, sms, Category.OTP, expirytime);
 
-        Sms sms = new Sms(number, msg, category, expirytime, "123");
+        Sms sms = new Sms(number, msg, category, expirytime, "1007045301736516403");
 
         smsService.sendSMS(sms);
 
-        return null;
+        return ResponseEntity.ok().body("Message successfully sent");
     }
 
 }

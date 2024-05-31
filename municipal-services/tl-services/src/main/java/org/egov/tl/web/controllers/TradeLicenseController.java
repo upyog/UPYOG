@@ -10,10 +10,13 @@ import org.egov.tl.util.TLConstants;
 import org.egov.tl.web.models.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.*;
+import lombok.AllArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,11 +25,13 @@ import java.util.*;
 
 import javax.validation.constraints.*;
 import javax.validation.Valid;
+import javax.servlet.annotation.HttpMethodConstraint;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.egov.tl.util.TLConstants.businessService_TL;
 
-@RestController
+@RestController	
+@CrossOrigin(origins="*")
     @RequestMapping("/v1")
     public class TradeLicenseController {
 
