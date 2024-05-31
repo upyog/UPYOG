@@ -34,6 +34,7 @@ import static org.egov.inbox.util.SWConstants.SW;
 import static org.egov.inbox.util.BSConstants.*;
 import static org.egov.inbox.util.WSConstants.WS;
 import static org.egov.inbox.util.PTRConstants.PTR;
+import static org.egov.inbox.util.AssetConstants.ASSET;
 
 import java.util.*;
 import java.util.function.Function;
@@ -122,6 +123,9 @@ public class InboxService {
     
     @Autowired
     private BillingAmendmentInboxFilterService billInboxFilterService;
+    
+    @Autowired
+    private AssetInboxFilterService assetInboxFilterService;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -155,11 +159,12 @@ public class InboxService {
         }
 
         Integer totalCount = 0;
+        log.info(processCriteria.getModuleName().toString());
         if(!(processCriteria.getModuleName().equals(SW) || processCriteria.getModuleName().equals(WS)))
             totalCount = workflowService.getProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
 //        Integer nearingSlaProcessCount = workflowService.getNearingSlaProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
         Integer nearingSlaProcessCount =  0;
-        if(!(processCriteria.getModuleName().equals(PTR) || processCriteria.getModuleName().equals(PT))) {
+        if(!(processCriteria.getModuleName().equals(PTR) || processCriteria.getModuleName().equals(PT) || processCriteria.getModuleName().equals(ASSET))) {
         	nearingSlaProcessCount = workflowService.getNearingSlaProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
         }
         
@@ -369,6 +374,20 @@ public class InboxService {
                     isSearchResultEmpty = true;
                 }
             }//for pet service
+            
+            if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(ASSET)) {
+
+                List<String> applicationNumbers = assetInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
+                        StatusIdNameMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                    moduleSearchCriteria.put(ACKNOWLEDGEMENT_IDS_PARAM, applicationNumbers);
+                    businessKeys.addAll(applicationNumbers);
+                    moduleSearchCriteria.remove(LOCALITY_PARAM);
+                    moduleSearchCriteria.remove(OFFSET_PARAM);
+                } else {
+                    isSearchResultEmpty = true;
+                }
+            }//for asset service
             
             if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && ( processCriteria.getModuleName().equals(TL)
                     || processCriteria.getModuleName().equals(BPAREG))) {
@@ -1047,11 +1066,13 @@ public class InboxService {
         }
         StringBuilder url = new StringBuilder(srvMap.get("searchPath"));
         url.append("?tenantId=").append(tenantId);
-        if(moduleSearchCriteria.containsKey("status")) { // for pet-service
-     	   if(businessServiceName.contains("ptr")) {
-     		   moduleSearchCriteria.remove("status");
-        }
-        }//for pet-service
+        
+		if (moduleSearchCriteria.containsKey("status")) { // for pet-service
+			if (businessServiceName.contains("ptr")) {
+				moduleSearchCriteria.remove("status");
+			}
+		} // for pet-service
+		
         Set<String> searchParams = moduleSearchCriteria.keySet();
         
 		searchParams.forEach((param) -> {
