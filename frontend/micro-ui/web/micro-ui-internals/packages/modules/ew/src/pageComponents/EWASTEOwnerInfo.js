@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber } from "@egovernments/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber } from "@upyog/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
@@ -51,56 +51,7 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
     setAddress(e.target.value);
   }
 
-  const roughlocality = [
-    {
-      code: "city a",
-      i18nKey: "city a",
-    },
-    {
-      code: "city b",
-      i18nKey: "city b",
-    },
-    {
-      code: "city c",
-      i18nKey: "city c",
-    },
-    {
-      code: "city d",
-      i18nKey: "city d",
-    },
-  ];
 
-  // const roughvendor = [
-  //   {
-  //     code: "vendor a",
-  //     i18nKey: "vendor a"
-  //   },
-  //   {
-  //     code: "vendor b",
-  //     i18nKey: "vendor b"
-  //   },
-  //   {
-  //     code: "vendor c",
-  //     i18nKey: "vendor c"
-  //   },
-  //   {
-  //     code: "vendor d",
-  //     i18nKey: "vendor d"
-  //   }
-  // ]
-
-  // const goNext = () => {
-  //   let owner = formData.ownerKey && formData.ownerKey[index];
-  //   let ownerStep;
-  //   if (userType === "citizen") {
-  //     ownerStep = { ...owner, applicantName, mobileNumber, alternateNumber, fatherName, emailId };
-  //     onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
-  //   } else {
-
-  //     ownerStep = { ...owner, applicantName, mobileNumber, alternateNumber, fatherName, emailId };
-  //     onSelect(config.key, ownerStep, false, index);
-  //   }
-  // };
 
   const goNext = () => {
     let owner = formData.ownerKey && formData.ownerKey[index];
@@ -131,7 +82,7 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
         onSelect={goNext}
         onSkip={onSkip}
         t={t}
-        // isDisabled={!applicantName || !mobileNumber || !fatherName || !emailId}
+        isDisabled={!applicantName || !mobileNumber || !emailId}
       >
         <div>
           <CardLabel>{`${t("EWASTE_APPLICANT_NAME")}`}</CardLabel>
@@ -177,62 +128,6 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
               title: t("EWASTE_NAME_ERROR_MESSAGE"),
             })}
           />
-
-
-          {/* <CardLabel>{`${t("EWASTE_LOCALITY")}`}</CardLabel>
-            <Controller
-              control={control}
-              name={"locality"}
-              defaultValue={locality}
-              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
-                <Dropdown
-                  className="form-field"
-                  selected={locality}
-                  select={setLocality}
-                  option={roughlocality}
-                  optionKey="i18nKey"
-                  t={t}
-                />
-              )}
-            /> */}
-
-          {/* <CardLabel>{`${t("EWASTE_COMPLETE_ADDRESS")}`}</CardLabel>
-            <TextInput
-              t={t}
-              type={"text"}
-              isMandatory={false}
-              optionKey="i18nKey"
-              name="address"
-              value={address}
-              onChange={setaddress}
-              style={{ width: "86%" }}
-              ValidationRequired={false}
-              {...(validation = {
-                isRequired: true,
-                pattern: "^[a-zA-Z-.`' ]*$",
-                type: "text",
-                title: t("EWASTE_ADDRESS_ERROR_MESSAGE"),
-              })}
-            /> */}
-
-          {/* <CardLabel>{`${t("EWASTE_VENDOR_NAME")}`}</CardLabel>
-            <Controller
-              control={control}
-              name={"vendor"}
-              defaultValue={vendor}
-              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
-                <Dropdown
-                  className="form-field"
-                  selected={vendor}
-                  select={setVendor}
-                  option={roughvendor}
-                  optionKey="i18nKey"
-                  t={t}
-                />
-              )}
-            /> */}
         </div>
       </FormStep>
     </React.Fragment>

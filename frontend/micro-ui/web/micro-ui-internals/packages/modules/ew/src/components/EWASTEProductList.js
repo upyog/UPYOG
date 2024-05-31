@@ -2,62 +2,36 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ProductListElement from "./EWASTEProductListElement";
 import ApplicationTable from "./inbox/ApplicationTable";
-import { Header } from "@egovernments/digit-ui-react-components";
-import { LinkButton, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Header, Button } from "@upyog/digit-ui-react-components";
+import { LinkButton, SubmitBar, DeleteIcon } from "@upyog/digit-ui-react-components";
 
-const ProductList = ({ t, prlistName, prlistQuantity, prlistTotalprice }) => {
-  const [productList, setProductList] = useState([]);
-
-  useEffect(() => {
-    if (prlistName) {
-      setProductList([...prlistName]);
+const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity }) => {
+  const handleDelete = (e) => {
+    const updatedList = [...prlistName];
+    if (updatedList.length != 0) {
+      updatedList.splice(e, 1);
+     setPrlistName(updatedList);
     }
-  }, [prlistName]);
+  };
 
-//   console.log("this is product list state in product list component :: ", productList)
-  // const handleDelete = (e) => {
-  //   const updatedList = [...prlistName];
-  //   if (updatedList.length != 0) {
-  //     updatedList.splice(e, 1);
-  //     setProductList(updatedList);
-  //    // setPrlistName(updatedList);
-  //   }
-  // };
+  const columns = [
+    { Header: "PRODUCT_NAME", accessor: "name" },
+    { Header: "PRODUCT_QUANTITY", accessor: "quantity" },
+    { Header: "PRODUCT_PRICE", accessor: "price" },
 
-  // const handleDelete = (e) => {
-  //   console.log("delete button clicked")
-  //   // const updatedList = [...productList];
-  //   // productList?.map((pr, index) => {
-  //   //     if (e == pr.code){
-  //   //         updatedList.splice(index, 1);
-  //   //         setProductList(updatedList);
-  //   //     }
-  //   // })
-  // };
-
-    const columns = [
-        { Header: "Product Name", accessor: "name" },
-        { Header: "Product Quantity", accessor: "quantity" },
-        { Header: "Product Price", accessor: "price" },
-
-    ]
+    { Header: "DELETE_KEY", accessor: "delete", Cell: ({ row }) => (
+      <button onClick={() => handleDelete(row.index)}><DeleteIcon className="delete" fill="#a82227" style={{ cursor: "pointer", marginLeft: "20px" }} /></button>
+    ), },
+  ];
 
     const data = prlistName?.map((p, index) => (
         {
             name: p.code,
             quantity: prlistQuantity[index].code,
-            price: prlistTotalprice[index].code,
-            
+            price: p.price * prlistQuantity[index].code,
         }
     )) || [];
 
-    // const data = [
-    //     {
-    //         name: "pjdojaowe",
-    //         quantity: 5,
-    //         price: 45
-    //     },
-    // ]
 
   return (
     <div className="card">
@@ -72,6 +46,7 @@ const ProductList = ({ t, prlistName, prlistQuantity, prlistTotalprice }) => {
             fontSize: "16px",
           },
         })}
+        onChange={() => {console.log("onchnage")}}
         totalRecords={data.length}
       />
 

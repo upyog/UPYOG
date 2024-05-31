@@ -1,5 +1,7 @@
 import React from "react";
-import { Table } from "@egovernments/digit-ui-react-components";
+import { Table } from "@upyog/digit-ui-react-components";
+
+import { useTranslation } from "react-i18next";
 
 const ApplicationTable = ({
   t,

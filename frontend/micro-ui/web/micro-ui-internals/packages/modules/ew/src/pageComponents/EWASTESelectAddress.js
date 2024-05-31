@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 import Timeline from "../components/EWASTETimeline";
 
 const EWASTESelectAddress = ({ t, config, onSelect, userType, formData, setError, clearErrors, formState }) => {
-  const allCities = Digit.Hooks.ew?.useTenants();
+  const allCities = Digit.Hooks.asset.useTenants();  // asset hook is added only to run the application components and will be changed later when the hook will be created
   let tenantId = Digit.ULBService.getCurrentTenantId();
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
