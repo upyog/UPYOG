@@ -56,60 +56,84 @@
     const selfdeclarationform =
     `
    To,
-   ${ulbgrade}
-   ULB ${district} 
+   <b>${ulbgrade}</b>
+   <b>${district}</b>
+   
     
    Dear Sir or Madam,
 
-   I, under signed Shri/Smt/Kum ${architecname} (${architecttype}) having Registration No. ${architectid} is 
-   appointed by the ${ownername} Mobile number ${mobile} for the development on land bearing Kh. No
-   ${khasranumber} of ${ulbname}, Area ${area} (Sq.mts).
+   I, under signed Shri/Smt/Kum <b>${architecname}</b> (<b>${architecttype}</b>) having Registration No. 
+   <b>${architectid}</b> is appointed by the <b>${ownername}</b> Mobile number <b>${mobile}</b> for the development on
+   land bearing Kh. No <b>${khasranumber}</b> Area <b>${area}</b> (Sq.mts).
     
-   This site falls in ward number ${ward} zone number ${zone}  in the Master plan of ${district}
-   and the proposed Residential/Commercial/Industrial construction is permissible in this area.
+   This site falls in ward number <b>${ward}</b> zone number <b>${zone}</b>  in the Master plan of 
+   <b>${district}</b> and the proposed Residential/Commercial/Industrial construction is permi
+   -ssible in this area.
   
-   I am currently registered as ${architecttype} with the Competent Authority and empanelled 
-   under Self-Certification Scheme.
+   I am currently registered as <b>${architecttype}</b> with the Competent Authority and empane
+   -lled under Self-Certification Scheme.
   
-   I hereby certify that I/we have appointed by the owner to prepare the plans, sections and details, 
-   structural details as required under the Punjab Municipal Building Byelaws for the above mentioned 
-   project. 
+   I hereby certify that I/we have appointed by the owner to prepare the plans, sections and 
+   details, structural details as required under the Punjab Municipal Building Byelaws for the 
+   above mentioned project. 
   
    That the drawings prepared and uploaded along with other necessary documents on this 
-   UPYOG Platform are as per the provisions of Punjab Municipal Building Byelaws and this building 
-   plan has been applied under Self-Certification Scheme. 
+   E-Naksha Platform are as per the provisions of Punjab Municipal Building Byelaws and th
+   -is building plan has been applied under Self-Certification Scheme. 
   
    I certify that:
-   
-   That I am fully conversant with the provisions of the Punjab Municipal Building Byelaws and other 
-   applicable instructions/ regulations, which are in force and I undertake to fulfill the same.
+   That I am fully conversant with the provisions of the Punjab Municipal Building Byelaws and 
+   other applicable instructions/ regulations, which are in force and I undertake to fulfill the 
+   same.
   
-   That plans have been prepared within the framework of provisions of the Master Plan and 
-   applicable Building Bye Laws / Regulations. 
+   That plans have been prepared within the framework of provisions of the Master Plan and app
+   -licable Building Bye Laws / Regulations. 
   
-   That site does not falls in any prohibited area/ government land/ encroachment or any other land 
-   restricted for building construction or in any unauthorized colony. 
+   That site does not falls in any prohibited area/ government land/ encroachment or any other 
+   land restricted for building construction or in any unauthorized colony. 
   
    That plan is in conformity to structural safety norms. 
   
-   That I have seen the originals of all the documents uploaded and Nothing is concealed thereof. 
+   That I have seen the originals of all the documents uploaded and Nothing is concealed 
+   thereof. 
   
-   That all the requisite documents/NOC required to be uploaded have been uploaded on E-Naksha 
-   portal along with plan. 
+   That all the requisite documents/NOC required to be uploaded have been uploaded on 
+   E-Naksha portal along with plan. 
   
-   That above stated facts are true and all the requisite documents uploaded with this E-Naksha plan 
-   have been signed by the owner/owners in my presence.
+   That above stated facts are true and all the requisite documents uploaded with this E-Naksha plan.
+   
 
 
-   This Document is Verified By OTP at ${TimeStamp}
+   This Document is Verified By OTP at <b>${TimeStamp}</b>
 
 
-                                                                                          Name of Professional - ${architecname} 
-                                                                                          Designation - ${architecttype}
-                                                                                          Architect Id - ${architectid}
-                                                                                          Mobile Number - ${architectmobileNumber}
+   Name of Professional - <b>${architecname}</b> 
+   Designation - <b>${architecttype}</b>
+   Architect Id - <b>${architectid}</b> 
+   Mobile Number - <b>${architectmobileNumber}</b>
+   
                                   
     `;
+
+    const isRightAlignedLine = (line) => [
+      `Name of Professional - <b>${architecname}</b>`,
+      `Designation - <b>${architecttype}</b>`,
+      `Architect Id - <b>${architectid}</b>`,
+      `Mobile Number - <b>${architectmobileNumber}</b>`,
+    ].includes(line.trim());
+  
+    const shouldAddSpacing = (currentLine, nextLine) => {
+      const lineToCheck1 = 'That above stated facts are true and all the requisite documents uploaded with this E-Naksha plan.';
+      const lineToCheck2 = '';
+      const lineToCheck3 = `This Document is Verified By OTP at <b>${TimeStamp}</b>`;
+  
+      return (
+        (currentLine.trim() === lineToCheck1 && nextLine?.trim() === lineToCheck2) ||
+        currentLine.trim() === lineToCheck3
+      );
+    };
+
+   
 
     const openModal = () => {
       setIsModalOpen(true);
@@ -128,7 +152,7 @@
         const doc = new jsPDF();
         const leftMargin = 15;
         const topMargin = 10;
-        const lineSpacing = 5;
+        const lineSpacing = 4.6;  // Adjusted for Better Spacing
         const pageWidth = doc.internal.pageSize.getWidth();
         const maxLineWidth = pageWidth - 2 * leftMargin;
   
@@ -139,19 +163,60 @@
   
        // Split and write text into the PDF
     const lines = selfdeclarationform.split("\n");
+    // lines.forEach((line) => {
+      
+
+    //   const wrappedLines = doc.splitTextToSize(line, maxLineWidth);
+    //   wrappedLines.forEach((wrappedLine) => {
+    //     if (currentY + lineSpacing > doc.internal.pageSize.getHeight() - topMargin) {
+    //       doc.addPage();
+    //       currentY = topMargin;
+    //     }
+    //     doc.text(leftMargin, currentY, wrappedLine);
+    //     currentY += lineSpacing;
+    //   });
+    // });
     lines.forEach((line) => {
-      const wrappedLines = doc.splitTextToSize(line, maxLineWidth);
-      wrappedLines.forEach((wrappedLine) => {
-        if (currentY + lineSpacing > doc.internal.pageSize.getHeight() - topMargin) {
+      const segments = line.split(/(<b>|<\/b>)/g); // Split line by <b> and </b> tags
+      let isBold = false;
+      let currentX = leftMargin;
+
+      segments.forEach((segment) => {
+          if (segment === "<b>") {
+              isBold = true;
+          } else if (segment === "</b>") {
+              isBold = false;
+          } else {
+              const words = segment.split(' ');
+              words.forEach((word, index) => {
+                  const wordWithSpace = index < words.length - 1 ? `${word} ` : word;
+                  const textWidth = doc.getTextWidth(wordWithSpace);
+
+                  if (currentX + textWidth > maxLineWidth) {
+                      currentY += lineSpacing;
+                      currentX = leftMargin;
+                      if (currentY + lineSpacing > doc.internal.pageSize.getHeight() - topMargin) {
+                          doc.addPage();
+                          currentY = topMargin;
+                      }
+                  }
+
+                  doc.setFont(isBold ? "Times-Bold" : "Times-Roman");
+                  doc.text(currentX, currentY, wordWithSpace);
+                  currentX += textWidth;
+              });
+          }
+      });
+
+      currentY += lineSpacing;
+      if (currentY + lineSpacing > doc.internal.pageSize.getHeight() - topMargin) {
           doc.addPage();
           currentY = topMargin;
-        }
-        doc.text(leftMargin, currentY, wrappedLine);
-        currentY += lineSpacing;
-      });
-    });
-
+      }
+  });
     // Convert the PDF to a Blob
+    
+    
     const pdfBlob = doc.output("blob", "declaration.pdf");
 
     // Prepare FormData for the upload
@@ -234,7 +299,18 @@
         marginBottom: '20px',
        
       },
+      rightAlignedText: {
+        textAlign: 'right',
+        whiteSpace: 'pre-wrap',
+        wordWrap: 'break-word',
+        fontFamily: 'Roboto, serif'
+      },
+      
     };
+
+    
+   
+
 
     return (
       <div>
@@ -249,12 +325,28 @@
           }}
         >
           <div>
+          
+
+          </div>
+          <div>
             <h2 style={modalStyles.heading}>DECLARATION UNDER SELF-CERTIFICATION SCHEME</h2>
             <h3 style={modalStyles.subheading}>(For proposed Construction)</h3>
             <h3 style={modalStyles.subheading}>(By Architect/ Civil Engineer/ Building Designer and Supervisor)</h3>
-            <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word', textAlign: 'justify', fontFamily: 'Roboto, serif'}}>{selfdeclarationform}</pre>            
             
-
+          <div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word', textAlign: 'justify', fontFamily: 'Roboto, serif' }}>
+          {selfdeclarationform.split('\n').map((line, index) => (
+            <React.Fragment key={index}>
+              <div style={isRightAlignedLine(line) ? modalStyles.rightAlignedText : {}}
+              dangerouslySetInnerHTML={{ __html: line }}/>
+                {/* {line}
+               
+              </div> */}
+              {shouldAddSpacing(line, selfdeclarationform.split('\n')[index + 1]) && (
+                <div style={{ marginBottom: '2rem' }} />
+              )}
+            </React.Fragment>
+          ))}
+        </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
               <SubmitBar label={t("BPA_CLOSE")} onSubmit={closeModal} />
             </div>

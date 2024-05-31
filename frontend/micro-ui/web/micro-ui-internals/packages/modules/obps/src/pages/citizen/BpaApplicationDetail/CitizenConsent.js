@@ -2,8 +2,7 @@
   import React, { useState } from 'react';
   import Modal from 'react-modal';
   import jsPDF from 'jspdf';
-  import { useLocation } from "react-router-dom";
-  import { SubmitBar, CitizenConsentForm } from '@upyog/digit-ui-react-components';
+  import { SubmitBar } from '@upyog/digit-ui-react-components';
   import { useTranslation } from "react-i18next";
   import { useParams } from "react-router-dom";
   import Axios from "axios";
@@ -46,47 +45,67 @@
     const architecttype =  data?.applicationData?.additionalDetails?.typeOfArchitect
     const TimeStamp = otpVerifiedTimestamp;
     
-    const ulbselection = data?. applicationData?.additionalDetails?.Ulblisttype === "MUNICIPAL_CORPORATION" ? "Commissioner" : "Executive Officer"
+    const ulbselection = data?. applicationData?.additionalDetails?.Ulblisttype === "Municipal Corporation" ? "Commissioner" : "Executive Officer"
 
 
     const selfdeclarationform =
     `
     To,
-    ${ulbselection}
-    ULB ${ulbname} 
+    <b>${ulbselection}</b>
+    <b>${ulbname}</b> 
     
     Dear Sir or Madam,
 
-    I/We, Shri/Smt/Kum. ${ownername} under signed owner of land bearing Kh. No. ${khasranumber} of ULB ${ulbname}
-    Area ${area} (Sq.mts.), ward number ${ward}, City ${district}
+    I/We, Shri/Smt/Kum. <b>${ownername}</b> under signed owner of land bearing Kh. No. <b>${khasranumber}</b> of ULB 
+    <b>${ulbname}</b> Area <b>${area}</b> (Sq.mts.), ward number <b>${ward}</b>, City <b>${district}</b>
     
-    I/We hereby declare that the Architect name ${architectname} (${architecttype}) Architect ID - ${architectid} is 
-    appointed by me/us and is authorized to make representation/application with regard to aforesaid 
-    construction to any of the authorities.
+    I/We hereby declare that the Architect name <b>${architectname}</b> (<b>${architecttype}</b>) Architect ID 
+    <b>${architectid}</b> is appointed by me/us and is authorized to make representation/application 
+    with regard to aforesaid construction to any of the authorities.
 
-    I/We further declare that I am/We are aware of all the action taken or representation made by the 
-    ${architecttype} authorized by me/us.
+    I/We further declare that I am/We are aware of all the action taken or representation made 
+    by the <b>${architecttype}</b> authorized by me/us.
 
     i) That I am/We are sole owner of the site.
 
-    ii) There is no dispute regarding the site and if any dispute arises then I shall be solely 
-    responsible for the same.
+    ii) There is no dispute regarding the site and if any dispute arises then I shall be solely resp
+    -onsible for the same.
 
     iii) That construction of the building will be undertaken as per the approved building plans 
-    and structural design given by the Structural Engineer.
+    and strutural design given by the Structural Engineer.
 
-    That above stated facts are true and the requisite documents have been uploaded with this 
-    E-Naksha plan and nothing has been concealed thereof.
-
-
-    This Document is Verified By OTP at ${TimeStamp}
+    That above stated facts are true and the requisite documents have been uploaded with this E-
+    Naksha plan.
 
 
-                                                                        Name of Owner - ${ownername}
-                                                                        Mobile Number - ${ownermobileNumber}
-                                                                        Email Id  - ${ownerEmail}
+    This Document is Verified By OTP at <b>${TimeStamp}
+
+
+    Name of Owner - <b>${ownername}</b>
+    Mobile Number - <b>${ownermobileNumber}</b>
+    Email Id  - <b>${ownerEmail}</b>
                                                                   
     `;
+
+
+
+    const isRightAlignedLine = (line) => [
+      `Name of Owner - <b>${ownername}</b>`,
+      `Mobile Number - <b>${ownermobileNumber}</b>`,
+      `Email Id  - <b>${ownerEmail}</b>`,
+    ].includes(line.trim());
+  
+    const shouldAddSpacing = (currentLine, nextLine) => {
+      const lineToCheck1 = 'That above stated facts are true and the requisite documents have been uploaded with this E-Naksha plan.';
+      const lineToCheck2 = '';
+      const lineToCheck3 = `This Document is Verified By OTP at ${TimeStamp}`;
+  
+      return (
+        (currentLine.trim() === lineToCheck1 && nextLine?.trim() === lineToCheck2) ||
+        currentLine.trim() === lineToCheck3
+      );
+    };
+
 
     const openModal = () => {
       setIsModalOpen(true);
@@ -114,19 +133,59 @@
   
        // Split and write text into the PDF
     const lines = selfdeclarationform.split("\n");
+    // lines.forEach((line) => {
+    //   const wrappedLines = doc.splitTextToSize(line, maxLineWidth);
+    //   wrappedLines.forEach((wrappedLine) => {
+    //     if (currentY + lineSpacing > doc.internal.pageSize.getHeight() - topMargin) {
+    //       doc.addPage();
+    //       currentY = topMargin;
+    //     }
+    //     doc.text(leftMargin, currentY, wrappedLine);
+    //     currentY += lineSpacing;
+    //   });
+    // });
     lines.forEach((line) => {
-      const wrappedLines = doc.splitTextToSize(line, maxLineWidth);
-      wrappedLines.forEach((wrappedLine) => {
-        if (currentY + lineSpacing > doc.internal.pageSize.getHeight() - topMargin) {
+      const segments = line.split(/(<b>|<\/b>)/g); // Split line by <b> and </b> tags
+      let isBold = false;
+      let currentX = leftMargin;
+
+      segments.forEach((segment) => {
+          if (segment === "<b>") {
+              isBold = true;
+          } else if (segment === "</b>") {
+              isBold = false;
+          } else {
+              const words = segment.split(' ');
+              words.forEach((word, index) => {
+                  const wordWithSpace = index < words.length - 1 ? `${word} ` : word;
+                  const textWidth = doc.getTextWidth(wordWithSpace);
+
+                  if (currentX + textWidth > maxLineWidth) {
+                      currentY += lineSpacing;
+                      currentX = leftMargin;
+                      if (currentY + lineSpacing > doc.internal.pageSize.getHeight() - topMargin) {
+                          doc.addPage();
+                          currentY = topMargin;
+                      }
+                  }
+
+                  doc.setFont(isBold ? "Times-Bold" : "Times-Roman");
+                  doc.text(currentX, currentY, wordWithSpace);
+                  currentX += textWidth;
+              });
+          }
+      });
+
+      currentY += lineSpacing;
+      if (currentY + lineSpacing > doc.internal.pageSize.getHeight() - topMargin) {
           doc.addPage();
           currentY = topMargin;
-        }
-        doc.text(leftMargin, currentY, wrappedLine);
-        currentY += lineSpacing;
-      });
-    });
+      }
+  });
+
 
     // Convert the PDF to a Blob
+    
     const pdfBlob = doc.output("blob", "declaration.pdf");
 
     // Prepare FormData for the upload
@@ -191,7 +250,8 @@
         textAlign: 'justify',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', 
         maxHeight: '80vh', 
-        overflowY: 'auto', 
+        overflowY: 'auto',
+        lineHeight: "2" 
       },
       heading: {
         textAlign: 'center',
@@ -204,6 +264,13 @@
         fontWeight: 'bold',
         marginBottom: '20px',
        
+      },
+      rightAlignedText: {
+        textAlign: 'right',
+        whiteSpace: 'pre-wrap',
+        wordWrap: 'break-word',
+        fontFamily: 'Roboto, serif',
+        lineHeight: "2" 
       },
     };
 
@@ -222,7 +289,21 @@
           <div>
             <h2 style={modalStyles.heading}>DECLARATION UNDER SELF-CERTIFICATION SCHEME</h2>
             <h3 style={modalStyles.subheading}>(By OWNER)</h3>
-            <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word', textAlign: 'justify', fontFamily: 'Roboto, serif'}}>{selfdeclarationform}</pre>            
+            {/* <div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word', textAlign: 'justify', fontFamily: 'Roboto, serif' }}>{selfdeclarationform}</div>             */}
+            <div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word', textAlign: 'justify', fontFamily: 'Roboto, serif' }}>
+            {selfdeclarationform.split('\n').map((line, index) => (
+            <React.Fragment key={index}>
+              <div style={isRightAlignedLine(line) ? modalStyles.rightAlignedText : {}}
+              dangerouslySetInnerHTML={{ __html: line }}/>
+                {/* {line}
+               
+              </div> */}
+              {shouldAddSpacing(line, selfdeclarationform.split('\n')[index + 1]) && (
+                <div style={{ marginBottom: '2rem' }} />
+              )}
+            </React.Fragment>
+          ))}
+        </div>
             
 
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>

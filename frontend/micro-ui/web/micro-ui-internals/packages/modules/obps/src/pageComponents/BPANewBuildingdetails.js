@@ -451,7 +451,7 @@
           case "SCHEME":
             return (
               <>
-              <CardLabel>{`${t("BPA_SCHEMES_TYPE")}`}</CardLabel>
+              <CardLabel>{`${t("BPA_SCHEME_TYPE_LABEL")}`}</CardLabel>
               <Controller
                 control={control}
                 name={"schemesselection"}
@@ -488,7 +488,7 @@
                 })}
               />
 
-              <CardLabel>{`${t("BPA_TRANSFERRED_SCHEME")}`}</CardLabel>
+              <CardLabel>{`${t("BPA_TRANFERRED_SCHEME_LABEL")}`}</CardLabel>
               <TextInput
                 t={t}
                 type={"text"}

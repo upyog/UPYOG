@@ -139,16 +139,16 @@ const BpaApplicationDetail = () => {
       const response = await Digit.UserService.authenticate(requestData);
       if (response.ResponseInfo.status==="Access Token generated successfully") {
         setIsOTPVerified(true);
-        setOTPError(t("BPA_OTP_VERIFIED"));
+        setOTPError(t("VERIFIED"));
         setOTPVerifiedTimestamp(new Date());
       } else {
         setIsOTPVerified(false);
-        setOTPError(t("BPA_WRONG_OTP"));
+        setOTPError(t("WRONG OTP"));
       }
     } catch (error) {
       console.error("Error verifying OTP:", error);
       setIsOTPVerified(false);
-      setOTPError(t("BPA_OTP_VERIFICATION_ERROR"));
+      setOTPError(t("Error verifying OTP"));
     }
   };
 
@@ -750,7 +750,7 @@ const BpaApplicationDetail = () => {
                             onSelect={onActionSelect}
                           />
                         ) : null}
-                        <SubmitBar /*style={{ width: "100%" }}*/ disabled={checkForSubmitDisable(isFromSendBack, isTocAccepted) || (!agree || !isOTPVerified || !citizenvalidations)} label={t("ES_COMMON_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+                        <SubmitBar /*style={{ width: "100%" }}*/ disabled={checkForSubmitDisable(isFromSendBack, isTocAccepted) || (workflowDetails?.data?.actionState?.state ==="CITIZEN_APPROVAL_PENDING" ? (!agree || !isOTPVerified || !citizenvalidations) : false )} label={t("ES_COMMON_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
                       </div>
                     </ActionBar>
                   )}
@@ -788,7 +788,7 @@ const BpaApplicationDetail = () => {
         <Card>
         <React.Fragment>
               <div>
-            <CardLabel>{t("CITIZEN_SHOULD_VERIFY_HIMSELF_BY_CLICKING_BELOW_BUTTON")}</CardLabel>
+            <CardLabel>{t("ARCHITECT_SHOULD_VERIFY_HIMSELF_BY_CLICKING_BELOW_BUTTON")}</CardLabel>
             <SubmitBar label={t("BPA_VERIFY")} onSubmit={handleVerifyClick} />
             <br></br>
             {showMobileInput && (

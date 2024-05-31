@@ -381,7 +381,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 if (formData?.owners?.schemesselection?.i18nKey) payload.additionalDetails.schemesselection = formData?.owners?.schemesselection?.i18nKey;
                 if (formData?.owners?.schemeName) payload.additionalDetails.schemeName = formData?.owners?.schemeName;
                 if (formData?.owners?.transferredscheme) payload.additionalDetails.transferredscheme = formData?.owners?.transferredscheme;
-                if (formData?.owners?.Ulblisttype?.code) payload.additionalDetails.Ulblisttype = formData?.owners?.Ulblisttype?.code;
+                if (formData?.owners?.Ulblisttype?.value) payload.additionalDetails.Ulblisttype = formData?.owners?.Ulblisttype?.value;
                 if (formData?.owners?.uploadedFile) payload.additionalDetails.uploadedFileNoc = formData?.owners?.uploadedFile;
                 if (formData?.owners?.rating?.code) payload.additionalDetails.rating = formData?.owners?.rating?.code;
                 if (formData?.owners?.greenuploadedFile) payload.additionalDetails.uploadedFileGreenBuilding = formData?.owners?.greenuploadedFile;
