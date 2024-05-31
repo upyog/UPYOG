@@ -41,12 +41,13 @@ import {
     else if(value.businessService === "BPA")
     BusinessService="BPA.NC_APP_FEE";
 
+    
+
 
     
     const { data, address, owners, nocDocuments, documents, additionalDetails, subOccupancy,PrevStateDocuments,PrevStateNocDocuments,applicationNo } = value;
     const isEditApplication = window.location.href.includes("editApplication");
 
-    
 
     const [agree, setAgree] = useState(false);
     const setdeclarationhandler = () => {
@@ -150,17 +151,17 @@ import {
         const response = await Digit.UserService.authenticate(requestData);
         if (response.ResponseInfo.status==="Access Token generated successfully") {
           setIsOTPVerified(true);
-          setOTPError(t("BPA_OTP_VERIFIED"));
+          setOTPError(t("VERIFIED"));
           setOTPVerifiedTimestamp(new Date());
         } else {
           setIsOTPVerified(false);
-          setOTPError(t("BPA_WRONG_OTP"));
+          setOTPError(t("WRONG OTP"));
         }
       } catch (error) {
         console.error("Error verifying OTP:", error);
         alert("OTP Verification Error ")
         setIsOTPVerified(false);
-        setOTPError(t("BPA_OTP_VERIFICATION_ERROR"));
+        setOTPError(t("OTP Verification Error"));
       }
     };
 
@@ -440,8 +441,8 @@ function selectfile(e) {
           <Row className="border-none" label={t(`BPA_HOLDING_NUMBER_LABEL`)} text={data?.holdingNumber || t("CS_NA")} />
           <Row className="border-none" label={t(`BPA_BOUNDARY_LAND_REG_DETAIL_LABEL`)} text={data?.registrationDetails || t("CS_NA")} />
           <Row className="border-none" label={t(`BPA_BOUNDARY_WALL_LENGTH_LABEL`)} text={data?.boundaryWallLength|| t("CS_NA")} />
-          <Row className="border-none" label={t(`BPA_KHASRA_NUMBER_LABEL`)} text={data?.khasraNumber|| t("CS_NA")} />
-          <Row className="border-none" label={t(`BPA_WARD_NUMBER_LABEL`)} text={data?.wardnumber|| t("CS_NA")} />
+          <Row className="border-none" label={t(`BPA_KHASRA_NUMBER_LABEL`)} text={data?.khasraNumber|| value?.additionalDetails?.khasraNumber|| t("CS_NA")} />
+          <Row className="border-none" label={t(`BPA_WARD_NUMBER_LABEL`)} text={data?.wardnumber|| value?.additionalDetails?.wardnumber || t("CS_NA")} />
 
 
     </StatusTable>
@@ -545,19 +546,19 @@ function selectfile(e) {
       <Card style={{paddingRight:"16px"}}>
         <StatusTable>
         <CardHeader>{t("BPA_ADDITIONAL_BUILDING_DETAILS")}</CardHeader>
-        <Row className="border-none" label={t(`BPA_APPROVED_COLONY_LABEL`)} text={owners?.approvedColony?.code || t("CS_NA")} />
-        <Row className="border-none" label={t(`BPA_ULB_TYPE_LABEL`)} text={owners?.Ulblisttype?.code || t("CS_NA")} />
-        <Row className="border-none" label={t(`BPA_ULB_NAME_LABEL`)} text={owners?.UlbName?.code || t("CS_NA")} />
-        <Row className="border-none" label={t(`BPA_DISTRICT_LABEL`)} text={owners?.District?.code || t("CS_NA")} />
-        <Row className="border-none" label={t(`BPA_BUILDING_STATUS_LABEL`)} text={owners?.buildingStatus?.code || t("CS_NA")} />
-        <Row className="border-none" label={t(`BPA_CORE_AREA_LABEL`)} text={owners?.coreArea?.code || t("CS_NA")} />
-        <Row className="border-none" label={t(`BPA_PROPOSED_SITE_LABEL`)} text={owners?.proposedSite?.code || t("CS_NA")} />
-        <Row className="border-none" label={t(`BPA_SCHEME_TYPE_LABEL`)} text={owners?.schemesselection?.code || t("CS_NA")} />
-        <Row className="border-none" label={t(`BPA_SCHEME_NAME_LABEL`)} text={owners?.schemeName || t("CS_NA")} />
-        <Row className="border-none" label={t(`BPA_TRANFERRED_SCHEME_LABEL`)} text={owners?.transferredscheme || t("CS_NA")} />
-        <Row className="border-none" label={t(`BPA_PURCHASED_FAR_LABEL`)} text={owners?.purchasedFAR?.code || t("CS_NA")} />
-        <Row className="border-none" label={t(`BPA_MASTER_PLAN_LABEL`)} text={owners?.masterPlan?.code || t("CS_NA")} />
-        <Row className="border-none" label={t(`BPA_GREEN_BUILDING_LABEL`)} text={owners?.greenbuilding?.code || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_APPROVED_COLONY_LABEL`)} text={owners?.approvedColony?.value || value?.additionalDetails?.approvedColony || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_ULB_TYPE_LABEL`)} text={owners?.Ulblisttype?.value || value?.additionalDetails?.Ulblisttype || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_ULB_NAME_LABEL`)} text={owners?.UlbName?.code || value?.additionalDetails?.UlbName || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_DISTRICT_LABEL`)} text={owners?.District?.code || value?.additionalDetails?.District || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_BUILDING_STATUS_LABEL`)} text={owners?.buildingStatus?.code || value?.additionalDetails?.buildingStatus || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_CORE_AREA_LABEL`)} text={owners?.coreArea?.code || value?.additionalDetails?.coreArea || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_PROPOSED_SITE_LABEL`)} text={owners?.proposedSite?.code || value?.additionalDetails?.proposedSite || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_SCHEME_TYPE_LABEL`)} text={owners?.schemesselection?.code || value?.additionalDetails?.schemesselection || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_SCHEME_NAME_LABEL`)} text={owners?.schemeName || value?.additionalDetails?.schemeName || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_TRANFERRED_SCHEME_LABEL`)} text={owners?.transferredscheme || value?.additionalDetails?.transferredscheme || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_PURCHASED_FAR_LABEL`)} text={owners?.purchasedFAR?.code || value?.additionalDetails?.purchasedFAR || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_MASTER_PLAN_LABEL`)} text={owners?.masterPlan?.code || value?.additionalDetails?.masterPlan || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_GREEN_BUILDING_LABEL`)} text={owners?.greenbuilding?.code || value?.additionalDetails?.greenbuilding || t("CS_NA")} />
         </StatusTable>
 
       </Card>
@@ -721,6 +722,7 @@ function selectfile(e) {
           <SubmitBar label={t("BPA_GET_OTP")} onSubmit={handleGetOTPClick} disabled={!isValidMobileNumber} />
           </React.Fragment>
           )}
+          <br></br>
           {showOTPInput && (
             <React.Fragment>
               <br></br>
