@@ -34,6 +34,12 @@ import {
   PTRComponents,
 } from "@upyog-niua/upyog-ui-module-ptr";
 
+import { 
+  EWModule, 
+  EWLinks, 
+  EWComponents }
+  from "@upyog-niua/upyog-ui-module-ew";
+
 import {  
   ASSETModule, 
   ASSETLinks,
@@ -75,7 +81,8 @@ const enabledModules = [
   "Birth",
   "Death",
   "PTR",
-  "ASSET"
+  "ASSET",
+  "EW"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -95,7 +102,10 @@ window.Digit.ComponentRegistryService.setupRegistry({
   ...PTRComponents,
   ASSETLinks,
   ASSETModule,
-  ...ASSETComponents
+  ...ASSETComponents,
+  EWModule,
+  EWLinks,
+  ...EWComponents
 });
 
 initPGRComponents();

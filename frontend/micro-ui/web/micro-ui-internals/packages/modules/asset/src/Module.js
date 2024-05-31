@@ -111,5 +111,6 @@ export const ASSETComponents = {
   ASSETCard,
   ASSETModule,
   ASSETLinks,
+  ASTInboxTableConfig: TableConfig,
   
 };

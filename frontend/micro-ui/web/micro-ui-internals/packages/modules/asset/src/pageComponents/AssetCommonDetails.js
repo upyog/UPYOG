@@ -19,14 +19,14 @@
 
     
 
-        serialNo: "",
+        // serialNo: "",
         BookPagereference: "",
-        AssetId: "",
+        // AssetId: "",
         AssetName: "",
         Assetdescription: "",
         Department : "",
 
-    key: Date.now(),
+        key: Date.now(),
     });
 
     const AssetCommonDetails = ({ config, onSelect, userType, formData, setError, formState, clearErrors }) => {
@@ -141,8 +141,8 @@
             ) : null}
 
     
-                <LabelFieldPair>
-                    <CardLabel className="card-label-smaller">{t("ASSET_SERIAL_NO") + " *"}</CardLabel>
+                {/* <LabelFieldPair>
+                    <CardLabel className="card-label-smaller">{t("AST_SERIAL_NO") }</CardLabel>
                     <div className="field">
                     <Controller
                         control={control}
@@ -170,41 +170,43 @@
                     />
                     </div>
                 </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.serialNo ? errors?.serialNo?.message : ""}</CardLabelError>
+                <CardLabelError style={errorStyle}>{localFormState.touched.serialNo ? errors?.serialNo?.message : ""}</CardLabelError> */}
 
                 <LabelFieldPair>
-                    <CardLabel className="card-label-smaller">{t("ASSET_BOOK_REFERENCE_NO") + " *"}</CardLabel>
+                    <CardLabel className="card-label-smaller">{t("AST_BOOK_REF_SERIAL_NUM") + " *"}</CardLabel>
                     <div className="field">
                     <Controller
-                        control={control}
-                        name={"BookPagereference"}
-                        defaultValue={assetcommonforall?.BookPagereference}
-                        rules={{
-                        required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                        validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
-                        }}
-                        render={(props) => (
+                    control={control}
+                    name={"BookPagereference"}
+                    defaultValue={assetcommonforall?.BookPagereference}
+                    rules={{
+                        required: t("CORE\_COMMON\_REQUIRED\_ERRMSG"),
+                        validate: {
+                        pattern: (val) => /^[a-zA-Z0-9\s\/\[\]\*]+$/.test(val) || t("ERR\_DEFAULT\_INPUT\_FIELD\_MSG"),
+                        },
+                    }}
+                    render={(props) => (
                         <TextInput
-                            value={props.value}
-                            // disable={isEditScreen}
-                            autoFocus={focusIndex.index === assetcommonforall?.key && focusIndex.type === "BookPagereference"}
-                            onChange={(e) => {
+                        value={props.value}
+                        // disable={isEditScreen}
+                        autoFocus={focusIndex.index === assetcommonforall?.key && focusIndex.type === "BookPagereference"}
+                        onChange={(e) => {
                             props.onChange(e.target.value);
                             setFocusIndex({ index: assetcommonforall.key, type: "BookPagereference" });
-                            }}
-                            onBlur={(e) => {
+                        }}
+                        onBlur={(e) => {
                             setFocusIndex({ index: -1 });
                             props.onBlur(e);
-                            }}
+                        }}
                         />
-                        )}
+                    )}
                     />
                     </div>
                 </LabelFieldPair>
                 <CardLabelError style={errorStyle}>{localFormState.touched.BookPagereference ? errors?.BookPagereference?.message : ""}</CardLabelError>
 
-                <LabelFieldPair>
-                    <CardLabel className="card-label-smaller">{t("ASSET_ID") + " *"}</CardLabel>
+                {/* <LabelFieldPair>
+                    <CardLabel className="card-label-smaller">{t("AST_ID") }</CardLabel>
                     <div className="field">
                     <Controller
                         control={control}
@@ -232,10 +234,10 @@
                     />
                     </div>
                 </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.AssetId ? errors?.AssetId?.message : ""}</CardLabelError>
+                <CardLabelError style={errorStyle}>{localFormState.touched.AssetId ? errors?.AssetId?.message : ""}</CardLabelError> */}
 
                 <LabelFieldPair>
-                    <CardLabel className="card-label-smaller">{t("ASSET_NAME") + " *"}</CardLabel>
+                    <CardLabel className="card-label-smaller">{t("AST_NAME") }</CardLabel>
                     <div className="field">
                     <Controller
                         control={control}
@@ -266,7 +268,7 @@
                 <CardLabelError style={errorStyle}>{localFormState.touched.AssetName ? errors?.AssetName?.message : ""}</CardLabelError>
 
                 <LabelFieldPair>
-                    <CardLabel className="card-label-smaller">{t("ASSET_DESCRIPTION") + " *"}</CardLabel>
+                    <CardLabel className="card-label-smaller">{t("ASSET_DESCRIPTION") }</CardLabel>
                     <div className="field">
                     <Controller
                         control={control}
@@ -297,7 +299,7 @@
                 <CardLabelError style={errorStyle}>{localFormState.touched.Assetdescription ? errors?.Assetdescription?.message : ""}</CardLabelError>
 
                 <LabelFieldPair>
-                    <CardLabel className="card-label-smaller">{t("ASSET_DEPARTMENT") + " *"}</CardLabel>
+                    <CardLabel className="card-label-smaller">{t("AST_DEPARTMENT") }</CardLabel>
                     <div className="field">
                     <Controller
                         control={control}

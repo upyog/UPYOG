@@ -5,12 +5,15 @@
 
   const ASSETSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
       const isMobile = window.Digit.Utils.browser.isMobile();
+
+      const user = Digit.UserService.getUser().info;
       const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
           defaultValues: {
               offset: 0,
               limit: !isMobile && 10,
               sortBy: "commencementDate",
-              sortOrder: "DESC"
+              sortOrder: "DESC",
+              city: user?.tenantId
           }
       })
       useEffect(() => {
@@ -19,6 +22,8 @@
         register("sortBy", "commencementDate")
         register("sortOrder", "DESC")
       },[register])
+
+
       
       
 
@@ -31,7 +36,6 @@
               accessor: "applicationNo",
               disableSortBy: true,
               Cell: ({ row }) => {
-                console.log("row in application",row);
                 return (
                   <div>
                     <span className="link">
@@ -48,7 +52,6 @@
             {
               Header: t("AST_ASSET_CATEGORY"),
               Cell: ( row ) => {
-                console.log("rowwwww",row);
                 return GetCell(`${row?.row?.original?.["assetClassification"]}`)
               },
               disableSortBy: true,
@@ -107,38 +110,16 @@
                   </Card>
                   <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                   <SearchField>
-                      <label>{t("ASSET_APPLICATION_ID")}</label>
+                    <label>{t("MYCITY_CODE_LABEL")}</label>
+                    <TextInput name="city" inputRef={register({})} />
+                </SearchField>
+                  <SearchField>
+                      <label>{t("AST_APPLICATION_ID")}</label>
                       <TextInput name="applicationNo" inputRef={register({})} />
                   </SearchField>
                  
                   <SearchField>
-                  <label>{t("ASSET_OWNER_MOBILE_NO")}</label>
-                  <MobileNumber
-                      name="mobileNumber"
-                      inputRef={register({
-                      minLength: {
-                          value: 10,
-                          message: t("CORE_COMMON_MOBILE_ERROR"),
-                      },
-                      maxLength: {
-                          value: 10,
-                          message: t("CORE_COMMON_MOBILE_ERROR"),
-                      },
-                      pattern: {
-                      value: /[6789][0-9]{9}/,
-                      //type: "tel",
-                      message: t("CORE_COMMON_MOBILE_ERROR"),
-                      },
-                  })}
-                  type="number"
-                  componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
-                  //maxlength={10}
-                  />
-                  <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
-                  </SearchField>
-                 
-                  <SearchField>
-                      <label>{t("ASSET_FROM_DATE")}</label>
+                      <label>{t("AST_FROM_DATE")}</label>
                       <Controller
                           render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
                           name="fromDate"
@@ -146,7 +127,7 @@
                           />
                   </SearchField>
                   <SearchField>
-                      <label>{t("ASSET_TO_DATE")}</label>
+                      <label>{t("AST_TO_DATE")}</label>
                       <Controller
                           render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
                           name="toDate"
@@ -160,8 +141,8 @@
                           reset({ 
                               applicationNo: "", 
                               fromDate: "", 
+                              city: user?.tenantId,
                               toDate: "",
-                              mobileNumber:"",
                               offset: 0,
                               limit: 10,
                               sortBy: "commencementDate",

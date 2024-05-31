@@ -1,3 +1,5 @@
+import { update } from "lodash";
+
 const Urls = {
   MDMS: `/egov-mdms-service/v1/_search`,
   WorkFlow: `/egov-workflow-v2/egov-wf/businessservice/_search`,
@@ -100,7 +102,8 @@ const Urls = {
 
   asset:{
     create:"/asset-services/v1/assets/_create",
-    search:"/asset-services/v1/assets/_search"
+    search:"/asset-services/v1/assets/_search",
+    update:"/asset-services/v1/assets/_update"
   },
 
 

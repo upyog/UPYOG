@@ -42,7 +42,7 @@ const NewAssetApplication = () => {
       assetName: data?.assetcommonforall?.[0]?.AssetName,
       description: data?.assetcommonforall?.[0]?.Assetdescription,
       assetClassification:data?.assets[0]?.assetclassification?.value,
-      assetParentCategory: data?.assets[0]?.assettype?.value,
+      assetParentCategory: data?.assets[0]?.assettype?.code,
       department: data?.assetcommonforall?.[0]?.Department,
       applicationNo: "",
       approvalDate: "",
@@ -57,7 +57,8 @@ const NewAssetApplication = () => {
         buildingName:data?.address?.buildingName,
         doorNo:data?.address?.doorNo,
         street:data?.address?.street,
-        city:"",
+        pincode:data?.address?.pincode,
+        city:data?.address?.city?.name,
         locality: { code: data?.address?.locality?.code, area: data?.address?.locality?.area },
 
       },
@@ -85,11 +86,7 @@ const NewAssetApplication = () => {
     
 
    
-  // if (isLoading) {
-  //   return <Loader />;
-  // }
-
-  /* use newConfig instead of commonFields for local development in case needed */
+  
 
   
   const configs = newConfig;    

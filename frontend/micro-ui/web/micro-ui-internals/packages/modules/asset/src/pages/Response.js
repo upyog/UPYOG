@@ -57,6 +57,8 @@ const Response = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { state } = props.location;
 
+  console.log("statststs",state);
+
   
 
 
@@ -80,6 +82,8 @@ const Response = (props) => {
   useEffect(() => {
     if (mutation1.data && mutation1.isSuccess) setsuccessData(mutation1.data);
   }, [mutation1.data]);
+
+
   useEffect(() => {
     const onSuccess = async (successRes) => {
       console.log("hhhhhhhhhhhhhhhh",successRes)
@@ -108,14 +112,14 @@ const Response = (props) => {
   }, []);
 
   const handleDownloadPdf = async () => {
-    const { PetRegistrationApplications = [] } = mutation.data || successData;
-    const Pet = (PetRegistrationApplications && PetRegistrationApplications[0]) || {};
-    const tenantInfo = tenants.find((tenant) => tenant.code === Pet.tenantId);
+    const { Assets = [] } = mutation.data || successData;
+    const Ast = (Assets && Assets[0]) || {};
+    const tenantInfo = tenants.find((tenant) => tenant.code === Ast.tenantId);
 
-    let tenantId = Pet.tenantId || tenantId;
+    let tenantId = Ast.tenantId || tenantId;
     
 
-    const data = await getAssetAcknowledgementData({ ...Pet, auditData }, tenantInfo, t);
+    const data = await getAssetAcknowledgementData({ ...Ast, auditData }, tenantInfo, t);
     Digit.Utils.pdf.generate(data);
   };
 
@@ -137,9 +141,9 @@ const Response = (props) => {
         <CardText>
           {DisplayText(state.action, (mutation.isSuccess || !!successData) && !mutation.isError, props.parentRoute.includes("employee"), t)}
         </CardText>
-        {/* {(mutation.isSuccess || !!successData) && !mutation.isError && (
-          <SubmitBar style={{ overflow: "hidden" }} label={t("ASSET_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />
-        )} */}
+        {(mutation.isSuccess || !!successData) && !mutation.isError && (
+          <SubmitBar style={{ overflow: "hidden" }} label={t("AST_REPORT")} onSubmit={handleDownloadPdf} />
+        )}
       </Card>
       {showToast && <Toast error={showToast.key === "error" ? true : false} label={error} onClose={closeToast} />}
       <ActionBar>

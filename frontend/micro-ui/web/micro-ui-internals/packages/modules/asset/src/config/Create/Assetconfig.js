@@ -4,6 +4,12 @@ export const newConfig =[
         "head": "ASSET_GENERAL_DETAILS",
         "body": [
             {
+                "component": "AssetClassification",
+                "withoutLabel": true,
+                "key": "assets",
+                "type": "component"
+            },
+            {
                 "route": "commonpage",
                 "component": "AssetCommonDetails",
                 "withoutLabel": true,
@@ -11,17 +17,6 @@ export const newConfig =[
                 "isMandatory": true,
                 "type": "component"
             },
-            {
-                "component": "AssetClassification",
-                "withoutLabel": true,
-                "key": "assets",
-                "type": "component"
-            }
-        ]
-    },
-    {
-        "head": "ES_TITILE_ASSET_COMMON_SELECTION",
-        "body": [
             {
                 "component": "AssetCommonSelection",
                 "withoutLabel": true,
@@ -31,9 +26,10 @@ export const newConfig =[
             },
         ]
     },
+    
 
     {
-        "head": "ASSET_LOCATION_DETAILS",
+        "head": "AST_LOCATION_DETAILS",
         "body": [
            
             {
@@ -65,7 +61,7 @@ export const newConfig =[
         ]
     },
     {
-        "head": "ES_TITILE_DOCUMENT_DETAILS",
+        "head": "AST_DOCUMENT_DETAILS",
         "body": [
             {
                 "component": "AssetDocuments",

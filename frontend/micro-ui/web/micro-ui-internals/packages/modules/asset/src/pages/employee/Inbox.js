@@ -24,7 +24,7 @@ const Inbox = ({
 
   const { t } = useTranslation();
   const [enableSarch, setEnableSearch] = useState(() => (isInbox ? {} : { enabled: false }));
-  const [TableConfig, setTableConfig] = useState(() => Digit.ComponentRegistryService?.getComponent("PTRInboxTableConfig"));
+  const [TableConfig, setTableConfig] = useState(() => Digit.ComponentRegistryService?.getComponent("ASTInboxTableConfig"));
   // const [getSearchFi]
   const [pageOffset, setPageOffset] = useState(initialStates.pageOffset || 0);
   const [pageSize, setPageSize] = useState(initialStates.pageSize || 10);
@@ -42,6 +42,7 @@ const Inbox = ({
         ModuleCode: moduleCode,
         filters: { ...searchParams, ...paginationParams, sortParams },
       })
+
     : Digit.Hooks.useInboxGeneral({
         tenantId,
         businessService: moduleCode,
@@ -124,7 +125,7 @@ const Inbox = ({
             moduleCode={moduleCode}
             data={data}
             
-            tableConfig={TableConfig(t)["PTR"]}
+            tableConfig={TableConfig(t)["AST"]}
             isLoading={hookLoading}
             defaultSearchParams={initialStates.searchParams}
             isSearch={!isInbox}

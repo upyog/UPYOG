@@ -501,6 +501,25 @@ const getBreedTypeList = (tenantId, moduleCode, type) => ({
   },
 });
 
+const getProductPriceList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "ProductName",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+
+
 ////////////////////////
 const getAssetClassificationList = (tenantId, moduleCode, type) => ({
   type,
@@ -512,6 +531,23 @@ const getAssetClassificationList = (tenantId, moduleCode, type) => ({
         masterDetails: [
           {
             name: "assetClassification",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getAssetparentsubcategoryList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "assetSubCategory",
           },
         ],
       },
@@ -545,7 +581,7 @@ const getAssetSubParentList = (tenantId, moduleCode, type) => ({
         moduleName: moduleCode,
         masterDetails: [
           {
-            name: "assetSubCategory",
+            name: "assetCategory",
           },
         ],
       },
@@ -1184,6 +1220,17 @@ const GetPropertySubtype = (MdmsRes) =>
     });
     //return MdmsRes;
   };
+
+  const getAssetparentsubcategory= (MdmsRes) => {
+    return MdmsRes["ASSET"].assetSubCategory.filter((assetSubCategory) => assetSubCategory.active).map((assetparentDetails) => {
+      return {
+        ...assetparentDetails,
+        i18nKey: `AST_${assetparentDetails.code}`,
+      };
+    });
+    //return MdmsRes;
+  };
+
   
   const getAssetParent = (MdmsRes) => {
     return MdmsRes["ASSET"].assetParentCategory.filter((assetParentCategory) => assetParentCategory.active).map((assetparentDetails) => {
@@ -1196,7 +1243,7 @@ const GetPropertySubtype = (MdmsRes) =>
   };
   
   const getAssetSubParent = (MdmsRes) => {
-    return MdmsRes["ASSET"].assetSubCategory.filter((assetSubCategory) => assetSubCategory.active).map((assetsubparentDetails) => {
+    return MdmsRes["ASSET"].assetCategory.filter((assetCategory) => assetCategory.active).map((assetsubparentDetails) => {
       return {
         ...assetsubparentDetails,
         i18nKey: `ASSET_SUB_CLASSIFIED_${assetsubparentDetails.code}`,
@@ -1214,6 +1261,16 @@ const GetPropertySubtype = (MdmsRes) =>
     });
     //return MdmsRes;
   };   
+
+  const getProductPrice = (MdmsRes) => {
+    return MdmsRes["Ewaste"].ProductName.filter((ProductName) => ProductName.active).map((ewasteDetails) => {
+      return {
+        ...ewasteDetails,
+        i18nKey: `EWASTE_${ewasteDetails.code}`,
+      };
+    });
+    //return MdmsRes;
+  };   
   
   const Asset_Classification = (MdmsRes) => {
     MdmsRes["ASSET"].assetClassification.filter((assetClassification) => assetClassification.active).map((asset_mdms) => {
@@ -1223,6 +1280,16 @@ const GetPropertySubtype = (MdmsRes) =>
       };
     });
   };
+
+  const AST_PARENT= (MdmsRes) => {
+    MdmsRes["ASSET"].assetSubCategory.filter((assetSubCategory) => assetSubCategory.active).map((asset_parent_mdms) => {
+      return {
+        ...asset_parent_mdms,
+        i18nKey: `AST_PAR_${asset_parent_mdms.code}`,
+      };
+    });
+  };
+
   const AssetTypeParent = (MdmsRes) => {
     MdmsRes["ASSET"].assetParentCategory.filter((assetParentCategory) => assetParentCategory.active).map((asset_type_mdms) => {
       return {
@@ -1233,7 +1300,7 @@ const GetPropertySubtype = (MdmsRes) =>
   };
   
   const AssetSubTypeParent = (MdmsRes) => {
-    MdmsRes["ASSET"].assetSubCategory.filter((assetSubCategory) => assetSubCategory.active).map((asset_sub_type_mdms) => {
+    MdmsRes["ASSET"].assetCategory.filter((assetCategory) => assetCategory.active).map((asset_sub_type_mdms) => {
       return {
         ...asset_sub_type_mdms,
         i18nKey: `ASSET_SUB_PARENT_CATEGORY_${asset_sub_type_mdms.code}`,
@@ -1320,6 +1387,9 @@ const GetPropertyOwnerShipCategory = (MdmsRes) =>
     });
     //return MdmsRes;
   };
+ 
+ 
+  
   
   const PTRGenderType = (MdmsRes) => {
     MdmsRes["common-masters"].GenderType.filter((GenderType) => GenderType.active).map((ptrgenders) => {
@@ -1349,6 +1419,8 @@ const GetPropertyOwnerShipCategory = (MdmsRes) =>
       };
     });
   };
+
+ 
   ///////////
 
 const GetTradeOwnerShipCategory = (MdmsRes) =>
@@ -1704,16 +1776,25 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
     case "PTRBreedType":
       return PTRBreedType(MdmsRes);
 
+    case "ProductName":
+      return getProductPrice(MdmsRes);
+  
     case "assetClassification":
       return getAssetClassification(MdmsRes); 
+
+      case "assetSubCategory":
+        return getAssetparentsubcategory(MdmsRes);
     
     case "Asset_Classification":
       return Asset_Classification(MdmsRes);
+
+    case "AST_PARENT":
+      return AST_PARENT(MdmsRes);
   
     case "assetParentCategory":
       return getAssetParent(MdmsRes);
 
-      case "assetSubCategory":
+      case "assetCategory":
       return getAssetSubParent(MdmsRes);
 
     case "AssetCommonDetail":
@@ -1878,8 +1959,14 @@ export const MdmsService = {
   getAssetClassification: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getAssetClassificationList(tenantId, moduleCode, type), moduleCode);
   },
+  getAssetparentsubcategory: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetparentsubcategoryList(tenantId, moduleCode, type), moduleCode);
+  },
   Asset_Classification: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getAssetClassificationList(tenantId, moduleCode, type), moduleCode);
+  },
+  AST_PARENT: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetparentsubcategoryList(tenantId, moduleCode, type), moduleCode);
   },
 
   AssetTypeParent: (tenantId, moduleCode, type) => {
@@ -1912,6 +1999,7 @@ export const MdmsService = {
   getBreedType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getBreedTypeList(tenantId, moduleCode, type), moduleCode);
   },
+  
   PTRGenderType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getGenderTypeList(tenantId, moduleCode, type), moduleCode);
   },
@@ -1922,7 +2010,11 @@ export const MdmsService = {
   PTRBreedType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getBreedTypeList(tenantId, moduleCode, type), moduleCode);
   },
-
+  
+  EWProductPrice: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getProductPriceList(tenantId, moduleCode, type), moduleCode);
+  },
+ 
   getCustomizationConfig: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getConfig(tenantId, moduleCode), moduleCode);
   },

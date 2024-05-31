@@ -7,6 +7,7 @@ import BPAActionModal from "./BPAActionModal";
 import NOCActionModal from "./NOCActionModal";
 import WNSActionModal from "./WNSActionModal";
 import PTRActionModal from "./PTRActionModal";
+import ASSETActionModal from "./ASSETActionModal";
 
 
 
@@ -18,6 +19,9 @@ const ActionModal = (props) => {
   }
   if (props?.businessService.includes("ptr")) {
     return <PTRActionModal {...props} />;
+  }
+  if (props?.businessService.includes("asset-create")) {
+    return <ASSETActionModal {...props} />;
   }
 
   if (props?.businessService.includes("NewTL") || props?.businessService.includes("TL") || props?.businessService.includes("EDITRENEWAL") || props?.businessService.includes("DIRECTRENEWAL")) {

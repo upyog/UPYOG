@@ -12,7 +12,7 @@
   const GetMobCell = (value) => <span className="sla-cell">{value}</span>;
 
   export const TableConfig = (t) => ({
-    PTR: {
+    ASSET: {
       
       
       inboxColumns: (props) => [
