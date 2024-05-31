@@ -374,21 +374,23 @@ console.log("appl", applicationDetails)
           {!isEditApplication && detail?.additionalDetails?.permissions && workflowDetails?.data?.nextActions?.length > 0 && (
             <PermissionCheck applicationData={applicationDetails?.applicationData} t={t} permissions={detail?.additionalDetails?.permissions} />
           )}
-          {/* {detail?.additionalDetails?.obpsDocuments && (
+          {detail?.additionalDetails?.obpsDocuments && (
+            <div style={{display:"flex"}}>
             <BPADocuments
               t={t}
               applicationData={applicationDetails?.applicationData}
               docs={detail.additionalDetails.obpsDocuments}
               bpaActionsDetails={workflowDetails}
             />
-          )} */}
+            </div>
+          )}
 
           {/* to get Document values */}
-          {( detail?.additionalDetails?.obpsDocuments?.[0]?.values) && (
+          {/* {( detail?.additionalDetails?.obpsDocuments?.[0]?.values) && (
                   <div style={{marginTop: "-8px"}}>
                     {<DocumentsPreview documents={getOrderDocuments(detail?.additionalDetails?.obpsDocuments?.[0]?.values)} svgStyles = {{}} isSendBackFlow = {false} isHrLine = {true} titleStyles ={{fontSize: "20px", lineHeight: "24px", "fontWeight": 700, marginBottom: "10px"}}/>}
                   </div>
-                )}
+                )} */}
           {detail?.additionalDetails?.noc && (
             <NOCDocuments
               t={t}
