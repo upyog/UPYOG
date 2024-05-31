@@ -1,4 +1,4 @@
-CREATE TABLE  IF NOT EXISTS eg_wf_assignee_v2(
+CREATE TABLE IF NOT EXISTS eg_wf_assignee_v2(
 
     processinstanceid character varying(64),
     tenantid character varying(128),
