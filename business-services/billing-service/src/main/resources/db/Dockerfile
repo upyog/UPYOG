@@ -10,7 +10,7 @@ COPY ./migration/main /flyway/sql
 
 #COPY ./migration/test /flyway/test
 
-#COPY migrate.sh /usr/bin/migrate.sh
+COPY migrate.sh /usr/bin/migrate.sh
 
 RUN chmod +x /usr/bin/migrate.sh
 
