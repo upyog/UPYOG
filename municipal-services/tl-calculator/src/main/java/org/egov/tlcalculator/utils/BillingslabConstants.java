@@ -13,6 +13,7 @@ public class BillingslabConstants {
 	public static final String COMMON_MASTERS_MDMS_MODULE_NAME = "common-masters";
 	public static final String TL_MDMS_TRADETYPE = "TradeType";
 	public static final String TL_MDMS_ACCESSORIESCATEGORY = "AccessoriesCategory";
+	//public static final String TL_MDMS_ACCESSORIESCATEGORY_PART2 = "AccessoriesCategoryPart2";
 	public static final String TL_MDMS_UOM = "UOM";
 	public static final String TL_MDMS_STRUCTURETYPE = "StructureType";
 	public static final String TL_MDMS_DOCUMENT = "DocumentType";

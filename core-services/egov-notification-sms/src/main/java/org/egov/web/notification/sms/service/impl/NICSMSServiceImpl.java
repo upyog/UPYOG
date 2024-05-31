@@ -9,6 +9,8 @@ import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -105,14 +107,35 @@ public class NICSMSServiceImpl extends BaseSMSService {
 		}
 	}
 
+	 private static String hashSHA512(String input) {
+	        try {
+	            MessageDigest digest = MessageDigest.getInstance("SHA-512");
+	            byte[] hash = digest.digest(input.getBytes());
+	            StringBuilder hexString = new StringBuilder();
+	            for (byte b : hash) {
+	                String hex = Integer.toHexString(0xff & b);
+	                if (hex.length() == 1) {
+	                    hexString.append('0');
+	                }
+	                hexString.append(hex);
+	            }
+	            return hexString.toString();
+	        } catch (NoSuchAlgorithmException e) {
+	            e.printStackTrace();
+	            return null;
+	        }
+	 }
 	protected void submitToExternalSmsService(Sms sms) {
 		log.info("submitToExternalSmsService() start");
 		try {
 
 			String final_data = "";
+			String key= hashSHA512(smsProperties.getUsername()+smsProperties.getSenderid() + sms.getMessage()+ smsProperties.getSecureKey());
 			final_data += "username=" + smsProperties.getUsername();
-			final_data += "&pin=" + smsProperties.getPassword();
-
+			final_data += "&password=" + smsProperties.getPassword();
+			final_data += "&smsservicetype=" + smsProperties.getSmsServiceType();
+			final_data +="&key=" + key;
+			//final_data +="&key=" + smsProperties.getUsername()+smsProperties.getSenderid() + sms.getMessage()+ smsProperties.getSecureKey();
 			String smsBody = sms.getMessage();
 
 			if (smsBody.split("#").length > 1) {
@@ -129,19 +152,19 @@ public class NICSMSServiceImpl extends BaseSMSService {
 			String message = "" + smsBody;
 			message = URLEncoder.encode(message, "UTF-8");
 
-			final_data += "&message=" + message;
-			final_data += "&mnumber=91" + sms.getMobileNumber();
+			final_data += "&content=" + message;
+			final_data += "&mobileno=91" + sms.getMobileNumber();
 			final_data += "&signature=" + smsProperties.getSenderid();
-			final_data += "&dlt_entity_id=" + smsProperties.getSmsEntityId();
+			final_data += "&senderid=" + smsProperties.getSmsEntityId();
 			if (null == sms.getTemplateId()) {
-				final_data += "&dlt_template_id=" + smsProperties.getSmsDefaultTmplid();
+				final_data += "&templateid=" + smsProperties.getSmsDefaultTmplid();
 			} else
-				final_data += "&dlt_template_id=" + sms.getTemplateId();
+				final_data += "&templateid=" + sms.getTemplateId();
 
 			if (smsProperties.isSmsEnabled()) {
 				HttpsURLConnection conn = (HttpsURLConnection) new URL(smsProperties.getUrl() + "?" + final_data)
 						.openConnection();
-				conn.setSSLSocketFactory(sslContext.getSocketFactory());
+				//conn.setSSLSocketFactory(sslContext.getSocketFactory());
 				conn.setDoOutput(true);
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json");
