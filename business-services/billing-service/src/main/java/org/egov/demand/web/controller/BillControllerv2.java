@@ -73,7 +73,7 @@ public class BillControllerv2 {
 			@ModelAttribute @Valid GenerateBillCriteria generateBillCriteria){
 		
 		String ojb = new JSONObject(generateBillCriteria).toString();
-		System.out.println(" fetchBill GenerateBillCriteria::"+ ojb);
+		log.info(" fetchBill GenerateBillCriteria::"+ ojb);
 		
 		BillResponseV2 billResponse = billService.fetchBill(generateBillCriteria, requestInfoWrapper);
 		log.info("_fetchbill generateBillCriteria :"+generateBillCriteria ); //added logger
