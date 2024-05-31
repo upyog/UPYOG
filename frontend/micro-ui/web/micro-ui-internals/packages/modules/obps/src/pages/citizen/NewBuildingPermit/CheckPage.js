@@ -362,7 +362,7 @@ setWaterCharges(Malbafees/2)
     function onSubmitCheck(){
       if(development && otherCharges && lessAdjusment){
       if(parseInt(lessAdjusment)>(parseInt(development)+parseInt(otherCharges)+parseInt(malbafees)+parseInt(labourCess)+parseInt(waterCharges)+parseInt(gaushalaFees))){
-        alert("Enterd Less Adjustment amount is invalid");
+        alert(t("Enterd Less Adjustment amount is invalid"));
       }
       else{
         onSubmit();
@@ -375,7 +375,7 @@ setWaterCharges(Malbafees/2)
         sessionStorage.setItem("otherCharges",value)
       }
       else{
-        alert("Please enter numbers")
+        alert(t("Please enter numbers"))
       }      
   }
     function setDevelopmentVal(value) {
@@ -384,7 +384,7 @@ setWaterCharges(Malbafees/2)
         sessionStorage.setItem("development",value)
       }
       else{
-        alert("Please enter numbers")
+        alert(t("Please enter numbers"))
       }      
     }
     function setLessAdjusmentVal(value) {
@@ -393,7 +393,7 @@ setWaterCharges(Malbafees/2)
       sessionStorage.setItem("lessAdjusment",value)
     }
     else{
-     alert("Please enter numbers")
+     alert(t("Please enter numbers"))
     }      
     }
     function setOtherChargesDis(value) {
