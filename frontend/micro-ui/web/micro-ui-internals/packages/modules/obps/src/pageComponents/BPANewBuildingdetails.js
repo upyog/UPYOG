@@ -307,21 +307,33 @@
           updatedFormData.owners = [];
         }
         if((approvedColony?.code=="NO") ) 
-        { if(NocNumber || uploadedFile || formData?.owners?.uploadedFile || formData?.owners?.NocNumber){
-          onSelect(config.key, { ...formData[config.key], ...ownerStep }, updatedFormData, false, index);          
-        }
-        else{
-          alert("Please fill NOC number or Upload NOC Document")
-        }  }
-        if((greenbuilding?.code==="YES"))
+        { if(NocNumber || uploadedFile || formData?.owners?.uploadedFile ){
+          if((greenbuilding?.code==="YES"))
           { if(greenuploadedFile || formData?.owners?.greenuploadedFile){
             onSelect(config.key, { ...formData[config.key], ...ownerStep }, updatedFormData, false, index);          
           }
           else{
             alert("Please Upload Document")
           }  }
+          else{
+          onSelect(config.key, { ...formData[config.key], ...ownerStep }, updatedFormData, false, index);        
+        }  
+        }
         else{
+          alert("Please fill NOC number or Upload NOC Document")
+        }  }
+        
+        else{
+          if((greenbuilding?.code==="YES"))
+          { if(greenuploadedFile || formData?.owners?.greenuploadedFile){
+            onSelect(config.key, { ...formData[config.key], ...ownerStep }, updatedFormData, false, index);          
+          }
+          else{
+            alert("Please Upload Document")
+          }  }
+          else{
           onSelect(config.key, { ...formData[config.key], ...ownerStep }, updatedFormData, false, index);
+          }
         }        
       };
 
