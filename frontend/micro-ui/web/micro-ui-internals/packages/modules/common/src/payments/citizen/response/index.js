@@ -302,12 +302,12 @@ export const convertEpochToDate = (dateEpoch) => {
 
     let count=0;
     for(let i=0;i<workflowDetails?.data?.processInstances?.length;i++){
-        if(workflowDetails?.data?.processInstances[i]?.action==="PAY" && count==0 ){
+      if((workflowDetails?.data?.processInstances[i]?.action==="POST_PAYMENT_APPLY" ||workflowDetails?.data?.processInstances[i]?.action==="PAY" ) && (workflowDetails?.data?.processInstances?.[i]?.state?.applicationStatus==="APPROVAL_INPROGRESS")   && count==0 ){
           reqData.additionalDetails.submissionDate=workflowDetails?.data?.processInstances[i]?.auditDetails?.createdTime;
           count=1;
         }
     }
-    
+
     if(reqData?.additionalDetails?.approvedColony=="NO"){
       reqData.additionalDetails.permitData= "The plot has been officially regularized under No."+reqData?.additionalDetails?.NocNumber +"  dated dd/mm/yyyy, registered in the name of <name as per the NOC>. This regularization falls within the jurisdiction of "+ state +".Any form of misrepresentation of the NoC is strictly prohibited. Such misrepresentation renders the building plan null and void, and it will be regarded as an act of impersonation. Criminal proceedings will be initiated against the owner and concerned architect / engineer/ building designer / supervisor involved in such actions"
     }

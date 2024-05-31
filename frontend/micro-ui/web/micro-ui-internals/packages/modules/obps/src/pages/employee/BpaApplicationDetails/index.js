@@ -94,7 +94,7 @@ const BpaApplicationDetail = () => {
     let count=0;
 
     for(let i=0;i<workflowDetails?.data?.processInstances?.length;i++){
-        if(workflowDetails?.data?.processInstances[i]?.action==="PAY" && count==0 ){
+        if((workflowDetails?.data?.processInstances[i]?.action==="POST_PAYMENT_APPLY" ||workflowDetails?.data?.processInstances[i]?.action==="PAY" ) && (workflowDetails?.data?.processInstances?.[i]?.state?.applicationStatus==="APPROVAL_INPROGRESS")   && count==0 ){
           requestData.additionalDetails.submissionDate=workflowDetails?.data?.processInstances[i]?.auditDetails?.createdTime;
           count=1;
         }

@@ -34,6 +34,7 @@ import DocumentsPreview from "./DocumentsPreview";
 import InfoDetails from "./InfoDetails";
 import ViewBreakup from"./ViewBreakup";
 import ArrearSummary from "../../../common/src/payments/citizen/bills/routes/bill-details/arrear-summary"
+import { getOrderDocuments  } from "../../../obps/src/utils";
 function ApplicationDetailsContent({
   applicationDetails,
   workflowDetails,
@@ -373,14 +374,21 @@ console.log("appl", applicationDetails)
           {!isEditApplication && detail?.additionalDetails?.permissions && workflowDetails?.data?.nextActions?.length > 0 && (
             <PermissionCheck applicationData={applicationDetails?.applicationData} t={t} permissions={detail?.additionalDetails?.permissions} />
           )}
-          {detail?.additionalDetails?.obpsDocuments && (
+          {/* {detail?.additionalDetails?.obpsDocuments && (
             <BPADocuments
               t={t}
               applicationData={applicationDetails?.applicationData}
               docs={detail.additionalDetails.obpsDocuments}
               bpaActionsDetails={workflowDetails}
             />
-          )}
+          )} */}
+
+          {/* to get Document values */}
+          {( detail?.additionalDetails?.obpsDocuments?.[0]?.values) && (
+                  <div style={{marginTop: "-8px"}}>
+                    {<DocumentsPreview documents={getOrderDocuments(detail?.additionalDetails?.obpsDocuments?.[0]?.values)} svgStyles = {{}} isSendBackFlow = {false} isHrLine = {true} titleStyles ={{fontSize: "20px", lineHeight: "24px", "fontWeight": 700, marginBottom: "10px"}}/>}
+                  </div>
+                )}
           {detail?.additionalDetails?.noc && (
             <NOCDocuments
               t={t}

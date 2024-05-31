@@ -108,10 +108,10 @@ const ApplicationDetails = (props) => {
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
     if(data?.Property?.workflow?.comment?.length == 0 || data?.Licenses?.[0]?.comment?.length == 0 || data?.WaterConnection?.comment?.length == 0 || data?.SewerageConnection?.comment?.length == 0 || data?.BPA?.comment?.length == 0)
     {
-     alert("Please fill in the comments before submitting")
+     alert(t("Please fill in the comments before submitting"))
     }
     else if( data?.BPA?.businessService=="BPA" && !data?.BPA?.additionalDetails?.blockingReason && data?.BPA?.workflow?.action=="BLOCK"){
-      alert("Please select Blocking reason")
+      alert(t("Please select Blocking reason"))
     }
     else{
       setIsEnableLoader(true);
@@ -220,9 +220,9 @@ const ApplicationDetails = (props) => {
     bpaDetails.BPA.additionalDetails.otherFeesDiscription=sessionStorage.getItem("otherChargesDisc");
     bpaDetails.BPA.additionalDetails.lessAdjustmentFeeFiles=JSON.parse(sessionStorage.getItem("uploadedFileLess"));
     if (!bpaDetails.BPA.additionalDetails.selfCertificationCharges.BPA_DEVELOPMENT_CHARGES || !bpaDetails.BPA.additionalDetails.selfCertificationCharges.BPA_OTHER_CHARGES || !bpaDetails.BPA.additionalDetails.selfCertificationCharges.BPA_LESS_ADJUSMENT_PLOT ){
-      alert("Please fill P2 Manual Fees");}
+      alert(t("Please fill P2 Manual Fees"));}
     else if(parseInt(sessionStorage.getItem("lessAdjusment"))>(parseInt(sessionStorage.getItem("development"))+parseInt(sessionStorage.getItem("otherCharges"))+parseInt(bpaDetails?.BPA?.additionalDetails?.selfCertificationCharges?.BPA_MALBA_CHARGES)+parseInt(bpaDetails?.BPA?.additionalDetails?.selfCertificationCharges?.BPA_LABOUR_CESS)+parseInt(bpaDetails?.BPA?.additionalDetails?.selfCertificationCharges?.BPA_WATER_CHARGES)+parseInt(bpaDetails?.BPA?.additionalDetails?.selfCertificationCharges?.BPA_GAUSHALA_CHARGES_CESS))){
-      alert("Enterd Less Adjustment amount is invalid");
+      alert(t("Enterd Less Adjustment amount is invalid"));
     }
     else{
         const response = await Digit.OBPSService.update(bpaDetails, tenantId); 
