@@ -5,12 +5,15 @@
 
   const ASSETSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
       const isMobile = window.Digit.Utils.browser.isMobile();
+
+      const user = Digit.UserService.getUser().info;
       const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
           defaultValues: {
               offset: 0,
               limit: !isMobile && 10,
               sortBy: "commencementDate",
-              sortOrder: "DESC"
+              sortOrder: "DESC",
+              city: user?.tenantId
           }
       })
       useEffect(() => {
@@ -19,6 +22,8 @@
         register("sortBy", "commencementDate")
         register("sortOrder", "DESC")
       },[register])
+
+
       
       
 
@@ -105,6 +110,10 @@
                   </Card>
                   <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                   <SearchField>
+                    <label>{t("MYCITY_CODE_LABEL")}</label>
+                    <TextInput name="city" inputRef={register({})} />
+                </SearchField>
+                  <SearchField>
                       <label>{t("AST_APPLICATION_ID")}</label>
                       <TextInput name="applicationNo" inputRef={register({})} />
                   </SearchField>
@@ -132,6 +141,7 @@
                           reset({ 
                               applicationNo: "", 
                               fromDate: "", 
+                              city: user?.tenantId,
                               toDate: "",
                               offset: 0,
                               limit: 10,
