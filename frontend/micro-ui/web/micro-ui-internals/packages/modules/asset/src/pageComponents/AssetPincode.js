@@ -4,11 +4,11 @@ import { useLocation } from "react-router-dom";
 import Timeline from "../components/ASTTimeline";
 
 const AssetPincode = ({ t, config, onSelect, formData = {}, userType, register, errors, setError, formState, clearErrors }) => {
-  const tenants = Digit.Hooks.ptr.useTenants();
+  const tenants = Digit.Hooks.asset.useTenants();
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
 
-  console.log("formData in oincode ",formData)
+ 
 
   const [pincode, setPincode] = useState(() => {
     if (presentInModifyApplication && userType === "employee") return formData?.originalData?.address?.pincode || "";
@@ -19,7 +19,7 @@ const AssetPincode = ({ t, config, onSelect, formData = {}, userType, register, 
   
   const inputs = [
     {
-      label: "AST_ADDRESS_PINCODE",
+      label: "AST_PINCODE",
       type: "text",
       name: "pincode",
       validation: {
@@ -61,7 +61,7 @@ const AssetPincode = ({ t, config, onSelect, formData = {}, userType, register, 
     if (foundValue) {
       onSelect(config.key, { pincode });
     } else {
-      setPincodeServicability("PTR_COMMON_PINCODE_NOT_SERVICABLE");
+      setPincodeServicability("COMMON_PINCODE_NOT_SERVICABLE");
     }
   };
 

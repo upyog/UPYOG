@@ -223,6 +223,18 @@ const ptrAccess = () => {
   return PTR_ACCESS?.length > 0;
 };
 
+const ewAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  
+  
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const ewRoles = ["EW_VENDOR"];
+
+  const EW_ACCESS = userRoles?.filter((role) => ewRoles?.includes(role));
+
+  return EW_ACCESS?.length > 0;
+};
+
 const assetAccess = () => {
   const userInfo = Digit.UserService.getUser();
   
@@ -326,6 +338,8 @@ export default {
   tlAccess,
   wsAccess,
   swAccess,
+  ewAccess,
+
 
   ...privacy
 };

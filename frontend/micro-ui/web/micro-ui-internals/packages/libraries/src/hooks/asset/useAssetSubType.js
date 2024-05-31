@@ -8,7 +8,7 @@ const useAssetSubType = (tenantId, moduleCode, type,  config = {}) => {
   
 
   switch (type) {
-    case "assetSubCategory":
+    case "assetCategory":
       return useAssetthird();
     default:
       return null;

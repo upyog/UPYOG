@@ -22,6 +22,7 @@ import {
     assetclassification: "",
     assettype: "",
     assetsubtype: "",
+    assetparentsubCategory: "",
   
     key: Date.now(),
   });
@@ -33,6 +34,8 @@ import {
     const [assets, setAssets] = useState(formData?.assets || [createAssetDetails()]);
 
     
+
+    
     const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
   
     const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -42,13 +45,14 @@ import {
   
   
     const { data: Menu_Asset } = Digit.Hooks.asset.useAssetClassification(stateId, "ASSET", "assetClassification"); // hook for asset classification Type
-    console.log("Menu_Asset", Menu_Asset)  
   
     const { data: Asset_Type } = Digit.Hooks.asset.useAssetType(stateId, "ASSET", "assetParentCategory"); 
-    console.log("Asset_Type",Asset_Type);// hooks for Asset Parent Category
 
-    const { data: Asset_Sub_Type } = Digit.Hooks.asset.useAssetSubType(stateId, "ASSET", "assetSubCategory");  // hooks for Asset Parent Category
+    const { data: Asset_Sub_Type } = Digit.Hooks.asset.useAssetSubType(stateId, "ASSET", "assetCategory");  // hooks for Asset Parent Category
+    
+    const { data: Asset_Parent_Sub_Type } = Digit.Hooks.asset.useAssetparentSubType(stateId, "ASSET", "assetSubCategory");
 
+    console.log("Asset_Parent_Sub_Type",Asset_Parent_Sub_Type);
    
 
     let menu_Asset = [];   //variable name for assetCalssification
@@ -56,6 +60,8 @@ import {
     let asset_type = [];  //variable name for asset type
 
     let asset_sub_type = [];  //variable name for asset sub  parent caregory
+
+    let asset_parent_sub_category = [];
     
 
     Menu_Asset &&
@@ -84,7 +90,7 @@ import {
 
       Asset_Sub_Type &&
       Asset_Sub_Type.map((asset_sub_type_mdms) => {
-          if (asset_sub_type_mdms.ParentCategory == assets[0]?.assettype?.code) {
+          if (asset_sub_type_mdms.assetParentCategory == assets[0]?.assettype?.code) {
               asset_sub_type.push({
               i18nKey: `ASSET_SUB_TYPE_${asset_sub_type_mdms.code}`,
               code: `${asset_sub_type_mdms.code}`,
@@ -93,13 +99,19 @@ import {
           }
     
         });
+
+        Asset_Parent_Sub_Type &&
+        Asset_Parent_Sub_Type.map((asset_parent_mdms) => {
+          if (asset_parent_mdms.assetCategory == assets[0]?.assetsubtype?.code) {
+            asset_parent_sub_category.push({
+              i18nKey: `${asset_parent_mdms.code}`,
+              code: `${asset_parent_mdms.code}`,
+              value: `${asset_parent_mdms.name}`
+            });
+          }
     
-  
-  
-  
-  
-   
-  
+        });
+
     useEffect(() => {
       onSelect(config?.key, assets);
   
@@ -121,7 +133,8 @@ import {
       config,
       menu_Asset,
       asset_type,
-      asset_sub_type
+      asset_sub_type,
+      asset_parent_sub_category
     
     };
   
@@ -149,10 +162,13 @@ import {
       formState,
       menu_Asset,
       asset_type,
-      asset_sub_type
+      asset_sub_type,
+      asset_parent_sub_category
     
   
     } = _props;
+
+    
   
     const [showToast, setShowToast] = useState(null);
     const {
@@ -194,7 +210,7 @@ import {
             ) : null}
   
             <LabelFieldPair>
-              <CardLabel className="card-label-smaller">{t("ASSET_CLASSIFICATION") + " *"}</CardLabel>
+              <CardLabel className="card-label-smaller">{t("AST_CATEGORY") + " *"}</CardLabel>
               <Controller
                 control={control}
                 name={"assetclassification"}
@@ -219,7 +235,7 @@ import {
             </LabelFieldPair>
             <CardLabelError style={errorStyle}>{localFormState.touched.assetclassification ? errors?.assetclassification?.message : ""}</CardLabelError>
             <LabelFieldPair>
-              <CardLabel className="card-label-smaller">{t("ASSET_PARENT_CATEGORY") + " *"}</CardLabel>
+              <CardLabel className="card-label-smaller">{t("AST_PARENT_CATEGORY") + " *"}</CardLabel>
               <Controller
                 control={control}
                 name={"assettype"}
@@ -240,7 +256,7 @@ import {
             </LabelFieldPair>
             <CardLabelError style={errorStyle}>{localFormState.touched.assettype ? errors?.assettype?.message : ""}</CardLabelError>
             <LabelFieldPair>
-              <CardLabel className="card-label-smaller">{t("ASSET_SUB_TYPE") + " *"}</CardLabel>
+              <CardLabel className="card-label-smaller">{t("AST_SUB_CATEGORY") + " *"}</CardLabel>
               <Controller
                 control={control}
                 name={"assetsubtype"}
@@ -260,7 +276,30 @@ import {
               />
             </LabelFieldPair>
             <CardLabelError style={errorStyle}>{localFormState.touched.assetsubtype ? errors?.assetsubtype?.message : ""}</CardLabelError>
-  
+
+            <LabelFieldPair>
+              <CardLabel className="card-label-smaller">{t("AST_CATEGORY_SUB_CATEGORY") + " *"}</CardLabel>
+              <Controller
+                control={control}
+                name={"assetparentsubCategory"}
+                defaultValue={assets?.assetparentsubCategory}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                render={(props) => (
+                  <Dropdown
+                    className="form-field"
+                    selected={props.value}
+                    select={props.onChange}
+                    onBlur={props.onBlur}
+                    option={asset_parent_sub_category}
+                    optionKey="i18nKey"
+                    t={t}
+                  />
+                )}
+              />
+            </LabelFieldPair>
+            <CardLabelError style={errorStyle}>{localFormState.touched.assetparentsubCategory ? errors?.assetparentsubCategory?.message : ""}</CardLabelError>
+
+          
           
   
   
