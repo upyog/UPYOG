@@ -46,7 +46,6 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity }) => {
             fontSize: "16px",
           },
         })}
-        onChange={() => {console.log("onchnage")}}
         totalRecords={data.length}
       />
 
