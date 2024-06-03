@@ -274,6 +274,9 @@ import useAssetCreateAPI from "./asset/useAssetCreateAPI";
 import useAssetApplicationDetail from "./asset/useAssetApplicationDetail";
 import useASSETSearch from "./asset/useASSETSearch";
 import useTenantsASSET from "./asset/useTenants"
+import useASSETApplicationAction from "./asset/useASSETApplicationAction";
+import useAssetparentSubType from "./asset/useAssetparentSubType";
+import useProductPriceMDMS from "./ew/useProductPriceMDMS";
 
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
@@ -297,6 +300,10 @@ const pgr = {
   useMDMS: usePGRMDMS,
 };
 
+const ew = {
+  useProductPriceMDMS
+};
+
 const asset = {
   useAssetClassification,
   useAssetType,
@@ -305,7 +312,9 @@ const asset = {
   useAssetdetail,
   useAssetCreateAPI,
   useAssetApplicationDetail,
+  useASSETApplicationAction,
   useASSETSearch,
+  useAssetparentSubType,
   useTenants: useTenantsASSET
 };
 
@@ -590,6 +599,7 @@ const Hooks = {
   fsm,
   pt,
   ptr,
+  ew,
   dss,
   mcollect,
   hrms,

@@ -142,7 +142,7 @@
 
     
                 {/* <LabelFieldPair>
-                    <CardLabel className="card-label-smaller">{t("AST_SERIAL_NO") + " *"}</CardLabel>
+                    <CardLabel className="card-label-smaller">{t("AST_SERIAL_NO") }</CardLabel>
                     <div className="field">
                     <Controller
                         control={control}
@@ -206,7 +206,7 @@
                 <CardLabelError style={errorStyle}>{localFormState.touched.BookPagereference ? errors?.BookPagereference?.message : ""}</CardLabelError>
 
                 {/* <LabelFieldPair>
-                    <CardLabel className="card-label-smaller">{t("AST_ID") + " *"}</CardLabel>
+                    <CardLabel className="card-label-smaller">{t("AST_ID") }</CardLabel>
                     <div className="field">
                     <Controller
                         control={control}
@@ -237,7 +237,7 @@
                 <CardLabelError style={errorStyle}>{localFormState.touched.AssetId ? errors?.AssetId?.message : ""}</CardLabelError> */}
 
                 <LabelFieldPair>
-                    <CardLabel className="card-label-smaller">{t("AST_NAME") + " *"}</CardLabel>
+                    <CardLabel className="card-label-smaller">{t("AST_NAME") }</CardLabel>
                     <div className="field">
                     <Controller
                         control={control}
@@ -268,7 +268,7 @@
                 <CardLabelError style={errorStyle}>{localFormState.touched.AssetName ? errors?.AssetName?.message : ""}</CardLabelError>
 
                 <LabelFieldPair>
-                    <CardLabel className="card-label-smaller">{t("ASSET_DESCRIPTION") + " *"}</CardLabel>
+                    <CardLabel className="card-label-smaller">{t("ASSET_DESCRIPTION") }</CardLabel>
                     <div className="field">
                     <Controller
                         control={control}
@@ -299,7 +299,7 @@
                 <CardLabelError style={errorStyle}>{localFormState.touched.Assetdescription ? errors?.Assetdescription?.message : ""}</CardLabelError>
 
                 <LabelFieldPair>
-                    <CardLabel className="card-label-smaller">{t("AST_DEPARTMENT") + " *"}</CardLabel>
+                    <CardLabel className="card-label-smaller">{t("AST_DEPARTMENT") }</CardLabel>
                     <div className="field">
                     <Controller
                         control={control}

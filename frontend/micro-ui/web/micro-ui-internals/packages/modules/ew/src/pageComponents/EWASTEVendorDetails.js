@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber } from "@egovernments/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber } from "@upyog/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
@@ -23,7 +23,7 @@ const EWVendorDetails
     const stateId = Digit.ULBService.getStateId();
     const { control } = useForm();
 
-
+    // static values are passed for vendor
     const roughvendor = [
       {
         code: "vendor a",

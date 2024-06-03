@@ -8,7 +8,7 @@ import {
   Row,
   StatusTable,
   SubmitBar,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -56,8 +56,8 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
           <CardSubHeader>{t("EWASTE_TITLE_PRODUCT_DETAILS")}</CardSubHeader>
           <br></br>
-          {/* <p><i>!!Under Construction!!</i></p> */}
-          <StatusTable>
+          <p><i>!!Under Construction!!</i></p>
+          {/* <StatusTable>
             <Row
               label={t("EWASTE_SEARCH_PRODUCT_NAME")}
               text={`${t(checkForNA(ewdet?.productName?.code))}`}
@@ -75,7 +75,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
               text={`${t(checkForNA(ewdet.productPrice))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/productdetails/`}`} />}
             />
-          </StatusTable>
+          </StatusTable> */}
           <br></br>
 
           <CardSubHeader>{t("EWASTE_TITLE_OWNER_DETAILS")}</CardSubHeader>
@@ -165,47 +165,6 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             />
           </StatusTable>
           <br></br>
-
-          {/* <CardSubHeader>{t("PTR_LOCATION_DETAILS")}</CardSubHeader>
-        <br></br> */}
-          {/* <StatusTable>
-        <Row
-            label={t("PTR_HOUSE_NO")}
-            text={`${t(checkForNA(address?.doorNo))}`}
-            actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/street/`}${index}`} />}
-        />
-         <Row
-            label={t("PTR_STREET_NAME")}
-            text={`${t(checkForNA(address?.street))}`}
-            actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/street/`}${index}`} />}
-        />
-         <Row
-            label={t("PTR_ADDRESS_LINE1")}
-            text={`${t(checkForNA(address?.addressLine1))}`}
-            actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/street/`}${index}`} />}
-        />
-         
-         <Row
-            label={t("PTR_ADDRESS_PINCODE")}
-            text={`${t(checkForNA(address?.pincode))}`}
-            // actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pincode/`}${index}`} />}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pincode`} />}
-        />
-         <Row
-            label={t("MYCITY_CODE_LABEL")}
-            text={`${t(checkForNA(address?.city?.name))}`}
-            // actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address/`}${index}`} />}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
-        />
-         <Row
-            label={t("PTR_LOCALITY")}
-            text={`${t(checkForNA(address?.locality?.name))}`}
-            // actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address/`}${index}`} />}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
-        />
-
-        </StatusTable>
-        <br></br> */}
 
           <CheckBox
             label={t("EWASTE_FINAL_DECLARATION_MESSAGE")}

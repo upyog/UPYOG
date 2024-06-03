@@ -144,7 +144,7 @@ const AssetStreets = ({ t, config, onSelect, userType, formData, formState, setE
         <LabelFieldPair key={index}>
           <CardLabel className="card-label-smaller">
             {!checkLocation ? t(input.label) : `${t(input.label)}:`}
-            {config.isMandatory ? " * " : null}
+            {config.isMandatory ? null : " * "}
           </CardLabel>
           <div className="field">
             <Controller

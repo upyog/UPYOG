@@ -15,6 +15,7 @@ import EWASTEVendorDetails from "./pageComponents/EWASTEVendorDetails";
 import EWASTECitizenAddress from "./pageComponents/EWASTECitizenAddress";
 import EWASTESelectPincode from "./pageComponents/EWASTESelectPincode";
 import EWASTESelectAddress from "./pageComponents/EWASTESelectAddress";
+import EWASTEAcknowledgement from "./pages/citizen/Create/EWASTEAcknowledgement";
 
 
 
@@ -29,6 +30,7 @@ const componentsToRegister = {
   EWASTECitizenAddress,
   EWASTESelectPincode,
   EWASTESelectAddress,
+  EWASTEAcknowledgement
 }
 
 

@@ -30,7 +30,6 @@ export const citizenConfig =
                     "type": "component",
                     "isMandatory": true,
                     "hideInEmployee": true,
-                    // "nextStep": "summary-ewaste",
                     "nextStep": "vendor-details",
                     "texts": {
                         "submitBarLabel": "EWASTE_COMMON_NEXT",
