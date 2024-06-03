@@ -219,12 +219,18 @@ public class WSConfiguration {
     private String stateLevelTenantId;
 
     //mdms
-    @Value("${egov.mdms.host}")
+//    @Value("${egov.mdms.host}")
+//    private String mdmsHost;
+//
+//    @Value("${egov.mdms.search.endpoint}")
+//    private String mdmsUrl;
+    
+	@Value("${mdms.v2.host}")
     private String mdmsHost;
 
-    @Value("${egov.mdms.search.endpoint}")
+    @Value("${mdms.v2.search.endpoint}")
     private String mdmsUrl;
-    
+
     @Value("${egov.disconnect.businessservice}")
     private String disconnectBusinessServiceName;
 
