@@ -126,18 +126,12 @@ public class ChallanConfiguration {
     private Boolean isLocalizationStateLevel;
 
     //MDMS
-//    @Value("${egov.mdms.host}")
-//    private String mdmsHost;
-//
-//    @Value("${egov.mdms.search.endpoint}")
-//    private String mdmsEndPoint;
-
-	@Value("${mdms.v2.host}")
+    @Value("${egov.mdms.host}")
     private String mdmsHost;
 
-    @Value("${mdms.v2.search.endpoint}")
+    @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
-    
+
     @Value("${is.external.workflow.enabled}")
     private Boolean isExternalWorkFlowEnabled;
 
