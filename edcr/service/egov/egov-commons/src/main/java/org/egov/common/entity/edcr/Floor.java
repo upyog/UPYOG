@@ -84,6 +84,12 @@ public class Floor extends Measurement {
     private List<Room> regularRooms = new ArrayList<>();
     private List<Room> habitationRooms = new ArrayList<>();
     private List<Room> storeRooms = new ArrayList<>();
+    // Doors for version 1.1.1
+    private List<Door> doors = new ArrayList<>();
+    private List<Door> nonaHabitationalDoors = new ArrayList<>();
+    
+    private List<Window> windows = new ArrayList<>();
+
     private Room kitchen;
     private Room bathRoom;
     private Room waterClosets;
@@ -106,8 +112,7 @@ public class Floor extends Measurement {
     private List<Measurement> constructedAreas = new ArrayList<>();
 
     private List<GlassFacadeOpening> glassFacadeOpenings = new ArrayList<>();
-    // Doors for version 1.1.1
-    private List<Door> doors = new ArrayList<>();
+   
 
     // From 2.0.0 version
     private List<BigDecimal> heightFromFloorToBottomOfBeam;
@@ -173,6 +178,42 @@ public class Floor extends Measurement {
 
     public void addDaLifts(Lift daLift) {
         this.daLifts.add(daLift);
+    }
+    
+    public List<Door> getNonaHabitationalDoors() {
+        return nonaHabitationalDoors;
+    }
+
+    public void setNonaHabitationalDoors(List<Door> nonaHabitationalDoors) {
+        this.nonaHabitationalDoors = nonaHabitationalDoors;
+    }
+    
+    public void addNonaHabitationalDoors(Door nonaHabitationalDoors) {
+        this.nonaHabitationalDoors.add(nonaHabitationalDoors);
+    }
+    
+    public List<Door> getDoors() {
+        return doors;
+    }
+
+    public void setDoors(List<Door> doors) {
+        this.doors = doors;
+    }
+    
+    public void addDoor(Door door) {
+        this.doors.add(door);
+    }
+
+    public List<Window> getWindows() {
+		return windows;
+	}
+
+	public void setWindows(List<Window> windows) {
+		this.windows = windows;
+	}
+	
+	public void addWindow(Window window) {
+        this.windows.add(window);
     }
 
     public List<Ramp> getRamps() {
@@ -663,13 +704,7 @@ public class Floor extends Measurement {
         this.glassFacadeOpenings = glassFacadeOpenings;
     }
 
-    public List<Door> getDoors() {
-        return doors;
-    }
-
-    public void setDoors(List<Door> doors) {
-        this.doors = doors;
-    }
+   
 
     public List<BigDecimal> getHeightFromFloorToBottomOfBeam() {
         return heightFromFloorToBottomOfBeam;

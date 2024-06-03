@@ -774,7 +774,7 @@ public class PlanReportService {
                         if (blkFeature.equals(FRONT_YARD_DESC)) {
                             front = allMap.get(blkName + blkFeature);
                             front.getDetail().get(0).put(SIDENUMBER_NAME, "Front");
-                            continue;
+                           // continue;
                         }
                         if (blkFeature.equals(REAR_YARD_DESC)) {
                             rear = allMap.get(blkName + blkFeature);
@@ -783,15 +783,15 @@ public class PlanReportService {
                         }
 
                         side = allMap.get(blkName + blkFeature);
-                        // List<Map<String, String>> detail = allMap.get(blkName +
-                        // blkFeature).getDetail();
+//                         List<Map<String, String>> detail = allMap.get(blkName +
+//                         blkFeature).getDetail();
                         List<Map<String, String>> detail = side.getDetail();
-
-                        if (front != null)
-                            detail.add(0, front.getDetail().get(0));
-                        if (rear != null)
-                            detail.add(1, rear.getDetail().get(0));
-
+//
+//                        if (front != null)
+//                            detail.add(0, front.getDetail().get(0));
+//                        if (rear != null)
+//                            detail.add(1, rear.getDetail().get(0));
+//
                         for (Map<String, String> d : detail) {
                             String sideNumber = d.get(SIDENUMBER);
                             if (StringUtils.isNotBlank(sideNumber)) {
@@ -801,7 +801,7 @@ public class PlanReportService {
                         }
                         side.addColumnHeading(2, SIDENUMBER_NAME);
                         side.addColumnHeading(4, LEVEL);
-                        // allMap.get(blkName + blkFeature).setHeading(SIDENUMBER_NMAE);
+                         allMap.get(blkName + blkFeature).setHeading(SIDENUMBER_NAME);
 
                         j++;
                         drb.addConcatenatedReport(

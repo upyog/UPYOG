@@ -122,7 +122,7 @@ public class GeneralStair extends FeatureProcess {
                                 {
                                     validateFlight(plan, errors, block, scrutinyDetail2, scrutinyDetail3,
                                             scrutinyDetailRise, mostRestrictiveOccupancyType, floor, typicalFloorValues,
-                                            generalStair);
+                                            generalStair, generalStairCount);
 
                                     List<StairLanding> landings = generalStair.getLandings();
                                     if (!landings.isEmpty()) {
@@ -130,9 +130,10 @@ public class GeneralStair extends FeatureProcess {
                                                 floor,
                                                 typicalFloorValues, generalStair, landings, errors);
                                     } else {
+                                    	if (floor.getNumber() != generalStairCount - 1) //This condition because in top most floor stairs are not mandatory for punjab, 
+                                            //so removing the error if stairs are not defined in top mist floor
                                         errors.put(
-                                                "General Stair landing not defined in block " + block.getNumber() + " floor "
-                                                        + floor.getNumber()
+                                                "General Stair landing not defined in block " + block.getNumber() + " floor "                                                        + floor.getNumber()
                                                         + " stair " + generalStair.getNumber(),
                                                 "General Stair landing not defined in block " + block.getNumber() + " floor "
                                                         + floor.getNumber()
@@ -180,6 +181,7 @@ public class GeneralStair extends FeatureProcess {
             BigDecimal landingWidth = widths.stream().reduce(BigDecimal::min).get();
             BigDecimal minWidth = BigDecimal.ZERO;
             boolean valid = false;
+            
 
             if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
                 minWidth = Util.roundOffTwoDecimal(landingWidth);
@@ -223,7 +225,7 @@ public class GeneralStair extends FeatureProcess {
 
     private void validateFlight(Plan plan, HashMap<String, String> errors, Block block, ScrutinyDetail scrutinyDetail2,
             ScrutinyDetail scrutinyDetail3, ScrutinyDetail scrutinyDetailRise, OccupancyTypeHelper mostRestrictiveOccupancyType,
-            Floor floor, Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.GeneralStair generalStair) {
+            Floor floor, Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.GeneralStair generalStair, int generalStairCount) {
         if (!generalStair.getFlights().isEmpty()) {
             for (Flight flight : generalStair.getFlights()) {
                 List<Measurement> flightPolyLines = flight.getFlights();
@@ -231,7 +233,8 @@ public class GeneralStair extends FeatureProcess {
                 List<BigDecimal> flightWidths = flight.getWidthOfFlights();
                 BigDecimal noOfRises = flight.getNoOfRises();
                 Boolean flightPolyLineClosed = flight.getFlightClosed();
-
+               
+                
                 BigDecimal minTread = BigDecimal.ZERO;
                 BigDecimal minFlightWidth = BigDecimal.ZERO;
                 String flightLayerName = String.format(DxfFileConstants.LAYER_STAIR_FLIGHT,
@@ -267,6 +270,7 @@ public class GeneralStair extends FeatureProcess {
                                 LOG.info("Denominator is zero");
                             }
                         } else {
+                        	
                             errors.put("Flight PolyLine length" + flightLayerName,
                                     FLIGHT_LENGTH_DEFINED_DESCRIPTION + flightLayerName);
                             plan.addErrors(errors);
@@ -301,10 +305,12 @@ public class GeneralStair extends FeatureProcess {
 
             }
         } else {
+        	if(floor.getNumber() != generalStairCount - 1) { //This condition because in top most floor stairs are not mandatory for punjab, 
+        		                                            //so removing the error if stairs are not defined in top mist floor
             String error = String.format(FLIGHT_NOT_DEFINED_DESCRIPTION, block.getNumber(), floor.getNumber());
             errors.put(error, error);
             plan.addErrors(errors);
-        }
+        }}
     }
 
     private BigDecimal validateWidth(Plan plan, ScrutinyDetail scrutinyDetail2, Floor floor, Block block,
@@ -446,8 +452,8 @@ public class GeneralStair extends FeatureProcess {
         	 && DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
             return BigDecimal.valueOf(0.25);
         } else {
-           // return BigDecimal.valueOf(0.3);
-        	return null;
+            return BigDecimal.valueOf(0.3);
+        	//return null;
         }
     }
 
