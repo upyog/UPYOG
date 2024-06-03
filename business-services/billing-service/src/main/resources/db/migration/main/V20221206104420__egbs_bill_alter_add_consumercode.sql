@@ -1,6 +1,6 @@
 ALTER TABLE egbs_bill_v1 ADD COLUMN IF NOT EXISTS consumercode CHARACTER VARYING(256);
 
-UPDATE egbs_bill_v1 b SET consumerCode = bd.consumercode FROM egbs_billdetail_v1 bd WHERE bd.billid = b.id;
+--UPDATE egbs_bill_v1 b SET consumerCode = bd.consumercode FROM egbs_billdetail_v1 bd WHERE bd.billid = b.id;
 
 -- ALTER TABLE egbs_bill_v1 ALTER COLUMN consumercode SET NOT NULL;
 
