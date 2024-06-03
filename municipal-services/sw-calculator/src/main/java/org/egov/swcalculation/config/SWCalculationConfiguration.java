@@ -31,18 +31,12 @@ public class SWCalculationConfiguration {
 	private String taxPeriodSearchEndpoint;
 
 	// MDMS
-//	@Value("${egov.mdms.host}")
-//	private String mdmsHost;
-//
-//	@Value("${egov.mdms.search.endpoint}")
-//	private String mdmsEndPoint;
+	@Value("${egov.mdms.host}")
+	private String mdmsHost;
+
+	@Value("${egov.mdms.search.endpoint}")
+	private String mdmsEndPoint;
 	
-	@Value("${mdms.v2.host}")
-    private String mdmsHost;
-
-    @Value("${mdms.v2.search.endpoint}")
-    private String mdmsEndPoint;
-
 	// sewerage Registry
 	@Value("${egov.sw.host}")
 	private String sewerageConnectionHost;

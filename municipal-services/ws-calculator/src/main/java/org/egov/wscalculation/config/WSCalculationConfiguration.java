@@ -59,12 +59,6 @@ public class WSCalculationConfiguration {
 
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
-
-	@Value("${mdms.v2.host}")
-    private String mdms2Host;
-
-    @Value("${mdms.v2.search.endpoint}")
-    private String mdms2EndPoint;
     
     @Value("${egov.bill.gen.endpoint}")
     private String billGenerateEndpoint;

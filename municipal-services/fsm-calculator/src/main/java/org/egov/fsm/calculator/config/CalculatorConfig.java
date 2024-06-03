@@ -59,18 +59,12 @@ public class CalculatorConfig {
 	private String cancellationFeeType;
 
 	// MDMS
-//	@Value("${egov.mdms.host}")
-//	private String mdmsHost;
-//
-//	@Value("${egov.mdms.search.endpoint}")
-//	private String mdmsSearchEndpoint;
+	@Value("${egov.mdms.host}")
+	private String mdmsHost;
 
-	@Value("${mdms.v2.host}")
-    private String mdmsHost;
+	@Value("${egov.mdms.search.endpoint}")
+	private String mdmsSearchEndpoint;
 
-    @Value("${mdms.v2.search.endpoint}")
-    private String mdmsSearchEndpoint;
-    
 	@Value("${egov.bill.fetch.endpoint}")
 	private String fetchBillEndpoint;
 
