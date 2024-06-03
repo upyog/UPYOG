@@ -141,6 +141,9 @@ public class PaymentService {
 		Map<String,Bill> billIdToBillMap = bills.stream().collect(Collectors.toMap(Bill::getId, Function.identity()));
 		
 		setApportionedBillsToPayment(billIdToBillMap,payment);
+		
+		
+		//////////////////////////////////FOR MANIPUR ENDS /////////////////////
 
 		String payerId = createUser(paymentRequest);
 		if(!StringUtils.isEmpty(payerId))
