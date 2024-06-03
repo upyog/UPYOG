@@ -85,6 +85,7 @@ public class WorkflowService {
 //		else
 //		request.getProperty().setStatus(Status.fromValue(state.getApplicationStatus()));
 //		request.getProperty().getWorkflow().setState(state);
+		assetRequest.getAsset().setStatus(state.getApplicationStatus());
 		return state;
 	}
 
