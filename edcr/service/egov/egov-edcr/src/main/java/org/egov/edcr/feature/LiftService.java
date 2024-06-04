@@ -122,7 +122,9 @@ public class LiftService extends FeatureProcess {
                 scrutinyDetail1.addColumnHeading(6, REMARKS);
                 scrutinyDetail1.setKey("Block_" + block.getNumber() + "_" + "Lift - Minimum Dimension");
 
-                if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty()) {
+                if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty() && block.getBuilding().getFloors().stream()
+                        .anyMatch(floor -> floor.getLifts() != null && !floor.getLifts().isEmpty()))
+                 {
                     /*
                      * if (Util.checkExemptionConditionForBuildingParts(block)) { continue blk; }
                      */
@@ -135,9 +137,11 @@ public class LiftService extends FeatureProcess {
                      * To be added Rule 48 Lift shall be provided for buildings above 15 m. height in case of apartments, group
                      * housing, commercial, institutional and office buildings
                      */
-                    if (block.getBuilding().getIsHighRise() &&
-                            (DxfFileConstants.A_AF
-                                    .equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype()
+                    if (
+                    		//block.getBuilding().getIsHighRise() &&
+//                            (DxfFileConstants.A_AF
+                    		(DxfFileConstants.A
+                                    .equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getType()
                                             .getCode())
                                     || DxfFileConstants.B
                                             .equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype()

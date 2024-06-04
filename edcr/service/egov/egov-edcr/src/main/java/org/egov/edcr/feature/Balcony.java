@@ -71,7 +71,7 @@ public class Balcony extends FeatureProcess {
     private static final String FLOOR = "Floor";
     private static final String RULE45_IV = "45-iv";
     private static final String WIDTH_BALCONY_DESCRIPTION = "Minimum width for balcony %s";
-    private static final BigDecimal ONE_POINTTWO = BigDecimal.valueOf(1.2);
+    private static final BigDecimal ONE_POINTNINEONE = BigDecimal.valueOf(0.91);
 
     @Override
     public Plan validate(Plan plan) {
@@ -107,7 +107,7 @@ public class Balcony extends FeatureProcess {
                             BigDecimal minWidth = widths.isEmpty() ? BigDecimal.ZERO : widths.stream().reduce(BigDecimal::min).get();
                             minWidth = minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
                                     DcrConstants.ROUNDMODE_MEASUREMENTS);
-                            if (minWidth.compareTo(ONE_POINTTWO.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+                            if (minWidth.compareTo(ONE_POINTNINEONE.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
                                     DcrConstants.ROUNDMODE_MEASUREMENTS)) >= 0) {
                                 isAccepted = true;
                             }
@@ -119,12 +119,12 @@ public class Balcony extends FeatureProcess {
                             if (isAccepted) {
                                 setReportOutputDetailsFloorBalconyWise(plan, RULE45_IV, value,
                                         String.format(WIDTH_BALCONY_DESCRIPTION, balcony.getNumber()),
-                                        ONE_POINTTWO.toString(),
+                                        ONE_POINTNINEONE.toString(),
                                         String.valueOf(minWidth), Result.Accepted.getResultVal(), scrutinyDetailLanding);
                             } else {
                                 setReportOutputDetailsFloorBalconyWise(plan, RULE45_IV, value,
                                         String.format(WIDTH_BALCONY_DESCRIPTION, balcony.getNumber()),
-                                        ONE_POINTTWO.toString(),
+                                        ONE_POINTNINEONE.toString(),
                                         String.valueOf(minWidth), Result.Not_Accepted.getResultVal(), scrutinyDetailLanding);
                             }
                         }

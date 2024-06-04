@@ -71,9 +71,11 @@ public abstract class FeatureProcess {
 	public static final String DESCRIPTION = "Description";
 	public static final String RULE_NO = "Byelaw";
 	public static final String FLOOR_NO = "Floor";
+	public static final String Room = "Room";
 	public static final String DISTANCE = "Distance";
 	public static final String VERIFIED = "Verified";
 	public static final String ACTION = "Action";
+	public static final String LIFT_AREA = "Lift Area";
 	public static final String AREA_TYPE = "Area Type";
 	public static final String PLOT_AREA = "Plot Area";
 	public static final String MAX_PERMISSIBLE = "Max Permissible";
