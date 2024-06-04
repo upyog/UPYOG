@@ -118,8 +118,8 @@ public class Parking extends FeatureProcess {
     private static final double MECH_PARKING_WIDTH = 2.7;
     private static final double MECH_PARKING_HEIGHT = 5.5;
 
-    private static final double OPEN_ECS = 26.5;
-    private static final double COVER_ECS = 28;
+    private static final double OPEN_ECS = 22.15;
+    private static final double COVER_ECS = 27.17;
     private static final double BSMNT_ECS = 38.5;
     private static final double STILT_ECS = 32.5;
     private static final double PARK_A = 0.25;
@@ -331,6 +331,10 @@ public class Parking extends FeatureProcess {
        	    requiredCarParkArea += BSMNT_ECS * noOfrequiredParking;
 
       }
+           else  if (coverParkingArea.doubleValue() > 0) {
+          	    requiredCarParkArea += COVER_ECS * noOfrequiredParking;
+
+         }
                 }
 //            } else {
 //                BigDecimal builtupArea = totalBuiltupArea.subtract(totalBuiltupArea.multiply(BigDecimal.valueOf(0.15)));
