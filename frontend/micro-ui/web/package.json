@@ -16,7 +16,7 @@
     "@egovernments/digit-ui-libraries": "1.7.2",
     "@egovernments/digit-ui-module-bills": "1.7.14",
     "@egovernments/digit-ui-module-common": "1.7.14",
-    "@egovernments/digit-ui-module-core": "1.7.14",
+    "@egovernments/digit-ui-module-core": "1.7.15",
     "@egovernments/digit-ui-module-engagement": "1.7.14",
     "@egovernments/digit-ui-module-dss": "1.7.14",
     "@egovernments/digit-ui-module-fsm": "1.7.14",

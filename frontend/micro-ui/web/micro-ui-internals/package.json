@@ -15,7 +15,7 @@
     "node": ">=14"
   },
   "scripts": {
-    "start": "run-s build start:dev",
+    "start": "SKIP_PREFLIGHT_CHECK=true run-s build start:dev",
     "sprint": "SKIP_PREFLIGHT_CHECK=true run-s start:script",
     "start:dev": "run-p dev:**",
     "start:script": "./scripts/create.sh",
