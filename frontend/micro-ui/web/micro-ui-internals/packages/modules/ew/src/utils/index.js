@@ -42,51 +42,79 @@ export const setAddressDetails = (data) => {
   return data;
 };
 
-export const setOwnerDetails = (data) => {
-    let { ownerss } = data;
-  
-    let propOwners = {
-      ...ownerss,
-      
-    };
-  
-    data.ownerss = propOwners;
-    return data;
-  };
-  
-  export const setPetDetails = (data) => {
-    let { pets } = data;
-  
-    let petDetails = {
-      ...pets,
-        petType:pets?.petType?.value,
-        breedType:pets?.breedType?.value,
-        petGender: pets?.petGender?.name,
-        clinicName: pets?.clinicName,
-        petName: pets?.petName,
-        doctorName: pets?.doctorName,
-        lastVaccineDate: pets?.lastVaccineDate,
-        petAge: pets?.petAge,
-        vaccinationNumber: pets?.vaccinationNumber 
-      
-    };
-  
-    data.pets = petDetails;
-    return data;
-  };
+export const setProductDetails = (data) => {
+  let { ewdet } = data;
 
-  export const setDocumentDetails = (data) => {
-    let { documents } = data;
+  let productDetails = {
+    ...ewdet, 
+    productName: ewdet?.productName?.code,
+    productQuantity: ewdet?.productQuantity,
+    productPrice: ewdet.productPrice
+  }
+
+  data.ewdet = productDetails;
+  return data;
+}
+
+export const setOwnerDetails = (data) => {
+  let { ownerKey } = data;
+
+  let ownerDetails = {
+    ...ownerKey, 
+    applicantName: ownerKey?.applicantName,
+    mobileNumber: ownerKey?.mobileNumber,
+    emailId: ownerKey?.emailId
+  }
+
+  data.ownerKey = ownerDetails;
+  return data;
+}
+
+// export const setOwnerDetails = (data) => {
+//     let { ownerss } = data;
   
-    let doc = {
-      ...documents,
+//     let propOwners = {
+//       ...ownerss,
+      
+//     };
+  
+//     data.ownerss = propOwners;
+//     return data;
+//   };
+  
+  // export const setPetDetails = (data) => {
+  //   let { pets } = data;
+  
+  //   let petDetails = {
+  //     ...pets,
+  //       petType:pets?.petType?.value,
+  //       breedType:pets?.breedType?.value,
+  //       petGender: pets?.petGender?.name,
+  //       clinicName: pets?.clinicName,
+  //       petName: pets?.petName,
+  //       doctorName: pets?.doctorName,
+  //       lastVaccineDate: pets?.lastVaccineDate,
+  //       petAge: pets?.petAge,
+  //       vaccinationNumber: pets?.vaccinationNumber 
+      
+  //   };
+  
+  //   data.pets = petDetails;
+  //   return data;
+  // };
+
+  // export const setDocumentDetails = (data) => {
+  //   let { documents } = data;
+  
+  //   let doc = {
+  //     ...documents,
        
       
-    };
+  //   };
   
-    data.documents = doc;
-    return data;
-  };
+  //   data.documents = doc;
+  //   return data;
+  // };
 
 
 export const PetDataConvert = (data) => {
@@ -147,7 +175,7 @@ return true;
 
 /*   method to check value  if not returns NA*/
 export const checkForNA = (value = "") => {
-  return checkForNotNull(value) ? value : "PTR_NA";
+  return checkForNotNull(value) ? value : "EWASTE_NA";
 };
 
 /*   method to get required format from fielstore url*/

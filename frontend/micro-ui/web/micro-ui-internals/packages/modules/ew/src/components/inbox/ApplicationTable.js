@@ -1,5 +1,7 @@
 import React from "react";
-import { Table } from "@egovernments/digit-ui-react-components";
+import { Table } from "@upyog/digit-ui-react-components";
+
+import { useTranslation } from "react-i18next";
 
 const ApplicationTable = ({
   t,
@@ -12,6 +14,7 @@ const ApplicationTable = ({
   onNextPage,
   onPrevPage,
   onPageSizeChange,
+  isPaginationRequired,
   pageSizeLimit,
   sortParams,
   totalRecords,
@@ -27,6 +30,7 @@ const ApplicationTable = ({
       onPrevPage={onPrevPage}
       pageSizeLimit={pageSizeLimit}
       disableSort={disableSort}
+      isPaginationRequired={isPaginationRequired}
       onPageSizeChange={onPageSizeChange}
       onSort={onSort}
       sortParams={sortParams}
