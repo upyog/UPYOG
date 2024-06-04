@@ -20,7 +20,7 @@ public class WSCalculationConstant {
 
 	public static final String SERVICE_FIELD_FOR_SEARCH_URL = "service=";
 
-	public static final String SERVICE_FIELD_VALUE_WS = "NewWS1";
+	public static final String SERVICE_FIELD_VALUE_WS = "WS";
 	
 	public static final String ONE_TIME_FEE_SERVICE_FIELD = "WS.ONE_TIME_FEE";
 
