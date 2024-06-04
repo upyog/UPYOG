@@ -27,74 +27,6 @@ export const configBPAApproverApplication = ({
     isCommentRequired = true;
   }
   
-  if(action?.action=="BLOCK" && action?.state?.state=="PENDINGAPPROVAL"){
-    return {
-      label: {
-        heading: `WF_${action?.action}_APPLICATION`,
-        submit: `WF_${businessService}_${action?.action}`,
-        cancel: "BPA_CITIZEN_CANCEL_BUTTON",
-      },
-      form: [
-        {
-          body: [
-            {
-              label: action.isTerminateState || isRejectOrRevocate ? null : t(assigneeLabel || `WF_ROLE_${action.assigneeRoles?.[0]}`),
-              type: "dropdown",
-              populators: action.isTerminateState || isRejectOrRevocate ? null : (
-                <Dropdown
-                  option={approvers}
-                  autoComplete="off"
-                  optionKey="name"
-                  id="fieldInspector"
-                  select={setSelectedApprover}
-                  selected={selectedApprover}
-                />
-              ),
-            },
-            {
-              label: action?.action=="BLOCK" &&  action?.state?.state=="PENDINGAPPROVAL" ? t(`BLOCK_REASON`):null  ,
-              type: "dropdown",
-              populators: !action?.action=="BLOCK" || !action?.state?.state=="PENDINGAPPROVAL" ? null : (
-                <Dropdown
-                  option={blockReasonFiltered}
-                  autoComplete="off"
-                  optionKey="name"
-                  id="fieldInspector"
-                  select={setBlockReason}
-                  selected={selectedBlockReason}
-                  isMandatory={true}
-                />
-              ),
-            },
-            {
-              label: t("WF_COMMON_COMMENTS"),
-              type: "textarea",
-              isMandatory: true,
-              populators: {
-                name: "comments",
-              },
-            },
-            {
-              label: `${t("WF_APPROVAL_UPLOAD_HEAD")}`,
-              populators: (
-                <UploadFile
-                  id={"workflow-doc"}
-                  onUpload={selectFile}
-                  onDelete={() => {
-                    setUploadedFile(null);
-                  }}
-                  message={uploadedFile ? `1 ${t(`ES_PT_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
-                  accept= "image/*, .pdf, .png, .jpeg, .jpg"
-                  iserror={error}
-                />
-              ),
-            },
-          ],
-        },
-      ],
-    };
-  }
-  
   return {
     label: {
       heading: `WF_${action?.action}_APPLICATION`,
@@ -105,9 +37,9 @@ export const configBPAApproverApplication = ({
       {
         body: [
           {
-            label: action.isTerminateState || isRejectOrRevocate ? null : t(assigneeLabel || `WF_ROLE_${action.assigneeRoles?.[0]}`),
+            label: action.isTerminateState || isRejectOrRevocate || (action?.action=="BLOCK" && action?.state?.state=="PENDINGAPPROVAL")|| (action?.action=="FORWARD" && action?.state?.state=="FIELDINSPECTION_PENDING") ? null : t(assigneeLabel || `WF_ROLE_${action.assigneeRoles?.[0]}`),
             type: "dropdown",
-            populators: action.isTerminateState || isRejectOrRevocate ? null : (
+            populators: (action.isTerminateState || isRejectOrRevocate || (action?.action=="BLOCK" && action?.state?.state=="PENDINGAPPROVAL")|| (action?.action=="FORWARD" && action?.state?.state=="FIELDINSPECTION_PENDING")) ? null : (
               <Dropdown
                 option={approvers}
                 autoComplete="off"
@@ -117,6 +49,21 @@ export const configBPAApproverApplication = ({
                 selected={selectedApprover}
               />
             ),
+          },
+          {
+            label: (action?.action=="BLOCK" &&  action?.state?.state=="PENDINGAPPROVAL") ? t(`BLOCK_REASON`):null  ,
+            type: "dropdown",
+            populators: (action?.action=="BLOCK" && action?.state?.state=="PENDINGAPPROVAL") ?  (
+              <Dropdown
+                option={blockReasonFiltered}
+                autoComplete="off"
+                optionKey="name"
+                id="fieldInspector"
+                select={setBlockReason}
+                selected={selectedBlockReason}
+                isMandatory={true}
+              />
+            ):null ,
           },
           {
             label: t("WF_COMMON_COMMENTS"),
