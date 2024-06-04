@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useEffect } from "react"
 import { useForm, Controller } from "react-hook-form";
-import { SearchForm, Table, Card, Header } from "@egovernments/digit-ui-react-components";
+import { SearchForm, Table, Card, Header } from "@upyog/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import { convertEpochToDateDMY } from  "../../utils";
 import SearchFields from "./SearchFields";
@@ -102,7 +102,7 @@ const SearchLicenseApplication = ({tenantId, t, onSubmit, data, count }) => {
         },
         {
           Header: t("TL_LOCALIZATION_TRADE_OWNER_NAME"),
-          accessor: (row) => GetCell(row?.tradeLicenseDetail?.owners?.map( o => o.name ). join(",") || ""),
+          accessor: (row) => GetCell(row.tradeLicenseDetail.owners.additionalDetails!==null? (row.tradeLicenseDetail.owners.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence).map(o=>o.name).join(",")): row.tradeLicenseDetail.owners.map( o => o.name ). join(",") || ""),
           disableSortBy: true,
         },
         {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { LinkButton } from "@upyog/digit-ui-react-components";
 
 import { LOCALIZATION_KEY } from "../../constants/Localization";
 
@@ -16,7 +17,7 @@ import {
   ImageViewer,
   Loader,
   Toast,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 import TimeLine from "../../components/TimeLine";
 
@@ -69,6 +70,7 @@ const ComplaintDetailsPage = (props) => {
   const [disableComment, setDisableComment] = useState(true);
 
   const [loader, setLoader] = useState(false);
+  const [viewTimeline, setViewTimeline]=useState(false);
 
   useEffect(() => {
     (async () => {
@@ -90,7 +92,14 @@ const ComplaintDetailsPage = (props) => {
   function onCloseImageZoom() {
     setImageZoom(null);
   }
-
+  
+  const handleViewTimeline=()=>{ 
+    const timelineSection=document.getElementById('timeline');
+      if(timelineSection){
+        timelineSection.scrollIntoView({behavior: 'smooth'});
+      } 
+      setViewTimeline(true);   
+  };
   const onWorkFlowChange = (data) => {
     let timeline = data?.timeline;
     timeline && timeline[0].timeLineActions?.filter((e) => e === "COMMENT").length ? setDisableComment(false) : setDisableComment(true);
@@ -158,9 +167,11 @@ const ComplaintDetailsPage = (props) => {
               {imageZoom ? <ImageViewer imageSrc={imageZoom} onClose={onCloseImageZoom} /> : null}
             </Card>
             <Card>
+            <div id="timeline">
               {complaintDetails?.service && (
                 <WorkflowComponent getWorkFlow={onWorkFlowChange} complaintDetails={complaintDetails} id={id} zoomImage={zoomImage} />
               )}
+              </div>
             </Card>
             {/* <Card>
       <CardSubHeader>{t(`${LOCALIZATION_KEY.CS_COMMON}_COMMENTS`)}</CardSubHeader>

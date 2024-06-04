@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, CardLabel, Dropdown, RadioButtons, LabelFieldPair, RadioOrSelect } from "@egovernments/digit-ui-react-components";
+import { FormStep, CardLabel, Dropdown, RadioButtons, LabelFieldPair, RadioOrSelect } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/TLTimelineInFSM";
 import { useLocation } from "react-router-dom";
 
@@ -35,11 +35,20 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
       : pincode
       ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode))
       : allCities;
-
-  const [selectedCity, setSelectedCity] = useState(
-    () => formData?.address?.city || Digit.SessionStorage.get("fsm.file.address.city") || Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")
-  );
-  const [newLocality, setNewLocality] = useState();
+let property = sessionStorage?.getItem("Digit_FSM_PT")
+if (property !== "undefined")
+{
+  property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
+}
+console.log("property",property)
+let cityDetail={}
+if (property)
+{
+cityDetail = cities.filter((city) =>{
+return city.code == property?.propertyDetails?.address?.tenantId
+})
+}
+  const [selectedCity, setSelectedCity] = useState(() =>formData?.address?.city ||cityDetail?.[0] ||  null);
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
     selectedCity?.code,
     "revenue",
@@ -60,7 +69,7 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
   );
 
   const [localities, setLocalities] = useState();
-  const [selectedLocality, setSelectedLocality] = useState();
+  const [selectedLocality, setSelectedLocality] = useState(()=>property?.propertyDetails?.address?.locality || formData?.cpt?.details?.address?.locality|| formData?.address?.locality);
 
   useEffect(() => {
     if (cities) {
@@ -83,10 +92,17 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
     if ((!isUrcEnable || isNewVendor || isEditVendor) && selectedCity && fetchedLocalities) {
       let __localityList = fetchedLocalities;
       let filteredLocalityList = [];
-
+console.log("formData?.address?.locality",formData?.address?.locality,formData?.cpt?.details?.address?.locality,property?.propertyDetails?.address?.locality)
       if (formData?.address?.locality) {
         setSelectedLocality(formData.address.locality);
       }
+      else if (formData?.cpt?.details?.address?.locality) {
+        setSelectedLocality(formData.cpt.details.address.locality);
+      }
+      else if (property?.propertyDetails?.address?.locality) {
+        setSelectedLocality(property?.propertyDetails?.address?.locality);
+      }
+      
 
       if (formData?.address?.pincode) {
         filteredLocalityList = __localityList.filter((obj) => obj.pincode?.find((item) => item == formData.address.pincode));
@@ -104,7 +120,7 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
         }
       }
     }
-  }, [selectedCity, selectLocation, fetchedLocalities]);
+  }, [selectedCity, formData?.cpt?.details?.address, fetchedLocalities]);
 
   function selectCity(city) {
     setSelectedLocality(null);
@@ -139,7 +155,7 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
   function selectLocality(locality) {
     setSelectedLocality(locality);
     if (userType === "employee") {
-      onSelect(config.key, { ...formData[config.key], locality: locality });
+      onSelect(config.key, { ...formData[config.key], locality: selectedLocality });
     }
   }
 
@@ -240,6 +256,17 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
         )}
         <CardLabel>{`${t("MYCITY_CODE_LABEL")} *`}</CardLabel>
         <RadioOrSelect options={cities} selectedOption={selectedCity} optionKey="i18nKey" onSelect={selectCity} t={t} />
+        {selectedCity && localities && <CardLabel>{`${t("CS_CREATECOMPLAINT_MOHALLA")} *`}</CardLabel>}
+        {selectedCity && localities && (
+          <RadioOrSelect
+            isMandatory={config.isMandatory}
+            options={localities}
+            selectedOption={selectedLocality}
+            optionKey="name"
+            onSelect={selectLocality}
+            t={t}
+          />
+        )}
       </FormStep>
     </React.Fragment>
   );

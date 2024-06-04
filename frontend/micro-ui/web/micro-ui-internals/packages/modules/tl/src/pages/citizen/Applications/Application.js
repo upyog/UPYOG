@@ -1,4 +1,4 @@
-import { Card, Header, KeyNote, Loader, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Card, Header, KeyNote, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -40,6 +40,16 @@ const TLMyApplications = ({ view }) => {
               <Link to={`/digit-ui/citizen/tl/tradelicence/application/${application?.raw?.applicationNumber}/${application.raw?.tenantId}`}>
                 <SubmitBar label={t(application?.raw?.status != "PENDINGPAYMENT" ? "TL_VIEW_DETAILS" : "TL_VIEW_DETAILS_PAY")} />
               </Link>{" "}
+              {application?.raw?.status === "PENDINGPAYMENT" ? (
+                  <Link
+                  to={{
+                    pathname : `/digit-ui/citizen/payment/collect/${data?.[0]?.raw?.businessService}/${application?.raw?.applicationNumber}`,
+                  }}>
+                    <div style={{marginTop:"10px"}}>
+                    <SubmitBar label ={t("COMMON_MAKE_PAYMENT")}/>
+                    </div>
+                  </Link>
+              ):null}
             </Card>
           </div>
         );

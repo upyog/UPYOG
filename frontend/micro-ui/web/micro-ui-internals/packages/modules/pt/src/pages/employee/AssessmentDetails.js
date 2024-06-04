@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 
 import { useParams, useLocation, useHistory } from "react-router-dom";
-import { ActionBar, Header, Loader, SubmitBar,Card,CardSubHeader,CardSectionHeader,LinkLabel, CardLabel, CardHeader, CardText} from "@egovernments/digit-ui-react-components";
+import { ActionBar, Header, Loader, SubmitBar,Card,CardSubHeader,CardSectionHeader,LinkLabel, CardLabel, CardHeader, CardText} from "@upyog/digit-ui-react-components";
 import { useQueryClient } from "react-query";
 import _, { first, update } from "lodash";
-import { Modal,Dropdown, Row, StatusTable } from "@egovernments/digit-ui-react-components";
+import { Modal,Dropdown, Row, StatusTable } from "@upyog/digit-ui-react-components";
 import {convertEpochToDate} from "../../utils/index";
 
 
@@ -67,8 +67,8 @@ const AssessmentDetails = () => {
     ptCalculationEstimateMutate({ Assessment: AssessmentData });
     }, []);
     useEffect(()=>{
-      setPenalty(parseInt(ptCalculationEstimateData?.Calculation[0]?.taxHeadEstimates[6]?.estimateAmount))
-      setRebate(parseInt(ptCalculationEstimateData?.Calculation[0]?.taxHeadEstimates[5]?.estimateAmount))
+      setPenalty(parseInt(ptCalculationEstimateData?.Calculation[0].taxHeadEstimates[6].estimateAmount))
+      setRebate(parseInt(ptCalculationEstimateData?.Calculation[0].taxHeadEstimates[5].estimateAmount))
     },[ptCalculationEstimateLoading])
   useEffect(() => {
     if (applicationDetails) setAppDetailsToShow(_.cloneDeep(applicationDetails));
@@ -101,6 +101,7 @@ const AssessmentDetails = () => {
     },
     }
   ); 
+
   const closeToast = () => {
     setShowToast(null);
   };
@@ -189,7 +190,7 @@ function change(){
           let additionalPenality=first;
           ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6]={
             "taxHeadCode": "PT_TIME_PENALTY",
-            "estimateAmount":  ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6].estimateAmount+first+penalty,
+            "estimateAmount":  ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6].estimateAmount=first+penalty,
             "category": "TAX"
         }
         // AssessmentData.additionalDetails={
@@ -210,7 +211,7 @@ function change(){
           let additionalPenality=first;
           ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6]={
             "taxHeadCode": "PT_TIME_PENALTY",
-            "estimateAmount": ptCalculationEstimateData?.Calculation[0]?.taxHeadEstimates[6]?.estimateAmount+first+penalty,
+            "estimateAmount": ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6]?.estimateAmount+first+penalty,
             "category": "TAX"
         }
         // AssessmentData.additionalDetails={
@@ -233,7 +234,7 @@ function change(){
         if(second<total_amount){
           ptCalculationEstimateData.Calculation[0].taxHeadEstimates[5]={
             "taxHeadCode": "PT_TIME_REBATE",
-            "estimateAmount": ptCalculationEstimateData?.Calculation[0]?.taxHeadEstimates[5]?.estimateAmount+second+rebate,
+            "estimateAmount": ptCalculationEstimateData.Calculation[0].taxHeadEstimates[5].estimateAmount=second+rebate,
             "category": "TAX"
         }
         // AssessmentData.additionalDetails={
@@ -254,7 +255,7 @@ function change(){
         if(second<total_amount){
           ptCalculationEstimateData.Calculation[0].taxHeadEstimates[5]={
             "taxHeadCode": "PT_TIME_REBATE",
-            "estimateAmount": ptCalculationEstimateData?.Calculation[0]?.taxHeadEstimates[5]?.estimateAmount-second-rebate,
+            "estimateAmount": ptCalculationEstimateData.Calculation[0].taxHeadEstimates[5]?.estimateAmount-second-rebate,
             "category": "TAX"
         }
         // AssessmentData.additionalDetails={

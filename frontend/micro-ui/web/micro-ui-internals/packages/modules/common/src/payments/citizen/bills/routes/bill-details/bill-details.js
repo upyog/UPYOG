@@ -1,4 +1,4 @@
-import { Card, CardSubHeader, Header, KeyNote, Loader, RadioButtons, SubmitBar, TextInput } from "@egovernments/digit-ui-react-components";
+import { Card, CardSubHeader, Header, KeyNote, Loader, RadioButtons, SubmitBar, TextInput } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useLocation, useParams, Redirect } from "react-router-dom";
@@ -16,6 +16,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
   const [bill, setBill] = useState(state?.bill);
   const tenantId = state?.tenantId || _tenantId || Digit.UserService.getUser().info?.tenantId;
   const propertyId = state?.propertyId;
+  const applicationNumber = state?.applicationNumber;
   if (wrkflow === "WNS" && consumerCode.includes("?")) consumerCode = consumerCode.substring(0, consumerCode.indexOf("?"));
   const { data, isLoading } = state?.bill
     ? { isLoading: false }
@@ -46,7 +47,8 @@ const BillDetails = ({ paymentRules, businessService }) => {
     { enabled: pathname.includes("FSM") ? true : false },
     "CITIZEN"
   );
-  let { minAmountPayable, isAdvanceAllowed } = paymentRules;
+  
+  let { minAmountPayable, isAdvanceAllowed } = paymentRules; 
   minAmountPayable = wrkflow === "WNS" ? 100 : minAmountPayable;
   const billDetails = bill?.billDetails?.sort((a, b) => b.fromPeriod - a.fromPeriod)?.[0] || [];
   const Arrears =
@@ -124,7 +126,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
   }, [paymentType, amount]);
 
   useEffect(() => {
-    if (!isFSMLoading && application?.pdfData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT_CITIZEN") {
+    if (!isFSMLoading && (application?.pdfData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT_CITIZEN" || application?.pdfData?.applicationStatus ==="PENDING_APPL_FEE_PAYMENT")) {
       setPaymentAllowed(true);
       setPaymentType(t("CS_PAYMENT_ADV_COLLECTION"));
     }
@@ -135,7 +137,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
       let requiredBill = data.Bill.filter((e) => e.consumerCode == (wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode))[0];
       setBill(requiredBill);
     }
-  }, [isLoading]);
+  }, [isLoading]); 
 
   const onSubmit = () => {debugger
     let paymentAmount =
@@ -203,8 +205,8 @@ const BillDetails = ({ paymentRules, businessService }) => {
             <div>
               <KeyNote keyValue={t("ES_PAYMENT_DETAILS_TOTAL_AMOUNT")} note={application?.pdfData?.totalAmount} />
               <KeyNote keyValue={t("ES_PAYMENT_DETAILS_ADV_AMOUNT")} note={application?.pdfData?.advanceAmount} />
-              {application?.pdfData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT_CITIZEN" ? (
-                <KeyNote keyValue={t("FSM_DUE_AMOUNT_TO_BE_PAID")} note={bill?.totalAmount} />
+              {application?.pdfData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT_CITIZEN" || application?.pdfData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT" ? (
+                <KeyNote keyValue={t("FSM_DUE_AMOUNT_TO_BE_PAID")} note={application?.pdfData?.totalAmount-application?.pdfData?.advanceAmount} />
               ) : null}
             </div>
           ) : (

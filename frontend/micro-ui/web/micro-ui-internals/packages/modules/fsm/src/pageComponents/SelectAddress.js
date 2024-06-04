@@ -53,6 +53,9 @@ const SelectAddress = ({ t, config, onSelect, userType, formData }) => {
       : pincode
       ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode))
       : allCities;
+const property = sessionStorage.getItem("Digit_FSM_PT")
+const [selectedCity, setSelectedCity] = useState(() => formData?.address?.city || sessionStorage.getItem("Digit_FSM_PT") || null);
+  const [newLocality, setNewLocality] = useState();
 
   const [selectedCity, setSelectedCity] = useState(
     () =>

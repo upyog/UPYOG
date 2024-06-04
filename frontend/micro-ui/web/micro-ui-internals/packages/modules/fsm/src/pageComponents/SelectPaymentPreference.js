@@ -9,7 +9,7 @@ import {
   TextInput,
   CardLabelError,
   KeyNote,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import Timeline from "../components/TLTimelineInFSM";
 
 const SelectPaymentPreference = ({ config, formData, t, onSelect, userType }) => {
@@ -29,7 +29,7 @@ const SelectPaymentPreference = ({ config, formData, t, onSelect, userType }) =>
       validation: {
         isRequired: true,
       },
-      disable: MinAmount === totalAmount ? true : false,
+      disable: true,
       default: formData?.selectPaymentPreference?.advanceAmount,
       isMandatory: true,
     },
@@ -82,8 +82,8 @@ const SelectPaymentPreference = ({ config, formData, t, onSelect, userType }) =>
           Digit.SessionStorage.set("total_amount", totaltripAmount);
           Digit.SessionStorage.set("advance_amount", advanceBalanceAmount);
           formData?.selectPaymentPreference?.advanceAmount
-            ? setAdvanceAmount(formData?.selectPaymentPreference?.advanceAmount)
-            : setAdvanceAmount(advanceBalanceAmount);
+            ? setAdvanceAmount(Math.ceil(formData?.selectPaymentPreference?.advanceAmount))
+            : setAdvanceAmount(Math.ceil(advanceBalanceAmount));
 
           setError(false);
         } else if (billSlab?.price === 0) {
@@ -118,7 +118,7 @@ const SelectPaymentPreference = ({ config, formData, t, onSelect, userType }) =>
   if (advanceAmount === null) {
     return <Loader />;
   }
-
+console.log("advance",advanceAmount,totalAmount,MinAmount)
   return (
     <React.Fragment>
       <Timeline currentStep={3} flow="APPLY" />
@@ -151,6 +151,8 @@ const SelectPaymentPreference = ({ config, formData, t, onSelect, userType }) =>
           </CardLabelError>
         )}
         <KeyNote keyValue={t("FSM_ADV_MIN_PAY") + " (₹)"} note={min} />
+        <KeyNote keyValue={t("ADV_TOTAL_AMOUNT") + " (₹)"} note={max} />
+        <KeyNote keyValue={t("FSM_ADV_MIN_PAY") + " (₹)"} note={Math.ceil(min)} />
         {inputs?.map((input, index) => {
           return (
             <React.Fragment key={index}>
@@ -163,7 +165,7 @@ const SelectPaymentPreference = ({ config, formData, t, onSelect, userType }) =>
                   <TextInput
                     type={input.type}
                     key={input.name}
-                    disable={input.disable}
+                    disable={true}
                     onChange={(e) => setAdvanceAmountValue(e.target.value)}
                     value={advanceAmount}
                     {...input.validation}

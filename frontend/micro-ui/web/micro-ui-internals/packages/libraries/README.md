@@ -4,7 +4,7 @@
 ## Install
 
 ```bash
-npm install --save @egovernments/digit-ui-libraries
+npm install --save @upyog/digit-ui-libraries
 ```
 
 ## Limitation
@@ -36,7 +36,7 @@ then navigate to App.js
 
 ```jsx
 import React from "react";
-import initLibraries from "@egovernments/digit-ui-libraries";
+import initLibraries from "@upyog/digit-ui-libraries";
 
 import defaultConfig from "./config";
 

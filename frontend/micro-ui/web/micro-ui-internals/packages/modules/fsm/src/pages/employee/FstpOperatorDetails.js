@@ -16,7 +16,7 @@ import {
   Row,
   LabelFieldPair,
   Menu,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import CustomTimePicker from "../../components/CustomTimePicker";

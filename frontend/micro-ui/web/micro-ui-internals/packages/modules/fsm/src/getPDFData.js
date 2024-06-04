@@ -54,12 +54,13 @@ const getPDFData = (application, tenantInfo, t) => {
     name: `${t(tenantInfo?.i18nKey)} ${t(`ULBGRADE_${tenantInfo?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`)}`,
     email: tenantInfo?.emailId,
     phoneNumber: tenantInfo?.contactNumber,
+    applicationNumber: application?.applicationNo||"NA",
     heading: t("PDF_HEADER_DESLUDGING_REQUEST_ACKNOWLEDGEMENT"),
     details: [
       {
         title: t("CS_TITLE_APPLICATION_DETAILS"),
         values: [
-          { title: t("CS_MY_APPLICATION_APPLICATION_NO"), value: application?.applicationNo },
+          
           {
             title: t("CS_APPLICATION_DETAILS_APPLICATION_DATE"),
             value: Digit.DateUtils.ConvertTimestampToDate(application?.auditDetails?.createdTime, "dd/MM/yyyy"),
@@ -75,6 +76,7 @@ const getPDFData = (application, tenantInfo, t) => {
         values: [
           { title: t("CS_APPLICATION_DETAILS_APPLICANT_NAME"), value: application?.citizen?.name || "N/A" },
           { title: t("CS_APPLICATION_DETAILS_APPLICANT_MOBILE"), value: application?.citizen?.mobileNumber || "N/A" },
+          { title: t("CS_APPLICATION_DETAILS_APPLICANT_EMAIL_ID"), value: application?.citizen?.emailId || application?.additionalDetails?.emailId || "NA" },
         ],
       },
       {
