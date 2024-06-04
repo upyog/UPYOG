@@ -17,12 +17,12 @@ import {
   PaymentLinks,
   paymentConfigs,
 } from "@upyog/digit-ui-module-common";
-import { DigitUI } from "@egovernments/digit-ui-module-core";
+import { DigitUI } from "@upyog/digit-ui-module-core";
 import { initLibraries } from "@upyog/digit-ui-libraries";
 import {
   HRMSModule,
   initHRMSComponents,
-} from "@egovernments/digit-ui-module-hrms";
+} from "@upyog/digit-ui-module-hrms";
 import {
   TLModule,
   TLLinks,
@@ -34,13 +34,13 @@ import {
   PTRComponents,
 } from "@upyog-niua/upyog-ui-module-ptr";
 import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
-import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
+import { initOBPSComponents } from "@egovernments/digit-ui-module-obps";
 import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
 import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 import { initWSComponents } from "@egovernments/digit-ui-module-ws";
 import { initCustomisationComponents } from "./Customisations";
-import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
-import { initBillsComponents } from "@egovernments/digit-ui-module-bills";
+import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
+import { initBillsComponents } from "@upyog/digit-ui-module-bills";
 // import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
 
 initLibraries();

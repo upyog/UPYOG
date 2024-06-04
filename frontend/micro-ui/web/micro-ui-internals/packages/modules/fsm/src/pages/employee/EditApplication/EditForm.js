@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { FormComposer, Header, Loader } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Header, Loader } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 const isConventionalSpecticTank = (tankDimension) => tankDimension === "lbd";

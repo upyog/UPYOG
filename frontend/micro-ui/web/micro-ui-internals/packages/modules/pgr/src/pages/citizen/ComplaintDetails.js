@@ -141,9 +141,11 @@ const ComplaintDetailsPage = (props) => {
   return (
     <React.Fragment>
       <div className="complaint-summary">
-        <Header>{t(`${LOCALIZATION_KEY?.CS_HEADER}_COMPLAINT_SUMMARY`)}</Header>
-
-        {complaintDetails && Object.keys(complaintDetails).length > 0 ? (
+        <Header>{t(`${LOCALIZATION_KEY.CS_HEADER}_COMPLAINT_SUMMARY`)}</Header>
+        <div style={{marginLeft:"500px", color:"#A52A2A"}}>
+        <LinkButton label={t("VIEW_TIMELINE")}  onClick={handleViewTimeline} ></LinkButton>
+        </div>
+        {Object.keys(complaintDetails).length > 0 ? (
           <React.Fragment>
             <Card>
               <CardSubHeader>{t(`SERVICEDEFS.${complaintDetails.audit.serviceCode.toUpperCase()}`)}</CardSubHeader>

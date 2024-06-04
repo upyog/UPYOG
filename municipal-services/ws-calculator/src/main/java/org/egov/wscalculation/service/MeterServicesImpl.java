@@ -16,7 +16,10 @@ import org.egov.wscalculation.web.models.MeterReadingSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class MeterServicesImpl implements MeterService {
 
 	@Autowired
@@ -53,15 +56,47 @@ public class MeterServicesImpl implements MeterService {
 		List<MeterReading> meterReadingsList = new ArrayList<MeterReading>();
 		if(meterConnectionRequest.getMeterReading().getGenerateDemand()){
 			wsCalulationWorkflowValidator.applicationValidation(meterConnectionRequest.getRequestInfo(),meterConnectionRequest.getMeterReading().getTenantId(),meterConnectionRequest.getMeterReading().getConnectionNo(),genratedemand);
-			wsCalculationValidator.validateMeterReading(meterConnectionRequest, true);
+			wsCalculationValidator.validateMeterReading(meterConnectionRequest.getRequestInfo(),meterConnectionRequest.getMeterReading(), true);
 		}
-		enrichmentService.enrichMeterReadingRequest(meterConnectionRequest);
+		enrichmentService.enrichMeterReadingRequest(meterConnectionRequest.getRequestInfo(),meterConnectionRequest.getMeterReading());
 		meterReadingsList.add(meterConnectionRequest.getMeterReading());
 		wSCalculationDao.saveMeterReading(meterConnectionRequest);
 		if (meterConnectionRequest.getMeterReading().getGenerateDemand()) {
 			generateDemandForMeterReading(meterReadingsList, meterConnectionRequest.getRequestInfo());
 		}
 		return meterReadingsList;
+	}
+	
+	@Override
+	public List<MeterReading> createMeterReadingBulk(MeterConnectionRequest meterConnectionRequest) {
+		Boolean genratedemand = true;
+		List<MeterReading> meterReadingsList = new ArrayList<MeterReading>();
+		List<MeterReading> meterReadingOutput=new ArrayList<MeterReading>();
+		Boolean applicationValid = false,readingValid=false;
+		String status=null;
+		for(MeterReading mr:meterConnectionRequest.getMeterReadingList()) {
+		if(mr.getGenerateDemand()){
+			applicationValid=wsCalulationWorkflowValidator.applicationValidationBulk(meterConnectionRequest.getRequestInfo(),mr,genratedemand);
+			readingValid=wsCalculationValidator.validateMeterReadingBulk(meterConnectionRequest.getRequestInfo(),mr, true);
+		}
+		
+		log.info("applicationValid ="+applicationValid);
+		log.info("readingValid ="+readingValid);
+
+		if(applicationValid && readingValid) {
+		enrichmentService.enrichMeterReadingRequest(meterConnectionRequest.getRequestInfo(),mr);
+		meterReadingsList.add(mr);
+		meterConnectionRequest.setMeterReading(mr);
+		wSCalculationDao.saveMeterReading(meterConnectionRequest);
+		if (mr.getGenerateDemand()) {
+			generateDemandForMeterReading(meterReadingsList, meterConnectionRequest.getRequestInfo());
+		}
+		if(mr.getStatus()==null) mr.setStatus("Meter Reading entered successfully");
+		}
+		meterReadingOutput.add(mr);
+
+		}
+		return meterReadingOutput;
 	}
 
 	private void generateDemandForMeterReading(List<MeterReading> meterReadingsList, RequestInfo requestInfo) {

@@ -27,7 +27,7 @@ import { PTRModule, PTRLinks, PTRComponents } from "@upyog-niua/upyog-ui-module-
 // import {initCustomisationComponents} from "./customisations";
 
 // import { PGRModule, PGRLinks } from "@egovernments/digit-ui-module-pgr";
-// import { Body, TopBar } from "@egovernments/digit-ui-react-components";
+// import { Body, TopBar } from "@upyog/digit-ui-react-components";
 import "@upyog-niua/upyog-css/example/index.css";
 // import * as comps from "@upyog/digit-ui-react-components";
 

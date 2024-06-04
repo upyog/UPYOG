@@ -293,26 +293,26 @@ const ApplicationDetails = (props) => {
     setShowAllTimeline((prev)=>!prev);
   }
 
+let deepCopy = _.cloneDeep( workflowDetails )
+let index1 =0
+deepCopy?.data?.timeline.map((check,index) => {
+  if (check.status == "ASSING_DSO" && index1 ==0)
+  {
+      let obj= check
+      obj.status = "PENDING_PAYYY"
+      index1 +=1
+      workflowDetails.data.timeline[index].status ="ASSING_DSO_PAY"
+      workflowDetails.data.timeline.splice(index, 0, obj);
+  }
+
   return (
     <React.Fragment>
       {!isLoading ? (
         <React.Fragment>
-          <div className="employee-application-details" style={{ marginBottom: "15px" }}>
-            <Header style={{ marginBottom: "16px" }}>{t("ES_TITLE_APPLICATION_DETAILS")}</Header>
-            <MultiLink
-              className="multilinkWrapper employee-mulitlink-main-div"
-              onHeadClick={() => setIsDisplayDownloadMenu(!isDisplayDownloadMenu)}
-              style={{ marginTop: "10px" }}
-              downloadBtnClassName={"employee-download-btn-className"}
-              optionsClassName={"employee-options-btn-className"}
-              options={dowloadOptions}
-              displayOptions={isDisplayDownloadMenu}
-
-              // displayOptions={showOptions}
-              // options={dowloadOptions}
-            />
+          <Header style={{ marginBottom: "16px" }}>{t("ES_TITLE_APPLICATION_DETAILS")}</Header> 
+          <div style={{display:"flex", marginLeft:'500px', color:"#A52A2A"}}>
+          <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
           </div>
-
           <Card className="fsm" style={{ position: "relative" }}>
             {/* {!DSO && (
               <LinkButton

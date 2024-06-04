@@ -220,10 +220,10 @@
                             <execution>
                                 <id>migrate-database</id>
                                 <phase>process-resources</phase>
-                                <goals>
+                                 <!-- <goals>
                                     <goal>repair</goal>
                                     <goal>migrate</goal>
-                                </goals>
+                                </goals> -->
                                 <configuration>
                                     <configFile>src/main/resources/flyway.properties</configFile>
                                 </configuration>
