@@ -40,6 +40,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonParser;
+import com.jayway.jsonpath.Criteria;
 
 import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 import lombok.extern.slf4j.Slf4j;
@@ -224,14 +225,17 @@ public class TransactionService {
 			//Chek transactionid location accrding to flag for S its 4 For F check the message
 
 			String transactionId="";
+			String transactionAmmount="";
 			if(message.split("[|]")[0].equalsIgnoreCase("S")) {
 				transactionId= message.split("[|]")[4];
+				transactionAmmount=message.split("[|]")[6];
 			}
 			else if(message.split("[|]")[0].equalsIgnoreCase("F")) {
 				transactionId= message.split("[|]")[2];
 			}
 
 			requestParams.put("transactionId", transactionId );
+			requestParams.put("transactionAmmount", transactionAmmount);
 			Transaction currentTxnStatus = validator.validateUpdateTxn(requestParams);
 			Transaction newTxn = null;
 
@@ -252,38 +256,58 @@ public class TransactionService {
 
 
 			try {
+					
 				if (validator.shouldGenerateReceipt(currentTxnStatus, newTxn)) {
 					TransactionRequest request=TransactionRequest.builder().requestInfo(requestInfo).transaction(newTxn).build(); 
-					paymentsService.registerPayment(request); }
+					paymentsService.registerPayment(request); 
+				}
 
 				TransactionDump dump=TransactionDump.builder().txnId(currentTxnStatus.getTxnId()).txnResponse(
 						newTxn.getResponseJson()).auditDetails(newTxn.getAuditDetails()) .build();
 
 				producer.push(appProperties.getUpdateTxnTopic(), new TransactionRequest(requestInfo, newTxn));
-				producer.push(appProperties.getUpdateTxnDumpTopic(), new TransactionDumpRequest(requestInfo, dump)); } catch (CustomException e) {
-					if(e.getCode().equals("EXTERNAL_SERVICE_EXCEPTION")) {
-						if(e.getMessage()!=null) {
+				producer.push(appProperties.getUpdateTxnDumpTopic(), new TransactionDumpRequest(requestInfo, dump)); 
+			} 
+			catch (CustomException e) {
 
-							ObjectMapper map = new ObjectMapper();
+				if(e.getCode().equals("EXTERNAL_SERVICE_EXCEPTION")) {
+					if(e.getMessage()!=null) {
 
-							JsonNode node; try { node = map.readTree(e.getMessage()); JsonNode a =
-									node.get("Errors").findParent("code");
-							if(a.get("code").toString().replaceAll("\"","").equalsIgnoreCase(
-									"BILL_ALREADY_PAID")) { response="200|Y|SUCCESSFUL" ; }else {
-										response="400|N|"+"System Exception"; } } catch (JsonMappingException e1) {
-											// TODO Auto-generated catch block e1.printStackTrace();
-											response="400|N|"+"System Exception"; } catch (JsonProcessingException e1) {
-												// TODO Auto-generated catch block e1.printStackTrace();
-												response="400|N|"+"System Exception"; }
+						ObjectMapper map = new ObjectMapper();
 
+						JsonNode node; 
 
+						try { 
+							node = map.readTree(e.getMessage()); 
+							JsonNode a =node.get("Errors").findParent("code");
 
+							if(a.get("code").toString().replaceAll("\"","").equalsIgnoreCase("BILL_ALREADY_PAID")) 
+							{ 
+								response="200|Y|SUCCESSFUL" ; 
+							}
+							else 
+							{
+								response="400|N|"+"System Exception";
+							} 
+						} 
+						catch (JsonMappingException e1) {
+							// TODO Auto-generated catch block e1.printStackTrace();
+							response="400|N|"+"System Exception"; 
+						} 
+						catch (JsonProcessingException e1) {
+							// TODO Auto-generated catch block e1.printStackTrace();
+							response="400|N|"+"System Exception"; 
 						}
 
 					}
 
+				}
 
-					else { response="400|N|"+"System Exception"; } }
+
+				else { 
+					response="400|N|"+"System Exception"; 
+				} 
+			}
 
 		}
 		catch (CustomException e) {
@@ -296,8 +320,12 @@ public class TransactionService {
 			else if(e.getCode().equals("BILL_ALREADY_PAID")) {
 				response="200|Y|SUCCESSFUL" ;
 			}
+			else if(e.getCode().equals("TXN_UPDATE_NOT_FOUND"))
+				response="400|N|TXN_UPDATE_NOT_FOUND" ;
+			else if(e.getCode().equals("TXN_AMMOUNT_MISSMATCH"))
+				response="400|N|TXN_AMMOUNT_MISSMATCH" ;
 			else {
-				response="400|N|"+"System Exception2";
+				response="400|N|"+"System Exception";
 			}
 		}
 

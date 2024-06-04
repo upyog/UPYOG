@@ -90,7 +90,7 @@ public class TransactionValidator {
 	public Transaction validateUpdateTxn(Map<String, String> requestParams) {
 
 		Optional<String> optional = gatewayService.getTxnId(requestParams);
-
+		
 		if (!optional.isPresent())
 			throw new CustomException("MISSING_UPDATE_TXN_ID", "Cannot process request, missing transaction id");
 
@@ -100,11 +100,14 @@ public class TransactionValidator {
 
 		List<Transaction> statuses = transactionRepository.fetchTransactions(criteria);
 
+		String txnammount=statuses.get(0).getTxnAmount();
 		System.out.println("statuses::"+statuses.get(0));
 		//TODO Add to error queue
 		if (statuses.isEmpty()) {
 			throw new CustomException("TXN_UPDATE_NOT_FOUND", "Transaction not found");
 		}
+		else if(!requestParams.get("transactionAmmount").equals(txnammount))
+			throw new CustomException("TXN_AMMOUNT_MISSMATCH","Transaction ammount is not Matching");
 
 		return statuses.get(0);
 	}
