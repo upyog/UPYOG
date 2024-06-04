@@ -1106,7 +1106,7 @@ const generateQRCodes = async (
     {
       urlQR=egov_host;
 
-      urlQR=urlQR.concat(qrmapping.value);
+      urlQR=urlQR.concat(" ").concat(qrmapping.value);
     }
     if(urlQR=='')
     qrtext = mustache.render(qrmapping.value, variableTovalueMap);
