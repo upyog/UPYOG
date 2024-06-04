@@ -257,7 +257,13 @@ const SelectDocument = React.memo(function MyComponent({
                     console.log('Longitude:', location.longitude);
                     setLatitude(location.latitude);
                     setLongitude(location.longitude);
-                    // Continue with your existing code
+                    {if (doc?.code === "SITEPHOTOGRAPH.ONE"){
+                        sessionStorage.setItem("Latitude",location.latitude)
+                        sessionStorage.setItem("Longitude",location.longitude)
+                    }}
+                    
+
+                    // Continue with your existing codezz
                     data = Object.fromEntries(e);
                     newArr = Object.values(data);
                     newArr = formData?.documents?.documents?.filter((ob) => ob.documentType === selectedDocument.code);
@@ -417,10 +423,10 @@ const SelectDocument = React.memo(function MyComponent({
         {doc?.uploadedDocuments?.length && <DocumentsPreview isSendBackFlow={true} documents={doc?.uploadedDocuments} />}
 
         {doc?.code === "SITEPHOTOGRAPH.ONE" && (
-            latitude !== null && longitude !== null ? (
+            (sessionStorage.getItem("Latitude")  ?  true : false ) ? (
                 <div>
-                    <p>Latitude: {latitude}</p>
-                    <p>Longitude: {longitude}</p>
+                    <p>Latitude: {sessionStorage.getItem("Latitude")}</p>
+                    <p>Longitude: {sessionStorage.getItem("Longitude")}</p>
                     {setIsNextButtonDisabled(false)} {/* Enable the "Next" button */}
                 </div>
             ): 
