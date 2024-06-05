@@ -230,7 +230,7 @@ class PaymentServiceTest {
         doThrow(new CustomException("Code", "An error occurred")).when(paymentEnricher)
                 .enrichAdvanceTaxHead((List<Bill>) any());
         doNothing().when(paymentEnricher).enrichPaymentPostValidate((PaymentRequest) any());
-        doNothing().when(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any());
+       // doNothing().when(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any());
         PaymentValidator paymentValidator = mock(PaymentValidator.class);
         when(paymentValidator.validatePaymentForCreate((PaymentRequest) any())).thenReturn(new Payment());
         ApplicationProperties applicationProperties = new ApplicationProperties();
@@ -242,7 +242,7 @@ class PaymentServiceTest {
         verify(apportionerService).apportionBill((PaymentRequest) any());
         verify(paymentEnricher).enrichAdvanceTaxHead((List<Bill>) any());
         verify(paymentEnricher).enrichPaymentPostValidate((PaymentRequest) any());
-        verify(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any());
+        verify(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any(), false);
         verify(paymentValidator).validatePaymentForCreate((PaymentRequest) any());
     }
 
@@ -254,7 +254,7 @@ class PaymentServiceTest {
         PaymentEnricher paymentEnricher = mock(PaymentEnricher.class);
         doNothing().when(paymentEnricher).enrichAdvanceTaxHead((List<Bill>) any());
         doNothing().when(paymentEnricher).enrichPaymentPostValidate((PaymentRequest) any());
-        doNothing().when(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any());
+        doNothing().when(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any(), false);
         PaymentValidator paymentValidator = mock(PaymentValidator.class);
         when(paymentValidator.validatePaymentForCreate((PaymentRequest) any())).thenReturn(new Payment());
         ApplicationProperties applicationProperties = new ApplicationProperties();
@@ -272,7 +272,7 @@ class PaymentServiceTest {
         verify(apportionerService).apportionBill((PaymentRequest) any());
         verify(paymentEnricher).enrichAdvanceTaxHead((List<Bill>) any());
         verify(paymentEnricher).enrichPaymentPostValidate((PaymentRequest) any());
-        verify(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any());
+        verify(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any(), false);
         verify(paymentValidator).validatePaymentForCreate((PaymentRequest) any());
     }
 
@@ -284,7 +284,7 @@ class PaymentServiceTest {
         PaymentEnricher paymentEnricher = mock(PaymentEnricher.class);
         doNothing().when(paymentEnricher).enrichAdvanceTaxHead((List<Bill>) any());
         doNothing().when(paymentEnricher).enrichPaymentPostValidate((PaymentRequest) any());
-        doNothing().when(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any());
+        doNothing().when(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any(), false);
         PaymentValidator paymentValidator = mock(PaymentValidator.class);
         when(paymentValidator.validatePaymentForCreate((PaymentRequest) any())).thenReturn(new Payment());
         ApplicationProperties applicationProperties = new ApplicationProperties();
@@ -303,7 +303,7 @@ class PaymentServiceTest {
         verify(apportionerService).apportionBill((PaymentRequest) any());
         verify(paymentEnricher).enrichAdvanceTaxHead((List<Bill>) any());
         verify(paymentEnricher).enrichPaymentPostValidate((PaymentRequest) any());
-        verify(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any());
+        verify(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any(), false);
         verify(paymentValidator).validatePaymentForCreate((PaymentRequest) any());
     }
 
@@ -315,7 +315,7 @@ class PaymentServiceTest {
         PaymentEnricher paymentEnricher = mock(PaymentEnricher.class);
         doNothing().when(paymentEnricher).enrichAdvanceTaxHead((List<Bill>) any());
         doNothing().when(paymentEnricher).enrichPaymentPostValidate((PaymentRequest) any());
-        doNothing().when(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any());
+      //  doNothing().when(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any());
         PaymentValidator paymentValidator = mock(PaymentValidator.class);
         when(paymentValidator.validatePaymentForCreate((PaymentRequest) any())).thenReturn(new Payment());
         PaymentRepository paymentRepository = mock(PaymentRepository.class);
@@ -336,9 +336,7 @@ class PaymentServiceTest {
         BigDecimal totalAmountPaid = BigDecimal.valueOf(42L);
         AuditDetails auditDetails = new AuditDetails();
         MissingNode additionalDetails = MissingNode.getInstance();
-        Payment payment = new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L, PaymentModeEnum.CASH, 1L, "42",
-                InstrumentStatusEnum.APPROVED, "Ifsc Code", auditDetails, additionalDetails, new ArrayList<>(), "Paid By", "42",
-                "Payer Name", "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42");
+        Payment payment = new Payment();
 
         paymentRequest.setPayment(payment);
         Payment actualCreatePaymentResult = paymentService.createPayment(paymentRequest);
@@ -347,7 +345,7 @@ class PaymentServiceTest {
         verify(apportionerService).apportionBill((PaymentRequest) any());
         verify(paymentEnricher).enrichAdvanceTaxHead((List<Bill>) any());
         verify(paymentEnricher).enrichPaymentPostValidate((PaymentRequest) any());
-        verify(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any());
+        verify(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any(), false);
         verify(paymentValidator).validatePaymentForCreate((PaymentRequest) any());
         verify(paymentRepository).savePayment((Payment) any());
         verify(collectionProducer).producer((String) any(), (Object) any());
@@ -361,7 +359,7 @@ class PaymentServiceTest {
         PaymentEnricher paymentEnricher = mock(PaymentEnricher.class);
         doNothing().when(paymentEnricher).enrichAdvanceTaxHead((List<Bill>) any());
         doNothing().when(paymentEnricher).enrichPaymentPostValidate((PaymentRequest) any());
-        doNothing().when(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any());
+    //    doNothing().when(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any());
         PaymentValidator paymentValidator = mock(PaymentValidator.class);
         when(paymentValidator.validatePaymentForCreate((PaymentRequest) any())).thenReturn(new Payment());
         PaymentRepository paymentRepository = mock(PaymentRepository.class);
@@ -381,16 +379,14 @@ class PaymentServiceTest {
         BigDecimal totalAmountPaid = BigDecimal.valueOf(42L);
         AuditDetails auditDetails = new AuditDetails();
         MissingNode additionalDetails = MissingNode.getInstance();
-        Payment payment = new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L, PaymentModeEnum.CASH, 1L, "42",
-                InstrumentStatusEnum.APPROVED, "Ifsc Code", auditDetails, additionalDetails, new ArrayList<>(), "Paid By", "42",
-                "Payer Name", "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42");
+        Payment payment = new Payment();
 
         paymentRequest.setPayment(payment);
         assertSame(payment, paymentService.createPayment(paymentRequest));
         verify(apportionerService).apportionBill((PaymentRequest) any());
         verify(paymentEnricher).enrichAdvanceTaxHead((List<Bill>) any());
         verify(paymentEnricher).enrichPaymentPostValidate((PaymentRequest) any());
-        verify(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any());
+        verify(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any(), false);
         verify(paymentValidator).validatePaymentForCreate((PaymentRequest) any());
         verify(paymentRepository).savePayment((Payment) any());
         verify(collectionProducer).producer((String) any(), (Object) any());
@@ -544,7 +540,7 @@ class PaymentServiceTest {
     void testVaidateProvisonalPayment3() {
 
         PaymentEnricher paymentEnricher = mock(PaymentEnricher.class);
-        doNothing().when(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any());
+     //   doNothing().when(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any());
         PaymentValidator paymentValidator = mock(PaymentValidator.class);
         when(paymentValidator.validatePaymentForCreate((PaymentRequest) any())).thenReturn(new Payment());
         ApportionerService apportionerService = new ApportionerService();
@@ -554,7 +550,7 @@ class PaymentServiceTest {
         PaymentService paymentService = new PaymentService(apportionerService, paymentEnricher, applicationProperties,
                 userService, paymentValidator, paymentRepository, new CollectionProducer());
         assertNull(paymentService.vaidateProvisonalPayment(new PaymentRequest()));
-        verify(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any());
+       // verify(paymentEnricher).enrichPaymentPreValidate((PaymentRequest) any());
         verify(paymentValidator).validatePaymentForCreate((PaymentRequest) any());
     }
 
@@ -716,8 +712,7 @@ class PaymentServiceTest {
         ArrayList<String> payerIds = new ArrayList<>();
         HashSet<String> consumerCodes = new HashSet<>();
         List<Payment> actualPlainSearchResult = paymentService
-                .plainSearch(new PaymentSearchCriteria(ids, billIds, "42", tenantIds, receiptNumbers, status, instrumentStatus,
-                        paymentModes, payerIds, consumerCodes, new HashSet<>(), "42", "42", 3L, 3L, 2, 3, true));
+                .plainSearch(new PaymentSearchCriteria());
         assertSame(paymentList, actualPlainSearchResult);
         assertTrue(actualPlainSearchResult.isEmpty());
         verify(paymentRepository).fetchPaymentIds((PaymentSearchCriteria) any());

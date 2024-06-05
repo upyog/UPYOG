@@ -447,6 +447,139 @@ public class PaymentRepository {
 		return res;
 	}
 
+
+	 //        //onetime fee
+	
+	public List<String> fetchUsageCategoryByApplicationnos(Set<String> consumerCodes,String businesssrvice) {
+		List<String> res = new ArrayList<>();
+		String consumercode = null;
+		 Iterator<String> iterate = consumerCodes.iterator();
+		 while(iterate.hasNext()) {
+			    consumercode =   iterate.next();			  
+		}		
+		Map<String, Object> preparedStatementValues = new HashMap<>();
+		String queryString;
+		if (businesssrvice.contains("WS")) {
+			queryString = "select a2.usagecategory from eg_ws_connection a1 "
+					+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
+					+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
+					+ " where a1.connectionno in (select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill "
+					+ "	where bill.id=pd.billid "
+					+ "	 and pd.receiptnumber='"+consumercode+"')";
+		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
+		} else {
+			queryString = "select a2.usagecategory from eg_sw_connection a1 "
+					+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
+					+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
+					+ " where a1.connectionno in (select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill "
+					+ "	where bill.id=pd.billid "
+					+ "	 and pd.receiptnumber='"+consumercode+"')";
+			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
+		}
+		try {
+			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+		} catch (Exception ex) {
+			log.error("Exception while reading usage category" + ex.getMessage());
+		}
+		return res;
+	}
+	public List<String> fetchAddressByApplicationnos(Set<String> consumerCodes,String businesssrvice) {
+		List<String> res = new ArrayList<>();
+		String consumercode = null;
+		 Iterator<String> iterate = consumerCodes.iterator();
+		 while(iterate.hasNext()) {
+			    consumercode =   iterate.next();			  
+		}
+		Map<String, Object> preparedStatementValues = new HashMap<>();
+		String queryString;
+		if (businesssrvice.contains("WS")) {
+			 queryString = "SELECT TRIM(BOTH ',' FROM CONCAT_WS(',', "
+			 		+ "                NULLIF(doorno, ''), "
+			 		+ "                NULLIF(plotno, ''), "
+			 		+ "                NULLIF(buildingname, ''), "
+			 		+ "                NULLIF(street, ''), "
+			 		+ "                NULLIF(landmark, ''), "
+			 		+ "                NULLIF(city, ''), "
+			 		+ "                NULLIF(district, ''), "
+			 		+ "                NULLIF(region, ''), "
+			 		+ "                NULLIF(pincode, '') "
+		
+			 		+ "            )) AS connectionno "
+			 		+ "FROM eg_ws_connection a1 "
+			 		+ "INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid "
+			 		+ "INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid  "
+			 		+ " where a1.connectionno in (select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill"
+						+ "	where bill.id=pd.billid "
+						+ " and pd.receiptnumber='"+consumercode+"')";
+		log.info("Query for fetchAddressByApplicationno: " +queryString);
+		}
+		else {
+			 queryString = "SELECT TRIM(BOTH ',' FROM CONCAT_WS(',', "
+				 		+ "                NULLIF(doorno, ''), "
+				 		+ "                NULLIF(plotno, ''), "
+				 		+ "                NULLIF(buildingname, ''), "
+				 		+ "                NULLIF(street, ''), "
+				 		+ "                NULLIF(landmark, ''), "
+				 		+ "                NULLIF(city, ''), "
+				 		+ "                NULLIF(district, ''), "
+				 		+ "                NULLIF(region, ''), "
+				 		+ "                NULLIF(pincode, '') "
+			
+				 		+ "            )) AS connectionno "
+				 		+ "FROM eg_sw_connection a1 "
+				 		+ "INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid "
+				 		+ "INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid  "
+				 		+ " where a1.connectionno in (select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill"
+							+ "	where bill.id=pd.billid "
+							+ " and pd.receiptnumber='"+consumercode+"')";
+				log.info("Query for fetchAddressByApplicationno: " +queryString);
+		}
+		try {
+			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+		} catch (Exception ex) {
+			log.error("Exception while reading usage category" + ex.getMessage());
+		}
+		return res;
+	}
+	
+	// for propertyid//
+	
+	public List<String> fetchPropertyid(Set<String> consumerCodes,String businesssrvice) {
+		List<String> res = new ArrayList<>();
+		String consumercode = null;
+		 Iterator<String> iterate = consumerCodes.iterator();
+		 while(iterate.hasNext()) {
+			    consumercode =   iterate.next();			  
+		}		
+		Map<String, Object> preparedStatementValues = new HashMap<>();
+		String queryString;
+		if (businesssrvice.contains("WS")) {
+			queryString = "select property_id "
+					+ " FROM eg_ws_connection a1 "
+					+ " INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid "
+					+ " INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid "
+					+ " WHERE a1.connectionno in(select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill "
+					+ "	where bill.id=pd.billid "
+					+ "	 and pd.receiptnumber='"+consumercode+"')";
+		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
+		} else {
+			queryString = "select property_id "
+					+ " FROM eg_sw_connection a1 "
+					+ " INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid "
+					+ " INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid "
+					+ " WHERE a1.connectionno in(select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill "
+					+ "	where bill.id=pd.billid "
+					+ "	 and pd.receiptnumber='"+consumercode+"')";
+			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
+		}
+		try {
+			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+		} catch (Exception ex) {
+			log.error("Exception while reading usage category" + ex.getMessage());
+		}
+		return res;
+	}
+
 	/**
 	 * API is to get the distinct ifsccode from payment
 	 * 

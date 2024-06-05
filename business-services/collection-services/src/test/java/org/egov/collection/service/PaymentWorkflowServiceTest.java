@@ -165,9 +165,7 @@ class PaymentWorkflowServiceTest {
         BigDecimal totalAmountPaid = BigDecimal.valueOf(42L);
         AuditDetails auditDetails = new AuditDetails();
         MissingNode additionalDetails = MissingNode.getInstance();
-        arrayList.add(new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L, PaymentModeEnum.CASH, 1L, "42",
-                InstrumentStatusEnum.APPROVED, "?key=", auditDetails, additionalDetails, new ArrayList<>(), "?key=", "42",
-                "?key=", "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42"));
+        arrayList.add(new Payment());
         assertTrue(paymentWorkflowService.generateNewReceiptUponStatusChange(arrayList, new RequestInfo()).isEmpty());
     }
 

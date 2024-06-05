@@ -78,10 +78,7 @@ class PaymentValidatorTest {
         BigDecimal totalAmountPaid = BigDecimal.valueOf(42L);
         AuditDetails auditDetails = new AuditDetails();
         MissingNode additionalDetails = MissingNode.getInstance();
-        when(paymentRequest.getPayment()).thenReturn(new Payment("42", "42", totalDue, totalAmountPaid, "42", 4L,
-                PaymentModeEnum.CASH, 4L, "42", InstrumentStatusEnum.APPROVED, "INVALID_USER_INFO", auditDetails,
-                additionalDetails, new ArrayList<>(), "INVALID_USER_INFO", "42", "INVALID_USER_INFO", "42 Main St",
-                "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42"));
+        when(paymentRequest.getPayment()).thenReturn(new Payment());
         doNothing().when(paymentRequest).setPayment((Payment) any());
         paymentRequest.setPayment(payment);
         assertThrows(CustomException.class, () -> paymentValidator.validatePaymentForCreate(paymentRequest));

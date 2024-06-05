@@ -76,10 +76,7 @@ class PaymentRepositoryTest {
         AuditDetails auditDetails = new AuditDetails();
         MissingNode additionalDetails = MissingNode.getInstance();
         this.paymentRepository
-                .savePayment(new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L, PaymentModeEnum.CASH, 1L, "42",
-                        InstrumentStatusEnum.APPROVED, "Failed to persist payment to database", auditDetails, additionalDetails,
-                        new ArrayList<>(), "Failed to persist payment to database", "42", "Failed to persist payment to database",
-                        "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42"));
+                .savePayment(new Payment());
         verify(this.namedParameterJdbcTemplate).update((String) any(),
                 (org.springframework.jdbc.core.namedparam.SqlParameterSource) any());
         verify(this.namedParameterJdbcTemplate, atLeast(1)).batchUpdate((String) any(),
@@ -96,11 +93,7 @@ class PaymentRepositoryTest {
         BigDecimal totalAmountPaid = BigDecimal.valueOf(42L);
         MissingNode additionalDetails = MissingNode.getInstance();
         assertThrows(CustomException.class,
-                () -> this.paymentRepository.savePayment(new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L,
-                        PaymentModeEnum.CASH, 1L, "42", InstrumentStatusEnum.APPROVED, "Failed to persist payment to database",
-                        null, additionalDetails, new ArrayList<>(), "Failed to persist payment to database", "42",
-                        "Failed to persist payment to database", "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW,
-                        "42")));
+                () -> this.paymentRepository.savePayment(new Payment()));
     }
 
     @Test
@@ -113,10 +106,7 @@ class PaymentRepositoryTest {
         BigDecimal totalAmountPaid = BigDecimal.valueOf(42L);
         AuditDetails auditDetails = new AuditDetails();
         NullNode additionalDetails = NullNode.getInstance();
-        Payment payment = new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L, PaymentModeEnum.CASH, 1L, "42",
-                InstrumentStatusEnum.APPROVED, "Failed to persist payment to database", auditDetails, additionalDetails,
-                new ArrayList<>(), "Failed to persist payment to database", "42", "Failed to persist payment to database",
-                "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42");
+        Payment payment = new Payment();
 
         this.paymentRepository.savePayment(payment);
         verify(this.namedParameterJdbcTemplate).update((String) any(),
@@ -344,9 +334,7 @@ class PaymentRepositoryTest {
         BigDecimal totalAmountPaid = BigDecimal.valueOf(42L);
         AuditDetails auditDetails = new AuditDetails();
         MissingNode additionalDetails = MissingNode.getInstance();
-        paymentList.add(new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L, PaymentModeEnum.CASH, 1L, "42",
-                InstrumentStatusEnum.APPROVED, "id", auditDetails, additionalDetails, new ArrayList<>(), "id", "42", "id",
-                "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42"));
+        paymentList.add(new Payment());
         this.paymentRepository.updateStatus(paymentList);
         verify(this.namedParameterJdbcTemplate, atLeast(1)).batchUpdate((String) any(),
                 (org.springframework.jdbc.core.namedparam.SqlParameterSource[]) any());
@@ -371,9 +359,7 @@ class PaymentRepositoryTest {
         BigDecimal totalDue = BigDecimal.valueOf(42L);
         BigDecimal totalAmountPaid = BigDecimal.valueOf(42L);
         MissingNode additionalDetails = MissingNode.getInstance();
-        paymentList.add(new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L, PaymentModeEnum.CASH, 1L, "42",
-                InstrumentStatusEnum.APPROVED, "id", null, additionalDetails, new ArrayList<>(), "id", "42", "id", "42 Main St",
-                "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42"));
+        paymentList.add(new Payment());
         assertThrows(CustomException.class, () -> this.paymentRepository.updateStatus(paymentList));
     }
 
@@ -387,9 +373,7 @@ class PaymentRepositoryTest {
         BigDecimal totalDue = BigDecimal.valueOf(42L);
         BigDecimal totalAmountPaid = BigDecimal.valueOf(42L);
         AuditDetails auditDetails = new AuditDetails();
-        Payment e = new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L, PaymentModeEnum.CASH, 1L, "42",
-                InstrumentStatusEnum.APPROVED, "id", auditDetails, MissingNode.getInstance(), paymentDetailList, "id", "42",
-                "id", "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42");
+        Payment e = new Payment();
 
         ArrayList<Payment> paymentList = new ArrayList<>();
         paymentList.add(e);
@@ -452,9 +436,7 @@ class PaymentRepositoryTest {
         BigDecimal totalAmountPaid = BigDecimal.valueOf(42L);
         AuditDetails auditDetails = new AuditDetails();
         MissingNode additionalDetails = MissingNode.getInstance();
-        paymentList.add(new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L, PaymentModeEnum.CASH, 1L, "42",
-                InstrumentStatusEnum.APPROVED, "id", auditDetails, additionalDetails, new ArrayList<>(), "id", "42", "id",
-                "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42"));
+        paymentList.add(new Payment());
         this.paymentRepository.updatePayment(paymentList);
         verify(this.namedParameterJdbcTemplate, atLeast(1)).batchUpdate((String) any(),
                 (org.springframework.jdbc.core.namedparam.SqlParameterSource[]) any());
