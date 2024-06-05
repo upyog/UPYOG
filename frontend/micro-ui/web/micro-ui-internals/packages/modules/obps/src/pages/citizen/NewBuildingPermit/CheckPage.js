@@ -390,8 +390,13 @@ setWaterCharges(Malbafees/2)
     }
     function setLessAdjusmentVal(value) {
     if(/^[0-9]*$/.test(value)){
+      if(parseInt(value)>((parseInt(development)?parseInt(development):0)+(parseInt(otherCharges)?parseInt(otherCharges):0)+parseInt(malbafees)+parseInt(labourCess)+parseInt(waterCharges)+parseInt(gaushalaFees))){
+        alert(t("Less adjustment fees cannot be grater than Total of other P2 fees"))
+      }
+      else{
       setLessAdjusment(value);
       sessionStorage.setItem("lessAdjusment",value)
+      }      
     }
     else{
      alert(t("Please enter numbers"))
@@ -694,7 +699,7 @@ function selectfile(e) {
             </a>
             }            
             <Row className="border-none"></Row>
-       <Row  className="border-none" label={t(`BPA_P2_TOTAL_FEE`)} text={`₹ ${(parseInt(development)+parseInt(otherCharges)+parseInt(malbafees)+parseInt(labourCess)+parseInt(waterCharges)+parseInt(gaushalaFees))-parseInt(lessAdjusment)}`} />
+       <Row  className="border-none" label={t(`BPA_P2_TOTAL_FEE`)} text={`₹ ${((parseInt(development)?parseInt(development):0)+(parseInt(otherCharges)?parseInt(otherCharges):0)+parseInt(malbafees)+parseInt(labourCess)+parseInt(waterCharges)+parseInt(gaushalaFees))-(parseInt(lessAdjusment)?parseInt(lessAdjusment):0)}`} />
        
        </StatusTable>
        <br></br>

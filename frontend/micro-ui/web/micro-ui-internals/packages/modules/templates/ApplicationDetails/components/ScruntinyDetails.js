@@ -102,8 +102,13 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails,a
   }
   function setLessAdjusmentVal(value) {
   if(/^[0-9]*$/.test(value)){
+    if(parseInt(value)>(parseInt(development)?parseInt(development):0)+(parseInt(otherCharges?parseInt(otherCharges):0))+parseInt(additionalDetails?.selfCertificationCharges?.BPA_MALBA_CHARGES)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_LABOUR_CESS)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_WATER_CHARGES)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_GAUSHALA_CHARGES_CESS)){
+      alert("Less adjustment fees cannot be grater than Total of other P2 fees")
+    }
+    else{
     setLessAdjusment(value);
     sessionStorage.setItem("lessAdjusment",value)
+    }    
   }
   else{
     //alert("Please enter numbers")
@@ -241,7 +246,7 @@ function selectfile(e) {
             </a>
             }            
             <Row className="border-none"></Row>
-       <Row  className="border-none" label={t(`BPA_P2_TOTAL_FEE`)} text={`₹ ${(parseInt(development)+parseInt(otherCharges)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_MALBA_CHARGES)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_LABOUR_CESS)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_WATER_CHARGES)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_GAUSHALA_CHARGES_CESS))-parseInt(lessAdjusment)}`} />
+       <Row  className="border-none" label={t(`BPA_P2_TOTAL_FEE`)} text={`₹ ${((parseInt(development)?parseInt(development):0)+(parseInt(otherCharges?parseInt(otherCharges):0))+parseInt(additionalDetails?.selfCertificationCharges?.BPA_MALBA_CHARGES)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_LABOUR_CESS)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_WATER_CHARGES)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_GAUSHALA_CHARGES_CESS))-(parseInt(lessAdjusment)?parseInt(lessAdjusment):0)}`} />
             </div>}
           </div>
           }          
