@@ -811,4 +811,10 @@ config:
       - work-dir: "municipal-services/asset-services/src/main/resources/db"
         image-name: "asset-services-db" 
         
-   
+  - name: "builds/upyog/municipal-services/chb-services"
+    build:
+      - work-dir: "municipal-services/chb-services"
+        image-name: "chb-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/chb-services/src/main/resources/db"
+        image-name: "chb-services-db" 
