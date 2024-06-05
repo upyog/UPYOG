@@ -41,9 +41,7 @@ class PaymentQueryBuilderTest {
         AuditDetails auditDetails = new AuditDetails();
         MissingNode additionalDetails = MissingNode.getInstance();
 
-        Payment payment = new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L, PaymentModeEnum.CASH, 1L, "42",
-                InstrumentStatusEnum.APPROVED, "Ifsc Code", auditDetails, additionalDetails, new ArrayList<>(), "Paid By", "42",
-                "Payer Name", "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42");
+        Payment payment = new Payment();
         payment.setPaymentMode(PaymentModeEnum.CASH);
         assertEquals(23, PaymentQueryBuilder.getParametersForPaymentCreate(payment).getParameterNames().length);
     }
@@ -59,9 +57,7 @@ class PaymentQueryBuilderTest {
         BigDecimal totalAmountPaid = BigDecimal.valueOf(42L);
         MissingNode additionalDetails = MissingNode.getInstance();
 
-        Payment payment = new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L, PaymentModeEnum.CASH, 1L, "42",
-                InstrumentStatusEnum.APPROVED, "Ifsc Code", auditDetails, additionalDetails, new ArrayList<>(), "Paid By", "42",
-                "Payer Name", "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42");
+        Payment payment = new Payment();
         payment.setPaymentMode(PaymentModeEnum.CASH);
         assertEquals(23, PaymentQueryBuilder.getParametersForPaymentCreate(payment).getParameterNames().length);
         verify(auditDetails).getCreatedTime();
@@ -81,9 +77,7 @@ class PaymentQueryBuilderTest {
         BigDecimal totalAmountPaid = BigDecimal.valueOf(42L);
         NullNode additionalDetails = NullNode.getInstance();
 
-        Payment payment = new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L, PaymentModeEnum.CASH, 1L, "42",
-                InstrumentStatusEnum.APPROVED, "Ifsc Code", auditDetails, additionalDetails, new ArrayList<>(), "Paid By", "42",
-                "Payer Name", "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42");
+        Payment payment = new Payment();
         payment.setPaymentMode(PaymentModeEnum.CASH);
         assertEquals(23, PaymentQueryBuilder.getParametersForPaymentCreate(payment).getParameterNames().length);
         verify(auditDetails).getCreatedTime();
@@ -103,9 +97,7 @@ class PaymentQueryBuilderTest {
         BigDecimal totalAmountPaid = BigDecimal.valueOf(42L);
         BooleanNode additionalDetails = BooleanNode.getFalse();
 
-        Payment payment = new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L, PaymentModeEnum.CASH, 1L, "42",
-                InstrumentStatusEnum.APPROVED, "Ifsc Code", auditDetails, additionalDetails, new ArrayList<>(), "Paid By", "42",
-                "Payer Name", "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42");
+        Payment payment = new Payment();
         payment.setPaymentMode(PaymentModeEnum.CASH);
         assertEquals(23, PaymentQueryBuilder.getParametersForPaymentCreate(payment).getParameterNames().length);
         verify(auditDetails).getCreatedTime();
@@ -1052,9 +1044,7 @@ class PaymentQueryBuilderTest {
         HashSet<String> paymentModes = new HashSet<>();
         ArrayList<String> payerIds = new ArrayList<>();
         HashSet<String> consumerCodes = new HashSet<>();
-        PaymentSearchCriteria paymentSearchCriteria = new PaymentSearchCriteria(ids, billIds, "42", tenantIds,
-                receiptNumbers, status, instrumentStatus, paymentModes, payerIds, consumerCodes, new HashSet<>(), "42", "42",
-                1L, 1L, 2, 1, true);
+        PaymentSearchCriteria paymentSearchCriteria = new PaymentSearchCriteria();
 
         HashMap<String, Object> stringObjectMap = new HashMap<>();
         assertEquals("SELECT py.*,pyd.*,py.id as py_id,py.tenantId as py_tenantId,py.totalAmountPaid as py_totalAmountPaid"
@@ -2076,9 +2066,7 @@ class PaymentQueryBuilderTest {
         AuditDetails auditDetails = new AuditDetails();
         MissingNode additionalDetails = MissingNode.getInstance();
 
-        Payment payment = new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L, PaymentModeEnum.CASH, 1L, "42",
-                InstrumentStatusEnum.APPROVED, "Ifsc Code", auditDetails, additionalDetails, new ArrayList<>(), "Paid By", "42",
-                "Payer Name", "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42");
+        Payment payment = new Payment();
         payment.setInstrumentStatus(InstrumentStatusEnum.APPROVED);
         MapSqlParameterSource actualParametersForPaymentStatusUpdate = PaymentQueryBuilder
                 .getParametersForPaymentStatusUpdate(payment);
@@ -2098,9 +2086,7 @@ class PaymentQueryBuilderTest {
         BigDecimal totalAmountPaid = BigDecimal.valueOf(42L);
         MissingNode additionalDetails = MissingNode.getInstance();
 
-        Payment payment = new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L, PaymentModeEnum.CASH, 1L, "42",
-                InstrumentStatusEnum.APPROVED, "Ifsc Code", auditDetails, additionalDetails, new ArrayList<>(), "Paid By", "42",
-                "Payer Name", "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42");
+        Payment payment = new Payment();
         payment.setInstrumentStatus(InstrumentStatusEnum.APPROVED);
         MapSqlParameterSource actualParametersForPaymentStatusUpdate = PaymentQueryBuilder
                 .getParametersForPaymentStatusUpdate(payment);
@@ -2122,9 +2108,7 @@ class PaymentQueryBuilderTest {
         BigDecimal totalAmountPaid = BigDecimal.valueOf(42L);
         NullNode additionalDetails = NullNode.getInstance();
 
-        Payment payment = new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L, PaymentModeEnum.CASH, 1L, "42",
-                InstrumentStatusEnum.APPROVED, "Ifsc Code", auditDetails, additionalDetails, new ArrayList<>(), "Paid By", "42",
-                "Payer Name", "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42");
+        Payment payment = new Payment();
         payment.setInstrumentStatus(InstrumentStatusEnum.APPROVED);
         MapSqlParameterSource actualParametersForPaymentStatusUpdate = PaymentQueryBuilder
                 .getParametersForPaymentStatusUpdate(payment);
@@ -2146,9 +2130,7 @@ class PaymentQueryBuilderTest {
         BigDecimal totalAmountPaid = BigDecimal.valueOf(42L);
         BooleanNode additionalDetails = BooleanNode.getFalse();
 
-        Payment payment = new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L, PaymentModeEnum.CASH, 1L, "42",
-                InstrumentStatusEnum.APPROVED, "Ifsc Code", auditDetails, additionalDetails, new ArrayList<>(), "Paid By", "42",
-                "Payer Name", "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42");
+        Payment payment = new Payment();
         payment.setInstrumentStatus(InstrumentStatusEnum.APPROVED);
         MapSqlParameterSource actualParametersForPaymentStatusUpdate = PaymentQueryBuilder
                 .getParametersForPaymentStatusUpdate(payment);
@@ -2176,9 +2158,7 @@ class PaymentQueryBuilderTest {
         AuditDetails auditDetails = new AuditDetails();
         MissingNode additionalDetails = MissingNode.getInstance();
         MapSqlParameterSource actualParametersForPaymentUpdate = PaymentQueryBuilder.getParametersForPaymentUpdate(
-                new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L, PaymentModeEnum.CASH, 1L, "42",
-                        InstrumentStatusEnum.APPROVED, "id", auditDetails, additionalDetails, new ArrayList<>(), "id", "42", "id",
-                        "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42"));
+                new Payment());
         assertEquals(8, actualParametersForPaymentUpdate.getParameterNames().length);
         assertEquals("jsonb", ((PGobject) actualParametersForPaymentUpdate.getValues().get("additionalDetails")).getType());
         assertEquals("", ((PGobject) actualParametersForPaymentUpdate.getValues().get("additionalDetails")).getValue());
