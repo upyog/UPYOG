@@ -12,7 +12,7 @@ RUN yarn add @egovernments/digit-ui-module-pgr
 RUN yarn add @egovernments/digit-ui-module-noc
 RUN yarn add @egovernments/digit-ui-module-engagement
 RUN yarn add @egovernments/digit-ui-module-hrms
-RUN yarn add @egovernments/digit-ui-module-core
+RUN yarn add @upyog/digit-ui-module-core
 RUN yarn add @egovernments/digit-ui-module-obps
 RUN yarn add @egovernments/digit-ui-module-common
 RUN yarn add @egovernments/digit-ui-module-ws

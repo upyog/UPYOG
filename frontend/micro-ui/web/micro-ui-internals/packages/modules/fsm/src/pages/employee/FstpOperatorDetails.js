@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
 import { useParams, useHistory, useLocation } from "react-router-dom";
 import TimePicker from "react-time-picker";
-import { Dropdown, Header, MultiUploadWrapper, RadioButtons, TextArea } from "@egovernments/digit-ui-react-components";
+import { Dropdown, Header, MultiUploadWrapper, RadioButtons, TextArea } from "@upyog/digit-ui-react-components";
 import {
   Card,
   CardLabel,

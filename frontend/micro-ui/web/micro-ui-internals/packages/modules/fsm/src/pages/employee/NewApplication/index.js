@@ -505,7 +505,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
         ]
     }
 ]
-  console.log("configs",configs)
+  console.log(conf,"confffffffff")
   return (
     <React.Fragment>
       <div style={{ marginLeft: "15px" }}>

@@ -1,4 +1,4 @@
-import { FormComposer, Header, Toast, Loader } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Header, Toast, Loader } from "@upyog/digit-ui-react-components";
 import cloneDeep from "lodash/cloneDeep";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
