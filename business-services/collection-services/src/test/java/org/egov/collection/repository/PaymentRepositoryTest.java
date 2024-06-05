@@ -373,9 +373,7 @@ class PaymentRepositoryTest {
         BigDecimal totalDue = BigDecimal.valueOf(42L);
         BigDecimal totalAmountPaid = BigDecimal.valueOf(42L);
         AuditDetails auditDetails = new AuditDetails();
-        Payment e = new Payment("42", "42", totalDue, totalAmountPaid, "42", 1L, PaymentModeEnum.CASH, 1L, "42",
-                InstrumentStatusEnum.APPROVED, "id", auditDetails, MissingNode.getInstance(), paymentDetailList, "id", "42",
-                "id", "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42", null, null, null, null);
+        Payment e = new Payment();
 
         ArrayList<Payment> paymentList = new ArrayList<>();
         paymentList.add(e);
