@@ -525,17 +525,17 @@ public class PaymentValidator {
 	 * @param errorMap
 	 */
 
-    private void validateIFSCCode(PaymentRequest paymentRequest) {
+     private void validateIFSCCode(PaymentRequest paymentRequest) {
 		// TODO Auto-generated method stub
 		JsonNode razorPayIfscSearchResponse = null;
 		if (paymentRequest.getPayment().getIfscCode() != null) {
 
 			String response = serviceRequestRepository
 					.fetchGetResult(applicationProperties.getRazorPayUrl() + paymentRequest.getPayment().getIfscCode());
-			ObjectNode objectNode = (ObjectNode) paymentRequest.getPayment().getAdditionalDetails();
+			com.fasterxml.jackson.databind.node.ArrayNode objectNode = (com.fasterxml.jackson.databind.node.ArrayNode) paymentRequest.getPayment().getAdditionalDetails();
 			if (objectNode == null) {
 				ObjectMapper mapper = new ObjectMapper();
-				objectNode = mapper.createObjectNode();
+				ObjectNode objectNode1 = mapper.createObjectNode();
 				
 					try {
 						razorPayIfscSearchResponse = mapper.readTree(response);
@@ -543,8 +543,8 @@ public class PaymentValidator {
 						throw new CustomException("INVALID_PROCESS_EXCEPTION", e.getMessage());
 
 				} 
-				objectNode.set("bankDetails", razorPayIfscSearchResponse);
-				paymentRequest.getPayment().setAdditionalDetails(objectNode);
+				objectNode1.set("bankDetails", razorPayIfscSearchResponse);
+				paymentRequest.getPayment().setAdditionalDetails(objectNode1);
 			}
 
 		}
