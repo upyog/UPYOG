@@ -135,6 +135,7 @@ public class PaymentQueryBuilder {
 
     public static final String FILESTOREID_UPDATE_PAYMENT_SQL = "UPDATE egcl_payment SET filestoreid=:filestoreid WHERE id=:id;";
 
+    public static final String FILESTOREID_UPDATE_NULL_PAYMENT_SQL = "UPDATE egcl_payment SET filestoreid=null WHERE id=:id;";
 
 
     // Payment update queries

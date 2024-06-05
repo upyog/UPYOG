@@ -56,7 +56,7 @@ public class PaymentEnricher {
 	@Autowired
 	private MDMSService mdmsService;
 
-	public void enrichPaymentPreValidate(PaymentRequest paymentRequest) {
+	public void enrichPaymentPreValidate(PaymentRequest paymentRequest,boolean ismigration) {
 
 		Payment payment = paymentRequest.getPayment();
 		String tenantId = payment.getTenantId();
@@ -132,8 +132,11 @@ public class PaymentEnricher {
 			paymentDetail.setId(UUID.randomUUID().toString());
 			paymentDetail.setTenantId(payment.getTenantId());
 			paymentDetail.setAuditDetails(auditDetails);
+			if(!ismigration) {
+				paymentDetail.setReceiptDate(System.currentTimeMillis());	
+			}
 			paymentDetail.setReceiptType(ReceiptType.BILLBASED.toString());
-			paymentDetail.setReceiptDate(System.currentTimeMillis());
+		
 			paymentDetail.setTotalDue(billIdToBillMap.get(paymentDetail.getBillId()).getTotalAmount());
 		});
 		if (!errorMap.isEmpty())
