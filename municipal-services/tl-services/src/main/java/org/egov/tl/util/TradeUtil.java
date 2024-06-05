@@ -130,6 +130,7 @@ public class TradeUtil {
 
         tlMasterDetails.add(MasterDetail.builder().name(TRADE_TYPE).build());
         tlMasterDetails.add(MasterDetail.builder().name(ACCESSORIES_CATEGORY).build());
+        tlMasterDetails.add(MasterDetail.builder().name(ACCESSORIES_CATEGORY_PART_2).build());
         tlMasterDetails.add(MasterDetail.builder().name(REMINDER_PERIODS).build());
 
         ModuleDetail tlModuleDtls = ModuleDetail.builder().masterDetails(tlMasterDetails)
