@@ -230,11 +230,12 @@ public class ReportService {
         if ((reportDefinition.getdecryptionPathId()!= null)&&(reportRequest.getRequestInfo()!=null)&&(reportRequest.getRequestInfo().getUserInfo()!=null))
         {
             try {
-         User userInfo=getEncrichedandCopiedUserInfo(reportRequest.getRequestInfo().getUserInfo());
-                maps = encryptionService.decryptJson(maps,reportDefinition.getdecryptionPathId(),
-                        userInfo,Map.class);
-                auditDecryptRequest(maps, reportDefinition.getdecryptionPathId(),
-                        reportRequest.getRequestInfo().getUserInfo());
+            								
+            	 User userInfo=getEncrichedandCopiedUserInfo(reportRequest.getRequestInfo().getUserInfo());
+                 maps = encryptionService.decryptJson(maps,reportDefinition.getdecryptionPathId(),
+                         userInfo,Map.class);
+                 auditDecryptRequest(maps, reportDefinition.getdecryptionPathId(),
+                         reportRequest.getRequestInfo().getUserInfo());
             } catch (IOException e) {
                 log.error("IO exception while decrypting report: " + e.getMessage());
                 throw new CustomException("REPORT_DECRYPTION_ERROR", "Error while decrypting report data");
