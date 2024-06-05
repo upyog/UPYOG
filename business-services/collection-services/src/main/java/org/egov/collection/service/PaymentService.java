@@ -103,17 +103,21 @@ public class PaymentService {
      	 // if(businessservice.equals("WS")||businessservice.equals("SW")) {
        //       setPropertyData(receiptnumber,payments);
        //   }
-// 	if((businessservice.equals("WS")||businessservice.equals("SW") )|| payments.get(0).getAddress().isEmpty()) {
-//   	 List<String> usageCategory = paymentRepository.fetchUsageCategoryByApplicationnos(paymentSearchCriteria.getReceiptNumbers(),businessservice);
-//          List<String> address = paymentRepository.fetchAddressByApplicationnos(paymentSearchCriteria.getReceiptNumbers(),businessservice);
-//          List<String> propertyIds = paymentRepository.fetchPropertyid(paymentSearchCriteria.getReceiptNumbers(), businessservice);
+ if((businessservice.equals("WS")||businessservice.equals("SW") ) && payments.get(0).getAddress()==null) {
+   	  List<String> usageCategory = paymentRepository.fetchUsageCategoryByApplicationnos(paymentSearchCriteria.getReceiptNumbers(),businessservice);
+          List<String> address = paymentRepository.fetchAddressByApplicationnos(paymentSearchCriteria.getReceiptNumbers(),businessservice);
+          List<String> propertyIds = paymentRepository.fetchPropertyid(paymentSearchCriteria.getReceiptNumbers(), businessservice);
+          System.out.println("Receipt Number: " + receiptnumber);
+          System.out.println("Payments: " + payments);   
+          setPropertyData(receiptnumber,payments);
+          payments.get(0).setUsageCategory(usageCategory.get(0));
+   	  payments.get(0).setAddress(address.get(0));
+          payments.get(0).setPropertyId(propertyIds.get(0));
 
-// //           setPropertyData(receiptnumber,payments);
-//          payments.get(0).setUsageCategory(usageCategory.get(0));
-//   		 payments.get(0).setAddress(address.get(0));
-//   		payments.get(0).setPropertyId(propertyIds.get(0));
-
-//    }
+    }
+ 	else {
+ 		  return payments;
+ 	}
 	}
         return payments;
     }
