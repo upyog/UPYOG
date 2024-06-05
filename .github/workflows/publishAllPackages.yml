@@ -3,7 +3,7 @@ name: Node.js Publish UI Packages
 on:
   push:
 
-    branches: [ 'digit2.9eGov' ]
+    branches: [ 'digit2.9' ]
 
     paths:
       - 'frontend/micro-ui/web/micro-ui-internals/**'
