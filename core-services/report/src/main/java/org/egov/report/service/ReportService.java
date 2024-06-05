@@ -230,8 +230,11 @@ public class ReportService {
         if ((reportDefinition.getdecryptionPathId()!= null)&&(reportRequest.getRequestInfo()!=null)&&(reportRequest.getRequestInfo().getUserInfo()!=null))
         {
             try {
-                maps = encryptionService.decryptJson(reportRequest.getRequestInfo(), maps,
-                        reportDefinition.getdecryptionPathId(), "Retrieve Report Data", Map.class);
+         User userInfo=getEncrichedandCopiedUserInfo(reportRequest.getRequestInfo().getUserInfo());
+                maps = encryptionService.decryptJson(maps,reportDefinition.getdecryptionPathId(),
+                        userInfo,Map.class);
+                auditDecryptRequest(maps, reportDefinition.getdecryptionPathId(),
+                        reportRequest.getRequestInfo().getUserInfo());
             } catch (IOException e) {
                 log.error("IO exception while decrypting report: " + e.getMessage());
                 throw new CustomException("REPORT_DECRYPTION_ERROR", "Error while decrypting report data");
@@ -300,6 +303,25 @@ public class ReportService {
         reportResponse.setReportHeader(columnDetails);
     }
 
+ private void auditDecryptRequest(List<Map<String, Object>> maps, String decryptionPathId, User userInfo) {
+        String purpose = "Report";
+
+        ObjectNode abacParams = objectMapper.createObjectNode();
+        abacParams.set("key", TextNode.valueOf(decryptionPathId));
+
+        List<String> decryptedEntityUuid = new ArrayList<>();
+
+        for (Map map : maps) {
+            if(map.containsKey("uuid")) {
+                decryptedEntityUuid.add((String) map.get("uuid"));
+            }
+        }
+
+        ObjectNode auditData = objectMapper.createObjectNode();
+        auditData.set("entityType", TextNode.valueOf(User.class.getName()));
+        auditData.set("decryptedEntityIds", objectMapper.valueToTree(decryptedEntityUuid));
+        auditService.audit(userInfo.getUuid(), System.currentTimeMillis(), purpose, abacParams, auditData);
+    }
     private User getEncrichedandCopiedUserInfo(User userInfo)
     {
         List<org.egov.common.contract.request.Role>newRoleList=new ArrayList<>();
