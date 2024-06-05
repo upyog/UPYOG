@@ -813,8 +813,8 @@ config:
         
   - name: "builds/upyog/municipal-services/chb-services"
     build:
-      - work-dir: "municipal-services/chb-services"
+      - work-dir: "municipal-services/community-hall-booking"
         image-name: "chb-services"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "municipal-services/chb-services/src/main/resources/db"
+      - work-dir: "municipal-services/community-hall-booking/src/main/resources/db"
         image-name: "chb-services-db" 
