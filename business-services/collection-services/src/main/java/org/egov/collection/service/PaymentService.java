@@ -23,6 +23,8 @@ import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Service
 public class PaymentService {
@@ -122,7 +124,12 @@ public class PaymentService {
     }
 
 
-    
+    @Transactional
+    public Payment updatePaymentForFilestore(Payment payment) {
+
+       paymentRepository.updateFileStoreIdToNull(payment);
+        return payment;
+    }
     
     /**
      * Handles creation of a receipt, including multi-service, involves the following steps, - Enrich receipt from billing service
