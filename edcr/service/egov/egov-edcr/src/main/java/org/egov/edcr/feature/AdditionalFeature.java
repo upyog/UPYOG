@@ -767,10 +767,11 @@ public class AdditionalFeature extends FeatureProcess {
         if (pl.getUtility().getSegregationOfWaste() != null && !pl.getUtility().getSegregationOfWaste().isEmpty()) {
             addDetails(scrutinyDetail, "55-4-a", "Segregation of Waste", "Segregation of waste details",
                     "Provided segregation of waste details", Result.Accepted.getResultVal());
-        } else {
-            addDetails(scrutinyDetail, "55-4-a", "Segregation of Waste", "Segregation of waste details",
-                    "Not provided segregation of waste details", Result.Not_Accepted.getResultVal());
-        }
+        } 
+//        else {
+//            addDetails(scrutinyDetail, "55-4-a", "Segregation of Waste", "Segregation of waste details",
+//                    "Not provided segregation of waste details", Result.Not_Accepted.getResultVal());
+//        }
     }
 
     private void validate2b(Plan pl, ScrutinyDetail scrutinyDetail) {
@@ -779,11 +780,12 @@ public class AdditionalFeature extends FeatureProcess {
             addDetails(scrutinyDetail, "55-2-b", "Installation of Solar Assisted Water Heating Systems",
                     "Solar assisted water heating system details",
                     "Provided solar assisted water heating system details", Result.Accepted.getResultVal());
-        } else {
-            addDetails(scrutinyDetail, "55-2-b", "Installation of Solar Assisted Water Heating Systems",
-                    "Solar assisted water heating system details",
-                    "Not provided solar assisted water heating system details", Result.Not_Accepted.getResultVal());
-        }
+        } 
+//        else {
+//            addDetails(scrutinyDetail, "55-2-b", "Installation of Solar Assisted Water Heating Systems",
+//                    "Solar assisted water heating system details",
+//                    "Not provided solar assisted water heating system details", Result.Not_Accepted.getResultVal());
+//        }
     }
 
     private void validate2a(Plan pl, ScrutinyDetail scrutinyDetail) {
@@ -791,11 +793,12 @@ public class AdditionalFeature extends FeatureProcess {
             addDetails(scrutinyDetail, "55-2-a", "Installation of Solar Photovoltaic Panels",
                     "Solar photovoltaic panel details", "Provided solar photovoltaic panel details",
                     Result.Accepted.getResultVal());
-        } else {
-            addDetails(scrutinyDetail, "55-2-a", "Installation of Solar Photovoltaic Panels",
-                    "Solar photovoltaic panel details", "Not provided solar photovoltaic panel details",
-                    Result.Not_Accepted.getResultVal());
         }
+//        else {
+//            addDetails(scrutinyDetail, "55-2-a", "Installation of Solar Photovoltaic Panels",
+//                    "Solar photovoltaic panel details", "Not provided solar photovoltaic panel details",
+//                    Result.Not_Accepted.getResultVal());
+//        }
     }
 
     private void validate1a(Plan pl, ScrutinyDetail scrutinyDetail) {
