@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import Timeline from "../components/ASTTimeline";
 
 const AssetPincode = ({ t, config, onSelect, formData = {}, userType, register, errors, setError, formState, clearErrors }) => {
+  console.log("formdatata in pincodeee",formData);
   const tenants = Digit.Hooks.asset.useTenants();
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
@@ -29,6 +30,9 @@ const AssetPincode = ({ t, config, onSelect, formData = {}, userType, register, 
         max: "9999999",
         title: t("PTR_ADDRESS_PINCODE_INVALID"),
       },
+      style: {
+        width: "50%"
+      }
     },
   ];
   const [pincodeServicability, setPincodeServicability] = useState(null);
@@ -72,7 +76,7 @@ const AssetPincode = ({ t, config, onSelect, formData = {}, userType, register, 
           <LabelFieldPair key={index}>
             <CardLabel className="card-label-smaller">{t(input.label)}</CardLabel>
             <div className="field">
-              <TextInput key={input.name} value={pincode} onChange={onChange} {...input.validation} disable={presentInModifyApplication} autoFocus={presentInModifyApplication} />
+              <TextInput key={input.name} style={input.style} value={pincode} onChange={onChange} {...input.validation} disable={presentInModifyApplication} autoFocus={presentInModifyApplication} />
             </div>
           </LabelFieldPair>
           {error ? <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" }}>{error}</CardLabelError> : null}
@@ -83,7 +87,7 @@ const AssetPincode = ({ t, config, onSelect, formData = {}, userType, register, 
   const onSkip = () => onSelect();
   return (
     <React.Fragment>
-    {window.location.href.includes("/citizen") ? <Timeline currentStep={3}/> : null}
+    {window.location.href.includes("/employee") ? <Timeline currentStep={3}/> : null}
     <FormStep
       t={t}
       config={{ ...config, inputs }}
@@ -93,7 +97,7 @@ const AssetPincode = ({ t, config, onSelect, formData = {}, userType, register, 
       onSkip={onSkip}
       forcedError={t(pincodeServicability)}
     ></FormStep>
-            </React.Fragment>
+    </React.Fragment>
   );
 };
 
