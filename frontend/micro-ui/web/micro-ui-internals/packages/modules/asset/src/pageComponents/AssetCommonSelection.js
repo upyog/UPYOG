@@ -16,13 +16,12 @@
     import { useLocation } from "react-router-dom";
 
 
-    import AssetLand from "./AssetLand";
-    import AssetBuildings from "./AssetBuildings";
+  
 
     
     const createAssetcommon = () => ({
 
-      assetcommonselection: "",
+    //   assetcommonselection: "",
     
       key: Date.now(),
     });
@@ -62,9 +61,7 @@
     
         });
 
-    // AST_Type && AST_Type.map((AST_type_mdms) => {
-    //     AST_type.push(`${AST_type_mdms.code}`);
-    //   });
+    
 
       useEffect(() => {
         onSelect(config?.key, assetscommon);
@@ -164,7 +161,10 @@
             code: "NO",
             i18nKey: "NO"
         }
+        
       ]
+
+
 
       const surfaceselecttype = [
         {
@@ -249,8 +249,8 @@
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"LandType"}
-                      defaultValue={assetscommon?.LandType}
+                      name={"landType"}
+                      defaultValue={assetscommon?.landType}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
@@ -259,10 +259,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "LandType"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "landType"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "LandType" });
+                          setFocusIndex({ index: assetscommon.key, type: "landType" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -273,7 +273,7 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.LandType ? errors?.LandType?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.landType ? errors?.landType?.message : ""}</CardLabelError>
 
 
               <LabelFieldPair>
@@ -281,8 +281,8 @@
                 <div className="field">
                     <Controller
                     control={control}
-                    name={"Area"}
-                    defaultValue={assetscommon?.Area}
+                    name={"area"}
+                    defaultValue={assetscommon?.area}
                     rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         validate: {
@@ -293,10 +293,10 @@
                         <TextInput
                         value={props.value}
                         // disable={isEditScreen}
-                        autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "Area"}
+                        autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "area"}
                         onChange={(e) => {
                             props.onChange(e.target.value);
-                            setFocusIndex({ index: assetscommon.key, type: "Area" });
+                            setFocusIndex({ index: assetscommon.key, type: "area" });
                         }}
                         onBlur={(e) => {
                             setFocusIndex({ index: -1 });
@@ -307,15 +307,15 @@
                     />
                 </div>
                 </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.Area ? errors?.Area?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.area ? errors?.area?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_ACQUISTION_COST_BOOK_VALUE") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"BookValue"}
-                      defaultValue={assetscommon?.BookValue}
+                      name={"bookValue"}
+                      defaultValue={assetscommon?.bookValue}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -324,10 +324,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "BookValue"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "bookValue"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "BookValue" });
+                          setFocusIndex({ index: assetscommon.key, type: "bookValue" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -338,7 +338,7 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.BookValue ? errors?.BookValue?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.bookValue ? errors?.bookValue?.message : ""}</CardLabelError>
 
               
               <LabelFieldPair>
@@ -346,8 +346,8 @@
                 <div className="field">
                 <Controller
                     control={control}
-                    name={"DateofDeedExecution"}
-                    defaultValue={assetscommon?.DateofDeedExecution}
+                    name={"dateOfDeedExecution"}
+                    defaultValue={assetscommon?.dateOfDeedExecution}
                     rules={{
                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                     validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
@@ -365,7 +365,7 @@
                 />
                 </div>
             </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.DateofDeedExecution ? errors?.DateofDeedExecution?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.dateOfDeedExecution ? errors?.dateOfDeedExecution?.message : ""}</CardLabelError>
 
               
                 <LabelFieldPair>
@@ -373,8 +373,8 @@
                     <div className="field">
                     <Controller
                         control={control}
-                        name={"DateofPossesion"}
-                        defaultValue={assetscommon?.DateofPossesion}
+                        name={"dateFfPossession"}
+                        defaultValue={assetscommon?.dateFfPossession}
                         rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
@@ -392,15 +392,15 @@
                     />
                     </div>
                 </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.DateofPossesion ? errors?.DateofPossesion?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.dateFfPossession ? errors?.dateFfPossession?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_FROM_DEED_TAKEN") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"FromWhomDeedTaken"}
-                      defaultValue={assetscommon?.FromWhomDeedTaken}
+                      name={"fromWhomDeedTaken"}
+                      defaultValue={assetscommon?.fromWhomDeedTaken}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
@@ -409,10 +409,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "FromWhomDeedTaken"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "fromWhomDeedTaken"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "FromWhomDeedTaken" });
+                          setFocusIndex({ index: assetscommon.key, type: "fromWhomDeedTaken" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -423,15 +423,15 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.FromWhomDeedTaken ? errors?.FromWhomDeedTaken?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.fromWhomDeedTaken ? errors?.fromWhomDeedTaken?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_GOVT_ORDER_NUM") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"GovernmentorderNumber"}
-                      defaultValue={assetscommon?.GovernmentorderNumber}
+                      name={"governmentOrderNumber"}
+                      defaultValue={assetscommon?.governmentOrderNumber}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -440,10 +440,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "GovernmentorderNumber"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "governmentOrderNumber"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "GovernmentorderNumber" });
+                          setFocusIndex({ index: assetscommon.key, type: "governmentOrderNumber" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -454,15 +454,15 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.GovernmentorderNumber ? errors?.GovernmentorderNumber?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.governmentOrderNumber ? errors?.governmentOrderNumber?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_COLLECT_ORDER_NUM") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"CollectororderNumber"}
-                      defaultValue={assetscommon?.CollectororderNumber}
+                      name={"collectorOrderNumber"}
+                      defaultValue={assetscommon?.collectorOrderNumber}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -471,10 +471,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "CollectororderNumber"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "collectorOrderNumber"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "CollectororderNumber" });
+                          setFocusIndex({ index: assetscommon.key, type: "collectorOrderNumber" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -485,15 +485,15 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.CollectororderNumber ? errors?.CollectororderNumber?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.collectorOrderNumber ? errors?.collectorOrderNumber?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_COUNCIL_RES_NUM") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"CouncilResolutionNumber"}
-                      defaultValue={assetscommon?.CouncilResolutionNumber}
+                      name={"councilResolutionNumber"}
+                      defaultValue={assetscommon?.councilResolutionNumber}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -502,10 +502,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "CouncilResolutionNumber"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "councilResolutionNumber"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "CouncilResolutionNumber" });
+                          setFocusIndex({ index: assetscommon.key, type: "councilResolutionNumber" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -516,15 +516,15 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.CouncilResolutionNumber ? errors?.CouncilResolutionNumber?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.councilResolutionNumber ? errors?.councilResolutionNumber?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_AWARD_NUMBER") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"AwardNumber"}
-                      defaultValue={assetscommon?.AwardNumber}
+                      name={"awardNumber"}
+                      defaultValue={assetscommon?.awardNumber}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -533,10 +533,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "AwardNumber"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "awardNumber"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "AwardNumber" });
+                          setFocusIndex({ index: assetscommon.key, type: "awardNumber" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -547,15 +547,15 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.AwardNumber ? errors?.AwardNumber?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.awardNumber ? errors?.awardNumber?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_COI") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"OandMCOI"}
-                      defaultValue={assetscommon?.OandMCOI}
+                      name={"oAndMCOI"}
+                      defaultValue={assetscommon?.oAndMCOI}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
@@ -564,10 +564,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "OandMCOI"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "oAndMCOI"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "OandMCOI" });
+                          setFocusIndex({ index: assetscommon.key, type: "oAndMCOI" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -578,15 +578,15 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.OandMCOI ? errors?.OandMCOI?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.oAndMCOI ? errors?.oAndMCOI?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_OM_TASK") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"OandMTaskDetail"}
-                      defaultValue={assetscommon?.OandMTaskDetail}
+                      name={"oAndMTaskDetail"}
+                      defaultValue={assetscommon?.oAndMTaskDetail}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
@@ -595,10 +595,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "OandMTaskDetail"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "oAndMTaskDetail"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "OandMTaskDetail" });
+                          setFocusIndex({ index: assetscommon.key, type: "oAndMTaskDetail" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -609,15 +609,15 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.OandMTaskDetail ? errors?.OandMTaskDetail?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.oAndMTaskDetail ? errors?.oAndMTaskDetail?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_TOTAL_COST") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"Totalcost"}
-                      defaultValue={assetscommon?.Totalcost}
+                      name={"totalCost"}
+                      defaultValue={assetscommon?.totalCost}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -626,10 +626,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "Totalcost"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "totalCost"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "Totalcost" });
+                          setFocusIndex({ index: assetscommon.key, type: "totalCost" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -644,15 +644,15 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.Totalcost ? errors?.Totalcost?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.totalCost ? errors?.totalCost?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                 <CardLabel className="card-label-smaller">{t("AST_DEPRICIATION_RATE") }</CardLabel>
                 <div className="field">
                     <Controller
                     control={control}
-                    name={"DepriciationRate"}
-                    defaultValue={assetscommon?.DepriciationRate}
+                    name={"depreciationRate"}
+                    defaultValue={assetscommon?.depreciationRate}
                     rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         validate: {
@@ -663,10 +663,10 @@
                         <TextInput
                         value={props.value}
                         // disable={isEditScreen}
-                        autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "DepriciationRate"}
+                        autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "depreciationRate"}
                         onChange={(e) => {
                             props.onChange(e.target.value);
-                            setFocusIndex({ index: assetscommon.key, type: "DepriciationRate" });
+                            setFocusIndex({ index: assetscommon.key, type: "depreciationRate" });
                         }}
                         onBlur={(e) => {
                             setFocusIndex({ index: -1 });
@@ -677,15 +677,15 @@
                     />
                 </div>
                 </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.DepriciationRate ? errors?.DepriciationRate?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.depreciationRate ? errors?.depreciationRate?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_COST_AFTER_DEPRICIAT") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"Costafterdepriciation"}
-                      defaultValue={assetscommon?.Costafterdepriciation}
+                      name={"costAfterDepreciation"}
+                      defaultValue={assetscommon?.costAfterDepreciation}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -694,10 +694,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "Costafterdepriciation"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "costAfterDepreciation"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "Costafterdepriciation" });
+                          setFocusIndex({ index: assetscommon.key, type: "costAfterDepreciation" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -709,15 +709,15 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.Costafterdepriciation ? errors?.Costafterdepriciation?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.costAfterDepreciation ? errors?.costAfterDepreciation?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_CURRENT_VALUE") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"Currentassetvalue"}
-                      defaultValue={assetscommon?.Currentassetvalue}
+                      name={"currentAssetValue"}
+                      defaultValue={assetscommon?.currentAssetValue}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -726,10 +726,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "Currentassetvalue"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "currentAssetValue"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "Currentassetvalue" });
+                          setFocusIndex({ index: assetscommon.key, type: "currentAssetValue" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -741,15 +741,15 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.Currentassetvalue ? errors?.Currentassetvalue?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.currentAssetValue ? errors?.currentAssetValue?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_REVENUE_GENERATED") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"Revenuegeneratedbyasset"}
-                      defaultValue={assetscommon?.Revenuegeneratedbyasset}
+                      name={"revenueGeneratedByAsset"}
+                      defaultValue={assetscommon?.revenueGeneratedByAsset}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -758,10 +758,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "Revenuegeneratedbyasset"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "revenueGeneratedByAsset"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "Revenuegeneratedbyasset" });
+                          setFocusIndex({ index: assetscommon.key, type: "revenueGeneratedByAsset" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -773,7 +773,7 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.Revenuegeneratedbyasset ? errors?.Revenuegeneratedbyasset?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.revenueGeneratedByAsset ? errors?.revenueGeneratedByAsset?.message : ""}</CardLabelError>
 
               <br></br>
               <div style={{fontWeight: 'bold', fontSize: '24px'}}>{t("AST_ADDITIONAL_DETAILS")}<br></br></div>
@@ -783,8 +783,8 @@
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"OSRLand"}
-                      defaultValue={assetscommon?.OSRLand}
+                      name={"osrLand"}
+                      defaultValue={assetscommon?.osrLand}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
@@ -793,10 +793,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "OSRLand"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "osrLand"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "OSRLand" });
+                          setFocusIndex({ index: assetscommon.key, type: "osrLand" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -807,19 +807,21 @@
                   />
                   </div>
               </LabelFieldPair>
-              {/*<CardLabelError style={errorStyle}>{localFormState.touched.OSRLand ? errors?.OSRLand?.message : ""}</CardLabelError>*/}
+              {/*<CardLabelError style={errorStyle}>{localFormState.touched.osrLand ? errors?.osrLand?.message : ""}</CardLabelError>*/}
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_FENCED") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"isitfenced"}
-                      defaultValue={assetscommon?.isitfenced}
+                      name={"isItFenced"}
+                      defaultValue={assetscommon?.isItFenced}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       }}
-                      render={(props) => (
+                      render={(props) => 
+                        
+                        (
                         <Dropdown
                         className="form-field"
                         selected={props.value}
@@ -834,15 +836,15 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.isitfenced ? errors?.isitfenced?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.isItFenced ? errors?.isItFenced?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_ANY_BUILTUP") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"AnyBuiltup"}
-                      defaultValue={assetscommon?.AnyBuiltup}
+                      name={"anyBuiltup"}
+                      defaultValue={assetscommon?.anyBuiltup}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       }}
@@ -861,7 +863,7 @@
                   />
                   </div>
               </LabelFieldPair>
-            <CardLabelError style={errorStyle}>{localFormState.touched.AnyBuiltup ? errors?.AnyBuiltup?.message : ""}</CardLabelError>
+            <CardLabelError style={errorStyle}>{localFormState.touched.anyBuiltup ? errors?.anyBuiltup?.message : ""}</CardLabelError>
 
               
               
@@ -870,8 +872,8 @@
                       <div className="field">
                       <Controller
                           control={control}
-                          name={"howassetbeingused"}
-                          defaultValue={assetscommon?.howassetbeingused}
+                          name={"howAssetBeingUsed"}
+                          defaultValue={assetscommon?.howAssetBeingUsed}
                           rules={{
                           required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                           validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
@@ -880,10 +882,10 @@
                           <TextInput
                               value={props.value}
                               // disable={isEditScreen}
-                              autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "howassetbeingused"}
+                              autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "howAssetBeingUsed"}
                               onChange={(e) => {
                               props.onChange(e.target.value);
-                              setFocusIndex({ index: assetscommon.key, type: "howassetbeingused" });
+                              setFocusIndex({ index: assetscommon.key, type: "howAssetBeingUsed" });
                               }}
                               onBlur={(e) => {
                               setFocusIndex({ index: -1 });
@@ -908,8 +910,8 @@
                         <div className="field">
                         <Controller
                             control={control}
-                            name={"Buildingsno"}
-                            defaultValue={assetscommon?.Buildingsno}
+                            name={"buildingSno"}
+                            defaultValue={assetscommon?.buildingSno}
                             rules={{
                             required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                             validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -918,10 +920,10 @@
                             <TextInput
                                 value={props.value}
                                 // disable={isEditScreen}
-                                autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "Buildingsno"}
+                                autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "buildingSno"}
                                 onChange={(e) => {
                                 props.onChange(e.target.value);
-                                setFocusIndex({ index: assetscommon.key, type: "Buildingsno" });
+                                setFocusIndex({ index: assetscommon.key, type: "buildingSno" });
                                 }}
                                 onBlur={(e) => {
                                 setFocusIndex({ index: -1 });
@@ -932,15 +934,15 @@
                         />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.Buildingsno ? errors?.Buildingsno?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState.touched.buildingSno ? errors?.buildingSno?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_PLOT_AREA") }</CardLabel>
                         <div className="field">
                         <Controller
                             control={control}
-                            name={"plotarea"}
-                            defaultValue={assetscommon?.plotarea}
+                            name={"plotArea"}
+                            defaultValue={assetscommon?.plotArea}
                             rules={{
                             required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                             validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -949,10 +951,10 @@
                             <TextInput
                                 value={props.value}
                                 // disable={isEditScreen}
-                                autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "plotarea"}
+                                autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "plotArea"}
                                 onChange={(e) => {
                                 props.onChange(e.target.value);
-                                setFocusIndex({ index: assetscommon.key, type: "plotarea" });
+                                setFocusIndex({ index: assetscommon.key, type: "plotArea" });
                                 }}
                                 onBlur={(e) => {
                                 setFocusIndex({ index: -1 });
@@ -963,15 +965,15 @@
                         />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.plotarea ? errors?.plotarea?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState.touched.plotArea ? errors?.plotArea?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_PLINTH_AREA") }</CardLabel>
                         <div className="field">
                         <Controller
                             control={control}
-                            name={"plintharea"}
-                            defaultValue={assetscommon?.plintharea}
+                            name={"plinthArea"}
+                            defaultValue={assetscommon?.plinthArea}
                             rules={{
                             required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                             validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -980,10 +982,10 @@
                             <TextInput
                                 value={props.value}
                                 // disable={isEditScreen}
-                                autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "plintharea"}
+                                autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "plinthArea"}
                                 onChange={(e) => {
                                 props.onChange(e.target.value);
-                                setFocusIndex({ index: assetscommon.key, type: "plintharea" });
+                                setFocusIndex({ index: assetscommon.key, type: "plinthArea" });
                                 }}
                                 onBlur={(e) => {
                                 setFocusIndex({ index: -1 });
@@ -994,15 +996,15 @@
                         />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.plintharea ? errors?.plintharea?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState.touched.plinthArea ? errors?.plinthArea?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_FLOORS_NO") }</CardLabel>
                         <div className="field">
                         <Controller
                             control={control}
-                            name={"floorno"}
-                            defaultValue={assetscommon?.floorno}
+                            name={"floorNo"}
+                            defaultValue={assetscommon?.floorNo}
                             rules={{
                             required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                             validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -1011,10 +1013,10 @@
                             <TextInput
                                 value={props.value}
                                 // disable={isEditScreen}
-                                autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "floorno"}
+                                autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "floorNo"}
                                 onChange={(e) => {
                                 props.onChange(e.target.value);
-                                setFocusIndex({ index: assetscommon.key, type: "floorno" });
+                                setFocusIndex({ index: assetscommon.key, type: "floorNo" });
                                 }}
                                 onBlur={(e) => {
                                 setFocusIndex({ index: -1 });
@@ -1025,7 +1027,7 @@
                         />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.floorno ? errors?.floorno?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState.touched.floorNo ? errors?.floorNo?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
                     <CardLabel className="card-label-smaller">{t("AST_DIMENSIONS") }</CardLabel>
@@ -1065,8 +1067,8 @@
                         <div className="field">
                         <Controller
                             control={control}
-                            name={"floorarea"}
-                            defaultValue={assetscommon?.floorarea}
+                            name={"floorArea"}
+                            defaultValue={assetscommon?.floorArea}
                             rules={{
                             required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                             validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -1075,10 +1077,10 @@
                             <TextInput
                                 value={props.value}
                                 // disable={isEditScreen}
-                                autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "floorarea"}
+                                autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "floorArea"}
                                 onChange={(e) => {
                                 props.onChange(e.target.value);
-                                setFocusIndex({ index: assetscommon.key, type: "floorarea" });
+                                setFocusIndex({ index: assetscommon.key, type: "floorArea" });
                                 }}
                                 onBlur={(e) => {
                                 setFocusIndex({ index: -1 });
@@ -1089,7 +1091,7 @@
                         />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.floorarea ? errors?.floorarea?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState.touched.floorArea ? errors?.floorArea?.message : ""}</CardLabelError>
 
                     <br></br>
                     <div style={{fontWeight: 'bold', fontSize: '24px'}}>{t("AST_ADDITIONAL_DETAILS")}<br></br></div>
@@ -1100,8 +1102,8 @@
                     <div className="field">
                     <Controller
                         control={control}
-                        name={"BookValue"}
-                        defaultValue={assetscommon?.BookValue}
+                        name={"bookValue"}
+                        defaultValue={assetscommon?.bookValue}
                         rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -1110,10 +1112,10 @@
                         <TextInput
                             value={props.value}
                             // disable={isEditScreen}
-                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "BookValue"}
+                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "bookValue"}
                             onChange={(e) => {
                             props.onChange(e.target.value);
-                            setFocusIndex({ index: assetscommon.key, type: "BookValue" });
+                            setFocusIndex({ index: assetscommon.key, type: "bookValue" });
                             }}
                             onBlur={(e) => {
                             setFocusIndex({ index: -1 });
@@ -1125,7 +1127,7 @@
                     />
                     </div>
                 </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.BookValue ? errors?.BookValue?.message : ""}</CardLabelError>
+                <CardLabelError style={errorStyle}>{localFormState.touched.bookValue ? errors?.bookValue?.message : ""}</CardLabelError>
 
 
                 <LabelFieldPair>
@@ -1133,8 +1135,8 @@
                     <div className="field">
                     <Controller
                         control={control}
-                        name={"Totalcost"}
-                        defaultValue={assetscommon?.Totalcost}
+                        name={"totalCost"}
+                        defaultValue={assetscommon?.totalCost}
                         rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -1143,10 +1145,10 @@
                         <TextInput
                             value={props.value}
                             // disable={isEditScreen}
-                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "Totalcost"}
+                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "totalCost"}
                             onChange={(e) => {
                             props.onChange(e.target.value);
-                            setFocusIndex({ index: assetscommon.key, type: "Totalcost" });
+                            setFocusIndex({ index: assetscommon.key, type: "totalCost" });
                             }}
                             onBlur={(e) => {
                             setFocusIndex({ index: -1 });
@@ -1159,15 +1161,15 @@
                     />
                     </div>
                 </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.Totalcost ? errors?.Totalcost?.message : ""}</CardLabelError>
+                <CardLabelError style={errorStyle}>{localFormState.touched.totalCost ? errors?.totalCost?.message : ""}</CardLabelError>
 
                 <LabelFieldPair>
                     <CardLabel className="card-label-smaller">{t("AST_DEPRICIATION_RATE") }</CardLabel>
                     <div className="field">
                     <Controller
                         control={control}
-                        name={"DepriciationRate"}
-                        defaultValue={assetscommon?.DepriciationRate}
+                        name={"depreciationRate"}
+                        defaultValue={assetscommon?.depreciationRate}
                         rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?(%)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"),
@@ -1177,10 +1179,10 @@
                         <TextInput
                             value={props.value}
                             // disable={isEditScreen}
-                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "DepriciationRate"}
+                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "depreciationRate"}
                             onChange={(e) => {
                             props.onChange(e.target.value);
-                            setFocusIndex({ index: assetscommon.key, type: "DepriciationRate" });
+                            setFocusIndex({ index: assetscommon.key, type: "depreciationRate" });
                             }}
                             onBlur={(e) => {
                             setFocusIndex({ index: -1 });
@@ -1191,15 +1193,15 @@
                     />
                     </div>
                 </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.DepriciationRate ? errors?.DepriciationRate?.message : ""}</CardLabelError>
+                <CardLabelError style={errorStyle}>{localFormState.touched.depreciationRate ? errors?.depreciationRate?.message : ""}</CardLabelError>
 
                 <LabelFieldPair>
                     <CardLabel className="card-label-smaller">{t("AST_COST_AFTER_DEPRICIAT") }</CardLabel>
                     <div className="field">
                     <Controller
                         control={control}
-                        name={"Costafterdepriciation"}
-                        defaultValue={assetscommon?.Costafterdepriciation}
+                        name={"costAfterDepreciation"}
+                        defaultValue={assetscommon?.costAfterDepreciation}
                         rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -1208,10 +1210,10 @@
                         <TextInput
                             value={props.value}
                             // disable={isEditScreen}
-                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "Costafterdepriciation"}
+                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "costAfterDepreciation"}
                             onChange={(e) => {
                             props.onChange(e.target.value);
-                            setFocusIndex({ index: assetscommon.key, type: "Costafterdepriciation" });
+                            setFocusIndex({ index: assetscommon.key, type: "costAfterDepreciation" });
                             }}
                             onBlur={(e) => {
                             setFocusIndex({ index: -1 });
@@ -1224,15 +1226,15 @@
                     />
                     </div>
                 </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.Costafterdepriciation ? errors?.Costafterdepriciation?.message : ""}</CardLabelError>
+                <CardLabelError style={errorStyle}>{localFormState.touched.costAfterDepreciation ? errors?.costAfterDepreciation?.message : ""}</CardLabelError>
 
                 <LabelFieldPair>
                     <CardLabel className="card-label-smaller">{t("AST_CURRENT_VALUE") }</CardLabel>
                     <div className="field">
                     <Controller
                         control={control}
-                        name={"Currentassetvalue"}
-                        defaultValue={assetscommon?.Currentassetvalue}
+                        name={"currentAssetValue"}
+                        defaultValue={assetscommon?.currentAssetValue}
                         rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -1241,10 +1243,10 @@
                         <TextInput
                             value={props.value}
                             // disable={isEditScreen}
-                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "Currentassetvalue"}
+                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "currentAssetValue"}
                             onChange={(e) => {
                             props.onChange(e.target.value);
-                            setFocusIndex({ index: assetscommon.key, type: "Currentassetvalue" });
+                            setFocusIndex({ index: assetscommon.key, type: "currentAssetValue" });
                             }}
                             onBlur={(e) => {
                             setFocusIndex({ index: -1 });
@@ -1257,15 +1259,15 @@
                     />
                     </div>
                 </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.Currentassetvalue ? errors?.Currentassetvalue?.message : ""}</CardLabelError>
+                <CardLabelError style={errorStyle}>{localFormState.touched.currentAssetValue ? errors?.currentAssetValue?.message : ""}</CardLabelError>
 
                 <LabelFieldPair>
                     <CardLabel className="card-label-smaller">{t("AST_REVENUE_GENERATED") }</CardLabel>
                     <div className="field">
                     <Controller
                         control={control}
-                        name={"Revenuegeneratedbyasset"}
-                        defaultValue={assetscommon?.Revenuegeneratedbyasset}
+                        name={"revenueGeneratedByAsset"}
+                        defaultValue={assetscommon?.revenueGeneratedByAsset}
                         rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -1274,10 +1276,10 @@
                         <TextInput
                             value={props.value}
                             // disable={isEditScreen}
-                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "Revenuegeneratedbyasset"}
+                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "revenueGeneratedByAsset"}
                             onChange={(e) => {
                             props.onChange(e.target.value);
-                            setFocusIndex({ index: assetscommon.key, type: "Revenuegeneratedbyasset" });
+                            setFocusIndex({ index: assetscommon.key, type: "revenueGeneratedByAsset" });
                             }}
                             onBlur={(e) => {
                             setFocusIndex({ index: -1 });
@@ -1290,15 +1292,15 @@
                     />
                     </div>
                 </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.Revenuegeneratedbyasset ? errors?.Revenuegeneratedbyasset?.message : ""}</CardLabelError>
+                <CardLabelError style={errorStyle}>{localFormState.touched.revenueGeneratedByAsset ? errors?.revenueGeneratedByAsset?.message : ""}</CardLabelError>
 
                 <LabelFieldPair>
                     <CardLabel className="card-label-smaller">{t("AST_HOW_ASSET_USE") }</CardLabel>
                     <div className="field">
                     <Controller
                         control={control}
-                        name={"howassetbeingused"}
-                        defaultValue={assetscommon?.howassetbeingused}
+                        name={"howAssetBeingUsed"}
+                        defaultValue={assetscommon?.howAssetBeingUsed}
                         rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
@@ -1307,10 +1309,10 @@
                         <TextInput
                             value={props.value}
                             // disable={isEditScreen}
-                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "howassetbeingused"}
+                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "howAssetBeingUsed"}
                             onChange={(e) => {
                             props.onChange(e.target.value);
-                            setFocusIndex({ index: assetscommon.key, type: "howassetbeingused" });
+                            setFocusIndex({ index: assetscommon.key, type: "howAssetBeingUsed" });
                             }}
                             onBlur={(e) => {
                             setFocusIndex({ index: -1 });
@@ -1321,7 +1323,7 @@
                     />
                     </div>
                 </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.howassetbeingused ? errors?.howassetbeingused?.message : ""}</CardLabelError>
+                <CardLabelError style={errorStyle}>{localFormState.touched.howAssetBeingUsed ? errors?.howAssetBeingUsed?.message : ""}</CardLabelError>
 
                     
                 </React.Fragment>
@@ -1339,8 +1341,8 @@
                     <div className="field">
                     <Controller
                         control={control}
-                        name={"RoadType"}
-                        defaultValue={assetscommon?.RoadType}
+                        name={"roadType"}
+                        defaultValue={assetscommon?.roadType}
                         rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         }}
@@ -1359,7 +1361,7 @@
                     />
                     </div>
                 </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.RoadType ? errors?.RoadType?.message : ""}</CardLabelError>
+                <CardLabelError style={errorStyle}>{localFormState.touched.roadType ? errors?.roadType?.message : ""}</CardLabelError>
 
 
               <LabelFieldPair>
@@ -1367,8 +1369,8 @@
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"TotalLength"}
-                      defaultValue={assetscommon?.TotalLength}
+                      name={"totalLength"}
+                      defaultValue={assetscommon?.totalLength}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -1377,10 +1379,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "TotalLength"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "totalLength"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "TotalLength" });
+                          setFocusIndex({ index: assetscommon.key, type: "totalLength" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -1391,15 +1393,15 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.TotalLength ? errors?.TotalLength?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.totalLength ? errors?.totalLength?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_ROAD_WIDTH") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"RoadWidth"}
-                      defaultValue={assetscommon?.RoadWidth}
+                      name={"roadWidth"}
+                      defaultValue={assetscommon?.roadWidth}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -1408,10 +1410,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "RoadWidth"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "roadWidth"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "RoadWidth" });
+                          setFocusIndex({ index: assetscommon.key, type: "roadWidth" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -1422,7 +1424,7 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.RoadWidth ? errors?.RoadWidth?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.roadWidth ? errors?.roadWidth?.message : ""}</CardLabelError>
 
               
               <LabelFieldPair>
@@ -1430,8 +1432,8 @@
                     <div className="field">
                     <Controller
                         control={control}
-                        name={"SurfaceType"}
-                        defaultValue={assetscommon?.SurfaceType}
+                        name={"surfaceType"}
+                        defaultValue={assetscommon?.surfaceType}
                         rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         }}
@@ -1450,15 +1452,15 @@
                     />
                     </div>
                 </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.SurfaceType ? errors?.SurfaceType?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.surfaceType ? errors?.surfaceType?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_PROTECTION_LENGTH") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"ProtectionLength"}
-                      defaultValue={assetscommon?.ProtectionLength}
+                      name={"protectionLength"}
+                      defaultValue={assetscommon?.protectionLength}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -1467,10 +1469,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "ProtectionLength"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "protectionLength"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "ProtectionLength" });
+                          setFocusIndex({ index: assetscommon.key, type: "protectionLength" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -1481,15 +1483,15 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.ProtectionLength ? errors?.ProtectionLength?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.protectionLength ? errors?.protectionLength?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_DRAINAGE_CHANNEL_LENGTH") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"DrainageLength"}
-                      defaultValue={assetscommon?.DrainageLength}
+                      name={"drainageLength"}
+                      defaultValue={assetscommon?.drainageLength}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -1498,10 +1500,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "DrainageLength"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "drainageLength"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "DrainageLength" });
+                          setFocusIndex({ index: assetscommon.key, type: "drainageLength" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -1512,15 +1514,15 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.DrainageLength ? errors?.DrainageLength?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.drainageLength ? errors?.drainageLength?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_FOOTPATH_NUMBER") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"NumofFootpath"}
-                      defaultValue={assetscommon?.NumofFootpath}
+                      name={"numOfFootpath"}
+                      defaultValue={assetscommon?.numOfFootpath}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -1529,10 +1531,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "NumofFootpath"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "numOfFootpath"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "NumofFootpath" });
+                          setFocusIndex({ index: assetscommon.key, type: "numOfFootpath" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -1543,15 +1545,15 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.NumofFootpath ? errors?.NumofFootpath?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.numOfFootpath ? errors?.numOfFootpath?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_PEDASTRIAN_CROSSING_NUMBER") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"NumofPedastrianCross"}
-                      defaultValue={assetscommon?.NumofPedastrianCross}
+                      name={"numOfPedastrianCross"}
+                      defaultValue={assetscommon?.numOfPedastrianCross}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -1560,10 +1562,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "NumofPedastrianCross"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "numOfPedastrianCross"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "NumofPedastrianCross" });
+                          setFocusIndex({ index: assetscommon.key, type: "numOfPedastrianCross" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -1574,15 +1576,15 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.NumofPedastrianCross ? errors?.NumofPedastrianCross?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.numOfPedastrianCross ? errors?.numOfPedastrianCross?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_BUSSTOP_NUMBER") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"NumofBusStop"}
-                      defaultValue={assetscommon?.NumofBusStop}
+                      name={"numOfBusStop"}
+                      defaultValue={assetscommon?.numOfBusStop}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -1591,10 +1593,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "NumofBusStop"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "numOfBusStop"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "NumofBusStop" });
+                          setFocusIndex({ index: assetscommon.key, type: "numOfBusStop" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -1605,7 +1607,7 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.NumofBusStop ? errors?.NumofBusStop?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.numOfBusStop ? errors?.numOfBusStop?.message : ""}</CardLabelError>
 
               
               <LabelFieldPair>
@@ -1613,8 +1615,8 @@
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"NumofMetroStation"}
-                      defaultValue={assetscommon?.NumofMetroStation}
+                      name={"numOfMetroStation"}
+                      defaultValue={assetscommon?.numOfMetroStation}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -1623,10 +1625,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "NumofMetroStation"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "numOfMetroStation"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "NumofMetroStation" });
+                          setFocusIndex({ index: assetscommon.key, type: "numOfMetroStation" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -1637,15 +1639,15 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.NumofMetroStation ? errors?.NumofMetroStation?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.numOfMetroStation ? errors?.numOfMetroStation?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_CYCLETRACK_LENGTH") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"LengthofCycletrack"}
-                      defaultValue={assetscommon?.LengthofCycletrack}
+                      name={"lengthOfCycletrack"}
+                      defaultValue={assetscommon?.lengthOfCycletrack}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -1654,10 +1656,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "LengthofCycletrack"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "lengthOfCycletrack"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "LengthofCycletrack" });
+                          setFocusIndex({ index: assetscommon.key, type: "lengthOfCycletrack" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -1668,15 +1670,15 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.LengthofCycletrack ? errors?.LengthofCycletrack?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.lengthOfCycletrack ? errors?.lengthOfCycletrack?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                 <CardLabel className="card-label-smaller">{t("AST_LAST_MAINTAINENCE") }</CardLabel>
                 <div className="field">
                 <Controller
                     control={control}
-                    name={"LastMaintainence"}
-                    defaultValue={assetscommon?.LastMaintainence}
+                    name={"lastMaintainence"}
+                    defaultValue={assetscommon?.lastMaintainence}
                     rules={{
                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                     validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
@@ -1694,15 +1696,15 @@
                 />
                 </div>
             </LabelFieldPair>
-            <CardLabelError style={errorStyle}>{localFormState.touched.LastMaintainence ? errors?.LastMaintainence?.message : ""}</CardLabelError>
+            <CardLabelError style={errorStyle}>{localFormState.touched.lastMaintainence ? errors?.lastMaintainence?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                 <CardLabel className="card-label-smaller">{t("AST_NEXT_MAINTAINENCE") }</CardLabel>
                 <div className="field">
                 <Controller
                     control={control}
-                    name={"NextMaintainence"}
-                    defaultValue={assetscommon?.NextMaintainence}
+                    name={"nextMaintainence"}
+                    defaultValue={assetscommon?.nextMaintainence}
                     rules={{
                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                     validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
@@ -1720,15 +1722,15 @@
                 />
                 </div>
             </LabelFieldPair>
-            <CardLabelError style={errorStyle}>{localFormState.touched.NextMaintainence ? errors?.NextMaintainence?.message : ""}</CardLabelError>
+            <CardLabelError style={errorStyle}>{localFormState.touched.nextMaintainence ? errors?.nextMaintainence?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
                     <CardLabel className="card-label-smaller">{t("AST_ACQUISTION_COST_BOOK_VALUE") }</CardLabel>
                     <div className="field">
                     <Controller
                         control={control}
-                        name={"BookValue"}
-                        defaultValue={assetscommon?.BookValue}
+                        name={"bookValue"}
+                        defaultValue={assetscommon?.bookValue}
                         rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -1737,10 +1739,10 @@
                         <TextInput
                             value={props.value}
                             // disable={isEditScreen}
-                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "BookValue"}
+                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "bookValue"}
                             onChange={(e) => {
                             props.onChange(e.target.value);
-                            setFocusIndex({ index: assetscommon.key, type: "BookValue" });
+                            setFocusIndex({ index: assetscommon.key, type: "bookValue" });
                             }}
                             onBlur={(e) => {
                             setFocusIndex({ index: -1 });
@@ -1753,15 +1755,15 @@
                     />
                     </div>
                 </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.BookValue ? errors?.BookValue?.message : ""}</CardLabelError>
+                <CardLabelError style={errorStyle}>{localFormState.touched.bookValue ? errors?.bookValue?.message : ""}</CardLabelError>
 
                 <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_TOTAL_COST") }</CardLabel>
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"Totalcost"}
-                      defaultValue={assetscommon?.Totalcost}
+                      name={"totalCost"}
+                      defaultValue={assetscommon?.totalCost}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -1770,10 +1772,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "Totalcost"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "totalCost"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "Totalcost" });
+                          setFocusIndex({ index: assetscommon.key, type: "totalCost" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -1786,7 +1788,7 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.Totalcost ? errors?.Totalcost?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.totalCost ? errors?.totalCost?.message : ""}</CardLabelError>
 
 
               <LabelFieldPair>
@@ -1794,8 +1796,8 @@
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"DepriciationRate"}
-                      defaultValue={assetscommon?.DepriciationRate}
+                      name={"depreciationRate"}
+                      defaultValue={assetscommon?.depreciationRate}
                       rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?(%)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"),
@@ -1805,10 +1807,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "DepriciationRate"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "depreciationRate"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "DepriciationRate" });
+                          setFocusIndex({ index: assetscommon.key, type: "depreciationRate" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -1819,7 +1821,7 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.DepriciationRate ? errors?.DepriciationRate?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.depreciationRate ? errors?.depreciationRate?.message : ""}</CardLabelError>
 
 
               <LabelFieldPair>
@@ -1827,8 +1829,8 @@
                   <div className="field">
                   <Controller
                       control={control}
-                      name={"Costafterdepriciation"}
-                      defaultValue={assetscommon?.Costafterdepriciation}
+                      name={"costAfterDepreciation"}
+                      defaultValue={assetscommon?.costAfterDepreciation}
                       rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -1837,10 +1839,10 @@
                       <TextInput
                           value={props.value}
                           // disable={isEditScreen}
-                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "Costafterdepriciation"}
+                          autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "costAfterDepreciation"}
                           onChange={(e) => {
                           props.onChange(e.target.value);
-                          setFocusIndex({ index: assetscommon.key, type: "Costafterdepriciation" });
+                          setFocusIndex({ index: assetscommon.key, type: "costAfterDepreciation" });
                           }}
                           onBlur={(e) => {
                           setFocusIndex({ index: -1 });
@@ -1852,7 +1854,7 @@
                   />
                   </div>
               </LabelFieldPair>
-              <CardLabelError style={errorStyle}>{localFormState.touched.Costafterdepriciation ? errors?.Costafterdepriciation?.message : ""}</CardLabelError>
+              <CardLabelError style={errorStyle}>{localFormState.touched.costAfterDepreciation ? errors?.costAfterDepreciation?.message : ""}</CardLabelError>
 
 
 
@@ -2006,8 +2008,8 @@
                     <div className="field">
                     <Controller
                         control={control}
-                        name={"asquistionDate"}
-                        defaultValue={assetscommon?.asquistionDate}
+                        name={"acquisitionDate"}
+                        defaultValue={assetscommon?.acquisitionDate}
                         rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
@@ -2025,7 +2027,7 @@
                     />
                     </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.asquistionDate ? errors?.asquistionDate?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState.touched.acquisitionDate ? errors?.acquisitionDate?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_ACQUIRED_SOURCE") }</CardLabel>
@@ -2096,8 +2098,8 @@
                     <div className="field">
                     <Controller
                         control={control}
-                        name={"BookValue"}
-                        defaultValue={assetscommon?.BookValue}
+                        name={"bookValue"}
+                        defaultValue={assetscommon?.bookValue}
                         rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -2106,10 +2108,10 @@
                         <TextInput
                             value={props.value}
                             // disable={isEditScreen}
-                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "BookValue"}
+                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "bookValue"}
                             onChange={(e) => {
                             props.onChange(e.target.value);
-                            setFocusIndex({ index: assetscommon.key, type: "BookValue" });
+                            setFocusIndex({ index: assetscommon.key, type: "bookValue" });
                             }}
                             onBlur={(e) => {
                             setFocusIndex({ index: -1 });
@@ -2121,15 +2123,15 @@
                     />
                     </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.BookValue ? errors?.BookValue?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState.touched.bookValue ? errors?.bookValue?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
                     <CardLabel className="card-label-smaller">{t("AST_CURRENT_VALUE") }</CardLabel>
                     <div className="field">
                     <Controller
                         control={control}
-                        name={"Currentassetvalue"}
-                        defaultValue={assetscommon?.Currentassetvalue}
+                        name={"currentAssetValue"}
+                        defaultValue={assetscommon?.currentAssetValue}
                         rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -2138,10 +2140,10 @@
                         <TextInput
                             value={props.value}
                             // disable={isEditScreen}
-                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "Currentassetvalue"}
+                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "currentAssetValue"}
                             onChange={(e) => {
                             props.onChange(e.target.value);
-                            setFocusIndex({ index: assetscommon.key, type: "Currentassetvalue" });
+                            setFocusIndex({ index: assetscommon.key, type: "currentAssetValue" });
                             }}
                             onBlur={(e) => {
                             setFocusIndex({ index: -1 });
@@ -2154,15 +2156,15 @@
                     />
                     </div>
                 </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.Currentassetvalue ? errors?.Currentassetvalue?.message : ""}</CardLabelError>
+                <CardLabelError style={errorStyle}>{localFormState.touched.currentAssetValue ? errors?.currentAssetValue?.message : ""}</CardLabelError>
 
                 <LabelFieldPair>
                     <CardLabel className="card-label-smaller">{t("AST_TOTAL_COST") }</CardLabel>
                     <div className="field">
                     <Controller
                         control={control}
-                        name={"Totalcost"}
-                        defaultValue={assetscommon?.Totalcost}
+                        name={"totalCost"}
+                        defaultValue={assetscommon?.totalCost}
                         rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         validate: { pattern: (val) => /^[0-9]+(\.[0-9]+)?$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"), },
@@ -2171,10 +2173,10 @@
                         <TextInput
                             value={props.value}
                             // disable={isEditScreen}
-                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "Totalcost"}
+                            autoFocus={focusIndex.index === assetscommon?.key && focusIndex.type === "totalCost"}
                             onChange={(e) => {
                             props.onChange(e.target.value);
-                            setFocusIndex({ index: assetscommon.key, type: "Totalcost" });
+                            setFocusIndex({ index: assetscommon.key, type: "totalCost" });
                             }}
                             onBlur={(e) => {
                             setFocusIndex({ index: -1 });
@@ -2187,7 +2189,7 @@
                     />
                     </div>
                 </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.Totalcost ? errors?.Totalcost?.message : ""}</CardLabelError>
+                <CardLabelError style={errorStyle}>{localFormState.touched.totalCost ? errors?.totalCost?.message : ""}</CardLabelError>
 
 
 

@@ -52,6 +52,7 @@ const EmployeeApp = ({ path, url, userType }) => {
   // const NewApplication = Digit?.ComponentRegistryService?.getComponent("PTRNewApplication");
   const NewAssetApplication = Digit?.ComponentRegistryService?.getComponent("AssetApplication");
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
+  const ASSETCreate = Digit?.ComponentRegistryService?.getComponent("AssetCreateNew")
 
   // const EditApplication = Digit?.ComponentRegistryService?.getComponent("PTEditApplication");
   const Response = Digit?.ComponentRegistryService?.getComponent("AssetResponse");
@@ -67,6 +68,7 @@ const EmployeeApp = ({ path, url, userType }) => {
           <PrivateRoute exact path={`${path}/`} component={() => <ASSETLinks matchPath={path} userType={userType} />} />
           
           <PrivateRoute path={`${path}/assetservice/new-asset`} component={() => <NewAssetApplication parentUrl={url} />} />
+          <PrivateRoute path={`${path}/assetservice/new-assets`} component={() => <ASSETCreate parentUrl={url} />} />
           <PrivateRoute path={`${path}/assetservice/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/assetservice/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/assetservice/response`} component={(props) => <Response {...props} parentRoute={path} />} />

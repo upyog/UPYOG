@@ -10,7 +10,7 @@ const getAction = (flow) => {
       actions = [];
       break;
     default:
-      actions = ["ES_TITILE_OWNER_DETAILS", "ES_TITILE_PET_DETAILS", "PTR_LOCATION_DETAILS", "ES_TITILE_DOCUMENT_DETAILS","PTR_SUMMARY"];
+      actions = ["ASSET_GENERAL_DETAILS", "AST_DETAILS", "AST_ADDRESS_DETAILS", "AST_DOCUMENT_DETAILS","AST_SUMMARY"];
   }
 };
 const Timeline = ({ currentStep = 1, flow = "" }) => {
@@ -18,7 +18,7 @@ const Timeline = ({ currentStep = 1, flow = "" }) => {
   const isMobile = window.Digit.Utils.browser.isMobile();
   getAction(flow);
   return (
-    <div className="timeline-container" style={isMobile ? {} : { maxWidth: "960px", minWidth: "640px", marginRight: "auto" }}>
+    <div className="timeline-container" style={isMobile ? {} : { maxWidth: "960px", minWidth: "640px", marginRight: "auto", marginLeft: "auto", display: "flex", justifyContent: "center" }}>
       {actions.map((action, index, arr) => (
         <div className="timeline-checkpoint" key={index}>
           <div className="timeline-content">

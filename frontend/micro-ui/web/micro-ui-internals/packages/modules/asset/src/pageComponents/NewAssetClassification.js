@@ -1,0 +1,352 @@
+import React, { useEffect, useState } from "react";
+import { FormStep, TextInput, CardLabel, MobileNumber, Dropdown } from "@upyog/digit-ui-react-components";
+import { useLocation } from "react-router-dom";
+import Timeline from "../components/ASTTimeline";
+import { Controller, useForm } from "react-hook-form";
+
+const NewAssetClassification
+ = ({ t, config, onSelect, userType, formData }) => {
+
+  console.log("formmmmmmmmmm",formData);
+  const { pathname: url } = useLocation();
+
+  let index = 0
+  
+   
+  let validation = {};
+
+  const [assetclassification, setassetclassification] = useState((formData.asset && formData.asset[index] && formData.asset[index].assetclassification) || formData?.asset?.assetclassification || "");
+  const [assettype, setassettype] = useState((formData.asset && formData.asset[index] && formData.asset[index].assettype) || formData?.asset?.assettype || "");
+  const [assetsubtype, setassetsubtype] = useState((formData.asset && formData.asset[index] && formData.asset[index].assetsubtype) || formData?.asset?.assetsubtype || "");
+
+
+  
+  const [assetparentsubCategory, setassetparentsubCategory] = useState(
+    (formData.asset && formData.asset[index] && formData.asset[index].assetparentsubCategory) || formData?.asset?.assetparentsubCategory || ""
+  );
+
+  const [BookPagereference, setBookPagereference] = useState((formData.asset && formData.asset[index] && formData.asset[index].BookPagereference) || formData?.asset?.BookPagereference || "");
+  const [AssetName, setAssetName] = useState((formData.asset && formData.asset[index] && formData.asset[index].AssetName) || formData?.asset?.AssetName || "");
+  const [Assetdescription, setAssetdescription] = useState((formData.asset && formData.asset[index] && formData.asset[index].Assetdescription) || formData?.asset?.Assetdescription || "");
+  const [Department, setDepartment] = useState((formData.asset && formData.asset[index] && formData.asset[index].Department) || formData?.asset?.Department || "");
+
+
+
+  
+ 
+
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+    const stateId = Digit.ULBService.getStateId();
+  
+  
+  
+  
+    const { data: Menu_Asset } = Digit.Hooks.asset.useAssetClassification(stateId, "ASSET", "assetClassification"); // hook for asset classification Type
+  
+    const { data: Asset_Type } = Digit.Hooks.asset.useAssetType(stateId, "ASSET", "assetParentCategory"); 
+
+    const { data: Asset_Sub_Type } = Digit.Hooks.asset.useAssetSubType(stateId, "ASSET", "assetCategory");  // hooks for Asset Parent Category
+    
+    const { data: Asset_Parent_Sub_Type } = Digit.Hooks.asset.useAssetparentSubType(stateId, "ASSET", "assetSubCategory");
+
+    console.log("Asset_Parent_Sub_Type",Asset_Parent_Sub_Type);
+   
+
+    let menu_Asset = [];   //variable name for assetCalssification
+
+    let asset_type = [];  //variable name for asset type
+
+    let asset_sub_type = [];  //variable name for asset sub  parent caregory
+
+    let asset_parent_sub_category = [];
+    
+
+    Menu_Asset &&
+    Menu_Asset.map((asset_mdms) => {
+        menu_Asset.push({ i18nKey: `ASSET_CLASS_${asset_mdms.code}`, code: `${asset_mdms.code}`, value: `${asset_mdms.name}` });
+    });
+  
+    
+
+      
+  
+  
+  
+    Asset_Type &&
+    Asset_Type.map((asset_type_mdms) => {
+        if (asset_type_mdms.assetClassification == assetclassification?.code) {
+            asset_type.push({
+            i18nKey: `ASSET_TYPE_${asset_type_mdms.code}`,
+            code: `${asset_type_mdms.code}`,
+            value: `${asset_type_mdms.name}`
+          });
+        }
+  
+      });
+
+
+      Asset_Sub_Type &&
+      Asset_Sub_Type.map((asset_sub_type_mdms) => {
+          if (asset_sub_type_mdms.assetParentCategory == assettype?.code) {
+              asset_sub_type.push({
+              i18nKey: `ASSET_SUB_TYPE_${asset_sub_type_mdms.code}`,
+              code: `${asset_sub_type_mdms.code}`,
+              value: `${asset_sub_type_mdms.name}`
+            });
+          }
+    
+        });
+
+        Asset_Parent_Sub_Type &&
+        Asset_Parent_Sub_Type.map((asset_parent_mdms) => {
+          if (asset_parent_mdms.assetCategory == assetsubtype?.code) {
+            asset_parent_sub_category.push({
+              i18nKey: `${asset_parent_mdms.code}`,
+              code: `${asset_parent_mdms.code}`,
+              value: `${asset_parent_mdms.name}`
+            });
+          }
+    
+        });
+
+      const { control } = useForm();
+
+  
+
+  function setAssetClassification(e) {
+    setassetclassification(e.target.value);
+  }
+  function setAssetType(e) {
+    setassettype(e.target.value);
+  }
+  
+
+ 
+  function setAssetSubType(e) {
+    setassetsubtype(e.target.value);
+  }
+
+  function setbookpagereference(e) {
+    setBookPagereference(e.target.value);
+  }
+  function setassetname(e) {
+    setAssetName(e.target.value);
+  }
+  function setassetDescription(e) {
+    setAssetdescription(e.target.value);
+  }
+  function setdepartment(e) {
+    setDepartment(e.target.value);
+  }
+  
+
+  const goNext = () => {
+    let owner = formData.asset && formData.asset[index];
+    let ownerStep;
+    if (userType === "citizen") {
+      ownerStep = { ...owner, assetclassification,assetparentsubCategory, assetsubtype, assettype};
+      onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
+    } else {
+      
+      ownerStep = { ...owner, assetclassification,assetparentsubCategory, assetsubtype,assettype, BookPagereference, AssetName,Department,Assetdescription };
+      onSelect(config.key, ownerStep, false,index);
+    }
+  };
+
+  const onSkip = () => onSelect();
+
+  
+  
+
+  useEffect(() => {
+    if (userType === "citizen") {
+      goNext();
+    }
+  }, [assetclassification, assetsubtype, assettype, assetparentsubCategory,BookPagereference, AssetName,Department,Assetdescription]);
+
+ 
+
+  return (
+    <React.Fragment>
+    {
+      window.location.href.includes("/employee") ? <Timeline currentStep={1} /> : null
+    }
+
+    <FormStep
+      config={config}
+      onSelect={goNext}
+      onSkip={onSkip}
+      t={t}
+      isDisabled={!assetclassification || !assetsubtype || !assettype || !assetparentsubCategory || !BookPagereference}
+    >
+      <div>
+        
+        <CardLabel>{`${t("AST_CATEGORY")}`}</CardLabel>
+            <Controller
+              control={control}
+              name={"assetclassification"}
+              defaultValue={assetclassification}
+              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+              render={(props) => (
+                <Dropdown
+
+                  className="form-field"
+                  selected={assetclassification}
+                  select={setassetclassification}
+                  option={menu_Asset}
+                  optionKey="i18nKey"
+                  t={t}
+                />
+
+              )}
+
+            />
+            <CardLabel>{`${t("AST_PARENT_CATEGORY")}`}</CardLabel>
+            <Controller
+              control={control}
+              name={"assettype"}
+              defaultValue={assettype}
+              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+              render={(props) => (
+                <Dropdown
+
+                  className="form-field"
+                  selected={assettype}
+                  select={setassettype}
+                  option={asset_type}
+                  optionKey="i18nKey"
+                  t={t}
+                />
+
+              )}
+
+            />
+            <CardLabel>{`${t("AST_SUB_CATEGORY")}`}</CardLabel>
+            <Controller
+              control={control}
+              name={"assetsubtype"}
+              defaultValue={assetsubtype}
+              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+              render={(props) => (
+                <Dropdown
+
+                  className="form-field"
+                  selected={assetsubtype}
+                  select={setassetsubtype}
+                  option={asset_sub_type}
+                  optionKey="i18nKey"
+                  t={t}
+                />
+
+              )}
+
+            />
+
+            <CardLabel>{`${t("AST_CATEGORY_SUB_CATEGORY")}`}</CardLabel>
+            <Controller
+              control={control}
+              name={"assetparentsubCategory"}
+              defaultValue={assetparentsubCategory}
+              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+              render={(props) => (
+                <Dropdown
+
+                  className="form-field"
+                  selected={assetparentsubCategory}
+                  select={setassetparentsubCategory}
+                  option={asset_parent_sub_category}
+                  optionKey="i18nKey"
+                  t={t}
+                />
+
+              )}
+
+            />
+            
+            <CardLabel>{`${t("AST_BOOK_REF_SERIAL_NUM")}`}</CardLabel>
+            <TextInput
+              t={t}
+              type={"text"}
+              isMandatory={false}
+              optionKey="i18nKey"
+              name="BookPagereference"
+              value={BookPagereference}
+              onChange={setbookpagereference}
+              style={{ width: "50%" }}
+              ValidationRequired={false}
+              {...(validation = {
+                isRequired: true,
+                pattern: "^[a-zA-Z-.`' ]*$",
+                type: "text",
+                title: t("PT_NAME_ERROR_MESSAGE"),
+              })}
+            />
+            
+            <CardLabel>{`${t("AST_NAME")}`}</CardLabel>
+            <TextInput
+              t={t}
+              type={"text"}
+              isMandatory={false}
+              optionKey="i18nKey"
+              name="AssetName"
+              value={AssetName}
+              onChange={setassetname}
+              style={{ width: "50%" }}
+              ValidationRequired={false}
+              {...(validation = {
+                isRequired: true,
+                pattern: "^[a-zA-Z-.`' ]*$",
+                type: "text",
+                title: t("PT_NAME_ERROR_MESSAGE"),
+              })}
+            />
+            
+            <CardLabel>{`${t("ASSET_DESCRIPTION")}`}</CardLabel>
+            <TextInput
+              t={t}
+              type={"text"}
+              isMandatory={false}
+              optionKey="i18nKey"
+              name="Assetdescription"
+              value={Assetdescription}
+              onChange={setassetDescription}
+              style={{ width: "50%" }}
+              ValidationRequired={false}
+              {...(validation = {
+                isRequired: true,
+                pattern: "^[a-zA-Z-.`' ]*$",
+                type: "text",
+                title: t("PT_NAME_ERROR_MESSAGE"),
+              })}
+            />
+            
+            <CardLabel>{`${t("AST_DEPARTMENT")}`}</CardLabel>
+            <TextInput
+              t={t}
+              type={"text"}
+              isMandatory={false}
+              optionKey="i18nKey"
+              name="Department"
+              value={Department}
+              onChange={setdepartment}
+              style={{ width: "50%" }}
+              ValidationRequired={false}
+              {...(validation = {
+                isRequired: true,
+                pattern: "^[a-zA-Z-.`' ]*$",
+                type: "text",
+                title: t("PT_NAME_ERROR_MESSAGE"),
+              })}
+            />
+       
+        
+
+        
+        
+      </div>
+    </FormStep>
+    </React.Fragment>
+  );
+};
+
+export default NewAssetClassification;
