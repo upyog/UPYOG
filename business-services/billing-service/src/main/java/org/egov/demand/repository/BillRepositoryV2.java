@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
+import java.sql.Types;
 import org.egov.demand.model.AuditDetails;
 import org.egov.demand.model.BillAccountDetailV2;
 import org.egov.demand.model.BillDetailV2;
@@ -238,8 +238,46 @@ public String  getLatestActiveBillId(CancelBillCriteria cancelBillCriteria){
 		}
 		
 		List<Object> preparedStmtList = new ArrayList<>();
+		preparedStmtList.add(status.toString());
 		String queryStr = billQueryBuilder.getBillStatusUpdateQuery(updateBillCriteria, preparedStmtList);
 		return jdbcTemplate.update(queryStr, preparedStmtList.toArray());
 	}
 	
+	/**
+	 * executes batch query to update bill status for bill id
+	 *  
+	 * @param billIds
+	 */
+	public void updateBillStatusInBatch(Map<String, String> billIdAndStatusMap) {
+
+		String queryStr = billQueryBuilder.getBillStatusUpdateBatchQuery();
+		List<String> keys = new ArrayList<>(billIdAndStatusMap.keySet());
+		jdbcTemplate.batchUpdate(queryStr, new BatchPreparedStatementSetter() {
+			
+			@Override
+			public void setValues(PreparedStatement ps, int rowNum) throws SQLException {
+
+				String key = keys.get(rowNum);
+
+				ps.setString(1, billIdAndStatusMap.get(key));
+				ps.setString(2, key);
+			}
+			
+			@Override
+			public int getBatchSize() {
+
+				return billIdAndStatusMap.size();
+			}
+		});
+	}
+
+	public void updateBillStatusBYId(String billId, String billStatus) {
+		// TODO Auto-generated method stub
+		String queryStr = billQueryBuilder.getBillStatusUpdateBatchQuery();
+		List<Object> prepareStatementValues=new ArrayList<Object>();
+		prepareStatementValues.add(billStatus);
+		prepareStatementValues.add(billId);
+		int[] types = {Types.VARCHAR, Types.VARCHAR};
+		jdbcTemplate.update(queryStr, prepareStatementValues.toArray(),types);
+	}
 }
