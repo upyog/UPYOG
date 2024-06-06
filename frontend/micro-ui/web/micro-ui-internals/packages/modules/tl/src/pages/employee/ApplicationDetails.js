@@ -279,11 +279,10 @@ const ApplicationDetails = () => {
     <div className={"employee-main-application-details"} >
       <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
         <Header>{(applicationDetails?.applicationData?.workflowCode == "NewTL" && applicationDetails?.applicationData?.status !== "APPROVED") ? t("TL_TRADE_APPLICATION_DETAILS_LABEL") : t("TL_TRADE_LICENSE_DETAILS_LABEL")}</Header>
-        <div style={{display:"flex", color:"#A52A2A", alignItems:"center"}}>
-        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
-        </div>
+        <div >
+        <div style={{zIndex: "10",  position: "relative"}}>
         <MultiLink
-                className="multilinkWrapper employee-mulitlink-main-div"
+                className="multilinkWrapper"
                 onHeadClick={() => setIsDisplayDownloadMenu(!isDisplayDownloadMenu)}
                 displayOptions={isDisplayDownloadMenu}
                 options={dowloadOptions}
@@ -291,6 +290,9 @@ const ApplicationDetails = () => {
                 optionsClassName={"employee-options-btn-className"}
                 optionStyle={{padding: "10px"}}
         />
+        </div>
+        <LinkButton label={t("VIEW_TIMELINE")} style={{color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        </div>        
       </div>
       <ApplicationDetailsTemplate
         applicationDetails={applicationDetails}
