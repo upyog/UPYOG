@@ -392,6 +392,8 @@ public class BillServicev2 {
 				.mobileNumber(billCriteria.getMobileNumber())
 				.tenantId(billCriteria.getTenantId())
 				.email(billCriteria.getEmail())
+				.periodFrom(billCriteria.getPeriodFrom())
+			.periodTo(billCriteria.getPeriodTo())
 				.consumerCode(consumerCodes)
 				//.isPaymentCompleted(false)
 				.receiptRequired(false)
@@ -408,11 +410,24 @@ public class BillServicev2 {
 			.isPaymentCompleted(false)
 			.receiptRequired(false)
 			.demandId(demandIds)
+			.periodFrom(billCriteria.getPeriodFrom())
+			.periodTo(billCriteria.getPeriodTo())
 			.build();
 		
 
 		/* Fetching demands for the given bill search criteria */
-		List<Demand> demands = demandService.getDemands(demandCriteria, requestInfo);
+	List<Demand> demandsWithMultipleActive = demandService.getDemands(demandCriteria, requestInfo);
+
+		System.out.println("demandsWithMultipleActive::"+demandsWithMultipleActive.size());
+ 		if (demandsWithMultipleActive.isEmpty()) {
+			throw new CustomException(EG_BS_BILL_NO_DEMANDS_FOUND_KEY, EG_BS_BILL_NO_DEMANDS_FOUND_MSG);
+		}
+		
+		//filter the demands which are fully paid
+		demandsWithMultipleActive = demandsWithMultipleActive.stream().filter(demand -> !demand.getIsPaymentCompleted()).collect(Collectors.toList());
+
+		List<Demand> demands = filterMultipleActiveDemands(demandsWithMultipleActive);
+		//List<Demand> demands = demandService.getDemands(demandCriteria, requestInfo);
 		
 		List<BillV2> bills;
 
@@ -456,7 +471,20 @@ public class BillServicev2 {
 		
 		return payer.get(0);
 	}
+private List<Demand> filterMultipleActiveDemands(List<Demand> demands) {
 
+		Comparator<Demand> comparator = Comparator.comparing(h -> h.getAuditDetails().getCreatedTime());
+		demands.sort(comparator);
+
+		Map<Long, Demand> fromPeriodToDemand = new LinkedHashMap<>();
+
+		demands.forEach(demand -> {
+			fromPeriodToDemand.put(demand.getTaxPeriodFrom(), demand);
+		});
+
+		return new LinkedList<>(fromPeriodToDemand.values());
+
+	}
 	/**
 	 * Prepares the bill object from the list of given demands
 	 * 
@@ -620,6 +648,22 @@ public class BillServicev2 {
 	 */
 	private Long getExpiryDateForDemand(Demand demand) {
 
+	Long previousExpiryDate = 0l;
+		
+		BillSearchCriteria criteria = BillSearchCriteria.builder()
+				.consumerCode(Stream.of(demand.getConsumerCode()).collect(Collectors.toSet()))
+				.tenantId(demand.getTenantId())
+				.build();
+		List<BillV2> searchBills = billRepository.findBill(criteria);
+		
+		if (!CollectionUtils.isEmpty(searchBills)) {
+
+			for (BillDetailV2 billDetail : searchBills.get(0).getBillDetails()) {
+				if (previousExpiryDate.compareTo(billDetail.getExpiryDate()) <= 0)
+					previousExpiryDate = billDetail.getExpiryDate();
+			}
+		}
+		
 		Long billExpiryPeriod = demand.getBillExpiryTime();
 		Long fixedBillExpiryDate = demand.getFixedBillExpiryDate();
 		Calendar cal = Calendar.getInstance();
@@ -627,13 +671,48 @@ public class BillServicev2 {
 		if (!ObjectUtils.isEmpty(fixedBillExpiryDate) && fixedBillExpiryDate > cal.getTimeInMillis()) {
 			cal.setTimeInMillis(fixedBillExpiryDate);
 		} else if (!ObjectUtils.isEmpty(billExpiryPeriod) && 0 < billExpiryPeriod) {
-			cal.setTimeInMillis(cal.getTimeInMillis() + billExpiryPeriod);
-		}
+	try {				
+			String expireBillingDay = checkBillExpireDay(cal.getTimeInMillis()+billExpiryPeriod);
+			log.info("The Billing expired day is ---"+expireBillingDay);
+      		         if(expireBillingDay.equals("Saturday")){
+				 log.info("If the billing expired day is ---Saturday"+expireBillingDay);
+				billExpiryPeriod = billExpiryPeriod+172800000L;
+				log.info("bill expiry period for saturday "+billExpiryPeriod); 
+				cal.setTimeInMillis(cal.getTimeInMillis() + billExpiryPeriod);
+				log.info("exact day for bill expiry if day is saturday "+cal.getTimeInMillis()); 
+			}else if (expireBillingDay.equals("Sunday")) {
+				 log.info("If the billing expired day is ---Sunday"+expireBillingDay);
+				billExpiryPeriod = billExpiryPeriod+86400000L;
+				log.info("bill expiry period for sunday "+billExpiryPeriod); 
+				cal.setTimeInMillis(cal.getTimeInMillis() + billExpiryPeriod);
+				log.info("exact day for bill expiry if day is sunday "+cal.getTimeInMillis()); 
+			}else {
+				 log.info("If the billing expired day is not saturday or sunday"+expireBillingDay);
+				cal.setTimeInMillis(cal.getTimeInMillis() + billExpiryPeriod);
+				log.info("exact day for bill expiry if day is not saturday or sunday "+cal.getTimeInMillis()); 
+			}
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+					}
 
 		cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), 23, 59, 59);
+		log.info("exact time for bill expiry "+cal.getTimeInMillis()); 
 		return cal.getTimeInMillis();
 	}
 
+	private String checkBillExpireDay(long dateToChek) throws ParseException {
+		  DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+		  String formatted = format.format(dateToChek);
+		  SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
+		  Date dt1 = format1.parse(formatted);
+		  DateFormat format2 = new SimpleDateFormat("EEEE"); 
+		  String finalDay = format2.format(dt1);
+		  System.out.println(finalDay);
+		  return finalDay;
+	}
 	/**
 	 * creates/ updates bill-account details based on the tax-head code in
 	 * taxCodeAccDetailMap
@@ -765,6 +844,16 @@ public class BillServicev2 {
 			ownerPlainRequestFieldsList.add("permanentAddress");
 		}
 		return ownerPlainRequestFieldsList;
+	}
+	public void cancelBill( CancelBillCriteria cancelBillCriteria) {
+		try {
+		String billId=billRepository.getLatestActiveBillId(cancelBillCriteria);
+		billRepository.updateBillStatusBYId(billId,BillStatus.EXPIRED.toString());
+		}
+		catch (Exception e) {
+			throw new CustomException("EGBS_CANCEL_BILL_ERROR", e.getMessage());
+		}
+		
 	}
 	
 }
