@@ -109,7 +109,7 @@ public class PaymentService {
           List<String> propertyIds = paymentRepository.fetchPropertyid(paymentSearchCriteria.getReceiptNumbers(), businessservice);
           System.out.println("Receipt Number: " + receiptnumber);
           System.out.println("Payments: " + payments);   
-          setPropertyData(receiptnumber,payments);
+          setPropertyData(receiptnumber,payments,businessservice);
           payments.get(0).setUsageCategory(usageCategory.get(0));
    	  payments.get(0).setAddress(address.get(0));
           payments.get(0).setPropertyId(propertyIds.get(0));
@@ -167,10 +167,10 @@ public class PaymentService {
     }
 
 
-    private void setPropertyData(String receiptnumber,List<Payment> payments) {
+    private void setPropertyData(String receiptnumber,List<Payment> payments,String businessservice) {
     	List<String> consumercode = paymentRepository.fetchConsumerCodeByReceiptNumber(receiptnumber);	
     	String connectionno = consumercode.get(0);
-    	List<String> status = paymentRepository.fetchPropertyDetail(connectionno);		
+    	List<String> status = paymentRepository.fetchPropertyDetail(connectionno,businessservice);		
 		HashMap<String, String> additionalDetail = new HashMap<>();		
 		 if(!StringUtils.isEmpty(status.get(0)))
 		additionalDetail.put("oldConnectionno", status.get(0));
