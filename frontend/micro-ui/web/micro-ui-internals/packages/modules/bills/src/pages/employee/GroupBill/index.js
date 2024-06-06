@@ -1,4 +1,4 @@
-import { Header, DownloadIcon, MultiLink,Toast } from "@upyog/digit-ui-react-components";
+import { Header, DownloadIcon, MultiLink,Toast } from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import DesktopInbox from "../../../components/inbox/BillsDesktopInbox";

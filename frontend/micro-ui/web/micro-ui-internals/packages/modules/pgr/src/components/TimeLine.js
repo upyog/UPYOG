@@ -1,4 +1,4 @@
-import { Card, CardSubHeader, CheckPoint, ConnectingCheckPoints, GreyOutText, Loader, DisplayPhotos, LinkButton } from "@upyog/digit-ui-react-components";
+import { Card, CardSubHeader, CheckPoint, ConnectingCheckPoints, GreyOutText, Loader, DisplayPhotos, LinkButton } from "@egovernments/digit-ui-react-components";
 import React, {Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LOCALIZATION_KEY } from "../constants/Localization";

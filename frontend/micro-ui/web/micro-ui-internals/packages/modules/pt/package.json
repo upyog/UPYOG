@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "axios": "0.21.1",
-    "@upyog/digit-ui-react-components": "1.7.2",
+    "@egovernments/digit-ui-react-components": "1.7.15",
     "microbundle-crl": "0.13.11",
     "lodash.merge": "^4.6.2",
     "react": "17.0.2",

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Dropdown, DatePicker, Toast } from "@upyog/digit-ui-react-components";
+import { Dropdown, DatePicker, Toast } from "@egovernments/digit-ui-react-components";
 import * as func from "./Utils/Category";
 import { FormComposer } from "../../components/FormComposer";
 import { sortDropdownNames } from "./Utils/Sortbyname";

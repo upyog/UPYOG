@@ -1,4 +1,4 @@
-import { EmployeeModuleCard, ReceiptIcon } from "@upyog/digit-ui-react-components";
+import { EmployeeModuleCard, ReceiptIcon } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { getDefaultReceiptService } from "./utils";

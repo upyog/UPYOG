@@ -6,7 +6,7 @@ import { SuccessfulPayment, FailedPayment } from "./response";
 // import { SubformComposer } from "../../hoc";
 // import { subFormRegistry } from "../../hoc/subFormClass";
 import { testForm } from "../../hoc/testForm-config";
-import { subFormRegistry } from "@upyog/digit-ui-libraries";
+import { subFormRegistry } from "@egovernments/digit-ui-libraries";
 import { useTranslation } from "react-i18next";
 import IFrameInterface from "./IFrameInterface";
 

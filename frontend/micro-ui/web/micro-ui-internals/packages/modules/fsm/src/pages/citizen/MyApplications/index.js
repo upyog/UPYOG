@@ -1,5 +1,5 @@
 import React from "react";
-import { Header, Loader, Card } from "@upyog/digit-ui-react-components";
+import { Header, Loader, Card } from "@egovernments/digit-ui-react-components";
 import MyApplication from "./MyApplication";
 import { useTranslation } from "react-i18next";
 

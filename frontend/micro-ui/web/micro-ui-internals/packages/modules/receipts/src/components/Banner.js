@@ -1,4 +1,4 @@
-import { CardLabel, LabelFieldPair } from "@upyog/digit-ui-react-components";
+import { CardLabel, LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import React from "react";
 
 const Banner = ({ t, config }) => {

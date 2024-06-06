@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { TypeSelectCard } from "@upyog/digit-ui-react-components";
-import { FormStep, RadioOrSelect, RadioButtons } from "@upyog/digit-ui-react-components";
+import { TypeSelectCard } from "@egovernments/digit-ui-react-components";
+import { FormStep, RadioOrSelect, RadioButtons } from "@egovernments/digit-ui-react-components";
 import Timeline from "../components/TLTimeline";
 
 const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {

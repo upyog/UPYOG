@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Header, LabelFieldPair, CardLabel, TextInput, Dropdown, FormComposer, Loader } from "@upyog/digit-ui-react-components";
+import { Card, Header, LabelFieldPair, CardLabel, TextInput, Dropdown, FormComposer, Loader } from "@egovernments/digit-ui-react-components";
 import { Controller } from "react-hook-form";
 
 const SelectCategory = ({ userType, t, setValue, onSelect, config, data, formData, register, errors, setError, clearErrors, formState, control }) => {

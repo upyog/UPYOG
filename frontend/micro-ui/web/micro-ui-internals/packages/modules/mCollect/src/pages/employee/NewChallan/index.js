@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Toast, Header, Loader } from "@upyog/digit-ui-react-components";
+import { FormComposer, Toast, Header, Loader } from "@egovernments/digit-ui-react-components";
 import { newConfig as newConfigMcollect } from "../../../config/config";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { stringReplaceAll } from "../../../utils";

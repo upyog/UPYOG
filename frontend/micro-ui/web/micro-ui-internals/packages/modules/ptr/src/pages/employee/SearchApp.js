@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Toast } from "@upyog/digit-ui-react-components";
+import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Toast } from "@egovernments/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next";

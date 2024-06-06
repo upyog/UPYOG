@@ -11,7 +11,7 @@ import {
   CardLabelError,
   Menu,
   AddIcon,
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import DropdownStatus from "./inbox/DropdownStatus";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";

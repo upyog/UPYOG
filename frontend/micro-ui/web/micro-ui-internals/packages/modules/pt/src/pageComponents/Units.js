@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, Loader, DeleteIcon } from "@upyog/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, Loader, DeleteIcon } from "@egovernments/digit-ui-react-components";
 import { stringReplaceAll } from "../utils";
 import { useForm, Controller } from "react-hook-form";
 import _ from "lodash";

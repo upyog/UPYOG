@@ -1,4 +1,4 @@
-import { FormComposer,Dropdown } from "@upyog/digit-ui-react-components";
+import { FormComposer,Dropdown } from "@egovernments/digit-ui-react-components";
 import PropTypes from "prop-types";
 import React, { useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";

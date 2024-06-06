@@ -1,5 +1,5 @@
 import React from "react";
-import { Dropdown } from "@upyog/digit-ui-react-components";
+import { Dropdown } from "@egovernments/digit-ui-react-components";
 
 export const configRejectFstpo = ({ t, rejectMenu, selectReason, reason, action }) => {
   return {

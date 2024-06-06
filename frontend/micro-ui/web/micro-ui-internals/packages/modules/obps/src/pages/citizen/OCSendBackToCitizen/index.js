@@ -4,7 +4,7 @@ import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useParams, useRouteMatch } from "react-router-dom";
 import { newConfig as newConfigOCBPA } from "../../../config/ocbuildingPermitConfig";
 import { getBPAEditDetails, getPath } from "../../../utils";
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@egovernments/digit-ui-react-components";
 
 const OCSendBackToCitizen = ({ parentRoute }) => {
   sessionStorage.setItem("BPA_SUBMIT_APP", JSON.stringify("BPA_SUBMIT_APP"));

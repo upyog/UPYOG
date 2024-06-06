@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { MultiLink } from "@upyog/digit-ui-react-components";
+import { MultiLink } from "@egovernments/digit-ui-react-components";
 
 const Download = ({ dowloadOptions }) => {
   const [showOptions, setShowOptions] = useState(false);

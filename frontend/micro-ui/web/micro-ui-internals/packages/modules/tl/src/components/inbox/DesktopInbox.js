@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, Loader } from "@upyog/digit-ui-react-components";
+import { Card, Loader } from "@egovernments/digit-ui-react-components";
 import InboxLinks from "./ApplicationLinks";
 import ApplicationTable from "./ApplicationTable";
 import SearchLicenseApplication from "./search";

@@ -1,6 +1,6 @@
 import React from "react";
-import { ActionBar, RemoveableTag, CloseSvg, Loader, Localities } from "@upyog/digit-ui-react-components";
-import { ApplyFilterBar } from "@upyog/digit-ui-react-components";
+import { ActionBar, RemoveableTag, CloseSvg, Loader, Localities } from "@egovernments/digit-ui-react-components";
+import { ApplyFilterBar } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import Status from "./Status";
 import AssignedTo from "./AssignedTo";

@@ -1,4 +1,4 @@
-import { CardLabel, Dropdown, FormStep, LinkButton, Loader, RadioButtons, TextInput } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, LinkButton, Loader, RadioButtons, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";

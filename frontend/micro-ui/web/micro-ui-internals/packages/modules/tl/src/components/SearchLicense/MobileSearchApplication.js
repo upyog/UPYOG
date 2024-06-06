@@ -9,7 +9,7 @@ import {
   DetailsCard,
   Loader,
   Toast,
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import SearchFormFields from "./SearchFields";
 import { convertEpochToDateDMY, stringReplaceAll } from "../../utils";
 

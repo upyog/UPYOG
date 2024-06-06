@@ -1,4 +1,4 @@
-import { CitizenHomeCard, Loader, PTIcon } from "@upyog/digit-ui-react-components";
+import { CitizenHomeCard, Loader, PTIcon } from "@egovernments/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";

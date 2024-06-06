@@ -11,7 +11,7 @@ import {
   StatusTable,
   SubmitBar,
   Toast,
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useRouteMatch, Link } from "react-router-dom";

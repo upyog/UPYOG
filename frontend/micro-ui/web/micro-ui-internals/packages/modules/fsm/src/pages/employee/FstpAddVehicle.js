@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, LabelFieldPair, CardLabel, Header, InfoIcon } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, LabelFieldPair, CardLabel, Header, InfoIcon } from "@egovernments/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import _ from "lodash";
 import { useTranslation } from "react-i18next";

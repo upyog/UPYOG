@@ -10,7 +10,7 @@ import {
   Rating,
   ShareIcon,
   WhatsappIcon,
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import { format } from "date-fns";
 import React, { useMemo, useRef, useState, useContext } from "react";
 import { useTranslation } from "react-i18next";

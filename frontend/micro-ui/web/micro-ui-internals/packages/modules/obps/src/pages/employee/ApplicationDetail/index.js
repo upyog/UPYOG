@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Header, CardSectionHeader, PDFSvg, StatusTable, Row, MultiLink, LinkButton } from "@upyog/digit-ui-react-components";
+import { Header, CardSectionHeader, PDFSvg, StatusTable, Row, MultiLink, LinkButton } from "@egovernments/digit-ui-react-components";
 import ApplicationDetailsTemplate from "../../../../../templates/ApplicationDetails";
 import { downloadAndPrintReciept } from "../../../utils";
 

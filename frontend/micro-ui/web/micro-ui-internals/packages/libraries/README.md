@@ -4,7 +4,7 @@
 ## Install
 
 ```bash
-npm install --save @upyog/digit-ui-libraries
+npm install --save @egovernments/digit-ui-libraries
 ```
 
 ## Limitation
@@ -22,7 +22,7 @@ frontend/micro-ui/web/package.json
 ```
 
 ```json
-"@upyog/digit-ui-libraries":"1.8.0",
+"@egovernments/digit-ui-libraries":"1.8.0",
 ```
 
 then navigate to App.js
@@ -36,7 +36,7 @@ then navigate to App.js
 
 ```jsx
 import React from "react";
-import initLibraries from "@upyog/digit-ui-libraries";
+import initLibraries from "@egovernments/digit-ui-libraries";
 
 import defaultConfig from "./config";
 

@@ -3,7 +3,7 @@ import {
     FormStep,
     RadioOrSelect,
     CardLabel
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 
 const WSServiceName = ({ t, config, onSelect, userType, formData }) => {

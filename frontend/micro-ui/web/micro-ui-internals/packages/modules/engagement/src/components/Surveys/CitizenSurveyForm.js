@@ -1,6 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { ActionBar, Header, Loader, SubmitBar, Toast } from "@upyog/digit-ui-react-components";
+import { ActionBar, Header, Loader, SubmitBar, Toast } from "@egovernments/digit-ui-react-components";
 
 import CitizenSurveyQuestion from "./CitizenSurveyQuestion";
 import { useTranslation } from "react-i18next";

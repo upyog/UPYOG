@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
 import { useParams, useHistory, useLocation } from "react-router-dom";
 import TimePicker from "react-time-picker";
-import { Dropdown, Header, MultiUploadWrapper, RadioButtons, TextArea } from "@upyog/digit-ui-react-components";
+import { Dropdown, Header, MultiUploadWrapper, RadioButtons, TextArea } from "@egovernments/digit-ui-react-components";
 import {
   Card,
   CardLabel,
@@ -16,7 +16,7 @@ import {
   Row,
   LabelFieldPair,
   Menu,
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import CustomTimePicker from "../../components/CustomTimePicker";

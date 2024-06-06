@@ -1,4 +1,4 @@
-import { CardLabel,LabelFieldPair, TextInput, CardLabelError } from "@upyog/digit-ui-react-components";
+import { CardLabel,LabelFieldPair, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
 import  FormStep  from "../../../../react-components/src/molecules/FormStep";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";

@@ -1,4 +1,4 @@
-import { CloseSvg, FormComposer, Header, Toast } from "@upyog/digit-ui-react-components";
+import { CloseSvg, FormComposer, Header, Toast } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";

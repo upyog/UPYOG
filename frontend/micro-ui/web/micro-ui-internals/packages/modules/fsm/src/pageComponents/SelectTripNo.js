@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FormStep, Dropdown, Loader, RadioOrSelect, CardText } from "@upyog/digit-ui-react-components";
+import { FormStep, Dropdown, Loader, RadioOrSelect, CardText } from "@egovernments/digit-ui-react-components";
 
 const SelectTripNo = ({ config, formData, t, onSelect, userType }) => {
   const state = Digit.ULBService.getStateId();

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Header, InfoIcon } from "@upyog/digit-ui-react-components";
+import { Header, InfoIcon } from "@egovernments/digit-ui-react-components";
 import { useParams, useHistory, useLocation } from "react-router-dom";
 
 import RegisryInbox from "../../../components/RegistryInbox";

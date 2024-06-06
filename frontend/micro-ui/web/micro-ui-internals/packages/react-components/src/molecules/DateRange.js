@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
-// import { ArrowDown, Modal, ButtonSelector, Calender } from "@upyog/digit-ui-react-components";
+// import { ArrowDown, Modal, ButtonSelector, Calender } from "@egovernments/digit-ui-react-components";
 import ButtonSelector from "../atoms/ButtonSelector";
 import { ArrowDown, Calender } from "../atoms/svgindex";
 import Modal from "../hoc/Modal";

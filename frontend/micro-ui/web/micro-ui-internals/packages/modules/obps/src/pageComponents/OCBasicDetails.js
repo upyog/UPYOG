@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fromUnixTime, format } from 'date-fns';
-import { Card, CardHeader, Label, SearchIconSvg, Toast, StatusTable, TextInput, Row, CardCaption, SubmitBar, Loader } from "@upyog/digit-ui-react-components";
+import { Card, CardHeader, Label, SearchIconSvg, Toast, StatusTable, TextInput, Row, CardCaption, SubmitBar, Loader } from "@egovernments/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 import { useTranslation } from "react-i18next";
 import { ocScrutinyDetailsData } from "../utils";
