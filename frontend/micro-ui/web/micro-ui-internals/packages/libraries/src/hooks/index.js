@@ -277,6 +277,7 @@ import useTenantsASSET from "./asset/useTenants"
 import useASSETApplicationAction from "./asset/useASSETApplicationAction";
 import useAssetparentSubType from "./asset/useAssetparentSubType";
 import useProductPriceMDMS from "./ew/useProductPriceMDMS";
+import useEWCreateAPI from "./ew/useEWCreateAPI";
 
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
@@ -301,7 +302,8 @@ const pgr = {
 };
 
 const ew = {
-  useProductPriceMDMS
+  useProductPriceMDMS,
+  useEWCreateAPI
 };
 
 const asset = {

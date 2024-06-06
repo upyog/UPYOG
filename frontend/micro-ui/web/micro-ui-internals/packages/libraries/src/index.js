@@ -53,7 +53,7 @@ import { CFService } from "./services/elements/CF";
 import { PTRService } from "./services/elements/PTR";   
 import { ASSETService } from "./services/elements/ASSET";  
 
-
+import { EWService } from "./services/elements/EW";
 import {CustomService} from "./services/elements/CustomService";    
    
 
@@ -119,6 +119,8 @@ const initLibraries = () => {
   setupLibraries("AuditService",AuditService);
   setupLibraries("PTRService", PTRService);
   setupLibraries("ASSETService", ASSETService);
+  setupLibraries("EWService", EWService);
+
   return new Promise((resolve) => {
     initI18n(resolve);
   });

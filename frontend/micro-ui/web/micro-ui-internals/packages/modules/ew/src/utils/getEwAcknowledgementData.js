@@ -6,20 +6,20 @@
   const getAssessmentInfo = (application, t) => {
   
     let values = [
-      {
-        title: t("PTR_PET_NAME"),
+      // {
+      //   title: t("PTR_PET_NAME"),
       
-        value: application?.petDetails.petName,
-      },
+      //   value: application?.petDetails.petName,
+      // },
 
-      { title: t("PTR_PET_TYPE"), value: application?.petDetails.petType },
-      { title: t("PTR_BREED_TYPE"), value: application?.petDetails.breedType },
-      { title: t("PTR_VACCINATED_DATE"), value: application?.petDetails.lastVaccineDate },
-      { title: t("PTR_VACCINATION_NUMBER"), value: application?.petDetails.vaccinationNumber },
-      {title: t("PTR_DOCTOR_NAME"), value: application?.petDetails.doctorName },
-      {title: t("PTR_CLINIC_NAME"), value: application?.petDetails.clinicName },
-      {title: t("PTR_PET_AGE"), value: application?.petDetails.petAge + " Months" },
-      {title: t("PTR_PET_SEX"), value: application?.petDetails.petGender },
+      // { title: t("PTR_PET_TYPE"), value: application?.petDetails.petType },
+      // { title: t("PTR_BREED_TYPE"), value: application?.petDetails.breedType },
+      // { title: t("PTR_VACCINATED_DATE"), value: application?.petDetails.lastVaccineDate },
+      // { title: t("PTR_VACCINATION_NUMBER"), value: application?.petDetails.vaccinationNumber },
+      // {title: t("PTR_DOCTOR_NAME"), value: application?.petDetails.doctorName },
+      // {title: t("PTR_CLINIC_NAME"), value: application?.petDetails.clinicName },
+      // {title: t("PTR_PET_AGE"), value: application?.petDetails.petAge + " Months" },
+      // {title: t("PTR_PET_SEX"), value: application?.petDetails.petGender },
     
 
 

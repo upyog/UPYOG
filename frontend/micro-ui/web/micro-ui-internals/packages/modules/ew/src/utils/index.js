@@ -45,12 +45,13 @@ export const setAddressDetails = (data) => {
 export const setProductDetails = (data) => {
   let { ewdet } = data;
 
-  let productDetails = {
-    ...ewdet, 
-    productName: ewdet?.productName?.code,
-    productQuantity: ewdet?.productQuantity,
-    productPrice: ewdet.productPrice
-  }
+  ewdet?.prlistName.map((product, index) => {
+    let productDetails = {
+      ...ewdet, 
+      productName: product?.code,
+      quantity: ewdet?.productQuantity[index]
+      }
+  })
 
   data.ewdet = productDetails;
   return data;
@@ -70,77 +71,98 @@ export const setOwnerDetails = (data) => {
   return data;
 }
 
-// export const setOwnerDetails = (data) => {
-//     let { ownerss } = data;
-  
-//     let propOwners = {
-//       ...ownerss,
-      
-//     };
-  
-//     data.ownerss = propOwners;
-//     return data;
-//   };
-  
-  // export const setPetDetails = (data) => {
-  //   let { pets } = data;
-  
-  //   let petDetails = {
-  //     ...pets,
-  //       petType:pets?.petType?.value,
-  //       breedType:pets?.breedType?.value,
-  //       petGender: pets?.petGender?.name,
-  //       clinicName: pets?.clinicName,
-  //       petName: pets?.petName,
-  //       doctorName: pets?.doctorName,
-  //       lastVaccineDate: pets?.lastVaccineDate,
-  //       petAge: pets?.petAge,
-  //       vaccinationNumber: pets?.vaccinationNumber 
-      
-  //   };
-  
-  //   data.pets = petDetails;
-  //   return data;
-  // };
-
-  // export const setDocumentDetails = (data) => {
-  //   let { documents } = data;
-  
-  //   let doc = {
-  //     ...documents,
-       
-      
-  //   };
-  
-  //   data.documents = doc;
-  //   return data;
-  // };
-
-
-export const PetDataConvert = (data) => {
+// export const PetDataConvert = (data) => {
  
-  data = setDocumentDetails(data);
+//   data = setDocumentDetails(data);
+//   data = setOwnerDetails(data);
+//   data = setAddressDetails(data);
+//   data = setPetDetails(data);
+
+//   const formdata = {
+//     PetRegistrationApplications: [{
+//       tenantId: data.tenantId,
+//       ...data?.ownerss,
+//       address: data.address,
+//       petDetails: data.pets,
+//         ...data.documents,
+
+      
+//       workflow : {
+//         businessService: "ptr",
+//         action : "APPLY",
+//         moduleName: "pet-services"
+//       }
+//     }],
+//   };
+
+ 
+//   return formdata;
+// };
+
+export const EWDataConvert = (data) => {
+ 
+  data = setProductDetails(data);
   data = setOwnerDetails(data);
   data = setAddressDetails(data);
-  data = setPetDetails(data);
 
-  const formdata = {
-    PetRegistrationApplications: [{
-      tenantId: data.tenantId,
-      ...data?.ownerss,
-      address: data.address,
-      petDetails: data.pets,
-        ...data.documents,
+  // const formdata = {
+  //   EwasteApplication: [{
+  //     tenantId: "pg.citya",
+  //     applicant: {...data?.ownerKey},
+  //     address: data.address,
+  //       ...data?.documents,
 
       
-      workflow : {
-        businessService: "ptr",
-        action : "APPLY",
-        moduleName: "pet-services"
-      }
-    }],
-  };
+  //     workflow : {
+  //       businessService: "ewst",
+  //       action : "CREATE",
+  //       moduleName: "ewaste-services"
+  //     }
+  //   }],
+  // };
 
+  const formdata = {
+    EwasteApplication: {
+      tenantId: "pg.citya",
+      requestId: data.requestId || "",
+      transactionId: data.transactionId || "",
+      pickUpDate: data.pickUpDate || "",
+      vendorUuid: "345",
+      applicant: {
+        applicantName: data?.ownerKey?.applicantName,
+        mobileNumber: data?.ownerKey?.mobileNumber,
+        emailId: data?.ownerKey?.emailId,
+        aadharNumber: data?.ownerKey?.aadharNumber || ""
+      },
+      ewasteDetails: data.ewasteDetails || [],
+      address: {
+        tenantId: "pg.citya",
+        doorNo: data.address?.doorNo,
+        latitude: data.address?.latitude || null,
+        longitude: data.address?.longitude || null,
+        addressNumber: data.address?.addressNumber || "",
+        type: data.address?.type || "RESIDENTIAL",
+        addressLine1: data.address?.addressLine1 || "",
+        addressLine2: data.address?.addressLine2 || "",
+        landmark: data.address?.landmark || "",
+        city: data.address?.city || "",
+        pincode: data.address?.pincode || "",
+        detail: data.address?.detail || "",
+        buildingName: data.address?.buildingName || "",
+        street: data.address?.street || "",
+        locality: {
+          code: data.address?.locality?.code || "NA",
+          name: data.address?.locality?.name || ""
+        }
+      },
+      documents: data.documents || [],
+      workflow: {
+        businessService: "ewst",
+        action: "CREATE",
+        moduleName: "ewaste-services"
+      }
+    }
+  };
  
   return formdata;
 };
@@ -242,8 +264,8 @@ export const checkArrayLength = (obj = [], length = 0) => {
 export const getWorkflow = (data = {}) => {
   return {
 
-    businessService: `ptr`,
-    moduleName: "pet-services",
+    businessService: `ewst`,
+    moduleName: "ewaste-services",
   };
 };
 

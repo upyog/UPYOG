@@ -29,11 +29,11 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
     ), },
   ];
 
-    const productRows = prlistName?.map((p, index) => (
+    const productRows = prlistName?.map((product, index) => (
         {
-            name: p.code,
+            name: product.code,
             quantity: prlistQuantity[index].code,
-            price: p.price * prlistQuantity[index].code,
+            price: product.price * prlistQuantity[index].code,
         }
     )) || [];
 

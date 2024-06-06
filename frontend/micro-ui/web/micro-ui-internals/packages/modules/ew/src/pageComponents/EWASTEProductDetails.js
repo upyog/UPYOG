@@ -20,6 +20,9 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
   );
   // const productPrice = (formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.productPrice) || formData?.ewdet?.productPrice || "0.0";
 
+  const [prlistName, setPrlistName] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.prlistName) || formData?.ewdet?.prlistName || []);
+  const [prlistQuantity, setPrlistQuantity] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.prlistQuantity) || formData?.ewdet?.prlistQuantity || []);
+
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
 
@@ -38,8 +41,6 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
     setProductQuantity(e.target.value);
   }
 
-  const [prlistName, setPrlistName] = useState([]);
-  const [prlistQuantity, setPrlistQuantity] = useState([]);
   // const [prlistTotalprice, setPrlistTotalprice] = useState([]);
 
   const handleAddProduct = () => {
@@ -51,14 +52,16 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
     // })
   };
 
+  console.log("this is product lst ::", prlistName);
+
   const goNext = () => {
     let owner = formData.ewdet && formData.ewdet[index];
     let ownerStep;
     if (userType === "citizen") {
-      ownerStep = { ...owner, productName, productQuantity };
+      ownerStep = { ...owner, prlistName, prlistQuantity };
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
     } else {
-      ownerStep = { ...owner, productName, productQuantity };
+      ownerStep = { ...owner, prlistName, prlistQuantity };
       onSelect(config.key, ownerStep, false, index);
     }
   };
@@ -69,7 +72,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
     if (userType === "citizen") {
       goNext();
     }
-  }, [productName, productQuantity]);
+  }, [prlistName, prlistQuantity]);
 
   return (
     <React.Fragment>
