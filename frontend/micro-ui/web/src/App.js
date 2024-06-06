@@ -52,7 +52,7 @@ import { initWSComponents } from "@upyog/digit-ui-module-ws";
 import { initCustomisationComponents } from "./Customisations";
 import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
 import { initBillsComponents } from "@upyog/digit-ui-module-bills";
-
+import {CHBModule,CHBLinks,CHBComponents} from "@upyog-niua/upyog-ui-module-chb";
 
 initLibraries();
 
@@ -82,7 +82,8 @@ const enabledModules = [
   "Death",
   "PTR",
   "ASSET",
-  "EW"
+  "EW",
+  "CHB"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -105,7 +106,10 @@ window.Digit.ComponentRegistryService.setupRegistry({
   ...ASSETComponents,
   EWModule,
   EWLinks,
-  ...EWComponents
+  ...EWComponents,
+  CHBModule,
+  CHBLinks,
+  ...CHBComponents
 });
 
 initPGRComponents();

@@ -622,6 +622,76 @@ const getAssetDocumentsCategory = (tenantId, moduleCode) => ({
   },
 });
 
+//////////////////////////////////////////////////////
+const getChbSpecialCategoryList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "SpecialCategory",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getChbResidentTypeList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "ResidentType",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getChbPurposeList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Purpose",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getChbDocumentsCategory = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Documents",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+
+
 //##############################################
 const getPetDocumentsRequiredScreen = (MdmsRes) => {
   MdmsRes["PetService"].Documents.filter((Documents) => Documents.active).map((dropdownData) => {
@@ -643,6 +713,14 @@ const getAssetDocuments = (MdmsRes) => {
 };
 
 
+const getChbDocuments = (MdmsRes) => {
+  MdmsRes["CHB"].Documents.filter((Documents) => Documents.active).map((dropdownData) => {
+    return {
+      ...Documents,
+      i18nKey: `${dropdownData.code}`,
+    };
+  });
+};
 
 
 const getDefaultMapConfig = (tenantId, moduleCode) => ({
@@ -1317,6 +1395,40 @@ const GetPropertySubtype = (MdmsRes) =>
     });
   };
 
+
+  ////////////////////////////////////////////////////////
+  const getChbSpecialCategory = (MdmsRes) => {
+    return MdmsRes["CHB"].SpecialCategory.filter((SpecialCategory) => SpecialCategory.active).map((chbDetails) => {
+      return {
+        ...chbDetails,
+        i18nKey: `CHB_SPECIAL_CATEGORY_${chbDetails.code}`,
+      };
+    });
+    //return MdmsRes;
+  };
+  
+  const getChbResidentType = (MdmsRes) => {
+    return MdmsRes["CHB"].ResidentType.filter((ResidentType) => ResidentType.active).map((chbResidentDetails) => {
+      return {
+        ...chbResidentDetails,
+        i18nKey: `CHB_RESIDENT_TYPE_${chbResidentDetails.code}`,
+      };
+    });
+    //return MdmsRes;
+  };
+  
+  const getChbPurpose= (MdmsRes) => {
+    return MdmsRes["CHB"].Purpose.filter((Purpose) => Purpose.active).map((chbPurposeDetails) => {
+      return {
+        ...chbPurposeDetails,
+        i18nKey: `CHB_PURPOSE_${chbPurposeDetails.code}`,
+      };
+    });
+    //return MdmsRes;
+  };   
+  
+  ////////////////////////////////////////////////////
+
 const GetVehicleType = (MdmsRes) =>
   MdmsRes["Vehicle"].VehicleMakeModel.filter((vehicle) => vehicle.active)
     .filter((vehicle) => vehicle.make)
@@ -1811,6 +1923,19 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
 
     case "Assetcommondetail":
       return Assetcommondetail(MdmsRes);
+
+    case "ChbSpecialCategory":
+      return getChbSpecialCategory(MdmsRes);
+
+    case "ChbResidentType":
+      return getChbResidentType(MdmsRes);
+
+    case "ChbPurpose":
+      return getChbPurpose(MdmsRes);
+    
+    case "Documents":
+      return getChbDocuments(MdmsRes);
+
      
     default:
       return MdmsRes;
@@ -1994,7 +2119,24 @@ export const MdmsService = {
   getAssetcommon: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getAssetcommonList(tenantId, moduleCode, type), moduleCode);
   },
-  /////////////
+  //////////////////////////////////////////////
+ 
+  getChbSpecialCategory: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getChbSpecialCategoryList(tenantId, moduleCode, type), moduleCode);
+  },
+  getChbResidentType: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getChbResidentTypeList(tenantId, moduleCode, type), moduleCode);
+  },
+
+  getChbPurpose: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getChbPurposeList(tenantId, moduleCode, type), moduleCode);
+  },
+
+  getChbDocuments: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getChbDocumentsCategory(tenantId, moduleCode), moduleCode);
+  },
+
+  //////////////////////////////////////////////
 
   getBreedType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getBreedTypeList(tenantId, moduleCode, type), moduleCode);

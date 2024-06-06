@@ -277,6 +277,11 @@ import useTenantsASSET from "./asset/useTenants"
 import useASSETApplicationAction from "./asset/useASSETApplicationAction";
 import useAssetparentSubType from "./asset/useAssetparentSubType";
 import useProductPriceMDMS from "./ew/useProductPriceMDMS";
+import useSpecialCategory from "./chb/useSpecialCategory";
+import useResidentType from "./chb/useResidentType";
+import usePurpose from "./chb/usePurpose";
+import useChbCreateAPI from "./chb/useChbCreateAPI";
+import useChbDocumentsMDMS from "./chb/useChbDocumentsMDMS";
 import useEWCreateAPI from "./ew/useEWCreateAPI";
 
 
@@ -320,6 +325,13 @@ const asset = {
   useTenants: useTenantsASSET
 };
 
+const chb={
+  useSpecialCategory,
+  useResidentType,
+  usePurpose,
+  useChbCreateAPI,
+  useChbDocumentsMDMS
+}
 
 const fsm = {
   useTenants: useTenantsFSM,
@@ -609,6 +621,7 @@ const Hooks = {
   receipts,
   obps,
   events,
+  chb,
   engagement,
   survey,
   noc,

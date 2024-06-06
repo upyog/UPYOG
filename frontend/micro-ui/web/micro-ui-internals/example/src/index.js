@@ -41,6 +41,7 @@ import "@upyog-niua/upyog-css/example/index.css";
 // import * as comps from "@upyog/digit-ui-react-components";
 
 // import { subFormRegistry } from "@upyog/digit-ui-libraries";
+import { CHBModule, CHBLinks, CHBComponents } from "@upyog-niua/upyog-ui-module-chb";
 
 import { pgrCustomizations, pgrComponents } from "./pgr";
 
@@ -72,7 +73,8 @@ const enabledModules = [
   "Death",
   "PTR",
   "ASSET",
-  "EW"
+  "EW",
+  "CHB"
 ];
 
 const initTokens = (stateCode) => {
@@ -126,7 +128,10 @@ const initDigitUI = () => {
     ...ASSETComponents,
     EWModule,
     EWLinks,
-    ...EWComponents
+    ...EWComponents,
+    CHBModule, 
+    CHBLinks, 
+    ...CHBComponents
   });
 
   initFSMComponents();

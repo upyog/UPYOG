@@ -180,10 +180,6 @@ const PTRCitizenPet
         >
           <div>
             <CardLabel>{`${t("PTR_SEARCH_PET_TYPE")}`}</CardLabel>
-
-
-
-
             <Controller
               control={control}
               name={"petType"}

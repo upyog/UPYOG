@@ -26,7 +26,13 @@ import AssetCommonSelection from "./pageComponents/AssetCommonSelection";
 import AssetLand from "./pageComponents/AssetLand";
 import AssetBuildings from "./pageComponents/AssetBuildings";
 import AssetStreets from "./pageComponents/AssetStreets";
-
+import ServiceDoc from "./pageComponents/ServiceDoc";
+import ASSETCreate from "./pages/employee/TestApplication/Create";
+import NewAssetClassification from "./pageComponents/NewAssetClassification";
+import NewAsset from "./pageComponents/NewAsset";
+import NewDocument from "./pageComponents/NewDocument";
+import ASTCheckPage from "./pages/employee/TestApplication/Create/CheckPage"
+import NewResponse from "./pages/employee/TestApplication/Create/NewResponse";
 
 
 const componentsToRegister = {
@@ -42,6 +48,13 @@ const componentsToRegister = {
   AssetLand,
   AssetBuildings,
   AssetStreets,
+  ServiceDoc,
+  AssetCreateNew: ASSETCreate,
+  NewAssetClassification,
+  NewAsset,
+  NewDocument,
+  ASTCheckPage,
+  NewResponse,
   
 
 

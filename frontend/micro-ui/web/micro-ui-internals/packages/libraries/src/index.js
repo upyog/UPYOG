@@ -52,6 +52,7 @@ import BillServices from "./services/elements/Bill";
 import { CFService } from "./services/elements/CF";
 import { PTRService } from "./services/elements/PTR";   
 import { ASSETService } from "./services/elements/ASSET";  
+import { CHBServices } from "./services/elements/CHB";  
 
 import { EWService } from "./services/elements/EW";
 import {CustomService} from "./services/elements/CustomService";    
@@ -119,6 +120,7 @@ const initLibraries = () => {
   setupLibraries("AuditService",AuditService);
   setupLibraries("PTRService", PTRService);
   setupLibraries("ASSETService", ASSETService);
+  setupLibraries("CHBServices", CHBServices);
   setupLibraries("EWService", EWService);
 
   return new Promise((resolve) => {
