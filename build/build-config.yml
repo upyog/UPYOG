@@ -818,4 +818,12 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/community-hall-booking/src/main/resources/db"
         image-name: "chb-services-db" 
+
+  - name: "builds/upyog/municipal-services/ewaste-services"
+    build:
+      - work-dir: "municipal-services/ewaste-services"
+        image-name: "ewaste-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/ewaste-servicessrc/main/resources/db"
+        image-name: "ewaste-services-db"
    
