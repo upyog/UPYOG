@@ -312,11 +312,11 @@ public class PaymentRepository {
         return namedParameterJdbcTemplate.query(query, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
 	}
 
-	public List<String> fetchPropertyDetail(String consumerCode) {
+	public List<String> fetchPropertyDetail(String consumerCode,String businessservice) {
 		List<String> status = new ArrayList<String>();
-		List<String> oldConnectionno = fetchOldConnectionNo(consumerCode);
-		List<String> plotSize = fetchLandArea(consumerCode);
-		List<String> usageCategory = fetchUsageCategory(consumerCode);
+		List<String> oldConnectionno = fetchOldConnectionNo(consumerCode,businessservice);
+		List<String> plotSize = fetchLandArea(consumerCode,businessservice);
+		List<String> usageCategory = fetchUsageCategory(consumerCode,businessservice);
 		if(oldConnectionno.size()>0)
 		status.add(oldConnectionno.get(0));
 		if(plotSize.size()>0)
@@ -335,9 +335,15 @@ public class PaymentRepository {
 	
 	
 	
-	public List<String> fetchOldConnectionNo(String consumerCode) {
+	public List<String> fetchOldConnectionNo(String consumerCode,String businessservice) {
 		List<String> res = new ArrayList<>();
-		String queryString = "select oldconnectionno from eg_ws_connection where connectionno='"+consumerCode+"'";
+		String queryString = ""; 
+		if(businessservice.equals("WS")) {
+		 queryString = "select oldconnectionno from eg_ws_connection where connectionno='"+consumerCode+"'";
+		}else {
+			 queryString = "select oldconnectionno from eg_sw_connection where connectionno='"+consumerCode+"'";
+
+		}
 		log.info("Query: " +queryString);
 		try {
 		//	res = jdbcTemplate.queryForList(queryString, String.class);
@@ -348,11 +354,17 @@ public class PaymentRepository {
 		return res;
 	}
 	
-	public List<String> fetchLandArea(String consumerCode) {
+	public List<String> fetchLandArea(String consumerCode,String businessservice) {
 		List<String> res = new ArrayList<>();
 		Map<String, Object> preparedStatementValues = new HashMap<>();
-		String queryString = "select a2.landarea from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+		String queryString = "";  
+		if(businessservice.equals("WS")) {
+		 queryString = "select a2.landarea from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
 				+ " where a1.connectionno = '"+consumerCode+"'";
+		}else {
+			 queryString = "select a2.landarea from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+						+ " where a1.connectionno = '"+consumerCode+"'";
+		}
 		log.info("Query: " +queryString);
 		try {
 			//res = jdbcTemplate.queryForList(queryString, String.class);
@@ -365,11 +377,17 @@ public class PaymentRepository {
 	
 	
 	
-	public List<String> fetchUsageCategory(String consumerCode) {
+	public List<String> fetchUsageCategory(String consumerCode,String businessservice) {
 		List<String> res = new ArrayList<>();
 		Map<String, Object> preparedStatementValues = new HashMap<>();
-		String queryString = "select a2.usagecategory from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+		 String queryString = "";  // Declare queryString outside the if-else block
+	    if(businessservice.equals("WS")) {
+		 queryString = "select a2.usagecategory from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
 				+ " where a1.connectionno = '"+consumerCode+"'";
+	    }else {
+	    	 queryString = "select a2.usagecategory from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+	 				+ " where a1.connectionno = '"+consumerCode+"'";
+	    }
 		log.info("Query: " +queryString);
 		try {
 		//	res = jdbcTemplate.queryForList(queryString, String.class);
