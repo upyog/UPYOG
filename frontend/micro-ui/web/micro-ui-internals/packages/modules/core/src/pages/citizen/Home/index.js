@@ -82,11 +82,11 @@ const Home = () => {
         Icon: <CaseIcon className="fill-path-primary-main" />,
         onClick: () => history.push(citizenServicesObj?.props?.[2]?.navigationUrl),
       },
-      // {
-      //     name: t("ACTION_TEST_WATER_AND_SEWERAGE"),
-      //     Icon: <DropIcon/>,
-      //     onClick: () => history.push("/digit-ui/citizen")
-      // },
+      {
+          name: t("COMMUNITY_HALL_BOOKING"),
+          Icon: <DropIcon/>,
+          // onClick: () => history.push("/digit-ui/citizen")
+      },
       {
         name: t(citizenServicesObj?.props?.[3]?.label),
         Icon: <WSICon />,

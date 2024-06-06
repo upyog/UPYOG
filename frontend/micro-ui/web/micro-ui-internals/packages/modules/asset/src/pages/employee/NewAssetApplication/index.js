@@ -43,7 +43,11 @@ const NewAssetApplication = () => {
       description: data?.assetcommonforall?.[0]?.Assetdescription,
       assetClassification:data?.assets[0]?.assetclassification?.value,
       assetParentCategory: data?.assets[0]?.assettype?.code,
+      assetCategory:data?.assets[0]?.assetsubtype?.code,
+      assetSubCategory:data?.assets[0]?.assetparentsubCategory?.code,
       department: data?.assetcommonforall?.[0]?.Department,
+      financialYear: "",
+      sourceOfFinance:"",
       applicationNo: "",
       approvalDate: "",
       applicationDate: "",
@@ -59,7 +63,10 @@ const NewAssetApplication = () => {
         street:data?.address?.street,
         pincode:data?.address?.pincode,
         city:data?.address?.city?.name,
-        locality: { code: data?.address?.locality?.code, area: data?.address?.locality?.area },
+        locality: { code: data?.address?.locality?.code,
+                    area: data?.address?.locality?.area,
+                    latitude: data?.address?.latitude,
+                    longitude: data?.address?.longitude },
 
       },
       documents: data?.documents?.documents,
@@ -70,11 +77,9 @@ const NewAssetApplication = () => {
       },
 
       additionalDetails: {
-        assetParentCategory: data?.assets[0]?.assettype?.value,
-        assetAssetSubCategory: data?.assets[0]?.assetsubtype?.value,
         ...data?.assetscommon?.[0],
 
-        acquisitionProsessionDetails: {
+        acquisitionProcessionDetails: {
         },
       },   
     };
@@ -95,7 +100,7 @@ const NewAssetApplication = () => {
   return (
     <FormComposer
       heading={t("ES_TITLE_NEW_ASSET_MANAGEMENT")}
-      isDisabled={canSubmit}
+      isDisabled={!canSubmit}
       label={t("ES_COMMON_APPLICATION_SUBMIT")}
       config={configs.map((config) => {
        
@@ -105,6 +110,7 @@ const NewAssetApplication = () => {
         };
       })}
       fieldStyle={{ marginRight: 0 }}
+      cardStyle={{Width: 60}}
       onSubmit={onSubmit}
       defaultValues={defaultValues}
       onFormValueChange={onFormValueChange}

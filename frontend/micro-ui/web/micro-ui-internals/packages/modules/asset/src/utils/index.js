@@ -96,6 +96,66 @@ export const convertEpochToDate = (dateEpoch,businessService) => {
   }
 };
 
+
+export const Assetdata = (data) => {
+
+  console.log("datajsfgjhewgfjhewf",data);
+ 
+
+  const formdata = {
+    Asset: {
+      accountId: "",
+      tenantId: data?.address?.city?.code,
+      assetBookRefNo: data?.asset?.BookPagereference,
+      assetName: data?.asset?.AssetName,
+      description: data?.asset?.Assetdescription,
+      assetClassification:data?.asset?.assetclassification?.value,
+      assetParentCategory: data?.asset?.assettype?.code,
+      assetCategory:data?.asset?.assetsubtype?.code,
+      assetSubCategory:data?.asset?.assetparentsubCategory?.code,
+      department: data?.asset?.Department,
+      financialYear: "",
+      sourceOfFinance:"",
+      applicationNo: "",
+      approvalDate: "",
+      applicationDate: "",
+      status: "",
+      action: "",
+      businessService: "asset-create",
+
+      addressDetails: {
+        addressLine1:data?.address?.addressLine1,
+        addressLine2:data?.address?.addressLine2,
+        buildingName:data?.address?.buildingName,
+        doorNo:data?.address?.doorNo,
+        street:data?.address?.street,
+        pincode:data?.address?.pincode,
+        city:data?.address?.city?.name,
+        locality: { code: data?.address?.locality?.code,
+                    area: data?.address?.locality?.area,
+                    latitude: data?.address?.latitude,
+                    longitude: data?.address?.longitude },
+
+      },
+      documents: data?.documents?.documents,
+      workflow : {
+        action: "INITIATE",
+        businessService: "asset-create",
+        moduleName: "asset-services"
+      },
+
+      additionalDetails: {
+        ...data?.assetDetails,
+
+        acquisitionProcessionDetails: {
+        },
+      }, 
+    },
+  };
+
+ 
+  return formdata;
+};
 export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
   if (searcher == "") return str;
   while (str.includes(searcher)) {
