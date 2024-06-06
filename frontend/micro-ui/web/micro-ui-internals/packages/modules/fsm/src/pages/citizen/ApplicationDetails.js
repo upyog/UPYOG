@@ -86,17 +86,18 @@ const ApplicationDetails = () => {
 
   return (
     <React.Fragment>
-      <div className="cardHeaderWithOptions">
+      <div style={{display:"flex",justifyContent:"space-between",maxWidth:"960px"}} className="cardHeaderWithOptions">
         <Header>{t("CS_FSM_APPLICATION_DETAIL_TITLE_APPLICATION_DETAILS")}</Header>
-        <div style={{display:"flex", alignItems:"center"}}>
-        <LinkButton label={t("VIEW_TIMELINE")}  onClick={handleViewTimeline}></LinkButton>
-        </div>
-        <MultiLink
+        <div >
+        {/* <MultiLink
           className="multilinkWrapper"
           onHeadClick={() => setShowOptions(!showOptions)}
           displayOptions={showOptions}
           options={dowloadOptions}
-        />
+        /> */}
+        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        </div>
+        
       </div>
       <Card style={{ position: "relative" }}>
         {application?.applicationDetails?.map(({ title, value, child, caption, map }, index) => {
