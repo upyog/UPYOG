@@ -48,7 +48,6 @@
 			<artifactId>javers-core</artifactId>
 			<version>5.11.2</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -136,8 +135,6 @@
 					</excludes>
 				</configuration>
 			</plugin>
-
-
 			<plugin>
 				<groupId>cz.habarta.typescript-generator</groupId>
 				<artifactId>typescript-generator-maven-plugin</artifactId>
@@ -161,9 +158,14 @@
 					<namespace>Digit</namespace>
 					<debug>true</debug>
 					<outputKind>module</outputKind>
+					<outputFile>target/generated-sources/typescript.d.ts</outputFile>
+					<classes>
+						<class>org.egov.common.contract.request.User</class>
+						<class>org.egov.common.contract.request.RequestInfo</class>
+						<class>org.egov.common.contract.response.ResponseInfo</class>
+					</classes>
 				</configuration>
 			</plugin>
-
 		</plugins>
 		<pluginManagement>
 			<plugins>
