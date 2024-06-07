@@ -63,4 +63,13 @@ public class DriverRepository {
 		return jdbcTemplate.query(query, preparedStmtList.toArray(), new SingleColumnRowMapper<>(String.class));
 	}
 
+	public String getdriverSeqMobileNum(String seqDriverMobileNumber) {
+		List<Object> preparedStmtList = new ArrayList<>();
+
+		String query = driverQueryBuilder.getSeqDriverMobileNumber(seqDriverMobileNumber, preparedStmtList);
+
+		return jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), String.class);
+
+	}
+
 }

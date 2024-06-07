@@ -37,6 +37,7 @@ import org.egov.bpa.workflow.WorkflowIntegrator;
 import org.egov.bpa.workflow.WorkflowService;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
+import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -105,7 +106,9 @@ public class BPAService {
 	
 	@Autowired
 	private BPAConfiguration config;
-	
+
+	@Autowired
+	private MultiStateInstanceUtil centralInstanceUtil;
 	/**
 	 * does all the validations required to create BPA Record in the system
 	 * @param bpaRequest
@@ -113,9 +116,9 @@ public class BPAService {
 	 */
 	public BPA create(BPARequest bpaRequest) {
 		RequestInfo requestInfo = bpaRequest.getRequestInfo();
-		String tenantId = bpaRequest.getBPA().getTenantId().split("\\.")[0];
+		String tenantId =  centralInstanceUtil.getStateLevelTenant(bpaRequest.getBPA().getTenantId());
 		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
-		if (bpaRequest.getBPA().getTenantId().split("\\.").length == 1) {
+		if (centralInstanceUtil.isTenantIdStateLevel(bpaRequest.getBPA().getTenantId())) {
 			throw new CustomException(BPAErrorConstants.INVALID_TENANT, " Application cannot be create at StateLevel");
 		}
 		
@@ -143,7 +146,6 @@ public class BPAService {
 	 * applies the required vlaidation for OC on Create
 	 * @param applicationType
 	 * @param values
-	 * @param criteria
 	 * @param requestInfo
 	 * @param bpaRequest
 	 */
@@ -241,7 +243,6 @@ public class BPAService {
 	 * @param requestInfo
 	 * @param landcriteria
 	 * @param edcrNos
-	 * @param bpas
 	 */
 	private List<BPA> getBPACreatedForByMe(BPASearchCriteria criteria, RequestInfo requestInfo,LandSearchCriteria landcriteria,List<String> edcrNos ) {
 		List<BPA> bpas = null;
@@ -376,7 +377,7 @@ public class BPAService {
 	@SuppressWarnings("unchecked")
 	public BPA update(BPARequest bpaRequest) {
 		RequestInfo requestInfo = bpaRequest.getRequestInfo();
-		String tenantId = bpaRequest.getBPA().getTenantId().split("\\.")[0];
+		String tenantId =  centralInstanceUtil.getStateLevelTenant(bpaRequest.getBPA().getTenantId());
 		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
 		BPA bpa = bpaRequest.getBPA();
 

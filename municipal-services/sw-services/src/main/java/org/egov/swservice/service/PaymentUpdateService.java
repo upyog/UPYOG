@@ -22,6 +22,7 @@ import org.egov.swservice.web.models.users.UserDetailResponse;
 import org.egov.swservice.web.models.workflow.ProcessInstance;
 import org.egov.swservice.workflow.WorkflowIntegrator;
 import org.egov.tracer.model.CustomException;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -35,6 +36,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.egov.swservice.util.SWConstants.TENANTID_MDC_STRING;
 import static org.egov.swservice.util.SWConstants.*;
 
 @Slf4j
@@ -83,6 +85,10 @@ public class PaymentUpdateService {
 	public void process(HashMap<String, Object> record) {
 		try {
 			PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
+			String tenantId = paymentRequest.getPayment().getTenantId();
+
+			// Adding in MDC so that tracer can add it in header
+			MDC.put(TENANTID_MDC_STRING, tenantId);
 			boolean isServiceMatched = false;
 			for (PaymentDetail paymentDetail : paymentRequest.getPayment().getPaymentDetails()) {
 				if (paymentDetail.getBusinessService().equalsIgnoreCase(config.getReceiptBusinessservice()) ||
@@ -241,7 +247,7 @@ public class PaymentUpdateService {
 			if (config.getIsUserEventsNotificationEnabled() != null && config.getIsUserEventsNotificationEnabled()) {
 				EventRequest eventRequest = getEventRequest(sewerageConnectionRequest, property, paymentDetail);
 				if (eventRequest != null) {
-					notificationUtil.sendEventNotification(eventRequest);
+					notificationUtil.sendEventNotification(eventRequest, property.getTenantId());
 				}
 			}
 		}
@@ -249,7 +255,7 @@ public class PaymentUpdateService {
 			if (config.getIsSMSEnabled() != null && config.getIsSMSEnabled()) {
 				List<SMSRequest> smsRequests = getSmsRequest(sewerageConnectionRequest, property, paymentDetail);
 				if (!CollectionUtils.isEmpty(smsRequests)) {
-					notificationUtil.sendSMS(smsRequests);
+					notificationUtil.sendSMS(smsRequests, property.getTenantId());
 				}
 			}
 		}
@@ -258,7 +264,7 @@ public class PaymentUpdateService {
 			if (config.getIsEmailNotificationEnabled() != null && config.getIsEmailNotificationEnabled()) {
 				List<EmailRequest> emailRequests = getEmailRequest(sewerageConnectionRequest, property, paymentDetail);
 				if (!CollectionUtils.isEmpty(emailRequests)) {
-					notificationUtil.sendEmail(emailRequests);
+					notificationUtil.sendEmail(emailRequests, property.getTenantId());
 				}
 			}
 		}

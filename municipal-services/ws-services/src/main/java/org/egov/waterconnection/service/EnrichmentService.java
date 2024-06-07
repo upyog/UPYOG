@@ -84,7 +84,6 @@ public class EnrichmentService {
 	@Autowired
 	private UnmaskingUtil unmaskingUtil;
 
-
 	/**
 	 * Enrich water connection
 	 * 
@@ -121,8 +120,8 @@ public class EnrichmentService {
 		waterConnectionRequest.getWaterConnection().setAdditionalDetails(additionalDetail);
 	    //Setting ApplicationType
 		String applicationType=null;
-		
-		
+
+
 		if(reqType==WCConstants.CREATE_APPLICATION) {
 			applicationType=WCConstants.NEW_WATER_CONNECTION;
 		}
@@ -497,13 +496,17 @@ public class EnrichmentService {
 						if (creationDate1.compareTo(creationDate2) == -1) {
 							connectionHashMap.put(connection.getConnectionNo(), connection);
 						}
-					} else if (connection.getApplicationStatus().equals(WCConstants.MODIFIED_FINAL_STATE )) {
+					} else if (connection.getApplicationStatus().equals(WCConstants.MODIFIED_FINAL_STATE)) {
+							connectionHashMap.put(connection.getConnectionNo(), connection);
+					} else {
+						if (connection.getApplicationStatus().equals(WCConstants
+								.DISCONNECTION_FINAL_STATE)) {
 							connectionHashMap.put(connection.getConnectionNo(), connection);
 					} 
 				}
 				
 			}
-		});
+		}});
 		return new ArrayList(connectionHashMap.values());
 	}
 
@@ -628,7 +631,8 @@ public class EnrichmentService {
 				auditObject.put("accessBy", requestInfo.getUserInfo().getUuid());
 				auditObject.put("purpose",DOCUMENT_ACCESS_AUDIT_MSG);
 
-				producer.push(config.getDocumentAuditTopic(), auditObject);
+				producer.push(propertyCriteria.getTenantId(),config.getDocumentAuditTopic(), auditObject);
+
 			}
 
 

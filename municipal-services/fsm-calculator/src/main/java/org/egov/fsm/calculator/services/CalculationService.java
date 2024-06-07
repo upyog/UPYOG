@@ -309,7 +309,7 @@ public class CalculationService {
 				: new HashMap<>();
 		if (oldAdditionalDetails != null
 				|| oldAdditionalDetails != null && oldAdditionalDetails.get("tripAmount") != null) {
-			amount = BigDecimal.valueOf(Double.valueOf((String) oldAdditionalDetails.get("tripAmount")));
+			amount = BigDecimal.valueOf(Double.valueOf(String.valueOf(oldAdditionalDetails.get("tripAmount"))));
 
 			// fetch advance amount from fsm application
 		} else {
