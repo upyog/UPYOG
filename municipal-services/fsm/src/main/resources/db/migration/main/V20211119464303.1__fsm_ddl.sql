@@ -1,2 +1,2 @@
 ALTER TABLE eg_fsm_application_auditlog
-	DROP COLUMN pit_id ;
+	DROP COLUMN IF EXISTS pit_id ;

@@ -44,7 +44,11 @@ public class ElasticSearchRepository {
 
         // Conversion of multi-index request to a single request to avoid repetitive REST calls to ES.
         indexNameVsDocumentsToBeIndexed.keySet().forEach(indexName -> {
-            String actionMetaData = String.format("{ \"index\" : { \"_index\" : \"%s\", \"_type\" : \"_doc\" } }%n", indexName);
+            String actionMetaData;
+        	if(applicationProperties.getIsLegacyVersionES())
+        		actionMetaData = String.format("{ \"index\" : { \"_index\" : \"%s\", \"_type\" : \"_doc\" } }%n", indexName);
+        	else
+        		actionMetaData = String.format("{ \"index\" : { \"_index\" : \"%s\" } }%n", indexName);
             for (String document : indexNameVsDocumentsToBeIndexed.get(indexName)) {
                 bulkRequestBody.append(actionMetaData);
                 bulkRequestBody.append(document);

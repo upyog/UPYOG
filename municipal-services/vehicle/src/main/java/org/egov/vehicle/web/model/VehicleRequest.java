@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,6 +20,7 @@ public class VehicleRequest {
     @JsonProperty("RequestInfo")
     private RequestInfo RequestInfo = null;
 
+    @Valid
     @JsonProperty("vehicle")
     private Vehicle vehicle;
 

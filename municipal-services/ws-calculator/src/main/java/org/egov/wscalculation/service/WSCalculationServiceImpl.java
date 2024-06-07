@@ -110,6 +110,11 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 			masterMap = masterDataService.loadMasterData(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
 			calculations = getCalculations(request, masterMap);
+		} else if (request.getIsconnectionCalculation()) {
+			connectionRequest = request.getIsconnectionCalculation();
+			masterMap = masterDataService.loadMasterData(request.getRequestInfo(),
+					request.getCalculationCriteria().get(0).getTenantId());
+			calculations = getCalculations(request, masterMap);
 		}
 		else if (request.getIsReconnectionRequest()) {
 			connectionRequest = (!request.getIsReconnectionRequest());
@@ -275,7 +280,7 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 				.taxHeadEstimates(estimates).billingSlabIds(billingSlabIds).connectionNo(criteria.getConnectionNo()).applicationNO(criteria.getApplicationNo())
 				.build();
 	}
-	
+
 	/**
 	 * 
 	 * @param request would be calculations request

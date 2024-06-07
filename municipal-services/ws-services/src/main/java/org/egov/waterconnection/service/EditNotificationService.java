@@ -45,6 +45,7 @@ public class EditNotificationService {
 	
 
 	public void sendEditNotification(WaterConnectionRequest request) {
+		
 		try {
 			String applicationStatus = request.getWaterConnection().getApplicationStatus();
 			List<String> configuredChannelNames =  notificationUtil.fetchChannelList(request.getRequestInfo(), request.getWaterConnection().getTenantId(), WATER_SERVICE_BUSINESS_ID, request.getWaterConnection().getProcessInstance().getAction());
@@ -61,15 +62,16 @@ public class EditNotificationService {
 				if (config.getIsUserEventsNotificationEnabled() != null && config.getIsUserEventsNotificationEnabled()) {
 					EventRequest eventRequest = getEventRequest(request, property);
 					if (eventRequest != null) {
-						notificationUtil.sendEventNotification(eventRequest);
+						notificationUtil.sendEventNotification(eventRequest, property.getTenantId());
 					}
 				}
 			}
+			
 			if(configuredChannelNames.contains(CHANNEL_NAME_SMS)){
 				if (config.getIsSMSEnabled() != null && config.getIsSMSEnabled()) {
 				List<SMSRequest> smsRequests = getSmsRequest(request, property);
 				if (!CollectionUtils.isEmpty(smsRequests)) {
-					notificationUtil.sendSMS(smsRequests);
+					notificationUtil.sendSMS(smsRequests, property.getTenantId());
 				}
 			}}
 		} catch (Exception ex) {

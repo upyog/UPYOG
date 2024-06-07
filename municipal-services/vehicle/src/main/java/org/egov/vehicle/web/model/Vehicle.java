@@ -1,5 +1,6 @@
 package org.egov.vehicle.web.model;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
 import org.egov.vehicle.web.model.user.User;
@@ -124,6 +125,7 @@ public class Vehicle {
     private StatusEnum status = null;
 
     @JsonProperty("owner")
+    @Valid
     private User owner = null;
 
     @JsonProperty("auditDetails")
