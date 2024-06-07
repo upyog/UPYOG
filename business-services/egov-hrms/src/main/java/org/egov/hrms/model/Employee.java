@@ -83,9 +83,9 @@ public class Employee {
 
     private Long dateOfAppointment;
 
-    @Valid
-    @NotEmpty
-    @Size(min = 1,max = 50)
+//    @Valid
+//    @NotEmpty
+//    @Size(min = 1,max = 50)
     private List<Jurisdiction> jurisdictions = new ArrayList<>();
 
 
