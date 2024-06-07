@@ -22,7 +22,7 @@
     "@egovernments/digit-ui-module-tl": "1.7.16",
     "@egovernments/digit-ui-module-ws": "1.7.16",
     "@egovernments/digit-ui-module-commonpt": "1.7.16",
-    "@egovernments/upyog-ui-module-ptr": "1.0.7",
+    "@upyog-niua/upyog-ui-module-ptr": "1.0.7",
     "microbundle-crl": "^0.13.11",
     "http-proxy-middleware": "^1.0.5",
     "react": "17.0.2",

@@ -1,5 +1,5 @@
 {
-  "name": "@egovernments/upyog-css",
+  "name": "@upyog-niua/upyog-css",
   "version": "1.8.0",
   "license": "MIT",
   "main": "dist/index.css",
