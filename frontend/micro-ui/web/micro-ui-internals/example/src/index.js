@@ -23,12 +23,12 @@ import { initWSComponents } from "@egovernments/digit-ui-module-ws";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
 import { initBillsComponents, BillsModule } from "@egovernments/digit-ui-module-bills";
-import { PTRModule, PTRLinks, PTRComponents } from "@upyog-niua/upyog-ui-module-ptr";
+import { PTRModule, PTRLinks, PTRComponents } from "@egovernments/upyog-ui-module-ptr";
 // import {initCustomisationComponents} from "./customisations";
 
 // import { PGRModule, PGRLinks } from "@egovernments/digit-ui-module-pgr";
 // import { Body, TopBar } from "@egovernments/digit-ui-react-components";
-import "@upyog-niua/upyog-css/example/index.css";
+import "@egovernments/upyog-css/example/index.css";
 // import * as comps from "@egovernments/digit-ui-react-components";
 
 // import { subFormRegistry } from "@egovernments/digit-ui-libraries";

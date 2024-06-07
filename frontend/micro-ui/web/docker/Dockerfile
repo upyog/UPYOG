@@ -19,7 +19,7 @@ RUN yarn add @egovernments/digit-ui-module-ws
 RUN yarn add @egovernments/digit-ui-module-commonpt
 RUN yarn add @egovernments/digit-ui-module-receipts
 RUN yarn add @egovernments/digit-ui-module-bills
-RUN yarn add @upyog-niua/upyog-ui-module-ptr
+RUN yarn add @egovernments/upyog-ui-module-ptr
 ARG WORK_DIR
 WORKDIR /app
 ENV NODE_OPTIONS "--max-old-space-size=4096"

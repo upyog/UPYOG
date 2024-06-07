@@ -32,7 +32,7 @@ import {
   PTRModule,
   PTRLinks,
   PTRComponents,
-} from "@upyog-niua/upyog-ui-module-ptr";
+} from "@egovernments/upyog-ui-module-ptr";
 import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
 import { initOBPSComponents } from "@egovernments/digit-ui-module-obps";
 import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
