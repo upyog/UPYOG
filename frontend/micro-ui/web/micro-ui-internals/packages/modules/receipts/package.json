@@ -1,6 +1,6 @@
 {
   "name": "@egovernments/digit-ui-module-receipts",
-  "version": "1.7.15",
+  "version": "1.7.16",
   "description": "RECEIPTS",
   "license": "MIT",
   "main": "dist/index.js",
