@@ -824,5 +824,5 @@ config:
       - work-dir: "municipal-services/ewaste-services"
         image-name: "ewaste-services"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "municipal-services/ewaste-servicessrc/main/resources/db"
+      - work-dir: "municipal-services/ewaste-services/src/main/resources/db"
         image-name: "ewaste-services-db"
