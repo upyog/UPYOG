@@ -71,8 +71,9 @@ public class WSCalculationWorkflowValidator {
 			Map<String, String> errorMap) {
 		Boolean isApplicationApproved = propertyWorkflowValidation(requestInfo, tenantId, property.getAcknowldgementNumber());
 		JSONObject mdmsResponse=getWnsPTworkflowConfig(requestInfo,tenantId);
+		log.info("Property details "+property.getStatus());
 		if(mdmsResponse.getBoolean("inWorkflowStatusAllowed")&&!isApplicationApproved){
-			if(property.getStatus().equals(Status.INWORKFLOW))
+			if(property.getStatus()!=null && property.getStatus().equals(Status.INWORKFLOW))
 				isApplicationApproved=true;
 		}
 
