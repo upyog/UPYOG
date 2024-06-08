@@ -218,13 +218,11 @@ public String  getLatestActiveBillId(CancelBillCriteria cancelBillCriteria){
 		if (CollectionUtils.isEmpty(bills))
 			return 0;
 
-		BillStatus status = bills.get(0).getStatus();
-		if (!status.equals(BillStatus.ACTIVE)) {
-			if (status.equals(BillStatus.PAID) || status.equals(BillStatus.PARTIALLY_PAID))
-				return -1;
-			else
-				return 0;
-		}
+		
+		/*
+		 * if (!status.equals(BillStatus.ACTIVE)) { if (status.equals(BillStatus.PAID)
+		 * || status.equals(BillStatus.PARTIALLY_PAID)) return -1; else return 0; }
+		 */
 
 		if (BillStatus.CANCELLED.equals(updateBillCriteria.getStatusToBeUpdated())) {
 
@@ -238,7 +236,6 @@ public String  getLatestActiveBillId(CancelBillCriteria cancelBillCriteria){
 		}
 		
 		List<Object> preparedStmtList = new ArrayList<>();
-		preparedStmtList.add(status.toString());
 		String queryStr = billQueryBuilder.getBillStatusUpdateQuery(updateBillCriteria, preparedStmtList);
 		return jdbcTemplate.update(queryStr, preparedStmtList.toArray());
 	}

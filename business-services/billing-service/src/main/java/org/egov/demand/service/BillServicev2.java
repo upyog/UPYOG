@@ -241,6 +241,8 @@ public class BillServicev2 {
 		if (CollectionUtils.isEmpty(billCriteria.getConsumerCode()))
 			billCriteria.setConsumerCode(new HashSet<>());
 		BillResponseV2 res = searchBill(billCriteria.toBillSearchCriteria(), requestInfo);
+		log.info("\n\t\t\tResurlt billing query\t"+res);
+		
 		List<BillV2> bills = res.getBill();
 
 		/* 
@@ -254,7 +256,7 @@ public class BillServicev2 {
 			return generateBill(billCriteria, requestInfo);
 		}
 		
-		if (!CollectionUtils.isEmpty(bills) && billCriteria.getBusinessService().equalsIgnoreCase("PT") && !(bills.get(0).getTotalAmount().remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0))
+		if (!CollectionUtils.isEmpty(bills) && billCriteria.getBusinessService().equalsIgnoreCase("PT") )
 		{
 			log.info( "If bills are not empty" );
 			if(!billCriteria.getBusinessService().equalsIgnoreCase("WS") && !billCriteria.getBusinessService().equalsIgnoreCase("SW"))
