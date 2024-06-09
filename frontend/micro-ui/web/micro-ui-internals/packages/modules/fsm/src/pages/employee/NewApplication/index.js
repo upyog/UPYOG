@@ -42,13 +42,11 @@ export const NewApplication = ({ parentUrl, heading }) => {
   };
 
   const onFormValueChange = (setValue, formData) => {
-    if (
-      
+    console.log(formData,"formdata")
+    console.log(formData?.tripData?.amountPerTrip , formData?.tripData?.amountPerTrip === 0 )
+      if (
       formData?.propertyType &&
       formData?.subtype &&
-      ((formData?.address?.locality?.name === "Other" ? formData?.address?.newLocality : formData?.address?.locality?.code) ||
-        (formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" &&
-          (formData?.address?.gramPanchayat?.name === "Other" ? formData?.address?.newGp : formData?.address?.gramPanchayat?.code))) &&
       formData?.tripData?.vehicleType &&
       formData?.channel &&
       formData?.pitType &&
@@ -56,7 +54,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
       formData?.tripData?.distancefromroad &&
       formData?. address?.street &&
       formData?.address?.doorNo &&
-      (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0 || formData?.tripData?.undefined?.amountPerTrip)
+      (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0 )
     ) {
       setSubmitValve(true);
       const pitDetailValues = formData?.pitDetail ? Object.values(formData?.pitDetail).filter((value) => value > 0) : null;
@@ -68,17 +66,19 @@ export const NewApplication = ({ parentUrl, heading }) => {
         } else if (isConventionalSpecticTank(formData?.pitType?.dimension) && pitDetailValues?.length >= 3) {
           setSubmitValve(true);
         } else if (!isConventionalSpecticTank(formData?.pitType?.dimension) && pitDetailValues?.length >= 2) {
+
           setSubmitValve(true);
-        } else setSubmitValve(false);
-      }
-      if (
-        formData?.tripData?.amountPerTrip !== 0 &&
-        (formData?.advancepaymentPreference?.advanceAmount < min ||
-          formData?.advancepaymentPreference?.advanceAmount > max ||
-          formData?.advancepaymentPreference?.advanceAmount === "")
-      ) {
+        } else 
         setSubmitValve(false);
       }
+      // if (
+      //   formData?.tripData?.amountPerTrip !== 0 &&
+      //   (formData?.advancepaymentPreference?.advanceAmount < min ||
+      //     formData?.advancepaymentPreference?.advanceAmount > max ||
+      //     formData?.advancepaymentPreference?.advanceAmount === "")
+      // ) {
+      //   setSubmitValve(false);
+      // }
     } else {
       setSubmitValve(false);
     }

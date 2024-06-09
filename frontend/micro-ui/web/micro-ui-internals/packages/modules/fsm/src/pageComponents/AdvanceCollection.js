@@ -39,7 +39,7 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
         title: t("ES_NEW_APPLICATION_AMOUNT_INVALID"),
       },
 
-      default: url.includes("modify") ? applicationData?.advanceAmount : formData?.advanceAmount,
+      default: url.includes("modify") ? applicationData?.advanceAmount : formData?.advancepaymentPreference?.advanceAmount,
       isMandatory: true,
     },
   ];
@@ -51,86 +51,93 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
     onSelect(config.key, { ...formData[config.key], advanceAmount: value });
   }
 
+  // useEffect(() => {
+  //   (async () => {
+  //     if (formData?.tripData?.vehicleType !== vehicle) {
+  //       setVehicle({ label: formData?.tripData?.vehicleType?.capacity });
+  //     }
+
+  //     if (
+  //       formData?.propertyType &&
+  //       formData?.subtype &&
+  //       formData?.address &&
+  //       formData?.tripData?.vehicleType?.capacity &&
+  //       formData?.address?.propertyLocation?.code === "WITHIN_ULB_LIMITS"
+  //     ) {
+  //       const capacity = formData?.tripData?.vehicleType.capacity;
+  //       const { slum: slumDetails } = formData.address;
+  //       const slum = slumDetails ? "YES" : "NO";
+  //       const billingDetails = await Digit.FSMService.billingSlabSearch(tenantId, {
+  //         propertyType: formData?.subtype,
+  //         capacity,
+  //         slum,
+  //       });
+
+  //       const billSlab = billingDetails?.billingSlab?.length && billingDetails?.billingSlab[0];
+
+  //       if (billSlab?.price || billSlab?.price === 0) {
+  //         const totaltripAmount = billSlab.price * formData.tripData.noOfTrips;
+  //         const isTotalAmountOdd=totaltripAmount %2 !==0;
+
+  //         const { advanceAmount: advanceBalanceAmount } = await Digit.FSMService.advanceBalanceCalculate(tenantId, {
+  //           totalTripAmount: totaltripAmount,
+  //         });
+  //         Digit.SessionStorage.set("total_amount", totaltripAmount);
+  //         Digit.SessionStorage.set("advance_amount", advanceBalanceAmount);
+  //         setTotalAmount(totaltripAmount);
+  //         setAdvanceAmounts(advanceBalanceAmount);
+  //         !url.includes("modify") || (url.includes("modify") && advanceBalanceAmount > formData?.advancepaymentPreference?.advanceAmount)
+  //           ? setValue({
+  //               advanceAmount: (isTotalAmountOdd ? Math.ceil(advanceBalanceAmount) : advanceBalanceAmount) ,
+  //             })
+  //           : null;
+  //         setError(false);
+  //       } else {
+  //         sessionStorage.removeItem("Digit.total_amount");
+  //         sessionStorage.removeItem("Digit.advance_amount");
+  //         setError(true);
+  //       }
+  //     }
+  //   })();
+  // }, [formData?.propertyType, formData?.subtype, formData?.address?.slum, formData?.tripData?.vehicleType?.capacity, formData?.tripData?.noOfTrips]);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     if (formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" && formData.tripData.noOfTrips && formData.tripData.amountPerTrip) {
+  //       const totaltripAmount = formData.tripData.amountPerTrip * formData.tripData.noOfTrips;
+
+  //       const { advanceAmount: advanceBalanceAmount } = await Digit.FSMService.advanceBalanceCalculate(tenantId, {
+  //         totalTripAmount: totaltripAmount,
+  //       });
+  //       Digit.SessionStorage.set("total_amount", totaltripAmount);
+  //       Digit.SessionStorage.set("advance_amount", advanceBalanceAmount);
+  //       setTotalAmount(totaltripAmount);
+  //       setAdvanceAmounts(advanceBalanceAmount);
+  //       if (formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" && url.includes("modify")) {
+  //         setValue({
+  //           advanceAmount: 0,
+  //         });
+  //       } else if (
+  //         !url.includes("modify") ||
+  //         url.includes("modify") ||
+  //         (formData?.advancepaymentPreference?.advanceAmount > 0 && advanceBalanceAmount > formData?.advancepaymentPreference?.advanceAmount)
+  //       ) {
+  //         setValue({
+  //           advanceAmount: advanceBalanceAmount,
+  //         });
+  //       }
+
+  //       setError(false);
+  //     }
+  //   })();
+  // }, [formData.tripData.noOfTrips, formData.tripData.amountPerTrip]);
+
   useEffect(() => {
-    (async () => {
-      if (formData?.tripData?.vehicleType !== vehicle) {
-        setVehicle({ label: formData?.tripData?.vehicleType?.capacity });
-      }
-
-      if (
-        formData?.propertyType &&
-        formData?.subtype &&
-        formData?.address &&
-        formData?.tripData?.vehicleType?.capacity &&
-        formData?.address?.propertyLocation?.code === "WITHIN_ULB_LIMITS"
-      ) {
-        const capacity = formData?.tripData?.vehicleType.capacity;
-        const { slum: slumDetails } = formData.address;
-        const slum = slumDetails ? "YES" : "NO";
-        const billingDetails = await Digit.FSMService.billingSlabSearch(tenantId, {
-          propertyType: formData?.subtype,
-          capacity,
-          slum,
-        });
-
-        const billSlab = billingDetails?.billingSlab?.length && billingDetails?.billingSlab[0];
-
-        if (billSlab?.price || billSlab?.price === 0) {
-          const totaltripAmount = billSlab.price * formData.tripData.noOfTrips;
-          const isTotalAmountOdd=totaltripAmount %2 !==0;
-
-          const { advanceAmount: advanceBalanceAmount } = await Digit.FSMService.advanceBalanceCalculate(tenantId, {
-            totalTripAmount: totaltripAmount,
-          });
-          Digit.SessionStorage.set("total_amount", totaltripAmount);
-          Digit.SessionStorage.set("advance_amount", advanceBalanceAmount);
-          setTotalAmount(totaltripAmount);
-          setAdvanceAmounts(advanceBalanceAmount);
-          !url.includes("modify") || (url.includes("modify") && advanceBalanceAmount > formData?.advancepaymentPreference?.advanceAmount)
-            ? setValue({
-                advanceAmount: (isTotalAmountOdd ? Math.ceil(advanceBalanceAmount) : advanceBalanceAmount) ,
-              })
-            : null;
-          setError(false);
-        } else {
-          sessionStorage.removeItem("Digit.total_amount");
-          sessionStorage.removeItem("Digit.advance_amount");
-          setError(true);
-        }
-      }
-    })();
-  }, [formData?.propertyType, formData?.subtype, formData?.address?.slum, formData?.tripData?.vehicleType?.capacity, formData?.tripData?.noOfTrips]);
-
-  useEffect(() => {
-    (async () => {
-      if (formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" && formData.tripData.noOfTrips && formData.tripData.amountPerTrip) {
-        const totaltripAmount = formData.tripData.amountPerTrip * formData.tripData.noOfTrips;
-
-        const { advanceAmount: advanceBalanceAmount } = await Digit.FSMService.advanceBalanceCalculate(tenantId, {
-          totalTripAmount: totaltripAmount,
-        });
-        Digit.SessionStorage.set("total_amount", totaltripAmount);
-        Digit.SessionStorage.set("advance_amount", advanceBalanceAmount);
-        setTotalAmount(totaltripAmount);
-        setAdvanceAmounts(advanceBalanceAmount);
-        if (formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" && url.includes("modify")) {
-          setValue({
-            advanceAmount: 0,
-          });
-        } else if (
-          !url.includes("modify") ||
-          url.includes("modify") ||
-          (formData?.advancepaymentPreference?.advanceAmount > 0 && advanceBalanceAmount > formData?.advancepaymentPreference?.advanceAmount)
-        ) {
-          setValue({
-            advanceAmount: advanceBalanceAmount,
-          });
-        }
-
-        setError(false);
-      }
-    })();
-  }, [formData.tripData.noOfTrips, formData.tripData.amountPerTrip]);
+    if (formData?.tripData?.amount){
+      onSelect(config.key, { ...formData[config.key], advanceAmount: (formData?.tripData?.amount/2) });
+    }
+  }, [formData.tripData.amount]);
+  console.log(formData[config.key],"11111111111")
   return isVehicleMenuLoading && isDsoLoading ? (
     <Loader />
   ) : (
