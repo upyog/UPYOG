@@ -32,7 +32,7 @@ export const MyProperties = () => {
 
   return (
     <React.Fragment>
-      <Header>{`${t("PT_MY_PROPERTIES_HEADER_NEW_HEADER")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
+      <Header>{`${t("PT_MY_PROPERTIES_HEADER_NEW_HEADER111111")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
       <div>
         {applicationsList?.length > 0 &&
           applicationsList.map((application, index) => (
