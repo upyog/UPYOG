@@ -816,7 +816,7 @@ let conf =[
   return (
     <div>   
     <FormComposer
-      heading={t("ES_TITLE_NEW_PROPERTY_APPLICATION")}
+      heading={t("ES_TITLE_NEW_PROPERTY_APPLICATION_NEWWWWWWWWW")}
       isDisabled={!canSubmit}
       label={t("ES_COMMON_APPLICATION_SUBMIT")}
       config={conf.map((config) => {   
@@ -832,7 +832,7 @@ let conf =[
     />
     <div>
     { showToast &&   <Modal
-    headerBarMain={<Heading label={t("CR_PROPERTY_NUMBER")} />}
+    headerBarMain={<Heading label={t("CR_PROPERTY_NUMBER_NEWWWWWWW")} />}
     headerBarEnd={<CloseBtn onClick={closeModal} />}
     actionCancelLabel={"Cancel"}
     actionCancelOnSubmit={closeModal}
@@ -845,8 +845,8 @@ let conf =[
    
           <StatusTable>
               <Row label={t("CR_PROPERTY_NUMBER")} text={propertyData?.Properties?.[0]?.propertyId || "NA"} textStyle={{ whiteSpace: "pre" }} />
-              <Row label={t("CR_OWNER_NAME")} text={propertyData?.Properties?.[0]?.owners?.[0].name || "NA"} />
-              <Row label={t("CR_MOBILE_NUMBER")} text={propertyData?.Properties?.[0]?.owners?.[0].mobileNumber|| "NA"} /> 
+              {/* <Row label={t("CR_OWNER_NAME")} text={propertyData?.Properties?.[0]?.owners?.[0].name || "NA"} /> */}
+              {/* <Row label={t("CR_MOBILE_NUMBER")} text={propertyData?.Properties?.[0]?.owners?.[0].mobileNumber|| "NA"} />  */}
               <Row label={t("CR_ADDRESS")}    text={( propertyData?.Properties?.[0]?.address?.doorNo +", "+ propertyData?.Properties?.[0]?.address?.locality?.name +", "+ propertyData?.Properties?.[0]?.address?.city ) || "NA"}/>      
           </StatusTable>
   </Card>
