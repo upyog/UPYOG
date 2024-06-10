@@ -32,7 +32,7 @@ export const MyProperties = () => {
 
   return (
     <React.Fragment>
-      <Header>{`${t("PT_MY_PROPERTIES_HEADER")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
+      <Header>{`${t("PT_MY_PROPERTIES_HEADER_NEW_HEADER")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
       <div>
         {applicationsList?.length > 0 &&
           applicationsList.map((application, index) => (
@@ -40,12 +40,12 @@ export const MyProperties = () => {
               <MyProperty application={application} />
             </div>
           ))}
-        {!applicationsList?.length > 0 && <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("PT_NO_PROP_FOUND_MSG")}</p>}
+        {!applicationsList?.length > 0 && <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("PT_NO_PROP_FOUND_MSG_NO_PROP")}</p>}
 
         {applicationsList?.length !== 0 && (
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
-              <span className="link">{<Link to={`/digit-ui/citizen/pt/property/my-properties/${t1}`}>{t("PT_LOAD_MORE_MSG")}</Link>}</span>
+              <span className="link">{<Link to={`/digit-ui/citizen/pt/property/my-properties/${t1}`}>{t("PT_LOAD_MORE_MSG_LOADDD")}</Link>}</span>
             </p>
           </div>
         )}

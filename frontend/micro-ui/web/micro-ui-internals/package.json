@@ -11,7 +11,6 @@
     "packages/modules/core",
     "packages/modules/commonPt",
     "packages/modules/dss",
-    "packages/modules/pt",
     "packages/modules/obps"
     
   ],
@@ -53,7 +52,7 @@
     "build:libraries": "cd packages/libraries && yarn build",
     "build:components": "cd packages/react-components && yarn build",
     "build:common": "cd packages/modules/common && yarn build",
-    "build:pt": "cd packages/modules/pt && yarn build",
+    "buildD:pt": "cd packages/modules/pt && yarn build",
     "build:commonPt": "cd packages/modules/commonPt && yarn build",
     "build:core": "cd packages/modules/core && yarn build",
     "buildD:pgr": "cd packages/modules/pgr && yarn build",
