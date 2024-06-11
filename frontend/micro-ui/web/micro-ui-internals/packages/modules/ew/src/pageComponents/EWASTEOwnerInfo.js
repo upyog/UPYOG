@@ -23,13 +23,9 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
   const [mobileNumber, setMobileNumber] = useState(
     (formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].mobileNumber) || formData?.ownerKey?.mobileNumber || ""
   );
-
-  // const [locality, setLocality] = useState(
-  //   (formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].locality) || formData?.ownerKey?.locality || ""
-  // );
-  // const [address, setAddress] = useState(
-  //   (formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].address) || formData?.ownerKey?.address || ""
-  // );
+  const [altMobileNumber, setAltMobileNumber] = useState(
+    (formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].altMobileNumber) || formData?.ownerKey?.altmobileNumber || ""
+  );
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
@@ -43,12 +39,12 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
     setMobileNumber(e.target.value);
   }
 
-  function setOwnerEmail(e) {
-    setEmail(e.target.value);
+  function setAltMobileNo(e) {
+    setAltMobileNumber(e.target.value);
   }
 
-  function setaddress(e) {
-    setAddress(e.target.value);
+  function setOwnerEmail(e) {
+    setEmail(e.target.value);
   }
 
 
@@ -57,10 +53,10 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
     let owner = formData.ownerKey && formData.ownerKey[index];
     let ownerStep;
     if (userType === "citizen") {
-      ownerStep = { ...owner, applicantName, mobileNumber, emailId };
+      ownerStep = { ...owner, applicantName, mobileNumber, altMobileNumber, emailId };
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
     } else {
-      ownerStep = { ...owner, applicantName, mobileNumber, emailId };
+      ownerStep = { ...owner, applicantName, mobileNumber, altMobileNumber, emailId };
       onSelect(config.key, ownerStep, false, index);
     }
   };
@@ -109,6 +105,14 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
             name="mobileNumber"
             onChange={(value) => setMobileNo({ target: { value } })}
             {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
+          />
+
+          <CardLabel>{`${t("EWASTE_ALT_MOBILE_NUMBER")}`}</CardLabel>
+          <MobileNumber
+            value={altMobileNumber}
+            name="altmobileNumber"
+            onChange={(value) => setAltMobileNo({ target: { value } })}
+            {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_ALT_MOBILE_NUMBER_INVALID") }}
           />
 
           <CardLabel>{`${t("EWASTE_EMAIL_ID")}`}</CardLabel>

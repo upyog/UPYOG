@@ -518,6 +518,23 @@ const getProductPriceList = (tenantId, moduleCode, type) => ({
   },
 });
 
+const getVendorDetailsList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "VendorName",
+          },
+        ],
+      },
+    ],
+  },
+});
+
 
 
 ////////////////////////
@@ -1349,6 +1366,16 @@ const GetPropertySubtype = (MdmsRes) =>
     });
     //return MdmsRes;
   };   
+
+  const getVendorDetails = (MdmsRes) => {
+    return MdmsRes["Ewaste"].VendorName.filter((VendorName) => VendorName.active).map((vendorDetails) => {
+      return {
+        ...vendorDetails,
+        i18nKey: `EWASTE_${vendorDetails.code}`,
+      };
+    });
+    //return MdmsRes;
+  };   
   
   const Asset_Classification = (MdmsRes) => {
     MdmsRes["ASSET"].assetClassification.filter((assetClassification) => assetClassification.active).map((asset_mdms) => {
@@ -1890,6 +1917,9 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
 
     case "ProductName":
       return getProductPrice(MdmsRes);
+
+    case "VendorName":
+      return getVendorDetails(MdmsRes);
   
     case "assetClassification":
       return getAssetClassification(MdmsRes); 
@@ -2155,6 +2185,10 @@ export const MdmsService = {
   
   EWProductPrice: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getProductPriceList(tenantId, moduleCode, type), moduleCode);
+  },
+
+  EWVendor: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getVendorDetailsList(tenantId, moduleCode, type), moduleCode);
   },
  
   getCustomizationConfig: (tenantId, moduleCode) => {

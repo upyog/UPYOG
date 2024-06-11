@@ -112,8 +112,6 @@ const EWCreate = ({ parentRoute }) => {
 
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("EWCheckPage");
   const EWASTEAcknowledgement = Digit?.ComponentRegistryService?.getComponent("EWASTEAcknowledgement");
-
-  
   
   return (
     <Switch>

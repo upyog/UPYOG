@@ -46,18 +46,16 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   const productcolumns = [
     { Header: "PRODUCT_NAME", accessor: "name" },
     { Header: "PRODUCT_QUANTITY", accessor: "quantity" },
-    { Header: "PRODUCT_PRICE", accessor: "price" },
-    // { Header: "DELETE_KEY", accessor: "delete", Cell: ({ row }) => (
-    //   <button >{<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/productdetails/`}`} />}
-    //   </button>
-    // ), },
+    { Header: "UNIT_PRICE", accessor: "unit_price" },
+    { Header: "TOTAL_PRODUCT_PRICE", accessor: "total_price" },
   ];
 
     const productRows = ewdet?.prlistName?.map((product, index) => (
         {
             name: product.code,
             quantity: ewdet?.prlistQuantity[index].code,
-            price: ewdet?.prlistQuantity[index].code,
+            unit_price: product.price,
+            total_price: ewdet?.prlistQuantity[index].code * product.price,
         }
     )) || [];
 
@@ -75,25 +73,6 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
           <CardSubHeader>{t("EWASTE_TITLE_PRODUCT_DETAILS")}</CardSubHeader>
           <br></br>
-          {/* <StatusTable>
-            <Row
-              label={t("EWASTE_SEARCH_PRODUCT_NAME")}
-              text={`${t(checkForNA(ewdet?.productName?.code))}`}
-              actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/productdetails/`}`} />}
-            />
-
-            <Row
-              label={t("EWASTE_SEARCH_QUANTITY")}
-              text={`${t(checkForNA(ewdet?.productQuantity))}`}
-              actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/productdetails/`}`} />}
-            />
-
-            <Row
-              label={t("EWASTE_SEARCH_TOTAL_PRICE")}
-              text={`${t(checkForNA(ewdet.productPrice))}`}
-              actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/productdetails/`}`} />}
-            />
-          </StatusTable> */}
 
           <ApplicationTable
             t={t}
@@ -176,25 +155,25 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
             <Row
               label={t("EWASTE_SEARCH_HOUSE_NAME")}
-              text={`${t(checkForNA(ewdet?.buildingName))}`}
+              text={`${t(checkForNA(address?.buildingName))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/street`}`} />}
             />
 
             <Row
               label={t("EWASTE_SEARCH_ADDRESS_LINE_1")}
-              text={`${t(checkForNA(ewdet?.addressLine1))}`}
+              text={`${t(checkForNA(address?.addressLine1))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/street`}`} />}
             />
 
             <Row
               label={t("EWASTE_SEARCH_ADDRESS_LINE_2")}
-              text={`${t(checkForNA(ewdet?.addressLine2))}`}
+              text={`${t(checkForNA(address?.addressLine2))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/street`}`} />}
             />
 
             <Row
               label={t("EWASTE_SEARCH_LANDMARK")}
-              text={`${t(checkForNA(ewdet?.landmark))}`}
+              text={`${t(checkForNA(address?.landmark))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/street`}`} />}
             />
           </StatusTable>

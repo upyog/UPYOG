@@ -52,8 +52,6 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
     // })
   };
 
-  console.log("this is product lst ::", prlistName);
-
   const goNext = () => {
     let owner = formData.ewdet && formData.ewdet[index];
     let ownerStep;

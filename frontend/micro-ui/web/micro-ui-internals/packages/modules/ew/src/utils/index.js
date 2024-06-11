@@ -45,65 +45,41 @@ export const setAddressDetails = (data) => {
 export const setProductDetails = (data) => {
   let { ewdet } = data;
 
-  ewdet?.prlistName.map((product, index) => {
-    let productDetails = {
-      ...ewdet, 
-      productName: product?.code,
-      quantity: ewdet?.productQuantity[index]
-      }
-  })
+  let productDetails = ewdet?.prlistName.map((product, index) => {
+    return { 
+      productId: "",
+      productName: product.code,
+      quantity: ewdet?.prlistQuantity[index].code,
+      price: product.price * ewdet?.prlistQuantity[index].code
+    };
+  }) || [];
 
   data.ewdet = productDetails;
   return data;
 }
 
-export const setOwnerDetails = (data) => {
-  let { ownerKey } = data;
+// export const setOwnerDetails = (data) => {
+//   let { ownerKey } = data;
 
-  let ownerDetails = {
-    ...ownerKey, 
-    applicantName: ownerKey?.applicantName,
-    mobileNumber: ownerKey?.mobileNumber,
-    emailId: ownerKey?.emailId
-  }
+//   let ownerDetails = {
+//     ...ownerKey, 
+//     applicantName: ownerKey?.applicantName,
+//     mobileNumber: ownerKey?.mobileNumber,
+//     emailId: ownerKey?.emailId
+//   }
 
-  data.ownerKey = ownerDetails;
-  return data;
-}
+//   data.ownerKey = ownerDetails;
+//   return data;
+// }
 
-// export const PetDataConvert = (data) => {
- 
-//   data = setDocumentDetails(data);
-//   data = setOwnerDetails(data);
-//   data = setAddressDetails(data);
-//   data = setPetDetails(data);
-
-//   const formdata = {
-//     PetRegistrationApplications: [{
-//       tenantId: data.tenantId,
-//       ...data?.ownerss,
-//       address: data.address,
-//       petDetails: data.pets,
-//         ...data.documents,
-
-      
-//       workflow : {
-//         businessService: "ptr",
-//         action : "APPLY",
-//         moduleName: "pet-services"
-//       }
-//     }],
-//   };
-
- 
-//   return formdata;
-// };
 
 export const EWDataConvert = (data) => {
  
   data = setProductDetails(data);
-  data = setOwnerDetails(data);
+  // data = setOwnerDetails(data);
   data = setAddressDetails(data);
+
+  console.log("this is data in ::", data)
 
   // const formdata = {
   //   EwasteApplication: [{
@@ -122,19 +98,21 @@ export const EWDataConvert = (data) => {
   // };
 
   const formdata = {
-    EwasteApplication: {
+    EwasteApplication: [
+    {
       tenantId: "pg.citya",
       requestId: data.requestId || "",
       transactionId: data.transactionId || "",
       pickUpDate: data.pickUpDate || "",
       vendorUuid: "345",
+      requestStatus: "New Request",
       applicant: {
         applicantName: data?.ownerKey?.applicantName,
         mobileNumber: data?.ownerKey?.mobileNumber,
         emailId: data?.ownerKey?.emailId,
-        aadharNumber: data?.ownerKey?.aadharNumber || ""
+        altMobileNumber: data?.ownerKey?.altMobileNumber,
       },
-      ewasteDetails: data.ewasteDetails || [],
+      ewasteDetails: data?.ewdet,
       address: {
         tenantId: "pg.citya",
         doorNo: data.address?.doorNo,
@@ -162,6 +140,7 @@ export const EWDataConvert = (data) => {
         moduleName: "ewaste-services"
       }
     }
+  ]
   };
  
   return formdata;

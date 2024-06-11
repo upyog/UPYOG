@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import Timeline from "../components/EWASTETimeline";
 
 const EWASTESelectPincode = ({ t, config, onSelect, formData = {}, userType, register, errors, setError, formState, clearErrors }) => {
-  const tenants = Digit.Hooks.ptr.useTenants();
+  const tenants = Digit.Hooks.ew.useTenants();
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
 

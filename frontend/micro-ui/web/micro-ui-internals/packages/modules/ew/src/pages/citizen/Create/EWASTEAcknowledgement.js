@@ -40,8 +40,6 @@ const EWASTEAcknowledgement = ({ data, onSuccess }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   // const mutation = Digit.Hooks.ptr.usePTRCreateAPI(data.address?.city?.code); 
   const mutation = Digit.Hooks.ew.useEWCreateAPI("pg.citya"); 
-  console.log("this is data and tenantId :: ", data, tenantId)
-  console.log("this is mutation data :: ", mutation)
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const match = useRouteMatch();
   const { tenants } = storeData || {};
