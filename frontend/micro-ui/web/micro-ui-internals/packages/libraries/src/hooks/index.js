@@ -282,6 +282,8 @@ import useResidentType from "./chb/useResidentType";
 import usePurpose from "./chb/usePurpose";
 import useChbCreateAPI from "./chb/useChbCreateAPI";
 import useChbDocumentsMDMS from "./chb/useChbDocumentsMDMS";
+import useEWCreateAPI from "./ew/useEWCreateAPI";
+import useTenantsEW from "./ew/useTenants";
 
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
@@ -306,7 +308,9 @@ const pgr = {
 };
 
 const ew = {
-  useProductPriceMDMS
+  useProductPriceMDMS,
+  useEWCreateAPI,
+  useTenants: useTenantsEW
 };
 
 const asset = {

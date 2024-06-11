@@ -100,6 +100,12 @@ const Urls = {
     
   },
 
+  ew: {
+    create:"/ewaste-services/ewaste-request/_create",
+    search:"/ewaste-services/ewaste-request/_search",
+    update:"/ewaste-services/ewaste-request/_update",
+  },
+
   asset:{
     create:"/asset-services/v1/assets/_create",
     search:"/asset-services/v1/assets/_search",

@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { checkForNA, getFixedFilename } from "../../../utils";
 import Timeline from "../../../components/EWASTETimeline";
+import ApplicationTable from "../../../components/inbox/ApplicationTable";
 
 const ActionButton = ({ jumpTo }) => {
   const { t } = useTranslation();
@@ -42,6 +43,22 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
   // const typeOfApplication = !isEditPET && !isUpdatePET ? `new-application` : `edit-application`;
 
+  const productcolumns = [
+    { Header: "PRODUCT_NAME", accessor: "name" },
+    { Header: "PRODUCT_QUANTITY", accessor: "quantity" },
+    { Header: "UNIT_PRICE", accessor: "unit_price" },
+    { Header: "TOTAL_PRODUCT_PRICE", accessor: "total_price" },
+  ];
+
+    const productRows = ewdet?.prlistName?.map((product, index) => (
+        {
+            name: product.code,
+            quantity: ewdet?.prlistQuantity[index].code,
+            unit_price: product.price,
+            total_price: ewdet?.prlistQuantity[index].code * product.price,
+        }
+    )) || [];
+
   const [agree, setAgree] = useState(false);
   const setdeclarationhandler = () => {
     setAgree(!agree);
@@ -56,26 +73,22 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
           <CardSubHeader>{t("EWASTE_TITLE_PRODUCT_DETAILS")}</CardSubHeader>
           <br></br>
-          <p><i>!!Under Construction!!</i></p>
-          {/* <StatusTable>
-            <Row
-              label={t("EWASTE_SEARCH_PRODUCT_NAME")}
-              text={`${t(checkForNA(ewdet?.productName?.code))}`}
-              actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/productdetails/`}`} />}
-            />
 
-            <Row
-              label={t("EWASTE_SEARCH_QUANTITY")}
-              text={`${t(checkForNA(ewdet?.productQuantity))}`}
-              actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/productdetails/`}`} />}
-            />
-
-            <Row
-              label={t("EWASTE_SEARCH_TOTAL_PRICE")}
-              text={`${t(checkForNA(ewdet.productPrice))}`}
-              actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/productdetails/`}`} />}
-            />
-          </StatusTable> */}
+          <ApplicationTable
+            t={t}
+            data={productRows}
+            columns={productcolumns}
+            getCellProps={(cellInfo) => ({
+              style: {
+                minWidth: "150px",
+                padding: "10px",
+                fontSize: "16px",
+                paddingLeft: "20px",
+              },
+            })}
+            isPaginationRequired={false}
+            totalRecords={productRows.length}
+          />
           <br></br>
 
           <CardSubHeader>{t("EWASTE_TITLE_OWNER_DETAILS")}</CardSubHeader>
@@ -85,7 +98,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
               label={t("EWASTE_APPLICANT_NAME")}
               text={`${t(checkForNA(ownerKey?.applicantName))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/owner-details`}`} />}
-              // actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/owners/`}${index}`} />}
+            // actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/owners/`}${index}`} />}
             />
 
             <Row
@@ -142,25 +155,25 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
             <Row
               label={t("EWASTE_SEARCH_HOUSE_NAME")}
-              text={`${t(checkForNA(ewdet?.productPrice))}`}
+              text={`${t(checkForNA(address?.buildingName))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/street`}`} />}
             />
 
             <Row
               label={t("EWASTE_SEARCH_ADDRESS_LINE_1")}
-              text={`${t(checkForNA(ewdet?.productPrice))}`}
+              text={`${t(checkForNA(address?.addressLine1))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/street`}`} />}
             />
 
             <Row
               label={t("EWASTE_SEARCH_ADDRESS_LINE_2")}
-              text={`${t(checkForNA(ewdet?.productPrice))}`}
+              text={`${t(checkForNA(address?.addressLine2))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/street`}`} />}
             />
 
             <Row
               label={t("EWASTE_SEARCH_LANDMARK")}
-              text={`${t(checkForNA(ewdet?.productPrice))}`}
+              text={`${t(checkForNA(address?.landmark))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/street`}`} />}
             />
           </StatusTable>
@@ -170,7 +183,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             label={t("EWASTE_FINAL_DECLARATION_MESSAGE")}
             onChange={setdeclarationhandler}
             styles={{ height: "auto" }}
-            //disabled={!agree}
+          //disabled={!agree}
           />
         </div>
         <SubmitBar label={t("EWASTE_COMMON_BUTTON_SUBMIT")} onSubmit={onSubmit} disabled={!agree} />
