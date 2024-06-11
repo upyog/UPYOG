@@ -106,8 +106,12 @@ public class TransactionValidator {
 		if (statuses.isEmpty()) {
 			throw new CustomException("TXN_UPDATE_NOT_FOUND", "Transaction not found");
 		}
-		else if(!requestParams.get("transactionAmmount").equals(txnammount))
-			throw new CustomException("TXN_AMMOUNT_MISSMATCH","Transaction ammount is not Matching");
+		if(requestParams.containsKey("transactionAmmount"))
+		{
+			if(!requestParams.get("transactionAmmount").equals(txnammount))
+				throw new CustomException("TXN_AMMOUNT_MISSMATCH","Transaction ammount is not Matching");
+		}
+		
 
 		return statuses.get(0);
 	}
