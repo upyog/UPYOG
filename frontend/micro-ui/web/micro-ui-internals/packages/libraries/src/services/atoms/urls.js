@@ -112,12 +112,10 @@ const Urls = {
     update:"/asset-services/v1/assets/_update"
   },
 
-  chb: {  
-    
+  chb: {    
     create:"/chb-services/booking/v1/_create",
     search:"/chb-services/booking/v1/_search",
     update:"/chb-services/booking/v1/_update",
-    
   },
 
 

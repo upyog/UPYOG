@@ -24,6 +24,10 @@ const ASSETCard = () => {
       role: "ASSET_INITIATOR",
     },
     {
+      label: t("Inbox"),
+      link: `/digit-ui/employee/asset/assetservice/inbox`,
+    },
+    {
       label: t("MY_ASSET_APPLICATION"),
       link: `/digit-ui/employee/asset/assetservice/my-asset`,
     },

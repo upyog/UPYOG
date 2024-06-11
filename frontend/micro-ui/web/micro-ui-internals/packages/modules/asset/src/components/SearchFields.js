@@ -4,38 +4,11 @@ import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardL
 
 const SearchFields = ({register, control, reset, tenantId, t, formState, setShowToast, previousPage }) => {
 
-    const applicationTypes = [
-        {
-            code: "CREATE",
-            i18nKey: "CREATE"
-        },
-        {
-            code: "UPDATE",
-            i18nKey: "UPDATE"
-        },
-        {
-            code: "MUTATION",
-            i18nKey: "MUTATION"
-        },
-    ]
-    const applicationStatuses = [
-        {
-            code: "ACTIVE",
-            i18nKey: "WF_PT_ACTIVE"
-        },
-        {
-            code: "INACTIVE",
-            i18nKey: "WF_PT_INACTIVE"
-        },
-        {
-            code: "INWORKFLOW",
-            i18nKey: "WF_PT_INWORKFLOW"
-        },
-    ]
+    
 
     return <>
                 <SearchField>
-                    <label>{t("PTR_APPLICATION_NO_LABEL")}</label>
+                    <label>{t("hgrehjyewgf")}</label>
                     <TextInput name="applicationNumber" inputRef={register({})} />
                 </SearchField>
 

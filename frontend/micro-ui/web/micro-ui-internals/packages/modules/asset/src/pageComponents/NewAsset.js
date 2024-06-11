@@ -175,6 +175,15 @@ const NewAsset
     const [improvementCost, setimprovementCost] = useState(
       (formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].improvementCost) || formData?.assetDetails?.improvementCost || ""
     );
+
+
+    const [brand, setbrand] = useState(
+      (formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].brand) || formData?.assetDetails?.brand || ""
+    );
+    const [invoiceDate, setinvoiceDate] = useState(
+      (formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].invoiceDate) || formData?.assetDetails?.invoiceDate || ""
+    );
+   
    
    
     
@@ -191,6 +200,14 @@ const NewAsset
 
 
     const { control } = useForm();
+
+    function setBrand(e) {
+      setbrand(e.target.value);
+    }
+
+    function setInvoiceDate(e) {
+      setinvoiceDate(e.target.value);
+    }
 
     function setImprovementCost(e) {
       setimprovementCost(e.target.value);
@@ -437,6 +454,9 @@ const NewAsset
         ownerStep= {...owner,roadType,surfaceType,protectionLength,drainageLength,numOfBusStop,numOfFootpath,numOfMetroStation,numOfPedastrianCross,lengthOfCycletrack,lastMaintainence,nextMaintainence,bookValue,totalCost, depreciationRate, costAfterDepreciation}
       } else if (formData?.asset?.assettype?.code === "OTHER"){
         ownerStep= {...owner, registrationNumber,parkingLocation,engineNumber,chasisNumber,improvementCost,acquiredFrom,acquisitionDate,bookValue,totalCost,currentAssetValue}
+      }
+      else if (formData?.asset?.assettype?.code === "IT"){
+        ownerStep= {...owner,brand,invoiceDate }
       }
 
       onSelect(config.key, ownerStep, false, index);
@@ -1424,7 +1444,7 @@ const NewAsset
               </React.Fragment>
             )}
 
-            {formData?.asset?.assettype?.code === "OTHER" && (
+            {formData?.asset?.assettype?.code === "VEHICLE" && (
               <React.Fragment>
                 <CardLabel>{`${t("AST_REGISTRATION_NUMBER")}`}</CardLabel>
               <TextInput
@@ -1612,6 +1632,47 @@ const NewAsset
 
               
 
+            )}
+
+            {formData?.asset?.assettype?.code === "IT" && (
+              <React.Fragment>
+                 <CardLabel>{`${t("AST_BRAND")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="brand"
+                value={brand}
+                onChange={setBrand}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+              <CardLabel>{`${t("AST_INVOICE_DATE")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="invoiceDate"
+                value={invoiceDate}
+                onChange={setInvoiceDate}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+              </React.Fragment>
             )}
 
 

@@ -100,7 +100,7 @@ export const EWDataConvert = (data) => {
   const formdata = {
     EwasteApplication: [
     {
-      tenantId: "pg.citya",
+      tenantId: data?.tenantId,
       requestId: data.requestId || "",
       transactionId: data.transactionId || "",
       pickUpDate: data.pickUpDate || "",

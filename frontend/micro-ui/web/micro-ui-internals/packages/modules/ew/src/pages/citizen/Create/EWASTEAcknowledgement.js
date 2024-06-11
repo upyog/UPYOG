@@ -25,7 +25,7 @@ const BannerPicker = (props) => {
   return (
     <Banner
       message={GetActionMessage(props)}
-      applicationNumber={props.data?.PetRegistrationApplications[0].applicationNumber}
+      applicationNumber={props.data?.EwasteApplication[0].requestId}
       info={props.isSuccess ? props.t("EWASTE_APPLICATION_NO") : ""}
       successful={props.isSuccess}
       style={{width: "100%"}}
@@ -34,11 +34,11 @@ const BannerPicker = (props) => {
 };
 
 const EWASTEAcknowledgement = ({ data, onSuccess }) => {
+  
 
   const { t } = useTranslation();
   
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  // const mutation = Digit.Hooks.ptr.usePTRCreateAPI(data.address?.city?.code); 
   const mutation = Digit.Hooks.ew.useEWCreateAPI("pg.citya"); 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const match = useRouteMatch();

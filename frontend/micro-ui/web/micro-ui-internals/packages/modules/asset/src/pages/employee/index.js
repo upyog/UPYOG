@@ -5,7 +5,7 @@ import { Link, Switch, useLocation } from "react-router-dom";
 import { ASSETLinks } from "../../Module";
 import SearchApp from "./SearchApp";
 import SearchReport from "./SearchReport";
-
+import Inbox from "./Inbox";
 
 const EmployeeApp = ({ path, url, userType }) => {
   console.log("pathhhh",path,url);
@@ -14,6 +14,16 @@ const EmployeeApp = ({ path, url, userType }) => {
   const mobileView = innerWidth <= 640;
   sessionStorage.removeItem("revalidateddone");
   const isMobile = window.Digit.Utils.browser.isMobile();
+
+  const inboxInitialState = {
+    searchParams: {
+      uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
+      services: ["asset-create"],
+      applicationStatus: [],
+      locality: [],
+
+    },
+  };
 
   
  
@@ -29,11 +39,11 @@ const EmployeeApp = ({ path, url, userType }) => {
         content: t("ES_COMMON_HOME"),
         show: true,
       },
-      // {
-      //   path: "/digit-ui/employee/ptr/petservice/inbox",
-      //   content: t("ES_TITLE_INBOX"),
-      //   show: location.pathname.includes("ptr/petservice/inbox") ? true : false,
-      // },
+      {
+        path: "/digit-ui/employee/asset/assetservice/inbox",
+        content: t("ES_TITLE_INBOX"),
+        show: location.pathname.includes("asset/assetservice/inbox") ? true : false,
+      },
      
     
       {
@@ -66,6 +76,19 @@ const EmployeeApp = ({ path, url, userType }) => {
           
           {!isRes ? <div style={isNewRegistration ? {marginLeft: "12px" } : {marginLeft:"-4px"}}><AssetBreadCrumbs location={location} /></div> : null}
           <PrivateRoute exact path={`${path}/`} component={() => <ASSETLinks matchPath={path} userType={userType} />} />
+          <PrivateRoute
+            path={`${path}/assetservice/inbox`}
+            component={() => (
+              <Inbox
+                useNewInboxAPI={true}
+                parentRoute={path}
+                businessService="asset-create"
+                filterComponent="AST_INBOX_FILTER"
+                initialStates={inboxInitialState}
+                isInbox={true}
+              />
+            )}
+          />
           
           <PrivateRoute path={`${path}/assetservice/new-asset`} component={() => <NewAssetApplication parentUrl={url} />} />
           <PrivateRoute path={`${path}/assetservice/new-assets`} component={() => <ASSETCreate parentUrl={url} />} />

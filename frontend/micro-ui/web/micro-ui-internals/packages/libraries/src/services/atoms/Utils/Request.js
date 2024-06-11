@@ -45,7 +45,11 @@ const authHeaders = () => ({
   "auth-token": Digit.UserService.getUser()?.access_token || null,
 });
 
-const userServiceData = () => ({ userInfo: Digit.UserService.getUser()?.info });
+// const userServiceData = () => ({ userInfo: Digit.UserService.getUser()?.info });
+const userServiceData = () => {
+  const { active, permanentCity,locale, ...filteredUserInfo } = Digit.UserService.getUser()?.info || {};
+  return { userInfo: filteredUserInfo };
+};
 
 window.Digit = window.Digit || {};
 window.Digit = { ...window.Digit, RequestCache: window.Digit.RequestCache || {} };
