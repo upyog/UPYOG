@@ -1,4 +1,5 @@
-  import React from "react";
+  import { SubmitBar } from "@upyog/digit-ui-react-components";
+import React from "react";
   import { Link } from "react-router-dom";
 
   const GetCell = (value) => <span className="cell-text">{value}</span>;
@@ -18,67 +19,84 @@
       inboxColumns: (props) => [
       
         {
-          Header: t("PTR_APPLICATION_NUMBER"),
+          Header: t("AST_APPLICATION_NUMBER"),
           Cell: ({ row }) => {
             return (
               <div>
                 <span className="link">
                   
-                  <Link to={`${props.parentRoute}/petservice/application-details/` + `${row?.original?.searchData?.["applicationNumber"]}`}>
+                  <Link to={`${props.parentRoute}/assetservice/application-details/` + `${row?.original?.searchData?.["applicationNo"]}`}>
 
-                    {row.original?.searchData?.["applicationNumber"]}
+                    {row.original?.searchData?.["applicationNo"]}
                   </Link>
                 </span>
               </div>
             );
           },
-          mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNumber"]),
+          mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNo"]),
         },
         
         {
-          Header: t("PTR_APPLICANT_NAME"),
-          Cell: ( row ) => {
-          
-            return GetCell(`${row?.cell?.row?.original?.searchData?.["applicantName"]}`)
+          Header: t("AST_ASSET_CATEGORY"),
+          Cell: ( row ) => {          
+            return GetCell(`${row?.cell?.row?.original?.searchData?.["assetClassification"]}`)
             
           },
-          mobileCell: (original) => GetMobCell(original?.searchData?.["applicantName"]),
+          mobileCell: (original) => GetMobCell(original?.searchData?.["assetClassification"]),
           
         },
         {
-          Header: t("PTR_PET_TYPE"),
+          Header: t("AST_PARENT_CATEGORY"),
           Cell: ({ row }) => {
-            return GetCell(`${row.original?.searchData?.petDetails?.["petType"]}`);
+            return GetCell(`${row.original?.searchData?.["assetParentCategory"]}`);
            
           },
-          mobileCell: (original) => GetMobCell(original?.searchData?.petDetails?.["petType"]),
+          mobileCell: (original) => GetMobCell(original?.searchData?.["assetParentCategory"]),
         },
 
         {
-          Header: t("PTR_BREED_TYPE"),
+          Header: t("AST_NAME"),
           Cell: ({ row }) => {
-            return GetCell(`${row.original?.searchData?.petDetails?.["breedType"]}`);
+            return GetCell(`${row.original?.searchData?.["assetName"]}`);
           },
-          mobileCell: (original) => GetMobCell(original?.searchData?.petDetails?.["breedType"]),
+          mobileCell: (original) => GetMobCell(original?.searchData?.["assetName"]),
         },
 
         
         {
-          Header: t("PTR_STATUS"),
+          Header: t("AST_DEPARTMENT"),
           Cell: ({ row }) => {
-            // console.log("row",row)
             const wf = row.original?.workflowData;
-            return GetCell(t(`${row?.original?.workflowData?.state?.["applicationStatus"]}`));
+            return GetCell(t(`${row?.original?.searchData?.["department"]}`));
 
 
           },
-          mobileCell: (original) => GetMobCell(t(`ES_PTR_COMMON_STATUS_${original?.workflowData?.state?.["applicationStatus"]}`)),
+          mobileCell: (original) => GetMobCell(t(`AST_COMMON_STATUS_${original?.searchData?.["department"]}`)),
         
 
+        },
+        {
+          Header: t("AST_TRANSFER"),
+          Cell: ({ row }) => {
+            return (
+              <div>
+                
+                <span className="link">
+                
+                  <Link to={`${props.parentRoute}/assetservice/application-details/` + `${row?.original?.searchData?.["applicationNo"]}`}>
+
+                    {t('AST_TRANSFER '+`${row?.original?.searchData?.["assetParentCategory"]}`)}
+                  </Link>
+                  
+                </span>
+              </div>
+            );
+          },
+          mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNo"]),
         },
         
       ],
-      serviceRequestIdKey: (original) => original?.[t("PTR_INBOX_UNIQUE_APPLICATION_NUMBER")]?.props?.children,
+      serviceRequestIdKey: (original) => original?.[t("AST_INBOX_UNIQUE_APPLICATION_NUMBER")]?.props?.children,
 
       
     },

@@ -52,7 +52,7 @@ return true;
 
 /*   method to check value  if not returns NA*/
 export const checkForNA = (value = "") => {
-  return checkForNotNull(value) ? value : "PTR_NA";
+  return checkForNotNull(value) ? value : "NA";
 };
 
 /*   method to get required format from fielstore url*/
@@ -114,8 +114,8 @@ export const Assetdata = (data) => {
       assetCategory:data?.asset?.assetsubtype?.code,
       assetSubCategory:data?.asset?.assetparentsubCategory?.code,
       department: data?.asset?.Department,
-      financialYear: "",
-      sourceOfFinance:"",
+      financialYear: data?.asset?.financialYear?.code,
+      sourceOfFinance:data?.asset?.sourceOfFinance?.code,
       applicationNo: "",
       approvalDate: "",
       applicationDate: "",
