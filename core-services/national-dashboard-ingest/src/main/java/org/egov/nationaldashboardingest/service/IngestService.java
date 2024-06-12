@@ -62,6 +62,7 @@ public class IngestService {
     }
 
          Set<String> usageList = ingestValidator.verifyPropertyType(ingestRequest.getRequestInfo(),ingestRequest.getIngestData());
+         Set<String> paymentChannelList = ingestValidator.verifyPaymentChannel(ingestRequest.getRequestInfo(),ingestRequest.getIngestData());
 
 //       
         
@@ -74,8 +75,11 @@ public class IngestService {
             // Validates that no cross state data is being ingested, i.e. employee of state X cannot insert data for state Y
             ingestValidator.verifyCrossStateRequest(data, ingestRequest.getRequestInfo());
             Boolean isUsageCategoryInvalid = ingestValidator.verifyUsage(data, usageList);
+            Boolean isPaymentChannelInvalid = ingestValidator.verifyPayment(data, paymentChannelList);
             if(!isUsageCategoryInvalid)
                 throw new CustomException("EG_DS_INVALID_USAGE_ERR", "Invalid Usage Category!!");
+            if(!isPaymentChannelInvalid)
+                throw new CustomException("EG_DS_INVALID_PAYMENT_ERR", "Invalid Payment Channel!!");
 
             // Validates whether the fields configured for a given module are present in payload
             ingestValidator.verifyDataStructure(data);
