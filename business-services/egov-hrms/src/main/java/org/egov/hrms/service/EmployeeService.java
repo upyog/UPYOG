@@ -126,7 +126,7 @@ public class EmployeeService {
 			employee.getUser().setPassword(null);
 		});
 		hrmsProducer.push(propertiesManager.getSaveEmployeeTopic(), employeeRequest);
-		notificationService.sendNotification(employeeRequest, pwdMap);
+//		notificationService.sendNotification(employeeRequest, pwdMap);
 		return generateResponse(employeeRequest);
 	}
 	
@@ -253,7 +253,9 @@ public class EmployeeService {
 		pwdParams.add(employee.getUser().getMobileNumber());
 		pwdParams.add(employee.getTenantId());
 		pwdParams.add(employee.getUser().getName().toUpperCase());
-		employee.getUser().setPassword(hrmsUtils.generatePassword(pwdParams));
+		if (StringUtils.isEmpty(employee.getUser().getPassword())) {
+			employee.getUser().setPassword(hrmsUtils.generatePassword(pwdParams));
+		}
 		employee.getUser().setUsername(employee.getCode());
 		employee.getUser().setActive(true);
 		employee.getUser().setType(UserType.EMPLOYEE.toString());
