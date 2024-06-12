@@ -1,24 +1,19 @@
 package digit.util;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-
-import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import digit.config.Configuration;
-import digit.models.coremodels.UserDetailResponse;
 import digit.models.coremodels.user.Role;
 import digit.models.coremodels.user.User;
 import digit.models.coremodels.user.enums.UserType;
 import digit.repository.ServiceRequestRepository;
+import digit.models.coremodels.UserDetailResponse;
+import org.egov.tracer.model.CustomException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Component
 public class UserUtil {

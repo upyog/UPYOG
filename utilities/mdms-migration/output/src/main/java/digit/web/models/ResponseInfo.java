@@ -1,19 +1,17 @@
 package digit.web.models;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.springframework.validation.annotation.Validated;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Data;
+import lombok.Builder;
 
 /**
  * ResponseInfo should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseInfo should always correspond to the same values in respective request&#x27;s RequestInfo.
@@ -54,21 +52,21 @@ public class ResponseInfo   {
             */
             public enum StatusEnum {
                         SUCCESSFUL("SUCCESSFUL"),
-
+                        
                         FAILED("FAILED");
-
+            
             private String value;
-
+            
             StatusEnum(String value) {
             this.value = value;
             }
-
+            
             @Override
             @JsonValue
             public String toString() {
             return String.valueOf(value);
             }
-
+            
             @JsonCreator
             public static StatusEnum fromValue(String text) {
             for (StatusEnum b : StatusEnum.values()) {

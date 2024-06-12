@@ -1,22 +1,23 @@
 package digit.service;
 
+import java.io.InputStream;
+import java.lang.reflect.*;
+import java.util.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
+import com.fasterxml.jackson.core.type.*;
+import org.apache.commons.io.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -25,7 +26,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
@@ -115,7 +115,7 @@ public class MDMSApplicationRunnerImpl {
         String moduleName = (String) map.get("moduleName");
         Set<String> masterKeys = map.keySet();
         String nonMasterKeys = "tenantId,moduleName";
-        List<String> ignoreKey = new ArrayList<>(Arrays.asList(nonMasterKeys.split(",")));
+        List<String> ignoreKey = new ArrayList<String>(Arrays.asList(nonMasterKeys.split(",")));
         masterKeys.removeAll(ignoreKey);
         boolean isMergeAllowed;
         Map<String, JSONArray> masterDataMap = new HashMap<>();

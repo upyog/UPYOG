@@ -1,18 +1,15 @@
 package digit.util;
 
-import static digit.constants.ErrorCodes.IO_ERROR_CODE;
-import static digit.constants.ErrorCodes.IO_WRITE_ERROR_MESSAGE;
-import static digit.constants.MDMSMigrationToolkitConstants.JSON_EXTENSION;
-
-import java.io.File;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import java.io.File;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static digit.constants.ErrorCodes.*;
+import static digit.constants.MDMSMigrationToolkitConstants.*;
 
 @Component
 public class FileWriter {
@@ -25,7 +22,7 @@ public class FileWriter {
 
     public void writeJsonToFile(JsonNode content, String fileName) {
         try {
-            objectMapper.writeValue(new File(masterSchemaFilesDirectory + fileName + JSON_EXTENSION), content);
+            objectMapper.writeValue(new File(masterSchemaFilesDirectory, fileName + JSON_EXTENSION), content);
         }catch (Exception e){
             throw new CustomException(IO_ERROR_CODE, IO_WRITE_ERROR_MESSAGE);
         }

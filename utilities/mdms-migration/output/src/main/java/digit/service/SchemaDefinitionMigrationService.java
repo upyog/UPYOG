@@ -1,21 +1,8 @@
 package digit.service;
 
-import static digit.constants.MDMSMigrationToolkitConstants.DOT_SEPARATOR;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.saasquatch.jsonschemainferrer.*;
-
 import digit.repository.ServiceRequestRepository;
 import digit.util.FileReader;
 import digit.util.FileWriter;
@@ -23,9 +10,19 @@ import digit.web.models.SchemaDefinition;
 import digit.web.models.SchemaDefinitionRequest;
 import digit.web.models.SchemaMigrationRequest;
 import net.minidev.json.JSONArray;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.logging.Logger;
+
+import static digit.constants.MDMSMigrationToolkitConstants.DOT_SEPARATOR;
 
 @Service
 public class SchemaDefinitionMigrationService {
+
+    Logger log = Logger.getLogger(SchemaDefinitionMigrationService.class.getName());
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -70,7 +67,8 @@ public class SchemaDefinitionMigrationService {
                     .requestInfo(schemaMigrationRequest.getRequestInfo())
                     .schemaDefinition(schemaDefinition)
                     .build();
-
+            
+            log.info("mdmsrequest:" + schemaDefinitionRequest);
             // Send it to kafka/make API calls to MDMS service schema APIs
             serviceRequestRepository.fetchResult(new StringBuilder("http://localhost:8094/mdms-v2/schema/v1/_create"), schemaDefinitionRequest);
         });

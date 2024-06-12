@@ -16,3 +16,13 @@ You can view the api documentation in swagger-ui by pointing to
 http://localhost:8080/  
 
 Change default port value in application.properties
+
+## Steps
+Steps to migrate data -
+- Hit schema/v1/_generate API to generate schema of existing master data locally
+- Add x-unique and x-ref-schema fields to the generated schema definitions
+- Hit schema/v1/_migrate API to trigger migration by port-forwarding new MDMS service
+- Hit data/v1/_migrate API to trigger data migration for the existing data
+Please ensure that all the data in all masters conform to the same data type otherwise data creation will fail.
+
+mdms-migration-toolkit/schema/v1/_generate

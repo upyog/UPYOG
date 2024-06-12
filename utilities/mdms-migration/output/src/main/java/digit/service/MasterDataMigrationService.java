@@ -1,12 +1,15 @@
 package digit.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.validation.Valid;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import digit.util.FileReader;
+import digit.web.models.MasterDataMigrationRequest;
+import digit.web.models.Mdms;
+import digit.web.models.MdmsRequest;
+import net.minidev.json.JSONArray;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.utils.AuditDetailsEnrichmentUtil;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,18 +17,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static digit.constants.ErrorCodes.*;
+import static digit.constants.MDMSMigrationToolkitConstants.DOT_SEPARATOR;
 
-import digit.models.coremodels.AuditDetails;
-import digit.util.FileReader;
-import digit.web.models.MasterDataMigrationRequest;
-import digit.web.models.Mdms;
-import digit.web.models.MdmsRequest;
-import net.minidev.json.JSONArray;
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.logging.Logger;
 
 @Service
 public class MasterDataMigrationService {
+
+    Logger log = Logger.getLogger(MasterDataMigrationService.class.getName()); 
 
     @Autowired
     private FileReader fileReader;
@@ -62,8 +67,9 @@ public class MasterDataMigrationService {
         // Check if master data is present for the incoming tenantId.
         if (tenantMap.containsKey(tenantId)) {
             tenantMap.get(tenantId).keySet().forEach(module -> {
+                if(module.equals("PropertyTax")){
                 tenantMap.get(tenantId).get(module).keySet().forEach(master -> {
-
+                    if(master.equals("Documents")){
                     // Get master data array for current module and master
                     JSONArray masterDataJsonArray = MDMSApplicationRunnerImpl
                             .getTenantMap()
@@ -91,10 +97,13 @@ public class MasterDataMigrationService {
                                 .requestInfo(requestInfo)
                                 .build();
 
+                                log.info("mdmsrequest:" + mdmsRequest);
+
                         // TODO - Make call to MDMS Service with the created request
                         restTemplate.postForObject("http://localhost:8094/mdms-v2/v2/_create/" + mdmsRequest.getMdms().getSchemaCode(), mdmsRequest, Map.class);
                     });
-                });
+                }});
+            }
             });
         } else {
             throw new CustomException(MASTER_DATA_MIGRATION_ERROR_CODE, MASTER_DATA_MIGRATION_TENANTID_DOES_NOT_EXIST_ERROR_MESSAGE + masterDataMigrationRequest.getMasterDataMigrationCriteria().getTenantId());

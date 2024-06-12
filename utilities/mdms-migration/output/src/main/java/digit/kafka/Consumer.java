@@ -1,8 +1,9 @@
 package digit.kafka;
 
-import java.util.HashMap;
-
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
 
 @Component
 public class Consumer {
