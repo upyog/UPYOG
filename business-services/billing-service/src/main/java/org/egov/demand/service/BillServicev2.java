@@ -263,6 +263,13 @@ public class BillServicev2 {
 			updateDemandsForexpiredBillDetails(billCriteria.getBusinessService(), billCriteria.getConsumerCode(), billCriteria.getTenantId(), requestInfoWrapper);
 			return generateBill(billCriteria, requestInfo);
 		}
+		else if (!CollectionUtils.isEmpty(bills))
+		{
+			log.info( "If bills are not empty and Service Is "+ billCriteria.getBusinessService());
+			if(!billCriteria.getBusinessService().equalsIgnoreCase("WS") && !billCriteria.getBusinessService().equalsIgnoreCase("SW"))
+			updateDemandsForexpiredBillDetails(billCriteria.getBusinessService(), billCriteria.getConsumerCode(), billCriteria.getTenantId(), requestInfoWrapper);
+			return generateBill(billCriteria, requestInfo);
+		}
 		
 		/*
 		 * Adding consumer-codes of unbilled demands to generate criteria
