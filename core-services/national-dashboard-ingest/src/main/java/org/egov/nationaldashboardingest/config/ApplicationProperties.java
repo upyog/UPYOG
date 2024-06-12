@@ -62,4 +62,10 @@ public class ApplicationProperties {
 
     @Value("#{${national.dashboard.usageTypeNOC}}")
     private List<String> nationalDashboardUsageTypeNOC;
+    
+    @Value("#{${national.dashboard.paymentChannel}}")
+    private List<String> nationalDashboardpaymentChannel;
+    
+    @Value("#{${national.dashboard.paymentChannelMISC}}")
+    private List<String> nationalDashboardpaymentChannelMISC;
 }
