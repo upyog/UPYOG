@@ -52,13 +52,13 @@ import java.util.List;
 
 public class ICT extends Room {
 
-    List<Measurement> doors = new ArrayList<>();
+    List<Door> doors = new ArrayList<>();
 
-    public List<Measurement> getDoors() {
+    public List<Door> getDoors() {
         return doors;
     }
 
-    public void setDoors(List<Measurement> doors) {
+    public void setDoors(List<Door> doors) {
         this.doors = doors;
     }
 
