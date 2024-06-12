@@ -282,6 +282,11 @@ public class PlanReportService {
                     .setColumnProperty("builtUpArea", BigDecimal.class.getName()).setTitle("Built Up Area in m²")
                     .setWidth(120).setStyle(reportService.getNumberStyle()).build();
             frb.addGlobalFooterVariable(builtUpArea, DJCalculation.SUM, reportService.getTotalNumberStyle());
+            
+            AbstractColumn builtUpDeductionArea = ColumnBuilder.getNew().setColumnProperty("builtUpDeductionArea", BigDecimal.class.getName())
+                    .setTitle("Deduction").setWidth(120).setStyle(reportService.getNumberStyle()).build();
+            frb.addGlobalFooterVariable(builtUpDeductionArea, DJCalculation.SUM, reportService.getTotalNumberStyle());
+
 
             AbstractColumn floorArea = ColumnBuilder.getNew().setColumnProperty("floorArea", BigDecimal.class.getName())
                     .setTitle("Floor Area in m²").setWidth(120).setStyle(reportService.getNumberStyle()).build();
@@ -295,6 +300,7 @@ public class PlanReportService {
             frb.addColumn(floor);
             frb.addColumn(occupancy);
             frb.addColumn(builtUpArea);
+            frb.addColumn(builtUpDeductionArea);
             frb.addColumn(floorArea);
            // frb.addColumn(carpetArea);
 
@@ -327,7 +333,7 @@ public class PlanReportService {
                     }
 
                     AutoText autoText = new AutoText(text.toString(), AutoText.POSITION_FOOTER,
-                            HorizontalBandAlignment.LEFT, 410);
+                            HorizontalBandAlignment.LEFT, 530);
 
                     autoText.setHeight(40);
                     autoText.setStyle(reportService.getTotalNumberStyle());
@@ -1059,6 +1065,7 @@ public class PlanReportService {
                                                     ? occupancy.getFloorArea()
                                                             .subtract(occupancy.getExistingFloorArea())
                                                     : occupancy.getFloorArea());
+                                    dcrReportFloorDetail.setBuiltUpDeductionArea(occupancy.getDeduction() == null ? BigDecimal.ZERO : occupancy.getDeduction());
 //                                    dcrReportFloorDetail.setCarpetArea(
 //                                            occupancy.getExistingCarpetArea().compareTo(BigDecimal.ZERO) > 0
 //                                                    ? occupancy.getCarpetArea()
