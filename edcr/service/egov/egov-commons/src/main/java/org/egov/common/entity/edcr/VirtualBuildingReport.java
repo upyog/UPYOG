@@ -66,6 +66,8 @@ public class VirtualBuildingReport {
     private BigDecimal totalExistingFloorArea;
 
     private BigDecimal totalExistingCarpetArea;
+    
+    private BigDecimal builtUpDeductionArea;
 
     private BigDecimal totalCoverageArea;
 
@@ -93,6 +95,14 @@ public class VirtualBuildingReport {
 
     public void setProposedFloorArea(BigDecimal proposedFloorArea) {
         this.proposedFloorArea = proposedFloorArea;
+    }
+    
+    public BigDecimal getBuiltUpDeductionArea() {
+        return builtUpDeductionArea;
+    }
+
+    public void setBuiltUpDeductionArea(BigDecimal builtUpDeductionArea) {
+        this.builtUpDeductionArea = builtUpDeductionArea;
     }
 
     public BigDecimal getProposedCarpetArea() {

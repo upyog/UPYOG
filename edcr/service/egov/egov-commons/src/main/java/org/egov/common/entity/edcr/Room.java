@@ -68,6 +68,8 @@ public class Room {
     private List<Measurement> waterClosetVentialtion = new ArrayList<>();
     
     private List<Window> windows = new ArrayList<>();
+    
+    private List<Door> doors = new ArrayList<>();
 
 
     public List<RoomHeight> getHeights() {
@@ -166,5 +168,18 @@ public class Room {
   	public void addWindow(Window window) {
           this.windows.add(window);
       }
+  	
+  	 public List<Door> getDoors() {
+   		return doors;
+   	}
 
-}
+   	public void setDoors(List<Door> doors) {
+   		this.doors = doors;
+   	}
+   	
+   	public void addDoors(Door doors) {
+           this.doors.add(doors);
+       }
+
+
+   }

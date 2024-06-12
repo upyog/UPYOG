@@ -159,6 +159,16 @@ public class HeightOfRoom extends FeatureProcess {
 						scrutinyDetail2.addColumnHeading(6, STATUS);
 						scrutinyDetail2.setKey("Block_" + block.getNumber() + "_" + "Door");
 
+						
+						 ScrutinyDetail scrutinyDetail5 = new ScrutinyDetail();
+						 scrutinyDetail5.addColumnHeading(1, RULE_NO);
+						 scrutinyDetail5.addColumnHeading(2, DESCRIPTION);
+						 scrutinyDetail5.addColumnHeading(3, FLOOR);
+						 scrutinyDetail5.addColumnHeading(4, REQUIRED);
+						 scrutinyDetail5.addColumnHeading(5, PROVIDED);
+						 scrutinyDetail5.addColumnHeading(6, STATUS);
+						 scrutinyDetail5.setKey("Block_" + block.getNumber() + "_" + "Non Habitational Door");
+
 						ScrutinyDetail scrutinyDetail3 = new ScrutinyDetail();
 						scrutinyDetail3.addColumnHeading(1, RULE_NO);
 						scrutinyDetail3.addColumnHeading(2, DESCRIPTION);
@@ -169,13 +179,23 @@ public class HeightOfRoom extends FeatureProcess {
 						scrutinyDetail3.setKey("Block_" + block.getNumber() + "_" + "Window");
 						
 						ScrutinyDetail scrutinyDetail4 = new ScrutinyDetail();
-						scrutinyDetail3.addColumnHeading(1, RULE_NO);
-						scrutinyDetail3.addColumnHeading(2, DESCRIPTION);
-						scrutinyDetail3.addColumnHeading(3, Room);
-						scrutinyDetail3.addColumnHeading(4, REQUIRED);
-						scrutinyDetail3.addColumnHeading(5, PROVIDED);
-						scrutinyDetail3.addColumnHeading(6, STATUS);
-						scrutinyDetail3.setKey("Block_" + block.getNumber() + "_" + "Window Ventilation");
+						scrutinyDetail4.addColumnHeading(1, RULE_NO);
+						scrutinyDetail4.addColumnHeading(2, DESCRIPTION);
+						scrutinyDetail4.addColumnHeading(3, Room);
+						scrutinyDetail4.addColumnHeading(4, REQUIRED);
+						scrutinyDetail4.addColumnHeading(5, PROVIDED);
+						scrutinyDetail4.addColumnHeading(6, STATUS);
+						scrutinyDetail4.setKey("Block_" + block.getNumber() + "_" + "Room Wise Window Ventilation");
+
+						
+						ScrutinyDetail scrutinyDetail6 = new ScrutinyDetail();
+						scrutinyDetail6.addColumnHeading(1, RULE_NO);
+						scrutinyDetail6.addColumnHeading(2, DESCRIPTION);
+						scrutinyDetail6.addColumnHeading(3, Room);
+						scrutinyDetail6.addColumnHeading(4, REQUIRED);
+						scrutinyDetail6.addColumnHeading(5, PROVIDED);
+						scrutinyDetail6.addColumnHeading(6, STATUS);
+						scrutinyDetail6.setKey("Block_" + block.getNumber() + "_" + "Room wise Window Area");
 
 
 
@@ -189,6 +209,8 @@ public class HeightOfRoom extends FeatureProcess {
                             String subRule = "4.4.4";
                             String subRuleDesc = "Minimum Area and Width of Room";
                             String subRuleDesc1 = "Window Ventialtion";
+                            String subRuleDesc2 = "Room Wise Window Area";
+                            String subRuleDesc3 = "Window Area";
                             String color = "";
                             BigDecimal minimumArea = BigDecimal.ZERO;
 
@@ -445,7 +467,7 @@ public class HeightOfRoom extends FeatureProcess {
                                     }
                             }
                             
-                            // Calculation For Doors
+                            // Calculation For Doors  Added by Neha
                             if (floor.getDoors() != null && floor.getDoors().size() > 0) {
 								for (Door door : floor.getDoors()) {
 									if (door != null) {
@@ -475,7 +497,7 @@ public class HeightOfRoom extends FeatureProcess {
 								}
 							}
                             
-                            // Calculation For non-habitational Doors
+                            // Calculation For non-habitational Doors  Added by Neha
                             if (floor.getNonaHabitationalDoors() != null && floor.getNonaHabitationalDoors().size() > 0) {
 								for (Door door : floor.getNonaHabitationalDoors()) {
 									if (door != null) {
@@ -492,78 +514,194 @@ public class HeightOfRoom extends FeatureProcess {
 													" Width >=" + minDoorWidth,
 													" Width = " + doorWidth
 															+ DcrConstants.IN_METER,
-													Result.Accepted.getResultVal(), scrutinyDetail2);
+													Result.Accepted.getResultVal(), scrutinyDetail5);
 										} else {
 											setReportOutputDetails(pl, subRule, subRuleDesc,
 													floor.getNumber().toString(),
 													" Width >=" + minDoorWidth,
 													" Width = " + doorWidth
 															+ DcrConstants.IN_METER,
-													Result.Not_Accepted.getResultVal(), scrutinyDetail2);
+													Result.Not_Accepted.getResultVal(), scrutinyDetail5);
 										}
 									}
 								}
 							}
+//                          // Calculation For Windows  Added by Neha
+							if (floor.getWindows() != null && floor.getWindows().size() > 0) {
+								for (Window window : floor.getWindows()) {
+									BigDecimal windowHeight = window.getWindowHeight();
+									BigDecimal windowWidth = window.getWindowWidth();
+									BigDecimal minWindowHeight = BigDecimal.valueOf(.50);
+									BigDecimal minWindowWidth = BigDecimal.valueOf(.50);
+									subRule = SUBRULE_41_II_B;
+									subRuleDesc = SUBRULE_41_II_B;
+//									if (windowHeight.compareTo(MIN_WINDOW_HEIGHT) >= 0 && windowWidth.compareTo(MIN_WINDOW_WIDTH) >= 0) {
+						                setReportOutputDetails(pl, subRule, subRuleDesc3,"",
+						                        "" + "",
+						                        "Height = " + windowHeight + ", Width = " + windowWidth,
+						                        Result.Accepted.getResultVal(), scrutinyDetail3);
+						            //} else {
+//						                setReportOutputDetails(pl, subRule, subRuleDesc2, room.getNumber(),
+//						                        "Height >= " + MIN_WINDOW_HEIGHT + ", Width >= " + MIN_WINDOW_WIDTH,
+//						                        "Height = " + windowHeight + ", Width = " + windowWidth,
+//						                        Result.Not_Accepted.getResultVal(), scrutinyDetail3);
+//						            }
+									//}
 
-							// Calculation For Windows
+								}
+							}
+
+
+							// Calculation For roomwise Windows  Added by Neha
 //							if (room.getWindows() != null && floor.getWindows().size() > 0) {
 //								for (Window window : floor.getWindows()) {
-									
-									
-                            for (Room room : floor.getRegularRooms()) {
-                                BigDecimal roomArea = BigDecimal.ZERO;
-                                if (room.getRooms() != null && !room.getRooms().isEmpty()) {
-                                    for (Measurement measurement : room.getRooms()) {
-                                        roomArea = roomArea.add(measurement.getArea().setScale(2, BigDecimal.ROUND_HALF_UP));
-                                    }
-                                }
+								
+							
+							for (Room room : floor.getRegularRooms()) {
+								
+							    BigDecimal roomArea = BigDecimal.ZERO;
 
-                                BigDecimal requiredVentilationArea = roomArea.multiply(VENTILATION_PERCENTAGE).divide(BigDecimal.valueOf(100)).setScale(2, BigDecimal.ROUND_HALF_UP);
+							    // Calculate room area
+							    if (room.getRooms() != null && !room.getRooms().isEmpty()) {
+							        for (Measurement measurement : room.getRooms()) {
+							            roomArea = roomArea.add(measurement.getArea());
+							        }
+							    }
 
-                                Map<String, String> details2 = new HashMap<>();
-                                details2.put(RULE_NO, subRule);
-                                details2.put(DESCRIPTION, subRuleDesc1);
+							    // Calculate required ventilation area
+							    BigDecimal requiredVentilationArea = roomArea.multiply(VENTILATION_PERCENTAGE)
+							                                                .divide(BigDecimal.valueOf(100))
+							                                                .setScale(2, BigDecimal.ROUND_HALF_UP);
 
-                                // Calculate total window area
-                                BigDecimal totalWindowArea = BigDecimal.ZERO;
-                                if (room.getWindows() != null && !room.getWindows().isEmpty()) {
-                                    for (Window window : room.getWindows()) {
-                                        BigDecimal windowHeight = window.getWindowHeight();
-                                        BigDecimal windowWidth = window.getWindowWidth();
-                                        
-                                            BigDecimal windowArea = windowHeight.multiply(windowWidth).setScale(2, BigDecimal.ROUND_HALF_UP);
-                                            totalWindowArea = totalWindowArea.add(windowArea);
-                                          
+							    // Calculate total window area
+							    BigDecimal totalWindowArea = BigDecimal.ZERO;
+							    if (room.getWindows() != null && !room.getWindows().isEmpty()) {
+							        for (Window window : room.getWindows()) {
+							            BigDecimal windowHeight = window.getWindowHeight();
+							            BigDecimal windowWidth = window.getWindowWidth();
 
-                                            // Check each window's dimensions
-                                            if (windowHeight.compareTo(MIN_WINDOW_HEIGHT) >= 0 && windowWidth.compareTo(MIN_WINDOW_WIDTH) >= 0) {
-                                                setReportOutputDetails(pl, subRule, subRuleDesc1, room.getNumber().toString(),
-                                                        "Height >= " + MIN_WINDOW_HEIGHT + ", Width >= " + MIN_WINDOW_WIDTH,
-                                                        "Height = " + windowHeight + ", Width = " + windowWidth,
-                                                        Result.Accepted.getResultVal(), scrutinyDetail);
-                                            } else {
-                                                setReportOutputDetails(pl, subRule, subRuleDesc1, room.getNumber().toString(),
-                                                        "Height >= " + MIN_WINDOW_HEIGHT + ", Width >= " + MIN_WINDOW_WIDTH,
-                                                        "Height = " + windowHeight + ", Width = " + windowWidth,
-                                                        Result.Not_Accepted.getResultVal(), scrutinyDetail);
-                                            }
-                                        
-                                    }
-                                }
+							            // Calculate window area
+							            BigDecimal windowArea = windowHeight.multiply(windowWidth).setScale(2, BigDecimal.ROUND_HALF_UP);
+							            totalWindowArea = totalWindowArea.add(windowArea);
+							        }
 
-                                // Compare total window area with required ventilation area
-                                if (totalWindowArea.compareTo(requiredVentilationArea) >= 0) {
-                                	  setReportOutputDetails(pl, subRule, subRuleDesc1, room.getNumber().toString(),
-                                              "Ventilation >= " + requiredVentilationArea,
-                                              "WindowArea = " + totalWindowArea,
-                                              Result.Accepted.getResultVal(), scrutinyDetail4);
-                                  } else {
-                                      setReportOutputDetails(pl, subRule, subRuleDesc1, room.getNumber().toString(),
-                                    		  "Ventilation >= " + requiredVentilationArea,
-                                              "WindowArea = " + totalWindowArea,
-                                              Result.Not_Accepted.getResultVal(), scrutinyDetail4);
-                                  }
-                                } 
+							        System.out.println("Total Window Area for Room " + room.getNumber() + " = " + totalWindowArea);
+							    }
+
+							    // Compare total window area with required ventilation area and report the result
+							    if (room.getWindows() != null && !room.getWindows().isEmpty() && requiredVentilationArea.compareTo(BigDecimal.ZERO) != 0 && totalWindowArea.compareTo(BigDecimal.ZERO) != 0)
+ {
+							    if (totalWindowArea.compareTo(requiredVentilationArea) >= 0) {
+							        setReportOutputDetails(pl, subRule, subRuleDesc1, room.getNumber(),
+							                "Ventilation >= " + requiredVentilationArea,
+							                "WindowArea = " + totalWindowArea,
+							                Result.Accepted.getResultVal(), scrutinyDetail4);
+							    } else {
+							        setReportOutputDetails(pl, subRule, subRuleDesc1, room.getNumber(),
+							                "Ventilation >= " + requiredVentilationArea,
+							                "WindowArea = " + totalWindowArea,
+							                Result.Not_Accepted.getResultVal(), scrutinyDetail4);
+							    }}
+
+							    // Now perform the check for each window against the minimum dimensions
+							    if (room.getWindows() != null && !room.getWindows().isEmpty()) {
+							        for (Window window : room.getWindows()) {
+							            BigDecimal windowHeight = window.getWindowHeight();
+							            BigDecimal windowWidth = window.getWindowWidth();
+
+							            // Check each window's dimensions
+//							            if (windowHeight.compareTo(MIN_WINDOW_HEIGHT) >= 0 && windowWidth.compareTo(MIN_WINDOW_WIDTH) >= 0) {
+							                setReportOutputDetails(pl, subRule, subRuleDesc2, room.getNumber(),
+							                        "" + "",
+							                        "Height = " + windowHeight + ", Width = " + windowWidth,
+							                        Result.Accepted.getResultVal(), scrutinyDetail6);
+							            //} else {
+//							                setReportOutputDetails(pl, subRule, subRuleDesc2, room.getNumber(),
+//							                        "Height >= " + MIN_WINDOW_HEIGHT + ", Width >= " + MIN_WINDOW_WIDTH,
+//							                        "Height = " + windowHeight + ", Width = " + windowWidth,
+//							                        Result.Not_Accepted.getResultVal(), scrutinyDetail6);
+//							            }
+							        }
+							    }
+							}
+							
+							
+							// Calculation For roomwise Doors  Added by Neha
+//							if (room.getWindows() != null && floor.getWindows().size() > 0) {
+//								for (Window window : floor.getWindows()) {
+								
+//							
+//							for (Room room : floor.getRegularRooms()) {
+//								
+//							    BigDecimal roomArea = BigDecimal.ZERO;
+//
+//							    // Calculate room area
+//							    if (room.getRooms() != null && !room.getRooms().isEmpty()) {
+//							        for (Measurement measurement : room.getRooms()) {
+//							            roomArea = roomArea.add(measurement.getArea());
+//							        }
+//							    }
+//
+//							    // Calculate required ventilation area
+//							    BigDecimal requiredVentilationArea = roomArea.multiply(VENTILATION_PERCENTAGE)
+//							                                                .divide(BigDecimal.valueOf(100))
+//							                                                .setScale(2, BigDecimal.ROUND_HALF_UP);
+//
+//							    // Calculate total window area
+//							    BigDecimal totalDoorArea = BigDecimal.ZERO;
+//							    if (room.getDoors() != null && !room.getDoors().isEmpty()) {
+//							        for (Door door : room.getDoors()) {
+//							            BigDecimal doorHeight = door.getDoorHeight();
+//							            BigDecimal doorWidth = door.getDoorWidth();
+//
+//							            // Calculate window area
+//							            BigDecimal doorArea = doorHeight.multiply(doorWidth).setScale(2, BigDecimal.ROUND_HALF_UP);
+//							            totalDoorArea = totalDoorArea.add(doorArea);
+//							        }
+//
+//							        System.out.println("Total Window Area for Room " + room.getNumber() + " = " + totalDoorArea);
+//							    }
+//
+//							    // Compare total window area with required ventilation area and report the result
+//							    if (room.getDoors() != null && !room.getDoors().isEmpty() && requiredVentilationArea.compareTo(BigDecimal.ZERO) != 0 && totalDoorArea.compareTo(BigDecimal.ZERO) != 0)
+// {
+//							    if (totalDoorArea.compareTo(requiredVentilationArea) >= 0) {
+//							        setReportOutputDetails(pl, subRule, subRuleDesc1, room.getNumber(),
+//							                "Ventilation >= " + requiredVentilationArea,
+//							                "Area = " + totalDoorArea,
+//							                Result.Accepted.getResultVal(), scrutinyDetail4);
+//							    } else {
+//							        setReportOutputDetails(pl, subRule, subRuleDesc1, room.getNumber(),
+//							                "Ventilation >= " + requiredVentilationArea,
+//							                "DoorArea = " + totalDoorArea,
+//							                Result.Not_Accepted.getResultVal(), scrutinyDetail4);
+//							    }}
+//
+//							    // Now perform the check for each window against the minimum dimensions
+//							    if (room.getDoors() != null && !room.getDoors().isEmpty()) {
+//							        for (Door door : room.getDoors()) {
+//							        	 BigDecimal doorHeight = door.getDoorHeight();
+//								            BigDecimal doorWidth = door.getDoorWidth();
+//
+//								          
+//							            // Check each window's dimensions
+//							            if (doorHeight.compareTo(MIN_WINDOW_HEIGHT) >= 0 && doorWidth.compareTo(MIN_WINDOW_WIDTH) >= 0) {
+//							                setReportOutputDetails(pl, subRule, subRuleDesc2, room.getNumber(),
+//							                        "Height >= " + MIN_WINDOW_HEIGHT + ", Width >= " + MIN_WINDOW_WIDTH,
+//							                        "Height = " + doorHeight + ", Width = " + doorWidth,
+//							                        Result.Accepted.getResultVal(), scrutinyDetail6);
+//							            } else {
+//							                setReportOutputDetails(pl, subRule, subRuleDesc2, room.getNumber(),
+//							                        "Height >= " + MIN_WINDOW_HEIGHT + ", Width >= " + MIN_WINDOW_WIDTH,
+//							                        "Height = " + doorHeight + ", Width = " + doorWidth,
+//							                        Result.Not_Accepted.getResultVal(), scrutinyDetail6);
+//							            }
+//							        }
+//							    }
+//							}
+
+
+
 //                                scrutinyDetail.getDetail().add(details);
 //                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
