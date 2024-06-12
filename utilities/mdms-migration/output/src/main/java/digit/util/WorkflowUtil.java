@@ -10,6 +10,8 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.egov.common.contract.models.Workflow;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -110,7 +112,7 @@ public class WorkflowUtil {
         processInstance.setModuleName(wfModuleName);
         processInstance.setTenantId(tenantId);
         processInstance.setBusinessService(getBusinessService(requestInfo, tenantId, businessServiceCode).getBusinessService());
-        processInstance.setDocuments(workflow.getVerificationDocuments());
+        //processInstance.setDocuments(workflow.getVerificationDocuments());
         processInstance.setComment(workflow.getComments());
 
         if(!CollectionUtils.isEmpty(workflow.getAssignes())) {
@@ -148,7 +150,7 @@ public class WorkflowUtil {
                 .action(processInstance.getAction())
                 .assignes(userIds)
                 .comments(processInstance.getComment())
-                .verificationDocuments(processInstance.getDocuments())
+                //.verificationDocuments(processInstance.getDocuments())
                 .build();
 
             businessIdToWorkflow.put(processInstance.getBusinessId(), workflow);
