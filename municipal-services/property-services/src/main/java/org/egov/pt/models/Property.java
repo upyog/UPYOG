@@ -9,6 +9,7 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
+import lombok.experimental.SuperBuilder;
 import org.egov.pt.models.enums.Channel;
 import org.egov.pt.models.enums.CreationReason;
 import org.egov.pt.models.enums.Source;
@@ -36,6 +37,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 public class Property extends PropertyInfo {
 
 	@JsonProperty("acknowldgementNumber")
@@ -116,7 +118,6 @@ public class Property extends PropertyInfo {
 	@JsonProperty("isOldDataEncryptionRequest")
 	private boolean isOldDataEncryptionRequest = false;
 
-	@Builder
 	public Property(String id, String propertyId, String surveyId, List<String> linkedProperties, String tenantId,
 			String accountId, String oldPropertyId, Status status, Address address, String acknowldgementNumber,
 			String propertyType, String ownershipCategory, List<OwnerInfo> owners, Institution institution,
