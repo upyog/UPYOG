@@ -23,12 +23,16 @@ const SelectComplaintType = ({ t, config, onSelect, value }) => {
     return priorityLevel? priorityLevel:{};
   })
   const goNext = () => {
+    console.log("complaintType",complaintType)
     sessionStorage.setItem("complaintType",JSON.stringify(complaintType))
     onSelect({ subType , priorityLevel});
   };
 
 
   const textParams = config.texts;
+  const valuenew= {
+    key  :"PropertyTax",
+    name :"Property Tax"}
 
   const menu = Digit.Hooks.pgr.useComplaintTypes({ stateCode: Digit.ULBService.getCurrentTenantId() });
   const  priorityMenu= 
@@ -117,21 +121,14 @@ const SelectComplaintType = ({ t, config, onSelect, value }) => {
     //setPriorityMenu(await serviceDefinitions.getSubMen)
   }
 
-  // function selectedValue(value) {
-  //   setComplaintType(value);
-  //   window.Digit.SessionStorage.set("complaintType", value);
-  // }
   return (
-    <TypeSelectCard
-      {...textParams}
-      {...{ menu: menu }}
-      {...{ optionsKey: "name" }}
-      {...{ selected: selectedValue }}
-      {...{ selectedOption: complaintType }}
-      {...{ onSave: goNext }}
-      {...{ t }}
-      disabled={Object.keys(complaintType).length === 0 || complaintType === null ? true : false}
-    />
+    <FormComposer
+    heading={t("ES_CREATECOMPLAINT_NEW_COMPLAINT")}
+    config={config1}
+    onSubmit={goNext}
+    isDisabled={Object.keys(complaintType).length === 0 || complaintType === null ? true : false}
+    label={"NEXT"}
+  />
   );
 };
 
