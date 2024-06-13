@@ -364,9 +364,44 @@ public class EnrichmentService {
 
 			property.setStatus(Status.ACTIVE);
 		}
-
+		
+		
 		String pId = propertyutil.getIdList(requestInfo, tenantId, config.getPropertyIdGenName(), config.getPropertyIdGenFormat(), 1).get(0);
 		String ackNo = propertyutil.getIdList(requestInfo, tenantId, config.getAckIdGenName(), config.getAckIdGenFormat(), 1).get(0);
+		if(!config.isDefaultPropertyId()) {
+
+			String hyphe = "-";
+			StringBuffer sb =  new StringBuffer();
+			StringBuffer finalSb = new StringBuffer();
+			
+			List<String> masterNames = new ArrayList<>(
+					Arrays.asList("tenants"));
+
+			Map<String, List<String>> codes = propertyutil.getAttributeValues(config.getStateLevelTenantId(), "tenant", masterNames,
+					"[?(@.city.districtTenantCode== '"+request.getProperty().getTenantId()+"')].city.code", "$.MdmsRes.tenant", request.getRequestInfo());
+			
+			List<String> masterNamesOwn = new ArrayList<>(
+					Arrays.asList("OwnerShipCategory"));
+
+			Map<String, List<String>> codesOwn = propertyutil.getAttributeValues(config.getStateLevelTenantId(), "PropertyTax", masterNamesOwn,
+					"[?(@.code=='"+request.getProperty().getOwnershipCategory()+"')].OwnerShipCategoryCode", "$.MdmsRes.PropertyTax", request.getRequestInfo());
+			
+			String cityCode = codes.get("tenants").get(0);
+			String ownerShipCode = codesOwn.get("OwnerShipCategory").get(0);
+			sb.append(cityCode);
+			sb.append(request.getProperty().getAddress().getLocality().getCode());
+			sb.append(ownerShipCode);
+			String[] propId = pId.split("PT");
+			
+			finalSb.append(propId[0]).append("PT-").append(sb).append(propId[1]);
+			//sb.append(propId[1]).append(hyphe);
+			
+			pId = finalSb.toString();
+			System.out.println(pId);
+			
+			
+		
+		}
 		property.setPropertyId(pId);
 		property.setAcknowldgementNumber(ackNo);
 	}

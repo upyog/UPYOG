@@ -434,5 +434,8 @@ public class PropertyConfiguration {
     
 	@Value("${persister.save.notice.topic}")
 	private String savenoticetopic;
+	
+	@Value("${default.propertyid}")
+	private boolean defaultPropertyId;
 	    
 }
