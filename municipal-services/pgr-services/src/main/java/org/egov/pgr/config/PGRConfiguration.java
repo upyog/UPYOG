@@ -190,6 +190,9 @@ public class PGRConfiguration {
 
     @Value("${employee.allowed.search.params}")
     private String allowedEmployeeSearchParameters;
+    
+    @Value("${default.allowed.search.params}")
+    private String allowedDefaultSearchParameters;
 
     //Sources
     @Value("${allowed.source}")

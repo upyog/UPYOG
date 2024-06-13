@@ -225,14 +225,16 @@ public class ServiceRequestValidator {
      */
     private void validateSearchParam(RequestInfo requestInfo, RequestSearchCriteria criteria){
 
-        if(requestInfo.getUserInfo().getType().equalsIgnoreCase("EMPLOYEE" ) && criteria.isEmpty())
+        String allowedParamStr = null;
+
+        if(!criteria.getIsPlainSearch()) {
+    	if(requestInfo.getUserInfo().getType().equalsIgnoreCase("EMPLOYEE" ) && criteria.isEmpty())
             throw new CustomException("INVALID_SEARCH","Search without params is not allowed");
 
         if(requestInfo.getUserInfo().getType().equalsIgnoreCase("EMPLOYEE") && criteria.getTenantId().split("\\.").length == 1){
             throw new CustomException("INVALID_SEARCH", "Employees cannot perform state level searches.");
         }
 
-        String allowedParamStr = null;
 
         if(requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN" ))
             allowedParamStr = config.getAllowedCitizenSearchParameters();
@@ -240,7 +242,12 @@ public class ServiceRequestValidator {
             allowedParamStr = config.getAllowedEmployeeSearchParameters();
         else throw new CustomException("INVALID SEARCH","The userType: "+requestInfo.getUserInfo().getType()+
                     " does not have any search config");
+        }
+        else
+        {
+            allowedParamStr = config.getAllowedDefaultSearchParameters();
 
+        }
         List<String> allowedParams = Arrays.asList(allowedParamStr.split(","));
 
         if(criteria.getServiceCode()!=null && !allowedParams.contains("serviceCode"))
