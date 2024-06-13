@@ -28,11 +28,11 @@ import {
   TLLinks,
   initTLComponents,
 } from "@egovernments/digit-ui-module-tl";
-// import {
-//   PTRModule,
-//   PTRLinks,
-//   PTRComponents,
-// } from "@upyog-niua/upyog-ui-module-ptr";
+import {
+  PTRModule,
+  PTRLinks,
+  PTRComponents,
+} from "@upyog-niua/upyog-ui-module-ptr";
 import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
 import { initOBPSComponents } from "@egovernments/digit-ui-module-obps";
 import { initNOCComponents } from "@egovernments/digit-ui-module-noc";

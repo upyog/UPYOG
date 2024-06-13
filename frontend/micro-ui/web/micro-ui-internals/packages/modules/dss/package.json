@@ -1,6 +1,6 @@
 {
   "name": "@egovernments/digit-ui-module-dss",
-  "version": "1.7.16",
+  "version": "1.7.21",
   "license": "MIT",
   "description": "Digit Dashboard Module",
   "main": "dist/index.js",
@@ -19,7 +19,7 @@
     "react-router-dom": "5.3.0"
   },
   "dependencies": {
-    "@egovernments/digit-ui-react-components": "1.7.16",
+    "@egovernments/digit-ui-react-components": "1.7.21",
     "microbundle-crl": "^0.13.11",
     "lodash": "4.17.21",
     "react": "17.0.2",
