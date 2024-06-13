@@ -270,27 +270,24 @@ public class DemandService {
 		generateAndSetIdsForNewDemands(newDemands, auditDetail);
 
 		update(demandRequest, paymentBackUpdateAudit);
-		String businessService = demands.get(0).getBusinessService();
 		String tenantId = demands.get(0).getTenantId();
-		
-		UpdateBillCriteria updateBillCriteria = UpdateBillCriteria.builder()
-				.consumerCodes(demands.stream().map(Demand::getConsumerCode).collect(Collectors.toSet()))
-				.businessService(businessService)
-				.tenantId(tenantId)
-				.build();
-		
-		if (ObjectUtils.isEmpty(paymentBackUpdateAudit)) {
-			
-			updateBillCriteria.setStatusToBeUpdated(BillStatus.EXPIRED);
-			billRepoV2.updateBillStatus(updateBillCriteria);
-		} else {
-			
-			updateBillCriteria.setStatusToBeUpdated(BillStatus.PAID);
-			billRepoV2.updateBillStatus(updateBillCriteria);
-		}
+		String businessService = demands.get(0).getBusinessService();
+		if (ObjectUtils.isEmpty(paymentBackUpdateAudit))
+			billRepoV2.updateBillStatus( demands.stream().map(Demand::getConsumerCode).collect(Collectors.toList()),
+					businessService,BillStatus.EXPIRED);
+		else
+			billRepoV2.updateBillStatus(demands.stream().map(Demand::getConsumerCode).collect(Collectors.toList()),
+					businessService,BillStatus.PAID);
 		// producer.push(applicationProperties.getDemandIndexTopic(), demandRequest);
 		return new DemandResponse(responseInfoFactory.getResponseInfo(requestInfo, HttpStatus.CREATED), demands);
 	}
+	
+		
+		
+		
+		
+		
+	
 
 
 	/**
