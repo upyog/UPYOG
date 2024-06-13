@@ -287,6 +287,7 @@ import useTenantsEW from "./ew/useTenants";
 
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
+import useEWSearch from "./ew/useEWSearch";
 
 const pgr = {
   useComplaintDetails,
@@ -310,7 +311,8 @@ const pgr = {
 const ew = {
   useProductPriceMDMS,
   useEWCreateAPI,
-  useTenants: useTenantsEW
+  useTenants: useTenantsEW,
+  useEWSearch
 };
 
 const asset = {

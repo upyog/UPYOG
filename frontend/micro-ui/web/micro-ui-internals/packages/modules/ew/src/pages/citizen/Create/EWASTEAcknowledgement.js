@@ -33,6 +33,7 @@ const BannerPicker = (props) => {
   );
 };
 
+
 const EWASTEAcknowledgement = ({ data, onSuccess }) => {
   
 
@@ -61,21 +62,20 @@ const EWASTEAcknowledgement = ({ data, onSuccess }) => {
 
   
 
-  // const handleDownloadPdf = async () => {
-  //   const { PetRegistrationApplications = [] } = mutation.data;
-  //   let Pet = (PetRegistrationApplications && PetRegistrationApplications[0]) || {};
-  //   const tenantInfo = tenants.find((tenant) => tenant.code === Pet.tenantId);
-  //   let tenantId = Pet.tenantId || tenantId;
+  const handleDownloadPdf = async () => {
+    const { PetRegistrationApplications = [] } = mutation.data;
+    let Pet = (PetRegistrationApplications && PetRegistrationApplications[0]) || {};
+    const tenantInfo = tenants.find((tenant) => tenant.code === Pet.tenantId);
+    let tenantId = Pet.tenantId || tenantId;
    
-  //   const data = await getEwAcknowledgementData({ ...Pet }, tenantInfo, t);
-  //   Digit.Utils.pdf.generate(data);
-  // };
+    const data = await getEwAcknowledgementData({ ...Pet }, tenantInfo, t);
+    Digit.Utils.pdf.generate(data);
+  };
 
-  return (
-  // mutation.isLoading || mutation.isIdle ? (
-  //   <Loader />
-  // ) : 
-  // (
+  return mutation.isLoading || mutation.isIdle ? (
+    <Loader />
+  ) : 
+  (
     <Card>
       <BannerPicker t={t} data={mutation.data} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
       <StatusTable>
