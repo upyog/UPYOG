@@ -82,6 +82,7 @@ public class PropertySearchRowMapper implements ResultSetExtractor<List<Property
 						.noOfFloors(rs.getLong("noOfFloors"))
 						.auditDetails(auditdetails)
 						.landArea(landArea)
+						.address(address)
 						.build();
 
 
