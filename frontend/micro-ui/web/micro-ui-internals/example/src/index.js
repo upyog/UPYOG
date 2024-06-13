@@ -23,7 +23,7 @@ import { initWSComponents } from "@egovernments/digit-ui-module-ws";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
 import { initBillsComponents, BillsModule } from "@egovernments/digit-ui-module-bills";
-import { PTRModule, PTRLinks, PTRComponents } from "@upyog-niua/upyog-ui-module-ptr";
+
 // import {initCustomisationComponents} from "./customisations";
 
 // import { PGRModule, PGRLinks } from "@egovernments/digit-ui-module-pgr";
@@ -60,17 +60,16 @@ const enabledModules = [
   "BillAmendment",
   "FireNoc",
   "Birth",
-  "Death",
-  "PTR"
+  "Death"
 ];
 
 const initTokens = (stateCode) => {
   const userType = window.sessionStorage.getItem("userType") || process.env.REACT_APP_USER_TYPE || "CITIZEN";
 
-  const token = window.localStorage.getItem("token") || process.env[`REACT_APP_${userType}_TOKEN`];
-
-  const citizenInfo = window.localStorage.getItem("Citizen.user-info");
-
+  const token = window.localStorage.getItem("token")|| process.env[`REACT_APP_${userType}_TOKEN`];
+ 
+  const citizenInfo = window.localStorage.getItem("Citizen.user-info")
+ 
   const citizenTenantId = window.localStorage.getItem("Citizen.tenant-id") || stateCode;
 
   const employeeInfo = window.localStorage.getItem("Employee.user-info");
@@ -107,9 +106,6 @@ const initDigitUI = () => {
     BillsModule,
     // TLModule,
     // TLLinks,
-    // PTRModule,
-    // PTRLinks,
-    // ...PTRComponents
   });
 
   initFSMComponents();

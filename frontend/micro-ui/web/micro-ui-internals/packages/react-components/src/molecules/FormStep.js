@@ -6,7 +6,7 @@ import CardLabel from "../atoms/CardLabel";
 import CardLabelError from "../atoms/CardLabelError";
 import TextInput from "../atoms/TextInput";
 import InputCard from "./InputCard";
-import { DatePicker } from "../atoms/DatePicker";
+import { DatePicker } from "@egovernments/digit-ui-react-components";
 const FormStep = ({
   t,
   children,

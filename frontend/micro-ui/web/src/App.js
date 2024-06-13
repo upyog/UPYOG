@@ -28,17 +28,12 @@ import {
   TLLinks,
   initTLComponents,
 } from "@egovernments/digit-ui-module-tl";
-import {
-  PTRModule,
-  PTRLinks,
-  PTRComponents,
-} from "@upyog-niua/upyog-ui-module-ptr";
 import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
 import { initOBPSComponents } from "@egovernments/digit-ui-module-obps";
 import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
 import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 import { initWSComponents } from "@egovernments/digit-ui-module-ws";
-import { initCustomisationComponents } from "./Customisations";
+// import { initCustomisationComponents } from "./Customisations";
 import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
 import { initBillsComponents } from "@egovernments/digit-ui-module-bills";
 // import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
@@ -69,7 +64,6 @@ const enabledModules = [
   "FireNoc",
   "Birth",
   "Death",
-  "PTR"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -84,9 +78,6 @@ window.Digit.ComponentRegistryService.setupRegistry({
   TLModule,
   TLLinks,
   ReceiptsModule,
-  // PTRModule,
-  // PTRLinks,
-  // ...PTRComponents,
 });
 
 initPGRComponents();
