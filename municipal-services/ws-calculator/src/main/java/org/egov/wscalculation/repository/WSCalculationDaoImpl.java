@@ -87,7 +87,7 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 		log.debug("Prepared Statement" + preparedStatement.toString());
 		return jdbcTemplate.query(query, preparedStatement.toArray(), meterReadingRowMapper);
 	}
-
+	
 	@Override
 	public List<MeterReading> searchCurrentMeterReadings(MeterReadingSearchCriteria criteria) {
 		List<Object> preparedStatement = new ArrayList<>();
@@ -140,7 +140,13 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 		return connectionNos;
 	}
 
-	
+	@Override
+	public List<String> getLocalityList(String tenantId,String batchCode ) {
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getLocalityListWithBatch(tenantId,batchCode,preparedStatement);
+		log.info("batchCode " + batchCode + " Locality list : " + query);
+		return jdbcTemplate.queryForList(query, preparedStatement.toArray(), String.class);
+	}
 
 	@Override
 	public List<WaterConnection> getConnectionsNoList(String tenantId, String connectionType, Integer batchOffset,

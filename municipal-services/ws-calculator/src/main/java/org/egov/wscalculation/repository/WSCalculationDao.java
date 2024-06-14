@@ -40,7 +40,7 @@ public interface WSCalculationDao {
 	long getConnectionCount(String tenantid, Long fromDate, Long toDate);
 	
 	List<WaterConnection> getConnection(String tenantId, String consumerCode,String connectionType,Long fromDate, Long toDate);
-
+	List<String> getLocalityList(String tenantId, String locality); 
 	List<WaterDetails> getConnectionsNoList(String tenantId, String connectionType, Long taxPeriodFrom,
 			Long taxPeriodTo, String cone);
 

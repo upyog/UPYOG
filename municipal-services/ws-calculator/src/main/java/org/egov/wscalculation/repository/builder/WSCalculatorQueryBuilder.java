@@ -22,7 +22,7 @@ public class WSCalculatorQueryBuilder {
 	private final static String Query = "SELECT mr.id, mr.connectionNo as connectionId, mr.billingPeriod, mr.meterStatus, mr.lastReading, mr.lastReadingDate, mr.currentReading,"
 			+ " mr.currentReadingDate, mr.createdBy as mr_createdBy, mr.tenantid, mr.lastModifiedBy as mr_lastModifiedBy,"
 			+ " mr.createdTime as mr_createdTime, mr.lastModifiedTime as mr_lastModifiedTime FROM eg_ws_meterreading mr";
-
+	private static final String LocalityListAsPerBatchQuery = "SELECT distinct(localitycode) FROM eg_bndry_mohalla conn";
 	private final static String noOfConnectionSearchQuery = "SELECT count(*) FROM eg_ws_meterreading WHERE";
 
 	private final static String noOfConnectionSearchQueryForCurrentMeterReading = "select mr.currentReading from eg_ws_meterreading mr";
@@ -238,6 +238,20 @@ public class WSCalculatorQueryBuilder {
 
 	}
 
+	public String getLocalityListWithBatch(String tenantId, String batchCode, List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(LocalityListAsPerBatchQuery);
+		// add batchcode
+				addClauseIfRequired(preparedStatement, query);
+				query.append(" conn.blockcode = ? ");
+				preparedStatement.add(batchCode);
+				
+				// add tenantid
+				addClauseIfRequired(preparedStatement, query);
+				query.append(" conn.tenantid = ? ");
+				preparedStatement.add(tenantId);
+	
+		return query.toString();
+	}
 	public String getConnectionNumberList(String tenantId, String connectionType,String status, Long taxPeriodFrom, Long taxPeriodTo, String cone, List<Object> preparedStatement) {
 		StringBuilder query = new StringBuilder(connectionNoListQuery);
 		
