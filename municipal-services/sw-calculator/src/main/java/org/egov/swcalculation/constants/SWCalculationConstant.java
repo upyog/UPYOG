@@ -288,6 +288,8 @@ public class SWCalculationConstant {
 	public static final String CALCULATION_ATTRIBUTE_CONST = "CalculationAttribute";
 	
 	public static final String ATTRIBUTE = "attribute";
+
+	public static final String connectionCategory = "connectionCategory";
 	
 	public static final String SW_ADHOC_PENALTY = "SW_ADHOC_PENALTY";
 
