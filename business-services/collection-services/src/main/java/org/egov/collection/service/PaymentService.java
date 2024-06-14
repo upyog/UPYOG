@@ -107,7 +107,7 @@ public class PaymentService {
    	  List<String> usageCategory = paymentRepository.fetchUsageCategoryByApplicationnos(paymentSearchCriteria.getReceiptNumbers(),businessservice);
           List<String> address = paymentRepository.fetchAddressByApplicationnos(paymentSearchCriteria.getReceiptNumbers(),businessservice);
           List<String> propertyIds = paymentRepository.fetchPropertyid(paymentSearchCriteria.getReceiptNumbers(), businessservice);
-          setPropertyData(receiptnumber,payments,businessservice);
+          // setPropertyData(receiptnumber,payments,businessservice);
           payments.get(0).setUsageCategory(usageCategory.get(0));
    	  payments.get(0).setAddress(address.get(0));
           payments.get(0).setPropertyId(propertyIds.get(0));
