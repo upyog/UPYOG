@@ -105,11 +105,13 @@ public class EnrichmentService {
      */
     public void enrichSearchRequest(RequestInfo requestInfo, RequestSearchCriteria criteria){
 
+    	if(!criteria.getIsPlainSearch()) {
         if(criteria.isEmpty() && requestInfo.getUserInfo().getType().equalsIgnoreCase(USERTYPE_CITIZEN)){
             String citizenMobileNumber = requestInfo.getUserInfo().getUserName();
             criteria.setMobileNumber(citizenMobileNumber);
         }
 
+        
         criteria.setAccountId(requestInfo.getUserInfo().getUuid());
 
         String tenantId = (criteria.getTenantId()!=null) ? criteria.getTenantId() : requestInfo.getUserInfo().getTenantId();
@@ -117,7 +119,7 @@ public class EnrichmentService {
         if(criteria.getMobileNumber()!=null){
             userService.enrichUserIds(tenantId, criteria);
         }
-
+    	}
         if(criteria.getLimit()==null)
             criteria.setLimit(config.getDefaultLimit());
 

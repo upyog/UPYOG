@@ -72,7 +72,7 @@ public class RequestSearchCriteria {
     private Set<String> userIds;
 
     @JsonIgnore
-    private Boolean isPlainSearch;
+    private Boolean isPlainSearch=false;
 
 
     public enum SortOrder {
