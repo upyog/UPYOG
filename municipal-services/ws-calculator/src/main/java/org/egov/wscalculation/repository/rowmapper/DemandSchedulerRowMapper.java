@@ -5,19 +5,26 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.wscalculation.web.models.WaterDetails;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DemandSchedulerRowMapper implements ResultSetExtractor<List<String>> {
+public class DemandSchedulerRowMapper implements ResultSetExtractor<List<WaterDetails>> {
 
+	
+	
 	@Override
-	public List<String> extractData(ResultSet rs) throws SQLException, DataAccessException {
-		List<String> connectionLists = new ArrayList<>();
+	public List<WaterDetails> extractData(ResultSet rs) throws SQLException, DataAccessException {
+		List<WaterDetails> waterDetailList = new ArrayList<>();
 		while (rs.next()) {
-			connectionLists.add(rs.getString("connectionno"));
+			WaterDetails waterDetails=new WaterDetails();
+			
+			waterDetails.setConnectionExecutionDate(rs.getLong("connectionExecutionDate"));
+			waterDetails.setConnectionNo(rs.getString("connectionno"));
+			waterDetailList.add(waterDetails);
 		}
-		return connectionLists;
+		return waterDetailList;
 	}
 }

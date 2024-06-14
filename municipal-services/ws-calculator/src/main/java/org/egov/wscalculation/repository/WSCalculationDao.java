@@ -7,6 +7,7 @@ import org.egov.wscalculation.web.models.MeterConnectionRequest;
 import org.egov.wscalculation.web.models.MeterReading;
 import org.egov.wscalculation.web.models.MeterReadingSearchCriteria;
 import org.egov.wscalculation.web.models.WaterConnection;
+import org.egov.wscalculation.web.models.WaterDetails;
 
 public interface WSCalculationDao {
 
@@ -39,5 +40,8 @@ public interface WSCalculationDao {
 	long getConnectionCount(String tenantid, Long fromDate, Long toDate);
 	
 	List<WaterConnection> getConnection(String tenantId, String consumerCode,String connectionType,Long fromDate, Long toDate);
+
+	List<WaterDetails> getConnectionsNoList(String tenantId, String connectionType, Long taxPeriodFrom,
+			Long taxPeriodTo, String cone);
 
 }

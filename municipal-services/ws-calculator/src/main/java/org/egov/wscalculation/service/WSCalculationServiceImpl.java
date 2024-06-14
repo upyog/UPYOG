@@ -390,18 +390,173 @@ if(category!=null)
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		LocalDateTime date = LocalDateTime.now();
 		log.info("Time schedule start for water demand generation on : " + date.format(dateTimeFormatter));
+//		List<String> tenantIds = wSCalculationDao.getTenantId();
 		List<String> tenantIds = new ArrayList<>();
-		if(!CollectionUtils.isEmpty(bulkBillCriteria.getTenantIds())){
-			tenantIds = bulkBillCriteria.getTenantIds();
-		}
-		else
-			tenantIds = wSCalculationDao.getTenantId();
+		String tenat = requestInfo.getMsgId();
 
-		if (tenantIds.isEmpty())
+		 if (!tenat.contains("pb"))
+		{
+		tenantIds.add("pb.abohar");
+		tenantIds.add("pb.adampur");
+		tenantIds.add("pb.ahmedgarh");
+		tenantIds.add("pb.ajnala");
+		tenantIds.add("pb.alawalpur");
+		tenantIds.add("pb.amargarh");
+		tenantIds.add("pb.amloh");
+		tenantIds.add("pb.anandpursahib");
+		tenantIds.add("pb.badhnikalan");
+		tenantIds.add("pb.baghapurana");
+		tenantIds.add("pb.balachaur");
+		tenantIds.add("pb.banga");
+		tenantIds.add("pb.banur");
+		tenantIds.add("pb.bareta");
+		tenantIds.add("pb.bariwala");
+		tenantIds.add("pb.barnala");
+		tenantIds.add("pb.bassipathana");
+		tenantIds.add("pb.batala");
+		tenantIds.add("pb.begowal");
+		tenantIds.add("pb.bhadaur");
+		tenantIds.add("pb.bhadson");
+		tenantIds.add("pb.bhawanigarh");
+		tenantIds.add("pb.bhikhi");
+		tenantIds.add("pb.bhogpur");
+		tenantIds.add("pb.bhuchomandi");
+		tenantIds.add("pb.bhulath");
+		tenantIds.add("pb.boha");
+		tenantIds.add("pb.budhlada");
+		tenantIds.add("pb.chamkaursahib");
+		tenantIds.add("pb.cheema");
+		tenantIds.add("pb.dasuya");
+		tenantIds.add("pb.derababananak");
+		tenantIds.add("pb.derabassi");
+		tenantIds.add("pb.dhanaula");
+		tenantIds.add("pb.dharamkot");
+		tenantIds.add("pb.dhariwal");
+		tenantIds.add("pb.dhilwan");
+		tenantIds.add("pb.dhuri");
+		tenantIds.add("pb.dinanagar");
+		tenantIds.add("pb.dirba");
+		tenantIds.add("pb.doraha");
+		tenantIds.add("pb.faridkot");
+		tenantIds.add("pb.fatehgarhchurian");
+		tenantIds.add("pb.fazilka");
+		tenantIds.add("pb.ferozepur");
+		tenantIds.add("pb.garhdiwala");
+		tenantIds.add("pb.garhshankar");
+		tenantIds.add("pb.ghagga");
+		tenantIds.add("pb.ghanaur");
+		tenantIds.add("pb.gidderbaha");
+		tenantIds.add("pb.goniana");
+		tenantIds.add("pb.goraya");
+		tenantIds.add("pb.gurdaspur");
+		tenantIds.add("pb.guruharsahai");
+		tenantIds.add("pb.handiaya");
+		tenantIds.add("pb.hariana");
+		tenantIds.add("pb.hoshiarpur");
+		tenantIds.add("pb.jagraon");
+		tenantIds.add("pb.jaitu");
+		tenantIds.add("pb.jalalabad");
+		tenantIds.add("pb.jalandhar");
+		tenantIds.add("pb.jandialaguru");
+		tenantIds.add("pb.kapurthala");
+		tenantIds.add("pb.kartarpur");
+		tenantIds.add("pb.khamano");
+		tenantIds.add("pb.khanauri");
+		tenantIds.add("pb.khanna");
+		tenantIds.add("pb.kharar");
+		tenantIds.add("pb.khemkaran");
+		tenantIds.add("pb.kiratpursahib");
+		tenantIds.add("pb.kotfatta");
+		tenantIds.add("pb.kotkapura");
+		tenantIds.add("pb.kurali");
+		tenantIds.add("pb.lalru");
+		tenantIds.add("pb.lehragaga");
+		tenantIds.add("pb.longowal");
+		tenantIds.add("pb.machhiwara");
+		tenantIds.add("pb.mahilpur");
+		tenantIds.add("pb.majitha");
+		tenantIds.add("pb.makhu");
+		tenantIds.add("pb.malerkotla");
+		tenantIds.add("pb.mallanwala");
+		tenantIds.add("pb.maloud");
+		tenantIds.add("pb.malout");
+		tenantIds.add("pb.mamdot");
+		tenantIds.add("pb.mandigobindgarh");
+		tenantIds.add("pb.mansa");
+		tenantIds.add("pb.maur");
+		tenantIds.add("pb.moga");
+		tenantIds.add("pb.mohali");
+		tenantIds.add("pb.moonak");
+		tenantIds.add("pb.morinda");
+		tenantIds.add("pb.mudki");
+		tenantIds.add("pb.mukerian");
+		tenantIds.add("pb.mullanpurdakha");
+		tenantIds.add("pb.nabha");
+		tenantIds.add("pb.nadala");
+		tenantIds.add("pb.nakodar");
+		tenantIds.add("pb.nangal");
+		tenantIds.add("pb.nawanshahr");
+		tenantIds.add("pb.nihalsinghwala");
+		tenantIds.add("pb.nurmahal");
+		tenantIds.add("pb.pathankot");
+		tenantIds.add("pb.patiala");
+		tenantIds.add("pb.patran");
+		tenantIds.add("pb.patti");
+		tenantIds.add("pb.payal");
+		tenantIds.add("pb.phagwara");
+		tenantIds.add("pb.phillaur");
+		tenantIds.add("pb.quadian");
+		tenantIds.add("pb.rahon");
+		tenantIds.add("pb.raikot");
+		tenantIds.add("pb.rajasansi");
+		tenantIds.add("pb.rajpura");
+		tenantIds.add("pb.raman");
+		tenantIds.add("pb.ramdass");
+		tenantIds.add("pb.rampuraphul");
+		tenantIds.add("pb.rayya");
+		tenantIds.add("pb.ropar");
+		tenantIds.add("pb.samana");
+		tenantIds.add("pb.samrala");
+		tenantIds.add("pb.sanaur");
+		tenantIds.add("pb.sangatmandi");
+		tenantIds.add("pb.sangrur");
+		tenantIds.add("pb.sardulgarh");
+		tenantIds.add("pb.shahkot");
+		tenantIds.add("pb.shamchurasi");
+		tenantIds.add("pb.sirhind");
+		tenantIds.add("pb.srihargobindpur");
+		tenantIds.add("pb.sujanpur");
+		tenantIds.add("pb.sultanpurlodhi");
+		tenantIds.add("pb.sunam");
+		tenantIds.add("pb.talwandisabo");
+		tenantIds.add("pb.talwandibhai");
+		tenantIds.add("pb.talwara");
+		tenantIds.add("pb.tapa");
+		tenantIds.add("pb.tarntaran");
+		tenantIds.add("pb.urmartanda");
+		tenantIds.add("pb.zira");
+		tenantIds.add("pb.zirakpur");
+		tenantIds.add("pb.itpatiala");
+
+		}
+		else {
+			tenantIds.add(tenat);
+
+		}
+		if (tenantIds.isEmpty()) {
+			log.info("No tenants are found for generating demand");
 			return;
-		log.info("Tenant Ids : " + tenantIds);
+		}
+		log.info("Tenant Ids : " + tenantIds.toString());
 		tenantIds.forEach(tenantId -> {
-			demandService.generateDemandForTenantId(tenantId, requestInfo, bulkBillCriteria);
+			try {
+			
+				demandService.generateDemandForTenantId(tenantId, requestInfo);
+				
+			} catch (Exception e) {
+				log.error("Exception occured while generating demand for tenant: " + tenantId);
+				e.printStackTrace();
+			}
 		});
 	}
 	

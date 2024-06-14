@@ -26,7 +26,8 @@ public class WSCalculationConfiguration {
 	@Value("${egov.ws_calculation.meterReading.default.offset}")
 	private Integer meterReadingDefaultOffset;
 
-
+	@Value("${egov.bulk.bill.generate.count}")
+	private Integer bulkBillGenerateCount;
 	/*
 	 * Calculator Configs
 	 */
@@ -34,6 +35,9 @@ public class WSCalculationConfiguration {
 	// billing service
 	@Value("${egov.billingservice.host}")
 	private String billingServiceHost;
+	
+	@Value("${egov.bulk.save.demand.count}")
+	private Integer bulkSaveDemandCount;
 
 	@Value("${egov.taxhead.search.endpoint}")
 	private String taxheadsSearchEndpoint;

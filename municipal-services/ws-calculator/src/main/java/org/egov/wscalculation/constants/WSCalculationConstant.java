@@ -17,7 +17,7 @@ public class WSCalculationConstant {
 	public static final String TENANT_ID_FIELD_FOR_SEARCH_URL = "tenantId=";
 
 	public static final String SEPARATER = "&";
-
+	public static final String  ACTIVE_CONNECTION = "Active";
 	public static final String SERVICE_FIELD_FOR_SEARCH_URL = "service=";
 
 	public static final String SERVICE_FIELD_VALUE_WS = "WS";
@@ -35,7 +35,7 @@ public class WSCalculationConstant {
 	public static final String MDMS_ENDDATE = "endingDate";
 
 	public static final String MDMS_FINANCIALYEAR = "FinancialYear";
-
+	public static final String MDMS_NO_FILTER_TAXPERIOD = "$.MdmsRes.BillingService.TaxPeriod.*";
 	/*
 	 * Module names
 	 */

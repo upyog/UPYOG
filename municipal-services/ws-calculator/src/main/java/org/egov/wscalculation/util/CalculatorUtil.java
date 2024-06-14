@@ -1,6 +1,7 @@
 package org.egov.wscalculation.util;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -16,6 +17,7 @@ import org.egov.wscalculation.web.models.Property;
 import org.egov.wscalculation.web.models.PropertyResponse;
 import org.egov.wscalculation.web.models.RequestInfoWrapper;
 import org.egov.wscalculation.web.models.SearchCriteria;
+import org.egov.wscalculation.web.models.TaxPeriod;
 import org.egov.wscalculation.web.models.WaterConnection;
 import org.egov.wscalculation.web.models.WaterConnectionResponse;
 import org.egov.wscalculation.web.models.workflow.ProcessInstance;
@@ -23,14 +25,17 @@ import org.egov.wscalculation.web.models.workflow.ProcessInstanceResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-
+import com.jayway.jsonpath.DocumentContext;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Getter
+@Slf4j
 public class CalculatorUtil {
 
 	@Autowired
@@ -387,7 +392,68 @@ public class CalculatorUtil {
 		url.append("businessIds=").append(businessIds);
 		return url.toString();
 	}
+	/**
+	 * Prepare the MDMS tax period
+	 * @param requestInfo
+	 * @param serviceName
+	 * @param tenantId
+	 * @return
+	 */
+	public MdmsCriteriaReq prepareWSTaxPeriodMdmsRequest(RequestInfo requestInfo, String serviceName, String tenantId) {
+		String type=null;
+		if(tenantId.contains("pb.khanna"))
+		{
+			type="ANNUAL";
+		}
 
+		else
+		{
+			type="QUATERLY";
+		}
+		
+		
+		log.info("prepareWSTaxPeriodMdmsRequest:: start");
+			MasterDetail masterDetail = MasterDetail.builder().name(WSCalculationConstant.TAXPERIOD_MASTERNAME)
+					// .filter("[?(@.periodCycle=='"+type+"' && @.service== '"+serviceName+"')]")
+					.filter("[?(@.periodCycle=='QUATERLY' && @.service== '"+serviceName+"')]")
+					.build();
+			ModuleDetail moduleDetail = ModuleDetail.builder().moduleName(WSCalculationConstant.MODULE_NAME_BILLINGSERVICE)
+					.masterDetails(Arrays.asList(masterDetail)).build();
+			MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(moduleDetail)).tenantId(tenantId)
+					.build();
+			log.info("prepareWSTaxPeriodMdmsRequest:: end"+mdmsCriteria);
+			return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+
+	}
+	/**
+	 * Fetches the MDMS tax periods based on the MdmsCriteriaRequest
+	 *
+	 * @param tenantId    tenantId of properties in PropertyRequest
+	 * @param names       List of String containing the names of all master-data
+	 *                    whose code has to be extracted
+	 * @param requestInfo RequestInfo of the received PropertyRequest
+	 * @return Map of MasterData name to the list of code in the MasterData
+	 *
+	 */
+	public List<TaxPeriod> getTaxPeriodsFromMDMS(RequestInfo requestInfo, String tenantId) {
+
+		try {
+			MdmsCriteriaReq mdmsReq = prepareWSTaxPeriodMdmsRequest(requestInfo, WSCalculationConstant.SERVICE_FIELD_VALUE_WS, tenantId);
+			DocumentContext documentContext = JsonPath.parse(serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsReq));
+
+			List<TaxPeriod> taxPeriods =  mapper.convertValue(documentContext.read(WSCalculationConstant.MDMS_NO_FILTER_TAXPERIOD), new TypeReference<List<TaxPeriod>>() {});
+			//Sorting the tax periods based on tax from date in ascending order
+			taxPeriods = taxPeriods.stream()
+					     .sorted(Comparator.comparing(TaxPeriod::getFromDate))
+					     .collect(Collectors.toList());
+		
+			return taxPeriods;
+			
+		} catch (Exception e) {
+			log.error("Error while fetching MDMS data", e);
+			throw new CustomException("NO_TAXPERIOD_FOUND", "Exception while getting the tax periods from the MDMS service");
+		}
+	}
 	/**
 	 *
 	 * @param dateInLong
