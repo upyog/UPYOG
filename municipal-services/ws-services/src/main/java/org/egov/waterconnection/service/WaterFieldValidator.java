@@ -48,6 +48,18 @@ public class WaterFieldValidator implements WaterActionValidator {
 
 	private void handleUpdateApplicationRequest(WaterConnectionRequest waterConnectionRequest,
 			Map<String, String> errorMap) {
+		 String jsonString = waterConnectionRequest.getWaterConnection().getAdditionalDetails().toString();
+                 String[] keyValuePairs = jsonString.substring(1, jsonString.length() - 1).split(", "); // Remove the curly braces and split by comma followed by a space
+                 String valueOfConnectionCategory = null;
+
+        for (String pair : keyValuePairs) {
+                String[] keyValue = pair.split("=");
+                if (keyValue[0].equals("connectionCategory")) {
+                 valueOfConnectionCategory = keyValue[1];
+        break;
+    }
+}
+		valueOfConnectionCategory = valueOfConnectionCategory.replaceAll("\\s", "");
 		if (WCConstants.ACTIVATE_CONNECTION_CONST
 				.equalsIgnoreCase(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction())) {
 			if (StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getConnectionType())) {
@@ -57,10 +69,10 @@ public class WaterFieldValidator implements WaterActionValidator {
 				errorMap.put("INVALID_WATER_SOURCE", "WaterConnection cannot be created  without water source");
 			}
 			
-			if(waterConnectionRequest.getWaterConnection().getRoadCuttingInfo() == null){
+			if(waterConnectionRequest.getWaterConnection().getRoadCuttingInfo() == null && !valueOfConnectionCategory.equalsIgnoreCase("REGULARIZED")){
 				errorMap.put("INVALID_ROAD_INFO", "Road Cutting Information should not be empty");
 			}
-			if(waterConnectionRequest.getWaterConnection().getRoadCuttingInfo() != null){
+			if(waterConnectionRequest.getWaterConnection().getRoadCuttingInfo() != null && valueOfConnectionCategory!="REGULARIZED"){
 				for(RoadCuttingInfo roadCuttingInfo : waterConnectionRequest.getWaterConnection().getRoadCuttingInfo()){
 					if(StringUtils.isEmpty(roadCuttingInfo.getRoadType())){
 						errorMap.put("INVALID_ROAD_TYPE", "Road type should not be empty");
@@ -76,16 +88,16 @@ public class WaterFieldValidator implements WaterActionValidator {
 		if (WCConstants.APPROVE_CONNECTION_CONST
 				.equalsIgnoreCase(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction())) {
 
-			if(waterConnectionRequest.getWaterConnection().getRoadCuttingInfo() == null){
+			if(waterConnectionRequest.getWaterConnection().getRoadCuttingInfo() == null && !valueOfConnectionCategory.equalsIgnoreCase("REGULARIZED")){
 				errorMap.put("INVALID_ROAD_INFO", "Road Cutting Information should not be empty");
 			}
 
-			if(waterConnectionRequest.getWaterConnection().getRoadCuttingInfo() != null){
+			if(waterConnectionRequest.getWaterConnection().getRoadCuttingInfo() != null && !valueOfConnectionCategory.equalsIgnoreCase("REGULARIZED")){
 				for(RoadCuttingInfo roadCuttingInfo : waterConnectionRequest.getWaterConnection().getRoadCuttingInfo()){
 					if(StringUtils.isEmpty(roadCuttingInfo.getRoadType())){
 						errorMap.put("INVALID_ROAD_TYPE", "Road type should not be empty");
 					}
-					if(roadCuttingInfo.getRoadCuttingArea() == null){
+					if(roadCuttingInfo.getRoadCuttingArea() == null && !valueOfConnectionCategory.equalsIgnoreCase("REGULARIZED")){
 						errorMap.put("INVALID_ROAD_CUTTING_AREA", "Road cutting area should not be empty");
 					}
 				}
