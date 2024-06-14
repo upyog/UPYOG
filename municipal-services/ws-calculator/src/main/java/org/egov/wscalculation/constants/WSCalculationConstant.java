@@ -336,7 +336,7 @@ public class WSCalculationConstant {
 	public static final String UNIT_USAGE_TYPE_KEY = "unitUsageType";
 	
 	public static final String CONNECTION_ACTIVATED = "CONNECTION_ACTIVATED";
-	
+	public static final String MODIFIED_APPROVED = "APPROVED";
 	public static final String WS_NO_BILLING_PERIOD = "WS_NO_BILLING_PERIOD";
 	
 	public static final String WS_NO_BILLING_PERIOD_MSG = "No billin period is active or not defined";
