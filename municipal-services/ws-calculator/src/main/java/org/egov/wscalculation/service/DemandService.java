@@ -1308,7 +1308,7 @@ public class DemandService {
 			log.error("Exception occurred while processing the demand generation for tenantId: "+tenantId);
 		}
 	}
-	
+
 	private boolean isValidBillingCycle(WaterDetails waterConnection, RequestInfo requestInfo, String tenantId,
 			long taxPeriodFrom, long taxPeriodTo) {
 		// TODO Auto-generated method stub
@@ -1327,6 +1327,31 @@ public class DemandService {
 		 */
 
 		return isConnectionValid;
+
+	}
+
+private boolean fetchBill(WaterDetails waterConnection, long taxPeriodFrom, long taxPeriodTo, String tenantId,
+			RequestInfo requestInfo) {
+
+		final boolean[] isConnectionValid = { false };
+
+		Object result = serviceRequestRepository.fetchResult(
+				calculatorUtils.getFetchBillURL(tenantId, waterConnection.getConnectionNo()),
+				RequestInfoWrapper.builder().requestInfo(requestInfo).build());
+		BillResponseV2 billResponse = mapper.convertValue(result, BillResponseV2.class);
+		billResponse.getBill().forEach(bill -> {
+			bill.getBillDetails().forEach(billDetail -> {
+
+				long previousBillingCycleToDate = taxPeriodFrom - 86400000;
+				if (billDetail.getToPeriod() == previousBillingCycleToDate) {
+					isConnectionValid[0] = true;
+				}
+
+			});
+
+		});
+
+		return isConnectionValid[0];
 
 	}
 	/**
@@ -1529,6 +1554,55 @@ public class DemandService {
 		log.info("Updated Demand Details " + demands.toString());
 		demandRepository.updateDemand(requestInfo, demands);
 		return calculations;
+	}
+	
+	public List<String> fetchBillSchedulerBatch(Set<String> consumerCodes,String tenantId, RequestInfo requestInfo) {
+		List<String> consumercodesFromRes = null ;
+		try {
+
+			StringBuilder fetchBillURL = calculatorUtils.getFetchBillURL(tenantId, getCommaSeparateStrings(consumerCodes));
+
+			Object result = serviceRequestRepository.fetchResult(fetchBillURL, RequestInfoWrapper.builder().requestInfo(requestInfo).build());
+			log.info("Bills generated for the consumercodes: {}", fetchBillURL);
+			BillResponseV2 billResponse = mapper.convertValue(result, BillResponseV2.class);
+			List<BillV2> bills = billResponse.getBill();
+			if(bills != null && !bills.isEmpty()) {
+				consumercodesFromRes = bills.stream().map(BillV2::getConsumerCode).collect(Collectors.toList());
+			}
+
+		} catch (Exception ex) {
+			log.error("Fetch Bill Error For tenantId:{} consumercode: {} and Exception is: {}",tenantId,consumerCodes, ex);
+			return consumercodesFromRes;
+		}
+		return consumercodesFromRes;
+	}
+	/**
+     * Creates demand
+     * @param requestInfo The RequestInfo of the calculation Request
+     * @param demands The demands to be created
+     * @return The list of demand created
+     */
+	public void saveDemand(RequestInfo requestInfo, List<Demand> demands){
+		try{
+			DemandRequest request = new DemandRequest(requestInfo,demands);
+			wsCalculationProducer.push(configs.getSaveDemand(), request);
+		}catch(Exception e){
+			throw new CustomException("PARSING_ERROR","Failed to push the save demand data to kafka topic");
+		}
+	}
+	
+	private static String getCommaSeparateStrings(Set<String> idList) {
+
+		StringBuilder query = new StringBuilder();
+		if (!idList.isEmpty()) {
+
+			String[] list = idList.toArray(new String[idList.size()]);
+			query.append(list[0]);
+			for (int i = 1; i < idList.size(); i++) {
+				query.append("," + list[i]);
+			}
+		}
+		return query.toString();
 	}
 
 	/**

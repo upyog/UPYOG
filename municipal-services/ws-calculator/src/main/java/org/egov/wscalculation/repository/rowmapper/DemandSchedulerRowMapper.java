@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class DemandSchedulerRowMapper implements ResultSetExtractor<List<WaterDetails>> {
 
-	
-	
 	@Override
 	public List<WaterDetails> extractData(ResultSet rs) throws SQLException, DataAccessException {
 		List<WaterDetails> waterDetailList = new ArrayList<>();

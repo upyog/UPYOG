@@ -22,12 +22,16 @@ import org.egov.wscalculation.web.models.WaterConnection;
 import org.egov.wscalculation.web.models.WaterConnectionResponse;
 import org.egov.wscalculation.web.models.workflow.ProcessInstance;
 import org.egov.wscalculation.web.models.workflow.ProcessInstanceResponse;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import com.jayway.jsonpath.DocumentContext;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.Getter;
@@ -126,8 +130,10 @@ public class CalculatorUtil {
 
 		WaterConnectionResponse response;
 		try {
+			log.info("WaterConnectionResponse result: " + mapper.writeValueAsString(result));
 			response = mapper.convertValue(result, WaterConnectionResponse.class);
-		} catch (IllegalArgumentException e) {
+			log.info("WaterConnectionResponse: " + mapper.writeValueAsString(response));
+		} catch (Exception e) {
 			throw new CustomException("PARSING_ERROR", "Error while parsing response of Water Connection Search");
 		}
 
@@ -316,14 +322,29 @@ public class CalculatorUtil {
 	 * @return Master For Billing Period
 	 */
 	public Map<String, Object> loadBillingFrequencyMasterData(RequestInfo requestInfo, String tenantId) {
+		log.info("loadBillingFrequencyMasterData");
 		MdmsCriteriaReq mdmsCriteriaReq = getBillingFrequencyForScheduler(requestInfo, tenantId);
 		Object res = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+		log.info("loadBillingFrequencyMasterData::"+res);
+		String jsonString = new JSONObject(res).toString();
+		log.info("loadBillingFrequencyMasterData"+jsonString);
 		if (res == null) {
 			throw new CustomException("MDMS_ERROR_FOR_BILLING_FREQUENCY", "ERROR IN FETCHING THE BILLING FREQUENCY");
 		}
 		List<Map<String, Object>> jsonOutput = JsonPath.read(res, WSCalculationConstant.JSONPATH_ROOT_FOR_BilingPeriod);
 		return jsonOutput.get(0);
 	}
+	
+//	public Map<String, Object> getSchedulerBillingMasterData(RequestInfo requestInfo, String tenantId) {
+//		MdmsCriteriaReq mdmsCriteriaReq = getBillingPeriodForScheduler(requestInfo, tenantId);
+//		Object res = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+//		if (res == null) {
+//			throw new CustomException("MDMS_ERROR_FOR_SCHEDULER_BILLING_PERIOD", "ERROR IN FETCHING THE SCHEDULER BILLING PERIOD");
+//		}
+//		List<Map<String, Object>> jsonOutput = JsonPath.read(res, WSCalculationConstant.JSONPATH_ROOT_FOR_SCHEDULER_BilingPeriod);
+//		return jsonOutput.get(0);
+//	}
+	
 	
 	private  MdmsCriteriaReq getBillingPeriodForScheduler(RequestInfo requestInfo, String tenantId) {
 
@@ -392,6 +413,32 @@ public class CalculatorUtil {
 		url.append("businessIds=").append(businessIds);
 		return url.toString();
 	}
+	
+	/**
+	 * prepares mdms request
+	 * 
+	 * @param tenantId
+	 * @param moduleName
+	 * @param names
+	 * @param filter
+	 * @param requestInfo
+	 * @return
+	 */
+	public MdmsCriteriaReq prepareMdMsRequest(String tenantId, String moduleName, List<String> names, String filter,
+			RequestInfo requestInfo) {
+
+		List<MasterDetail> masterDetails = new ArrayList<>();
+		names.forEach(name -> {
+				masterDetails.add(MasterDetail.builder().name(name).build());
+		});
+
+		ModuleDetail moduleDetail = ModuleDetail.builder().moduleName(moduleName).masterDetails(masterDetails).build();
+		List<ModuleDetail> moduleDetails = new ArrayList<>();
+		moduleDetails.add(moduleDetail);
+		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().tenantId(tenantId).moduleDetails(moduleDetails).build();
+		return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+	}
+	
 	/**
 	 * Prepare the MDMS tax period
 	 * @param requestInfo
@@ -425,6 +472,7 @@ public class CalculatorUtil {
 			return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
 
 	}
+	
 	/**
 	 * Fetches the MDMS tax periods based on the MdmsCriteriaRequest
 	 *

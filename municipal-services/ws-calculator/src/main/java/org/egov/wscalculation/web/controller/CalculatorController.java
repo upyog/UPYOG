@@ -90,6 +90,12 @@ public class CalculatorController {
 		wSCalculationService.generateDemandBasedOnTimePeriod(bulkBillReq.getRequestInfo(), bulkBillReq.getBulkBillCriteria());
 	}
 	
+	@PostMapping("/_jobbillscheduler")
+	public void jobbillscheduler(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
+		log.info("_jobbillscheduler::");
+		wSCalculationService.generateBillBasedLocality(requestInfoWrapper.getRequestInfo());
+	}
+	
 	@PostMapping("/_getConnectionForDemand")
 	public ResponseEntity<ConnectionResponse> generateDemand(@Valid @RequestBody BulkBillReq bulkBillReq) {
 		List<WaterConnection> waterConnectionList=wSCalculationService.getConnnectionWithPendingDemand(bulkBillReq.getRequestInfo(), bulkBillReq.getBulkBillCriteria());

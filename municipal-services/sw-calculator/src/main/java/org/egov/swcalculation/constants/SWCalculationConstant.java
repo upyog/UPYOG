@@ -272,8 +272,6 @@ public class SWCalculationConstant {
 	public static final String METER_COST_CONST = "meterCost";
 
 	public static final String OTHER_CHARGE_CONST = "other";
-	
-	public static final String connectionCategory = "connectionCategory";
 
 	public static final String TAX_PERCENTAGE_CONST = "taxpercentage";
 	

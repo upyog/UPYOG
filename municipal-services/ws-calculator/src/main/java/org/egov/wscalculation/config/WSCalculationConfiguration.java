@@ -219,5 +219,11 @@ public class WSCalculationConfiguration {
 
 	@Value("${egov.bill.details.sms.link}")
 	private String billDetailsLink;
+	
+	@Value("${egov.watercalculatorservice.billgenerate.topic}")
+	private String billGenerateSchedulerTopic;
+	
+	@Value("${kafka.topics.save.demand}")
+	private String saveDemand;
 
 }

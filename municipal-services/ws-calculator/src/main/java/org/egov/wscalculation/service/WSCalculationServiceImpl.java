@@ -6,7 +6,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import org.egov.wscalculation.web.models.BillScheduler.StatusEnum;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.minidev.json.JSONArray;
@@ -14,7 +16,10 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.tracer.model.CustomException;
+import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.constants.WSCalculationConstant;
+import org.egov.wscalculation.producer.WSCalculationProducer;
+import org.egov.wscalculation.repository.BillGeneratorDao;
 import org.egov.wscalculation.util.WaterCessUtil;
 import org.egov.wscalculation.web.models.*;
 import org.egov.wscalculation.repository.ServiceRequestRepository;
@@ -25,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.google.common.collect.ImmutableSet;
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +65,19 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 	
 	@Autowired
 	private WSCalculationUtil wSCalculationUtil;
+	
+	
+	@Autowired
+	private BillGeneratorService billGeneratorService;
+	
+	@Autowired
+	private WSCalculationProducer producer;
+	
+	@Autowired
+	private WSCalculationConfiguration configs;
+	
+	@Autowired
+	private BillGeneratorDao billGeneratorDao;
 
 	@Autowired
 	private CalculatorUtil util;
@@ -577,7 +596,73 @@ if(category!=null)
 	
 			return msg;
 	}
-	
+	/**
+	 * Generate bill Based on Time (Monthly, Quarterly, Yearly)
+	 */
+	public void generateBillBasedLocality(RequestInfo requestInfo) {
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime date = LocalDateTime.now();
+		log.info("Time schedule start for water bill generation on : " + date.format(dateTimeFormatter));
+
+		BillGenerationSearchCriteria criteria = new BillGenerationSearchCriteria();
+		criteria.setStatus(WSCalculationConstant.INITIATED_CONST);
+
+		List<BillScheduler> billSchedularList = billGeneratorService.getBillGenerationDetails(criteria);
+		if (billSchedularList.isEmpty())
+			return;
+		log.info("billSchedularList count : " + billSchedularList.size());
+		for (BillScheduler billSchedular : billSchedularList) {
+			try {
+
+				billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.INPROGRESS);
+				log.info("Updated Bill Schedular Status To INPROGRESS");
+
+				requestInfo.getUserInfo().setTenantId(billSchedular.getTenantId() != null ? billSchedular.getTenantId() : requestInfo.getUserInfo().getTenantId());
+				RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+
+				List<String> connectionNos = wSCalculationDao.getConnectionsNoByLocality( billSchedular.getTenantId(), WSCalculationConstant.nonMeterdConnection, billSchedular.getLocality());
+				//			connectionNos.add("0603000002");
+				//			connectionNos.add("0603009718");
+				//			connectionNos.add("0603000001");
+				if (connectionNos == null || connectionNos.isEmpty()) {
+					billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.COMPLETED);
+					continue;
+				}
+
+				Collection<List<String>> partitionConectionNoList = partitionBasedOnSize(connectionNos, configs.getBulkBillGenerateCount());
+				log.info("partitionConectionNoList size: {}, Producer ConsumerCodes size : {} and BulkBillGenerateCount: {}",partitionConectionNoList.size(), connectionNos.size(), configs.getBulkBillGenerateCount());
+				int threadSleepCount = 1;
+				int count = 1;
+				for (List<String>  conectionNoList : partitionConectionNoList) {
+
+					BillGeneratorReq billGeneraterReq = BillGeneratorReq
+							.builder()
+							.requestInfoWrapper(requestInfoWrapper)
+							.tenantId(billSchedular.getTenantId())
+							.consumerCodes(ImmutableSet.copyOf(conectionNoList))
+							.billSchedular(billSchedular)
+							.build();
+
+					producer.push(configs.getBillGenerateSchedulerTopic(), billGeneraterReq);
+					log.info("Bill Scheduler pushed connections size:{} to kafka topic of batch no: ", conectionNoList.size(), count++);
+
+					if(threadSleepCount == 2) {
+						//Pausing the controller for 10 seconds after every two batches pushed to Kafka topic
+						Thread.sleep(10000);
+						threadSleepCount=1;
+					}
+					threadSleepCount++;
+
+				}
+				billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.COMPLETED);
+				log.info("Updated Bill Schedular Status To COMPLETED");
+
+			}catch (Exception e) {
+				log.error("Execption occured while generating bills for tenant"+billSchedular.getTenantId()+" and locality: "+billSchedular.getLocality());
+			}
+
+		}
+	}
 	/**
 	 * 
 	 * @param request - Calculation Request Object
@@ -662,6 +747,13 @@ if(category!=null)
 
 		}
 		return waterCess;
+	}
+	
+	static <T> Collection<List<T>> partitionBasedOnSize(List<T> inputList, int size) {
+        final AtomicInteger counter = new AtomicInteger(0);
+        return inputList.stream()
+                    .collect(Collectors.groupingBy(s -> counter.getAndIncrement()/size))
+                    .values();
 	}
 	
 }

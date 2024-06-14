@@ -1,6 +1,8 @@
 package org.egov.wscalculation.web.models;
 
 import javax.validation.constraints.NotNull;
+
+import org.egov.wscalculation.web.models.MeterReading.MeterStatusEnum;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -55,5 +57,9 @@ public class CalculationCriteria {
 	//Fee Estimation
 	@JsonProperty("applicationNo")
 	private String applicationNo;
+	
+	private MeterStatusEnum meterStatus;
+	
+	
 
 }

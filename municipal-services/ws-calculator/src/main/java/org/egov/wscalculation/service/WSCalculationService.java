@@ -13,6 +13,10 @@ public interface WSCalculationService {
 	List<Calculation> getCalculation(CalculationReq calculationReq);
 
 	void jobScheduler();
+	
+	void generateDemandBasedOnTimePeriod(RequestInfo requestInfo);
+	
+	void generateBillBasedLocality(RequestInfo requestInfo);
 
 	void generateDemandBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria);
 	
