@@ -264,6 +264,14 @@ public class WsQueryBuilder {
 			query.append(" conn.locality = ? ");
 			preparedStatement.add(criteria.getLocality());
 		}
+
+			if(criteria.getConnectionType().equalsIgnoreCase("METERED")) {
+			if (!StringUtils.isEmpty(criteria.getConnectionType())) {
+				addClauseIfRequired(preparedStatement, query);
+				query.append(" wc.connectiontype = ? ");
+				preparedStatement.add(criteria.getConnectionType());
+			}
+		}
 		
 		//Add group by and order by clause as per the search scenario
 		if(criteria.getIsCountCall() && !StringUtils.isEmpty(criteria.getSearchType())
