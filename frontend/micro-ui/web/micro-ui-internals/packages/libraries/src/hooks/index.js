@@ -286,12 +286,8 @@ import useEWCreateAPI from "./ew/useEWCreateAPI";
 import useTenantsEW from "./ew/useTenants";
 import useEWSearch from "./ew/useEWSearch";
 import useEwApplicationDetail from "./ew/useEwApplicationDetail";
-import useEWApplicationAction from "./ew/useEWApplicationAction";
-
-
-
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
-import useEWSearch from "./ew/useEWSearch";
+import useEWApplicationAction from "./ew/useEWApplicationAction";
 
 const pgr = {
   useComplaintDetails,

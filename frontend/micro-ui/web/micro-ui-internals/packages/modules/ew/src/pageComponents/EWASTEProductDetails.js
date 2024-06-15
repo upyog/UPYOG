@@ -22,7 +22,6 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
 
   const [prlistName, setPrlistName] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.prlistName) || formData?.ewdet?.prlistName || []);
   const [prlistQuantity, setPrlistQuantity] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.prlistQuantity) || formData?.ewdet?.prlistQuantity || []);
-  const [calculatedAmount, setCalculatedAmount] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.calculatedAmount) || formData?.ewdet?.calculatedAmount || "");
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
@@ -57,10 +56,10 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
     let owner = formData.ewdet && formData.ewdet[index];
     let ownerStep;
     if (userType === "citizen") {
-      ownerStep = { ...owner, prlistName, prlistQuantity, calculatedAmount };
+      ownerStep = { ...owner, prlistName, prlistQuantity };
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
     } else {
-      ownerStep = { ...owner, prlistName, prlistQuantity, calculatedAmount };
+      ownerStep = { ...owner, prlistName, prlistQuantity };
       onSelect(config.key, ownerStep, false, index);
     }
   };
@@ -155,7 +154,6 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
           setPrlistName={setPrlistName}
           prlistQuantity={prlistQuantity}
           setPrlistQuantity={setPrlistQuantity}
-          setCalculatedAmount={setCalculatedAmount}
           // prlistTotalprice={prlistTotalprice}
         />
       </div>

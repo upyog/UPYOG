@@ -1,3 +1,4 @@
+import { values } from "lodash";
 import { EwService } from "../../elements/EW";
 
 export const EWSearch = {
@@ -60,7 +61,11 @@ export const EWSearch = {
         asSectionHeader: true,
         isTable: true,
         headers: ["PRODUCT_NAME", "PRODUCT_QUANTITY", "UNIT_PRICE", "TOTAL_PRODUCT_PRICE"],
-        tableRows: productRows
+        tableRows: productRows,
+        values: [
+          { title: "", value: " "},
+          { title: "EWASTE_NET_PRICE", value: response?.calculatedAmount},
+        ]
       },
     ];
   },

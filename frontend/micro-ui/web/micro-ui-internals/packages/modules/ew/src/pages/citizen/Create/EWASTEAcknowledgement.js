@@ -64,11 +64,11 @@ const EWASTEAcknowledgement = ({ data, onSuccess }) => {
 
   const handleDownloadPdf = async () => {
     const { EwasteApplication = [] } = mutation.data;
-    let Pet = (EwasteApplication && EwasteApplication[0]) || {};
-    const tenantInfo = tenants.find((tenant) => tenant.code === Pet.tenantId);
-    let tenantId = Pet.tenantId || tenantId;
+    let EW = (EwasteApplication && EwasteApplication[0]) || {};
+    const tenantInfo = tenants.find((tenant) => tenant.code === EW.tenantId);
+    let tenantId = EW.tenantId || tenantId;
    
-    const data = await getEwAcknowledgementData({ ...Pet }, tenantInfo, t);
+    const data = await getEwAcknowledgementData({ ...EW }, tenantInfo, t);
     Digit.Utils.pdf.generate(data);
   };
 
