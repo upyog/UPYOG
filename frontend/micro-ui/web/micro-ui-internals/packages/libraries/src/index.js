@@ -54,7 +54,7 @@ import { PTRService } from "./services/elements/PTR";
 import { ASSETService } from "./services/elements/ASSET";  
 import { CHBServices } from "./services/elements/CHB";  
 
-import { EWService } from "./services/elements/EW";
+import { EwService } from "./services/elements/EW";
 import {CustomService} from "./services/elements/CustomService";    
    
 
@@ -121,7 +121,7 @@ const initLibraries = () => {
   setupLibraries("PTRService", PTRService);
   setupLibraries("ASSETService", ASSETService);
   setupLibraries("CHBServices", CHBServices);
-  setupLibraries("EWService", EWService);
+  setupLibraries("EwService", EwService);
 
   return new Promise((resolve) => {
     initI18n(resolve);
