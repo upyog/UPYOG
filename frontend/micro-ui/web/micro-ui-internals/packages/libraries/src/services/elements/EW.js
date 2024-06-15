@@ -3,7 +3,7 @@ import { Request } from "../atoms/Utils/Request";
 
 
 
-export const EWService = {
+export const EwService = {
 
   create: (details, tenantId) =>
     Request({
@@ -62,7 +62,6 @@ export const EWService = {
   //     }),
 
 };
-
 
 
 

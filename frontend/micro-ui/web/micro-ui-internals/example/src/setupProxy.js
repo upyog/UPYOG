@@ -75,6 +75,8 @@ module.exports = function (app) {
     "/billing-service/bill/v2/_fetchbill",
     "/chb-services/booking/v1/_create",
     "/ewaste-services/ewaste-request/_create",
+    "/ewaste-services/ewaste-request/_search",
+    "/ewaste-services/ewaste-request/_update",
     "/collection-services/payments/pet-services/_search",
     "/requester-services-dx"
    

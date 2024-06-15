@@ -1,15 +1,15 @@
 import { useQuery, useMutation } from "react-query";
-import { EWService } from "../../services/elements/EW";
+import { EwService } from "../../services/elements/EW";
 
 
-export const useEWCreateAPI = (tenantId, type = true) => {
+export const useEwCreateAPI = (tenantId, type = true) => {
  // return useMutation((data) => EWService.create(data, tenantId));
   if (type) {
-    return useMutation((data) => EWService.create(data, tenantId));
+    return useMutation((data) => EwService.create(data, tenantId));
   } 
   else {
-    return useMutation((data) => EWService.update(data, tenantId));
+    return useMutation((data) => EwService.update(data, tenantId));
   }
 };
 
-export default useEWCreateAPI;
+export default useEwCreateAPI;

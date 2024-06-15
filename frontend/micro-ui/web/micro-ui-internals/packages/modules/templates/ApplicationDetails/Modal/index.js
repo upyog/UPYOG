@@ -8,6 +8,7 @@ import NOCActionModal from "./NOCActionModal";
 import WNSActionModal from "./WNSActionModal";
 import PTRActionModal from "./PTRActionModal";
 import ASSETActionModal from "./ASSETActionModal";
+import EWActionModal from "./EWActionModal";
 
 
 
@@ -19,6 +20,9 @@ const ActionModal = (props) => {
   }
   if (props?.businessService.includes("ptr")) {
     return <PTRActionModal {...props} />;
+  }
+  if (props?.businessService.includes("ewst")) {
+    return <EWActionModal {...props} />;
   }
   if (props?.businessService.includes("asset-create")) {
     return <ASSETActionModal {...props} />;

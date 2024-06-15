@@ -100,7 +100,7 @@ export const EWDataConvert = (data) => {
   const formdata = {
     EwasteApplication: [
     {
-      tenantId: data?.tenantId,
+      tenantId: "pg.citya",
       requestId: data.requestId || "",
       transactionId: data.transactionId || "",
       pickUpDate: data.pickUpDate || "",
@@ -211,7 +211,7 @@ export const convertEpochToDate = (dateEpoch,businessService) => {
     let year = dateFromApi.getFullYear();
     month = (month > 9 ? "" : "0") + month;
     day = (day > 9 ? "" : "0") + day;
-    if(businessService == "ptr")
+    if(businessService == "ewst")
     return `${day}-${month}-${year}`;
     else
     return `${day}/${month}/${year}`;

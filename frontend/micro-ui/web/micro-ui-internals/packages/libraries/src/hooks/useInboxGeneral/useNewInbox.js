@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "react-query";
 import { FSMService } from "../../services/elements/FSM";
 import { PTService } from "../../services/elements/PT";
 import { ASSETService } from "../../services/elements/ASSET";
-
+import { EwService } from "../../services/elements/EW";
 import { filterFunctions } from "./newFilterFn";
 import { getSearchFields } from "./searchFields";
 import { InboxGeneral } from "../../services/elements/InboxService";
@@ -32,6 +32,14 @@ const inboxConfig = (tenantId, filters) => ({
     businessIdAliasForSearch: "applicationNo",
     fetchFilters: filterFunctions.ASSET,
     _searchFn: () => ASSETService.search({ tenantId, filters }),
+  },
+  EW: {
+    services: ["ewst"],
+    searchResponseKey: "EwasteApplication",
+    businessIdsParamForSearch: "requestId",
+    businessIdAliasForSearch: "requestId",
+    fetchFilters: filterFunctions.EW,
+    _searchFn: () => EwService.search({ tenantId, filters }),
   },
   FSM: {
     services: ["FSM"],

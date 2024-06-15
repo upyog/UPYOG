@@ -13,6 +13,7 @@ import { configWSApproverApplication } from "./WSApproverApplication";
 import { configWSDisConnectApplication } from "./WSDisconnectApplication";
 import { configPTRApproverApplication } from "./PTRApproverApplication";
 import { configASSETApproverApplication } from "./ASSETApproverApplication";
+import { configEWApproverApplication } from "./EWApproverApplication";
 
 
 export {
@@ -30,5 +31,6 @@ export {
   configWSApproverApplication,
   configWSDisConnectApplication,
   configPTRApproverApplication,
-  configASSETApproverApplication
+  configASSETApproverApplication,
+  configEWApproverApplication
 };
