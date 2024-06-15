@@ -4,7 +4,7 @@
     import { useTranslation } from "react-i18next";
     import { useParams } from "react-router-dom";
     import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
-    import getPetAcknowledgementData from "../../getPetAcknowledgementData";
+    import getChbAcknowledgementData from "../../getChbAcknowledgementData";
 
 
     const ApplicationDetails = () => {
@@ -24,7 +24,7 @@
 
 
       sessionStorage.setItem("applicationNoinAppDetails", applicationNumber);
-      const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.ptr.usePtrApplicationDetail(t, tenantId, applicationNumber);
+      const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.chb.useChbApplicationDetail(t, tenantId, applicationNumber);
       
       const {
         isLoading: updatingApplication,
@@ -32,7 +32,7 @@
         data: updateResponse,
         error: updateError,
         mutate,
-      } = Digit.Hooks.ptr.usePTRApplicationAction(tenantId);
+      } = Digit.Hooks.chb.useChbApplicationAction(tenantId);
 
       let workflowDetails = Digit.Hooks.useWorkflowDetails({
         tenantId: applicationDetails?.applicationData?.tenantId || tenantId,
@@ -43,7 +43,7 @@
 
       console.log("workkkkflooowowow",workflowDetails);
 
-      const { isLoading: auditDataLoading, isError: isAuditError, data: auditData } = Digit.Hooks.ptr.usePTRSearch(
+      const { isLoading: auditDataLoading, isError: isAuditError, data: auditData } = Digit.Hooks.chb.useChbSearch(
         {
           tenantId,
           filters: { applicationNumber: applicationNumber, audit: true },
@@ -66,7 +66,7 @@
 
       useEffect(() => {
 
-        if (workflowDetails?.data?.applicationBusinessService && !(workflowDetails?.data?.applicationBusinessService === "ptr" && businessService === "ptr")) {
+        if (workflowDetails?.data?.applicationBusinessService && !(workflowDetails?.data?.applicationBusinessService === "chb" && businessService === "chb")) {
           setBusinessService(workflowDetails?.data?.applicationBusinessService);
         }
       }, [workflowDetails.data]);
@@ -91,15 +91,15 @@
       }
 
       const handleDownloadPdf = async () => {
-        const PetRegistrationApplications = appDetailsToShow?.applicationData;
-        const tenantInfo = tenants.find((tenant) => tenant.code === PetRegistrationApplications.tenantId);
-        const data = await getPetAcknowledgementData(PetRegistrationApplications.applicationData, tenantInfo, t);
+        const hallsBookingApplication = appDetailsToShow?.applicationData;
+        const tenantInfo = tenants.find((tenant) => tenant.code === hallsBookingApplication.tenantId);
+        const data = await getChbAcknowledgementData(hallsBookingApplication.applicationData, tenantInfo, t);
         Digit.Utils.pdf.generate(data);
       };
 
       const petDetailsPDF = {
         order: 1,
-        label: t("PTR_APPLICATION"),
+        label: t("CHB_APPLICATION"),
         onClick: () => handleDownloadPdf(),
       };
       let dowloadOptions = [petDetailsPDF];
@@ -107,7 +107,7 @@
       const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
         {
           tenantId: tenantId,
-          businessService: "pet-services",
+          businessService: "chb-services",
           consumerCodes: appDetailsToShow?.applicationData?.applicationData?.applicationNumber,
           isEmployee: false,
         },
@@ -124,12 +124,12 @@
 
       if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
       dowloadOptions.push({
-        label: t("PTR_FEE_RECIEPT"),
+        label: t("CHB_FEE_RECIEPT"),
         onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
       });
 
       const printCertificate = async () => {
-        let response = await Digit.PaymentService.generatePdf(tenantId, { PetRegistrationApplications: [applicationDetails?.applicationData?.applicationData] }, "petservicecertificate");
+        let response = await Digit.PaymentService.generatePdf(tenantId, { hallsBookingApplication: [applicationDetails?.applicationData?.applicationData] }, "petservicecertificate");
         const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
         window.open(fileStore[response?.filestoreIds[0]], "_blank");
       };
@@ -137,7 +137,7 @@
 
       if (reciept_data?.Payments[0]?.instrumentStatus === "APPROVED")
       dowloadOptions.push({
-        label: t("PTR_CERTIFICATE"),
+        label: t("CHB_CERTIFICATE"),
         onClick: () => printCertificate(),
       });
 
@@ -145,7 +145,7 @@
       return (
         <div>
           <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-            <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("PTR_PET_APPLICATION_DETAILS")}</Header>
+            <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("CHB_APPLICATION_DETAILS")}</Header>
             {dowloadOptions && dowloadOptions.length > 0 && (
               <MultiLink
                 className="multilinkWrapper employee-mulitlink-main-div"
@@ -167,12 +167,12 @@
             mutate={mutate}
             workflowDetails={workflowDetails}
             businessService={businessService}
-            moduleCode="pet-services"
+            moduleCode="chb-services"
             showToast={showToast}
             setShowToast={setShowToast}
             closeToast={closeToast}
-            timelineStatusPrefix={"PTR_COMMON_STATUS_"}
-            forcedActionPrefix={"EMPLOYEE_PTR"}
+            timelineStatusPrefix={"CHB_COMMON_STATUS_"}
+            forcedActionPrefix={"EMPLOYEE_CHB"}
             statusAttribute={"state"}
             MenuStyle={{ color: "#FFFFFF", fontSize: "18px" }}
           />

@@ -10,7 +10,7 @@ const getAction = (flow) => {
       actions = [];
       break;
     default:
-      actions = ["Booking Details", "Slot Details", "Bank Details", "Upload Documents","SUMMARY"];
+      actions = ["BOOKING_DETAILS", "SLOT_DETAILS", "BANK_DETAILS", "UPLOAD_DOCUMENTS","SUMMARY"];
   }
 };
 const Timeline = ({ currentStep = 1, flow = "" }) => {

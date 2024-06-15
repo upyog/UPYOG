@@ -21,25 +21,39 @@ export const shouldHideBackButton = (config = []) => {
   return config.filter((key) => window.location.href.includes(key.screenPath)).length > 0 ? true : false;
 };
 
+export const sethallDetails = (data) => {
+  let { slotlist } = data;
+  let hallDetails = slotlist?.bookingSlotDetails.map((slot) => {
+    return { 
+      slotId:slot.slotId,
+      hallCode: slot.hallCode,
+      hallName: slot.hallName,
+      bookingSlotDatetime:slot.date1,
+      status:slot.status,
+    };
+  }) || [];
 
-export const setAddressDetails = (data) => {
-  let { address } = data;
+  data.slotlist = hallDetails;
+  return data;
+}
 
-  let propAddress = {
-    ...address,
-    pincode: address?.pincode,
-    landmark: address?.landmark,
-    city: address?.city?.name,
-    doorNo: address?.doorNo,
-    street: address?.street,
-    locality: {
-      code: address?.locality?.code || "NA",
-      area: address?.locality?.name,
-    },
+export const setBankDetails = (data) => {
+  let { bankdetails } = data;
+
+  let propbankdetails = {
+    ...bankdetails,
+    accountNumber: bankdetails?.accountNumber,
+    confirmAccountNumber: bankdetails?.confirmAccountNumber,
+    ifscCode: bankdetails?.ifscCode,
+    bankName: bankdetails?.bankName,
+    bankBranchName: bankdetails?.bankBranchName,
+    accountHolderName: bankdetails?.accountHolderName,
+    refundStatus: "Done",
   };
 
-  data.address = propAddress;
+  data.bankdetails = propbankdetails;
   return data;
+
 };
 
 export const setOwnerDetails = (data) => {
@@ -47,26 +61,30 @@ export const setOwnerDetails = (data) => {
   
     let propOwners = {
       ...ownerss,
-      
+      applicantName:ownerss?.applicantName,
+      mobileNumber:ownerss?.mobileNumber,
+      alternateNumber:ownerss?.alternateNumber,
+      emailId:ownerss?.emailId,
     };
   
     data.ownerss = propOwners;
     return data;
   };
   
-  export const setPetDetails = (data) => {
+  export const setSlotDetails = (data) => {
     let { slots } = data;
   
-    let petDetails = {
+    let bookingSlotDetails = {
       ...slots,
       selectslot:slots?.selectslot?.value,
-      residenttype:slots?.residenttype?.value,
-      specialcategory:slots?.specialcategory?.value,
-      purpose:slots?.purpose?.value,
+      type:slots?.residentType?.value,
+      category:slots?.specialCategory?.value,
+      purposes:slots?.purpose?.value,
+      purposeDescription:slots?.purposeDescription,
       
     };
   
-    data.slots = petDetails;
+    data.slots = bookingSlotDetails;
     return data;
   };
 
@@ -84,31 +102,74 @@ export const setOwnerDetails = (data) => {
   };
 
 
-export const PetDataConvert = (data) => {
+export const CHBDataConvert = (data) => {
  
   data = setDocumentDetails(data);
   data = setOwnerDetails(data);
-  data = setAddressDetails(data);
-  data = setPetDetails(data);
+  data = setBankDetails(data);
+  data = setSlotDetails(data);
+  data=sethallDetails(data);
 
-  const formdata = {
-    PetRegistrationApplications: [{
-      tenantId: data.tenantId,
-      ...data?.ownerss,
-      address: data.address,
-      petDetails: data.slots,
-        ...data.documents,
+const formdata={
+  hallsBookingApplication: {
+    tenantId: data.tenantId,
+    bankDetails:data.bankdetails,
+    applicantDetails:data.ownerss,
+    purposeDescription:data.slots?.purposeDescription,
+    specialCategory:{
+      category:data.slots?.specialCategory?.value
+    },
+    residentType:{
+      type:data.slots?.residentType?.value
+    },
+    purpose:{
+      purpose:data.slots?.purpose?.value
+    },
+    bookingSlotDetails:data?.slotlist,
+    uploadedDocumentDetails:data.documents || [],
 
-      
-      workflow : {
-        businessService: "chb",
-        action : "APPLY",
-        moduleName: "chb-services"
-      }
-    }],
-  };
+  workflow : {
+      businessService: "chb",
+      action : "CREATE",
+      moduleName: "chb-services"
+    }
+  }
+}
 
- 
+  // const formdata = {
+  //     hallsBookingApplication: {
+  //       tenantId: data.tenantId,
+  //       // ...data?.ownerss,
+  //       bankDetails: data.bankdetails,
+  //         // ...data.documents,
+  //       bookingSlotDetails: [
+  //           {
+  //               bookingId: "675464564",
+  //               hallCode: "456",
+  //               slotId: "464564",
+  //               status: "Booked"
+  //           }
+  //       ],
+  //       purpose:{
+  //         purpose:"kjskldfjsd"
+  //       },
+  //       purposeDescription: "sjfdsljfdskf",
+  //       residentType: {
+  //           type:"kjflsdkfj"
+  //       },
+  //       specialCategory: {
+  //           category: "lksjdklf"
+  //       },
+  //       uploadedDocumentDetails: [],
+
+  //         workflow : {
+  //           businessService: "chb",
+  //           action : "CREATE",
+  //           moduleName: "chb-services"
+  //         }
+  //     },
+  // }
+
   return formdata;
 };
 
@@ -177,7 +238,7 @@ export const convertEpochToDate = (dateEpoch,businessService) => {
     let year = dateFromApi.getFullYear();
     month = (month > 9 ? "" : "0") + month;
     day = (day > 9 ? "" : "0") + day;
-    if(businessService == "ptr")
+    if(businessService == "chb")
     return `${day}-${month}-${year}`;
     else
     return `${day}/${month}/${year}`;

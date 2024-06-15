@@ -8,7 +8,7 @@ const SearchFields = ({register, control, reset, tenantId, t, formState, setShow
 
     return <>
                 <SearchField>
-                    <label>{t("PTR_APPLICATION_NO_LABEL")}</label>
+                    <label>{t("ghjg_APPLICATION_NO_LABEL")}</label>
                     <TextInput name="applicationNumber" inputRef={register({})} />
                 </SearchField>
 

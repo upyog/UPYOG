@@ -3,11 +3,10 @@ import React ,{Fragment}from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
-// import { newConfig } from "../../../config/Create/config";
 import { citizenConfig } from "../../../config/Create/citizenconfig";
 import { data } from "jquery";
 
-const PTRCreate = ({ parentRoute }) => {
+const CHBCreate = ({ parentRoute }) => {
 
   const queryClient = useQueryClient();
   const match = useRouteMatch();
@@ -16,7 +15,7 @@ const PTRCreate = ({ parentRoute }) => {
   const history = useHistory();
   const stateId = Digit.ULBService.getStateId();
   let config = [];
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PTR_CREATE_PET", {});
+  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("CHB_CREATE", {});
   let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig"); //  PROPERTY CONFIG HOOK , just for commkonfeild config 
   const goNext = (skipStep, index, isAddMultiple, key) => {
 
@@ -71,10 +70,10 @@ const PTRCreate = ({ parentRoute }) => {
   if(params && Object.keys(params).length>0 && window.location.href.includes("/searchhall") && sessionStorage.getItem("docReqScreenByBack") !== "true")
     {
       clearParams();
-      queryClient.invalidateQueries("PTR_CREATE_PET");
+      queryClient.invalidateQueries("CHB_CREATE");
     }
 
-  const ptrcreate = async () => {
+  const chbcreate = async () => {
     history.push(`${match.path}/acknowledgement`);
   };
 
@@ -100,7 +99,7 @@ const PTRCreate = ({ parentRoute }) => {
 
   const onSuccess = () => {
     clearParams();
-    queryClient.invalidateQueries("PTR_CREATE_PET");
+    queryClient.invalidateQueries("CHB_CREATE");
   };
   if (isLoading) {
     return <Loader />;
@@ -115,8 +114,8 @@ const PTRCreate = ({ parentRoute }) => {
   
   config.indexRoute = "searchhall";
 
-  const CheckPage = Digit?.ComponentRegistryService?.getComponent("PTRCheckPage");
-  const PTRAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTRAcknowledgement");
+  const CheckPage = Digit?.ComponentRegistryService?.getComponent("CHBCheckPage");
+  const CHBAcknowledgement = Digit?.ComponentRegistryService?.getComponent("CHBAcknowledgement");
 
   
   
@@ -133,10 +132,10 @@ const PTRCreate = ({ parentRoute }) => {
       })}
 
       <Route path={`${match.path}/check`}>
-        <CheckPage onSubmit={ptrcreate} value={params} />
+        <CheckPage onSubmit={chbcreate} value={params} />
       </Route>
       <Route path={`${match.path}/acknowledgement`}>
-        <PTRAcknowledgement data={params} onSuccess={onSuccess} />
+        <CHBAcknowledgement data={params} onSuccess={onSuccess} />
       </Route>
       <Route>
         <Redirect to={`${match.path}/${config.indexRoute}`} />
@@ -145,4 +144,4 @@ const PTRCreate = ({ parentRoute }) => {
   );
 };
 
-export default PTRCreate;
+export default CHBCreate;
