@@ -184,4 +184,50 @@ export const filterFunctions = {
    
     return { requestId,searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
 },
+  CHB: (filtersArg) => {
+    
+
+    let { uuid } = Digit.UserService.getUser()?.info || {};
+
+    const searchFilters = {};
+    const workflowFilters = {};
+
+    const { applicationNumbers, mobileNumber, limit, offset, sortBy, sortOrder, total, applicationStatus, services } = filtersArg || {};
+
+    if (filtersArg?.applicationNumber) {
+      searchFilters.applicationNumber = filtersArg?.applicationNumber;
+    }
+    if (filtersArg?.applicationNumbers) {
+      searchFilters.applicationNumber = applicationNumbers;
+    }
+    
+    if (applicationStatus && applicationStatus?.[0]?.applicationStatus) {
+      workflowFilters.status = applicationStatus.map((status) => status.uuid);
+      if (applicationStatus?.some((e) => e.nonActionableRole)) {
+        searchFilters.fetchNonActionableRecords = true;
+      }
+    }
+    if (filtersArg?.locality?.length) {
+      searchFilters.locality = filtersArg?.locality.map((item) => item.code.split("_").pop());
+    }
+    if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
+      workflowFilters.assignee = uuid;
+    }
+    if (mobileNumber) {
+      searchFilters.mobileNumber = mobileNumber;
+    }
+
+
+    if (services) {
+      workflowFilters.businessService = services;
+    }
+    searchFilters["isInboxSearch"] = true;
+    searchFilters["creationReason"] = ["CREATE"];
+    workflowFilters["moduleName"] = "chb-services";
+
+
+   
+    return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
+  },
+  
 };

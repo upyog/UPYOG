@@ -2,10 +2,10 @@ import { ActionLinks, CardSectionHeader, CheckPoint, CloseSvg, ConnectingCheckPo
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import PTRWFCaption from "./PTRWFCaption";
+import CHBWFCaption from "./CHBWFCaption";
 
 
-const PTRWFApplicationTimeline = (props) => {
+const CHBWFApplicationTimeline = (props) => {
   
   const { t } = useTranslation();
   const businessService = props?.application?.workflow?.businessService;
@@ -30,7 +30,7 @@ const PTRWFApplicationTimeline = (props) => {
         date: checkpoint?.auditDetails?.lastModified,
         source: props.application?.channel || "",
       };
-      return <PTRWFCaption data={caption} />;
+      return <CHBWFCaption data={caption} />;
     }
     else if (checkpoint.state) {
       const caption = {
@@ -41,7 +41,7 @@ const PTRWFApplicationTimeline = (props) => {
         wfComment: checkpoint.wfComment,
         thumbnailsToShow: checkpoint?.thumbnailsToShow,
       };
-      return <PTRWFCaption data={caption} OpenImage={OpenImage} />;
+      return <CHBWFCaption data={caption} OpenImage={OpenImage} />;
     } 
     
    
@@ -51,7 +51,7 @@ const PTRWFApplicationTimeline = (props) => {
         name: checkpoint?.assigner?.name,
         comment: t(checkpoint?.comment),
       };
-      return <PTRWFCaption data={caption} />;
+      return <CHBWFCaption data={caption} />;
     }
   };
 
@@ -148,4 +148,4 @@ const PTRWFApplicationTimeline = (props) => {
   );
 };
 
-export default PTRWFApplicationTimeline;
+export default CHBWFApplicationTimeline;

@@ -7,6 +7,7 @@ import { EwService } from "../../services/elements/EW";
 import { filterFunctions } from "./newFilterFn";
 import { getSearchFields } from "./searchFields";
 import { InboxGeneral } from "../../services/elements/InboxService";
+import { CHBServices } from "../../services/elements/CHB";
 
 const inboxConfig = (tenantId, filters) => ({
   PT: {
@@ -40,6 +41,14 @@ const inboxConfig = (tenantId, filters) => ({
     businessIdAliasForSearch: "requestId",
     fetchFilters: filterFunctions.EW,
     _searchFn: () => EwService.search({ tenantId, filters }),
+  },
+  CHB: {
+    services: ["chb"],
+    searchResponseKey: "hallsBookingApplication",
+    businessIdsParamForSearch: "bookingNo",
+    businessIdAliasForSearch: "bookingNo",
+    fetchFilters: filterFunctions.CHB,
+    _searchFn: () => CHBServices.search({ tenantId, filters }),
   },
   FSM: {
     services: ["FSM"],

@@ -5,7 +5,7 @@ import ApplicationTable from "./inbox/ApplicationTable";
 import InboxLinks from "./inbox/InboxLink";
 import SearchApplication from "./inbox/search";
 
-const PTRDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
+const CHBDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
   
   const { data, useNewInboxAPI } = props;
   const { t } = useTranslation();
@@ -109,4 +109,4 @@ const PTRDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
   );
 };
 
-export default PTRDesktopInbox;
+export default CHBDesktopInbox;

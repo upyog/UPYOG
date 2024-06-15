@@ -11,7 +11,7 @@ import {
 } from "@upyog/digit-ui-react-components";
 
 import { useLocation } from "react-router-dom";
-const PTRDocumentUpload = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {
+const CHBDocumentUpload = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const [documents, setDocuments] = useState(formData?.documents?.documents || []);
@@ -22,17 +22,17 @@ const PTRDocumentUpload = ({ t, config, onSelect, userType, formData, setError: 
   const { pathname } = useLocation();
   
 
-  const { isLoading, data } = Digit.Hooks.ptr.usePetMDMS(stateId, "PetService", "Documents");   
+  const { isLoading, data } = Digit.Hooks.chb.useChbDocumentsMDMS(stateId, "CHB", "Documents");   
 
 
-  const PTRDocument = data?.PetService?.Documents.map(document => ({
+  const CHBDocument = data?.CHB?.Documents.map(document => ({
   ...document,
   hasDropdown: true
 }));
 
 
   const goNext = () => {
-    onSelect(config.key, { documents, PTRDocumentLength: PTRDocument?.length });
+    onSelect(config.key, { documents, CHBDocumentLength: CHBDocument?.length });
   };
 
   
@@ -46,9 +46,9 @@ const PTRDocumentUpload = ({ t, config, onSelect, userType, formData, setError: 
 
   return (
     <div>
-      {PTRDocument?.map((document, index) => {
+      {CHBDocument?.map((document, index) => {
         return (
-          <PTRSelectDocument
+          <CHBSelectDocument
             key={index}
             document={document}
             action={action}
@@ -74,7 +74,7 @@ const PTRDocumentUpload = ({ t, config, onSelect, userType, formData, setError: 
   );
 };
 
-function PTRSelectDocument({
+function CHBSelectDocument({
   t,
   document: doc,
   setDocuments,
@@ -252,4 +252,4 @@ function PTRSelectDocument({
   );
 }
 
-export default PTRDocumentUpload;
+export default CHBDocumentUpload;

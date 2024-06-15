@@ -7,7 +7,8 @@
                             "route":"searchhall",
                             "component":"CHBSearchHall",
                             "nextStep": "applicant-details",
-                            "key": "Documents"
+                            "key": "slotlist",
+                            "type": "component"
                         },
 
                         

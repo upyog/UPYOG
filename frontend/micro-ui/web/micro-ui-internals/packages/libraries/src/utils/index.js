@@ -239,7 +239,7 @@ const chbAccess = () => {
   const userInfo = Digit.UserService.getUser();
   
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
-  const chbRoles = ["CHB_APPROVER", "CHB_CEMP", "CHB_VERIFIER"];
+  const chbRoles = ["CHB_APPROVER", "CHB_VERIFIER"];
 
   const CHB_ACCESS = userRoles?.filter((role) => chbRoles?.includes(role));
 

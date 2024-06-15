@@ -3,11 +3,10 @@ import React from "react";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import { shouldHideBackButton } from "../../utils";
 import { useTranslation } from "react-i18next";
-import Hall from "./Create/Hall";
 
 const hideBackButtonConfig = [
-  { screenPath: "petservice/new-application/acknowledgement" },
-  { screenPath: "petservice/edit-application/acknowledgement" },
+  { screenPath: "bookHall/new-application/acknowledgement" },
+  { screenPath: "bookHall/edit-application/acknowledgement" },
 
 ];
 
@@ -18,21 +17,20 @@ const App = () => {
     searchParams: {},
   };
 
-  const PTRCreate = Digit?.ComponentRegistryService?.getComponent("PTRCreatePet");
-  const PTRApplicationDetails = Digit?.ComponentRegistryService?.getComponent("PTRApplicationDetails");
-  const PTRMyApplications = Digit?.ComponentRegistryService?.getComponent("PTRMyApplications");
+  const CHBCreate = Digit?.ComponentRegistryService?.getComponent("CHBCreate");
+  const CHBApplicationDetails = Digit?.ComponentRegistryService?.getComponent("CHBApplicationDetails");
+  const CHBMyApplications = Digit?.ComponentRegistryService?.getComponent("CHBMyApplications");
  
   return (
-    <span className={"pet-citizen"}style={{width:"100%"}}>
+    <span className={"chb-citizen"}style={{width:"100%"}}>
       <Switch>
         <AppContainer>
           {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
-          <PrivateRoute path={`${path}/bookHall`} component={PTRCreate} />
-       
-          {/* <PrivateRoute path={`${path}/petservice/application/:acknowledgementIds/:tenantId`} component={PTRApplicationDetails}></PrivateRoute>
-          <PrivateRoute path={`${path}/petservice/my-applications`} component={PTRMyApplications}></PrivateRoute> */}
-          {/* <PrivateRoute path={`${path}/petservice/my-payments`} component={PTMyPayments}></PrivateRoute>
-          <PrivateRoute path={`${path}/petservice/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} /> */}
+          <PrivateRoute path={`${path}/bookHall`} component={CHBCreate} />
+          <PrivateRoute path={`${path}/myBookings`} component={CHBMyApplications}></PrivateRoute>
+          <PrivateRoute path={`${path}/application/:acknowledgementIds/:tenantId`} component={CHBApplicationDetails}></PrivateRoute>
+           {/* <PrivateRoute path={`${path}/petservice/my-payments`} component={PTMyPayments}></PrivateRoute> */}
+          <PrivateRoute path={`${path}/bookHall/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} /> 
         </AppContainer>
       </Switch>
     </span>

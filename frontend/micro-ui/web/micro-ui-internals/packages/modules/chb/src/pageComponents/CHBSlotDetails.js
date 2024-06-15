@@ -1,105 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, CardLabel, Dropdown} from "@upyog/digit-ui-react-components";
+import { FormStep, CardLabel, TextInput,Dropdown} from "@upyog/digit-ui-react-components";
 import { useLocation} from "react-router-dom";
 import Timeline from "../components/CHBTimeline";
 import { Controller, useForm } from "react-hook-form";
 
 
 const CHBSlotDetails
-  = ({ t, config, onSelect, userType, formData,}) => {
+  = ({ t, config, onSelect, userType, formData}) => {
     const { pathname: url } = useLocation();
     let index = window.location.href.charAt(window.location.href.length - 1);
     const [selectslot, setslot] =useState((formData.slots && formData.slots[index] && formData.slots[index].selectslot) || formData?.slots?.selectslot || "");
-    const [residenttype, setresidenttype] = useState((formData.slots && formData.slots[index] && formData.slots[index].residenttype) || formData?.slots?.residenttype || "");
-    const [specialcategory, setspecialcategory] = useState((formData.slots && formData.slots[index] && formData.slots[index].specialcategory) || formData?.slots?.specialcategory || "");
+    const [residentType, setresidenttype] = useState((formData.slots && formData.slots[index] && formData.slots[index].residentType) || formData?.slots?.residentType || "");
+    const [specialCategory, setspecialcategory] = useState((formData.slots && formData.slots[index] && formData.slots[index].specialCategory) || formData?.slots?.specialCategory || "");
     const [purpose, setpurpose] = useState((formData.slots && formData.slots[index] && formData.slots[index].purpose) || formData?.slots?.purpose || "");
 
-    let slot = [{
-      "value": "01-may-2024 to 02-may-2024",
-      "code": "01-may-2024 to 02-may-2024",
-      "i18nKey": '01-may-2024 to 02-may-2024'
-    },
-    {
-      "value": "01-may-2024 to 03-may-2024",
-      "code": "01-may-2024 to 03-may-2024",
-      "i18nKey": '01-may-2024 to 03-may-2024'
-    },  
-    {
-      "value": "01-may-2024 to 04-may-2024",
-      "code": "01-may-2024 to 04-may-2024",
-      "i18nKey": '01-may-2024 to 04-may-2024'
-    }]; 
-    // let resident = [
-    //   {
-    //     "value": "Cant Resident",
-    //     "code": "Cant Resident",
-    //     "i18nKey": 'Cant Resident'
-    //   }
-    // ];
-    // let category = [
-    //   {
-    //     "value": "Cantonment Staff",
-    //     "code": "Cantonment Staff",
-    //     "i18nKey": 'Cantonment Staff'
-    //   },
-    //   {
-    //     "value": "Retaired Cant Staff",
-    //     "code": "Retaired Cant Staff",
-    //     "i18nKey": 'Retaired Cant Staff'
-    //   },
-    //   {
-    //     "value": "Elected Member",
-    //     "code": "Elected Member",
-    //     "i18nKey": 'Elected Member'
-    //   },
-    //   {
-    //     "value": "Below Poverty Line",
-    //     "code": "Below Poverty Line",
-    //     "i18nKey": 'Below Poverty Line'
-    //   },
-    //   {
-    //     "value": "None",
-    //     "code": "None",
-    //     "i18nKey": 'None'
-    //   }
-    // ];
-    // let purposes = [
-    //   {
-    //     "value": "Religious",
-    //     "code": "Religious",
-    //     "i18nKey": 'Religious'
-    //   },
-    //   {
-    //     "value": "Marriage",
-    //     "code": "Marriage",
-    //     "i18nKey": 'Marriage'
-    //   },
-    //   {
-    //     "value": "Social",
-    //     "code": "Social",
-    //     "i18nKey": 'Social'
-    //   },
-    //   {
-    //     "value": "Conference",
-    //     "code": "Conference",
-    //     "i18nKey": 'Conference'
-    //   },
-    //   {
-    //     "value": "Public Gathering",
-    //     "code": "Public Gathering",
-    //     "i18nKey": 'Public Gathering'
-    //   }
-    // ];
+    const [purposeDescription, setPurposeDescription] = useState((formData.slots && formData.slots[index] && formData.slots[index].purposeDescription) || formData?.slots?.purposeDescription || "");
 
+    let slot = [{
+      "i18nKey": '01-may-2024 to 02-may-2024'
+    }]; 
+    let validation = {};
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
 
     const { data: Resident} = Digit.Hooks.chb.useResidentType(stateId, "CHB", "ChbResidentType");
     const { data: Category } = Digit.Hooks.chb.useSpecialCategory(stateId, "CHB", "ChbSpecialCategory");
     const { data: Purposes } = Digit.Hooks.chb.usePurpose(stateId, "CHB", "ChbPurpose");
+    const { data: hallList } = Digit.Hooks.chb.useChbCommunityHalls(stateId, "CHB", "ChbCommunityHalls");
 
+    
 
-      //variable name for pettype
     let resident=[];
     let category=[];
     let purposes=[];
@@ -107,6 +37,8 @@ const CHBSlotDetails
     Resident &&
     Resident.map((chbDetails) => {
       resident.push({ i18nKey: `CHB_${chbDetails.code}`, code: `${chbDetails.code}`, value: `${chbDetails.name}` });
+      console.log("resident is-->",Resident);
+      console.log("hallList is-->",hallList);
       });
 
       Category &&
@@ -120,17 +52,19 @@ const CHBSlotDetails
       });
 
     const { control } = useForm();
-
+    function setpurposeDescription(e) {
+      setPurposeDescription(e.target.value);
+    }
     const goNext = () => {
 
       let owner = formData.slots && formData.slots[index];
       let ownerStep;
       if (userType === "citizen") {
-        ownerStep = { ...owner, selectslot, residenttype,specialcategory,purpose};
+        ownerStep = { ...owner, selectslot, residentType,specialCategory,purpose,purposeDescription};
         onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
       } else {
 
-        ownerStep = { ...owner, selectslot, residenttype,specialcategory,purpose};
+        ownerStep = { ...owner, selectslot, residentType,specialCategory,purpose,purposeDescription};
         onSelect(config.key, ownerStep, false, index);
       }
       console.log(ownerStep);
@@ -143,7 +77,7 @@ const CHBSlotDetails
       if (userType === "citizen") {
         goNext();
       }
-    }, [selectslot, residenttype,specialcategory,purpose]);
+    }, [selectslot, residentType,specialCategory,purpose,purposeDescription]);
 
 
 
@@ -163,7 +97,7 @@ const CHBSlotDetails
           onSelect={goNext}
           onSkip={onSkip}
           t={t}
-          isDisabled={ !selectslot || !residenttype || !specialcategory || !purpose}
+          isDisabled={ !selectslot || !residentType || !specialCategory || !purpose || !purposeDescription}
         >
           <div>
             <CardLabel>{`${t("SELECT_SLOT")}`}</CardLabel>
@@ -194,14 +128,14 @@ const CHBSlotDetails
 
             <Controller
               control={control}
-              name={"residenttype"}
-              defaultValue={residenttype}
+              name={"residentType"}
+              defaultValue={residentType}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
               render={(props) => (
                 <Dropdown
 
                   className="form-field"
-                  selected={residenttype}
+                  selected={residentType}
                   select={setresidenttype}
                   option={resident}
                   optionKey="i18nKey"
@@ -218,14 +152,14 @@ const CHBSlotDetails
 
             <Controller
               control={control}
-              name={"specialcategory"}
-              defaultValue={specialcategory}
+              name={"specialCategory"}
+              defaultValue={specialCategory}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
               render={(props) => (
                 <Dropdown
 
                   className="form-field"
-                  selected={specialcategory}
+                  selected={specialCategory}
                   select={setspecialcategory}
                   option={category}
                   optionKey="i18nKey"
@@ -257,6 +191,25 @@ const CHBSlotDetails
 
               )}
                 />
+
+          <CardLabel>{`${t("PURPOSE_DESCRIPTION")}`}</CardLabel>
+          <TextInput
+            t={t}
+            type={"text"}
+            isMandatory={false}
+            optionKey="i18nKey"
+            name="purposeDescription"
+            value={purposeDescription}
+            onChange={setpurposeDescription}
+            style={{ width: "86%" }}
+            ValidationRequired={false}
+            {...(validation = {
+              isRequired: true,
+              pattern: "^[a-zA-Z ]+$",
+              type: "text",
+              title: t("PURPOSE_DESCRIPTION_ERROR_MESSAGE"),
+            })}
+          />
           </div>
         </FormStep>
       </React.Fragment>

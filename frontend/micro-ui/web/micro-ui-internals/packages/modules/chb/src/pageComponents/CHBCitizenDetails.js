@@ -4,12 +4,11 @@ import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/CHBTimeline";
 
 const CHBCitizenDetails
- = ({ t, config, onSelect, userType, formData, ownerIndex,searchParams }) => {
+ = ({ t, config, onSelect, userType, formData, ownerIndex,searchParams}) => {
   const { pathname: url } = useLocation();
 
-  let index = 0
-  // window.location.href.charAt(window.location.href.length - 1);
-  // console.log("index in detail page ",  index)
+  let index =window.location.href.charAt(window.location.href.length - 1);
+  
    
   let validation = {};
 
@@ -23,17 +22,8 @@ const CHBCitizenDetails
   );
   const [localSearchParams, setLocalSearchParams] = useState(() => ({ ...searchParams }));
 
-  
-  const [fatherName, setFatherOrHusbandName] = useState(
-    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].fatherName) || formData?.ownerss?.fatherName || ""
-  );
-  
- 
-
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
-
-  
 
   function setOwnerName(e) {
     setName(e.target.value);
@@ -50,22 +40,20 @@ const CHBCitizenDetails
   function setAltMobileNo(e) {
     setAltMobileNumber(e.target.value);
   }
-  function setGuardiansName(e) {
-    setFatherOrHusbandName(e.target.value);
-  }
   
 
   const goNext = () => {
     let owner = formData.ownerss && formData.ownerss[index];
     let ownerStep;
     if (userType === "citizen") {
-      ownerStep = { ...owner, applicantName, mobileNumber,alternateNumber, fatherName, emailId};
+      ownerStep = { ...owner, applicantName, mobileNumber,alternateNumber, emailId};
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
     } else {
       
-      ownerStep = { ...owner, applicantName,  mobileNumber,alternateNumber, fatherName,emailId };
+      ownerStep = { ...owner, applicantName,  mobileNumber,alternateNumber,emailId };
       onSelect(config.key, ownerStep, false,index);
     }
+    console.log(ownerStep);
   };
 
   const onSkip = () => onSelect();
@@ -82,7 +70,9 @@ const CHBCitizenDetails
  
 
   return (
+   
     <React.Fragment>
+  
     {
       window.location.href.includes("/citizen") ?
  <Timeline currentStep={1} />
@@ -93,7 +83,7 @@ const CHBCitizenDetails
       onSelect={goNext}
       onSkip={onSkip}
       t={t}
-      // isDisabled={!applicantName || !mobileNumber || !fatherName || !emailId}
+      // isDisabled={!applicantName || !mobileNumber || !emailId}
     >
       
       <div>
@@ -132,23 +122,6 @@ const CHBCitizenDetails
             onChange={(value) => setAltMobileNo({ target: { value } })}
             {...{ required: false, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
           />
-        <CardLabel>{`${t("CHB_FATHER_HUSBAND_NAME")}`}</CardLabel>
-        <TextInput
-          t={t}
-          type={"text"}
-          isMandatory={false}
-          optionKey="i18nKey"
-          name="fatherName"
-          value={fatherName}
-          onChange={setGuardiansName}
-          ValidationRequired = {true}
-          {...(validation = {
-            // isRequired: true,
-            pattern: "^[a-zA-Z-.`' ]*$",
-            type: "text",
-            title: t("CHB_NAME_ERROR_MESSAGE"),
-          })}
-        />
 
         <CardLabel>{`${t("CHB_EMAIL_ID")}`}</CardLabel>
         <TextInput

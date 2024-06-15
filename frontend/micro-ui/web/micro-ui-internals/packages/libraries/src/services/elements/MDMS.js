@@ -690,6 +690,22 @@ const getChbPurposeList = (tenantId, moduleCode, type) => ({
     ],
   },
 });
+const getChbCommunityHallsList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "CommunityHalls",
+          },
+        ],
+      },
+    ],
+  },
+});
 
 const getChbDocumentsCategory = (tenantId, moduleCode) => ({
   details: {
@@ -1433,6 +1449,14 @@ const GetPropertySubtype = (MdmsRes) =>
     });
     //return MdmsRes;
   };
+  const getChbCommunityHalls = (MdmsRes) => {
+    return MdmsRes["CHB"].CommunityHalls.filter((CommunityHalls) => CommunityHalls.active).map((chbHallDetails) => {
+      return {
+        ...chbHallDetails,
+        i18nKey: `CHB_COMMUNITY_HALLS_${chbHallDetails.name}`,
+      };
+    });
+  };
   
   const getChbResidentType = (MdmsRes) => {
     return MdmsRes["CHB"].ResidentType.filter((ResidentType) => ResidentType.active).map((chbResidentDetails) => {
@@ -1962,6 +1986,9 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
 
     case "ChbPurpose":
       return getChbPurpose(MdmsRes);
+
+    case "ChbCommunityHalls":
+      return getChbCommunityHalls(MdmsRes);
     
     case "Documents":
       return getChbDocuments(MdmsRes);
@@ -2154,6 +2181,9 @@ export const MdmsService = {
   getChbSpecialCategory: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getChbSpecialCategoryList(tenantId, moduleCode, type), moduleCode);
   },
+  getChbCommunityHalls: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getChbCommunityHallsList(tenantId, moduleCode, type), moduleCode);
+  },
   getChbResidentType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getChbResidentTypeList(tenantId, moduleCode, type), moduleCode);
   },
@@ -2186,10 +2216,11 @@ export const MdmsService = {
   EWProductPrice: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getProductPriceList(tenantId, moduleCode, type), moduleCode);
   },
-
+  
   EWVendor: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getVendorDetailsList(tenantId, moduleCode, type), moduleCode);
   },
+ 
  
   getCustomizationConfig: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getConfig(tenantId, moduleCode), moduleCode);

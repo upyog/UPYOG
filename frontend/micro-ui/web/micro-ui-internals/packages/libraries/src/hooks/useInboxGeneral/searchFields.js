@@ -88,8 +88,33 @@ EW: [
     },
   },
 ],
+  CHB: [
+    {
+      label: "CHB_APPLICATION_NUMBER",
+      name: "bookingNo",
+      roles: [],
+    },
+    {
+      label: "CHB_HALL_NAME",
+      name: "hallName",
+      roles: [],
+    },
+    {
+      label: "CHB_MOBILE_NUMBER",
+      name: "mobileNumber",
+      type: "mobileNumber",
+      maxLength: 10,
+      minLength: 0,
+      roles: [],
+      pattern: "^$|[6-9][0-9]{9}",
+      errorMessages: {
+        pattern: "",
+        minLength: "",
+        maxLength: "",
+      },
+    },
+  ],
 };
-
 
 const searchFieldsForSearch = {
   PT: [
