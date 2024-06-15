@@ -134,10 +134,10 @@ const CHBCitizenDetails
           onChange={setOwnerEmail}
           ValidationRequired = {true}
           {...(validation = {
-            // isRequired: true,
-            pattern: "[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$",
-            type: "text",
-            title: t("CHB_NAME_ERROR_MESSAGE"),
+           required: true, 
+           pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", 
+           type: "email",
+           title: t("CHB_NAME_ERROR_MESSAGE"),
           })}
         />
         
