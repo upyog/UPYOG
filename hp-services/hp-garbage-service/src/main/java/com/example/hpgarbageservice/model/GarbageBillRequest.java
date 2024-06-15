@@ -11,14 +11,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Data
-@Builder
-public class GarbageAccountRequest {
+@Builder(toBuilder = true)
+@NoArgsConstructor
+public class GarbageBillRequest {
 
 	@JsonProperty("RequestInfo")
 	private RequestInfo requestInfo;
-	
-	private List<GarbageAccount> garbageAccounts;
-	
+
+	private List<GarbageBill> garbageBills;
+
 }

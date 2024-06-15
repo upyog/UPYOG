@@ -31,5 +31,5 @@ public class GarbageAccount {
 	
 	private List<GarbageBill> garbageBills;
 
-	private List<GarbageAccount> garbageAccounts;
+	private List<GarbageAccount> childGarbageAccounts;
 }

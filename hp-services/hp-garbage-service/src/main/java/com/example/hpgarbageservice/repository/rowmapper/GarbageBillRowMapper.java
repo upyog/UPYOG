@@ -2,41 +2,66 @@ package com.example.hpgarbageservice.repository.rowmapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.stereotype.Component;
 
-import com.example.hpgarbageservice.model.GarbageBill;
 import com.example.hpgarbageservice.model.AuditDetails;
+import com.example.hpgarbageservice.model.GarbageBill;
 
-public class GarbageBillRowMapper implements RowMapper<GarbageBill> {
+@Component
+public class GarbageBillRowMapper implements ResultSetExtractor<List<GarbageBill>> {
 
-    @Override
-    public GarbageBill mapRow(ResultSet rs, int rowNum) throws SQLException {
-        GarbageBill bill = new GarbageBill();
-        bill.setId(rs.getLong("id"));
-        bill.setBillRefNo(rs.getString("bill_ref_no"));
-        bill.setGarbageId(rs.getLong("garbage_id"));
-        bill.setBillAmount(rs.getDouble("bill_amount"));
-        bill.setArrearAmount(rs.getDouble("arrear_amount"));
-        bill.setPaneltyAmount(rs.getDouble("panelty_amount"));
-        bill.setDiscountAmount(rs.getDouble("discount_amount"));
-        bill.setTotalBillAmount(rs.getDouble("total_bill_amount"));
-        bill.setTotalBillAmountAfterDueDate(rs.getDouble("total_bill_amount_after_due_date"));
-        bill.setBillGeneratedBy(rs.getString("bill_generated_by"));
-        bill.setBillGeneratedDate(rs.getLong("bill_generated_date"));
-        bill.setBillDueDate(rs.getLong("bill_due_date"));
-        bill.setBillPeriod(rs.getString("bill_period"));
-        bill.setBankDiscountAmount(rs.getDouble("bank_discount_amount"));
-        bill.setPaymentId(rs.getString("payment_id"));
-        bill.setPaymentStatus(rs.getString("payment_status"));
+	@Override
+	public List<GarbageBill> extractData(ResultSet rs) throws SQLException, DataAccessException {
+		
+		Map<Long, GarbageBill> billsMap = new LinkedHashMap<>();
+		
+		while(rs.next()) {
+			
 
-        AuditDetails audit = new AuditDetails();
-        audit.setCreatedBy(rs.getString("created_by"));
-        audit.setCreatedDate(rs.getLong("created_date"));
-        audit.setLastModifiedBy(rs.getString("last_modified_by"));
-        audit.setLastModifiedDate(rs.getLong("last_modified_date"));
-        bill.setAuditDetails(audit);
-
-        return bill;
-    }
+			 
+			 Long billId = rs.getLong("id");
+			 GarbageBill garbageBill = billsMap.get(billId);
+			 
+			 if(null == garbageBill) {
+				 
+				 AuditDetails audit = AuditDetails.builder()
+					        .createdBy(rs.getString("created_by"))
+					        .createdDate(rs.getLong("created_date"))
+					        .lastModifiedBy(rs.getString("last_modified_by"))
+					        .lastModifiedDate(rs.getLong("last_modified_date"))
+					        .build();
+				 
+				 garbageBill = GarbageBill.builder()
+						 	.id(rs.getLong("id"))
+				            .billRefNo(rs.getString("bill_ref_no"))
+				            .garbageId(rs.getLong("garbage_id"))
+				            .billAmount(rs.getDouble("bill_amount"))
+				            .arrearAmount(rs.getDouble("arrear_amount"))
+				            .paneltyAmount(rs.getDouble("panelty_amount"))
+				            .discountAmount(rs.getDouble("discount_amount"))
+				            .totalBillAmount(rs.getDouble("total_bill_amount"))
+				            .totalBillAmountAfterDueDate(rs.getDouble("total_bill_amount_after_due_date"))
+				            .billGeneratedBy(rs.getString("bill_generated_by"))
+				            .billGeneratedDate(rs.getLong("bill_generated_date"))
+				            .billDueDate(rs.getLong("bill_due_date"))
+				            .billPeriod(rs.getString("bill_period"))
+				            .bankDiscountAmount(rs.getDouble("bank_discount_amount"))
+				            .paymentId(rs.getString("payment_id"))
+				            .paymentStatus(rs.getString("payment_status"))
+				            .auditDetails(audit)
+					        .build();
+				 
+				 billsMap.put(billId, garbageBill);
+			 }
+		}
+		
+		return new ArrayList<>(billsMap.values());
+	}
 }

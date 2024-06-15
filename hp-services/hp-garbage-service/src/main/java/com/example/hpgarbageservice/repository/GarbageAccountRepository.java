@@ -25,7 +25,7 @@ public class GarbageAccountRepository {
 	@Autowired
 	GarbageAccountRowMapper garbageAccountRowMapper;
 
-	private static final String GET_ACCOUNT_BY_ID = "SELECT acc.*, bill.id as bill_id, bill.bill_ref_no as bill_bill_ref_no, bill.garbage_id as bill_garbage_id"
+	private static final String SELECT_QUERY_ACCOUNT = "SELECT acc.*, bill.id as bill_id, bill.bill_ref_no as bill_bill_ref_no, bill.garbage_id as bill_garbage_id"
 			+ ", bill.bill_amount as bill_bill_amount, bill.arrear_amount as bill_arrear_amount, bill.panelty_amount as bill_panelty_amount, bill.discount_amount as bill_discount_amount"
 			+ ", bill.total_bill_amount as bill_total_bill_amount, bill.total_bill_amount_after_due_date as bill_total_bill_amount_after_due_date"
 			+ ", bill.bill_generated_by as bill_bill_generated_by, bill.bill_generated_date as bill_bill_generated_date, bill.bill_due_date as bill_bill_due_date"
@@ -40,7 +40,7 @@ public class GarbageAccountRepository {
     
     private static final String INSERT_ACCOUNT = "INSERT INTO hpudd_grbg_account (id, garbage_id, property_id, type, name"
     		+ ", mobile_number, parent_id, created_by, created_date, last_modified_by, last_modified_date) "
-    		+ "VALUES (:garbageId, :propertyId, :type, :name, :mobileNumber, :parentId, :createdBy, :createdDate, "
+    		+ "VALUES (:id, :garbageId, :propertyId, :type, :name, :mobileNumber, :parentId, :createdBy, :createdDate, "
     		+ ":lastModifiedBy, :lastModifiedDate)";
     
     private static final String UPDATE_ACCOUNT_BY_ID = "UPDATE hpudd_grbg_account SET garbage_id = :garbageId"
@@ -79,19 +79,19 @@ public class GarbageAccountRepository {
     	return jdbcTemplate.queryForObject(SELECT_NEXT_SEQUENCE, Long.class);
 	}
 
-	public void update(GarbageAccount account) {
+	public void update(GarbageAccount newGarbageAccount) {
         Map<String, Object> accountInputs = new HashMap<>();
-        accountInputs.put("id", account.getId());
-        accountInputs.put("garbageId", account.getGarbageId());
-        accountInputs.put("propertyId", account.getPropertyId());
-        accountInputs.put("type", account.getType());
-        accountInputs.put("name", account.getName());
-        accountInputs.put("mobileNumber", account.getMobileNumber());
-        accountInputs.put("parentId", account.getParentId());
-        accountInputs.put("createdBy", account.getAuditDetails().getCreatedBy());
-        accountInputs.put("createdDate", account.getAuditDetails().getCreatedDate());
-        accountInputs.put("lastModifiedBy", account.getAuditDetails().getLastModifiedBy());
-        accountInputs.put("lastModifiedDate", account.getAuditDetails().getLastModifiedDate());
+        accountInputs.put("id", newGarbageAccount.getId());
+        accountInputs.put("garbageId", newGarbageAccount.getGarbageId());
+        accountInputs.put("propertyId", newGarbageAccount.getPropertyId());
+        accountInputs.put("type", newGarbageAccount.getType());
+        accountInputs.put("name", newGarbageAccount.getName());
+        accountInputs.put("mobileNumber", newGarbageAccount.getMobileNumber());
+        accountInputs.put("parentId", newGarbageAccount.getParentId());
+//        accountInputs.put("createdBy", newGarbageAccount.getAuditDetails().getCreatedBy());
+//        accountInputs.put("createdDate", newGarbageAccount.getAuditDetails().getCreatedDate());
+        accountInputs.put("lastModifiedBy", newGarbageAccount.getAuditDetails().getLastModifiedBy());
+        accountInputs.put("lastModifiedDate", newGarbageAccount.getAuditDetails().getLastModifiedDate());
 
         namedParameterJdbcTemplate.update(UPDATE_ACCOUNT_BY_ID, accountInputs);
     }
@@ -102,7 +102,7 @@ public class GarbageAccountRepository {
 		final List preparedStatementValues = new ArrayList<>();
 
 		//generate search query
-    	getSearchQueryByCriteria(searchQuery, searchCriteriaGarbageAccount, preparedStatementValues);
+    	searchQuery = getSearchQueryByCriteria(searchQuery, searchCriteriaGarbageAccount, preparedStatementValues);
         
         log.debug(searchQuery.toString());
 
@@ -111,15 +111,15 @@ public class GarbageAccountRepository {
         return garbageAccounts;
     }
 
-	private void getSearchQueryByCriteria(StringBuilder searchQuery,
+	private StringBuilder getSearchQueryByCriteria(StringBuilder searchQuery,
 			SearchCriteriaGarbageAccount searchCriteriaGarbageAccount, List preparedStatementValues) {
 		
-		searchQuery = new StringBuilder(GET_ACCOUNT_BY_ID);
-		addWhereClause(searchQuery, preparedStatementValues, searchCriteriaGarbageAccount);
-		
+		searchQuery = new StringBuilder(SELECT_QUERY_ACCOUNT);
+		searchQuery = addWhereClause(searchQuery, preparedStatementValues, searchCriteriaGarbageAccount);
+		return searchQuery;
 	}
 
-	private void addWhereClause(StringBuilder searchQuery, List preparedStatementValues,
+	private StringBuilder addWhereClause(StringBuilder searchQuery, List preparedStatementValues,
 			SearchCriteriaGarbageAccount searchCriteriaGarbageAccount) {
 
 
@@ -130,7 +130,7 @@ public class GarbageAccountRepository {
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getName())
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getMobileNumber())
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getParentId())) {
-        	return;
+        	return null;
         }
 
         searchQuery.append(" WHERE");
@@ -143,42 +143,43 @@ public class GarbageAccountRepository {
         }
         
 
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getId())) {
+        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getGarbageId())) {
             isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
             searchQuery.append(" acc.garbage_id IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getGarbageId(),
                     preparedStatementValues)).append(" )");
         }
 
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getId())) {
+        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getPropertyId())) {
             isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
             searchQuery.append(" acc.property_id IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getPropertyId(),
                     preparedStatementValues)).append(" )");
         }
 
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getId())) {
+        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getType())) {
             isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
             searchQuery.append(" acc.type IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getType(),
                     preparedStatementValues)).append(" )");
         }
 
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getId())) {
+        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getName())) {
             isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
             searchQuery.append(" acc.name IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getName(),
                     preparedStatementValues)).append(" )");
         }
 
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getId())) {
+        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getMobileNumber())) {
             isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
             searchQuery.append(" acc.mobile_number IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getMobileNumber(),
                     preparedStatementValues)).append(" )");
         }
 
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getId())) {
+        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getParentId())) {
             isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
             searchQuery.append(" acc.parent_id IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getParentId(),
                     preparedStatementValues)).append(" )");
         }
 		
+        return searchQuery;
 	}
 	
 	private boolean addAndClauseIfRequired(final boolean appendAndClauseFlag, final StringBuilder queryString) {

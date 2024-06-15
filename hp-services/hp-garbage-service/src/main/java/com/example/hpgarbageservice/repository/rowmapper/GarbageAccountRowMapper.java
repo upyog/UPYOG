@@ -10,6 +10,7 @@ import java.util.Map;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import com.example.hpgarbageservice.model.AuditDetails;
 import com.example.hpgarbageservice.model.GarbageAccount;
@@ -17,27 +18,6 @@ import com.example.hpgarbageservice.model.GarbageBill;
 
 @Component
 public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageAccount>> {
-
-//    @Override
-//    public GarbageAccount mapRow(ResultSet rs, int rowNum) throws SQLException {
-//        GarbageAccount account = new GarbageAccount();
-//        account.setId(rs.getLong("id"));
-//        account.setGarbageId(rs.getLong("garbage_id"));
-//        account.setPropertyId(rs.getLong("property_id"));
-//        account.setType(rs.getString("type"));
-//        account.setName(rs.getString("name"));
-//        account.setMobileNumber(rs.getString("mobile_number"));
-//        account.setParentId(rs.getLong("parent_id"));
-//
-//        AuditDetails audit = new AuditDetails();
-//        audit.setCreatedBy(rs.getString("created_by"));
-//        audit.setCreatedDate(rs.getLong("created_date"));
-//        audit.setLastModifiedBy(rs.getString("last_modified_by"));
-//        audit.setLastModifiedDate(rs.getLong("last_modified_date"));
-//        account.setAuditDetails(audit);
-//
-//        return account;
-//    }
 
 	@Override
 	public List<GarbageAccount> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -48,7 +28,7 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
 			 
 			 Long accountId = rs.getLong("id");
 			 GarbageAccount garbageAccount = accountsMap.get(accountId);
-			 
+
 			 if(null == garbageAccount) {
 				 
 				 AuditDetails audit = AuditDetails.builder()
@@ -66,6 +46,7 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
 					        .name(rs.getString("name"))
 					        .mobileNumber(rs.getString("mobile_number"))
 					        .parentId(rs.getLong("parent_id"))
+					        .garbageBills(new ArrayList<>())
 					        .auditDetails(audit)
 					        .build();
 				 
@@ -88,10 +69,12 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
 	}
 	
 	private GarbageBill findBillByUuid(List<GarbageBill> garbageBills, String bill_id) {
-		for (GarbageBill garbageBill : garbageBills) {
-			if(garbageBill.getId().equals(bill_id)) {
-				return garbageBill;
-			}
+		
+		if (!CollectionUtils.isEmpty(garbageBills)) {
+			return garbageBills.stream()
+					.filter(bill -> bill.getId().equals(bill_id))
+					.findFirst()
+					.orElse(null);
 		}
 		return null;
 	}
