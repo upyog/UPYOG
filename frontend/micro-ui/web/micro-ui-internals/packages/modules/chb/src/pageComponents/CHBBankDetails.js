@@ -11,7 +11,6 @@ const CHBBankDetails = ({ t, config, onSelect, userType, formData, formState, se
   const formValue = watch();
   const { errors } = localFormState;
   const checkLocation = window.location.href.includes("chb/bookHall");
-
   let inputs;
  
   
@@ -19,7 +18,7 @@ const CHBBankDetails = ({ t, config, onSelect, userType, formData, formState, se
       {
         label: "ACCOUNT_NUMBER",
         type: "text",
-        name: "AccountNumber",
+        name: "accountNumber",
         validation: {
           pattern: "[0-9]{8,25}",
           title: t("INVALID_ACCOUNT_NUMBER"),
@@ -28,7 +27,7 @@ const CHBBankDetails = ({ t, config, onSelect, userType, formData, formState, se
       {
         label: "CONFIRM_ACCOUNT_NUMBER",
         type: "text",
-        name: "ConfirmAccountNumber",
+        name: "confirmAccountNumber",
         validation: {
           pattern: "[0-9]{8,25}",
           title: t("INVALID_CONFIRM_ACCOUNT_NUMBER"),
@@ -37,16 +36,16 @@ const CHBBankDetails = ({ t, config, onSelect, userType, formData, formState, se
       {
         label: "IFSC_CODE",
         type: "text",
-        name: "Ifsc",
+        name: "ifscCode",
          validation: {
           pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-          title: t("INVALID_IFSC_CODE"),
+          title: t("INVALID_ifscCode_CODE"),
          },
       },
       {
         label: "BANK_NAME",
         type: "text",
-        name: "BankName",
+        name: "bankName",
          validation: {
           pattern: "^[a-zA-Z ]+$",
           title: t("INVALID_BANK_NAME"),
@@ -55,7 +54,7 @@ const CHBBankDetails = ({ t, config, onSelect, userType, formData, formState, se
       {
         label: "BANK_BRANCH_NAME",
         type: "text",
-        name: "BankBranchName",
+        name: "bankBranchName",
          validation: {
           pattern: "^[a-zA-Z ]+$",
           title: t("INVALID_BANK_BRANCH_NAME"),
@@ -64,7 +63,7 @@ const CHBBankDetails = ({ t, config, onSelect, userType, formData, formState, se
       {
         label: "ACCOUNT_HOLDER_NAME",
         type: "text",
-        name: "AccountHolderName",
+        name: "accountHolderName",
          validation: {
           pattern: "^[a-zA-Z ]+$",
           title: t("INVALID_ACCOUNT_HOLDER_NAME"),
@@ -127,7 +126,7 @@ const CHBBankDetails = ({ t, config, onSelect, userType, formData, formState, se
           <div className="field">
             <Controller
               control={control}
-              defaultValue={formData?.address?.[input.name]}
+              defaultValue={formData?.bankdetails?.[input.name]}
               name={input.name}
               rules={{ validate: convertValidationToRules(input) }}
               render={(_props) => (
@@ -157,12 +156,12 @@ const CHBBankDetails = ({ t, config, onSelect, userType, formData, formState, se
     <FormStep
       config={{ ...config, inputs }}
       _defaultValues={{
-        AccountNumber: formData?.AccountNumber,
-        ConfirmAccountNumber: formData?.ConfirmAccountNumber,
-        Ifsc: formData?.Ifsc,
-        BankName: formData?.BankName,
-        BankBranchName: formData?.BankBranchName,
-        AccountHolderName: formData?.AccountHolderName  
+        accountNumber: formData?.bankdetails?.accountNumber || '',
+        confirmAccountNumber: formData?.bankdetails?.confirmAccountNumber || '',
+        ifscCode: formData?.bankdetails?.ifscCode || '',
+        bankName: formData?.bankdetails?.bankName || '',
+        bankBranchName: formData?.bankdetails?.bankBranchName || '',
+        accountHolderName: formData?.bankdetails?.accountHolderName || ''
        }}
 
       onSelect={(data) => onSelect(config.key, data)}

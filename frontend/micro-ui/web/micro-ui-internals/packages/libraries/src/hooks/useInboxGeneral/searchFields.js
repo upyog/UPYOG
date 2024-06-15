@@ -53,6 +53,67 @@ const inboxSearchFields = {
       },
     },
   ],
+  ASSET: [
+    {
+      label: "ES_ASSET_RESPONSE_CREATE_LABEL",
+      name: "applicationNo",
+      roles: [],
+    },
+    {
+      label: "AST_CATEGORY",
+      name: "assetclassification",
+      // minLength: "10",
+      roles: [],
+    },
+  ],
+
+EW: [
+  {
+    label: "EW_REQUEST_ID",
+    name: "requestId",
+    roles: [],
+  },
+  {
+    label: "EW_MOBILE_NUMBER",
+    name: "mobileNumber",
+    type: "mobileNumber",
+    maxLength: 10,
+    minLength: 0,
+    roles: [],
+    pattern: "^$|[6-9][0-9]{9}",
+    errorMessages: {
+      pattern: "",
+      minLength: "",
+      maxLength: "",
+    },
+  },
+],
+  CHB: [
+    {
+      label: "CHB_APPLICATION_NUMBER",
+      name: "bookingNo",
+      roles: [],
+    },
+    {
+      label: "CHB_HALL_NAME",
+      name: "hallName",
+      roles: [],
+    },
+    {
+      label: "CHB_MOBILE_NUMBER",
+      name: "mobileNumber",
+      type: "mobileNumber",
+      maxLength: 10,
+      minLength: 0,
+      roles: [],
+      pattern: "^$|[6-9][0-9]{9}",
+      errorMessages: {
+        pattern: "",
+        minLength: "",
+        maxLength: "",
+      },
+    },
+  ],
 };
 
 const searchFieldsForSearch = {

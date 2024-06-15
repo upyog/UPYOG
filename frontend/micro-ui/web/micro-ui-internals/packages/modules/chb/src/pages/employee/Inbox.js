@@ -2,13 +2,13 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Header } from "@upyog/digit-ui-react-components";
 
-import PTRDesktopInbox from "../../components/PTRDesktopInbox";
+import CHBDesktopInbox from "../../components/CHBDesktopInbox";
 import MobileInbox from "../../components/MobileInbox";
 
 const Inbox = ({
   useNewInboxAPI,
   parentRoute,
-  moduleCode = "PTR",
+  moduleCode = "CHB",
   initialStates = {},
   filterComponent,
   isInbox,
@@ -25,8 +25,7 @@ const Inbox = ({
 
   const { t } = useTranslation();
   const [enableSarch, setEnableSearch] = useState(() => (isInbox ? {} : { enabled: false }));
-  const [TableConfig, setTableConfig] = useState(() => Digit.ComponentRegistryService?.getComponent("PTRInboxTableConfig"));
-  // const [getSearchFi]
+  const [TableConfig, setTableConfig] = useState(() => Digit.ComponentRegistryService?.getComponent("CHBInboxTableConfig"));
   const [pageOffset, setPageOffset] = useState(initialStates.pageOffset || 0);
   const [pageSize, setPageSize] = useState(initialStates.pageSize || 10);
   const [sortParams, setSortParams] = useState(initialStates.sortParams || [{ id: "createdTime", desc: true }]);
@@ -107,12 +106,11 @@ const Inbox = ({
           searchParams={searchParams}
           sortParams={sortParams}
           linkPrefix={`${parentRoute}/application-details/`}
-          tableConfig={rest?.tableConfig ? res?.tableConfig:TableConfig(t)["PTR"]}
+          tableConfig={rest?.tableConfig ? res?.tableConfig:TableConfig(t)["CHB"]}
           filterComponent={filterComponent}
           EmptyResultInboxComp={EmptyResultInboxComp}
           useNewInboxAPI={useNewInboxAPI}
         />
-        // <div></div>
       );
     } else {
       return (
@@ -120,11 +118,11 @@ const Inbox = ({
           {isInbox && <Header>{t("ES_COMMON_INBOX")}</Header>}
          
           
-          <PTRDesktopInbox
+          <CHBDesktopInbox
             moduleCode={moduleCode}
             data={data}
             
-            tableConfig={TableConfig(t)["PTR"]}
+            tableConfig={TableConfig(t)["CHB"]}
             isLoading={hookLoading}
             defaultSearchParams={initialStates.searchParams}
             isSearch={!isInbox}

@@ -9,12 +9,12 @@ const PDFSvg = ({ width = 20, height = 20, style }) => (
   </svg>
 );
 
-function PTRDocument({ petdetail = {} }) {
+function CHBDocument({ chbdetail = {} }) {
   const { t } = useTranslation();
-  const { isLoading, isError, error, data } = Digit.Hooks.ptr.usePetDocumentSearch({
-    petdetail,
+  const { isLoading, isError, error, data } = Digit.Hooks.chb.useChbDocumentSearch({
+    chbdetail,
   });
-  const documents = petdetail?.documents || [];
+  const documents = chbdetail?.documents || [];
 
   if (isLoading) {
     return <Loader />;
@@ -40,4 +40,4 @@ function PTRDocument({ petdetail = {} }) {
   );
 }
 
-export default PTRDocument;
+export default CHBDocument;

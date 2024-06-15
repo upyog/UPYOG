@@ -3,10 +3,10 @@
   import { Link, useHistory } from "react-router-dom";
   import { useTranslation } from "react-i18next";
   import { useQueryClient } from "react-query";
-  import getPetAcknowledgementData from "../getPetAcknowledgementData";
+  import getChbAcknowledgementData from "../getChbAcknowledgementData";
 
   const GetMessage = (type, action, isSuccess, isEmployee, t) => {
-    return t(`${isEmployee ? "E" : "C"}S_PTR_RESPONSE_${action ? action : "CREATE"}_${type}${isSuccess ? "" : "_ERROR"}`);
+    return t(`${isEmployee ? "E" : "C"}S_CHB_RESPONSE_${action ? action : "CREATE"}_${type}${isSuccess ? "" : "_ERROR"}`);
   };
 
   const GetActionMessage = (action, isSuccess, isEmployee, t) => {
@@ -24,9 +24,9 @@
   const BannerPicker = (props) => {
     return (
       <Banner
-        message={GetActionMessage(props?.data?.PetRegistrationApplications?.[0]?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
-        applicationNumber={props?.data?.PetRegistrationApplications?.[0]?.applicationNumber}
-        info={GetLabel(props.data?.PetRegistrationApplications?.[0]?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
+        message={GetActionMessage(props?.data?.hallsBookingApplication?.[0]?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
+        applicationNumber={props?.data?.hallsBookingApplication?.[0]?.applicationNumber}
+        info={GetLabel(props.data?.hallsBookingApplication?.[0]?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
         successful={props.isSuccess}
       />
     );
@@ -50,18 +50,18 @@
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const { state } = props.location;
 
-    const mutation = Digit.Hooks.ptr.usePTRCreateAPI(tenantId, state.key !== "UPDATE");
-    const mutation1 = Digit.Hooks.ptr.usePTRCreateAPI(tenantId, false);
+    const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, state.key !== "UPDATE");
+    const mutation1 = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
 
     const { data: storeData } = Digit.Hooks.useStore.getInitData();
     const { tenants } = storeData || {};
 
-    const { isLoading: auditDataLoading, isError: isAuditError, data: auditData } = Digit.Hooks.ptr.usePTRSearch(
+    const { isLoading: auditDataLoading, isError: isAuditError, data: auditData } = Digit.Hooks.chb.useChbSearch(
       {
         tenantId,
-        filters: { applicationNumber: state.PetRegistrationApplications.applicationNumber, audit: true },
+        filters: { applicationNumber: state.hallsBookingApplication.bookingNo, audit: true },
       },
-      { enabled: enableAudit, select: (data) => data.PetRegistrationApplications?.filter((e) => e.status === "ACTIVE") }
+      { enabled: enableAudit, select: (data) => data.hallsBookingApplication?.filter((e) => e.status === "ACTIVE") }
     );
 
     useEffect(() => {
@@ -74,7 +74,7 @@
       const onSuccess = async (successRes) => {
         setMutationHappened(true);
         queryClient.clear();
-        if (successRes?.PetRegistrationApplications[0]?.creationReason === "CREATE") {
+        if (successRes?.hallsBookingApplication[0]?.creationReason === "CREATE") {
           setEnableAudit(true);
         }
       };
@@ -86,7 +86,7 @@
       if (!mutationHappened) {
         mutation.mutate(
           {
-            PetRegistrationApplications: state?.PetRegistrationApplications,
+            hallsBookingApplication: state?.hallsBookingApplication,
           },
           {
             onError,
@@ -97,14 +97,14 @@
     }, []);
 
     const handleDownloadPdf = async () => {
-      const { PetRegistrationApplications = [] } = mutation.data || successData;
-      const Pet = (PetRegistrationApplications && PetRegistrationApplications[0]) || {};
+      const { hallsBookingApplication = [] } = mutation.data || successData;
+      const Pet = (hallsBookingApplication && hallsBookingApplication[0]) || {};
       const tenantInfo = tenants.find((tenant) => tenant.code === Pet.tenantId);
 
       let tenantId = Pet.tenantId || tenantId;
       
 
-      const data = await getPetAcknowledgementData({ ...Pet, auditData }, tenantInfo, t);
+      const data = await getChbAcknowledgementData({ ...Pet, auditData }, tenantInfo, t);
       Digit.Utils.pdf.generate(data);
     };
 
@@ -127,7 +127,7 @@
             {DisplayText(state.action, (mutation.isSuccess || !!successData) && !mutation.isError, props.parentRoute.includes("employee"), t)}
           </CardText>
           {(mutation.isSuccess || !!successData) && !mutation.isError && (
-            <SubmitBar style={{ overflow: "hidden" }} label={t("PTR_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />
+            <SubmitBar style={{ overflow: "hidden" }} label={t("CHB_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />
           )}
         </Card>
         {showToast && <Toast error={showToast.key === "error" ? true : false} label={error} onClose={closeToast} />}

@@ -2,9 +2,9 @@ import { Header, Loader } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import PetApplication from "./pet-application";
+import ChbApplication from "./chb-application";
 
-export const PTRMyApplications = () => {
+export const CHBMyApplications = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const user = Digit.UserService.getUser().info;
@@ -23,10 +23,10 @@ export const PTRMyApplications = () => {
     ? { limit: "50", sortOrder: "ASC", sortBy: "createdTime", offset: off, tenantId }
     : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0",mobileNumber:user?.mobileNumber, tenantId };
 
-  const { isLoading, isError, error, data } = Digit.Hooks.ptr.usePTRSearch({ filters: filter1 }, { filters: filter1 });
+  const { isLoading, isError, error, data } = Digit.Hooks.chb.useChbSearch({ filters: filter1 }, { filters: filter1 });
   
-  const {PetRegistrationApplications: applicationsList } = data || {};
-  let combinedApplicationNumber = applicationsList?.length > 0 ? applicationsList?.map((ob) => ob?.applicationNumber) : [];
+  const {hallsBookingApplication: applicationsList } = data || {};
+  let combinedApplicationNumber = applicationsList?.length > 0 ? applicationsList?.map((ob) => ob?.bookingNo) : [];
   let serviceSearchArgs = {
     tenantId : tenantId,
     referenceIds : combinedApplicationNumber,
@@ -35,8 +35,7 @@ export const PTRMyApplications = () => {
   const { isLoading:serviceloading, data : servicedata} = Digit.Hooks.useFeedBackSearch({ filters: { serviceSearchArgs } },{ filters: { serviceSearchArgs }, enabled : combinedApplicationNumber?.length > 0 ?true : false, cacheTime : 0 });
 
   function getLabelValue(curservice){
-    let foundValue = servicedata?.Service?.find((ob) => ob?.referenceId?.includes(curservice?.applicationNumber));
-
+    let foundValue = servicedata?.Service?.find((ob) => ob?.referenceId?.includes(curservice?.bookingNo));
     if(foundValue)
     return t("CS_CF_VIEW")
     else
@@ -50,12 +49,12 @@ export const PTRMyApplications = () => {
 
   return (
     <React.Fragment>
-      <Header>{`${t("CS_TITLE_MY_APPLICATIONS")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
+      <Header>{`${t("CS_TITLE_MY_BOOKINGS")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
       <div>
         {applicationsList?.length > 0 &&
           applicationsList.map((application, index) => (
             <div key={index}>
-              <PetApplication application={application} tenantId={user?.permanentCity} buttonLabel={getLabelValue(application)}/>
+              <ChbApplication application={application} tenantId={user?.permanentCity} buttonLabel={getLabelValue(application)}/>
             </div>
           ))}
         {!applicationsList?.length > 0 && <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("CHB_NO_APPLICATION_FOUND_MSG")}</p>}
@@ -63,16 +62,16 @@ export const PTRMyApplications = () => {
         {applicationsList?.length !== 0 && (
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
-              <span className="link">{<Link to={`/digit-ui/citizen/ptr/petservice/my-application/${t1}`}>{t("CHB_LOAD_MORE_MSG")}</Link>}</span>
+              <span className="link">{<Link to={`/digit-ui/citizen/chb/myBookings/${t1}`}>{t("CHB_LOAD_MORE_MSG")}</Link>}</span>
             </p>
           </div>
         )}
       </div>
 
       <p style={{ marginLeft: "16px", marginTop: "16px" }}>
-        {t("PTR_TEXT_NOT_ABLE_TO_FIND_THE_APPLICATION")}{" "}
+        {t("chb_TEXT_NOT_ABLE_TO_FIND_THE_BOOKING")}{" "}
         <span className="link" style={{ display: "block" }}>
-          <Link to="/digit-ui/citizen/ptr/petservice/new-application/info">{t("CHB_COMMON_CLICK_HERE_TO_REGISTER_NEW_PET")}</Link>
+          <Link to="/digit-ui/citizen/chb/bookHall/searchHall">{t("CHB_COMMON_CLICK_HERE_TO_REGISTER_NEW_BOOKING")}</Link>
         </span>
       </p>
     </React.Fragment>

@@ -282,10 +282,22 @@ import useResidentType from "./chb/useResidentType";
 import usePurpose from "./chb/usePurpose";
 import useChbCreateAPI from "./chb/useChbCreateAPI";
 import useChbDocumentsMDMS from "./chb/useChbDocumentsMDMS";
+import useEWCreateAPI from "./ew/useEWCreateAPI";
+import useTenantsEW from "./ew/useTenants";
+import useEWSearch from "./ew/useEWSearch";
+import useEwApplicationDetail from "./ew/useEwApplicationDetail";
+import useEWApplicationAction from "./ew/useEWApplicationAction";
 
+import useChbDocumentSearch from "./chb/useChbDocumentSearch";
+import useChbApplicationDetail from "./chb/useChbApplicationDetail";
+import useChbSearch from "./chb/useChbSearch";
+import useTenantsCHB from "./chb/useTenants";
+import useChbApplicationAction from "./chb/useChbApplicationAction";
+import useServiceSearchCHB from "./chb/useServiceSearchCHB";
+import useChbCommunityHalls from "./chb/useChbCommunityHalls";
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
-
+import useEWSearch from "./ew/useEWSearch";
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
@@ -306,7 +318,12 @@ const pgr = {
 };
 
 const ew = {
-  useProductPriceMDMS
+  useProductPriceMDMS,
+  useEWCreateAPI,
+  useTenants: useTenantsEW,
+  useEWSearch,
+  useEwApplicationDetail,
+  useEWApplicationAction,
 };
 
 const asset = {
@@ -328,7 +345,14 @@ const chb={
   useResidentType,
   usePurpose,
   useChbCreateAPI,
-  useChbDocumentsMDMS
+  useChbDocumentsMDMS,
+  useChbDocumentSearch,
+  useChbApplicationDetail,
+  useChbSearch,
+  useTenants:useTenantsCHB,
+  useChbApplicationAction,
+  useServiceSearchCHB,
+  useChbCommunityHalls
 }
 
 const fsm = {

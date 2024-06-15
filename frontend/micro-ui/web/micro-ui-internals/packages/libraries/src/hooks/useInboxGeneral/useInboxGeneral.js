@@ -2,10 +2,12 @@ import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "react-query";
 import { FSMService } from "../../services/elements/FSM";
 import { PTService } from "../../services/elements/PT";
-
+import { ASSETService } from "../../services/elements/ASSET"
+import { EwService } from "../../services/elements/EW";
 import { filterFunctions } from "./filterFn";
 import { getSearchFields } from "./searchFields";
 import { TLService } from "../../services/elements/TL";
+import { CHBServices } from "../../services/elements/CHB";
 
 const inboxConfig = (tenantId, filters) => ({
   PT: {
@@ -23,6 +25,30 @@ const inboxConfig = (tenantId, filters) => ({
     businessIdAliasForSearch: "applicationNumber",
     fetchFilters: filterFunctions.PTR,
     _searchFn: () => PTRService.search({ tenantId, filters }),
+  },
+  ASSET: {
+    services: ["asset-create"],
+    searchResponseKey: "Asset",
+    businessIdsParamForSearch: "applicationNo",
+    businessIdAliasForSearch: "applicationNo",
+    fetchFilters: filterFunctions.ASSET,
+    _searchFn: () => ASSETService.search({ tenantId, filters }),
+  },
+  EW: {
+    services: ["ewst"],
+    searchResponseKey: "EwasteApplication",
+    businessIdsParamForSearch: "requestId",
+    businessIdAliasForSearch: "requestId",
+    fetchFilters: filterFunctions.EW,
+    _searchFn: () => EwService.search({ tenantId, filters }),
+  },
+  CHB: {
+    services: ["chb"],
+    searchResponseKey: "hallsBookingApplication",
+    businessIdsParamForSearch: "bookingNo",
+    businessIdAliasForSearch: "bookingNo",
+    fetchFilters: filterFunctions.CHB,
+    _searchFn: () => CHBServices.search({ tenantId, filters }),
   },
   FSM: {
     services: ["FSM"],
