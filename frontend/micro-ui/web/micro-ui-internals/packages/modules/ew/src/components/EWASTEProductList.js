@@ -35,13 +35,13 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
   const productRows = prlistName?.map((product, index) => (
     {
       name: t(product.code),
-      quantity: t(prlistQuantity[index].code),
-      unit_price: t(product.price),
-      total_price: t(product.price * prlistQuantity[index].code),
+      quantity: prlistQuantity[index].code,
+      unit_price: product.price,
+      total_price: product.price * prlistQuantity[index].code,
     }
   )) || [];
 
-  const totalPrice = productRows.reduce((sum, pd) => sum + (pd.total_price || 0), 0);
+  const totalPrice = productRows.reduce((sum, pd) => sum + (parseInt(pd.total_price) || 0), 0);
 
   return (
     <div className="card">

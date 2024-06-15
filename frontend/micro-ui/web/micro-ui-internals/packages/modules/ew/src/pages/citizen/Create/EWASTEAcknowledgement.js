@@ -72,11 +72,10 @@ const EWASTEAcknowledgement = ({ data, onSuccess }) => {
     Digit.Utils.pdf.generate(data);
   };
 
-  return (
-  mutation.isLoading || mutation.isIdle ? (
+  return mutation.isLoading || mutation.isIdle ? (
     <Loader />
   ) : 
-  
+  (
     <Card>
       <BannerPicker t={t} data={mutation.data} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
       <StatusTable>
