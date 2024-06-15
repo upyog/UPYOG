@@ -260,6 +260,7 @@ export const filterFunctions = {
 
     return { searchFilters, workflowFilters };
   },
+  
   TL: (filtersArg) => {
     let { uuid } = Digit.UserService.getUser()?.info || {};
 
