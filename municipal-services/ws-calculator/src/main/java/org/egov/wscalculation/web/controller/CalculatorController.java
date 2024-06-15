@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Getter
@@ -88,6 +88,32 @@ public class CalculatorController {
 	@PostMapping("/_jobscheduler")
 	public void jobscheduler(@Valid @RequestBody BulkBillReq bulkBillReq) {
 		wSCalculationService.generateDemandBasedOnTimePeriod(bulkBillReq.getRequestInfo(), bulkBillReq.getBulkBillCriteria());
+	}
+	
+	@PostMapping("/_singledemand")
+    public ResponseEntity<Map<String, Object>> singledemandgen(@Valid @RequestBody SingleDemand singledemand) {
+	    Map<String, Object> response = new HashMap<>(); 
+		
+		 try {
+	     String singleresponse=   wSCalculationService.generateSingleDemand(singledemand);
+	     if (singleresponse==null) {
+	    	 response.put("status", "Failed");String Message="Unable to Generate Demand for Connection No: ".concat(singledemand.getConsumercode());
+	 	    response.put("message", Message);
+	 	   return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	     }
+	     else {response.put("status", "Success"); String Message="Single demand generated successfully for Connection No: ".concat(singledemand.getConsumercode());
+		    response.put("message",Message);
+	            log.info("singledemandgen:: Demand generated successfully for: {}", singledemand);
+	            return new ResponseEntity<>(response,HttpStatus.OK );
+	     }
+	        } catch (Exception e) {
+	        	response.put("status", "failed");
+	            log.error("singledemandgen:: Error generating demand for: {}", singledemand, e);
+	            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+     }
+		
+	
+	
 	}
 	
 	@PostMapping("/_jobbillscheduler")

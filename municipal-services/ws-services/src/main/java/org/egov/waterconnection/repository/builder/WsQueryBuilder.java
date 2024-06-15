@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.waterconnection.config.WSConfiguration;
 import org.egov.waterconnection.service.UserService;
@@ -18,6 +19,7 @@ import org.springframework.util.StringUtils;
 import static org.egov.waterconnection.constants.WCConstants.SEARCH_TYPE_CONNECTION;
 
 @Component
+@Slf4j
 public class WsQueryBuilder {
 
 	@Autowired
@@ -264,13 +266,15 @@ public class WsQueryBuilder {
 			query.append(" conn.locality = ? ");
 			preparedStatement.add(criteria.getLocality());
 		}
-
-			if(criteria.getConnectionType().equalsIgnoreCase("METERED")) {
-			if (!StringUtils.isEmpty(criteria.getConnectionType())) {
-				addClauseIfRequired(preparedStatement, query);
-				query.append(" wc.connectiontype = ? ");
-				preparedStatement.add(criteria.getConnectionType());
-			}
+		
+		if (criteria.getConnectionType() != null && !criteria.getConnectionType().isEmpty()) {
+		    if (criteria.getConnectionType().equalsIgnoreCase("METERED")) {
+		        if (!StringUtils.isEmpty(criteria.getConnectionType())) {
+		            addClauseIfRequired(preparedStatement, query);
+		            query.append(" wc.connectiontype = ? ");
+		            preparedStatement.add(criteria.getConnectionType());
+		        }
+		    }
 		}
 		
 		//Add group by and order by clause as per the search scenario

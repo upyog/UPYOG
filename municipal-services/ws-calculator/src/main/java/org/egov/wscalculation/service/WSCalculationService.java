@@ -6,6 +6,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.wscalculation.web.models.BulkBillCriteria;
 import org.egov.wscalculation.web.models.Calculation;
 import org.egov.wscalculation.web.models.CalculationReq;
+import org.egov.wscalculation.web.models.SingleDemand;
 import org.egov.wscalculation.web.models.WaterConnection;
 
 public interface WSCalculationService {
@@ -15,7 +16,7 @@ public interface WSCalculationService {
 	void jobScheduler();
 	
 	void generateDemandBasedOnTimePeriod(RequestInfo requestInfo);
-	
+	String  generateSingleDemand(SingleDemand singledemand);
 	void generateBillBasedLocality(RequestInfo requestInfo);
 
 	void generateDemandBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria);

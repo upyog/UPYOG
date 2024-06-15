@@ -44,4 +44,7 @@ public interface WSCalculationDao {
 	List<WaterDetails> getConnectionsNoList(String tenantId, String connectionType, Long taxPeriodFrom,
 			Long taxPeriodTo, String cone);
 
+	List<String> fetchUsageCategory(String consumerCodes);
+	List<String> fetchSewConnection(String consumerCodes); 
+	void updateBillStatus(List<String> consumerCodes, String string, String string2);
 }

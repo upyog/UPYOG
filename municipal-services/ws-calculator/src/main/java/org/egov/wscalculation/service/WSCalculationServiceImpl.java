@@ -26,6 +26,7 @@ import org.egov.wscalculation.repository.ServiceRequestRepository;
 import org.egov.wscalculation.repository.WSCalculationDao;
 import org.egov.wscalculation.util.CalculatorUtil;
 import org.egov.wscalculation.util.WSCalculationUtil;
+import org.egov.wscalculation.web.models.BillScheduler.StatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -316,7 +317,7 @@ if(category!=null)
 	public List<Calculation> getCalculations(CalculationReq request, Map<String, Object> masterMap) {
 		List<Calculation> calculations = new ArrayList<>(request.getCalculationCriteria().size());
 		for (CalculationCriteria criteria : request.getCalculationCriteria()) {
-			Map<String, List> estimationMap = estimationService.getEstimationMap(criteria, request.getRequestInfo(),
+			Map<String, List> estimationMap = estimationService.getEstimationMap(criteria, request,
 					masterMap);
 			ArrayList<?> billingFrequencyMap = (ArrayList<?>) masterMap
 					.get(WSCalculationConstant.Billing_Period_Master);
@@ -596,6 +597,36 @@ if(category!=null)
 	
 			return msg;
 	}
+	
+	// Single Demand Generation 
+	
+     public String generateSingleDemand(SingleDemand singledemand) {
+		String tempvariable=null;
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime date = LocalDateTime.now();
+		log.info("Time schedule start for water demand generation on : " + date.format(dateTimeFormatter));
+//		List<String> tenantIds = wSCalculationDao.getTenantId();
+		List<String> tenantIds = new ArrayList<>();
+		String tenat = singledemand.getTenantId();
+		tenantIds.add(tenat);
+		if (tenantIds.isEmpty()) {
+			log.info("No tenants are found for generating demand");
+			
+		}
+		log.info("Tenant Ids : " + tenantIds.toString());
+		
+			try {
+			
+				tempvariable=	demandService.SingleDemandGenerate(tenat, singledemand);
+				
+			} catch (Exception e) {
+				log.error("Exception occured while generating demand for tenant: " + tenat);
+				e.printStackTrace();
+			}
+      return tempvariable;
+	}
+	
+	
 	/**
 	 * Generate bill Based on Time (Monthly, Quarterly, Yearly)
 	 */
@@ -754,6 +785,13 @@ if(category!=null)
         return inputList.stream()
                     .collect(Collectors.groupingBy(s -> counter.getAndIncrement()/size))
                     .values();
+	}
+
+
+	@Override
+	public void generateDemandBasedOnTimePeriod(RequestInfo requestInfo) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

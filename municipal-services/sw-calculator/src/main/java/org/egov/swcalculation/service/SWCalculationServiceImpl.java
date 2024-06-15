@@ -47,6 +47,7 @@ import org.egov.swcalculation.web.models.Property;
 import org.egov.swcalculation.web.models.RequestInfoWrapper;
 import org.egov.swcalculation.web.models.SewerageConnection;
 import org.egov.swcalculation.web.models.SewerageConnectionRequest;
+import org.egov.swcalculation.web.models.SingleDemand;
 import org.egov.swcalculation.web.models.TaxHeadCategory;
 import org.egov.swcalculation.web.models.TaxHeadEstimate;
 import org.egov.swcalculation.web.models.TaxHeadMaster;
@@ -55,7 +56,7 @@ import com.google.common.collect.ImmutableSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
+import com.google.common.collect.ImmutableSet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -469,6 +470,31 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 
 		}
 		return sewerageCess;
+	}
+	
+	public void generateSingleDemand(SingleDemand singledemand) {
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime date = LocalDateTime.now();
+		log.info("Time schedule start for sewerage demand generation on : " + date.format(dateTimeFormatter));
+//		List<String> tenantIds = wSCalculationDao.getTenantId();
+		List<String> tenantIds = new ArrayList<>();
+		String tenat = singledemand.getTenantId();
+		tenantIds.add(tenat);
+		if (tenantIds.isEmpty()) {
+			log.info("No tenants are found for generating demand");
+			return;
+		}
+		log.info("Tenant Ids : " + tenantIds.toString());
+		tenantIds.forEach(tenantId -> {
+			try {
+
+				demandService.SingleDemandGenerate(tenantId, singledemand);
+
+			} catch (Exception e) {
+				log.error("Exception occured while generating demand for tenant: " + tenantId);
+				e.printStackTrace();
+			}
+		});
 	}
 	
 	/**

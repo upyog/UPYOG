@@ -235,9 +235,9 @@ public class WSCalculationConstant {
 	public static final String WS_METER_CHARGE = "WS_METER_CHARGE";
 	
 	public static final String WS_SECURITY_DEPOSIT= "WS_SECURITY_DEPOSIT";
-	
+	public static final String WS_METER_TESTING_FEE = "WS_METER_TESTING_FEE";
 	public static final String WS_SECURITY_CHARGE_CONST = "securityCharge";
-	
+	public static final String WS_CONNECTION_FEE = "WS_CONNECTION_FEE";
 	public static final String WS_SECURITY_CHARGE = "WS_SECURITY_DEPOSIT";
 	
 	public static final String WS_CONNECTION_FEE_CONST = "connectionFee";
@@ -257,9 +257,9 @@ public class WSCalculationConstant {
 	public static final String SCRUTINY_FEE_CONST = "scrutinyFee";
 	
 	public static final String RECONNECTION_FEE_CONST = "reconnectionfee";
-	
+	public static final String METER_TESTING_FEE_CONST = "meterTestingFee";
 	public static final String METER_COST_CONST = "meterCost";
-	
+	public static final String OTHER_FEE_CONST = "othersFee";
 	public static final String OTHER_CHARGE_CONST = "other";
 	
 	public static final String TAX_PERCENTAGE_CONST = "taxpercentage";
@@ -295,6 +295,14 @@ public class WSCalculationConstant {
 	public static final String  USER_CHARGES = "WS_USER_CHARGE";
 	
 	public static final String OTHER_FEE="WS_OTHER_FEE";
+	
+	public static final String  BILLINGTYPE = "billingType";
+
+	public static final String CUSTOM = "CUSTOM";
+
+	public static final String  CUSTOM_BILL_AMOUNT = "billingAmount";
+
+	public static final String LOCKED = "Locked";
 
 	//Notification
 	public static final String CHANNEL_NAME_SMS = "SMS";
@@ -307,10 +315,14 @@ public class WSCalculationConstant {
 
 	public static final String ACTION = "action";
 	
+	public static final String NO_METER = "No-meter";
+	
 	public static final String BREAKDOWN= "Breakdown";
 
 	public static final String CHANNEL_LIST = "channelList";
-
+	
+	public static final String AVARAGEMETERREADING = "avarageMeterReading";
+public static final String WATER_SUBUSAGE_TYPE = "waterSubUsageType";
 	public static final String CHANNEL = "Channel";
 
 	public static final String ACTION_FOR_DEMAND = "DEMAND";
@@ -328,7 +340,7 @@ public class WSCalculationConstant {
     public static final String EG_WS_CAL_JSON_EXCEPTION_MSG = "Exception occured while parsing additional details";
     
 	public static final String WS_BILL_SCHEDULER_TRANSACTION = "Bill Generation";
-
+public static final String PROPERTY_TYPE_MIXED = "MIXED";
 	public static final String ACTION_FOR_BILL = "BILL";
 	public static final String PROPERTY_SUB_DOMESTIC_TYPE_MIXED = "USAGE_DOM_NA";
 	public static final String PROPERTY_SUB_COMMERCIAL_TYPE_MIXED = "USAGE_COMM_NA";
@@ -336,7 +348,9 @@ public class WSCalculationConstant {
 	public static final String UNIT_USAGE_TYPE_KEY = "unitUsageType";
 	
 	public static final String CONNECTION_ACTIVATED = "CONNECTION_ACTIVATED";
+
 	public static final String MODIFIED_APPROVED = "APPROVED";
+	
 	public static final String WS_NO_BILLING_PERIOD = "WS_NO_BILLING_PERIOD";
 	
 	public static final String WS_NO_BILLING_PERIOD_MSG = "No billin period is active or not defined";
