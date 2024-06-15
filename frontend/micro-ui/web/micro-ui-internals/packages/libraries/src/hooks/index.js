@@ -295,7 +295,6 @@ import useTenantsCHB from "./chb/useTenants";
 import useChbApplicationAction from "./chb/useChbApplicationAction";
 import useServiceSearchCHB from "./chb/useServiceSearchCHB";
 import useChbCommunityHalls from "./chb/useChbCommunityHalls";
-import useEWSearch from "./ew/useEWSearch";
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
 
