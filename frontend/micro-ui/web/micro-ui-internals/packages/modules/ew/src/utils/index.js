@@ -116,6 +116,7 @@ export const EWDataConvert = (data) => {
       address: {
         tenantId: "pg.citya",
         doorNo: data.address?.doorNo,
+        calculatedAmount: data.calculatedAmount,
         latitude: data.address?.latitude || null,
         longitude: data.address?.longitude || null,
         addressNumber: data.address?.addressNumber || "",
