@@ -18,7 +18,7 @@ export const getFixedFilename = (filename = "", size = 5) => {
 };
 
 export const shouldHideBackButton = (config = []) => {
-  return config.filter((key) => window.location.href.includes(key.screenPath)).length > 0 ? true : false;
+  return config.filter((key) => window.location.href.includes(key.screenPath)).length > 0 || window.location.href.includes("acknowledgement") ? true : false;
 };
 
 
@@ -44,6 +44,7 @@ export const setAddressDetails = (data) => {
 
 export const setProductDetails = (data) => {
   let { ewdet } = data;
+  console.log("ewdet", ewdet)
 
   let productDetails = ewdet?.prlistName.map((product, index) => {
     return { 
@@ -57,6 +58,20 @@ export const setProductDetails = (data) => {
   data.ewdet = productDetails;
   return data;
 }
+
+export const setcalculatedAmount = (data) => {
+  let {ewdet} = data;
+
+  const totalPrice = ewdet?.reduce((sum, pd) => sum + (pd.price || 0), 0);
+
+  // let calculatedAmount = ewdet?.map((product, index) => {
+  //     product.price
+  // } )
+
+  data.calculatedAmount = totalPrice;
+  return data;
+}
+
 
 // export const setOwnerDetails = (data) => {
 //   let { ownerKey } = data;
@@ -78,6 +93,7 @@ export const EWDataConvert = (data) => {
   data = setProductDetails(data);
   // data = setOwnerDetails(data);
   data = setAddressDetails(data);
+  data = setcalculatedAmount(data);
 
   console.log("this is data in ::", data)
 
@@ -106,6 +122,7 @@ export const EWDataConvert = (data) => {
       pickUpDate: data.pickUpDate || "",
       vendorUuid: "345",
       requestStatus: "New Request",
+      calculatedAmount: data?.calculatedAmount || null,
       applicant: {
         applicantName: data?.ownerKey?.applicantName,
         mobileNumber: data?.ownerKey?.mobileNumber,
@@ -116,6 +133,7 @@ export const EWDataConvert = (data) => {
       address: {
         tenantId: "pg.citya",
         doorNo: data.address?.doorNo,
+        calculatedAmount: data.calculatedAmount,
         latitude: data.address?.latitude || null,
         longitude: data.address?.longitude || null,
         addressNumber: data.address?.addressNumber || "",
