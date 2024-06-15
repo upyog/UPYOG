@@ -38,6 +38,9 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
       quantity: prlistQuantity[index].code,
       unit_price: product.price,
       total_price: product.price * prlistQuantity[index].code,
+      quantity: prlistQuantity[index].code,
+      unit_price: product.price,
+      total_price: product.price * prlistQuantity[index].code,
     }
   )) || [];
 
