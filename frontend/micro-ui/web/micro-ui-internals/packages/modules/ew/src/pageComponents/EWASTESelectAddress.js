@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 import Timeline from "../components/EWASTETimeline";
 
 const EWASTESelectAddress = ({ t, config, onSelect, userType, formData, setError, clearErrors, formState }) => {
-  const allCities = Digit.Hooks.asset.useTenants();  // asset hook is added only to run the application components and will be changed later when the hook will be created
+  const allCities = Digit.Hooks.ew.useTenants();  
   let tenantId = Digit.ULBService.getCurrentTenantId();
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
@@ -16,8 +16,7 @@ const EWASTESelectAddress = ({ t, config, onSelect, userType, formData, setError
   if (presentInModifyApplication) isEditAddress = true;
   
   const { pincode, city } = formData?.address || "";
-  const cities =
-    userType === "employee" ? allCities.filter((city) => city.code === tenantId) : pincode  ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode)) : allCities;
+  const cities = userType === "employee" ? allCities.filter((city) => city.code === tenantId) : pincode  ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode)) : allCities;
 
   const [selectedCity, setSelectedCity] = useState(() => {
     return formData?.address?.city || null;

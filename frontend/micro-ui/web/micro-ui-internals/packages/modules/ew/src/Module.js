@@ -2,7 +2,8 @@ import { Header, CitizenHomeCard, PTIcon } from "@upyog/digit-ui-react-component
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
-
+// import { TableConfig } from "./config/inbox-table-config";
+import { TableConfig } from "./config/inbox-table-config";
 import EWCard from "./components/EWCard";
 import EWASTEProductDetails from "./pageComponents/EWASTEProductDetails";
 import EWASTEOwnerInfo from "./pageComponents/EWASTEOwnerInfo";
@@ -16,6 +17,13 @@ import EWASTECitizenAddress from "./pageComponents/EWASTECitizenAddress";
 import EWASTESelectPincode from "./pageComponents/EWASTESelectPincode";
 import EWASTESelectAddress from "./pageComponents/EWASTESelectAddress";
 import EWASTEAcknowledgement from "./pages/citizen/Create/EWASTEAcknowledgement";
+import { EWASTEMyApplications } from "./pages/citizen/EWASTEMyApplications";
+import EWASTEApplicationDetails from "./pages/citizen/EWASTEApplicationDetails";
+import Inbox from "./pages/employee/Inbox";
+import InboxFilter from "./components/inbox/NewInboxFilter";
+import EmployeeApp from "./pages/employee/index";
+import ApplicationDetails from "./pages/employee/ApplicationDetails";
+import { EwService } from "../../../libraries/src/services/elements/EW";
 
 
 
@@ -30,7 +38,13 @@ const componentsToRegister = {
   EWASTECitizenAddress,
   EWASTESelectPincode,
   EWASTESelectAddress,
-  EWASTEAcknowledgement
+  EWASTEAcknowledgement,
+  EWASTEMyApplications,
+  EWASTEApplicationDetails,
+  Inbox,
+  EmployeeApp,
+  EWASTEApplicationDetails: ApplicationDetails,
+  EwService
 }
 
 
@@ -107,4 +121,6 @@ const addComponentsToRegistry = () => {
     EWCard,
     EWModule,
     EWLinks,
+    EW_INBOX_FILTER: (props) => <InboxFilter {...props} />,
+    EWInboxTableConfig: TableConfig,
   };

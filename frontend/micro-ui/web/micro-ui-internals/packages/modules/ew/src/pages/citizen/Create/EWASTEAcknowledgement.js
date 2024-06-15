@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
 import getEwAcknowledgementData from "../../../utils/getEwAcknowledgementData";
-import { PetDataConvert } from "../../../utils";
+import { EWDataConvert } from "../../../utils";
 
 const GetActionMessage = (props) => {
   const { t } = useTranslation();
@@ -25,7 +25,7 @@ const BannerPicker = (props) => {
   return (
     <Banner
       message={GetActionMessage(props)}
-      applicationNumber={props.data?.PetRegistrationApplications[0].applicationNumber}
+      applicationNumber={props.data?.EwasteApplication[0].requestId}
       info={props.isSuccess ? props.t("EWASTE_APPLICATION_NO") : ""}
       successful={props.isSuccess}
       style={{width: "100%"}}
@@ -33,13 +33,14 @@ const BannerPicker = (props) => {
   );
 };
 
-const EWASTEAcknowledgement = ({ data, onSuccess }) => {
 
+const EWASTEAcknowledgement = ({ data, onSuccess }) => {
   
+
   const { t } = useTranslation();
   
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.ptr.usePTRCreateAPI(data.address?.city?.code); 
+  const mutation = Digit.Hooks.ew.useEWCreateAPI("pg.citya"); 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const match = useRouteMatch();
   const { tenants } = storeData || {};
@@ -48,8 +49,8 @@ const EWASTEAcknowledgement = ({ data, onSuccess }) => {
   useEffect(() => {
     try {
       
-      data.tenantId = data.address?.city?.code;
-      let formdata = PetDataConvert(data)
+      data.tenantId = "pg.citya";
+      let formdata = EWDataConvert(data)
       
 
       mutation.mutate(formdata, {
@@ -62,8 +63,8 @@ const EWASTEAcknowledgement = ({ data, onSuccess }) => {
   
 
   const handleDownloadPdf = async () => {
-    const { PetRegistrationApplications = [] } = mutation.data;
-    let Pet = (PetRegistrationApplications && PetRegistrationApplications[0]) || {};
+    const { EwasteApplication = [] } = mutation.data;
+    let Pet = (EwasteApplication && EwasteApplication[0]) || {};
     const tenantInfo = tenants.find((tenant) => tenant.code === Pet.tenantId);
     let tenantId = Pet.tenantId || tenantId;
    
@@ -72,10 +73,10 @@ const EWASTEAcknowledgement = ({ data, onSuccess }) => {
   };
 
   return (
-  //  mutation.isLoading || mutation.isIdle ? (
-  //   <Loader />
-  // ) : 
-  // (
+  mutation.isLoading || mutation.isIdle ? (
+    <Loader />
+  ) : 
+  
     <Card>
       <BannerPicker t={t} data={mutation.data} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
       <StatusTable>
@@ -87,7 +88,7 @@ const EWASTEAcknowledgement = ({ data, onSuccess }) => {
           />
         )}
       </StatusTable>
-      {mutation.isSuccess && <SubmitBar label={t("EWASTE_PET_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />}
+      {mutation.isSuccess && <SubmitBar label={t("EWASTE_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />}
       <Link to={`/digit-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>

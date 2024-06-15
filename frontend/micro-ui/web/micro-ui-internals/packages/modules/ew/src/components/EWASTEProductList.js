@@ -3,14 +3,14 @@ import { useTranslation } from "react-i18next";
 import ProductListElement from "./EWASTEProductListElement";
 import ApplicationTable from "./inbox/ApplicationTable";
 import { Header, Button } from "@upyog/digit-ui-react-components";
-import { LinkButton, SubmitBar, DeleteIcon } from "@upyog/digit-ui-react-components";
+import { LinkButton, SubmitBar, DeleteIcon, StatusTable, Row } from "@upyog/digit-ui-react-components";
 
 const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQuantity }) => {
   const handleDelete = (e) => {
     const updatedList1 = [...prlistName];
     if (updatedList1.length != 0) {
       updatedList1.splice(e, 1);
-     setPrlistName(updatedList1);
+      setPrlistName(updatedList1);
     }
 
     const updatedList2 = [...prlistQuantity];
@@ -21,22 +21,27 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
   };
 
   const productcolumns = [
-    { Header: "PRODUCT_NAME", accessor: "name" },
-    { Header: "PRODUCT_QUANTITY", accessor: "quantity" },
-    { Header: "PRODUCT_PRICE", accessor: "price" },
-    { Header: "DELETE_KEY", accessor: "delete", Cell: ({ row }) => (
-      <button onClick={() => handleDelete(row.index)}><DeleteIcon className="delete" fill="#a82227" style={{ cursor: "pointer", marginLeft: "20px" }} /></button>
-    ), },
+    { Header: t("PRODUCT_NAME"), accessor: "name" },
+    { Header: t("PRODUCT_QUANTITY"), accessor: "quantity" },
+    { Header: t("UNIT_PRICE"), accessor: "unit_price" },
+    { Header: t("TOTAL_PRODUCT_PRICE"), accessor: "total_price" },
+    {
+      Header: t("DELETE_KEY"), accessor: "delete", Cell: ({ row }) => (
+        <button onClick={() => handleDelete(row.index)}><DeleteIcon className="delete" fill="#a82227" style={{ cursor: "pointer", marginLeft: "20px" }} /></button>
+      ),
+    },
   ];
 
-    const productRows = prlistName?.map((p, index) => (
-        {
-            name: p.code,
-            quantity: prlistQuantity[index].code,
-            price: p.price * prlistQuantity[index].code,
-        }
-    )) || [];
+  const productRows = prlistName?.map((product, index) => (
+    {
+      name: t(product.code),
+      quantity: t(prlistQuantity[index].code),
+      unit_price: t(product.price),
+      total_price: t(product.price * prlistQuantity[index].code),
+    }
+  )) || [];
 
+  const totalPrice = productRows.reduce((sum, pd) => sum + (pd.total_price || 0), 0);
 
   return (
     <div className="card">
@@ -51,9 +56,17 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
             fontSize: "16px",
           },
         })}
-        isPaginationRequired = {false}
+        isPaginationRequired={false}
         totalRecords={productRows.length}
       />
+      <br></br>
+
+      <StatusTable style={{marginLeft: "20px"}}>
+        <Row
+          label={t("EWASTE_NET_PRICE")}
+          text={totalPrice}
+        />
+      </StatusTable>
 
       {/* {prlistName?.map((p, index) => (
                 <ProductListElement 

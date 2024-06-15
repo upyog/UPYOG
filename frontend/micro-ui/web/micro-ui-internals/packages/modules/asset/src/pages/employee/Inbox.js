@@ -108,7 +108,7 @@ const Inbox = ({
           searchParams={searchParams}
           sortParams={sortParams}
           linkPrefix={`${parentRoute}/application-details/`}
-          tableConfig={rest?.tableConfig ? res?.tableConfig:TableConfig(t)["PTR"]}
+          tableConfig={rest?.tableConfig ? res?.tableConfig:TableConfig(t)["ASSET"]}
           filterComponent={filterComponent}
           EmptyResultInboxComp={EmptyResultInboxComp}
           useNewInboxAPI={useNewInboxAPI}
@@ -125,7 +125,7 @@ const Inbox = ({
             moduleCode={moduleCode}
             data={data}
             
-            tableConfig={TableConfig(t)["AST"]}
+            tableConfig={TableConfig(t)["ASSET"]}
             isLoading={hookLoading}
             defaultSearchParams={initialStates.searchParams}
             isSearch={!isInbox}

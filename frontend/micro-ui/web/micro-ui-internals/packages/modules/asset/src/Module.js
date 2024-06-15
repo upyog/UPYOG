@@ -8,14 +8,14 @@ import EmployeeApp from "./pages/employee";
 
 import ASSETCard from "./components/ASSETCard";
 import InboxFilter from "./components/inbox/NewInboxFilter";
-import { TableConfig } from "./config/inbox-table-config";
+
 
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import Response from "./pages/Response";
 import SelectOtp from "../../core/src/pages/citizen/Login/SelectOtp";
 import AcknowledgementCF from "@upyog/digit-ui-module-core/src/components/AcknowledgementCF";
 
-
+import { TableConfig } from "./config/inbox-table-config";
 import NewAssetApplication from "./pages/employee/NewAssetApplication";
 import AssetClassification from "./pageComponents/AssetClassification";
 import AssetDocuments from "./pageComponents/AssetDocuments";
@@ -124,6 +124,7 @@ export const ASSETComponents = {
   ASSETCard,
   ASSETModule,
   ASSETLinks,
+  AST_INBOX_FILTER: (props) => <InboxFilter {...props} />,
   ASTInboxTableConfig: TableConfig,
   
 };

@@ -20,7 +20,7 @@ const ApplicationDetails = () => {
   const [enableAudit, setEnableAudit] = useState(false);
   const [businessService, setBusinessService] = useState("asset-create");
 
-  
+  console.log("qwydugewhjgdjwegdwe",applicationNo);
 
   const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
 

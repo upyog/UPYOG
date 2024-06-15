@@ -32,7 +32,9 @@ const NewAssetClassification
 
 
 
-  
+  const [financialYear, setfinancialYear] = useState((formData.asset && formData.asset[index] && formData.asset[index].financialYear) || formData?.asset?.financialYear || "");
+  const [sourceOfFinance, setsourceOfFinance] = useState((formData.asset && formData.asset[index] && formData.asset[index].sourceOfFinance) || formData?.asset?.sourceOfFinance || "");
+
  
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -108,16 +110,42 @@ const NewAssetClassification
           }
     
         });
+   
+
+      // need to chenge it and fetch it from MDMS
+        const financialYearOptions = [
+          { code: "2023-2024", i18nKey: "2023-2024" },
+          { code: "2022-2023", i18nKey: "2022-2023" },
+          { code: "2021-2022", i18nKey: "2021-2022" },
+          // Add more years as needed
+        ];
+
+        const sourceoffinance = [
+          { code: "Test 1", i18nKey: "Test 3" },
+          { code: "Test 2", i18nKey: "Test 3" },
+          { code: "Test 3", i18nKey: "Test 3" },
+          // Add more years as needed
+        ];
 
       const { control } = useForm();
 
   
+
+
 
   function setAssetClassification(e) {
     setassetclassification(e.target.value);
   }
   function setAssetType(e) {
     setassettype(e.target.value);
+  }
+
+  function setFinancialYear(e) {
+    setfinancialYear(e.target.value)
+  }
+
+  function setSourceOfFinance(e){
+    setsourceOfFinance(e.target.value)
   }
   
 
@@ -144,11 +172,11 @@ const NewAssetClassification
     let owner = formData.asset && formData.asset[index];
     let ownerStep;
     if (userType === "citizen") {
-      ownerStep = { ...owner, assetclassification,assetparentsubCategory, assetsubtype, assettype};
+      ownerStep = { ...owner, financialYear,sourceOfFinance, assetclassification,assetparentsubCategory, assetsubtype, assettype};
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
     } else {
       
-      ownerStep = { ...owner, assetclassification,assetparentsubCategory, assetsubtype,assettype, BookPagereference, AssetName,Department,Assetdescription };
+      ownerStep = { ...owner, financialYear,sourceOfFinance,assetclassification,assetparentsubCategory, assetsubtype,assettype, BookPagereference, AssetName,Department,Assetdescription };
       onSelect(config.key, ownerStep, false,index);
     }
   };
@@ -162,7 +190,7 @@ const NewAssetClassification
     if (userType === "citizen") {
       goNext();
     }
-  }, [assetclassification, assetsubtype, assettype, assetparentsubCategory,BookPagereference, AssetName,Department,Assetdescription]);
+  }, [financialYear,sourceOfFinance,assetclassification, assetsubtype, assettype, assetparentsubCategory,BookPagereference, AssetName,Department,Assetdescription]);
 
  
 
@@ -177,9 +205,50 @@ const NewAssetClassification
       onSelect={goNext}
       onSkip={onSkip}
       t={t}
-      isDisabled={!assetclassification || !assetsubtype || !assettype || !assetparentsubCategory || !BookPagereference}
+      isDisabled={!assetclassification || !assetsubtype || !assettype  || !BookPagereference}
     >
       <div>
+
+      <CardLabel>{`${t("AST_FINANCIAL_YEAR")}`}</CardLabel>
+            <Controller
+              control={control}
+              name={"financialYear"}
+              defaultValue={financialYear}
+              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+              render={(props) => (
+                <Dropdown
+
+                  className="form-field"
+                  selected={financialYear}
+                  select={setfinancialYear}
+                  option={financialYearOptions}
+                  optionKey="i18nKey"
+                  t={t}
+                />
+
+              )}
+
+            />
+            <CardLabel>{`${t("AST_SOURCE_FINANCE")}`}</CardLabel>
+            <Controller
+              control={control}
+              name={"sourceOfFinance"}
+              defaultValue={sourceOfFinance}
+              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+              render={(props) => (
+                <Dropdown
+
+                  className="form-field"
+                  selected={sourceOfFinance}
+                  select={setsourceOfFinance}
+                  option={sourceoffinance}
+                  optionKey="i18nKey"
+                  t={t}
+                />
+
+              )}
+
+            />
         
         <CardLabel>{`${t("AST_CATEGORY")}`}</CardLabel>
             <Controller

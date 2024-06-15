@@ -1,8 +1,22 @@
+/**
+ * @author - Shivank Shukla  - NIUA
+ * 
+ * Fetch Location Feature in AssetStreets Component
+ * 
+ * This feature allows users to fetch their current geographic coordinates (latitude and longitude) using the browser's Geolocation API.
+ * 
+ * 
+ * - The `handleGetLocation` function is triggered when the "AST_FETCH_LOCATION" button is clicked. It fetches the current position and 
+ *   updates the `latitude` and `longitude` states.
+ * 
+ * - The `locationFetched` state is set to true once the location is successfully fetched, enabling the conditional rendering of the 
+ *   latitude and longitude fields and disabling the fetch button.
+ * 
+ */
 
 
 
-
-import { CardLabel, FormStep, LabelFieldPair, TextInput ,CardLabelError} from "@upyog/digit-ui-react-components";
+import { CardLabel, FormStep, TextInput ,SubmitBar} from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -11,15 +25,15 @@ import Timeline from "../components/ASTTimeline";
 const AssetStreets = ({ t, config, onSelect, userType, formData, formState, setError, clearErrors }) => {
   const onSkip = () => onSelect();
   const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
-  const [street,setStreet]=useState(formData?.address?.street || "")
-  const [addressLine1,setaddressLine1]=useState(formData?.address?.addressLine1 ||"" )
-  const [addressLine2,setaddressLine2]=useState(formData?.address?.addressLine2 ||"" )
-  const [landmark,setlandmark]=useState(formData?.address?.landmark ||"" )
-  const [latitude,setlatitude]=useState(formData?.address?.latitude ||"" )
-  const [longitude,setlongitude]=useState(formData?.address?.longitude ||"" )
-  const [doorNo,setDoorNo]=useState(formData?.address?.doorNo ||"" )
+  const [street, setStreet] = useState(formData?.address?.street || "");
+  const [addressLine1, setAddressLine1] = useState(formData?.address?.addressLine1 || "");
+  const [addressLine2, setAddressLine2] = useState(formData?.address?.addressLine2 || "");
+  const [landmark, setLandmark] = useState(formData?.address?.landmark || "");
+  const [latitude, setLatitude] = useState(formData?.address?.latitude || "");
+  const [longitude, setLongitude] = useState(formData?.address?.longitude || "");
+  const [doorNo, setDoorNo] = useState(formData?.address?.doorNo || "");
 
-
+  const [locationFetched, setLocationFetched] = useState(!!formData?.address?.latitude && !!formData?.address?.longitude);
 
 
 
@@ -36,36 +50,7 @@ const AssetStreets = ({ t, config, onSelect, userType, formData, formState, setE
   const isRenewal = window.location.href.includes("edit-application") || window.location.href.includes("tl/renew-application-details");
   let validation = {};
   let inputs;
-  if (window.location.href.includes("tl")) {
-    inputs = config.inputs;
-    config.inputs[0].disable = window.location.href.includes("edit-application");
-    config.inputs[1].disable = window.location.href.includes("edit-application");
-  } else {
-    inputs = [
-      {
-        label: "PT_PROPERTY_ADDRESS_STREET_NAME",
-        type: "text",
-        name: "street",
-        isMandatory:"true",
-        validation: {
-          pattern: "[a-zA-Z0-9 !@#$%^&()_+\-={};':\\\\|,.<>/?]{1,64}",
-          isRequired: true,
-          title: t("CORE_COMMON_STREET_INVALID"),
-        },
-      },
-      {
-        label: "PT_PROPERTY_ADDRESS_HOUSE_NO",
-        type: "text",
-        name: "doorNo",
-        isMandatory:"true",
-        validation: {
-          pattern: "[a-zA-Z0-9 !@#$%^&()_+\-={};':\\\\|,.<>/?]{1,64}",
-          isRequired: true,
-          title: t("CORE_COMMON_DOOR_INVALID"),
-        },
-      },
-    ];
-  }
+  
 
   const convertValidationToRules = ({ validation, name, messages }) => {
     if (validation) {
@@ -120,31 +105,41 @@ const setData=(config,data)=>{
     } 
   }, [formValue]);
 
-  function selectStreet(e) {
-    setFocusIndex({ index:1 });
-    setStreet(e.target.value);
-  }
-  function selectDoorNo(e) {
-    setDoorNo(e.target.value);
-  }
+  const handleGetLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setLatitude(latitude);
+          setLongitude(longitude);
+          setLocationFetched(true);
+        },
+        (error) => {
+          console.error("Error Code = " + error.code + " - " + error.message);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+  };
+
+  
 
 
-  function selectLatitude(e) {
-    setlatitude(e.target.value);
-  }
-  function selectLandmark(e) {
-    setlandmark(e.target.value);
-  }
-  function selectaddressLineone(e) {
-    setaddressLine1(e.target.value);
-  }
-  function selectaddressLinetwo(e) {
-    setaddressLine2(e.target.value);
-  }
-  function selectLongitude(e) {
-    setlongitude(e.target.value);
-  }
+  const handleHideLocationFields = () => {
+    setLocationFetched(false);
+    setLatitude('');
+    setLongitude('');
+  };
 
+  
+  const selectStreet = (e) => setStreet(e.target.value);
+  const selectDoorNo = (e) => setDoorNo(e.target.value);
+  const selectLatitude = (e) => setLatitude(e.target.value);
+  const selectLandmark = (e) => setLandmark(e.target.value);
+  const selectAddressLine1 = (e) => setAddressLine1(e.target.value);
+  const selectAddressLine2 = (e) => setAddressLine2(e.target.value);
+  const selectLongitude = (e) => setLongitude(e.target.value);
   
   return (
     <React.Fragment>
@@ -190,7 +185,7 @@ const setData=(config,data)=>{
             type={"text"}
             optionKey="i18nKey"
             name="addressLine1"
-            onChange={selectaddressLineone}
+            onChange={selectAddressLine1}
             value={addressLine1}
             style={{width:"50%"}}
             errorStyle={true}
@@ -203,7 +198,7 @@ const setData=(config,data)=>{
             type={"text"}
             optionKey="i18nKey"
             name="addressLine2"
-            onChange={selectaddressLinetwo}
+            onChange={selectAddressLine2}
             style={{width:"50%"}}
             value={addressLine2}
             errorStyle={false}
@@ -223,34 +218,39 @@ const setData=(config,data)=>{
             errorStyle={true}
             autoFocus={focusIndex?.index == 1}
           />
-          <CardLabel>{`${t("AST_LATITUDE")}`}</CardLabel>
-          <TextInput
-            t={t}
-            //isMandatory={true}
-            type={"text"}
-            optionKey="i18nKey"
-            name="latitude"
-            onChange={selectLatitude}
-            style={{width:"50%"}}
-            value={latitude}
-            errorStyle={false}
-            autoFocus={focusIndex?.index == 1}
-           
-          />
-          <CardLabel>{`${t("AST_LONGITUDE")}`}</CardLabel>
-          <TextInput
-            t={t}
-            //isMandatory={true}
-            type={"text"}
-            optionKey="i18nKey"
-            name="longitude"
-            onChange={selectLongitude}
-            value={longitude}
-            style={{width:"50%"}}
-            errorStyle={true}
-            autoFocus={focusIndex?.index == 1}
-          />
-          
+           {locationFetched && (
+          <React.Fragment>
+            <CardLabel>{`${t("AST_LATITUDE")}`}</CardLabel>
+            <TextInput
+              t={t}
+              type={"text"}
+              optionKey="i18nKey"
+              name="latitude"
+              onChange={selectLatitude}
+              style={{ width: "50%" }}
+              value={latitude}
+              errorStyle={false}
+              autoFocus={focusIndex?.index == 1}
+            />
+            <CardLabel>{`${t("AST_LONGITUDE")}`}</CardLabel>
+            <TextInput
+              t={t}
+              type={"text"}
+              optionKey="i18nKey"
+              name="longitude"
+              onChange={selectLongitude}
+              value={longitude}
+              style={{ width: "50%" }}
+              errorStyle={true}
+              autoFocus={focusIndex?.index == 1}
+            />
+          </React.Fragment>
+        )}
+
+          <br></br>
+
+          <SubmitBar label={t("AST_FETCH_LOCATION")} onSubmit={handleGetLocation} disabled={locationFetched} />
+          <br></br>
       </FormStep>
     </React.Fragment>
   );
