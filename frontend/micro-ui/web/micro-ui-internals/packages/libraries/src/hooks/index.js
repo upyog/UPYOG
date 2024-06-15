@@ -297,6 +297,8 @@ import useServiceSearchCHB from "./chb/useServiceSearchCHB";
 import useChbCommunityHalls from "./chb/useChbCommunityHalls";
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
+import useEWSearch from "./ew/useEWSearch";
+
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
