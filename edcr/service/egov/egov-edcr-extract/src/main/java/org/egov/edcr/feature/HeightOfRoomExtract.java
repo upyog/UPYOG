@@ -388,6 +388,56 @@ public class HeightOfRoomExtract extends FeatureExtract {
 							}
 						}
 						 }
+						 
+						// Code Added by Neha for roomwise doors extract
+						 for (Room room : floor.getRegularRooms()) {
+                            
+						String roomDoorLayerName = String.format(layerNames.getLayerName("LAYER_NAME_REGULAR_ROOM_DOOR"),
+								block.getNumber(), floor.getNumber(), room.getNumber(), "+\\d");
+
+						List<String> roomDoorLayers = Util.getLayerNamesLike(pl.getDoc(), roomDoorLayerName);
+
+						if (!roomDoorLayers.isEmpty()) {
+
+							for (String doorLayer : roomDoorLayers) {
+								String doorHeight = Util.getMtextByLayerName(pl.getDoc(), doorLayer);
+
+//                            	List<DXFLWPolyline> doorPolyLines = Util.getPolyLinesByLayer(pl.getDoc(),
+//                            			doorLayer);
+
+//                            	BigDecimal doorWidth=BigDecimal.ZERO;
+
+								List<DXFDimension> dimensionList = Util.getDimensionsByLayer(pl.getDoc(), doorLayer);
+								if (dimensionList != null && !dimensionList.isEmpty()) {
+									Door door = new Door();
+									BigDecimal doorHeight1 = doorHeight != null
+											? BigDecimal.valueOf(
+													Double.valueOf(doorHeight.replaceAll("DOOR_HT_M=", "")))
+											: BigDecimal.ZERO;
+									door.setDoorHeight(doorHeight1);
+									for (Object dxfEntity : dimensionList) {
+										DXFDimension dimension = (DXFDimension) dxfEntity;
+										List<BigDecimal> values = new ArrayList<>();
+										Util.extractDimensionValue(pl, values, dimension, doorLayer);
+
+										if (!values.isEmpty()) {
+											for (BigDecimal minDis : values) {
+//                                            	doorWidth=minDis;
+												door.setDoorWidth(minDis);
+											}
+										} else {
+											door.setDoorWidth(BigDecimal.ZERO);
+										}
+									}
+									room.addDoors(door);
+								}
+//								else {
+//									window.setWindowWidth(BigDecimal.ZERO);
+//								}
+
+							}
+						}
+						 }
 						
 						// Code Added by Neha for windows extract
 
