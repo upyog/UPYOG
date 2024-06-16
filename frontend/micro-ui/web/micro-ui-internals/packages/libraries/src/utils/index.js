@@ -235,6 +235,17 @@ const ewAccess = () => {
   return EW_ACCESS?.length > 0;
 };
 
+const chbAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const chbRoles = ["CHB_APPROVER", "CHB_CEMP", "CHB_VERIFIER"];
+
+  const CHB_ACCESS = userRoles?.filter((role) => chbRoles?.includes(role));
+
+  return CHB_ACCESS?.length > 0;
+};
+
 const assetAccess = () => {
   const userInfo = Digit.UserService.getUser();
   
@@ -333,6 +344,7 @@ export default {
   didEmployeeHasRole,
   hrmsAccess,
   getPattern,
+  chbAccess,
   hrmsRoles,
   getUnique,
   tlAccess,

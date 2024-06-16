@@ -13,7 +13,8 @@
     "packages/modules/asset",
     "packages/modules/ew",
     "packages/modules/ptr",
-    "packages/modules/obps"
+    "packages/modules/obps",
+    "packages/modules/chb"
 
 
 
@@ -50,6 +51,7 @@
     "dev:asset": "cd packages/modules/asset && yarn start",
     "dev:hrms": "cd packages/modules/hrms && yarn start",
     "dev:obps": "cd packages/modules/obps && yarn start",
+    "dev:chb": "cd packages/modules/chb && yarn start",
     "dev:engagement": "cd packages/modules/engagement && yarn start",
     "dev:noc": "cd packages/modules/noc && yarn start",
     "dev:ws": "cd packages/modules/ws && yarn start",
@@ -76,6 +78,7 @@
     "build:ew": "cd packages/modules/ew && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
     "buildD:noc": "cd packages/modules/noc && yarn build",
+    "build:chb": "cd packages/modules/chb && yarn build",
     "buildD:ws": "cd packages/modules/ws && yarn build",
     "buildD:bills": "cd packages/modules/bills && yarn build",
     "buildR:reports": "cd packages/modules/reports && yarn build",

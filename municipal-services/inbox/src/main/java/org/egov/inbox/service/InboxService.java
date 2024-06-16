@@ -35,6 +35,7 @@ import static org.egov.inbox.util.BSConstants.*;
 import static org.egov.inbox.util.WSConstants.WS;
 import static org.egov.inbox.util.PTRConstants.PTR;
 import static org.egov.inbox.util.AssetConstants.ASSET;
+import static org.egov.inbox.util.EwasteConstants.EWASTE;
 
 import java.util.*;
 import java.util.function.Function;
@@ -128,6 +129,9 @@ public class InboxService {
     private AssetInboxFilterService assetInboxFilterService;
 
     @Autowired
+    private EwasteInboxFilterService ewasteInboxFilterService;
+    
+    @Autowired
     private RestTemplate restTemplate;
 
     @Autowired
@@ -164,7 +168,7 @@ public class InboxService {
             totalCount = workflowService.getProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
 //        Integer nearingSlaProcessCount = workflowService.getNearingSlaProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
         Integer nearingSlaProcessCount =  0;
-        if(!(processCriteria.getModuleName().equals(PTR) || processCriteria.getModuleName().equals(PT) || processCriteria.getModuleName().equals(ASSET))) {
+        if(!(processCriteria.getModuleName().equals(PTR) || processCriteria.getModuleName().equals(PT) || processCriteria.getModuleName().equals(ASSET) || processCriteria.getModuleName().equals(EWASTE))) {
         	nearingSlaProcessCount = workflowService.getNearingSlaProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
         }
         
@@ -371,7 +375,7 @@ public class InboxService {
                     moduleSearchCriteria.remove(LOCALITY_PARAM);
                     moduleSearchCriteria.remove(OFFSET_PARAM);
                 } else {
-                    isSearchResultEmpty = true;
+                    isSearchResultEmpty = true;	
                 }
             }//for pet service
             
@@ -388,6 +392,20 @@ public class InboxService {
                     isSearchResultEmpty = true;
                 }
             }//for asset service
+            
+            if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(EWASTE)) {
+
+                List<String> applicationNumbers = ewasteInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
+                        StatusIdNameMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                    moduleSearchCriteria.put(ACKNOWLEDGEMENT_IDS_PARAM, applicationNumbers);
+                    businessKeys.addAll(applicationNumbers);
+                    moduleSearchCriteria.remove(LOCALITY_PARAM);
+                    moduleSearchCriteria.remove(OFFSET_PARAM);
+                } else {
+                    isSearchResultEmpty = true;
+                }
+            }// for ewaste service
             
             if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && ( processCriteria.getModuleName().equals(TL)
                     || processCriteria.getModuleName().equals(BPAREG))) {
@@ -1072,6 +1090,12 @@ public class InboxService {
 				moduleSearchCriteria.remove("status");
 			}
 		} // for pet-service
+		
+		if (moduleSearchCriteria.containsKey("requestStatus")) { // for pet-service
+			if (businessServiceName.contains("ewst")) {
+				moduleSearchCriteria.remove("requestStatus");
+			}
+		}
 		
         Set<String> searchParams = moduleSearchCriteria.keySet();
         

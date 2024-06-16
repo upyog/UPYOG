@@ -8,14 +8,14 @@ import EmployeeApp from "./pages/employee";
 
 import ASSETCard from "./components/ASSETCard";
 import InboxFilter from "./components/inbox/NewInboxFilter";
-import { TableConfig } from "./config/inbox-table-config";
+
 
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import Response from "./pages/Response";
 import SelectOtp from "../../core/src/pages/citizen/Login/SelectOtp";
 import AcknowledgementCF from "@upyog/digit-ui-module-core/src/components/AcknowledgementCF";
 
-
+import { TableConfig } from "./config/inbox-table-config";
 import NewAssetApplication from "./pages/employee/NewAssetApplication";
 import AssetClassification from "./pageComponents/AssetClassification";
 import AssetDocuments from "./pageComponents/AssetDocuments";
@@ -26,7 +26,13 @@ import AssetCommonSelection from "./pageComponents/AssetCommonSelection";
 import AssetLand from "./pageComponents/AssetLand";
 import AssetBuildings from "./pageComponents/AssetBuildings";
 import AssetStreets from "./pageComponents/AssetStreets";
-
+import ServiceDoc from "./pageComponents/ServiceDoc";
+import ASSETCreate from "./pages/employee/TestApplication/Create";
+import NewAssetClassification from "./pageComponents/NewAssetClassification";
+import NewAsset from "./pageComponents/NewAsset";
+import NewDocument from "./pageComponents/NewDocument";
+import ASTCheckPage from "./pages/employee/TestApplication/Create/CheckPage"
+import NewResponse from "./pages/employee/TestApplication/Create/NewResponse";
 
 
 const componentsToRegister = {
@@ -42,6 +48,13 @@ const componentsToRegister = {
   AssetLand,
   AssetBuildings,
   AssetStreets,
+  ServiceDoc,
+  AssetCreateNew: ASSETCreate,
+  NewAssetClassification,
+  NewAsset,
+  NewDocument,
+  ASTCheckPage,
+  NewResponse,
   
 
 
@@ -111,6 +124,7 @@ export const ASSETComponents = {
   ASSETCard,
   ASSETModule,
   ASSETLinks,
+  AST_INBOX_FILTER: (props) => <InboxFilter {...props} />,
   ASTInboxTableConfig: TableConfig,
   
 };

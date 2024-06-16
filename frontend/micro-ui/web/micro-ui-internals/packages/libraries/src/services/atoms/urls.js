@@ -100,11 +100,24 @@ const Urls = {
     
   },
 
+  ew: {
+    create:"/ewaste-services/ewaste-request/_create",
+    search:"/ewaste-services/ewaste-request/_search",
+    update:"/ewaste-services/ewaste-request/_update",
+  },
+
   asset:{
     create:"/asset-services/v1/assets/_create",
     search:"/asset-services/v1/assets/_search",
     update:"/asset-services/v1/assets/_update"
   },
+
+  chb: {    
+    create:"/chb-services/booking/v1/_create",
+    search:"/chb-services/booking/v1/_search",
+    update:"/chb-services/booking/v1/_update",
+  },
+
 
 
   dss: {

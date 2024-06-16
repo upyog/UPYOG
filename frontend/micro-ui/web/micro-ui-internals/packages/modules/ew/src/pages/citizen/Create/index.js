@@ -1,4 +1,4 @@
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 import React ,{Fragment}from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
@@ -16,7 +16,7 @@ const EWCreate = ({ parentRoute }) => {
   const history = useHistory();
   const stateId = Digit.ULBService.getStateId();
   let config = [];
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PTR_CREATE_PET", {});
+  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("EWASTE_CREATE", {});
   let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig"); //  PROPERTY CONFIG HOOK , just for commkonfeild config 
   const goNext = (skipStep, index, isAddMultiple, key) => {
     let currentPath = pathname.split("/").pop(),
@@ -66,10 +66,10 @@ const EWCreate = ({ parentRoute }) => {
   if(params && Object.keys(params).length>0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true")
     {
       clearParams();
-      queryClient.invalidateQueries("PTR_CREATE_PET");
+      queryClient.invalidateQueries("EWASTE_CREATE");
     }
 
-  const ptrcreate = async () => {
+  const ewasteCreate = async () => {
     history.push(`${match.path}/acknowledgement`);
   };
 
@@ -95,7 +95,7 @@ const EWCreate = ({ parentRoute }) => {
 
   const onSuccess = () => {
     clearParams();
-    queryClient.invalidateQueries("PTR_CREATE_PET");
+    queryClient.invalidateQueries("EWASTE_CREATE");
   };
   if (isLoading) {
     return <Loader />;
@@ -111,14 +111,11 @@ const EWCreate = ({ parentRoute }) => {
   config.indexRoute = "productdetails";
 
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("EWCheckPage");
-  // const PTRAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTRAcknowledgement");
-
-  
+  const EWASTEAcknowledgement = Digit?.ComponentRegistryService?.getComponent("EWASTEAcknowledgement");
   
   return (
     <Switch>
       {config.map((routeObj, index) => {
-        console.log("the config is runnnging", config)
         const { component, texts, inputs, key } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
@@ -130,11 +127,11 @@ const EWCreate = ({ parentRoute }) => {
 
       
        <Route path={`${match.path}/check`}>
-        <CheckPage onSubmit={ptrcreate} value={params} />
+        <CheckPage onSubmit={ewasteCreate} value={params} />
       </Route>
-      {/* <Route path={`${match.path}/acknowledgement`}>
-        <PTRAcknowledgement data={params} onSuccess={onSuccess} />
-      </Route> */}
+      <Route path={`${match.path}/acknowledgement`}>
+        <EWASTEAcknowledgement data={params} onSuccess={onSuccess} />
+      </Route>
        <Route>
         <Redirect to={`${match.path}/${config.indexRoute}`} />
       </Route> 

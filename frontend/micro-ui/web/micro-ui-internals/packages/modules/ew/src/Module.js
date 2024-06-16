@@ -11,7 +11,11 @@ import EWASTEProductListElement from "./components/EWASTEProductListElement";
 import EWCheckPage from "./pages/citizen/Create/CheckPage";
 import EWCreate from "./pages/citizen/Create";
 import CitizenApp from "./pages/citizen";
-import EWASTEVendorDetails from "./pageComponents/EWASTEVendorDetails"
+import EWASTEVendorDetails from "./pageComponents/EWASTEVendorDetails";
+import EWASTECitizenAddress from "./pageComponents/EWASTECitizenAddress";
+import EWASTESelectPincode from "./pageComponents/EWASTESelectPincode";
+import EWASTESelectAddress from "./pageComponents/EWASTESelectAddress";
+import EWASTEAcknowledgement from "./pages/citizen/Create/EWASTEAcknowledgement";
 
 
 
@@ -22,7 +26,11 @@ const componentsToRegister = {
   EWASTEOwnerInfo,
   EWASTEProductList,
   EWASTEProductListElement,
-  EWASTEVendorDetails
+  EWASTEVendorDetails,
+  EWASTECitizenAddress,
+  EWASTESelectPincode,
+  EWASTESelectAddress,
+  EWASTEAcknowledgement
 }
 
 
@@ -36,7 +44,6 @@ const addComponentsToRegistry = () => {
   
   export const EWModule = ({ stateCode, userType, tenants }) => {
     const { path, url } = useRouteMatch();
-    console.log("this ai another path",path,url)
   
     const moduleCode = "EW";
     const language = Digit.StoreData.getCurrentLanguage();
@@ -79,17 +86,17 @@ const addComponentsToRegistry = () => {
       // },
       
     //   {
-    //     link: `${matchPath}/ptr/petservice/my-applition`,
-    //     i18nKey: t("PTR_MY_APPLICATIONS_HEADER"),
+    //     link: `${matchPath}/EWASTE/petservice/my-applition`,
+    //     i18nKey: t("EWASTE_MY_APPLICATIONS_HEADER"),
     //   },
       
     //   {
     //     link: `${matchPath}/howItWorks`,
-    //     i18nKey: t("PTR_HOW_IT_WORKS"),
+    //     i18nKey: t("EWASTE_HOW_IT_WORKS"),
     //   },
     //   {
     //     link: `${matchPath}/faqs`,
-    //     i18nKey: t("PTR_FAQ_S"),
+    //     i18nKey: t("EWASTE_FAQ_S"),
     //   },
     ];
   
@@ -100,5 +107,4 @@ const addComponentsToRegistry = () => {
     EWCard,
     EWModule,
     EWLinks,
-    
   };

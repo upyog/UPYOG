@@ -70,6 +70,8 @@ module.exports = function (app) {
     "/asset-services/v1/assets/_search",
     "/asset-services/v1/assets/_update",
     "/billing-service/bill/v2/_fetchbill",
+    "/chb-services/booking/v1/_create",
+    "/ewaste-services/ewaste-request/_create",
     "/collection-services/payments/pet-services/_search",
     "/requester-services-dx"
    
