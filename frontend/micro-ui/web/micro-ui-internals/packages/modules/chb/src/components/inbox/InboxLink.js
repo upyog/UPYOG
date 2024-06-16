@@ -9,20 +9,20 @@ const InboxLinks = ({ parentRoute, businessService }) => {
   const allLinks = [
     {
       text: "ES_TITLE_NEW_PET_REGISTRATION",
-      link: "/digit-ui/employee/ptr/new-application",
-      businessService: "ptr",
-      roles: ["PT_CEMP"],
+      link: "/digit-ui/employee/chb/new-application",
+      businessService: "chb",
+      roles: ["CHB_APPROVER"],
     },
     {
-      text: "PTR_SEARCH_PET",
-      link: `/digit-ui/employee/ptr/search`,
-      businessService: "ptr",
+      text: "CHB_SEARCH",
+      link: `/digit-ui/employee/chb/search`,
+      businessService: "chb",
       roles: [],
     },
     {
-      text: "PTR_COMMON_APPLICATION_SEARCH",
-      link: `/digit-ui/employee/ptr/application-search`,
-      businessService: "ptr",
+      text: "CHB_COMMON_APPLICATION_SEARCH",
+      link: `/digit-ui/employee/chb/application-search`,
+      businessService: "chb",
       roles: [],
     },
     // { text: "PT_REPORTS", hyperLink: true, link: "/digit-ui/employee/integration/dss/propertytax", roles: [], businessService: "PT" },
@@ -45,7 +45,7 @@ const InboxLinks = ({ parentRoute, businessService }) => {
       <span className="logo">
         <PropertyHouse />
       </span>{" "}
-      <span className="text">{t("PET_SERVICE")}</span>
+      <span className="text">{t("CHB_SERVICE")}</span>
     </div>
   );
 

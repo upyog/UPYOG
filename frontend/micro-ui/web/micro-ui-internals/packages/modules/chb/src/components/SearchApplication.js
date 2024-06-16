@@ -3,7 +3,7 @@
   import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@upyog/digit-ui-react-components";
   import { Link } from "react-router-dom";
 
-  const PTRSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
+  const CHBSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
     
       const isMobile = window.Digit.Utils.browser.isMobile();
       const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
@@ -21,67 +21,35 @@
         register("sortOrder", "DESC")
       },[register])
       
-      const applicationStatuses = [
-          {
-              code: "ACTIVE",
-              i18nKey: "WF_PTR_ACTIVE"
-          },
-          {
-              code: "INACTIVE",
-              i18nKey: "WF_PTR_INACTIVE"
-          },
-          {
-              code: "INWORKFLOW",
-              i18nKey: "WF_PTR_INWORKFLOW"
-          },
-      ]
-      
+
       const stateId = Digit.ULBService.getStateId();
 
 
-      const { data: Menu } = Digit.Hooks.ptr.usePTRPetMDMS(stateId, "PetService", "PetType");
-      // const { data: Breed_Type } = Digit.Hooks.ptr.useBreedTypeMDMS(stateId, "PetService", "BreedType");  // hooks for breed type
-
+      const { data: Menu } = Digit.Hooks.chb.useResidentType(stateId, "CHB", "ChbResidentType");
+    
       let menu = [];
 
       
-      // let breed_type = [];
-
 
       Menu &&
-    Menu.map((petone) => {
-      menu.push({ i18nKey: `PTR_PET_${petone.code}`, code: `${petone.code}`, value: `${petone.name}` });
+    Menu.map((one) => {
+      menu.push({ i18nKey: `CHB_${one.code}`, code: `${one.code}`, value: `${one.name}` });
     });
 
-    // Breed_Type &&
-    // Breed_Type.map((breedss) => {
-    //   if (breedss.PetType == menu?.code) {
-    //     breed_type.push({
-    //       i18nKey: `PTR_BREED_TYPE_${breedss.code}`,
-    //       code: `${breedss.code}`,
-    //       value: `${breedss.name}`
-    //     });
-    //   }
-
-    // });
-
-
-
-      
       const GetCell = (value) => <span className="cell-text">{value}</span>;
       
       const columns = useMemo( () => ([
           
           {
-              Header: t("PTR_APPLICATION_NUMBER"),
-              accessor: "applicationNumber",
+              Header: t("CHB_APPLICATION_NUMBER"),
+              accessor: "bookingNo",
               disableSortBy: true,
               Cell: ({ row }) => {
                 return (
                   <div>
                     <span className="link">
-                      <Link to={`/digit-ui/employee/ptr/petservice/applicationsearch/application-details/${row.original["applicationNumber"]}`}>
-                        {row.original["applicationNumber"]}
+                      <Link to={`/digit-ui/employee/chb/bookHall/applicationsearch/application-details/${row.original["bookingNo"]}`}>
+                        {row.original["bookingNo"]}
                       </Link>
                     </span>
                   </div>
@@ -91,7 +59,7 @@
           
 
             {
-              Header: t("PTR_APPLICANT_NAME"),
+              Header: t("CHB_APPLICANT_NAME"),
               Cell: ( row ) => {
                 return GetCell(`${row?.row?.original?.["applicantName"]}`)
                 
@@ -99,22 +67,22 @@
               disableSortBy: true,
             },
             {
-              Header: t("PTR_PET_TYPE"),
+              Header: t("CHB_HALL_NAME"),
               Cell: ({ row }) => {
-                return GetCell(`${row.original?.petDetails?.["petType"]}`)
+                return GetCell(`${row.original?.residentType?.["residentType"]}`)
               },
               disableSortBy: true,
             
             },
             {
-              Header: t("PTR_BREED_TYPE"),
+              Header: t("CHB_HALL_CODE"),
               Cell: ({ row }) => {
                 return GetCell(`${row.original?.petDetails?.["breedType"]}`)
               },
               disableSortBy: true,
             },
             {
-              Header: t("PTR_MOBILE_NUMBER"),
+              Header: t("CHB_MOBILE_NUMBER"),
               Cell: ({ row }) => {
                 return GetCell(`${row?.original?.["mobileNumber"]}`)
               },
@@ -146,22 +114,23 @@
       return <React.Fragment>
                   
                   <div>
-                  <Header>{t("PTR_SEARCH_PET_APPLICATIONS")}</Header>
+                  <Header>{t("CHB_SEARCH_APPLICATIONS")}</Header>
                   < Card className={"card-search-heading"}>
                       <span style={{color:"#505A5F"}}>{t("Provide at least one parameter to search for an application")}</span>
                   </Card>
                   <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                   <SearchField>
-                      <label>{t("PTR_APPLICATION_NO_LABEL")}</label>
+                      <label>{t("CHB_APPLICATION_NO_LABEL")}</label>
                       <TextInput name="applicationNumber" inputRef={register({})} />
                   </SearchField>
                   <SearchField>
-                      <label>{t("PTR_SEARCH_PET_TYPE")}</label>
+                      <label>{t("CHB_SEARCH_RESIDENT_TYPE")}</label>
                       {/* <TextInput name="petType" inputRef={register({})} /> */}
                       <Controller
                               control={control}
                               name="petType"
                               render={(props) => (
+
                                   <Dropdown
                                   selected={props.value}
                                   select={props.onChange}
@@ -171,29 +140,12 @@
                                   t={t}
                                   disable={false}
                                   />
+                                  
                               )}
                               />
                   </SearchField>
-                  {/* <SearchField>
-                      <label>{t("PTR_SEARCH_BREED_TYPE")}</label>
-                       <Controller
-                              control={control}
-                              name="breedType"
-                              render={(props) => (
-                                  <Dropdown
-                                  selected={props.value}
-                                  select={props.onChange}
-                                  onBlur={props.onBlur}
-                                  option={breed_type}
-                                  optionKey="i18nKey"
-                                  t={t}
-                                  disable={false}
-                                  />
-                              )}
-                              />
-                  </SearchField> */}
                   <SearchField>
-                  <label>{t("PTR_OWNER_MOBILE_NO")}</label>
+                  <label>{t("CHB_OWNER_MOBILE_NO")}</label>
                   <MobileNumber
                       name="mobileNumber"
                       inputRef={register({
@@ -218,7 +170,7 @@
                   <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
                   </SearchField> 
                   <SearchField>
-                      <label>{t("PTR_FROM_DATE")}</label>
+                      <label>{t("CHB_FROM_DATE")}</label>
                       <Controller
                           render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
                           name="fromDate"
@@ -226,7 +178,7 @@
                           />
                   </SearchField>
                   <SearchField>
-                      <label>{t("PTR_TO_DATE")}</label>
+                      <label>{t("CHB_TO_DATE")}</label>
                       <Controller
                           render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
                           name="toDate"
@@ -274,7 +226,7 @@
                   getCellProps={(cellInfo) => {
                   return {
                       style: {
-                      minWidth: cellInfo.column.Header === t("PTR_INBOX_APPLICATION_NO") ? "240px" : "",
+                      minWidth: cellInfo.column.Header === t("CHB_INBOX_APPLICATION_NO") ? "240px" : "",
                       padding: "20px 18px",
                       fontSize: "16px"
                     },
@@ -293,4 +245,4 @@
           </React.Fragment>
   }
 
-  export default PTRSearchApplication
+  export default CHBSearchApplication

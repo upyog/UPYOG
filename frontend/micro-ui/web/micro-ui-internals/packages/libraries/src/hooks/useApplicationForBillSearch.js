@@ -3,6 +3,7 @@ import { PTService } from "../services/elements/PT";
 import { useQuery } from "react-query";
 import { MCollectService } from "../services/elements/MCollect";
 import { PTRService } from "../services/elements/PTR";
+import { CHBServices } from "../services/elements/CHB";
 
 const fsmApplications = async (tenantId, filters) => {
   return (await FSMService.search(tenantId, { ...filters, limit: 10000 })).fsm;
@@ -10,6 +11,11 @@ const fsmApplications = async (tenantId, filters) => {
 
 const ptrApplications = async (tenantId, filters) => {
   return (await PTRService.search({ tenantId, filters })).PetRegistrationApplications;
+};
+
+
+const chbApplications = async (tenantId, filters) => {
+  return (await CHBServices.search({ tenantId, filters })).hallsBookingApplication;
 };
 
 const ptApplications = async (tenantId, filters) => {
@@ -37,6 +43,11 @@ const refObj = (tenantId, filters) => {
       searchFn: () => ptrApplications(null, { ...filters, applicationNumber: consumerCodes }),
       key: "applicationNumber",
       label: "PTR_UNIQUE_APPLICATION_NUMBER",
+    },
+    chb: {
+      searchFn: () => chbApplications(null, { ...filters, applicationNumber: consumerCodes }),
+      key: "applicationNumber",
+      label: "CHB_UNIQUE_APPLICATION_NUMBER",
     },
     fsm: {
       searchFn: () => fsmApplications(tenantId, filters),
@@ -92,6 +103,9 @@ export const useApplicationsForBusinessServiceSearch = ({ tenantId, businessServ
   }
   if (window.location.href.includes("pet-services")) {
     _key = "ptr"
+  } 
+  if (window.location.href.includes("chb-services")) {
+    _key = "chb"
   } 
 
   /* key from application ie being used as consumer code in bill */

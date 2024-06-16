@@ -18,14 +18,14 @@ const EWCard = () => {
     //    link: `/digit-ui/employee/ptr/petservice/inbox`,
     //  },
      {
-       label: t("EW_TITLE_NEW_EWASTE_APPLICATION"),
-       link: `/digit-ui/employee/ptr/petservice/inbox`,
+       label: t("INBOX"),
+       link: `/digit-ui/employee/ew/inbox`,
        role: "EW_CEMP"
      },
-    //  {
-    //    label: t("ES_COMMON_APPLICATION_SEARCH"),
-    //    link: `/digit-ui/employee/ptr/petservice/my-applications`,
-    // },
+     {
+      label: t("ES_COMMON_APPLICATION_SEARCH"),
+      link: `/digit-ui/employee/ew/my-applications`,
+   },
   ]
   const EW_CEMP = Digit.UserService.hasAccess(["EW_VENDOR"]) || false;
   const propsForModuleCard = {
