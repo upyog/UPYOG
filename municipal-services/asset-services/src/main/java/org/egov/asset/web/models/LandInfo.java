@@ -1,21 +1,21 @@
 package org.egov.asset.web.models;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import java.math.BigInteger;
+
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Builder;
 
 /**
- * Specific details related to the asset get stored as JSON in single column in Database.
+ * Specific details related to the asset get stored as JSON in single column in
+ * Database.
  */
 @ApiModel(description = "Specific details related to the asset get stored as JSON in single column in Database.")
 @Validated
@@ -26,90 +26,87 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LandInfo   {
-        @JsonProperty("assetParentCategory")
-        private String assetParentCategory = null;
+public class LandInfo implements AdditionalDetails{
+	
+	@JsonProperty("id")
+	private String id;
 
-        @JsonProperty("assetAssetCategory")
-        private String assetAssetCategory = null;
+    @JsonProperty("assetId")
+    private String assetId;
 
-        @JsonProperty("assetAssetSubCategory")
-        private String assetAssetSubCategory = null;
-        
-        @JsonProperty("OSRLand")
-        private String osRLand = null;
-        
-        @JsonProperty("isitfenced")
-        private String isitfenced = null;
-        
-        @JsonProperty("isItfenced")
-        private String isItfencedDesc = null;
+    @JsonProperty("area") // Assuming area is a double
+    private double area;
 
-        @JsonProperty("isThereAnyBuiltupOnSite")
-        private String isThereAnyBuiltupOnSite = null;
+    @JsonProperty("bookValue")
+    private double bookValue;
 
-        @JsonProperty("isThereAnyBuiltupOnSiteDesc")
-        private String isThereAnyBuiltupOnSiteDesc = null;
-        
-        @JsonProperty("typeofTreesOnSite")
-        private String typeofTreesOnSite = null;
-        
-        @JsonProperty("typeofTreesOnSiteOther")
-        private String typeofTreesOnSiteOther = null;
-        
-        @JsonProperty("typeofTreesOnSiteDesc")
-        private String typeofTreesOnSiteDesc = null;
+    @JsonProperty("dateOfDeedExecution")
+    private String dateOfDeedExecution;
 
-        @JsonProperty("AwardNumber")
-        private String awardNumber = null;
+    @JsonProperty("dateOfPossession")
+    private String dateOfPossession;
 
-        @JsonProperty("BookValue")
-        private String bookValue = null;
+    @JsonProperty("anyBuiltUp")
+    private String anyBuiltUp;
 
-        @JsonProperty("CollectororderNumber")
-        private String collectororderNumber = null;
+    @JsonProperty("isThereAnyBuiltUpOnSiteDesc")
+    private String isThereAnyBuiltUpOnSiteDesc;
 
-        @JsonProperty("Costafterdepriciation")
-        private String costafterdepriciation = null;
+    @JsonProperty("typeOfTreesOnSite")
+    private String typeOfTreesOnSite;
 
-        @JsonProperty("CouncilResolutionNumber")
-        private String councilResolutionNumber = null;
+    @JsonProperty("typeOfTreesOnSiteOther")
+    private String typeOfTreesOnSiteOther;
 
-        @JsonProperty("Currentassetvalue")
-        private String currentassetvalue = null;
+    @JsonProperty("typeOfTreesOnSiteDesc")
+    private String typeOfTreesOnSiteDesc;
 
-        @JsonProperty("DateofDeedExecution")
-        private String dateofDeedExecution = null;
+    @JsonProperty("fromWhomDeedTaken")
+    private String fromWhomDeedTaken;
 
-        @JsonProperty("DateofPossesion")
-        private String dateofPossesion = null;
+    @JsonProperty("governmentOrderNumber")
+    private String governmentOrderNumber;
 
-        @JsonProperty("DepriciationRate")
-        private String depriciationRate = null;
+    @JsonProperty("collectorOrderNumber")
+    private String collectorOrderNumber;
 
-        @JsonProperty("FromWhomDeedTaken")
-        private String fromWhomDeedTaken = null;
+    @JsonProperty("councilResolutionNumber")
+    private String councilResolutionNumber;
 
-        @JsonProperty("GovernmentorderNumber")
-        private String governmentorderNumber = null;
+    @JsonProperty("awardNumber")
+    private String awardNumber;
 
-        @JsonProperty("OandMCOI")
-        private String oandMCOI = null;
+    @JsonProperty("oAndMCOI")
+    private String oAndMCOI;
 
-        @JsonProperty("OandMTaskDetail")
-        private String oandMTaskDetail = null;
+    @JsonProperty("oAndMTaskDetail")
+    private String oAndMTaskDetail;
 
-        @JsonProperty("Revenuegeneratedbyasset")
-        private String revenuegeneratedbyasset = null;
+    @JsonProperty("totalCost") // Assuming totalCost is a double with scientific notation (E7)
+    private double totalCost;
 
-        @JsonProperty("Totalcost")
-        private String totalcost = null;
+    @JsonProperty("depreciationRate") // Assuming depreciationRate is a double
+    private double depreciationRate;
 
-        @JsonProperty("howassetbeingused")
-        private String howassetbeingused = null;
+    @JsonProperty("costAfterDepreciation") // Assuming costAfterDepreciation is a double with scientific notation (E7)
+    private double costAfterDepreciation;
 
-        @JsonProperty("acquisitionProsessionDetails")
-        private String LandAcquisitionProssessionInfo = null;
+    @JsonProperty("currentAssetValue") // Assuming currentAssetValue is a double with scientific notation (E7)
+    private double currentAssetValue;
+
+    @JsonProperty("revenueGeneratedByAsset") // Assuming revenueGeneratedByAsset is a double
+    private double revenueGeneratedByAsset;
+
+    @JsonProperty("osrLand")
+    private String osrLand;
+
+    @JsonProperty("isItFenced")
+    private String isItFenced;
+
+    @JsonProperty("howAssetBeingUsed")
+    private String howAssetBeingUsed;
+
+    @JsonProperty("acquisitionProcessionDetails")
+    private LandAcquisitionProcessionDetails acquisitionProcessionDetails = null;
 
 }
-
