@@ -80,7 +80,7 @@ public class AdditionalFeature extends FeatureProcess {
 
     private static final String RULE_38 = "38";
     private static final String RULE_39 = "39";
-    private static final String RULE = "4.4.4";
+    private static final String RULE = "5.2.1";
     private static final String RULE_41_I_B = "41-i-b";
     private static final String RULE_47 = "47";
     private static final String RULE_50 = "50";
@@ -803,10 +803,10 @@ public class AdditionalFeature extends FeatureProcess {
 
     private void validate1a(Plan pl, ScrutinyDetail scrutinyDetail) {
         if (pl.getUtility().getRainWaterHarvest() != null && !pl.getUtility().getRainWaterHarvest().isEmpty()) {
-            addDetails(scrutinyDetail, "55-1-a", "Rain Water Harvesting", "Rain water harvesting details",
+            addDetails(scrutinyDetail, "10.3", "Rain Water Harvesting", "Rain water harvesting details",
                     "Provided rain water harvesting", Result.Accepted.getResultVal());
         } else {
-            addDetails(scrutinyDetail, "55-1-a", "Rain Water Harvesting", "Rain water harvesting details",
+            addDetails(scrutinyDetail, "10.3", "Rain Water Harvesting", "Rain water harvesting details",
                     "Not Provided rain water harvesting", Result.Not_Accepted.getResultVal());
         }
     }

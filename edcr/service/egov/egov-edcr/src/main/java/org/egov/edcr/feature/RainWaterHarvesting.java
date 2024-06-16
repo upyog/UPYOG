@@ -63,7 +63,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RainWaterHarvesting extends FeatureProcess {
-    private static final String RULE_51 = "51";
+    private static final String RULE_51 = "10.3";
     /*
      * private static final String RULE_51_DESCRIPTION = "RainWater Storage Arrangement "; private static final String
      * RAINWATER_HARVESTING_TANK_CAPACITY = "Minimum capacity of Rain Water Harvesting Tank";
