@@ -126,7 +126,7 @@ public class Parking extends FeatureProcess {
     private static final double PARK_F = 0.30;
     private static final double PARK_VISITOR = 0.15;
     private static final String SUB_RULE_40 = "40";
-    private static final String RULE_ = "4.4.4";
+    private static final String RULE_ = "4.2.1";
     private static final String RULE__DESCRIPTION = "Parking space";
     private static final String SUB_RULE_40_10 = "40-10";
     private static final String SUB_RULE_40_10_DESCRIPTION = "Visitor’s Parking";

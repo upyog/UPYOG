@@ -74,7 +74,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class Kitchen extends FeatureProcess {
 
-    private static final String SUBRULE_41_III = "41-iii";
+    private static final String SUBRULE_41_III = "5.4.1";
 
     private static final String SUBRULE_41_III_DESC = "Minimum height of kitchen";
     private static final String SUBRULE_41_III_AREA_DESC = "Total area of %s";

@@ -74,7 +74,7 @@ import org.springframework.stereotype.Service;
 public class Plantation extends FeatureProcess {
 
     private static final Logger LOGGER = LogManager.getLogger(Plantation.class);
-    private static final String RULE_32 = "32";
+    private static final String RULE_32 = "4.4.4 (XI)";
     public static final String PLANTATION_TREECOVER_DESCRIPTION = "Plantation tree cover";
 
     @Override
