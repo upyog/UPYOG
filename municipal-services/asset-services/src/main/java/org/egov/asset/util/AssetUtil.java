@@ -1,9 +1,8 @@
 package org.egov.asset.util;
 
+import org.egov.asset.web.models.AssetRequest;
 import org.egov.asset.web.models.AuditDetails;
 import org.springframework.stereotype.Component;
-import org.egov.asset.web.models.AssetRequest;
-import org.egov.asset.web.models.AssetType;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,28 +33,12 @@ public class AssetUtil {
         }
 
         String assetParentCategory = asset.getAsset().getAssetParentCategory();
-        if (assetParentCategory != null) {
-            switch (AssetType.valueOf(assetParentCategory)) {
-                case LAND:
-                    // Replace 'T' with 'L' in the asset ID
-                    assetId = assetId.replace("A", "L");
-                    break;
-                case BUILDING:
-                    // Replace 'T' with 'B' in the asset ID
-                    assetId = assetId.replace("A", "B");
-                    break;
-                case SERVICE:
-                    // Replace 'T' with 'B' in the asset ID
-                    assetId = assetId.replace("A", "S");
-                    break;
-                case OTHER:
-                    // Replace 'T' with 'B' in the asset ID
-                    assetId = assetId.replace("A", "O");
-                    break;
-                default:
-                    // No change for other asset types
-                    break;
-            }
+        if (assetParentCategory != null && !assetParentCategory.trim().isEmpty()) {
+            // Trim the assetParentCategory and extract the first letter
+            char firstLetter = assetParentCategory.trim().charAt(0);
+            // Replace 'A' with the first letter of assetParentCategory in the asset ID
+            assetId = assetId.replace("A", Character.toString(firstLetter));
+            log.info(assetId);
         }
         return assetId;
     }
