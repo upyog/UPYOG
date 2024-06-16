@@ -92,6 +92,12 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
       <Link to={`/digit-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
+
+      <br></br>
+
+      <Link to={`/digit-ui/citizen/payment/my-bills/` + `${businessService}/` + `${bookingNo}`}>
+        <LinkButton label={t("PAYMENT_BUTTON")} />
+      </Link>
     </Card>
   );
 };
