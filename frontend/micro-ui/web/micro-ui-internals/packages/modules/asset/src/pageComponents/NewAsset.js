@@ -1,5 +1,7 @@
 /** 
 *   @author - Shivank - NIUA
+*   all the assets are dynamically rendering from this page on the slection of their parent or sub parent category
+*   TODO: Need to change normal used functions to Arrow Function for the better performance.
 *
 */
 
@@ -177,15 +179,22 @@ const NewAsset
     );
 
 
-    const [brand, setbrand] = useState(
-      (formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].brand) || formData?.assetDetails?.brand || ""
-    );
-    const [invoiceDate, setinvoiceDate] = useState(
-      (formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].invoiceDate) || formData?.assetDetails?.invoiceDate || ""
-    );
-   
-   
-   
+   const [brand, setbrand] = useState((formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].brand) || formData?.assetDetails?.brand || "");
+   const [invoiceDate, setinvoiceDate] = useState((formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].invoiceDate) || formData?.assetDetails?.invoiceDate || "");
+   const [manufacturer, setmanufacturer] = useState((formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].manufacturer) || formData?.assetDetails?.manufacturer || "")
+   const [purchaseOrderNumber, setpurchaseOrderNumber] = useState((formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].purchaseOrderNumber) || formData?.assetDetails?.purchaseOrderNumber || "")
+   const [purchaseDate, setpurchaseDate] = useState((formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].purchaseDate) || formData?.assetDetails?.purchaseDate || "")
+   const [purchaseCost, setpurchaseCost] = useState((formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].purchaseCost) || formData?.assetDetails?.purchaseCost || "")
+   const [currentLocation, setcurrentLocation] = useState((formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].currentLocation) || formData?.assetDetails?.currentLocation || "")
+   const [assignedUser, setassignedUser] = useState((formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].assignedUser) || formData?.assetDetails?.assignedUser || "")
+   const [department, setdepartment] = useState((formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].department) || formData?.assetDetails?.department || "")
+   const [assetAge, setassetAge] = useState((formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].assetAge) || formData?.assetDetails?.assetAge || "")
+   const [warranty, setwarranty] = useState((formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].warranty) || formData?.assetDetails?.warranty || "")
+   const [operatingSystem, setoperatingSystem] = useState((formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].operatingSystem) || formData?.assetDetails?.operatingSystem || "")
+   const [ram, setram] = useState((formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].ram) || formData?.assetDetails?.ram || "")
+   const [cpu, setcpu] = useState((formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].cpu) || formData?.assetDetails?.cpu || "")
+   const [storage, setstorage] = useState((formData.assetDetails && formData.assetDetails[index] && formData.assetDetails[index].storage) || formData?.assetDetails?.storage || "")
+
     
    
    
@@ -232,10 +241,6 @@ const NewAsset
     function setRegistrationNumber(e) {
       setregistrationNumber(e.target.value);
     }
-
-    
-
-
 
 
     function setLandType(e) {
@@ -368,17 +373,6 @@ const NewAsset
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
     function setbuildingsNo(e) {
       setBuildingsno(e.target.value);
     }
@@ -386,6 +380,25 @@ const NewAsset
     function setPlotArea(e) {
       setplotarea(e.target.value);
     }
+
+
+    // used arrow functions for the IT assets, need tp change for other assets to 
+
+    const selectmanufacturer = (e) => setmanufacturer(e.target.value);
+    const selectpurchasecost = (e) => setpurchaseCost(e.target.value);
+    const selectpurchasedate = (e) => setpurchaseDate(e.target.value);
+    const selectpurchaseorder = (e) => setpurchaseOrderNumber(e.target.value);
+    const selectcurrentlocation = (e) => setcurrentLocation(e.target.value);
+    const selectassigneduser = (e) => setassignedUser(e.target.value);
+    const selectdepartment = (e) => setdepartment(e.target.value);
+    const selectassetage = (e) => setassetAge(e.target.value);
+    const selectwarranty = (e) => setwarranty(e.target.value);
+    const selectcpu = (e) => setcpu(e.target.value);
+    const selectoperatingsystem = (e) => setoperatingSystem(e.target.value);
+    const selectram = (e) => setram(e.target.value);
+    const selectstorage = (e) => setstorage(e.target.value);
+
+
 
 
 
@@ -452,11 +465,14 @@ const NewAsset
         ownerStep = { ...owner, buildingSno, plotArea, plinthArea,floorArea, floorNo, dimensions,totalCost, depreciationRate, costAfterDepreciation,currentAssetValue, revenueGeneratedByAsset, bookValue };
       } else if (formData?.asset?.assettype?.code === 'SERVICE') {
         ownerStep= {...owner,roadType,surfaceType,protectionLength,drainageLength,numOfBusStop,numOfFootpath,numOfMetroStation,numOfPedastrianCross,lengthOfCycletrack,lastMaintainence,nextMaintainence,bookValue,totalCost, depreciationRate, costAfterDepreciation}
-      } else if (formData?.asset?.assettype?.code === "OTHER"){
+      } else if (formData?.asset?.assettype?.code === "VEHICLE"){
         ownerStep= {...owner, registrationNumber,parkingLocation,engineNumber,chasisNumber,improvementCost,acquiredFrom,acquisitionDate,bookValue,totalCost,currentAssetValue}
       }
       else if (formData?.asset?.assettype?.code === "IT"){
-        ownerStep= {...owner,brand,invoiceDate }
+        ownerStep= {...owner,brand,invoiceDate,manufacturer,purchaseCost,purchaseDate,purchaseOrderNumber,currentLocation,assignedUser,department,assetAge,warranty }
+      }
+      else if (formData?.asset?.assettype?.code === "IT" && formData?.asset?.assetsubtype?.code ==="COMPUTERS_AND_LAPTOPS"){
+        ownerStep= {...owner,brand, operatingSystem,ram,storage,cpu,invoiceDate,manufacturer,purchaseCost,purchaseDate,purchaseOrderNumber,currentLocation,assignedUser,department,assetAge,warranty }
       }
 
       onSelect(config.key, ownerStep, false, index);
@@ -1521,22 +1537,20 @@ const NewAsset
               
               <CardLabel>{`${t("AST_ACQUISTION_DATE")}`}</CardLabel>
               <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="acquisitionDate"
-                value={acquisitionDate}
-                onChange={setAcquisitionDate}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
-              />
+              t={t}
+              type={"date"}
+              isMandatory={false}
+              optionKey="i18nKey"
+              name="acquisitionDate"
+              value={acquisitionDate}
+              onChange={setAcquisitionDate}
+              style={{ width: "50%" }}
+              max={new Date().toISOString().split('T')[0]}
+              rules={{
+                required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+              }}
+            />
               <CardLabel>{`${t("AST_ACQUIRED_SOURCE")}`}</CardLabel>
               <TextInput
                 t={t}
@@ -1636,7 +1650,7 @@ const NewAsset
 
             {formData?.asset?.assettype?.code === "IT" && (
               <React.Fragment>
-                 <CardLabel>{`${t("AST_BRAND")}`}</CardLabel>
+              <CardLabel>{`${t("AST_BRAND")}`}</CardLabel>
               <TextInput
                 t={t}
                 type={"text"}
@@ -1655,14 +1669,31 @@ const NewAsset
                 })}
               />
               <CardLabel>{`${t("AST_INVOICE_DATE")}`}</CardLabel>
+               <TextInput
+              t={t}
+              type={"date"}
+              isMandatory={false}
+              optionKey="i18nKey"
+              name="invoiceDate"
+              value={invoiceDate}
+              onChange={setInvoiceDate}
+              style={{ width: "50%" }}
+              max={new Date().toISOString().split('T')[0]}
+              rules={{
+                required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+              }}
+            />
+
+              <CardLabel>{`${t("AST_MANUFACTURER")}`}</CardLabel>
               <TextInput
                 t={t}
                 type={"text"}
                 isMandatory={false}
                 optionKey="i18nKey"
-                name="invoiceDate"
-                value={invoiceDate}
-                onChange={setInvoiceDate}
+                name="manufacturer"
+                value={manufacturer}
+                onChange={selectmanufacturer}
                 style={{ width: "50%" }}
                 ValidationRequired={false}
                 {...(validation = {
@@ -1672,8 +1703,431 @@ const NewAsset
                   title: t("PT_NAME_ERROR_MESSAGE"),
                 })}
               />
+              <CardLabel>{`${t("AST_PURCHASE_COST")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="purchaseCost"
+                value={purchaseCost}
+                onChange={selectpurchasecost}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+              <CardLabel>{`${t("AST_PURCHASE_ORDER")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="purchaseOrderNumber"
+                value={purchaseOrderNumber}
+                onChange={selectpurchaseorder}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+              <CardLabel>{`${t("AST_PURCHASE_DATE")}`}</CardLabel>
+              <TextInput
+              t={t}
+              type={"date"}
+              isMandatory={false}
+              optionKey="i18nKey"
+              name="purchaseDate"
+              value={purchaseDate}
+              onChange={selectpurchasedate}
+              style={{ width: "50%" }}
+              max={new Date().toISOString().split('T')[0]}
+              rules={{
+                required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+              }}
+            />
+              <CardLabel>{`${t("AST_CURRENT_LOCATION")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="currentLocation"
+                value={currentLocation}
+                onChange={selectcurrentlocation}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+              <CardLabel>{`${t("AST_ASSIGNED_USER")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="assignedUser"
+                value={assignedUser}
+                onChange={selectassigneduser}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+              <CardLabel>{`${t("AST_DEPARTMENT")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="department"
+                value={department}
+                onChange={selectdepartment}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+              <CardLabel>{`${t("AST_ASSET_AGE")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="assetAge"
+                value={assetAge}
+                onChange={selectassetage}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+              <CardLabel>{`${t("AST_WARRANTY")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="warranty"
+                value={warranty}
+                onChange={selectwarranty}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+
               </React.Fragment>
             )}
+
+            {/* {formData?.asset?.assettype?.code === "IT" && formData?.asset?.assetparentsubCategory?.code === "DESKTOP_COMPUTERS" && (
+              <React.Fragment>
+
+              <CardLabel>{`${t("AST_BRAND")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="brand"
+                value={brand}
+                onChange={setBrand}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+              <CardLabel>{`${t("AST_OPERATING_SYSTEM")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="operatingSystem"
+                value={operatingSystem}
+                onChange={selectoperatingsystem}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+              <CardLabel>{`${t("AST_CPU")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="operatingSystem"
+                value={operatingSystem}
+                onChange={selectoperatingsystem}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+
+              <CardLabel>{`${t("AST_RAM_ROM")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="ram"
+                value={ram}
+                onChange={selectram}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+              <CardLabel>{`${t("AST_STORAGE")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="storage"
+                value={storage}
+                onChange={selectstorage}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+
+
+              
+              <CardLabel>{`${t("AST_INVOICE_DATE")}`}</CardLabel>
+               <TextInput
+              t={t}
+              type={"date"}
+              isMandatory={false}
+              optionKey="i18nKey"
+              name="invoiceDate"
+              value={invoiceDate}
+              onChange={setInvoiceDate}
+              style={{ width: "50%" }}
+              max={new Date().toISOString().split('T')[0]}
+              rules={{
+                required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+              }}
+            />
+
+              <CardLabel>{`${t("AST_MANUFACTURER")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="manufacturer"
+                value={manufacturer}
+                onChange={selectmanufacturer}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+              <CardLabel>{`${t("AST_PURCHASE_COST")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="purchaseCost"
+                value={purchaseCost}
+                onChange={selectpurchasecost}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+              <CardLabel>{`${t("AST_PURCHASE_ORDER")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="purchaseOrderNumber"
+                value={purchaseOrderNumber}
+                onChange={selectpurchaseorder}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+              <CardLabel>{`${t("AST_PURCHASE_DATE")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="purchaseDate"
+                value={purchaseDate}
+                onChange={selectpurchasedate}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+              <CardLabel>{`${t("AST_CURRENT_LOCATION")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="currentLocation"
+                value={currentLocation}
+                onChange={selectcurrentlocation}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+              <CardLabel>{`${t("AST_ASSIGNED_USER")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="assignedUser"
+                value={assignedUser}
+                onChange={selectassigneduser}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+              <CardLabel>{`${t("AST_DEPARTMENT")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="department"
+                value={department}
+                onChange={selectdepartment}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+              <CardLabel>{`${t("AST_ASSET_AGE")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="assetAge"
+                value={assetAge}
+                onChange={selectassetage}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+              <CardLabel>{`${t("AST_WARRANTY")}`}</CardLabel>
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="warranty"
+                value={warranty}
+                onChange={selectwarranty}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: true,
+                  pattern: "^[a-zA-Z-.`' ]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
+                })}
+              />
+
+              </React.Fragment>
+            )} */}
 
 
            

@@ -32,8 +32,6 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
   
 
-  
-
   const {
     address,
     assetDetails,
@@ -309,7 +307,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             </React.Fragment>
           )}
 
-          {asset?.assettype?.value==="Other" && (
+          {asset?.assettype?.value==="Vehicle" && (
             <React.Fragment>
               <Row
               label={t("AST_REGISTRATION_NUMBER")}
@@ -355,6 +353,79 @@ const CheckPage = ({ onSubmit, value = {} }) => {
           />
 
             </React.Fragment>
+          )}
+
+          {asset?.assettype?.code === "IT" && (
+            <React.Fragment>
+              <Row
+              label={t("AST_BRAND")}
+              text={`${t(checkForNA(assetDetails?.brand))}`}
+              //actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+
+              />
+              <Row
+              label={t("AST_ASSIGNED_USER")}
+              text={`${t(checkForNA(assetDetails?.assignedUser))}`}
+              //actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+
+          />
+          <Row
+              label={t("AST_ASSET_AGE")}
+              text={`${t(checkForNA(assetDetails?.assetAge))}`}
+              //actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+
+          />
+          <Row
+              label={t("AST_CURRENT_LOCATION")}
+              text={`${t(checkForNA(assetDetails?.currentLocation))}`}
+              //actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+
+          />
+          <Row
+              label={t("AST_DEPARTMENT")}
+              text={`${t(checkForNA(assetDetails?.department))}`}
+              //actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+
+          />
+          <Row
+              label={t("AST_INVOICE_DATE")}
+              text={`${t(checkForNA(assetDetails?.invoiceDate))}`}
+              //actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+
+          />
+          <Row
+              label={t("AST_MANUFACTURER")}
+              text={`${t(checkForNA(assetDetails?.manufacturer))}`}
+              //actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+
+          />
+
+            <Row
+              label={t("AST_PURCHASE_COST")}
+              text={`${t(checkForNA(assetDetails?.purchaseCost))}`}
+              //actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+
+          />
+          <Row
+              label={t("AST_PURCHASE_DATE")}
+              text={`${t(checkForNA(assetDetails?.purchaseDate))}`}
+              //actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+
+          />
+          <Row
+              label={t("AST_PURCHASE_ORDER")}
+              text={`${t(checkForNA(assetDetails?.purchaseOrderNumber))}`}
+              //actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+
+          />
+          <Row
+              label={t("AST_WARRANTY")}
+              text={`${t(checkForNA(assetDetails?.warranty))}`}
+              //actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+
+          />
+            </React.Fragment>
+
           )}
 
         </StatusTable>
