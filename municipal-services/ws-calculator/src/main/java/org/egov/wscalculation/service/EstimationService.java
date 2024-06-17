@@ -229,8 +229,8 @@ public class EstimationService {
 
 			List<Slab> filteredSlabs = billSlab.getSlabs().stream()
 					.filter(slab -> slab.getFrom() <= totalUOM && slab.getTo() >= totalUOM
-							&& slab.getFrom() <= System.currentTimeMillis()
-							&& slab.getTo() >= System.currentTimeMillis())
+							&& slab.getEffectiveFrom() <= System.currentTimeMillis()
+							&& slab.getEffectiveTo() >= System.currentTimeMillis())
 					.collect(Collectors.toList());
 			log.info("After billingslab  filter: " + filteredSlabs.size());
 			// IF calculation type is flat then take flat rate else take slab and calculate
