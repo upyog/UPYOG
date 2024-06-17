@@ -89,6 +89,7 @@ public class WSCalculationWorkflowValidator {
 
 		for (ProcessInstance processInstances : processInstancesList) {
 			if (((processInstances.getBusinessService().equals(WSCalculationConstant.NEWWATER_BUSINESS_SERVICE)
+					|| processInstances.getBusinessService().equals(WSCalculationConstant.NEWWATER_BUSINESS_SERVICE_NEW)
 					|| processInstances.getBusinessService().equals(WSCalculationConstant.MODIFY_BUSINESS_SERVICE))
 					&& processInstances.getState().getIsTerminateState())
 
