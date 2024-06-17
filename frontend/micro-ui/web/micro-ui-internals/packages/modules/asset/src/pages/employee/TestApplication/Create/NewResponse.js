@@ -91,7 +91,7 @@ const NewResponse = ({ data, onSuccess }) => {
         )}
       </StatusTable>
       {mutation.isSuccess && <SubmitBar label={t("AST_REPORT")} onSubmit={handleDownloadPdf} />}
-      <Link to={`/digit-ui/citizen`}>
+      <Link to={`/digit-ui/employee`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
     </Card>

@@ -1,4 +1,4 @@
-import { PrivateRoute,BreadCrumb } from "@upyog/digit-ui-react-components";
+import { PrivateRoute,BreadCrumb,AppContainer,BackButton } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Switch, useLocation } from "react-router-dom";
@@ -71,10 +71,12 @@ const EmployeeApp = ({ path, url, userType }) => {
   const isNewRegistration = window.location.href.includes("new-asset") || window.location.href.includes("modify-application") || window.location.href.includes("asset/assetservice/application-details");
   return (
     <Switch>
+      <AppContainer>
+      {/* <BackButton>Back</BackButton> */}
       <React.Fragment>
         <div className="ground-container">
           
-          {!isRes ? <div style={isNewRegistration ? {marginLeft: "12px" } : {marginLeft:"-4px"}}><AssetBreadCrumbs location={location} /></div> : null}
+          {!isRes ? <div style={isNewRegistration ? {marginLeft: "12px" } : {marginLeft:"-4px"}}><BackButton location={location} /> </div> : null}
           <PrivateRoute exact path={`${path}/`} component={() => <ASSETLinks matchPath={path} userType={userType} />} />
           <PrivateRoute
             path={`${path}/assetservice/inbox`}
@@ -101,6 +103,7 @@ const EmployeeApp = ({ path, url, userType }) => {
 
         </div>
       </React.Fragment>
+      </AppContainer>
     </Switch>
   );
 };

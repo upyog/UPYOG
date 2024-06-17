@@ -61,7 +61,7 @@ export const ASSETSearch = {
         values: [
           ...(response?.assetParentCategory=== "LAND"
             ? [
-                { title: "AST_TYPE", value: response?.additionalDetails?.assetParentCategory },
+                { title: "AST_TYPE", value: response?.additionalDetails?.landType },
                 { title: "AST_LAND_AREA", value: response?.additionalDetails?.area },
                 { title: "AST_AWARD_NUMBER", value: response?.additionalDetails?.awardNumber },
                 { title: "AST_BOOK_VALUE", value: response?.additionalDetails?.bookValue  + " Rupees" },
@@ -136,6 +136,24 @@ export const ASSETSearch = {
             { title: "AST_BOOK_VALUE", value: response?.additionalDetails?.bookValue + " Rupees"},
           ]
           :[]),
+
+          ...(response?.assetParentCategory === "IT" ?
+            [
+            { title: "AST_BRAND", value: response?.additionalDetails?.brand },
+            { title: "AST_INVOICE_DATE", value: response?.additionalDetails?.invoiceDate },
+            { title: "AST_ASSET_AGE", value: response?.additionalDetails?.assetAge },
+            { title: "AST_ASSIGNED_USER", value: response?.additionalDetails?.assignedUser },
+            { title: "AST_CURRENT_LOCATION", value: response?.additionalDetails?.currentLocation },
+            { title: "AST_MANUFACTURER ", value: response?.additionalDetails?.manufacturer },
+            { title: "AST_PURCHASE_COST", value: response?.additionalDetails?.purchaseCost + " Rupees"},
+            { title: "AST_PURCHASE_DATE", value: response?.additionalDetails?.purchaseDate},
+            { title: "AST_PURCHASE_ORDER", value: response?.additionalDetails?.purchaseOrderNumber},
+            { title: "AST_WARRANTY", value: response?.additionalDetails?.warranty},
+
+            ]
+            : []),
+
+
 
         ],
       },

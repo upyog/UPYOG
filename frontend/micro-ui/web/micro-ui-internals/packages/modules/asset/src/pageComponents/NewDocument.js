@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/ASTTimeline";
+import EXIF from 'exif-js';
 
 const NewDocument = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {
   const tenantId = Digit.ULBService.getStateId();
@@ -61,6 +62,7 @@ const NewDocument = ({ t, config, onSelect, userType, formData, setError: setFor
                 setDocuments={setDocuments}
                 documents={documents}
                 setCheckRequiredFields={setCheckRequiredFields}
+                formData={formData}
               />
             );
           })}
@@ -99,7 +101,9 @@ function ASSETSelectDocument({
   );
 
   const [file, setFile] = useState(null);
-  const [uploadedFile, setUploadedFile] = useState(() => filteredDocument?.filestoreId || null);
+  const [uploadedFile, setUploadedFile] = useState(() => filteredDocument?.fileStoreId || null);
+  const [latitude, setLatitude] = useState(formData?.latitude || null);
+  const [longitude, setLongitude] = useState(formData?.longitude || null);
 
   const handleASSETSelectDocument = (value) => setSelectedDocument(value);
 
@@ -128,14 +132,16 @@ function ASSETSelectDocument({
           ...filteredDocumentsByFileStoreId,
           {
             documentType: selectedDocument?.code,
-            filestoreId: uploadedFile,
+            fileStoreId: uploadedFile,
             documentUid: uploadedFile,
+            latitude,
+            longitude,
           },
         ];
       });
     }
     
-  }, [uploadedFile, selectedDocument]);
+  }, [uploadedFile, selectedDocument, latitude, longitude]);
 
   useEffect(() => {
     if (action === "update") {
@@ -151,6 +157,44 @@ function ASSETSelectDocument({
     } else if (action === "create") {
     }
   }, []);
+
+  const extractGeoLocation = (file) => {
+    return new Promise((resolve) => {
+      EXIF.getData(file, function () {
+        const lat = EXIF.getTag(this, 'GPSLatitude');
+        const lon = EXIF.getTag(this, 'GPSLongitude');
+        if (lat && lon) {
+          const latDecimal = convertToDecimal(lat);
+          const lonDecimal = convertToDecimal(lon);
+          resolve({ latitude: latDecimal, longitude: lonDecimal });
+        } else {
+          resolve({ latitude: null, longitude: null });
+          if (doc?.code === "OWNER.ASSETPHOTO") {
+            alert("Please upload a photo with location details");
+          }
+        }
+      });
+    });
+  };
+
+  const convertToDecimal = (coordinate) => {
+    const degrees = coordinate[0];
+    const minutes = coordinate[1];
+    const seconds = coordinate[2];
+    return degrees + minutes / 60 + seconds / 3600;
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    setFile(file);
+    extractGeoLocation(file).then(({ latitude, longitude }) => {
+      setLatitude(latitude);
+      setLongitude(longitude);
+      if (doc?.code === "OWNER.ASSETPHOTO" && (!latitude || !longitude)) {
+        setError("Please upload a photo with location details");
+      }
+    });
+  };
 
   useEffect(() => {
     (async () => {
@@ -200,10 +244,12 @@ function ASSETSelectDocument({
         <CardLabel className="card-label-smaller"></CardLabel>
         <div className="field">
           <UploadFile
-            onUpload={selectfile}
-            onDelete={() => {
-              setUploadedFile(null);
-            }}
+           onUpload={handleFileUpload}
+           onDelete={() => {
+             setUploadedFile(null);
+             setLatitude(null);
+             setLongitude(null);
+           }}
             id={id}
             message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
             textStyles={{ width: "100%" }}
@@ -214,6 +260,15 @@ function ASSETSelectDocument({
           />
         </div>
       </LabelFieldPair>
+      
+      {doc?.code === "OWNER.ASSETPHOTO" && latitude && longitude && (
+        <div style={{ marginTop: '10px', textAlign: 'center' }}>
+          <p><strong>{t("Location Details")}:</strong></p>
+          <p>{t("Latitude")}: {latitude}</p>
+          <p>{t("Longitude")}: {longitude}</p>
+        </div>
+      )}
+      {/* {error && <CardLabel style={{ color: "red" }}>{error}</CardLabel>} */}
     </div>
   );
 }
