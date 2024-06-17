@@ -1,13 +1,12 @@
 import { useQuery } from "react-query";
 import { MdmsService } from "../../services/elements/MDMS";
-import { MdmsServiceV2 } from "../../services/elements/MDMSV2";
 
 const SearchMdmsTypes = {
   useApplicationTypes: (tenantId) =>
     useQuery(
       [tenantId, "BPA_MDMS_APPLICATION_STATUS"],
       () =>
-        MdmsServiceV2.getDataByCriteria(
+        MdmsService.getDataByCriteria(
           tenantId,
           {
             details: {
@@ -42,7 +41,7 @@ const SearchMdmsTypes = {
     useQuery(
       [tenantId, "BPA_MDMS_SERVICE_STATUS"],
       () =>
-        MdmsServiceV2.getDataByCriteria(
+        MdmsService.getDataByCriteria(
           tenantId,
           {
             details: {
@@ -78,7 +77,7 @@ const SearchMdmsTypes = {
     useQuery(
       [tenantId, "BPAREG_MDMS_SERVICE_STATUS"],
       () =>
-        MdmsServiceV2.getDataByCriteria(
+        MdmsService.getDataByCriteria(
           tenantId,
           {
             details: {
@@ -113,7 +112,7 @@ const SearchMdmsTypes = {
     useQuery(
       [tenantId, "BPA_MDMS_SERVICE_STATUS"],
       () =>
-        MdmsServiceV2.getDataByCriteria(
+        MdmsService.getDataByCriteria(
           tenantId,
           {
             details: {

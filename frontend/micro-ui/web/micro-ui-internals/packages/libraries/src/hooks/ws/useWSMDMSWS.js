@@ -1,13 +1,13 @@
 import React from "react";
 import { useQuery } from "react-query";
-import { MdmsServiceV2 } from "../../services/elements/MDMSV2";
+import { MdmsService } from "../../services/elements/MDMS";
 
 const useWSMDMSWS = {
   applicationTypes: (tenantId) =>
     useQuery(
       [tenantId, "WS_WS_SERVICES_MASTERS"],
       () =>
-        MdmsServiceV2.getDataByCriteria(
+        MdmsService.getDataByCriteria(
           tenantId,
           {
             details: {
