@@ -185,7 +185,7 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 		log.info("Tenant Id's List Query : " + query);
 		return jdbcTemplate.queryForList(query, String.class);
 	}
-
+	
 	@Override
 	public int isBillingPeriodExists(String connectionNo, String billingPeriod) {
 		List<Object> preparedStatement = new ArrayList<>();
@@ -193,7 +193,7 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 		log.info("Is BillingPeriod Exits Query: " + query);
 		return jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
 	}
-
+	
 	@Override
 	public long getConnectionCount(String tenantid, Long fromDate, Long toDate) {
 		// List<Object> preparedStatement = new ArrayList<>();
@@ -210,21 +210,32 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 
 	@Override
 	public List<String> getConnectionsNoByLocality(String tenantId, String connectionType, String locality) {
-		// TODO Auto-generated method stub
+//		List<Object> preparedStatement = new ArrayList<>();
+//		String query = queryBuilder.getLocalityListWithBatch(tenantId,batchCode,preparedStatement);
+//		log.info("batchCode " + batchCode + " Locality list : " + query);
+//		return jdbcTemplate.queryForList(query, preparedStatement.toArray(), String.class);
 		return null;
 	}
-
+	
 	@Override
 	public Long searchLastDemandGenFromDate(String consumerCode, String tenantId) {
-		// TODO Auto-generated method stub
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.searchLastDemandGenFromDate(consumerCode, tenantId, preparedStatement);
+		log.info("preparedStatement: "+ preparedStatement + " searchLastDemandGenFromDate Query : " + query);
+		List<Long> fromDate = jdbcTemplate.queryForList(query, preparedStatement.toArray(), Long.class);
+		if(fromDate != null && !fromDate.isEmpty())
+			return  fromDate.get(0);
+		
 		return null;
 	}
-
 	@Override
 	public Boolean isConnectionDemandAvailableForBillingCycle(String tenantId, Long taxPeriodFrom, Long taxPeriodTo,
 			String consumerCode) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.isConnectionDemandAvailableForBillingCycle(tenantId, taxPeriodFrom, taxPeriodTo, consumerCode, preparedStatement);
+		log.info("isConnectionDemandAvailableForBillingCycle Query: " + query + " preparedStatement: "+ preparedStatement);
+		
+		return jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Boolean.class);
 	}
 
 	@Override
