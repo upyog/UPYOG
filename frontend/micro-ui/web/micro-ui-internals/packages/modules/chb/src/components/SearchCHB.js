@@ -8,7 +8,11 @@ const SearchCHB = ({onFilterChange, searchParams }) => {
   const [localSearchParams, setLocalSearchParams] = useState(() => ({ ...searchParams }));
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const state = tenantId?.split('.')[0];
+  const stateId = Digit.ULBService.getStateId();
   const { isLoading, data } = Digit.Hooks.useCommonMDMS(state, "mseva", ["EventCategories"]);
+
+  // const { data1: Resident } = Digit.Hooks.chb.useChbCommunityHall(stateId, "CHB", "ChbCommunityHalls");
+  // console.log("data is--->",...Resident);
   const [applicantName, setName] = useState("");
   
 

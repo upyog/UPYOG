@@ -12,11 +12,13 @@ import {
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
+import ApplicationTable from "../../../components/inbox/ApplicationTable";
 import {
   checkForNA,
   getFixedFilename, 
 } from "../../../utils";
 import Timeline from "../../../components/CHBTimeline";
+import CHBDocument from "../../../pageComponents/CHBDocument";
 
 const ActionButton = ({ jumpTo }) => {
   const { t } = useTranslation();
@@ -32,22 +34,38 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   const { t } = useTranslation();
   const history = useHistory();
   
-
+  const columns = [
+    { Header: "Hall Name", accessor: "hallName" },
+    { Header: "Hall Code", accessor: "hallCode" },
+    { Header: "Start Date", accessor: "date1" },
+    { Header: "End Date", accessor: "date2" },
+    { Header: "Status", accessor: "status" },
+  ];
   
 
   
 
   const {
-    address,
+    bankdetails,
     slots,
+    slotlist,
     index,    
     isEditCHB,
     isUpdateCHB,
     ownerss,
+    documents
    
   } = value;
 
-
+  const productRows = slotlist?.bookingSlotDetails.map((name) => (
+    {
+      hallName:  name.hallName,
+      hallCode: name.hallCode,
+      date1: name.date1,
+      date2: name.date2,
+      status: name.status,
+    }
+)) || [];
 
   const typeOfApplication = !isEditCHB && !isUpdateCHB ? `bookHall` : `edit-application`;
 
@@ -55,6 +73,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   const [agree, setAgree] = useState(false);
   const setdeclarationhandler = () => {
     setAgree(!agree);
+    console.log(slotlist);
   };
   return (
     <React.Fragment>
@@ -63,20 +82,33 @@ const CheckPage = ({ onSubmit, value = {} }) => {
       <CardHeader>{t("CHB_CHECK_YOUR_DETAILS")}</CardHeader>
       <div>
         <br></br>
-
+        <CardSubHeader>{slotlist?.bookingSlotDetails.map((slot,index) =>(
+    <div key={index}>
+      {slot.hallName}({slot.date1})
+    </div>
+  ))}</CardSubHeader>
+        <ApplicationTable
+            t={t}
+            data={productRows}
+            columns={columns}
+            getCellProps={() => ({
+              style: {
+                minWidth: "150px",
+                padding: "10px",
+                fontSize: "16px",
+                paddingLeft: "20px",
+              },
+            })}
+            isPaginationRequired={true}
+            totalRecords={productRows.length}
+          />
+        <br></br>
         <CardSubHeader>{t("BOOKING_DETAILS")}</CardSubHeader>
         <br></br>
         <StatusTable>
         <Row
             label={t("CHB_APPLICANT_NAME")}
             text={`${t(checkForNA(ownerss?.applicantName))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/applicant-details`} />}
-
-        />
-
-        <Row
-            label={t("CHB_FATHER_HUSBAND_NAME")}
-            text={`${t(checkForNA(ownerss?.fatherName))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/applicant-details`} />}
 
         />
@@ -110,20 +142,26 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
         <Row
             label={t("RESIDENT_TYPE")}
-            text={`${t(checkForNA(slots?.residenttype?.value))}`}
+            text={`${t(checkForNA(slots?.residentType?.value))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/slot-details`} />}
         />
 
         <Row
             label={t("SPECIAL_CATEGORY")}
-            text={`${t(checkForNA(slots?.specialcategory.value))}`}
+            text={`${t(checkForNA(slots?.specialCategory?.value))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/slot-details`} />}
 
         />
 
         <Row
             label={t("PURPOSE")}
-            text={`${t(checkForNA(slots?.purpose.value))}`}
+            text={`${t(checkForNA(slots?.purpose?.value))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/slot-details`} />}
+
+        />
+        <Row
+            label={t("PURPOSE_DESCRIPTION")}
+            text={`${t(checkForNA(slots?.purposeDescription))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/slot-details`} />}
 
         />
@@ -135,36 +173,36 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <StatusTable>
         <Row
             label={t("ACCOUNT_NUMBER")}
-            text={`${t(checkForNA(address?.AccountNumber))}`}
+            text={`${t(checkForNA(bankdetails?.accountNumber))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
 
         />
          <Row
             label={t("CONFIRM_ACCOUNT_NUMBER")}
-            text={`${t(checkForNA(address?.ConfirmAccountNumber))}`}
+            text={`${t(checkForNA(bankdetails?.confirmAccountNumber))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
 
         />
          <Row
             label={t("IFSC_CODE")}
-            text={`${t(checkForNA(address?.IFSC))}`}
+            text={`${t(checkForNA(bankdetails?.ifscCode))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
 
         />
          
          <Row
             label={t("BANK_NAME")}
-            text={`${t(checkForNA(address?.BankName))}`}
+            text={`${t(checkForNA(bankdetails?.bankName))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
         />
          <Row
             label={t("BANK_BRANCH_NAME")}
-            text={`${t(checkForNA(address?.BankBranchName))}`}
+            text={`${t(checkForNA(bankdetails?.bankBranchName))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
         />
          <Row
             label={t("ACCOUNT_HOLDER_NAME")}
-            text={`${t(checkForNA(address?.AccountHolderName))}`}
+            text={`${t(checkForNA(bankdetails?.accountHolderName))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
         />
 
@@ -172,6 +210,19 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <StatusTable>
         <br></br>
         <CardSubHeader>{t("DOCUMENTS_DETAILS")}</CardSubHeader>
+        {/* <Card style={{paddingRight:"16px"}}>
+        {documents && documents?.documents.map((doc, index) => (
+          <div key={`doc-${index}`}>
+         {<div><CardSectionHeader>{t(doc?.documentType?.split('.').slice(0,2).join('_'))}</CardSectionHeader>
+          <StatusTable>
+          {
+           <CHBDocument value={value} Code={doc?.documentType} index={index} /> }
+          {documents?.documents.length != index+ 1 ? <hr style={{color:"white",backgroundColor:"white",height:"2px",marginTop:"20px",marginBottom:"20px"}}/> : null}
+          </StatusTable>
+          </div>}
+          </div>
+        ))}
+      </Card> */}
         <br></br>
         </StatusTable>
         <br></br>

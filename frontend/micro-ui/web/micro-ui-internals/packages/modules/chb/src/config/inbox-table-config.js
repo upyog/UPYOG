@@ -12,67 +12,67 @@
   const GetMobCell = (value) => <span className="sla-cell">{value}</span>;
 
   export const TableConfig = (t) => ({
-    PTR: {
+    CHB: {
       
       
       inboxColumns: (props) => [
       
         {
-          Header: t("PTR_APPLICATION_NUMBER"),
-          Cell: ({ row }) => {
-            return (
-              <div>
-                <span className="link">
+          Header: t("APPLICATION_NUMBER")
+          // Cell: ({ row }) => {
+          //   return (
+          //     <div>
+          //       <span className="link">
                   
-                  <Link to={`${props.parentRoute}/petservice/application-details/` + `${row?.original?.searchData?.["applicationNumber"]}`}>
+          //         <Link to={`${props.parentRoute}/petservice/application-details/` + `${row?.original?.searchData?.["applicationNumber"]}`}>
 
-                    {row.original?.searchData?.["applicationNumber"]}
-                  </Link>
-                </span>
-              </div>
-            );
-          },
-          mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNumber"]),
+          //           {row.original?.searchData?.["applicationNumber"]}
+          //         </Link>
+          //       </span>
+          //     </div>
+          //   );
+          // },
+          // mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNumber"]),
         },
         
         {
           Header: t("PTR_APPLICANT_NAME"),
-          Cell: ( row ) => {
+          // Cell: ( row ) => {
           
-            return GetCell(`${row?.cell?.row?.original?.searchData?.["applicantName"]}`)
+          //   return GetCell(`${row?.cell?.row?.original?.searchData?.["applicantName"]}`)
             
-          },
-          mobileCell: (original) => GetMobCell(original?.searchData?.["applicantName"]),
+          // },
+          // mobileCell: (original) => GetMobCell(original?.searchData?.["applicantName"]),
           
         },
         {
           Header: t("PTR_PET_TYPE"),
-          Cell: ({ row }) => {
-            return GetCell(`${row.original?.searchData?.petDetails?.["petType"]}`);
+          // Cell: ({ row }) => {
+          //   return GetCell(`${row.original?.searchData?.petDetails?.["petType"]}`);
            
-          },
-          mobileCell: (original) => GetMobCell(original?.searchData?.petDetails?.["petType"]),
+          // },
+          // mobileCell: (original) => GetMobCell(original?.searchData?.petDetails?.["petType"]),
         },
 
         {
           Header: t("PTR_BREED_TYPE"),
-          Cell: ({ row }) => {
-            return GetCell(`${row.original?.searchData?.petDetails?.["breedType"]}`);
-          },
-          mobileCell: (original) => GetMobCell(original?.searchData?.petDetails?.["breedType"]),
+          // Cell: ({ row }) => {
+          //   return GetCell(`${row.original?.searchData?.petDetails?.["breedType"]}`);
+          // },
+          // mobileCell: (original) => GetMobCell(original?.searchData?.petDetails?.["breedType"]),
         },
 
         
         {
           Header: t("PTR_STATUS"),
-          Cell: ({ row }) => {
+          // Cell: ({ row }) => {
             
-            const wf = row.original?.workflowData;
-            return GetCell(t(`${row?.original?.workflowData?.state?.["applicationStatus"]}`));
+          //   const wf = row.original?.workflowData;
+          //   return GetCell(t(`${row?.original?.workflowData?.state?.["applicationStatus"]}`));
 
 
-          },
-          mobileCell: (original) => GetMobCell(t(`ES_PTR_COMMON_STATUS_${original?.workflowData?.state?.["applicationStatus"]}`)),
+          // },
+          // mobileCell: (original) => GetMobCell(t(`ES_PTR_COMMON_STATUS_${original?.workflowData?.state?.["applicationStatus"]}`)),
         
 
         },

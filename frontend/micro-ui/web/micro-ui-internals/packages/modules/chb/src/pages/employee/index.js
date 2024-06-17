@@ -27,7 +27,7 @@ const EmployeeApp = ({ path, url, userType }) => {
 
  
 
-  const PETBreadCrumbs = ({ location }) => {
+  const CHBBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
     const search = useLocation().search;
     const fromScreen = new URLSearchParams(search).get("from") || null;
@@ -43,8 +43,6 @@ const EmployeeApp = ({ path, url, userType }) => {
         content: t("ES_TITLE_INBOX"),
         show: location.pathname.includes("chb/bookHall/inbox") ? true : false,
       },
-     
-    
       {
         path: "/digit-ui/employee/chb/bookHall/my-applications",
         content: t("ES_COMMON_APPLICATION_SEARCH"),
@@ -58,11 +56,10 @@ const EmployeeApp = ({ path, url, userType }) => {
     return <BreadCrumb style={isMobile?{display:"flex"}:{}}  spanStyle={{maxWidth:"min-content"}} crumbs={crumbs} />;
   }
 
-  const NewApplication = Digit?.ComponentRegistryService?.getComponent("PTRNewApplication");
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
 
   // const EditApplication = Digit?.ComponentRegistryService?.getComponent("PTEditApplication");
-  const Response = Digit?.ComponentRegistryService?.getComponent("PTRResponse");
+  const Response = Digit?.ComponentRegistryService?.getComponent("CHBResponse");
   const DocsRequired = Digit?.ComponentRegistryService?.getComponent("PTRDocsRequired");
   const isRes = window.location.href.includes("chb/response");
   const isNewRegistration = window.location.href.includes("new-application") || window.location.href.includes("modify-application") || window.location.href.includes("chb/application-details");
@@ -71,7 +68,7 @@ const EmployeeApp = ({ path, url, userType }) => {
       <React.Fragment>
         <div className="ground-container">
           
-          {!isRes ? <div style={isNewRegistration ? {marginLeft: "12px" } : {marginLeft:"-4px"}}><PETBreadCrumbs location={location} /></div> : null}
+          {!isRes ? <div style={isNewRegistration ? {marginLeft: "12px" } : {marginLeft:"-4px"}}><CHBBreadCrumbs location={location} /></div> : null}
           <PrivateRoute exact path={`${path}/`} component={() => <CHBLinks matchPath={path} userType={userType} />} />
           <PrivateRoute
             path={`${path}/bookHall/inbox`}
@@ -86,7 +83,6 @@ const EmployeeApp = ({ path, url, userType }) => {
               />
             )}
           />
-          <PrivateRoute path={`${path}/bookHall/new-application`} component={() => <NewApplication parentUrl={url} />} />
           <PrivateRoute path={`${path}/bookHall/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/bookHall/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/bookHall/response`} component={(props) => <Response {...props} parentRoute={path} />} />

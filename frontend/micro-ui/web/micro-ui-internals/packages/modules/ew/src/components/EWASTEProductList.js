@@ -21,12 +21,12 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
   };
 
   const productcolumns = [
-    { Header: "PRODUCT_NAME", accessor: "name" },
-    { Header: "PRODUCT_QUANTITY", accessor: "quantity" },
-    { Header: "UNIT_PRICE", accessor: "unit_price" },
-    { Header: "TOTAL_PRODUCT_PRICE", accessor: "total_price" },
+    { Header: t("PRODUCT_NAME"), accessor: "name" },
+    { Header: t("PRODUCT_QUANTITY"), accessor: "quantity" },
+    { Header: t("UNIT_PRICE"), accessor: "unit_price" },
+    { Header: t("TOTAL_PRODUCT_PRICE"), accessor: "total_price" },
     {
-      Header: "DELETE_KEY", accessor: "delete", Cell: ({ row }) => (
+      Header: t("DELETE_KEY"), accessor: "delete", Cell: ({ row }) => (
         <button onClick={() => handleDelete(row.index)}><DeleteIcon className="delete" fill="#a82227" style={{ cursor: "pointer", marginLeft: "20px" }} /></button>
       ),
     },

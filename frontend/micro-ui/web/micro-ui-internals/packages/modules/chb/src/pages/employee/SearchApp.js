@@ -3,7 +3,7 @@ import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker
 import { useForm, Controller } from "react-hook-form";
 import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next";
-import PTRSearchApplication from "../../components/SearchApplication";
+import CHBSearchApplication from "../../components/SearchApplication";
 
 const SearchApp = ({path}) => {
     const { variant } = useParams();
@@ -25,7 +25,7 @@ const SearchApp = ({path}) => {
 
         let payload = Object.keys(data).filter( k => data[k] ).reduce( (acc, key) => ({...acc,  [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {} );
         if(Object.entries(payload).length>0 && !payload.applicationNumber && !payload.creationReason && !payload.fromDate && !payload.mobileNumber && !payload.applicationNumber && !payload.status && !payload.toDate)
-        setShowToast({ warning: true, label: "ERR_PTR_FILL_VALID_FIELDS" });
+        setShowToast({ warning: true, label: "ERR_CHB_FILL_VALID_FIELDS" });
         else if(Object.entries(payload).length>0 && (payload.creationReason || payload.status ) && (!payload.applicationNumber && !payload.fromDate && !payload.mobileNumber && !payload.applicationNumber && !payload.toDate))
         setShowToast({ warning: true, label: "ERR_PROVIDE_MORE_PARAM_WITH_TYPE_STATUS" });
         else if(Object.entries(payload).length>0 && (payload.fromDate && !payload.toDate) || (!payload.fromDate && payload.toDate))
@@ -38,14 +38,14 @@ const SearchApp = ({path}) => {
         enabled: !!( payload && Object.keys(payload).length > 0 )
     }
 
-    const { isLoading, isSuccess, isError, error, data: {PetRegistrationApplications: searchReult, Count: count} = {} } = Digit.Hooks.ptr.usePTRSearch(
+    const { isLoading, isSuccess, isError, error, data: {hallsBookingApplication: searchReult, Count: count} = {} } = Digit.Hooks.chb.useChbSearch(
         { tenantId,
           filters: payload
         },
        config,
       );
     return <React.Fragment>
-        <PTRSearchApplication t={t} isLoading={isLoading} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={  isSuccess && !isLoading ? (searchReult.length>0? searchReult : { display: "ES_COMMON_NO_DATA" } ):""} count={count} /> 
+        <CHBSearchApplication t={t} isLoading={isLoading} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={  isSuccess && !isLoading ? (searchReult.length>0? searchReult : { display: "ES_COMMON_NO_DATA" } ):""} count={count} /> 
         {showToast && (
         <Toast
           error={showToast.error}

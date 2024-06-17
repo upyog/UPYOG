@@ -9,7 +9,7 @@ const ApplicationLinks = ({ linkPrefix, classNameForMobileView="" }) => {
   const allLinks = [
     {
       text: t("ES_TITLE_NEW_REGISTRATION"),
-      link: "/digit-ui/employee/ptr/new-application",
+      link: "/digit-ui/employee/chb/bookHall/new-application",
     },
     {
       text: t("ES_TITILE_SEARCH_APPLICATION"),
@@ -44,7 +44,7 @@ const ApplicationLinks = ({ linkPrefix, classNameForMobileView="" }) => {
       <span className="logo">
         <ShippingTruck />
       </span>{" "}
-      <span className="text">{t("ES_TITLE_PET_REGISTRATION")}</span>
+      <span className="text">{t("ES_TITLE_CHB_REGISTRATION")}</span>
     </div>
   );
 

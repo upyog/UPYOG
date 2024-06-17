@@ -14,8 +14,8 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
 
   const ApplicationTypeMenu = [
     {
-      label: "PTR_NEW_REGISTRATION",
-      value: "ptr",
+      label: "CHB_NEW_REGISTRATION",
+      value: "chb",
     },
     
   ];
@@ -112,7 +112,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
             </div>
             <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("ES_PTR_APP_TYPE")}
+                {t("ES_CHB_APP_TYPE")}
               </div>
               {ApplicationTypeMenu.map((e, index) => {
                 const checked = _searchParams?.services?.includes(e.value);

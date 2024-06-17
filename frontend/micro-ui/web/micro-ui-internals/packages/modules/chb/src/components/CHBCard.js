@@ -9,8 +9,8 @@ const CHBCard = () => {
   const [total, setTotal] = useState("-");
   const { data, isLoading, isFetching, isSuccess } = Digit.Hooks.useNewInboxGeneral({
     tenantId: Digit.ULBService.getCurrentTenantId(),
-    ModuleCode: "PTR",
-    filters: { limit: 10, offset: 0, services: ["ptr"] },
+    ModuleCode: "CHB",
+    filters: { limit: 10, offset: 0, services: ["chb"] },
 
     config: {
       select: (data) => {
@@ -24,26 +24,21 @@ const CHBCard = () => {
     if (!isFetching && isSuccess) setTotal(data);
   }, [isFetching]);
 
-  if (!Digit.Utils.assetAccess()) {
+  if (!Digit.Utils.chbAccess()) {
     return null;
   }
   const links=[
     {
       count: isLoading ? "-" : total?.totalCount,
       label: t("ES_COMMON_INBOX"),
-      link: `/digit-ui/employee/ptr/petservice/inbox`,
-    },
-    {
-      label: t("CHB_TITLE_NEW_PET_REGISTRATION"),
-      link: `/digit-ui/employee/ptr/petservice/new-application`,
-      role: "PT_CEMP"
+      link: `/digit-ui/employee/chb/bookHall/inbox`,
     },
     {
       label: t("ES_COMMON_APPLICATION_SEARCH"),
-      link: `/digit-ui/employee/ptr/petservice/my-applications`,
+      link: `/digit-ui/employee/chb/bookHall/my-applications`,
     },
   ]
-  const PT_CEMP = Digit.UserService.hasAccess(["ASSET_INITIATOR","ASSET_VERIFIER"]) || false;
+  const CHB_CEMP = Digit.UserService.hasAccess(["CHB_APPROVER","CHB_VERIFIER"]) || false;
   const propsForModuleCard = {
     Icon: <PTIcon />,
     moduleName: t("CHB_TITLE_COMMUNITY_HALL_BOOKING"),
@@ -54,7 +49,7 @@ const CHBCard = () => {
         link: `/digit-ui/employee/chb/searchHall/inbox`,
       },
     ],
-    links:links.filter(link=>!link?.role||PT_CEMP),
+    links:links.filter(link=>!link?.role||CHB_CEMP),
   };
 
   return <EmployeeModuleCard {...propsForModuleCard} />;
