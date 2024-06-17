@@ -18,6 +18,12 @@ public class ApplicationProperties {
     @Value("${egov.es.host}")
     private String elasticSearchHost;
 
+    @Value("${egov.es.username}")
+    private String userName;
+
+    @Value("${egov.es.password}")
+    private String password;
+
     @Value("${master.data.index}")
     private String masterDataIndex;
 
