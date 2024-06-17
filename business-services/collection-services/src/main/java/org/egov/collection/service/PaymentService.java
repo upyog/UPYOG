@@ -248,12 +248,12 @@ public class PaymentService {
         return paymentRequest.getPayment();
     }
     
-    @Transactional
-    public Payment updatePaymentForFilestore(Payment payment) {
-
-       paymentRepository.updateFileStoreIdToNull(payment);
-        return payment;
-    }
+//    @Transactional
+//    public Payment updatePaymentForFilestore(Payment payment) {
+//
+//       paymentRepository.updateFileStoreIdToNull(payment);
+//        return payment;
+//    }
     
     public List<Payment> plainSearch(PaymentSearchCriteria paymentSearchCriteria) {
         PaymentSearchCriteria searchCriteria = new PaymentSearchCriteria();
