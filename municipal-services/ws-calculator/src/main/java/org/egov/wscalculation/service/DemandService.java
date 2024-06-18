@@ -1583,6 +1583,10 @@ public class DemandService {
 					} else if(connectionNosIndex == connectionNos.size()-1) {
 						log.info("Last connection entered into producer logic, connectionNosCount: {} and connectionNos.size(): {}",connectionNosCount, connectionNos.size());
 
+						
+
+						
+						
 						CalculationReq calculationReq = CalculationReq.builder()
 								.calculationCriteria(calculationCriteriaList)
 								.requestInfo(requestInfo)

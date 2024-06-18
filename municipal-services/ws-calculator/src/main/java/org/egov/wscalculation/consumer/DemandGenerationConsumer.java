@@ -63,9 +63,11 @@ public class DemandGenerationConsumer {
 	public void processMessage(Map<String, Object> consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 		try{
 			CalculationReq calculationReq = mapper.convertValue(consumerRecord, CalculationReq.class);
-			log.info(" Bulk bill Consumerbatch records log for batch :  "
-					+ calculationReq.getMigrationCount().getOffset() + "Count is : "
-					+ calculationReq.getMigrationCount().getLimit());
+			/*
+			 * log.info(" Bulk bill Consumerbatch records log for batch :  " +
+			 * calculationReq.getMigrationCount().getOffset() + "Count is : " +
+			 * calculationReq.getMigrationCount().getLimit());
+			 */
 			generateDemandInBatch(calculationReq);
 		}catch (final Exception e){
 			log.error("KAFKA_PROCESS_ERROR", e);
@@ -187,8 +189,8 @@ public class DemandGenerationConsumer {
 		/*
 		 * this topic will be used by billing service to post message
 		 */
-		request.getMigrationCount().setAuditTopic(bulkBillGenAuditTopic);
-		request.getMigrationCount().setAuditTime(System.currentTimeMillis());
+		//request.getMigrationCount().setAuditTopic(bulkBillGenAuditTopic);
+		//request.getMigrationCount().setAuditTime(System.currentTimeMillis());
 		try {
 			bulkDemandAndBillGenService.bulkDemandGeneration(request);
 		} catch (Exception ex) {

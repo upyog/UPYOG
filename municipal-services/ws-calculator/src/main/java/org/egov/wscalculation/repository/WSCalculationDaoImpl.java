@@ -140,13 +140,7 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 		return connectionNos;
 	}
 
-	@Override
-	public List<String> getLocalityList(String tenantId,String batchCode ) {
-		List<Object> preparedStatement = new ArrayList<>();
-		String query = queryBuilder.getLocalityListWithBatch(tenantId,batchCode,preparedStatement);
-		log.info("batchCode " + batchCode + " Locality list : " + query);
-		return jdbcTemplate.queryForList(query, preparedStatement.toArray(), String.class);
-	}
+	
 
 	@Override
 	public List<WaterConnection> getConnectionsNoList(String tenantId, String connectionType, Integer batchOffset,
@@ -210,13 +204,19 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 
 	@Override
 	public List<String> getConnectionsNoByLocality(String tenantId, String connectionType, String locality) {
-//		List<Object> preparedStatement = new ArrayList<>();
-//		String query = queryBuilder.getLocalityListWithBatch(tenantId,batchCode,preparedStatement);
-//		log.info("batchCode " + batchCode + " Locality list : " + query);
-//		return jdbcTemplate.queryForList(query, preparedStatement.toArray(), String.class);
-		return null;
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getConnectionsNoByLocality(tenantId, connectionType,WSCalculationConstant.ACTIVE_CONNECTION, locality, preparedStatement);
+		log.info("preparedStatement: " + preparedStatement + " query : " + query);
+		return jdbcTemplate.queryForList(query, preparedStatement.toArray(), String.class);
 	}
 	
+	@Override
+	public List<String> getLocalityList(String tenantId,String batchCode ) {
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getLocalityListWithBatch(tenantId,batchCode,preparedStatement);
+		log.info("batchCode " + batchCode + " Locality list : " + query);
+		return jdbcTemplate.queryForList(query, preparedStatement.toArray(), String.class);
+	}
 	@Override
 	public Long searchLastDemandGenFromDate(String consumerCode, String tenantId) {
 		List<Object> preparedStatement = new ArrayList<>();
