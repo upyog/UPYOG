@@ -1,9 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { CardText,Card, CardHeader,FormStep, CitizenConsentForm, Loader, CheckBox,ButtonSelector,TextInput ,OTPInput} from "@upyog/digit-ui-react-components";
-import { Link } from "react-router-dom";
+import {useLocation,useHistory } from "react-router-dom";
 const TYPE_LOGIN = { type: "login" };
-const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMobileChange, config, canSubmit }) => {
+const DEFAULT_REDIRECT_URL = "/digit-ui/citizen";
+const setCitizenDetail = (userObject, token, tenantId) => {
+  let locale = JSON.parse(sessionStorage.getItem("Digit.initData"))?.value?.selectedLanguage;
+  localStorage.setItem("Citizen.tenant-id", tenantId);
+  localStorage.setItem("tenant-id", tenantId);
+  localStorage.setItem("citizen.userRequestObject", JSON.stringify(userObject));
+  localStorage.setItem("locale", locale);
+  localStorage.setItem("Citizen.locale", locale);
+  localStorage.setItem("token", token);
+  localStorage.setItem("Citizen.token", token);
+  localStorage.setItem("user-info", JSON.stringify(userObject));
+  localStorage.setItem("Citizen.user-info", JSON.stringify(userObject));
+};
 
+const getFromLocation = (state, searchParams) => {
+  return state?.from || searchParams?.from || DEFAULT_REDIRECT_URL;
+};
+const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMobileChange, config, canSubmit }) => {
+  const location = useLocation();
+  const history = useHistory();
   const [isCheckBox, setIsCheckBox] = useState(false);
   const [isCCFEnabled, setisCCFEnabled] = useState(false);
   const [mdmsConfig, setMdmsConfig] = useState("");
@@ -118,7 +136,59 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
     const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
     setIsOtpSent(true);
   };
-
+  const handleSubmit = async (e) => {
+    console.log("hell115")
+    e.preventDefault();
+    const requestData = isOtpLogin
+      ? {
+          username: formValues?.mobile,
+          password: formValues?.otp,
+          tenantId: "pg",
+          userType: "CITIZEN",
+          otp: "Y"
+        }
+      : {
+          username: formValues?.username,
+          password: formValues?.password,
+          tenantId: "pg",
+          userType: "CITIZEN",
+          otp: "N"
+        };
+    try {
+      console.log("hell116")
+      const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
+      if (!ResponseInfo) throw new Error("No response info");
+      console.log("hell117")
+      if (location.state?.role) {
+        const roleInfo = info.roles.find((userRole) => userRole.code === location.state.role);
+        if (!roleInfo || !roleInfo.code) {
+          setError(t("ES_ERROR_USER_NOT_PERMITTED"));
+          setTimeout(() => history.push("/digit-ui/citizen"), 5000);
+          return;
+        }
+      }
+  
+      if (window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")) {
+        info.tenantId = Digit.ULBService.getStateId();
+      }
+      const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
+      const userNew = { info, ...tokens };
+      Digit.SessionStorage.set("citizen.userRequestObject", userNew);
+      Digit.UserService.setUser(userNew);
+      setCitizenDetail(userNew?.info, userNew?.access_token, "pg");
+      console.log("hell118")
+      if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
+        history.replace("/digit-ui/citizen/select-location", {
+          redirectBackTo: redirectPath,
+        });
+      } else {
+        history.replace(redirectPath);
+      }
+    } catch (error) {
+      console.error('Error during authentication:', error);
+      setError(t("ES_ERROR_LOGIN_FAILED"));
+    }
+  };
   return (
     // <FormStep
     //   isDisabled={checkDisbaled()}
@@ -220,7 +290,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
               />
             </div>
           )}
-          {/* <ButtonSelector type="button" onSubmit={(e) => }style={{marginLeft: "0px" }} label= {isOtpLogin ? 'Login with OTP' : 'Login with Username & Password'} /> */}
+          <ButtonSelector type="button" onSubmit={(e) =>handleSubmit(e) }style={{marginLeft: "0px" }} label= {isOtpLogin ? 'Login with OTP' : 'Login with Username & Password'} />
            
           <ButtonSelector  type="button" size="small" onSubmit={() => window.location.href= window.location.href.split("login")[0] + "register/name"} label="Register" />
 
