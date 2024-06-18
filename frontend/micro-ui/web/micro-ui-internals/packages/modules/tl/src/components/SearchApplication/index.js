@@ -1,12 +1,12 @@
 import React, { useCallback, useMemo, useEffect } from "react"
 import { useForm, Controller } from "react-hook-form";
-import { SearchForm, Table, Card, Header } from "@upyog/digit-ui-react-components";
+import { SearchForm, Table, Card, Header } from "@egovernments/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import { convertEpochToDateDMY } from  "../../utils";
 import SearchFields from "./SearchFields";
 import MobileSearchApplication from "./MobileSearchApplication";
 
-const SearchApplication = ({tenantId, t, onSubmit, data, count }) => {
+const SearchLicenseApplication = ({tenantId, t, onSubmit, data, count }) => {
   const initialValues = Digit.SessionStorage.get("SEARCH_APPLICATION_DETAIL")? {
     ...Digit.SessionStorage.get("SEARCH_APPLICATION_DETAIL"),
     offset: 0,
@@ -126,7 +126,7 @@ const SearchApplication = ({tenantId, t, onSubmit, data, count }) => {
                 {
                 t(data.display)
                     .split("\\n")
-                    .map((text, index) => (
+                    ?.map((text, index) => (
                     <p key={index} style={{ textAlign: "center" }}>
                         {text}
                     </p>
@@ -159,4 +159,4 @@ const SearchApplication = ({tenantId, t, onSubmit, data, count }) => {
         </React.Fragment>
 }
 
-export default SearchApplication
+export default SearchLicenseApplication

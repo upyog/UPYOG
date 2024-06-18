@@ -1,4 +1,4 @@
-import { DetailsCard, Loader, Table } from "@upyog/digit-ui-react-components";
+import { DetailsCard, Loader, Table } from "@egovernments/digit-ui-react-components";
 import React, { memo, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLocation, useHistory } from "react-router-dom";
@@ -122,7 +122,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
   };
 
   const tableData = Object.values(data?.FormattedData || {}) || [];
-  if (ptSearchConfig?.ptSearchCount && payload.locality && tableData && tableData.length > ptSearchConfig.ptSearchCount) {
+  if (ptSearchConfig?.ptSearchCount && payload.locality && tableData && tableData.length > ptSearchConfig?.ptSearchCount) {
     !showToast && setShowToast({ error: true, label: "PT_MODIFY_SEARCH_CRITERIA" });
     return null;
   }

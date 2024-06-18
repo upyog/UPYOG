@@ -11,7 +11,7 @@ import {
   CardLabelError,
   Menu,
   AddIcon,
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import DropdownStatus from "./inbox/DropdownStatus";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -182,14 +182,14 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
                 </div>
               </div>
               {showAddMenu && (
-                <Menu localeKeyPrefix={"ES_FSM_ACTION_CREATE"} options={["VENDOR", "DRIVER", "VEHICLE"]} t={t} onSelect={onActionSelect} />
+                <Menu localeKeyPrefix={"ES_FSM_ACTION_CREATE"} options={["VENDOR", "VEHICLE", "DRIVER"]} t={t} onSelect={onActionSelect} />
               )}
             </div>
           </div>
           <form onSubmit={handleSubmit(onSubmitInput)}>
             <div
               className={FSTP ? "complaint-input-container for-pt for-search" : "complaint-input-container"}
-              style={{ display:"grid",width: "100%", gridTemplateColumns: "33.33% 66.66% 0%" }}
+              style={{ width: "100%", gridTemplateColumns: "33.33% 66.66% 0%" }}
             >
               {searchFields?.map((input, index) => (
                 <span key={index} className={index === 0 ? "complaint-input" : "mobile-input"}>

@@ -10,7 +10,7 @@ import {
   StatusTable,
   SubmitBar,
   LinkLabel
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory, useParams } from "react-router-dom";
@@ -65,7 +65,7 @@ const [isWarningPop, setWarningPopUp] = useState(false);
 const businessService="PT"
 const state = Digit.ULBService.getStateId();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { data: UpdateNumberConfig } = Digit.Hooks.useCommonMDMS(Digit.ULBService.getStateId(),"PropertyTax",["UpdateNumber"],{
+  const { data: UpdateNumberConfig } = Digit.Hooks.useCommonMDMSV2(Digit.ULBService.getStateId(),"PropertyTax",["UpdateNumber"],{
     select: (data) => {
       return data?.PropertyTax?.UpdateNumber?.[0];
     },

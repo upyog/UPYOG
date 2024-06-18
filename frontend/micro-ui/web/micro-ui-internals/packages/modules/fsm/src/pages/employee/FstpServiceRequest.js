@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { CardHeader, Header, Loader } from "@upyog/digit-ui-react-components";
+import { CardHeader, Header, Loader } from "@egovernments/digit-ui-react-components";
 import DesktopInbox from "../../components/DesktopInbox";
 import MobileInbox from "../../components/MobileInbox";
 import { Link, useHistory, useLocation } from "react-router-dom";
@@ -142,7 +142,10 @@ const FstpServiceRequest = () => {
 
   let citizenInfo = [];
   tripDetail?.map((vehicle) => {
-    citizenInfo.push(vehicleLog?.find((i) => i?.tripDetails[0]?.referenceNo === vehicle?.applicationNo));
+    const info = vehicleLog?.find((i) => i?.tripDetails[0]?.referenceNo === vehicle?.applicationNo);
+    if (info !== undefined) {
+      citizenInfo.push(info);
+    }
   });
 
   if (isMobile) {

@@ -1,4 +1,4 @@
-import { FormComposer, Loader } from "@upyog/digit-ui-react-components";
+import { FormComposer, Loader } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useLocation } from "react-router-dom";
@@ -83,6 +83,7 @@ let propertyStructureDetails= {"usageCategory":"","structureType":applicationDat
       formData.units = formData.units.filter((unit) => unit.active);
     }
     history.push("/digit-ui/employee/pt/response", { Property: formData, key: "UPDATE", action: "SUBMIT" });
+
   };
 
   if (isLoading) {

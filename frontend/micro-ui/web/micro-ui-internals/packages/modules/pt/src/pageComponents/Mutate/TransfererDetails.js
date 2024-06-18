@@ -1,5 +1,5 @@
 import React from "react";
-import { FormStep, StatusTable, Row, CardHeader, KeyNote, CardCaption } from "@upyog/digit-ui-react-components";
+import { FormStep, StatusTable, Row, CardHeader, KeyNote, CardCaption } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import Timeline from "../../components/TLTimeline";
 // import { cardBodyStyle, stringReplaceAll } from "../utils";

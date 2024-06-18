@@ -1,10 +1,10 @@
-import { Banner, Card, Loader, CardText, ActionBar, SubmitBar,Menu } from "@upyog/digit-ui-react-components";
+import { Banner, Card, Loader, CardText, ActionBar, SubmitBar,Menu } from "@egovernments/digit-ui-react-components";
 import { useQueryClient } from "react-query";
 import React, { useEffect,useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link,useHistory } from "react-router-dom";
 const getMessage = (mutation) => {
-  if (mutation.isSuccess) return mutation.data?.Surveys?.[0]?.uuid;
+  if (mutation.isSuccess) return mutation.data?.ServiceDefinition?.[0]?.id;
   return "";
 };
 
@@ -24,7 +24,7 @@ const Acknowledgement = (props) => {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.survey.useCreate();
+  const mutation = Digit.Hooks.survey.useServeyCreateDef();
   const { state } = props.location;
   const history = useHistory();
   const [isActionClicked,setIsActionClicked] = useState(false) 

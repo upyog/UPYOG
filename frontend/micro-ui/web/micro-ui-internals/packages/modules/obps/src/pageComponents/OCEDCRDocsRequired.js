@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Card, CardHeader, CardLabel, CardText, CitizenInfoLabel, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Card, CardHeader, CardLabel, CardText, CitizenInfoLabel, SubmitBar } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 const OCEDCRDocsRequired = ({ onSelect, onSkip, config }) => {

@@ -1,4 +1,4 @@
-import { CardLabel, Dropdown, FormStep, LinkButton, Loader, TextInput, DeleteIcon } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, LinkButton, Loader, TextInput, DeleteIcon } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState ,Fragment} from "react";
 import Timeline from "../components/TLTimeline";
 
@@ -20,10 +20,6 @@ const formatUnits = (units = [], currentFloor, isFloor) => {
         usageCategory: "",
         unitType: "",
         occupancyType: "",
-        rentedMonths:"",
-        nonRentedMonthsUsage:"",
-        ageOfProperty:null,
-        structureType:null,
         builtUpArea: null,
         arv: "",
         floorNo: isFloor ? { code: currentFloor, i18nKey: `PROPERTYTAX_FLOOR_${currentFloor}` } : "",
@@ -69,7 +65,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
     }
   };
 
-  const { data: mdmsData, isLoading } = Digit.Hooks.useCommonMDMS(
+  const { data: mdmsData, isLoading } = Digit.Hooks.useCommonMDMSV2(
     Digit.ULBService.getStateId(),
     "PropertyTax",
     ["Floor", "OccupancyType", "UsageCategory"],

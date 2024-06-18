@@ -1,4 +1,4 @@
-import { Card, ShippingTruck } from "@upyog/digit-ui-react-components";
+import { Card, ShippingTruck } from "@egovernments/digit-ui-react-components";
 import { forEach } from "lodash";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -60,7 +60,7 @@ const FSMLink = ({ parentRoute, isMobile, data }) => {
           {links.map(({ link, text, hyperlink = false, accessTo = [] }, index) => {
             return (
               <span className="link" key={index}>
-                {hyperlink ? <a href={link}>{text}</a> : <Link to={link}>{text}</Link>}
+                {hyperlink ? <a href={link}>{t(text)}</a> : <Link to={link}>{t(text)}</Link>}
               </span>
             );
           })}

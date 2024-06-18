@@ -1,13 +1,12 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Header, Loader } from "@upyog/digit-ui-react-components";
+import { Header, Loader } from "@egovernments/digit-ui-react-components";
 import Layout from "../components/Layout";
 
 const Overview = () => {
   const { t } = useTranslation();
   const moduleCode = "home";
   const { data: response, isLoading } = Digit.Hooks.dss.useDashboardConfig(moduleCode);
-console.log("")
   if (isLoading) {
     return <Loader />;
   }

@@ -1,4 +1,4 @@
-import { CheckBox, CloseSvg, Dropdown, Loader, SubmitBar,ApplyFilterBar,ActionBar } from "@upyog/digit-ui-react-components";
+import { CheckBox, CloseSvg, Dropdown, Loader, SubmitBar,ApplyFilterBar,ActionBar } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getDefaultReceiptService } from "../utils";

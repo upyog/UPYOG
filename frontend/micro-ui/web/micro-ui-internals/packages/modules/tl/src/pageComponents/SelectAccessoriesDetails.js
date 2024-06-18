@@ -1,4 +1,4 @@
-import { CardLabel, FormStep, LinkButton, Loader, RadioOrSelect, TextInput } from "@upyog/digit-ui-react-components";
+import { CardLabel, FormStep, LinkButton, Loader, RadioOrSelect, TextInput } from "@egovernments/digit-ui-react-components";
 import isUndefined from "lodash/isUndefined";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -83,7 +83,7 @@ const SelectAccessoriesDetails = ({ t, config, onSelect, userType, formData }) =
         return { code: item.licenseType, active: true };
       });
 
-      accessories.forEach((data) => {
+      accessories?.((data) => {
         data.i18nKey = t(`TRADELICENSE_ACCESSORIESCATEGORY_${stringReplaceAll(data?.code?.toUpperCase(), "-", "_")}`);
       });
 
@@ -123,7 +123,7 @@ const SelectAccessoriesDetails = ({ t, config, onSelect, userType, formData }) =
     acc[i].uom = "";
     setenableUOM(true);
     acc[i].unit = value?.uom != null ?  value.uom : "";
-    Array.from(document.querySelectorAll("input")).forEach((input) => (input.value = ""));
+    Array.from(document.querySelectorAll("input"))?.forEach((input) => (input.value = ""));
     setUnitOfMeasure(value?.uom != null ? value.uom : null);
     // Data?.TradeLicense?.AccessoriesCategory.map((ob) => {
     //   if (value.code === ob.code && ob.uom != null) {
@@ -293,7 +293,7 @@ const SelectAccessoriesDetails = ({ t, config, onSelect, userType, formData }) =
                     disable={true}
                     /* {...(validation = {
             isRequired: true,
-            pattern: "^[a-zA-Z ]*$",
+            pattern: "^[a-zA-Z-.`' ]*$",
             type: "text",
             title: t("PT_NAME_ERROR_MESSAGE"),
           })} */

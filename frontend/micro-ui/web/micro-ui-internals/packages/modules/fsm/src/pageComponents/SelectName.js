@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { LabelFieldPair, CardLabel, TextInput, CardLabelError, Dropdown } from "@upyog/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, CardLabelError, Dropdown } from "@egovernments/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 
 const SelectName = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
@@ -95,7 +95,7 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
               </CardLabel>
               <div className="field">
                 <Dropdown
-                  option={input.options}
+                  option={input.options?.sort((a, b) => a.code.localeCompare(b.code))}
                   optionKey="i18nKey"
                   id="dropdown"
                   selected={formData && formData[config.key] ? input.options.find((data) => data.code === formData[config.key][input.name]) : null}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Loader, Toast, Header } from "@upyog/digit-ui-react-components";
+import { FormComposer, Loader, Toast, Header } from "@egovernments/digit-ui-react-components";
 import { useHistory, useParams } from "react-router-dom";
 import { useQueryClient } from "react-query";
 import DriverConfig from "../../configs/DriverConfig";
@@ -45,7 +45,7 @@ const EditDriver = ({ parentUrl, heading }) => {
         selectGender: driverDetails?.driverData?.owner?.gender,
         dob: driverDetails?.driverData?.owner?.dob && Digit.DateUtils.ConvertTimestampToDate(driverDetails?.driverData?.owner?.dob, "yyyy-MM-dd"),
         emailId: driverDetails?.driverData?.owner?.emailId === "abc@egov.com" ? "" : driverDetails?.driverData?.owner?.emailId,
-        phone: driverDetails?.driverData?.owner?.mobileNumber,
+        // phone: driverDetails?.driverData?.owner?.mobileNumber,
         additionalDetails: driverDetails?.driverData?.additionalDetails?.description,
       };
       setDefaultValues(values);

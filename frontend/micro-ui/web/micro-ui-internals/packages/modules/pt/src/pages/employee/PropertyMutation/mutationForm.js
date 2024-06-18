@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Toast } from "@upyog/digit-ui-react-components";
+import { FormComposer, Toast } from "@egovernments/digit-ui-react-components";
 import { newConfigMutate } from "../../../config/Mutate/config";
 import { useHistory } from "react-router-dom";
 
@@ -56,7 +56,6 @@ const MutationForm = ({ applicationData, tenantId }) => {
       data?.originalData?.documents?.filter(
         (oldDoc) => !mutationDocs?.PropertyTax?.MutationDocuments.some((mut) => oldDoc.documentType.includes(mut.code))
       ) || [];
-      console.log("data",data)
     const submitData = {
       Property: {
         ...data.originalData,

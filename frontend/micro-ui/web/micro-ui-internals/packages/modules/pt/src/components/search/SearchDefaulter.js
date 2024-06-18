@@ -1,4 +1,4 @@
-import { DetailsCard, Loader, Table, Modal,SearchField,SubmitBar,SearchForm } from "@upyog/digit-ui-react-components";
+import { DetailsCard, Loader, Table, Modal,SearchField,SubmitBar,SearchForm } from "@egovernments/digit-ui-react-components";
 import React, { memo, useEffect, useMemo, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import PropertyInvalidMobileNumber from "../../pages/citizen/MyProperties/PropertyInvalidMobileNumber";
@@ -27,7 +27,7 @@ const { isLoading, error, data, isSuccess } = useQuery(["propertySearchList", te
   const mutation = Digit.Hooks.pt.usePropertyAPI(tenantId, false);
 
   const UpdatePropertyNumberComponent = Digit?.ComponentRegistryService?.getComponent("EmployeeUpdateOwnerNumber");
-  const { data: updateNumberConfig } = Digit.Hooks.useCommonMDMS(Digit.ULBService.getStateId(), "PropertyTax", ["UpdateNumber"], {
+  const { data: updateNumberConfig } = Digit.Hooks.useCommonMDMSV2(Digit.ULBService.getStateId(), "PropertyTax", ["UpdateNumber"], {
     select: (data) => {
       return data?.PropertyTax?.UpdateNumber?.[0];
     },
@@ -233,7 +233,7 @@ const onViewDownload =async () =>{
     });
   };
   const tableData = Object.values(data?.Properties || {}) || [];
-  if(ptSearchConfig?.ptSearchCount&&payload.locality&&tableData&&tableData.length>ptSearchConfig.ptSearchCount){
+  if(ptSearchConfig?.ptSearchCount&&payload.locality&&tableData&&tableData.length>ptSearchConfig?.ptSearchCount){
    // !showToast &&setShowToast({ error: true, label: "PT_MODIFY_SEARCH_CRITERIA" });
     return null;
   }

@@ -3,44 +3,39 @@ import React from "react";
 import {
   initPGRComponents,
   PGRReducers,
-} from "@upyog/digit-ui-module-pgr";
-import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
+} from "@egovernments/digit-ui-module-pgr";
+import { initFSMComponents } from "@egovernments/digit-ui-module-fsm";
 import {
   PTModule,
   PTLinks,
   PTComponents,
-} from "@upyog/digit-ui-module-pt";
-import { MCollectModule, MCollectLinks, initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
-import { initDSSComponents } from "@upyog/digit-ui-module-dss";
+} from "@egovernments/digit-ui-module-pt";
+import { MCollectModule, MCollectLinks, initMCollectComponents } from "@egovernments/digit-ui-module-mcollect";
+import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 import {
   PaymentModule,
   PaymentLinks,
   paymentConfigs,
-} from "@upyog/digit-ui-module-common";
-import { DigitUI } from "@upyog/digit-ui-module-core";
-import { initLibraries } from "@upyog/digit-ui-libraries";
+} from "@egovernments/digit-ui-module-common";
+import { DigitUI } from "@egovernments/digit-ui-module-core";
+import { initLibraries } from "@egovernments/digit-ui-libraries";
 import {
   HRMSModule,
   initHRMSComponents,
-} from "@upyog/digit-ui-module-hrms";
+} from "@egovernments/digit-ui-module-hrms";
 import {
   TLModule,
   TLLinks,
   initTLComponents,
-} from "@upyog/digit-ui-module-tl";
-import {
-  PTRModule,
-  PTRLinks,
-  PTRComponents,
-} from "@upyog-niua/upyog-ui-module-ptr";
-import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-receipts";
-import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
-import { initNOCComponents } from "@upyog/digit-ui-module-noc";
-import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
-import { initWSComponents } from "@upyog/digit-ui-module-ws";
-import { initCustomisationComponents } from "./Customisations";
-import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
-import { initBillsComponents } from "@upyog/digit-ui-module-bills";
+} from "@egovernments/digit-ui-module-tl";
+import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
+import { initOBPSComponents } from "@egovernments/digit-ui-module-obps";
+import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
+import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
+import { initWSComponents } from "@egovernments/digit-ui-module-ws";
+// import { initCustomisationComponents } from "./Customisations";
+import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
+import { initBillsComponents } from "@egovernments/digit-ui-module-bills";
 // import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
 
 initLibraries();
@@ -69,7 +64,6 @@ const enabledModules = [
   "FireNoc",
   "Birth",
   "Death",
-  "PTR"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -84,9 +78,6 @@ window.Digit.ComponentRegistryService.setupRegistry({
   TLModule,
   TLLinks,
   ReceiptsModule,
-  PTRModule,
-  PTRLinks,
-  ...PTRComponents,
 });
 
 initPGRComponents();
@@ -103,7 +94,7 @@ initWSComponents();
 initCommonPTComponents();
 initBillsComponents();
 // initReportsComponents();
-initCustomisationComponents();
+// initCustomisationComponents();
 
 const moduleReducers = (initData) => ({
   pgr: PGRReducers(initData),

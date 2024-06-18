@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { TextInput, LabelFieldPair, CardLabel, WrapUnMaskComponent } from "@upyog/digit-ui-react-components";
+import { TextInput, LabelFieldPair, CardLabel, WrapUnMaskComponent } from "@egovernments/digit-ui-react-components";
 import FormStep from "../../../../react-components/src/molecules/FormStep";
 import { useForm, Controller } from "react-hook-form";
 import _ from "lodash";
@@ -104,6 +104,7 @@ const SelectRoadDetails = ({ t, config, onSelect, userType, formData, formState,
         onSelect={(data) => onSelect(config.key, data)}
         isDisabled={roadWidth && distance ? false : true}
         t={t}
+        onSkip={onSkip}
       />
     </React.Fragment>
   );

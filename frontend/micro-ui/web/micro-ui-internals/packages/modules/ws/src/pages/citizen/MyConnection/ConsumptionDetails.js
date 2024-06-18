@@ -1,4 +1,4 @@
-import { Card, Header, KeyNote, Loader, StatusTable, SubmitBar, Row } from "@upyog/digit-ui-react-components";
+import { Card, Header, KeyNote, Loader, StatusTable, SubmitBar, Row } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";

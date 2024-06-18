@@ -1,5 +1,5 @@
 import React from "react";
-const { DatePicker } = require("@upyog/digit-ui-react-components");
+const { DatePicker } = require("@egovernments/digit-ui-react-components");
 import { convertEpochToDate } from "../../../utils";
 
 const DriverConfig = (t, disabled = false) => {
@@ -97,7 +97,7 @@ const DriverConfig = (t, disabled = false) => {
             className: "payment-form-text-input-correction",
           },
         },
-        {
+       /* {
           label: "ES_FSM_REGISTRY_DRIVER_PHONE",
           isMandatory: true,
           type: "mobileNumber",
@@ -114,7 +114,7 @@ const DriverConfig = (t, disabled = false) => {
             className: "payment-form-text-input-correction",
             labelStyle: { border: "1px solid black", borderRight: "none" },
           },
-        },
+        }, */
       ],
     },
   ];

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Loader, TypeSelectCard, Dropdown, FormStep, CardLabel, RadioOrSelect } from "@upyog/digit-ui-react-components";
+import { Loader, TypeSelectCard, Dropdown, FormStep, CardLabel, RadioOrSelect } from "@egovernments/digit-ui-react-components";
 import Timeline from "../components/TLTimelineInFSM";
 import { useLocation } from "react-router-dom";
 
@@ -67,14 +67,30 @@ const SelectPropertySubtype = ({ config, onSelect, t, userType, formData }) => {
   // }, [propertyType])
 
   if (userType === "employee") {
-    return <Dropdown option={subtypeOptions} optionKey="i18nKey" id="propertySubType" selected={subtype} select={selectedSubType} t={t} disable={url.includes("/modify-application/") || url.includes("/new-application") ? false : true} />;
+    return (
+      <Dropdown
+        option={subtypeOptions?.sort((a, b) => a.name.localeCompare(b.name))}
+        optionKey="i18nKey"
+        id="propertySubType"
+        selected={subtype}
+        select={selectedSubType}
+        t={t}
+        disable={url.includes("/modify-application/") || url.includes("/new-application") ? false : true}
+      />
+    );
   } else {
     return (
       <React.Fragment>
         <Timeline currentStep={1} flow="APPLY" />
         <FormStep config={config} onSelect={goNext} isDisabled={!subtype} t={t}>
           <CardLabel>{`${t("CS_FILE_APPLICATION_PROPERTY_SUBTYPE_LABEL")} *`}</CardLabel>
-          <RadioOrSelect options={subtypeOptions} selectedOption={subtype} optionKey="i18nKey" onSelect={selectedValue} t={t} />
+          <RadioOrSelect
+            options={subtypeOptions?.sort((a, b) => a.name.localeCompare(b.name))}
+            selectedOption={subtype}
+            optionKey="i18nKey"
+            onSelect={selectedValue}
+            t={t}
+          />
         </FormStep>
       </React.Fragment>
     );

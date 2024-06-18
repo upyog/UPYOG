@@ -1,5 +1,5 @@
 import React,{Fragment,useEffect,useMemo,useState} from 'react'
-import { Card, CardLabelError, CheckBox, RadioButtons, TextArea, TextInput, Loader, CardHeader, BreakLine, CardLabel, CardSectionHeader, Header, MultiLink } from "@upyog/digit-ui-react-components";
+import { Card, CardLabelError, CheckBox, RadioButtons, TextArea, TextInput, Loader, CardHeader, BreakLine, CardLabel, CardSectionHeader, Header, MultiLink } from "@egovernments/digit-ui-react-components";
 import { bindQuesWithAns } from './bindquesansutil';
 import WhoHasResponded from './WhoHasResponded';
 import SurveyDetailsView from './SurveyDetailsView';
@@ -17,7 +17,7 @@ const transformDate = (date) => {
 ]
     return {
         day,
-        date:`${monthNames[month-1]} ${year}`
+        date:date?`${monthNames[month-1]} ${year}`:date
     }
     // return (<p>
     //     <strong>{`${monthNames[month-1]} ${year} ${day}`}</strong>
@@ -179,20 +179,20 @@ const displayResult = (ques,ans,type,resCount=0,t) => {
         }
     }
 
-const SurveyResultsView = ({surveyInfo,responsesInfoMutation}) => {
+const SurveyResultsView = ({surveyInfo,selecedSurveyresults}) => {
     
     const { t } = useTranslation();
     const [data,setData]=useState(null);
     const [userInfo,setUserInfo] = useState({})
     const tenant = Digit.ULBService.getCurrentTenantId();
     useEffect( async() => {
-        if(responsesInfoMutation.isSuccess){
-        const dp = bindQuesWithAns(surveyInfo?.questions,responsesInfoMutation.data.answers)
+        if(selecedSurveyresults?.answers?.length){
+        const dp = bindQuesWithAns(surveyInfo?.questions,selecedSurveyresults.answers)
         setData(dp)
-        const ue = await getUserData(responsesInfoMutation.data.answers,tenant.split(".")[0])
+        const ue = await getUserData(selecedSurveyresults.answers,tenant.split(".")[0])
         setUserInfo(ue);
         }
-    },[responsesInfoMutation])
+    },[selecedSurveyresults])
 
     //    const dp = bindQuesWithAns(surveyInfo?.questions,responsesInfoMutation.data.answers);
     //    setData(dp)    
@@ -201,7 +201,7 @@ const SurveyResultsView = ({surveyInfo,responsesInfoMutation}) => {
     const generateExcelObj = (ques,ans) => {
 
         const countResponses = parseInt(ans.length/ques.length)
-        const dp = bindQuesWithAns(surveyInfo?.questions, responsesInfoMutation.data.answers)
+        const dp = bindQuesWithAns(surveyInfo?.questions, selecedSurveyresults.answers)
         
         const result = []
         //now in a loop fill all the sampleObj (3 times) and use it to download report
@@ -232,11 +232,11 @@ const SurveyResultsView = ({surveyInfo,responsesInfoMutation}) => {
     }
 
     const handleReportDownload = () => {
-        const result = generateExcelObj(surveyInfo?.questions, responsesInfoMutation.data.answers)
-        return Digit.Download.Excel(result, responsesInfoMutation.data.title);
+        const result = generateExcelObj(surveyInfo?.questions, selecedSurveyresults.answers)
+        return Digit.Download.Excel(result, selecedSurveyresults.Service[0].referenceId);
     }
 
-    if(!data) return <Loader />
+    // if(!data) return <Loader />
     
     return (
     <div className="custom-group-merge-container">

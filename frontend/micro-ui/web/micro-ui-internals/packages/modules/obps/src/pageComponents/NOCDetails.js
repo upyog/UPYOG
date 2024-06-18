@@ -9,7 +9,7 @@ import {
     StatusTable,
     MultiUploadWrapper,
     Row
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 import PropertyDocuments from "../../../templates/ApplicationDetails/components/PropertyDocuments";
 import DocumentsPreview from "../../../templates/ApplicationDetails/components/DocumentsPreview";

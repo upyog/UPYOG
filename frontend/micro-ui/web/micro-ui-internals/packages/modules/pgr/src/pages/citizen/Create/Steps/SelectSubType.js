@@ -1,4 +1,4 @@
-import { TypeSelectCard } from "@upyog/digit-ui-react-components";
+import { TypeSelectCard } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 
 const SelectSubType = ({ t, config, onSelect, value }) => {
@@ -21,7 +21,7 @@ const SelectSubType = ({ t, config, onSelect, value }) => {
 
   const configNew = {
     ...config.texts,
-    ...{ headerCaption: t(`SERVICEDEFS.${complaintType.key.toUpperCase()}`) },
+    ...{ headerCaption: t(`SERVICEDEFS.${complaintType?.key.toUpperCase()}`) },
     ...{ menu: menu },
     ...{ optionsKey: "name" },
     ...{ selected: selectedValue },

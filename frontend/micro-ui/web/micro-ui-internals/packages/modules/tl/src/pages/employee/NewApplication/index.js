@@ -1,4 +1,4 @@
-import { FormComposer, Header, Toast } from "@upyog/digit-ui-react-components";
+import { FormComposer, Header, Toast } from "@egovernments/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -290,6 +290,11 @@ const NewApplication = () => {
       return head;
     }
   }
+
+  console.log(configs,"configs");
+
+  // configs[1] = configs[0];
+  // configs[6] = configs[0];
 
   return (
     <div>

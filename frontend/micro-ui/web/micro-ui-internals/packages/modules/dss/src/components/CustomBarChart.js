@@ -1,4 +1,4 @@
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useContext, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -248,7 +248,7 @@ const CustomBarChart = ({
       </ResponsiveContainer>
       {chartData?.length > 3 && showDrillDown && (
         <p className="showMore" onClick={goToDrillDownCharts}>
-          {t("DSS_SHOW_MORE")}
+          {window.location.href.includes("fsm") ? "" : t("DSS_SHOW_MORE")}
         </p>
       )}
     </Fragment>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { TypeSelectCard } from "@upyog/digit-ui-react-components";
-import { FormStep, RadioOrSelect, RadioButtons, CitizenInfoLabel, InfoBannerIcon } from "@upyog/digit-ui-react-components";
+import { TypeSelectCard } from "@egovernments/digit-ui-react-components";
+import { FormStep, RadioOrSelect, RadioButtons, CitizenInfoLabel, InfoBannerIcon } from "@egovernments/digit-ui-react-components";
 
 const EyeSvgINdex = ({ style }) => {
     return <span>

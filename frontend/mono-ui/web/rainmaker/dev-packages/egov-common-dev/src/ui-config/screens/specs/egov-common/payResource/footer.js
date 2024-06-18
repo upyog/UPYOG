@@ -10,8 +10,6 @@ import { httpRequest } from "../../../../../ui-utils/api";
 import { convertDateToEpoch, ifUserRoleExists, validateFields } from "../../utils";
 import { paybuttonJsonpath } from "./constants";
 import "./index.css";
-import { makePayment } from "./payGov";
-import $ from "jquery";
 
 const checkAmount = (totalAmount, customAmount, businessService) => {
   if (totalAmount !== 0 && customAmount === 0) {
@@ -126,7 +124,6 @@ export const callPGService = async (state, dispatch) => {
         paidBy:payerInfo }
       }
     };
-    
     const goToPaymentGateway = await httpRequest(
       "post",
       "pg-service/transaction/v1/_create",
@@ -134,7 +131,7 @@ export const callPGService = async (state, dispatch) => {
       [],
       requestBody
     );
-  
+
     if (get(goToPaymentGateway, "Transaction.txnAmount") == 0) {
       const srcQuery = `?tenantId=${get(
         goToPaymentGateway,
@@ -161,81 +158,10 @@ export const callPGService = async (state, dispatch) => {
         )
       );
     } else {
-      try {
-        console.log("goToPaymentGatewaygoToPaymentGatewaygoToPaymentGateway",goToPaymentGateway,goToPaymentGateway.Transaction.redirectUrl)
-        debugger
-        let redirectUrl=goToPaymentGateway.Transaction.redirectUrl
-        const gatewayParam = redirectUrl
-          .split("?")
-          .slice(1)
-          .join("?")
-          .split("&")
-          .reduce((curr, acc) => {
-            var d = acc.split("=");
-            curr[d[0]] = d[1];
-            return curr;
-          }, {});
-        var newForm = $("<form>", {
-          action: gatewayParam.txURL,
-          method: "POST",
-          target: "_top",
-        });
-        const orderForNDSLPaymentSite = [
-          "checksum",
-          "messageType",
-          "merchantId",
-          "serviceId",
-          "orderId",
-          "customerId",
-          "transactionAmount",
-          "currencyCode",
-          "requestDateTime",
-          "successUrl",
-          "failUrl",
-          "additionalField1",
-          "additionalField2",
-          "additionalField3",
-          "additionalField4",
-          "additionalField5",
-        ];
-
-        // override default date for UPYOG Custom pay
-        gatewayParam["requestDateTime"] = gatewayParam["requestDateTime"].split(new Date().getFullYear()).join(`${new Date().getFullYear()} `);
-
-        gatewayParam["successUrl"]= redirectUrl.split("successUrl=")[1].split("eg_pg_txnid=")[0]+'eg_pg_txnid=' +gatewayParam.orderId;
-        gatewayParam["failUrl"]= redirectUrl.split("failUrl=")[1].split("eg_pg_txnid=")[0]+'eg_pg_txnid=' +gatewayParam.orderId;
-        // gatewayParam["successUrl"]= data?.Transaction?.callbackUrl;
-        // gatewayParam["failUrl"]= data?.Transaction?.callbackUrl;
-
-        // var formdata = new FormData();
-
-        for (var key of orderForNDSLPaymentSite) {
-
-          // formdata.append(key,gatewayParam[key]);
-
-          newForm.append(
-            $("<input>", {
-              name: key,
-              value: gatewayParam[key],
-              // type: "hidden",
-            })
-          );
-        }
-        $(document.body).append(newForm);
-        newForm.submit();
-console.log("newForm",newForm)
-debugger
-        makePayment(gatewayParam.txURL,newForm);
-
-      } catch (e) {
-        console.log("Error in payment redirect ", e);
-        //window.location = redirectionUrl;
-      }
-      // const redirectionUrl =
-      //   get(goToPaymentGateway, "Transaction.redirectUrl") ||
-      //   get(goToPaymentGateway, "Transaction.callbackUrl");
-      //   console.log("goToPaymentGateway",goToPaymentGateway,redirectionUrl)
-      // window.location = redirectionUrl;
+      const redirectionUrl =
+        get(goToPaymentGateway, "Transaction.redirectUrl") ||
+        get(goToPaymentGateway, "Transaction.callbackUrl");
+      window.location = redirectionUrl;
     }
   } catch (e) {
     dispatch(handleField("pay", buttonJsonpath, "props.disabled", false));

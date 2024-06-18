@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { TextInput, CardLabel, LabelFieldPair } from "@upyog/digit-ui-react-components";
+import { TextInput, CardLabel, LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 
 const SelectAltContactNumber = ({ t, config, onSelect, userType, formData }) => {

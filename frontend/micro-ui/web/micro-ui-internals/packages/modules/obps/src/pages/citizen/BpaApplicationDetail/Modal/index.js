@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Loader, Modal, FormComposer, ButtonSelector, ActionBar,ApplyFilterBar  } from "@upyog/digit-ui-react-components";
+import { Loader, Modal, FormComposer, ButtonSelector, ActionBar,ApplyFilterBar  } from "@egovernments/digit-ui-react-components";
 import { configAcceptApplication } from "../config/Approve";
 import { configTermsAndConditions } from "../config/TermsAndConditions";
 

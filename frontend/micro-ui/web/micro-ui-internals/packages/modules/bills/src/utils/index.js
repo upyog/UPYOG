@@ -1,4 +1,4 @@
-import { Toast } from "@upyog/digit-ui-react-components";
+import { Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect,useState,Fragment } from "react";
 import { useTranslation } from "react-i18next";
 

@@ -1,4 +1,4 @@
-import { CaseIcon, EmployeeModuleCard } from "@upyog/digit-ui-react-components";
+import { CaseIcon, EmployeeModuleCard } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { checkForEmployee } from "../utils";

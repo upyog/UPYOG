@@ -1,4 +1,4 @@
-import { FormStep, TextInput, CardLabel, LabelFieldPair, CardLabelError } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, LabelFieldPair, CardLabelError } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect, Fragment } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimelineInFSM";
@@ -23,6 +23,7 @@ const SelectPincode = ({ t, config, onSelect, formData = {}, userType, register,
         max: "9999999",
         title: t("CORE_COMMON_PINCODE_INVALID"),
       },
+      disable: true,
     },
   ];
 
@@ -79,7 +80,7 @@ const SelectPincode = ({ t, config, onSelect, formData = {}, userType, register,
               {config.isMandatory ? " * " : null}
             </CardLabel>
             <div className="field">
-              <TextInput key={input.name} value={pincode} onChange={onChange} {...input.validation} />
+            <TextInput key={input.name} disable={input.disable} value={pincode} onChange={onChange} {...input.validation} />
             </div>
           </LabelFieldPair>
           {pincodeServicability && (

@@ -1,5 +1,6 @@
 const Urls = {
   MDMS: `/egov-mdms-service/v1/_search`,
+  MDMSV2: `/mdms-v2/v1/_search`,
   WorkFlow: `/egov-workflow-v2/egov-wf/businessservice/_search`,
   WorkFlowProcessSearch: `/egov-workflow-v2/egov-wf/process/_search`,
   localization: `/localization/messages/v1/_search`,
@@ -215,6 +216,11 @@ digiLocker:{
       delete: "/egov-survey-services/egov-ss/survey/_delete",
       submitResponse: "/egov-survey-services/egov-ss/survey/response/_submit",
       showResults: "/egov-survey-services/egov-ss/survey/response/_results",
+      createSurvey: "/service-request/service/definition/v1/_create",
+      cfdefinitionsearch: "/service-request/service/definition/v1/_search",
+      submitSurveyResponse: "/service-request/service/v1/_create",
+      selectedSurveySearch: "/service-request/service/v1/_search",
+      updateSurvey:"/service-request/service/definition/v1/_update",
     },
   },
 

@@ -1,4 +1,4 @@
-import { CardLabel,  LabelFieldPair, TextInput, CardLabelError } from "@upyog/digit-ui-react-components";
+import { CardLabel,  LabelFieldPair, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
 import FormStep from "../../../../react-components/src/molecules/FormStep";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -14,9 +14,9 @@ const UID = ({ t, config, onSelect, value, userType, formData, setError: setForm
   const [hidden, setHidden] = useState(true);
   //const pattern = /^[a-zA-Z0-9-]*$/;
   if (!isNaN(index)) {
-    [uid, setUid] = useState(formData?.uid?.uid || "");
+    [uid, setUid] = useState(formData?.originalData?.additionalDetails?.uid || "");
   } else {
-    [uid, setUid] = useState(formData?.uid?.uid || "");
+    [uid, setUid] = useState(formData?.originalData?.additionalDetails?.uid || "");
 
   }
   const [error, setError] = useState(null);
@@ -41,7 +41,7 @@ const UID = ({ t, config, onSelect, value, userType, formData, setError: setForm
   useEffect(() => {
     if (userType === "employee") {
       if (uid !== "undefined" && uid?.length === 0) setFormError(config.key, { type: "required", message: t("CORE_COMMON_REQUIRED_ERRMSG") });
-      else if (uid !== "undefined" && (!/^[a-zA-Z0-9-]{0,15}$/.test(uid) || uid?.length !== 15)) setFormError(config.key, { type: "invalid", message: t("ERR_DEFAULT_INPUT_FIELD_MSG") });
+      else if (uid !== "undefined" && (!/^[0-9-]{0,15}$/.test(uid) || uid?.length !== 15)) setFormError(config.key, { type: "invalid", message: t("ERR_DEFAULT_INPUT_FIELD_MSG") });
       else clearFormErrors(config.key);
 
       onSelect(config.key, uid);
@@ -133,9 +133,8 @@ const UID = ({ t, config, onSelect, value, userType, formData, setError: setForm
         onChange={handleUIDChange}
         onSelect={goNext}
         onSkip={onSkip}
-        defaultValues={ formData?.uid?.uid}
         t={t}
-        isDisabled={uid.length===15|| formData?.uid?.uid ? false:true}
+        isDisabled={uid.length===15 ? false:true}
         showErrorBelowChildren={true}
       >
         <CardLabel>{`${t("PT_ELECTRICITY_UID")}`}</CardLabel>
@@ -145,7 +144,7 @@ const UID = ({ t, config, onSelect, value, userType, formData, setError: setForm
           isMandatory={false}
           optionKey="i18nKey"
           name="uid"
-          value={uid || formData?.uid?.uid}
+          value={uid}
           onChange={handleUIDChange}
           placeholder={"Enter a valid 15-digit alphanumeric characters UID"}
           {...inputs[0].validation}

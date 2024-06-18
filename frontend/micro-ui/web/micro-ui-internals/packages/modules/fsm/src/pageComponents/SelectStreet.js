@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, LabelFieldPair, CardLabel, WrapUnMaskComponent } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, LabelFieldPair, CardLabel, WrapUnMaskComponent } from "@egovernments/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import _ from "lodash";
 import Timeline from "../components/TLTimelineInFSM";
@@ -81,8 +81,26 @@ const SelectStreet = ({ t, config, onSelect, userType, formData, formState, setE
   };
 
   useEffect(() => {
+    if(window.location.href.includes("employee/tl/") && formData?.cpt?.details)
+    {
+      setValue("doorNo", formData?.cpt?.details?.address?.doorNo);
+      setValue("street", formData?.cpt?.details?.address?.street);
+    }
+  },[formData])
+  
+  useEffect(() => {
     trigger();
   }, []);
+
+  useEffect(()=>{
+    if(formData?.address?.doorNo) setDoorNo(formData?.address?.doorNo)
+    if(formData?.address?.street) setStreet(formData?.address?.street)
+  },[formData?.address])
+
+  useEffect(() => {
+    if (formData?.address?.doorNo) setDoorNo(formData?.address?.doorNo);
+    if (formData?.address?.street) setStreet(formData?.address?.street);
+  }, [formData?.address]);
 
   useEffect(() => {
     if (formData?.address?.doorNo) setDoorNo(formData?.address?.doorNo);
@@ -202,7 +220,8 @@ const SelectStreet = ({ t, config, onSelect, userType, formData, formState, setE
         _defaultValues={{ street: formData?.address.street, doorNo: formData?.address.doorNo }}
         onChange={handleSkip}
         onSelect={(data) => onSelect(config.key, data)}
-        isDisabled={doorNo && street ? false : true}
+        onSkip={onSkip}
+        isDisabled={doorNo || street ? false : true}
         t={t}
       />
     </React.Fragment>

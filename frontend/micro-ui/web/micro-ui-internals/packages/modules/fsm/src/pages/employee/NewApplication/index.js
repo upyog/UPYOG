@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Loader, Header } from "@upyog/digit-ui-react-components";
+import { FormComposer, Loader, Header } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
 
 const isConventionalSpecticTank = (tankDimension) => tankDimension === "lbd";
@@ -42,12 +42,11 @@ export const NewApplication = ({ parentUrl, heading }) => {
   };
 
   const onFormValueChange = (setValue, formData) => {
-    console.log("ProID", formData)
-    if (
-      
+    console.log(formData,"formdata")
+    console.log(formData?.tripData?.amountPerTrip , formData?.tripData?.amountPerTrip === 0 )
+      if (
       formData?.propertyType &&
       formData?.subtype &&
-      formData?.address?.locality?.code || formData?.cpt?.details?.address?.locality?.code &&
       formData?.tripData?.vehicleType &&
       formData?.channel &&
       formData?.pitType &&
@@ -55,7 +54,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
       formData?.tripData?.distancefromroad &&
       formData?. address?.street &&
       formData?.address?.doorNo &&
-      (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0 || formData?.tripData?.undefined?.amountPerTrip)
+      (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0 )
     ) {
       setSubmitValve(true);
       const pitDetailValues = formData?.pitDetail ? Object.values(formData?.pitDetail).filter((value) => value > 0) : null;
@@ -67,27 +66,23 @@ export const NewApplication = ({ parentUrl, heading }) => {
         } else if (isConventionalSpecticTank(formData?.pitType?.dimension) && pitDetailValues?.length >= 3) {
           setSubmitValve(true);
         } else if (!isConventionalSpecticTank(formData?.pitType?.dimension) && pitDetailValues?.length >= 2) {
+
           setSubmitValve(true);
-        } else setSubmitValve(false);
-      }
-      if (
-        formData?.tripData?.amountPerTrip !== 0 &&
-        (formData?.advancepaymentPreference?.advanceAmount < min ||
-          formData?.advancepaymentPreference?.advanceAmount > max ||
-          formData?.advancepaymentPreference?.advanceAmount === "")
-      ) {
+        } else 
         setSubmitValve(false);
       }
+      // if (
+      //   formData?.tripData?.amountPerTrip !== 0 &&
+      //   (formData?.advancepaymentPreference?.advanceAmount < min ||
+      //     formData?.advancepaymentPreference?.advanceAmount > max ||
+      //     formData?.advancepaymentPreference?.advanceAmount === "")
+      // ) {
+      //   setSubmitValve(false);
+      // }
     } else {
       setSubmitValve(false);
     }
   };
-
-  // useEffect(() => {
-  //   (async () => {
-
-  //   })();
-  // }, [propertyType, subType, vehicle]);
 
   const onSubmit = (data) => {
     console.log("data",data)
@@ -112,9 +107,17 @@ export const NewApplication = ({ parentUrl, heading }) => {
     const localityName = data.cpt?.details?.address?.locality?.name || data?.address?.locality?.name;
     const gender = data.applicationData.applicantGender;
     const paymentPreference = amount === 0 ? null : data?.paymentPreference ? data?.paymentPreference : null;
-    const advanceAmount = amount === 0 ? null : data?.advancepaymentPreference?.advanceAmount;
+    const advanceAmount =
+      amount === 0 ? null : data?.advancepaymentPreference?.advanceAmount === null ? 0 : data?.advancepaymentPreference?.advanceAmount;
     const distancefromroad=data?.tripData?.distancefromroad;
     const roadWidth= data?.tripData?.roadWidth;
+    const gramPanchayat = data?.address.gramPanchayat;
+    const village = data?.address.village;
+    const propertyLocation = data?.address?.propertyLocation?.code;
+    const newLocality = data?.address?.newLocality;
+    const newGp = data?.address?.newGp;
+    const newVillage = data?.address?.newVillage;
+
     const formData = {
       fsm: {
         citizen: {
@@ -127,7 +130,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
         sanitationtype: sanitationtype,
         source: applicationChannel.code,
         additionalDetails: {
-          tripAmount: amount,
+          tripAmount: typeof amount === "number" ? JSON.stringify(amount) : amount,
           distancefromroad:distancefromroad,
           roadWidth:roadWidth,
           propertyID : propertyID,
@@ -148,17 +151,32 @@ export const NewApplication = ({ parentUrl, heading }) => {
           pincode,
           slumName: slum,
           locality: {
-            code: localityCode,
-            name: localityName,
+            code: propertyLocation === "FROM_GRAM_PANCHAYAT" ? gramPanchayat?.code : localityCode,
+            name: propertyLocation === "FROM_GRAM_PANCHAYAT" ? gramPanchayat?.name : localityName,
           },
           geoLocation: {
             latitude: data?.address?.latitude,
             longitude: data?.address?.longitude,
           },
+          additionalDetails: {
+            boundaryType: propertyLocation === "FROM_GRAM_PANCHAYAT" ? "GP" : "Locality",
+            gramPanchayat: {
+              code: gramPanchayat?.code,
+              name: gramPanchayat?.name,
+            },
+            village: village?.code
+              ? {
+                  code: village?.code ? village?.code : "",
+                  name: village?.name ? village?.name : "",
+                }
+              : newVillage,
+            newLocality: newLocality,
+            newGramPanchayat: newGp,
+          },
         },
         noOfTrips,
         paymentPreference,
-        advanceAmount,
+        advanceAmount: typeof advanceAmount === "number" ? JSON.stringify(advanceAmount) : advanceAmount,
       },
       workflow: null,
     };
@@ -487,7 +505,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
         ]
     }
 ]
-  console.log("configs",configs)
+  console.log(conf,"confffffffff")
   return (
     <React.Fragment>
       <div style={{ marginLeft: "15px" }}>

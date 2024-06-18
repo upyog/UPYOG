@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TickMark } from "@upyog/digit-ui-react-components";
+import { TickMark } from "@egovernments/digit-ui-react-components";
 
 let actions = [];
 
@@ -10,7 +10,7 @@ const getAction = (flow) => {
       break;
     case "APPLY": actions = [
       'FSM_TIMELINE_PROPERTY_DETAILS',
-      // 'FSM_GENDER_DETAILS',
+      'FSM_GENDER_DETAILS',
       'FSM_PAYMENT_DETAILS',
       'FSM_TIMELINE_SUMMARY',
     ]

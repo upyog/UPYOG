@@ -6,7 +6,7 @@ import {
   LabelFieldPair,
   TextInput,
   WrapUnMaskComponent,
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
