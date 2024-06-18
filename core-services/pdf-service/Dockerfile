@@ -4,7 +4,10 @@ ARG WORK_DIR
 ENV npm_config_cache=/tmp
 WORKDIR /app
 
-RUN apk upgrade && apk update
+RUN apk update && \
+    apk add --no-cache openjdk11-jre-headless ca-certificates
+
+RUN update-ca-certificates
 
 COPY ${WORK_DIR} .
 
