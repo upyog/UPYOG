@@ -128,19 +128,52 @@ public class EstimationService {
 			WaterConnection connection,
 			Map<String, JSONArray> timeBasedExemptionsMasterMap, RequestInfoWrapper requestInfoWrapper) {
 		List<TaxHeadEstimate> estimates = new ArrayList<>();
-		// water_charge
-		estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_CHARGE)
+
+		HashMap<String,String> add_details= ((HashMap<String,String>)connection.getAdditionalDetails());
+		// water_charge to be added only if dischargeConnection is not Onlydisposal (category 62 of Amritsar) means if the connection is only disposal that only discharge/disposal charges should be applicable
+		if(add_details.containsKey("dischargeConnection"))
+		{
+			if(add_details.get("dischargeConnection").equalsIgnoreCase("OnlyDischarge")==false)
+				estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_CHARGE)
+						.estimateAmount(waterCharge.setScale(2, 2)).build());
+		}
+		else
+			estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_CHARGE)
 				.estimateAmount(waterCharge.setScale(2, 2)).build());
 
 		// Water_cess
-		if (timeBasedExemptionsMasterMap.get(WSCalculationConstant.WC_WATER_CESS_MASTER) != null) {
-			List<Object> waterCessMasterList = timeBasedExemptionsMasterMap
-					.get(WSCalculationConstant.WC_WATER_CESS_MASTER);
-			BigDecimal waterCess;
-			waterCess = waterCessUtil.getWaterCess(waterCharge, WSCalculationConstant.Assessment_Year, waterCessMasterList);
-			estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_WATER_CESS)
-					.estimateAmount(waterCess.setScale(2, 2)).build());
+	//	if (timeBasedExemptionsMasterMap.get(WSCalculationConstant.WC_WATER_CESS_MASTER) != null) {
+	//		List<Object> waterCessMasterList = timeBasedExemptionsMasterMap
+	//				.get(WSCalculationConstant.WC_WATER_CESS_MASTER);
+	//		BigDecimal waterCess;
+	//		waterCess = waterCessUtil.getWaterCess(waterCharge, WSCalculationConstant.Assessment_Year, waterCessMasterList);
+	//		estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_WATER_CESS)
+	//				.estimateAmount(waterCess.setScale(2, 2)).build());
+		
+		// DISPOSAL DISCHARGE CHARGES
+		if(add_details.containsKey("dischargeConnection"))
+		{
+			
+			if(add_details.get("dischargeConnection").equalsIgnoreCase("true") || add_details.get("dischargeConnection").equalsIgnoreCase("OnlyDischarge"))
+			{
+				BigDecimal disposal_charge;
+				try
+				{
+				if(add_details.containsKey("dischargeFee"))  // if dischargeFee attribute is present in additionalDetails then use give dischargeFee else fix dischagefee to 200
+					disposal_charge=new BigDecimal(add_details.get("dischargeFee"));
+				else
+					disposal_charge=new BigDecimal(200.0);
+				}
+				catch(Exception ex)
+				{
+					disposal_charge=new BigDecimal(200.0);
+				}
+				estimates.add(TaxHeadEstimate.builder().taxHeadCode("WS_DISCHARGE_CHARGES")
+						.estimateAmount(disposal_charge.setScale(2, 2)).build());
+			}
 		}
+		
+		
 		
 
 //		if (timeBasedExemptionsMasterMap.get(WSCalculationConstant.WC_REBATE_MASTER) != null) {
@@ -379,7 +412,7 @@ public class EstimationService {
 			return isBuildingTypeMatching && isConnectionTypeMatching && isCalculationAttributeMatching;
 		}).collect(Collectors.toList());
 	}
-	
+
 	private String getCalculationAttribute(Map<String, Object> calculationAttributeMap, String connectionType) {
 		if (calculationAttributeMap == null)
 			throw new CustomException("CALCULATION_ATTRIBUTE_MASTER_NOT_FOUND",
@@ -669,7 +702,7 @@ public class EstimationService {
 
 //		BigDecimal totalCharge = formFee.add(scrutinyFee).add(otherCharges).add(meterTestingFee).add(roadCuttingCharge)
 //				.add(roadPlotCharge).add(usageTypeCharge);
-BigDecimal totalCharge = formFee.add(securityCharge).add(meterTestingFee).add(roadCuttingCharge);
+		BigDecimal totalCharge = formFee.add(securityCharge).add(meterTestingFee).add(roadCuttingCharge);
 		BigDecimal tax = totalCharge.multiply(taxAndCessPercentage.divide(WSCalculationConstant.HUNDRED));
 		List<TaxHeadEstimate> estimates = new ArrayList<>();
 		//
@@ -826,7 +859,30 @@ BigDecimal totalCharge = formFee.add(securityCharge).add(meterTestingFee).add(ro
 										additionalDetails.get(WSCalculationConstant.ADHOC_REBATE).toString()).negate())
 								.build());
 			}
-		}}
+
+			if (additionalDetails.getOrDefault(WSCalculationConstant.COMPOSITION_FEE_CONST, null) != null) {
+				estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_COMPOSITION_FEE)
+						.estimateAmount(new BigDecimal(
+								additionalDetails.get(WSCalculationConstant.COMPOSITION_FEE_CONST).toString()))
+						.build());
+			}
+			 System.out.println(additionalDetails.get(WSCalculationConstant.connectionCategory).toString());
+			if (additionalDetails.getOrDefault(WSCalculationConstant.USER_CHARGES_CONST, null) != null) {
+				estimates
+						.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.USER_CHARGES)
+								.estimateAmount(new BigDecimal(
+										additionalDetails.get(WSCalculationConstant.USER_CHARGES_CONST).toString()))
+								.build());
+			}
+
+			if (additionalDetails.getOrDefault(WSCalculationConstant.OTHER_FEE_CONST, null) != null) {
+				estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.OTHER_FEE)
+						.estimateAmount(
+								new BigDecimal(additionalDetails.get(WSCalculationConstant.OTHER_FEE_CONST).toString()))
+						.build());
+			 }
+			}
+		}
 	}
 	
 	public Map<String, List> getReconnectionFeeEstimation(CalculationCriteria criteria, RequestInfo requestInfo, Map<String, Object> masterData ) {
