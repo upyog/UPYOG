@@ -15,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 import com.example.hpgarbageservice.model.GarbageAccount;
 import com.example.hpgarbageservice.model.SearchCriteriaGarbageAccount;
 import com.example.hpgarbageservice.repository.rowmapper.GarbageAccountRowMapper;
+import com.example.hpgarbageservice.repository.rowmapper.GarbageAccountRowMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,9 +37,20 @@ public class GarbageAccountRepository {
 			+ ", sub_acc.name as sub_acc_name, sub_acc.mobile_number as sub_acc_mobile_number, sub_acc.parent_id as sub_acc_parent_id"
 			+ ", sub_acc.created_by as sub_acc_created_by, sub_acc.created_date as sub_acc_created_date, sub_acc.last_modified_by as sub_acc_last_modified_by"
 			+ ", sub_acc.last_modified_date as sub_acc_last_modified_date"
+			+ ", sub_acc_bill.id as sub_acc_bill_id, sub_acc_bill.bill_ref_no as sub_acc_bill_bill_ref_no, sub_acc_bill.garbage_id as sub_acc_bill_garbage_id " 
+		    + ", sub_acc_bill.bill_amount as sub_acc_bill_bill_amount, sub_acc_bill.arrear_amount as sub_acc_bill_arrear_amount, sub_acc_bill.panelty_amount as sub_acc_bill_panelty_amount " 
+		    + ", sub_acc_bill.discount_amount as sub_acc_bill_discount_amount, sub_acc_bill.total_bill_amount as sub_acc_bill_total_bill_amount " 
+		    + ", sub_acc_bill.total_bill_amount_after_due_date as sub_acc_bill_total_bill_amount_after_due_date " 
+		    + ", sub_acc_bill.bill_generated_by as sub_acc_bill_bill_generated_by, sub_acc_bill.bill_generated_date as sub_acc_bill_bill_generated_date " 
+		    + ", sub_acc_bill.bill_due_date as sub_acc_bill_bill_due_date, sub_acc_bill.bill_period as sub_acc_bill_bill_period " 
+		    + ", sub_acc_bill.bank_discount_amount as sub_acc_bill_bank_discount_amount, sub_acc_bill.payment_id as sub_acc_bill_payment_id " 
+		    + ", sub_acc_bill.payment_status as sub_acc_bill_payment_status, sub_acc_bill.created_by as sub_acc_bill_created_by " 
+		    + ", sub_acc_bill.created_date as sub_acc_bill_created_date, sub_acc_bill.last_modified_by as sub_acc_bill_last_modified_by " 
+		    + ", sub_acc_bill.last_modified_date as sub_acc_bill_last_modified_date "
 			+ " FROM hpudd_grbg_account as acc "
 			+ " LEFT OUTER JOIN hpudd_grbg_bill bill ON acc.garbage_id = bill.garbage_id"
-			+ " LEFT OUTER JOIN hpudd_grbg_account sub_acc ON acc.garbage_id = sub_acc.parent_id";
+			+ " LEFT OUTER JOIN hpudd_grbg_account sub_acc ON acc.garbage_id = sub_acc.parent_id"
+		    + " LEFT OUTER JOIN hpudd_grbg_bill as sub_acc_bill ON sub_acc.garbage_id = sub_acc_bill.garbage_id";
 
     
     private static final String INSERT_ACCOUNT = "INSERT INTO hpudd_grbg_account (id, garbage_id, property_id, type, name"
@@ -113,7 +125,7 @@ public class GarbageAccountRepository {
         log.debug(searchQuery.toString());
 
         List<GarbageAccount> garbageAccounts = jdbcTemplate.query(searchQuery.toString(), preparedStatementValues.toArray(), garbageAccountRowMapper);
-        
+
         return garbageAccounts;
     }
 
