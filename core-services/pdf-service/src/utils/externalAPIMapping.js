@@ -24,6 +24,14 @@ function escapeRegex(string) {
     return string;
 }
 
+const agent = new https.Agent({
+  ca: fs.readFileSync('/etc/ssl/certs/ca-certificates.crt') // Path to CA certificates bundle
+});
+
+const axios_instance = axios.create({
+  httpsAgent: agent
+});
+
 export const externalAPIMapping = async function (
   pdfKey,
   req,
@@ -168,7 +176,7 @@ export const externalAPIMapping = async function (
 
     var resPromise;
     if (externalAPIArray[i].requesttype == "POST") {
-      resPromise = axios.post(
+      resPromise = axios_instance.post(
         externalAPIArray[i].uri + "?" + externalAPIArray[i].queryParams, {
           RequestInfo: requestInfo
         }, {
@@ -176,7 +184,7 @@ export const externalAPIMapping = async function (
         }
       );
     } else {
-      resPromise = axios.get(
+      resPromise = axios_instance.get(
         externalAPIArray[i].uri + "?" + externalAPIArray[i].queryParams, {
           responseType: "application/json"
         }
@@ -205,7 +213,7 @@ export const externalAPIMapping = async function (
         if (replaceValue != "NA") {
           try {
             var len = replaceValue[0].split(",").length;
-            var response = await axios.get(
+            var response = await axios_instance.get(
               replaceValue[0].split(",")[len - 1], {
                 responseType: "arraybuffer"
               }
