@@ -105,5 +105,6 @@ let height=params.height;
 let usagetype=params.buildingUsageType; let AREA_SQYD=params.areaSQYD; let AREA_ACRE=params.areaACRE;
   let queryString =
   "SELECT * FROM eg_firenoc_state_billingslab WHERE (" + height + " BETWEEN heightfromuom AND heighttouom) AND buildingusagetype='" + usagetype + "' AND ((CASE WHEN areauom='SQYD' THEN " + AREA_SQYD + " BETWEEN areafromuom AND areatouom END) OR (CASE WHEN areauom='ACRE' THEN " + AREA_ACRE + " BETWEEN areafromuom AND areatouom END))";
+  console.log(queryString)
   return queryString;
 };
