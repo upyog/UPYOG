@@ -7,7 +7,7 @@
 
 
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormStep, TextInput, CardLabel, Dropdown } from "@upyog/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/ASTTimeline";
@@ -386,7 +386,13 @@ const NewAsset
 
     const selectmanufacturer = (e) => setmanufacturer(e.target.value);
     const selectpurchasecost = (e) => setpurchaseCost(e.target.value);
-    const selectpurchasedate = (e) => setpurchaseDate(e.target.value);
+    const selectpurchasedate = (e) => {
+      const selectedDate = e.target.value;
+      setpurchaseDate(selectedDate);
+      calculateAssetAge(selectedDate);
+      // setpurchaseDate(e.target.value);
+
+    }
     const selectpurchaseorder = (e) => setpurchaseOrderNumber(e.target.value);
     const selectcurrentlocation = (e) => setcurrentLocation(e.target.value);
     const selectassigneduser = (e) => setassignedUser(e.target.value);
@@ -397,6 +403,32 @@ const NewAsset
     const selectoperatingsystem = (e) => setoperatingSystem(e.target.value);
     const selectram = (e) => setram(e.target.value);
     const selectstorage = (e) => setstorage(e.target.value);
+
+
+
+    const calculateAssetAge = (purchaseDate) => {
+      const today = new Date();
+      const purchaseDatetime = new Date(purchaseDate);
+      const diffInYears = today.getFullYear() - purchaseDatetime.getFullYear();
+      const diffInMonths = today.getMonth() - purchaseDatetime.getMonth();
+
+      let age;
+      if (diffInYears > 0) {
+        age = diffInYears + ' ' + t("YEAR");
+      } else if (diffInMonths >=0 ) {
+        age = diffInMonths+ ' ' + t("MONTH");
+      } else {
+        const diffInDays = today.getDate() - purchaseDatetime.getDate();
+        age = diffInDays + ' ' + t("DAY");
+      }
+      setassetAge(age)
+    };
+
+    useEffect(() => {
+      if (purchaseDate) {
+        calculateAssetAge(purchaseDate);
+      }
+    }, [purchaseDate]);
 
 
 
@@ -1791,7 +1823,7 @@ const NewAsset
                   title: t("PT_NAME_ERROR_MESSAGE"),
                 })}
               />
-              <CardLabel>{`${t("AST_DEPARTMENT")}`}</CardLabel>
+              {/* <CardLabel>{`${t("AST_DEPARTMENT")}`}</CardLabel>
               <TextInput
                 t={t}
                 type={"text"}
@@ -1808,7 +1840,7 @@ const NewAsset
                   type: "text",
                   title: t("PT_NAME_ERROR_MESSAGE"),
                 })}
-              />
+              /> */}
               <CardLabel>{`${t("AST_ASSET_AGE")}`}</CardLabel>
               <TextInput
                 t={t}
@@ -1817,15 +1849,15 @@ const NewAsset
                 optionKey="i18nKey"
                 name="assetAge"
                 value={assetAge}
-                onChange={selectassetage}
+                // onChange={selectassetage}
                 style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
+                // ValidationRequired={false}
+                // {...(validation = {
+                //   isRequired: true,
+                //   pattern: "^[a-zA-Z-.`' ]*$",
+                //   type: "text",
+                //   title: t("PT_NAME_ERROR_MESSAGE"),
+                // })}
               />
               <CardLabel>{`${t("AST_WARRANTY")}`}</CardLabel>
               <TextInput

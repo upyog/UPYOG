@@ -78,7 +78,7 @@ const NewAssetClassification
     Asset_Type.map((asset_type_mdms) => {
         if (asset_type_mdms.assetClassification == assetclassification?.code) {
             asset_type.push({
-            i18nKey: `ASSET_TYPE_${asset_type_mdms.code}`,
+            i18nKey: `${asset_type_mdms.code}`,
             code: `${asset_type_mdms.code}`,
             value: `${asset_type_mdms.name}`
           });
@@ -91,7 +91,7 @@ const NewAssetClassification
       Asset_Sub_Type.map((asset_sub_type_mdms) => {
           if (asset_sub_type_mdms.assetParentCategory == assettype?.code) {
               asset_sub_type.push({
-              i18nKey: `ASSET_SUB_TYPE_${asset_sub_type_mdms.code}`,
+              i18nKey: `${asset_sub_type_mdms.code}`,
               code: `${asset_sub_type_mdms.code}`,
               value: `${asset_sub_type_mdms.name}`
             });
@@ -112,7 +112,7 @@ const NewAssetClassification
         });
    
 
-      // need to chenge it and fetch it from MDMS
+      // need to change it and fetch it from MDMS
         const financialYearOptions = [
           { code: "2023-2024", i18nKey: "2023-2024" },
           { code: "2022-2023", i18nKey: "2022-2023" },
