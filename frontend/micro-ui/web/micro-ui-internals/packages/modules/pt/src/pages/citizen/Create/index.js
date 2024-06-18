@@ -1,4 +1,4 @@
-import { Loader,Modal ,Card , CardHeader, StatusTable,Row} from "@upyog/digit-ui-react-components";
+import { Loader,Modal ,Card , CardHeader, StatusTable,Row} from "@egovernments/digit-ui-react-components";
 import React ,{Fragment,useState,useEffect}from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
@@ -15,8 +15,7 @@ const CreateProperty = ({ parentRoute }) => {
   const stateId = Digit.ULBService.getStateId();
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PT_CREATE_PROPERTY", {});
-  let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig");
-  const [searchData, setSearchData] = useState({});
+  let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig");  const [searchData, setSearchData] = useState({});
   const { data: propertyData, isLoading: propertyDataLoading, error, isSuccess, billData } = Digit.Hooks.pt.usePropertySearchWithDue({
     tenantId: searchData?.city,
     filters: searchData?.filters,

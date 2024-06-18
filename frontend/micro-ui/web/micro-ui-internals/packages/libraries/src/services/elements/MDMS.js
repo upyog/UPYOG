@@ -227,6 +227,24 @@ const getApplicationChannelCriteria = (tenantId, moduleCode) => ({
   },
 });
 
+const getUrcConfigCriteria = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "UrcConfig",
+            filter: null,
+          },
+        ],
+      },
+    ],
+  },
+});
+
 const getPropertyTypeCriteria = (tenantId, moduleCode, type) => ({
   type,
   details: {
@@ -1064,6 +1082,8 @@ const GetApplicationChannel = (MdmsRes) =>
     i18nKey: `ES_APPLICATION_DETAILS_APPLICATION_CHANNEL_${channel.code}`,
   }));
 
+const getUrcConfig = (MdmsRes) => MdmsRes["FSM"].UrcConfig;
+
 const GetPropertyType = (MdmsRes) =>
   MdmsRes["FSM"].PropertyType.filter((property) => property.active && !property.propertyType).map((item) => ({
     ...item,
@@ -1517,6 +1537,8 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
       return GetTripNumber(MdmsRes);
     case "ReceivedPaymentType":
       return GetReceivedPaymentType(MdmsRes);
+    case "UrcConfig":
+      return getUrcConfig(MdmsRes);
     case "Documents":
       return getPetDocumentsRequiredScreen(MdmsRes);
     case "PetType":
@@ -1646,6 +1668,9 @@ export const MdmsService = {
   },
   getApplicationChannel: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getApplicationChannelCriteria(tenantId, moduleCode), moduleCode);
+  },
+  getUrcConfig: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getUrcConfigCriteria(tenantId, moduleCode, type), moduleCode);
   },
   getPropertyType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getPropertyTypeCriteria(tenantId, moduleCode, type), moduleCode);

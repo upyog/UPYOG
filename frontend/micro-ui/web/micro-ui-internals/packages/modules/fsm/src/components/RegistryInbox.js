@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory } from "react-router-dom";
-import { Card, Dropdown, Loader, Menu, SubmitBar, Toast } from "@upyog/digit-ui-react-components";
+import { Card, Dropdown, Loader, Menu, SubmitBar, Toast } from "@egovernments/digit-ui-react-components";
 import FSMLink from "./inbox/FSMLink";
 import ApplicationTable from "./inbox/ApplicationTable";
 import Filter from "./inbox/Filter";
-import { ToggleSwitch } from "@upyog/digit-ui-react-components";
+import { ToggleSwitch } from "@egovernments/digit-ui-react-components";
 import RegistrySearch from "./RegistrySearch";
 import { useQueryClient } from "react-query";
 
@@ -183,6 +183,47 @@ const RegisryInbox = (props) => {
       vendor: {
         ...selectedVendor,
         drivers: selectedVendor.drivers ? [...selectedVendor.drivers, driverData] : [driverData],
+      },
+    };
+
+    mutateVendor(formData, {
+      onError: (error, variables) => {
+        setShowToast({ key: "error", action: error });
+        setTimeout(closeToast, 5000);
+      },
+      onSuccess: (data, variables) => {
+        setShowToast({ key: "success", action: "VENDOR" });
+        queryClient.invalidateQueries("DSO_SEARCH");
+        props.refetchData();
+        setTimeout(closeToast, 3000);
+      },
+    });
+  };
+
+  const onVendorVehicleSelect = (row, selectedOption) => {
+    let vehicleData = row.original;
+    let formDetails = row.original.dsoDetails;
+    let existingVendor = vehicleData?.vendor;
+    let selectedVendor = selectedOption;
+    delete vehicleData.vendor;
+    vehicleData.vendorVehicleStatus = "ACTIVE";
+    if (existingVendor) {
+      const vehicles = existingVendor?.vehicles;
+      vehicles.splice(
+        vehicles.findIndex((ele) => ele.id === vehicleData.id),
+        1
+      );
+      const formData = {
+        vendor: {
+          ...formDetails,
+          vehicles: vehicles,
+        },
+      };
+    }
+    const formData = {
+      vendor: {
+        ...selectedVendor,
+        vehicles: selectedVendor.vehicles ? [...selectedVendor.vehicles, vehicleData] : [vehicleData],
       },
     };
 

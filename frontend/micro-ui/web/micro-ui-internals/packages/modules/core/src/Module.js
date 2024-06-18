@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
 import { getI18n } from "react-i18next";
-import { Body, Loader } from "@upyog/digit-ui-react-components";
+import { Body, Loader } from "@egovernments/digit-ui-react-components";
 import { DigitApp } from "./App";
 import SelectOtp from "./pages/citizen/Login/SelectOtp";
 import AcknowledgementCF from "./components/AcknowledgementCF";
@@ -38,7 +38,6 @@ const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers }) => {
 };
 
 export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers }) => {
-  const [privacy, setPrivacy] = useState(Digit.Utils.getPrivacyObject() || {});
   const userType = Digit.UserService.getType();
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -46,7 +45,7 @@ export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers })
         staleTime: 15 * 60 * 1000,
         cacheTime: 50 * 60 * 1000,
         retryDelay: (attemptIndex) => Infinity,
-        retry:false
+        retry: false,
         /*
           enable this to have auto retry incase of failure
           retryDelay: attemptIndex => Math.min(1000 * 3 ** attemptIndex, 60000)
@@ -54,6 +53,7 @@ export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers })
       },
     },
   });
+  const [privacy, setPrivacy] = useState(Digit.Utils.getPrivacyObject() || {});
 
   const ComponentProvider = Digit.Contexts.ComponentProvider;
   const PrivacyProvider = Digit.Contexts.PrivacyProvider;

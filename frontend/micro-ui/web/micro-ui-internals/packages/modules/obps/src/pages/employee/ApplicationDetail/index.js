@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Header, CardSectionHeader, PDFSvg, StatusTable, Row, MultiLink, LinkButton } from "@upyog/digit-ui-react-components";
+import { Header, CardSectionHeader, PDFSvg, StatusTable, Row, MultiLink, LinkButton } from "@egovernments/digit-ui-react-components";
 import ApplicationDetailsTemplate from "../../../../../templates/ApplicationDetails";
 import { downloadAndPrintReciept } from "../../../utils";
 
@@ -9,10 +9,10 @@ const ApplicationDetail = () => {
   const { id } = useParams();
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const state = tenantId?.split('.')[0]
+  const stateCode = Digit.ULBService.getStateId();
   const [showToast, setShowToast] = useState(null);
   const [showOptions, setShowOptions] = useState(false);
-  const { isLoading, data: applicationDetails } = Digit.Hooks.obps.useLicenseDetails(state, { applicationNumber: id, tenantId: state }, {});
+  const { isLoading, data: applicationDetails } = Digit.Hooks.obps.useLicenseDetails(stateCode, { applicationNumber: id, tenantId: stateCode }, {});
   const isMobile = window.Digit.Utils.browser.isMobile();
   const [viewTimeline, setViewTimeline]=useState(false);
   const {
@@ -24,7 +24,7 @@ const ApplicationDetail = () => {
   } = Digit.Hooks.obps.useBPAREGApplicationActions(tenantId);
 
   const workflowDetails = Digit.Hooks.useWorkflowDetails({
-    tenantId: tenantId?.split('.')[0],
+    tenantId: stateCode,
     id: id,
     moduleCode: "BPAREG",
   });

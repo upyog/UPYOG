@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, LabelFieldPair, CardLabel, WrapUnMaskComponent } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, LabelFieldPair, CardLabel, WrapUnMaskComponent } from "@egovernments/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import _ from "lodash";
 import Timeline from "../components/TLTimelineInFSM";
@@ -81,7 +81,7 @@ const TLSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
   useEffect(() => {
     const keys = Object.keys(formValue);
     const part = {};
-    keys.forEach((key) => (part[key] = formData[config.key]?.[key]));
+    keys?.forEach((key) => (part[key] = formData[config.key]?.[key]));
 
     if (!_.isEqual(formValue, part)) {
       onSelect(config.key, { ...formData[config.key], ...formValue });
@@ -177,4 +177,6 @@ const TLSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
   );
 };
 
+
 export default TLSelectStreet;
+

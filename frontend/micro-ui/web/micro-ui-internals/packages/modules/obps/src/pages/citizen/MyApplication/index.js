@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, KeyNote, Loader, SubmitBar, Header } from "@upyog/digit-ui-react-components";
+import { Card, KeyNote, Loader, SubmitBar, Header } from "@egovernments/digit-ui-react-components";
 import { Fragment } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { getBPAFormData } from "../../../utils/index";
@@ -14,7 +14,7 @@ const MyApplication = () => {
   const history = useHistory();
   const [finalData, setFinalData] = useState([]);
   const [labelMessage, setLableMessage] = useState(false);
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   // const userInfo = Digit.UserService.getUser();
   // const requestor = userInfo?.info?.mobileNumber;
 

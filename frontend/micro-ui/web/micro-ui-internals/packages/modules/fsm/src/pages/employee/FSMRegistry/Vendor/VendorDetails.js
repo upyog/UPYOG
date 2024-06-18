@@ -17,7 +17,7 @@ import {
   Modal,
   CardText,
   Dropdown,
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 
 import { useQueryClient } from "react-query";
 
@@ -117,6 +117,8 @@ const VendorDetails = (props) => {
         return setShowModal(true);
       case "EDIT":
         return history.push("/digit-ui/employee/fsm/registry/modify-vendor/" + dsoId);
+      case "HOME":
+        return history.push("/digit-ui/employee/fsm/registry?selectedTabs=VENDOR");
       default:
         break;
     }
@@ -388,7 +390,9 @@ const VendorDetails = (props) => {
             />
           )}
           <ActionBar style={{ zIndex: "19" }}>
-            {displayMenu ? <Menu localeKeyPrefix={"ES_FSM_REGISTRY_ACTION"} options={["EDIT", "DELETE"]} t={t} onSelect={onActionSelect} /> : null}
+            {displayMenu ? (
+              <Menu localeKeyPrefix={"ES_FSM_REGISTRY_ACTION"} options={["EDIT", "DELETE", "HOME"]} t={t} onSelect={onActionSelect} />
+            ) : null}
             <SubmitBar label={t("ES_COMMON_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
           </ActionBar>
         </React.Fragment>

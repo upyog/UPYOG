@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Switch, useLocation } from "react-router-dom";
-import { PrivateRoute, BreadCrumb } from "@upyog/digit-ui-react-components";
+import { PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-components";
 
 
 import WSResponse from "./WSResponse";
@@ -228,7 +228,6 @@ const BILLSBreadCrumbs = ({ location }) => {
   return <div style={window?.location.href.includes("/employee/ws/bill-amendment") || window?.location.href.includes("/employee/ws/response")? {marginLeft:"20px"} : {}}><BreadCrumb crumbs={crumbs}  spanStyle={{ maxWidth: "min-content"}} /></div>;
 };
 const App = ({ path }) => {
-  console.log("ffffff",path)
   const location = useLocation();
 
   const WSDocsRequired = Digit?.ComponentRegistryService?.getComponent("WSDocsRequired");

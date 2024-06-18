@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Card, CardText } from "@upyog/digit-ui-react-components";
+import { Modal, Card, CardText } from "@egovernments/digit-ui-react-components";
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.t(props.heading)}</h1>;
@@ -24,7 +24,7 @@ const ConfirmationQuestion = ({ t, title }) => (
   <div className="confirmation_box">
     <span>
       {" "}
-      {t("CONFIRM_DELETE_MSG_NEW")} <b>{` ${title}`}</b>{t("COMPLETELY_DELETE")} <br/><br />{t("COMPLETELY_DELETE_WARN_MSG")} 
+      {t("CONFIRM_DELETE_MSG_NEW")} <b>{` ${title} `}</b>{t("COMPLETELY_DELETE")} <br/><br />{t("COMPLETELY_DELETE_WARN_MSG")} 
     </span>
   </div>
 );

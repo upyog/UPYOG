@@ -9,7 +9,7 @@ import {
   StatusTable,
   SubmitBar,
   Toast
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useReducer } from "react";
 import { Controller, useForm } from "react-hook-form";
 

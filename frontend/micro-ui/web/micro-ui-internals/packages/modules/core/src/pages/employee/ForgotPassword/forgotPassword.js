@@ -1,4 +1,4 @@
-import { BackButton, Dropdown, FormComposer, Loader, Toast } from "@upyog/digit-ui-react-components";
+import { BackButton, Dropdown, FormComposer, Loader, Toast } from "@egovernments/digit-ui-react-components";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -36,7 +36,7 @@ const ForgotPassword = ({ config: propsConfig, t }) => {
     const requestData = {
       otp: {
         mobileNumber: data.mobileNumber,
-        userType: getUserType().toUpperCase(),
+        userType: "citizen",
         type: "passwordreset",
         tenantId: data.city.code,
       },

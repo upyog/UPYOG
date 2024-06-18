@@ -27,7 +27,7 @@ const Layout = ({ rowData, forHome = false, services, configName }) => {
   const { value } = useContext(FilterContext);
   const [searchQuery, onSearch] = useState("");
   const [chip, updateChip] = useState({});
-  const moduleCode = services.filter((e) => configName?.includes(e.name))?.[0]?.code;
+  const moduleCode = services?.filter((e) => configName?.includes(e.name))?.[0]?.code;
   const renderChart = (chart, title, moduleCode) => {
     switch (chart.chartType) {
       case "table":

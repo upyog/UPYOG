@@ -13,14 +13,16 @@ import { httpRequest } from "egov-ui-framework/ui-utils/api";
 import { convertEpochToDate } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {  downloadReceipt } from "../utils";
 import { downloadReceiptFromFilestoreID } from "egov-common/ui-utils/commons";
+import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 
 const getMyApplications = async (action, state, dispatch) => {
   try {
     const queryParams = [];
     let payload = null;
+    let tenantId = getTenantId();
     payload = await httpRequest(
       "post",
-      "birth-death-services/death/_searchapplications",
+      `birth-death-services/death/_searchapplications?tenantId=${tenantId}`,
       "_search",
       queryParams,
       {}

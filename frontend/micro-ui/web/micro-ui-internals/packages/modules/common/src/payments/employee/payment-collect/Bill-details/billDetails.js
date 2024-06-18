@@ -1,4 +1,4 @@
-import { CardSectionHeader, Loader, RadioButtons, Row, StatusTable, TextInput } from "@upyog/digit-ui-react-components";
+import { CardSectionHeader, Loader, RadioButtons, Row, StatusTable, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { BillDetailsKeyNoteConfig } from "./billDetailsConfig";
@@ -208,8 +208,13 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
   const getTotal = () => (bill?.totalAmount ? bill?.totalAmount : 0);
   const getTotalFSM = () => (application?.totalAmount ? application?.totalAmount : 0);
   const getAdvanceAmount = () => (applicationData?.advanceAmount ? applicationData?.advanceAmount : 0);
-  //const dueAmountTobePaid = () => ( bill?.totalAmount ? bill?.totalAmount - applicationData?.advanceAmount:0);
-  const dueAmountTobePaid = () => ( application?.totalAmount ? application?.totalAmount - applicationData?.advanceAmount:0);
+  const dueAmountTobePaid = () => {
+    if (bill?.businessService === "FSM.TRIP_CHARGES"){
+      return bill?.totalAmount;
+    }else{
+      return bill?.totalAmount ? bill?.totalAmount - applicationData?.advanceAmount:0;
+    }
+  } 
   const getAmountPerTrip = () => (application?.additionalDetails?.tripAmount ? application?.additionalDetails?.tripAmount : 0);
 
   const arrears =
@@ -323,7 +328,7 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
 
   const config = BillDetailsKeyNoteConfig()[ModuleWorkflow ? ModuleWorkflow : businessService];
   const getAdvanceAmountPaid = applicationData?.applicationStatus === "DSO_INPROGRESS";
-
+  console.log(bill,"bill")
   const renderArrearDetailsForWNS = () => {
     return (
       <table className="table-fixed-column-common-pay">

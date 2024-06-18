@@ -7,7 +7,7 @@ import {
   LabelFieldPair,
   Loader,
   RadioButtons,
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { stringReplaceAll } from "../utils";
@@ -31,7 +31,7 @@ const PropertyType = ({ t, config, onSelect, userType, formData, setError, clear
     } else {
       if (Array.isArray(proptype) && proptype.length > 0) {
         for (i = 0; i < proptype.length; i++) {
-          if (i != 1 && i != 4 && Array.isArray(proptype) && proptype.length > 0)
+          if ( Array.isArray(proptype) && proptype.length > 0)
             menu.push({ i18nKey: "COMMON_PROPTYPE_" + stringReplaceAll(proptype[i].code, ".", "_"), code: proptype[i].code });
         }
       }

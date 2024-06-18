@@ -20,7 +20,7 @@ import {
   ActionBar,
   Dropdown,
   InfoIcon
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import DisconnectTimeline from "../components/DisconnectTimeline";
@@ -344,7 +344,6 @@ console.log("disconnectionData",disconnectionData)
       </div>
     );
   }
-console.log("disconnectionData.type?.value?.code",disconnectionData.type?.value?.code)
   return (
     <div style={{ margin: "16px" }}>
     <Header styles={{fontSize: "32px", marginLeft: "18px"}}>{t("WS_WATER_AND_SEWERAGE_DISCONNECTION")}</Header>

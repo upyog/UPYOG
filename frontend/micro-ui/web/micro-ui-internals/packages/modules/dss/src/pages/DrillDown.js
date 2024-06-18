@@ -1,4 +1,4 @@
-import { Header, Loader, RemoveableTag } from "@upyog/digit-ui-react-components";
+import { Header, Loader, RemoveableTag } from "@egovernments/digit-ui-react-components";
 import { addMonths, endOfYear, format, startOfYear } from "date-fns";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";

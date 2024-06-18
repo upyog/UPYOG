@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Dropdown, RadioButtons, ActionBar, RemoveableTag, CloseSvg, CheckBox, Localities, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Dropdown, RadioButtons, ActionBar, RemoveableTag, CloseSvg, CheckBox, Localities, SubmitBar } from "@egovernments/digit-ui-react-components";
 
 import { useTranslation } from "react-i18next";
 
@@ -13,7 +13,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statuses, .
   const localParamChange = (filterParam) => {
     let keys_to_delete = filterParam.delete;
     let _new = { ..._searchParams, ...filterParam };
-    if (keys_to_delete) keys_to_delete.forEach((key) => delete _new[key]);
+    if (keys_to_delete) keys_to_delete?.forEach((key) => delete _new[key]);
     delete filterParam.delete;
     setSearchParams({ ..._new });
   };

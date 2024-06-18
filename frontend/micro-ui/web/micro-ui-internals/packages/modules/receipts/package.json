@@ -1,6 +1,6 @@
 {
-  "name": "@upyog/digit-ui-module-receipts",
-  "version": "1.7.0-beta.3",
+  "name": "@egovernments/digit-ui-module-receipts",
+  "version": "1.7.24",
   "description": "RECEIPTS",
   "license": "MIT",
   "main": "dist/index.js",
@@ -15,7 +15,7 @@
     "prepublish": "yarn build"
   },
   "dependencies": {
-    "@upyog/digit-ui-react-components": "1.7.0-beta.4",
+    "@egovernments/digit-ui-react-components": "1.7.24",
     "microbundle-crl": "^0.13.11",
     "react": "17.0.2",
     "react-dom": "17.0.2",

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Loader, Toast, Header } from "@upyog/digit-ui-react-components";
+import { FormComposer, Loader, Toast, Header } from "@egovernments/digit-ui-react-components";
 import { useHistory, useParams } from "react-router-dom";
 import VendorConfig from "../../configs/VendorConfig";
 import { useQueryClient } from "react-query";
@@ -89,6 +89,7 @@ const EditVendor = ({ parentUrl, heading }) => {
 
   const onSubmit = (data) => {
     const name = data?.vendorName;
+    const phone = data?.phone;
     const pincode = data?.pincode;
     const street = data?.street?.trim();
     const doorNo = data?.doorNo?.trim();
@@ -141,6 +142,7 @@ const EditVendor = ({ parentUrl, heading }) => {
           gender: gender || dsoDetails.owner?.gender || "OTHER",
           dob: dob,
           emailId: emailId || "abc@egov.com",
+          mobileNumber: phone,
           relationship: dsoDetails.owner?.relationship || "OTHER",
         },
         additionalDetails: {

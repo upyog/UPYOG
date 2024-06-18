@@ -1,4 +1,4 @@
-import { CardLabel, LabelFieldPair, TextInput, CardLabelError, DatePicker } from "@upyog/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, TextInput, CardLabelError, DatePicker } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { getPattern } from "../utils";
 import * as func from "../utils";
@@ -135,7 +135,6 @@ const ConnectionDetails = (_props) => {
     }, [errors]);
 
     const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
-console.log("ffffffffffffffffffff",formData2)
     return (
         <div>
             <div style={{ marginBottom: "16px" }}>

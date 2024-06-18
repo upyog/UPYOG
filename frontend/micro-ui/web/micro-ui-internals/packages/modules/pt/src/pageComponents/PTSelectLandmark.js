@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FormStep, TextArea, LabelFieldPair, CardLabel } from "@upyog/digit-ui-react-components";
+import { FormStep, TextArea, LabelFieldPair, CardLabel } from "@egovernments/digit-ui-react-components";
 import Timeline from "../components/TLTimeline";
 
 const PTSelectLandmark = ({ t, config, onSelect, formData, userType }) => {

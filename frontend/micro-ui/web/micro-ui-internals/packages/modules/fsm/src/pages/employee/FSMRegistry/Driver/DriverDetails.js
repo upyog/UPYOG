@@ -18,7 +18,7 @@ import {
   CardText,
   Dropdown,
   AddIcon,
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 
 import { useQueryClient } from "react-query";
 
@@ -111,6 +111,8 @@ const DriverDetails = (props) => {
         return setShowModal(true);
       case "EDIT":
         return history.push("/digit-ui/employee/fsm/registry/modify-driver/" + dsoId);
+      case "HOME":
+        return history.push("/digit-ui/employee/fsm/registry?selectedTabs=DRIVER");
       default:
         break;
     }

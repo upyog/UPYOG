@@ -1,4 +1,4 @@
-import { Card, KeyNote, SubmitBar, Toast } from "@upyog/digit-ui-react-components";
+import { Card, KeyNote, SubmitBar, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -27,7 +27,7 @@ const TradeLicenseList = ({ application }) => {
     let Licenses = res.Licenses;
     let FY = getvalidfromdate("", mdmsFinancialYear).finYearRange;
     Licenses &&
-      Licenses.map((ob) => {
+      Licenses?.map((ob) => {
         if (ob.financialYear === FY) {
           setIsrenewalspresent(true)
           //isrenewalspresent = true;
@@ -112,7 +112,7 @@ useEffect(async ()=>{
       const isAllowedToNextYear = numOfApplications?.filter(data => (data.financialYear == finalFinancialYear && data?.status !== "REJECTED"));
     let FY = getvalidfromdate("", mdmsFinancialYear).finYearRange;
     numOfApplications &&
-    numOfApplications.map((ob) => {
+    numOfApplications?.map((ob) => {
         if (ob.financialYear === FY) {
           setIsrenewalspresent(true)
           //isrenewalspresent = true;

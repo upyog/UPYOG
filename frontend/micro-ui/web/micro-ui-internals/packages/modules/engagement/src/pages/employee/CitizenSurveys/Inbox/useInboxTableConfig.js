@@ -2,7 +2,7 @@ import React, { Fragment, useMemo } from "react"
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
-import { InfoBannerIcon } from "@upyog/digit-ui-react-components";
+import { InfoBannerIcon } from "@egovernments/digit-ui-react-components";
 const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCount, table, dispatch, inboxStyles={} }) => {
     const GetCell = (value) => <span className="cell-text styled-cell">{value}</span>;
     const GetStatusCell = (value) => value?.toLowerCase() === "active" ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>
@@ -58,7 +58,7 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
             },
             {
                 Header: t("EVENTS_POSTEDBY_LABEL"),
-                accessor: (row) =>  row.postedBy,
+                accessor: (row) =>  row.additionalDetails.postedBy,
             },
             {
                 Header: t("CS_SURVEY_RESULTS"),

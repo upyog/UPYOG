@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CardLabelError, Loader, RatingCard } from "@upyog/digit-ui-react-components";
+import { CardLabelError, Loader, RatingCard } from "@egovernments/digit-ui-react-components";
 import { useHistory, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -138,12 +138,6 @@ const SelectRating = ({ parentRoute }) => {
         type: "textarea",
         label: t("CS_COMMON_COMMENTS"),
         name: "comments",
-        className: "Hello",
-      },
-      {
-        type: "text",
-        label: t("CS_NO_TRIPS"),
-        name: "noOfTrips",
         className: "Hello",
       },
     ],

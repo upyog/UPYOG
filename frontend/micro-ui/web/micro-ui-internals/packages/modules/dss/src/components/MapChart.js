@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { get } from "lodash";
 import FilterContext from "./FilterContext";
 import { endOfMonth, getTime, startOfMonth } from "date-fns";
-import { Loader } from "@upyog/digit-ui-react-components"
+import { Loader } from "@egovernments/digit-ui-react-components"
 import { ResponsiveContainer } from "recharts";
 import { format } from "date-fns";
 
@@ -40,6 +40,8 @@ const getColor = (current) => {
         return COLOR_RANGE[0];
       case "OnBoarded":
         return COLOR_RANGE[1];
+      case "UnderImplementation":
+        return COLOR_RANGE[2];
       case "None":
         return DEFAULT_COLOR;
       default:
@@ -119,12 +121,12 @@ const MapChart = ({
 
   let data1 = !isLoading ? response?.responseData?.data?.filter((dat) => 
   {
-    let totalCount = dat.plots[3].value;
-    let liveCount = dat.plots[4].value;
-    let live = dat.plots[4].strValue > 0 ? true : true;
+    let totalCount = dat?.plots[3]?.value;
+    let liveCount = dat?.plots[4]?.value ;
+    let live = dat?.plots[4]?.strValue > 0 ? true : true;
     DataObj[dat.headerName] = {
       ...DataObj?.[dat.headerName],
-      status: dat.plots[2].strValue,
+      status: dat?.plots[2]?.strValue,
       value: live ? liveCount : totalCount,
       live,
       totalCount,

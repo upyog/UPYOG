@@ -1,4 +1,4 @@
-import { Banner, Card, Loader, ActionBar, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Banner, Card, Loader, ActionBar, SubmitBar } from "@egovernments/digit-ui-react-components";
 import { useQueryClient } from "react-query";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -34,7 +34,8 @@ const Response = (props) => {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.survey.useDelete();
+  // const mutation = Digit.Hooks.survey.useDelete();
+  const mutation = Digit.Hooks.survey.useUpdateSurvey();
   const { state } = props.location;
 
   useEffect(() => {

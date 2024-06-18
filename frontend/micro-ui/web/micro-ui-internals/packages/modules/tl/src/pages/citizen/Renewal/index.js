@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardText, Loader } from "@upyog/digit-ui-react-components";
+import { Card, CardHeader, CardText, Loader } from "@egovernments/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -32,7 +32,7 @@ export const TLList = () => {
       </Card>
       <div>
         {newapplicationlist?.length > 0 &&
-          newapplicationlist.map((application, index) => (
+          newapplicationlist?.map((application, index) => (
             <div key={index}>
               <TradeLicenseList application={application} />
             </div>

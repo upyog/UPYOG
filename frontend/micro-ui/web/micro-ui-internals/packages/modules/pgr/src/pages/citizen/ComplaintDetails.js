@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { LinkButton } from "@upyog/digit-ui-react-components";
+import { LinkButton } from "@egovernments/digit-ui-react-components";
 
 import { LOCALIZATION_KEY } from "../../constants/Localization";
 
@@ -17,7 +17,7 @@ import {
   ImageViewer,
   Loader,
   Toast,
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 
 import TimeLine from "../../components/TimeLine";
 

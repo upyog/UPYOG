@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AppContainer, BackButton, Toast } from "@upyog/digit-ui-react-components";
+import { AppContainer, BackButton, Toast } from "@egovernments/digit-ui-react-components";
 import { Route, Switch, useHistory, useRouteMatch, useLocation } from "react-router-dom";
 import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
@@ -93,7 +93,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     )
   );
 
-  const getUserType = () => Digit.UserService.getType();
+  const getUserType = () => "citizen";
 
   const handleOtpChange = (otp) => {
     setParmas({ ...params, otp });
@@ -110,7 +110,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     const data = {
       ...mobileNumber,
       tenantId: stateCode,
-      userType: getUserType(),
+      userType: "citizen",
     };
     if (isUserRegistered) {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });

@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { AppContainer } from "@upyog/digit-ui-react-components";
+import { AppContainer } from "@egovernments/digit-ui-react-components";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import { config } from "./config";
 import ChangePasswordComponent from "./changePassword";

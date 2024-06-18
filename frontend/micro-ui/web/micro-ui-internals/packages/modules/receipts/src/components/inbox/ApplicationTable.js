@@ -1,4 +1,4 @@
-import { Table } from "@upyog/digit-ui-react-components";
+import { Table } from "@egovernments/digit-ui-react-components";
 import React from "react";
 
 const ApplicationTable = ({ t, columns, data, getCellProps, onNextPage, onPrevPage, currentPage, totalRecords, pageSizeLimit, onPageSizeChange, onLastPage, onFirstPage }) => (

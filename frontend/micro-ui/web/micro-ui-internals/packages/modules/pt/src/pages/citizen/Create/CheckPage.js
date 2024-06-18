@@ -8,7 +8,7 @@ import {
   Row,
   StatusTable,
   SubmitBar
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -291,7 +291,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
           <Row
             label={t("PT_ASSESMENT1_ELECTRICITY_UID")}
             text={`${t(checkForNA(uid?.uid))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/uid`} />}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/electricity-uid`} />}
           />
           {PropertyType?.code !== "VACANT" &&<Row
             label={t("PT_ASSESMENT1_PLOT_SIZE")}

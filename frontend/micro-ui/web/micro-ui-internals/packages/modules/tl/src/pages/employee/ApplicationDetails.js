@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 import cloneDeep from "lodash/cloneDeep";
 import { useParams } from "react-router-dom";
-import { Header,MultiLink, LinkButton } from "@upyog/digit-ui-react-components";
+import { Header,MultiLink, LinkButton } from "@egovernments/digit-ui-react-components";
 import get from "lodash/get";
 import orderBy from "lodash/orderBy";
 import getPDFData from "../../utils/getTLAcknowledgementData"
@@ -195,8 +195,6 @@ const ApplicationDetails = () => {
         }
       });
   };
-
-
 
   const wfDocs = workflowDetails.data?.timeline?.reduce((acc, { wfDocuments }) => {
     return wfDocuments ? [...acc, ...wfDocuments] : acc;

@@ -1,4 +1,4 @@
-import { Dropdown, FormComposer, InfoBannerIcon, Loader, Localities, RadioButtons, Toast } from "@upyog/digit-ui-react-components";
+import { Dropdown, FormComposer, InfoBannerIcon, Loader, Localities, RadioButtons, Toast } from "@egovernments/digit-ui-react-components";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import React, { useEffect, useLayoutEffect, useState } from "react";
@@ -39,8 +39,8 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
   useEffect(() => {
     if ( !(searchData?.filters?.mobileNumber && Object.keys(searchData?.filters)?.length == 1) && 
       propertyData?.Properties.length > 0 &&
-      ptSearchConfig.maxResultValidation &&
-      propertyData?.Properties.length > ptSearchConfig.maxPropertyResult &&
+      ptSearchConfig?.maxResultValidation &&
+      propertyData?.Properties.length > ptSearchConfig?.maxPropertyResult &&
       !errorShown
     ) {
       setShowToast({ error: true, warning: true, label: "ERR_PLEASE_REFINED_UR_SEARCH" });
@@ -313,9 +313,9 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
 
   const onPropertySearch = async (data) => {
     if (
-      ptSearchConfig.maxResultValidation &&
+      ptSearchConfig?.maxResultValidation &&
       propertyData?.Properties.length > 0 &&
-      propertyData?.Properties.length > ptSearchConfig.maxPropertyResult &&
+      propertyData?.Properties.length > ptSearchConfig?.maxPropertyResult &&
       errorShown
     ) {
       seterrorShown(true);
@@ -406,7 +406,7 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
     return <Loader />;
   }
 
-  let validation = ptSearchConfig.maxResultValidation && !(searchData?.filters?.mobileNumber && Object.keys(searchData?.filters)?.length == 1)   ? propertyData?.Properties.length<ptSearchConfig.maxPropertyResult && (showToast == null || (showToast !== null && !showToast?.error)) : true;
+  let validation = ptSearchConfig?.maxResultValidation && !(searchData?.filters?.mobileNumber && Object.keys(searchData?.filters)?.length == 1)   ? propertyData?.Properties.length<ptSearchConfig?.maxPropertyResult && (showToast == null || (showToast !== null && !showToast?.error)) : true;
 
   if (propertyData && !propertyDataLoading && !error && validation ) {
     let qs = {};
@@ -417,7 +417,7 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
       searchData?.filters?.locality &&
       propertyDataLoading &&
       propertyDataLoading?.Properties?.length &&
-      propertyDataLoading.Properties.length > ptSearchConfig.ptSearchCount
+      propertyDataLoading.Properties.length > ptSearchConfig?.ptSearchCount
     ) {
       !showToast && setShowToast({ error: true, label: "PT_MODIFY_SEARCH_CRITERIA" });
     } else if (propsConfig.action === "MUTATION") {

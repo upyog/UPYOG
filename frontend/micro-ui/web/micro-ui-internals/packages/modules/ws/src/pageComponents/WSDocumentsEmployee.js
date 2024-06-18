@@ -8,7 +8,7 @@ import {
   Loader,
   CardHeader,
   CardSectionHeader,
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 
 const WSDocumentsEmployee = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {

@@ -1,4 +1,4 @@
-import { CardLabelError, Dropdown, RemoveableTag, TextInput, MultiSelectDropdown } from "@upyog/digit-ui-react-components";
+import { CardLabelError, Dropdown, RemoveableTag, TextInput, MultiSelectDropdown } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useMemo } from "react";
 import { Controller } from "react-hook-form";
 
@@ -27,7 +27,6 @@ const SurveyDetailsForms = ({ t, registerRef, controlSurveyForm, surveyFormState
     //inactive survey editing
     return false
   }
-
 
   return (
     <div className="surveydetailsform-wrapper">

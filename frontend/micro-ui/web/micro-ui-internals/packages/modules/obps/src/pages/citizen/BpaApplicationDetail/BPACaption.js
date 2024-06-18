@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TelePhone, DisplayPhotos } from "@upyog/digit-ui-react-components";
+import { TelePhone, DisplayPhotos } from "@egovernments/digit-ui-react-components";
 import BPAReason from "./BPAReason";
 
 const BPACaption = ({ data,OpenImage }) => {

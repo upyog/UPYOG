@@ -1,4 +1,4 @@
-import { FormComposer, Header, Loader } from "@upyog/digit-ui-react-components";
+import { FormComposer, Header, Loader } from "@egovernments/digit-ui-react-components";
 import { format } from 'date-fns';
 import React, { Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
