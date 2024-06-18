@@ -8,19 +8,19 @@ import some from "lodash/some";
 
 const calculalte = async (req, res, pool, next) => {
   console.log("calculalte");
-  let errors = validateCalculationReq(req.body);
-  if (errors.length <= 0) errors = await calculateValidate(req.body, errors);
+  //let errors = validateCalculationReq(req.body);
+  //if (errors.length <= 0) errors = await calculateValidate(req.body, errors);
 
-  if (errors.length > 0) {
-    next({
-      errorType: "custom",
-      errorReponse: {
-        ResponseInfo: requestInfoToResponseInfo(req.body.RequestInfo, false),
-        Errors: errors
-      }
-    });
-    return;
-  }
+  //if (errors.length > 0) {
+  //  next({
+  //    errorType: "custom",
+  //    errorReponse: {
+  //      ResponseInfo: requestInfoToResponseInfo(req.body.RequestInfo, false),
+  //      Errors: errors
+  //    }
+  //  });
+  //  return;
+ // }
 
   let calculalteResponse = {};
   calculalteResponse = await calculateService(req, pool, next);
