@@ -12,7 +12,9 @@ public enum Status {
   
   INACTIVE("INACTIVE"),
 
-  INWORKFLOW("INWORKFLOW");
+  INWORKFLOW("INWORKFLOW"),
+
+  PENDINGWS("PENDINGWS");
 
   private String value;
 
