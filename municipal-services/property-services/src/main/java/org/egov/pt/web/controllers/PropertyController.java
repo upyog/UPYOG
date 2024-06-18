@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -139,15 +140,25 @@ public class PropertyController {
 
 
     @RequestMapping(value = "/_sendOpenSMS", method = RequestMethod.POST)
-    public ResponseEntity<Integer> sendOpenSMS(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper)
+    public ResponseEntity<Integer> sendOpenSMS(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,@RequestParam String msgParam)
     {
-    	String msg="Dear OpenSMS, Status for your application no.OpenSMSApp for property OpenPid to OpenCreated property has been changed to OpenActivate. You can track your application on the link given below-https://mseva.lgpunjab.gov.in/employee/user/login Thank you|1301157492438182299|1407162859196626520";
+    	try
+    	{
+    		//String msg="Dear OpenSMS, Status for your application no.OpenSMSApp for property OpenPid to OpenCreated property has been changed to OpenActivate. You can track your application on the link given below-https://mseva.lgpunjab.gov.in/employee/user/login Thank you|1301157492438182299|1407162859196626520";
+
+    	String msg=msgParam;
     	Map<String, String> mobileNumberToOwner = new HashMap<>();
     	mobileNumberToOwner.put("9417630724", "gurpreet");
     	List<SMSRequest> smsRequests = notifUtil.createSMSRequest(msg, mobileNumberToOwner);
 		notifUtil.sendSMS(smsRequests);
 
     	return new ResponseEntity<>(1,HttpStatus.OK);
+    	}
+    	catch(Exception ex)
+    	{
+    		return new ResponseEntity<>(1,HttpStatus.PRECONDITION_FAILED);
+    	}
+
     }
 
     @PostMapping("/_search")
