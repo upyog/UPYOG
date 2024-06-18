@@ -310,7 +310,7 @@ public class CalculationService {
                BillingSlabSearchCriteria searchCriteria = new BillingSlabSearchCriteria();
                searchCriteria.setTenantId(license.getTenantId());
                searchCriteria.setAccessoryCategory(accessory.getAccessoryCategory());
-               searchCriteria.setApplicationType(license.getApplicationType().toString());
+             //  searchCriteria.setApplicationType(license.getApplicationType().toString());
               if(accessory.getUomValue()!=null)
               {
                   searchCriteria.setUomValue(Double.parseDouble(accessory.getUomValue()));
@@ -324,7 +324,7 @@ public class CalculationService {
                   throw new CustomException("BILLINGSLAB ERROR","Found multiple BillingSlabs for the given accessories ");
               if(CollectionUtils.isEmpty(billingSlabs))
                   throw new CustomException("BILLINGSLAB ERROR","No BillingSlab Found for the given accessory");
-             System.out.println("Accessory: "+accessory.getAccessoryCategory()+ " rate: "+billingSlabs.get(0).getRate());
+             log.info("Accessory: "+accessory.getAccessoryCategory()+ " rate: "+billingSlabs.get(0).getRate());
              billingSlabIds.add(billingSlabs.get(0).getId()+"|"+i+"|"+accessory.getId());
              if(billingSlabs.get(0).getType().equals(BillingSlab.TypeEnum.FLAT)){
                  BigDecimal count = accessory.getCount()==null ? BigDecimal.ONE : new BigDecimal(accessory.getCount());
