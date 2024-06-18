@@ -260,7 +260,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
             <SelectMobileNumber
               onSelect={selectMobileNumber}
               config={stepItems[0]}
-              mobileNumber={params.mobileNumber || ""}
+              mobileNumber={params?.mobileNumber || ""}
               onMobileChange={handleMobileChange}
               canSubmit={canSubmitNo}
               showRegisterLink={isUserRegistered && !location.state?.role}
@@ -269,11 +269,11 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
           </Route>
           <Route path={`${path}/otp`}>
             <SelectOtp
-              config={{ ...stepItems[1], texts: { ...stepItems[1].texts, cardText: `${stepItems[1].texts.cardText} ${params.mobileNumber || ""}` } }}
+              config={{ ...stepItems[1], texts: { ...stepItems[1].texts, cardText: `${stepItems[1].texts.cardText} ${params?.mobileNumber || ""}` } }}
               onOtpChange={handleOtpChange}
               onResend={resendOtp}
               onSelect={selectOtp}
-              otp={params.otp}
+              otp={params?.otp}
               error={isOtpValid}
               canSubmit={canSubmitOtp}
               t={t}

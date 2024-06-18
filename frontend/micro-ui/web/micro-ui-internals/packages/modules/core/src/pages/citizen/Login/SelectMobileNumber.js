@@ -231,14 +231,14 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
         <CardHeader variant="body2">
           {isOtpLogin ? t("Login with OTP") : t("Login with Username & Password")}
         </CardHeader>
-        <div>
+        <div style={{display:"flex"}}>
           <div onClick={toggleLoginMethod} style={{ cursor: 'pointer', fontSize: '24px' }}>
             <i className={isOtpLogin ? 'fa-solid fa-toggle-on' : 'fa-solid fa-toggle-on fa-flip-horizontal'}></i>
           </div>
           <span style={{ marginLeft: "10px" }}>{isOtpLogin ? 'Click for Login with Username & Password' : 'Click for Login with OTP'}</span>
         </div>
           {isOtpLogin ? (
-            <div>
+            <div style={{marginBottom:"10px"}}>
               <label>{t("Mobile_No")}</label>
               <TextInput
                 required
@@ -252,7 +252,8 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
                 margin="normal"
               />
               {!isOtpSent ? (
-                <ButtonSelector type="button" onSubmit={handleSendOtp} style={{ marginLeft: "10px", marginBottom: "10px" }} label=  {t("Send OTP")} />
+                <span onClick={handleSendOtp} style={{color:"#a82227"}}>Send OTP</span>
+                
 
               ) : (
                 <div>
@@ -290,10 +291,11 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
               />
             </div>
           )}
+          <div>
           <ButtonSelector type="button" onSubmit={(e) =>handleSubmit(e) }style={{marginLeft: "0px" }} label= {isOtpLogin ? 'Login with OTP' : 'Login with Username & Password'} />
            
-          <ButtonSelector  type="button" size="small" onSubmit={() => window.location.href= window.location.href.split("login")[0] + "register/name"} label="Register" />
-
+          <ButtonSelector  type="button" size="small" onSubmit={() => window.location.href= window.location.href.split("login")[0] + "register/name"} label="Register" style={{marginLeft: "10px" }}/>
+          </div>
       </Card>
       </React.Fragment>
   );
