@@ -203,6 +203,19 @@ public String  getLatestActiveBillId(CancelBillCriteria cancelBillCriteria){
 	 * executes query to update bill status to expired 
 	 * @param billIds
 	 */
+	public void updateBillStatus(List<String> consumerCodes,String businessService, BillStatus status) {
+		if (CollectionUtils.isEmpty(consumerCodes))
+			return;
+
+		List<Object> preparedStmtList = new ArrayList<>();
+		preparedStmtList.add(status.toString());
+		String queryStr = billQueryBuilder.getBillStatusUpdateQuery(consumerCodes,businessService, preparedStmtList);
+		jdbcTemplate.update(queryStr, preparedStmtList.toArray());
+	}
+	/**
+	 * executes query to update bill status to expired 
+	 * @param billIds
+	 */
 	public Integer updateBillStatus(UpdateBillCriteria updateBillCriteria) {
 
 		Set<String> consumerCodes = updateBillCriteria.getConsumerCodes();

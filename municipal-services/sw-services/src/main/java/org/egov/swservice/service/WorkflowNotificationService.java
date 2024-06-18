@@ -97,7 +97,13 @@ public class WorkflowNotificationService {
 			User userInfoCopy = request.getRequestInfo().getUserInfo();
 			User userInfo = notificationUtil.getInternalMicroserviceUser(request.getSewerageConnection().getTenantId());
 			request.getRequestInfo().setUserInfo(userInfo);
-
+			if (!SWConstants.NOTIFICATION_ENABLE_FOR_STATUS
+					.contains(request.getSewerageConnection().getProcessInstance().getAction() + "_"
+							+ applicationStatus)) {
+				log.info("Notification Disabled For State :"
+						+ applicationStatus);
+				return;
+			}
 			Property property = validateProperty.getOrValidateProperty(request);
 
 			request.getRequestInfo().setUserInfo(userInfoCopy);
@@ -232,6 +238,8 @@ public class WorkflowNotificationService {
 		if (message.contains("{receipt download link}"))
 			mobileNumberAndMesssage = setRecepitDownloadLink(mobileNumberAndMesssage, sewerageConnectionRequest, message, property);
 		Set<String> mobileNumbers = new HashSet<>(mobileNumberAndMesssage.keySet());
+	    mapOfPhoneNoAndUUIDs = fetchUserUUIDs(mobileNumbers, sewerageConnectionRequest.getRequestInfo(),
+				property.getTenantId());
 
 		if (CollectionUtils.isEmpty(mapOfPhoneNoAndUUIDs.keySet())) {
 			log.info("UUID search failed!");
@@ -282,11 +290,15 @@ public class WorkflowNotificationService {
 			String actionLink = "";
 			if (code.equalsIgnoreCase("Download Application")) {
 				actionLink = config.getNotificationUrl() + config.getViewHistoryLink();
+				actionLink = actionLink.replace(mobileNoReplacer, mobileNumber);
 				actionLink = actionLink.replace(applicationNumberReplacer, sewerageConnectionRequest.getSewerageConnection().getApplicationNo());
+				actionLink = actionLink.replace(tenantIdReplacer, property.getTenantId());
 			}
 			if (code.equalsIgnoreCase("PAY NOW")||code.equalsIgnoreCase("Pay Dues")) {
 				actionLink = config.getNotificationUrl() + config.getViewHistoryLink();
-				actionLink = actionLink.replace(applicationNumberReplacer, sewerageConnectionRequest.getSewerageConnection().getApplicationNo());
+				actionLink = actionLink.replace(applicationNumberReplacer, mobileNumber);
+				actionLink = actionLink.replace(consumerCodeReplacer, sewerageConnectionRequest.getSewerageConnection().getApplicationNo());
+				actionLink = actionLink.replace(tenantIdReplacer, property.getTenantId());
 			}
 			if (code.equalsIgnoreCase("DOWNLOAD RECEIPT")) {
 				actionLink = config.getNotificationUrl() + config.getMyPaymentsLink();
@@ -301,6 +313,8 @@ public class WorkflowNotificationService {
 			if (code.equalsIgnoreCase("Connection Detail Page")) {
 				actionLink = config.getNotificationUrl() + config.getConnectionDetailsLink();
 				actionLink = actionLink.replace(applicationNumberReplacer, sewerageConnectionRequest.getSewerageConnection().getApplicationNo());
+				actionLink = actionLink.replace(tenantIdReplacer, property.getTenantId());
+				actionLink = actionLink.replace(mobileNoReplacer, mobileNumber);
 			}
 			ActionItem item = ActionItem.builder().actionUrl(actionLink).code(code).build();
 			items.add(item);

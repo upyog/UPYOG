@@ -227,12 +227,12 @@ public class AmendmentValidator {
 		/*
 		 * enrich workflow fields if enabled
 		 */
-		String workflowName = amendment.getBusinessService().concat(".").concat(Constants.AMENDMENT_STRING_CONSTANT);
+		
 		if (props.getIsAmendmentworkflowEnabed()) {
 
 			ProcessInstance processInstance = ProcessInstance.builder()
-					.businessService(workflowName)
-					.moduleName(amendment.getBusinessService())
+					.moduleName(props.getAmendmentWfModuleName())
+					.businessService(props.getAmendmentWfName())
 					.action(props.getAmendmentWfOpenAction())
 					.businessId(amendment.getAmendmentId())
 					.tenantId(amendment.getTenantId())

@@ -45,8 +45,8 @@ public class BankAccountRepository {
 
         try {
             BankAccountResponse response = restTemplate.postForObject(uri, wrapper, BankAccountResponse.class);
-            if( response.getBankAccounts().size() == 1 )
-                return response.getBankAccounts().get(0);
+            if( response.getBankAccounts().size() >= 1 )
+                return response.getBankAccounts().get(response.getBankAccounts().size()-1);
             else {
                 log.error("Expected to find one bank account for tenant " +
                         "{}, instead found {}", tenantId, response.getBankAccounts().size());

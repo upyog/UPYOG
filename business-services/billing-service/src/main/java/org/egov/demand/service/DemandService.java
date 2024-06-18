@@ -270,27 +270,24 @@ public class DemandService {
 		generateAndSetIdsForNewDemands(newDemands, auditDetail);
 
 		update(demandRequest, paymentBackUpdateAudit);
-		String businessService = demands.get(0).getBusinessService();
 		String tenantId = demands.get(0).getTenantId();
-		
-		UpdateBillCriteria updateBillCriteria = UpdateBillCriteria.builder()
-				.consumerCodes(demands.stream().map(Demand::getConsumerCode).collect(Collectors.toSet()))
-				.businessService(businessService)
-				.tenantId(tenantId)
-				.build();
-		
-		if (ObjectUtils.isEmpty(paymentBackUpdateAudit)) {
-			
-			updateBillCriteria.setStatusToBeUpdated(BillStatus.EXPIRED);
-			billRepoV2.updateBillStatus(updateBillCriteria);
-		} else {
-			
-			updateBillCriteria.setStatusToBeUpdated(BillStatus.PAID);
-			billRepoV2.updateBillStatus(updateBillCriteria);
-		}
+		String businessService = demands.get(0).getBusinessService();
+		if (ObjectUtils.isEmpty(paymentBackUpdateAudit))
+			billRepoV2.updateBillStatus( demands.stream().map(Demand::getConsumerCode).collect(Collectors.toList()),
+					businessService,BillStatus.EXPIRED);
+		else
+			billRepoV2.updateBillStatus(demands.stream().map(Demand::getConsumerCode).collect(Collectors.toList()),
+					businessService,BillStatus.PAID);
 		// producer.push(applicationProperties.getDemandIndexTopic(), demandRequest);
 		return new DemandResponse(responseInfoFactory.getResponseInfo(requestInfo, HttpStatus.CREATED), demands);
 	}
+	
+		
+		
+		
+		
+		
+	
 
 
 	/**
@@ -410,7 +407,7 @@ public class DemandService {
 			List<DemandDetail> newdemandDetail = demand.getDemandDetails();
 			 for (DemandDetail demandDetailnew : newdemandDetail) 
 		        {
-		            if ("WS_CHARGE".equals(demandDetailnew.getTaxHeadMasterCode())) 
+		              if ("WS_CHARGE".equals(demandDetailnew.getTaxHeadMasterCode()) || "SW_CHARGE".equals(demandDetailnew.getTaxHeadMasterCode())) 
 		            {
 		            	taxamnt= demandDetailnew.getTaxAmount().intValue();
 
@@ -432,7 +429,7 @@ public class DemandService {
 			        List<DemandDetail> d12 = d1.getDemandDetails();
 			        for (DemandDetail d123 : d12) 
 			        {
-			            if ("WS_ADVANCE_CARRYFORWARD".equals(d123.getTaxHeadMasterCode())) 
+			            if ("WS_ADVANCE_CARRYFORWARD".equals(d123.getTaxHeadMasterCode()) || "SW_ADVANCE_CARRYFORWARD".equals(d123.getTaxHeadMasterCode())) 
 			            {
 			            	finalsadvance = d123.getTaxAmount().intValue();
 			            		if(taxamnt+finalsadvance>0)
@@ -478,7 +475,7 @@ public class DemandService {
 			
 			    List<DemandDetail> demandDetails23 = demand12.getDemandDetails();
 			    for (DemandDetail demandDetail45 : demandDetails23) {
-			        if ("WS_ADVANCE_CARRYFORWARD".equals(demandDetail45.getTaxHeadMasterCode())) {
+			        if ("WS_ADVANCE_CARRYFORWARD".equals(demandDetail45.getTaxHeadMasterCode()) || "SW_ADVANCE_CARRYFORWARD".equals(demandDetail45.getTaxHeadMasterCode())) {
 			        	BigDecimal tax=new BigDecimal(finalsadvance);
 			            demandDetail45.setTaxAmount(tax);
 			        }

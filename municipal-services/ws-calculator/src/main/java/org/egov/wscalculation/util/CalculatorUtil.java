@@ -1,6 +1,7 @@
 package org.egov.wscalculation.util;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -16,21 +17,30 @@ import org.egov.wscalculation.web.models.Property;
 import org.egov.wscalculation.web.models.PropertyResponse;
 import org.egov.wscalculation.web.models.RequestInfoWrapper;
 import org.egov.wscalculation.web.models.SearchCriteria;
+import org.egov.wscalculation.web.models.SingleDemand;
+import org.egov.wscalculation.web.models.TaxPeriod;
 import org.egov.wscalculation.web.models.WaterConnection;
 import org.egov.wscalculation.web.models.WaterConnectionResponse;
 import org.egov.wscalculation.web.models.workflow.ProcessInstance;
 import org.egov.wscalculation.web.models.workflow.ProcessInstanceResponse;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Getter
+@Slf4j
 public class CalculatorUtil {
 
 	@Autowired
@@ -121,8 +131,10 @@ public class CalculatorUtil {
 
 		WaterConnectionResponse response;
 		try {
+			log.info("WaterConnectionResponse result: " + mapper.writeValueAsString(result));
 			response = mapper.convertValue(result, WaterConnectionResponse.class);
-		} catch (IllegalArgumentException e) {
+			log.info("WaterConnectionResponse: " + mapper.writeValueAsString(response));
+		} catch (Exception e) {
 			throw new CustomException("PARSING_ERROR", "Error while parsing response of Water Connection Search");
 		}
 
@@ -311,14 +323,44 @@ public class CalculatorUtil {
 	 * @return Master For Billing Period
 	 */
 	public Map<String, Object> loadBillingFrequencyMasterData(RequestInfo requestInfo, String tenantId) {
+		log.info("loadBillingFrequencyMasterData");
 		MdmsCriteriaReq mdmsCriteriaReq = getBillingFrequencyForScheduler(requestInfo, tenantId);
 		Object res = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+		log.info("loadBillingFrequencyMasterData::"+res);
+		String jsonString = new JSONObject(res).toString();
+		log.info("loadBillingFrequencyMasterData"+jsonString);
 		if (res == null) {
 			throw new CustomException("MDMS_ERROR_FOR_BILLING_FREQUENCY", "ERROR IN FETCHING THE BILLING FREQUENCY");
 		}
 		List<Map<String, Object>> jsonOutput = JsonPath.read(res, WSCalculationConstant.JSONPATH_ROOT_FOR_BilingPeriod);
 		return jsonOutput.get(0);
 	}
+
+	public Map<String, Object> loadBillingFrequencyMasterDatas(SingleDemand singledemand, String tenantId) {
+		log.info("loadBillingFrequencyMasterData");
+		RequestInfo Req=singledemand.getRequestInfo();
+		MdmsCriteriaReq mdmsCriteriaReq = getBillingFrequencyForScheduler(Req, tenantId);
+		Object res = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+		log.info("loadBillingFrequencyMasterData::"+res);
+		String jsonString = new JSONObject(res).toString();
+		log.info("loadBillingFrequencyMasterData"+jsonString);
+		if (res == null) {
+			throw new CustomException("MDMS_ERROR_FOR_BILLING_FREQUENCY", "ERROR IN FETCHING THE BILLING FREQUENCY");
+		}
+		List<Map<String, Object>> jsonOutput = JsonPath.read(res, WSCalculationConstant.JSONPATH_ROOT_FOR_BilingPeriod);
+		return jsonOutput.get(0);
+	}
+	
+//	public Map<String, Object> getSchedulerBillingMasterData(RequestInfo requestInfo, String tenantId) {
+//		MdmsCriteriaReq mdmsCriteriaReq = getBillingPeriodForScheduler(requestInfo, tenantId);
+//		Object res = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+//		if (res == null) {
+//			throw new CustomException("MDMS_ERROR_FOR_SCHEDULER_BILLING_PERIOD", "ERROR IN FETCHING THE SCHEDULER BILLING PERIOD");
+//		}
+//		List<Map<String, Object>> jsonOutput = JsonPath.read(res, WSCalculationConstant.JSONPATH_ROOT_FOR_SCHEDULER_BilingPeriod);
+//		return jsonOutput.get(0);
+//	}
+	
 	
 	private  MdmsCriteriaReq getBillingPeriodForScheduler(RequestInfo requestInfo, String tenantId) {
 
@@ -387,7 +429,95 @@ public class CalculatorUtil {
 		url.append("businessIds=").append(businessIds);
 		return url.toString();
 	}
+	
+	/**
+	 * prepares mdms request
+	 * 
+	 * @param tenantId
+	 * @param moduleName
+	 * @param names
+	 * @param filter
+	 * @param requestInfo
+	 * @return
+	 */
+	public MdmsCriteriaReq prepareMdMsRequest(String tenantId, String moduleName, List<String> names, String filter,
+			RequestInfo requestInfo) {
 
+		List<MasterDetail> masterDetails = new ArrayList<>();
+		names.forEach(name -> {
+				masterDetails.add(MasterDetail.builder().name(name).build());
+		});
+
+		ModuleDetail moduleDetail = ModuleDetail.builder().moduleName(moduleName).masterDetails(masterDetails).build();
+		List<ModuleDetail> moduleDetails = new ArrayList<>();
+		moduleDetails.add(moduleDetail);
+		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().tenantId(tenantId).moduleDetails(moduleDetails).build();
+		return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+	}
+	
+	/**
+	 * Prepare the MDMS tax period
+	 * @param requestInfo
+	 * @param serviceName
+	 * @param tenantId
+	 * @return
+	 */
+	public MdmsCriteriaReq prepareWSTaxPeriodMdmsRequest(RequestInfo requestInfo, String serviceName, String tenantId) {
+		String type=null;
+		if(tenantId.contains("pb.khanna"))
+		{
+			type="ANNUAL";
+		}
+
+		else
+		{
+			type="QUATERLY";
+		}
+		
+		
+		log.info("prepareWSTaxPeriodMdmsRequest:: start");
+			MasterDetail masterDetail = MasterDetail.builder().name(WSCalculationConstant.TAXPERIOD_MASTERNAME)
+					// .filter("[?(@.periodCycle=='"+type+"' && @.service== '"+serviceName+"')]")
+					.filter("[?(@.periodCycle=='QUATERLY' && @.service== '"+serviceName+"')]")
+					.build();
+			ModuleDetail moduleDetail = ModuleDetail.builder().moduleName(WSCalculationConstant.MODULE_NAME_BILLINGSERVICE)
+					.masterDetails(Arrays.asList(masterDetail)).build();
+			MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(moduleDetail)).tenantId(tenantId)
+					.build();
+			log.info("prepareWSTaxPeriodMdmsRequest:: end"+mdmsCriteria);
+			return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+
+	}
+	
+	/**
+	 * Fetches the MDMS tax periods based on the MdmsCriteriaRequest
+	 *
+	 * @param tenantId    tenantId of properties in PropertyRequest
+	 * @param names       List of String containing the names of all master-data
+	 *                    whose code has to be extracted
+	 * @param requestInfo RequestInfo of the received PropertyRequest
+	 * @return Map of MasterData name to the list of code in the MasterData
+	 *
+	 */
+	public List<TaxPeriod> getTaxPeriodsFromMDMS(RequestInfo requestInfo, String tenantId) {
+
+		try {
+			MdmsCriteriaReq mdmsReq = prepareWSTaxPeriodMdmsRequest(requestInfo, WSCalculationConstant.SERVICE_FIELD_VALUE_WS, tenantId);
+			DocumentContext documentContext = JsonPath.parse(serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsReq));
+
+			List<TaxPeriod> taxPeriods =  mapper.convertValue(documentContext.read(WSCalculationConstant.MDMS_NO_FILTER_TAXPERIOD), new TypeReference<List<TaxPeriod>>() {});
+			//Sorting the tax periods based on tax from date in ascending order
+			taxPeriods = taxPeriods.stream()
+					     .sorted(Comparator.comparing(TaxPeriod::getFromDate))
+					     .collect(Collectors.toList());
+		
+			return taxPeriods;
+			
+		} catch (Exception e) {
+			log.error("Error while fetching MDMS data", e);
+			throw new CustomException("NO_TAXPERIOD_FOUND", "Exception while getting the tax periods from the MDMS service");
+		}
+	}
 	/**
 	 *
 	 * @param dateInLong

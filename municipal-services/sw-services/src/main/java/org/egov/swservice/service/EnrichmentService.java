@@ -181,12 +181,14 @@ public class EnrichmentService {
 			}
 			additionalDetail.put(SWConstants.LOCALITY,addDetail.get(SWConstants.LOCALITY).toString());
 
+			log.info("Additional details1:"+ additionalDetail);
 			for (Map.Entry<String, Object> entry: addDetail.entrySet()) {
 				if (additionalDetail.getOrDefault(entry.getKey(), null) == null) {
 					additionalDetail.put(entry.getKey(), addDetail.get(entry.getKey()));
 				}
 			}
 		}
+		log.info("Additional details2:"+ additionalDetail);
 		sewerageConnectionRequest.getSewerageConnection().setAdditionalDetails(additionalDetail);
 	}
 

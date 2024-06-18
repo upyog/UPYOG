@@ -1,9 +1,12 @@
 package org.egov.wscalculation.web.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
+import org.egov.wscalculation.repository.WSCalculationDao;
 import org.egov.wscalculation.service.BillGeneratorService;
 import org.egov.wscalculation.util.ResponseInfoFactory;
 import org.egov.wscalculation.validator.BillGenerationValidator;
@@ -12,6 +15,7 @@ import org.egov.wscalculation.web.models.BillGenerationSearchCriteria;
 import org.egov.wscalculation.web.models.BillScheduler;
 import org.egov.wscalculation.web.models.BillSchedulerResponse;
 import org.egov.wscalculation.web.models.RequestInfoWrapper;
+import org.jsoup.helper.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +28,14 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @Setter
 @Builder
 @RestController
 @RequestMapping("/watercharges")
+@Slf4j
 public class BillGeneratorController {
 
 	@Autowired
@@ -41,13 +47,41 @@ public class BillGeneratorController {
 	@Autowired
 	private BillGenerationValidator billGenerationValidator;
 
+	@Autowired
+	private WSCalculationDao waterCalculatorDao;
+
 	@PostMapping("/scheduler/_create")
 	public ResponseEntity<BillSchedulerResponse> billSchedulerCreate(
 			@Valid @RequestBody BillGenerationReq billGenerationReq) {
 
-		billGenerationValidator.validateBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
-		List<BillScheduler> billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
-		BillSchedulerResponse response = BillSchedulerResponse.builder().billSchedulers(billDetails)
+		BillSchedulerResponse response=new BillSchedulerResponse();
+		List<BillScheduler> billDetails1 = new ArrayList<BillScheduler>();
+		List<BillScheduler> billDetails = new ArrayList<BillScheduler>();
+		String isBatch=billGenerationReq.getBillScheduler().getIsBatch();
+        	log.info("isBatch value"+isBatch);
+        	boolean batchBilling=false;
+        	if(StringUtils.isBlank(isBatch))
+        		isBatch="false";
+        			
+		if(isBatch.equals("true")) {
+			batchBilling = true;
+		}
+        	if(batchBilling) {		
+			List<String> listOfLocalities = waterCalculatorDao.getLocalityList(billGenerationReq.getBillScheduler().getTenantId(),billGenerationReq.getBillScheduler().getLocality());
+			for(String localityName : listOfLocalities) {		
+				billGenerationReq.getBillScheduler().setLocality(localityName);			
+				boolean localityStatus = billGenerationValidator.checkBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
+				if(!localityStatus) {
+				billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
+				}
+				billDetails1.addAll(billDetails);
+		}
+		}else {
+					billGenerationValidator.validateBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
+					billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
+				    billDetails1.addAll(billDetails);
+		}
+		 response = BillSchedulerResponse.builder().billSchedulers(billDetails1)
 				.responseInfo(
 						responseInfoFactory.createResponseInfoFromRequestInfo(billGenerationReq.getRequestInfo(), true))
 				.build();

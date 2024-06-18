@@ -146,8 +146,8 @@ public class DemandGenerationConsumer {
 		/*
 		 * this topic will be used by billing service to post message
 		 */
-		request.getMigrationCount().setAuditTopic(bulkBillGenAuditTopic);
-		request.getMigrationCount().setAuditTime(System.currentTimeMillis());
+		//request.getMigrationCount().setAuditTopic(bulkBillGenAuditTopic);
+		//request.getMigrationCount().setAuditTime(System.currentTimeMillis());
 		try {
 			bulkDemandAndBillGenService.bulkDemandGeneration(request);
 		} catch (Exception ex) {

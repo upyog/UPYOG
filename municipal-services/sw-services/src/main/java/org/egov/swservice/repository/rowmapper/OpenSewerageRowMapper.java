@@ -45,7 +45,21 @@ public class OpenSewerageRowMapper implements ResultSetExtractor<List<SewerageCo
                 sewarageConnection.setOldConnectionNo(rs.getString("oldConnectionNo"));
                 sewarageConnection.setOldApplication(rs.getBoolean("isoldapplication"));
                 // get property id and get property object
-                HashMap<String, Object> addtionalDetails = new HashMap<>();
+//                HashMap<String, Object> addtionalDetails = new HashMap<>();
+                PGobject pgObj = (PGobject) rs.getObject("additionaldetails");
+
+                ObjectNode addtionalDetails = null;
+				if (pgObj != null) {
+
+					try {
+						addtionalDetails = mapper.readValue(pgObj.getValue(), ObjectNode.class);
+					} catch (IOException ex) {
+						// TODO Auto-generated catch block
+						throw new CustomException("PARSING ERROR", "The additionalDetail json cannot be parsed");
+					}
+				} else {
+					addtionalDetails = mapper.createObjectNode();
+				}
                 addtionalDetails.put(SWConstants.APP_CREATED_DATE, rs.getBigDecimal("appCreatedDate"));
                 addtionalDetails.put(SWConstants.LOCALITY, rs.getString("locality"));
                 sewarageConnection.setAdditionalDetails(addtionalDetails);

@@ -16,6 +16,7 @@ import org.egov.swcalculation.web.models.*;
 import org.egov.swcalculation.web.models.workflow.ProcessInstance;
 import org.egov.swcalculation.web.models.workflow.ProcessInstanceResponse;
 import org.egov.tracer.model.CustomException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -302,6 +303,21 @@ public class CalculatorUtils {
 		Object res = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
 		if (res == null) {
 			throw new CustomException("MDMS_ERROR_FOR_BILLING_FREQUENCY", "Failed to get Billing Frequency details");
+		}
+		List<Map<String, Object>> jsonOutput = JsonPath.read(res, SWCalculationConstant.JSONPATH_ROOT_FOR_BilingPeriod);
+		return jsonOutput.get(0);
+	}
+
+	public Map<String, Object> loadBillingFrequencyMasterDatas(SingleDemand singledemand, String tenantId) {
+		log.info("loadBillingFrequencyMasterData");
+		RequestInfo Req=singledemand.getRequestInfo();
+		MdmsCriteriaReq mdmsCriteriaReq = getBillingFrequencyForScheduler(Req, tenantId);
+		Object res = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+		log.info("loadBillingFrequencyMasterData::"+res);
+		String jsonString = new JSONObject(res).toString();
+		log.info("loadBillingFrequencyMasterData"+jsonString);
+		if (res == null) {
+			throw new CustomException("MDMS_ERROR_FOR_BILLING_FREQUENCY", "ERROR IN FETCHING THE BILLING FREQUENCY");
 		}
 		List<Map<String, Object>> jsonOutput = JsonPath.read(res, SWCalculationConstant.JSONPATH_ROOT_FOR_BilingPeriod);
 		return jsonOutput.get(0);

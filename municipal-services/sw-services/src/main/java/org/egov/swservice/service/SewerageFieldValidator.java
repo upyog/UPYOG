@@ -74,16 +74,16 @@ public class SewerageFieldValidator implements SewerageActionValidator {
 		}
 		if (SWConstants.APPROVE_CONNECTION_CONST.equalsIgnoreCase(
 				sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction())) {
-			if(sewerageConnectionRequest.getSewerageConnection().getRoadCuttingInfo() == null){
+			if(sewerageConnectionRequest.getSewerageConnection().getRoadCuttingInfo() == null && !valueOfConnectionCategory.equalsIgnoreCase("REGULARIZED")){
 				errorMap.put("INVALID_ROAD_INFO", "Road Cutting Information should not be empty");
 			}
 
-			if(sewerageConnectionRequest.getSewerageConnection().getRoadCuttingInfo() != null){
+			if(sewerageConnectionRequest.getSewerageConnection().getRoadCuttingInfo() != null && !valueOfConnectionCategory.equalsIgnoreCase("REGULARIZED")){
 				for(RoadCuttingInfo roadCuttingInfo : sewerageConnectionRequest.getSewerageConnection().getRoadCuttingInfo()){
 					if(StringUtils.isEmpty(roadCuttingInfo.getRoadType())){
 						errorMap.put("INVALID_ROAD_TYPE", "Road type should not be empty");
 					}
-					if(roadCuttingInfo.getRoadCuttingArea() == null){
+					if(roadCuttingInfo.getRoadCuttingArea() == null && !valueOfConnectionCategory.equalsIgnoreCase("REGULARIZED")){
 						errorMap.put("INVALID_ROAD_CUTTING_AREA", "Road cutting area should not be empty");
 					}
 				}
@@ -106,9 +106,9 @@ public class SewerageFieldValidator implements SewerageActionValidator {
 
 			}
 			if (sewerageConnectionRequest.getSewerageConnection().getDateEffectiveFrom() != null) {
-				if (System.currentTimeMillis() > sewerageConnectionRequest.getSewerageConnection().getDateEffectiveFrom()) {
-					errorMap.put("DATE_EFFECTIVE_FROM_IN_PAST", "Date effective from cannot be past");
-				}
+				//if (System.currentTimeMillis() > sewerageConnectionRequest.getSewerageConnection().getDateEffectiveFrom()) {
+				//	errorMap.put("DATE_EFFECTIVE_FROM_IN_PAST", "Date effective from cannot be past");
+				//}
 				if ((sewerageConnectionRequest.getSewerageConnection().getConnectionExecutionDate() != null)
 						&& (sewerageConnectionRequest.getSewerageConnection()
 						.getConnectionExecutionDate() > sewerageConnectionRequest.getSewerageConnection()

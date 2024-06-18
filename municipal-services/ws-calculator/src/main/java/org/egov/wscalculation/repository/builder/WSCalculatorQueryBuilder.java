@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.egov.wscalculation.config.WSCalculationConfiguration;
+import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.web.models.BillGenerationSearchCriteria;
 import org.egov.wscalculation.web.models.MeterReadingSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class WSCalculatorQueryBuilder {
 			+ " mr.currentReadingDate, mr.createdBy as mr_createdBy, mr.tenantid, mr.lastModifiedBy as mr_lastModifiedBy,"
 			+ " mr.createdTime as mr_createdTime, mr.lastModifiedTime as mr_lastModifiedTime FROM eg_ws_meterreading mr";
 
+	private static final String LocalityListAsPerBatchQuery = "SELECT distinct(localitycode) FROM eg_bndry_mohalla conn";
+
 	private final static String noOfConnectionSearchQuery = "SELECT count(*) FROM eg_ws_meterreading WHERE";
 
 	private final static String noOfConnectionSearchQueryForCurrentMeterReading = "select mr.currentReading from eg_ws_meterreading mr";
@@ -30,14 +33,24 @@ public class WSCalculatorQueryBuilder {
 
 	private final static String connectionNoWaterConnectionSearchQuery = "SELECT conn.connectionNo as conn_no FROM eg_ws_service wc INNER JOIN eg_ws_connection conn ON wc.connection_id = conn.id";
 
-	private static final String connectionNoListQuery = "SELECT distinct(conn.connectionno) FROM eg_ws_connection conn INNER JOIN eg_ws_service ws ON conn.id = ws.connection_id";
+	private static final String connectionNoListQuery = "SELECT distinct(conn.connectionno),ws.connectionexecutiondate FROM eg_ws_connection conn INNER JOIN eg_ws_service ws ON conn.id = ws.connection_id";
+	// private static final String connectionNoListQuery = "SELECT
+	// distinct(conn.connectionno) FROM eg_ws_connection conn INNER JOIN
+	// eg_ws_service ws ON conn.id = ws.connection_id";
 
 	private static final String distinctTenantIdsCriteria = "SELECT distinct(tenantid) FROM eg_ws_connection ws";
 
-	private static final String countQuery = "select count(*) from eg_ws_connection";
+	private static final String connectionNoByLocality = "SELECT distinct(conn.connectionno) FROM eg_ws_connection conn INNER JOIN eg_ws_service ws ON conn.id = ws.connection_id  ";
 
-	private static String holderSelectValues = "connectionholder.tenantid as holdertenantid, connectionholder.connectionid as holderapplicationId, userid, connectionholder.status as holderstatus, isprimaryholder, connectionholdertype, holdershippercentage, connectionholder.relationship as holderrelationship, connectionholder.createdby as holdercreatedby, connectionholder.createdtime as holdercreatedtime, connectionholder.lastmodifiedby as holderlastmodifiedby, connectionholder.lastmodifiedtime as holderlastmodifiedtime";
 	private static final String BILL_SCHEDULER_STATUS_SEARCH_QUERY = "select status from eg_ws_scheduler ";
+	private static final String LAST_DEMAND_GEN_FOR_CONN = " SELECT d.taxperiodfrom FROM egbs_demand_v1 d ";
+
+	private static final String isConnectionDemandAvailableForBillingCycle = "select EXISTS (select 1 from egbs_demand_v1 d ";
+
+	public static final String BILL_STATUS_UPDATE_QUERY = "UPDATE egbs_bill_v1 SET status=? WHERE status='ACTIVE' ";
+	private static final String fiterConnectionBasedOnTaxPeriod = " AND conn.connectionno not in (select distinct consumercode from egbs_demand_v1 d ";
+	private static String holderSelectValues = "connectionholder.tenantid as holdertenantid, connectionholder.connectionid as holderapplicationId, userid, connectionholder.status as holderstatus, isprimaryholder, connectionholdertype, holdershippercentage, connectionholder.relationship as holderrelationship, connectionholder.createdby as holdercreatedby, connectionholder.createdtime as holdercreatedtime, connectionholder.lastmodifiedby as holderlastmodifiedby, connectionholder.lastmodifiedtime as holderlastmodifiedtime";
+
 	private static final String INNER_JOIN_STRING = "INNER JOIN";
 	private static final String BILL_SCHEDULER_STATUS_UPDATE_QUERY = "UPDATE eg_ws_scheduler SET status=? where id=?";
 	private static final String LEFT_OUTER_JOIN_STRING = " LEFT OUTER JOIN ";
@@ -100,7 +113,7 @@ public class WSCalculatorQueryBuilder {
 	}
 
 	public String getCountQuery() {
-		return countQuery;
+		return getCountQuery();
 	}
 
 	/**
@@ -237,6 +250,89 @@ public class WSCalculatorQueryBuilder {
 
 	}
 
+	public String getLocalityListWithBatch(String tenantId, String batchCode, List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(LocalityListAsPerBatchQuery);
+		// add batchcode
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.blockcode = ? ");
+		preparedStatement.add(batchCode);
+
+		// add tenantid
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.tenantid = ? ");
+		preparedStatement.add(tenantId);
+
+		return query.toString();
+	}
+
+	public String getConnectionNumberList(String tenantId, String connectionType, String status, Long taxPeriodFrom,
+			Long taxPeriodTo, String cone, List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(connectionNoListQuery);
+
+		// Add connection type
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" ws.connectiontype = ? ");
+		preparedStatement.add(connectionType);
+
+		// Active status
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.status = ? ");
+		preparedStatement.add(status);
+
+		// Get the activated connections status
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" (conn.applicationstatus = ?  or conn.applicationstatus = ?)");
+		preparedStatement.add(WSCalculationConstant.CONNECTION_ACTIVATED);
+		preparedStatement.add(WSCalculationConstant.MODIFIED_APPROVED);
+
+		// add tenantid
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.tenantid = ? ");
+		preparedStatement.add(tenantId);
+
+//		 Test with connection number
+//		addClauseIfRequired(preparedStatement, query);
+//		query.append(" conn.connectionno = '0603000900' ");
+
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.connectionno is not null");
+
+		if (cone != null && cone != "") {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" conn.connectionno = ? ");
+			preparedStatement.add(cone);
+		}
+		query.append(fetchConnectionsToBeGenerate(tenantId, taxPeriodFrom, taxPeriodTo, preparedStatement));
+
+		return query.toString();
+
+	}
+
+	public String fetchConnectionsToBeGenerate(String tenantId, Long taxPeriodFrom, Long taxPeriodTo,
+			List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(fiterConnectionBasedOnTaxPeriod);
+
+		query.append(" WHERE d.tenantid = ? ");
+		preparedStatement.add(tenantId);
+
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.status = 'ACTIVE' ");
+
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.taxPeriodFrom = ? ");
+		preparedStatement.add(taxPeriodFrom);
+
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.taxPeriodTo = ? ");
+		preparedStatement.add(taxPeriodTo);
+
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.businessservice = ? ) ");
+		preparedStatement.add(WSCalculationConstant.SERVICE_FIELD_VALUE_WS);
+
+		return query.toString();
+	}
+
 	public String getConnectionNumberList(String tenantId, String connectionType, List<Object> preparedStatement,
 			Integer batchOffset, Integer batchsize, Long fromDate, Long toDate) {
 		// StringBuilder query = new StringBuilder(connectionNoListQuery);
@@ -267,6 +363,41 @@ public class WSCalculatorQueryBuilder {
 		preparedStatement.add(batchsize);
 		query.append(orderbyClause);
 
+		return query.toString();
+
+	}
+
+	public String getConnectionsNoByLocality(String tenantId, String connectionType, String status, String locality,
+			List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(connectionNoByLocality);
+
+		// add tenantid
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.tenantid = ? ");
+		preparedStatement.add(tenantId);
+
+		// Add connection type
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" ws.connectiontype = ? ");
+		preparedStatement.add(connectionType);
+
+		// Active status
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.status = ? ");
+		preparedStatement.add(status);
+
+		if (locality != null) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" conn.locality = ? ");
+			preparedStatement.add(locality);
+		}
+
+		// Getting only non exempted connection to generate bill
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" (conn.additionaldetails->>'isexempted')::boolean is not true ");
+
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.connectionno is not null");
 		return query.toString();
 
 	}
@@ -403,6 +534,91 @@ public class WSCalculatorQueryBuilder {
 		}
 
 		query.append(" ORDER BY createdtime ");
+
+		return query.toString();
+	}
+
+	public String getBillStatusUpdateQuery(List<String> consumerCodes, String businessService,
+			List<Object> preparedStmtList) {
+		StringBuilder builder = new StringBuilder(BILL_STATUS_UPDATE_QUERY);
+
+		if (!CollectionUtils.isEmpty(consumerCodes)) {
+
+			builder.append(" AND id IN ( SELECT billid from egbs_billdetail_v1 where consumercode IN (");
+			appendListToQuery(consumerCodes, preparedStmtList, builder);
+			builder.append(" AND businessservice=? )");
+			preparedStmtList.add(businessService);
+		}
+
+		return builder.toString();
+	}
+
+	public String searchLastDemandGenFromDate(String consumerCode, String tenantId, List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(LAST_DEMAND_GEN_FOR_CONN);
+
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.businessservice = ? ");
+		preparedStatement.add(WSCalculationConstant.SERVICE_FIELD_VALUE_WS);
+
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.tenantid = ? ");
+		preparedStatement.add(tenantId);
+
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.consumercode = ? ");
+		preparedStatement.add(consumerCode);
+
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.status = 'ACTIVE' ");
+
+		query.append(" ORDER BY d.taxperiodfrom desc limit 1 ");
+
+		return query.toString();
+	}
+
+	/**
+	 * @param billIds
+	 * @param preparedStmtList
+	 * @param builder
+	 */
+	private void appendListToQuery(List<String> values, List<Object> preparedStmtList, StringBuilder builder) {
+		int length = values.size();
+
+		for (int i = 0; i < length; i++) {
+			builder.append(" ?");
+			if (i != length - 1)
+				builder.append(",");
+			preparedStmtList.add(values.get(i));
+		}
+		builder.append(")");
+	}
+
+	public String isConnectionDemandAvailableForBillingCycle(String tenantId, Long taxPeriodFrom, Long taxPeriodTo,
+			String consumerCode, List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(isConnectionDemandAvailableForBillingCycle);
+
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.tenantid = ? ");
+		preparedStatement.add(tenantId);
+
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.consumercode = ? ");
+		preparedStatement.add(consumerCode);
+
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.status = 'ACTIVE' ");
+
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.taxPeriodFrom = ? ");
+		preparedStatement.add(taxPeriodFrom);
+
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.taxPeriodTo = ? ");
+		preparedStatement.add(taxPeriodTo);
+
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.businessservice = ? ) ");
+		preparedStatement.add(WSCalculationConstant.SERVICE_FIELD_VALUE_WS);
 
 		return query.toString();
 	}

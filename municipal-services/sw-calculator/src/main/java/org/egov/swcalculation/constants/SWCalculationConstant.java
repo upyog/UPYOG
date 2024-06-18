@@ -272,8 +272,6 @@ public class SWCalculationConstant {
 	public static final String METER_COST_CONST = "meterCost";
 
 	public static final String OTHER_CHARGE_CONST = "other";
-	
-	public static final String connectionCategory = "connectionCategory";
 
 	public static final String TAX_PERCENTAGE_CONST = "taxpercentage";
 	
@@ -288,6 +286,8 @@ public class SWCalculationConstant {
 	public static final String CALCULATION_ATTRIBUTE_CONST = "CalculationAttribute";
 	
 	public static final String ATTRIBUTE = "attribute";
+
+	public static final String connectionCategory = "connectionCategory";
 	
 	public static final String SW_ADHOC_PENALTY = "SW_ADHOC_PENALTY";
 
@@ -310,6 +310,14 @@ public class SWCalculationConstant {
 	public static final String PROPERTY_JSONPATH_ROOT = "$.MdmsRes.PropertyTax";
 
 	public static final String PROPERTY_MASTER_MODULE = "PropertyTax";
+	
+	public static final String COMPOSITION_FEE_CONST = "compositionFee";
+
+	public static final String COMPOSITION_FEE = "SW_COMPOSITION_FEE";
+
+	public static final String USER_CHARGES_CONST = "userCharges";
+	
+	
 
 	public static final String CUSTOM = "CUSTOM";
 

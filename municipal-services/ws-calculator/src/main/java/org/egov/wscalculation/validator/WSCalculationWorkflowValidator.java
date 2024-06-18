@@ -88,13 +88,8 @@ public class WSCalculationWorkflowValidator {
 		Boolean isAddingMeterReadingAllowed = false;
 
 		for (ProcessInstance processInstances : processInstancesList) {
-			if (((processInstances.getBusinessService().equals(WSCalculationConstant.NEWWATER_BUSINESS_SERVICE)
-					|| processInstances.getBusinessService().equals(WSCalculationConstant.MODIFY_BUSINESS_SERVICE))
-					&& processInstances.getState().getIsTerminateState())
-
-					|| (processInstances.getBusinessService().equals(WSCalculationConstant.DISCONNECTION_BUSINESS_SERVICE)
-					&& !(processInstances.getState().getState().equals(WSCalculationConstant.PENDING_FOR_DISCONNECTION_EXECUTION)
-					|| processInstances.getState().getState().equals(WSCalculationConstant.DISCONNECTION_EXECUTED)))) {
+				
+			if (processInstances.getState().getIsTerminateState()) {
 				isAddingMeterReadingAllowed = true;
 			}
 		}

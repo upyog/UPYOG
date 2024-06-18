@@ -75,6 +75,7 @@ public class MeterServicesImpl implements MeterService {
 			criteria.setConnectionNo(reading.getConnectionNo());
 			criteria.setFrom(reading.getLastReadingDate());
 			criteria.setTo(reading.getCurrentReadingDate());
+			criteria.setMeterStatus(reading.getMeterStatus());
 			criteriaList.add(criteria);
 		});
 		CalculationReq calculationRequest = CalculationReq.builder().requestInfo(requestInfo)

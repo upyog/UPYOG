@@ -12,7 +12,9 @@ public enum Status {
   
   INACTIVE("INACTIVE"),
 
-  INWORKFLOW("INWORKFLOW");
+  INWORKFLOW("INWORKFLOW"),
+  
+  PENDINGWS("PENDINGWS"); // properties created as new during water & sewerage migration where existing property has not matched
 
   private String value;
 

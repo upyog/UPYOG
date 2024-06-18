@@ -47,6 +47,7 @@ import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.pt.calculator.repository.Repository;
+import org.egov.pt.calculator.service.EstimationService;
 import org.egov.pt.calculator.service.PaymentService;
 import org.egov.pt.calculator.web.models.Assessment;
 import org.egov.pt.calculator.web.models.CalculationCriteria;
@@ -75,7 +76,8 @@ import static org.egov.pt.calculator.util.CalculatorConstants.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.Getter;
-
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
 @Component
 @Getter
 public class CalculatorUtils {
@@ -743,7 +745,7 @@ public class CalculatorUtils {
 		DemandResponse res = mapper.convertValue(
 				repository.fetchResult(getDemandSearchUrl(criteria), new RequestInfoWrapper(requestInfo)),
 				DemandResponse.class);
-
+		log.info("Response from demand Search"+res);
 		List<Demand> demands = res.getDemands();
 
 		if (demands != null && demands.size() > 0) {

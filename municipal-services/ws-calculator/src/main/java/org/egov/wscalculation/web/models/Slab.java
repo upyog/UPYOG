@@ -8,6 +8,9 @@ public class Slab {
 	private int to;
 	private double charge;
 	private double meterCharge;
+	private long effectiveFrom;
+	
+	private long effectiveTo;
 	
 	public int getFrom() {
 		return from;
@@ -34,5 +37,25 @@ public class Slab {
 		this.meterCharge = meterCharge;
 	}
 
+	public long getEffectiveFrom() {
+		return effectiveFrom;
+	}
+	public void setEffectiveFrom(long  effectiveFrom) {
+		this.effectiveFrom = effectiveFrom;
+	}
+	
+	public long getEffectiveTo() {
+		return effectiveTo;
+	}
+	public void setEffectiveTo(long  effectiveTo) {
+		this.effectiveTo = effectiveTo;
+	}
+	@Override
+	public String toString() {
+		return "Slab [from=" + from + ", to=" + to + ", charge=" + charge + ", meterCharge=" + meterCharge
+				+ ", effectiveFrom=" + effectiveFrom + ", effectiveTo=" + effectiveTo + "]";
+	}
+	
+	
 	
 }

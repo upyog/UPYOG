@@ -829,7 +829,7 @@ public class EstimationService {
 
 		Map<String, Category> taxHeadCategoryMap = ((List<TaxHeadMaster>)masterMap.get(TAXHEADMASTER_MASTER_KEY)).stream()
 				.collect(Collectors.toMap(TaxHeadMaster::getCode, TaxHeadMaster::getCategory));
-
+		log.info("inside getCalculation line number 832" +taxHeadCategoryMap.toString());
 		BigDecimal taxAmt = BigDecimal.ZERO;
 		BigDecimal penalty = BigDecimal.ZERO;
 		BigDecimal exemption = BigDecimal.ZERO;
@@ -890,8 +890,9 @@ public class EstimationService {
 		// false in the argument represents that the demand shouldn't be updated from this call
 		Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(requestInfo,criteria);
 		BigDecimal collectedAmtForOldDemand = demandService.getCarryForwardAndCancelOldDemand(ptTax, criteria, requestInfo,oldDemand, false);
+		log.info("inside getCalculation line number 892" +collectedAmtForOldDemand.toString());
 
-		if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
+if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
 			estimates.add(TaxHeadEstimate.builder()
 					.taxHeadCode(PT_ADVANCE_CARRYFORWARD)
 					.estimateAmount(collectedAmtForOldDemand).build());

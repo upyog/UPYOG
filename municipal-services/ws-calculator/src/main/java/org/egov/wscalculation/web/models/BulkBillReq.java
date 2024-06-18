@@ -22,8 +22,6 @@ public class BulkBillReq {
 	@NotNull
 	private RequestInfo requestInfo;
 
-	@Valid
-	@NotNull
 	@JsonProperty("BulkBillCriteria")
 	private BulkBillCriteria bulkBillCriteria;
 
