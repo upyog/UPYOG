@@ -190,22 +190,22 @@ public class GarbageAccountService {
 		//search garbage account
 		List<GarbageAccount> grbgAccs = repository.searchGarbageAccount(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount());
 		
-		//search child garbage accounts
-		grbgAccs.stream().forEach(grbgAccTemp -> {
-			searchChildGarbageAccounts(grbgAccTemp);
-		});
+//		//search child garbage accounts
+//		grbgAccs.stream().forEach(grbgAccTemp -> {
+//			searchChildGarbageAccounts(grbgAccTemp);
+//		});
 		
 		return grbgAccs;
 	}
 
-	private void searchChildGarbageAccounts(GarbageAccount grbgAccTemp) {
-		SearchCriteriaGarbageAccount searchCriteriaGarbageAccountNew = SearchCriteriaGarbageAccount.builder()
-				.parentId(Collections.singletonList(grbgAccTemp.getId()))
-				.build();
-		//search child garbage account
-		List<GarbageAccount> subAccs = repository.searchGarbageAccount(searchCriteriaGarbageAccountNew);
-		grbgAccTemp.setChildGarbageAccounts(subAccs);
-	}
+//	private void searchChildGarbageAccounts(GarbageAccount grbgAccTemp) {
+//		SearchCriteriaGarbageAccount searchCriteriaGarbageAccountNew = SearchCriteriaGarbageAccount.builder()
+//				.parentId(Collections.singletonList(grbgAccTemp.getId()))
+//				.build();
+//		//search child garbage account
+//		List<GarbageAccount> subAccs = repository.searchGarbageAccount(searchCriteriaGarbageAccountNew);
+//		grbgAccTemp.setChildGarbageAccounts(subAccs);
+//	}
 
 	private void validateSearchGarbageAccount(SearchCriteriaGarbageAccount searchCriteriaGarbageAccount) {
 		

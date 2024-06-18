@@ -47,18 +47,28 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
 					        .mobileNumber(rs.getString("mobile_number"))
 					        .parentId(rs.getLong("parent_id"))
 					        .garbageBills(new ArrayList<>())
+					        .childGarbageAccounts(new ArrayList<>())
 					        .auditDetails(audit)
 					        .build();
 				 
 				 accountsMap.put(accountId, garbageAccount);
 			 }
 			 
-			 if(null != rs.getString("bill_id")) {
+				if (null != rs.getString("bill_id")) {
 					String billId = rs.getString("bill_id");
-					GarbageBill garbageBill = findBillByUuid(garbageAccount.getGarbageBills(),billId); 
-					if(null == garbageBill) {
+					GarbageBill garbageBill = findBillByUuid(garbageAccount.getGarbageBills(), billId);
+					if (null == garbageBill) {
 						GarbageBill garbageBill1 = populateGarbageBill(rs);
 						garbageAccount.getGarbageBills().add(garbageBill1);
+					}
+				}
+				
+				if (null != rs.getString("sub_acc_id")) {
+					Long subAccId = rs.getLong("sub_acc_id");
+					GarbageAccount subGarbageAccount = findSubAccById(garbageAccount.getChildGarbageAccounts(), subAccId);
+					if (null == subGarbageAccount) {
+						GarbageAccount subGarbageAccount1 = populateGarbageAccount(rs);
+						garbageAccount.getChildGarbageAccounts().add(subGarbageAccount1);
 					}
 				}
 			 
@@ -68,6 +78,40 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
 		return new ArrayList<>(accountsMap.values());
 	}
 	
+	private GarbageAccount populateGarbageAccount(ResultSet rs) throws SQLException {
+		
+		GarbageAccount garbageAccount = GarbageAccount.builder()
+		        .id(rs.getLong("sub_acc_id"))
+		        .garbageId(rs.getLong("sub_acc_garbage_id"))
+		        .propertyId(rs.getLong("sub_acc_property_id"))
+		        .type(rs.getString("sub_acc_type"))
+		        .name(rs.getString("sub_acc_name"))
+		        .mobileNumber(rs.getString("sub_acc_mobile_number"))
+		        .parentId(rs.getLong("sub_acc_parent_id"))
+		        .garbageBills(new ArrayList<>())
+		        .auditDetails(AuditDetails.builder()
+				        .createdBy(rs.getString("sub_acc_created_by"))
+				        .createdDate(rs.getLong("sub_acc_created_date"))
+				        .lastModifiedBy(rs.getString("sub_acc_last_modified_by"))
+				        .lastModifiedDate(rs.getLong("sub_acc_last_modified_date"))
+				        .build())
+		        .build();
+	 
+	 
+		return garbageAccount;
+	}
+
+	private GarbageAccount findSubAccById(List<GarbageAccount> subGarbageAccounts, Long subAccId) {
+		
+		if (!CollectionUtils.isEmpty(subGarbageAccounts)) {
+			return subGarbageAccounts.stream()
+					.filter(acc -> acc.getId().equals(subAccId))
+					.findFirst()
+					.orElse(null);
+		}
+		return null;
+	}
+
 	private GarbageBill findBillByUuid(List<GarbageBill> garbageBills, String bill_id) {
 		
 		if (!CollectionUtils.isEmpty(garbageBills)) {

@@ -41,8 +41,11 @@ public class GarbageBillRepository {
     }
 
     public GarbageBill create(GarbageBill bill) {
+    	
+    	bill.setId(getNextSequence());
+    	
         Map<String, Object> billInputs = new HashMap<>();
-        billInputs.put("id", getNextSequence());
+        billInputs.put("id", bill.getId());
         billInputs.put("billRefNo", bill.getBillRefNo());
         billInputs.put("garbageId", bill.getGarbageId());
         billInputs.put("billAmount", bill.getBillAmount());
@@ -71,7 +74,7 @@ public class GarbageBillRepository {
 //        return jdbcTemplate.queryForObject(SELECT_NEXT_SEQUENCE, Long.class);
 //    }
 
-    private Object getNextSequence() {
+    private Long getNextSequence() {
     	return jdbcTemplate.queryForObject(SELECT_NEXT_SEQUENCE, Long.class);
 	}
 

@@ -32,11 +32,14 @@ public class GarbageAccountRepository {
 			+ ", bill.bill_period as bill_bill_period, bill.bank_discount_amount as bill_bank_discount_amount, bill.payment_id as bill_payment_id"
 			+ ", bill.payment_status as bill_payment_status, bill.created_by as bill_created_by, bill.created_date as bill_created_date, bill.last_modified_by as bill_last_modified_by"
 			+ ", bill.last_modified_date as bill_last_modified_date "
-			+ "FROM hpudd_grbg_account as acc "
-			+ "LEFT OUTER JOIN hpudd_grbg_bill bill ON acc.garbage_id = bill.garbage_id";
+			+ ", sub_acc.id as sub_acc_id, sub_acc.garbage_id as sub_acc_garbage_id, sub_acc.property_id as sub_acc_property_id, sub_acc.type as sub_acc_type "
+			+ ", sub_acc.name as sub_acc_name, sub_acc.mobile_number as sub_acc_mobile_number, sub_acc.parent_id as sub_acc_parent_id"
+			+ ", sub_acc.created_by as sub_acc_created_by, sub_acc.created_date as sub_acc_created_date, sub_acc.last_modified_by as sub_acc_last_modified_by"
+			+ ", sub_acc.last_modified_date as sub_acc_last_modified_date"
+			+ " FROM hpudd_grbg_account as acc "
+			+ " LEFT OUTER JOIN hpudd_grbg_bill bill ON acc.garbage_id = bill.garbage_id"
+			+ " LEFT OUTER JOIN hpudd_grbg_account sub_acc ON acc.garbage_id = sub_acc.parent_id";
 
-//    private static final String GET_ACCOUNT_BY_ID = "SELECT acc.*, bill. FROM hpudd_grbg_account as acc "
-//    		+ " LEFT OUTER JOIN hpudd_grbg_bill bill ON acc.garbage_id = bill.garbage_id ";
     
     private static final String INSERT_ACCOUNT = "INSERT INTO hpudd_grbg_account (id, garbage_id, property_id, type, name"
     		+ ", mobile_number, parent_id, created_by, created_date, last_modified_by, last_modified_date) "
@@ -58,8 +61,11 @@ public class GarbageAccountRepository {
     }
 
     public GarbageAccount create(GarbageAccount account) {
+    	
+    	account.setId(getNextSequence());
+    	
         Map<String, Object> accountInputs = new HashMap<>();
-        accountInputs.put("id", getNextSequence());
+        accountInputs.put("id", account.getId());
         accountInputs.put("garbageId", account.getGarbageId());
         accountInputs.put("propertyId", account.getPropertyId());
         accountInputs.put("type", account.getType());
@@ -75,7 +81,7 @@ public class GarbageAccountRepository {
         return account;
     }
 
-    private Object getNextSequence() {
+    private Long getNextSequence() {
     	return jdbcTemplate.queryForObject(SELECT_NEXT_SEQUENCE, Long.class);
 	}
 
