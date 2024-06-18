@@ -15,11 +15,13 @@ import org.egov.common.contract.response.ResponseInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Document;
 import org.egov.pt.models.OwnerInfo;
+import org.egov.pt.util.NotificationUtil;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.oldProperty.OldPropertyCriteria;
 import org.egov.pt.service.FuzzySearchService;
 import org.egov.pt.service.MigrationService;
+import org.egov.pt.web.contracts.SMSRequest;
 import org.egov.pt.service.PropertyEncryptionService;
 import org.egov.pt.service.PropertyService;
 import org.egov.pt.util.ResponseInfoFactory;
@@ -45,6 +47,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PropertyController {
 
+    @Autowired
+	private NotificationUtil notifUtil;
+    
     @Autowired
     private PropertyService propertyService;
 
@@ -121,6 +126,7 @@ public class PropertyController {
     				
     		}
     	}
+        
  
         Property property = propertyService.updateProperty(propertyRequest);
         ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(propertyRequest.getRequestInfo(), true);
@@ -129,6 +135,19 @@ public class PropertyController {
                 .responseInfo(resInfo)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "/_sendOpenSMS", method = RequestMethod.POST)
+    public ResponseEntity<Integer> sendOpenSMS(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper)
+    {
+    	String msg="Dear OpenSMS, Status for your application no.OpenSMSApp for property OpenPid to OpenCreated property has been changed to OpenActivate. You can track your application on the link given below-https://mseva.lgpunjab.gov.in/employee/user/login Thank you|1301157492438182299|1407162859196626520";
+    	Map<String, String> mobileNumberToOwner = new HashMap<>();
+    	mobileNumberToOwner.put("9417630724", "gurpreet");
+    	List<SMSRequest> smsRequests = notifUtil.createSMSRequest(msg, mobileNumberToOwner);
+		notifUtil.sendSMS(smsRequests);
+
+    	return new ResponseEntity<>(1,HttpStatus.OK);
     }
 
     @PostMapping("/_search")
