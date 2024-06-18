@@ -50,7 +50,7 @@ public class MDMSValidator {
      */
     public void validateMdmsData(TradeLicenseRequest licenseRequest,Object mdmsData, Object billingSlabs) {
 
-        Map<String, String> errorMap = new HashMap<>();
+    	Map<String, String> errorMap = new HashMap<>();
 
         Map<String, List<String>> masterData = getAttributeValues(mdmsData);
         
@@ -60,11 +60,7 @@ public class MDMSValidator {
         validateIfMasterPresent(masterArray, masterData);
 
         Map<String,String> tradeTypeUomMap = getTradeTypeUomMap(mdmsData);
-        //Map<String,String> accessoryeUomMap = getAccessoryUomMap(mdmsData);
-        Map<String,String> billingSlabsTradeTypeUomMap = getBillingSlabsTradeTypeUomMap(billingSlabs);
-        Map<String,String> billingSlabsAccessoryUomMap = getBillingSlabsAccessoryUomMap(billingSlabs);
-
-
+        Map<String,String> accessoryeUomMap = getAccessoryUomMap(mdmsData);
 
         licenseRequest.getLicenses().forEach(license -> {
 
@@ -85,40 +81,40 @@ public class MDMSValidator {
                                 + license.getTradeLicenseDetail().getStructureType() + "' does not exists");
 
                     license.getTradeLicenseDetail().getTradeUnits().forEach(unit -> {
-                        if (!billingSlabsTradeTypeUomMap.containsKey(unit.getTradeType()))
+                        if (!tradeTypeUomMap.containsKey(unit.getTradeType()))
                             errorMap.put("INVALID TRADETYPE", "The Trade type '" + unit.getTradeType() + "' does not exists");
 
                         if(unit.getUom()!=null){
-                            if(!unit.getUom().equalsIgnoreCase(billingSlabsTradeTypeUomMap.get(unit.getTradeType())))
+                            if(!unit.getUom().equalsIgnoreCase(tradeTypeUomMap.get(unit.getTradeType())))
                                 errorMap.put("INVALID UOM","The UOM: "+unit.getUom()+" is not valid for tradeType: "+unit.getTradeType());
-                            else if(unit.getUom().equalsIgnoreCase(billingSlabsTradeTypeUomMap.get(unit.getTradeType()))
+                            else if(unit.getUom().equalsIgnoreCase(tradeTypeUomMap.get(unit.getTradeType()))
                                     && unit.getUomValue()==null)
                                 throw new CustomException("INVALID UOMVALUE","The uomValue cannot be null");
                         }
 
                         else if(unit.getUom()==null){
-                            if(billingSlabsTradeTypeUomMap.get(unit.getTradeType())!=null)
+                            if(tradeTypeUomMap.get(unit.getTradeType())!=null)
                                 errorMap.put("INVALID UOM","The UOM cannot be null for tradeType: "+unit.getTradeType());
                         }
                     });
 
                     if(!CollectionUtils.isEmpty(license.getTradeLicenseDetail().getAccessories())){
                         license.getTradeLicenseDetail().getAccessories().forEach(accessory -> {
-                            if (!billingSlabsAccessoryUomMap.containsKey(accessory.getAccessoryCategory()))
+                            if (!accessoryeUomMap.containsKey(accessory.getAccessoryCategory()))
                                 errorMap.put("INVALID ACCESORRYCATEGORY",
                                         "The Accessory Category '" + accessory.getAccessoryCategory() + "' does not exists");
 
                             if(accessory.getUom()!=null){
-                                if(!accessory.getUom().equalsIgnoreCase(billingSlabsAccessoryUomMap.get(accessory.getAccessoryCategory())))
+                                if(!accessory.getUom().equalsIgnoreCase(accessoryeUomMap.get(accessory.getAccessoryCategory())))
                                     errorMap.put("INVALID UOM","The UOM: "+accessory.getUom()+" is not valid for accessoryCategory: "
                                             +accessory.getAccessoryCategory());
-                                else if(accessory.getUom().equalsIgnoreCase(billingSlabsAccessoryUomMap.get(accessory.getAccessoryCategory()))
+                                else if(accessory.getUom().equalsIgnoreCase(accessoryeUomMap.get(accessory.getAccessoryCategory()))
                                         && accessory.getUomValue()==null)
                                     throw new CustomException("INVALID UOMVALUE","The uomValue cannot be null");
                             }
 
                             else if(accessory.getUom()==null){
-                                if(billingSlabsAccessoryUomMap.get(accessory.getAccessoryCategory())!=null)
+                                if(accessoryeUomMap.get(accessory.getAccessoryCategory())!=null)
                                     errorMap.put("INVALID UOM","The UOM cannot be null for tradeType: "+accessory.getAccessoryCategory());
                             }
                         });
