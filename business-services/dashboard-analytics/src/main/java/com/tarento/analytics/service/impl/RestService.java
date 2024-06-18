@@ -67,7 +67,7 @@ public class RestService {
         try {
             ResponseEntity<Object> response = retryTemplate.postForEntity(url, requestEntity);
             responseNode = new ObjectMapper().convertValue(response.getBody(), JsonNode.class);
-            LOGGER.info("RestTemplate response :- "+responseNode);
+            //LOGGER.info("RestTemplate response :- "+responseNode);
 
         } catch (HttpClientErrorException e) {
             e.printStackTrace();

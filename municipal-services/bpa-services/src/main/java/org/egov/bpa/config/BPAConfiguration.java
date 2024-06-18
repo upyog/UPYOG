@@ -177,8 +177,14 @@ public class BPAConfiguration {
 	@Value("${mdms.v2.host}")
     private String mdmsHost;
 
-    @Value("${mdms.v2.search.endpoint}")
-    private String mdmsEndPoint;
+	@Value("${egov.mdms.search.endpoint}")
+	private String mdmsEndPoint;
+	
+//	@Value("${mdms.v2.host}")
+//    private String mdmsHost;
+//
+//    @Value("${mdms.v2.search.endpoint}")
+//    private String mdmsEndPoint;
 
 	// Allowed Search Parameters
 	@Value("${citizen.allowed.search.params}")
@@ -216,8 +222,8 @@ public class BPAConfiguration {
 	private Boolean isExternalWorkFlowEnabled;
 
 	// USER EVENTS
-	@Value("${egov.ui.app.host}")
-	private String uiAppHost;
+	@Value("#{${egov.ui.app.host.map}}")
+	private Map<String, String>  uiAppHostMap;
 
 	@Value("${egov.usr.events.create.topic}")
 	private String saveUserEventsTopic;

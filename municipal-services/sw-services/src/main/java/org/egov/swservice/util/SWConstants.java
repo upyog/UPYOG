@@ -224,7 +224,6 @@ public class SWConstants {
 					"connectionCategory", "connectionType", "documentType", "fileStoreId", "licenseNo"));
 
 	public static final String SUBMIT_APPLICATION_CONST = "SUBMIT_APPLICATION";
-	
 	public static final List<String> IGNORE_CLASS_ADDED = Collections.unmodifiableList(Arrays.asList("PlumberInfo"));
 	
 	public static final String PENDING_FOR_CONNECTION_ACTIVATION = "PENDING_FOR_CONNECTION_ACTIVATION";
@@ -299,7 +298,14 @@ public class SWConstants {
 	public static final String CHANNEL_LIST = "channelList";
 
 	public static final String CHANNEL = "Channel";
-	
+
+	public static String SCHEMA_REPLACE_STRING = "{schema}";
+
+	public static final String TENANTID_MDC_STRING = "TENANTID";
+
+	public static final List<String> TOPICS_TO_AVOID = Collections.unmodifiableList(Arrays.asList("editnotificationsewerage", "sw-filestoreids-process"));
+
+
 	public static final String ACTIVE = "ACTIVE";
 
 	public static final String EXECUTE_DISCONNECTION = "EXECUTE_DISCONNECTION";
@@ -322,7 +328,6 @@ public class SWConstants {
 	public static final String WNS_OWNER_PLAIN_DECRYPTION_MODEL = "WnSConnectionOwnerDecrypDisabled";
 
 	public static final String WNS_PLUMBER_PLAIN_DECRYPTION_MODEL = "WnSConnectionPlumberDecrypDisabled";
-
 
 	public static final String WNS_PLUMBER_ENCRYPTION_MODEL = "WnSConnectionPlumber";
 

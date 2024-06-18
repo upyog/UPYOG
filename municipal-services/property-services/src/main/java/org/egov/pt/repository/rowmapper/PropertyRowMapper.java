@@ -83,7 +83,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 				String linkIdString = rs.getString("linkedProperties");
 				if (!StringUtils.isEmpty(linkIdString))
 					linkedProperties = Arrays.asList(linkIdString.split(","));
-				
+
 				currentProperty = Property.builder()
 						.source(org.egov.pt.models.enums.Source.fromValue(rs.getString("source")))
 						.creationReason(CreationReason.fromValue(rs.getString("creationReason")))
@@ -101,7 +101,6 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 						.build();
 
 
-				setPropertyInfo(currentProperty, rs, tenanId, propertyUuId, linkedProperties, address);
 				addChildrenToProperty(rs, currentProperty);
 				propertyMap.put(propertyUuId, currentProperty);
 			}

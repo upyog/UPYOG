@@ -45,7 +45,6 @@ public class OpenPropertyRowMapper implements ResultSetExtractor<List<Property>>
 						.auditDetails(auditdetails)
 						.build();
 
-				setPropertyInfo(currentProperty, rs, tenanId, propertyUuId, address);
 
 				addChildrenToProperty(rs, currentProperty);
 				propertyMap.put(propertyUuId, currentProperty);

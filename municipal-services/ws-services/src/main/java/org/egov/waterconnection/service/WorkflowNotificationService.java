@@ -13,7 +13,9 @@ import org.egov.tracer.model.CustomException;
 import org.egov.waterconnection.config.WSConfiguration;
 import org.egov.waterconnection.constants.WCConstants;
 import org.egov.waterconnection.repository.ServiceRequestRepository;
+import org.egov.waterconnection.util.EncryptionDecryptionUtil;
 import org.egov.waterconnection.util.NotificationUtil;
+import org.egov.waterconnection.util.UnmaskingUtil;
 import org.egov.waterconnection.util.WaterServicesUtil;
 import org.egov.waterconnection.validator.ValidateProperty;
 import org.egov.waterconnection.web.models.*;
@@ -27,6 +29,7 @@ import org.egov.waterconnection.workflow.WorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.egov.common.utils.MultiStateInstanceUtil;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -35,6 +38,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+
+import static org.egov.waterconnection.constants.WCConstants.*;
 
 import static org.egov.waterconnection.constants.WCConstants.*;
 
@@ -66,6 +71,15 @@ public class WorkflowNotificationService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UnmaskingUtil unmaskingUtil;
+
+    @Autowired
+    private EncryptionDecryptionUtil encryptionDecryptionUtil;
+
+    @Autowired
+    private MultiStateInstanceUtil centralInstanceUtil;
+
     String tenantIdReplacer = "$tenantId";
     String urlReplacer = "url";
     String requestInfoReplacer = "RequestInfo";
@@ -82,8 +96,7 @@ public class WorkflowNotificationService {
     String applicationKey = "$applicationkey";
     String propertyKey = "property";
     String businessService = "WS.ONE_TIME_FEE";
-
-
+    String tenantName = "tenantName";
 
     /**
      *
@@ -92,6 +105,7 @@ public class WorkflowNotificationService {
      */
     public void process(WaterConnectionRequest request, String topic) {
         try {
+        	String tenantId = request.getWaterConnection().getTenantId();
         	log.info("In process of consumer to generate notifications");
             String applicationStatus = request.getWaterConnection().getApplicationStatus();
             List<String> configuredChannelNames=new ArrayList<String>();
@@ -111,21 +125,21 @@ public class WorkflowNotificationService {
                 if (config.getIsUserEventsNotificationEnabled() != null && config.getIsUserEventsNotificationEnabled()) {
                     EventRequest eventRequest = getEventRequest(request, topic, property, applicationStatus);
                     if (eventRequest != null) {
-                        notificationUtil.sendEventNotification(eventRequest);
+                        notificationUtil.sendEventNotification(eventRequest, tenantId);
                     }
                 }}
             if(configuredChannelNames.contains(CHANNEL_NAME_SMS)){
                 if (config.getIsSMSEnabled() != null && config.getIsSMSEnabled()) {
                     List<SMSRequest> smsRequests = getSmsRequest(request, topic, property, applicationStatus);
                     if (!CollectionUtils.isEmpty(smsRequests)) {
-                        notificationUtil.sendSMS(smsRequests);
+                        notificationUtil.sendSMS(smsRequests, tenantId);
                     }
                 }}
             if(configuredChannelNames.contains(CHANNEL_NAME_EMAIL)){
                 if (config.getIsEmailNotificationEnabled() != null && config.getIsEmailNotificationEnabled()) {
                     List<EmailRequest> emailRequests = getEmailRequest(request, topic, property, applicationStatus);
                     if (!CollectionUtils.isEmpty(emailRequests)) {
-                        notificationUtil.sendEmail(emailRequests);
+                        notificationUtil.sendEmail(emailRequests, tenantId);
                     }
                 }}
         } catch (Exception ex) {
@@ -717,7 +731,8 @@ public class WorkflowNotificationService {
             waterObject.put(serviceFee, calResponse.getCalculation().get(0).getCharge());
             waterObject.put(tax, calResponse.getCalculation().get(0).getTaxAmount());
             waterObject.put(propertyKey, property);
-            String tenantId = property.getTenantId().split("\\.")[0];
+            //String tenantId = property.getTenantId().split("\\.")[0];
+            String tenantId = centralInstanceUtil.getStateLevelTenant(property.getTenantId());
             String fileStoreId = getFielStoreIdFromPDFService(waterObject, waterConnectionRequest.getRequestInfo(), tenantId);
             return getApplicationDownloadLink(tenantId, fileStoreId);
         } catch (Exception ex) {
@@ -784,7 +799,7 @@ public class WorkflowNotificationService {
         }
     }
 
-    public Map<String, String> setRecepitDownloadLink(Map<String, String> mobileNumberAndMessage,
+	public Map<String, String> setRecepitDownloadLink(Map<String, String> mobileNumberAndMessage,
                                                       WaterConnectionRequest waterConnectionRequest, String message, Property property) {
 
         Map<String, String> messageToReturn = new HashMap<>();

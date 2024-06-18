@@ -438,8 +438,7 @@ router.post(
         bussinessService: bussinessService,
         isConsolidated: isConsolidated,
         consumerCode: consumerCode,
-        jobid: jobid,
-        propertyId: propertyId
+        jobid: jobid
       };
 
       try {
