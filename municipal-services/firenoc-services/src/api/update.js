@@ -42,22 +42,23 @@ export const updateApiResponse = async ({ body }, isExternalCall, next = {}) => 
       body.RequestInfo,
       body.FireNOCs[0].tenantId
     );
+    console.log("helloTest"+ JSON.stringify(get(locationResponse, "TenantBoundary.0.boundary")));
     set(
       mdms,
       "MdmsRes.firenoc.boundary",
       get(locationResponse, "TenantBoundary.0.boundary")
     );
-    let errors = await validateFireNOCModel(body, mdms);
-    if (errors.length > 0) {
-      return next({
-        errorType: "custom",
-        errorReponse: {
-          ResponseInfo: requestInfoToResponseInfo(body.RequestInfo, true),
-          Errors: errors
-        }
-      });
-      return;
-    }
+    //let errors = await validateFireNOCModel(body, mdms);
+   // if (errors.length > 0) {
+   //   return next({
+   //     errorType: "custom",
+   //     errorReponse: {
+   //       ResponseInfo: requestInfoToResponseInfo(body.RequestInfo, true),
+   //       Errors: errors
+  //      }
+  //    });
+   //   return;
+  //  }
   
   }catch(err){
     console.log("Location Error Msg :"+ err)

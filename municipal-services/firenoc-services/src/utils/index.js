@@ -64,7 +64,7 @@ export const getLocationDetails = async (requestInfo, tenantId) => {
     }&tenantId=${tenantId}`,
     requestBody
   });
-  // console.log("idgenresponse",locationResponse);
+   console.log("idgenresponse",locationResponse);
   return locationResponse;
 };
 
