@@ -24,13 +24,12 @@ public class GarbageBillController {
 
     @PostMapping("/_create")
     public ResponseEntity<List<GarbageBill>> create(@RequestBody GarbageBillRequest garbageBillRequest) {
-        return ResponseEntity.ok(service.createGarbageBill(garbageBillRequest));
+        return ResponseEntity.ok(service.createGarbageBills(garbageBillRequest));
     }
 
     @PostMapping("/_update")
-    public ResponseEntity<GarbageBill> update(@PathVariable Long id, @RequestBody GarbageBill bill) {
-        bill.setId(id);
-        return ResponseEntity.ok(service.update(bill));
+    public ResponseEntity<List<GarbageBill>> update(@RequestBody GarbageBillRequest garbageBillRequest) {
+        return ResponseEntity.ok(service.updateGarbageBills(garbageBillRequest));
     }
 
     @PostMapping("/_search")

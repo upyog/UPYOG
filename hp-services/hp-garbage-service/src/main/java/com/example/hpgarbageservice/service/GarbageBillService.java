@@ -2,16 +2,21 @@ package com.example.hpgarbageservice.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import com.example.hpgarbageservice.model.AuditDetails;
+import com.example.hpgarbageservice.model.GarbageAccount;
 import com.example.hpgarbageservice.model.GarbageBill;
 import com.example.hpgarbageservice.model.GarbageBillRequest;
 import com.example.hpgarbageservice.model.GarbageBillSearchCriteria;
+import com.example.hpgarbageservice.model.SearchCriteriaGarbageAccount;
+import com.example.hpgarbageservice.model.SearchCriteriaGarbageAccountRequest;
 import com.example.hpgarbageservice.model.SearchGarbageBillRequest;
 import com.example.hpgarbageservice.model.contract.RequestInfo;
 import com.example.hpgarbageservice.repository.GarbageBillRepository;
@@ -22,7 +27,7 @@ public class GarbageBillService {
     @Autowired
     private GarbageBillRepository repository;
 
-    public List<GarbageBill> createGarbageBill(GarbageBillRequest garbageBillRequest) {
+    public List<GarbageBill> createGarbageBills(GarbageBillRequest garbageBillRequest) {
     	
     	List<GarbageBill> garbageBills = new ArrayList<>();
     	
@@ -73,12 +78,108 @@ public class GarbageBillService {
 		}
 	}
 
-	public GarbageBill update(GarbageBill bill) {
-        repository.update(bill);
-        return bill;
-    }
+	public List<GarbageBill> updateGarbageBills(GarbageBillRequest garbageBillRequest) {
 
-    public List<GarbageBill> searchGarbageBills(SearchGarbageBillRequest searchGarbageBillRequest) {
+		List<GarbageBill> garbageBillsResponse = new ArrayList<>();
+		GarbageBillSearchCriteria garbageBillSearchCriteria = createSearchCriteriaByGarbageBills(garbageBillRequest.getGarbageBills());
+		Map<Long, GarbageBill> existingGarbageBillsMap = searchGarbageBillMap(garbageBillSearchCriteria, garbageBillRequest.getRequestInfo());
+		
+		if(!CollectionUtils.isEmpty(garbageBillRequest.getGarbageBills())) {
+			garbageBillRequest.getGarbageBills().forEach(newGarbageBill -> {
+				// search existing grbg bill
+				GarbageBill existingGarbageBill = existingGarbageBillsMap.get(newGarbageBill.getId());
+
+				// validate existing and new grbg bill
+				validateUpdateGarbageBill(newGarbageBill, existingGarbageBill);
+
+				// replicate existing grbg bill to history table
+
+				// enrich new request
+				enrichUpdateGarbageBill(newGarbageBill, existingGarbageBill, garbageBillRequest.getRequestInfo());
+
+				// update garbage bill
+				repository.update(newGarbageBill);
+				garbageBillsResponse.add(newGarbageBill);
+			});
+		}
+		
+		return garbageBillsResponse;
+	}
+
+    private void enrichUpdateGarbageBill(GarbageBill newGarbageBill, GarbageBill existingGarbageBill,
+			RequestInfo requestInfo) {
+
+		AuditDetails auditDetails = null;
+		if (null != requestInfo
+				&& null != requestInfo.getUserInfo()) {
+			auditDetails = AuditDetails.builder()
+					.lastModifiedBy(requestInfo.getUserInfo().getUuid())
+					.lastModifiedDate(new Date().getTime()).build();
+		}
+		if (null != existingGarbageBill.getAuditDetails()) {
+			auditDetails.setCreatedBy(existingGarbageBill.getAuditDetails().getCreatedBy());
+			auditDetails.setCreatedDate(existingGarbageBill.getAuditDetails().getCreatedDate());
+		}
+
+		newGarbageBill.setAuditDetails(auditDetails);
+		newGarbageBill.setId(existingGarbageBill.getId());
+		newGarbageBill.setGarbageId(existingGarbageBill.getGarbageId());
+	}
+
+	private void validateUpdateGarbageBill(GarbageBill newGarbageBill, GarbageBill existingGarbageBill) {
+		if (null == existingGarbageBill) {
+			throw new RuntimeException("Provided garbage account doesn't exist.");
+		}
+		// validate grbg acc req
+		validateCreateGarbageBill(newGarbageBill);
+	}
+
+	private Map<Long, GarbageBill> searchGarbageBillMap(GarbageBillSearchCriteria garbageBillSearchCriteria,
+			RequestInfo requestInfo) {
+		
+    	SearchGarbageBillRequest searchGarbageBillRequest = SearchGarbageBillRequest.builder()
+				.garbageBillSearchCriteria(garbageBillSearchCriteria)
+				.requestInfo(requestInfo)
+				.build();
+		
+		List<GarbageBill> garbageBills = searchGarbageBills(searchGarbageBillRequest);
+		
+		Map<Long, GarbageBill> existingGarbageBillMap = new HashMap<>();
+		garbageBills.stream().forEach(bill -> {
+			existingGarbageBillMap.put(bill.getId(), bill);
+		});
+		
+		return existingGarbageBillMap;
+	}
+
+	private GarbageBillSearchCriteria createSearchCriteriaByGarbageBills(List<GarbageBill> garbageBills) {
+		
+		GarbageBillSearchCriteria searchCriteriaGarbageBill = GarbageBillSearchCriteria.builder().build();
+		List<Long> ids = new ArrayList<>();
+//		List<Long> garbageIds = new ArrayList<>();
+		
+		garbageBills.stream().forEach(grbgBill -> {
+			if(null != grbgBill.getId() && 0 <= grbgBill.getId()) {
+				ids.add(grbgBill.getId());
+			}
+//			if(null != grbgAcc.getGarbageId() && 0 <= grbgAcc.getGarbageId()) {
+//				garbageIds.add(grbgAcc.getGarbageId());
+//			}
+		});
+		
+
+		if (!CollectionUtils.isEmpty(ids)) {
+			searchCriteriaGarbageBill.setIds(ids);
+		}
+//		if (!CollectionUtils.isEmpty(garbageIds)) {
+//			searchCriteriaGarbageAccount.setGarbageId(garbageIds);
+//		}
+		
+		
+		return searchCriteriaGarbageBill;
+	}
+
+	public List<GarbageBill> searchGarbageBills(SearchGarbageBillRequest searchGarbageBillRequest) {
 
 		//validate search criteria
 		validateGarbageBillSearchCriteria(searchGarbageBillRequest.getGarbageBillSearchCriteria());
