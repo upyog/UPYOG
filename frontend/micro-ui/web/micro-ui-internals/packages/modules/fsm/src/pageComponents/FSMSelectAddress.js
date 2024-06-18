@@ -35,20 +35,11 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
       : pincode
       ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode))
       : allCities;
-let property = sessionStorage?.getItem("Digit_FSM_PT")
-if (property !== "undefined")
-{
-  property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
-}
-console.log("property",property)
-let cityDetail={}
-if (property)
-{
-cityDetail = cities.filter((city) =>{
-return city.code == property?.propertyDetails?.address?.tenantId
-})
-}
-  const [selectedCity, setSelectedCity] = useState(() =>formData?.address?.city ||cityDetail?.[0] ||  null);
+
+  const [selectedCity, setSelectedCity] = useState(
+    () => formData?.address?.city || Digit.SessionStorage.get("fsm.file.address.city") || Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")
+  );
+  const [newLocality, setNewLocality] = useState();
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
     selectedCity?.code,
     "revenue",
@@ -69,7 +60,7 @@ return city.code == property?.propertyDetails?.address?.tenantId
   );
 
   const [localities, setLocalities] = useState();
-  const [selectedLocality, setSelectedLocality] = useState(()=>property?.propertyDetails?.address?.locality || formData?.cpt?.details?.address?.locality|| formData?.address?.locality);
+  const [selectedLocality, setSelectedLocality] = useState();
 
   useEffect(() => {
     if (cities) {
@@ -92,17 +83,10 @@ return city.code == property?.propertyDetails?.address?.tenantId
     if ((!isUrcEnable || isNewVendor || isEditVendor) && selectedCity && fetchedLocalities) {
       let __localityList = fetchedLocalities;
       let filteredLocalityList = [];
-console.log("formData?.address?.locality",formData?.address?.locality,formData?.cpt?.details?.address?.locality,property?.propertyDetails?.address?.locality)
+
       if (formData?.address?.locality) {
         setSelectedLocality(formData.address.locality);
       }
-      else if (formData?.cpt?.details?.address?.locality) {
-        setSelectedLocality(formData.cpt.details.address.locality);
-      }
-      else if (property?.propertyDetails?.address?.locality) {
-        setSelectedLocality(property?.propertyDetails?.address?.locality);
-      }
-      
 
       if (formData?.address?.pincode) {
         filteredLocalityList = __localityList.filter((obj) => obj.pincode?.find((item) => item == formData.address.pincode));
@@ -120,7 +104,7 @@ console.log("formData?.address?.locality",formData?.address?.locality,formData?.
         }
       }
     }
-  }, [selectedCity, formData?.cpt?.details?.address, fetchedLocalities]);
+  }, [selectedCity, selectLocation, fetchedLocalities]);
 
   function selectCity(city) {
     setSelectedLocality(null);
@@ -155,7 +139,7 @@ console.log("formData?.address?.locality",formData?.address?.locality,formData?.
   function selectLocality(locality) {
     setSelectedLocality(locality);
     if (userType === "employee") {
-      onSelect(config.key, { ...formData[config.key], locality: selectedLocality });
+      onSelect(config.key, { ...formData[config.key], locality: locality });
     }
   }
 
@@ -256,17 +240,6 @@ console.log("formData?.address?.locality",formData?.address?.locality,formData?.
         )}
         <CardLabel>{`${t("MYCITY_CODE_LABEL")} *`}</CardLabel>
         <RadioOrSelect options={cities} selectedOption={selectedCity} optionKey="i18nKey" onSelect={selectCity} t={t} />
-        {selectedCity && localities && <CardLabel>{`${t("CS_CREATECOMPLAINT_MOHALLA")} *`}</CardLabel>}
-        {selectedCity && localities && (
-          <RadioOrSelect
-            isMandatory={config.isMandatory}
-            options={localities}
-            selectedOption={selectedLocality}
-            optionKey="name"
-            onSelect={selectLocality}
-            t={t}
-          />
-        )}
       </FormStep>
     </React.Fragment>
   );
