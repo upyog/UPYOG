@@ -43,17 +43,17 @@ import static org.egov.echallan.util.ChallanConstants.*;
 public class NotificationService {
 	private ChallanConfiguration config;
 
-//	@Value("${egov.mdms.host}")
-//	private String mdmsHost;
+	@Value("${egov.mdms.host}")
+	private String mdmsHost;
+
+	@Value("${egov.mdms.search.endpoint}")
+	private String mdmsUrl;
+
+//  	@Value("${mdms.v2.host}")
+//    private String mdmsHost;
 //
-//	@Value("${egov.mdms.search.endpoint}")
-//	private String mdmsUrl;
-
-  	@Value("${mdms.v2.host}")
-    private String mdmsHost;
-
-    @Value("${mdms.v2.search.endpoint}")
-    private String mdmsUrl;
+//    @Value("${mdms.v2.search.endpoint}")
+//    private String mdmsUrl;
     
 	private RestTemplate restTemplate;
 

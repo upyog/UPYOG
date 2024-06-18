@@ -207,11 +207,11 @@ private Integer defaultLimit;
 //    @Value("${egov.mdms.search.endpoint}")
 //    private String mdmsUrl;
 
-	@Value("${mdms.v2.host}")
-    private String mdmsHost;
-
-    @Value("${mdms.v2.search.endpoint}")
-    private String mdmsUrl;
+//	@Value("${mdms.v2.host}")
+//    private String mdmsHost2;
+//
+//    @Value("${mdms.v2.search.endpoint}")
+//    private String mdmsUrl2;
     
     @Value("${egov.url.shortner.host}")
     private String urlShortnerHost;
