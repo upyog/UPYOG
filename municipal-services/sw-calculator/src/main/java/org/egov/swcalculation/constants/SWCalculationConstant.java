@@ -310,6 +310,14 @@ public class SWCalculationConstant {
 	public static final String PROPERTY_JSONPATH_ROOT = "$.MdmsRes.PropertyTax";
 
 	public static final String PROPERTY_MASTER_MODULE = "PropertyTax";
+	
+	public static final String COMPOSITION_FEE_CONST = "compositionFee";
+
+	public static final String COMPOSITION_FEE = "SW_COMPOSITION_FEE";
+
+	public static final String USER_CHARGES_CONST = "userCharges";
+	
+	
 
 	public static final String CUSTOM = "CUSTOM";
 
