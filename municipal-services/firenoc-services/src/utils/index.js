@@ -52,7 +52,7 @@ export const getLocationDetails = async (requestInfo, tenantId) => {
   let requestBody = {
     RequestInfo: requestInfo
   };
-  // console.log(JSON.stringify(requestBody));
+   console.log(JSON.stringify(requestBody));
   let locationResponse = await httpRequest({
     hostURL: envVariables.EGOV_LOCATION_HOST,
     endPoint: `${envVariables.EGOV_LOCATION_CONTEXT_PATH}${
@@ -70,6 +70,7 @@ export const getLocationDetails = async (requestInfo, tenantId) => {
 
 export const createWorkFlow = async body => {
   //wfDocuments and comment should rework after that
+    console.log("WorkFlow Method Calling Now")
   let processInstances = body.FireNOCs.map(fireNOC => {
     return {
       tenantId: fireNOC.tenantId,

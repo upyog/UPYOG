@@ -37,29 +37,37 @@ export const updateApiResponse = async ({ body }, isExternalCall, next = {}) => 
   let mdms = await mdmsData(body.RequestInfo, body.FireNOCs[0].tenantId);
   //model validator
   //location data
-  let locationResponse = await getLocationDetails(
-    body.RequestInfo,
-    body.FireNOCs[0].tenantId
-  );
-
-  set(
-    mdms,
-    "MdmsRes.firenoc.boundary",
-    get(locationResponse, "TenantBoundary.0.boundary")
-  );
-
-  let errors = await validateFireNOCModel(body, mdms);
-  if (errors.length > 0) {
-    return next({
-      errorType: "custom",
-      errorReponse: {
-        ResponseInfo: requestInfoToResponseInfo(body.RequestInfo, true),
-        Errors: errors
-      }
-    });
-    return;
+  try{
+    let locationResponse = await getLocationDetails(
+      body.RequestInfo,
+      body.FireNOCs[0].tenantId
+    );
+    set(
+      mdms,
+      "MdmsRes.firenoc.boundary",
+      get(locationResponse, "TenantBoundary.0.boundary")
+    );
+    let errors = await validateFireNOCModel(body, mdms);
+    if (errors.length > 0) {
+      return next({
+        errorType: "custom",
+        errorReponse: {
+          ResponseInfo: requestInfoToResponseInfo(body.RequestInfo, true),
+          Errors: errors
+        }
+      });
+      return;
+    }
+  
+  }catch(err){
+    console.log("Location Error Msg :"+ err)
   }
+    
 
+  
+
+  
+  
   body = await addUUIDAndAuditDetails(body);
   let { FireNOCs = [], RequestInfo = {} } = body;
   let errorMap = [];
