@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -55,13 +56,13 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 	@Override
 	public void saveCommunityHallBookingInit(CommunityHallBookingRequest bookingRequest) {
 
-		// TODO: Bass user id in created by and last modified by
+		RequestInfo requestInfo = bookingRequest.getRequestInfo();
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
 		CommunityHallBookingRequestInit testPersist = CommunityHallBookingRequestInit.builder()
 				.bookingId(bookingDetail.getBookingId()).tenantId(bookingDetail.getTenantId())
 				.communityHallId(bookingDetail.getCommunityHallId()).bookingStatus(bookingDetail.getBookingStatus())
-				.bookingDetails(bookingRequest.getHallsBookingApplication()).createdBy("12233")
-				.createdDate(CommunityHallBookingUtil.getCurrentDateTime()).lastModifiedBy("1223")
+				.bookingDetails(bookingRequest.getHallsBookingApplication()).createdBy(requestInfo.getUserInfo().getUuid())
+				.createdDate(CommunityHallBookingUtil.getCurrentDateTime()).lastModifiedBy(requestInfo.getUserInfo().getUuid())
 				.lastModifiedDate(CommunityHallBookingUtil.getCurrentDateTime()).build();
 		CommunityHallBokingInitDetails bookingPersiter = CommunityHallBokingInitDetails.builder()
 				.hallsBookingApplication(testPersist).build();
@@ -78,6 +79,12 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 		log.info("getBookingDetails : Final query: " + query);
 		List<CommunityHallBookingDetail> bookingDetails = jdbcTemplate.query(query, preparedStmtList.toArray(),
 				bookingRowmapper);
+		
+		log.info("Fetched booking details size : " + bookingDetails.size());
+		
+		if(bookingDetails.size() == 0) {
+			return bookingDetails; 
+		}
 		
 		HashMap<String , CommunityHallBookingDetail> bookingMap =  bookingDetails.stream().collect(Collectors.toMap(CommunityHallBookingDetail::getBookingId,
 	           Function.identity(),

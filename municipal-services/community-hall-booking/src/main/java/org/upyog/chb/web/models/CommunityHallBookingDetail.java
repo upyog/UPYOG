@@ -37,15 +37,25 @@ public class CommunityHallBookingDetail {
 	
 	private Long bookingDate;
 	
-	private String approvalNo;
+	private String applicationNo;
 	
-	private Long approvalDate;
+	private Long applicationDate;
+	
+	private String applicantName;
+	
+	private String applicantMobileNo;
+	
+	private String applicantAlternateMobileNo;
+	
+	private String applicantEmailId;
 	
 	@JsonProperty("tenantId")
 	private String tenantId = null;
 	
 	@JsonProperty("communityHallId")
 	private Integer communityHallId = null;
+	
+	private String communityHallName;
 	
 	@JsonProperty("bookingStatus")
 	private String bookingStatus;
