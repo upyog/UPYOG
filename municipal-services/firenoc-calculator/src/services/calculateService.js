@@ -19,6 +19,7 @@ export const calculateService = async (req, pool, next) => {
   let calculations = await getCalculation(req, pool, next);
   calculalteResponse.Calculation = calculations;
 
+  console.log("calculations",calculations);
   let a = await generateDemand(requestInfo, tenantId, calculations);
 
   return calculalteResponse;

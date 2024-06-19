@@ -25,6 +25,8 @@ export const generateDemand = async (requestInfo, tenantId, calculations) => {
       updatecalculations.push(calculation);
     else createcalculations.push(calculation);
   });
+  console.log("createcalculations",updatecalculations);
+  console.log("updatecalculations",createcalculations);
   if (createcalculations.length > 0) {
     let cr = await createDemand(requestInfo, createcalculations, mdms);
   }
@@ -105,6 +107,8 @@ const updateDemand = async (requestInfo, calculations, demandsSearch, mdms) => {
       };
     });
     calculation.taxHeadEstimates.map(taxHeadEstimate => {
+      console.log("taxHeadEstimate in update",taxHeadEstimate);
+      console.log(taxHeadEstimate.taxHeadCode);
       if (demandDetailsMap.hasOwnProperty(taxHeadEstimate.taxHeadCode)) {
         demandDetailsMap[[taxHeadEstimate.taxHeadCode]].taxAmount =
           taxHeadEstimate.estimateAmount;
