@@ -62,7 +62,7 @@ public class UserService {
 			userDetailResponse = userExists(applicant);
 
 			if (userDetailResponse != null || !userDetailResponse.getUser().isEmpty()) {
-				log.info("User Exists!!!"  + userDetailResponse.getUser().get(0));
+				//log.info("User Exists!!!"  + userDetailResponse);
 				if (!userDetailResponse.getUser().isEmpty()) {
 					Boolean foundUser = Boolean.FALSE, isCitizenRegisteredOnCitizPortal = Boolean.FALSE;
 					for (int j = 0; j < userDetailResponse.getUser().size(); j++) {
