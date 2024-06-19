@@ -31,83 +31,53 @@ export default ({ config }) => {
   );
   return api;
 };
-export const updateApiResponse = async ({ body }, isExternalCall, next = {}) => {
-  //console.log("Update Body: "+JSON.stringify(body));
+export const updateApiResponse = async ({ body }, next = {}) => {
+  console.log("Update Body: "+JSON.stringify(body));
   let payloads = [];
   let mdms = await mdmsData(body.RequestInfo, body.FireNOCs[0].tenantId);
   //model validator
   //location data
-  try{
-    let locationResponse = await getLocationDetails(
-      body.RequestInfo,
-      body.FireNOCs[0].tenantId
-    );
-    console.log("helloTest"+ JSON.stringify(get(locationResponse, "TenantBoundary.0.boundary")));
-    set(
-      mdms,
-      "MdmsRes.firenoc.boundary",
-      get(locationResponse, "TenantBoundary.0.boundary")
-    );
-    let errors = await validateFireNOCModel(body, mdms);
-   if (errors.length > 0) {
-     return next({
-       errorType: "custom",
-        errorReponse: {
-          ResponseInfo: requestInfoToResponseInfo(body.RequestInfo, true),
-          Errors: errors
-        }
-      });
-      return;
-   }
-  
-  }catch(err){
-    console.log("Location Error Msg :"+ err)
-  }
-    
+  let locationResponse = await getLocationDetails(
+    body.RequestInfo,
+    body.FireNOCs[0].tenantId
+  );
 
-  
+  set(
+    mdms,
+    "MdmsRes.firenoc.boundary",
+    get(locationResponse, "TenantBoundary.0.boundary")
+  );
 
-  
-  
-  body = await addUUIDAndAuditDetails(body);
-  let { FireNOCs = [], RequestInfo = {} } = body;
-  let errorMap = [];
-
-  //Check records for approved
-  // let approvedList=await getApprovedList(cloneDeep(body));
-
-  //Enrich assignee
-  body.FireNOCs = await enrichAssignees(FireNOCs, RequestInfo);
-
-  //applay workflow
-  let workflowResponse = await createWorkFlow(body);
-
-
-
-  for (var i = 0; i < FireNOCs.length; i++) {
-    if(isExternalCall && FireNOCs[i].fireNOCDetails.action === 'PAY'){
-      errorMap.push({"INVALID_ACTION":"PAY action cannot perform directly on application "+FireNOCs[i].fireNOCDetails.applicationNumber});
-    }
-  }
-
-  if (errorMap.length > 0) {
+  let errors = await validateFireNOCModel(body, mdms);
+  console.log("Error Check:"+JSON.stringify(errors));
+  if (errors.length > 0) {
     return next({
       errorType: "custom",
       errorReponse: {
-        ResponseInfo: requestInfoToResponseInfo(RequestInfo, false),
-        Errors: errorMap
+        ResponseInfo: requestInfoToResponseInfo(body.RequestInfo, true),
+        Errors: errors
       }
     });
     return;
   }
 
+  body = await addUUIDAndAuditDetails(body);
+
+  //Check records for approved
+  // let approvedList=await getApprovedList(cloneDeep(body));
+
+  //applay workflow
+  let workflowResponse = await createWorkFlow(body);
+  //console.log("workflowResponse"+JSON.stringify(workflowResponse));
+
   //calculate call
+  let { FireNOCs = [], RequestInfo = {} } = body;
   for (var i = 0; i < FireNOCs.length; i++) {
     let firenocResponse = await calculate(FireNOCs[i], RequestInfo);
   }
 
   body.FireNOCs = updateStatus(FireNOCs, workflowResponse);
-  //console.log("Fire NoC body"+JSON.stringify(body.FireNOCs));
+  console.log("Fire NoC body"+JSON.stringify(body.FireNOCs));
 
   payloads.push({
     topic: envVariables.KAFKA_TOPICS_FIRENOC_UPDATE,
@@ -126,7 +96,7 @@ export const updateApiResponse = async ({ body }, isExternalCall, next = {}) => 
       messages: JSON.stringify({ RequestInfo, FireNOCs: approvedList })
     });
   }
-  // console.log(JSON.stringify(body));
+  console.log(JSON.stringify(body));
   let response = {
     ResponseInfo: requestInfoToResponseInfo(body.RequestInfo, true),
     FireNOCs: body.FireNOCs
