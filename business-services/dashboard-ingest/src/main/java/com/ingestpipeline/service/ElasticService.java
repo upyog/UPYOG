@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
-import jdk.jpackage.internal.Log;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
