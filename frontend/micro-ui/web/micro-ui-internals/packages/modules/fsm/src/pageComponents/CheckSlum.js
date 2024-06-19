@@ -16,10 +16,10 @@ const CheckSlum = ({ t, config, onSelect, userType, formData }) => {
     sessionStorage.removeItem("Digit.total_amount");
     onSelect(config.key, { slumArea });
   }
-  useEffect(() => {
-    if (formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT") onSkip();
-  }, [formData]);
 
+  useEffect(() => {
+    if (formData?.address?.propertyLocation === "FROM_GRAM_PANCHAYAT") onSkip();
+  }, [formData]);
   return (
     <React.Fragment>
       <Timeline currentStep={1} flow="APPLY" />
