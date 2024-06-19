@@ -22,8 +22,6 @@ export const CreateComplaint = () => {
   const { stateInfo } = storeData || {};
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage(PGR_CITIZEN_CREATE_COMPLAINT, {});
   // const [customConfig, setConfig] = Digit.Hooks.useSessionStorage(PGR_CITIZEN_COMPLAINT_CONFIG, {});
-  console.log(Digit.Customizations.PGR.complaintConfig,"1")
-  console.log([Digit.Customizations.PGR.complaintConfig],"2")
   const config = useMemo(() => defaultConfig);
   const [paramState, setParamState] = useState(params);
   const [nextStep, setNextStep] = useState("");
