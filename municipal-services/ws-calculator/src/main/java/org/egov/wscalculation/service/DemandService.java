@@ -328,7 +328,7 @@ public class DemandService {
 			// For the metered connections demand has to create one by one
 			if (WSCalculationConstant.meteredConnectionType.equalsIgnoreCase(connection.getConnectionType())) {
 				demandsForMetered.add(demand);
-				if(demand.getTenantId().equalsIgnoreCase("pb.amritsar")) {
+				if(demand.getTenantId().equalsIgnoreCase("pb.amritsar") && demand.getBusinessService().equalsIgnoreCase("WS_CHARGE") ) {
 					List<String> usageCategory = waterCalculatorDao.fetchUsageCategory(demand.getConsumerCode());
 					if(usageCategory.size()>0) {
 						if(usageCategory.get(0).equals("NONRESIDENTIAL.COMMERCIAL")) {							
