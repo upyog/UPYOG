@@ -9,11 +9,7 @@
     "packages/react-components",
     "packages/modules/common",
     "packages/modules/core",
-    "packages/modules/commonPt",
-    "packages/modules/dss",
-    "packages/modules/pt",
-    "packages/modules/obps"
-    
+    "packages/modules/pgr"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
@@ -56,7 +52,7 @@
     "build:pt": "cd packages/modules/pt && yarn build",
     "build:commonPt": "cd packages/modules/commonPt && yarn build",
     "build:core": "cd packages/modules/core && yarn build",
-    "buildD:pgr": "cd packages/modules/pgr && yarn build",
+    "build:pgr": "cd packages/modules/pgr && yarn build",
     "buildD:fsm": "cd packages/modules/fsm && yarn build",
     "build:dss": "cd packages/modules/dss && yarn build",
     "buildD:mcollect": "cd packages/modules/mCollect && yarn build",

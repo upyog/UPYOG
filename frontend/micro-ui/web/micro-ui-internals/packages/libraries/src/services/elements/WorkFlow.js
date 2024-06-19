@@ -110,39 +110,37 @@ export const WorkflowService = {
   },
 
   getDetailsById: async ({ tenantId, id, moduleCode, role, getTripData }) => {
+    console.log("getDetailsById")
     const workflow = await Digit.WorkflowService.getByBusinessId(tenantId, id); 
     const applicationProcessInstance = cloneDeep(workflow?.ProcessInstances);
     const getLocationDetails = window.location.href.includes("/obps/") || window.location.href.includes("noc/inbox");
     const moduleCodeData = getLocationDetails ? applicationProcessInstance?.[0]?.businessService : moduleCode;
-    const businessServiceResponse = (await Digit.WorkflowService.init(tenantId, moduleCodeData))?.BusinessServices[0]?.states;
+    //const businessServiceResponse = (await Digit.WorkflowService.init(tenantId, moduleCodeData))?.BusinessServices[0]?.states;
     if (workflow && workflow.ProcessInstances) {
       const processInstances = workflow.ProcessInstances;
       const nextStates = processInstances[0]?.nextActions.map((action) => ({ action: action?.action, nextState: processInstances[0]?.state.uuid }));
-      const nextActions = nextStates.map((id) => ({
-        action: id.action,
-        state: businessServiceResponse?.find((state) => state.uuid === id.nextState),
-      }));
+      const nextActions = []
       /* To check state is updatable and provide edit option*/
-      const currentState = businessServiceResponse?.find((state) => state.uuid === processInstances[0]?.state.uuid);
-      if (currentState && currentState?.isStateUpdatable) {
-        if (moduleCode === "FSM" || moduleCode === "FSM_POST_PAY_SERVICE" || moduleCode === "FSM_ADVANCE_PAY_SERVICE" || moduleCode === "FSM_ADVANCE_PAY_SERVICE_V1" || moduleCode === "FSM_ZERO_PAY_SERVICE" || moduleCode === "PAY_LATER_SERVICE" || moduleCode === "FSM_VEHICLE_TRIP" || moduleCode === "PGR" || moduleCode === "OBPS") null;
-        else nextActions.push({ action: "EDIT", state: currentState });
-      }
+      // const currentState = businessServiceResponse?.find((state) => state.uuid === processInstances[0]?.state.uuid);
+      // if (currentState && currentState?.isStateUpdatable) {
+      //   if (moduleCode === "FSM" || moduleCode === "FSM_POST_PAY_SERVICE" || moduleCode === "FSM_ADVANCE_PAY_SERVICE" || moduleCode === "FSM_ADVANCE_PAY_SERVICE_V1" || moduleCode === "FSM_ZERO_PAY_SERVICE" || moduleCode === "PAY_LATER_SERVICE" || moduleCode === "FSM_VEHICLE_TRIP" || moduleCode === "PGR" || moduleCode === "OBPS") null;
+      //   else nextActions.push({ action: "EDIT", state: currentState });
+      // }
 
-      const getStateForUUID = (uuid) => businessServiceResponse?.find((state) => state.uuid === uuid);
+      // const getStateForUUID = (uuid) => businessServiceResponse?.find((state) => state.uuid === uuid);
 
-      const actionState = businessServiceResponse
-        ?.filter((state) => state.uuid === processInstances[0]?.state.uuid)
-        .map((state) => {
-          let _nextActions = state.actions?.map?.((ac) => {
-            let actionResultantState = getStateForUUID(ac.nextState);
-            let assignees = actionResultantState?.actions?.reduce?.((acc, act) => {
-              return [...acc, ...act.roles];
-            }, []);
-            return { ...actionResultantState, assigneeRoles: assignees, action: ac.action, roles: ac.roles };
-          });
-          return { ...state, nextActions: _nextActions, roles: state?.action, roles: state?.actions?.reduce((acc, el) => [...acc, ...el.roles], []) };
-        })?.[0];
+      // const actionState = businessServiceResponse
+      //   ?.filter((state) => state.uuid === processInstances[0]?.state.uuid)
+      //   .map((state) => {
+      //     let _nextActions = state.actions?.map?.((ac) => {
+      //       let actionResultantState = getStateForUUID(ac.nextState);
+      //       let assignees = actionResultantState?.actions?.reduce?.((acc, act) => {
+      //         return [...acc, ...act.roles];
+      //       }, []);
+      //       return { ...actionResultantState, assigneeRoles: assignees, action: ac.action, roles: ac.roles };
+      //     });
+      //     return { ...state, nextActions: _nextActions, roles: state?.action, roles: state?.actions?.reduce((acc, el) => [...acc, ...el.roles], []) };
+      //   })?.[0];
 
       // HANDLING ACTION for NEW VEHICLE LOG FROM UI SIDE
       const action_newVehicle = [{
@@ -289,7 +287,7 @@ export const WorkflowService = {
         const details = {
           timeline,
           nextActions : window.location.href?.includes("fsm") ? nextStep : nextActions,
-          actionState,
+          actionState:[],
           applicationBusinessService: workflow?.ProcessInstances?.[0]?.businessService,
           processInstances: applicationProcessInstance,
         };

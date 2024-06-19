@@ -20,6 +20,8 @@ import CitizenFeedback from "../../components/CitizenFeedback";
 import Search from "./SearchApp";
 import QRCode from "./QRCode";
 import ChallanQRCode from "./ChallanQRCode";
+import { ComplaintsList } from "./ComplaintsList";
+import ComplaintDetailsPage from "./ComplaintDetails";
 const sidebarHiddenFor = [
   "digit-ui/citizen/register/name",
   "/digit-ui/citizen/select-language",
@@ -217,6 +219,12 @@ const Home = ({
           </Route>
           <Route path={`${path}/challan/details`}>
          <ChallanQRCode></ChallanQRCode>
+          </Route>
+          <Route exact path={`${path}/complaints`}>
+        <ComplaintsList />
+          </Route>
+          <Route path={`${path}/complaints/inc/:id`}>
+        <ComplaintDetailsPage />
           </Route>
           <ErrorBoundary initData={initData}>
             {appRoutes}
