@@ -9,8 +9,8 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData, formSta
   const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
   const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger } = useForm();
   const formValue = watch();
-  const { errors } = localFormState;
-  const checkLocation = window.location.href.includes("ptr/petservice/new-application");
+  // const { errors } = localFormState;
+  // const checkLocation = window.location.href.includes("ew/raiseRequest");
 
   let inputs;
   
@@ -80,36 +80,45 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData, formSta
     ];
   // }
 
-  const convertValidationToRules = ({ validation, name, messages }) => {
-    if (validation) {
-      let { pattern: valPattern, maxlength,minlength, required: valReq } = validation || {};
-      let pattern = (value) => {
-        if (valPattern) {
-          if (valPattern instanceof RegExp) return valPattern.test(value) ? true : messages?.pattern || `${name.toUpperCase()}_PATTERN`;
-          else if (typeof valPattern === "string")
-            return new RegExp(valPattern)?.test(value) ? true : messages?.pattern || `${name.toUpperCase()}_PATTERN`;
-        }
-        return true;
-      };
-      let maxLength = (value) => (maxlength ? (value?.length <= maxlength ? true : messages?.maxlength || `${name.toUpperCase()}_MAXLENGTH`) : true);
-      let minLength = (value) => (minlength ? (value?.length >= minlength ? true : messages?.minlength || `${name.toUpperCase()}_MINLENGTH`) : true);
-      let required = (value) => (valReq ? (!!value ? true : messages?.required || `${name.toUpperCase()}_REQUIRED`) : true);
+  // const convertValidationToRules = ({ validation, name, messages }) => {
+  //   if (validation) {
+  //     let { pattern: valPattern, maxlength,minlength, required: valReq } = validation || {};
+  //     let pattern = (value) => {
+  //       if (valPattern) {
+  //         if (valPattern instanceof RegExp) return valPattern.test(value) ? true : messages?.pattern || `${name.toUpperCase()}_PATTERN`;
+  //         else if (typeof valPattern === "string")
+  //           return new RegExp(valPattern)?.test(value) ? true : messages?.pattern || `${name.toUpperCase()}_PATTERN`;
+  //       }
+  //       return true;
+  //     };
+  //     let maxLength = (value) => (maxlength ? (value?.length <= maxlength ? true : messages?.maxlength || `${name.toUpperCase()}_MAXLENGTH`) : true);
+  //     let minLength = (value) => (minlength ? (value?.length >= minlength ? true : messages?.minlength || `${name.toUpperCase()}_MINLENGTH`) : true);
+  //     let required = (value) => (valReq ? (!!value ? true : messages?.required || `${name.toUpperCase()}_REQUIRED`) : true);
 
-      return { pattern, required, maxLength,minlength };
-    }
-    return {};
-  };
+  //     return { pattern, required, maxLength,minlength };
+  //   }
+  //   return {};
+  // };
+
+  // let isDis = true;
 
   useEffect(() => {
     trigger();
   }, []);
 
-  useEffect(() => {
-    if (userType === "employee") {
-      if (Object.keys(errors).length && !_.isEqual(formState.errors[config.key]?.type || {}, errors)) setError(config.key, { type: errors });
-      else if (!Object.keys(errors).length && formState.errors[config.key]) clearErrors(config.key);
-    }
-  }, [errors]);
+  // useEffect(() => {
+  //   console.log("euseffect")
+  //   if(inputs.street){
+  //     isDis=false
+  //   }
+  // }, [inputs.street])
+
+  // useEffect(() => {
+  //   if (userType === "employee") {
+  //     if (Object.keys(errors).length && !_.isEqual(formState.errors[config.key]?.type || {}, errors)) setError(config.key, { type: errors });
+  //     else if (!Object.keys(errors).length && formState.errors[config.key]) clearErrors(config.key);
+  //   }
+  // }, [errors]);
 
   useEffect(() => {
     const keys = Object.keys(formValue);
@@ -122,41 +131,41 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData, formSta
     }
   }, [formValue]);
 
-  if (userType === "employee") {
-    return inputs?.map((input, index) => {
-      return (
-        <LabelFieldPair key={index}>
-          <CardLabel className="card-label-smaller">
-            {!checkLocation ? t(input.label) : `${t(input.label)}:`}
-            {config.isMandatory ? " * " : null}
-          </CardLabel>
-          <div className="field">
-            <Controller
-              control={control}
-              defaultValue={formData?.address?.[input.name]}
-              name={input.name}
-              rules={{ validate: convertValidationToRules(input) }}
-              render={(_props) => (
-                <TextInput
-                  id={input.name}
-                  key={input.name}
-                  value={_props.value}
-                  onChange={(e) => {
-                    setFocusIndex({ index });
-                    _props.onChange(e.target.value);
-                  }}
-                  onBlur={_props.onBlur}
-                  // disable={isRenewal}
-                  autoFocus={focusIndex?.index == index}
-                  {...input.validation}
-                />
-              )}
-            />
-          </div>
-        </LabelFieldPair>
-      );
-    });
-  }
+  // if (userType === "employee") {
+  //   return inputs?.map((input, index) => {
+  //     return (
+  //       <LabelFieldPair key={index}>
+  //         <CardLabel className="card-label-smaller">
+  //           {!checkLocation ? t(input.label) : `${t(input.label)}:`}
+  //           {config.isMandatory ? " * " : null}
+  //         </CardLabel>
+  //         <div className="field">
+  //           <Controller
+  //             control={control}
+  //             defaultValue={formData?.address?.[input.name]}
+  //             name={input.name}
+  //             rules={{ validate: convertValidationToRules(input) }}
+  //             render={(_props) => (
+  //               <TextInput
+  //                 id={input.name}
+  //                 key={input.name}
+  //                 value={_props.value}
+  //                 onChange={(e) => {
+  //                   setFocusIndex({ index });
+  //                   _props.onChange(e.target.value);
+  //                 }}
+  //                 onBlur={_props.onBlur}
+  //                 // disable={isRenewal}
+  //                 autoFocus={focusIndex?.index == index}
+  //                 {...input.validation}
+  //               />
+  //             )}
+  //           />
+  //         </div>
+  //       </LabelFieldPair>
+  //     );
+  //   });
+  // }
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline currentStep={4}/> : null}

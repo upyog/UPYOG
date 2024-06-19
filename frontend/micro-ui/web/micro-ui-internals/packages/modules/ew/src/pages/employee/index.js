@@ -57,7 +57,7 @@ const EmployeeApp = ({ path, url, userType }) => {
   }
 console.log("this dssssis path :: ", path)
   const NewApplication = Digit?.ComponentRegistryService?.getComponent("PTRNewApplication");
-  const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("EWASTEApplicationDetails");
+  const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("EWApplicationDetails");
 
   // const EditApplication = Digit?.ComponentRegistryService?.getComponent("PTEditApplication");
   const Response = Digit?.ComponentRegistryService?.getComponent("PTRResponse");
