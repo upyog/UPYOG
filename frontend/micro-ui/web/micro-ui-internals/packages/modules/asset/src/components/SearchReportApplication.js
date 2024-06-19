@@ -19,7 +19,7 @@ import * as XLSX from 'xlsx';
 
 
 const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, data, count, setShowToast }) => {
-    console.log("data",userType);
+    console.log("data",data);
     
     const isMobile = window.Digit.Utils.browser.isMobile();
 
@@ -270,10 +270,12 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
             </SearchForm>
 
             <br></br>
+           { data !== "" ? 
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: "10px" }}>
             <button onClick={downloadPDF} style = {{ color: "maroon", border: "2px solid #333", padding: "8px 16px", cursor: "pointer",marginRight: "10px"}} >Download PDF</button>
             <button onClick={downloadXLS} style = {{ color: "maroon", border: "2px solid #333", padding: "10px 20px",cursor: "pointer"}}>Download XLS</button> 
             </div>
+            : "" }
 
             <br></br>
             
