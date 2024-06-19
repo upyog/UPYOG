@@ -18,7 +18,7 @@ import EWASTESelectPincode from "./pageComponents/EWASTESelectPincode";
 import EWASTESelectAddress from "./pageComponents/EWASTESelectAddress";
 import EWASTEAcknowledgement from "./pages/citizen/Create/EWASTEAcknowledgement";
 import { EWASTEMyApplications } from "./pages/citizen/EWASTEMyApplications";
-import EWASTEApplicationDetails from "./pages/citizen/EWASTEApplicationDetails";
+import EWASTECitizenApplicationDetails from "./pages/citizen/EWASTECitizenApplicationDetails";
 import Inbox from "./pages/employee/Inbox";
 import InboxFilter from "./components/inbox/NewInboxFilter";
 import EmployeeApp from "./pages/employee/index";
@@ -40,10 +40,10 @@ const componentsToRegister = {
   EWASTESelectAddress,
   EWASTEAcknowledgement,
   EWASTEMyApplications,
-  EWASTEApplicationDetails,
+  EWASTECitizenApplicationDetails,
   Inbox,
   EmployeeApp,
-  EWASTEApplicationDetails: ApplicationDetails,
+  EWApplicationDetails: ApplicationDetails,
   EwService
 }
 

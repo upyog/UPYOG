@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, Dropdown, RadioOrSelect } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons, Dropdown, RadioOrSelect, Toast } from "@upyog/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/EWASTETimeline";
@@ -23,6 +23,8 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
   const [prlistName, setPrlistName] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.prlistName) || formData?.ewdet?.prlistName || []);
   const [prlistQuantity, setPrlistQuantity] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.prlistQuantity) || formData?.ewdet?.prlistQuantity || []);
 
+  const [showToast, setShowToast] = useState(null);
+
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
 
@@ -35,17 +37,38 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
       menu.push({ i18nKey: `EWASTE_${ewasteDetails.code}`, code: `${ewasteDetails.code}`, value: `${ewasteDetails.name}`, price: `${ewasteDetails.price}` });
     });
 
-  const { control } = useForm();
+  const { control, setError, clearErrors } = useForm();
 
   function setproductQuantity(e) {
+    setShowToast(null);
     setProductQuantity(e.target.value);
   }
 
   // const [prlistTotalprice, setPrlistTotalprice] = useState([]);
 
   const handleAddProduct = () => {
-    setPrlistName([...prlistName, { code: productName.code, i18nKey: productName.i18nKey, price: productName.price }]);
-    setPrlistQuantity([...prlistQuantity, { code: productQuantity }]);
+    if (!/^[1-9][0-9]*$/.test(productQuantity)) {
+      // alert(t("EWASTE_NUMBER_ERROR_MESSAGE"));
+      setShowToast({
+        label: t("EWASTE_ZERO_ERROR_MESSAGE")
+      });
+      return;
+    }
+
+    const productExists = prlistName.some((item) => item.code === productName.code);
+
+    if (!productExists) {
+      setPrlistName([...prlistName, { code: productName.code, i18nKey: productName.i18nKey, price: productName.price }]);
+      setPrlistQuantity([...prlistQuantity, { code: productQuantity }]);
+    } else {
+      setShowToast({
+        label: t("EWASTE_DUPLICATE_PRODUCT_ERROR_MESSAGE")
+      });
+    }
+
+
+    // setPrlistName([...prlistName, { code: productName.code, i18nKey: productName.i18nKey, price: productName.price }]);
+    // setPrlistQuantity([...prlistQuantity, { code: productQuantity }]);
     // setPrlistTotalprice([...prlistTotalprice, { code: productPrice }]);
     // prlist.map((pr) => {
     //   console.log("product is" + pr.code);
@@ -112,10 +135,10 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
             value={productQuantity}
             onChange={setproductQuantity}
             style={{ width: "86%" }}
-            ValidationRequired={false}
+            ValidationRequired={true}
             {...(validation = {
               isRequired: true,
-              pattern: "^[0-9]*$",
+              pattern: "^[1-9][0-9]*$",
               type: "text",
               title: t("EWASTE_NUMBER_ERROR_MESSAGE"),
             })}
@@ -134,12 +157,6 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
             //  onChange={setproductPrice}
             style={{ width: "86%" }}
             ValidationRequired={false}
-            {...(validation = {
-              isRequired: true,
-              pattern: "^[0-9]*$",
-              type: "text",
-              title: t("PT_NAME_ERROR_MESSAGE"),
-            })}
           />
 
 
@@ -157,6 +174,15 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
           // prlistTotalprice={prlistTotalprice}
         />
       </div>
+
+      {showToast?.label && <Toast
+      label={showToast.label}
+      error={true}
+      isDleteBtn={true}
+      onClose={() => {
+        setShowToast(null)
+      }}
+      />}
     </React.Fragment>
   );
 };

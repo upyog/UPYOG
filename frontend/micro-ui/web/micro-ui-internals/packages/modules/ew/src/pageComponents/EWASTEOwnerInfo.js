@@ -4,6 +4,7 @@ import { cardBodyStyle } from "../utils";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import Timeline from "../components/EWASTETimeline";
+import { flatMap } from "lodash";
 
 const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) => {
   const { pathname: url } = useLocation();
@@ -124,11 +125,11 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
             name="emailId"
             value={emailId}
             onChange={setOwnerEmail}
-            ValidationRequired={true}
+            ValidationRequired={false}
             {...(validation = {
               isRequired: true,
               pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$",
-              type: "text",
+              type: "email",
               title: t("EWASTE_NAME_ERROR_MESSAGE"),
             })}
           />

@@ -83,7 +83,7 @@ const EWVendorDetails
           onSelect={goNext}
           onSkip={onSkip}
           t={t}
-        // isDisabled={!applicantName || !mobileNumber || !fatherName || !emailId}
+        isDisabled={!vendor}
         >
           <div>
 

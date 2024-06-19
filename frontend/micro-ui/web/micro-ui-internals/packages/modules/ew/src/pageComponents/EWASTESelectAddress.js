@@ -178,7 +178,7 @@ const EWASTESelectAddress = ({ t, config, onSelect, userType, formData, setError
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={4} /> : null}
       <FormStep config={config} onSelect={onSubmit} t={t}
-      //  isDisabled={selectedLocality ? false : true}
+       isDisabled={selectedLocality ? false : true}
        >
         <div>
           <CardLabel>{`${t("MYCITY_CODE_LABEL")} `}</CardLabel>

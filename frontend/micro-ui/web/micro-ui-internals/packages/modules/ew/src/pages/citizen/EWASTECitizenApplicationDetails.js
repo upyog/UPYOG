@@ -5,15 +5,15 @@ import { useHistory, useParams } from "react-router-dom";
 // import getEwAcknowledgementData from "../../getEwAcknowledgementData";
 import EWASTEWFApplicationTimeline from "../../pageComponents/EWASTEWFApplicationTimeline";
 import { pdfDownloadLink } from "../../utils";
-
+import ApplicationTable from "../../components/inbox/ApplicationTable";
 
 import get from "lodash/get";
 import { size } from "lodash";
 
-const EWASTEApplicationDetails = () => {
+const EWASTECitizenApplicationDetails = () => {
   const { t } = useTranslation();
   const history = useHistory();
-  const { acknowledgementIds, tenantId } = useParams();
+  const {requestId, tenantId } = useParams();
   const [acknowldgementData, setAcknowldgementData] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [popup, setpopup] = useState(false);
@@ -26,7 +26,7 @@ const EWASTEApplicationDetails = () => {
   const { isLoading, isError,error, data } = Digit.Hooks.ew.useEWSearch(
     {
       tenantId,
-      filters: { applicationNumber: acknowledgementIds },
+      filters: { applicationNumber: requestId },
     },
   );
 
@@ -37,6 +37,7 @@ const EWASTEApplicationDetails = () => {
   const ewId = get(data, "EwasteApplication[0].applicationNumber", []);
   
   let  ew_details = (EwasteApplication && EwasteApplication.length > 0 && EwasteApplication[0]) || {};
+  // console.log("this is ew-detaoishdjf:::", ew_details)
   const application =  ew_details;
 
   
@@ -48,14 +49,14 @@ const EWASTEApplicationDetails = () => {
 
   const fetchBillData=async()=>{
     setLoading(true);
-    const result= await Digit.PaymentService.fetchBill(tenantId,{ businessService: "ew-services", consumerCode: acknowledgementIds, });
+    const result= await Digit.PaymentService.fetchBill(tenantId,{ businessService: "ew-services", consumerCode: requestId, });
   
   setBillData(result);
   setLoading(false);
 };
 useEffect(()=>{
 fetchBillData();
-}, [tenantId, acknowledgementIds]); 
+}, [tenantId, requestId]); 
 
   const { isLoading: auditDataLoading, isError: isAuditError, data: auditResponse } = Digit.Hooks.ew.useEWSearch(
     {
@@ -71,11 +72,11 @@ fetchBillData();
   const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
     {
       tenantId: tenantId,
-      businessService: "pet-services",
-      consumerCodes: acknowledgementIds,
+      businessService: "ewst",
+      consumerCodes: requestId,
       isEmployee: false,
     },
-    { enabled: acknowledgementIds ? true : false }
+    { enabled: requestId ? true : false }
   );
 
   if (!ew_details.workflow) {
@@ -163,6 +164,25 @@ fetchBillData();
       label: t("EWASTE_CERTIFICATE"),
       onClick: () => printCertificate(),
     });
+
+
+  const productcolumns = [
+    { Header: t("PRODUCT_NAME"), accessor: "name" },
+    { Header: t("PRODUCT_QUANTITY"), accessor: "quantity" },
+    { Header: t("UNIT_PRICE"), accessor: "unit_price" },
+    { Header: t("TOTAL_PRODUCT_PRICE"), accessor: "total_price" },
+  ];
+
+    const productRows = ew_details?.ewasteDetails?.map((product) => (
+        {
+            name: t(product.productName),
+            quantity: product.quantity,
+            unit_price: product.price,
+            total_price: product.quantity * product.price,
+        }
+    )) || [];
+  
+
   
   return (
     <React.Fragment>
@@ -183,7 +203,7 @@ fetchBillData();
             <Row
               className="border-none"
               label={t("EWASTE_APPLICATION_NO_LABEL")}
-              text={ew_details?.applicationNumber} 
+              text={ew_details?.requestId} 
             />
           </StatusTable>
            
@@ -193,15 +213,35 @@ fetchBillData();
             <Row className="border-none" label={t("EWASTE_CITY")} text={ew_details?.address?.city || t("CS_NA")} />
             <Row className="border-none" label={t("EWASTE_STREET_NAME")} text={ew_details?.address?.street || t("CS_NA")} />
             <Row className="border-none" label={t("EWASTE_HOUSE_NO")} text={ew_details?.address?.doorNo || t("CS_NA")} />
+            <Row className="border-none" label={t("EWASTE_HOUSE_NAME")} text={ew_details?.address?.buildingName || t("CS_NA")} />
+            <Row className="border-none" label={t("EWASTE_ADDRESS_LINE1")} text={ew_details?.address?.addressLine1 || t("CS_NA")} />
+            <Row className="border-none" label={t("EWASTE_ADDRESS_LINE2")} text={ew_details?.address?.addressLine2 || t("CS_NA")} />
+            <Row className="border-none" label={t("EWASTE_LANDMARK")} text={ew_details?.address?.landmark || t("CS_NA")} />
           </StatusTable>
 
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("EWASTE_APPLICANT_DETAILS_HEADER")}</CardSubHeader>
+          <CardSubHeader style={{ fontSize: "24px" }}>{t("EWASTE_APPLICANT_DETAILS")}</CardSubHeader>
           <StatusTable>
-            <Row className="border-none" label={t("EWASTE_APPLICANT_NAME")} text={ew_details?.applicantName || t("CS_NA")} />
-            <Row className="border-none" label={t("EWASTE_FATHER/HUSBAND_NAME")} text={ew_details?.fatherName || t("CS_NA")} />
-            <Row className="border-none" label={t("EWASTE_APPLICANT_MOBILE_NO")} text={ew_details?.mobileNumber || t("CS_NA")} />
-            <Row className="border-none" label={t("EWASTE_APPLICANT_EMAILID")} text={ew_details?.emailId || t("CS_NA")} />
+            <Row className="border-none" label={t("EWASTE_APPLICANT_NAME")} text={ew_details?.applicant?.applicantName || t("CS_NA")} />
+            <Row className="border-none" label={t("EWASTE_APPLICANT_MOBILE_NO")} text={ew_details?.applicant?.mobileNumber || t("CS_NA")} />
+            <Row className="border-none" label={t("EWASTE_APPLICANT_EMAIL_ID")} text={ew_details?.applicant?.emailId || t("CS_NA")} />
           </StatusTable>
+
+          <CardSubHeader style={{ fontSize: "24px" }}>{t("EWASTE_TITLE_PRODUCT_DETAILS")}</CardSubHeader>
+          <ApplicationTable
+            t={t}
+            data={productRows}
+            columns={productcolumns}
+            getCellProps={(cellInfo) => ({
+              style: {
+                minWidth: "150px",
+                padding: "10px",
+                fontSize: "16px",
+                paddingLeft: "20px",
+              },
+            })}
+            isPaginationRequired={false}
+            totalRecords={productRows.length}
+          />
 
           {/* <CardSubHeader style={{ fontSize: "24px" }}>{t("EWASTE__DETAILS_HEADER")}</CardSubHeader>
           <StatusTable>
@@ -243,7 +283,7 @@ fetchBillData();
   );
 };
 
-export default EWASTEApplicationDetails;
+export default EWASTECitizenApplicationDetails;
             
            
            

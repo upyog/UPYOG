@@ -18,7 +18,7 @@ export const getFixedFilename = (filename = "", size = 5) => {
 };
 
 export const shouldHideBackButton = (config = []) => {
-  return config.filter((key) => window.location.href.includes(key.screenPath)).length > 0 || window.location.href.includes("acknowledgement") ? true : false;
+  return config.filter((key) => window.location.href.includes(key.screenPath)).length > 0 || window.location.href.includes("acknowledgement") ? true : false ;
 };
 
 
