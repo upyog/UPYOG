@@ -17,12 +17,14 @@ public class CommunityHallBookingQueryBuilder {
 	private CommunityHallBookingConfiguration bookingConfiguration;
 
 	private static final StringBuilder bookingAndSlotDetailsQuery = new StringBuilder(
-			"select chbd.booking_id, chbd.booking_no, chbd.booking_date, chbd.approval_no, chbd.approval_date,\n"
-					+ "chbd.tenant_id, chbd.community_hall_id,chbd.booking_status, chbd.resident_type, chbd.special_category,\n"
-					+ "chbd.purpose, chbd.purpose_description, chbd.event_name, chbd.event_organized_by, \n"
+			"select chbd.booking_id, chbd.booking_no, chbd.booking_date, chbd.application_no, chbd.application_date,\n"
+					+ "chbd.tenant_id, chbd.community_hall_id, chbd.community_hall_name, chbd.booking_status, chbd.resident_type,"
+					+ " chbd.special_category,chbd.applicant_name, chbd.applicant_email_id, chbd.applicant_mobile_no, \n"
+					+ " chbd.applicant_alternate_mobile_no, chbd.purpose, chbd.purpose_description, chbd.event_name, chbd.event_organized_by, \n"
 					+ "chbd.createdby as booking_created_by, chbd.createdtime as booking_created_time, \n"
 					+ "chbd.lastmodifiedby as booking_last_modified_by, chbd.lastmodifiedtime as booking_last_modified_time\n"
-					+ ",bsd.slot_id, bsd.booking_id as slot_booking_id,bsd.hallcode, bsd.booking_slot_datetime, bsd.status as slot_status, bsd.createdby as slot_created_by\n"
+					+ ",bsd.slot_id, bsd.booking_id as slot_booking_id,bsd.hall_code, bsd.hall_name, bsd.booking_date, bsd.booking_from_time"
+					+ " , bsd.booking_to_time, bsd.status as slot_status, bsd.createdby as slot_created_by\n"
 					+ ", bsd.createdtime as slot_created_time, bsd.lastmodifiedby as slot_last_modified_by, bsd.lastmodifiedtime as \n"
 					+ "slot_last_modified_time from community_hall_booking_details chbd\n"
 					+ "join booking_slot_details bsd on  bsd.booking_id = chbd.booking_id ");

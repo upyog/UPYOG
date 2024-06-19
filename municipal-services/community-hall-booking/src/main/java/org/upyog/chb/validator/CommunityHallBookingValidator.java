@@ -14,53 +14,59 @@ import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class CommunityHallBookingValidator {
-	
+
 	@Autowired
 	private MDMSValidator mdmsValidator;
-	
+
 	@Autowired
 	private CommunityHallBookingConfiguration config;
 
 	/**
 	 * TODO: uncomment validation after adding data to MDMS
+	 * 
 	 * @param bookingRequest
 	 * @param mdmsData
 	 */
 	public void validateCreate(CommunityHallBookingRequest bookingRequest, Object mdmsData) {
-		//mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
-		
+		log.info("validating master data for booking request for mdmsdata : " + mdmsData);
+		// mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
+
 	}
 
 	/**
-	 * TODO: add slot and document validation here 
+	 * TODO: add slot and document validation here
+	 * 
 	 * @param bookingRequest
 	 */
 	private void validateApplicationDocuments(CommunityHallBookingRequest bookingRequest) {
-		
-		
+
 	}
-	
+
 	/**
 	 * Validates if the search parameters are valid
 	 * 
-	 * @param requestInfo
-	 *            The requestInfo of the incoming request
-	 * @param criteria
-	 *            The CommunityHallBookingSearchCriteria Criteria
+	 * @param requestInfo The requestInfo of the incoming request
+	 * @param criteria    The CommunityHallBookingSearchCriteria Criteria
 	 */
-	 //TODO need to make the changes in the data
-	public void validateSearch(RequestInfo requestInfo, CommunityHallBookingSearchCriteria criteria) { 
-		if (!requestInfo.getUserInfo().getType().equalsIgnoreCase(CommunityHallBookingConstants.EMPLOYEE) && criteria.isEmpty())
-			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Search without any paramters is not allowed");
+	// TODO need to make the changes in the data
+	public void validateSearch(RequestInfo requestInfo, CommunityHallBookingSearchCriteria criteria) {
+		log.info("Validating search request for criteria " + criteria);
+		if (!requestInfo.getUserInfo().getType().equalsIgnoreCase(CommunityHallBookingConstants.EMPLOYEE)
+				&& criteria.isEmpty())
+			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
+					"Search without any paramters is not allowed");
 
-		if (!requestInfo.getUserInfo().getType().equalsIgnoreCase(CommunityHallBookingConstants.EMPLOYEE) && !criteria.isEmpty()
-				&& criteria.getTenantId() == null)
+		if (!requestInfo.getUserInfo().getType().equalsIgnoreCase(CommunityHallBookingConstants.EMPLOYEE)
+				&& !criteria.isEmpty() && criteria.getTenantId() == null)
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "TenantId is mandatory in search");
 
-		if (requestInfo.getUserInfo().getType().equalsIgnoreCase(CommunityHallBookingConstants.EMPLOYEE) && !criteria.isEmpty()
-				&& criteria.getTenantId() == null)
+		if (requestInfo.getUserInfo().getType().equalsIgnoreCase(CommunityHallBookingConstants.EMPLOYEE)
+				&& !criteria.isEmpty() && criteria.getTenantId() == null)
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "TenantId is mandatory in search");
 
 		String allowedParamStr = null;
@@ -74,25 +80,26 @@ public class CommunityHallBookingValidator {
 					"The userType: " + requestInfo.getUserInfo().getType() + " does not have any search config");
 
 		if (StringUtils.isEmpty(allowedParamStr) && !criteria.isEmpty())
-			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "No search parameters are expected");
+			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
+					"No search parameters are expected");
 		else {
 			List<String> allowedParams = Arrays.asList(allowedParamStr.split(","));
 			validateSearchParams(criteria, allowedParams);
 		}
 	}
-	
+
 	/**
 	 * Validates if the paramters coming in search are allowed
 	 * 
-	 * @param criteria
-	 *            CHB search criteria
-	 * @param allowedParams
-	 *            Allowed Params for search
+	 * @param criteria      CHB search criteria
+	 * @param allowedParams Allowed Params for search
 	 */
 	private void validateSearchParams(CommunityHallBookingSearchCriteria criteria, List<String> allowedParams) {
-
+		log.info("Validating search params for allowedParams " + allowedParams);
+		
 		if (criteria.getApplicationNo() != null && !allowedParams.contains("applicationNo"))
-			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Search on applicationNo is not allowed");
+			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
+					"Search on applicationNo is not allowed");
 
 		if (criteria.getStatus() != null && !allowedParams.contains("status"))
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Search on Status is not allowed");
@@ -105,17 +112,19 @@ public class CommunityHallBookingValidator {
 
 		if (criteria.getLimit() != null && !allowedParams.contains("limit"))
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Search on limit is not allowed");
-		
+
 		if (criteria.getApprovalDate() != null && (criteria.getApprovalDate() > new Date().getTime()))
-			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Booking approved date cannot be a future date");
-		
+			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
+					"Booking approved date cannot be a future date");
+
 		if (criteria.getFromDate() != null && (criteria.getFromDate() > new Date().getTime()))
-			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "From date cannot be a future date");
+			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
+					"From date cannot be a future date");
 
 		if (criteria.getToDate() != null && criteria.getFromDate() != null
 				&& (criteria.getFromDate() > criteria.getToDate()))
-			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "To date cannot be prior to from date");
+			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
+					"To date cannot be prior to from date");
 	}
-
 
 }

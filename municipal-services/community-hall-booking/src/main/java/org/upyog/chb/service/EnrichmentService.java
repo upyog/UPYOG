@@ -31,11 +31,13 @@ public class EnrichmentService {
 
 	public void enrichCreateBookingRequest(CommunityHallBookingRequest bookingRequest, Object mdmsData,
 			Map<String, String> values) {
+		String bookingId = CommunityHallBookingUtil.getRandonUUID();
+		log.info("Enriching booking request for booking id :" + bookingId);
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
 		RequestInfo requestInfo = bookingRequest.getRequestInfo();
 		AuditDetails auditDetails = CommunityHallBookingUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 		bookingDetail.setAuditDetails(auditDetails);
-		bookingDetail.setBookingId(CommunityHallBookingUtil.getRandonUUID());
+		bookingDetail.setBookingId(bookingId);
 
 		// Set booking it to dependent tables with foreign key relation
 
@@ -54,34 +56,33 @@ public class EnrichmentService {
 		bookingDetail.getBankDetails().setBookingId(bookingDetail.getBookingId());
 		bookingDetail.getBankDetails().setBankDetailId(CommunityHallBookingUtil.getRandonUUID());
 		bookingDetail.getBankDetails().setAuditDetails(auditDetails);
-		
-		 List<String> customIds = getIdList(requestInfo,bookingDetail.getTenantId(),config.getCommunityHallBookingIdKey()
-				 ,config.getCommunityHallBookingIdFromat(),1);
 
-		 bookingDetail.setBookingNo(customIds.get(0));
+		List<String> customIds = getIdList(requestInfo, bookingDetail.getTenantId(),
+				config.getCommunityHallBookingIdKey(), config.getCommunityHallBookingIdFromat(), 1);
+
+		bookingDetail.setBookingNo(customIds.get(0));
 
 	}
-	
+
 	/**
-     * Returns a list of numbers generated from idgen
-     *
-     * @param requestInfo RequestInfo from the request
-     * @param tenantId    tenantId of the city
-     * @param idKey       code of the field defined in application properties for which ids are generated for
-     * @param idformat    format in which ids are to be generated
-     * @param count       Number of ids to be generated
-     * @return List of ids generated using idGen service
-     */
-    private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idKey,
-                                   String idformat, int count) {
-        List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count).getIdResponses();
+	 * Returns a list of numbers generated from idgen
+	 *
+	 * @param requestInfo RequestInfo from the request
+	 * @param tenantId    tenantId of the city
+	 * @param idKey       code of the field defined in application properties for
+	 *                    which ids are generated for
+	 * @param idformat    format in which ids are to be generated
+	 * @param count       Number of ids to be generated
+	 * @return List of ids generated using idGen service
+	 */
+	private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idKey, String idformat, int count) {
+		List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count)
+				.getIdResponses();
 
-        if (CollectionUtils.isEmpty(idResponses))
-            throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
+		if (CollectionUtils.isEmpty(idResponses))
+			throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
 
-        return idResponses.stream()
-                .map(IdResponse::getId).collect(Collectors.toList());
-    }
-
+		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
+	}
 
 }
