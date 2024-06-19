@@ -381,12 +381,12 @@ const NewAssetClassification
               onChange={setassetDescription}
               style={{ width: "50%" }}
               ValidationRequired={false}
-              {...(validation = {
-                isRequired: true,
-                pattern: "^[a-zA-Z-.`' ]*$",
-                type: "text",
-                title: t("PT_NAME_ERROR_MESSAGE"),
-              })}
+              // {...(validation = {
+              //   isRequired: true,
+              //   pattern: "^[a-zA-Z-.`' ]*$",
+              //   type: "text",
+              //   title: t("PT_NAME_ERROR_MESSAGE"),
+              // })}
             />
             
             <CardLabel>{`${t("AST_DEPARTMENT")}`}</CardLabel>

@@ -1,3 +1,14 @@
+/**
+*   @author - Shivank-NIUA
+*  Integrated the Download PDF and Download exel feature to download the Asset Report. 
+*  You can customize the Number of table and data you want to show in PDF and Exel. 
+*/
+
+
+
+
+
+
 import React, { useCallback, useMemo, useEffect } from "react"
 import { useForm, Controller } from "react-hook-form";
 import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@upyog/digit-ui-react-components";
@@ -58,7 +69,7 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
         
         
         {
-            Header: t("AST_APPLICATION_NUMBER"),
+            Header: t("ES_ASSET_RESPONSE_CREATE_LABEL"),
             accessor: "applicationNo",
             disableSortBy: true,
             Cell: ({ row }) => {
@@ -76,14 +87,14 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
         
 
           {
-            Header: t("AST_ASSET_CATEGORY"),
+            Header: t("AST_ASSET_CATEGORY_LABEL"),
             Cell: ( row ) => {
               return GetCell(`${row?.row?.original?.["assetClassification"]}`)
             },
             disableSortBy: true,
           },
           {
-            Header: t("AST_PARENT_CATEGORY"),
+            Header: t("AST_PARENT_CATEGORY_LABEL"),
             Cell: ({ row }) => {
               return GetCell(`${row?.original?.["assetParentCategory"]}`)
             },
@@ -91,7 +102,7 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
           
           },
           {
-            Header: t("AST_NAME"),
+            Header: t("AST_NAME_LABEL"),
             Cell: ({ row }) => {
               return GetCell(`${row?.original?.["assetName"]}`)
             },
@@ -106,7 +117,7 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
             disableSortBy: true,
           },
           {
-            Header: t("AST_DEPARTMENT"),
+            Header: t("AST_DEPARTMENT_LABEL"),
             Cell: ({ row }) => {
               return GetCell(`${row?.original?.["department"]}`)
             },
@@ -134,6 +145,51 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
         handleSubmit(onSubmit)()
     }
     let validation={}
+
+
+    //custom Functions to download the data which is coming in the Coloumns as a PDF and XLS 
+
+    const downloadPDF = () => {
+      const doc = new jsPDF("landscape");
+      const tableColumn = ["S.No", ...columns.map(col => t(col.Header))];
+      const tableRows = data.map((row, index) => [
+          index + 1, // for the S.No it will increase the Number by +1
+          row.applicationNo,
+          row.assetClassification,
+          row.assetParentCategory,
+          row.assetName,
+          row.addressDetails?.pincode,
+          row.department
+      ]);
+      
+      doc.autoTable({
+          head: [tableColumn],
+          body: tableRows,
+      });
+
+      doc.save("Asset-Reports.pdf");
+  }
+
+  const downloadXLS = () => {
+    const tableColumn = columns.map(col => t(col.Header));
+    const tableRows = data.map(row => [
+        row.applicationNo,
+        row.assetClassification,
+        row.assetParentCategory,
+        row.assetName,
+        row.addressDetails?.pincode,
+        row.department
+    ]);
+    const worksheet = XLSX.utils.aoa_to_sheet([tableColumn, ...tableRows]);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Asset Report");
+    XLSX.writeFile(workbook, "Asset-Reports.xlsx");
+};
+
+
+
+
+
 
     return <React.Fragment>
                 
@@ -212,6 +268,14 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
                 </SearchField>
                 
             </SearchForm>
+
+            <br></br>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: "10px" }}>
+            <button onClick={downloadPDF} style = {{ color: "maroon", border: "2px solid #333", padding: "8px 16px", cursor: "pointer",marginRight: "10px"}} >Download PDF</button>
+            <button onClick={downloadXLS} style = {{ color: "maroon", border: "2px solid #333", padding: "10px 20px",cursor: "pointer"}}>Download XLS</button> 
+            </div>
+
+            <br></br>
             
             {!isLoading && data?.display ? <Card style={{ marginTop: 20 }}>
                 {

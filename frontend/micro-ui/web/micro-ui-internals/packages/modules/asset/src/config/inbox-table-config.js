@@ -19,7 +19,7 @@ import React from "react";
       inboxColumns: (props) => [
       
         {
-          Header: t("AST_APPLICATION_NUMBER"),
+          Header: t("ES_ASSET_RESPONSE_CREATE_LABEL"),
           Cell: ({ row }) => {
             return (
               <div>
@@ -37,7 +37,7 @@ import React from "react";
         },
         
         {
-          Header: t("AST_ASSET_CATEGORY"),
+          Header: t("AST_ASSET_CATEGORY_LABEL"),
           Cell: ( row ) => {          
             return GetCell(`${row?.cell?.row?.original?.searchData?.["assetClassification"]}`)
             
@@ -46,7 +46,7 @@ import React from "react";
           
         },
         {
-          Header: t("AST_PARENT_CATEGORY"),
+          Header: t("AST_PARENT_CATEGORY_LABEL"),
           Cell: ({ row }) => {
             return GetCell(`${row.original?.searchData?.["assetParentCategory"]}`);
            
@@ -55,7 +55,7 @@ import React from "react";
         },
 
         {
-          Header: t("AST_NAME"),
+          Header: t("AST_NAME_LABEL"),
           Cell: ({ row }) => {
             return GetCell(`${row.original?.searchData?.["assetName"]}`);
           },
@@ -64,7 +64,7 @@ import React from "react";
 
         
         {
-          Header: t("AST_DEPARTMENT"),
+          Header: t("AST_DEPARTMENT_LABEL"),
           Cell: ({ row }) => {
             const wf = row.original?.workflowData;
             return GetCell(t(`${row?.original?.searchData?.["department"]}`));

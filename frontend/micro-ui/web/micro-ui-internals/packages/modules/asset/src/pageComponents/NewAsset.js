@@ -1682,7 +1682,7 @@ const NewAsset
 
             {formData?.asset?.assettype?.code === "IT" && (
               <React.Fragment>
-              <CardLabel>{`${t("AST_BRAND")}`}</CardLabel>
+              <CardLabel>{`${t("AST_BRAND") + " *"}`}</CardLabel>
               <TextInput
                 t={t}
                 type={"text"}
@@ -1700,7 +1700,7 @@ const NewAsset
                   title: t("PT_NAME_ERROR_MESSAGE"),
                 })}
               />
-              <CardLabel>{`${t("AST_INVOICE_DATE")}`}</CardLabel>
+              <CardLabel>{`${t("AST_INVOICE_DATE") + " *"}`}</CardLabel>
                <TextInput
               t={t}
               type={"date"}
@@ -1729,13 +1729,13 @@ const NewAsset
                 style={{ width: "50%" }}
                 ValidationRequired={false}
                 {...(validation = {
-                  isRequired: true,
+                  isRequired: false,
                   pattern: "^[a-zA-Z-.`' ]*$",
                   type: "text",
                   title: t("PT_NAME_ERROR_MESSAGE"),
                 })}
               />
-              <CardLabel>{`${t("AST_PURCHASE_COST")}`}</CardLabel>
+              <CardLabel>{`${t("AST_PURCHASE_COST") + " *"}`}</CardLabel>
               <TextInput
                 t={t}
                 type={"text"}
@@ -1752,8 +1752,9 @@ const NewAsset
                   type: "text",
                   title: t("PT_NAME_ERROR_MESSAGE"),
                 })}
+                placeholder={"In Rupees"}
               />
-              <CardLabel>{`${t("AST_PURCHASE_ORDER")}`}</CardLabel>
+              <CardLabel>{`${t("AST_PURCHASE_ORDER") + " *"}`}</CardLabel>
               <TextInput
                 t={t}
                 type={"text"}
@@ -1771,7 +1772,7 @@ const NewAsset
                   title: t("PT_NAME_ERROR_MESSAGE"),
                 })}
               />
-              <CardLabel>{`${t("AST_PURCHASE_DATE")}`}</CardLabel>
+              <CardLabel>{`${t("AST_PURCHASE_DATE") + " *"}`}</CardLabel>
               <TextInput
               t={t}
               type={"date"}
@@ -1799,7 +1800,7 @@ const NewAsset
                 style={{ width: "50%" }}
                 ValidationRequired={false}
                 {...(validation = {
-                  isRequired: true,
+                  isRequired: false,
                   pattern: "^[a-zA-Z-.`' ]*$",
                   type: "text",
                   title: t("PT_NAME_ERROR_MESSAGE"),
@@ -1817,7 +1818,7 @@ const NewAsset
                 style={{ width: "50%" }}
                 ValidationRequired={false}
                 {...(validation = {
-                  isRequired: true,
+                  isRequired: false,
                   pattern: "^[a-zA-Z-.`' ]*$",
                   type: "text",
                   title: t("PT_NAME_ERROR_MESSAGE"),
@@ -1871,7 +1872,7 @@ const NewAsset
                 style={{ width: "50%" }}
                 ValidationRequired={false}
                 {...(validation = {
-                  isRequired: true,
+                  isRequired: false,
                   pattern: "^[a-zA-Z-.`' ]*$",
                   type: "text",
                   title: t("PT_NAME_ERROR_MESSAGE"),
@@ -1881,27 +1882,9 @@ const NewAsset
               </React.Fragment>
             )}
 
-            {/* {formData?.asset?.assettype?.code === "IT" && formData?.asset?.assetparentsubCategory?.code === "DESKTOP_COMPUTERS" && (
+            {/* {formData?.asset?.assetclassification?.code === "MOVEABLE" && formData?.asset?.assetsubtype?.code === "COMPUTERS_AND_LAPTOPS" && (
               <React.Fragment>
 
-              <CardLabel>{`${t("AST_BRAND")}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="brand"
-                value={brand}
-                onChange={setBrand}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
-              />
               <CardLabel>{`${t("AST_OPERATING_SYSTEM")}`}</CardLabel>
               <TextInput
                 t={t}
@@ -1920,15 +1903,15 @@ const NewAsset
                   title: t("PT_NAME_ERROR_MESSAGE"),
                 })}
               />
-              <CardLabel>{`${t("AST_CPU")}`}</CardLabel>
+              <CardLabel>{`${t("AST_CPU_DESCRIPTION")}`}</CardLabel>
               <TextInput
                 t={t}
                 type={"text"}
                 isMandatory={false}
                 optionKey="i18nKey"
-                name="operatingSystem"
-                value={operatingSystem}
-                onChange={selectoperatingsystem}
+                name="cpu"
+                value={cpu}
+                onChange={selectcpu}
                 style={{ width: "50%" }}
                 ValidationRequired={false}
                 {...(validation = {
@@ -1976,191 +1959,9 @@ const NewAsset
                 })}
               />
 
-
-              
-              <CardLabel>{`${t("AST_INVOICE_DATE")}`}</CardLabel>
-               <TextInput
-              t={t}
-              type={"date"}
-              isMandatory={false}
-              optionKey="i18nKey"
-              name="invoiceDate"
-              value={invoiceDate}
-              onChange={setInvoiceDate}
-              style={{ width: "50%" }}
-              max={new Date().toISOString().split('T')[0]}
-              rules={{
-                required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
-              }}
-            />
-
-              <CardLabel>{`${t("AST_MANUFACTURER")}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="manufacturer"
-                value={manufacturer}
-                onChange={selectmanufacturer}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
-              />
-              <CardLabel>{`${t("AST_PURCHASE_COST")}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="purchaseCost"
-                value={purchaseCost}
-                onChange={selectpurchasecost}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
-              />
-              <CardLabel>{`${t("AST_PURCHASE_ORDER")}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="purchaseOrderNumber"
-                value={purchaseOrderNumber}
-                onChange={selectpurchaseorder}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
-              />
-              <CardLabel>{`${t("AST_PURCHASE_DATE")}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="purchaseDate"
-                value={purchaseDate}
-                onChange={selectpurchasedate}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
-              />
-              <CardLabel>{`${t("AST_CURRENT_LOCATION")}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="currentLocation"
-                value={currentLocation}
-                onChange={selectcurrentlocation}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
-              />
-              <CardLabel>{`${t("AST_ASSIGNED_USER")}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="assignedUser"
-                value={assignedUser}
-                onChange={selectassigneduser}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
-              />
-              <CardLabel>{`${t("AST_DEPARTMENT")}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="department"
-                value={department}
-                onChange={selectdepartment}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
-              />
-              <CardLabel>{`${t("AST_ASSET_AGE")}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="assetAge"
-                value={assetAge}
-                onChange={selectassetage}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
-              />
-              <CardLabel>{`${t("AST_WARRANTY")}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="warranty"
-                value={warranty}
-                onChange={selectwarranty}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
-              />
-
               </React.Fragment>
-            )} */}
-
+            )} 
+ */}
 
            
 
