@@ -237,8 +237,7 @@ export const ComplaintDetails = (props) => {
       const {data:{timeline: complaintTimelineData}={}} = workflowDetails
       if(complaintTimelineData){
         const actionByCitizenOnComplaintCreation = complaintTimelineData?.find( e => e?.performedAction === "APPLY")
-        const { thumbnailsToShow } = actionByCitizenOnComplaintCreation
-        thumbnailsToShow ? setImagesToShowBelowComplaintDetails(thumbnailsToShow) : null
+        actionByCitizenOnComplaintCreation?.thumbnailsToShow ? setImagesToShowBelowComplaintDetails(actionByCitizenOnComplaintCreation?.thumbnailsToShow) : null
       }
     }
   },[workflowDetails])

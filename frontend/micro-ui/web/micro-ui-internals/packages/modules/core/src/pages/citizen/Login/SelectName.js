@@ -140,7 +140,7 @@ const SelectName = ({ config, onSelect, t, isDisabled }) => {
             message={uploadedFile ? `1 ${t("TL_ACTION_FILEUPLOADED")}` : t("TL_ACTION_NO_FILEUPLOADED")}
             error={error}
           />
-          <ButtonSelector label="Register" onSubmit={handleSubmit} style={{ marginLeft: "10px" }} />
+          <ButtonSelector label="Register" onSubmit={handleSubmit} style={{ marginLeft: "0px" ,marginTop:"10px", width:"200px" }} />
 
 
     </Card>

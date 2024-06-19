@@ -36,7 +36,7 @@ import useNewInboxGeneral from "./useInboxGeneral/useNewInbox";
 import useDynamicData from "./useDynamicData";
 
 import useComplaintDetails from "./pgr/useComplaintDetails";
-import { useComplaintsList, useComplaintsListByMobile } from "./pgr/useComplaintList";
+import { useComplaintsList, useComplaintsListByMobile,useComplaintsListServiceRequest,useComplaintsListByServiceRequest } from "./pgr/useComplaintList";
 import useComplaintStatus from "./pgr/useComplaintStatus";
 import useComplaintTable from "./pgr/useComplaintTable";
 import useComplaintTypes from "./pgr/useComplaintTypes";
@@ -272,6 +272,8 @@ const pgr = {
   useComplaintDetails,
   useComplaintsList,
   useComplaintsListByMobile,
+  useComplaintsListServiceRequest,
+  useComplaintsListByServiceRequest,
   useComplaintStatus,
   useComplaintTable,
   useComplaintTypes,

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LinkButton } from "@upyog/digit-ui-react-components";
 
-import { LOCALIZATION_KEY } from "../../constants/Localization";
+import { LOCALIZATION_KEY } from "./Localization";
 
 import {
   Card,
@@ -19,10 +19,10 @@ import {
   Toast,
 } from "@upyog/digit-ui-react-components";
 
-import TimeLine from "../../components/TimeLine";
+import TimeLine from "./TimeLine";
 
 const WorkflowComponent = ({ complaintDetails, id, getWorkFlow, zoomImage }) => {
-  const tenantId = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code || complaintDetails.service.tenantId;
+  const tenantId = "pg.citya"
   let workFlowDetails = Digit.Hooks.useWorkflowDetails({ tenantId: tenantId, id, moduleCode: "PGR" });
   const { data: ComplainMaxIdleTime, isLoading: ComplainMaxIdleTimeLoading } = Digit.Hooks.pgr.useMDMS.ComplainClosingTime(tenantId?.split(".")[0]);
 

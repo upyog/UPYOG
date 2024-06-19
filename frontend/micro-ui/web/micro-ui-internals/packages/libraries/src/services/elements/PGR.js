@@ -7,8 +7,8 @@ export const PGRService = {
       url: Urls.pgr_search,
       useCache: false,
       method: "POST",
-      auth: true,
-      userService: true,
+      auth: false,
+      userService: false,
       params: { tenantId: tenantId, ...filters },
     });
   },
