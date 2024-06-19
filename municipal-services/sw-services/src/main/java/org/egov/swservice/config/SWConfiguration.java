@@ -201,11 +201,11 @@ private Integer defaultLimit;
     private String stateLevelTenantId;
 
     //mdms
-//    @Value("${egov.mdms.host}")
-//    private String mdmsHost;
-//
-//    @Value("${egov.mdms.search.endpoint}")
-//    private String mdmsUrl;
+    @Value("${egov.mdms.host}")
+    private String mdmsHost;
+
+    @Value("${egov.mdms.search.endpoint}")
+    private String mdmsUrl;
 
 //	@Value("${mdms.v2.host}")
 //    private String mdmsHost2;
