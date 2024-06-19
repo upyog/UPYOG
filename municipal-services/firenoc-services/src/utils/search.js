@@ -60,6 +60,10 @@ const fireNOCRowMapper = async (row, mapper = {}) => {
         addressNumber: row.paddressNumber,
         buildingName: row.pbuildingname,
         city: row.pcity,
+        areaType:row.pareatype,
+        subDistrict:row.psubdistrict,
+        addressLine2:row.addressline2,
+        landmark:row.landmark,
         locality: {
           code: row.plocality
         },
