@@ -17,11 +17,43 @@ import com.tarento.analytics.constant.Constants;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.*;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
 
 @SpringBootApplication
 @EnableCaching
 public class AnalyticApp {
+	public static void trustSelfSignedSSL() {
+		try {
+			SSLContext ctx = SSLContext.getInstance("TLS");
+			X509TrustManager tm = new X509TrustManager() {
+				public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException {
+				}
+
+				public void checkServerTrusted(X509Certificate[] xcs, String string) throws CertificateException {
+				}
+
+				public X509Certificate[] getAcceptedIssuers() {
+					return null;
+				}
+			};
+			ctx.init(null, new TrustManager[]{tm}, null);
+			SSLContext.setDefault(ctx);
+
+			// Disable hostname verification
+			HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+				public boolean verify(String hostname, javax.net.ssl.SSLSession sslSession) {
+					return true;
+				}
+			});
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 	 public static void main( String[] args ) {
+		 	trustSelfSignedSSL();
 	        SpringApplication.run(AnalyticApp.class, args);
 	    }
 
