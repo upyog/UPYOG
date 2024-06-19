@@ -32,7 +32,7 @@
       const columns = useMemo( () => ([
           
           {
-              Header: t("AST_APPLICATION_NUMBER"),
+              Header: t("ES_ASSET_RESPONSE_CREATE_LABEL"),
               accessor: "applicationNo",
               disableSortBy: true,
               Cell: ({ row }) => {
@@ -50,14 +50,14 @@
           
 
             {
-              Header: t("AST_ASSET_CATEGORY"),
+              Header: t("AST_ASSET_CATEGORY_LABEL"),
               Cell: ( row ) => {
                 return GetCell(`${row?.row?.original?.["assetClassification"]}`)
               },
               disableSortBy: true,
             },
             {
-              Header: t("AST_PARENT_CATEGORY"),
+              Header: t("AST_PARENT_CATEGORY_LABEL"),
               Cell: ({ row }) => {
                 return GetCell(`${row?.original?.["assetParentCategory"]}`)
               },
@@ -65,14 +65,14 @@
             
             },
             {
-              Header: t("AST_NAME"),
+              Header: t("AST_NAME_LABEL"),
               Cell: ({ row }) => {
                 return GetCell(`${row?.original?.["assetName"]}`)
               },
               disableSortBy: true,
             },
             {
-              Header: t("AST_DEPARTMENT"),
+              Header: t("AST_DEPARTMENT_LABEL"),
               Cell: ({ row }) => {
                 return GetCell(`${row?.original?.["department"]}`)
               },
