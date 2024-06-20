@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { ArrowRightInbox } from "./svgindex";
+import { ArrowRightInbox, MapMarker } from "./svgindex";
 import { Link } from "react-router-dom";
 
 // const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen = false, className, styles, longModuleName=false, FsmHideCount }) => {
@@ -91,7 +91,7 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
             <div className="links-wrapper" style={{ width: "100%", display: "flex", fontSize: "0.8rem", paddingLeft: "10px", flexWrap:"wrap",flexDirection:"row",paddingTop:"10px"}}>
               {links.map(({ count, label, link }, index) => (
                 <div className="link" key={index} style={{ paddingLeft: "5px", color: "#a1a5b7",display:"flex" }}>
-                  {link ? <div style={{display:"flex"}}> <Link to={link}> {label} </Link>  <span>|</span> </div>: null}
+                  {link ? <div style={{display:"flex"}}> <Link to={link} style={{color:"black"}}> {label} </Link>  <span style={{margin:"0px 5px"}}>|</span> </div>: null}
                 </div>
 
               ))}

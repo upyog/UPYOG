@@ -33,15 +33,15 @@
       display: inline;
 
       &.city {
-        margin-right: 8px;
-        height: 48px;
-        width: 48px;
+        margin-right: 20px;
+        max-height: 45px;
+        width: auto;
       }
 
       &.state {
         height: 20px;
         max-height: 20px;
-        width: auto;
+        width: 0;
       }
     }
 
