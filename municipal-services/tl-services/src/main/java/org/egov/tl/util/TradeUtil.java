@@ -220,6 +220,23 @@ public class TradeUtil {
   //      		
  //       		
  //       	}
+        	if(StringUtils.isBlank(license.getFinancialYear()))
+        			{
+        		List<Map<String,Object>> jsonOutput = JsonPath.read(mdmsData, TLConstants.MDMS_CURRENT_FINANCIAL_YEAR.replace("{}", "TL"));
+        		
+        		for(Map<String,Object> map :jsonOutput)
+        		{
+        			
+        			if(	(Boolean) map.get("active")) {
+        				log.info(map.get("code")+"");
+        				license.setFinancialYear((String)map.get("code"));
+        			break;
+        			}
+        			
+        		}
+        			
+        		
+        			}
             String jsonPath = TLConstants.MDMS_FINACIALYEAR_PATH.replace("{}",license.getFinancialYear());
             List<Map<String,Object>> jsonOutput =  JsonPath.read(mdmsData, jsonPath);
             Map<String,Object> financialYearProperties = jsonOutput.get(0);
