@@ -3,16 +3,19 @@ import { FormStep, CardLabel, Dropdown, RadioButtons, LabelFieldPair, RadioOrSel
 import Timeline from "../components/TLTimelineInFSM";
 import { useLocation } from "react-router-dom";
 
+// const Digit = window.Digit;
+
 const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
   const allCities = Digit.Hooks.fsm.useTenants();
   let tenantId = Digit.ULBService.getCurrentTenantId();
-
+  
   if (userType !== "employee") {
     tenantId = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code;
   }
   const location = useLocation();
   const isNewVendor = location.pathname.includes("new-vendor");
   const isEditVendor = location.pathname.includes("modify-vendor");
+
   const inputs = [
     {
       active: true,
@@ -28,6 +31,14 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
     },
   ];
 
+  if (formData && formData.address) {
+    // Check if propertyLocation does not exist in address
+    if (!formData.address.hasOwnProperty("propertyLocation")) {
+      // Assign default value to propertyLocation
+      formData.address.propertyLocation = inputs[0];
+    }
+  }
+
   const { pincode, city } = formData?.address || "";
   const cities =
     userType === "employee"
@@ -37,9 +48,13 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
       : allCities;
 
   const [selectedCity, setSelectedCity] = useState(
-    () => formData?.address?.city || Digit.SessionStorage.get("fsm.file.address.city") || Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")
+    () =>
+      formData?.address?.city ||
+      Digit.SessionStorage.get("fsm.file.address.city") ||
+      Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")
   );
   const [newLocality, setNewLocality] = useState();
+
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
     selectedCity?.code,
     "revenue",
@@ -48,17 +63,18 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
     },
     t
   );
-
   const { data: urcConfig } = Digit.Hooks.fsm.useMDMS(tenantId, "FSM", "UrcConfig");
-  const isUrcEnable = urcConfig && urcConfig.length > 0 && urcConfig[0].URCEnable;
-  const [selectLocation, setSelectLocation] = useState(() =>
-    formData?.address?.propertyLocation
-      ? formData?.address?.propertyLocation
-      : Digit.SessionStorage.get("locationType")
-      ? Digit.SessionStorage.get("locationType")
-      : inputs[0]
-  );
+  const isUrcEnable =
+    urcConfig && urcConfig.length > 0 && urcConfig[0].URCEnable;
 
+    const [selectLocation, setSelectLocation] = useState(() =>
+      formData?.address?.propertyLocation
+        ? formData?.address?.propertyLocation
+        : Digit.SessionStorage.get("locationType")
+        ? Digit.SessionStorage.get("locationType")
+        : inputs[0]
+    );
+  
   const [localities, setLocalities] = useState();
   const [selectedLocality, setSelectedLocality] = useState();
 
@@ -69,7 +85,7 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
       }
     }
   }, [cities]);
-
+ 
   useEffect(() => {
     if (selectedCity && selectLocation) {
       if (userType === "employee") {
@@ -80,7 +96,11 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
         });
       }
     }
-    if ((!isUrcEnable || isNewVendor || isEditVendor) && selectedCity && fetchedLocalities) {
+    if (
+      (!isUrcEnable || isNewVendor || isEditVendor) &&
+      selectedCity &&
+      fetchedLocalities
+    ) {
       let __localityList = fetchedLocalities;
       let filteredLocalityList = [];
 
@@ -89,18 +109,25 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
       }
 
       if (formData?.address?.pincode) {
-        filteredLocalityList = __localityList.filter((obj) => obj.pincode?.find((item) => item == formData.address.pincode));
+        filteredLocalityList = __localityList.filter((obj) =>
+          obj.pincode?.find((item) => item == formData.address.pincode)
+        );
         if (!formData?.address?.locality) setSelectedLocality();
       }
 
       if (userType === "employee") {
         onSelect(config.key, { ...formData[config.key], city: selectedCity });
       }
-      setLocalities(() => (filteredLocalityList.length > 0 ? filteredLocalityList : __localityList));
+      setLocalities(() =>
+        filteredLocalityList.length > 0 ? filteredLocalityList : __localityList
+      );
       if (filteredLocalityList.length === 1) {
         setSelectedLocality(filteredLocalityList[0]);
         if (userType === "employee") {
-          onSelect(config.key, { ...formData[config.key], locality: filteredLocalityList[0] });
+          onSelect(config.key, {
+            ...formData[config.key],
+            locality: filteredLocalityList[0],
+          });
         }
       }
     }
@@ -153,7 +180,9 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
   function onSubmit() {
     onSelect(config.key, {
       city: selectedCity,
-      propertyLocation: Digit.SessionStorage.get("locationType") ? Digit.SessionStorage.get("locationType") : selectLocation,
+      propertyLocation: Digit.SessionStorage.get("locationType")
+        ? Digit.SessionStorage.get("locationType")
+        : selectLocation,
     });
   }
 
@@ -170,7 +199,7 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
             isMandatory
             selected={cities?.length === 1 ? cities[0] : selectedCity}
             disable={cities?.length === 1}
-            option={cities}
+            option={cities?.sort((a, b) => a.name.localeCompare(b.name))}
             select={selectCity}
             optionKey="code"
             t={t}
@@ -180,27 +209,36 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
           <div>
             <LabelFieldPair>
               <CardLabel className="card-label-smaller">
-                {t("ES_NEW_APPLICATION_LOCATION_MOHALLA")}
-                {config.isMandatory ? " * " : null}
+                {`${t("CS_CREATECOMPLAINT_MOHALLA")} *`}
+                {/* {config.isMandatory ? " * " : null} */}
               </CardLabel>
               <Dropdown
                 className="form-field"
                 isMandatory
                 selected={selectedLocality}
-                option={localities}
+                option={localities?.sort((a, b) =>
+                  a.name.localeCompare(b.name)
+                )}
                 select={selectLocality}
                 optionKey="i18nkey"
                 t={t}
               />
             </LabelFieldPair>
             {!isNewVendor && !isEditVendor && !isUrcEnable && formData?.address?.locality?.name === "Other" && (
-              <LabelFieldPair>
-                <CardLabel className="card-label-smaller">{`${t("ES_INBOX_PLEASE_SPECIFY_LOCALITY")} *`}</CardLabel>
-                <div className="field">
-                  <TextInput id="newLocality" key="newLocality" value={newLocality} onChange={(e) => onNewLocality(e.target.value)} />
-                </div>
-              </LabelFieldPair>
-            )}
+                <LabelFieldPair>
+                  <CardLabel className="card-label-smaller">{`${t(
+                    "ES_INBOX_PLEASE_SPECIFY_LOCALITY"
+                  )} *`}</CardLabel>
+                  <div className="field">
+                    <TextInput
+                      id="newLocality"
+                      key="newLocality"
+                      value={newLocality}
+                      onChange={(e) => onNewLocality(e.target.value)}
+                    />
+                  </div>
+                </LabelFieldPair>
+              )}
           </div>
         ) : (
           <LabelFieldPair>
@@ -226,20 +264,26 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
       <Timeline currentStep={1} flow="APPLY" />
       <FormStep config={config} onSelect={onSubmit} t={t} isDisabled={selectLocation ? false : true}>
         {isUrcEnable && (
-          <React.Fragment>
+          <>
             <CardLabel>{`${t("CS_PROPERTY_LOCATION")} *`}</CardLabel>
             <RadioOrSelect
               isMandatory={config.isMandatory}
               options={inputs}
-              selectedOption={Digit.SessionStorage.get("locationType") ? Digit.SessionStorage.get("locationType") : selectLocation}
+              selectedOption={Digit.SessionStorage.get("locationType")? Digit.SessionStorage.get("locationType"): selectLocation}
               optionKey="i18nKey"
               onSelect={selectedValue}
               t={t}
             />
-          </React.Fragment>
+          </>
         )}
         <CardLabel>{`${t("MYCITY_CODE_LABEL")} *`}</CardLabel>
-        <RadioOrSelect options={cities} selectedOption={selectedCity} optionKey="i18nKey" onSelect={selectCity} t={t} />
+        <RadioOrSelect
+          options={cities?.sort((a, b) => a.name.localeCompare(b.name))}
+          selectedOption={cities?.length === 1 ? cities[0] : selectedCity}
+          optionKey="i18nKey"
+          onSelect={selectCity}
+          t={t}
+        />
       </FormStep>
     </React.Fragment>
   );
