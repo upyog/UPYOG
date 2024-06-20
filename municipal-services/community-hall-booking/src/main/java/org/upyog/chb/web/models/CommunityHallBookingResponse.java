@@ -1,6 +1,9 @@
 package org.upyog.chb.web.models;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.validation.annotation.Validated;
 
@@ -30,7 +33,15 @@ public class CommunityHallBookingResponse   {
 	private ResponseInfo responseInfo;
 	
 	@JsonProperty("hallsBookingApplication")
+	@Valid
 	private List<CommunityHallBookingDetail> hallsBookingApplication; 
+	
+	public void addNewHallsBookingApplication(CommunityHallBookingDetail bookingDetail) {
+		if(this.hallsBookingApplication == null) {
+			this.hallsBookingApplication = new ArrayList<CommunityHallBookingDetail>();
+		}
+		this.hallsBookingApplication.add(bookingDetail);
+	}
 	
 	private Integer count;
 

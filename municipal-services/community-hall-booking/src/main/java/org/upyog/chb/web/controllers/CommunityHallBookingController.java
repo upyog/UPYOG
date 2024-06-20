@@ -63,11 +63,13 @@ public class CommunityHallBookingController {
 			}
 		}
 
-		CommunityHallBookingRequest hallsBookingRequest = bookingService.createBooking(communityHallsBookingRequest);
+		CommunityHallBookingDetail bookingDetail = bookingService.createBooking(communityHallsBookingRequest);
 		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(communityHallsBookingRequest.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_CREATED,
 				StatusEnum.SUCCESSFUL);
-		CommunityHallBookingResponse communityHallResponse = CommunityHallBookingResponse.builder().responseInfo(info)
-				.hallsBookingApplication(new ArrayList<CommunityHallBookingDetail>()).build();
+		CommunityHallBookingResponse communityHallResponse = CommunityHallBookingResponse.builder()
+				.responseInfo(info)
+				.build();
+		communityHallResponse.addNewHallsBookingApplication(bookingDetail);
 		return new ResponseEntity<CommunityHallBookingResponse>(communityHallResponse, HttpStatus.OK);
 	}
 	
@@ -85,11 +87,12 @@ public class CommunityHallBookingController {
 			}
 		}
 
-		CommunityHallBookingRequest hallsBookingRequest = bookingService.createInitBooking(communityHallsBookingRequest);
+		CommunityHallBookingDetail bookingDetail = bookingService.createInitBooking(communityHallsBookingRequest);
 		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(communityHallsBookingRequest.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_CREATED,
 				StatusEnum.SUCCESSFUL);
 		CommunityHallBookingResponse communityHallResponse = CommunityHallBookingResponse.builder().responseInfo(info)
-				.hallsBookingApplication(new ArrayList<CommunityHallBookingDetail>()).build();
+				.build();
+		communityHallResponse.addNewHallsBookingApplication(bookingDetail);
 		return new ResponseEntity<CommunityHallBookingResponse>(communityHallResponse, HttpStatus.OK);
 	}
 
@@ -114,7 +117,7 @@ public class CommunityHallBookingController {
 	public ResponseEntity<CommunityHallBookingResponse> v1SearchPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
             @Valid @ModelAttribute CommunityHallBookingSearchCriteria criteria) {
 		List<CommunityHallBookingDetail> applications = bookingService.getBookingDetails(criteria);
-		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_CREATED,
+		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_LIST,
 				StatusEnum.SUCCESSFUL);
 		CommunityHallBookingResponse response = CommunityHallBookingResponse.builder().hallsBookingApplication(applications)
 				.responseInfo(info).build();

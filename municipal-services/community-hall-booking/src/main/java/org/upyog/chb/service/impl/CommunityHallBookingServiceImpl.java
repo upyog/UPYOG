@@ -8,7 +8,6 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
-import org.upyog.chb.constants.WorkflowStatus;
 import org.upyog.chb.repository.CommunityHallBookingRepository;
 import org.upyog.chb.service.CommunityHallBookingService;
 import org.upyog.chb.service.EnrichmentService;
@@ -36,7 +35,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	
 	
 	@Override
-	public CommunityHallBookingRequest createBooking(
+	public CommunityHallBookingDetail createBooking(
 			@Valid CommunityHallBookingRequest communityHallsBookingRequest) {
 		log.info("Create community hall booking for user : " + communityHallsBookingRequest.getRequestInfo().getUserInfo().getUuid());
 		
@@ -53,11 +52,11 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		//4.Persist the request using persister service
 		bookingRepository.saveCommunityHallBooking(communityHallsBookingRequest);
 		
-		return communityHallsBookingRequest;
+		return communityHallsBookingRequest.getHallsBookingApplication();
 	}
 
 	@Override
-	public CommunityHallBookingRequest createInitBooking(
+	public CommunityHallBookingDetail createInitBooking(
 			@Valid CommunityHallBookingRequest communityHallsBookingRequest) {
 		log.info("Create community hall temp booking for user : " + communityHallsBookingRequest.getRequestInfo().getUserInfo().getUuid());
 		bookingRepository.saveCommunityHallBookingInit(communityHallsBookingRequest);

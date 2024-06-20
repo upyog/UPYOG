@@ -10,9 +10,9 @@ import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 
 public interface CommunityHallBookingService {
 
-	CommunityHallBookingRequest createBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest);
+	CommunityHallBookingDetail createBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest);
 	
-	CommunityHallBookingRequest createInitBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest);	
+	CommunityHallBookingDetail createInitBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest);	
 	
 	List<CommunityHallBookingDetail> getBookingDetails(CommunityHallBookingSearchCriteria bookingSearchCriteria);
 

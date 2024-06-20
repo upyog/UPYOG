@@ -27,8 +27,13 @@ public class BookingSlotDetail {
 	@JsonProperty("hallCode")
 	private String hallCode;
 	
-	@JsonProperty("bookingSlotDatetime")
-	private Long bookingSlotDatetime = null;
+	private String hallName;
+	
+	private String bookingDate = null;
+	
+	private String bookingFromTime;
+	
+	private String bookingToTime;
 	
 	@JsonProperty("status")
 	private String status = null;
