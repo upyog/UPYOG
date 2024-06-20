@@ -34,7 +34,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
 
   Menu?.Ewaste?.ProductName &&
     Menu?.Ewaste?.ProductName.map((ewasteDetails) => {
-      menu.push({ i18nKey: `EWASTE_${ewasteDetails.code}`, code: `${ewasteDetails.code}`, value: `${ewasteDetails.name}`, price: `${ewasteDetails.price}` });
+      menu.push({ i18nKey: `EWASTE_${ewasteDetails.code}`, code: `${ewasteDetails.name}`, value: `${ewasteDetails.name}`, price: `${ewasteDetails.price}` });
     });
 
   const { control, setError, clearErrors } = useForm();

@@ -23,10 +23,11 @@ export const configEWApproverApplication = ({
     form: [
       {
         body: [
-          action?.state === "PRODUCTVERIFIED" ? (
+          action?.state === "COMPLETIONPENDING" ? (
           {
             label: t("EW_PICKUP_DATE"),
             type: "date",
+            isMandatory: true,
             populators: { 
               name: "date",
             
@@ -38,20 +39,22 @@ export const configEWApproverApplication = ({
               ),
               }    
           }) : "null",
-          action?.state === "COMPLETIONPENDING" ? (
+          action?.state === "REQUESTCOMPLETED" ? (
 
           {
             label: t("ES_EW_ACTION_TRANSACTION_ID"),
             type: "text",
+            isMandatory: true,
             populators: {
               name: "transactionId",
             },
           }): "null",
-          action?.state === "COMPLETIONPENDING" ? (
+          action?.state === "REQUESTCOMPLETED" ? (
 
           {
             label: t("ES_EW_ACTION_FINALAMOUNT"),
             type: "text",
+            isMandatory: true,
             populators: {
               name: "finalAmount",
             },

@@ -44,10 +44,10 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   // const typeOfApplication = !isEditPET && !isUpdatePET ? `new-application` : `edit-application`;
 
   const productcolumns = [
-    { Header: "PRODUCT_NAME", accessor: "name" },
-    { Header: "PRODUCT_QUANTITY", accessor: "quantity" },
-    { Header: "UNIT_PRICE", accessor: "unit_price" },
-    { Header: "TOTAL_PRODUCT_PRICE", accessor: "total_price" },
+    { Header: t("PRODUCT_NAME"), accessor: "name" },
+    { Header: t("PRODUCT_QUANTITY"), accessor: "quantity" },
+    { Header: t("UNIT_PRICE"), accessor: "unit_price" },
+    { Header: t("TOTAL_PRODUCT_PRICE"), accessor: "total_price" },
   ];
 
     const productRows = ewdet?.prlistName?.map((product, index) => (
@@ -108,7 +108,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             />
 
             <Row
-              label={t("EWASTE_EMAIL")}
+              label={t("EWASTE_EMAIL_ID")}
               text={`${t(checkForNA(ownerKey?.emailId))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/owner-details`}`} />}
             />
@@ -160,13 +160,13 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             />
 
             <Row
-              label={t("EWASTE_SEARCH_ADDRESS_LINE_1")}
+              label={t("EWASTE_SEARCH_ADDRESS_LINE1")}
               text={`${t(checkForNA(address?.addressLine1))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/street`}`} />}
             />
 
             <Row
-              label={t("EWASTE_SEARCH_ADDRESS_LINE_2")}
+              label={t("EWASTE_SEARCH_ADDRESS_LINE2")}
               text={`${t(checkForNA(address?.addressLine2))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/street`}`} />}
             />
