@@ -14,6 +14,8 @@ import org.egov.wscalculation.web.models.Connection;
 import org.egov.wscalculation.web.models.MeterConnectionRequest;
 import org.egov.wscalculation.web.models.WaterConnection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.egov.wscalculation.web.models.MeterConnectionRequests;
+import org.egov.wscalculation.web.models.MeterReadingList;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 

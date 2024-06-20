@@ -5,8 +5,11 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.egov.wscalculation.web.models.MeterConnectionRequest;
+import org.egov.wscalculation.web.models.MeterConnectionRequests;
 import org.egov.wscalculation.web.models.MeterReading;
+import org.egov.wscalculation.web.models.MeterReadingList;
 import org.egov.wscalculation.web.models.MeterReadingResponse;
+import org.egov.wscalculation.web.models.MeterReadingResponses;
 import org.egov.wscalculation.web.models.MeterReadingSearchCriteria;
 import org.egov.wscalculation.web.models.RequestInfoWrapper;
 import org.egov.wscalculation.service.MeterService;
@@ -46,6 +49,19 @@ public class MeterReadingController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 
 	}
+
+	@RequestMapping(value = "/_createmultiple", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<MeterReadingResponses> createMeterReadings(
+			@Valid @RequestBody MeterConnectionRequests meterConnectionRequests) {
+//				meterConnectionRequests.getMeterReadingslist().setGenerateDemand(Boolean.TRUE);
+		List<MeterReadingList> meterReadings = meterService.createMeterReadings(meterConnectionRequests);
+		MeterReadingResponses response = MeterReadingResponses.builder().meterReadingslist(meterReadings).responseInfo(
+				responseInfoFactory.createResponseInfoFromRequestInfo(meterConnectionRequests.getRequestInfo(), true))
+				.build();
+		return new ResponseEntity<>(response, HttpStatus.OK); 
+
+	}
+
 	
 	@RequestMapping(value = "/_search", method = RequestMethod.POST)
 	public ResponseEntity<MeterReadingResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
