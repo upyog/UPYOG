@@ -157,9 +157,9 @@ public class ElasticService implements IESService {
     public Map search(String index, String searchQuery) throws Exception {
 
         String url = indexServiceHost + index + indexServiceHostSearch;
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
+        HttpHeaders headers = getHttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+		LOGGER.info("Headers: " + headers.toString());
         LOGGER.info("searching ES for query::" + searchQuery + "::on::" + index + "::ON URL::" + url);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(searchQuery, headers);
@@ -195,9 +195,9 @@ public class ElasticService implements IESService {
 		LOGGER.info("url ## " +url);
 
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-
+		HttpHeaders headers = getHttpHeaders();
+//		headers.setContentType(MediaType.APPLICATION_JSON);
+		LOGGER.info("Headers: " + headers.toString());
 		LOGGER.info("Posting request to ES on ::" + collectionIndexName + " with doc id:: "+docId);
 
 		JsonNode request = new ObjectMapper().convertValue(requestBody, JsonNode.class);
