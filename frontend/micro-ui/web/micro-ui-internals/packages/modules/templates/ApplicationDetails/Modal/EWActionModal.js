@@ -25,21 +25,27 @@ const CloseBtn = (props) => {
 
 const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode }) => {
 
-  console.log("applicationData",applicationData);
+  console.log("snjdskbjdfbjskfjkbs",action);
   const { data: approverData, isLoading: PTALoading } = Digit.Hooks.useEmployeeSearch(
     tenantId,
     {
       roles: action?.assigneeRoles?.map?.((e) => ({ code: e })),
       isActive: true,
+   
     },
     { enabled: !action?.isTerminateState }
+
+
   );
+
+
 
 
   const [config, setConfig] = useState({});
   const [defaultValues, setDefaultValues] = useState({});
   const [approvers, setApprovers] = useState([]);
   const [selectedApprover, setSelectedApprover] = useState(null);
+  const [pickUpDate,setpickUpDate]=useState(null);
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [error, setError] = useState(null);
@@ -78,9 +84,10 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     })();
   }, [file]);
   
-
   function submit(data) {
-      let workflow = { action: action?.action, comments: data?.comments, businessService, moduleName: moduleCode };
+      let workflow = { action: action?.action, comments: data?.comments , businessService, moduleName: moduleCode };
+      console.log("applicationData",data);
+
       if (uploadedFile)
         workflow["documents"] = [
           {
@@ -89,19 +96,19 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
             filestoreId: uploadedFile,
           },
           {
-
-
-
-
-
-             
-          }
+                 }
           
         ];
+        applicationData.pickUpDate = data?.date
+        applicationData.transactionId = data?.transactionId
+        applicationData.finalAmount = data?.finalAmount
+
       submitAction({
         EwasteApplication: [
           {
+            
             ...applicationData,
+      
             workflow,
           },
         ],
@@ -128,7 +135,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       
     }
   }, [action, approvers, uploadedFile]);
-
+console.log("conggg",config)
   return action && config.form ? (
     <Modal
       headerBarMain={<Heading label={t(config.label.heading)} />}

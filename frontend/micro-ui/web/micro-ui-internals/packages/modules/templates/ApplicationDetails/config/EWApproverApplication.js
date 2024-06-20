@@ -1,18 +1,19 @@
-import { Dropdown, UploadFile } from "@upyog/digit-ui-react-components";
-import React from "react";
+import { DatePicker, UploadFile,TextInput } from "@upyog/digit-ui-react-components";
+import React, { act } from "react";
 
 export const configEWApproverApplication = ({
   t,
   action,
   approvers,
-  selectedApprover,
-  setSelectedApprover,
+  selectedDate,
+  setSelectedDate,
   selectFile,
   uploadedFile,
   setUploadedFile,
   assigneeLabel,
   businessService,
 }) => {
+  console.log("action",action)
   return {
     label: {
       heading: `WF_${action?.action}_APPLICATION`,
@@ -21,14 +22,48 @@ export const configEWApproverApplication = ({
     },
     form: [
       {
-        body: [  
+        body: [
+          action?.state === "PRODUCTVERIFIED" ? (
           {
-            label: t("ES_PTR_ACTION_COMMENTS"),
+            label: t("EW_PICKUP_DATE"),
+            type: "date",
+            populators: { 
+              name: "date",
+            
+              component: (
+                <DatePicker
+                  date={selectedDate}
+                  onChange={setSelectedDate}
+                />
+              ),
+              }    
+          }) : "null",
+          action?.state === "COMPLETIONPENDING" ? (
+
+          {
+            label: t("ES_EW_ACTION_TRANSACTION_ID"),
+            type: "text",
+            populators: {
+              name: "transactionId",
+            },
+          }): "null",
+          action?.state === "COMPLETIONPENDING" ? (
+
+          {
+            label: t("ES_EW_ACTION_FINALAMOUNT"),
+            type: "text",
+            populators: {
+              name: "finalAmount",
+            },
+          }): "null",
+          {
+            label: t("ES_EW_ACTION_COMMENTS"),
             type: "textarea",
             populators: {
               name: "comments",
             },
           },
+      
           {
             label: `${t("ES_EW_TEXT")}${action.docUploadRequired ? " *" : ""}`,
             populators: (
