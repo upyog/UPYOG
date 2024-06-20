@@ -7,6 +7,7 @@ const Urls = {
   location: {
     localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality`,
     revenue_localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Locality`,
+    gramPanchayats: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=GP`,
   },
 
   pgr_search: `/pgr-services/v2/request/_search`,
