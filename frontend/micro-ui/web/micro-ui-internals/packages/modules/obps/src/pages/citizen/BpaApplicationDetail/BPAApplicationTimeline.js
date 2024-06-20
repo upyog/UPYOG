@@ -1,6 +1,6 @@
 import React, { Fragment, useState} from "react";
 import { useTranslation } from "react-i18next";
-import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar, LinkButton } from "@egovernments/digit-ui-react-components";
+import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar, LinkButton } from "@upyog/digit-ui-react-components";
 import BPACaption from "./BPACaption";
 
 const BPAApplicationTimeline = (props) => {

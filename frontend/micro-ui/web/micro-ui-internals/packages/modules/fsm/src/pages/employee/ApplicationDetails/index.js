@@ -21,7 +21,7 @@ import {
   Header,
   ImageViewer,
   MultiLink,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 import ActionModal from "./Modal";
 import TLCaption from "../../../components/TLCaption";

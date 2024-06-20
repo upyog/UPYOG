@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useHistory, Redirect } from "react-router-dom";
 
-import { BackButton, Card, CardHeader, CardText, TextArea, SubmitBar,Toast } from "@egovernments/digit-ui-react-components";
+import { BackButton, Card, CardHeader, CardText, TextArea, SubmitBar,Toast } from "@upyog/digit-ui-react-components";
 
 import { updateComplaints } from "../../../redux/actions/index";
 import { LOCALIZATION_KEY } from "../../../constants/Localization";

@@ -1,4 +1,4 @@
-import { Card,CardLabel, CardCaption, TextInput, CardHeader, Label, StatusTable, Row, SubmitBar, Loader, FormStep } from "@egovernments/digit-ui-react-components";
+import { Card,CardLabel, CardCaption, TextInput, CardHeader, Label, StatusTable, Row, SubmitBar, Loader, FormStep } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Timeline from "../components/Timeline";

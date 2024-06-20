@@ -7,7 +7,7 @@ import {
   LabelFieldPair,
   RadioOrSelect,
   TextInput,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import Timeline from "../components/TLTimelineInFSM";
 import { useLocation } from "react-router-dom";
 

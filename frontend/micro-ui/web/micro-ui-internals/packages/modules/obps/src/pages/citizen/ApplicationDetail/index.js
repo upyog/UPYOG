@@ -1,4 +1,4 @@
-import { StatusTable, Header, Card, CardHeader, Row, PDFSvg, CardSectionHeader, MultiLink, Loader, LinkButton } from "@egovernments/digit-ui-react-components";
+import { StatusTable, Header, Card, CardHeader, Row, PDFSvg, CardSectionHeader, MultiLink, Loader, LinkButton } from "@upyog/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
