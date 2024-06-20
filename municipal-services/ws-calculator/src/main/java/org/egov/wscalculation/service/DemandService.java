@@ -203,8 +203,13 @@ public class DemandService {
 					Long toDateSearch = null;
 					String consumerCodes;
 					if (isForConnectionNo) {
-						fromDateSearch = calculation.getFrom();
-						toDateSearch = calculation.getTo();
+						if (calculation.getFrom()!=null || calculation.getTo()!=null) {
+							fromDateSearch = calculation.getFrom();
+							toDateSearch = calculation.getTo();}
+							else {
+								fromDateSearch = request.getTaxPeriodFrom();
+								toDateSearch = request.getTaxPeriodTo();	
+							}
 						consumerCodes = calculation.getConnectionNo();
 					} else {
 						consumerCodes = calculation.getApplicationNO();
