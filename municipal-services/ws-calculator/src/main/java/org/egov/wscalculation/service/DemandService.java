@@ -1583,15 +1583,20 @@ public class DemandService {
 					} else if(connectionNosIndex == connectionNos.size()-1) {
 						log.info("Last connection entered into producer logic, connectionNosCount: {} and connectionNos.size(): {}",connectionNosCount, connectionNos.size());
 
-						
-
-						
-						
-						CalculationReq calculationReq = CalculationReq.builder()
-								.calculationCriteria(calculationCriteriaList)
-								.requestInfo(requestInfo)
-								.isconnectionCalculation(true)
+						 UUID uuid = UUID.randomUUID();
+						 
+						 MigrationCount migrationCount = MigrationCount.builder().createdTime(System.currentTimeMillis())
+								.businessService("WS")
+								.id(uuid.toString())
+								.tenantid(tenantId)
 								.build();
+
+CalculationReq calculationReq = CalculationReq.builder()
+.calculationCriteria(calculationCriteriaList)
+.requestInfo(requestInfo)
+.isconnectionCalculation(true)
+.migrationCount(migrationCount)
+.build();
 						log.info("Pushing calculation last req to the kafka topic with bulk data of calculationCriteriaList size: {}", calculationCriteriaList.size());
 						wsCalculationProducer.push(configs.getCreateDemand(), calculationReq);
 						totalRecordsPushedToKafka=totalRecordsPushedToKafka+calculationCriteriaList.size();
