@@ -224,10 +224,10 @@ const Address = {
       properties: {
         code: {
           type: "string",
-          valid_boundary: true
+         // valid_boundary: true
         }
       },
-      required: ["code"]
+    //  required: ["code"]
     }
   },
  // required: ["locality", "city"]

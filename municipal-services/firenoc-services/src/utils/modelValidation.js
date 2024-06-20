@@ -79,12 +79,12 @@ export const validateFireNOCModel = (data, mdmsData) => {
     errors: false
   });
 
-  ajv.addKeyword("valid_boundary", {
+/*ajv.addKeyword("valid_boundary", {
     validate: function(schema, data) {
       return some(boundary, { code: data });
     },
     errors: false
-  });
+  });*/
 
   // ajv.addKeyword("valid_gender", {
   //   validate: function(schema, data) {

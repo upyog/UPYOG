@@ -1,19 +1,28 @@
 package org.egov.wscalculation.validator;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.coyote.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.repository.WSCalculationDao;
 import org.egov.wscalculation.service.MasterDataService;
 import org.egov.wscalculation.util.CalculatorUtil;
 import org.egov.wscalculation.web.models.MeterConnectionRequest;
+import org.egov.wscalculation.web.models.MeterConnectionRequests;
 import org.egov.wscalculation.web.models.MeterReading;
+import org.egov.wscalculation.web.models.MeterReadingList;
 import org.egov.wscalculation.web.models.MeterReadingSearchCriteria;
 import org.egov.wscalculation.web.models.WaterConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
+import ch.qos.logback.core.net.ObjectWriter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,7 +46,7 @@ public class WSCalculationValidator {
 
 	/**
 	 * 
-	 * @param meterConnectionRequest
+	 * @param meterreq
 	 *            meterReadingConnectionRequest is request for create or update
 	 *            meter reading connection
 	 * @param isUpdate
@@ -113,6 +122,9 @@ public class WSCalculationValidator {
 		}
 	}
 	
+	
+  
+    
 	/**
 	 * Billing Period Validation
 	 */

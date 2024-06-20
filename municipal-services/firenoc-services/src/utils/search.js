@@ -21,6 +21,7 @@ const fireNOCRowMapper = async (row, mapper = {}) => {
   fireNoc.provisionFireNOCNumber = row.provisionfirenocnumber;
   fireNoc.oldFireNOCNumber = row.oldfirenocnumber;
   fireNoc.dateOfApplied = intConversion(row.dateofapplied);
+  fireNoc.IsLegacy=row.islegacy;
   let auditDetails = {
     createdBy: row.createdby,
     lastModifiedBy: row.lastmodifiedby,
@@ -60,6 +61,10 @@ const fireNOCRowMapper = async (row, mapper = {}) => {
         addressNumber: row.paddressNumber,
         buildingName: row.pbuildingname,
         city: row.pcity,
+        areaType:row.pareatype,
+        subDistrict:row.psubdistrict,
+        addressLine2:row.addressline2,
+        landmark:row.landmark,
         locality: {
           code: row.plocality
         },

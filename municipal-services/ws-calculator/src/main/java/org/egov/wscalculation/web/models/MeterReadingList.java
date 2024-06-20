@@ -5,7 +5,6 @@ import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -32,13 +31,10 @@ import lombok.Setter;
 @ApiModel(description = "This is lightweight meter reading object that can be used as reference by definitions needing meterreading linking.")
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-11-12T10:46:14.653+05:30[Asia/Kolkata]")
-public class MeterReading {
-
-	@SafeHtml
+public class MeterReadingList {
 	@JsonProperty("id")
 	private String id = null;
 
-	@SafeHtml
 	@JsonProperty("billingPeriod")
 	private String billingPeriod = null;
 
@@ -96,7 +92,6 @@ public class MeterReading {
 	@JsonProperty("currentReadingDate")
 	private Long currentReadingDate = null;
 
-	@SafeHtml
 	@JsonProperty("connectionNo")
 	private String connectionNo = null;
 
@@ -110,21 +105,14 @@ public class MeterReading {
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails = null;
 
-	@SafeHtml
 	@JsonProperty("tenantId")
 	private String tenantId = null;
 
-	public MeterReading id(String id) {
+	public MeterReadingList id(String id) {
 		this.id = id;
 		return this;
 	}
 
-	
-
-    public void setMeterStatus(MeterStatusEnum meterStatusEnum) {
-        this.meterStatus = MeterStatusEnum.valueOf(meterStatusEnum.name());
-    }
-	
 	/**
 	 * Unique Identifier of the meterreading for internal reference.
 	 *
@@ -141,12 +129,12 @@ public class MeterReading {
 		this.id = id;
 	}
 
-	public MeterReading billingPeriod(String billingPeriod) {
+	public MeterReadingList billingPeriod(String billingPeriod) {
 		this.billingPeriod = billingPeriod;
 		return this;
 	}
 
-	public MeterReading connectionNo(String connectionNo) {
+	public MeterReadingList connectionNo(String connectionNo) {
 		this.connectionNo = connectionNo;
 		return this;
 	}
@@ -184,7 +172,7 @@ public class MeterReading {
 		this.billingPeriod = billingPeriod;
 	}
 
-	public MeterReading meterStatus(MeterStatusEnum meterStatus) {
+	public MeterReadingList meterStatus(MeterStatusEnum meterStatus) {
 		this.meterStatus = meterStatus;
 		return this;
 	}
@@ -201,11 +189,11 @@ public class MeterReading {
 		return meterStatus;
 	}
 
-//	public void setMeterStatus(MeterStatusEnum meterStatus) {
-//		this.meterStatus = meterStatus;
-//	}
+	public void setMeterStatus(MeterStatusEnum meterStatus) {
+		this.meterStatus = meterStatus;
+	}
 
-	public MeterReading lastReading(Double lastReading) {
+	public MeterReadingList lastReading(Double lastReading) {
 		this.lastReading = lastReading;
 		return this;
 	}
@@ -226,7 +214,7 @@ public class MeterReading {
 		this.lastReading = lastReading;
 	}
 
-	public MeterReading lastReadingDate(Long lastReadingDate) {
+	public MeterReadingList lastReadingDate(Long lastReadingDate) {
 		this.lastReadingDate = lastReadingDate;
 		return this;
 	}
@@ -247,12 +235,12 @@ public class MeterReading {
 		this.lastReadingDate = lastReadingDate;
 	}
 
-	public MeterReading currentReading(Double currentReading) {
+	public MeterReadingList currentReading(Double currentReading) {
 		this.currentReading = currentReading;
 		return this;
 	}
 
-	public MeterReading consumption(Double consumption) {
+	public MeterReadingList consumption(Double consumption) {
 		this.consumption = consumption;
 		return this;
 	}
@@ -281,7 +269,7 @@ public class MeterReading {
 		this.currentReading = currentReading;
 	}
 
-	public MeterReading currentReadingDate(Long currentReadingDate) {
+	public MeterReadingList currentReadingDate(Long currentReadingDate) {
 		this.currentReadingDate = currentReadingDate;
 		return this;
 	}
@@ -302,7 +290,7 @@ public class MeterReading {
 		this.currentReadingDate = currentReadingDate;
 	}
 
-	public MeterReading generateDemand(Boolean generateDemand) {
+	public MeterReadingList generateDemand(Boolean generateDemand) {
 		this.generateDemand = generateDemand;
 		return this;
 	}
@@ -315,7 +303,7 @@ public class MeterReading {
 		this.generateDemand = generateDemand;
 	}
 
-	public MeterReading auditDetails(AuditDetails auditDetails) {
+	public MeterReadingList auditDetails(AuditDetails auditDetails) {
 		this.auditDetails = auditDetails;
 		return this;
 	}
@@ -334,7 +322,7 @@ public class MeterReading {
 		this.auditDetails = auditDetails;
 	}
 
-	public MeterReading tenantId(String tenantId) {
+	public MeterReadingList tenantId(String tenantId) {
 		this.tenantId = tenantId;
 		return this;
 	}
@@ -356,7 +344,7 @@ public class MeterReading {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		MeterReading meterReading = (MeterReading) o;
+		MeterReadingList meterReading = (MeterReadingList) o;
 		return Objects.equals(this.id, meterReading.id)
 				&& Objects.equals(this.billingPeriod, meterReading.billingPeriod)
 				&& Objects.equals(this.meterStatus, meterReading.meterStatus)
