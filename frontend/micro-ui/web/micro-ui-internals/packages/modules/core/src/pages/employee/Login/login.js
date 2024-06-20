@@ -21,6 +21,7 @@ const setEmployeeDetail = (userObject, token) => {
 
 const Login = ({ config: propsConfig, t, isDisabled }) => {
   const { data: cities, isLoading } = Digit.Hooks.useTenants();
+  console.log("citiesssss",cities);
   const { data: storeData, isLoading: isStoreLoading } = Digit.Hooks.useStore.getInitData();
   const { stateInfo } = storeData || {};
   const [user, setUser] = useState(null);
@@ -114,7 +115,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
           isMandatory: true,
         },
         {
-          label: t(city.label),
+          label: t(city.name),
           type: city.type,
           populators: {
             name: city.name,

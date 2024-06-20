@@ -67,15 +67,28 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
         <CardSubHeader>{t("ASSET_GENERAL_DETAILS")}</CardSubHeader>
         <StatusTable>
+
         <Row
-            label={t("AST_CATEGORY")}
+            label={t("AST_FINANCIAL_YEAR")}
+            text={`${t(checkForNA(asset?.financialYear?.code))}`}
+            ////actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/owners`} />}
+
+        />
+         <Row
+            label={t("AST_SOURCE_FINANCE")}
+            text={`${t(checkForNA(asset?.sourceOfFinance?.value))}`}
+            ////actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/owners`} />}
+
+        />
+        <Row
+            label={t("AST_ASSET_CATEGORY_LABEL")}
             text={`${t(checkForNA(asset?.assetclassification?.value))}`}
             ////actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/owners`} />}
 
         />
 
         <Row
-            label={t("AST_PARENT_CATEGORY")}
+            label={t("AST_PARENT_CATEGORY_LABEL")}
             text={`${t(checkForNA(asset?.assettype?.value))}`}
            // //actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/owners`} />}
 
@@ -378,12 +391,6 @@ const CheckPage = ({ onSubmit, value = {} }) => {
           <Row
               label={t("AST_CURRENT_LOCATION")}
               text={`${t(checkForNA(assetDetails?.currentLocation))}`}
-              //actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
-
-          />
-          <Row
-              label={t("AST_DEPARTMENT")}
-              text={`${t(checkForNA(assetDetails?.department))}`}
               //actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
 
           />

@@ -6,26 +6,39 @@ import { EmployeeModuleCard, PropertyHouse } from "@upyog/digit-ui-react-compone
 const ASSETCard = () => {
   const { t } = useTranslation();
 
+  const [total, setTotal] = useState("-");
+  const { data, isLoading, isFetching, isSuccess } = Digit.Hooks.useNewInboxGeneral({
+    tenantId: Digit.ULBService.getCurrentTenantId(),
+    ModuleCode: "ASSET",
+    filters: { limit: 10, offset: 0, services: ["asset-create"] },
+
+    config: {
+      select: (data) => {
+        return {totalCount:data?.totalCount,nearingSlaCount:data?.nearingSlaCount} || "-";
+      },
+      enabled: Digit.Utils.assetAccess(),
+    },
+  });
+
+  useEffect(() => {
+    if (!isFetching && isSuccess) setTotal(data);
+  }, [isFetching]);
+
   
 
   if (!Digit.Utils.assetAccess()) {
     return null;
   }
   const links=[
-    
-    // {
-    //   label: t("ASSET_ADD"),
-    //   link: `/digit-ui/employee/asset/assetservice/new-asset`,
-    //   role: "ASSET_INITIATOR",
-    // },
+    {
+      count: isLoading ? "-" : total?.totalCount,
+      label: t("Inbox"),
+      link: `/digit-ui/employee/asset/assetservice/inbox`,
+    },
     {
       label: t("ASSET_ADD"),
       link: `/digit-ui/employee/asset/assetservice/new-assets`,
       role: "ASSET_INITIATOR",
-    },
-    {
-      label: t("Inbox"),
-      link: `/digit-ui/employee/asset/assetservice/inbox`,
     },
     {
       label: t("MY_ASSET_APPLICATION"),
@@ -34,7 +47,7 @@ const ASSETCard = () => {
     {
       label: t("AST_REPORT"),
       link: `/digit-ui/employee/asset/assetservice/report`,
-    },
+    }
    
   ]
   const ASSET_INITIATOR = Digit.UserService.hasAccess(["ASSET_INITIATOR","ASSET_VERIFIER", "ASSET_APPROVER"]) || false;
@@ -42,6 +55,11 @@ const ASSETCard = () => {
     // Icon: <PropertyHouse />,
     moduleName: t("TITLE_ASSET_MANAGEMENT"),
     kpis: [
+      {
+        count: total?.totalCount,
+        label: t("Inbox"),
+        link: `/digit-ui/employee/asset/assetservice/inbox`
+      },
       
     ],
     links:links.filter(link=>!link?.role||ASSET_INITIATOR),
