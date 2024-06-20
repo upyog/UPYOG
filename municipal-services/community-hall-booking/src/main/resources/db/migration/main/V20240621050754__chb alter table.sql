@@ -6,6 +6,7 @@ ALTER TABLE COMMUNITY_HALL_BOOKING_DETAILS
 ADD COLUMN application_no  character varying(64),
 ADD COLUMN application_date bigint,
 ADD COLUMN applicant_name  character varying(100)  NOT NULL,
+ADD COLUMN community_hall_name  character varying(200),
 ADD COLUMN applicant_email_id  character varying(100)  NOT NULL,
 ADD COLUMN applicant_mobile_no  character varying(12),
 ADD COLUMN applicant_alternate_mobile_no  character varying(12)  NOT NULL;
