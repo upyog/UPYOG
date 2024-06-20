@@ -40,12 +40,16 @@ export const FormComposer = (props) => {
   });
   const { t } = useTranslation();
   const formData = watch();
-
+  const formData1 = watch('WmsTEUploadDocuments');
+  
   useEffect(() => {
     const iseyeIconClicked = sessionStorage.getItem("eyeIconClicked");
     if (props?.appData && !(props?.appData?.ConnectionHolderDetails?.[0]?.sameAsOwnerDetails) && iseyeIconClicked && Object.keys(props?.appData)?.length > 0 && (!(_.isEqual(props?.appData?.ConnectionHolderDetails?.[0],formData?.ConnectionHolderDetails?.[0] ))) ) {
       reset({ ...props?.appData });
     }
+
+    if(props?.getDataimg){props?.getDataimg(formData1)}
+
   }, [props?.appData, formData, props?.appData?.ConnectionHolderDetails]);
 
   useEffect(() => {
@@ -55,7 +59,7 @@ export const FormComposer = (props) => {
   function onSubmit(data) {
     props.onSubmit(data);
   }
-
+  
   function onSecondayActionClick(data) {
     props.onSecondayActionClick();
   }
@@ -113,6 +117,7 @@ export const FormComposer = (props) => {
             control={control}
           />
         );
+        
       case "component":
         return (
           <Controller

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { stringReplaceAll, getPattern } from "../utils";
 import cloneDeep from "lodash/cloneDeep";
 import * as func from "../utils";
-import { useForm, Controller, useWatch } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import _ from "lodash";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";

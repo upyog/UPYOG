@@ -15,6 +15,7 @@ const CreateProperty = ({ parentRoute }) => {
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PT_CREATE_PROPERTY", {});
   let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig");
+  console.log("commonFields ",commonFields)
   const goNext = (skipStep, index, isAddMultiple, key) => {
     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
@@ -145,6 +146,7 @@ const CreateProperty = ({ parentRoute }) => {
   // commonFields=newConfig;
   /* use newConfig instead of commonFields for local development in case needed */
   commonFields = newConfig;
+  console.log("commonFields newConfig ",commonFields)
   commonFields.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });

@@ -9,12 +9,12 @@
     "node": ">=10"
   },
   "scripts": {
-    "example": "cd example && npm run start",
+    "work-management-system": "cd work-management-system && npm run start",
     "build": "microbundle-crl --compress --no-sourcemap --format cjs",
     "start": "microbundle-crl watch --no-compress --format modern,cjs",
     "prepare": "yarn build",
-    "predeploy": "cd example && yarn install && yarn run build",
-    "deploy": "gh-pages -d example/build",
+    "predeploy": "cd work-management-system && yarn install && yarn run build",
+    "deploy": "gh-pages -d work-management-system/build",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public -o dist-storybook",
     "deploy-storybook": "npm run build-storybook && surge --project dist-storybook --domain react-components-$npm_package_version.surge.sh"

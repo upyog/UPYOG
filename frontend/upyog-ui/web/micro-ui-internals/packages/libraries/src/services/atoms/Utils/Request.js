@@ -69,6 +69,8 @@ export const Request = async ({
   reqTimestamp = false,
   plainAccessRequest = null
 }) => {
+  if(url!==undefined)
+  {
   if (method.toUpperCase() === "POST") {
     const ts = new Date().getTime();
     data.RequestInfo = {
@@ -125,8 +127,8 @@ export const Request = async ({
   } else if (setTimeParam) {
     params._ = Date.now();
   }
-
-  let _url = url
+//alert(url);
+  let _url =(url===undefined)?url:url
     .split("/")
     .map((path) => {
       let key = path.split(":")?.[1];
@@ -168,6 +170,7 @@ export const Request = async ({
     window.Digit.RequestCache[key] = returnData;
   }
   return returnData;
+}
 };
 
 /**

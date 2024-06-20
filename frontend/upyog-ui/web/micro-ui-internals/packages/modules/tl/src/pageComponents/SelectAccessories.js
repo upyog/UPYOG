@@ -6,8 +6,8 @@ import Timeline from "../components/TLTimeline";
 const SelectAccessories = ({ t, config, onSelect, userType, formData }) => {
   const [isAccessories, setisAccessories] = useState(formData?.TradeDetails?.isAccessories);
   const menu = [
-    { i18nKey: "TL_COMMON_YES", code: "ACCESSORY" },
-    { i18nKey: "TL_COMMON_NO", code: "NONACCESSORY" },
+    { i18nKey: "yesssss", code: "ACCESSORY" },
+    { i18nKey: "nooooooo", code: "NONACCESSORY" },
   ];
 
   const onSkip = () => onSelect();

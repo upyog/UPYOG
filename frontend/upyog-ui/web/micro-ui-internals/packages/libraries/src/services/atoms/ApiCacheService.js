@@ -51,6 +51,7 @@ export const ApiCacheService = {
     PersistantStorage.set(storageKey, setting || defaultApiCachingSettings);
   },
   getSettingByServiceUrl: (serviceUrl, moduleName) => {
+    console.log('serviceUrl.split("/")[1] ',serviceUrl.split("/")[1])
     return getSetting(serviceUrl.split("/")[1], moduleName);
   },
 };

@@ -186,7 +186,7 @@
 }
 
 .clear-search-label {
-  color: #a82227;
+  color: #a89f22;
   cursor: pointer;
 }
 
@@ -208,7 +208,7 @@
   @apply flex mb-sm;
 
   .download-button {
-    color: #a82227;
+    color: #a89622;
     margin-left: 8px;
     white-space: nowrap;
 
@@ -216,7 +216,7 @@
 }
 
 .check-page-link-button {
-  color: #a82227 !important;
+  color: #a87e22 !important;
 }
 
 .pt-application-download-btn {
@@ -239,10 +239,10 @@
   gap: 10px;
 
   svg {
-    fill: #a82227;
+    fill: #94a822;
   }
 
-  color: #5a1166;
+  color: #dede1e;
 
   cursor: pointer;
   font-weight: 500;
@@ -540,7 +540,7 @@ input[type="number"] {
       padding: 8px 24px;
       color: white;
       cursor: pointer;
-      background-color: #a82227;
+      background-color: #a8a422;
     }
   }
 }
@@ -733,7 +733,7 @@ min-height: calc(100vh - 8em);
     background-color:#d7aefc !important;
 }
 .icon-banner-employee svg{
-  background-color:#bf2f3b !important;
+  background-color:#aebf2f !important;
   width: 40px;
   height: 40px;
 }
@@ -753,7 +753,7 @@ min-height: calc(100vh - 8em);
 }
 .employee .inboxButton{
   padding: 5px 15px;
-  background: #ba2b36
+  background: #ba8d2b
 }
 .citizen .inboxButton{
   padding: 15px;

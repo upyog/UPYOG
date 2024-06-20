@@ -237,6 +237,79 @@ import useDisconnectionWorkflow from "./ws/useDisconnectionWorkflow";
 import useDisConnectionDetails from "./ws/useDisConnectionDetails";
 import useWSModifyDetailsPage from "./ws/useWSModifyDetailsPage";
 
+import useWmsSchMDMS from "./wms/useWmsSchMDMS";
+import useWmsSchSearch from "./wms/sch/useWmsSchSearch";
+import useWmsSchCount from "./wms/sch/useWmsSchCount";
+import useWmsSchCreate from "./wms/sch/useWmsSchCreate";
+import useWmsSchUpdate from "./wms/sch/useWmsSchUpdate";
+
+import useWmsSorMDMS from "./wms/useWmsSorMDMS";
+import useWmsGenderMDMS from "./wms/useWmsGender";
+import useWmsSorSearch from "./wms/sor/useWmsSorSearch";
+import useWmsSorCount from "./wms/sor/useWmsSorCount";
+import useWmsSorCreate from "./wms/sor/useWmsSorCreate";
+import useWmsSorUpdate from "./wms/sor/useWmsSorUpdate";
+
+import useWmsPrjSearch from "./wms/prj/useWmsPrjSearch";
+import useWmsPrjCount from "./wms/prj/useWmsPrjCount";
+import useWmsPrjCreate from "./wms/prj/useWmsPrjCreate";
+import useWmsPrjUpdate from "./wms/prj/useWmsPrjUpdate";
+import useWmsMDMS from "./wms/useWmsMDMS";
+
+import useWmsPhmSearch from "./wms/phm/useWmsPhmSearch";
+import useWmsPhmCount from "./wms/phm/useWmsPhmCount";
+import useWmsPhmCreate from "./wms/phm/useWmsPhmCreate";
+import useWmsPhmUpdate from "./wms/phm/useWmsPhmUpdate";
+import useWmsPhmGet from "./wms/phm/useWmsPhmGet";
+
+import useWmsDrSearch from "./wms/dr/useWmsDrSearch";
+import useWmsDrCount from "./wms/dr/useWmsDrCount";
+import useWmsDrCreate from "./wms/dr/useWmsDrCreate";
+import useWmsDrUpdate from "./wms/dr/useWmsDrUpdate";
+
+import useWmsPrSearch from "./wms/pr/useWmsPrSearch";
+import useWmsPrCount from "./wms/pr/useWmsPrCount";
+import useWmsPrCreate from "./wms/pr/useWmsPrCreate";
+import useWmsPrUpdate from "./wms/pr/useWmsPrUpdate";
+import useWmsPrGet from "./wms/pr/useWmsPrGet";
+
+
+import useWmsMbSearch from "./wms/mb/useWmsMbSearch";
+import useWmsMbCount from "./wms/mb/useWmsMbCount";
+import useWmsMbCreate from "./wms/mb/useWmsMbCreate";
+import useWmsMbUpdate from "./wms/mb/useWmsMbUpdate";
+
+import useWmsWsrSearch from "./wms/wsr/useWmsWsrSearch";
+import useWmsWsrCount from "./wms/wsr/useWmsWsrCount";
+import useWmsWsrCreate from "./wms/wsr/useWmsWsrCreate";
+import useWmsWsrUpdate from "./wms/wsr/useWmsWsrUpdate";
+import useWmsWsrGet from "./wms/wsr/useWmsWsrGet";
+
+
+
+import useWmsPmaSearch from "./wms/pma/useWmsPmaSearch";
+import useWmsPmaCount from "./wms/pma/useWmsPmaCount";
+import useWmsPmaCreate from "./wms/pma/useWmsPmaCreate";
+import useWmsPmaUpdate from "./wms/pma/useWmsPmaUpdate";
+import useWmsPmaGet from "./wms/pma/useWmsPmaGet";
+
+
+import useWmsCMGet from "./wms/cm/useWmsCMGet";
+import useWmsCMCount from "./wms/cm/useWmsCMCount";
+import useWmsCMSearch from "./wms/cm/useWmsCMSearch";
+import useWmsCMEdit from "./wms/cm/useWmsCMEdit";
+import useWmsCMAdd from "./wms/cm/useWmsCMAdd";
+import useWMSMaster from "./wms/cm/useWMSMaster";
+import useWmsTEAdd from "./wms/TE/useWmsTEAdd";
+import useWmsTEEdit from "./wms/TE/useWmsTEEdit";
+import useWmsTEGetSingleRecord from "./wms/TE/useWmsTEGetSingleRecord";
+import useWmsTEGetRecord from "./wms/TE/useWmsTEGetRecord";
+import useWmsTESearch from "./wms/TE/useWmsTESearch";
+import useWMSTEMaster from "./wms/TE/useWMSTEMaster";
+import useWmsCAGet from "./wms/CA/useWmsCAGet";
+import useWmsCAAdd from "./wms/CA/useWmsCAAdd";
+import useWmsCAUpdate from "./wms/CA/useWmsCAUpdate";
+
 import useGetHowItWorksJSON from "./useHowItWorksJSON";
 import useGetFAQsJSON from "./useGetFAQsJSON";
 import useGetDSSFAQsJSON from "./useGetDSSFAQsJSON";
@@ -247,6 +320,12 @@ import { usePrivacyContext } from "./usePrivacyContext";
 import useToCheckPrivacyEnablement from "./ws/useToCheckPrivacyEnablement";
 import useWSConfigMDMS from "./ws/useWSConfigMDMS";
 import useFeedBackSearch from "./useFeedBackSearch";
+import useTenantsWMS from "./wms/useTenants";
+import useWmsRAFBGet from "./wms/RAFB/useWmsRAFBGet";
+import useWmsRAFBCreate from "./wms/RAFB/useWmsRAFBCreate";
+import useWmsRAFBUpdate from "./wms/RAFB/useWmsRAFBUpdate";
+
+
 
 const pgr = {
   useComplaintDetails,
@@ -483,7 +562,97 @@ const ws = {
   useToCheckPrivacyEnablement,
   useWSConfigMDMS: useWSConfigMDMS,
 };
-
+const wms = {
+  sor:{
+    useWmsSorSearch:useWmsSorSearch,
+    useWmsSorCreate:useWmsSorCreate,
+    useWmsSorUpdate:useWmsSorUpdate,
+    useWmsSorCount:useWmsSorCount
+  },
+  sch:{
+    useWmsSchSearch:useWmsSchSearch,
+    useWmsSchCreate:useWmsSchCreate,
+    useWmsSchUpdate:useWmsSchUpdate,
+    useWmsSchCount:useWmsSchCount
+  },
+  prj:{
+    useWmsPrjSearch:useWmsPrjSearch,
+    useWmsPrjCreate:useWmsPrjCreate,
+    useWmsPrjUpdate:useWmsPrjUpdate,
+    useWmsPrjCount:useWmsPrjCount
+  },
+  phm:{
+    useWmsPhmSearch:useWmsPhmSearch,
+    useWmsPhmCreate:useWmsPhmCreate,
+    useWmsPhmUpdate:useWmsPhmUpdate,
+    useWmsPhmCount:useWmsPhmCount,
+    useWmsPhmGet:useWmsPhmGet
+  },
+  mb:{
+    useWmsMbSearch:useWmsMbSearch,
+    useWmsMbCreate:useWmsMbCreate,
+    useWmsMbUpdate:useWmsMbUpdate,
+    useWmsMbCount:useWmsMbCount
+  },
+  dr:{
+    useWmsDrSearch:useWmsDrSearch,
+    useWmsDrCreate:useWmsDrCreate,
+    useWmsDrUpdate:useWmsDrUpdate,
+    useWmsDrCount:useWmsDrCount
+  },
+  pr:{
+    useWmsPrSearch:useWmsPrSearch,
+    useWmsPrCreate:useWmsPrCreate,
+    useWmsPrUpdate:useWmsPrUpdate,
+    useWmsPrCount:useWmsPrCount,
+    useWmsPrGet:useWmsPrGet
+  },
+  wsr:{
+    useWmsWsrSearch:useWmsWsrSearch,
+    useWmsWsrCreate:useWmsWsrCreate,
+    useWmsWsrUpdate:useWmsWsrUpdate,
+    useWmsWsrCount:useWmsWsrCount,
+    useWmsWsrGet:useWmsWsrGet
+  },
+  pma:{
+    useWmsPmaSearch:useWmsPmaSearch,
+    useWmsPmaCreate:useWmsPmaCreate,
+    useWmsPmaUpdate:useWmsPmaUpdate,
+    useWmsPmaCount:useWmsPmaCount,
+    useWmsPmaGet:useWmsPmaGet,
+  },
+  cm:{
+    useWmsCMGet,
+    useWmsCMCount,
+    useWmsCMSearch,
+    useWmsCMEdit,
+    useWmsCMAdd,
+    useWMSMaster
+  },
+  te:{
+    useWmsTEAdd,
+    useWmsTEEdit,
+    useWmsTEGetSingleRecord,
+    useWmsTEGetRecord,
+    useWmsTESearch,
+    useWMSTEMaster
+  },
+  ca:{
+    useWmsCAGet,
+    useWmsCAAdd,
+    useWmsCAUpdate
+  },
+  useWmsSchMDMS,
+  useWmsGenderMDMS,
+  useWmsMDMS,
+  rafb:{
+    useWmsRAFBGet,
+    useWmsRAFBCreate,
+    useWmsRAFBUpdate
+  },
+  
+  
+};
 const reports = {
   useReportMeta,
 };
@@ -538,6 +707,7 @@ const Hooks = {
   survey,
   noc,
   ws,
+  wms,
   useCustomMDMS,
   useCustomAPIHook,
   reports,
@@ -550,6 +720,7 @@ const Hooks = {
   useBulkPdfDetails,
   useBillAmendmentInbox,
   useAudit,
+  useTenantsWMS
 };
 
 export default Hooks;

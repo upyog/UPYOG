@@ -5,6 +5,8 @@ import Timeline from "../components/TLTimeline";
 import { sortDropdownNames } from "../utils/index";
 
 const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
+  debugger
+  console.log("TL SelectTradeUnits formData ",formData);
   let validation = {};
   const [TradeCategory, setTradeCategory] = useState("");
   const [TradeType, setTradeType] = useState(formData?.TadeDetails?.Units?.TradeType || "");

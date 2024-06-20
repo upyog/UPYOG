@@ -3,7 +3,7 @@ module.exports = {
     removeDeprecatedGapUtilities: true,
     purgeLayersByDefault: true,
   },
-  purge: { enabled: true, content: ["./example/index.html"] },
+  purge: { enabled: true, content: ["./work-management-system/index.html"] },
   theme: {
     screens: {
       dt: "780px",

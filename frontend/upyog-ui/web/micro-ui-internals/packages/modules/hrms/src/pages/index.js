@@ -38,7 +38,7 @@ const EmployeeApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/create`} component={() => <CreateEmployee />} />
           <PrivateRoute path={`${path}/response`} component={(props) => <HRMSResponse {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/details/:tenantId/:id`} component={() => <HRMSDetails />} />
-          <PrivateRoute path={`${path}/edit/:tenantId/:id`} component={() => <EditEmpolyee />} />
+          <PrivateRoute path={`${path}/edit/:tenantId/:sor_id`} component={() => <EditEmpolyee />} />
         </div>
       </React.Fragment>
     </Switch>

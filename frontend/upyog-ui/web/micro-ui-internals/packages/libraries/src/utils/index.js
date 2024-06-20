@@ -3,6 +3,7 @@ import * as date from "./date";
 import * as dss from "./dss";
 import * as locale from "./locale";
 import * as obps from "./obps";
+import * as wms from "./wms";
 import * as pt from "./pt";
 import * as privacy from "./privacy";
 import PDFUtil, { downloadReceipt ,downloadPDFFromLink,downloadBill ,getFileUrl} from "./pdf";
@@ -20,7 +21,7 @@ const GetParamFromUrl = (key, fallback, search) => {
 const getPattern = (type) => {
   switch (type) {
     case "Name":
-      return /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i;
+      return /^[^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i;
     case "SearchOwnerName":
       return /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{3,50}$/i;
     case "MobileNo":
@@ -81,6 +82,12 @@ const getPattern = (type) => {
       return /^[^\$\"'<>?\\\\~`!@$%^()+={}\[\]*.:;“”‘’]{1,50}$/i;
     case "OldLicenceNo":
       return /^[a-zA-Z0-9-/]{0,64}$/;
+    case "Percentage":
+      return /(^100([.]0{1,2})?)$|(^\d{1,2}([.]\d{1,2})?)$/;
+    case "AlphaNumeric":
+      return /^[a-z0-9]+$/i;
+    case "Num":
+      return /^[^{A-Z}^{a-z}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,4}$/i;
   }
 };
 
@@ -267,6 +274,15 @@ const swAccess = () => {
 };
 
 
+const wmsAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  alert(userRoles)
+  const wmsRoles = ["WMS_ADMIN","CITIZEN"];
+  const WMS_ACCESS = userRoles?.filter((role) => wmsRoles?.includes(role));
+  return true;
+  return WMS_ACCESS?.length > 0;
+};
 export default {
   pdf: PDFUtil,
   downloadReceipt,
@@ -288,6 +304,7 @@ export default {
   BPAAccess,
   dss,
   obps,
+  wms,
   pt,
   ptAccess,
   NOCAccess,
@@ -301,6 +318,6 @@ export default {
   tlAccess,
   wsAccess,
   swAccess,
-
+  wmsAccess,
   ...privacy
 };

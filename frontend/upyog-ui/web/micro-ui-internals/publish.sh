@@ -23,6 +23,8 @@ cd "$BASEDIR/packages/react-components" &&  rm -rf node_modules &&  rm -rf dist&
 # msg "Updating dependencies"
 # cd "$BASEDIR" && yarn upgrade -S @egovernments
 # sleep 5
+msg "Building and publishing wms module"
+cd "$BASEDIR/packages/modules/wms" &&  rm -rf node_modules &&  rm -rf dist && yarn build &&   npm publish --tag upyog-2.8
 
 msg "Building and publishing PGR module"
 cd "$BASEDIR/packages/modules/pgr" &&  rm -rf node_modules &&  rm -rf dist && yarn build &&   npm publish --tag upyog-2.8

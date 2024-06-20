@@ -3,7 +3,8 @@ import React, { useState, useEffect } from "react";
 import Timeline from "../components/TLTimeline";
 import { currentFinancialYear } from "../utils";
 
-const SelectTradeName = ({ t, config, onSelect, value, userType, formData }) => {
+const SelectTradeName = ({ t, config, onSelect, value, userType, formData, digitTest="testqwert" }) => {
+  alert("select trade name")
   let validation = {};
   const onSkip = () => onSelect();
   const [TradeName, setTradeName] = useState(formData.TradeDetails?.TradeName);

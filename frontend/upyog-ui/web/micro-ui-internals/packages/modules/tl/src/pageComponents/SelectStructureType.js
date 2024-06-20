@@ -3,7 +3,8 @@ import { TypeSelectCard } from "@egovernments/digit-ui-react-components";
 import { FormStep, RadioOrSelect, RadioButtons } from "@egovernments/digit-ui-react-components";
 import Timeline from "../components/TLTimeline";
 
-const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
+const SelectStructureType = ({ t, config, onSelect, userType, formData,siyaram="siyaram kumar" }) => {
+  alert("Select struct type")
   const [StructureType, setStructureType] = useState(formData?.TradeDetails?.StructureType);
   const isEdit = window.location.href.includes("/edit-application/")||window.location.href.includes("renew-trade");
   const menu = [

@@ -8,12 +8,13 @@
     "micro-ui-internals/packages/react-components",
     "micro-ui-internals/packages/modules/common",
     "micro-ui-internals/packages/modules/core",
-    "micro-ui-internals/packages/modules/dss",
-    "micro-ui-internals/packages/modules/engagement",
     "micro-ui-internals/packages/modules/pgr",
     "micro-ui-internals/packages/modules/pt",
-    "micro-ui-internals/packages/modules/tl",
-    "micro-ui-internals/packages/modules/ws"
+    "micro-ui-internals/packages/modules/fsm",
+    "micro-ui-internals/packages/modules/ws",
+    "micro-ui-internals/packages/modules/wms",
+    "micro-ui-internals/packages/modules/dss",
+    "micro-ui-internals/packages/modules/mcollect"
   ],
   "engines": {
     "node": ">=14"
@@ -21,23 +22,19 @@
   "dependencies": {
     "@upyog-niua/upyog-css": "1.0.3",
     "@egovernments/digit-ui-libraries": "1.7.0-beta.2",
-    "@egovernments/digit-ui-module-bills": "1.7.0-beta.2",
     "@egovernments/digit-ui-module-common": "1.7.0-beta.2",
     "@egovernments/digit-ui-module-core": "1.7.0-beta.2",
-    "@egovernments/digit-ui-module-engagement": "1.7.0-beta.2",
-    "@egovernments/digit-ui-module-dss": "1.7.0-beta.2",
-    "@egovernments/digit-ui-module-fsm": "1.7.0-beta.5",
-    "@egovernments/digit-ui-module-hrms": "1.7.0-beta.2",
-    "@egovernments/digit-ui-module-mcollect": "1.7.0-beta.2",
     "@egovernments/digit-ui-module-commonpt":"1.7.0-beta.2",
     "@egovernments/digit-ui-module-obps": "1.7.0-beta.2",
-    "@egovernments/digit-ui-module-noc": "1.7.0-beta.2",
     "@egovernments/digit-ui-module-pgr": "1.7.0-beta.2",
     "@egovernments/digit-ui-module-pt": "1.7.0-beta.2",
-    "@egovernments/digit-ui-module-receipts": "1.7.0-beta.2",
-    "@egovernments/digit-ui-module-tl": "1.7.0-beta.2",
+    "@egovernments/digit-ui-module-fsm": "1.7.0-beta.2",
     "@egovernments/digit-ui-module-ws": "1.7.0-beta.2",
+    "@egovernments/digit-ui-module-wms": "1.7.0-beta.2",
+    "@egovernments/digit-ui-module-dss": "1.7.0-beta.2",
+    "@egovernments/digit-ui-module-mcollect": "1.7.0-beta.2",
     "@egovernments/digit-ui-react-components": "1.7.0-beta.2",
+    
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
@@ -62,11 +59,7 @@
     "build": "GENERATE_SOURCEMAP=false SKIP_PREFLIGHT_CHECK=true react-scripts build",
     "build:prepare": "./build.sh"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app"
-    ]
-  },
+ 
   "browserslist": [
     ">0.2%",
    "not dead",
