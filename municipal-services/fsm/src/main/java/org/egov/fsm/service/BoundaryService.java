@@ -5,7 +5,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.fsm.config.FSMConfiguration;
 import org.egov.fsm.repository.ServiceRequestRepository;
 import org.egov.fsm.util.FSMErrorConstants;
@@ -20,10 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 
@@ -81,6 +77,8 @@ public class BoundaryService {
 		Map<String, String> additionalDetails = null;
 		if (additionalDetail instanceof Map) {
 			additionalDetails = additionalDetail != null ? (Map<String, String>) additionalDetail : new HashMap<>();
+		} else if (additionalDetail instanceof ObjectNode) {
+			additionalDetails = mapper.convertValue(additionalDetail, Map.class);
 		}
 		if (additionalDetails != null && additionalDetails.get("boundaryType") != null) {
 			String boundaryType = (String) additionalDetails.get("boundaryType");
