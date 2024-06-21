@@ -26,6 +26,7 @@
       const [schemeName, setschemeName] = useState(formData?.owners?.schemeName || "");
       const [transferredscheme, settransferredscheme] = useState("Pre-Approved Standard Designs" || "");
       const [rating, setrating] = useState(formData?.owners?.rating || "");
+      const [use, setUse] = useState(formData?.owners?.use || "");
 
 
       const [Ulblisttype, setUlblisttype] = useState(formData?.owners?.Ulblisttype || "");
@@ -179,6 +180,21 @@
         }
       ]
 
+      const masterdropfields = [
+        {
+          code: "RESIDENT",
+          i18nKey: "Resident"
+        },
+        {
+          code: "COMMERCIAL",
+          i18nKey: "Commercial"
+        },
+        {
+          code: "INDUSTRIAL",
+          i18nKey: "Industrial"
+        }
+      ]
+
       const tenantId = Digit.ULBService.getCurrentTenantId();
       const stateId = Digit.ULBService.getStateId();
 
@@ -194,12 +210,13 @@
 
       ULBLIST &&
       ULBLIST.map((ulbtypelist) => {
+        if(ulbtypelist?.Districts === UlbName?.code)
         ulblists.push({ i18nKey: `${ulbtypelist.code}`, code: `${ulbtypelist.code}`, value: `${ulbtypelist.name}` });
         });
 
       Menu &&
         Menu.map((districts) => {
-          if(districts.UlbType == Ulblisttype?.code)
+          // if(districts.UlbType == Ulblisttype?.code)
           menu.push({ i18nKey: `${districts.code}`, code: `${districts.code}`, value: `${districts.name}` });
         });
 
@@ -297,9 +314,15 @@
      }
 
 
+     function setuse(e) {
+      setUse(e.target.value);
+    }
+
+
+
       const goNext = () => {
         let owners = formData.owners && formData.owners[index];
-        let ownerStep = { ...owners, approvedColony, UlbName, Ulblisttype, District, rating, masterPlan, coreArea, buildingStatus, schemes, schemesselection,  purchasedFAR, greenbuilding, restrictedArea, proposedSite, nameofApprovedcolony, schemeName, transferredscheme, NocNumber, uploadedFile,greenuploadedFile };
+        let ownerStep = { ...owners, approvedColony, use, UlbName, Ulblisttype, District, rating, masterPlan, coreArea, buildingStatus, schemes, schemesselection,  purchasedFAR, greenbuilding, restrictedArea, proposedSite, nameofApprovedcolony, schemeName, transferredscheme, NocNumber, uploadedFile,greenuploadedFile };
         let updatedFormData = { ...formData };
 
         // Check if owners array exists in formData if not , then it will add it 
@@ -457,6 +480,40 @@
             return null;
         }
       }
+
+      const Master_plan_render_fields = () => {
+        switch(masterPlan?.code) {
+          case "YES":
+            return(
+              <>
+               <CardLabel>{`${t("BPA_USE")}`}</CardLabel>
+              <Controller
+                control={control}
+                name={"use"}
+                defaultValue={use}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
+                render={(props) => (
+                  <Dropdown
+                    className="form-field"
+                    selected={use}
+                    select={setUse}
+                    option={masterdropfields}
+                    optionKey="i18nKey"
+                    t={t}
+                  />
+                )}
+              />
+
+              </>
+            );
+          case "NO":
+            return null;
+
+          default:
+            return null;
+
+        }
+      };
       
       const renderschemedropdown = () => {
         switch (schemes?.code) {
@@ -473,7 +530,7 @@
                   <Dropdown
                     className="form-field"
                     selected={schemesselection}
-                    select={setschemesselection}
+                    select={setSchemeselection}
                     option={forschemes}
                     optionKey="i18nKey"
                     t={t}
@@ -585,6 +642,8 @@
                 )}
 
               />
+              {Master_plan_render_fields()}
+
                <CardLabel>{`${t("BPA_CORE_AREA")}`}</CardLabel>
               <Controller
                 control={control}
@@ -603,27 +662,7 @@
                   />
 
                 )}
-
               />
-
-              <CardLabel>{`${t("BPA_ULB_TYPE")}`}</CardLabel>
-              <Controller
-                control={control}
-                name={"Ulblisttype"}
-                defaultValue={Ulblisttype}
-                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
-                render={(props) => (
-                  <Dropdown
-
-                    className="form-field"
-                    selected={Ulblisttype}
-                    select={setUlblisttype}
-                    option={ulblists}
-                    optionKey="i18nKey"
-                    t={t}
-                  />
-                )}
-                />
 
             <CardLabel>{`${t("BPA_ULB_NAME")}`}</CardLabel>
               <Controller
@@ -633,13 +672,13 @@
                 rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
                 render={(props) => (
                   <Dropdown
-
                     className="form-field"
                     selected={UlbName}
                     select={setUlbName}
                     option={menu}
                     optionKey="i18nKey"
                     t={t}
+                    
                   />
                 )}
                 />
@@ -662,6 +701,25 @@
                   />
                 )}
               />
+
+              <CardLabel>{`${t("BPA_ULB_TYPE")}`}</CardLabel>
+              <Controller
+                control={control}
+                name={"Ulblisttype"}
+                defaultValue={Ulblisttype}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
+                render={(props) => (
+                  <Dropdown
+
+                    className="form-field"
+                    selected={Ulblisttype}
+                    select={setUlblisttype}
+                    option={ulblists}
+                    optionKey="i18nKey"
+                    t={t}
+                  />
+                )}
+                />
               <CardLabel>{`${t("BPA_BUILDING_STATUS")}`}</CardLabel>
               <Controller
                 control={control}

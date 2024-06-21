@@ -385,6 +385,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 if (formData?.owners?.uploadedFile) payload.additionalDetails.uploadedFileNoc = formData?.owners?.uploadedFile;
                 if (formData?.owners?.rating?.code) payload.additionalDetails.rating = formData?.owners?.rating?.code;
                 if (formData?.owners?.greenuploadedFile) payload.additionalDetails.uploadedFileGreenBuilding = formData?.owners?.greenuploadedFile;
+                if (formData?.owners?.use?.code) payload.additionalDetails.use = formData?.owners?.use?.code;
 
 
                 //For LandInfo
