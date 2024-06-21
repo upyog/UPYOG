@@ -2,15 +2,15 @@ import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory, useParams } from "react-router-dom";
 import {
-  // Header,
+  Header,
   ActionLinks,
-  // Card,
+  Card,
   CardSectionHeader,
   ConnectingCheckPoints,
   CheckPoint,
-  // KeyNote,
+  KeyNote,
   SubmitBar,
-  // LinkButton,
+  LinkButton,
   Loader,
   Rating,
 } from "@egovernments/digit-ui-react-components";
@@ -85,15 +85,15 @@ export const ApplicationTimeline = (props) => {
       if (checkpoint?.numberOfTrips) caption.comment = `${t("NUMBER_OF_TRIPS")}: ${checkpoint?.numberOfTrips}`;
       return <TLCaption data={caption} />;
     }
-    /* else if (checkpoint.status === "PENDING_PAYYY") {
+    else if (checkpoint.status === "PENDING_PAYYY") {
       const caption = {
         name: checkpoint?.assigner,
         mobileNumber: checkpoint?.assigner?.mobileNumber,
         date: `${t("CS_FSM_EXPECTED_DATE")} ${Digit.DateUtils.ConvertTimestampToDate(props.application?.possibleServiceDate)}`,
       };
-      return <TLCaption data={caption} />; */
+      return <TLCaption data={caption} />;
   };
-// }
+}
 
   const showNextActions = (nextAction) => {
     switch (nextAction?.action) {
@@ -106,7 +106,7 @@ export const ApplicationTimeline = (props) => {
                 state: { tenantId: props.application.tenantId },
               }}
             >
-              <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
+              {window.location.href.includes("citizen/fsm/") && <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />}
             </Link>
           </div>
         );
@@ -124,8 +124,10 @@ export const ApplicationTimeline = (props) => {
   if (isLoading) {
     return <Loader />;
   }
+  const toggleTimeline=()=>{
+    setShowAllTimeline((prev)=>!prev);
+  }
 
-/*
   let deepCopy = _.cloneDeep( data )
 let index1 =0
 deepCopy?.timeline.map((check,index) => {
@@ -137,7 +139,7 @@ deepCopy?.timeline.map((check,index) => {
       data.timeline[index].status ="ASSING_DSO_PAY"
       data.timeline.splice(index, 0, obj);
   }
-}) */
+})
   return (
     <React.Fragment>
       {!isLoading && (
@@ -148,8 +150,7 @@ deepCopy?.timeline.map((check,index) => {
             </CardSectionHeader>
           )}
           {data?.timeline && data?.timeline?.length === 1 ? (
-            <CheckPoint isCompleted={true} label={t("CS_COMMON_" + data?.timeline[0]?.status)} customChild={getTimelineCaptions(data?.timeline[0])} />
-            
+            <CheckPoint isCompleted={true} label={t("CS_COMMON_FSM_" + `${data?.timeline[0]?.performedAction === "UPDATE" ? "UPDATE_" : ""}` + data?.timeline[0]?.status)} customChild={getTimelineCaptions(data?.timeline[0])} />            
           ) : (
             <ConnectingCheckPoints>
               {data?.timeline &&
@@ -159,7 +160,7 @@ deepCopy?.timeline.map((check,index) => {
                       <CheckPoint
                         keyValue={index}
                         isCompleted={index === 0}
-                        label={t("CS_COMMON_" + checkpoint.status)}
+                        label={t("CS_COMMON_" +  `${checkpoint?.performedAction === "UPDATE" ? "UPDATE_" : ""}` + checkpoint.status)}
                         customChild={getTimelineCaptions(checkpoint)}
                       />
                     </React.Fragment>

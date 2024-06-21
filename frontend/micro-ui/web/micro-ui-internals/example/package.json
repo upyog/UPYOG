@@ -12,7 +12,7 @@
     "@egovernments/digit-ui-module-bills": "1.7.24",
     "@egovernments/digit-ui-module-common": "1.7.24",
     "@egovernments/digit-ui-module-engagement": "1.7.24",
-    "@egovernments/digit-ui-module-fsm": "1.7.29",
+    "@egovernments/digit-ui-module-fsm": "1.7.30",
     "@egovernments/digit-ui-module-mcollect": "1.7.24",
     "@egovernments/digit-ui-module-noc": "1.7.24",
     "@egovernments/digit-ui-module-obps": "1.7.25",
