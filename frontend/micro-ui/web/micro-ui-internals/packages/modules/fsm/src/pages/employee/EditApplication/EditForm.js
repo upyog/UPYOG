@@ -213,7 +213,7 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
           longitude: data?.address?.longitude ? data?.address?.longitude : applicationData.address.geoLocation.longitude,
         },
         additionalDetails: {
-          boundaryType: propertyLocation === "FROM_GRAM_PANCHAYAT" ? (village?.code ? "Village" : "GP") : "Locality",
+          boundaryType: propertyLocation === "FROM_GRAM_PANCHAYAT" ? "GP" : "Locality",
           gramPanchayat: {
             code: gramPanchayat?.code,
             name: gramPanchayat?.name,
