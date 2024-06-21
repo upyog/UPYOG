@@ -223,6 +223,8 @@ public class EstimationService {
 				throw new CustomException("BILLING_SLAB_NOT_FOUND", "Billing Slab are Empty");
 			List<BillingSlab> mappingBillingSlab;
 			try {
+				
+				log.info(billingSlabMaster.get(WSCalculationConstant.WC_BILLING_SLAB_MASTER).toJSONString());
 				mappingBillingSlab = mapper.readValue(
 						billingSlabMaster.get(WSCalculationConstant.WC_BILLING_SLAB_MASTER).toJSONString(),
 						mapper.getTypeFactory().constructCollectionType(List.class, BillingSlab.class));
