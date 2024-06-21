@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.time.*; 
+import java.time.temporal.*;
 
 import static org.egov.tl.util.TLConstants.*;
 import static org.egov.tl.util.TLConstants.COMMON_MASTERS_MODULE;
@@ -221,22 +223,13 @@ public class TradeUtil {
  //       		
  //       	}
         	if(StringUtils.isBlank(license.getFinancialYear()))
-        			{
-        		List<Map<String,Object>> jsonOutput = JsonPath.read(mdmsData, TLConstants.MDMS_CURRENT_FINANCIAL_YEAR.replace("{}", "TL"));
+        	{
+        		LocalDate today = LocalDate.now();
+                int year = today.getYear();
+                String financialYear = (year) + "-" + (year % 100 + 1);
         		
-        		for(Map<String,Object> map :jsonOutput)
-        		{
-        			
-        			if(	(Boolean) map.get("active")) {
-        				log.info(map.get("code")+"");
-        				license.setFinancialYear((String)map.get("code"));
-        			break;
-        			}
-        			
-        		}
-        			
-        		
-        			}
+        		license.setFinancialYear(financialYear);
+        	}
             String jsonPath = TLConstants.MDMS_FINACIALYEAR_PATH.replace("{}",license.getFinancialYear());
             List<Map<String,Object>> jsonOutput =  JsonPath.read(mdmsData, jsonPath);
             Map<String,Object> financialYearProperties = jsonOutput.get(0);
