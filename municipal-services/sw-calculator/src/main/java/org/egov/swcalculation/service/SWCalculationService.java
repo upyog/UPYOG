@@ -13,7 +13,7 @@ public interface SWCalculationService {
 	
 	List<Calculation> getCalculation(CalculationReq request);
 	
-	void generateDemandBasedOnTimePeriod(RequestInfo requestInfo);
+//	void generateDemandBasedOnTimePeriod(RequestInfo requestInfo);
 	
 	void generateSingleDemand(SingleDemand singledemand);
 	
