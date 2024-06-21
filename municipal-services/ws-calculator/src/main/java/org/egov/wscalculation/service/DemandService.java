@@ -399,9 +399,13 @@ public class DemandService {
 	private List<Demand> createDemand(CalculationReq calculationReq, List<Calculation> calculations,
 			Map<String, Object> masterMap, boolean isForConnectionNO) {
 		List<Demand> demands = new LinkedList<>();
+		List<Demand> demandsSw = new LinkedList<>();
+		List<Demand> demandReq = new LinkedList<>();
 		Set<String> waterConnectionIds = new HashSet<>();
-
+		List<Demand> demandsForMetered = new LinkedList<>();
 		RequestInfo requestInfo = calculationReq.getRequestInfo();
+		String sewConsumerCode= "";
+		String businessServices= "";
 
 		for (Calculation calculation : calculations) {
 			WaterConnection connection = calculation.getWaterConnection();
@@ -424,6 +428,7 @@ public class DemandService {
 			}
 			owner = getPlainOwnerDetails(requestInfo, owner.getUuid(), tenantId);
 			List<DemandDetail> demandDetails = new LinkedList<>();
+			List<DemandDetail> demandDetails1 = new LinkedList<>();
 			calculation.getTaxHeadEstimates().forEach(taxHeadEstimate -> {
 				demandDetails.add(DemandDetail.builder().taxAmount(taxHeadEstimate.getEstimateAmount())
 						.taxHeadMasterCode(taxHeadEstimate.getTaxHeadCode()).collectionAmount(BigDecimal.ZERO)
@@ -463,6 +468,51 @@ public class DemandService {
 					.taxPeriodTo(toDate).consumerType("waterConnection").businessService(businessService)
 					.status(StatusEnum.valueOf("ACTIVE")).billExpiryTime(expiryDate)
 					.additionalDetails(additionalDetailsMap).build());
+			
+			
+			
+			// For the metered connections demand has to create one by one
+						if (WSCalculationConstant.meteredConnectionType.equalsIgnoreCase(connection.getConnectionType())) {
+							demandReq.addAll(demands);
+							if(tenantId.equalsIgnoreCase("pb.amritsar") && demands.get(0).getBusinessService().equalsIgnoreCase("WS") ) {
+								List<String> usageCategory = waterCalculatorDao.fetchUsageCategory(demands.get(0).getConsumerCode());
+								if(usageCategory.size()>0) {
+									if(usageCategory.get(0).equals("NONRESIDENTIAL.COMMERCIAL")) {							
+										List<String> sewConsumerList = waterCalculatorDao.fetchSewConnection(demands.get(0).getConsumerCode());
+										if(sewConsumerList.size()>0) {
+											sewConsumerCode=sewConsumerList.get(0);								
+										}
+									}						
+								}				
+								businessServices ="SW";					
+								for(DemandDetail ddSew : demandDetails) {
+									DemandDetail dd1  = new DemandDetail();
+									dd1.setTaxHeadMasterCode("SW_CHARGE");
+									dd1.setDemandId(ddSew.getDemandId());
+									dd1.setAuditDetails(ddSew.getAuditDetails());
+									dd1.setCollectionAmount(ddSew.getCollectionAmount());
+									dd1.setId(ddSew.getId());
+									dd1.setTaxAmount(ddSew.getTaxAmount());
+									dd1.setTenantId(ddSew.getTenantId());						
+									demandDetails1.add(dd1);
+								}
+								
+								
+								demandsSw.add(Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner)
+										.minimumAmountPayable(minimumPayableAmount).tenantId(tenantId).taxPeriodFrom(fromDate)
+										.taxPeriodTo(toDate).consumerType("sewerageConnection").businessService(businessService)
+										.status(StatusEnum.valueOf("ACTIVE")).billExpiryTime(expiryDate)
+										.additionalDetails(additionalDetailsMap).build());
+								
+
+								demandReq.addAll(demandsSw);
+							}
+						} else {
+							demandReq.addAll(demands);
+						}
+						List<String> consumerCodes= new ArrayList<String>();
+						consumerCodes.add(sewConsumerCode);
+						waterCalculatorDao.updateBillStatus(consumerCodes,"SW", "EXPIRED");
 		}
 
 		String billingcycle = calculatorUtils.getBillingCycle(masterMap);
@@ -470,7 +520,7 @@ public class DemandService {
 				.tenantId(calculations.get(0).getTenantId()).waterConnectionIds(waterConnectionIds)
 				.billingCycle(billingcycle).build();
 		log.info("Demand Input for WSREconnection is " + demands);
-		List<Demand> demandRes = demandRepository.saveDemand(requestInfo, demands, notificationObj);
+		List<Demand> demandRes = demandRepository.saveDemand(requestInfo, demandReq, notificationObj);
 		log.info("Demand Response for WSREconnection is " + demandRes);
 
 		if (calculationReq.getIsReconnectionRequest())
