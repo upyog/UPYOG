@@ -41,7 +41,7 @@ export const searchApiResponse = async (request, next = {}) => {
     });
     return;
   }
-  console.log("QUERY OBJECT --> "+JSON.stringify(queryObj));
+  console.log("QUERY OBJECT Test--> "+JSON.stringify(queryObj));
   let text =
     " SELECT * FROM (SELECT FN.uuid as FID,FN.tenantid,FN.fireNOCNumber,FN.islegacy,FN.provisionfirenocnumber,FN.oldfirenocnumber,FN.dateofapplied,FN.createdBy,FN.createdTime,FN.lastModifiedBy,FN.lastModifiedTime,FD.uuid as firenocdetailsid,FD.action,FD.applicationnumber,FD.fireNOCType,FD.applicationdate,FD.financialYear,FD.firestationid,FD.issuedDate,FD.validFrom,FD.validTo,FD.action,FD.status,FD.channel,FD.propertyid,FD.noofbuildings,FD.additionaldetail,FBA.uuid as puuid,FBA.doorno as pdoorno,FBA.latitude as platitude,FBA.longitude as plongitude,FBA.buildingName as pbuildingname,FBA.addressnumber as paddressnumber,FBA.pincode as ppincode,FBA.locality as plocality,FBA.landmark as landmark, FBA.addressline2,FBA.city as pcity, FBA.areatype as pareatype, FBA.subdistrict as psubdistrict, FBA.street as pstreet,FB.uuid as buildingid ,FB.name as buildingname,FB.usagetype,FB.usagesubtype,FB.leftsurrounding,FB.rightsurrounding,FB.frontsurrounding,FB.backsurrounding,FB.landarea,FB.totalcoveredarea,FB.parkingarea,FO.uuid as ownerid,FO.ownertype,FO.useruuid,FO.relationship,FUOM.uuid as uomuuid,FUOM.code,FUOM.value,FUOM.activeuom,FBD.uuid as documentuuid,FUOM.active,FBD.documentType,FBD.filestoreid,FBD.documentuid,FBD.createdby as documentCreatedBy,FBD.lastmodifiedby as documentLastModifiedBy,FBD.createdtime as documentCreatedTime,FBD.lastmodifiedtime as documentLastModifiedTime FROM eg_fn_firenoc FN JOIN eg_fn_firenocdetail FD ON (FN.uuid = FD.firenocuuid) JOIN eg_fn_address FBA ON (FD.uuid = FBA.firenocdetailsuuid) JOIN eg_fn_owner FO ON (FD.uuid = FO.firenocdetailsuuid) JOIN eg_fn_buidlings FB ON (FD.uuid = FB.firenocdetailsuuid) JOIN eg_fn_buildinguoms FUOM ON (FB.uuid = FUOM.buildinguuid) LEFT OUTER JOIN eg_fn_buildingdocuments FBD on(FB.uuid = FBD.buildinguuid)";
   // FBD.active=true AND FO.active=true AND FUOM.active=true AND";
@@ -189,23 +189,63 @@ export const searchApiResponse = async (request, next = {}) => {
 
   if (queryKeys) {
     queryKeys.forEach(item => {
-      if (queryObj[item]) {
-        if (
-          item != "fromDate" &&
+     if (queryObj[item]) {
+      if (
+      item != "fromDate" &&
           item != "toDate" &&
           item != "tenantId" &&
-           item != "status" &&
+            item != "status" &&
           item != "ids" &&
           item != "mobileNumber" &&
-          item != "offset" &&
-          item != "limit"
+             item != "offset" &&
+             item !="limit"
         ) {
-          queryObj[item]=queryObj[item].toUpperCase();
-          sqlQuery = `${sqlQuery} ${item}='${queryObj[item]}' AND`;
-        }
-      }
-    });
+      sqlQuery = `${sqlQuery} ${item}= '${queryObj[item]}' AND`;
+     // console.log("jghghghg")
+     }
+    }
+ });
+ }
+
+ 
+ const offset= queryObj.offset ? queryObj["offset"] : "";
+ const limit = queryObj["limit"] ? queryObj["limit"]: "";
+
+
+ if(queryObj.hasOwnProperty("city"))
+{     
+
+ sqlQuery=`${sqlQuery}  FBA.city='${queryObj.city}' AND`;
+
+}
+
+
+if(queryObj.hasOwnProperty("fireNOCType"))
+{     
+  console.log("shdgsfdshdshfdv")
+ sqlQuery=`${sqlQuery}  FD.firenoctype='${queryObj.fireNOCType}' AND`;
+
+}
+if(queryObj.hasOwnProperty("status"))
+  {     
+  
+   sqlQuery=`${sqlQuery}  FD.status='${queryObj.status}' AND`;
+  
   }
+
+if(queryObj.hasOwnProperty("areaType"))
+{     
+
+ sqlQuery=`${sqlQuery}  FBA.areatype='${queryObj.areaType}' AND`;
+
+}
+
+if(queryObj.hasOwnProperty("subDistrict"))
+{     
+
+ sqlQuery=`${sqlQuery}  FBA.subdistrict='${queryObj.subDistrict}' AND`;
+
+}
 
   if (
     queryObj.hasOwnProperty("fromDate") &&
@@ -247,13 +287,13 @@ export const searchApiResponse = async (request, next = {}) => {
   sqlQuery = `${sqlQuery.substring(0, sqlQuery.length - 3)}  ) s ORDER BY fid `;
 }
 
-  //console.log("SQL QUery:" +sqlQuery);
+  console.log("SQL QUery:" +sqlQuery);
   const dbResponse = await db.query(sqlQuery);
-  console.log("dbResponse"+JSON.stringify(dbResponse));
+  //console.log("dbResponse"+JSON.stringify(dbResponse));
   if (dbResponse.err) {
     console.log(err.stack);
   } else {
-    console.log(JSON.stringify(dbResponse.rows));
+   // console.log(JSON.stringify(dbResponse.rows));
     response.FireNOCs =
       dbResponse.rows && !isEmpty(dbResponse.rows)
         ? await mergeSearchResults(
