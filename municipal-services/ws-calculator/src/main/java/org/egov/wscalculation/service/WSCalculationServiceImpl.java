@@ -302,7 +302,7 @@ if(category!=null)
 		}
 
 		BigDecimal totalAmount = taxAmt.add(penalty).add(rebate).add(exemption).add(waterCharge).add(fee);
-		return Calculation.builder().totalAmount(totalAmount).taxAmount(taxAmt).penalty(penalty).exemption(exemption)
+		return Calculation.builder().totalAmount(totalAmount).taxAmount(taxAmt).penalty(penalty).exemption(exemption).from(fromDate).to(toDate)
 				.charge(waterCharge).fee(fee).waterConnection(waterConnection).rebate(rebate).tenantId(criteria.getTenantId())
 				.taxHeadEstimates(estimates).billingSlabIds(billingSlabIds).connectionNo(criteria.getConnectionNo()).applicationNO(criteria.getApplicationNo())
 				.build();
