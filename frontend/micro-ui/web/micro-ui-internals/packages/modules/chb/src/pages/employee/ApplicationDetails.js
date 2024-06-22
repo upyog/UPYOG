@@ -38,7 +38,7 @@
         tenantId: applicationDetails?.applicationData?.tenantId || tenantId,
         id: applicationDetails?.applicationData?.applicationData?.applicationNumber,
         moduleCode: businessService,
-        role: "PT_CEMP",
+        role: "CHB_APPROVER",
       });
 
       console.log("workkkkflooowowow",workflowDetails);

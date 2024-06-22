@@ -3,7 +3,6 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
 import CHBSlotDetails from "./pageComponents/CHBSlotDetails";
-import CHBDocumentUpload from "./pageComponents/CHBDocumentUpload";
 import CHBCreate from "./pages/citizen/Create";
 import CHBCitizenDetails from "./pageComponents/CHBCitizenDetails";
 import CHBBankDetails from "./pageComponents/CHBBankDetails";
@@ -42,7 +41,6 @@ const componentsToRegister = {
   AcknowledgementCF,
   CitizenFeedback,
   CHBCreate: CHBCreate,
-  CHBDocumentUpload,
   CHBCitizenDetails,
   CHBSlotDetails,
   CHBBankDetails,

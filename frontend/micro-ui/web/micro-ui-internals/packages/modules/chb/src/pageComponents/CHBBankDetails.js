@@ -1,10 +1,11 @@
-import { CardLabel, FormStep, LabelFieldPair, TextInput } from "@upyog/digit-ui-react-components";
+import { CardLabel, FormStep, LabelFieldPair, TextInput,Card,CardSubHeader } from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import Timeline from "../components/CHBTimeline";
+import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 
-const CHBBankDetails = ({ t, config, onSelect, userType, formData, formState, setError, clearErrors }) => {
+const CHBBankDetails = ({ t, config, onSelect, userType, formData, formState, setError, clearErrors,value=formData.slotlist }) => {
   const onSkip = () => onSelect();
   const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
   const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger } = useForm();
@@ -153,6 +154,19 @@ const CHBBankDetails = ({ t, config, onSelect, userType, formData, formState, se
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline currentStep={3}/> : null}
+    <Card>
+      <CardSubHeader>{value?.bookingSlotDetails.map((slot) =>(
+        <div>
+        {slot.name}
+       </div>
+    
+    // <div key={index}>
+    //   {slot.name}
+    //   {/* ({slot.date1}) */}
+    // </div>
+  ))}</CardSubHeader>
+  <ChbCancellationPolicy/>
+      </Card>
     <FormStep
       config={{ ...config, inputs }}
       _defaultValues={{

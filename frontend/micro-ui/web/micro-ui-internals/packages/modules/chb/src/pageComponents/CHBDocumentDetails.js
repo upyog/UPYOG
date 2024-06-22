@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair,Card,CardSubHeader} from "@upyog/digit-ui-react-components";
 import Timeline from "../components/CHBTimeline";
 
-const CHBDocumentDetails = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {
+const CHBDocumentDetails = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState,value=formData.slotlist}) => {
   const tenantId = Digit.ULBService.getStateId();
   const [documents, setDocuments] = useState(formData?.documents?.documents || []);
   const [error, setError] = useState(null);
@@ -45,6 +45,18 @@ const CHBDocumentDetails = ({ t, config, onSelect, userType, formData, setError:
   return (
     <div>
       <Timeline currentStep={4} />
+      <Card>
+      <CardSubHeader>{value?.bookingSlotDetails.map((slot) =>(
+         <div>
+         {slot.name}
+        </div>
+     
+    // <div key={index}>
+    //   {slot.name}
+    //   {/* ({slot.date1}) */}
+    // </div>
+  ))}</CardSubHeader>
+      </Card>
       {!isLoading ? (
         <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} onAdd={onAdd}>
         {/* <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={enableSubmit} onAdd={onAdd}> */}

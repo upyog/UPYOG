@@ -25,11 +25,13 @@ export const sethallDetails = (data) => {
   let { slotlist } = data;
   let hallDetails = slotlist?.bookingSlotDetails.map((slot) => {
     return { 
-      slotId:slot.slotId,
-      hallCode: slot.hallCode,
-      hallName: slot.hallName,
-      bookingSlotDatetime:slot.date1,
-      status:slot.status,
+      bookingId:slot.slotId,
+      hallCode: slot.slotId,
+      bookingDate:"20-06-2024",
+      bookingFromTime:"10:00",
+      bookingToTime:"9:59",
+      hallName: slot.name,
+      status:"Available",
     };
   }) || [];
 
@@ -62,9 +64,9 @@ export const setOwnerDetails = (data) => {
     let propOwners = {
       ...ownerss,
       applicantName:ownerss?.applicantName,
-      mobileNumber:ownerss?.mobileNumber,
-      alternateNumber:ownerss?.alternateNumber,
-      emailId:ownerss?.emailId,
+      applicantMobileNo:ownerss?.mobileNumber,
+      applicantAlternateMobileNo:ownerss?.alternateNumber,
+      applicantEmailId:ownerss?.emailId,
     };
   
     data.ownerss = propOwners;
@@ -76,7 +78,6 @@ export const setOwnerDetails = (data) => {
   
     let bookingSlotDetails = {
       ...slots,
-      selectslot:slots?.selectslot?.value,
       type:slots?.residentType?.value,
       category:slots?.specialCategory?.value,
       purposes:slots?.purpose?.value,
@@ -113,8 +114,11 @@ export const CHBDataConvert = (data) => {
 const formdata={
   hallsBookingApplication: {
     tenantId: data.tenantId,
+    applicantName:data.ownerss?.applicantName,
+    applicantMobileNo:data.ownerss?.mobileNumber,
+    applicantAlternateMobileNo:data.ownerss?.alternateNumber,
+    applicantEmailId:data.ownerss?.emailId,
     bankDetails:data.bankdetails,
-    applicantDetails:data.ownerss,
     purposeDescription:data.slots?.purposeDescription,
     specialCategory:{
       category:data.slots?.specialCategory?.value
@@ -126,7 +130,8 @@ const formdata={
       purpose:data.slots?.purpose?.value
     },
     bookingSlotDetails:data?.slotlist,
-    uploadedDocumentDetails:data.documents || [],
+    // uploadedDocumentDetails:data.documents || [],
+    uploadedDocumentDetails:[],
 
   workflow : {
       businessService: "chb",
