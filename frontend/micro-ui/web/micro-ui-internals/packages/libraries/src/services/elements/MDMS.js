@@ -673,6 +673,22 @@ const getChbResidentTypeList = (tenantId, moduleCode, type) => ({
     ],
   },
 });
+const getChbHallCodeList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "HallCode",
+          },
+        ],
+      },
+    ],
+  },
+});
 
 const getChbPurposeList = (tenantId, moduleCode, type) => ({
   type,
@@ -1468,6 +1484,15 @@ const GetPropertySubtype = (MdmsRes) =>
     //return MdmsRes;
   };
   
+  const getChbHallCode = (MdmsRes) => {
+    return MdmsRes["CHB"].HallCode.filter((HallCode) => HallCode.active).map((chbHallCodeDetails) => {
+      return {
+        ...chbHallCodeDetails,
+        i18nKey: `CHB_HALL_CODE_${chbHallCodeDetails.code}`,
+      };
+    });
+  };
+  
   const getChbPurpose= (MdmsRes) => {
     return MdmsRes["CHB"].Purpose.filter((Purpose) => Purpose.active).map((chbPurposeDetails) => {
       return {
@@ -1984,6 +2009,9 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
     case "ChbResidentType":
       return getChbResidentType(MdmsRes);
 
+    case "ChbHallCode":
+      return getChbHallCode(MdmsRes);
+
     case "ChbPurpose":
       return getChbPurpose(MdmsRes);
 
@@ -2186,6 +2214,9 @@ export const MdmsService = {
   },
   getChbResidentType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getChbResidentTypeList(tenantId, moduleCode, type), moduleCode);
+  },
+  getChbHallCode: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getChbHallCodeList(tenantId, moduleCode, type), moduleCode);
   },
 
   getChbPurpose: (tenantId, moduleCode, type) => {

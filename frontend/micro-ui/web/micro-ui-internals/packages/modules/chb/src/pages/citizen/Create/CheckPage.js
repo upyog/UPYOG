@@ -1,6 +1,7 @@
 import {
   Card,
   CardHeader,
+  CardSectionHeader,
   CardSubHeader,
   CardText,
   CheckBox,
@@ -34,13 +35,13 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   const { t } = useTranslation();
   const history = useHistory();
   
-  const columns = [
-    { Header: "Hall Name", accessor: "hallName" },
-    { Header: "Hall Code", accessor: "hallCode" },
-    { Header: "Start Date", accessor: "date1" },
-    { Header: "End Date", accessor: "date2" },
-    { Header: "Status", accessor: "status" },
-  ];
+  // const columns = [
+  //   { Header: "Hall Name", accessor: "hallName" },
+  //   { Header: "Hall Code", accessor: "hallCode" },
+  //   { Header: "Start Date", accessor: "date1" },
+  //   { Header: "End Date", accessor: "date2" },
+  //   { Header: "Status", accessor: "status" },
+  // ];
   
 
   
@@ -57,15 +58,15 @@ const CheckPage = ({ onSubmit, value = {} }) => {
    
   } = value;
 
-  const productRows = slotlist?.bookingSlotDetails.map((name) => (
-    {
-      hallName:  name.hallName,
-      hallCode: name.hallCode,
-      date1: name.date1,
-      date2: name.date2,
-      status: name.status,
-    }
-)) || [];
+//   const productRows = slotlist?.bookingSlotDetails.map((name) => (
+//     {
+//       hallName:  name.hallName,
+//       hallCode: name.hallCode,
+//       date1: name.date1,
+//       date2: name.date2,
+//       status: name.status,
+//     }
+// )) || [];
 
   const typeOfApplication = !isEditCHB && !isUpdateCHB ? `bookHall` : `edit-application`;
 
@@ -84,10 +85,11 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <br></br>
         <CardSubHeader>{slotlist?.bookingSlotDetails.map((slot,index) =>(
     <div key={index}>
-      {slot.hallName}({slot.date1})
+      {slot.name}
+      {/* ({slot.date1}) */}
     </div>
   ))}</CardSubHeader>
-        <ApplicationTable
+        {/* <ApplicationTable
             t={t}
             data={productRows}
             columns={columns}
@@ -101,7 +103,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             })}
             isPaginationRequired={true}
             totalRecords={productRows.length}
-          />
+          /> */}
         <br></br>
         <CardSubHeader>{t("BOOKING_DETAILS")}</CardSubHeader>
         <br></br>
@@ -116,6 +118,12 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <Row
             label={t("CHB_MOBILE_NUMBER")}
             text={`${t(checkForNA(ownerss?.mobileNumber))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/applicant-details`} />}
+
+        />
+        <Row
+            label={t("CHB_ALTERNATE_MOBILE_NUMBER")}
+            text={`${t(checkForNA(ownerss?.alternateNumber))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/applicant-details`} />}
 
         />
@@ -210,7 +218,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <StatusTable>
         <br></br>
         <CardSubHeader>{t("DOCUMENTS_DETAILS")}</CardSubHeader>
-        {/* <Card style={{paddingRight:"16px"}}>
+        <Card style={{paddingRight:"16px"}}>
         {documents && documents?.documents.map((doc, index) => (
           <div key={`doc-${index}`}>
          {<div><CardSectionHeader>{t(doc?.documentType?.split('.').slice(0,2).join('_'))}</CardSectionHeader>
@@ -222,7 +230,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
           </div>}
           </div>
         ))}
-      </Card> */}
+      </Card>
         <br></br>
         </StatusTable>
         <br></br>
