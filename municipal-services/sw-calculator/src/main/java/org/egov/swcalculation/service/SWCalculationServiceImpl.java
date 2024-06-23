@@ -187,9 +187,15 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 
 		Map<String, Object> financialYearMaster =  (Map<String, Object>) masterMap
 				.get(SWCalculationConstant.BILLING_PERIOD);
-		Long fromDate = (Long) financialYearMaster.get(SWCalculationConstant.STARTING_DATE_APPLICABLES);
-		Long toDate = (Long) financialYearMaster.get(SWCalculationConstant.ENDING_DATE_APPLICABLES);
-
+		/*
+		 * Long fromDate = (Long)
+		 * financialYearMaster.get(SWCalculationConstant.STARTING_DATE_APPLICABLES);
+		 * Long toDate = (Long)
+		 * financialYearMaster.get(SWCalculationConstant.ENDING_DATE_APPLICABLES);
+		 */
+		Long fromDate=(Long) criteria.getFrom();
+		Long toDate=(Long)criteria.getTo();
+		
 		if(isLastElementWithDisconnectionRequest) {
 			if (sewerageConnection.getApplicationStatus().equalsIgnoreCase(SWCalculationConstant.PENDING_APPROVAL_FOR_DISCONNECTION)) {
 
