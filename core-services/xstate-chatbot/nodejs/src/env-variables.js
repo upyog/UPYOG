@@ -70,15 +70,15 @@ const envVariables = {
         valuefirstNotificationOtherWSBillSuccessTemplateid: process.env.VALUEFIRST_NOTIFICATION_OTHER_WS_BILL_SUCCESS_TEMPLATEID || '3618675,4156317',
         valuefirstNotificationTrackCompliantTemplateid: process.env.VALUEFIRST_NOTIFICATION_TRACK_COMPLAINT_TEMPLATEID || '4052381,4156335',
         valuefirstNotificationLodgeCompliantTemplateid: process.env.VALUEFIRST_NOTIFICATION_LODGE_COMPLAINT_TEMPLATEID || '4052379,4156333',
-        valuefirstLoginAuthorizationHeader: process.env.VALUEFIRST_LOGIN_AUTHORIZATION_HEADER || 'Basic ZWdvdnRmb3VuZGFXQTo3Xy05Q1lzVzYq',
+        valuefirstLoginAuthorizationHeader: process.env.VALUEFIRST_LOGIN_AUTHORIZATION_HEADER || 'Basic bXNldmF1cmJhbndhOjE+PkdpZ3pINCU=',
     },
 
     egovServices: {
-        egovServicesHost: process.env.EGOV_SERVICES_HOST || 'https://dev.digit.org/',
-        externalHost: process.env.EXTERNAL_HOST || 'https://dev.digit.org/',
+        egovServicesHost: process.env.EGOV_SERVICES_HOST || 'http://mseva.lgpunjab.gov.in/',
+        externalHost: process.env.EXTERNAL_HOST || 'http://mseva.lgpunjab.gov.in/',
         searcherHost: process.env.EGOV_SEARCHER_HOST || "http://egov-searcher.egov:8080/",
 
-        userServiceHost: process.env.USER_SERVICE_HOST || 'https://dev.digit.org/',
+        userServiceHost: process.env.USER_SERVICE_HOST || 'https://mseva.lgpunjab.gov.in/',
         userServiceOAuthPath: process.env.USER_SERVICE_OAUTH_PATH || 'user/oauth/token',
         userServiceCreateCitizenPath: process.env.USER_SERVICE_CREATE_CITIZEN_PATH || 'user/citizen/_create',
         userServiceUpdateProfilePath: process.env.USER_SERVICE_UPDATE_PROFILE_PATH || 'user/profile/_update',
