@@ -114,7 +114,7 @@ public class NICSMSServiceImpl extends BaseSMSService {
 			final_data += "&pin=" + smsProperties.getPassword();
 
 			String smsBody = sms.getMessage();
-
+			log.info("smsBody"+smsBody);
 			if (smsBody.split("|").length > 1) {
 				String templateId = smsBody.split("|")[1];
 

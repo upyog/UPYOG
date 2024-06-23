@@ -96,7 +96,9 @@ public class RazorpayGateway implements Gateway{
 	        
 	     		transfers.put(transfer);
 			request.put("transfers", transfers);
+			log.info(request.toString());
 			Order order = null;
+			
 			try {
 				order = client.Orders.create(request);
 			} catch (RazorpayException e) {
