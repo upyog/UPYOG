@@ -116,10 +116,10 @@ public class NICSMSServiceImpl extends BaseSMSService {
 			String smsBody = sms.getMessage();
 
 			if (smsBody.split("#").length > 1) {
-				String templateId = smsBody.split("#")[1];
+				String templateId = smsBody.split("|")[1];
 
 				sms.setTemplateId(templateId);
-				smsBody = smsBody.split("#")[0];
+				smsBody = smsBody.split("|")[0];
 
 			} else if (StringUtils.isEmpty(sms.getTemplateId())) {
 				log.info("No template Id, Message Not sent" + smsBody);
