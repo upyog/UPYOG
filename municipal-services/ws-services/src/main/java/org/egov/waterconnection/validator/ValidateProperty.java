@@ -35,7 +35,7 @@ public class ValidateProperty {
 		JSONObject mdmsResponse=getWnsPTworkflowConfig(requestInfo,property.getTenantId());
 		List<Status> allowedPropertyStatus = new ArrayList<>();
 		allowedPropertyStatus.add(Status.ACTIVE);
-		allowedPropertyStatus.add(Status.PENDINGWS); // allow property in PENDINGWS status valid for Water connection creation (these are created during WS migration for not existing properties)
+		allowedPropertyStatus.add(Status.PENDINGWS);  // allow property in PENDINGWS status valid for Water connection creation (these are created during WS migration for not existing properties)
 		if (mdmsResponse.getBoolean("inWorkflowStatusAllowed"))
 			allowedPropertyStatus.add(Status.INWORKFLOW);
 
