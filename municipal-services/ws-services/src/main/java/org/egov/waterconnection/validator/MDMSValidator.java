@@ -167,6 +167,7 @@ public class MDMSValidator {
 	 *            List of codes
 	 * @return error map for given fields
 	 */
+	@SuppressWarnings("unchecked")
 	private void validateCodes(WaterConnection waterConnection, Map<String, List<String>> codes) {
 		Map<String, String> errorMap = new HashMap<>();
 		StringBuilder messageBuilder = new StringBuilder();
@@ -176,6 +177,7 @@ public class MDMSValidator {
 			messageBuilder.append("Connection type value is invalid, please enter proper value! ");
 			errorMap.put("INVALID_WATER_CONNECTION_TYPE", messageBuilder.toString());
 		}
+		
 		if (!StringUtils.isEmpty(waterConnection.getWaterSource())
 				&& !codes.get(WCConstants.MDMS_WC_WATER_SOURCE).contains(waterConnection.getWaterSource())) {
 			messageBuilder = new StringBuilder();
@@ -188,8 +190,10 @@ public class MDMSValidator {
 			messageBuilder.append("Road type value is invalid, please enter proper value! ");
 			errorMap.put("INVALID_WATER_ROAD_TYPE", messageBuilder.toString());
 		}*/
-
-		if(waterConnection.getRoadCuttingInfo() == null){
+		Map<String, String> additionaldetails= new HashMap<String, String>();
+		additionaldetails=(Map<String, String>) waterConnection.getAdditionalDetails();
+		String connectionCategory=additionaldetails.get("connectionCategory");
+		if(waterConnection.getRoadCuttingInfo() == null && !connectionCategory.equalsIgnoreCase("REGULARIZED")){
 			errorMap.put("INVALID_ROAD_INFO", "Road Cutting Information should not be empty");
 		}
 
