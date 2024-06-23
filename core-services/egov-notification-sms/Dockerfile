@@ -27,7 +27,7 @@ WORKDIR /opt/egov
 COPY --from=build /app/target/*.jar /app/start.sh /opt/egov/
 COPY --from=build /app/src/main/resources/smsgwsmsgovin.cer smsgwsmsgovin.cer
 
-RUN keytool -import -alias smsgwsmsgovin -file /src/main/resources/smsgwsmsgovin.cer -keystore /etc/ssl/certs/truststore.jks -storepass changeit -noprompt
+RUN keytool -import -alias smsgwsmsgovin -file smsgwsmsgovin.cer -keystore /etc/ssl/certs/truststore.jks -storepass changeit -noprompt
 
 RUN chmod +x /opt/egov/start.sh
 
