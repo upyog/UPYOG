@@ -54,7 +54,7 @@ class LocalisationService {
     }
 
     async fetchMessagesForLocale(locale, tenantId) {
-        var url = config.egovServices.egovServicesHost + config.egovServices.localisationServiceSearchPath + '?tenantId=' + tenantId + '&locale=' + locale;
+        var url = config.egovServices.egovlocalizationhost + config.egovServices.localisationServiceSearchPath + '?tenantId=' + tenantId + '&locale=' + locale;
         var options = {
             method: 'POST'
         }
