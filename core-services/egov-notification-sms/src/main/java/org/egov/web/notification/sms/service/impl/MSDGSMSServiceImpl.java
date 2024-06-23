@@ -164,6 +164,8 @@ public class MSDGSMSServiceImpl extends BaseSMSService {
      */
     private String hashGenerator(String userName, String senderId, String content, String secureKey) {
         StringBuffer finalString = new StringBuffer();
+        log.info(userName+" SenderId\t"+senderId+"content \t"+content+"Secure Key \t"+secureKey);    
+        
         finalString.append(userName.trim()).append(senderId.trim()).append(content.trim()).append(secureKey.trim());
         String hashGen = finalString.toString();
         StringBuffer sb = null;
