@@ -209,8 +209,15 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 
 		Map<String, Object> financialYearMaster =  (Map<String, Object>) masterMap
 				.get(WSCalculationConstant.BILLING_PERIOD);
-		Long fromDate = (Long) financialYearMaster.get(WSCalculationConstant.STARTING_DATE_APPLICABLES);
-		Long toDate = (Long) financialYearMaster.get(WSCalculationConstant.ENDING_DATE_APPLICABLES);
+		/*
+		 * Long fromDate = (Long)
+		 * financialYearMaster.get(WSCalculationConstant.STARTING_DATE_APPLICABLES);
+		 * Long toDate = (Long)
+		 * financialYearMaster.get(WSCalculationConstant.ENDING_DATE_APPLICABLES);
+		 */
+		Long fromDate=(Long) criteria.getFrom();
+		Long toDate=(Long)criteria.getTo();
+
 		if(isLastElementWithDisconnectionRequest) {
 			if (waterConnection.getApplicationStatus().equalsIgnoreCase(WSCalculationConstant.PENDING_APPROVAL_FOR_DISCONNECTION)) {
 
