@@ -118,6 +118,7 @@ public class MDMSValidator {
 			throw new CustomException(errorMap);
 	}
 
+	@SuppressWarnings("unchecked")
 	private static Map<String, String> validateCodes(SewerageConnection sewerageConnection,
 			Map<String, List<String>> codes, Map<String, String> errorMap) {
 		StringBuilder messageBuilder;
@@ -128,7 +129,10 @@ public class MDMSValidator {
 			errorMap.put("INVALID SEWERAGE CONNECTION TYPE", messageBuilder.toString());
 		}
 		
-		if(sewerageConnection.getRoadCuttingInfo() == null){
+		Map<String, String> additionaldetails= new HashMap<String, String>();
+		additionaldetails=(Map<String, String>) sewerageConnection.getAdditionalDetails();
+		String connectionCategory=additionaldetails.get("connectionCategory");
+		if(sewerageConnection.getRoadCuttingInfo() == null && !connectionCategory.equalsIgnoreCase("REGULARIZED")){
 			errorMap.put("INVALID_ROAD_INFO", "Road Cutting Information should not be empty");
 		}
 
