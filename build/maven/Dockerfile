@@ -18,6 +18,9 @@ RUN mvn -B -f /app/pom.xml package -Dmaven.test.skip=true -DskipTests
 FROM upyogio/8-openjdk-alpine
 #FROM ghcr.io/egovernments/8-openjdk-alpine:latest
 
+RUN apk update && \
+    apk add --no-cache ca-certificates && \
+    update-ca-certificates
 
 WORKDIR /opt/egov
 
