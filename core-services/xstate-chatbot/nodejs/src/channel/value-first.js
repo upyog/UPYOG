@@ -117,12 +117,12 @@ class ValueFirstWhatsAppProvider {
             type: type
         };
         reformattedMessage.user = {
-           mobileNumber: requestBody.from.slice(2)
-           //mobileNumber: requestBody.from
+           //mobileNumber: requestBody.from.slice(2)
+           mobileNumber: requestBody.from
         };
         reformattedMessage.extraInfo ={
-           whatsAppBusinessNumber: requestBody.to.slice(2),
-           // whatsAppBusinessNumber: requestBody.to,
+           //whatsAppBusinessNumber: requestBody.to.slice(2),
+           whatsAppBusinessNumber: requestBody.to,
             tenantId: config.rootTenantId
         };
 
