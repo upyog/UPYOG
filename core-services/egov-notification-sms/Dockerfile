@@ -5,7 +5,7 @@ WORKDIR /app
 
 # copy the project files
 COPY ${WORK_DIR}/pom.xml ./pom.xml
-COPY build/maven/start.sh ./start.sh
+COPY ${WORK_DIR}/start.sh ./start.sh
 
 # not useful for stateless builds
 # RUN mvn -B dependency:go-offline
@@ -19,12 +19,16 @@ FROM upyogio/8-openjdk-alpine
 #FROM ghcr.io/egovernments/8-openjdk-alpine:latest
 
 RUN apk update && \
-    apk add --no-cache ca-certificates && \
+    apk add --no-cache ca-certificates openssl && \
     update-ca-certificates
 
 WORKDIR /opt/egov
 
 COPY --from=build /app/target/*.jar /app/start.sh /opt/egov/
+COPY --from=build /app/src/main/resources/smsgwsmsgovin.cer smsgwsmsgovin.cer
+
+#RUN keytool -import -alias smsgwsmsgovin -file smsgwsmsgovin.cer -keystore /etc/ssl/certs/truststore.jks -storepass changeit -noprompt
+RUN keytool -importcert -alias smsgwsmsgovin -trustcacerts -keystore cacerts -file smsgwsmsgovin.cer
 
 RUN chmod +x /opt/egov/start.sh
 
