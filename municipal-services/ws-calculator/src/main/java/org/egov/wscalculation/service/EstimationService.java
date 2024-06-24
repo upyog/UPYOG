@@ -677,7 +677,7 @@ public class EstimationService {
 					feeObj.getAsNumber(WSCalculationConstant.METER_TESTING_FEE_CONST).toString());
 		}
 		BigDecimal roadCuttingCharge = BigDecimal.ZERO;
-		BigDecimal usageTypeCharge = BigDecimal.ZERO;
+//		BigDecimal usageTypeCharge = BigDecimal.ZERO;
 
 		if(criteria.getWaterConnection().getRoadCuttingInfo() != null){
 			for(RoadCuttingInfo roadCuttingInfo : criteria.getWaterConnection().getRoadCuttingInfo()){
@@ -687,14 +687,14 @@ public class EstimationService {
 							roadCuttingInfo.getRoadCuttingArea());
 				roadCuttingCharge = roadCuttingCharge.add(singleRoadCuttingCharge);
 
-				BigDecimal singleUsageTypeCharge = BigDecimal.ZERO;
-				if (roadCuttingInfo.getRoadCuttingArea() != null)
-					singleUsageTypeCharge = getUsageTypeFee(masterData,
-							property.getUsageCategory(),
-							roadCuttingInfo.getRoadCuttingArea());
+//				BigDecimal singleUsageTypeCharge = BigDecimal.ZERO;
+//				if (roadCuttingInfo.getRoadCuttingArea() != null)
+//					singleUsageTypeCharge = getUsageTypeFee(masterData,
+//							property.getUsageCategory(),
+//							roadCuttingInfo.getRoadCuttingArea());
 
-				roadCuttingCharge = roadCuttingCharge.add(singleRoadCuttingCharge);
-				usageTypeCharge = usageTypeCharge.add(singleUsageTypeCharge);
+//				roadCuttingCharge = roadCuttingCharge.add(singleRoadCuttingCharge);
+//				usageTypeCharge = usageTypeCharge.add(singleUsageTypeCharge);
 			}
 		}
 
