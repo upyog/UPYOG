@@ -569,6 +569,7 @@ public class DemandService {
 			Map<String, Object> masterMap, boolean isForConnectionNO, long taxPeriodFrom, long taxPeriodTo) {
 
 		WaterConnection connection = calculation.getWaterConnection();
+		connection.setConnectionHolders(null);
 		if (connection == null) {
 			throw new CustomException("INVALID_WATER_CONNECTION",
 					"Demand cannot be generated for "
