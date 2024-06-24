@@ -163,6 +163,8 @@ public class WSCalculationConstant {
 
 	public static final String Quaterly_Billing_Period = "quarterly";
 
+	public static final String Quaterly_Billing_Period_MDMS_CALL = "QUATERLY";
+	
 	public static final String Monthly_Billing_Period = "monthly";
 
         public static final String Annual_Billing_Period = "annualy";

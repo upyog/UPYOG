@@ -133,6 +133,7 @@ public class CalculatorUtil {
 		try {
 			log.info("WaterConnectionResponse result: " + mapper.writeValueAsString(result));
 			response = mapper.convertValue(result, WaterConnectionResponse.class);
+
 			log.info("WaterConnectionResponse: " + mapper.writeValueAsString(response));
 		} catch (Exception e) {
 			throw new CustomException("PARSING_ERROR", "Error while parsing response of Water Connection Search");
@@ -471,14 +472,14 @@ public class CalculatorUtil {
 
 		else
 		{
-			type=WSCalculationConstant.Quaterly_Billing_Period;
+			type=WSCalculationConstant.Quaterly_Billing_Period_MDMS_CALL;
 		}
 		
 		
 		log.info("prepareWSTaxPeriodMdmsRequest:: start");
 			MasterDetail masterDetail = MasterDetail.builder().name(WSCalculationConstant.TAXPERIOD_MASTERNAME)
 					// .filter("[?(@.periodCycle=='"+type+"' && @.service== '"+serviceName+"')]")
-					.filter("[?(@.periodCycle=='"+WSCalculationConstant.Quaterly_Billing_Period+"' && @.service== '"+serviceName+"')]")
+					.filter("[?(@.periodCycle=='"+WSCalculationConstant.Quaterly_Billing_Period_MDMS_CALL+"' && @.service== '"+serviceName+"')]")
 					//.filter("[?(@.periodCycle=='QUATERLY' && @.service== '"+serviceName+"')]")
 					.build();
 			ModuleDetail moduleDetail = ModuleDetail.builder().moduleName(WSCalculationConstant.MODULE_NAME_BILLINGSERVICE)
