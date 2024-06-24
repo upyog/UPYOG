@@ -1388,10 +1388,16 @@ public class DemandService {
 						log.info(
 								"Last connection entered into producer logic, connectionNosCount: {} and connectionNos.size(): {}",
 								connectionNosCount, connectionNos.size());
+						MigrationCount migrationCount = MigrationCount.builder().tenantid(tenantId)
+								.businessService("WS").id(UUID.randomUUID().toString())
+							.createdTime(System.currentTimeMillis()).build();
 
 						CalculationReq calculationReq = CalculationReq.builder()
 								.calculationCriteria(calculationCriteriaList).requestInfo(requestInfo)
-								.isconnectionCalculation(true).build();
+								.isconnectionCalculation(true).migrationCount(migrationCount).build();
+//						CalculationReq calculationReq = CalculationReq.builder()
+//								.calculationCriteria(calculationCriteriaList).requestInfo(requestInfo)
+//								.isconnectionCalculation(true).build();
 						log.info(
 								"Pushing calculation last req to the kafka topic with bulk data of calculationCriteriaList size: {}",
 								calculationCriteriaList.size());
