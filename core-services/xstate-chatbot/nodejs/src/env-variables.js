@@ -77,8 +77,8 @@ const envVariables = {
     egovServices: {
         egovServicesHost: process.env.EGOV_SERVICES_HOST || 'https://mseva.lgpunjab.gov.in/',
         externalHost: process.env.EXTERNAL_HOST || 'https://mseva.lgpunjab.gov.in/',
-        searcherHost: process.env.EGOV_SEARCHER_HOST || "https://mseva.lgpunjab.gov.in/",
-       //searcherHost: process.env.EGOV_SEARCHER_HOST || "http://egov-searcher.egov:8080/",
+        //searcherHost: process.env.EGOV_SEARCHER_HOST || "https://mseva.lgpunjab.gov.in/",
+        searcherHost: process.env.EGOV_SEARCHER_HOST || "http://egov-searcher.egov:8080/",
 
         //userServiceHost: process.env.USER_SERVICE_HOST || 'http://192.168.1.75:6083/',
         userServiceHost: process.env.USER_SERVICE_HOST || 'https://mseva.lgpunjab.gov.in/',
