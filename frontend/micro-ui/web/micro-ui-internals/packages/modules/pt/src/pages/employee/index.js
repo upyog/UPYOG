@@ -9,6 +9,7 @@ import Search from "./Search";
 import SearchApp from "./SearchApp";
 import Notices from "./Notices";
 import AssessmentWorkflow from "./AssessmentWorkflow";
+import AppealWorkflow from "./AppealWorkflow"
 
 
 const EmployeeApp = ({ path, url, userType }) => {
@@ -38,14 +39,18 @@ const EmployeeApp = ({ path, url, userType }) => {
   let userRole='';
   if(userDetails && userDetails.info && userDetails.info?.roles) {
     userDetails.info.roles.map((role)=>{
-      if(role?.code == "ASSIGNING_OFFICER") userRole = role.code;
+      if(role?.code == "ASSIGNING_OFFICER") {
+        userRole = role.code;
+      } else if (role?.code == "EXECUTING_OFFICER") {
+        userRole = role.code;
+      }
     })
   }
 
   const inboxInitialState = {
     searchParams: {
       uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
-      services: userRole && userRole=='ASSIGNING_OFFICER' ? ["ASMT"] : ["PT.CREATE", "PT.MUTATION", "PT.UPDATE"], //, "PT.MUTATION", "PT.UPDATE"
+      services: userRole && userRole=='ASSIGNING_OFFICER' ? ["ASMT"] : userRole && userRole=='EXECUTING_OFFICER' ? ["PT.APPEAL"] : ["PT.CREATE", "PT.MUTATION", "PT.UPDATE"], //, "PT.MUTATION", "PT.UPDATE"
       applicationStatus: [],
       locality: [],
     },
@@ -200,7 +205,7 @@ const EmployeeApp = ({ path, url, userType }) => {
                 businessService="PT"
                 filterComponent="PT_INBOX_FILTER"
                 initialStates={inboxInitialState}
-                isInbox={userRole && userRole == 'ASSIGNING_OFFICER' ? false : true}
+                isInbox={userRole && (userRole == 'ASSIGNING_OFFICER' || userRole == 'EXECUTING_OFFICER') ? false : true}
               />
             )}
           />
@@ -228,6 +233,7 @@ const EmployeeApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/ptsearch/assessment-details/:id`} component={() => <AssessmentDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/modify-application/:id`} component={() => <EditApplication />} />
           <PrivateRoute path={`${path}/assessment-details-workflow/:id`} component={() => <AssessmentWorkflow parentRoute={path} />} />
+          <PrivateRoute path={`${path}/appeal-details-workflow/:id`} component={() => <AppealWorkflow parentRoute={path} />} />
 
           {/**/}
           <PrivateRoute path={`${path}/response`} component={(props) => <Response {...props} parentRoute={path} />} />

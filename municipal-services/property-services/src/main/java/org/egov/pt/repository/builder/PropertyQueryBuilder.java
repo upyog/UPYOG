@@ -377,7 +377,7 @@ private String appealAddPaginationWrapper(String query, List<Object> preparedStm
 	public String getAppealSearchQuery(AppealCriteria criteria, List<Object> preparedStmtList) {
 
 		Boolean isEmpty = CollectionUtils.isEmpty(criteria.getPropertyIds())
-				|| CollectionUtils.isEmpty(criteria.getAcknowledgementNumbers());
+				|| CollectionUtils.isEmpty(criteria.getApplicationNumber());
 		
 		if(isEmpty)
 			throw new CustomException("EG_PT_APPEAL_SEARCH_ERROR"," No criteria given for the property search");
@@ -424,7 +424,7 @@ private String appealAddPaginationWrapper(String query, List<Object> preparedStm
 			addToPreparedStatementWithUpperCase(preparedStmtList, propertyIds);
 		}
 		
-		Set<String> acknowledgementIds = criteria.getAcknowledgementNumbers();
+		Set<String> acknowledgementIds = criteria.getApplicationNumber();
 		if (!CollectionUtils.isEmpty(acknowledgementIds)) {
 
 			addClauseIfRequired(preparedStmtList,builder);
@@ -571,13 +571,22 @@ private String appealAddPaginationWrapper(String query, List<Object> preparedStm
 			addToPreparedStatementWithUpperCase(preparedStmtList, propertyId);
 		}
 		
-		Set<String> acknowledgementIds=appealCriteria.getAcknowledgementNumbers();
+		Set<String> acknowledgementIds=appealCriteria.getApplicationNumber();
 		if(acknowledgementIds!=null)
 		{
 			addClauseIfRequired(preparedStmtList,builder);
 			builder.append("appeal.acknowldgementnumber IN (").append(createQuery(acknowledgementIds)).append(")");
 			addToPreparedStatementWithUpperCase(preparedStmtList, acknowledgementIds);
 		}
+		
+		Set<String> appealid=appealCriteria.getAppealid();
+		if(appealid!=null)
+		{
+			addClauseIfRequired(preparedStmtList,builder);
+			builder.append("appeal.appealid IN (").append(createQuery(appealid)).append(")");
+			addToPreparedStatementWithUpperCase(preparedStmtList, appealid);
+		}
+		
 		return builder.toString();
 		
 	}

@@ -8,6 +8,7 @@ import { newConfigMutate } from "../../config/Mutate/config";
 import TransfererDetails from "../../pageComponents/Mutate/TransfererDetails";
 import MutationApplicationDetails from "./MutationApplicatinDetails";
 import getPTAcknowledgementData from "../../getPTAcknowledgementData";
+import { data } from "jquery";
 
 
 const ApplicationDetails = () => {
@@ -47,6 +48,8 @@ const ApplicationDetails = () => {
     },
     { enabled: enableAudit, select: (data) => data.Properties?.filter((e) => e.status === "ACTIVE") }
   );
+  console.log("Application Details==", auditData)
+
 
   const showTransfererDetails = React.useCallback(() => {
     if (

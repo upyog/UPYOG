@@ -112,7 +112,6 @@ export const MediaRow = (props) => {
 };
 
 export const StatusTable = (props) => {
-  console.log("statusTable==",props)
   const employee = Digit.SessionStorage.get("user_type") === "employee" ? true : false;
   if (props.dataObject) {
     return (

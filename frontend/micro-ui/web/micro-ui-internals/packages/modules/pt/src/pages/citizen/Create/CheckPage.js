@@ -83,8 +83,8 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     setAgree(!agree);
   };
   const [isPartOfProperty, setIsPartOfProperty] = useState(
-    value?.isPartOfProperty ? true : false
-  );;
+    (value?.isPartOfProperty=='true'||value?.isPartOfProperty==true) ? true : false
+  );
   const onSetIsApportion = (e) => {
     setIsPartOfProperty(e.target.checked);
   };

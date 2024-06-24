@@ -580,6 +580,18 @@ export const convertToProperty = (data = {}) => {
     
     amalgamationDetails = arr
   };
+  let bifurcationDetails = null;
+  let parentPropertyId = null;
+  let maxBifurcation = null;
+  if(data?.bifurcationDetails && data?.bifurcationDetails?.action == "BIFURCATION" && data?.bifurcationDetails?.propertyDetails) {
+    let obj = {};
+      obj['propertyId'] = data?.bifurcationDetails?.propertyDetails?.propertyId;
+      obj['tenantId'] = data?.bifurcationDetails?.propertyDetails?.tenantId;
+    
+      bifurcationDetails = obj
+      parentPropertyId = data?.bifurcationDetails?.propertyDetails?.propertyId;
+      maxBifurcation = 2;
+  };
   let isPartOfProperty = data?.isPartOfProperty;
   data = setDocumentDetails(data);
   data = setOwnerDetails(data);
@@ -601,6 +613,9 @@ export const convertToProperty = (data = {}) => {
 
       documents: data.documents || [],
       amalgamatedProperty: amalgamationDetails,
+      parentPropertyId: parentPropertyId,
+      maxBifurcation: maxBifurcation,
+      // bifurcatedProperty: bifurcationDetails,
       isPartOfProperty: isPartOfProperty,
       ...data.propertyDetails,
 
@@ -622,7 +637,7 @@ export const convertToProperty = (data = {}) => {
         
       },
 
-      creationReason: data?.amalgamationDetails && data?.amalgamationDetails?.action == "Amalgamation" ? 'AMALGAMATION' : getCreationReason(data),
+      creationReason: data?.amalgamationDetails && data?.amalgamationDetails?.action == "Amalgamation" ? 'AMALGAMATION' : data?.bifurcationDetails && data?.bifurcationDetails?.action == "BIFURCATION" ? 'BIFURCATION' : getCreationReason(data),
       source: "MUNICIPAL_RECORDS",
       channel: "CITIZEN",
     },

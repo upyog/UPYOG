@@ -153,7 +153,6 @@ const Dropdown = (props) => {
     let isSelectedSameAsOptions = props.option?.filter((ob) => ob?.code === selectedOption?.code)?.length > 0;
     if(!isSelectedSameAsOptions) setSelectedOption(null)
   }
-  console.log("props====",props)
   return (
     <div
       className={`${user_type === "employee" ? "employee-select-wrap" : "select-wrap"} ${props?.className ? props?.className : ""}`}

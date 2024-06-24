@@ -734,7 +734,7 @@ public class PropertyValidator {
 				throw new CustomException("EG_PT_INVALID_SEARCH"," TenantId is mandatory for search by " + userType);
 
 		
-		if(CollectionUtils.isEmpty(criteria.getPropertyIds()) || CollectionUtils.isEmpty(criteria.getAcknowledgementNumbers()))
+		if(CollectionUtils.isEmpty(criteria.getPropertyIds()) || CollectionUtils.isEmpty(criteria.getApplicationNumber()))
 			throw new CustomException("EG_PT_INVALID_SEARCH","Search based on ids Property ids or Acknowledgement number ");
 
 		

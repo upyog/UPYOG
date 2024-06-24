@@ -2,17 +2,22 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Dropdown, Header, Toast } from "@egovernments/digit-ui-react-components";
 import { Switch, useLocation, Link } from "react-router-dom";
-import DesktopInbox from "../../components/DesktopInbox";
-import MobileInbox from "../../components/MobileInbox";
-import NoticeForAssesment from "./NoticeTemplates/NoticeForAssesment";
-import NoticeForRectification from "./NoticeTemplates/NoticeForRectification";
-import NoticeForReassessment from "./NoticeTemplates/NoticeForReassessment";
-import NoticeToEnterPremises from "./NoticeTemplates/NoticeToEnterPremises";
-import NoticeToFileReturn from "./NoticeTemplates/NoticeToFileReturn";
-import NoticeForHearing from "./NoticeTemplates/NoticeForHearing";
-import NoticeForImpositionOfPenalty from "./NoticeTemplates/NoticeForImpositionOfPenalty";
+// import NoticeForAssesment from "./NoticeTemplates/NoticeForAssesment";
+// import NoticeForRectification from "./NoticeTemplates/NoticeForRectification";
+// import NoticeForReassessment from "./NoticeTemplates/NoticeForReassessment";
+// import NoticeToEnterPremises from "./NoticeTemplates/NoticeToEnterPremises";
+// import NoticeToFileReturn from "./NoticeTemplates/NoticeToFileReturn";
+// import NoticeForHearing from "./NoticeTemplates/NoticeForHearing";
+// import NoticeForImpositionOfPenalty from "./NoticeTemplates/NoticeForImpositionOfPenalty";
+import NoticeForHearing from "../employee/NoticeTemplates/NoticeForHearing";
+import NoticeForRectification from "../employee/NoticeTemplates/NoticeForRectification";
+import NoticeForAssesment from "../employee/NoticeTemplates/NoticeForAssesment";
+import NoticeForReassessment from "../employee/NoticeTemplates/NoticeForReassessment";
+import NoticeToEnterPremises from "../employee/NoticeTemplates/NoticeToEnterPremises";
+import NoticeForImpositionOfPenalty from "../employee/NoticeTemplates/NoticeForImpositionOfPenalty";
+import NoticeToFileReturn from "../employee/NoticeTemplates/NoticeToFileReturn";
 
-const Notices = ({
+const CitizenNotice = ({
   useNewInboxAPI,
   parentRoute,
   moduleCode = "PT",
@@ -40,7 +45,7 @@ const Notices = ({
   const [searchParams, setSearchParams] = useState(initialStates.searchParams || {});
   const [showToast, setShowToast] = useState(null);
   const location = useLocation();
-  console.log("location===",location)
+  console.log("location citizen notice===",location)
 
   let isMobile = window.Digit.Utils.browser.isMobile();
   let paginationParams = isMobile
@@ -112,8 +117,14 @@ const Notices = ({
     setNotice(value)
   }
   const [isLocation, setIsLocation] = useState(false)
-  if(location && location?.state?.status==="ACTIVE" && !isLocation){
-    setNotice({code: '6', name: 'Notice for Hearing under Rule 39 / 40'});
+  if(location && location?.state && !isLocation){
+    noticeList.forEach(element => {
+        if(element.name== location?.state?.noticeType) {
+            setNotice(element);
+        }
+    });
+    // setNotice(noticeList[0]);
+    
     setNoticeData(location?.state);
     setIsLocation(true);
   }
@@ -145,40 +156,27 @@ const Notices = ({
 
       return (
         <div>
-          <Header>{t("NOTICES")}</Header>
-          <div className="card" style={{maxWidth: "100%"}}>
-            <div>
-              <Dropdown
-                option={noticeList}
-                selected={notice}
-                optionKey={"name"}
-                select={handleChangeNotice}
-                freeze={true}
-              />
-            </div>
-            
-          </div>
           <div>
               {notice && notice.code=='1' && (
-                <NoticeForRectification notice={notice} submit={submit}></NoticeForRectification>
+                <NoticeForRectification notice={notice} submit={submit} noticeData={noticeData} isCitizen={true}></NoticeForRectification>
               )}
               {notice && notice.code=='2' && (
-                <NoticeForAssesment notice={notice} submit={submit}></NoticeForAssesment>
+                <NoticeForAssesment notice={notice} submit={submit} noticeData={noticeData} isCitizen={true}></NoticeForAssesment>
               )}
               {notice && notice.code=='3' && (
-                <NoticeForReassessment notice={notice} submit={submit}></NoticeForReassessment>
+                <NoticeForReassessment notice={notice} submit={submit} noticeData={noticeData} isCitizen={true}></NoticeForReassessment>
               )}
               {notice && notice.code=='4' && (
-                <NoticeToEnterPremises notice={notice} submit={submit}></NoticeToEnterPremises>
+                <NoticeToEnterPremises notice={notice} submit={submit} noticeData={noticeData} isCitizen={true}></NoticeToEnterPremises>
               )}
               {notice && notice.code=='5' && (
-                <NoticeToFileReturn notice={notice} submit={submit}></NoticeToFileReturn>
+                <NoticeToFileReturn notice={notice} submit={submit} noticeData={noticeData} isCitizen={true}></NoticeToFileReturn>
               )}
               {notice && notice.code=='6' && (
-                <NoticeForHearing notice={notice} submit={submit} noticeData={noticeData}></NoticeForHearing>
+                <NoticeForHearing notice={notice} submit={submit} noticeData={noticeData} isCitizen={true}></NoticeForHearing>
               )}
               {notice && notice.code=='7' && (
-                <NoticeForImpositionOfPenalty notice={notice} submit={submit}></NoticeForImpositionOfPenalty>
+                <NoticeForImpositionOfPenalty notice={notice} submit={submit} isCitizen={true}></NoticeForImpositionOfPenalty>
               )}
             </div>
             {showToast && <Toast isDleteBtn={true} error={showToast?.key} label={showToast?.label} onClose={() => setShowToast(null)} />}
@@ -186,4 +184,4 @@ const Notices = ({
       );
 };
 
-export default Notices;
+export default CitizenNotice;
