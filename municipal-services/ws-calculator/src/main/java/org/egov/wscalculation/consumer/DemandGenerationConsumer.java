@@ -198,8 +198,11 @@ public class DemandGenerationConsumer {
 			 * Error with message goes to audit topic
 			 */
 			log.error("Failed in DemandGenerationConsumer with error : " + ex.getMessage());
-			log.info("Bulk bill Errorbatch records log for batch : " + request.getMigrationCount().getOffset()
-					+ "Count is : " + request.getMigrationCount().getRecordCount());
+			/*
+			 * log.info("Bulk bill Errorbatch records log for batch : " +
+			 * request.getMigrationCount().getOffset() + "Count is : " +
+			 * request.getMigrationCount().getRecordCount());
+			 */
 			request.getMigrationCount().setMessage("Failed in DemandGenerationConsumer with error : " + ex.getMessage());
 			producer.push(bulkBillGenAuditTopic, request.getMigrationCount());
 		}
