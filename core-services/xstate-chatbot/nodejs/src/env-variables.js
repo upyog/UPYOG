@@ -14,7 +14,7 @@ const envVariables = {
 
     repoProvider: process.env.REPO_PROVIDER || 'PostgreSQL',
 
-    whatsAppBusinessNumber : process.env.WHATSAPP_BUSINESS_NUMBER || '917834811114',
+    whatsAppBusinessNumber : process.env.WHATSAPP_BUSINESS_NUMBER || '918750975975',
 
     rootTenantId: process.env.ROOT_TENANTID || 'pb',
 
@@ -50,7 +50,7 @@ const envVariables = {
         sid: process.env.KALEYRA_SID || '',
         apikey: process.env.KALEYRA_API_KEY || '',
     },
-
+   
     valueFirstWhatsAppProvider: {
         valueFirstUsername: process.env.VALUEFIRST_USERNAME || 'demo',
         valueFirstPassword: process.env.VALUEFIRST_PASSWORD || 'demo',
