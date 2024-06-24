@@ -590,8 +590,11 @@ public class NotificationUtil {
 
         Filter masterDataFilter = filter(
                 where(MODULE).is(moduleName).and(ACTION).is(action)
-        );
-
+                
+        		);
+        log.info("Missing channels"+moduleName+action);
+        
+        log.info(masterDataFilter.toString());
         try {
             Object response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
             masterData = JsonPath.parse(response).read("$.MdmsRes.Channel.channelList[?].channelNames[*]", masterDataFilter);
