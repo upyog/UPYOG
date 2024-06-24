@@ -118,11 +118,11 @@ class ValueFirstWhatsAppProvider {
         };
         reformattedMessage.user = {
            //mobileNumber: requestBody.from.slice(2)
-           mobileNumber: requestBody.from
+           mobileNumber: requestBody.user.mobileNumber.slice(2)
         };
         reformattedMessage.extraInfo ={
            //whatsAppBusinessNumber: requestBody.to.slice(2),
-           whatsAppBusinessNumber: requestBody.to,
+           whatsAppBusinessNumber: requestBody.extraInfo.whatsAppBusinessNumber.slice(2),
             tenantId: config.rootTenantId
         };
 

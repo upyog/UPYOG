@@ -4,10 +4,11 @@ const envVariables = {
     serviceId : process.env.NAME || 'xstate-chatbot',
     ver : process.env.VERSION || '0.0.1',
 
-    port: process.env.SERVICE_PORT || 8080,
+    port: process.env.SERVICE_PORT || 8082,
     contextPath : process.env.CONTEXT_PATH || '/xstate-chatbot',
 
-    whatsAppProvider: process.env.WHATSAPP_PROVIDER || 'console',
+   whatsAppProvider: process.env.WHATSAPP_PROVIDER || 'ValueFirst',
+   //whatsAppProvider: process.env.WHATSAPP_PROVIDER || 'console',
 
     serviceProvider: process.env.SERVICE_PROVIDER || 'eGov',
 
@@ -33,7 +34,7 @@ const envVariables = {
         dbPort: process.env.DB_PORT || '5432',
         dbName: process.env.DB_NAME || 'chat',
         dbUsername: process.env.DB_USER || 'postgres',
-        dbPassword: process.env.DB_PASSWORD || ''
+        dbPassword: process.env.DB_PASSWORD || 'postgres'
     },
 
     kafka: {
@@ -74,11 +75,13 @@ const envVariables = {
     },
 
     egovServices: {
-        egovServicesHost: process.env.EGOV_SERVICES_HOST || 'http://mseva.lgpunjab.gov.in/',
-        externalHost: process.env.EXTERNAL_HOST || 'http://mseva.lgpunjab.gov.in/',
-        searcherHost: process.env.EGOV_SEARCHER_HOST || "http://egov-searcher.egov:8080/",
+        egovServicesHost: process.env.EGOV_SERVICES_HOST || 'https://mseva.lgpunjab.gov.in/',
+        externalHost: process.env.EXTERNAL_HOST || 'https://mseva.lgpunjab.gov.in/',
+        searcherHost: process.env.EGOV_SEARCHER_HOST || "https://mseva.lgpunjab.gov.in/",
+       //searcherHost: process.env.EGOV_SEARCHER_HOST || "http://egov-searcher.egov:8080/",
 
-        userServiceHost: process.env.USER_SERVICE_HOST || 'http://egov-user:8080/',
+        //userServiceHost: process.env.USER_SERVICE_HOST || 'http://192.168.1.75:6083/',
+        userServiceHost: process.env.USER_SERVICE_HOST || 'https://mseva.lgpunjab.gov.in/',
         userServiceOAuthPath: process.env.USER_SERVICE_OAUTH_PATH || 'user/oauth/token',
         userServiceCreateCitizenPath: process.env.USER_SERVICE_CREATE_CITIZEN_PATH || 'user/citizen/_create',
         userServiceUpdateProfilePath: process.env.USER_SERVICE_UPDATE_PROFILE_PATH || 'user/profile/_update',
@@ -110,7 +113,7 @@ const envVariables = {
     },
 
     userService: {
-        userServiceHardCodedPassword: process.env.USER_SERVICE_HARDCODED_PASSWORD || '123456',
+        userServiceHardCodedPassword: process.env.USER_SERVICE_HARDCODED_PASSWORD || '768696',
         userLoginAuthorizationHeader: process.env.USER_LOGIN_AUTHORIZATION_HEADER || 'Basic ZWdvdi11c2VyLWNsaWVudDplZ292LXVzZXItc2VjcmV0',
     },
 
