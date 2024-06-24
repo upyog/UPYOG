@@ -92,7 +92,12 @@ public class WSCalculationUtil {
 					.append(WSCalculationConstant.CONSUMER_CODE_SEARCH_FIELD_NAME)
 					.append(getBillCriteria.getConnectionId())
 					.append(WSCalculationConstant.WS_CONSUMER_CODE_SEPARATOR)
-					.append(getBillCriteria.getConnectionNumber());
+					.append(getBillCriteria.getConnectionNumber())
+					.append(WSCalculationConstant.SEPARATER)
+					.append(WSCalculationConstant.BUSINESSSERVICE_FIELD_FOR_SEARCH_URL)
+					.append("WS")
+				
+						;
 
 		else {
 			 url = new StringBuilder().append(configurations.getBillingServiceHost())
