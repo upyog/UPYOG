@@ -1,21 +1,16 @@
 package org.egov.asset.web.controllers;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.egov.asset.service.AssetService;
 import org.egov.asset.util.ResponseInfoFactory;
 import org.egov.asset.web.models.Asset;
-import org.egov.asset.web.models.AssetSearchCriteria;
 import org.egov.asset.web.models.AssetRequest;
 import org.egov.asset.web.models.AssetResponse;
-import org.egov.asset.web.models.RequestInfo;
+import org.egov.asset.web.models.AssetSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +19,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.ApiParam;
@@ -32,7 +26,7 @@ import io.swagger.annotations.ApiParam;
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-12T12:56:34.514+05:30")
 
 @Controller
-@RequestMapping("/asset-services")
+@RequestMapping("/v1/assets")
 public class AssetControllerV1 {
 	
 	@Autowired
@@ -42,7 +36,7 @@ public class AssetControllerV1 {
 	AssetService assetService;
 
 
-	@RequestMapping(value = "/v1/assets/_create", method = RequestMethod.POST)
+	@RequestMapping(value = "/_create", method = RequestMethod.POST)
 	public ResponseEntity<AssetResponse> v1AssetsCreatePost(
 			@ApiParam(value = "Details for the new asset(s) + RequestInfo metadata.", required = true) @Valid @RequestBody AssetRequest assetRequest) {
 		//String accept = request.getHeader("Accept");
@@ -80,7 +74,7 @@ public class AssetControllerV1 {
 //		return new ResponseEntity<AssetResponse>(HttpStatus.NOT_IMPLEMENTED);
 //	}
 	
-	@RequestMapping(value = "/v1/assets/_search", method = RequestMethod.POST)
+	@RequestMapping(value = "/_search", method = RequestMethod.POST)
 	public ResponseEntity<AssetResponse> v1AssetsSearchPost(
 			@RequestBody RequestInfoWrapper requestInfoWrapper,
 			@Valid @ModelAttribute AssetSearchCriteria searchCriteria) {
@@ -91,7 +85,7 @@ public class AssetControllerV1 {
 		return  new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/v1/assets/_update", method = RequestMethod.POST)
+	@RequestMapping(value = "/_update", method = RequestMethod.POST)
 	public ResponseEntity<AssetResponse> v1AssetsUpdatePost(
 			@ApiParam(value = "Details for updating existing assets + RequestInfo metadata.", required = true) @Valid @RequestBody AssetRequest assetRequest) {
 		Asset asset = assetService.update(assetRequest);
