@@ -43,7 +43,6 @@ export const ASSETSearch = {
         title: "AST_ADDRESS_DETAILS",
         asSectionHeader: true,
         values: [
-          { title: "AST_PINCODE", value: response?.addressDetails?.pincode },
           { title: "MYCITY_CODE_LABEL", value: response?.addressDetails?.city },
           { title: "AST_DOOR_NO", value: response?.addressDetails?.doorNo },
           { title: "AST_STREET", value: response?.addressDetails?.street },
@@ -144,7 +143,7 @@ export const ASSETSearch = {
             { title: "AST_ASSET_AGE", value: response?.additionalDetails?.assetAge },
             { title: "AST_ASSIGNED_USER", value: response?.additionalDetails?.assignedUser },
             { title: "AST_CURRENT_LOCATION", value: response?.additionalDetails?.currentLocation },
-            { title: "AST_MANUFACTURER ", value: response?.additionalDetails?.manufacturer },
+            { title: "AST_MANUFACTURER", value: response?.additionalDetails?.manufacturer },
             { title: "AST_PURCHASE_COST", value: response?.additionalDetails?.purchaseCost + " Rupees"},
             { title: "AST_PURCHASE_DATE", value: response?.additionalDetails?.purchaseDate},
             { title: "AST_PURCHASE_ORDER", value: response?.additionalDetails?.purchaseOrderNumber},

@@ -17,7 +17,16 @@ const PTRCreate = ({ parentRoute }) => {
   const stateId = Digit.ULBService.getStateId();
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PTR_CREATE_PET", {});
-  let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig"); //  PROPERTY CONFIG HOOK , just for commkonfeild config 
+  
+  let { data: commonFields, isLoading } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "CommonFieldsConfig" }],
+    {
+      select: (data) => {
+          const formattedData = data?.["PetService"]?.["CommonFieldsConfigEmp"]
+          return formattedData;
+      },
+  });
+  
+  
   const goNext = (skipStep, index, isAddMultiple, key) => {
 
     
@@ -106,9 +115,8 @@ const PTRCreate = ({ parentRoute }) => {
     return <Loader />;
   }
 
-  // commonFields=newConfig;
-  /* use newConfig instead of commonFields for local development in case needed */
-  commonFields = citizenConfig;
+  
+  commonFields = commonFields? commonFields:citizenConfig;
   commonFields.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });

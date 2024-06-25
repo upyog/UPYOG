@@ -148,10 +148,10 @@ const setData=(config,data)=>{
       config={{ ...config }}
       onSelect={(data) => {setData(config.key,data)}}
       onSkip={onSkip}
-      isDisabled={street =="" || doorNo ==""}
+      isDisabled={""}
       t={t}
     >
-        <CardLabel>{`${t("AST_STREET")}*`}</CardLabel>
+        <CardLabel>{`${t("AST_STREET")}`}</CardLabel>
           <TextInput
             t={t}
             //isMandatory={true}
@@ -164,7 +164,7 @@ const setData=(config,data)=>{
             errorStyle={true}
             autoFocus={focusIndex?.index == 1}
           />
-          <CardLabel>{`${t("AST_DOOR_NO")}*`}</CardLabel>
+          <CardLabel>{`${t("AST_DOOR_NO")}`}</CardLabel>
           <TextInput
             t={t}
             //isMandatory={true}
