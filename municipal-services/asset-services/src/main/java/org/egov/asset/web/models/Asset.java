@@ -80,12 +80,6 @@ public class Asset   {
         @JsonProperty("status")
         private String status = null;
 
-//        @JsonProperty("action")
-//        private String action = null;
-//
-//        @JsonProperty("businessService")
-//        private String businessService = null;
-
         @JsonProperty("addressDetails")
         private Address addressDetails = null;
         
@@ -108,6 +102,12 @@ public class Asset   {
         
         @JsonProperty("remarks")
         private String remarks = null;
+        
+        @JsonProperty("financialYear")
+        private String financialYear = null;
+        
+        @JsonProperty("sourceOfFinance")
+        private String sourceOfFinance = null;
         
         @JsonProperty("workflow")
     	private ProcessInstance workflow = null;

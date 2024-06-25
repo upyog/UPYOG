@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, CardLabel, TextInput,Dropdown} from "@upyog/digit-ui-react-components";
+import { FormStep, CardLabel, TextInput,Dropdown, TextArea,Card,CardSubHeader} from "@upyog/digit-ui-react-components";
 import { useLocation} from "react-router-dom";
 import Timeline from "../components/CHBTimeline";
 import { Controller, useForm } from "react-hook-form";
+import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
+
 
 
 const CHBSlotDetails
-  = ({ t, config, onSelect, userType, formData}) => {
+  = ({ t, config, onSelect, userType, formData,value=formData.slotlist}) => {
     const { pathname: url } = useLocation();
     let index = window.location.href.charAt(window.location.href.length - 1);
     const [selectslot, setslot] =useState((formData.slots && formData.slots[index] && formData.slots[index].selectslot) || formData?.slots?.selectslot || "");
@@ -22,7 +24,6 @@ const CHBSlotDetails
     let validation = {};
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
-
     const { data: Resident} = Digit.Hooks.chb.useResidentType(stateId, "CHB", "ChbResidentType");
     const { data: Category } = Digit.Hooks.chb.useSpecialCategory(stateId, "CHB", "ChbSpecialCategory");
     const { data: Purposes } = Digit.Hooks.chb.usePurpose(stateId, "CHB", "ChbPurpose");
@@ -92,6 +93,18 @@ const CHBSlotDetails
             <Timeline currentStep={2} />
             : null
         }
+        <Card>
+      <CardSubHeader>{value?.bookingSlotDetails.map((slot) =>(
+        <div>
+        {slot.name}
+     </div>
+    // <div key={index}>
+    //   {slot.name}
+    //   {/* ({slot.date1}) */}
+    // </div>
+  ))}</CardSubHeader>
+  <ChbCancellationPolicy/>
+      </Card>
         <FormStep
           config={config}
           onSelect={goNext}
@@ -193,20 +206,20 @@ const CHBSlotDetails
                 />
 
           <CardLabel>{`${t("PURPOSE_DESCRIPTION")}`}</CardLabel>
-          <TextInput
+          <TextArea
             t={t}
-            type={"text"}
+            type={"textarea"}
             isMandatory={false}
             optionKey="i18nKey"
             name="purposeDescription"
             value={purposeDescription}
             onChange={setpurposeDescription}
-            style={{ width: "86%" }}
+            style={{ width: "50%" }}
             ValidationRequired={false}
             {...(validation = {
               isRequired: true,
               pattern: "^[a-zA-Z ]+$",
-              type: "text",
+              type: "textarea",
               title: t("PURPOSE_DESCRIPTION_ERROR_MESSAGE"),
             })}
           />

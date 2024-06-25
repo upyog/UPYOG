@@ -16,4 +16,8 @@ public interface CommunityHallBookingService {
 	
 	List<CommunityHallBookingDetail> getBookingDetails(CommunityHallBookingSearchCriteria bookingSearchCriteria);
 
+	CommunityHallBookingDetail updateBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest);
+
+	void updateBookingStatus(String bookingNo);
+
 }

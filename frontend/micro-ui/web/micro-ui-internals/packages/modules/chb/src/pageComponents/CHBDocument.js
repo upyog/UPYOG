@@ -9,13 +9,22 @@ const PDFSvg = ({ width = 20, height = 20, style }) => (
   </svg>
 );
 
-function CHBDocument({ chbdetail = {} }) {
+function CHBDocument({ value = {},Code,index }) {
   const { t } = useTranslation();
   const { isLoading, isError, error, data } = Digit.Hooks.chb.useChbDocumentSearch({
-    chbdetail,
-  });
-  const documents = chbdetail?.documents || [];
-
+    value,
+  },
+  { value }, Code, index
+);
+  const documents = [];
+  ;
+  
+   value?.documents ? value?.documents?.documents.filter(doc => doc?.documentType === Code /* || doc?.documentType?.includes(Code.split(".")[1]) */).map((ob)=>{
+      documents.push(ob);
+    }) : value.filter(doc => doc?.documentType === Code /* || doc?.documentType.includes(Code.split(".")[1]) */).map((ob)=>{
+      documents.push(ob);
+    })
+  
   if (isLoading) {
     return <Loader />;
   }
@@ -30,7 +39,7 @@ function CHBDocument({ chbdetail = {} }) {
             return (
               <a target="_" href={documentLink} style={{ minWidth: "160px" }} key={index}>
                 <PDFSvg width={85} height={100} style={{ background: "#f6f6f6", padding: "8px" }} />
-                <p style={{ marginTop: "8px" }}>{t(`PT_${document?.documentType.replace(".","_")}`)}</p>
+                <p style={{ marginTop: "8px" }}>{t(`CHB_${document?.documentType.replace(".","_")}`)}</p>
               </a>
             );
           })}

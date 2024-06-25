@@ -3,7 +3,6 @@ package org.egov.asset.web.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.asset.service.AssetService;
@@ -29,8 +28,6 @@ import io.swagger.annotations.ApiParam;
 @Controller
 @RequestMapping("/v1/assets")
 public class AssetControllerV1 {
-
-	private final HttpServletRequest request;
 	
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
@@ -38,10 +35,6 @@ public class AssetControllerV1 {
 	@Autowired
 	AssetService assetService;
 
-	@Autowired
-	public AssetControllerV1( HttpServletRequest request) {
-		this.request = request;
-	}
 
 	@RequestMapping(value = "/_create", method = RequestMethod.POST)
 	public ResponseEntity<AssetResponse> v1AssetsCreatePost(
@@ -60,7 +53,7 @@ public class AssetControllerV1 {
 		//return new ResponseEntity<AssetResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
-//	@RequestMapping(value = "/assets/_search", method = RequestMethod.POST)
+//	@RequestMapping(value = "/v1/assets/_search", method = RequestMethod.POST)
 //	public ResponseEntity<AssetResponse> v1AssetsSearchPost(
 //			@NotNull @ApiParam(value = "Unique id for a tenant.", required = true) @Valid @RequestParam(value = "tenantId", required = true) String tenantId,
 //			@ApiParam(value = "Parameter to carry Request metadata in the request body") @Valid @RequestBody RequestInfo requestInfo,

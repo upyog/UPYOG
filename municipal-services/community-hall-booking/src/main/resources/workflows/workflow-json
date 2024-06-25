@@ -1,5 +1,5 @@
 {
-  "requestInfo": {
+    "requestInfo": {
     "apiId": "Rainmaker",
     "ver": ".01",
     "ts": null,
@@ -23,15 +23,15 @@
           "tenantId": "pg"
         },
         {
-          "name": "superuser",
-          "code": "CHB_INITIATOR",
+          "name": "Citizen",
+          "code": "Citizen",
           "tenantId": "pg"
         }
       ],
       "tenantId": "pg"
     }
   },
-  "BusinessServices": [
+    "BusinessServices": [
         {
             "tenantId": "pg",
             "businessService": "chb",
@@ -51,8 +51,7 @@
                             "action": "APPLY",
                             "nextState": "APPLIED",
                             "roles": [
-                                "CITIZEN",
-                                "CHB_CEMP"
+                                "CITIZEN"
                             ]
                         }
                     ]
@@ -67,28 +66,18 @@
                     "isStateUpdatable": false,
                     "actions": [
                         {
-                            "action": "VERIFY",
-                            "nextState": "APPLICATION_VERIFIED",
+                            "action": "PAY",
+                            "nextState": "PAYMENT_DONE",
                             "roles": [
-                                "CHB_CEMP",
-                                "CHB_VERIFIER"
-                            ]
-                        },
-                        {
-                            "action": "REJECT",
-                            "nextState": "REJECTED",
-                            "roles": [
-                                "EMPLOYEE",
-                                "CHB_CEMP",
-                                "CHB_VERIFIER"
+                                "CITIZEN"
                             ]
                         }
                     ]
                 },
                 {
                     "sla": null,
-                    "state": "APPLICATION_VERIFIED",
-                    "applicationStatus": "APPLICATION_VERIFIED",
+                    "state": "PAYMENT_DONE",
+                    "applicationStatus": "PAYMENT_DONE",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": true,
@@ -98,8 +87,6 @@
                             "action": "APPROVE",
                             "nextState": "APPROVED",
                             "roles": [
-                                "EMPLOYEE",
-                                "CHB_CEMP",
                                 "CHB_APPROVER"
                             ]
                         },
@@ -107,8 +94,6 @@
                             "action": "REJECT",
                             "nextState": "REJECTED",
                             "roles": [
-                                "EMPLOYEE",
-                                "CHB_CEMP",
                                 "CHB_APPROVER"
                             ]
                         }
@@ -124,13 +109,10 @@
                     "isStateUpdatable": false,
                     "actions": [
                         {
-                            "action": "PAY",
+                            "action": "REFUND",
                             "nextState": "BOOKING_COMPLETED",
                             "roles": [
-                                "SYSTEM_PAYMENT",
-                                "CITIZEN",
-                                "EMPLOYEE",
-                                "CHB_CEMP"
+                                "CHB_APPROVER"
                             ]
                         }
                     ]

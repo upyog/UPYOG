@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -49,13 +51,14 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 
 	@Override
 	public void saveCommunityHallBooking(CommunityHallBookingRequest bookingRequest) {
+		log.info("Saving community hall booking request data for booking no : " + bookingRequest.getHallsBookingApplication().getBookingNo());
 		producer.push(bookingConfiguration.getCommunityHallBookingSaveTopic(), bookingRequest);
 
 	}
 
 	@Override
 	public void saveCommunityHallBookingInit(CommunityHallBookingRequest bookingRequest) {
-
+		log.info("Saving community hall booking init data");
 		RequestInfo requestInfo = bookingRequest.getRequestInfo();
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
 		CommunityHallBookingRequestInit testPersist = CommunityHallBookingRequestInit.builder()
@@ -106,8 +109,13 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 		documentDetails.stream().forEach(documentDetail -> {
 			bookingMap.get(documentDetail.getBookingId()).addUploadedDocumentDetailsItem(documentDetail);
 		});
-		
 		return bookingDetails;
+	}
+
+	@Override
+	public void updateBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest) {
+		log.info("Updating community hall booking request data for booking no : " + communityHallsBookingRequest.getHallsBookingApplication().getBookingNo());
+		producer.push(bookingConfiguration.getCommunityHallBookingUpdateTopic(), communityHallsBookingRequest);
 	}
 
 }

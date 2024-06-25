@@ -38,7 +38,7 @@ serviceMaps:
    isTransaction: true
    queryMaps:
 
-       - query: INSERT INTO public.community_hall_booking_details(booking_id, booking_no, booking_date, approval_no, approval_date, tenant_id, community_hall_id, booking_status, resident_type, special_category, purpose, purpose_description, event_name, event_organized_by, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); 
+       - query: INSERT INTO public.community_hall_booking_details(booking_id, booking_no,booking_date, applicant_name, applicant_email_id,applicant_mobile_no, applicant_alternate_mobile_no, tenant_id, community_hall_id,community_hall_name, booking_status, resident_type, special_category, purpose, purpose_description,event_name, event_organized_by, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
          basePath: hallsBookingApplication
          jsonMaps:
           - jsonPath: $.hallsBookingApplication.bookingId
@@ -47,13 +47,19 @@ serviceMaps:
           
           - jsonPath: $.hallsBookingApplication.bookingDate
           
-          - jsonPath: $.hallsBookingApplication.approvalNo
+          - jsonPath: $.hallsBookingApplication.applicantName
+
+          - jsonPath: $.hallsBookingApplication.applicantEmailId
           
-          - jsonPath: $.hallsBookingApplication.approvalDate
+          - jsonPath: $.hallsBookingApplication.applicantMobileNo
+
+          - jsonPath: $.hallsBookingApplication.applicantAlternateMobileNo
 
           - jsonPath: $.hallsBookingApplication.tenantId
           
           - jsonPath: $.hallsBookingApplication.communityHallId
+
+          - jsonPath: $.hallsBookingApplication.communityHallName
           
           - jsonPath: $.hallsBookingApplication.bookingStatus
           
@@ -77,7 +83,7 @@ serviceMaps:
           
           - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
           
-       - query: INSERT INTO public.booking_slot_details(slot_id, booking_id, hallcode, booking_slot_datetime, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime)	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+       - query: INSERT INTO public.booking_slot_details(slot_id, booking_id, hall_code, hall_name, booking_date, booking_from_time, booking_to_time, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
          basePath: hallsBookingApplication.bookingSlotDetails.*
          jsonMaps:
           - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.slotId
@@ -86,7 +92,13 @@ serviceMaps:
 
           - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.hallCode
 
-          - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.bookingSlotDatetime
+          - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.hallName
+
+          - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.bookingDate
+
+          - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.bookingFromTime
+
+          - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.bookingToTime
 
           - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.status
 
@@ -143,8 +155,17 @@ serviceMaps:
           - jsonPath: $.hallsBookingApplication.auditDetails.createdTime
 
           - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
-      
 
+- version: 1.0
+      description: update community hall booking details
+      fromTopic: update-community-hall-booking
+      isTransaction: true
+      queryMaps:
 
-
- 
+       - query: UPDATE community_hall_booking_details SET lastmodifiedby = ?, lastmodifiedtime = ? WHERE booking_id = ?;
+         basePath: hallsBookingApplication
+         jsonMaps:
+           - jsonPath: $.hallsBookingApplication.bookingStatus
+           - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedBy
+           - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
+        

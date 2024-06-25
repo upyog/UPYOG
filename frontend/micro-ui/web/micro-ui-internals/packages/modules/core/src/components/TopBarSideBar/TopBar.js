@@ -100,6 +100,8 @@ const TopBar = ({
     );
   }
   const loggedin = userDetails?.access_token ? true : false;
+
+  console.log("cityDetails",cityDetails);
   return (
     <div className="topbar">
       {mobileView ? <Hamburger handleClick={toggleSidebar} color="#9E9E9E" /> : null}
@@ -108,7 +110,7 @@ const TopBar = ({
         {loggedin &&
           (cityDetails?.city?.ulbGrade ? (
             <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block" } : {}}>
-              {t(cityDetails?.i18nKey).toUpperCase()}{" "}
+              {t(cityDetails?.name).toUpperCase()}{" "}
               {t(`ULBGRADE_${cityDetails?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`).toUpperCase()}
             </p>
           ) : (

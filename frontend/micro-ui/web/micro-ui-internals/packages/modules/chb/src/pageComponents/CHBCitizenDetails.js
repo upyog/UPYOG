@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber, Card,CardSubHeader } from "@upyog/digit-ui-react-components";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/CHBTimeline";
+import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 
 const CHBCitizenDetails
- = ({ t, config, onSelect, userType, formData, ownerIndex,searchParams}) => {
+ = ({ t, config, onSelect, userType, formData, ownerIndex,searchParams,value=formData.slotlist}) => {
   const { pathname: url } = useLocation();
 
   let index =window.location.href.charAt(window.location.href.length - 1);
@@ -66,18 +67,32 @@ const CHBCitizenDetails
       goNext();
     }
   }, []);
-
+console.log("value----->",value);
  
-
+const {slotlist}=value;
   return (
    
     <React.Fragment>
-  
+      
     {
       window.location.href.includes("/citizen") ?
  <Timeline currentStep={1} />
     : null
     }
+    <Card>
+      <CardSubHeader>{value?.bookingSlotDetails.map((slot) =>(
+        <div>
+           {slot.name}
+        </div>
+       
+    // <div key={index}>
+    //   {slot.name}
+    //   {/* ({slot.date1}) */}
+    // </div>
+  ))}</CardSubHeader>
+  <ChbCancellationPolicy/>
+      </Card>
+  
     <FormStep
       config={config}
       onSelect={goNext}
