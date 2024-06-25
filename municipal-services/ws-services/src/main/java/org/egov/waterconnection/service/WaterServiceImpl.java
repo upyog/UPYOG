@@ -236,52 +236,21 @@ public class WaterServiceImpl implements WaterService {
 	 */
 	public List<WaterConnection> search(SearchCriteria criteria, RequestInfo requestInfo) {
 		List<WaterConnection> waterConnectionList;
-		//Creating copies of apiPlainAcessRequests for decryption process
-		//Any decryption process returns the  requestInfo with only the already used plain Access Request fields
-
-		PlainAccessRequest apiPlainAccessRequest = null, apiPlainAccessRequestCopy = null;
-		if (!ObjectUtils.isEmpty(requestInfo.getPlainAccessRequest())) {
-			PlainAccessRequest plainAccessRequest = requestInfo.getPlainAccessRequest();
-			if (!StringUtils.isEmpty(plainAccessRequest.getRecordId()) && !ObjectUtils.isEmpty(plainAccessRequest.getPlainRequestFields())) {
-				apiPlainAccessRequest = new PlainAccessRequest(plainAccessRequest.getRecordId(), plainAccessRequest.getPlainRequestFields());
-				apiPlainAccessRequestCopy = new PlainAccessRequest(plainAccessRequest.getRecordId(), plainAccessRequest.getPlainRequestFields());
-			}
-		}
-		/* encrypt here */
-	//	criteria = encryptionDecryptionUtil.encryptObject(criteria, WNS_ENCRYPTION_MODEL, SearchCriteria.class);
-	//	criteria = encryptionDecryptionUtil.encryptObject(criteria, WNS_PLUMBER_ENCRYPTION_MODEL, SearchCriteria.class);
-
 		waterConnectionList = getWaterConnectionsList(criteria, requestInfo);
-		log.info("connection after search" +waterConnectionList.size() );
-
-		if (!StringUtils.isEmpty(criteria.getSearchType()) &&
-				criteria.getSearchType().equals(WCConstants.SEARCH_TYPE_CONNECTION)) {
+		log.info("Water Connection List Inside Search API call ::" + waterConnectionList);
+		log.info("Search Criteria ::" + criteria);
+		if (!StringUtils.isEmpty(criteria.getSearchType())
+				&& criteria.getSearchType().equals(WCConstants.SEARCH_TYPE_CONNECTION)) {
 			waterConnectionList = enrichmentService.filterConnections(waterConnectionList);
-			/*if(criteria.getIsPropertyDetailsRequired()){
-				waterConnectionList = enrichmentService.enrichPropertyDetails(waterConnectionList, criteria, requestInfo);
-			}*/
-		}
-		
-		log.info("Filtered connection after search" +waterConnectionList.size() );
-		if ((criteria.getIsPropertyDetailsRequired() != null) && criteria.getIsPropertyDetailsRequired()) {
-			waterConnectionList = enrichmentService.enrichPropertyDetails(waterConnectionList, criteria, requestInfo);
+			if (criteria.getIsPropertyDetailsRequired()) {
+				waterConnectionList = enrichmentService.enrichPropertyDetails(waterConnectionList, criteria,
+						requestInfo);
+
+			}
 		}
 		waterConnectionValidator.validatePropertyForConnection(waterConnectionList);
 		enrichmentService.enrichConnectionHolderDeatils(waterConnectionList, criteria, requestInfo);
-		enrichmentService.enrichProcessInstance(waterConnectionList, criteria, requestInfo);
-//		enrichmentService.enrichDocumentDetails(waterConnectionList, criteria, requestInfo);
-
-		requestInfo.setPlainAccessRequest(apiPlainAccessRequest);
-		/* decrypt here */
-		if (criteria.getIsInternalCall()) {
-		//	waterConnectionList = encryptionDecryptionUtil.decryptObject(waterConnectionList, "WnSConnectionPlumberDecrypDisabled", WaterConnection.class, requestInfo);
-			requestInfo.setPlainAccessRequest(apiPlainAccessRequestCopy);
-			return waterConnectionList;//encryptionDecryptionUtil.decryptObject(waterConnectionList, "WnSConnectionDecrypDisabled", WaterConnection.class, requestInfo);
-		}
-		//waterConnectionList = encryptionDecryptionUtil.decryptObject(waterConnectionList, WNS_PLUMBER_ENCRYPTION_MODEL, WaterConnection.class, requestInfo);
-		requestInfo.setPlainAccessRequest(apiPlainAccessRequestCopy);
-		return waterConnectionList;//encryptionDecryptionUtil.decryptObject(waterConnectionList, WNS_ENCRYPTION_MODEL, WaterConnection.class, requestInfo);
-	}
+		return waterConnectionList;}
 
 	/**
 	 *
