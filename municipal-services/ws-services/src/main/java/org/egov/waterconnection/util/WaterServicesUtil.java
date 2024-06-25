@@ -92,6 +92,8 @@ public class WaterServicesUtil {
 		HashSet<String> propertyIds = new HashSet<>();
 		propertyIds.add(waterConnectionRequest.getWaterConnection().getPropertyId());
 		propertyCriteria.setPropertyIds(propertyIds);
+		propertyCriteria.setTenantId(waterConnectionRequest.getWaterConnection().getTenantId());
+		
 //		propertyCriteria.setTenantId(waterConnectionRequest.getWaterConnection().getTenantId());
 		if (waterConnectionRequest.getRequestInfo().getUserInfo() != null
 				&& "EMPLOYEE".equalsIgnoreCase(waterConnectionRequest.getRequestInfo().getUserInfo().getType())) {
