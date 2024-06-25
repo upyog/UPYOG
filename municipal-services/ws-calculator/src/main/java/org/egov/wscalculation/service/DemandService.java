@@ -471,6 +471,7 @@ public class DemandService {
 
 			// For the metered connections demand has to create one by one
 			if (WSCalculationConstant.meteredConnectionType.equalsIgnoreCase(connection.getConnectionType())) {
+				additionalDetailsMap.put("connectionType", connection.getConnectionType());
 				demandReq.addAll(demands);
 				if (tenantId.equalsIgnoreCase("pb.amritsar")
 						&& demands.get(0).getBusinessService().equalsIgnoreCase("WS")) {
@@ -498,7 +499,7 @@ public class DemandService {
 						demandDetails1.add(dd1);
 					}
 
-					demandsSw.add(Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner)
+					demandsSw.add(Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails1).payer(owner)
 							.minimumAmountPayable(minimumPayableAmount).tenantId(tenantId).taxPeriodFrom(fromDate)
 							.taxPeriodTo(toDate).consumerType("sewerageConnection").businessService(businessService)
 							.status(StatusEnum.valueOf("ACTIVE")).billExpiryTime(expiryDate)
