@@ -26,8 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.ApiParam;
 
@@ -36,10 +34,6 @@ import io.swagger.annotations.ApiParam;
 @Controller
 @RequestMapping("/asset-services")
 public class AssetControllerV1 {
-
-	private final ObjectMapper objectMapper;
-
-	private final HttpServletRequest request;
 	
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
@@ -47,11 +41,6 @@ public class AssetControllerV1 {
 	@Autowired
 	AssetService assetService;
 
-	@Autowired
-	public AssetControllerV1(ObjectMapper objectMapper, HttpServletRequest request) {
-		this.objectMapper = objectMapper;
-		this.request = request;
-	}
 
 	@RequestMapping(value = "/v1/assets/_create", method = RequestMethod.POST)
 	public ResponseEntity<AssetResponse> v1AssetsCreatePost(
