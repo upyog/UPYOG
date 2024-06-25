@@ -296,8 +296,8 @@ public class PropertyQueryBuilder {
 		Set<String> documentNumberList = criteria.getDocumentNumbers();
 
 		if(!CollectionUtils.isEmpty(documentNumberList)){
-				if(appendAndQuery)
-				builder.append(AND_QUERY);
+	//			if(appendAndQuery)
+	//			builder.append(AND_QUERY);
 			addClauseIfRequired(preparedStmtList, builder);
 			builder.append(" property.status='ACTIVE' and owndoc.status='ACTIVE' and owndoc.documentuid  IN ( ").append(createQuery(documentNumberList)).append(" )");
 			addToPreparedStatement(preparedStmtList, documentNumberList);
@@ -305,8 +305,8 @@ public class PropertyQueryBuilder {
 		
 		
 		if (null != criteria.getLocality()) {
-	if(appendAndQuery)
-				builder.append(AND_QUERY);
+	//if(appendAndQuery)
+//				builder.append(AND_QUERY);
 			addClauseIfRequired(preparedStmtList,builder);
 			builder.append("address.locality = ?");
 			preparedStmtList.add(criteria.getLocality());
@@ -323,8 +323,8 @@ public class PropertyQueryBuilder {
 		if (!CollectionUtils.isEmpty(propertyIds)) {
 
 			addClauseIfRequired(preparedStmtList,builder);
-			if(appendAndQuery)
-			builder.append(AND_QUERY);
+		//	if(appendAndQuery)
+		//	builder.append(AND_QUERY);
 			builder.append("property.propertyid IN (").append(createQuery(propertyIds)).append(")");
 			addToPreparedStatementWithUpperCase(preparedStmtList, propertyIds);
 			appendAndQuery= true;
@@ -334,8 +334,8 @@ public class PropertyQueryBuilder {
 		if (!CollectionUtils.isEmpty(acknowledgementIds)) {
 
 			addClauseIfRequired(preparedStmtList,builder);
-			if(appendAndQuery)
-				builder.append(AND_QUERY);
+		//	if(appendAndQuery)
+		//		builder.append(AND_QUERY);
 			builder.append("property.acknowldgementnumber IN (").append(createQuery(acknowledgementIds)).append(")");
 			addToPreparedStatementWithUpperCase(preparedStmtList, acknowledgementIds);
 			appendAndQuery= true;
@@ -343,8 +343,8 @@ public class PropertyQueryBuilder {
 		
 		Set<String> uuids = criteria.getUuids();
 		if (!CollectionUtils.isEmpty(uuids)) {
-			if(appendAndQuery)
-				builder.append(AND_QUERY);
+	//		if(appendAndQuery)
+		//		builder.append(AND_QUERY);
 			addClauseIfRequired(preparedStmtList,builder);
 			builder.append("property.id IN (").append(createQuery(uuids)).append(")");
 			addToPreparedStatement(preparedStmtList, uuids);
@@ -353,8 +353,8 @@ public class PropertyQueryBuilder {
 
 		Set<String> oldpropertyids = criteria.getOldpropertyids();
 		if (!CollectionUtils.isEmpty(oldpropertyids)) {
-			if(appendAndQuery)
-				builder.append(AND_QUERY);
+		//	if(appendAndQuery)
+		//		builder.append(AND_QUERY);
 			addClauseIfRequired(preparedStmtList,builder);
 			builder.append("property.oldpropertyid IN (").append(createQuery(oldpropertyids)).append(")");
 			addToPreparedStatement(preparedStmtList, oldpropertyids);
