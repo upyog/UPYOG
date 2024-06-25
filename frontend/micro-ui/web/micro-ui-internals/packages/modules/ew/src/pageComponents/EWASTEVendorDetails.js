@@ -74,7 +74,7 @@ const EWVendorDetails
       <React.Fragment>
         {
           window.location.href.includes("/citizen") ?
-            <Timeline currentStep={3} />
+            <Timeline currentStep={5} />
             : null
         }
 

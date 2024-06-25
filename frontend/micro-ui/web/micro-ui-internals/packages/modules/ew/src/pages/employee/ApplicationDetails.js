@@ -6,7 +6,7 @@
     import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
     // import getEwAcknowledgementData from "../../utils/getEwAcknowledgementData";
 
-    const ApplicationDetails = () => {
+    const EWApplicationDetails = () => {
       const { t } = useTranslation();
       const { data: storeData } = Digit.Hooks.useStore.getInitData();
       console.log("sss",storeData)
@@ -149,4 +149,4 @@
       );
     };
 
-    export default React.memo(ApplicationDetails);
+    export default React.memo(EWApplicationDetails);

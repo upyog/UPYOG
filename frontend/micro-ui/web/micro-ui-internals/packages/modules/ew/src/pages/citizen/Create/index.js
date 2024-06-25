@@ -1,5 +1,5 @@
 import { Loader } from "@upyog/digit-ui-react-components";
-import React ,{Fragment}from "react";
+import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
@@ -41,7 +41,7 @@ const EWCreate = ({ parentRoute }) => {
     }
     let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
 
-    
+
     let redirectWithHistory = history.push;
     if (skipStep) {
       redirectWithHistory = history.replace;
@@ -55,7 +55,7 @@ const EWCreate = ({ parentRoute }) => {
     if (!isNaN(nextStep.split("/").pop())) {
       nextPage = `${match.path}/${nextStep}`;
     }
-     else {
+    else {
       nextPage = isMultiple && nextStep !== "map" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
     }
 
@@ -63,11 +63,10 @@ const EWCreate = ({ parentRoute }) => {
   };
 
 
-  if(params && Object.keys(params).length>0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true")
-    {
-      clearParams();
-      queryClient.invalidateQueries("EWASTE_CREATE");
-    }
+  if (params && Object.keys(params).length > 0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true") {
+    clearParams();
+    queryClient.invalidateQueries("EWASTE_CREATE");
+  }
 
   const ewasteCreate = async () => {
     history.push(`${match.path}/acknowledgement`);
@@ -90,8 +89,8 @@ const EWCreate = ({ parentRoute }) => {
     goNext(skipStep, index, isAddMultiple, key);
   }
 
-  const handleSkip = () => {};
-  const handleMultiple = () => {};
+  const handleSkip = () => { };
+  const handleMultiple = () => { };
 
   const onSuccess = () => {
     clearParams();
@@ -107,12 +106,12 @@ const EWCreate = ({ parentRoute }) => {
   commonFields.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });
-  
+
   config.indexRoute = "productdetails";
 
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("EWCheckPage");
   const EWASTEAcknowledgement = Digit?.ComponentRegistryService?.getComponent("EWASTEAcknowledgement");
-  
+
   return (
     <Switch>
       {config.map((routeObj, index) => {
@@ -125,16 +124,15 @@ const EWCreate = ({ parentRoute }) => {
         );
       })}
 
-      
-       <Route path={`${match.path}/check`}>
+      <Route path={`${match.path}/check`}>
         <CheckPage onSubmit={ewasteCreate} value={params} />
       </Route>
       <Route path={`${match.path}/acknowledgement`}>
         <EWASTEAcknowledgement data={params} onSuccess={onSuccess} />
       </Route>
-       <Route>
+      <Route>
         <Redirect to={`${match.path}/${config.indexRoute}`} />
-      </Route> 
+      </Route>
     </Switch>
   );
 };

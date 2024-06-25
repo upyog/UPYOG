@@ -72,7 +72,7 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
 
   return (
     <React.Fragment>
-      {window.location.href.includes("/citizen") ? <Timeline currentStep={2} /> : null}
+      {window.location.href.includes("/citizen") ? <Timeline currentStep={3} /> : null}
 
       <FormStep
         config={config}
@@ -119,16 +119,16 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
           <CardLabel>{`${t("EWASTE_EMAIL_ID")}`}</CardLabel>
           <TextInput
             t={t}
-            type={"text"}
+            type={"email"}
             isMandatory={true}
             optionKey="i18nKey"
             name="emailId"
             value={emailId}
             onChange={setOwnerEmail}
-            ValidationRequired={false}
+            ValidationRequired={true}
             {...(validation = {
               isRequired: true,
-              pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$",
+              pattern: "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$",
               type: "email",
               title: t("EWASTE_NAME_ERROR_MESSAGE"),
             })}

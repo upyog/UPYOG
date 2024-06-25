@@ -13,7 +13,7 @@ import { size } from "lodash";
 const EWASTECitizenApplicationDetails = () => {
   const { t } = useTranslation();
   const history = useHistory();
-  const {requestId, tenantId } = useParams();
+  const { requestId, tenantId } = useParams();
   const [acknowldgementData, setAcknowldgementData] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [popup, setpopup] = useState(false);
@@ -21,42 +21,44 @@ const EWASTECitizenApplicationDetails = () => {
   // const tenantId = Digit.ULBService.getCurrentTenantId();
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
- 
 
-  const { isLoading, isError,error, data } = Digit.Hooks.ew.useEWSearch(
+
+  const { isLoading, isError, error, data } = Digit.Hooks.ew.useEWSearch(
     {
       tenantId,
       filters: { applicationNumber: requestId },
     },
   );
 
-  const [billData, setBillData]=useState(null);
+  // console.log("thi si is data in ewaste citizen applicateon:: ", data)
+
+  const [billData, setBillData] = useState(null);
 
   const EwasteApplication = get(data, "EwasteApplication", []);
-  
+
   const ewId = get(data, "EwasteApplication[0].applicationNumber", []);
-  
-  let  ew_details = (EwasteApplication && EwasteApplication.length > 0 && EwasteApplication[0]) || {};
+
+  let ew_details = (EwasteApplication && EwasteApplication.length > 0 && EwasteApplication[0]) || {};
   // console.log("this is ew-detaoishdjf:::", ew_details)
-  const application =  ew_details;
+  const application = ew_details;
+  console.log("application ::", application)
 
-  
-  sessionStorage.setItem("ew-pet", JSON.stringify(application));
+  sessionStorage.setItem("ew-storage", JSON.stringify(application));
 
-  
 
-  const [loading, setLoading]=useState(false);
 
-  const fetchBillData=async()=>{
+  const [loading, setLoading] = useState(false);
+
+  const fetchBillData = async () => {
     setLoading(true);
-    const result= await Digit.PaymentService.fetchBill(tenantId,{ businessService: "ew-services", consumerCode: requestId, });
-  
-  setBillData(result);
-  setLoading(false);
-};
-useEffect(()=>{
-fetchBillData();
-}, [tenantId, requestId]); 
+    const result = await Digit.PaymentService.fetchBill(tenantId, { businessService: "ew-services", consumerCode: requestId, });
+
+    setBillData(result);
+    setLoading(false);
+  };
+  useEffect(() => {
+    fetchBillData();
+  }, [tenantId, requestId]);
 
   const { isLoading: auditDataLoading, isError: isAuditError, data: auditResponse } = Digit.Hooks.ew.useEWSearch(
     {
@@ -65,7 +67,7 @@ fetchBillData();
     },
     {
       enabled: true,
-      
+
     }
   );
 
@@ -92,14 +94,14 @@ fetchBillData();
       documents: null,
       assignes: null,
     };
-     ew_details.workflow = workflow;
+    ew_details.workflow = workflow;
   }
 
-  
 
-  
 
- 
+
+
+
   // let owners = [];
   // owners = application?.owners;
   // let docs = [];
@@ -109,7 +111,7 @@ fetchBillData();
     return <Loader />;
   }
 
- 
+
 
   // const getAcknowledgementData = async () => {
   //   const applications = application || {};
@@ -120,8 +122,8 @@ fetchBillData();
   // };
 
   let documentDate = t("CS_NA");
-  if ( ew_details?.additionalDetails?.documentDate) {
-    const date = new Date( ew_details?.additionalDetails?.documentDate);
+  if (ew_details?.additionalDetails?.documentDate) {
+    const date = new Date(ew_details?.additionalDetails?.documentDate);
     const month = Digit.Utils.date.monthNames[date.getMonth()];
     documentDate = `${date.getDate()} ${month} ${date.getFullYear()}`;
   }
@@ -150,7 +152,7 @@ fetchBillData();
 
   dowloadOptions.push({
     label: t("EWASTE_DOWNLOAD_ACK_FORM"),
-    onClick: () => getAcknowledgementData(),
+    // onClick: () => getAcknowledgementData(),
   });
 
   //commented out, need later for download receipt and certificate 
@@ -159,11 +161,19 @@ fetchBillData();
       label: t("EWASTE_FEE_RECIEPT"),
       onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
     });
-  if (data?.ResponseInfo?.status === "successful")
-    dowloadOptions.push({
-      label: t("EWASTE_CERTIFICATE"),
-      onClick: () => printCertificate(),
-    });
+
+
+  const currentForms = data?.EwasteApplication?.filter(form => form.requestId === requestId);
+  // console.log("cureenstforms", currentForms[0]?.requestStatus)
+
+  // if (data?.ResponseInfo?.status === "successful")
+  if (currentForms[0]?.requestStatus != "NEWREQUEST"){
+  // console.log("ewaste certificate if ::", data?.EwasteApplication, currentForms)
+  dowloadOptions.push({
+    label: t("EWASTE_CERTIFICATE"),
+    onClick: () => printCertificate(),
+  });
+}
 
 
   const productcolumns = [
@@ -173,17 +183,17 @@ fetchBillData();
     { Header: t("TOTAL_PRODUCT_PRICE"), accessor: "total_price" },
   ];
 
-    const productRows = ew_details?.ewasteDetails?.map((product) => (
-        {
-            name: t(product.productName),
-            quantity: product.quantity,
-            unit_price: product.price,
-            total_price: product.quantity * product.price,
-        }
-    )) || [];
-  
+  const productRows = ew_details?.ewasteDetails?.map((product) => (
+    {
+      name: t(product.productName),
+      quantity: product.quantity,
+      unit_price: product.price,
+      total_price: product.quantity * product.price,
+    }
+  )) || [];
 
-  
+
+
   return (
     <React.Fragment>
       <div>
@@ -203,10 +213,10 @@ fetchBillData();
             <Row
               className="border-none"
               label={t("EWASTE_APPLICATION_NO_LABEL")}
-              text={ew_details?.requestId} 
+              text={ew_details?.requestId}
             />
           </StatusTable>
-           
+
           <CardSubHeader style={{ fontSize: "24px" }}>{t("EWASTE_ADDRESS_HEADER")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("EWASTE_PINCODE")} text={ew_details?.address?.pincode || t("CS_NA")} />
@@ -243,15 +253,13 @@ fetchBillData();
             totalRecords={productRows.length}
           />
 
-          {/* <CardSubHeader style={{ fontSize: "24px" }}>{t("EWASTE__DETAILS_HEADER")}</CardSubHeader>
-          <StatusTable>
-            <Row className="border-none" label={t("PTR_PET_TYPE")} text={ew_details?.petDetails?.petType || t("CS_NA")} />
-            <Row className="border-none" label={t("PTR_BREED_TYPE")} text={ew_details?.petDetails?.breedType || t("CS_NA")} />
-            <Row className="border-none" label={t("PTR_DOCTOR_NAME")} text={ew_details?.petDetails?.doctorName || t("CS_NA")} />
-            <Row className="border-none" label={t("PTR_CLINIC_NAME")} text={ew_details?.petDetails?.clinicName || t("CS_NA")} />
-            <Row className="border-none" label={t("PTR_VACCINATED_DATE")} text={ew_details?.petDetails?.lastVaccineDate || t("CS_NA")} />
-            <Row className="border-none" label={t("PTR_VACCINATION_NUMBER")} text={ew_details?.petDetails?.vaccinationNumber || t("CS_NA")} />
-          </StatusTable> */}
+          <br></br>
+          <StatusTable style={{ marginLeft: "20px" }}>
+            <Row
+              label={t("EWASTE_NET_PRICE")}
+              text={ew_details?.calculatedAmount}
+            />
+          </StatusTable>
 
 
           {/* <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_DOCUMENT_DETAILS")}</CardSubHeader>
@@ -264,31 +272,31 @@ fetchBillData();
               </StatusTable>
             )}
           </div> */}
-          <EWASTEWFApplicationTimeline application={application} id={application?.applicationNumber} userType={"citizen"} />
+          <EWASTEWFApplicationTimeline application={application} id={application?.requestId} userType={"citizen"} />
           {showToast && (
-          <Toast
-            error={showToast.key}
-            label={t(showToast.label)}
-            style={{bottom:"0px"}}
-            onClose={() => {
-              setShowToast(null);
-            }}
-          />
-        )}
+            <Toast
+              error={showToast.key}
+              label={t(showToast.label)}
+              style={{ bottom: "0px" }}
+              onClose={() => {
+                setShowToast(null);
+              }}
+            />
+          )}
         </Card>
 
-        {popup && <PTCitizenFeedbackPopUp setpopup={setpopup} setShowToast={setShowToast} data={data} />}
+        {/* {popup && <PTCitizenFeedbackPopUp setpopup={setpopup} setShowToast={setShowToast} data={data} />} */}
       </div>
     </React.Fragment>
   );
 };
 
 export default EWASTECitizenApplicationDetails;
-            
-           
-           
-            
 
-         
 
-        
+
+
+
+
+
+

@@ -50,14 +50,14 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     { Header: t("TOTAL_PRODUCT_PRICE"), accessor: "total_price" },
   ];
 
-    const productRows = ewdet?.prlistName?.map((product, index) => (
-        {
-            name: product.code,
-            quantity: ewdet?.prlistQuantity[index].code,
-            unit_price: product.price,
-            total_price: ewdet?.prlistQuantity[index].code * product.price,
-        }
-    )) || [];
+  const productRows = ewdet?.prlistName?.map((product, index) => (
+    {
+      name: product.code,
+      quantity: ewdet?.prlistQuantity[index].code,
+      unit_price: product.price,
+      total_price: ewdet?.prlistQuantity[index].code * product.price,
+    }
+  )) || [];
 
   const [agree, setAgree] = useState(false);
   const setdeclarationhandler = () => {
@@ -65,14 +65,13 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   };
   return (
     <React.Fragment>
-      {window.location.href.includes("/citizen") ? <Timeline currentStep={5} /> : null}
+      {window.location.href.includes("/citizen") ? <Timeline currentStep={6} /> : null}
       <Card>
         <CardHeader>{t("EWASTE_CHECK_YOUR_DETAILS")}</CardHeader>
         <div>
           <br></br>
 
           <CardSubHeader>{t("EWASTE_TITLE_PRODUCT_DETAILS")}</CardSubHeader>
-          <br></br>
 
           <ApplicationTable
             t={t}
@@ -90,6 +89,17 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             totalRecords={productRows.length}
           />
           <br></br>
+
+          <StatusTable style={{ marginLeft: "20px" }}>
+            <Row
+              label={t("EWASTE_NET_PRICE")}
+              text={ewdet?.calculatedAmount}
+              actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/productdetails`}`} />}
+
+            />
+          </StatusTable>
+          <br></br>
+
 
           <CardSubHeader>{t("EWASTE_TITLE_OWNER_DETAILS")}</CardSubHeader>
           <br></br>

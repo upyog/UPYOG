@@ -22,9 +22,11 @@ import EWASTECitizenApplicationDetails from "./pages/citizen/EWASTECitizenApplic
 import Inbox from "./pages/employee/Inbox";
 import InboxFilter from "./components/inbox/NewInboxFilter";
 import EmployeeApp from "./pages/employee/index";
-import ApplicationDetails from "./pages/employee/ApplicationDetails";
+import EWApplicationDetails from "./pages/employee/ApplicationDetails";
 import { EwService } from "../../../libraries/src/services/elements/EW";
-
+import EWASTEWFCaption from "./components/EWASTEWFCaption";
+import EWASTEWFReason from "./components/EWASTEWFReason";
+import EWASTEDocuments from "./pageComponents/EWASTEDocuments";
 
 
 const componentsToRegister = {
@@ -40,10 +42,13 @@ const componentsToRegister = {
   EWASTESelectAddress,
   EWASTEAcknowledgement,
   EWASTEMyApplications,
+  EWASTEDocuments,
   EWASTECitizenApplicationDetails,
+  EWASTEWFCaption,
+  EWASTEWFReason,
   Inbox,
   EmployeeApp,
-  EWApplicationDetails: ApplicationDetails,
+  EWApplicationDetails: EWApplicationDetails,
   EwService
 }
 
