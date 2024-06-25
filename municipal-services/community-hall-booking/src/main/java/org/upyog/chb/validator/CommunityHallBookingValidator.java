@@ -33,9 +33,16 @@ public class CommunityHallBookingValidator {
 	 * @param mdmsData
 	 */
 	public void validateCreate(CommunityHallBookingRequest bookingRequest, Object mdmsData) {
-		log.info("validating master data for booking request for mdmsdata : " + mdmsData);
+		log.info("validating master data for create booking request for mdmsdata : " + mdmsData);
+
 		// mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
 
+	}
+
+	public void validateUpdate(CommunityHallBookingRequest bookingRequest, Object mdmsData) {
+		log.info("validating master data for update  booking request for mdmsdata : " + mdmsData);
+
+		// mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
 	}
 
 	/**
@@ -96,10 +103,10 @@ public class CommunityHallBookingValidator {
 	 */
 	private void validateSearchParams(CommunityHallBookingSearchCriteria criteria, List<String> allowedParams) {
 		log.info("Validating search params for allowedParams " + allowedParams);
-		
-		if (criteria.getApplicationNo() != null && !allowedParams.contains("applicationNo"))
+
+		if (criteria.getBookingNo() != null && !allowedParams.contains("bookingNo"))
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
-					"Search on applicationNo is not allowed");
+					"Search on booking no is not allowed");
 
 		if (criteria.getStatus() != null && !allowedParams.contains("status"))
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Search on Status is not allowed");
@@ -112,10 +119,6 @@ public class CommunityHallBookingValidator {
 
 		if (criteria.getLimit() != null && !allowedParams.contains("limit"))
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Search on limit is not allowed");
-
-		if (criteria.getApprovalDate() != null && (criteria.getApprovalDate() > new Date().getTime()))
-			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
-					"Booking approved date cannot be a future date");
 
 		if (criteria.getFromDate() != null && (criteria.getFromDate() > new Date().getTime()))
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,

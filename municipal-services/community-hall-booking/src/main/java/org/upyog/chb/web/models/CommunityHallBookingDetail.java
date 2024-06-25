@@ -37,10 +37,6 @@ public class CommunityHallBookingDetail {
 	
 	private Long bookingDate;
 	
-	private String applicationNo;
-	
-	private Long applicationDate;
-	
 	private String applicantName;
 	
 	private String applicantMobileNo;
