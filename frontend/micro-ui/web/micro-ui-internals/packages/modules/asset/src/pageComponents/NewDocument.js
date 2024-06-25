@@ -3,14 +3,13 @@ import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPai
 import Timeline from "../components/ASTTimeline";
 import EXIF from 'exif-js';
 
-const NewDocument = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {
-  const tenantId = Digit.ULBService.getStateId();
+const NewDocument = ({ t, config, onSelect, formData}) => {
+  
   const [documents, setDocuments] = useState(formData?.documents?.documents || []);
   const [error, setError] = useState(null);
   const [enableSubmit, setEnableSubmit] = useState(true);
   const [checkRequiredFields, setCheckRequiredFields] = useState(true);
 
-  // const tenantId = Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
   
 
@@ -29,8 +28,6 @@ const NewDocument = ({ t, config, onSelect, userType, formData, setError: setFor
   useEffect(() => {
     let count = 0;
     data?.ASSET?.Documents.map((doc) => {
-
-        console.log("docccccc",doc);
       doc.hasDropdown = true;
       
       let isRequired = false;
@@ -51,7 +48,6 @@ const NewDocument = ({ t, config, onSelect, userType, formData, setError: setFor
       {!isLoading ? (
         <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={enableSubmit} onAdd={onAdd}>
           {data?.ASSET?.Documents?.map((document, index) => {
-            console.log("djuhewdiugwefigwehjdbywd",document);
             return (
               <ASSETSelectDocument
                 key={index}
@@ -82,16 +78,14 @@ function ASSETSelectDocument({
   setDocuments,
   setError,
   documents,
-  action,
   formData,
-  
+  action,
   id,
   
 }) {
   const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0];
   
 
-  const tenantId = Digit.ULBService.getCurrentTenantId();
   const [selectedDocument, setSelectedDocument] = useState(
     filteredDocument
       ? { ...filteredDocument, active: doc?.active === true, code: filteredDocument?.documentType }
@@ -110,11 +104,12 @@ function ASSETSelectDocument({
   function selectfile(e) {
     setFile(e.target.files[0]);
   }
+
   const { dropdownData } = doc;
   
   var dropDownData = dropdownData;
    
-  const [isHidden, setHidden] = useState(false);
+  // const [isHidden, setHidden] = useState(false);
 
   
 
@@ -143,20 +138,20 @@ function ASSETSelectDocument({
     
   }, [uploadedFile, selectedDocument, latitude, longitude]);
 
-  useEffect(() => {
-    if (action === "update") {
-      const originalDoc = formData?.originalData?.documents?.filter((e) => e.documentType.includes(doc?.code))[0];
-      const docType = dropDownData
-        .filter((e) => e.code === originalDoc?.documentType)
-        .map((e) => ({ ...e, i18nKey: e?.code?.replaceAll(".", "_") }))[0];
-      if (!docType) setHidden(true);
-      else {
-        setSelectedDocument(docType);
-        setUploadedFile(originalDoc?.fileStoreId);
-      }
-    } else if (action === "create") {
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (action === "update") {
+  //     const originalDoc = formData?.originalData?.documents?.filter((e) => e.documentType.includes(doc?.code))[0];
+  //     const docType = dropDownData
+  //       .filter((e) => e.code === originalDoc?.documentType)
+  //       .map((e) => ({ ...e, i18nKey: e?.code?.replaceAll(".", "_") }))[0];
+  //     if (!docType) setHidden(true);
+  //     else {
+  //       setSelectedDocument(docType);
+  //       setUploadedFile(originalDoc?.fileStoreId);
+  //     }
+  //   } else if (action === "create") {
+  //   }
+  // }, []);
 
   const extractGeoLocation = (file) => {
     return new Promise((resolve) => {
@@ -202,7 +197,6 @@ function ASSETSelectDocument({
       if (file) {
         if (file.size >= 5242880) {
           setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
-          // if (!formState.errors[config.key]) setFormError(config.key, { type: doc?.code });
         } else {
           try {
             setUploadedFile(null);
@@ -220,9 +214,9 @@ function ASSETSelectDocument({
     })();
   }, [file]);
 
-  useEffect(() => {
-    if (isHidden) setUploadedFile(null);
-  }, [isHidden]);
+  // useEffect(() => {
+  //   if (isHidden) setUploadedFile(null);
+  // }, [isHidden]);
 
   return (
     <div style={{ marginBottom: "24px" }}>
@@ -268,7 +262,6 @@ function ASSETSelectDocument({
           <p>{t("Longitude")}: {longitude}</p>
         </div>
       )}
-      {/* {error && <CardLabel style={{ color: "red" }}>{error}</CardLabel>} */}
     </div>
   );
 }
