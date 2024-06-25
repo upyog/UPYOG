@@ -85,7 +85,7 @@ public class WorkflowService {
      */
     public List<ProcessInstance> search(RequestInfo requestInfo,ProcessInstanceSearchCriteria criteria){
         
-    	criteria.setLimit(criteria.getOffset()+config.getMaxSearchLimit());
+    	
     	
     	List<ProcessInstance> processInstances;
         if(criteria.isNull())
