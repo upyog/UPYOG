@@ -225,13 +225,15 @@ public class PropertyQueryBuilder {
 
 		if(isPlainSearch)
 		{
+			
+			
 			Set<String> tenantIds = criteria.getTenantIds();
 			if(!CollectionUtils.isEmpty(tenantIds))
 			{
 				addClauseIfRequired(preparedStmtList,builder);
 				builder.append("property.tenantid IN (").append(createQuery(tenantIds)).append(")");
 				addToPreparedStatement(preparedStmtList,tenantIds);
-				appendAndQuery = true;
+				//appendAndQuery = true;
 			}
 		}
 		else
@@ -322,7 +324,7 @@ public class PropertyQueryBuilder {
 
 			addClauseIfRequired(preparedStmtList,builder);
 			if(appendAndQuery)
-				//builder.append(AND_QUERY);
+			builder.append(AND_QUERY);
 			builder.append("property.propertyid IN (").append(createQuery(propertyIds)).append(")");
 			addToPreparedStatementWithUpperCase(preparedStmtList, propertyIds);
 			appendAndQuery= true;
@@ -351,7 +353,7 @@ public class PropertyQueryBuilder {
 
 		Set<String> oldpropertyids = criteria.getOldpropertyids();
 		if (!CollectionUtils.isEmpty(oldpropertyids)) {
-if(appendAndQuery)
+			if(appendAndQuery)
 				builder.append(AND_QUERY);
 			addClauseIfRequired(preparedStmtList,builder);
 			builder.append("property.oldpropertyid IN (").append(createQuery(oldpropertyids)).append(")");
