@@ -146,22 +146,37 @@ public class TransactionService {
 
         Transaction newTxn = null;
 
-        if(validator.skipGateway(currentTxnStatus)) {
-            newTxn = currentTxnStatus;
+	if(currentTxnStatus.getGateway().contentEquals("CCAVANUE")) {     	 
+      		 if(validator.skipGateway(currentTxnStatus)) {
+               newTxn = currentTxnStatus;
+           } else{
+               newTxn = gatewayService.getLiveStatus(currentTxnStatus, requestParams);
 
-        } else{
-            newTxn = gatewayService.getLiveStatus(currentTxnStatus, requestParams);
+               // Enrich the new transaction status before persisting
+              enrichmentService.enrichUpdateTransaction(new TransactionRequest(requestInfo, currentTxnStatus), newTxn);
+            // Check if transaction is successful, amount matches etc
+               if (validator.shouldGenerateReceipt(currentTxnStatus, newTxn)) {
+               	TransactionRequest request = TransactionRequest.builder().requestInfo(requestInfo).transaction(newTxn).build();
+              	paymentsService.registerPayment(request);
+               }
+           } 
+           }else {
+       	   if(validator.skipGateway(currentTxnStatus)) {
+                  newTxn = currentTxnStatus;
+              } else{
+                  newTxn = gatewayService.getLiveStatus(currentTxnStatus, requestParams);
 
-            // Enrich the new transaction status before persisting
-            enrichmentService.enrichUpdateTransaction(new TransactionRequest(requestInfo, currentTxnStatus), newTxn);
-        }
+                  // Enrich the new transaction status before persisting
+                  enrichmentService.enrichUpdateTransaction(new TransactionRequest(requestInfo, currentTxnStatus), newTxn);
+               // Check if transaction is successful, amount matches etc
+                  if (validator.shouldGenerateReceipt(currentTxnStatus, newTxn)) {
+                  	TransactionRequest request = TransactionRequest.builder().requestInfo(requestInfo).transaction(newTxn).build();
+                  	paymentsService.registerPayment(request);
+                  }
+              } 
+          }
 
-        // Check if transaction is successful, amount matches etc
-        if (validator.shouldGenerateReceipt(currentTxnStatus, newTxn)) {
-        	TransactionRequest request = TransactionRequest.builder().requestInfo(requestInfo).transaction(newTxn).build();
-        	paymentsService.registerPayment(request);
-        }
-
+        
         TransactionDump dump = TransactionDump.builder()
                 .txnId(currentTxnStatus.getTxnId())
                 .txnResponse(newTxn.getResponseJson())
