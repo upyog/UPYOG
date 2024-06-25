@@ -4,7 +4,7 @@
 ## Install
 
 ```bash
-npm install --save @egovernments/digit-ui-module-tl
+npm install --save @upyog/digit-ui-module-tl
 ```
 
 ## Limitation

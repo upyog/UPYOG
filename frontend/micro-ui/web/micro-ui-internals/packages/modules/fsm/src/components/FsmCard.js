@@ -81,7 +81,7 @@ const FSMCard = () => {
   const moduleForSomeFSMAdmin = FSM_ADMIN
     ? [
         {
-          link: "/digit-ui/employee/fsm/registry",
+          link: "/digit-ui/employee/fsm/registry?selectedTabs=VENDOR",
           label: t("ES_TITLE_FSM_REGISTRY"),
           icon: <AddNewIcon />,
         },
