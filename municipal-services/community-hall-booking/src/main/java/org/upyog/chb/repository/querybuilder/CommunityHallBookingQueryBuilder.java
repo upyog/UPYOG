@@ -17,7 +17,7 @@ public class CommunityHallBookingQueryBuilder {
 	private CommunityHallBookingConfiguration bookingConfiguration;
 
 	private static final StringBuilder bookingAndSlotDetailsQuery = new StringBuilder(
-			"select chbd.booking_id, chbd.booking_no, chbd.booking_date, chbd.application_no, chbd.application_date,\n"
+			"select chbd.booking_id, chbd.booking_no, chbd.booking_date,\n"
 					+ "chbd.tenant_id, chbd.community_hall_id, chbd.community_hall_name, chbd.booking_status, chbd.resident_type,"
 					+ " chbd.special_category,chbd.applicant_name, chbd.applicant_email_id, chbd.applicant_mobile_no, \n"
 					+ " chbd.applicant_alternate_mobile_no, chbd.purpose, chbd.purpose_description, chbd.event_name, chbd.event_organized_by, \n"
@@ -68,9 +68,9 @@ public class CommunityHallBookingQueryBuilder {
 			addToPreparedStatement(preparedStmtList, ids);
 		}
 
-		String applicationNo = criteria.getApplicationNo();
-		if (applicationNo != null) {
-			List<String> applicationNos = Arrays.asList(applicationNo.split(","));
+		String bookingNo = criteria.getBookingNo();
+		if (bookingNo != null) {
+			List<String> applicationNos = Arrays.asList(bookingNo.split(","));
 			addClauseIfRequired(preparedStmtList, builder);
 			builder.append(" chbd.booking_no IN (").append(createQuery(applicationNos)).append(")");
 			addToPreparedStatement(preparedStmtList, applicationNos);
@@ -85,28 +85,6 @@ public class CommunityHallBookingQueryBuilder {
 			addToPreparedStatement(preparedStmtList, createdBy);
 		}
 
-		// Approval from approvaldate and to approvaldate search criteria
-		Long approvalDt = criteria.getApprovalDate();
-		if (approvalDt != null) {
-
-			Calendar approvalDate = Calendar.getInstance();
-			approvalDate.setTimeInMillis(approvalDt);
-
-			int year = approvalDate.get(Calendar.YEAR);
-			int month = approvalDate.get(Calendar.MONTH);
-			int day = approvalDate.get(Calendar.DATE);
-
-			Calendar approvalStrDate = Calendar.getInstance();
-			approvalStrDate.setTimeInMillis(0);
-			approvalStrDate.set(year, month, day, 0, 0, 0);
-
-			Calendar approvalEndDate = Calendar.getInstance();
-			approvalEndDate.setTimeInMillis(0);
-			approvalEndDate.set(year, month, day, 23, 59, 59);
-			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" chbd.approvalDate BETWEEN ").append(approvalStrDate.getTimeInMillis()).append(" AND ")
-					.append(approvalEndDate.getTimeInMillis());
-		}
 
 		// Approval from createddate and to createddate search criteria
 		if (criteria.getFromDate() != null && criteria.getToDate() != null) {

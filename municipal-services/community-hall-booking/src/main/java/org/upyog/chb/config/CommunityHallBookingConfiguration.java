@@ -5,19 +5,12 @@ import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 
 import org.egov.tracer.config.TracerConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -44,6 +37,9 @@ public class CommunityHallBookingConfiguration {
 
 	@Value("${persister.save.communityhall.booking.init.topic}")
 	private String communityHallBookingInitSaveTopic;
+	
+	@Value("${persister.update.communityhall.booking.topic}")
+	private String communityHallBookingUpdateTopic;
 
 	// Idgen Config
 	@Value("${egov.idgen.host}")
@@ -52,13 +48,13 @@ public class CommunityHallBookingConfiguration {
 	@Value("${egov.idgen.path}")
 	private String idGenPath;
 
-	@Value("${egov.idgen.comunityHallBooking.name}")
+	@Value("${egov.idgen.comunityHallBooking.booking.id.name}")
 	private String communityHallBookingIdKey;
 
-	@Value("${egov.idgen.comunityHallBooking.format}")
+	@Value("${egov.idgen.comunityHallBooking.booking.id.format}")
 	private String communityHallBookingIdFromat;
-
-	//Pagination cofig for search results
+	
+	// Pagination config for search results
 	@Value("${egov.chb.default.limit}")
 	private Integer defaultLimit;
 
@@ -68,7 +64,7 @@ public class CommunityHallBookingConfiguration {
 	@Value("${egov.chb.max.limit}")
 	private Integer maxSearchLimit;
 
-	//Workflow configs
+	// Workflow configs
 	@Value("${workflow.host}")
 	private String wfHost;
 
@@ -81,26 +77,133 @@ public class CommunityHallBookingConfiguration {
 	@Value("${workflow.processinstance.search.path}")
 	private String wfProcessSearchPath;
 
+	// MDMS Config
 	@Value("${egov.mdms.host}")
 	private String mdmsHost;
 
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsPath;
-	
+
 	@Value("${employee.allowed.search.params}")
 	private String allowedEmployeeSearchParameters;
 
-	/*@Bean
-	public ObjectMapper objectMapper() {
-		return new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-				.setTimeZone(TimeZone.getTimeZone(timeZone));
-	}
+	// User Config
+	@Value("${egov.user.host}")
+	private String userHost;
 
-	@Autowired
-	public MappingJackson2HttpMessageConverter jacksonConverter(ObjectMapper objectMapper) {
-		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-		converter.setObjectMapper(objectMapper);
-		return converter;
-	}*/
+	@Value("${egov.user.context.path}")
+	private String userContextPath;
+
+	@Value("${egov.user.create.path}")
+	private String userCreateEndpoint;
+
+	@Value("${egov.user.search.path}")
+	private String userSearchEndpoint;
+
+	@Value("${egov.user.update.path}")
+	private String userUpdateEndpoint;
+
+	// NOTIFICATION TOPICS
+	@Value("${kafka.topics.notification.sms}")
+	private String smsNotifTopic;
+
+	@Value("${kafka.topics.notification.email}")
+	private String emailNotifTopic;
+
+	@Value("${kafka.topics.receipt.create}")
+	private String receiptTopic;
+
+	@Value("${kafka.topics.notification.pg.save.txns}")
+	private String pgTopic;
+
+	@Value("${egov.localization.statelevel}")
+	private Boolean isStateLevel;
+
+	@Value("${notif.sms.enabled}")
+	private Boolean isSMSNotificationEnabled;
+
+	@Value("${notif.email.enabled}")
+	private Boolean isEmailNotificationEnabled;
+
+	// Notif variables
+
+	@Value("${egov.usr.events.download.receipt.link}")
+	private String userEventReceiptDownloadLink;
+
+	// Localization
+	@Value("${egov.localization.host}")
+	private String localizationHost;
+
+	@Value("${egov.localization.context.path}")
+	private String localizationContextPath;
+
+	@Value("${egov.localization.search.endpoint}")
+	private String localizationSearchEndpoint;
+
+	@Value("${egov.localization.fallback.locale}")
+	private String fallBackLocale;
+
+	// USER EVENTS
+	@Value("${egov.ui.app.host}")
+	private String uiAppHost;
+
+	@Value("${egov.usr.events.create.topic}")
+	private String saveUserEventsTopic;
+
+	@Value("${egov.usr.events.pay.code}")
+	private String payCode;
+
+	@Value("${egov.user.event.notification.enabled}")
+	private Boolean isUserEventsNotificationEnabled;
+
+	@Value("${egov.msg.download.receipt.link}")
+	private String receiptDownloadLink;
+
+	@Value("${egov.msg.pay.link}")
+	private String payLinkSMS;
+
+	// Billing-Service
+
+	@Value("${egbs.host}")
+	private String egbsHost;
+
+	@Value("${egbs.fetchbill.endpoint}")
+	private String egbsFetchBill;
+
+	@Value("${egov.localization.statelevel}")
+	private Boolean isLocalizationStateLevel;
+
+	@Value("${egov.billingservice.host}")
+	private String billingHost;
+
+	@Value("${egov.demand.create.endpoint}")
+	private String demandCreateEndpoint;
+
+	@Value("${egov.demand.update.endpoint}")
+	private String demandUpdateEndpoint;
+
+	@Value("${egov.demand.search.endpoint}")
+	private String demandSearchEndpoint;
+
+	@Value("${egov.bill.gen.endpoint}")
+	private String billGenerateEndpoint;
+	
+	@Value("${chb.module.name}")
+	private String moduleName;
+	
+	@Value("${chb.business.service.name}")
+	private String businessServiceName;
+
+	/*
+	 * @Bean public ObjectMapper objectMapper() { return new
+	 * ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+	 * .setTimeZone(TimeZone.getTimeZone(timeZone)); }
+	 * 
+	 * @Autowired public MappingJackson2HttpMessageConverter
+	 * jacksonConverter(ObjectMapper objectMapper) {
+	 * MappingJackson2HttpMessageConverter converter = new
+	 * MappingJackson2HttpMessageConverter();
+	 * converter.setObjectMapper(objectMapper); return converter; }
+	 */
 
 }
