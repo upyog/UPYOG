@@ -54,7 +54,7 @@ public class Service   {
   private String serviceRequestId;
 
   @JsonProperty("description")
-  @Pattern(regexp = "^[a-zA-Z0-9!@#.,/: +()&']*$")
+  @Pattern(regexp = "^[a-zA-Z0-9!@#.,/: +-()&']*$")
   @Size(max=256)
   private String description;
 
@@ -68,7 +68,7 @@ public class Service   {
   private String addressId;
   
   @JsonProperty("address")
-  @Pattern(regexp = "^[a-zA-Z0-9!@#.,/: +()&']*$")
+  @Pattern(regexp = "^[a-zA-Z0-9!@#.,/: +-()&']*$")
   @Size(max=160)
   private String address;
 
@@ -77,7 +77,7 @@ public class Service   {
   private String email;
 
   @JsonProperty("deviceId")
-  @Pattern(regexp = "^[a-zA-Z0-9!@#.,/: ()&']*$")
+  @Pattern(regexp = "^[a-zA-Z0-9!@#.,/: +-()&']*$")
   @Size(max=160)
   private String deviceId;
 
