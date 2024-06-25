@@ -23,7 +23,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LandAcquisitionProcessionDetails {
+public class LandAcquisitionPossessionInfo {
 	
 	 @JsonProperty("landType")
      private String landType = null;
