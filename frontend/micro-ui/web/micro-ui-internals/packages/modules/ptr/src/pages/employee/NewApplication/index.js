@@ -6,18 +6,25 @@
 
   const NewApplication = () => {
     const tenantId = Digit.ULBService.getCurrentTenantId();
-    const tenants = Digit.Hooks.ptr.useTenants();
+    
 
     const { t } = useTranslation();
     const [canSubmit, setSubmitValve] = useState(false);
     const defaultValues = {};
     const history = useHistory();
 
-    const [_formData, setFormData,_clear] = Digit.Hooks.useSessionStorage("store-data",null);
-    const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
-    const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", { });
+    const [_formData,_clear] = Digit.Hooks.useSessionStorage("store-data",null);
+    const [setMutationHappened] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
+    const [clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", { });
   
-    // const { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(Digit.ULBService.getStateId(), "PropertyTax", "CommonFieldsConfig");
+    const { data: commonFields } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "CommonFieldsConfigEmp" }],
+    {
+      select: (data) => {
+          const formattedData = data?.["PetService"]?.["CommonFieldsConfigEmp"]
+          return formattedData;
+      },
+  });  
+  
 
     useEffect(() => {
       setMutationHappened(false);
@@ -69,18 +76,9 @@
       
 
     };
-      
 
     
-    // if (isLoading) {
-    //   return <Loader />;
-    // }
-
-    /* use newConfig instead of commonFields for local development in case needed */
-
-    
-    // const configs = commonFields? newConfig: commonFields;    \
-    const configs =  newConfig;    
+    const configs = commonFields? commonFields: newConfig;    
 
 
     

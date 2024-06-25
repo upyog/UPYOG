@@ -21,7 +21,6 @@ import PTRAcknowledgement from "./pages/citizen/Create/PTRAcknowledgement";
 import { PTRMyApplications } from "./pages/citizen/PTRMyApplications";
 import PTRApplicationDetails from "./pages/citizen/PTRApplicationDetails";
 import PTRWFCaption from "./pageComponents/PTRWFCaption";
-import PTRWFReason from "./pageComponents/PTRWFReason";
 import EmployeeApp from "./pages/employee";
 import PTRCard from "./components/PTRCard";
 import InboxFilter from "./components/inbox/NewInboxFilter";
@@ -39,7 +38,6 @@ const componentsToRegister = {
   PTRCheckPage,
   PTRAcknowledgement,
   PTRWFCaption,
-  PTRWFReason,
   PTRNewApplication: NewApplication,
   ApplicationDetails: ApplicationDetails,
   PTRResponse: Response,
