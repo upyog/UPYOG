@@ -96,7 +96,7 @@ public class EnrichmentService {
 		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
 
-		asset.setApplicationNo(AssetUtil.improveAssetID(itr.next(), request));
+		asset.setApplicationNo(itr.next());
 	}
 
 	/**
