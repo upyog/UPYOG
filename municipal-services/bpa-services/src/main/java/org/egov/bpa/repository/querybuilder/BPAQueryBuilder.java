@@ -74,8 +74,8 @@ public class BPAQueryBuilder {
           
             addClauseIfRequired(preparedStmtList, builder);
             
-            builder.append(" bpa.additionaldetails ->>'ownerName' LIKE ?");
-            preparedStmtList.add('%' + criteria.getName() + '%');
+            builder.append(" lower(bpa.additionaldetails ->>'ownerName') LIKE ?");
+            preparedStmtList.add('%' + criteria.getName().toLowerCase()+ '%');
 
             
         }
