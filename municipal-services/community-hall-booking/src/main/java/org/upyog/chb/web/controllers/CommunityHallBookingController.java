@@ -52,17 +52,7 @@ public class CommunityHallBookingController {
 	@RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
 	public ResponseEntity<CommunityHallBookingResponse> createBooking(
 			@ApiParam(value = "Details for the community halls booking time payment and documents", required = true) @Valid @RequestBody CommunityHallBookingRequest communityHallsBookingRequest) {
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
-			try {
-				return new ResponseEntity<CommunityHallBookingResponse>(objectMapper.readValue(
-						"{  \"headerImageUrl\" : \"headerImageUrl\",  \"specialCategories\" : [ {    \"discountRate\" : 7,    \"category\" : \"category\"  }, {    \"discountRate\" : 7,    \"category\" : \"category\"  } ],  \"address\" : {    \"pincode\" : \"pincode\",    \"city\" : \"city\",    \"latitude\" : 6.027456183070403,    \"locality\" : {      \"code\" : \"code\",      \"materializedPath\" : \"materializedPath\",      \"children\" : [ null, null ],      \"latitude\" : \"latitude\",      \"name\" : \"name\",      \"label\" : \"label\",      \"longitude\" : \"longitude\"    },    \"type\" : \"type\",    \"addressId\" : \"addressId\",    \"buildingName\" : \"buildingName\",    \"street\" : \"street\",    \"tenantId\" : \"tenantId\",    \"addressNumber\" : \"addressNumber\",    \"addressLine1\" : \"addressLine1\",    \"addressLine2\" : \"addressLine2\",    \"doorNo\" : \"doorNo\",    \"detail\" : \"detail\",    \"landmark\" : \"landmark\",    \"longitude\" : 1.4658129805029452  },  \"hallDescription\" : \"hallDescription\",  \"timeSlots\" : [ {    \"electricityCharges\" : 7,    \"waterCharges\" : 9,    \"conservancyCharges\" : 3,    \"from\" : \"from\",    \"securityDeposit\" : 2,    \"id\" : 5,    \"to\" : \"to\",    \"rent\" : 5  }, {    \"electricityCharges\" : 7,    \"waterCharges\" : 9,    \"conservancyCharges\" : 3,    \"from\" : \"from\",    \"securityDeposit\" : 2,    \"id\" : 5,    \"to\" : \"to\",    \"rent\" : 5  } ],  \"type\" : \"type\",  \"contactDetails\" : \"contactDetails\",  \"hallCode\" : 0,  \"geoLocation\" : \"geoLocation\",  \"maxAllowedFutureBookingDays\" : 1,  \"purposes\" : [ {    \"discountRate\" : 4,    \"purpose\" : \"purpose\"  }, {    \"discountRate\" : 4,    \"purpose\" : \"purpose\"  } ],  \"portalUrl\" : \"portalUrl\",  \"auditDetails\" : {    \"lastModifiedTime\" : 5,    \"createdBy\" : \"createdBy\",    \"lastModifiedBy\" : \"lastModifiedBy\",    \"createdTime\" : 4  },  \"tenantId\" : \"tenantId\",  \"name\" : \"name\",  \"id\" : \"id\",  \"termsAndCondition\" : \"termsAndCondition\",  \"penantlyForWrongDocuments\" : 1,  \"residentTypes\" : [ {    \"discountRate\" : 2,    \"disabled\" : true,    \"type\" : \"type\"  }, {    \"discountRate\" : 2,    \"disabled\" : true,    \"type\" : \"type\"  } ],  \"cancellationPolicy\" : [ {    \"id\" : 1,    \"cancelTo\" : 7,    \"cancelFrom\" : 6,    \"percentageDeduction\" : 1  }, {    \"id\" : 1,    \"cancelTo\" : 7,    \"cancelFrom\" : 6,    \"percentageDeduction\" : 1  } ],  \"remarks\" : \"remarks\"}",
-						CommunityHallBookingResponse.class), HttpStatus.NOT_IMPLEMENTED);
-			} catch (IOException e) {
-				return new ResponseEntity<CommunityHallBookingResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}
-
+		
 		CommunityHallBookingDetail bookingDetail = bookingService.createBooking(communityHallsBookingRequest);
 		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(communityHallsBookingRequest.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_CREATED,
 				StatusEnum.SUCCESSFUL);
@@ -76,17 +66,7 @@ public class CommunityHallBookingController {
 	@RequestMapping(value = "/v1/_init", method = RequestMethod.POST)
 	public ResponseEntity<CommunityHallBookingResponse> initBooking(
 			@ApiParam(value = "Details for the community halls booking time payment and documents", required = true) @Valid @RequestBody CommunityHallBookingRequest communityHallsBookingRequest) {
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
-			try {
-				return new ResponseEntity<CommunityHallBookingResponse>(objectMapper.readValue(
-						"{  \"headerImageUrl\" : \"headerImageUrl\",  \"specialCategories\" : [ {    \"discountRate\" : 7,    \"category\" : \"category\"  }, {    \"discountRate\" : 7,    \"category\" : \"category\"  } ],  \"address\" : {    \"pincode\" : \"pincode\",    \"city\" : \"city\",    \"latitude\" : 6.027456183070403,    \"locality\" : {      \"code\" : \"code\",      \"materializedPath\" : \"materializedPath\",      \"children\" : [ null, null ],      \"latitude\" : \"latitude\",      \"name\" : \"name\",      \"label\" : \"label\",      \"longitude\" : \"longitude\"    },    \"type\" : \"type\",    \"addressId\" : \"addressId\",    \"buildingName\" : \"buildingName\",    \"street\" : \"street\",    \"tenantId\" : \"tenantId\",    \"addressNumber\" : \"addressNumber\",    \"addressLine1\" : \"addressLine1\",    \"addressLine2\" : \"addressLine2\",    \"doorNo\" : \"doorNo\",    \"detail\" : \"detail\",    \"landmark\" : \"landmark\",    \"longitude\" : 1.4658129805029452  },  \"hallDescription\" : \"hallDescription\",  \"timeSlots\" : [ {    \"electricityCharges\" : 7,    \"waterCharges\" : 9,    \"conservancyCharges\" : 3,    \"from\" : \"from\",    \"securityDeposit\" : 2,    \"id\" : 5,    \"to\" : \"to\",    \"rent\" : 5  }, {    \"electricityCharges\" : 7,    \"waterCharges\" : 9,    \"conservancyCharges\" : 3,    \"from\" : \"from\",    \"securityDeposit\" : 2,    \"id\" : 5,    \"to\" : \"to\",    \"rent\" : 5  } ],  \"type\" : \"type\",  \"contactDetails\" : \"contactDetails\",  \"hallCode\" : 0,  \"geoLocation\" : \"geoLocation\",  \"maxAllowedFutureBookingDays\" : 1,  \"purposes\" : [ {    \"discountRate\" : 4,    \"purpose\" : \"purpose\"  }, {    \"discountRate\" : 4,    \"purpose\" : \"purpose\"  } ],  \"portalUrl\" : \"portalUrl\",  \"auditDetails\" : {    \"lastModifiedTime\" : 5,    \"createdBy\" : \"createdBy\",    \"lastModifiedBy\" : \"lastModifiedBy\",    \"createdTime\" : 4  },  \"tenantId\" : \"tenantId\",  \"name\" : \"name\",  \"id\" : \"id\",  \"termsAndCondition\" : \"termsAndCondition\",  \"penantlyForWrongDocuments\" : 1,  \"residentTypes\" : [ {    \"discountRate\" : 2,    \"disabled\" : true,    \"type\" : \"type\"  }, {    \"discountRate\" : 2,    \"disabled\" : true,    \"type\" : \"type\"  } ],  \"cancellationPolicy\" : [ {    \"id\" : 1,    \"cancelTo\" : 7,    \"cancelFrom\" : 6,    \"percentageDeduction\" : 1  }, {    \"id\" : 1,    \"cancelTo\" : 7,    \"cancelFrom\" : 6,    \"percentageDeduction\" : 1  } ],  \"remarks\" : \"remarks\"}",
-						CommunityHallBookingResponse.class), HttpStatus.NOT_IMPLEMENTED);
-			} catch (IOException e) {
-				return new ResponseEntity<CommunityHallBookingResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}
-
+		
 		CommunityHallBookingDetail bookingDetail = bookingService.createInitBooking(communityHallsBookingRequest);
 		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(communityHallsBookingRequest.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_CREATED,
 				StatusEnum.SUCCESSFUL);
@@ -99,18 +79,13 @@ public class CommunityHallBookingController {
 	@RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
 	public ResponseEntity<CommunityHallBookingResponse> v1RegistrationUpdatePost(
 			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @Valid @RequestBody CommunityHallBookingRequest communityHallsBookingRequest) {
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
-			try {
-				return new ResponseEntity<CommunityHallBookingResponse>(objectMapper.readValue(
-						"{  \"headerImageUrl\" : \"headerImageUrl\",  \"specialCategories\" : [ {    \"discountRate\" : 7,    \"category\" : \"category\"  }, {    \"discountRate\" : 7,    \"category\" : \"category\"  } ],  \"address\" : {    \"pincode\" : \"pincode\",    \"city\" : \"city\",    \"latitude\" : 6.027456183070403,    \"locality\" : {      \"code\" : \"code\",      \"materializedPath\" : \"materializedPath\",      \"children\" : [ null, null ],      \"latitude\" : \"latitude\",      \"name\" : \"name\",      \"label\" : \"label\",      \"longitude\" : \"longitude\"    },    \"type\" : \"type\",    \"addressId\" : \"addressId\",    \"buildingName\" : \"buildingName\",    \"street\" : \"street\",    \"tenantId\" : \"tenantId\",    \"addressNumber\" : \"addressNumber\",    \"addressLine1\" : \"addressLine1\",    \"addressLine2\" : \"addressLine2\",    \"doorNo\" : \"doorNo\",    \"detail\" : \"detail\",    \"landmark\" : \"landmark\",    \"longitude\" : 1.4658129805029452  },  \"hallDescription\" : \"hallDescription\",  \"timeSlots\" : [ {    \"electricityCharges\" : 7,    \"waterCharges\" : 9,    \"conservancyCharges\" : 3,    \"from\" : \"from\",    \"securityDeposit\" : 2,    \"id\" : 5,    \"to\" : \"to\",    \"rent\" : 5  }, {    \"electricityCharges\" : 7,    \"waterCharges\" : 9,    \"conservancyCharges\" : 3,    \"from\" : \"from\",    \"securityDeposit\" : 2,    \"id\" : 5,    \"to\" : \"to\",    \"rent\" : 5  } ],  \"type\" : \"type\",  \"contactDetails\" : \"contactDetails\",  \"hallCode\" : 0,  \"geoLocation\" : \"geoLocation\",  \"maxAllowedFutureBookingDays\" : 1,  \"purposes\" : [ {    \"discountRate\" : 4,    \"purpose\" : \"purpose\"  }, {    \"discountRate\" : 4,    \"purpose\" : \"purpose\"  } ],  \"portalUrl\" : \"portalUrl\",  \"auditDetails\" : {    \"lastModifiedTime\" : 5,    \"createdBy\" : \"createdBy\",    \"lastModifiedBy\" : \"lastModifiedBy\",    \"createdTime\" : 4  },  \"tenantId\" : \"tenantId\",  \"name\" : \"name\",  \"id\" : \"id\",  \"termsAndCondition\" : \"termsAndCondition\",  \"penantlyForWrongDocuments\" : 1,  \"residentTypes\" : [ {    \"discountRate\" : 2,    \"disabled\" : true,    \"type\" : \"type\"  }, {    \"discountRate\" : 2,    \"disabled\" : true,    \"type\" : \"type\"  } ],  \"cancellationPolicy\" : [ {    \"id\" : 1,    \"cancelTo\" : 7,    \"cancelFrom\" : 6,    \"percentageDeduction\" : 1  }, {    \"id\" : 1,    \"cancelTo\" : 7,    \"cancelFrom\" : 6,    \"percentageDeduction\" : 1  } ],  \"remarks\" : \"remarks\"}",
-						CommunityHallBookingResponse.class), HttpStatus.NOT_IMPLEMENTED);
-			} catch (IOException e) {
-				return new ResponseEntity<CommunityHallBookingResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}
-
-		return new ResponseEntity<CommunityHallBookingResponse>(HttpStatus.NOT_IMPLEMENTED);
+		CommunityHallBookingDetail bookingDetail = bookingService.updateBooking(communityHallsBookingRequest);
+		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(communityHallsBookingRequest.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_CREATED,
+				StatusEnum.SUCCESSFUL);
+		CommunityHallBookingResponse communityHallResponse = CommunityHallBookingResponse.builder().responseInfo(info)
+				.build();
+		communityHallResponse.addNewHallsBookingApplication(bookingDetail);
+		return new ResponseEntity<CommunityHallBookingResponse>(communityHallResponse, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/v1/_search", method = RequestMethod.POST)

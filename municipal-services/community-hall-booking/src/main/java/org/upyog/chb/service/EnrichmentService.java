@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
+import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.repository.IdGenRepository;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.AuditDetails;
@@ -29,8 +32,7 @@ public class EnrichmentService {
 	@Autowired
 	private IdGenRepository idGenRepository;
 
-	public void enrichCreateBookingRequest(CommunityHallBookingRequest bookingRequest, Object mdmsData,
-			Map<String, String> values) {
+	public void enrichCreateBookingRequest(CommunityHallBookingRequest bookingRequest, Object mdmsData) {
 		String bookingId = CommunityHallBookingUtil.getRandonUUID();
 		log.info("Enriching booking request for booking id :" + bookingId);
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
@@ -38,9 +40,9 @@ public class EnrichmentService {
 		AuditDetails auditDetails = CommunityHallBookingUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 		bookingDetail.setAuditDetails(auditDetails);
 		bookingDetail.setBookingId(bookingId);
-
+		bookingDetail.setBookingDate(auditDetails.getCreatedTime());		
+		
 		// Set booking it to dependent tables with foreign key relation
-
 		bookingDetail.getBookingSlotDetails().stream().forEach(slot -> {
 			slot.setBookingId(bookingDetail.getBookingId());
 			slot.setSlotId(CommunityHallBookingUtil.getRandonUUID());
@@ -56,6 +58,7 @@ public class EnrichmentService {
 		bookingDetail.getBankDetails().setBookingId(bookingDetail.getBookingId());
 		bookingDetail.getBankDetails().setBankDetailId(CommunityHallBookingUtil.getRandonUUID());
 		bookingDetail.getBankDetails().setAuditDetails(auditDetails);
+		bookingDetail.setBookingStatus(BookingStatusEnum.valueOf(bookingDetail.getBookingStatus()).toString());
 
 		List<String> customIds = getIdList(requestInfo, bookingDetail.getTenantId(),
 				config.getCommunityHallBookingIdKey(), config.getCommunityHallBookingIdFromat(), 1);
@@ -83,6 +86,12 @@ public class EnrichmentService {
 			throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
 
 		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
+	}
+
+	public void enrichUpdateBookingRequest(CommunityHallBookingRequest communityHallsBookingRequest,
+			Object mdmsdata) {
+		AuditDetails auditDetails = CommunityHallBookingUtil.getAuditDetails(communityHallsBookingRequest.getRequestInfo().getUserInfo().getUuid(), false);
+		communityHallsBookingRequest.getHallsBookingApplication().setAuditDetails(auditDetails);
 	}
 
 }

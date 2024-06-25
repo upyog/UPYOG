@@ -26,20 +26,14 @@ public class CommunityHallBookingSearchCriteria {
 	@JsonProperty("status")
 	private String status;
 
-	@JsonProperty("applicationNo")
-	private String applicationNo;
-
-	@JsonProperty("approvalNo")
-	private String approvalNo;
+	@JsonProperty("bookingNo")
+	private String bookingNo;
 
 	@JsonProperty("offset")
 	private Integer offset;
 
 	@JsonProperty("limit")
 	private Integer limit;
-
-	@JsonProperty("approvalDate")
-	private Long approvalDate;
 
 	@JsonProperty("fromDate")
 	private Long fromDate;

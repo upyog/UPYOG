@@ -44,8 +44,8 @@ public class CommunityHallBookingRowmapper implements ResultSetExtractor<List<Co
 				BookingPurpose bookingPurpose = BookingPurpose.builder().purpose(rs.getString("purpose")).build();
 				
 				currentBooking = CommunityHallBookingDetail.builder().bookingId(bookingId).bookingNo(bookingNo)
-						.bookingDate(rs.getLong("booking_date")).applicationNo(rs.getString("application_no"))
-						.applicationDate(rs.getLong("application_date")).tenantId(tenantId)
+						.bookingDate(rs.getLong("booking_date"))
+						.tenantId(tenantId)
 						.applicantName(rs.getString("applicant_name"))
 						.applicantMobileNo(rs.getString("applicant_mobile_no"))
 						.applicantAlternateMobileNo(rs.getString("applicant_alternate_mobile_no"))
