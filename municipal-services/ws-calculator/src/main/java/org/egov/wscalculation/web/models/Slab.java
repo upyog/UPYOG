@@ -12,16 +12,16 @@ public class Slab {
 	
 	private long effectiveTo;
 	
-	public int getFrom() {
+	public double getFrom() {
 		return from;
 	}
-	public void setFrom(int from) {
+	public void setFrom(double from) {
 		this.from = from;
 	}
-	public int getTo() {
+	public double getTo() {
 		return to;
 	}
-	public void setTo(int to) {
+	public void setTo(double to) {
 		this.to = to;
 	}
 	public double getCharge() {
@@ -55,7 +55,6 @@ public class Slab {
 		return "Slab [from=" + from + ", to=" + to + ", charge=" + charge + ", meterCharge=" + meterCharge
 				+ ", effectiveFrom=" + effectiveFrom + ", effectiveTo=" + effectiveTo + "]";
 	}
-	
 	
 	
 }
