@@ -71,11 +71,38 @@ public class AssetQueryBuilder {
         // createdby search criteria 
         List<String> createdBy = criteria.getCreatedBy();
 		if (!CollectionUtils.isEmpty(createdBy)) {
-            
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" asset.createdby IN (").append(createQuery(createdBy)).append(")");
             addToPreparedStatement(preparedStmtList, createdBy);
         }
+		
+		// Status wise search criteria 
+        String status = criteria.getStatus();
+        if (status != null) {
+            List<String> statusList = Arrays.asList(status.split(","));
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.status IN (").append(createQuery(statusList)).append(")");
+            addToPreparedStatement(preparedStmtList, statusList);
+        }
+        
+        // ParentCategory wise search criteria 
+        String assetParentCategoryList = criteria.getAssetParentCategory();
+        if (assetParentCategoryList != null) {
+            List<String>  assetParentCategory = Arrays.asList(assetParentCategoryList.split(","));
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.parentCategory IN (").append(createQuery(assetParentCategory)).append(")");
+            addToPreparedStatement(preparedStmtList, assetParentCategory);
+        }
+        
+        // Classification wise search criteria 
+        String classification = criteria.getAssetClassification();
+        if (classification != null) {
+            List<String>  classificationList = Arrays.asList(classification.split(","));
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.classification IN (").append(createQuery(classificationList)).append(")");
+            addToPreparedStatement(preparedStmtList, classificationList);
+        }
+		
         
 		// Approval from approvaldate and to approvaldate search criteria 
 		Long approvalDt = criteria.getApprovalDate();
