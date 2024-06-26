@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Slab {
-	private int from;
-	private int to;
+	private double from;
+	private double to;
 	private double charge;
 	private double meterCharge;
 	private long effectiveFrom;
