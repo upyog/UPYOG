@@ -89,6 +89,7 @@ public class BillQueryBuilder {
 		} else {
 			billQuery.append(" WHERE b.tenantid = ? ");
 			preparedStatementValues.add(billSearchCriteria.getTenantId());
+			billQuery.append("AND b.status='ACTIVE' ");
 		}
 		if (billSearchCriteria.getPeriodFrom() != null) {
 			billQuery.append(" AND bd.fromperiod = ?");
@@ -98,7 +99,6 @@ public class BillQueryBuilder {
 			billQuery.append(" AND bd.toperiod = ?");
 			preparedStatementValues.add(billSearchCriteria.getPeriodTo());
 		}
-
 		addWhereClause(billQuery, preparedStatementValues, billSearchCriteria);
 		StringBuilder maxQuery = addPagingClause(billQuery, preparedStatementValues, billSearchCriteria);
 
