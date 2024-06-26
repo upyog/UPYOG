@@ -31,11 +31,8 @@ export const ASSETSearch = {
           { title: "AST_BOOK_REF_SERIAL_NUM", value: response?.assetBookRefNo},
           { title: "AST_CATEGORY", value: response?.assetClassification },
           { title: "AST_PARENT_CATEGORY", value: response?.assetParentCategory},
-          { title: "AST_SUB_CATEGORY", value: response?.additionalDetails?.assetAssetSubCategory},
+          { title: "AST_SUB_CATEGORY", value: response?.assetCategory},
 
-          
-          
-          
         ],
       },
 
@@ -44,12 +41,6 @@ export const ASSETSearch = {
         asSectionHeader: true,
         values: [
           { title: "MYCITY_CODE_LABEL", value: response?.addressDetails?.city },
-          { title: "AST_DOOR_NO", value: response?.addressDetails?.doorNo },
-          { title: "AST_STREET", value: response?.addressDetails?.street },
-          { title: "AST_ADDRESS_LINE_1", value: response?.addressDetails?.addressLine1 },
-          { title: "AST_ADDRESS_LINE_2", value: response?.addressDetails?.addressLine2 },
-
-
         ],
       },
 

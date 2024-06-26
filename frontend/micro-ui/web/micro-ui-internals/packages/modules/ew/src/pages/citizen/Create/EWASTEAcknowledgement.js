@@ -48,10 +48,8 @@ const EWASTEAcknowledgement = ({ data, onSuccess }) => {
 
   useEffect(() => {
     try {
-      
       data.tenantId = "pg.citya";
       let formdata = EWDataConvert(data)
-      
 
       mutation.mutate(formdata, {
         onSuccess,

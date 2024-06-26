@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import ProductListElement from "./EWASTEProductListElement";
+// import ProductListElement from "./EWASTEProductListElement";
 import ApplicationTable from "./inbox/ApplicationTable";
 import { Header, Button } from "@upyog/digit-ui-react-components";
 import { LinkButton, SubmitBar, DeleteIcon, StatusTable, Row } from "@upyog/digit-ui-react-components";
 
-const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQuantity }) => {
+const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQuantity, setCalculatedAmount }) => {
   const handleDelete = (e) => {
     const updatedList1 = [...prlistName];
     if (updatedList1.length != 0) {
@@ -42,6 +42,7 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
   )) || [];
 
   const totalPrice = productRows.reduce((sum, pd) => sum + (pd.total_price || 0), 0);
+  setCalculatedAmount(totalPrice);
 
   return (
     <div className="card">

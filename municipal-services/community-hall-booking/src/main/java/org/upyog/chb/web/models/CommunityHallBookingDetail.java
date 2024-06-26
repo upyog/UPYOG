@@ -76,7 +76,7 @@ public class CommunityHallBookingDetail {
 	@JsonProperty("bookingSlotDetails")
 	private List<BookingSlotDetail> bookingSlotDetails;
 	
-	@JsonProperty("uploadedDocumentDetails")
+	@JsonProperty("documents")
 	@Valid
 	private List<DocumentDetails> uploadedDocumentDetails = null;
 	

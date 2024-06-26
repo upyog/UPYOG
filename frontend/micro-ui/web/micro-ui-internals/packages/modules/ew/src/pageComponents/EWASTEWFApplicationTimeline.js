@@ -2,58 +2,56 @@ import { ActionLinks, CardSectionHeader, CheckPoint, CloseSvg, ConnectingCheckPo
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-// import PTRWFCaption from "./PTRWFCaption";
+import EWASTEWFCaption from "../components/EWASTEWFCaption";
 
 
 const EWASTEWFApplicationTimeline = (props) => {
-  
+
   const { t } = useTranslation();
   const businessService = props?.application?.workflow?.businessService;
   // const businessService = "ptr";
 
   const { isLoading, data } = Digit.Hooks.useWorkflowDetails({
     tenantId: props.application?.tenantId,
-    id: props.application?.applicationNumber,
+    id: props.application?.requestId,
     moduleCode: businessService,
   });
-  
+
+  console.log("data in appictiontimeline ::", data);
 
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
 
-  // const getTimelineCaptions = (checkpoint) => {
-    
-  //   if (checkpoint.state === "OPEN")
-  //   {
-  //     const caption = {
-  //       date: checkpoint?.auditDetails?.lastModified,
-  //       source: props.application?.channel || "",
-  //     };
-  //     return <PTRWFCaption data={caption} />;
-  //   }
-  //   else if (checkpoint.state) {
-  //     const caption = {
-  //       date: checkpoint?.auditDetails?.lastModified,
-  //       name: checkpoint?.assignes?.[0]?.name,
-  //       mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
-  //       comment: t(checkpoint?.comment),
-  //       wfComment: checkpoint.wfComment,
-  //       thumbnailsToShow: checkpoint?.thumbnailsToShow,
-  //     };
-  //     return <PTRWFCaption data={caption} OpenImage={OpenImage} />;
-  //   } 
-    
-   
-  //   else {
-  //     const caption = {
-  //       date: Digit.DateUtils.ConvertTimestampToDate(props.application?.auditDetails.lastModified),
-  //       name: checkpoint?.assigner?.name,
-  //       comment: t(checkpoint?.comment),
-  //     };
-  //     return <PTRWFCaption data={caption} />;
-  //   }
-  // };
+  const getTimelineCaptions = (checkpoint) => {
+
+    if (checkpoint.state === "OPEN") {
+      const caption = {
+        date: checkpoint?.auditDetails?.lastModified,
+        source: props.application?.channel || "",
+      };
+      return <EWASTEWFCaption data={caption} />;
+    }
+    else if (checkpoint.state) {
+      const caption = {
+        date: checkpoint?.auditDetails?.lastModified,
+        name: checkpoint?.assignes?.[0]?.name,
+        mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
+        comment: t(checkpoint?.comment),
+        wfComment: checkpoint.wfComment,
+        thumbnailsToShow: checkpoint?.thumbnailsToShow,
+      };
+      return <EWASTEWFCaption data={caption} OpenImage={OpenImage} />;
+    }
+    else {
+      const caption = {
+        date: Digit.DateUtils.ConvertTimestampToDate(props.application?.auditDetails.lastModified),
+        name: checkpoint?.assigner?.name,
+        comment: t(checkpoint?.comment),
+      };
+      return <EWASTEWFCaption data={caption} />;
+    }
+  };
 
   const showNextActions = (nextActions) => {
     let nextAction = nextActions[0];
@@ -67,17 +65,17 @@ const EWASTEWFApplicationTimeline = (props) => {
       case "PAY":
         return (
           props?.userType === 'citizen'
-          ? (
-          <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
-            <Link
-              to={{ pathname: `/digit-ui/citizen/payment/my-bills/${businessService}/${props?.application?.applicationNumber}`, state: { tenantId: props.application.tenantId, applicationNumber : props?.application?.applicationNumber } }}
-            >
-              <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
-            </Link>
-          </div>
-          ) : null
+            ? (
+              <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
+                <Link
+                  to={{ pathname: `/digit-ui/citizen/payment/my-bills/${businessService}/${props?.application?.applicationNumber}`, state: { tenantId: props.application.tenantId, applicationNumber: props?.application?.applicationNumber } }}
+                >
+                  <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
+                </Link>
+              </div>
+            ) : null
         );
-      
+
       case "SUBMIT_FEEDBACK":
         return (
           <div style={{ marginTop: "24px" }}>
@@ -113,27 +111,27 @@ const EWASTEWFApplicationTimeline = (props) => {
           ) : (
             <ConnectingCheckPoints>
               {data?.timeline &&
-                data?.timeline.map((checkpoint, index, arr) => {
-                  
-                  let timelineStatusPostfix = "";
-                  if (window.location.href.includes("/obps/")) {
-                    if(workflowDetails?.data?.timeline[index-1]?.state?.includes("BACK_FROM") || workflowDetails?.data?.timeline[index-1]?.state?.includes("SEND_TO_CITIZEN"))
-                    timelineStatusPostfix = `_NOT_DONE`
-                    else if(checkpoint?.performedAction === "SEND_TO_ARCHITECT")
-                    timelineStatusPostfix = `_BY_ARCHITECT_DONE`
-                    else
-                    timelineStatusPostfix = index == 0 ? "" : `_DONE`;
-                  }
+                data?.timeline.map((checkpoint, index) => {
+
+                  // let timelineStatusPostfix = "";
+                  // if (window.location.href.includes("/obps/")) {
+                  //   if (workflowDetails?.data?.timeline[index - 1]?.state?.includes("BACK_FROM") || workflowDetails?.data?.timeline[index - 1]?.state?.includes("SEND_TO_CITIZEN"))
+                  //     timelineStatusPostfix = `_NOT_DONE`
+                  //   else if (checkpoint?.performedAction === "SEND_TO_ARCHITECT")
+                  //     timelineStatusPostfix = `_BY_ARCHITECT_DONE`
+                  //   else
+                  //     timelineStatusPostfix = index == 0 ? "" : `_DONE`;
+                  // }
                   return (
                     <React.Fragment key={index}>
                       <CheckPoint
                         keyValue={index}
                         isCompleted={index === 0}
-                       //label={checkpoint.state ? t(`WF_${businessService}_${checkpoint.state}`) : "NA"}
-                       label={t(
-                        `ES_PTR_COMMON_STATUS_${data?.processInstances[index].state?.["state"]
-                        }${timelineStatusPostfix}`
-                      )}
+                        //label={checkpoint.state ? t(`WF_${businessService}_${checkpoint.state}`) : "NA"}
+                        label={t(
+                          // `ES_EWASTE_COMMON_STATUS_${data?.processInstances[index].state?.["state"]}${timelineStatusPostfix}`
+                          `ES_EWASTE_COMMON_STATUS_${data?.processInstances[index].state?.["state"]}`
+                        )}
                         customChild={getTimelineCaptions(checkpoint)}
                       />
                     </React.Fragment>

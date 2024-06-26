@@ -9,7 +9,6 @@
 //import org.egov.common.contract.request.RequestInfo;
 //import org.egov.ewst.config.EwasteConfiguration;
 //import org.egov.ewst.models.EwasteRegistrationRequest;
-//import org.egov.ewst.models.PetRegistrationRequest;
 //import org.egov.ewst.models.event.*;
 //import org.egov.ewst.repository.ServiceRequestRepository;
 //import org.egov.ewst.util.NotificationUtil;

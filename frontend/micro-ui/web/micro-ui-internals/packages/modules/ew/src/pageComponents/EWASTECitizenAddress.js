@@ -12,73 +12,12 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData, formSta
   // const { errors } = localFormState;
   // const checkLocation = window.location.href.includes("ew/raiseRequest");
 
-  let inputs;
-  
-    inputs = [
-      {
-        label: "EWASTE_STREET_NAME",
-        type: "text",
-        name: "street",
-        validation: {
-          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-          // maxlength: 256,
-          title: t("CORE_COMMON_STREET_INVALID"),
-        },
-      },
-      {
-        label: "EWASTE_HOUSE_NO",
-        type: "text",
-        name: "doorNo",
-        validation: {
-          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-          // maxlength: 256,
-          title: t("CORE_COMMON_DOOR_INVALID"),
-        },
-      },
-      {
-        label: "EWASTE_HOUSE_NAME",
-        type: "text",
-        name: "buildingName",
-         validation: {
-          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-          // maxlength: 256,
-          title: t("CORE_COMMON_DOOR_INVALID"),
-         },
-      },
-      {
-        label: "EWASTE_ADDRESS_LINE1",
-        type: "text",
-        name: "addressLine1",
-         validation: {
-          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-          // maxlength: 256,
-          title: t("CORE_COMMON_DOOR_INVALID"),
-         },
-      },
-      {
-        label: "EWASTE_ADDRESS_LINE2",
-        type: "text",
-        name: "addressLine2",
-         validation: {
-          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-          // maxlength: 256,
-          title: t("CORE_COMMON_DOOR_INVALID"),
-         },
-      },
-      {
-        label: "EWASTE_landmark",
-        type: "text",
-        name: "landmark",
-         validation: {
-          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-          // maxlength: 256,
-          title: t("CORE_COMMON_DOOR_INVALID"),
-         },
-      },
-    
-      
-    ];
-  // }
+  const [street, setStreet] = useState(formData?.address?.street || "");
+  const [addressLine1, setAddressLine1] = useState(formData?.address?.addressLine1 || "");
+  const [addressLine2, setAddressLine2] = useState(formData?.address?.addressLine2 || "");
+  const [landmark, setLandmark] = useState(formData?.address?.landmark || "");
+  const [buildingName, setBuildingName] = useState(formData?.address?.latitude || "");
+  const [doorNo, setDoorNo] = useState(formData?.address?.doorNo || "");
 
   // const convertValidationToRules = ({ validation, name, messages }) => {
   //   if (validation) {
@@ -100,18 +39,9 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData, formSta
   //   return {};
   // };
 
-  // let isDis = true;
-
   useEffect(() => {
     trigger();
   }, []);
-
-  // useEffect(() => {
-  //   console.log("euseffect")
-  //   if(inputs.street){
-  //     isDis=false
-  //   }
-  // }, [inputs.street])
 
   // useEffect(() => {
   //   if (userType === "employee") {
@@ -166,24 +96,122 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData, formSta
   //     );
   //   });
   // }
+
+
+
+  const selectStreet = (e) => setStreet(e.target.value);
+  const selectDoorNo = (e) => setDoorNo(e.target.value);
+  const selectBuilding = (e) => setBuildingName(e.target.value);
+  const selectLandmark = (e) => setLandmark(e.target.value);
+  const selectAddressLine1 = (e) => setAddressLine1(e.target.value);
+  const selectAddressLine2 = (e) => setAddressLine2(e.target.value);
+
+
+  const goNext = () => {
+    let owner = formData.address;
+    let ownerStep;
+    if (userType === "citizen") {
+      ownerStep = { ...owner, street, addressLine1, addressLine2, landmark, buildingName, doorNo };
+      onSelect(config.key, { ...formData[config.key], ...ownerStep }, false);
+    } else {
+      ownerStep = { ...owner, street, addressLine1, addressLine2, landmark, buildingName, doorNo };
+      onSelect(config.key, ownerStep, false);
+    }
+  };
+
+  useEffect(() => {
+    if (userType === "citizen") {
+      goNext();
+    }
+  }, [street, addressLine1, addressLine2, landmark, buildingName, doorNo]);
+
   return (
     <React.Fragment>
-    {window.location.href.includes("/citizen") ? <Timeline currentStep={4}/> : null}
-    <FormStep
-      config={{ ...config, inputs }}
-      _defaultValues={{
-        street: formData?.address.street,
-        doorNo: formData?.address.doorNo,
-        buildingName: formData?.address.buildingName,
-        addressLine1: formData?.address.addressLine1,
-        addressLine2: formData?.address.addressLine2,
-        landmark: formData?.address.landmark  
-       }}
+      {window.location.href.includes("/citizen") ? <Timeline currentStep={4} /> : null}
+      <FormStep
+        config={{ ...config }}
+        // onSelect={(data) => onSelect(config.key, data)}
+        onSelect={goNext}
+        onSkip={onSkip}
+        isDisabled={addressLine1 == "" || doorNo == ""}
+        t={t}
+      >
+        <CardLabel>{`${t("EWASTE_STREET_NAME")}`}</CardLabel>
+        <TextInput
+          t={t}
+          //isMandatory={true}
+          type={"text"}
+          optionKey="i18nKey"
+          name="street"
+          onChange={selectStreet}
+          value={street}
+          errorStyle={true}
+          autoFocus={focusIndex?.index == 1}
+        />
+        <CardLabel>{`${t("EWASTE_HOUSE_NO")}*`}</CardLabel>
+        <TextInput
+          t={t}
+          //isMandatory={true}
+          type={"text"}
+          optionKey="i18nKey"
+          name="doorNo"
+          onChange={selectDoorNo}
+          value={doorNo}
+          errorStyle={false}
+          autoFocus={focusIndex?.index == 1}
 
-      onSelect={(data) => onSelect(config.key, data)}
-      onSkip={onSkip}
-      t={t}
-    />
+        />
+        <CardLabel>{`${t("EWASTE_HOUSE_NAME")}`}</CardLabel>
+        <TextInput
+          t={t}
+          //isMandatory={true}
+          type={"text"}
+          optionKey="i18nKey"
+          name="buildingName"
+          onChange={selectBuilding}
+          value={buildingName}
+          errorStyle={false}
+          autoFocus={focusIndex?.index == 1}
+
+        />
+        <CardLabel>{`${t("EWASTE_ADDRESS_LINE1")}*`}</CardLabel>
+        <TextInput
+          t={t}
+          //isMandatory={true}
+          type={"text"}
+          optionKey="i18nKey"
+          name="addressLine1"
+          onChange={selectAddressLine1}
+          value={addressLine1}
+          errorStyle={true}
+          autoFocus={focusIndex?.index == 1}
+        />
+        <CardLabel>{`${t("EWASTE_ADDRESS_LINE2")}`}</CardLabel>
+        <TextInput
+          t={t}
+          //isMandatory={true}
+          type={"text"}
+          optionKey="i18nKey"
+          name="addressLine2"
+          onChange={selectAddressLine2}
+          value={addressLine2}
+          errorStyle={false}
+          autoFocus={focusIndex?.index == 1}
+
+        />
+        <CardLabel>{`${t("EWASTE_landmark")}`}</CardLabel>
+        <TextInput
+          t={t}
+          //isMandatory={true}
+          type={"text"}
+          optionKey="i18nKey"
+          name="landmark"
+          onChange={selectLandmark}
+          value={landmark}
+          errorStyle={true}
+          autoFocus={focusIndex?.index == 1}
+        />
+      </FormStep>
     </React.Fragment>
   );
 };
