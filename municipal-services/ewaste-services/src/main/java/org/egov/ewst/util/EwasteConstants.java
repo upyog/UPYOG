@@ -102,7 +102,7 @@ public class EwasteConstants {
 
 	public static final String WF_STATUS_PAID_LOCALE = "PT_NOTIF_WF_STATE_LOCALE_PAID";
 
-	public static final String NOTIFICATION_MODULENAME = "rainmaker-ptr";
+	public static final String NOTIFICATION_MODULENAME = "rainmaker-ew";
 
 	public static final String WORKFLOW_SENDBACK_CITIZEN = "SENDBACKTOCITIZEN";
 
@@ -213,22 +213,22 @@ public class EwasteConstants {
 
 	public static final String PAYLINK_STRING = "You can pay your application fee on the below link - {PAYLINK} or visit your ULB to pay your dues. Thank you";
 
-	public static final String CERTIFICATE_STRING = "You can download your certificate on the below link - {PTRURL} Thank you";
+	public static final String CERTIFICATE_STRING = "You can download your certificate on the below link - {EWURL} Thank you";
 
-	public static final String RECEIPT_STRING = "You can download your receipt on the below link - {PTRURL} Thank you";
+	public static final String NOTIFICATION_VERIFY = "ew.en.counter.verify";
 
-	public static final String NOTIFICATION_VERIFY = "ptr.en.counter.verify";
+	public static final String NOTIFICATION_SUBMIT = "ew.en.counter.submit";
 
-	public static final String NOTIFICATION_APPLY = "ptr.en.counter.submit";
+	public static final String NOTIFICATION_PICKUPALERT = "ew.en.counter.sendpickupalert";
 
-	public static final String NOTIFICATION_APPROVE = "ptr.en.counter.approve";
-
-	public static final String NOTIFICATION_REJECT = "ptr.en.counter.reject";
+	public static final String NOTIFICATION_REJECT = "ew.en.counter.reject";
+	
+	public static final String NOTIFICATION_COMPLETE_REQUEST = "ew.en.counter.completerequest";
 
 	public static final String USREVENTS_EVENT_TYPE = "SYSTEMGENERATED";
 
-	public static final String USREVENTS_EVENT_NAME = "PTR";
+	public static final String USREVENTS_EVENT_NAME = "EWASTE";
 
-	public static final String USREVENTS_EVENT_POSTEDBY = "SYSTEM-PTR";
+	public static final String USREVENTS_EVENT_POSTEDBY = "SYSTEM-EW";
 
 }

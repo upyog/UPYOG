@@ -52,6 +52,10 @@ public class EwasteApplicationRowMapper implements ResultSetExtractor<List<Ewast
 						.build();
 
 				ewasteMap.put(uuid, ewasteApplication);
+				addDocToEwasteApplication(rs,ewasteApplication);
+			}
+			else {
+				addDocToEwasteApplication(rs,ewasteApplication);
 			}
 
 			addEwasteOverallDetails(rs, ewasteApplication);
