@@ -11,9 +11,9 @@ const EWASTEDocuments = ({ t, config, onSelect, userType, formData, setError: se
 
   // const tenantId = Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
-  
+  console.log("documents ::", documents)
 
-  const { isLoading, data } = Digit.Hooks.ptr.usePetMDMS(stateId, "PetService", "Documents");
+  // const { isLoading, data } = Digit.Hooks.ptr.usePetMDMS(stateId, "PetService", "Documents");
   
   // console.log("data in documents ::", data)
 
@@ -26,27 +26,26 @@ const EWASTEDocuments = ({ t, config, onSelect, userType, formData, setError: se
   const onSkip = () => onSelect();
   function onAdd() {}
 
-  useEffect(() => {
-    let count = 0;
-    data?.PetService?.Documents.map((doc) => {
-      doc.hasDropdown = true;
+  // useEffect(() => {
+  //   let count = 0;
+  //   data?.PetService?.Documents.map((doc) => {
+  //     doc.hasDropdown = true;
       
-      let isRequired = false;
-      documents.map((data) => {
-        if (doc.required && data?.documentType.includes(doc.code)) isRequired = true;
-      });
-      if (!isRequired && doc.required) count = count + 1;
-    });
-    if ((count == "0" || count == 0) && documents.length > 0) setEnableSubmit(false);
-    else setEnableSubmit(true);
-  }, [documents, checkRequiredFields]);
+  //     let isRequired = false;
+  //     documents.map((data) => {
+  //       if (doc.required && data?.documentType.includes(doc.code)) isRequired = true;
+  //     });
+  //     if (!isRequired && doc.required) count = count + 1;
+  //   });
+  //   if ((count == "0" || count == 0) && documents.length > 0) setEnableSubmit(false);
+  //   else setEnableSubmit(true);
+  // }, [documents, checkRequiredFields]);
 
  
 
   return (
     <div>
       <Timeline currentStep={2} />
-      {!isLoading ? (
         <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={false} onAdd={onAdd}>
           {/* {data?.PetService?.Documents?.map((document, index) => {
             return ( */}
@@ -64,9 +63,6 @@ const EWASTEDocuments = ({ t, config, onSelect, userType, formData, setError: se
           {/* })} */}
           {error && <Toast label={error} onClose={() => setError(null)} error />}
         </FormStep>
-      ) : (
-        <Loader />
-      )}
     </div>
   );
 };
@@ -84,7 +80,6 @@ function EWASTESelectDocument({
   
 }) {
   // const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0];
-  
 
   // const tenantId = Digit.ULBService.getCurrentTenantId();
   // // const [selectedDocument, setSelectedDocument] = useState(
@@ -97,6 +92,7 @@ function EWASTESelectDocument({
 
   const [file, setFile] = useState(null);
   // const [uploadedFile, setUploadedFile] = useState(() => filteredDocument?.filestoreId || null);
+  const [uploadedFile, setUploadedFile] = useState(null);
 
   // const handleEWASTESelectDocument = (value) => setSelectedDocument(value);
 
@@ -149,29 +145,29 @@ function EWASTESelectDocument({
   //   }
   // }, []);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     setError(null);
-  //     if (file) {
-  //       if (file.size >= 5242880) {
-  //         setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
-  //         // if (!formState.errors[config.key]) setFormError(config.key, { type: doc?.code });
-  //       } else {
-  //         try {
-  //           setUploadedFile(null);
-  //           const response = await Digit.UploadServices.Filestorage("EWASTE", file, Digit.ULBService.getStateId());
-  //           if (response?.data?.files?.length > 0) {
-  //             setUploadedFile(response?.data?.files[0]?.fileStoreId);
-  //           } else {
-  //             setError(t("CS_FILE_UPLOAD_ERROR"));
-  //           }
-  //         } catch (err) {
-  //           setError(t("CS_FILE_UPLOAD_ERROR"));
-  //         }
-  //       }
-  //     }
-  //   })();
-  // }, [file]);
+  useEffect(() => {
+    (async () => {
+      setError(null);
+      if (file) {
+        if (file.size >= 5242880) {
+          setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
+          // if (!formState.errors[config.key]) setFormError(config.key, { type: doc?.code });
+        } else {
+          try {
+            setUploadedFile(null);
+            const response = await Digit.UploadServices.Filestorage("EWASTE", file, Digit.ULBService.getStateId());
+            if (response?.data?.files?.length > 0) {
+              setUploadedFile(response?.data?.files[0]?.fileStoreId);
+            } else {
+              setError(t("CS_FILE_UPLOAD_ERROR"));
+            }
+          } catch (err) {
+            setError(t("CS_FILE_UPLOAD_ERROR"));
+          }
+        }
+      }
+    })();
+  }, [file]);
 
   // useEffect(() => {
   //   if (isHidden) setUploadedFile(null);
@@ -179,35 +175,21 @@ function EWASTESelectDocument({
 
   return (
     <div style={{ marginBottom: "24px" }}>
-      {/* {doc?.hasDropdown ? (
-        <LabelFieldPair>
-          <CardLabel className="card-label-smaller">{t(doc?.code.replaceAll(".", "_")) + "  *"}</CardLabel>
-          <Dropdown
-            className="form-field"
-            selected={selectedDocument}
-            style={{ width: "100%" }}
-            option={dropDownData.map((e) => ({ ...e, i18nKey: e.code?.replaceAll(".", "_") }))}
-            select={handleEWASTESelectDocument}
-            optionKey="i18nKey"
-            t={t}
-          />
-        </LabelFieldPair>
-      ) : null} */}
       <LabelFieldPair>
-        <CardLabel className="card-label-smaller"></CardLabel>
+        <CardLabel className="card-label-smaller">{t("EWASTE_PR_DOCUMENTS")}</CardLabel>
         <div className="field">
           <UploadFile
             onUpload={selectfile}
-            // onDelete={() => {
-            //   setUploadedFile(null);
-            // }}
+            onDelete={() => {
+              setUploadedFile(null);
+            }}
             id={id}
-            // message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
+            message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
             textStyles={{ width: "100%" }}
             inputStyles={{ width: "280px" }}
             accept=".pdf, .jpeg, .jpg, .png"   //  to accept document of all kind
             buttonType="button"
-            // error={!uploadedFile}
+            error={!uploadedFile}
           />
         </div>
       </LabelFieldPair>
