@@ -51,27 +51,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
 
   const mobileView = innerWidth <= 640;
 
-  // useEffect(() => {
-  //   searchFields.forEach(({ pattern, name, maxLength, minLength, errorMessages, ...el }) => {
-  //     const value = form[name];
-  //     const error = formState.errors[name];
-  //     if (pattern) {
-  //       if (!new RegExp(pattern).test(value) && !error)
-  //         setError(name, { type: "pattern", message: t(errorMessages?.pattern) || t(`PATTERN_${name.toUpperCase()}_FAILED`) });
-  //       else if (new RegExp(pattern).test(value) && error?.type === "pattern") clearErrors([name]);
-  //     }
-  //     if (minLength) {
-  //       if (value?.length < minLength && !error)
-  //         setError(name, { type: "minLength", message: t(errorMessages?.minLength || `MINLENGTH_${name.toUpperCase()}_FAILED`) });
-  //       else if (value?.length >= minLength && error?.type === "minLength") clearErrors([name]);
-  //     }
-  //     if (maxLength) {
-  //       if (value?.length > maxLength && !error)
-  //         setError(name, { type: "maxLength", message: t(errorMessages?.maxLength || `MAXLENGTH_${name.toUpperCase()}_FAILED`) });
-  //       else if (value?.length <= maxLength && error?.type === "maxLength") clearErrors([name]);
-  //     }
-  //   });
-  // }, [form, formState, setError, clearErrors]);
+
 
 
   const onSubmitInput = (data) => {

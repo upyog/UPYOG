@@ -413,8 +413,11 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                 label={t("AST_MANUFACTURER")}
                 text={`${t(checkForNA(assetDetails?.manufacturer))}`}
               actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/assets`} />}
-
-
+            />
+            <Row
+                label={t("AST_ASSIGNED_USER")}
+                text={`${t(checkForNA(assetDetails?.assignedUser))}`}
+              actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/assets`} />}
             />
 
               <Row
@@ -455,18 +458,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <CardSubHeader>{t("AST_ADDRESS_DETAILS")}</CardSubHeader>
         
         <StatusTable>
-         <Row
-            label={t("AST_ADDRESS_LINE_1")}
-            text={`${t(checkForNA(address?.addressLine1))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/street`} />}
-
-        />
          
-         <Row
-            label={t("AST_ADDRESS_LINE_2")}
-            text={`${t(checkForNA(address?.addressLine2))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/street`} />}
-        />
          <Row
             label={t("MYCITY_CODE_LABEL")}
             text={`${t(checkForNA(address?.city?.name))}`}

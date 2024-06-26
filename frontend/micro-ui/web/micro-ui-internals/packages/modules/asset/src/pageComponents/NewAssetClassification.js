@@ -79,6 +79,21 @@
       sourcefinance.push({i18nKey: `${finance.name}`, code: `${finance.code}`, value: `${finance.name}`})
     }) 
 
+    const { data: currentFinancialYear } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "FinancialYear" }],
+      {
+        select: (data) => {
+            const formattedData = data?.["ASSET"]?.["FinancialYear"]
+            return formattedData;
+        },
+    }); 
+
+    let financal = []; 
+
+    currentFinancialYear && currentFinancialYear.map((financialyear) => {
+      financal.push({i18nKey: `${financialyear.name}`, code: `${financialyear.code}`, value: `${financialyear.name}`})
+    }) 
+
+
 
 
       let menu_Asset = [];   //variable name for assetCalssification
@@ -236,7 +251,7 @@
                   className="form-field"
                   selected={financialYear}
                   select={setfinancialYear}
-                  option={[{ i18nKey: calculateCurrentFinancialYear(), code: calculateCurrentFinancialYear(), value: calculateCurrentFinancialYear() }]}
+                  option={financal}
                   optionKey="i18nKey"
                   t={t}
                 />
