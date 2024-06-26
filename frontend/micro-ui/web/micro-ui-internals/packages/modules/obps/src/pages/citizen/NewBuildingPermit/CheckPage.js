@@ -213,9 +213,11 @@ import {
        setUploadedFileLess(value?.additionalDetails?.lessAdjustmentFeeFiles);
       }
 let plotArea = parseInt(sessionStorage.getItem("plotArea")) || datafromAPI?.planDetail?.planInformation?.plotArea || value?.additionalDetails?.area;
-const LabourCess = plotArea > 909 ?mdmsData?.BPA?.LabourCess[1].rate * plotArea : 0
- const GaushalaFees =  mdmsData?.BPA?.GaushalaFees[0].rate  
- const Malbafees = (plotArea <=500 ?mdmsData?.BPA?.MalbaCharges[0].rate :plotArea >500 && plotArea <=1000 ?mdmsData?.BPA?.MalbaCharges?.[1].rate :mdmsData?.BPA?.MalbaCharges[2].rate || 500)
+
+//plotArea*10.7639 conversion from sq mtrs to sq ft;
+const LabourCess =Math.round( (plotArea*10.7639) > 909 ?mdmsData?.BPA?.LabourCess[1].rate * (plotArea*10.7639) : 0)
+ const GaushalaFees = Math.round( mdmsData?.BPA?.GaushalaFees[0].rate  )
+ const Malbafees =Math.round( ((plotArea*10.7639) <=500 ?mdmsData?.BPA?.MalbaCharges[0].rate :(plotArea*10.7639) >500 && (plotArea*10.7639) <=1000 ?mdmsData?.BPA?.MalbaCharges?.[1].rate :mdmsData?.BPA?.MalbaCharges[2].rate || 500))
 sessionStorage.setItem("Malbafees",Malbafees)
 sessionStorage.setItem("WaterCharges",Malbafees/2)
 sessionStorage.setItem("GaushalaFees",GaushalaFees)
@@ -617,9 +619,11 @@ function selectfile(e) {
       ))} */}
        {/* <Row className="border-none" label={t(`BPA_COMMON_TOTAL_AMT`)} text={`₹ ${paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}`} /> */}
        <CardSubHeader>{t("BPA_P1_SUMMARY_FEE_EST")}</CardSubHeader> 
-       <Row className="border-none" label={t(`BPA_COMMON_P1_AMT`)} text={`₹ ${value?.additionalDetails?.P1charges || paymentDetails?.Bill[0]?.billDetails[0]?.amount}`} />
-       <CardSubHeader>{t("BPA_P2_SUMMARY_FEE_EST")}</CardSubHeader> 
-       
+       <Row className="border-none" label={t(`BPA_APPL_FEES`)} text={`₹ ${value?.additionalDetails?.P1charges || paymentDetails?.Bill[0]?.billDetails[0]?.amount}`} />
+       <Row className="border-none" label={t(`BUILDING_APPLICATION_FEES`)} text={`₹ ${Math.round((datafromAPI?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea)*10.7639*2.5)}`}></Row>
+       <Row className="border-none" label={t(`BOUNDARY_WALL_FEES`)} text={`₹ ${data?.boundaryWallLength*2.5}`}></Row>
+
+       <CardSubHeader>{t("BPA_P2_SUMMARY_FEE_EST")}</CardSubHeader>        
        <Row className="border-none" label={t(`BPA_COMMON_MALBA_AMT`)} text={`₹ ${malbafees}`} />
        <Row className="border-none" label={t(`BPA_COMMON_LABOUR_AMT`)} text={`₹ ${labourCess}`} />
        <Row className="border-none" label={t(`BPA_COMMON_WATER_AMT`)} text={`₹ ${waterCharges}`} />
