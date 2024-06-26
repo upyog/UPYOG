@@ -3,6 +3,7 @@ import { Banner, Card, CardText, SubmitBar, ActionBar, DownloadPrefixIcon, Loade
 import { useHistory, useParams, Link, LinkLabel } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
+import { format } from "date-fns";
 
 export const convertEpochToDate = (dateEpoch) => {
   // Returning NA in else case because new Date(null) returns Current date from calender
@@ -198,8 +199,12 @@ export const SuccessfulPayment = (props) => {
 
     let count=0;
     for(let i=0;i<workflowDetails?.data?.processInstances?.length;i++){
+      const newDate=new Date(workflowDetails?.data?.processInstances[i]?.auditDetails?.createdTime);
+    const formattedDate=format(newDate, 'dd-MM-yyyy HH:mm:ss');
+    console.log("formatteddate2", formattedDate)
       if((workflowDetails?.data?.processInstances[i]?.action==="POST_PAYMENT_APPLY" ||workflowDetails?.data?.processInstances[i]?.action==="PAY" ) && (workflowDetails?.data?.processInstances?.[i]?.state?.applicationStatus==="APPROVAL_INPROGRESS")   && count==0 ){
           reqData.additionalDetails.submissionDate=workflowDetails?.data?.processInstances[i]?.auditDetails?.createdTime;
+          reqData.additionalDetails.formattedSubmissionDate=formattedDate;
           count=1;
         }
     }

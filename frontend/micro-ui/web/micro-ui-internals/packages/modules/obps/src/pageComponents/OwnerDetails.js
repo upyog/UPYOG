@@ -373,7 +373,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 if (formData?.owners?.purchasedFAR?.code) payload.additionalDetails.purchasedFAR = formData?.owners?.purchasedFAR?.code;
                 if (formData?.owners?.restrictedArea?.code) payload.additionalDetails.restrictedArea = formData?.owners?.restrictedArea?.code;
                 if (formData?.owners?.schemes?.i18nKey) payload.additionalDetails.schemes = formData?.owners?.schemes?.i18nKey;
-                if (formData?.owners?.UlbName?.code) payload.additionalDetails.UlbName = formData?.owners?.UlbName?.code;
+                if (formData?.owners?.UlbName?.code) payload.additionalDetails.UlbName = formData?.owners?.UlbName?.code.toLowerCase().replace(/^\w/, c=>c.toUpperCase());
                 if (formData?.owners?.District?.code) payload.additionalDetails.District = formData?.owners?.District?.code;
                 if (formData?.owners?.nameofApprovedcolony) payload.additionalDetails.nameofApprovedcolony = formData?.owners?.nameofApprovedcolony;
                 if (formData?.owners?.NocNumber) payload.additionalDetails.NocNumber = formData?.owners?.NocNumber;
