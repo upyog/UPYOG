@@ -45,14 +45,16 @@ public class AssetRowMapper implements ResultSetExtractor<List<Asset>> {
         while (rs.next()) {
             String id = rs.getString("id");
             String tenantId = rs.getString("tenantId");
+            String financialYear = rs.getString("financialYear");
+            String sourceOfFinance = rs.getString("sourceOfFinance");
             Asset currentAsset = assetMap.get(id);
             if (currentAsset == null) {
                 
                 currentAsset = Asset.builder()
                 	    .id(id)
                 	    .tenantId(tenantId)
-                	    .financialYear("financialYear")
-                	    .sourceOfFinance("sourceOfFinance")
+                	    .financialYear(financialYear)
+                	    .sourceOfFinance(sourceOfFinance)
                 	    .assetBookRefNo(rs.getString("bookRefNo"))
                 	    .assetName(rs.getString("name"))
                 	    .description(rs.getString("description"))
