@@ -93,6 +93,8 @@ public class NotificationUtil {
         path = path.replace("{}", notificationCode);
         String message = "";
         try {
+        	log.info(localizationMessage);
+        	log.info(path);
             Object messageObj = JsonPath.parse(localizationMessage).read(path);
             message = ((ArrayList<String>) messageObj).get(0);
         } catch (Exception e) {
