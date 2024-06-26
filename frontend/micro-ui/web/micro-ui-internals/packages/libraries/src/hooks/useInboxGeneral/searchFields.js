@@ -60,8 +60,14 @@ const inboxSearchFields = {
       roles: [],
     },
     {
-      label: "AST_CATEGORY",
+      label: "AST_ASSET_CATEGORY_LABEL",
       name: "assetclassification",
+      // minLength: "10",
+      roles: [],
+    },
+    {
+      label: "AST_PARENT_CATEGORY_LABEL",
+      name: "assetParentCategory",
       // minLength: "10",
       roles: [],
     },

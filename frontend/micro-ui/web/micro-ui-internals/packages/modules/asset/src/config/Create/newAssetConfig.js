@@ -75,7 +75,7 @@ export const newAssetConfig =
             "submitBarLabel": "COMMON_NEXT",
         },
         "key": "address",
-        "nextStep": "street",
+        "nextStep": "documents",
         "isMandatory": true,
         "type": "component",
         },
