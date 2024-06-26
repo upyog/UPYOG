@@ -197,13 +197,22 @@ const NewAsset
 
     
    
-   
-
-
-
-    const tenantId = Digit.ULBService.getCurrentTenantId();
-    const stateId = Digit.ULBService.getStateId();
-
+   const fetchCurrentLocation = () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setcurrentLocation(`${latitude}, ${longitude}`);
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          alert("Unable to retrieve your location. Please check your browser settings.");
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by your browser.");
+    }
+  };
     
 
 
@@ -1788,24 +1797,43 @@ const NewAsset
                 validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
               }}
             />
+
               <CardLabel>{`${t("AST_CURRENT_LOCATION")}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="currentLocation"
-                value={currentLocation}
-                onChange={selectcurrentlocation}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: false,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
-              />
+              <div style={{ display: 'flex', alignItems: 'stretch', width: '50%' }}>
+                <TextInput
+                  t={t}
+                  type={"text"}
+                  isMandatory={false}
+                  optionKey="i18nKey"
+                  name="currentLocation"
+                  value={currentLocation}
+                  onChange={selectcurrentlocation}
+                  style={{ flex: 1, marginRight: '10px' }}
+                  ValidationRequired={false}
+                  {...(validation = {
+                    isRequired: false,
+                    pattern: "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$",
+                    type: "text",
+                    title: t("VALID_LAT_LONG"),
+                  })}
+                />
+                <button 
+                  onClick={fetchCurrentLocation}
+                  style={{
+                    padding: '8px 16px',
+                    backgroundColor: '#800000',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '0 4px 4px 0',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    minWidth: 'fit-content',
+                  }}
+                >
+                  {t("AST_FETCH_LOCATION")}
+                </button>
+              </div>
+
               <CardLabel>{`${t("AST_ASSIGNED_USER")}`}</CardLabel>
               <TextInput
                 t={t}
@@ -1882,86 +1910,7 @@ const NewAsset
               </React.Fragment>
             )}
 
-            {/* {formData?.asset?.assetclassification?.code === "MOVEABLE" && formData?.asset?.assetsubtype?.code === "COMPUTERS_AND_LAPTOPS" && (
-              <React.Fragment>
-
-              <CardLabel>{`${t("AST_OPERATING_SYSTEM")}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="operatingSystem"
-                value={operatingSystem}
-                onChange={selectoperatingsystem}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
-              />
-              <CardLabel>{`${t("AST_CPU_DESCRIPTION")}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="cpu"
-                value={cpu}
-                onChange={selectcpu}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
-              />
-
-              <CardLabel>{`${t("AST_RAM_ROM")}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="ram"
-                value={ram}
-                onChange={selectram}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
-              />
-              <CardLabel>{`${t("AST_STORAGE")}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="storage"
-                value={storage}
-                onChange={selectstorage}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
-              />
-
-              </React.Fragment>
-            )} 
- */}
+           
 
            
 
