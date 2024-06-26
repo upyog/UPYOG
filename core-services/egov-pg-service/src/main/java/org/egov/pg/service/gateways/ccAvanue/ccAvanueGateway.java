@@ -246,16 +246,6 @@ params.add("access_code", MERCHANT_ACCESS_CODE);
  		String vResponse="";
  		AesUtil aesUtilenc=new AesUtil(MERCHANT_WORKING_KEY);
 
-	        String decRespp = aesUtilenc.decrypt(encResp);
- 		log.info(decRespp);
- 		String[] keyValuePairs2 = decRespp.split(",");
- 		String referenceno = keyValuePairs2[0];
- 		log.info("Reference no is"+referenceno);
- 		referenceno = referenceno.substring(17, (referenceno.length())-1);
- 		log.info("correct Reference no is"+referenceno);
- 	        ccaRequest =  "{'reference_no': '"+referenceno+"'}";     
- 		
-
        		String encRequest = aesUtilenc.encrypt(ccaRequest);
   	 	System.out.println("ENC REq "+encRequest);  
   	    	StringBuffer wsDataBuff=new StringBuffer();
