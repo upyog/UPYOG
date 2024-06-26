@@ -27,7 +27,7 @@ const BannerPicker = (props) => {
     <Banner
       message={GetActionMessage(props)}
       applicationNumber={props.data?.hallsBookingApplication[0].bookingNo}
-      info={props.isSuccess ? props.t("CHB_APPLICATION_NO") : ""}
+      info={props.isSuccess ? props.t("CHB_BOOKING_NO") : ""}
       successful={props.isSuccess}
       style={{width: "100%"}}
     />
@@ -41,7 +41,6 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
   
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const mutation = Digit.Hooks.chb.useChbCreateAPI("pg.citya"); 
-  // const mutation = Digit.Hooks.chb.useChbSearch("pg.citya"); 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const match = useRouteMatch();
   const { tenants } = storeData || {};
@@ -95,7 +94,7 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
 
       <br></br>
 
-      <Link to={`/digit-ui/citizen/payment/my-bills/` + `${businessService}/` + `${bookingNo}`}>
+      <Link to={`/digit-ui/citizen/payment/my-bills/` + `${"chb-services"}/` + `${mutation.data?.hallsBookingApplication[0].bookingNo}`}>
         <LinkButton label={t("PAYMENT_BUTTON")} />
       </Link>
     </Card>

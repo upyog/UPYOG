@@ -11,13 +11,14 @@ import {
   SubmitBar,
   TextInput,
   DateRange,
+  Calender
 } from "@upyog/digit-ui-react-components";
+import { DateRangePicker, createStaticRanges } from "react-date-range";
+import { addDays, startOfDay, endOfDay,format } from 'date-fns';
 
 const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData, onFilterChange, searchParams }) => {
   const { pathname: url } = useLocation();
   let index = 0;
-  let validation = {};
-
   const [bookingSlotDetails, setBookingSlotDetails] = useState(
     (formData.slotlist && formData.slotlist[index] && formData.slotlist[index].bookingSlotDetails) ||
     formData?.slotlist?.bookingSlotDetails ||
@@ -28,13 +29,17 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
     formData?.slotlist?.selectedHall ||
     ""
   );
+  const [showDateRangePicker, setShowDateRangePicker] = useState(false);
   const [hallCode, setHallCode] = useState( (formData.slotlist && formData.slotlist[index] && formData.slotlist[index].hallCode) ||
   formData?.slotlist?.hallCode ||
   "");
   const stateId = Digit.ULBService.getStateId();
-  const [localSearchParams, setLocalSearchParams] = useState(null);
  
-  const [dateRange, setDateRange] = useState([null, null]);
+  const [dateRange, setDateRange] = useState([{
+    startDate: new Date(),
+    endDate: addDays(new Date(), 1),
+    key: 'selection'
+  }]);
   const { data: hallList } = Digit.Hooks.chb.useChbCommunityHalls(stateId, "CHB", "ChbCommunityHalls");
   const { data: Hall } = Digit.Hooks.chb.useChbHallCode(stateId, "CHB", "ChbHallCode");
   
@@ -85,11 +90,11 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
   const [data, setData] = useState(initialData);
 
   const columns = [
-    { Header: "Hall_Name", accessor: "name" },
-    { Header: "ADDRESS", accessor: "address" },
-    { Header: "LOCATION", accessor: "location" },
-    { Header: "BOOKING_DATE", accessor: "bookingDate" },
-    { Header: "STATUS", accessor: "status" },
+    { Header: `${t("CHB_HALL_NAME")}`, accessor: "name" },
+    { Header: `${t("CHB_ADDRESS")}`, accessor: "address" },
+    { Header: `${t("CHB_LOCATION")}`, accessor: "location" },
+    { Header: `${t("CHB_BOOKING_DATE")}`, accessor: "bookingDate" },
+    { Header: `${t("CHB_STATUS")}`, accessor: "status" },
   ];
 
   const { control } = useForm();
@@ -154,7 +159,30 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
   };
 
   const enhancedColumns = [checkboxColumn, ...columns];
-
+  const staticRanges = createStaticRanges([
+    {
+      label: 'Today',
+      range: () => ({
+        startDate: startOfDay(new Date()),
+        endDate: endOfDay(new Date())
+      })
+    },
+    {
+      label: 'Tomorrow',
+      range: () => ({
+        startDate: startOfDay(addDays(new Date(), 1)),
+        endDate: endOfDay(addDays(new Date(), 1))
+      })
+    },
+    {
+      label: 'Next 2 Days',
+      range: () => ({
+        startDate: startOfDay(new Date()),
+        endDate: endOfDay(addDays(new Date(), 2))
+      })
+    },
+  ]);
+  console.log("daterange",dateRange[0].startDate && dateRange[0].endDate);
   const handleSearch = () => {
     let filteredData = initialData;
 
@@ -171,7 +199,7 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
       filteredData = filteredData.filter(item =>
         new Date(item.date1) >= new Date(dateRange[0]) && new Date(item.date2) <= new Date(dateRange[1])
       );
-      console.log("daterange",dateRange[0] && dateRange[1]);
+      console.log("daterange",dateRange.startDate && dateRange.endDate);
     }
 
     setData(filteredData);
@@ -187,9 +215,9 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
         onSkip={onSkip}
         t={t}
       >
-        <CardHeader>{`${t("SEARCH_COMMUNITY_HALL")}`}</CardHeader>
+        <CardHeader>{`${t("CHB_SEARCH_COMMUNITY_HALL_HEADER")}`}</CardHeader>
         <div >
-          <CardLabel>{`${t("SELECT_HALL_NAME")}`}</CardLabel>
+          <CardLabel>{`${t("CHB_SELECT_HALL_NAME")}`}</CardLabel>
           <Controller
               control={control}
               name={"selectedHall"}
@@ -208,16 +236,30 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
 
               )}
             />
-          <div style={{ width: "50%" }}>
-          <DateRange
-            t={t}
-            value={dateRange}
-            select={setDateRange}
-            optionKey="i18nKey"
-            isMandatory={false}
-          />
-          </div>
-          <CardLabel>{`${t("HALL_CODE")}`}</CardLabel>
+
+          <div className="filter-label"><CardLabel>{`${t("SELECT_DATE")}`}</CardLabel></div>
+                <div className="employee-select-wrap" style={{ width: "50%" }}>
+                  <div className="select">
+                    <input className="employee-select-wrap--elipses" type="text"  value={`${format(dateRange[0].startDate, 'dd/MM/yyyy')} - ${format(dateRange[0].endDate, 'dd/MM/yyyy')}`} readOnly />
+                    <Calender className="cursorPointer" onClick={() => setShowDateRangePicker((prevState) => !prevState)} />
+                  </div>
+            {showDateRangePicker && (
+               <div className="options-card" style={{ overflow: "visible", width: "unset", maxWidth: "unset" }}>
+              <DateRangePicker
+               className="pickerShadow"
+                ranges={dateRange}
+                onChange={item => setDateRange([item.selection])}
+                showSelectionPreview={true}
+                rangeColors={["#9E9E9E"]}
+                moveRangeOnFirstSelection={false}
+                staticRanges={staticRanges}
+                inputRanges={[]}
+                minDate={new Date()}
+              />
+            </div>
+            )}
+            </div>
+          <CardLabel>{`${t("CHB_HALL_CODE")}`}</CardLabel>
           <Controller
               control={control}
               name={"hallCode"}

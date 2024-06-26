@@ -41,7 +41,7 @@ const CHBCard = () => {
   const CHB_CEMP = Digit.UserService.hasAccess(["CHB_APPROVER","CHB_VERIFIER"]) || false;
   const propsForModuleCard = {
     Icon: <PTIcon />,
-    moduleName: t("CHB_TITLE_COMMUNITY_HALL_BOOKING"),
+    moduleName: t("CHB_COMMUNITY_HALL_BOOKING"),
     kpis: [
       {
         count: total?.totalCount,

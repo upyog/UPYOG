@@ -102,7 +102,7 @@ const {slotlist}=value;
     >
       
       <div>
-        <CardLabel>{`${t("CHB_APPLICANT_NAME")}`}</CardLabel>
+        <CardLabel>{`${t("CHB_APPLICANT_NAME")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
         <TextInput
           t={t}
           type={"text"}
@@ -122,7 +122,7 @@ const {slotlist}=value;
          
         />
        
-        <CardLabel>{`${t("CHB_MOBILE_NUMBER")}`}</CardLabel>
+        <CardLabel>{`${t("CHB_MOBILE_NUMBER")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
         <MobileNumber
           value={mobileNumber}
           name="mobileNumber"
@@ -130,7 +130,7 @@ const {slotlist}=value;
           {...{ pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
         />
 
-        <CardLabel>{`${t("CHB_ALT_MOBILE_NUMBER")}`}</CardLabel>
+        <CardLabel>{`${t("CHB_ALT_MOBILE_NUMBER")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
           <MobileNumber
             value={alternateNumber}
             name="alternateNumber"
@@ -138,7 +138,7 @@ const {slotlist}=value;
             {...{ required: false, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
           />
 
-        <CardLabel>{`${t("CHB_EMAIL_ID")}`}</CardLabel>
+        <CardLabel>{`${t("CHB_EMAIL_ID")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
         <TextInput
           t={t}
           type={"text"}

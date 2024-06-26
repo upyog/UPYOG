@@ -95,7 +95,7 @@ fetchBillData();
       id: null,
       tenantId: tenantId,
       businessService: "chb-services",
-      businessId: application?.applicationNumber,
+      businessId: application?.bookingNo,
       action: "",
       moduleName: "chb-services",
       state: null,

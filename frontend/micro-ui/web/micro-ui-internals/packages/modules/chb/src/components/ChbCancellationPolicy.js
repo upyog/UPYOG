@@ -17,14 +17,14 @@ const ChbCancellationPolicy = () => {
     color: 'black',
     padding: '20px',
     borderRadius: '8px',
-    maxWidth: '500px',
+    maxWidth: '700px',
     width: '90%',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    maxHeight: '80vh',
+    maxHeight: '90vh',
     overflowY: 'auto'
   };
 
@@ -32,7 +32,7 @@ const ChbCancellationPolicy = () => {
     background: 'none',
     border: 'none',
     color: 'black',
-    fontSize: '16px',
+    fontSize: '25px',
     cursor: 'pointer',
     position: 'absolute',
     top: '10px',
@@ -71,7 +71,7 @@ const ChbCancellationPolicy = () => {
       {showCancellationPolicy && (
         <PopUp onClose={handleCancellationPolicyClick}>
           <div style={popupContentStyle}>
-            <button onClick={handleCancellationPolicyClick} style={closeButtonStyle}>Close</button>
+            <button onClick={handleCancellationPolicyClick} style={closeButtonStyle}>&times;</button>
             <h3>Cancellation Policy</h3>
             <p>When you cancel your booking</p>
             <p>You can cancel your application any time before the date of event. GST will not be refunded. Also, a percentage of rent is deducted based on when you cancel your application with respect to the date of event. The day range and percentage amount deducted from rent during refund is shown in the table below. Earlier you cancel, lesser will be the amount deducted. All other charges like Security Deposit, Electricity Charges, Water Charges and Conservation fees will be refunded.</p>
@@ -90,7 +90,7 @@ const ChbCancellationPolicy = () => {
       {showPriceBreakup && (
         <PopUp onClose={handleCancellationPolicyClick}>
           <div style={popupContentStyle}>
-          <button onClick={handlePriceBreakupClick} style={closeButtonStyle}>Close</button>
+          <button onClick={handlePriceBreakupClick} style={closeButtonStyle}>&times;</button>
           <div>
             <h3>Calculation BreakUp</h3>
             <p>Estimate Price Details</p>
