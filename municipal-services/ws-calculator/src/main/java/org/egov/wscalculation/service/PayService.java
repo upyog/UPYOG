@@ -172,11 +172,11 @@ public class PayService {
 		if (daysDiff.compareTo(BigDecimal.ONE) < 0) {
 			return applicableInterest;
 		}
-		long currentUTC = System.currentTimeMillis();
-		long numberOfDaysInMillis = demand.getAuditDetails().getCreatedTime() - currentUTC;
-		BigDecimal noOfDaysforInterest = BigDecimal.valueOf((TimeUnit.MILLISECONDS.toDays(Math.abs(numberOfDaysInMillis))))
-				.subtract(BigDecimal.valueOf(Double.parseDouble(interestMaster.get(WSCalculationConstant.STARTING_DATE_APPLICABLES).toString())));
-		log.info("No. of days applicable for interest ::" + noOfDaysforInterest );
+//		long currentUTC = System.currentTimeMillis();
+//		long numberOfDaysInMillis = demand.getAuditDetails().getCreatedTime() - currentUTC;
+//		BigDecimal noOfDaysforInterest = BigDecimal.valueOf((TimeUnit.MILLISECONDS.toDays(Math.abs(numberOfDaysInMillis))))
+//				.subtract(BigDecimal.valueOf(Double.parseDouble(interestMaster.get(WSCalculationConstant.STARTING_DATE_APPLICABLES).toString())));
+//		log.info("No. of days applicable for interest ::" + noOfDaysforInterest );
 		
 		BigDecimal rate = null != interestMaster.get(WSCalculationConstant.RATE_FIELD_NAME)
 				? BigDecimal.valueOf(((Number) interestMaster.get(WSCalculationConstant.RATE_FIELD_NAME)).doubleValue())
