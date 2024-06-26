@@ -8,8 +8,6 @@ export const convertDotValues = (value = "") => {
   );
 };
 
-
-
 export const getFixedFilename = (filename = "", size = 5) => {
   if (filename.length <= size) {
     return filename;
@@ -44,7 +42,7 @@ export const setAddressDetails = (data) => {
 
 export const setProductDetails = (data) => {
   let { ewdet } = data;
-  console.log("ewdet", ewdet)
+  // console.log("ewdet", ewdet)
 
   let productDetails = ewdet?.prlistName.map((product, index) => {
     return { 
@@ -55,71 +53,25 @@ export const setProductDetails = (data) => {
     };
   }) || [];
 
+  data.calculatedAmount = ewdet.calculatedAmount;
   data.ewdet = productDetails;
   return data;
 }
 
-export const setcalculatedAmount = (data) => {
-  let {ewdet} = data;
-
-  const totalPrice = ewdet?.reduce((sum, pd) => sum + (pd.price || 0), 0);
-
-  // let calculatedAmount = ewdet?.map((product, index) => {
-  //     product.price
-  // } )
-
-  data.calculatedAmount = totalPrice;
-  return data;
-}
-
-
-// export const setOwnerDetails = (data) => {
-//   let { ownerKey } = data;
-
-//   let ownerDetails = {
-//     ...ownerKey, 
-//     applicantName: ownerKey?.applicantName,
-//     mobileNumber: ownerKey?.mobileNumber,
-//     emailId: ownerKey?.emailId
-//   }
-
-//   data.ownerKey = ownerDetails;
-//   return data;
-// }
-
-
 export const EWDataConvert = (data) => {
  
   data = setProductDetails(data);
-  // data = setOwnerDetails(data);
   data = setAddressDetails(data);
-  data = setcalculatedAmount(data);
 
-  console.log("this is data in ::", data)
-
-  // const formdata = {
-  //   EwasteApplication: [{
-  //     tenantId: "pg.citya",
-  //     applicant: {...data?.ownerKey},
-  //     address: data.address,
-  //       ...data?.documents,
-
-      
-  //     workflow : {
-  //       businessService: "ewst",
-  //       action : "CREATE",
-  //       moduleName: "ewaste-services"
-  //     }
-  //   }],
-  // };
+  // console.log("this is data in ::", data)
 
   const formdata = {
     EwasteApplication: [
     {
       tenantId: "pg.citya",
       requestId: data.requestId || "",
-      transactionId: data.transactionId || "",
-      pickUpDate: data.pickUpDate || "",
+      transactionId: "",
+      pickUpDate: "",
       vendorUuid: "345",
       requestStatus: "New Request",
       calculatedAmount: data?.calculatedAmount || null,
@@ -133,7 +85,6 @@ export const EWDataConvert = (data) => {
       address: {
         tenantId: "pg.citya",
         doorNo: data.address?.doorNo,
-        calculatedAmount: data.calculatedAmount,
         latitude: data.address?.latitude || null,
         longitude: data.address?.longitude || null,
         addressNumber: data.address?.addressNumber || "",

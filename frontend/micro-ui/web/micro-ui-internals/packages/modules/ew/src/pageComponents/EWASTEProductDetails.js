@@ -19,6 +19,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
     (formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.productQuantity) || formData?.ewdet?.productQuantity || "1"
   );
   // const productPrice = (formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.productPrice) || formData?.ewdet?.productPrice || "0.0";
+  const [calculatedAmount, setCalculatedAmount] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.calculatedAmount) || formData?.ewdet?.calculatedAmount || "");
 
   const [prlistName, setPrlistName] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.prlistName) || formData?.ewdet?.prlistName || []);
   const [prlistQuantity, setPrlistQuantity] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.prlistQuantity) || formData?.ewdet?.prlistQuantity || []);
@@ -79,10 +80,10 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
     let owner = formData.ewdet && formData.ewdet[index];
     let ownerStep;
     if (userType === "citizen") {
-      ownerStep = { ...owner, prlistName, prlistQuantity };
+      ownerStep = { ...owner, prlistName, prlistQuantity, calculatedAmount };
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
     } else {
-      ownerStep = { ...owner, prlistName, prlistQuantity };
+      ownerStep = { ...owner, prlistName, prlistQuantity, calculatedAmount };
       onSelect(config.key, ownerStep, false, index);
     }
   };
@@ -93,7 +94,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
     if (userType === "citizen") {
       goNext();
     }
-  }, [prlistName, prlistQuantity]);
+  }, [prlistName, prlistQuantity, calculatedAmount]);
 
   return (
     <React.Fragment>
@@ -119,6 +120,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
               selected={productName} 
               select={setProductName} 
               option={menu} 
+              optionCardStyles={{overflowY: "auto", maxHeight: "300px"}}
               optionKey="i18nKey" 
               t={t} 
               />
@@ -171,6 +173,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
           setPrlistName={setPrlistName}
           prlistQuantity={prlistQuantity}
           setPrlistQuantity={setPrlistQuantity}
+          setCalculatedAmount={setCalculatedAmount}
           // prlistTotalprice={prlistTotalprice}
         />
       </div>

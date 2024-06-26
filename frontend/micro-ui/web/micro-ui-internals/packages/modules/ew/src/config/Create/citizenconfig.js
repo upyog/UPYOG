@@ -9,7 +9,7 @@ export const citizenConfig =
                     "withoutLabel": true,
                     "key": "ewdet",
                     "type": "component",
-                    "nextStep": "owner-details",
+                    "nextStep": "documents",
                     "hideInEmployee": true,
                     "isMandatory": true,
                     "texts": {
@@ -18,6 +18,25 @@ export const citizenConfig =
                 },
             ],
         },
+
+        {
+            "head": "EWASTE_TITLE_DOCUMENT_DETAILS",
+            "body": [
+                {
+                    "route": "documents",
+                    "component": "EWASTEDocuments",
+                    "withoutLabel": true,
+                    "key": "documents",
+                    "type": "component",
+                    "nextStep": "owner-details",
+                    "texts": {
+                        "submitBarLabel": "EWASTE_COMMON_NEXT",
+                    },
+
+                }
+            ],
+        },
+
 
         {
             "head": "EWASTE_TITLE_OWNER_DETAILS",
@@ -30,13 +49,62 @@ export const citizenConfig =
                     "type": "component",
                     "isMandatory": true,
                     "hideInEmployee": true,
-                    "nextStep": "vendor-details",
+                    "nextStep": "pincode",
                     "texts": {
                         "submitBarLabel": "EWASTE_COMMON_NEXT",
                     }
                 },
             ],
         },
+
+        {
+            "head": "EWASTE_LOCATION_DETAILS",
+            "body":
+                [
+                    {
+                        "route": "pincode",
+                        "component": "EWASTESelectPincode",
+                        "texts": {
+
+                            "submitBarLabel": "EWASTE_COMMON_NEXT",
+                            "skipText": "CORE_COMMON_SKIP_CONTINUE",
+                        },
+                        "withoutLabel": true,
+                        "key": "address",
+                        "nextStep": "address",
+                        "type": "component",
+                    },
+
+                    {
+                        "route": "address",
+                        "component": "EWASTESelectAddress",
+                        "withoutLabel": true,
+                        "texts": {
+
+                            "submitBarLabel": "EWASTE_COMMON_NEXT",
+                        },
+                        "key": "address",
+                        "nextStep": "street",
+                        "isMandatory": true,
+                        "type": "component",
+                    },
+
+                    {
+                        "type": "component",
+                        "route": "street",
+                        "component": "EWASTECitizenAddress",
+                        "key": "address",
+                        "withoutLabel": true,
+                        "texts": {
+                            "submitBarLabel": "EWASTE_COMMON_NEXT",
+                        },
+                        "nextStep": "vendor-details",
+                    },
+
+
+                ],
+        },
+
 
         {
             "head": "EWASTE_TITLE_VENDOR_DETAILS",
@@ -50,60 +118,12 @@ export const citizenConfig =
                     "isMandatory": true,
                     "hideInEmployee": true,
                     // "nextStep": "summary-ewaste",
-                    "nextStep": "pincode",
+                    "nextStep": null,
                     "texts": {
                         "submitBarLabel": "EWASTE_COMMON_NEXT",
                     }
                 },
             ],
         },
-
-        {
-            "head": "EWASTE_LOCATION_DETAILS",
-            "body": 
-            [
-                {
-                "route": "pincode",
-                "component": "EWASTESelectPincode",
-                "texts": {
-                    
-                    "submitBarLabel": "EWASTE_COMMON_NEXT",
-                    "skipText": "CORE_COMMON_SKIP_CONTINUE",
-                },
-                "withoutLabel": true,
-                "key": "address",
-                "nextStep": "address",
-                "type": "component",
-                },
-
-                {
-                "route": "address",
-                "component": "EWASTESelectAddress",
-                "withoutLabel": true,
-                "texts": {
-                    
-                    "submitBarLabel": "EWASTE_COMMON_NEXT",
-                },
-                "key": "address",
-                "nextStep": "street",
-                "isMandatory": true,
-                "type": "component",
-                },
-
-                {
-                "type": "component",
-                "route": "street",
-                "component": "EWASTECitizenAddress",
-                "key": "address",
-                "withoutLabel": true,
-                "texts": {
-                    "submitBarLabel": "EWASTE_COMMON_NEXT",
-                },
-                "nextStep": null,
-                },
-
-                
-            ],
-            }
 
     ];
