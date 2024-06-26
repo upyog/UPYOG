@@ -230,7 +230,7 @@ public String  getLatestActiveBillId(CancelBillCriteria cancelBillCriteria){
 		if(CollectionUtils.isEmpty(consumerCodes))
 			return 0;
 		
-		List<BillV2> bills =  findBill(BillSearchCriteria.builder()
+		List<BillV2> bills =  findBillActive(BillSearchCriteria.builder()
 				.service(updateBillCriteria.getBusinessService())
 				.tenantId(updateBillCriteria.getTenantId())
 				.consumerCode(consumerCodes)
