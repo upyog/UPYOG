@@ -32,12 +32,15 @@ public class SMSProperties {
     @Value("${sms.provider.password}")
     public String password;
 
+    @Value("${sms.sender.secure.key}")
+    private String key;
+    
     @Value("${sms.senderid}")
     public String senderid;
 
     @Value("${sms.sender.secure.key}")
     public String secureKey;
-
+    
     @Value("#{${sms.config.map}}")
     Map<String, String> configMap;
 
@@ -74,6 +77,9 @@ public class SMSProperties {
 
     @Value("${sms.msg.append}")
     private String smsMsgAppend;
+    
+    @Value("${sms.smsservicetype}")
+    private String smsServiceType;
 
     @Value("${sms.provider.entityid}")
     public String smsEntityId;
