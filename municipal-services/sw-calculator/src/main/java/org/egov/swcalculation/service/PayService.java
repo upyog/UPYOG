@@ -75,11 +75,11 @@ public class PayService {
 		if(BigDecimal.ONE.compareTo(noOfDays) <= 0) noOfDays = noOfDays.add(BigDecimal.ONE);
 		BigDecimal penalty = getApplicablePenalty(demand,sewerageCharge, noOfDays, timeBasedExemptionMasterMap.get(SWCalculationConstant.SW_PENANLTY_MASTER));
 		BigDecimal interest = getApplicableInterest(demand,sewerageCharge, noOfDays, timeBasedExemptionMasterMap.get(SWCalculationConstant.SW_INTEREST_MASTER));
-		BigDecimal rebate = getApplicableRebate(sewerageCharge, demand, timeBasedExemptionMasterMap.get(SWCalculationConstant.SW_REBATE_MASTER));
+		//BigDecimal rebate = getApplicableRebate(sewerageCharge, demand, timeBasedExemptionMasterMap.get(SWCalculationConstant.SW_REBATE_MASTER));
 
 		estimates.put(SWCalculationConstant.SW_TIME_PENALTY, penalty.setScale(2, 2));
 		estimates.put(SWCalculationConstant.SW_TIME_INTEREST, interest.setScale(2, 2));
-		estimates.put(SWCalculationConstant.SW_TIME_REBATE, rebate.negate().setScale(2, 2));
+		//estimates.put(SWCalculationConstant.SW_TIME_REBATE, rebate.negate().setScale(2, 2));
 
 		return estimates;
 	}
