@@ -216,7 +216,7 @@ public class Service   {
   private AuditDetails auditDetails;
   
   @JsonProperty("landmark")
-  @Pattern(regexp = "^[a-zA-Z0-9!@#.,/: +()&']*$")
+  @Pattern(regexp = "^[a-zA-Z0-9!@#.,-/: +()&']*$")
   private String landmark;
   
   }
