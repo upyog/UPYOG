@@ -29,7 +29,7 @@ function PropertyEstimates({ taxHeadEstimatesCalculation }) {
           label={t("ES_PT_TITLE_TOTAL_DUE_AMOUNT")}
           text={`₹ ${taxHeadEstimatesCalculation?.totalAmount}` || "N/A"}
           className="border-none"
-          textStyle={{ fontSize: "24px", fontWeight: "bold" }}
+          textStyle={{ fontSize: "16px", fontWeight: "bold" }}
         />
       </StatusTable>
     </div>

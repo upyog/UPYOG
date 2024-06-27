@@ -69,6 +69,12 @@ public class OwnerInfo extends User {
 
 	@JsonProperty("relationship")
 	private Relationship relationship;
+	
+	
+	@JsonProperty("isOwnerdead")
+	private Boolean isOwnerdead;
+	@JsonProperty("dateofdeath")
+	private String dateofDeath;
 
 	public OwnerInfo addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {

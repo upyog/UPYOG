@@ -52,9 +52,15 @@ public class BillDetailV2 {
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;
 
+	@JsonProperty("paymentPeriod")
+	private String paymentPeriod;
+	
 	@JsonProperty("billAccountDetails")
 	@Valid
 	private List<BillAccountDetailV2> billAccountDetails;
+	
+	@JsonProperty("partPaymentAllowed")
+	private boolean partPaymentAllowed;
 
 	public BillDetailV2 addBillAccountDetailsItem(BillAccountDetailV2 billAccountDetailsItem) {
 		if (this.billAccountDetails == null) {

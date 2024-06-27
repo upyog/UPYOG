@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.pt.models.Address;
+import org.egov.pt.models.AmalgamatedProperty;
 import org.egov.pt.models.AuditDetails;
 import org.egov.pt.models.ConstructionDetail;
 import org.egov.pt.models.Document;
@@ -20,6 +21,7 @@ import org.egov.pt.models.Institution;
 import org.egov.pt.models.Locality;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
+import org.egov.pt.models.TypeOfRoad;
 import org.egov.pt.models.Unit;
 import org.egov.pt.models.enums.Channel;
 import org.egov.pt.models.enums.CreationReason;
@@ -98,9 +100,23 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 						.auditDetails(auditdetails)
 						.institution(institute)
 						.landArea(landArea)
+						.exemption(rs.getString("exemption"))
+						.parentPropertyId(rs.getString("parentpropertyid"))
+						.isPartOfProperty(null!=rs.getString("ispartofproperty")?rs.getBoolean("ispartofproperty"):false)
+						.parentPropertyUuId(rs.getString("parentpropertyuuid"))
 						.build();
 
-
+				
+				@SuppressWarnings("unchecked")
+				Map<String, Object> additionalDetails = mapper.convertValue(currentProperty.getAdditionalDetails(), Map.class);
+				if(additionalDetails.containsKey("amalgamatedProperty") &&null!=additionalDetails.get("amalgamatedProperty")) {
+					@SuppressWarnings("unchecked")
+					List<AmalgamatedProperty> amalgamatedProperties = (List<AmalgamatedProperty>) additionalDetails.get("amalgamatedProperty");
+					currentProperty.setAmalgamatedProperty(amalgamatedProperties);
+				}
+				
+				
+				
 				setPropertyInfo(currentProperty, rs, tenanId, propertyUuId, linkedProperties, address);
 
 				addChildrenToProperty(rs, currentProperty);
@@ -175,6 +191,8 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 				.unitType(rs.getString("unitType"))
 				.constructionDetail(consDetail)
 				.floorNo(rs.getInt("floorno"))
+				.ageOfProperty(rs.getString("ageofproperty"))
+				.structureType(rs.getString("structuretype"))
 				.arv(arv)
 				.id(unitId)
 				.build();
@@ -323,19 +341,50 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 		.district(rs.getString("district"))
 		.country(rs.getString("country"))
 		.pincode(rs.getString("pincode"))
+		.dagNo(rs.getString("dag_no"))
+		.village(rs.getString("village"))
+		.pattaNo(rs.getString("patta_no"))
 		.doorNo(rs.getString("doorNo"))
 		.plotNo(rs.getString("plotNo"))
+		.principalRoadName(rs.getString("principal_road_name"))
+		.subSideRoadName(rs.getString("sub_side_road_name"))
+		.commonNameOfBuilding(rs.getString("common_name_of_building"))
 		.region(rs.getString("region"))
 		.street(rs.getString("street"))
 		.id(rs.getString("addressid"))
 		.state(rs.getString("state"))
 		.city(rs.getString("city"))
+		.typeOfRoad(getTypeOfRoad(rs,"type_of_road"))
+		.commonNameOfBuilding(rs.getString("common_name_of_building"))
 		.geoLocation(geoLocation)
 		.locality(locality)
 		.tenantId(tenanId)
 		.build();
 	}
-	
+	private TypeOfRoad getTypeOfRoad(ResultSet rs, String key) throws SQLException {
+
+		TypeOfRoad propertyAdditionalDetails = null;
+
+		try {
+
+			String obj =  rs.getString(key);
+			if (obj != null) {
+				propertyAdditionalDetails =new TypeOfRoad();
+			
+				propertyAdditionalDetails.setCode( obj);
+			}
+
+		} catch (Exception e) {
+			throw new CustomException("PARSING ERROR", "The propertyAdditionalDetail json cannot be parsed");
+		}
+		
+		//System.out.println("propertyAdditionalDetails:::"+propertyAdditionalDetails.getCode());
+
+		//if(propertyAdditionalDetails.getCode().isEmpty())
+			//propertyAdditionalDetails = null;
+		
+		return propertyAdditionalDetails;
+	}
 	/**
 	 * prepares and returns an audit detail object
 	 * 

@@ -79,6 +79,7 @@ public class UserController {
         User user = createUserRequest.toDomain(true);
         user.setOtpValidationMandatory(IsValidationMandatory);
         if (isRegWithLoginEnabled) {
+        	System.out.println("YSerr------------------------->>>>"+user);
             Object object = userService.registerWithLogin(user, createUserRequest.getRequestInfo());
             return new ResponseEntity<>(object, HttpStatus.OK);
         }

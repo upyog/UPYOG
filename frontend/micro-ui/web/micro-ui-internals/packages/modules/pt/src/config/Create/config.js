@@ -51,6 +51,7 @@ export const newConfig =[
                     "component": "PTSelectStreet",
                     "key": "address",
                     "withoutLabel": true,
+                    "isMandatory": true,
                     "texts": {
                         "headerCaption": "PT_PROPERTY_LOCATION_CAPTION",
                         "header": "CS_FILE_APPLICATION_PROPERTY_LOCATION_ADDRESS_TEXT",
@@ -202,7 +203,7 @@ export const newConfig =[
                     },
                     "key": "units",
                     "withoutLabel": true,
-                    "nextStep": "map",
+                    "nextStep": "pincode",
                     "hideInEmployee": true
                 },
                 {
@@ -234,8 +235,22 @@ export const newConfig =[
                     },
                     "key": "units",
                     "withoutLabel": true,
-                    "nextStep": "map",
+                    "nextStep": "usageCategory",
                     "hideInEmployee": true
+                },
+                {
+                    "route": "usageCategory",
+                    "component": "UsageCategoryVacantLand",
+                    "texts": {
+                        "headerCaption": "",
+                        "header": "PT_USAGE_CATEGORY",
+                        "cardText": "",
+                        "submitBarLabel": "PT_COMMON_NEXT"
+                    },
+                    "withoutLabel": true,
+                    "key": "usageCategory",
+                    "nextStep": "pincode",
+                    "type": "component"
                 },
                 {
                     "type": "component",
@@ -328,7 +343,7 @@ export const newConfig =[
                         "cardText": "PT_FLAT_DETAILS_DESC",
                         "submitBarLabel": "PT_COMMON_NEXT"
                     },
-                    "nextStep": "map",
+                    "nextStep": "pincode",
                     "key": "units",
                     "withoutLabel": true,
                     "hideInEmployee": true
@@ -395,7 +410,7 @@ export const newConfig =[
                     },
                     "key": "units",
                     "withoutLabel": true,
-                    "nextStep": "map",
+                    "nextStep": "pincode",
                     "hideInEmployee": true
                 }
             ]
@@ -508,7 +523,7 @@ export const newConfig =[
                     },
                     "key": "owners",
                     "withoutLabel": true,
-                    "nextStep": null,
+                    "nextStep": 'exemption-details',
                     "hideInEmployee": true
                 },
                 {
@@ -556,7 +571,7 @@ export const newConfig =[
                     },
                     "key": "owners",
                     "withoutLabel": true,
-                    "nextStep": null,
+                    "nextStep": 'exemption-details',
                     "hideInEmployee": true
                 },
                 {
@@ -576,6 +591,48 @@ export const newConfig =[
                     "withoutLabel": true,
                     "key": "documents",
                     "type": "component"
+                }
+            ]
+        },
+        {
+            "head": "ES_NEW_APPLICATION_PROPERTY_TAX_EXEMPTION",
+            "body": [
+                
+                {
+                    "type": "component",
+                    "route": "exemption-details",
+                    "isMandatory": true,
+                    "component": "ExemptionDetails",
+                    "texts": {
+                        "headerCaption": "",
+                        "header": "PT_EXEMPTION_DETAILS",
+                        "cardText": "",
+                        "submitBarLabel": "PT_COMMONS_NEXT"
+                    },
+                    "nextStep": "property-photo",
+                    "key": "exemption",
+                    "withoutLabel": true
+                }
+            ]
+        },
+        {
+            "head": "ES_NEW_APPLICATION_PROPERTY_PHOTO",
+            "body": [
+                
+                {
+                    "type": "component",
+                    "route": "property-photo",
+                    "isMandatory": true,
+                    "component": "PropertyPhoto",
+                    "texts": {
+                        "headerCaption": "",
+                        "header": "PT_PROPERTY_PHOTO",
+                        "cardText": "",
+                        "submitBarLabel": "PT_COMMONS_NEXT"
+                    },
+                    "nextStep": null,
+                    "key": "propertyPhoto",
+                    "withoutLabel": true
                 }
             ]
         }

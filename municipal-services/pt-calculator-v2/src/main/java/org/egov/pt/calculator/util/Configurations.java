@@ -19,6 +19,9 @@ public class Configurations {
 	
 	@Value("${kafka.topics.billing-slab.update.service}")
 	public String billingSlabUpdatePersisterTopic;
+	
+	@Value("${isRentCalck}")
+	public Boolean isrentcalc;
 
 	@Value("${kafka.topics.mutation-billing-slab.save.service}")
 	public String mutationbillingSlabSavePersisterTopic;

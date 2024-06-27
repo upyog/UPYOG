@@ -10,7 +10,7 @@ function DocumentsPreview({ documents, svgStyles = {}, isSendBackFlow = false, i
         <div style={{ marginTop: "19px" }}>
             {!isStakeholderApplication && documents?.map((document, index) => (
                 <React.Fragment key={index}>
-                    {document?.title ? <CardSubHeader style={titleStyles ? titleStyles : { marginTop: "32px", marginBottom: "8px", color: "#505A5F", fontSize: "24px" }}>{t(document?.title)}</CardSubHeader> : null}
+                    {document?.title ? <CardSubHeader style={titleStyles ? titleStyles : { marginTop: "32px", marginBottom: "8px", color: "#505A5F", fontSize: "16px" }}>{t(document?.title)}</CardSubHeader> : null}
                     <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start" }}>
                         {document?.values && document?.values.length > 0 ? document?.values?.map((value, index) => (
                             <a target="_" href={value?.url} style={{ minWidth: "80px", marginRight: "10px", maxWidth: "100px", height: "auto", minWidth: "100px" }} key={index}>
@@ -27,7 +27,7 @@ function DocumentsPreview({ documents, svgStyles = {}, isSendBackFlow = false, i
             ))}
             {isStakeholderApplication && documents?.map((document, index) => (
                 <React.Fragment key={index}>
-                    {document?.title ? <CardSubHeader style={{ marginTop: "32px", marginBottom: "8px", color: "#505A5F", fontSize: "24px" }}>{t(document?.title)}</CardSubHeader> : null}
+                    {document?.title ? <CardSubHeader style={{ marginTop: "32px", marginBottom: "8px", color: "#505A5F", fontSize: "16px" }}>{t(document?.title)}</CardSubHeader> : null}
                     <div>
                         {document?.values && document?.values.length > 0 ? document?.values?.map((value, index) => (
                             <a target="_" href={value?.url} style={{ minWidth: svgStyles?.minWidth ? svgStyles?.minWidth : "160px", marginRight: "20px" }} key={index}>

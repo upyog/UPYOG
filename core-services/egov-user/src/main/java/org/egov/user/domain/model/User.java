@@ -26,6 +26,7 @@ import javax.validation.constraints.Size;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter

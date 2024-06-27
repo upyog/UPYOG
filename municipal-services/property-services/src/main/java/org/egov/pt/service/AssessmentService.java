@@ -7,27 +7,40 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Assessment;
 import org.egov.pt.models.AssessmentSearchCriteria;
+import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
+import org.egov.pt.models.enums.CreationReason;
 import org.egov.pt.models.enums.Status;
+import org.egov.pt.models.user.UserDetailResponse;
+import org.egov.pt.models.user.UserSearchRequest;
 import org.egov.pt.models.workflow.BusinessService;
+import org.egov.pt.models.workflow.ProcessInstance;
 import org.egov.pt.models.workflow.ProcessInstanceRequest;
 import org.egov.pt.models.workflow.State;
 import org.egov.pt.producer.PropertyProducer;
 import org.egov.pt.repository.AssessmentRepository;
 import org.egov.pt.util.AssessmentUtils;
+import org.egov.pt.util.PTConstants;
+import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.validator.AssessmentValidator;
 import org.egov.pt.web.contracts.AssessmentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.egov.tracer.model.CustomException;
+import org.json.JSONObject;
 
 @Service
 public class AssessmentService {
+
+	private static final String URL_PARAMS_SEPARATER = "&";
 
 	private AssessmentValidator validator;
 
@@ -49,11 +62,17 @@ public class AssessmentService {
 
 	private CalculationService calculationService;
 
+	@Autowired
+	private PropertyUtil util;
+
+	@Autowired
+	private UserService userService;
+
 
 	@Autowired
 	public AssessmentService(AssessmentValidator validator, PropertyProducer producer, PropertyConfiguration props, AssessmentRepository repository,
-                             AssessmentEnrichmentService assessmentEnrichmentService, PropertyConfiguration config, DiffService diffService,
-                             AssessmentUtils utils, WorkflowService workflowService, CalculationService calculationService) {
+			AssessmentEnrichmentService assessmentEnrichmentService, PropertyConfiguration config, DiffService diffService,
+			AssessmentUtils utils, WorkflowService workflowService, CalculationService calculationService) {
 		this.validator = validator;
 		this.producer = producer;
 		this.props = props;
@@ -73,10 +92,26 @@ public class AssessmentService {
 	 * @return
 	 */
 	public Assessment createAssessment(AssessmentRequest request) {
-		
+
 		Property property = utils.getPropertyForAssessment(request);
 		validator.validateAssessmentCreate(request, property);
 		assessmentEnrichmentService.enrichAssessmentCreate(request);
+
+		//For Checking Assesmnt Done for the year
+
+		AssessmentSearchCriteria crt = new AssessmentSearchCriteria();
+		Set<String>propertyIds = new HashSet<>();
+		propertyIds.add(property.getPropertyId());
+		crt.setPropertyIds(propertyIds);
+		crt.setFinancialYear(request.getAssessment().getFinancialYear());
+		crt.setStatus(Status.ACTIVE);
+
+
+		List<Assessment> earlierAssesmentForTheFinancialYear =  searchAssessments(crt, request.getRequestInfo());
+		if(earlierAssesmentForTheFinancialYear.size()>0)
+			throw new CustomException("ASSESMENT_EXCEPTION","Property assessment is already completed for this property for the financial year "+crt.getFinancialYear());
+
+
 
 		if(config.getIsAssessmentWorkflowEnabled()){
 			assessmentEnrichmentService.enrichWorkflowForInitiation(request);
@@ -88,6 +123,7 @@ public class AssessmentService {
 		else {
 			calculationService.calculateTax(request, property);
 		}
+
 		producer.push(props.getCreateAssessmentTopic(), request);
 
 		return request.getAssessment();
@@ -107,14 +143,14 @@ public class AssessmentService {
 		Property property = utils.getPropertyForAssessment(request);
 		assessmentEnrichmentService.enrichAssessmentUpdate(request, property);
 		Assessment assessmentFromSearch = repository.getAssessmentFromDB(request.getAssessment());
-		Boolean isWorkflowTriggered = isWorkflowTriggered(request.getAssessment(),assessmentFromSearch);
+		Boolean isWorkflowTriggered = isWorkflowTriggered(request.getAssessment(),assessmentFromSearch,"");
 		validator.validateAssessmentUpdate(request, assessmentFromSearch, property, isWorkflowTriggered);
 
 		if ((request.getAssessment().getStatus().equals(Status.INWORKFLOW) || isWorkflowTriggered)
 				&& config.getIsAssessmentWorkflowEnabled()){
 
 			BusinessService businessService = workflowService.getBusinessService(request.getAssessment().getTenantId(),
-												ASSESSMENT_BUSINESSSERVICE,request.getRequestInfo());
+					ASSESSMENT_BUSINESSSERVICE,request.getRequestInfo());
 
 			assessmentEnrichmentService.enrichAssessmentProcessInstance(request, property);
 
@@ -140,19 +176,19 @@ public class AssessmentService {
 
 
 			/*
-				*
-				* if(stateIsUpdatable){
-				*
-				*
-				*  }
-				*
-				*  else {
-				*  	producer.push(stateUpdateTopic, request);
-				*
-				*  }
-				*
-				*
-				* */
+			 *
+			 * if(stateIsUpdatable){
+			 *
+			 *
+			 *  }
+			 *
+			 *  else {
+			 *  	producer.push(stateUpdateTopic, request);
+			 *
+			 *  }
+			 *
+			 *
+			 * */
 
 
 		}
@@ -163,8 +199,27 @@ public class AssessmentService {
 		return request.getAssessment();
 	}
 
-	public List<Assessment> searchAssessments(AssessmentSearchCriteria criteria){
-		return repository.getAssessments(criteria);
+	public List<Assessment> searchAssessments(AssessmentSearchCriteria criteria, RequestInfo requestInfo){
+
+		List<Assessment> assessments;
+		assessments=repository.getAssessments(criteria);
+		boolean isInternal=false;
+
+		Boolean isOpenSearch = isInternal ? false : util.isPropertySearchOpen(requestInfo.getUserInfo());
+
+		if (CollectionUtils.isEmpty(assessments))
+			return Collections.emptyList();
+
+		Set<String> ownerIds = assessments.stream().map(Assessment::getOwners).flatMap(List::stream)
+				.map(OwnerInfo::getUuid).collect(Collectors.toSet());
+
+		UserSearchRequest userSearchRequest = userService.getBaseUserSearchRequest(criteria.getTenantId(), requestInfo);
+		userSearchRequest.setUuid(ownerIds);
+		UserDetailResponse userDetailResponse = userService.getUser(userSearchRequest);
+
+		util.enrichAssesmentOwner(userDetailResponse, assessments, isOpenSearch);
+
+		return assessments;
 	}
 
 	public List<Assessment> getAssessmenPlainSearch(AssessmentSearchCriteria criteria) {
@@ -195,13 +250,14 @@ public class AssessmentService {
 
 	/**
 	 * Checks if the fields modified can trigger a workflow
+	 * @param mutationProcessConstant 
 	 * @return true if workflow is triggered else false
 	 */
-	private Boolean isWorkflowTriggered(Assessment assessment, Assessment assessmentFromSearch){
+	private Boolean isWorkflowTriggered(Assessment assessment, Assessment assessmentFromSearch, String mutationProcessConstant){
 
 		Boolean isWorkflowTriggeredByFieldChange = false;
-		List<String> fieldsUpdated = diffService.getUpdatedFields(assessment, assessmentFromSearch, "");
-
+		List<String> fieldsUpdated = diffService.getUpdatedFields(assessment, assessmentFromSearch, mutationProcessConstant);
+		
 		if(!CollectionUtils.isEmpty(fieldsUpdated))
 			isWorkflowTriggeredByFieldChange = intersection(new LinkedList<>(Arrays.asList(config.getAssessmentWorkflowTriggerParams().split(","))), fieldsUpdated);
 

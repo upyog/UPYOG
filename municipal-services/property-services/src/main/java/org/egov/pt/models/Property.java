@@ -18,6 +18,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 import org.javers.core.metamodel.annotation.DiffIgnore;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.AllArgsConstructor;
@@ -46,6 +47,10 @@ public class Property extends PropertyInfo {
 	@JsonProperty("propertyType")
 	@SafeHtml
 	private String propertyType;
+	
+	@JsonProperty("exemption")
+	@SafeHtml
+	private String exemption;
 
 	@JsonProperty("ownershipCategory")
 	@SafeHtml
@@ -110,6 +115,28 @@ public class Property extends PropertyInfo {
 	@Builder.Default
 	@JsonProperty("isOldDataEncryptionRequest")
 	private boolean isOldDataEncryptionRequest = false;
+	
+	@JsonProperty("amalgamatedProperty")
+	private List<AmalgamatedProperty> amalgamatedProperty;
+	
+	@JsonProperty("parentPropertyId")
+	private String  parentPropertyId;
+	
+	@JsonProperty("isPartOfProperty")
+	private boolean  isPartOfProperty;
+	
+	@JsonProperty("parentPropertyUuId")
+	private String  parentPropertyUuId;
+	
+	@JsonProperty("maxBifurcation")
+	private Integer maxBifurcation;
+	
+	@JsonProperty("bifurcationCount")
+	private Integer bifurcationCount;
+	
+	
+	@JsonProperty("propertyBifurcations")
+	List<PropertyBifurcation> propertyBifurcations;
 
 	@Builder
 	public Property(String id, String propertyId, String surveyId, List<String> linkedProperties, String tenantId,
@@ -117,7 +144,8 @@ public class Property extends PropertyInfo {
 			String propertyType, String ownershipCategory, List<OwnerInfo> owners, Institution institution,
 			CreationReason creationReason, String usageCategory, Long noOfFloors, Double landArea,
 			BigDecimal superBuiltUpArea, Source source, Channel channel, List<Document> documents, List<Unit> units,
-			JsonNode additionalDetails, AuditDetails auditDetails, ProcessInstance workflow) {
+			JsonNode additionalDetails, AuditDetails auditDetails, ProcessInstance workflow,String exemption,
+			String parentPropertyId,boolean isPartOfProperty,String parentPropertyUuId ) {
 		super(id, propertyId, surveyId, linkedProperties, tenantId, accountId, oldPropertyId, status, address);
 		this.acknowldgementNumber = acknowldgementNumber;
 		this.propertyType = propertyType;
@@ -136,6 +164,10 @@ public class Property extends PropertyInfo {
 		this.additionalDetails = additionalDetails;
 		this.auditDetails = auditDetails;
 		this.workflow = workflow;
+		this.exemption= exemption;
+		this.isPartOfProperty = isPartOfProperty;
+		this.parentPropertyId= parentPropertyId;
+		this.parentPropertyUuId=parentPropertyUuId; 
 	}
 
 	public Property addOwnersItem(OwnerInfo ownersItem) {

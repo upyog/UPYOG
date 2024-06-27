@@ -24,8 +24,8 @@ function InspectionReport({ fiReport, isCitizen=false }) {
     return (
         <React.Fragment>
             <div style={{ marginTop: "10px" }}>
-            {isCitizen?<CardHeader style={{fontSize: "24px"}}>{`${t(`BPA_FI_REPORT`)}`}</CardHeader>:
-            <CardSectionHeader style={{fontSize: "24px"}}>{`${t(`BPA_FI_REPORT`)}`}</CardSectionHeader>}
+            {isCitizen?<CardHeader style={{fontSize: "16px"}}>{`${t(`BPA_FI_REPORT`)}`}</CardHeader>:
+            <CardSectionHeader style={{fontSize: "16px"}}>{`${t(`BPA_FI_REPORT`)}`}</CardSectionHeader>}
                 {fiReport.map((fiData, index) =>
                     <div style={{ background: "#FAFAFA", border: "1px solid #D6D5D4", padding: "8px", borderRadius: "4px", maxWidth: "950px", minWidth: "280px", marginBottom: "24px" }}>
                         <StatusTable>

@@ -112,6 +112,24 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
+		 
+		<!--	<dependency>
+				  <groupId>org.egov</groupId>
+				  <artifactId>egov-enc-service</artifactId>
+				  <version>2.0.4-SNAPSHOT</version>
+				  <exclusions>
+				<exclusion>
+					<groupId>org.springframework.kafka</groupId>
+					<artifactId>spring-kafka</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.kafka</groupId>
+					<artifactId>kafka-clients</artifactId>
+				</exclusion>
+			</exclusions>
+			</dependency> -->
+		
 	</dependencies>
 	<repositories>
 		<repository>

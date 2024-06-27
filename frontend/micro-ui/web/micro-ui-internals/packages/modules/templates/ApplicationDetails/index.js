@@ -26,6 +26,8 @@ const ApplicationDetails = (props) => {
 
   const {
     applicationDetails,
+    assmentSearchData,
+    userRole,
     showToast,
     setShowToast,
     isLoading,
@@ -56,6 +58,7 @@ const ApplicationDetails = (props) => {
   }, [showToast]);
 
   function onActionSelect(action) {
+    console.log("onActionSelect==",action)
     if (action) {
       if(action?.isToast){
         setShowToast({ key: "error", error: { message: action?.toastMessage } });
@@ -208,6 +211,8 @@ const ApplicationDetails = (props) => {
               state={state}
               id={applicationNumber}
               applicationDetails={applicationDetails}
+              assmentSearchData={assmentSearchData}
+              userRole={userRole}
               applicationData={applicationDetails?.applicationData}
               closeModal={closeModal}
               submitAction={submitAction}

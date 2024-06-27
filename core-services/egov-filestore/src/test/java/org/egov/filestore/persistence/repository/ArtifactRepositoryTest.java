@@ -41,7 +41,7 @@ class ArtifactRepositoryTest {
     void testFindArtifactMock() throws IOException {
         Artifact artifact = mock(Artifact.class);
         when(artifact.getFileLocation())
-                .thenReturn(new FileLocation("42", "Module", "Tag", "42", "foo.txt", "File Source"));
+                .thenReturn(new FileLocation("42", "Module", "Tag", "42", "foo.txt", "File Source",null));
         doNothing().when(artifact).setContentType((String) any());
         doNothing().when(artifact).setCreatedBy((String) any());
         doNothing().when(artifact).setCreatedTime((Long) any());

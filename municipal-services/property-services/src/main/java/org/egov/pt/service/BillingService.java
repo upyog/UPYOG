@@ -1,6 +1,7 @@
 package org.egov.pt.service;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.pt.models.Assessment;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.collection.BillResponse;
 import org.egov.pt.repository.ServiceRequestRepository;
@@ -32,13 +33,14 @@ public class BillingService {
 	@Autowired
 	private ObjectMapper mapper;
 	
-	public BillResponse fetchBill(Property property, RequestInfo requestInfo) {
+	public BillResponse fetchBill(Property property, RequestInfo requestInfo, Assessment assessment) {
 		
 		StringBuilder uri = new StringBuilder(billingHost);
 		uri.append(fetchBillEndpoint);
 		uri.append("?").append("tenantId=").append(property.getTenantId());
 		uri.append("&businessService=").append(PT_BUSINESSSERVICE);
 		uri.append("&consumerCode=").append(property.getPropertyId());
+		uri.append("&modeOfPayment=").append(assessment.getModeOfPayment());
 		
 		try {
         	Optional<Object> response = serviceRequestRepository.fetchResult(uri, RequestInfoWrapper.builder().requestInfo(requestInfo).build());

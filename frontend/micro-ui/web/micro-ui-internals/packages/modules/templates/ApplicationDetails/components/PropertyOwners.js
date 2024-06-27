@@ -41,7 +41,7 @@ function PropertyOwners({ owners }) {
             style={
               checkLocation && Number(checkOwnerLength) > 1
                 ? { marginBottom: "8px", paddingBottom: "9px", color: "#0B0C0C", fontSize: "16px", lineHeight: "19px" }
-                : { marginBottom: "8px", color: "#505A5F", fontSize: "24px" }
+                : { marginBottom: "8px", color: "#505A5F", fontSize: "16px" }
             }
           >
             {checkLocation && Number(checkOwnerLength) > 1 ? `${t(owner?.title)} ${index + 1}` : t(owner?.title)}
