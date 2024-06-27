@@ -20,6 +20,8 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
     console.log("config========next===",config)
     if(config && config?.amalgamationState && config?.amalgamationState?.action == "Amalgamation") {
       onSelect('amalgamationDetails', config?.amalgamationState);
+    }else if(config && config?.amalgamationState && config?.amalgamationState?.action == "BIFURCATION") {
+      onSelect('bifurcationDetails', config?.amalgamationState);
     } else {
       onSelect();
     }
@@ -27,9 +29,15 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
   }
   let isAmalgamation = false;
   let amalgamationDetails = {};
-  if(config && config?.amalgamationState && config?.amalgamationState?.propertyDetails) {
+  if(config && config?.amalgamationState && config?.amalgamationState?.action=='Amalgamation' && config?.amalgamationState?.propertyDetails) {
     isAmalgamation = true;
     amalgamationDetails =  config?.amalgamationState
+  }
+  let isBifurcation = false;
+  let bifurcationDetails = {};
+  if(config && config?.amalgamationState && config?.amalgamationState?.action=="BIFURCATION" && config?.amalgamationState?.propertyDetails) {
+    isBifurcation = true;
+    bifurcationDetails =  config?.amalgamationState
   }
   console.log("config========next===",config)
   const isMobile = window.Digit.Utils.browser.isMobile();
@@ -48,6 +56,19 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
             <span style={{fontWeight: 'bold'}}>Owner Mobile No.: </span><span>{e.owner_mobile}</span>
           </div>
           ))}
+        </div>
+        }
+        {isBifurcation &&
+          <div style={isMobile ? {} : { maxWidth: "960px", minWidth: "640px", marginRight: "auto", padding: '15px', background: '#cde2e4',marginBottom : '5px', borderRadius: "6px", color: "#0f4f9e" }}>
+          <div style={{fontWeight: 'bold', fontSize: '18px'}}>Separation of Ownership Property Details</div>
+          {bifurcationDetails && bifurcationDetails?.propertyDetails && 
+          (
+          <div>
+            <span style={{fontWeight: 'bold'}}>Property ID: </span><span>{bifurcationDetails?.propertyDetails?.propertyId} | </span>
+            <span style={{fontWeight: 'bold'}}>Owner Name: </span><span>{bifurcationDetails?.propertyDetails?.owners[0]?.name} | </span>
+            <span style={{fontWeight: 'bold'}}>Owner Mobile No.: </span><span>{bifurcationDetails?.propertyDetails?.owners[0]?.mobileNumber}</span>
+          </div>
+          )}
         </div>
         }
       </div>

@@ -27,7 +27,11 @@ const PTCard = () => {
   let userRole='';
   if(userDetails && userDetails.info && userDetails.info?.roles) {
     userDetails.info.roles.map((role)=>{
-      if(role?.code == "ASSIGNING_OFFICER") userRole = role.code;
+      if(role?.code == "ASSIGNING_OFFICER") {
+        userRole = role.code;
+      }else if(role?.code == "EXECUTING_OFFICER") {
+        userRole = role.code;
+      }
     })
   }
 
@@ -35,7 +39,7 @@ const PTCard = () => {
   const { data, isLoading, isFetching, isSuccess } = Digit.Hooks.useNewInboxGeneral({
     tenantId: Digit.ULBService.getCurrentTenantId(),
     ModuleCode: "PT",
-    filters: { limit: 10, offset: 0, services: userRole && userRole=='ASSIGNING_OFFICER' ? ["ASMT"] : ["PT.CREATE", "PT.MUTATION", "PT.UPDATE"]},
+    filters: { limit: 10, offset: 0, services: userRole && userRole=='ASSIGNING_OFFICER' ? ["ASMT"] : userRole && userRole=='EXECUTING_OFFICER' ? ["PT.APPEAL"] : ["PT.CREATE", "PT.MUTATION", "PT.UPDATE"]},
     config: {
       select: (data) => {
         return {totalCount:data?.totalCount,nearingSlaCount:data?.nearingSlaCount} || "-";

@@ -122,6 +122,14 @@ const handleClick=()=>{
 
   setshowModal(true)
 }
+const onBifurcate = () =>{
+  console.log("property.onBifurcate==",property.length,property)
+  history.push({pathname: "/digit-ui/citizen/pt/property/new-application", state: {propertyDetails: property, action: 'BIFURCATION'}})
+}
+const onAppeal =()=>{
+  history.push(`/digit-ui/citizen/pt/property/appeal/${property?.propertyId}`);
+
+}
   sessionStorage.setItem("pt-property", JSON.stringify(property));
   let docs = [];
   docs = property?.documents;
@@ -445,6 +453,22 @@ const handleClick=()=>{
                
                   {/* <SubmitBar label="Asses Property" onClick={handleClick} /> */}
                   <button className="submit-bar" type="button" onClick={handleClick} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("PT_SELF_ASSES_PROPERTY")}</button>
+               
+              </div>
+            )}
+            {property?.status === "ACTIVE" && !enableAudit && getBillAmount(fetchBillData)==0 && (
+              <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
+               
+                  {/* <SubmitBar label="Asses Property" onClick={handleClick} /> */}
+                  <button className="submit-bar" type="button" onClick={onBifurcate} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("Separation of Ownership")}</button>
+               
+              </div>
+            )}
+            {property?.status === "ACTIVE" && !enableAudit && getBillAmount(fetchBillData)==0 && (
+              <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
+               
+                  {/* <SubmitBar label="Asses Property" onClick={handleClick} /> */}
+                  <button className="submit-bar" type="button" onClick={onAppeal} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("Appeal")}</button>
                
               </div>
             )}

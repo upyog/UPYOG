@@ -91,6 +91,55 @@ export const PTService = {
   //     userService: true,
   //     params: { tenantId },
   //   }),
+  appealCreate: (details) =>
+    Request({
+      url: Urls.pt.appeal_create,
+      data: details,
+      useCache: false,
+      userService: true,
+      method: "POST",
+      params: { },
+      auth: true,
+    }),
+  appealSearch: ({ tenantId, filters }) =>
+    Request({
+      url: Urls.pt.appeal_search,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      params: { tenantId, ...filters },
+    }),
+    appealUpdate: (details, tenantId) =>
+      Request({
+        url: Urls.pt.appeal_update,
+        data: details,
+        useCache: false,
+        setTimeParam: false,
+        userService: true,
+        method: "POST",
+        params: {tenantId},
+        auth: true,
+      }),
+      noticeCreate: (details) =>
+        Request({
+          url: Urls.pt.notice_save,
+          data: details,
+          useCache: false,
+          userService: true,
+          method: "POST",
+          params: { },
+          auth: true,
+        }),
+        noticeSearch: (filters, tenantId) =>
+          Request({
+            url: Urls.pt.notice_search,
+            useCache: false,
+            method: "POST",
+            auth: true,
+            userService: true,
+            params: { tenantId, ...filters },
+          }),
     
   paymentsearch: ({ tenantId, filters, auth }) =>
     Request({

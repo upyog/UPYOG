@@ -24,9 +24,12 @@ public class AppealCriteria {
 	private Set<String> propertyIds;
 
 	private Set<String> tenantIds;
+	
 	private Set<String> uuids;
 	
-	private Set<String>acknowledgementNumbers;
+	private Set<String>applicationNumber;
+	
+	private Set<String>appealid;
 	
 	private Long offset;
 

@@ -13,7 +13,6 @@ import ApplicationDetailsActionBar from "./components/ApplicationDetailsActionBa
 import ApplicationDetailsWarningPopup from "./components/ApplicationDetailsWarningPopup";
 
 const ApplicationDetails = (props) => {
-  console.log("ApplicationDetails_props====",props)
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
   const { t } = useTranslation();
