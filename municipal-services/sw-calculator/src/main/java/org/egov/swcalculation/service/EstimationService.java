@@ -152,6 +152,8 @@ public class EstimationService {
 		HashMap<String, Object> additionalDetail = new HashMap<>();
 		additionalDetail = mapper.convertValue(sewerageConnection.getAdditionalDetails(), HashMap.class);
 		String billingType = (String) additionalDetail.getOrDefault(SWCalculationConstant.BILLINGTYPE, null);
+		if(billingType==null|| billingType=="" || billingType.isEmpty())
+			billingType="STANDARD";
 		if (sewerageConnection.getConnectionType().equalsIgnoreCase(SWCalculationConstant.nonMeterdConnection)
 				&& billingType.equalsIgnoreCase(SWCalculationConstant.CUSTOM)) {
 			Integer billingAmountInt = (Integer) additionalDetail.getOrDefault(SWCalculationConstant.CUSTOM_BILL_AMOUNT, 0);
@@ -199,9 +201,19 @@ public class EstimationService {
 		BillingSlab billSlab = billingSlabs.get(0);
 		if (isRangeCalculation(calculationAttribute)) {
 
-			final String waterSubUsageType = (String) additionalDetail
+			 String waterSubUsageType = (String) additionalDetail
 					.getOrDefault(SWCalculationConstant.WATER_SUBUSAGE_TYPE, null);
-
+if (waterSubUsageType==null|| waterSubUsageType.isEmpty())
+	{
+	if (property.getUsageCategory().equalsIgnoreCase("RESIDENTIAL"))
+		waterSubUsageType="USAGE_DOM_NA";
+	else if (property.getUsageCategory().equalsIgnoreCase("COMMERCIAL"))
+		waterSubUsageType="USAGE_COMM_NA";
+	else if (property.getUsageCategory().equalsIgnoreCase("INDUSTRIAL"))
+		waterSubUsageType="USAGE_COMM_NA";
+	else if (property.getUsageCategory().equalsIgnoreCase("INSTITUTIONAL"))
+		waterSubUsageType="USAGE_COMM_NA";
+	}
 			for (Slab slab : billSlab.getSlabs()) {
 
 				boolean slabCondition = false;
@@ -219,8 +231,8 @@ public class EstimationService {
 
 				if (slabCondition) {
 					sewerageCharge = BigDecimal.valueOf((slab.getCharge()));
-					request.setTaxPeriodFrom(criteria.getFrom());
-					request.setTaxPeriodTo(criteria.getTo());
+					// request.setTaxPeriodFrom(criteria.getFrom());
+					// request.setTaxPeriodTo(criteria.getTo());
 					if (request.getTaxPeriodFrom() > 0 && request.getTaxPeriodTo() > 0) {
 						if (sewerageConnection.getConnectionExecutionDate() > request.getTaxPeriodFrom()) {
 							long milli_sec_btw_conn_date = Math.abs(request.getTaxPeriodTo() - sewerageConnection.getConnectionExecutionDate());
