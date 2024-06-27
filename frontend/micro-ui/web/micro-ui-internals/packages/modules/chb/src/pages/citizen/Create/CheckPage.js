@@ -105,7 +105,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             totalRecords={productRows.length}
           /> */}
         <br></br>
-        <CardSubHeader>{t("BOOKING_DETAILS")}</CardSubHeader>
+        <CardSubHeader>{t("CHB_BOOKING_DETAILS")}</CardSubHeader>
         <br></br>
         <StatusTable>
         <Row
@@ -122,7 +122,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
         />
         <Row
-            label={t("CHB_ALTERNATE_MOBILE_NUMBER")}
+            label={t("CHB_ALT_MOBILE_NUMBER")}
             text={`${t(checkForNA(ownerss?.alternateNumber))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/applicant-details`} />}
 
@@ -142,33 +142,33 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <br></br>
         <StatusTable>
         <Row
-            label={t("SELECT_SLOT")}
+            label={t("CHB_SELECT_SLOT")}
             text={`${t(checkForNA(slots?.selectslot?.value))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/slot-details`} />}
 
         />
 
         <Row
-            label={t("RESIDENT_TYPE")}
+            label={t("CHB_RESIDENT_TYPE")}
             text={`${t(checkForNA(slots?.residentType?.value))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/slot-details`} />}
         />
 
         <Row
-            label={t("SPECIAL_CATEGORY")}
+            label={t("CHB_SPECIAL_CATEGORY")}
             text={`${t(checkForNA(slots?.specialCategory?.value))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/slot-details`} />}
 
         />
 
         <Row
-            label={t("PURPOSE")}
+            label={t("CHB_PURPOSE")}
             text={`${t(checkForNA(slots?.purpose?.value))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/slot-details`} />}
 
         />
         <Row
-            label={t("PURPOSE_DESCRIPTION")}
+            label={t("CHB_PURPOSE_DESCRIPTION")}
             text={`${t(checkForNA(slots?.purposeDescription))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/slot-details`} />}
 
@@ -176,40 +176,40 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
         </StatusTable>
         <br></br>
-        <CardSubHeader>{t("BANK_DETAILS")}</CardSubHeader>
+        <CardSubHeader>{t("CHB_BANK_DETAILS")}</CardSubHeader>
         <br></br>
         <StatusTable>
         <Row
-            label={t("ACCOUNT_NUMBER")}
+            label={t("CHB_ACCOUNT_NUMBER")}
             text={`${t(checkForNA(bankdetails?.accountNumber))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
 
         />
          <Row
-            label={t("CONFIRM_ACCOUNT_NUMBER")}
+            label={t("CHB_CONFIRM_ACCOUNT_NUMBER")}
             text={`${t(checkForNA(bankdetails?.confirmAccountNumber))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
 
         />
          <Row
-            label={t("IFSC_CODE")}
+            label={t("CHB_IFSC_CODE")}
             text={`${t(checkForNA(bankdetails?.ifscCode))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
 
         />
          
          <Row
-            label={t("BANK_NAME")}
+            label={t("CHB_BANK_NAME")}
             text={`${t(checkForNA(bankdetails?.bankName))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
         />
          <Row
-            label={t("BANK_BRANCH_NAME")}
+            label={t("CHB_BANK_BRANCH_NAME")}
             text={`${t(checkForNA(bankdetails?.bankBranchName))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
         />
          <Row
-            label={t("ACCOUNT_HOLDER_NAME")}
+            label={t("CHB_ACCOUNT_HOLDER_NAME")}
             text={`${t(checkForNA(bankdetails?.accountHolderName))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
         />
@@ -217,11 +217,11 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         </StatusTable>
         <StatusTable>
         <br></br>
-        <CardSubHeader>{t("DOCUMENTS_DETAILS")}</CardSubHeader>
+        <CardSubHeader>{t("CHB_DOCUMENTS_DETAILS")}</CardSubHeader>
         <Card style={{paddingRight:"16px"}}>
         {documents && documents?.documents.map((doc, index) => (
           <div key={`doc-${index}`}>
-         {<div><CardSectionHeader>{t(doc?.documentType?.split('.').slice(0,2).join('_'))}</CardSectionHeader>
+         {<div><CardSectionHeader>{t("CHB_" +(doc?.documentType?.split('.').slice(0,2).join('_')))}</CardSectionHeader>
           <StatusTable>
           {
            <CHBDocument value={value} Code={doc?.documentType} index={index} /> }

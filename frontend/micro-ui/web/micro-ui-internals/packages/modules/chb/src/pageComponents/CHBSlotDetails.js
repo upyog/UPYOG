@@ -113,7 +113,7 @@ const CHBSlotDetails
           isDisabled={ !selectslot || !residentType || !specialCategory || !purpose || !purposeDescription}
         >
           <div>
-            <CardLabel>{`${t("SELECT_SLOT")}`}</CardLabel>
+            <CardLabel>{`${t("CHB_SELECT_SLOT")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
 
             <Controller
               control={control}
@@ -136,7 +136,7 @@ const CHBSlotDetails
             />
 
 
-            <CardLabel>{`${t("RESIDENT_TYPE")}`}</CardLabel>
+            <CardLabel>{`${t("CHB_RESIDENT_TYPE")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
 
 
             <Controller
@@ -160,7 +160,7 @@ const CHBSlotDetails
             />
 
 
-            <CardLabel>{`${t("SPECIAL_CATEGORY")}`}</CardLabel>
+            <CardLabel>{`${t("CHB_SPECIAL_CATEGORY")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
 
 
             <Controller
@@ -183,7 +183,7 @@ const CHBSlotDetails
 
             />
 
-            <CardLabel>{`${t("PURPOSE")}`}</CardLabel>
+            <CardLabel>{`${t("CHB_PURPOSE")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
 
 
             <Controller
@@ -205,7 +205,7 @@ const CHBSlotDetails
               )}
                 />
 
-          <CardLabel>{`${t("PURPOSE_DESCRIPTION")}`}</CardLabel>
+          <CardLabel>{`${t("CHB_PURPOSE_DESCRIPTION")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
           <TextArea
             t={t}
             type={"textarea"}

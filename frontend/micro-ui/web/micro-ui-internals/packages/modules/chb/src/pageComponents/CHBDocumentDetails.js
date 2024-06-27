@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair,Card,CardSubHeader} from "@upyog/digit-ui-react-components";
+import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 import Timeline from "../components/CHBTimeline";
 
 const CHBDocumentDetails = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState,value=formData.slotlist}) => {
@@ -56,6 +57,7 @@ const CHBDocumentDetails = ({ t, config, onSelect, userType, formData, setError:
     //   {/* ({slot.date1}) */}
     // </div>
   ))}</CardSubHeader>
+  <ChbCancellationPolicy/>
       </Card>
       {!isLoading ? (
         <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} onAdd={onAdd}>
@@ -194,12 +196,12 @@ function CHBSelectDocument({
     <div style={{ marginBottom: "24px" }}>
       {doc?.hasDropdown ? (
         <LabelFieldPair>
-          <CardLabel className="card-label-smaller">{t(doc?.code.replaceAll(".", "_")) + "  *"}</CardLabel>
+          <CardLabel className="card-label-smaller">{t("CHB_"+(doc?.code.replaceAll(".", "_"))) + "  *"}</CardLabel>
           <Dropdown
             className="form-field"
             selected={selectedDocument}
             style={{ width: "100%" }}
-            option={dropDownData.map((e) => ({ ...e, i18nKey: e.code?.replaceAll(".", "_") }))}
+            option={dropDownData.map((e) => ({ ...e, i18nKey:"CHB_" + e.code?.replaceAll(".", "_") }))}
             select={handleCHBSelectDocument}
             optionKey="i18nKey"
             t={t}

@@ -111,7 +111,7 @@ export const CHBLinks = ({ matchPath, userType }) => {
 
 export const CHBComponents = {
   CHBCard,
-  CHBModule,
+  CHBModule, 
   CHBLinks,
   CHB_INBOX_FILTER: (props) => <InboxFilter {...props} />,
   CHBInboxTableConfig: TableConfig,

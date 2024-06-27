@@ -45,9 +45,9 @@ const refObj = (tenantId, filters) => {
       label: "PTR_UNIQUE_APPLICATION_NUMBER",
     },
     chb: {
-      searchFn: () => chbApplications(null, { ...filters, applicationNumber: consumerCodes }),
-      key: "applicationNumber",
-      label: "CHB_UNIQUE_APPLICATION_NUMBER",
+      searchFn: () => chbApplications(null, { ...filters, bookingNo: consumerCodes }),
+      key: "bookingNo",
+      label: "CHB_UNIQUE_BOOKING_NUMBER",
     },
     fsm: {
       searchFn: () => fsmApplications(tenantId, filters),

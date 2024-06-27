@@ -1,165 +1,120 @@
-import { CardLabel, FormStep, LabelFieldPair, TextInput,Card,CardSubHeader } from "@upyog/digit-ui-react-components";
-import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber, Card,CardSubHeader } from "@upyog/digit-ui-react-components";
+import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/CHBTimeline";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 
-const CHBBankDetails = ({ t, config, onSelect, userType, formData, formState, setError, clearErrors,value=formData.slotlist }) => {
-  const onSkip = () => onSelect();
-  const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
-  const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger } = useForm();
-  const formValue = watch();
-  const { errors } = localFormState;
-  const checkLocation = window.location.href.includes("chb/bookHall");
-  let inputs;
- 
+const CHBBankDetails 
+ = ({ t, config, onSelect, userType, formData, ownerIndex,searchParams,value=formData.slotlist}) => {
+  const { pathname: url } = useLocation();
+
+  let index =window.location.href.charAt(window.location.href.length - 1);
   
-    inputs = [
-      {
-        label: "ACCOUNT_NUMBER",
-        type: "text",
-        name: "accountNumber",
-        validation: {
-          pattern: "[0-9]{8,25}",
-          title: t("INVALID_ACCOUNT_NUMBER"),
-        },
-      },
-      {
-        label: "CONFIRM_ACCOUNT_NUMBER",
-        type: "text",
-        name: "confirmAccountNumber",
-        validation: {
-          pattern: "[0-9]{8,25}",
-          title: t("INVALID_CONFIRM_ACCOUNT_NUMBER"),
-        },
-      },
-      {
-        label: "IFSC_CODE",
-        type: "text",
-        name: "ifscCode",
-         validation: {
-          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-          title: t("INVALID_ifscCode_CODE"),
-         },
-      },
-      {
-        label: "BANK_NAME",
-        type: "text",
-        name: "bankName",
-         validation: {
-          pattern: "^[a-zA-Z ]+$",
-          title: t("INVALID_BANK_NAME"),
-         },
-      },
-      {
-        label: "BANK_BRANCH_NAME",
-        type: "text",
-        name: "bankBranchName",
-         validation: {
-          pattern: "^[a-zA-Z ]+$",
-          title: t("INVALID_BANK_BRANCH_NAME"),
-         },
-      },
-      {
-        label: "ACCOUNT_HOLDER_NAME",
-        type: "text",
-        name: "accountHolderName",
-         validation: {
-          pattern: "^[a-zA-Z ]+$",
-          title: t("INVALID_ACCOUNT_HOLDER_NAME"),
-         },
-      },
-    
-      
-    ];
+   
+  let validation = {};
 
-  const convertValidationToRules = ({ validation, name, messages }) => {
-    if (validation) {
-      let { pattern: valPattern, maxlength,minlength, required: valReq } = validation || {};
-      let pattern = (value) => {
-        if (valPattern) {
-          if (valPattern instanceof RegExp) return valPattern.test(value) ? true : messages?.pattern || `${name.toUpperCase()}_PATTERN`;
-          else if (typeof valPattern === "string")
-            return new RegExp(valPattern)?.test(value) ? true : messages?.pattern || `${name.toUpperCase()}_PATTERN`;
-        }
-        return true;
-      };
-      let maxLength = (value) => (maxlength ? (value?.length <= maxlength ? true : messages?.maxlength || `${name.toUpperCase()}_MAXLENGTH`) : true);
-      let minLength = (value) => (minlength ? (value?.length >= minlength ? true : messages?.minlength || `${name.toUpperCase()}_MINLENGTH`) : true);
-      let required = (value) => (valReq ? (!!value ? true : messages?.required || `${name.toUpperCase()}_REQUIRED`) : true);
+  const [accountNumber , setAccountNumber ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].accountNumber) || formData?.bankdetails?.accountNumber || "");
+  const [confirmAccountNumber , setConfirmAccountNumber ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].confirmAccountNumber) || formData?.bankdetails?.confirmAccountNumber || "");
+  const [ifscCode , setIfscCode ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].ifscCode) || formData?.bankdetails?.ifscCode || "");
+  const [bankName , setBankName ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].bankName) || formData?.bankdetails?.bankName || "");
+  const [bankBranchName , setBankBranchName ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].bankBranchName) || formData?.bankdetails?.bankBranchName || "");
+  const [accountHolderName , setAccountHolderName ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].accountHolderName) || formData?.bankdetails?.accountHolderName || "");
 
-      return { pattern, required, maxLength,minlength };
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const stateId = Digit.ULBService.getStateId();
+
+  useEffect(() => {
+    if (ifscCode.length === 11) {
+      fetch(`https://ifsc.razorpay.com/${ifscCode}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data) {
+            setBankName(data.BANK);
+            setBankBranchName(data.BRANCH);
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching IFSC details:", error);
+        });
     }
-    return {};
+    else {
+      setBankName("");
+      setBankBranchName("");
+    }
+  }, [ifscCode]);
+
+  function setApplicantAccountNumber(e) {
+    if (e.target.value.length <= 16) {
+    setAccountNumber(e.target.value);
+    }
+  }
+  function setApplicantConfirmAccountNumber(e) {
+    if (e.target.value.length <= 16) {
+    setConfirmAccountNumber(e.target.value);
+    }
+  }
+  function setApplicantIfscCode(e) {
+    if (e.target.value.length <= 11) {
+      setIfscCode(e.target.value);
+    }
+  }
+  function setApplicantBankName(e) {
+    setBankName(e.target.value);
+  }
+  function setApplicantBankBranchName(e) {
+    setBankBranchName(e.target.value);
+  }
+  function setApplicantAccountHolderName(e) {
+    setAccountHolderName(e.target.value);
+  }
+  
+  
+
+  const goNext = () => {
+    if (accountNumber !== confirmAccountNumber) {
+      alert(t("CHB_ACCOUNT_NUMBERS_DO_NOT_MATCH"));
+      return;
+    }
+    let owner = formData.bankdetails && formData.bankdetails[index];
+    let ownerStep;
+    if (userType === "citizen") {
+      ownerStep = { ...owner,accountNumber ,confirmAccountNumber,ifscCode,bankName,bankBranchName,accountHolderName};
+      onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
+    } else {
+      
+      ownerStep = { ...owner,accountNumber ,confirmAccountNumber,ifscCode,bankName,bankBranchName,accountHolderName };
+      onSelect(config.key, ownerStep, false,index);
+    }
+    console.log(ownerStep);
   };
 
+  const onSkip = () => onSelect();
+
+  
+  
+
   useEffect(() => {
-    trigger();
+    if (userType === "citizen") {
+      goNext();
+    }
   }, []);
+console.log("value----->",value);
 
-  useEffect(() => {
-    if (userType === "employee") {
-      if (Object.keys(errors).length && !_.isEqual(formState.errors[config.key]?.type || {}, errors)) setError(config.key, { type: errors });
-      else if (!Object.keys(errors).length && formState.errors[config.key]) clearErrors(config.key);
-    }
-  }, [errors]);
-
-  useEffect(() => {
-    const keys = Object.keys(formValue);
-    const part = {};
-    keys.forEach((key) => (part[key] = formData[config.key]?.[key]));
-
-    if (!_.isEqual(formValue, part)) {
-      onSelect(config.key, { ...formData[config.key], ...formValue });
-      trigger();
-    }
-  }, [formValue]);
-
-  if (userType === "employee") {
-    return inputs?.map((input, index) => {
-      return (
-        <LabelFieldPair key={index}>
-          <CardLabel className="card-label-smaller">
-            {!checkLocation ? t(input.label) : `${t(input.label)}:`}
-            {config.isMandatory ? " * " : null}
-          </CardLabel>
-          <div className="field">
-            <Controller
-              control={control}
-              defaultValue={formData?.bankdetails?.[input.name]}
-              name={input.name}
-              rules={{ validate: convertValidationToRules(input) }}
-              render={(_props) => (
-                <TextInput
-                  id={input.name}
-                  key={input.name}
-                  value={_props.value}
-                  onChange={(e) => {
-                    setFocusIndex({ index });
-                    _props.onChange(e.target.value);
-                  }}
-                  onBlur={_props.onBlur}
-                  // disable={isRenewal}
-                  autoFocus={focusIndex?.index == index}
-                  {...input.validation}
-                />
-              )}
-            />
-          </div>
-        </LabelFieldPair>
-      );
-    });
-  }
   return (
+   
     <React.Fragment>
-    {window.location.href.includes("/citizen") ? <Timeline currentStep={3}/> : null}
+      
+    {
+      window.location.href.includes("/citizen") ?
+ <Timeline currentStep={3} />
+    : null
+    }
     <Card>
       <CardSubHeader>{value?.bookingSlotDetails.map((slot) =>(
         <div>
-        {slot.name}
-       </div>
-    
+           {slot.name}
+        </div>
+       
     // <div key={index}>
     //   {slot.name}
     //   {/* ({slot.date1}) */}
@@ -167,23 +122,124 @@ const CHBBankDetails = ({ t, config, onSelect, userType, formData, formState, se
   ))}</CardSubHeader>
   <ChbCancellationPolicy/>
       </Card>
+  
     <FormStep
-      config={{ ...config, inputs }}
-      _defaultValues={{
-        accountNumber: formData?.bankdetails?.accountNumber || '',
-        confirmAccountNumber: formData?.bankdetails?.confirmAccountNumber || '',
-        ifscCode: formData?.bankdetails?.ifscCode || '',
-        bankName: formData?.bankdetails?.bankName || '',
-        bankBranchName: formData?.bankdetails?.bankBranchName || '',
-        accountHolderName: formData?.bankdetails?.accountHolderName || ''
-       }}
-
-      onSelect={(data) => onSelect(config.key, data)}
+      config={config}
+      onSelect={goNext}
       onSkip={onSkip}
       t={t}
-    />
+      // isDisabled={!applicantName || !mobileNumber || !emailId}
+    >
+      
+      <div>
+        <CardLabel>{`${t("CHB_ACCOUNT_NUMBER")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+        <TextInput
+          t={t}
+          type={"text"}
+          isMandatory={false}
+          optionKey="i18nKey"
+          name="accountNumber"
+          value={accountNumber}
+          onChange={setApplicantAccountNumber}
+          minLength={8}
+          maxLength={16}
+          ValidationRequired = {true}
+          {...(validation = {
+            // isRequired: true,
+            pattern:  "[0-9]{8,16}",
+            type: "text",
+            title: t("CHB_INVALID_ACCOUNT_NUMBER"),
+          })}
+       
+         
+        />
+       
+        <CardLabel>{`${t("CHB_CONFIRM_ACCOUNT_NUMBER")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+        <TextInput
+          t={t}
+          type={"text"}
+          isMandatory={false}
+          optionKey="i18nKey"
+          name="confirmAccountNumber"
+          value={confirmAccountNumber}
+          onChange={setApplicantConfirmAccountNumber}
+          minLength={8}
+          maxLength={16}
+          ValidationRequired = {true}
+          {...(validation = {
+            // isRequired: true,
+            pattern: "[0-9]{8,16}",
+            type: "text",
+            title: t("CHB_INVALID_CONFIRM_ACCOUNT_NUMBER"),
+          })}
+       
+         
+        />
+       
+        <CardLabel>{`${t("CHB_IFSC_CODE")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+        <TextInput
+            t={t}
+            type={"text"}
+            isMandatory={false}
+            optionKey="i18nKey"
+            name="ifscCode"
+            value={ifscCode}
+            onChange={setApplicantIfscCode}
+            maxLength={11}
+            ValidationRequired={true}
+            {...(validation = {
+              pattern: "[a-zA-Z0-9]{11}",
+              type: "text",
+              title: t("CHB_INVALID_IFSC_CODE"),
+            })}
+          />
+       
+        <CardLabel>{`${t("CHB_BANK_NAME")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+        <TextInput
+            t={t}
+            type={"text"}
+            isMandatory={false}
+            optionKey="i18nKey"
+            name="bankName"
+            value={bankName}
+            onChange={setApplicantBankName}
+            disabled={true}
+          />
+       
+        <CardLabel>{`${t("CHB_BANK_BRANCH_NAME")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+        <TextInput
+            t={t}
+            type={"text"}
+            isMandatory={false}
+            optionKey="i18nKey"
+            name="bankBranchName"
+            value={bankBranchName}
+            onChange={setApplicantBankBranchName}
+            disabled={true}
+          />
+        <CardLabel>{`${t("CHB_ACCOUNT_HOLDER_NAME")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+        <TextInput
+          t={t}
+          type={"text"}
+          isMandatory={false}
+          optionKey="i18nKey"
+          name="accountHolderName"
+          value={accountHolderName}
+          onChange={setApplicantAccountHolderName}
+          ValidationRequired = {true}
+          {...(validation = {
+            // isRequired: true,
+            pattern: "^[a-zA-Z ]+$",
+            type: "text",
+            title: t("CHB_INVALID_ACCOUNT_HOLDER_NAME"),
+          })}
+       
+         
+        />
+      </div>
+    </FormStep>
     </React.Fragment>
   );
 };
 
-export default CHBBankDetails;
+export default CHBBankDetails ;

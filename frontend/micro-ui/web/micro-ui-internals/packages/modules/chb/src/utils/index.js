@@ -109,7 +109,7 @@ export const CHBDataConvert = (data) => {
   data = setOwnerDetails(data);
   data = setBankDetails(data);
   data = setSlotDetails(data);
-  data=sethallDetails(data);
+  data= sethallDetails(data);
 
 const formdata={
   hallsBookingApplication: {
@@ -120,6 +120,9 @@ const formdata={
     applicantEmailId:data.ownerss?.emailId,
     bankDetails:data.bankdetails,
     purposeDescription:data.slots?.purposeDescription,
+    communityHallId:3,
+    ...data.documents,
+    bookingStatus:"BOOKING_CREATED",
     specialCategory:{
       category:data.slots?.specialCategory?.value
     },

@@ -31,7 +31,7 @@ export const CHBMyApplications = () => {
     tenantId : tenantId,
     referenceIds : combinedApplicationNumber,
   }
-
+  console.log("combinedApplication--->",combinedApplicationNumber);
   const { isLoading:serviceloading, data : servicedata} = Digit.Hooks.useFeedBackSearch({ filters: { serviceSearchArgs } },{ filters: { serviceSearchArgs }, enabled : combinedApplicationNumber?.length > 0 ?true : false, cacheTime : 0 });
 
   function getLabelValue(curservice){
