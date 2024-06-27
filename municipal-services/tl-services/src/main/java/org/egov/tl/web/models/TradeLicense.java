@@ -212,6 +212,10 @@ public class  TradeLicense   {
         @SafeHtml
         @JsonProperty("fileStoreId")
         private String fileStoreId = null;
+        
+        private Integer passedDays;
+        
+        private String ulb = null;
 
 }
 

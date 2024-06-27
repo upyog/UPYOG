@@ -1,23 +1,37 @@
 package org.egov.tl.repository;
 
-import lombok.extern.slf4j.Slf4j;
+import static org.egov.tl.util.TLConstants.ACTION_ADHOC;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.producer.Producer;
 import org.egov.tl.repository.builder.TLQueryBuilder;
 import org.egov.tl.repository.rowmapper.TLRowMapper;
 import org.egov.tl.util.TLConstants;
-import org.egov.tl.web.models.*;
+import org.egov.tl.web.models.Accessory;
+import org.egov.tl.web.models.Document;
+import org.egov.tl.web.models.TradeLicense;
+import org.egov.tl.web.models.TradeLicenseRequest;
+import org.egov.tl.web.models.TradeLicenseSearchCriteria;
+import org.egov.tl.web.models.TradeUnit;
+import org.egov.tl.web.models.User;
 import org.egov.tl.workflow.WorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
-
-import static org.egov.tl.util.TLConstants.ACTION_ADHOC;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
@@ -36,6 +50,8 @@ public class TLRepository {
 
     private WorkflowService workflowService;
 
+    @Autowired
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
     public TLRepository(JdbcTemplate jdbcTemplate, TLQueryBuilder queryBuilder, TLRowMapper rowMapper,
@@ -184,6 +200,19 @@ public class TLRepository {
     	return jdbcTemplate.query(queryBuilder.TENANTIDQUERY,preparedStmtList.toArray(),new SingleColumnRowMapper<>(String.class));
     	
     }
+
+
+	public void updateTlStatus(String businessId, String action) {
+		
+		Map<String, Object> inputs = new HashMap<>();
+		inputs.put("status", action);
+		inputs.put("applicationNumber", businessId);
+		
+		String updateQuery = "UPDATE eg_tl_tradelicense set status =:status WHERE applicationnumber =:applicationNumber ";
+		
+		namedParameterJdbcTemplate.update(updateQuery,inputs);
+		
+	}
     
 
 }
