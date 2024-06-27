@@ -4,7 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 import _ from "lodash";
 import Timeline from "../components/TLTimelineInFSM";
 
-const SelectStreet = ({ t, config, onSelect, userType, formData, formState, setError, clearErrors }) => {
+const TLSelectStreet = ({ t, config, onSelect, userType, formData, formState, setError, clearErrors }) => {
   const onSkip = () => onSelect();
 
   const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
@@ -81,7 +81,7 @@ const SelectStreet = ({ t, config, onSelect, userType, formData, formState, setE
   useEffect(() => {
     const keys = Object.keys(formValue);
     const part = {};
-    keys.forEach((key) => (part[key] = formData[config.key]?.[key]));
+    keys?.forEach((key) => (part[key] = formData[config.key]?.[key]));
 
     if (!_.isEqual(formValue, part)) {
       onSelect(config.key, { ...formData[config.key], ...formValue });
@@ -177,4 +177,4 @@ const SelectStreet = ({ t, config, onSelect, userType, formData, formState, setE
   );
 };
 
-export default SelectStreet;
+export default TLSelectStreet;

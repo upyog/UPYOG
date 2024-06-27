@@ -228,7 +228,6 @@ const BILLSBreadCrumbs = ({ location }) => {
   return <div style={window?.location.href.includes("/employee/ws/bill-amendment") || window?.location.href.includes("/employee/ws/response")? {marginLeft:"20px"} : {}}><BreadCrumb crumbs={crumbs}  spanStyle={{ maxWidth: "min-content"}} /></div>;
 };
 const App = ({ path }) => {
-  console.log("ffffff",path)
   const location = useLocation();
 
   const WSDocsRequired = Digit?.ComponentRegistryService?.getComponent("WSDocsRequired");

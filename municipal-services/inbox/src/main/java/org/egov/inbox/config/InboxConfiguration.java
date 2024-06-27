@@ -91,6 +91,12 @@ public class InboxConfiguration {
 	@Value("${egov.services.esindexer.host.search}")
 	private String indexServiceHostSearchEndpoint;
 
+	@Value("${services.esindexer.username}")
+	private String userName;
+
+	@Value("${services.esindexer.password}")
+	private String password;
+
 	@Value("${egov.user.host}")
 	private String userHost;
 

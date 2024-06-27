@@ -71,6 +71,8 @@ import PTRegistrationDocument from "./pageComponents/Mutate/RegistrationDocument
 import TransferProof from "./pageComponents/Mutate/transferReasonDocument";
 import UpdateNumber from "./pages/citizen/MyProperties/updateNumber";
 import EmployeeUpdateOwnerNumber from "./pages/employee/updateNumber";
+//import PTCitizenFeedback from "@upyog/digit-ui-module-core/src/components/PTCitizenFeedback";
+import PTSelectLandmark from "./pageComponents/PTSelectLandmark";
 import PropertyStructureDetails from "./pageComponents/PropertyStructureDetails";
 //import PTCitizenFeedback from "@upyog/digit-ui-module-core/src/components/PTCitizenFeedback";
 
@@ -92,8 +94,6 @@ import CitizenFeedback from "@upyog/digit-ui-module-core/src/components/CitizenF
 import AcknowledgementCF from "@upyog/digit-ui-module-core/src/components/AcknowledgementCF";
 // PTAcknowledgementCF from "@upyog/digit-ui-module-core/src/components/PTAcknowledgementCF";
 //import PTCitizenFeedbackPopUp from "./pageComponents/PTCitizenFeedbackPopUp";
-
-import PTSelectLandmark from "./pageComponents/PTSelectLandmark";
 
 const componentsToRegister = {
   PTLandArea,

@@ -175,8 +175,9 @@ const Address = {
     },
     landmark: {
       description: "additional landmark to help locate the address",
+      valid_htmlData: true,
       type: ["string", "null"]
-        },
+    },
     city: {
       description:
         "City of the address. Can be represented by the tenantid itself",

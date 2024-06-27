@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import lombok.experimental.SuperBuilder;
 import org.egov.pt.models.enums.Status;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,6 +26,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 public class PropertyInfo {
 
 	@JsonProperty("id")

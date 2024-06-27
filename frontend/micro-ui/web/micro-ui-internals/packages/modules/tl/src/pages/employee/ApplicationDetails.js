@@ -196,8 +196,6 @@ const ApplicationDetails = () => {
       });
   };
 
-
-
   const wfDocs = workflowDetails.data?.timeline?.reduce((acc, { wfDocuments }) => {
     return wfDocuments ? [...acc, ...wfDocuments] : acc;
   }, []);

@@ -3,6 +3,7 @@ package org.egov.wscalculation.validator;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.constants.MRConstants;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.util.CalculatorUtil;
@@ -16,10 +17,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
@@ -31,6 +29,9 @@ public class WSCalculationWorkflowValidator {
 
 	@Autowired
 	private MDMSValidator mdmsValidator;
+
+	@Autowired
+	private WSCalculationConfiguration config;
 
 	 public Boolean applicationValidation(RequestInfo requestInfo,String tenantId,String connectionNo, Boolean genratedemand){
 	    Map<String,String> errorMap = new HashMap<>();
@@ -142,7 +143,7 @@ public class WSCalculationWorkflowValidator {
 		return isApplicationApproved;
 	}
 	public JSONObject getWnsPTworkflowConfig(RequestInfo requestInfo, String tenantId){
-		tenantId = tenantId.split("\\.")[0];
+		tenantId = config.getStateLevelTenantId();
 		List<String> propertyModuleMasters = new ArrayList<>(Arrays.asList("PTWorkflow"));
 		Map<String, List<String>> codes = mdmsValidator.getAttributeValues(tenantId,MRConstants.PROPERTY_MASTER_MODULE, propertyModuleMasters, "$.*",
 				MRConstants.PROPERTY_JSONPATH_ROOT,requestInfo);
