@@ -504,7 +504,7 @@ public class DemandService {
 							.taxPeriodTo(toDate).consumerType("sewerageConnection").businessService(businessService)
 							.status(StatusEnum.valueOf("ACTIVE")).billExpiryTime(expiryDate)
 							.additionalDetails(additionalDetailsMap).build());
-
+                                        demandsSw.get(0).setBusinessService("SW");
 					demandReq.addAll(demandsSw);
 				}
 			} else {
