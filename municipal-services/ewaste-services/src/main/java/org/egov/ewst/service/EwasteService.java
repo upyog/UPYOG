@@ -69,16 +69,6 @@ public class EwasteService {
 		return applications;
 	}
 
-//	public EwasteApplication updateEwasteRequest(EwasteRegistrationRequest ewasteRegistrationRequest) {
-//
-//		EwasteApplication existingApplication = validator
-//				.validateApplicationExistence(ewasteRegistrationRequest.getEwasteApplication().get(0));
-//		existingApplication.setWorkflow(ewasteRegistrationRequest.getEwasteApplication().get(0).getWorkflow());
-//		enrichmentService.enrichEwasteApplicationUponUpdate(ewasteRegistrationRequest);
-//		ewasteRegistrationRequest.setEwasteApplication(Collections.singletonList(existingApplication));
-//		producer.push(config.getUpdateEwasteTopic(), ewasteRegistrationRequest);
-//		return ewasteRegistrationRequest.getEwasteApplication().get(0);
-//	}
 	public EwasteApplication updateEwasteRequest(EwasteRegistrationRequest ewasteRegistrationRequest) {
 
 		// Validate the existence of the application
@@ -91,8 +81,10 @@ public class EwasteService {
 		existingApplication.setFinalAmount(payloadApplication.getFinalAmount());
 		String action = payloadApplication.getWorkflow().getAction();
 
-		if ("VERIFYPRODUCT".equals(action) || "SENDPICKUPALERT".equals(action)) {
-			existingApplication.setRequestStatus(Status.INWORKFLOW.toString());
+		if ("VERIFYPRODUCT".equals(action)) {
+			existingApplication.setRequestStatus(Status.PRODUCTVERIFIED.toString());
+		} else if ("SENDPICKUPALERT".equals(action)) {
+			existingApplication.setRequestStatus(Status.COMPLETIONPENDING.toString());
 		} else if ("REJECT".equals(action)) {
 			existingApplication.setRequestStatus(Status.REJECTED.toString());
 		} else if ("COMPLETEREQUEST".equals(action)) {
@@ -100,9 +92,13 @@ public class EwasteService {
 		}
 
 		existingApplication.setWorkflow(payloadApplication.getWorkflow());
-
+		//Update the audit details upon update
+		existingApplication.getAuditDetails()
+				.setLastModifiedBy(ewasteRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
+		existingApplication.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+		
 		// Enrich the application with audit details upon update
-		enrichmentService.enrichEwasteApplicationUponUpdate(ewasteRegistrationRequest);
+//		enrichmentService.enrichEwasteApplicationUponUpdate(ewasteRegistrationRequest);
 
 		// Update the ewaste application request with the modified existing application
 		ewasteRegistrationRequest.setEwasteApplication(Collections.singletonList(existingApplication));
