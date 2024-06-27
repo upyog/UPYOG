@@ -2,8 +2,6 @@ package org.egov.ewst.service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
-
 import org.egov.ewst.config.EwasteConfiguration;
 import org.egov.ewst.models.AuditDetails;
 import org.egov.ewst.models.EwasteApplication;
@@ -36,9 +34,7 @@ public class EnrichmentService {
 		EwasteApplication eApplication = ewasteRegistrationRequest.getEwasteApplication().get(0);
 		AuditDetails auditDetails = AuditDetails.builder()
 				.createdBy(ewasteRegistrationRequest.getRequestInfo().getUserInfo().getUuid())
-				.createdTime(System.currentTimeMillis())
-				.lastModifiedBy(ewasteRegistrationRequest.getRequestInfo().getUserInfo().getUuid())
-				.lastModifiedTime(System.currentTimeMillis()).build();
+				.createdTime(System.currentTimeMillis()).lastModifiedBy(null).lastModifiedTime(null).build();
 		eApplication.setAuditDetails(auditDetails);
 		eApplication.setId(UUID.randomUUID().toString());
 		eApplication.getAddress().setRegistrationId(eApplication.getId());
