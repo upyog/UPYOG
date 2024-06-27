@@ -940,11 +940,12 @@ public class DemandService {
 			Map<String, Object> financialYearMaster =  (Map<String, Object>) masterMap
 					.get(SWCalculationConstant.BILLING_PERIOD);
 
-			Long fromDate = (Long) financialYearMaster.get(SWCalculationConstant.STARTING_DATE_APPLICABLES);
-			Long toDate = (Long) financialYearMaster.get(SWCalculationConstant.ENDING_DATE_APPLICABLES);
-			log.info("from date:: "+ fromDate);
-			log.info("to Date :: "+ toDate);
-
+			// Long fromDate = (Long) financialYearMaster.get(SWCalculationConstant.STARTING_DATE_APPLICABLES);
+			// Long toDate = (Long) financialYearMaster.get(SWCalculationConstant.ENDING_DATE_APPLICABLES);
+			// log.info("from date:: "+ fromDate);
+			// log.info("to Date :: "+ toDate);
+		Long fromDate= (Long) billingMasterData.get("taxPeriodFrom");
+			Long toDate = (Long) billingMasterData.get("taxPeriodTo");
 			List<SewerageConnection> connections = sewerageCalculatorDao.getConnection( bulkBillCriteria.getTenantId(),bulkBillCriteria.getConsumerCode(),
 							SWCalculationConstant.nonMeterdConnection, fromDate, toDate);
 					log.info("Size of the connection list for batch : "+ connections.size());
@@ -976,6 +977,8 @@ public class DemandService {
 
 						CalculationReq calculationReq = CalculationReq.builder()
 								.calculationCriteria(calculationCriteriaList)
+								.taxPeriodFrom(fromDate)
+								.taxPeriodTo(toDate)
 								.requestInfo(requestInfo)
 								.isconnectionCalculation(true)
 								.migrationCount(migrationCount).build();
