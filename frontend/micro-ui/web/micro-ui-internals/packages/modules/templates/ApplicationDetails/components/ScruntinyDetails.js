@@ -27,6 +27,7 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails,a
     },
   };
   const [showSanctionFee, setShowSanctionFee] = useState(false);
+  const [showApplicationFee, setshowApplicationFee] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -102,7 +103,7 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails,a
   }
   function setLessAdjusmentVal(value) {
   if(/^[0-9]*$/.test(value)){
-    if(parseInt(value)>(parseInt(development)?parseInt(development):0)+(parseInt(otherCharges?parseInt(otherCharges):0))+parseInt(additionalDetails?.selfCertificationCharges?.BPA_MALBA_CHARGES)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_LABOUR_CESS)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_WATER_CHARGES)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_GAUSHALA_CHARGES_CESS)){
+    if(parseFloat(value)>(parseFloat(development)?parseFloat(development):0)+(parseFloat(otherCharges?parseFloat(otherCharges):0))+parseFloat(additionalDetails?.selfCertificationCharges?.BPA_MALBA_CHARGES)+parseFloat(additionalDetails?.selfCertificationCharges?.BPA_LABOUR_CESS)+parseFloat(additionalDetails?.selfCertificationCharges?.BPA_WATER_CHARGES)+parseFloat(additionalDetails?.selfCertificationCharges?.BPA_GAUSHALA_CHARGES_CESS)){
       alert("Less adjustment fees cannot be grater than Total of other P2 fees")
     }
     else{
@@ -139,6 +140,41 @@ function selectfile(e) {
               return <CardLabel style={{fontWeight:"400"}}>{value?.title}</CardLabel>
             })}
           </div>
+          {window.location.href.includes("employee") && scrutinyDetails?.values[0]?.title=="BPA_APPL_FEES_DETAILS" && 
+          <div>
+          {!showApplicationFee && (
+         <div style={styles.buttonStyle}>
+          <button
+            type="button"
+            onClick={() => {
+              setshowApplicationFee(true);
+            }}
+          >
+            {t("SHOW_P1_FEES_DETAILS")}
+          </button>
+        </div>
+      )}
+      {showApplicationFee && (
+        <div style={styles.buttonStyle}>
+          <button
+            type="button"
+            onClick={() => {
+              setshowApplicationFee(false);
+            }}
+          >
+            {t("HIDE_P1_FEES_DETAILS")}
+          </button>
+        </div>
+      )}
+      {showApplicationFee &&
+      <div>
+          <CardSubHeader>{t("BPA_P1_SUMMARY_FEE_EST")}</CardSubHeader>        
+          <Row className="border-none" label={t(`BUILDING_APPLICATION_FEES`)} text={`₹ ${Math.round((additionalDetails?.builtUpArea)*10.7639*2.5)}`}></Row>
+          <Row className="border-none" label={t(`BOUNDARY_WALL_FEES`)} text={`₹ ${additionalDetails?.boundaryWallLength*2.5}`}></Row>
+          <Row className="border-none"></Row>
+            </div>}
+          </div>
+          } 
           {window.location.href.includes("employee") && scrutinyDetails?.values[0]?.title=="BPA_APPL_FEES_DETAILS" && 
           <div>
           {!showSanctionFee && (
@@ -246,7 +282,7 @@ function selectfile(e) {
             </a>
             }            
             <Row className="border-none"></Row>
-       <Row  className="border-none" label={t(`BPA_P2_TOTAL_FEE`)} text={`₹ ${((parseInt(development)?parseInt(development):0)+(parseInt(otherCharges?parseInt(otherCharges):0))+parseInt(additionalDetails?.selfCertificationCharges?.BPA_MALBA_CHARGES)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_LABOUR_CESS)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_WATER_CHARGES)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_GAUSHALA_CHARGES_CESS))-(parseInt(lessAdjusment)?parseInt(lessAdjusment):0)}`} />
+       <Row  className="border-none" label={t(`BPA_P2_TOTAL_FEE`)} text={`₹ ${((parseFloat(development)?parseFloat(development):0)+(parseFloat(otherCharges?parseFloat(otherCharges):0))+parseFloat(additionalDetails?.selfCertificationCharges?.BPA_MALBA_CHARGES)+parseFloat(additionalDetails?.selfCertificationCharges?.BPA_LABOUR_CESS)+parseFloat(additionalDetails?.selfCertificationCharges?.BPA_WATER_CHARGES)+parseFloat(additionalDetails?.selfCertificationCharges?.BPA_GAUSHALA_CHARGES_CESS))-(parseFloat(lessAdjusment)?parseFloat(lessAdjusment):0)}`} />
             </div>}
           </div>
           }          
