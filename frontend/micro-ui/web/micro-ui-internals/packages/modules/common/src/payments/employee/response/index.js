@@ -43,7 +43,14 @@ export const SuccessfulPayment = (props) => {
     {},
     { enabled: businessService?.includes("BPA") ? true : false }
   );
-  
+  const cities = Digit.Hooks.useTenants();
+  let ulbType=""
+  const loginCity=JSON.parse(sessionStorage.getItem("Digit.User"))?.value?.info?.tenantId
+  if(cities.data!==undefined){
+    const selectedTenantData = cities.data.find(item => item.city.districtTenantCode=== loginCity);
+    ulbType=selectedTenantData.city.ulbGrade 
+  }
+
   const FSM_EDITOR = Digit.UserService.hasAccess("FSM_EDITOR_EMP") || false;
 
   function onActionSelect(action) {
@@ -269,6 +276,26 @@ export const SuccessfulPayment = (props) => {
             }
             payments.Payments[0].paymentDetails[0].additionalDetails=details; 
             printRecieptNew(payments)
+        }
+        else if(payments.Payments[0].paymentDetails[0].businessService.includes("BPA")){
+          const designation=(ulbType==="Municipal Corporation") ? "Municipal Commissioner" : "Executive Officer"
+          const updatedpayments={
+            ...payments,
+            payments:payments.Payments.map((payment, index)=>{
+              if(index===0){
+                return{
+                  ...payment,
+                  additionalDetails:{
+                    ...payment.additionalDetails,
+                    designation:designation,
+                    ulbType:ulbType
+                  }
+                }
+              }
+              return payment;
+            })
+          }
+          response = await Digit.PaymentService.generatePdf(state, { Payments: updatedpayments.payments }, generatePdfKey);
         }
         else {
           response = await Digit.PaymentService.generatePdf(state, { Payments: payments.Payments }, generatePdfKey);
