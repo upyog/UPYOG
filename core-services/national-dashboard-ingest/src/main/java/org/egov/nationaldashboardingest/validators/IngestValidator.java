@@ -88,6 +88,8 @@ public class IngestValidator {
 	public static final String MDMS_NATIONALTENANTS_PATH = "$.MdmsRes.tenant.nationalInfo";
 
 	public static final String MDMS_PROPERTYTYPE_PATH = "$.MdmsRes.tenant.propertyType";
+	
+	public static final String MDMS_PAYMENTCHANNEL_PATH = "$.MdmsRes.common-masters.PaymentChannel";
 
 //    public void verifyCrossStateRequest(Data data, RequestInfo requestInfo){
 //        String employeeUlb = requestInfo.getUserInfo().getTenantId();
@@ -460,6 +462,56 @@ public class IngestValidator {
 
     	return isUsageCategoryInvalid;
     }
+	
+	public Boolean verifyPayment(Data ingestData, Set < String > paymentChannelList) {
+
+	        Set < String > PaymentChannel = new HashSet < String > ();
+	        HashMap < String, Object > map = ingestData.getMetrics();
+	        List < String > keyToFetch = null;
+	        Boolean isValid=false;
+	        int validCounts=0;
+	        
+	        Boolean isPaymentChannelInvalid = false;
+	        if (ingestData.getModule() != null && (ingestData.getModule().equals("COMMON")||ingestData.getModule().equals("PGR")) ) {
+	            keyToFetch = null;
+	            isPaymentChannelInvalid = true;
+	        }
+	    
+	        if (ingestData.getModule() != null && (ingestData.getModule().equals("PT")|| ingestData.getModule().equals("FIRENOC") || ingestData.getModule().equals("TL") || ingestData.getModule().equals("FSM") || ingestData.getModule().equals("WS") || ingestData.getModule().equals("OBPS")) ) {
+	            keyToFetch = applicationProperties.getNationalDashboardpaymentChannel();
+	        }
+	        else if (ingestData.getModule() != null && ingestData.getModule().equals("MCOLLECT")) {
+	            keyToFetch = applicationProperties.getNationalDashboardpaymentChannelMISC();
+	        }
+
+	        if (keyToFetch != null) {
+	            for (String key: keyToFetch) {
+	                List < HashMap < String, Object >> values = (List < HashMap < String, Object >> ) map.get(key);
+	                if (values!=null) {
+	                for (HashMap < String, Object > a: values) {
+	                    if (a.get("groupBy").equals("paymentChannelType") || a.get("groupBy").equals("paymentMode")) {
+	                        List < HashMap < String, String >> valuess = (List < HashMap < String, String >> ) a.get("buckets");
+	                        for (HashMap < String, String > b: valuess)
+	                        	PaymentChannel.add(toCamelCase(b.get("name")));
+	                    }
+	                }
+	                }
+	            }
+	    		for (String pc: PaymentChannel) {
+	    			isValid=paymentChannelList.contains(pc); 
+	    			if(!isValid)
+	    				break;
+	    			else
+	    				validCounts++;
+	    				
+	    				
+	            }
+	            if(validCounts==PaymentChannel.size())
+	            	isPaymentChannelInvalid=true;
+	        }
+
+	    	return isPaymentChannelInvalid;
+	    }
     
     public Set < String > verifyPropertyType(RequestInfo requestInfo, List < Data > ingestData) {
 
@@ -507,6 +559,54 @@ public class IngestValidator {
             usageList.add(usageCat.get("code"));
         }
         return usageList;
+    }
+    
+    public Set < String > verifyPaymentChannel(RequestInfo requestInfo, List < Data > ingestData) {
+
+
+        Boolean isPaymentChannelValid = false;
+        int validCounts = 0;
+
+        StringBuilder mdmsURL = new StringBuilder().append(mdmsHost).append(mdmsEndpoint);
+
+        MasterDetail mstrDetail = MasterDetail.builder().name("PaymentChannel")
+            .filter("[?(@.active==true)]")
+            .build();
+
+
+        ModuleDetail moduleDetail = ModuleDetail.builder().moduleName("common-masters").masterDetails(Arrays.asList(mstrDetail)).build();
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(moduleDetail)).tenantId("pg").build();
+        MdmsCriteriaReq mdmsConfig = MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+        Object response = null;
+        List < Map < String, String >> jsonOutput = null;
+
+        log.info("URI: " + mdmsURL.toString());
+        try {
+            log.info(objectMapper.writeValueAsString(mdmsConfig));
+            response = restTemplate.postForObject(mdmsURL.toString(), mdmsConfig, Map.class);
+            jsonOutput = JsonPath.read(response, MDMS_PAYMENTCHANNEL_PATH);
+            //migratedTenant= jsonOutput.get(0);
+
+        } catch (ResourceAccessException e) {
+
+            Map < String, String > map = new HashMap < > ();
+            map.put(null, e.getMessage());
+            throw new CustomException(map);
+        } catch (HttpClientErrorException e) {
+
+            log.info("the error is : " + e.getResponseBodyAsString());
+            throw new ServiceCallException(e.getResponseBodyAsString());
+        } catch (Exception e) {
+
+            log.error("Exception while fetching from searcher: ", e);
+        }
+
+
+        Set < String > paymentChannelList = new HashSet < String > ();
+        for (Map < String, String > paymentType: jsonOutput) {
+        	paymentChannelList.add(paymentType.get("code"));
+        }
+        return paymentChannelList;
     }
     
     // The verification logic will always use module name + date to determine the uniqueness of a set of records.
