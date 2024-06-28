@@ -91,12 +91,12 @@ public class DemandGenerationConsumer {
 			}
 		});
 		CalculationReq request = CalculationReq.builder().calculationCriteria(calculationCriteria)
-				.requestInfo(calculationReq.getRequestInfo()).isconnectionCalculation(true).build();
 				.requestInfo(calculationReq.getRequestInfo()).isconnectionCalculation(true)
 				.taxPeriodFrom(calculationReq.getTaxPeriodFrom())
 				.taxPeriodTo(calculationReq.getTaxPeriodTo())
 				.migrationCount(calculationReq.getMigrationCount())
 				.build();
+			
 		generateDemandInBatch(request);
 		log.info("Number of batch records:  " + records.size());
 	}
