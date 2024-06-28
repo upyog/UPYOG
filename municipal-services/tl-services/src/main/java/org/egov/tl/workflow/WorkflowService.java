@@ -6,6 +6,8 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.repository.ServiceRequestRepository;
 import org.egov.tl.web.models.RequestInfoWrapper;
+import org.egov.tl.web.models.contract.ProcessInstanceRequest;
+import org.egov.tl.web.models.contract.ProcessInstanceResponse;
 import org.egov.tl.web.models.workflow.BusinessService;
 import org.egov.tl.web.models.workflow.BusinessServiceResponse;
 import org.egov.tl.web.models.workflow.State;
@@ -83,6 +85,12 @@ public class WorkflowService {
        }
        return null;
     }
+
+	public ProcessInstanceResponse transition(ProcessInstanceRequest processInstanceRequest) {
+		Object result = serviceRequestRepository.fetchResult(new StringBuilder(config.getWfHost().concat(config.getWfTransitionPath())), processInstanceRequest);
+		ProcessInstanceResponse processInstanceResponse = mapper.convertValue(result,ProcessInstanceResponse.class);
+		return processInstanceResponse;
+	}
 
 
 
