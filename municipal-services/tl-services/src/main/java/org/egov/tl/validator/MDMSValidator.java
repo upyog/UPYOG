@@ -84,45 +84,45 @@ public class MDMSValidator {
                         errorMap.put("INVALID STRUCTURETYPE", "The structureType '"
                                 + license.getTradeLicenseDetail().getStructureType() + "' does not exists");
 
-                    license.getTradeLicenseDetail().getTradeUnits().forEach(unit -> {
-                        if (!billingSlabsTradeTypeUomMap.containsKey(unit.getTradeType()))
-                            errorMap.put("INVALID TRADETYPE", "The Trade type '" + unit.getTradeType() + "' does not exists");
+//                    license.getTradeLicenseDetail().getTradeUnits().forEach(unit -> {
+//                        if (!billingSlabsTradeTypeUomMap.containsKey(unit.getTradeType()))
+//                            errorMap.put("INVALID TRADETYPE", "The Trade type '" + unit.getTradeType() + "' does not exists");
+//
+//                        if(unit.getUom()!=null){
+//                            if(!unit.getUom().equalsIgnoreCase(billingSlabsTradeTypeUomMap.get(unit.getTradeType())))
+//                                errorMap.put("INVALID UOM","The UOM: "+unit.getUom()+" is not valid for tradeType: "+unit.getTradeType());
+//                            else if(unit.getUom().equalsIgnoreCase(billingSlabsTradeTypeUomMap.get(unit.getTradeType()))
+//                                    && unit.getUomValue()==null)
+//                                throw new CustomException("INVALID UOMVALUE","The uomValue cannot be null");
+//                        }
+//
+//                        else if(unit.getUom()==null){
+//                            if(billingSlabsTradeTypeUomMap.get(unit.getTradeType())!=null)
+//                                errorMap.put("INVALID UOM","The UOM cannot be null for tradeType: "+unit.getTradeType());
+//                        }
+//                    });
 
-                        if(unit.getUom()!=null){
-                            if(!unit.getUom().equalsIgnoreCase(billingSlabsTradeTypeUomMap.get(unit.getTradeType())))
-                                errorMap.put("INVALID UOM","The UOM: "+unit.getUom()+" is not valid for tradeType: "+unit.getTradeType());
-                            else if(unit.getUom().equalsIgnoreCase(billingSlabsTradeTypeUomMap.get(unit.getTradeType()))
-                                    && unit.getUomValue()==null)
-                                throw new CustomException("INVALID UOMVALUE","The uomValue cannot be null");
-                        }
-
-                        else if(unit.getUom()==null){
-                            if(billingSlabsTradeTypeUomMap.get(unit.getTradeType())!=null)
-                                errorMap.put("INVALID UOM","The UOM cannot be null for tradeType: "+unit.getTradeType());
-                        }
-                    });
-
-                    if(!CollectionUtils.isEmpty(license.getTradeLicenseDetail().getAccessories())){
-                        license.getTradeLicenseDetail().getAccessories().forEach(accessory -> {
-                            if (!billingSlabsAccessoryUomMap.containsKey(accessory.getAccessoryCategory()))
-                                errorMap.put("INVALID ACCESORRYCATEGORY",
-                                        "The Accessory Category '" + accessory.getAccessoryCategory() + "' does not exists");
-
-                            if(accessory.getUom()!=null){
-                                if(!accessory.getUom().equalsIgnoreCase(billingSlabsAccessoryUomMap.get(accessory.getAccessoryCategory())))
-                                    errorMap.put("INVALID UOM","The UOM: "+accessory.getUom()+" is not valid for accessoryCategory: "
-                                            +accessory.getAccessoryCategory());
-                                else if(accessory.getUom().equalsIgnoreCase(billingSlabsAccessoryUomMap.get(accessory.getAccessoryCategory()))
-                                        && accessory.getUomValue()==null)
-                                    throw new CustomException("INVALID UOMVALUE","The uomValue cannot be null");
-                            }
-
-                            else if(accessory.getUom()==null){
-                                if(billingSlabsAccessoryUomMap.get(accessory.getAccessoryCategory())!=null)
-                                    errorMap.put("INVALID UOM","The UOM cannot be null for tradeType: "+accessory.getAccessoryCategory());
-                            }
-                        });
-                    }
+//                    if(!CollectionUtils.isEmpty(license.getTradeLicenseDetail().getAccessories())){
+//                        license.getTradeLicenseDetail().getAccessories().forEach(accessory -> {
+//                            if (!billingSlabsAccessoryUomMap.containsKey(accessory.getAccessoryCategory()))
+//                                errorMap.put("INVALID ACCESORRYCATEGORY",
+//                                        "The Accessory Category '" + accessory.getAccessoryCategory() + "' does not exists");
+//
+//                            if(accessory.getUom()!=null){
+//                                if(!accessory.getUom().equalsIgnoreCase(billingSlabsAccessoryUomMap.get(accessory.getAccessoryCategory())))
+//                                    errorMap.put("INVALID UOM","The UOM: "+accessory.getUom()+" is not valid for accessoryCategory: "
+//                                            +accessory.getAccessoryCategory());
+//                                else if(accessory.getUom().equalsIgnoreCase(billingSlabsAccessoryUomMap.get(accessory.getAccessoryCategory()))
+//                                        && accessory.getUomValue()==null)
+//                                    throw new CustomException("INVALID UOMVALUE","The uomValue cannot be null");
+//                            }
+//
+//                            else if(accessory.getUom()==null){
+//                                if(billingSlabsAccessoryUomMap.get(accessory.getAccessoryCategory())!=null)
+//                                    errorMap.put("INVALID UOM","The UOM cannot be null for tradeType: "+accessory.getAccessoryCategory());
+//                            }
+//                        });
+//                    }
                     break;
 
                 case businessService_BPA:

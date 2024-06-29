@@ -43,6 +43,8 @@ package org.egov.hrms.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
@@ -124,7 +126,7 @@ public class EmployeeService {
 			employee.getUser().setPassword(null);
 		});
 		hrmsProducer.push(propertiesManager.getSaveEmployeeTopic(), employeeRequest);
-		notificationService.sendNotification(employeeRequest, pwdMap);
+//		notificationService.sendNotification(employeeRequest, pwdMap);
 		return generateResponse(employeeRequest);
 	}
 	
@@ -242,13 +244,19 @@ public class EmployeeService {
 	 * @param employee
 	 */
 	private void enrichUser(Employee employee) {
+		
+		if(StringUtils.isEmpty(employee.getCode())) {
+			employee.setCode(RandomStringUtils.randomAlphanumeric(8));
+		}
 		List<String> pwdParams = new ArrayList<>();
 		pwdParams.add(employee.getCode());
 		pwdParams.add(employee.getUser().getMobileNumber());
 		pwdParams.add(employee.getTenantId());
 		pwdParams.add(employee.getUser().getName().toUpperCase());
-		employee.getUser().setPassword(hrmsUtils.generatePassword(pwdParams));
-		employee.getUser().setUserName(employee.getCode());
+		if (StringUtils.isEmpty(employee.getUser().getPassword())) {
+			employee.getUser().setPassword(hrmsUtils.generatePassword(pwdParams));
+		}
+		employee.getUser().setUsername(employee.getCode());
 		employee.getUser().setActive(true);
 		employee.getUser().setType(UserType.EMPLOYEE.toString());
 	}
@@ -376,7 +384,7 @@ public class EmployeeService {
 				.build();
 		Employee existingEmpData = existingEmployeesData.stream().filter(existingEmployee -> existingEmployee.getUuid().equals(employee.getUuid())).findFirst().get();
 
-		employee.getUser().setUserName(employee.getCode());
+		employee.getUser().setUsername(employee.getCode());
 		if(!employee.getIsActive())
 			employee.getUser().setActive(false);
 		else

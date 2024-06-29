@@ -655,5 +655,8 @@ public class UserService {
         }
     }
 
+    public Object getLoginAccess(User user, String password) {
+    	return getAccess(user, password);
+    }
 
 }

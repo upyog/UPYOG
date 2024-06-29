@@ -8,12 +8,17 @@ import org.egov.tl.service.notification.TLNotificationService;
 import org.egov.tl.util.ResponseInfoFactory;
 import org.egov.tl.util.TLConstants;
 import org.egov.tl.web.models.*;
+import org.egov.tl.web.models.contract.ProcessInstanceResponse;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.*;
+import lombok.AllArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,11 +27,13 @@ import java.util.*;
 
 import javax.validation.constraints.*;
 import javax.validation.Valid;
+import javax.servlet.annotation.HttpMethodConstraint;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.egov.tl.util.TLConstants.businessService_TL;
 
-@RestController
+@RestController	
+@CrossOrigin(origins="*")
     @RequestMapping("/v1")
     public class TradeLicenseController {
 
@@ -128,6 +135,15 @@ import static org.egov.tl.util.TLConstants.businessService_TL;
     public ResponseEntity test1(@Valid @RequestBody TradeLicenseRequest tradeLicenseRequest){
         tlNotificationService.process(tradeLicenseRequest);
         return new ResponseEntity(HttpStatus.OK);
+    }
+    
+    @PostMapping("/update/state")
+    public ResponseEntity<ProcessInstanceResponse> updateStateWf(@RequestParam String action
+    		,@RequestParam String businessId
+    		,@RequestParam String tenantId
+    		,@RequestBody RequestInfoWrapper requestInfoWrapper){
+    	ProcessInstanceResponse processInstanceResponse = tradeLicenseService.updateState(action, businessId, tenantId, requestInfoWrapper);
+        return new ResponseEntity(processInstanceResponse , HttpStatus.OK);
     }
 
 

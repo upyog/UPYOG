@@ -39,8 +39,8 @@ public class User {
     private String uuid;
 
     @Size(max=180)
-    @JsonProperty("userName")
-    private String userName;
+    @JsonProperty("username")
+    private String username;
 
     @Size(max=64)
     @JsonProperty("password")

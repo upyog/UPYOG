@@ -11,7 +11,7 @@ import java.util.List;
 public class TLConstants {
 
 
-    public static  final String businessService_TL = "TL";
+    public static  final String businessService_TL = "NewTL";
 
     public static  final String businessService_DIRECT_RENEWAL = "DIRECTRENEWAL";
     
@@ -188,6 +188,7 @@ public class TLConstants {
     public static final String TRADE_TYPE = "TradeType";
 
     public static final String ACCESSORIES_CATEGORY = "AccessoriesCategory";
+    public static final String ACCESSORIES_CATEGORY_PART_2 = "AccessoriesCategoryPart2";
 
     public static final String STRUCTURE_TYPE = "StructureType";
 

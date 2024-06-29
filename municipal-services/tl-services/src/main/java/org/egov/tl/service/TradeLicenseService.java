@@ -12,6 +12,9 @@ import org.egov.tl.util.TLConstants;
 import org.egov.tl.util.TradeUtil;
 import org.egov.tl.validator.TLValidator;
 import org.egov.tl.web.models.*;
+import org.egov.tl.web.models.contract.ProcessInstance;
+import org.egov.tl.web.models.contract.ProcessInstanceRequest;
+import org.egov.tl.web.models.contract.ProcessInstanceResponse;
 import org.egov.tl.web.models.user.UserDetailResponse;
 import org.egov.tl.web.models.workflow.BusinessService;
 import org.egov.tl.workflow.ActionValidator;
@@ -65,6 +68,12 @@ public class TradeLicenseService {
     private TradeUtil tradeUtil;
 
     private TLBatchService tlBatchService;
+    
+    @Autowired
+    private WorkflowIntegrator workflowIntegrator;
+
+    @Autowired
+    private TLRepository tlRepository;
 
     @Value("${workflow.bpa.businessServiceCode.fallback_enabled}")
     private Boolean pickWFServiceNameFromTradeTypeOnly;
@@ -124,15 +133,17 @@ public class TradeLicenseService {
         /*
          * call workflow service if it's enable else uses internal workflow process
          */
-       switch(businessServicefromPath)
-       {
-           case businessService_TL:
-               if (config.getIsExternalWorkFlowEnabled())
-                   wfIntegrator.callWorkFlow(tradeLicenseRequest);
-               break;
-       }
+//       switch(businessServicefromPath)
+//       {
+//           case businessService_TL:
+//               if (config.getIsExternalWorkFlowEnabled())
+//                   wfIntegrator.callWorkFlow(tradeLicenseRequest);
+//               break;
+//       }
         repository.save(tradeLicenseRequest);
        
+        //trigger wf 
+        workflowIntegrator.callWorkFlow(tradeLicenseRequest);
 
         return tradeLicenseRequest.getLicenses();
 	}
@@ -205,11 +216,50 @@ public class TradeLicenseService {
          else {
              licenses = getLicensesWithOwnerInfo(criteria,requestInfo);
          }
+         
+         
+         // calculate passed dates from creation date
+         enrichPassedDates(licenses);
+
+         // enrich ULB from tenantId
+         enrichUlbFromTenantId(licenses);
 
          return licenses;       
     }
     
-    private void getLatestRejectedApplication(RequestInfo requestInfo, List<TradeLicense> licenses) {
+    private void enrichUlbFromTenantId(List<TradeLicense> licenses) {
+		
+    	licenses.stream().forEach(license -> {
+    		if(StringUtils.equalsIgnoreCase(license.getTenantId(), "hp.shimla")) {
+    			license.setUlb("Shimla");
+    		}
+    	});
+		
+	}
+
+
+
+
+
+	private void enrichPassedDates(List<TradeLicense> licenses) {
+		licenses.stream().forEach(license -> {
+			
+			if(null != license.getAuditDetails() && null != license.getAuditDetails().getCreatedTime()) {
+				Long passedDays = new Date().getTime() - license.getAuditDetails().getCreatedTime();
+				// Convert milliseconds to days (assuming 24 hours = 86400000 milliseconds)
+                long passedDaysCount = passedDays / 86400000L;
+				license.setPassedDays((int) passedDaysCount);
+			}
+			
+		});
+		
+	}
+
+
+
+
+
+	private void getLatestRejectedApplication(RequestInfo requestInfo, List<TradeLicense> licenses) {
     	List <TradeLicense> licensesToBeRemoved = new ArrayList<TradeLicense>();
     	List <TradeLicense> licensesToBeAdded = new ArrayList<TradeLicense>();
         
@@ -561,6 +611,42 @@ public class TradeLicenseService {
 
 	public int getApplicationValidity() {
 		return Integer.valueOf(config.getApplicationValidity());
+	}
+
+
+
+
+
+	public ProcessInstanceResponse updateState(String action, String businessId, String tenantId, RequestInfoWrapper requestInfoWrapper) {
+		
+		ProcessInstance processInstance = ProcessInstance.builder()
+				.tenantId(tenantId)
+				.businessService(businessService_TL)
+				.moduleName("TL")
+				.businessId(businessId)
+				.action(action)
+				.build();
+		
+		ProcessInstanceRequest processInstanceRequest = ProcessInstanceRequest.builder()
+				.requestInfo(requestInfoWrapper.getRequestInfo())
+				.processInstances(Arrays.asList(processInstance))
+				.build();
+		
+		// run workflow
+		ProcessInstanceResponse response = workflowService.transition(processInstanceRequest);
+		
+		if(response == null) {
+			throw new RuntimeException("Provided application failed to change status.");
+		}
+		
+		//update status of trade license
+		if(StringUtils.equalsIgnoreCase(action, "VERIFY")) {
+			tlRepository.updateTlStatus(businessId, "VERIFIED");
+		}else if(StringUtils.equalsIgnoreCase(action, "APPROVE")) {
+			tlRepository.updateTlStatus(businessId, "APPROVED");
+		}
+		
+		return response;
 	}
 
 }
