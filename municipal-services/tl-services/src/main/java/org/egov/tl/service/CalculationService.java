@@ -1,8 +1,11 @@
 package org.egov.tl.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tl.repository.ServiceRequestRepository;
+import org.egov.tl.util.TLConstants;
 import org.egov.tl.util.TradeUtil;
 import org.egov.tl.web.models.TradeLicense;
 import org.egov.tl.web.models.TradeLicenseRequest;
@@ -79,6 +82,14 @@ public class CalculationService {
 
         licenses.forEach(license -> {
             criterias.add(new CalulationCriteria(license,license.getApplicationNumber(),license.getTenantId()));
+            
+//            if(StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
+//            		&& uri.toString().contains("v1/_calculate")) {
+//            	int index = uri.indexOf("v1/_calculate");
+//                if (index != -1) {
+//                    uri.replace(index, index + "v1/_calculate".length(), "v1/NewTL/_calculate");
+//                }
+//            }
         });
 
         CalculationReq request = CalculationReq.builder().calulationCriteria(criterias)

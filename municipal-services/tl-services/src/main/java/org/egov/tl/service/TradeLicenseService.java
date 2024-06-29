@@ -125,7 +125,7 @@ public class TradeLicenseService {
                 break;
         }
        enrichmentService.enrichTLCreateRequest(tradeLicenseRequest, mdmsData);
-       tlValidator.validateCreate(tradeLicenseRequest, mdmsData, billingSlabs);
+//       tlValidator.validateCreate(tradeLicenseRequest, mdmsData, billingSlabs);
        log.info("request is " + tradeLicenseRequest);
        userService.createUser(tradeLicenseRequest, false);
        calculationService.addCalculation(tradeLicenseRequest);
@@ -617,18 +617,19 @@ public class TradeLicenseService {
 
 
 
-	public ProcessInstanceResponse updateState(String action, String businessId, String tenantId, RequestInfoWrapper requestInfoWrapper) {
+	public ProcessInstanceResponse updateState(UpdateTLStatusCriteriaRequest updateTLStatusCriteriaRequest) {
 		
 		ProcessInstance processInstance = ProcessInstance.builder()
-				.tenantId(tenantId)
+				.tenantId(updateTLStatusCriteriaRequest.getUpdateTLStatusCriteria().getTenantId())
 				.businessService(businessService_TL)
 				.moduleName("TL")
-				.businessId(businessId)
-				.action(action)
+				.businessId(updateTLStatusCriteriaRequest.getUpdateTLStatusCriteria().getBusinessId())
+				.action(updateTLStatusCriteriaRequest.getUpdateTLStatusCriteria().getAction())
+				.comment(updateTLStatusCriteriaRequest.getUpdateTLStatusCriteria().getComment())
 				.build();
 		
 		ProcessInstanceRequest processInstanceRequest = ProcessInstanceRequest.builder()
-				.requestInfo(requestInfoWrapper.getRequestInfo())
+				.requestInfo(updateTLStatusCriteriaRequest.getRequestInfo())
 				.processInstances(Arrays.asList(processInstance))
 				.build();
 		
@@ -640,10 +641,10 @@ public class TradeLicenseService {
 		}
 		
 		//update status of trade license
-		if(StringUtils.equalsIgnoreCase(action, "VERIFY")) {
-			tlRepository.updateTlStatus(businessId, "VERIFIED");
-		}else if(StringUtils.equalsIgnoreCase(action, "APPROVE")) {
-			tlRepository.updateTlStatus(businessId, "APPROVED");
+		if(StringUtils.equalsIgnoreCase(updateTLStatusCriteriaRequest.getUpdateTLStatusCriteria().getAction(), "VERIFY")) {
+			tlRepository.updateTlStatus(updateTLStatusCriteriaRequest.getUpdateTLStatusCriteria().getBusinessId(), "VERIFIED");
+		}else if(StringUtils.equalsIgnoreCase(updateTLStatusCriteriaRequest.getUpdateTLStatusCriteria().getAction(), "APPROVE")) {
+			tlRepository.updateTlStatus(updateTLStatusCriteriaRequest.getUpdateTLStatusCriteria().getBusinessId(), "APPROVED");
 		}
 		
 		return response;

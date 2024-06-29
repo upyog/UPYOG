@@ -6,25 +6,32 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.example.hpgarbageservice.controller.ApplicationPropertiesAndConstant;
 import com.example.hpgarbageservice.model.AuditDetails;
 import com.example.hpgarbageservice.model.GarbageAccount;
 import com.example.hpgarbageservice.model.GarbageAccountRequest;
+import com.example.hpgarbageservice.model.GrbgApplication;
 import com.example.hpgarbageservice.model.SearchCriteriaGarbageAccount;
 import com.example.hpgarbageservice.model.SearchCriteriaGarbageAccountRequest;
 import com.example.hpgarbageservice.model.contract.RequestInfo;
 import com.example.hpgarbageservice.repository.GarbageAccountRepository;
+import com.example.hpgarbageservice.repository.GrbgApplicationRepository;
 
 @Service
 public class GarbageAccountService {
 
 	@Autowired
-	private GarbageAccountRepository repository;
+	private GarbageAccountRepository garbageAccountRepository;
+
+	@Autowired
+	private GrbgApplicationRepository grbgApplicationRepository;
 
 	public List<GarbageAccount> create(GarbageAccountRequest createGarbageRequest) {
 
@@ -33,20 +40,40 @@ public class GarbageAccountService {
 		if (!CollectionUtils.isEmpty(createGarbageRequest.getGarbageAccounts())) {
 			createGarbageRequest.getGarbageAccounts().forEach(garbageAccount -> {
 
-				// validate create grbg act
+				// validate create garbage account
 				validateGarbageAccount(garbageAccount);
 
-				// enrich grbg act
+				// enrich create garbage account
 				enrichCreateGarbageAccount(garbageAccount, createGarbageRequest.getRequestInfo());
 
-				// create grbg act
-				garbageAccountsResponse.add(repository.create(garbageAccount));
+				// enrich create garbage application
+				enrichCreateGarbageApplication(garbageAccount, createGarbageRequest.getRequestInfo());
 
+				// create garbage application
+				grbgApplicationRepository.create(garbageAccount.getGrbgApplication());
+				
+				// create garbage account
+				garbageAccountsResponse.add(garbageAccountRepository.create(garbageAccount));
+				
 			});
 		}
 		
 		return garbageAccountsResponse;
 	}
+
+
+	private void enrichCreateGarbageApplication(GarbageAccount garbageAccount, RequestInfo requestInfo) {
+		
+		GrbgApplication grbgApplication = GrbgApplication.builder()
+				.uuid(UUID.randomUUID().toString())
+				.applicationNo(ApplicationPropertiesAndConstant.APPLICATION_PREFIX.concat(garbageAccount.getGarbageId().toString()))
+				.status(ApplicationPropertiesAndConstant.APPLICATION_STATUS_DRAFT)
+				.garbageId(garbageAccount.getGarbageId())
+				.build();
+		
+		garbageAccount.setGrbgApplication(grbgApplication);
+	}
+
 
 	private void validateGarbageAccount(GarbageAccount garbageAccount) {
 
@@ -99,7 +126,7 @@ public class GarbageAccountService {
 		newGarbageAccount.setGarbageId(existingGarbageAccount.getGarbageId());
 	}
 
-	public List<GarbageAccount> update(GarbageAccountRequest updateGarbageRequest) {
+	public List<GarbageAccount> updateGrbgAccount(GarbageAccountRequest updateGarbageRequest) {
 
 		List<GarbageAccount> garbageAccountsResponse = new ArrayList<>();
 		SearchCriteriaGarbageAccount searchCriteriaGarbageAccount = createSearchCriteriaByGarbageAccounts(updateGarbageRequest.getGarbageAccounts());
@@ -119,7 +146,7 @@ public class GarbageAccountService {
 				enrichUpdateGarbageAccount(newGarbageAccount, existingGarbageAccount, updateGarbageRequest.getRequestInfo());
 
 				// update garbage account
-				repository.update(newGarbageAccount);
+				garbageAccountRepository.update(newGarbageAccount);
 				garbageAccountsResponse.add(newGarbageAccount);
 			});
 		}
@@ -188,7 +215,7 @@ public class GarbageAccountService {
 		validateSearchGarbageAccount(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount());
 		
 		//search garbage account
-		List<GarbageAccount> grbgAccs = repository.searchGarbageAccount(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount());
+		List<GarbageAccount> grbgAccs = garbageAccountRepository.searchGarbageAccount(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount());
 		
 //		//search child garbage accounts
 //		grbgAccs.stream().forEach(grbgAccTemp -> {

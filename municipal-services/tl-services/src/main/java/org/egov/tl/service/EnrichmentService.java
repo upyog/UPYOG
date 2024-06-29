@@ -188,6 +188,10 @@ public class EnrichmentService {
             case businessService_BPA:
                 applicationNumbers = getIdList(requestInfo, tenantId, config.getApplicationNumberIdgenNameBPA(), config.getApplicationNumberIdgenFormatBPA(), request.getLicenses().size());
                 break;
+                
+//            case businessService_NewTL:
+//            	applicationNumbers = getIdList(requestInfo, tenantId, config.getApplicationNumberIdgenNameTL(), config.getApplicationNumberIdgenFormatTL(), request.getLicenses().size());
+//                break;
         }
         ListIterator<String> itr = applicationNumbers.listIterator();
 

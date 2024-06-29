@@ -25,7 +25,10 @@ public class GarbageAccount {
 
 	private String mobileNumber;
 
-	private Long parentId;
+//	private Long parentId;
+	private Boolean isOwner; 
+	
+	private GrbgApplication grbgApplication;
 
 	private AuditDetails auditDetails;
 	
