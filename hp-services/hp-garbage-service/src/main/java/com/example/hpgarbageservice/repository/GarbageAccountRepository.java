@@ -34,7 +34,7 @@ public class GarbageAccountRepository {
 			+ ", bill.payment_status as bill_payment_status, bill.created_by as bill_created_by, bill.created_date as bill_created_date, bill.last_modified_by as bill_last_modified_by"
 			+ ", bill.last_modified_date as bill_last_modified_date "
 			+ ", sub_acc.id as sub_acc_id, sub_acc.garbage_id as sub_acc_garbage_id, sub_acc.property_id as sub_acc_property_id, sub_acc.type as sub_acc_type "
-			+ ", sub_acc.name as sub_acc_name, sub_acc.mobile_number as sub_acc_mobile_number, sub_acc.parent_id as sub_acc_parent_id"
+			+ ", sub_acc.name as sub_acc_name, sub_acc.mobile_number as sub_acc_mobile_number, sub_acc.is_owner as sub_acc_is_owner"
 			+ ", sub_acc.created_by as sub_acc_created_by, sub_acc.created_date as sub_acc_created_date, sub_acc.last_modified_by as sub_acc_last_modified_by"
 			+ ", sub_acc.last_modified_date as sub_acc_last_modified_date"
 			+ ", sub_acc_bill.id as sub_acc_bill_id, sub_acc_bill.bill_ref_no as sub_acc_bill_bill_ref_no, sub_acc_bill.garbage_id as sub_acc_bill_garbage_id " 
@@ -49,13 +49,13 @@ public class GarbageAccountRepository {
 		    + ", sub_acc_bill.last_modified_date as sub_acc_bill_last_modified_date "
 			+ " FROM hpudd_grbg_account as acc "
 			+ " LEFT OUTER JOIN hpudd_grbg_bill bill ON acc.garbage_id = bill.garbage_id"
-			+ " LEFT OUTER JOIN hpudd_grbg_account sub_acc ON acc.garbage_id = sub_acc.parent_id"
+			+ " LEFT OUTER JOIN hpudd_grbg_account sub_acc ON acc.property_id = sub_acc.property_id"
 		    + " LEFT OUTER JOIN hpudd_grbg_bill as sub_acc_bill ON sub_acc.garbage_id = sub_acc_bill.garbage_id";
 
     
     private static final String INSERT_ACCOUNT = "INSERT INTO hpudd_grbg_account (id, garbage_id, property_id, type, name"
-    		+ ", mobile_number, parent_id, created_by, created_date, last_modified_by, last_modified_date) "
-    		+ "VALUES (:id, :garbageId, :propertyId, :type, :name, :mobileNumber, :parentId, :createdBy, :createdDate, "
+    		+ ", mobile_number, is_owner, created_by, created_date, last_modified_by, last_modified_date) "
+    		+ "VALUES (:id, :garbageId, :propertyId, :type, :name, :mobileNumber, :isOwner, :createdBy, :createdDate, "
     		+ ":lastModifiedBy, :lastModifiedDate)";
     
     private static final String UPDATE_ACCOUNT_BY_ID = "UPDATE hpudd_grbg_account SET garbage_id = :garbageId"
@@ -83,7 +83,8 @@ public class GarbageAccountRepository {
         accountInputs.put("type", account.getType());
         accountInputs.put("name", account.getName());
         accountInputs.put("mobileNumber", account.getMobileNumber());
-        accountInputs.put("parentId", account.getParentId());
+        accountInputs.put("isOwner", account.getIsOwner());
+//        accountInputs.put("parentId", account.getParentId());
         accountInputs.put("createdBy", account.getAuditDetails().getCreatedBy());
         accountInputs.put("createdDate", account.getAuditDetails().getCreatedDate());
         accountInputs.put("lastModifiedBy", account.getAuditDetails().getLastModifiedBy());
@@ -105,7 +106,8 @@ public class GarbageAccountRepository {
         accountInputs.put("type", newGarbageAccount.getType());
         accountInputs.put("name", newGarbageAccount.getName());
         accountInputs.put("mobileNumber", newGarbageAccount.getMobileNumber());
-        accountInputs.put("parentId", newGarbageAccount.getParentId());
+        accountInputs.put("isOwner", newGarbageAccount.getIsOwner());
+//        accountInputs.put("parentId", newGarbageAccount.getParentId());
 //        accountInputs.put("createdBy", newGarbageAccount.getAuditDetails().getCreatedBy());
 //        accountInputs.put("createdDate", newGarbageAccount.getAuditDetails().getCreatedDate());
         accountInputs.put("lastModifiedBy", newGarbageAccount.getAuditDetails().getLastModifiedBy());

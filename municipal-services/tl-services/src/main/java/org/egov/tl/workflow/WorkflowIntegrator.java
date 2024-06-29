@@ -113,6 +113,7 @@ public class WorkflowIntegrator {
 				{
 				//TLR Changes
 					case businessService_TL:
+//					case businessService_NewTL:
 						obj.put(BUSINESSSERVICEKEY, currentLicense.getWorkflowCode());
 						obj.put(MODULENAMEKEY, TLMODULENAMEVALUE);
 						break;
@@ -126,6 +127,7 @@ public class WorkflowIntegrator {
 						obj.put(BUSINESSSERVICEKEY, tradeType);
 						obj.put(MODULENAMEKEY, BPAMODULENAMEVALUE);
 						break;
+						
 				}
 				obj.put(ACTIONKEY, license.getAction());
 				obj.put(COMMENTKEY, license.getComment());

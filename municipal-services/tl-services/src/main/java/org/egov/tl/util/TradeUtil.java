@@ -77,6 +77,10 @@ public class TradeUtil {
             case businessService_BPA:
                 uri.append(config.getCalculateEndpointBPA());
                 break;
+                
+//            case businessService_NewTL:
+//            	uri.append(config.getCalculateEndpointTL());
+//            	break;
         }
         return uri;
     }

@@ -137,12 +137,10 @@ import static org.egov.tl.util.TLConstants.businessService_TL;
         return new ResponseEntity(HttpStatus.OK);
     }
     
+    
     @PostMapping("/update/state")
-    public ResponseEntity<ProcessInstanceResponse> updateStateWf(@RequestParam String action
-    		,@RequestParam String businessId
-    		,@RequestParam String tenantId
-    		,@RequestBody RequestInfoWrapper requestInfoWrapper){
-    	ProcessInstanceResponse processInstanceResponse = tradeLicenseService.updateState(action, businessId, tenantId, requestInfoWrapper);
+    public ResponseEntity<ProcessInstanceResponse> updateStateWf(@RequestBody UpdateTLStatusCriteriaRequest updateTLStatusCriteriaRequest){
+    	ProcessInstanceResponse processInstanceResponse = tradeLicenseService.updateState(updateTLStatusCriteriaRequest);
         return new ResponseEntity(processInstanceResponse , HttpStatus.OK);
     }
 
