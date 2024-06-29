@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
+import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 
 @Component
 public class CommunityHallBookingQueryBuilder {
@@ -35,6 +36,12 @@ public class CommunityHallBookingQueryBuilder {
 
 	private final String paginationWrapper = "SELECT * FROM " + "(SELECT *, DENSE_RANK() OVER () offset_ FROM " + "({})"
 			+ " result) result_offset " + "WHERE offset_ > ? AND offset_ <= ?";
+	
+	private static final String COMMUNITY_HALL_SLOTS_AVAIALABILITY_QUERY = "SELECT chbd.tenant_id, chbd.community_hall_name, bsd.hall_code, bsd.status,bsd.booking_date \n"
+			+ "	FROM community_hall_booking_details chbd, booking_slot_details bsd\n"
+			+ "where chbd.booking_id = bsd.booking_id and chbd.tenant_id= ? and chbd.community_hall_name = ? \n"
+			+ "AND bsd.hall_code = ? and bsd.status = 'BOOKED' and \n"
+			+ "	bsd.booking_date >= ? and bsd.booking_date <=  ? ";
 
 	/**
 	 * To give the Search query based on the requirements.
@@ -64,7 +71,7 @@ public class CommunityHallBookingQueryBuilder {
 		List<String> ids = criteria.getBookingIds();
 		if (!CollectionUtils.isEmpty(ids)) {
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" chbd.booking_id IN (").append(createQuery(ids)).append(")");
+			builder.append(" chbd.booking_id IN (").append(createQueryParams(ids)).append(")");
 			addToPreparedStatement(preparedStmtList, ids);
 		}
 
@@ -72,7 +79,7 @@ public class CommunityHallBookingQueryBuilder {
 		if (bookingNo != null) {
 			List<String> applicationNos = Arrays.asList(bookingNo.split(","));
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" chbd.booking_no IN (").append(createQuery(applicationNos)).append(")");
+			builder.append(" chbd.booking_no IN (").append(createQueryParams(applicationNos)).append(")");
 			addToPreparedStatement(preparedStmtList, applicationNos);
 		}
 
@@ -81,7 +88,7 @@ public class CommunityHallBookingQueryBuilder {
 		if (!CollectionUtils.isEmpty(createdBy)) {
 
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" chbd.createdby IN (").append(createQuery(createdBy)).append(")");
+			builder.append(" chbd.createdby IN (").append(createQueryParams(createdBy)).append(")");
 			addToPreparedStatement(preparedStmtList, createdBy);
 		}
 
@@ -130,7 +137,7 @@ public class CommunityHallBookingQueryBuilder {
 	 * @param ids
 	 * @return
 	 */
-	private Object createQuery(List<String> ids) {
+	private Object createQueryParams(List<String> ids) {
 		StringBuilder builder = new StringBuilder();
 		int length = ids.size();
 		for (int i = 0; i < length; i++) {
@@ -182,14 +189,26 @@ public class CommunityHallBookingQueryBuilder {
 	
 	public String getBankDetailsQuery(List<String> bookingIds) {
 		StringBuilder builder = new StringBuilder(bankDetailsQuery);
-		builder.append(createQuery(bookingIds)).append(")");
+		builder.append(createQueryParams(bookingIds)).append(")");
 		return builder.toString();
 		
 	}
 	
 	public String getDocumentDetailsQuery(List<String> bookingIds) {
 		StringBuilder builder = new StringBuilder(documentDetailsQuery);
-		builder.append(createQuery(bookingIds)).append(")");
+		builder.append(createQueryParams(bookingIds)).append(")");
+		return builder.toString();
+	}
+	
+	public String getCommunityHallSlotAvailabilityQuery(CommunityHallSlotSearchCriteria searchCriteria, List<Object> paramsList) {
+		StringBuilder builder = new StringBuilder(COMMUNITY_HALL_SLOTS_AVAIALABILITY_QUERY);
+		
+		paramsList.add(searchCriteria.getTenantId());
+		paramsList.add(searchCriteria.getCommunityHallName());
+		paramsList.add(searchCriteria.getHallCode());
+		paramsList.add(searchCriteria.getBookingStartDate());
+		paramsList.add(searchCriteria.getBookingEndDate());
+		
 		return builder.toString();
 	}
 

@@ -7,6 +7,8 @@ import javax.validation.Valid;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
+import org.upyog.chb.web.models.CommunityHallSlotAvailabiltityDetail;
+import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 
 public interface CommunityHallBookingService {
 
@@ -19,5 +21,7 @@ public interface CommunityHallBookingService {
 	CommunityHallBookingDetail updateBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest);
 
 	void updateBookingStatus(String bookingNo);
+
+	List<CommunityHallSlotAvailabiltityDetail> getCommunityHallSlotAvailability(CommunityHallSlotSearchCriteria criteria);
 
 }
