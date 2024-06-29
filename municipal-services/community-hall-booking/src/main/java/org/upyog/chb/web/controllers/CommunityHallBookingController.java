@@ -1,10 +1,7 @@
 package org.upyog.chb.web.controllers;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +15,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.service.CommunityHallBookingService;
 import org.upyog.chb.util.CommunityHallBookingUtil;
-import org.upyog.chb.web.models.CommunityHallBookingResponse;
-import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
-import org.upyog.chb.web.models.RequestInfoWrapper;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
+import org.upyog.chb.web.models.CommunityHallBookingResponse;
+import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
+import org.upyog.chb.web.models.CommunityHallSlotAvailabilityResponse;
+import org.upyog.chb.web.models.CommunityHallSlotAvailabiltityDetail;
+import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
+import org.upyog.chb.web.models.RequestInfoWrapper;
 import org.upyog.chb.web.models.ResponseInfo;
 import org.upyog.chb.web.models.ResponseInfo.StatusEnum;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.annotations.ApiParam;
 
@@ -36,16 +34,15 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/booking")
 public class CommunityHallBookingController {
 
-	private final ObjectMapper objectMapper;
-
-	private final HttpServletRequest request;
-
-	@Autowired
-	public CommunityHallBookingController(ObjectMapper objectMapper, HttpServletRequest request) {
-		this.objectMapper = objectMapper;
-		this.request = request;
-	}
-	
+	/*
+	 * private final ObjectMapper objectMapper;
+	 * 
+	 * private final HttpServletRequest request;
+	 * 
+	 * @Autowired public CommunityHallBookingController(ObjectMapper objectMapper,
+	 * HttpServletRequest request) { this.objectMapper = objectMapper; this.request
+	 * = request; }
+	 */
 	@Autowired
 	private CommunityHallBookingService bookingService;
 
@@ -77,7 +74,7 @@ public class CommunityHallBookingController {
 	}
 
 	@RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
-	public ResponseEntity<CommunityHallBookingResponse> v1RegistrationUpdatePost(
+	public ResponseEntity<CommunityHallBookingResponse> v1UpdateBooking(
 			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @Valid @RequestBody CommunityHallBookingRequest communityHallsBookingRequest) {
 		CommunityHallBookingDetail bookingDetail = bookingService.updateBooking(communityHallsBookingRequest);
 		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(communityHallsBookingRequest.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_CREATED,
@@ -89,7 +86,7 @@ public class CommunityHallBookingController {
 	}
 
 	@RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
-	public ResponseEntity<CommunityHallBookingResponse> v1SearchPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+	public ResponseEntity<CommunityHallBookingResponse> v1SearchCommunityHallBooking(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
             @Valid @ModelAttribute CommunityHallBookingSearchCriteria criteria) {
 		List<CommunityHallBookingDetail> applications = bookingService.getBookingDetails(criteria);
 		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_LIST,
@@ -98,5 +95,19 @@ public class CommunityHallBookingController {
 				.responseInfo(info).build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+	
+	@RequestMapping(value = "/v1/_slot-search", method = RequestMethod.POST)
+	public ResponseEntity<CommunityHallSlotAvailabilityResponse> v1GetCommmunityHallSlotAvailablity(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+            @Valid @ModelAttribute CommunityHallSlotSearchCriteria criteria) {
+		List<CommunityHallSlotAvailabiltityDetail> applications = bookingService.getCommunityHallSlotAvailability(criteria);
+		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_LIST,
+				StatusEnum.SUCCESSFUL);
+		CommunityHallSlotAvailabilityResponse response = CommunityHallSlotAvailabilityResponse.builder()
+				.hallSlotAvailabiltityDetails(applications)
+				.responseInfo(info).build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	
 
 }

@@ -1,4 +1,3 @@
-ALTER TABLE DROP COLUMN 
 
 CREATE TABLE IF NOT EXISTS COMMUNITY_HALL_BOOKING_INIT(
   booking_id character varying(64) NOT NULL,
@@ -16,13 +15,11 @@ CREATE TABLE IF NOT EXISTS COMMUNITY_HALL_BOOKING_INIT(
 
 --TODO : Remove drop table statement before merging PR
 --TODO : Need to add index for colums used in Query
---DROP TABLE  IF EXISTS COMMUNITY_HALL_BOOKING_DETAILS cascade;
+--DROP TABLE  COMMUNITY_HALL_BOOKING_DETAILS cascade;
 CREATE TABLE IF NOT EXISTS COMMUNITY_HALL_BOOKING_DETAILS(
   booking_id character varying(64) NOT NULL,
   booking_no character varying(64),
   booking_date bigint,
-  application_no  character varying(64),
-  application_date bigint,
   applicant_name  character varying(100),
   applicant_email_id  character varying(100),
   applicant_mobile_no  character varying(12),
@@ -44,7 +41,7 @@ CREATE TABLE IF NOT EXISTS COMMUNITY_HALL_BOOKING_DETAILS(
   CONSTRAINT COMMUNITY_HALL_BOOKING_DETAILS_PK PRIMARY KEY (booking_id)
 );
 
---DROP TABLE  IF EXISTS BOOKING_SLOT_DETAILS;
+--DROP TABLE   BOOKING_SLOT_DETAILS;
 
 CREATE TABLE IF NOT EXISTS BOOKING_SLOT_DETAILS(
    slot_id character varying(64) NOT NULL,
@@ -107,4 +104,4 @@ CREATE TABLE IF NOT EXISTS  COMMUNITY_HALL_BOOKING_DOCUMENT_DETAILS(
 --TODO : Need to add audit details table
 
 
-CREATE SEQUENCEIF IF NOT EXISTS seq_chb_booking_id;
+CREATE SEQUENCE IF NOT EXISTS seq_chb_booking_id;

@@ -25,54 +25,13 @@ import lombok.extern.slf4j.Slf4j;
 public class MdmsUtil {
 
     @Autowired
-    private RestTemplate restTemplate;
-    
-    @Autowired
     private CommunityHallBookingConfiguration config;
 	
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
 
-    private String masterName;
-
-    @Value("${egov.mdms.module.name}")
-    private String moduleName;
 
 
-	/*
-	 * public Integer fetchRegistrationChargesFromMdms(RequestInfo requestInfo,
-	 * String tenantId) { StringBuilder uri = new StringBuilder();
-	 * uri.append(mdmsHost).append(mdmsUrl); MdmsCriteriaReq mdmsCriteriaReq =
-	 * getMdmsRequestForCategoryList(requestInfo, tenantId); Object response = new
-	 * HashMap<>(); Integer rate = 0; try { response =
-	 * restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class); rate
-	 * = JsonPath.read(response, "$.MdmsRes.VTR.RegistrationCharges.[0].amount");
-	 * }catch(Exception e) {
-	 * log.error("Exception occurred while fetching category lists from mdms: ",e);
-	 * } //log.info(ulbToCategoryListMap.toString()); return rate; }
-	 * 
-	 * private MdmsCriteriaReq getMdmsRequestForCategoryList(RequestInfo
-	 * requestInfo, String tenantId) { MasterDetail masterDetail = new
-	 * MasterDetail(); masterDetail.setName(masterName); List<MasterDetail>
-	 * masterDetailList = new ArrayList<>(); masterDetailList.add(masterDetail);
-	 * 
-	 * ModuleDetail moduleDetail = new ModuleDetail();
-	 * moduleDetail.setMasterDetails(masterDetailList);
-	 * moduleDetail.setModuleName(moduleName); List<ModuleDetail> moduleDetailList =
-	 * new ArrayList<>(); moduleDetailList.add(moduleDetail);
-	 * 
-	 * MdmsCriteria mdmsCriteria = new MdmsCriteria();
-	 * mdmsCriteria.setTenantId(tenantId.split("\\.")[0]);
-	 * mdmsCriteria.setModuleDetails(moduleDetailList);
-	 * 
-	 * MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
-	 * mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
-	 * mdmsCriteriaReq.setRequestInfo(requestInfo);
-	 * 
-	 * return mdmsCriteriaReq; }
-	 */
-    
-    
     /**
    	 * makes mdms call with the given criteria and reutrn mdms data
    	 * @param requestInfo
@@ -95,7 +54,7 @@ public class MdmsUtil {
    	public StringBuilder getMdmsSearchUrl() {
    		return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsPath());
    	}
-   	
+
    	/**
    	 * prepares the mdms request object
    	 * @param requestInfo
@@ -103,7 +62,7 @@ public class MdmsUtil {
    	 * @return
    	 */
    	public MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId) {
-   		List<ModuleDetail> moduleRequest = getBPAModuleRequest();
+   		List<ModuleDetail> moduleRequest = getCHBModuleRequest();
    		
    		log.info("Module details data needs to be fetched from MDMS : " + moduleRequest);
 
@@ -126,7 +85,7 @@ public class MdmsUtil {
    	 *            The tenantId of the CHB
    	 * @return request to search ApplicationType and etc from MDMS
    	 */
-   	public List<ModuleDetail> getBPAModuleRequest() {
+   	public List<ModuleDetail> getCHBModuleRequest() {
 
    		// master details for CHB module
    		List<MasterDetail> chbMasterDtls = new ArrayList<>();
@@ -137,6 +96,10 @@ public class MdmsUtil {
    		chbMasterDtls.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_PURPOSE).filter(filterCode).build());
    		chbMasterDtls.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_RESIDENT_TYPE).filter(filterCode).build());
    		chbMasterDtls.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_SPECIAL_CATEGORY).filter(filterCode).build());
+   		chbMasterDtls.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_CALCULATION_TYPE).build());
+   		chbMasterDtls.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_COMMNUITY_HALLS).build());
+   		chbMasterDtls.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_HALL_CODES).build());
+   		chbMasterDtls.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_DOCUMENTS).build());
 
    		ModuleDetail moduleDetail = ModuleDetail.builder().masterDetails(chbMasterDtls)
    				.moduleName(CommunityHallBookingConstants.CHB_MODULE).build();

@@ -109,14 +109,14 @@ public class WorkflowIntegrator {
 			try {
 				errros = responseContext.read("$.Errors");
 			} catch (PathNotFoundException pnfe) {
-				log.error(CommunityHallBookingConstants.CHB_WORKFLOW_WORKFLOW_ERROR,
+				log.error(CommunityHallBookingConstants.CHB_WORKFLOW_ERROR,
 						" Unable to read the json path in error object : " + pnfe.getMessage());
-				throw new CustomException(CommunityHallBookingConstants.CHB_WORKFLOW_WORKFLOW_ERROR,
+				throw new CustomException(CommunityHallBookingConstants.CHB_WORKFLOW_ERROR,
 						" Unable to read the json path in error object : " + pnfe.getMessage());
 			}
-			throw new CustomException(CommunityHallBookingConstants.CHB_WORKFLOW_WORKFLOW_ERROR, errros.toString());
+			throw new CustomException(CommunityHallBookingConstants.CHB_WORKFLOW_ERROR, errros.toString());
 		} catch (Exception e) {
-			throw new CustomException(CommunityHallBookingConstants.CHB_WORKFLOW_WORKFLOW_ERROR,
+			throw new CustomException(CommunityHallBookingConstants.CHB_WORKFLOW_ERROR,
 					" Exception occured while integrating with workflow : " + e.getMessage());
 		}
 

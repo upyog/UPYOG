@@ -29,6 +29,15 @@ public class DemandService {
 
 	@Autowired
 	private DemandRepository demandRepository;
+	
+	/**
+	 * 1. Fetch tax heads from mdms tax-heads.json
+	 * 2. Map amount to tax heads from CalculateType.json
+	 * 3. Create XDemand for particular tax heads 
+	 * 4. Bill will be automatically generated when fetch bill api is called for demand created by this API
+	 * @param bookingRequest
+	 * @return
+	 */
 
 	public List<Demand> createDemand(CommunityHallBookingRequest bookingRequest) {
 		String tenantId = bookingRequest.getHallsBookingApplication().getTenantId();

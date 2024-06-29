@@ -18,6 +18,7 @@ import org.upyog.chb.repository.CommunityHallBookingRepository;
 import org.upyog.chb.repository.querybuilder.CommunityHallBookingQueryBuilder;
 import org.upyog.chb.repository.rowmapper.BankDetailsRowMapper;
 import org.upyog.chb.repository.rowmapper.CommunityHallBookingRowmapper;
+import org.upyog.chb.repository.rowmapper.CommunityHallSlotAvailabilityRowMapper;
 import org.upyog.chb.repository.rowmapper.DocumentDetailsRowMapper;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.BankDetails;
@@ -26,6 +27,8 @@ import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingRequestInit;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
+import org.upyog.chb.web.models.CommunityHallSlotAvailabiltityDetail;
+import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 import org.upyog.chb.web.models.DocumentDetails;
 
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +51,8 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 	private DocumentDetailsRowMapper detailsRowMapper;
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	@Autowired
+	private CommunityHallSlotAvailabilityRowMapper availabilityRowMapper;
 
 	@Override
 	public void saveCommunityHallBooking(CommunityHallBookingRequest bookingRequest) {
@@ -116,6 +121,21 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 	public void updateBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest) {
 		log.info("Updating community hall booking request data for booking no : " + communityHallsBookingRequest.getHallsBookingApplication().getBookingNo());
 		producer.push(bookingConfiguration.getCommunityHallBookingUpdateTopic(), communityHallsBookingRequest);
+	}
+
+	@Override
+	public List<CommunityHallSlotAvailabiltityDetail> getCommunityHallSlotAvailability(
+			CommunityHallSlotSearchCriteria criteria) {
+		List<Object> paramsList = new ArrayList<>();
+		String query = queryBuilder.getCommunityHallSlotAvailabilityQuery(criteria, paramsList);
+
+		log.info("getBookingDetails : Final query: " + query);
+		log.info("paramsList : " + paramsList);
+		List<CommunityHallSlotAvailabiltityDetail> availabiltityDetails = jdbcTemplate.query(query, paramsList.toArray(),
+				availabilityRowMapper);
+		
+		log.info("Fetched slot availabilty details : " + availabiltityDetails);
+		return availabiltityDetails;
 	}
 
 }

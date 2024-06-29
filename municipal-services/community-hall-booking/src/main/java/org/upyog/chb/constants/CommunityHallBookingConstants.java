@@ -2,9 +2,6 @@ package org.upyog.chb.constants;
 
 public class CommunityHallBookingConstants {
 
-	public static final String CHB_MODULE = "ChbService";
-	public static final String CHB_BUSINESS_SERVICE = "chb";
-	public static final String ASSET_MODULE_CODE = "CHB";
 
 	public static final String COMMUNITY_HALL_BOOKING_CREATED = "Your community hall booking created successfully";
 
@@ -12,9 +9,8 @@ public class CommunityHallBookingConstants {
 
 	public static final String INVALID_TENANT = "INVALID TENANT";
 
-	public static final String CHB_WORKFLOW_WORKFLOW_ERROR = "CHB_WORKFLOW_WORKFLOW_ERROR";
-
 	// mdms path codes
+	public static final String CHB_MODULE = "ChbService";
 	public static final String CHB_JSONPATH_CODE = "$.MdmsRes.CHB";
 	public static final String COMMON_MASTER_JSONPATH_CODE = "$.MdmsRes.common-masters";
 
@@ -23,6 +19,14 @@ public class CommunityHallBookingConstants {
 	public static final String CHB_PURPOSE = "Purpose";
 	public static final String CHB_RESIDENT_TYPE = "ResidenType";
 	public static final String CHB_SPECIAL_CATEGORY = "SpecialCategory";
+	public static final String CHB_CALCULATION_TYPE = "CalculationType";
+	public static final String CHB_COMMNUITY_HALLS = "CommunityHalls";
+	public static final String CHB_HALL_CODES = "HallCode";
+	//TODO: check if we can move documents data to common masters
+	//Check what is the role of common fields config
+	public static final String CHB_DOCUMENTS = "Documents";
+	
+	
 
 	public static final String INVALID_TENANT_ID_MDMS_KEY = "INVALID TENANTID";
 	public static final String INVALID_TENANT_ID_MDMS_MSG = "No data found for this tenant";
@@ -30,12 +34,13 @@ public class CommunityHallBookingConstants {
 	public static final String EMPLOYEE = "EMPLOYEE";
 	public static final String CITIZEN = "CITIZEN";
 	public static final String INVALID_SEARCH = "INVALID SEARCH";
+	public static final String CHB_WORKFLOW_ERROR = "CHB_WORKFLOW_ERROR";
 
 	public static final String MOBILE_NUMBER_PARAM = "mobileNumber";
 	public static final String BUSINESS_SERVICE_PARAM = "businessservice";
 	public static final String TENANT_ID_PARAM = "tenantId";
 	public static final String LOCALITY_PARAM = "locality";
-	public static final String PTR_APPLICATION_NUMBER_PARAM = "applicationNumber";
+	public static final String CHB_BOOKING_NO_PARAM = "bookingNo";
 	public static final String ASSIGNEE_PARAM = "assignee";
 	public static final String STATUS_PARAM = "status";
 	public static final String OFFSET_PARAM = "offset";
@@ -148,15 +153,15 @@ public class CommunityHallBookingConstants {
 
 	public static final String EVENT_PAY_BUSINESSSERVICE = "$businessService";
 
-	public static final String TRACK_APPLICATION_STRING = "You can track your application on the link given below - {PTURL} Thank you";
+	public static final String TRACK_APPLICATION_STRING = "You can track your application on the link given below - {CHB_URL} Thank you";
 
 	public static final String PAY_ONLINE_STRING = "Click on the URL to view the details and pay online {PAYMENT_LINK}";
 
 	public static final String PAYLINK_STRING = "You can pay your application fee on the below link - {PAYLINK} or visit your ULB to pay your dues. Thank you";
 
-	public static final String CERTIFICATE_STRING = "You can download your certificate on the below link - {PTRURL} Thank you";
+	public static final String CERTIFICATE_STRING = "You can download your certificate on the below link - {CHB_URL} Thank you";
 
-	public static final String RECEIPT_STRING = "You can download your receipt on the below link - {PTRURL} Thank you";
+	public static final String RECEIPT_STRING = "You can download your receipt on the below link - {CHB_URL} Thank you";
 	
 	
 	public static final String NOTIFICATION_VERIFY = "chb.en.counter.verify";
