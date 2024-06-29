@@ -49,7 +49,7 @@ public class GarbageAccountRepository {
 		    + ", sub_acc_bill.last_modified_date as sub_acc_bill_last_modified_date "
 			+ " FROM hpudd_grbg_account as acc "
 			+ " LEFT OUTER JOIN hpudd_grbg_bill bill ON acc.garbage_id = bill.garbage_id"
-			+ " LEFT OUTER JOIN hpudd_grbg_account sub_acc ON acc.property_id = sub_acc.property_id"and
+			+ " LEFT OUTER JOIN hpudd_grbg_account sub_acc ON acc.property_id = sub_acc.property_id"
 		    + " LEFT OUTER JOIN hpudd_grbg_bill as sub_acc_bill ON sub_acc.garbage_id = sub_acc_bill.garbage_id";
 
     
