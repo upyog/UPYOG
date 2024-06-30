@@ -934,7 +934,7 @@ public class DemandService {
 				log.info("-------updateDemands-----inside if-------demand.getId()--------" + demand.getId()
 						+ "-------oldDemand.getId()---------" + oldDemand.getId());
 				if (!demand.getIsPaymentCompleted() 
-						//&& totalTax.compareTo(totalCollection) > 0
+						&& totalTax.compareTo(totalCollection) > 0
 						&& !taxHeadMasterCodes.contains(WSCalculationConstant.WS_TIME_PENALTY))
 				{
 					log.info(" Inside Update if ");
@@ -945,6 +945,10 @@ public class DemandService {
 								WSCalculationConstant.EG_WS_INVALID_DEMAND_ERROR_MSG);
 					applyTimeBasedApplicables(demand, requestInfoWrapper, timeBasedExemptionMasterMap, taxPeriods);
 					addRoundOffTaxHead(tenantId, demand.getDemandDetails());
+					demandsToBeUpdated.add(demand);
+				}
+				else
+				{
 					demandsToBeUpdated.add(demand);
 				}
 			}
