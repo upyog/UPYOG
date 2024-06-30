@@ -474,7 +474,7 @@ public class DemandValidatorV1 {
 		Map<String, String> errorMap = new HashMap<>();
 		List<Demand> demands = demandRequest.getDemands();
 		String tenantId = demands.get(0).getTenantId();
-
+		log.info("Inside Validate For Update :  ");
 		List<Demand> oldDemands = new ArrayList<>();
 		List<DemandDetail> olddemandDetails = new ArrayList<>();
 		List<Demand> newDemands = new ArrayList<>();
@@ -494,6 +494,7 @@ public class DemandValidatorV1 {
 				newDemandDetails.addAll(demand.getDemandDetails());
 			}
 		}
+		log.info("Going for validation Of Demand Details next after it:  ");
 		validateOldDemands(oldDemands, olddemandDetails, errorMap, tenantId);
 		
 		/*
@@ -552,11 +553,15 @@ public class DemandValidatorV1 {
 		 */
 		for (Demand demand : oldDemands) {
 			Demand dbDemand = demandMap.get(demand.getId());
-			if (dbDemand == null)
+			log.info("Old Demand From Db: "+ dbDemand.toString());
+			if (dbDemand == null) {
 				unFoundDemandIds.add(demand.getId());
+				log.info("Inside If Condition for validation Of Demand Details as demands not found: ");	
+			}
 			else {
 				/* payment completed field information cannot be changed from outside
 				 */
+				log.info("Inside Else Condition for validation Of Demand Details: ");
 				demand.setIsPaymentCompleted(dbDemand.getIsPaymentCompleted());
 				dbDemandDetailMap.putAll(dbDemand.getDemandDetails().stream()
 						.collect(Collectors.toMap(DemandDetail::getId, Function.identity())));
