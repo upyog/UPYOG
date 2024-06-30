@@ -917,6 +917,16 @@ public class DemandService {
 					.collect(Collectors.toList());
 			;
 			log.info(" taxHeadMasterCodes "+taxHeadMasterCodes );
+			
+			log.info(" isMigratedCon "+ isMigratedCon);
+			log.info(" oldDemand.getId().equalsIgnoreCase(demand.getId()) "+ !oldDemand.getId().equalsIgnoreCase(demand.getId()));
+			log.info(" isMigratedCon "+ !demand.getIsPaymentCompleted());
+			
+			Boolean abc=totalTax.compareTo(totalCollection) > 0;
+			
+			log.info(" isMigratedCon "+ abc);
+			
+			log.info(" isMigratedCon "+	taxHeadMasterCodes.contains(WSCalculationConstant.WS_TIME_PENALTY));
 			if (!(isMigratedCon && oldDemand.getId().equalsIgnoreCase(demand.getId()))) {
 				log.info("-------updateDemands-----inside if-------demand.getId()--------" + demand.getId()
 						+ "-------oldDemand.getId()---------" + oldDemand.getId());
