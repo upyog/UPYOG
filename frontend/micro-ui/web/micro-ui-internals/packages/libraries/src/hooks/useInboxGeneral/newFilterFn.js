@@ -96,20 +96,24 @@ export const filterFunctions = {
   },
   ASSET: (filtersArg) => {
     
-
+console.log("filtersArgss",filtersArg);
     let { uuid } = Digit.UserService.getUser()?.info || {};
 
     const searchFilters = {};
     const workflowFilters = {};
 
-    const { applicationNumbers, mobileNumber, limit, offset, sortBy, sortOrder, total, applicationStatus, services } = filtersArg || {};
+    const { applicationNo, assetParentCategory,assetclassification, limit, offset, sortBy, sortOrder, total, applicationStatus, services } = filtersArg || {};
 
     if (filtersArg?.applicationNo) {
       searchFilters.applicationNo = filtersArg?.applicationNo;
     }
-    if (filtersArg?.applicationNumbers) {
-      searchFilters.applicationNo = applicationNumbers;
+    if (filtersArg?.assetParentCategory) {
+      searchFilters.assetParentCategory = filtersArg?.assetParentCategory;
     }
+    if (filtersArg?.assetclassification) {
+      searchFilters.assetclassification = filtersArg?.assetclassification;
+    }
+    
     
     if (applicationStatus && applicationStatus?.[0]?.applicationStatus) {
       workflowFilters.status = applicationStatus.map((status) => status.uuid);
@@ -123,8 +127,14 @@ export const filterFunctions = {
     if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
       workflowFilters.assignee = uuid;
     }
-    if (mobileNumber) {
-      searchFilters.mobileNumber = mobileNumber;
+    if (applicationNo) {
+      searchFilters.applicationNo = applicationNo;
+    }
+    if (assetclassification) {
+      searchFilters.assetclassification = assetclassification;
+    }
+    if (assetParentCategory) {
+      searchFilters.assetParentCategory = assetParentCategory;
     }
 
 

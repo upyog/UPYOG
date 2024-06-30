@@ -28,9 +28,9 @@ const SearchReport = ({path}) => {
         }
 
         let payload = Object.keys(data).filter( k => data[k] ).reduce( (acc, key) => ({...acc,  [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {} );
-        if(Object.entries(payload).length>0 && !payload.applicationNo && !payload.creationReason && !payload.fromDate && !payload.mobileNumber && !payload.applicationNo && !payload.status && !payload.toDate)
-        setShowToast({ warning: true, label: "ERR_PTR_FILL_VALID_FIELDS" });
-        else if(Object.entries(payload).length>0 && (payload.creationReason || payload.status ) && (!payload.applicationNo && !payload.fromDate && !payload.mobileNumber && !payload.applicationNo && !payload.toDate))
+        if(Object.entries(payload).length>0 &&  !payload.assetClassification && !payload.assetParentCategory && !payload.fromDate && !payload.applicationNo && !payload.toDate)
+        setShowToast({ warning: true, label: "ERR_VALID_FIELDS" });
+        else if(Object.entries(payload).length>0 && (!payload.assetClassification && !payload.assetParentCategory ) && (!payload.applicationNo && !payload.fromDate  && !payload.applicationNo && !payload.toDate))
         setShowToast({ warning: true, label: "ERR_PROVIDE_MORE_PARAM_WITH_TYPE_STATUS" });
         else if(Object.entries(payload).length>0 && (payload.fromDate && !payload.toDate) || (!payload.fromDate && payload.toDate))
         setShowToast({ warning: true, label: "ERR_PROVIDE_BOTH_FORM_TO_DATE" });

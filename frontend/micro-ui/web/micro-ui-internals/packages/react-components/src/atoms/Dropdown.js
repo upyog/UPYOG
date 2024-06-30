@@ -285,6 +285,7 @@ Dropdown.propTypes = {
   optionKey: PropTypes.any,
   select: PropTypes.any,
   t: PropTypes.func,
+  placeholder:"Please Select"
 };
 
 Dropdown.defaultProps = {

@@ -21,9 +21,9 @@
   "dependencies": {
     "@upyog/digit-ui-libraries": "1.7.0-beta.5",
     "@upyog/digit-ui-react-components": "1.7.0-beta.4",
+    "exif-js": "^2.3.0",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",
-    "exif-js": "^2.3.0",
     "lodash.merge": "^4.6.2",
     "microbundle-crl": "^0.13.11",
     "react": "17.0.2",

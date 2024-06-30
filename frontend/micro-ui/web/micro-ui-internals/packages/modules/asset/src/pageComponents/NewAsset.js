@@ -8,7 +8,7 @@
 
 
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, Dropdown } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, Dropdown,InfoBannerIcon  } from "@upyog/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/ASTTimeline";
 import { Controller, useForm } from "react-hook-form";
@@ -391,6 +391,21 @@ const NewAsset
     }
 
 
+    const { data: warrantyperiod } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Warranty" }],
+      {
+        select: (data) => {
+            const formattedData = data?.["ASSET"]?.["Warranty"]
+            return formattedData;
+        },
+    }); 
+    let warrantyTime = [];
+
+    warrantyperiod && warrantyperiod.map((warrantytime) => {
+      warrantyTime.push({i18nKey: `${warrantytime.name}`, code: `${warrantytime.code}`, value: `${warrantytime.name}`})
+    }) 
+
+
+
     // used arrow functions for the IT assets, need tp change for other assets to 
 
     const selectmanufacturer = (e) => setmanufacturer(e.target.value);
@@ -438,6 +453,20 @@ const NewAsset
         calculateAssetAge(purchaseDate);
       }
     }, [purchaseDate]);
+
+
+    const { data: brandsName } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Brands" }],
+      {
+        select: (data) => {
+            const formattedData = data?.["ASSET"]?.["Brands"]
+            return formattedData;
+        },
+    }); 
+    let brandsname = [];
+
+    brandsName && brandsName.map((brands) => {
+      brandsname.push({i18nKey: `AST_${brands.code}`, code: `${brands.code}`, value: `${brands.name}`})
+    }) 
 
 
 
@@ -544,7 +573,7 @@ const NewAsset
           onSelect={goNext}
           onSkip={onSkip}
           t={t}
-          isDisabled={ ( formData?.asset?.assettype?.code === "LAND" ? (!landType || !area) : false) || (formData?.asset?.assettype?.code === "BUILDING" ? (!buildingSno || !plotArea) : false) }
+          isDisabled={ ( formData?.asset?.assettype?.code === "LAND" ? (!landType || !area) : false) || (formData?.asset?.assettype?.code === "BUILDING" ? (!buildingSno || !plotArea) : false) || (formData?.asset?.assettype?.code === "IT"  ? (!currentLocation || !brand || !purchaseDate) : false ) }
         >
           <div>
 
@@ -1692,22 +1721,26 @@ const NewAsset
             {formData?.asset?.assettype?.code === "IT" && (
               <React.Fragment>
               <CardLabel>{`${t("AST_BRAND") + " *"}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="brand"
-                value={brand}
-                onChange={setBrand}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
+              <Controller
+                control={control}
+                name={"brand"}
+                defaultValue={brand}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                render={(props) => (
+                  <Dropdown
+
+                    className="form-field"
+                    selected={brand}
+                    select={setbrand}
+                    option={brandsname}
+                    optionKey="i18nKey"
+                    placeholder={"Select"}
+
+                    t={t}
+                  />
+
+                )}
+
               />
               <CardLabel>{`${t("AST_INVOICE_DATE") + " *"}`}</CardLabel>
                <TextInput
@@ -1739,12 +1772,26 @@ const NewAsset
                 ValidationRequired={false}
                 {...(validation = {
                   isRequired: false,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
+                  pattern: "^[a-zA-Z ]+$",
+                  type: "tel",
+                  title: t("MATCH_THE_FORMAT"),
                 })}
               />
-              <CardLabel>{`${t("AST_PURCHASE_COST") + " *"}`}</CardLabel>
+              <div>{t("AST_PURCHASE_COST")}
+              <div className="tooltip" style={{width: "12px", height: "5px",marginLeft:"10px", display: "inline-flex",alignItems: "center"}}>
+              <InfoBannerIcon fill="#FF0000" style />
+                    <span className="tooltiptext" style={{
+                        whiteSpace: "pre-wrap",
+                        fontSize: "small",
+                        wordWrap:"break-word",
+                        width:"300px",
+                        marginLeft:"15px",
+                        marginBottom:"-10px"
+                        //overflow:"auto"
+                    }}>
+                    {`${t(`AST_PURCHASE`)}`}
+                    </span>
+                </div></div>
               <TextInput
                 t={t}
                 type={"text"}
@@ -1757,13 +1804,28 @@ const NewAsset
                 ValidationRequired={false}
                 {...(validation = {
                   isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
+                  pattern: "^[0-9]+$",
+                  type: "tel",
+                  title: "",
                 })}
                 placeholder={"In Rupees"}
               />
-              <CardLabel>{`${t("AST_PURCHASE_ORDER") + " *"}`}</CardLabel>
+              
+              <div>{t("AST_PURCHASE_ORDER") + " *"}
+              <div className="tooltip" style={{width: "12px", height: "5px",marginLeft:"10px", display: "inline-flex",alignItems: "center"}}>
+              <InfoBannerIcon fill="#FF0000" style />
+                    <span className="tooltiptext" style={{
+                        whiteSpace: "pre-wrap",
+                        fontSize: "small",
+                        wordWrap:"break-word",
+                        width:"300px",
+                        marginLeft:"15px",
+                        marginBottom:"-10px"
+                        //overflow:"auto"
+                    }}>
+                    {`${t(`AST_PURCHASE_NUMBER`)}`}
+                    </span>
+                </div></div>
               <TextInput
                 t={t}
                 type={"text"}
@@ -1776,12 +1838,27 @@ const NewAsset
                 ValidationRequired={false}
                 {...(validation = {
                   isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
+                  pattern: "^[0-9]+$",
+                  type: "tel",
+                  title: "",
                 })}
               />
-              <CardLabel>{`${t("AST_PURCHASE_DATE") + " *"}`}</CardLabel>
+             
+              <div>{t("AST_PURCHASE_DATE") + " *"}
+              <div className="tooltip" style={{width: "12px", height: "5px",marginLeft:"10px", display: "inline-flex",alignItems: "center"}}>
+              <InfoBannerIcon fill="#FF0000" style />
+                    <span className="tooltiptext" style={{
+                        whiteSpace: "pre-wrap",
+                        fontSize: "small",
+                        wordWrap:"break-word",
+                        width:"300px",
+                        marginLeft:"15px",
+                        marginBottom:"-10px"
+                        //overflow:"auto"
+                    }}>
+                    {`${t(`AST_DATE_PURCHASE`)}`}
+                    </span>
+                </div></div>
               <TextInput
               t={t}
               type={"date"}
@@ -1811,7 +1888,7 @@ const NewAsset
                   style={{ flex: 1, marginRight: '10px' }}
                   ValidationRequired={false}
                   {...(validation = {
-                    isRequired: false,
+                    isRequired: true,
                     pattern: "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$",
                     type: "text",
                     title: t("VALID_LAT_LONG"),
@@ -1847,29 +1924,12 @@ const NewAsset
                 ValidationRequired={false}
                 {...(validation = {
                   isRequired: false,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
+                  pattern: "^[a-zA-Z ]+$",
+                  type: "tel",
+                  title: t("MATCH_THE_FORMAT"),
                 })}
               />
-              {/* <CardLabel>{`${t("AST_DEPARTMENT")}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="department"
-                value={department}
-                onChange={selectdepartment}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
-              /> */}
+
               <CardLabel>{`${t("AST_ASSET_AGE")}`}</CardLabel>
               <TextInput
                 t={t}
@@ -1878,33 +1938,28 @@ const NewAsset
                 optionKey="i18nKey"
                 name="assetAge"
                 value={assetAge}
-                // onChange={selectassetage}
                 style={{ width: "50%" }}
-                // ValidationRequired={false}
-                // {...(validation = {
-                //   isRequired: true,
-                //   pattern: "^[a-zA-Z-.`' ]*$",
-                //   type: "text",
-                //   title: t("PT_NAME_ERROR_MESSAGE"),
-                // })}
               />
               <CardLabel>{`${t("AST_WARRANTY")}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="warranty"
-                value={warranty}
-                onChange={selectwarranty}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: false,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
-                  title: t("PT_NAME_ERROR_MESSAGE"),
-                })}
+              <Controller
+                control={control}
+                name={"warranty"}
+                defaultValue={warranty}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                render={(props) => (
+                  <Dropdown
+
+                    className="form-field"
+                    selected={warranty}
+                    select={setwarranty}
+                    option={warrantyTime}
+                    optionKey="i18nKey"
+                    placeholder={"Select"}
+                    t={t}
+                  />
+
+                )}
+
               />
 
               </React.Fragment>

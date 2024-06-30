@@ -113,7 +113,7 @@ export const Assetdata = (data) => {
       assetParentCategory: data?.asset?.assettype?.code,
       assetCategory:data?.asset?.assetsubtype?.code,
       assetSubCategory:data?.asset?.assetparentsubCategory?.code,
-      department: data?.asset?.Department,
+      department: data?.asset?.Department?.code,
       financialYear: data?.asset?.financialYear?.code,
       sourceOfFinance: data?.asset?.sourceOfFinance?.code,
       applicationNo: "",
