@@ -1,8 +1,9 @@
   import React, { useEffect, useState } from "react";
-  import { FormStep, TextInput, CardLabel, MobileNumber, Dropdown } from "@upyog/digit-ui-react-components";
+  import { FormStep, TextInput, CardLabel, InfoBannerIcon, Dropdown } from "@upyog/digit-ui-react-components";
   import { useLocation } from "react-router-dom";
   import Timeline from "../components/ASTTimeline";
   import { Controller, useForm } from "react-hook-form";
+  
 
   const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => {
     const { control } = useForm();
@@ -24,7 +25,7 @@
       };
     
       const initialFinancialYear = calculateCurrentFinancialYear();
-
+      
 
     const [assetclassification, setassetclassification] = useState((formData.asset && formData.asset[index] && formData.asset[index].assetclassification) || formData?.asset?.assetclassification || "");
     const [assettype, setassettype] = useState((formData.asset && formData.asset[index] && formData.asset[index].assettype) || formData?.asset?.assettype || "");
@@ -39,7 +40,7 @@
     const [BookPagereference, setBookPagereference] = useState((formData.asset && formData.asset[index] && formData.asset[index].BookPagereference) || formData?.asset?.BookPagereference || "");
     const [AssetName, setAssetName] = useState((formData.asset && formData.asset[index] && formData.asset[index].AssetName) || formData?.asset?.AssetName || "");
     const [Assetdescription, setAssetdescription] = useState((formData.asset && formData.asset[index] && formData.asset[index].Assetdescription) || formData?.asset?.Assetdescription || "");
-    const [Department, setDepartment] = useState((formData.asset && formData.asset[index] && formData.asset[index].Department) || formData?.asset?.Department || "");
+    const [Department, setDepartment] = useState((formData.asset && formData.asset[index] && formData.asset[index].Department) || formData?.asset?.Department  || "");
 
 
 
@@ -69,14 +70,15 @@
       {
         select: (data) => {
             const formattedData = data?.["ASSET"]?.["SourceFinance"]
-            return formattedData;
+            const activeData = formattedData?.filter(item => item.active === true);
+            return activeData;
         },
     });   // Note : used direct custom MDMS to get the Data ,Do not copy and paste without understanding the Context
 
     let sourcefinance = [];
 
     sourceofFinanceMDMS && sourceofFinanceMDMS.map((finance) => {
-      sourcefinance.push({i18nKey: `${finance.name}`, code: `${finance.code}`, value: `${finance.name}`})
+      sourcefinance.push({i18nKey: `AST_${finance.code}`, code: `${finance.code}`, value: `${finance.name}`})
     }) 
 
     const { data: currentFinancialYear } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "FinancialYear" }],
@@ -90,8 +92,26 @@
     let financal = []; 
 
     currentFinancialYear && currentFinancialYear.map((financialyear) => {
-      financal.push({i18nKey: `${financialyear.name}`, code: `${financialyear.code}`, value: `${financialyear.name}`})
+      financal.push({i18nKey: `${financialyear.code}`, code: `${financialyear.code}`, value: `${financialyear.name}`})
     }) 
+
+
+
+    const { data: departmentName } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Department" }],
+      {
+        select: (data) => {
+            const formattedData = data?.["ASSET"]?.["Department"]
+            return formattedData;
+        },
+    }); 
+    let departNamefromMDMS = [];
+
+    departmentName && departmentName.map((departmentname) => {
+      departNamefromMDMS.push({i18nKey: `AST_${departmentname.code}`, code: `${departmentname.code}`, value: `${departmentname.name}`})
+    }) 
+
+    
+
 
 
 
@@ -121,7 +141,7 @@
       Asset_Type.map((asset_type_mdms) => {
           if (asset_type_mdms.assetClassification == assetclassification?.code) {
               asset_type.push({
-              i18nKey: `${asset_type_mdms.code}`,
+              i18nKey: `${asset_type_mdms.name}`,
               code: `${asset_type_mdms.code}`,
               value: `${asset_type_mdms.name}`
             });
@@ -134,7 +154,7 @@
         Asset_Sub_Type.map((asset_sub_type_mdms) => {
             if (asset_sub_type_mdms.assetParentCategory == assettype?.code) {
                 asset_sub_type.push({
-                i18nKey: `${asset_sub_type_mdms.code}`,
+                i18nKey: `${asset_sub_type_mdms.name}`,
                 code: `${asset_sub_type_mdms.code}`,
                 value: `${asset_sub_type_mdms.name}`
               });
@@ -146,7 +166,7 @@
           Asset_Parent_Sub_Type.map((asset_parent_mdms) => {
             if (asset_parent_mdms.assetCategory == assetsubtype?.code) {
               asset_parent_sub_category.push({
-                i18nKey: `${asset_parent_mdms.code}`,
+                i18nKey: `${asset_parent_mdms.name}`,
                 code: `${asset_parent_mdms.code}`,
                 value: `${asset_parent_mdms.name}`
               });
@@ -156,7 +176,6 @@
     
 
       
-
 
 
 
@@ -240,8 +259,25 @@
       >
         <div>
 
-        <CardLabel>{`${t("AST_FINANCIAL_YEAR")}`}</CardLabel>
-        <Controller
+        
+        
+        <div>{t("AST_FINANCIAL_YEAR")}
+          <div className="tooltip" style={{width: "12px", height: "5px",marginLeft:"10px", display: "inline-flex",alignItems: "center"}}>
+                    <InfoBannerIcon fill="#FF0000" style />
+                    <span className="tooltiptext" style={{
+                        whiteSpace: "pre-wrap",
+                        fontSize: "small",
+                        wordWrap:"break-word",
+                        width:"300px",
+                        marginLeft:"15px",
+                        marginBottom:"-10px"
+                       
+                    }}>
+                    {`${t(`AST_WHICH_FINANCIAL_YEAR`)}`}
+                    </span>
+                </div></div>
+        
+              <Controller
               control={control}
               name={"financialYear"}
               defaultValue={financialYear}
@@ -253,11 +289,27 @@
                   select={setfinancialYear}
                   option={financal}
                   optionKey="i18nKey"
+                  placeholder={"Select"}
                   t={t}
                 />
               )}
             />
-              <CardLabel>{`${t("AST_SOURCE_FINANCE")}`}</CardLabel>
+
+              <div>{t("AST_SOURCE_FINANCE")}
+            <div className="tooltip" style={{width: "12px", height: "5px",marginLeft:"10px", display: "inline-flex",alignItems: "center"}}>
+                    <InfoBannerIcon fill="#FF0000" style />
+                    <span className="tooltiptext" style={{
+                        whiteSpace: "pre-wrap",
+                        fontSize: "small",
+                        wordWrap:"break-word",
+                        width:"300px",
+                        marginLeft:"15px",
+                        marginBottom:"-10px"
+                       
+                    }}>
+                    {`${t(`AST_SOURCE_OF_FUNDING`)}`}
+                    </span>
+                </div></div>
               <Controller
                 control={control}
                 name={"sourceOfFinance"}
@@ -271,6 +323,7 @@
                     select={setsourceOfFinance}
                     option={sourcefinance}
                     optionKey="i18nKey"
+                    placeholder={"Select"}
                     t={t}
                   />
 
@@ -278,7 +331,21 @@
 
               />
           
-          <CardLabel>{`${t("AST_CATEGORY")}`}</CardLabel>
+              <div>{t("AST_CATEGORY")}
+            <div className="tooltip" style={{width: "12px", height: "5px",marginLeft:"10px", display: "inline-flex",alignItems: "center"}}>
+                    <InfoBannerIcon fill="#FF0000" style />
+                    <span className="tooltiptext" style={{
+                        whiteSpace: "pre-wrap",
+                        fontSize: "small",
+                        wordWrap:"break-word",
+                        width:"300px",
+                        marginLeft:"15px",
+                        marginBottom:"-10px"
+                       
+                    }}>
+                    {`${t(`AST_CLASSIFICATION_ASSET`)}`}
+                    </span>
+                </div></div>
               <Controller
                 control={control}
                 name={"assetclassification"}
@@ -286,12 +353,13 @@
                 rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
                 render={(props) => (
                   <Dropdown
-
                     className="form-field"
                     selected={assetclassification}
                     select={setassetclassification}
                     option={menu_Asset}
                     optionKey="i18nKey"
+                    placeholder={"Select"}
+
                     t={t}
                   />
 
@@ -312,6 +380,8 @@
                     select={setassettype}
                     option={asset_type}
                     optionKey="i18nKey"
+                    placeholder={"Select"}
+
                     t={t}
                   />
 
@@ -332,6 +402,8 @@
                     select={setassetsubtype}
                     option={asset_sub_type}
                     optionKey="i18nKey"
+                    placeholder={"Select"}
+
                     t={t}
                   />
 
@@ -353,6 +425,8 @@
                     select={setassetparentsubCategory}
                     option={asset_parent_sub_category}
                     optionKey="i18nKey"
+                    placeholder={"Select"}
+
                     t={t}
                   />
 
@@ -360,7 +434,22 @@
 
               />
               
-              <CardLabel>{`${t("AST_BOOK_REF_SERIAL_NUM")}`}</CardLabel>
+
+              <div>{t("AST_BOOK_REF_SERIAL_NUM")}
+            <div className="tooltip" style={{width: "12px", height: "5px",marginLeft:"10px", display: "inline-flex",alignItems: "center"}}>
+                    <InfoBannerIcon fill="#FF0000" style />
+                    <span className="tooltiptext" style={{
+                        whiteSpace: "pre-wrap",
+                        fontSize: "small",
+                        wordWrap:"break-word",
+                        width:"300px",
+                        marginLeft:"15px",
+                        marginBottom:"-10px"
+                       
+                    }}>
+                    {`${t(`AST_BOOK_REF_NUMBER`)}`}
+                    </span>
+                </div></div>
               <TextInput
                 t={t}
                 type={"text"}
@@ -392,13 +481,28 @@
                 ValidationRequired={false}
                 {...(validation = {
                   isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
+                  pattern: "^[a-zA-Z ]+$",
+                  type: "tel",
                   title: t("PT_NAME_ERROR_MESSAGE"),
                 })}
               />
               
-              <CardLabel>{`${t("ASSET_DESCRIPTION")}`}</CardLabel>
+
+              <div>{t("ASSET_DESCRIPTION")}
+              <div className="tooltip" style={{width: "12px", height: "5px",marginLeft:"10px", display: "inline-flex",alignItems: "center"}}>
+                    <InfoBannerIcon fill="#FF0000" style />
+                    <span className="tooltiptext" style={{
+                        whiteSpace: "pre-wrap",
+                        fontSize: "small",
+                        wordWrap:"break-word",
+                        width:"300px",
+                        marginLeft:"15px",
+                        marginBottom:"-10px"
+                       
+                    }}>
+                    {`${t(`AST_ANY_DESCRIPTION`)}`}
+                    </span>
+                </div></div>
               <TextInput
                 t={t}
                 type={"text"}
@@ -409,37 +513,47 @@
                 onChange={setassetDescription}
                 style={{ width: "50%" }}
                 ValidationRequired={false}
-                // {...(validation = {
-                //   isRequired: true,
-                //   pattern: "^[a-zA-Z-.`' ]*$",
-                //   type: "text",
-                //   title: t("PT_NAME_ERROR_MESSAGE"),
-                // })}
-              />
-              
-              <CardLabel>{`${t("AST_DEPARTMENT")}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="Department"
-                value={Department}
-                onChange={setdepartment}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
                 {...(validation = {
-                  isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
-                  type: "text",
+                  isRequired: false,
+                  pattern: "^[a-zA-Z ]+$",
+                  type: "tel",
                   title: t("PT_NAME_ERROR_MESSAGE"),
                 })}
               />
-        
-          
 
-          
-          
+              
+              <div>{t("AST_DEPARTMENT")}
+              <div className="tooltip" style={{width: "12px", height: "5px",marginLeft:"10px", display: "inline-flex",alignItems: "center"}}>
+              <InfoBannerIcon fill="#FF0000" style />
+                    <span className="tooltiptext" style={{
+                        whiteSpace: "pre-wrap",
+                        fontSize: "small",
+                        wordWrap:"break-word",
+                        width:"300px",
+                        marginLeft:"15px",
+                        marginBottom:"-10px"
+                        //overflow:"auto"
+                    }}>
+                    {`${t(`AST_PROCURED_DEPARTMENT`)}`}
+                    </span>
+                </div></div>
+              <Controller
+                control={control}
+                name={"Department"}
+                defaultValue={Department}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                render={(props) => (
+                  <Dropdown
+                    className="form-field"
+                    selected={Department}
+                    select={setDepartment}
+                    option={departNamefromMDMS}
+                    optionKey="i18nKey"
+                    placeholder={"Select"}
+                    t={t}
+                  />
+                )}
+              />
         </div>
       </FormStep>
       </React.Fragment>

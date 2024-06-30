@@ -113,7 +113,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
           <Row
             label={t("AST_DEPARTMENT")}
-            text={`${t(checkForNA(asset?.Department))}`}
+            text={`${t(checkForNA(asset?.Department?.value))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/asset-deatils`} />}
         />
 
@@ -383,7 +383,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             <React.Fragment>
               <Row
               label={t("AST_BRAND")}
-              text={`${t(checkForNA(assetDetails?.brand))}`}
+              text={`${t(checkForNA(assetDetails?.brand?.value))}`}
              actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/assets`} />}
 
 
@@ -443,7 +443,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
           />
           <Row
               label={t("AST_WARRANTY")}
-              text={`${t(checkForNA(assetDetails?.warranty))}`}
+              text={`${t(checkForNA(assetDetails?.warranty?.value))}`}
              actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/assets`} />}
 
 
@@ -462,12 +462,12 @@ const CheckPage = ({ onSubmit, value = {} }) => {
          <Row
             label={t("MYCITY_CODE_LABEL")}
             text={`${t(checkForNA(address?.city?.name))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/street`} />}
+            actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/address`} />}
         />
          <Row
             label={t("AST_LOCALITY")}
             text={`${t(checkForNA(address?.locality?.name))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/street`} />}
+            actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/address`} />}
         />
 
         </StatusTable>

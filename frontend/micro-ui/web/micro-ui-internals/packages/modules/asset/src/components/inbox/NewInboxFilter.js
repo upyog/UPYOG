@@ -15,7 +15,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
   const ApplicationTypeMenu = [
     {
       label: "AST_NEW_ASSET",
-      value: "asset",
+      value: "asset-create",
     },
     
   ];

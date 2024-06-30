@@ -23,10 +23,15 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
     
     const isMobile = window.Digit.Utils.browser.isMobile();
 
-    const user = Digit.UserService.getUser().info;
+    const user = Digit.UserService.getUser();
 
+   console.log("user",user);
+   const { pincode, city } =  "";
+   const allCities = Digit.Hooks.asset.useTenants();
+   const cities = user?.info?.type  === "EMPLOYEE" ? allCities.filter((city) => city?.name=== "Mohali") : allCities;
 
-    
+  console.log("citiessss",cities);
+ 
     
 
     const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
@@ -35,7 +40,7 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
             limit: !isMobile && 10,
             sortBy: "commencementDate",
             sortOrder: "DESC",
-            city: user?.tenantId
+            city: cities?.[0]?.name
         }
     })
     useEffect(() => {
@@ -57,8 +62,14 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
     });
   
     
+    const { data: Asset_Type } = Digit.Hooks.asset.useAssetType(stateId, "ASSET", "assetParentCategory"); 
 
-    
+    let asset_Type = [];
+
+    Asset_Type &&
+    Asset_Type.map((asset_type_mdms) => {
+      asset_Type.push({ i18nKey: `${asset_type_mdms.name}`, code: `${asset_type_mdms.code}`, value: `${asset_type_mdms.name}` });
+    });
    
     
 
@@ -68,24 +79,15 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
     const columns = useMemo( () => ([
         
         
-        {
+      
+          {
             Header: t("ES_ASSET_RESPONSE_CREATE_LABEL"),
-            accessor: "applicationNo",
-            disableSortBy: true,
-            Cell: ({ row }) => {
-              return (
-                <div>
-                  <span className="link">
-                    <Link to={`/digit-ui/employee/asset/assetservice/applicationsearch/application-details/${row.original?.["applicationNo"]}`}>
-                      {row.original?.["applicationNo"]}
-                    </Link>
-                  </span>
-                </div>
-              );
+            Cell: ( row ) => {
+              console.log("roeewwwinaplicationn",row);
+              return GetCell(`${row?.row?.original?.["applicationNo"]}`)
             },
+            disableSortBy: true,
           },
-        
-
           {
             Header: t("AST_ASSET_CATEGORY_LABEL"),
             Cell: ( row ) => {
@@ -209,7 +211,7 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
                 </SearchField>
                 
                 <SearchField>
-                      <label>{t("AST_CATEGORY")}</label>
+                      <label>{t("AST_ASSET_CATEGORY_LABEL")}</label>
                       <Controller
                               control={control}
                               name="assetClassification"
@@ -226,10 +228,24 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
                               )}
                               />
                   </SearchField>
-
-              
-
-               
+                  <SearchField>
+                      <label>{t("AST_PARENT_CATEGORY_LABEL")}</label>
+                      <Controller
+                              control={control}
+                              name="assetParentCategory"
+                              render={(props) => (
+                                  <Dropdown
+                                  selected={props.value}
+                                  select={props.onChange}
+                                  onBlur={props.onBlur}
+                                  option={asset_Type}
+                                  optionKey="i18nKey"
+                                  t={t}
+                                  disable={false}
+                                  />
+                              )}
+                              />
+                  </SearchField>
                 <SearchField>
                     <label>{t("AST_FROM_DATE")}</label>
                     <Controller
@@ -252,10 +268,11 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
                     onClick={() => {
                         reset({ 
                             applicationNo: "", 
-                            city: user?.tenantId,
+                            city: cities?.[0]?.name,
                             fromDate: "", 
                             toDate: "",
                             assetClassification: "",
+                            assetParentCategory: "",
                             pincode: "",
                             offset: 0,
                             limit: 10,

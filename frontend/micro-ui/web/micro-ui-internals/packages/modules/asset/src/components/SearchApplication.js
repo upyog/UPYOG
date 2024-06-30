@@ -6,14 +6,17 @@
   const ASSETSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
       const isMobile = window.Digit.Utils.browser.isMobile();
 
-      const user = Digit.UserService.getUser().info;
+      const user = Digit.UserService.getUser();
+
+      const allCities = Digit.Hooks.asset.useTenants();
+      const cities = user?.info?.type  === "EMPLOYEE" ? allCities.filter((city) => city?.name=== "Mohali") : allCities;
       const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
           defaultValues: {
               offset: 0,
               limit: !isMobile && 10,
               sortBy: "commencementDate",
               sortOrder: "DESC",
-              city: user?.tenantId
+              city: cities?.[0]?.name
           }
       })
       useEffect(() => {
@@ -141,7 +144,7 @@
                           reset({ 
                               applicationNo: "", 
                               fromDate: "", 
-                              city: user?.tenantId,
+                              city: cities?.[0]?.name,
                               toDate: "",
                               offset: 0,
                               limit: 10,

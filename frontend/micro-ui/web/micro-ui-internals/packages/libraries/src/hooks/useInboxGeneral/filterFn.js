@@ -106,16 +106,21 @@ export const filterFunctions = {
     return { searchFilters, workflowFilters };
   },
   ASSET: (filtersArg) => {
-    console.log("filer",filtersArg )
+    console.log("filtersArg",filtersArg);
     let { uuid } = Digit.UserService.getUser()?.info || {};
 
     const searchFilters = {};
     const workflowFilters = {};
 
-    const { applicationNo, mobileNumber, limit, offset, sortBy, sortOrder, total, applicationStatus, services } = filtersArg || {};
-
+    const { applicationNo, mobileNumber,assetclassification, assetParentCategory, limit, offset, sortBy, sortOrder, total, applicationStatus, services } = filtersArg || {};
+    console.log("filtersArg",applicationNo,assetclassification,assetParentCategory);
     if (filtersArg?.applicationNo) {
       searchFilters.applicationNo = filtersArg?.applicationNo;
+    }
+    if (filtersArg?.assetclassification) {
+      searchFilters.assetclassification = filtersArg?.assetclassification;
+    }if (filtersArg?.assetParentCategory) {
+      searchFilters.assetParentCategory = filtersArg?.assetParentCategory;
     }
     
     if (applicationStatus && applicationStatus?.[0]) {
@@ -137,6 +142,12 @@ export const filterFunctions = {
     }
     if (applicationNo) {
       searchFilters.applicationNo = applicationNo;
+    }
+    if (assetclassification) {
+      searchFilters.assetclassification = assetclassification;
+    }
+    if (assetParentCategory) {
+      searchFilters.assetParentCategory = assetParentCategory;
     }
     if (sortBy) {
       searchFilters.sortBy = sortBy;
