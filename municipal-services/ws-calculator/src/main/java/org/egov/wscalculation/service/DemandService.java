@@ -916,12 +916,15 @@ public class DemandService {
 			List<String> taxHeadMasterCodes = demand.getDemandDetails().stream().map(DemandDetail::getTaxHeadMasterCode)
 					.collect(Collectors.toList());
 			;
+			log.info(" taxHeadMasterCodes "+taxHeadMasterCodes );
 			if (!(isMigratedCon && oldDemand.getId().equalsIgnoreCase(demand.getId()))) {
 				log.info("-------updateDemands-----inside if-------demand.getId()--------" + demand.getId()
 						+ "-------oldDemand.getId()---------" + oldDemand.getId());
 				if (!demand.getIsPaymentCompleted() && totalTax.compareTo(totalCollection) > 0
 						&& !taxHeadMasterCodes.contains(WSCalculationConstant.WS_TIME_PENALTY))
 				{
+					log.info(" Inside Update if ");
+
 					if (demand.getStatus() != null && WSCalculationConstant.DEMAND_CANCELLED_STATUS
 							.equalsIgnoreCase(demand.getStatus().toString()))
 						throw new CustomException(WSCalculationConstant.EG_WS_INVALID_DEMAND_ERROR,
@@ -932,7 +935,7 @@ public class DemandService {
 				}
 			}
 		});
-
+		log.info("demand to be update123 "+ demandsToBeUpdated);
 		// Call demand update in bulk to update the interest or penalty
 		DemandRequest request = DemandRequest.builder().demands(demandsToBeUpdated).requestInfo(requestInfo).build();
 		log.info("Is call For Bulk Gen"+isCallFromBulkGen);
