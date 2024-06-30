@@ -920,7 +920,8 @@ public class DemandService {
 				log.info("-------updateDemands-----inside if-------demand.getId()--------" + demand.getId()
 						+ "-------oldDemand.getId()---------" + oldDemand.getId());
 				if (!demand.getIsPaymentCompleted() && totalTax.compareTo(totalCollection) > 0
-						&& !taxHeadMasterCodes.contains(WSCalculationConstant.WS_TIME_PENALTY)) {
+						&& !taxHeadMasterCodes.contains(WSCalculationConstant.WS_TIME_PENALTY))
+				{
 					if (demand.getStatus() != null && WSCalculationConstant.DEMAND_CANCELLED_STATUS
 							.equalsIgnoreCase(demand.getStatus().toString()))
 						throw new CustomException(WSCalculationConstant.EG_WS_INVALID_DEMAND_ERROR,
@@ -934,6 +935,7 @@ public class DemandService {
 
 		// Call demand update in bulk to update the interest or penalty
 		DemandRequest request = DemandRequest.builder().demands(demandsToBeUpdated).requestInfo(requestInfo).build();
+		log.info("Is call For Bulk Gen"+isCallFromBulkGen);
 		if (!isCallFromBulkGen)
 			repository.fetchResult(utils.getUpdateDemandUrl(), request);
 		log.info("demand to be update "+ demandsToBeUpdated);
@@ -1150,7 +1152,7 @@ public class DemandService {
 						.taxHeadMasterCode(WSCalculationConstant.WS_TIME_REBATE).demandId(demandId).tenantId(tenantId)
 						.build());
 		}
-
+log.info("Is current Demand  "+isCurrentDemand);
 		return isCurrentDemand;
 	}
 
