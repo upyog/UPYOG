@@ -916,21 +916,25 @@ public class DemandService {
 			List<String> taxHeadMasterCodes = demand.getDemandDetails().stream().map(DemandDetail::getTaxHeadMasterCode)
 					.collect(Collectors.toList());
 			;
+			
+			log.info("Demand Id: "+ demand.getId());
 			log.info(" taxHeadMasterCodes "+taxHeadMasterCodes );
 			
 			log.info(" isMigratedCon "+ isMigratedCon);
 			log.info(" oldDemand.getId().equalsIgnoreCase(demand.getId()) "+ !oldDemand.getId().equalsIgnoreCase(demand.getId()));
-			log.info(" isMigratedCon "+ !demand.getIsPaymentCompleted());
-			
+			log.info(" Payment Completed  "+ demand.getIsPaymentCompleted());
+			log.info("Total Tax "+ totalTax);
+			log.info("Total totalCollection "+ totalCollection);
 			Boolean abc=totalTax.compareTo(totalCollection) > 0;
 			
-			log.info(" isMigratedCon "+ abc);
+			log.info(" tax condition "+ abc);
+			log.info(" penalty taxhead code "+	taxHeadMasterCodes.contains(WSCalculationConstant.WS_TIME_PENALTY));
 			
-			log.info(" isMigratedCon "+	taxHeadMasterCodes.contains(WSCalculationConstant.WS_TIME_PENALTY));
 			if (!(isMigratedCon && oldDemand.getId().equalsIgnoreCase(demand.getId()))) {
 				log.info("-------updateDemands-----inside if-------demand.getId()--------" + demand.getId()
 						+ "-------oldDemand.getId()---------" + oldDemand.getId());
-				if (!demand.getIsPaymentCompleted() && totalTax.compareTo(totalCollection) > 0
+				if (!demand.getIsPaymentCompleted() 
+						//&& totalTax.compareTo(totalCollection) > 0
 						&& !taxHeadMasterCodes.contains(WSCalculationConstant.WS_TIME_PENALTY))
 				{
 					log.info(" Inside Update if ");
