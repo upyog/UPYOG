@@ -936,6 +936,7 @@ public class DemandService {
 		DemandRequest request = DemandRequest.builder().demands(demandsToBeUpdated).requestInfo(requestInfo).build();
 		if (!isCallFromBulkGen)
 			repository.fetchResult(utils.getUpdateDemandUrl(), request);
+		log.info("demand to be update "+ demandsToBeUpdated);
 		return demandsToBeUpdated;
 
 	}
