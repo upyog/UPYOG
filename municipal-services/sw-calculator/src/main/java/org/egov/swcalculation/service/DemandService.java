@@ -717,24 +717,73 @@ public class DemandService {
 		if (CollectionUtils.isEmpty(res.getDemands())) {
 			return Collections.emptyList();
 		}
+		List<Demand> demands = res.getDemands();
+		Demand oldDemand = demands.get(0);
 
+	
+		demands = demands.stream()
+				.filter(i -> !SWCalculationConstant.DEMAND_CANCELLED_STATUS.equalsIgnoreCase(i.getStatus().toString()))
+				.collect(Collectors.toList());
 
-		// Loop through the consumerCodes and re-calculate the time based applicable
-		Map<String, Demand> consumerCodeToDemandMap = res.getDemands().stream()
+		log.info("Demands are of size " + res.getDemands().size());
+
+		Map<String, Demand> consumerCodeToDemandMap = demands.stream()
 				.collect(Collectors.toMap(Demand::getId, Function.identity()));
-		String tenantId = getBillCriteria.getTenantId();
 		List<Demand> demandsToBeUpdated = new LinkedList<>();
+		boolean isMigratedCon = isMigratedConnection(getBillCriteria.getConsumerCodes().get(0),
+				getBillCriteria.getTenantId());
+		log.info("-------updateDemands------------isMigratedCon--------" + isMigratedCon);
+
+		// Loop through the consumerCodes and re-calculate the time base applicable
+
+		demands.sort((d1, d2) -> d1.getTaxPeriodFrom().compareTo(d2.getTaxPeriodFrom()));
+		log.info("-------updateDemands------------demands--------" + demands);
+		
+		log.info("-------updateDemands------------oldDemand--------" + oldDemand);
+		String tenantId = getBillCriteria.getTenantId();
+
 		List<TaxPeriod> taxPeriods = masterDataService.getTaxPeriodList(requestInfoWrapper.getRequestInfo(), getBillCriteria.getTenantId(), SWCalculationConstant.SERVICE_FIELD_VALUE_SW);
 		consumerCodeToDemandMap.forEach((id, demand) ->{
-			if (demand.getStatus() != null
-					&& SWCalculationConstant.DEMAND_CANCELLED_STATUS.equalsIgnoreCase(demand.getStatus().toString()))
-				throw new CustomException(SWCalculationConstant.EG_SW_INVALID_DEMAND_ERROR,
-						SWCalculationConstant.EG_SW_INVALID_DEMAND_ERROR_MSG);
-			User owner = getPlainOwnerDetails(requestInfo,demand.getPayer().getUuid(), tenantId);
-			demand.setPayer(owner);
-			applyTimeBasedApplicables(demand, requestInfoWrapper, timeBasedExemptionMasterMap, taxPeriods);
-			addRoundOffTaxHead(getBillCriteria.getTenantId(), demand.getDemandDetails());
-			demandsToBeUpdated.add(demand);
+			BigDecimal totalTax = demand.getDemandDetails().stream().map(DemandDetail::getTaxAmount)
+					.reduce(BigDecimal.ZERO, BigDecimal::add);
+			BigDecimal totalCollection = demand.getDemandDetails().stream().map(DemandDetail::getCollectionAmount)
+					.reduce(BigDecimal.ZERO, BigDecimal::add);
+			List<String> taxHeadMasterCodes = demand.getDemandDetails().stream().map(DemandDetail::getTaxHeadMasterCode)
+					.collect(Collectors.toList());
+			log.info("Demand Id: "+ demand.getId());
+			log.info(" taxHeadMasterCodes "+taxHeadMasterCodes );
+			
+			log.info(" isMigratedCon "+ isMigratedCon);
+			log.info(" oldDemand.getId().equalsIgnoreCase(demand.getId()) "+ !oldDemand.getId().equalsIgnoreCase(demand.getId()));
+			log.info(" Payment Completed  "+ demand.getIsPaymentCompleted());
+			log.info("Total Tax "+ totalTax);
+			log.info("Total totalCollection "+ totalCollection);
+			Boolean abc=totalTax.compareTo(totalCollection) > 0;
+			
+			log.info(" tax condition "+ abc);
+			log.info(" penalty taxhead code "+	taxHeadMasterCodes.contains(SWCalculationConstant.SW_TIME_PENALTY));
+			if (!(isMigratedCon && oldDemand.getId().equalsIgnoreCase(demand.getId()))) {
+				log.info("-------updateDemands-----inside if-------demand.getId()--------" + demand.getId()
+						+ "-------oldDemand.getId()---------" + oldDemand.getId());
+				if (!demand.getIsPaymentCompleted() 
+						&& totalTax.compareTo(totalCollection) > 0
+						&& !taxHeadMasterCodes.contains(SWCalculationConstant.SW_TIME_PENALTY))
+				{
+						if (demand.getStatus() != null
+								&& SWCalculationConstant.DEMAND_CANCELLED_STATUS.equalsIgnoreCase(demand.getStatus().toString()))
+							throw new CustomException(SWCalculationConstant.EG_SW_INVALID_DEMAND_ERROR,
+									SWCalculationConstant.EG_SW_INVALID_DEMAND_ERROR_MSG);
+						User owner = getPlainOwnerDetails(requestInfo,demand.getPayer().getUuid(), tenantId);
+						demand.setPayer(owner);
+						applyTimeBasedApplicables(demand, requestInfoWrapper, timeBasedExemptionMasterMap, taxPeriods);
+						addRoundOffTaxHead(getBillCriteria.getTenantId(), demand.getDemandDetails());
+						demandsToBeUpdated.add(demand);
+				}
+				else
+				{
+					demandsToBeUpdated.add(demand);
+				}	
+			}
 		});
 		// Call demand update in bulk to update the interest or penalty
 		if(!isCallFromBulkGen)
@@ -743,7 +792,6 @@ public class DemandService {
 
 		return demandsToBeUpdated;
 	}
-
 	private boolean isMigratedConnection(final String connectionNumber, final String tenantId) {
 
 		String connectionAddlDetail = sewerageConnectionRepository.fetchConnectionAdditonalDetails(connectionNumber,
