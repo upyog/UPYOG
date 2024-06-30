@@ -68,7 +68,7 @@ export const EWDataConvert = (data) => {
   const formdata = {
     EwasteApplication: [
     {
-      tenantId: "pg.citya",
+      tenantId: data?.tenantId,
       requestId: data.requestId || "",
       transactionId: "",
       pickUpDate: "",
@@ -83,7 +83,7 @@ export const EWDataConvert = (data) => {
       },
       ewasteDetails: data?.ewdet,
       address: {
-        tenantId: "pg.citya",
+        tenantId: data?.tenantId,
         doorNo: data.address?.doorNo,
         latitude: data.address?.latitude || null,
         longitude: data.address?.longitude || null,
@@ -102,7 +102,7 @@ export const EWDataConvert = (data) => {
           name: data.address?.locality?.name || ""
         }
       },
-      documents: data.documents || [],
+      documents: data.documents.documents || [],
       workflow: {
         businessService: "ewst",
         action: "CREATE",
