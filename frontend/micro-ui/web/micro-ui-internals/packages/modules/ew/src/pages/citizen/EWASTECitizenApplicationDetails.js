@@ -38,10 +38,18 @@ const EWASTECitizenApplicationDetails = () => {
 
   const ewId = get(data, "EwasteApplication[0].applicationNumber", []);
 
-  let ew_details = (EwasteApplication && EwasteApplication.length > 0 && EwasteApplication[0]) || {};
+  let ew_details = (EwasteApplication && EwasteApplication.length > 0) || {};
+
+  EwasteApplication.map((Appl) => {
+    if(Appl.requestId == requestId){
+      ew_details = Appl;
+    }
+  })
+
+  // console.log("ewasteapplications and requestid :::", EwasteApplication, requestId)
   // console.log("this is ew-detaoishdjf:::", ew_details)
   const application = ew_details;
-  console.log("application ::", application)
+  // console.log("application ::", application)
 
   sessionStorage.setItem("ew-storage", JSON.stringify(application));
 
@@ -56,6 +64,7 @@ const EWASTECitizenApplicationDetails = () => {
     setBillData(result);
     setLoading(false);
   };
+
   useEffect(() => {
     fetchBillData();
   }, [tenantId, requestId]);

@@ -63,7 +63,7 @@ export const EWDataConvert = (data) => {
   data = setProductDetails(data);
   data = setAddressDetails(data);
 
-  // console.log("this is data in ::", data)
+  console.log("this is data in ::", data)
 
   const formdata = {
     EwasteApplication: [
@@ -102,7 +102,7 @@ export const EWDataConvert = (data) => {
           name: data.address?.locality?.name || ""
         }
       },
-      documents: data.documents || [],
+      documents: data.documents.documents || [],
       workflow: {
         businessService: "ewst",
         action: "CREATE",

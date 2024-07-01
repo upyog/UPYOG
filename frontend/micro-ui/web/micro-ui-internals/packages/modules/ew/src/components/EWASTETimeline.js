@@ -10,7 +10,7 @@ const getAction = (flow) => {
       actions = [];
       break;
     default:
-      actions = ["EWASTE_TITLE_PRODUCT_DETAILS", "EWASTE_TITLE_DOCUMENT_DETAILS", "EWASTE_TITLE_OWNER_DETAILS", "EWASTE_LOCATION_DETAILS", "EWASTE_TITLE_VENDOR_DETAILS", "EWASTE_TITLE_SUMMARY"];
+      actions = ["EWASTE_TITLE_PRODUCT_DETAILS", "EWASTE_TITLE_DOCUMENT_DETAILS", "EWASTE_TITLE_OWNER_DETAILS", "EWASTE_LOCATION_DETAILS", "EWASTE_TITLE_SUMMARY"];
   }
 };
 const Timeline = ({ currentStep = 1, flow = "" }) => {

@@ -65,7 +65,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   };
   return (
     <React.Fragment>
-      {window.location.href.includes("/citizen") ? <Timeline currentStep={6} /> : null}
+      {window.location.href.includes("/citizen") ? <Timeline currentStep={5} /> : null}
       <Card>
         <CardHeader>{t("EWASTE_CHECK_YOUR_DETAILS")}</CardHeader>
         <div>
@@ -125,7 +125,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
           </StatusTable>
           <br></br>
 
-          <CardSubHeader>{t("EWASTE_TITLE_VENDOR_DETAILS")}</CardSubHeader>
+          {/* <CardSubHeader>{t("EWASTE_TITLE_VENDOR_DETAILS")}</CardSubHeader>
           <br></br>
           <StatusTable>
             <Row
@@ -134,7 +134,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/vendor-details`}`} />}
             />
           </StatusTable>
-          <br></br>
+          <br></br> */}
 
           <CardSubHeader>{t("EWASTE_TITLE_ADDRESS_DETAILS")}</CardSubHeader>
           <br></br>
