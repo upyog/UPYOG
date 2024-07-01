@@ -44,6 +44,13 @@ export const convertEpochToDate = (dateEpoch) => {
     refetchOnWindowFocus: false,
   });
   console.log("datatatataty",data)
+  const cities = Digit.Hooks.useTenants();
+  let ulbType=""
+  const loginCity=JSON.parse(sessionStorage.getItem("Digit.User"))?.value?.info?.permanentCity
+  if(cities.data!==undefined){
+    const selectedTenantData = cities.data.find(item => item.city.districtTenantCode=== loginCity);
+    ulbType=selectedTenantData.city.ulbGrade  
+  }
 
   const { label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService: business_service }, { enabled: false });
 
@@ -225,6 +232,19 @@ export const convertEpochToDate = (dateEpoch) => {
           console.log("generatedpdfkey",generatePdfKey)
           if(business_service=="WS" || business_service=="SW"){
             response = await Digit.PaymentService.generatePdf(state, { Payments: [{...paymentData}] }, generatePdfKeyForWs);
+          }
+          else if(paymentData.paymentDetails[0].businessService.includes("BPA")){
+            const designation=(ulbType==="Municipal Corporation") ? "Municipal Commissioner" : "Executive Officer"
+            const updatedpayments={
+              ...paymentData,
+              additionalDetails:{
+                  ...paymentData.additionalDetails,
+                  designation:designation,
+                  ulbType:ulbType
+              }
+            }
+
+            response = await Digit.PaymentService.generatePdf(state, { Payments: [{...updatedpayments}] }, generatePdfKey);
           }
           else{
             response = await Digit.PaymentService.generatePdf(state, { Payments: [{...paymentData}] }, generatePdfKey);
