@@ -13,7 +13,6 @@ import {
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import ApplicationTable from "../../../components/inbox/ApplicationTable";
 import {
   checkForNA,
   getFixedFilename, 
@@ -35,17 +34,6 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   const { t } = useTranslation();
   const history = useHistory();
   
-  // const columns = [
-  //   { Header: "Hall Name", accessor: "hallName" },
-  //   { Header: "Hall Code", accessor: "hallCode" },
-  //   { Header: "Start Date", accessor: "date1" },
-  //   { Header: "End Date", accessor: "date2" },
-  //   { Header: "Status", accessor: "status" },
-  // ];
-  
-
-  
-
   const {
     bankdetails,
     slots,
@@ -57,16 +45,6 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     documents
    
   } = value;
-
-//   const productRows = slotlist?.bookingSlotDetails.map((name) => (
-//     {
-//       hallName:  name.hallName,
-//       hallCode: name.hallCode,
-//       date1: name.date1,
-//       date2: name.date2,
-//       status: name.status,
-//     }
-// )) || [];
 
   const typeOfApplication = !isEditCHB && !isUpdateCHB ? `bookHall` : `edit-application`;
 
@@ -84,26 +62,13 @@ const CheckPage = ({ onSubmit, value = {} }) => {
       <div>
         <br></br>
         <CardSubHeader>{slotlist?.bookingSlotDetails.map((slot,index) =>(
-    <div key={index}>
-      {slot.name}
-      {/* ({slot.date1}) */}
-    </div>
+     <div>
+     <div key={index}>
+       {slot.name}
+       ({slot.bookingDate})
+     </div>
+     </div>
   ))}</CardSubHeader>
-        {/* <ApplicationTable
-            t={t}
-            data={productRows}
-            columns={columns}
-            getCellProps={() => ({
-              style: {
-                minWidth: "150px",
-                padding: "10px",
-                fontSize: "16px",
-                paddingLeft: "20px",
-              },
-            })}
-            isPaginationRequired={true}
-            totalRecords={productRows.length}
-          /> */}
         <br></br>
         <CardSubHeader>{t("CHB_BOOKING_DETAILS")}</CardSubHeader>
         <br></br>
@@ -141,12 +106,6 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <CardSubHeader>{t("SLOT_DETAILS")}</CardSubHeader>
         <br></br>
         <StatusTable>
-        <Row
-            label={t("CHB_SELECT_SLOT")}
-            text={`${t(checkForNA(slots?.selectslot?.value))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/slot-details`} />}
-
-        />
 
         <Row
             label={t("CHB_RESIDENT_TYPE")}

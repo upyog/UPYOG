@@ -27,11 +27,11 @@ export const sethallDetails = (data) => {
     return { 
       bookingId:slot.slotId,
       hallCode: slot.slotId,
-      bookingDate:"20-06-2024",
+      bookingDate:slot.bookingDate,
       bookingFromTime:"10:00",
       bookingToTime:"9:59",
       hallName: slot.name,
-      status:"Available",
+      status:"BOOKED",
     };
   }) || [];
 
@@ -50,7 +50,6 @@ export const setBankDetails = (data) => {
     bankName: bankdetails?.bankName,
     bankBranchName: bankdetails?.bankBranchName,
     accountHolderName: bankdetails?.accountHolderName,
-    refundStatus: "Done",
   };
 
   data.bankdetails = propbankdetails;
@@ -110,7 +109,6 @@ export const CHBDataConvert = (data) => {
   data = setBankDetails(data);
   data = setSlotDetails(data);
   data= sethallDetails(data);
-
 const formdata={
   hallsBookingApplication: {
     tenantId: data.tenantId,
@@ -120,9 +118,11 @@ const formdata={
     applicantEmailId:data.ownerss?.emailId,
     bankDetails:data.bankdetails,
     purposeDescription:data.slots?.purposeDescription,
-    communityHallId:3,
+    communityHallId:data.slotlist[0]?.bookingId || "2",
     ...data.documents,
     bookingStatus:"BOOKING_CREATED",
+    communityHallName:data.slotlist[0]?.hallName,
+    
     specialCategory:{
       category:data.slots?.specialCategory?.value
     },
@@ -133,50 +133,14 @@ const formdata={
       purpose:data.slots?.purpose?.value
     },
     bookingSlotDetails:data?.slotlist,
-    // uploadedDocumentDetails:data.documents || [],
-    uploadedDocumentDetails:[],
 
   workflow : {
       businessService: "chb",
-      action : "CREATE",
+      action : "APPLY",
       moduleName: "chb-services"
     }
   }
 }
-
-  // const formdata = {
-  //     hallsBookingApplication: {
-  //       tenantId: data.tenantId,
-  //       // ...data?.ownerss,
-  //       bankDetails: data.bankdetails,
-  //         // ...data.documents,
-  //       bookingSlotDetails: [
-  //           {
-  //               bookingId: "675464564",
-  //               hallCode: "456",
-  //               slotId: "464564",
-  //               status: "Booked"
-  //           }
-  //       ],
-  //       purpose:{
-  //         purpose:"kjskldfjsd"
-  //       },
-  //       purposeDescription: "sjfdsljfdskf",
-  //       residentType: {
-  //           type:"kjflsdkfj"
-  //       },
-  //       specialCategory: {
-  //           category: "lksjdklf"
-  //       },
-  //       uploadedDocumentDetails: [],
-
-  //         workflow : {
-  //           businessService: "chb",
-  //           action : "CREATE",
-  //           moduleName: "chb-services"
-  //         }
-  //     },
-  // }
 
   return formdata;
 };
