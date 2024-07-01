@@ -49,7 +49,7 @@ export const CHBMyApplications = () => {
 
   return (
     <React.Fragment>
-      <Header>{`${t("CS_TITLE_MY_BOOKINGS")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
+      <Header>{`${t("CHB_MY_APPLICATION_HEADER")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
       <div>
         {applicationsList?.length > 0 &&
           applicationsList.map((application, index) => (

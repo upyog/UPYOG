@@ -1,6 +1,7 @@
-import { Card, CardSubHeader,CardSectionHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Card, CardSubHeader,CardSectionHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar, CardHeader } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { format } from 'date-fns';
 
 import { useHistory, useParams,Link } from "react-router-dom";
 import getChbAcknowledgementData from "../../getChbAcknowledgementData";
@@ -49,7 +50,7 @@ const CHBApplicationDetails = () => {
   
   let  chb_details = (hallsBookingApplication && hallsBookingApplication.length > 0 && hallsBookingApplication[0]) || {};
   const application =  chb_details;
-  console.log("applicationCHB_details--------->",application);
+  console.log("chb_____details--------->",chb_details);
 
   
   sessionStorage.setItem("chb", JSON.stringify(application));
@@ -201,7 +202,7 @@ fetchBillData();
           <StatusTable>
             <Row
               className="border-none"
-              label={t("CHB_BOOKING_NO_LABEL")}
+              label={t("CHB_BOOKING_NO")}
               text={chb_details?.bookingNo} 
             />
           </StatusTable>
@@ -209,20 +210,30 @@ fetchBillData();
           <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_APPLICANT_DETAILS")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("CHB_APPLICANT_NAME")} text={chb_details?.applicantName || t("CS_NA")} />
-            <Row className="border-none" label={t("CHB_MOBILE_NO")} text={chb_details?.applicantMobileNo || t("CS_NA")} />
+            <Row className="border-none" label={t("CHB_MOBILE_NUMBER")} text={chb_details?.applicantMobileNo || t("CS_NA")} />
             <Row className="border-none" label={t("CHB_ALT_MOBILE_NUMBER")} text={chb_details?.applicantAlternateMobileNo || t("CS_NA")} />
             <Row className="border-none" label={t("CHB_EMAIL_ID")} text={chb_details?.applicantEmailId || t("CS_NA")} />
           </StatusTable>
 
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("SLOT_DETAILS")}</CardSubHeader>
+          <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_EVENT_DETAILS")}</CardSubHeader>
           <StatusTable>
-            <Row className="border-none" label={t("CHB_BOOKING_DATE")} text={chb_details?.bookingSlotDetails[0]?.bookingDate || t("CS_NA")} />
             <Row className="border-none" label={t("CHB_RESIDENT_TYPE")} text={chb_details?.residentType?.type || t("CS_NA")} />
             <Row className="border-none" label={t("CHB_SPECIAL_CATEGORY")} text={chb_details?.specialCategory?.category || t("CS_NA")} />
             <Row className="border-none" label={t("CHB_PURPOSE")} text={chb_details?.purpose?.purpose || t("CS_NA")} />
             <Row className="border-none" label={t("CHB_PURPOSE_DESCRIPTION")} text={chb_details?.purposeDescription || t("CS_NA")} />
           </StatusTable>
-
+          
+          <CardSubHeader style={{ fontSize: "24px" }}>{t("SLOT_DETAILS")}</CardSubHeader>
+            {chb_details?.bookingSlotDetails.map((slot)=>(
+              <StatusTable>
+              <Row className="border-none" label={t("CHB_COMMUNITY_HALL_NAME")} text={slot?.hallName || t("CS_NA")} />
+              <Row className="border-none" label={t("CHB_BOOKING_DATE")} text={slot?.bookingDate} />
+              <Row className="border-none" label={t("CHB_BOOKING_FROM_TIME")} text={slot?.
+                bookingFromTime
+                 || t("CS_NA")} />
+              <Row className="border-none" label={t("CHB_BOOKING_TO_TIME")} text={slot?.bookingToTime || t("CS_NA")} />
+              </StatusTable>
+            ))}
           <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_BANK_DETAILS")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("CHB_ACCOUNT_NUMBER")} text={chb_details?.bankDetails?.accountNumber || t("CS_NA")} />
@@ -245,9 +256,7 @@ fetchBillData();
           </div>}
           </div>
         ))}
-         <Link to={`/digit-ui/citizen/payment/my-bills/` + `${"chb-services"}/` + `${chb_details?.bookingNo}`}>
-        <LinkButton label={t("PAYMENT_BUTTON")} />
-      </Link>
+        
       </Card>
           
           <CHBWFApplicationTimeline application={application} id={application?.bookingNo} userType={"citizen"} />

@@ -73,13 +73,14 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
     }
   });
 
-  const addressdata = initialData.map(slot => {
-    if (slot.name === selectedHall.code) {
-      return slot.address;
-    }
-  });
+ 
 
   useEffect(() => {
+    const addressdata = initialData.map(slot => {
+      if (slot.name === selectedHall.code) {
+        return slot.address;
+      }
+    });
     if (slotSearchData && slotSearchData.hallSlotAvailabiltityDetails) {
       const newData = slotSearchData.hallSlotAvailabiltityDetails.map((slot, index) => ({
         slotId: index + 1,
@@ -87,22 +88,22 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
         address: addressdata || "", // Ensure address is set
         location: "NEW DELHI",
         bookingDate: slot.bookingDate, 
-        status: slot.Status === "Available" ? (
-          <SubmitBar label={slot.slotStaus} onSubmit={goNext} disabled={true}  style={{color:"green",width: "50%"}}/>
+        status: slot.slotStaus === "AVAILABLE" ? (
+          <SubmitBar label={slot.slotStaus} onSubmit={goNext} disabled={false}  style={{color:"green",width: "85%"}}/>
         ) : (
-          <SubmitBar label={slot.slotStaus} disabled={false} />
+          <SubmitBar label={slot.slotStaus} disabled={true} />
         )
       }));
       setData(newData); // Update data state
       setShowTable(true); // Show the table after data is fetched
     }
-  }, [slotSearchData, selectedHall, hallCode, dateRange]);
+  }, [slotSearchData, selectedHall, hallCode, dateRange,bookingSlotDetails]);
 
   const [data, setData] = useState("");
   const [showTable, setShowTable] = useState(false); // State to control table visibility
 
   const columns = [
-    { Header: `${t("CHB_HALL_NAME")}`, accessor: "name" },
+    { Header: `${t("CHB_HALL_NAME")}`+ "/" + `${t("CHB_PARK")}`, accessor: "name" },
     { Header: `${t("CHB_ADDRESS")}`, accessor: "address" },
     { Header: `${t("CHB_LOCATION")}`, accessor: "location" },
     { Header: `${t("CHB_BOOKING_DATE")}`, accessor: "bookingDate" },
@@ -218,7 +219,7 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
         onSkip={onSkip}
         t={t}
       >
-        <CardHeader>{`${t("CHB_SEARCH_COMMUNITY_HALL_HEADER")}`}</CardHeader>
+        <CardHeader>{`${t("CHB_SEARCH_COMMUNITY_HALL_HEADER")}`}/{`${t("CHB_PARK")}`}</CardHeader>
         <div>
           <CardLabel>{`${t("CHB_SELECT_HALL_NAME")}`}</CardLabel>
           <Controller
