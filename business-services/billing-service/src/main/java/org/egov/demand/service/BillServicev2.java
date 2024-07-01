@@ -286,10 +286,20 @@ public class BillServicev2 {
 		for (Entry<String, BillV2> entry : consumerCodeAndBillMap.entrySet()) {
 			BillV2 bill = entry.getValue();
 
-			cosnumerCodesToBeExpired.add(bill.getConsumerCode());
+			for (BillDetailV2 billDetail : bill.getBillDetails()) {
+				if (billDetail.getExpiryDate().compareTo(System.currentTimeMillis()) < 0) {
+					isBillExpired = true;
+					break;
+				}
+			}
+			if (!isBillExpired)
+				billsToBeReturned.add(bill);
+			else
+				cosnumerCodesToBeExpired.add(bill.getConsumerCode());
 			cosnumerCodesNotFoundInBill.remove(entry.getKey());
 			isBillExpired = false;
 		}
+			
 			
 		log.info("Consumer Code to be expired " + cosnumerCodesToBeExpired);
 		log.info("Consumer code not found in bill " + cosnumerCodesNotFoundInBill);
