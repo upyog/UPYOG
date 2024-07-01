@@ -144,9 +144,9 @@ public class DemandService {
 		demandValidatorV1.validatedemandForCreate(demandRequest, true, mdmsData);
 
 		log.info("the demand request in create async : {}", demandRequest);
-
-		RequestInfo requestInfo = demandRequest.getRequestInfo();
-		List<Demand> demands = demandRequest.getDemands();
+//
+	RequestInfo requestInfo = demandRequest.getRequestInfo();
+	List<Demand> demands = demandRequest.getDemands();
 		AuditDetails auditDetail = util.getAuditDetail(requestInfo);
 		log.info("requestInfo: {} and AuditDetails: {}", requestInfo, auditDetail);
 		log.info("AuditDetails tostring: {}", auditDetail.toString());
@@ -174,15 +174,18 @@ public class DemandService {
 
 		if(!CollectionUtils.isEmpty(demandToBeUpdated))
 			update(new DemandRequest(requestInfo,demandToBeUpdated), null);
+//		
+//		billRepoV2.updateBillStatus(
+//				UpdateBillCriteria.builder()
+//				.statusToBeUpdated(BillStatus.EXPIRED)
+//				.businessService(businessService)
+//				.consumerCodes(demands.stream().map(Demand::getConsumerCode).collect(Collectors.toSet()))
+//				.tenantId(demands.get(0).getTenantId())
+//				.build()
+//				);
 		
-		billRepoV2.updateBillStatus(
-				UpdateBillCriteria.builder()
-				.statusToBeUpdated(BillStatus.EXPIRED)
-				.businessService(businessService)
-				.consumerCodes(demands.stream().map(Demand::getConsumerCode).collect(Collectors.toSet()))
-				.tenantId(demands.get(0).getTenantId())
-				.build()
-				);
+		billRepoV2.updateBillStatus( demands.stream().map(Demand::getConsumerCode).collect(Collectors.toList()),
+				businessService,BillStatus.EXPIRED);
 		return new DemandResponse(responseInfoFactory.getResponseInfo(requestInfo, HttpStatus.CREATED), demands);
 	}
 
