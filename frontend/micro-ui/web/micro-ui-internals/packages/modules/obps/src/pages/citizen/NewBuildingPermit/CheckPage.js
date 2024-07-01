@@ -8,6 +8,7 @@ import {
   import Timeline from "../../../components/Timeline";
   import { convertEpochToDateDMY, stringReplaceAll, getOrderDocuments } from "../../../utils";
   import DocumentsPreview from "../../../../../templates/ApplicationDetails/components/DocumentsPreview";
+  import { format } from "date-fns";
 
   const CheckPage = ({ onSubmit, value }) => {
     const { t } = useTranslation();

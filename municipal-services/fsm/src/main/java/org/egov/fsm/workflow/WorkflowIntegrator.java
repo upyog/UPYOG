@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.egov.fsm.config.FSMConfiguration;
 import org.egov.fsm.util.FSMConstants;
 import org.egov.fsm.util.FSMErrorConstants;
@@ -87,17 +89,21 @@ public class WorkflowIntegrator {
 		JSONObject obj = new JSONObject();
 		obj.put(BUSINESSIDKEY, fsm.getApplicationNo());
 		obj.put(TENANTIDKEY, wfTenantId);
+
+		Double tripAmount = getAdditionalDetails(fsm.getAdditionalDetails());
 		
 		if (FSMConstants.FSM_PAYMENT_PREFERENCE_POST_PAY.equalsIgnoreCase(fsmRequest.getFsm().getPaymentPreference())) {
 			obj.put(BUSINESSSERVICEKEY, FSMConstants.FSM_POST_PAY_BUSINESSSERVICE);
-		} else if (fsm.getAdvanceAmount() == null && fsm.getPaymentPreference()==null) {
-			obj.put(BUSINESSSERVICEKEY, FSMConstants.FSM_ZERO_PRICE_SERVICE);
-		} else if (fsm.getAdvanceAmount().intValue() == 0) {
-			obj.put(BUSINESSSERVICEKEY, FSMConstants.FSM_LATER_PAY_SERVICE);
-		} else if (fsm.getAdvanceAmount().intValue() > 0) {
-			obj.put(BUSINESSSERVICEKEY, FSMConstants.FSM_ADVANCE_PAY_BUSINESSSERVICE);
-		} else
+		} else if (FSMConstants.FSM_PAYMENT_PREFERENCE_PRE_PAY
+				.equalsIgnoreCase(fsmRequest.getFsm().getPaymentPreference())) {
 			obj.put(BUSINESSSERVICEKEY, FSMConstants.FSM_BUSINESSSERVICE);
+		} else if (fsm.getAdvanceAmount() == null && fsm.getPaymentPreference() == null	&& tripAmount <= 0) {
+			obj.put(BUSINESSSERVICEKEY, FSMConstants.FSM_ZERO_PRICE_SERVICE);
+		} else if (fsm.getAdvanceAmount() != null && fsm.getAdvanceAmount().intValue() > 0) {
+			obj.put(BUSINESSSERVICEKEY, FSMConstants.FSM_ADVANCE_PAY_BUSINESSSERVICE);
+		} else {
+			obj.put(BUSINESSSERVICEKEY, FSMConstants.FSM_LATER_PAY_SERVICE);
+		}
 
 		obj.put(MODULENAMEKEY, MODULENAMEVALUE);
 		obj.put(ACTIONKEY, fsmRequest.getWorkflow().getAction());
@@ -160,4 +166,36 @@ public class WorkflowIntegrator {
 		fsm.setApplicationStatus(idStatusMap.get(fsm.getApplicationNo()));
 
 	}
+
+	/**
+	 * Method to return additionalDetails as a Map
+	 *
+	 * @param additionalDetails
+	 */
+	public Double getAdditionalDetails(Object additionalDetails) {
+
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> fsmAdditionalDetails = new HashMap<>();
+
+		if (additionalDetails instanceof ObjectNode) {
+			fsmAdditionalDetails = mapper.convertValue(additionalDetails, Map.class);
+		} else if (additionalDetails instanceof Map) {
+			fsmAdditionalDetails = (Map<String, Object>) additionalDetails;
+		}
+
+		Double tripAmount = Double.valueOf(0.0);
+
+		if (fsmAdditionalDetails != null && fsmAdditionalDetails.get("tripAmount") != null) {
+			Object tripAmountObj = fsmAdditionalDetails.get("tripAmount");
+			if (tripAmountObj instanceof String) {
+				tripAmount = Double.valueOf((String) tripAmountObj);
+			} else if (tripAmountObj instanceof Integer) {
+				tripAmount = Double.valueOf((Integer) tripAmountObj);
+			}
+		}
+
+		return tripAmount;
+	}
+
+
 }

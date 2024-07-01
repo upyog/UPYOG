@@ -95,7 +95,7 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
               </CardLabel>
               <div className="field">
                 <Dropdown
-                  option={input.options}
+                  option={input.options?.sort((a, b) => a.code.localeCompare(b.code))}
                   optionKey="i18nKey"
                   id="dropdown"
                   selected={formData && formData[config.key] ? input.options.find((data) => data.code === formData[config.key][input.name]) : null}

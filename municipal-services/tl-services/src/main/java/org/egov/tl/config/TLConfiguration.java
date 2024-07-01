@@ -11,6 +11,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.Map;
 import java.util.TimeZone;
 
 
@@ -203,10 +204,10 @@ public class TLConfiguration {
 
 
     //MDMS
-    @Value("${egov.mdms.host}")
+    @Value("${mdms.v2.host}")
     private String mdmsHost;
 
-    @Value("${egov.mdms.search.endpoint}")
+    @Value("${mdms.v2.search.endpoint}")
     private String mdmsEndPoint;
 
 
@@ -250,8 +251,8 @@ public class TLConfiguration {
     private String tlBusinessServices;
 
     //USER EVENTS
-	@Value("${egov.ui.app.host}")
-	private String uiAppHost;
+    @Value("#{${egov.ui.app.host.map}}")
+    private Map<String, String> uiAppHostMap;
     
 	@Value("${egov.usr.events.create.topic}")
 	private String saveUserEventsTopic;
@@ -331,6 +332,14 @@ public class TLConfiguration {
 
     @Value("${id.timezone}")
     private String egovAppTimeZone;
+    
+    // central-instance configs
+    
+    @Value("${state.level.tenantid.length}")
+    private Integer stateLevelTenantIdLength;
+    
+    @Value("${is.environment.central.instance}")
+    private Boolean isEnvironmentCentralInstance;
 
     //receipt
     @Value("${notification.url}")
@@ -348,6 +357,4 @@ public class TLConfiguration {
 
     @Value("${egov.tl.calculator.billingSlab.endpoint}")
     private String billingSlabEndPoint;
-
-
 }

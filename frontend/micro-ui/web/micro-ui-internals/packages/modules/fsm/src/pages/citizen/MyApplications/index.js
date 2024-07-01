@@ -1,5 +1,5 @@
 import React from "react";
-import { Header, Loader } from "@upyog/digit-ui-react-components";
+import { Header, Loader, Card } from "@upyog/digit-ui-react-components";
 import MyApplication from "./MyApplication";
 import { useTranslation } from "react-i18next";
 
@@ -27,6 +27,11 @@ export const MyApplications = () => {
               <MyApplication application={application} />
             </div>
           ))}
+          {applicationsList.length === 0 && (
+          <Card>
+            <p style={{ textAlign: "center" }}>{`${t("FSM_NO_APPLICATION")} ${userInfo.mobileNumber}`}</p>
+          </Card>
+        )}
       </div>
     </React.Fragment>
   );

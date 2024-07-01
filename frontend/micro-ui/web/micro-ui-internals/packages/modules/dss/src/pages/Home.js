@@ -224,7 +224,6 @@ const renderLegend = (value) => {
   }
 
   const bars = response?.responseData?.data?.map((bar) => bar?.headerName);
-
   return (
     <ResponsiveContainer
       width="50%"
@@ -416,7 +415,6 @@ const Home = ({ stateCode }) => {
           </div>
         ) : null}
         {dashboardConfig?.[0]?.visualizations.map((row, key) => {
-          console.log("visualizations",row,key)
           return (
             <div className="dss-card" key={key}>
               {row.vizArray.map((item, index) => {

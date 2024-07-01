@@ -169,7 +169,7 @@ const Address = {
     },
     landmark: {
       description: "additional landmark to help locate the address",
-      type: ["string", "null"],
+      type: ["string", "null"]
     },
     city: {
       description:

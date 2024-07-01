@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -82,6 +84,17 @@ public class VehicleLogEnrichmentService {
 					vehicleTrip.setVehicleId(vehicleTrip.getVehicle().getId());
 				} else {
 					addVehicle(vehicleTrip);
+				}
+			} 
+			else {
+				Object additionalDetailsObject = vehicleTrip.getAdditionalDetails();
+				Map<String, String> vehicleTripAdditionalDetails = additionalDetailsObject != null
+						? (Map<String, String>) additionalDetailsObject : new HashMap<>();
+				//Updates the tripdetails.volume as volumeCarried in case of Un-registered Vehicle logs
+				if (vehicleTripAdditionalDetails.get("vehicleNumber") != null && vehicleTrip.getVolumeCarried() != null
+						&& (vehicleTrip.getTripDetails().get(0).getVolume() == null
+						|| vehicleTrip.getTripDetails().get(0).getVolume() == 0)) {
+					vehicleTrip.getTripDetails().get(0).setVolume(vehicleTrip.getVolumeCarried());
 				}
 			}
 

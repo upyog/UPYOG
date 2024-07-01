@@ -261,7 +261,8 @@ public class WSCalculationConstant {
 	
 	public static final String ADHOC_REBATE = "adhocRebate";
 	
-	public static final Long APPLICATION_FEE_DEMAND_END_DATE = 157784760000L;
+	//public static final Long APPLICATION_FEE_DEMAND_END_DATE = 157784760000L;
+	public static final Long APPLICATION_FEE_DEMAND_END_DATE = 63072000000L;
 	
 	public static final Long APPLICATION_FEE_DEMAND_EXP_DATE = 220898664000L;
 	
@@ -357,5 +358,7 @@ public class WSCalculationConstant {
 	public static final String MODIFY_WATER_CONNECTION = "MODIFY_WATER_CONNECTION";
 
 	public static final String DISCONNECT_WATER_CONNECTION = "DISCONNECT_WATER_CONNECTION";
+	
+	public static final String TENANTID_MDC_STRING = "TENANTID";
 
 }

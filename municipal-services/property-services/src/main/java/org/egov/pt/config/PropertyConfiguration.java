@@ -1,7 +1,12 @@
 package org.egov.pt.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.*;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+
+import javax.annotation.PostConstruct;
+
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,11 +15,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.TimeZone;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 @Import({TracerConfiguration.class})
@@ -118,6 +124,9 @@ public class PropertyConfiguration {
     @Value("${kafka.topics.receipt.create}")
     private String receiptTopic;
 
+    @Value("${kafka.topics.receipt.create.pattern}")
+    private String receiptTopicPattern;
+
     @Value("${kafka.topics.notification.pg.save.txns}")
     private String pgTopic;
 
@@ -185,8 +194,8 @@ public class PropertyConfiguration {
     @Value("${egov.localization.fallback.locale}")
     private String fallBackLocale;
     //USER EVENTS
-	@Value("${egov.ui.app.host}")
-	private String uiAppHost;
+	@Value("#{${egov.ui.app.host.map}}")
+	private Map<String, String> uiAppHostMap;
     
 	@Value("${egov.usr.events.create.topic}")
 	private String saveUserEventsTopic;
@@ -257,11 +266,11 @@ public class PropertyConfiguration {
     
     // ##### mdms 
     
-    @Value("${egov.mdms.host}")
+    @Value("${mdms.v2.host}")
     private String mdmsHost;
 
-    @Value("${egov.mdms.search.endpoint}")
-    private String mdmsEndpoint;
+    @Value("${mdms.v2.search.endpoint}")
+    private String mdmsEndPoint;
     
     // Billing-Service
     

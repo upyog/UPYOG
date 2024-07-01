@@ -1,7 +1,9 @@
 package org.egov.fsm.service;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.fsm.config.FSMConfiguration;
 import org.egov.fsm.repository.ServiceRequestRepository;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 
@@ -68,7 +71,22 @@ public class BoundaryService {
 		if (hierarchyTypeCode != null) {
 			uri.append("&").append("hierarchyTypeCode=").append(hierarchyTypeCode);
 		}
-		uri.append("&").append("boundaryType=").append("Locality");
+		uri.append("&").append("boundaryType=");
+
+		Object additionalDetail = fsm.getAddress().getAdditionalDetails();
+		Map<String, String> additionalDetails = null;
+		if (additionalDetail instanceof Map) {
+			additionalDetails = additionalDetail != null ? (Map<String, String>) additionalDetail : new HashMap<>();
+		} else if (additionalDetail instanceof ObjectNode) {
+			additionalDetails = mapper.convertValue(additionalDetail, Map.class);
+		}
+		if (additionalDetails != null && additionalDetails.get("boundaryType") != null) {
+			String boundaryType = (String) additionalDetails.get("boundaryType");
+			uri.append(boundaryType);
+		} else {
+
+			uri.append("Locality");
+		}
 		uri.append("&").append("codes=").append(fsm.getAddress().getLocality().getCode());
 
 		RequestInfoWrapper wrapper = RequestInfoWrapper.builder().requestInfo(request.getRequestInfo()).build();
@@ -79,9 +97,9 @@ public class BoundaryService {
 					"The response from location service is empty or null");
 		}
 			
-		String jsonString = new JSONObject(responseMap).toString();
+		String jsonString1 = new JSONObject(responseMap).toString();
 
-		DocumentContext context = JsonPath.parse(jsonString);
+		DocumentContext context = JsonPath.parse(jsonString1);
 
 		List<Boundary> boundaryResponse = context.read("$..boundary[?(@.code==\"{}\")]".replace("{}",fsm.getAddress().getLocality().getCode()));
 

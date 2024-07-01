@@ -1,6 +1,7 @@
 package org.egov.nationaldashboardingest.repository;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +45,11 @@ public class ElasticSearchRepository {
 
         // Conversion of multi-index request to a single request to avoid repetitive REST calls to ES.
         indexNameVsDocumentsToBeIndexed.keySet().forEach(indexName -> {
-            String actionMetaData = String.format("{ \"index\" : { \"_index\" : \"%s\", \"_type\" : \"_doc\" } }%n", indexName);
+            String actionMetaData;
+        	if(applicationProperties.getIsLegacyVersionES())
+        		actionMetaData = String.format("{ \"index\" : { \"_index\" : \"%s\", \"_type\" : \"_doc\" } }%n", indexName);
+        	else
+        		actionMetaData = String.format("{ \"index\" : { \"_index\" : \"%s\" } }%n", indexName);
             for (String document : indexNameVsDocumentsToBeIndexed.get(indexName)) {
                 bulkRequestBody.append(actionMetaData);
                 bulkRequestBody.append(document);
@@ -54,8 +59,7 @@ public class ElasticSearchRepository {
 
         // Persisting flattened data to ES.
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpHeaders headers = getHttpHeaders();
             HttpEntity<Object> httpEntity = new HttpEntity<>(bulkRequestBody.toString(), headers);
             StringBuilder uri = new StringBuilder(applicationProperties.getElasticSearchHost() + IngestConstants.BULK_ENDPOINT);
             Object response = restTemplate.postForEntity(uri.toString(), httpEntity, Map.class);
@@ -123,5 +127,24 @@ public class ElasticSearchRepository {
 //        indexNameVsDocumentsToBeIndexed.keySet().forEach(indexName -> {
 //            producer.push("persist-national-records", ProducerPOJO.builder().requestInfo(new RequestInfo()).records(indexNameVsDocumentsToBeIndexed.get(indexName)).build());
 //        });
+    }
+
+    private HttpHeaders getHttpHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", getESEncodedCredentials());
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        List<MediaType> mediaTypes = new ArrayList<>();
+        mediaTypes.add(MediaType.APPLICATION_JSON);
+        headers.setAccept(mediaTypes);
+        return headers;
+    }
+
+    public String getESEncodedCredentials() {
+        String credentials = applicationProperties.getUserName() + ":" + applicationProperties.getPassword();
+        byte[] credentialsBytes = credentials.getBytes();
+        byte[] base64CredentialsBytes = Base64.getEncoder().encode(credentialsBytes);
+        return "Basic " + new String(base64CredentialsBytes);
     }
 }

@@ -58,7 +58,7 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
             },
             {
                 Header: t("EVENTS_POSTEDBY_LABEL"),
-                accessor: (row) =>  row.postedBy,
+                accessor: (row) =>  row.additionalDetails.postedBy,
             },
             {
                 Header: t("CS_SURVEY_RESULTS"),

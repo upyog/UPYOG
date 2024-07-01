@@ -71,8 +71,6 @@ const ApplicationDetails = () => {
       select: (data) => data?.DataSecurity?.SecurityPolicy?.find((elem) => elem?.model == "User") || {},
     }
   );
-  
-  
 
   let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.ws.useWSDetailsPage(t, tenantId, applicationNumber, serviceType, userInfo,{ privacy: Digit.Utils.getPrivacyObject() });
 
@@ -374,13 +372,14 @@ const ApplicationDetails = () => {
 
   const handleEstimateDownload = async () => {
     if (applicationDetails?.applicationData?.additionalDetails?.estimationFileStoreId) {
-      getFiles([applicationDetails?.applicationData?.additionalDetails?.estimationFileStoreId], stateCode)
+      getFiles([applicationDetails?.applicationData?.additionalDetails?.estimationFileStoreId], applicationDetails?.tenantId)
     } else {
       const warningCount = sessionStorage.getItem("WARINIG_COUNT") || "0";
       const warningCountDetails = JSON.parse(warningCount);
       if(warningCountDetails == 0) {
         const filters = { applicationNumber };
-        const response = await Digit.WSService.search({tenantId : tenantId, filters: { ...filters }, businessService: serviceType == "WATER" ? "WS" : "SW"})
+        console.log(filters,"filters")
+        const response = await Digit.WSService.search({tenantId : applicationDetails?.tenantId, filters: { ...filters }, businessService: serviceType == "WATER" ? "WS" : "SW"})
         let details = serviceType == "WATER" ? response?.WaterConnection?.[0] : response?.SewerageConnections?.[0];
         if (details?.additionalDetails?.estimationFileStoreId) {
           getFiles([details?.additionalDetails?.estimationFileStoreId], stateCode)
@@ -407,7 +406,7 @@ const ApplicationDetails = () => {
   const sanctionDownloadObject = {
     order: 2,
     label: t("WS_SANCTION_LETTER"),
-    onClick: () => getFiles([applicationDetails?.applicationData?.additionalDetails?.sanctionFileStoreId], stateCode),
+    onClick: () => getFiles([applicationDetails?.applicationData?.additionalDetails?.sanctionFileStoreId], applicationDetails?.tenantId),
   };
 
   const applicationDownloadObject = {

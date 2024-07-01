@@ -21,6 +21,7 @@ import { useUserSearch } from "./userSearch";
 import { useApplicationsForBusinessServiceSearch } from "./useApplicationForBillSearch";
 import useBoundaryLocalities from "./useLocalities";
 import useCommonMDMS from "./useMDMS";
+import useCommonMDMSV2 from "./useMDMSV2";
 import useCustomMDMS from "./useCustomMDMS";
 import useCustomAPIHook from "./useCustomAPIHook";
 import useInboxGeneral from "./useInboxGeneral/useInboxGeneral";
@@ -195,6 +196,12 @@ import useSurveySearch from "./surveys/useSearch";
 import useSurveyShowResults from "./surveys/useShowResults";
 import useSurveySubmitResponse from "./surveys/useSubmitResponse";
 import useSurveyInbox from "./surveys/useSurveyInbox";
+import useServeyCreateDef from "./surveys/useCreateSurvey";
+import useCfdefinitionsearch from "./surveys/useCfdefinitionsearch";
+import useSubmitSurveyResponse from "./surveys/useSubmitSurveyResponse";
+import useSelectedSurveySearch from "./surveys/useSelectedSurveySearch";
+import useCfdefinitionsearchresult from "./surveys/useCfdefinitionsearchresult";
+import useUpdateSurvey from "./surveys/useSurveyUpdate";
 
 import useNOCDetails from "./noc/useNOCDetails";
 import useNOCInbox from "./noc/useInbox";
@@ -474,6 +481,12 @@ const survey = {
   useSubmitResponse: useSurveySubmitResponse,
   useShowResults: useSurveyShowResults,
   useSurveyInbox,
+  useServeyCreateDef:useServeyCreateDef,
+  useCfdefinitionsearch:useCfdefinitionsearch,
+  useSubmitSurveyResponse:useSubmitSurveyResponse,
+  useSelectedSurveySearch:useSelectedSurveySearch,
+  useCfdefinitionsearchresult:useCfdefinitionsearchresult,
+  useUpdateSurvey:useUpdateSurvey,
 };
 
 const noc = {
@@ -545,6 +558,7 @@ const Hooks = {
   useEmployeeSearch,
   useBoundaryLocalities,
   useCommonMDMS,
+  useCommonMDMSV2,
   useApplicationStatusGeneral,
   useModuleTenants,
   useRecieptSearch,

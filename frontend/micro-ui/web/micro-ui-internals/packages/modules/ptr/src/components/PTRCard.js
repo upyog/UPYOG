@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { EmployeeModuleCard, PropertyHouse } from "@upyog/digit-ui-react-components";
+import { EmployeeModuleCard, PTRIcon } from "@upyog/digit-ui-react-components";
 
 const PTRCard = () => {
   const { t } = useTranslation();
@@ -16,7 +16,7 @@ const PTRCard = () => {
       select: (data) => {
         return {totalCount:data?.totalCount,nearingSlaCount:data?.nearingSlaCount} || "-";
       },
-      enabled: Digit.Utils.ptAccess(),
+      enabled: Digit.Utils.ptrAccess(),
     },
   });
 
@@ -24,7 +24,7 @@ const PTRCard = () => {
     if (!isFetching && isSuccess) setTotal(data);
   }, [isFetching]);
 
-  if (!Digit.Utils.ptAccess()) {
+  if (!Digit.Utils.ptrAccess()) {
     return null;
   }
   const links=[
@@ -36,16 +36,16 @@ const PTRCard = () => {
     {
       label: t("PTR_TITLE_NEW_PET_REGISTRATION"),
       link: `/digit-ui/employee/ptr/petservice/new-application`,
-      role: "PT_CEMP"
+      role: "PTR_CEMP"
     },
     {
       label: t("ES_COMMON_APPLICATION_SEARCH"),
       link: `/digit-ui/employee/ptr/petservice/my-applications`,
     },
   ]
-  const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
+  const PTR_CEMP = Digit.UserService.hasAccess(["PTR_APPROVER", "PTR_CEMP", "PTR_VERIFIER"]) || false;
   const propsForModuleCard = {
-    Icon: <PropertyHouse />,
+    Icon: <PTRIcon />,
     moduleName: t("PTR_TITLE_PET_REGISTRATION"),
     kpis: [
       {
@@ -54,7 +54,7 @@ const PTRCard = () => {
         link: `/digit-ui/employee/ptr/petservice/inbox`,
       },
     ],
-    links:links.filter(link=>!link?.role||PT_CEMP),
+    links:links.filter(link=>!link?.role||PTR_CEMP),
   };
 
   return <EmployeeModuleCard {...propsForModuleCard} />;

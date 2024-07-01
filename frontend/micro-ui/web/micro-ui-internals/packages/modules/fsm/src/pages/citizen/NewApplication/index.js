@@ -200,9 +200,23 @@ let newConfig=[
           "submitBarLabel": "CS_COMMON_NEXT"
       },
       "key": "address",
-      "nextStep": "check-slum",
+      "nextStep": "locality-gramPanchayat",
       "isMandatory": true,
       "type": "component"
+  },{
+    "route": "locality-gramPanchayat",
+    "component": "SelectLocalityOrGramPanchayat",
+    "withoutLabel": true,
+    "texts": {
+      "headerCaption": "CS_FILE_APPLICATION_PROPERTY_LOCATION_LABEL",
+      "header": "CS_FILE_APPLICATION_PROPERTY_LOCATION_ADDRESS_TEXT",
+      "cardText": "CS_FILE_APPLICATION_PROPERTY_LOCATION_CITY_MOHALLA_TEXT",
+      "submitBarLabel": "CS_COMMON_NEXT"
+    },
+    "key": "address",
+    "nextStep": "check-slum",
+    "isMandatory": true,
+    "type": "component"
   },
   {
       "type": "component",

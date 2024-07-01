@@ -116,6 +116,10 @@ public class WaterServicesUtil {
 			propertyCriteria.setTenantId(waterConnectionRequest.getWaterConnection().getTenantId());
 			propertyCriteria.setLocality(addDetail.get(localityCode).toString());
 		}
+		if (waterConnectionRequest.getRequestInfo().getUserInfo() != null
+				&& "CITIZEN".equalsIgnoreCase(waterConnectionRequest.getRequestInfo().getUserInfo().getType())) {
+			propertyCriteria.setTenantId(waterConnectionRequest.getWaterConnection().getTenantId());
+		}
 		Object result = serviceRequestRepository.fetchResult(
 				getPropertyURL(propertyCriteria),
 				RequestInfoWrapper.builder().requestInfo(waterConnectionRequest.getRequestInfo()).build());
@@ -305,7 +309,7 @@ public class WaterServicesUtil {
 	public String getShortnerURL(String actualURL) {
 		JSONObject obj = new JSONObject();
 		obj.put(URL, actualURL);
-		String url = config.getNotificationUrl() + config.getShortenerURL();
+		String url = config.getUrlShortnerHost() + config.getShortenerURL();
 		
 		Object response = serviceRequestRepository.getShorteningURL(new StringBuilder(url), obj);
 		return response.toString();

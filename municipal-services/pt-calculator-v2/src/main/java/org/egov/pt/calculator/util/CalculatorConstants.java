@@ -378,4 +378,5 @@ public static final String ASSESSMENT_CONFIG_MASTER = "assessmentconfig";
 
 
 
+	public static final String TENANTID_MDC_STRING = "TENANTID";
 }

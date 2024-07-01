@@ -140,7 +140,7 @@ console.log("appl", applicationDetails)
       return <TLCaption data={caption} OpenImage={OpenImage} privacy={privacy} />;
     } else {
       const caption = {
-        date: convertEpochToDateDMY(applicationData?.auditDetails?.lastModifiedTime),
+        date: checkpoint?.auditDetails?.lastModified,
         // name: checkpoint?.assigner?.name,
         name: checkpoint?.assignes?.[0]?.name,
         // mobileNumber: checkpoint?.assigner?.mobileNumber,
