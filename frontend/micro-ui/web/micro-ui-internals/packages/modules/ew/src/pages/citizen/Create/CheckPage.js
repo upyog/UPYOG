@@ -2,6 +2,7 @@ import {
   Card,
   CardHeader,
   CardSubHeader,
+  CardSectionHeader,
   CardText,
   CheckBox,
   LinkButton,
@@ -15,6 +16,7 @@ import { useHistory } from "react-router-dom";
 import { checkForNA, getFixedFilename } from "../../../utils";
 import Timeline from "../../../components/EWASTETimeline";
 import ApplicationTable from "../../../components/inbox/ApplicationTable";
+import EWASTEDocument from "../../../components/EWASTEDocumentView";
 
 const ActionButton = ({ jumpTo }) => {
   const { t } = useTranslation();
@@ -37,8 +39,9 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     isEditPET,
     isUpdatePET,
     ownerKey,
-    vendorKey,
+    vendorKey,  // created for vendor screen
     ewdet,
+    documents,
   } = value;
 
   // const typeOfApplication = !isEditPET && !isUpdatePET ? `new-application` : `edit-application`;
@@ -59,6 +62,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     }
   )) || [];
 
+  console.log("documents data in checkpage ::", documents)
   const [agree, setAgree] = useState(false);
   const setdeclarationhandler = () => {
     setAgree(!agree);
@@ -186,6 +190,36 @@ const CheckPage = ({ onSubmit, value = {} }) => {
               text={`${t(checkForNA(address?.landmark))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/street`}`} />}
             />
+          </StatusTable>
+          <br></br>
+
+          <StatusTable>
+            <br></br>
+            <CardSubHeader>{t("EWASTE_DOCUMENTS_DETAILS")}</CardSubHeader>
+            <Card style={{ paddingRight: "16px" }}>
+              {documents && documents?.documents.map((doc, index) => (
+                <div key={`doc-${index}`}>
+
+                  {<div><CardSectionHeader>{t("EWASTE_" + (doc?.fileType?.split('.').slice(0, 2).join('_')))}</CardSectionHeader>
+                    <StatusTable>
+                      {<EWASTEDocument doc={doc} Code={doc?.fileType} index={index} />}
+                      {documents?.documents.length != index + 1 ? <hr style={{ color: "white", backgroundColor: "white", height: "2px", marginTop: "20px", marginBottom: "20px" }} /> : null}
+                    </StatusTable>
+                  </div>}
+
+
+
+                  {/* {<div><CardSectionHeader>{t("EWASTE_" + (doc?.documentType?.split('.').slice(0, 2).join('_')))}</CardSectionHeader>
+                    <StatusTable>
+                      {
+                        <EWASTEDocument value={value} Code={doc?.documentType} index={index} />}
+                      {documents?.documents.length != index + 1 ? <hr style={{ color: "white", backgroundColor: "white", height: "2px", marginTop: "20px", marginBottom: "20px" }} /> : null}
+                    </StatusTable>
+                  </div>} */}
+                </div>
+              ))}
+            </Card>
+            <br></br>
           </StatusTable>
           <br></br>
 

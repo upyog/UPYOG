@@ -27,6 +27,7 @@ import { EwService } from "../../../libraries/src/services/elements/EW";
 import EWASTEWFCaption from "./components/EWASTEWFCaption";
 import EWASTEWFReason from "./components/EWASTEWFReason";
 import EWASTEDocuments from "./pageComponents/EWASTEDocuments";
+import EWASTEDocumentView from "./components/EWASTEDocumentView"
 
 
 const componentsToRegister = {
@@ -49,7 +50,8 @@ const componentsToRegister = {
   Inbox,
   EmployeeApp,
   EWApplicationDetails: EWApplicationDetails,
-  EwService
+  EwService,
+  EWASTEDocumentView,
 }
 
 

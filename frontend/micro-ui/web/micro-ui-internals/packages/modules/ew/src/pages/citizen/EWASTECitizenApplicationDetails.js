@@ -41,13 +41,13 @@ const EWASTECitizenApplicationDetails = () => {
   let ew_details = (EwasteApplication && EwasteApplication.length > 0) || {};
 
   EwasteApplication.map((Appl) => {
-    if(Appl.requestId == requestId){
+    if (Appl.requestId == requestId) {
       ew_details = Appl;
     }
   })
 
   // console.log("ewasteapplications and requestid :::", EwasteApplication, requestId)
-  // console.log("this is ew-detaoishdjf:::", ew_details)
+  console.log("this is ew-detaoishdjf:::", ew_details)
   const application = ew_details;
   // console.log("application ::", application)
 
@@ -176,13 +176,13 @@ const EWASTECitizenApplicationDetails = () => {
   // console.log("cureenstforms", currentForms[0]?.requestStatus)
 
   // if (data?.ResponseInfo?.status === "successful")
-  if (currentForms[0]?.requestStatus != "NEWREQUEST"){
-  // console.log("ewaste certificate if ::", data?.EwasteApplication, currentForms)
-  dowloadOptions.push({
-    label: t("EWASTE_CERTIFICATE"),
-    onClick: () => printCertificate(),
-  });
-}
+  if (currentForms[0]?.requestStatus != "NEWREQUEST") {
+    // console.log("ewaste certificate if ::", data?.EwasteApplication, currentForms)
+    dowloadOptions.push({
+      label: t("EWASTE_CERTIFICATE"),
+      onClick: () => printCertificate(),
+    });
+  }
 
 
   const productcolumns = [
@@ -263,11 +263,19 @@ const EWASTECitizenApplicationDetails = () => {
           />
 
           <br></br>
-          <StatusTable style={{ marginLeft: "20px" }}>
+          {/* <StatusTable style={{ marginLeft: "20px" }}>
             <Row
               label={t("EWASTE_NET_PRICE")}
               text={ew_details?.calculatedAmount}
             />
+          </StatusTable> */}
+
+          <CardSubHeader style={{ fontSize: "24px" }}>{t("EWASTE_TITLE_TRANSACTION_DETAILS")}</CardSubHeader>
+          <StatusTable>
+            <Row className="border-none" label={t("EWASTE_NET_PRICE")} text={ew_details?.calculatedAmount || t("CS_NA")} />
+            <Row className="border-none" label={t("EWASTE_FINAL_AMOUNT")} text={ew_details?.finalAmount || t("CS_NA")} />
+            <Row className="border-none" label={t("EWASTE_TRANSACTION_ID")} text={ew_details?.transactionId || t("CS_NA")} />
+            <Row className="border-none" label={t("EWASTE_PICKUP_DATE")} text={ew_details?.pickUpDate || t("CS_NA")} />
           </StatusTable>
 
 
