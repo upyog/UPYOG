@@ -49,11 +49,11 @@ public class GarbageAccountService {
 				// enrich create garbage application
 				enrichCreateGarbageApplication(garbageAccount, createGarbageRequest.getRequestInfo());
 
-				// create garbage application
-				grbgApplicationRepository.create(garbageAccount.getGrbgApplication());
-				
 				// create garbage account
 				garbageAccountsResponse.add(garbageAccountRepository.create(garbageAccount));
+				
+				// create garbage application
+				grbgApplicationRepository.create(garbageAccount.getGrbgApplication());
 				
 			});
 		}
@@ -77,6 +77,7 @@ public class GarbageAccountService {
 
 	private void validateGarbageAccount(GarbageAccount garbageAccount) {
 
+		// validate nullability
 		if (null == garbageAccount
 				|| null == garbageAccount.getMobileNumber()
 				|| null == garbageAccount.getName()
@@ -84,6 +85,9 @@ public class GarbageAccountService {
 				|| null == garbageAccount.getPropertyId()) {
 			throw new RuntimeException("Provide garbage account details.");
 		}
+		
+		// validate duplicate owner with same properyId
+		
 
 	}
 
@@ -103,6 +107,7 @@ public class GarbageAccountService {
 
 		// generate garbage_id
 		garbageAccount.setGarbageId(System.currentTimeMillis());
+		garbageAccount.setStatus(ApplicationPropertiesAndConstant.ACCOUNT_STATUS_DRAFT);
 
 	}
 
@@ -126,7 +131,7 @@ public class GarbageAccountService {
 		newGarbageAccount.setGarbageId(existingGarbageAccount.getGarbageId());
 	}
 
-	public List<GarbageAccount> updateGrbgAccount(GarbageAccountRequest updateGarbageRequest) {
+	public List<GarbageAccount> update(GarbageAccountRequest updateGarbageRequest) {
 
 		List<GarbageAccount> garbageAccountsResponse = new ArrayList<>();
 		SearchCriteriaGarbageAccount searchCriteriaGarbageAccount = createSearchCriteriaByGarbageAccounts(updateGarbageRequest.getGarbageAccounts());
@@ -137,21 +142,49 @@ public class GarbageAccountService {
 				// search existing grbg acc
 				GarbageAccount existingGarbageAccount = existingGarbageAccountsMap.get(newGarbageAccount.getGarbageId());
 
-				// validate existing and new grbg acc
-				validateUpdateGarbageAccount(newGarbageAccount, existingGarbageAccount);
-
-				// replicate existing grbg acc to history table
-
-				// enrich new request
-				enrichUpdateGarbageAccount(newGarbageAccount, existingGarbageAccount, updateGarbageRequest.getRequestInfo());
-
 				// update garbage account
-				garbageAccountRepository.update(newGarbageAccount);
+				updateGarbageAccount(updateGarbageRequest, newGarbageAccount, existingGarbageAccount);
+				
+				
+				
+				// update other objects of garbage account
+				
+				// 1. update application
+				if(!newGarbageAccount.getGrbgApplication().equals(existingGarbageAccount.getGrbgApplication()))
+				{
+					grbgApplicationRepository.update(newGarbageAccount.getGrbgApplication());
+				}
+				
+
+				// 2. update bills
+//				bills loop > make list of deleting, updating and creating bills
+				
+				
+				
+				
+				
 				garbageAccountsResponse.add(newGarbageAccount);
 			});
 		}
 		
 		return garbageAccountsResponse;
+	}
+
+
+	private void updateGarbageAccount(GarbageAccountRequest updateGarbageRequest, GarbageAccount newGarbageAccount,
+			GarbageAccount existingGarbageAccount) {
+		
+		// validate existing and new grbg acc
+		validateUpdateGarbageAccount(newGarbageAccount, existingGarbageAccount);
+
+		// replicate existing grbg acc to history table
+
+		// enrich new request
+		enrichUpdateGarbageAccount(newGarbageAccount, existingGarbageAccount, updateGarbageRequest.getRequestInfo());
+
+		// update garbage account
+		garbageAccountRepository.update(newGarbageAccount);
+		
 	}
 
 	private Map<Long, GarbageAccount> searchGarbageAccountMap(
@@ -242,7 +275,8 @@ public class GarbageAccountService {
 		        CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getType()) &&
 		        CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getName()) &&
 		        CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getMobileNumber()) &&
-		        CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getParentId())) {
+		        null == searchCriteriaGarbageAccount.getIsOwner()) {
+//		        CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getParentId())) {
 			throw new RuntimeException("Provide the parameters to search garbage accounts.");
 		}
 		

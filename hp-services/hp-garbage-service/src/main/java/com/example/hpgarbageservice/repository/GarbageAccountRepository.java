@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -35,6 +36,7 @@ public class GarbageAccountRepository {
 			+ ", bill.last_modified_date as bill_last_modified_date "
 			+ ", sub_acc.id as sub_acc_id, sub_acc.garbage_id as sub_acc_garbage_id, sub_acc.property_id as sub_acc_property_id, sub_acc.type as sub_acc_type "
 			+ ", sub_acc.name as sub_acc_name, sub_acc.mobile_number as sub_acc_mobile_number, sub_acc.is_owner as sub_acc_is_owner"
+			+ ", sub_acc.user_uuid as sub_acc_user_uuid, sub_acc.declaration_uuid as sub_acc_declaration_uuid, sub_acc.grbg_coll_address_uuid as sub_acc_grbg_coll_address_uuid, sub_acc.status as sub_acc_status"
 			+ ", sub_acc.created_by as sub_acc_created_by, sub_acc.created_date as sub_acc_created_date, sub_acc.last_modified_by as sub_acc_last_modified_by"
 			+ ", sub_acc.last_modified_date as sub_acc_last_modified_date"
 			+ ", sub_acc_bill.id as sub_acc_bill_id, sub_acc_bill.bill_ref_no as sub_acc_bill_bill_ref_no, sub_acc_bill.garbage_id as sub_acc_bill_garbage_id " 
@@ -47,19 +49,24 @@ public class GarbageAccountRepository {
 		    + ", sub_acc_bill.payment_status as sub_acc_bill_payment_status, sub_acc_bill.created_by as sub_acc_bill_created_by " 
 		    + ", sub_acc_bill.created_date as sub_acc_bill_created_date, sub_acc_bill.last_modified_by as sub_acc_bill_last_modified_by " 
 		    + ", sub_acc_bill.last_modified_date as sub_acc_bill_last_modified_date "
-			+ " FROM hpudd_grbg_account as acc "
+		    + ", app.uuid as app_uuid, app.application_no as app_application_no , app.status as app_status, app.garbage_id as app_garbage_id " 
+		    + ", sub_app.uuid as sub_app_uuid, sub_app.application_no as sub_app_application_no , sub_app.status as sub_app_status, sub_app.garbage_id as sub_app_garbage_id " 
+		    + " FROM hpudd_grbg_account as acc "
 			+ " LEFT OUTER JOIN hpudd_grbg_bill bill ON acc.garbage_id = bill.garbage_id"
 			+ " LEFT OUTER JOIN hpudd_grbg_account sub_acc ON acc.property_id = sub_acc.property_id"
-		    + " LEFT OUTER JOIN hpudd_grbg_bill as sub_acc_bill ON sub_acc.garbage_id = sub_acc_bill.garbage_id";
+		    + " LEFT OUTER JOIN hpudd_grbg_bill as sub_acc_bill ON sub_acc.garbage_id = sub_acc_bill.garbage_id"
+		    + " LEFT OUTER JOIN grbg_application as app ON app.garbage_id = acc.garbage_id"
+		    + " LEFT OUTER JOIN grbg_application as sub_app ON sub_app.garbage_id = sub_acc.garbage_id";
 
     
     private static final String INSERT_ACCOUNT = "INSERT INTO hpudd_grbg_account (id, garbage_id, property_id, type, name"
-    		+ ", mobile_number, is_owner, created_by, created_date, last_modified_by, last_modified_date) "
-    		+ "VALUES (:id, :garbageId, :propertyId, :type, :name, :mobileNumber, :isOwner, :createdBy, :createdDate, "
+    		+ ", mobile_number, is_owner, user_uuid, declaration_uuid, grbg_coll_address_uuid, status, created_by, created_date, last_modified_by, last_modified_date) "
+    		+ "VALUES (:id, :garbageId, :propertyId, :type, :name, :mobileNumber, :isOwner, :userUuid, :declarationUuid, :grbgCollectionAddressUuid, :status, :createdBy, :createdDate, "
     		+ ":lastModifiedBy, :lastModifiedDate)";
     
     private static final String UPDATE_ACCOUNT_BY_ID = "UPDATE hpudd_grbg_account SET garbage_id = :garbageId"
-    		+ ", property_id = :propertyId, type = :type, name = :name, mobile_number = :mobileNumber, parent_id = :parentId"
+    		+ ", property_id = :propertyId, type = :type, name = :name, mobile_number = :mobileNumber, is_owner = :isOwner"
+    		+ ", user_uuid = :userUuid, declaration_uuid = :declarationUuid, grbg_coll_address_uuid = :grbgCollectionAddressUuid, status = :status"
     		+ ", last_modified_by = :lastModifiedBy, last_modified_date = :lastModifiedDate WHERE id = :id";
 
 	public static final String SELECT_NEXT_SEQUENCE = "select nextval('seq_id_hpudd_grbg_account')";
@@ -84,6 +91,10 @@ public class GarbageAccountRepository {
         accountInputs.put("name", account.getName());
         accountInputs.put("mobileNumber", account.getMobileNumber());
         accountInputs.put("isOwner", account.getIsOwner());
+        accountInputs.put("userUuid", account.getUserUuid());
+        accountInputs.put("declarationUuid", account.getDeclarationUuid());
+        accountInputs.put("grbgCollectionAddressUuid", account.getGrbgCollectionAddressUuid());
+        accountInputs.put("status", account.getStatus());
 //        accountInputs.put("parentId", account.getParentId());
         accountInputs.put("createdBy", account.getAuditDetails().getCreatedBy());
         accountInputs.put("createdDate", account.getAuditDetails().getCreatedDate());
@@ -107,6 +118,10 @@ public class GarbageAccountRepository {
         accountInputs.put("name", newGarbageAccount.getName());
         accountInputs.put("mobileNumber", newGarbageAccount.getMobileNumber());
         accountInputs.put("isOwner", newGarbageAccount.getIsOwner());
+        accountInputs.put("userUuid", newGarbageAccount.getUserUuid());
+        accountInputs.put("declarationUuid", newGarbageAccount.getDeclarationUuid());
+        accountInputs.put("grbgCollectionAddressUuid", newGarbageAccount.getGrbgCollectionAddressUuid());
+        accountInputs.put("status", newGarbageAccount.getStatus());
 //        accountInputs.put("parentId", newGarbageAccount.getParentId());
 //        accountInputs.put("createdBy", newGarbageAccount.getAuditDetails().getCreatedBy());
 //        accountInputs.put("createdDate", newGarbageAccount.getAuditDetails().getCreatedDate());
@@ -124,7 +139,7 @@ public class GarbageAccountRepository {
 		//generate search query
     	searchQuery = getSearchQueryByCriteria(searchQuery, searchCriteriaGarbageAccount, preparedStatementValues);
         
-        log.debug(searchQuery.toString());
+        log.debug("### search garbage account: "+searchQuery.toString());
 
         List<GarbageAccount> garbageAccounts = jdbcTemplate.query(searchQuery.toString(), preparedStatementValues.toArray(), garbageAccountRowMapper);
 
@@ -148,8 +163,8 @@ public class GarbageAccountRepository {
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getPropertyId())
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getType())
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getName())
-        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getMobileNumber())
-        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getParentId())) {
+        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getMobileNumber())){
+//        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getParentId())) {
         	return null;
         }
 
@@ -193,10 +208,15 @@ public class GarbageAccountRepository {
                     preparedStatementValues)).append(" )");
         }
 
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getParentId())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
-            searchQuery.append(" acc.parent_id IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getParentId(),
-                    preparedStatementValues)).append(" )");
+//        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getParentId())) {
+//            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
+//            searchQuery.append(" acc.parent_id IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getParentId(),
+//                    preparedStatementValues)).append(" )");
+//        }
+        
+        if (null != searchCriteriaGarbageAccount.getIsOwner()) {
+        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
+            searchQuery.append(" acc.is_owner = ").append(searchCriteriaGarbageAccount.getIsOwner());
         }
 		
         return searchQuery;

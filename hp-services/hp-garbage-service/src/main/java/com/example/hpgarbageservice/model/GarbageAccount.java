@@ -28,6 +28,14 @@ public class GarbageAccount {
 //	private Long parentId;
 	private Boolean isOwner; 
 	
+	private String userUuid;
+
+	private String declarationUuid;
+
+	private String grbgCollectionAddressUuid;
+
+	private String status;
+	
 	private GrbgApplication grbgApplication;
 
 	private AuditDetails auditDetails;
