@@ -42,11 +42,17 @@ export const NewApplication = ({ parentUrl, heading }) => {
   };
 
   const onFormValueChange = (setValue, formData) => {
-    console.log(formData, "formdata")
-    console.log(formData?.tripData?.amountPerTrip, formData?.tripData?.amountPerTrip === 0)
+    console.log("ProID", formData)
     if (
+      formData?.pitType!==undefined &&
+      formData?.tripData?.vehicleType &&
+      formData?.tripData?.roadWidth!==undefined &&
+      formData?.tripData?.distancefromroad!==undefined &&
+      formData?. address?.street &&
+      formData?.address?.doorNo &&
       formData?.propertyType &&
       formData?.subtype &&
+      formData?.address?.locality?.code || formData?.cpt?.details?.address?.locality?.code &&
       formData?.tripData?.vehicleType &&
       formData?.channel &&
       formData?.pitType &&
@@ -66,10 +72,16 @@ export const NewApplication = ({ parentUrl, heading }) => {
         } else if (isConventionalSpecticTank(formData?.pitType?.dimension) && pitDetailValues?.length >= 3) {
           setSubmitValve(true);
         } else if (!isConventionalSpecticTank(formData?.pitType?.dimension) && pitDetailValues?.length >= 2) {
-
           setSubmitValve(true);
-        } else
-          setSubmitValve(false);
+        } else setSubmitValve(false);
+      }
+      if (
+        formData?.tripData?.amountPerTrip !== 0 &&
+        (formData?.advancepaymentPreference?.advanceAmount < min ||
+          formData?.advancepaymentPreference?.advanceAmount > max ||
+          formData?.advancepaymentPreference?.advanceAmount === "")
+      ) {
+        setSubmitValve(false);
       }
       // if (
       //   formData?.tripData?.amountPerTrip !== 0 &&
