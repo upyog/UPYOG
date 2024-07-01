@@ -435,9 +435,14 @@ public class DemandService {
 			            		if(taxamnt+finalsadvance>0)
 			            			{
 			            		ispaymentcompleted=false;
+			            		demand.setIsPaymentCompleted(ispaymentcompleted);
+			            		d1.setIsPaymentCompleted(ispaymentcompleted);
 			            	}
 			            	else {
+			            		
 			            		ispaymentcompleted=true;
+			            		demand.setIsPaymentCompleted(ispaymentcompleted);
+			            		d1.setIsPaymentCompleted(ispaymentcompleted);
 			            	}
 
 			            }
@@ -452,19 +457,20 @@ public class DemandService {
 				
 			        	if (finalsvar!=1)
 			        	{
-					      // System.out.print("Settling Advcance  ");
+					     
 					       finalsadvance = taxamnt+finalsadvance;
 					       
 					       if (finalsadvance==0)
 					       {
 					    	   finalsvar=1;
 					    	   ispaymentcompleted=false;
+			
 					       }	
 					       else 
 					       {  ispaymentcompleted=true;
 					    	   finalsvar=0;
 					       }           	
-					      // System.out.println("txamt "+finalsadvance);
+					
 					            	
 					   }
 		}
