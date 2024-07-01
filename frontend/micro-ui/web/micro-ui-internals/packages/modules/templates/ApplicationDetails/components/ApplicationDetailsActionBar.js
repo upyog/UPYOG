@@ -1,8 +1,10 @@
 import React, {useEffect, useRef} from "react";
 import { useTranslation } from "react-i18next";
 import { SubmitBar, ActionBar, Menu } from "@upyog/digit-ui-react-components";
+import { useParams } from "react-router-dom";
 
-function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSelect, setDisplayMenu, businessService, forcedActionPrefix,ActionBarStyle={},MenuStyle={} }) {
+function ApplicationDetailsActionBar({ workflowDetails,data, displayMenu, onActionSelect, setDisplayMenu, businessService, forcedActionPrefix,ActionBarStyle={},MenuStyle={} }) {
+  
   const { t } = useTranslation();
   let user = Digit.UserService.getUser();
   const menuRef = useRef();
@@ -11,6 +13,17 @@ function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSel
     const userInfo = userInfos ? JSON.parse(userInfos) : {};
     user = userInfo?.value;
   }
+
+  const { id: requestId } = useParams();
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+
+  const { data: applicationDetails } = Digit.Hooks.ew.useEwApplicationDetail(t, tenantId, requestId);
+console.log("applicationDetails",applicationDetails)
+  const Session = Digit.SessionStorage.get("User");
+  console.log("Session",Session);
+  const uuid = Session?.info?.uuid;
+  const modified = applicationDetails?.applicationData?.applicationData?.auditDetails?.lastModifiedBy;
+
   const userRoles = user?.info?.roles?.map((e) => e.code);
   let isSingleButton = false;
   let isMenuBotton = false;
@@ -47,7 +60,8 @@ function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSel
               style={MenuStyle}
             />
           ) : null}
-          <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+          {businessService === "ewst" ? modified === uuid ? <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} /> : null : <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />}
+           {/* <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} /> */}
         </ActionBar>
       )}
       {!workflowDetails?.isLoading && !isMenuBotton && isSingleButton && (
