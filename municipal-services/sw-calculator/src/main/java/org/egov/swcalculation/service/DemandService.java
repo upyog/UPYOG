@@ -781,6 +781,7 @@ public class DemandService {
 				}
 				else
 				{
+					addRoundOffTaxHead(getBillCriteria.getTenantId(), demand.getDemandDetails());
 					demandsToBeUpdated.add(demand);
 				}	
 			}
