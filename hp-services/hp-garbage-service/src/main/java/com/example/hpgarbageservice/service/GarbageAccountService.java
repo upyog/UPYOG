@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -23,6 +24,7 @@ import com.example.hpgarbageservice.model.SearchCriteriaGarbageAccountRequest;
 import com.example.hpgarbageservice.model.contract.RequestInfo;
 import com.example.hpgarbageservice.repository.GarbageAccountRepository;
 import com.example.hpgarbageservice.repository.GrbgApplicationRepository;
+import com.example.hpgarbageservice.repository.GrbgCommercialDetailsRepository;
 
 @Service
 public class GarbageAccountService {
@@ -32,6 +34,9 @@ public class GarbageAccountService {
 
 	@Autowired
 	private GrbgApplicationRepository grbgApplicationRepository;
+
+	@Autowired
+	private GrbgCommercialDetailsRepository grbgCommercialDetailsRepository;
 
 	public List<GarbageAccount> create(GarbageAccountRequest createGarbageRequest) {
 
@@ -143,8 +148,10 @@ public class GarbageAccountService {
 				GarbageAccount existingGarbageAccount = existingGarbageAccountsMap.get(newGarbageAccount.getGarbageId());
 
 				// update garbage account
-				updateGarbageAccount(updateGarbageRequest, newGarbageAccount, existingGarbageAccount);
-				
+				if(!newGarbageAccount.equals(existingGarbageAccount))
+				{
+					updateGarbageAccount(updateGarbageRequest, newGarbageAccount, existingGarbageAccount);
+				}
 				
 				
 				// update other objects of garbage account
@@ -159,6 +166,17 @@ public class GarbageAccountService {
 				// 2. update bills
 //				bills loop > make list of deleting, updating and creating bills
 				
+				
+				if(null != newGarbageAccount.getGrbgCommercialDetails()
+						&& StringUtils.isEmpty(newGarbageAccount.getGrbgCommercialDetails().getUuid())) {
+					// 3. create commercial details
+					grbgCommercialDetailsRepository.create(newGarbageAccount.getGrbgCommercialDetails());
+				}
+				else if(StringUtils.isNotEmpty(newGarbageAccount.getGrbgCommercialDetails().getUuid())
+						&& !newGarbageAccount.getGrbgCommercialDetails().equals(existingGarbageAccount.getGrbgCommercialDetails())){
+					// 4. update commercial details
+					grbgCommercialDetailsRepository.update(newGarbageAccount.getGrbgCommercialDetails());
+				}
 				
 				
 				

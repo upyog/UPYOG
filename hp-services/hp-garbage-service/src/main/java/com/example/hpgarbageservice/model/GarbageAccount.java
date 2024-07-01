@@ -5,12 +5,14 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @Data
 @Builder(toBuilder = true)
 @NoArgsConstructor
+@EqualsAndHashCode(exclude = {"id","grbgApplication","grbgCommercialDetails","auditDetails","garbageBills","childGarbageAccounts"})
 public class GarbageAccount {
 
 	private Long id;
@@ -37,6 +39,8 @@ public class GarbageAccount {
 	private String status;
 	
 	private GrbgApplication grbgApplication;
+
+	private GrbgCommercialDetails grbgCommercialDetails;
 
 	private AuditDetails auditDetails;
 	

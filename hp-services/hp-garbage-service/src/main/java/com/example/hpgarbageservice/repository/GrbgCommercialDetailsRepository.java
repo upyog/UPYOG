@@ -26,6 +26,7 @@ public class GrbgCommercialDetailsRepository {
 
     public void update(GrbgCommercialDetails grbgCommercialDetails) {
         jdbcTemplate.update(queryBuilder.UPDATE_QUERY,
+                grbgCommercialDetails.getGarbageId(),
                 grbgCommercialDetails.getBusinessName(),
                 grbgCommercialDetails.getBusinessType(),
                 grbgCommercialDetails.getOwnerUserUuid(),

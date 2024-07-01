@@ -51,12 +51,16 @@ public class GarbageAccountRepository {
 		    + ", sub_acc_bill.last_modified_date as sub_acc_bill_last_modified_date "
 		    + ", app.uuid as app_uuid, app.application_no as app_application_no , app.status as app_status, app.garbage_id as app_garbage_id " 
 		    + ", sub_app.uuid as sub_app_uuid, sub_app.application_no as sub_app_application_no , sub_app.status as sub_app_status, sub_app.garbage_id as sub_app_garbage_id " 
+		    + ", comm.uuid as comm_uuid, comm.garbage_id as comm_garbage_id, comm.business_name as comm_business_name, comm.business_type as comm_business_type, comm.owner_user_uuid as comm_owner_user_uuid " 
+		    + ", sub_comm.uuid as sub_comm_uuid, sub_comm.garbage_id as sub_comm_garbage_id, sub_comm.business_name as sub_comm_business_name, sub_comm.business_type as sub_comm_business_type, sub_comm.owner_user_uuid as sub_comm_owner_user_uuid " 
 		    + " FROM hpudd_grbg_account as acc "
 			+ " LEFT OUTER JOIN hpudd_grbg_bill bill ON acc.garbage_id = bill.garbage_id"
 			+ " LEFT OUTER JOIN hpudd_grbg_account sub_acc ON acc.property_id = sub_acc.property_id"
 		    + " LEFT OUTER JOIN hpudd_grbg_bill as sub_acc_bill ON sub_acc.garbage_id = sub_acc_bill.garbage_id"
 		    + " LEFT OUTER JOIN grbg_application as app ON app.garbage_id = acc.garbage_id"
-		    + " LEFT OUTER JOIN grbg_application as sub_app ON sub_app.garbage_id = sub_acc.garbage_id";
+		    + " LEFT OUTER JOIN grbg_application as sub_app ON sub_app.garbage_id = sub_acc.garbage_id"
+		    + " LEFT OUTER JOIN grbg_commercial_details as comm ON comm.garbage_id = acc.garbage_id"
+		    + " LEFT OUTER JOIN grbg_commercial_details as sub_comm ON sub_comm.garbage_id = sub_acc.garbage_id";
 
     
     private static final String INSERT_ACCOUNT = "INSERT INTO hpudd_grbg_account (id, garbage_id, property_id, type, name"

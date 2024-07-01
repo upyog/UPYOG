@@ -13,11 +13,11 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import com.example.hpgarbageservice.controller.GarbageApplicationController;
 import com.example.hpgarbageservice.model.AuditDetails;
 import com.example.hpgarbageservice.model.GarbageAccount;
 import com.example.hpgarbageservice.model.GarbageBill;
 import com.example.hpgarbageservice.model.GrbgApplication;
+import com.example.hpgarbageservice.model.GrbgCommercialDetails;
 
 @Component
 public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageAccount>> {
@@ -68,6 +68,12 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                 	GrbgApplication garbageApplication = populateGarbageApplication(rs, "app_");
                     garbageAccount.setGrbgApplication(garbageApplication);
             }
+
+            if (null != rs.getString("comm_uuid")
+            		&& null == garbageAccount.getGrbgCommercialDetails()) {
+            	GrbgCommercialDetails garbageCommDetails = populateGrbgCommercialDetails(rs, "comm_");
+                    garbageAccount.setGrbgCommercialDetails(garbageCommDetails);
+            }
             
             
             if (null != rs.getString("bill_id")) {
@@ -94,6 +100,12 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                     	subGarbageAccount.setGrbgApplication(subGarbageApplication);
                 }
                 
+                if (null != rs.getString("sub_comm_uuid")
+                		&& null == subGarbageAccount.getGrbgCommercialDetails()) {
+                	GrbgCommercialDetails garbageCommDetails = populateGrbgCommercialDetails(rs, "sub_comm_");
+                	subGarbageAccount.setGrbgCommercialDetails(garbageCommDetails);
+                }
+                
                 if (null != rs.getString("sub_acc_bill_id")) {
                     String subAccBillId = rs.getString("sub_acc_bill_id");
                     GarbageBill subAccGarbageBill = findBillByUuid(subGarbageAccount.getGarbageBills(), subAccBillId);
@@ -108,7 +120,18 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
         return new ArrayList<>(accountsMap.values());
     }
 
-    private GrbgApplication populateGarbageApplication(ResultSet rs, String prefix) throws SQLException {
+    private GrbgCommercialDetails populateGrbgCommercialDetails(ResultSet rs, String prefix) throws SQLException {
+		GrbgCommercialDetails grbgCommercialDetails = GrbgCommercialDetails.builder()
+				.uuid(rs.getString(prefix+"uuid"))
+				.garbageId(rs.getLong(prefix+"garbage_id"))
+				.businessName(rs.getString(prefix+"business_name"))
+				.businessType(rs.getString(prefix+"business_type"))
+				.ownerUserUuid(rs.getString(prefix+"owner_user_uuid"))
+				.build();
+		return grbgCommercialDetails;
+	}
+
+	private GrbgApplication populateGarbageApplication(ResultSet rs, String prefix) throws SQLException {
     	GrbgApplication grbgApplication = GrbgApplication.builder()
     			.uuid(rs.getString(prefix+"uuid"))
     			.applicationNo(rs.getString(prefix+"application_no"))
