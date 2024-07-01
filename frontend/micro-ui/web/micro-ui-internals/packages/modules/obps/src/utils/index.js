@@ -483,6 +483,7 @@ export const convertToBPAObject = (data, isOCBPA = false, isSendBackTOCitizen = 
       auditDetails: data?.auditDetails,
       additionalDetails: {
         ...data?.additionalDetails,
+        OTPverfiedTimeSamp: sessionStorage.getItem("otpVerifiedTimestamp"),
         otherFeesDiscription:sessionStorage.getItem("otherChargesDisc"),
         lessAdjustmentFeeFiles:JSON.parse(sessionStorage.getItem("uploadedFileLess")),
         selfCertificationCharges:{

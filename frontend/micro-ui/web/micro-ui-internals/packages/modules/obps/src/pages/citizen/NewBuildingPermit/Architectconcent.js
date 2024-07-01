@@ -17,12 +17,10 @@
   */
   import React, { useState } from 'react';
   import Modal from 'react-modal';
-  import jsPDF from 'jspdf';
   import { useLocation } from "react-router-dom";
-  import { SubmitBar, CitizenConsentForm } from '@upyog/digit-ui-react-components';
+  import { SubmitBar } from '@upyog/digit-ui-react-components';
   import { useTranslation } from "react-i18next";
-  import Axios from "axios";
-  import Urls from '../../../../../../libraries/src/services/atoms/urls'; 
+  
 
 
 
@@ -35,6 +33,7 @@
     const architecname = user?.info?.name;
     const architectmobileNumber = user?.info.mobileNumber
     const [params] = Digit.Hooks.useSessionStorage("BUILDING_PERMIT", state?.edcrNumber ? { data: { scrutinyNumber: { edcrNumber: state?.edcrNumber } } } : {});
+    console.log("paramdkjagdew",params);
     const [isUploading, setIsUploading] = useState(false); // it will check whether the file upload is in process or not
     const [isFileUploaded, setIsFileUploaded] = useState(false);
     const architectid = params?.additionalDetails?.architectid;
@@ -149,103 +148,21 @@
     const uploadSelfDeclaration = async () => {
       try {
         setIsUploading(true); // Set isUploading to true before starting the upload
-        const doc = new jsPDF();
-        const leftMargin = 15;
-        const topMargin = 10;
-        const lineSpacing = 4.6;  // Adjusted for Better Spacing
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const maxLineWidth = pageWidth - 2 * leftMargin;
-  
-        let currentY = topMargin;
-  
-        doc.setFont("Times-Roman");
-        doc.setFontSize(12);
-  
-       // Split and write text into the PDF
-    const lines = selfdeclarationform.split("\n");
-    // lines.forEach((line) => {
-      
-
-    //   const wrappedLines = doc.splitTextToSize(line, maxLineWidth);
-    //   wrappedLines.forEach((wrappedLine) => {
-    //     if (currentY + lineSpacing > doc.internal.pageSize.getHeight() - topMargin) {
-    //       doc.addPage();
-    //       currentY = topMargin;
-    //     }
-    //     doc.text(leftMargin, currentY, wrappedLine);
-    //     currentY += lineSpacing;
-    //   });
-    // });
-    lines.forEach((line) => {
-      const segments = line.split(/(<b>|<\/b>)/g); // Split line by <b> and </b> tags
-      let isBold = false;
-      let currentX = leftMargin;
-
-      segments.forEach((segment) => {
-          if (segment === "<b>") {
-              isBold = true;
-          } else if (segment === "</b>") {
-              isBold = false;
-          } else {
-              const words = segment.split(' ');
-              words.forEach((word, index) => {
-                  const wordWithSpace = index < words.length - 1 ? `${word} ` : word;
-                  const textWidth = doc.getTextWidth(wordWithSpace);
-
-                  if (currentX + textWidth > maxLineWidth) {
-                      currentY += lineSpacing;
-                      currentX = leftMargin;
-                      if (currentY + lineSpacing > doc.internal.pageSize.getHeight() - topMargin) {
-                          doc.addPage();
-                          currentY = topMargin;
-                      }
-                  }
-
-                  doc.setFont(isBold ? "Times-Bold" : "Times-Roman");
-                  doc.text(currentX, currentY, wordWithSpace);
-                  currentX += textWidth;
-              });
-          }
-      });
-
-      currentY += lineSpacing;
-      if (currentY + lineSpacing > doc.internal.pageSize.getHeight() - topMargin) {
-          doc.addPage();
-          currentY = topMargin;
+        let result = await Digit.PaymentService.generatePdf(Digit.ULBService.getStateId(), { Bpa: [params] }, "architectconsent");
+        
+      if (result?.filestoreIds[0]?.length > 0) {
+        alert("File Uploaded Successfully");
+        sessionStorage.setItem("ArchitectConsentdocFilestoreid",result?.filestoreIds[0]);
+        setIsFileUploaded(true); // Set isFileUploaded to true on successful upload
+      } else {
+        alert("File Upload Failed"); 
       }
-  });
-    // Convert the PDF to a Blob
-    
-    
-    const pdfBlob = doc.output("blob", "declaration.pdf");
-
-    // Prepare FormData for the upload
-    const formData = new FormData();
-    formData.append("file", pdfBlob, "declaration.pdf"); 
-    formData.append("tenantId", "pg"); 
-    formData.append("module", "BPA"); 
-
-   
-    const response = await Axios({
-      method: "post",
-      url: `${Urls.FileStore}`, 
-      data: formData,
-      headers: { "auth-token": Digit.UserService.getUser()?.access_token },
-    });
-
-    if (response?.data?.files?.length > 0) {
-      alert("File Uploaded Successfully");
-      sessionStorage.setItem("ArchitectConsentdocFilestoreid",response?.data?.files[0]?.fileStoreId);
-      setIsFileUploaded(true); // Set isFileUploaded to true on successful upload
-    } else {
-      alert("File Upload Failed"); 
+    } catch (error) {
+      alert("Error Uploading PDF:", error); // Error handling
     }
-  } catch (error) {
-    alert("Error Uploading PDF:", error); // Error handling
-  }
-  finally {
-    setIsUploading(false); // Set isUploading to false after the upload is complete
-  }
+    finally {
+      setIsUploading(false); // Set isUploading to false after the upload is complete
+    }
 };
     
     

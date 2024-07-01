@@ -33,6 +33,9 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         (formData?.owners && formData?.owners?.owners) || [{ name: "", gender: "", mobileNumber: null, isPrimaryOwner: true }]
     );
 
+    const user = Digit.UserService.getUser();
+    console.log("userrrr",user);
+
     useEffect(() => {
         var flag=0;
         fields.map((ob) => {
@@ -387,6 +390,9 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 if (formData?.owners?.greenuploadedFile) payload.additionalDetails.uploadedFileGreenBuilding = formData?.owners?.greenuploadedFile;
                 if (formData?.owners?.use?.code) payload.additionalDetails.use = formData?.owners?.use?.code;
 
+                //adding Architect name and his mobilenumber so that i can use it in Consent form 
+                if (user?.info?.name) payload.additionalDetails.architectName = user?.info?.name;
+                if (user?.info?.mobileNumber) payload.additionalDetails.architectMobileNumber = user?.info?.mobileNumber;
 
                 //For LandInfo
                 payload.landInfo = {};
