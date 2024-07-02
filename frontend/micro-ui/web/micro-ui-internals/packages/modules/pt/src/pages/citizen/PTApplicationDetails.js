@@ -260,9 +260,7 @@ const PTApplicationDetails = () => {
       <div>
         <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
           <Header styles={{ fontSize: "32px" }}>{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
-          <div style={{display:"flex", alignItems:"center", color:"#A52A2A"}}>
-          <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
-          </div>
+          <div >
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper"
@@ -271,6 +269,9 @@ const PTApplicationDetails = () => {
               options={dowloadOptions}
             />
           )}
+          <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+          </div>
+          
         </div>
         <Card>
           <StatusTable>

@@ -1,5 +1,5 @@
 import { CardLabel, Dropdown, LabelFieldPair, LinkButton, TextInput, CardLabelError, DeleteIcon } from "@upyog/digit-ui-react-components";
-import _ from "lodash";
+import _, { filter } from "lodash";
 import React, { useState, useEffect, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { stringReplaceAll } from "../utils";
@@ -95,9 +95,10 @@ const RoadCuttForm = (_props) => {
 
   const roadCuttingTypeMenu = useMemo(() => {
     const RoadTypes = mdmsData?.["sw-services-calculation"]?.RoadType || [];
-    RoadTypes?.forEach(data => data.i18nKey = `WS_ROADTYPE_${stringReplaceAll(data?.code?.toUpperCase(), " ", "_")}`);
-    return RoadTypes;
-  }, [mdmsData]);
+    const filteredRoadTypes = RoadTypes.filter(data => data?.isActive === true); // Filter out road types with isActive: true
+    filteredRoadTypes.forEach(data => data.i18nKey = `WS_ROADTYPE_${stringReplaceAll(data?.code?.toUpperCase(), " ", "_")}`);
+    return filteredRoadTypes;
+}, [mdmsData]);
 
   useEffect(() => {
     trigger();

@@ -310,9 +310,9 @@ const ApplicationDetails = (props) => {
     <React.Fragment>
       {!isLoading ? (
         <React.Fragment>
-          <Header style={{ marginBottom: "16px" }}>{t("ES_TITLE_APPLICATION_DETAILS")}</Header>
-          <div style={{ display: "flex", marginLeft: '500px', color: "#A52A2A" }}>
-            <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
+          <div style={{display:"flex",justifyContent:"space-between"}}>
+          <Header style={{ marginBottom: "16px" }}>{t("ES_TITLE_APPLICATION_DETAILS")}</Header>           
+          <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
           </div>
           <Card className="fsm" style={{ position: "relative" }}>
             {/* {!DSO && (

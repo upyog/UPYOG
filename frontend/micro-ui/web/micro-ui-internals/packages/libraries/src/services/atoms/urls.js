@@ -199,7 +199,7 @@ const Urls = {
 digiLocker:{
   authorization:"/requester-services-dx/user/authorization/url",
   register :"/requester-services-dx/user/authorization/url/citizen",
-  token:"/requester-services-dx/user/token",
+  token:"/requester-services-dx/user/token/citizen",
   issueDoc:"/requester-services-dx/user/issuedfiles",
   uri:"/requester-services-dx/user/file"
 },

@@ -323,16 +323,19 @@ const BpaApplicationDetail = () => {
       <div className={"employee-main-application-details"}>
       <div className={"employee-application-details"} style={{marginBottom: "15px"}}>
         <Header styles={{marginLeft:"0px", paddingTop: "10px", fontSize: "32px"}}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
-        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
-        {dowloadOptions && dowloadOptions.length>0 && <MultiLink
-          className="multilinkWrapper employee-mulitlink-main-div"
+        <div>         
+        <div style={{zIndex: "10",  position: "relative"}}>
+        {dowloadOptions && dowloadOptions.length>0 && <MultiLink                
+          className="multilinkWrapper"
           onHeadClick={() => setShowOptions(!showOptions)}
           displayOptions={showOptions}
           options={dowloadOptions}
           downloadBtnClassName={"employee-download-btn-className"}
           optionsClassName={"employee-options-btn-className"}
-        />}
-      </div>
+          />}  
+        </div>     
+        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        </div>
       {data?.applicationData?.status === "FIELDINSPECTION_INPROGRESS" && (userInfo?.info?.roles.filter(role => role.code === "BPA_FIELD_INSPECTOR")).length>0 && <FormComposer
         heading={t("")}
         isDisabled={!canSubmit}
@@ -372,6 +375,7 @@ const BpaApplicationDetail = () => {
         statusAttribute={"state"}
         timelineStatusPrefix={`WF_${workflowDetails?.data?.applicationBusinessService ? workflowDetails?.data?.applicationBusinessService : data?.applicationData?.businessService}_`}
       />
+      </div>
       </div>
     </Fragment>
   )
