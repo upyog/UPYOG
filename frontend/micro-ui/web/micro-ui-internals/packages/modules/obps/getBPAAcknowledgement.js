@@ -84,10 +84,10 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                         title: t("BPA_BASIC_DETAILS_RISK_TYPE_LABEL"), 
                         value: t(`WF_BPA_${application?.riskType}`) || "NA"
                     },
-                    { 
-                        title: t("BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL"), 
-                        value: application?.data?.edcrDetails?.planDetail?.planInformation?.applicantName || "NA"
-                    },
+                    // { 
+                    //     title: t("BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL"), 
+                    //     value: application?.data?.edcrDetails?.planDetail?.planInformation?.applicantName || "NA"
+                    // },
                     
                 ]
             

@@ -216,7 +216,7 @@ function selectfile(e) {
               isMandatory={false}
               optionKey="i18nKey"
               name="development"
-              defaultValue={additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES || ""}
+              defaultValue={additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES || 0}
               value={development}
               disabled={!isEditApplication}
               onChange={(e) => {setDevelopmentVal(e.target.value)}}
@@ -229,13 +229,15 @@ function selectfile(e) {
               isMandatory={false}
               optionKey="i18nKey"
               name="otherCharges"
-              defaultValue={additionalDetails?.selfCertificationCharges?.BPA_OTHER_CHARGES || ""}
+              defaultValue={additionalDetails?.selfCertificationCharges?.BPA_OTHER_CHARGES || 0}
               value={otherCharges}
               disabled={!isEditApplication}
               onChange={(e) => {setOtherChargesVal(e.target.value)}}
               {...{ required: true, pattern: "^[0-9]*$", type: "text" }}
             />
-            <CardLabel>{t("BPA_COMMON_OTHER_AMT_DISCRIPTION")}</CardLabel>
+            {parseInt(otherCharges)>0?(
+              <div>
+                <CardLabel>{t("BPA_COMMON_OTHER_AMT_DISCRIPTION")}</CardLabel>
             <TextArea
               t={t}
               type={"text"}
@@ -246,6 +248,8 @@ function selectfile(e) {
               onChange={(e) => {setOtherChargesDis(e.target.value)}}
               {...{ required: true }}
             />
+              </div>
+            ):null}            
             <CardLabel>{t("BPA_COMMON_LESS_AMT")}</CardLabel>
             <TextInput
               t={t}
@@ -259,6 +263,8 @@ function selectfile(e) {
               onChange={(e) => {setLessAdjusmentVal(e.target.value)}}
               {...{ required: true, pattern: "^[0-9]*$", type: "text" }}
             />
+            {(parseInt(lessAdjusment)>0 && isEditApplication)  ?(
+              <div>
             <CardLabel>{t("BPA_COMMON_LESS_AMT_FILE")}</CardLabel>
             <UploadFile
                 id={"noc-doc"}
@@ -273,10 +279,11 @@ function selectfile(e) {
                 error={errorFile}
                 uploadMessage={uploadMessage}
             />
-            {docLessAdjustment?.fileStoreIds?.length && 
+            </div>):null}
+            {(docLessAdjustment?.fileStoreIds?.length && parseInt(additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT)>0) && 
             <CardLabel style={{marginTop:"15px"}}>{t("BPA_COMMON_LESS_AMT_PREVIOUS_FILE")}</CardLabel>            
             }
-            {docLessAdjustment?.fileStoreIds?.length &&             
+            {(docLessAdjustment?.fileStoreIds?.length && parseInt(additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT)>0)&&             
               <a   target="_blank" href={docLessAdjustment?.fileStoreIds[docLessAdjustment?.fileStoreIds?.length-1]?.url}>
               <PDFSvg />
             </a>

@@ -365,14 +365,22 @@ setWaterCharges(Malbafees/2)
     }
 
     function onSubmitCheck(){
-      if(development && otherCharges && lessAdjusment){
+      if(!development){
+        sessionStorage.setItem("development",0)
+      }
+      if(!lessAdjusment){
+        sessionStorage.setItem("lessAdjusment",0)
+      }
+      if(!otherCharges){
+        sessionStorage.setItem("otherCharges",0)
+      }
       if(parseInt(lessAdjusment)>(parseInt(development)+parseInt(otherCharges)+parseInt(malbafees)+parseInt(labourCess)+parseInt(waterCharges)+parseInt(gaushalaFees))){
         alert(t("Enterd Less Adjustment amount is invalid"));
       }
       else{
         onSubmit();
-      }
-    }}
+      }      
+  }
 
     function setOtherChargesVal(value) {
       if(/^[0-9]*$/.test(value)){
@@ -433,7 +441,7 @@ function selectfile(e) {
           <Row className="border-none" label={t(`BPA_BASIC_DETAILS_SERVICE_TYPE_LABEL`)} text={t(data?.serviceType)} />
           <Row className="border-none" label={t(`BPA_BASIC_DETAILS_OCCUPANCY_LABEL`)} text={data?.occupancyType}/>
           <Row className="border-none" label={t(`BPA_BASIC_DETAILS_RISK_TYPE_LABEL`)} text={t(`WF_BPA_${data?.riskType}`)} />
-          <Row className="border-none" label={t(`BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL`)} text={data?.applicantName} />
+          {/* <Row className="border-none" label={t(`BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL`)} text={data?.applicantName} /> */}
         </StatusTable>
     </Card>
     <Card style={{paddingRight:"16px"}}>
@@ -659,6 +667,9 @@ function selectfile(e) {
               //disable={editScreen}
               {...{ required: true, pattern: /^[0-9]*$/ }}
             />
+            {parseInt(otherCharges)>0?
+            (
+            <div>
             <CardLabel>{t("BPA_COMMON_OTHER_AMT_DISCRIPTION")}</CardLabel>
             <TextArea
               t={t}
@@ -668,7 +679,8 @@ function selectfile(e) {
               value={otherChargesDisc}
               onChange={(e) => {setOtherChargesDis(e.target.value)}}
               {...{ required: true }}
-            />
+            /></div>):null
+            } 
             <CardLabel>{t("BPA_COMMON_LESS_AMT")}</CardLabel>
             <TextInput
               t={t}
@@ -683,8 +695,10 @@ function selectfile(e) {
               //disable={editScreen}
               {...{ required: true, pattern: "^[0-9]*$" }}
             />
-            <CardLabel>{t("BPA_COMMON_LESS_AMT_FILE")}</CardLabel>
-            <UploadFile
+            {parseInt(lessAdjusment)>0 ?(
+              <div>
+                <CardLabel>{t("BPA_COMMON_LESS_AMT_FILE")}</CardLabel>
+                <UploadFile
                 id={"noc-doc"}
                 style={{marginBottom:"200px"}}
                 onUpload={selectfile}
@@ -696,10 +710,13 @@ function selectfile(e) {
                 error={errorFile}
                 uploadMessage={uploadMessage}
             />
-            {docLessAdjustment?.fileStoreIds?.length && 
+              </div>
+            ):null
+            }
+            {(docLessAdjustment?.fileStoreIds?.length && parseInt(value?.additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT)>0) &&  
             <CardLabel style={{marginTop:"15px"}}>{t("BPA_COMMON_LESS_AMT_PREVIOUS_FILE")}</CardLabel>            
             }
-            {docLessAdjustment?.fileStoreIds?.length &&             
+            {(docLessAdjustment?.fileStoreIds?.length && parseInt(value?.additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT)>0) &&             
               <a   target="_blank" href={docLessAdjustment?.fileStoreIds[0]?.url}>
               <PDFSvg />
             </a>
@@ -774,7 +791,7 @@ function selectfile(e) {
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
       {/* <CardHeader>{t("BPA_COMMON_TOTAL_AMT")}</CardHeader> 
       <CardHeader>₹ {paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}</CardHeader>  */}
-      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmitCheck} disabled={ (!development||!otherCharges||!lessAdjusment || !agree || !isOTPVerified || !otherChargesDisc || !Architectvalidations)} id/>
+      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmitCheck} disabled={ ( !agree || !isOTPVerified || !Architectvalidations)} id/>
       </Card>
     </React.Fragment>
     );
