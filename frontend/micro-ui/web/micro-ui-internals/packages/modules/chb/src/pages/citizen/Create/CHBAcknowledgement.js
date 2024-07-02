@@ -13,7 +13,7 @@ const GetActionMessage = (props) => {
   } else if (props.isLoading) {
     return !window.location.href.includes("edit-application") ? t("CS_CHB_APPLICATION_PENDING") : t("CS_CHB_UPDATE_APPLICATION_PENDING");
   } else if (!props.isSuccess) {
-    return !window.location.href.includes("edit-application") ? t("CS_CHB_APPLICATION_FAILED") : t("CS_CHB_UPDATE_APPLICATION_FAILED");
+    return !window.location.href.includes("edit-application") ? t("CS_CHB_BOOKING_FAILED") : t("CS_CHB_UPDATE_BOOKING_FAILED");
   }
 };
 
@@ -95,7 +95,7 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
       <br></br>
 
       <Link to={`/digit-ui/citizen/payment/my-bills/` + `${"chb-services"}/` + `${mutation.data?.hallsBookingApplication[0].bookingNo}`}>
-        <LinkButton label={t("PAYMENT_BUTTON")} />
+        <LinkButton label={t("CHB_PAYMENT_BUTTON")} />
       </Link>
     </Card>
   );

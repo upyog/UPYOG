@@ -1,7 +1,7 @@
 import { Loader } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { pdfDocumentName, pdfDownloadLink } from "../utils";
+import { pdfDownloadLink } from "../utils";
 
 const PDFSvg = ({ width = 20, height = 20, style }) => (
   <svg style={style} xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 20 20" fill="gray">
@@ -9,22 +9,21 @@ const PDFSvg = ({ width = 20, height = 20, style }) => (
   </svg>
 );
 
-function CHBDocument({ value = {},Code,index }) {
+function CHBDocument({ value = {}, Code, index }) {
   const { t } = useTranslation();
-  const { isLoading, isError, error, data } = Digit.Hooks.chb.useChbDocumentSearch({
-    value,
-  },
-  { value }, Code, index
-);
-  const documents = [];
-  ;
-  
-   value?.documents ? value?.documents?.documents.filter(doc => doc?.documentType === Code /* || doc?.documentType?.includes(Code.split(".")[1]) */).map((ob)=>{
-      documents.push(ob);
-    }) : value.filter(doc => doc?.documentType === Code /* || doc?.documentType.includes(Code.split(".")[1]) */).map((ob)=>{
-      documents.push(ob);
-    })
-  
+  const { isLoading, isError, error, data } = Digit.Hooks.chb.useChbDocumentSearch(
+    { value },
+    { value },
+    Code,
+    index
+  );
+
+  const documents = value?.documents
+    ? value.documents.documents.filter(doc => doc.documentType === Code).map(doc => ({ ...doc, documentType: doc.documentType.replace(/\./g, '_') }))
+    : value.filter(doc => doc.documentType === Code).map(doc => ({ ...doc, documentType: doc.documentType.replace(/\./g, '_') }));
+
+    console.log("documentData-->",data);
+    console.log("document-->",documents);
   if (isLoading) {
     return <Loader />;
   }
@@ -33,13 +32,12 @@ function CHBDocument({ value = {},Code,index }) {
     <div style={{ marginTop: "19px" }}>
       <React.Fragment>
         <div style={{ display: "flex", flexWrap: "wrap" }}>
-          {documents?.map((document, index) => {
-            
-            let documentLink = pdfDownloadLink(data.pdfFiles, document?.fileStoreId);
+          {documents.map((document, index) => {
+            let documentLink = pdfDownloadLink(data.pdfFiles, document.fileStoreId);
             return (
               <a target="_" href={documentLink} style={{ minWidth: "160px" }} key={index}>
                 <PDFSvg width={85} height={100} style={{ background: "#f6f6f6", padding: "8px" }} />
-                <p style={{ marginTop: "8px" }}>{t(`CHB_${document?.documentType.replace(".","_")}`)}</p>
+                <p style={{ marginTop: "8px" }}>{t(`CHB_${document.documentType}`)}</p>
               </a>
             );
           })}
