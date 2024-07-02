@@ -10,6 +10,7 @@ import org.egov.wf.web.models.EscalationSearchCriteria;
 import org.egov.wf.web.models.ProcessInstance;
 import org.egov.wf.web.models.ProcessInstanceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -65,8 +66,25 @@ public class EscalationService {
             processEscalation(requestInfo, escalation, tenantIds);
 
         }
-
+        
+        
     }
+    public void triggerPendingApprovalSMS(RequestInfo requestInfo, String businessService){
+
+    	log.info("Entering");
+        Object mdmsData = mdmsService.mDMSCall(requestInfo);
+        List<Escalation> escalations = escalationUtil.getEscalationsFromConfig(businessService, mdmsData);
+        List<String> tenantIds = escalationUtil.getTenantIds(mdmsData);
+
+        for(Escalation escalation : escalations){
+
+        	triggerSMS(requestInfo, escalation, tenantIds);
+
+        }
+        
+        
+    }
+
 
 
     /**
@@ -185,8 +203,50 @@ public class EscalationService {
         return ids;
 
     }
+    private void triggerSMS(RequestInfo requestInfo, Escalation escalation, List<String> tenantIds){
+
+    	log.info("checking UUID");
+    	String stateUUID=null;
+        for(String tenantId: tenantIds){
+
+        	if(escalation.getStatus().contains(",") && escalation.getBusinessService().equalsIgnoreCase("BPA"))
+        	{
+        		stateUUID = escalationUtil.getStatusUUID(escalation.getStatus().split(",")[0], tenantId, escalation.getBusinessService());
+        		stateUUID = stateUUID.concat(",").concat(escalationUtil.getStatusUUID(escalation.getStatus().split(",")[1], tenantId, escalation.getBusinessService()));
+
+        	}	
+        	else
+        		stateUUID = escalationUtil.getStatusUUID(escalation.getStatus(), tenantId, escalation.getBusinessService());
+
+            EscalationSearchCriteria criteria = EscalationSearchCriteria.builder().tenantId(tenantId)
+                                                .status(stateUUID)
+                                                .businessService(escalation.getBusinessService())
+                                                .build();
 
 
+
+            List<String> businessIds = escalationRepository.getBusinessIds(criteria);
+            
+            if(escalation.getBusinessService().equalsIgnoreCase("BPA") && (businessIds !=null && businessIds.size()>0))
+            	{
+            	businessIds=escalationRepository.getBusinessSMSIds(criteria,businessIds);
+            	}
+            Integer numberOfBusinessIds = businessIds.size();
+            Integer batchSize = config.getEscalationBatchSize();
+
+            for(int i = 0; i < numberOfBusinessIds; i = i + batchSize){
+
+                // Processing the businessIds in batches
+                Integer start = i;
+                Integer end = ((i + batchSize) < numberOfBusinessIds ? (i + batchSize) : numberOfBusinessIds) ;
+
+                List<ProcessInstance> processInstances = escalationUtil.getProcessInstances(tenantId, businessIds.subList(start,end), escalation);
+                producer.push(config.getSmsNotifTopic(),new ProcessInstanceRequest(requestInfo, processInstances));
+            }
+
+        }
+
+    }
 
 
 }

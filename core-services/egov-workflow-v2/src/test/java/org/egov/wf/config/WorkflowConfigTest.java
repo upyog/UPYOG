@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-
+import org.egov.wf.config.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -16,7 +16,7 @@ class WorkflowConfigTest {
     void testInitialize() {
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3);
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
         workflowConfig.initialize();
         assertTrue(workflowConfig.getAssignedOnly());
         assertEquals("https://config.us-east-2.amazonaws.com", workflowConfig.getUserSearchEndpoint());
@@ -40,7 +40,7 @@ class WorkflowConfigTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3);
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
         workflowConfig.initialize();
         assertTrue(workflowConfig.getAssignedOnly());
         assertEquals("https://config.us-east-2.amazonaws.com", workflowConfig.getUserSearchEndpoint());
@@ -56,6 +56,8 @@ class WorkflowConfigTest {
         assertEquals(3, workflowConfig.getEscalationBatchSize().intValue());
         assertEquals(1, workflowConfig.getDefaultOffset().intValue());
         assertEquals(1, workflowConfig.getDefaultLimit().intValue());
+        assertEquals("Send SMS Topic", workflowConfig.getSmsNotifTopic());
+
     }
 
 
