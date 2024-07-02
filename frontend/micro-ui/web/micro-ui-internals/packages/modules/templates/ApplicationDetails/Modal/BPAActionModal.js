@@ -24,6 +24,8 @@ const CloseBtn = (props) => {
 };
 
 const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationDetails, applicationData, businessService, moduleCode,workflowDetails,blockReason }) => {
+  console.log("applicationData",applicationData)
+  console.log("workflowDetails",workflowDetails)
   const mutation1 = Digit.Hooks.obps.useObpsAPI(
       applicationData?.landInfo?.address?.city ? applicationData?.landInfo?.address?.city : tenantId,
       false
@@ -181,8 +183,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         action: action?.action,
         comment: data?.comments?.length > 0 ? data?.comments : null,
         comments: data?.comments?.length > 0 ? data?.comments : null,
-        assignee: !selectedApprover?.uuid ? null : [selectedApprover?.uuid],
-        assignes: !selectedApprover?.uuid ? null : [selectedApprover?.uuid],
+        assignee: (workflowDetails?.data?.processInstances?.[0]?.state?.applicationStatus==="FIELDINSPECTION_INPROGRESS")? [workflowDetails?.data?.processInstances?.[0]?.assigner?.uuid]: !selectedApprover?.uuid ? null : [selectedApprover?.uuid],
+        assignes:  (workflowDetails?.data?.processInstances?.[0]?.state?.applicationStatus==="FIELDINSPECTION_INPROGRESS")? [workflowDetails?.data?.processInstances?.[0]?.assigner?.uuid]: !selectedApprover?.uuid ? null : [selectedApprover?.uuid],
         varificationDocuments: uploadedFile
         ? [
           {
@@ -195,7 +197,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       },
       action: action?.action,
       comment: data?.comments,
-      assignee: !selectedApprover?.uuid ? null : [selectedApprover?.uuid],
+      assignee: (workflowDetails?.data?.processInstances?.[0]?.state?.applicationStatus==="FIELDINSPECTION_INPROGRESS")? [workflowDetails?.data?.processInstances?.[0]?.assigner?.uuid]: !selectedApprover?.uuid ? null : [selectedApprover?.uuid],
       wfDocuments: uploadedFile
         ? [
           {
