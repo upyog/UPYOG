@@ -156,7 +156,7 @@ public class WaterConnectionValidator {
 				!CollectionUtils.isEmpty(searchResult.getConnectionHolders())) {
 
 			List<OwnerInfo> connHolders = request.getWaterConnection().getConnectionHolders();
-			searchResult = encryptionDecryptionUtil.decryptObject(searchResult, "WnSConnectionDecrypDisabled", WaterConnection.class, request.getRequestInfo());
+			//searchResult = encryptionDecryptionUtil.decryptObject(searchResult, "WnSConnectionDecrypDisabled", WaterConnection.class, request.getRequestInfo());
 			List<OwnerInfo> searchedConnHolders = searchResult.getConnectionHolders();
 
 			if (!ObjectUtils.isEmpty(connHolders.get(0).getOwnerType()) &&
