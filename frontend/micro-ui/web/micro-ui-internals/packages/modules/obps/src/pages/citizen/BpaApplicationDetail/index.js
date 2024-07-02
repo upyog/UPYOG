@@ -410,16 +410,16 @@ const BpaApplicationDetail = () => {
     <Fragment>
       <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
         <Header styles={{fontSize: "32px", marginLeft: "10px"}}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
-        <div style={{display:"flex", alignItems:"center", color:"#A52A2A"}}>
-        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
-        </div>
+        <div >
         {dowloadOptions && dowloadOptions.length > 0 && <MultiLink
           className="multilinkWrapper"
           onHeadClick={() => setShowOptions(!showOptions)}
           displayOptions={showOptions}
           options={dowloadOptions}
-
         />}
+        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        </div>
+        
       </div>
       {data?.applicationDetails?.filter((ob) => Object.keys(ob).length > 0).map((detail, index, arr) => {
 
