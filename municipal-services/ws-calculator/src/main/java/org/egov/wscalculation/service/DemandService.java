@@ -1323,7 +1323,7 @@ log.info("Is current Demand  "+isCurrentDemand);
 					.filter(p -> taxPeriodFrom.equals(taxPeriods.get(p).getFromDate())).findFirst().getAsInt();
 			String cone = singleDemand.getConsumercode();
 			log.info("Billing master data values for non metered connection:: {}", master);
-			List<WaterDetails> connectionNos = waterCalculatorDao.getConnectionsNoList(tenantId,
+			List<WaterDetails> connectionNos = waterCalculatorDao.getConnectionsNoListforsingledemand(tenantId,
 					WSCalculationConstant.nonMeterdConnection, taxPeriodFrom, taxPeriodTo, cone);
 
 			// Generate bulk demands for connections in below count
@@ -1421,9 +1421,6 @@ log.info("Is current Demand  "+isCurrentDemand);
 						CalculationReq calculationReq = CalculationReq.builder()
 								.calculationCriteria(calculationCriteriaList).requestInfo(requestInfo)
 								.isconnectionCalculation(true).migrationCount(migrationCount).build();
-//						CalculationReq calculationReq = CalculationReq.builder()
-//								.calculationCriteria(calculationCriteriaList).requestInfo(requestInfo)
-//								.isconnectionCalculation(true).build();
 						log.info(
 								"Pushing calculation last req to the kafka topic with bulk data of calculationCriteriaList size: {}",
 								calculationCriteriaList.size());
@@ -1605,7 +1602,7 @@ log.info("Is current Demand  "+isCurrentDemand);
 					.filter(p -> taxPeriodFrom.equals(taxPeriods.get(p).getFromDate())).findFirst().getAsInt();
 			String cone = requestInfo.getKey();
 			log.info("Billing master data values for non metered connection:: {}", master);
-			List<WaterDetails> connectionNos = waterCalculatorDao.getConnectionsNoList(tenantId,
+			List<WaterDetails> connectionNos = waterCalculatorDao.getConnectionsNoListforsingledemand(tenantId,
 					WSCalculationConstant.nonMeterdConnection, taxPeriodFrom, taxPeriodTo, cone);
 
 			// Generate bulk demands for connections in below count
