@@ -385,7 +385,9 @@ const BpaApplicationDetail = () => {
     const updatedApplicationData = {
       ...data?.applicationData,
       documents: updatedDocuments,
-      additionalDetails: sessionStorage.getItem("otpVerifiedTimestampcitizen")
+      additionalDetails: {
+        otpVerifiedTimestampcitizen:sessionStorage.getItem("otpVerifiedTimestampcitizen")
+      }
     };
   
     mutation.mutate(
