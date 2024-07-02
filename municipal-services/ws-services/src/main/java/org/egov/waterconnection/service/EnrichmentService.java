@@ -495,7 +495,7 @@ public class EnrichmentService {
 				propertyCriteria.setTenantId(criteria.getTenantId());
 			}
 			propertyCriteria.setPropertyIds(propertyIds);
-			List<Property> propertyList = waterServicesUtil.getPropertyDetails(serviceRequestRepository.fetchResult(waterServicesUtil.getPropertyURL(propertyCriteria),
+			List<Property> propertyList = waterServicesUtil.getPropertyDetails(serviceRequestRepository.fetchResult(waterServicesUtil.getPropertyURL(propertyCriteria,requestInfo),
 					RequestInfoWrapper.builder().requestInfo(requestInfo).build()));
 
 			if (!CollectionUtils.isEmpty(propertyList)) {
@@ -583,7 +583,7 @@ public class EnrichmentService {
 			propertyCriteria.setPropertyIds(Collections.singleton(waterConnectionList.get(0).getPropertyId()));
 			propertyCriteria.setTenantId(waterConnectionList.get(0).getTenantId());
 
-			List<Property> propertyList = waterServicesUtil.getPropertyDetails(serviceRequestRepository.fetchResult(waterServicesUtil.getPropertyURL(propertyCriteria),
+			List<Property> propertyList = waterServicesUtil.getPropertyDetails(serviceRequestRepository.fetchResult(waterServicesUtil.getPropertyURL(propertyCriteria,requestInfo),
 					RequestInfoWrapper.builder().requestInfo(requestInfo).build()));
 			if(propertyList != null && propertyList.size()==1){
 				List<OwnerInfo> ownerInfoList = propertyList.get(0).getOwners();
