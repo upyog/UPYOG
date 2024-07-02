@@ -90,7 +90,12 @@ public class NotificationUtil {
 		String applicationType = edcrResponse.get(BPAConstants.APPLICATIONTYPE);
 		String serviceType = edcrResponse.get(BPAConstants.SERVICETYPE);
 
-		if (bpa.getStatus().toString().toUpperCase().equals(BPAConstants.STATUS_REJECTED)) {
+		if (bpa.getStatus().toString().toUpperCase().equals(BPAConstants.STATUS_CREATE)) {
+			messageTemplate = getMessageTemplate(
+					applicationType + "_" + serviceType + "_" + BPAConstants.STATUS_CREATE, localizationMessage);
+			message = getInitiatedMsg(bpa, messageTemplate, serviceType);
+		}
+		else if (bpa.getStatus().toString().toUpperCase().equals(BPAConstants.STATUS_REJECTED)) {
 			messageTemplate = getMessageTemplate(
 					applicationType + "_" + serviceType + "_" + BPAConstants.STATUS_REJECTED, localizationMessage);
 			message = getInitiatedMsg(bpa, messageTemplate, serviceType);

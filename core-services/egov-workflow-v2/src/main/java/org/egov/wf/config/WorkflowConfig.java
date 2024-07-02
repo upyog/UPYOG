@@ -60,6 +60,7 @@ public class WorkflowConfig {
 
     @Value("${persister.update.businessservice.wf.topic}")
     private String updateBusinessServiceTopic;
+    
 
 
 
@@ -88,9 +89,11 @@ public class WorkflowConfig {
 
     @Value("${egov.wf.escalation.batch.size}")
     private Integer escalationBatchSize;
+    
 
-
-
+	// SMS
+	@Value("${kafka.topics.notification.sms}")
+	private String smsNotifTopic;
 
 
 }

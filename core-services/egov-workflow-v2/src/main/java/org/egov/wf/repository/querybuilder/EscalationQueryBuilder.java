@@ -21,6 +21,9 @@ public class EscalationQueryBuilder {
             " FROM eg_wf_processinstance_v2 WHERE businessservice = ? AND tenantid= ? AND action in ('PAY','POST_PAYMENT_APPLY') ) wf  WHERE rank_number = 1 ";
 
     private static final String QUERY_BPA = "select businessId from eg_wf_processinstance_v2 where businessid in ( ";
+	private static final String SMS_QUERY_BPA = "select businessId from (" +
+            "  SELECT *,RANK () OVER (PARTITION BY businessId ORDER BY createdtime  DESC) rank_number " +
+            " FROM eg_wf_processinstance_v2 WHERE businessservice = ? AND tenantid= ? AND action in ('PAY','POST_PAYMENT_APPLY') ) wf  WHERE rank_number = 1 ";
 
 
     /**
@@ -110,5 +113,25 @@ public class EscalationQueryBuilder {
     private void addToPreparedStatement(List<Object> preparedStatement, List<String> ids) {
 		preparedStatement.addAll(ids);
 	}
+    
+    public String getSMSQueryFiltered(EscalationSearchCriteria criteria,List<String> businessIds, List<Object> preparedStmtList){
+
+
+        StringBuilder builder = new StringBuilder(SMS_QUERY_BPA);
+        
+        preparedStmtList.add(criteria.getBusinessService());
+        preparedStmtList.add(criteria.getTenantId());
+
+		builder.append(" AND wf.businessid IN (").append(createQuery(businessIds)).append(" )");
+		addToPreparedStatement(preparedStmtList, businessIds);
+		
+		builder.append("AND ((select (extract(epoch from current_timestamp) * 1000 - createdtime) / (1000 * 60 * 60 * 24) >=3 AND (extract(epoch from current_timestamp) * 1000 - createdtime) / (1000 * 60 * 60 * 24) < 4 ))");        
+		builder.append("OR ((select (extract(epoch from current_timestamp) * 1000 - createdtime) / (1000 * 60 * 60 * 24) >=6 AND (extract(epoch from current_timestamp) * 1000 - createdtime) / (1000 * 60 * 60 * 24) < 7 ))");        
+		builder.append("OR ((select (extract(epoch from current_timestamp) * 1000 - createdtime) / (1000 * 60 * 60 * 24) >=9 AND (extract(epoch from current_timestamp) * 1000 - createdtime) / (1000 * 60 * 60 * 24) < 10 ));");        
+
+		return builder.toString();
+
+    }
+
 
 }
