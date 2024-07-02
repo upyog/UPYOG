@@ -63,7 +63,7 @@ export const EWDataConvert = (data) => {
   data = setProductDetails(data);
   data = setAddressDetails(data);
 
-  // console.log("this is data in ::", data)
+  console.log("this is data in ::", data)
 
   const formdata = {
     EwasteApplication: [

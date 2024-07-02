@@ -62,10 +62,20 @@ export const EWSearch = {
         isTable: true,
         headers: ["PRODUCT_NAME", "PRODUCT_QUANTITY", "UNIT_PRICE", "TOTAL_PRODUCT_PRICE"],
         tableRows: productRows,
+        // values: [
+        //   { title: "", value: " "},
+        //   { title: "EWASTE_NET_PRICE", value: response?.calculatedAmount},
+        // ]
+      },
+      {
+        title: "EWASTE_TITLE_TRANSACTION_DETAILS",
+        asSectionHeader: true,
         values: [
-          { title: "", value: " "},
           { title: "EWASTE_NET_PRICE", value: response?.calculatedAmount},
-        ]
+          { title: "EWASTE_TRANSACTION_ID", value: response?.transactionId },
+          { title: "EWASTE_FINAL_AMOUNT", value: response?.finalAmount },
+          { title: "EWASTE_PICKUP_DATE", value: response?.pickUpDate },
+        ],
       },
     ];
   },
