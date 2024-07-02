@@ -1,14 +1,28 @@
-import { Card, CardSubHeader,CardSectionHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar, CardHeader } from "@upyog/digit-ui-react-components";
+import {
+  Card,
+  CardSubHeader,
+  CardSectionHeader,
+  Header,
+  LinkButton,
+  Loader,
+  Row,
+  StatusTable,
+  MultiLink,
+  PopUp,
+  Toast,
+  SubmitBar,
+  CardHeader,
+} from "@upyog/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 
-import { useHistory, useParams,Link } from "react-router-dom";
+import { useHistory, useParams, Link } from "react-router-dom";
 import getChbAcknowledgementData from "../../getChbAcknowledgementData";
+import getChbPaymentReceipt from "../../getChbPaymentReceipt";
 import CHBWFApplicationTimeline from "../../pageComponents/CHBWFApplicationTimeline";
 import CHBDocument from "../../pageComponents/CHBDocument";
 import { pdfDownloadLink } from "../../utils";
-
 
 import get from "lodash/get";
 import { size } from "lodash";
@@ -24,51 +38,35 @@ const CHBApplicationDetails = () => {
   // const tenantId = Digit.ULBService.getCurrentTenantId();
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
- 
 
-  const { isLoading, isError,error, data } = Digit.Hooks.chb.useChbSearch(
-    {
-      tenantId,
-      filters: { bookingNo: acknowledgementIds },
-    },
-  );
-  
+  const { isLoading, isError, error, data } = Digit.Hooks.chb.useChbSearch({
+    tenantId,
+    filters: { bookingNo: acknowledgementIds },
+  });
 
- console.log("acknowledgement-->",useParams());
+  const [billData, setBillData] = useState(null);
 
- 
-  const [billData, setBillData]=useState(null);
-
-  
-
-
-
+  // Getting HallsBookingDetails
   const hallsBookingApplication = get(data, "hallsBookingApplication", []);
-  
-  
   const chbId = get(data, "hallsBookingApplication[0].bookingNo", []);
-  
-  let  chb_details = (hallsBookingApplication && hallsBookingApplication.length > 0 && hallsBookingApplication[0]) || {};
-  const application =  chb_details;
-  console.log("chb_____details--------->",chb_details);
 
-  
+  let chb_details = (hallsBookingApplication && hallsBookingApplication.length > 0 && hallsBookingApplication[0]) || {};
+  const application = chb_details;
+
   sessionStorage.setItem("chb", JSON.stringify(application));
 
-  
+  const [loading, setLoading] = useState(false);
 
-  const [loading, setLoading]=useState(false);
-
-  const fetchBillData=async()=>{
+  const fetchBillData = async () => {
     setLoading(true);
-    const result= await Digit.PaymentService.fetchBill(tenantId,{ businessService: "chb-services", consumerCode: acknowledgementIds, });
-  
-  setBillData(result);
-  setLoading(false);
-};
-useEffect(()=>{
-fetchBillData();
-}, [tenantId, acknowledgementIds]); 
+    const result = await Digit.PaymentService.fetchBill(tenantId, { businessService: "chb-services", consumerCode: acknowledgementIds });
+
+    setBillData(result);
+    setLoading(false);
+  };
+  useEffect(() => {
+    fetchBillData();
+  }, [tenantId, acknowledgementIds]);
 
   const { isLoading: auditDataLoading, isError: isAuditError, data: auditResponse } = Digit.Hooks.chb.useChbSearch(
     {
@@ -77,7 +75,6 @@ fetchBillData();
     },
     {
       enabled: true,
-      
     }
   );
 
@@ -91,8 +88,7 @@ fetchBillData();
     { enabled: acknowledgementIds ? true : false }
   );
 
-  
-
+  //WorkFlow
   if (!chb_details.workflow) {
     let workflow = {
       id: null,
@@ -106,47 +102,40 @@ fetchBillData();
       documents: null,
       assignes: null,
     };
-     chb_details.workflow = workflow;
+    chb_details.workflow = workflow;
   }
 
-  
-
-  
-
- 
   // let owners = [];
   // owners = application?.owners;
   let docs = [];
   docs = application?.documents;
-  console.log("docs",docs);
+  console.log("docs", docs);
 
   if (isLoading || auditDataLoading) {
     return <Loader />;
   }
 
- 
-
-  const getAcknowledgementData = async () => {
-    const applications = application || {};
+  // for Generating Payment Receipt
+  const getPaymentReceiptData = async () => {
+    const applications = application || {}; // getting application details
     const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
-    const acknowldgementDataAPI = await getChbAcknowledgementData({ ...applications }, tenantInfo, t);
+    const acknowldgementDataAPI = await getChbPaymentReceipt({ ...applications }, tenantInfo, t);
     Digit.Utils.pdf.generate(acknowldgementDataAPI);
-    //setAcknowldgementData(acknowldgementDataAPI);
   };
 
   let documentDate = t("CS_NA");
-  if ( chb_details?.additionalDetails?.documentDate) {
-    const date = new Date( chb_details?.additionalDetails?.documentDate);
+  if (chb_details?.additionalDetails?.documentDate) {
+    const date = new Date(chb_details?.additionalDetails?.documentDate);
     const month = Digit.Utils.date.monthNames[date.getMonth()];
     documentDate = `${date.getDate()} ${month} ${date.getFullYear()}`;
   }
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
     let response = { filestoreIds: [payments?.fileStoreId] };
-    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "petservice-receipt");
+    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "chbservice-receipt");
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
-  };
+  }
 
   const handleDownload = async (document, tenantid) => {
     let tenantId = tenantid ? tenantid : tenantId;
@@ -156,26 +145,30 @@ fetchBillData();
   };
 
   const printCertificate = async () => {
-    let response = await Digit.PaymentService.generatePdf(tenantId, { hallsBookingApplication: [data?.hallsBookingApplication?.[0]] }, "petservicecertificate");
+    let response = await Digit.PaymentService.generatePdf(
+      tenantId,
+      { hallsBookingApplication: [data?.hallsBookingApplication?.[0]] },
+      "petservicecertificate"
+    );
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   };
 
   let dowloadOptions = [];
 
+  // Payment Receipt Button on Acknowledgement Page
   dowloadOptions.push({
-    label: t("CHB_DOWNLOAD_ACK_FORM"),
-    onClick: () => getAcknowledgementData(),
+    label: t("CHB_PAYMENT_RECEIPT"),
+    onClick: () => getPaymentReceiptData(),
   });
 
-  //commented out, need later for download receipt and certificate 
+  //commented out, need later for download receipt and certificate
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
     dowloadOptions.push({
       label: t("CHB_FEE_RECIEPT"),
       onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
     });
 
-    
   if (reciept_data?.Payments[0]?.paymentStatus === "DEPOSITED")
     dowloadOptions.push({
       label: t("CHB_CERTIFICATE"),
@@ -183,7 +176,7 @@ fetchBillData();
     });
   const timestamp = chb_details?.bookingSlotDetails[0]?.bookingDate;
   const date = new Date(timestamp);
-  
+
   return (
     <React.Fragment>
       <div>
@@ -200,11 +193,7 @@ fetchBillData();
         </div>
         <Card>
           <StatusTable>
-            <Row
-              className="border-none"
-              label={t("CHB_BOOKING_NO")}
-              text={chb_details?.bookingNo} 
-            />
+            <Row className="border-none" label={t("CHB_BOOKING_NO")} text={chb_details?.bookingNo} />
           </StatusTable>
 
           <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_APPLICANT_DETAILS")}</CardSubHeader>
@@ -222,18 +211,16 @@ fetchBillData();
             <Row className="border-none" label={t("CHB_PURPOSE")} text={chb_details?.purpose?.purpose || t("CS_NA")} />
             <Row className="border-none" label={t("CHB_PURPOSE_DESCRIPTION")} text={chb_details?.purposeDescription || t("CS_NA")} />
           </StatusTable>
-          
+
           <CardSubHeader style={{ fontSize: "24px" }}>{t("SLOT_DETAILS")}</CardSubHeader>
-            {chb_details?.bookingSlotDetails.map((slot)=>(
-              <StatusTable>
+          {chb_details?.bookingSlotDetails.map((slot) => (
+            <StatusTable>
               <Row className="border-none" label={t("CHB_COMMUNITY_HALL_NAME")} text={slot?.hallName || t("CS_NA")} />
               <Row className="border-none" label={t("CHB_BOOKING_DATE")} text={slot?.bookingDate} />
-              <Row className="border-none" label={t("CHB_BOOKING_FROM_TIME")} text={slot?.
-                bookingFromTime
-                 || t("CS_NA")} />
+              <Row className="border-none" label={t("CHB_BOOKING_FROM_TIME")} text={slot?.bookingFromTime || t("CS_NA")} />
               <Row className="border-none" label={t("CHB_BOOKING_TO_TIME")} text={slot?.bookingToTime || t("CS_NA")} />
-              </StatusTable>
-            ))}
+            </StatusTable>
+          ))}
           <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_BANK_DETAILS")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("CHB_ACCOUNT_NUMBER")} text={chb_details?.bankDetails?.accountNumber || t("CS_NA")} />
@@ -244,32 +231,30 @@ fetchBillData();
           </StatusTable>
 
           <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_DOCUMENTS_DETAILS")}</CardSubHeader>
-        <Card style={{paddingRight:"16px"}}>
-        {docs.map((doc, index) => (
-          <div key={`doc-${index}`}>
-         {<div><CardSectionHeader>{t("CHB_" +(doc?.documentType?.split('.').slice(0,2).join('_')))}</CardSectionHeader>
-          <StatusTable>
-          {
-           <CHBDocument value={docs} Code={doc?.documentType} index={index} /> }
+          <Card style={{ paddingRight: "16px" }}>
+            {docs.map((doc, index) => (
+              <div key={`doc-${index}`}>
+                {
+                  <div>
+                    <CardSectionHeader>{t("CHB_" + doc?.documentType?.split(".").slice(0, 2).join("_"))}</CardSectionHeader>
+                    <StatusTable>{<CHBDocument value={docs} Code={doc?.documentType} index={index} />}</StatusTable>
+                  </div>
+                }
+              </div>
+            ))}
+          </Card>
 
-          </StatusTable>
-          </div>}
-          </div>
-        ))}
-        
-      </Card>
-          
           <CHBWFApplicationTimeline application={application} id={application?.bookingNo} userType={"citizen"} />
           {showToast && (
-          <Toast
-            error={showToast.key}
-            label={t(showToast.label)}
-            style={{bottom:"0px"}}
-            onClose={() => {
-              setShowToast(null);
-            }}
-          />
-        )}
+            <Toast
+              error={showToast.key}
+              label={t(showToast.label)}
+              style={{ bottom: "0px" }}
+              onClose={() => {
+                setShowToast(null);
+              }}
+            />
+          )}
         </Card>
 
         {popup && <PTCitizenFeedbackPopUp setpopup={setpopup} setShowToast={setShowToast} data={data} />}
@@ -279,11 +264,3 @@ fetchBillData();
 };
 
 export default CHBApplicationDetails;
-            
-           
-           
-            
-
-         
-
-        
