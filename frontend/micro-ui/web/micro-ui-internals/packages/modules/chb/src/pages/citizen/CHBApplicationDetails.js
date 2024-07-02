@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 
 import { useHistory, useParams,Link } from "react-router-dom";
 import getChbAcknowledgementData from "../../getChbAcknowledgementData";
+import getChbPaymentReceipt from "../../getChbPaymentReceipt";
 import CHBWFApplicationTimeline from "../../pageComponents/CHBWFApplicationTimeline";
 import CHBDocument from "../../pageComponents/CHBDocument";
 import { pdfDownloadLink } from "../../utils";
@@ -32,26 +33,17 @@ const CHBApplicationDetails = () => {
       filters: { bookingNo: acknowledgementIds },
     },
   );
-  
-
- console.log("acknowledgement-->",useParams());
-
  
   const [billData, setBillData]=useState(null);
 
-  
 
-
-
+// Getting HallsBookingDetails 
   const hallsBookingApplication = get(data, "hallsBookingApplication", []);
-  
-  
   const chbId = get(data, "hallsBookingApplication[0].bookingNo", []);
-  
+   
   let  chb_details = (hallsBookingApplication && hallsBookingApplication.length > 0 && hallsBookingApplication[0]) || {};
   const application =  chb_details;
-  console.log("chb_____details--------->",chb_details);
-
+  console.log("application-->",application);
   
   sessionStorage.setItem("chb", JSON.stringify(application));
 
@@ -66,9 +58,10 @@ const CHBApplicationDetails = () => {
   setBillData(result);
   setLoading(false);
 };
-useEffect(()=>{
-fetchBillData();
+  useEffect(()=>{
+  fetchBillData();
 }, [tenantId, acknowledgementIds]); 
+
 
   const { isLoading: auditDataLoading, isError: isAuditError, data: auditResponse } = Digit.Hooks.chb.useChbSearch(
     {
@@ -77,7 +70,6 @@ fetchBillData();
     },
     {
       enabled: true,
-      
     }
   );
 
@@ -92,7 +84,7 @@ fetchBillData();
   );
 
   
-
+//WorkFlow
   if (!chb_details.workflow) {
     let workflow = {
       id: null,
@@ -126,13 +118,26 @@ fetchBillData();
 
  
 
-  const getAcknowledgementData = async () => {
-    const applications = application || {};
+  // const getAcknowledgementData = async () => {
+  //   const applications = application || {};
+  //   const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
+  //   const acknowldgementDataAPI = await getChbAcknowledgementData({ ...applications }, tenantInfo, t);
+  //   Digit.Utils.pdf.generate(acknowldgementDataAPI);
+    
+  //   //setAcknowldgementData(acknowldgementDataAPI);
+  // };
+
+
+// for Generating Payment Receipt 
+   const getPaymentReceiptData = async () => {
+    const applications = application || {}; // getting application details 
     const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
-    const acknowldgementDataAPI = await getChbAcknowledgementData({ ...applications }, tenantInfo, t);
+    console.log("Tenant Info:", tenantInfo);
+    const acknowldgementDataAPI = await getChbPaymentReceipt({ ...applications }, tenantInfo, t);
     Digit.Utils.pdf.generate(acknowldgementDataAPI);
-    //setAcknowldgementData(acknowldgementDataAPI);
+    
   };
+
 
   let documentDate = t("CS_NA");
   if ( chb_details?.additionalDetails?.documentDate) {
@@ -143,7 +148,7 @@ fetchBillData();
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
     let response = { filestoreIds: [payments?.fileStoreId] };
-    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "petservice-receipt");
+    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "chbservice-receipt");
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   };
@@ -163,9 +168,20 @@ fetchBillData();
 
   let dowloadOptions = [];
 
+// Acknowledge Button on Acknowledgement Page
+  // dowloadOptions.push({
+  //   label: t("CHB_ACKNOWLEDGEMENT"),
+  //   onClick: () => getAcknowledgementData(),
+
+  // });
+
+
+
+// Payment Receipt Button on Acknowledgement Page
   dowloadOptions.push({
-    label: t("CHB_DOWNLOAD_ACK_FORM"),
-    onClick: () => getAcknowledgementData(),
+    label: t("CHB_PAYMENT_RECEIPT"),
+    onClick: () => getPaymentReceiptData(),
+
   });
 
   //commented out, need later for download receipt and certificate 
@@ -205,10 +221,12 @@ fetchBillData();
               label={t("CHB_BOOKING_NO")}
               text={chb_details?.bookingNo} 
             />
+
           </StatusTable>
 
           <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_APPLICANT_DETAILS")}</CardSubHeader>
           <StatusTable>
+          {/* <Row className="border-none" label={t("CHB_APPLICANT_NAME")} text="checkkiiinggggg something "/> */}
             <Row className="border-none" label={t("CHB_APPLICANT_NAME")} text={chb_details?.applicantName || t("CS_NA")} />
             <Row className="border-none" label={t("CHB_MOBILE_NUMBER")} text={chb_details?.applicantMobileNo || t("CS_NA")} />
             <Row className="border-none" label={t("CHB_ALT_MOBILE_NUMBER")} text={chb_details?.applicantAlternateMobileNo || t("CS_NA")} />

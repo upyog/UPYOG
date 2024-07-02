@@ -23,7 +23,7 @@ const rowContainerStyle = {
 };
 
 const BannerPicker = (props) => {
-  return (
+  return (  
     <Banner
       message={GetActionMessage(props)}
       applicationNumber={props.data?.hallsBookingApplication[0].bookingNo}
@@ -60,8 +60,8 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
     }
   }, []);
 
-  
 
+  
   const handleDownloadPdf = async () => {
     const { hallsBookingApplication = [] } = mutation.data;
     console.log("mutation.data", mutation);
