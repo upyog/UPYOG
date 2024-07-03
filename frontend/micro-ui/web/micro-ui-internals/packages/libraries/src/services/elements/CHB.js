@@ -26,6 +26,16 @@ export const CHBServices= {
       params: { tenantId, ...filters },
     }),
 
+    slot_search: ({ tenantId, filters, auth }) =>
+    Request({
+      url: Urls.chb.slot_search,
+      useCache: false,
+      method: "POST",
+      auth: auth === false ? auth : true,
+      userService: auth === false ? auth : true,
+      params: { tenantId, ...filters },
+    }),
+
     update: (details, tenantId) =>
     Request({
       url: Urls.chb.update,

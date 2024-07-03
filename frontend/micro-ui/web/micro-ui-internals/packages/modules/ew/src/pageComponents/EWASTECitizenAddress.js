@@ -145,10 +145,10 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData, formSta
           name="street"
           onChange={selectStreet}
           value={street}
-          errorStyle={true}
+          errorStyle={false}
           autoFocus={focusIndex?.index == 1}
         />
-        <CardLabel>{`${t("EWASTE_HOUSE_NO")}*`}</CardLabel>
+        <CardLabel>{`${t("EWASTE_HOUSE_NO")}`}<span style={{ color: 'red' }}>*</span></CardLabel>
         <TextInput
           t={t}
           //isMandatory={true}
@@ -174,7 +174,7 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData, formSta
           autoFocus={focusIndex?.index == 1}
 
         />
-        <CardLabel>{`${t("EWASTE_ADDRESS_LINE1")}*`}</CardLabel>
+        <CardLabel>{`${t("EWASTE_ADDRESS_LINE1")}`}<span style={{ color: 'red' }}>*</span></CardLabel>
         <TextInput
           t={t}
           //isMandatory={true}
@@ -183,7 +183,7 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData, formSta
           name="addressLine1"
           onChange={selectAddressLine1}
           value={addressLine1}
-          errorStyle={true}
+          errorStyle={false}
           autoFocus={focusIndex?.index == 1}
         />
         <CardLabel>{`${t("EWASTE_ADDRESS_LINE2")}`}</CardLabel>
@@ -208,7 +208,7 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData, formSta
           name="landmark"
           onChange={selectLandmark}
           value={landmark}
-          errorStyle={true}
+          errorStyle={false}
           autoFocus={focusIndex?.index == 1}
         />
       </FormStep>

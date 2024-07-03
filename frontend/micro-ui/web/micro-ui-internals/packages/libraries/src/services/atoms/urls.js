@@ -116,6 +116,7 @@ const Urls = {
     create:"/chb-services/booking/v1/_create",
     search:"/chb-services/booking/v1/_search",
     update:"/chb-services/booking/v1/_update",
+    slot_search:"/chb-services/booking/v1/_slot-search",
   },
 
 

@@ -15,6 +15,9 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
 
   let validation = {};
 
+  const user = Digit.UserService.getUser().info;
+
+console.log("usssss",user)
   const [applicantName, setName] = useState(
     (formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].applicantName) || formData?.ownerKey?.applicantName || ""
   );
@@ -22,7 +25,7 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
     (formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].emailId) || formData?.ownerKey?.emailId || ""
   );
   const [mobileNumber, setMobileNumber] = useState(
-    (formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].mobileNumber) || formData?.ownerKey?.mobileNumber || ""
+    (formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].mobileNumber) || formData?.ownerKey?.mobileNumber || user?.mobileNumber
   );
   const [altMobileNumber, setAltMobileNumber] = useState(
     (formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].altMobileNumber) || formData?.ownerKey?.altmobileNumber || ""

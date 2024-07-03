@@ -296,6 +296,7 @@ import useChbApplicationAction from "./chb/useChbApplicationAction";
 import useServiceSearchCHB from "./chb/useServiceSearchCHB";
 import useChbCommunityHalls from "./chb/useChbCommunityHalls";
 import useChbHallCode from "./chb/useChbHallCode"
+import useChbSlotSearch from "./chb/useChbSlotSearch";
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
 
@@ -354,7 +355,8 @@ const chb={
   useChbApplicationAction,
   useServiceSearchCHB,
   useChbCommunityHalls,
-  useChbHallCode
+  useChbHallCode,
+  useChbSlotSearch
 }
 
 const fsm = {
