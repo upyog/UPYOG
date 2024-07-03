@@ -10,6 +10,7 @@ public interface SewerageCalculatorDao {
 	List<String> getTenantId();
 	
 	List<SewerageConnection> getConnectionsNoList(String tenantId, String connectionType, Integer batchOffset, Integer batchsize, Long fromDate, Long toDate);
+	List<SewerageDetails> getConnectionsNoListsingle(String tenantId, String connectionType,  Long fromDate, Long toDate, String connectionno);
 
 	long getConnectionCount(String tenantid, Long fromDate, Long toDate);
 	
