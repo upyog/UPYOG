@@ -29,308 +29,312 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class PaymentService {
 
-    private ApportionerService apportionerService;
+	private ApportionerService apportionerService;
 
-    private PaymentEnricher paymentEnricher;
+	private PaymentEnricher paymentEnricher;
 
-    private ApplicationProperties applicationProperties;
+	private ApplicationProperties applicationProperties;
 
-    private UserService userService;
+	private UserService userService;
 
-    private PaymentValidator paymentValidator;
+	private PaymentValidator paymentValidator;
 
-    private PaymentRepository paymentRepository;
+	private PaymentRepository paymentRepository;
 
-    private CollectionProducer producer;
+	private CollectionProducer producer;
 
-    @Autowired
+	@Autowired
 	private ObjectMapper objectMapper;
 
-
-    @Autowired
-    public PaymentService(ApportionerService apportionerService, PaymentEnricher paymentEnricher, ApplicationProperties applicationProperties,
-                          UserService userService, PaymentValidator paymentValidator, PaymentRepository paymentRepository, CollectionProducer producer) {
-        this.apportionerService = apportionerService;
-        this.paymentEnricher = paymentEnricher;
-        this.applicationProperties = applicationProperties;
-        this.userService = userService;
-        this.paymentValidator = paymentValidator;
-        this.paymentRepository = paymentRepository;
-        this.producer = producer;
-    }
-
-
-
-    /**
-     * Fetch all receipts matching the given criteria, enrich receipts with instruments
-     *
-     * @param requestInfo           Request info of the search
-     * @param paymentSearchCriteria Criteria against which search has to be performed
-     * @return List of matching receipts
-     */
-    public List<Payment> getPayments(RequestInfo requestInfo, PaymentSearchCriteria paymentSearchCriteria, String moduleName) {
-    	
-        paymentValidator.validateAndUpdateSearchRequestFromConfig(paymentSearchCriteria, requestInfo, moduleName);
-        if (applicationProperties.isPaymentsSearchPaginationEnabled()) {
-            paymentSearchCriteria.setOffset(isNull(paymentSearchCriteria.getOffset()) ? 0 : paymentSearchCriteria.getOffset());
-            paymentSearchCriteria.setLimit(isNull(paymentSearchCriteria.getLimit()) ? applicationProperties.getReceiptsSearchDefaultLimit() :
-                    paymentSearchCriteria.getLimit());
-        } else {
-            paymentSearchCriteria.setOffset(0);
-            paymentSearchCriteria.setLimit(applicationProperties.getReceiptsSearchDefaultLimit());
-        }
-        if(requestInfo.getUserInfo().getType().equals("CITIZEN")) {
-            List<String> payerIds = new ArrayList<>();
-            payerIds.add(requestInfo.getUserInfo().getUuid());
-            paymentSearchCriteria.setPayerIds(payerIds);
-        }
-        List<Payment> payments = paymentRepository.fetchPayments(paymentSearchCriteria);
-						if(null != paymentSearchCriteria.getBusinessService() && null != paymentSearchCriteria.getConsumerCodes())
-						{
-							String businessservice= paymentSearchCriteria.getBusinessService();
-							if(( paymentSearchCriteria.getBusinessService().equals("WS")|| paymentSearchCriteria.getBusinessService().equals("SW") ) && payments.get(0).getAddress()==null) {
-							   	  List<String> usageCategory = paymentRepository.fetchUsageCategoryByApplicationnos(paymentSearchCriteria.getReceiptNumbers(),businessservice);
-							          List<String> address = paymentRepository.fetchAddressByApplicationnos(paymentSearchCriteria.getReceiptNumbers(),businessservice);
-							          List<String> propertyIds = paymentRepository.fetchPropertyid(paymentSearchCriteria.getReceiptNumbers(), businessservice);
-							          // setPropertyData(receiptnumber,payments,businessservice);
-							          payments.get(0).setUsageCategory(null);
-							   	  payments.get(0).setAddress(address.get(0));
-							          payments.get(0).setPropertyId(propertyIds.get(0));
-							}
-							 return payments;
-						}
-			else if(null != paymentSearchCriteria.getReceiptNumbers()){
-															String receiptnumber = null;
-															 Iterator<String> iterate = paymentSearchCriteria.getReceiptNumbers().iterator();
-															 while(iterate.hasNext()) {
-																 receiptnumber =   iterate.next();			  
-															}	
-															String receipts[]=receiptnumber.split("/");
-													
-													     	String businessservice= receipts[0];
-													     	 if(businessservice.equals("WS_FEE")||businessservice.equals("SW_FEE")) 
-													     	 {
-													     		String receiptss[]=receipts[0].split("_");
-												
-													             setPropertyData(receiptnumber,payments,receiptss[0]);
-													       }
-													     	 return payments;
-													     	
-
-    }
- 	else 
- 	{
- 		  return payments;
- 	}
-    }
-    
-    public Long getpaymentcountForBusiness (String tenantId, String businessService) {
-    	
-    	return paymentRepository.getPaymentsCount(tenantId, businessService);
-    }
-
-
-    @Transactional
-    public Payment updatePaymentForFilestore(Payment payment) {
-
-       paymentRepository.updateFileStoreIdToNull(payment);
-        return payment;
-    }
-    
-    /**
-     * Handles creation of a receipt, including multi-service, involves the following steps, - Enrich receipt from billing service
-     * using bill id - Validate the receipt object - Enrich receipt with receipt numbers, coll type etc - Apportion paid amount -
-     * Persist the receipt object - Create instrument
-     *
-     * @param paymentRequest payment request for which receipt has to be created
-     * @return Created receipt
-     */
-    @Transactional
-    public Payment createPayment(PaymentRequest paymentRequest) {
-    	
-        paymentEnricher.enrichPaymentPreValidate(paymentRequest,false);
-        paymentValidator.validatePaymentForCreate(paymentRequest);
-        paymentEnricher.enrichPaymentPostValidate(paymentRequest);
-
-        Payment payment = paymentRequest.getPayment();
-        Map<String, Bill> billIdToApportionedBill = apportionerService.apportionBill(paymentRequest);
-        paymentEnricher.enrichAdvanceTaxHead(new LinkedList<>(billIdToApportionedBill.values()));
-        setApportionedBillsToPayment(billIdToApportionedBill,payment);
-
-        String payerId = createUser(paymentRequest);
-        if(!StringUtils.isEmpty(payerId))
-            payment.setPayerId(payerId);
-        paymentRepository.savePayment(payment);
-
-        producer.producer(applicationProperties.getCreatePaymentTopicName(), paymentRequest);
-
-
-        return payment;
-    }
-
-
-    private void setPropertyData(String receiptnumber,List<Payment> payments,String businessservice) {
-    	List<String> consumercode = paymentRepository.fetchConsumerCodeByReceiptNumber(receiptnumber);	
-    	String connectionno = consumercode.get(0);
-    	List<String> status = paymentRepository.fetchPropertyDetail(connectionno,businessservice);		
-		HashMap<String, String> additionalDetail = new HashMap<>();		
-		 if(!StringUtils.isEmpty(status.get(0)))
-		additionalDetail.put("oldConnectionno", status.get(0));
-		 if(!StringUtils.isEmpty(status.get(1)))
-		additionalDetail.put("landArea", status.get(1));
-		 if(!StringUtils.isEmpty(status.get(2)))
-		additionalDetail.put("usageCategory", status.get(2));
-			payments.get(0).setPropertyId(status.get(3));
-			payments.get(0).setAddress(status.get(4));
-			payments.get(0).setUsageCategory(status.get(2));
-		payments.get(0).setPropertyDetail(additionalDetail);		
+	@Autowired
+	public PaymentService(ApportionerService apportionerService, PaymentEnricher paymentEnricher,
+			ApplicationProperties applicationProperties, UserService userService, PaymentValidator paymentValidator,
+			PaymentRepository paymentRepository, CollectionProducer producer) {
+		this.apportionerService = apportionerService;
+		this.paymentEnricher = paymentEnricher;
+		this.applicationProperties = applicationProperties;
+		this.userService = userService;
+		this.paymentValidator = paymentValidator;
+		this.paymentRepository = paymentRepository;
+		this.producer = producer;
 	}
 
-    /**
-     * If Citizen is paying, the id of the logged in user becomes payer id.
-     * If Employee is paying, 
-     * 1. the id of the owner of the bill will be attached as payer id.
-     * 2. In case the bill is for a misc payment, payer id is empty.
-     * 
-     * @param paymentRequest
-     * @return
-     */
-    public String createUser(PaymentRequest paymentRequest) {
-    	
-        String id = null;
-        if(paymentRequest.getRequestInfo().getUserInfo().getType().equals("CITIZEN")) {
-            id = paymentRequest.getRequestInfo().getUserInfo().getUuid();
-        }else {
-            if(applicationProperties.getIsUserCreateEnabled()) {
-                Payment payment = paymentRequest.getPayment();
-                Map<String, String> res = userService.getUser(paymentRequest.getRequestInfo(), payment.getMobileNumber(), payment.getTenantId());
-                if(CollectionUtils.isEmpty(res.keySet())) {
-                    id = userService.createUser(paymentRequest);
-                }else {
-                    id = res.get("id");
-                }
-            }
-        }
-        return id;
-    }
+	/**
+	 * Fetch all receipts matching the given criteria, enrich receipts with
+	 * instruments
+	 *
+	 * @param requestInfo           Request info of the search
+	 * @param paymentSearchCriteria Criteria against which search has to be
+	 *                              performed
+	 * @return List of matching receipts
+	 */
+	public List<Payment> getPayments(RequestInfo requestInfo, PaymentSearchCriteria paymentSearchCriteria,
+			String moduleName) {
 
+		paymentValidator.validateAndUpdateSearchRequestFromConfig(paymentSearchCriteria, requestInfo, moduleName);
+		if (applicationProperties.isPaymentsSearchPaginationEnabled()) {
+			paymentSearchCriteria
+					.setOffset(isNull(paymentSearchCriteria.getOffset()) ? 0 : paymentSearchCriteria.getOffset());
+			paymentSearchCriteria.setLimit(
+					isNull(paymentSearchCriteria.getLimit()) ? applicationProperties.getReceiptsSearchDefaultLimit()
+							: paymentSearchCriteria.getLimit());
+		} else {
+			paymentSearchCriteria.setOffset(0);
+			paymentSearchCriteria.setLimit(applicationProperties.getReceiptsSearchDefaultLimit());
+		}
+		if (requestInfo.getUserInfo().getType().equals("CITIZEN")) {
+			List<String> payerIds = new ArrayList<>();
+			payerIds.add(requestInfo.getUserInfo().getUuid());
+			paymentSearchCriteria.setPayerIds(payerIds);
+		}
+		List<Payment> payments = paymentRepository.fetchPayments(paymentSearchCriteria);
+		if (null != paymentSearchCriteria.getBusinessService() && null != paymentSearchCriteria.getConsumerCodes()) {
+			String businessservice = paymentSearchCriteria.getBusinessService();
+			if ((paymentSearchCriteria.getBusinessService().equals("WS")
+					|| paymentSearchCriteria.getBusinessService().equals("SW"))
+					&& payments.get(0).getAddress() == null) {
+				List<String> usageCategory = paymentRepository
+						.fetchUsageCategoryByApplicationnos(paymentSearchCriteria.getReceiptNumbers(), businessservice);
+				List<String> address = paymentRepository
+						.fetchAddressByApplicationnos(paymentSearchCriteria.getReceiptNumbers(), businessservice);
+				List<String> propertyIds = paymentRepository.fetchPropertyid(paymentSearchCriteria.getReceiptNumbers(),
+						businessservice);
+				// setPropertyData(receiptnumber,payments,businessservice);
+				if (usageCategory != null && !usageCategory.isEmpty())
+					payments.get(0).setUsageCategory(usageCategory.get(0));
+				if (address != null && !address.isEmpty())
+					payments.get(0).setAddress(address.get(0));
+				if (propertyIds != null && !propertyIds.isEmpty())
+					payments.get(0).setPropertyId(propertyIds.get(0));
+			}
+			return payments;
+		} else if (null != paymentSearchCriteria.getReceiptNumbers()) {
+			String receiptnumber = null;
+			Iterator<String> iterate = paymentSearchCriteria.getReceiptNumbers().iterator();
+			while (iterate.hasNext()) {
+				receiptnumber = iterate.next();
+			}
+			String receipts[] = receiptnumber.split("/");
 
-    private void setApportionedBillsToPayment(Map<String, Bill> billIdToApportionedBill,Payment payment){
-        Map<String,String> errorMap = new HashMap<>();
-        payment.getPaymentDetails().forEach(paymentDetail -> {
-            if(billIdToApportionedBill.get(paymentDetail.getBillId())!=null)
-                paymentDetail.setBill(billIdToApportionedBill.get(paymentDetail.getBillId()));
-            else errorMap.put("APPORTIONING_ERROR","The bill id: "+paymentDetail.getBillId()+" not present in apportion response");
-        });
-        if(!errorMap.isEmpty())
-            throw new CustomException(errorMap);
-    }
+			String businessservice = receipts[0];
+			if (businessservice.equals("WS_FEE") || businessservice.equals("SW_FEE")) {
+				String receiptss[] = receipts[0].split("_");
 
+				setPropertyData(receiptnumber, payments, receiptss[0]);
+			}
+			return payments;
 
-    @Transactional
-    public List<Payment> updatePayment(PaymentRequest paymentRequest) {
+		} else {
+			return payments;
+		}
+	}
 
-        List<Payment> validatedPayments = paymentValidator.validateAndEnrichPaymentsForUpdate(Collections.singletonList(paymentRequest.getPayment()),
-                paymentRequest.getRequestInfo());
+	public Long getpaymentcountForBusiness(String tenantId, String businessService) {
 
-        paymentRepository.updatePayment(validatedPayments);
-        producer.producer(applicationProperties.getUpdatePaymentTopicName(), new PaymentRequest(paymentRequest.getRequestInfo(), paymentRequest.getPayment()));
+		return paymentRepository.getPaymentsCount(tenantId, businessService);
+	}
 
-        return validatedPayments;
-    }
-    
-    
-    
-    /**
-     * Used by payment gateway to validate provisional receipts of the payment
-     * 
-     * @param paymentRequest
-     * @return
-     */
-    @Transactional
-    public Payment vaidateProvisonalPayment(PaymentRequest paymentRequest) {
-        paymentEnricher.enrichPaymentPreValidate(paymentRequest,false);
-        paymentValidator.validatePaymentForCreate(paymentRequest);
-        
-        return paymentRequest.getPayment();
-    }
-    
+	@Transactional
+	public Payment updatePaymentForFilestore(Payment payment) {
+
+		paymentRepository.updateFileStoreIdToNull(payment);
+		return payment;
+	}
+
+	/**
+	 * Handles creation of a receipt, including multi-service, involves the
+	 * following steps, - Enrich receipt from billing service using bill id -
+	 * Validate the receipt object - Enrich receipt with receipt numbers, coll type
+	 * etc - Apportion paid amount - Persist the receipt object - Create instrument
+	 *
+	 * @param paymentRequest payment request for which receipt has to be created
+	 * @return Created receipt
+	 */
+	@Transactional
+	public Payment createPayment(PaymentRequest paymentRequest) {
+
+		paymentEnricher.enrichPaymentPreValidate(paymentRequest, false);
+		paymentValidator.validatePaymentForCreate(paymentRequest);
+		paymentEnricher.enrichPaymentPostValidate(paymentRequest);
+
+		Payment payment = paymentRequest.getPayment();
+		Map<String, Bill> billIdToApportionedBill = apportionerService.apportionBill(paymentRequest);
+		paymentEnricher.enrichAdvanceTaxHead(new LinkedList<>(billIdToApportionedBill.values()));
+		setApportionedBillsToPayment(billIdToApportionedBill, payment);
+
+		String payerId = createUser(paymentRequest);
+		if (!StringUtils.isEmpty(payerId))
+			payment.setPayerId(payerId);
+		paymentRepository.savePayment(payment);
+
+		producer.producer(applicationProperties.getCreatePaymentTopicName(), paymentRequest);
+
+		return payment;
+	}
+
+	private void setPropertyData(String receiptnumber, List<Payment> payments, String businessservice) {
+		List<String> consumercode = paymentRepository.fetchConsumerCodeByReceiptNumber(receiptnumber);
+		String connectionno = consumercode.get(0);
+		List<String> status = paymentRepository.fetchPropertyDetail(connectionno, businessservice);
+		HashMap<String, String> additionalDetail = new HashMap<>();
+		if (!StringUtils.isEmpty(status.get(0)))
+			additionalDetail.put("oldConnectionno", status.get(0));
+		if (!StringUtils.isEmpty(status.get(1)))
+			additionalDetail.put("landArea", status.get(1));
+		if (!StringUtils.isEmpty(status.get(2)))
+			additionalDetail.put("usageCategory", status.get(2));
+		payments.get(0).setPropertyId(status.get(3));
+		payments.get(0).setAddress(status.get(4));
+		payments.get(0).setUsageCategory(status.get(2));
+		payments.get(0).setPropertyDetail(additionalDetail);
+	}
+
+	/**
+	 * If Citizen is paying, the id of the logged in user becomes payer id. If
+	 * Employee is paying, 1. the id of the owner of the bill will be attached as
+	 * payer id. 2. In case the bill is for a misc payment, payer id is empty.
+	 * 
+	 * @param paymentRequest
+	 * @return
+	 */
+	public String createUser(PaymentRequest paymentRequest) {
+
+		String id = null;
+		if (paymentRequest.getRequestInfo().getUserInfo().getType().equals("CITIZEN")) {
+			id = paymentRequest.getRequestInfo().getUserInfo().getUuid();
+		} else {
+			if (applicationProperties.getIsUserCreateEnabled()) {
+				Payment payment = paymentRequest.getPayment();
+				Map<String, String> res = userService.getUser(paymentRequest.getRequestInfo(),
+						payment.getMobileNumber(), payment.getTenantId());
+				if (CollectionUtils.isEmpty(res.keySet())) {
+					id = userService.createUser(paymentRequest);
+				} else {
+					id = res.get("id");
+				}
+			}
+		}
+		return id;
+	}
+
+	private void setApportionedBillsToPayment(Map<String, Bill> billIdToApportionedBill, Payment payment) {
+		Map<String, String> errorMap = new HashMap<>();
+		payment.getPaymentDetails().forEach(paymentDetail -> {
+			if (billIdToApportionedBill.get(paymentDetail.getBillId()) != null)
+				paymentDetail.setBill(billIdToApportionedBill.get(paymentDetail.getBillId()));
+			else
+				errorMap.put("APPORTIONING_ERROR",
+						"The bill id: " + paymentDetail.getBillId() + " not present in apportion response");
+		});
+		if (!errorMap.isEmpty())
+			throw new CustomException(errorMap);
+	}
+
+	@Transactional
+	public List<Payment> updatePayment(PaymentRequest paymentRequest) {
+
+		List<Payment> validatedPayments = paymentValidator.validateAndEnrichPaymentsForUpdate(
+				Collections.singletonList(paymentRequest.getPayment()), paymentRequest.getRequestInfo());
+
+		paymentRepository.updatePayment(validatedPayments);
+		producer.producer(applicationProperties.getUpdatePaymentTopicName(),
+				new PaymentRequest(paymentRequest.getRequestInfo(), paymentRequest.getPayment()));
+
+		return validatedPayments;
+	}
+
+	/**
+	 * Used by payment gateway to validate provisional receipts of the payment
+	 * 
+	 * @param paymentRequest
+	 * @return
+	 */
+	@Transactional
+	public Payment vaidateProvisonalPayment(PaymentRequest paymentRequest) {
+		paymentEnricher.enrichPaymentPreValidate(paymentRequest, false);
+		paymentValidator.validatePaymentForCreate(paymentRequest);
+
+		return paymentRequest.getPayment();
+	}
+
 //    @Transactional
 //    public Payment updatePaymentForFilestore(Payment payment) {
 //
 //       paymentRepository.updateFileStoreIdToNull(payment);
 //        return payment;
 //    }
-    
-    public List<Payment> plainSearch(PaymentSearchCriteria paymentSearchCriteria) {
-        PaymentSearchCriteria searchCriteria = new PaymentSearchCriteria();
 
-	log.info("plainSearch Service BusinessServices"+paymentSearchCriteria.getBusinessServices() +"plainSearch Service Date "+
-        		 paymentSearchCriteria.getFromDate() +" to "+paymentSearchCriteria.getToDate() +"Teant IT "+paymentSearchCriteria.getTenantId()+" \"plainSearch Service BusinessServices\"+paymentSearchCriteria.getBusinessService():"+paymentSearchCriteria.getBusinessService());    
-	    
-        if (applicationProperties.isPaymentsSearchPaginationEnabled()) {
-            searchCriteria.setOffset(isNull(paymentSearchCriteria.getOffset()) ? 0 : paymentSearchCriteria.getOffset());
-            searchCriteria.setLimit(isNull(paymentSearchCriteria.getLimit()) ? applicationProperties.getReceiptsSearchDefaultLimit() : paymentSearchCriteria.getLimit());
-        } else {
-            searchCriteria.setOffset(0);
-            searchCriteria.setLimit(applicationProperties.getReceiptsSearchDefaultLimit());
-        }
+	public List<Payment> plainSearch(PaymentSearchCriteria paymentSearchCriteria) {
+		PaymentSearchCriteria searchCriteria = new PaymentSearchCriteria();
 
-        if(paymentSearchCriteria.getTenantId() != null) {
-        	searchCriteria.setTenantId(paymentSearchCriteria.getTenantId());
-        }
-        
-        if(paymentSearchCriteria.getBusinessServices() != null) {
-		 log.info("in PaymentService.java paymentSearchCriteria.getBusinessServices(): " + paymentSearchCriteria.getBusinessServices());
-        	searchCriteria.setBusinessServices(paymentSearchCriteria.getBusinessServices());
-        }
-        
-        if(paymentSearchCriteria.getBusinessService() != null) {
-   		 log.info("in PaymentService.java paymentSearchCriteria.getBusinessService(): " + paymentSearchCriteria.getBusinessService());
-           	searchCriteria.setBusinessService(paymentSearchCriteria.getBusinessService());
-          }
-           
+		log.info("plainSearch Service BusinessServices" + paymentSearchCriteria.getBusinessServices()
+				+ "plainSearch Service Date " + paymentSearchCriteria.getFromDate() + " to "
+				+ paymentSearchCriteria.getToDate() + "Teant IT " + paymentSearchCriteria.getTenantId()
+				+ " \"plainSearch Service BusinessServices\"+paymentSearchCriteria.getBusinessService():"
+				+ paymentSearchCriteria.getBusinessService());
 
-        
-        
-        if((paymentSearchCriteria.getFromDate() !=null && paymentSearchCriteria.getFromDate()>0 ) && (paymentSearchCriteria.getToDate() !=null && paymentSearchCriteria.getToDate()>0 ) )
-        {
-        	searchCriteria.setToDate(paymentSearchCriteria.getToDate());
-        	searchCriteria.setFromDate(paymentSearchCriteria.getFromDate());
+		if (applicationProperties.isPaymentsSearchPaginationEnabled()) {
+			searchCriteria.setOffset(isNull(paymentSearchCriteria.getOffset()) ? 0 : paymentSearchCriteria.getOffset());
+			searchCriteria.setLimit(
+					isNull(paymentSearchCriteria.getLimit()) ? applicationProperties.getReceiptsSearchDefaultLimit()
+							: paymentSearchCriteria.getLimit());
+		} else {
+			searchCriteria.setOffset(0);
+			searchCriteria.setLimit(applicationProperties.getReceiptsSearchDefaultLimit());
+		}
 
-        }
-        
-        List<String> ids = paymentRepository.fetchPaymentIds(searchCriteria);
-        if (ids.isEmpty())
-            return Collections.emptyList();
+		if (paymentSearchCriteria.getTenantId() != null) {
+			searchCriteria.setTenantId(paymentSearchCriteria.getTenantId());
+		}
 
-        PaymentSearchCriteria criteria = PaymentSearchCriteria.builder().ids(new HashSet<String>(ids)).build();
-        return paymentRepository.fetchPaymentsForPlainSearch(criteria);
-    }
+		if (paymentSearchCriteria.getBusinessServices() != null) {
+			log.info("in PaymentService.java paymentSearchCriteria.getBusinessServices(): "
+					+ paymentSearchCriteria.getBusinessServices());
+			searchCriteria.setBusinessServices(paymentSearchCriteria.getBusinessServices());
+		}
 
+		if (paymentSearchCriteria.getBusinessService() != null) {
+			log.info("in PaymentService.java paymentSearchCriteria.getBusinessService(): "
+					+ paymentSearchCriteria.getBusinessService());
+			searchCriteria.setBusinessService(paymentSearchCriteria.getBusinessService());
+		}
 
-    
-    @Transactional
-    public Payment createPaymentForWSMigration(PaymentRequest paymentRequest) {
-    	
-        paymentEnricher.enrichPaymentPreValidate(paymentRequest,true);
-        paymentValidator.validatePaymentForCreateWSMigration(paymentRequest);
-        paymentEnricher.enrichPaymentPostValidate(paymentRequest);
+		if ((paymentSearchCriteria.getFromDate() != null && paymentSearchCriteria.getFromDate() > 0)
+				&& (paymentSearchCriteria.getToDate() != null && paymentSearchCriteria.getToDate() > 0)) {
+			searchCriteria.setToDate(paymentSearchCriteria.getToDate());
+			searchCriteria.setFromDate(paymentSearchCriteria.getFromDate());
 
-        Payment payment = paymentRequest.getPayment();
-        Map<String, Bill> billIdToApportionedBill = apportionerService.apportionBill(paymentRequest);
-        paymentEnricher.enrichAdvanceTaxHead(new LinkedList<>(billIdToApportionedBill.values()));
-        setApportionedBillsToPayment(billIdToApportionedBill,payment);
+		}
 
-        String payerId = createUser(paymentRequest);
-        if(!StringUtils.isEmpty(payerId))
-            payment.setPayerId(payerId);
-        paymentRepository.savePayment(payment);
+		List<String> ids = paymentRepository.fetchPaymentIds(searchCriteria);
+		if (ids.isEmpty())
+			return Collections.emptyList();
 
-       // producer.producer(applicationProperties.getCreatePaymentTopicName(), paymentRequest);
+		PaymentSearchCriteria criteria = PaymentSearchCriteria.builder().ids(new HashSet<String>(ids)).build();
+		return paymentRepository.fetchPaymentsForPlainSearch(criteria);
+	}
 
+	@Transactional
+	public Payment createPaymentForWSMigration(PaymentRequest paymentRequest) {
 
-        return payment;
-    }
-    
+		paymentEnricher.enrichPaymentPreValidate(paymentRequest, true);
+		paymentValidator.validatePaymentForCreateWSMigration(paymentRequest);
+		paymentEnricher.enrichPaymentPostValidate(paymentRequest);
+
+		Payment payment = paymentRequest.getPayment();
+		Map<String, Bill> billIdToApportionedBill = apportionerService.apportionBill(paymentRequest);
+		paymentEnricher.enrichAdvanceTaxHead(new LinkedList<>(billIdToApportionedBill.values()));
+		setApportionedBillsToPayment(billIdToApportionedBill, payment);
+
+		String payerId = createUser(paymentRequest);
+		if (!StringUtils.isEmpty(payerId))
+			payment.setPayerId(payerId);
+		paymentRepository.savePayment(payment);
+
+		// producer.producer(applicationProperties.getCreatePaymentTopicName(),
+		// paymentRequest);
+
+		return payment;
+	}
+
 }
