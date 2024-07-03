@@ -1,6 +1,7 @@
 package org.egov.demand.web.controller;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -111,9 +112,11 @@ public class BillControllerv2 {
 		updateBillRequest.setRequestInfo(requestInfoWrapper.getRequestInfo());
 		UpdateBillCriteria objectBillCriteria =new UpdateBillCriteria();
 		objectBillCriteria.setTenantId(cancelBillCriteria.getTenantId());
+		  Set<String> consumerCodeSet = new HashSet<>();
+	        consumerCodeSet.add(cancelBillCriteria.getConsumerCode());
 		//objectBillCriteria.setConsumerCodes(Set.of(cancelBillCriteria.getConsumerCode().split(",")));
 		objectBillCriteria.setBusinessService(cancelBillCriteria.getBusinessService());
-		
+		objectBillCriteria.setConsumerCodes(consumerCodeSet);
 		updateBillRequest.setUpdateBillCriteria(objectBillCriteria);
 		billService.cancelBill(updateBillRequest);
 		return new ResponseEntity<>(Constants.SUCCESS_CANCEL_BILL, HttpStatus.CREATED);

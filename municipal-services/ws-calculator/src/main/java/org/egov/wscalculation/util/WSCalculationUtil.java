@@ -105,7 +105,10 @@ public class WSCalculationUtil {
 					.append(WSCalculationConstant.TENANT_ID_FIELD_FOR_SEARCH_URL).append(getBillCriteria.getTenantId())
 					.append(WSCalculationConstant.SEPARATER)
 					.append(WSCalculationConstant.CONSUMER_CODE_SEARCH_FIELD_NAME)
-					.append(StringUtils.join(getBillCriteria.getConsumerCodes(), ","));
+					.append(StringUtils.join(getBillCriteria.getConsumerCodes(), ","))
+					.append(WSCalculationConstant.SEPARATER)
+					.append(WSCalculationConstant.BUSINESSSERVICE_FIELD_FOR_SEARCH_URL)
+					.append("WS");
 
 			 if(getBillCriteria.getIsPaymentCompleted() != null)
 				 url.append(WSCalculationConstant.SEPARATER)

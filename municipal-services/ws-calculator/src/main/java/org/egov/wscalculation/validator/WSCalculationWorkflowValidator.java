@@ -77,6 +77,9 @@ public class WSCalculationWorkflowValidator {
 				isApplicationApproved=true;
 		}
 
+		if((property.getStatus().equals(Status.PENDINGWS)))
+                       isApplicationApproved=true;
+		
 		if (!isApplicationApproved)
 			errorMap.put("PROPERTY_APPLICATION_ERROR",
 					"Demand cannot be generated as property application with application number "

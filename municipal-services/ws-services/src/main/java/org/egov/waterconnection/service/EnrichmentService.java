@@ -387,38 +387,9 @@ public class EnrichmentService {
 			return;
 		UserSearchRequest userSearchRequest = userService.getBaseUserSearchRequest(criteria.getTenantId(), requestInfo);
 		userSearchRequest.setUuid(connectionHolderIds);
-
-		PlainAccessRequest apiPlainAccessRequest = userSearchRequest.getRequestInfo().getPlainAccessRequest();
-		/* Creating a PlainAccessRequest object to get unmasked data from user service */
-		List<String> plainRequestFieldsList = new ArrayList<String>() {{
-			add("userName");
-			add("mobileNumber");
-			add("correspondenceAddress");
-			add("guardian");
-			add("fatherOrHusbandName");
-			add("name");
-		}};
-		PlainAccessRequest plainAccessRequest = PlainAccessRequest.builder().recordId(connectionHolderIds.iterator().next())
-				.plainRequestFields(plainRequestFieldsList).build();
-
-		userSearchRequest.getRequestInfo().setPlainAccessRequest(plainAccessRequest);
-
 		UserDetailResponse userDetailResponse = userService.getUser(userSearchRequest);
+		enrichConnectionHolderInfo(userDetailResponse, waterConnectionList,requestInfo);
 
-		//Re-setting the original PlainAccessRequest object that came from api request
-		requestInfo.setPlainAccessRequest(apiPlainAccessRequest);
-
-		// Encrypting and decrypting the data as per ws-service requirement
-		/* encrypt here */
-		if (!criteria.getIsInternalCall()) {
-			userDetailResponse.setUser((List<OwnerInfo>) encryptionDecryptionUtil.encryptObject(userDetailResponse.getUser(), WNS_OWNER_ENCRYPTION_MODEL, OwnerInfo.class));
-
-			/* decrypt here */
-			if (!criteria.getIsSkipLevelSearch()) {
-				userDetailResponse.setUser(encryptionDecryptionUtil.decryptObject(userDetailResponse.getUser(), WNS_OWNER_ENCRYPTION_MODEL, OwnerInfo.class, requestInfo));
-			}
-		}
-		enrichConnectionHolderInfo(userDetailResponse, waterConnectionList, requestInfo);
 	}
 
 	/**
@@ -524,7 +495,7 @@ public class EnrichmentService {
 				propertyCriteria.setTenantId(criteria.getTenantId());
 			}
 			propertyCriteria.setPropertyIds(propertyIds);
-			List<Property> propertyList = waterServicesUtil.getPropertyDetails(serviceRequestRepository.fetchResult(waterServicesUtil.getPropertyURL(propertyCriteria),
+			List<Property> propertyList = waterServicesUtil.getPropertyDetails(serviceRequestRepository.fetchResult(waterServicesUtil.getPropertyURL(propertyCriteria,requestInfo),
 					RequestInfoWrapper.builder().requestInfo(requestInfo).build()));
 
 			if (!CollectionUtils.isEmpty(propertyList)) {
@@ -612,7 +583,7 @@ public class EnrichmentService {
 			propertyCriteria.setPropertyIds(Collections.singleton(waterConnectionList.get(0).getPropertyId()));
 			propertyCriteria.setTenantId(waterConnectionList.get(0).getTenantId());
 
-			List<Property> propertyList = waterServicesUtil.getPropertyDetails(serviceRequestRepository.fetchResult(waterServicesUtil.getPropertyURL(propertyCriteria),
+			List<Property> propertyList = waterServicesUtil.getPropertyDetails(serviceRequestRepository.fetchResult(waterServicesUtil.getPropertyURL(propertyCriteria,requestInfo),
 					RequestInfoWrapper.builder().requestInfo(requestInfo).build()));
 			if(propertyList != null && propertyList.size()==1){
 				List<OwnerInfo> ownerInfoList = propertyList.get(0).getOwners();

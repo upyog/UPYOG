@@ -229,6 +229,9 @@ public class PaymentNotificationService {
             String customMessage = null;
             String path = getJsonPath(topic, paymentMode, isPartiallyPayment);
             String messageTemplate = null;
+            
+            log.info("Path from Topi" +path);
+          //  log.info("localizationMessages"+localizationMessages);
             try {
                 Object messageObj = JsonPath.parse(localizationMessages).read(path);
                 messageTemplate = ((ArrayList<String>) messageObj).get(0);

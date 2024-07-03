@@ -75,7 +75,9 @@ public class WaterDaoImpl implements WaterDao {
 		
 		List<WaterConnection> waterConnectionList = new ArrayList<>();
 		List<Object> preparedStatement = new ArrayList<>();
-		String query = wsQueryBuilder.getSearchQueryString(criteria, preparedStatement, requestInfo);
+		// String query = wsQueryBuilder.getSearchQueryString(criteria, preparedStatement, requestInfo);]
+		Boolean iscitizenSearch=iscitizenSearch(requestInfo.getUserInfo());
+		String query = wsQueryBuilder.getSearchQueryString(criteria, preparedStatement, requestInfo, iscitizenSearch);
 
 		log.info("Search Query" + query);
 		log.info("Parameters for search Query:: " + preparedStatement.toString());
@@ -83,7 +85,13 @@ public class WaterDaoImpl implements WaterDao {
 			return Collections.emptyList();
 		Boolean isOpenSearch = isSearchOpen(requestInfo.getUserInfo());
 		
-		if(isOpenSearch)
+		// if(isOpenSearch)
+		 if(iscitizenSearch)
+		 {
+			 waterConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(),
+						openWaterRowMapper);
+			 
+		 }else if(isOpenSearch)
 			waterConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(),
 					openWaterRowMapper);
 		else
@@ -96,7 +104,9 @@ public class WaterDaoImpl implements WaterDao {
 
 	public Integer getWaterConnectionsCount(SearchCriteria criteria, RequestInfo requestInfo) {
 		List<Object> preparedStatement = new ArrayList<>();
-		String query = wsQueryBuilder.getSearchCountQueryString(criteria, preparedStatement, requestInfo);
+		// String query = wsQueryBuilder.getSearchCountQueryString(criteria, preparedStatement, requestInfo);
+		Boolean iscitizenSearch=iscitizenSearch(requestInfo.getUserInfo());
+		String query = wsQueryBuilder.getSearchCountQueryString(criteria, preparedStatement, requestInfo,iscitizenSearch);
 		
 		if (query == null)
 			return 0;
@@ -165,6 +175,12 @@ public class WaterDaoImpl implements WaterDao {
 
 		return userInfo.getType().equalsIgnoreCase("SYSTEM")
 				&& userInfo.getRoles().stream().map(Role::getCode).collect(Collectors.toSet()).contains("ANONYMOUS");
+	}
+
+	public Boolean iscitizenSearch(User userInfo) {
+
+		return userInfo.getType().equalsIgnoreCase("CITIZEN")
+				&& userInfo.getRoles().stream().map(Role::getCode).collect(Collectors.toSet()).contains("CITIZEN");
 	}
 	
 	public void updateWaterApplicationStatus(String id, String status) {

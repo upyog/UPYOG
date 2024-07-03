@@ -55,6 +55,14 @@ public class BillRepositoryV2 {
 		return jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), searchBillRowMapper);
 	}
 	
+	public List<BillV2> findBillActive(BillSearchCriteria billCriteria){
+		
+		List<Object> preparedStatementValues = new ArrayList<>();
+		String queryStr = billQueryBuilder.getActiveBillQuery(billCriteria, preparedStatementValues);
+		log.debug("query:::"+queryStr+"  preparedStatementValues::"+preparedStatementValues);
+		return jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), searchBillRowMapper);
+	}
+	
 public String  getLatestActiveBillId(CancelBillCriteria cancelBillCriteria){
 		
 		List<Object> preparedStatementValues = new ArrayList<>();
@@ -222,12 +230,12 @@ public String  getLatestActiveBillId(CancelBillCriteria cancelBillCriteria){
 		if(CollectionUtils.isEmpty(consumerCodes))
 			return 0;
 		
-		List<BillV2> bills =  findBill(BillSearchCriteria.builder()
+		List<BillV2> bills =  findBillActive(BillSearchCriteria.builder()
 				.service(updateBillCriteria.getBusinessService())
 				.tenantId(updateBillCriteria.getTenantId())
 				.consumerCode(consumerCodes)
 				.build());
-		
+		log.info("Fetched Bills From query: "+ bills);
 		if (CollectionUtils.isEmpty(bills))
 			return 0;
 
@@ -239,17 +247,20 @@ public String  getLatestActiveBillId(CancelBillCriteria cancelBillCriteria){
 
 		if (BillStatus.CANCELLED.equals(updateBillCriteria.getStatusToBeUpdated())) {
 
-			updateBillCriteria.setBillIds(Stream.of(bills.get(0).getId()).collect(Collectors.toSet()));
+			//updateBillCriteria.setBillIds(Stream.of(bills.get(0).getId()).collect(Collectors.toSet()));
 			updateBillCriteria.setAdditionalDetails(
 					util.jsonMerge(updateBillCriteria.getAdditionalDetails(), bills.get(0).getAdditionalDetails()));
 
-		} else {
+		}// else {
 
-			updateBillCriteria.setBillIds(bills.stream().map(BillV2::getId).collect(Collectors.toSet()));
-		}
+		updateBillCriteria.setBillIds(bills.stream().map(BillV2::getId).collect(Collectors.toSet()));
+		//}
 		
 		List<Object> preparedStmtList = new ArrayList<>();
+		
 		String queryStr = billQueryBuilder.getBillStatusUpdateQuery(updateBillCriteria, preparedStmtList);
+		log.info("Query String: "+queryStr);
+		log.info("preparedStmtList String: "+preparedStmtList.toString());
 		return jdbcTemplate.update(queryStr, preparedStmtList.toArray());
 	}
 	

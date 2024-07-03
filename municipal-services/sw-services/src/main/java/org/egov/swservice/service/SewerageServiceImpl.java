@@ -215,45 +215,17 @@ public class SewerageServiceImpl implements SewerageService {
 	 * @return List of matching sewerage connection
 	 */
 	public List<SewerageConnection> search(SearchCriteria criteria, RequestInfo requestInfo) {
-		//Creating copies of apiPlainAcessRequests for decryption process
-		//Any decryption process returns the  requestInfo with only the already used plain Access Request fields
-		PlainAccessRequest apiPlainAccessRequest = null, apiPlainAccessRequestCopy = null;
-		if (!ObjectUtils.isEmpty(requestInfo.getPlainAccessRequest())) {
-			PlainAccessRequest plainAccessRequest = requestInfo.getPlainAccessRequest();
-			if (!StringUtils.isEmpty(plainAccessRequest.getRecordId()) && !ObjectUtils.isEmpty(plainAccessRequest.getPlainRequestFields())) {
-				apiPlainAccessRequest = new PlainAccessRequest(plainAccessRequest.getRecordId(), plainAccessRequest.getPlainRequestFields());
-				apiPlainAccessRequestCopy = new PlainAccessRequest(plainAccessRequest.getRecordId(), plainAccessRequest.getPlainRequestFields());
-			}
-		}
-		/* encrypt here */
-	//	criteria = encryptionDecryptionUtil.encryptObject(criteria, WNS_ENCRYPTION_MODEL, SearchCriteria.class);
-		//criteria = encryptionDecryptionUtil.encryptObject(criteria, WNS_PLUMBER_ENCRYPTION_MODEL, SearchCriteria.class);
-
 		List<SewerageConnection> sewerageConnectionList = getSewerageConnectionsList(criteria, requestInfo);
 		if(!StringUtils.isEmpty(criteria.getSearchType()) &&
 				criteria.getSearchType().equals(SWConstants.SEARCH_TYPE_CONNECTION)){
 			sewerageConnectionList = enrichmentService.filterConnections(sewerageConnectionList);
-			/*if(criteria.getIsPropertyDetailsRequired()){
+			if(criteria.getIsPropertyDetailsRequired()){
 				sewerageConnectionList = enrichmentService.enrichPropertyDetails(sewerageConnectionList, criteria, requestInfo);
 
-			}*/
-		}
-		if ((criteria.getIsPropertyDetailsRequired() != null) && criteria.getIsPropertyDetailsRequired()) {
-			sewerageConnectionList = enrichmentService.enrichPropertyDetails(sewerageConnectionList, criteria, requestInfo);
+			}
 		}
 		validateProperty.validatePropertyForConnection(sewerageConnectionList);
 		enrichmentService.enrichConnectionHolderDeatils(sewerageConnectionList, criteria, requestInfo);
-		enrichmentService.enrichProcessInstance(sewerageConnectionList, criteria, requestInfo);
-//		enrichmentService.enrichDocumentDetails(sewerageConnectionList, criteria, requestInfo);
-		requestInfo.setPlainAccessRequest(apiPlainAccessRequest);
-		/* decrypt here 
-		if (criteria.getIsInternalCall()) {
-			//sewerageConnectionList = encryptionDecryptionUtil.decryptObject(sewerageConnectionList, "WnSConnectionPlumberDecrypDisabled", SewerageConnection.class, requestInfo);
-			requestInfo.setPlainAccessRequest(apiPlainAccessRequestCopy);
-			return encryptionDecryptionUtil.decryptObject(sewerageConnectionList, "WnSConnectionDecrypDisabled", SewerageConnection.class, requestInfo);
-		}*/
-//		sewerageConnectionList = encryptionDecryptionUtil.decryptObject(sewerageConnectionList, WNS_PLUMBER_ENCRYPTION_MODEL, SewerageConnection.class, requestInfo);
-	//	requestInfo.setPlainAccessRequest(apiPlainAccessRequestCopy);
 		return sewerageConnectionList;
 	}
 

@@ -89,6 +89,7 @@ public class BillQueryBuilder {
 		} else {
 			billQuery.append(" WHERE b.tenantid = ? ");
 			preparedStatementValues.add(billSearchCriteria.getTenantId());
+		//	billQuery.append("AND b.status='ACTIVE' ");
 		}
 		if (billSearchCriteria.getPeriodFrom() != null) {
 			billQuery.append(" AND bd.fromperiod = ?");
@@ -98,13 +99,45 @@ public class BillQueryBuilder {
 			billQuery.append(" AND bd.toperiod = ?");
 			preparedStatementValues.add(billSearchCriteria.getPeriodTo());
 		}
-
 		addWhereClause(billQuery, preparedStatementValues, billSearchCriteria);
 		StringBuilder maxQuery = addPagingClause(billQuery, preparedStatementValues, billSearchCriteria);
 
 		return maxQuery.toString();
 	}
 
+	
+/**
+ *  Fetch only Active Bills
+ * @param billSearchCriteria
+ * @param preparedStatementValues
+ * @return
+ */
+	public String getActiveBillQuery(BillSearchCriteria billSearchCriteria, List<Object> preparedStatementValues) {
+
+		StringBuilder billQuery = new StringBuilder(BILL_BASE_QUERY);
+		String tenantId = billSearchCriteria.getTenantId();
+		String[] tenantIdChunks = tenantId.split("\\.");
+		if (tenantIdChunks.length == 1) {
+			billQuery.append(" WHERE b.tenantid LIKE ? ");
+			preparedStatementValues.add(billSearchCriteria.getTenantId() + '%');
+		} else {
+			billQuery.append(" WHERE b.tenantid = ? ");
+			preparedStatementValues.add(billSearchCriteria.getTenantId());
+			billQuery.append("AND b.status='ACTIVE' ");
+		}
+		if (billSearchCriteria.getPeriodFrom() != null) {
+			billQuery.append(" AND bd.fromperiod = ?");
+			preparedStatementValues.add(billSearchCriteria.getPeriodFrom());
+		}
+		if (billSearchCriteria.getPeriodTo() != null) {
+			billQuery.append(" AND bd.toperiod = ?");
+			preparedStatementValues.add(billSearchCriteria.getPeriodTo());
+		}
+		addWhereClause(billQuery, preparedStatementValues, billSearchCriteria);
+		StringBuilder maxQuery = addPagingClause(billQuery, preparedStatementValues, billSearchCriteria);
+
+		return maxQuery.toString();
+	}
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void addWhereClause(final StringBuilder selectQuery, final List preparedStatementValues,
 			final BillSearchCriteria searchBill) {

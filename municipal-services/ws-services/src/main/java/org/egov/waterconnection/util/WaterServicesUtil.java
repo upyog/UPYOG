@@ -92,6 +92,8 @@ public class WaterServicesUtil {
 		HashSet<String> propertyIds = new HashSet<>();
 		propertyIds.add(waterConnectionRequest.getWaterConnection().getPropertyId());
 		propertyCriteria.setPropertyIds(propertyIds);
+		propertyCriteria.setTenantId(waterConnectionRequest.getWaterConnection().getTenantId());
+		
 //		propertyCriteria.setTenantId(waterConnectionRequest.getWaterConnection().getTenantId());
 		if (waterConnectionRequest.getRequestInfo().getUserInfo() != null
 				&& "EMPLOYEE".equalsIgnoreCase(waterConnectionRequest.getRequestInfo().getUserInfo().getType())) {
@@ -120,7 +122,7 @@ public class WaterServicesUtil {
 			propertyCriteria.setLocality(addDetail.get(localityCode).toString());
 		}
 		Object result = serviceRequestRepository.fetchResult(
-				getPropertyURL(propertyCriteria),
+				getPropertyURL(propertyCriteria,waterConnectionRequest.getRequestInfo()),
 				RequestInfoWrapper.builder().requestInfo(waterConnectionRequest.getRequestInfo()).build());
 		List<Property> propertyList = getPropertyDetails(result);
 		if (CollectionUtils.isEmpty(propertyList)) {
@@ -166,7 +168,7 @@ public class WaterServicesUtil {
 		if (!StringUtils.isEmpty(waterConnectionSearchCriteria.getLocality())) {
 			propertyCriteria.setLocality(waterConnectionSearchCriteria.getLocality());
 		}
-		return getPropertyDetails(serviceRequestRepository.fetchResult(getPropertyURL(propertyCriteria),
+		return getPropertyDetails(serviceRequestRepository.fetchResult(getPropertyURL(propertyCriteria,requestInfo),
 				RequestInfoWrapper.builder().requestInfo(requestInfo).build()));
 	}
 	
@@ -177,7 +179,7 @@ public class WaterServicesUtil {
 	 * @return List of Property
 	 */
 	public List<Property> searchPropertyOnId(PropertyCriteria criteria, RequestInfo requestInfo) {
-		return getPropertyDetails(serviceRequestRepository.fetchResult(getPropertyURL(criteria),
+		return getPropertyDetails(serviceRequestRepository.fetchResult(getPropertyURL(criteria,requestInfo),
 				RequestInfoWrapper.builder().requestInfo(requestInfo).build()));
 	}
 	
@@ -223,13 +225,25 @@ public class WaterServicesUtil {
 	 * @param criteria
 	 * @return property URL
 	 */
-	public StringBuilder getPropertyURL(PropertyCriteria criteria) {
+	public StringBuilder getPropertyURL(PropertyCriteria criteria,RequestInfo requestInfo) {
 		StringBuilder url = new StringBuilder(getPropertyURL());
+		boolean iscitizen =requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN")
+		&& requestInfo.getUserInfo().getRoles().stream().map(Role::getCode).collect(Collectors.toSet()).contains("CITIZEN");
 		boolean isanyparametermatch = false;
 		url.append("?");
+		if(!iscitizen) {
 		if (!StringUtils.isEmpty(criteria.getTenantId())) {
 			isanyparametermatch = true;
 			url.append(tenantId).append(criteria.getTenantId());
+		}
+			}
+		else {
+			
+			if (!StringUtils.isEmpty(criteria.getTenantId())) {
+				isanyparametermatch = true;
+				url.append(tenantId).append("pb");
+			}
+			
 		}
 		if (!CollectionUtils.isEmpty(criteria.getPropertyIds())) {
 			if (isanyparametermatch)url.append("&");

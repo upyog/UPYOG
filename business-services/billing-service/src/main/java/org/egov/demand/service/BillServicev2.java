@@ -188,7 +188,7 @@ public class BillServicev2 {
 	public Integer cancelBill(UpdateBillRequest updateBillRequest) {
 		
 		UpdateBillCriteria cancelBillCriteria = updateBillRequest.getUpdateBillCriteria();
-		billValidator.validateBillSearchRequest(cancelBillCriteria);
+		//billValidator.validateBillSearchRequest(cancelBillCriteria);
 		Set<String> consumerCodes = cancelBillCriteria.getConsumerCodes();
 		cancelBillCriteria.setStatusToBeUpdated(BillStatus.CANCELLED);
 
@@ -240,7 +240,7 @@ public class BillServicev2 {
 		billValidator.validateBillGenRequest(billCriteria, requestInfo);
 		if (CollectionUtils.isEmpty(billCriteria.getConsumerCode()))
 			billCriteria.setConsumerCode(new HashSet<>());
-		BillResponseV2 res = searchBill(billCriteria.toBillSearchCriteria(), requestInfo);
+		BillResponseV2 res = searchActiveBill(billCriteria.toBillSearchCriteria(), requestInfo);
 		log.info("\n\t\t\tResurlt billing query\t"+res);
 		
 		List<BillV2> bills = res.getBill();
@@ -256,13 +256,6 @@ public class BillServicev2 {
 			return generateBill(billCriteria, requestInfo);
 		}
 		
-		if (!CollectionUtils.isEmpty(bills) && billCriteria.getBusinessService().equalsIgnoreCase("PT") && !(bills.get(0).getTotalAmount().remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0))
-		{
-			log.info( "If bills are not empty" );
-			if(!billCriteria.getBusinessService().equalsIgnoreCase("WS") && !billCriteria.getBusinessService().equalsIgnoreCase("SW"))
-			updateDemandsForexpiredBillDetails(billCriteria.getBusinessService(), billCriteria.getConsumerCode(), billCriteria.getTenantId(), requestInfoWrapper);
-			return generateBill(billCriteria, requestInfo);
-		}
 		
 		
 		/*
@@ -306,6 +299,7 @@ public class BillServicev2 {
 			cosnumerCodesNotFoundInBill.remove(entry.getKey());
 			isBillExpired = false;
 		}
+			
 			
 		log.info("Consumer Code to be expired " + cosnumerCodesToBeExpired);
 		log.info("Consumer code not found in bill " + cosnumerCodesNotFoundInBill);
@@ -366,6 +360,20 @@ public class BillServicev2 {
 	}
 
 
+	/**
+	 * Searches the bills from DB for given criteria and enriches them with TaxAndPayments array
+	 * 
+	 * @param billCriteria
+	 * @param requestInfo
+	 * @return
+	 */
+	public BillResponseV2 searchActiveBill(BillSearchCriteria billCriteria, RequestInfo requestInfo) {
+
+		List<BillV2> bills = billRepository.findBillActive(billCriteria);
+
+		return BillResponseV2.builder().resposneInfo(responseFactory.getResponseInfo(requestInfo, HttpStatus.OK))
+				.bill(bills).build();
+	}
 	/**
 	 * Searches the bills from DB for given criteria and enriches them with TaxAndPayments array
 	 * 

@@ -89,13 +89,13 @@ public class BulkBillGenerationConsumer {
 		MigrationCount migrationCount = billGenerator.getMigrationCount();
 		migrationCount.setAuditTime(System.currentTimeMillis());
 		migrationCount.setMessage("prcoess succeded in billing service");
-		kafkaTemplate.send(migrationCount.getAuditTopic(), billGenerator.getMigrationCount());
+		//kafkaTemplate.send(migrationCount.getAuditTopic(), billGenerator.getMigrationCount());
 	}
 	
 	private void logError(String process, String message, MigrationCount bulkBillCount) {
 		bulkBillCount.setAuditTime(System.currentTimeMillis());
 		bulkBillCount.setMessage("prcoess failed in billing service during "+ process + " with error message : " + message);
-		kafkaTemplate.send(bulkBillCount.getAuditTopic(), bulkBillCount);
+		//kafkaTemplate.send(bulkBillCount.getAuditTopic(), bulkBillCount);
 	}
 
 }

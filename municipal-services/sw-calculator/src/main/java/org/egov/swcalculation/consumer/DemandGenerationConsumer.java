@@ -52,18 +52,18 @@ public class DemandGenerationConsumer {
 	 * 
 	 * @param consumerRecord would be calculation criteria.
 	 */
-	@KafkaListener(topics = { "${egov.seweragecalculatorservice.createdemand.topic}" })
-	public void processMessage(Map<String, Object> consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
-		try{
-			CalculationReq calculationReq = mapper.convertValue(consumerRecord, CalculationReq.class);
-			log.info(" Bulk bill Consumerbatch records log for batch :  "
-					+ calculationReq.getMigrationCount().getOffset() + " Count is : "
-					+ calculationReq.getMigrationCount().getLimit());
-			generateDemandInBatch(calculationReq);
-		}catch (final Exception e){
-			log.error("KAFKA_PROCESS_ERROR", e);
-		}
-	}
+	// @KafkaListener(topics = { "${egov.seweragecalculatorservice.createdemand.topic}" })
+	// public void processMessage(Map<String, Object> consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+	// 	try{
+	// 		CalculationReq calculationReq = mapper.convertValue(consumerRecord, CalculationReq.class);
+	// 		log.info(" Bulk bill Consumerbatch records log for batch :  "
+	// 				+ calculationReq.getMigrationCount().getOffset() + " Count is : "
+	// 				+ calculationReq.getMigrationCount().getLimit());
+	// 		generateDemandInBatch(calculationReq);
+	// 	}catch (final Exception e){
+	// 		log.error("KAFKA_PROCESS_ERROR", e);
+	// 	}
+	// }
 	
 	/**
 	 * Listen the topic for processing the batch records.
@@ -91,7 +91,12 @@ public class DemandGenerationConsumer {
 			}
 		});
 		CalculationReq request = CalculationReq.builder().calculationCriteria(calculationCriteria)
-				.requestInfo(calculationReq.getRequestInfo()).isconnectionCalculation(true).build();
+				.requestInfo(calculationReq.getRequestInfo()).isconnectionCalculation(true)
+				.taxPeriodFrom(calculationReq.getTaxPeriodFrom())
+				.taxPeriodTo(calculationReq.getTaxPeriodTo())
+				.migrationCount(calculationReq.getMigrationCount())
+				.build();
+			
 		generateDemandInBatch(request);
 		log.info("Number of batch records:  " + records.size());
 	}
@@ -155,9 +160,9 @@ public class DemandGenerationConsumer {
 			 * Error with message goes to audit topic
 			 */
 			log.error("Failed in DemandGenerationConsumer with error : " + ex.getMessage());
-			log.info("Bulk bill Errorbatch records log for batch : " + request.getMigrationCount().getOffset()
-					+ "Count is : " + request.getMigrationCount().getRecordCount());
-			request.getMigrationCount().setMessage("Failed in DemandGenerationConsumer with error : " + ex.getMessage());
+			// log.info("Bulk bill Errorbatch records log for batch : " + request.getMigrationCount().getOffset()
+			// 		+ "Count is : " + request.getMigrationCount().getRecordCount());
+		//	request.getMigrationCount().setMessage("Failed in DemandGenerationConsumer with error : " + ex.getMessage());
 			producer.push(bulkBillGenAuditTopic, request.getMigrationCount());
 		}
 

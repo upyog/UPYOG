@@ -234,32 +234,36 @@ params.add("access_code", MERCHANT_ACCESS_CODE);
     }
  @Override
     public Transaction fetchStatus(Transaction currentStatus, Map<String, String> params) {
-         Transaction txn =null;
-         String ccaRequest="";         
-         String orderId= currentStatus.getTxnId();
-         ccaRequest =  "{'order_no': '"+orderId+"'}";
+       		 Transaction txn =null;
+                 String ccaRequest="";         
+                 String orderId= currentStatus.getTxnId();
+	         String encResp = params.get("encResp");
+                 ccaRequest =  "{'order_no': '"+orderId+"'}";
   		String pCommand="orderStatusTracker";
  		String pRequestType="JSON";
  		String pResponseType="JSON";
  		String pVersion="1.2";
  		String vResponse="";
- 		
- 		AesUtil aesUtil=new AesUtil("D14357BBD21BD64FF7D074944DB08DFE");           
+ 		AesUtil aesUtilenc=new AesUtil(MERCHANT_WORKING_KEY);
 
-       String encRequest = aesUtil.encrypt(ccaRequest);
+       		String encRequest = aesUtilenc.encrypt(ccaRequest);
   	 	System.out.println("ENC REq "+encRequest);  
-  	    StringBuffer wsDataBuff=new StringBuffer();
-  	    wsDataBuff.append("enc_request="+encRequest+"&access_code="+MERCHANT_ACCESS_CODE+"&command="+pCommand+"&response_type="+pResponseType+"&request_type="+pRequestType+"&version="+pVersion);
+  	    	StringBuffer wsDataBuff=new StringBuffer();
+  	    	wsDataBuff.append("enc_request="+encRequest+"&access_code="+MERCHANT_ACCESS_CODE+"&command="+pCommand+"&response_type="+pResponseType+"&request_type="+pRequestType+"&version="+pVersion);
 		
   	     try {
+		            log.info("ENC WS Data Buff "+wsDataBuff.toString());
+		            log.info("Merchant URL "+MERCHANT_URL_STATUS);
 			  vResponse = processUrlConnectionReq(wsDataBuff.toString(), MERCHANT_URL_STATUS);
+		     	log.info("Response: "+vResponse);
 	  	      String[] keyValuePairs = vResponse.toString().split("&");
-	      	 //String[] keyValuePairs = response.toString().split("&");
-	           String resp = keyValuePairs[1];
-	           String status = keyValuePairs[0];
-
-	          	     AesUtil aes = new AesUtil("D14357BBD21BD64FF7D074944DB08DFE");
-	         		 String decResp = aes.decrypt(resp.substring(13, resp.length()));
+	      		 //String[] keyValuePairs = response.toString().split("&");
+	         	  String resp = keyValuePairs[1];
+	        	   String status = keyValuePairs[0];
+		   	        log.info("Complete response: "+resp);
+  			        String resp1= resp.substring(13, resp.length());
+	          	        log.info("Response to decrypt: "+resp1);
+	         		 String decResp = aesUtilenc.decrypt(resp.substring(13, resp.length()));
 	         		 String[] keyValuePairs1 = decResp.split(",");
 	         		// List<String> keyValueList = Arrays.asList(keyValuePairs1);
 	         		 System.out.println(keyValuePairs1[1]);

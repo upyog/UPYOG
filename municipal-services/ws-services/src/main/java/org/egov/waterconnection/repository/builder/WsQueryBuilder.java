@@ -102,7 +102,7 @@ public class WsQueryBuilder {
 	 * @return query as a string
 	 */
 	public String getSearchQueryString(SearchCriteria criteria, List<Object> preparedStatement,
-			RequestInfo requestInfo) {
+			RequestInfo requestInfo, Boolean iscitizenSearch) {
 		if (criteria.isEmpty())
 			return null;
 
@@ -175,7 +175,7 @@ public class WsQueryBuilder {
 			return null;
 		}
 
-		if (!StringUtils.isEmpty(criteria.getTenantId())) {
+		if (!StringUtils.isEmpty(criteria.getTenantId()) && !iscitizenSearch) {
 			addClauseIfRequired(preparedStatement, query);
 			if(criteria.getTenantId().equalsIgnoreCase(config.getStateLevelTenantId())){
 				query.append(" conn.tenantid LIKE ? ");
@@ -297,8 +297,8 @@ public class WsQueryBuilder {
 	
 	
 	public String getSearchCountQueryString(SearchCriteria criteria, List<Object> preparedStmtList,
-			RequestInfo requestInfo) {
-		String query = getSearchQueryString(criteria, preparedStmtList, requestInfo);
+			RequestInfo requestInfo, Boolean iscitizenSearch) {
+		String query = getSearchQueryString(criteria, preparedStmtList, requestInfo,iscitizenSearch);
 		if (query != null)
 			return COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
 		else

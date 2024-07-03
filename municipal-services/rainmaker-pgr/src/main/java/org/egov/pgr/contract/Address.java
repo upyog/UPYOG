@@ -25,7 +25,7 @@ public class Address {
 	public String uuid;
 
 	@JsonProperty("houseNoAndStreetName")
-	@Pattern(regexp = "^[a-zA-Z0-9!@#.,/: ()&']*$")
+	@Pattern(regexp = "^[a-zA-Z0-9!@#.,-/: +()&']*$")
 	@Size(max=160)
 	public String houseNoAndStreetName;
 

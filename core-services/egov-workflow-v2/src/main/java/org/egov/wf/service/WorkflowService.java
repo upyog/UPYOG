@@ -84,7 +84,10 @@ public class WorkflowService {
      * @return List of processInstances based on search criteria
      */
     public List<ProcessInstance> search(RequestInfo requestInfo,ProcessInstanceSearchCriteria criteria){
-        List<ProcessInstance> processInstances;
+        
+    	
+    	
+    	List<ProcessInstance> processInstances;
         if(criteria.isNull())
             processInstances = getUserBasedProcessInstances(requestInfo, criteria);
         else processInstances = workflowRepository.getProcessInstances(criteria);

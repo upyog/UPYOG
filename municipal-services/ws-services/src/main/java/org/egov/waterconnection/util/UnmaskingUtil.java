@@ -57,6 +57,7 @@ public class UnmaskingUtil {
 
             if(!ObjectUtils.isEmpty(userDetailResponse.getUser())) {
                 OwnerInfo unmaskedUser = userDetailResponse.getUser().get(0);
+             //   ownerInfo = unmaskedUser;
                 updateMaskedOwnerInfoWithUnmaskedFields(ownerInfo, unmaskedUser);
             }
             requestInfo.setPlainAccessRequest(apiPlainAccessRequest);

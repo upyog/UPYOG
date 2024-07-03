@@ -317,12 +317,18 @@ public class PaymentRepository {
 		List<String> oldConnectionno = fetchOldConnectionNo(consumerCode,businessservice);
 		List<String> plotSize = fetchLandArea(consumerCode,businessservice);
 		List<String> usageCategory = fetchUsageCategory(consumerCode,businessservice);
+		List<String> propertyid = fetchpropertyid(consumerCode,businessservice);
+		List<String> adress = fetchadresss(consumerCode,businessservice);
 		if(oldConnectionno.size()>0)
 		status.add(oldConnectionno.get(0));
 		if(plotSize.size()>0)
 		status.add(plotSize.get(0));
 		if(usageCategory.size()>0)
-		status.add(usageCategory.get(0));		
+		status.add(usageCategory.get(0));
+		if(propertyid.size()>0)
+			status.add(propertyid.get(0));
+		if(adress.size()>0)
+			status.add(adress.get(0));
 		return status;
 	}
 	
@@ -337,13 +343,27 @@ public class PaymentRepository {
 	
 	public List<String> fetchOldConnectionNo(String consumerCode,String businessservice) {
 		List<String> res = new ArrayList<>();
-		String queryString = ""; 
+		String queryString = "";
+		Boolean Isapp=false;
+		if (consumerCode.contains("WS_AP"))
+			Isapp=true;
+if (Isapp) {
 		if(businessservice.equals("WS")) {
+			
+		 queryString = "select oldconnectionno from eg_ws_connection where applicationno='"+consumerCode+"'";
+		}else {
+			 queryString = "select oldconnectionno from eg_sw_connection where applicationno='"+consumerCode+"'";
+
+		}}
+else {
+	if(businessservice.equals("WS")) {
+		
 		 queryString = "select oldconnectionno from eg_ws_connection where connectionno='"+consumerCode+"'";
 		}else {
 			 queryString = "select oldconnectionno from eg_sw_connection where connectionno='"+consumerCode+"'";
 
 		}
+}
 		log.info("Query: " +queryString);
 		try {
 		//	res = jdbcTemplate.queryForList(queryString, String.class);
@@ -358,13 +378,27 @@ public class PaymentRepository {
 		List<String> res = new ArrayList<>();
 		Map<String, Object> preparedStatementValues = new HashMap<>();
 		String queryString = "";  
+		Boolean Isapp=false;
+		if (consumerCode.contains("WS_AP"))
+			Isapp=true;
+if (Isapp) {
 		if(businessservice.equals("WS")) {
+		 queryString = "select a2.landarea from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+				+ " where a1.applicationno = '"+consumerCode+"'";
+		}else {
+			 queryString = "select a2.landarea from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+						+ " where a1.applicationno = '"+consumerCode+"'";
+		}
+}
+else {
+	if(businessservice.equals("WS")) {
 		 queryString = "select a2.landarea from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
 				+ " where a1.connectionno = '"+consumerCode+"'";
 		}else {
 			 queryString = "select a2.landarea from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
 						+ " where a1.connectionno = '"+consumerCode+"'";
 		}
+}
 		log.info("Query: " +queryString);
 		try {
 			//res = jdbcTemplate.queryForList(queryString, String.class);
@@ -381,13 +415,28 @@ public class PaymentRepository {
 		List<String> res = new ArrayList<>();
 		Map<String, Object> preparedStatementValues = new HashMap<>();
 		 String queryString = "";  // Declare queryString outside the if-else block
+			Boolean Isapp=false;
+			if (consumerCode.contains("WS_AP"))
+				Isapp=true;
+	if (Isapp) {
 	    if(businessservice.equals("WS")) {
 		 queryString = "select a2.usagecategory from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-				+ " where a1.connectionno = '"+consumerCode+"'";
+				+ " where a1.applicationno = '"+consumerCode+"'";
 	    }else {
 	    	 queryString = "select a2.usagecategory from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-	 				+ " where a1.connectionno = '"+consumerCode+"'";
+	 				+ " where a1.applicationno = '"+consumerCode+"'";
 	    }
+	}
+	else
+	{
+		  if(businessservice.equals("WS")) {
+				 queryString = "select a2.usagecategory from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+						+ " where a1.connectionno = '"+consumerCode+"'";
+			    }else {
+			    	 queryString = "select a2.usagecategory from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+			 				+ " where a1.connectionno = '"+consumerCode+"'";
+			    }	
+	}
 		log.info("Query: " +queryString);
 		try {
 		//	res = jdbcTemplate.queryForList(queryString, String.class);
@@ -398,8 +447,86 @@ public class PaymentRepository {
 		return res;
 	}
 
-
-
+	public List<String> fetchpropertyid(String consumerCode,String businessservice) {
+		List<String> res = new ArrayList<>();
+		Map<String, Object> preparedStatementValues = new HashMap<>();
+		 String queryString = "";  // Declare queryString outside the if-else block
+			Boolean Isapp=false;
+			if (consumerCode.contains("WS_AP"))
+				Isapp=true;
+	if (Isapp) {
+	    if(businessservice.equals("WS")) {
+		 queryString = "select a2.propertyid from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+				+ " where a1.applicationno = '"+consumerCode+"'";
+	    }else {
+	    	 queryString = "select a2.propertyid from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+	 				+ " where a1.applicationno = '"+consumerCode+"'";
+	    }}
+	else {
+		 if(businessservice.equals("WS")) {
+			 queryString = "select a2.propertyid from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+					+ " where a1.connectionno = '"+consumerCode+"'";
+		    }else {
+		    	 queryString = "select a2.propertyid from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+		 				+ " where a1.connectionno = '"+consumerCode+"'";
+		    }
+		
+	}
+		log.info("Query: " +queryString);
+		try {
+		//	res = jdbcTemplate.queryForList(queryString, String.class);
+			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+		} catch (Exception ex) {
+			log.error("Exception while reading bill scheduler status" + ex.getMessage());
+		}
+		return res;
+	}
+	public List<String> fetchadresss(String consumerCode,String businessservice) {
+		List<String> res = new ArrayList<>();
+		Map<String, Object> preparedStatementValues = new HashMap<>();
+		 String queryString = "";  // Declare queryString outside the if-else block
+			Boolean Isapp=false;
+			if (consumerCode.contains("WS_AP"))
+				Isapp=true;
+	if (Isapp) {
+	    if(businessservice.equals("WS")) {
+	    	 queryString = "select CONCAT(doorno,buildingname,city) as address from eg_ws_connection a1 "
+	 				+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
+	 				+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
+	 				+ " where a1.applicationno='"+consumerCode+"'"
+	 			        + " and a2.status='ACTIVE';";
+	    }else {
+	    	queryString = "select a2.usagecategory from eg_sw_connection a1 "
+					+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
+					+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
+					+ " where a1.applicationno='"+consumerCode+"'"
+				        + " and a2.status='ACTIVE';";
+	    }}
+	else {
+		 if(businessservice.equals("WS")) {
+			 queryString = "select CONCAT(doorno,buildingname,city) as address from eg_ws_connection a1 "
+						+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
+						+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
+						+ " where a1.applicationno='"+consumerCode+"'"
+					        + " and a2.status='ACTIVE';";
+		    }else {
+		    	queryString = "select a2.usagecategory from eg_sw_connection a1 "
+						+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
+						+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
+						+ " where a1.applicationno='"+consumerCode+"'"
+					        + " and a2.status='ACTIVE';";
+		    }
+		
+	}
+		log.info("Query: " +queryString);
+		try {
+		//	res = jdbcTemplate.queryForList(queryString, String.class);
+			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+		} catch (Exception ex) {
+			log.error("Exception while reading bill scheduler status" + ex.getMessage());
+		}
+		return res;
+	}
 
 
 
@@ -418,13 +545,15 @@ public class PaymentRepository {
 		    queryString = "select a2.usagecategory from eg_ws_connection a1 "
 				+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 				+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-				+ " where a1.applicationno='"+consumercode+"'";
+				+ " where a1.applicationno='"+consumercode+"'"
+			        + " and a2.status='ACTIVE';";
 		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		} else {
 			queryString = "select a2.usagecategory from eg_sw_connection a1 "
 					+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 					+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-					+ " where a1.applicationno='"+consumercode+"'";
+					+ " where a1.applicationno='"+consumercode+"'"
+				        + " and a2.status='ACTIVE';";
 			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		}
 		try {
@@ -447,14 +576,16 @@ public class PaymentRepository {
 		 queryString = "select CONCAT(doorno,buildingname,city) as address from eg_ws_connection a1 "
 				+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 				+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-				+ " where a1.applicationno='"+consumercode+"'";
+				+ " where a1.applicationno='"+consumercode+"'"
+			        + " and a2.status='ACTIVE';";
 		log.info("Query for fetchAddressByApplicationno: " +queryString);
 		}
 		else {
 			 queryString = "select CONCAT(doorno,buildingname,city) as address from eg_sw_connection a1 "
 						+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 						+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-						+ " where a1.applicationno='"+consumercode+"'";
+						+ " where a1.applicationno='"+consumercode+"'"
+				                + " and a2.status='ACTIVE';";
 				log.info("Query for fetchAddressByApplicationno: " +queryString);
 		}
 		try {
@@ -483,6 +614,7 @@ public class PaymentRepository {
 					+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
 					+ " where a1.connectionno in (select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill "
 					+ "	where bill.id=pd.billid "
+				        + " and a2.status='ACTIVE'"
 					+ "	 and pd.receiptnumber='"+consumercode+"')";
 		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		} else {
@@ -491,6 +623,7 @@ public class PaymentRepository {
 					+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
 					+ " where a1.connectionno in (select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill "
 					+ "	where bill.id=pd.billid "
+				        + " and a2.status='ACTIVE'"
 					+ "	 and pd.receiptnumber='"+consumercode+"')";
 			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		}
@@ -528,6 +661,7 @@ public class PaymentRepository {
 			 		+ "INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid  "
 			 		+ " where a1.connectionno in (select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill"
 						+ "	where bill.id=pd.billid "
+				                + " and a2.status='ACTIVE'"
 						+ " and pd.receiptnumber='"+consumercode+"')";
 		log.info("Query for fetchAddressByApplicationno: " +queryString);
 		}
@@ -549,6 +683,7 @@ public class PaymentRepository {
 				 		+ "INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid  "
 				 		+ " where a1.connectionno in (select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill"
 							+ "	where bill.id=pd.billid "
+				                        + " and a2.status='ACTIVE'"
 							+ " and pd.receiptnumber='"+consumercode+"')";
 				log.info("Query for fetchAddressByApplicationno: " +queryString);
 		}
@@ -578,6 +713,7 @@ public class PaymentRepository {
 					+ " INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid "
 					+ " WHERE a1.connectionno in(select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill "
 					+ "	where bill.id=pd.billid "
+				        + " and a2.status='ACTIVE'"
 					+ "	 and pd.receiptnumber='"+consumercode+"')";
 		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		} else {
@@ -587,6 +723,7 @@ public class PaymentRepository {
 					+ " INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid "
 					+ " WHERE a1.connectionno in(select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill "
 					+ "	where bill.id=pd.billid "
+				        + " and a2.status='ACTIVE'"
 					+ "	 and pd.receiptnumber='"+consumercode+"')";
 			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		}

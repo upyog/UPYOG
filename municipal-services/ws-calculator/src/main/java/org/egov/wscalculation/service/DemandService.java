@@ -471,6 +471,7 @@ public class DemandService {
 
 			// For the metered connections demand has to create one by one
 			if (WSCalculationConstant.meteredConnectionType.equalsIgnoreCase(connection.getConnectionType())) {
+				additionalDetailsMap.put("connectionType", connection.getConnectionType());
 				demandReq.addAll(demands);
 				if (tenantId.equalsIgnoreCase("pb.amritsar")
 						&& demands.get(0).getBusinessService().equalsIgnoreCase("WS")) {
@@ -498,12 +499,12 @@ public class DemandService {
 						demandDetails1.add(dd1);
 					}
 
-					demandsSw.add(Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner)
+					demandsSw.add(Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails1).payer(owner)
 							.minimumAmountPayable(minimumPayableAmount).tenantId(tenantId).taxPeriodFrom(fromDate)
 							.taxPeriodTo(toDate).consumerType("sewerageConnection").businessService(businessService)
 							.status(StatusEnum.valueOf("ACTIVE")).billExpiryTime(expiryDate)
 							.additionalDetails(additionalDetailsMap).build());
-
+                                        demandsSw.get(0).setBusinessService("SW");
 					demandReq.addAll(demandsSw);
 				}
 			} else {
@@ -915,11 +916,29 @@ public class DemandService {
 			List<String> taxHeadMasterCodes = demand.getDemandDetails().stream().map(DemandDetail::getTaxHeadMasterCode)
 					.collect(Collectors.toList());
 			;
+			
+			log.info("Demand Id: "+ demand.getId());
+			log.info(" taxHeadMasterCodes "+taxHeadMasterCodes );
+			
+			log.info(" isMigratedCon "+ isMigratedCon);
+			log.info(" oldDemand.getId().equalsIgnoreCase(demand.getId()) "+ !oldDemand.getId().equalsIgnoreCase(demand.getId()));
+			log.info(" Payment Completed  "+ demand.getIsPaymentCompleted());
+			log.info("Total Tax "+ totalTax);
+			log.info("Total totalCollection "+ totalCollection);
+			Boolean abc=totalTax.compareTo(totalCollection) > 0;
+			
+			log.info(" tax condition "+ abc);
+			log.info(" penalty taxhead code "+	taxHeadMasterCodes.contains(WSCalculationConstant.WS_TIME_PENALTY));
+			
 			if (!(isMigratedCon && oldDemand.getId().equalsIgnoreCase(demand.getId()))) {
 				log.info("-------updateDemands-----inside if-------demand.getId()--------" + demand.getId()
 						+ "-------oldDemand.getId()---------" + oldDemand.getId());
-				if (!demand.getIsPaymentCompleted() && totalTax.compareTo(totalCollection) > 0
-						&& !taxHeadMasterCodes.contains(WSCalculationConstant.WS_TIME_PENALTY)) {
+				if (!demand.getIsPaymentCompleted() 
+						&& totalTax.compareTo(totalCollection) > 0
+						&& !taxHeadMasterCodes.contains(WSCalculationConstant.WS_TIME_PENALTY))
+				{
+					log.info(" Inside Update if ");
+
 					if (demand.getStatus() != null && WSCalculationConstant.DEMAND_CANCELLED_STATUS
 							.equalsIgnoreCase(demand.getStatus().toString()))
 						throw new CustomException(WSCalculationConstant.EG_WS_INVALID_DEMAND_ERROR,
@@ -928,13 +947,20 @@ public class DemandService {
 					addRoundOffTaxHead(tenantId, demand.getDemandDetails());
 					demandsToBeUpdated.add(demand);
 				}
+				else
+				{
+					addRoundOffTaxHead(tenantId, demand.getDemandDetails());
+					demandsToBeUpdated.add(demand);
+				}
 			}
 		});
-
+		log.info("demand to be update123 "+ demandsToBeUpdated);
 		// Call demand update in bulk to update the interest or penalty
 		DemandRequest request = DemandRequest.builder().demands(demandsToBeUpdated).requestInfo(requestInfo).build();
+		log.info("Is call For Bulk Gen"+isCallFromBulkGen);
 		if (!isCallFromBulkGen)
 			repository.fetchResult(utils.getUpdateDemandUrl(), request);
+		log.info("demand to be update "+ demandsToBeUpdated);
 		return demandsToBeUpdated;
 
 	}
@@ -1148,7 +1174,7 @@ public class DemandService {
 						.taxHeadMasterCode(WSCalculationConstant.WS_TIME_REBATE).demandId(demandId).tenantId(tenantId)
 						.build());
 		}
-
+log.info("Is current Demand  "+isCurrentDemand);
 		return isCurrentDemand;
 	}
 
@@ -1297,7 +1323,7 @@ public class DemandService {
 					.filter(p -> taxPeriodFrom.equals(taxPeriods.get(p).getFromDate())).findFirst().getAsInt();
 			String cone = singleDemand.getConsumercode();
 			log.info("Billing master data values for non metered connection:: {}", master);
-			List<WaterDetails> connectionNos = waterCalculatorDao.getConnectionsNoList(tenantId,
+			List<WaterDetails> connectionNos = waterCalculatorDao.getConnectionsNoListforsingledemand(tenantId,
 					WSCalculationConstant.nonMeterdConnection, taxPeriodFrom, taxPeriodTo, cone);
 
 			// Generate bulk demands for connections in below count
@@ -1395,9 +1421,6 @@ public class DemandService {
 						CalculationReq calculationReq = CalculationReq.builder()
 								.calculationCriteria(calculationCriteriaList).requestInfo(requestInfo)
 								.isconnectionCalculation(true).migrationCount(migrationCount).build();
-//						CalculationReq calculationReq = CalculationReq.builder()
-//								.calculationCriteria(calculationCriteriaList).requestInfo(requestInfo)
-//								.isconnectionCalculation(true).build();
 						log.info(
 								"Pushing calculation last req to the kafka topic with bulk data of calculationCriteriaList size: {}",
 								calculationCriteriaList.size());
@@ -1579,7 +1602,7 @@ public class DemandService {
 					.filter(p -> taxPeriodFrom.equals(taxPeriods.get(p).getFromDate())).findFirst().getAsInt();
 			String cone = requestInfo.getKey();
 			log.info("Billing master data values for non metered connection:: {}", master);
-			List<WaterDetails> connectionNos = waterCalculatorDao.getConnectionsNoList(tenantId,
+			List<WaterDetails> connectionNos = waterCalculatorDao.getConnectionsNoListforsingledemand(tenantId,
 					WSCalculationConstant.nonMeterdConnection, taxPeriodFrom, taxPeriodTo, cone);
 
 			// Generate bulk demands for connections in below count

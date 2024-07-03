@@ -79,6 +79,7 @@ public class SewerageServicesUtil {
 		PropertyCriteria propertyCriteria = new PropertyCriteria();
 		propertyIds.add(sewerageConnectionRequest.getSewerageConnection().getPropertyId());
 		propertyCriteria.setPropertyIds(propertyIds);
+		propertyCriteria.setTenantId(sewerageConnectionRequest.getSewerageConnection().getTenantId());
 		if (sewerageConnectionRequest.getRequestInfo().getUserInfo() != null
 				&& "EMPLOYEE".equalsIgnoreCase(sewerageConnectionRequest.getRequestInfo().getUserInfo().getType())) {
 			propertyCriteria.setTenantId(sewerageConnectionRequest.getSewerageConnection().getTenantId());
