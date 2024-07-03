@@ -5,6 +5,7 @@ require('url-search-params-polyfill');
 class UserService {
 
   async getUserForMobileNumber(mobileNumber, tenantId) {
+     
     let user = await this.loginOrCreateUser(mobileNumber, tenantId);
     user.userId = user.userInfo.uuid;
     user.mobileNumber = mobileNumber;
@@ -14,10 +15,11 @@ class UserService {
   }
 
   async loginOrCreateUser(mobileNumber, tenantId) {
-    let user = await this.loginUser(mobileNumber, tenantId);
+    let newMobileNumber = mobileNumber.slice(2);
+    let user = await this.loginUser(newMobileNumber, tenantId);
     if(user === undefined) {
-      await this.createUser(mobileNumber, tenantId);
-      user = await this.loginUser(mobileNumber, tenantId);
+      await this.createUser(newMobileNumber, tenantId);
+      user = await this.loginUser(newMobileNumber, tenantId);
     }
 
     user = await this.enrichuserDetails(user);
@@ -80,7 +82,7 @@ class UserService {
   async createUser(mobileNumber, tenantId) {
     let requestBody = {
       RequestInfo: {
-        "apiId": "Rainmaker",
+      "apiId": "Rainmaker",
       "ver": ".01",
       "ts": "",
       "action": "_create",
@@ -93,7 +95,7 @@ class UserService {
         otpReference: config.userService.userServiceHardCodedPassword,
         permamnentCity: tenantId,
         tenantId: tenantId,
-        username: mobileNumber
+        username: mobileNumber,
       }
     }
 
