@@ -1,4 +1,4 @@
-import { CardLabel, Dropdown, FormStep, Loader, RadioOrSelect, TextInput, Toast } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, Loader, RadioOrSelect, TextInput, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import Timeline from "../components/Timeline";
 

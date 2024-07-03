@@ -1,4 +1,4 @@
-import { Header, ActionBar, SubmitBar, PDFSvg, Menu, GenericFileIcon, Loader } from '@upyog/digit-ui-react-components';
+import { Header, ActionBar, SubmitBar, PDFSvg, Menu, GenericFileIcon, Loader } from '@nudmcdgnpm/digit-ui-react-components';
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import { useParams, useHistory } from "react-router-dom";

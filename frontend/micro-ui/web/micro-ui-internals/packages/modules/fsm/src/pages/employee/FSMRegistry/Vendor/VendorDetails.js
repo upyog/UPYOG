@@ -17,7 +17,7 @@ import {
   Modal,
   CardText,
   Dropdown,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 
 import { useQueryClient } from "react-query";
 

@@ -2,6 +2,7 @@
 *   @author - Shivank-NIUA
 *  Integrated the Download PDF and Download exel feature to download the Asset Report. 
 *  You can customize the Number of table and data you want to show in PDF and Exel. 
+*  Integrated QR code Report Download feture 
 */
 
 
@@ -11,15 +12,16 @@
 
 import React, { useCallback, useMemo, useEffect } from "react"
 import { useForm, Controller } from "react-hook-form";
-import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@upyog/digit-ui-react-components";
-import { Link } from "react-router-dom";
+import { TextInput, SubmitBar, DatePicker, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
+import QRCode from 'qrcode';
 
 
-const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, data, count, setShowToast }) => {
-    console.log("data",data);
+
+const ASSETReportApplication = ({isLoading, t, onSubmit, data, count, setShowToast }) => {
+    
     
     const isMobile = window.Digit.Utils.browser.isMobile();
 
@@ -53,7 +55,7 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
     const stateId = Digit.ULBService.getStateId();
 
 
-    const { data: Menu_Asset } = Digit.Hooks.asset.useAssetClassification(stateId, "ASSET", "assetClassification"); // hook for asset classification Type
+    const { data: Menu_Asset } = Digit.Hooks.asset.useAssetClassification(stateId, "ASSET", "assetClassification"); 
     let menu_Asset = [];   //variable name for assetCalssification
 
     Menu_Asset &&
@@ -111,20 +113,13 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
             disableSortBy: true,
           },
           {
-            Header: t("AST_PINCODE"),
-            Cell: ({ row }) => {
-              console.log("row in pincode",row);
-                return GetCell(`${row?.original?.addressDetails?.["pincode"]}`)
-              },
-            disableSortBy: true,
-          },
-          {
             Header: t("AST_DEPARTMENT_LABEL"),
             Cell: ({ row }) => {
               return GetCell(`${row?.original?.["department"]}`)
             },
             disableSortBy: true,
           },
+
       ]), [] )
 
     const onSort = useCallback((args) => {
@@ -186,12 +181,148 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Asset Report");
     XLSX.writeFile(workbook, "Asset-Reports.xlsx");
-};
+    };
 
 
 
 
 
+//   const downloadQRReport = async () => {
+//     const doc = new jsPDF("landscape");
+//     const generateQRCode = async (text) => {
+//         return await QRCode.toDataURL(text);
+//     };
+
+//     const batchSize = 4; // Define batch size to process and added in a page so that QR code generation and PDF creation don't overwhelm the system's memory.
+//     for (let i = 0; i < data.length; i += batchSize) {
+//         const batch = data.slice(i, i + batchSize);
+//         const qrPromises = batch.map(async (row, index) => {
+//             const assetDetails = `
+//             Application No: ${row.applicationNo}
+//             Asset Classification: ${row.assetClassification}
+//             Asset Parent Category: ${row.assetParentCategory}
+//             Asset Name: ${row.assetName}
+//             `;
+//             const qrCodeURL = await generateQRCode(assetDetails.trim());
+//             const yOffset = (index % batchSize) * 70;
+
+//             doc.addImage(qrCodeURL, 'JPEG', 10, 20 + yOffset, 50, 50);
+//             doc.text(`Application No: ${row.applicationNo}`, 70, 30 + yOffset);
+//             doc.text(`Asset Classification: ${row.assetClassification}`, 70, 40 + yOffset);
+//             doc.text(`Asset Parent Category: ${row.assetParentCategory}`, 70, 50 + yOffset);
+//             doc.text(`Asset Name: ${row.assetName}`, 70, 60 + yOffset);
+//         });
+
+//         await Promise.all(qrPromises);
+
+//         // Add a new page after processing each batch except for the last batch
+//         if (i + batchSize < data.length) {
+//             doc.addPage();
+//         }
+//     }
+
+//     doc.save("Asset-QR-Reports.pdf");
+// };
+
+
+  // const downloadQRReport = async () => {
+  //   const doc = new jsPDF();
+  //   const generateQRCode = async (text) => {
+  //       return await QRCode.toDataURL(text);
+  //   };
+
+  //   // Add a title for the entire page
+  //   doc.setFontSize(16);
+  //   doc.text("Asset QR Code Report", 70, 10);
+
+  //   const batchSize = 3; // Define batch size to process and added in a page so that QR code generation and PDF creation don't overwhelm the system's memory.
+  //   for (let i = 0; i < data.length; i += batchSize) {
+  //       const batch = data.slice(i, i + batchSize);
+  //       const qrPromises = batch.map(async (row, index) => {
+  //           const assetDetails = `
+  //           Application No: ${row.applicationNo}
+  //           Asset Classification: ${row.assetClassification}
+  //           Asset Parent Category: ${row.assetParentCategory}
+  //           Asset Name: ${row.assetName}
+  //           `;
+  //           const qrCodeURL = await generateQRCode(assetDetails.trim());
+  //           const yOffset = (index % batchSize) * 90;
+
+  //           // Add QR code image
+  //           doc.addImage(qrCodeURL, 'JPEG', 10, 20 + yOffset, 50, 50);
+
+  //           // Add details below QR code
+  //           doc.setFontSize(12);
+  //           doc.text(`Application No: ${row.applicationNo}`, 70, 30 + yOffset);
+  //           doc.text(`Asset Classification: ${row.assetClassification}`, 70, 40 + yOffset);
+  //           doc.text(`Asset Parent Category: ${row.assetParentCategory}`, 70, 50 + yOffset);
+  //           doc.text(`Asset Name: ${row.assetName}`, 70, 60 + yOffset);
+
+  //           // Add horizontal line
+  //           doc.line(10, 80 + yOffset, 200, 80 + yOffset);
+  //       });
+
+  //       await Promise.all(qrPromises);
+
+  //       // Add a new page after processing each batch except for the last batch
+  //       if (i + batchSize < data.length) {
+  //           doc.addPage();
+  //       }
+  //   }
+
+  //   doc.save("Asset-QR-Reports.pdf");
+  // };
+
+
+  const downloadQRReport = async () => {
+    const doc = new jsPDF();
+    const generateQRCode = async (text) => {
+      return await QRCode.toDataURL(text);
+    };
+  
+    // Add a title for the entire page
+    doc.setFontSize(16);
+    doc.text("Asset QR Code Report", 70, 10);
+  
+    const batchSize = 3; // Define batch size to process and add in a page so that QR code generation and PDF creation don't overwhelm the system's memory.
+    for (let i = 0; i < data.length; i += batchSize) {
+      const batch = data.slice(i, i + batchSize);
+      const qrPromises = batch.map(async (row, index) => {
+        const url = `https://niuatt.niua.in/digit-ui/employee/asset/assetservice/applicationsearch/application-details/${row.applicationNo}`;
+        const assetDetails = `
+        Application No: ${row.applicationNo}
+        Asset Classification: ${row.assetClassification}
+        Asset Parent Category: ${row.assetParentCategory}
+        Asset Name: ${row.assetName}
+        `;
+        const qrCodeURL = await generateQRCode(url);
+        const yOffset = (index % batchSize) * 90;
+  
+        // Add QR code image
+        doc.addImage(qrCodeURL, 'JPEG', 10, 20 + yOffset, 50, 50);
+  
+        // Add details below QR code
+        doc.setFontSize(12);
+        doc.text(`Application No: ${row.applicationNo}`, 70, 30 + yOffset);
+        doc.text(`Asset Classification: ${row.assetClassification}`, 70, 40 + yOffset);
+        doc.text(`Asset Parent Category: ${row.assetParentCategory}`, 70, 50 + yOffset);
+        doc.text(`Asset Name: ${row.assetName}`, 70, 60 + yOffset);
+  
+        // Add horizontal line
+        doc.line(10, 80 + yOffset, 200, 80 + yOffset);
+      });
+  
+      await Promise.all(qrPromises);
+  
+      // Add a new page after processing each batch except for the last batch
+      if (i + batchSize < data.length) {
+        doc.addPage();
+      }
+    }
+  
+    doc.save("Asset-QR-Reports.pdf");
+  };
+  
 
     return <React.Fragment>
                 
@@ -291,6 +422,8 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: "10px" }}>
             <button onClick={downloadPDF} style = {{ color: "maroon", border: "2px solid #333", padding: "8px 16px", cursor: "pointer",marginRight: "10px"}} >Download PDF</button>
             <button onClick={downloadXLS} style = {{ color: "maroon", border: "2px solid #333", padding: "10px 20px",cursor: "pointer"}}>Download XLS</button> 
+            <button onClick={downloadQRReport} style = {{ color: "maroon", border: "2px solid #333", padding: "10px 20px",cursor: "pointer",marginLeft:"7px", marginRight: "10px"}}>Download QR Report</button> 
+
             </div>
             : "" }
 

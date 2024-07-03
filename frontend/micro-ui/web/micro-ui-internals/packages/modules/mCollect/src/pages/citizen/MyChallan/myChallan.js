@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Header, ResponseComposer, Loader } from "@upyog/digit-ui-react-components";
+import { Header, ResponseComposer, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
 import Axios from "axios";
 import { useHistory, Link } from "react-router-dom";

@@ -13,7 +13,7 @@ import {
   BirthIcon,
   DeathIcon,
   FirenocIcon,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 const CitizenSubMenuSideBar = ({ item }) => {

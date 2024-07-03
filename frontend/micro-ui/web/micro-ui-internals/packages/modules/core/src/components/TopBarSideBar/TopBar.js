@@ -1,4 +1,4 @@
-import { Dropdown, Hamburger, TopBar as TopBarComponent } from "@upyog/digit-ui-react-components";
+import { Dropdown, Hamburger, TopBar as TopBarComponent } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import ChangeCity from "../ChangeCity";

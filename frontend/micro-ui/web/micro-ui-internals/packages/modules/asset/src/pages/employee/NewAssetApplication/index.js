@@ -1,4 +1,4 @@
-import { FormComposer, Loader } from "@upyog/digit-ui-react-components";
+import { FormComposer, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";

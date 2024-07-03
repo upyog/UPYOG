@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/ASTTimeline";
 import EXIF from 'exif-js';
 

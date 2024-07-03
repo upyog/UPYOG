@@ -1,6 +1,6 @@
 import {
   CardSectionHeader, Header, MultiUploadWrapper, PDFSvg, Row, StatusTable, LabelFieldPair, CardLabel, Loader
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";

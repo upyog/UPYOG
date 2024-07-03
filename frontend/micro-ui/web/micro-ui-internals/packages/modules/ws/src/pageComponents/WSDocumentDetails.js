@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 
 const WSDocumentDetails = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {

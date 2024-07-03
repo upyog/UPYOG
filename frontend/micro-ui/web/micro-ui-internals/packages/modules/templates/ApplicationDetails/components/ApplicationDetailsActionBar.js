@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { SubmitBar, ActionBar, Menu, CardLabel } from "@upyog/digit-ui-react-components";
+import { SubmitBar, ActionBar, Menu, CardLabel } from "@nudmcdgnpm/digit-ui-react-components";
 import { useParams } from "react-router-dom";
 
 function ApplicationDetailsActionBar({
