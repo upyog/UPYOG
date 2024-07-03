@@ -79,45 +79,49 @@ public class PaymentService {
             paymentSearchCriteria.setOffset(0);
             paymentSearchCriteria.setLimit(applicationProperties.getReceiptsSearchDefaultLimit());
         }
-        /*if(requestInfo.getUserInfo().getType().equals("CITIZEN")) {
+        if(requestInfo.getUserInfo().getType().equals("CITIZEN")) {
             List<String> payerIds = new ArrayList<>();
             payerIds.add(requestInfo.getUserInfo().getUuid());
             paymentSearchCriteria.setPayerIds(payerIds);
-        }*/
+        }
         List<Payment> payments = paymentRepository.fetchPayments(paymentSearchCriteria);
-	if(null != paymentSearchCriteria.getBusinessService()){
-	if(paymentSearchCriteria.getBusinessService().equals("WS.ONE_TIME_FEE")|| paymentSearchCriteria.getBusinessService().equals("SW.ONE_TIME_FEE")) {  
-        List<String> usageCategory = paymentRepository.fetchUsageCategoryByApplicationno(paymentSearchCriteria.getConsumerCodes());
-        List<String> address = paymentRepository.fetchAddressByApplicationno(paymentSearchCriteria.getConsumerCodes());
-        payments.get(0).setUsageCategory(usageCategory.get(0));
-        payments.get(0).setAddress(address.get(0));
-	}  
-	}else if(null != paymentSearchCriteria.getReceiptNumbers()){
-		String receiptnumber = null;
-		 Iterator<String> iterate = paymentSearchCriteria.getReceiptNumbers().iterator();
-		 while(iterate.hasNext()) {
-			 receiptnumber =   iterate.next();			  
-		}	
-		String receipt[]=receiptnumber.split("/");
-     	String businessservice= receipt[0];
-     	 // if(businessservice.equals("WS")||businessservice.equals("SW")) {
-       //       setPropertyData(receiptnumber,payments);
-       //   }
- if((businessservice.equals("WS")||businessservice.equals("SW") ) && payments.get(0).getAddress()==null) {
-   	  List<String> usageCategory = paymentRepository.fetchUsageCategoryByApplicationnos(paymentSearchCriteria.getReceiptNumbers(),businessservice);
-          List<String> address = paymentRepository.fetchAddressByApplicationnos(paymentSearchCriteria.getReceiptNumbers(),businessservice);
-          List<String> propertyIds = paymentRepository.fetchPropertyid(paymentSearchCriteria.getReceiptNumbers(), businessservice);
-          // setPropertyData(receiptnumber,payments,businessservice);
-          payments.get(0).setUsageCategory(usageCategory.get(0));
-   	  payments.get(0).setAddress(address.get(0));
-          payments.get(0).setPropertyId(propertyIds.get(0));
+						if(null != paymentSearchCriteria.getBusinessService() && null != paymentSearchCriteria.getConsumerCodes())
+						{
+							String businessservice= paymentSearchCriteria.getBusinessService();
+							if(( paymentSearchCriteria.getBusinessService().equals("WS")|| paymentSearchCriteria.getBusinessService().equals("SW") ) && payments.get(0).getAddress()==null) {
+							   	  List<String> usageCategory = paymentRepository.fetchUsageCategoryByApplicationnos(paymentSearchCriteria.getReceiptNumbers(),businessservice);
+							          List<String> address = paymentRepository.fetchAddressByApplicationnos(paymentSearchCriteria.getReceiptNumbers(),businessservice);
+							          List<String> propertyIds = paymentRepository.fetchPropertyid(paymentSearchCriteria.getReceiptNumbers(), businessservice);
+							          // setPropertyData(receiptnumber,payments,businessservice);
+							          payments.get(0).setUsageCategory(null);
+							   	  payments.get(0).setAddress(address.get(0));
+							          payments.get(0).setPropertyId(propertyIds.get(0));
+							}
+							 return payments;
+						}
+			else if(null != paymentSearchCriteria.getReceiptNumbers()){
+															String receiptnumber = null;
+															 Iterator<String> iterate = paymentSearchCriteria.getReceiptNumbers().iterator();
+															 while(iterate.hasNext()) {
+																 receiptnumber =   iterate.next();			  
+															}	
+															String receipts[]=receiptnumber.split("/");
+													
+													     	String businessservice= receipts[0];
+													     	 if(businessservice.equals("WS_FEE")||businessservice.equals("SW_FEE")) 
+													     	 {
+													     		String receiptss[]=receipts[0].split("_");
+												
+													             setPropertyData(receiptnumber,payments,receiptss[0]);
+													       }
+													     	 return payments;
+													     	
 
     }
- 	else {
+ 	else 
+ 	{
  		  return payments;
  	}
-	}
-        return payments;
     }
     
     public Long getpaymentcountForBusiness (String tenantId, String businessService) {
@@ -176,6 +180,9 @@ public class PaymentService {
 		additionalDetail.put("landArea", status.get(1));
 		 if(!StringUtils.isEmpty(status.get(2)))
 		additionalDetail.put("usageCategory", status.get(2));
+			payments.get(0).setPropertyId(status.get(3));
+			payments.get(0).setAddress(status.get(4));
+			payments.get(0).setUsageCategory(status.get(2));
 		payments.get(0).setPropertyDetail(additionalDetail);		
 	}
 

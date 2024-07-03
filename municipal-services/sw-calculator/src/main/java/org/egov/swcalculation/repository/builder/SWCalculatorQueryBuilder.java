@@ -239,7 +239,7 @@ public class SWCalculatorQueryBuilder {
 		query.append(" conn.connectionno is not null");
 		
 		addClauseIfRequired(preparedStatement, query);
-		query.append(" conn.connectionno NOT IN (select distinct(consumercode) from egbs_demand_v1 dmd where (dmd.taxperiodfrom >= ? and dmd.taxperiodto <= ?) and businessservice = 'SW' and tenantid=? and consumercode = ?)");
+		query.append(" conn.connectionno NOT IN (select distinct(consumercode) from egbs_demand_v1 dmd where (dmd.taxperiodfrom >= ? and dmd.taxperiodto <= ?) and status='ACTIVE' and businessservice = 'SW' and tenantid=? and consumercode = ?)");
 		preparedStatement.add(fromDate);
 		preparedStatement.add(toDate);
 		preparedStatement.add(tenantId);

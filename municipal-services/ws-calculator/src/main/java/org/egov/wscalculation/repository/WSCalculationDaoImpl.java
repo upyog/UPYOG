@@ -264,7 +264,7 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 		jdbcTemplate.update(queryStr, preparedStmtList.toArray());
 	}
 	@Override
-	public List<WaterDetails> getConnectionsNoList(String tenantId, String connectionType, Long taxPeriodFrom,
+	public List<WaterDetails> getConnectionsNoListforsingledemand(String tenantId, String connectionType, Long taxPeriodFrom,
 			Long taxPeriodTo, String cone) {
 		
 			List<Object> preparedStatement = new ArrayList<>();

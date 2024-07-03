@@ -13,7 +13,7 @@ public interface SewerageCalculatorDao {
 
 	long getConnectionCount(String tenantid, Long fromDate, Long toDate);
 	
-	List<SewerageDetails> getConnectionsNoList(String tenantId, String connectionType, Long taxPeriodFrom, Long taxPeriodTo, String cone );
+	//List<SewerageDetails> getConnectionsNoList(String tenantId, String connectionType, Long taxPeriodFrom, Long taxPeriodTo, String cone );
 	
 	List<String> getConnectionsNoByLocality(String tenantId, String connectionType, String locality);
 	

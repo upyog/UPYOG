@@ -115,11 +115,6 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 		return jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Boolean.class);
 	}
 
-	@Override
-	public List<SewerageDetails> getConnectionsNoList(String tenantId, String connectionType, Long taxPeriodFrom,
-			Long taxPeriodTo, String cone) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 	
 }
