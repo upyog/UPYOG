@@ -8,6 +8,8 @@ import org.egov.tl.service.notification.TLNotificationService;
 import org.egov.tl.util.ResponseInfoFactory;
 import org.egov.tl.util.TLConstants;
 import org.egov.tl.web.models.*;
+import org.egov.tl.web.models.contract.ProcessInstanceResponse;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
@@ -133,6 +135,13 @@ import static org.egov.tl.util.TLConstants.businessService_TL;
     public ResponseEntity test1(@Valid @RequestBody TradeLicenseRequest tradeLicenseRequest){
         tlNotificationService.process(tradeLicenseRequest);
         return new ResponseEntity(HttpStatus.OK);
+    }
+    
+    
+    @PostMapping("/update/state")
+    public ResponseEntity<ProcessInstanceResponse> updateStateWf(@RequestBody UpdateTLStatusCriteriaRequest updateTLStatusCriteriaRequest){
+    	ProcessInstanceResponse processInstanceResponse = tradeLicenseService.updateState(updateTLStatusCriteriaRequest);
+        return new ResponseEntity(processInstanceResponse , HttpStatus.OK);
     }
 
 
