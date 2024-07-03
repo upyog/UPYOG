@@ -29,7 +29,7 @@ import {
   Modal,
   LinkButton,
   SectionalDropdown,
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 import { Close } from "../../Icons";
 import { useTranslation } from "react-i18next";

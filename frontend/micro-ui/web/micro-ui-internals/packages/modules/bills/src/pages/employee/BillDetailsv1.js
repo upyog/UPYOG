@@ -1,5 +1,5 @@
 import React, { Fragment,useState } from 'react'
-import { Card, CardSectionHeader, Header, Loader, RadioButtons, Row, StatusTable, TextInput,ActionBar,SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, CardSectionHeader, Header, Loader, RadioButtons, Row, StatusTable, TextInput,ActionBar,SubmitBar } from "@upyog/digit-ui-react-components";
 import { Link, useLocation } from "react-router-dom"
 import { useTranslation } from "react-i18next";
 import { BillDetailsConfig } from './BillDetailsConfig';

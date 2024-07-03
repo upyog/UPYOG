@@ -10,7 +10,7 @@ import LanguageSelection from "./LanguageSelection";
 import EmployeeLogin from "./Login";
 import UserProfile from "../citizen/Home/UserProfile";
 import ErrorComponent from "../../components/ErrorComponent";
-import { PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
+import { PrivateRoute } from "@upyog/digit-ui-react-components";
 
 const userScreensExempted = ["user/profile", "user/error"];
 

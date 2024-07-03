@@ -1,4 +1,4 @@
-import { CardLabel, CheckBox, DatePicker, Dropdown, LabelFieldPair, Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabel, CheckBox, DatePicker, Dropdown, LabelFieldPair, Loader } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import cleanup from "../Utils/cleanup";
 import { convertEpochToDate } from "../Utils/index";

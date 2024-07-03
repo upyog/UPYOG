@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { PageBasedInput, Loader, RadioButtons, CardHeader } from "@nudmcdgnpm/digit-ui-react-components";
+import { PageBasedInput, Loader, RadioButtons, CardHeader } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 

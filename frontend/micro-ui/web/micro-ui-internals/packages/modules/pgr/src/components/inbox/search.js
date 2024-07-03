@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg } from "@nudmcdgnpm/digit-ui-react-components";
+import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg } from "@upyog/digit-ui-react-components";
 
 const SearchComplaint = ({ onSearch, type, onClose, searchParams }) => {
   const [complaintNo, setComplaintNo] = useState(searchParams?.search?.serviceRequestId || "");

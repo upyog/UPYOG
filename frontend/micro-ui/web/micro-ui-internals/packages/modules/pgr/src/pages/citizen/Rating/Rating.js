@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 
-import { Card, CardHeader, CardLabel, Rating, CheckBox, TextArea, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, CardHeader, CardLabel, Rating, CheckBox, TextArea, SubmitBar } from "@upyog/digit-ui-react-components";
 import { updateComplaints } from "../../../redux/actions/index";
 
 import { LOCALIZATION_KEY } from "../../../constants/Localization";

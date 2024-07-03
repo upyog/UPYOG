@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Card, CardText, TextInput, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
+import { Modal, Card, CardText, TextInput, CardLabelError } from "@upyog/digit-ui-react-components";
 import { Controller, useForm } from "react-hook-form";
 
 const Heading = (props) => {

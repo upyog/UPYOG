@@ -8,7 +8,7 @@
 
 
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, Dropdown,InfoBannerIcon  } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, Dropdown,InfoBannerIcon  } from "@upyog/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/ASTTimeline";
 import { Controller, useForm } from "react-hook-form";
@@ -465,10 +465,7 @@ const NewAsset
     let brandsname = [];
 
     brandsName && brandsName.map((brands) => {
-      if (brands.AssetSubCategory===formData?.asset?.assetparentsubCategory?.code) {
-        brandsname.push({i18nKey: `AST_${brands.code}`, code: `${brands.code}`, value: `${brands.name}`})
-      }
-     
+      brandsname.push({i18nKey: `AST_${brands.code}`, code: `${brands.code}`, value: `${brands.name}`})
     }) 
 
 

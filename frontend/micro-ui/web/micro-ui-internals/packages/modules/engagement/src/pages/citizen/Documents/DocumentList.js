@@ -1,4 +1,4 @@
-import { AppContainer, Card, CardCaption, Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { AppContainer, Card, CardCaption, Header, Loader } from "@upyog/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import DocumentCard from "../../../components/Documents/DocumentCard";

@@ -1,5 +1,5 @@
 import React from "react";
-import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@upyog/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 
 const SelectEmployeeCorrespondenceAddress = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {

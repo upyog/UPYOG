@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Switch, useLocation, Link } from "react-router-dom";
-import { PrivateRoute, BreadCrumb } from "@nudmcdgnpm/digit-ui-react-components";
+import { PrivateRoute, BreadCrumb } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import Inbox from "./Inbox";
 // import NewApplication from "./NewApplication";

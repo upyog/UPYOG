@@ -4,7 +4,7 @@ import OBPSSearchApplication from "../../components/SearchApplication";
 import Search from "../employee/Search";
 import { useTranslation } from "react-i18next";
 import { Switch, useLocation, Route } from "react-router-dom";
-import { PrivateRoute, BackButton } from "@nudmcdgnpm/digit-ui-react-components";
+import { PrivateRoute, BackButton } from "@upyog/digit-ui-react-components";
 // import NewBuildingPermit from "./NewBuildingPermit";
 // import CreateEDCR from "./EDCR";
 // import CreateOCEDCR from "./OCEDCR";

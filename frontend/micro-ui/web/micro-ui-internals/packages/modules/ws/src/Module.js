@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
-import { Loader, CitizenHomeCard, WSICon } from "@nudmcdgnpm/digit-ui-react-components";
+import { Loader, CitizenHomeCard, WSICon } from "@upyog/digit-ui-react-components";
 import CitizenApp from "./pages/citizen";
 import EmployeeApp from "./pages/employee";
 

@@ -1,4 +1,4 @@
-import { CardLabel, Dropdown, LabelFieldPair, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabel, Dropdown, LabelFieldPair, TextInput } from "@upyog/digit-ui-react-components";
 import React from "react";
 
 const WSPlumberDetails = ({ t, config, userType, formData }) => {

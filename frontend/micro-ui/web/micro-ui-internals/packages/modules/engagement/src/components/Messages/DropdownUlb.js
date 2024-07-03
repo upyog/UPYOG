@@ -1,4 +1,4 @@
-import { Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
+import { Dropdown } from "@upyog/digit-ui-react-components";
 import React from "react";
 
 const DropdownUlb = ({ ulb, onAssignmentChange, value, t }) => {

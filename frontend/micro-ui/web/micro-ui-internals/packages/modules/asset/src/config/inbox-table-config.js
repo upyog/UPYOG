@@ -1,4 +1,4 @@
-  import { SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+  import { SubmitBar } from "@upyog/digit-ui-react-components";
 import React from "react";
   import { Link } from "react-router-dom";
 

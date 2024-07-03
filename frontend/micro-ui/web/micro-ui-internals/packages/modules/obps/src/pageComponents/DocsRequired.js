@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { Card, CardHeader, CardLabel, CardText, CitizenInfoLabel, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, CardHeader, CardLabel, CardText, CitizenInfoLabel, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
 
