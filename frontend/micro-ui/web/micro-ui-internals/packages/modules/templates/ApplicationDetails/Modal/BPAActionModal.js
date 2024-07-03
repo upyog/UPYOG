@@ -24,6 +24,8 @@ const CloseBtn = (props) => {
 };
 
 const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationDetails, applicationData, businessService, moduleCode,workflowDetails,blockReason }) => {
+  console.log("applicationData",applicationData)
+  console.log("workflowDetails",workflowDetails)
   const mutation1 = Digit.Hooks.obps.useObpsAPI(
       applicationData?.landInfo?.address?.city ? applicationData?.landInfo?.address?.city : tenantId,
       false
@@ -181,8 +183,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         action: action?.action,
         comment: data?.comments?.length > 0 ? data?.comments : null,
         comments: data?.comments?.length > 0 ? data?.comments : null,
-        assignee: !selectedApprover?.uuid ? null : [selectedApprover?.uuid],
-        assignes: !selectedApprover?.uuid ? null : [selectedApprover?.uuid],
+        assignee: (workflowDetails?.data?.processInstances?.[0]?.state?.applicationStatus==="FIELDINSPECTION_INPROGRESS")? [workflowDetails?.data?.processInstances?.[0]?.assigner?.uuid]: !selectedApprover?.uuid ? null : [selectedApprover?.uuid],
+        assignes:  (workflowDetails?.data?.processInstances?.[0]?.state?.applicationStatus==="FIELDINSPECTION_INPROGRESS")? [workflowDetails?.data?.processInstances?.[0]?.assigner?.uuid]: !selectedApprover?.uuid ? null : [selectedApprover?.uuid],
         varificationDocuments: uploadedFile
         ? [
           {
@@ -195,7 +197,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       },
       action: action?.action,
       comment: data?.comments,
-      assignee: !selectedApprover?.uuid ? null : [selectedApprover?.uuid],
+      assignee: (workflowDetails?.data?.processInstances?.[0]?.state?.applicationStatus==="FIELDINSPECTION_INPROGRESS")? [workflowDetails?.data?.processInstances?.[0]?.assigner?.uuid]: !selectedApprover?.uuid ? null : [selectedApprover?.uuid],
       wfDocuments: uploadedFile
         ? [
           {
@@ -205,19 +207,16 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           },
         ]
         : null,
-    };
-    if (!sessionStorage.getItem("development") || !sessionStorage.getItem("otherCharges") || !sessionStorage.getItem("lessAdjusment") ){
-      closeModal()
-      alert(t("Please fill P2 Manual Fees"));}
-    else if(parseInt(sessionStorage.getItem("lessAdjusment"))>(parseInt(sessionStorage.getItem("development"))+parseInt(sessionStorage.getItem("otherCharges"))+parseInt(applicationData?.additionalDetails?.selfCertificationCharges?.BPA_MALBA_CHARGES)+parseInt(applicationData?.additionalDetails?.selfCertificationCharges?.BPA_LABOUR_CESS)+parseInt(applicationData?.additionalDetails?.selfCertificationCharges?.BPA_WATER_CHARGES)+parseInt(applicationData?.additionalDetails?.selfCertificationCharges?.BPA_GAUSHALA_CHARGES_CESS))){
+    };    
+    if(parseInt(sessionStorage.getItem("lessAdjusment"))>(parseInt(sessionStorage.getItem("development"))+parseInt(sessionStorage.getItem("otherCharges"))+parseInt(applicationData?.additionalDetails?.selfCertificationCharges?.BPA_MALBA_CHARGES)+parseInt(applicationData?.additionalDetails?.selfCertificationCharges?.BPA_LABOUR_CESS)+parseInt(applicationData?.additionalDetails?.selfCertificationCharges?.BPA_WATER_CHARGES)+parseInt(applicationData?.additionalDetails?.selfCertificationCharges?.BPA_GAUSHALA_CHARGES_CESS))){
       closeModal()
       alert(t("Enterd Less Adjustment amount is invalid"));
     }
     else{
-    applicationData.additionalDetails.selfCertificationCharges.BPA_DEVELOPMENT_CHARGES=sessionStorage.getItem("development");
-    applicationData.additionalDetails.selfCertificationCharges.BPA_OTHER_CHARGES=sessionStorage.getItem("otherCharges");
-    applicationData.additionalDetails.selfCertificationCharges.BPA_LESS_ADJUSMENT_PLOT=sessionStorage.getItem("lessAdjusment");
-    applicationData.additionalDetails.otherFeesDiscription=sessionStorage.getItem("otherChargesDisc");
+    applicationData.additionalDetails.selfCertificationCharges.BPA_DEVELOPMENT_CHARGES=sessionStorage.getItem("development") || "0";
+    applicationData.additionalDetails.selfCertificationCharges.BPA_OTHER_CHARGES=sessionStorage.getItem("otherCharges")|| "0";
+    applicationData.additionalDetails.selfCertificationCharges.BPA_LESS_ADJUSMENT_PLOT=sessionStorage.getItem("lessAdjusment" )|| "0";
+    applicationData.additionalDetails.otherFeesDiscription=sessionStorage.getItem("otherChargesDisc" || "NA");
     applicationData.additionalDetails.lessAdjustmentFeeFiles=JSON.parse(sessionStorage.getItem("uploadedFileLess"));
 
     const nocDetails = applicationDetails?.nocData?.map(noc => {
