@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, Dropdown, RadioOrSelect } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons, Dropdown, RadioOrSelect } from "@upyog/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/PTRTimeline";

@@ -1,5 +1,5 @@
 import React,{Fragment} from 'react'
-import { Header,BreakLine, CardHeader,Card,CardSubHeader } from '@nudmcdgnpm/digit-ui-react-components'
+import { Header,BreakLine, CardHeader,Card,CardSubHeader } from '@upyog/digit-ui-react-components'
 
 const WhoHasResponded = ({t,userInfo}) => {
     const data = Object.entries(userInfo);

@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { OBPSIconSolidBg, EmployeeModuleCard } from "@nudmcdgnpm/digit-ui-react-components";
+import { OBPSIconSolidBg, EmployeeModuleCard } from "@upyog/digit-ui-react-components";
 import { showHidingLinksForStakeholder, showHidingLinksForBPA } from "../../utils";
 import { useLocation } from "react-router-dom";
 

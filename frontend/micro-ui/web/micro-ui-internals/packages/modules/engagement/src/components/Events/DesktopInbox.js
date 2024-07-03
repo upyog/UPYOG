@@ -1,7 +1,7 @@
 import React from "react";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
-import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 import ApplicationTable from "./ApplicationTable";
 import Search from "./Search";
 import EventLink from "./EventLink";

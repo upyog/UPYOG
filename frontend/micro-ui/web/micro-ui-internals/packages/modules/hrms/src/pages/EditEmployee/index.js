@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import EditForm from "./EditForm";
-import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 const EditEmpolyee = ({ parentUrl, heading }) => {
   const isupdate = Digit.SessionStorage.get("isupdate");
   const { id: employeeId } = useParams();

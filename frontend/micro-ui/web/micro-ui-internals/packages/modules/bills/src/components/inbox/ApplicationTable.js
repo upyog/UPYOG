@@ -1,4 +1,4 @@
-import { Table } from "@nudmcdgnpm/digit-ui-react-components";
+import { Table } from "@upyog/digit-ui-react-components";
 import React from "react";
 
 const ApplicationTable = ({

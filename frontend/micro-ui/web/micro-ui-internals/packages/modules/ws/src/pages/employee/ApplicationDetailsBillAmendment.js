@@ -1,4 +1,4 @@
-import { Header, MultiLink, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { Header, MultiLink, Toast } from "@upyog/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";

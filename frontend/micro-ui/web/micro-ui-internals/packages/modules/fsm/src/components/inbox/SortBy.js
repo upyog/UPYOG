@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { ActionBar, RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";
+import { ActionBar, RadioButtons } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import { ApplyFilterBar, CloseSvg } from "@nudmcdgnpm/digit-ui-react-components";
+import { ApplyFilterBar, CloseSvg } from "@upyog/digit-ui-react-components";
 
 const SortBy = (props) => {
   const { t } = useTranslation();

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Banner, Card, CardSectionHeader, CardText, LinkButton, SubmitBar, successSvg } from "@nudmcdgnpm/digit-ui-react-components";
+import { Banner, Card, CardSectionHeader, CardText, LinkButton, SubmitBar, successSvg } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { pdfDocumentName, pdfDownloadLink } from "../utils";

@@ -1,4 +1,4 @@
-import { RadioButtons, SearchField } from "@nudmcdgnpm/digit-ui-react-components";
+import { RadioButtons, SearchField } from "@upyog/digit-ui-react-components";
 import { format } from "date-fns";
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";

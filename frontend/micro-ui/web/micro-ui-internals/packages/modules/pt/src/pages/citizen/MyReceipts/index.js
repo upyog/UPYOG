@@ -1,5 +1,5 @@
 import React from "react";
-import { Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { Header, Loader } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 import MyReceipt from "./my-receipt";

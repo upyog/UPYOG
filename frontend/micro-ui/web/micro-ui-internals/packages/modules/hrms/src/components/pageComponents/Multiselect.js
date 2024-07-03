@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { ArrowDown, CheckSvg } from "@nudmcdgnpm/digit-ui-react-components";
+import { ArrowDown, CheckSvg } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 const MultiSelect = ({ options, optionsKey, selected = [], onSelect, defaultLabel = "", defaultUnit = "",BlockNumber=1,isOBPSMultiple=false}) => {

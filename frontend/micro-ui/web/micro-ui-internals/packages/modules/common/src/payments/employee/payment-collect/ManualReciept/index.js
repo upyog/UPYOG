@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { TextInput, SearchIconSvg, DatePicker } from "@nudmcdgnpm/digit-ui-react-components";
+import { TextInput, SearchIconSvg, DatePicker } from "@upyog/digit-ui-react-components";
 
 export const useCashPaymentDetails = (props, t) => {
   const config = [

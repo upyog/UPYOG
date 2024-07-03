@@ -1,4 +1,4 @@
-import { Card, DetailsCard, FilterAction, Loader, PopUp, SearchAction } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, DetailsCard, FilterAction, Loader, PopUp, SearchAction } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import BillsFilter from "../BillsFilter";
 import SearchApplication from "./search";

@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Card, CardText } from "@nudmcdgnpm/digit-ui-react-components";
+import { Modal, Card, CardText } from "@upyog/digit-ui-react-components";
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.t(props.heading)}</h1>;

@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { PDFSvg, Row } from "@nudmcdgnpm/digit-ui-react-components";
+import { PDFSvg, Row } from "@upyog/digit-ui-react-components";
 
 const DocumentDetails = ({ documents }) => {
   const { t } = useTranslation();

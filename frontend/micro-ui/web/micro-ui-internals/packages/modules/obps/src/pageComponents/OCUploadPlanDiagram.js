@@ -3,7 +3,7 @@ import {
     UploadFile,
     Toast,
     Loader
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 

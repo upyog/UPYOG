@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { CardSubHeader, PDFSvg } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardSubHeader, PDFSvg } from "@upyog/digit-ui-react-components";
 
 // const PDFSvg = ({ width = 34, height = 34, style, viewBox = "0 0 34 34" }) => (
 //   <svg style={style} xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox={viewBox} fill="gray">

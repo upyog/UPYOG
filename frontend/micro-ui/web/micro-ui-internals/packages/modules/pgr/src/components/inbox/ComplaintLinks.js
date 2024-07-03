@@ -1,4 +1,4 @@
-import { Card } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";

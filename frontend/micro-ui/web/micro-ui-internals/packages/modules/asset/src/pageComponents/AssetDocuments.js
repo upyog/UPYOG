@@ -8,7 +8,7 @@ import {
   Loader,
   CardHeader,
   CardSectionHeader,
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 import { useLocation } from "react-router-dom";
 const AssetDocuments = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {
