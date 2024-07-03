@@ -114,5 +114,7 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 		
 		return jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Boolean.class);
 	}
+
+	
 	
 }

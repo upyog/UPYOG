@@ -1211,8 +1211,9 @@ public class DemandService {
 			
 			log.info("Billing master data values for non metered connection:: {}", master);
 			String cone=requestInfo.getKey();
-			List<SewerageDetails> connectionNos = sewerageCalculatorDao.getConnectionsNoList(tenantId,
-					SWCalculationConstant.nonMeterdConnection, taxPeriodFrom, taxPeriodTo, cone);
+			List<SewerageDetails> connectionNos = null;
+			//sewerageCalculatorDao.getConnectionsNoList(tenantId,
+//					SWCalculationConstant.nonMeterdConnection, taxPeriodFrom, taxPeriodTo);
 
 			//Generate bulk demands for connections in below count
 			int bulkSaveDemandCount = configs.getBulkSaveDemandCount() != null ? configs.getBulkSaveDemandCount() : 1;
