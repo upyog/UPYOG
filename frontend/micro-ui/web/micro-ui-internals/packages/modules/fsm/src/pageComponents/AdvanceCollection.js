@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { LabelFieldPair, CardLabel, TextInput, Dropdown, Loader, CardLabelError } from "@upyog/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, Dropdown, Loader, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
 import { useParams, useLocation } from "react-router-dom";
 
 const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFieldStyle }) => {

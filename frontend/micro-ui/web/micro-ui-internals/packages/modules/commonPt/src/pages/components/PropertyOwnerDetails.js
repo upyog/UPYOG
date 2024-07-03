@@ -12,7 +12,7 @@ import {
   LinkButton,
   DeleteIcon,
   CardSectionHeader
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useState, useMemo, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";

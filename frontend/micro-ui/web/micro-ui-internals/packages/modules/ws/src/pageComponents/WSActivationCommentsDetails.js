@@ -1,4 +1,4 @@
-import { CardLabel, LabelFieldPair, TextInput } from "@upyog/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 
 const WSActivationCommentsDetails = ({ t, config, userType, formData, onSelect }) => {

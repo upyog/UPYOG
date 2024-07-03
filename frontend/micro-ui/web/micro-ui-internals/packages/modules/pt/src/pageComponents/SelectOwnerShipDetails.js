@@ -8,7 +8,7 @@ import {
   CardLabel,
   CardLabelError,
   Loader,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, UploadFile, Toast, FormStep, LabelFieldPair, SubmitBar, DeleteIcon} from "@upyog/digit-ui-react-components";
+import { CardLabel, UploadFile, Toast, FormStep, LabelFieldPair, SubmitBar, DeleteIcon} from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/EWASTETimeline";
 
 const EWASTEDocuments = ({ t, config, onSelect, formData }) => {
