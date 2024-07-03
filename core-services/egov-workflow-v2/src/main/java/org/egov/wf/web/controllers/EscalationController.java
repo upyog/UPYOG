@@ -58,7 +58,7 @@ public class EscalationController {
         return new ResponseEntity<>(ids, HttpStatus.OK);
     }
 
-    @RequestMapping(value="/auto/{businessService}/_sms", method = RequestMethod.POST)
+    @RequestMapping(value="/auto/{businessService}/_processReminders", method = RequestMethod.POST)
     public ResponseEntity<ResponseInfo> triggerSMS(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                                      @PathVariable(required = true) String businessService) {
         escalationService.triggerPendingApprovalSMS(requestInfoWrapper.getRequestInfo(), businessService);
