@@ -25,6 +25,7 @@ public interface SewerageCalculatorDao {
 	List<SewerageConnection> getConnectionsNoListForDemand(String tenantId, String connectionType, Long fromDate, Long toDate);
 
 	List<SewerageConnection> getConnection(String tenantId, String consumerCode,String connectionType,Long fromDate, Long toDate);
-
+	
+	List<String> getLocalityList(String tenantId, String batchCode); 
 	
 }
