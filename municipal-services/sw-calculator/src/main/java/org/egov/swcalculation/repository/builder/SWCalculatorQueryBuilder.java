@@ -39,7 +39,8 @@ public class SWCalculatorQueryBuilder {
 	private static final String LAST_DEMAND_GEN_FOR_CONN =" SELECT d.taxperiodfrom FROM egbs_demand_v1 d ";
 	
 	private static final String isConnectionDemandAvailableForBillingCycle ="select EXISTS (select 1 from egbs_demand_v1 d ";
-	
+	private static final String connectionNoListQuerysingle = "SELECT distinct(conn.connectionno),sw.connectionexecutiondate FROM eg_sw_connection conn INNER JOIN eg_sw_service sw ON conn.id = sw.connection_id";
+
 	private final static String SEWERAGE_SEARCH_QUERY = "SELECT conn.*, sc.*, document.*, plumber.*, sc.connectionExecutionDate,"
 			+ "sc.noOfWaterClosets, sc.noOfToilets,sc.proposedWaterClosets, sc.proposedToilets, sc.connectionType, sc.connection_id as connection_Id, sc.appCreatedDate,"
 			+ "  sc.detailsprovidedby, sc.estimationfileStoreId , sc.sanctionfileStoreId , sc.estimationLetterDate,"
@@ -136,6 +137,46 @@ public class SWCalculatorQueryBuilder {
 		return query.toString();
 	}
 	
+	
+	public String getConnectionNumberListsingle(String tenantId, String connectionType, List<Object> preparedStatement,  Long fromDate, Long toDate, String Connectionno) {
+		StringBuilder query = new StringBuilder(connectionNoListQuerysingle);
+
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" sw.connectiontype = ? ");
+		preparedStatement.add(connectionType);
+		
+		//Add status
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.status = 'Active'");
+
+		
+		//Get the activated connections status	
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.applicationstatus = ? ");
+		preparedStatement.add(SWCalculationConstant.CONNECTION_ACTIVATED);
+		
+
+		// add tenantid
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.tenantid = ? ");
+		preparedStatement.add(tenantId);
+		
+		//Added connection number for testing Anonymous User issue
+//		addClauseIfRequired(preparedStatement, query);
+//		query.append(" conn.connectionno ='0603001817' ");
+		
+		//Add not null condition
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.connectionno is not null");
+
+     
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" conn.connectionno = ? ");
+			preparedStatement.add(Connectionno);
+		
+		query.append(fetchConnectionsToBeGenerate(tenantId, fromDate, toDate, preparedStatement));
+		return query.toString();
+	}
 	public String getConnectionNumberListForDemand(String tenantId, String connectionType, List<Object> preparedStatement, Long fromDate, Long toDate) {
 		//StringBuilder query = new StringBuilder(connectionNoListQuery);
 		//StringBuilder query = new StringBuilder(connectionNoListQuery);

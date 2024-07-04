@@ -177,7 +177,6 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 		Map<String, TaxHeadCategory> taxHeadCategoryMap = ((List<TaxHeadMaster>) masterMap
 				.get(SWCalculationConstant.TAXHEADMASTER_MASTER_KEY)).stream()
 						.collect(Collectors.toMap(TaxHeadMaster::getCode, TaxHeadMaster::getCategory, (OldValue, NewValue) -> NewValue));
-
 		BigDecimal taxAmt = BigDecimal.ZERO;
 		BigDecimal sewerageCharge = BigDecimal.ZERO;
 		BigDecimal penalty = BigDecimal.ZERO;

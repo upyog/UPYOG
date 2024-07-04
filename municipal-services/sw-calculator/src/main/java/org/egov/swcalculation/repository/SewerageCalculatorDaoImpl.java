@@ -55,7 +55,14 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 		log.info(builder.toString());
 		return jdbcTemplate.query(query, preparedStatement.toArray(), sewerageRowMapper);
 	}
-
+	@Override
+	public List<SewerageDetails> getConnectionsNoListsingle(String tenantId, String connectionType,Long fromDate, Long toDate, String Connectionno) {
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getConnectionNumberListsingle(tenantId, connectionType, preparedStatement, fromDate, toDate,Connectionno);
+		
+		log.info(query.toString());	log.info(preparedStatement.toString());
+		return jdbcTemplate.query(query, preparedStatement.toArray(), demandSchedulerRowMapper);
+	}
 	@Override
 	public List<String> getConnectionsNoByLocality(String tenantId, String connectionType, String locality) {
 		List<Object> preparedStatement = new ArrayList<>();
@@ -114,6 +121,7 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 		
 		return jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Boolean.class);
 	}
+
 
 	
 	

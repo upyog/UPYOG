@@ -1,5 +1,5 @@
 package org.egov.collection.repository;
-
+                                       
 import static java.util.Collections.reverseOrder;
 import static org.egov.collection.config.CollectionServiceConstants.KEY_FILESTOREID;
 import static org.egov.collection.config.CollectionServiceConstants.KEY_ID;
@@ -312,27 +312,43 @@ public class PaymentRepository {
         return namedParameterJdbcTemplate.query(query, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
 	}
 
-	public List<String> fetchPropertyDetail(String consumerCode,String businessservice) {
-		List<String> status = new ArrayList<String>();
-		List<String> oldConnectionno = fetchOldConnectionNo(consumerCode,businessservice);
-		List<String> plotSize = fetchLandArea(consumerCode,businessservice);
-		List<String> usageCategory = fetchUsageCategory(consumerCode,businessservice);
-		List<String> propertyid = fetchpropertyid(consumerCode,businessservice);
-		List<String> adress = fetchadresss(consumerCode,businessservice);
-		if(oldConnectionno.size()>0)
-		status.add(oldConnectionno.get(0));
-		if(plotSize.size()>0)
-		status.add(plotSize.get(0));
-		if(usageCategory.size()>0)
-		status.add(usageCategory.get(0));
-		if(propertyid.size()>0)
-			status.add(propertyid.get(0));
-		if(adress.size()>0)
-			status.add(adress.get(0));
-		return status;
-	}
 	
-	
+public List<String> fetchPropertyDetail(String consumerCode,String businessservice) {
+		List<String> status = new ArrayList<String>();                                     
+status = new ArrayList<String>();                                                    
+		List<String> oldConnectionno = fetchOldConnectionNo(consumerCode,businessservice); 
+		List<String> plotSize = fetchLandArea(consumerCode,businessservice);               
+		List<String> usageCategory = fetchUsageCategory(consumerCode,businessservice);     
+		List<String> propertyid = fetchpropertyid(consumerCode,businessservice);           
+		List<String> adress = fetchadresss(consumerCode,businessservice);                  
+		if(oldConnectionno.size()>0) {                                                      
+		status.add(oldConnectionno.get(0));  }
+		else { status.add("No Value Found");  }
+		
+		if(plotSize.size()>0)                                                              
+		status.add(plotSize.get(0));  
+		else
+			status.add("No Value Found");  
+		
+		
+		if(usageCategory.size()>0)                                                         
+		status.add(usageCategory.get(0)); 
+		else                                 
+			status.add("No value present");    
+		
+		
+		if(propertyid.size()>0)                                                            
+			status.add(propertyid.get(0));  
+		else
+			status.add("No value present");  
+		
+		
+		if(adress.size()>0)                                                                
+			status.add(adress.get(0));   
+		else                                 
+			status.add("No value present"); 
+		return status;                                                                     	
+	}                                                                                   	
 	
 	
 	
@@ -416,7 +432,7 @@ else {
 		Map<String, Object> preparedStatementValues = new HashMap<>();
 		 String queryString = "";  // Declare queryString outside the if-else block
 			Boolean Isapp=false;
-			if (consumerCode.contains("WS_AP"))
+			if (consumerCode.contains("WS_AP") || consumerCode.contains("SW_AP"))
 				Isapp=true;
 	if (Isapp) {
 	    if(businessservice.equals("WS")) {
@@ -452,7 +468,7 @@ else {
 		Map<String, Object> preparedStatementValues = new HashMap<>();
 		 String queryString = "";  // Declare queryString outside the if-else block
 			Boolean Isapp=false;
-			if (consumerCode.contains("WS_AP"))
+			if (consumerCode.contains("WS_AP") || consumerCode.contains("SW_AP")) 
 				Isapp=true;
 	if (Isapp) {
 	    if(businessservice.equals("WS")) {
@@ -486,35 +502,37 @@ else {
 		Map<String, Object> preparedStatementValues = new HashMap<>();
 		 String queryString = "";  // Declare queryString outside the if-else block
 			Boolean Isapp=false;
-			if (consumerCode.contains("WS_AP"))
+			if (consumerCode.contains("WS_AP") || consumerCode.contains("SW_AP")) 
 				Isapp=true;
-	if (Isapp) {
+	if (Isapp)
+	{
 	    if(businessservice.equals("WS")) {
-	    	 queryString = "select CONCAT(doorno,buildingname,city) as address from eg_ws_connection a1 "
+	    	 queryString = "select CONCAT(doorno,'.',buildingname,'.',city) as address from eg_ws_connection a1 "
 	 				+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 	 				+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-	 				+ " where a1.applicationno='"+consumerCode+"'"
-	 			        + " and a2.status='ACTIVE';";
-	    }else {
-	    	queryString = "select a2.usagecategory from eg_sw_connection a1 "
+	 				+ " where a1.applicationno='"+consumerCode+"';";
+	 			       
+	    }else {               
+	    	queryString = "select CONCAT(doorno,'.',buildingname,'.',city) as address from eg_sw_connection a1 "
 					+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 					+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-					+ " where a1.applicationno='"+consumerCode+"'"
-				        + " and a2.status='ACTIVE';";
-	    }}
+					+ " where a1.applicationno='"+consumerCode+"';";
+				       
+	    }
+	    }
 	else {
 		 if(businessservice.equals("WS")) {
-			 queryString = "select CONCAT(doorno,buildingname,city) as address from eg_ws_connection a1 "
+			 queryString = "select CONCAT(doorno,'.',buildingname,'.',city) as address from eg_ws_connection a1 "
 						+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 						+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-						+ " where a1.applicationno='"+consumerCode+"'"
-					        + " and a2.status='ACTIVE';";
+						+ " where a1.connectionno='"+consumerCode+"';";
+					       
 		    }else {
-		    	queryString = "select a2.usagecategory from eg_sw_connection a1 "
+		    	queryString = "select   CONCAT(doorno,'.',buildingname,'.',city) as address from eg_sw_connection a1 "
 						+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 						+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-						+ " where a1.applicationno='"+consumerCode+"'"
-					        + " and a2.status='ACTIVE';";
+						+ " where a1.connectionno='"+consumerCode+"';";
+					     
 		    }
 		
 	}
@@ -597,7 +615,7 @@ else {
 	}
 
 
-	 //        //onetime fee
+	//RECE
 	
 	public List<String> fetchUsageCategoryByApplicationnos(Set<String> consumerCodes,String businesssrvice) {
 		List<String> res = new ArrayList<>();
@@ -661,7 +679,7 @@ else {
 			 		+ "INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid  "
 			 		+ " where a1.connectionno in (select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill"
 						+ "	where bill.id=pd.billid "
-				                + " and a2.status='ACTIVE'"
+				               
 						+ " and pd.receiptnumber='"+consumercode+"')";
 		log.info("Query for fetchAddressByApplicationno: " +queryString);
 		}
@@ -683,7 +701,7 @@ else {
 				 		+ "INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid  "
 				 		+ " where a1.connectionno in (select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill"
 							+ "	where bill.id=pd.billid "
-				                        + " and a2.status='ACTIVE'"
+				           
 							+ " and pd.receiptnumber='"+consumercode+"')";
 				log.info("Query for fetchAddressByApplicationno: " +queryString);
 		}
