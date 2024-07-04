@@ -174,7 +174,9 @@ public class PaymentService {
 	private void setPropertyData(String receiptnumber, List<Payment> payments, String businessservice) {
 		List<String> consumercode = paymentRepository.fetchConsumerCodeByReceiptNumber(receiptnumber);
 		String connectionno = consumercode.get(0);
-		List<String> status = paymentRepository.fetchPropertyDetail(connectionno, businessservice);
+		List<String> status=null;
+		if(!paymentRepository.fetchPropertyDetail(connectionno, businessservice).isEmpty()) {
+				status = paymentRepository.fetchPropertyDetail(connectionno, businessservice);
 		HashMap<String, String> additionalDetail = new HashMap<>();
 		if (!StringUtils.isEmpty(status.get(0)))
 			additionalDetail.put("oldConnectionno", status.get(0));
@@ -182,10 +184,13 @@ public class PaymentService {
 			additionalDetail.put("landArea", status.get(1));
 		if (!StringUtils.isEmpty(status.get(2)))
 			additionalDetail.put("usageCategory", status.get(2));
-		payments.get(0).setPropertyId(status.get(3));
+		if (!StringUtils.isEmpty(status.get(3)))
+		   payments.get(0).setPropertyId(status.get(3));
+		if (!StringUtils.isEmpty(status.get(4)))
 		payments.get(0).setAddress(status.get(4));
+		if (!StringUtils.isEmpty(status.get(2)))
 		payments.get(0).setUsageCategory(status.get(2));
-		payments.get(0).setPropertyDetail(additionalDetail);
+		payments.get(0).setPropertyDetail(additionalDetail);}
 	}
 
 	/**
