@@ -271,6 +271,8 @@ public class BPANotificationService {
 		String localizationMessages = util.getLocalizationMessages(tenantId, bpaRequest.getRequestInfo());
 		String message = util.getCustomizedMsg(bpaRequest.getRequestInfo(), bpaRequest.getBPA(), localizationMessages);
 		Map<String, String> mobileNumberToOwner = getUserList(bpaRequest);
+		log.info("Final message is " +message);
+		log.info("mobileNumber is " +mobileNumberToOwner);
 		smsRequests.addAll(util.createSMSRequest(bpaRequest,message, mobileNumberToOwner));
 
 	}
