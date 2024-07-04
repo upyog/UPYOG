@@ -122,7 +122,13 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 		return jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Boolean.class);
 	}
 
-
+	@Override
+	public List<String> getLocalityList(String tenantId,String batchCode ) {
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getLocalityListWithBatch(tenantId,batchCode,preparedStatement);
+		log.info("batchCode " + batchCode + " Locality list : " + query);
+		return jdbcTemplate.queryForList(query, preparedStatement.toArray(), String.class);
+	}
 	
 	
 }
