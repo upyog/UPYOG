@@ -354,21 +354,22 @@ if (waterSubUsageType==null|| waterSubUsageType.isEmpty())
 
 	private Double getCalculationUnit(SewerageConnection sewerageConnection, String calculationAttribute,
 			CalculationCriteria criteria,Property property) {
-		Double totalUnits = 0.0;
+		Double totalUnite = 0.0;
 		if (sewerageConnection.getConnectionType().equals(SWCalculationConstant.meteredConnectionType)) {
-			return totalUnits;
+			return totalUnite;
 		} else if (sewerageConnection.getConnectionType().equals(SWCalculationConstant.nonMeterdConnection)
-				&& calculationAttribute.equalsIgnoreCase(SWCalculationConstant.noOfToilets)) {
-			if (sewerageConnection.getNoOfToilets() == null)
-				return totalUnits;
+				&& calculationAttribute.equalsIgnoreCase(SWCalculationConstant.plotBasedConst)) {
+			if (property.getLandArea() != null && property.getLandArea() > 0)
+				return property.getLandArea();
 			return new Double(sewerageConnection.getNoOfToilets());
 		} else if (sewerageConnection.getConnectionType().equals(SWCalculationConstant.nonMeterdConnection)
 				&& calculationAttribute.equalsIgnoreCase(SWCalculationConstant.noOfWaterClosets)) {
 			if (sewerageConnection.getNoOfWaterClosets() == null)
-				return totalUnits;
+				return totalUnite;
 			return new Double(sewerageConnection.getNoOfWaterClosets());
 		}
-		return totalUnits;
+		return totalUnite;
+	
 	}
 
 	/**
