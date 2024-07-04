@@ -42,7 +42,7 @@ public class PaymentsService {
 		payment.setInstrumentDate(request.getTransaction().getAuditDetails().getCreatedTime());
 		payment.setInstrumentNumber(request.getTransaction().getTxnId());
 		payment.setTransactionNumber(request.getTransaction().getTxnId());
-		payment.setAdditionalDetails((JsonNode) request.getTransaction().getAdditionalDetails());
+		payment.setAdditionalDetails(request.getTransaction().getAdditionalDetails());
 
 		CollectionPaymentRequest paymentRequest = CollectionPaymentRequest.builder()
 				.requestInfo(request.getRequestInfo()).payment(payment).build();

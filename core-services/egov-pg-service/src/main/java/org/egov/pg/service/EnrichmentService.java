@@ -70,7 +70,8 @@ public class EnrichmentService {
         else{
             Map<String, Object> additionDetailsMap = objectMapper.convertValue(transaction.getAdditionalDetails(), Map.class);
             additionDetailsMap.put("taxAndPayments",(Object) transaction.getTaxAndPayments());
-            transaction.setAdditionalDetails(objectMapper.convertValue(additionDetailsMap,Object.class));
+            ObjectMapper objectMapper = new ObjectMapper();
+            transaction.setAdditionalDetails(objectMapper.valueToTree(additionDetailsMap));
         }
         
         String uri = UriComponentsBuilder

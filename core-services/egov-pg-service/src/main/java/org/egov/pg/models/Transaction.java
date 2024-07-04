@@ -8,7 +8,7 @@ import lombok.*;
 import org.egov.pg.constants.TransactionAdditionalFields;
 import org.egov.pg.web.models.User;
 import org.hibernate.validator.constraints.SafeHtml;
-
+import com.fasterxml.jackson.databind.JsonNode;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -174,7 +174,7 @@ public class Transaction {
     private AuditDetails auditDetails;
 
     @JsonProperty("additionalDetails")
-    private Object additionalDetails;
+    private JsonNode additionalDetails;
 
     /**
      * Entire RAW payment gateway response
