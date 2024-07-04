@@ -15,11 +15,13 @@ class UserService {
   }
 
   async loginOrCreateUser(mobileNumber, tenantId) {
-    let newMobileNumber = mobileNumber.slice(2);
-    let user = await this.loginUser(newMobileNumber, tenantId);
+    //let newMobileNumber = mobileNumber.slice(2);
+    console.log("Passed Mobile Number"+mobileNumber)
+    let user = await this.loginUser(mobileNumber, tenantId);
+
     if(user === undefined) {
-      await this.createUser(newMobileNumber, tenantId);
-      user = await this.loginUser(newMobileNumber, tenantId);
+      await this.createUser(mobileNumber, tenantId);
+      user = await this.loginUser(mobileNumber, tenantId);
     }
 
     user = await this.enrichuserDetails(user);
@@ -34,7 +36,8 @@ class UserService {
         'Content-Type': 'application/json'
       }
     }
-
+    console.log("User Enrich URL"+url)
+    console.log("User Enrich Data"+ JSON.stringify(options))
     let response = await fetch(url, options);
     if(response.status === 200) {
       let body = await response.json();
@@ -65,7 +68,8 @@ class UserService {
       headers: headers,
       body: data
     }
-
+    console.log("User Login URL"+url)
+    console.log("User Login Data"+ JSON.stringify(options))
     let response = await fetch(url, options);
     if(response.status === 200) {
       let body = await response.json();
@@ -107,7 +111,8 @@ class UserService {
       },
       body: JSON.stringify(requestBody)
     }
-
+    console.log("User Create URL"+url)
+    console.log("User Create Data"+ JSON.stringify(options))
     let response = await fetch(url, options);
     if(response.status === 200) {
       let responseBody = await response.json();
