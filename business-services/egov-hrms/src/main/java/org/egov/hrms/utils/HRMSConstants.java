@@ -59,4 +59,16 @@ public class HRMSConstants {
 
 	public static final String INTERNALMICROSERVICEUSER_TYPE = "SYSTEM";
 
+	public static final String TRADELICENCE_WORKFLOW_BUSINESS_SERVICE_NEWTL = "NewTL";
+
+	public static final String TRADELICENCE_WORKFLOW_MODULE_NAME = "TL";
+
+	public static final String TRADELICENCE_WORKFLOW_NEWTL_ACTION_VERIFY = "VERIFY";
+
+	public static final String TRADELICENCE_WORKFLOW_NEWTL_ACTION_APPROVE = "APPROVE";
+
+	public static final String TRADELICENCE_NEWTL_APPLICATION_STATUS_VERIFIED = "VERIFIED";
+
+	public static final String TRADELICENCE_NEWTL_APPLICATION_STATUS_APPROVED = "APPROVED";
+	
 }

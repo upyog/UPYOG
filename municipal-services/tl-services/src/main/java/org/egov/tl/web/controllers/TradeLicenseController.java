@@ -89,6 +89,7 @@ import static org.egov.tl.util.TLConstants.businessService_TL;
         TradeLicenseResponse response = TradeLicenseResponse.builder().licenses(licenses).responseInfo(
                 responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true)).count(count).applicationsIssued(applicationsIssued)
         		.applicationsRenewed(applicationsRenewed).validity(validity).build();
+        tradeLicenseService.processResponse(response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

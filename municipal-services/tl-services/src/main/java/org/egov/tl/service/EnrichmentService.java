@@ -1,6 +1,7 @@
 package org.egov.tl.service;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.repository.IdGenRepository;
@@ -84,6 +85,11 @@ public class EnrichmentService {
                             accessory.setId(UUID.randomUUID().toString());
                             accessory.setActive(true);
                         });
+                    // set loggedin user uuid as account id if not passed in input
+                    if(StringUtils.isEmpty(tradeLicense.getAccountId())
+                    		&& StringUtils.isNotEmpty(uuid)) {
+                    	tradeLicense.setAccountId(uuid);
+                    }
                     break;
             }
             tradeLicense.getTradeLicenseDetail().getAddress().setTenantId(tradeLicense.getTenantId());

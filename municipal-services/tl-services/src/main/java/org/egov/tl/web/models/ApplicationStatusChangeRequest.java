@@ -18,6 +18,7 @@ public class ApplicationStatusChangeRequest {
     private String idProofDoc;
     private String ownerProofDoc;
     private String ownerImage;
+    private String tenantId;
     private String applicationStatus;
 
 }

@@ -292,6 +292,8 @@ public class TLConstants {
 
     public static final String STATUS_APPLIED  = "APPLIED";
 
+    public static final String STATUS_VERIFIED  = "VERIFIED";
+
     public static final String STATUS_APPROVED  = "APPROVED";
 
     public static final String STATUS_REJECTED  = "REJECTED";

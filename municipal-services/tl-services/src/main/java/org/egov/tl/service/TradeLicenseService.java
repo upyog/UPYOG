@@ -141,11 +141,11 @@ public class TradeLicenseService {
 //               break;
 //       }
        
-       //trigger wf 
-       workflowIntegrator.callWorkFlow(tradeLicenseRequest);
-
        repository.save(tradeLicenseRequest);
 
+       //trigger wf 
+       workflowIntegrator.callWorkFlow(tradeLicenseRequest);
+       
         return tradeLicenseRequest.getLicenses();
 	}
 
@@ -656,8 +656,57 @@ public class TradeLicenseService {
 
 
 	public ApplicationStatusChangeRequest updateStateOfApplication(ApplicationStatusChangeRequest applicationStatusChangeRequest) {
+		
+		// search TL
+		TradeLicenseSearchCriteria criteria = TradeLicenseSearchCriteria.builder()
+				.tenantId(applicationStatusChangeRequest.getTenantId())
+				.businessService(businessService_TL)
+				.applicationNumber(applicationStatusChangeRequest.getApplicationNumber())
+				.build();
+		List<TradeLicense> licenses = repository.getLicenses(criteria);
+		
+		if(CollectionUtils.isEmpty(licenses)) {
+			throw new RuntimeException("No Trade license found for given input.");
+		}
+		TradeLicense tl = licenses.get(0);
+		
+		// validate current status
+		if(StringUtils.equals(applicationStatusChangeRequest.getApplicationStatus(), STATUS_APPLIED)) {
+			if(!(StringUtils.equals(tl.getStatus(), STATUS_INITIATED)
+				|| StringUtils.equals(tl.getStatus(), ACTION_STATUS_APPROVED)
+				|| StringUtils.equals(tl.getStatus(), STATUS_PENDINGFORMODIFICATION))) {
+			throw new RuntimeException("Currently Status can't be changed to "+STATUS_APPLIED);
+			}
+		}
+		
+		
 		tlRepository.updateStateOfApplicationApplied(applicationStatusChangeRequest);
 		return applicationStatusChangeRequest;
+	}
+
+
+
+
+
+	public void processResponse(TradeLicenseResponse response) {
+		
+		// categorize each license
+		if (!CollectionUtils.isEmpty(response.getLicenses())
+				) {
+			response.setApplicationInitiated((int) response.getLicenses().stream()
+					.filter(license -> StringUtils.equalsIgnoreCase(STATUS_INITIATED, license.getStatus())).count());
+			response.setApplicationApplied((int) response.getLicenses().stream()
+					.filter(license -> StringUtils.equalsIgnoreCase(STATUS_APPLIED, license.getStatus())).count());
+			response.setApplicationVerified((int) response.getLicenses().stream()
+					.filter(license -> StringUtils.equalsIgnoreCase(STATUS_VERIFIED, license.getStatus())).count());
+			response.setApplicationRejected((int) response.getLicenses().stream()
+					.filter(license -> StringUtils.equalsIgnoreCase(STATUS_REJECTED, license.getStatus())).count());
+			response.setApplicationApproved((int) response.getLicenses().stream()
+					.filter(license -> StringUtils.equalsIgnoreCase(STATUS_APPROVED, license.getStatus()))
+					.count());
+		}
+		
+		
 	}
 
 }
