@@ -494,14 +494,14 @@ else {
 	    	 queryString = "select CONCAT(doorno,buildingname,city) as address from eg_ws_connection a1 "
 	 				+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 	 				+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-	 				+ " where a1.applicationno='"+consumerCode+"'"
-	 			        + " and a2.status='ACTIVE';";
+	 				+ " where a1.applicationno='"+consumerCode+"';";
+	 			       
 	    }else {               
 	    	queryString = "select CONCAT(doorno,',',buildingname,',',city) as address from eg_sw_connection a1 "
 					+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 					+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-					+ " where a1.applicationno='"+consumerCode+"'"
-				        + " and a2.status='ACTIVE';";
+					+ " where a1.applicationno='"+consumerCode+"';";
+				       
 	    }
 	    }
 	else {
@@ -509,14 +509,14 @@ else {
 			 queryString = "select CONCAT(doorno,',',buildingname,',',city) as address from eg_ws_connection a1 "
 						+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 						+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-						+ " where a1.connectionno='"+consumerCode+"'"
-					        + " and a2.status='ACTIVE';";
+						+ " where a1.connectionno='"+consumerCode+"';";
+					       
 		    }else {
 		    	queryString = "select   CONCAT(doorno,',',buildingname,',',city) as address from eg_sw_connection a1 "
 						+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 						+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-						+ " where a1.connectionno='"+consumerCode+"'"
-					        + " and a2.status='ACTIVE';";
+						+ " where a1.connectionno='"+consumerCode+"';";
+					     
 		    }
 		
 	}
@@ -663,7 +663,7 @@ else {
 			 		+ "INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid  "
 			 		+ " where a1.connectionno in (select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill"
 						+ "	where bill.id=pd.billid "
-				                + " and a2.status='ACTIVE'"
+				               
 						+ " and pd.receiptnumber='"+consumercode+"')";
 		log.info("Query for fetchAddressByApplicationno: " +queryString);
 		}
@@ -685,7 +685,7 @@ else {
 				 		+ "INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid  "
 				 		+ " where a1.connectionno in (select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill"
 							+ "	where bill.id=pd.billid "
-				                        + " and a2.status='ACTIVE'"
+				           
 							+ " and pd.receiptnumber='"+consumercode+"')";
 				log.info("Query for fetchAddressByApplicationno: " +queryString);
 		}
