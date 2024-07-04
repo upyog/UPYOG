@@ -45,7 +45,9 @@ serviceMaps:
       jsonMaps:
 
 
-      - jsonPath: $.Employees[*][?({id} in @.assignments[*].id)].tenantId
+     ## - jsonPath: $.Employees[*][?({id} in @.assignments[*].id)].tenantId
+
+      - jsonPath: $.Employees.*.assignments.*.tenantid
 
       - jsonPath: $.Employees.*.assignments.*.id
 

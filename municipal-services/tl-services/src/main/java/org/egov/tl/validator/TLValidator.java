@@ -323,7 +323,7 @@ public class TLValidator {
         switch (businessService) {
             case businessService_TL:
                 valideDates(request, mdmsData);
-                propertyValidator.validateProperty(request);
+//                propertyValidator.validateProperty(request);
                 validateTLSpecificNotNullFields(request);
                 break;
 

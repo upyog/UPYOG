@@ -143,6 +143,12 @@ import static org.egov.tl.util.TLConstants.businessService_TL;
     	ProcessInstanceResponse processInstanceResponse = tradeLicenseService.updateState(updateTLStatusCriteriaRequest);
         return new ResponseEntity(processInstanceResponse , HttpStatus.OK);
     }
+    
+    @PostMapping("/updateApplicationAppliedStatus")
+    public ResponseEntity<?> updateStateOfApplication(@RequestBody ApplicationStatusChangeRequest applicationStatusChangeRequest){
+    	ApplicationStatusChangeRequest applicationStatusChangeRequest2 = tradeLicenseService.updateStateOfApplication(applicationStatusChangeRequest);
+        return new ResponseEntity(applicationStatusChangeRequest2 , HttpStatus.OK);
+    }
 
 
 }

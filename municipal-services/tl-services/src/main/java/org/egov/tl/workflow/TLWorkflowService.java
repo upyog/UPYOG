@@ -36,7 +36,7 @@ public class TLWorkflowService {
      */
     public void updateStatus(TradeLicenseRequest request){
     	List<TradeLicense> licenses = new ArrayList<TradeLicense>();
-        actionValidator.validateUpdateRequest(request,null,licenses);
+//        actionValidator.validateUpdateRequest(request,null,licenses);
         changeStatus(request);
     }
 

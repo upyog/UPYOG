@@ -1,5 +1,6 @@
 package org.egov.tl.service;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.repository.IdGenRepository;
@@ -372,7 +373,7 @@ public class EnrichmentService {
                 nameOfBusinessService=businessService_TL;
                 tradeLicense.setBusinessService(nameOfBusinessService);
             }
-            if ((nameOfBusinessService.equals(businessService_BPA) && (tradeLicense.getStatus().equalsIgnoreCase(STATUS_INITIATED))) || workflowService.isStateUpdatable(tradeLicense.getStatus(), businessService)) {
+            if ((nameOfBusinessService.equals(businessService_BPA) && (tradeLicense.getStatus().equalsIgnoreCase(STATUS_INITIATED))) || BooleanUtils.isTrue(workflowService.isStateUpdatable(tradeLicense.getStatus(), businessService))) {
                 tradeLicense.getTradeLicenseDetail().setAuditDetails(auditDetails);
                 if (!CollectionUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAccessories())) {
                     tradeLicense.getTradeLicenseDetail().getAccessories().forEach(accessory -> {

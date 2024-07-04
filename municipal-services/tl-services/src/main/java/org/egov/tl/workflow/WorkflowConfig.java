@@ -93,6 +93,9 @@ public class WorkflowConfig {
         map.put(STATUS_APPROVED, Arrays.asList(ACTION_CANCEL));
         map.put(STATUS_REJECTED, Arrays.asList()); // FIXME PUT THE ACTIONS IN PLACE
         map.put(STATUS_CANCELLED, Arrays.asList()); // FIXME PUT THE ACTIONS IN PLACE
+        map.put(STATUS_PENDINGFORMODIFICATION , Arrays.asList(ACTION_FORWARD_TO_APPROVER,ACTION_FORWARD_TO_VERIFIER));
+        map.put(STATUS_PENDINGFORVERIFICATION , Arrays.asList(ACTION_VERIFY,ACTION_RETURN_TO_INITIATOR));
+        map.put(STATUS_PENDINGFORAPPROVAL , Arrays.asList(ACTION_APPROVE,ACTION_RETURN_TO_VERIFIER,ACTION_RETURN_TO_INITIATOR));
 
         actionCurrentStatusMap = Collections.unmodifiableMap(map);
     }

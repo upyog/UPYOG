@@ -140,10 +140,11 @@ public class TradeLicenseService {
 //                   wfIntegrator.callWorkFlow(tradeLicenseRequest);
 //               break;
 //       }
-        repository.save(tradeLicenseRequest);
        
-        //trigger wf 
-        workflowIntegrator.callWorkFlow(tradeLicenseRequest);
+       //trigger wf 
+       workflowIntegrator.callWorkFlow(tradeLicenseRequest);
+
+       repository.save(tradeLicenseRequest);
 
         return tradeLicenseRequest.getLicenses();
 	}
@@ -648,6 +649,15 @@ public class TradeLicenseService {
 		}
 		
 		return response;
+	}
+
+
+
+
+
+	public ApplicationStatusChangeRequest updateStateOfApplication(ApplicationStatusChangeRequest applicationStatusChangeRequest) {
+		tlRepository.updateStateOfApplicationApplied(applicationStatusChangeRequest);
+		return applicationStatusChangeRequest;
 	}
 
 }
