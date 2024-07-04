@@ -3,7 +3,6 @@ package org.upyog.chb.util;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 import java.util.UUID;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -48,10 +47,6 @@ public class CommunityHallBookingUtil {
 
 	public static LocalDate parseStringToLocalDate(String date) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-		// Locale specifies human language for translating, and cultural norms for
-		// lowercase/uppercase and abbreviations and such. Example: Locale.US or
-		// Locale.CANADA_FRENCH
-		// formatter = formatter.withLocale( ;
 		LocalDate localDate = LocalDate.parse(date, formatter);
 		return localDate;
 	}

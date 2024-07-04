@@ -1,10 +1,7 @@
 package org.upyog.chb.service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -40,7 +37,7 @@ public class EnrichmentService {
 		AuditDetails auditDetails = CommunityHallBookingUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 		bookingDetail.setAuditDetails(auditDetails);
 		bookingDetail.setBookingId(bookingId);
-		bookingDetail.setBookingDate(auditDetails.getCreatedTime());		
+		bookingDetail.setBookingDate(bookingDetail.getBookingDate());		
 		
 		// Set booking it to dependent tables with foreign key relation
 		bookingDetail.getBookingSlotDetails().stream().forEach(slot -> {
@@ -88,8 +85,7 @@ public class EnrichmentService {
 		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
 	}
 
-	public void enrichUpdateBookingRequest(CommunityHallBookingRequest communityHallsBookingRequest,
-			Object mdmsdata) {
+	public void enrichUpdateBookingRequest(CommunityHallBookingRequest communityHallsBookingRequest) {
 		AuditDetails auditDetails = CommunityHallBookingUtil.getAuditDetails(communityHallsBookingRequest.getRequestInfo().getUserInfo().getUuid(), false);
 		communityHallsBookingRequest.getHallsBookingApplication().setAuditDetails(auditDetails);
 	}

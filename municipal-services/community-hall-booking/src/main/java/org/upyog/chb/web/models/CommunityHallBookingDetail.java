@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
 import org.upyog.chb.web.models.workflow.ProcessInstance;
@@ -37,14 +42,23 @@ public class CommunityHallBookingDetail {
 	
 	private Long bookingDate;
 	
+	@NotBlank(message = "CHB_BLANK_APPLICANT_NAME")
+	@Size(max = 100, message = "COMMON_MAX_VALIDATION")
 	private String applicantName;
 	
+	@NotBlank
+	@Size(min = 10, max = 10)
 	private String applicantMobileNo;
 	
+	@NotBlank
+	@Size(min = 10, max = 10)
 	private String applicantAlternateMobileNo;
 	
+	@NotBlank
+	@Email
 	private String applicantEmailId;
 	
+	@NotBlank
 	@JsonProperty("tenantId")
 	private String tenantId = null;
 	
@@ -56,23 +70,33 @@ public class CommunityHallBookingDetail {
 	@JsonProperty("bookingStatus")
 	private String bookingStatus;
 
+	@Valid
+	@NotNull
 	@JsonProperty("residentType")
 	private ResidentType residentType = null;
 
+	@Valid
+	@NotNull
 	@JsonProperty("specialCategory")
 	private SpecialCategory specialCategory = null;
 
+	@Valid
+	@NotNull
 	@JsonProperty("purpose")
 	private BookingPurpose purpose = null;
 	
+	@NotBlank
 	private String purposeDescription;
 
+	@NotBlank
 	@JsonProperty("eventName")
 	private String eventName = null;
 
+	@NotBlank
 	@JsonProperty("eventOrganisedBy")
 	private String eventOrganisedBy = null;
 	
+	@NotNull
 	@JsonProperty("bookingSlotDetails")
 	private List<BookingSlotDetail> bookingSlotDetails;
 	
@@ -80,12 +104,13 @@ public class CommunityHallBookingDetail {
 	@Valid
 	private List<DocumentDetails> uploadedDocumentDetails = null;
 	
+	@Valid
 	@JsonProperty("bankDetails")
 	private BankDetails bankDetails = null;
 	
 	private AuditDetails auditDetails;
 	
-	 @JsonProperty("workflow")
+	@JsonProperty("workflow")
  	private ProcessInstance workflow = null;
 	
 

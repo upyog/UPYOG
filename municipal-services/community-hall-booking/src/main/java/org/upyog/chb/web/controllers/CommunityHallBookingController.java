@@ -88,7 +88,7 @@ public class CommunityHallBookingController {
 	@RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
 	public ResponseEntity<CommunityHallBookingResponse> v1SearchCommunityHallBooking(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
             @Valid @ModelAttribute CommunityHallBookingSearchCriteria criteria) {
-		List<CommunityHallBookingDetail> applications = bookingService.getBookingDetails(criteria);
+		List<CommunityHallBookingDetail> applications = bookingService.getBookingDetails(criteria, requestInfoWrapper.getRequestInfo());
 		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_LIST,
 				StatusEnum.SUCCESSFUL);
 		CommunityHallBookingResponse response = CommunityHallBookingResponse.builder().hallsBookingApplication(applications)

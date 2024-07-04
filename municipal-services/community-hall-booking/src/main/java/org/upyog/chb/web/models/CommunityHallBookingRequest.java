@@ -1,5 +1,7 @@
 package org.upyog.chb.web.models;
 
+import javax.validation.Valid;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
@@ -26,9 +28,11 @@ import lombok.Setter;
 @Builder
 public class CommunityHallBookingRequest {
 	
+	@Valid
 	@JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
-	
+
+	@Valid
 	@JsonProperty("hallsBookingApplication")
 	private CommunityHallBookingDetail hallsBookingApplication; 
 	

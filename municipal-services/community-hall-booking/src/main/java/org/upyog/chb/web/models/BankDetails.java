@@ -1,5 +1,8 @@
 package org.upyog.chb.web.models;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,18 +32,24 @@ public class BankDetails   {
 	    
 	    private String bookingId;
 	
+	    @NotBlank
         @JsonProperty("accountNumber")
+	    @Size(min = 8, max = 18)
         private String accountNumber = null;
 
+	    @NotBlank
         @JsonProperty("ifscCode")
         private String ifscCode = null;
 
+	    @NotBlank
         @JsonProperty("bankName")
         private String bankName = null;
 
+	    @NotBlank
         @JsonProperty("bankBranchName")
         private String bankBranchName = null;
 
+	    @NotBlank
         @JsonProperty("accountHolderName")
         private String accountHolderName = null;
         

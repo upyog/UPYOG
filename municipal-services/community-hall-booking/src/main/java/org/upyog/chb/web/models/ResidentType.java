@@ -27,6 +27,7 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class ResidentType   {
+		@NotBlank
         @JsonProperty("type")
         private String type = null;
 

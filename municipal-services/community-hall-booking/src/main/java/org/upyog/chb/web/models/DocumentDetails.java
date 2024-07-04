@@ -1,5 +1,7 @@
 package org.upyog.chb.web.models;
 
+import javax.validation.constraints.NotBlank;
+
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,9 +31,11 @@ public class DocumentDetails {
 	
 	private String bookingId;
 
+	@NotBlank
 	@JsonProperty("documentType")
 	private String documentType = null;
 	
+	@NotBlank
 	@JsonProperty("fileStoreId")
 	private String fileStoreId = null;
 

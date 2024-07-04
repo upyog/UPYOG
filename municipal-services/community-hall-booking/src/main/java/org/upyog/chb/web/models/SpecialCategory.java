@@ -27,6 +27,7 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class SpecialCategory   {
+		@NotBlank
         @JsonProperty("category")
         private String category = null;
 
