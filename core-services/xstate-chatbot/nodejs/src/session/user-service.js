@@ -48,6 +48,7 @@ class UserService {
   }
 
   async loginUser(mobileNumber, tenantId) {
+    console.log("Into Login User mobileNumber "+ mobileNumber+ "tenant id "+tenantId );
     let data = new URLSearchParams();
     data.append('grant_type', 'password');
     data.append('scope', 'read');
@@ -56,7 +57,7 @@ class UserService {
 
     data.append('tenantId', tenantId);
     data.append('username', mobileNumber);
-    
+    console.log("Data befor "+data);
     let headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Authorization': config.userService.userLoginAuthorizationHeader
@@ -68,6 +69,7 @@ class UserService {
       headers: headers,
       body: data
     }
+    console.log("Data Value "+JSON.stringify(data));
     console.log("User Login URL"+url)
     console.log("User Login Data"+ JSON.stringify(options))
     let response = await fetch(url, options);
