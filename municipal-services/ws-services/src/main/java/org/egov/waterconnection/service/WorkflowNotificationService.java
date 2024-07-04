@@ -95,6 +95,10 @@ public class WorkflowNotificationService {
         	log.info("In process of consumer to generate notifications");
             String applicationStatus = request.getWaterConnection().getApplicationStatus();
             List<String> configuredChannelNames=new ArrayList<String>();
+            
+            log.info("configuredChannelNames for request Type " + request.getWaterConnection().getApplicationType() + " is :: "  + WATER_SERVICE_BUSINESS_ID+" action :  : " +request.getWaterConnection().getProcessInstance().getAction());
+            
+            
 			if(request.getWaterConnection().getApplicationType().equalsIgnoreCase(WCConstants.WATER_RECONNECTION) || request.getWaterConnection().getApplicationType().equalsIgnoreCase(WCConstants.DISCONNECT_WATER_CONNECTION))
             	configuredChannelNames=  notificationUtil.fetchChannelList(request.getRequestInfo(), request.getWaterConnection().getTenantId(), "WS.CREATE", request.getWaterConnection().getProcessInstance().getAction());
             else

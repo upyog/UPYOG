@@ -55,6 +55,7 @@ public class BulkDemandAndBillGenService {
 		Map<String, Object> masterMap = mDataService.loadMasterData(request.getRequestInfo(),
 				request.getCalculationCriteria().get(0).getTenantId());
 		List<Calculation> calculations = wsCalculationService.getCalculations(request, masterMap);
+		
 		BulkBillGenerator bulkBillGenerator = generateDemandInBulk(request.getRequestInfo(), calculations, masterMap,
 				true, request.getMigrationCount().getLimit());
 		bulkBillGenerator.setMigrationCount(request.getMigrationCount());
@@ -144,10 +145,24 @@ public class BulkDemandAndBillGenService {
 			@SuppressWarnings("unchecked")
 			Map<String, Object> financialYearMaster = (Map<String, Object>) masterMap
 					.get(SWCalculationConstant.BILLING_PERIOD);
+	        List<Map<String, Object>> billingPeriodMasterList = (List<Map<String, Object>>) masterMap.get("Billing_Period_Master");
 
-			Long fromDate = (Long) financialYearMaster.get(SWCalculationConstant.STARTING_DATE_APPLICABLES);
-			Long toDate = (Long) financialYearMaster.get(SWCalculationConstant.ENDING_DATE_APPLICABLES);
-			Long expiryDate = (Long) financialYearMaster.get(SWCalculationConstant.Demand_Expiry_Date_String);
+//			Long fromDate = (Long)billingPeriodMasterList.get("taxperiodto");
+//					//financialYearMaster.get(SWCalculationConstant.STARTING_DATE_APPLICABLES);
+//		Long toDate = (Long)billingPeriodMasterList.get("taxperiodto");
+//				//financialYearMaster.get(SWCalculationConstant.ENDING_DATE_APPLICABLES);
+//			
+	        Long fromDate =null;     Long toDate=null;
+	        if (!billingPeriodMasterList.isEmpty()) {
+                Map<String, Object> firstBillingPeriod = billingPeriodMasterList.get(0); // Assuming there's at least one element
+                 fromDate = (Long) firstBillingPeriod.get("taxPeriodFrom");
+                 toDate = (Long) firstBillingPeriod.get("taxPeriodTo");
+                log.info("taxPeriodFrom: " + fromDate);
+                log.info("taxPeriodTo: " + toDate);
+            } else {
+            	  log.info("Billing_Period_Master list is empty");
+            }
+	        Long expiryDate = (Long) financialYearMaster.get(SWCalculationConstant.Demand_Expiry_Date_String);
 			BigDecimal minimumPayableAmount = isForConnectionNO ? configs.getMinimumPayableAmount()
 					: calculation.getTotalAmount();
 			String businessService = isForConnectionNO ? configs.getBusinessService()

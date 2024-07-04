@@ -34,7 +34,7 @@ public class BillScheduler {
 	private long billingcycleEnddate;
 
 	private BillStatus status;
-
+	private String isBatch;
 	private AuditDetails auditDetails;
 
 	@NotNull

@@ -43,9 +43,13 @@ public class PlumberInfo   {
 	 * The relationship of gaurdian.
 	 */
 	public enum RelationshipEnum {
-		FATHER("FATHER"),
-
-		HUSBAND("HUSBAND");
+		Father("Father"),
+		
+		Husband("Husband"),
+	
+		Mother("Mother"),
+	
+		Other("Other");
 
 		private String value;
 

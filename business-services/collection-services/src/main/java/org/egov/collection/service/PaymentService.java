@@ -91,14 +91,10 @@ public class PaymentService {
 		if (null != paymentSearchCriteria.getBusinessService() && null != paymentSearchCriteria.getConsumerCodes()) {
 			String businessservice = paymentSearchCriteria.getBusinessService();
 			if ((paymentSearchCriteria.getBusinessService().equals("WS")
-					|| paymentSearchCriteria.getBusinessService().equals("SW"))
-					&& payments.get(0).getAddress() == null) {
-				List<String> usageCategory = paymentRepository
-						.fetchUsageCategoryByApplicationnos(paymentSearchCriteria.getReceiptNumbers(), businessservice);
-				List<String> address = paymentRepository
-						.fetchAddressByApplicationnos(paymentSearchCriteria.getReceiptNumbers(), businessservice);
-				List<String> propertyIds = paymentRepository.fetchPropertyid(paymentSearchCriteria.getReceiptNumbers(),
-						businessservice);
+					|| paymentSearchCriteria.getBusinessService().equals("SW"))) {
+			 	  List<String> usageCategory = paymentRepository.fetchUsageCategoryByApplicationnos(paymentSearchCriteria.getConsumerCodes(), businessservice);
+		          List<String> address = paymentRepository.fetchAddressByApplicationnos(paymentSearchCriteria.getConsumerCodes(),businessservice);
+		          List<String> propertyIds = paymentRepository.fetchPropertyid(paymentSearchCriteria.getConsumerCodes(), businessservice);
 				// setPropertyData(receiptnumber,payments,businessservice);
 				if (usageCategory != null && !usageCategory.isEmpty())
 					payments.get(0).setUsageCategory(usageCategory.get(0));
@@ -116,12 +112,14 @@ public class PaymentService {
 			}
 			String receipts[] = receiptnumber.split("/");
 
-			String businessservice = receipts[0];
-			if (businessservice.equals("WS_FEE") || businessservice.equals("SW_FEE")) {
-				String receiptss[] = receipts[0].split("_");
+		
+			String businessservice[]= receipts[0].split("_");
+			if (businessservice[0].equals("WS") || businessservice[0].equals("SW")) {
+				
 
-				setPropertyData(receiptnumber, payments, receiptss[0]);
+				setPropertyData(receiptnumber, payments, businessservice[0]);
 			}
+			
 			return payments;
 
 		} else {
@@ -175,7 +173,9 @@ public class PaymentService {
 	private void setPropertyData(String receiptnumber, List<Payment> payments, String businessservice) {
 		List<String> consumercode = paymentRepository.fetchConsumerCodeByReceiptNumber(receiptnumber);
 		String connectionno = consumercode.get(0);
-		List<String> status = paymentRepository.fetchPropertyDetail(connectionno, businessservice);
+		List<String> status=null;
+		if(!paymentRepository.fetchPropertyDetail(connectionno, businessservice).isEmpty()) {
+				status = paymentRepository.fetchPropertyDetail(connectionno, businessservice);
 		HashMap<String, String> additionalDetail = new HashMap<>();
 		if (!StringUtils.isEmpty(status.get(0)))
 			additionalDetail.put("oldConnectionno", status.get(0));
@@ -183,10 +183,13 @@ public class PaymentService {
 			additionalDetail.put("landArea", status.get(1));
 		if (!StringUtils.isEmpty(status.get(2)))
 			additionalDetail.put("usageCategory", status.get(2));
-		payments.get(0).setPropertyId(status.get(3));
+		if (!StringUtils.isEmpty(status.get(3)))
+		   payments.get(0).setPropertyId(status.get(3));
+		if (!StringUtils.isEmpty(status.get(4)))
 		payments.get(0).setAddress(status.get(4));
+		if (!StringUtils.isEmpty(status.get(2)))
 		payments.get(0).setUsageCategory(status.get(2));
-		payments.get(0).setPropertyDetail(additionalDetail);
+		payments.get(0).setPropertyDetail(additionalDetail);}
 	}
 
 	/**

@@ -22,8 +22,8 @@ public class BillGenerationValidator {
 	@Autowired
 	private BillGeneratorDao billGeneratorDao;
 
-	public void validateBillingCycleDates(BillGenerationRequest billGenerationReq, RequestInfo requestInfo) {
-
+	public boolean validateBillingCycleDates(BillGenerationRequest billGenerationReq, RequestInfo requestInfo) {
+		 boolean checkBillingStatus = false;
 		Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(requestInfo,
 				billGenerationReq.getBillScheduler().getTenantId());
 
@@ -36,21 +36,23 @@ public class BillGenerationValidator {
 
 		billGenerationReq.getBillScheduler().setBillingcycleStartdate(taxPeriodFrom);
 		billGenerationReq.getBillScheduler().setBillingcycleEnddate(taxPeriodTo);
-		validateExistingScheduledBillStatus(billGenerationReq);
+		checkBillingStatus = validateExistingScheduledBillStatus(billGenerationReq);
+		return checkBillingStatus;
 	}
 
-	private void validateExistingScheduledBillStatus(BillGenerationRequest billGenerationReq) {
-
+	private boolean validateExistingScheduledBillStatus(BillGenerationRequest billGenerationReq) {
+		 boolean checkBillingStatus = false;
 		BillScheduler billScheduler = billGenerationReq.getBillScheduler();
 		List<String> status = billGeneratorDao.fetchExistingBillSchedularStatusForLocality(billScheduler.getLocality(),
 				billScheduler.getBillingcycleStartdate(), billScheduler.getBillingcycleEnddate(),
 				billScheduler.getTenantId());
 
-		if (status.contains("INITIATED") || status.contains("INPROGRESS") || status.contains("COMPLETED")) {
-
+		if (status.contains("INITIATED") || status.contains("INPROGRESS")) {
+			checkBillingStatus = true;
 			throw new CustomException(SWCalculationConstant.SW_DUPLICATE_BILL_SCHEDULER,
 					SWCalculationConstant.SW_DUPLICATE_BILL_SCHEDULER_MSG + billScheduler.getLocality());
 		}
+		return checkBillingStatus;
 	}
 
 }
