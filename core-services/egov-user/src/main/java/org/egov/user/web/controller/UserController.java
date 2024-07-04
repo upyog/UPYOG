@@ -19,7 +19,6 @@ import org.egov.user.domain.service.SsoService;
 import org.egov.user.domain.service.TokenService;
 import org.egov.user.domain.service.UserService;
 import org.egov.user.web.contract.CreateUserRequest;
-import org.egov.user.web.contract.HpSsoValidateTokenResponse;
 import org.egov.user.web.contract.UserDetailResponse;
 import org.egov.user.web.contract.UserRequest;
 import org.egov.user.web.contract.UserSearchRequest;
@@ -31,6 +30,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -218,9 +219,11 @@ public class UserController {
         }
         return true;
     }
-    
-    @PostMapping("/_landingPage")
+
+	@PostMapping("/_landingPage")
+	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
     private ResponseEntity<?> landingPage(@RequestParam(value = "token") String token){
+    	log.info("## landing page token : "+token);
     	ResponseEntity<?> response = ssoService.getHpSsoValidateTokenResponse(token);
     	return response;
     }
