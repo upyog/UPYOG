@@ -91,8 +91,7 @@ public class PaymentService {
 		if (null != paymentSearchCriteria.getBusinessService() && null != paymentSearchCriteria.getConsumerCodes()) {
 			String businessservice = paymentSearchCriteria.getBusinessService();
 			if ((paymentSearchCriteria.getBusinessService().equals("WS")
-					|| paymentSearchCriteria.getBusinessService().equals("SW"))
-					&& payments.get(0).getAddress() == null) {
+					|| paymentSearchCriteria.getBusinessService().equals("SW"))) {
 			 	  List<String> usageCategory = paymentRepository.fetchUsageCategoryByApplicationnos(paymentSearchCriteria.getConsumerCodes(), businessservice);
 		          List<String> address = paymentRepository.fetchAddressByApplicationnos(paymentSearchCriteria.getConsumerCodes(),businessservice);
 		          List<String> propertyIds = paymentRepository.fetchPropertyid(paymentSearchCriteria.getConsumerCodes(), businessservice);
