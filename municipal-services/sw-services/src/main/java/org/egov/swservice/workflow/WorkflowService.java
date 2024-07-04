@@ -169,10 +169,10 @@ public class WorkflowService {
 
 						if (processInstances.get().getAssignes() != null) {
 							/* encrypt here */
-							processInstances.get().setAssignes((List<org.egov.common.contract.request.User>) encryptionDecryptionUtil.encryptObject(processInstances.get().getAssignes(), WNS_OWNER_ENCRYPTION_MODEL, User.class));
+							processInstances.get().setAssignes((List<org.egov.common.contract.request.User>) (processInstances.get().getAssignes()));
 
 							/* decrypt here */
-							processInstances.get().setAssignes(encryptionDecryptionUtil.decryptObject(processInstances.get().getAssignes(), WNS_OWNER_ENCRYPTION_MODEL, User.class, requestInfo));
+						//	processInstances.get().setAssignes(encryptionDecryptionUtil.decryptObject(processInstances.get().getAssignes(), WNS_OWNER_ENCRYPTION_MODEL, User.class, requestInfo));
 						}
 					}
 					processInstanceMap.put(processInstance.getBusinessId(), processInstance);
