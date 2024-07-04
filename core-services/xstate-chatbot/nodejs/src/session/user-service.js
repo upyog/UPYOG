@@ -5,7 +5,7 @@ require('url-search-params-polyfill');
 class UserService {
 
   async getUserForMobileNumber(mobileNumber, tenantId) {
-     
+    console.log("getUserForMobileNumber "+mobileNumber);
     let user = await this.loginOrCreateUser(mobileNumber, tenantId);
     user.userId = user.userInfo.uuid;
     user.mobileNumber = mobileNumber;
