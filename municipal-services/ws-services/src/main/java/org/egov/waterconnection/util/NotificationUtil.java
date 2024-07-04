@@ -317,6 +317,7 @@ public class NotificationUtil {
 		);
 
 		try {
+			log.info("MDMDS REquest :  "+mdmsCriteriaReq.getMdmsCriteria());
 			Object response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
 			masterData = JsonPath.parse(response).read("$.MdmsRes.Channel.channelList[?].channelNames[*]", masterDataFilter);
 		}catch(Exception e) {
