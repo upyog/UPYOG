@@ -42,7 +42,7 @@ const sevaMachine = Machine({
                 // let message = messages.onboarding.onboardingLocale.question;
                 context.grammer = grammer.locale.question;
                  var templateContent = {
-                  output: "3797433",
+                  output: "3797439",
                   type: "template"
                 };
                 dialog.sendMessage(context, templateContent, true);
@@ -389,8 +389,8 @@ const sevaMachine = Machine({
           (async() => {  
             await new Promise(resolve => setTimeout(resolve, 1000));
             dialog.sendMessage(context, dialog.get_message(messages.sevamenu.question, context.user.locale), true);
-             var templateContent={
-                output :"3797439",
+            var templateContent={
+                output :"3797433",
                 type :"template"
              }
              dialog.sendMessage(context, templateContent, true);
