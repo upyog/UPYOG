@@ -6,14 +6,7 @@
   "workspaces": [
     "micro-ui-internals/packages/libraries",
     "micro-ui-internals/packages/react-components",
-    "micro-ui-internals/packages/modules/common",
-    "micro-ui-internals/packages/modules/core",
-    "micro-ui-internals/packages/modules/dss",
-    "micro-ui-internals/packages/modules/asset",
-    "micro-ui-internals/packages/modules/ew",
-    "micro-ui-internals/packages/modules/ptr",
-    "micro-ui-internals/packages/modules/obps",
-    "micro-ui-internals/packages/modules/chb"
+    "micro-ui-internals/packages/modules/*"
 
 
   ],
