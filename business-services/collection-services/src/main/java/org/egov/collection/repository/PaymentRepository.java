@@ -488,32 +488,34 @@ else {
 			Boolean Isapp=false;
 			if (consumerCode.contains("WS_AP"))
 				Isapp=true;
-	if (Isapp) {
+	if (Isapp)
+	{
 	    if(businessservice.equals("WS")) {
 	    	 queryString = "select CONCAT(doorno,buildingname,city) as address from eg_ws_connection a1 "
 	 				+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 	 				+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
 	 				+ " where a1.applicationno='"+consumerCode+"'"
 	 			        + " and a2.status='ACTIVE';";
-	    }else {
-	    	queryString = "select a2.usagecategory from eg_sw_connection a1 "
+	    }else {               
+	    	queryString = "select CONCAT(doorno,',',buildingname,',',city) as address from eg_sw_connection a1 "
 					+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 					+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
 					+ " where a1.applicationno='"+consumerCode+"'"
 				        + " and a2.status='ACTIVE';";
-	    }}
+	    }
+	    }
 	else {
 		 if(businessservice.equals("WS")) {
-			 queryString = "select CONCAT(doorno,buildingname,city) as address from eg_ws_connection a1 "
+			 queryString = "select CONCAT(doorno,',',buildingname,',',city) as address from eg_ws_connection a1 "
 						+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 						+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-						+ " where a1.applicationno='"+consumerCode+"'"
+						+ " where a1.connectionno='"+consumerCode+"'"
 					        + " and a2.status='ACTIVE';";
 		    }else {
-		    	queryString = "select a2.usagecategory from eg_sw_connection a1 "
+		    	queryString = "select   CONCAT(doorno,',',buildingname,',',city) as address from eg_sw_connection a1 "
 						+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 						+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-						+ " where a1.applicationno='"+consumerCode+"'"
+						+ " where a1.connectionno='"+consumerCode+"'"
 					        + " and a2.status='ACTIVE';";
 		    }
 		
@@ -597,7 +599,7 @@ else {
 	}
 
 
-	 //        //onetime fee
+	//RECE
 	
 	public List<String> fetchUsageCategoryByApplicationnos(Set<String> consumerCodes,String businesssrvice) {
 		List<String> res = new ArrayList<>();

@@ -113,12 +113,14 @@ public class PaymentService {
 			}
 			String receipts[] = receiptnumber.split("/");
 
-			String businessservice = receipts[0];
-			if (businessservice.equals("WS_FEE") || businessservice.equals("SW_FEE")) {
-				String receiptss[] = receipts[0].split("_");
+		
+			String businessservice[]= receipts[0].split("_");
+			if (businessservice[0].equals("WS") || businessservice[0].equals("SW")) {
+				
 
-				setPropertyData(receiptnumber, payments, receiptss[0]);
+				setPropertyData(receiptnumber, payments, businessservice[0]);
 			}
+			
 			return payments;
 
 		} else {
