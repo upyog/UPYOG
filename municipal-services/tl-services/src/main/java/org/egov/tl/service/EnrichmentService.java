@@ -1,5 +1,7 @@
 package org.egov.tl.service;
 
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.repository.IdGenRepository;
@@ -83,6 +85,11 @@ public class EnrichmentService {
                             accessory.setId(UUID.randomUUID().toString());
                             accessory.setActive(true);
                         });
+                    // set loggedin user uuid as account id if not passed in input
+                    if(StringUtils.isEmpty(tradeLicense.getAccountId())
+                    		&& StringUtils.isNotEmpty(uuid)) {
+                    	tradeLicense.setAccountId(uuid);
+                    }
                     break;
             }
             tradeLicense.getTradeLicenseDetail().getAddress().setTenantId(tradeLicense.getTenantId());
@@ -188,6 +195,10 @@ public class EnrichmentService {
             case businessService_BPA:
                 applicationNumbers = getIdList(requestInfo, tenantId, config.getApplicationNumberIdgenNameBPA(), config.getApplicationNumberIdgenFormatBPA(), request.getLicenses().size());
                 break;
+                
+//            case businessService_NewTL:
+//            	applicationNumbers = getIdList(requestInfo, tenantId, config.getApplicationNumberIdgenNameTL(), config.getApplicationNumberIdgenFormatTL(), request.getLicenses().size());
+//                break;
         }
         ListIterator<String> itr = applicationNumbers.listIterator();
 
@@ -368,7 +379,7 @@ public class EnrichmentService {
                 nameOfBusinessService=businessService_TL;
                 tradeLicense.setBusinessService(nameOfBusinessService);
             }
-            if ((nameOfBusinessService.equals(businessService_BPA) && (tradeLicense.getStatus().equalsIgnoreCase(STATUS_INITIATED))) || workflowService.isStateUpdatable(tradeLicense.getStatus(), businessService)) {
+            if ((nameOfBusinessService.equals(businessService_BPA) && (tradeLicense.getStatus().equalsIgnoreCase(STATUS_INITIATED))) || BooleanUtils.isTrue(workflowService.isStateUpdatable(tradeLicense.getStatus(), businessService))) {
                 tradeLicense.getTradeLicenseDetail().setAuditDetails(auditDetails);
                 if (!CollectionUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAccessories())) {
                     tradeLicense.getTradeLicenseDetail().getAccessories().forEach(accessory -> {

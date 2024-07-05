@@ -7,7 +7,7 @@ serviceMaps:
     fromTopic: save-hrms-employee
     isTransaction: true
     queryMaps:
-    - query: INSERT INTO eg_hrms_employee(tenantid, id, uuid, code, phone, name, dateOfAppointment, employeestatus, employeetype, active, createdby, createddate, lastmodifiedby, lastModifiedDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_hrms_employee(tenantid, id, uuid, code, dateOfAppointment, employeestatus, employeetype, active, createdby, createddate, lastmodifiedby, lastModifiedDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
       basePath: Employees.*
       jsonMaps:
@@ -20,10 +20,6 @@ serviceMaps:
       - jsonPath: $.Employees.*.uuid
 
       - jsonPath: $.Employees.*.code
-
-      - jsonPath: $.Employees.*.user.mobileNumber
-
-      - jsonPath: $.Employees.*.user.name
 
       - jsonPath: $.Employees.*.dateOfAppointment
 
@@ -49,7 +45,9 @@ serviceMaps:
       jsonMaps:
 
 
-      - jsonPath: $.Employees[*][?({id} in @.assignments[*].id)].tenantId
+     ## - jsonPath: $.Employees[*][?({id} in @.assignments[*].id)].tenantId
+
+      - jsonPath: $.Employees.*.assignments.*.tenantid
 
       - jsonPath: $.Employees.*.assignments.*.id
 
