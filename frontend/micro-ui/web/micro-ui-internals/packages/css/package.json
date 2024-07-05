@@ -1,6 +1,6 @@
 {
-  "name": "@upyog-niua/upyog-css",
-  "version": "1.0.10",
+  "name": "@nudmcdgnpm/upyog-css",
+  "version": "1.2.0",
   "license": "MIT",
   "main": "dist/index.css",
   "engines": {

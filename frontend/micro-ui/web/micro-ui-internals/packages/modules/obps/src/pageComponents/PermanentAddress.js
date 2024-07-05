@@ -1,4 +1,4 @@
-import { CardLabel, CheckBox, CitizenInfoLabel, FormStep, Loader, TextInput, TextArea, OpenLinkContainer, BackButton } from "@upyog/digit-ui-react-components";
+import { CardLabel, CheckBox, CitizenInfoLabel, FormStep, Loader, TextInput, TextArea, OpenLinkContainer, BackButton } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
 import Timeline from "../components/Timeline";
 

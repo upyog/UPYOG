@@ -1,6 +1,6 @@
 import React from "react";
-import { DatePicker } from "@upyog/digit-ui-react-components";
-import { RadioButtons } from "@upyog/digit-ui-react-components";
+import { DatePicker } from "@nudmcdgnpm/digit-ui-react-components";
+import { RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";
 
 
 export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTrips, applicationCreatedTime = 0, receivedPaymentType, action, module }) => ({
