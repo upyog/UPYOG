@@ -141,7 +141,6 @@ public class MeterServicesImpl implements MeterService {
 			criteria.setFrom(reading.getLastReadingDate());
 			criteria.setTo(reading.getCurrentReadingDate());
 			criteria.setMeterStatus(reading.getMeterStatus());
-			criteria.getWaterConnection().setConnectionType(WSCalculationConstant.meteredConnectionType);
 			criteriaList.add(criteria);
 		});
 		CalculationReq calculationRequest = CalculationReq.builder().requestInfo(requestInfo)
