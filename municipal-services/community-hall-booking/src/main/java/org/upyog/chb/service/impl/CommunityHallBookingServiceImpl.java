@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,7 +59,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			throw new CustomException(CommunityHallBookingConstants.INVALID_TENANT, "Please provide valid tenant id for booking creation");
 		}
 		
-		Object mdmsData = null;//mdmsUtil.mDMSCall(communityHallsBookingRequest.getRequestInfo(), tenantId);
+		Object mdmsData = mdmsUtil.mDMSCall(communityHallsBookingRequest.getRequestInfo(), tenantId);
 		
 		//1. Validate request master data to confirm it has only valid data in records
 		hallBookingValidator.validateCreate(communityHallsBookingRequest, mdmsData);
@@ -66,7 +67,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		enrichmentService.enrichCreateBookingRequest(communityHallsBookingRequest, communityHallsBookingRequest);
 		
 		/**
-		 * Workflow will come into picture once hall location is changes or
+		 * Workflow will come into picture once hall location changes or
 		 * booking is cancelled
 		 * otherwise after payment booking will be auto approved
 		 * 
@@ -95,7 +96,8 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 	@Override
 	public List<CommunityHallBookingDetail> getBookingDetails(
-			CommunityHallBookingSearchCriteria bookingSearchCriteria) {
+			CommunityHallBookingSearchCriteria bookingSearchCriteria, RequestInfo info) {
+		hallBookingValidator.validateSearch(info, bookingSearchCriteria);
 		List<CommunityHallBookingDetail> bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
 		return bookingDetails;
 	}
@@ -109,10 +111,8 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		if(bookingDetails.size() == 0) {
 			throw new CustomException("INVALID_BOOKING_CODE", "Booking no not valid. Failed to update booking status for : " + bookingNo);
 		}
-		Object mdmsdata = null;
-		hallBookingValidator.validateUpdate(communityHallsBookingRequest, mdmsdata);
-		enrichmentService.enrichUpdateBookingRequest(communityHallsBookingRequest, mdmsdata);
-	//	workflowService.updateWorkflow(communityHallsBookingRequest, WorkflowStatus.UPDATE);
+
+		enrichmentService.enrichUpdateBookingRequest(communityHallsBookingRequest);
 		bookingRepository.updateBooking(communityHallsBookingRequest);
 		return communityHallsBookingRequest.getHallsBookingApplication();
 	}
@@ -128,6 +128,9 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		}
 		CommunityHallBookingDetail bookingDetail = bookingDetails.get(0);
 		bookingDetail.setBookingStatus(BookingStatusEnum.BOOKED.toString());
+		bookingDetail.getBookingSlotDetails().stream().forEach(slot -> {
+			slot.setStatus(BookingStatusEnum.BOOKED.toString());
+		});
 		CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder()
 				.hallsBookingApplication(bookingDetail).build();
 		updateBooking(bookingRequest);
@@ -197,29 +200,4 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		return availabiltityDetail;
 	}
 	
-	
-	public static void main(String[] args) {
-        // Define the two LocalDates
-        LocalDate startDate = LocalDate.of(2024, 6, 1);  // Start date
-        LocalDate endDate = LocalDate.of(2024, 6, 1);   // End date
-
-        // List to store the dates
-        List<LocalDate> datesInRange = new ArrayList<>();
-
-        // Add the start date to the list
-        LocalDate currentDate = startDate;
-
-        // Loop through all dates from start to end, inclusive
-        while (!currentDate.isAfter(endDate)) {
-            datesInRange.add(currentDate);
-            currentDate = currentDate.plusDays(1);  // Move to the next day
-        }
-
-        // Print all dates in the range
-        System.out.println("Dates between " + startDate + " and " + endDate + ":");
-        for (LocalDate date : datesInRange) {
-            System.out.println(date);
-        }
-    }
-
 }

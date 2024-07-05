@@ -13,23 +13,17 @@ create table eg_chb_booking_detail_init(
 );
 
 
--- TODO : Remove drop table statement before merging PR
--- TODO : Need to add index for colums used in Query
--- DROP TABLE  eg_chb_booking_detail cascade;
 create table eg_chb_booking_detail(
   booking_id character varying(64) NOT NULL,
   booking_no character varying(64),
   payment_date bigint,
   application_date bigint not null,
   tenant_id character varying(64) NOT NULL,
-  community_hall_code integer NOT NULL, 
+  community_hall_code character varying(64) NOT NULL, 
   booking_status character varying(15) NOT NULL,
- -- resident_type character varying(64) NOT NULL,
   special_category character varying(60) NOT NULL,
   purpose character varying(60) NOT NULL,
-  purpose_description character varying(100)  NOT NULL,
-  -- event_name character varying(64),
-  -- event_organized_by character varying(64),
+  purpose_description character varying(100) NOT NULL,
   createdBy character varying(64) NOT NULL,
   createdTime bigint  NOT NULL,
   lastModifiedBy character varying(64),
@@ -37,7 +31,28 @@ create table eg_chb_booking_detail(
   constraint eg_chb_booking_detail_pk primary key (booking_id)
 );
 
--- DROP TABLE   eg_chb_slot_detail;
+CREATE INDEX IF NOT EXISTS idx_eg_chb_booking_detail_booking_no ON eg_chb_booking_detail(booking_no);
+CREATE INDEX IF NOT EXISTS idx_eg_chb_booking_detail_community_hall_code ON eg_chb_booking_detail(community_hall_code);
+CREATE INDEX IF NOT EXISTS idx_eg_chb_booking_detail_createdBy ON eg_chb_booking_detail(createdBy);
+CREATE INDEX IF NOT EXISTS idx_eg_chb_booking_detail_tenant_id ON eg_chb_booking_detail(tenant_id);
+
+
+create table eg_chb_booking_detail_audit(
+  booking_id character varying(64) NOT NULL,
+  booking_no character varying(64),
+  payment_date bigint,
+  application_date bigint not null,
+  tenant_id character varying(64) NOT NULL,
+  community_hall_code character varying(64) NOT NULL, 
+  booking_status character varying(15) NOT NULL,
+  special_category character varying(60) NOT NULL,
+  purpose character varying(60) NOT NULL,
+  purpose_description character varying(100) NOT NULL,
+  createdBy character varying(64) NOT NULL,
+  createdTime bigint  NOT NULL,
+  lastModifiedBy character varying(64),
+  lastModifiedTime bigint
+);
 
 create table eg_chb_slot_detail(
    slot_id character varying(64) NOT NULL,
@@ -58,8 +73,26 @@ create table eg_chb_slot_detail(
      ON DELETE NO ACTION
 );
 
--- DROP TABLE  IF EXISTS eg_chb_bank_detail;
--- TODO check cascade type before committing
+create table eg_chb_slot_detai_auditl(
+   slot_id character varying(64) NOT NULL,
+   booking_id character varying(64) NOT NULL,
+   hall_code character varying(64) NOT NULL,
+   booking_date character varying(20) NOT NULL,
+   booking_from_time character varying(20) NOT NULL,
+   booking_to_time character varying(20) NOT NULL,
+   status character varying(15) NOT NULL,
+   createdBy character varying(64) NOT NULL,
+   createdTime bigint  NOT NULL,
+   lastModifiedBy character varying(64),
+   lastModifiedTime bigint
+);
+
+CREATE INDEX IF NOT EXISTS idx_eg_chb_slot_detail_status ON eg_chb_slot_detail(status);
+CREATE INDEX IF NOT EXISTS idx_eg_chb_slot_detail_booking_date ON eg_chb_slot_detail(booking_date);
+CREATE INDEX IF NOT EXISTS idx_eg_chb_slot_detail_hall_code ON eg_chb_slot_detail(hall_code);
+CREATE INDEX IF NOT EXISTS idx_eg_chb_slot_detail_booking_id ON eg_chb_slot_detail(booking_id);
+
+
 create table eg_chb_applicant_detail(
    applicant_detail_id character varying(64) NOT NULL,
    booking_id character varying(64) NOT NULL,
@@ -85,11 +118,14 @@ create table eg_chb_applicant_detail(
      ON DELETE NO ACTION
 );
 
+CREATE INDEX IF NOT EXISTS idx_eg_chb_applicant_detail_booking_id ON eg_chb_applicant_detail(booking_id);
+CREATE INDEX IF NOT EXISTS idx_eg_chb_applicant_detail_applicant_mobile_no ON eg_chb_applicant_detail(applicant_mobile_no);
+
 create table  eg_chb_document_detail(
     document_detail_id character varying(64)  NOT NULL,
-    booking_id character varying(64),
+    booking_id character varying(64)  NOT NULL,
     document_type character varying(64),
-    filestore_id character varying(64),
+    filestore_id character varying(64)  NOT NULL,
     createdby character varying(64),
     lastmodifiedby character varying(64),
     createdtime bigint,
@@ -101,18 +137,19 @@ create table  eg_chb_document_detail(
     ON DELETE NO ACTION
 );
 
+CREATE INDEX IF NOT EXISTS idx_eg_chb_document_detail_booking_id ON eg_chb_document_detail(booking_id);
 
 create table eg_chb_address_detail (
-    address_id character varying(64),
-    applicant_detail_id character varying(64),  -- Foreign Key
+    address_id character varying(64)  NOT NULL,
+    applicant_detail_id character varying(64)  NOT NULL,  -- Foreign Key
     door_no character varying(100),
     house_no character varying(100),
     address_line_1 character varying(150),
     landmark character varying(150),
-    city character varying(100),
-    pincode VARCHAR(12),
+    city character varying(100)  NOT NULL,
+    pincode VARCHAR(12)   NOT NULL,
     street_name character varying(150),
-    locality_code character varying(20),
+    locality_code character varying(20)  NOT NULL,
     constraint eg_chb_address_detail_id_pk PRIMARY KEY (address_id),
     constraint eg_chb_address_applicant_detail_id_fk 
     FOREIGN KEY (applicant_detail_id) REFERENCES eg_chb_applicant_detail (applicant_detail_id)
@@ -120,5 +157,11 @@ create table eg_chb_address_detail (
     ON DELETE NO ACTION
 );
 
+CREATE INDEX IF NOT EXISTS idx_eg_chb_address_detail_applicant_detail_id ON eg_chb_address_detail(applicant_detail_id);
+
 
 CREATE SEQUENCE IF NOT EXISTS seq_chb_booking_id;
+
+
+
+

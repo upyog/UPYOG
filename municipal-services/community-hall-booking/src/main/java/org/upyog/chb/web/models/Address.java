@@ -1,19 +1,15 @@
 package org.upyog.chb.web.models;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import org.upyog.chb.web.models.Boundary;
+import javax.validation.constraints.NotBlank;
+
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Builder;
 
 /**
  * Representation of a address. Indiavidual APIs may choose to extend from this using allOf if more details needed to be added in their case. 
@@ -28,54 +24,29 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class Address   {
-        @JsonProperty("tenantId")
-        private String tenantId = null;
+	
+		private String addressId;
+		
+		private String applicantDetailId;
 
-        @JsonProperty("doorNo")
-        private String doorNo = null;
+        private String doorNo;
 
-        @JsonProperty("latitude")
-        private Double latitude = null;
+        private String houseNo;
 
-        @JsonProperty("longitude")
-        private Double longitude = null;
+        private String addressLine1;
 
-        @JsonProperty("addressId")
-        private String addressId = null;
+        private String landmark;
 
-        @JsonProperty("addressNumber")
-        private String addressNumber = null;
+        @NotBlank
+        private String city;
 
-        @JsonProperty("type")
-        private String type = null;
+        @NotBlank
+        private String pincode;
 
-        @JsonProperty("addressLine1")
-        private String addressLine1 = null;
+        private String streetName;
 
-        @JsonProperty("addressLine2")
-        private String addressLine2 = null;
-
-        @JsonProperty("landmark")
-        private String landmark = null;
-
-        @JsonProperty("city")
-        private String city = null;
-
-        @JsonProperty("pincode")
-        private String pincode = null;
-
-        @JsonProperty("detail")
-        private String detail = null;
-
-        @JsonProperty("buildingName")
-        private String buildingName = null;
-
-        @JsonProperty("street")
-        private String street = null;
-
-        @JsonProperty("locality")
-        private Boundary locality = null;
-
-
+        @NotBlank
+        private String localityCode;
+        
 }
 

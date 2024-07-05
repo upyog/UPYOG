@@ -28,7 +28,8 @@ public class MDMSValidator {
 
 		Map<String, List<String>> masterData = getAttributeValues(mdmsData);
 		String[] masterArray = { CommunityHallBookingConstants.CHB_PURPOSE, CommunityHallBookingConstants.CHB_SPECIAL_CATEGORY,
-				CommunityHallBookingConstants.CHB_RESIDENT_TYPE};
+				CommunityHallBookingConstants.CHB_RESIDENT_TYPE, CommunityHallBookingConstants.CHB_COMMNUITY_HALLS,
+				CommunityHallBookingConstants.CHB_HALL_CODES, CommunityHallBookingConstants.CHB_DOCUMENTS};
 		
 		log.info("Validating master data from MDMS for : " + communityHallBookingRequest.getHallsBookingApplication().getBookingNo());
 
@@ -74,6 +75,8 @@ public class MDMSValidator {
 	 * @param codes
 	 */
 	private void validateIfMasterPresent(String[] masterNames, Map<String, List<String>> codes) {
+		log.info("Master names in validation : " + masterNames);
+		log.info("Mdms data map : " + codes);
 		Map<String, String> errorMap = new HashMap<>();
 		for (String masterName : masterNames) {
 			if (CollectionUtils.isEmpty(codes.get(masterName))) {

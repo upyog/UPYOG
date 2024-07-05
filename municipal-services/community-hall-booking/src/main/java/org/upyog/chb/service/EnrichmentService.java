@@ -1,10 +1,7 @@
 package org.upyog.chb.service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -13,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.enums.BookingStatusEnum;
+import org.upyog.chb.enums.SlotStatusEnum;
 import org.upyog.chb.repository.IdGenRepository;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.AuditDetails;
@@ -35,33 +33,45 @@ public class EnrichmentService {
 	public void enrichCreateBookingRequest(CommunityHallBookingRequest bookingRequest, Object mdmsData) {
 		String bookingId = CommunityHallBookingUtil.getRandonUUID();
 		log.info("Enriching booking request for booking id :" + bookingId);
+		
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
 		RequestInfo requestInfo = bookingRequest.getRequestInfo();
 		AuditDetails auditDetails = CommunityHallBookingUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+		
 		bookingDetail.setAuditDetails(auditDetails);
 		bookingDetail.setBookingId(bookingId);
-		bookingDetail.setBookingDate(auditDetails.getCreatedTime());		
+		bookingDetail.setApplicationDate(auditDetails.getCreatedTime());
+		bookingDetail.setBookingStatus(BookingStatusEnum.valueOf(bookingDetail.getBookingStatus()).toString());
 		
-		// Set booking it to dependent tables with foreign key relation
+		//Updating id and status for slot details
 		bookingDetail.getBookingSlotDetails().stream().forEach(slot -> {
-			slot.setBookingId(bookingDetail.getBookingId());
+			slot.setBookingId(bookingId);
 			slot.setSlotId(CommunityHallBookingUtil.getRandonUUID());
+			//Check Slot staus before setting TODO: booking_created
+			slot.setStatus(SlotStatusEnum.valueOf(slot.getStatus()).toString());
 			slot.setAuditDetails(auditDetails);
 		});
-
+		
+		//Updating id booking in documents
 		bookingDetail.getUploadedDocumentDetails().stream().forEach(document -> {
-			document.setBookingId(bookingDetail.getBookingId());
-			document.setDocumentId(CommunityHallBookingUtil.getRandonUUID());
+			document.setBookingId(bookingId);
+			document.setDocumentDetailId(CommunityHallBookingUtil.getRandonUUID());
 			document.setAuditDetails(auditDetails);
 		});
 
-		bookingDetail.getBankDetails().setBookingId(bookingDetail.getBookingId());
-		bookingDetail.getBankDetails().setBankDetailId(CommunityHallBookingUtil.getRandonUUID());
-		bookingDetail.getBankDetails().setAuditDetails(auditDetails);
-		bookingDetail.setBookingStatus(BookingStatusEnum.valueOf(bookingDetail.getBookingStatus()).toString());
+
+		bookingDetail.getApplicantDetail().setBookingId(bookingId);
+		bookingDetail.getApplicantDetail().setApplicantDetailId(CommunityHallBookingUtil.getRandonUUID());
+		bookingDetail.getApplicantDetail().setAuditDetails(auditDetails);
+	
+		
+		bookingDetail.getAddress().setAddressId(CommunityHallBookingUtil.getRandonUUID());
+		bookingDetail.getAddress().setApplicantDetailId(bookingDetail.getApplicantDetail().getApplicantDetailId());
 
 		List<String> customIds = getIdList(requestInfo, bookingDetail.getTenantId(),
 				config.getCommunityHallBookingIdKey(), config.getCommunityHallBookingIdFromat(), 1);
+		
+		log.info("Enriched booking request for booking no :" + customIds.get(0));
 
 		bookingDetail.setBookingNo(customIds.get(0));
 
@@ -88,9 +98,9 @@ public class EnrichmentService {
 		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
 	}
 
-	public void enrichUpdateBookingRequest(CommunityHallBookingRequest communityHallsBookingRequest,
-			Object mdmsdata) {
+	public void enrichUpdateBookingRequest(CommunityHallBookingRequest communityHallsBookingRequest) {
 		AuditDetails auditDetails = CommunityHallBookingUtil.getAuditDetails(communityHallsBookingRequest.getRequestInfo().getUserInfo().getUuid(), false);
+		communityHallsBookingRequest.getHallsBookingApplication().setPaymentDate(auditDetails.getCreatedTime());
 		communityHallsBookingRequest.getHallsBookingApplication().setAuditDetails(auditDetails);
 	}
 

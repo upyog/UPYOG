@@ -1,9 +1,10 @@
 package org.upyog.chb.util;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 import java.util.UUID;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -48,11 +49,13 @@ public class CommunityHallBookingUtil {
 
 	public static LocalDate parseStringToLocalDate(String date) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-		// Locale specifies human language for translating, and cultural norms for
-		// lowercase/uppercase and abbreviations and such. Example: Locale.US or
-		// Locale.CANADA_FRENCH
-		// formatter = formatter.withLocale( ;
 		LocalDate localDate = LocalDate.parse(date, formatter);
+		return localDate;
+	}
+	
+	public static LocalDate getCurrentDate() {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+		LocalDate localDate = LocalDate.now();
 		return localDate;
 	}
 
@@ -61,6 +64,14 @@ public class CommunityHallBookingUtil {
 		// Format the LocalDate
 		String formattedDate = date.format(formatter);
 		return formattedDate;
+	}
+	
+	public static AuditDetails getAuditDetails(ResultSet rs) throws SQLException {
+		AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("createdBy"))
+				.createdTime(rs.getLong("createdTime"))
+				.lastModifiedBy(rs.getString("lastModifiedBy"))
+				.lastModifiedTime(rs.getLong("lastModifiedTime")).build();
+		return auditdetails;
 	}
 
 }

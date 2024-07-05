@@ -48,7 +48,7 @@ public class CHBNotificationService {
 		String tenantId = request.getHallsBookingApplication().getTenantId();
 		String localizationMessages = util.getLocalizationMessages(tenantId, request.getRequestInfo());
 		List<String> toUsers = new ArrayList<>();
-		String mobileNumber = request.getHallsBookingApplication().getApplicantMobileNo();
+		String mobileNumber = request.getHallsBookingApplication().getApplicantDetail().getApplicantMobileNo();
 
 		Map<String, String> mapOfPhoneNoAndUUIDs = fetchUserUUIDs(mobileNumber, request.getRequestInfo(), tenantId);
 

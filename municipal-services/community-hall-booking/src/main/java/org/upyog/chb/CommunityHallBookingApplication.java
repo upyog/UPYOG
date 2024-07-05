@@ -10,10 +10,12 @@ import org.springframework.context.annotation.Import;
 @Import({ TracerConfiguration.class })
 @SpringBootApplication
 @ComponentScan(basePackages = { "org.upyog.chb", "org.upyog.chb.web.controllers" , "org.upyog.chb.config"})
+//@EnableFeignClients
 public class CommunityHallBookingApplication {
 
 
     public static void main(String[] args) throws Exception {
+    	System.setProperty("spring.devtools.restart.enabled", "false");
         SpringApplication.run(CommunityHallBookingApplication.class, args);
     }
     
