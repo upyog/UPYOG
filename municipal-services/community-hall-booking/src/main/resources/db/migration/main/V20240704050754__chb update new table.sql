@@ -37,6 +37,23 @@ CREATE INDEX IF NOT EXISTS idx_eg_chb_booking_detail_createdBy ON eg_chb_booking
 CREATE INDEX IF NOT EXISTS idx_eg_chb_booking_detail_tenant_id ON eg_chb_booking_detail(tenant_id);
 
 
+create table eg_chb_booking_detail_audit(
+  booking_id character varying(64) NOT NULL,
+  booking_no character varying(64),
+  payment_date bigint,
+  application_date bigint not null,
+  tenant_id character varying(64) NOT NULL,
+  community_hall_code character varying(64) NOT NULL, 
+  booking_status character varying(15) NOT NULL,
+  special_category character varying(60) NOT NULL,
+  purpose character varying(60) NOT NULL,
+  purpose_description character varying(100) NOT NULL,
+  createdBy character varying(64) NOT NULL,
+  createdTime bigint  NOT NULL,
+  lastModifiedBy character varying(64),
+  lastModifiedTime bigint
+);
+
 create table eg_chb_slot_detail(
    slot_id character varying(64) NOT NULL,
    booking_id character varying(64) NOT NULL,
@@ -54,6 +71,20 @@ create table eg_chb_slot_detail(
    FOREIGN KEY (booking_id) REFERENCES eg_chb_booking_detail (booking_id)
      ON UPDATE NO ACTION
      ON DELETE NO ACTION
+);
+
+create table eg_chb_slot_detai_auditl(
+   slot_id character varying(64) NOT NULL,
+   booking_id character varying(64) NOT NULL,
+   hall_code character varying(64) NOT NULL,
+   booking_date character varying(20) NOT NULL,
+   booking_from_time character varying(20) NOT NULL,
+   booking_to_time character varying(20) NOT NULL,
+   status character varying(15) NOT NULL,
+   createdBy character varying(64) NOT NULL,
+   createdTime bigint  NOT NULL,
+   lastModifiedBy character varying(64),
+   lastModifiedTime bigint
 );
 
 CREATE INDEX IF NOT EXISTS idx_eg_chb_slot_detail_status ON eg_chb_slot_detail(status);
