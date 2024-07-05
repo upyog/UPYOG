@@ -1,5 +1,5 @@
 serviceMaps:
- serviceName: community-hall-booking-service
+ serviceName: chb-service
  mappings:
  - version: 1.0
    description: Persists incomplete community hall booking details in community_hall_booking_init  table
@@ -38,42 +38,28 @@ serviceMaps:
    isTransaction: true
    queryMaps:
 
-       - query: INSERT INTO public.community_hall_booking_details(booking_id, booking_no,booking_date, applicant_name, applicant_email_id,applicant_mobile_no, applicant_alternate_mobile_no, tenant_id, community_hall_id,community_hall_name, booking_status, resident_type, special_category, purpose, purpose_description,event_name, event_organized_by, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+       - query: INSERT INTO public.eg_chb_booking_detail(booking_id, booking_no, payment_date, application_date, tenant_id, community_hall_code, booking_status, special_category, purpose, purpose_description, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
          basePath: hallsBookingApplication
          jsonMaps:
           - jsonPath: $.hallsBookingApplication.bookingId
           
           - jsonPath: $.hallsBookingApplication.bookingNo
-          
-          - jsonPath: $.hallsBookingApplication.bookingDate
-          
-          - jsonPath: $.hallsBookingApplication.applicantName
 
-          - jsonPath: $.hallsBookingApplication.applicantEmailId
+          - jsonPath: $.hallsBookingApplication.paymentDate
           
-          - jsonPath: $.hallsBookingApplication.applicantMobileNo
-
-          - jsonPath: $.hallsBookingApplication.applicantAlternateMobileNo
+          - jsonPath: $.hallsBookingApplication.applicationDate
 
           - jsonPath: $.hallsBookingApplication.tenantId
           
-          - jsonPath: $.hallsBookingApplication.communityHallId
-
-          - jsonPath: $.hallsBookingApplication.communityHallName
+          - jsonPath: $.hallsBookingApplication.communityHallCode
           
           - jsonPath: $.hallsBookingApplication.bookingStatus
-          
-          - jsonPath: $.hallsBookingApplication.residentType.type 
-          
+        
           - jsonPath: $.hallsBookingApplication.specialCategory.category
           
           - jsonPath: $.hallsBookingApplication.purpose.purpose
           
           - jsonPath: $.hallsBookingApplication.purposeDescription
-          
-          - jsonPath: $.hallsBookingApplication.eventName
-          
-          - jsonPath: $.hallsBookingApplication.eventOrganisedBy
 
           - jsonPath: $.hallsBookingApplication.auditDetails.createdBy
           
@@ -83,7 +69,8 @@ serviceMaps:
           
           - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
           
-       - query: INSERT INTO public.booking_slot_details(slot_id, booking_id, hall_code, hall_name, booking_date, booking_from_time, booking_to_time, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+       - query: INSERT INTO public.eg_chb_slot_detail(slot_id, booking_id, hall_code, booking_date, booking_from_time, booking_to_time, status, 
+               createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
          basePath: hallsBookingApplication.bookingSlotDetails.*
          jsonMaps:
           - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.slotId
@@ -91,9 +78,7 @@ serviceMaps:
           - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.bookingId
 
           - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.hallCode
-
-          - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.hallName
-
+          
           - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.bookingDate
 
           - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.bookingFromTime
@@ -110,16 +95,17 @@ serviceMaps:
 
           - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
           
-       - query: INSERT INTO public.community_hall_booking_document_details(document_detail_id, booking_id, document_type, filestore_id, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-         basePath: hallsBookingApplication.uploadedDocumentDetails.*
+       - query: INSERT INTO public.eg_chb_document_detail(document_detail_id, booking_id, document_type, filestore_id, createdby,
+               lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+         basePath: hallsBookingApplication.documents.*
          jsonMaps:
-          - jsonPath: $.hallsBookingApplication.uploadedDocumentDetails.*.documentId
+          - jsonPath: $.hallsBookingApplication.documents.*.documentDetailId
 
-          - jsonPath: $.hallsBookingApplication.uploadedDocumentDetails.*.bookingId
+          - jsonPath: $.hallsBookingApplication.documents.*.bookingId
 
-          - jsonPath: $.hallsBookingApplication.uploadedDocumentDetails.*.documentType
+          - jsonPath: $.hallsBookingApplication.documents.*.documentType
 
-          - jsonPath: $.hallsBookingApplication.uploadedDocumentDetails.*.fileStoreId
+          - jsonPath: $.hallsBookingApplication.documents.*.fileStoreId
 
           - jsonPath: $.hallsBookingApplication.auditDetails.createdBy
 
@@ -129,43 +115,83 @@ serviceMaps:
 
           - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
           
-       - query: INSERT INTO public.bank_account_details (bank_detail_id, booking_id, account_no, ifsc_code, bank_name, bank_branch_name, account_holder_name, refund_status, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); 
-         basePath: hallsBookingApplication.bankDetails
+       - query: INSERT INTO public.eg_chb_applicant_detail(applicant_detail_id, booking_id, applicant_name, applicant_email_id, applicant_mobile_no, applicant_alternate_mobile_no, account_no, ifsc_code, bank_name, bank_branch_name, account_holder_name, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+         basePath: hallsBookingApplication.applicantDetail
          jsonMaps:
-          - jsonPath: $.hallsBookingApplication.bankDetails.bankDetailId
+          - jsonPath: $.hallsBookingApplication.applicantDetail.applicantDetailId
 
-          - jsonPath: $.hallsBookingApplication.bankDetails.bookingId
+          - jsonPath: $.hallsBookingApplication.applicantDetail.bookingId
+
+          - jsonPath: $.hallsBookingApplication.applicantDetail.applicantName
+
+          - jsonPath: $.hallsBookingApplication.applicantDetail.applicantEmailId
           
-          - jsonPath: $.hallsBookingApplication.bankDetails.accountNumber
+          - jsonPath: $.hallsBookingApplication.applicantDetail.applicantMobileNo
+
+          - jsonPath: $.hallsBookingApplication.applicantDetail.applicantAlternateMobileNo
           
-          - jsonPath: $.hallsBookingApplication.bankDetails.ifscCode
-
-          - jsonPath: $.hallsBookingApplication.bankDetails.bankName
+          - jsonPath: $.hallsBookingApplication.applicantDetail.accountNumber
           
-          - jsonPath: $.hallsBookingApplication.bankDetails.bankBranchName
+          - jsonPath: $.hallsBookingApplication.applicantDetail.ifscCode
 
-          - jsonPath: $.hallsBookingApplication.bankDetails.accountHolderName
+          - jsonPath: $.hallsBookingApplication.applicantDetail.bankName
           
-          - jsonPath: $.hallsBookingApplication.bankDetails.refundStatus
+          - jsonPath: $.hallsBookingApplication.applicantDetail.bankBranchName
 
-          - jsonPath: $.hallsBookingApplication.auditDetails.createdBy
+          - jsonPath: $.hallsBookingApplication.applicantDetail.accountHolderName
 
-          - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedBy
+          - jsonPath: $.hallsBookingApplication.applicantDetail.auditDetails.createdBy
 
-          - jsonPath: $.hallsBookingApplication.auditDetails.createdTime
+          - jsonPath: $.hallsBookingApplication.applicantDetail.auditDetails.lastModifiedBy
 
-          - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
+          - jsonPath: $.hallsBookingApplication.applicantDetail.auditDetails.createdTime
 
+          - jsonPath: $.hallsBookingApplication.applicantDetail.auditDetails.lastModifiedTime
+       
+       - query: INSERT INTO public.eg_chb_address_detail(address_id, applicant_detail_id, door_no, house_no, address_line_1, landmark, city, pincode, street_name, locality_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+         basePath: hallsBookingApplication.address
+
+         jsonMaps:
+          - jsonPath: $.hallsBookingApplication.address.addressId
+
+          - jsonPath: $.hallsBookingApplication.address.applicantDetailId
+
+          - jsonPath: $.hallsBookingApplication.address.doorNo
+
+          - jsonPath: $.hallsBookingApplication.address.houseNo
+
+          - jsonPath: $.hallsBookingApplication.address.addressLine1
+
+          - jsonPath: $.hallsBookingApplication.address.landmark
+
+          - jsonPath: $.hallsBookingApplication.address.city
+
+          - jsonPath: $.hallsBookingApplication.address.pincode
+
+          - jsonPath: $.hallsBookingApplication.address.streetName
+
+          - jsonPath: $.hallsBookingApplication.address.localityCode
+          
+          
  - version: 1.0
-   description: update community hall booking details
+   description: Update community hall booking details after application is changed
    fromTopic: update-community-hall-booking
    isTransaction: true
    queryMaps:
-
-       - query: UPDATE community_hall_booking_details SET lastmodifiedby = ?, lastmodifiedtime = ? WHERE booking_id = ?;
+       - query: UPDATE public.eg_chb_booking_detail SET booking_status= ?, payment_date = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE booking_id = ?;
          basePath: hallsBookingApplication
          jsonMaps:
            - jsonPath: $.hallsBookingApplication.bookingStatus
+           - jsonPath: $.hallsBookingApplication.paymentDate
            - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedBy
            - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
-        
+           - jsonPath: $.hallsBookingApplication.bookingId
+
+       - query: UPDATE public.eg_chb_slot_detail SET status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE slot_id=?
+         basePath: hallsBookingApplication.bookingSlotDetails.*
+         jsonMaps:
+           - jsonPath: $.hallsBookingApplication.bookingStatus
+           - jsonPath: $.hallsBookingApplication.paymentDate
+           - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedBy
+           - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
+           - jsonPath: $.hallsBookingApplication.bookingId

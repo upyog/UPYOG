@@ -18,11 +18,11 @@ public class CommunityHallSlotAvailabilityRowMapper implements ResultSetExtracto
 		List<CommunityHallSlotAvailabiltityDetail> availabiltityDetails = new ArrayList<>();
 		while (rs.next()) {
 			/**
-			 * chbd.tenant_id, chbd.community_hall_name, bsd.hall_code, bsd.status,bsd.booking_date
+			 * chbd.tenant_id, chbd.community_hall_code, bsd.hall_code, bsd.status,bsd.booking_date
 			 */
 			CommunityHallSlotAvailabiltityDetail availabiltityDetail = CommunityHallSlotAvailabiltityDetail.builder()
 					.bookingDate(rs.getString("booking_date"))
-					.communityHallName(rs.getString("community_hall_name"))
+					.communityHallName(rs.getString("community_hall_code"))
 					.hallCode(rs.getString("hall_code"))
 					.slotStaus(rs.getString("status"))
 					.tenantId(rs.getString("tenant_id"))

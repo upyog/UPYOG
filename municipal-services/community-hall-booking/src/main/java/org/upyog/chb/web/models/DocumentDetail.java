@@ -25,21 +25,18 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DocumentDetails {
-	@JsonProperty("documentId")
-	private String documentId = null;
+public class DocumentDetail {
+	
+	private String documentDetailId;
 	
 	private String bookingId;
 
 	@NotBlank
-	@JsonProperty("documentType")
-	private String documentType = null;
+	private String documentType;
 	
 	@NotBlank
-	@JsonProperty("fileStoreId")
-	private String fileStoreId = null;
+	private String fileStoreId;
 
-	@JsonProperty("auditDetails")
-	private AuditDetails auditDetails = null;
+	private AuditDetails auditDetails;
 
 }

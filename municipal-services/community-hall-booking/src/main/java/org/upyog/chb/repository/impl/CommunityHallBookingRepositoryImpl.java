@@ -16,20 +16,20 @@ import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.kafka.producer.Producer;
 import org.upyog.chb.repository.CommunityHallBookingRepository;
 import org.upyog.chb.repository.querybuilder.CommunityHallBookingQueryBuilder;
-import org.upyog.chb.repository.rowmapper.BankDetailsRowMapper;
+import org.upyog.chb.repository.rowmapper.BookingSlotDetailRowmapper;
 import org.upyog.chb.repository.rowmapper.CommunityHallBookingRowmapper;
 import org.upyog.chb.repository.rowmapper.CommunityHallSlotAvailabilityRowMapper;
 import org.upyog.chb.repository.rowmapper.DocumentDetailsRowMapper;
 import org.upyog.chb.util.CommunityHallBookingUtil;
-import org.upyog.chb.web.models.BankDetails;
-import org.upyog.chb.web.models.CommunityHallBokingInitDetails;
+import org.upyog.chb.web.models.BookingSlotDetail;
+import org.upyog.chb.web.models.CommunityHallBokingInitDetail;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingRequestInit;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabiltityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
-import org.upyog.chb.web.models.DocumentDetails;
+import org.upyog.chb.web.models.DocumentDetail;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,7 +46,8 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 	@Autowired
 	private CommunityHallBookingRowmapper bookingRowmapper;
 	@Autowired
-	private BankDetailsRowMapper bankDetailsRowMapper;
+	private BookingSlotDetailRowmapper slotDetailRowmapper;
+	
 	@Autowired
 	private DocumentDetailsRowMapper detailsRowMapper;
 	@Autowired
@@ -63,16 +64,16 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 
 	@Override
 	public void saveCommunityHallBookingInit(CommunityHallBookingRequest bookingRequest) {
-		log.info("Saving community hall booking init data");
+		log.info("Saving community hall booking init data : " + bookingRequest.getHallsBookingApplication().getBookingId());
 		RequestInfo requestInfo = bookingRequest.getRequestInfo();
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
 		CommunityHallBookingRequestInit testPersist = CommunityHallBookingRequestInit.builder()
 				.bookingId(bookingDetail.getBookingId()).tenantId(bookingDetail.getTenantId())
-				.communityHallId(bookingDetail.getCommunityHallId()).bookingStatus(bookingDetail.getBookingStatus())
+				.bookingStatus(bookingDetail.getBookingStatus())
 				.bookingDetails(bookingRequest.getHallsBookingApplication()).createdBy(requestInfo.getUserInfo().getUuid())
 				.createdDate(CommunityHallBookingUtil.getCurrentDateTime()).lastModifiedBy(requestInfo.getUserInfo().getUuid())
 				.lastModifiedDate(CommunityHallBookingUtil.getCurrentDateTime()).build();
-		CommunityHallBokingInitDetails bookingPersiter = CommunityHallBokingInitDetails.builder()
+		CommunityHallBokingInitDetail bookingPersiter = CommunityHallBokingInitDetail.builder()
 				.hallsBookingApplication(testPersist).build();
 		producer.push(bookingConfiguration.getCommunityHallBookingInitSaveTopic(), bookingPersiter);
 
@@ -84,7 +85,7 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = queryBuilder.getCommunityHallBookingSearchQuery(bookingSearchCriteria, preparedStmtList);
 
-		log.info("getBookingDetails : Final query: " + query);
+		log.info("getBookingDetails : Final query: " + query + "preparedStmtList :  " + preparedStmtList);
 		List<CommunityHallBookingDetail> bookingDetails = jdbcTemplate.query(query, preparedStmtList.toArray(),
 				bookingRowmapper);
 		
@@ -102,13 +103,13 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 		List<String> bookingIds = new ArrayList<String>();
 		bookingIds.addAll(bookingMap.keySet());
 		
-	//	List<String> bookingIdPreparestStatementList = new ArrayList<>();
-		List<BankDetails> bankDetails = jdbcTemplate.query(queryBuilder.getBankDetailsQuery(bookingIds), bookingIds.toArray(), bankDetailsRowMapper);
-		bankDetails.stream().forEach(bankDetail -> {
-			bookingMap.get(bankDetail.getBookingId()).setBankDetails(bankDetail);
+		List<BookingSlotDetail> slotDetails = jdbcTemplate.
+				query(queryBuilder.getSlotDetailsQuery(bookingIds), bookingIds.toArray(), slotDetailRowmapper);
+		slotDetails.stream().forEach(slotDetail -> {
+			bookingMap.get(slotDetail.getBookingId()).addBookingSlots(slotDetail);
 		});
 		
-		List<DocumentDetails> documentDetails = jdbcTemplate.query(queryBuilder.getDocumentDetailsQuery(bookingIds), bookingIds.toArray(),
+		List<DocumentDetail> documentDetails = jdbcTemplate.query(queryBuilder.getDocumentDetailsQuery(bookingIds), bookingIds.toArray(),
 				detailsRowMapper);
 		
 		documentDetails.stream().forEach(documentDetail -> {

@@ -131,7 +131,6 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		bookingDetail.getBookingSlotDetails().stream().forEach(slot -> {
 			slot.setStatus(BookingStatusEnum.BOOKED.toString());
 		});
-		bookingDetail.setBookingDate(CommunityHallBookingUtil.getCurrentDateTime());
 		CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder()
 				.hallsBookingApplication(bookingDetail).build();
 		updateBooking(bookingRequest);

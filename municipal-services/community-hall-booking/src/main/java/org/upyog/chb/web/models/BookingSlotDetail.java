@@ -30,8 +30,6 @@ public class BookingSlotDetail {
 	@JsonProperty("hallCode")
 	private String hallCode;
 	
-	private String hallName;
-	
 	@NotBlank
 	private String bookingDate = null;
 	

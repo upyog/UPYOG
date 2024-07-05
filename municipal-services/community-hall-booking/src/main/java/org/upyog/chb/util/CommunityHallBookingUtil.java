@@ -1,5 +1,7 @@
 package org.upyog.chb.util;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -50,12 +52,26 @@ public class CommunityHallBookingUtil {
 		LocalDate localDate = LocalDate.parse(date, formatter);
 		return localDate;
 	}
+	
+	public static LocalDate getCurrentDate() {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+		LocalDate localDate = LocalDate.now();
+		return localDate;
+	}
 
 	public static String parseLocalDateToString(LocalDate date) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		// Format the LocalDate
 		String formattedDate = date.format(formatter);
 		return formattedDate;
+	}
+	
+	public static AuditDetails getAuditDetails(ResultSet rs) throws SQLException {
+		AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("createdBy"))
+				.createdTime(rs.getLong("createdTime"))
+				.lastModifiedBy(rs.getString("lastModifiedBy"))
+				.lastModifiedTime(rs.getLong("lastModifiedTime")).build();
+		return auditdetails;
 	}
 
 }

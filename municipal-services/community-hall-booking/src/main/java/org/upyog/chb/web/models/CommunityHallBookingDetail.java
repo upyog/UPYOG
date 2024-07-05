@@ -1,14 +1,12 @@
 package org.upyog.chb.web.models;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
 import org.upyog.chb.web.models.workflow.ProcessInstance;
@@ -36,85 +34,54 @@ import lombok.Setter;
 public class CommunityHallBookingDetail {
 	
 	@JsonProperty("bookingId")
-	private String bookingId = null;
+	private String bookingId;
 	
 	private String bookingNo;
 	
-	private Long bookingDate;
+	private Long paymentDate;
 	
-	@NotBlank(message = "CHB_BLANK_APPLICANT_NAME")
-	@Size(max = 100, message = "COMMON_MAX_VALIDATION")
-	private String applicantName;
+	private Long applicationDate;
 	
 	@NotBlank
-	@Size(min = 10, max = 10)
-	private String applicantMobileNo;
+	private String tenantId;
 	
 	@NotBlank
-	@Size(min = 10, max = 10)
-	private String applicantAlternateMobileNo;
-	
-	@NotBlank
-	@Email
-	private String applicantEmailId;
-	
-	@NotBlank
-	@JsonProperty("tenantId")
-	private String tenantId = null;
-	
-	@JsonProperty("communityHallId")
-	private Integer communityHallId = null;
-	
-	private String communityHallName;
+	private String communityHallCode;
 	
 	@JsonProperty("bookingStatus")
 	private String bookingStatus;
 
 	@Valid
 	@NotNull
-	@JsonProperty("residentType")
-	private ResidentType residentType = null;
+	private SpecialCategory specialCategory;
 
 	@Valid
 	@NotNull
-	@JsonProperty("specialCategory")
-	private SpecialCategory specialCategory = null;
-
-	@Valid
-	@NotNull
-	@JsonProperty("purpose")
-	private BookingPurpose purpose = null;
+	private BookingPurpose purpose;
 	
 	@NotBlank
 	private String purposeDescription;
 
-	@NotBlank
-	@JsonProperty("eventName")
-	private String eventName = null;
-
-	@NotBlank
-	@JsonProperty("eventOrganisedBy")
-	private String eventOrganisedBy = null;
-	
 	@NotNull
-	@JsonProperty("bookingSlotDetails")
+	@Valid
 	private List<BookingSlotDetail> bookingSlotDetails;
 	
 	@JsonProperty("documents")
 	@Valid
-	private List<DocumentDetails> uploadedDocumentDetails = null;
+	private List<DocumentDetail> uploadedDocumentDetails;
 	
 	@Valid
-	@JsonProperty("bankDetails")
-	private BankDetails bankDetails = null;
+	private ApplicantDetail applicantDetail;
+	
+	@Valid 
+	private Address address;
 	
 	private AuditDetails auditDetails;
 	
-	@JsonProperty("workflow")
- 	private ProcessInstance workflow = null;
+ 	private ProcessInstance workflow;
 	
 
-	public CommunityHallBookingDetail addUploadedDocumentDetailsItem(DocumentDetails uploadedDocumentDetailsItem) {
+	public CommunityHallBookingDetail addUploadedDocumentDetailsItem(DocumentDetail uploadedDocumentDetailsItem) {
 		if (this.uploadedDocumentDetails == null) {
 			this.uploadedDocumentDetails = new ArrayList<>();
 		}
