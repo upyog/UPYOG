@@ -51,13 +51,7 @@ public class NotificationUtil {
 	private Producer producer;
 
 	private RestTemplate restTemplate;
-
-	@Value("${egov.mdms.host}")
-	private String mdmsHost;
-
-	@Value("${egov.mdms.search.endpoint}")
-	private String mdmsUrl;
-
+	
 	@Autowired
 	public NotificationUtil(ServiceRequestRepository serviceRequestRepository, CommunityHallBookingConfiguration config,
 			Producer producer, RestTemplate restTemplate) {
@@ -328,7 +322,7 @@ public class NotificationUtil {
 	public List<String> fetchChannelList(RequestInfo requestInfo, String tenantId, String moduleName, String action) {
 		List<String> masterData = new ArrayList<>();
 		StringBuilder uri = new StringBuilder();
-		uri.append(mdmsHost).append(mdmsUrl);
+		uri.append(config.getMdmsHost()).append(config.getMdmsPath());
 		if (StringUtils.isEmpty(tenantId))
 			return masterData;
 		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForChannelList(requestInfo, tenantId.split("\\.")[0]);
@@ -378,22 +372,22 @@ public class NotificationUtil {
 
 		case ACTION_STATUS_APPLY:
 			messageTemplate = getMessageTemplate(CommunityHallBookingConstants.NOTIFICATION_APPLY, localizationMessage);
-			message = getMessageWithNumberAndPetDetails(bookingDetail, messageTemplate);
+			message = getMessageWithNumberAndCHBDetails(bookingDetail, messageTemplate);
 			break;
 
 		case ACTION_STATUS_VERIFY:
 			messageTemplate = getMessageTemplate(CommunityHallBookingConstants.NOTIFICATION_VERIFY, localizationMessage);
-			message = getMessageWithNumberAndPetDetails(bookingDetail, messageTemplate);
+			message = getMessageWithNumberAndCHBDetails(bookingDetail, messageTemplate);
 			break;
 
 		case ACTION_STATUS_APPROVE:
 			messageTemplate = getMessageTemplate(CommunityHallBookingConstants.NOTIFICATION_APPROVE, localizationMessage);
-			message = getMessageWithNumberAndPetDetails(bookingDetail, messageTemplate);
+			message = getMessageWithNumberAndCHBDetails(bookingDetail, messageTemplate);
 			break;
 
 		case ACTION_STATUS_REJECT:
 			messageTemplate = getMessageTemplate(CommunityHallBookingConstants.NOTIFICATION_REJECT, localizationMessage);
-			message = getMessageWithNumberAndPetDetails(bookingDetail, messageTemplate);
+			message = getMessageWithNumberAndCHBDetails(bookingDetail, messageTemplate);
 			break;
 
 		}
@@ -401,9 +395,9 @@ public class NotificationUtil {
 		return message;
 	}
 
-	private String getMessageWithNumberAndPetDetails(CommunityHallBookingDetail bookingDetail, String message) {
-		message = message.replace("{1}", bookingDetail.getApplicantName());
-		message = message.replace("{2}", bookingDetail.getCommunityHallName());
+	private String getMessageWithNumberAndCHBDetails(CommunityHallBookingDetail bookingDetail, String message) {
+		message = message.replace("{1}", bookingDetail.getApplicantDetail().getApplicantName());
+		message = message.replace("{2}", bookingDetail.getCommunityHallCode());
 		message = message.replace("{3}", bookingDetail.getBookingNo());
 		return message;
 	}

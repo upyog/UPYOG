@@ -44,8 +44,11 @@ public class DemandService {
 		String consumerCode = bookingRequest.getHallsBookingApplication().getBookingNo();
 		
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
-		User owner = User.builder().name(bookingDetail.getApplicantName()).emailId(bookingDetail.getApplicantEmailId())
-				.mobileNumber(bookingDetail.getApplicantMobileNo()).tenantId(bookingDetail.getTenantId()).build();
+		User user =bookingRequest.getRequestInfo().getUserInfo();
+		
+		User owner = User.builder().name(user.getName()).emailId(user.getEmailId())
+				.mobileNumber(user.getMobileNumber()).tenantId(bookingDetail.getTenantId()).build();
+		
 		List<DemandDetail> demandDetails = new LinkedList<>();
 		
 		demandDetails.add(DemandDetail.builder().collectionAmount(BigDecimal.ZERO).taxAmount(BigDecimal.valueOf(500.00))

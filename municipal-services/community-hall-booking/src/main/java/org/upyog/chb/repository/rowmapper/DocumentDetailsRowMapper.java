@@ -9,14 +9,14 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 import org.upyog.chb.web.models.AuditDetails;
-import org.upyog.chb.web.models.DocumentDetails;
+import org.upyog.chb.web.models.DocumentDetail;
 
 @Component
-public class DocumentDetailsRowMapper implements ResultSetExtractor<List<DocumentDetails>> {
+public class DocumentDetailsRowMapper implements ResultSetExtractor<List<DocumentDetail>> {
 
 	@Override
-	public List<DocumentDetails> extractData(ResultSet rs) throws SQLException, DataAccessException {
-		List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>();
+	public List<DocumentDetail> extractData(ResultSet rs) throws SQLException, DataAccessException {
+		List<DocumentDetail> documentDetails = new ArrayList<DocumentDetail>();
 		while (rs.next()) {
 			/**
 			 * document_detail_id, booking_id, document_type, filestore_id, createdby,
@@ -25,7 +25,7 @@ public class DocumentDetailsRowMapper implements ResultSetExtractor<List<Documen
 			AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("createdby"))
 					.createdTime(rs.getLong("createdtime")).lastModifiedBy(rs.getString("lastmodifiedby"))
 					.lastModifiedTime(rs.getLong("lastmodifiedtime")).build();
-			DocumentDetails details = DocumentDetails.builder().documentId(rs.getString("document_detail_id"))
+			DocumentDetail details = DocumentDetail.builder().documentDetailId(rs.getString("document_detail_id"))
 					.bookingId(rs.getString("booking_id")).documentType(rs.getString("document_type"))
 					.fileStoreId(rs.getString("filestore_id")).auditDetails(auditdetails).build();
 
