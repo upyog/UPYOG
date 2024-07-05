@@ -59,7 +59,7 @@ public class WorkflowService {
 		
 		processInstanceRequest.getProcessInstances().stream().forEach(instance -> {
 			
-			// update TL status
+			// update TL status and license number
 			if(StringUtils.equalsIgnoreCase(instance.getBusinessService(), HRMSConstants.TRADELICENCE_WORKFLOW_BUSINESS_SERVICE_NEWTL)
 					&& StringUtils.equalsIgnoreCase(instance.getModuleName(), HRMSConstants.TRADELICENCE_WORKFLOW_MODULE_NAME)) {
 				updateTlStatus(instance);
@@ -74,7 +74,7 @@ public class WorkflowService {
 		if(StringUtils.equalsIgnoreCase(instance.getAction(), HRMSConstants.TRADELICENCE_WORKFLOW_NEWTL_ACTION_VERIFY)) {
 			updateTlStatus(instance.getBusinessId(), HRMSConstants.TRADELICENCE_NEWTL_APPLICATION_STATUS_VERIFIED);
 		}else if(StringUtils.equalsIgnoreCase(instance.getAction(), HRMSConstants.TRADELICENCE_WORKFLOW_NEWTL_ACTION_APPROVE)) {
-			updateTlStatus(instance.getBusinessId(), HRMSConstants.TRADELICENCE_NEWTL_APPLICATION_STATUS_APPROVED);
+			updateTlApprovedStatus(instance.getBusinessId(), HRMSConstants.TRADELICENCE_NEWTL_APPLICATION_STATUS_APPROVED);
 		}
 		
 	}
@@ -86,6 +86,19 @@ public class WorkflowService {
 		inputs.put("applicationNumber", businessId);
 
 		String updateQuery = "UPDATE eg_tl_tradelicense set status =:status WHERE applicationnumber =:applicationNumber ";
+
+		namedParameterJdbcTemplate.update(updateQuery, inputs);
+
+	}
+	
+	public void updateTlApprovedStatus(String businessId, String action) {
+
+		Map<String, Object> inputs = new HashMap<>();
+		inputs.put("status", action);
+		inputs.put("applicationNumber", businessId);
+
+		String updateQuery = "UPDATE eg_tl_tradelicense set status =:status, licensenumber =:applicationNumber"
+				+ " WHERE applicationnumber =:applicationNumber ";
 
 		namedParameterJdbcTemplate.update(updateQuery, inputs);
 
