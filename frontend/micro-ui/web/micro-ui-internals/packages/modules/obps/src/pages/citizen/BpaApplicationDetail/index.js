@@ -386,6 +386,7 @@ const BpaApplicationDetail = () => {
       ...data?.applicationData,
       documents: updatedDocuments,
       additionalDetails: {
+        ...data?.applicationData?.additionalDetails,
         otpVerifiedTimestampcitizen:sessionStorage.getItem("otpVerifiedTimestampcitizen")
       }
     };
