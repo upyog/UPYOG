@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.repository.WSCalculationDao;
 import org.egov.wscalculation.validator.WSCalculationValidator;
 import org.egov.wscalculation.validator.WSCalculationWorkflowValidator;
@@ -142,7 +141,6 @@ public class MeterServicesImpl implements MeterService {
 			criteria.setFrom(reading.getLastReadingDate());
 			criteria.setTo(reading.getCurrentReadingDate());
 			criteria.setMeterStatus(reading.getMeterStatus());
-			criteria.getWaterConnection().setConnectionType(WSCalculationConstant.meteredConnectionType);
 			criteriaList.add(criteria);
 		});
 		CalculationReq calculationRequest = CalculationReq.builder().requestInfo(requestInfo)
