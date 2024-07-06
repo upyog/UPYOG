@@ -26,7 +26,7 @@ config:
       - work-dir: "business-services/billing-service/src/main/resources/db"
         image-name: "billing-service-db"
 
-  - name: "builds/upyog/business-services/billing-service"
+  - name: "builds/upyog/business-services/bmc"
     build:
       - work-dir: "business-services/bmc"
         image-name: "bmc"
