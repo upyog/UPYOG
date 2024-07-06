@@ -26,6 +26,14 @@ config:
       - work-dir: "business-services/billing-service/src/main/resources/db"
         image-name: "billing-service-db"
 
+  - name: "builds/upyog/business-services/billing-service"
+    build:
+      - work-dir: "business-services/bmc"
+        image-name: "bmc"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "business-services/bmc/src/main/resources/db"
+        image-name: "bmc-service-db"      
+
   - name: "builds/upyog/business-services/collection-services"
     build:
       - work-dir: "business-services/collection-services"
@@ -623,7 +631,16 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/birth-registration/src/main/resources/db"
         image-name: "birth-registration-db"
- 
+  
+  - name: "builds/upyog/municipal-services/bmc"
+    build:
+      - work-dir: "municipal-services/bmc"
+        image-name: "birth-registration"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/birth-registration/src/main/resources/db"
+        image-name: "bmc-work"
+
+
  # Utilities
  
   - name: "builds/upyog/utilities/egov-weekly-impact-notifier"

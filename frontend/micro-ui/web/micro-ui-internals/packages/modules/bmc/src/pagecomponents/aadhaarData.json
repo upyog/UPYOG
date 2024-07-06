@@ -1,0 +1,21 @@
+{
+    "aadhaarNumber": "111111111111",
+    "otp": "111111",
+    "aadhaarInfo": {
+        "firstName": "Bal",
+        "middleName": "krishna",
+        "lastName": "Yadav",
+        "dob": "25-05-1990",
+        "gender": "Male",
+        "father": "Ram krishna Yadav",
+        "home": "127/14",
+        "street": "Sector 2",
+        "landMark": "Gomati Nagar Extension",
+        "locality": "Lucknow",
+        "city": "Lucknow",
+        "subDistrict": "Lucknow",
+        "district": "Lucknow",
+        "state": "Uttar Pradesh",
+        "pincode": "226006"
+    }
+}

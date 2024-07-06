@@ -1,0 +1,278 @@
+{
+  "skill developement": [
+    {
+      "value": "For Women",
+      "label": "For Women"
+    },
+    {
+      "value": "For Transgender",
+      "label": "For Transgender"
+    }
+  ],
+  "skill developement1": [
+    {
+      "value": "For Divyang",
+      "label": "For Divyang"
+    }
+  ],
+  "empowerment": [
+    {
+      "value": "for Women",
+      "label": "For Women"
+    }
+  ],
+  "empowerment1": [
+    {
+      "value": "For divyang",
+      "label": "For Divyang"
+    }
+  ],
+  "pension": [
+    {
+      "value": "for Divyang",
+      "label": "For Divyang"
+    }
+  ],
+  "occ": [
+    {
+      "value": "Employed",
+      "label": "Employed"
+    },
+    {
+      "value": "Unemployed",
+      "label": "Unemployed"
+    }
+  ],
+  "employymentType": [
+    {
+      "value": "Service",
+      "label": "Service"
+    },
+    {
+      "value": "Business",
+      "label": "Business"
+    }
+  ],
+  "rationcardtype": [
+    {
+      "value": "yellow Card",
+      "label": "Yellow Card"
+    },
+    {
+      "value": "orange Card",
+      "label": "Orange Card"
+    },
+    {
+      "value": "white card",
+      "label": "white card"
+    }
+  ],
+  "bankName": [
+    {
+      "value": "HDFC",
+      "label": "HDFC"
+    },
+    {
+      "value": "ICICI",
+      "label": "ICICI"
+    },
+    {
+      "value": "SBI",
+      "label": "SBI"
+    }
+  ],
+  "bankBranch": [
+    {
+      "value": "Aminabaad",
+      "label": "Aminabaad"
+    },
+    {
+      "value": "Vadodara",
+      "label": "Vadodara"
+    },
+    {
+      "value": "Surat",
+      "label": "Surat"
+    }
+  ],
+  "pension1": [
+    {
+      "value": "Pension",
+      "label": "Pension"
+    },
+    {
+      "value": "Pension1",
+      "label": "Pension1"
+    }
+  ],
+  "machine": [
+    {
+      "value": "Sewing Machine",
+      "label": "Sewing Machine"
+    },
+    {
+      "value": "Flour Mill",
+      "label": "Flour Mill"
+    },
+    {
+      "value": "Masala Mill",
+      "label": "Masala Mill"
+    }
+  ],
+  "Course": [
+    {
+      "value": "Course 1",
+      "label": "Course 1"
+    },
+    {
+      "value": "Course 2",
+      "label": "Course 2"
+    },
+    {
+      "value": "Course 3",
+      "label": "Course 3"
+    }
+  ],
+  "Income": [
+    {
+      "value": "1 Lakhs",
+      "label": "1 Lakhs"
+    },
+    {
+      "value": "2 Lakhs",
+      "label": "2 Lakhs"
+    },
+    {
+      "value": "3 Lakhs",
+      "label": "3 Lakhs"
+    }
+  ],
+  "disablityType": [
+    {
+      "value": "Yes",
+      "label": "Yes"
+    },
+    {
+      "value": "No",
+      "label": "No"
+    }
+  ],
+  "Education": [
+    {
+      "value": "HighSchool",
+      "label": "HighSchool"
+    },
+    {
+      "value": "Intermediate",
+      "label": "Intermediate"
+    },
+    {
+      "value": "Graduation",
+      "label": "Graduation"
+    },
+    {
+      "value": "PostGraduation",
+      "label": "PostGraduation"
+    }
+  ],
+  "cityName": [
+    {
+      "value": "Navi Mumbai",
+      "label": "Navi Mumbai"
+    },
+    {
+      "value": "",
+      "label": "Vadodara"
+    }
+  ],
+  "sector": [
+    {
+      "value": "Sector 1",
+      "label": "Sector 1"
+    },
+    {
+      "value": "Sector 2",
+      "label": "Sector 2"
+    }
+  ],
+  "verification": [
+    {
+      "value": "Verified",
+      "label": "Verified"
+    },
+    {
+      "value": "Non-Verified",
+      "label": "Non-Verified"
+    }
+  ],
+  "scheme": [
+    {
+      "value": "scheme1",
+      "label": "scheme1"
+    },
+    {
+      "value": "scheme2",
+      "label": "scheme2"
+    }
+  ],
+  "randomizationType": [
+    {
+      "value": "First Round",
+      "label": "First Round"
+    },
+    {
+      "value": "Second Round",
+      "label": "Second Round"
+    },
+    {
+      "value": "Third Round",
+      "label": "Third Round"
+    }
+  ],
+  "disabled": [
+    {
+      "value": "Yes",
+      "label": "Yes"
+    },
+    {
+      "value": "No",
+      "label": "No"
+    }
+  ],
+  "religion": [
+    {
+      "value": "Hindu",
+      "label": "Hindu"
+    },
+    {
+      "value": "Muslim",
+      "label": "Muslim"
+    },
+    {
+      "value": "Christian",
+      "label": "Christian"
+    }
+  ],
+  "caste": [
+    {
+      "value": "General",
+      "label": "General"
+    },
+    {
+      "value": "OBC",
+      "label": "OBC"
+    },
+    {
+      "value": "SC",
+      "label": "SC"
+    },
+    {
+      "value": "ST",
+      "label": "ST"
+    },
+    {
+      "value": "Other",
+      "label": "Other"
+    }
+  ]
+}
