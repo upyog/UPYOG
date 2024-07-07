@@ -26,22 +26,23 @@ import { initBillsComponents, BillsModule } from "@nudmcdgnpm/digit-ui-module-bi
 
 
 
-import { PTRModule, PTRLinks, PTRComponents } from "@nudmcdgnpm-niua/upyog-ui-module-ptr";
+import { PTRModule, PTRLinks, PTRComponents } from "@nudmcdgnpm/upyog-ui-module-ptr";
 
-import { EWModule, EWLinks, EWComponents } from "@nudmcdgnpm-niua/upyog-ui-module-ew";
+import { EWModule, EWLinks, EWComponents } from "@nudmcdgnpm/upyog-ui-module-ew";
 
-import { ASSETComponents, ASSETLinks, ASSETModule } from "@nudmcdgnpm-niua/upyog-ui-module-asset";
+import { ASSETComponents, ASSETLinks, ASSETModule } from "@nudmcdgnpm/upyog-ui-module-asset";
 
 
 // import {initCustomisationComponents} from "./customisations";
 
 // import { PGRModule, PGRLinks } from "@egovernments/digit-ui-module-pgr";
 // import { Body, TopBar } from "@nudmcdgnpm/digit-ui-react-components";
-import "@nudmcdgnpm/upyog-css/example/index.css";
+// import "@nudmcdgnpm/upyog-css/example/index.css";
+import "@nudmcdgnpm/upyog-css"
 // import * as comps from "@nudmcdgnpm/digit-ui-react-components";
 
 // import { subFormRegistry } from "@nudmcdgnpm/digit-ui-libraries";
-import { CHBModule, CHBLinks, CHBComponents } from "@nudmcdgnpm-niua/upyog-ui-module-chb";
+import { CHBModule, CHBLinks, CHBComponents } from "@nudmcdgnpm/upyog-ui-module-chb";
 
 import { pgrCustomizations, pgrComponents } from "./pgr";
 

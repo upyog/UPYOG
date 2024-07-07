@@ -32,18 +32,18 @@ import {
   PTRModule,
   PTRLinks,
   PTRComponents,
-} from "@nudmcdgnpm-niua/upyog-ui-module-ptr";
+} from "@nudmcdgnpm/upyog-ui-module-ptr";
 
 import { 
   EWModule, 
   EWLinks, 
   EWComponents }
-  from "@nudmcdgnpm-niua/upyog-ui-module-ew";
+  from "@nudmcdgnpm/upyog-ui-module-ew";
 
 import {  
   ASSETModule, 
   ASSETLinks,
-  ASSETComponents } from "@nudmcdgnpm-niua/upyog-ui-module-asset";
+  ASSETComponents } from "@nudmcdgnpm/upyog-ui-module-asset";
 import { initReceiptsComponents, ReceiptsModule } from "@nudmcdgnpm/digit-ui-module-receipts";
 import { initOBPSComponents } from "@nudmcdgnpm/digit-ui-module-obps";
 import { initNOCComponents } from "@nudmcdgnpm/digit-ui-module-noc";
@@ -52,7 +52,7 @@ import { initWSComponents } from "@nudmcdgnpm/digit-ui-module-ws";
 import { initCustomisationComponents } from "./Customisations";
 import { initCommonPTComponents } from "@nudmcdgnpm/digit-ui-module-commonpt";
 import { initBillsComponents } from "@nudmcdgnpm/digit-ui-module-bills";
-import {CHBModule,CHBLinks,CHBComponents} from "@nudmcdgnpm-niua/upyog-ui-module-chb";
+import {CHBModule,CHBLinks,CHBComponents} from "@nudmcdgnpm/upyog-ui-module-chb";
 
 initLibraries();
 
