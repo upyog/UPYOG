@@ -27,7 +27,7 @@ function escapeRegex(string) {
 }
 
 const agent = new https.Agent({
-  ca: fs.readFileSync('/etc/ssl/certs/ca-certificates.crt') // Path to CA certificates bundle
+  ca: fs.readFileSync('/app/mseva.lgpunjab.gov.in') // Path to CA certificates bundle
 });
 
 const axios_instance = axios.create({
