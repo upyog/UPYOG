@@ -6,7 +6,10 @@
   "workspaces": [
     "micro-ui-internals/packages/libraries",
     "micro-ui-internals/packages/react-components",
-    "micro-ui-internals/packages/modules/*"
+    "micro-ui-internals/packages/modules/ws",
+    "micro-ui-internals/packages/modules/obps",
+    "micro-ui-internals/packages/modules/pt",
+    "micro-ui-internals/packages/modules/fsm"
   ],
   "engines": {
     "node": ">=14"
