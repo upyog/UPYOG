@@ -6,8 +6,11 @@
   "workspaces": [
     "micro-ui-internals/packages/libraries",
     "micro-ui-internals/packages/react-components",
-    "micro-ui-internals/packages/modules/*"
-
+    "micro-ui-internals/packages/modules/asset",
+    "micro-ui-internals/packages/modules/chb",
+    "micro-ui-internals/packages/modules/ew",
+    "micro-ui-internals/packages/modules/core",
+    "micro-ui-internals/packages/modules/common"
 
   ],
   "engines": {
@@ -19,21 +22,21 @@
     "@nudmcdgnpm/digit-ui-module-bills": "1.2.0",
     "@nudmcdgnpm/digit-ui-module-common": "1.2.0",
     "@nudmcdgnpm/digit-ui-module-core": "1.2.0",
-    "@nudmcdgnpm/digit-ui-module-engagement": "1.2.0",
+    "@nudmcdgnpm/digit-ui-module-engagement": "1.2.1",
     "@nudmcdgnpm/digit-ui-module-dss": "1.2.0",
     "@nudmcdgnpm/digit-ui-module-fsm": "1.2.0",
     "@nudmcdgnpm/digit-ui-module-hrms": "1.2.1",
     "@nudmcdgnpm/digit-ui-module-mcollect": "1.2.0",
-    "@nudmcdgnpm/digit-ui-module-commonpt":"1.2.0",
-    "@nudmcdgnpm/digit-ui-module-obps": "1.2.0",
-    "@nudmcdgnpm/digit-ui-module-noc": "1.2.0",
+    "@nudmcdgnpm/digit-ui-module-obps": "1.2.1",
+    "@nudmcdgnpm/digit-ui-module-noc": "1.2.1",
     "@nudmcdgnpm/digit-ui-module-pgr":"1.2.0",
-    "@nudmcdgnpm/digit-ui-module-pt": "1.2.0",
+    "@nudmcdgnpm/digit-ui-module-pt": "1.2.1",
     "@nudmcdgnpm/digit-ui-module-receipts": "1.2.0",
-    "@nudmcdgnpm/digit-ui-module-tl": "1.2.0",
-    "@nudmcdgnpm/digit-ui-module-ws": "1.2.0",
+    "@nudmcdgnpm/digit-ui-module-tl": "1.2.1",
+    "@nudmcdgnpm/digit-ui-module-ws": "1.2.1",
+    "@nudmcdgnpm/digit-ui-module-commonpt":"1.2.1",
     "@nudmcdgnpm/digit-ui-react-components": "1.2.0",
-    "@nudmcdgnpm/upyog-ui-module-ptr": "1.2.0",
+    "@nudmcdgnpm/upyog-ui-module-ptr": "1.2.1",
     "@nudmcdgnpm/upyog-ui-module-asset": "1.2.0",
     "@nudmcdgnpm/upyog-ui-module-ew":"1.2.0",
     "@nudmcdgnpm/upyog-ui-module-chb":"1.2.0",
