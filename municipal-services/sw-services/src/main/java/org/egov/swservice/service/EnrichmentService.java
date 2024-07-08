@@ -472,7 +472,7 @@ public class EnrichmentService {
 				propertyCriteria.setTenantId(criteria.getTenantId());
 			}
 			propertyCriteria.setPropertyIds(propertyIds);
-			List<Property> propertyList = sewerageServicesUtil.getPropertyDetails(serviceRequestRepository.fetchResult(sewerageServicesUtil.getPropertyURL(propertyCriteria),
+			List<Property> propertyList = sewerageServicesUtil.getPropertyDetails(serviceRequestRepository.fetchResult(sewerageServicesUtil.getPropertyURL(propertyCriteria,requestInfo),
 					RequestInfoWrapper.builder().requestInfo(requestInfo).build()));
 
 			if(!CollectionUtils.isEmpty(propertyList)){
@@ -570,7 +570,7 @@ public class EnrichmentService {
 			propertyCriteria.setPropertyIds(Collections.singleton(sewerageConnectionList.get(0).getPropertyId()));
 			propertyCriteria.setTenantId(sewerageConnectionList.get(0).getTenantId());
 
-			List<Property> propertyList = sewerageServicesUtil.getPropertyDetails(serviceRequestRepository.fetchResult(sewerageServicesUtil.getPropertyURL(propertyCriteria),
+			List<Property> propertyList = sewerageServicesUtil.getPropertyDetails(serviceRequestRepository.fetchResult(sewerageServicesUtil.getPropertyURL(propertyCriteria,requestInfo),
 					RequestInfoWrapper.builder().requestInfo(requestInfo).build()));
 			if(propertyList != null && propertyList.size()==1){
 				List<OwnerInfo> ownerInfoList = propertyList.get(0).getOwners();

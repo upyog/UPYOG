@@ -75,12 +75,19 @@ public class SewerageDaoImpl implements SewerageDao {
 	@Override
 	public List<SewerageConnection> getSewerageConnectionList(SearchCriteria criteria, RequestInfo requestInfo) {
 		List<Object> preparedStatement = new ArrayList<>();
-		String query = swQueryBuilder.getSearchQueryString(criteria, preparedStatement, requestInfo);
+//		String query = swQueryBuilder.getSearchQueryString(criteria, preparedStatement, requestInfo);
+		Boolean iscitizenSearch=iscitizenSearch(requestInfo.getUserInfo());
+		String query = swQueryBuilder.getSearchQueryString(criteria, preparedStatement, requestInfo, iscitizenSearch);
 		if (query == null)
 			return Collections.emptyList();
 		Boolean isOpenSearch = isSearchOpen(requestInfo.getUserInfo());
 		List<SewerageConnection> sewerageConnectionList = new ArrayList<>();
-		if(isOpenSearch)
+		 if(iscitizenSearch)
+		 {
+			 sewerageConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(),
+					 openSewerageRowMapper);
+
+		 }else if(isOpenSearch)
 			sewerageConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(),
 					openSewerageRowMapper);
 		else
@@ -95,7 +102,9 @@ public class SewerageDaoImpl implements SewerageDao {
 
 	public Integer getSewerageConnectionsCount(SearchCriteria criteria, RequestInfo requestInfo) {
 		List<Object> preparedStatement = new ArrayList<>();
-		String query = swQueryBuilder.getSearchCountQueryString(criteria, preparedStatement, requestInfo);
+//		String query = swQueryBuilder.getSearchCountQueryString(criteria, preparedStatement, requestInfo);
+		Boolean iscitizenSearch=iscitizenSearch(requestInfo.getUserInfo());
+		String query = swQueryBuilder.getSearchCountQueryString(criteria, preparedStatement, requestInfo,iscitizenSearch);
 		if (query == null)
 			return 0;
 
@@ -107,6 +116,11 @@ public class SewerageDaoImpl implements SewerageDao {
 
 		return userInfo.getType().equalsIgnoreCase("SYSTEM")
 				&& userInfo.getRoles().stream().map(Role::getCode).collect(Collectors.toSet()).contains("ANONYMOUS");
+	}
+	public Boolean iscitizenSearch(User userInfo) {
+
+		return userInfo.getType().equalsIgnoreCase("CITIZEN")
+				&& userInfo.getRoles().stream().map(Role::getCode).collect(Collectors.toSet()).contains("CITIZEN");
 	}
 
 	public void updateSewerageConnection(SewerageConnectionRequest sewerageConnectionRequest,

@@ -115,6 +115,17 @@ public class CalculatorUtil {
 		return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
 	}
 
+	
+	public MdmsCriteriaReq gettenants(RequestInfo requestInfo) {
+
+		MasterDetail masterDetail = MasterDetail.builder().name(WSCalculationConstant.WS_DEMAND_MODULE)
+				.filter("[?(@.isautodemand=='true')]").build();
+		ModuleDetail moduleDetail = ModuleDetail.builder().moduleName(WSCalculationConstant.WS_TENANT_SEARCH)
+				.masterDetails(Arrays.asList(masterDetail)).build();
+		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(moduleDetail)).tenantId("pb")
+				.build();
+		return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+	}
 	/**
 	 * 
 	 * @param requestInfo

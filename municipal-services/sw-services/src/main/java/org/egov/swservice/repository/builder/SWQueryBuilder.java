@@ -92,7 +92,7 @@ public class SWQueryBuilder {
 	 * @return Returns the created Query
 	 */
 	public String getSearchQueryString(SearchCriteria criteria, List<Object> preparedStatement,
-			RequestInfo requestInfo) {
+			RequestInfo requestInfo , Boolean iscitizenSearch) {
 		if (criteria.isEmpty())
 			return null;
 		Set<String> propertyIds = new HashSet<>();
@@ -163,7 +163,7 @@ public class SWQueryBuilder {
 			return null;
 		}
 		
-		if (!StringUtils.isEmpty(criteria.getTenantId())) {
+		if (!StringUtils.isEmpty(criteria.getTenantId()) && !iscitizenSearch) {
 			addClauseIfRequired(preparedStatement, query);
 			if(criteria.getTenantId().equalsIgnoreCase(config.getStateLevelTenantId())){
 				query.append(" conn.tenantid LIKE ? ");
@@ -277,8 +277,8 @@ public class SWQueryBuilder {
 	}
 
 	public String getSearchCountQueryString(SearchCriteria criteria, List<Object> preparedStmtList,
-			RequestInfo requestInfo) {
-		String query = getSearchQueryString(criteria, preparedStmtList, requestInfo);
+			RequestInfo requestInfo, Boolean iscitizenSearch) {
+		String query = getSearchQueryString(criteria, preparedStmtList, requestInfo,iscitizenSearch);
 		if (query != null)
 			return COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
 		else

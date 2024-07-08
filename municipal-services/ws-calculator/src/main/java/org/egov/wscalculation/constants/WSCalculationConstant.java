@@ -71,6 +71,12 @@ public class WSCalculationConstant {
 	public static final String EG_WS_INVALID_DEMAND_ERROR_MSG = " Bill cannot be generated for previous assessments in a year, please use the latest assesmment to pay";
 
 	public static final String Assessment_Year = "assessmentYear";
+	
+	
+
+	public static final String WS_DEMAND_MODULE = "waterSewerage";
+	public static final String WS_TENANT_SEARCH = "tenant";
+
 
 	/**
 	 * Time Taxes Config

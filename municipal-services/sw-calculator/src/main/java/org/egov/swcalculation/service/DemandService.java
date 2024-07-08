@@ -1211,9 +1211,8 @@ public class DemandService {
 			
 			log.info("Billing master data values for non metered connection:: {}", master);
 			String cone=requestInfo.getKey();
-			List<SewerageDetails> connectionNos = null;
-			//sewerageCalculatorDao.getConnectionsNoList(tenantId,
-//					SWCalculationConstant.nonMeterdConnection, taxPeriodFrom, taxPeriodTo);
+			List<SewerageDetails> connectionNos = sewerageCalculatorDao.getConnectionsNoListsingle(tenantId,SWCalculationConstant.nonMeterdConnection, taxPeriodFrom, taxPeriodTo,cone);
+
 
 			//Generate bulk demands for connections in below count
 			int bulkSaveDemandCount = configs.getBulkSaveDemandCount() != null ? configs.getBulkSaveDemandCount() : 1;
@@ -1269,7 +1268,15 @@ public class DemandService {
 					
 					if(billingCycleCount > 10 || connectionNosCount == bulkSaveDemandCount) {
 						log.info("Controller entered into producer logic, connectionNosCount: {} and connectionNos.size(): {}",connectionNosCount, connectionNos.size());
-
+						MigrationCount migrationCount = MigrationCount.builder()
+								.tenantid(tenantId)
+								.businessService("SW")
+								.limit((long)1.00)
+								.id(UUID.randomUUID().toString())
+								.offset((long)1.00)								
+								.createdTime(System.currentTimeMillis())
+								.recordCount(Long.valueOf(connectionNos.size()))
+								.build();
 						CalculationReq calculationReq = CalculationReq.builder()
 								.calculationCriteria(calculationCriteriaList)
 								.requestInfo(requestInfo)
@@ -1289,7 +1296,15 @@ public class DemandService {
 
 					} else if(connectionNosIndex == connectionNos.size()-1) {
 						log.info("Last connection entered into producer logic, connectionNosCount: {} and connectionNos.size(): {}",connectionNosCount, connectionNos.size());
-
+						MigrationCount migrationCount = MigrationCount.builder()
+								.tenantid(tenantId)
+								.businessService("SW")
+								.limit((long)1.00)
+								.id(UUID.randomUUID().toString())
+								.offset((long)1.00)								
+								.createdTime(System.currentTimeMillis())
+								.recordCount(Long.valueOf(connectionNos.size()))
+								.build();
 						CalculationReq calculationReq = CalculationReq.builder()
 								.calculationCriteria(calculationCriteriaList)
 								.requestInfo(requestInfo)
