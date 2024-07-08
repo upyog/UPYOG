@@ -14,6 +14,9 @@ export const configEWApproverApplication = ({
   businessService,
 }) => {
   console.log("action",action)
+  const todayDate = new Date().toISOString().split("T")[0];
+  console.log("todayedsta ::", todayDate)
+
   return {
     label: {
       heading: `WF_${action?.action}_APPLICATION`,
@@ -30,13 +33,20 @@ export const configEWApproverApplication = ({
             isMandatory: true,
             populators: { 
               name: "date",
-            
-              component: (
-                <DatePicker
-                  date={selectedDate}
-                  onChange={setSelectedDate}
-                />
-              ),
+              validation: {
+                required: true,
+              },
+              customProps: { min: Digit.Utils.date.getDate() },
+              component: (customProps) => <DatePicker onChange={setSelectedDate} date={selectedDate} {...customProps} />,
+
+
+              // component: (
+              //   <DatePicker
+              //     date={selectedDate}
+              //     onChange={setSelectedDate}
+              //     min={todayDate}
+              //   />
+              // ),
               }    
           }) : "null",
           action?.state === "REQUESTCOMPLETED" ? (
@@ -68,7 +78,7 @@ export const configEWApproverApplication = ({
           },
       
           {
-            label: `${t("ES_EW_TEXT")}${action.docUploadRequired ? " *" : ""}`,
+            label: `${t("ES_EW_PHOTO")}${action.docUploadRequired ? " *" : ""}`,
             populators: (
               <UploadFile
                 id={"workflow-doc"}
@@ -77,8 +87,8 @@ export const configEWApproverApplication = ({
                   setUploadedFile(null);
                 }}
                 showHint={true}
-                hintText={t("PTR_ATTACH_RESTRICTIONS_SIZE")}
-                message={uploadedFile ? `1 ${t(`ES_PTR_ACTION_FILEUPLOADED`)}` : t(`ES_PTR_ACTION_NO_FILEUPLOADED`)}
+                hintText={t("EW_ATTACH_RESTRICTIONS_SIZE")}
+                message={uploadedFile ? `1 ${t(`ES_EW_ACTION_FILEUPLOADED`)}` : t(`ES_EW_ACTION_NO_FILEUPLOADED`)}
               />
             ),
           },

@@ -2,14 +2,14 @@ import { Header, MultiLink } from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { useParams, useRouteMatch } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 // import getEwAcknowledgementData from "../../utils/getEwAcknowledgementData";
 
 const EWApplicationDetails = () => {
   const { t } = useTranslation();
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
-  
+
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { tenants } = storeData || {};
   const { id: requestId } = useParams();
@@ -17,13 +17,17 @@ const EWApplicationDetails = () => {
   const [appDetailsToShow, setAppDetailsToShow] = useState({});
   const [showOptions, setShowOptions] = useState(false);
   const [enableAudit, setEnableAudit] = useState(false);
-  
+
   let businessService = "ewst"
 
-
+  // isAction is added to enable or disable the actionbar
+  let isAction = false;
+  if (window.location.href.includes("applicationsearch")) {
+    isAction = true;
+  }
 
   const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.ew.useEwApplicationDetail(t, tenantId, requestId);
-  console.log("applicationDetails",applicationDetails)
+  console.log("applicationDetails", applicationDetails)
   const {
     isLoading: updatingApplication,
     isError: updateApplicationError,
@@ -33,14 +37,14 @@ const EWApplicationDetails = () => {
   } = Digit.Hooks.ew.useEWApplicationAction(tenantId);
 
   let workflowDetails = Digit.Hooks.useWorkflowDetails({
-      tenantId: applicationDetails?.applicationData?.tenantId || tenantId,
-      id: applicationDetails?.applicationData?.applicationData?.requestId,
-      moduleCode: businessService,
-      role: "EW_VENDOR",
+    tenantId: applicationDetails?.applicationData?.tenantId || tenantId,
+    id: applicationDetails?.applicationData?.applicationData?.requestId,
+    moduleCode: businessService,
+    role: "EW_VENDOR",
   });
 
 
-  console.log("workflowDetails",workflowDetails);
+  console.log("workflowDetails", workflowDetails);
 
   const { isLoading: auditDataLoading, isError: isAuditError, data: auditData } = Digit.Hooks.ew.useEWSearch(
     {
@@ -56,7 +60,7 @@ const EWApplicationDetails = () => {
   useEffect(() => {
     if (applicationDetails) {
       setAppDetailsToShow(_.cloneDeep(applicationDetails));
-    
+
     }
   }, [applicationDetails]);
 
@@ -98,7 +102,7 @@ const EWApplicationDetails = () => {
     },
     { enabled: appDetailsToShow?.applicationData?.applicationData?.requestId ? true : false }
   );
-  
+
   const printCertificate = async () => {
     let response = await Digit.PaymentService.generatePdf(tenantId, { EwasteApplication: [applicationDetails?.applicationData?.applicationData] }, "ewasteservicecertificate");
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
@@ -106,11 +110,12 @@ const EWApplicationDetails = () => {
   };
 
 
-  if (appDetailsToShow?.applicationData?.tenantId === "pg.citya")
-  downloadOptions.push({
-    label: t("EW_CERTIFICATE"),
-    onClick: () => printCertificate(),
-  });
+  if (appDetailsToShow?.applicationData?.applicationData?.requestStatus === "REQUESTCOMPLETED") {
+    downloadOptions.push({
+      label: t("EW_CERTIFICATE"),
+      onClick: () => printCertificate(),
+    });
+  }
 
 
   return (
@@ -118,7 +123,7 @@ const EWApplicationDetails = () => {
       <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
 
         <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("EW_APPLICATION_DETAILS")}</Header>
-        { downloadOptions && downloadOptions.length > 0 && (
+        {downloadOptions && downloadOptions.length > 0 && (
           <MultiLink
             className="multilinkWrapper employee-mulitlink-main-div"
             onHeadClick={() => setShowOptions(!showOptions)}
@@ -132,6 +137,7 @@ const EWApplicationDetails = () => {
       </div>
 
       <ApplicationDetailsTemplate
+        isAction={isAction}
         applicationDetails={appDetailsToShow?.applicationData}
         isLoading={isLoading}
         isDataLoading={isLoading}

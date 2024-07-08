@@ -56,11 +56,29 @@ const Inbox = ({
         middlewaresWf,
         middlewareSearch,
       });
+      
+      console.log("searchparams in inbox::", searchParams)
 
+     const Session = Digit.SessionStorage.get("User");
+     const uuid = Session?.info?.uuid;
 
-     
+  // useEffect(() => {
+  //   setSearchParams(
+  //     {
+  //     ...searchParams,
+  //     lastModifiedBy : uuid
+  //     }
+  //    )
+  // }, [])  
 
-
+  useEffect(() => {
+    if (uuid) {
+      setSearchParams((prevParams) => ({
+        ...prevParams,
+        lastModifiedBy: uuid,
+      }));
+    }
+  }, [uuid]);
 
   useEffect(() => {
     setPageOffset(0);

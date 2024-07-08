@@ -4,6 +4,7 @@ import { SubmitBar, ActionBar, Menu, CardLabel } from "@upyog/digit-ui-react-com
 import { useParams } from "react-router-dom";
 
 function ApplicationDetailsActionBar({
+  isAction,  // isAction is added to enable or disable the actionbar
   workflowDetails,
   data,
   displayMenu,
@@ -62,7 +63,9 @@ function ApplicationDetailsActionBar({
 
   return (
     <React.Fragment>
-      {!workflowDetails?.isLoading && isMenuBotton && !isSingleButton && (
+      {/* {!workflowDetails?.isLoading && isMenuBotton && !isSingleButton && ( */}
+      {/* isAction is added to enable or disable the actionbar in the search application */}
+      {!workflowDetails?.isLoading && isMenuBotton && !isSingleButton && !isAction && (
         <ActionBar style={{ ...ActionBarStyle }}>
           {displayMenu && (workflowDetails?.data?.actionState?.nextActions || workflowDetails?.data?.nextActions) ? (
             <Menu
@@ -87,7 +90,9 @@ function ApplicationDetailsActionBar({
           {/* <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} /> */}
         </ActionBar>
       )}
-      {!workflowDetails?.isLoading && !isMenuBotton && isSingleButton && (
+      {/* {!workflowDetails?.isLoading && isMenuBotton && !isSingleButton && ( */}
+      {/* isAction is added to enable or disable the actionbar in the search application */}
+      {!workflowDetails?.isLoading && !isMenuBotton && isSingleButton && !isAction &&(
         <ActionBar style={{ ...ActionBarStyle }}>
           <button
             style={{ color: "#FFFFFF", fontSize: "18px" }}
