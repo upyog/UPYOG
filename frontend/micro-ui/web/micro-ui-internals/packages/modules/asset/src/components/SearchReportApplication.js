@@ -341,6 +341,8 @@ const downloadQRReport = async () => {
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: "10px" }}>
             <button onClick={downloadPDF} style = {{ color: "maroon", border: "2px solid #333", padding: "8px 16px", cursor: "pointer",marginRight: "10px"}} >Download PDF</button>
             <button onClick={downloadXLS} style = {{ color: "maroon", border: "2px solid #333", padding: "10px 20px",cursor: "pointer"}}>Download XLS</button> 
+            <button onClick={downloadQRReport} style = {{ color: "maroon", border: "2px solid #333", padding: "10px 20px",cursor: "pointer", marginLeft:"15px"}}>Download QR Report</button> 
+
             </div>
             : "" }
 
@@ -355,7 +357,7 @@ const downloadQRReport = async () => {
                         {text}
                     </p>
                     ))
-                }
+                  }
             </Card>
             :(!isLoading && data !== ""? <Table
                 t={t}
