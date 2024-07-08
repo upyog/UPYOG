@@ -171,12 +171,13 @@ public class SWCalculatorQueryBuilder {
 		//Add not null condition
 		addClauseIfRequired(preparedStatement, query);
 		query.append(" conn.connectionno is not null");
-
+		if(Connectionno!=null && Connectionno!="")
+		{
      
 			addClauseIfRequired(preparedStatement, query);
 			query.append(" conn.connectionno = ? ");
 			preparedStatement.add(Connectionno);
-		
+}
 		query.append(fetchConnectionsToBeGenerate(tenantId, fromDate, toDate, preparedStatement));
 		return query.toString();
 	}
