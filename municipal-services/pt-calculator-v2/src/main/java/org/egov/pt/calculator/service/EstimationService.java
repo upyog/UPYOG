@@ -959,47 +959,53 @@ public class EstimationService {
 
 		BigDecimal modeofpayment_rebate=BigDecimal.ZERO;
 		BigDecimal updatedtaxammount=BigDecimal.ZERO;
-		switch (criteria.getModeOfPayment()) {
-		case "QUARTERLY":
-			modeofpayment_rebate=taxAmt.multiply(new BigDecimal(3).divide(new BigDecimal(100)).negate());
-			modeofpayment_rebate=modeofpayment_rebate.setScale(2,2);
-			updatedtaxammount=taxAmt.add(modeofpayment_rebate);
-			break;
-
-		case "HALFYEARLY":
-			modeofpayment_rebate=taxAmt.multiply(new BigDecimal(6).divide(new BigDecimal(100)).negate());
-			modeofpayment_rebate=modeofpayment_rebate.setScale(2,2);
-			updatedtaxammount=taxAmt.add(modeofpayment_rebate);
-			break;
-
-		case "YEARLY":
-			modeofpayment_rebate=taxAmt.multiply(new BigDecimal(10).divide(new BigDecimal(100)).negate());
-			modeofpayment_rebate=modeofpayment_rebate.setScale(2,2);
-			updatedtaxammount=taxAmt.add(modeofpayment_rebate);
-			break;
-
-		default:
-			break;
-		}
-
-
 		BigDecimal complementary_rebate=BigDecimal.ZERO;
-		complementary_rebate=updatedtaxammount.multiply(new BigDecimal(92).divide(new BigDecimal(100)).negate());
-		complementary_rebate=complementary_rebate.setScale(2,2);
+		if(exemption.compareTo(BigDecimal.ZERO)==0)
+		{
+			
+			switch (criteria.getModeOfPayment()) {
+			case "QUARTERLY":
+				modeofpayment_rebate=taxAmt.multiply(new BigDecimal(3).divide(new BigDecimal(100)).negate());
+				modeofpayment_rebate=modeofpayment_rebate.setScale(2,2);
+				updatedtaxammount=taxAmt.add(modeofpayment_rebate);
+				break;
 
-		//if(taxAmt.compareTo(new BigDecimal(600)) > 0) 
-		//taxAmt=taxAmt.multiply(new BigDecimal(8)).divide(new BigDecimal(100)).setScale(2,2);
+			case "HALFYEARLY":
+				modeofpayment_rebate=taxAmt.multiply(new BigDecimal(6).divide(new BigDecimal(100)).negate());
+				modeofpayment_rebate=modeofpayment_rebate.setScale(2,2);
+				updatedtaxammount=taxAmt.add(modeofpayment_rebate);
+				break;
 
-		/*
-		 * final BigDecimal NewtaxAmmount=taxAmt; estimates.stream().forEach(t-> {
-		 * if(t.getTaxHeadCode().equalsIgnoreCase("PT_TAX"))
-		 * t.setEstimateAmount(NewtaxAmmount);
-		 * 
-		 * });
-		 */
-		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MODEOFPAYMENT_REBATE).category(Category.REBATE).estimateAmount( modeofpayment_rebate).build());
-		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_COMPLEMENTARY_REBATE).category(Category.REBATE).estimateAmount( complementary_rebate).build());
+			case "YEARLY":
+				modeofpayment_rebate=taxAmt.multiply(new BigDecimal(10).divide(new BigDecimal(100)).negate());
+				modeofpayment_rebate=modeofpayment_rebate.setScale(2,2);
+				updatedtaxammount=taxAmt.add(modeofpayment_rebate);
+				break;
 
+			default:
+				break;
+			}
+
+
+			
+			complementary_rebate=updatedtaxammount.multiply(new BigDecimal(92).divide(new BigDecimal(100)).negate());
+			complementary_rebate=complementary_rebate.setScale(2,2);
+
+			//if(taxAmt.compareTo(new BigDecimal(600)) > 0) 
+			//taxAmt=taxAmt.multiply(new BigDecimal(8)).divide(new BigDecimal(100)).setScale(2,2);
+
+			/*
+			 * final BigDecimal NewtaxAmmount=taxAmt; estimates.stream().forEach(t-> {
+			 * if(t.getTaxHeadCode().equalsIgnoreCase("PT_TAX"))
+			 * t.setEstimateAmount(NewtaxAmmount);
+			 * 
+			 * });
+			 */
+			estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MODEOFPAYMENT_REBATE).category(Category.REBATE).estimateAmount( modeofpayment_rebate).build());
+			estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_COMPLEMENTARY_REBATE).category(Category.REBATE).estimateAmount( complementary_rebate).build());
+
+		}
+		
 		TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(taxAmt.add(penalty), rebate.add(exemption).add(complementary_rebate).add(modeofpayment_rebate));
 
 		if (null != decimalEstimate) {
@@ -1013,12 +1019,44 @@ public class EstimationService {
 
 		BigDecimal totalAmount = taxAmt.add(penalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
 		BigDecimal mandatorypay=BigDecimal.ZERO;
+		Map<String, BigDecimal> lowervalue=lowervaluemap();
 		if(exemption.compareTo(BigDecimal.ZERO)==0) {
-			if(totalAmount.compareTo(new BigDecimal(600)) < 0)
+			if(tenantId.equalsIgnoreCase("mn.imphal"))
 			{
-				mandatorypay=new BigDecimal(600).subtract(totalAmount);
-				estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MANDATORY_PAYMENT).category(Category.TAX).estimateAmount(mandatorypay).build());
-				totalAmount=new BigDecimal(600);
+				if(totalAmount.compareTo(new BigDecimal(600)) < 0)
+				{
+					mandatorypay=new BigDecimal(600).subtract(totalAmount);
+					estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MANDATORY_PAYMENT).category(Category.TAX).estimateAmount(mandatorypay).build());
+					totalAmount=new BigDecimal(600);
+				}
+			}
+			else
+			{
+				BigDecimal lowerammount=lowervalue.get(tenantId);
+				if(totalAmount.compareTo(new BigDecimal(350)) < 0 && lowerammount.compareTo(new BigDecimal(350)) == 0)
+				{
+					mandatorypay=new BigDecimal(350).subtract(totalAmount);
+					estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MANDATORY_PAYMENT).category(Category.TAX).estimateAmount(mandatorypay).build());
+					totalAmount=new BigDecimal(350);
+				}
+				else if(totalAmount.compareTo(new BigDecimal(300)) < 0 && lowerammount.compareTo(new BigDecimal(300)) == 0)
+				{
+					mandatorypay=new BigDecimal(300).subtract(totalAmount);
+					estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MANDATORY_PAYMENT).category(Category.TAX).estimateAmount(mandatorypay).build());
+					totalAmount=new BigDecimal(300);
+				}
+				else if(totalAmount.compareTo(new BigDecimal(250)) < 0 && lowerammount.compareTo(new BigDecimal(250)) == 0)
+				{
+					mandatorypay=new BigDecimal(250).subtract(totalAmount);
+					estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MANDATORY_PAYMENT).category(Category.TAX).estimateAmount(mandatorypay).build());
+					totalAmount=new BigDecimal(250);
+				}
+				else if(totalAmount.compareTo(new BigDecimal(200)) < 0 && lowerammount.compareTo(new BigDecimal(200)) == 0)
+				{
+					mandatorypay=new BigDecimal(200).subtract(totalAmount);
+					estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MANDATORY_PAYMENT).category(Category.TAX).estimateAmount(mandatorypay).build());
+					totalAmount=new BigDecimal(200);
+				}
 			}
 				
 		}
@@ -1047,6 +1085,38 @@ public class EstimationService {
 				.taxHeadEstimates(estimates)
 				.billingSlabIds(billingSlabIds)
 				.build();
+	}
+
+	private Map<String, BigDecimal> lowervaluemap() {
+		// TODO Auto-generated method stub
+		Map<String, BigDecimal> lowervalue=new HashMap<String, BigDecimal>();
+		lowervalue.put("mn.thoubal", new BigDecimal(350));
+		lowervalue.put("mn.kakching", new BigDecimal(350));
+		lowervalue.put("mn.lilongthoubal", new BigDecimal(350));
+		lowervalue.put("mn.mayangimphal", new BigDecimal(350));
+		lowervalue.put("mn.nambol", new BigDecimal(350));
+		lowervalue.put("mn.moirang", new BigDecimal(300));
+		lowervalue.put("mn.samurou", new BigDecimal(300));
+		lowervalue.put("mn.thongkhongluxmi", new BigDecimal(300));
+		lowervalue.put("mn.ningthoukhong", new BigDecimal(300));
+		lowervalue.put("mn.lilongimphalwest", new BigDecimal(300));
+		lowervalue.put("mn.bishnupur", new BigDecimal(300));
+		lowervalue.put("mn.kakchingkhunou", new BigDecimal(300));
+		lowervalue.put("mn.yairipok", new BigDecimal(250));
+		lowervalue.put("mn.kumbi", new BigDecimal(250));
+		lowervalue.put("mn.wangoi", new BigDecimal(250));
+		lowervalue.put("mn.andro", new BigDecimal(250));
+		lowervalue.put("mn.kwakta", new BigDecimal(250));
+		lowervalue.put("mn.lamsang", new BigDecimal(250));
+		lowervalue.put("mn.wangjinglamding", new BigDecimal(250));
+		lowervalue.put("mn.shikhongsekmai", new BigDecimal(250));
+		lowervalue.put("mn.jiribam", new BigDecimal(250));
+		lowervalue.put("mn.oinam", new BigDecimal(250));
+		lowervalue.put("mn.sugnu", new BigDecimal(250));
+		lowervalue.put("mn.sekmai", new BigDecimal(250));
+		lowervalue.put("mn.lamlai", new BigDecimal(200));
+		lowervalue.put("mn.heirok", new BigDecimal(200));
+		return lowervalue;
 	}
 
 	/**
