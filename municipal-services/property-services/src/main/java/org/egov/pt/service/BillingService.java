@@ -5,6 +5,8 @@ import org.egov.pt.models.Assessment;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.collection.BillResponse;
 import org.egov.pt.repository.ServiceRequestRepository;
+import org.egov.pt.web.contracts.AssessmentRequest;
+import org.egov.pt.web.contracts.DemandResponse;
 import org.egov.pt.web.contracts.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,12 @@ public class BillingService {
 	
 	@Value("${egbs.fetchbill.endpoint}")
 	private String fetchBillEndpoint;
+	
+	@Value("${egbs.fetchdemand.endpoint}")
+	private String fetchdemandEndpoint;
+	
+	@Value("${egbs.updatedemand.endpoint}")
+	private String updateDemandEndpoint;
 	
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
@@ -60,5 +68,38 @@ public class BillingService {
             throw new CustomException("IllegalArgumentException","ObjectMapper not able to convert response into bill response");
         }
 	}
+	
+	
+	public DemandResponse fetchDemand( AssessmentRequest assessment) {
+		
+		StringBuilder uri = new StringBuilder(billingHost);
+		uri.append(fetchdemandEndpoint);
+		uri.append("?").append("tenantId=").append(assessment.getAssessment().getTenantId());
+		uri.append("&consumerCode=").append(assessment.getAssessment().getPropertyId());
+		
+		System.out.println(uri);
+		
+		
+		try {
+        	Optional<Object> response = serviceRequestRepository.fetchResult(uri, RequestInfoWrapper.builder().requestInfo(assessment.getRequestInfo()).build());
+        	
+        	if(response.isPresent()) {
+        		LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>)response.get();
+        		DemandResponse billResponse = mapper.convertValue(responseMap,DemandResponse.class);
+                return billResponse;
+        	}else {
+        		throw new CustomException("IllegalArgumentException","Did not get any response from the billing services");
+        		
+        	}
+        }
+
+        catch(IllegalArgumentException  e)
+        {
+            throw new CustomException("IllegalArgumentException","ObjectMapper not able to convert response into bill response");
+        }
+	}
+	
+	
+	
 
 }

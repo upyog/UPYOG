@@ -31,6 +31,7 @@ import org.egov.pt.util.PTConstants;
 import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.validator.AssessmentValidator;
 import org.egov.pt.web.contracts.AssessmentRequest;
+import org.egov.pt.web.contracts.DemandResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -67,6 +68,9 @@ public class AssessmentService {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	BillingService billingService;
 
 
 	@Autowired
@@ -106,12 +110,17 @@ public class AssessmentService {
 		crt.setFinancialYear(request.getAssessment().getFinancialYear());
 		crt.setStatus(Status.ACTIVE);
 
-
+		
+		
+		
+		 
+		
 		List<Assessment> earlierAssesmentForTheFinancialYear =  searchAssessments(crt, request.getRequestInfo());
 		if(earlierAssesmentForTheFinancialYear.size()>0)
 			throw new CustomException("ASSESMENT_EXCEPTION","Property assessment is already completed for this property for the financial year "+crt.getFinancialYear());
 
-
+		//Call For Previous Year Demand Deactivation
+		deactivateOldDemandsForPreiousYears(request);
 
 		if(config.getIsAssessmentWorkflowEnabled()){
 			assessmentEnrichmentService.enrichWorkflowForInitiation(request);
@@ -136,6 +145,15 @@ public class AssessmentService {
 	 * @param request
 	 * @return
 	 */
+	
+	
+	public void deactivateOldDemandsForPreiousYears(AssessmentRequest request) {
+		
+		DemandResponse dmr = billingService.fetchDemand(request);
+		
+		System.out.println(dmr);
+	}
+	
 	public Assessment updateAssessment(AssessmentRequest request) {
 
 		Assessment assessment = request.getAssessment();
