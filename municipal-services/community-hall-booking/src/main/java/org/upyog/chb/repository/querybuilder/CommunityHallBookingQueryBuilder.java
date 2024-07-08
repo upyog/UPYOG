@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
+import org.upyog.chb.enums.SlotStatusEnum;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 
@@ -35,11 +36,13 @@ public class CommunityHallBookingQueryBuilder {
 	private final String paginationWrapper = "SELECT * FROM " + "(SELECT *, DENSE_RANK() OVER () offset_ FROM " + "({})"
 			+ " result) result_offset " + "WHERE offset_ > ? AND offset_ <= ?";
 
-	private static final String COMMUNITY_HALL_SLOTS_AVAIALABILITY_QUERY = "SELECT chbd.tenant_id, chbd.community_hall_name, bsd.hall_code, bsd.status,bsd.booking_date \n"
-			+ "	FROM community_hall_booking_details chbd, booking_slot_details bsd\n"
-			+ "where chbd.booking_id = bsd.booking_id and chbd.tenant_id= ? and chbd.community_hall_name = ? \n"
-			+ "AND bsd.hall_code = ? and bsd.status = 'BOOKED' and \n"
-			+ "	bsd.booking_date >= ? and bsd.booking_date <=  ? ";
+	private static final String COMMUNITY_HALL_SLOTS_AVAIALABILITY_QUERY = " SELECT ecbd.tenant_id, ecbd.community_hall_code, ecsd.hall_code, ecsd.status,ecsd.booking_date \n"
+			+ "	FROM eg_chb_booking_detail ecbd, eg_chb_slot_detail ecsd\n"
+			+ "where ecbd.booking_id = ecsd.booking_id and ecbd.tenant_id= ? and ecbd.community_hall_code = ?\n"
+			+ " and ecsd.status = ? and \n"
+			+ "	ecsd.booking_date >= ? and ecsd.booking_date <=  ? ";
+		//	+ "	AND ecsd.hall_code in (?)";
+	
 
 	/**
 	 * To give the Search query based on the requirements.
@@ -216,17 +219,17 @@ public class CommunityHallBookingQueryBuilder {
 		return builder.toString();
 	}
 
-	public String getCommunityHallSlotAvailabilityQuery(CommunityHallSlotSearchCriteria searchCriteria,
+	public StringBuilder getCommunityHallSlotAvailabilityQuery(CommunityHallSlotSearchCriteria searchCriteria,
 			List<Object> paramsList) {
 		StringBuilder builder = new StringBuilder(COMMUNITY_HALL_SLOTS_AVAIALABILITY_QUERY);
 
 		paramsList.add(searchCriteria.getTenantId());
-		paramsList.add(searchCriteria.getCommunityHallName());
-		paramsList.add(searchCriteria.getHallCode());
+		paramsList.add(searchCriteria.getCommunityHallCode());
+		paramsList.add(SlotStatusEnum.BOOKED.toString());
 		paramsList.add(searchCriteria.getBookingStartDate());
 		paramsList.add(searchCriteria.getBookingEndDate());
 
-		return builder.toString();
+		return builder;
 	}
 
 }

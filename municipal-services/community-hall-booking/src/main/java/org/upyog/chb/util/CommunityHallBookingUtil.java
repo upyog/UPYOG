@@ -12,6 +12,9 @@ import org.upyog.chb.web.models.AuditDetails;
 import org.upyog.chb.web.models.ResponseInfo;
 import org.upyog.chb.web.models.ResponseInfo.StatusEnum;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class CommunityHallBookingUtil {
 
 	public static ResponseInfo createReponseInfo(final RequestInfo requestInfo, String resMsg, StatusEnum status) {
@@ -52,12 +55,6 @@ public class CommunityHallBookingUtil {
 		LocalDate localDate = LocalDate.parse(date, formatter);
 		return localDate;
 	}
-	
-	public static LocalDate getCurrentDate() {
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-		LocalDate localDate = LocalDate.now();
-		return localDate;
-	}
 
 	public static String parseLocalDateToString(LocalDate date) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -72,6 +69,18 @@ public class CommunityHallBookingUtil {
 				.lastModifiedBy(rs.getString("lastModifiedBy"))
 				.lastModifiedTime(rs.getLong("lastModifiedTime")).build();
 		return auditdetails;
+	}
+	
+	public static String beuatifyJson(Object result) {
+		ObjectMapper mapper = new ObjectMapper();
+		String data = null;
+		try {
+			data = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(result);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return data;
 	}
 
 }

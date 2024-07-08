@@ -22,7 +22,7 @@ public class CommunityHallSlotAvailabilityRowMapper implements ResultSetExtracto
 			 */
 			CommunityHallSlotAvailabiltityDetail availabiltityDetail = CommunityHallSlotAvailabiltityDetail.builder()
 					.bookingDate(rs.getString("booking_date"))
-					.communityHallName(rs.getString("community_hall_code"))
+					.communityHallCode(rs.getString("community_hall_code"))
 					.hallCode(rs.getString("hall_code"))
 					.slotStaus(rs.getString("status"))
 					.tenantId(rs.getString("tenant_id"))

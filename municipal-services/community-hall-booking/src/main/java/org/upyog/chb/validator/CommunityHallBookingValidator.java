@@ -33,13 +33,15 @@ public class CommunityHallBookingValidator {
 	 * @param mdmsData
 	 */
 	public void validateCreate(CommunityHallBookingRequest bookingRequest, Object mdmsData) {
-		log.info("validating master data for create booking request for mdmsdata : " + mdmsData);
+		log.info("validating master data for create booking request for applicant mobile no : " + bookingRequest.getHallsBookingApplication()
+		.getApplicantDetail().getApplicantMobileNo());
 		 mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
 
 	}
 
 	public void validateUpdate(CommunityHallBookingRequest bookingRequest, Object mdmsData) {
-		log.info("validating master data for update  booking request for mdmsdata : " + mdmsData);
+		log.info("validating master data for update  booking request for  applicant mobile no : " + bookingRequest.getHallsBookingApplication()
+		.getApplicantDetail().getApplicantMobileNo());
 
 		// mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
 	}

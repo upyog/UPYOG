@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -128,11 +129,34 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 	public List<CommunityHallSlotAvailabiltityDetail> getCommunityHallSlotAvailability(
 			CommunityHallSlotSearchCriteria criteria) {
 		List<Object> paramsList = new ArrayList<>();
-		String query = queryBuilder.getCommunityHallSlotAvailabilityQuery(criteria, paramsList);
+		
+		StringBuilder query = queryBuilder.getCommunityHallSlotAvailabilityQuery(criteria, paramsList);
+		
+		String hallCodeQuery = " AND ecsd.hall_code ";
+		
+		if(StringUtils.isNotBlank(criteria.getHallCode())) {
+			query.append(hallCodeQuery).append(" = ? ");
+			paramsList.add(criteria.getHallCode());
+		}else {
+			List<String> hallCodes = criteria.getHallCodes();
+			query.append(hallCodeQuery).append(" IN ( ");
+			int i = 0;
+			while(i < hallCodes.size()) {
+				query.append(" ? ");
+				if(i != hallCodes.size() - 1) {
+					query.append( " , ");
+				}
+				
+				paramsList.add(hallCodes.get(i));
+				
+				i++;
+			}
+			query.append(" ) "); 
+		}
 
 		log.info("getBookingDetails : Final query: " + query);
 		log.info("paramsList : " + paramsList);
-		List<CommunityHallSlotAvailabiltityDetail> availabiltityDetails = jdbcTemplate.query(query, paramsList.toArray(),
+		List<CommunityHallSlotAvailabiltityDetail> availabiltityDetails = jdbcTemplate.query(query.toString(), paramsList.toArray(),
 				availabilityRowMapper);
 		
 		log.info("Fetched slot availabilty details : " + availabiltityDetails);
