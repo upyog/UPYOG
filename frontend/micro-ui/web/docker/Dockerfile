@@ -1,5 +1,4 @@
-FROM upyogio/alpine-node-builder-14:yarn AS build
-#FROM ghcr.io/egovernments/alpine-node-builder-14:yarn AS build
+FROM egovio/alpine-node-builder-14:yarn AS build
 RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
 RUN yarn add @upyog/digit-ui-libraries
@@ -23,7 +22,7 @@ RUN yarn add @upyog-niua/upyog-ui-module-ptr
 ARG WORK_DIR
 WORKDIR /app
 ENV NODE_OPTIONS "--max-old-space-size=8168"
-ENV GENERATE_SOURCEMAP "true"
+ENV GENERATE_SOURCEMAP "false"
 
 COPY ${WORK_DIR} .
 RUN ls -lah
