@@ -1,4 +1,4 @@
-import { CardLabel, DatePicker, LabelFieldPair, TextInput } from "@upyog/digit-ui-react-components";
+import { CardLabel, DatePicker, LabelFieldPair, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 
 const WSActivationDetails = ({ t, config, userType, formData, onSelect }) => {

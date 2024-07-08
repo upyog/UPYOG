@@ -29,6 +29,9 @@ public class CommunityHallBookingSearchCriteria {
 	@JsonProperty("bookingNo")
 	private String bookingNo;
 
+	@JsonProperty("mobileNumber")
+    private String mobileNumber;
+	
 	@JsonProperty("offset")
 	private Integer offset;
 
@@ -45,12 +48,16 @@ public class CommunityHallBookingSearchCriteria {
 	@JsonIgnore
 	private List<String> createdBy;
 
-	@JsonProperty("locality")
-	private String locality;
-
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
+		return (this.tenantId == null && this.status == null && this.bookingIds == null && this.bookingNo == null
+				&& this.mobileNumber == null && this.offset == null && this.limit == null
+				&& this.fromDate == null && this.toDate == null && this.createdBy == null);
+	}
+
+	public boolean tenantIdOnly() {
+		return (this.tenantId != null && this.status == null && this.bookingIds == null && this.bookingNo == null
+				&& this.mobileNumber == null && this.offset == null && this.limit == null
+				&& this.fromDate == null && this.toDate == null && this.createdBy == null);
 	}
 
 }

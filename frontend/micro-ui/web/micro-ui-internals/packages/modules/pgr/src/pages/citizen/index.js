@@ -3,7 +3,7 @@ import { ReopenComplaint } from "./ReopenComplaint/index";
 import SelectRating from "./Rating/SelectRating";
 import { PgrRoutes, getRoute } from "../../constants/Routes";
 import { useRouteMatch, Switch, useLocation } from "react-router-dom";
-import { AppContainer, BackButton, PrivateRoute } from "@upyog/digit-ui-react-components";
+import { AppContainer, BackButton, PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 
 import { CreateComplaint } from "./Create";
 import { ComplaintsList } from "./ComplaintsList";

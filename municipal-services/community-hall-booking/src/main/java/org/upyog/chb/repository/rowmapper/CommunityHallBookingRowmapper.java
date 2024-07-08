@@ -10,11 +10,12 @@ import java.util.Map;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
+import org.upyog.chb.util.CommunityHallBookingUtil;
+import org.upyog.chb.web.models.Address;
+import org.upyog.chb.web.models.ApplicantDetail;
 import org.upyog.chb.web.models.AuditDetails;
 import org.upyog.chb.web.models.BookingPurpose;
-import org.upyog.chb.web.models.BookingSlotDetail;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
-import org.upyog.chb.web.models.ResidentType;
 import org.upyog.chb.web.models.SpecialCategory;
 
 @Component
@@ -22,6 +23,7 @@ public class CommunityHallBookingRowmapper implements ResultSetExtractor<List<Co
 
 	@Override
 	public List<CommunityHallBookingDetail> extractData(ResultSet rs) throws SQLException, DataAccessException {
+		//TODO: Remove this map
 		Map<String, CommunityHallBookingDetail> bookingDetailMap = new LinkedHashMap<>();
 		List<CommunityHallBookingDetail> bookingDetails = new ArrayList<CommunityHallBookingDetail>();
 		while (rs.next()) {
@@ -31,12 +33,6 @@ public class CommunityHallBookingRowmapper implements ResultSetExtractor<List<Co
 			CommunityHallBookingDetail currentBooking = bookingDetailMap.get(bookingId);
 
 			if (currentBooking == null) {
-				AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("booking_created_by"))
-						.createdTime(rs.getLong("booking_created_time"))
-						.lastModifiedBy(rs.getString("booking_last_modified_by"))
-						.lastModifiedTime(rs.getLong("booking_last_modified_time")).build();
-
-				ResidentType residentType = ResidentType.builder().type(rs.getString("resident_type")).build();
 
 				SpecialCategory specialCategory = SpecialCategory.builder().category(rs.getString("special_category"))
 						.build();
@@ -44,18 +40,15 @@ public class CommunityHallBookingRowmapper implements ResultSetExtractor<List<Co
 				BookingPurpose bookingPurpose = BookingPurpose.builder().purpose(rs.getString("purpose")).build();
 				
 				currentBooking = CommunityHallBookingDetail.builder().bookingId(bookingId).bookingNo(bookingNo)
-						.bookingDate(rs.getLong("booking_date"))
+						.applicationDate(rs.getLong("application_date"))
 						.tenantId(tenantId)
-						.applicantName(rs.getString("applicant_name"))
-						.applicantMobileNo(rs.getString("applicant_mobile_no"))
-						.applicantAlternateMobileNo(rs.getString("applicant_alternate_mobile_no"))
-						.applicantEmailId(rs.getString("applicant_email_id"))
-						.communityHallId(rs.getInt("community_hall_id"))
-						.communityHallName(rs.getString("community_hall_name"))
-						.bookingStatus(rs.getString("booking_status")).residentType(residentType)
+						//TODO : check payment_date
+						.communityHallCode(rs.getString("community_hall_code"))
+						.bookingStatus(rs.getString("booking_status"))
 						.specialCategory(specialCategory).purpose(bookingPurpose)
-						.purposeDescription(rs.getString("purpose_description")).eventName(rs.getString("event_name"))
-						.eventOrganisedBy(rs.getString("event_organized_by")).auditDetails(auditdetails).build();
+						.purposeDescription(rs.getString("purpose_description"))
+						.auditDetails(CommunityHallBookingUtil.getAuditDetails(rs))
+						.build();
 
 				bookingDetailMap.put(bookingId, currentBooking);
 			} else {
@@ -66,8 +59,8 @@ public class CommunityHallBookingRowmapper implements ResultSetExtractor<List<Co
 				return bookingDetails;
 			}
 
-			BookingSlotDetail slotDetail = prepareSlotDetail(rs);
-			currentBooking.addBookingSlots(slotDetail);
+			currentBooking.setApplicantDetail(addApplicantDetail(rs));
+			currentBooking.setAddress(addApplicantAddress(rs));
 
 		}
 		bookingDetails.addAll(bookingDetailMap.values());
@@ -75,19 +68,49 @@ public class CommunityHallBookingRowmapper implements ResultSetExtractor<List<Co
 
 	}
 
-	private BookingSlotDetail prepareSlotDetail(ResultSet rs) throws SQLException {
+	
+	private ApplicantDetail addApplicantDetail(ResultSet rs) throws SQLException {
+		
+		ApplicantDetail applicantDetail = ApplicantDetail.builder().applicantDetailId(rs.getString("applicant_detail_id"))
+				.bookingId(rs.getString("booking_id"))
+				.applicantName(rs.getString("applicant_name"))
+				.applicantMobileNo(rs.getString("applicant_mobile_no"))
+				.applicantAlternateMobileNo(rs.getString("applicant_alternate_mobile_no"))
+				.applicantEmailId(rs.getString("applicant_email_id"))
+				.accountNumber(rs.getString("account_no"))
+				.ifscCode(rs.getString("ifsc_code")).bankName(rs.getString("bank_name"))
+				.bankBranchName(rs.getString("bank_branch_name"))
+				.accountHolderName(rs.getString("account_holder_name"))
+				.auditDetails(CommunityHallBookingUtil.getAuditDetails(rs)).build();
+		
 
-		AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("slot_created_by"))
-				.createdTime(rs.getLong("slot_created_time")).lastModifiedBy(rs.getString("slot_last_modified_by"))
-				.lastModifiedTime(rs.getLong("slot_last_modified_time")).build();
-
-		BookingSlotDetail slotDetail = BookingSlotDetail.builder().slotId(rs.getString("slot_id"))
-				.bookingId(rs.getString("slot_booking_id")).hallCode(rs.getString("hall_code"))
-				.hallName(rs.getString("hall_name")).bookingDate(rs.getString("booking_date"))
-				.bookingFromTime(rs.getString("booking_from_time")).bookingToTime(rs.getString("booking_to_time"))
-				.status(rs.getString("slot_status")).auditDetails(auditdetails).build();
-
-		return slotDetail;
+		
+		return applicantDetail;
+		
+	}
+	
+    private Address addApplicantAddress(ResultSet rs) throws SQLException {
+		
+		/**
+		 * address_id, applicant_detail_id, door_no, house_no, address_line_1, 
+	landmark, city, pincode, street_name, locality_code
+		 */
+		
+		Address address = Address.builder()
+				.addressId(rs.getString("address_id"))
+				.applicantDetailId(rs.getString("applicant_detail_id"))
+				.doorNo(rs.getString("door_no"))
+				.houseNo(rs.getString("house_no"))
+				.addressLine1(rs.getString("address_line_1"))
+				.landmark(rs.getString("landmark"))
+				.city(rs.getString("city"))
+				.pincode(rs.getString("pincode"))
+				.streetName(rs.getString("applicant_detail_id"))
+				.localityCode(rs.getString("applicant_detail_id"))
+				.build();
+		
+		return address;
+		
 	}
 
 }

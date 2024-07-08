@@ -1,4 +1,4 @@
-import { Banner, Card, Loader, CardText, SubmitBar, ActionBar } from "@upyog/digit-ui-react-components";
+import { Banner, Card, Loader, CardText, SubmitBar, ActionBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import { useQueryClient } from "react-query";
 import React, { useEffect } from "react";

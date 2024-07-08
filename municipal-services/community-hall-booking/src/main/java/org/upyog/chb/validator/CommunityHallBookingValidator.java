@@ -33,14 +33,15 @@ public class CommunityHallBookingValidator {
 	 * @param mdmsData
 	 */
 	public void validateCreate(CommunityHallBookingRequest bookingRequest, Object mdmsData) {
-		log.info("validating master data for create booking request for mdmsdata : " + mdmsData);
-
-		// mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
+		log.info("validating master data for create booking request for applicant mobile no : " + bookingRequest.getHallsBookingApplication()
+		.getApplicantDetail().getApplicantMobileNo());
+		 mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
 
 	}
 
 	public void validateUpdate(CommunityHallBookingRequest bookingRequest, Object mdmsData) {
-		log.info("validating master data for update  booking request for mdmsdata : " + mdmsData);
+		log.info("validating master data for update  booking request for  applicant mobile no : " + bookingRequest.getHallsBookingApplication()
+		.getApplicantDetail().getApplicantMobileNo());
 
 		// mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
 	}
@@ -63,24 +64,24 @@ public class CommunityHallBookingValidator {
 	// TODO need to make the changes in the data
 	public void validateSearch(RequestInfo requestInfo, CommunityHallBookingSearchCriteria criteria) {
 		log.info("Validating search request for criteria " + criteria);
-		if (!requestInfo.getUserInfo().getType().equalsIgnoreCase(CommunityHallBookingConstants.EMPLOYEE)
-				&& criteria.isEmpty())
+		String userType = requestInfo.getUserInfo().getType();
+		if (criteria.isEmpty())
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
 					"Search without any paramters is not allowed");
 
-		if (!requestInfo.getUserInfo().getType().equalsIgnoreCase(CommunityHallBookingConstants.EMPLOYEE)
+		if (!userType.equalsIgnoreCase(CommunityHallBookingConstants.EMPLOYEE)
 				&& !criteria.isEmpty() && criteria.getTenantId() == null)
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "TenantId is mandatory in search");
 
-		if (requestInfo.getUserInfo().getType().equalsIgnoreCase(CommunityHallBookingConstants.EMPLOYEE)
+		if (userType.equalsIgnoreCase(CommunityHallBookingConstants.EMPLOYEE)
 				&& !criteria.isEmpty() && criteria.getTenantId() == null)
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "TenantId is mandatory in search");
 
 		String allowedParamStr = null;
 
-		if (!requestInfo.getUserInfo().getType().equalsIgnoreCase(CommunityHallBookingConstants.EMPLOYEE))
+		if (!userType.equalsIgnoreCase(CommunityHallBookingConstants.EMPLOYEE))
 			allowedParamStr = config.getAllowedEmployeeSearchParameters();
-		else if (requestInfo.getUserInfo().getType().equalsIgnoreCase(CommunityHallBookingConstants.EMPLOYEE))
+		else if (userType.equalsIgnoreCase(CommunityHallBookingConstants.EMPLOYEE))
 			allowedParamStr = config.getAllowedEmployeeSearchParameters();
 		else
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
@@ -120,7 +121,7 @@ public class CommunityHallBookingValidator {
 		if (criteria.getLimit() != null && !allowedParams.contains("limit"))
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Search on limit is not allowed");
 
-		if (criteria.getFromDate() != null && (criteria.getFromDate() > new Date().getTime()))
+		if (criteria.getFromDate() != null && !allowedParams.contains("limit") && (criteria.getFromDate() > new Date().getTime()))
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
 					"From date cannot be a future date");
 

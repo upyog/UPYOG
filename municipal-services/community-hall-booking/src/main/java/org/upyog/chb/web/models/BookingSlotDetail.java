@@ -1,5 +1,7 @@
 package org.upyog.chb.web.models;
 
+import javax.validation.constraints.NotBlank;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -24,15 +26,17 @@ public class BookingSlotDetail {
 	@JsonProperty("bookingId")
 	private String bookingId = null;
 	
+	@NotBlank
 	@JsonProperty("hallCode")
 	private String hallCode;
 	
-	private String hallName;
-	
+	@NotBlank
 	private String bookingDate = null;
 	
+	@NotBlank
 	private String bookingFromTime;
 	
+	@NotBlank
 	private String bookingToTime;
 	
 	@JsonProperty("status")

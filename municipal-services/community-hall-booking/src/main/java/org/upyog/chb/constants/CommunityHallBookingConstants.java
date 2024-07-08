@@ -10,14 +10,13 @@ public class CommunityHallBookingConstants {
 	public static final String INVALID_TENANT = "INVALID TENANT";
 
 	// mdms path codes
-	public static final String CHB_MODULE = "ChbService";
 	public static final String CHB_JSONPATH_CODE = "$.MdmsRes.CHB";
 	public static final String COMMON_MASTER_JSONPATH_CODE = "$.MdmsRes.common-masters";
 
 	public static final String COMMON_MASTERS_MODULE = "common-masters";
 
 	public static final String CHB_PURPOSE = "Purpose";
-	public static final String CHB_RESIDENT_TYPE = "ResidenType";
+	public static final String CHB_RESIDENT_TYPE = "ResidentType";
 	public static final String CHB_SPECIAL_CATEGORY = "SpecialCategory";
 	public static final String CHB_CALCULATION_TYPE = "CalculationType";
 	public static final String CHB_COMMNUITY_HALLS = "CommunityHalls";

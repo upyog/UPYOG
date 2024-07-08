@@ -27,6 +27,7 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class BookingPurpose   {
+		@NotBlank
         @JsonProperty("purpose")
         private String purpose = null;
         
