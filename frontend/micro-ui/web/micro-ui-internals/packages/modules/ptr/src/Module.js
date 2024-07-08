@@ -30,7 +30,6 @@ import NewApplication from "./pages/employee/NewApplication";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import Response from "./pages/Response";
 import SelectOtp from "../../core/src/pages/citizen/Login/SelectOtp";
-import CitizenFeedback from "@upyog/digit-ui-module-core/src/components/CitizenFeedback";
 import AcknowledgementCF from "@upyog/digit-ui-module-core/src/components/AcknowledgementCF";
 
 
@@ -47,7 +46,6 @@ const componentsToRegister = {
   PTRApplicationDetails: PTRApplicationDetails,
   SelectOtp, // To-do: Temp fix, Need to check why not working if selectOtp module is already imported from core module
   AcknowledgementCF,
-  CitizenFeedback,
   PTRPetdetails,
   PTROwnerDetails,
   PTRCreatePet: PTRCreate,

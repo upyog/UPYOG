@@ -18,7 +18,7 @@ RUN yarn add @upyog/digit-ui-module-common@1.8.0
 RUN yarn add @upyog/digit-ui-module-ws@1.8.0
 RUN yarn add @upyog/digit-ui-module-commonpt@1.8.0
 RUN yarn add @upyog/digit-ui-module-bills@1.8.0
-RUN yarn add @upyog-niua/upyog-ui-module-ptr@1.0.9
+RUN yarn add @upyog-niua/upyog-ui-module-ptr@1.0.10
 RUN yarn add @upyog/digit-ui-react-components@1.8.0
 
 ARG WORK_DIR
