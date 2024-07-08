@@ -342,6 +342,10 @@ public class WorkflowNotificationService {
 				&& sewerageServicesUtil.isModifyConnectionRequestForNotification(sewerageConnectionRequest)) {
 			reqType = SWConstants.MODIFY_CONNECTION;
 		}
+		if((!workflow.getAction().equalsIgnoreCase(SWConstants.SUBMIT_APPLICATION)))
+		{
+			reqType = CREATE_APPLICATION;
+		}
 		if((!workflow.getAction().equalsIgnoreCase(SWConstants.ACTIVATE_CONNECTION)) &&
 				(!workflow.getAction().equalsIgnoreCase(APPROVE_CONNECTION)) &&
 				sewerageServicesUtil.isDisconnectConnectionRequest(sewerageConnectionRequest))
@@ -395,7 +399,7 @@ public class WorkflowNotificationService {
 			}
 
 			//Send the notification to applicant
-			if(!StringUtils.isEmpty(sewerageConnectionRequest.getRequestInfo().getUserInfo().getMobileNumber()))
+			if(!StringUtils.isEmpty(sewerageConnectionRequest.getRequestInfo().getUserInfo().getMobileNumber()) && sewerageConnectionRequest.getRequestInfo().getUserInfo().getType().equalsIgnoreCase("CITIZEN"))
 			{
 				mobileNumbersAndNames.put(sewerageConnectionRequest.getRequestInfo().getUserInfo().getMobileNumber(), sewerageConnectionRequest.getRequestInfo().getUserInfo().getName());
 			}
