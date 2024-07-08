@@ -107,7 +107,7 @@ public class SewerageServicesUtil {
 			propertyCriteria.setLocality(addDetail.get(localityCode).toString());
 		}
 		Object result = serviceRequestRepository.fetchResult(
-				getPropertyURL(propertyCriteria),
+				getPropertyURL(propertyCriteria,sewerageConnectionRequest.getRequestInfo()),
 				RequestInfoWrapper.builder().requestInfo(sewerageConnectionRequest.getRequestInfo()).build());
 		List<Property> propertyList = getPropertyDetails(result);
 		if (CollectionUtils.isEmpty(propertyList)) {
@@ -167,7 +167,7 @@ public class SewerageServicesUtil {
 		}
 
 		Object result = serviceRequestRepository.fetchResult(
-				getPropertyURL(propertyCriteria),
+				getPropertyURL(propertyCriteria,requestInfo),
 				RequestInfoWrapper.builder().requestInfo(requestInfo).build());
 		return getPropertyDetails(result);
 	}
@@ -200,7 +200,7 @@ public class SewerageServicesUtil {
 	 */
 	public List<Property> searchPropertyOnId(PropertyCriteria criteria, RequestInfo requestInfo) {
 
-		Object result = serviceRequestRepository.fetchResult(getPropertyURL(criteria),
+		Object result = serviceRequestRepository.fetchResult(getPropertyURL(criteria,requestInfo),
 				RequestInfoWrapper.builder().requestInfo(requestInfo).build());
 		return getPropertyDetails(result);
 	}
@@ -257,13 +257,24 @@ public class SewerageServicesUtil {
 	 * @param criteria - Property Search Criteria
 	 * @return property URL
 	 */
-	public StringBuilder getPropertyURL(PropertyCriteria criteria) {
+	public StringBuilder getPropertyURL(PropertyCriteria criteria,RequestInfo requestInfo) {
 		StringBuilder url = new StringBuilder(getPropertyURL());
+		boolean iscitizen =requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN")
+				&& requestInfo.getUserInfo().getRoles().stream().map(Role::getCode).collect(Collectors.toSet()).contains("CITIZEN");
 		boolean isanyparametermatch = false;
 		url.append("?");
+		if(!iscitizen) {
 		if (!StringUtils.isEmpty(criteria.getTenantId())) {
 			isanyparametermatch = true;
 			url.append(tenantId).append(criteria.getTenantId());
+		}
+		}
+	else {
+
+		if (!StringUtils.isEmpty(criteria.getTenantId())) {
+			isanyparametermatch = true;
+			url.append(tenantId).append("pb");
+		}
 		}
 		if (!CollectionUtils.isEmpty(criteria.getPropertyIds())) {
 			if (isanyparametermatch)url.append("&");
