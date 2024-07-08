@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FormComposer, Header } from "@upyog/digit-ui-react-components";
+import { FormComposer, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { documentsFormConfig } from "../../../config/doc-create";
 import { useHistory } from "react-router-dom";

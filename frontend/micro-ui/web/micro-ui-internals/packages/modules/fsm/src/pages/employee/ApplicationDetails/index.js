@@ -20,7 +20,7 @@ import {
   ActionLinks,
   Header,
   ImageViewer,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 
 import ActionModal from "./Modal";
 import TLCaption from "../../../components/TLCaption";

@@ -1,4 +1,4 @@
-import { CardLabel, Dropdown, LabelFieldPair, TextInput, CardLabelError,WrapUnMaskComponent } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, LabelFieldPair, TextInput, CardLabelError,WrapUnMaskComponent } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import * as func from "../utils";
 import { useForm, Controller } from "react-hook-form";

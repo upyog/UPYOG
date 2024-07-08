@@ -1,4 +1,4 @@
-import { CardLabelError, SearchField, SearchForm, SubmitBar, TextInput,Localities } from "@upyog/digit-ui-react-components";
+import { CardLabelError, SearchField, SearchForm, SubmitBar, TextInput,Localities } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 

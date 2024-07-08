@@ -1,4 +1,4 @@
-import { Loader, Card, Header, SearchForm, Table, DownloadIcon, MultiLink, DownloadBtnCommon } from "@upyog/digit-ui-react-components";
+import { Loader, Card, Header, SearchForm, Table, DownloadIcon, MultiLink, DownloadBtnCommon } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { getActionButton, getBillNumber } from "../../utils";
