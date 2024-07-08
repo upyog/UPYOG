@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.repository.WSCalculationDao;
+import org.egov.wscalculation.util.CalculatorUtil;
 import org.egov.wscalculation.validator.WSCalculationValidator;
 import org.egov.wscalculation.validator.WSCalculationWorkflowValidator;
 import org.egov.wscalculation.web.models.AuditDetails;
@@ -16,6 +18,8 @@ import org.egov.wscalculation.web.models.MeterConnectionRequests;
 import org.egov.wscalculation.web.models.MeterReading;
 import org.egov.wscalculation.web.models.MeterReadingList;
 import org.egov.wscalculation.web.models.MeterReadingSearchCriteria;
+import org.egov.wscalculation.web.models.WaterConnection;
+import org.egov.wscalculation.web.models.WaterDetails;
 import org.egov.wscalculation.web.models.MeterReading.MeterStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -44,6 +48,9 @@ public class MeterServicesImpl implements MeterService {
 	
 	@Autowired
 	private WSCalculationWorkflowValidator wsCalulationWorkflowValidator;
+	
+	@Autowired
+	private WSCalculationDao waterCalculatorDao;
 
 	@Autowired
 	public MeterServicesImpl(EnrichmentService enrichmentService) {
@@ -61,12 +68,12 @@ public class MeterServicesImpl implements MeterService {
 		Boolean genratedemand = true;
 		List<MeterReading> meterReadingsList = new ArrayList<MeterReading>();
 		if(meterConnectionRequest.getMeterReading().getGenerateDemand()){
-			wsCalulationWorkflowValidator.applicationValidation(meterConnectionRequest.getRequestInfo(),meterConnectionRequest.getMeterReading().getTenantId(),meterConnectionRequest.getMeterReading().getConnectionNo(),genratedemand);
-			wsCalculationValidator.validateMeterReading(meterConnectionRequest, true);
+	//		wsCalulationWorkflowValidator.applicationValidation(meterConnectionRequest.getRequestInfo(),meterConnectionRequest.getMeterReading().getTenantId(),meterConnectionRequest.getMeterReading().getConnectionNo(),genratedemand);
+	//		wsCalculationValidator.validateMeterReading(meterConnectionRequest, true);
 		}
-		enrichmentService.enrichMeterReadingRequest(meterConnectionRequest);
+		//enrichmentService.enrichMeterReadingRequest(meterConnectionRequest);
 		meterReadingsList.add(meterConnectionRequest.getMeterReading());
-		wSCalculationDao.saveMeterReading(meterConnectionRequest);
+		//wSCalculationDao.saveMeterReading(meterConnectionRequest);
 		if (meterConnectionRequest.getMeterReading().getGenerateDemand()) {
 			generateDemandForMeterReading(meterReadingsList, meterConnectionRequest.getRequestInfo());
 		}
@@ -131,6 +138,12 @@ public class MeterServicesImpl implements MeterService {
 	
 	private void generateDemandForMeterReading(List<MeterReading> meterReadingsList, RequestInfo requestInfo) {
 		List<CalculationCriteria> criteriaList = new ArrayList<>();
+		//List<WaterConnection> waterConnectionList = util.getWaterConnection(requestInfo,meterReadingsList.get(0).getConnectionNo(),meterReadingsList.get(0).getTenantId());
+	
+		
+		List<WaterConnection> connections = waterCalculatorDao.getConnectionsNo(meterReadingsList.get(0).getTenantId(),
+				WSCalculationConstant.meteredConnectionType,meterReadingsList.get(0).getConnectionNo());
+		
 		meterReadingsList.forEach(reading -> {
 			CalculationCriteria criteria = new CalculationCriteria();
 			criteria.setTenantId(reading.getTenantId());
@@ -138,8 +151,10 @@ public class MeterServicesImpl implements MeterService {
 			criteria.setCurrentReading(reading.getCurrentReading());
 			criteria.setLastReading(reading.getLastReading());
 			criteria.setConnectionNo(reading.getConnectionNo());
+			criteria.setConnectionType("Metered");
 			criteria.setFrom(reading.getLastReadingDate());
 			criteria.setTo(reading.getCurrentReadingDate());
+			criteria.setWaterConnection(connections.get(0));
 			criteria.setMeterStatus(reading.getMeterStatus());
 			criteriaList.add(criteria);
 		});

@@ -39,6 +39,11 @@ public class CalculationCriteria {
 	@NotNull
 	@JsonProperty("tenantId")
 	private String tenantId;
+	
+	
+	@NotNull
+	@JsonProperty("connectionType")
+	private String connectionType;
 
 	@JsonProperty("lastReading")
 	private Double lastReading = null;
