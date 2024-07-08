@@ -121,8 +121,11 @@ public class DemandService {
 		).collect(Collectors.toList());
 		
 		 //TODO: remove this with json and data
-		demandDetails.add(DemandDetail.builder().collectionAmount(BigDecimal.ZERO).taxAmount(BigDecimal.valueOf(500.00))
-				.taxHeadMasterCode("CHB_BOOKING_FEE").tenantId(tenantId).build());
+			/*
+			 * demandDetails.add(DemandDetail.builder().collectionAmount(BigDecimal.ZERO).
+			 * taxAmount(BigDecimal.valueOf(500.00))
+			 * .taxHeadMasterCode("CHB_BOOKING_FEE").tenantId(tenantId).build());
+			 */
 		
 		return demandDetails;
 
