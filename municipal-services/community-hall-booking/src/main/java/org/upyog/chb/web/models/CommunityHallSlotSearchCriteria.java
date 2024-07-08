@@ -1,5 +1,9 @@
 package org.upyog.chb.web.models;
 
+import java.util.List;
+
+import javax.validation.constraints.NotBlank;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -17,20 +21,17 @@ public class CommunityHallSlotSearchCriteria {
 	@JsonProperty("tenantId")
 	private String tenantId;
 
-	private String communityHallId;
-
+	@NotBlank
 	private String communityHallCode;
 
-	private String communityHallName;
-
-	private String hallCodeId;
-
-	private String hallCodeName;
-
 	private String hallCode;
+	
+	private List<String> hallCodes;
 
+	@NotBlank
 	private String bookingStartDate;
 
+	@NotBlank
 	private String bookingEndDate;
 
 	// This flag will be true if multiple slots are available in hall/park

@@ -6,10 +6,12 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.enums.SlotStatusEnum;
@@ -54,6 +56,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	public CommunityHallBookingDetail createBooking(
 			@Valid CommunityHallBookingRequest communityHallsBookingRequest) {
 		log.info("Create community hall booking for user : " + communityHallsBookingRequest.getRequestInfo().getUserInfo().getUuid());
+		//TODO move to util calss 
 		String tenantId = communityHallsBookingRequest.getHallsBookingApplication().getTenantId().split("\\.")[0];
 		if (communityHallsBookingRequest.getHallsBookingApplication().getTenantId().split("\\.").length == 1) {
 			throw new CustomException(CommunityHallBookingConstants.INVALID_TENANT, "Please provide valid tenant id for booking creation");
@@ -76,7 +79,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		//3.Update workflow of the application 
 		//workflowService.updateWorkflow(communityHallsBookingRequest, WorkflowStatus.CREATE);
 		
-		demandService.createDemand(communityHallsBookingRequest);
+		demandService.createDemand(communityHallsBookingRequest, mdmsData);
 		
 		//4.Persist the request using persister service
 		bookingRepository.saveCommunityHallBooking(communityHallsBookingRequest);
@@ -139,7 +142,10 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	@Override
 	public List<CommunityHallSlotAvailabiltityDetail> getCommunityHallSlotAvailability(
 			CommunityHallSlotSearchCriteria criteria) {
-		//TODO add validation for the search fields
+		if(criteria.getCommunityHallCode() == null || CollectionUtils.isEmpty(criteria.getHallCodes())) {
+			
+		}
+		
 		List<CommunityHallSlotAvailabiltityDetail> availabiltityDetails = bookingRepository.getCommunityHallSlotAvailability(criteria);
 		log.info("Availabiltity details fetched from DB :" + availabiltityDetails);
 		
@@ -159,24 +165,25 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		List<CommunityHallSlotAvailabiltityDetail> availabiltityDetailsResponse = new ArrayList<CommunityHallSlotAvailabiltityDetail>();
 		LocalDate startDate = CommunityHallBookingUtil.parseStringToLocalDate(criteria.getBookingStartDate());
 		
-		/*
-		 * if(criteria.getBookingStartDate().equals(criteria.getBookingEndDate())) {
-		 * availabiltityDetailsResponse.add(createCommunityHallSlotAvailabiltityDetail(
-		 * criteria, startDate, availabiltityDetails)); } else { }
-		 */
-		
 		LocalDate endDate = CommunityHallBookingUtil.parseStringToLocalDate(criteria.getBookingEndDate());
 		
 		List<LocalDate> totalDates = new ArrayList<>();
 		while (!startDate.isAfter(endDate)) {
 		    totalDates.add(startDate);
-		  //  availabiltityDetailsResponse.add(createCommunityHallSlotAvailabiltityDetail(criteria, startDate, availabiltityDetails));
 		    startDate = startDate.plusDays(1);
 		}
 		
 		totalDates.stream().forEach(date -> {
-			availabiltityDetailsResponse.add(createCommunityHallSlotAvailabiltityDetail(
-					  criteria, date, availabiltityDetails));
+			List<String> hallCodes = new ArrayList<>();
+			if(StringUtils.isNotBlank(criteria.getHallCode())) {
+				hallCodes.add(criteria.getHallCode());
+			}else {
+				hallCodes.addAll(criteria.getHallCodes());
+			}
+			hallCodes.stream().forEach(data ->{
+				availabiltityDetailsResponse.add(createCommunityHallSlotAvailabiltityDetail(
+						  criteria, date, data));
+			});
 		});
 		
 		availabiltityDetailsResponse.stream().forEach(detail -> {
@@ -188,11 +195,11 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		return availabiltityDetailsResponse;
 	}
 	
-	private CommunityHallSlotAvailabiltityDetail createCommunityHallSlotAvailabiltityDetail(CommunityHallSlotSearchCriteria criteria, LocalDate date,
-			List<CommunityHallSlotAvailabiltityDetail> availabiltityDetails) {
+	private CommunityHallSlotAvailabiltityDetail createCommunityHallSlotAvailabiltityDetail(CommunityHallSlotSearchCriteria criteria, LocalDate date, 
+			String hallCode) {
 		CommunityHallSlotAvailabiltityDetail availabiltityDetail = CommunityHallSlotAvailabiltityDetail.builder()
-				.communityHallName(criteria.getCommunityHallName())
-				.hallCode(criteria.getHallCode())
+				.communityHallCode(criteria.getCommunityHallCode())
+				.hallCode(hallCode)
 				.slotStaus(SlotStatusEnum.AVAILABLE.toString())
 				.tenantId(criteria.getTenantId())
 				.bookingDate(CommunityHallBookingUtil.parseLocalDateToString(date))

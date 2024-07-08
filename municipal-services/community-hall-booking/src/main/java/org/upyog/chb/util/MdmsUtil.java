@@ -2,8 +2,10 @@ package org.upyog.chb.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
@@ -16,6 +18,8 @@ import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.repository.ServiceRequestRepository;
 
+import com.jayway.jsonpath.JsonPath;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -27,6 +31,8 @@ public class MdmsUtil {
 
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
+
+	private static Object mdmsMap = null;
 
 	/*
 	 * @Autowired private MDMSClient mdmsClient;
@@ -48,9 +54,19 @@ public class MdmsUtil {
 	public Object mDMSCall(RequestInfo requestInfo, String tenantId) {
 		MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId);
 		Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
-		log.info("Master data fetched from MDMSfrom fiegn client : " + result);
-		//Object result = mdmsClient.getMDMSData(mdmsCriteriaReq);
-	//	log.info("Master data fetched from MDMSfrom fiegn client : " + result);
+		String data = CommunityHallBookingUtil.beuatifyJson(result);
+		
+		if(mdmsMap == null) {
+			setMDMSDataMap(result);// = ;
+		}
+		
+		log.info("dbeuatifed mdms response ata : " + data);
+		log.info("Calculkation data for CHB booking :" + 
+				JsonPath.read(result,
+						CommunityHallBookingConstants.CHB_JSONPATH_CODE +  "." + CommunityHallBookingConstants.CHB_CALCULATION_TYPE +".[0].feeType"));
+		 //rate = JsonPath.read(response, "$.MdmsRes.BTR.RegistrationCharges.[0].amount");
+		// Object result = mdmsClient.getMDMSData(mdmsCriteriaReq);
+		// log.info("Master data fetched from MDMSfrom fiegn client : " + result);
 		return result;
 	}
 
@@ -108,9 +124,12 @@ public class MdmsUtil {
 		chbMasterDtls.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_SPECIAL_CATEGORY)
 				.filter(filterCode).build());
 		chbMasterDtls.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_CALCULATION_TYPE).build());
-		chbMasterDtls.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_COMMNUITY_HALLS).filter(filterCode).build());
-		chbMasterDtls.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_HALL_CODES).filter(filterCode).build());
-		chbMasterDtls.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_DOCUMENTS).filter(filterCode).build());
+		chbMasterDtls.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_COMMNUITY_HALLS)
+				.filter(filterCode).build());
+		chbMasterDtls.add(
+				MasterDetail.builder().name(CommunityHallBookingConstants.CHB_HALL_CODES).filter(filterCode).build());
+		chbMasterDtls.add(
+				MasterDetail.builder().name(CommunityHallBookingConstants.CHB_DOCUMENTS).filter(filterCode).build());
 
 		ModuleDetail moduleDetail = ModuleDetail.builder().masterDetails(chbMasterDtls)
 				.moduleName(config.getModuleName()).build();
@@ -122,5 +141,16 @@ public class MdmsUtil {
 
 		return Arrays.asList(moduleDetail, commonMasterMDtl);
 
+	}
+
+	public static void setMDMSDataMap(Object mdmsDataMap) {
+		log.info("Calculkation data for CHB booking :" + 
+				JsonPath.read(mdmsDataMap,
+						CommunityHallBookingConstants.CHB_JSONPATH_CODE +  "." + CommunityHallBookingConstants.CHB_CALCULATION_TYPE +".[0].feeType"));
+		mdmsMap = mdmsDataMap;
+	}
+
+	public static Object getMDMSDataMap() {
+		return mdmsMap;
 	}
 }

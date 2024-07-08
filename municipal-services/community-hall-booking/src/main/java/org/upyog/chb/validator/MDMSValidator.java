@@ -9,6 +9,7 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
+import org.upyog.chb.util.MdmsUtil;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 
 import com.jayway.jsonpath.JsonPath;
@@ -27,6 +28,10 @@ public class MDMSValidator {
 	public void validateMdmsData(CommunityHallBookingRequest communityHallBookingRequest, Object mdmsData) {
 
 		Map<String, List<String>> masterData = getAttributeValues(mdmsData);
+		/*
+		 * if(MdmsUtil.getMDMSDataMap().isEmpty()) {
+		 * MdmsUtil.setMDMSDataMap(masterData); }
+		 */
 		String[] masterArray = { CommunityHallBookingConstants.CHB_PURPOSE, CommunityHallBookingConstants.CHB_SPECIAL_CATEGORY,
 				CommunityHallBookingConstants.CHB_RESIDENT_TYPE, CommunityHallBookingConstants.CHB_COMMNUITY_HALLS,
 				CommunityHallBookingConstants.CHB_HALL_CODES, CommunityHallBookingConstants.CHB_DOCUMENTS};
