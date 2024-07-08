@@ -604,25 +604,11 @@ public class EstimationService {
 //		if (feeObj.get(WSCalculationConstant.SCRUTINY_FEE_CONST) != null) {
 //			scrutinyFee = new BigDecimal(feeObj.getAsNumber(WSCalculationConstant.SCRUTINY_FEE_CONST).toString());
 //		}
-		
-		String connection_propertyType=((HashMap<String,String>)criteria.getWaterConnection().getAdditionalDetails()).get("waterSubUsageType");
-		
-		BigDecimal securityCharge = BigDecimal.ZERO;
-		String tenantid= criteria.getTenantId();
 
-		if(tenantid.equalsIgnoreCase("pb.patiala")) {
-			if (feeObj.get(WSCalculationConstant.WS_SECURITY_CHARGE_CONST) != null) {
-				if(connection_propertyType.contains("DOM") || connection_propertyType.contains("USAGE_RESIDENTIAL") )
-					securityCharge = new BigDecimal(1000.00);
-				else 
-					securityCharge = new BigDecimal(
-							feeObj.getAsNumber(WSCalculationConstant.WS_SECURITY_CHARGE_CONST).toString());
-			}
-		}else {		
+		BigDecimal securityCharge = BigDecimal.ZERO;
 		if (feeObj.get(WSCalculationConstant.WS_SECURITY_CHARGE_CONST) != null) {
 			securityCharge = new BigDecimal(
 					feeObj.getAsNumber(WSCalculationConstant.WS_SECURITY_CHARGE_CONST).toString());
-		}
 		}
 		
 		//Connection Fee to be evaluated here  from mdms depending on plotsize
@@ -635,8 +621,8 @@ public class EstimationService {
 				connection_plotSize=null;
 			else
 				connection_plotSize=new BigDecimal(property.getLandArea());
-
 			
+			String connection_propertyType=((HashMap<String,String>)criteria.getWaterConnection().getAdditionalDetails()).get("waterSubUsageType");
 			if(connection_plotSize==null || connection_propertyType==null || connection_propertyType.equals(""))
 				connection_propertyType="DEFAULT"; // default connectionFee to be applied from mdms
 			else if(connection_propertyType.contains("DOM") || connection_propertyType.contains("USAGE_RESIDENTIAL") )
