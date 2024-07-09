@@ -1,5 +1,5 @@
-import { DatePicker, UploadFile,TextInput } from "@upyog/digit-ui-react-components";
-import React, { act } from "react";
+import { DatePicker, UploadFile, TextInput } from "@upyog/digit-ui-react-components";
+import React, { Component, act, useState } from "react";
 
 export const configEWApproverApplication = ({
   t,
@@ -13,7 +13,7 @@ export const configEWApproverApplication = ({
   assigneeLabel,
   businessService,
 }) => {
-  console.log("action",action)
+  console.log("action", action)
   const todayDate = new Date().toISOString().split("T")[0];
   console.log("todayedsta ::", todayDate)
 
@@ -27,48 +27,37 @@ export const configEWApproverApplication = ({
       {
         body: [
           action?.state === "COMPLETIONPENDING" ? (
-          {
-            label: t("EW_PICKUP_DATE"),
-            type: "date",
-            isMandatory: true,
-            populators: { 
-              name: "date",
-              validation: {
-                required: true,
+            {
+              label: t("EW_PICKUP_DATE"),
+              type: "date",
+              isMandatory: true,
+              populators: {
+                name: "date",
+                min: new Date().toISOString().split('T')[0],
+              }
+            }) : "null",
+
+
+          action?.state === "REQUESTCOMPLETED" ? (
+
+            {
+              label: t("ES_EW_ACTION_TRANSACTION_ID"),
+              type: "text",
+              isMandatory: true,
+              populators: {
+                name: "transactionId",
               },
-              customProps: { min: Digit.Utils.date.getDate() },
-              component: (customProps) => <DatePicker onChange={setSelectedDate} date={selectedDate} {...customProps} />,
-
-
-              // component: (
-              //   <DatePicker
-              //     date={selectedDate}
-              //     onChange={setSelectedDate}
-              //     min={todayDate}
-              //   />
-              // ),
-              }    
-          }) : "null",
+            }) : "null",
           action?.state === "REQUESTCOMPLETED" ? (
 
-          {
-            label: t("ES_EW_ACTION_TRANSACTION_ID"),
-            type: "text",
-            isMandatory: true,
-            populators: {
-              name: "transactionId",
-            },
-          }): "null",
-          action?.state === "REQUESTCOMPLETED" ? (
-
-          {
-            label: t("ES_EW_ACTION_FINALAMOUNT"),
-            type: "text",
-            isMandatory: true,
-            populators: {
-              name: "finalAmount",
-            },
-          }): "null",
+            {
+              label: t("ES_EW_ACTION_FINALAMOUNT"),
+              type: "text",
+              isMandatory: true,
+              populators: {
+                name: "finalAmount",
+              },
+            }) : "null",
           {
             label: t("ES_EW_ACTION_COMMENTS"),
             type: "textarea",
@@ -76,7 +65,7 @@ export const configEWApproverApplication = ({
               name: "comments",
             },
           },
-      
+
           {
             label: `${t("ES_EW_PHOTO")}${action.docUploadRequired ? " *" : ""}`,
             populators: (
