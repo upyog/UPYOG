@@ -31,7 +31,7 @@ import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import Response from "./pages/Response";
 import SelectOtp from "../../core/src/pages/citizen/Login/SelectOtp";
 import CitizenFeedback from "@upyog/digit-ui-module-core/src/components/CitizenFeedback";
-import AcknowledgementCF from "@upyog/digit-ui-module-core/src/components/AcknowledgementCF";
+import AcknowledgementCF from "../../core/src/components/AcknowledgementCF";
 
 
 
