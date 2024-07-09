@@ -6,6 +6,7 @@ import CHBSlotDetails from "./pageComponents/CHBSlotDetails";
 import CHBCreate from "./pages/citizen/Create";
 import CHBCitizenDetails from "./pageComponents/CHBCitizenDetails";
 import CHBBankDetails from "./pageComponents/CHBBankDetails";
+import CHBAddressDetails from "./pageComponents/CHBAddressDetails"
 import CHBDocumentDetails from "./pageComponents/CHBDocumentDetails";
 import CHBSearchHall from "./pageComponents/CHBSearchHall";
 import CHBWFApplicationTimeline from "./pageComponents/CHBWFApplicationTimeline";
@@ -44,6 +45,7 @@ const componentsToRegister = {
   CHBCitizenDetails,
   CHBSlotDetails,
   CHBBankDetails,
+  CHBAddressDetails,
   CHBDocumentDetails,
   CHBSearchHall,
   CHBWFApplicationTimeline,

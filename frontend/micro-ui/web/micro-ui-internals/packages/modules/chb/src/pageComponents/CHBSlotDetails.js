@@ -11,7 +11,6 @@ const CHBSlotDetails
   = ({ t, config, onSelect, userType, formData,value=formData.slotlist}) => {
     const { pathname: url } = useLocation();
     let index = window.location.href.charAt(window.location.href.length - 1);
-    const [residentType, setresidenttype] = useState((formData.slots && formData.slots[index] && formData.slots[index].residentType) || formData?.slots?.residentType || "");
     const [specialCategory, setspecialcategory] = useState((formData.slots && formData.slots[index] && formData.slots[index].specialCategory) || formData?.slots?.specialCategory || "");
     const [purpose, setpurpose] = useState((formData.slots && formData.slots[index] && formData.slots[index].purpose) || formData?.slots?.purpose || "");
 
@@ -31,12 +30,6 @@ const CHBSlotDetails
     let category=[];
     let purposes=[];
   
-    Resident &&
-    Resident.map((chbDetails) => {
-      resident.push({ i18nKey: `CHB_${chbDetails.code}`, code: `${chbDetails.code}`, value: `${chbDetails.name}` });
-      console.log("resident is-->",Resident);
-      console.log("hallList is-->",hallList);
-      });
 
       Category &&
       Category.map((chbDetails) => {
@@ -57,11 +50,11 @@ const CHBSlotDetails
       let owner = formData.slots && formData.slots[index];
       let ownerStep;
       if (userType === "citizen") {
-        ownerStep = { ...owner, residentType,specialCategory,purpose,purposeDescription};
+        ownerStep = { ...owner,specialCategory,purpose,purposeDescription};
         onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
       } else {
 
-        ownerStep = { ...owner, residentType,specialCategory,purpose,purposeDescription};
+        ownerStep = { ...owner,specialCategory,purpose,purposeDescription};
         onSelect(config.key, ownerStep, false, index);
       }
       console.log(ownerStep);
@@ -74,12 +67,19 @@ const CHBSlotDetails
       if (userType === "citizen") {
         goNext();
       }
-    }, [residentType,specialCategory,purpose,purposeDescription]);
+    }, [specialCategory,purpose,purposeDescription]);
 
-
-
-
-
+    const formatSlotDetails = (slots) => {
+      const sortedSlots = slots.sort((a, b) => new Date(a.bookingDate) - new Date(b.bookingDate));
+      const firstDate = sortedSlots[0]?.bookingDate;
+      const lastDate = sortedSlots[sortedSlots.length - 1]?.bookingDate;
+      if(firstDate===lastDate){
+        return `${sortedSlots[0]?.name} (${firstDate})`;
+      }
+      else{
+      return `${sortedSlots[0]?.name} (${firstDate} - ${lastDate})`;
+      }
+    };
 
 
     return (
@@ -90,48 +90,21 @@ const CHBSlotDetails
             : null
         }
         <Card>
-      <CardSubHeader>{value?.bookingSlotDetails.map((slot) =>(
-         <div>
-         <div key={index}>
-           {slot.name}
-           ({slot.bookingDate})
-         </div>
-         </div>
-  ))}</CardSubHeader>
-  <ChbCancellationPolicy/>
+        <CardSubHeader>
+          {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
+            ? formatSlotDetails(value.bookingSlotDetails)
+            : null}
+        </CardSubHeader>
+        <ChbCancellationPolicy />
       </Card>
         <FormStep
           config={config}
           onSelect={goNext}
           onSkip={onSkip}
           t={t}
-          isDisabled={ !residentType || !specialCategory || !purpose || !purposeDescription}
+          isDisabled={!specialCategory || !purpose || !purposeDescription}
         >
           <div>
-
-            <CardLabel>{`${t("CHB_RESIDENT_TYPE")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
-
-
-            <Controller
-              control={control}
-              name={"residentType"}
-              defaultValue={residentType}
-              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
-                <Dropdown
-
-                  className="form-field"
-                  selected={residentType}
-                  select={setresidenttype}
-                  option={resident}
-                  optionKey="i18nKey"
-                  t={t}
-                />
-
-              )}
-
-            />
-
 
             <CardLabel>{`${t("CHB_SPECIAL_CATEGORY")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
 

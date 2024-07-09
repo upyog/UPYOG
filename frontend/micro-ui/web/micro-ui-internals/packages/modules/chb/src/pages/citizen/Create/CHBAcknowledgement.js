@@ -37,14 +37,15 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
   const { t } = useTranslation();
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.chb.useChbCreateAPI("pg.citya");
+  const mutation = Digit.Hooks.chb.useChbCreateAPI(data?.address?.city?.code);
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const match = useRouteMatch();
   const { tenants } = storeData || {};
+  console.log("storeData",data?.address?.city?.code);
 
   useEffect(() => {
     try {
-      data.tenantId = "pg.citya";
+      data.tenantId = data?.address?.city?.code;
       let formdata = CHBDataConvert(data);
       console.log("formdata-->", formdata);
 
@@ -75,13 +76,13 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
       </StatusTable>
       {mutation.isSuccess && <SubmitBar label={t("CHB_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />}
       <Link to={`/digit-ui/citizen`}>
-        <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
+        <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
 
       <br></br>
 
       <Link to={`/digit-ui/citizen/payment/my-bills/` + `${"chb-services"}/` + `${mutation.data?.hallsBookingApplication[0].bookingNo}`}>
-        <LinkButton label={t("CHB_PAYMENT_BUTTON")} />
+      <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
       </Link>
     </Card>
   );

@@ -25,14 +25,15 @@ export const sethallDetails = (data) => {
   let { slotlist } = data;
   let hallDetails = slotlist?.bookingSlotDetails.map((slot) => {
     return { 
+      hallName:slot.name,
       bookingId:slot.slotId,
       hallCode: slot.slotId,
       bookingDate:slot.bookingDate,
       bookingFromTime:"10:00",
       bookingToTime:"9:59",
-      hallName: slot.name,
       status:"BOOKED",
     };
+
   }) || [];
 
   data.slotlist = hallDetails;
@@ -43,9 +44,7 @@ export const setBankDetails = (data) => {
   let { bankdetails } = data;
 
   let propbankdetails = {
-    ...bankdetails,
     accountNumber: bankdetails?.accountNumber,
-    confirmAccountNumber: bankdetails?.confirmAccountNumber,
     ifscCode: bankdetails?.ifscCode,
     bankName: bankdetails?.bankName,
     bankBranchName: bankdetails?.bankBranchName,
@@ -57,11 +56,27 @@ export const setBankDetails = (data) => {
 
 };
 
+export const setaddressDetails = (data) => {
+  let { address } = data;
+
+  let addressdetails = {
+    pincode: address?.pincode,
+    city: address?.city?.city?.name,
+    localityCode: address?.locality?.code,
+    streetName: address?.streetName,
+    houseNo: address?.houseNo,
+    landmark: address?.landmark,
+  };
+
+  data.address = addressdetails;
+  return data;
+
+};
+
 export const setOwnerDetails = (data) => {
     let { ownerss } = data;
   
     let propOwners = {
-      ...ownerss,
       applicantName:ownerss?.applicantName,
       applicantMobileNo:ownerss?.mobileNumber,
       applicantAlternateMobileNo:ownerss?.alternateNumber,
@@ -102,6 +117,7 @@ export const setOwnerDetails = (data) => {
   };
 
 
+
 export const CHBDataConvert = (data) => {
  
   data = setDocumentDetails(data);
@@ -109,25 +125,22 @@ export const CHBDataConvert = (data) => {
   data = setBankDetails(data);
   data = setSlotDetails(data);
   data= sethallDetails(data);
+  data=setaddressDetails(data);
 const formdata={
   hallsBookingApplication: {
     tenantId: data.tenantId,
-    applicantName:data.ownerss?.applicantName,
-    applicantMobileNo:data.ownerss?.mobileNumber,
-    applicantAlternateMobileNo:data.ownerss?.alternateNumber,
-    applicantEmailId:data.ownerss?.emailId,
-    bankDetails:data.bankdetails,
+    applicantDetail:{
+      ...data.bankdetails,
+      ...data.ownerss
+    },
+    address:data.address,
     purposeDescription:data.slots?.purposeDescription,
     communityHallId:data.slotlist[0]?.bookingId || "2",
     ...data.documents,
     bookingStatus:"BOOKING_CREATED",
-    communityHallName:data.slotlist[0]?.hallName,
-    
+    communityHallCode:data.slotlist[0]?.hallName,
     specialCategory:{
       category:data.slots?.specialCategory?.value
-    },
-    residentType:{
-      type:data.slots?.residentType?.value
     },
     purpose:{
       purpose:data.slots?.purpose?.value
@@ -135,7 +148,7 @@ const formdata={
     bookingSlotDetails:data?.slotlist,
 
   workflow : {
-      businessService: "chb",
+      businessService: "chb-services",
       action : "APPLY",
       moduleName: "chb-services"
     }
