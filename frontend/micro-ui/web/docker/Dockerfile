@@ -18,7 +18,6 @@ RUN yarn add @upyog/digit-ui-module-common
 RUN yarn add @upyog/digit-ui-module-ws
 RUN yarn add @upyog/digit-ui-module-commonpt
 RUN yarn add @upyog/digit-ui-module-bills
-RUN yarn add @upyog-niua/upyog-ui-module-ptr
 
 ARG WORK_DIR
 WORKDIR /app

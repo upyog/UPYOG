@@ -30,7 +30,6 @@
     "@upyog/digit-ui-module-tl": "1.8.0",
     "@upyog/digit-ui-module-ws": "1.8.3",
     "@upyog/digit-ui-react-components": "1.8.0",
-    "@upyog-niua/upyog-ui-module-ptr": "1.0.11",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
