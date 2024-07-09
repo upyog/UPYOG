@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
+<<<<<<< Updated upstream
 import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber, Card,CardSubHeader } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation, useRouteMatch } from "react-router-dom";
+=======
+import { FormStep, TextInput, CardLabel, MobileNumber, Card,CardSubHeader } from "@upyog/digit-ui-react-components";
+import { useLocation} from "react-router-dom";
+>>>>>>> Stashed changes
 import Timeline from "../components/CHBTimeline";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 
 const CHBCitizenDetails
- = ({ t, config, onSelect, userType, formData, ownerIndex,searchParams,value=formData.slotlist}) => {
+ = ({ t, config, onSelect, userType, formData,value=formData.slotlist}) => {
   const { pathname: url } = useLocation();
 
   let index =window.location.href.charAt(window.location.href.length - 1);
@@ -21,11 +26,6 @@ const CHBCitizenDetails
   const [alternateNumber, setAltMobileNumber] = useState(
     (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].alternateNumber) || formData?.ownerss?.alternateNumber || ""
   );
-  const [localSearchParams, setLocalSearchParams] = useState(() => ({ ...searchParams }));
-
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const stateId = Digit.ULBService.getStateId();
-
   function setOwnerName(e) {
     setName(e.target.value);
   }
@@ -68,6 +68,18 @@ const CHBCitizenDetails
     }
   }, []);
 
+  const formatSlotDetails = (slots) => {
+    const sortedSlots = slots.sort((a, b) => new Date(a.bookingDate) - new Date(b.bookingDate));
+    const firstDate = sortedSlots[0]?.bookingDate;
+    const lastDate = sortedSlots[sortedSlots.length - 1]?.bookingDate;
+    if(firstDate===lastDate){
+      return `${sortedSlots[0]?.name} (${firstDate})`;
+    }
+    else{
+    return `${sortedSlots[0]?.name} (${firstDate} - ${lastDate})`;
+    }
+  };
+
   return (
    
     <React.Fragment>
@@ -78,19 +90,13 @@ const CHBCitizenDetails
     : null
     }
     <Card>
-      <CardSubHeader>{value?.bookingSlotDetails.map((slot,index) =>(
-        <div>
-        <div key={index}>
-          {slot.name}
-          ({slot.bookingDate})
-        </div>
-        </div>
-       
- 
-  ))}</CardSubHeader>
-  <ChbCancellationPolicy/>
+        <CardSubHeader>
+          {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
+            ? formatSlotDetails(value.bookingSlotDetails)
+            : null}
+        </CardSubHeader>
+        <ChbCancellationPolicy />
       </Card>
-  
     <FormStep
       config={config}
       onSelect={goNext}
@@ -139,7 +145,7 @@ const CHBCitizenDetails
         <CardLabel>{`${t("CHB_EMAIL_ID")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
         <TextInput
           t={t}
-          type={"text"}
+          type={"email"}
           isMandatory={false}
           optionKey="i18nKey"
           name="emailId"

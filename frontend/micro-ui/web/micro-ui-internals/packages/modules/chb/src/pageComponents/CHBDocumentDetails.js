@@ -41,19 +41,28 @@ const CHBDocumentDetails = ({ t, config, onSelect, userType, formData, setError:
     else setEnableSubmit(true);
   }, [documents, checkRequiredFields]);
 
- 
+  const formatSlotDetails = (slots) => {
+    const sortedSlots = slots.sort((a, b) => new Date(a.bookingDate) - new Date(b.bookingDate));
+    const firstDate = sortedSlots[0]?.bookingDate;
+    const lastDate = sortedSlots[sortedSlots.length - 1]?.bookingDate;
+    if(firstDate===lastDate){
+      return `${sortedSlots[0]?.name} (${firstDate})`;
+    }
+    else{
+    return `${sortedSlots[0]?.name} (${firstDate} - ${lastDate})`;
+    }
+  };
 
   return (
     <div>
-      <Timeline currentStep={4} />
+      <Timeline currentStep={5} />
       <Card>
-      <CardSubHeader>{value?.bookingSlotDetails.map((slot,index) =>(
-         <div key={index}>
-           {slot.name}
-           ({slot.bookingDate})
-         </div>
-  ))}</CardSubHeader>
-  <ChbCancellationPolicy/>
+        <CardSubHeader>
+          {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
+            ? formatSlotDetails(value.bookingSlotDetails)
+            : null}
+        </CardSubHeader>
+        <ChbCancellationPolicy />
       </Card>
       {!isLoading ? (
         <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={enableSubmit} onAdd={onAdd}>
@@ -99,14 +108,14 @@ function CHBSelectDocument({
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [selectedDocument, setSelectedDocument] = useState(
     filteredDocument
-      ? { ...filteredDocument, active: doc?.active === true, code: filteredDocument?.documentType }
-      : doc?.dropdownData?.length === 1
-      ? doc?.dropdownData[0]
-      : {}
+    ? { ...filteredDocument, active: true, code: filteredDocument?.documentType, i18nKey:"CHB_" +filteredDocument?.documentType.replaceAll(".", "_") }
+    : doc?.dropdownData?.length > 0
+        ? doc?.dropdownData[0]
+        : {}
   );
 
   const [file, setFile] = useState(null);
-  const [uploadedFile, setUploadedFile] = useState(() => filteredDocument?.filestoreId || null);
+  const [uploadedFile, setUploadedFile] = useState(() => filteredDocument?.fileStoreId || null);
 
   const handleCHBSelectDocument = (value) => setSelectedDocument(value);
 
@@ -135,7 +144,7 @@ function CHBSelectDocument({
           ...filteredDocumentsByFileStoreId,
           {
             documentType: selectedDocument?.code,
-            filestoreId: uploadedFile,
+            fileStoreId: uploadedFile,
             documentUid: uploadedFile,
           },
         ];

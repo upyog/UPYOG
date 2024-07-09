@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
+<<<<<<< Updated upstream
 import { FormStep, TextInput, CardLabel, Card,CardSubHeader } from "@nudmcdgnpm/digit-ui-react-components";
+=======
+import { FormStep, TextInput, CardLabel, Card,CardSubHeader,Toast } from "@upyog/digit-ui-react-components";
+>>>>>>> Stashed changes
 import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/CHBTimeline";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
@@ -22,6 +26,7 @@ const CHBBankDetails
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
+  const [showToast, setShowToast] = useState(null);
 
   useEffect(() => {
     if (ifscCode.length === 11) {
@@ -72,7 +77,7 @@ const CHBBankDetails
 
   const goNext = () => {
     if (accountNumber !== confirmAccountNumber) {
-      alert(t("CHB_ACCOUNT_NUMBERS_DO_NOT_MATCH"));
+      setShowToast({ error: true, label: t("CHB_ACCOUNT_NUMBERS_DO_NOT_MATCH") });
       return;
     }
     let owner = formData.bankdetails && formData.bankdetails[index];
@@ -98,7 +103,17 @@ const CHBBankDetails
       goNext();
     }
   }, []);
-console.log("value----->",value);
+  const formatSlotDetails = (slots) => {
+    const sortedSlots = slots.sort((a, b) => new Date(a.bookingDate) - new Date(b.bookingDate));
+    const firstDate = sortedSlots[0]?.bookingDate;
+    const lastDate = sortedSlots[sortedSlots.length - 1]?.bookingDate;
+    if(firstDate===lastDate){
+      return `${sortedSlots[0]?.name} (${firstDate})`;
+    }
+    else{
+    return `${sortedSlots[0]?.name} (${firstDate} - ${lastDate})`;
+    }
+  };
 
   return (
    
@@ -106,19 +121,16 @@ console.log("value----->",value);
       
     {
       window.location.href.includes("/citizen") ?
- <Timeline currentStep={3} />
+ <Timeline currentStep={4} />
     : null
     }
-    <Card>
-      <CardSubHeader>{value?.bookingSlotDetails.map((slot) =>(
-        <div>
-        <div key={index}>
-          {slot.name}
-          ({slot.bookingDate})
-        </div>
-        </div>
-  ))}</CardSubHeader>
-  <ChbCancellationPolicy/>
+   <Card>
+        <CardSubHeader>
+          {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
+            ? formatSlotDetails(value.bookingSlotDetails)
+            : null}
+        </CardSubHeader>
+        <ChbCancellationPolicy />
       </Card>
   
     <FormStep
@@ -236,6 +248,17 @@ console.log("value----->",value);
         />
       </div>
     </FormStep>
+    {showToast && (
+        <Toast
+          error={showToast.error}
+          warning={showToast.warning}
+          label={t(showToast.label)}
+          isDleteBtn={true}
+          onClose={() => {
+            setShowToast(null);
+          }}
+        />
+      )}
     </React.Fragment>
   );
 };

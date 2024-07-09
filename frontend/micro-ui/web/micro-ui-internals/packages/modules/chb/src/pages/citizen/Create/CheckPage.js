@@ -42,13 +42,24 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     isEditCHB,
     isUpdateCHB,
     ownerss,
-    documents
+    documents,
+    address,
    
   } = value;
 
   const typeOfApplication = !isEditCHB && !isUpdateCHB ? `bookHall` : `edit-application`;
 
-
+  const formatSlotDetails = (slots) => {
+    const sortedSlots = slots.sort((a, b) => new Date(a.bookingDate) - new Date(b.bookingDate));
+    const firstDate = sortedSlots[0]?.bookingDate;
+    const lastDate = sortedSlots[sortedSlots.length - 1]?.bookingDate;
+    if(firstDate===lastDate){
+      return `${sortedSlots[0]?.name} (${firstDate})`;
+    }
+    else{
+    return `${sortedSlots[0]?.name} (${firstDate} - ${lastDate})`;
+    }
+  };
   const [agree, setAgree] = useState(false);
   const setdeclarationhandler = () => {
     setAgree(!agree);
@@ -56,20 +67,17 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   };
   return (
     <React.Fragment>
-     {window.location.href.includes("/citizen") ? <Timeline currentStep={5}/> : null}
+     {window.location.href.includes("/citizen") ? <Timeline currentStep={6}/> : null}
     <Card>
       <CardHeader>{t("CHB_CHECK_YOUR_DETAILS")}</CardHeader>
       <div>
-        <br></br>
-        <CardSubHeader>{slotlist?.bookingSlotDetails.map((slot,index) =>(
-     <div>
-     <div key={index}>
-       {slot.name}
-       ({slot.bookingDate})
-     </div>
-     </div>
-  ))}</CardSubHeader>
-        <br></br>
+        <Card>
+        <CardSubHeader>
+          {slotlist?.bookingSlotDetails && slotlist.bookingSlotDetails.length > 0
+            ? formatSlotDetails(slotlist.bookingSlotDetails)
+            : null}
+        </CardSubHeader>
+      </Card>
         <CardSubHeader>{t("CHB_BOOKING_DETAILS")}</CardSubHeader>
         <br></br>
         <StatusTable>
@@ -103,16 +111,9 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         </StatusTable>
         <br></br>
 
-        <CardSubHeader>{t("SLOT_DETAILS")}</CardSubHeader>
+        <CardSubHeader>{t("CHB_EVENT_DETAILS")}</CardSubHeader>
         <br></br>
         <StatusTable>
-
-        <Row
-            label={t("CHB_RESIDENT_TYPE")}
-            text={`${t(checkForNA(slots?.residentType?.value))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/slot-details`} />}
-        />
-
         <Row
             label={t("CHB_SPECIAL_CATEGORY")}
             text={`${t(checkForNA(slots?.specialCategory?.value))}`}
@@ -174,10 +175,50 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         />
 
         </StatusTable>
+        <br></br>
+        <CardSubHeader>{t("CHB_ADDRESS_DETAILS")}</CardSubHeader>
+        <br></br>
+        <StatusTable>
+        <Row
+            label={t("CHB_PINCODE")}
+            text={`${t(checkForNA(address?.pincode))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
+
+        />
+         <Row
+            label={t("CHB_CITY")}
+            text={`${t(checkForNA(address?.city?.city?.name))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
+
+        />
+         <Row
+            label={t("CHB_LOCALITY")}
+            text={`${t(checkForNA(address?.locality?.name))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
+
+        />
+         
+         <Row
+            label={t("CHB_STREET_NAME")}
+            text={`${t(checkForNA(address?.streetName))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
+        />
+         <Row
+            label={t("CHB_HOUSE_NO")}
+            text={`${t(checkForNA(address?.houseNo))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
+        />
+         <Row
+            label={t("CHB_LANDMARK")}
+            text={`${t(checkForNA(address?.landmark))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
+        />
+
+        </StatusTable>
         <StatusTable>
         <br></br>
         <CardSubHeader>{t("CHB_DOCUMENTS_DETAILS")}</CardSubHeader>
-        <Card style={{paddingRight:"16px"}}>
+        <Card style={{ paddingRight: "16px", width: "auto", maxWidth: "80%" }}>
         {documents && documents?.documents.map((doc, index) => (
           <div key={`doc-${index}`}>
          {<div><CardSectionHeader>{t("CHB_" +(doc?.documentType?.split('.').slice(0,2).join('_')))}</CardSectionHeader>
