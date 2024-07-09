@@ -6,6 +6,7 @@ import org.egov.pt.models.Property;
 import org.egov.pt.models.collection.BillResponse;
 import org.egov.pt.repository.ServiceRequestRepository;
 import org.egov.pt.web.contracts.AssessmentRequest;
+import org.egov.pt.web.contracts.DemandRequest;
 import org.egov.pt.web.contracts.DemandResponse;
 import org.egov.pt.web.contracts.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
@@ -82,6 +83,37 @@ public class BillingService {
 		
 		try {
         	Optional<Object> response = serviceRequestRepository.fetchResult(uri, RequestInfoWrapper.builder().requestInfo(assessment.getRequestInfo()).build());
+        	
+        	if(response.isPresent()) {
+        		LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>)response.get();
+        		DemandResponse billResponse = mapper.convertValue(responseMap,DemandResponse.class);
+                return billResponse;
+        	}else {
+        		throw new CustomException("IllegalArgumentException","Did not get any response from the billing services");
+        		
+        	}
+        }
+
+        catch(IllegalArgumentException  e)
+        {
+            throw new CustomException("IllegalArgumentException","ObjectMapper not able to convert response into bill response");
+        }
+	}
+	
+	
+	
+public DemandResponse updateDemand( DemandRequest request) {
+		
+		StringBuilder uri = new StringBuilder(billingHost);
+		uri.append(updateDemandEndpoint);
+		//uri.append("?").append("tenantId=").append(assessment.getAssessment().getTenantId());
+		//uri.append("&consumerCode=").append(assessment.getAssessment().getPropertyId());
+		
+		System.out.println(uri);
+		
+		
+		try {
+        	Optional<Object> response = serviceRequestRepository.fetchResult(uri,request);
         	
         	if(response.isPresent()) {
         		LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>)response.get();

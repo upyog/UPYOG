@@ -2,6 +2,7 @@ package org.egov.pt.service;
 
 import static org.egov.pt.util.PTConstants.ASSESSMENT_BUSINESSSERVICE;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -14,6 +15,8 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Assessment;
 import org.egov.pt.models.AssessmentSearchCriteria;
+import org.egov.pt.models.Demand;
+import org.egov.pt.models.Demand.StatusEnum;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.enums.CreationReason;
@@ -31,6 +34,7 @@ import org.egov.pt.util.PTConstants;
 import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.validator.AssessmentValidator;
 import org.egov.pt.web.contracts.AssessmentRequest;
+import org.egov.pt.web.contracts.DemandRequest;
 import org.egov.pt.web.contracts.DemandResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -150,8 +154,18 @@ public class AssessmentService {
 	public void deactivateOldDemandsForPreiousYears(AssessmentRequest request) {
 		
 		DemandResponse dmr = billingService.fetchDemand(request);
-		
-		System.out.println(dmr);
+		DemandRequest demRequest = new DemandRequest();
+		List<Demand>demaListToBeUpdated = new ArrayList<>();
+		if(null!=dmr.getDemands() &&!dmr.getDemands().isEmpty()) {
+			for(Demand dm:dmr.getDemands()) {
+				dm.setStatus(StatusEnum.CANCELLED);
+				demaListToBeUpdated.add(dm);
+			}
+			demRequest.setDemands(demaListToBeUpdated);
+			demRequest.setRequestInfo(request.getRequestInfo());
+			DemandResponse resp = billingService.updateDemand(demRequest);
+			System.out.println(resp);
+			}
 	}
 	
 	public Assessment updateAssessment(AssessmentRequest request) {
