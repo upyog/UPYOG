@@ -8,16 +8,9 @@ import {
   CardLabel,
   Dropdown,
   SubmitBar,
-<<<<<<< Updated upstream
-  TextInput,
-  DateRange,
-  Calender
-} from "@nudmcdgnpm/digit-ui-react-components";
-=======
   Calender,
   Toast
-} from "@upyog/digit-ui-react-components";
->>>>>>> Stashed changes
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { DateRangePicker, createStaticRanges } from "react-date-range";
 import { addDays, startOfDay, endOfDay, format } from 'date-fns';
 

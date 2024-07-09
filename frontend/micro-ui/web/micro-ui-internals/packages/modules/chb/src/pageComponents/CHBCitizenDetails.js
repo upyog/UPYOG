@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
-<<<<<<< Updated upstream
-import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber, Card,CardSubHeader } from "@nudmcdgnpm/digit-ui-react-components";
-import { useLocation, useRouteMatch } from "react-router-dom";
-=======
-import { FormStep, TextInput, CardLabel, MobileNumber, Card,CardSubHeader } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, MobileNumber, Card,CardSubHeader } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation} from "react-router-dom";
->>>>>>> Stashed changes
 import Timeline from "../components/CHBTimeline";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 

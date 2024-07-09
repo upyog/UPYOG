@@ -25,6 +25,7 @@ export const sethallDetails = (data) => {
   let { slotlist } = data;
   let hallDetails = slotlist?.bookingSlotDetails.map((slot) => {
     return { 
+      hallName:slot.name,
       bookingId:slot.slotId,
       hallCode: slot.slotId,
       bookingDate:slot.bookingDate,
@@ -104,19 +105,17 @@ export const setOwnerDetails = (data) => {
 
   export const setDocumentDetails = (data) => {
     let { documents } = data;
-
-    let doc = documents?.documents
-    .map((
-      doc) => {
-    return { 
-      documentType:doc.documentType,
-      fileStoreId:doc.filestoreId,
+  
+    let doc = {
+      ...documents,
+       
+      
     };
-  });
+  
     data.documents = doc;
     return data;
-
   };
+
 
 
 export const CHBDataConvert = (data) => {
@@ -130,10 +129,6 @@ export const CHBDataConvert = (data) => {
 const formdata={
   hallsBookingApplication: {
     tenantId: data.tenantId,
-    // applicantName:data.ownerss?.applicantName,
-    // applicantMobileNo:data.ownerss?.mobileNumber,
-    // applicantAlternateMobileNo:data.ownerss?.alternateNumber,
-    // applicantEmailId:data.ownerss?.emailId,
     applicantDetail:{
       ...data.bankdetails,
       ...data.ownerss
@@ -141,9 +136,9 @@ const formdata={
     address:data.address,
     purposeDescription:data.slots?.purposeDescription,
     communityHallId:data.slotlist[0]?.bookingId || "2",
-    documents:data.documents,
+    ...data.documents,
     bookingStatus:"BOOKING_CREATED",
-    communityHallCode:data.slotlist[0]?.hallName || "Mehram Nagar Barat Ghar",
+    communityHallCode:data.slotlist[0]?.hallName,
     specialCategory:{
       category:data.slots?.specialCategory?.value
     },
@@ -153,7 +148,7 @@ const formdata={
     bookingSlotDetails:data?.slotlist,
 
   workflow : {
-      businessService: "chb",
+      businessService: "chb-services",
       action : "APPLY",
       moduleName: "chb-services"
     }

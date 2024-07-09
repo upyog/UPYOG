@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-<<<<<<< Updated upstream
-import { FormStep, TextInput, CardLabel, Card,CardSubHeader } from "@nudmcdgnpm/digit-ui-react-components";
-=======
-import { FormStep, TextInput, CardLabel, Card,CardSubHeader,Toast } from "@upyog/digit-ui-react-components";
->>>>>>> Stashed changes
+import { FormStep, TextInput, CardLabel, Card,CardSubHeader,Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/CHBTimeline";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
