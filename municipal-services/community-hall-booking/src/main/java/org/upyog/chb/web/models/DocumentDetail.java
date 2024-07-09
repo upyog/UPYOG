@@ -1,5 +1,7 @@
 package org.upyog.chb.web.models;
 
+import javax.validation.constraints.NotBlank;
+
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,19 +25,18 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DocumentDetails {
-	@JsonProperty("documentId")
-	private String documentId = null;
+public class DocumentDetail {
+	
+	private String documentDetailId;
 	
 	private String bookingId;
 
-	@JsonProperty("documentType")
-	private String documentType = null;
+	@NotBlank
+	private String documentType;
 	
-	@JsonProperty("fileStoreId")
-	private String fileStoreId = null;
+	@NotBlank
+	private String fileStoreId;
 
-	@JsonProperty("auditDetails")
-	private AuditDetails auditDetails = null;
+	private AuditDetails auditDetails;
 
 }

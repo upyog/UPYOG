@@ -11,11 +11,11 @@
 
 import React, { useCallback, useMemo, useEffect } from "react"
 import { useForm, Controller } from "react-hook-form";
-import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@upyog/digit-ui-react-components";
-import { Link } from "react-router-dom";
+import { TextInput, SubmitBar, DatePicker, SearchForm, SearchField, Dropdown, Table, Card, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
+import QRCode from 'qrcode';
 
 
 const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, data, count, setShowToast }) => {
@@ -189,6 +189,56 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
 };
 
 
+const downloadQRReport = async () => {
+  const doc = new jsPDF();
+  const generateQRCode = async (text) => {
+    return await QRCode.toDataURL(text);
+  };
+
+  // Add a title for the entire page
+  doc.setFontSize(16);
+  doc.text("Asset QR Code Report", 70, 10);
+
+  const batchSize = 3; // Define batch size to process and add in a page so that QR code generation and PDF creation don't overwhelm the system's memory.
+  for (let i = 0; i < data.length; i += batchSize) {
+    const batch = data.slice(i, i + batchSize);
+    const qrPromises = batch.map(async (row, index) => {
+      const url = `https://niuatt.niua.in/digit-ui/employee/asset/assetservice/applicationsearch/application-details/${row.applicationNo}`;
+      const assetDetails = `
+      Application No: ${row.applicationNo}
+      Asset Classification: ${row.assetClassification}
+      Asset Parent Category: ${row.assetParentCategory}
+      Asset Name: ${row.assetName}
+      `;
+      const qrCodeURL = await generateQRCode(url);
+      const yOffset = (index % batchSize) * 90;
+
+      // Add QR code image
+      doc.addImage(qrCodeURL, 'JPEG', 10, 20 + yOffset, 50, 50);
+
+      // Add details below QR code
+      doc.setFontSize(12);
+      doc.text(`Application No: ${row.applicationNo}`, 70, 30 + yOffset);
+      doc.text(`Asset Classification: ${row.assetClassification}`, 70, 40 + yOffset);
+      doc.text(`Asset Parent Category: ${row.assetParentCategory}`, 70, 50 + yOffset);
+      doc.text(`Asset Name: ${row.assetName}`, 70, 60 + yOffset);
+
+      // Add horizontal line
+      doc.line(10, 80 + yOffset, 200, 80 + yOffset);
+    });
+
+    await Promise.all(qrPromises);
+
+    // Add a new page after processing each batch except for the last batch
+    if (i + batchSize < data.length) {
+      doc.addPage();
+    }
+  }
+
+  doc.save("Asset-QR-Reports.pdf");
+};
+
+
 
 
 
@@ -291,6 +341,8 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: "10px" }}>
             <button onClick={downloadPDF} style = {{ color: "maroon", border: "2px solid #333", padding: "8px 16px", cursor: "pointer",marginRight: "10px"}} >Download PDF</button>
             <button onClick={downloadXLS} style = {{ color: "maroon", border: "2px solid #333", padding: "10px 20px",cursor: "pointer"}}>Download XLS</button> 
+            <button onClick={downloadQRReport} style = {{ color: "maroon", border: "2px solid #333", padding: "10px 20px",cursor: "pointer", marginLeft:"15px"}}>Download QR Report</button> 
+
             </div>
             : "" }
 
@@ -305,7 +357,7 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
                         {text}
                     </p>
                     ))
-                }
+                  }
             </Card>
             :(!isLoading && data !== ""? <Table
                 t={t}

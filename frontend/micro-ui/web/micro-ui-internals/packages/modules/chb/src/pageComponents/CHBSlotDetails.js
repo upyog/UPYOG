@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, CardLabel, TextInput,Dropdown, TextArea,Card,CardSubHeader} from "@upyog/digit-ui-react-components";
+import { FormStep, CardLabel, TextInput,Dropdown, TextArea,Card,CardSubHeader} from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation} from "react-router-dom";
 import Timeline from "../components/CHBTimeline";
 import { Controller, useForm } from "react-hook-form";
@@ -11,16 +11,12 @@ const CHBSlotDetails
   = ({ t, config, onSelect, userType, formData,value=formData.slotlist}) => {
     const { pathname: url } = useLocation();
     let index = window.location.href.charAt(window.location.href.length - 1);
-    const [selectslot, setslot] =useState((formData.slots && formData.slots[index] && formData.slots[index].selectslot) || formData?.slots?.selectslot || "");
     const [residentType, setresidenttype] = useState((formData.slots && formData.slots[index] && formData.slots[index].residentType) || formData?.slots?.residentType || "");
     const [specialCategory, setspecialcategory] = useState((formData.slots && formData.slots[index] && formData.slots[index].specialCategory) || formData?.slots?.specialCategory || "");
     const [purpose, setpurpose] = useState((formData.slots && formData.slots[index] && formData.slots[index].purpose) || formData?.slots?.purpose || "");
 
     const [purposeDescription, setPurposeDescription] = useState((formData.slots && formData.slots[index] && formData.slots[index].purposeDescription) || formData?.slots?.purposeDescription || "");
 
-    let slot = [{
-      "i18nKey": '01-may-2024 to 02-may-2024'
-    }]; 
     let validation = {};
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
@@ -61,11 +57,11 @@ const CHBSlotDetails
       let owner = formData.slots && formData.slots[index];
       let ownerStep;
       if (userType === "citizen") {
-        ownerStep = { ...owner, selectslot, residentType,specialCategory,purpose,purposeDescription};
+        ownerStep = { ...owner, residentType,specialCategory,purpose,purposeDescription};
         onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
       } else {
 
-        ownerStep = { ...owner, selectslot, residentType,specialCategory,purpose,purposeDescription};
+        ownerStep = { ...owner, residentType,specialCategory,purpose,purposeDescription};
         onSelect(config.key, ownerStep, false, index);
       }
       console.log(ownerStep);
@@ -78,7 +74,7 @@ const CHBSlotDetails
       if (userType === "citizen") {
         goNext();
       }
-    }, [selectslot, residentType,specialCategory,purpose,purposeDescription]);
+    }, [residentType,specialCategory,purpose,purposeDescription]);
 
 
 
@@ -95,13 +91,12 @@ const CHBSlotDetails
         }
         <Card>
       <CardSubHeader>{value?.bookingSlotDetails.map((slot) =>(
-        <div>
-        {slot.name}
-     </div>
-    // <div key={index}>
-    //   {slot.name}
-    //   {/* ({slot.date1}) */}
-    // </div>
+         <div>
+         <div key={index}>
+           {slot.name}
+           ({slot.bookingDate})
+         </div>
+         </div>
   ))}</CardSubHeader>
   <ChbCancellationPolicy/>
       </Card>
@@ -110,31 +105,9 @@ const CHBSlotDetails
           onSelect={goNext}
           onSkip={onSkip}
           t={t}
-          isDisabled={ !selectslot || !residentType || !specialCategory || !purpose || !purposeDescription}
+          isDisabled={ !residentType || !specialCategory || !purpose || !purposeDescription}
         >
           <div>
-            <CardLabel>{`${t("CHB_SELECT_SLOT")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
-
-            <Controller
-              control={control}
-              name={"selectslot"}
-              defaultValue={selectslot}
-              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
-                <Dropdown
-
-                  className="form-field"
-                  selected={selectslot}
-                  select={setslot}
-                  option={slot}
-                  optionKey="i18nKey"
-                  t={t}
-                />
-
-              )}
-
-            />
-
 
             <CardLabel>{`${t("CHB_RESIDENT_TYPE")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
 

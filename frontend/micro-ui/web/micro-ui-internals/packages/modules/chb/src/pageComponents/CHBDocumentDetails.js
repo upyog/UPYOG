@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair,Card,CardSubHeader} from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair,Card,CardSubHeader} from "@nudmcdgnpm/digit-ui-react-components";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 import Timeline from "../components/CHBTimeline";
 
@@ -47,21 +47,16 @@ const CHBDocumentDetails = ({ t, config, onSelect, userType, formData, setError:
     <div>
       <Timeline currentStep={4} />
       <Card>
-      <CardSubHeader>{value?.bookingSlotDetails.map((slot) =>(
-         <div>
-         {slot.name}
-        </div>
-     
-    // <div key={index}>
-    //   {slot.name}
-    //   {/* ({slot.date1}) */}
-    // </div>
+      <CardSubHeader>{value?.bookingSlotDetails.map((slot,index) =>(
+         <div key={index}>
+           {slot.name}
+           ({slot.bookingDate})
+         </div>
   ))}</CardSubHeader>
   <ChbCancellationPolicy/>
       </Card>
       {!isLoading ? (
-        <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} onAdd={onAdd}>
-        {/* <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={enableSubmit} onAdd={onAdd}> */}
+        <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={enableSubmit} onAdd={onAdd}>
           {data?.CHB?.Documents?.map((document, index) => {
             return (
               <CHBSelectDocument
@@ -196,7 +191,7 @@ function CHBSelectDocument({
     <div style={{ marginBottom: "24px" }}>
       {doc?.hasDropdown ? (
         <LabelFieldPair>
-          <CardLabel className="card-label-smaller">{t("CHB_"+(doc?.code.replaceAll(".", "_"))) + "  *"}</CardLabel>
+          <CardLabel className="card-label-smaller">{t("CHB_"+(doc?.code.replaceAll(".", "_"))) } <span style={{ color: 'red' }}>*</span></CardLabel>
           <Dropdown
             className="form-field"
             selected={selectedDocument}

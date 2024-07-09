@@ -11,7 +11,7 @@ import {
   Toast,
   Header,
   DownloadBtnCommon
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import { getBillNumber } from "../../utils";
 import SearchFormFields from "./SearchFields";

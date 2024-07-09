@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 
 import org.egov.common.contract.request.User;
 import org.upyog.chb.web.models.AuditDetails;
-import org.upyog.chb.web.models.DocumentDetails;
+import org.upyog.chb.web.models.DocumentDetail;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -69,7 +69,7 @@ public class ProcessInstance   {
 
         @JsonProperty("documents")
         @Valid
-        private List<DocumentDetails> documents;
+        private List<DocumentDetail> documents;
 
         @JsonProperty("assigner")
         private User assigner;
@@ -101,7 +101,7 @@ public class ProcessInstance   {
     	private List<User> assignes;
 
 
-        public ProcessInstance addDocumentsItem(DocumentDetails documentsItem) {
+        public ProcessInstance addDocumentsItem(DocumentDetail documentsItem) {
     		if (this.documents == null) {
     			this.documents = new ArrayList<>();
     		}

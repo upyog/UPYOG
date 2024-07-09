@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TickMark } from "@upyog/digit-ui-react-components";
+import { TickMark } from "@nudmcdgnpm/digit-ui-react-components";
 
 let actions = [];
 
@@ -10,7 +10,7 @@ const getAction = (flow) => {
       actions = [];
       break;
     default:
-      actions = ["CHB_BOOKING_DETAILS", "SLOT_DETAILS", "CHB_BANK_DETAILS", "CHB_UPLOAD_DOCUMENTS","CHB_SUMMARY"];
+      actions = ["CHB_APPLICANT_DETAILS", "CHB_EVENT_DETAILS", "CHB_BANK_DETAILS", "CHB_UPLOAD_DOCUMENTS","CHB_SUMMARY"];
   }
 };
 const Timeline = ({ currentStep = 1, flow = "" }) => {

@@ -248,12 +248,9 @@ const chbAccess = () => {
 
 const assetAccess = () => {
   const userInfo = Digit.UserService.getUser();
-  
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
-  const assetRoles = ["ASSET_INITIATOR","ASSET_VERIFIER"];
-
+  const assetRoles = ["ASSET_INITIATOR","ASSET_VERIFIER", "ASSET_APPROVER"];
   const ASSET_ACCESS = userRoles?.filter((role) => assetRoles?.includes(role));
-
   return ASSET_ACCESS?.length > 0;
 };
 

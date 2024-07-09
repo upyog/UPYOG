@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber, Card,CardSubHeader } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber, Card,CardSubHeader } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/CHBTimeline";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
@@ -67,9 +67,7 @@ const CHBCitizenDetails
       goNext();
     }
   }, []);
-console.log("value----->",value);
- 
-const {slotlist}=value;
+
   return (
    
     <React.Fragment>
@@ -80,15 +78,15 @@ const {slotlist}=value;
     : null
     }
     <Card>
-      <CardSubHeader>{value?.bookingSlotDetails.map((slot) =>(
+      <CardSubHeader>{value?.bookingSlotDetails.map((slot,index) =>(
         <div>
-           {slot.name}
+        <div key={index}>
+          {slot.name}
+          ({slot.bookingDate})
+        </div>
         </div>
        
-    // <div key={index}>
-    //   {slot.name}
-    //   {/* ({slot.date1}) */}
-    // </div>
+ 
   ))}</CardSubHeader>
   <ChbCancellationPolicy/>
       </Card>
@@ -98,7 +96,7 @@ const {slotlist}=value;
       onSelect={goNext}
       onSkip={onSkip}
       t={t}
-      // isDisabled={!applicantName || !mobileNumber || !emailId}
+      isDisabled={!applicantName || !mobileNumber || !emailId}
     >
       
       <div>
@@ -130,7 +128,7 @@ const {slotlist}=value;
           {...{ pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
         />
 
-        <CardLabel>{`${t("CHB_ALT_MOBILE_NUMBER")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+        <CardLabel>{`${t("CHB_ALT_MOBILE_NUMBER")}`}</CardLabel>
           <MobileNumber
             value={alternateNumber}
             name="alternateNumber"

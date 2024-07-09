@@ -1,9 +1,12 @@
 package org.upyog.chb.web.models;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.validation.annotation.Validated;
 import org.upyog.chb.web.models.workflow.ProcessInstance;
@@ -31,65 +34,54 @@ import lombok.Setter;
 public class CommunityHallBookingDetail {
 	
 	@JsonProperty("bookingId")
-	private String bookingId = null;
+	private String bookingId;
 	
 	private String bookingNo;
 	
-	private Long bookingDate;
+	private Long paymentDate;
 	
-	private String applicantName;
+	private Long applicationDate;
 	
-	private String applicantMobileNo;
+	@NotBlank
+	private String tenantId;
 	
-	private String applicantAlternateMobileNo;
-	
-	private String applicantEmailId;
-	
-	@JsonProperty("tenantId")
-	private String tenantId = null;
-	
-	@JsonProperty("communityHallId")
-	private Integer communityHallId = null;
-	
-	private String communityHallName;
+	@NotBlank
+	private String communityHallCode;
 	
 	@JsonProperty("bookingStatus")
 	private String bookingStatus;
 
-	@JsonProperty("residentType")
-	private ResidentType residentType = null;
+	@Valid
+	@NotNull
+	private SpecialCategory specialCategory;
 
-	@JsonProperty("specialCategory")
-	private SpecialCategory specialCategory = null;
-
-	@JsonProperty("purpose")
-	private BookingPurpose purpose = null;
+	@Valid
+	@NotNull
+	private BookingPurpose purpose;
 	
+	@NotBlank
 	private String purposeDescription;
 
-	@JsonProperty("eventName")
-	private String eventName = null;
-
-	@JsonProperty("eventOrganisedBy")
-	private String eventOrganisedBy = null;
-	
-	@JsonProperty("bookingSlotDetails")
+	@NotNull
+	@Valid
 	private List<BookingSlotDetail> bookingSlotDetails;
 	
 	@JsonProperty("documents")
 	@Valid
-	private List<DocumentDetails> uploadedDocumentDetails = null;
+	private List<DocumentDetail> uploadedDocumentDetails;
 	
-	@JsonProperty("bankDetails")
-	private BankDetails bankDetails = null;
+	@Valid
+	private ApplicantDetail applicantDetail;
+	
+	@Valid 
+	private Address address;
 	
 	private AuditDetails auditDetails;
 	
-	 @JsonProperty("workflow")
- 	private ProcessInstance workflow = null;
+ 	private ProcessInstance workflow;
 	
 
-	public CommunityHallBookingDetail addUploadedDocumentDetailsItem(DocumentDetails uploadedDocumentDetailsItem) {
+	public CommunityHallBookingDetail addUploadedDocumentDetailsItem(DocumentDetail uploadedDocumentDetailsItem) {
 		if (this.uploadedDocumentDetails == null) {
 			this.uploadedDocumentDetails = new ArrayList<>();
 		}

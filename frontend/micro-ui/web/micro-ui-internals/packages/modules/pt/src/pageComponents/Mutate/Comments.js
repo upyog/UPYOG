@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextInput, FormStep, TextArea, LabelFieldPair, CardLabel } from "@upyog/digit-ui-react-components";
+import { TextInput, FormStep, TextArea, LabelFieldPair, CardLabel } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../../components/TLTimeline";
 
 const Comments = (props) => {

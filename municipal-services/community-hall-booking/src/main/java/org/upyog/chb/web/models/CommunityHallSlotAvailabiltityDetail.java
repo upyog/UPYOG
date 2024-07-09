@@ -1,5 +1,7 @@
 package org.upyog.chb.web.models;
 
+import java.util.List;
+
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,25 +25,20 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EqualsAndHashCode(of = { "bookingDate" })
+@EqualsAndHashCode(of = { "bookingDate", "hallCode", "communityHallCode" })
 public class CommunityHallSlotAvailabiltityDetail {
 
 	private String communityHallCode;
 
-	private String communityHallName;
-
-	private String hallCodeName;
-
 	private String hallCode;
-
+	
 	private String bookingDate;
 
 	private String fromTime;
 
 	private String toTime;
 
-	@JsonProperty("tenantId")
-	private String tenantId = null;
+	private String tenantId;
 
 	@JsonProperty("slotStaus")
 	private String slotStaus;

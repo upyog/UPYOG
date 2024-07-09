@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PopUp } from '@upyog/digit-ui-react-components';
+import { PopUp } from '@nudmcdgnpm/digit-ui-react-components';
 
 const ChbCancellationPolicy = () => {
   const [showCancellationPolicy, setShowCancellationPolicy] = useState(false);

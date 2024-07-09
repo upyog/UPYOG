@@ -1,4 +1,4 @@
-import { ActionLinks, CardSectionHeader, CheckPoint, CloseSvg, ConnectingCheckPoints, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+import { ActionLinks, CardSectionHeader, CheckPoint, CloseSvg, ConnectingCheckPoints, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -13,7 +13,7 @@ const CHBWFApplicationTimeline = (props) => {
 
   const { isLoading, data } = Digit.Hooks.useWorkflowDetails({
     tenantId: props.application?.tenantId,
-    id: props.application?.applicationNumber,
+    id: props.application?.bookingNo,
     moduleCode: businessService,
   });
   
@@ -70,7 +70,7 @@ const CHBWFApplicationTimeline = (props) => {
           ? (
           <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
             <Link
-              to={{ pathname: `/digit-ui/citizen/payment/my-bills/${businessService}/${props?.application?.applicationNumber}`, state: { tenantId: props.application.tenantId, applicationNumber : props?.application?.applicationNumber } }}
+              to={{ pathname: `/digit-ui/citizen/payment/my-bills/${businessService}/${props?.application?.bookingNo}`, state: { tenantId: props.application.tenantId, bookingNo : props?.application?.bookingNo } }}
             >
               <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
             </Link>

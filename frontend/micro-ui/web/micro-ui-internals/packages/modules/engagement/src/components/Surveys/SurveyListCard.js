@@ -1,4 +1,4 @@
-import { Clock } from '@upyog/digit-ui-react-components'
+import { Clock } from '@nudmcdgnpm/digit-ui-react-components'
 import React from 'react'
 import {format, formatDistanceToNow} from "date-fns";
 import { useTranslation } from 'react-i18next';

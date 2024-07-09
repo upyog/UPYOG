@@ -1,4 +1,4 @@
-import { FormComposer, Header, Toast } from "@upyog/digit-ui-react-components";
+import { FormComposer, Header, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import cloneDeep from "lodash/cloneDeep";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";

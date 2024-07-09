@@ -1,4 +1,4 @@
-import { Header, Loader } from "@upyog/digit-ui-react-components";
+import { Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -49,7 +49,7 @@ export const CHBMyApplications = () => {
 
   return (
     <React.Fragment>
-      <Header>{`${t("CS_TITLE_MY_BOOKINGS")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
+      <Header>{`${t("CHB_MY_APPLICATION_HEADER")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
       <div>
         {applicationsList?.length > 0 &&
           applicationsList.map((application, index) => (

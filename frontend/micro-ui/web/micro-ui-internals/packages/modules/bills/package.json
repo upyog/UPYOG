@@ -1,6 +1,6 @@
 {
-  "name": "@upyog/digit-ui-module-bills",
-  "version": "1.7.0-beta.3",
+  "name": "@nudmcdgnpm/digit-ui-module-bills",
+  "version": "1.2.0",
   "description": "BILLS",
   "license": "MIT",
   "main": "dist/index.js",
@@ -15,7 +15,7 @@
     "prepublish": "yarn build"
   },
   "dependencies": {
-    "@upyog/digit-ui-react-components": "1.7.0-beta.4",
+    "@nudmcdgnpm/digit-ui-react-components": "1.2.0",
     "microbundle-crl": "^0.13.11",
     "react": "17.0.2",
     "react-dom": "17.0.2",

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber, Card,CardSubHeader } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, Card,CardSubHeader } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/CHBTimeline";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
@@ -112,13 +112,11 @@ console.log("value----->",value);
     <Card>
       <CardSubHeader>{value?.bookingSlotDetails.map((slot) =>(
         <div>
-           {slot.name}
+        <div key={index}>
+          {slot.name}
+          ({slot.bookingDate})
         </div>
-       
-    // <div key={index}>
-    //   {slot.name}
-    //   {/* ({slot.date1}) */}
-    // </div>
+        </div>
   ))}</CardSubHeader>
   <ChbCancellationPolicy/>
       </Card>
@@ -128,7 +126,7 @@ console.log("value----->",value);
       onSelect={goNext}
       onSkip={onSkip}
       t={t}
-      // isDisabled={!applicantName || !mobileNumber || !emailId}
+      isDisabled={!accountNumber || !confirmAccountNumber || !ifscCode || !bankName || !bankBranchName || !accountHolderName }
     >
       
       <div>

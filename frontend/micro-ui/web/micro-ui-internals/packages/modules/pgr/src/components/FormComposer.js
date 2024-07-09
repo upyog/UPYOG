@@ -12,7 +12,7 @@ import {
   ActionBar,
   SubmitBar,
   LabelFieldPair,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 export const FormComposer = (props) => {

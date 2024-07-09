@@ -1,17 +1,24 @@
 package org.upyog.chb.web.models;
 
+import java.math.BigDecimal;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
-@Getter
-@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class CommunityHallBokingInitDetails {
-	CommunityHallBookingRequestInit hallsBookingApplication;
-}
+@Setter
+@Getter
+@ToString
+public class CalculationType {
 
+	String applicationType;
+	String serviceType;
+	String feeType;
+	BigDecimal amount;
+}

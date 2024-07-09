@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 // import ProductListElement from "./EWASTEProductListElement";
 import ApplicationTable from "./inbox/ApplicationTable";
-import { Header, Button } from "@upyog/digit-ui-react-components";
-import { LinkButton, SubmitBar, DeleteIcon, StatusTable, Row } from "@upyog/digit-ui-react-components";
+import { Header, Button } from "@nudmcdgnpm/digit-ui-react-components";
+import { LinkButton, SubmitBar, DeleteIcon, StatusTable, Row } from "@nudmcdgnpm/digit-ui-react-components";
 
 const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQuantity, setCalculatedAmount }) => {
   const handleDelete = (e) => {
