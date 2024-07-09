@@ -531,7 +531,7 @@
                   <Dropdown
                     className="form-field"
                     selected={schemesselection}
-                    select={setSchemeselection}
+                    select={setschemesselection}
                     option={selectschemetypes}
                     optionKey="i18nKey"
                     t={t}
