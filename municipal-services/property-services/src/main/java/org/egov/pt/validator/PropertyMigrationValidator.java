@@ -229,9 +229,12 @@ public class PropertyMigrationValidator {
 			}
 		}
 
-		if(!CollectionUtils.isEmpty(property.getDocuments()) && property.getDocuments().contains(null))
-			errorMap.put("INVALID ENTRY IN PROPERTY DOCS", " The proeprty documents cannot contain null values");
-		
+		/*
+		 * if(!CollectionUtils.isEmpty(property.getDocuments()) &&
+		 * property.getDocuments().contains(null))
+		 * errorMap.put("INVALID ENTRY IN PROPERTY DOCS",
+		 * " The proeprty documents cannot contain null values");
+		 */
 		
 		
 
