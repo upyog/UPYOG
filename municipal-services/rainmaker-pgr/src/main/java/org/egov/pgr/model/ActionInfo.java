@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -214,6 +215,10 @@ public class ActionInfo   {
   **/
 
   public String getAssignee() {
+	  if(StringUtils.isEmpty(this.assignee) )
+	  {
+		  this.assignee="gro";
+	  }
     return assignee;
   }
 
