@@ -1,0 +1,1 @@
+rainmaker-bpa=/reports/bpa-reports.yml

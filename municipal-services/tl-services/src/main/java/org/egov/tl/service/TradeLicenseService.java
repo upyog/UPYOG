@@ -1,6 +1,25 @@
 package org.egov.tl.service;
 
-import java.util.*;
+import static org.egov.tl.util.TLConstants.ACTION_STATUS_APPROVED;
+import static org.egov.tl.util.TLConstants.STATUS_APPLIED;
+import static org.egov.tl.util.TLConstants.STATUS_APPROVED;
+import static org.egov.tl.util.TLConstants.STATUS_INITIATED;
+import static org.egov.tl.util.TLConstants.STATUS_PENDINGFORMODIFICATION;
+import static org.egov.tl.util.TLConstants.STATUS_REJECTED;
+import static org.egov.tl.util.TLConstants.STATUS_VERIFIED;
+import static org.egov.tl.util.TLConstants.TRADE_LICENSE_MODULE_CODE;
+import static org.egov.tl.util.TLConstants.businessService_BPA;
+import static org.egov.tl.util.TLConstants.businessService_TL;
+import static org.egov.tracer.http.HttpUtils.isInterServiceCall;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,10 +30,21 @@ import org.egov.tl.service.notification.EditNotificationService;
 import org.egov.tl.util.TLConstants;
 import org.egov.tl.util.TradeUtil;
 import org.egov.tl.validator.TLValidator;
-import org.egov.tl.web.models.*;
+import org.egov.tl.web.models.ApplicationStatusChangeRequest;
+import org.egov.tl.web.models.Difference;
+import org.egov.tl.web.models.OwnerInfo;
+import org.egov.tl.web.models.TradeLicense;
+import org.egov.tl.web.models.TradeLicenseRequest;
+import org.egov.tl.web.models.TradeLicenseResponse;
+import org.egov.tl.web.models.TradeLicenseSearchCriteria;
+import org.egov.tl.web.models.TradeUnit;
+import org.egov.tl.web.models.UpdateTLStatusCriteriaRequest;
+import org.egov.tl.web.models.contract.PDFRequest;
 import org.egov.tl.web.models.contract.ProcessInstance;
 import org.egov.tl.web.models.contract.ProcessInstanceRequest;
 import org.egov.tl.web.models.contract.ProcessInstanceResponse;
+import org.egov.tl.web.models.contract.Alfresco.DMSResponse;
+import org.egov.tl.web.models.contract.Alfresco.DmsRequest;
 import org.egov.tl.web.models.user.UserDetailResponse;
 import org.egov.tl.web.models.workflow.BusinessService;
 import org.egov.tl.workflow.ActionValidator;
@@ -24,16 +54,15 @@ import org.egov.tl.workflow.WorkflowService;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-
-import static org.egov.tl.util.TLConstants.*;
-import static org.egov.tracer.http.HttpUtils.isInterServiceCall;
-
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.jayway.jsonpath.JsonPath;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -74,6 +103,12 @@ public class TradeLicenseService {
 
     @Autowired
     private TLRepository tlRepository;
+    
+    @Autowired
+    private ReportService reportService;
+
+    @Autowired
+    private AlfrescoService alfrescoService;
 
     @Value("${workflow.bpa.businessServiceCode.fallback_enabled}")
     private Boolean pickWFServiceNameFromTradeTypeOnly;
@@ -707,6 +742,84 @@ public class TradeLicenseService {
 		}
 		
 		
+	}
+	
+	public Resource createNoSavePDF(TradeLicense tradeLicense, RequestInfo requestInfo) {
+		
+		// generate pdf
+		PDFRequest pdfRequest = generatePdfRequestByTradeLicense(tradeLicense, requestInfo);
+		Resource resource = reportService.createNoSavePDF(pdfRequest);
+		
+		
+		//upload pdf
+//		DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, tradeLicense, requestInfo);
+//		DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest);
+		
+		return resource;
+	}
+
+
+
+
+
+	private DmsRequest generateDmsRequestByTradeLicense(Resource resource, TradeLicense tradeLicense,
+			RequestInfo requestInfo) {
+		
+		DmsRequest dmsRequest = DmsRequest.builder()
+				.userId("")
+				.objectId("")
+				.description("")
+				.id("")
+				.type("")
+				.objectName("")
+				.comments("")
+				.status(STATUS_APPROVED)
+				.file((MultipartFile) resource)
+				.build();
+		
+		return dmsRequest;
+	}
+
+
+
+
+
+	private PDFRequest generatePdfRequestByTradeLicense(TradeLicense tradeLicense, RequestInfo requestInfo) {
+		
+		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map2 = generateDataForTradeLicensePdfCreate();
+		
+		map.put("tl", map2);
+		
+		PDFRequest pdfRequest = PDFRequest.builder()
+				.RequestInfo(requestInfo)
+				.key("TradeLicense")
+				.tenantId("hp")
+				.data(map)
+				.build();
+		
+		return pdfRequest;
+	}
+
+
+	private Map<String, Object> generateDataForTradeLicensePdfCreate() {
+
+		Map<String, Object> tlObject = new HashMap<>();
+
+		tlObject.put("applicationno", "PB-TL-2024-07-04-000098");
+		tlObject.put("qrCodeText", "your_qr_code_text_value");
+		tlObject.put("approvalDate", 1730636800000L);
+		tlObject.put("serviceType", "your_service_type_value");
+		tlObject.put("plotNo", "your_plot_no_value");
+		tlObject.put("phaseNo", "your_phase_no_value");
+		tlObject.put("permitNo", "your_permit_no_value");
+		tlObject.put("lesseeName", "your_lessee_name_value");
+		tlObject.put("approverName", "your_approver_name_value");
+		tlObject.put("estate", "your_estate_value");
+		tlObject.put("addressLine1", "your_address_line1_value");
+		tlObject.put("addressLine2", "your_address_line2_value");
+		tlObject.put("pincode", "your_pincode");
+		return tlObject;
 	}
 
 }
