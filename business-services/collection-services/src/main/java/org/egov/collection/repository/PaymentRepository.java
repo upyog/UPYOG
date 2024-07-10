@@ -8,6 +8,7 @@ import static org.egov.collection.repository.querybuilder.PaymentQueryBuilder.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.model.Payment;
 import org.egov.collection.model.PaymentDetail;
 import org.egov.collection.model.PaymentSearchCriteria;
@@ -325,25 +326,25 @@ status = new ArrayList<String>();
 		status.add(oldConnectionno.get(0));  }
 		else { status.add("No Value Found");  }
 		
-		if(plotSize.size()>0)                                                              
+		if(plotSize.size()>0 && !StringUtils.isBlank(plotSize.get(0)) )                                                              
 		status.add(plotSize.get(0));  
 		else
 			status.add("No Value Found");  
 		
 		
-		if(usageCategory.size()>0)                                                         
+		if(usageCategory.size()>0 && !StringUtils.isBlank(usageCategory.get(0)))                                                         
 		status.add(usageCategory.get(0)); 
 		else                                 
 			status.add("No value present");    
 		
 		
-		if(propertyid.size()>0)                                                            
+		if(propertyid.size()>0 && !StringUtils.isBlank(propertyid.get(0)))                                                            
 			status.add(propertyid.get(0));  
 		else
 			status.add("No value present");  
 		
 		
-		if(adress.size()>0)                                                                
+		if(adress.size()>0 && !StringUtils.isBlank(adress.get(0)))                                                                
 			status.add(adress.get(0));   
 		else                                 
 			status.add("No value present"); 
