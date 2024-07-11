@@ -128,7 +128,7 @@
 
       Menu_Asset &&
       Menu_Asset.map((asset_mdms) => {
-          menu_Asset.push({ i18nKey: `ASSET_CLASS_${asset_mdms.code}`, code: `${asset_mdms.code}`, value: `${asset_mdms.name}` });
+          menu_Asset.push({ i18nKey: `${asset_mdms.name}`, code: `${asset_mdms.code}`, value: `${asset_mdms.name}` });
       });
     
       
@@ -435,7 +435,7 @@
               />
               
 
-              <div>{t("AST_BOOK_REF_SERIAL_NUM")}
+            <div>{t("AST_BOOK_REF_SERIAL_NUM")}
             <div className="tooltip" style={{width: "12px", height: "5px",marginLeft:"10px", display: "inline-flex",alignItems: "center"}}>
                     <InfoBannerIcon fill="#FF0000" style />
                     <span className="tooltiptext" style={{
@@ -462,7 +462,7 @@
                 ValidationRequired={false}
                 {...(validation = {
                   isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
+                  pattern: "^[a-zA-Z0-9/-]*$",
                   type: "text",
                   title: t("PT_NAME_ERROR_MESSAGE"),
                 })}

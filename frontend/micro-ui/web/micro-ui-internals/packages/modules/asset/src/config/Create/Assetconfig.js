@@ -26,8 +26,6 @@ export const newConfig =[
             },
         ]
     },
-    
-
     {
         "head": "AST_LOCATION_DETAILS",
         "body": [

@@ -6,9 +6,8 @@ import { useLocation } from "react-router-dom";
 
 import Timeline from "../components/ASTTimeline";
 
-const AssetAddress = ({ t, config, onSelect, userType, formData, setError, clearErrors, formState }) => {
+const AssetAddress = ({ t, config, onSelect, userType, formData, formState }) => {
   const allCities = Digit.Hooks.asset.useTenants();
-  console.log("allCities",allCities);
   let tenantId = Digit.ULBService.getCurrentTenantId();
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
@@ -54,7 +53,6 @@ const AssetAddress = ({ t, config, onSelect, userType, formData, setError, clear
     }
   }, [cities]);
 
-  console.log("ciitititititit",cities);
 
   useEffect(() => {
     if (selectedCity && fetchedLocalities) {

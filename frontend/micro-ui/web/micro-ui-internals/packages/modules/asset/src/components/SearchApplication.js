@@ -1,22 +1,21 @@
   import React, { useCallback, useMemo, useEffect } from "react"
   import { useForm, Controller } from "react-hook-form";
-  import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@nudmcdgnpm/digit-ui-react-components";
+  import { TextInput, SubmitBar, DatePicker, SearchForm, Dropdown, SearchField, Table, Card, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
   import { Link } from "react-router-dom";
+  
 
-  const ASSETSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
+  const ASSETSearchApplication = ({isLoading, t, onSubmit, data, count, setShowToast }) => {
       const isMobile = window.Digit.Utils.browser.isMobile();
-
-      const user = Digit.UserService.getUser();
-
-      const allCities = Digit.Hooks.asset.useTenants();
-      const cities = user?.info?.type  === "EMPLOYEE" ? allCities.filter((city) => city?.name=== "Mohali") : allCities;
+      const todaydate = new Date();
+      const today = todaydate.toISOString().split("T")[0];
       const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
           defaultValues: {
               offset: 0,
               limit: !isMobile && 10,
               sortBy: "commencementDate",
               sortOrder: "DESC",
-              city: cities?.[0]?.name
+              fromDate: today,
+              toDate: today,
           }
       })
       useEffect(() => {
@@ -24,16 +23,27 @@
         register("limit", 10)
         register("sortBy", "commencementDate")
         register("sortOrder", "DESC")
-      },[register])
+        setValue("fromDate", today);
+        setValue("toDate", today);
+      },[register, setValue, today])
 
 
-      
-      
+      const { data: actionState } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Action" }],
+      {
+        select: (data) => {
+            const formattedData = data?.["ASSET"]?.["Action"]
+            return formattedData;
+        },
+    }); 
+    let action = [];
 
-      
+    actionState && actionState.map((actionstate) => {
+      action.push({i18nKey: `${actionstate.name}`, code: `${actionstate.code}`, value: `${actionstate.name}`})
+    }) 
+
+
       const GetCell = (value) => <span className="cell-text">{value}</span>;
       const columns = useMemo( () => ([
-          
           {
               Header: t("ES_ASSET_RESPONSE_CREATE_LABEL"),
               accessor: "applicationNo",
@@ -87,7 +97,7 @@
           if (args.length === 0) return
           setValue("sortBy", args.id)
           setValue("sortOrder", args.desc ? "DESC" : "ASC")
-      }, [])
+      }, [setValue])
 
       function onPageSizeChange(e){
           setValue("limit",Number(e.target.value))
@@ -102,7 +112,7 @@
           setValue("offset", getValues("offset") - getValues("limit") )
           handleSubmit(onSubmit)()
       }
-      let validation={}
+  
 
       return <React.Fragment>
                   
@@ -113,9 +123,23 @@
                   </Card>
                   <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                   <SearchField>
-                    <label>{t("MYCITY_CODE_LABEL")}</label>
-                    <TextInput name="city" inputRef={register({})} />
-                </SearchField>
+                      <label>{t("AST_STATUS")}</label>
+                      <Controller
+                              control={control}
+                              name="status"
+                              render={(props) => (
+                                  <Dropdown
+                                  selected={props.value}
+                                  select={props.onChange}
+                                  onBlur={props.onBlur}
+                                  option={action}
+                                  optionKey="i18nKey"
+                                  t={t}
+                                  disable={false}
+                                  />
+                              )}
+                              />
+                  </SearchField>
                   <SearchField>
                       <label>{t("AST_APPLICATION_ID")}</label>
                       <TextInput name="applicationNo" inputRef={register({})} />
@@ -143,9 +167,9 @@
                       onClick={() => {
                           reset({ 
                               applicationNo: "", 
-                              fromDate: "", 
-                              city: cities?.[0]?.name,
-                              toDate: "",
+                              fromDate: today, 
+                              toDate: today,
+                              status: "",
                               offset: 0,
                               limit: 10,
                               sortBy: "commencementDate",

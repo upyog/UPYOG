@@ -24,14 +24,9 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
     const isMobile = window.Digit.Utils.browser.isMobile();
 
     const user = Digit.UserService.getUser();
-
-   console.log("user",user);
-   const { pincode, city } =  "";
    const allCities = Digit.Hooks.asset.useTenants();
-   const cities = user?.info?.type  === "EMPLOYEE" ? allCities.filter((city) => city?.name=== "Mohali") : allCities;
 
-  console.log("citiessss",cities);
- 
+  
     
 
     const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
@@ -40,7 +35,7 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
             limit: !isMobile && 10,
             sortBy: "commencementDate",
             sortOrder: "DESC",
-            city: cities?.[0]?.name
+            
         }
     })
     useEffect(() => {
@@ -58,7 +53,7 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
 
     Menu_Asset &&
     Menu_Asset.map((asset_mdms) => {
-        menu_Asset.push({ i18nKey: `ASSET_CLASS_${asset_mdms.code}`, code: `${asset_mdms.code}`, value: `${asset_mdms.name}` });
+        menu_Asset.push({ i18nKey: `${asset_mdms.name}`, code: `${asset_mdms.code}`, value: `${asset_mdms.name}` });
     });
   
     
@@ -252,25 +247,16 @@ const downloadQRReport = async () => {
                 </Card>
                 <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                 <SearchField>
-                    <label>{t("MYCITY_CODE_LABEL")}</label>
-                    <TextInput name="city" inputRef={register({})} />
-                </SearchField>
-                <SearchField>
-                    <label>{t("AST_PINCODE")}</label>
-                    <TextInput name="pincode" inputRef={register({})} />
-                </SearchField>
-                
-                <SearchField>
-                      <label>{t("AST_ASSET_CATEGORY_LABEL")}</label>
+                      <label>{t("MYCITY_CODE_LABEL")}</label>
                       <Controller
                               control={control}
-                              name="assetClassification"
+                              name="city"
                               render={(props) => (
                                   <Dropdown
                                   selected={props.value}
                                   select={props.onChange}
                                   onBlur={props.onBlur}
-                                  option={menu_Asset}
+                                  option={allCities}
                                   optionKey="i18nKey"
                                   t={t}
                                   disable={false}
@@ -312,13 +298,31 @@ const downloadQRReport = async () => {
                         control={control}
                         />
                 </SearchField>
+                <SearchField>
+                      <label>{t("AST_ASSET_CATEGORY_LABEL")}</label>
+                      <Controller
+                              control={control}
+                              name="assetClassification"
+                              render={(props) => (
+                                  <Dropdown
+                                  selected={props.value}
+                                  select={props.onChange}
+                                  onBlur={props.onBlur}
+                                  option={menu_Asset}
+                                  optionKey="i18nKey"
+                                  t={t}
+                                  disable={false}
+                                  />
+                              )}
+                              />
+                  </SearchField>
                 <SearchField className="submit">
                     <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
                     <p style={{marginTop:"10px"}}
                     onClick={() => {
                         reset({ 
                             applicationNo: "", 
-                            city: cities?.[0]?.name,
+                            city: "",
                             fromDate: "", 
                             toDate: "",
                             assetClassification: "",
