@@ -213,9 +213,12 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
                 .build();
 
 
-
+        Double ownerShipPercentage = (double) 0;
         Boolean isPrimaryOwner = (Boolean) rs.getObject("isprimaryowner");
-        Double ownerShipPercentage = (Double) rs.getObject("ownershippercentage") ;
+        
+        if(rs.getObject("ownershippercentage")!=null ){
+         ownerShipPercentage = (Double) rs.getObject("ownershippercentage") ;
+        }
 
         if(rs.getBoolean("useractive") && rs.getString("tlowner_uuid")!=null)
         {   OwnerInfo owner = OwnerInfo.builder()
