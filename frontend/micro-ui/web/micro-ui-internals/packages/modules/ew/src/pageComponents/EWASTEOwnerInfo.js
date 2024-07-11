@@ -11,13 +11,10 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
 
   let index = 0;
   // window.location.href.charAt(window.location.href.length - 1);
-  // console.log("index in detail page ",  index)
 
   let validation = {};
 
   const user = Digit.UserService.getUser().info;
-
-console.log("usssss",user)
   const [applicantName, setName] = useState(
     (formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].applicantName) || formData?.ownerKey?.applicantName || ""
   );

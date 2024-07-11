@@ -13,7 +13,7 @@ import ApplicationDetailsActionBar from "./components/ApplicationDetailsActionBa
 import ApplicationDetailsWarningPopup from "./components/ApplicationDetailsWarningPopup";
 
 const ApplicationDetails = (props) => {
-    const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
   const { t } = useTranslation();
   const history = useHistory();
@@ -47,9 +47,10 @@ const ApplicationDetails = (props) => {
     showTimeLine = true,
     oldValue,
     isInfoLabel = false,
-    clearDataDetails
+    clearDataDetails,
+    isAction=false,
   } = props;
-  
+
   useEffect(() => {
     if (showToast) {
       workflowDetails.revalidate();
@@ -58,7 +59,7 @@ const ApplicationDetails = (props) => {
 
   function onActionSelect(action) {
     if (action) {
-      if(action?.isToast){
+      if (action?.isToast) {
         setShowToast({ key: "error", error: { message: action?.toastMessage } });
         setTimeout(closeToast, 5000);
       }
@@ -70,7 +71,7 @@ const ApplicationDetails = (props) => {
 
           history.push(`${action?.redirectionUrll?.pathname}`, JSON.stringify({ data: action?.redirectionUrll?.state, url: `${location?.pathname}${location.search}` }));
         }
-        else if (action?.redirectionUrll?.action === "RE-SUBMIT-APPLICATION"){
+        else if (action?.redirectionUrll?.action === "RE-SUBMIT-APPLICATION") {
           history.push(`${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
         }
         else {
@@ -101,11 +102,10 @@ const ApplicationDetails = (props) => {
   };
 
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
-    if(data?.Property?.workflow?.comment?.length == 0 || data?.Licenses?.[0]?.comment?.length == 0 || data?.WaterConnection?.comment?.length == 0 || data?.SewerageConnection?.comment?.length == 0 || data?.BPA?.comment?.length == 0)
-    {
-     alert("Please fill in the comments before submitting")
+    if (data?.Property?.workflow?.comment?.length == 0 || data?.Licenses?.[0]?.comment?.length == 0 || data?.WaterConnection?.comment?.length == 0 || data?.SewerageConnection?.comment?.length == 0 || data?.BPA?.comment?.length == 0) {
+      alert("Please fill in the comments before submitting")
     }
-    else{
+    else {
       setIsEnableLoader(true);
       if (typeof data?.customFunctionToExecute === "function") {
         data?.customFunctionToExecute({ ...data });
@@ -158,7 +158,7 @@ const ApplicationDetails = (props) => {
               //RAIN-6981 instead just show a toast here with appropriate message
               //show toast here and return 
               //history.push("/digit-ui/employee/ws/response-bill-amend", { status: true, state: data?.Amendments?.[0] })
-  
+
               if (variables?.AmendmentUpdate?.workflow?.action.includes("SEND_BACK")) {
                 setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_SEND_BACK_UPDATE_SUCCESS") })
               } else if (variables?.AmendmentUpdate?.workflow?.action.includes("RE-SUBMIT")) {
@@ -177,13 +177,13 @@ const ApplicationDetails = (props) => {
             queryClient.clear();
             queryClient.refetchQueries("APPLICATION_SEARCH");
             //push false status when reject
-  
+
           },
         });
       }
       closeModal();
     }
-  
+
   };
 
   if (isLoading || isEnableLoader) {
@@ -236,6 +236,7 @@ const ApplicationDetails = (props) => {
           ) : null}
           <ApplicationDetailsToast t={t} showToast={showToast} closeToast={closeToast} businessService={businessService} />
           <ApplicationDetailsActionBar
+            isAction={isAction} // isAction is added to enable or disable the actionbar
             workflowDetails={workflowDetails}
             displayMenu={displayMenu}
             onActionSelect={onActionSelect}

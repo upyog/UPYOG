@@ -193,7 +193,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
           </StatusTable>
           <br></br>
 
-          <StatusTable>
+          {/* <StatusTable>
             <br></br>
             <CardSubHeader>{t("EWASTE_DOCUMENTS_DETAILS")}</CardSubHeader>
             <Card style={{ paddingRight: "16px" }}>
@@ -207,21 +207,12 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                     </StatusTable>
                   </div>}
 
-
-
-                  {/* {<div><CardSectionHeader>{t("EWASTE_" + (doc?.documentType?.split('.').slice(0, 2).join('_')))}</CardSectionHeader>
-                    <StatusTable>
-                      {
-                        <EWASTEDocument value={value} Code={doc?.documentType} index={index} />}
-                      {documents?.documents.length != index + 1 ? <hr style={{ color: "white", backgroundColor: "white", height: "2px", marginTop: "20px", marginBottom: "20px" }} /> : null}
-                    </StatusTable>
-                  </div>} */}
                 </div>
               ))}
             </Card>
             <br></br>
           </StatusTable>
-          <br></br>
+          <br></br> */}
 
           <CheckBox
             label={t("EWASTE_FINAL_DECLARATION_MESSAGE")}
