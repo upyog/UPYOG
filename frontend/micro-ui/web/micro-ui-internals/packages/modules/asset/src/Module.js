@@ -2,21 +2,15 @@ import { Header, CitizenHomeCard, PTIcon } from "@nudmcdgnpm/digit-ui-react-comp
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
-
-
 import EmployeeApp from "./pages/employee";
-
 import ASSETCard from "./components/ASSETCard";
 import InboxFilter from "./components/inbox/NewInboxFilter";
-
-
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import Response from "./pages/Response";
-import SelectOtp from "../../core/src/pages/citizen/Login/SelectOtp";
-import AcknowledgementCF from "@nudmcdgnpm/digit-ui-module-core/src/components/AcknowledgementCF";
-
 import { TableConfig } from "./config/inbox-table-config";
+import AssignAssets from "./pageComponents/assignAssets";
 import NewAssetApplication from "./pages/employee/NewAssetApplication";
+import assignAsset from "./pages/employee/assignAsset";
 import AssetClassification from "./pageComponents/AssetClassification";
 import AssetDocuments from "./pageComponents/AssetDocuments";
 import AssetCommonDetails from "./pageComponents/AssetCommonDetails";
@@ -36,9 +30,8 @@ import NewResponse from "./pages/employee/TestApplication/Create/NewResponse";
 
 
 const componentsToRegister = {
-
-
   AssetApplication: NewAssetApplication,
+  AssignAst:assignAsset,
   AssetClassification,
   AssetDocuments,
   AssetCommonDetails,
@@ -55,19 +48,9 @@ const componentsToRegister = {
   NewDocument,
   ASTCheckPage,
   NewResponse,
-  
-
-
+  AssignAssets,
   ApplicationDetails: ApplicationDetails,
-  AssetResponse: Response,
-
-  SelectOtp, 
-  AcknowledgementCF,
-
-  
-  
-
- 
+  AssetResponse: Response, 
 };
 
 const addComponentsToRegistry = () => {

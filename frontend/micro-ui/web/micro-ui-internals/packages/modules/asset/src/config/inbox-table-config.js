@@ -83,7 +83,7 @@ import React from "react";
                 
                 <span className="link">
                 
-                  <Link to={`${props.parentRoute}/assetservice/application-details/` + `${row?.original?.searchData?.["applicationNo"]}`}>
+                  <Link to={`${props.parentRoute}/assetservice/assign-assets/`+ `${row?.original?.searchData?.["applicationNo"]}`}>
 
                     {t('AST_TRANSFER '+`${row?.original?.searchData?.["assetParentCategory"]}`)}
                   </Link>

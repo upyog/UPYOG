@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/ASTTimeline";
 
-const AssetPincode = ({ t, config, onSelect, formData = {}, userType, register, errors, setError, formState, clearErrors }) => {
-  console.log("formdatata in pincodeee",formData);
+const AssetPincode = ({ t, config, onSelect, formData = {}, userType}) => {
+  
   const tenants = Digit.Hooks.asset.useTenants();
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
