@@ -542,8 +542,8 @@ public class TLValidator {
             compareIdList(getAccessoryIds(searchedLicense),getAccessoryIds(license),errorMap);
             compareIdList(getOwnerIds(searchedLicense),getOwnerIds(license),errorMap);
             compareIdList(getOwnerDocIds(searchedLicense),getOwnerDocIds(license),errorMap);
-            compareIdList(getApplicationDocIds(searchedLicense),getApplicationDocIds(license),errorMap);
-            compareIdList(getVerficationDocIds(searchedLicense),getVerficationDocIds(license),errorMap);
+         //   compareIdList(getApplicationDocIds(searchedLicense),getApplicationDocIds(license),errorMap);
+       //     compareIdList(getVerficationDocIds(searchedLicense),getVerficationDocIds(license),errorMap);
         });
 
         if(!CollectionUtils.isEmpty(errorMap))
