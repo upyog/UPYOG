@@ -75,25 +75,24 @@ import React from "react";
         
 
         },
-        {
-          Header: t("AST_TRANSFER"),
-          Cell: ({ row }) => {
-            return (
-              <div>
+        // {
+        //   Header: t("AST_TRANSFER"),
+        //   Cell: ({ row }) => {
+        //     return (
+        //       <div>
                 
-                <span className="link">
+        //         <span className="link">
                 
-                  <Link to={`${props.parentRoute}/assetservice/assign-assets/`+ `${row?.original?.searchData?.["applicationNo"]}`}>
-
-                    {t('AST_TRANSFER '+`${row?.original?.searchData?.["assetParentCategory"]}`)}
-                  </Link>
+        //           <Link to={`${props.parentRoute}/assetservice/assign-assets/`+ `${row?.original?.searchData?.["applicationNo"]}`}>
+        //             {t('AST_TRANSFER '+`${row?.original?.searchData?.["assetParentCategory"]}`)}
+        //           </Link>
                   
-                </span>
-              </div>
-            );
-          },
-          mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNo"]),
-        },
+        //         </span>
+        //       </div>
+        //     );
+        //   },
+        //   mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNo"]),
+        // },
         
       ],
       serviceRequestIdKey: (original) => original?.[t("AST_INBOX_UNIQUE_APPLICATION_NUMBER")]?.props?.children,
