@@ -128,6 +128,12 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
                     .type(rs.getString("type"))
                     .build();
 
+            PGobject addressPgObj = (PGobject) rs.getObject("tl_ad_additionaldetail");
+            if(addressPgObj!=null){
+                JsonNode additionalDetail = mapper.readTree(addressPgObj.getValue());
+                address.setAdditionalDetail(additionalDetail);
+            }
+            
             Institution institution = null;
             if(rs.getString("instiid")!=null && rs.getBoolean("instiactive"))
             { institution = Institution.builder()
