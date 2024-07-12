@@ -126,7 +126,8 @@ public class EnrichmentService {
                     });
             });
 
-            if (tradeLicense.getTradeLicenseDetail().getSubOwnerShipCategory().contains(config.getInstitutional())) {
+            if ( !StringUtils.equalsIgnoreCase(businessService_TL, tradeLicense.getBusinessService())
+            		&& tradeLicense.getTradeLicenseDetail().getSubOwnerShipCategory().contains(config.getInstitutional())) {
                 tradeLicense.getTradeLicenseDetail().getInstitution().setId(UUID.randomUUID().toString());
                 tradeLicense.getTradeLicenseDetail().getInstitution().setActive(true);
                 tradeLicense.getTradeLicenseDetail().getInstitution().setTenantId(tradeLicense.getTenantId());
@@ -144,11 +145,13 @@ public class EnrichmentService {
         String businessService = tradeLicenseRequest.getLicenses().isEmpty()?null:tradeLicenseRequest.getLicenses().get(0).getBusinessService();
         if (businessService == null)
             businessService = businessService_TL;
-        switch (businessService) {
-            case businessService_TL:
-                boundaryService.getAreaType(tradeLicenseRequest, config.getHierarchyTypeCode());
-                break;
-        }
+        
+        // if need to implement Locality/Ward/Zone/ULB validations
+//        switch (businessService) {
+//            case businessService_TL:
+//                boundaryService.getAreaType(tradeLicenseRequest, config.getHierarchyTypeCode());
+//                break;
+//        }
     }
 
 
@@ -548,11 +551,12 @@ public class EnrichmentService {
         if (businessService == null)
             businessService = businessService_TL;
         TradeLicenseSearchCriteria searchCriteria = enrichTLSearchCriteriaWithOwnerids(criteria,licenses);
-        switch (businessService) {
-            case businessService_TL:
-                enrichBoundary(new TradeLicenseRequest(requestInfo, licenses));
-                break;
-        }
+     // if need to implement Locality/Ward/Zone/ULB validations
+//        switch (businessService) {
+//            case businessService_TL:
+//                enrichBoundary(new TradeLicenseRequest(requestInfo, licenses));
+//                break;
+//        }
         UserDetailResponse userDetailResponse = userService.getUser(searchCriteria,requestInfo);
         enrichOwner(userDetailResponse,licenses);
         return licenses;

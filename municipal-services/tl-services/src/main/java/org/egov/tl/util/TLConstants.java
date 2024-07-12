@@ -315,6 +315,8 @@ public class TLConstants {
     public static final String STATUS_PENDINGFORVERIFICATION = "PENDINGFORVERIFICATION";
     
     public static final String STATUS_PENDINGFORAPPROVAL = "PENDINGFORAPPROVAL";
+    
+    public static final String STATUS_PENDINGFORPAYMENT = "PENDINGFORPAYMENT";
 	
 
 

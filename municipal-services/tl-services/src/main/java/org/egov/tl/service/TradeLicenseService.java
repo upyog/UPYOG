@@ -12,6 +12,7 @@ import static org.egov.tl.util.TLConstants.businessService_BPA;
 import static org.egov.tl.util.TLConstants.businessService_TL;
 import static org.egov.tracer.http.HttpUtils.isInterServiceCall;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -752,36 +753,28 @@ public class TradeLicenseService {
 		
 		
 		//upload pdf
-//		DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, tradeLicense, requestInfo);
-//		DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest);
+		DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, tradeLicense, requestInfo);
+		try {
+			DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest, requestInfo);
+		} catch (IOException e) {
+			throw new RuntimeException("Upload Attachment failed." + e.getMessage());
+		}
 		
 		return resource;
 	}
 
 
-
-
-
 	private DmsRequest generateDmsRequestByTradeLicense(Resource resource, TradeLicense tradeLicense,
 			RequestInfo requestInfo) {
-		
-		DmsRequest dmsRequest = DmsRequest.builder()
-				.userId("")
-				.objectId("")
-				.description("")
-				.id("")
-				.type("")
-				.objectName("")
-				.comments("")
-				.status(STATUS_APPROVED)
-				.file((MultipartFile) resource)
+
+//		MultipartFile multipartFile = convertResourceToMultipartFile(resource, "filename");
+
+		DmsRequest dmsRequest = DmsRequest.builder().userId("123").objectId("1222").description("TL certificate")
+				.id("").type("PDF").objectName("TL").comments("Signed Certificate").status(STATUS_APPROVED).file(resource)
 				.build();
-		
+
 		return dmsRequest;
 	}
-
-
-
 
 
 	private PDFRequest generatePdfRequestByTradeLicense(TradeLicense tradeLicense, RequestInfo requestInfo) {

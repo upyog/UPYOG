@@ -1,5 +1,6 @@
 package org.egov.tl.web.models.contract.Alfresco;
 
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class DmsRequest {
 
-	private MultipartFile file;
+	private Resource file;
 	private String userId;
 	private String objectId;
 	private String description;
