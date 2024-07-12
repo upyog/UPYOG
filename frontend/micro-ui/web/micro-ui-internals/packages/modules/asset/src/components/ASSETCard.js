@@ -31,14 +31,14 @@ const ASSETCard = () => {
   }
   const links=[
     {
-      count: isLoading ? "-" : total?.totalCount,
+      count: isLoading ? "0" : total?.totalCount,
       label: t("Inbox"),
       link: `/digit-ui/employee/asset/assetservice/inbox`,
     },
     {
       label: t("ASSET_ADD"),
       link: `/digit-ui/employee/asset/assetservice/new-assets`,
-      role: "ASSET_INITIATOR",
+      role: "ASSET_INITIATOR"
     },
     {
       label: t("MY_ASSET_APPLICATION"),
@@ -50,7 +50,7 @@ const ASSETCard = () => {
     }
    
   ]
-  const ASSET_INITIATOR = Digit.UserService.hasAccess(["ASSET_INITIATOR","ASSET_VERIFIER", "ASSET_APPROVER"]) || false;
+  const ASSETRole = Digit.UserService.hasAccess(["ASSET_INITIATOR"]) || false;
   const propsForModuleCard = {
     // Icon: <PropertyHouse />,
     moduleName: t("TITLE_ASSET_MANAGEMENT"),
@@ -62,7 +62,7 @@ const ASSETCard = () => {
       },
       
     ],
-    links:links.filter(link=>!link?.role||ASSET_INITIATOR),
+    links:links.filter(link=>!link?.role || ASSETRole ),
   };
 
   return <EmployeeModuleCard {...propsForModuleCard} />;

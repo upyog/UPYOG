@@ -13,7 +13,10 @@ export const configEWApproverApplication = ({
   assigneeLabel,
   businessService,
 }) => {
-  console.log("action",action)
+  console.log("action", action)
+  const todayDate = new Date().toISOString().split("T")[0];
+  console.log("todayedsta ::", todayDate)
+
   return {
     label: {
       heading: `WF_${action?.action}_APPLICATION`,
@@ -24,41 +27,37 @@ export const configEWApproverApplication = ({
       {
         body: [
           action?.state === "COMPLETIONPENDING" ? (
-          {
-            label: t("EW_PICKUP_DATE"),
-            type: "date",
-            isMandatory: true,
-            populators: { 
-              name: "date",
-            
-              component: (
-                <DatePicker
-                  date={selectedDate}
-                  onChange={setSelectedDate}
-                />
-              ),
-              }    
-          }) : "null",
+            {
+              label: t("EW_PICKUP_DATE"),
+              type: "date",
+              isMandatory: true,
+              populators: {
+                name: "date",
+                min: new Date().toISOString().split('T')[0],
+              }
+            }) : "null",
+
+
           action?.state === "REQUESTCOMPLETED" ? (
 
-          {
-            label: t("ES_EW_ACTION_TRANSACTION_ID"),
-            type: "text",
-            isMandatory: true,
-            populators: {
-              name: "transactionId",
-            },
-          }): "null",
+            {
+              label: t("ES_EW_ACTION_TRANSACTION_ID"),
+              type: "text",
+              isMandatory: true,
+              populators: {
+                name: "transactionId",
+              },
+            }) : "null",
           action?.state === "REQUESTCOMPLETED" ? (
 
-          {
-            label: t("ES_EW_ACTION_FINALAMOUNT"),
-            type: "text",
-            isMandatory: true,
-            populators: {
-              name: "finalAmount",
-            },
-          }): "null",
+            {
+              label: t("ES_EW_ACTION_FINALAMOUNT"),
+              type: "text",
+              isMandatory: true,
+              populators: {
+                name: "finalAmount",
+              },
+            }) : "null",
           {
             label: t("ES_EW_ACTION_COMMENTS"),
             type: "textarea",
@@ -66,9 +65,9 @@ export const configEWApproverApplication = ({
               name: "comments",
             },
           },
-      
+
           {
-            label: `${t("ES_EW_TEXT")}${action.docUploadRequired ? " *" : ""}`,
+            label: `${t("ES_EW_PHOTO")}${action.docUploadRequired ? " *" : ""}`,
             populators: (
               <UploadFile
                 id={"workflow-doc"}
@@ -77,8 +76,8 @@ export const configEWApproverApplication = ({
                   setUploadedFile(null);
                 }}
                 showHint={true}
-                hintText={t("PTR_ATTACH_RESTRICTIONS_SIZE")}
-                message={uploadedFile ? `1 ${t(`ES_PTR_ACTION_FILEUPLOADED`)}` : t(`ES_PTR_ACTION_NO_FILEUPLOADED`)}
+                hintText={t("EW_ATTACH_RESTRICTIONS_SIZE")}
+                message={uploadedFile ? `1 ${t(`ES_EW_ACTION_FILEUPLOADED`)}` : t(`ES_EW_ACTION_NO_FILEUPLOADED`)}
               />
             ),
           },

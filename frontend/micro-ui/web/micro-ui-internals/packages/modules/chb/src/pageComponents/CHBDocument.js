@@ -12,16 +12,17 @@ const PDFSvg = ({ width = 20, height = 20, style }) => (
 function CHBDocument({ value = {}, Code, index }) {
   const { t } = useTranslation();
   const { isLoading, isError, error, data } = Digit.Hooks.chb.useChbDocumentSearch(
-    { value },
+    { value, },
     { value },
     Code,
     index
   );
+  console.log("documentvalue",value);
 
   const documents = value?.documents
     ? value.documents.documents.filter(doc => doc.documentType === Code).map(doc => ({ ...doc, documentType: doc.documentType.replace(/\./g, '_') }))
     : value.filter(doc => doc.documentType === Code).map(doc => ({ ...doc, documentType: doc.documentType.replace(/\./g, '_') }));
-
+//TODO: remove
     console.log("documentData-->",data);
     console.log("document-->",documents);
   if (isLoading) {

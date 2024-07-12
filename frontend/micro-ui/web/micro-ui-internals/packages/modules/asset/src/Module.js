@@ -2,19 +2,11 @@ import { Header, CitizenHomeCard, PTIcon } from "@nudmcdgnpm/digit-ui-react-comp
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
-
-
 import EmployeeApp from "./pages/employee";
-
 import ASSETCard from "./components/ASSETCard";
 import InboxFilter from "./components/inbox/NewInboxFilter";
-
-
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import Response from "./pages/Response";
-import SelectOtp from "../../core/src/pages/citizen/Login/SelectOtp";
-import AcknowledgementCF from "@nudmcdgnpm/digit-ui-module-core/src/components/AcknowledgementCF";
-
 import { TableConfig } from "./config/inbox-table-config";
 import NewAssetApplication from "./pages/employee/NewAssetApplication";
 import AssetClassification from "./pageComponents/AssetClassification";
@@ -36,8 +28,6 @@ import NewResponse from "./pages/employee/TestApplication/Create/NewResponse";
 
 
 const componentsToRegister = {
-
-
   AssetApplication: NewAssetApplication,
   AssetClassification,
   AssetDocuments,
@@ -55,19 +45,8 @@ const componentsToRegister = {
   NewDocument,
   ASTCheckPage,
   NewResponse,
-  
-
-
   ApplicationDetails: ApplicationDetails,
-  AssetResponse: Response,
-
-  SelectOtp, 
-  AcknowledgementCF,
-
-  
-  
-
- 
+  AssetResponse: Response, 
 };
 
 const addComponentsToRegistry = () => {

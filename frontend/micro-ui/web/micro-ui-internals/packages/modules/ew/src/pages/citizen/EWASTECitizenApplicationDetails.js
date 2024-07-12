@@ -2,10 +2,11 @@ import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, Mult
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
-// import getEwAcknowledgementData from "../../getEwAcknowledgementData";
+import getEwAcknowledgementData from "../../utils/getEwAcknowledgementData";
 import EWASTEWFApplicationTimeline from "../../pageComponents/EWASTEWFApplicationTimeline";
 import { pdfDownloadLink } from "../../utils";
 import ApplicationTable from "../../components/inbox/ApplicationTable";
+// import PropertyDocuments from "../../../../templates/ApplicationDetails/components/PropertyDocuments"
 
 import get from "lodash/get";
 import { size } from "lodash";
@@ -122,13 +123,13 @@ const EWASTECitizenApplicationDetails = () => {
 
 
 
-  // const getAcknowledgementData = async () => {
-  //   const applications = application || {};
-  //   const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
-  //   const acknowldgementDataAPI = await getEwAcknowledgementData({ ...applications }, tenantInfo, t);
-  //   Digit.Utils.pdf.generate(acknowldgementDataAPI);
-  //   //setAcknowldgementData(acknowldgementDataAPI);
-  // };
+  const getAcknowledgementData = async () => {
+    const applications = application || {};
+    const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
+    const acknowldgementDataAPI = await getEwAcknowledgementData({ ...applications }, tenantInfo, t);
+    Digit.Utils.pdf.generate(acknowldgementDataAPI);
+    //setAcknowldgementData(acknowldgementDataAPI);
+  };
 
   let documentDate = t("CS_NA");
   if (ew_details?.additionalDetails?.documentDate) {
@@ -152,7 +153,7 @@ const EWASTECitizenApplicationDetails = () => {
   };
 
   const printCertificate = async () => {
-    let response = await Digit.PaymentService.generatePdf(tenantId, { EwasteApplication: [data?.EwasteApplication?.[0]] }, "ewservicecertificate");
+    let response = await Digit.PaymentService.generatePdf(tenantId, { EwasteApplication: [data?.EwasteApplication?.[0]] }, "ewasteservicecertificate");
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   };
@@ -161,7 +162,7 @@ const EWASTECitizenApplicationDetails = () => {
 
   dowloadOptions.push({
     label: t("EWASTE_DOWNLOAD_ACK_FORM"),
-    // onClick: () => getAcknowledgementData(),
+    onClick: () => getAcknowledgementData(),
   });
 
   //commented out, need later for download receipt and certificate 
@@ -172,11 +173,10 @@ const EWASTECitizenApplicationDetails = () => {
     });
 
 
+  // currentForms is added to select the data of current field only whose data is being used 
   const currentForms = data?.EwasteApplication?.filter(form => form.requestId === requestId);
-  // console.log("cureenstforms", currentForms[0]?.requestStatus)
 
-  // if (data?.ResponseInfo?.status === "successful")
-  if (currentForms[0]?.requestStatus != "NEWREQUEST") {
+  if (currentForms[0]?.requestStatus === "REQUESTCOMPLETED") {
     // console.log("ewaste certificate if ::", data?.EwasteApplication, currentForms)
     dowloadOptions.push({
       label: t("EWASTE_CERTIFICATE"),
@@ -279,7 +279,7 @@ const EWASTECitizenApplicationDetails = () => {
           </StatusTable>
 
 
-          {/* <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_DOCUMENT_DETAILS")}</CardSubHeader>
+           {/* <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_DOCUMENT_DETAILS")}</CardSubHeader>
           <div>
             {Array.isArray(docs) ? (
               docs.length > 0 && <PTRDocument ew_details={ew_details}></PTRDocument>
@@ -289,6 +289,8 @@ const EWASTECitizenApplicationDetails = () => {
               </StatusTable>
             )}
           </div> */}
+
+          
           <EWASTEWFApplicationTimeline application={application} id={application?.requestId} userType={"citizen"} />
           {showToast && (
             <Toast

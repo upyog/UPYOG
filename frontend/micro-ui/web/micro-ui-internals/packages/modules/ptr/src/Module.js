@@ -28,9 +28,7 @@ import { TableConfig } from "./config/inbox-table-config";
 import NewApplication from "./pages/employee/NewApplication";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import Response from "./pages/Response";
-import SelectOtp from "../../core/src/pages/citizen/Login/SelectOtp";
-import CitizenFeedback from "@nudmcdgnpm/digit-ui-module-core/src/components/CitizenFeedback";
-import AcknowledgementCF from "@nudmcdgnpm/digit-ui-module-core/src/components/AcknowledgementCF";
+
 
 
 
@@ -43,9 +41,6 @@ const componentsToRegister = {
   PTRResponse: Response,
   PTRMyApplications: PTRMyApplications,
   PTRApplicationDetails: PTRApplicationDetails,
-  SelectOtp, // To-do: Temp fix, Need to check why not working if selectOtp module is already imported from core module
-  AcknowledgementCF,
-  CitizenFeedback,
   PTRPetdetails,
   PTROwnerDetails,
   PTRCreatePet: PTRCreate,
@@ -58,13 +53,8 @@ const componentsToRegister = {
   PTRSelectAddress,
   PTRSelectProofIdentity,
   PTRServiceDoc,
-  PTRWFApplicationTimeline,
- 
-  
-  
-  
+  PTRWFApplicationTimeline
 
- 
 };
 
 const addComponentsToRegistry = () => {
@@ -138,6 +128,6 @@ export const PTRComponents = {
   PTRCard,
   PTRModule,
   PTRLinks,
-  PT_INBOX_FILTER: (props) => <InboxFilter {...props} />,
+  PTR_INBOX_FILTER: (props) => <InboxFilter {...props} />,
   PTRInboxTableConfig: TableConfig,
 };

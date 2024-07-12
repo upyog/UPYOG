@@ -12,12 +12,12 @@ export const EWSearch = {
 
   application: async (tenantId, filters = {}) => {
     const response = await EwService.search({ tenantId, filters });
-    console.log("response",response);
+    // console.log("response",response);
     return response.EwasteApplication[0];
   },
 
   RegistrationDetails: ({ EwasteApplication: response, t }) => {
-    console.log("responseeeeee",response);
+    // console.log("THIS IS RESPONSE DATA IN SEARCH.JS",response);
 
   const productRows = response?.ewasteDetails?.map((product) => (
     [
@@ -29,6 +29,14 @@ export const EWSearch = {
   )) || [];
 
   // console.log("productRow", productRows)
+
+  const transactionDetails = [
+    response?.calculatedAmount ? { title: "EWASTE_NET_PRICE", value: response?.calculatedAmount } : null,
+    response?.transactionId ? { title: "EWASTE_TRANSACTION_ID", value: response?.transactionId } : null,
+    response?.finalAmount ? { title: "EWASTE_FINAL_AMOUNT", value: response?.finalAmount } : null,
+    response?.pickUpDate ? { title: "EWASTE_PICKUP_DATE", value: response?.pickUpDate } : null,
+  ].filter(detail => detail !== null && detail.value !== null);
+
 
 
     return [
@@ -70,12 +78,35 @@ export const EWSearch = {
       {
         title: "EWASTE_TITLE_TRANSACTION_DETAILS",
         asSectionHeader: true,
-        values: [
-          { title: "EWASTE_NET_PRICE", value: response?.calculatedAmount},
-          { title: "EWASTE_TRANSACTION_ID", value: response?.transactionId },
-          { title: "EWASTE_FINAL_AMOUNT", value: response?.finalAmount },
-          { title: "EWASTE_PICKUP_DATE", value: response?.pickUpDate },
-        ],
+        values: transactionDetails,
+        // [
+        //   (response?.calculatedAmount ? { title: "EWASTE_NET_PRICE", value: response?.calculatedAmount} : {value : ""}),
+        //   (response?.transactionId ? { title: "EWASTE_TRANSACTION_ID", value: response?.transactionId} : {value : ""}),
+        //   (response?.finalAmount ? { title: "EWASTE_FINAL_AMOUNT", value: response?.finalAmount} : {value : ""}),
+        //   (response?.pickUpDate ? { title: "EWASTE_PICKUP_DATE", value: response?.pickUpDate} : {value : ""}),
+        // ],
+      },
+      {
+        title: "EWASTE_DOCUMENT_DETAILS",
+        additionalDetails: {
+          
+          documents: [
+            {
+             
+              values: response?.documents
+                ?.map((document) => {
+
+                  return {
+                    title: `EWASTE_${document?.documentType?.replace(".", "_")}`,
+                    documentType: document?.documentType,
+                    documentUid: document?.fileStoreId,
+                    fileStoreId: document?.filestoreId,
+                    status: document.status,
+                  };
+                }),
+            },
+          ],
+        },
       },
     ];
   },

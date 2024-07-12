@@ -109,7 +109,7 @@ export const Assetdata = (data) => {
       assetBookRefNo: data?.asset?.BookPagereference,
       assetName: data?.asset?.AssetName,
       description: data?.asset?.Assetdescription,
-      assetClassification:data?.asset?.assetclassification?.value,
+      assetClassification:data?.asset?.assetclassification?.code,
       assetParentCategory: data?.asset?.assettype?.code,
       assetCategory:data?.asset?.assetsubtype?.code,
       assetSubCategory:data?.asset?.assetparentsubCategory?.code,

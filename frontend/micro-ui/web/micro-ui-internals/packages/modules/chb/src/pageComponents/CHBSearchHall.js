@@ -4,19 +4,17 @@ import { useLocation } from "react-router-dom";
 import ApplicationTable from "../components/inbox/ApplicationTable";
 import {
   FormStep,
-  Card,
   CardHeader,
   CardLabel,
   Dropdown,
   SubmitBar,
-  TextInput,
-  DateRange,
-  Calender
+  Calender,
+  Toast
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { DateRangePicker, createStaticRanges } from "react-date-range";
 import { addDays, startOfDay, endOfDay, format } from 'date-fns';
 
-const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData, onFilterChange, searchParams }) => {
+const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
   const { pathname: url } = useLocation();
   let index = 0;
   const [bookingSlotDetails, setBookingSlotDetails] = useState(
@@ -29,6 +27,7 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
     formData?.slotlist?.selectedHall ||
     ""
   );
+  const [showToast, setShowToast] = useState(null);
   const [showDateRangePicker, setShowDateRangePicker] = useState(false);
   const [hallCode, setHallCode] = useState(
     (formData.slotlist && formData.slotlist[index] && formData.slotlist[index].hallCode) ||
@@ -36,7 +35,6 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
     ""
   );
   const stateId = Digit.ULBService.getStateId();
- 
   const [dateRange, setDateRange] = useState([{
     startDate: null,
     endDate: null,
@@ -49,16 +47,13 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
   let HallName = [];
   let HallId = [];
 
-  hallList &&
-  hallList.map((slot) => {
+  hallList && hallList.map((slot) => {
     initialData.push({ slotId: slot.communityHallId, name: slot.name, address: slot.address });
   });
-  Hall &&
-  Hall.map((slot) => {
+  Hall && Hall.map((slot) => {
     HallName.push({ i18nKey: `${slot.name}`, code: `${slot.name}`, value: `${slot.name}` });
   });
-  Hall &&
-  Hall.map((slot) => {
+  Hall && Hall.map((slot) => {
     HallId.push({ i18nKey: `${slot.HallCode}`, code: `${slot.HallCode}`, slotId: `${slot.communityHallId}` });
   });
 
@@ -66,14 +61,12 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
   const { data: slotSearchData, refetch } = Digit.Hooks.chb.useChbSlotSearch({
     tenantId: "pg.citya",
     filters: {
-      communityHallName: selectedHall.code,
+      communityHallCode: selectedHall.code,
       bookingStartDate: dateRange[0].startDate ? format(dateRange[0].startDate, 'dd-MM-yyyy') : "",
       bookingEndDate: dateRange[0].endDate ? format(dateRange[0].endDate, 'dd-MM-yyyy') : "",
-      hallCode: hallCode.code
+      hallCode:hallCode.code
     }
   });
-
- 
 
   useEffect(() => {
     const addressdata = initialData.map(slot => {
@@ -84,26 +77,27 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
     if (slotSearchData && slotSearchData.hallSlotAvailabiltityDetails) {
       const newData = slotSearchData.hallSlotAvailabiltityDetails.map((slot, index) => ({
         slotId: index + 1,
-        name: slot.communityHallName,
+        name: slot.communityHallCode,
         address: addressdata || "", // Ensure address is set
         location: "NEW DELHI",
         bookingDate: slot.bookingDate, 
         status: slot.slotStaus === "AVAILABLE" ? (
-          <SubmitBar label={slot.slotStaus} onSubmit={goNext} disabled={false}  style={{color:"green",width: "85%"}}/>
+          <div className="sla-cell-success">Available</div>
         ) : (
-          <SubmitBar label={slot.slotStaus} disabled={true} />
+          <div className="sla-cell-error">Booked</div>
         )
       }));
       setData(newData); // Update data state
       setShowTable(true); // Show the table after data is fetched
     }
-  }, [slotSearchData, selectedHall, hallCode, dateRange,bookingSlotDetails]);
+  }, [slotSearchData, selectedHall, hallCode, dateRange, bookingSlotDetails]);
 
   const [data, setData] = useState("");
   const [showTable, setShowTable] = useState(false); // State to control table visibility
+  const [isCheckboxSelected, setIsCheckboxSelected] = useState(false);
 
   const columns = [
-    { Header: `${t("CHB_HALL_NAME")}`+ "/" + `${t("CHB_PARK")}`, accessor: "name" },
+    { Header: `${t("CHB_HALL_NAME")}` + "/" + `${t("CHB_PARK")}`, accessor: "name" },
     { Header: `${t("CHB_ADDRESS")}`, accessor: "address" },
     { Header: `${t("CHB_LOCATION")}`, accessor: "location" },
     { Header: `${t("CHB_BOOKING_DATE")}`, accessor: "bookingDate" },
@@ -137,6 +131,7 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
       const updatedSelectedRows = prevSelectedRows.some(row => row.slotId === data[rowIndex].slotId) ?
         prevSelectedRows.filter(row => row.slotId !== data[rowIndex].slotId) :
         [...prevSelectedRows, data[rowIndex]];
+      setIsCheckboxSelected(updatedSelectedRows.length > 0);
       return updatedSelectedRows;
     });
   };
@@ -151,9 +146,11 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
           onChange={() => {
             if (bookingSlotDetails.length === data.length) {
               setBookingSlotDetails([]);
+              setIsCheckboxSelected(false);
             } else {
               const allRows = data;
               setBookingSlotDetails(allRows);
+              setIsCheckboxSelected(true);
             }
           }}
         />
@@ -203,10 +200,19 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
   };
 
   const handleSearch = () => {
-    if ((selectedHall.code && dateRange[0].startDate && dateRange[0].endDate) || (hallCode.code && dateRange[0].startDate && dateRange[0].endDate && selectedHall.code)) {
+    if ((selectedHall.code && dateRange[0].startDate && dateRange[0].endDate && hallCode.code) || (hallCode.code && dateRange[0].startDate && dateRange[0].endDate && selectedHall.code)) {
       refetch(); // Fetch data using refetch
     } else {
-      alert('Please select either Community Hall Name with Date or Hall Code with Date.');
+      setShowToast({ error: true, label: 'Please select either Community Hall Name with Date or Hall Code with Date.' });
+
+    }
+  };
+
+  const handleBookClick = () => {
+    if (!isCheckboxSelected) {
+      setShowToast({ error: true, label: 'Please select at least one hall slot to book.' });
+    } else {
+      goNext();
     }
   };
 
@@ -250,6 +256,7 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
                     : ""
                 }
                 readOnly
+                onClick={() => setShowDateRangePicker((prevState) => !prevState)}
               />
               <Calender className="cursorPointer" onClick={() => setShowDateRangePicker((prevState) => !prevState)} />
             </div>
@@ -289,7 +296,7 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
         </div>
         <div>
           <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
-          <SubmitBar label={t("CHB_BOOK")} onSubmit={goNext} style={{ margin: "20px" }} />
+          <SubmitBar label={t("CHB_BOOK")} onSubmit={handleBookClick} style={{ margin: "20px" }} disabled={!isCheckboxSelected} />
         </div>
         <br />
         {showTable && ( // Only show table when showTable is true
@@ -308,6 +315,17 @@ const CommunityHallSearch = ({ t, onSelect, config, onSearch, userType, formData
           />
         )}
       </FormStep>
+      {showToast && (
+        <Toast
+          error={showToast.error}
+          warning={showToast.warning}
+          label={t(showToast.label)}
+          isDleteBtn={true}
+          onClose={() => {
+            setShowToast(null);
+          }}
+        />
+      )}
     </React.Fragment>
   );
 };

@@ -466,7 +466,7 @@ const NewAsset
 
     brandsName && brandsName.map((brands) => {
       if (brands.AssetSubCategory===formData?.asset?.assetparentsubCategory?.code) {
-        brandsname.push({i18nKey: `AST_${brands.code}`, code: `${brands.code}`, value: `${brands.name}`})
+        brandsname.push({i18nKey: `${brands.name}`, code: `${brands.code}`, value: `${brands.name}`})
       }
      
     }) 

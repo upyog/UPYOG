@@ -37,7 +37,7 @@ const EWASTEDocuments = ({ t, config, onSelect, formData }) => {
           const fileStoreId = response.data.files[0].fileStoreId;
           setUploadedFiles((prev) => {
             const updatedFiles = [...prev];
-            updatedFiles[index] = { filestoreId: fileStoreId, documentuuid: fileStoreId, fileType: "Photo" + (index+1) };
+            updatedFiles[index] = { filestoreId: fileStoreId, documentuuid: fileStoreId, documentType: "Photo" + (index+1) };
             return updatedFiles;
           });
         } else {

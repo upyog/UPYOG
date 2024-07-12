@@ -11,7 +11,9 @@
     "packages/modules/asset", 
     "packages/modules/ew",
     "packages/modules/chb",
-    "packages/modules/common"
+    "packages/modules/common",
+    "packages/modules/dss"
+
 
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
@@ -57,11 +59,10 @@
     "build:common": "cd packages/modules/common && yarn build",
     "buildD:pt": "cd packages/modules/pt && yarn build",
     "build:core": "cd packages/modules/core && yarn build",
-    "build:pt": "cd packages/modules/pt && yarn build",
     "buildD:commonPt": "cd packages/modules/commonPt && yarn build",
     "buildD:pgr": "cd packages/modules/pgr && yarn build",
     "buildD:fsm": "cd packages/modules/fsm && yarn build",
-    "buildD:dss": "cd packages/modules/dss && yarn build",
+    "build:dss": "cd packages/modules/dss && yarn build",
     "buildD:mcollect": "cd packages/modules/mCollect && yarn build",
     "build:receipts": "cd packages/modules/receipts && yarn build",
     "buildD:tl": "cd packages/modules/tl && yarn build",
