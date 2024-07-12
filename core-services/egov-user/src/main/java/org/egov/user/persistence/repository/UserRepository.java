@@ -1,8 +1,24 @@
 package org.egov.user.persistence.repository;
 
-import lombok.extern.slf4j.Slf4j;
+import static java.util.Objects.isNull;
+import static org.egov.user.repository.builder.UserTypeQueryBuilder.SELECT_FAILED_ATTEMPTS_BY_USER_SQL;
+import static org.egov.user.repository.builder.UserTypeQueryBuilder.SELECT_NEXT_SEQUENCE_USER;
+import static org.springframework.util.StringUtils.isEmpty;
 
-import org.egov.common.contract.request.RequestInfo;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.egov.tracer.model.CustomException;
 import org.egov.user.domain.model.Address;
 import org.egov.user.domain.model.Role;
@@ -18,20 +34,16 @@ import org.egov.user.repository.builder.UserTypeQueryBuilder;
 import org.egov.user.repository.rowmapper.UserResultSetExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.isNull;
-import static org.egov.user.repository.builder.UserTypeQueryBuilder.SELECT_FAILED_ATTEMPTS_BY_USER_SQL;
-import static org.egov.user.repository.builder.UserTypeQueryBuilder.SELECT_NEXT_SEQUENCE_USER;
-import static org.springframework.util.StringUtils.isEmpty;
+import lombok.extern.slf4j.Slf4j;
 
 @Repository
 @Slf4j
@@ -92,13 +104,44 @@ public class UserRepository {
         }
         String queryStr = userTypeQueryBuilder.getQuery(userSearch, preparedStatementValues);
         log.debug(queryStr);
-
+        final List<Object> preparedStatementValuesForRole = new ArrayList<>();
         users = jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), userResultSetExtractor);
+        String roleQueryStr = userTypeQueryBuilder.getRolesForUSers(users.stream().map(User::getId).collect(Collectors.toList()), preparedStatementValuesForRole);
+        Map<Long, List<Role>> userRoles = jdbcTemplate.query(roleQueryStr, preparedStatementValuesForRole.toArray(), extractor);
+        for(User user : users)
+        	user.getRoles().addAll(userRoles.get(user.getId()));
+        	
         enrichRoles(users);
 
         return users;
     }
 
+ // Implement the ResultSetExtractor
+    ResultSetExtractor<Map<Long, List<Role>>> extractor = new ResultSetExtractor<Map<Long, List<Role>>>() {
+        @Override
+        public Map<Long, List<Role>> extractData(ResultSet rs) throws SQLException, DataAccessException {
+        	Map<Long, List<Role>> userRoles = new HashMap<>();
+            if (rs.next()) {
+            	Long userId = Long.valueOf(rs.getString("user_id"));
+            	if(userRoles.containsKey(userId)) {
+            		Role role = new Role();
+                    role.setCode(rs.getString("role_code"));
+                    role.setTenantId(rs.getString("role_tenantid"));
+                    List<Role> existingRole = userRoles.get(userId);
+                    existingRole.add(role);
+            		userRoles.put(userId, existingRole);
+            	} else {
+            		Role role = new Role();
+                    role.setCode(rs.getString("role_code"));
+                    role.setTenantId(rs.getString("role_tenantid"));
+            		userRoles.put(userId, Arrays.asList(role));
+            	}
+                return userRoles;
+            }
+            return null; // or throw an exception if no role found
+        }
+    };
+    
 
     /**
      * get list of all userids with role in given tenant
