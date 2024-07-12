@@ -86,7 +86,7 @@ public class AssetService {
 		for (Role role : requestInfo.getUserInfo().getRoles()) {
 			roles.add(role.getCode());
 		}
-		if ((criteria.tenantIdOnly() || criteria.isEmpty()) && roles.contains(AssetConstants.EMPLOYEE)) {
+		if ((criteria.tenantIdOnly() || criteria.isEmpty()) && roles.contains(AssetConstants.AASET_INITIATOR)) {
 			log.debug("loading data of created and by me");
 			assets = this.getAssetCreatedForByMe(criteria, requestInfo);
 			log.debug("no of assets retuning by the search query" + assets.size());

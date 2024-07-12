@@ -81,7 +81,7 @@ public class AssetQueryBuilder {
         if (status != null) {
             List<String> statusList = Arrays.asList(status.split(","));
             addClauseIfRequired(preparedStmtList, builder);
-            builder.append(" asset.status IN (").append(createQuery(statusList)).append(")");
+            builder.append(" UPPER(asset.status IN) (").append(createQuery(statusList)).append(")");
             addToPreparedStatement(preparedStmtList, statusList);
         }
         
@@ -90,7 +90,7 @@ public class AssetQueryBuilder {
         if (assetParentCategoryList != null) {
             List<String>  assetParentCategory = Arrays.asList(assetParentCategoryList.split(","));
             addClauseIfRequired(preparedStmtList, builder);
-            builder.append(" asset.parentCategory IN (").append(createQuery(assetParentCategory)).append(")");
+            builder.append(" UPPER(asset.parentCategory) IN (").append(createQuery(assetParentCategory)).append(")");
             addToPreparedStatement(preparedStmtList, assetParentCategory);
         }
         
@@ -99,7 +99,7 @@ public class AssetQueryBuilder {
         if (classification != null) {
             List<String>  classificationList = Arrays.asList(classification.split(","));
             addClauseIfRequired(preparedStmtList, builder);
-            builder.append(" asset.classification IN (").append(createQuery(classificationList)).append(")");
+            builder.append(" UPPER(asset.classification) IN (").append(createQuery(classificationList)).append(")");
             addToPreparedStatement(preparedStmtList, classificationList);
         }
 		
