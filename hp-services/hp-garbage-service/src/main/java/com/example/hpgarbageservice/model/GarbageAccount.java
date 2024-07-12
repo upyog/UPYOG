@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
 public class GarbageAccount {
 
 	private Long id;
+	
+	private String uuid;
 
 	private Long garbageId;
 
@@ -41,6 +43,8 @@ public class GarbageAccount {
 	private GrbgApplication grbgApplication;
 
 	private GrbgCommercialDetails grbgCommercialDetails;
+	
+	private List<GrbgDocument> documents;
 
 	private AuditDetails auditDetails;
 	

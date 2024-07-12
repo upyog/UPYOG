@@ -32,4 +32,10 @@ public class GrbgCollectionUnitRepository {
                 grbgCollectionUnit.getTypeOfUlb(),
                 grbgCollectionUnit.getUuid());
     }
+
+    public void deactivate(GrbgCollectionUnit grbgCollectionUnit) {
+        jdbcTemplate.update(queryBuilder.DEACTIVATE_QUERY,
+                grbgCollectionUnit.getIsActive(),
+                grbgCollectionUnit.getUuid());
+    }
 }

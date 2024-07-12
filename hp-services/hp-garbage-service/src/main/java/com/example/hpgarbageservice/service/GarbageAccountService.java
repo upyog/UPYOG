@@ -1,13 +1,11 @@
 package com.example.hpgarbageservice.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +23,7 @@ import com.example.hpgarbageservice.model.contract.RequestInfo;
 import com.example.hpgarbageservice.repository.GarbageAccountRepository;
 import com.example.hpgarbageservice.repository.GrbgApplicationRepository;
 import com.example.hpgarbageservice.repository.GrbgCommercialDetailsRepository;
+import com.example.hpgarbageservice.repository.GrbgDocumentRepository;
 
 @Service
 public class GarbageAccountService {
@@ -38,6 +37,9 @@ public class GarbageAccountService {
 	@Autowired
 	private GrbgCommercialDetailsRepository grbgCommercialDetailsRepository;
 
+	@Autowired
+	private GrbgDocumentRepository grbgDocumentRepository;
+
 	public List<GarbageAccount> create(GarbageAccountRequest createGarbageRequest) {
 
 		List<GarbageAccount> garbageAccountsResponse = new ArrayList<>();
@@ -50,12 +52,18 @@ public class GarbageAccountService {
 
 				// enrich create garbage account
 				enrichCreateGarbageAccount(garbageAccount, createGarbageRequest.getRequestInfo());
+				
+				// enrich garbage document
+				enrichCreateGarbageDocuments(garbageAccount);
 
 				// enrich create garbage application
 				enrichCreateGarbageApplication(garbageAccount, createGarbageRequest.getRequestInfo());
 
 				// create garbage account
 				garbageAccountsResponse.add(garbageAccountRepository.create(garbageAccount));
+				
+				// create garbage documents
+				createGarbageDocuments(garbageAccount);
 				
 				// create garbage application
 				grbgApplicationRepository.create(garbageAccount.getGrbgApplication());
@@ -64,6 +72,27 @@ public class GarbageAccountService {
 		}
 		
 		return garbageAccountsResponse;
+	}
+
+
+	private void createGarbageDocuments(GarbageAccount garbageAccount) {
+		
+		garbageAccount.getDocuments().stream().forEach(doc -> {
+			grbgDocumentRepository.create(doc);
+		});
+		
+	}
+
+
+	private void enrichCreateGarbageDocuments(GarbageAccount garbageAccount) {
+		
+		garbageAccount.getDocuments().stream().forEach(doc -> {
+			doc.setUuid(UUID.randomUUID().toString());
+			if(StringUtils.equalsIgnoreCase(doc.getDocCategory(), ApplicationPropertiesAndConstant.DOCUMENT_ACCOUNT)) {
+				doc.setTblRefUuid(garbageAccount.getUuid());
+			}
+		});
+		
 	}
 
 
@@ -111,6 +140,7 @@ public class GarbageAccountService {
 		}
 
 		// generate garbage_id
+		garbageAccount.setUuid(UUID.randomUUID().toString());
 		garbageAccount.setGarbageId(System.currentTimeMillis());
 		garbageAccount.setStatus(ApplicationPropertiesAndConstant.ACCOUNT_STATUS_DRAFT);
 
@@ -167,14 +197,15 @@ public class GarbageAccountService {
 //				bills loop > make list of deleting, updating and creating bills
 				
 				
+				// commercial details
 				if(null != newGarbageAccount.getGrbgCommercialDetails()
 						&& StringUtils.isEmpty(newGarbageAccount.getGrbgCommercialDetails().getUuid())) {
-					// 3. create commercial details
+				// 3. create commercial details
 					grbgCommercialDetailsRepository.create(newGarbageAccount.getGrbgCommercialDetails());
 				}
 				else if(StringUtils.isNotEmpty(newGarbageAccount.getGrbgCommercialDetails().getUuid())
 						&& !newGarbageAccount.getGrbgCommercialDetails().equals(existingGarbageAccount.getGrbgCommercialDetails())){
-					// 4. update commercial details
+				// 4. update commercial details
 					grbgCommercialDetailsRepository.update(newGarbageAccount.getGrbgCommercialDetails());
 				}
 				

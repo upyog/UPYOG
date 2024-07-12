@@ -126,6 +126,11 @@
             <artifactId>flyway-core</artifactId>
             <version>4.1.0</version>
         </dependency>
+		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>1.8.0</version>
+		</dependency>
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>mdms-client</artifactId>

@@ -9,17 +9,19 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.user.domain.model.UpdateRequest;
 import org.egov.user.domain.model.UpdateResponse;
 import org.egov.user.domain.model.User;
 import org.egov.user.domain.model.UserDetail;
 import org.egov.user.domain.model.UserSearchCriteria;
+import org.egov.user.domain.service.LoginService;
 import org.egov.user.domain.service.SsoService;
 import org.egov.user.domain.service.TokenService;
 import org.egov.user.domain.service.UserService;
 import org.egov.user.web.contract.CreateUserRequest;
-import org.egov.user.web.contract.HpSsoValidateTokenResponse;
+import org.egov.user.web.contract.LoginRequest;
 import org.egov.user.web.contract.UserDetailResponse;
 import org.egov.user.web.contract.UserRequest;
 import org.egov.user.web.contract.UserSearchRequest;
@@ -31,6 +33,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -63,6 +67,9 @@ public class UserController {
 
     @Autowired
     private SsoService ssoService;
+
+    @Autowired
+    private LoginService loginService;
 
     @Autowired
     public UserController(UserService userService, TokenService tokenService) {
@@ -218,11 +225,25 @@ public class UserController {
         }
         return true;
     }
-    
-    @PostMapping("/_landingPage")
+
+	@PostMapping("/_landingPage")
+	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
     private ResponseEntity<?> landingPage(@RequestParam(value = "token") String token){
+    	log.info("## landing page token : "+token);
     	ResponseEntity<?> response = ssoService.getHpSsoValidateTokenResponse(token);
     	return response;
     }
+	
+	
+	@PostMapping("/_login")
+	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+	public Object employeeUserLogin(@RequestBody LoginRequest loginRequest) {
+		if (StringUtils.isEmpty(loginRequest.getUserType())) {
+			throw new RuntimeException("Employee login failed.");
+		}
+
+		Object response = loginService.employeeUserLogin(loginRequest);
+		return response;
+	}
 
 }

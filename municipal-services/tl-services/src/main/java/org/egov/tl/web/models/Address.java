@@ -2,6 +2,7 @@ package org.egov.tl.web.models;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -109,6 +110,8 @@ public class Address   {
         @JsonProperty("locality")
         private Boundary locality = null;
 
+        @JsonProperty("additionalDetail")
+        private JsonNode additionalDetail = null;
 
 }
 

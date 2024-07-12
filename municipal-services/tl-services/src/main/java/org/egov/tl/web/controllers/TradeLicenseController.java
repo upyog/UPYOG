@@ -1,36 +1,44 @@
 package org.egov.tl.web.controllers;
 
 
-import org.egov.tl.service.PaymentUpdateService;
+import static org.egov.tl.util.TLConstants.businessService_TL;
+
+import java.util.HashMap;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.notification.PaymentNotificationService;
 import org.egov.tl.service.notification.TLNotificationService;
 import org.egov.tl.util.ResponseInfoFactory;
 import org.egov.tl.util.TLConstants;
-import org.egov.tl.web.models.*;
+import org.egov.tl.web.models.ApplicationStatusChangeRequest;
+import org.egov.tl.web.models.RequestInfoWrapper;
+import org.egov.tl.web.models.TradeLicense;
+import org.egov.tl.web.models.TradeLicenseRequest;
+import org.egov.tl.web.models.TradeLicenseResponse;
+import org.egov.tl.web.models.TradeLicenseSearchCriteria;
+import org.egov.tl.web.models.UpdateTLStatusCriteriaRequest;
 import org.egov.tl.web.models.contract.ProcessInstanceResponse;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.*;
-import lombok.AllArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.util.*;
-
-import javax.validation.constraints.*;
-import javax.validation.Valid;
-import javax.servlet.annotation.HttpMethodConstraint;
-import javax.servlet.http.HttpServletRequest;
-
-import static org.egov.tl.util.TLConstants.businessService_TL;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController	
 @CrossOrigin(origins="*")
@@ -89,6 +97,7 @@ import static org.egov.tl.util.TLConstants.businessService_TL;
         TradeLicenseResponse response = TradeLicenseResponse.builder().licenses(licenses).responseInfo(
                 responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true)).count(count).applicationsIssued(applicationsIssued)
         		.applicationsRenewed(applicationsRenewed).validity(validity).build();
+        tradeLicenseService.processResponse(response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -143,6 +152,24 @@ import static org.egov.tl.util.TLConstants.businessService_TL;
     	ProcessInstanceResponse processInstanceResponse = tradeLicenseService.updateState(updateTLStatusCriteriaRequest);
         return new ResponseEntity(processInstanceResponse , HttpStatus.OK);
     }
+    
+    @PostMapping("/updateApplicationAppliedStatus")
+    public ResponseEntity<?> updateStateOfApplication(@RequestBody ApplicationStatusChangeRequest applicationStatusChangeRequest){
+    	ApplicationStatusChangeRequest applicationStatusChangeRequest2 = tradeLicenseService.updateStateOfApplication(applicationStatusChangeRequest);
+        return new ResponseEntity(applicationStatusChangeRequest2 , HttpStatus.OK);
+    }
 
+    @PostMapping("/testPdfCreateAndUpload")
+    public ResponseEntity<Resource> testPdfCreateAndUpload(@Valid @RequestBody TradeLicenseRequest tradeLicenseRequest){
+    	Resource object = tradeLicenseService.createNoSavePDF(tradeLicenseRequest.getLicenses().get(0)
+    														, tradeLicenseRequest.getRequestInfo());
+    	
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "generated.pdf");
+
+        return new ResponseEntity(object, headers, HttpStatus.OK);
+    }
 
 }

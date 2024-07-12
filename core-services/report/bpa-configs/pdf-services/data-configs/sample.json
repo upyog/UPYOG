@@ -1,0 +1,46 @@
+{
+   "key":"sample",
+   "DataConfigs":{
+      "version":"1.0.0",
+      "baseKeyPath":"$.Bpa",
+      "mappings":[
+         {
+            "direct":[
+               {
+                  "variable":"applicationno",
+                  "value":{
+                     "path":"$.applicationno"
+                  }
+               }
+            ]
+         },
+         {
+            "dataBase":[
+               {
+                  "key":"qry1",
+                  "query":"select * from egbpa_buildingplan eb where applicationno =:applicationno",
+                  "queryParam":[
+                     {
+                        "key":"applicationno",
+                        "value":{
+                           "path":"$.applicationno"
+                        },
+                        "type":"String"
+                     }
+                  ],
+                  "responseMapping":[
+                     {
+                        "variable":"applicationno",
+                        "columnName":"applicationno"
+                     },
+                     {
+                        "variable":"edcr_Number",
+                        "columnName":"edcrnumber"
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   }
+}

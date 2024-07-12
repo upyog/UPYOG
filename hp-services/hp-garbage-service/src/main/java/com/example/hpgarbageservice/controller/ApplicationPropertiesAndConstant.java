@@ -15,5 +15,7 @@ public class ApplicationPropertiesAndConstant {
 	public static final String APPLICATION_STATUS_APPROVED = "APPROVED";
 
 	public static final String APPLICATION_PREFIX = "GA-";
+
+	public static final String DOCUMENT_ACCOUNT = "ACCOUNT";
     
 }
