@@ -7,7 +7,7 @@ serviceMaps:
     fromTopic: save-hrms-employee
     isTransaction: true
     queryMaps:
-    - query: INSERT INTO eg_hrms_employee(tenantid, id, uuid, code, dateOfAppointment, employeestatus, employeetype, active, createdby, createddate, lastmodifiedby, lastModifiedDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_hrms_employee(tenantid, id, uuid, code, dateOfAppointment, employeestatus, employeetype, active, createdby, createddate, lastmodifiedby, lastModifiedDate, additionalDetail) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
       basePath: Employees.*
       jsonMaps:
@@ -36,6 +36,10 @@ serviceMaps:
       - jsonPath: $.Employees.*.auditDetails.lastModifiedBy
 
       - jsonPath: $.Employees.*.auditDetails.lastModifiedDate
+      
+      - jsonPath: $.Employees.*.additionalDetail
+        type: JSON
+        dbType: JSONB
 
 
 
@@ -249,7 +253,7 @@ serviceMaps:
 
       - jsonPath:  $.Employees.*.uuid
 
-    - query: INSERT INTO eg_hrms_employee(tenantid, id, uuid, code, dateOfAppointment, employeestatus, employeetype, active, createdby, createddate, lastmodifiedby, lastModifiedDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_hrms_employee(tenantid, id, uuid, code, dateOfAppointment, employeestatus, employeetype, active, createdby, createddate, lastmodifiedby, lastModifiedDate, additionalDetail) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
       basePath: Employees.*
       jsonMaps:
@@ -278,6 +282,10 @@ serviceMaps:
       - jsonPath: $.Employees.*.auditDetails.lastModifiedBy
 
       - jsonPath: $.Employees.*.auditDetails.lastModifiedDate
+      
+      - jsonPath: $.Employees.*.additionalDetail
+        type: JSON
+        dbType: JSONB
 
 
 

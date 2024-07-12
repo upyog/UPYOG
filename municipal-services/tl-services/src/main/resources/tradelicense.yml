@@ -238,7 +238,7 @@ serviceMaps:
           - jsonPath: $.Licenses[*][?({id} in @.tradeLicenseDetail.applicationDocuments[*].id)].auditDetails.lastModifiedTime
 
 
-       - query: INSERT INTO eg_tl_address( id, tenantid, doorno,street,buildingName, latitude,longitude, addressid, addressnumber,locality, type, addressline1, addressline2, landmark, city, pincode, detail, tradelicensedetailid, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+       - query: INSERT INTO eg_tl_address( id, tenantid, doorno,street,buildingName, latitude,longitude, addressid, addressnumber,locality, type, addressline1, addressline2, landmark, city, pincode, detail, tradelicensedetailid, createdby, lastmodifiedby, createdtime, lastmodifiedtime, additionaldetail) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
          basePath: Licenses.*.tradeLicenseDetail.address
          jsonMaps:
           - jsonPath: $.Licenses.*.tradeLicenseDetail.address.id
@@ -284,6 +284,10 @@ serviceMaps:
           - jsonPath: $.Licenses.*.auditDetails.createdTime
 
           - jsonPath: $.Licenses.*.auditDetails.lastModifiedTime
+          
+          - jsonPath: $.Licenses.*.tradeLicenseDetail.address.additionalDetail
+            type: JSON
+            dbType: JSONB
 
 
        - query: INSERT INTO eg_tl_institution(tenantId,active,id, tradelicensedetailid, name, type,designation, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ;
@@ -612,7 +616,7 @@ serviceMaps:
 
 
 
-       - query: UPDATE eg_tl_address SET doorno =?,street = ?,buildingName = ?, latitude =?, longitude =?, addressid =?, addressnumber =?,locality =?, type =?, addressline1 =?, addressline2 =?, landmark =?, city =?, pincode =?, detail =?,lastmodifiedby =?, lastmodifiedtime =? WHERE id =?;
+       - query: UPDATE eg_tl_address SET doorno =?,street = ?,buildingName = ?, latitude =?, longitude =?, addressid =?, addressnumber =?,locality =?, type =?, addressline1 =?, addressline2 =?, landmark =?, city =?, pincode =?, detail =?,lastmodifiedby =?, lastmodifiedtime =?, additionaldetail =? WHERE id =?;
          basePath: Licenses.*.tradeLicenseDetail.address
          jsonMaps:
           - jsonPath: $.Licenses.*.tradeLicenseDetail.address.doorNo
@@ -648,6 +652,10 @@ serviceMaps:
           - jsonPath: $.Licenses.*.auditDetails.lastModifiedBy
 
           - jsonPath: $.Licenses.*.auditDetails.lastModifiedTime
+          
+          - jsonPath: $.Licenses.*.tradeLicenseDetail.address.additionalDetail
+            type: JSON
+            dbType: JSONB
 
           - jsonPath: $.Licenses.*.tradeLicenseDetail.address.id
 

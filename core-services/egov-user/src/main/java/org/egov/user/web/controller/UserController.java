@@ -234,15 +234,6 @@ public class UserController {
     	return response;
     }
 	
-//	@PostMapping("/_testing")
-//	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
-//    private ResponseEntity<?> testingLogin(@RequestParam(value = "username") String username
-//    		, @RequestParam(value = "password") String password
-//    		, @RequestParam(value = "type") String type){
-//    	log.info("## testingLogin page token : "+type);
-//    	ResponseEntity<?> response = ssoService.testingLogin(type);
-//    	return response;
-//    }
 	
 	@PostMapping("/_login")
 	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
