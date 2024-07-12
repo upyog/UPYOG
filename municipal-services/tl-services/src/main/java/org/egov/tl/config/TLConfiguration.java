@@ -349,5 +349,17 @@ public class TLConfiguration {
     @Value("${egov.tl.calculator.billingSlab.endpoint}")
     private String billingSlabEndPoint;
 
+    @Value("${egov.report.host}")
+    private String reportHost;
+
+    @Value("${egov.report.endpoint.create}")
+    private String reportCreateEndPoint;
+
+    @Value("${egov.alfresco.host}")
+    private String alfrescoHost;
+
+    @Value("${egov.alfresco.endpoint.upload}")
+    private String alfrescoUploadEndPoint;
+
 
 }

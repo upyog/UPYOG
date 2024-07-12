@@ -1,0 +1,190 @@
+---
+ReportDefinitions:
+  - reportName: TechnicalPersonReport
+    summary: Technical Person
+    version: 1.0.0
+    moduleName: rainmaker-bpa
+    sourceColumns:
+      - name: code
+        label: Code
+        type: string
+        source: bpa
+        total: false
+      - name: name
+        label: Name
+        type: string
+        source: bpa
+        total: false
+      - name: mobNo
+        label: Mobile No
+        type: string
+        source: bpa
+        total: false
+      - name: pinCode
+        label: pinCode
+        type: string
+        source: bpa
+        total: false
+      - name: emailId
+        label: Email Id
+        type: string
+        source: bpa
+        total: false
+      - name: licIssueDt
+        label: Licence Issue Date
+        type: string
+        source: bpa
+        total: false
+      - name: licRenewalDt
+        label: Licence Renewal Date
+        type: string
+        source: bpa
+        total: false
+      - name: licValidUpto
+        label: Licence Valid Upto
+        type: string
+        source: bpa
+        total: false
+      - name: officeCd
+        label: Office Code
+        type: string
+        source: bpa
+        total: false
+      - name: kycUpdateYN
+        label: Kyc Updated
+        type: string
+        source: bpa
+        total: false
+      - name: isSuspended
+        label: Is Licence Suspended
+        type: string
+        source: bpa
+        total: false
+      - name: suspendedFromDt
+        label: Suspended From Date
+        type: string
+        source: bpa
+        total: false
+      - name: suspendedToDt
+        label: Suspended To Date
+        type: string
+        source: bpa
+        total: false
+      - name: applicationno
+        label: Application No
+        type: string
+        source: bpa
+        total: false
+      - name: status
+        label: Application Status
+        type: string
+        source: bpa
+        total: false
+      - name: businessservice
+        label: Business Service
+        type: string
+        source: bpa
+        total: false
+      - name: applicationtype
+        label: Application Type
+        type: string
+        source: bpa
+        total: false
+    searchParams:
+      - name: lbsType
+        label: Type
+        type: singlevaluelist
+        pattern: 'list://C.A:C.A,ESE:ESE,GTE:GTE,ESR:ESR'
+        source: bpa
+        isMandatory: false
+        searchClause: AND arcTable.bldg_lbs_arc_type = $lbsType      
+      - name: lbsClass
+        label: Class
+        type: singlevaluelist
+        pattern: 'list://I:I,II:II,III:III'
+        source: bpa
+        isMandatory: false
+        searchClause: AND arcTable.bldg_lbs_class = $lbsClass 
+    query: |
+      SELECT arcTable.bldg_lbs_cd AS code, arcTable.bldg_lbs_name AS name, arcTable.bldg_lbs_pin_code AS pinCode, arcTable.bldg_lbs_mobile_no AS mobNo, arcTable.bldg_lbs_email_id AS emailId, TO_CHAR(CAST(TRIM(TRAILING '0' FROM TO_CHAR(arcTable.bldg_lic_renewal_dt, 'YYYY-MM-DD HH24:MI:SS')) AS TIMESTAMP), 'DD-MM-YYYY') AS licRenewalDt, TO_CHAR(CAST(TRIM(TRAILING '0' FROM TO_CHAR(arcTable.bldg_lic_valid_upto, 'YYYY-MM-DD HH24:MI:SS')) AS TIMESTAMP), 'DD-MM-YYYY') AS licValidUpto, arcTable.bldg_office_cd AS officeCd, arcTable.bldg_kyc_updated_yn AS kycUpdateYN, arcTable.bldg_is_lbs_suspended AS isSuspended, TO_CHAR(CAST(TRIM(TRAILING '0' FROM TO_CHAR(arcTable.bldg_suspended_from_date, 'YYYY-MM-DD HH24:MI:SS')) AS TIMESTAMP), 'DD-MM-YYYY') AS suspendedFromDt, TO_CHAR(CAST(TRIM(TRAILING '0' FROM TO_CHAR(arcTable.bldg_suspended_to_date, 'YYYY-MM-DD HH24:MI:SS')) AS TIMESTAMP), 'DD-MM-YYYY') AS suspendedToDt, appTable.applicationno, appTable.status, appTable.businessservice, appTable.applicationtype FROM bldg_lbs_arc_mst arcTable LEFT OUTER JOIN bpa_tp_application appTable ON arcTable.tp_id = appTable.tp_id WHERE arcTable.bldg_lic_valid_upto > NOW()
+    orderby: ORDER BY arcTable.create_date desc
+    
+  - reportName: ApplicationDetailsReport
+    summary: Application Details Report
+    version: 1.0.0
+    moduleName: rainmaker-bpa
+    sourceColumns:  
+      - name: plancaseno
+        label: Plan Case No
+        type: string
+        source: bpa
+        total: false  
+      - name: businessservice
+        label: Business Service 
+        type: string
+        source: bpa
+        total: false    
+      - name: applicationnumber
+        label: Application Number
+        type: string
+        source: bpa
+        total: false
+      - name: applicantname
+        label: Applicant Name
+        type: string
+        source: bpa
+        total: false
+      - name: applicantmobileno
+        label: Applicant Mobile Number
+        type: string
+        source: bpa
+        total: false
+      - name: plotnumber
+        label: Plot Number
+        type: string
+        source: bpa
+        total: false
+      - name: ownername
+        label: Owner Name
+        type: string
+        source: bpa
+        total: false
+      - name: lbs_name
+        label: Architect/Tech Person Name
+        type: string
+        source: bpa
+        total: false 
+      - name: currentStatus
+        label: Status
+        type: string
+        source: bpa
+        total: false 
+      - name: submissiondate
+        label: Submission Date
+        type: string
+        source: bpa
+        total: false
+      - name: approvaldate
+        label: Approval Date
+        type: string
+        source: bpa
+        total: false  
+    searchParams:
+      - name: tenantId
+        label: tenantId
+        type: singlevaluelist
+        pattern: 'list://km.kolkata:km.kolkata'
+        source: bpa
+        isMandatory: false
+        searchClause: WHERE tenantId = $tenantId 
+      - name: status
+        label: Status
+        type: singlevaluelist
+        pattern: http://localhost:8080/bpa-services/egov-mdms-service/v1/_get?moduleName=common&masterName=applicationStatus&tenantId=km|MdmsRes.common.applicationStatus[*].status[*].code|MdmsRes.common.applicationStatus[*].status[*].name
+        source: bpa
+        isMandatory: false
+        searchClause: AND status = $status    
+    query: |      
+      SELECT bps.plan_case_no AS plancaseno, bps.ws_application_no AS applicationnumber, bps.applicant_name AS applicantname, bps.applicant_mobile_no AS applicantmobileno, bps.survey_plot_no AS plotnumber, to_char(cast(bps.plan_submit_date as date), 'DD-MM-YYYY') AS submissiondate, ebb.status AS currentStatus, to_char(cast(to_timestamp(ebb.approvaldate / 1000) as date), 'DD-MM-YYYY') AS approvaldate, bps.owner_name AS ownername, bps.lbs_name AS lbs_name, ebb.businessservice AS businessservice FROM building_plan_submition bps LEFT JOIN eg_bpa_buildingplan ebb ON ebb.plan_case_no = bps.plan_case_no
+      
+       
