@@ -16,4 +16,5 @@ public class GrbgCollectionUnit {
     private String unitWard;
     private String ulbName;
     private String typeOfUlb;
+    private Boolean isActive;
 }

@@ -27,5 +27,6 @@ public class SearchCriteriaGarbageAccount {
 
     private List<String> mobileNumber;
 
-    private List<Long> parentId;
+//    private List<Long> parentId;
+    private Boolean isOwner;
 }

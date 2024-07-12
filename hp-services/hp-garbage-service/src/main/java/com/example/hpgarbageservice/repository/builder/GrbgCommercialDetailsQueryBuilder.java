@@ -10,6 +10,6 @@ public class GrbgCommercialDetailsQueryBuilder {
                                               "VALUES (?, ?, ?, ?, ?)";
 
     public static final String UPDATE_QUERY = "UPDATE grbg_commercial_details " +
-                                              "SET business_name = ?, business_type = ?, owner_user_uuid = ? " +
+                                              "SET garbage_id = ?, business_name = ?, business_type = ?, owner_user_uuid = ? " +
                                               "WHERE uuid = ?";
 }

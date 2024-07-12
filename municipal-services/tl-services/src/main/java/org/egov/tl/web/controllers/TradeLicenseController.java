@@ -89,6 +89,7 @@ import static org.egov.tl.util.TLConstants.businessService_TL;
         TradeLicenseResponse response = TradeLicenseResponse.builder().licenses(licenses).responseInfo(
                 responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true)).count(count).applicationsIssued(applicationsIssued)
         		.applicationsRenewed(applicationsRenewed).validity(validity).build();
+        tradeLicenseService.processResponse(response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -142,6 +143,12 @@ import static org.egov.tl.util.TLConstants.businessService_TL;
     public ResponseEntity<ProcessInstanceResponse> updateStateWf(@RequestBody UpdateTLStatusCriteriaRequest updateTLStatusCriteriaRequest){
     	ProcessInstanceResponse processInstanceResponse = tradeLicenseService.updateState(updateTLStatusCriteriaRequest);
         return new ResponseEntity(processInstanceResponse , HttpStatus.OK);
+    }
+    
+    @PostMapping("/updateApplicationAppliedStatus")
+    public ResponseEntity<?> updateStateOfApplication(@RequestBody ApplicationStatusChangeRequest applicationStatusChangeRequest){
+    	ApplicationStatusChangeRequest applicationStatusChangeRequest2 = tradeLicenseService.updateStateOfApplication(applicationStatusChangeRequest);
+        return new ResponseEntity(applicationStatusChangeRequest2 , HttpStatus.OK);
     }
 
 

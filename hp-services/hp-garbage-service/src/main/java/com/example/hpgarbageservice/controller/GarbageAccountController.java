@@ -29,7 +29,7 @@ public class GarbageAccountController {
 
     @PostMapping("/_update")
     public ResponseEntity<List<GarbageAccount>> update(@RequestBody GarbageAccountRequest createGarbageRequest) {
-        return ResponseEntity.ok(service.updateGrbgAccount(createGarbageRequest));
+        return ResponseEntity.ok(service.update(createGarbageRequest));
     }
 
     @PostMapping("/_search")

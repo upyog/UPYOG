@@ -111,6 +111,14 @@ public class TLQueryBuilder {
                 builder.append(" AND tlowner.active = ? )");
                 preparedStmtList.add(true);
             }            
+            
+            List<String> status = criteria.getStatus();
+            if (!CollectionUtils.isEmpty(status)) {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" LOWER(tl.status) IN (").append(createQuery(status)).append(")");
+                addToPreparedStatement(preparedStmtList, status);
+            }
+            
         }
         
         else {

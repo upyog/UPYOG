@@ -7,7 +7,7 @@ serviceMaps:
     fromTopic: save-hrms-employee
     isTransaction: true
     queryMaps:
-    - query: INSERT INTO eg_hrms_employee(tenantid, id, uuid, code, dateOfAppointment, employeestatus, employeetype, active, createdby, createddate, lastmodifiedby, lastModifiedDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_hrms_employee(tenantid, id, uuid, code, dateOfAppointment, employeestatus, employeetype, active, createdby, createddate, lastmodifiedby, lastModifiedDate, additionalDetail) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
       basePath: Employees.*
       jsonMaps:
@@ -37,6 +37,10 @@ serviceMaps:
 
       - jsonPath: $.Employees.*.auditDetails.lastModifiedDate
 
+      - jsonPath: $.Employees.*.additionalDetail
+        type: JSON
+        dbType: JSONB
+
 
 
     - query: INSERT INTO eg_hrms_assignment(tenantid, uuid, position, department, designation, fromdate, todate, govtordernumber, reportingto, isHOD, employeeid, createdby, createddate, lastmodifiedby, lastModifiedDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
@@ -45,7 +49,9 @@ serviceMaps:
       jsonMaps:
 
 
-      - jsonPath: $.Employees[*][?({id} in @.assignments[*].id)].tenantId
+     ## - jsonPath: $.Employees[*][?({id} in @.assignments[*].id)].tenantId
+
+      - jsonPath: $.Employees.*.assignments.*.tenantid
 
       - jsonPath: $.Employees.*.assignments.*.id
 
@@ -237,7 +243,7 @@ serviceMaps:
 
       - jsonPath:  $.Employees.*.uuid
 
-    - query: INSERT INTO eg_hrms_employee(tenantid, id, uuid, code, phone, name, dateOfAppointment, employeestatus, employeetype, active, createdby, createddate, lastmodifiedby, lastModifiedDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_hrms_employee(tenantid, id, uuid, code, phone, name, dateOfAppointment, employeestatus, employeetype, active, createdby, createddate, lastmodifiedby, lastModifiedDate, additionalDetail) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
       basePath: Employees.*
       jsonMaps:
@@ -270,6 +276,10 @@ serviceMaps:
       - jsonPath: $.Employees.*.auditDetails.lastModifiedBy
 
       - jsonPath: $.Employees.*.auditDetails.lastModifiedDate
+
+      - jsonPath: $.Employees.*.additionalDetail
+        type: JSON
+        dbType: JSONB
 
 
 

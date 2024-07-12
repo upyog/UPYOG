@@ -49,6 +49,21 @@ public class TradeLicenseResponse   {
         
         @JsonProperty("applicationValidity")
         private int validity;
+        
+        @JsonProperty("applicationInitiated")
+        private int applicationInitiated;
+        
+        @JsonProperty("applicationApplied")
+        private int applicationApplied;
+        
+        @JsonProperty("applicationVerified")
+        private int applicationVerified;
+        
+        @JsonProperty("applicationRejected")
+        private int applicationRejected;
+        
+        @JsonProperty("applicationApproved")
+        private int applicationApproved;
 
 
         public TradeLicenseResponse addLicensesItem(TradeLicense licensesItem) {
