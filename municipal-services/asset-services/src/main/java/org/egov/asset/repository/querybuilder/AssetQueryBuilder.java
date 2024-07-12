@@ -81,7 +81,7 @@ public class AssetQueryBuilder {
         if (status != null) {
             List<String> statusList = Arrays.asList(status.split(","));
             addClauseIfRequired(preparedStmtList, builder);
-            builder.append(" UPPER(asset.status IN) (").append(createQuery(statusList)).append(")");
+            builder.append(" UPPER(asset.status) IN (").append(createQuery(statusList)).append(")");
             addToPreparedStatement(preparedStmtList, statusList);
         }
         
