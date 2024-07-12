@@ -104,22 +104,6 @@ public class WorkflowService {
 
 	}
 
-//	private void updateTlStatus(String businessId, String string) {
-//		
-//		public static final String UPDATE_QUERY = "UPDATE grbg_collection_unit " +
-//                "SET unit_name = ?, unit_ward = ?, ulb_name = ?, type_of_ulb = ? " +
-//                "WHERE uuid = ?, is_active = ?";
-//		jdbcTemplate.update("UPDATE grbg_collection_unit " +
-//                "SET unit_name = ?, unit_ward = ?, ulb_name = ?, type_of_ulb = ? " +
-//                "WHERE uuid = ?, is_active = ?",
-//                grbgCollectionUnit.getUuid(),
-//                grbgCollectionUnit.getUnitName(),
-//                grbgCollectionUnit.getUnitWard(),
-//                grbgCollectionUnit.getUlbName(),
-//                grbgCollectionUnit.getTypeOfUlb());
-//		
-//	}
-
 	private void validateProcessInstances(ProcessInstanceRequest processInstanceRequest) {
 	    String finalInspectorUserTenantId = null;
 	    String finalSuperintendentUserTenantId = null;
@@ -165,51 +149,4 @@ public class WorkflowService {
 	}
 
 	
-	
-//	private void validateProcessInstances1(ProcessInstanceRequest processInstanceRequest) {
-//		
-////		Role role = null;
-////		String userTenantId = null;
-//		String  finalUserTenantId =null;
-////		List<ProcessInstance> processInstances = new ArrayList<>();
-//		if(null != processInstanceRequest 
-//				&& null != processInstanceRequest.getRequestInfo()
-//				&& null != processInstanceRequest.getRequestInfo().getUserInfo()
-//				&& null != processInstanceRequest.getRequestInfo().getUserInfo().getRoles()) {
-//			
-//			List<org.egov.common.contract.request.Role> roles = processInstanceRequest.getRequestInfo().getUserInfo().getRoles();
-//			roles.stream().forEach(role4 -> {
-//				if(StringUtils.equalsIgnoreCase(role4.getCode(), "TL_FIELD_INSPECTOR")) {
-//					finalUserTenantId = role4.getTenantId();
-//				}
-//			});
-//					
-////					.filter(role1 -> 
-////			StringUtils.equalsIgnoreCase(role.getCode(), "TL_FIELD_INSPECTOR")).findFirst().orElse(null);
-////			if(null != role2) {
-////				
-////			}
-//			
-////			role.add();
-////			userTenantId = processInstanceRequest.getRequestInfo().getUserInfo().getTenantId();
-//		}else {
-//			throw new RuntimeException("Provide correct Process Instance Request.");
-//		}
-//		
-//		 //userTenantId;
-////		final LinkedHashMap responseMap1 = responseMap;
-//		
-//		processInstanceRequest.getProcessInstances().stream().forEach(instance -> {
-//			
-//			if((StringUtils.equalsIgnoreCase(instance.getBusinessService(), "TRADELICENSE")
-//					&& StringUtils.equalsIgnoreCase(instance.getAction(), "VERIFY"))
-//					&& !StringUtils.equalsIgnoreCase(instance.getTenantId(), finalUserTenantId)) {
-//				throw new RuntimeException("Inspector can only verify its own ULB TL applications.");
-////				processInstances.add(instance);
-//			}
-//			
-//		});
-//		
-////		processInstanceRequest.setProcessInstances(processInstances);
-//	}
 }

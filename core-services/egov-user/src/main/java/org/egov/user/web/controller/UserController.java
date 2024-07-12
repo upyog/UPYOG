@@ -9,16 +9,19 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.user.domain.model.UpdateRequest;
 import org.egov.user.domain.model.UpdateResponse;
 import org.egov.user.domain.model.User;
 import org.egov.user.domain.model.UserDetail;
 import org.egov.user.domain.model.UserSearchCriteria;
+import org.egov.user.domain.service.LoginService;
 import org.egov.user.domain.service.SsoService;
 import org.egov.user.domain.service.TokenService;
 import org.egov.user.domain.service.UserService;
 import org.egov.user.web.contract.CreateUserRequest;
+import org.egov.user.web.contract.LoginRequest;
 import org.egov.user.web.contract.UserDetailResponse;
 import org.egov.user.web.contract.UserRequest;
 import org.egov.user.web.contract.UserSearchRequest;
@@ -64,6 +67,9 @@ public class UserController {
 
     @Autowired
     private SsoService ssoService;
+
+    @Autowired
+    private LoginService loginService;
 
     @Autowired
     public UserController(UserService userService, TokenService tokenService) {
@@ -227,5 +233,17 @@ public class UserController {
     	ResponseEntity<?> response = ssoService.getHpSsoValidateTokenResponse(token);
     	return response;
     }
+	
+	
+	@PostMapping("/_login")
+	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+	public Object employeeUserLogin(@RequestBody LoginRequest loginRequest) {
+		if (StringUtils.isEmpty(loginRequest.getUserType())) {
+			throw new RuntimeException("Employee login failed.");
+		}
+
+		Object response = loginService.employeeUserLogin(loginRequest);
+		return response;
+	}
 
 }
