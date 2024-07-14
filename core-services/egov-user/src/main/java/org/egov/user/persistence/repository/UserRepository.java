@@ -128,13 +128,14 @@ public class UserRepository {
         @Override
         public Map<Long, List<Role>> extractData(ResultSet rs) throws SQLException, DataAccessException {
         	Map<Long, List<Role>> userRoles = new HashMap<>();
-            if (rs.next()) {
+        	while (rs.next()) {
             	Long userId = Long.valueOf(rs.getString("user_id"));
             	if(userRoles.containsKey(userId)) {
             		Role role = new Role();
                     role.setCode(rs.getString("role_code"));
                     role.setTenantId(rs.getString("role_tenantid"));
-                    List<Role> existingRole = userRoles.get(userId);
+                    List<Role> existingRole = new ArrayList<>();
+                    existingRole.addAll(userRoles.get(userId));
                     existingRole.add(role);
             		userRoles.put(userId, existingRole);
             	} else {
@@ -143,9 +144,8 @@ public class UserRepository {
                     role.setTenantId(rs.getString("role_tenantid"));
             		userRoles.put(userId, Arrays.asList(role));
             	}
-                return userRoles;
             }
-            return null; // or throw an exception if no role found
+            return userRoles;
         }
     };
     
