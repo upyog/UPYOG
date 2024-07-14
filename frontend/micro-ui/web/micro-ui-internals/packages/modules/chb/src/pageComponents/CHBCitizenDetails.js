@@ -22,7 +22,8 @@ const CHBCitizenDetails
     (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].alternateNumber) || formData?.ownerss?.alternateNumber || ""
   );
   function setOwnerName(e) {
-    setName(e.target.value);
+    const input = e.target.value.replace(/[^a-zA-Z\s]/g, ''); // Remove non-alphabetic characters and non-space characters
+  setName(input);
   }
   function setOwnerEmail(e) {
     setEmail(e.target.value);
@@ -90,7 +91,7 @@ const CHBCitizenDetails
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
         </CardSubHeader>
-        <ChbCancellationPolicy />
+        <ChbCancellationPolicy count={value?.bookingSlotDetails.length}/>
       </Card>
     <FormStep
       config={config}
@@ -108,6 +109,7 @@ const CHBCitizenDetails
           isMandatory={false}
           optionKey="i18nKey"
           name="applicantName"
+          placeholder={"Enter Applicant Name"}
           value={applicantName}
           onChange={setOwnerName}
           ValidationRequired = {true}
@@ -125,6 +127,7 @@ const CHBCitizenDetails
         <MobileNumber
           value={mobileNumber}
           name="mobileNumber"
+          placeholder={"Enter Applicant Register Mobile Number"}
           onChange={(value) => setMobileNo({ target: { value } })}
           {...{ pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
         />
@@ -133,6 +136,7 @@ const CHBCitizenDetails
           <MobileNumber
             value={alternateNumber}
             name="alternateNumber"
+            placeholder={"Enter Alternate Mobile Number"}
             onChange={(value) => setAltMobileNo({ target: { value } })}
             {...{ required: false, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
           />
@@ -145,6 +149,7 @@ const CHBCitizenDetails
           optionKey="i18nKey"
           name="emailId"
           value={emailId}
+          placeholder={"Enter Applicant Email Id"}
           onChange={setOwnerEmail}
           ValidationRequired = {true}
           {...(validation = {

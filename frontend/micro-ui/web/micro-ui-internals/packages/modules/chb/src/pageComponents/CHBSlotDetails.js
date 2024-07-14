@@ -19,14 +19,9 @@ const CHBSlotDetails
     let validation = {};
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
-    const { data: Resident} = Digit.Hooks.chb.useResidentType(stateId, "CHB", "ChbResidentType");
     const { data: Category } = Digit.Hooks.chb.useSpecialCategory(stateId, "CHB", "ChbSpecialCategory");
     const { data: Purposes } = Digit.Hooks.chb.usePurpose(stateId, "CHB", "ChbPurpose");
-    const { data: hallList } = Digit.Hooks.chb.useChbCommunityHalls(stateId, "CHB", "ChbCommunityHalls");
-
     
-
-    let resident=[];
     let category=[];
     let purposes=[];
   
@@ -43,7 +38,8 @@ const CHBSlotDetails
 
     const { control } = useForm();
     function setpurposeDescription(e) {
-      setPurposeDescription(e.target.value);
+      const input = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+      setPurposeDescription(input);
     }
     const goNext = () => {
 
@@ -95,7 +91,7 @@ const CHBSlotDetails
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
         </CardSubHeader>
-        <ChbCancellationPolicy />
+        <ChbCancellationPolicy count={value?.bookingSlotDetails.length}/>
       </Card>
         <FormStep
           config={config}
@@ -121,6 +117,7 @@ const CHBSlotDetails
                   selected={specialCategory}
                   select={setspecialcategory}
                   option={category}
+                  placeholder={"Select Special Category"}
                   optionKey="i18nKey"
                   t={t}
                 />
@@ -142,6 +139,7 @@ const CHBSlotDetails
 
                   className="form-field"
                   selected={purpose}
+                  placeholder={"Select Purpose"}
                   select={setpurpose}
                   option={purposes}
                   optionKey="i18nKey"
@@ -158,6 +156,7 @@ const CHBSlotDetails
             isMandatory={false}
             optionKey="i18nKey"
             name="purposeDescription"
+            placeholder={"Enter Purpose Description"}
             value={purposeDescription}
             onChange={setpurposeDescription}
             style={{ width: "50%" }}

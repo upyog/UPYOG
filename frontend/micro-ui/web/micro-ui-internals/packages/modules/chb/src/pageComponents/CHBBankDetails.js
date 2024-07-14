@@ -45,18 +45,21 @@ const CHBBankDetails
   }, [ifscCode]);
 
   function setApplicantAccountNumber(e) {
-    if (e.target.value.length <= 16) {
-    setAccountNumber(e.target.value);
+    const input = e.target.value.replace(/\D/g, ''); // Replace non-digit characters
+    if (input.length <= 16) {
+      setAccountNumber(input);
     }
   }
   function setApplicantConfirmAccountNumber(e) {
-    if (e.target.value.length <= 16) {
-    setConfirmAccountNumber(e.target.value);
+    const input = e.target.value.replace(/\D/g, ''); // Replace non-digit characters
+    if (input.length <= 16) {
+      setConfirmAccountNumber(input);
     }
   }
   function setApplicantIfscCode(e) {
-    if (e.target.value.length <= 11) {
-      setIfscCode(e.target.value);
+    const input = e.target.value.replace(/[^a-zA-Z0-9]/g, ''); // Remove non-alphanumeric characters
+    if (input.length <= 11) {
+      setIfscCode(input);
     }
   }
   function setApplicantBankName(e) {
@@ -66,7 +69,8 @@ const CHBBankDetails
     setBankBranchName(e.target.value);
   }
   function setApplicantAccountHolderName(e) {
-    setAccountHolderName(e.target.value);
+    const input = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+    setAccountHolderName(input);
   }
   
   
@@ -92,7 +96,15 @@ const CHBBankDetails
   const onSkip = () => onSelect();
 
   
-  
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(null);
+      }, 1000); // Close toast after 1 seconds
+
+      return () => clearTimeout(timer); // Clear timer on cleanup
+    }
+  }, [showToast]);
 
   useEffect(() => {
     if (userType === "citizen") {
@@ -126,7 +138,7 @@ const CHBBankDetails
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
         </CardSubHeader>
-        <ChbCancellationPolicy />
+        <ChbCancellationPolicy count={value?.bookingSlotDetails.length}/>
       </Card>
   
     <FormStep
@@ -149,6 +161,7 @@ const CHBBankDetails
           onChange={setApplicantAccountNumber}
           minLength={8}
           maxLength={16}
+          placeholder={"Enter Account Number"}
           ValidationRequired = {true}
           {...(validation = {
             // isRequired: true,
@@ -168,6 +181,7 @@ const CHBBankDetails
           optionKey="i18nKey"
           name="confirmAccountNumber"
           value={confirmAccountNumber}
+          placeholder={"Enter Confirm Account Number"}
           onChange={setApplicantConfirmAccountNumber}
           minLength={8}
           maxLength={16}
@@ -190,6 +204,7 @@ const CHBBankDetails
             optionKey="i18nKey"
             name="ifscCode"
             value={ifscCode}
+            placeholder={"Enter IFSC Code"}
             onChange={setApplicantIfscCode}
             maxLength={11}
             ValidationRequired={true}
@@ -207,6 +222,7 @@ const CHBBankDetails
             isMandatory={false}
             optionKey="i18nKey"
             name="bankName"
+            placeholder={"Bank Name Auto Select"}
             value={bankName}
             onChange={setApplicantBankName}
             disabled={true}
@@ -220,6 +236,7 @@ const CHBBankDetails
             optionKey="i18nKey"
             name="bankBranchName"
             value={bankBranchName}
+            placeholder={"Bank Branch Name Auto Select"}
             onChange={setApplicantBankBranchName}
             disabled={true}
           />
@@ -231,6 +248,7 @@ const CHBBankDetails
           optionKey="i18nKey"
           name="accountHolderName"
           value={accountHolderName}
+          placeholder={"Enter Account Holder Name"}
           onChange={setApplicantAccountHolderName}
           ValidationRequired = {true}
           {...(validation = {
@@ -249,7 +267,6 @@ const CHBBankDetails
           error={showToast.error}
           warning={showToast.warning}
           label={t(showToast.label)}
-          isDleteBtn={true}
           onClose={() => {
             setShowToast(null);
           }}
