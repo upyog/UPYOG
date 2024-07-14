@@ -88,11 +88,12 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
                 user = usersMap.get(userId);
             }
 
-            Role role = populateRole(rs);
+			/* Role role = populateRole(rs); */
             Address address = populateAddress(rs, user);
 
-            if (!isNull(role))
-                user.addRolesItem(role);
+			/*
+			 * if (!isNull(role)) user.addRolesItem(role);
+			 */
 
             if (!isNull(address))
                 user.addAddressItem(address);

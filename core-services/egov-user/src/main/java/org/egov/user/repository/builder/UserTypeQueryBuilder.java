@@ -93,7 +93,7 @@ public class UserTypeQueryBuilder {
 
     private static final String SELECT_USER_ROLE_QUERY = "SELECT distinct(user_id) from eg_userrole_v1 ur";
     
-    private static final String SELECT_USER_ROLES = "select ur.user_id as user_id, ur.role_code as role_code, ur.role_tenantid as role_tenantid from eg_userrole_v1 ur";
+    private static final String SELECT_USER_ROLES = "select ur.user_id as user_id, ur.role_code as role_code, ur.role_tenantid as role_tenantid from eg_userrole_v1 ur where";
 
     @SuppressWarnings("rawtypes")
     public String getQuery(final UserSearchCriteria userSearchCriteria, final List preparedStatementValues) {
@@ -217,7 +217,7 @@ public class UserTypeQueryBuilder {
 
     private void addOrderByClause(final StringBuilder selectQuery, final UserSearchCriteria userSearchCriteria) {
         final String sortBy = userSearchCriteria.getSort() != null && !userSearchCriteria.getSort().isEmpty()
-                ? " userdata." + userSearchCriteria.getSort().get(0) : "userdata.name";
+                ? " userdata." + userSearchCriteria.getSort().get(0) : "userdata.id";
         selectQuery.append(" ORDER BY ").append(sortBy);
     }
 

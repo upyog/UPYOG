@@ -106,10 +106,17 @@ public class UserRepository {
         log.debug(queryStr);
         final List<Object> preparedStatementValuesForRole = new ArrayList<>();
         users = jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), userResultSetExtractor);
-        String roleQueryStr = userTypeQueryBuilder.getRolesForUSers(users.stream().map(User::getId).collect(Collectors.toList()), preparedStatementValuesForRole);
-        Map<Long, List<Role>> userRoles = jdbcTemplate.query(roleQueryStr, preparedStatementValuesForRole.toArray(), extractor);
-        for(User user : users)
-        	user.getRoles().addAll(userRoles.get(user.getId()));
+        if(!users.isEmpty()) {
+        	String roleQueryStr = userTypeQueryBuilder.getRolesForUSers(users.stream().map(User::getId).collect(Collectors.toList()), preparedStatementValuesForRole);
+            Map<Long, List<Role>> userRoles = jdbcTemplate.query(roleQueryStr, preparedStatementValuesForRole.toArray(), extractor);
+            for(User user : users) {
+            	Set<Role> roles = new HashSet<>();
+            	if(userRoles.get(user.getId()) != null) {
+            		roles.addAll(userRoles.get(user.getId()));
+            		user.setRoles(roles);
+            	}
+            }
+        }
         	
         enrichRoles(users);
 

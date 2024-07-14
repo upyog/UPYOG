@@ -189,9 +189,10 @@ public class UserService {
         
         String altmobnumber=null;
         
-        if(searchCriteria.getMobileNumber()!=null) {
-        	altmobnumber = searchCriteria.getMobileNumber();
-        }
+		/*
+		 * if(searchCriteria.getMobileNumber()!=null) { altmobnumber =
+		 * searchCriteria.getMobileNumber(); }
+		 */
       //  org.egov.user.domain.model.User user= encryptionDecryptionUtil.encryptObject(searchCriteria, "User", User.class);
         searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "UserSearchCriteria", UserSearchCriteria.class);
         
