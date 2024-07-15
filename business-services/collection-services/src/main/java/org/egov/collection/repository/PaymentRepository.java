@@ -353,37 +353,32 @@ status = new ArrayList<String>();
 	
 	
 	
-	
-	
-	
-	
-	
-	public List<String> fetchOldConnectionNo(String consumerCode,String businessservice) {
+	public List<String> fetchOldConnectionNo(String consumerCode, String businessservice) {
 		List<String> res = new ArrayList<>();
 		String queryString = "";
-		Boolean Isapp=false;
+		Boolean Isapp = false;
 		if (consumerCode.contains("WS_AP"))
-			Isapp=true;
-if (Isapp) {
-		if(businessservice.equals("WS")) {
-			
-		 queryString = "select oldconnectionno from eg_ws_connection where applicationno='"+consumerCode+"'";
-		}else {
-			 queryString = "select oldconnectionno from eg_sw_connection where applicationno='"+consumerCode+"'";
+			Isapp = true;
+		if (Isapp) {
+			if (businessservice.equals("WS")) {
 
-		}}
-else {
-	if(businessservice.equals("WS")) {
-		
-		 queryString = "select oldconnectionno from eg_ws_connection where connectionno='"+consumerCode+"'";
-		}else {
-			 queryString = "select oldconnectionno from eg_sw_connection where connectionno='"+consumerCode+"'";
+				queryString = "select oldconnectionno from eg_ws_connection where applicationno='" + consumerCode + "'";
+			} else {
+				queryString = "select oldconnectionno from eg_sw_connection where applicationno='" + consumerCode + "'";
 
+			}
+		} else {
+			if (businessservice.equals("WS")) {
+
+				queryString = "select oldconnectionno from eg_ws_connection where connectionno='" + consumerCode + "'";
+			} else {
+				queryString = "select oldconnectionno from eg_sw_connection where connectionno='" + consumerCode + "'";
+
+			}
 		}
-}
-		log.info("Query: " +queryString);
+		log.info("Query: " + queryString);
 		try {
-		//	res = jdbcTemplate.queryForList(queryString, String.class);
+			// res = jdbcTemplate.queryForList(queryString, String.class);
 			res = namedParameterJdbcTemplate.query(queryString, new SingleColumnRowMapper<>(String.class));
 		} catch (Exception ex) {
 			log.error("Exception while reading bill scheduler status" + ex.getMessage());
@@ -391,35 +386,35 @@ else {
 		return res;
 	}
 	
-	public List<String> fetchLandArea(String consumerCode,String businessservice) {
+	public List<String> fetchLandArea(String consumerCode, String businessservice) {
 		List<String> res = new ArrayList<>();
 		Map<String, Object> preparedStatementValues = new HashMap<>();
-		String queryString = "";  
-		Boolean Isapp=false;
+		String queryString = "";
+		Boolean Isapp = false;
 		if (consumerCode.contains("WS_AP"))
-			Isapp=true;
-if (Isapp) {
-		if(businessservice.equals("WS")) {
-		 queryString = "select a2.landarea from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-				+ " where a1.applicationno = '"+consumerCode+"'";
-		}else {
-			 queryString = "select a2.landarea from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-						+ " where a1.applicationno = '"+consumerCode+"'";
+			Isapp = true;
+		if (Isapp) {
+			if (businessservice.equals("WS")) {
+				queryString = "select a2.landarea from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+						+ " where a1.applicationno = '" + consumerCode + "'";
+			} else {
+				queryString = "select a2.landarea from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+						+ " where a1.applicationno = '" + consumerCode + "'";
+			}
+		} else {
+			if (businessservice.equals("WS")) {
+				queryString = "select a2.landarea from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+						+ " where a1.connectionno = '" + consumerCode + "'";
+			} else {
+				queryString = "select a2.landarea from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+						+ " where a1.connectionno = '" + consumerCode + "'";
+			}
 		}
-}
-else {
-	if(businessservice.equals("WS")) {
-		 queryString = "select a2.landarea from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-				+ " where a1.connectionno = '"+consumerCode+"'";
-		}else {
-			 queryString = "select a2.landarea from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-						+ " where a1.connectionno = '"+consumerCode+"'";
-		}
-}
-		log.info("Query: " +queryString);
+		log.info("Query: " + queryString);
 		try {
-			//res = jdbcTemplate.queryForList(queryString, String.class);
-			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+			// res = jdbcTemplate.queryForList(queryString, String.class);
+			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues,
+					new SingleColumnRowMapper<>(String.class));
 		} catch (Exception ex) {
 			log.error("Exception while reading bill scheduler status" + ex.getMessage());
 		}

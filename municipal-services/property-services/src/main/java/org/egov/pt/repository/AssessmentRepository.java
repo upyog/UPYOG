@@ -36,8 +36,10 @@ public class AssessmentRepository {
 		Map<String, Object> preparedStatementValues = new HashMap<>();
 		List<Assessment> assessments = new ArrayList<>();
 		String query = queryBuilder.getSearchQuery(criteria, preparedStatementValues);
-		log.info("Query: "+query);
-		log.debug("preparedStatementValues: "+preparedStatementValues);
+		if (log.isDebugEnabled()) {
+			log.debug("Query: " + query);
+			log.debug("preparedStatementValues: " + preparedStatementValues);
+		}
 		assessments = namedParameterJdbcTemplate.query(query, preparedStatementValues, rowMapper);
 		return assessments;
 	}
