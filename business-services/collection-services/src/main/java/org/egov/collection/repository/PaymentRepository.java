@@ -726,24 +726,35 @@ else {
 		Map<String, Object> preparedStatementValues = new HashMap<>();
 		String queryString;
 		if (businesssrvice.contains("WS")) {
-			queryString = "select property_id "
+			queryString = /*"select property_id "
 					+ " FROM eg_ws_connection a1 "
 					+ " INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid "
 					+ " INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid "
 					+ " WHERE a1.connectionno in(select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill "
 					+ "	where bill.id=pd.billid "
 				        + " and a2.status='ACTIVE'"
-					+ "	 and pd.receiptnumber='"+consumercode+"')";
+					+ "	 and pd.receiptnumber='"+consumercode+"')";*/
+			
+			"select property_id  FROM eg_ws_connection a1 "+  
+			"INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid"+  
+			"INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid  "+
+			"INNER JOIN egcl_bill bill ON a1.connectionno = bill.consumercode"+   
+			"INNER JOIN egcl_paymentdetail pd ON bill.id=pd.billid "+
+			"where   a2.status='ACTIVE' "+	 
+			"and pd.receiptnumber='"+consumercode+"'";
+			
 		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		} else {
-			queryString = "select property_id "
-					+ " FROM eg_sw_connection a1 "
-					+ " INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid "
-					+ " INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid "
-					+ " WHERE a1.connectionno in(select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill "
-					+ "	where bill.id=pd.billid "
-				        + " and a2.status='ACTIVE'"
-					+ "	 and pd.receiptnumber='"+consumercode+"')";
+			queryString = 
+					"select property_id  FROM eg_sw_connection a1 "+  
+							"INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid"+  
+							"INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid  "+
+							"INNER JOIN egcl_bill bill ON a1.connectionno = bill.consumercode"+   
+							"INNER JOIN egcl_paymentdetail pd ON bill.id=pd.billid "+
+							"where   a2.status='ACTIVE' "+	 
+							"and pd.receiptnumber='"+consumercode+"'";
+					
+			
 			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		}
 		try {
