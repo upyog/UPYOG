@@ -4,14 +4,26 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 const ChbApplication = ({ application, tenantId, buttonLabel }) => {
-  
   const { t } = useTranslation();
+  const getBookingDateRange = (bookingSlotDetails) => {
+    if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
+      return t("CS_NA");
+    }
+    const startDate = bookingSlotDetails[0]?.bookingDate;
+    const endDate = bookingSlotDetails[bookingSlotDetails.length - 1]?.bookingDate;
+    if (startDate === endDate) {
+      return startDate; // Return only the start date
+    } else {
+      // Format date range as needed, for example: "startDate - endDate"
+      return startDate && endDate ? `${startDate}  -  ${endDate}` : t("CS_NA");
+    }
+  };
   return (
     <Card>
       <KeyNote keyValue={t("CHB_BOOKING_NO")} note={application?.bookingNo} />
-      <KeyNote keyValue={t("CHB_APPLICANT_NAME")} note={application?.applicantName} />
-      <KeyNote keyValue={t("CHB_COMMUNITY_HALL_NAME")} note={application?.bookingSlotDetails[0]?.hallName} />
-      <KeyNote keyValue={t("CHB_BOOKING_DATE")} note={application?.slots?.selectslot} />
+      <KeyNote keyValue={t("CHB_APPLICANT_NAME")} note={application?.applicantDetail?.applicantName} />
+      <KeyNote keyValue={t("CHB_COMMUNITY_HALL_NAME")} note={application?.communityHallCode} />
+      <KeyNote keyValue={t("CHB_BOOKING_DATE")} note={getBookingDateRange(application?.bookingSlotDetails)} />
       <KeyNote keyValue={t("PT_COMMON_TABLE_COL_STATUS_LABEL")} note={t(`CHB_${application?.bookingStatus}`)} />
       <div>
       <Link to={`/digit-ui/citizen/chb/application/${application?.bookingNo}/${application?.tenantId}`}>

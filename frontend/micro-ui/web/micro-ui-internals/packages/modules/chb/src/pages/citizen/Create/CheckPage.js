@@ -47,23 +47,43 @@ const CheckPage = ({ onSubmit, value = {} }) => {
    
   } = value;
 
-  const typeOfApplication = !isEditCHB && !isUpdateCHB ? `bookHall` : `edit-application`;
+  const typeOfApplication = !isEditCHB && !isUpdateCHB ? `bookHall` : `editbookHall`;
 
-  const formatSlotDetails = (slots) => {
-    const sortedSlots = slots.sort((a, b) => new Date(a.bookingDate) - new Date(b.bookingDate));
-    const firstDate = sortedSlots[0]?.bookingDate;
-    const lastDate = sortedSlots[sortedSlots.length - 1]?.bookingDate;
-    if(firstDate===lastDate){
-      return `${sortedSlots[0]?.name} (${firstDate})`;
-    }
-    else{
-    return `${sortedSlots[0]?.name} (${firstDate} - ${lastDate})`;
-    }
-  };
   const [agree, setAgree] = useState(false);
   const setdeclarationhandler = () => {
     setAgree(!agree);
     console.log(slotlist);
+  };
+  const getBookingDateRange = (bookingSlotDetails) => {
+    if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
+      return t("CS_NA");
+    }
+    const startDate = bookingSlotDetails[0]?.bookingDate;
+    const endDate = bookingSlotDetails[bookingSlotDetails.length - 1]?.bookingDate;
+    if (startDate === endDate) {
+      return startDate; // Return only the start date
+    } else {
+      // Format date range as needed, for example: "startDate - endDate"
+      return startDate && endDate ? `${startDate} - ${endDate}` : t("CS_NA");
+    }
+  };
+  const getBookingTimeRange = (bookingSlotDetails) => {
+    if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
+      return "10:00 - 11:59"; 
+    }
+    const startTime = "10:00"; 
+    
+    const length = bookingSlotDetails.length;
+  
+    let defaultEndTime = "11:59"; 
+    if (length === 2) {
+      defaultEndTime = "23:59"; 
+    } else if (length === 3) {
+      defaultEndTime = "71:59"; 
+    }
+  
+    // Return formatted time range
+    return `${startTime} - ${defaultEndTime}`;
   };
   return (
     <React.Fragment>
@@ -71,15 +91,8 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     <Card>
       <CardHeader>{t("CHB_CHECK_YOUR_DETAILS")}</CardHeader>
       <div>
-        <Card>
-        <CardSubHeader>
-          {slotlist?.bookingSlotDetails && slotlist.bookingSlotDetails.length > 0
-            ? formatSlotDetails(slotlist.bookingSlotDetails)
-            : null}
-        </CardSubHeader>
-      </Card>
-        <CardSubHeader>{t("CHB_BOOKING_DETAILS")}</CardSubHeader>
-        <br></br>
+      <CardText>{t("CHB_CHECK_CHECK_YOUR_ANSWERS_TEXT")}</CardText>
+        <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_APPLICANT_DETAILS")}</CardSubHeader>
         <StatusTable>
         <Row
             label={t("CHB_APPLICANT_NAME")}
@@ -107,37 +120,51 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/applicant-details`} />}
 
         />
-
         </StatusTable>
-        <br></br>
+        <CardSubHeader style={{ fontSize: "24px" }}>{t("SLOT_DETAILS")}</CardSubHeader>
+        <StatusTable>
+        <Row
+            label={t("CHB_COMMUNITY_HALL_NAME")}
+            text={`${t(checkForNA(slotlist?.bookingSlotDetails[0]?.name))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/searchHall`} />}
 
-        <CardSubHeader>{t("CHB_EVENT_DETAILS")}</CardSubHeader>
-        <br></br>
+        />
+        <Row
+            label={t("CHB_BOOKING_DATE")}
+            text={`${t(checkForNA(getBookingDateRange(slotlist?.bookingSlotDetails)))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/searchHall`} />}
+
+        />
+       <Row
+          label={t("CHB_BOOKING_TIME")} // Label for the row, presumably fetched from translations
+          text={(checkForNA(getBookingTimeRange(slotlist?.bookingSlotDetails)))} // Text to display, likely the formatted time range
+          actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/searchHall`} />} // Action button component
+        />
+        </StatusTable>
+        <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_EVENT_DETAILS")}</CardSubHeader>
         <StatusTable>
         <Row
             label={t("CHB_SPECIAL_CATEGORY")}
             text={`${t(checkForNA(slots?.specialCategory?.value))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/slot-details`} />}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/event-details`} />}
 
         />
 
         <Row
             label={t("CHB_PURPOSE")}
             text={`${t(checkForNA(slots?.purpose?.value))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/slot-details`} />}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/event-details`} />}
 
         />
         <Row
             label={t("CHB_PURPOSE_DESCRIPTION")}
             text={`${t(checkForNA(slots?.purposeDescription))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/slot-details`} />}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/event-details`} />}
 
         />
 
         </StatusTable>
-        <br></br>
-        <CardSubHeader>{t("CHB_BANK_DETAILS")}</CardSubHeader>
-        <br></br>
+        <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_BANK_DETAILS")}</CardSubHeader>
         <StatusTable>
         <Row
             label={t("CHB_ACCOUNT_NUMBER")}
@@ -175,9 +202,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         />
 
         </StatusTable>
-        <br></br>
-        <CardSubHeader>{t("CHB_ADDRESS_DETAILS")}</CardSubHeader>
-        <br></br>
+        <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_ADDRESS_DETAILS")}</CardSubHeader>
         <StatusTable>
         <Row
             label={t("CHB_PINCODE")}
@@ -213,32 +238,25 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             text={`${t(checkForNA(address?.landmark))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
         />
-
         </StatusTable>
+        <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_DOCUMENTS_DETAILS")}</CardSubHeader>
         <StatusTable>
-        <br></br>
-        <CardSubHeader>{t("CHB_DOCUMENTS_DETAILS")}</CardSubHeader>
-        <Card style={{ paddingRight: "16px", width: "auto", maxWidth: "80%" }}>
-        {documents && documents?.documents.map((doc, index) => (
-          <div key={`doc-${index}`}>
-         {<div><CardSectionHeader>{t("CHB_" +(doc?.documentType?.split('.').slice(0,2).join('_')))}</CardSectionHeader>
-          <StatusTable>
-          {
-           <CHBDocument value={value} Code={doc?.documentType} index={index} /> }
-          {documents?.documents.length != index+ 1 ? <hr style={{color:"white",backgroundColor:"white",height:"2px",marginTop:"20px",marginBottom:"20px"}}/> : null}
-          </StatusTable>
-          </div>}
-          </div>
-        ))}
-      </Card>
-        <br></br>
+        <Card style={{display: "flex", flexDirection: "row" }}>
+          {documents && documents?.documents.map((doc, index) => (
+            <div key={`doc-${index}`} style={{ marginRight: "25px"}}>
+              <div>
+                <CardSectionHeader>{t("CHB_" + (doc?.documentType?.split('.').slice(0,2).join('_')))}</CardSectionHeader>
+                <CHBDocument value={value} Code={doc?.documentType} index={index} />
+              </div>
+            </div>
+          ))}
+        </Card>
         </StatusTable>
-        <br></br>
        
         <CheckBox
           label={t("CHB_FINAL_DECLARATION_MESSAGE")}
           onChange={setdeclarationhandler}
-          styles={{ height: "auto" }}
+          styles={{marginBottom: "25px"}}
           //disabled={!agree}
         />
       </div>

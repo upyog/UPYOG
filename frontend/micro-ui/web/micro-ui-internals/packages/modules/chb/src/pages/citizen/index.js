@@ -5,8 +5,8 @@ import { shouldHideBackButton } from "../../utils";
 import { useTranslation } from "react-i18next";
 
 const hideBackButtonConfig = [
-  { screenPath: "bookHall/new-application/acknowledgement" },
-  { screenPath: "bookHall/edit-application/acknowledgement" },
+  { screenPath: "bookHall/acknowledgement" },
+  { screenPath: "editbookHall/acknowledgement" },
 
 ];
 

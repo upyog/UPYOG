@@ -81,15 +81,15 @@ const EWASTECitizenApplicationDetails = () => {
     }
   );
 
-  const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
-    {
-      tenantId: tenantId,
-      businessService: "ewst",
-      consumerCodes: requestId,
-      isEmployee: false,
-    },
-    { enabled: requestId ? true : false }
-  );
+  // const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
+  //   {
+  //     tenantId: tenantId,
+  //     businessService: "ewst",
+  //     consumerCodes: requestId,
+  //     isEmployee: false,
+  //   },
+  //   { enabled: requestId ? true : false }
+  // );
 
   if (!ew_details.workflow) {
     let workflow = {
@@ -166,11 +166,11 @@ const EWASTECitizenApplicationDetails = () => {
   });
 
   //commented out, need later for download receipt and certificate 
-  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
-    dowloadOptions.push({
-      label: t("EWASTE_FEE_RECIEPT"),
-      onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
-    });
+  // if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+  //   dowloadOptions.push({
+  //     label: t("EWASTE_FEE_RECIEPT"),
+  //     onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+  //   });
 
 
   // currentForms is added to select the data of current field only whose data is being used 
@@ -179,7 +179,7 @@ const EWASTECitizenApplicationDetails = () => {
   if (currentForms[0]?.requestStatus === "REQUESTCOMPLETED") {
     // console.log("ewaste certificate if ::", data?.EwasteApplication, currentForms)
     dowloadOptions.push({
-      label: t("EWASTE_CERTIFICATE"),
+      label: t("EW_CERTIFICATE"),
       onClick: () => printCertificate(),
     });
   }
@@ -207,7 +207,7 @@ const EWASTECitizenApplicationDetails = () => {
     <React.Fragment>
       <div>
         <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
-          <Header styles={{ fontSize: "32px" }}>{t("EWASTE_APPLICATION_DETAILS")}</Header>
+          <Header styles={{ fontSize: "32px", marginLeft: "10px" }}>{t("EW_APPLICATION_DETAILS")}</Header>
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper"
@@ -226,10 +226,10 @@ const EWASTECitizenApplicationDetails = () => {
             />
           </StatusTable>
 
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("EWASTE_ADDRESS_HEADER")}</CardSubHeader>
+          <CardSubHeader style={{ fontSize: "24px" }}>{t("EW_ADDRESS_DETAILS")}</CardSubHeader>
           <StatusTable>
-            <Row className="border-none" label={t("EWASTE_PINCODE")} text={ew_details?.address?.pincode || t("CS_NA")} />
-            <Row className="border-none" label={t("EWASTE_CITY")} text={ew_details?.address?.city || t("CS_NA")} />
+            <Row className="border-none" label={t("EW_PINCODE")} text={ew_details?.address?.pincode || t("CS_NA")} />
+            <Row className="border-none" label={t("EW_CITY")} text={ew_details?.address?.city || t("CS_NA")} />
             <Row className="border-none" label={t("EWASTE_STREET_NAME")} text={ew_details?.address?.street || t("CS_NA")} />
             <Row className="border-none" label={t("EWASTE_HOUSE_NO")} text={ew_details?.address?.doorNo || t("CS_NA")} />
             <Row className="border-none" label={t("EWASTE_HOUSE_NAME")} text={ew_details?.address?.buildingName || t("CS_NA")} />
@@ -238,14 +238,14 @@ const EWASTECitizenApplicationDetails = () => {
             <Row className="border-none" label={t("EWASTE_LANDMARK")} text={ew_details?.address?.landmark || t("CS_NA")} />
           </StatusTable>
 
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("EWASTE_APPLICANT_DETAILS")}</CardSubHeader>
+          <CardSubHeader style={{ fontSize: "24px" }}>{t("EW_APPLICANT_DETAILS")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("EWASTE_APPLICANT_NAME")} text={ew_details?.applicant?.applicantName || t("CS_NA")} />
-            <Row className="border-none" label={t("EWASTE_APPLICANT_MOBILE_NO")} text={ew_details?.applicant?.mobileNumber || t("CS_NA")} />
-            <Row className="border-none" label={t("EWASTE_APPLICANT_EMAIL_ID")} text={ew_details?.applicant?.emailId || t("CS_NA")} />
+            <Row className="border-none" label={t("EW_MOBILE_NUMBER")} text={ew_details?.applicant?.mobileNumber || t("CS_NA")} />
+            <Row className="border-none" label={t("EW_EMAIL")} text={ew_details?.applicant?.emailId || t("CS_NA")} />
           </StatusTable>
 
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("EWASTE_TITLE_PRODUCT_DETAILS")}</CardSubHeader>
+          <CardSubHeader style={{ fontSize: "24px" }}>{t("EW_PRODUCT_DETAILS")}</CardSubHeader>
           <ApplicationTable
             t={t}
             data={productRows}
@@ -272,14 +272,14 @@ const EWASTECitizenApplicationDetails = () => {
 
           <CardSubHeader style={{ fontSize: "24px" }}>{t("EWASTE_TITLE_TRANSACTION_DETAILS")}</CardSubHeader>
           <StatusTable>
-            <Row className="border-none" label={t("EWASTE_NET_PRICE")} text={ew_details?.calculatedAmount || t("CS_NA")} />
-            <Row className="border-none" label={t("EWASTE_FINAL_AMOUNT")} text={ew_details?.finalAmount || t("CS_NA")} />
-            <Row className="border-none" label={t("EWASTE_TRANSACTION_ID")} text={ew_details?.transactionId || t("CS_NA")} />
-            <Row className="border-none" label={t("EWASTE_PICKUP_DATE")} text={ew_details?.pickUpDate || t("CS_NA")} />
+            {ew_details.calculatedAmount && <Row className="border-none" label={t("EWASTE_NET_PRICE")} text={ew_details?.calculatedAmount} />}
+            {ew_details.finalAmount && <Row className="border-none" label={t("EWASTE_FINAL_AMOUNT")} text={ew_details?.finalAmount} />}
+            {ew_details.transactionId && <Row className="border-none" label={t("EWASTE_TRANSACTION_ID")} text={ew_details?.transactionId} />}
+            {ew_details.pickUpDate && <Row className="border-none" label={t("EWASTE_PICKUP_DATE")} text={ew_details?.pickUpDate} />}
           </StatusTable>
 
 
-           {/* <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_DOCUMENT_DETAILS")}</CardSubHeader>
+          {/* <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_DOCUMENT_DETAILS")}</CardSubHeader>
           <div>
             {Array.isArray(docs) ? (
               docs.length > 0 && <PTRDocument ew_details={ew_details}></PTRDocument>
@@ -290,7 +290,7 @@ const EWASTECitizenApplicationDetails = () => {
             )}
           </div> */}
 
-          
+
           <EWASTEWFApplicationTimeline application={application} id={application?.requestId} userType={"citizen"} />
           {showToast && (
             <Toast
