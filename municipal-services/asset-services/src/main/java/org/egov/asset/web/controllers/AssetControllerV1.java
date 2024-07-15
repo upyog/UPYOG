@@ -97,4 +97,29 @@ public class AssetControllerV1 {
 		return  new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
+	
+	@RequestMapping(value = "assignment/_create", method = RequestMethod.POST)
+	public ResponseEntity<AssetResponse> v1AssetAssginCreatePost(
+			@ApiParam(value = "Details for the new asset(s) + RequestInfo metadata.", required = true) @Valid @RequestBody AssetRequest assetRequest) {
+			Asset asset = assetService.assignment(assetRequest);
+			List<Asset> assets = new ArrayList<Asset>();
+			assets.add(asset);
+			AssetResponse response = AssetResponse.builder().assets(assets)
+					.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
+					.build();
+			return  new ResponseEntity<>(response, HttpStatus.OK);
+
+	}
+	
+	@RequestMapping(value = "assignment/_update", method = RequestMethod.POST)
+	public ResponseEntity<AssetResponse> v1AssetsAssignmentUpdatePost(
+			@ApiParam(value = "Details for updating existing assets + RequestInfo metadata.", required = true) @Valid @RequestBody AssetRequest assetRequest) {
+		Asset asset = assetService.updateAssignment(assetRequest);
+		List<Asset> assets = new ArrayList<Asset>();
+		assets.add(asset);
+		AssetResponse response = AssetResponse.builder().assets(assets)
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
+				.build();
+		return  new ResponseEntity<>(response, HttpStatus.OK);
+	}
 }

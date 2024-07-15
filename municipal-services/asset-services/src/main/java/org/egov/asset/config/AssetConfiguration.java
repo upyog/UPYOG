@@ -40,11 +40,8 @@ public class AssetConfiguration {
 
  	@Value("${egov.mdms.search.endpoint}")
  	private String mdmsEndPoint;
-
-//    @Value("${egov.mdms.search.endpoint}")
-//    private String mdmsUrl;
  	
- // Idgen Config
+ 	// Idgen Config
  	@Value("${egov.idgen.host}")
  	private String idGenHost;
 
@@ -58,12 +55,18 @@ public class AssetConfiguration {
  	private String applicationNoIdgenFormat;
 
  	
- // Persister Config
+ 	// Persister Config
  	@Value("${persister.save.assetdetails.topic}")
  	private String saveTopic;
 
  	@Value("${persister.update.assetdetails.topic}")
  	private String updateTopic;
+ 	
+ 	@Value("${persister.save.assetassignment.topic}")
+ 	private String saveAssignmentTopic;
+
+ 	@Value("${persister.update.assetassignment.topic}")
+ 	private String updateAssignmentTopic;
  	
 	@Value("${employee.allowed.search.params}")
 	private String allowedEmployeeSearchParameters;

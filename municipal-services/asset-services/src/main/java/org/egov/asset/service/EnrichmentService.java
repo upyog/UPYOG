@@ -78,6 +78,32 @@ public class EnrichmentService {
 	}
 
 	/**
+	 * encrich Asset other operation assignment Request like assignment, desposal
+	 * etc by adding auditdetails and uuids
+	 * 
+	 * @param assetRequest
+	 * @param mdmsData
+	 * @param values
+	 */
+	public void enrichAssetOtherOperationsCreateRequest(AssetRequest assetRequest) {
+		log.info("Doing EnrichAssetOtherOperationsRequest");
+		RequestInfo requestInfo = assetRequest.getRequestInfo();
+		AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+		assetRequest.getAsset().getAssetAssignment().setAuditDetails(auditDetails);  
+		assetRequest.getAsset().getAssetAssignment().setId(UUID.randomUUID().toString());
+
+	}
+	
+	public void enrichAssetOtherOperationsUpdateRequest(AssetRequest assetRequest) {
+		log.info("Doing EnrichAssetOtherOperationsRequest");
+		RequestInfo requestInfo = assetRequest.getRequestInfo();
+		AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+		assetRequest.getAsset().getAssetAssignment().setAuditDetails(auditDetails);  
+
+	}
+	
+	
+	/**
 	 * Sets the ApplicationNumber for given bpaRequest
 	 *
 	 * @param request bpaRequest which is to be created
