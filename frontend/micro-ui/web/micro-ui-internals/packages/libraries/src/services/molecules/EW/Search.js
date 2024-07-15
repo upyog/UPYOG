@@ -97,7 +97,7 @@ export const EWSearch = {
                 ?.map((document) => {
 
                   return {
-                    title: `EWASTE_${document?.documentType?.replace(".", "_")}`,
+                    title: `${document?.documentType?.replace(".", "_")}`,
                     documentType: document?.documentType,
                     documentUid: document?.fileStoreId,
                     fileStoreId: document?.filestoreId,

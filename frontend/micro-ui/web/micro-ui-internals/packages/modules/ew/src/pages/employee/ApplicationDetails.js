@@ -89,19 +89,18 @@ const EWApplicationDetails = () => {
   //   onClick: () => handleDownloadPdf(),
   // };
 
+  
+  // const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
+    //   {
+      //     tenantId: tenantId,
+      //     businessService: "ewst",
+  //     consumerCodes: appDetailsToShow?.applicationData?.applicationData?.requestId,
+  //     isEmployee: false,
+  //   },
+  //   { enabled: appDetailsToShow?.applicationData?.applicationData?.requestId ? true : false }
+  // );
+  
   let downloadOptions = [""];
-
-
-
-  const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
-    {
-      tenantId: tenantId,
-      businessService: "ewst",
-      consumerCodes: appDetailsToShow?.applicationData?.applicationData?.requestId,
-      isEmployee: false,
-    },
-    { enabled: appDetailsToShow?.applicationData?.applicationData?.requestId ? true : false }
-  );
 
   const printCertificate = async () => {
     let response = await Digit.PaymentService.generatePdf(tenantId, { EwasteApplication: [applicationDetails?.applicationData?.applicationData] }, "ewasteservicecertificate");

@@ -57,7 +57,8 @@ const Inbox = ({
         middlewareSearch,
       });
       
-      console.log("searchparams in inbox::", searchParams)
+      // console.log("searchparams in inbox::", searchParams)
+      // console.log("data from usenewinbox hook ::", data)
 
      const Session = Digit.SessionStorage.get("User");
      const uuid = Session?.info?.uuid;
