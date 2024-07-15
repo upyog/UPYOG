@@ -33,7 +33,6 @@
     const architecname = user?.info?.name;
     const architectmobileNumber = user?.info.mobileNumber
     const [params] = Digit.Hooks.useSessionStorage("BUILDING_PERMIT", state?.edcrNumber ? { data: { scrutinyNumber: { edcrNumber: state?.edcrNumber } } } : {});
-    console.log("paramdkjagdew",params);
     const [isUploading, setIsUploading] = useState(false); // it will check whether the file upload is in process or not
     const [isFileUploaded, setIsFileUploaded] = useState(false);
     const architectid = params?.additionalDetails?.architectid;

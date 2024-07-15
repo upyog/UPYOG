@@ -21,7 +21,6 @@
       const [proposedSite, setproposedSite] = useState(formData?.owners?.proposedSite || "");
       const [nameofApprovedcolony, setnameofApprovedcolony] = useState(formData?.owners?.nameofApprovedcolony || "");
       const [NocNumber, setNocNumber] = useState(formData?.owners?.NocNumber || "");
-      const [coreArea, setcoreArea] = useState(formData?.owners?.coreArea || "");
       const [schemesselection, setschemesselection] = useState(formData?.owners?.schemesselection || "");
       const [schemeName, setschemeName] = useState(formData?.owners?.schemeName || "");
       const [transferredscheme, settransferredscheme] = useState("Pre-Approved Standard Designs" || "");
@@ -107,8 +106,6 @@
           i18nKey: "LAL LAKEER"
         }
       ]
-      
-
       const common = [
         {
           code: "YES",
@@ -127,7 +124,7 @@
         }
       ]
 
-      const tenantId = Digit.ULBService.getCurrentTenantId();
+      
       const stateId = Digit.ULBService.getStateId();
 
       const { data: ulbList } = Digit.Hooks.obps.useUlbType(stateId, "BPA", "UlbType");
@@ -244,10 +241,6 @@
         setmasterPlan(e.target.value);
       }
 
-      function setcorearea(e) {
-        setcoreArea(e.target.value);
-      }
-
       function setRatings(e) {
         setrating(e.target.value)
       }
@@ -323,7 +316,7 @@
 
       const goNext = () => {
         let owners = formData.owners && formData.owners[index];
-        let ownerStep = { ...owners, approvedColony, use, UlbName, Ulblisttype, District, rating, masterPlan, coreArea, buildingStatus, schemes, schemesselection,  purchasedFAR, greenbuilding, restrictedArea, proposedSite, nameofApprovedcolony, schemeName, transferredscheme, NocNumber, uploadedFile,greenuploadedFile };
+        let ownerStep = { ...owners, approvedColony, use, UlbName, Ulblisttype, District, rating, masterPlan, buildingStatus, schemes, schemesselection,  purchasedFAR, greenbuilding, restrictedArea, proposedSite, nameofApprovedcolony, schemeName, transferredscheme, NocNumber, uploadedFile,greenuploadedFile };
         let updatedFormData = { ...formData };
 
         // Check if owners array exists in formData if not , then it will add it 
@@ -595,7 +588,7 @@
           <FormStep
             config={config} onSelect={goNext} onSkip={onSkip} t={t}
           
-            isDisabled={!approvedColony || !masterPlan || !coreArea || !Ulblisttype|| !UlbName || !buildingStatus || !schemes || !purchasedFAR || !greenbuilding || !restrictedArea || !proposedSite/* || (approvedColony === "YES" && !nameofApprovedcolony) || (approvedColony === "NO" && !NocNumber)*/}
+            isDisabled={!approvedColony || !masterPlan || !Ulblisttype|| !UlbName || !buildingStatus || !schemes || !purchasedFAR || !greenbuilding || !restrictedArea || !proposedSite/* || (approvedColony === "YES" && !nameofApprovedcolony) || (approvedColony === "NO" && !NocNumber)*/}
           >
             <div>
               <CardLabel>{`${t("BPA_APPROVED_COLONY")}`}</CardLabel>
@@ -645,26 +638,6 @@
               />
               {Master_plan_render_fields()}
 
-               <CardLabel>{`${t("BPA_CORE_AREA")}`}</CardLabel>
-              <Controller
-                control={control}
-                name={"coreArea"}
-                defaultValue={coreArea}
-                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
-                render={(props) => (
-                  <Dropdown
-
-                    className="form-field"
-                    selected={coreArea}
-                    select={setcoreArea}
-                    option={common}
-                    optionKey="i18nKey"
-                    t={t}
-                  />
-
-                )}
-              />
-
             <CardLabel>{`${t("BPA_ULB_NAME")}`}</CardLabel>
               <Controller
                 control={control}
@@ -679,7 +652,6 @@
                     option={menu}
                     optionKey="i18nKey"
                     t={t}
-                    
                   />
                 )}
                 />
@@ -692,7 +664,6 @@
                 rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
                 render={(props) => (
                   <Dropdown
-
                     className="form-field"
                     selected={District}
                     select={setDistrict}
@@ -711,7 +682,6 @@
                 rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
                 render={(props) => (
                   <Dropdown
-
                     className="form-field"
                     selected={Ulblisttype}
                     select={setUlblisttype}

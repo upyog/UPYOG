@@ -45,6 +45,7 @@ const CreateEDCR = ({ parentRoute }) => {
     };
 
     const applicantName = data?.applicantName;
+    const coreArea = data?.coreArea?.code;
     const file = data?.file;
     const tenantId = data?.tenantId?.code;
     const transactionNumber = uuidv4();
@@ -54,6 +55,7 @@ const CreateEDCR = ({ parentRoute }) => {
     edcrRequest = { ...edcrRequest, tenantId };
     edcrRequest = { ...edcrRequest, transactionNumber };
     edcrRequest = { ...edcrRequest, applicantName };
+    edcrRequest = { ...edcrRequest, coreArea };
     edcrRequest = { ...edcrRequest, appliactionType };
     edcrRequest = { ...edcrRequest, applicationSubType };
 
