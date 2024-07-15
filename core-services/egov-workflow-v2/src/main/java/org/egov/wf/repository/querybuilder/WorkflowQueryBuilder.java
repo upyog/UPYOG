@@ -77,7 +77,7 @@ public class WorkflowQueryBuilder {
         StringBuilder builder = new StringBuilder(QUERY);
 
         if (!criteria.getHistory())
-            builder.append(LATEST_RECORD);
+            builder.append(" latest=true");
 
         if (criteria.getHistory())
             builder.append(" pi.tenantid=? ");
@@ -141,7 +141,6 @@ public class WorkflowQueryBuilder {
 
         if (!criteria.getHistory()) {
             with_query_builder.append(" latest=true");
-            preparedStmtList.add(criteria.getTenantId());
         }
 
         if (criteria.getHistory())
