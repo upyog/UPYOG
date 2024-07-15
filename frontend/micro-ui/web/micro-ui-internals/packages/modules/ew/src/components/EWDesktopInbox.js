@@ -28,7 +28,6 @@ const EWDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
   let modData = [];
   data?.map((smallData) => {
     if((smallData?.searchData?.auditDetails?.lastModifiedBy) === uuid || !smallData?.searchData?.auditDetails?.lastModifiedBy){
-      // setModifiedData(smallData);
       modData.push(smallData);
     }
   })
