@@ -8,11 +8,11 @@ import { CHBDataConvert } from "../../../utils";
 const GetActionMessage = (props) => {
   const { t } = useTranslation();
   if (props.isSuccess) {
-    return !window.location.href.includes("edit-application") ? t("ES_CHB_RESPONSE_CREATE_ACTION") : t("CS_CHB_UPDATE_APPLICATION_SUCCESS");
+    return !window.location.href.includes("editbookHall") ? t("ES_CHB_RESPONSE_CREATE_ACTION") : t("CS_CHB_UPDATE_BOOKING_SUCCESS");
   } else if (props.isLoading) {
-    return !window.location.href.includes("edit-application") ? t("CS_CHB_APPLICATION_PENDING") : t("CS_CHB_UPDATE_APPLICATION_PENDING");
+    return !window.location.href.includes("editbookHall") ? t("CS_CHB_BOOKING_PENDING") : t("CS_CHB_UPDATE_BOOKING_PENDING");
   } else if (!props.isSuccess) {
-    return !window.location.href.includes("edit-application") ? t("CS_CHB_BOOKING_FAILED") : t("CS_CHB_UPDATE_BOOKING_FAILED");
+    return !window.location.href.includes("editbookHall") ? t("CS_CHB_BOOKING_FAILED") : t("CS_CHB_UPDATE_BOOKING_FAILED");
   }
 };
 
@@ -47,8 +47,6 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
     try {
       data.tenantId = data?.address?.city?.code;
       let formdata = CHBDataConvert(data);
-      console.log("formdata-->", formdata);
-
       mutation.mutate(formdata, {
         onSuccess,
       });
@@ -57,7 +55,6 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
 
   const handleDownloadPdf = async () => {
     const { hallsBookingApplication = [] } = mutation.data;
-    console.log("mutation.data", mutation);
     let Chb = (hallsBookingApplication && hallsBookingApplication[0]) || {};
     const tenantInfo = tenants.find((tenant) => tenant.code === Chb.tenantId);
     let tenantId = Chb.tenantId || tenantId;
@@ -74,15 +71,19 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
       <StatusTable>
         {mutation.isSuccess && <Row rowContainerStyle={rowContainerStyle} last textStyle={{ whiteSpace: "pre", width: "60%" }} />}
       </StatusTable>
-      {mutation.isSuccess && <SubmitBar label={t("CHB_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />}
+      {mutation.isSuccess && (
+      <div style={{ display: 'flex', flexDirection: 'row', gap: '15px' }}>
+        <SubmitBar
+          label={t("CHB_DOWNLOAD_ACK_FORM")}
+          onSubmit={handleDownloadPdf}
+        />
+        <Link to={`/digit-ui/citizen/payment/my-bills/${"chb-services"}/${mutation.data?.hallsBookingApplication[0].bookingNo}`}>
+          <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
+        </Link>
+      </div>
+    )}
       <Link to={`/digit-ui/citizen`}>
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
-      </Link>
-
-      <br></br>
-
-      <Link to={`/digit-ui/citizen/payment/my-bills/` + `${"chb-services"}/` + `${mutation.data?.hallsBookingApplication[0].bookingNo}`}>
-      <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
       </Link>
     </Card>
   );

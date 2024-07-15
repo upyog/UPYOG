@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair,Card,CardSubHeader} from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair,Card,CardSubHeader,CardLabelDesc} from "@nudmcdgnpm/digit-ui-react-components";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 import Timeline from "../components/CHBTimeline";
 
@@ -62,10 +62,13 @@ const CHBDocumentDetails = ({ t, config, onSelect, userType, formData, setError:
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
         </CardSubHeader>
-        <ChbCancellationPolicy />
+        <ChbCancellationPolicy count={value?.bookingSlotDetails.length}/>
       </Card>
       {!isLoading ? (
         <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={enableSubmit} onAdd={onAdd}>
+          <CardSubHeader>{t(`CHB_PROOF_OF_DOCUMENTS`)}</CardSubHeader>
+          <CardLabelDesc>{t(`CHB_UPLOAD_RESTRICTIONS_TYPES`)}</CardLabelDesc>
+          <CardLabelDesc>{t(`CHB_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
           {data?.CHB?.Documents?.map((document, index) => {
             return (
               <CHBSelectDocument
@@ -205,6 +208,7 @@ function CHBSelectDocument({
             className="form-field"
             selected={selectedDocument}
             style={{ width: "100%" }}
+            placeholder={"Select " + t("CHB_"+(doc?.code.replaceAll(".", "_"))) }
             option={dropDownData.map((e) => ({ ...e, i18nKey:"CHB_" + e.code?.replaceAll(".", "_") }))}
             select={handleCHBSelectDocument}
             optionKey="i18nKey"

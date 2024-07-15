@@ -1,7 +1,23 @@
 import React, { useState } from 'react';
-import { PopUp } from '@nudmcdgnpm/digit-ui-react-components';
+import { CardLabel, CardText, CardLabelDesc, CardSubHeader, Modal } from '@nudmcdgnpm/digit-ui-react-components';
 
-const ChbCancellationPolicy = () => {
+// Close button component
+const Close = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
+    <path d="M0 0h24v24H0V0z" fill="none" />
+    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+  </svg>
+);
+
+const CloseBtn = (props) => {
+  return (
+    <div className="icon-bg-secondary" onClick={props.onClick}>
+      <Close />
+    </div>
+  );
+};
+
+const ChbCancellationPolicy = ({ count }) => {
   const [showCancellationPolicy, setShowCancellationPolicy] = useState(false);
   const [showPriceBreakup, setShowPriceBreakup] = useState(false);
   const stateId = Digit.ULBService.getStateId();
@@ -30,46 +46,6 @@ const ChbCancellationPolicy = () => {
     setShowPriceBreakup(!showPriceBreakup);
   };
 
-  const popupContentStyle = {
-    backgroundColor: 'white',
-    color: 'black',
-    padding: '20px',
-    borderRadius: '8px',
-    maxWidth: '700px',
-    width: '90%',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    maxHeight: '90vh',
-    overflowY: 'auto'
-  };
-
-  const closeButtonStyle = {
-    background: 'none',
-    border: 'none',
-    color: 'black',
-    fontSize: '25px',
-    cursor: 'pointer',
-    position: 'absolute',
-    top: '10px',
-    right: '10px'
-  };
-
-  const listItemStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginBottom: '5px'
-  };
-
-  const totalStyle = {
-    fontWeight: 'bold',
-    marginTop: '10px',
-    display: 'flex',
-    justifyContent: 'space-between'
-  };
-
   const renderCancellationPolicy = (policy) => {
     const policyLines = policy
       .split('\n')
@@ -77,69 +53,119 @@ const ChbCancellationPolicy = () => {
       .map((line, index) => `${index + 1}. ${line.trim()}`);
 
     return (
-      <ol>
+      <ol style={{ paddingLeft: '20px' }}>
         {policyLines.map((line, index) => (
-          <li key={index}>{line}</li>
+          <li key={index} style={{ marginBottom: '10px' }}><CardLabelDesc>{line}</CardLabelDesc></li>
         ))}
       </ol>
     );
   };
 
   const calculateTotalAmount = (CalculationType) => {
-    return CalculationType.reduce((total, item) => total + item.amount, 0);
+    return CalculationType.reduce((total, item) => total + item.amount * count, 0);
   };
 
   return (
     <div>
-      <div style={{ color: '#FE7A51' }}>Total booking amount</div>
-      <div style={{ display: 'flex' }}>
-        <div style={{ marginLeft: '30px', marginRight: '60px' }}>
+      <CardSubHeader style={{ color: '#FE7A51', fontSize: '18px'}}>
+        Total Booking Amount
+      </CardSubHeader>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ marginLeft: '30px', marginRight: '60px', fontSize: '16px', fontWeight: 'bold' }}>
           Rs {CalculationType ? calculateTotalAmount(CalculationType) : 'Loading...'} /-
         </div>
-        <div onClick={handlePriceBreakupClick} style={{ cursor: 'pointer', margin: '0 20px', color: '#FE7A51' }}>VIEW ESTIMATE PRICE BREAKUP</div>
-        <div onClick={handleCancellationPolicyClick} style={{ cursor: 'pointer', color: '#FE7A51' }}>
+        <div 
+          onClick={handlePriceBreakupClick} 
+          style={{ cursor: 'pointer', margin: '0 20px', color: '#FE7A51', fontSize: '16px', textDecoration: 'none' }}
+        >
+          VIEW ESTIMATE PRICE BREAKUP
+        </div>
+        <div 
+          onClick={handleCancellationPolicyClick} 
+          style={{ cursor: 'pointer', color: '#FE7A51', fontSize: '16px', textDecoration: 'none' }}
+        >
           VIEW CANCELLATION POLICY
         </div>
       </div>
 
       {showCancellationPolicy && (
-        <PopUp onClose={handleCancellationPolicyClick}>
-          <div style={popupContentStyle}>
-            <button onClick={handleCancellationPolicyClick} style={closeButtonStyle}>&times;</button>
-            {cancelpolicyData ? (
-              <div>
-                <h3>Cancellation Policy</h3>
-                {renderCancellationPolicy(cancelpolicyData[0].cancellationPolicy)}
-              </div>
-            ) : (
-              <p>Loading...</p>
-            )}
-          </div>
-        </PopUp>
+        <Modal
+          headerBarMain={<CardSubHeader style={{ color: '#FE7A51', margin: '25px' }}>Cancellation Policy</CardSubHeader>}
+          headerBarEnd={<CloseBtn onClick={handleCancellationPolicyClick} />}
+          popupStyles={{ backgroundColor: "#fff", position: 'relative', maxHeight: '90vh', width: '80%', overflowY: 'auto' }}
+          children={
+            <div>
+              {cancelpolicyData ? (
+                <div>
+                  {renderCancellationPolicy(cancelpolicyData[0].cancellationPolicy)}
+                </div>
+              ) : (
+                <CardLabel style={{ fontSize: '20px' }}>Loading...</CardLabel>
+              )}
+            </div>
+          }
+          actionCancelLabel={null}  // Hide Cancel button
+          actionCancelOnSubmit={null}  // No action for Cancel
+          actionSaveLabel={null}  // Hide Save button
+          actionSaveOnSubmit={null}  // No action for Save
+          actionSingleLabel={null}  // Hide Submit button
+          actionSingleSubmit={null}  // No action for Submit
+          error={null}
+          setError={() => {}}
+          formId="modalForm"
+          isDisabled={false}
+          hideSubmit={true}  // Ensure submit is hidden
+          style={{}}
+          popupModuleMianStyles={{ padding: "10px" }}
+          headerBarMainStyle={{ backgroundColor: "#f5f5f5" }}
+          isOBPSFlow={false}
+          popupModuleActionBarStyles={{ display: 'none' }}  // Hide Action Bar
+          isOpen={showCancellationPolicy}  // Pass isOpen prop
+          onClose={handleCancellationPolicyClick}  // Pass onClose prop
+        />
       )}
       {showPriceBreakup && (
-        <PopUp onClose={handlePriceBreakupClick}>
-          <div style={popupContentStyle}>
-            <button onClick={handlePriceBreakupClick} style={closeButtonStyle}>&times;</button>
+        <Modal
+          headerBarMain={<CardSubHeader style={{ color: '#FE7A51', margin: '25px' }}>Price Breakup</CardSubHeader>}
+          headerBarEnd={<CloseBtn onClick={handlePriceBreakupClick} />}
+          popupStyles={{ backgroundColor: "#fff", position: 'relative', maxHeight: '90vh', width: '60%', overflowY: 'auto' }}
+          children={
             <div>
-              <h3>Calculation BreakUp</h3>
-              <p>Estimate Price Details</p>
+              <CardText style={{ marginBottom: '15px' }}>Estimate Price Details</CardText>
               <ul>
                 {CalculationType && CalculationType.map((finance, index) => (
-                  <li key={index} style={listItemStyle}>
-                    <span>{finance.feeType}</span>
-                    <span>{finance.amount}</span>
+                  <li key={index} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <CardLabelDesc>{finance.feeType}</CardLabelDesc>
+                    <CardLabelDesc>Rs {finance.amount * count}</CardLabelDesc>
                   </li>
                 ))}
               </ul>
               <hr />
-              <div style={totalStyle}>
-                <span>Total</span>
-                <span>Rs {CalculationType && calculateTotalAmount(CalculationType)}</span>
+              <div style={{ fontWeight: 'bold', marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
+                <CardLabelDesc>Total</CardLabelDesc>
+                <CardLabelDesc>Rs {CalculationType && calculateTotalAmount(CalculationType)}</CardLabelDesc>
               </div>
             </div>
-          </div>
-        </PopUp>
+          }
+          actionCancelLabel={null}  // Hide Cancel button
+          actionCancelOnSubmit={null}  // No action for Cancel
+          actionSaveLabel={null}  // Hide Save button
+          actionSaveOnSubmit={null}  // No action for Save
+          actionSingleLabel={null}  // Hide Submit button
+          actionSingleSubmit={null}  // No action for Submit
+          error={null}
+          setError={() => {}}
+          formId="modalForm"
+          isDisabled={false}
+          hideSubmit={true}  // Ensure submit is hidden
+          style={{}}
+          // popupModuleMianStyles={{ padding: "10px" }}
+          headerBarMainStyle={{ backgroundColor: "#f5f5f5" }}
+          isOBPSFlow={false}
+          popupModuleActionBarStyles={{ display: 'none' }}  // Hide Action Bar
+          isOpen={showPriceBreakup}  // Pass isOpen prop
+          onClose={handlePriceBreakupClick}  // Pass onClose prop
+        />
       )}
     </div>
   );

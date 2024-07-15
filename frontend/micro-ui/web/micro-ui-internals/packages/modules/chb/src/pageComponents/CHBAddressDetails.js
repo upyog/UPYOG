@@ -83,12 +83,13 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
   };
 
   const setAddressPincode = (e) => {
-    const newPincode = e.target.value;
+    const newPincode = e.target.value.slice(0, 6); // Truncate input to first 6 characters
     setPincode(newPincode);
+    
     if (newPincode === "") {
-      setCity(null);  // Clear city
-      setLocality(null);  // Clear locality
-      setLocalities([]);  // Clear localities list
+      setCity(null);       // Clear city
+      setLocality(null);   // Clear locality
+      setLocalities([]);   // Clear localities list
     }
   };
 
@@ -140,7 +141,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
         </CardSubHeader>
-        <ChbCancellationPolicy />
+        <ChbCancellationPolicy count={value?.bookingSlotDetails.length}/>
       </Card>
       <FormStep
         config={config}
@@ -153,21 +154,22 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
           <CardLabel>{`${t("CHB_PINCODE")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
           <TextInput
             t={t}
-            type={"text"}
+            type="text"
             isMandatory={false}
             optionKey="i18nKey"
             name="pincode"
             value={pincode}
             onChange={setAddressPincode}
-            minLength={6}
-            maxLength={6}
+            placeholder="Enter Pincode"
             style={{ width: "86%" }}
             ValidationRequired={true}
-            {...(validation = {
-              pattern: "[0-9]+",
+            validation={{
+              pattern: "[0-9]{6}",
               type: "text",
               title: t("CHB_ADDRESS_PINCODE_INVALID"),
-            })}
+            }}
+            minLength={6}
+            maxLength={6}
           />
           <CardLabel>{`${t("CHB_CITY")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
           <Controller
@@ -180,6 +182,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
                 className="form-field"
                 selected={city}
                 select={setCity}
+                placeholder={"Select City"}
                 optionKey="i18nKey"
                 t={t}
                 isDisabled
@@ -198,6 +201,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
                 selected={locality}
                 select={selectLocality}
                 option={localities.sort((a, b) => a.name.localeCompare(b.name))}
+                placeholder={"Select Locality"}
                 optionKey="name"
                 t={t}
                 isLoading={isLoadingLocalities}
@@ -212,10 +216,19 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             optionKey="i18nKey"
             name="streetName"
             value={streetName}
+            placeholder={"Enter Street Name"}
             onChange={setApplicantStreetName}
             style={{ width: "86%" }}
+            ValidationRequired = {true}
+            {...(validation = {
+              // isRequired: true,
+              pattern: "^[a-zA-Z ]+$",
+              type: "text",
+              title: t("CHB_NAME_ERROR_MESSAGE"),
+            })}
+         
           />
-          <CardLabel>{`${t("CHB_HOUSE_N0.")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+          <CardLabel>{`${t("CHB_HOUSE_NO")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
           <TextInput
             t={t}
             type={"text"}
@@ -223,6 +236,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             optionKey="i18nKey"
             name="houseNo"
             value={houseNo}
+            placeholder={"Enter HouseNo"}
             onChange={setApplicantHouseNo}
             style={{ width: "86%" }}
           />
@@ -234,9 +248,10 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             optionKey="i18nKey"
             name="landmark"
             value={landmark}
+            placeholder={"Enter Landmark"}
             onChange={setApplicantLandmark}
             style={{ width: "50%" }}
-            ValidationRequired={false}
+            ValidationRequired={true}
             {...(validation = {
               isRequired: true,
               pattern: "^[a-zA-Z ]+$",

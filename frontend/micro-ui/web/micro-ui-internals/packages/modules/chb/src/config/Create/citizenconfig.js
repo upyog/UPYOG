@@ -18,7 +18,7 @@
                         "withoutLabel": true,
                         "key": "ownerss",
                         "type": "component",
-                        "nextStep": "slot-details",
+                        "nextStep": "event-details",
                         "hideInEmployee": true,
                         "isMandatory": true,
                         "texts": {
@@ -32,7 +32,7 @@
                     "head": "ES_TITILE_SLOT_DETAILS",
                     "body": [
                         {
-                        "route": "slot-details",
+                        "route": "event-details",
                         "component": "CHBSlotDetails",
                         "withoutLabel": true,
                         "key": "slots",

@@ -31,15 +31,13 @@ export const CHBMyApplications = () => {
     tenantId : tenantId,
     referenceIds : combinedApplicationNumber,
   }
-  console.log("combinedApplication--->",combinedApplicationNumber);
   const { isLoading:serviceloading, data : servicedata} = Digit.Hooks.useFeedBackSearch({ filters: { serviceSearchArgs } },{ filters: { serviceSearchArgs }, enabled : combinedApplicationNumber?.length > 0 ?true : false, cacheTime : 0 });
-
   function getLabelValue(curservice){
     let foundValue = servicedata?.Service?.find((ob) => ob?.referenceId?.includes(curservice?.bookingNo));
     if(foundValue)
     return t("CS_CF_VIEW")
     else
-    return t("CS_CF_TRACK")
+    return t("CHB_SUMMARY")
   }
 
   if (isLoading || serviceloading) {

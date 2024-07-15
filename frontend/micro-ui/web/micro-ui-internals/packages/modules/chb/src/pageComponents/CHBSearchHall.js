@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useRef, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import ApplicationTable from "../components/inbox/ApplicationTable";
@@ -9,10 +9,13 @@ import {
   Dropdown,
   SubmitBar,
   Calender,
-  Toast
+  Toast,
+  InfoIcon,
+  Card
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { DateRangePicker, createStaticRanges } from "react-date-range";
-import { addDays, startOfDay, endOfDay, format } from 'date-fns';
+import { addDays, startOfDay, endOfDay, format, differenceInCalendarDays } from 'date-fns';
+import ChbCommunityHallDetails from "../components/ChbCommunityHallDetails";
 
 const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
   const { pathname: url } = useLocation();
@@ -28,6 +31,8 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     ""
   );
   const [showToast, setShowToast] = useState(null);
+  const [showDetails, setShowDetails] = useState(false);
+  const dateRangePickerRef = useRef(null);
   const [showDateRangePicker, setShowDateRangePicker] = useState(false);
   const [hallCode, setHallCode] = useState(
     (formData.slotlist && formData.slotlist[index] && formData.slotlist[index].hallCode) ||
@@ -48,49 +53,77 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
   let HallId = [];
 
   hallList && hallList.map((slot) => {
-    initialData.push({ slotId: slot.communityHallId, name: slot.name, address: slot.address });
+    initialData.push({ communityHallId: slot.communityHallId, name: slot.name, code: slot.code, address: slot.address });
+  });
+  hallList && hallList.map((slot) => {
+    HallName.push({ i18nKey: `${slot.code}`, code: `${slot.code}`, value: `${slot.name}`, communityHallId: slot.communityHallId });
   });
   Hall && Hall.map((slot) => {
-    HallName.push({ i18nKey: `${slot.name}`, code: `${slot.name}`, value: `${slot.name}` });
+    HallId.push({ i18nKey: `${slot.code}`, code: `${slot.code}`, value: `${slot.code}`, communityHallId: slot.communityHallId });
   });
-  Hall && Hall.map((slot) => {
-    HallId.push({ i18nKey: `${slot.HallCode}`, code: `${slot.HallCode}`, slotId: `${slot.communityHallId}` });
-  });
+  const hallCodeId = HallId.map((slot) => {
+    if (selectedHall.communityHallId === slot.communityHallId) {
+      return {
+        i18nKey: slot.code,
+        code: slot.code,
+        value: slot.code,
+        communityHallId: slot.communityHallId
+      };
+    }
+  }).filter(item => item !== undefined);
+  const Searchdata = initialData.reduce((acc, slot) => {
+    if ((slot.code === selectedHall.code && slot.communityHallId === hallCode.communityHallId) || slot.code === selectedHall.code) {
+      acc.push({
+        communityHallCode: slot.name,
+        hallCode: slot.communityHallId || hallCode.name,
+        hallAddress: slot.address
+      });
+    }
+    return acc;
+  }, []);
 
   // Define the slot_search hook to refetch data on search
   const { data: slotSearchData, refetch } = Digit.Hooks.chb.useChbSlotSearch({
     tenantId: "pg.citya",
     filters: {
-      communityHallCode: selectedHall.code,
+      communityHallCode: Searchdata.length ? Searchdata[0].communityHallCode : "",
       bookingStartDate: dateRange[0].startDate ? format(dateRange[0].startDate, 'dd-MM-yyyy') : "",
       bookingEndDate: dateRange[0].endDate ? format(dateRange[0].endDate, 'dd-MM-yyyy') : "",
-      hallCode:hallCode.code
+      hallCode: Searchdata.length ? Searchdata[0].hallCode : ""
     }
   });
 
   useEffect(() => {
-    const addressdata = initialData.map(slot => {
-      if (slot.name === selectedHall.code) {
-        return slot.address;
-      }
-    });
     if (slotSearchData && slotSearchData.hallSlotAvailabiltityDetails) {
       const newData = slotSearchData.hallSlotAvailabiltityDetails.map((slot, index) => ({
         slotId: index + 1,
         name: slot.communityHallCode,
-        address: addressdata || "", // Ensure address is set
-        location: "NEW DELHI",
-        bookingDate: slot.bookingDate, 
+        address: Searchdata.length ? Searchdata[0].hallAddress : "",
+        hallCode: Searchdata[0].hallCode,
+        bookingDate: slot.bookingDate,
         status: slot.slotStaus === "AVAILABLE" ? (
           <div className="sla-cell-success">Available</div>
         ) : (
           <div className="sla-cell-error">Booked</div>
         )
       }));
-      setData(newData); // Update data state
-      setShowTable(true); // Show the table after data is fetched
+
+      // Only update state if newData is different from current state
+      setData((prevData) => {
+        if (JSON.stringify(prevData) !== JSON.stringify(newData)) {
+          return newData;
+        }
+        return prevData;
+      });
+
+      setShowTable((prevShowTable) => {
+        if (!prevShowTable) {
+          return true;
+        }
+        return prevShowTable;
+      });
     }
-  }, [slotSearchData, selectedHall, hallCode, dateRange, bookingSlotDetails]);
+  }, [slotSearchData, Searchdata]);
 
   const [data, setData] = useState("");
   const [showTable, setShowTable] = useState(false); // State to control table visibility
@@ -99,7 +132,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
   const columns = [
     { Header: `${t("CHB_HALL_NAME")}` + "/" + `${t("CHB_PARK")}`, accessor: "name" },
     { Header: `${t("CHB_ADDRESS")}`, accessor: "address" },
-    { Header: `${t("CHB_LOCATION")}`, accessor: "location" },
+    { Header: `${t("CHB_HALL_CODE")}`, accessor: "hallCode" },
     { Header: `${t("CHB_BOOKING_DATE")}`, accessor: "bookingDate" },
     { Header: `${t("CHB_STATUS")}`, accessor: "status" },
   ];
@@ -125,6 +158,16 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
       goNext();
     }
   }, [bookingSlotDetails, selectedHall, hallCode]);
+  
+  const handleViewReportClick = () => {
+    if (selectedHall) {
+      // Trigger the popup
+      setShowDetails(prevShowDetails => !prevShowDetails); 
+    } else {
+      // Show toast message
+      setShowToast({ error: true, label: 'Please select a hall name.' });
+    }
+  };
 
   const handleRowSelection = (rowIndex) => {
     setBookingSlotDetails((prevSelectedRows) => {
@@ -191,20 +234,37 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
       })
     },
   ]);
-
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dateRangePickerRef.current && !dateRangePickerRef.current.contains(event.target) && !event.target.closest('.calendar-icon')) {
+        setShowDateRangePicker(false);
+      }
+    };
+  
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   const handleDateRangeChange = (item) => {
-    setDateRange([item.selection]);
-    if (item.selection.startDate && item.selection.endDate) {
-      setShowDateRangePicker(false); // Close date range picker when both dates are selected
+    const { startDate, endDate } = item.selection;
+    const dayDifference = differenceInCalendarDays(endDate, startDate);
+
+    if (dayDifference < 3) { // Limit the date range to 3 days
+      setDateRange([item.selection]);
+      if (startDate && endDate) {
+        setShowDateRangePicker(false); // Close date range picker when both dates are selected
+      }
+    } else {
+      setShowToast({ error: true, label: 'You can only select a date range of up to 3 days.' });
     }
   };
 
   const handleSearch = () => {
-    if ((selectedHall.code && dateRange[0].startDate && dateRange[0].endDate && hallCode.code) || (hallCode.code && dateRange[0].startDate && dateRange[0].endDate && selectedHall.code)) {
+    if ((selectedHall.code && dateRange[0].startDate && dateRange[0].endDate && hallCode.code) || (dateRange[0].startDate && dateRange[0].endDate && selectedHall.code)) {
       refetch(); // Fetch data using refetch
     } else {
-      setShowToast({ error: true, label: 'Please select either Community Hall Name with Date or Hall Code with Date.' });
-
+      setShowToast({ error: true, label: 'Please select either Community Hall Name with Date or both.' });
     }
   };
 
@@ -215,6 +275,16 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
       goNext();
     }
   };
+
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(null);
+      }, 1500); // Close toast after 1.5 seconds
+
+      return () => clearTimeout(timer); // Clear timer on cleanup
+    }
+  }, [showToast]);
 
   return (
     <React.Fragment>
@@ -227,41 +297,56 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
       >
         <CardHeader>{`${t("CHB_SEARCH_COMMUNITY_HALL_HEADER")}`}/{`${t("CHB_PARK")}`}</CardHeader>
         <div>
-          <CardLabel>{`${t("CHB_SELECT_HALL_NAME")}`}</CardLabel>
-          <Controller
-            control={control}
-            name={"selectedHall"}
-            defaultValue={selectedHall}
-            rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-            render={(props) => (
-              <Dropdown
-                className="form-field"
-                selected={selectedHall}
-                select={setSelectedHall}
-                option={HallName}
-                optionKey="i18nKey"
-                t={t}
-              />
-            )}
-          />
-          <div className="filter-label"><CardLabel>{`${t("CHB_SELECT_DATE")}`}</CardLabel></div>
+          <CardLabel>{`${t("CHB_SELECT_HALL_NAME")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+          <div style={{ display: "flex", flexDirection: "row", gap: "10px"}}>
+            <Controller
+              control={control}
+              name={"selectedHall"}
+              defaultValue={selectedHall}
+              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+              render={(props) => (
+                <Dropdown
+                  className="form-field"
+                  selected={selectedHall}
+                  select={setSelectedHall}
+                  placeholder={"Select Community Hall"}
+                  option={HallName}
+                  optionKey="i18nKey"
+                  t={t}
+                />
+              )}
+            />
+            <div onClick={handleViewReportClick} style={{ cursor: "pointer",display: "flex", marginTop:"10px"}}>
+              <InfoIcon/>
+              {showDetails &&(
+              <ChbCommunityHallDetails hallId={selectedHall.communityHallId} />
+              )}
+            </div>
+          </div>
+          <div className="filter-label"><CardLabel>{`${t("CHB_SELECT_DATE")}`} <span style={{ color: 'red' }}>*</span></CardLabel></div>
           <div className="employee-select-wrap" style={{ width: "50%" }}>
             <div className="select">
               <input
                 className="employee-select-wrap--elipses"
                 type="text"
+                placeholder={"Select Date"}
                 value={
                   dateRange[0].startDate && dateRange[0].endDate
                     ? `${format(dateRange[0].startDate, 'dd/MM/yyyy')} - ${format(dateRange[0].endDate, 'dd/MM/yyyy')}`
                     : ""
                 }
                 readOnly
-                onClick={() => setShowDateRangePicker((prevState) => !prevState)}
               />
-              <Calender className="cursorPointer" onClick={() => setShowDateRangePicker((prevState) => !prevState)} />
+             <Calender
+              className="cursorPointer calendar-icon"
+              onClick={(e) => {
+                e.stopPropagation();  // Prevent the event from bubbling up to the document
+                setShowDateRangePicker((prevState) => !prevState);
+              }}
+            />
             </div>
             {showDateRangePicker && (
-              <div className="options-card" style={{ overflow: "visible", width: "unset", maxWidth: "unset" }}>
+              <div ref={dateRangePickerRef} className="date-range-picker-wrapper">
                 <DateRangePicker
                   className="pickerShadow"
                   ranges={dateRange}
@@ -271,7 +356,8 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
                   moveRangeOnFirstSelection={false}
                   staticRanges={staticRanges}
                   inputRanges={[]}
-                  minDate={new Date()}
+                  placeholder={"Select Community Hall"}
+                  minDate={addDays(new Date(), 1)}  // This sets the minimum date to tomorrow
                 />
               </div>
             )}
@@ -287,7 +373,8 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
                 className="form-field"
                 selected={hallCode}
                 select={setHallCode}
-                option={HallId}
+                option={hallCodeId}
+                placeholder={"Select Hall Code"}
                 optionKey="i18nKey"
                 t={t}
               />
@@ -298,29 +385,29 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
           <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
           <SubmitBar label={t("CHB_BOOK")} onSubmit={handleBookClick} style={{ margin: "20px" }} disabled={!isCheckboxSelected} />
         </div>
-        <br />
-        {showTable && ( // Only show table when showTable is true
-          <ApplicationTable
-            t={t}
-            data={data}
-            columns={enhancedColumns}
-            getCellProps={(cellInfo) => ({
-              style: {
-                minWidth: "150px",
-                padding: "20px",
-                fontSize: "16px",
-              },
-            })}
-            totalRecords={data.length}
-          />
-        )}
       </FormStep>
+      {showTable && ( // Only show table when showTable is true
+       <Card>
+         <ApplicationTable
+           t={t}
+           data={data}
+           columns={enhancedColumns}
+           getCellProps={(cellInfo) => ({
+             style: {
+               minWidth: "140px",
+               padding: "20px",
+               fontSize: "16px",
+             },
+           })}
+           totalRecords={data.length}
+         />
+         </Card>
+        )}
       {showToast && (
         <Toast
           error={showToast.error}
           warning={showToast.warning}
           label={t(showToast.label)}
-          isDleteBtn={true}
           onClose={() => {
             setShowToast(null);
           }}
