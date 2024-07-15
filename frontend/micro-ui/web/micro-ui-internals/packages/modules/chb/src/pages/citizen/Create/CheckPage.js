@@ -48,24 +48,42 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   } = value;
 
   const typeOfApplication = !isEditCHB && !isUpdateCHB ? `bookHall` : `editbookHall`;
-  console.log("isEditCHB",isEditCHB);
-  console.log("isUpdateCHB",isUpdateCHB);
 
-  const formatSlotDetails = (slots) => {
-    const sortedSlots = slots.sort((a, b) => new Date(a.bookingDate) - new Date(b.bookingDate));
-    const firstDate = sortedSlots[0]?.bookingDate;
-    const lastDate = sortedSlots[sortedSlots.length - 1]?.bookingDate;
-    if(firstDate===lastDate){
-      return `${sortedSlots[0]?.name} (${firstDate})`;
-    }
-    else{
-    return `${sortedSlots[0]?.name} (${firstDate} - ${lastDate})`;
-    }
-  };
   const [agree, setAgree] = useState(false);
   const setdeclarationhandler = () => {
     setAgree(!agree);
     console.log(slotlist);
+  };
+  const getBookingDateRange = (bookingSlotDetails) => {
+    if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
+      return t("CS_NA");
+    }
+    const startDate = bookingSlotDetails[0]?.bookingDate;
+    const endDate = bookingSlotDetails[bookingSlotDetails.length - 1]?.bookingDate;
+    if (startDate === endDate) {
+      return startDate; // Return only the start date
+    } else {
+      // Format date range as needed, for example: "startDate - endDate"
+      return startDate && endDate ? `${startDate} - ${endDate}` : t("CS_NA");
+    }
+  };
+  const getBookingTimeRange = (bookingSlotDetails) => {
+    if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
+      return "10:00 - 11:59"; 
+    }
+    const startTime = "10:00"; 
+    
+    const length = bookingSlotDetails.length;
+  
+    let defaultEndTime = "11:59"; 
+    if (length === 2) {
+      defaultEndTime = "23:59"; 
+    } else if (length === 3) {
+      defaultEndTime = "71:59"; 
+    }
+  
+    // Return formatted time range
+    return `${startTime} - ${defaultEndTime}`;
   };
   return (
     <React.Fragment>
@@ -74,13 +92,6 @@ const CheckPage = ({ onSubmit, value = {} }) => {
       <CardHeader>{t("CHB_CHECK_YOUR_DETAILS")}</CardHeader>
       <div>
       <CardText>{t("CHB_CHECK_CHECK_YOUR_ANSWERS_TEXT")}</CardText>
-        {/* <Card>
-        <CardSubHeader>
-          {slotlist?.bookingSlotDetails && slotlist.bookingSlotDetails.length > 0
-            ? formatSlotDetails(slotlist.bookingSlotDetails)
-            : null}
-        </CardSubHeader>
-      </Card> */}
         <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_APPLICANT_DETAILS")}</CardSubHeader>
         <StatusTable>
         <Row
@@ -108,6 +119,26 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             text={`${t(checkForNA(ownerss?.emailId))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/applicant-details`} />}
 
+        />
+        </StatusTable>
+        <CardSubHeader style={{ fontSize: "24px" }}>{t("SLOT_DETAILS")}</CardSubHeader>
+        <StatusTable>
+        <Row
+            label={t("CHB_COMMUNITY_HALL_NAME")}
+            text={`${t(checkForNA(slotlist?.bookingSlotDetails[0]?.name))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/searchHall`} />}
+
+        />
+        <Row
+            label={t("CHB_BOOKING_DATE")}
+            text={`${t(checkForNA(getBookingDateRange(slotlist?.bookingSlotDetails)))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/searchHall`} />}
+
+        />
+       <Row
+          label={t("CHB_BOOKING_TIME")} // Label for the row, presumably fetched from translations
+          text={(checkForNA(getBookingTimeRange(slotlist?.bookingSlotDetails)))} // Text to display, likely the formatted time range
+          actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/searchHall`} />} // Action button component
         />
         </StatusTable>
         <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_EVENT_DETAILS")}</CardSubHeader>

@@ -30,7 +30,7 @@ export const sethallDetails = (data) => {
       hallCode: slot.slotId,
       bookingDate:slot.bookingDate,
       bookingFromTime:"10:00",
-      bookingToTime:"9:59",
+      bookingToTime:"11:59",
       status:"BOOKED",
     };
 
@@ -135,7 +135,7 @@ const formdata={
     },
     address:data.address,
     purposeDescription:data.slots?.purposeDescription,
-    communityHallId:data.slotlist[0]?.bookingId || "2",
+    communityHallId:data.slotlist[0]?.bookingId,
     ...data.documents,
     bookingStatus:"BOOKING_CREATED",
     communityHallCode:data.slotlist[0]?.hallName,
@@ -188,7 +188,7 @@ return true;
 
 /*   method to check value  if not returns NA*/
 export const checkForNA = (value = "") => {
-  return checkForNotNull(value) ? value : "CHB_NA";
+  return checkForNotNull(value) ? value : "CS_NA";
 };
 
 /*   method to get required format from fielstore url*/
@@ -223,7 +223,7 @@ export const convertEpochToDate = (dateEpoch,businessService) => {
     let year = dateFromApi.getFullYear();
     month = (month > 9 ? "" : "0") + month;
     day = (day > 9 ? "" : "0") + day;
-    if(businessService == "chb")
+    if(businessService == "chb-services")
     return `${day}-${month}-${year}`;
     else
     return `${day}/${month}/${year}`;
@@ -255,7 +255,7 @@ export const checkArrayLength = (obj = [], length = 0) => {
 export const getWorkflow = (data = {}) => {
   return {
 
-    businessService: `chb`,
+    businessService: `chb-services`,
     moduleName: "chb-services",
   };
 };

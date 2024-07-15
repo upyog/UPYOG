@@ -172,8 +172,36 @@ const CHBApplicationDetails = () => {
       label: t("CHB_CERTIFICATE"),
       onClick: () => printCertificate(),
     });
-    console.log("chb_details--->",application);
-
+    
+    const getBookingDateRange = (bookingSlotDetails) => {
+      if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
+        return t("CS_NA");
+      }
+      const startDate = bookingSlotDetails[0]?.bookingDate;
+      const endDate = bookingSlotDetails[bookingSlotDetails.length - 1]?.bookingDate;
+      if (startDate === endDate) {
+        return startDate; // Return only the start date
+      } else {
+        // Format date range as needed, for example: "startDate - endDate"
+        return startDate && endDate ? `${endDate} - ${startDate} ` : t("CS_NA");
+      }
+    };
+   const getBookingTimeRange = (bookingSlotDetails) => {
+      if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
+        return "10:00 - 11:59"; // Default time range if details are not present
+      }
+      const startTime = bookingSlotDetails[0]?.bookingFromTime;
+      // const endTime = bookingSlotDetails[bookingSlotDetails.length - 1]?.bookingToTime;
+      const length = bookingSlotDetails.length;
+      let defaultEndTime = "11:59"; // Default end time for length 1
+      if (length === 2) {
+        defaultEndTime = "23:59"; // End time for length 2
+      } else if (length === 3) {
+        defaultEndTime = "71:59"; // End time for length 3
+      }
+      // Return formatted time range
+      return startTime ? `${startTime} - ${defaultEndTime}` : t("CS_NA");
+    };
   return (
     <React.Fragment>
       <div>
@@ -209,16 +237,12 @@ const CHBApplicationDetails = () => {
           </StatusTable>
 
           <CardSubHeader style={{ fontSize: "24px" }}>{t("SLOT_DETAILS")}</CardSubHeader>
-          {chb_details?.bookingSlotDetails.map((slot) => (
             <StatusTable>
-              <Row className="border-none" label={t("CHB_COMMUNITY_HALL_NAME")} text={chb_details?.communityHallCode || t("CS_NA")} />
-              <Row className="border-none" label={t("CHB_BOOKING_DATE")} text={slot?.bookingDate} />
-              <Row className="border-none" label={t("CHB_BOOKING_FROM_TIME")} text={slot?.bookingFromTime || t("CS_NA")} />
-              <Row className="border-none" label={t("CHB_BOOKING_TO_TIME")} text={slot?.bookingToTime || t("CS_NA")} />
+            <Row className="border-none" label={t("CHB_COMMUNITY_HALL_NAME")} text={chb_details?.communityHallCode || t("CS_NA")} />
+            <Row className="border-none" label={t("CHB_BOOKING_DATE")} text={getBookingDateRange(chb_details?.bookingSlotDetails) || t("CS_NA")} />
+            <Row className="border-none" label={t("CHB_BOOKING_TIME")} text={getBookingTimeRange(chb_details?.bookingSlotDetails) || t("CS_NA")} />
             </StatusTable>
-          ))}
           <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_ADDRESS_DETAILS")}</CardSubHeader>
-          {chb_details?.bookingSlotDetails.map((slot) => (
             <StatusTable>
               <Row className="border-none" label={t("CHB_PINCODE")} text={chb_details?.address?.pincode || t("CS_NA")} />
               <Row className="border-none" label={t("CHB_CITY")} text={chb_details?.address?.city || t("CS_NA")}/>
@@ -227,7 +251,6 @@ const CHBApplicationDetails = () => {
               <Row className="border-none" label={t("CHB_HOUSE_NO")} text={chb_details?.address?.houseNo || t("CS_NA")} />
               <Row className="border-none" label={t("CHB_LANDMARK")} text={chb_details?.address?.landmark || t("CS_NA")} />
             </StatusTable>
-          ))}
           <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_BANK_DETAILS")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("CHB_ACCOUNT_NUMBER")} text={chb_details?.applicantDetail?.accountNumber || t("CS_NA")} />
