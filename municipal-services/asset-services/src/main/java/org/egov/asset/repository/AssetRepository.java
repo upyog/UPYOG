@@ -47,6 +47,17 @@ public class AssetRepository {
 	}
 	
 	/**
+	 * Pushes the request on save assignment topic through kafka
+	 *
+	 * @param bpaRequest
+	 *            The asset create request
+	 */
+	public void saveAssignment(AssetRequest assetRequest) {
+		producer.push(config.getSaveAssignmentTopic(), assetRequest);
+	}
+	
+	
+	/**
 	 * Pushes the request on update topic through kafka
 	 *
 	 * @param bpaRequest
@@ -55,7 +66,16 @@ public class AssetRepository {
 	public void update(AssetRequest assetRequest) {
 		producer.push(config.getUpdateTopic(), assetRequest);
 	}
-
+	
+	/**
+	 * Pushes the request on update assignment topic through kafka
+	 *
+	 * @param bpaRequest
+	 *            The asset update request
+	 */
+	public void updateAssignment(AssetRequest assetRequest) {
+		producer.push(config.getUpdateAssignmentTopic(), assetRequest);
+	}
 
 	public List<Asset> getAssetData(AssetSearchCriteria searchCriteria) {
 		List<Object> preparedStmtList = new ArrayList<>();

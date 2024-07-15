@@ -86,7 +86,8 @@ public class AssetService {
 		for (Role role : requestInfo.getUserInfo().getRoles()) {
 			roles.add(role.getCode());
 		}
-		if ((criteria.tenantIdOnly() || criteria.isEmpty()) && roles.contains(AssetConstants.AASET_INITIATOR)) {
+		//if ((criteria.tenantIdOnly() || criteria.isEmpty()) && roles.contains(AssetConstants.ASSET_INITIATOR)) {
+		if ((criteria.tenantIdOnly() || criteria.isEmpty())) {
 			log.debug("loading data of created and by me");
 			assets = this.getAssetCreatedForByMe(criteria, requestInfo);
 			log.debug("no of assets retuning by the search query" + assets.size());
@@ -145,6 +146,34 @@ public class AssetService {
 //		wfIntegrator.callWorkFlow(assetRequest);
 		assetRepository.update(assetRequest);
 
+		return assetRequest.getAsset();
+	}
+
+	public Asset assignment(@Valid AssetRequest assetRequest) {
+		log.debug("Asset assignment service method called");
+		//RequestInfo requestInfo = assetRequest.getRequestInfo();
+
+		// Application can not be created statelevel
+		if (assetRequest.getAsset().getTenantId().split("\\.").length == 1) {
+			throw new CustomException(AssetErrorConstants.INVALID_TENANT,
+					" Application cannot be create at StateLevel");
+		}
+		enrichmentService.enrichAssetOtherOperationsCreateRequest(assetRequest);
+		assetRepository.saveAssignment(assetRequest);
+		return assetRequest.getAsset();
+	}
+
+	public Asset updateAssignment(@Valid AssetRequest assetRequest) {
+		log.debug("Asset assignment service method called");
+		//RequestInfo requestInfo = assetRequest.getRequestInfo();
+
+		// Application can not be created statelevel
+		if (assetRequest.getAsset().getTenantId().split("\\.").length == 1) {
+			throw new CustomException(AssetErrorConstants.INVALID_TENANT,
+					" Application cannot be create at StateLevel");
+		}
+		enrichmentService.enrichAssetOtherOperationsUpdateRequest(assetRequest);
+		assetRepository.updateAssignment(assetRequest);
 		return assetRequest.getAsset();
 	}
 
