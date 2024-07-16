@@ -16,13 +16,16 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
     const [uploadMessage, setUploadMessage] = useState("");
     const [showToast, setShowToast] = useState(null);
     const history = useHistory();
-
+    const [coreArea, setcoreArea] = useState(formData?.Scrutiny?.[0]?.coreArea);
 
     let validation = { };
 
 
     function setApplicantName(e) {
         setName(e.target.value);
+    }
+    function setCoreArea(value) {
+        setcoreArea(value);
     }
 
     function setTypeOfTenantID(value) {
@@ -37,6 +40,17 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
     const onSkip = () => {
         setUploadMessage("NEED TO DELETE");
     };
+
+    const common = [
+        {
+          code: "YES",
+          i18nKey: "YES"
+        },
+        {
+          code: "NO",
+          i18nKey: "NO"
+        }
+      ]
 
     const { isLoading, data: citymodules } = Digit.Hooks.obps.useMDMS(stateId, "tenant", ["citymodule"]);
 
@@ -56,6 +70,7 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
         if (uploadMessage || isShowToast) {
             setName("");
             setTenantIdData("");
+            setcoreArea("");
             setUploadedFile(null);
             setFile("");
             setUploadMessage("");
@@ -77,6 +92,7 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
         data.tenantId = tenantIdData;
         data.applicantName = name;
         data.file = file;
+        data.coreArea = coreArea;
         onSelect(config.key, data);
     };
 
@@ -90,7 +106,7 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
             config={config}
             onSelect={handleSubmit}
             onSkip={onSkip}
-            isDisabled={!tenantIdData || !name || !file || isSubmitBtnDisable}
+            isDisabled={!tenantIdData || !name || !coreArea || !file || isSubmitBtnDisable}
             onAdd={onAdd}
             isMultipleAllow={true}
         >
@@ -120,6 +136,16 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
                     type: "text",
                     title: t("TL_NAME_ERROR_MESSAGE"),
                 })}
+            />
+            <CardLabel>{`${t("BPA_CORE_AREA")}`}</CardLabel>
+            <Dropdown
+                t={t}
+                isMandatory={false}
+                option={common}
+                selected={coreArea}
+                optionKey="i18nKey"
+                select={setCoreArea}
+                uploadMessage={uploadMessage}
             />
             <CardLabel>{`${t("BPA_PLAN_DIAGRAM_LABEL")} *`}</CardLabel>
             <UploadFile
