@@ -23,18 +23,17 @@ export const EWSearch = {
     [
       product?.productName,
       product?.quantity,
+      product?.price/product?.quantity,
       product?.price,
-      product?.price * product?.quantity,
     ]
   )) || [];
 
-  // console.log("productRow", productRows)
 
   const transactionDetails = [
     response?.calculatedAmount ? { title: "EWASTE_NET_PRICE", value: response?.calculatedAmount } : null,
-    response?.transactionId ? { title: "EWASTE_TRANSACTION_ID", value: response?.transactionId } : null,
-    response?.finalAmount ? { title: "EWASTE_FINAL_AMOUNT", value: response?.finalAmount } : null,
-    response?.pickUpDate ? { title: "EWASTE_PICKUP_DATE", value: response?.pickUpDate } : null,
+    response?.transactionId ? { title: "ES_EW_ACTION_TRANSACTION_ID", value: response?.transactionId } : null,
+    response?.finalAmount ? { title: "ES_EW_ACTION_FINALAMOUNT", value: response?.finalAmount } : null,
+    response?.pickUpDate ? { title: "EW_PICKUP_DATE", value: response?.pickUpDate } : null,
   ].filter(detail => detail !== null && detail.value !== null);
 
 
@@ -46,7 +45,7 @@ export const EWSearch = {
         values: [
           { title: "EW_APPLICANT_NAME", value: response?.applicant?.applicantName },
           { title: "EW_EMAIL", value: response?.applicant?.emailId },
-          { title: "EW_APPLICATION_NUMBER", value: response?.requestId },
+          { title: "EW_REQUEST_ID", value: response?.requestId },
           { title: "EW_MOBILE_NUMBER", value: response?.applicant?.mobileNumber },
           { title: "EW_ALT_NUMBER", value: response?.applicant?.altMobileNumber },
         ],

@@ -221,7 +221,7 @@ const EWASTECitizenApplicationDetails = () => {
           <StatusTable>
             <Row
               className="border-none"
-              label={t("EWASTE_APPLICATION_NO_LABEL")}
+              label={t("EW_REQUEST_ID")}
               text={ew_details?.requestId}
             />
           </StatusTable>
@@ -270,11 +270,11 @@ const EWASTECitizenApplicationDetails = () => {
             />
           </StatusTable> */}
 
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("EWASTE_TITLE_TRANSACTION_DETAILS")}</CardSubHeader>
+          <CardSubHeader style={{ fontSize: "24px" }}>{t("ES_EW_ACTION_TRANSACTION_ID")}</CardSubHeader>
           <StatusTable>
             {ew_details.calculatedAmount && <Row className="border-none" label={t("EWASTE_NET_PRICE")} text={ew_details?.calculatedAmount} />}
-            {ew_details.finalAmount && <Row className="border-none" label={t("EWASTE_FINAL_AMOUNT")} text={ew_details?.finalAmount} />}
-            {ew_details.transactionId && <Row className="border-none" label={t("EWASTE_TRANSACTION_ID")} text={ew_details?.transactionId} />}
+            {ew_details.finalAmount && <Row className="border-none" label={t("ES_EW_ACTION_FINALAMOUNT")} text={ew_details?.finalAmount} />}
+            {ew_details.transactionId && <Row className="border-none" label={t("ES_EW_ACTION_TRANSACTION_ID")} text={ew_details?.transactionId} />}
             {ew_details.pickUpDate && <Row className="border-none" label={t("EWASTE_PICKUP_DATE")} text={ew_details?.pickUpDate} />}
           </StatusTable>
 
