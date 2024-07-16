@@ -1,6 +1,7 @@
 package org.egov.search.repository;
 
-
+import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,8 +47,8 @@ public class SearchRepository {
         String query = searchUtils.buildQuery(searchRequest, definition.getSearchParams(), definition.getQuery(), preparedStatementValues);
 		log.info("Final Query: " + query);
 		//log.debug("preparedStatementValues: " + preparedStatementValues);
-		List<PGobject> maps = namedParameterJdbcTemplate.queryForList(query, preparedStatementValues, PGobject.class);
-
+ 		List<PGobject> maps = namedParameterJdbcTemplate.queryForList(query, preparedStatementValues, PGobject.class);
+ 		log.info("data before convertPGOBjects" + maps);
 		return searchUtils.convertPGOBjects(maps);
 	}
 	
@@ -59,6 +60,35 @@ public class SearchRepository {
 			//log.debug("preparedStatementValues: " + preparedStatementValues);
 			List<Bill> result = namedParameterJdbcTemplate.query(query, preparedStatementValues, rowMapper);
 			return result;
+		} catch (CustomException e) {
+			throw e;
+		}
+	}
+// 	public Integer  getUniqueCitizenCount() {
+	     
+// 		try {
+			
+// 			  String query = "select count(*) from eg_user where type=:CITIZEN";
+// 		        log.info("Final Query: " + query);
+// 		        String CITIZEN ="CITIZEN";
+// 				//log.debug("preparedStatementValues: " + preparedStatementValues);
+// 		        Map<String, String> params = Collections.singletonMap("CITIZEN", CITIZEN);
+// 		        int count = namedParameterJdbcTemplate.queryForObject(query, params, Integer.class);
+// 				return count;
+// 		} catch (CustomException e) {
+// 			throw e;
+// 		}
+// 	}
+	public Integer  getUniqueCitizenCount(String date) {
+	    
+		try {
+			 Timestamp timestamp = Timestamp.valueOf(date);
+			  String query = "select distinct(count(uuid)) from eg_user where type='CITIZEN' and active = true and createddate <='"+timestamp+"'";
+		        log.info("Final Query: " + query);
+		        String CITIZEN ="CITIZEN";
+		   		        Map<String, String> params = Collections.singletonMap("CITIZEN", CITIZEN);
+		     		        int count = namedParameterJdbcTemplate.queryForObject(query, params, Integer.class);
+				return count;
 		} catch (CustomException e) {
 			throw e;
 		}

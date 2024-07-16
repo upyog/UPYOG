@@ -20,7 +20,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 	
 	@Autowired
@@ -60,7 +65,16 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 				address.setPincode(rs.getString("ptadd_pincode"));
 				address.setLocality(rs.getString("ptadd_locality"));
 				User user = User.builder().id(rs.getString("ptown_userid")).build();
-								
+				Connection connection=new Connection();
+				try {
+					connection.setPropertyId(rs.getString("pid"));
+					connection.setOldConnectionNo(rs.getString("oldpid"));
+					connection.setStatus(rs.getString("conn_status"));
+					connection.setAdditionalDetails(rs.getObject("conn_add"));
+				} catch (Exception ex) {
+					log.info("exception in bill rowmapper",ex);
+					log.error(ex.getMessage());
+				}
 				bill = Bill.builder()
 					.id(billId)
 					.totalAmount(BigDecimal.ZERO)
@@ -81,6 +95,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.fileStoreId(rs.getString("b_filestoreid"))
 					.address(address)
 					.user(user)
+					.connection(connection)
 					.build();
 				
 				userIds.add(user.getId());

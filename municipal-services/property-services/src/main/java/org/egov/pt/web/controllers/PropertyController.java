@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.pt.config.PropertyConfiguration;
@@ -115,7 +116,7 @@ public class PropertyController {
     		{
     		if(owner.getDocuments()!=null && !owner.getDocuments().isEmpty())
     			for(Document document:owner.getDocuments())
-    				if(document.getDocumentType().contains("OWNER.SPECIALCATEGORYPROOF"))
+    				if((!StringUtils.isBlank(document.getDocumentType())) && document.getDocumentType().contains("OWNER.SPECIALCATEGORYPROOF"))
     				{
     					PropertyCriteria propertyCriteria=new PropertyCriteria();
     					propertyCriteria.setTenantId(owner.getTenantId());

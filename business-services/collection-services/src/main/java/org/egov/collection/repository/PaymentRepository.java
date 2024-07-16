@@ -8,6 +8,7 @@ import static org.egov.collection.repository.querybuilder.PaymentQueryBuilder.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.model.Payment;
 import org.egov.collection.model.PaymentDetail;
 import org.egov.collection.model.PaymentSearchCriteria;
@@ -325,25 +326,25 @@ status = new ArrayList<String>();
 		status.add(oldConnectionno.get(0));  }
 		else { status.add("No Value Found");  }
 		
-		if(plotSize.size()>0)                                                              
+		if(plotSize.size()>0 && !StringUtils.isBlank(plotSize.get(0)) )                                                              
 		status.add(plotSize.get(0));  
 		else
 			status.add("No Value Found");  
 		
 		
-		if(usageCategory.size()>0)                                                         
+		if(usageCategory.size()>0 && !StringUtils.isBlank(usageCategory.get(0)))                                                         
 		status.add(usageCategory.get(0)); 
 		else                                 
 			status.add("No value present");    
 		
 		
-		if(propertyid.size()>0)                                                            
+		if(propertyid.size()>0 && !StringUtils.isBlank(propertyid.get(0)))                                                            
 			status.add(propertyid.get(0));  
 		else
 			status.add("No value present");  
 		
 		
-		if(adress.size()>0)                                                                
+		if(adress.size()>0 && !StringUtils.isBlank(adress.get(0)))                                                                
 			status.add(adress.get(0));   
 		else                                 
 			status.add("No value present"); 
@@ -352,37 +353,32 @@ status = new ArrayList<String>();
 	
 	
 	
-	
-	
-	
-	
-	
-	public List<String> fetchOldConnectionNo(String consumerCode,String businessservice) {
+	public List<String> fetchOldConnectionNo(String consumerCode, String businessservice) {
 		List<String> res = new ArrayList<>();
 		String queryString = "";
-		Boolean Isapp=false;
+		Boolean Isapp = false;
 		if (consumerCode.contains("WS_AP"))
-			Isapp=true;
-if (Isapp) {
-		if(businessservice.equals("WS")) {
-			
-		 queryString = "select oldconnectionno from eg_ws_connection where applicationno='"+consumerCode+"'";
-		}else {
-			 queryString = "select oldconnectionno from eg_sw_connection where applicationno='"+consumerCode+"'";
+			Isapp = true;
+		if (Isapp) {
+			if (businessservice.equals("WS")) {
 
-		}}
-else {
-	if(businessservice.equals("WS")) {
-		
-		 queryString = "select oldconnectionno from eg_ws_connection where connectionno='"+consumerCode+"'";
-		}else {
-			 queryString = "select oldconnectionno from eg_sw_connection where connectionno='"+consumerCode+"'";
+				queryString = "select oldconnectionno from eg_ws_connection where applicationno='" + consumerCode + "'";
+			} else {
+				queryString = "select oldconnectionno from eg_sw_connection where applicationno='" + consumerCode + "'";
 
+			}
+		} else {
+			if (businessservice.equals("WS")) {
+
+				queryString = "select oldconnectionno from eg_ws_connection where connectionno='" + consumerCode + "'";
+			} else {
+				queryString = "select oldconnectionno from eg_sw_connection where connectionno='" + consumerCode + "'";
+
+			}
 		}
-}
-		log.info("Query: " +queryString);
+		log.info("Query: " + queryString);
 		try {
-		//	res = jdbcTemplate.queryForList(queryString, String.class);
+			// res = jdbcTemplate.queryForList(queryString, String.class);
 			res = namedParameterJdbcTemplate.query(queryString, new SingleColumnRowMapper<>(String.class));
 		} catch (Exception ex) {
 			log.error("Exception while reading bill scheduler status" + ex.getMessage());
@@ -390,35 +386,35 @@ else {
 		return res;
 	}
 	
-	public List<String> fetchLandArea(String consumerCode,String businessservice) {
+	public List<String> fetchLandArea(String consumerCode, String businessservice) {
 		List<String> res = new ArrayList<>();
 		Map<String, Object> preparedStatementValues = new HashMap<>();
-		String queryString = "";  
-		Boolean Isapp=false;
+		String queryString = "";
+		Boolean Isapp = false;
 		if (consumerCode.contains("WS_AP"))
-			Isapp=true;
-if (Isapp) {
-		if(businessservice.equals("WS")) {
-		 queryString = "select a2.landarea from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-				+ " where a1.applicationno = '"+consumerCode+"'";
-		}else {
-			 queryString = "select a2.landarea from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-						+ " where a1.applicationno = '"+consumerCode+"'";
+			Isapp = true;
+		if (Isapp) {
+			if (businessservice.equals("WS")) {
+				queryString = "select a2.landarea from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+						+ " where a1.applicationno = '" + consumerCode + "'";
+			} else {
+				queryString = "select a2.landarea from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+						+ " where a1.applicationno = '" + consumerCode + "'";
+			}
+		} else {
+			if (businessservice.equals("WS")) {
+				queryString = "select a2.landarea from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+						+ " where a1.connectionno = '" + consumerCode + "'";
+			} else {
+				queryString = "select a2.landarea from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
+						+ " where a1.connectionno = '" + consumerCode + "'";
+			}
 		}
-}
-else {
-	if(businessservice.equals("WS")) {
-		 queryString = "select a2.landarea from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-				+ " where a1.connectionno = '"+consumerCode+"'";
-		}else {
-			 queryString = "select a2.landarea from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-						+ " where a1.connectionno = '"+consumerCode+"'";
-		}
-}
-		log.info("Query: " +queryString);
+		log.info("Query: " + queryString);
 		try {
-			//res = jdbcTemplate.queryForList(queryString, String.class);
-			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+			// res = jdbcTemplate.queryForList(queryString, String.class);
+			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues,
+					new SingleColumnRowMapper<>(String.class));
 		} catch (Exception ex) {
 			log.error("Exception while reading bill scheduler status" + ex.getMessage());
 		}
@@ -627,22 +623,11 @@ else {
 		Map<String, Object> preparedStatementValues = new HashMap<>();
 		String queryString;
 		if (businesssrvice.contains("WS")) {
-			queryString = "select a2.usagecategory from eg_ws_connection a1 "
-					+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
-					+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-					+ " where a1.connectionno in (select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill "
-					+ "	where bill.id=pd.billid "
-				        + " and a2.status='ACTIVE'"
-					+ "	 and pd.receiptnumber='"+consumercode+"')";
+			queryString = "select a2.usagecategory  FROM eg_ws_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  where    a1.status='Active' and a1.connectionno   ='"+consumercode+"')";
 		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		} else {
-			queryString = "select a2.usagecategory from eg_sw_connection a1 "
-					+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
-					+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-					+ " where a1.connectionno in (select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill "
-					+ "	where bill.id=pd.billid "
-				        + " and a2.status='ACTIVE'"
-					+ "	 and pd.receiptnumber='"+consumercode+"')";
+			queryString = "select a2.usagecategory  FROM eg_sw_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  where    a1.status='Active' and a1.connectionno   ='"+consumercode+"')";
+
 			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		}
 		try {
@@ -662,47 +647,12 @@ else {
 		Map<String, Object> preparedStatementValues = new HashMap<>();
 		String queryString;
 		if (businesssrvice.contains("WS")) {
-			 queryString = "SELECT TRIM(BOTH ',' FROM CONCAT_WS(',', "
-			 		+ "                NULLIF(doorno, ''), "
-			 		+ "                NULLIF(plotno, ''), "
-			 		+ "                NULLIF(buildingname, ''), "
-			 		+ "                NULLIF(street, ''), "
-			 		+ "                NULLIF(landmark, ''), "
-			 		+ "                NULLIF(city, ''), "
-			 		+ "                NULLIF(district, ''), "
-			 		+ "                NULLIF(region, ''), "
-			 		+ "                NULLIF(pincode, '') "
-		
-			 		+ "            )) AS connectionno "
-			 		+ "FROM eg_ws_connection a1 "
-			 		+ "INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid "
-			 		+ "INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid  "
-			 		+ " where a1.connectionno in (select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill"
-						+ "	where bill.id=pd.billid "
-				               
-						+ " and pd.receiptnumber='"+consumercode+"')";
+			 queryString = "select concat(a3.doorno,',',a3.plotno,',',a3.buildingname,',',a3.street',',',a3.landmark,',',a3.district ,',',a3.region,',',a3.city )  FROM eg_ws_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  inner join eg_pt_address as a3 on a2.id=a3.propertyid where   a1.status='Active' and a1.connectionno   ='"+consumercode+"')";
 		log.info("Query for fetchAddressByApplicationno: " +queryString);
 		}
 		else {
-			 queryString = "SELECT TRIM(BOTH ',' FROM CONCAT_WS(',', "
-				 		+ "                NULLIF(doorno, ''), "
-				 		+ "                NULLIF(plotno, ''), "
-				 		+ "                NULLIF(buildingname, ''), "
-				 		+ "                NULLIF(street, ''), "
-				 		+ "                NULLIF(landmark, ''), "
-				 		+ "                NULLIF(city, ''), "
-				 		+ "                NULLIF(district, ''), "
-				 		+ "                NULLIF(region, ''), "
-				 		+ "                NULLIF(pincode, '') "
-			
-				 		+ "            )) AS connectionno "
-				 		+ "FROM eg_sw_connection a1 "
-				 		+ "INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid "
-				 		+ "INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid  "
-				 		+ " where a1.connectionno in (select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill"
-							+ "	where bill.id=pd.billid "
-				           
-							+ " and pd.receiptnumber='"+consumercode+"')";
+			 queryString = "select concat(a3.doorno,',',a3.plotno,',',a3.buildingname,',',a3.street',',',a3.landmark,',',a3.district ,',',a3.region,',',a3.city ) FROM eg_sw_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  inner join eg_pt_address as a3 on a2.id=a3.propertyid where   a1.status='Active' and a1.connectionno   ='"+consumercode+"')";
+
 				log.info("Query for fetchAddressByApplicationno: " +queryString);
 		}
 		try {
@@ -725,24 +675,11 @@ else {
 		Map<String, Object> preparedStatementValues = new HashMap<>();
 		String queryString;
 		if (businesssrvice.contains("WS")) {
-			queryString = "select property_id "
-					+ " FROM eg_ws_connection a1 "
-					+ " INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid "
-					+ " INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid "
-					+ " WHERE a1.connectionno in(select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill "
-					+ "	where bill.id=pd.billid "
-				        + " and a2.status='ACTIVE'"
-					+ "	 and pd.receiptnumber='"+consumercode+"')";
+			queryString = "select a1.property_id  FROM eg_ws_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid where    a1.status='Active' and a1.connectionno   ='"+consumercode+"')";
 		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		} else {
-			queryString = "select property_id "
-					+ " FROM eg_sw_connection a1 "
-					+ " INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid "
-					+ " INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid "
-					+ " WHERE a1.connectionno in(select bill.consumercode from egcl_paymentdetail pd, egcl_bill bill "
-					+ "	where bill.id=pd.billid "
-				        + " and a2.status='ACTIVE'"
-					+ "	 and pd.receiptnumber='"+consumercode+"')";
+			queryString = "select a1.property_id  FROM eg_sw_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid where    a1.status='Active' and a1.connectionno   ='"+consumercode+"')";
+
 			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		}
 		try {

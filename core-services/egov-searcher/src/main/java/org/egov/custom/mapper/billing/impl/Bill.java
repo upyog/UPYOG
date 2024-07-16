@@ -74,6 +74,12 @@ public class Bill {
 	@JsonProperty("tenantId")
 	private String tenantId;
 
+	@JsonProperty("pid")
+	private String pid;
+	
+	@JsonProperty("oldpid")
+	private String oldpid;
+	
 	@JsonProperty("fileStoreId")
 	private String fileStoreId;
 
@@ -138,5 +144,7 @@ public class Bill {
 	@JsonProperty("user")
 	private User user;	
 	
+	@JsonProperty("connection")
+	private Connection connection;	
 
 }

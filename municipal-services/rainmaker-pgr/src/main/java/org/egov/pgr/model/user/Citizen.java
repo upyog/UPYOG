@@ -26,7 +26,6 @@ public class Citizen {
 	private String name;
 	
 	@JsonProperty("permanentAddress")
-	
 	@Size(max=160)
 	private String address;
 	

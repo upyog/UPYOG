@@ -86,8 +86,8 @@ public class PropertyRepository {
 			query=queryBuilder.getPropertySearchQueryForDeafauterNotice(criteria,preparedStmtList);
 		else
 			query=queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, isPlainSearch, false);
-		
-		log.info("Query for Property search is " + query + " with parameters " +  preparedStmtList.toArray().toString());
+		if(log.isDebugEnabled())
+			log.debug("Query for Property search is " + query + " with parameters " +  preparedStmtList.toArray().toString());
 		if (isApiOpen)
 			return jdbcTemplate.query(query, preparedStmtList.toArray(), openRowMapper);
 		if(criteria.getIsDefaulterNoticeSearch())
@@ -299,8 +299,8 @@ public class PropertyRepository {
 
 		List<Object> preparedStatement = new ArrayList<>();
 		String query = queryBuilder.getLastExecutionDetail(criteria, preparedStatement);
-
-		log.info("\nQuery executed:" + query);
+		if(log.isDebugEnabled())
+			log.debug("\nQuery executed:" + query);
 		if (query == null)
 			return null;
 		EncryptionCount encryptionCount = jdbcTemplate.query(query, preparedStatement.toArray(), encryptionCountRowMapper);
