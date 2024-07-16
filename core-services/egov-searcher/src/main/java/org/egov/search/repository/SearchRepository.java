@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Comparator;
 import org.egov.custom.mapper.billing.impl.Bill;
 import org.egov.custom.mapper.billing.impl.BillRowMapper;
 import org.egov.search.model.Definition;
@@ -59,6 +59,13 @@ public class SearchRepository {
 			log.info("Final Query: " + query);
 			//log.debug("preparedStatementValues: " + preparedStatementValues);
 			List<Bill> result = namedParameterJdbcTemplate.query(query, preparedStatementValues, rowMapper);
+	        Map<String, String> business = (Map<String, String>) searchRequest.getSearchCriteria();
+	        
+	        String businesService=business.get("businesService");
+	        if (businesService.equalsIgnoreCase("SW")|| businesService.equalsIgnoreCase("WS") && !result.isEmpty())
+			Collections.sort(result.get(0).getBillDetails(), (b1, b2) -> b2.getFromPeriod().compareTo(b1.getFromPeriod()));
+
+
 			return result;
 		} catch (CustomException e) {
 			throw e;
