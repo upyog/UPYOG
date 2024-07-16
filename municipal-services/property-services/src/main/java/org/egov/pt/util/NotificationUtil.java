@@ -93,8 +93,10 @@ public class NotificationUtil {
         path = path.replace("{}", notificationCode);
         String message = "";
         try {
-        	log.info(localizationMessage);
-        	log.info(path);
+			if (log.isDebugEnabled()) {
+				log.debug(localizationMessage);
+				log.debug(path);
+			}
             Object messageObj = JsonPath.parse(localizationMessage).read(path);
             message = ((ArrayList<String>) messageObj).get(0);
         } catch (Exception e) {
@@ -195,7 +197,8 @@ public class NotificationUtil {
             for (SMSRequest smsRequest : smsRequestList) {
                 producer.push(config.getSmsNotifTopic(), smsRequest);
                 log.info("Sending SMS notification: ");
-                log.info("MobileNumber: " + smsRequest.getMobileNumber() + " Messages: " + smsRequest.getMessage());
+                if(log.isDebugEnabled())
+                	log.debug("MobileNumber: " + smsRequest.getMobileNumber() + " Messages: " + smsRequest.getMessage());
             }
         }
     }
@@ -594,9 +597,6 @@ public class NotificationUtil {
                 where(MODULE).is(moduleName).and(ACTION).is(action)
                 
         		);
-        log.info("Missing channels"+moduleName+action);
-        
-        log.info(masterDataFilter.toString());
         try {
             Object response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
             masterData = JsonPath.parse(response).read("$.MdmsRes.Channel.channelList[?].channelNames[*]", masterDataFilter);
