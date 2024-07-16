@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.producer.Producer;
@@ -17,6 +18,7 @@ import org.egov.tl.repository.builder.TLQueryBuilder;
 import org.egov.tl.repository.rowmapper.TLRowMapper;
 import org.egov.tl.util.TLConstants;
 import org.egov.tl.web.models.Accessory;
+import org.egov.tl.web.models.ApplicationStatusChangeRequest;
 import org.egov.tl.web.models.Document;
 import org.egov.tl.web.models.TradeLicense;
 import org.egov.tl.web.models.TradeLicenseRequest;
@@ -126,7 +128,8 @@ public class TLRepository {
 
 
         for (TradeLicense license : licenses) {
-            if (idToIsStateUpdatableMap.get(license.getId())) {
+            if (null != idToIsStateUpdatableMap
+            		&& BooleanUtils.isTrue(idToIsStateUpdatableMap.get(license.getId()))) {
                 licensesForUpdate.add(license);
             }
             else if(license.getAction().equalsIgnoreCase(ACTION_ADHOC))
@@ -212,6 +215,18 @@ public class TLRepository {
 		
 		namedParameterJdbcTemplate.update(updateQuery,inputs);
 		
+	}
+
+
+	public void updateStateOfApplicationApplied(ApplicationStatusChangeRequest applicationStatusChangeRequest) {
+		Map<String, Object> inputs = new HashMap<>();
+
+		inputs.put("status", applicationStatusChangeRequest.getApplicationStatus());
+		inputs.put("applicationNumber", applicationStatusChangeRequest.getApplicationNumber());
+		
+		String updateQuery = "UPDATE eg_tl_tradelicense set status =:status WHERE applicationnumber =:applicationNumber ";
+		
+		namedParameterJdbcTemplate.update(updateQuery,inputs);
 	}
     
 

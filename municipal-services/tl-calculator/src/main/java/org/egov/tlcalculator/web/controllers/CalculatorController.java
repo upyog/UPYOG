@@ -68,6 +68,11 @@ public class CalculatorController {
 			case businessService_BPA:
 				calculations = bpaCalculationService.calculate(calculationReq);
 				break;
+//			
+//			case TLCalculatorConstants.businessService_NewTL:
+//				calculations = calculationService.calculate(calculationReq, false);
+//				break;
+//				
 			default:
 				throw new CustomException("UNKNOWN_BUSINESSSERVICE", " Business Service not supported");
 		}

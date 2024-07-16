@@ -40,23 +40,32 @@
 
 package org.egov.hrms.web.controller;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.validation.Valid;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.hrms.service.EmployeeService;
+import org.egov.hrms.service.WorkflowService;
 import org.egov.hrms.web.contract.EmployeeRequest;
 import org.egov.hrms.web.contract.EmployeeResponse;
 import org.egov.hrms.web.contract.EmployeeSearchCriteria;
+import org.egov.hrms.web.contract.ProcessInstanceRequest;
 import org.egov.hrms.web.contract.RequestInfoWrapper;
 import org.egov.hrms.web.validator.EmployeeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -68,6 +77,9 @@ public class EmployeeController {
 	
 	@Autowired
 	private EmployeeValidator validator;
+	
+	@Autowired
+	private WorkflowService workflowService; 
 
 
 	/**
@@ -128,6 +140,12 @@ public class EmployeeController {
 		validator.validateEmployeeCountRequest(tenantId);
 		response = employeeService.getEmployeeCountResponse(requestInfo,tenantId);
 		return new ResponseEntity<>(response,HttpStatus.OK);
+	}
+	
+	@PostMapping("/workflow/_transition")
+	private ResponseEntity<?> workflowTransition(@RequestBody ProcessInstanceRequest processInstanceRequest) {
+		Object object = workflowService.workflowTransition(processInstanceRequest);
+		return new ResponseEntity<>(object,HttpStatus.OK);
 	}
 
 

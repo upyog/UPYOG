@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- <th:link href='https://fonts.googleapis.com/css?family=Karla' rel='stylesheet'> -->
+
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"
+	charset="UTF-8">
+</meta>
+<title>Document</title>
+<style>
+.title {
+	text-align: center;
+	text-decoration: underline;
+	margin-bottom: 30px;
+}
+
+.sign {
+	text-align: center;
+	margin-top: 60px;
+}
+
+.sign .inside {
+	position: relative;
+	margin-left: 450px;
+}
+
+.copy {
+	margin-bottom: 20px;
+}
+
+.content {
+	margin-bottom: 20px;
+}
+
+body {
+	box-sizing: border-box;
+	/* font-family: Karla; */
+	font-family: Inter;
+	font-size: small;
+}
+
+ol {
+	list-style-type: decimal;
+	padding-left: 20px;
+}
+
+p {
+	margin: 0;
+}
+
+.to {
+	margin-top: 30px;
+}
+
+.content2 {
+	margin-bottom: 20px;
+}
+
+.footer {
+	border-top: 2px solid green;
+	padding-top: 15px;
+	position: fixed;
+	top: 900px;
+	horizontal-align: middle;
+	
+}
+
+.img_parent .child1, .img_parent .child2 {
+	height: 150px;
+	  width: 170px;
+	  margin-bottom: 10px;
+}
+
+.img_parent .child1 {
+	 height: 150px;
+	width: 180px; 
+}
+
+.img_parent .child2 {
+	margin-top: -100px;
+	margin-left: 540px;
+	height: 110px;
+	width: 140px;
+}
+
+.child1, .child2 {
+	padding-top: -100px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+
+
+.child2 {
+	margin-top: -30px;
+	margin-left: 500px;
+}
+</style>
+</head>
+
+<body>
+	<div class="img_parent">
+
+		 <!--  <img class="child1" height="80px" width= "150px" src="https://imgtr.ee/images/2024/01/26/f5fa602ef8771936445d455446355a43.png" alt="f5fa602ef8771936445d455446355a43.png" border="0" /> -->
+		<img class="child1"  height="80px" width= "150px" th:src="${logo}" src="/qr.png"  alt="" />
+		 <img class="child2" th:src="${qrCode}" src="/logo.png" alt="" />
+
+	</div>
+	<BR></BR>
+	<div>
+		<p>
+			Ref: <span th:text="${applicationno}">NA</span>
+		</p>
+		<p>
+			Dated: <span th:text="${approvalDate}">07/11/2023</span>
+		</p>
+	</div>
+	<div class="title">
+		<u ><b>NO OBJECTION CERTIFICATE</b></u>
+	</div>
+
+
+
+	<!-- 
+	Technical Clearance is hereby granted for the constructing (reconstruction/extension/alteration) the Industrial Building as per the enclosed approved plans in Plot No:_____, Phase No:____ , of ___ Industrial Estate of Goa Industrial Development Corporation with the following conditions.
+	 -->
+	<div class="content">
+		<p>
+			Technical Clearance is hereby granted for the
+			<spam th:text="${serviceType}">constructing</spam>
+			of the Industrial Building as per the enclosed approved plans in Plot
+			No: <span th:text="${plotNo}">NA</span>, Phase: <span
+				th:text="${phaseNo}">NA</span>, in <span th:text="${estate}">NA</span>
+			Industrial Estate of Goa Industrial Development Corporation with the
+			following conditions:-
+		</p>
+		<ol>
+			<li>Construction shall be strictly as per the approved plans. No
+				changes shall be effected in the approved plans/approved built
+				spaces without the prior permission of this Authority.</li>
+			<li>The permission granted shall be revoked, if any information,
+				plans, calculations, documents and any other accompaniments of the
+				application are found incorrect or wrong at any stage after the
+				grant of the permission and the applicant will not be entitled for
+				any compensation.</li>
+
+			<li>The permission shall be revoked if found expedient to such
+				an action under the provision of Section 50 of The Goa Town and
+				Country Planning Act, 1974.</li>
+
+			<li>The development permission will not entitle the applicant
+				for making/laying any claim on water and any other connection from
+				the Government of Goa.</li>
+
+			<li>The Developer/applicant should display a sign board of
+				minimum size 1.00 mts. x 0.50 mts. with writing in black color on a
+				white background at the site, as required under the Regulations.</li>
+
+			<li>The soak pit should not be located within a distance of
+				15.00 meters from any other existing well in the plot area/plan.</li>
+			<li>The commencement and the completion of the work shall be
+				notified to the authority in writing in appropriate forms.</li>
+			<li>Completion Certificate has to be obtained from this
+				Authority before applying for Occupancy Certificate from the
+				licensing authority.</li>
+			<li>Storm water drain should be constructed along the boundary
+				of the affected plot abutting to the road.</li>
+			<li>Adequate Utility space for the dustbin, transformer etc.
+				should be reserved within the plot area. In case of any cutting of
+				sloppy land OR filling of low-lying land, beyond permissible limits,
+				prior permission of the IPDC (37B) shall be obtained before
+				the commencement of the works as per the provisions of Section 17(A) of
+				The Goa Town and Country Planning Act, 1974.</li>
+			<li>In case of compound walls, the gates shall open inwards only
+				and traditional access, if any passing through the property shall
+				not be blocked.</li>
+			<li>The Ownership of the property shall be verified by the
+				licensing body before the issuing of the licence.</li>
+
+		</ol>
+		<div class="content2">
+			<p>
+				THIS ORDER IS ISSUED WITH REFERENCE TO THE APPLICATION <span
+					th:text="${permitNo}">NA</span> DATED <span
+					th:text="${approvalDate}"></span> FROM <span
+					th:text="${lesseeName}">NA</span>.
+				
+			</p>
+			<br></br>
+			<p>THIS ORDER IS VALID FOR THREE YEARS FROM THE DATE OF ISSUE OF
+				CONSTRUCTION LICENCE, PROVIDED THE CONSTRUCTION LICENCE IS ISSUED
+				WITHIN THE PERIOD OF THREE YEARS.</p>
+		</div>
+
+	</div>
+
+	<!-- Industrial Planning & Development Committee (37-B) -->
+
+	<div class="sign">
+		<div class="inside">
+			<p class="first">
+				(<span th:text="${approverName}">NA</span>)
+			</p>
+			<p class="second">Member Secretary/</p>
+			<p class="third">Dy. Town Planner IPDC</p>
+			<p class="fourth">Goa-IDC</p>
+		</div>
+	</div>
+	<div class="to">
+		<p>TO</p>
+		<p th:text="${lesseeName}">Shri/Smt. Ravi teja</p>
+		<p th:text="${addressLine1}">Ram nagar Road</p>
+		<p th:text="${addressLine2}">BTM stage 2</p>
+		<p th:text="${estate}+' '+${pincode}">Goa - 560029</p>
+
+	</div>
+	<div class="footer">
+		<div class='parent'>
+			<div class='child1'>
+				<p>Plot No 13 A-2, EDC Complex</p>
+				<p>Patto Plaza, Panaji, Goa 403 001</p>
+			</div>
+			<div class='child2'>
+				<p>T: +91 832 2437470-73</p>
+				<p>E: goa-idc@goa.gov.in</p>
+				<p>W: www.goaidc.com</p>
+			</div>
+
+		</div>
+
+	</div>
+
+</body>
+
+</html>

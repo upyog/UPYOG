@@ -116,4 +116,10 @@ public class PropertiesManager {
 
 	@Value("${decryption.abac.enable}")
 	private Boolean isDecryptionEnable;
+
+	@Value("${egov.wf.host}")
+	private String wfHost;
+
+	@Value("${egov.wf.transition}")
+	private String wfTransition;
 }

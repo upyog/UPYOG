@@ -33,7 +33,7 @@ public class GarbageAccountController {
     }
 
     @PostMapping("/_search")
-    public ResponseEntity<List<GarbageAccount>> findById(@RequestBody SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
+    public ResponseEntity<List<GarbageAccount>> search(@RequestBody SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
         return ResponseEntity.ok(service.searchGarbageAccounts(searchCriteriaGarbageAccountRequest));
     }
 

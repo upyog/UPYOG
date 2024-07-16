@@ -46,7 +46,7 @@ public class TLQueryBuilder {
     private static final String QUERY = "SELECT tl.*,tld.*,tlunit.*,tlacc.*,tlowner.*," +
             "tladdress.*,tlapldoc.*,tlverdoc.*,tlownerdoc.*,tlinsti.*,tl.id as tl_id,tl.tenantid as tl_tenantId,tl.lastModifiedTime as " +
             "tl_lastModifiedTime,tl.createdBy as tl_createdBy,tl.lastModifiedBy as tl_lastModifiedBy,tl.createdTime as " +
-            "tl_createdTime,tl.filestoreid as tl_fileStoreId,tld.id as tld_id,tladdress.id as tl_ad_id,tld.createdBy as tld_createdBy," +
+            "tl_createdTime,tl.filestoreid as tl_fileStoreId,tld.id as tld_id,tladdress.id as tl_ad_id, tladdress.additionaldetail as tl_ad_additionaldetail,tld.createdBy as tld_createdBy," +
             "tlowner.id as tlowner_uuid,tlowner.active as useractive,tlowner.additionalDetails as oadditionaldetails, " +
             "tld.createdTime as tld_createdTime,tld.lastModifiedBy as tld_lastModifiedBy,tld.createdTime as " +
             "tld_createdTime,tlunit.id as tl_un_id,tlunit.tradeType as tl_un_tradeType,tlunit.uom as tl_un_uom,tlunit.active as tl_un_active," +
@@ -111,6 +111,14 @@ public class TLQueryBuilder {
                 builder.append(" AND tlowner.active = ? )");
                 preparedStmtList.add(true);
             }            
+            
+            List<String> status = criteria.getStatus();
+            if (!CollectionUtils.isEmpty(status)) {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" LOWER(tl.status) IN (").append(createQuery(status)).append(")");
+                addToPreparedStatement(preparedStmtList, status);
+            }
+            
         }
         
         else {

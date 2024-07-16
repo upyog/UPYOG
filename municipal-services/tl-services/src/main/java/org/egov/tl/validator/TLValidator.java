@@ -110,8 +110,9 @@ public class TLValidator {
                 errorMap.put("NULL_STRUCTURETYPE", " Structure Type cannot be null");
             if (license.getTradeLicenseDetail().getSubOwnerShipCategory() == null)
                 errorMap.put("NULL_SUBOWNERSHIPCATEGORY", " SubOwnership Category cannot be null");
-            if ((license.getTradeLicenseDetail().getAddress().getLocality() == null)||(license.getTradeLicenseDetail().getAddress().getLocality().getCode() == null))
-                errorMap.put("NULL_LOCALITY", " Locality cannot be null");
+         // if need to implement Locality/Ward/Zone/ULB validations
+//            if ((license.getTradeLicenseDetail().getAddress().getLocality() == null)||(license.getTradeLicenseDetail().getAddress().getLocality().getCode() == null))
+//                errorMap.put("NULL_LOCALITY", " Locality cannot be null");
 
             if (!errorMap.isEmpty())
                 throw new CustomException(errorMap);
@@ -323,7 +324,7 @@ public class TLValidator {
         switch (businessService) {
             case businessService_TL:
                 valideDates(request, mdmsData);
-                propertyValidator.validateProperty(request);
+//                propertyValidator.validateProperty(request);
                 validateTLSpecificNotNullFields(request);
                 break;
 

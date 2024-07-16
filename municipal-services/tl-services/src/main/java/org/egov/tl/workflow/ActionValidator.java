@@ -1,5 +1,6 @@
 package org.egov.tl.workflow;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
@@ -263,7 +264,8 @@ public class ActionValidator {
             String namefBusinessService=license.getBusinessService();
             if((namefBusinessService==null) || (namefBusinessService.equals(businessService_TL))||(namefBusinessService.equals(businessService_BPA) && (!license.getStatus().equalsIgnoreCase(STATUS_INITIATED))))
             {
-                if(!workflowService.isStateUpdatable(license.getStatus(), businessService)) {
+            	Boolean bol = workflowService.isStateUpdatable(license.getStatus(), businessService);
+                if(!BooleanUtils.isTrue(bol)) {
                     if (license.getId() == null)
                         errorMap.put("INVALID UPDATE", "Id of tradeLicense cannot be null");
                     if(license.getTradeLicenseDetail().getId()==null)

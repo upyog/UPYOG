@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8"/>
+		<meta name="viewport"
+		      content="width=device-width, initial-scale=1.0"/>
+		<title>Document</title>
+		<style>
+            body {
+                width: 100%;
+                margin: 0;
+            }
+ 
+            .image p {
+                margin: 0px;
+                padding-left: 15px;
+                font-size: 12px;
+            }
+ 
+            .content {
+                width: 85%;
+                margin-left: 40px;
+            }
+ 
+            .first_content {
+                margin-top: 10px;
+                position: relative;
+            }
+ 
+            .date {
+                position: absolute;
+                right: 0px;
+                top: 0;
+            }
+ 
+            p {
+                margin: 0px;
+            }
+ 
+            .designation,
+            .subject,
+            .salutation,
+            .contentOfApplication {
+                margin-top: 30px;
+            }
+ 
+            .subject {
+                text-align: justify;
+                /* display: inline-flex; */
+            }
+ 
+            .request,
+            .thankYou,
+            .yoursFaithful {
+                margin-top: 25px;
+            }
+ 
+            .enclosed {
+                clear: both;
+            }
+ 
+            .subject_detail {
+                font-weight: bold;
+                text-decoration: underline;
+                /* display: inline-block; */
+                /* width: 96%; */
+                vertical-align: text-top;
+            }
+ 
+            .contentOfApplication {
+                word-spacing: 5px;
+                line-height: 25px;
+                text-align: justify;
+            }
+ 
+            .yoursFaithful {
+                float: right;
+                clear: both;
+                margin-bottom: 30px;
+                width: 40%;
+                text-align: center;
+            }
+ 
+            .pdf_footer {
+                margin-top: 90px;
+                border-top: 2px solid #45852e;
+                padding-top: 10px;
+                font-weight: bold;
+                width: 97%;
+                margin-left: 1%;
+                margin-right: 1%;
+                position: relative;
+            }
+ 
+            .right_side,
+            .left_side {
+                display: inline-block;
+                vertical-align: text-top;
+                position: absolute;
+                top: 10px;
+            }
+ 
+            .right_side {
+                /* float: right; */
+                position: absolute;
+                right: 0;
+                text-align: right;
+            }
+ 
+            .img_parent .child1,
+            .img_parent .child2 {
+                height: 150px;
+                width: 170px;
+                margin-bottom: 10px;
+            }
+ 
+            .img_parent .child1 {
+                height: 150px;
+                width: 180px;
+            }
+ 
+            .img_parent .child2 {
+                margin-top: -100px;
+                margin-left: 540px;
+                height: 110px;
+                width: 140px;
+            }
+ 
+            .child1,
+            .child2 {
+                padding-top: -100px;
+                display: inline-block;
+                vertical-align: middle;
+            }
+ 
+            .sub-text {
+                font-size: 12px;
+            }
+ 
+            .none {
+                text-decoration: none;
+                font-weight: 300;
+            }
+ 
+            .main-content {
+                margin-top: 80px;
+            }
+ 
+            .bold {
+                font-weight: bold;
+            }
+        </style>
+	</head>
+	<body>
+		<div class="img_parent">
+			<img class="child1"
+			     height="80px"
+			     width="150px"
+			     th:src="${logo}"
+			     alt=""/>
+			<p class="sub-text">A Government of Goa Undertaking</p>
+		</div>
+		<div class="content">
+			<div class="first_content">
+				<div>No: <span th:text="${applicationNo}">NA</span></div>
+				<div class="date">Date : <span th:text="${date}">NA</span></div>
+			</div>
+			<div class="designation">
+				<p>To,</p>
+				<p>The Sub-Registrar,</p>
+				<p>Office of the Sub-Registrar of Salcete,</p>
+				<p>Margo Goa 403 601.</p>
+			</div>
+			<div class="subject"
+			     style="position: relative">
+				<p style="position: absolute; left: 0; top: 0; margin: 0">Sub:</p>
+				<span class="subject_detail"
+				      style="position: absolute; left: 50px; top: 0; margin: 0">Registration of <span th:text="${valueOfDeedType}">NA</span> in respect of Plot No. <span th:text="${plotNo}">NA</span>. admeasuring <span th:text="${area}">NA</span> at <span th:text="${estate}">NA</span>, Phase <span th:text="${phase}">NA</span>.</span>
+			</div>
+			<div class="main-content">
+				<div class="salutation">Sir,</div>
+				<div class="contentOfApplication">
+                    We are enclosing herewith Original <span th:text="${valueOfDeedType}">NA</span> for the purpose of registration in respect of Plot No. <span th:text="${plotNo}">NA</span> admeasuring <span th:text="${area}">NA</span> Allotted to
+                    <b> <span th:text="${enterpriseName}">NA</span></b>, at <span th:text="${estate}">NA</span>, Phase-<span th:text="${phase}">NA</span>.
+                </div>
+				<div class="request">The registration fee, if any, will be borne by the party concerned.</div>
+				<div class="thankYou">Thanking you,</div>
+			</div>
+			<div class="yoursFaithful">
+				<div style="display: inline-block">Yours faithfully,</div>
+				<br/>
+				<div style="text-align: center; margin-top: 100px; display: inline-block">
+					<p>(<span th:text="${MDName}">NA</span>, IAS)</p>
+					<p>Managing Director</p>
+				</div>
+			</div>
+			<div class="enclosed bold">Encl: As above</div>
+		</div>
+		<div class="pdf_footer">
+			<div class="left_side">
+				<div>Plot no:13 A-2, EDC Complex</div>
+				<div>Patto Plaza, Panaji, Goa 403 001</div>
+			</div>
+			<div class="right_side">
+				<div>T: +91 832 2437470-73</div>
+				<div>E: goa-idc@goa.gov.in</div>
+				<div>W:www.goaidc.com</div>
+			</div>
+		</div>
+	</body>
+</html>

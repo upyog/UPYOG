@@ -1,6 +1,26 @@
 package org.egov.tl.service;
 
-import java.util.*;
+import static org.egov.tl.util.TLConstants.ACTION_STATUS_APPROVED;
+import static org.egov.tl.util.TLConstants.STATUS_APPLIED;
+import static org.egov.tl.util.TLConstants.STATUS_APPROVED;
+import static org.egov.tl.util.TLConstants.STATUS_INITIATED;
+import static org.egov.tl.util.TLConstants.STATUS_PENDINGFORMODIFICATION;
+import static org.egov.tl.util.TLConstants.STATUS_REJECTED;
+import static org.egov.tl.util.TLConstants.STATUS_VERIFIED;
+import static org.egov.tl.util.TLConstants.TRADE_LICENSE_MODULE_CODE;
+import static org.egov.tl.util.TLConstants.businessService_BPA;
+import static org.egov.tl.util.TLConstants.businessService_TL;
+import static org.egov.tracer.http.HttpUtils.isInterServiceCall;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,10 +31,21 @@ import org.egov.tl.service.notification.EditNotificationService;
 import org.egov.tl.util.TLConstants;
 import org.egov.tl.util.TradeUtil;
 import org.egov.tl.validator.TLValidator;
-import org.egov.tl.web.models.*;
+import org.egov.tl.web.models.ApplicationStatusChangeRequest;
+import org.egov.tl.web.models.Difference;
+import org.egov.tl.web.models.OwnerInfo;
+import org.egov.tl.web.models.TradeLicense;
+import org.egov.tl.web.models.TradeLicenseRequest;
+import org.egov.tl.web.models.TradeLicenseResponse;
+import org.egov.tl.web.models.TradeLicenseSearchCriteria;
+import org.egov.tl.web.models.TradeUnit;
+import org.egov.tl.web.models.UpdateTLStatusCriteriaRequest;
+import org.egov.tl.web.models.contract.PDFRequest;
 import org.egov.tl.web.models.contract.ProcessInstance;
 import org.egov.tl.web.models.contract.ProcessInstanceRequest;
 import org.egov.tl.web.models.contract.ProcessInstanceResponse;
+import org.egov.tl.web.models.contract.Alfresco.DMSResponse;
+import org.egov.tl.web.models.contract.Alfresco.DmsRequest;
 import org.egov.tl.web.models.user.UserDetailResponse;
 import org.egov.tl.web.models.workflow.BusinessService;
 import org.egov.tl.workflow.ActionValidator;
@@ -24,16 +55,15 @@ import org.egov.tl.workflow.WorkflowService;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-
-import static org.egov.tl.util.TLConstants.*;
-import static org.egov.tracer.http.HttpUtils.isInterServiceCall;
-
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.jayway.jsonpath.JsonPath;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -74,6 +104,12 @@ public class TradeLicenseService {
 
     @Autowired
     private TLRepository tlRepository;
+    
+    @Autowired
+    private ReportService reportService;
+
+    @Autowired
+    private AlfrescoService alfrescoService;
 
     @Value("${workflow.bpa.businessServiceCode.fallback_enabled}")
     private Boolean pickWFServiceNameFromTradeTypeOnly;
@@ -125,7 +161,7 @@ public class TradeLicenseService {
                 break;
         }
        enrichmentService.enrichTLCreateRequest(tradeLicenseRequest, mdmsData);
-       tlValidator.validateCreate(tradeLicenseRequest, mdmsData, billingSlabs);
+//       tlValidator.validateCreate(tradeLicenseRequest, mdmsData, billingSlabs);
        log.info("request is " + tradeLicenseRequest);
        userService.createUser(tradeLicenseRequest, false);
        calculationService.addCalculation(tradeLicenseRequest);
@@ -140,11 +176,12 @@ public class TradeLicenseService {
 //                   wfIntegrator.callWorkFlow(tradeLicenseRequest);
 //               break;
 //       }
-        repository.save(tradeLicenseRequest);
        
-        //trigger wf 
-        workflowIntegrator.callWorkFlow(tradeLicenseRequest);
+       repository.save(tradeLicenseRequest);
 
+       //trigger wf 
+       workflowIntegrator.callWorkFlow(tradeLicenseRequest);
+       
         return tradeLicenseRequest.getLicenses();
 	}
 
@@ -617,18 +654,19 @@ public class TradeLicenseService {
 
 
 
-	public ProcessInstanceResponse updateState(String action, String businessId, String tenantId, RequestInfoWrapper requestInfoWrapper) {
+	public ProcessInstanceResponse updateState(UpdateTLStatusCriteriaRequest updateTLStatusCriteriaRequest) {
 		
 		ProcessInstance processInstance = ProcessInstance.builder()
-				.tenantId(tenantId)
+				.tenantId(updateTLStatusCriteriaRequest.getUpdateTLStatusCriteria().getTenantId())
 				.businessService(businessService_TL)
 				.moduleName("TL")
-				.businessId(businessId)
-				.action(action)
+				.businessId(updateTLStatusCriteriaRequest.getUpdateTLStatusCriteria().getBusinessId())
+				.action(updateTLStatusCriteriaRequest.getUpdateTLStatusCriteria().getAction())
+				.comment(updateTLStatusCriteriaRequest.getUpdateTLStatusCriteria().getComment())
 				.build();
 		
 		ProcessInstanceRequest processInstanceRequest = ProcessInstanceRequest.builder()
-				.requestInfo(requestInfoWrapper.getRequestInfo())
+				.requestInfo(updateTLStatusCriteriaRequest.getRequestInfo())
 				.processInstances(Arrays.asList(processInstance))
 				.build();
 		
@@ -640,13 +678,141 @@ public class TradeLicenseService {
 		}
 		
 		//update status of trade license
-		if(StringUtils.equalsIgnoreCase(action, "VERIFY")) {
-			tlRepository.updateTlStatus(businessId, "VERIFIED");
-		}else if(StringUtils.equalsIgnoreCase(action, "APPROVE")) {
-			tlRepository.updateTlStatus(businessId, "APPROVED");
+		if(StringUtils.equalsIgnoreCase(updateTLStatusCriteriaRequest.getUpdateTLStatusCriteria().getAction(), "VERIFY")) {
+			tlRepository.updateTlStatus(updateTLStatusCriteriaRequest.getUpdateTLStatusCriteria().getBusinessId(), "VERIFIED");
+		}else if(StringUtils.equalsIgnoreCase(updateTLStatusCriteriaRequest.getUpdateTLStatusCriteria().getAction(), "APPROVE")) {
+			tlRepository.updateTlStatus(updateTLStatusCriteriaRequest.getUpdateTLStatusCriteria().getBusinessId(), "APPROVED");
 		}
 		
 		return response;
+	}
+
+
+
+
+
+	public ApplicationStatusChangeRequest updateStateOfApplication(ApplicationStatusChangeRequest applicationStatusChangeRequest) {
+		
+		// search TL
+		TradeLicenseSearchCriteria criteria = TradeLicenseSearchCriteria.builder()
+				.tenantId(applicationStatusChangeRequest.getTenantId())
+				.businessService(businessService_TL)
+				.applicationNumber(applicationStatusChangeRequest.getApplicationNumber())
+				.build();
+		List<TradeLicense> licenses = repository.getLicenses(criteria);
+		
+		if(CollectionUtils.isEmpty(licenses)) {
+			throw new RuntimeException("No Trade license found for given input.");
+		}
+		TradeLicense tl = licenses.get(0);
+		
+		// validate current status
+		if(StringUtils.equals(applicationStatusChangeRequest.getApplicationStatus(), STATUS_APPLIED)) {
+			if(!(StringUtils.equals(tl.getStatus(), STATUS_INITIATED)
+				|| StringUtils.equals(tl.getStatus(), ACTION_STATUS_APPROVED)
+				|| StringUtils.equals(tl.getStatus(), STATUS_PENDINGFORMODIFICATION))) {
+			throw new RuntimeException("Currently Status can't be changed to "+STATUS_APPLIED);
+			}
+		}
+		
+		
+		tlRepository.updateStateOfApplicationApplied(applicationStatusChangeRequest);
+		return applicationStatusChangeRequest;
+	}
+
+
+
+
+
+	public void processResponse(TradeLicenseResponse response) {
+		
+		// categorize each license
+		if (!CollectionUtils.isEmpty(response.getLicenses())
+				) {
+			response.setApplicationInitiated((int) response.getLicenses().stream()
+					.filter(license -> StringUtils.equalsIgnoreCase(STATUS_INITIATED, license.getStatus())).count());
+			response.setApplicationApplied((int) response.getLicenses().stream()
+					.filter(license -> StringUtils.equalsIgnoreCase(STATUS_APPLIED, license.getStatus())).count());
+			response.setApplicationVerified((int) response.getLicenses().stream()
+					.filter(license -> StringUtils.equalsIgnoreCase(STATUS_VERIFIED, license.getStatus())).count());
+			response.setApplicationRejected((int) response.getLicenses().stream()
+					.filter(license -> StringUtils.equalsIgnoreCase(STATUS_REJECTED, license.getStatus())).count());
+			response.setApplicationApproved((int) response.getLicenses().stream()
+					.filter(license -> StringUtils.equalsIgnoreCase(STATUS_APPROVED, license.getStatus()))
+					.count());
+		}
+		
+		
+	}
+	
+	public Resource createNoSavePDF(TradeLicense tradeLicense, RequestInfo requestInfo) {
+		
+		// generate pdf
+		PDFRequest pdfRequest = generatePdfRequestByTradeLicense(tradeLicense, requestInfo);
+		Resource resource = reportService.createNoSavePDF(pdfRequest);
+		
+		
+		//upload pdf
+		DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, tradeLicense, requestInfo);
+		try {
+			DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest, requestInfo);
+		} catch (IOException e) {
+			throw new RuntimeException("Upload Attachment failed." + e.getMessage());
+		}
+		
+		return resource;
+	}
+
+
+	private DmsRequest generateDmsRequestByTradeLicense(Resource resource, TradeLicense tradeLicense,
+			RequestInfo requestInfo) {
+
+//		MultipartFile multipartFile = convertResourceToMultipartFile(resource, "filename");
+
+		DmsRequest dmsRequest = DmsRequest.builder().userId("123").objectId("1222").description("TL certificate")
+				.id("").type("PDF").objectName("TL").comments("Signed Certificate").status(STATUS_APPROVED).file(resource)
+				.build();
+
+		return dmsRequest;
+	}
+
+
+	private PDFRequest generatePdfRequestByTradeLicense(TradeLicense tradeLicense, RequestInfo requestInfo) {
+		
+		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map2 = generateDataForTradeLicensePdfCreate();
+		
+		map.put("tl", map2);
+		
+		PDFRequest pdfRequest = PDFRequest.builder()
+				.RequestInfo(requestInfo)
+				.key("TradeLicense")
+				.tenantId("hp")
+				.data(map)
+				.build();
+		
+		return pdfRequest;
+	}
+
+
+	private Map<String, Object> generateDataForTradeLicensePdfCreate() {
+
+		Map<String, Object> tlObject = new HashMap<>();
+
+		tlObject.put("applicationno", "PB-TL-2024-07-04-000098");
+		tlObject.put("qrCodeText", "your_qr_code_text_value");
+		tlObject.put("approvalDate", 1730636800000L);
+		tlObject.put("serviceType", "your_service_type_value");
+		tlObject.put("plotNo", "your_plot_no_value");
+		tlObject.put("phaseNo", "your_phase_no_value");
+		tlObject.put("permitNo", "your_permit_no_value");
+		tlObject.put("lesseeName", "your_lessee_name_value");
+		tlObject.put("approverName", "your_approver_name_value");
+		tlObject.put("estate", "your_estate_value");
+		tlObject.put("addressLine1", "your_address_line1_value");
+		tlObject.put("addressLine2", "your_address_line2_value");
+		tlObject.put("pincode", "your_pincode");
+		return tlObject;
 	}
 
 }
