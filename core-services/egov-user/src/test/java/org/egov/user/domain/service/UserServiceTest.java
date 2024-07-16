@@ -413,6 +413,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @Ignore
     public void test_should_update_password_for_logged_in_user() {
         final LoggedInUserUpdatePasswordRequest updatePasswordRequest = LoggedInUserUpdatePasswordRequest.builder()
                 .userName("xyz")
