@@ -1725,26 +1725,42 @@ const NewAsset
             {formData?.asset?.assettype?.code === "IT" && (
               <React.Fragment>
               <CardLabel>{`${t("AST_BRAND") + " *"}`}</CardLabel>
-              <Controller
+
+            {/* Do NOT delete this comment as we can add the brands in MDMS so that we can convert this from text to dropdown */}
+
+              {/* <Controller
                 control={control}
                 name={"brand"}
                 defaultValue={brand}
                 rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
                 render={(props) => (
                   <Dropdown
-
                     className="form-field"
                     selected={brand}
                     select={setbrand}
                     option={brandsname}
                     optionKey="i18nKey"
                     placeholder={"Select"}
-
                     t={t}
                   />
-
                 )}
-
+              /> */}
+              <TextInput
+                t={t}
+                type={"text"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="brand"
+                value={brand}
+                onChange={setBrand}
+                style={{ width: "50%" }}
+                ValidationRequired={false}
+                {...(validation = {
+                  isRequired: false,
+                  pattern: "^[a-zA-Z ]+$",
+                  type: "tel",
+                  title: t("MATCH_THE_FORMAT"),
+                })}
               />
               <CardLabel>{`${t("AST_INVOICE_DATE") + " *"}`}</CardLabel>
                <TextInput
@@ -1842,9 +1858,9 @@ const NewAsset
                 ValidationRequired={false}
                 {...(validation = {
                   isRequired: true,
-                  pattern: "^[0-9]+$",
-                  type: "tel",
-                  title: "",
+                  pattern: "^[a-zA-Z0-9/-]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
                 })}
               />
              
