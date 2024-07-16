@@ -101,13 +101,14 @@
       {
         select: (data) => {
             const formattedData = data?.["ASSET"]?.["Department"]
-            return formattedData;
+            const activeData = formattedData?.filter(item => item.active === true);
+            return activeData;
         },
     }); 
     let departNamefromMDMS = [];
 
     departmentName && departmentName.map((departmentname) => {
-      departNamefromMDMS.push({i18nKey: `AST_${departmentname.code}`, code: `${departmentname.code}`, value: `${departmentname.name}`})
+      departNamefromMDMS.push({i18nKey: `${departmentname.name}`, code: `${departmentname.code}`, value: `${departmentname.name}`})
     }) 
 
     
@@ -481,8 +482,8 @@
                 ValidationRequired={false}
                 {...(validation = {
                   isRequired: true,
-                  pattern: "^[a-zA-Z ]+$",
-                  type: "tel",
+                  pattern: "^[a-zA-Z0-9/-]*$",
+                  type: "text",
                   title: t("PT_NAME_ERROR_MESSAGE"),
                 })}
               />
@@ -505,7 +506,7 @@
                 </div></div>
               <TextInput
                 t={t}
-                type={"text"}
+                type={"textarea"}
                 isMandatory={false}
                 optionKey="i18nKey"
                 name="Assetdescription"
@@ -514,9 +515,9 @@
                 style={{ width: "50%" }}
                 ValidationRequired={false}
                 {...(validation = {
-                  isRequired: false,
-                  pattern: "^[a-zA-Z ]+$",
-                  type: "tel",
+                  isRequired: true,
+                  pattern: "^[a-zA-Z0-9/-]*$",
+                  type: "text",
                   title: t("PT_NAME_ERROR_MESSAGE"),
                 })}
               />
