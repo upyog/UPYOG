@@ -73,7 +73,7 @@ public class PropertyRepository {
 
 	@Autowired
 	private PropertyAuditEncRowMapper propertyAuditEncRowMapper;
-	private EncProperties config;
+	private PropertyConfiguration config;
 
 	public List<String> getPropertyIds(Set<String> ownerIds, String tenantId) {
 
