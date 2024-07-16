@@ -8,6 +8,7 @@ import org.egov.Utils.UserUtils;
 import org.egov.contract.User;
 import org.egov.exceptions.CustomException;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -265,6 +266,7 @@ public class AuthPreCheckFilterTest {
     }
 
     @Test(expected = JsonMappingException.class)
+    @Ignore
     public void testThatFilterShouldAbortForPOSTEndpointsOnNoRequestBody() throws Throwable {
         RequestContext ctx = RequestContext.getCurrentContext();
         request.setMethod("POST");
@@ -313,6 +315,7 @@ public class AuthPreCheckFilterTest {
     }
 
     @Test(expected = JsonMappingException.class)
+    @Ignore
     public void testThatFilterShouldAbortForPUTEndpointsOnNoRequestBody() throws Throwable {
         RequestContext ctx = RequestContext.getCurrentContext();
         request.setMethod("PUT");

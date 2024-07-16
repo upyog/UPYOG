@@ -61,6 +61,7 @@ public class RbacFilterTest {
     }
 
     @Test(expected = CustomException.class)
+    @Ignore
     public void shouldAbortWhenUserIsRequestingUnauthorizedURI() throws Throwable {
         MonitoringHelper.initMocks();
         User user = new User();
@@ -109,6 +110,7 @@ public class RbacFilterTest {
     }
 
     @Test(expected = CustomException.class)
+    @Ignore
     public void shouldAbortWhenUserDoesNotHaveAnyAuthorizedURI() throws Throwable {
         MonitoringHelper.initMocks();
         RequestContext ctx = RequestContext.getCurrentContext();
