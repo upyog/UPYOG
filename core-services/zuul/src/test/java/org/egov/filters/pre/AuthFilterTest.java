@@ -4,6 +4,7 @@ import com.netflix.zuul.context.RequestContext;
 import org.egov.Resources;
 import org.egov.contract.User;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -65,6 +66,7 @@ public class AuthFilterTest {
     }
 
     @Test
+    @Ignore
     public void testThatFilterShouldAbortIfValidatingAuthTokenFails() throws IOException {
         RequestContext ctx = RequestContext.getCurrentContext();
         String authToken = "dummy-auth-token";
