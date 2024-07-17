@@ -533,24 +533,24 @@ public class WorkflowNotificationService {
 			Boolean isConnectionNoPresent = !StringUtils.isEmpty(sewerageConnectionRequest.getSewerageConnection().getConnectionNo());
 
 			if (messageToReplace.contains("{Owner Name}"))
-				messageToReplace = messageToReplace.replace("{Owner Name}", mobileAndName.getValue());
+				messageToReplace = messageToReplace.replace("<Owner Name>", mobileAndName.getValue());
 			if (messageToReplace.contains("{Service}"))
-				messageToReplace = messageToReplace.replace("{Service}", SWConstants.SERVICE_FIELD_VALUE_NOTIFICATION);
+				messageToReplace = messageToReplace.replace("<Service>", SWConstants.SERVICE_FIELD_VALUE_NOTIFICATION);
 
 			if (messageToReplace.contains("{Application number}"))
-				messageToReplace = messageToReplace.replace("{Application number}",
+				messageToReplace = messageToReplace.replace("<Application number>",
 						sewerageConnectionRequest.getSewerageConnection().getApplicationNo());
 
 			if (messageToReplace.contains("{Connection number}"))
-				messageToReplace = messageToReplace.replace("{Connection number}", isConnectionNoPresent ? sewerageConnectionRequest.getSewerageConnection().getConnectionNo() : "NA");
+				messageToReplace = messageToReplace.replace("<Connection number>", isConnectionNoPresent ? sewerageConnectionRequest.getSewerageConnection().getConnectionNo() : "NA");
 
 			if(messageToReplace.contains("{Reason for Rejection}"))
-				messageToReplace = messageToReplace.replace("{Reason for Rejection}",  sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getComment());
+				messageToReplace = messageToReplace.replace("<Reason for Rejection>",  sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getComment());
 
 			if (messageToReplace.contains("{Application download link}")) {
 				String actionLink = config.getNotificationUrl() + config.getViewHistoryLink();
 				actionLink = actionLink.replace(applicationNumberReplacer, sewerageConnectionRequest.getSewerageConnection().getApplicationNo());
-				messageToReplace = messageToReplace.replace("{Application download link}", sewerageServicesUtil.getShortenedURL(actionLink));
+				messageToReplace = messageToReplace.replace("<Application download link>", sewerageServicesUtil.getShortenedURL(actionLink));
 			}
 
 			if (messageToReplace.contains("{mseva URL}"))
