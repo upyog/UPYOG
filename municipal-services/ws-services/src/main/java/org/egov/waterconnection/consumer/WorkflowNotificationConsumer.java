@@ -11,6 +11,7 @@ import org.egov.waterconnection.service.WorkflowNotificationService;
 import org.slf4j.MDC;
 import org.egov.waterconnection.util.EncryptionDecryptionUtil;
 import org.egov.waterconnection.web.models.OwnerInfo;
+import org.egov.waterconnection.web.models.SearchCriteria;
 import org.egov.waterconnection.web.models.WaterConnection;
 import org.egov.waterconnection.web.models.WaterConnectionRequest;
 import org.springframework.beans.factory.annotation.Autowired;

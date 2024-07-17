@@ -214,6 +214,9 @@ public class WSConfiguration {
 
     @Value("${egov.collection.host}")
     private String collectionHost;
+    
+	@Value("${reconnection.ws.workflow.name}")
+	private String wsWorkflowReconnectionName;
 
     @Value("${state.level.tenant.id}")
     private String stateLevelTenantId;
@@ -234,14 +237,27 @@ public class WSConfiguration {
     @Value("${egov.disconnect.businessservice}")
     private String disconnectBusinessServiceName;
 
+    @Value("${egov.reconnect.businessservice}")
+    private String reconnectBusinessServiceName;
+    
     @Value("${egov.idgen.wdcid.name}")
     private String waterDisconnectionIdGenName;
 
     @Value("${egov.idgen.wdcid.format}")
     private String waterDisconnectionIdGenFormat;
-
+    
     @Value("${egov.receipt.disconnection.businessservice.topic}")
     private String receiptDisconnectionBusinessservice;
+
+    @Value("${egov.receipt.reconnection.businessservice.topic}")
+    private String receiptReconnectionBusinessservice;
+    
+	/*
+	 * @Value("${egov.idgen.wrcid.name}") private String waterReconnectionIdGenName;
+	 * 
+	 * @Value("${egov.idgen.wrcid.format}") private String
+	 * waterResconnectionIdGenFormat;
+	 */
 
     @Value("${egov.water.connection.document.access.audit.kafka.topic}")
     private String documentAuditTopic;

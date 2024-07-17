@@ -130,6 +130,9 @@ public class WaterDaoImpl implements WaterDao {
             if (WCConstants.EXECUTE_DISCONNECTION.equalsIgnoreCase(reqAction)) {
                 waterConnectionRequest.getWaterConnection().setStatus(Connection.StatusEnum.INACTIVE);
             }
+			if ((waterConnectionRequest.isReconnectRequest() || waterConnectionRequest.getWaterConnection().getApplicationType().equalsIgnoreCase(WCConstants.WATER_RECONNECTION)) && WCConstants.ACTIVATE_CONNECTION_CONST.equalsIgnoreCase(reqAction)) {
+				waterConnectionRequest.getWaterConnection().setStatus(Connection.StatusEnum.ACTIVE);
+			}
             waterConnectionProducer.push(waterConnectionRequest.getWaterConnection().getTenantId(), updateWaterConnection, waterConnectionRequest);
         } else {
             waterConnectionProducer.push(waterConnectionRequest.getWaterConnection().getTenantId(), wsConfiguration.getWorkFlowUpdateTopic(), waterConnectionRequest);
