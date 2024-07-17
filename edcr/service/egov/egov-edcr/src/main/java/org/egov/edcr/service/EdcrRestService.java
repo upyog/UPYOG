@@ -679,9 +679,8 @@ public class EdcrRestService {
             if (edcrRequest != null && edcrRequest.getTenantId().equalsIgnoreCase(stateCity.getCode())) {
                 final Map<String, String> params = new ConcurrentHashMap<>();
 
-                StringBuilder queryStr = new StringBuilder();
-                searchAtStateTenantLevel(edcrRequest, userInfo, userId, onlyTenantId, params, isStakeholder);
-                final Query query = getCurrentSession().createSQLQuery(queryStr.toString()).setFirstResult(offset)
+                String queryStr = searchAtStateTenantLevel(edcrRequest, userInfo, userId, onlyTenantId, params, isStakeholder);
+                final Query query = getCurrentSession().createSQLQuery(queryStr).setFirstResult(offset)
                         .setMaxResults(limit);
                 LOG.info(queryStr.toString());
 
