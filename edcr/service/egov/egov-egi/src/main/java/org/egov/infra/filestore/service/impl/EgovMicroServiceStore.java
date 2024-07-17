@@ -248,50 +248,6 @@ public class EgovMicroServiceStore implements FileStoreService {
     }
 
     @Override
-    public FileStoreMapper store(InputStream fileStream, String fileName, String mimeType, String moduleName,
-            String tenantId, boolean closeStream) {
-
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            fileName = normalizeString(fileName);
-            mimeType = normalizeString(mimeType);
-            moduleName = normalizeString(moduleName);
-            File f = new File(fileName);
-            FileUtils.copyToFile(fileStream, f);
-            if (closeStream) {
-                fileStream.close();
-            }
-            if (LOG.isDebugEnabled())
-                LOG.debug(String.format("Uploading .....  %s    with size %s   ", f.getName(), f.length()));
-
-            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-            MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-            map.add("file", new FileSystemResource(f.getName()));
-            map.add("tenantId", StringUtils.isEmpty(tenantId) ? ApplicationThreadLocals.getTenantID() : tenantId);
-            map.add("module", moduleName);
-            HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<MultiValueMap<String, Object>>(map,
-                    headers);
-            ResponseEntity<StorageResponse> result = restTemplate.postForEntity(url, request, StorageResponse.class);
-            FileStoreMapper fileMapper = new FileStoreMapper(result.getBody().getFiles().get(0).getFileStoreId(),
-                    fileName);
-            if (LOG.isDebugEnabled())
-                LOG.debug(String.format("Upload completed for  %s   with filestoreid   ", f.getName(),
-                        fileMapper.getFileStoreId()));
-
-            fileMapper.setContentType(mimeType);
-            if (closeStream)
-                Files.deleteIfExists(Paths.get(fileName));
-
-            return fileMapper;
-        } catch (RestClientException | IOException e) {
-            LOG.error("Error while Saving to FileStore", e);
-
-        }
-        return null;
-
-    }
-
-    @Override
     public File fetch(FileStoreMapper fileMapper, String moduleName) {
         return this.fetch(fileMapper.getFileStoreId(), moduleName);
     }

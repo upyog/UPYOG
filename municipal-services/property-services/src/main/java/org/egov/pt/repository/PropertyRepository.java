@@ -1,4 +1,3 @@
-
 package org.egov.pt.repository;
 
 import java.util.ArrayList;
@@ -350,3 +349,4 @@ public class PropertyRepository {
 		return jdbcTemplate.query(query, criteria.getPropertyIds().toArray(), propertyAuditEncRowMapper);
 	}
 }
+
