@@ -68,10 +68,13 @@ public class WorkflowNotificationConsumer {
 				}
 			}
 			if(!isCitizenRole) {
-				sewerageConnection.setConnectionHolders(encryptionDecryptionUtil.decryptObject(sewerageConnection.getConnectionHolders(),
-						WNS_OWNER_PLAIN_DECRYPTION_MODEL, OwnerInfo.class, sewerageConnectionRequest.getRequestInfo()));
-				sewerageConnectionRequest.setSewerageConnection(encryptionDecryptionUtil.decryptObject(sewerageConnection,
-						WNS_PLUMBER_PLAIN_DECRYPTION_MODEL, SewerageConnection.class, sewerageConnectionRequest.getRequestInfo()));
+//				sewerageConnection.setConnectionHolders(encryptionDecryptionUtil.decryptObject(sewerageConnection.getConnectionHolders(),
+//						WNS_OWNER_PLAIN_DECRYPTION_MODEL, OwnerInfo.class, sewerageConnectionRequest.getRequestInfo()));
+//				sewerageConnectionRequest.setSewerageConnection(encryptionDecryptionUtil.decryptObject(sewerageConnection,
+//						WNS_PLUMBER_PLAIN_DECRYPTION_MODEL, SewerageConnection.class, sewerageConnectionRequest.getRequestInfo()));
+				
+				sewerageConnection.setConnectionHolders(sewerageConnection.getConnectionHolders());
+				sewerageConnectionRequest.setSewerageConnection(sewerageConnection);
 			}
 			
 			log.info("sewerageConnectionRequest is"+ sewerageConnectionRequest);
