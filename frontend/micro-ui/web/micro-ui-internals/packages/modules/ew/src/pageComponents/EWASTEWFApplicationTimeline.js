@@ -130,7 +130,7 @@ const EWASTEWFApplicationTimeline = (props) => {
                         //label={checkpoint.state ? t(`WF_${businessService}_${checkpoint.state}`) : "NA"}
                         label={t(
                           // `ES_EWASTE_COMMON_STATUS_${data?.processInstances[index].state?.["state"]}${timelineStatusPostfix}`
-                          `ES_EWASTE_COMMON_STATUS_${data?.processInstances[index].state?.["state"]}`
+                          `${data?.processInstances[index].state?.["state"]}`
                         )}
                         customChild={getTimelineCaptions(checkpoint)}
                       />
