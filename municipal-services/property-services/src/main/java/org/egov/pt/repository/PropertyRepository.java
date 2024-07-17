@@ -73,7 +73,7 @@ public class PropertyRepository {
 
 	@Autowired
 	private PropertyAuditEncRowMapper propertyAuditEncRowMapper;
-	private EncProperties config;
+	private PropertyConfiguration config;
 
 	public List<String> getPropertyIds(Set<String> ownerIds, String tenantId) {
 
@@ -177,9 +177,11 @@ public class PropertyRepository {
 	public List<Property> getPropertiesWithOwnerInfo(PropertyCriteria criteria, RequestInfo requestInfo, Boolean isInternal) {
 
 		List<Property> properties;
+		
+		String stateLevelTenant=config.getStateLevelTenantId()!=null?config.getStateLevelTenantId():"pg";
 
 		if(criteria.getTenantId() == null)
-		{	criteria.setTenantId(config.getStateLevelTenantId()); }
+		{	criteria.setTenantId(stateLevelTenant); }
 
 		Boolean isOpenSearch = isInternal ? false : util.isPropertySearchOpen(requestInfo.getUserInfo());
 
