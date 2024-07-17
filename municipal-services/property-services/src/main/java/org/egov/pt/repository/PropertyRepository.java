@@ -72,6 +72,8 @@ public class PropertyRepository {
 
 	@Autowired
 	private PropertyAuditEncRowMapper propertyAuditEncRowMapper;
+	
+	@Autowired
 	private PropertyConfiguration config;
 
 	public List<String> getPropertyIds(Set<String> ownerIds, String tenantId) {
