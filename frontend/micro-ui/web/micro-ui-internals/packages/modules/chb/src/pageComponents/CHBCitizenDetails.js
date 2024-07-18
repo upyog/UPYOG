@@ -10,13 +10,12 @@ const CHBCitizenDetails
 
   let index =window.location.href.charAt(window.location.href.length - 1);
   
-   
   let validation = {};
-
+  const user = Digit.UserService.getUser().info;
   const [applicantName, setName] = useState((formData.ownerss && formData.ownerss[index] && formData.ownerss[index].applicantName) || formData?.ownerss?.applicantName || "");
   const [emailId, setEmail] = useState((formData.ownerss && formData.ownerss[index] && formData.ownerss[index].emailId) || formData?.ownerss?.emailId || "");
   const [mobileNumber, setMobileNumber] = useState(
-    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].mobileNumber) || formData?.ownerss?.mobileNumber || ""
+    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].mobileNumber) || formData?.ownerss?.mobileNumber || user?.mobileNumber
   );
   const [alternateNumber, setAltMobileNumber] = useState(
     (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].alternateNumber) || formData?.ownerss?.alternateNumber || ""

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, Card, CardSubHeader, Dropdown, TextArea } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, Card, CardSubHeader, TextArea, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import Timeline from "../components/CHBTimeline";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 
@@ -19,6 +19,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
   const [landmark, setLandmark] = useState((formData.address && formData.address[index] && formData.address[index].landmark) || formData?.address?.landmark || "");
 
   const [localities, setLocalities] = useState([]);
+  const [showToast, setShowToast] = useState(null);  // State for Toast
 
   const { data: fetchedLocalities, isLoading: isLoadingLocalities } = Digit.Hooks.useBoundaryLocalities(
     city?.code,
@@ -30,7 +31,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
   );
 
   useEffect(() => {
-    if (pincode) {
+    if (pincode.length === 6) {
       const matchedCity = allCities?.find((city) => city?.pincode?.some((pin) => pin == pincode));
       if (matchedCity) {
         setCity(matchedCity);
@@ -42,11 +43,13 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
         }
       } else {
         setCity(null);  // Clear city if no match found
+        setLocality(null);  // Clear locality if no match found
+        setShowToast({ error: true, label: t("CHB_PINCODE_INVALID") });
       }
     } else {
-      setCity(null);  // Clear city when pincode is empty
-      setLocality(null);  // Clear locality when pincode is empty
-      setLocalities([]);  // Clear localities list when pincode is empty
+      setCity(null);  // Clear city when pincode is less than 6
+      setLocality(null);  // Clear locality when pincode is less than 6
+      setLocalities([]);  // Clear localities list when pincode is less than 6
     }
   }, [pincode, allCities, fetchedLocalities]);
 
@@ -85,8 +88,8 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
   const setAddressPincode = (e) => {
     const newPincode = e.target.value.slice(0, 6); // Truncate input to first 6 characters
     setPincode(newPincode);
-    
-    if (newPincode === "") {
+
+    if (newPincode.length < 6) {
       setCity(null);       // Clear city
       setLocality(null);   // Clear locality
       setLocalities([]);   // Clear localities list
@@ -132,6 +135,16 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
     }
   };
 
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(null);
+      }, 2000); // Close toast after 2 seconds
+
+      return () => clearTimeout(timer); // Clear timer on cleanup
+    }
+  }, [showToast]);
+
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={3} /> : null}
@@ -141,7 +154,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
         </CardSubHeader>
-        <ChbCancellationPolicy count={value?.bookingSlotDetails.length}/>
+        <ChbCancellationPolicy count={value?.bookingSlotDetails.length} />
       </Card>
       <FormStep
         config={config}
@@ -172,41 +185,30 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             maxLength={6}
           />
           <CardLabel>{`${t("CHB_CITY")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
-          <Controller
-            control={control}
-            name={"city"}
-            defaultValue={city}
-            rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-            render={(props) => (
-              <Dropdown
-                className="form-field"
-                selected={city}
-                select={setCity}
-                placeholder={"Select City"}
-                optionKey="i18nKey"
-                t={t}
-                isDisabled
-              />
-            )}
+          <TextInput
+            t={t}
+            type={"text"}
+            isMandatory={false}
+            optionKey="i18nKey"
+            name="city"
+            value={city?.name || ""}
+            placeholder={"City Auto Select"}
+            style={{ width: "86%" }}
+            onChange={setCity}
+            disabled={true}
           />
           <CardLabel>{`${t("CHB_LOCALITY")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
-          <Controller
-            control={control}
-            name={"locality"}
-            defaultValue={locality}
-            rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-            render={(props) => (
-              <Dropdown
-                className="form-field"
-                selected={locality}
-                select={selectLocality}
-                option={localities.sort((a, b) => a.name.localeCompare(b.name))}
-                placeholder={"Select Locality"}
-                optionKey="name"
-                t={t}
-                isLoading={isLoadingLocalities}
-              />
-            )}
+          <TextInput
+            t={t}
+            type={"text"}
+            isMandatory={false}
+            optionKey="i18nKey"
+            name="locality"
+            value={locality?.name || ""}
+            placeholder={"Locality Auto Select"}
+            style={{ width: "86%" }}
+            onChange={selectLocality}
+            disabled={true}
           />
           <CardLabel>{`${t("CHB_STREET_NAME")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
           <TextInput
@@ -219,14 +221,12 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             placeholder={"Enter Street Name"}
             onChange={setApplicantStreetName}
             style={{ width: "86%" }}
-            ValidationRequired = {true}
+            ValidationRequired={true}
             {...(validation = {
-              // isRequired: true,
-              pattern: "^[a-zA-Z ]+$",
+              pattern: "^[a-zA-Z0-9 ,\\-]+$",
               type: "text",
-              title: t("CHB_NAME_ERROR_MESSAGE"),
+              title: t("CHB_STREET_NAME_ERROR_MESSAGE"),
             })}
-         
           />
           <CardLabel>{`${t("CHB_HOUSE_NO")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
           <TextInput
@@ -236,9 +236,16 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             optionKey="i18nKey"
             name="houseNo"
             value={houseNo}
-            placeholder={"Enter HouseNo"}
+            placeholder={"Enter House No"}
             onChange={setApplicantHouseNo}
             style={{ width: "86%" }}
+            ValidationRequired={true}
+            {...(validation = {
+              isRequired: true,
+              pattern: "^[a-zA-Z0-9 ,\\-]+$",
+              type: "text",
+              title: t("CHB_HOUSE_NO_ERROR_MESSAGE"),
+            })}
           />
           <CardLabel>{`${t("CHB_LANDMARK")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
           <TextArea
@@ -254,13 +261,23 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
-              pattern: "^[a-zA-Z ]+$",
+              pattern: "^[a-zA-Z0-9 ,\\-]+$",
               type: "textarea",
-              title: t("_ERROR_MESSAGE"),
+              title: t("CHB_LANDMARK_ERROR_MESSAGE"),
             })}
           />
         </div>
       </FormStep>
+      {showToast && (
+        <Toast
+          error={showToast.error}
+          warning={showToast.warning}
+          label={t(showToast.label)}
+          onClose={() => {
+            setShowToast(null);
+          }}
+        />
+      )}
     </React.Fragment>
   );
 };

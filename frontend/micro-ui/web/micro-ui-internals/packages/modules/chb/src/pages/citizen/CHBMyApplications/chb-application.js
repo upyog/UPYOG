@@ -5,6 +5,16 @@ import { Link } from "react-router-dom";
 
 const ChbApplication = ({ application, tenantId, buttonLabel }) => {
   const { t } = useTranslation();
+  const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
+    {
+      tenantId: application?.tenantId,
+      businessService: "chb-services",
+      consumerCodes: application?.bookingNo,
+      isEmployee: false,
+    },
+    { enabled: application?.bookingNo ? true : false }
+  );
+  console.log("reciept_data",reciept_data);
   const getBookingDateRange = (bookingSlotDetails) => {
     if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
       return t("CS_NA");
@@ -18,6 +28,7 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
       return startDate && endDate ? `${startDate}  -  ${endDate}` : t("CS_NA");
     }
   };
+
   return (
     <Card>
       <KeyNote keyValue={t("CHB_BOOKING_NO")} note={application?.bookingNo} />
@@ -26,12 +37,20 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
       <KeyNote keyValue={t("CHB_BOOKING_DATE")} note={getBookingDateRange(application?.bookingSlotDetails)} />
       <KeyNote keyValue={t("PT_COMMON_TABLE_COL_STATUS_LABEL")} note={t(`CHB_${application?.bookingStatus}`)} />
       <div>
-      <Link to={`/digit-ui/citizen/chb/application/${application?.bookingNo}/${application?.tenantId}`}>
-        <SubmitBar label={buttonLabel} />
-      </Link>
-      <Link to={{ pathname: `/digit-ui/citizen/payment/my-bills/${"chb-services"}/${application?.bookingNo}`, state: { tenantId:application?.tenantId, bookingNo :application?.bookingNo } }}  style={{ margin: "20px" }}>
-        <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
+        <Link to={`/digit-ui/citizen/chb/application/${application?.bookingNo}/${application?.tenantId}`}>
+          <SubmitBar label={buttonLabel} />
         </Link>
+        {reciept_data?.Payments[0]?.paymentStatus !== "DEPOSITED" && (
+          <Link
+            to={{
+              pathname: `/digit-ui/citizen/payment/my-bills/${"chb-services"}/${application?.bookingNo}`,
+              state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo },
+            }}
+            style={{ margin: "20px" }}
+          >
+            <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
+          </Link>
+        )}
       </div>
     </Card>
   );

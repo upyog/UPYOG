@@ -22,6 +22,7 @@ import getChbAcknowledgementData from "../../getChbAcknowledgementData";
 import getChbPaymentReceipt from "../../getChbPaymentReceipt";
 import CHBWFApplicationTimeline from "../../pageComponents/CHBWFApplicationTimeline";
 import CHBDocument from "../../pageComponents/CHBDocument";
+import ApplicationTable from "../../components/inbox/ApplicationTable";
 import { pdfDownloadLink } from "../../utils";
 
 import get from "lodash/get";
@@ -87,7 +88,8 @@ const CHBApplicationDetails = () => {
     },
     { enabled: acknowledgementIds ? true : false }
   );
-
+  console.log("reciept_data-->",reciept_data);
+  console.log("reciept_data1234-->",acknowledgementIds);
   //WorkFlow
   if (!chb_details.workflow) {
     let workflow = {
@@ -118,6 +120,12 @@ const CHBApplicationDetails = () => {
     const applications = application || {}; // getting application details
     const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
     const acknowldgementDataAPI = await getChbPaymentReceipt({ ...applications }, tenantInfo, t);
+    Digit.Utils.pdf.generate(acknowldgementDataAPI);
+  };
+  const getChbAcknowledgement = async () => {
+    const applications = application || {}; // getting application details
+    const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
+    const acknowldgementDataAPI = await getChbAcknowledgementData({ ...applications }, tenantInfo, t);
     Digit.Utils.pdf.generate(acknowldgementDataAPI);
   };
 
@@ -156,9 +164,14 @@ const CHBApplicationDetails = () => {
 
   // Payment Receipt Button on Acknowledgement Page
   dowloadOptions.push({
-    label: t("CHB_PAYMENT_RECEIPT"),
-    onClick: () => getPaymentReceiptData(),
+    label: t("CHB_DOWNLOAD_ACK_FORM"),
+    onClick: () => getChbAcknowledgement(),
   });
+  // dowloadOptions.push({
+  //   label: t("CHB_PAYMENT_RECEIPT"),
+  //   onClick: () => getPaymentReceiptData(),
+  // });
+ 
 
   //commented out, need later for download receipt and certificate
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
@@ -167,41 +180,55 @@ const CHBApplicationDetails = () => {
       onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
     });
 
-  if (reciept_data?.Payments[0]?.paymentStatus === "DEPOSITED")
-    dowloadOptions.push({
-      label: t("CHB_CERTIFICATE"),
-      onClick: () => printCertificate(),
-    });
+  // if (reciept_data?.Payments[0]?.paymentStatus === "DEPOSITED")
+  //   dowloadOptions.push({
+  //     label: t("CHB_CERTIFICATE"),
+  //     onClick: () => printCertificate(),
+  //   });
     
-    const getBookingDateRange = (bookingSlotDetails) => {
-      if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
-        return t("CS_NA");
+  //   const getBookingDateRange = (bookingSlotDetails) => {
+  //     if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
+  //       return t("CS_NA");
+  //     }
+  //     const startDate = bookingSlotDetails[0]?.bookingDate;
+  //     const endDate = bookingSlotDetails[bookingSlotDetails.length - 1]?.bookingDate;
+  //     if (startDate === endDate) {
+  //       return startDate; // Return only the start date
+  //     } else {
+  //       // Format date range as needed, for example: "startDate - endDate"
+  //       return startDate && endDate ? `${endDate} - ${startDate} ` : t("CS_NA");
+  //     }
+  //   };
+  //  const getBookingTimeRange = (bookingSlotDetails) => {
+  //     if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
+  //       return "10:00 - 11:59"; // Default time range if details are not present
+  //     }
+  //     const startTime = bookingSlotDetails[0]?.bookingFromTime;
+  //     // const endTime = bookingSlotDetails[bookingSlotDetails.length - 1]?.bookingToTime;
+  //     const length = bookingSlotDetails.length;
+  //     let defaultEndTime = "11:59"; // Default end time for length 1
+  //     if (length === 2) {
+  //       defaultEndTime = "23:59"; // End time for length 2
+  //     } else if (length === 3) {
+  //       defaultEndTime = "71:59"; // End time for length 3
+  //     }
+  //     // Return formatted time range
+  //     return startTime ? `${startTime} - ${defaultEndTime}` : t("CS_NA");
+  //   };
+    const columns = [
+      { Header: `${t("CHB_HALL_NAME")}` + "/" + `${t("CHB_PARK")}`, accessor: "communityHallCode" },
+      { Header: `${t("CHB_HALL_CODE")}`, accessor: "hallCode" },
+      { Header: `${t("CHB_BOOKING_DATE")}`, accessor: "bookingDate" },
+      { Header: `${t("PT_COMMON_TABLE_COL_STATUS_LABEL")}`, accessor: "bookingStatus" }
+    ];
+    const slotlistRows = chb_details?.bookingSlotDetails?.map((slot) => (
+      {
+        communityHallCode: chb_details?.communityHallCode,
+        hallCode:slot.hallCode,
+        bookingDate:slot.bookingDate + " (" + slot.bookingFromTime + " - " + slot.bookingToTime + ")",
+        bookingStatus:slot.status
       }
-      const startDate = bookingSlotDetails[0]?.bookingDate;
-      const endDate = bookingSlotDetails[bookingSlotDetails.length - 1]?.bookingDate;
-      if (startDate === endDate) {
-        return startDate; // Return only the start date
-      } else {
-        // Format date range as needed, for example: "startDate - endDate"
-        return startDate && endDate ? `${endDate} - ${startDate} ` : t("CS_NA");
-      }
-    };
-   const getBookingTimeRange = (bookingSlotDetails) => {
-      if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
-        return "10:00 - 11:59"; // Default time range if details are not present
-      }
-      const startTime = bookingSlotDetails[0]?.bookingFromTime;
-      // const endTime = bookingSlotDetails[bookingSlotDetails.length - 1]?.bookingToTime;
-      const length = bookingSlotDetails.length;
-      let defaultEndTime = "11:59"; // Default end time for length 1
-      if (length === 2) {
-        defaultEndTime = "23:59"; // End time for length 2
-      } else if (length === 3) {
-        defaultEndTime = "71:59"; // End time for length 3
-      }
-      // Return formatted time range
-      return startTime ? `${startTime} - ${defaultEndTime}` : t("CS_NA");
-    };
+    )) || [];
   return (
     <React.Fragment>
       <div>
@@ -236,12 +263,12 @@ const CHBApplicationDetails = () => {
             <Row className="border-none" label={t("CHB_PURPOSE_DESCRIPTION")} text={chb_details?.purposeDescription || t("CS_NA")} />
           </StatusTable>
 
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("SLOT_DETAILS")}</CardSubHeader>
+          {/* <CardSubHeader style={{ fontSize: "24px" }}>{t("SLOT_DETAILS")}</CardSubHeader>
             <StatusTable>
             <Row className="border-none" label={t("CHB_COMMUNITY_HALL_NAME")} text={chb_details?.communityHallCode || t("CS_NA")} />
             <Row className="border-none" label={t("CHB_BOOKING_DATE")} text={getBookingDateRange(chb_details?.bookingSlotDetails) || t("CS_NA")} />
             <Row className="border-none" label={t("CHB_BOOKING_TIME")} text={getBookingTimeRange(chb_details?.bookingSlotDetails) || t("CS_NA")} />
-            </StatusTable>
+            </StatusTable> */}
           <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_ADDRESS_DETAILS")}</CardSubHeader>
             <StatusTable>
               <Row className="border-none" label={t("CHB_PINCODE")} text={chb_details?.address?.pincode || t("CS_NA")} />
@@ -259,7 +286,22 @@ const CHBApplicationDetails = () => {
             <Row className="border-none" label={t("CHB_BANK_BRANCH_NAME")} text={chb_details?.applicantDetail?.bankBranchName || t("CS_NA")} />
             <Row className="border-none" label={t("CHB_ACCOUNT_HOLDER_NAME")} text={chb_details?.applicantDetail?.accountHolderName || t("CS_NA")} />
           </StatusTable>
-
+          <CardSubHeader style={{ fontSize: "24px" }}>{t("SLOT_DETAILS")}</CardSubHeader>
+          <ApplicationTable
+                t={t}
+                data={slotlistRows}
+                columns={columns}
+                getCellProps={(cellInfo) => ({
+                  style: {
+                    minWidth: "150px",
+                    padding: "10px",
+                    fontSize: "16px",
+                    paddingLeft: "20px",
+                  },
+                })}
+                isPaginationRequired={false}
+                totalRecords={slotlistRows.length}
+              />
           <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_DOCUMENTS_DETAILS")}</CardSubHeader>
           <StatusTable>
             <Card style={{display: "flex", flexDirection: "row" }}>

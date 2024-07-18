@@ -399,6 +399,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
                fontSize: "16px",
              },
            })}
+           isPaginationRequired={false}
            totalRecords={data.length}
          />
          </Card>
