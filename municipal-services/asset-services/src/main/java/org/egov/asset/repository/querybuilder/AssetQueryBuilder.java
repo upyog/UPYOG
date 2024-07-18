@@ -20,7 +20,8 @@ public class AssetQueryBuilder {
 
     private static final String QUERY = "SELECT * FROM eg_asset_assetdetails asset" 
     		+ LEFT_OUTER_JOIN_STRING + "eg_asset_addressdetails address on asset.id = address.asset_id"
-    		+ LEFT_OUTER_JOIN_STRING + "eg_asset_document doc on asset.id = doc.assetid ";
+    		+ LEFT_OUTER_JOIN_STRING + "eg_asset_document doc on asset.id = doc.assetid"
+    		+ LEFT_OUTER_JOIN_STRING + "eg_asset_assignmentdetails assign on asset.id = assign.assetid ";
     		//+ " ORDER BY eg_asset_assetdetails.createdtime DESC";
 
     private final String paginationWrapper = "SELECT * FROM "

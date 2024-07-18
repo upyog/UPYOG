@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.egov.asset.web.models.Address;
 import org.egov.asset.web.models.Asset;
+import org.egov.asset.web.models.AssetAssignment;
 import org.egov.asset.web.models.AuditDetails;
 import org.egov.asset.web.models.Boundary;
 import org.egov.asset.web.models.Document;
@@ -121,6 +122,14 @@ public class AssetRowMapper implements ResultSetExtractor<List<Asset>> {
 	        auditDetails.setLastModifiedBy(rs.getString("lastModifiedBy"));
 	        auditDetails.setLastModifiedTime(rs.getLong("lastModifiedTime"));
 	        asset.setAuditDetails(auditDetails);
+	        
+	    // Mapping AssignmDetails
+	    AssetAssignment assetAssignment = new AssetAssignment();
+	    	assetAssignment.setAssignedUserName(rs.getString("assignedUserName"));
+	    	assetAssignment.setAssignedDate(rs.getLong("assignedDate"));
+	    	assetAssignment.setReturnDate(rs.getLong("assignedDate"));
+	    	assetAssignment.setIsAssigned(rs.getBoolean("isAssigned"));
+	    	asset.setAssetAssignment(assetAssignment);
 
         // Mapping additionalDetails
         PGobject additionalDetails = (PGobject) rs.getObject("additionalDetails");
