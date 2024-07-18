@@ -71,10 +71,14 @@ class UserService {
     }
     console.log("Data Value "+JSON.stringify(data));
     console.log("User Login URL"+url)
-    console.log("User Login Data"+ JSON.stringify(options))
+   
     let response = await fetch(url, options);
+    console.log("User Response status"+ response.status)
+   
     if(response.status === 200) {
+     // console.log("User Response"+ JSON.stringify(await response.json()))
       let body = await response.json();
+      console.log("User Response"+ JSON.stringify(body))
       return {
         authToken: body.access_token,
         refreshToken: body.refresh_token,
