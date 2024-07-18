@@ -633,7 +633,7 @@ config:
         
   - name: 'builds/upyog/municipal-services/pqm'
     build:
-      - work-dir: 'pqm'
+      - work-dir: 'municipal-services/pqm'
         image-name: 'pqm-service'
         dockerfile: 'build/maven/Dockerfile'
       - work-dir: 'municipal-services/pqm/src/main/resources/db'
@@ -641,13 +641,13 @@ config:
 
   - name: 'builds/upyog/municipal-services/pqm-scheduler'
     build:
-      - work-dir: 'pqm-scheduler'
+      - work-dir: 'municipal-services/pqm-scheduler'
         image-name: 'pqm-scheduler'
-        dockerfile: 'municipal-services/pqm-scheduler/Dockerfile'
+        dockerfile: 'pqm-scheduler/Dockerfile'
 
   - name: 'builds/upyog/municipal-services/pqm-anomaly-finder'
     build:
-      - work-dir: 'pqm-anomaly-finder'
+      - work-dir: 'municipal-services/pqm-anomaly-finder'
         image-name: 'pqm-anomaly-finder'
         dockerfile: 'build/maven/Dockerfile'
       - work-dir: 'municipal-services/pqm-anomaly-finder/src/main/resources/db'
