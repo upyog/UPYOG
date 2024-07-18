@@ -26,7 +26,7 @@ public class Citizen {
 	private String name;
 	
 	@JsonProperty("permanentAddress")
-	@Size(max=160)
+	
 	private String address;
 	
 	@Pattern(regexp="(^$|[0-9]{10})")
