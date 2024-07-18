@@ -52,7 +52,7 @@ export const EWASTEMyApplications = () => {
 
   return (
     <React.Fragment>
-      <Header>{`${t("CS_TITLE_MY_APPLICATIONS")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
+      <Header>{`${t("EW_MY_REQUEST")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
       <div>
         {applicationsList?.length > 0 &&
           applicationsList.map((application, index) => (

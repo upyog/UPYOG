@@ -66,8 +66,8 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
         label: t("EWASTE_DUPLICATE_PRODUCT_ERROR_MESSAGE")
       });
     }
-
-
+    setProductName("");
+    setProductQuantity("");
     // setPrlistName([...prlistName, { code: productName.code, i18nKey: productName.i18nKey, price: productName.price }]);
     // setPrlistQuantity([...prlistQuantity, { code: productQuantity }]);
     // setPrlistTotalprice([...prlistTotalprice, { code: productPrice }]);
@@ -105,7 +105,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
         onSelect={goNext}
         onSkip={onSkip}
         t={t}
-        isDisabled={!productName || !productQuantity}
+        isDisabled={!calculatedAmount}
       >
         <div>
           <CardLabel>{`${t("EWASTE_SEARCH_PRODUCT")}`}</CardLabel>
@@ -139,7 +139,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
             style={{ width: "86%" }}
             ValidationRequired={true}
             {...(validation = {
-              isRequired: true,
+              isRequired: false,
               pattern: "^[1-9][0-9]*$",
               type: "text",
               title: t("EWASTE_NUMBER_ERROR_MESSAGE"),
@@ -160,9 +160,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
             style={{ width: "86%" }}
             ValidationRequired={false}
           />
-
-
-        </div>
+           </div>
         <SubmitBar label="Add Product" style={{ marginBottom: "10px" }} onSubmit={handleAddProduct} />
       </FormStep>
 

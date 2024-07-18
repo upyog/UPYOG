@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ApplicationCard } from "./inbox/ApplicationCard";
-import ApplicationLinks from "./inbox/ApplicationLinks";
+import InboxLinks from "./inbox/InboxLink";
 
 const MobileInbox = ({
   data,
@@ -34,7 +34,7 @@ const MobileInbox = ({
     <div style={{ padding: 0 }}>
       <div className="inbox-container">
         <div className="filters-container">
-          {!isSearch && <ApplicationLinks classNameForMobileView="linksWrapperForMobileInbox" linkPrefix={parentRoute} isMobile={true} />}
+          {!isSearch && <InboxLinks classNameForMobileView="linksWrapperForMobileInbox" linkPrefix={parentRoute} isMobile={true} />}
           <ApplicationCard
             t={t}
             data={getData()}

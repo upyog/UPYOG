@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { EmployeeModuleCard, PropertyHouse } from "@nudmcdgnpm/digit-ui-react-components";
+import { EmployeeModuleCard } from "@nudmcdgnpm/digit-ui-react-components";
 
 const ASSETCard = () => {
   const { t } = useTranslation();
@@ -14,7 +13,7 @@ const ASSETCard = () => {
 
     config: {
       select: (data) => {
-        return {totalCount:data?.totalCount,nearingSlaCount:data?.nearingSlaCount} || "-";
+        return {totalCount:data?.totalCount,nearingSlaCount:data?.nearingSlaCount} || "0";
       },
       enabled: Digit.Utils.assetAccess(),
     },
