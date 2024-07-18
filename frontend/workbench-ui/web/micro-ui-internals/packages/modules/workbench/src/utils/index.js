@@ -268,4 +268,16 @@ const postProcessData = (data = {}, schema = {}) => {
   return { ...data };
 };
 
-export default { getConfig, getMDMSLabel, getFormattedData, getUpdatedPath, updateTitleToLocalisationCodeForObject, preProcessData, postProcessData };
+
+const getMDMSActionURL = (moduleName, masterName, action) => {
+  let url = `/${Digit.Hooks.workbench.getMDMSContextPath()}/v2/_${action}`;
+  if (Digit.Hooks.workbench.isSchemaCodeInMDMSAction()) {
+    url += `/${moduleName}.${masterName}`;
+  }
+  return url;
+}
+
+
+
+
+export default { getConfig, getMDMSLabel, getFormattedData, getUpdatedPath, updateTitleToLocalisationCodeForObject, preProcessData, postProcessData,getMDMSActionURL };
