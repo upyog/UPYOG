@@ -74,15 +74,15 @@ public class MDMSValidator {
             switch(businessService)
             {
                 case businessService_TL:
-                    if(!masterData.get(TLConstants.OWNERSHIP_CATEGORY)
-                            .contains(license.getTradeLicenseDetail().getSubOwnerShipCategory()))
-                        errorMap.put("INVALID OWNERSHIPCATEGORY", "The SubOwnerShipCategory '"
-                                + license.getTradeLicenseDetail().getSubOwnerShipCategory() + "' does not exists");
-
-                    if(!masterData.get(TLConstants.STRUCTURE_TYPE).
-                            contains(license.getTradeLicenseDetail().getStructureType()))
-                        errorMap.put("INVALID STRUCTURETYPE", "The structureType '"
-                                + license.getTradeLicenseDetail().getStructureType() + "' does not exists");
+//                    if(!masterData.get(TLConstants.OWNERSHIP_CATEGORY)
+//                            .contains(license.getTradeLicenseDetail().getSubOwnerShipCategory()))
+//                        errorMap.put("INVALID OWNERSHIPCATEGORY", "The SubOwnerShipCategory '"
+//                                + license.getTradeLicenseDetail().getSubOwnerShipCategory() + "' does not exists");
+//
+//                    if(!masterData.get(TLConstants.STRUCTURE_TYPE).
+//                            contains(license.getTradeLicenseDetail().getStructureType()))
+//                        errorMap.put("INVALID STRUCTURETYPE", "The structureType '"
+//                                + license.getTradeLicenseDetail().getStructureType() + "' does not exists");
 
 //                    license.getTradeLicenseDetail().getTradeUnits().forEach(unit -> {
 //                        if (!billingSlabsTradeTypeUomMap.containsKey(unit.getTradeType()))

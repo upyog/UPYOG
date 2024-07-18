@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -150,6 +151,7 @@ public class TradeLicenseService {
     public List<TradeLicense> create(TradeLicenseRequest tradeLicenseRequest,String businessServicefromPath){
        if(businessServicefromPath==null)
             businessServicefromPath = businessService_TL;
+       enrichPreCreateNewTLValues(tradeLicenseRequest);
        tlValidator.validateBusinessService(tradeLicenseRequest,businessServicefromPath);
        Object mdmsData = util.mDMSCall(tradeLicenseRequest.getRequestInfo(), tradeLicenseRequest.getLicenses().get(0).getTenantId());
        Object billingSlabs = util.getBillingSlabs(tradeLicenseRequest.getRequestInfo(), tradeLicenseRequest.getLicenses().get(0).getTenantId());
@@ -185,7 +187,20 @@ public class TradeLicenseService {
         return tradeLicenseRequest.getLicenses();
 	}
 
-    public void validateMobileNumberUniqueness(TradeLicenseRequest request) {
+    private void enrichPreCreateNewTLValues(TradeLicenseRequest tradeLicenseRequest) {
+    	tradeLicenseRequest.getLicenses().forEach(license -> {
+    		if(StringUtils.equals(license.getBusinessService(), businessService_TL)) {
+        		enrichmentService.enrichCreateNewTLValues(tradeLicenseRequest.getRequestInfo().getUserInfo().getUuid(), license);
+    		}
+    	});
+    	
+	}
+
+
+
+
+
+	public void validateMobileNumberUniqueness(TradeLicenseRequest request) {
         for (TradeLicense license : request.getLicenses()) {
             for (TradeUnit tradeUnit : license.getTradeLicenseDetail().getTradeUnits()) {
                 String tradetypeOfNewLicense = tradeUnit.getTradeType().split("\\.")[0];
@@ -549,11 +564,58 @@ public class TradeLicenseService {
             repository.update(tradeLicenseRequest, idToIsStateUpdatableMap);
             licenceResponse=  tradeLicenseRequest.getLicenses();
         }
+        
+//        // send notifications
+//        sendTLNotifications(licenceResponse);
+//        
+//        // create and upload pdf
+//        createAndUploadPDF(licenceResponse, tradeLicenseRequest.getRequestInfo());
+        
         return licenceResponse;
         
     }
 
-    private void validateLatestApplicationCancellation(TradeLicenseRequest tradeLicenseRequest, BusinessService businessService) {
+
+	private void sendTLNotifications(List<TradeLicense> licenceResponse) {
+		
+    	licenceResponse.stream().forEach(license -> {
+    		
+    		if(StringUtils.equals(license.getBusinessService(), businessService_TL)
+    				&& StringUtils.equals(license.getStatus(), STATUS_APPROVED)) {
+    			// send notification to license owner
+    			List<String> mobileNumbers = license.getTradeLicenseDetail().getOwners().stream().map(owner -> owner.getMobileNumber()).collect(Collectors.toList());
+    			sendSmsNotification(mobileNumbers, STATUS_APPROVED, license.getApplicationNumber());
+    		}
+    		if(StringUtils.equals(license.getBusinessService(), businessService_TL)
+    				&& StringUtils.equals(license.getStatus(), STATUS_PENDINGFORMODIFICATION)) {
+    			// send notification to license owner
+    			List<String> mobileNumbers = license.getTradeLicenseDetail().getOwners().stream().map(owner -> owner.getMobileNumber()).collect(Collectors.toList());
+    			sendSmsNotification(mobileNumbers, STATUS_PENDINGFORMODIFICATION, license.getApplicationNumber());
+    		}
+    	});
+    	
+	}
+
+
+	private void sendSmsNotification(List<String> mobileNumbers, String statusApproved, String applicationNumber) {
+//		sendMail;
+	}
+
+
+	private void createAndUploadPDF(List<TradeLicense> licenceResponse, RequestInfo requestInfo) {
+		
+		licenceResponse.stream().forEach(license -> {
+			Resource object = createNoSavePDF(license
+					, requestInfo);
+		});
+		
+		
+	}
+
+
+
+
+	private void validateLatestApplicationCancellation(TradeLicenseRequest tradeLicenseRequest, BusinessService businessService) {
     	List <TradeLicense> licenses = tradeLicenseRequest.getLicenses();
         TradeLicenseSearchCriteria criteria = new TradeLicenseSearchCriteria();
     	

@@ -271,9 +271,9 @@ serviceMaps:
 
           - jsonPath: $.Licenses.*.tradeLicenseDetail.address.type
 
-          - jsonPath: $.Licenses.*.tradeLicenseDetail.address.addressline1
+          - jsonPath: $.Licenses.*.tradeLicenseDetail.address.addressLine1
 
-          - jsonPath: $.Licenses.*.tradeLicenseDetail.address.addressline2
+          - jsonPath: $.Licenses.*.tradeLicenseDetail.address.addressLine2
 
           - jsonPath: $.Licenses.*.tradeLicenseDetail.address.landmark
 
