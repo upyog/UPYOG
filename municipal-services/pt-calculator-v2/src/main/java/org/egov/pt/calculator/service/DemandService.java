@@ -10,6 +10,9 @@ import static org.egov.pt.calculator.util.CalculatorConstants.PT_TIME_REBATE;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -638,11 +641,20 @@ public DemandResponse updateDemandsForAssessmentCancel(GetBillCriteria getBillCr
 
 		DemandDetailAndCollection latestPenaltyDemandDetail,latestInterestDemandDetail;
 
-
+		 long currentTimeMillis = System.currentTimeMillis();
+	        Instant instant = Instant.ofEpochMilli(currentTimeMillis);
+	        ZonedDateTime zdt = instant.atZone(ZoneId.systemDefault());
+	        int month = zdt.getMonthValue();
 		BigDecimal oldRebate = BigDecimal.ZERO;
 		for(DemandDetail demandDetail : details) {
 			if(demandDetail.getTaxHeadMasterCode().equalsIgnoreCase(PT_TIME_REBATE)){
 				oldRebate = oldRebate.add(demandDetail.getTaxAmount());
+				if (month>5) 
+				{
+				log.info("Rebate amount Before: "+oldRebate);
+				demandDetail.setTaxAmount(BigDecimal.ZERO);
+				isRebateUpdated=true;
+				}
 			}
 		}
 		
@@ -661,12 +673,14 @@ public DemandResponse updateDemandsForAssessmentCancel(GetBillCriteria getBillCr
 			
 		}
 		
-		if(rebate.compareTo(oldRebate)!=0){
+		if (!isRebateUpdated)
+			{if(rebate.compareTo(oldRebate)!=0){
 				details.add(DemandDetail.builder().taxAmount(rebate.subtract(oldRebate))
 						.taxHeadMasterCode(PT_TIME_REBATE).demandId(demandId).tenantId(tenantId)
 						.build());
-		}
-
+				
+		}}
+	
 
 		if(interest.compareTo(BigDecimal.ZERO)!=0){
 			latestInterestDemandDetail = utils.getLatestDemandDetailByTaxHead(PT_TIME_INTEREST,details);

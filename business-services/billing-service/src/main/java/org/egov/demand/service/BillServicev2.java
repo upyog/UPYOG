@@ -306,8 +306,12 @@ public class BillServicev2 {
 		/*
 		 * If none of the billDetails in the bills needs to be updated then return the search result
 		 */
-		if(CollectionUtils.isEmpty(cosnumerCodesToBeExpired) && CollectionUtils.isEmpty(cosnumerCodesNotFoundInBill))
+		if(CollectionUtils.isEmpty(cosnumerCodesToBeExpired) && CollectionUtils.isEmpty(cosnumerCodesNotFoundInBill)) 
+		{
+			BigDecimal roundedTaxAmount = res.getBill().get(0).getTotalAmount().setScale(0, BigDecimal.ROUND_HALF_UP);
+			res.getBill().get(0).setTotalAmount(roundedTaxAmount);
 			return res;
+		}
 		else {
 			
 			billCriteria.getConsumerCode().retainAll(cosnumerCodesToBeExpired);
