@@ -17,7 +17,10 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
@@ -143,7 +146,7 @@ public class WSCalculationWorkflowValidator {
 		return isApplicationApproved;
 	}
 	public JSONObject getWnsPTworkflowConfig(RequestInfo requestInfo, String tenantId){
-		tenantId = config.getStateLevelTenantId();
+		tenantId = tenantId.split("\\.")[0];
 		List<String> propertyModuleMasters = new ArrayList<>(Arrays.asList("PTWorkflow"));
 		Map<String, List<String>> codes = mdmsValidator.getAttributeValues(tenantId,MRConstants.PROPERTY_MASTER_MODULE, propertyModuleMasters, "$.*",
 				MRConstants.PROPERTY_JSONPATH_ROOT,requestInfo);
