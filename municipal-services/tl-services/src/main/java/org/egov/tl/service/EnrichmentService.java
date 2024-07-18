@@ -580,6 +580,8 @@ public class EnrichmentService {
                         if (businessService.equalsIgnoreCase(businessService_TL)) {
                         	String tempId = validateAndEnrichTLApplication(license, license.getLicenseNumber());
                         	license.setLicenseNumber(tempId);
+                            license.setValidFrom(new Date().getTime());
+                        	license.setValidTo(getValidToDateFromLicensePeriod(license));
                         }
 
                     }
@@ -590,7 +592,25 @@ public class EnrichmentService {
     }
 
 
-    /**
+    private Long getValidToDateFromLicensePeriod(TradeLicense license) {
+    	Long licensePeriodEndDate = null;
+    	String periodOfLicenseStr = license.getTradeLicenseDetail().getAdditionalDetail().get("periodOfLicense")
+				.toString();
+
+		try {
+			Integer periodOfLicense = Integer.parseInt(periodOfLicenseStr);
+			// Calculate valid to date as today + periodOfLicense years
+	        long periodInMillis = periodOfLicense * 365L * 24 * 60 * 60 * 1000; // Convert years to milliseconds
+	        licensePeriodEndDate = new Date().getTime() + periodInMillis;
+			
+		} catch (NumberFormatException | NullPointerException e) {
+			throw new RuntimeException("Period of license is not in correct format or is missing.", e);
+		}
+		return licensePeriodEndDate;
+	}
+
+
+	/**
      * Adds accountId of the logged in user to search criteria
      * @param requestInfo The requestInfo of searhc request
      * @param criteria The tradeLicenseSearch criteria
