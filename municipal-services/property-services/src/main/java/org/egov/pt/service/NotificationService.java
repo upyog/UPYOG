@@ -296,8 +296,10 @@ public class NotificationService {
 			    mobileNumbers.add(owner.getMobileNumber());
 		});
 
-
-		List<SMSRequest> smsRequests = notifUtil.createSMSRequest(msg, mobileNumberToOwner);
+log.info("mobileNumbers sms: "+mobileNumbers);
+log.info("property.getOwners() sms: "+property.getOwners().toString());
+log.info("mobileNumberToOwner sms: "+mobileNumberToOwner);
+List<SMSRequest> smsRequests = notifUtil.createSMSRequest(msg, mobileNumberToOwner);
 
 		if(configuredChannelNames.contains(CHANNEL_NAME_SMS)){
 			notifUtil.sendSMS(smsRequests);
