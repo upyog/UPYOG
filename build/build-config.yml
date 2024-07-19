@@ -643,7 +643,7 @@ config:
     build:
       - work-dir: 'municipal-services/pqm-scheduler'
         image-name: 'pqm-scheduler'
-        dockerfile: 'pqm-scheduler/Dockerfile'
+        dockerfile: 'municipal-services/pqm-scheduler/Dockerfile'
 
   - name: 'builds/upyog/municipal-services/pqm-anomaly-finder'
     build:
