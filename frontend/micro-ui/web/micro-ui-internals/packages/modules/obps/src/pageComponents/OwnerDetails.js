@@ -580,7 +580,7 @@ useEffect(()=>{
                                         value={field.emailId}
                                         onChange={(e) => setOwnerEmail(index, e)}
                                         {...(validation = {
-                                            isRequired: true,
+                                            //isRequired: true,
                                             pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$",
                                             type: "emailId",
                                             title: t("TL_EMAIL_ID_ERROR_MESSAGE"),
