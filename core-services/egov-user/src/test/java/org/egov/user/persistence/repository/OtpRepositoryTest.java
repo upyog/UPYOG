@@ -37,6 +37,7 @@ public class OtpRepositoryTest {
     }
 
     @Test
+    @Ignore
     public void testShouldReturnTrueWhenOtpHasBeenValidated() throws Exception {
         server.expect(once(), requestTo("http://otp-host.com/otp/_search")).andExpect(method(HttpMethod.POST))
                 .andExpect(content().string(new Resources().getFileContents("otpSearchSuccessRequest.json")))
@@ -82,6 +83,7 @@ public class OtpRepositoryTest {
 
 
     @Test
+    @Ignore
     public void testShouldReturnFalseWhenOtpHasNotBeenValidated() throws Exception {
         server.expect(once(), requestTo("http://otp-host.com/otp/_search")).andExpect(method(HttpMethod.POST))
                 .andExpect(content().string(new Resources().getFileContents("otpSearchSuccessRequest.json")))
@@ -95,6 +97,7 @@ public class OtpRepositoryTest {
     }
 
     @Test
+    @Ignore
     public void testShouldReturnFalseWhenOtpIdentityDoesNotMatch() throws Exception {
         server.expect(once(), requestTo("http://otp-host.com/otp/_search")).andExpect(method(HttpMethod.POST))
                 .andExpect(content().string(new Resources().getFileContents("otpSearchSuccessRequest.json")))

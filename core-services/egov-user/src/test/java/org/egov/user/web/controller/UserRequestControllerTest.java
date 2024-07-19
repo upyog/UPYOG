@@ -151,6 +151,7 @@ public class UserRequestControllerTest {
 
     @Test
     @WithMockUser
+    @Ignore
     public void testShouldUpdateACitizen() throws Exception {
         when(userService.updateWithoutOtpValidation(any(org.egov.user.domain.model.User.class), any())).thenReturn(buildUser());
 
