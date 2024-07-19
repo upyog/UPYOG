@@ -40,12 +40,7 @@ const EmployeeSideBar = () => {
           }
           mergeObjects(obj1[key], obj2[key]);
         } else {
-          if (obj1[key]) {
-            if (!Array.isArray(obj1[key])) {
-              obj1[key] = [obj1[key]];
-            }
-            obj1[key].push(obj2[key]);
-          } else {
+          if (!obj1[key]) {
             obj1[key] = obj2[key];
           }
         }
@@ -96,14 +91,18 @@ const EmployeeSideBar = () => {
     const objectArray = Object.entries(configEmployeeSideBar);
 
     // Sort the array based on the 'orderNumber' or the length of the object if 'orderNumber' is not present
+    // sort logic updated to sort the parent item by alphabetical
     objectArray.sort((a, b) => {
-      const orderNumberA = a[1].item
-        ? a[1].item.orderNumber || Object.keys(configEmployeeSideBar).length + 1
-        : Object.keys(configEmployeeSideBar).length + 1;
-      const orderNumberB = b[1].item
-        ? b[1].item.orderNumber || Object.keys(configEmployeeSideBar).length + 1
-        : Object.keys(configEmployeeSideBar).length + 1;
-      return orderNumberA - orderNumberB;
+      if (a[0] < b[0]) { return -1; }
+      if (a[0] > b[0]) { return 1; }
+      return 0;
+      // const orderNumberA = a[1].item
+      //   ? a[1].item.orderNumber || Object.keys(configEmployeeSideBar).length + 1
+      //   : Object.keys(configEmployeeSideBar).length + 1;
+      // const orderNumberB = b[1].item
+      //   ? b[1].item.orderNumber || Object.keys(configEmployeeSideBar).length + 1
+      //   : Object.keys(configEmployeeSideBar).length + 1;
+      // return orderNumberA - orderNumberB;
     });
     const sortedObject = Object.fromEntries(objectArray);
     configEmployeeSideBar = sortedObject;

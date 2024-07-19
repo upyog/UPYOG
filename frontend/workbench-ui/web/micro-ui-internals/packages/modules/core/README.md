@@ -62,9 +62,12 @@ with
 
 ```
 
-# Changelog
+### Changelog
 
 ```bash
+1.8.2 build issue fix due to ajv library
+1.8.1 sidebar null check fixes
+1.8.0 workbench v1.0
 1.8.0-beta.5 fix for login screen alignments
 1.8.0-beta.4 made the default localisation in globalconfig
 1.8.0-beta workbench base version beta release
@@ -91,14 +94,21 @@ with
 1.5.28 fixed the route issue for profile screen
 ```
 
-# Contributors
+### Contributors
 
 [jagankumar-egov] [nipunarora-eGov] [Tulika-eGov] [Ramkrishna-egov] [nabeelmd-eGov] [anil-egov] [vamshikrishnakole-wtt-egov] 
 
-## Published from DIGIT Core
+## Documentation
 
-Digit Dev Repo (<https://github.com/egovernments/Digit-Core/tree/digit-ui-core>)
+Documentation Site (https://core.digit.org/guides/developer-guide/ui-developer-guide/digit-ui)
 
-## License
+## Maintainer
 
-MIT © [jagankumar-egov](https://github.com/jagankumar-egov)
+- [jagankumar-egov](https://www.github.com/jagankumar-egov)
+
+
+### Published from DIGIT Frontend 
+DIGIT Frontend Repo (https://github.com/egovernments/Digit-Frontend/tree/master)
+
+
+![Logo](https://s3.ap-south-1.amazonaws.com/works-dev-asset/mseva-white-logo.png)

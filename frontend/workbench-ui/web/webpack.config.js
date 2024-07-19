@@ -11,6 +11,7 @@ module.exports = {
     rules: [
       {
         test: /\.(js)$/,
+        exclude: /node_modules/,
         use: ["babel-loader"],
       },
       {
@@ -22,7 +23,7 @@ module.exports = {
   output: {
     filename: "[name].bundle.js",
     path: path.resolve(__dirname, "build"),
-    publicPath: "/digit-ui/",
+    publicPath: "/workbench-ui/",
   },
   optimization: {
     splitChunks: {

@@ -150,9 +150,10 @@ const useGetCustomFilterRequestValues = (filterConfigs, config={}) => {
 ```
 
 
-# Changelog
+### Changelog
 
 ```bash
+1.8.0 workbench v1.0 release
 1.8.0-beta workbench base version beta release
 1.7.0 urban 2.9
 1.6.0 urban 2.8
@@ -181,13 +182,21 @@ const useGetCustomFilterRequestValues = (filterConfigs, config={}) => {
 1.5.20 base version
 ```
 
-# Contributors
+### Contributors
 
 [jagankumar-egov] [nipunarora-eGov] [Tulika-eGov] [Ramkrishna-egov] [nabeelmd-eGov]
 
-## Published from DIGIT Core 
-Digit Dev Repo (https://github.com/egovernments/Digit-Core/tree/digit-ui-core)
+## Documentation
 
-## License
+Documentation Site (https://core.digit.org/guides/developer-guide/ui-developer-guide/digit-ui)
 
-MIT © [jagankumar-egov](https://github.com/jagankumar-egov)
+## Maintainer
+
+- [jagankumar-egov](https://www.github.com/jagankumar-egov)
+
+
+### Published from DIGIT Frontend 
+DIGIT Frontend Repo (https://github.com/egovernments/Digit-Frontend/tree/master)
+
+
+![Logo](https://s3.ap-south-1.amazonaws.com/works-dev-asset/mseva-white-logo.png)
