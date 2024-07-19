@@ -299,22 +299,27 @@ public class NotificationService {
 log.info("mobileNumbers sms: "+mobileNumbers);
 log.info("property.getOwners() sms: "+property.getOwners().toString());
 log.info("mobileNumberToOwner sms: "+mobileNumberToOwner);
+log.info("CHANNEL_NAME_SMS sms: "+CHANNEL_NAME_SMS);
 List<SMSRequest> smsRequests = notifUtil.createSMSRequest(msg, mobileNumberToOwner);
 
 		if(configuredChannelNames.contains(CHANNEL_NAME_SMS)){
 			notifUtil.sendSMS(smsRequests);
-
-			Boolean isActionReq = false;
-			if(state.equalsIgnoreCase(PT_CORRECTION_PENDING))
-				isActionReq = true;
-
-			List<Event> events = notifUtil.enrichEvent(smsRequests, requestInfo, property.getTenantId(), property, isActionReq);
-			notifUtil.sendEventNotification(new EventRequest(requestInfo, events));
+//temp disabling
+			/*
+			 * Boolean isActionReq = false;
+			 * if(state.equalsIgnoreCase(PT_CORRECTION_PENDING)) isActionReq = true;
+			 * 
+			 * List<Event> events = notifUtil.enrichEvent(smsRequests, requestInfo,
+			 * property.getTenantId(), property, isActionReq);
+			 * notifUtil.sendEventNotification(new EventRequest(requestInfo, events));
+			 */
 		}
-		if(configuredChannelNames.contains(CHANNEL_NAME_EMAIL)){
-			List<EmailRequest> emailRequests = notifUtil.createEmailRequestFromSMSRequests(requestInfo,smsRequests, tenantId);
-			notifUtil.sendEmail(emailRequests);
-		}
+		/*
+		 * if(configuredChannelNames.contains(CHANNEL_NAME_EMAIL)){ List<EmailRequest>
+		 * emailRequests =
+		 * notifUtil.createEmailRequestFromSMSRequests(requestInfo,smsRequests,
+		 * tenantId); notifUtil.sendEmail(emailRequests); }
+		 */
 	}
 
 	private String fetchContentFromLocalization(RequestInfo requestInfo, String tenantId, String module, String code){

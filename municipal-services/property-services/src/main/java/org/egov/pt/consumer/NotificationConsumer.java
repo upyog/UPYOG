@@ -61,7 +61,7 @@ public class NotificationConsumer {
 				PropertyRequest request = mapper.convertValue(record, PropertyRequest.class);
 		    	Integer count = 0;
 		        count = repository.getCountprocess( request.getProperty(),request.getRequestInfo());
-		        	log.info("Count  in consumer topic: "+ count);
+		        	log.debug("Count  in consumer topic: "+ count);
 		       
 				if (!request.getProperty().isOldDataEncryptionRequest())
 				{
