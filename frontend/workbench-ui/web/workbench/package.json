@@ -14,11 +14,14 @@
   ],
   "homepage": "/workbench-ui",
   "dependencies": {
-    "@egovernments/digit-ui-libraries": "1.8.0-beta",
-    "@egovernments/digit-ui-module-workbench": "1.0.0-beta",
-    "@egovernments/digit-ui-module-core": "1.8.0-beta.5",
-    "@egovernments/digit-ui-module-hrms": "1.8.0-beta.2",
-    "@egovernments/digit-ui-react-components": "1.8.0-beta.1",
+    "@egovernments/digit-ui-libraries": "1.8.3",
+    "@egovernments/digit-ui-module-workbench": "1.0.5",
+    "@egovernments/digit-ui-module-core": "1.8.2",
+    "@egovernments/digit-ui-react-components": "1.8.2",
+    "@egovernments/digit-ui-module-utilities": "1.0.0",
+    "@egovernments/digit-ui-module-hrms":"1.8.0",
+    "@egovernments/digit-ui-module-pgr":"1.8.0",
+    "@egovernments/digit-ui-module-engagement":"1.5.20",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
@@ -44,6 +47,14 @@
     "lint-staged": "12.3.7",
     "npm-run-all": "4.1.5",
     "prettier": "2.1.2"
+  },
+  "resolutions":  {
+    "**/babel-loader": "8.2.2",
+    "**/@babel/core": "7.14.0",
+    "**/@babel/preset-env": "7.14.0",
+    "**/@babel/plugin-transform-modules-commonjs": "7.14.0",
+    "**/polished":"4.2.2",
+    "fast-uri":"2.1.0"
   },
   "scripts": {
     "start": "react-scripts start",

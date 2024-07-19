@@ -47,6 +47,9 @@ cd "$BASEDIR/packages/modules/core" &&   rm -rf dist && yarn&& npm publish --acc
 # msg "Building and publishing Utilities module"
 cd "$BASEDIR/packages/modules/utilities" &&   rm -rf dist && yarn&& npm publish --access public
 
+# msg "Building and publishing pgr module"
+cd "$BASEDIR/packages/modules/pgr" &&   rm -rf dist && yarn&& npm publish --access public
 
-# msg "Building and publishing Utilities module"
+
+# msg "Building and publishing workbench module"
 cd "$BASEDIR/packages/modules/workbench" &&   rm -rf dist && yarn&& npm publish --access public
