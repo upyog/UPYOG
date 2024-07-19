@@ -375,7 +375,7 @@ public class PropertyQueryBuilder {
 		if (isPlainSearch) {
 
 			String tenantId = criteria.getTenantId();
-			log.info("tenantId "+tenantId);
+			log.debug("tenantId "+tenantId);
 			if (tenantId != null) {
 			
 				if (tenantId.equalsIgnoreCase(config.getStateLevelTenantId())) {
@@ -391,7 +391,7 @@ public class PropertyQueryBuilder {
 		}
 
 		String propertyIds = criteria.getPropertyId();
-		log.info("propertyIds "+propertyIds);
+		log.debug("propertyIds "+propertyIds);
 		if (!propertyIds.isEmpty()) {
 
 			addClauseIfRequired(preparedStmtList, builder);
@@ -402,7 +402,7 @@ public class PropertyQueryBuilder {
 		}
 
 		String acknowledgementIds = criteria.getAcknowldgementNumber();
-		log.info("acknowledgementIds  "+acknowledgementIds);
+		log.debug("acknowledgementIds  "+acknowledgementIds);
 		if (!acknowledgementIds.isEmpty()) {
 
 			addClauseIfRequired(preparedStmtList, builder);

@@ -122,7 +122,7 @@ public class AssessmentNotificationService {
 				}
 			}
 		} catch (Exception e) {
-			throw new CustomException("Error in Accessment topic","Try Again");
+			throw new CustomException("Error in Accessment topic","Try Again--> "+property.getPropertyId());
 		}
 	}
 
