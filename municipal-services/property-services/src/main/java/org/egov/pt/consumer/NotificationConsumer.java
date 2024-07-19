@@ -1,15 +1,20 @@
 package org.egov.pt.consumer;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Property;
+import org.egov.pt.repository.PropertyRepository;
 import org.egov.pt.service.AssessmentNotificationService;
 import org.egov.pt.service.NotificationService;
+import org.egov.pt.service.PropertyService;
 import org.egov.pt.util.PTConstants;
 import org.egov.pt.web.contracts.AssessmentRequest;
 import org.egov.pt.web.contracts.PropertyRequest;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -29,7 +34,10 @@ public class NotificationConsumer {
 	
 	@Autowired
 	private PropertyConfiguration configs;
-
+	
+	@Autowired
+	private PropertyRepository repository;
+	
 	@Autowired
     private AssessmentNotificationService assessmentNotificationService;
 	
@@ -51,14 +59,23 @@ public class NotificationConsumer {
 			} else if (topic.equalsIgnoreCase(configs.getSavePropertyTopic()) || topic.equalsIgnoreCase(configs.getUpdatePropertyTopic())) {
 
 				PropertyRequest request = mapper.convertValue(record, PropertyRequest.class);
-
-				if (!request.getProperty().isOldDataEncryptionRequest()) {
-					if (PTConstants.MUTATION_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())) {
+		    	Integer count = 0;
+		        count = repository.getCountprocess( request.getProperty(),request.getRequestInfo());
+		        	log.info("Count  in consumer topic: "+ count);
+		       
+				if (!request.getProperty().isOldDataEncryptionRequest())
+				{
+					if (PTConstants.MUTATION_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())) 
+					{
 
 						notifService.sendNotificationForMutation(request);
-					} else {
-
+					}
+					
+					else {
+						if (count>0)
 						notifService.sendNotificationForUpdate(request);
+						else
+							throw new CustomException ("Error","No Property ");
 					}
 				}
 			}

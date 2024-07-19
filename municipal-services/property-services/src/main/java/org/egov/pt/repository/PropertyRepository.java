@@ -27,6 +27,7 @@ import org.egov.pt.repository.rowmapper.PropertySearchRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyAuditEncRowMapper;
 import org.egov.pt.service.UserService;
 import org.egov.pt.util.PropertyUtil;
+import org.egov.pt.web.contracts.PropertyRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -51,6 +52,9 @@ public class PropertyRepository {
 	
 	@Autowired
 	private PropertySearchRowMapper rowSearchMapper;
+	
+	
+	
 	
 	@Autowired
 	private OpenPropertyRowMapper openRowMapper;
@@ -274,6 +278,17 @@ public class PropertyRepository {
 		
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getPropertySearchQuery(propertyCriteria, preparedStmtList, false, false);
+        Integer count =  jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
+        return count;
+    }
+	
+	
+	
+public Integer getCountprocess(Property propertyCriteria, RequestInfo requestInfo) {
+		
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getPropertySearchQuerytemp(propertyCriteria, preparedStmtList, false, false);
+        log.info("Query For Cnsumer: "+query);
         Integer count =  jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
         return count;
     }
