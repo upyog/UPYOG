@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.time.Instant;
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.consumer.NotificationConsumer;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.enums.Status;
@@ -17,7 +18,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class PropertyQueryBuilder {
 
 	@Autowired
@@ -371,6 +375,7 @@ public class PropertyQueryBuilder {
 		if (isPlainSearch) {
 
 			String tenantId = criteria.getTenantId();
+			log.info("tenantId "+tenantId);
 			if (tenantId != null) {
 			
 				if (tenantId.equalsIgnoreCase(config.getStateLevelTenantId())) {
@@ -386,6 +391,7 @@ public class PropertyQueryBuilder {
 		}
 
 		String propertyIds = criteria.getPropertyId();
+		log.info("propertyIds "+propertyIds);
 		if (!propertyIds.isEmpty()) {
 
 			addClauseIfRequired(preparedStmtList, builder);
@@ -396,6 +402,7 @@ public class PropertyQueryBuilder {
 		}
 
 		String acknowledgementIds = criteria.getAcknowldgementNumber();
+		log.info("acknowledgementIds  "+acknowledgementIds);
 		if (!acknowledgementIds.isEmpty()) {
 
 			addClauseIfRequired(preparedStmtList, builder);

@@ -289,6 +289,7 @@ public Integer getCountprocess(Property propertyCriteria, RequestInfo requestInf
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getPropertySearchQuerytemp(propertyCriteria, preparedStmtList, false, false);
         log.info("Query For Cnsumer: "+query);
+        log.info("preparedStmtList.toArray(): "+preparedStmtList.toArray());
         Integer count =  jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
         return count;
     }
