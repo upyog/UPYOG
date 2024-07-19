@@ -65,9 +65,10 @@ public class NotificationConsumer {
 		       
 				if (!request.getProperty().isOldDataEncryptionRequest())
 				{
+					 log.info("Inside mutations");
 					if (PTConstants.MUTATION_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())) 
 					{
-
+						 log.info(" Creation Reason " + request.getProperty().getCreationReason().toString());
 						notifService.sendNotificationForMutation(request);
 					}
 					

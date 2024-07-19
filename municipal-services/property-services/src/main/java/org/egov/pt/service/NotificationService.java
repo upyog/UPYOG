@@ -299,10 +299,11 @@ public class NotificationService {
 log.info("mobileNumbers sms: "+mobileNumbers);
 log.info("property.getOwners() sms: "+property.getOwners().toString());
 log.info("mobileNumberToOwner sms: "+mobileNumberToOwner);
-log.info("CHANNEL_NAME_SMS sms: "+CHANNEL_NAME_SMS);
+log.info("CHANNEL_NAME_SMS sms: "+configuredChannelNames);
 List<SMSRequest> smsRequests = notifUtil.createSMSRequest(msg, mobileNumberToOwner);
 
 		if(configuredChannelNames.contains(CHANNEL_NAME_SMS)){
+			log.info("Inside  sms: "+smsRequests);
 			notifUtil.sendSMS(smsRequests);
 //temp disabling
 			/*
