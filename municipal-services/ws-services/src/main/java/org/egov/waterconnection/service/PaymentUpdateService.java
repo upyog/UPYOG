@@ -147,6 +147,8 @@ public class PaymentUpdateService {
 					RequestInfo requestInfo = waterConnectionRequest.getRequestInfo();
 					Role role = Role.builder().code("SYSTEM_PAYMENT").tenantId(property.getTenantId()).build();
 					requestInfo.getUserInfo().getRoles().add(role);
+					if(paymentDetail.getBusinessService().equalsIgnoreCase(config.getReconnectBusinessServiceName()))
+						waterConnectionRequest.setReconnectRequest(true);
 					wfIntegrator.callWorkFlow(waterConnectionRequest, property);
 					enrichmentService.enrichFileStoreIds(waterConnectionRequest);
 					repo.updateWaterConnection(waterConnectionRequest, false);

@@ -23,6 +23,7 @@ import org.egov.waterconnection.validator.MDMSValidator;
 import org.egov.waterconnection.validator.ValidateProperty;
 import org.egov.waterconnection.validator.WaterConnectionValidator;
 import org.egov.waterconnection.web.models.*;
+import org.egov.waterconnection.web.models.Connection.StatusEnum;
 import org.egov.waterconnection.web.models.workflow.BusinessService;
 import org.egov.waterconnection.web.models.workflow.ProcessInstance;
 import org.egov.waterconnection.workflow.WorkflowIntegrator;
@@ -321,6 +322,9 @@ public class WaterServiceImpl implements WaterService {
 		if(waterConnectionRequest.isDisconnectRequest() || waterConnectionRequest.getWaterConnection().getApplicationType().equalsIgnoreCase(WCConstants.DISCONNECT_WATER_CONNECTION)) {
 			return updateWaterConnectionForDisconnectFlow(waterConnectionRequest);
 		}
+		else if (waterConnectionRequest.isReconnectRequest() || waterConnectionRequest.getWaterConnection().getApplicationType().equalsIgnoreCase(WCConstants.WATER_RECONNECTION)) {
+			return updateWaterConnectionForReconnectFlow(waterConnectionRequest);
+		}
 		SearchCriteria criteria = new SearchCriteria();
 		log.info("con" + wsUtil.isModifyConnectionRequest(waterConnectionRequest));
 		log.info("isDisconnection" +waterConnectionRequest.getWaterConnection().getIsDisconnectionTemporary());
@@ -460,7 +464,78 @@ public class WaterServiceImpl implements WaterService {
 
 		return Arrays.asList(waterConnectionRequest.getWaterConnection());
 	}
-	
+
+	public List<WaterConnection> updateWaterConnectionForReconnectFlow(WaterConnectionRequest waterConnectionRequest) {
+
+		SearchCriteria criteria = new SearchCriteria();
+		
+		waterConnectionValidator.validateWaterConnection(waterConnectionRequest, WCConstants.RECONNECTION);
+		mDMSValidator.validateMasterData(waterConnectionRequest,WCConstants.RECONNECTION );
+		
+		Property property = validateProperty.getOrValidateProperty(waterConnectionRequest);
+		validateProperty.validatePropertyFields(property,waterConnectionRequest.getRequestInfo());
+		BusinessService businessService = workflowService.getBusinessService(waterConnectionRequest.getWaterConnection().getTenantId(), 
+		waterConnectionRequest.getRequestInfo(), config.getReconnectBusinessServiceName());
+		WaterConnection searchResult = getConnectionForUpdateRequest(waterConnectionRequest.getWaterConnection().getTenantId(),waterConnectionRequest.getWaterConnection().getId(), waterConnectionRequest.getRequestInfo());
+
+		boolean isPlumberSwapped = unmaskingUtil.getUnmaskedPlumberInfo(waterConnectionRequest.getWaterConnection().getPlumberInfo(), searchResult.getPlumberInfo());
+		if (isPlumberSwapped)
+			waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnectionRequest.getWaterConnection(), "WnSConnectionPlumberDecrypDisabled", WaterConnection.class, waterConnectionRequest.getRequestInfo()));
+
+		String previousApplicationStatus = workflowService.getApplicationStatus(waterConnectionRequest.getRequestInfo(),
+				waterConnectionRequest.getWaterConnection().getApplicationNo(),
+				waterConnectionRequest.getWaterConnection().getTenantId(),
+				config.getReconnectBusinessServiceName());
+ 
+		boolean isStateUpdatable = waterServiceUtil.getStatusForUpdate(businessService, previousApplicationStatus);
+
+		enrichmentService.enrichUpdateWaterConnection(waterConnectionRequest);
+		actionValidator.validateUpdateRequest(waterConnectionRequest, businessService, previousApplicationStatus);
+		waterConnectionValidator.validateUpdate(waterConnectionRequest, searchResult, WCConstants.RECONNECTION);
+		userService.updateUser(waterConnectionRequest, searchResult);
+		//call calculator service to generate the demand for one time fee
+		//if(!waterConnectionRequest.getWaterConnection().getIsDisconnectionTemporary())
+		calculationService.calculateFeeAndGenerateDemand(waterConnectionRequest, property);
+		//check whether amount is due
+		boolean isNoPayment = false;
+		WaterConnection waterConnection = waterConnectionRequest.getWaterConnection();
+		ProcessInstance processInstance = waterConnection.getProcessInstance();
+		if (WCConstants.APPROVE_CONNECTION_CONST.equalsIgnoreCase(processInstance.getAction()) ) {
+			isNoPayment = calculationService.fetchBillForReconnect(waterConnection.getTenantId(), waterConnection.getApplicationNo(), waterConnectionRequest.getRequestInfo());
+			if (isNoPayment) {
+				processInstance.setComment(WORKFLOW_NO_PAYMENT_CODE);
+			}
+		}
+		//Call workflow
+		wfIntegrator.callWorkFlow(waterConnectionRequest, property);
+		//check for edit and send edit notification
+		//waterDaoImpl.pushForEditNotification(waterConnectionRequest, isStateUpdatable);
+
+		/* encrypt here */
+		waterConnectionRequest.setWaterConnection(encryptConnectionDetails(waterConnectionRequest.getWaterConnection()));
+		/* encrypt here for connection holder details */
+		waterConnectionRequest.setWaterConnection(encryptConnectionHolderDetails(waterConnectionRequest.getWaterConnection()));
+
+		waterDao.updateWaterConnection(waterConnectionRequest, isStateUpdatable);
+
+		// setting oldApplication Flag
+		markOldApplication(waterConnectionRequest);
+//		enrichmentService.postForMeterReading(waterConnectionRequest,  WCConstants.DISCONNECT_CONNECTION);
+		if (!StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getTenantId()))
+			criteria.setTenantId(waterConnectionRequest.getWaterConnection().getTenantId());
+		enrichmentService.enrichProcessInstance(Arrays.asList(waterConnectionRequest.getWaterConnection()), criteria, waterConnectionRequest.getRequestInfo());
+
+		//Updating the workflow from approve for disconnection to pending for disconnection execution when there are no dues
+		if(WCConstants.APPROVE_CONNECTION_CONST.equalsIgnoreCase(processInstance.getAction()) && isNoPayment){
+			paymentUpdateService.noPaymentWorkflow(waterConnectionRequest, property, waterConnectionRequest.getRequestInfo());
+		}
+
+		/* decrypt here */
+		waterConnectionRequest.setWaterConnection(decryptConnectionDetails(waterConnectionRequest.getWaterConnection(), waterConnectionRequest.getRequestInfo()));
+
+		return Arrays.asList(waterConnectionRequest.getWaterConnection());
+	}
+
 	/**
 	 * Search Water connection to be update
 	 *
