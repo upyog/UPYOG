@@ -48,6 +48,7 @@ public class WaterConnectionValidator {
 	 */
 	public void validateWaterConnection(WaterConnectionRequest waterConnectionRequest, int reqType) {
 		Map<String, String> errorMap = new HashMap<>();
+		String channel = waterConnectionRequest.getWaterConnection().getChannel();
 		if (StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getProcessInstance())
 				|| StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction())) {
 			errorMap.put("INVALID_ACTION", "Workflow obj can not be null or action can not be empty!!");
@@ -56,16 +57,17 @@ public class WaterConnectionValidator {
 		ValidatorResult isPropertyValidated = propertyValidator.validate(waterConnectionRequest, reqType);
 		if (!isPropertyValidated.isStatus())
 			errorMap.putAll(isPropertyValidated.getErrorMessage());
+		if(!channel.equalsIgnoreCase("CITIZEN")) {
 		ValidatorResult isWaterFieldValidated = waterFieldValidator.validate(waterConnectionRequest, reqType);
 		if (!isWaterFieldValidated.isStatus())
 			errorMap.putAll(isWaterFieldValidated.getErrorMessage());
 		ValidatorResult isMeterInfoValidated = meterInfoValidator.validate(waterConnectionRequest, reqType);
 		if (!isMeterInfoValidated.isStatus())
 			errorMap.putAll(isMeterInfoValidated.getErrorMessage());
+		}
 		if(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction().equalsIgnoreCase("PAY"))
 			errorMap.put("INVALID_ACTION","Pay action cannot be perform directly");
 
-		String channel = waterConnectionRequest.getWaterConnection().getChannel();
 		if(channel != null){
 			if(!WCConstants.CHANNEL_VALUES.contains(channel))
 				errorMap.put("INVALID_CHANNEL","The value given for channel field is invalid");
