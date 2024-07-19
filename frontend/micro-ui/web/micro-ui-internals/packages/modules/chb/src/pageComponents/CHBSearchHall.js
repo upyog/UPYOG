@@ -191,7 +191,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
               setBookingSlotDetails([]);
               setIsCheckboxSelected(false);
             } else {
-              const allRows = data;
+              const allRows = data.filter(row => row.status.props.children === "Available");
               setBookingSlotDetails(allRows);
               setIsCheckboxSelected(true);
             }
@@ -205,6 +205,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
           type="checkbox"
           checked={bookingSlotDetails.some(selectedRow => selectedRow.slotId === row.original.slotId)}
           onChange={() => handleRowSelection(row.index)}
+          disabled={row.original.status.props.children !== "Available"} // Disable checkbox if status is "Booked"
         />
       </div>
     ),
@@ -213,24 +214,24 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
   const enhancedColumns = [checkboxColumn, ...columns];
   const staticRanges = createStaticRanges([
     {
-      label: 'Today',
-      range: () => ({
-        startDate: startOfDay(new Date()),
-        endDate: endOfDay(new Date())
-      })
-    },
-    {
-      label: 'Tomorrow',
+      label: 'One Day',
       range: () => ({
         startDate: startOfDay(addDays(new Date(), 1)),
         endDate: endOfDay(addDays(new Date(), 1))
       })
     },
     {
-      label: 'Next 2 Days',
+      label: 'Two Days',
       range: () => ({
-        startDate: startOfDay(new Date()),
+        startDate: startOfDay(addDays(new Date(), 1)),
         endDate: endOfDay(addDays(new Date(), 2))
+      })
+    },
+    {
+      label: 'Three Days',
+      range: () => ({
+        startDate: startOfDay(addDays(new Date(), 1)),
+        endDate: endOfDay(addDays(new Date(), 3))
       })
     },
   ]);
