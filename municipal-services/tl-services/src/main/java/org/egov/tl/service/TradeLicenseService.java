@@ -22,7 +22,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -60,7 +59,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.jayway.jsonpath.JsonPath;
 
@@ -497,6 +495,7 @@ public class TradeLicenseService {
      * @return Updated TradeLcienses
      */
     public List<TradeLicense> update(TradeLicenseRequest tradeLicenseRequest, String businessServicefromPath){
+    	tradeLicenseRequest = enrichPreUpdateNewTLValues(tradeLicenseRequest, businessServicefromPath);
         TradeLicense licence = tradeLicenseRequest.getLicenses().get(0);
         TradeLicense.ApplicationTypeEnum applicationType = licence.getApplicationType();
         List<TradeLicense> licenceResponse = null;
@@ -574,6 +573,46 @@ public class TradeLicenseService {
         return licenceResponse;
         
     }
+
+
+	private TradeLicenseRequest enrichPreUpdateNewTLValues(TradeLicenseRequest tradeLicenseRequest, String businessServicefromPath) {
+		
+		TradeLicenseRequest tempTradeLicenseRequest = TradeLicenseRequest.builder()
+				.requestInfo(tradeLicenseRequest.getRequestInfo())
+				.licenses(new ArrayList())
+				.build();
+		
+		for(int i=0; i<tradeLicenseRequest.getLicenses().size(); i++) {
+			TradeLicense license = tradeLicenseRequest.getLicenses().get(i);
+			String action = license.getAction();
+			
+			if(null == license.getTradeLicenseDetail()
+					&& (StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_VERIFIER, license.getAction())
+							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_VERIFY, license.getAction())
+							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR, license.getAction())
+							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_VERIFIER, license.getAction())
+							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_APPROVE, license.getAction()))
+					&& StringUtils.isNotEmpty(license.getApplicationNumber())) {
+				// search TL by application number
+				TradeLicenseSearchCriteria tradeLicenseSearchCriteria = TradeLicenseSearchCriteria.builder()
+						.businessService(businessServicefromPath)
+						.tenantId(license.getTenantId())
+						.applicationNumber(license.getApplicationNumber())
+						.build();
+				List<TradeLicense> licenses = getLicensesWithOwnerInfo(tradeLicenseSearchCriteria,tradeLicenseRequest.getRequestInfo());
+				
+				//enrich input fields
+				licenses.get(0).setAction(action);
+				tempTradeLicenseRequest.getLicenses().add(licenses.get(0));
+			}
+			else {
+				tempTradeLicenseRequest.getLicenses().add(license);
+			}
+		}
+		
+		return tempTradeLicenseRequest;
+		
+	}
 
 
 	private void sendTLNotifications(List<TradeLicense> licenceResponse) {

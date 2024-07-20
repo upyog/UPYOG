@@ -102,7 +102,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
     }
 
     @RequestMapping(value = {"/{servicename}/_update", "/_update"}, method = RequestMethod.POST)
-    public ResponseEntity<TradeLicenseResponse> update(@Valid @RequestBody TradeLicenseRequest tradeLicenseRequest,
+    public ResponseEntity<TradeLicenseResponse> update(@RequestBody TradeLicenseRequest tradeLicenseRequest,
                                                        @PathVariable(required = false) String servicename) {
         List<TradeLicense> licenses = tradeLicenseService.update(tradeLicenseRequest, servicename);
 
