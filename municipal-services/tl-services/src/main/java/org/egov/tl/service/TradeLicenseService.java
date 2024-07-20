@@ -21,10 +21,17 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.response.ErrorResponse;
 import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.repository.TLRepository;
 import org.egov.tl.service.notification.EditNotificationService;
@@ -57,6 +64,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -606,6 +615,7 @@ public class TradeLicenseService {
 				tempTradeLicenseRequest.getLicenses().add(licenses.get(0));
 			}
 			else {
+				validateInputObjectAndConstraints(license);
 				tempTradeLicenseRequest.getLicenses().add(license);
 			}
 		}
@@ -613,6 +623,26 @@ public class TradeLicenseService {
 		return tempTradeLicenseRequest;
 		
 	}
+
+
+	private void validateInputObjectAndConstraints(TradeLicense license) {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+	    Validator validator = factory.getValidator();
+	    Set<ConstraintViolation<TradeLicense>> violations = validator.validate(license);
+
+	    if (!violations.isEmpty()) {
+	        // Collect validation errors
+	        List<String> errorMessages = violations.stream()
+	                .map(ConstraintViolation::getMessage)
+	                .collect(Collectors.toList());
+
+	        // Return a Bad Request response with validation errors
+	        throw new RuntimeException("Input Data Validation Failed."+errorMessages);
+	    }
+	}
+
+
+
 
 
 	private void sendTLNotifications(List<TradeLicense> licenceResponse) {

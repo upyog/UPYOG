@@ -104,6 +104,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
     @RequestMapping(value = {"/{servicename}/_update", "/_update"}, method = RequestMethod.POST)
     public ResponseEntity<TradeLicenseResponse> update(@RequestBody TradeLicenseRequest tradeLicenseRequest,
                                                        @PathVariable(required = false) String servicename) {
+    	
         List<TradeLicense> licenses = tradeLicenseService.update(tradeLicenseRequest, servicename);
 
         TradeLicenseResponse response = TradeLicenseResponse.builder().licenses(licenses).responseInfo(
@@ -112,7 +113,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @RequestMapping(value = {"/{servicename}/{jobname}/_batch", "/_batch"}, method = RequestMethod.POST)
+	@RequestMapping(value = {"/{servicename}/{jobname}/_batch", "/_batch"}, method = RequestMethod.POST)
     public ResponseEntity sendReminderSMS(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                           @PathVariable(required = false) String servicename,
                                           @PathVariable(required = true) String jobname) {
