@@ -52,7 +52,7 @@ export const PaymentService = {
   getReciept: (tenantId, businessservice, filters = {}) =>
     Request({
       url:
-        businessservice && businessservice !== "BPAREG" || businessservice && businessservice !== "TL"
+        businessservice && businessservice !== "BPAREG"
           ? `${Urls.payment.print_reciept}/${businessservice}/_search`
           : `${Urls.payment.print_reciept}/_search`,
       useCache: false,
@@ -130,14 +130,7 @@ export const PaymentService = {
       auth: true,
       params: { tenantId, ...params },
     }),
-    recieptSearchNew: (tenantId, params) =>
-    Request({
-      url:Urls.payment.obps_Reciept_Search,
-      method: "POST",
-      // do not change this directly add a param if needed
-      auth: true,
-      params: { tenantId, ...params },
-    }),
+
   getBulkPdfRecordsDetails: (filters) =>
     Request({
       url: Urls.payment.getBulkPdfRecordsDetails,

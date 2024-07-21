@@ -1,4 +1,4 @@
-import { Header, ActionBar, SubmitBar, ExternalLinkIcon, Menu, GenericFileIcon, LinkButton } from '@upyog/digit-ui-react-components';
+import { Header, ActionBar, SubmitBar, ExternalLinkIcon, Menu, GenericFileIcon, LinkButton } from '@egovernments/digit-ui-react-components';
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import { openDocumentLink, openUploadedDocument } from '../../utils';
@@ -45,7 +45,7 @@ const DocumentDetails = ({ location, match, history, }) => {
                 ...details
             }
             history.push({
-                pathname: `/digit-ui/employee/engagement/documents/inbox/update`,
+                pathname: `/${window?.contextPath}/employee/engagement/documents/inbox/update`,
                 state: { DocumentEntity }
             })
         }
@@ -61,7 +61,7 @@ const DocumentDetails = ({ location, match, history, }) => {
             ...details
         }
         history.push({
-            pathname: `/digit-ui/employee/engagement/documents/delete-response`,
+            pathname: `/${window?.contextPath}/employee/engagement/documents/delete-response`,
             state: { DocumentEntity }
         })
     }

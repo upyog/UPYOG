@@ -157,24 +157,6 @@
       "label": "No"
     }
   ],
-  "Education": [
-    {
-      "value": "HighSchool",
-      "label": "HighSchool"
-    },
-    {
-      "value": "Intermediate",
-      "label": "Intermediate"
-    },
-    {
-      "value": "Graduation",
-      "label": "Graduation"
-    },
-    {
-      "value": "PostGraduation",
-      "label": "PostGraduation"
-    }
-  ],
   "cityName": [
     {
       "value": "Navi Mumbai",
@@ -253,6 +235,14 @@
       "label": "Christian"
     }
   ],
+  "board":[
+    {"value": "SSC",
+      "label": "SSC"},
+    {"value": "CBSE",
+      "label": "CBSE"},
+    {"value": "ICSE",
+      "label": "ICSE"}
+  ],
   "caste": [
     {
       "value": "General",
@@ -274,5 +264,63 @@
       "value": "Other",
       "label": "Other"
     }
-  ]
+  ],
+  "education":[
+    {
+        "qualification": {
+            "code": 3,
+            "name": "Senior Secondary",
+            "i18nKey": "MH_MUMBAI_ADMIN_Senior Secondary"
+        },
+        "yearOfPassing": {
+            "label": "1991",
+            "value": 1991
+        },
+        "percentage": "23",
+        "board": {
+            "value": "SSC",
+            "label": "SSC"
+        }
+    },
+    {
+        "qualification": {
+            "code": 1,
+            "name": "Primary",
+            "i18nKey": "MH_MUMBAI_ADMIN_Primary"
+        },
+        "yearOfPassing": {
+            "label": "1990",
+            "value": 1990
+        },
+        "percentage": "45",
+        "board": {
+            "value": "CBSE",
+            "label": "CBSE"
+        }
+    },
+    {
+        "qualification": {
+            "code": 6,
+            "name": "Postgraduate Diploma",
+            "i18nKey": "MH_MUMBAI_ADMIN_Postgraduate Diploma"
+        },
+        "yearOfPassing": {
+            "label": "1991",
+            "value": 1991
+        },
+        "percentage": "100",
+        "board": {
+            "value": "CBSE",
+            "label": "CBSE"
+        }
+    }
+],
+"gender":[
+  {"id": 2,
+            "name": "Male"},
+  {"id": 1,
+            "name": "Female"},
+  {"id": 3,
+            "name": "Transgender"}
+]
 }

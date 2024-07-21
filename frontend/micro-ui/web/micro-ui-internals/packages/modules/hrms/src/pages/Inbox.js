@@ -1,4 +1,4 @@
-import { Header, Loader } from "@upyog/digit-ui-react-components";
+import { Header, Loader } from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import DesktopInbox from "../components/inbox/DesktopInbox";
@@ -114,7 +114,7 @@ const Inbox = ({ parentRoute, businessService = "HRMS", initialStates = {}, filt
           searchParams={searchParams}
           sortParams={sortParams}
           totalRecords={totalRecords}
-          linkPrefix={'/digit-ui/employee/hrms/details/'}
+          linkPrefix={ `/${window?.contextPath}/employee/hrms/details/`}
           filterComponent={filterComponent}
         />
         // <div></div>

@@ -1,78 +1,14 @@
-import { FSMService } from "../services/elements/FSM";
-import { PTService } from "../services/elements/PT";
+
 import { useQuery } from "react-query";
-import { MCollectService } from "../services/elements/MCollect";
-import { PTRService } from "../services/elements/PTR";
 
-const fsmApplications = async (tenantId, filters) => {
-  return (await FSMService.search(tenantId, { ...filters, limit: 10000 })).fsm;
-};
 
-const ptrApplications = async (tenantId, filters) => {
-  return (await PTRService.search({ tenantId, filters })).PetRegistrationApplications;
-};
-
-const ptApplications = async (tenantId, filters) => {
-  return (await PTService.search({ tenantId, filters })).Properties;
-};
-
-const advtApplications = async (tenantId, filters) => {
-  return (await MCollectService.search_bill({ tenantId, filters })).Bills;
-};
-const tlApplications = async (tenantId, filters) => {
-  return (await TLService.search_bill({ tenantId, filters })).Bills;
-};
 
 const refObj = (tenantId, filters) => {
   let consumerCodes = filters?.consumerCodes;
   // delete filters.consumerCodes;
 
   return {
-    pt: {
-      searchFn: () => ptApplications(null, { ...filters, propertyIds: consumerCodes }),
-      key: "propertyId",
-      label: "PT_UNIQUE_PROPERTY_ID",
-    },
-    ptr: {
-      searchFn: () => ptrApplications(null, { ...filters, applicationNumber: consumerCodes }),
-      key: "applicationNumber",
-      label: "PTR_UNIQUE_APPLICATION_NUMBER",
-    },
-    fsm: {
-      searchFn: () => fsmApplications(tenantId, filters),
-      key: "applicationNo",
-      label: "FSM_APPLICATION_NO",
-    },
-    mcollect: {
-      searchFn: () => advtApplications(tenantId, filters),
-      key: "consumerCode",
-      label: "UC_CHALLAN_NO",
-    },
-    ws: {
-      searchFn: () => advtApplications(tenantId, filters),
-      key: "consumerCode",
-      label: "WS_MYCONNECTIONS_CONSUMER_NO",
-    },
-    sw: {
-      searchFn: () => advtApplications(tenantId, filters),
-      key: "consumerCode",
-      label: "WS_MYCONNECTIONS_CONSUMER_NO",
-    },
-    TL: {
-      searchFn: () => tlApplications(tenantId, filters),
-      key: "consumerCode",
-      label: "REFERENCE_NO",
-    },
-    BPAREG: {
-      searchFn: () => tlApplications(tenantId, filters),
-      key: "consumerCode",
-      label: "REFERENCE_NO",
-    },
-    BPA: {
-      searchFn: () => tlApplications(tenantId, filters),
-      key: "consumerCode",
-      label: "REFERENCE_NO",
-    },
+   
   };
 };
 
@@ -90,9 +26,6 @@ export const useApplicationsForBusinessServiceSearch = ({ tenantId, businessServ
   if (window.location.href.includes("BPA.")) {
     _key = "BPA"
   }
-  if (window.location.href.includes("pet-services")) {
-    _key = "ptr"
-  } 
 
   /* key from application ie being used as consumer code in bill */
   const { searchFn, key, label } = refObj(tenantId, filters)[_key];

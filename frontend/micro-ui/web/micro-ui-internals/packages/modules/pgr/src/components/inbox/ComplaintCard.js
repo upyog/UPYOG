@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { FilterAction, Card, DetailsCard, PopUp, SearchAction } from "@upyog/digit-ui-react-components";
+import { FilterAction, Card, DetailsCard, PopUp, SearchAction } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import Filter from "./Filter";
 import SearchComplaint from "./search";
@@ -42,7 +42,7 @@ export const ComplaintCard = ({ data, onFilterChange, onSearch, serviceRequestId
       </Card>
     );
   } else if (data && data?.length > 0) {
-    result = <DetailsCard data={data} serviceRequestIdKey={serviceRequestIdKey} linkPrefix={"/digit-ui/employee/pgr/complaint/details/"} />;
+    result = <DetailsCard data={data} serviceRequestIdKey={serviceRequestIdKey} linkPrefix={`/${window?.contextPath}/employee/pgr/complaint/details/`} />;
   } else {
     result = (
       <Card style={{ marginTop: 20 }}>

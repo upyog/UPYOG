@@ -1,4 +1,4 @@
-import { Clock, Header, Loader, MapMarker, OnGroundEventCard } from "@upyog/digit-ui-react-components";
+import { Clock, Header, Loader, MapMarker, OnGroundEventCard } from "@egovernments/digit-ui-react-components";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Redirect, useHistory, useLocation, useParams } from "react-router-dom";
@@ -16,7 +16,7 @@ const EventDetails = () => {
   if (!Digit.UserService?.getUser()?.access_token) {
     localStorage.clear();
     sessionStorage.clear();
-    return <Redirect to={{ pathname: `/digit-ui/citizen/login`, state: { from: location.pathname + location.search } }} />;
+    return <Redirect to={{ pathname: `/${window?.contextPath}/citizen/login`, state: { from: location.pathname + location.search } }} />;
   }
 
   function onGroundEventCardPropsForEventDetails(DataParamsInEvent) {

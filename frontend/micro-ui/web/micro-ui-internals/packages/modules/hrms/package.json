@@ -1,7 +1,7 @@
 {
-  "name": "@upyog/digit-ui-module-hrms",
-  "version": "1.7.0-beta.3",
-  "description": "Digit HRMS Module",
+  "name": "@egovernments/digit-ui-module-hrms",
+  "version": "1.8.0",
+  "description": "HRMS",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
@@ -15,8 +15,7 @@
     "prepublish": "yarn build"
   },
   "dependencies": {
-    "@upyog/digit-ui-react-components": "1.7.0-beta.4",
-    "microbundle-crl": "^0.13.11",
+    "@egovernments/digit-ui-react-components": "1.5.22",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-hook-form": "6.15.8",
@@ -24,5 +23,7 @@
     "react-query": "3.6.1",
     "react-router-dom": "5.3.0",
     "rooks": "^4.4.0"
-  }
+  },
+  "author": "JaganKumar <jagan.kumar@egov.org.in>",
+  "keywords": ["digit","egov","dpg","digit-ui","hrms","employee","management"]
 }

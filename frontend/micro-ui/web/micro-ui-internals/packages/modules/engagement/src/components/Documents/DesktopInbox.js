@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Loader } from "@upyog/digit-ui-react-components";
+import { Card, Loader } from "@egovernments/digit-ui-react-components";
 import { Link } from "react-router-dom";
 
 import EventLink from "../Events/EventLink";
@@ -55,7 +55,7 @@ const DocumentDesktopInbox = ({ isLoading, data, t, onSearch, title, iconName, l
     result = (
       <Card style={{ marginTop: 20, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         {t("CE_DOCUMENTS_NOT_FOUND")}<br />
-        <Link className="link" to={`/digit-ui/employee/engagement/documents/inbox/new-doc`}>{t('NEW_DOCUMENT_TEXT')}</Link>
+        <Link className="link" to={`/${window?.contextPath}/employee/engagement/documents/inbox/new-doc`}>{t('NEW_DOCUMENT_TEXT')}</Link>
       </Card>
     );
   } else if (data?.length > 0) {

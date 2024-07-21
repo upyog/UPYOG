@@ -1,7 +1,7 @@
 import React, { Fragment, useState ,useEffect} from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Header, Card, CardSectionHeader, PDFSvg, Loader, StatusTable, Menu, ActionBar, SubmitBar, Modal, CardText } from "@upyog/digit-ui-react-components";
+import { Header, Card, CardSectionHeader, PDFSvg, Loader, StatusTable, Menu, ActionBar, SubmitBar, Modal, CardText } from "@egovernments/digit-ui-react-components";
 import ApplicationDetailsTemplate from "../../../../../templates/ApplicationDetails";
 
 const Heading = (props) => {
@@ -45,7 +45,7 @@ const EventDetails = () => {
   function onActionSelect(action) {
     // setSelectedAction(action);
     if (action === "EDIT") {
-      history.push(`/digit-ui/employee/engagement/event/edit-event/${id}`)
+      history.push(`/${window?.contextPath}/employee/engagement/event/edit-event/${id}`)
     }
     if (action === "DELETE") {
       setShowModal(true);
@@ -62,7 +62,7 @@ const EventDetails = () => {
         },
       ],
     };
-    history.push("/digit-ui/employee/engagement/event/response?delete=true", details);
+    history.push(`/${window?.contextPath}/employee/engagement/event/response?delete=true`, details);
   };
 
   return (

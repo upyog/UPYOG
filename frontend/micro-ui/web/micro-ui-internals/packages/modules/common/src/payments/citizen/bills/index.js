@@ -1,4 +1,4 @@
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@egovernments/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useParams, useHistory, useRouteMatch, useLocation } from "react-router-dom";
 import Routes from "./routes";
@@ -21,7 +21,7 @@ export const MyBills = ({ stateCode }) => {
   const { tenantId } = Digit.UserService.getUser()?.info || location?.state || { tenantId: _tenantId } || {};
 
   if (!tenantId && !location?.state?.fromSearchResults) {
-    history.replace(`/digit-ui/citizen/login`, { from: url });
+    history.replace(`/${window?.contextPath}/citizen/login`, { from: url });
   }
 
   const { isLoading, data } = Digit.Hooks.useFetchCitizenBillsForBuissnessService(

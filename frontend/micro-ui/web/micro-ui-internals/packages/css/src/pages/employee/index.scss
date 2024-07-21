@@ -6,7 +6,6 @@
   }
   .ground-container {
     margin-bottom: 56px;
-    margin-left: 0px;
     @apply flex flex-col;
   }
   .card-home {
@@ -25,8 +24,8 @@
     top: 0;
     width: 100%;
     padding: 16px 24px;
-    background: #ffffff;
-    box-shadow: 0 1px 4px #b1b4b6;
+    background: white;
+    box-shadow: rgba(0, 0, 0, 0.24) 0 1px 4px;
     z-index: 9999;
 
     img {
@@ -54,7 +53,7 @@
       margin-top: 12px;
 
       .user-img-txt {
-        background: #a82227;
+        background: theme(colors.primary.main);
         padding: 10px 15px;
         border-radius: 50%;
         color: white;
@@ -67,73 +66,16 @@
     padding-top: 88px;
   }
 
-.submit-bar header{
-  height: 2rem !important;
-  line-height: 2rem !important;
-} 
-
   .loginContainer {
     padding-top: 88px;
-    position: relative;
   }
-
-.loginnn{
-  position: relative;
-  max-width: 100%;
-  width: 100%;
-  min-width: 100%;
-}
-.loginnn .img{
-  position: absolute;
-  background-size: cover;
-  width: 100%;
-  max-width: 100%;
-  max-height: 100%;
-}
-.logoNiua{
-  display: flex;
-  width: 100%;
-  position: absolute;
-}
-.logoNiua .img{
-  width: 15%;
-  height: 15%;
-}
-.upyogLogo{
-  width: 100% !important;
-}
-.login-logo-wrapper{
-    min-width: 100%;
-    height: 100%;
-    position: absolute;
-    display: flex;
-    flex-direction: row;
-}
-.loginConference{
-    position: relative;
-    height: 100%;
-    width: 100%;
-    font-weight: 700;
-
-}
-.login-banner-wrapper{
-    position: relative;
-    color: white;
-    float: right;
-    z-index: 999;
-    height: 100%;
-    padding-top: 35vh;
-    margin-right: 2%;
-    text-align: right;
-    font-family: none;
-}
 
   .react-time-picker {
     width: 100%;
   }
 
   .react-time-picker__wrapper {
-    border: 1px solid #464646;
+    border: 1px solid theme(colors.inputBorder);
   }
 
   .react-time-picker__clock {
@@ -156,50 +98,28 @@
     padding-left: 8px;
   }
 }
-#login-conference-table{
-  position:absolute;
-   z-index:1;
-   width:36vw;
-   height:62vh;
-   margin-top:20vh;
-   margin-left: 2vw;
-}
-.banner-slogan{
-  padding-top: 10%;
-}
-.psuedo-banner span{
-  color: #fdd049;
-} 
-.login-banner-wrapper .psuedo-banner{
-  font-size: 2.2rem;
-}
-.login-banner-wrapper .banner-slogan{
-  font-size: 1.5rem;
-}
+
 .citizen {
   .main {
     padding-top: 82px;
-    min-height: calc(100vh - 48px);
-    display: flex !important;
+    min-height: calc(100vh - 90px);
   }
 }
+
 .citizen,
 .employee {
   .sidebar {
     position: fixed;
     left: 0;
+    background: #0B4B66;
     height: 100%;
-    color: #ffffff;
-    margin-top: 80px;
-    z-index: 999;
+    color: theme(colors.white);
+    margin-top: 83px;
+    z-index: 10000;
     transition: 0.3s ease all;
     white-space: nowrap;
     height: calc(100vh - 36px);
     padding-bottom: 5rem;
-    background-image: url(https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-green-card.png), url(https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-red-card.png);
-    background-blend-mode: lighten;
-    background-size: cover;
-
 
     .actions {
       cursor: pointer;
@@ -208,29 +128,39 @@
       .tooltip {
         margin-left: 16px;
       }
+      margin-bottom: 0px;
     }
 
     svg {
       width: 24px;
       height: 24px;
-      fill: #ffffff;
+      fill: theme(colors.white);
     }
     a {
       display: flex;
     }
     .sidebar-link {
       display: flex;
-      color: #ffffff;
+      color: theme(colors.white);
       justify-content: space-between;
       align-items: center;
       padding: 20px;
       font-size: 14px;
-      &.active {
-        color: #a82227 !important;
+      
+      &.level-0 {
+        margin:0 0.3rem 0 0.3rem;
+        &.select-level{
+          border-top: 1px solid;
+          border-bottom: 1px solid;
+        }
+      }
 
-        border-right: 4px solid #a82227;
+      &.active {
+        color: theme(colors.primary.main) !important;
+
+        border-right: none;
         svg {
-          fill: #a82227 !important;
+          fill: theme(colors.primary.main) !important;
         }
       }
       .employee-search-input {
@@ -250,27 +180,28 @@
       }
 
       svg {
-        fill: #ffffff !important;
+        fill: theme(colors.white) !important;
         width: 21px;
         height: 21px;
       }
 
       &:hover {
-        color: #a82227 !important;
-        background-color: #486480;
+        
+        background-color: #0B4B66;
 
         cursor: pointer;
-        svg {
-          fill: #a82227 !important;
-        }
+        
       }
       .search-icon-wrapper {
+        border: 2px solid theme(colors.white);
+        border-radius: 4px;
+        padding: 5px;
         svg {
-          fill: #ffffff !important;
+          fill: theme(colors.white) !important;
           width: 21px;
           height: 21px;
           path {
-            fill: #ffffff !important;
+            fill: theme(colors.white) !important;
           }
         }
       }
@@ -281,7 +212,7 @@
       margin-left: 40px;
       align-items: center;
       text-decoration: none;
-      color: #ffffff;
+      color: theme(colors.white);
       font-size: 14px;
       .actions {
         .tooltiptext {
@@ -292,22 +223,37 @@
       svg {
         width: 20px;
         height: 20px;
-        fill: #ffffff;
+        fill: theme(colors.white);
       }
       &:hover {
-        color: #fe7a51 !important;
-        background-color: #486480;
+        background-color: #6A8E9D;
+        opacity: 0.8;
         cursor: pointer;
         svg {
           fill: #fe7a51 !important;
         }
       }
-      &.active {
-        color: #a82227 !important;
 
-        border-right: 4px solid #a82227;
+
+      &.active {
+        border-left: 4px solid theme(colors.primary.main);
+        &.level-0 {
+        
+        }
+        &.level-1 {
+          border-left: 8.5px solid theme(colors.primary.main);
+        }
+        &.level-2 {
+          border-left: 4px solid theme(colors.primary.main);
+        }
+
+        &.level-3{
+
+        }
+        color: theme(colors.primary.main) !important;
+        border-right: none;
         svg {
-          fill: #a82227 !important;
+          fill: theme(colors.primary.main) !important;
         }
       }
     }
@@ -325,7 +271,7 @@
     padding-top: 10px;
 
     .containerStyles {
-      border: 1px solid #505a5f;
+      border: 1px solid theme(colors.text.secondary);
       padding: 16px;
       margin-bottom: 20px;
     }
@@ -340,7 +286,7 @@
   }
 
   .tableContainerStyles {
-    border: 1px solid #505a5f;
+    border: 1px solid theme(colors.text.secondary);
     padding: 16px;
     margin-bottom: 20px;
   }
@@ -429,12 +375,11 @@
   }
 }
 
-.RightMostTopBarOptions{
-  @apply flex float-right;
-  display: flex;
-  .EventNotificationWrapper{
-    @apply relative cursor-pointer;
-    span{
+.RightMostTopBarOptions {
+  @apply flex;
+  .EventNotificationWrapper {
+    @apply relative cursor-pointer ml-md;
+    span {
       top: -10px;
       right: -10px;
       @apply absolute bg-error h-5 w-5 rounded-full text-center;
@@ -446,11 +391,60 @@
   .select-wrap {
     margin-bottom: unset;
     svg {
-      fill: #ffffff;
+      fill: theme(colors.white);
     }
   }
 }
 
+@media (min-width: 640px) {
+  .employee {
+    .ground-container {
+      @apply block;
+    }
+    .breadcrumb {
+      @apply mb-lg;
+      margin-left: 0;
+    }
+    .card-home {
+      width: 270px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    .card-home-hrms {
+      width: 405px;
+      padding: 0px;
+      margin-right: 16px;
+      margin-bottom: 16px;
+    }
+    .main {
+      display: flex;
+      flex-direction: column;
+      padding-top: 80px;
+      margin-left: 72px;
+      width: calc(100%-83px);
+    }
+    .citizen-home-container {
+      display: flex;
+      flex-direction: unset !important;
+      width: unset !important;
+      margin-left: unset !important;
+      padding-top: 58px;
+    }
+  }
+
+  .citizen {
+    .main {
+      width: 100%;
+      padding-top: 58px;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .center-container {
+    }
+  }
+}
 
 .fullWidth {
   width: 100%;
@@ -472,154 +466,107 @@
 
 @screen dt {
   .d-grid {
-    display: flex-root;
+    display: grid;
     grid-template-columns: 250px 250px 250px 250px;
     column-gap: 10px;
     row-gap: 2px;
     margin-left: -12px;
   }
-
 }
 
 .m-auto {
   margin: auto !important;
 }
 
-.mb-50{
+.mb-50 {
   margin-bottom: 50px;
 }
-.mb-25{
+.mb-25 {
   margin-bottom: 25px;
 }
-@media (min-width: 640px) {
-  .employee {
-    .ground-container {
-      margin-left: 0px !important;
-      @apply block ml-md;
-    }
-    .breadcrumb {
-      @apply mb-lg;
-      margin-left: 0;
-    }
-    .card-home {
-      width: 270px;
-      margin-right: 10px;
-      margin-bottom: 10px;
-    }
-    .card-home-hrms {
-      width: 405px;
-      padding: 0px;
-      margin-right: 16px;
-      margin-bottom: 16px;
-    }
-    .main {
-      display: flex;
-      flex-direction: column;
-      padding-top: 80px;
-      margin-left: 64px;
-      width: calc(100%-83px);
-    }
-    .citizen-home-container {
-      display: flex;
-      flex-direction: unset !important;
-      width: unset !important;
-      margin-left: unset !important;
-      padding-top: 58px;
-    }
-  }
-  #main-img{      
-    content:url("https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/employee-login.png");
-} 
-  .citizen {
-    .main {
-      width: 100%;
-      padding-top: 80px;
-      min-height: calc(100vh - 48px);
-      margin-bottom: 18px !important;
-      display: flex !important;
-    }
 
-    .center-container {
+.back-wrapper {
+  display: flex;
+  justify-content: space-between;
+
+  .top-back-btn {
+    margin-bottom: 0px;
+    color: theme(colors.white);
+    margin-right: 1em;
+    & svg {
+      fill: theme(colors.white);
     }
   }
- 
-}
-
-@media only screen and (max-width:950px){
-  #main-img{      
-    content:url("https://i.postimg.cc/9Q7jT6Dd/Banner-Image-2.png");
-  }
- #login-conference-table{
-  position:relative;
-   z-index:1;
-   width:75%;
-   height:115%;
-   margin:12%;
-   margin-top:25%
-}
-.loginConference{
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    font-weight: 700;
+  .hambuger-back-wrapper {
     display: flex;
-    flex-direction: column;
+    @media (min-width: 780px) {
+      .hamburger-span {
+        display: none;
+      }
+    }
+  }
 }
-.employee .login-banner-wrapper{
-  padding-top: 0vh;
+
+@screen dt {
+  .back-wrapper {
+    margin-right: 2rem;
+    margin-left: 2rem;
+  }
+}
+
+.user-profile {
+  @media (min-width: 780px) {
+    width: calc(100% - 219px);
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+}
+
+.link {
+  a{
+    color: inherit;
+    text-decoration: inherit
+    }
+}
+
+.breadcrumb {
+  a{
+    color: inherit;
+    text-decoration: inherit
+    }
+}
+
+.sidebar-link.active{
+.custom-link{
+  text-decoration: none;
+  div{
+    span{
+      color: theme(colors.primary.main) !important;
+      text-decoration: none;
+    }
+  }
+}
+}
+.bread-crumb {
+  a{
+    color: inherit;
+    text-decoration: inherit
+    }
+}
+
+.sidebar-link{
+  .custom-link{
+    text-decoration: none;
+    div{
+      span{
+        color: theme(colors.white);
+        text-decoration: none;
+      }
+    }
+  }
+  }
   
-}
-.psuedo-banner{
-  font-size: 4vw;
-}
-.banner-slogan{
-  font-size: 3.5vw;
-}
-}
-
-@media screen and (min-width:768){
-
-   #login-conference-table{
-  position:absolute;
-   z-index:1;
-   width:40%;
-   height:30%;
-   margin:12%;
-   margin-top:25%
-} 
-}
-@media only screen and (max-width:500px){
-  #main-img{      
-    content:url("https://i.postimg.cc/9Q7jT6Dd/Banner-Image-2.png");
+/* TODO fix required NABEEL/ANIL for home screen card */
+  .customEmployeeCard {
+    @apply m-sm !important;
   }
- #login-conference-table{
-  position:relative;
-   z-index:1;
-   width:75%;
-   height:80%;
-   margin:12%;
-   margin-top:25%
-}
-.loginConference{
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    font-weight: 700;
-    display: flex;
-    flex-direction: column;
-}
-.employee .psuedo-banner{
-  font-size: 1.2rem;
-}
-.employee .banner-slogan{
-  font-size: 0.8rem;
-}
-}
-@media only screen and (min-width:300px)
-{
-.employee .card-home{
-height: 220px;
-box-shadow: #32325d14 0px 50px 100px -20px, rgb(0 0 0 / 18%) 0px 30px 60px -30px, #0a254038 0px -2px 6px 0px inset;
-border-radius: 12px;
-}
-}

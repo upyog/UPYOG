@@ -1,4 +1,4 @@
-import { FormComposer, Header } from "@upyog/digit-ui-react-components";
+import { FormComposer, Header } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -38,7 +38,7 @@ const NewEvents = () => {
         }
       ]
     }
-    history.push("/digit-ui/employee/engagement/messages/response", details)
+    history.push(`/${window?.contextPath}/employee/engagement/messages/response`, details)
   }
 
   return (

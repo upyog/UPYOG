@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { EditPencilIcon, LogoutIcon } from "@upyog/digit-ui-react-components";
+import { EditPencilIcon, LogoutIcon } from "@egovernments/digit-ui-react-components";
 import TopBar from "./TopBar";
 import { useHistory } from "react-router-dom";
 import SideBar from "./SideBar";
@@ -19,7 +19,6 @@ const TopBarSideBar = ({
   islinkDataLoading,
 }) => {
   const [isSidebarOpen, toggleSidebar] = useState(false);
-  const [isSideBarScroll, setSideBarScrollTop] = useState(false);
   const history = useHistory();
   const [showDialog, setShowDialog] = useState(false);
   const handleLogout = () => {
@@ -34,7 +33,7 @@ const TopBarSideBar = ({
     setShowDialog(false);
   }
   const userProfile = () => {
-    history.push("/digit-ui/employee/user/profile");
+    history.push(`/${window?.contextPath}/employee/user/profile`);
   };
   const userOptions = [
     { name: t("EDIT_PROFILE"), icon: <EditPencilIcon className="icon" />, func: userProfile },
@@ -46,9 +45,7 @@ const TopBarSideBar = ({
         t={t}
         stateInfo={stateInfo}
         toggleSidebar={toggleSidebar}
-        setSideBarScrollTop={setSideBarScrollTop}
         isSidebarOpen={isSidebarOpen}
-        isSideBarScroll={isSideBarScroll}
         handleLogout={handleLogout}
         userDetails={userDetails}
         CITIZEN={CITIZEN}
@@ -68,8 +65,6 @@ const TopBarSideBar = ({
           CITIZEN={CITIZEN}
           isSidebarOpen={isSidebarOpen}
           toggleSidebar={toggleSidebar}
-          isSideBarScroll={isSideBarScroll}
-          setSideBarScrollTop={setSideBarScrollTop}
           handleLogout={handleLogout}
           mobileView={mobileView}
           userDetails={userDetails}

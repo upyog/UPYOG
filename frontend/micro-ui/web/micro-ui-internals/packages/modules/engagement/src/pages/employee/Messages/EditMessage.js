@@ -1,4 +1,4 @@
-import { FormComposer, Header, Loader } from "@upyog/digit-ui-react-components";
+import { FormComposer, Header, Loader } from "@egovernments/digit-ui-react-components";
 import { format } from 'date-fns';
 import React, { Fragment, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -53,7 +53,7 @@ const EditMessage = () => {
         }
       ]
     }
-    history.push("/digit-ui/employee/engagement/messages/response?update=true", details)
+    history.push(`/${window?.contextPath}/employee/engagement/messages/response?update=true`, details)
   }
 
   const defaultValues = useMemo(() => {

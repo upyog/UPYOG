@@ -16,7 +16,7 @@
 
   .upper_green {
     @apply inline;
-    color: #00703C;
+    color: theme(colors.success);
   }
 }
 
@@ -24,4 +24,5 @@
   display: flex;
     flex-wrap: wrap;
     margin-top: 15px;
+    justify-content: space-evenly;
 }

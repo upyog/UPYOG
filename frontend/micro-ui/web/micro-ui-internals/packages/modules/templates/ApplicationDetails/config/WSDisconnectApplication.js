@@ -1,4 +1,4 @@
-import { Dropdown, UploadFile, DatePicker } from "@upyog/digit-ui-react-components";
+import { Dropdown, UploadFile, DatePicker } from "@egovernments/digit-ui-react-components";
 import React from "react";
 
 export const configWSDisConnectApplication = ({
@@ -79,8 +79,6 @@ export const configWSDisConnectApplication = ({
                 message={uploadedFile ? `1 ${t(`ES_PT_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
                 error={error}
                 iserror={error}
-                showHintBelow={true}
-                hintText={"WS_HINT_TEXT_LABEL"}
               />
             )
           },

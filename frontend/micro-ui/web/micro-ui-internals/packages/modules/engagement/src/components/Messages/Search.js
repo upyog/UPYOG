@@ -1,6 +1,6 @@
 import React, {useCallback} from "react";
 import { useForm, Controller } from "react-hook-form";
-import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, DateRange } from "@upyog/digit-ui-react-components";
+import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, DateRange } from "@egovernments/digit-ui-react-components";
 import DropdownUlb from "./DropdownUlb";
 import { alphabeticalSortFunctionForTenantsBasedOnName } from "../../utils";
 
@@ -95,7 +95,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
               </span>
             </div>
           )}
-          <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%",display:"grid" }}>
+          <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%" }}>
             {searchFields
               ?.map((input, index) => (
                 <div key={input.name} className="input-fields">

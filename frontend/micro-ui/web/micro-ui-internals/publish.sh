@@ -7,65 +7,49 @@ msg() {
 }
 
 # msg "Pre-building all packages"
-# yarn install && yarn build
+# yarn build
 # sleep 5
 
+msg "Building and publishing css"
+cd "$BASEDIR/packages/css" && rm -rf dist && yarn && npm publish --access public
 
-msg "Building and publishing libraries"
-cd "$BASEDIR/packages/libraries" &&  rm -rf node_modules &&  rm -rf dist && yarn install && yarn build &&   npm publish --access public 
+# msg "Building and publishing svg components"
+cd "$BASEDIR/packages/svg-components" && rm -rf dist && yarn && npm publish --access public
 
 msg "Building and publishing react-components"
-cd "$BASEDIR/packages/react-components" &&  rm -rf node_modules &&  rm -rf dist && yarn install && yarn build &&   npm publish --access public 
+cd "$BASEDIR/packages/react-components" && rm -rf dist && yarn && npm publish --access public
+
+msg "Building and publishing libraries"
+cd "$BASEDIR/packages/libraries" && rm -rf dist && yarn && npm publish --access public
+
+
 
 # sleep 10
 # msg "Updating dependencies"
 # cd "$BASEDIR" && yarn upgrade -S @egovernments
 # sleep 5
 
-msg "Building and publishing PGR module"
-cd "$BASEDIR/packages/modules/pgr" &&  rm -rf node_modules &&  rm -rf dist && yarn install && yarn build &&   npm publish --access public 
+# msg "Building and publishing Engagement module"
+cd "$BASEDIR/packages/modules/engagement" &&   rm -rf dist && yarn&& npm publish --access public
 
-msg "Building and publishing FSM module"
-cd "$BASEDIR/packages/modules/fsm" &&  rm -rf node_modules &&  rm -rf dist && yarn install && yarn build &&   npm publish --access public 
+# msg "Building and publishing hrms module"
+cd "$BASEDIR/packages/modules/hrms" &&   rm -rf dist && yarn&& npm publish --access public
 
-msg "Building and publishing PT module"
-cd "$BASEDIR/packages/modules/pt" &&  rm -rf node_modules &&  rm -rf dist && yarn install && yarn build &&   npm publish --access public 
+# msg "Building and publishing DSS module"
+cd "$BASEDIR/packages/modules/dss" &&  rm -rf dist && yarn&& npm publish --access public
 
-msg "Building and publishing DSS module"
-cd "$BASEDIR/packages/modules/dss" &&  rm -rf node_modules &&  rm -rf dist && yarn install && yarn build &&   npm publish --access public 
+# msg "Building and publishing Common module"
+cd "$BASEDIR/packages/modules/common" &&   rm -rf dist && yarn&& npm publish --access public
 
-msg "Building and publishing Common module"
-cd "$BASEDIR/packages/modules/common" &&  rm -rf node_modules &&  rm -rf dist && yarn install && yarn build  &&   npm publish --access public 
+# msg "Building and publishing Core module"
+cd "$BASEDIR/packages/modules/core" &&   rm -rf dist && yarn&& npm publish --access public
 
-msg "Building and publishing Core module"
-cd "$BASEDIR/packages/modules/core" &&  rm -rf node_modules &&  rm -rf dist  && yarn install && yarn build &&   npm publish --access public 
+# msg "Building and publishing Utilities module"
+cd "$BASEDIR/packages/modules/utilities" &&   rm -rf dist && yarn&& npm publish --access public
 
-msg "Building and publishing OBPS module"
-cd "$BASEDIR/packages/modules/obps" &&  rm -rf node_modules &&  rm -rf dist && yarn install && yarn build &&   npm publish --access public 
+# msg "Building and publishing pgr module"
+cd "$BASEDIR/packages/modules/pgr" &&   rm -rf dist && yarn&& npm publish --access public
 
-msg "Building and publishing tl module"
-cd "$BASEDIR/packages/modules/tl" &&  rm -rf node_modules &&  rm -rf dist && yarn install && yarn build &&   npm publish --access public
 
-msg "Building and publishing bills module"
-cd "$BASEDIR/packages/modules/bills" &&  rm -rf node_modules &&  rm -rf dist && yarn install && yarn build &&   npm publish --access public
-
-msg "Building and publishing noc module"
-cd "$BASEDIR/packages/modules/noc" &&  rm -rf node_modules &&  rm -rf dist && yarn install && yarn build &&   npm publish --access public
-
-msg "Building and publishing commonPt module"
-cd "$BASEDIR/packages/modules/commonPt" &&  rm -rf node_modules &&  rm -rf dist && yarn install && yarn build &&   npm publish --access public
-
-msg "Building and publishing engagement module"
-cd "$BASEDIR/packages/modules/engagement" &&  rm -rf node_modules &&  rm -rf dis && yarn install && yarn build &&   npm publish --access public 
-
-msg "Building and publishing receipts module"
-cd "$BASEDIR/packages/modules/receipts" &&  rm -rf node_modules &&  rm -rf dist && yarn install && yarn build &&   npm publish --access public 
-
-msg "Building and publishing hrms module"
-cd "$BASEDIR/packages/modules/hrms" &&  rm -rf node_modules &&  rm -rf dist  && yarn install && yarn build&&   npm publish --access public
-
-msg "Building and publishing ws module"
-cd "$BASEDIR/packages/modules/ws" &&  rm -rf node_modules &&  rm -rf dist && yarn install && yarn build &&   npm publish --access public
-
-msg "Building and publishing mCollect module"
-cd "$BASEDIR/packages/modules/mCollect" &&  rm -rf node_modules &&  rm -rf dist && yarn install && yarn build &&   npm publish --access public 
+# msg "Building and publishing workbench module"
+cd "$BASEDIR/packages/modules/workbench" &&   rm -rf dist && yarn&& npm publish --access public

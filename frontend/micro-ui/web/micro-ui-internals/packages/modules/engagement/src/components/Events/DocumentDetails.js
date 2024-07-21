@@ -1,4 +1,4 @@
-import { Header, ActionBar, SubmitBar, PDFSvg, Menu, GenericFileIcon, Loader } from '@upyog/digit-ui-react-components';
+import { Header, ActionBar, SubmitBar, PDFSvg, Menu, GenericFileIcon, Loader } from '@egovernments/digit-ui-react-components';
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import { useParams, useHistory } from "react-router-dom";
@@ -26,7 +26,7 @@ const DocumentDetails = () => {
   function onActionSelect(action) {
     // setSelectedAction(action);
     if (action === "EDIT") {
-      history.push(`/digit-ui/employee/engagement/event/edit-event/${id}`)
+      history.push(`/${window?.contextPath}/employee/engagement/event/edit-event/${id}`)
     }
     if (action === "DELETE") {
       setShowModal(true);
@@ -43,7 +43,7 @@ const DocumentDetails = () => {
           },
         ],
       };
-      history.push("/digit-ui/employee/engagement/event/response?delete=true", details);
+      history.push(`/${window?.contextPath}/employee/engagement/event/response?delete=true`, details);
   };
 
   function onModalCancel() {

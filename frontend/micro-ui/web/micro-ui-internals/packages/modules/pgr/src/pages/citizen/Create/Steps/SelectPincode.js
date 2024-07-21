@@ -1,24 +1,12 @@
-import { FormStep } from "@upyog/digit-ui-react-components";
+import { FormStep } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 
 const SelectPincode = ({ t, config, onSelect, value }) => {
-  const pttype=sessionStorage.getItem("type")
-  let storedpincode=sessionStorage.getItem("pincode") 
-  if(storedpincode=="null"){
-    storedpincode=""
-  } 
-  let value2=value
   const tenants = Digit.Hooks.pgr.useTenants();
   // const __initPincode = Digit.SessionStorage.get("PGR_CREATE_PINCODE");
   const [pincode, setPincode] = useState(() => {
-    if(pttype=="PT"){
-      value2=storedpincode;
-      return value2;
-    }
-    else{
     const { pincode } = value;
     return pincode;
-    }        
   });
   let isNextDisabled = pincode ? false : true;
   const [pincodeServicability, setPincodeServicability] = useState(null);

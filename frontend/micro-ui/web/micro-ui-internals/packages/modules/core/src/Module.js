@@ -1,19 +1,17 @@
+import { Body, Loader } from "@egovernments/digit-ui-react-components";
 import React from "react";
+import { getI18n } from "react-i18next";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
-import { getI18n } from "react-i18next";
-import { Body, Loader } from "@upyog/digit-ui-react-components";
 import { DigitApp } from "./App";
 import SelectOtp from "./pages/citizen/Login/SelectOtp";
-import AcknowledgementCF from "./components/AcknowledgementCF";
-import CitizenFeedback from "./components/CitizenFeedback";
 
-import getStore from "./redux/store";
-import ErrorBoundary from "./components/ErrorBoundaries";
 import { useState } from "react";
+import ErrorBoundary from "./components/ErrorBoundaries";
+import getStore from "./redux/store";
 
-const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers }) => {
+const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers,defaultLanding }) => {
   const { isLoading, data: initData } = Digit.Hooks.useInitStore(stateCode, enabledModules);
   if (isLoading) {
     return <Loader page={true} />;
@@ -30,6 +28,7 @@ const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers }) => {
             modules={initData?.modules}
             appTenants={initData.tenants}
             logoUrl={initData?.stateInfo?.logoUrl}
+            defaultLanding={defaultLanding}
           />
         </Body>
       </Router>
@@ -37,7 +36,7 @@ const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers }) => {
   );
 };
 
-export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers }) => {
+export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers ,defaultLanding}) => {
   const [privacy, setPrivacy] = useState(Digit.Utils.getPrivacyObject() || {});
   const userType = Digit.UserService.getType();
   const queryClient = new QueryClient({
@@ -45,8 +44,8 @@ export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers })
       queries: {
         staleTime: 15 * 60 * 1000,
         cacheTime: 50 * 60 * 1000,
+        retry: false,
         retryDelay: (attemptIndex) => Infinity,
-        retry:false
         /*
           enable this to have auto retry incase of failure
           retryDelay: attemptIndex => Math.min(1000 * 3 ** attemptIndex, 60000)
@@ -99,7 +98,7 @@ export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers })
                 },
               }}
             >
-              <DigitUIWrapper stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />
+              <DigitUIWrapper stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} defaultLanding={defaultLanding}/>
             </PrivacyProvider.Provider>
           </ComponentProvider.Provider>
         </QueryClientProvider>
@@ -110,8 +109,6 @@ export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers })
 
 const componentsToRegister = {
   SelectOtp,
-  AcknowledgementCF,
-  CitizenFeedback,
 };
 
 export const initCoreComponents = () => {

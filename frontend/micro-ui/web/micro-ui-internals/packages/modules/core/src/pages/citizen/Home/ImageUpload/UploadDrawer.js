@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { GalleryIcon, RemoveIcon, UploadFile } from "@upyog/digit-ui-react-components";
+import { GalleryIcon, RemoveIcon, UploadFile } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 function UploadDrawer({ setProfilePic, closeDrawer, userType, removeProfilePic ,showToast}) {
@@ -66,7 +66,7 @@ function UploadDrawer({ setProfilePic, closeDrawer, userType, removeProfilePic ,
           right: "0",
           height: "20%",
           bottom: userType === "citizen" ? "2.5rem" : "0",
-          zIndex: "2",
+          zIndex: "1000",
         }}
       >
         <div

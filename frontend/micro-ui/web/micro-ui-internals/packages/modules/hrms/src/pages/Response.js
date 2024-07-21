@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Card, Banner, CardText, SubmitBar, Loader, LinkButton, ActionBar } from "@upyog/digit-ui-react-components";
+import { Card, Banner, CardText, SubmitBar, Loader, LinkButton, ActionBar } from "@egovernments/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -38,6 +38,16 @@ const Response = (props) => {
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_HRMS_MUTATION_SUCCESS_DATA", false);
   const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("EMPLOYEE_HRMS_ERROR_DATA", false);
   const mutation = state.key === "UPDATE" ? Digit.Hooks.hrms.useHRMSUpdate(tenantId) : Digit.Hooks.hrms.useHRMSCreate(tenantId);
+
+  const employeeCreateSession = Digit.Hooks.useSessionStorage("NEW_EMPLOYEE_CREATE", {});
+  const [sessionFormData,setSessionFormData, clearSessionFormData] = employeeCreateSession;
+
+  // remove session form data if user navigates away from the estimate create screen
+  useEffect(()=>{
+    if (!window.location.href.includes("/hrms/create") && sessionFormData && Object.keys(sessionFormData) != 0) {
+    clearSessionFormData();
+    }
+},[location]);
 
   const onError = (error, variables) => {
     setErrorInfo(error?.response?.data?.Errors[0]?.code || 'ERROR');
@@ -95,7 +105,7 @@ const Response = (props) => {
       <CardText>{t(DisplayText(state.action, mutation.isSuccess || !!successData, props.parentRoute.includes("employee"), t), t)}</CardText>
 
       <ActionBar>
-        <Link to={`${props.parentRoute.includes("employee") ? "/digit-ui/employee" : "/digit-ui/citizen"}`}>
+        <Link to={`${props.parentRoute.includes("employee") ?  `/${window?.contextPath}/employee` :  `/${window?.contextPath}/citizen`}`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       </ActionBar>

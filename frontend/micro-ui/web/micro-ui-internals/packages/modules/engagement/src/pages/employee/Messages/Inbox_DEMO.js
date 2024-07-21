@@ -1,5 +1,5 @@
 import React, {Fragment, useCallback, useMemo, useReducer} from "react"
-import { InboxComposer, CaseIcon, SearchField, TextInput, FilterFormField, Loader } from "@upyog/digit-ui-react-components";
+import { InboxComposer, CaseIcon, SearchField, TextInput, FilterFormField, Loader } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
@@ -44,7 +44,7 @@ const Inbox = () => {
         headerText: "CS_COMMON_TEXT",
         links: [{
             text: "TL_NEW_APPLICATION",
-            link: "/digit-ui/employee/engagement/messages/create",
+            link: `/${window?.contextPath}/employee/engagement/messages/create`,
             businessService: "TL",
             roles: ["TL_CEMP"],
           }]

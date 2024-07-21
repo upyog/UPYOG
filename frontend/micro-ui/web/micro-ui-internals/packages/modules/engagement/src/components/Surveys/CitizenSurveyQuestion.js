@@ -1,8 +1,8 @@
-import { Card, CardLabelError, CheckBox, RadioButtons, TextArea, TextInput } from "@upyog/digit-ui-react-components";
+import { Card, CardLabelError, CheckBox, RadioButtons, TextArea, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { Fragment } from "react";
 import { Controller } from "react-hook-form";
 
-const CitizenSurveyQuestion = ({t, question, control, register, values, formState,formDisabled, index }) => {
+const CitizenSurveyQuestion = ({ t, question, control, register, values, formState,formDisabled }) => {
   const formErrors = formState?.errors;
   
   if (!question) return;
@@ -100,8 +100,6 @@ const CitizenSurveyQuestion = ({t, question, control, register, values, formStat
                         }}
                         checked={typeof value === "string" ? !!([value]?.find(e => e === option)) : !!value?.find(e => e === option)}
                         label={option}
-                        checkboxWidth = {{width:"34px",height:"34px"}}
-                        style={{marginTop:"5px", overflowWrap:"break-word"}}
                       />
                     );
                   })}
@@ -197,7 +195,7 @@ const CitizenSurveyQuestion = ({t, question, control, register, values, formStat
   return (
     <Card>
       <div className="surveyQuestion-wrapper">
-        <span className="question-title">{index+1}. {question.questionStatement} {question?.required? "*":""}</span>
+        <span className="question-title">{question.questionStatement} {question?.required? "*":""}</span>
         <span>{displayAnswerField(question.type)}</span>
       </div>
     </Card>

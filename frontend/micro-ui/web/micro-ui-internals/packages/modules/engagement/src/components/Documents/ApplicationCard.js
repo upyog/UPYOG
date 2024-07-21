@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, DetailsCard, Loader, PopUp, SearchAction, FilterAction } from "@upyog/digit-ui-react-components";
+import { Card, DetailsCard, Loader, PopUp, SearchAction, FilterAction } from "@egovernments/digit-ui-react-components";
 import Filter from "./Filter";
 import Search from "./Search";
 import { useHistory, Link } from "react-router-dom";
@@ -35,7 +35,7 @@ const ApplicationCard = ({
   const redirectToDetailsPage = (data) => {
     const details = responseData?.find((item) => (areEqual(item.postedBy, data["Posted By"]) && areEqual(item.name, data["Document Name"])));
     if (details) {
-      history.push(`/digit-ui/employee/engagement/documents/inbox/details/${details?.name}`, { details })
+      history.push(`/${window?.contextPath}/employee/engagement/documents/inbox/details/${details?.name}`, { details })
     }
   }
 
@@ -44,7 +44,7 @@ const ApplicationCard = ({
     result = (
       <Card style={{ marginTop: 20, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         {t("CE_DOCUMENTS_NOT_FOUND")}<br />
-        <Link className="link" to={`/digit-ui/employee/engagement/documents/inbox/new-doc`}>{t('NEW_DOCUMENT_TEXT')}</Link>
+        <Link className="link" to={`/${window?.contextPath}/employee/engagement/documents/inbox/new-doc`}>{t('NEW_DOCUMENT_TEXT')}</Link>
       </Card>
     );
   }

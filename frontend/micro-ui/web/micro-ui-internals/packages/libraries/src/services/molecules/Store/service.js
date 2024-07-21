@@ -7,7 +7,7 @@ const getImgUrl = (url, fallbackUrl) => {
   if (!url && fallbackUrl) {
     return fallbackUrl;
   }
-  if (url.includes("s3.ap-south-1.amazonaws.com")) {
+  if (url?.includes("s3.ap-south-1.amazonaws.com")) {
     const baseDomain = window?.location?.origin;
     return url.replace("https://s3.ap-south-1.amazonaws.com", baseDomain);
   }
@@ -61,7 +61,7 @@ export const StoreService = {
     const localities = {};
     const revenue_localities = {};
     const initData = {
-      languages: stateInfo.hasLocalisation ? stateInfo.languages : [{ label: "ENGLISH", value: "en_IN" }],
+      languages: stateInfo.hasLocalisation ? stateInfo.languages : [{ label: "ENGLISH", value: Digit.Utils.getDefaultLanguage() }],
       stateInfo: {
         code: stateInfo.code,
         name: stateInfo.name,
@@ -71,7 +71,7 @@ export const StoreService = {
         bannerUrl: stateInfo.bannerUrl,
       },
       localizationModules: stateInfo.localizationModules,
-      modules: MdmsRes?.tenant?.citymodule.filter((module) => module?.active).filter((module) => enabledModules?.includes(module?.code))?.sort((x,y)=>x?.order-y?.order),
+      modules: MdmsRes?.tenant?.citymodule?.filter((module) => module?.active)?.filter((module) => enabledModules?.includes(module?.code))?.sort((x,y)=>x?.order-y?.order),
       uiHomePage: uiHomePage
     };
 
@@ -92,7 +92,7 @@ export const StoreService = {
     await LocalizationService.getLocale({
       modules: [
         `rainmaker-common`,
-        `rainmaker-${stateCode.toLowerCase()}`,
+        `rainmaker-${stateCode.toLowerCase()}`
       ],
       locale: initData.selectedLanguage,
       tenantId: stateCode,

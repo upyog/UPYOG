@@ -66,10 +66,9 @@ export const CreateComplaint = () => {
   };
   const submitComplaint = async () => {
     if (paramState?.complaintType) {
-      const { city_complaint, locality_complaint, uploadedImages, complaintType, subType, prioritylevel, details, ...values } = paramState;
+      const { city_complaint, locality_complaint, uploadedImages, complaintType, subType, details, ...values } = paramState;
       const { code: cityCode, name: city } = city_complaint;
       const { code: localityCode, name: localityName } = locality_complaint;
-      const storedpropertyid =sessionStorage.getItem("propertyid")
       const _uploadImages = uploadedImages?.map((url) => ({
         documentType: "PHOTO",
         fileStoreId: url,
@@ -82,7 +81,6 @@ export const CreateComplaint = () => {
         complaintType: subType.key,
         cityCode,
         city,
-        prioritylevel: prioritylevel ,
         description: details,
         district: city,
         region: city,
@@ -90,9 +88,6 @@ export const CreateComplaint = () => {
         localityName,
         state: stateInfo.name,
         uploadedImages: _uploadImages,
-        additionalDetails: {
-          propertyid: storedpropertyid,
-        },
       };
 
       await dispatch(createComplaint(data));
@@ -102,19 +97,8 @@ export const CreateComplaint = () => {
   };
 
   const handleSelect = (data) => {
-    let c = JSON.parse(sessionStorage.getItem("complaintType"))
-    if(data?.subType)
-    {
-      
-      let data2 ={"complaintType":c}
-      console.log("handleSelect",data,data2)
-      setParams({ ...params, ...data ,...data2 });
-      goNext();
-    }
-    else {
-      setParams({ ...params, ...data });
-      goNext();
-    }
+    setParams({ ...params, ...data });
+    goNext();
   };
 
   const handleSkip = () => {

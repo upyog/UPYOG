@@ -1,4 +1,4 @@
-import { Card, Loader } from "@upyog/digit-ui-react-components";
+import { Card, Loader } from "@egovernments/digit-ui-react-components";
 import React, { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowDownwardElement } from "./ArrowDownward";

@@ -1,5 +1,5 @@
-import { Card, CardSubHeader, CheckPoint, ConnectingCheckPoints, GreyOutText, Loader, DisplayPhotos, LinkButton } from "@upyog/digit-ui-react-components";
-import React, {Fragment, useEffect, useMemo, useState } from "react";
+import { Card, CardSubHeader, CheckPoint, ConnectingCheckPoints, GreyOutText, Loader, DisplayPhotos } from "@egovernments/digit-ui-react-components";
+import React, {Fragment, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { LOCALIZATION_KEY } from "../constants/Localization";
 import PendingAtLME from "./timelineInstances/pendingAtLme";
@@ -51,7 +51,7 @@ const TimeLine = ({ isLoading, data, serviceRequestId, complaintWorkflow, rating
       status: "COMPLAINT_FILED",
     });
   }, [timeline]);
-  const [showAllTimeline, setShowAllTimeline]=useState(false);
+
   const getCommentsInCustomChildComponent = ({comment, thumbnailsToShow, auditDetails, assigner, status}) => {
     const captionDetails = {
       date: auditDetails?.lastModified,
@@ -73,10 +73,7 @@ const TimeLine = ({ isLoading, data, serviceRequestId, complaintWorkflow, rating
     {captionDetails?.date ? <TLCaption data={captionDetails} comments={comment}/> : null}
     </>
   }
-  
-  const toggleTimeline=()=>{
-    setShowAllTimeline((prev)=>!prev);
-  }
+
   const getCheckPoint = ({ status, caption, auditDetails, timeLineActions, index, array, performedAction, comment, thumbnailsToShow, assigner, totalTimelineLength }) => {
     const isCurrent = 0 === index;
     switch (status) {
@@ -151,16 +148,12 @@ const TimeLine = ({ isLoading, data, serviceRequestId, complaintWorkflow, rating
       <CardSubHeader>{t(`${LOCALIZATION_KEY.CS_COMPLAINT_DETAILS}_COMPLAINT_TIMELINE`)}</CardSubHeader>
       {timeline && totalTimelineLength > 0 ? (
         <ConnectingCheckPoints>
-          {timeline.slice(0,showAllTimeline? timeline.length:2).map(({ status, caption, auditDetails, timeLineActions, performedAction, wfComment: comment, thumbnailsToShow, assigner }, index, array) => {
+          {timeline.map(({ status, caption, auditDetails, timeLineActions, performedAction, wfComment: comment, thumbnailsToShow, assigner }, index, array) => {
             return getCheckPoint({ status, caption, auditDetails, timeLineActions, index, array, performedAction, comment, thumbnailsToShow, assigner, totalTimelineLength });
           })}
         </ConnectingCheckPoints>
       ) : (
         <Loader />
-      )}
-      {timeline?.length > 2 && (
-          <LinkButton label={showAllTimeline? t("COLLAPSE") : t("VIEW_TIMELINE")} onClick={toggleTimeline}>
-          </LinkButton>   
       )}
     </React.Fragment>
   );

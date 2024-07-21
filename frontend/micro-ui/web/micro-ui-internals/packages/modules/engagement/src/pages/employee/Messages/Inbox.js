@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { format, isValid } from "date-fns";
-import { Header } from "@upyog/digit-ui-react-components";
+import { Header } from "@egovernments/digit-ui-react-components";
 import DesktopInbox from "../../../components/Messages/DesktopInbox";
 import MobileInbox from "../../../components/Messages/MobileInbox";
 
@@ -75,7 +75,7 @@ const Inbox = ({ tenants, parentRoute }) => {
   const links = [
     {
       text: t("NEW_PUBLIC_MESSAGE_BUTTON_LABEL"),
-      link: "/digit-ui/employee/engagement/messages/inbox/create",
+      link: `/${window?.contextPath}/employee/engagement/messages/inbox/create`,
     }
   ]
 

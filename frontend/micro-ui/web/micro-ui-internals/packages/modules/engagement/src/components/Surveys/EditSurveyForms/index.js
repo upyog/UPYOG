@@ -1,4 +1,4 @@
-import { ActionBar, Card, SubmitBar, Menu } from "@upyog/digit-ui-react-components";
+import { ActionBar, Card, SubmitBar, Menu } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useForm,FormProvider } from "react-hook-form";
 import SurveyInfoLabel from "../../../utils/SurveyInfoLabel";
@@ -21,7 +21,7 @@ const EditSurveyForms = ({ t, onEdit, menuOptions, initialSurveysConfig, isFormD
     formState: surveyFormState,
     clearErrors: clearSurveyFormsErrors,
   } = useForm({
-    defaultValues: { ...initialSurveysConfig },
+    defaultValues: { ...initialSurveysConfig, collectCitizenInfo: initialSurveysConfig?.collectCitizenInfo?.code ? { code: true, name: t("ES_COMMON_YES") } : { code: false, name: t("ES_COMMON_NO") } },
   });
 
   useEffect(() => {

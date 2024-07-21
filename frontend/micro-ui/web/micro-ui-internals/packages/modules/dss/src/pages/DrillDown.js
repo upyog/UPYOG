@@ -1,4 +1,4 @@
-import { Header, Loader, RemoveableTag } from "@upyog/digit-ui-react-components";
+import { Header, Loader, RemoveableTag } from "@egovernments/digit-ui-react-components";
 import { addMonths, endOfYear, format, startOfYear } from "date-fns";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -42,7 +42,6 @@ const DrillDown = ({ stateCode }) => {
       },
     };
   });
-  let title1=title
   const [showFilters, setShowFilters] = useState(false);
 
   const handleFilters = (data) => {
@@ -119,18 +118,10 @@ const DrillDown = ({ stateCode }) => {
   if (isUlbLoading) {
     return <Loader />;
   }
-console.log("ffff123445555",title)
-if(title1.includes("DSS_TOP_3"))
-{
-  title1 ="NATIONAL_DSS_TOP_PERFORMING_STATES_REVENUE_POPULATION"
-}
-else if(title1.includes("DSS_BOTTOM_3"))
-{
-  title1 ="NATIONAL_DSS_BOTTOM_PERFORMING_STATES_REVENUE_POPULATION"
-}
+
   return (
     <FilterContext.Provider value={provided}>
-      <Header>{t(title1)}</Header>
+      <Header>{t(title)}</Header>
       {isNational ? (
         <FiltersNational t={t} ulbTenants={nationalInfo} isNational={isNational} />
       ) : (

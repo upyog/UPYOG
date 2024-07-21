@@ -12,23 +12,23 @@ const BMCCard = () => {
       kpis: ["1"],
       links: [
         {
-          label: t("Verify Applications"),
+          label: t("VERIFY APPLICATIONS"),
           link: `/${window?.contextPath}/employee/bmc/aadhaarverify`,
   
         }
         ,
         {
-          label: t("Randomize Applications"),
+          label: t("RANDOMIZE APPLICATIONS"),
           link: `/${window?.contextPath}/employee/bmc/randmization`,
   
         },
         {
-          label: t("Cross Verify Randomized Applications"),
+          label: t("APPROVE APPLICATIONS"),
           link: `/${window?.contextPath}/employee/bmc/crossverify`,
   
         },
         {
-          label: t("Approve Crossed Verified Applications"),
+          label: t("APPROVE CROSSED VERIFIED APPLICATIONS"),
           link: `/${window?.contextPath}/employee/bmc/approve`,
   
         },

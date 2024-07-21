@@ -5,7 +5,7 @@ import getRootReducer from "./redux/reducers";
 import CitizenApp from "./pages/citizen";
 
 import EmployeeApp from "./EmployeeApp";
-import { ComplaintIcon, CitizenHomeCard, Loader } from "@upyog/digit-ui-react-components";
+import { ComplaintIcon, CitizenHomeCard, Loader } from "@egovernments/digit-ui-react-components";
 import { PGR_CITIZEN_CREATE_COMPLAINT } from "./constants/Citizen";
 import { useTranslation } from "react-i18next";
 import { LOCALE } from "./constants/Localization";
@@ -19,7 +19,6 @@ import { ComplaintsList } from "./pages/citizen/ComplaintsList";
 import ComplaintDetailsPage from "./pages/citizen/ComplaintDetails";
 import SelectRating from "./pages/citizen/Rating/SelectRating";
 import ResponseCitizen from "./pages/citizen/Response";
-import EditApplication from "./pages/employee/EditApplication";
 
 
 export const PGRReducers = getRootReducer;
@@ -76,8 +75,7 @@ const componentsToRegister = {
   PGRComplaintsList : ComplaintsList,
   PGRComplaintDetailsPage : ComplaintDetailsPage,
   PGRSelectRating : SelectRating,
-  PGRResponseCitzen : ResponseCitizen,
-  PGREditApplication: EditApplication,
+  PGRResponseCitzen : ResponseCitizen
 };
 
 export const initPGRComponents = () => {

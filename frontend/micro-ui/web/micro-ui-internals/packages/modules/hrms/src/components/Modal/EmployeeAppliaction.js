@@ -1,5 +1,5 @@
 import React from "react";
-import { UploadFile, Dropdown } from "@upyog/digit-ui-react-components";
+import { UploadFile, Dropdown } from "@egovernments/digit-ui-react-components";
 import { convertEpochToDate } from "../Utils/index";
 
 export const configEmployeeApplication = ({ t, action, selectFile, uploadedFile, setUploadedFile, selectedReason, Reasons, selectReason }) => {
@@ -13,7 +13,7 @@ export const configEmployeeApplication = ({ t, action, selectFile, uploadedFile,
         body: [
           {
             label: t("HR_DEACTIVATION_REASON"),
-            type: "dropdown",
+            //type: "dropdown",
             isMandatory: true,
             name: "reasonForDeactivation",
             populators: <Dropdown isMandatory selected={selectedReason} optionKey="i18key" option={Reasons} select={selectReason} t={t} />,

@@ -6,7 +6,6 @@ import Axios from "axios";
  * @author jagankumar-egov
  *
  */
-
 Axios.interceptors.response.use(
   (res) => res,
   (err) => {
@@ -17,18 +16,18 @@ Axios.interceptors.response.use(
           localStorage.clear();
           sessionStorage.clear();
           window.location.href =
-            (isEmployee ? "/digit-ui/employee/user/login" : "/digit-ui/citizen/login") +
+            (isEmployee ? `/${window?.contextPath}/employee/user/login` : `/${window?.contextPath}/citizen/login`) +
             `?from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         } else if (
           error?.message?.toLowerCase()?.includes("internal server error") ||
           error?.message?.toLowerCase()?.includes("some error occured")
         ) {
           window.location.href =
-            (isEmployee ? "/digit-ui/employee/user/error" : "/digit-ui/citizen/error") +
+            (isEmployee ? `/${window?.contextPath}/employee/user/error` : `/${window?.contextPath}/citizen/error`) +
             `?type=maintenance&from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         } else if (error.message.includes("ZuulRuntimeException")) {
           window.location.href =
-            (isEmployee ? "/digit-ui/employee/user/error" : "/digit-ui/citizen/error") +
+            (isEmployee ? `/${window?.contextPath}/employee/user/error` : `/${window?.contextPath}/citizen/error`) +
             `?type=notfound&from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         }
       }
@@ -67,10 +66,10 @@ export const Request = async ({
   multipartFormData = false,
   multipartData = {},
   reqTimestamp = false,
-  plainAccessRequest = null
 }) => {
+  const ts = new Date().getTime();
   if (method.toUpperCase() === "POST") {
-    const ts = new Date().getTime();
+
     data.RequestInfo = {
       apiId: "Rainmaker",
     };
@@ -83,27 +82,21 @@ export const Request = async ({
     if (locale) {
       data.RequestInfo = { ...data.RequestInfo, msgId: `${ts}|${Digit.StoreData.getCurrentLanguage()}` };
     }
+
     if (noRequestInfo) {
       delete data.RequestInfo;
     }
-    if (reqTimestamp) {
-      data.RequestInfo = { ...data.RequestInfo, ts: Number(ts) };
-    }
-
     /* 
     Feature :: Privacy
     
     Desc :: To send additional field in HTTP Requests inside RequestInfo Object as plainAccessRequest
     */
     const privacy = Digit.Utils.getPrivacyObject();
-    if (privacy && !url.includes("/edcr/rest/dcr/") && !noRequestInfo) {
-      data.RequestInfo = { ...data.RequestInfo, plainAccessRequest: { ...privacy } };
+    if (privacy && !url.includes("/edcr/rest/dcr/")) {
+      if (!noRequestInfo) {
+        data.RequestInfo = { ...data.RequestInfo, plainAccessRequest: { ...privacy } };
+      }
     }
-
-    if(plainAccessRequest){
-      data.RequestInfo = { ...data.RequestInfo, plainAccessRequest };
-    }
-
   }
 
   const headers1 = {
@@ -124,6 +117,9 @@ export const Request = async ({
     }
   } else if (setTimeParam) {
     params._ = Date.now();
+  }
+  if (reqTimestamp) {
+    data.RequestInfo = { ...data.RequestInfo, ts: Number(ts) };
   }
 
   let _url = url
@@ -167,6 +163,8 @@ export const Request = async ({
   if (useCache && res?.data && Object.keys(returnData).length !== 0) {
     window.Digit.RequestCache[key] = returnData;
   }
+
+
   return returnData;
 };
 
@@ -191,6 +189,7 @@ export const ServiceRequest = async ({
   useCache = false,
   params = {},
   auth,
+  reqTimestamp,
   userService,
 }) => {
   const preHookName = `${serviceName}Pre`;
@@ -203,7 +202,7 @@ export const ServiceRequest = async ({
     reqParams = preHookRes.params;
     reqData = preHookRes.data;
   }
-  const resData = await Request({ method, url, data: reqData, headers, useCache, params: reqParams, auth, userService });
+  const resData = await Request({ method, url, data: reqData, headers, useCache, params: reqParams, auth, userService, reqTimestamp });
 
   if (window[postHookName] && typeof window[postHookName] === "function") {
     return await window[postHookName](resData);

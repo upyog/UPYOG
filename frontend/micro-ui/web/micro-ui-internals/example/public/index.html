@@ -1,20 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8"/>
-    <link rel="icon" href="https://cdn.jsdelivr.net/npm/@egovernments/digit-ui-css/img/browser-icon.png"/>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel='stylesheet' type='text/css'>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <meta name="theme-color" content="#00bcd1"/>
-    <title>mSeva</title>
-    <!-- <link rel="stylesheet" href="https://unpkg.com/@egovernments/digit-ui-css/dist/index.css"/> -->
-    <script src="https://s3.ap-south-1.amazonaws.com/in-egov-assets/globalConfigs.js"></script>
-    <script src="%REACT_APP_GLOBAL%"></script>
-    <script src="https://pgtest.atomtech.in/staticdata/ots/js/atomcheckout.js"></script> 
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="https://egov-dev-assets.s3.ap-south-1.amazonaws.com/browser-icon.png" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap"
+    rel='stylesheet' type='text/css'>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#00bcd1" />
+  <title>DIGIT</title>
+  <!-- <link rel="stylesheet" href="https://unpkg.com/@egovernments/digit-ui-css@1.5.41/dist/index.css" /> -->
+
+  <!-- <link rel="stylesheet" href="https://unpkg.com/@egovernments/digit-ui-css/dist/index.css"/> -->
+  <!-- <script src="https://s3.ap-south-1.amazonaws.com/egov-dev-assets/globalConfigs.js"></script> -->
+  <!-- <script src="%REACT_APP_GLOBAL%"></script> -->
+  <script>
+var globalConfigs = (function() {
+  var stateTenantId = 'mh'
+  var gmaps_api_key = 'AIzaSyAQOd09-vjmk1sXFb_ZQYDz2nlfhXq7Wf8'
+  var finEnv = 'upyog'
+  var centralInstanceEnabled = false;
+  var footerBWLogoURL = 'https://s3.ap-south-1.amazonaws.com/egov-uat-assets/digit-footer-bw.png'
+  var footerLogoURL = 'https://s3.ap-south-1.amazonaws.com/egov-uat-assets/digit-footer.png'
+  var digitHomeURL = 'http://sundeep.localhost.com'
+  var assetS3Bucket = 'pg-egov-assets';
+
+  var getConfig = function (key) {
+    if (key === 'STATE_LEVEL_TENANT_ID') {
+      return stateTenantId;
+    }
+    else if (key === 'GMAPS_API_KEY') {
+      return gmaps_api_key;
+    }
+    else if (key === 'FIN_ENV') {
+      return finEnv;
+    } else if (key === 'ENABLE_SINGLEINSTANCE') {
+      return centralInstanceEnabled;
+    } else if (key === 'DIGIT_FOOTER_BW') {
+      return footerBWLogoURL;
+    } else if (key === 'DIGIT_FOOTER') {
+      return footerLogoURL;
+    } else if (key === 'DIGIT_HOME_URL') {
+      return digitHomeURL;
+    } else if (key === 'S3BUCKET') {
+      return assetS3Bucket;
+    } else if (key === "JWT_TOKEN"){
+      return "ZWdvdi11c2VyLWNsaWVudDo=";
+    }
+  };
+
+  return {
+    getConfig
+  };
+}());
+
+  </script>
+
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
 </body>
 
 </html>

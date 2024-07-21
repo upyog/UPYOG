@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Header } from "@upyog/digit-ui-react-components";
+import { Header } from "@egovernments/digit-ui-react-components";
 import DesktopInbox from "../../../../components/Documents/DesktopInbox";
 import MobileInbox from "../../../../components/Documents/MobileInbox";
 
@@ -70,7 +70,7 @@ const Inbox = ({ tenants }) => {
     const links = [
         {
             text: t('NEW_DOCUMENT_TEXT'),
-            link: "/digit-ui/employee/engagement/documents/inbox/new-doc",
+            link: `/${window?.contextPath}/employee/engagement/documents/inbox/new-doc`,
         }
     ]
     if (isMobile) {

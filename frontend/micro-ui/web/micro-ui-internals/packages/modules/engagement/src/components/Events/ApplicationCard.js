@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, DetailsCard, Loader, PopUp, SearchAction, FilterAction } from "@upyog/digit-ui-react-components";
+import { Card, DetailsCard, Loader, PopUp, SearchAction, FilterAction } from "@egovernments/digit-ui-react-components";
 import Filter from "./Filter";
 import Search from "./Search";
 import { areEqual } from "../../utils";
@@ -47,7 +47,7 @@ const ApplicationCard = ({
     );
   }
   else if (data && data?.length > 0) {
-    result = <DetailsCard data={data}  linkPrefix={'/digit-ui/employee/engagement/event/inbox/event-details/'} serviceRequestIdKey={serviceRequestIdKey}/>
+    result = <DetailsCard data={data}  linkPrefix={`/${window?.contextPath}/employee/engagement/event/inbox/event-details/`} serviceRequestIdKey={serviceRequestIdKey}/>
   }
   return (
     <React.Fragment>

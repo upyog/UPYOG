@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, DetailsCard, Loader, PopUp, SearchAction, FilterAction } from "@upyog/digit-ui-react-components";
+import { Card, DetailsCard, Loader, PopUp, SearchAction, FilterAction } from "@egovernments/digit-ui-react-components";
 import Filter from "./Filter";
 import Search from "./Search";
 import { areEqual } from "../../utils";
@@ -37,7 +37,7 @@ const ApplicationCard = ({
 
     const details = responseData?.find((item) => (areEqual(item?.user?.name, data["Posted By"]) && areEqual(item.name, data["Title"])));
     if (details) {
-      history.push(`/digit-ui/employee/engagement/messages/inbox/details/${details?.id  }`,)}
+      history.push(`/${window?.contextPath}/employee/engagement/messages/inbox/details/${details?.id  }`,)}
   }
 
   let result;

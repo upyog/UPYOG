@@ -3,19 +3,24 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Switch, useRouteMatch } from "react-router-dom";
 
-
-
 //Citizen Pages
+import AddressDetailCard from "./components/AddressDetails";
+import DisabilityCard from "./components/DisabilityCard";
+import PersonalDetailCard from "./components/PersonalDetails";
+import QualificationCard from "./components/QualificationCard";
+import WorkflowPopup from "./components/Workflowpopup";
 import AadhaarVerification from "./pagecomponents/aadhaarVerification";
 import AadhaarFullForm from "./pagecomponents/aadhaarfullformpge";
 import ApplicationDetail from "./pagecomponents/applicationDetail";
 import BMCReviewPage from "./pagecomponents/bmcReview";
 import SelectSchemePage from "./pagecomponents/selectScheme";
 import BMCCitizenHome from "./pages/citizen";
-
 //Employee Pages
 import BMCCard from "./components/BMCCard";
 import InboxFilter from "./components/InboxFilter";
+import SearchApplications from "./components/SearchApplications";
+
+import WorkflowActions from "./components/Workflow";
 import BMCEmployeeHome from "./pages/employee";
 import ApprovePage from "./pages/employee/Approve";
 import BMCInbox from './pages/employee/Inbox';
@@ -119,6 +124,13 @@ const componentsToRegister = {
   ApprovePage,
   BMCCard,
   BMCInbox,
+  QualificationCard,
+  DisabilityCard,
+  PersonalDetailCard,
+  AddressDetailCard,
+  WorkflowActions,
+  WorkflowPopup,
+  SearchApplications,
   BMC_INBOX_FILTER: (props) => <InboxFilter {...props} />,
 };
 
@@ -127,13 +139,4 @@ export const initBMCComponents = () => {
     Digit.ComponentRegistryService.setComponent(key, value);
   });
 };
-
-// export const initSampleComponents = () => {
-//   overrideHooks();
-//   updateCustomConfigs();
-//   Object.entries(componentsToRegister).forEach(([key, value]) => {
-//     Digit.ComponentRegistryService.setComponent(key, value);
-//   });
-// };
-
 export const BMCReducers = getRootReducer;

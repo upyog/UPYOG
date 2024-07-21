@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Switch, Route, useRouteMatch, useLocation } from "react-router-dom";
-import { ActionBar, Menu, SubmitBar, BreadCrumb } from "@upyog/digit-ui-react-components";
+import { ActionBar, Menu, SubmitBar, BreadCrumb } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 // import { ComplaintDetails } from "./ComplaintDetails";
 // import { CreateComplaint } from "./CreateComplaint";
@@ -35,10 +35,6 @@ const Complaint = () => {
       content: t("CS_PGR_RESPONSE"),
       path: match.url + Employee.Response,
     },
-    editApplication: {
-      content: t("CS_PGR_EDIT_APPLICATION"),
-      path: match.url + Employee.EditApplication,
-    },    
   };
   function popupCall(option) {
     setDisplayMenu(false);
@@ -51,7 +47,7 @@ const Complaint = () => {
   const ComplaintDetails = Digit?.ComponentRegistryService?.getComponent('PGRComplaintDetails');
   const Inbox = Digit?.ComponentRegistryService?.getComponent('PGRInbox');
   const Response = Digit?.ComponentRegistryService?.getComponent('PGRResponseEmp');
-  const EditApplication = Digit.ComponentRegistryService.getComponent("PGREditApplication");
+
   return (
     <React.Fragment>
       <div className="ground-container">
@@ -73,10 +69,6 @@ const Complaint = () => {
               path={match.url + Employee.Response}
               component={<BreadCrumb crumbs={[breadcrumConfig.home, breadcrumConfig.response]}></BreadCrumb>}
             />
-            <Route
-              path={match.url + Employee.EditApplication + ":id"}
-              component={<BreadCrumb crumbs={[breadcrumConfig.home, breadcrumConfig.editApplication]}></BreadCrumb>}
-            />
           </Switch>
         )}
         <Switch>
@@ -84,7 +76,6 @@ const Complaint = () => {
           <Route path={match.url + Employee.ComplaintDetails + ":id*"} component={() => <ComplaintDetails />} />
           <Route path={match.url + Employee.Inbox} component={Inbox} />
           <Route path={match.url + Employee.Response} component={Response} />
-          <Route path={match.url +Employee.EditApplication +":id*"} component={EditApplication} />
         </Switch>
       </div>
       {/* <ActionBar>

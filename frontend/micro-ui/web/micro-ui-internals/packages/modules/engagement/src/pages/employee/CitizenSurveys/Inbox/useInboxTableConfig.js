@@ -2,7 +2,7 @@ import React, { Fragment, useMemo } from "react"
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
-import { InfoBannerIcon } from "@upyog/digit-ui-react-components";
+import { InfoBannerIcon } from "@egovernments/digit-ui-react-components";
 const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCount, table, dispatch, inboxStyles={} }) => {
     const GetCell = (value) => <span className="cell-text styled-cell">{value}</span>;
     const GetStatusCell = (value) => value?.toLowerCase() === "active" ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>
@@ -39,15 +39,12 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
                 Cell: ({ row }) => row.original?.answersCount ? GetCell(Number(row.original?.answersCount)) : "-"
             },
             {
-                Header: <div>{t("EVENTS_STATUS_LABEL")}<div className="tooltip" style={{marginLeft:"5px"}}>
+                Header: <div>{t("EVENTS_STATUS_LABEL")}<div className="tooltip">
                     <InfoBannerIcon fill="#0b0c0c" style />
                     <span className="tooltiptext" style={{
                         whiteSpace: "pre-wrap",
                         fontSize: "small",
                         wordWrap:"break-word",
-                        width:"120px",
-                        marginLeft:"15px",
-                        marginBottom:"-260px"
                         //overflow:"auto"
                     }}>
                         {`${t(`SURVEY_STATUS_TOOLTIP`)}`}
@@ -70,7 +67,7 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
                             <Link to={`${parentRoute}/surveys/inbox/results/${row.original["uuid"]}`}>
                                 <span  className="link"> 
                                     <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M5.5 18H0V6H5.5V18ZM12.75 0H7.25V18H12.75V0ZM20 8H14.5V18H20V8Z" fill="#a82227"/>
+                                    <path d="M5.5 18H0V6H5.5V18ZM12.75 0H7.25V18H12.75V0ZM20 8H14.5V18H20V8Z" fill="#F47738"/>
                                     </svg> 
                                 </span>
                             </Link>

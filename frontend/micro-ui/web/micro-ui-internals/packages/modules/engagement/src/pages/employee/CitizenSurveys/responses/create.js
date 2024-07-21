@@ -1,4 +1,4 @@
-import { Banner, Card, Loader, CardText, ActionBar, SubmitBar,Menu } from "@upyog/digit-ui-react-components";
+import { Banner, Card, Loader, CardText, ActionBar, SubmitBar,Menu } from "@egovernments/digit-ui-react-components";
 import { useQueryClient } from "react-query";
 import React, { useEffect,useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -53,13 +53,13 @@ const Acknowledgement = (props) => {
     }))
   }
   // const actionClickHandler = (option) => {
-  //   if(option === "Go Back to home") history.push("/digit-ui/employee")
-  //   else if(option === "Create another survey") history.push("/digit-ui/employee/engagement/surveys/create")
+  //   if(option === "Go Back to home") history.push(`/${window?.contextPath}/employee`)
+  //   else if(option === "Create another survey") history.push(`/${window?.contextPath}/employee/engagement/surveys/create")
   // }
 
    const actionClickHandler = (option) => {
-    if(option === t("GO_BACK_TO_HOME")) history.push("/digit-ui/employee")
-    else if(option === t("CREATE_ANOTHER_SURVEY")) history.push("/digit-ui/employee/engagement/surveys/create")
+    if(option === t("GO_BACK_TO_HOME")) history.push(`/${window?.contextPath}/employee`)
+    else if(option === t("CREATE_ANOTHER_SURVEY")) history.push(`/${window?.contextPath}/employee/engagement/surveys/create`)
   }
   return (
     <Card>
@@ -78,7 +78,7 @@ const Acknowledgement = (props) => {
       </CardText>
       
        {/* <ActionBar>
-        <Link to={"/digit-ui/employee"}>
+        <Link to={`/${window?.contextPath}/employee`}>
           <SubmitBar label="Action" />
         </Link>
       </ActionBar> */}

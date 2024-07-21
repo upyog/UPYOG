@@ -1,4 +1,4 @@
-import { Header, Modal, Loader, Toast } from "@upyog/digit-ui-react-components";
+import { Header, Modal, Loader } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
@@ -18,7 +18,7 @@ const filterQuestion = (question) => {
   // if (question.type !== "Multiple Choice" || question.type !== "Check Boxes") {
   //   delete question.options;
   // }
-  return { ...question, type: question.type.includes("_") ? question.type : answerTypeEnum[question.type],options:question?.options, status:question.status ? question.status : "ACTIVE", qorder:question.qorder };
+  return { ...question, type: answerTypeEnum[question.type],options:question?.options };
 };
 
 /**TODO : Think of better to do this possibly in service layer */
@@ -43,28 +43,6 @@ const SurveyDetails = ({ location, match }) => {
   const [userAction, setUserAction] = useState(undefined);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const tenantIdForInboxSearch = window?.Digit.SessionStorage?.get("CITIZENSURVEY.INBOX")?.searchForm?.tenantIds?.code || tenantId
-  const [showToast, setShowToast] = useState(null);
-
-  const closeToast = () => {
-    setShowToast(null);
-  };
-  setTimeout(() => {
-    closeToast();
-  }, 10000);
-
-  function convertTime12To24(time) {
-    var hours   = Number(time.match(/^(\d+)/)[1]);
-    var minutes = Number(time.match(/:(\d+)/)[1]);
-    var AMPM    = time.match(/\s(.*)$/)[1];
-    if (AMPM === "PM" || AMPM === "pm"  && hours < 12) hours = hours + 12;
-    if (AMPM === "AM" || AMPM === "am" && hours === 12) hours = hours - 12;
-    var sHours   = hours.toString();
-    var sMinutes = minutes.toString();
-    if (hours < 10) sHours = "0" + sHours;
-    if (minutes < 10) sMinutes = "0" + sMinutes;
-    return (sHours + ":" + sMinutes);
-}
-
   const { isLoading, data: surveyData } = Digit.Hooks.survey.useSearch(
     { tenantIds: tenantIdForInboxSearch, uuid: id },
     {
@@ -75,22 +53,20 @@ const SurveyDetails = ({ location, match }) => {
           uuid: surveyObj.uuid,
           title: surveyObj.title,
           description: surveyObj.description,
+          collectCitizenInfo: { code: surveyObj.collectCitizenInfo },
           fromDate: format(new Date(surveyObj.startDate), "yyyy-MM-dd"),
           toDate: format(new Date(surveyObj.endDate), "yyyy-MM-dd"),
-          fromTime: convertTime12To24(new Date(surveyObj.startDate).toLocaleString("en-IN",{hour: "numeric", minute:"numeric",hour12:true})),
-          toTime: convertTime12To24(new Date(surveyObj.endDate).toLocaleString("en-IN",{hour: "numeric", minute:"numeric",hour12:true})),
-          questions: surveyObj.questions.map(({ questionStatement, type, required, options, uuid, surveyId, qorder, status }) => ({
+          fromTime: format(new Date(surveyObj.startDate), "hh:mm"),
+          toTime: format(new Date(surveyObj.endDate), "hh:mm"),
+          questions: surveyObj.questions.map(({ questionStatement, type, required, options, uuid, surveyId }) => ({
             questionStatement,
-            type: /*TypeAnswerEnum[type]*/type,
+            type: TypeAnswerEnum[type],
             required,
             options,
             uuid,
-            surveyId,
-            qorder,
-            status
+            surveyId
           })),
           status: surveyObj.status,
-          tenantId: { code: surveyObj.tenantId },
         };
       },
     }
@@ -132,14 +108,15 @@ const SurveyDetails = ({ location, match }) => {
 
   const onEdit = (data) => {
     const { collectCitizenInfo, title, description, tenantIds, fromDate, toDate, fromTime, toTime, questions } = data;
-    const mappedQuestions = mapQuestions(questions,surveyData);
+    const mappedQuestions = mapQuestions(questions);
     const details = {
       SurveyEntity: {
         uuid: surveyData.uuid,
         //tenantIds: tenantIds.map(({ code }) => code),
-        tenantId: tenantIds[0]?.code ? tenantIds[0]?.code : surveyData.tenantId.code,
+        tenantId: tenantIds[0]?.code,
         title,
         description,
+        collectCitizenInfo: collectCitizenInfo.code,
         startDate: new Date(`${fromDate} ${fromTime}`).getTime(),
         endDate: new Date(`${toDate} ${toTime}`).getTime(),
         questions: mappedQuestions,
@@ -152,29 +129,14 @@ const SurveyDetails = ({ location, match }) => {
         //These are not required to update, only status was required that we were not sending..
       },
     };
-
-    try{
-      let filters = {tenantIds : tenantIds[0]?.code ? tenantIds[0]?.code : surveyData.tenantId.code, title : title}
-      Digit.Surveys.search(filters).then((ob) => {
-        if(ob?.Surveys?.length>0 && data?.title !== surveyData?.title)
-        {
-          setShowToast({ key: true, label: "SURVEY_SAME_NAME_SURVEY_ALREADY_PRESENT" });
-        }
-        else
-        {
-          history.push("/digit-ui/employee/engagement/surveys/update-response", details);
-        }
-      })
-    }
-    catch(error)
-    {}
+    history.push(`/${window?.contextPath}/employee/engagement/surveys/update-response`, details);
   };
 
   const handleDelete = () => {
     const details = {
-      SurveyEntity: { ...surveyData, tenantId: tenantId?.code ? tenantId?.code : tenantId },
+      SurveyEntity: { ...surveyData, collectCitizenInfo: surveyData.collectCitizenInfo.code },
     };
-    history.push("/digit-ui/employee/engagement/surveys/delete-response", details);
+    history.push(`/${window?.contextPath}/employee/engagement/surveys/delete-response`, details);
   };
 
   //if we don't send tenantId it violates the not null constraint in the backend...
@@ -186,11 +148,12 @@ const SurveyDetails = ({ location, match }) => {
         status: "ACTIVE",
         startDate: new Date(`${fromDate} ${fromTime}`).getTime(),
         endDate: new Date(`${toDate} ${toTime}`).getTime(),
+        collectCitizenInfo: surveyData.collectCitizenInfo.code,
         questions: surveyData.questions.map(filterQuestion),
         tenantId,
       },
     };
-    history.push("/digit-ui/employee/engagement/surveys/update-response", details);
+    history.push(`/${window?.contextPath}/employee/engagement/surveys/update-response`, details);
   };
 
   const handleMarkInactive = () => {
@@ -199,9 +162,10 @@ const SurveyDetails = ({ location, match }) => {
         tenantId,
         questions: surveyData.questions.map(filterQuestion), 
         status: "INACTIVE", 
+        collectCitizenInfo: surveyData.collectCitizenInfo.code,
          },
     };
-    history.push("/digit-ui/employee/engagement/surveys/update-response", details);
+    history.push(`/${window?.contextPath}/employee/engagement/surveys/update-response`, details);
   };
 
   const actionMenuOptions = useMemo(() => {
@@ -273,7 +237,6 @@ const SurveyDetails = ({ location, match }) => {
           actionSaveOnSubmit={handleMarkInactive}
         />
       )}
-      {showToast && <Toast error={showToast.key} label={t(showToast.label)} onClose={closeToast} />}
     </Fragment>
   );
 };

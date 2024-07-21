@@ -1,14 +1,10 @@
-import { CardLabel, LabelFieldPair, Modal, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, Modal, TextInput, WorkflowActions, WorkflowTimeline } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import Timeline from "../components/bmcTimeline";
 import Title from "../components/title";
-
-import {
-  EditIcon
-} from "@egovernments/digit-ui-react-components";
 
 const defaultImage =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAADUCAMAAACs0e/bAAAAM1BMVEXK0eL" +
@@ -611,7 +607,6 @@ const ReviewDetailForm = (_props) => {
                         />
                       )}
                     />
-                    <EditIcon className="fill-path-primary-main" onChange={() => handleEdit("religion")} />
                   </LabelFieldPair>
                 </div>
               </div>
@@ -647,7 +642,6 @@ const ReviewDetailForm = (_props) => {
                         />
                       )}
                     />
-                    <EditIcon className="fill-path-primary-main" />
                   </LabelFieldPair>
                 </div>
                 <div className="bmc-col1-card">
@@ -681,7 +675,6 @@ const ReviewDetailForm = (_props) => {
                         />
                       )}
                     />
-                    <EditIcon className="fill-path-primary-main" />
                   </LabelFieldPair>
                 </div>
                 <div className="bmc-col1-card">
@@ -715,7 +708,6 @@ const ReviewDetailForm = (_props) => {
                         />
                       )}
                     />
-                    <EditIcon className="fill-path-primary-main" />
                   </LabelFieldPair>
                 </div>
               </div>
@@ -751,7 +743,6 @@ const ReviewDetailForm = (_props) => {
                         />
                       )}
                     />
-                    <EditIcon className="fill-path-primary-main" />
                   </LabelFieldPair>
                 </div>
               </div>
@@ -799,7 +790,6 @@ const ReviewDetailForm = (_props) => {
                     />
                   )}
                 />
-                <EditIcon className="fill-path-primary-main" />
               </LabelFieldPair>
             </div>
             <div className="bmc-col3-card">
@@ -833,7 +823,6 @@ const ReviewDetailForm = (_props) => {
                     />
                   )}
                 />
-                <EditIcon className="fill-path-primary-main" />
               </LabelFieldPair>
             </div>
             <div className="bmc-col3-card">
@@ -867,7 +856,6 @@ const ReviewDetailForm = (_props) => {
                     />
                   )}
                 />
-                <EditIcon className="fill-path-primary-main" />
               </LabelFieldPair>
             </div>
             <div className="bmc-col3-card">
@@ -901,7 +889,6 @@ const ReviewDetailForm = (_props) => {
                     />
                   )}
                 />
-                <EditIcon className="fill-path-primary-main" />
               </LabelFieldPair>
             </div>
           </div>
@@ -937,7 +924,6 @@ const ReviewDetailForm = (_props) => {
                     />
                   )}
                 />
-                <EditIcon className="fill-path-primary-main" />
               </LabelFieldPair>
             </div>
           </div>
@@ -1256,6 +1242,15 @@ const ReviewDetailForm = (_props) => {
           </div>
         )}
       </div>
+      <WorkflowTimeline tenantId={"mh.mumbai"} businessService={"bmc-schemes"} applicationNo={"MH-0001"}></WorkflowTimeline>
+      <WorkflowActions
+        ActionBarStyle={{}}
+        MenuStyle={{}}
+        businessService={"bmc-schemes"}
+        applicationNo={"MH-0001"}
+        tenantId={"mh.mumbai"}
+        moduleCode={"BMC"}
+      />
     </React.Fragment>
   );
 };

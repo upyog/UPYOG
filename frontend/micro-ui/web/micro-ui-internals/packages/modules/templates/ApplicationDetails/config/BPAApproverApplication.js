@@ -1,4 +1,4 @@
-import { Dropdown, UploadFile } from "@upyog/digit-ui-react-components";
+import { Dropdown, UploadFile } from "@egovernments/digit-ui-react-components";
 import React from "react";
 
 export const configBPAApproverApplication = ({
@@ -50,7 +50,7 @@ export const configBPAApproverApplication = ({
           {
             label: t("WF_COMMON_COMMENTS"),
             type: "textarea",
-            isMandatory: true,
+            isMandatory: isCommentRequired,
             populators: {
               name: "comments",
             },

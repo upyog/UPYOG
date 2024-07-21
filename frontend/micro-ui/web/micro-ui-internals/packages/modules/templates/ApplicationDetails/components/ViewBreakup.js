@@ -1,6 +1,6 @@
 import React, { useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import { CardSectionHeader, Modal, Row, StatusTable } from "@upyog/digit-ui-react-components";
+import { CardSectionHeader, Modal, Row, StatusTable } from "@egovernments/digit-ui-react-components";
 
 const ViewBreakup = ({ wsAdditionalDetails, workflowDetails }) => {
     const { t } = useTranslation();
@@ -39,7 +39,7 @@ const ViewBreakup = ({ wsAdditionalDetails, workflowDetails }) => {
         <Fragment>
             <div style={{ lineHeight: "19px", maxWidth: "950px", minWidth: "280px" }}>
                 {wsAdditionalDetails?.additionalDetails?.isViewBreakup ? <div onClick={(e) => onPopupOpen()} style={{ marginTop: "12px" }}>
-                    <span style={{ cursor: "pointer", color: "#a82227" }}>{t("WS_PAYMENT_VIEW_BREAKUP")}</span>
+                    <span style={{ cursor: "pointer", color: "#F47738" }}>{t("WS_PAYMENT_VIEW_BREAKUP")}</span>
                 </div> : null
                 }
                 {popup &&

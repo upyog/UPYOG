@@ -1,4 +1,4 @@
-import { Dropdown, UploadFile } from "@upyog/digit-ui-react-components";
+import { Dropdown, UploadFile } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { convertEpochToDate } from "../Utils/index";
 
@@ -14,7 +14,7 @@ export const configEmployeeActiveApplication = ({ t, action, selectFile, uploade
         body: [
           {
             label: t("HR_ACTIVATION_REASON"),
-            type: "dropdown",
+            //type: "dropdown",
             isMandatory: true,
             name: "reasonForDeactivation",
             populators: <Dropdown isMandatory selected={selectedReason} optionKey="i18key" option={Reasons} select={selectReason} t={t} />,

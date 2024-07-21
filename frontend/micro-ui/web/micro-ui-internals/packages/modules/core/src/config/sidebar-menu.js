@@ -1,15 +1,13 @@
 import React from "react";
-import { HomeIcon, LanguageIcon, LogoutIcon, AddressBookIcon, LocationIcon, LoginIcon } from "@upyog/digit-ui-react-components";
+import { HomeIcon, LanguageIcon, LogoutIcon, AddressBookIcon, LocationIcon } from "@egovernments/digit-ui-react-components";
 import ChangeLanguage from "../components/ChangeLanguage";
 
-const SideBarMenu = (t, closeSidebar, redirectToLoginPage, isEmployee, storeData, tenantId) => {
-  let filteredTenantData = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
-return [
+const SideBarMenu = (t, closeSidebar, redirectToLoginPage, isEmployee) => [
   {
     type: "link",
     element: "HOME",
     text: t("COMMON_BOTTOM_NAVIGATION_HOME"),
-    link: isEmployee ? "/digit-ui/employee" : "/digit-ui/citizen",
+    link: isEmployee ? `/${window?.contextPath}/employee` : `/${window?.contextPath}/citizen`,
     icon: "HomeIcon",
     populators: {
       onClick: closeSidebar,
@@ -25,27 +23,11 @@ return [
     id: "login-btn",
     element: "LOGIN",
     text: t("CORE_COMMON_LOGIN"),
-    icon: "LoginIcon",
+    icon: <LogoutIcon className="icon" />,
     populators: {
       onClick: redirectToLoginPage,
     },
   },
-  {
-    id: "help-line",
-    text: (
-      <React.Fragment>
-        {t("CS_COMMON_HELPLINE")}
-        <div className="telephone" style={{ marginTop: "-10%" }}>
-          <div className="link">
-            <a href={`tel:${filteredTenantData}`}>{filteredTenantData}</a>
-          </div>
-        </div>
-      </React.Fragment>
-    ),
-    element: "Helpline",
-    icon: "Phone",
-  },
-]
-};
+];
 
 export default SideBarMenu;

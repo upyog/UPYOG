@@ -1,4 +1,4 @@
-import { FormComposer, Toast,Loader } from "@upyog/digit-ui-react-components";
+import { FormComposer, Toast,Loader } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -198,7 +198,7 @@ const EditForm = ({ tenantId, data }) => {
     Employees=Digit?.Customizations?.HRMS?.customiseUpdateFormData?Digit.Customizations.HRMS.customiseUpdateFormData(data,Employees):Employees;
 
 
-    history.replace("/digit-ui/employee/hrms/response", { Employees, key: "UPDATE", action: "UPDATE" });
+    history.replace(`/${window?.contextPath}/employee/hrms/response`, { Employees, key: "UPDATE", action: "UPDATE" });
   };
   if (isLoading) {
     return <Loader />;

@@ -1,12 +1,9 @@
-import React, { useContext, useEffect } from "react";
-import { Route, Switch, useRouteMatch, Redirect, useLocation } from "react-router-dom";
+import React from "react";
+import { Redirect, Route, Switch, useLocation, useRouteMatch } from "react-router-dom";
 
-import { AppHome } from "./Home";
-import Login from "../pages/citizen/Login";
-import EmployeeLogin from "../pages/employee/Login/index";
 import ChangePassword from "../pages/employee/ChangePassword/index";
 import ForgotPassword from "../pages/employee/ForgotPassword/index";
-import LanguageSelection from "../pages/employee/LanguageSelection";
+import { AppHome } from "./Home";
 // import UserProfile from "./userProfile";
 
 const getTenants = (codes, tenants) => {
@@ -21,18 +18,22 @@ export const AppModules = ({ stateCode, userType, modules, appTenants }) => {
   const user = Digit.UserService.getUser();
 
   if (!user || !user?.access_token || !user?.info) {
-    return <Redirect to={{ pathname: "/digit-ui/employee/user/login", state: { from: location.pathname + location.search } }} />;
+    return <Redirect to={{ pathname: `/${window?.contextPath}/employee/user/login`, state: { from: location.pathname + location.search } }} />;
   }
-
+ 
   const appRoutes = modules.map(({ code, tenants }, index) => {
     const Module = Digit.ComponentRegistryService.getComponent(`${code}Module`);
     return Module ? (
       <Route key={index} path={`${path}/${code.toLowerCase()}`}>
         <Module stateCode={stateCode} moduleCode={code} userType={userType} tenants={getTenants(tenants, appTenants)} />
       </Route>
-    ) :   <Route key={index} path={`${path}/${code.toLowerCase()}`}>
-    <Redirect to={{ pathname: "/digit-ui/employee/user/error?type=notfound", state: { from: location.pathname + location.search } }} />
-  </Route>;
+    ) : (
+      <Route key={index} path={`${path}/${code.toLowerCase()}`}>
+        <Redirect
+          to={`/${window?.contextPath}/employee/user/error?type=notfound&module=${code}` }
+        />
+      </Route>
+    );
   });
 
   return (
@@ -40,7 +41,7 @@ export const AppModules = ({ stateCode, userType, modules, appTenants }) => {
       <Switch>
         {appRoutes}
         <Route path={`${path}/login`}>
-          <Redirect to={{ pathname: "/digit-ui/employee/user/login", state: { from: location.pathname + location.search } }} />
+          <Redirect to={{ pathname: `/${window?.contextPath}/employee/user/login`, state: { from: location.pathname + location.search } }} />
         </Route>
         <Route path={`${path}/forgot-password`}>
           <ForgotPassword />

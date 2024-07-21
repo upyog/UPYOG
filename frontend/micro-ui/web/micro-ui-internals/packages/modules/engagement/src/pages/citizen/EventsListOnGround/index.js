@@ -1,4 +1,4 @@
-import { Card, CardCaption, Header, Loader, OnGroundEventCard } from "@upyog/digit-ui-react-components";
+import { Card, CardCaption, Header, Loader, OnGroundEventCard } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Redirect, useHistory, useLocation } from "react-router-dom";
@@ -21,7 +21,7 @@ const EventsListOnGround = ({ variant, parentRoute }) => {
   if (!Digit.UserService?.getUser()?.access_token) {
     localStorage.clear();
     sessionStorage.clear();
-    return <Redirect to={{ pathname: `/digit-ui/citizen/login`, state: { from: location.pathname + location.search } }} />;
+    return <Redirect to={{ pathname: `/${window?.contextPath}/citizen/login`, state: { from: location.pathname + location.search } }} />;
   }
 
   if (EventsDataLoading || !preVisitUnseenEventsCountLoaded) return <Loader />;

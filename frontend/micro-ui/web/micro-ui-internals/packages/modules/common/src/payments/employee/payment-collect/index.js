@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { RadioButtons, FormComposer, Dropdown, CardSectionHeader, Loader, Toast, Card, Header } from "@upyog/digit-ui-react-components";
+import { RadioButtons, FormComposer, Dropdown, CardSectionHeader, Loader, Toast, Card, Header } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams, useRouteMatch, useLocation } from "react-router-dom";
 import { useQueryClient } from "react-query";
@@ -126,7 +126,7 @@ export const CollectPayment = (props) => {
         paidBy: data.paidBy,
       },
     };
-    if (advanceBill !== null && (applicationData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT" || applicationData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT_CITIZEN") && !applicationData.paymentPreference) {
+    if (advanceBill !== null && applicationData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT" && !applicationData.paymentPreference) {
       (recieptRequest.Payment.paymentDetails[0].totalAmountPaid = advanceBill),
         (recieptRequest.Payment.totalAmountPaid = advanceBill),
         (recieptRequest.Payment.totalDue = bill.totalAmount);
@@ -307,7 +307,7 @@ export const CollectPayment = (props) => {
   ];
 
   const getDefaultValues = () => ({
-    payerName: bill?.payerName || formState?.payerName || "",
+    payerName: ((bill?.payerName || formState?.payerName || "")?.trim()) || "",
   });
 
   const getFormConfig = () => {
@@ -347,7 +347,7 @@ export const CollectPayment = (props) => {
         onSubmit={onSubmit}
         formState={formState}
         defaultValues={getDefaultValues()}
-        isDisabled={IsDisconnectionFlow ? false : businessService === "SW" || "WS" ?false:bill?.totalAmount ? !bill.totalAmount > 0 : true}
+        isDisabled={IsDisconnectionFlow ? false : bill?.totalAmount ? !bill.totalAmount > 0 : true}
         // isDisabled={BillDetailsFormConfig({ consumerCode }, t)[businessService] ? !}
         onFormValueChange={(setValue, formValue) => {
           if (!isEqual(formValue.paymentMode, selectedPaymentMode)) {

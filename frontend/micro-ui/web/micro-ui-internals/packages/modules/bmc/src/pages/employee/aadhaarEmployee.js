@@ -1,6 +1,6 @@
 import React from "react";
+import WorkflowActions from "../../components/Workflow";
 import BMCReviewPage from "../../pagecomponents/bmcReview";
-
 const AadhaarEmployeePage = ({
   focusIndex,
   allOwners: owners,
@@ -15,6 +15,9 @@ const AadhaarEmployeePage = ({
   userType,
   config,
 }) => {
+  //const { businessService, applicationNo, moduleCode } = Digit.Hooks.useQueryParams();
+  //console.log(tenantId, businessService, applicationNo, moduleCode);
+  console.log(formData);
   return (
     <React.Fragment>
       <BMCReviewPage
@@ -31,6 +34,7 @@ const AadhaarEmployeePage = ({
         userType={userType}
         config={config}
       />
+      <WorkflowActions ActionBarStyle={{}} MenuStyle={{}} businessService={"bmc-schemes"} applicationNo={"MH-0001"} tenantId={"mh"} moduleCode={"BMC"} />
     </React.Fragment>
   );
 };

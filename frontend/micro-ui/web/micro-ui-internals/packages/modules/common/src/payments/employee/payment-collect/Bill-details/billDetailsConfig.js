@@ -126,26 +126,6 @@ export const BillDetailsKeyNoteConfig = () => ({
       },
     ],
   },
-  "WSReconnection": {
-    heading: "COMMON_PAY_SCREEN_HEADER",
-    details: [
-      {
-        keyValue: "WS_COMMON_TABLE_APP_NO_LABEL",
-        keyPath: ["consumerCode"],
-        fallback: "",
-      },
-    ],
-  },
-  "SWReconnection": {
-    heading: "COMMON_PAY_SCREEN_HEADER",
-    details: [
-      {
-        keyValue: "WS_COMMON_TABLE_APP_NO_LABEL",
-        keyPath: ["consumerCode"],
-        fallback: "",
-      },
-    ],
-  },
   WS: {
     heading: "COMMON_PAY_SCREEN_HEADER",
     details: [

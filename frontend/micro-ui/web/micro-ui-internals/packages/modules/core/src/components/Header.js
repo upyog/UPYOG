@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Loader } from "@upyog/digit-ui-react-components"
+import { Loader } from "@egovernments/digit-ui-react-components"
 
 const Header = () => {
   const { data: storeData, isLoading } = Digit.Hooks.useStore.getInitData();
@@ -11,8 +11,8 @@ const Header = () => {
 
   return (
     <div className="bannerHeader">
-      {/* <img className="bannerLogo" src={stateInfo?.logoUrl} />
-      <p>{t(`TENANT_TENANTS_${stateInfo?.code.toUpperCase()}`)}</p> */}
+      <img className="bannerLogo" src={stateInfo?.logoUrl} />
+      <p>{t(`TENANT_TENANTS_${stateInfo?.code.toUpperCase()}`)}</p>
     </div>
   );
 }

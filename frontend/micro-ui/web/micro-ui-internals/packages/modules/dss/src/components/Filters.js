@@ -1,4 +1,4 @@
-import { CloseSvg, FilterIcon, MultiSelectDropdown, RefreshIcon, Dropdown } from "@upyog/digit-ui-react-components";
+import { CloseSvg, FilterIcon, MultiSelectDropdown, RefreshIcon, Dropdown } from "@egovernments/digit-ui-react-components";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import DateRange from "./DateRange";
 import FilterContext from "./FilterContext";

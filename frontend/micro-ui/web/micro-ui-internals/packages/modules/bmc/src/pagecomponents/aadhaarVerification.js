@@ -6,10 +6,8 @@ import aadhaarData from "./aadhaarData.json";
 
 const AadhaarVerification = ({ t, setError: setFormError, clearErrors: clearFormErrors, onBlur }) => {
   const [aadhaar, setAadhaar] = useState(Array(12).fill(""));
-  const [otp, setOtp] = useState(Array(6).fill(""));
   const [error, setError] = useState("");
   const [isAadhaarValid, setIsAadhaarValid] = useState(false);
-  const [isOtpEnabled, setIsOtpEnabled] = useState(false);
   const [message, setMessage] = useState("");
   const [buttonText, setButtonText] = useState("Submit");
   const history = useHistory();
@@ -24,7 +22,6 @@ const AadhaarVerification = ({ t, setError: setFormError, clearErrors: clearForm
         setError("");
       }
       setIsAadhaarValid(false);
-      setIsOtpEnabled(false);
       setMessage("");
       setButtonText("Submit");
 
@@ -36,33 +33,9 @@ const AadhaarVerification = ({ t, setError: setFormError, clearErrors: clearForm
     }
   };
 
-  const handleOtpChange = (e, index) => {
-    const value = e.target.value;
-    if (/^\d{0,1}$/.test(value)) {
-      const newOtp = [...otp];
-      newOtp[index] = value;
-      setOtp(newOtp);
-      if (newOtp.every((digit) => digit !== "")) {
-        setError("");
-      }
-
-      if (e.target.value && value && index < otp.length - 1) {
-        document.getElementById(`otp-${index + 1}`).focus();
-      }
-    } else {
-      setError("OTP should contain only 6 digits");
-    }
-  };
-
   const handleKeyDownAadhaar = (e, index) => {
     if (e.key === "Backspace" && !aadhaar[index] && index > 0) {
       document.getElementById(`aadhaar-${index - 1}`).focus();
-    }
-  };
-
-  const handleKeyDownOtp = (e, index) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
-      document.getElementById(`otp-${index - 1}`).focus();
     }
   };
 
@@ -70,31 +43,26 @@ const AadhaarVerification = ({ t, setError: setFormError, clearErrors: clearForm
     if (aadhaar.every((digit) => digit !== "")) {
       setError("");
       setIsAadhaarValid(true);
-      setIsOtpEnabled(true);
-      setButtonText("Verify");
+      setButtonText("Submit");
     } else {
       setError("Aadhaar number should contain only 12 digits");
       setIsAadhaarValid(false);
-      setIsOtpEnabled(false);
       setMessage("");
-      setButtonText("Submit");
     }
   };
 
   const handleSubmit = () => {
     const aadhaarString = aadhaar.join("");
-    const otpString = otp.join("");
-    if (buttonText === "Submit") {
+    if (buttonText === "Submit" && isAadhaarValid && aadhaarString.length === 12) {
       validateAadhaar();
-    } else if (buttonText === "Verify" && isAadhaarValid && otpString.length === 6) {
-      if (aadhaarString === aadhaarData.aadhaarNumber && otpString === aadhaarData.otp) {
+    } else if (buttonText === "Submit") {
+      if (aadhaarString === aadhaarData.aadhaarNumber) {
         history.push({
           pathname: "/digit-ui/citizen/bmc/aadhaarForm",
           state: { aadhaarInfo: aadhaarData.aadhaarInfo },
         });
       } else {
-        setError("Invalid Aadhaar number or OTP");
-        setIsOtpEnabled(false);
+        setError("Invalid Aadhaar number");
       }
     }
   };
@@ -110,58 +78,34 @@ const AadhaarVerification = ({ t, setError: setFormError, clearErrors: clearForm
                 <div className="bmc-title" style={{ textAlign: "center" }}>
                   Aadhaar Verification
                 </div>
-               
+
                 <LabelFieldPair>
                   <CardLabel className="aadhaar-label">{"BMC_AADHAAR_LABEL"}</CardLabel>
                   <div className="aadhaar-container">
                     {aadhaar.map((digit, index) => (
-                      <TextInput
-                        key={index}
-                        id={`aadhaar-${index}`}
-                        t={t}
-                        type="number"
-                        isMandatory={false}
-                        optionKey="i18nKey"
-                        name={`aadhaar-${index}`}
-                        onBlur={onBlur}
-                        value={digit}
-                        onChange={(e) => handleAadhaarChange(e, index)}
-                        onKeyDown={(e) => handleKeyDownAadhaar(e, index)}
-                        className="aadhaar-input"
-                        maxLength={1}
-                        validation={{
-                          required: true,
-                          minLength: 12,
-                          maxLength: 12,
-                        }}
-                      />
-                    ))}
-                  </div>
-                </LabelFieldPair>
-                <LabelFieldPair>
-                  <CardLabel className="aadhaar-label">{"BMC_OTP_LABEL"}</CardLabel>
-                  <div className="otp-container" style={{ width: "60%" }}>
-                    {otp.map((digit, index) => (
-                      <TextInput
-                        key={index}
-                        id={`otp-${index}`}
-                        t={t}
-                        type="number"
-                        isMandatory={false}
-                        optionKey="i18nKey"
-                        name={`otp-${index}`}
-                        value={digit}
-                        onChange={(e) => handleOtpChange(e, index)}
-                        onKeyDown={(e) => handleKeyDownOtp(e, index)}
-                        className="otp-input"
-                        maxLength={1}
-                        disabled={!isOtpEnabled}
-                        validation={{
-                          required: true,
-                          minLength: 6,
-                          maxLength: 6,
-                        }}
-                      />
+                      <React.Fragment>
+                        <TextInput
+                          key={index}
+                          id={`aadhaar-${index}`}
+                          t={t}
+                          type="number"
+                          isMandatory={false}
+                          optionKey="i18nKey"
+                          name={`aadhaar-${index}`}
+                          onBlur={onBlur}
+                          value={digit}
+                          onChange={(e) => handleAadhaarChange(e, index)}
+                          onKeyDown={(e) => handleKeyDownAadhaar(e, index)}
+                          className="aadhaar-input"
+                          maxLength={1}
+                          validation={{
+                            required: true,
+                            minLength: 12,
+                            maxLength: 12,
+                          }}
+                        />
+                        {(index === 3 || index === 7) && <span className="aadhaar-dash">-</span>}
+                      </React.Fragment>
                     ))}
                   </div>
                 </LabelFieldPair>
