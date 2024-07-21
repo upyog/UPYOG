@@ -6,6 +6,7 @@ import java.util.List;
 import org.egov.asset.config.AssetConfiguration;
 import org.egov.asset.kafka.Producer;
 import org.egov.asset.repository.querybuilder.AssetQueryBuilder;
+import org.egov.asset.repository.rowmapper.AssetLimitedDateRowMapper;
 import org.egov.asset.repository.rowmapper.AssetRowMapper;
 import org.egov.asset.web.models.Asset;
 import org.egov.asset.web.models.AssetSearchCriteria;
@@ -34,6 +35,9 @@ public class AssetRepository {
 	
 	@Autowired
 	AssetRowMapper rowMapper;
+	
+	@Autowired
+	AssetLimitedDateRowMapper assetLimitedDateRowMapper;
 	
 	
 	/**
@@ -79,11 +83,17 @@ public class AssetRepository {
 
 	public List<Asset> getAssetData(AssetSearchCriteria searchCriteria) {
 		List<Object> preparedStmtList = new ArrayList<>();
-		String query = queryBuilder.getAssetSearchQuery(searchCriteria, preparedStmtList);
-		
-		log.info("Final query: " + query);
-		return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
-		//return null;
+		String query = null;
+		if(searchCriteria.getApplicationNo() != null) {
+			 query = queryBuilder.getAssetSearchQuery(searchCriteria, preparedStmtList);
+			 log.info("Final query: " + query);
+			return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+		}
+		else {
+			 query = queryBuilder.getAssetSearchQueryForLimitedData(searchCriteria, preparedStmtList);
+			 log.info("Final query: " + query);
+				return jdbcTemplate.query(query, preparedStmtList.toArray(), assetLimitedDateRowMapper);
+		}
 	}
 
 }
