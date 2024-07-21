@@ -623,10 +623,10 @@ status = new ArrayList<String>();
 		Map<String, Object> preparedStatementValues = new HashMap<>();
 		String queryString;
 		if (businesssrvice.contains("WS")) {
-			queryString = "select a2.usagecategory  FROM eg_ws_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  where    a1.status='Active' and a1.connectionno   ='"+consumercode+"')";
+			queryString = "select a2.usagecategory  FROM eg_ws_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  where    a1.status='Active' and a1.connectionno   ='"+consumercode+"';";
 		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		} else {
-			queryString = "select a2.usagecategory  FROM eg_sw_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  where    a1.status='Active' and a1.connectionno   ='"+consumercode+"')";
+			queryString = "select a2.usagecategory  FROM eg_sw_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  where    a1.status='Active' and a1.connectionno   ='"+consumercode+"';";
 
 			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		}
@@ -647,11 +647,11 @@ status = new ArrayList<String>();
 		Map<String, Object> preparedStatementValues = new HashMap<>();
 		String queryString;
 		if (businesssrvice.contains("WS")) {
-			 queryString = "select concat(a3.doorno,',',a3.plotno,',',a3.buildingname,',',a3.street',',',a3.landmark,',',a3.district ,',',a3.region,',',a3.city )  FROM eg_ws_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  inner join eg_pt_address as a3 on a2.id=a3.propertyid where   a1.status='Active' and a1.connectionno   ='"+consumercode+"')";
+			 queryString = "select concat(a3.doorno,',',a3.plotno,',',a3.buildingname,',',a3.street',',',a3.landmark,',',a3.district ,',',a3.region,',',a3.city )  FROM eg_ws_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  inner join eg_pt_address as a3 on a2.id=a3.propertyid where   a1.status='Active' and a1.connectionno   ='"+consumercode+"';";
 		log.info("Query for fetchAddressByApplicationno: " +queryString);
 		}
 		else {
-			 queryString = "select concat(a3.doorno,',',a3.plotno,',',a3.buildingname,',',a3.street',',',a3.landmark,',',a3.district ,',',a3.region,',',a3.city ) FROM eg_sw_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  inner join eg_pt_address as a3 on a2.id=a3.propertyid where   a1.status='Active' and a1.connectionno   ='"+consumercode+"')";
+			 queryString = "select concat(a3.doorno,',',a3.plotno,',',a3.buildingname,',',a3.street',',',a3.landmark,',',a3.district ,',',a3.region,',',a3.city ) FROM eg_sw_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  inner join eg_pt_address as a3 on a2.id=a3.propertyid where   a1.status='Active' and a1.connectionno   ='"+consumercode+"';";
 
 				log.info("Query for fetchAddressByApplicationno: " +queryString);
 		}
@@ -675,10 +675,10 @@ status = new ArrayList<String>();
 		Map<String, Object> preparedStatementValues = new HashMap<>();
 		String queryString;
 		if (businesssrvice.contains("WS")) {
-			queryString = "select a1.property_id  FROM eg_ws_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid where    a1.status='Active' and a1.connectionno   ='"+consumercode+"')";
+			queryString = "select a1.property_id  FROM eg_ws_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid where    a1.status='Active' and a1.connectionno   ='"+consumercode+"';";
 		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		} else {
-			queryString = "select a1.property_id  FROM eg_sw_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid where    a1.status='Active' and a1.connectionno   ='"+consumercode+"')";
+			queryString = "select a1.property_id  FROM eg_sw_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid where    a1.status='Active' and a1.connectionno   ='"+consumercode+"';";
 
 			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		}
