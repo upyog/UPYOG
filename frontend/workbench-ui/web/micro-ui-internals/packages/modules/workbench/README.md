@@ -54,19 +54,26 @@ _Add this configuration to enable this module [MDMS Enabling Workbench Module](h
 ## List of Screens available in this versions were as follows
 
 1 . Search Master Data
-    // TODO Add more information
+    > -Provides a screen based on Schema and renders the search result if data is present
+    > -It also provides a dynamic filter based on which data can be filtered
 
 
 2 . Add Master Data based on selected schema
-    // TODO Add more information
-
+    > -Provides a screen to add new master data according to the schema
+    > -Provides a Dropdown if it has any referenced master 
 
 3 . Update Master data for selected data.
-    // TODO Add more information
+    > -View the master data from search screen
+    > -Disable/Enable the master data if required
+    > -Update the master data value except the unique-identifier field mentioned in the schema
 
 
 
 4 . Localisation screens
+    > -Provides a screen to search the localisation present in the environment
+    > -Add new localisation 
+    > -Update existing localisation
+    > -Bulk Upload of Localisation data
 
 5 . MDMS UI Schema
 
@@ -103,6 +110,12 @@ https://github.com/egovernments/DIGIT-OSS/pull/99/commits/6e711bdc005c226c7debd5
 ### Changelog
 
 ```bash
+1.0.5 Updated Search Feature Change
+1.0.4 Added Search feature changes
+1.0.3 Changed url in view and edit screen of workbench and fix some bug
+1.0.2 If you dont want to use modulename and mastername in mdms-v2 data create and update api use {MDMS_SCHEMACODE_INACTION} this constant in global config and set it as false
+1.0.1 Fixes related to the limits
+1.0.0 Workbench v1.0 release
 1.0.0-beta workbench base version beta release
 0.0.3 readme updated
 0.0.2 readme updated
@@ -119,15 +132,18 @@ https://github.com/egovernments/DIGIT-OSS/pull/99/commits/6e711bdc005c226c7debd5
 
 [MIT](https://choosealicense.com/licenses/mit/)
 
+## Documentation
 
-## Authors
+Documentation Site (https://core.digit.org/guides/developer-guide/ui-developer-guide/digit-ui)
+Workbench Documentation(https://workbench.digit.org/platform/functional-specifications/workbench-ui)
+
+## Maintainer
 
 - [jagankumar-egov](https://www.github.com/jagankumar-egov)
 
 
-### Published from
-[Digit Core Repo](https://github.com/egovernments/Digit-Core/tree/digit-ui-core)
-
+### Published from DIGIT Frontend 
+DIGIT Frontend Repo (https://github.com/egovernments/Digit-Frontend/tree/master)
 
 
 ![Logo](https://s3.ap-south-1.amazonaws.com/works-dev-asset/mseva-white-logo.png)
