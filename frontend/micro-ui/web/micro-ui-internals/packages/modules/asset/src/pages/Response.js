@@ -7,7 +7,7 @@ import { useQueryClient } from "react-query";
 import getAssetAcknowledgementData from "../getAssetAcknowledgementData";
 
 const GetMessage = (type, action, isSuccess, isEmployee, t) => {
-  return t(`${isEmployee ? "E" : "C"}S_ASSET_RESPONSE_${action ? action : "CREATE"}_${type}${isSuccess ? "" : "_ERROR"}`);
+  return t(`${isEmployee ? "E" : "C"}S_ASSET_RESPONSE_${action ? action : "ASSIGN"}_${type}${isSuccess ? "" : "_ERROR"}`);
 };
 
 const GetActionMessage = (action, isSuccess, isEmployee, t) => {
@@ -62,8 +62,8 @@ const Response = (props) => {
   
 
 
-  const mutation = Digit.Hooks.asset.useAssetCreateAPI(tenantId, state.key !== "UPDATE");
-  const mutation1 = Digit.Hooks.asset.useAssetCreateAPI(tenantId, false);
+  const mutation = Digit.Hooks.asset.useAssignCreateAPI(tenantId, state.key !== "UPDATE");
+  const mutation1 = Digit.Hooks.asset.useAssignCreateAPI(tenantId, false);
 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
@@ -141,9 +141,9 @@ const Response = (props) => {
         <CardText>
           {DisplayText(state.action, (mutation.isSuccess || !!successData) && !mutation.isError, props.parentRoute.includes("employee"), t)}
         </CardText>
-        {(mutation.isSuccess || !!successData) && !mutation.isError && (
+        {/* {(mutation.isSuccess || !!successData) && !mutation.isError && (
           <SubmitBar style={{ overflow: "hidden" }} label={t("AST_REPORT")} onSubmit={handleDownloadPdf} />
-        )}
+        )} */}
       </Card>
       {showToast && <Toast error={showToast.key === "error" ? true : false} label={error} onClose={closeToast} />}
       <ActionBar>
