@@ -115,6 +115,7 @@ public class MDMSService {
         HashMap<String,Object> calculationType = new HashMap<>();
         try {
             LinkedHashMap tradeLicenseData = JsonPath.read(mdmsData,TLCalculatorConstants.MDMS_TRADELICENSE_PATH);
+            log.info("tradeLicenseData===",tradeLicenseData);
             if(tradeLicenseData.size()==0)
                 return defaultMap();
 
