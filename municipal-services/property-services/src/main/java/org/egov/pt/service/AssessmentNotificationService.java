@@ -80,49 +80,44 @@ public class AssessmentNotificationService {
 					util.sendSMS(smsRequests);
 				}
 
-				if (configuredChannelNamesForAssessment.contains(CHANNEL_NAME_EVENT)) {
-					Boolean isActionReq = false;
-					if (topicName.equalsIgnoreCase(config.getCreateAssessmentTopic())
-							&& assessment.getWorkflow() == null)
-						isActionReq = true;
-
-					List<Event> events = util.enrichEvent(smsRequests, requestInfo, tenantId, property, isActionReq);
-					util.sendEventNotification(new EventRequest(requestInfo, events));
-				}
-
-				if (configuredChannelNamesForAssessment.contains(CHANNEL_NAME_EMAIL)) {
-					List<EmailRequest> emailRequests = util.createEmailRequestFromSMSRequests(requestInfo, smsRequests,
-							tenantId);
-					util.sendEmail(emailRequests);
-				}
-
-				if (dueAmount != null && dueAmount.compareTo(BigDecimal.ZERO) > 0) {
-
-					List<String> configuredChannelNames = util.fetchChannelList(new RequestInfo(), tenantId,
-							PT_BUSINESSSERVICE, ACTION_FOR_DUES);
-					List<SMSRequest> smsRequestsList = new ArrayList<>();
-					enrichSMSRequestForDues(smsRequestsList, assessmentRequest, property);
-
-					if (configuredChannelNames.contains(CHANNEL_NAME_SMS)) {
-						util.sendSMS(smsRequestsList);
-					}
-
-					if (configuredChannelNames.contains(CHANNEL_NAME_EVENT)) {
-						Boolean isActionRequired = true;
-						List<Event> eventsList = util.enrichEvent(smsRequestsList, requestInfo, tenantId, property,
-								isActionRequired);
-						util.sendEventNotification(new EventRequest(requestInfo, eventsList));
-					}
-
-					if (configuredChannelNames.contains(CHANNEL_NAME_EMAIL)) {
-						List<EmailRequest> emailRequests = util.createEmailRequestFromSMSRequests(requestInfo,
-								smsRequests, tenantId);
-						util.sendEmail(emailRequests);
-					}
-				}
+				/*
+				 * if (configuredChannelNamesForAssessment.contains(CHANNEL_NAME_EVENT)) {
+				 * Boolean isActionReq = false; if
+				 * (topicName.equalsIgnoreCase(config.getCreateAssessmentTopic()) &&
+				 * assessment.getWorkflow() == null) isActionReq = true;
+				 * 
+				 * List<Event> events = util.enrichEvent(smsRequests, requestInfo, tenantId,
+				 * property, isActionReq); util.sendEventNotification(new
+				 * EventRequest(requestInfo, events)); }
+				 * 
+				 * if (configuredChannelNamesForAssessment.contains(CHANNEL_NAME_EMAIL)) {
+				 * List<EmailRequest> emailRequests =
+				 * util.createEmailRequestFromSMSRequests(requestInfo, smsRequests, tenantId);
+				 * util.sendEmail(emailRequests); }
+				 * 
+				 * if (dueAmount != null && dueAmount.compareTo(BigDecimal.ZERO) > 0) {
+				 * 
+				 * List<String> configuredChannelNames = util.fetchChannelList(new
+				 * RequestInfo(), tenantId, PT_BUSINESSSERVICE, ACTION_FOR_DUES);
+				 * List<SMSRequest> smsRequestsList = new ArrayList<>();
+				 * enrichSMSRequestForDues(smsRequestsList, assessmentRequest, property);
+				 * 
+				 * if (configuredChannelNames.contains(CHANNEL_NAME_SMS)) {
+				 * util.sendSMS(smsRequestsList); }
+				 * 
+				 * if (configuredChannelNames.contains(CHANNEL_NAME_EVENT)) { Boolean
+				 * isActionRequired = true; List<Event> eventsList =
+				 * util.enrichEvent(smsRequestsList, requestInfo, tenantId, property,
+				 * isActionRequired); util.sendEventNotification(new EventRequest(requestInfo,
+				 * eventsList)); }
+				 * 
+				 * if (configuredChannelNames.contains(CHANNEL_NAME_EMAIL)) { List<EmailRequest>
+				 * emailRequests = util.createEmailRequestFromSMSRequests(requestInfo,
+				 * smsRequests, tenantId); util.sendEmail(emailRequests); } }
+				 */
 			}
 		} catch (Exception e) {
-			throw new CustomException("Error in Accessment topic","Try Again");
+			throw new CustomException("Error in Accessment topic","Try Again--> "+property.getPropertyId());
 		}
 	}
 

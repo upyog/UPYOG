@@ -59,23 +59,23 @@ public class NotificationConsumer {
 			} else if (topic.equalsIgnoreCase(configs.getSavePropertyTopic()) || topic.equalsIgnoreCase(configs.getUpdatePropertyTopic())) {
 
 				PropertyRequest request = mapper.convertValue(record, PropertyRequest.class);
-		    	Integer count = 0;
-		        count = repository.getCountprocess( request.getProperty(),request.getRequestInfo());
-		        	log.info("Count  in consumer topic: "+ count);
+//		    	Integer count = 0;
+		 //       count = repository.getCountprocess( request.getProperty(),request.getRequestInfo());
+		        	//log.debug("Count  in consumer topic: "+ count);
 		       
 				if (!request.getProperty().isOldDataEncryptionRequest())
 				{
+					// log.info("Inside mutations");
 					if (PTConstants.MUTATION_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())) 
 					{
-
+						 log.info(" Creation Reason " + request.getProperty().getCreationReason().toString());
 						notifService.sendNotificationForMutation(request);
 					}
 					
 					else {
-						if (count>0)
+						log.info("Inside Create");
 						notifService.sendNotificationForUpdate(request);
-						else
-							throw new CustomException ("Error","No Property ");
+					
 					}
 				}
 			}
