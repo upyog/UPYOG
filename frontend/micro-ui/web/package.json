@@ -5,7 +5,15 @@
   "homepage": "/digit-ui",
   "workspaces": [
     "micro-ui-internals/packages/libraries",
-    "micro-ui-internals/packages/react-components"
+    "micro-ui-internals/packages/react-components",
+    "micro-ui-internals/packages/fsm",
+    "micro-ui-internals/packages/tl",
+    "micro-ui-internals/packages/pt",
+    "micro-ui-internals/packages/pgr",
+    "micro-ui-internals/packages/obps",
+    "micro-ui-internals/packages/ws",
+    "micro-ui-internals/packages/core",
+    "micro-ui-internals/packages/dss"
   ],
   "engines": {
     "node": ">=14"
