@@ -125,6 +125,7 @@ public class AssetRowMapper implements ResultSetExtractor<List<Asset>> {
 	        
 	    // Mapping AssignmDetails
 	    AssetAssignment assetAssignment = new AssetAssignment();
+	    	assetAssignment.setId(rs.getString("id"));
 	    	assetAssignment.setAssignedUserName(rs.getString("assignedUserName"));
 	    	assetAssignment.setAssignedDate(rs.getLong("assignedDate"));
 	    	assetAssignment.setReturnDate(rs.getLong("assignedDate"));
