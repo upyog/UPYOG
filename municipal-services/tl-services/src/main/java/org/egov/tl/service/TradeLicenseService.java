@@ -276,30 +276,12 @@ public class TradeLicenseService {
              licenses = getLicensesWithOwnerInfo(criteria,requestInfo);
          }
          
-         
          // calculate passed dates from creation date
          enrichPassedDates(licenses);
-
-         // enrich ULB from tenantId
-         enrichUlbFromTenantId(licenses);
 
          return licenses;       
     }
     
-    private void enrichUlbFromTenantId(List<TradeLicense> licenses) {
-		
-    	licenses.stream().forEach(license -> {
-    		if(StringUtils.equalsIgnoreCase(license.getTenantId(), "hp.shimla")) {
-    			license.setUlb("Shimla");
-    		}
-    	});
-		
-	}
-
-
-
-
-
 	private void enrichPassedDates(List<TradeLicense> licenses) {
 		licenses.stream().forEach(license -> {
 			
@@ -610,6 +592,9 @@ public class TradeLicenseService {
 						.build();
 				List<TradeLicense> licenses = getLicensesWithOwnerInfo(tradeLicenseSearchCriteria,tradeLicenseRequest.getRequestInfo());
 				
+				// calculate passed dates from creation date
+		         enrichPassedDates(licenses);
+		         
 				//enrich input fields
 				licenses.get(0).setAction(action);
 				tempTradeLicenseRequest.getLicenses().add(licenses.get(0));
@@ -637,7 +622,7 @@ public class TradeLicenseService {
 	                .collect(Collectors.toList());
 
 	        // Return a Bad Request response with validation errors
-	        throw new RuntimeException("Input Data Validation Failed."+errorMessages);
+	        throw new CustomException("INPUT_VALIDATION_FAILED", "Input Data Validation Failed." + errorMessages);
 	    }
 	}
 
@@ -805,7 +790,7 @@ public class TradeLicenseService {
 		ProcessInstanceResponse response = workflowService.transition(processInstanceRequest);
 		
 		if(response == null) {
-			throw new RuntimeException("Provided application failed to change status.");
+			throw new CustomException("STATUS_CHANGE_FAILED", "Provided application failed to change status.");
 		}
 		
 		//update status of trade license
@@ -833,7 +818,7 @@ public class TradeLicenseService {
 		List<TradeLicense> licenses = repository.getLicenses(criteria);
 		
 		if(CollectionUtils.isEmpty(licenses)) {
-			throw new RuntimeException("No Trade license found for given input.");
+			throw new CustomException("NO_TRADE_LICENSE_FOUND", "No Trade license found for given input.");
 		}
 		TradeLicense tl = licenses.get(0);
 		
@@ -842,7 +827,7 @@ public class TradeLicenseService {
 			if(!(StringUtils.equals(tl.getStatus(), STATUS_INITIATED)
 				|| StringUtils.equals(tl.getStatus(), ACTION_STATUS_APPROVED)
 				|| StringUtils.equals(tl.getStatus(), STATUS_PENDINGFORMODIFICATION))) {
-			throw new RuntimeException("Currently Status can't be changed to "+STATUS_APPLIED);
+				throw new CustomException("STATUS_CHANGE_NOT_ALLOWED", "Currently Status can't be changed to " + STATUS_APPLIED);
 			}
 		}
 		
@@ -888,7 +873,7 @@ public class TradeLicenseService {
 		try {
 			DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest, requestInfo);
 		} catch (IOException e) {
-			throw new RuntimeException("Upload Attachment failed." + e.getMessage());
+			throw new CustomException("UPLOAD_ATTACHMENT_FAILED", "Upload Attachment failed." + e.getMessage());
 		}
 		
 		return resource;

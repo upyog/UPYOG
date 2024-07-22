@@ -9,6 +9,7 @@ import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.repository.ServiceRequestRepository;
 import org.egov.tl.web.models.contract.Alfresco.DMSResponse;
 import org.egov.tl.web.models.contract.Alfresco.DmsRequest;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -99,7 +100,7 @@ public class AlfrescoService {
 
 		} catch (Exception e) {
 			log.error("Error ocurred while upload file.", e);
-			throw new RuntimeException("Error ocurred while upload file.");
+			throw new CustomException("UPLOAD_FILE_FAILED","Error ocurred while upload file.");
 		}
 	}
 

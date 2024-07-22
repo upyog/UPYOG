@@ -257,7 +257,7 @@ public class EnrichmentService {
 		
 		String ulbName = null;
 		if(null == tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("ulbName")) {
-			throw new RuntimeException("Provide the ULB name.");
+			throw new CustomException("ULB_NAME_EMPTY","Provide the ULB name.");
 		}else {
 			ulbName = tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("ulbName").toString();
 			ulbName = ulbName.replaceAll("^\"|\"$", "").toUpperCase();
@@ -283,7 +283,7 @@ public class EnrichmentService {
 				return periodOfLicense.toString();
 			}
 		} catch (NumberFormatException | NullPointerException e) {
-			throw new RuntimeException("Period of license is not in correct format or is missing.", e);
+			throw new CustomException("PERIOD_OF_LICENSE_FORMAT_INCORRECT","Period of license is not in correct format or is missing.");
 		}
 	}
 
@@ -605,7 +605,7 @@ public class EnrichmentService {
 	        licensePeriodEndDate = new Date().getTime() + periodInMillis;
 			
 		} catch (NumberFormatException | NullPointerException e) {
-			throw new RuntimeException("Period of license is not in correct format or is missing.", e);
+			throw new CustomException("FORMAT_INVALID_PERIOD_OF_LICENSE","Period of license is not in correct format or is missing.");
 		}
 		return licensePeriodEndDate;
 	}
@@ -619,7 +619,7 @@ public class EnrichmentService {
     public void enrichSearchCriteriaWithAccountId(RequestInfo requestInfo,TradeLicenseSearchCriteria criteria){
         if(criteria.isEmpty() && requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN")){
             criteria.setAccountId(requestInfo.getUserInfo().getUuid());
-            criteria.setMobileNumber(requestInfo.getUserInfo().getUserName());
+//            criteria.setMobileNumber(requestInfo.getUserInfo().getUserName());
             criteria.setTenantId(requestInfo.getUserInfo().getTenantId());
         }
         
