@@ -41,7 +41,6 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const match = useRouteMatch();
   const { tenants } = storeData || {};
-  console.log("storeData",data?.address?.city?.code);
 
   useEffect(() => {
     try {
@@ -72,7 +71,10 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
         {mutation.isSuccess && <Row rowContainerStyle={rowContainerStyle} last textStyle={{ whiteSpace: "pre", width: "60%" }} />}
       </StatusTable>
       {mutation.isSuccess && (
-      <div style={{ display: 'flex', flexDirection: 'row', gap: '15px' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
+         <Link to={`/digit-ui/citizen`}>
+        <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+         </Link>
         <SubmitBar
           label={t("CHB_DOWNLOAD_ACK_FORM")}
           onSubmit={handleDownloadPdf}
@@ -82,9 +84,11 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
         </Link>
       </div>
     )}
+    {!mutation.isSuccess && (
       <Link to={`/digit-ui/citizen`}>
-        <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
-      </Link>
+      <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+       </Link>
+     )}
     </Card>
   );
 };

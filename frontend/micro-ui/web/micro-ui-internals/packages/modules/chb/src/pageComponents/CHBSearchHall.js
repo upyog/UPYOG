@@ -30,6 +30,11 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     formData?.slotlist?.selectedHall ||
     ""
   );
+  const [Searchdata, setSearchData] = useState(
+    (formData.slotlist && formData.slotlist[index] && formData.slotlist[index].Searchdata) ||
+    formData?.slotlist?.Searchdata ||
+    []
+  );
   const [showToast, setShowToast] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
   const dateRangePickerRef = useRef(null);
@@ -48,15 +53,11 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
   const { data: hallList } = Digit.Hooks.chb.useChbCommunityHalls(stateId, "CHB", "ChbCommunityHalls");
   const { data: Hall } = Digit.Hooks.chb.useChbHallCode(stateId, "CHB", "ChbHallCode");
   
-  let initialData = [];
   let HallName = [];
   let HallId = [];
 
   hallList && hallList.map((slot) => {
-    initialData.push({ communityHallId: slot.communityHallId, name: slot.name, code: slot.code, address: slot.address });
-  });
-  hallList && hallList.map((slot) => {
-    HallName.push({ i18nKey: `${slot.code}`, code: `${slot.code}`, value: `${slot.name}`, communityHallId: slot.communityHallId });
+    HallName.push({ i18nKey: `${slot.code}`, code: `${slot.code}`, value: `${slot.name}`, communityHallId: slot.communityHallId,address: slot.address});
   });
   Hall && Hall.map((slot) => {
     HallId.push({ i18nKey: `${slot.code}`, code: `${slot.code}`, value: `${slot.code}`, communityHallId: slot.communityHallId });
@@ -71,25 +72,15 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
       };
     }
   }).filter(item => item !== undefined);
-  const Searchdata = initialData.reduce((acc, slot) => {
-    if ((slot.code === selectedHall.code && slot.communityHallId === hallCode.communityHallId) || slot.code === selectedHall.code) {
-      acc.push({
-        communityHallCode: slot.name,
-        hallCode: slot.communityHallId || hallCode.name,
-        hallAddress: slot.address
-      });
-    }
-    return acc;
-  }, []);
 
   // Define the slot_search hook to refetch data on search
   const { data: slotSearchData, refetch } = Digit.Hooks.chb.useChbSlotSearch({
     tenantId: "pg.citya",
     filters: {
-      communityHallCode: Searchdata.length ? Searchdata[0].communityHallCode : "",
-      bookingStartDate: dateRange[0].startDate ? format(dateRange[0].startDate, 'dd-MM-yyyy') : "",
-      bookingEndDate: dateRange[0].endDate ? format(dateRange[0].endDate, 'dd-MM-yyyy') : "",
-      hallCode: Searchdata.length ? Searchdata[0].hallCode : ""
+      communityHallCode:Searchdata.communityHallCode,
+      bookingStartDate:Searchdata.bookingStartDate,
+      bookingEndDate:Searchdata.bookingEndDate,
+      hallCode:Searchdata.hallCode
     }
   });
 
@@ -98,8 +89,8 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
       const newData = slotSearchData.hallSlotAvailabiltityDetails.map((slot, index) => ({
         slotId: index + 1,
         name: slot.communityHallCode,
-        address: Searchdata.length ? Searchdata[0].hallAddress : "",
-        hallCode: Searchdata[0].hallCode,
+        address: Searchdata.hallAddress,
+        hallCode: slot.hallCode,
         bookingDate: slot.bookingDate,
         status: slot.slotStaus === "AVAILABLE" ? (
           <div className="sla-cell-success">Available</div>
@@ -174,8 +165,10 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
       const updatedSelectedRows = prevSelectedRows.some(row => row.slotId === data[rowIndex].slotId) ?
         prevSelectedRows.filter(row => row.slotId !== data[rowIndex].slotId) :
         [...prevSelectedRows, data[rowIndex]];
-      setIsCheckboxSelected(updatedSelectedRows.length > 0);
-      return updatedSelectedRows;
+        const sortedSelectedRows = updatedSelectedRows.sort((a, b) => a.slotId - b.slotId);
+
+        setIsCheckboxSelected(sortedSelectedRows.length > 0);
+        return sortedSelectedRows;
     });
   };
 
@@ -191,7 +184,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
               setBookingSlotDetails([]);
               setIsCheckboxSelected(false);
             } else {
-              const allRows = data;
+              const allRows = data.filter(row => row.status.props.children === "Available");
               setBookingSlotDetails(allRows);
               setIsCheckboxSelected(true);
             }
@@ -205,6 +198,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
           type="checkbox"
           checked={bookingSlotDetails.some(selectedRow => selectedRow.slotId === row.original.slotId)}
           onChange={() => handleRowSelection(row.index)}
+          disabled={row.original.status.props.children !== "Available"} // Disable checkbox if status is "Booked"
         />
       </div>
     ),
@@ -213,24 +207,24 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
   const enhancedColumns = [checkboxColumn, ...columns];
   const staticRanges = createStaticRanges([
     {
-      label: 'Today',
-      range: () => ({
-        startDate: startOfDay(new Date()),
-        endDate: endOfDay(new Date())
-      })
-    },
-    {
-      label: 'Tomorrow',
+      label: 'One Day',
       range: () => ({
         startDate: startOfDay(addDays(new Date(), 1)),
         endDate: endOfDay(addDays(new Date(), 1))
       })
     },
     {
-      label: 'Next 2 Days',
+      label: 'Two Days',
       range: () => ({
-        startDate: startOfDay(new Date()),
+        startDate: startOfDay(addDays(new Date(), 1)),
         endDate: endOfDay(addDays(new Date(), 2))
+      })
+    },
+    {
+      label: 'Three Days',
+      range: () => ({
+        startDate: startOfDay(addDays(new Date(), 1)),
+        endDate: endOfDay(addDays(new Date(), 3))
       })
     },
   ]);
@@ -261,12 +255,29 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
   };
 
   const handleSearch = () => {
-    if ((selectedHall.code && dateRange[0].startDate && dateRange[0].endDate && hallCode.code) || (dateRange[0].startDate && dateRange[0].endDate && selectedHall.code)) {
-      refetch(); // Fetch data using refetch
+    const selectedHallName = selectedHall?.value || "";
+    const startDate = dateRange[0].startDate ? format(dateRange[0].startDate, 'dd-MM-yyyy') : "";
+    const endDate = dateRange[0].endDate ? format(dateRange[0].endDate, 'dd-MM-yyyy') : "";
+    const selectedHallCode = hallCode?.code || "";
+  
+    if (selectedHallName && startDate && endDate) {
+      const filters = {
+        communityHallCode: selectedHallName,
+        bookingStartDate: startDate,
+        bookingEndDate: endDate,
+        hallAddress:selectedHall?.address,
+        hallCode:selectedHall?.hallCode || "1001"
+      };
+  
+      if (selectedHallCode) {
+        filters.hallCode = selectedHallCode;
+      }
+      setSearchData(filters);
     } else {
       setShowToast({ error: true, label: 'Please select either Community Hall Name with Date or both.' });
     }
   };
+  
 
   const handleBookClick = () => {
     if (!isCheckboxSelected) {
@@ -285,7 +296,12 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
       return () => clearTimeout(timer); // Clear timer on cleanup
     }
   }, [showToast]);
-
+    useEffect(() => {
+      if (Searchdata.communityHallCode) {
+        refetch();
+        setBookingSlotDetails([]);
+      }
+    }, [Searchdata]);
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen")}
@@ -399,6 +415,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
                fontSize: "16px",
              },
            })}
+           isPaginationRequired={false}
            totalRecords={data.length}
          />
          </Card>
