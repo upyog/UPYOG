@@ -59,7 +59,7 @@ public class AssetLimitedDateRowMapper implements ResultSetExtractor<List<Asset>
 	    	assetAssignment.setId(rs.getString("assignid"));
 	    	assetAssignment.setAssignedUserName(rs.getString("assignedUserName"));
 	    	assetAssignment.setAssignedDate(rs.getLong("assignedDate"));
-	    	assetAssignment.setReturnDate(rs.getLong("assignedDate"));
+	    	assetAssignment.setReturnDate(rs.getLong("returnDate"));
 	    	assetAssignment.setIsAssigned(rs.getBoolean("isAssigned"));
 	    	asset.setAssetAssignment(assetAssignment);
     }
