@@ -62,14 +62,17 @@ public abstract class FeatureProcess {
 	protected ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 	public static final String STATUS = "Status";
 	public static final String PROVIDED = "Provided";
+	public static final String AREA_PROVIDED = "Area Provided";
 	public static final String LEVEL = "Level";
 	public static final String OCCUPANCY = "Occupancy";
 	public static final String FIELDVERIFIED = "Field Verified";
 	public static final String REQUIRED = "Required";
+	public static final String VENTILATION_REQUIRED = "Ventilation Required";
 	public static final String PERMITTED = "Permitted";
 	public static final String PERMISSIBLE = "Permissible";
 	public static final String DESCRIPTION = "Description";
-	public static final String RULE_NO = "Byelaw";
+	public static final String NUMBER = "	Toilet Number";
+	public static final String RULE_NO = "Section";
 	public static final String FLOOR_NO = "Floor";
 	public static final String Room = "Room";
 	public static final String DISTANCE = "Distance";
@@ -81,6 +84,9 @@ public abstract class FeatureProcess {
 	public static final String MAX_PERMISSIBLE = "Max Permissible";
 	public static final String ROAD_WIDTH = "Road Width";
 	public static final String MIN_REQUIRED = "Min Required";
+	public static final String REQUIRED_ECS = "Required ECS";
+	public static final String REQUIRED_AREA = "Required Area";
+	
 
 	public abstract Map<String, Date> getAmendments();
 

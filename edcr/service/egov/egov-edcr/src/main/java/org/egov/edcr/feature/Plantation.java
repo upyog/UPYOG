@@ -117,6 +117,7 @@ public class Plantation extends FeatureProcess {
             }
             if (totalArea.intValue() > 0 && plotArea != null && plotArea.intValue() > 0)
                 plantationPer = totalArea.divide(plotArea, DECIMALDIGITS_MEASUREMENTS, ROUNDMODE_MEASUREMENTS);
+                
                  
             if ( A.equals(type) ||  A_AF.equals(subType)  || A_SA.equals(subType) || B.equals(type) || D.equals(type) || G.equals(type)) {
             	
@@ -134,16 +135,16 @@ public class Plantation extends FeatureProcess {
 //                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 //                }
           //  } else {
-                if (plantationPer.compareTo(new BigDecimal("0.05")) <= 0) {
+                if (plantationPer.compareTo(new BigDecimal("0.05")) >= 0) {
                     details.put(REQUIRED, ">= 5%");
                     details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
-                    details.put(STATUS, Result.Not_Accepted.getResultVal());
+                    details.put(STATUS, Result.Accepted.getResultVal());
                     scrutinyDetail.getDetail().add(details);
                     pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
                 } else {
                     details.put(REQUIRED, ">= 5%");
                     details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
-                    details.put(STATUS, Result.Accepted.getResultVal());
+                    details.put(STATUS, Result.Not_Accepted.getResultVal());
                     scrutinyDetail.getDetail().add(details);
                     pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
                 }

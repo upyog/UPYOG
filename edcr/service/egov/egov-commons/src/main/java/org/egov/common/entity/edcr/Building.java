@@ -61,6 +61,8 @@ public class Building extends Measurement {
 
     private BigDecimal buildingHeight;
     
+    private BigDecimal buildingHeightExcludingMP; // building height excluding mumty and parapet
+    
     private BigDecimal buildingHeightAsMeasured;
 
     private BigDecimal declaredBuildingHeight;
@@ -166,6 +168,15 @@ public class Building extends Measurement {
     public void setBuildingHeight(BigDecimal buildingHeight) {
         this.buildingHeight = buildingHeight;
     }
+    
+    public BigDecimal getBuildingHeightExcludingMP() {
+        return buildingHeightExcludingMP;
+    }
+
+    public void setBuildingHeightExcludingMP(BigDecimal buildingHeightExcludingMP) {
+        this.buildingHeightExcludingMP = buildingHeightExcludingMP;
+    }
+
 
     public BigDecimal getBuildingHeightAsMeasured() {
         return buildingHeightAsMeasured;

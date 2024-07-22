@@ -97,7 +97,9 @@ public class RainWaterHarvesting extends FeatureProcess {
         OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding() != null
                 ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
                 : null;
-
+      
+       
+      
         if (mostRestrictiveFarHelper != null && mostRestrictiveFarHelper.getType() != null) {
             if (DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode()) &&
                     plotArea.compareTo(HUNDRED) >= 0) {
@@ -107,7 +109,8 @@ public class RainWaterHarvesting extends FeatureProcess {
             } else if (DxfFileConstants.G.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode())) {
                 addOutput(pl, errors, subRule, subRuleDesc);
             }    
-        }
+        } 
+       
 
         /*
          * if (plotArea.compareTo(HUNDRED) >= 0) { validateRWH(pl, errors); if (pl.getUtility() != null &&
@@ -124,10 +127,12 @@ public class RainWaterHarvesting extends FeatureProcess {
         if (pl.getPlanInformation() != null &&  pl.getPlanInformation().getRwhDeclared()!= null) {
             if (pl.getPlanInformation().getRwhDeclared().equalsIgnoreCase(DcrConstants.NO)
                     || pl.getPlanInformation().getRwhDeclared().equalsIgnoreCase(DcrConstants.NA)) {
+            
                 errors.put(DxfFileConstants.RWH_DECLARED, RWH_DECLARATION_ERROR);
                 pl.addErrors(errors);
                 addReportOutput(pl, subRule, subRuleDesc);
             } else {
+            	
                 addReportOutput(pl, subRule, subRuleDesc);
             }
         }
@@ -137,7 +142,7 @@ public class RainWaterHarvesting extends FeatureProcess {
         if (pl.getUtility() != null) {
             if (pl.getUtility().getRainWaterHarvest() != null && !pl.getUtility().getRainWaterHarvest().isEmpty()) {
                 setReportOutputDetails(pl, subRule, subRuleDesc, null,
-                        "Defined in the plan",
+                		 " Capacity - " + pl.getUtility().getRainWaterHarvestingTankCapacity(),
                         Result.Verify.getResultVal());
             } else {
                 setReportOutputDetails(pl, subRule, subRuleDesc, null,

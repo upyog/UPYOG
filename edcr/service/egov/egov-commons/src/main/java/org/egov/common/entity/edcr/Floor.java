@@ -93,6 +93,7 @@ public class Floor extends Measurement {
     private Room kitchen;
     private Room bathRoom;
     private Room waterClosets;
+    private List<Toilet> toilet;
     private Room bathRoomWaterClosets;
     private List<BigDecimal> heightFromTheFloorToCeiling;
     private List<BigDecimal> heightOfTheCeilingOfUpperBasement;
@@ -563,6 +564,15 @@ public class Floor extends Measurement {
     public void setBathRoom(Room bathRoom) {
         this.bathRoom = bathRoom;
     }
+    
+    public List<Toilet> getToilet() {
+        return toilet;
+    }
+
+    public void setToilet(List<Toilet> toilet) {
+        this.toilet = toilet;
+    }
+
 
     public Room getWaterClosets() {
         return waterClosets;

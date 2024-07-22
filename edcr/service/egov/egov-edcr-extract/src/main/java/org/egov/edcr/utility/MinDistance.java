@@ -311,14 +311,14 @@ public class MinDistance {
             }
             int incr = 0;
             for (Point out : outsidePoints)
-                if (insidePoints.size() < 10) {
+                if (insidePoints.size() < 100) {
                     distance = MathUtils.distance(in, out);
                     distanceList.add(distance);
                     singleDistanceList.add(distance);
                 } else {
                     incr++;
 
-                    if (incr % 10 == 1) {
+                    if (incr % 100 == 1) {
 
                         distance = MathUtils.distance(in, out);
                         singleDistanceList.add(distance);
