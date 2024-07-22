@@ -29,21 +29,29 @@ const CHBBankDetails
       fetch(`https://ifsc.razorpay.com/${ifscCode}`)
         .then(response => response.json())
         .then(data => {
-          if (data) {
+          if (data && data.BANK && data.BRANCH) {
             setBankName(data.BANK);
             setBankBranchName(data.BRANCH);
+            setShowToast({ error: false, label: t("CHB_IFSC_CODE_VALID") });
+          } else {
+            setShowToast({ error: true, label: t("CHB_IFSC_CODE_INVALID") });
           }
         })
-        .catch(error => {
-          console.error("Error fetching IFSC details:", error);
+        .catch(() => {
+          setShowToast({ error: true, label: t("CHB_IFSC_CODE_INVALID") });
         });
-    }
+      }
     else {
       setBankName("");
       setBankBranchName("");
     }
   }, [ifscCode]);
 
+  useEffect(() => {
+    if (accountNumber && confirmAccountNumber && accountNumber === confirmAccountNumber) {
+      setShowToast({ error: false, label: t("CHB_ACCOUNT_NUMBERS_MATCH") });
+    }
+  }, [accountNumber, confirmAccountNumber, t]);
   function setApplicantAccountNumber(e) {
     const input = e.target.value.replace(/\D/g, ''); // Replace non-digit characters
     if (input.length <= 16) {

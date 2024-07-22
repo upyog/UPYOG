@@ -129,7 +129,7 @@ export const ASSETSearch = {
 
           ...(response?.assetParentCategory === "IT" ?
             [
-            { title: "AST_BRAND", value: response?.additionalDetails?.brand?.code },
+            { title: "AST_BRAND", value: response?.additionalDetails?.brand },
             { title: "AST_INVOICE_DATE", value: response?.additionalDetails?.invoiceDate },
             { title: "AST_ASSET_AGE", value: response?.additionalDetails?.assetAge },
             { title: "AST_ASSIGNED_USER", value: response?.additionalDetails?.assignedUser },
@@ -147,7 +147,6 @@ export const ASSETSearch = {
 
         ],
       },
-
       {
         title: "AST_DOCUMENT_DETAILS",
         additionalDetails: {

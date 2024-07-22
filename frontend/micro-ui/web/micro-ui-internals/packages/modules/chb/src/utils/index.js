@@ -27,7 +27,7 @@ export const sethallDetails = (data) => {
     return { 
       hallName:slot.name,
       bookingId:slot.slotId,
-      hallCode: slot.slotId,
+      hallCode: slot.hallCode,
       bookingDate:slot.bookingDate,
       bookingFromTime:"10:00",
       bookingToTime:"11:59",

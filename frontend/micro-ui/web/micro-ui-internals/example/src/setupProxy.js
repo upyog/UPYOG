@@ -69,6 +69,7 @@ module.exports = function (app) {
     "/asset-services/v1/assets/_create",
     "/asset-services/v1/assets/_search",
     "/asset-services/v1/assets/_update",
+    "/asset-services/v1/assets/assignment/_create",
     "/ewaste-services/ewaste-request/_create",
     "/ewaste-services/ewaste-request/_search",
     "/ewaste-services/ewaste-request/_update",

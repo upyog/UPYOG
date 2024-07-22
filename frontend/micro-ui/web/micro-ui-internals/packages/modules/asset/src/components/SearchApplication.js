@@ -91,6 +91,22 @@
               },
               disableSortBy: true,
             },
+            {
+              Header: t("AST_TRANSFER"),
+              Cell: ({ row }) => {
+                console.log("roeowowowinsearchdsjf",row);
+                return (
+                  <div>
+                    <span className="link">
+                    <Link to={`/digit-ui/employee/asset/assetservice/assign-assets/`+ `${row?.original?.["applicationNo"]}`}>
+                        {t('AST_TRANSFER '+`${row?.original?.["assetParentCategory"]}`)}
+                      </Link>
+                    </span>
+                  </div>
+                );
+              },
+              mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNo"]),
+            },
         ]), [] )
 
       const onSort = useCallback((args) => {

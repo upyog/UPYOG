@@ -384,7 +384,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             <React.Fragment>
               <Row
               label={t("AST_BRAND")}
-              text={`${t(checkForNA(assetDetails?.brand?.value))}`}
+              text={`${t(checkForNA(assetDetails?.brand))}`}
              actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/assets`} />}
 
 

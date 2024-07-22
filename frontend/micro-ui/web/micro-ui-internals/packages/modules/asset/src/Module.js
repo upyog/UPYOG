@@ -25,10 +25,11 @@ import NewAsset from "./pageComponents/NewAsset";
 import NewDocument from "./pageComponents/NewDocument";
 import ASTCheckPage from "./pages/employee/TestApplication/Create/CheckPage"
 import NewResponse from "./pages/employee/TestApplication/Create/NewResponse";
+import AssetAssign from "./pageComponents/AssetAssign";
 
 
 const componentsToRegister = {
-  AssetApplication: NewAssetApplication,
+  AssignAssetApplication: NewAssetApplication,
   AssetClassification,
   AssetDocuments,
   AssetCommonDetails,
@@ -47,6 +48,7 @@ const componentsToRegister = {
   NewResponse,
   ApplicationDetails: ApplicationDetails,
   AssetResponse: Response, 
+  AssetAssign
 };
 
 const addComponentsToRegistry = () => {

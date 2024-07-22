@@ -12,6 +12,7 @@ const ApplicationTable = ({
   onNextPage,
   onPrevPage,
   onPageSizeChange,
+  isPaginationRequired,
   pageSizeLimit,
   sortParams,
   totalRecords,
@@ -27,6 +28,7 @@ const ApplicationTable = ({
       onPrevPage={onPrevPage}
       pageSizeLimit={pageSizeLimit}
       disableSort={disableSort}
+      isPaginationRequired={isPaginationRequired}
       onPageSizeChange={onPageSizeChange}
       onSort={onSort}
       sortParams={sortParams}

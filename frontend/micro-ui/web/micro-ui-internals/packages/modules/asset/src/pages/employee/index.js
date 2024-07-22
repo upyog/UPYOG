@@ -59,23 +59,19 @@ const EmployeeApp = ({ path, url, userType }) => {
     return <BreadCrumb style={isMobile?{display:"flex"}:{}}  spanStyle={{maxWidth:"min-content"}} crumbs={crumbs} />;
   }
 
-  // const NewApplication = Digit?.ComponentRegistryService?.getComponent("PTRNewApplication");
-  const NewAssetApplication = Digit?.ComponentRegistryService?.getComponent("AssetApplication");
+  
+  const NewAssetAssignApplication = Digit?.ComponentRegistryService?.getComponent("AssignAssetApplication");
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
   const ASSETCreate = Digit?.ComponentRegistryService?.getComponent("AssetCreateNew")
-
-  // const EditApplication = Digit?.ComponentRegistryService?.getComponent("PTEditApplication");
   const Response = Digit?.ComponentRegistryService?.getComponent("AssetResponse");
-  // const DocsRequired = Digit?.ComponentRegistryService?.getComponent("PTRDocsRequired");
   const isRes = window.location.href.includes("asset/response");
   const isNewRegistration = window.location.href.includes("new-asset") || window.location.href.includes("modify-application") || window.location.href.includes("asset/assetservice/application-details");
+
   return (
     <Switch>
       <AppContainer>
-      {/* <BackButton>Back</BackButton> */}
       <React.Fragment>
         <div className="ground-container">
-          
           {!isRes ? <div style={isNewRegistration ? {marginLeft: "12px" } : {marginLeft:"-4px"}}><BackButton location={location} /> </div> : null}
           <PrivateRoute exact path={`${path}/`} component={() => <ASSETLinks matchPath={path} userType={userType} />} />
           <PrivateRoute
@@ -92,11 +88,11 @@ const EmployeeApp = ({ path, url, userType }) => {
             )}
           />
           
-          <PrivateRoute path={`${path}/assetservice/new-asset`} component={() => <NewAssetApplication parentUrl={url} />} />
+          <PrivateRoute path={`${path}/assetservice/assign-assets/:id`} component={() => <NewAssetAssignApplication parentUrl={url} />} />
           <PrivateRoute path={`${path}/assetservice/new-assets`} component={() => <ASSETCreate parentUrl={url} />} />
           <PrivateRoute path={`${path}/assetservice/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/assetservice/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
-          <PrivateRoute path={`${path}/assetservice/response`} component={(props) => <Response {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/assetservice/assign-response`} component={(props) => <Response {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/assetservice/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />
           <PrivateRoute path={`${path}/assetservice/my-asset`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/assetservice/report`} component={(props) => <SearchReport {...props} parentRoute={path} />} />
