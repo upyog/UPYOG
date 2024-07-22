@@ -2,23 +2,27 @@ import { FormComposer, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-
-
-import { newConfig } from "../../../config/Create/Assetconfig";
+import { useParams } from "react-router-dom";
+import { assignConfig } from "../../../config/Create/assignConfig";
 
 const NewAssetApplication = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  
-  
-
   const { t } = useTranslation();
   const [canSubmit, setSubmitValve] = useState(false);
   const defaultValues = {};
   const history = useHistory();
-
+  const { id: applicationNo } = useParams();
+  const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
    const [_formData, setFormData,_clear] = Digit.Hooks.useSessionStorage("store-data",null);
    const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", { });
+
+
+  const convertToEpoch = (dateString) => {
+    const [year, month, day] = dateString.split("-").map(Number);
+    return new Date(year, month - 1, day).getTime();
+  };
+
  
 
   useEffect(() => {
@@ -34,57 +38,34 @@ const NewAssetApplication = () => {
   };
 
   const onSubmit = (data) => {
-    console.log("dta for payload console", data);
+    const assignedDateEpoch = convertToEpoch(data?.assigndetails?.[0]?.transferDate);
+    const returnDateEpoch = convertToEpoch(data?.assigndetails?.[0]?.returnDate);
     const formData = {
-      accountId: "",
+      id: "",
       tenantId: tenantId,
-      assetBookRefNo: data?.assetcommonforall?.[0]?.BookPagereference,
-      assetName: data?.assetcommonforall?.[0]?.AssetName,
-      description: data?.assetcommonforall?.[0]?.Assetdescription,
-      assetClassification:data?.assets[0]?.assetclassification?.value,
-      assetParentCategory: data?.assets[0]?.assettype?.code,
-      assetCategory:data?.assets[0]?.assetsubtype?.code,
-      assetSubCategory:data?.assets[0]?.assetparentsubCategory?.code,
-      department: data?.assetcommonforall?.[0]?.Department,
-      financialYear: "",
-      sourceOfFinance:"",
-      applicationNo: "",
-      approvalDate: "",
-      applicationDate: "",
-      status: "",
-      action: "",
-      businessService: "asset-create",
-
-      addressDetails: {
-        addressLine1:data?.address?.addressLine1,
-        addressLine2:data?.address?.addressLine2,
-        buildingName:data?.address?.buildingName,
-        doorNo:data?.address?.doorNo,
-        street:data?.address?.street,
-        pincode:data?.address?.pincode,
-        city:data?.address?.city?.name,
-        locality: { code: data?.address?.locality?.code,
-                    area: data?.address?.locality?.area,
-                    latitude: data?.address?.latitude,
-                    longitude: data?.address?.longitude },
-
-      },
-      documents: data?.documents?.documents,
-      workflow : {
-        action: "INITIATE",
-        businessService: "asset-create",
-        moduleName: "asset-services"
-      },
-
-      additionalDetails: {
-        ...data?.assetscommon?.[0],
-
-        acquisitionProcessionDetails: {
-        },
+      applicationNo: applicationDetails?.applicationData?.applicationData?.applicationNo,
+      assetAssignment: {
+        id: "",
+        assetId: "",
+        assignedUserName: data?.assigndetails?.[0]?.assignedUser,
+        designation: data?.assigndetails?.[0]?.designation,
+        department: data?.assigndetails?.[0]?.department,
+        assignedDate: assignedDateEpoch,
+        isAssigned: true,
+        returnDate: returnDateEpoch,
+        allocatedDepartment:data?.assigndetails?.[0]?.allocatedDepartment?.code, 
+        employeeCode:data?.assigndetails?.[0]?.employeeCode,
+        returnValue:data?.assigndetails?.[0]?.returnValue?.code,
+        auditDetails: {
+          createdBy: "",
+          lastModifiedBy: "",
+          createdTime: "",
+          lastModifiedTime: ""
+        }
       },   
     };
 
-    history.replace("/digit-ui/employee/asset/assetservice/response", { Asset: formData }); 
+    history.replace("/digit-ui/employee/asset/assetservice/assign-response", { Asset: formData }); 
     
 
   };
@@ -94,12 +75,12 @@ const NewAssetApplication = () => {
   
 
   
-  const configs = newConfig;    
+  const configs = assignConfig;    
 
   
   return (
     <FormComposer
-      heading={t("ES_TITLE_NEW_ASSET_MANAGEMENT")}
+      heading={t("AST_ASSIGN_ASSET")}
       isDisabled={!canSubmit}
       label={t("ES_COMMON_APPLICATION_SUBMIT")}
       config={configs.map((config) => {

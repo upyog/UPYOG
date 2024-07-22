@@ -3,12 +3,9 @@ import React ,{Fragment}from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
-
-;
 import { newAssetConfig } from "../../../../config/Create/newAssetConfig";
 
 const ASSETCreate = ({ parentRoute }) => {
-
   const queryClient = useQueryClient();
   const match = useRouteMatch();
   const { t } = useTranslation();
@@ -17,7 +14,7 @@ const ASSETCreate = ({ parentRoute }) => {
   const stateId = Digit.ULBService.getStateId();
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("Asset_Test", {});
-  let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig"); //  PROPERTY CONFIG HOOK , just for commkonfeild config 
+  // let { data: commonFields } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig"); //  PROPERTY CONFIG HOOK , just for commkonfeild config 
   const goNext = (skipStep, index, isAddMultiple, key) => {
 
     
@@ -102,13 +99,16 @@ const ASSETCreate = ({ parentRoute }) => {
     clearParams();
     queryClient.invalidateQueries("AST_CREATE");
   };
+
+  let isLoading
+
   if (isLoading) {
     return <Loader />;
   }
 
   // commonFields=newConfig;
   /* use newConfig instead of commonFields for local development in case needed */
-  commonFields = newAssetConfig;
+ let commonFields = newAssetConfig;
   commonFields.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });

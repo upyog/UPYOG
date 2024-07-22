@@ -25,9 +25,7 @@ const ServiceDoc = ({ t, config, onSelect, userType, formData }) => {
     <React.Fragment>
       <Card>
         <div>
-          {/* <CardText className={"primaryColor"}>{t("ServiceDocDOC_REQ_SCREEN_SUB_HEADER")}</CardText>
-          <CardText className={"primaryColor"}>{t("ServiceDocDOC_REQ_SCREEN_TEXT")}</CardText>
-          <CardText className={"primaryColor"}>{t("ServiceDocDOC_REQ_SCREEN_SUB_TEXT")}</CardText> */}
+         
           <CardSubHeader>{t("AST_REQ_SCREEN_LABEL")}</CardSubHeader>
           
           <CardText style={{color: 'red'}}>{t('AST_DOCUMENT_ACCEPTED_PDF_JPG_PNG')}</CardText>

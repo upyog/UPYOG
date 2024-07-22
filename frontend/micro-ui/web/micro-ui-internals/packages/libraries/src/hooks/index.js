@@ -276,6 +276,8 @@ import useASSETSearch from "./asset/useASSETSearch";
 import useTenantsASSET from "./asset/useTenants"
 import useASSETApplicationAction from "./asset/useASSETApplicationAction";
 import useAssetparentSubType from "./asset/useAssetparentSubType";
+import useAssignCreateAPI from "./asset/useAssignCreateAPI";
+
 import useProductPriceMDMS from "./ew/useProductPriceMDMS";
 import useSpecialCategory from "./chb/useSpecialCategory";
 import useResidentType from "./chb/useResidentType";
@@ -339,7 +341,8 @@ const asset = {
   useASSETApplicationAction,
   useASSETSearch,
   useAssetparentSubType,
-  useTenants: useTenantsASSET
+  useTenants: useTenantsASSET,
+  useAssignCreateAPI
 };
 
 const chb={
