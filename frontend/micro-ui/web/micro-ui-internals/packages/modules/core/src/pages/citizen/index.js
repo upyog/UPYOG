@@ -20,6 +20,7 @@ import CitizenFeedback from "../../components/CitizenFeedback";
 import Search from "./SearchApp";
 import QRCode from "./QRCode";
 import ChallanQRCode from "./ChallanQRCode";
+import AcknowledgementQRCode from "./AcknowledgementQRCode";
 import EDCRScrutiny from "./Home/EdcrScrutiny";
 import { newConfig as newConfigEDCR  } from "../../config/edcrConfig";
 import CreateEDCR1 from "./Home/EDCR";
@@ -225,6 +226,9 @@ const Home = ({
           <Route path={`${path}/challan/details`}>
          <ChallanQRCode></ChallanQRCode>
           </Route>
+          <Route path={`${path}/acknowledgement/details`}>
+         <AcknowledgementQRCode></AcknowledgementQRCode>
+         </Route>
           <Route path={`/digit-ui/citizen/core/edcr/scrutiny`}>
             {/* <EDCRScrutiny config={newConfigEDCR} isSubmitBtnDisable={false}/>
             
