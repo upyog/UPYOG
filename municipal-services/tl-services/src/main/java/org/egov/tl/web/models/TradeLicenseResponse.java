@@ -59,8 +59,8 @@ public class TradeLicenseResponse   {
         @JsonProperty("applicationApplied")
         private int applicationApplied;
         
-        @JsonProperty("applicationVerified")
-        private int applicationVerified;
+        @JsonProperty("applicationPendingForPayment")
+        private int applicationPendingForPayment;
         
         @JsonProperty("applicationRejected")
         private int applicationRejected;
