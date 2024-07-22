@@ -90,7 +90,7 @@ public class EnrichmentService {
 		RequestInfo requestInfo = assetRequest.getRequestInfo();
 		AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 		assetRequest.getAsset().getAssetAssignment().setAuditDetails(auditDetails);  
-		assetRequest.getAsset().getAssetAssignment().setId(UUID.randomUUID().toString());
+		assetRequest.getAsset().getAssetAssignment().setAssignmentId(UUID.randomUUID().toString());
 
 	}
 	
