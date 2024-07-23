@@ -71,9 +71,9 @@ public class PaymentNotificationService {
 				bookingService.updateBooking(null, bookingNo);
 			}
 		} catch (IllegalArgumentException e) {
-			log.error("Illegal argument exception occurred pet: " + e.getMessage());
+			log.error("Illegal argument exception occured while sending notification CHB : " + e.getMessage());
 		} catch (Exception e) {
-			log.error("An unexpected exception occurred pet: " + e.getMessage());
+			log.error("An unexpected exception occurred while sending notification CHB : ", e);
 		}
 
 	}
