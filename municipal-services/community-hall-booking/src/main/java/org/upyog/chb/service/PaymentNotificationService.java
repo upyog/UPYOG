@@ -50,6 +50,7 @@ public class PaymentNotificationService {
 		log.info(" Receipt consumer class entry " + record.toString());
 		try {
 			PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
+			log.info("paymentRequest : " + paymentRequest);
 			String businessService = paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService();
 			log.info("Payment request processing in CHB method for businessService : " + businessService);
 			if (configs.getBusinessServiceName()
