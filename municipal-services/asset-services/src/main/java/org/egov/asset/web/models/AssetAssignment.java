@@ -26,8 +26,8 @@ import lombok.Setter;
 @Builder
 public class AssetAssignment {
 	
-	@JsonProperty("id")
-    private String id ;
+	@JsonProperty("assignmentId")
+    private String assignmentId ;
 	
 	@JsonProperty("assetApplicaltionNo")
 	private String assetApplicaltionNo;

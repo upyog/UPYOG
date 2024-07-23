@@ -40,7 +40,7 @@
     "@nudmcdgnpm/digit-ui-module-commonpt":"1.2.1",
     "@nudmcdgnpm/digit-ui-react-components": "1.2.0",
     "@nudmcdgnpm/upyog-ui-module-ptr": "1.2.1",
-    "@nudmcdgnpm/upyog-ui-module-asset": "1.2.0",
+    "@nudmcdgnpm/upyog-ui-module-asset": "1.2.1",
     "@nudmcdgnpm/upyog-ui-module-ew":"1.2.0",
     "@nudmcdgnpm/upyog-ui-module-chb":"1.2.0",
     "babel-loader": "8.1.0",
