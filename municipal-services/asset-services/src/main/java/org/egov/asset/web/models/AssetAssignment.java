@@ -38,6 +38,9 @@ public class AssetAssignment {
     @JsonProperty("assignedUserName")
     private String assignedUserName ;
     
+    @JsonProperty("employeeCode")
+    private String employeeCode ;
+    
     @JsonProperty("designation")
     private String designation ;
     
@@ -56,5 +59,6 @@ public class AssetAssignment {
 
     @JsonProperty("returnDate")
     private Long returnDate;
+    
 
 }

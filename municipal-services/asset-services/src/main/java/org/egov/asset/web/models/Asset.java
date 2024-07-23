@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
+import org.egov.asset.dto.AssetDTO;
 import org.egov.asset.web.models.workflow.ProcessInstance;
 import org.springframework.validation.annotation.Validated;
 
@@ -31,7 +32,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Asset   {
+public class Asset  implements AssetDTO {
 
 		@JsonProperty("id")
         private String id ;
@@ -172,6 +173,9 @@ public class Asset   {
         
         @JsonProperty("warrantyExpiryDate")
         private Long warrantyExpiryDate;
+        
+        @JsonProperty("assetStatus")
+        private String assetStatus;
        
         
         

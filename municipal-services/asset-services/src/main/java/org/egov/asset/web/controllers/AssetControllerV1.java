@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.egov.asset.dto.AssetDTO;
 import org.egov.asset.service.AssetService;
 import org.egov.asset.util.ResponseInfoFactory;
 import org.egov.asset.web.models.Asset;
@@ -42,7 +43,7 @@ public class AssetControllerV1 {
 		//String accept = request.getHeader("Accept");
 		//if (accept != null && accept.contains("application/json")) {
 			Asset asset = assetService.create(assetRequest);
-			List<Asset> assets = new ArrayList<Asset>();
+			List<AssetDTO> assets = new ArrayList<AssetDTO>();
 			assets.add(asset);
 			AssetResponse response = AssetResponse.builder().assets(assets)
 					.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
@@ -78,7 +79,7 @@ public class AssetControllerV1 {
 	public ResponseEntity<AssetResponse> v1AssetsSearchPost(
 			@RequestBody RequestInfoWrapper requestInfoWrapper,
 			@Valid @ModelAttribute AssetSearchCriteria searchCriteria) {
-		List<Asset> assets = assetService.search(searchCriteria, requestInfoWrapper.getRequestInfo());
+		List<AssetDTO> assets = assetService.search(searchCriteria, requestInfoWrapper.getRequestInfo());
 		AssetResponse response = AssetResponse.builder().assets(assets)
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
 				.build();
@@ -89,7 +90,7 @@ public class AssetControllerV1 {
 	public ResponseEntity<AssetResponse> v1AssetsUpdatePost(
 			@ApiParam(value = "Details for updating existing assets + RequestInfo metadata.", required = true) @Valid @RequestBody AssetRequest assetRequest) {
 		Asset asset = assetService.update(assetRequest);
-		List<Asset> assets = new ArrayList<Asset>();
+		List<AssetDTO> assets = new ArrayList<AssetDTO>();
 		assets.add(asset);
 		AssetResponse response = AssetResponse.builder().assets(assets)
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
@@ -102,7 +103,7 @@ public class AssetControllerV1 {
 	public ResponseEntity<AssetResponse> v1AssetAssginCreatePost(
 			@ApiParam(value = "Details for the new asset(s) + RequestInfo metadata.", required = true) @Valid @RequestBody AssetRequest assetRequest) {
 			Asset asset = assetService.assignment(assetRequest);
-			List<Asset> assets = new ArrayList<Asset>();
+			List<AssetDTO> assets = new ArrayList<AssetDTO>();
 			assets.add(asset);
 			AssetResponse response = AssetResponse.builder().assets(assets)
 					.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
@@ -115,7 +116,7 @@ public class AssetControllerV1 {
 	public ResponseEntity<AssetResponse> v1AssetsAssignmentUpdatePost(
 			@ApiParam(value = "Details for updating existing assets + RequestInfo metadata.", required = true) @Valid @RequestBody AssetRequest assetRequest) {
 		Asset asset = assetService.updateAssignment(assetRequest);
-		List<Asset> assets = new ArrayList<Asset>();
+		List<AssetDTO> assets = new ArrayList<AssetDTO>();
 		assets.add(asset);
 		AssetResponse response = AssetResponse.builder().assets(assets)
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))

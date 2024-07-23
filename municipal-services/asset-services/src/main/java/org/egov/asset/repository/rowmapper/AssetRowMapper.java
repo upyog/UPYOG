@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.asset.dto.AssetDTO;
 import org.egov.asset.web.models.Address;
 import org.egov.asset.web.models.Asset;
 import org.egov.asset.web.models.AssetAssignment;
@@ -127,6 +128,9 @@ public class AssetRowMapper implements ResultSetExtractor<List<Asset>> {
 	    AssetAssignment assetAssignment = new AssetAssignment();
 	    	assetAssignment.setAssignmentId(rs.getString("assignmentId"));
 	    	assetAssignment.setAssignedUserName(rs.getString("assignedUserName"));
+	    	assetAssignment.setEmployeeCode(rs.getString("employeeCode"));
+	    	assetAssignment.setDesignation(rs.getString("designation"));
+	    	assetAssignment.setDepartment(rs.getString("department"));
 	    	assetAssignment.setAssignedDate(rs.getLong("assignedDate"));
 	    	assetAssignment.setReturnDate(rs.getLong("returnDate"));
 	    	assetAssignment.setIsAssigned(rs.getBoolean("isAssigned"));
