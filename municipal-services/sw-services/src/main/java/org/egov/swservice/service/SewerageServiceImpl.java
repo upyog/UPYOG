@@ -602,8 +602,7 @@ public class SewerageServiceImpl implements SewerageService {
 	}
 
 	public void markOldApplication(SewerageConnectionRequest sewerageConnectionRequest) {
-		String action = sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction();
-		if (action.equalsIgnoreCase(APPROVE_CONNECTION) || action.equalsIgnoreCase(EXECUTE_DISCONNECTION)) {
+		if (sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction().equalsIgnoreCase(APPROVE_CONNECTION)) {
 			String currentModifiedApplicationNo = sewerageConnectionRequest.getSewerageConnection().getApplicationNo();
 			List<SewerageConnection> sewerageConnectionList = getAllSewerageApplications(sewerageConnectionRequest);
 

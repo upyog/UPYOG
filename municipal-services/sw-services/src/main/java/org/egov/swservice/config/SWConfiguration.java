@@ -199,6 +199,9 @@ private Integer defaultLimit;
 
     @Value("${state.level.tenant.id}")
     private String stateLevelTenantId;
+    
+	@Value("${reconnection.sw.workflow.name}")
+	private String swWorkflowReconnectionName;
 
     //mdms
     @Value("${egov.mdms.host}")

@@ -475,12 +475,7 @@ public class EnrichmentService {
 						}
 					} else if (connection.getApplicationStatus().equals(SWConstants.MODIFIED_FINAL_STATE)) {
 						connectionHashMap.put(connection.getConnectionNo(), connection);
-					} else {
-						if(connection.getApplicationStatus().equals(SWConstants
-								.DISCONNECTION_FINAL_STATE)) {
-							connectionHashMap.put(connection.getConnectionNo(), connection);
-						}
-					}
+					} 
 				}
 			}
 		});
