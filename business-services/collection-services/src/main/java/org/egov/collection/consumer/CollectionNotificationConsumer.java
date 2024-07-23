@@ -82,6 +82,7 @@ public class CollectionNotificationConsumer {
 	}
 
 	private String buildSmsBody(Bill bill, PaymentDetail paymentDetail, RequestInfo requestInfo, String paymentStatus) {
+		log.info("Inside BodySms");;
 		String message = null;
 		String content = null;
 		switch (paymentStatus.toUpperCase()) {
@@ -105,7 +106,8 @@ public class CollectionNotificationConsumer {
 			break;
 		}
 		if (!StringUtils.isEmpty(content)) {
-			if (!paymentStatus.equalsIgnoreCase("NEW")) {
+			if (!paymentStatus.equalsIgnoreCase("NEW"))
+			{
 				StringBuilder link = new StringBuilder();
 				link.append(applicationProperties.getUiHost() + "/citizen").append("/otpLogin?mobileNo=")
 						.append(bill.getMobileNumber()).append("&redirectTo=")
@@ -145,6 +147,7 @@ public class CollectionNotificationConsumer {
 			content = content.replaceAll("<unique_id>", bill.getConsumerCode());
 			message = content;
 		}
+		log.info("Final msg: "+message);
 		return message;
 	}
 
