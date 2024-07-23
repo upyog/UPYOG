@@ -1,14 +1,10 @@
 package org.upyog.chb.web.models;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
@@ -43,8 +39,6 @@ public class ApplicantDetail   {
 	@Size(min = 10, max = 10)
 	private String applicantMobileNo;
 	
-	@NotBlank
-	@Size(min = 10, max = 10)
 	private String applicantAlternateMobileNo;
 	
 	@NotBlank

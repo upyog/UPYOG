@@ -19,9 +19,7 @@ public interface CommunityHallBookingService {
 	
 	List<CommunityHallBookingDetail> getBookingDetails(CommunityHallBookingSearchCriteria bookingSearchCriteria, RequestInfo info);
 
-	CommunityHallBookingDetail updateBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest);
-
-	void updateBookingStatus(String bookingNo);
+	CommunityHallBookingDetail updateBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest, String bookingNumber);
 
 	List<CommunityHallSlotAvailabiltityDetail> getCommunityHallSlotAvailability(CommunityHallSlotSearchCriteria criteria);
 

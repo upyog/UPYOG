@@ -2,10 +2,8 @@ package org.upyog.chb.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
@@ -54,22 +52,34 @@ public class MdmsUtil {
 	public Object mDMSCall(RequestInfo requestInfo, String tenantId) {
 		MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId);
 		Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
-		String data = CommunityHallBookingUtil.beuatifyJson(result);
 		
 		if(mdmsMap == null) {
 			setMDMSDataMap(result);// = ;
 		}
 		
-		log.info("dbeuatifed mdms response ata : " + data);
-		log.info("Calculkation data for CHB booking :" + 
+		
+		log.info("Calculation data for CHB booking :" + 
 				JsonPath.read(result,
 						CommunityHallBookingConstants.CHB_JSONPATH_CODE +  "." + CommunityHallBookingConstants.CHB_CALCULATION_TYPE +".[0].feeType"));
-		 //rate = JsonPath.read(response, "$.MdmsRes.BTR.RegistrationCharges.[0].amount");
+
 		// Object result = mdmsClient.getMDMSData(mdmsCriteriaReq);
-		// log.info("Master data fetched from MDMSfrom fiegn client : " + result);
+		// log.info("Master data fetched from MDMSfrom feign client : " + result);
+		
 		return result;
 	}
 
+	
+	
+	/**
+	 * Fetch data from mdms for mdms criteria request {@code mdmsCriteriaReq}
+	 */
+	public Object mDMSCall(MdmsCriteriaReq mdmsCriteriaReq) {
+		Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+		return result;
+	}
+
+	
+	
 	/**
 	 * Returns the URL for MDMS search end point
 	 *
@@ -119,15 +129,13 @@ public class MdmsUtil {
 		chbMasterDtls
 				.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_PURPOSE).filter(filterCode).build());
 
-		chbMasterDtls.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_RESIDENT_TYPE)
-				.filter(filterCode).build());
 		chbMasterDtls.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_SPECIAL_CATEGORY)
 				.filter(filterCode).build());
 		chbMasterDtls.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_CALCULATION_TYPE).build());
 		chbMasterDtls.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_COMMNUITY_HALLS)
 				.filter(filterCode).build());
 		chbMasterDtls.add(
-				MasterDetail.builder().name(CommunityHallBookingConstants.CHB_HALL_CODES).filter(filterCode).build());
+				MasterDetail.builder().name(CommunityHallBookingConstants.CHB_HALL_CODES).filter("$.[?(@.active==true)].HallCode").build());
 		chbMasterDtls.add(
 				MasterDetail.builder().name(CommunityHallBookingConstants.CHB_DOCUMENTS).filter(filterCode).build());
 

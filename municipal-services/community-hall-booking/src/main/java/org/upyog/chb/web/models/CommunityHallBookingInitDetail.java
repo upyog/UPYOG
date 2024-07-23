@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CommunityHallBokingInitDetail {
+public class CommunityHallBookingInitDetail {
 	CommunityHallBookingRequestInit hallsBookingApplication;
 }
 

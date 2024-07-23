@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.Address;
 import org.upyog.chb.web.models.ApplicantDetail;
-import org.upyog.chb.web.models.AuditDetails;
 import org.upyog.chb.web.models.BookingPurpose;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.SpecialCategory;
@@ -105,8 +104,8 @@ public class CommunityHallBookingRowmapper implements ResultSetExtractor<List<Co
 				.landmark(rs.getString("landmark"))
 				.city(rs.getString("city"))
 				.pincode(rs.getString("pincode"))
-				.streetName(rs.getString("applicant_detail_id"))
-				.localityCode(rs.getString("applicant_detail_id"))
+				.streetName(rs.getString("street_name"))
+				.localityCode(rs.getString("locality_code"))
 				.build();
 		
 		return address;
