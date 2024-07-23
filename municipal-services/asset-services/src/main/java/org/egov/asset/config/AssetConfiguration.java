@@ -5,6 +5,7 @@ import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 
 import org.egov.tracer.config.TracerConfiguration;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -140,5 +141,9 @@ public class AssetConfiguration {
     return converter;
     }
 
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 	
 }

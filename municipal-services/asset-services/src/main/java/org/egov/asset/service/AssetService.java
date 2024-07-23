@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.egov.asset.dto.AssetAssignmentDTO;
+import org.egov.asset.dto.AssetDTO;
+import org.egov.asset.dto.AssetSearchDTO;
 import org.egov.asset.repository.AssetRepository;
 import org.egov.asset.util.AssetConstants;
 import org.egov.asset.util.AssetErrorConstants;
@@ -20,6 +24,7 @@ import org.egov.asset.web.models.UserSearchCriteria;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +47,9 @@ public class AssetService {
 	WorkflowIntegrator workflowIntegrator;
 	@Autowired
 	WorkflowService workflowService;
+	
+	@Autowired
+    private ModelMapper modelMapper;
 
 	/**
 	 * does all the validations required to create Asset Record in the system
@@ -79,7 +87,7 @@ public class AssetService {
 
 	}
 
-	public List<Asset> search(AssetSearchCriteria criteria, RequestInfo requestInfo) {
+	public List<AssetDTO> search(AssetSearchCriteria criteria, RequestInfo requestInfo) {
 		List<Asset> assets = new LinkedList<>();
 		assetValidator.validateSearch(requestInfo, criteria);
 		List<String> roles = new ArrayList<>();
@@ -92,9 +100,29 @@ public class AssetService {
 			assets = this.getAssetCreatedForByMe(criteria, requestInfo);
 			log.debug("no of assets retuning by the search query" + assets.size());
 		}
-		assets = getAssetsFromCriteria(criteria);
-		return assets;
+		else 
+			assets = getAssetsFromCriteria(criteria);
+
+		if(criteria.getApplicationNo() != null) {
+			return assets.stream()
+	                .map(asset -> modelMapper.map(asset, AssetDTO.class))
+	                .collect(Collectors.toList());
+		}
+		else
+		{
+			return assets.stream()
+	                .map(this::convertToAssetSearchDTO)
+	                .collect(Collectors.toList());
+		}
 	}
+	
+	private AssetSearchDTO convertToAssetSearchDTO(Asset asset) {
+        AssetSearchDTO assetSearchDTO = modelMapper.map(asset, AssetSearchDTO.class);
+        if (asset.getAssetAssignment() != null) {
+            assetSearchDTO.setAssetAssignment(modelMapper.map(asset.getAssetAssignment(), AssetAssignmentDTO.class));
+        }
+        return assetSearchDTO;
+    }
 
 	private List<Asset> getAssetCreatedForByMe(AssetSearchCriteria criteria, RequestInfo requestInfo) {
 		List<Asset> assets = null;
