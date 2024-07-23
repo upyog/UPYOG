@@ -20,6 +20,7 @@ import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingResponse;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
+import org.upyog.chb.web.models.CommunityHallDemandEstimationCriteria;
 import org.upyog.chb.web.models.CommunityHallDemandEstimationResponse;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabilityResponse;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabiltityDetail;
@@ -116,9 +117,9 @@ public class CommunityHallBookingController {
 	
 	@RequestMapping(value = "/v1/_estimate", method = RequestMethod.POST)
 	public ResponseEntity<CommunityHallDemandEstimationResponse> v1GetEstimateDemand(
-			@ApiParam(value = "Details for the community halls booking for demand estimation", required = true) @Valid @RequestBody CommunityHallBookingRequest communityHallsBookingRequest) {
-		List<Demand> demands = demandService.getDemand(communityHallsBookingRequest);
-		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(communityHallsBookingRequest.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_DEMAND_ESTIMATION,
+			@ApiParam(value = "Details for the community halls booking for demand estimation", required = true) @Valid @RequestBody CommunityHallDemandEstimationCriteria estimationCriteria) {
+		List<Demand> demands = demandService.getDemand(estimationCriteria);
+		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(estimationCriteria.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_DEMAND_ESTIMATION,
 				StatusEnum.SUCCESSFUL);
 		CommunityHallDemandEstimationResponse response = CommunityHallDemandEstimationResponse.builder()
 				.demands(demands)
