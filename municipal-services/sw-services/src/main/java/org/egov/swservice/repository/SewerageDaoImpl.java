@@ -106,10 +106,10 @@ public class SewerageDaoImpl implements SewerageDao {
 		ResultSetExtractor<List<SewerageConnection>> rowMapper;
 
 		if (isOpenSearch || iscitizenSearch) {
-			rowMapper = (criteria.getConnectionNumber() != null) ? openSewerageRowMapper
+			rowMapper = (criteria.getConnectionNumber() != null || criteria.getApplicationNumber() != null) ? openSewerageRowMapper
 					: openSewerageRowMapperForTable;
 		} else {
-			rowMapper = (criteria.getConnectionNumber() != null) ? sewarageRowMapper : sewarageRowMapperForTable;
+			rowMapper = (criteria.getConnectionNumber() != null || criteria.getApplicationNumber() != null) ? sewarageRowMapper : sewarageRowMapperForTable;
 		}
 
 		sewerageConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(), rowMapper);

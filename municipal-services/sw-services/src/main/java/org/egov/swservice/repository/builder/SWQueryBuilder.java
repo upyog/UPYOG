@@ -138,7 +138,7 @@ public class SWQueryBuilder {
 		    }
 		    query.append(SEARCH_COUNT_QUERY);
 		} else {
-		    query = new StringBuilder(criteria.getConnectionNumber() != null ? SEWERAGE_SEARCH_QUERY : SEWERAGE_SEARCH_QUERY_FORTABLE);
+		    query = new StringBuilder((criteria.getConnectionNumber() != null || criteria.getApplicationNumber() != null) ? SEWERAGE_SEARCH_QUERY : SEWERAGE_SEARCH_QUERY_FORTABLE);
 		}
 
 		
