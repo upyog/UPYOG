@@ -149,18 +149,14 @@ public class CHBNotificationService {
 		try {
 
 			Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
-			log.info("User fetched in fetUserUUID method of pet notfication consumer" + user.toString());
+			log.info("User fetched in fetUserUUID method of CHB notfication consumer" + user.toString());
 //			if (null != user) {
 //				String uuid = JsonPath.read(user, "$.user[0].uuid");
-			if (user instanceof Optional) {
-				Optional<Object> optionalUser = (Optional<Object>) user;
-				if (optionalUser.isPresent()) {
-					String uuid = JsonPath.read(optionalUser.get(), "$.user[0].uuid");
+			if (user  != null) {
+					String uuid = JsonPath.read(user, "$.user[0].uuid");
 					mapOfPhoneNoAndUUIDs.put(mobileNumber, uuid);
-				}
-			} else {
-				log.error("Service returned null while fetching user for username - " + mobileNumber);
-			}
+					log.info("mapOfPhoneNoAndUUIDs : " + mapOfPhoneNoAndUUIDs);
+			} 
 		} catch (Exception e) {
 			log.error("Exception while fetching user for username - " + mobileNumber);
 			log.error("Exception trace: ", e);
