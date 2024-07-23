@@ -110,7 +110,8 @@ const Urls = {
     create:"/asset-services/v1/assets/_create",
     search:"/asset-services/v1/assets/_search",
     update:"/asset-services/v1/assets/_update",
-    assign:"/asset-services/v1/assets/assignment/_create"
+    assign:"/asset-services/v1/assets/assignment/_create",
+    return_asset:"/asset-services/v1/assets/assignment/_update"
   },
 
   chb: {    
