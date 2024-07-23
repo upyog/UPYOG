@@ -13,7 +13,7 @@ const ReturnAsset = () => {
   const history = useHistory();
   const { id: applicationNo } = useParams();
   const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
-  
+  console.log("testttttttttttttttttttttttttttttttttttttttttttttttttttttt",applicationDetails);
    const [_formData, setFormData,_clear] = Digit.Hooks.useSessionStorage("store-data",null);
    const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", { });
@@ -52,6 +52,7 @@ const ReturnAsset = () => {
         designation: applicationDetails?.applicationData?.applicationData?.assetAssignment?.designation || "",
         department: applicationDetails?.applicationData?.applicationData?.assetAssignment?.department || "",    //later we need to send the procured department here.
         assignedDate: applicationDetails?.applicationData?.applicationData?.assetAssignment?.assignedDate,
+        employeeCode:applicationDetails?.applicationData?.applicationData?.assetAssignment?.employeeCode,
         isAssigned: false,
         returnDate: returnDateEpoch,
         auditDetails: {
