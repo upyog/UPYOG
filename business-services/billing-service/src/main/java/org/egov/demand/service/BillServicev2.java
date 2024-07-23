@@ -464,7 +464,8 @@ public class BillServicev2 {
 			return getBillResponse(Collections.emptyList());
 
 		BillRequestV2 billRequest = BillRequestV2.builder().bills(bills).requestInfo(requestInfo).build();
-		//kafkaTemplate.send(notifTopicName, null, billRequest);
+		if (billRequest.getBills().get(0).getBusinessService().equalsIgnoreCase("WS")||billRequest.getBills().get(0).getBusinessService().equalsIgnoreCase("SW"))
+			kafkaTemplate.send(notifTopicName, null, billRequest);
 		return create(billRequest);
 	}
 

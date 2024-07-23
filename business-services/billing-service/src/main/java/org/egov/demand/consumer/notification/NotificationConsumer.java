@@ -263,11 +263,11 @@ public class NotificationConsumer {
 			int month = cal.get(Calendar.MONTH) + 1;
 			content = content.replace("<Due Date>",
 					" " + cal.get(Calendar.DATE) + "/" + month + "/" + cal.get(Calendar.YEAR) + " ".toUpperCase());
-			content = content.replace("<Owner Name>", bill.getPayerName());
+			content = content.replace("<Owner Name>","Citizen");
 			if (bill.getBusinessService().contains("WS")) {
-				content = content.replace("<Service>", "Water Charges");
+				content = content.replace("<Service>", "Water");
 			} else {
-				content = content.replace("<Service>", "Sewerage Charges");
+				content = content.replace("<Service>", "Sewerage");
 			}
 			log.info("::append content ::" + content);
 			String actionLink = config.getSmsNotificationLink().replace("$consumerCode", bill.getConsumerCode())
@@ -276,7 +276,7 @@ public class NotificationConsumer {
 			actionLink = getShortnerURL(actionLink);
 			log.info("Action link " + actionLink);
 			content = content.replace("<Link to Bill>", actionLink);
-
+			content = content.replace("<connectionNumber>", "Consumer No: "+bill.getConsumerCode());
 			content = content.replace("<bill amount>", bill.getTotalAmount().toString());
 			log.info("content WS" + content);
 		}
