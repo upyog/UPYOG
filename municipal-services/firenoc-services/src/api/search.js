@@ -104,9 +104,12 @@ export const searchApiResponse = async (request, next = {}) => {
 
     let firenocIdQuery = `SELECT FN.uuid as FID FROM eg_fn_firenoc FN JOIN eg_fn_firenocdetail FD ON (FN.uuid = FD.firenocuuid) JOIN eg_fn_owner FO ON (FD.uuid = FO.firenocdetailsuuid) where `;
 
+
+
     if (queryObj.tenantId) {
       if (queryObj.tenantId == envVariables.EGOV_DEFAULT_STATE_ID) {
-        firenocIdQuery = `${firenocIdQuery} FN.tenantid LIKE '${queryObj.tenantId}%' AND`;
+        //Remove Tenant Id in case of citizen
+        //firenocIdQuery = `${firenocIdQuery} FN.tenantid LIKE '${queryObj.tenantId}%' AND`;
       } else {
         firenocIdQuery = `${firenocIdQuery} FN.tenantid = '${queryObj.tenantId}' AND`;
       }
@@ -134,15 +137,19 @@ export const searchApiResponse = async (request, next = {}) => {
 
     if (userUUIDArray.length > 0) {
       firenocIdQuery = `${firenocIdQuery} FO.useruuid in (`;
-
+      let firenocIdQuerydata
       for (var j = 0; j < userUUIDArray.length; j++) {
         if (j == 0) {
-          firenocIdQuery = `${firenocIdQuery}'${userUUIDArray[j]}'`;
+          firenocIdQuerydata = `'${userUUIDArray[j]}'`;
+          //firenocIdQuery = `${firenocIdQuery}'${userUUIDArray[j]}'`;
         } else {
-          firenocIdQuery = `${firenocIdQuery}, '${userUUIDArray[j]}'`;
+          //firenocIdQuery = `${firenocIdQuery}, '${userUUIDArray[j]}'`;
+          firenocIdQuerydata = `${firenocIdQuerydata}, '${userUUIDArray[j]}'`;
         }
       }
-      firenocIdQuery = `${firenocIdQuery} )`;
+
+      firenocIdQuery =`${firenocIdQuery} ${firenocIdQuerydata} ) or FN.createdby in (${firenocIdQuerydata})`
+     // firenocIdQuery = `${firenocIdQuery} )`;
 
     } else firenocIdQuery = `${firenocIdQuery}'${queryObj.mobileNumber}'`;
 
