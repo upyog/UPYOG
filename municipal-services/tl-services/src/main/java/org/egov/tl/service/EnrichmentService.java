@@ -8,6 +8,9 @@ import org.egov.tl.repository.IdGenRepository;
 import org.egov.tl.util.TLConstants;
 import org.egov.tl.util.TradeUtil;
 import org.egov.tl.web.models.*;
+import org.egov.tl.web.models.OwnerInfo.RelationshipEnum;
+import org.egov.tl.web.models.TradeLicense.ApplicationTypeEnum;
+import org.egov.tl.web.models.TradeLicense.LicenseTypeEnum;
 import org.egov.tl.web.models.Idgen.IdResponse;
 import org.egov.tl.web.models.user.UserDetailResponse;
 import org.egov.tl.web.models.workflow.BusinessService;
@@ -85,11 +88,6 @@ public class EnrichmentService {
                             accessory.setId(UUID.randomUUID().toString());
                             accessory.setActive(true);
                         });
-                    // set loggedin user uuid as account id if not passed in input
-                    if(StringUtils.isEmpty(tradeLicense.getAccountId())
-                    		&& StringUtils.isNotEmpty(uuid)) {
-                    	tradeLicense.setAccountId(uuid);
-                    }
                     break;
             }
             tradeLicense.getTradeLicenseDetail().getAddress().setTenantId(tradeLicense.getTenantId());
@@ -155,6 +153,37 @@ public class EnrichmentService {
     }
 
 
+	public void enrichCreateNewTLValues(String uuid, TradeLicense tradeLicense) {
+		// set loggedin user uuid as account id if not passed in input
+		if(StringUtils.isEmpty(tradeLicense.getAccountId())
+				&& StringUtils.isNotEmpty(uuid)) {
+			tradeLicense.setAccountId(uuid);
+		}
+		// set relationship as FATHER if not passes
+		if(!CollectionUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getOwners())) {
+			tradeLicense.getTradeLicenseDetail().getOwners().stream().forEach(owner -> {
+				owner.setRelationship(RelationshipEnum.FATHER);
+			});
+		}
+		// set license type
+		if(null == tradeLicense.getLicenseType()) {
+			tradeLicense.setLicenseType(LicenseTypeEnum.PERMANENT);
+		}
+		// set application type : NEW is used in tl-calculator
+		if(null == tradeLicense.getApplicationType()) {
+			tradeLicense.setApplicationType(ApplicationTypeEnum.NEW);
+		}
+		// set workflow action
+		if(StringUtils.isEmpty(tradeLicense.getAction())) {
+			tradeLicense.setAction(ACTION_INITIATE);
+		}
+		// set workflow code : is used in egov-wf svc
+		if(StringUtils.isEmpty(tradeLicense.getWorkflowCode())) {
+			tradeLicense.setWorkflowCode(tradeLicense.getBusinessService());
+		}
+	}
+
+
     /**
      * Returns a list of numbers generated from idgen
      *
@@ -214,10 +243,49 @@ public class EnrichmentService {
             throw new CustomException(errorMap);
 
         licenses.forEach(tradeLicense -> {
-            tradeLicense.setApplicationNumber(itr.next());
+        	String tempId = itr.next();
+        	
+        	if(StringUtils.equals(tradeLicense.getBusinessService(), businessService_TL)) {
+        		tempId = validateAndEnrichTLApplication(tradeLicense, tempId);
+        	}
+        	
+        	tradeLicense.setApplicationNumber(tempId);
         });
     }
 
+	private String validateAndEnrichTLApplication(TradeLicense tradeLicense, String tempId) {
+		
+		String ulbName = null;
+		if(null == tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("ulbName")) {
+			throw new CustomException("ULB_NAME_EMPTY","Provide the ULB name.");
+		}else {
+			ulbName = tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("ulbName").toString();
+			ulbName = ulbName.replaceAll("^\"|\"$", "").toUpperCase();
+		}
+		
+		tempId = tempId.replace("ULBNAME", ulbName);
+    	tempId = tempId.replace("VALIDITYPERIOD", getFormatOfPeriodOfTL(tradeLicense));
+        
+		return tempId;
+	}
+
+
+	private String getFormatOfPeriodOfTL(TradeLicense tradeLicense) {
+		String periodOfLicenseStr = tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("periodOfLicense")
+				.toString();
+
+		try {
+			Integer periodOfLicense = Integer.parseInt(periodOfLicenseStr);
+
+			if (periodOfLicense < 10) {
+				return "0" + periodOfLicense.toString();
+			} else {
+				return periodOfLicense.toString();
+			}
+		} catch (NumberFormatException | NullPointerException e) {
+			throw new CustomException("PERIOD_OF_LICENSE_FORMAT_INCORRECT","Period of license is not in correct format or is missing.");
+		}
+	}
 
     /**
      * Adds the ownerIds from userSearchReponse to search criteria
@@ -414,7 +482,8 @@ public class EnrichmentService {
                         });
                 });
 
-                if(tradeLicense.getTradeLicenseDetail().getSubOwnerShipCategory().contains(config.getInstitutional())
+                if(null != tradeLicense.getTradeLicenseDetail().getSubOwnerShipCategory()
+                		&& tradeLicense.getTradeLicenseDetail().getSubOwnerShipCategory().contains(config.getInstitutional())
                         && tradeLicense.getTradeLicenseDetail().getInstitution().getId()==null){
                     tradeLicense.getTradeLicenseDetail().getInstitution().setId(UUID.randomUUID().toString());
                     tradeLicense.getTradeLicenseDetail().getInstitution().setActive(true);
@@ -509,6 +578,12 @@ public class EnrichmentService {
                             license.setValidTo(calendar.getTimeInMillis());
                             license.setValidFrom(time);
                         }
+                        if (businessService.equalsIgnoreCase(businessService_TL)) {
+                        	String tempId = validateAndEnrichTLApplication(license, license.getLicenseNumber());
+                        	license.setLicenseNumber(tempId);
+                            license.setValidFrom(new Date().getTime());
+                        	license.setValidTo(getValidToDateFromLicensePeriod(license));
+                        }
 
                     }
                 }
@@ -518,7 +593,25 @@ public class EnrichmentService {
     }
 
 
-    /**
+    private Long getValidToDateFromLicensePeriod(TradeLicense license) {
+    	Long licensePeriodEndDate = null;
+    	String periodOfLicenseStr = license.getTradeLicenseDetail().getAdditionalDetail().get("periodOfLicense")
+				.toString();
+
+		try {
+			Integer periodOfLicense = Integer.parseInt(periodOfLicenseStr);
+			// Calculate valid to date as today + periodOfLicense years
+	        long periodInMillis = periodOfLicense * 365L * 24 * 60 * 60 * 1000; // Convert years to milliseconds
+	        licensePeriodEndDate = new Date().getTime() + periodInMillis;
+			
+		} catch (NumberFormatException | NullPointerException e) {
+			throw new CustomException("FORMAT_INVALID_PERIOD_OF_LICENSE","Period of license is not in correct format or is missing.");
+		}
+		return licensePeriodEndDate;
+	}
+
+
+	/**
      * Adds accountId of the logged in user to search criteria
      * @param requestInfo The requestInfo of searhc request
      * @param criteria The tradeLicenseSearch criteria
@@ -526,7 +619,7 @@ public class EnrichmentService {
     public void enrichSearchCriteriaWithAccountId(RequestInfo requestInfo,TradeLicenseSearchCriteria criteria){
         if(criteria.isEmpty() && requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN")){
             criteria.setAccountId(requestInfo.getUserInfo().getUuid());
-            criteria.setMobileNumber(requestInfo.getUserInfo().getUserName());
+//            criteria.setMobileNumber(requestInfo.getUserInfo().getUserName());
             criteria.setTenantId(requestInfo.getUserInfo().getTenantId());
         }
         
