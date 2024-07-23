@@ -270,12 +270,12 @@ public class NotificationConsumer {
 				content = content.replace("<Service>", "Sewerage");
 			}
 			log.info("::append content ::" + content);
-			String actionLink = config.getSmsNotificationLink().replace("$consumerCode", bill.getConsumerCode())
-					.replace("$tenantId", bill.getTenantId());
-			actionLink = config.getNotificationUrl() + actionLink;
-			actionLink = getShortnerURL(actionLink);
-			log.info("Action link " + actionLink);
-			content = content.replace("<Link to Bill>", actionLink);
+//			String actionLink = config.getSmsNotificationLink().replace("$consumerCode", bill.getConsumerCode())
+//					.replace("$tenantId", bill.getTenantId());
+//			actionLink = config.getNotificationUrl() + actionLink;
+			//actionLink = getShortnerURL(actionLink);
+			//log.info("Action link " + actionLink);
+			content = content.replace("<Link to Bill>", "https://mseva.lgpunjab.gov.in/");
 			content = content.replace("<connectionNumber>", "Consumer No: "+bill.getConsumerCode());
 			content = content.replace("<bill amount>", bill.getTotalAmount().toString());
 			log.info("content WS" + content);
