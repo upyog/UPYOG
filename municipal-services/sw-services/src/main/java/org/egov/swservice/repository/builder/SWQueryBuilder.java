@@ -44,7 +44,9 @@ public class SWQueryBuilder {
 			+ " conn.locality, conn.isoldapplication, conn.roadtype, conn.disconnectionreason, conn.isDisconnectionTemporary, sc.disconnectionExecutionDate "
 			+ " FROM eg_sw_connection conn "
 			+  INNER_JOIN_STRING 
-			+ " eg_sw_service sc ON sc.connection_id = conn.id";
+			+ " eg_sw_service sc ON sc.connection_id = conn.id "
+			+  LEFT_OUTER_JOIN_STRING
+			+ " eg_sw_connectionholder connectionholder ON connectionholder.connectionid = conn.id ";
 	
 	private final static String SEWERAGE_SEARCH_QUERY = "SELECT conn.*, sc.*, document.*, plumber.*, sc.connectionExecutionDate,"
 			+ "sc.noOfWaterClosets, sc.noOfToilets,sc.proposedWaterClosets, sc.proposedToilets, sc.connectionType, sc.connection_id as connection_Id, sc.appCreatedDate as sc_appCreatedDate,"

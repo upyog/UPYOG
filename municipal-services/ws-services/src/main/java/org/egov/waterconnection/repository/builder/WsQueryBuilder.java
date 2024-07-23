@@ -47,7 +47,9 @@ public class WsQueryBuilder {
 			+ " conn.locality, conn.isoldapplication, conn.roadtype, conn.disconnectionreason, conn.isDisconnectionTemporary, wc.disconnectionExecutionDate "
 			+ " FROM eg_ws_connection conn "
 			+  INNER_JOIN_STRING 
-			+" eg_ws_service wc ON wc.connection_id = conn.id ";
+			+ " eg_ws_service wc ON wc.connection_id = conn.id "
+			+ LEFT_OUTER_JOIN_STRING
+			+ " eg_ws_connectionholder connectionholder ON connectionholder.connectionid = conn.id ";
 
     
 	private static final String WATER_SEARCH_QUERY = "SELECT count(*) OVER() AS full_count, wc.connectionCategory, wc.connectionType, wc.waterSource,"
