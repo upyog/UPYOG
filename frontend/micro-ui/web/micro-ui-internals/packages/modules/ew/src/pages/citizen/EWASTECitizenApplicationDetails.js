@@ -196,8 +196,8 @@ const EWASTECitizenApplicationDetails = () => {
     {
       name: t(product.productName),
       quantity: product.quantity,
-      unit_price: product.price,
-      total_price: product.quantity * product.price,
+      unit_price: product.price/product.quantity,
+      total_price: product.price,
     }
   )) || [];
 

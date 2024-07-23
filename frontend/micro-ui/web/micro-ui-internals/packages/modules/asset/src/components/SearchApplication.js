@@ -94,18 +94,20 @@
             {
               Header: t("AST_ACTIONS"),
               Cell: ({ row }) => {
-                console.log("roeowowowinsearchdsjfinsearchhhhh",row);
                 return (
                   <div>
                     <span className="link">
-                    {row?.original?.assetAssignment?.isAssigned  ? 
+                    {row?.original?.status==="APPROVED" ?
+                    (row?.original?.assetAssignment?.isAssigned  ? 
                         <Link to={`/digit-ui/employee/asset/assetservice/return-assets/`+ `${row?.original?.["applicationNo"]}`}>
                             {t('AST_RETURN')}
                         </Link>
                       :
                         <Link to={`/digit-ui/employee/asset/assetservice/assign-assets/`+ `${row?.original?.["applicationNo"]}`}>
-                          {t('AST_TRANSFER '+`${row?.original?.["assetParentCategory"]}`)}
-                        </Link>
+                          {t('AST_ASSIGN')}
+                        </Link>)
+                      :
+                      t('AST_SHOULD_BE_APPROVED_FIRST')
                     }
                     </span>
                   </div>
