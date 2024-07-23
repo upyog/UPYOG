@@ -106,8 +106,9 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	}
 
 	@Override
-	public CommunityHallBookingDetail updateBooking(CommunityHallBookingRequest communityHallsBookingRequest, String bookingNumber) {
-		String bookingNo = StringUtils.isNotBlank(bookingNumber)  ? bookingNumber : communityHallsBookingRequest.getHallsBookingApplication().getBookingNo();
+	public CommunityHallBookingDetail updateBooking(CommunityHallBookingRequest communityHallsBookingRequest) {
+		String bookingNo = communityHallsBookingRequest.getHallsBookingApplication().getBookingNo();
+		log.info("Updating booking for booking no : " + bookingNo);
 		if(bookingNo == null) {
 			return null;
 		}
