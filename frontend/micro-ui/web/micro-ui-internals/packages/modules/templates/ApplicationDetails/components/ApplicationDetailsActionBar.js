@@ -14,6 +14,7 @@ function ApplicationDetailsActionBar({
   forcedActionPrefix,
   ActionBarStyle = {},
   MenuStyle = {},
+  applicationDetails
 }) {
   const { t } = useTranslation();
   let user = Digit.UserService.getUser();
@@ -23,16 +24,9 @@ function ApplicationDetailsActionBar({
     const userInfo = userInfos ? JSON.parse(userInfos) : {};
     user = userInfo?.value;
   }
-
-  const { id: requestId } = useParams();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-
-  const { data: applicationDetails } = Digit.Hooks.ew.useEwApplicationDetail(t, tenantId, requestId);
-  console.log("applicationDetails", applicationDetails);
   const Session = Digit.SessionStorage.get("User");
-  console.log("Session", Session);
   const uuid = Session?.info?.uuid;
-  const modified = applicationDetails?.applicationData?.applicationData?.auditDetails?.lastModifiedBy;
+  const modified = applicationDetails?.applicationData?.auditDetails?.lastModifiedBy;
 
   const userRoles = user?.info?.roles?.map((e) => e.code);
   let isSingleButton = false;
