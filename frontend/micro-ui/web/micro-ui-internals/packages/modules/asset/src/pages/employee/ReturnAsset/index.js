@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { assignConfig } from "../../../config/Create/assignConfig";
+import { returnConfig } from "../../../config/Create/returnConfig";
 
-const NewAssetApplication = () => {
+const ReturnAsset = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const [canSubmit, setSubmitValve] = useState(false);
@@ -40,22 +40,20 @@ const NewAssetApplication = () => {
 
   const onSubmit = (data) => {
     
-    const assignedDateEpoch = convertToEpoch(data?.assigndetails?.[0]?.transferDate);
+    const returnDateEpoch = convertToEpoch(data?.returndetails?.[0]?.returnDate);
     const formData = {
       id: applicationDetails?.applicationData?.applicationData?.id,
       tenantId: tenantId,
       applicationNo: applicationDetails?.applicationData?.applicationData?.applicationNo,
       assetAssignment: {
-        assignmentId: "",
-        assetApplicaltionNo:"",
+        assignmentId: applicationDetails?.applicationData?.applicationData?.assetAssignment?.assignmentId,
         assetId: "",
-        assignedUserName: data?.assigndetails?.[0]?.assignedUser,
-        designation: data?.assigndetails?.[0]?.designation,
-        department: data?.assigndetails?.[0]?.allocatedDepartment?.code,    //later we need to send the procured department here.
-        assignedDate: assignedDateEpoch,
-        isAssigned: true,
-        allocatedDepartment:data?.assigndetails?.[0]?.allocatedDepartment?.code, 
-        employeeCode:data?.assigndetails?.[0]?.employeeCode,
+        assignedUserName: applicationDetails?.applicationData?.applicationData?.assetAssignment?.assignedUserName,
+        designation: applicationDetails?.applicationData?.applicationData?.assetAssignment?.designation || "",
+        department: applicationDetails?.applicationData?.applicationData?.assetAssignment?.department || "",    //later we need to send the procured department here.
+        assignedDate: applicationDetails?.applicationData?.applicationData?.assetAssignment?.assignedDate,
+        isAssigned: false,
+        returnDate: returnDateEpoch,
         auditDetails: {
           createdBy: "",
           lastModifiedBy: "",
@@ -65,7 +63,7 @@ const NewAssetApplication = () => {
       },   
     };
 
-    history.replace("/digit-ui/employee/asset/assetservice/assign-response", { Assets: formData }); 
+    history.replace("/digit-ui/employee/asset/assetservice/return-response", { Asset: formData }); 
     
 
   };
@@ -75,12 +73,12 @@ const NewAssetApplication = () => {
   
 
   
-  const configs = assignConfig;    
+  const configs = returnConfig;    
 
   
   return (
     <FormComposer
-      heading={t("AST_ASSIGN_ASSET")}
+      heading={t("AST_RETURN_ASSET")}
       isDisabled={!canSubmit}
       label={t("ES_COMMON_APPLICATION_SUBMIT")}
       config={configs.map((config) => {
@@ -100,7 +98,7 @@ const NewAssetApplication = () => {
   );
 };
 
-export default NewAssetApplication;
+export default ReturnAsset;
 
 
 

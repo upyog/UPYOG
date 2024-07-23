@@ -37,7 +37,8 @@ public class AssetQueryBuilder {
             + "assign.isassigned, "  
             + "assign.assignedusername, "
             + "assign.assigneddate, "
-            + "assign.returndate "
+            + "assign.returndate, "
+            + "assign.assignmentId "  
             + "FROM eg_asset_assetdetails asset "
             + LEFT_OUTER_JOIN_STRING + "eg_asset_assignmentdetails assign on asset.id = assign.assetid";
 
