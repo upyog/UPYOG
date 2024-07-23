@@ -34,7 +34,6 @@ import {
 
 
     const [assigndetails, setassigndetails] = useState(formData?.assigndetails || [createAssetcommonforAll()]);
-    console.log("assigndetails",assigndetails);
 
     const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
     useEffect(() => {
@@ -102,44 +101,44 @@ import {
         { i18nKey: "NO", code: "NO" },
       ];
 
-      const returndateRender = () => {
-        switch (assigndetails?.returnValue?.code){
-            case "YES":
-                return(
-                    <React.Fragment>
-                    <LabelFieldPair>
-                    <CardLabel className="card-label-smaller">{t("AST_RETURN_DATE") }</CardLabel>
-                    <div className="field">
-                    <Controller
-                        control={control}
-                        name={"returnDate"}
-                        defaultValue={assigndetails?.returnDate}
-                        rules={{
-                        required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                        validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
-                        }}
-                        render={(props) => (
-                        <TextInput
-                            type="date"
-                            value={props.value}
-                            onChange={(e) => {
-                            props.onChange(e.target.value);
-                            }}
-                            max={new Date().toISOString().split('T')[0]}
-                        />
-                        )}
-                    />
-                    </div>
-                    </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.returnDate ? errors?.returnDate?.message : ""}</CardLabelError>
-                    </React.Fragment>
-                );
-            case "NO":
-                return null;
+    //   const returndateRender = () => {
+    //     switch (assigndetails?.returnValue?.code){
+    //         case "YES":
+    //             return(
+    //                 <React.Fragment>
+    //                 <LabelFieldPair>
+    //                 <CardLabel className="card-label-smaller">{t("AST_RETURN_DATE") }</CardLabel>
+    //                 <div className="field">
+    //                 <Controller
+    //                     control={control}
+    //                     name={"returnDate"}
+    //                     defaultValue={assigndetails?.returnDate}
+    //                     rules={{
+    //                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+    //                     validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+    //                     }}
+    //                     render={(props) => (
+    //                     <TextInput
+    //                         type="date"
+    //                         value={props.value}
+    //                         onChange={(e) => {
+    //                         props.onChange(e.target.value);
+    //                         }}
+    //                         max={new Date().toISOString().split('T')[0]}
+    //                     />
+    //                     )}
+    //                 />
+    //                 </div>
+    //                 </LabelFieldPair>
+    //                 <CardLabelError style={errorStyle}>{localFormState.touched.returnDate ? errors?.returnDate?.message : ""}</CardLabelError>
+    //                 </React.Fragment>
+    //             );
+    //         case "NO":
+    //             return null;
 
-            default:
-                return null;
-        }}
+    //         default:
+    //             return null;
+    //     }}
 
     const [showToast, setShowToast] = useState(null);
     const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, } = useForm();
@@ -150,6 +149,7 @@ import {
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
     const [part, setPart] = React.useState({});
+
 
     useEffect(() => {
         if (!_.isEqual(part, formValue)) {
@@ -257,9 +257,12 @@ import {
                         name={"employeeCode"}
                         defaultValue={assigndetails?.employeeCode}
                         rules={{
-                        required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                        validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
-                        }}
+                            required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                            validate: {
+                                pattern: (val) => 
+                                  /^[a-zA-Z0-9\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG")
+                              },
+                          }}
                         render={(props) => (
                         <TextInput
                             value={props.value}
@@ -352,7 +355,7 @@ import {
                 </LabelFieldPair>
                 <CardLabelError style={errorStyle}>{localFormState.touched.returnValue ? errors?.returnValue?.message : ""}</CardLabelError>
 
-                {returndateRender()}
+               
 
                 
 

@@ -1930,26 +1930,6 @@ const NewAsset
                   {t("AST_FETCH_LOCATION")}
                 </button>
               </div>
-
-              <CardLabel>{`${t("AST_ASSIGNED_USER")}`}</CardLabel>
-              <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="assignedUser"
-                value={assignedUser}
-                onChange={selectassigneduser}
-                style={{ width: "50%" }}
-                ValidationRequired={false}
-                {...(validation = {
-                  isRequired: false,
-                  pattern: "^[a-zA-Z ]+$",
-                  type: "tel",
-                  title: t("MATCH_THE_FORMAT"),
-                })}
-              />
-
               <CardLabel>{`${t("AST_ASSET_AGE")}`}</CardLabel>
               <TextInput
                 t={t}
@@ -1977,9 +1957,7 @@ const NewAsset
                     placeholder={"Select"}
                     t={t}
                   />
-
                 )}
-
               />
 
               </React.Fragment>

@@ -7,7 +7,7 @@ import { useQueryClient } from "react-query";
 
 
 const GetMessage = (type, action, isSuccess, isEmployee, t) => {
-  return t(`${isEmployee ? "E" : "C"}S_ASSET_RESPONSE_${action ? action : "ASSIGN"}_${type}${isSuccess ? "" : "_ERROR"}`);
+  return t(`${isEmployee ? "E" : "C"}S_ASSET_RESPONSE_${action ? action : "RETURN"}_${type}${isSuccess ? "" : "_ERROR"}`);
 };
 
 const GetActionMessage = (action, isSuccess, isEmployee, t) => {
@@ -35,7 +35,7 @@ const BannerPicker = (props) => {
 
 
 
-const Response = (props) => {
+const ReturnResponse = (props) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const history = useHistory();
@@ -49,15 +49,15 @@ const Response = (props) => {
     setShowToast(null);
     setError(null);
   };
+
   
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { state } = props.location;
 
-  const mutation = Digit.Hooks.asset.useAssignCreateAPI(tenantId, state.key !== "UPDATE");
-  const mutation1 = Digit.Hooks.asset.useAssignCreateAPI(tenantId, false);
+  const mutation = Digit.Hooks.asset.useReturnAPI(tenantId, state.key !== "UPDATE");
+  const mutation1 = Digit.Hooks.asset.useReturnAPI(tenantId, false);
 
-  
 
   useEffect(() => {
     if (mutation1.data && mutation1.isSuccess) setsuccessData(mutation1.data);
@@ -83,7 +83,7 @@ const Response = (props) => {
     if (!mutationHappened) {
       mutation.mutate(
         {
-          Asset: state?.Assets,
+          Asset: state?.Asset,
         },
         {
           onError,
@@ -109,7 +109,8 @@ const Response = (props) => {
           isLoading={(mutation.isIdle && !mutationHappened) || mutation?.isLoading}
           isEmployee={props.parentRoute.includes("employee")}
         />
-       
+        
+        
       </Card>
       {showToast && <Toast error={showToast.key === "error" ? true : false} label={error} onClose={closeToast} />}
       <ActionBar>
@@ -121,4 +122,4 @@ const Response = (props) => {
   );
 };
 
-export default Response;
+export default ReturnResponse;
