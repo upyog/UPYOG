@@ -49,6 +49,7 @@ export const searchApiResponse = async (request, next = {}) => {
   const roles = get(request.body, "RequestInfo.userInfo.roles");
   const userUUID = get(request.body, "RequestInfo.userInfo.uuid");
   const isUser = some(roles, { code: "CITIZEN" }) && userUUID;
+  console.log("isUser"+isUser)
   if (isUser) {
     const mobileNumber = get(request.body, "RequestInfo.userInfo.mobileNumber");
     const tenantId = get(request.body, "RequestInfo.userInfo.tenantId");
@@ -104,10 +105,11 @@ export const searchApiResponse = async (request, next = {}) => {
 
     let firenocIdQuery = `SELECT FN.uuid as FID FROM eg_fn_firenoc FN JOIN eg_fn_firenocdetail FD ON (FN.uuid = FD.firenocuuid) JOIN eg_fn_owner FO ON (FD.uuid = FO.firenocdetailsuuid) where `;
 
-
+    console.log("roles.code"+roles[0].code)
 
     if (queryObj.tenantId) {
-      if (queryObj.tenantId == envVariables.EGOV_DEFAULT_STATE_ID) {
+     // if (queryObj.tenantId == envVariables.EGOV_DEFAULT_STATE_ID) {
+     if(roles[0].code=='CITIZEN'){
         //Remove Tenant Id in case of citizen
         //firenocIdQuery = `${firenocIdQuery} FN.tenantid LIKE '${queryObj.tenantId}%' AND`;
       } else {
