@@ -15,16 +15,18 @@ import org.upyog.chb.web.models.ResponseInfo.StatusEnum;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
+
 public class CommunityHallBookingUtil {
 
 	public static ResponseInfo createReponseInfo(final RequestInfo requestInfo, String resMsg, StatusEnum status) {
 
-		final String apiId = requestInfo != null ? requestInfo.getApiId() : "";
-		final String ver = requestInfo != null ? requestInfo.getVer() : "";
+		final String apiId = requestInfo != null ? requestInfo.getApiId() : StringUtils.EMPTY;
+		final String ver = requestInfo != null ? requestInfo.getVer() : StringUtils.EMPTY;
 		Long ts = null;
 		if (requestInfo != null)
 			ts = requestInfo.getTs();
-		final String msgId = requestInfo != null ? requestInfo.getMsgId() : "";
+		final String msgId = requestInfo != null ? requestInfo.getMsgId() : StringUtils.EMPTY;
 
 		ResponseInfo responseInfo = ResponseInfo.builder().apiId(apiId).ver(ver).ts(ts).msgId(msgId).resMsgId(resMsg)
 				.status(status).build();
@@ -82,5 +84,10 @@ public class CommunityHallBookingUtil {
 		}
 		return data;
 	}
+	
+	public static String getTenantId(String tenantId) {
+		return tenantId.split("\\.")[0];
+	}
+	
 
 }

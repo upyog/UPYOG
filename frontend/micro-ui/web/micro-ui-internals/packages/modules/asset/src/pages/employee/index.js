@@ -61,9 +61,11 @@ const EmployeeApp = ({ path, url, userType }) => {
 
   
   const NewAssetAssignApplication = Digit?.ComponentRegistryService?.getComponent("AssignAssetApplication");
+  const NewAssetReturnApplication = Digit?.ComponentRegistryService?.getComponent("returnAssets");
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
-  const ASSETCreate = Digit?.ComponentRegistryService?.getComponent("AssetCreateNew")
+  const ASSETCreate = Digit?.ComponentRegistryService?.getComponent("AssetCreateNew");
   const Response = Digit?.ComponentRegistryService?.getComponent("AssetResponse");
+  const ReturnResponse = Digit?.ComponentRegistryService?.getComponent("returnResponse");
   const isRes = window.location.href.includes("asset/response");
   const isNewRegistration = window.location.href.includes("new-asset") || window.location.href.includes("modify-application") || window.location.href.includes("asset/assetservice/application-details");
 
@@ -89,10 +91,12 @@ const EmployeeApp = ({ path, url, userType }) => {
           />
           
           <PrivateRoute path={`${path}/assetservice/assign-assets/:id`} component={() => <NewAssetAssignApplication parentUrl={url} />} />
+          <PrivateRoute path={`${path}/assetservice/return-assets/:id`} component={() => <NewAssetReturnApplication parentUrl={url} />} />
           <PrivateRoute path={`${path}/assetservice/new-assets`} component={() => <ASSETCreate parentUrl={url} />} />
           <PrivateRoute path={`${path}/assetservice/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/assetservice/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/assetservice/assign-response`} component={(props) => <Response {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/assetservice/return-response`} component={(props) => <ReturnResponse {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/assetservice/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />
           <PrivateRoute path={`${path}/assetservice/my-asset`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/assetservice/report`} component={(props) => <SearchReport {...props} parentRoute={path} />} />

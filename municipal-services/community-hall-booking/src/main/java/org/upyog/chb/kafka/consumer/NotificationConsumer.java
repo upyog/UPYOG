@@ -40,7 +40,7 @@ public class NotificationConsumer {
 				+ bookingRequest.getHallsBookingApplication().getBookingNo());
 
 		//TODO :  Remove this once integrated
-		//notificationService.process(bookingRequest);
+		notificationService.process(bookingRequest);
 	}
 
 }

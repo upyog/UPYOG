@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.enums.BookingStatusEnum;
-import org.upyog.chb.enums.SlotStatusEnum;
 import org.upyog.chb.repository.IdGenRepository;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.AuditDetails;
@@ -48,7 +47,7 @@ public class EnrichmentService {
 			slot.setBookingId(bookingId);
 			slot.setSlotId(CommunityHallBookingUtil.getRandonUUID());
 			//Check Slot staus before setting TODO: booking_created
-			slot.setStatus(SlotStatusEnum.valueOf(slot.getStatus()).toString());
+			slot.setStatus(BookingStatusEnum.valueOf(slot.getStatus()).toString());
 			slot.setAuditDetails(auditDetails);
 		});
 		
@@ -100,7 +99,13 @@ public class EnrichmentService {
 
 	public void enrichUpdateBookingRequest(CommunityHallBookingRequest communityHallsBookingRequest) {
 		AuditDetails auditDetails = CommunityHallBookingUtil.getAuditDetails(communityHallsBookingRequest.getRequestInfo().getUserInfo().getUuid(), false);
-		communityHallsBookingRequest.getHallsBookingApplication().setPaymentDate(auditDetails.getCreatedTime());
+		CommunityHallBookingDetail bookingDetail = communityHallsBookingRequest.getHallsBookingApplication();
+		bookingDetail.setBookingStatus(BookingStatusEnum.BOOKED.toString());
+		//bookingDetail.setReceiptNo(paymentRequest.getPayment().getTransactionNumber());;
+		bookingDetail.getBookingSlotDetails().stream().forEach(slot -> {
+			slot.setStatus(BookingStatusEnum.BOOKED.toString());
+		});
+		communityHallsBookingRequest.getHallsBookingApplication().setPaymentDate(auditDetails.getLastModifiedTime());
 		communityHallsBookingRequest.getHallsBookingApplication().setAuditDetails(auditDetails);
 	}
 

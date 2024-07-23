@@ -76,15 +76,23 @@ import React from "react";
 
         },
         {
-          Header: t("AST_TRANSFER"),
+          Header: t("AST_ACTION"),
           Cell: ({ row }) => {
+            console.log("ROWWWWWINACTIONNNNN",row);
             return (
               <div>
                 
                 <span className="link">
-                <Link to={`${props.parentRoute}/assetservice/assign-assets/`+ `${row?.original?.searchData?.["applicationNo"]}`}>
-                    {t('AST_TRANSFER '+`${row?.original?.searchData?.["assetParentCategory"]}`)}
-                  </Link>
+                {row?.original?.searchData?.assetAssignment?.isAssigned  ? 
+                        <Link to={`${props.parentRoute}/assetservice/return-assets/`+ `${row?.original?.searchData?.["applicationNo"]}`}>
+                            {t('AST_RETURN')}
+                        </Link>
+                      :
+                      <Link to={`${props.parentRoute}/assetservice/assign-assets/`+ `${row?.original?.searchData?.["applicationNo"]}`}>
+                      {t('AST_TRANSFER '+`${row?.original?.searchData?.["assetParentCategory"]}`)}
+                    </Link>
+                    }
+                
                 </span>
               </div>
             );
