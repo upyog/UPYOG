@@ -24,7 +24,6 @@ import {
         employeeCode : "",
         transferDate: "",
         returnDate: "",
-        returnValue:"",
         allocatedDepartment:"",
         key: Date.now(),
     });
@@ -96,49 +95,6 @@ import {
         departNamefromMDMS
     } = _props;
 
-    const menu = [
-        { i18nKey: "YES", code: "YES" },
-        { i18nKey: "NO", code: "NO" },
-      ];
-
-    //   const returndateRender = () => {
-    //     switch (assigndetails?.returnValue?.code){
-    //         case "YES":
-    //             return(
-    //                 <React.Fragment>
-    //                 <LabelFieldPair>
-    //                 <CardLabel className="card-label-smaller">{t("AST_RETURN_DATE") }</CardLabel>
-    //                 <div className="field">
-    //                 <Controller
-    //                     control={control}
-    //                     name={"returnDate"}
-    //                     defaultValue={assigndetails?.returnDate}
-    //                     rules={{
-    //                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-    //                     validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
-    //                     }}
-    //                     render={(props) => (
-    //                     <TextInput
-    //                         type="date"
-    //                         value={props.value}
-    //                         onChange={(e) => {
-    //                         props.onChange(e.target.value);
-    //                         }}
-    //                         max={new Date().toISOString().split('T')[0]}
-    //                     />
-    //                     )}
-    //                 />
-    //                 </div>
-    //                 </LabelFieldPair>
-    //                 <CardLabelError style={errorStyle}>{localFormState.touched.returnDate ? errors?.returnDate?.message : ""}</CardLabelError>
-    //                 </React.Fragment>
-    //             );
-    //         case "NO":
-    //             return null;
-
-    //         default:
-    //             return null;
-    //     }}
 
     const [showToast, setShowToast] = useState(null);
     const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, } = useForm();
@@ -329,31 +285,7 @@ import {
                     </div>
                 </LabelFieldPair>
                 <CardLabelError style={errorStyle}>{localFormState.touched.employeeCode ? errors?.employeeCode?.message : ""}</CardLabelError>
-                <LabelFieldPair>
-                    <CardLabel className="card-label-smaller">{t("AST_RETURN_APPLICABLE") }</CardLabel>
-                    <div className="field">
-                    <Controller
-                    control={control}
-                    name={"returnValue"}
-                    defaultValue={assigndetails?.returnValue}
-                    rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-                    render={(props) => (
-                        <Dropdown
-                        className="form-field"
-                        selected={props.value}
-                        select={props.onChange}
-                        onBlur={props.onBlur}
-                        style={{width:"100%"}}
-                        option={menu}
-                        optionKey="i18nKey"
-                        t={t}
-                        />
-                    
-                    )}
-                    />
-                    </div>
-                </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.returnValue ? errors?.returnValue?.message : ""}</CardLabelError>
+                
 
                
 
