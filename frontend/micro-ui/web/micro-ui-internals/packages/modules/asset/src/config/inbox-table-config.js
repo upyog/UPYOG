@@ -72,8 +72,7 @@ import React from "react";
 
           },
           mobileCell: (original) => GetMobCell(t(`AST_COMMON_STATUS_${original?.searchData?.["department"]}`)),
-        
-
+  
         },
         {
           Header: t("AST_ACTION"),
@@ -81,18 +80,19 @@ import React from "react";
             console.log("ROWWWWWINACTIONNNNN",row);
             return (
               <div>
-                
                 <span className="link">
-                {row?.original?.searchData?.assetAssignment?.isAssigned  ? 
+                {row?.original?.searchData?.status==="APPROVED" ?
+                (row?.original?.searchData?.assetAssignment?.isAssigned  ? 
                         <Link to={`${props.parentRoute}/assetservice/return-assets/`+ `${row?.original?.searchData?.["applicationNo"]}`}>
                             {t('AST_RETURN')}
                         </Link>
                       :
                       <Link to={`${props.parentRoute}/assetservice/assign-assets/`+ `${row?.original?.searchData?.["applicationNo"]}`}>
-                      {t('AST_TRANSFER '+`${row?.original?.searchData?.["assetParentCategory"]}`)}
-                    </Link>
+                      {t('AST_ASSIGN')}
+                    </Link>)
+                    :
+                    t('AST_SHOULD_BE_APPROVED_FIRST')
                     }
-                
                 </span>
               </div>
             );
