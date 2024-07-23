@@ -56,7 +56,6 @@ const NewAssetApplication = () => {
         isAssigned: true,
         allocatedDepartment:data?.assigndetails?.[0]?.allocatedDepartment?.code, 
         employeeCode:data?.assigndetails?.[0]?.employeeCode,
-        returnValue:data?.assigndetails?.[0]?.returnValue?.code,
         auditDetails: {
           createdBy: "",
           lastModifiedBy: "",
