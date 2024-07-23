@@ -4,6 +4,13 @@ public enum BookingStatusEnum {
 	
 	BOOKING_CREATED,
 	BOOKED,
-	CANCELLED
+	CANCELLATION_REQUESTED,
+	CANCELLED;
+	
+	String status;
+	
+	public String getStatus() {
+		return status;
+	}
 
 }

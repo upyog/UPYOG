@@ -1,7 +1,5 @@
 package org.upyog.chb.web.models;
 
-import java.util.List;
-
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

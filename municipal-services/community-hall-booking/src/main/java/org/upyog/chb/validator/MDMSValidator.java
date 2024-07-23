@@ -33,7 +33,7 @@ public class MDMSValidator {
 		 * MdmsUtil.setMDMSDataMap(masterData); }
 		 */
 		String[] masterArray = { CommunityHallBookingConstants.CHB_PURPOSE, CommunityHallBookingConstants.CHB_SPECIAL_CATEGORY,
-				CommunityHallBookingConstants.CHB_RESIDENT_TYPE, CommunityHallBookingConstants.CHB_COMMNUITY_HALLS,
+				CommunityHallBookingConstants.CHB_COMMNUITY_HALLS,
 				CommunityHallBookingConstants.CHB_HALL_CODES, CommunityHallBookingConstants.CHB_DOCUMENTS};
 		
 		log.info("Validating master data from MDMS for : " + communityHallBookingRequest.getHallsBookingApplication().getBookingNo());

@@ -23,7 +23,7 @@ import org.upyog.chb.repository.rowmapper.CommunityHallSlotAvailabilityRowMapper
 import org.upyog.chb.repository.rowmapper.DocumentDetailsRowMapper;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.BookingSlotDetail;
-import org.upyog.chb.web.models.CommunityHallBokingInitDetail;
+import org.upyog.chb.web.models.CommunityHallBookingInitDetail;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingRequestInit;
@@ -74,7 +74,7 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 				.bookingDetails(bookingRequest.getHallsBookingApplication()).createdBy(requestInfo.getUserInfo().getUuid())
 				.createdDate(CommunityHallBookingUtil.getCurrentDateTime()).lastModifiedBy(requestInfo.getUserInfo().getUuid())
 				.lastModifiedDate(CommunityHallBookingUtil.getCurrentDateTime()).build();
-		CommunityHallBokingInitDetail bookingPersiter = CommunityHallBokingInitDetail.builder()
+		CommunityHallBookingInitDetail bookingPersiter = CommunityHallBookingInitDetail.builder()
 				.hallsBookingApplication(testPersist).build();
 		producer.push(bookingConfiguration.getCommunityHallBookingInitSaveTopic(), bookingPersiter);
 

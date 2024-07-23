@@ -13,13 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
-import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.enums.SlotStatusEnum;
 import org.upyog.chb.repository.CommunityHallBookingRepository;
 import org.upyog.chb.service.CommunityHallBookingService;
 import org.upyog.chb.service.DemandService;
 import org.upyog.chb.service.EnrichmentService;
-import org.upyog.chb.service.WorkflowService;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.util.MdmsUtil;
 import org.upyog.chb.validator.CommunityHallBookingValidator;
@@ -39,8 +37,10 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	private CommunityHallBookingRepository bookingRepository;
 	@Autowired
 	private CommunityHallBookingValidator hallBookingValidator;
-	@Autowired
-	private WorkflowService workflowService;
+	
+	/*
+	 * @Autowired private WorkflowService workflowService;
+	 */
 	
 	@Autowired
 	private EnrichmentService enrichmentService;
@@ -79,7 +79,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		//3.Update workflow of the application 
 		//workflowService.updateWorkflow(communityHallsBookingRequest, WorkflowStatus.CREATE);
 		
-		demandService.createDemand(communityHallsBookingRequest, mdmsData);
+		demandService.createDemand(communityHallsBookingRequest, mdmsData, true);
 		
 		//4.Persist the request using persister service
 		bookingRepository.saveCommunityHallBooking(communityHallsBookingRequest);
@@ -106,39 +106,24 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	}
 
 	@Override
-	public CommunityHallBookingDetail updateBooking(CommunityHallBookingRequest communityHallsBookingRequest) {
-		String bookingNo = communityHallsBookingRequest.getHallsBookingApplication().getBookingNo();
+	public CommunityHallBookingDetail updateBooking(CommunityHallBookingRequest communityHallsBookingRequest, String bookingNumber) {
+		String bookingNo = StringUtils.isNotBlank(bookingNumber)  ? bookingNumber : communityHallsBookingRequest.getHallsBookingApplication().getBookingNo();
+		if(bookingNo == null) {
+			return null;
+		}
 		CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
 				.bookingNo(bookingNo).build();
 		List<CommunityHallBookingDetail> bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
 		if(bookingDetails.size() == 0) {
 			throw new CustomException("INVALID_BOOKING_CODE", "Booking no not valid. Failed to update booking status for : " + bookingNo);
 		}
-
+		
 		enrichmentService.enrichUpdateBookingRequest(communityHallsBookingRequest);
 		bookingRepository.updateBooking(communityHallsBookingRequest);
+		log.info("fetched booking detail and updated status " + communityHallsBookingRequest.getHallsBookingApplication().getBookingStatus() );
 		return communityHallsBookingRequest.getHallsBookingApplication();
 	}
 	
-	@Override
-	public void updateBookingStatus(String bookingNo) {
-		CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
-				.bookingNo(bookingNo).build();
-		//Add validation for search criteria
-		List<CommunityHallBookingDetail> bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
-		if(bookingDetails.size() == 0) {
-			throw new CustomException("INVALID_BOOKING_CODE", "Booking no not valid. Failed to update booking status for : " + bookingNo);
-		}
-		CommunityHallBookingDetail bookingDetail = bookingDetails.get(0);
-		bookingDetail.setBookingStatus(BookingStatusEnum.BOOKED.toString());
-		bookingDetail.getBookingSlotDetails().stream().forEach(slot -> {
-			slot.setStatus(BookingStatusEnum.BOOKED.toString());
-		});
-		CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder()
-				.hallsBookingApplication(bookingDetail).build();
-		updateBooking(bookingRequest);
-	}
-
 	@Override
 	public List<CommunityHallSlotAvailabiltityDetail> getCommunityHallSlotAvailability(
 			CommunityHallSlotSearchCriteria criteria) {

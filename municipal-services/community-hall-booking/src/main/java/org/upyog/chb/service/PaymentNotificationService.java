@@ -2,6 +2,7 @@ package org.upyog.chb.service;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,9 @@ import org.springframework.stereotype.Service;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.repository.ServiceRequestRepository;
 import org.upyog.chb.util.NotificationUtil;
+import org.upyog.chb.web.models.CommunityHallBookingDetail;
+import org.upyog.chb.web.models.CommunityHallBookingRequest;
+import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 import org.upyog.chb.web.models.workflow.ProcessInstance;
 import org.upyog.chb.web.models.workflow.ProcessInstanceRequest;
 import org.upyog.chb.web.models.workflow.ProcessInstanceResponse;
@@ -23,9 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class PaymentNotificationService {
-
-	@Autowired
-	private NotificationUtil util;
 
 	@Autowired
 	private ObjectMapper mapper;
@@ -56,8 +57,7 @@ public class PaymentNotificationService {
 			PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
 			String businessService = paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService();
 			log.info("Payment request processing in CHB method for businessService : " + businessService);
-			String businessServiceName = configs.getBusinessServiceName();
-			if (businessServiceName
+			if (configs.getBusinessServiceName()
 					.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
 				String bookingNo = paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode();
 				log.info("Updating payment status for CHB booking : " + bookingNo);
@@ -67,7 +67,13 @@ public class PaymentNotificationService {
 				 * otherwise after payment booking will be auto approved
 				 * 
 				 */
+				//String tenantId = paymentRequest.getPayment().getTenantId();
+			//	CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
+			//			.bookingNo(bookingNo)
+			//			.tenantId(tenantId).build();
 				//updateWorkflowStatus(paymentRequest);
+				//List<CommunityHallBookingDetail> bookingDetail = bookingService.getBookingDetails(bookingSearchCriteria, null);
+				bookingService.updateBooking(null, bookingNo);
 			}
 		} catch (IllegalArgumentException e) {
 			log.error("Illegal argument exception occurred pet: " + e.getMessage());

@@ -1,10 +1,9 @@
 package org.upyog.chb.web.models;
 
-import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 import org.springframework.validation.annotation.Validated;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.upyog.chb.web.models.billing.Demand;
 
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
@@ -14,9 +13,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Purpose for which community hall booking is allowed
+ * A Object holds the community halls for booking
  */
-@ApiModel(description = "Purpose for which community hall booking is allowed")
+@ApiModel(description = "A Object holds the community halls slot avaialabiltiy details")
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-19T11:17:29.419+05:30")
 
@@ -25,13 +24,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BookingPurpose   {
-		@NotBlank
-        @JsonProperty("purpose")
-        private String purpose = null;
-        
-        @JsonProperty("discountRate")
-        private Integer discountRate = null;
+public class CommunityHallDemandEstimationResponse   {
+	
+	private ResponseInfo responseInfo;
+	
+	private List<Demand> demands; 
 
 
 }
