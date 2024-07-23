@@ -34,6 +34,18 @@ public class SWQueryBuilder {
 	
 	private static String holderSelectValues = "connectionholder.tenantid as holdertenantid, connectionholder.connectionid as holderapplicationId, userid, connectionholder.status as holderstatus, isprimaryholder, connectionholdertype, holdershippercentage, connectionholder.relationship as holderrelationship, connectionholder.createdby as holdercreatedby, connectionholder.createdtime as holdercreatedtime, connectionholder.lastmodifiedby as holderlastmodifiedby, connectionholder.lastmodifiedtime as holderlastmodifiedtime";
 	
+	private final static String SEWERAGE_SEARCH_QUERY_FORTABLE = "SELECT  sc.connectionExecutionDate,"
+			+ " sc.noOfWaterClosets, sc.noOfToilets,sc.proposedWaterClosets, sc.proposedToilets, sc.connectionType, sc.connection_id as connection_Id, sc.appCreatedDate as sc_appCreatedDate,"
+			+ "  sc.detailsprovidedby, sc.estimationfileStoreId , sc.sanctionfileStoreId , sc.estimationLetterDate,"
+			+ " conn.id as conn_id, conn.tenantid, conn.applicationNo, conn.applicationStatus, conn.status, conn.connectionNo, conn.oldConnectionNo, conn.property_id,"
+			+ " conn.roadcuttingarea, conn.action, conn.adhocpenalty, conn.adhocrebate, conn.createdBy as sw_createdBy,"
+			+ " conn.lastModifiedBy as sw_lastModifiedBy, conn.createdTime as sw_createdTime, conn.lastModifiedTime as sw_lastModifiedTime, "
+			+ " conn.adhocpenaltyreason, conn.adhocpenaltycomment, conn.adhocrebatereason, conn.adhocrebatecomment, conn.applicationType, conn.channel, conn.dateEffectiveFrom,"
+			+ " conn.locality, conn.isoldapplication, conn.roadtype, conn.disconnectionreason, conn.isDisconnectionTemporary, sc.disconnectionExecutionDate "
+			+ " FROM eg_sw_connection conn "
+			+  INNER_JOIN_STRING 
+			+ " eg_sw_service sc ON sc.connection_id = conn.id";
+	
 	private final static String SEWERAGE_SEARCH_QUERY = "SELECT conn.*, sc.*, document.*, plumber.*, sc.connectionExecutionDate,"
 			+ "sc.noOfWaterClosets, sc.noOfToilets,sc.proposedWaterClosets, sc.proposedToilets, sc.connectionType, sc.connection_id as connection_Id, sc.appCreatedDate as sc_appCreatedDate,"
 			+ "  sc.detailsprovidedby, sc.estimationfileStoreId , sc.sanctionfileStoreId , sc.estimationLetterDate,"
@@ -101,17 +113,36 @@ public class SWQueryBuilder {
 			criteria.setIsCountCall(Boolean.FALSE);
 
 		StringBuilder query;
-		if (!criteria.getIsCountCall())
-			query = new StringBuilder(SEWERAGE_SEARCH_QUERY);
-		else if (criteria.getIsCountCall() && !StringUtils.isEmpty(criteria.getSearchType())
-				&& criteria.getSearchType().equalsIgnoreCase(SEARCH_TYPE_CONNECTION)) {
-			query = new StringBuilder("SELECT DISTINCT(conn.connectionno),max(sc.appCreatedDate) appCreatedDate");
-			query.append(SEARCH_COUNT_QUERY);
+//		if (!criteria.getIsCountCall()) {
+//			if(criteria.getConnectionNumber()!=null) {
+//			query = new StringBuilder(SEWERAGE_SEARCH_QUERY);
+//			}
+//			else {
+//			query = new StringBuilder(SEWERAGE_SEARCH_QUERY_FORTABLE);
+//			}
+//		}
+//		else if (criteria.getIsCountCall() && !StringUtils.isEmpty(criteria.getSearchType())
+//				&& criteria.getSearchType().equalsIgnoreCase(SEARCH_TYPE_CONNECTION)) {
+//			query = new StringBuilder("SELECT DISTINCT(conn.connectionno),max(sc.appCreatedDate) appCreatedDate");
+//			query.append(SEARCH_COUNT_QUERY);
+//		} else {
+//			query = new StringBuilder("SELECT DISTINCT(conn.applicationNo),max(sc.appCreatedDate) appCreatedDate");
+//			query.append(SEARCH_COUNT_QUERY);
+//		}
+
+		if (criteria.getIsCountCall()) {
+		    if (!StringUtils.isEmpty(criteria.getSearchType()) && criteria.getSearchType().equalsIgnoreCase(SEARCH_TYPE_CONNECTION)) {
+		        query = new StringBuilder("SELECT DISTINCT(conn.connectionno), max(sc.appCreatedDate) appCreatedDate");
+		    } else {
+		        query = new StringBuilder("SELECT DISTINCT(conn.applicationNo), max(sc.appCreatedDate) appCreatedDate");
+		    }
+		    query.append(SEARCH_COUNT_QUERY);
 		} else {
-			query = new StringBuilder("SELECT DISTINCT(conn.applicationNo),max(sc.appCreatedDate) appCreatedDate");
-			query.append(SEARCH_COUNT_QUERY);
+		    query = new StringBuilder(criteria.getConnectionNumber() != null ? SEWERAGE_SEARCH_QUERY : SEWERAGE_SEARCH_QUERY_FORTABLE);
 		}
 
+		
+		
 		boolean propertyIdsPresent = false;
 		
 		if (!StringUtils.isEmpty(criteria.getMobileNumber()) || !StringUtils.isEmpty(criteria.getDoorNo())
