@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.repository.ServiceRequestRepository;
+import org.upyog.chb.web.models.CommunityHallBookingDetail;
+import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.workflow.ProcessInstance;
 import org.upyog.chb.web.models.workflow.ProcessInstanceRequest;
 import org.upyog.chb.web.models.workflow.ProcessInstanceResponse;
@@ -37,7 +39,7 @@ public class PaymentNotificationService {
 
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
-	
+
 	@Autowired
 	private CommunityHallBookingService bookingService;
 
@@ -58,18 +60,23 @@ public class PaymentNotificationService {
 				String bookingNo = paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode();
 				log.info("Updating payment status for CHB booking : " + bookingNo);
 				/**
-				 * Workflow will come into picture once hall location is changes or
-				 * booking is cancelled
-				 * otherwise after payment booking will be auto approved
+				 * Workflow will come into picture once hall location is changes or booking is
+				 * cancelled otherwise after payment booking will be auto approved
 				 * 
 				 */
-				//String tenantId = paymentRequest.getPayment().getTenantId();
-			//	CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
-			//			.bookingNo(bookingNo)
-			//			.tenantId(tenantId).build();
-				//updateWorkflowStatus(paymentRequest);
-				//List<CommunityHallBookingDetail> bookingDetail = bookingService.getBookingDetails(bookingSearchCriteria, null);
-				bookingService.updateBooking(null, bookingNo);
+				// String tenantId = paymentRequest.getPayment().getTenantId();
+				// CommunityHallBookingSearchCriteria bookingSearchCriteria =
+				// CommunityHallBookingSearchCriteria.builder()
+				// .bookingNo(bookingNo)
+				// .tenantId(tenantId).build();
+				// updateWorkflowStatus(paymentRequest);
+				// List<CommunityHallBookingDetail> bookingDetail =
+				// bookingService.getBookingDetails(bookingSearchCriteria, null);
+				CommunityHallBookingDetail bookingDetail = CommunityHallBookingDetail.builder().bookingNo(bookingNo)
+						.build();
+				CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder()
+						.requestInfo(paymentRequest.getRequestInfo()).hallsBookingApplication(bookingDetail).build();
+				bookingService.updateBooking(bookingRequest);
 			}
 		} catch (IllegalArgumentException e) {
 			log.error("Illegal argument exception occured while sending notification CHB : " + e.getMessage());
