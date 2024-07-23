@@ -215,10 +215,7 @@ public class ActionInfo   {
   **/
 
   public String getAssignee() {
-	  if(StringUtils.isEmpty(this.assignee) )
-	  {
-		  this.assignee="GRO";
-	  }
+	  
     return assignee;
   }
 
