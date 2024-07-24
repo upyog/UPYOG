@@ -1,5 +1,6 @@
 package org.upyog.chb.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,6 +70,8 @@ public class DemandService {
 		List<Demand> demands = new ArrayList<>();
 		demands.add(demand);
 		if(!generateDemand) {
+			BigDecimal totalAmount = demandDetails.stream().map(DemandDetail::getTaxAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+			demand.setAdditionalDetails(totalAmount);
 			return demands;
 		}
 		log.info("Sending call to billing service for generating demand for booking no : " + consumerCode);

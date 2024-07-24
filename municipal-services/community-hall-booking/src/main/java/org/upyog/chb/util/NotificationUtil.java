@@ -134,8 +134,7 @@ public class NotificationUtil {
 		for (SMSRequest smsRequest : smsRequestList) {
 			producer.push(config.getSmsNotifTopic(), smsRequest);
 			log.debug("SMS request object : " + smsRequest);
-			log.info("Sending SMS notification: ");
-			log.info("MobileNumber: " + smsRequest.getMobileNumber() + " Messages: " + smsRequest.getMessage());
+			log.info("Sending SMS notification to MobileNumber: " + smsRequest.getMobileNumber() + " Messages: " + smsRequest.getMessage());
 		}
 	}
 
@@ -203,7 +202,7 @@ public class NotificationUtil {
 	// {COMMUNITY_HALL_NAME} is created. Please pay using link {CHB_PAYMENT_LINK}
 	// Hi {APPLICANT_NAME} your booking no {BOOKING_NO} for community hall
 	// {COMMUNITY_HALL_NAME} is confirmed. Please download permission letter using
-	// link {CHB_PAYMENT_LINK}
+	// link {CHB_PERMISSION_LETTER_LINK}
 	private String populateDynamicValues(CommunityHallBookingDetail bookingDetail, String message, String linkName,
 			String link) {
 		message = message.replace(CommunityHallBookingConstants.APPLICANT_NAME,

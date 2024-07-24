@@ -72,6 +72,8 @@ public class PaymentNotificationService {
 				// updateWorkflowStatus(paymentRequest);
 				// List<CommunityHallBookingDetail> bookingDetail =
 				// bookingService.getBookingDetails(bookingSearchCriteria, null);
+				log.info("Reciept no of payment : " + paymentRequest.getPayment().getPaymentDetails().get(0).getReceiptNumber());
+				log.info("Payment date of payment : " + paymentRequest.getPayment().getPaymentDetails().get(0).getReceiptDate());
 				CommunityHallBookingDetail bookingDetail = CommunityHallBookingDetail.builder().bookingNo(bookingNo)
 						.build();
 				CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder()

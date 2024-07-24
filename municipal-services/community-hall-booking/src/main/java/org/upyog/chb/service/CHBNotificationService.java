@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -136,7 +135,6 @@ public class CHBNotificationService {
 	 * @param tenantId     - Tenant Id
 	 * @return Returns List of MobileNumbers and UUIDs
 	 */
-	@SuppressWarnings({ "unchecked" })
 	private Map<String, String> fetchUserUUIDs(String mobileNumber, RequestInfo requestInfo, String tenantId) {
 		Map<String, String> mapOfPhoneNoAndUUIDs = new HashMap<>();
 		StringBuilder uri = new StringBuilder();
