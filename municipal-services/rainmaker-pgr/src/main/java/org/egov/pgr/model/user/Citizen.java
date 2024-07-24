@@ -22,14 +22,14 @@ public class Citizen {
 	private String uuid;
 	
 	
-	@Size(max=30)
+	
 	private String name;
 	
 	@JsonProperty("permanentAddress")
 	
 	private String address;
 	
-	@Pattern(regexp="(^$|[0-9]{10})")
+	
 	private String mobileNumber;
 	
 	private String aadhaarNumber;

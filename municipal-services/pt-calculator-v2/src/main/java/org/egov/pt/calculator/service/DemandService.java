@@ -649,7 +649,7 @@ public DemandResponse updateDemandsForAssessmentCancel(GetBillCriteria getBillCr
 		for(DemandDetail demandDetail : details) {
 			if(demandDetail.getTaxHeadMasterCode().equalsIgnoreCase(PT_TIME_REBATE)){
 				oldRebate = oldRebate.add(demandDetail.getTaxAmount());
-				if (month>5) 
+				if (month>9) 
 				{
 				log.info("Rebate amount Before: "+oldRebate);
 				demandDetail.setTaxAmount(BigDecimal.ZERO);
