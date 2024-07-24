@@ -22,6 +22,7 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
     console.log("data",data);
     
     const isMobile = window.Digit.Utils.browser.isMobile();
+    const todaydate = new Date();
     const today = todaydate.toISOString().split("T")[0];
     const user = Digit.UserService.getUser();
    const allCities = Digit.Hooks.asset.useTenants();
