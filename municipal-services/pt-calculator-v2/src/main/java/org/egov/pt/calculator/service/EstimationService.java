@@ -500,7 +500,7 @@ public class EstimationService {
 
 			BigDecimal currentExemption = mDataService.calculateApplicables(currentUnitTax,
 					applicableRoadTypeRate.get("value"));
-			currentUnitTax = currentExemption.add(currentUnitTax);
+			currentUnitTax = currentExemption.multiply(currentUnitTax);
 		}
 		return currentUnitTax;
 	}

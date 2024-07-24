@@ -47,7 +47,7 @@ public class PaymentsService {
 		CollectionPaymentRequest paymentRequest = CollectionPaymentRequest.builder()
 				.requestInfo(request.getRequestInfo()).payment(payment).build();
 		String uri = props.getCollectionServiceHost() + props.getPaymentCreatePath();
-		Optional<Object> response =  repository.fetchResult(uri, paymentRequest);
+		Optional<Object> response =  repository.fetchResultNew(uri, paymentRequest);
 		if(response.isPresent()) {
 			try {
 				CollectionPaymentResponse paymentResponse = mapper.convertValue(response.get(), CollectionPaymentResponse.class);
