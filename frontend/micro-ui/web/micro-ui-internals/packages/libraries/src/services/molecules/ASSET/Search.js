@@ -193,8 +193,6 @@ export const ASSETSearch = {
     const filter = { applicationNo, ...args };
     const response = await ASSETSearch.application(tenantId, filter);
     
-    
-
     return {
       tenantId: response.tenantId,
       applicationDetails: ASSETSearch.RegistrationDetails({ Assets: response, t }),

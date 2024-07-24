@@ -268,9 +268,9 @@ import {
                         name={"transferDate"}
                         defaultValue={assigndetails?.transferDate}
                         rules={{
-                        required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                        validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
-                        }}
+                            required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                            validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                          }}
                         render={(props) => (
                         <TextInput
                             type="date"

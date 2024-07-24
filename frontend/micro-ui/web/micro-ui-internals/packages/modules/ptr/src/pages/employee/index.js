@@ -43,16 +43,11 @@ const EmployeeApp = ({ path, url, userType }) => {
         content: t("ES_TITLE_INBOX"),
         show: location.pathname.includes("ptr/petservice/inbox") ? true : false,
       },
-     
-    
       {
         path: "/digit-ui/employee/ptr/petservice/my-applications",
         content: t("ES_COMMON_APPLICATION_SEARCH"),
         show: location.pathname.includes("/ptr/petservice/my-applications") || location.pathname.includes("/ptr/applicationsearch/application-details/") ? true : false,
       },
-      
-     
-      
     ];
   
     return <BreadCrumb style={isMobile?{display:"flex"}:{}}  spanStyle={{maxWidth:"min-content"}} crumbs={crumbs} />;
@@ -60,8 +55,6 @@ const EmployeeApp = ({ path, url, userType }) => {
 
   const NewApplication = Digit?.ComponentRegistryService?.getComponent("PTRNewApplication");
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
-
-  // const EditApplication = Digit?.ComponentRegistryService?.getComponent("PTEditApplication");
   const Response = Digit?.ComponentRegistryService?.getComponent("PTRResponse");
   const DocsRequired = Digit?.ComponentRegistryService?.getComponent("PTRDocsRequired");
   const isRes = window.location.href.includes("ptr/response");
