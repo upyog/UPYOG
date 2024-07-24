@@ -110,9 +110,9 @@ public class WaterDaoImpl implements WaterDao {
 		 ResultSetExtractor<List<WaterConnection>> rowMapper;
 
 		 if (isOpenSearch || iscitizenSearch) {
-		     rowMapper = (criteria.getConnectionNumber() != null || criteria.getApplicationNumber() != null) ? openWaterRowMapper : openWaterRowMapperForTable;
+		     rowMapper = (criteria.getConnectionNumber() != null) ? openWaterRowMapper : openWaterRowMapperForTable;
 		 } else {
-		     rowMapper = (criteria.getConnectionNumber() != null || criteria.getApplicationNumber() != null) ? waterRowMapper : waterRowMapperForTable;
+		     rowMapper = (criteria.getConnectionNumber() != null) ? waterRowMapper : waterRowMapperForTable;
 		 }
 
 		 waterConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(), rowMapper);

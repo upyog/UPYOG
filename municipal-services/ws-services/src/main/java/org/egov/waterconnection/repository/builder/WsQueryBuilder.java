@@ -149,7 +149,7 @@ public class WsQueryBuilder {
 		    }
 		    query.append(SEARCH_COUNT_QUERY);
 		} else {
-		    query = new StringBuilder((criteria.getConnectionNumber() != null || criteria.getApplicationNumber() != null) ? WATER_SEARCH_QUERY : WATER_SEARCH_QUERY_FORTABLE  );
+		    query = new StringBuilder(criteria.getConnectionNumber() != null ? WATER_SEARCH_QUERY_FORTABLE : WATER_SEARCH_QUERY);
 		}
 
 		
