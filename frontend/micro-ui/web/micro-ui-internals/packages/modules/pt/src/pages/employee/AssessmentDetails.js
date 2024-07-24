@@ -488,36 +488,33 @@ const Penality_menu=[
                     }),
                 },
               },
-            {
-              belowComponent:()=>{
-                return (
-                  <div style={{marginTop:"19px"}}>
-                  <CardSubHeader style={{marginBottom:"8px",color:"#0B0C0C",fontSize:"24px"}}>
-                  {t("PT_CALC_DETAILS")}<br/>
-                  </CardSubHeader>
-                  <CardSectionHeader style={{marginBottom:"16px",color:"#0B0C0C",fontSize:"16px",marginTop:"revert"}}>{t("PT_CALC_LOGIC_HEADER")}</CardSectionHeader>
-                  <CardText style={{fontSize:"16px"}}>{t("PT_CALC_LOGIC")}</CardText>
-                    {/* <div className="employee-data-table" style={{position:"relative",padding:"8px"}}>
-                    <div style={{position:"absolute",maxWidth:"640px",border:"1px solid rgb(214,213,212)",inset:"0px",width:"auto"}}/> */}
-                    <div style={{ border: "1px solid #D6D5D4", padding: "16px", marginTop: "8px", borderRadius: "4px", background: "#FAFAFA" }}>
-                    <div className="row border-none"><h2>{t("PT_APPLICABLE_CHARGE_SLABS")}</h2></div>
-                    {/* <div className="row border-none"><h2>{t("PT_GRND_FLOOR_UNIT-1")}</h2>
-                    <div className="value">{t("PT_RATE")}</div>
-                    </div> */}
-                    <StatusTable>
-                    {applicationDetails?.applicationData?.units
-                    ?.filter((e) => e.active)
-                    ?.sort?.((a, b) => a.floorNo - b.floorNo)
-                    ?.map((unit, index) => (
-                    <Row label={`${t(`PROPERTYTAX_FLOOR_${unit?.floorNo}`)} ${t(`PT_UNIT`)} - ${index+1}`} text={ChargeSlabsMenu?.PropertyTax && ChargeSlabsMenu?.PropertyTax?.ChargeSlabs?.filter((ob) => ob.floorNo == unit.floorNo)?.[0]?.name} />
-                    ))}
-                    </StatusTable>
-                   </div>
-                  </div>
+            // {
+            //   belowComponent:()=>{
+            //     return (
+            //       <div style={{marginTop:"19px"}}>
+            //       <CardSubHeader style={{marginBottom:"8px",color:"#0B0C0C",fontSize:"24px"}}>
+            //       {t("PT_CALC_DETAILS")}<br/>
+            //       </CardSubHeader>
+            //       <CardSectionHeader style={{marginBottom:"16px",color:"#0B0C0C",fontSize:"16px",marginTop:"revert"}}>{t("PT_CALC_LOGIC_HEADER")}</CardSectionHeader>
+            //       <CardText style={{fontSize:"16px"}}>{t("PT_CALC_LOGIC")}</CardText>
+                    
+            //         <div style={{ border: "1px solid #D6D5D4", padding: "16px", marginTop: "8px", borderRadius: "4px", background: "#FAFAFA" }}>
+            //         <div className="row border-none"><h2>{t("PT_APPLICABLE_CHARGE_SLABS")}</h2></div>
+                    
+            //         <StatusTable>
+            //         {applicationDetails?.applicationData?.units
+            //         ?.filter((e) => e.active)
+            //         ?.sort?.((a, b) => a.floorNo - b.floorNo)
+            //         ?.map((unit, index) => (
+            //         <Row label={`${t(`PROPERTYTAX_FLOOR_${unit?.floorNo}`)} ${t(`PT_UNIT`)} - ${index+1}`} text={ChargeSlabsMenu?.PropertyTax && ChargeSlabsMenu?.PropertyTax?.ChargeSlabs?.filter((ob) => ob.floorNo == unit.floorNo)?.[0]?.name} />
+            //         ))}
+            //         </StatusTable>
+            //        </div>
+            //       </div>
                   
-                )
-              }
-            }
+            //     )
+            //   }
+            // }
           ]}
         }
         showTimeLine={false}

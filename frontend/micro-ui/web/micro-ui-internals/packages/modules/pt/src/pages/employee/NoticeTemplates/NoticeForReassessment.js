@@ -8,65 +8,41 @@ const NoticeForReassessment = (props) => {
 
   const { t } = useTranslation();
   const [financialYears, setFinancialYears] = useState([]);
-  const [selectedFinancialYear, setSelectedFinancialYear] = useState(null);
-  const [submissionDate, setSubmissionDate] = useState();
+  const [selectedFinancialYear, setSelectedFinancialYear] = useState(props?.noticeData && props?.noticeData.assessmentYear? {code: props?.noticeData.assessmentYear, name: props?.noticeData.assessmentYear} : null);
+  const [dateOfAnnualRet, setDateOfAnnualRet] = useState(props?.noticeData?.dateOfAnnualRet ? props?.noticeData?.dateOfAnnualRet : props?.noticeData?.dateOfOrder ? props?.noticeData?.dateOfOrder : null);
 
-  const [notice, setNotice] = useState();
   const [showModal, setShowModal] = useState(false)
   const [showDateModal, setShowDateModal] = useState(false)
-  const handleChangeNotice = (value) => {
-
-  }
-  const [name, setName] = useState();
+  
+  const [name, setName] = useState(props?.noticeData?.ownerName ? props?.noticeData?.ownerName : props?.noticeData?.name ? props?.noticeData?.name : null);
   const onChangeName = (e) => {
     setName(e.target?.value)
   }
-  const [propertyAddress, setPropertyAddress] = useState();
+  const [address, setAddress] = useState(props?.noticeData?.address ? props?.noticeData?.address : props?.noticeData?.propertyAddress ? props?.noticeData?.propertyAddress : null);
   const onChangePtAddress = (e) => {
     setPropertyAddress(e.target?.value)
   }
-  const [propertyId, setPropertyId] = useState();
+  const [propertyId, setPropertyId] = useState(props?.noticeData?.propertyId ? props?.noticeData?.propertyId : null);
   const onChangePtId = (e) => {
     setPropertyId(e.target?.value)
   }
-  const [acknowledgementNo, setAcknowledgementNo] = useState();
+  const [acknowledgementNumber, setAcknowledgementNumber] = useState(props?.noticeData?.acknowledgementNumber ? props?.noticeData?.acknowledgementNumber : props?.noticeData?.acknowldgementNumber ? props?.noticeData?.acknowldgementNumber : null);
   const onChangeAcknowledgementNo=(e)=>{
-    setAcknowledgementNo(e.target.value)
+    setAcknowledgementNumber(e.target.value)
   }
   const [returnFormData, setReturnFormData] = useState({
-    particulars: null,
-    asPerReturnFiled: null,
-    asPerMunicipality: null,
-    remarks: null
+    particulars: props?.noticeData?.particulars ? props?.noticeData?.particulars : null,
+    asPerReturnFiled: props?.noticeData?.asPerReturnFiled ? props?.noticeData?.asPerReturnFiled : null,
+    asPerMunicipality: props?.noticeData?.asPerMunicipality ? props?.noticeData?.asPerMunicipality : null,
+    remarks: props?.noticeData?.remarks ? props?.noticeData?.remarks : null,
   });
   const [returnTimeFormData, setReturnTimeFormData] = useState({
     resolutionNo: null,
     resolutionDate: null,
-    time: null,
-    date: null
+    entryTime: props?.noticeData?.entryTime ? props?.noticeData?.entryTime : null,
+    entryDate: props?.noticeData?.entryDate ? props?.noticeData?.entryDate : null
   });
-  // const [particulars, setParticulars] = useState();
-  // const [asPerReturnFiled, setAsPerReturnFiled] = useState();
-  // const [asPerMunicipality, setAsPerMunicipality] = useState();
-  // const [remarks, setRemarks] = useState();
   const [tableList, setTableList] = useState([]);
-  const [timeMeridian, setTimeMeridian] = useState('');
-  const [time, setTime] = useState();
-  const [editDate, setEditDate] = useState();
-
-  const onChangeParticulars = (e)=>{
-    setParticulars(e.target.value)
-  }
-  const onChangeAsPerReturnFiled = (e)=>{
-    setAsPerReturnFiled(e.target.value)
-  }
-  const onChangeMunicipality = (e)=>{
-    setAsPerMunicipality(e.target.value)
-  }
-  const onChangeRemarks = (e)=>{
-    setRemarks(e.target.value)
-  }
-
   const { isLoading: financialYearsLoading, data: financialYearsData } = Digit.Hooks.pt.useMDMS(
     Digit.ULBService.getStateId(),
     '',
@@ -243,7 +219,7 @@ const NoticeForReassessment = (props) => {
       resolutionNo: returnTimeFormData.resolutionNo,
       resolutionDate: returnTimeFormData.resolutionDate,
       noticeDate: returnTimeFormData?.date,
-      noticeTime: returnTimeFormData?.time
+      entryTime: returnTimeFormData?.entryTime
     }
     props.submit(noticeDetails)
   }
@@ -380,7 +356,7 @@ const NoticeForReassessment = (props) => {
                       </li>}
                       <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
                         <div style={{ width: '60%' }}>
-                          If therefore purpose to initiate a re-assessment under Rule 35, which has the consent of the Board of Councilors vide Resolution no: {returnTimeFormData?.resolutionNo && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.resolutionNo}</span>}{!returnTimeFormData?.resolutionNo && <span>__________________</span>} dated {returnTimeFormData?.resolutionDate && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.resolutionDate}</span>} {!returnTimeFormData?.resolutionDate && <span>________________ </span>}. If therefore processed to the open the earlier assessment and modify the Annual Property Value(APV) and the Property tax on the basis of the information available with the municipality. In case, you disagree with the re-assessment and the proposed increase, you may present your case with all available records either in person or through an authorized representative on {returnTimeFormData?.date && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.date}</span>}{!returnTimeFormData?.date && <span>__________________</span>} at {returnTimeFormData?.time && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.time}</span>} {!returnTimeFormData?.time && <span>________________ </span>} in the chamber of the undersigned.
+                          If therefore purpose to initiate a re-assessment under Rule 35, which has the consent of the Board of Councilors vide Resolution no: {returnTimeFormData?.resolutionNo && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.resolutionNo}</span>}{!returnTimeFormData?.resolutionNo && <span>__________________</span>} dated {returnTimeFormData?.resolutionDate && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.resolutionDate}</span>} {!returnTimeFormData?.resolutionDate && <span>________________ </span>}. If therefore processed to the open the earlier assessment and modify the Annual Property Value(APV) and the Property tax on the basis of the information available with the municipality. In case, you disagree with the re-assessment and the proposed increase, you may present your case with all available records either in person or through an authorized representative on {returnTimeFormData?.date && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.date}</span>}{!returnTimeFormData?.date && <span>__________________</span>} at {returnTimeFormData?.entryTime && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.entryTime}</span>} {!returnTimeFormData?.entryTime && <span>________________ </span>} in the chamber of the undersigned.
                         </div>
                         <div style={{ width: '40%', display: 'inline' }}>
                           <button id="printPageButton" onClick={(e) => onEditDate(e)} className="submit-bar"
@@ -585,10 +561,10 @@ const NoticeForReassessment = (props) => {
               <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
                 
                 <label for="formControlInputReturnTime" class="form-label">Time*</label>
-                <input type="time" className={fieldError.time ? "form-control error-message" : "form-control"} id="formControlInputReturnTime" name="time" placeholder="Enter Time" value={returnTimeFormData.time} onChange={handleChangeTimeReturn} required />
-                {fieldError.time &&
+                <input type="time" className={fieldError.entryTime ? "form-control error-message" : "form-control"} id="formControlInputReturnTime" name="entryTime" placeholder="Enter Time" value={returnTimeFormData.entryTime} onChange={handleChangeTimeReturn} required />
+                {fieldError.entryTime &&
                     <span className="error-message">
-                        {fieldError.time}
+                        {fieldError.entryTime}
                     </span>
                 }
               </div>
