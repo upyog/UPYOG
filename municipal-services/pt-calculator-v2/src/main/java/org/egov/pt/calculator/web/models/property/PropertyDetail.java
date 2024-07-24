@@ -49,6 +49,9 @@ public class PropertyDetail   {
 	 * Source of a assessment data. The properties will be created in a system based on the data avaialble in their manual records or during field survey. There can be more from client to client.
 	 */
 
+	@JsonProperty("VacantUsagecategory")
+	private String vacantusagecategory;
+	
 	@JsonProperty("exemption")
 	private String exemption;
 

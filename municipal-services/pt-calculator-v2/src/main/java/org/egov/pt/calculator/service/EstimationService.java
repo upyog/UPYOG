@@ -400,24 +400,28 @@ public class EstimationService {
 			 * making call to get unbuilt area tax estimate
 			 */
 
-			BigDecimal unbuiltAmount = getUnBuiltRate(detail, unBuiltRate, groundUnitsCount, groundUnitsArea);
-			BigDecimal unbuiltarea=getUnBuiltAre(detail, unBuiltRate, groundUnitsCount, groundUnitsArea);
+			if(detail.getVacantusagecategory().equalsIgnoreCase("COMMERCIAL"))
+			{
+				BigDecimal unbuiltAmount = getUnBuiltRate(detail, unBuiltRate, groundUnitsCount, groundUnitsArea);
+				BigDecimal unbuiltarea=getUnBuiltAre(detail, unBuiltRate, groundUnitsCount, groundUnitsArea);
 
 
-			/*
-			 * taxHeadEstimate = getBiilinfEstimatesForTax(requestInfo,unbuiltarea,
-			 * usageExemption, property, propertyBasedExemptionMasterMap,
-			 * timeBasedExemptionMasterMap,masterMap,typeofroad,structuretype,agefactor,null
-			 * );
-			 */
+				/*
+				 * taxHeadEstimate = getBiilinfEstimatesForTax(requestInfo,unbuiltarea,
+				 * usageExemption, property, propertyBasedExemptionMasterMap,
+				 * timeBasedExemptionMasterMap,masterMap,typeofroad,structuretype,agefactor,null
+				 * );
+				 */
 
-			unbuiltAmount =	getApplicableTaxForRoadType(unbuiltAmount,propertyBasedExemptionMasterMap,detail,"UNBUILT");
+				unbuiltAmount =	getApplicableTaxForRoadType(unbuiltAmount,propertyBasedExemptionMasterMap,detail,"UNBUILT");
 
-			unbuiltAmount = getApplicableTaxForAgeOfProperty(unbuiltAmount,propertyBasedExemptionMasterMap,detail,"UNBUILT",null);
+				unbuiltAmount = getApplicableTaxForAgeOfProperty(unbuiltAmount,propertyBasedExemptionMasterMap,detail,"UNBUILT",null);
 
-			unbuiltAmount=getApplicableTaxForOwnerUsageCategory(unbuiltarea, propertyBasedExemptionMasterMap, detail,null);
+				unbuiltAmount=getApplicableTaxForOwnerUsageCategory(unbuiltarea, propertyBasedExemptionMasterMap, detail,null);
 
-			taxAmt = taxAmt.add(unbuiltAmount);
+				taxAmt = taxAmt.add(unbuiltAmount);
+			}
+
 
 			/*
 			 * special case to handle property with one unit
