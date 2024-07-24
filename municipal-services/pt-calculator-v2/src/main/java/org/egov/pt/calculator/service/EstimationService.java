@@ -245,7 +245,7 @@ public class EstimationService {
 					
 					BigDecimal  noofmonths=BigDecimal.valueOf(Double.parseDouble(unit.getAdditionalDetails().get("rentedformonths").toString()));
 					log.info(noofmonths+" noofmonths  ");
-					if(noofmonths.compareTo(BigDecimal.valueOf(12)) < 0 )
+					if(noofmonths.compareTo(BigDecimal.valueOf(12)) <= 0 )
 					{
 					String occ=unit.getAdditionalDetails().has("usageForDueMonths")?unit.getAdditionalDetails().get("usageForDueMonths").toString():"SELFOCCUPIED";
 					unit.setOccupancyType(occ.substring(1).substring(0,occ.length()-2));
