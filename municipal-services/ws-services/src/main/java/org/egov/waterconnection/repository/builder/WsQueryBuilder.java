@@ -37,22 +37,8 @@ public class WsQueryBuilder {
     
     private static String holderSelectValues = "connectionholder.tenantid as holdertenantid, connectionholder.connectionid as holderapplicationId, userid, connectionholder.status as holderstatus, isprimaryholder, connectionholdertype, holdershippercentage, connectionholder.relationship as holderrelationship, connectionholder.createdby as holdercreatedby, connectionholder.createdtime as holdercreatedtime, connectionholder.lastmodifiedby as holderlastmodifiedby, connectionholder.lastmodifiedtime as holderlastmodifiedtime";
 
-	private static final String WATER_SEARCH_QUERY_FORTABLE = "SELECT wc.connectionCategory, wc.connectionType, wc.waterSource,"
-			+ " wc.meterId, wc.meterInstallationDate, wc.pipeSize, wc.noOfTaps, wc.proposedPipeSize, wc.proposedTaps, wc.connection_id as connection_Id, wc.connectionExecutionDate, wc.initialmeterreading, wc.appCreatedDate,"
-			+ " wc.detailsprovidedby, wc.estimationfileStoreId , wc.sanctionfileStoreId , wc.estimationLetterDate,"
-			+ " conn.id as conn_id, conn.tenantid, conn.applicationNo, conn.applicationStatus, conn.status, conn.connectionNo, conn.oldConnectionNo, conn.property_id, conn.roadcuttingarea,"
-			+ " conn.action, conn.adhocpenalty, conn.adhocrebate, conn.adhocpenaltyreason, conn.applicationType, conn.channel, conn.dateEffectiveFrom,"
-			+ " conn.adhocpenaltycomment, conn.adhocrebatereason, conn.adhocrebatecomment, conn.createdBy as ws_createdBy, conn.lastModifiedBy as ws_lastModifiedBy,"
-			+ " conn.createdTime as ws_createdTime, conn.lastModifiedTime as ws_lastModifiedTime, "
-			+ " conn.locality, conn.isoldapplication, conn.roadtype, conn.disconnectionreason, conn.isDisconnectionTemporary, wc.disconnectionExecutionDate "
-			+ " FROM eg_ws_connection conn "
-			+  INNER_JOIN_STRING 
-			+ " eg_ws_service wc ON wc.connection_id = conn.id "
-			+ LEFT_OUTER_JOIN_STRING
-			+ " eg_ws_connectionholder connectionholder ON connectionholder.connectionid = conn.id ";
-
     
-	private static final String WATER_SEARCH_QUERY = "SELECT count(*) OVER() AS full_count, wc.connectionCategory, wc.connectionType, wc.waterSource,"
+	private static final String WATER_SEARCH_QUERY = "SELECT count(*) OVER() AS full_count, conn.*, wc.*, document.*, plumber.*, wc.connectionCategory, wc.connectionType, wc.waterSource,"
 			+ " wc.meterId, wc.meterInstallationDate, wc.pipeSize, wc.noOfTaps, wc.proposedPipeSize, wc.proposedTaps, wc.connection_id as connection_Id, wc.connectionExecutionDate, wc.initialmeterreading, wc.appCreatedDate as wc_appCreatedDate,"
 			+ " wc.detailsprovidedby, wc.estimationfileStoreId , wc.sanctionfileStoreId , wc.estimationLetterDate,"
 			+ " conn.id as conn_id, conn.tenantid, conn.applicationNo, conn.applicationStatus, conn.status, conn.connectionNo, conn.oldConnectionNo, conn.property_id, conn.roadcuttingarea,"
@@ -124,34 +110,17 @@ public class WsQueryBuilder {
 			criteria.setIsCountCall(Boolean.FALSE);
 
 		StringBuilder query;
-//		if (!criteria.getIsCountCall()) {
-//			if(criteria.getConnectionNumber()!=null) {
-//				query = new StringBuilder(WATER_SEARCH_QUERY_FORTABLE);
-//			} else {
-//			query = new StringBuilder(WATER_SEARCH_QUERY);
-//			}
-//		}
-//		else if (criteria.getIsCountCall() && !StringUtils.isEmpty(criteria.getSearchType())
-//				&& criteria.getSearchType().equalsIgnoreCase(SEARCH_TYPE_CONNECTION)) {
-//			query = new StringBuilder(
-//					"SELECT DISTINCT(conn.connectionno),max(wc.appCreatedDate) appCreatedDate");
-//			query.append(SEARCH_COUNT_QUERY);
-//		} else {
-//			query = new StringBuilder("SELECT DISTINCT(conn.applicationNo),max(wc.appCreatedDate) appCreatedDate");
-//			query.append(SEARCH_COUNT_QUERY);
-//		}
-		
-		if (criteria.getIsCountCall()) {
-		    if (!StringUtils.isEmpty(criteria.getSearchType()) && criteria.getSearchType().equalsIgnoreCase(SEARCH_TYPE_CONNECTION)) {
-		        query = new StringBuilder("SELECT DISTINCT(conn.connectionno), max(wc.appCreatedDate) appCreatedDate");
-		    } else {
-		        query = new StringBuilder("SELECT DISTINCT(conn.applicationNo), max(wc.appCreatedDate) appCreatedDate");
-		    }
-		    query.append(SEARCH_COUNT_QUERY);
+		if (!criteria.getIsCountCall())
+			query = new StringBuilder(WATER_SEARCH_QUERY);
+		else if (criteria.getIsCountCall() && !StringUtils.isEmpty(criteria.getSearchType())
+				&& criteria.getSearchType().equalsIgnoreCase(SEARCH_TYPE_CONNECTION)) {
+			query = new StringBuilder(
+					"SELECT DISTINCT(conn.connectionno),max(wc.appCreatedDate) appCreatedDate");
+			query.append(SEARCH_COUNT_QUERY);
 		} else {
-		    query = new StringBuilder((criteria.getConnectionNumber() != null || criteria.getApplicationNumber() != null) ? WATER_SEARCH_QUERY : WATER_SEARCH_QUERY_FORTABLE  );
+			query = new StringBuilder("SELECT DISTINCT(conn.applicationNo),max(wc.appCreatedDate) appCreatedDate");
+			query.append(SEARCH_COUNT_QUERY);
 		}
-
 		
 		boolean propertyIdsPresent = false;
 

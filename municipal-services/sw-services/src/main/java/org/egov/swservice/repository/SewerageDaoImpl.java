@@ -14,9 +14,7 @@ import org.egov.swservice.producer.SewarageConnectionProducer;
 import org.egov.swservice.repository.builder.SWQueryBuilder;
 import org.egov.swservice.repository.rowmapper.EncryptionCountRowMapper;
 import org.egov.swservice.repository.rowmapper.OpenSewerageRowMapper;
-import org.egov.swservice.repository.rowmapper.OpenSewerageRowMapperForTable;
 import org.egov.swservice.repository.rowmapper.SewerageRowMapper;
-import org.egov.swservice.repository.rowmapper.SewerageRowMapperForTable;
 import org.egov.swservice.util.SWConstants;
 import org.egov.swservice.web.models.Connection;
 import org.egov.swservice.web.models.EncryptionCount;
@@ -26,7 +24,6 @@ import org.egov.swservice.web.models.SewerageConnectionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.ObjectUtils;
@@ -52,12 +49,6 @@ public class SewerageDaoImpl implements SewerageDao {
 	@Autowired
 	private OpenSewerageRowMapper openSewerageRowMapper;
 
-	@Autowired
-	private SewerageRowMapperForTable sewarageRowMapperForTable;
-
-	@Autowired
-	private OpenSewerageRowMapperForTable openSewerageRowMapperForTable;
-	
 	@Autowired
 	private SWConfiguration swConfiguration;
 
@@ -91,28 +82,17 @@ public class SewerageDaoImpl implements SewerageDao {
 			return Collections.emptyList();
 		Boolean isOpenSearch = isSearchOpen(requestInfo.getUserInfo());
 		List<SewerageConnection> sewerageConnectionList = new ArrayList<>();
-//		 if(iscitizenSearch)
-//		 {
-//			 sewerageConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(),
-//					 openSewerageRowMapper);
-//
-//		 }else if(isOpenSearch)
-//			sewerageConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(),
-//					openSewerageRowMapper);
-//		else
-//			sewerageConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(),
-//					sewarageRowMapper);
+		 if(iscitizenSearch)
+		 {
+			 sewerageConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(),
+					 openSewerageRowMapper);
 
-		ResultSetExtractor<List<SewerageConnection>> rowMapper;
-
-		if (isOpenSearch || iscitizenSearch) {
-			rowMapper = (criteria.getConnectionNumber() != null || criteria.getApplicationNumber() != null) ? openSewerageRowMapper
-					: openSewerageRowMapperForTable;
-		} else {
-			rowMapper = (criteria.getConnectionNumber() != null || criteria.getApplicationNumber() != null) ? sewarageRowMapper : sewarageRowMapperForTable;
-		}
-
-		sewerageConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(), rowMapper);
+		 }else if(isOpenSearch)
+			sewerageConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(),
+					openSewerageRowMapper);
+		else
+			sewerageConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(),
+					sewarageRowMapper);
 
 		if (sewerageConnectionList == null) {
 			return Collections.emptyList();
