@@ -95,34 +95,31 @@ public class NotificationService {
 		if(configuredChannelNames.contains(CHANNEL_NAME_SMS)){
 			List<SMSRequest> smsRequests = new LinkedList<>();
 			if (null != config.getIsSMSEnabled()) {
+				log.info("is sms enabled: "+config.getIsSMSEnabled());
 				if (config.getIsSMSEnabled()) {
 					enrichSMSRequest(challanRequest, smsRequests, code);
-					if (!CollectionUtils.isEmpty(smsRequests))
+					if (!CollectionUtils.isEmpty(smsRequests)) {
 						util.sendSMS(smsRequests, config.getIsSMSEnabled());
+						log.info("smsRequests is not empty: "+smsRequests);	
+					}
 				}
 			}
 		}
 
-		if(configuredChannelNames.contains(CHANNEL_NAME_EVENT)){
-			if (null != config.getIsUserEventEnabled()) {
-				if (config.getIsUserEventEnabled()) {
-					EventRequest eventRequest = getEventsForChallan(challanRequest,isSave);
-					if(null != eventRequest)
-						util.sendEventNotification(eventRequest);
-				}
-			}
-		}
-
-		if(configuredChannelNames.contains(CHANNEL_NAME_EMAIL)){
-			List<EmailRequest> emailRequests = new LinkedList<>();
-			if (null != config.getIsEmailNotificationEnabled()) {
-				if (config.getIsEmailNotificationEnabled()) {
-					enrichEmailRequest(challanRequest, emailRequests, code.replace(".sms",".email"));
-					if (!CollectionUtils.isEmpty(emailRequests))
-						util.sendEmail(emailRequests);
-				}
-			}
-		}
+		/*
+		 * if(configuredChannelNames.contains(CHANNEL_NAME_EVENT)){ if (null !=
+		 * config.getIsUserEventEnabled()) { if (config.getIsUserEventEnabled()) {
+		 * EventRequest eventRequest = getEventsForChallan(challanRequest,isSave);
+		 * if(null != eventRequest) util.sendEventNotification(eventRequest); } } }
+		 * 
+		 * if(configuredChannelNames.contains(CHANNEL_NAME_EMAIL)){ List<EmailRequest>
+		 * emailRequests = new LinkedList<>(); if (null !=
+		 * config.getIsEmailNotificationEnabled()) { if
+		 * (config.getIsEmailNotificationEnabled()) { enrichEmailRequest(challanRequest,
+		 * emailRequests, code.replace(".sms",".email")); if
+		 * (!CollectionUtils.isEmpty(emailRequests)) util.sendEmail(emailRequests); } }
+		 * }
+		 */
 	}
 
 	private EventRequest getEventsForChallan(ChallanRequest request,boolean isSave) {

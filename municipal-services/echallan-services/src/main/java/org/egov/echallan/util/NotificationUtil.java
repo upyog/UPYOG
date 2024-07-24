@@ -104,28 +104,51 @@ public class NotificationUtil {
 			String billDetails = getBillDetails(requestInfo, challan);
 			Object obj = JsonPath.parse(billDetails).read(BILL_AMOUNT_JSONPATH);
 			BigDecimal amountToBePaid = new BigDecimal(obj.toString());
-			message = message.replace("{challanAmount}", amountToBePaid.toString());
+			message = message.replace("<amount>", amountToBePaid.toString());
+			log.info("Replaced Amount");
 		}
 
 		message = message.replace("{User}",challan.getCitizen().getName());
-        message = message.replace("{challanno}", challan.getChallanNo());
+        message = message.replace("<challanno>", challan.getChallanNo());
 		if(message.contains("{ULB}"))
 			message = message.replace("{ULB}", capitalize(challan.getTenantId().split("\\.")[1]));
 
 		String[] split_array = capitalize(challan.getBusinessService().split("\\.")[1]).split("_");
 		String service = String.join(" ", split_array);
-		message = message.replace("{service}", service);
+		
 
         String UIHost = config.getUiAppHost();
 		String paymentPath = config.getPayLinkSMS();
 		paymentPath = paymentPath.replace("$consumercode",challan.getChallanNo());
 		paymentPath = paymentPath.replace("$tenantId",challan.getTenantId());
 		paymentPath = paymentPath.replace("$businessservice",challan.getBusinessService());
-		String finalPath = UIHost + paymentPath;
-		if(message.contains("{Link}"))
-			message = message.replace("{Link}",getShortenedUrl(finalPath));
+		//String finalPath = UIHost + paymentPath;
+		/*
+		 * if(message.contains("{Link}")) message =
+		 * message.replace("{Link}",getShortenedUrl(finalPath));
+		 */
+		String result = truncateAndSplitString(service, 33);
+		message = message.replace("<service>", result);
+		String newLink = "https://mseva.lgpunjab.gov.in/citizen";
+		String updatedMessage = message.replace("<Link>", newLink);
 
-        return message;
+        log.info("update"+updatedMessage);
+		log.info("Final msg after all rep: "+updatedMessage);
+        return updatedMessage;
+    }
+	public static String truncateAndSplitString(String inputString, int truncateLength) {
+        if (inputString.length() <= truncateLength) {
+            return inputString;
+        }
+
+        String truncatedString = inputString.substring(0, truncateLength);
+
+        int splitPosition = truncatedString.lastIndexOf(' ', 27);
+
+        if (splitPosition == -1) {
+            splitPosition = truncateLength;
+        }
+        return truncatedString.substring(0, splitPosition);
     }
 
 	private String getPaymentMsg(RequestInfo requestInfo,Challan challan, String message) {
@@ -201,6 +224,7 @@ public class NotificationUtil {
 		} catch (Exception e) {
 			log.warn("Fetching from localization failed", e);
 		}
+		log.info("Final msg: "+message);
 		return message;
 	}
 
