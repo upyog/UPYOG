@@ -15,16 +15,13 @@ import org.egov.waterconnection.config.WSConfiguration;
 import org.egov.waterconnection.constants.WCConstants;
 import org.egov.waterconnection.repository.rowmapper.EncryptionCountRowMapper;
 import org.egov.waterconnection.repository.rowmapper.OpenWaterRowMapper;
-import org.egov.waterconnection.repository.rowmapper.OpenWaterRowMapperForTable;
 import org.egov.waterconnection.web.models.*;
 import org.egov.waterconnection.producer.WaterConnectionProducer;
 import org.egov.waterconnection.repository.builder.WsQueryBuilder;
 import org.egov.waterconnection.repository.rowmapper.WaterRowMapper;
-import org.egov.waterconnection.repository.rowmapper.WaterRowMapperForTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -48,12 +45,6 @@ public class WaterDaoImpl implements WaterDao {
 
 	@Autowired
 	private OpenWaterRowMapper openWaterRowMapper;
-	
-	@Autowired
-	private WaterRowMapperForTable waterRowMapperForTable;
-
-	@Autowired
-	private OpenWaterRowMapperForTable openWaterRowMapperForTable;
 	
 	@Autowired
 	private WSConfiguration wsConfiguration;
@@ -95,27 +86,17 @@ public class WaterDaoImpl implements WaterDao {
 		Boolean isOpenSearch = isSearchOpen(requestInfo.getUserInfo());
 		
 		// if(isOpenSearch)
-//		 if(iscitizenSearch)
-//		 {
-//			 waterConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(),
-//						openWaterRowMapper);
-//			 
-//		 }else if(isOpenSearch)
-//			waterConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(),
-//					openWaterRowMapper);
-//		else
-//			waterConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(),
-//				waterRowMapper);
-		 
-		 ResultSetExtractor<List<WaterConnection>> rowMapper;
-
-		 if (isOpenSearch || iscitizenSearch) {
-		     rowMapper = (criteria.getConnectionNumber() != null) ? openWaterRowMapper : openWaterRowMapperForTable;
-		 } else {
-		     rowMapper = (criteria.getConnectionNumber() != null) ? waterRowMapper : waterRowMapperForTable;
-		 }
-
-		 waterConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(), rowMapper);
+		 if(iscitizenSearch)
+		 {
+			 waterConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(),
+						openWaterRowMapper);
+			 
+		 }else if(isOpenSearch)
+			waterConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(),
+					openWaterRowMapper);
+		else
+			waterConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(),
+				waterRowMapper);
 		if (waterConnectionList == null)
 			return Collections.emptyList();
 		return waterConnectionList;
