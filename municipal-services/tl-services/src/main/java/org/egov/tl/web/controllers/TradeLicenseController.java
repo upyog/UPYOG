@@ -5,7 +5,6 @@ import static org.egov.tl.util.TLConstants.businessService_TL;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -19,6 +18,7 @@ import org.egov.tl.web.models.ApplicationStatusChangeRequest;
 import org.egov.tl.web.models.RequestInfoWrapper;
 import org.egov.tl.web.models.TradeLicense;
 import org.egov.tl.web.models.TradeLicenseActionRequest;
+import org.egov.tl.web.models.TradeLicenseActionResponse;
 import org.egov.tl.web.models.TradeLicenseRequest;
 import org.egov.tl.web.models.TradeLicenseResponse;
 import org.egov.tl.web.models.TradeLicenseSearchCriteria;
@@ -181,7 +181,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
     @PostMapping("/_actions")
     public ResponseEntity<?> getActions(@RequestBody TradeLicenseActionRequest tradeLicenseActionRequest){
     	
-    	Map<String, List<String>> response = tradeLicenseService.getActionsOnApplication(tradeLicenseActionRequest);
+    	TradeLicenseActionResponse response = tradeLicenseService.getActionsOnApplication(tradeLicenseActionRequest);
     	
     	return new ResponseEntity(response, HttpStatus.OK);
     }

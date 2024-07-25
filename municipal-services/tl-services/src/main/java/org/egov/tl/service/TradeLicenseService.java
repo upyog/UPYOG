@@ -1,6 +1,14 @@
 package org.egov.tl.service;
 
-import static org.egov.tl.util.TLConstants.*;
+import static org.egov.tl.util.TLConstants.ACTION_STATUS_APPROVED;
+import static org.egov.tl.util.TLConstants.STATUS_APPLIED;
+import static org.egov.tl.util.TLConstants.STATUS_APPROVED;
+import static org.egov.tl.util.TLConstants.STATUS_INITIATED;
+import static org.egov.tl.util.TLConstants.STATUS_PENDINGFORMODIFICATION;
+import static org.egov.tl.util.TLConstants.STATUS_REJECTED;
+import static org.egov.tl.util.TLConstants.TRADE_LICENSE_MODULE_CODE;
+import static org.egov.tl.util.TLConstants.businessService_BPA;
+import static org.egov.tl.util.TLConstants.businessService_TL;
 import static org.egov.tracer.http.HttpUtils.isInterServiceCall;
 
 import java.io.IOException;
@@ -33,10 +41,12 @@ import org.egov.tl.util.TradeUtil;
 import org.egov.tl.validator.TLValidator;
 import org.egov.tl.web.models.ApplicationStatusChangeRequest;
 import org.egov.tl.web.models.Difference;
+import org.egov.tl.web.models.NextAction;
 import org.egov.tl.web.models.OwnerInfo;
 import org.egov.tl.web.models.RequestInfoWrapper;
 import org.egov.tl.web.models.TradeLicense;
 import org.egov.tl.web.models.TradeLicenseActionRequest;
+import org.egov.tl.web.models.TradeLicenseActionResponse;
 import org.egov.tl.web.models.TradeLicenseRequest;
 import org.egov.tl.web.models.TradeLicenseResponse;
 import org.egov.tl.web.models.TradeLicenseSearchCriteria;
@@ -999,7 +1009,7 @@ public class TradeLicenseService {
 
 
 
-	public Map<String, List<String>> getActionsOnApplication(TradeLicenseActionRequest tradeLicenseActionRequest) {
+	public TradeLicenseActionResponse getActionsOnApplication(TradeLicenseActionRequest tradeLicenseActionRequest) {
 		
 		if(CollectionUtils.isEmpty(tradeLicenseActionRequest.getApplicationNumbers())) {
 			throw new CustomException("INVALID REQUEST","Provide Application Number.");
@@ -1057,7 +1067,13 @@ public class TradeLicenseService {
 			applicationActionMaps.put(applicationNumber, actions);
 		});
 		
-		return applicationActionMaps;
+		List<NextAction> nextActionList = new ArrayList<>();
+		applicationActionMaps.entrySet().stream().forEach(entry -> {
+			nextActionList.add(NextAction.builder().applicationNumber(entry.getKey()).action(entry.getValue()).build());
+		});
+		
+		TradeLicenseActionResponse tradeLicenseActionResponse = TradeLicenseActionResponse.builder().nextActions(nextActionList).build();
+		return tradeLicenseActionResponse;
 	
 	}
 
