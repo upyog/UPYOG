@@ -19,12 +19,12 @@ public class CommunityHallBookingQueryBuilder {
 
 	private static final StringBuilder bookingDetailsQuery = new StringBuilder(
 			"SELECT ecbd.booking_id, booking_no, payment_date, application_date, tenant_id, community_hall_code, \n"
-					+ "booking_status, special_category, purpose, purpose_description, ecbd.createdby, ecbd.createdtime, \n"
+					+ "booking_status, special_category, purpose, purpose_description, receipt_no, ecbd.createdby, ecbd.createdtime, \n"
 					+ "ecbd.lastmodifiedby, ecbd.lastmodifiedtime,\n" + "	\n"
 					+ "appl.applicant_detail_id, applicant_name, applicant_email_id, applicant_mobile_no,\n"
 					+ "applicant_alternate_mobile_no, account_no, ifsc_code, bank_name, bank_branch_name, \n"
 					+ "account_holder_name, \n" + "\n" + "address_id, door_no, house_no, address_line_1, \n"
-					+ "landmark, city, pincode, street_name, locality_code\n" + "	\n"
+					+ "landmark, city, city_code, pincode, street_name, locality, locality_code\n" + "	\n"
 					+ "FROM public.eg_chb_booking_detail ecbd \n"
 					+ "join public.eg_chb_applicant_detail appl on ecbd.booking_id = appl.booking_id\n"
 					+ "join public.eg_chb_address_detail addr on appl.applicant_detail_id = addr.applicant_detail_id ");
@@ -36,7 +36,7 @@ public class CommunityHallBookingQueryBuilder {
 	private final String paginationWrapper = "SELECT * FROM " + "(SELECT *, DENSE_RANK() OVER () offset_ FROM " + "({})"
 			+ " result) result_offset " + "WHERE offset_ > ? AND offset_ <= ?";
 
-	private static final String COMMUNITY_HALL_SLOTS_AVAIALABILITY_QUERY = " SELECT ecbd.tenant_id, ecbd.community_hall_code, ecsd.hall_code, ecsd.status,ecsd.booking_date \n"
+	private static final String COMMUNITY_HALL_SLOTS_AVAIALABILITY_QUERY = " SELECT ecbd.tenant_id, ecbd.community_hall_code, ecsd.capacity, ecsd.hall_code, ecsd.status,ecsd.booking_date \n"
 			+ "	FROM eg_chb_booking_detail ecbd, eg_chb_slot_detail ecsd\n"
 			+ "where ecbd.booking_id = ecsd.booking_id and ecbd.tenant_id= ? and ecbd.community_hall_code = ?\n"
 			+ " and ecsd.status = ? and \n"

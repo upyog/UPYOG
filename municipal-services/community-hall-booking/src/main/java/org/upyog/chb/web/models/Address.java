@@ -32,6 +32,8 @@ public class Address   {
         private String doorNo;
 
         private String houseNo;
+        
+        private String streetName;
 
         private String addressLine1;
 
@@ -39,14 +41,17 @@ public class Address   {
 
         @NotBlank
         private String city;
+        
+        private String cityCode;
 
         @NotBlank
-        private String pincode;
-
-        private String streetName;
+        private String locality;
 
         @NotBlank
         private String localityCode;
+        
+        @NotBlank
+        private String pincode;
         
 }
 
