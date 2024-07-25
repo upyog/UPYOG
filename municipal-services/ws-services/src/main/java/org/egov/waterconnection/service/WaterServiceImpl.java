@@ -334,6 +334,7 @@ public class WaterServiceImpl implements WaterService {
 		else if (waterConnectionRequest.isReconnectRequest() || waterConnectionRequest.getWaterConnection().getApplicationType().equalsIgnoreCase(WCConstants.WATER_RECONNECTION)) {
 			return updateWaterConnectionForReconnectFlow(waterConnectionRequest);
 		}
+		 Boolean ismeterentry=false;
 		SearchCriteria criteria = new SearchCriteria();
 		log.info("con" + wsUtil.isModifyConnectionRequest(waterConnectionRequest));
 		log.info("isDisconnection" +waterConnectionRequest.getWaterConnection().getIsDisconnectionTemporary());
@@ -341,6 +342,24 @@ public class WaterServiceImpl implements WaterService {
 			// Received request to update the connection for modifyConnection WF
 			return updateWaterConnectionForModifyFlow(waterConnectionRequest);
 		}
+		
+		Map <String , String> adddetails=(Map<String, String>)waterConnectionRequest.getWaterConnection().getAdditionalDetails();
+		String ismeter=null;
+		String metermake=null;
+		if (!adddetails.containsKey("meterMakeentry")) {
+			ismeter="false";
+		}
+		else
+		{
+			 ismeter=adddetails.get("meterMakeentry");
+			 metermake=adddetails.get("meterMake");
+			 adddetails.put("isnumberchange", "new_value"); 
+			  ismeterentry=true;
+			 waterDaoImpl.pushForEditNotification(waterConnectionRequest, true,ismeterentry);
+			 return Arrays.asList(waterConnectionRequest.getWaterConnection());
+		}
+		
+		
 		waterConnectionValidator.validateWaterConnection(waterConnectionRequest, WCConstants.UPDATE_APPLICATION);
 		mDMSValidator.validateMasterData(waterConnectionRequest,WCConstants.UPDATE_APPLICATION );
 		Property property = validateProperty.getOrValidateProperty(waterConnectionRequest);
@@ -375,7 +394,7 @@ public class WaterServiceImpl implements WaterService {
 		//call calculator service to generate the demand for one time fee
 		calculationService.calculateFeeAndGenerateDemand(waterConnectionRequest, property);
 		//check for edit and send edit notification
-		waterDaoImpl.pushForEditNotification(waterConnectionRequest, isStateUpdatable);
+		waterDaoImpl.pushForEditNotification(waterConnectionRequest, isStateUpdatable,  ismeterentry);
 		//Enrich file store Id After payment
 		enrichmentService.enrichFileStoreIds(waterConnectionRequest);
 //		userService.createUser(waterConnectionRequest);
@@ -577,6 +596,7 @@ public class WaterServiceImpl implements WaterService {
 		BusinessService businessService = workflowService.getBusinessService(
 				waterConnectionRequest.getWaterConnection().getTenantId(), waterConnectionRequest.getRequestInfo(),
 				config.getModifyWSBusinessServiceName());
+		 Boolean ismeterentry=false;
 		WaterConnection searchResult = getConnectionForUpdateRequest(
 				waterConnectionRequest.getWaterConnection().getId(), waterConnectionRequest.getRequestInfo());
 
@@ -597,7 +617,7 @@ public class WaterServiceImpl implements WaterService {
 		boolean isStateUpdatable = waterServiceUtil.getStatusForUpdate(businessService, previousApplicationStatus);
 
 		//check for edit and send edit notification
-		waterDaoImpl.pushForEditNotification(waterConnectionRequest, isStateUpdatable);
+		waterDaoImpl.pushForEditNotification(waterConnectionRequest, isStateUpdatable,ismeterentry);
 
 		/* encrypt here */
 		waterConnectionRequest.setWaterConnection(encryptConnectionDetails(waterConnectionRequest.getWaterConnection()));
@@ -609,7 +629,7 @@ public class WaterServiceImpl implements WaterService {
 		// setting oldApplication Flag
 		markOldApplication(waterConnectionRequest);
 		// check for edit and send edit notification
-		waterDaoImpl.pushForEditNotification(waterConnectionRequest, isStateUpdatable);
+		waterDaoImpl.pushForEditNotification(waterConnectionRequest, isStateUpdatable,ismeterentry);
 		enrichmentService.postForMeterReading(waterConnectionRequest, WCConstants.MODIFY_CONNECTION);
 
 		/* decrypt here */

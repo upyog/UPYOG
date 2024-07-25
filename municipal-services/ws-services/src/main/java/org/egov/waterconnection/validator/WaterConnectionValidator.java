@@ -57,7 +57,8 @@ public class WaterConnectionValidator {
 		ValidatorResult isPropertyValidated = propertyValidator.validate(waterConnectionRequest, reqType);
 		if (!isPropertyValidated.isStatus())
 			errorMap.putAll(isPropertyValidated.getErrorMessage());
-		if(!channel.equalsIgnoreCase("CITIZEN")) {
+		String usertype = waterConnectionRequest.getRequestInfo().getUserInfo().getType();
+		if(!usertype.equalsIgnoreCase("CITIZEN")) {
 		ValidatorResult isWaterFieldValidated = waterFieldValidator.validate(waterConnectionRequest, reqType);
 		if (!isWaterFieldValidated.isStatus())
 			errorMap.putAll(isWaterFieldValidated.getErrorMessage());
