@@ -252,8 +252,13 @@ public class EstimationService {
 					BigDecimal restMonths=	BigDecimal.valueOf(12).subtract(noofmonths);
 					slab = getSlabForCalc(filteredBillingSlabs, unit);
 					BigDecimal tax=BigDecimal.valueOf(Math.round(getTaxForUnit(slab, unit,assessmentYear).doubleValue()));
-					BigDecimal addTax=
-					tax.multiply(restMonths).divide(BigDecimal.valueOf(12),2, RoundingMode.HALF_UP);
+					
+					BigDecimal addTax=BigDecimal.ZERO;
+							if(restMonths.compareTo(BigDecimal.ZERO)>0)
+								addTax=tax.multiply(restMonths).divide(BigDecimal.valueOf(12),2, RoundingMode.HALF_UP);
+							else
+								addTax=tax.multiply(noofmonths).divide(BigDecimal.valueOf(12),2, RoundingMode.HALF_UP);
+							
 					log.info(tax+" tax  addTax"+addTax);
 					currentUnitTax =currentUnitTax.add(addTax);
 					log.info(occ+" occ  currentUnitTax"+currentUnitTax);
