@@ -78,7 +78,7 @@ public class PaymentNotificationService {
 						.build();
 				CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder()
 						.requestInfo(paymentRequest.getRequestInfo()).hallsBookingApplication(bookingDetail).build();
-				bookingService.updateBooking(bookingRequest);
+				bookingService.updateBooking(bookingRequest, paymentRequest.getPayment().getPaymentDetails().get(0));
 			}
 		} catch (IllegalArgumentException e) {
 			log.error("Illegal argument exception occured while sending notification CHB : " + e.getMessage());

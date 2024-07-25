@@ -1,5 +1,5 @@
 
-create table eg_chb_booking_detail_init(
+create table  IF NOT EXISTS eg_chb_booking_detail_init(
   booking_id character varying(64) NOT NULL,
   tenant_id character varying(10) NOT NULL,
   community_hall_id character varying(64) NOT NULL, 

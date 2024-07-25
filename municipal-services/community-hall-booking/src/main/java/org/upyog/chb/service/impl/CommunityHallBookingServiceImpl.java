@@ -27,6 +27,7 @@ import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabiltityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 
+import digit.models.coremodels.PaymentDetail;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -106,7 +107,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	}
 
 	@Override
-	public CommunityHallBookingDetail updateBooking(CommunityHallBookingRequest communityHallsBookingRequest) {
+	public CommunityHallBookingDetail updateBooking(CommunityHallBookingRequest communityHallsBookingRequest, PaymentDetail paymentDetail) {
 		String bookingNo = communityHallsBookingRequest.getHallsBookingApplication().getBookingNo();
 		log.info("Updating booking for booking no : " + bookingNo);
 		if(bookingNo == null) {
@@ -122,6 +123,10 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		communityHallsBookingRequest.setHallsBookingApplication(bookingDetails.get(0));
 		
 		enrichmentService.enrichUpdateBookingRequest(communityHallsBookingRequest);
+		if(paymentDetail != null) {
+			communityHallsBookingRequest.getHallsBookingApplication().setReceiptNo(paymentDetail.getReceiptNumber());
+			communityHallsBookingRequest.getHallsBookingApplication().setPaymentDate(paymentDetail.getReceiptDate());
+		}
 		bookingRepository.updateBooking(communityHallsBookingRequest);
 		log.info("fetched booking detail and updated status " + communityHallsBookingRequest.getHallsBookingApplication().getBookingStatus() );
 		return communityHallsBookingRequest.getHallsBookingApplication();
