@@ -2,6 +2,7 @@ package org.egov.demand.model;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import org.egov.demand.web.contract.RequestInfoWrapper;
 
 import org.egov.common.contract.request.RequestInfo;
 

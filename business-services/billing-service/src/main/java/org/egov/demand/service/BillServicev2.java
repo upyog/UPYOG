@@ -80,6 +80,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.demand.config.ApplicationProperties;
 import org.egov.demand.model.BillAccountDetailV2;
 import org.egov.demand.model.BillDetailV2;
+import org.egov.demand.model.BillList;
 import org.egov.demand.model.BillSearchCriteria;
 import org.egov.demand.model.BillV2;
 import org.egov.demand.model.BillV2.BillStatus;
@@ -185,21 +186,25 @@ public class BillServicev2 {
 	 * @param cancelBillCriteria
 	 * @param requestInfoWrapper
 	 */
-	public Integer cancelBill(UpdateBillRequest updateBillRequest) {
+public Integer cancelBill(UpdateBillRequest updateBillRequest) {
 		
 		UpdateBillCriteria cancelBillCriteria = updateBillRequest.getUpdateBillCriteria();
-		//billValidator.validateBillSearchRequest(cancelBillCriteria);
-		Set<String> consumerCodes = cancelBillCriteria.getConsumerCodes();
+	
 		cancelBillCriteria.setStatusToBeUpdated(BillStatus.CANCELLED);
-
-		if (!CollectionUtils.isEmpty(consumerCodes) && consumerCodes.size() > 1) {
-			
-			throw new CustomException("EG_BS_CANCEL_BILL_ERROR", "Only one consumer code can be provided in the Cancel request");
-		} else {
-			int result = billRepository.updateBillStatus(cancelBillCriteria);
+		int result = 0;
+		for(BillList bill : cancelBillCriteria.getBillList()) 
+		{
+			String businessService = bill.getBusinessService();
+			String consumercodes = bill.getConsumerCode();
+			 Set<String> consumerCodeSet = new HashSet<>();
+		        consumerCodeSet.add(consumercodes);	
+		        cancelBillCriteria.setConsumerCodes(consumerCodeSet);
+            
+			 result = billRepository.updateBillStatus(cancelBillCriteria);
 			sendNotificationForBillCancellation(updateBillRequest.getRequestInfo(), cancelBillCriteria);
-			return result;
+		
 		}
+			return result;
 	}
 
 	private void sendNotificationForBillCancellation(RequestInfo requestInfo, UpdateBillCriteria cancelBillCriteria) {
@@ -876,7 +881,7 @@ private List<Demand> filterMultipleActiveDemands(List<Demand> demands) {
 	public void cancelBill( CancelBillCriteria cancelBillCriteria) {
 		try {
 		String billId=billRepository.getLatestActiveBillId(cancelBillCriteria);
-		billRepository.updateBillStatusBYId(billId,BillStatus.EXPIRED.toString());
+		billRepository.updateBillStatusBYId(billId,BillStatus.CANCELLED.toString());
 		}
 		catch (Exception e) {
 			throw new CustomException("EGBS_CANCEL_BILL_ERROR", e.getMessage());

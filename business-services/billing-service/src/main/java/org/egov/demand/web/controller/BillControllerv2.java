@@ -105,18 +105,16 @@ public class BillControllerv2 {
 	
 	@PostMapping("_cancelbill")
 	@ResponseBody
-	public ResponseEntity<?> cancelBill(@RequestBody RequestInfoWrapper requestInfoWrapper, 
-			@ModelAttribute @Valid CancelBillCriteria cancelBillCriteria){
+	public ResponseEntity<?> cancelBill(@RequestBody @Valid CancelBillCriteria cancelBillCriteria){
 		log.info("_cancelbill criteria : "+cancelBillCriteria);
 		UpdateBillRequest updateBillRequest =  new UpdateBillRequest();
-		updateBillRequest.setRequestInfo(requestInfoWrapper.getRequestInfo());
+		updateBillRequest.setRequestInfo(cancelBillCriteria.getRequestInfo());
 		UpdateBillCriteria objectBillCriteria =new UpdateBillCriteria();
 		objectBillCriteria.setTenantId(cancelBillCriteria.getTenantId());
-		  Set<String> consumerCodeSet = new HashSet<>();
-	        consumerCodeSet.add(cancelBillCriteria.getConsumerCode());
-		//objectBillCriteria.setConsumerCodes(Set.of(cancelBillCriteria.getConsumerCode().split(",")));
-		objectBillCriteria.setBusinessService(cancelBillCriteria.getBusinessService());
-		objectBillCriteria.setConsumerCodes(consumerCodeSet);
+
+		objectBillCriteria.setBillList(cancelBillCriteria.getBillList());
+//		objectBillCriteria.setBusinessService(cancelBillCriteria.getBusinessService());
+//		objectBillCriteria.setConsumerCodes(consumerCodeSet);
 		updateBillRequest.setUpdateBillCriteria(objectBillCriteria);
 		billService.cancelBill(updateBillRequest);
 		return new ResponseEntity<>(Constants.SUCCESS_CANCEL_BILL, HttpStatus.CREATED);

@@ -1,11 +1,14 @@
 package org.egov.demand.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
 import org.egov.demand.model.BillV2.BillStatus;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.AllArgsConstructor;
@@ -27,6 +30,9 @@ public class UpdateBillCriteria {
 	
 	@NotNull
 	private String businessService;
+	
+	@NotNull
+	private List<BillList> BillList = new ArrayList<>();
 	
 	@NotNull
 	private  JsonNode additionalDetails;

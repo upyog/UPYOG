@@ -267,10 +267,10 @@ public class BillQueryBuilder {
 		preparedStatementValues.add(Constants.ACTIVE.toString());
 
 		selectQuery.append(" AND billdetail.businessservice = ?");
-		preparedStatementValues.add(cancelBillCriteria.getBusinessService().toString());
+		preparedStatementValues.add(cancelBillCriteria.getBillList().toString());
 
 		selectQuery.append(" AND billdetail.consumercode = ?");
-		preparedStatementValues.add(cancelBillCriteria.getConsumerCode().toString());
+		preparedStatementValues.add(cancelBillCriteria.getBillList().toString());
 
 		selectQuery.append(" order by bill.createddate desc limit 1");
 
