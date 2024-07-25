@@ -88,7 +88,7 @@ public class CHBNotificationService {
 		String tenantId = bookingRequest.getHallsBookingApplication().getTenantId();
 		String localizationMessages = util.getLocalizationMessages(tenantId, bookingRequest.getRequestInfo());
 		String message = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages);
-
+		log.info("Message for sending sms : " + message);
 		smsRequests.addAll(util.createSMSRequest(bookingRequest, message, mobileNumberToOwner));
 	}
 
@@ -96,7 +96,6 @@ public class CHBNotificationService {
 
 		List<Event> events = new ArrayList<>();
 		String tenantId = request.getHallsBookingApplication().getTenantId();
-		String localizationMessages = util.getLocalizationMessages(tenantId, request.getRequestInfo());
 		List<String> toUsers = new ArrayList<>();
 
 		// Mobile no will be used to filter out user to send notification
@@ -109,8 +108,10 @@ public class CHBNotificationService {
 		}
 
 		toUsers.add(mapOfPhoneNoAndUUIDs.get(mobileNumber));
+		String localizationMessages = util.getLocalizationMessages(tenantId, request.getRequestInfo());
 		String message = util.getCustomizedMsg(request.getHallsBookingApplication(), localizationMessages);
-		log.info("Message for event in CHB module:" + message);
+		
+		log.info("Message for user event : " + message);
 		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
 		log.info("Recipient object in CHB event :" + recepient.toString());
 		events.add(Event.builder().tenantId(tenantId).description(message)
