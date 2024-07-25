@@ -238,7 +238,12 @@ params.add("access_code", MERCHANT_ACCESS_CODE);
                  String ccaRequest="";         
                  String orderId= currentStatus.getTxnId();
 	         String encResp = params.get("encResp");
-                 ccaRequest =  "{'order_no': '"+orderId+"'}";
+                 String refNo = getRefNo(encResp);
+                 if (refNo != null && !refNo.equalsIgnoreCase("null") && !refNo.isEmpty()) {
+    			 ccaRequest =  "{'reference_no': '"+refNo+"'}";
+                 }else {
+    			 ccaRequest =  "{'order_no': '"+orderId+"'}";
+                 }    	         
   		String pCommand="orderStatusTracker";
  		String pRequestType="JSON";
  		String pResponseType="JSON";
@@ -276,7 +281,16 @@ params.add("access_code", MERCHANT_ACCESS_CODE);
 		return txn;
     }
 
-
+	private String getRefNo(String encResp) {
+ 				AesUtil aesUtilenc=new AesUtil("91390F86F5BA01AD2012E26F59F2340E");
+				String decRespp = aesUtilenc.decrypt(encResp);
+				log.info(decRespp);
+				String[] keyValuePairs2 = decRespp.split(",");
+				String referenceno = keyValuePairs2[0];
+				log.info("Reference no is"+referenceno);
+				referenceno = referenceno.substring(17, (referenceno.length())-1);
+				return referenceno;
+ 			}
 public static String processUrlConnectionReq(String pBankData,String pBankUrl) throws Exception{
 		URL	vUrl = null;
 		URLConnection vHttpUrlConnection = null;
