@@ -1027,7 +1027,8 @@ public class TradeLicenseService {
 			
 			
 			// fetch business service search
-			StringBuilder uri = new StringBuilder("http://localhost:8280/egov-workflow-v2/egov-wf/businessservice/_search");
+			StringBuilder uri = new StringBuilder(config.getWfHost());
+			uri.append(config.getWfBusinessServiceSearchPath());
 			uri.append("?tenantId=").append(applicationTenantId);
 			uri.append("&businessServices=").append(applicationBusinessId);
 			RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
@@ -1041,7 +1042,7 @@ public class TradeLicenseService {
 			}
 			List<State> stateList = businessServiceResponse.getBusinessServices().get(0).getStates().stream()
 					.filter(state -> StringUtils.equalsIgnoreCase(state.getApplicationStatus(), applicationStatus)
-										&& !StringUtils.equalsAnyIgnoreCase(state.getApplicationStatus(), TLConstants.STATUS_INITIATED, TLConstants.STATUS_APPROVED)).collect(Collectors.toList());
+										&& !StringUtils.equalsAnyIgnoreCase(state.getApplicationStatus(), TLConstants.STATUS_APPROVED)).collect(Collectors.toList());
 			
 			List<String> actions = new ArrayList<>();
 			stateList.stream().forEach(state -> {
