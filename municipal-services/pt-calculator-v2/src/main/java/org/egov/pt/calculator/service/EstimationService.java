@@ -245,16 +245,18 @@ public class EstimationService {
 					
 					BigDecimal  noofmonths=BigDecimal.valueOf(Double.parseDouble(unit.getAdditionalDetails().get("rentedformonths").toString()));
 					log.info(noofmonths+" noofmonths  ");
-					if(noofmonths.compareTo(BigDecimal.valueOf(13)) < 0 )
+					if(noofmonths.compareTo(BigDecimal.valueOf(12)) <= 0 )
 					{
 					String occ=unit.getAdditionalDetails().has("usageForDueMonths")?unit.getAdditionalDetails().get("usageForDueMonths").toString():"SELFOCCUPIED";
 					unit.setOccupancyType(occ.substring(1).substring(0,occ.length()-2));
 					BigDecimal restMonths=	BigDecimal.valueOf(12).subtract(noofmonths);
 					slab = getSlabForCalc(filteredBillingSlabs, unit);
 					BigDecimal tax=BigDecimal.valueOf(Math.round(getTaxForUnit(slab, unit,assessmentYear).doubleValue()));
-					BigDecimal addTax=tax.multiply(restMonths).divide(BigDecimal.valueOf(12),2, RoundingMode.HALF_UP);
+						BigDecimal addTax=
+						tax.multiply(restMonths).divide(BigDecimal.valueOf(12),2, RoundingMode.HALF_UP);
+						log.info(tax+" tax  addTax"+addTax);
 					currentUnitTax =currentUnitTax.add(addTax);
-					log.info(occ+" occ  ");
+					log.info(occ+" occ  currentUnitTax"+currentUnitTax);
 					billingSlabIds.add(slab.getId()+"|"+i);
 					unitSlabMapping.put(unit, slab);
 					}	
