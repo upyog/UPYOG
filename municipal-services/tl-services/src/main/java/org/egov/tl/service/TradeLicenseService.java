@@ -31,6 +31,7 @@ import javax.validation.ValidatorFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.common.contract.response.ErrorResponse;
 import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.repository.TLRepository;
@@ -276,12 +277,71 @@ public class TradeLicenseService {
              licenses = getLicensesWithOwnerInfo(criteria,requestInfo);
          }
          
-         // calculate passed dates from creation date
-         enrichPassedDates(licenses);
-
+         // post search activity
+         licenses = enrichPostSearchLicense(licenses,requestInfo,criteria);
+         
          return licenses;       
     }
     
+	private List<TradeLicense> enrichPostSearchLicense(List<TradeLicense> licenses, RequestInfo requestInfo,
+			TradeLicenseSearchCriteria criteria) {
+
+		// calculate passed dates from creation date
+        enrichPassedDates(licenses);
+        
+        // filter role based search TL
+        List<TradeLicense> tempLicenses = filterLicensesBasedOnRolesWithinTenantId(licenses, requestInfo, criteria);
+		
+		return tempLicenses;
+
+	}
+
+
+	private List<TradeLicense> filterLicensesBasedOnRolesWithinTenantId(List<TradeLicense> licenses,
+			RequestInfo requestInfo, TradeLicenseSearchCriteria criteria) {
+		
+		List<TradeLicense> tempLicenses = licenses;
+		
+		if(StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), TLConstants.ROLE_CODE_EMPLOYEE)) {
+			
+			tempLicenses = licenses.stream().filter(license -> 
+						!StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_INITIATED))
+					.collect(Collectors.toList());
+			
+			List<String> rolesWithinTenant = getRolesWithinTenant(criteria.getTenantId(), requestInfo.getUserInfo().getRoles());
+			
+			if(!rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_VERIFIER)) {
+				tempLicenses = tempLicenses.stream().filter(license -> 
+				!StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORVERIFICATION))
+			.collect(Collectors.toList());
+			}
+			
+			if(!rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_APPROVER)) {
+				tempLicenses = tempLicenses.stream().filter(license -> 
+				!StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORAPPROVAL))
+			.collect(Collectors.toList());
+			}
+			
+		}
+		return tempLicenses;
+	}
+
+
+
+
+
+	private List<String> getRolesWithinTenant(String tenantId, List<Role> roles) {
+
+		List<String> roleCodes = roles.stream()
+				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(role -> role.getCode())
+				.collect(Collectors.toList());
+		return roleCodes;
+	}
+
+
+
+
+
 	private void enrichPassedDates(List<TradeLicense> licenses) {
 		licenses.stream().forEach(license -> {
 			

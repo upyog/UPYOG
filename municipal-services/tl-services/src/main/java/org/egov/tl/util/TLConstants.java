@@ -457,5 +457,11 @@ public class TLConstants {
     public TLConstants() {}
 
     public static final String TENANTS_JSONPATH = "$.MdmsRes.tenant.tenants";
+    
+    public static String ROLE_CODE_EMPLOYEE = "EMPLOYEE";
+
+    public static String ROLE_CODE_TL_VERIFIER = "TL_VERIFIER";
+
+    public static String ROLE_CODE_TL_APPROVER = "TL_APPROVER";
 
 }
