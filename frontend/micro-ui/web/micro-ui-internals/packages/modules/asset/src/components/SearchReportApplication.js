@@ -11,7 +11,7 @@
 
 import React, { useCallback, useMemo, useEffect } from "react"
 import { useForm, Controller } from "react-hook-form";
-import { TextInput, SubmitBar, DatePicker, SearchForm, SearchField, Dropdown, Table, Card, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
+import {SubmitBar, DatePicker, SearchForm, SearchField, Dropdown, Table, Card, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
@@ -22,7 +22,8 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
     console.log("data",data);
     
     const isMobile = window.Digit.Utils.browser.isMobile();
-
+    const todaydate = new Date();
+    const today = todaydate.toISOString().split("T")[0];
     const user = Digit.UserService.getUser();
    const allCities = Digit.Hooks.asset.useTenants();
 
@@ -78,7 +79,6 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
           {
             Header: t("ES_ASSET_RESPONSE_CREATE_LABEL"),
             Cell: ( row ) => {
-              console.log("roeewwwinaplicationn",row);
               return GetCell(`${row?.row?.original?.["applicationNo"]}`)
             },
             disableSortBy: true,
@@ -233,11 +233,6 @@ const downloadQRReport = async () => {
   doc.save("Asset-QR-Reports.pdf");
 };
 
-
-
-
-
-
     return <React.Fragment>
                 
                 <div>
@@ -285,7 +280,7 @@ const downloadQRReport = async () => {
                 <SearchField>
                     <label>{t("AST_FROM_DATE")}</label>
                     <Controller
-                        render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+                        render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today} />}
                         name="fromDate"
                         control={control}
                         />
@@ -293,7 +288,7 @@ const downloadQRReport = async () => {
                 <SearchField>
                     <label>{t("AST_TO_DATE")}</label>
                     <Controller
-                        render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+                        render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today} />}
                         name="toDate"
                         control={control}
                         />

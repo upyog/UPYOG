@@ -30,8 +30,8 @@ export const sethallDetails = (data) => {
       hallCode: slot.hallCode,
       bookingDate:slot.bookingDate,
       bookingFromTime:"10:00",
-      bookingToTime:"11:59",
-      status:"BOOKED",
+      bookingToTime:"23:59",
+      status:"BOOKING_CREATED",
     };
 
   }) || [];

@@ -88,8 +88,6 @@ const CHBApplicationDetails = () => {
     },
     { enabled: acknowledgementIds ? true : false }
   );
-  console.log("reciept_data-->",reciept_data);
-  console.log("reciept_data1234-->",acknowledgementIds);
   //WorkFlow
   if (!chb_details.workflow) {
     let workflow = {
@@ -142,6 +140,13 @@ const CHBApplicationDetails = () => {
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   }
+  async function getPermissionLetter({ tenantId, payments, ...params }) {
+    let response =await Digit.PaymentService.generatePdf(
+      tenantId,
+      { hallsBookingApplication: [data?.hallsBookingApplication?.[0]] }, "chbpermissionletter");
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+    window.open(fileStore[response?.filestoreIds[0]], "_blank");
+  }
 
   const handleDownload = async (document, tenantid) => {
     let tenantId = tenantid ? tenantid : tenantId;
@@ -178,6 +183,11 @@ const CHBApplicationDetails = () => {
     dowloadOptions.push({
       label: t("CHB_FEE_RECIEPT"),
       onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+    });
+  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+    dowloadOptions.push({
+      label: t("CHB_PERMISSION_LETTER"),
+      onClick: () => getPermissionLetter({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
     });
 
   // if (reciept_data?.Payments[0]?.paymentStatus === "DEPOSITED")

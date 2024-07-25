@@ -78,6 +78,7 @@ module.exports = function (app) {
     "/chb-services/booking/v1/_search",
     "/chb-services/booking/v1/_update",
     "/chb-services/booking/v1/_slot-search",
+    "/chb-services/booking/v1/_estimate",
     "/billing-service/bill/v2/_fetchbill",
     "/collection-services/payments/pet-services/_search",
     "/requester-services-dx"

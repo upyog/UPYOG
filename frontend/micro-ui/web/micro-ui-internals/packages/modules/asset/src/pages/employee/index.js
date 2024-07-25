@@ -42,21 +42,10 @@ const EmployeeApp = ({ path, url, userType }) => {
       {
         path: "/digit-ui/employee/asset/assetservice/inbox",
         content: t("ES_TITLE_INBOX"),
-        show: location.pathname.includes("asset/assetservice/inbox") ? true : false,
+        show: location.pathname.includes("asset/assetservice/inbox") ? false : false,
       },
-     
-    
-      {
-        path: "/digit-ui/employee/asset/assetservice/my-asset",
-        content: t("ES_COMMON_APPLICATION_SEARCH"),
-        show: location.pathname.includes("asset/assetservice/my-asset") || location.pathname.includes("/asset/assetservice/applicationsearch/application-details/") ? true : false,
-      },
-      
-     
-      
     ];
-  
-    return <BreadCrumb style={isMobile?{display:"flex"}:{}}  spanStyle={{maxWidth:"min-content"}} crumbs={crumbs} />;
+    return <BreadCrumb style={isMobile?{display:"flex"}:{margin: "0 0 4px", color:"#000000" }}  spanStyle={{maxWidth:"min-content"}} crumbs={crumbs} />;
   }
 
   
@@ -67,14 +56,21 @@ const EmployeeApp = ({ path, url, userType }) => {
   const Response = Digit?.ComponentRegistryService?.getComponent("AssetResponse");
   const ReturnResponse = Digit?.ComponentRegistryService?.getComponent("returnResponse");
   const isRes = window.location.href.includes("asset/response");
-  const isNewRegistration = window.location.href.includes("new-asset") || window.location.href.includes("modify-application") || window.location.href.includes("asset/assetservice/application-details");
+  const isNewRegistration = window.location.href.includes("new-assets") || window.location.href.includes("asset/assetservice/application-details");
 
   return (
     <Switch>
       <AppContainer>
       <React.Fragment>
         <div className="ground-container">
-          {!isRes ? <div style={isNewRegistration ? {marginLeft: "12px" } : {marginLeft:"-4px"}}><BackButton location={location} /> </div> : null}
+        {!isRes ? 
+              <div style={isNewRegistration ? { marginLeft: "12px",display: "flex", alignItems: "center" } : { marginLeft: "-4px",display: "flex", alignItems: "center" }}>
+                  <BackButton location={location} />
+                  <span style={{ margin: "0 5px 16px", display: "inline-block" }}>|</span>
+                  <AssetBreadCrumbs location={location} />
+               
+              </div>
+          : null}
           <PrivateRoute exact path={`${path}/`} component={() => <ASSETLinks matchPath={path} userType={userType} />} />
           <PrivateRoute
             path={`${path}/assetservice/inbox`}
