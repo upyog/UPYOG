@@ -47,7 +47,7 @@ const refObj = (tenantId, filters) => {
     chb: {
       searchFn: () => chbApplications(null, { ...filters, bookingNo: consumerCodes }),
       key: "bookingNo",
-      label: "CHB_UNIQUE_BOOKING_NUMBER",
+      label: "CHB_BOOKING_NO",
     },
     fsm: {
       searchFn: () => fsmApplications(tenantId, filters),

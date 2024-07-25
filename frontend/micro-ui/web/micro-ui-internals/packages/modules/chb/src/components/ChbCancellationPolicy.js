@@ -37,7 +37,23 @@ const ChbCancellationPolicy = ({ count }) => {
         return formattedData;
       },
   });
-
+  // const { data: estimation, refetch } = Digit.Hooks.chb.useDemandEstimation({
+  //   tenantId: "pg.citya",
+  //   filters: {
+  //     "bookingSlotDetails": [
+  //       {
+  //         "bookingDate": "24-08-2024",
+  //         "bookingFromTime": "string",
+  //         "bookingId": "string",
+  //         "bookingToTime": "string",
+  //         "hallCode": "1001",
+  //         "slotId": "string",
+  //         "status": "BOOKING_CREATED"
+  //       }
+  //     ],
+  //   "communityHallCode": "MEHRAM_NAGAR_BARAT_GHAR",
+  //   }
+  // });
   const handleCancellationPolicyClick = () => {
     setShowCancellationPolicy(!showCancellationPolicy);
   };
