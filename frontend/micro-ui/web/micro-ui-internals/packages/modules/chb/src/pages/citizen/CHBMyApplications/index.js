@@ -1,5 +1,5 @@
-import { Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Header, Loader, TextInput, Dropdown, SubmitBar, CardLabel, Card } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ChbApplication from "./chb-application";
@@ -8,7 +8,11 @@ export const CHBMyApplications = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const user = Digit.UserService.getUser().info;
-  
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [status, setStatus] = useState("UPCOMING");
+  const [filteredApplications, setFilteredApplications] = useState([]);
+  const [applicationsList, setApplicationsList] = useState([]);
 
   let filter = window.location.href.split("/").pop();
   let t1;
@@ -21,46 +25,121 @@ export const CHBMyApplications = () => {
   }
   let filter1 = !isNaN(parseInt(filter))
     ? { limit: "50", sortOrder: "ASC", sortBy: "createdTime", offset: off, tenantId }
-    : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0",mobileNumber:user?.mobileNumber, tenantId };
+    : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", mobileNumber: user?.mobileNumber, tenantId };
 
   const { isLoading, isError, error, data } = Digit.Hooks.chb.useChbSearch({ filters: filter1 }, { filters: filter1 });
   
-  const {hallsBookingApplication: applicationsList } = data || {};
-  let combinedApplicationNumber = applicationsList?.length > 0 ? applicationsList?.map((ob) => ob?.bookingNo) : [];
-  let serviceSearchArgs = {
-    tenantId : tenantId,
-    referenceIds : combinedApplicationNumber,
-  }
-  const { isLoading:serviceloading, data : servicedata} = Digit.Hooks.useFeedBackSearch({ filters: { serviceSearchArgs } },{ filters: { serviceSearchArgs }, enabled : combinedApplicationNumber?.length > 0 ?true : false, cacheTime : 0 });
-  function getLabelValue(curservice){
-    let foundValue = servicedata?.Service?.find((ob) => ob?.referenceId?.includes(curservice?.bookingNo));
-    if(foundValue)
-    return t("CS_CF_VIEW")
-    else
-    return t("CHB_SUMMARY")
-  }
+  const { hallsBookingApplication } = data || {};
 
-  if (isLoading || serviceloading) {
+  const handleSearch = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    setFilteredApplications(
+      hallsBookingApplication?.filter(app => 
+        (searchTerm ? app.bookingNo.toLowerCase().includes(lowerCaseSearchTerm) : true) &&
+        (status.code === "UPCOMING" ? app.bookingSlotDetails.some(slot => {
+          const bookingDate = new Date(slot.bookingDate.split('-').reverse().join('-'));
+          return bookingDate >= today;
+        }) : true) ||
+        (status ? app.bookingStatus === status.code : true) &&
+        (status.code === "UPCOMING" ? app.bookingSlotDetails.some(slot => {
+          const bookingDate = new Date(slot.bookingDate.split('-').reverse().join('-'));
+          return bookingDate >= today;
+        }) : true)
+      ) || []
+    );
+  };
+
+  useEffect(() => {
+    if (hallsBookingApplication) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      setFilteredApplications(
+        hallsBookingApplication.filter(app => 
+          app.bookingSlotDetails.some(slot => {
+            const bookingDate = new Date(slot.bookingDate.split('-').reverse().join('-'));
+            return bookingDate >= today;
+          })
+        )
+      );
+      setApplicationsList(hallsBookingApplication);
+    }
+  }, [hallsBookingApplication]);
+
+  if (isLoading) {
     return <Loader />;
   }
 
+  const statusOptions = [
+    { i18nKey: "Upcoming", code: "UPCOMING", value: t("CHB_STATUS_UPCOMING") },
+    { i18nKey: "Booked", code: "BOOKED", value: t("CHB_STATUS_BOOKED") },
+    { i18nKey: "Booking Created", code: "BOOKING_CREATED", value: t("CHB_STATUS_BOOKING_CREATED") }
+  ];
 
   return (
     <React.Fragment>
       <Header>{`${t("CHB_MY_APPLICATION_HEADER")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
+      <Card>
+  <div style={{ margin: "16px" }}>
+    <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "16px" }}>
+      <div style={{ flex: 1 }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <CardLabel>{t("CHB_BOOKING_NO")}</CardLabel>
+          <TextInput
+            placeholder={t("Enter Booking No.")}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ width: "100%", padding: "8px", height: '150%' }}
+          />
+        </div>
+      </div>
+      <div style={{ flex: 1 }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <CardLabel>{t("PT_COMMON_TABLE_COL_STATUS_LABEL")}</CardLabel>
+          <Dropdown
+            className="form-field"
+            selected={status}
+            select={setStatus}
+            option={statusOptions}
+            placeholder={t("Select Status")}
+            optionKey="value"
+            style={{ width: "100%"}}
+            t={t}
+          />
+        </div>
+      </div>
       <div>
-        {applicationsList?.length > 0 &&
-          applicationsList.map((application, index) => (
+        <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
+      </div>
+    </div>
+  </div>
+</Card>
+      <div>
+        {filteredApplications.length > 0 &&
+          filteredApplications.map((application, index) => (
             <div key={index}>
-              <ChbApplication application={application} tenantId={user?.permanentCity} buttonLabel={getLabelValue(application)}/>
+              <ChbApplication
+                application={application}
+                tenantId={user?.permanentCity}
+                buttonLabel={t("CHB_SUMMARY")}
+              />
             </div>
           ))}
-        {!applicationsList?.length > 0 && <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("CHB_NO_APPLICATION_FOUND_MSG")}</p>}
+        {filteredApplications.length === 0 && !isLoading && (
+          <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("CHB_NO_APPLICATION_FOUND_MSG")}</p>
+        )}
 
-        {applicationsList?.length !== 0 && (
+        {filteredApplications.length !== 0 && (
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
-              <span className="link">{<Link to={`/digit-ui/citizen/chb/myBookings/${t1}`}>{t("CHB_LOAD_MORE_MSG")}</Link>}</span>
+              <span className="link">
+                <Link to={`/digit-ui/citizen/chb/myBookings/${t1}`}>
+                  {t("CHB_LOAD_MORE_MSG")}
+                </Link>
+              </span>
             </p>
           </div>
         )}
@@ -69,7 +148,9 @@ export const CHBMyApplications = () => {
       <p style={{ marginLeft: "16px", marginTop: "16px" }}>
         {t("chb_TEXT_NOT_ABLE_TO_FIND_THE_BOOKING")}{" "}
         <span className="link" style={{ display: "block" }}>
-          <Link to="/digit-ui/citizen/chb/bookHall/searchHall">{t("CHB_COMMON_CLICK_HERE_TO_REGISTER_NEW_BOOKING")}</Link>
+          <Link to="/digit-ui/citizen/chb/bookHall/searchHall">
+            {t("CHB_COMMON_CLICK_HERE_TO_REGISTER_NEW_BOOKING")}
+          </Link>
         </span>
       </p>
     </React.Fragment>

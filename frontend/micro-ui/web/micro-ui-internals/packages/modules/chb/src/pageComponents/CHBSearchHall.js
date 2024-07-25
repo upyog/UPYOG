@@ -60,13 +60,13 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     HallName.push({ i18nKey: `${slot.code}`, code: `${slot.code}`, value: `${slot.name}`, communityHallId: slot.communityHallId,address: slot.address});
   });
   Hall && Hall.map((slot) => {
-    HallId.push({ i18nKey: `${slot.code}`, code: `${slot.code}`, value: `${slot.code}`, communityHallId: slot.communityHallId });
+    HallId.push({ i18nKey: `${slot.HallCode}`, code: `${slot.HallCode}`, value: `${slot.HallCode}`, communityHallId: slot.communityHallId ,capacity:`${slot.capacity}`});
   });
   const hallCodeId = HallId.map((slot) => {
     if (selectedHall.communityHallId === slot.communityHallId) {
       return {
-        i18nKey: slot.code,
-        code: slot.code,
+        i18nKey: slot.code +" - " + slot.capacity + " Person",
+        code: slot.code +" - " + slot.capacity + " Person",
         value: slot.code,
         communityHallId: slot.communityHallId
       };
@@ -186,7 +186,9 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
             } else {
               const allRows = data.filter(row => row.status.props.children === "Available");
               setBookingSlotDetails(allRows);
+              if(bookingSlotDetails.length>0){
               setIsCheckboxSelected(true);
+              }
             }
           }}
         />
@@ -254,29 +256,30 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     }
   };
 
-  const handleSearch = () => {
-    const selectedHallName = selectedHall?.value || "";
-    const startDate = dateRange[0].startDate ? format(dateRange[0].startDate, 'dd-MM-yyyy') : "";
-    const endDate = dateRange[0].endDate ? format(dateRange[0].endDate, 'dd-MM-yyyy') : "";
-    const selectedHallCode = hallCode?.code || "";
-  
-    if (selectedHallName && startDate && endDate) {
-      const filters = {
-        communityHallCode: selectedHallName,
-        bookingStartDate: startDate,
-        bookingEndDate: endDate,
-        hallAddress:selectedHall?.address,
-        hallCode:selectedHall?.hallCode || "1001"
-      };
-  
-      if (selectedHallCode) {
-        filters.hallCode = selectedHallCode;
-      }
-      setSearchData(filters);
-    } else {
-      setShowToast({ error: true, label: 'Please select either Community Hall Name with Date or both.' });
-    }
-  };
+ const handleSearch = () => {
+  const selectedHallName = selectedHall?.value || "";
+  const startDate = dateRange[0].startDate ? format(dateRange[0].startDate, 'dd-MM-yyyy') : "";
+  const endDate = dateRange[0].endDate ? format(dateRange[0].endDate, 'dd-MM-yyyy') : "";
+  const selectedHallCode = hallCode?.code || "";
+
+  if (selectedHallName && startDate && endDate) {
+    // Find hallCodeId based on selectedHall.communityHallId
+    const hallCodeIds = hallCodeId.find(slot => selectedHall.communityHallId === slot.communityHallId)?.code;
+
+    const filters = {
+      communityHallCode: selectedHallName,
+      bookingStartDate: startDate,
+      bookingEndDate: endDate,
+      hallAddress: selectedHall?.address,
+      hallCode: selectedHallCode || hallCodeIds
+    };
+
+    setSearchData(filters);
+  } else {
+    setShowToast({ error: true, label: 'Please select either Community Hall Name with Date or both.' });
+  }
+};
+
   
 
   const handleBookClick = () => {

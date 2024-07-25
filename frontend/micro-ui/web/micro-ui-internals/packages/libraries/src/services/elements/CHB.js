@@ -35,7 +35,15 @@ export const CHBServices= {
       userService: auth === false ? auth : true,
       params: { tenantId, ...filters },
     }),
-
+    estimate: ({ tenantId, filters, auth }) =>
+    Request({
+      url: Urls.chb.estimate,
+      useCache: false,
+      method: "POST",
+      auth: auth === false ? auth : true,
+      userService: auth === false ? auth : true,
+      params: { tenantId, ...filters },
+    }),
     update: (details, tenantId) =>
     Request({
       url: Urls.chb.update,

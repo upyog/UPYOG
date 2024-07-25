@@ -94,17 +94,18 @@
             {
               Header: t("AST_ACTIONS"),
               Cell: ({ row }) => {
+                console.log("rowwwwwwwwwwinactionsss",row)
                 return (
                   <div>
                     <span className="link">
                     {row?.original?.status==="APPROVED" ?
                     (row?.original?.assetAssignment?.isAssigned  ? 
                         <Link to={`/digit-ui/employee/asset/assetservice/return-assets/`+ `${row?.original?.["applicationNo"]}`}>
-                            {t('AST_RETURN')}
+                            <SubmitBar label={t("AST_RETURN")} />
                         </Link>
                       :
                         <Link to={`/digit-ui/employee/asset/assetservice/assign-assets/`+ `${row?.original?.["applicationNo"]}`}>
-                          {t('AST_ASSIGN')}
+                          <SubmitBar label={t("AST_ASSIGN")} />
                         </Link>)
                       :
                       t('AST_SHOULD_BE_APPROVED_FIRST')
@@ -172,7 +173,7 @@
                   <SearchField>
                       <label>{t("AST_FROM_DATE")}</label>
                       <Controller
-                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today}/>}
                           name="fromDate"
                           control={control}
                           />
@@ -180,7 +181,7 @@
                   <SearchField>
                       <label>{t("AST_TO_DATE")}</label>
                       <Controller
-                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today}/>}
                           name="toDate"
                           control={control}
                           />
