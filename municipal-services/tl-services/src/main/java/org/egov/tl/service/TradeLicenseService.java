@@ -1,15 +1,6 @@
 package org.egov.tl.service;
 
-import static org.egov.tl.util.TLConstants.ACTION_STATUS_APPROVED;
-import static org.egov.tl.util.TLConstants.STATUS_APPLIED;
-import static org.egov.tl.util.TLConstants.STATUS_APPROVED;
-import static org.egov.tl.util.TLConstants.STATUS_INITIATED;
-import static org.egov.tl.util.TLConstants.STATUS_PENDINGFORMODIFICATION;
-import static org.egov.tl.util.TLConstants.STATUS_REJECTED;
-import static org.egov.tl.util.TLConstants.STATUS_VERIFIED;
-import static org.egov.tl.util.TLConstants.TRADE_LICENSE_MODULE_CODE;
-import static org.egov.tl.util.TLConstants.businessService_BPA;
-import static org.egov.tl.util.TLConstants.businessService_TL;
+import static org.egov.tl.util.TLConstants.*;
 import static org.egov.tracer.http.HttpUtils.isInterServiceCall;
 
 import java.io.IOException;
@@ -18,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +24,8 @@ import javax.validation.ValidatorFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
-import org.egov.common.contract.response.ErrorResponse;
 import org.egov.tl.config.TLConfiguration;
+import org.egov.tl.repository.RestCallRepository;
 import org.egov.tl.repository.TLRepository;
 import org.egov.tl.service.notification.EditNotificationService;
 import org.egov.tl.util.TLConstants;
@@ -42,20 +34,24 @@ import org.egov.tl.validator.TLValidator;
 import org.egov.tl.web.models.ApplicationStatusChangeRequest;
 import org.egov.tl.web.models.Difference;
 import org.egov.tl.web.models.OwnerInfo;
+import org.egov.tl.web.models.RequestInfoWrapper;
 import org.egov.tl.web.models.TradeLicense;
+import org.egov.tl.web.models.TradeLicenseActionRequest;
 import org.egov.tl.web.models.TradeLicenseRequest;
 import org.egov.tl.web.models.TradeLicenseResponse;
 import org.egov.tl.web.models.TradeLicenseSearchCriteria;
 import org.egov.tl.web.models.TradeUnit;
 import org.egov.tl.web.models.UpdateTLStatusCriteriaRequest;
+import org.egov.tl.web.models.contract.BusinessService;
+import org.egov.tl.web.models.contract.BusinessServiceResponse;
 import org.egov.tl.web.models.contract.PDFRequest;
 import org.egov.tl.web.models.contract.ProcessInstance;
 import org.egov.tl.web.models.contract.ProcessInstanceRequest;
 import org.egov.tl.web.models.contract.ProcessInstanceResponse;
+import org.egov.tl.web.models.contract.State;
 import org.egov.tl.web.models.contract.Alfresco.DMSResponse;
 import org.egov.tl.web.models.contract.Alfresco.DmsRequest;
 import org.egov.tl.web.models.user.UserDetailResponse;
-import org.egov.tl.web.models.workflow.BusinessService;
 import org.egov.tl.workflow.ActionValidator;
 import org.egov.tl.workflow.TLWorkflowService;
 import org.egov.tl.workflow.WorkflowIntegrator;
@@ -65,11 +61,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
@@ -119,6 +114,12 @@ public class TradeLicenseService {
 
     @Autowired
     private AlfrescoService alfrescoService;
+
+    @Autowired
+    private RestCallRepository restCallRepository;
+    
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Value("${workflow.bpa.businessServiceCode.fallback_enabled}")
     private Boolean pickWFServiceNameFromTradeTypeOnly;
@@ -992,6 +993,71 @@ public class TradeLicenseService {
 		tlObject.put("addressLine2", "your_address_line2_value");
 		tlObject.put("pincode", "your_pincode");
 		return tlObject;
+	}
+
+
+
+
+
+	public Map<String, List<String>> getActionsOnApplication(TradeLicenseActionRequest tradeLicenseActionRequest) {
+		
+		if(CollectionUtils.isEmpty(tradeLicenseActionRequest.getApplicationNumbers())) {
+			throw new CustomException("INVALID REQUEST","Provide Application Number.");
+		}
+		
+		Map<String, List<String>> applicationActionMaps = new HashMap<>();
+		
+		tradeLicenseActionRequest.getApplicationNumbers().stream().forEach(applicationNumber -> {
+			
+			// search application number
+			TradeLicenseSearchCriteria criteria = TradeLicenseSearchCriteria.builder()
+					.applicationNumber(applicationNumber)
+					.build();
+			List<TradeLicense> licenses = repository.getLicenses(criteria);
+			TradeLicense license = null != licenses ? licenses.get(0): null;
+			
+			if(null == license) {
+				throw new CustomException("LICENSE_NOT_FOUND","No License found with provided input.");
+			}
+			
+			String applicationStatus = license.getStatus();
+			String applicationTenantId = license.getTenantId();
+			String applicationBusinessId = license.getBusinessService();
+			List<String> rolesWithinTenant = getRolesWithinTenant(applicationTenantId, tradeLicenseActionRequest.getRequestInfo().getUserInfo().getRoles());
+			
+			
+			// fetch business service search
+			StringBuilder uri = new StringBuilder("http://localhost:8280/egov-workflow-v2/egov-wf/businessservice/_search");
+			uri.append("?tenantId=").append(applicationTenantId);
+			uri.append("&businessServices=").append(applicationBusinessId);
+			RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
+					.requestInfo(tradeLicenseActionRequest.getRequestInfo()).build();
+			LinkedHashMap<String, Object> responseObject = (LinkedHashMap<String, Object>) restCallRepository.fetchResult(uri, requestInfoWrapper);
+			BusinessServiceResponse businessServiceResponse = objectMapper.convertValue(responseObject
+																					, BusinessServiceResponse.class);
+			
+			if(null == businessServiceResponse || CollectionUtils.isEmpty(businessServiceResponse.getBusinessServices())) {
+				throw new CustomException("NO_BUSINESS_SERVICE_FOUND","Business service not found for application number: "+applicationNumber);
+			}
+			List<State> stateList = businessServiceResponse.getBusinessServices().get(0).getStates().stream()
+					.filter(state -> StringUtils.equalsIgnoreCase(state.getApplicationStatus(), applicationStatus)
+										&& !StringUtils.equalsAnyIgnoreCase(state.getApplicationStatus(), TLConstants.STATUS_INITIATED, TLConstants.STATUS_APPROVED)).collect(Collectors.toList());
+			
+			List<String> actions = new ArrayList<>();
+			stateList.stream().forEach(state -> {
+				state.getActions().stream()
+				.filter(action -> action.getRoles().stream().anyMatch(role -> rolesWithinTenant.contains(role)))
+				.forEach(action -> {
+					actions.add(action.getAction());
+				});
+			}) ;
+			
+			
+			applicationActionMaps.put(applicationNumber, actions);
+		});
+		
+		return applicationActionMaps;
+	
 	}
 
 }

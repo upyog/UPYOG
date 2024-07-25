@@ -1,5 +1,15 @@
 package org.egov.tl.workflow;
 
+import static org.egov.tl.util.TLConstants.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -8,15 +18,11 @@ import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.util.TLConstants;
 import org.egov.tl.web.models.TradeLicense;
 import org.egov.tl.web.models.TradeLicenseRequest;
-import org.egov.tl.web.models.workflow.BusinessService;
+import org.egov.tl.web.models.contract.BusinessService;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-
-import java.util.*;
-
-import static org.egov.tl.util.TLConstants.*;
 
 
 @Component

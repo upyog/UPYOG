@@ -1,17 +1,26 @@
-package org.egov.tl.web.models.workflow;
+package org.egov.tl.web.models.contract;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import lombok.*;
-import org.egov.tl.web.models.AuditDetails;
-import org.springframework.validation.annotation.Validated;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.egov.tl.web.models.AuditDetails;
+import org.springframework.validation.annotation.Validated;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.swagger.annotations.ApiModel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * A Object holds the
@@ -30,6 +39,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BusinessService   {
 
+        @NotNull
         @Size(max=256)
         @JsonProperty("tenantId")
         private String tenantId = null;
@@ -38,10 +48,12 @@ public class BusinessService   {
         @JsonProperty("uuid")
         private String uuid = null;
 
+        @NotNull
         @Size(max=256)
         @JsonProperty("businessService")
         private String businessService = null;
 
+        @NotNull
         @Size(max=256)
         @JsonProperty("business")
         private String business = null;

@@ -1,5 +1,26 @@
 package org.egov.tl.service;
 
+import static org.egov.tl.util.TLConstants.ACTION_APPLY;
+import static org.egov.tl.util.TLConstants.ACTION_INITIATE;
+import static org.egov.tl.util.TLConstants.CITIZEN_SENDBACK_ACTION;
+import static org.egov.tl.util.TLConstants.STATUS_APPLIED;
+import static org.egov.tl.util.TLConstants.STATUS_INITIATED;
+import static org.egov.tl.util.TLConstants.businessService_BPA;
+import static org.egov.tl.util.TLConstants.businessService_TL;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -7,23 +28,24 @@ import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.repository.IdGenRepository;
 import org.egov.tl.util.TLConstants;
 import org.egov.tl.util.TradeUtil;
-import org.egov.tl.web.models.*;
+import org.egov.tl.web.models.AuditDetails;
+import org.egov.tl.web.models.OwnerInfo;
 import org.egov.tl.web.models.OwnerInfo.RelationshipEnum;
+import org.egov.tl.web.models.TradeLicense;
 import org.egov.tl.web.models.TradeLicense.ApplicationTypeEnum;
 import org.egov.tl.web.models.TradeLicense.LicenseTypeEnum;
+import org.egov.tl.web.models.TradeLicenseRequest;
+import org.egov.tl.web.models.TradeLicenseSearchCriteria;
 import org.egov.tl.web.models.Idgen.IdResponse;
+import org.egov.tl.web.models.contract.BusinessService;
 import org.egov.tl.web.models.user.UserDetailResponse;
-import org.egov.tl.web.models.workflow.BusinessService;
 import org.egov.tl.workflow.WorkflowService;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import com.jayway.jsonpath.JsonPath;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import static org.egov.tl.util.TLConstants.*;
+import com.jayway.jsonpath.JsonPath;
 
 
 @Service
