@@ -56,11 +56,15 @@ public class CHBNotificationService {
 		Map<String, String> mobileNumberToOwner = new HashMap<String, String>();
 		mobileNumberToOwner.put(bookingDetail.getApplicantDetail().getApplicantMobileNo(),
 				bookingDetail.getApplicantDetail().getApplicantName());
+		
+		String localizationMessages = util.getLocalizationMessages(tenantId, bookingRequest.getRequestInfo());
+		String message = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages);
+		log.info("Message for sending sms and event : " + message);
 
 		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_SMS)) {
 			List<SMSRequest> smsRequests = new LinkedList<>();
 			if (config.getIsSMSNotificationEnabled()) {
-				enrichSMSRequest(bookingRequest, smsRequests, mobileNumberToOwner);
+				enrichSMSRequest(bookingRequest, smsRequests, mobileNumberToOwner, message);
 				if (!CollectionUtils.isEmpty(smsRequests))
 					util.sendSMS(smsRequests);
 			}
@@ -69,7 +73,7 @@ public class CHBNotificationService {
 		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EVENT)) {
 			if (null != config.getIsUserEventsNotificationEnabled()) {
 				if (config.getIsUserEventsNotificationEnabled()) {
-					EventRequest eventRequest = getEventsForCommunityHallBooking(bookingRequest);
+					EventRequest eventRequest = getEventsForCommunityHallBooking(bookingRequest, message);
 					if (null != eventRequest)
 						util.sendEventNotification(eventRequest);
 				}
@@ -84,15 +88,11 @@ public class CHBNotificationService {
 	 * @param smsRequests List of SMSRequets
 	 */
 	private void enrichSMSRequest(CommunityHallBookingRequest bookingRequest, List<SMSRequest> smsRequests,
-			Map<String, String> mobileNumberToOwner) {
-		String tenantId = bookingRequest.getHallsBookingApplication().getTenantId();
-		String localizationMessages = util.getLocalizationMessages(tenantId, bookingRequest.getRequestInfo());
-		String message = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages);
-		log.info("Message for sending sms : " + message);
+			Map<String, String> mobileNumberToOwner, String message) {
 		smsRequests.addAll(util.createSMSRequest(bookingRequest, message, mobileNumberToOwner));
 	}
 
-	private EventRequest getEventsForCommunityHallBooking(CommunityHallBookingRequest request) {
+	private EventRequest getEventsForCommunityHallBooking(CommunityHallBookingRequest request, String message) {
 
 		List<Event> events = new ArrayList<>();
 		String tenantId = request.getHallsBookingApplication().getTenantId();
@@ -108,8 +108,6 @@ public class CHBNotificationService {
 		}
 
 		toUsers.add(mapOfPhoneNoAndUUIDs.get(mobileNumber));
-		String localizationMessages = util.getLocalizationMessages(tenantId, request.getRequestInfo());
-		String message = util.getCustomizedMsg(request.getHallsBookingApplication(), localizationMessages);
 		
 		log.info("Message for user event : " + message);
 		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
@@ -180,8 +178,8 @@ public class CHBNotificationService {
 		uri.append(config.getMdmsHost()).append(config.getMdmsPath());
 		if (StringUtils.isEmpty(tenantId))
 			return masterData;
-		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForChannelList(requestInfo, tenantId);
-
+		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForChannelList(requestInfo, tenantId, moduleName, action);
+		//Can create filter as string using this
 		Filter masterDataFilter = filter(where(CommunityHallBookingConstants.MODULE).is(moduleName)
 				.and(CommunityHallBookingConstants.ACTION).is(action));
 
@@ -196,9 +194,11 @@ public class CHBNotificationService {
 		return masterData;
 	}
 
-	private MdmsCriteriaReq getMdmsRequestForChannelList(RequestInfo requestInfo, String tenantId) {
+	private MdmsCriteriaReq getMdmsRequestForChannelList(RequestInfo requestInfo, String tenantId, String moduleName, String action) {
+
 		MasterDetail masterDetail = new MasterDetail();
 		masterDetail.setName(CommunityHallBookingConstants.CHANNEL_LIST);
+		masterDetail.setFilter("[?(@['module'] == 'CHB' && @['action'] == 'BOOKING_CREATED')]");
 		List<MasterDetail> masterDetailList = new ArrayList<>();
 		masterDetailList.add(masterDetail);
 

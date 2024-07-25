@@ -6,7 +6,7 @@ DROP Table eg_chb_booking_detail_audit cascade;
 
 DROP Table eg_chb_slot_detail cascade;
 
-DROP Table eg_chb_slot_detai_audit cascade;
+DROP Table eg_chb_slot_detail_audit cascade;
 
 DROP Table eg_chb_document_detail cascade;
 
