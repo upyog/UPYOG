@@ -83,7 +83,7 @@ public class CommunityHallBookingController {
 	@RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
 	public ResponseEntity<CommunityHallBookingResponse> v1UpdateBooking(
 			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @Valid @RequestBody CommunityHallBookingRequest communityHallsBookingRequest) {
-		CommunityHallBookingDetail bookingDetail = bookingService.updateBooking(communityHallsBookingRequest);
+		CommunityHallBookingDetail bookingDetail = bookingService.updateBooking(communityHallsBookingRequest, null);
 		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(communityHallsBookingRequest.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_UPDATED,
 				StatusEnum.SUCCESSFUL);
 		CommunityHallBookingResponse communityHallResponse = CommunityHallBookingResponse.builder().responseInfo(info)
