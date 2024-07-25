@@ -65,10 +65,11 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
   const hallCodeId = HallId.map((slot) => {
     if (selectedHall.communityHallId === slot.communityHallId) {
       return {
-        i18nKey: slot.code +" - " + slot.capacity + " Person",
-        code: slot.code +" - " + slot.capacity + " Person",
+        i18nKey: slot.code + " - " + slot.capacity + " Person",
+        code: slot.code ,
         value: slot.code,
-        communityHallId: slot.communityHallId
+        communityHallId: slot.communityHallId,
+        capacity:slot.capacity + " Person"
       };
     }
   }).filter(item => item !== undefined);
@@ -88,9 +89,12 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     if (slotSearchData && slotSearchData.hallSlotAvailabiltityDetails) {
       const newData = slotSearchData.hallSlotAvailabiltityDetails.map((slot, index) => ({
         slotId: index + 1,
-        name: slot.communityHallCode,
+        name: `${t(slot.communityHallCode)}`,
+        code:slot.communityHallCode,
+        hallCode1:slot.hallCode,
         address: Searchdata.hallAddress,
-        hallCode: slot.hallCode,
+        hallCode: slot.hallCode + " - " + Searchdata.capacity,
+        capacity:Searchdata.capacity,
         bookingDate: slot.bookingDate,
         status: slot.slotStaus === "AVAILABLE" ? (
           <div className="sla-cell-success">Available</div>
@@ -134,21 +138,22 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     let owner = formData.slotlist && formData.slotlist[index];
     let ownerStep;
     if (userType === "citizen") {
-      ownerStep = { ...owner, bookingSlotDetails, selectedHall, hallCode };
+      ownerStep = { ...owner, bookingSlotDetails, selectedHall, hallCode,Searchdata };
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
     } else {
-      ownerStep = { ...owner, bookingSlotDetails, selectedHall, hallCode };
+      ownerStep = { ...owner, bookingSlotDetails, selectedHall, hallCode,Searchdata };
       onSelect(config.key, ownerStep, false, index);
     }
+    console.log("slotBookingDetails-->",ownerStep);
   };
-
+  
   const onSkip = () => onSelect();
 
   useEffect(() => {
     if (userType === "citizen") {
       goNext();
     }
-  }, [bookingSlotDetails, selectedHall, hallCode]);
+  }, [bookingSlotDetails, selectedHall, hallCode,Searchdata]);
   
   const handleViewReportClick = () => {
     if (selectedHall) {
@@ -257,21 +262,22 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
   };
 
  const handleSearch = () => {
-  const selectedHallName = selectedHall?.value || "";
+  const selectedHallName = selectedHall?.code || "";
   const startDate = dateRange[0].startDate ? format(dateRange[0].startDate, 'dd-MM-yyyy') : "";
   const endDate = dateRange[0].endDate ? format(dateRange[0].endDate, 'dd-MM-yyyy') : "";
   const selectedHallCode = hallCode?.code || "";
 
   if (selectedHallName && startDate && endDate) {
     // Find hallCodeId based on selectedHall.communityHallId
-    const hallCodeIds = hallCodeId.find(slot => selectedHall.communityHallId === slot.communityHallId)?.code;
+    const hallCodeIds = hallCodeId.find(slot => selectedHall.communityHallId === slot.communityHallId);
 
     const filters = {
       communityHallCode: selectedHallName,
       bookingStartDate: startDate,
       bookingEndDate: endDate,
       hallAddress: selectedHall?.address,
-      hallCode: selectedHallCode || hallCodeIds
+      hallCode: selectedHallCode || hallCodeIds.code,
+      capacity:hallCodeIds.capacity
     };
 
     setSearchData(filters);

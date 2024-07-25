@@ -119,7 +119,7 @@ const Urls = {
     search:"/chb-services/booking/v1/_search",
     update:"/chb-services/booking/v1/_update",
     slot_search:"/chb-services/booking/v1/_slot-search",
-    estimate:"/chb-services/booking/v1/_estimate"
+    estimateCreate:"/chb-services/booking/v1/_estimate"
   },
 
 
