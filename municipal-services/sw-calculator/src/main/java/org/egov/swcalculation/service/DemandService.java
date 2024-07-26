@@ -1310,6 +1310,7 @@ public class DemandService {
 								.calculationCriteria(calculationCriteriaList)
 								.requestInfo(requestInfo)
 								.isconnectionCalculation(true)
+								.migrationCount(migrationCount)
 								.build();
 						log.info("Pushing calculation last req to the kafka topic with bulk data of calculationCriteriaList size: {}", calculationCriteriaList.size());
 						kafkaTemplate.send(configs.getCreateDemand(), calculationReq);
