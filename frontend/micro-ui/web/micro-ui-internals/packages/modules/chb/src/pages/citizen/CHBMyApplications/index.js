@@ -34,24 +34,27 @@ export const CHBMyApplications = () => {
   const handleSearch = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
+  
+    // Convert search term to lower case
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
-    setFilteredApplications(
-      hallsBookingApplication?.filter(app => 
-        (searchTerm ? app.bookingNo.toLowerCase().includes(lowerCaseSearchTerm) : true) &&
-        (status.code === "UPCOMING" ? app.bookingSlotDetails.some(slot => {
-          const bookingDate = new Date(slot.bookingDate.split('-').reverse().join('-'));
-          return bookingDate >= today;
-        }) : true) ||
-        (status ? app.bookingStatus === status.code : true) &&
-        (status.code === "UPCOMING" ? app.bookingSlotDetails.some(slot => {
-          const bookingDate = new Date(slot.bookingDate.split('-').reverse().join('-'));
-          return bookingDate >= today;
-        }) : true)
-      ) || []
-    );
+  
+    // Filter applications based on booking number or status
+    const filtered = hallsBookingApplication?.filter(app => {
+      const bookingNoMatch = searchTerm ? app.bookingNo.toLowerCase().includes(lowerCaseSearchTerm) : true;
+  
+      const statusMatch = status.code === "UPCOMING" ? app.bookingSlotDetails.some(slot => {
+        const bookingDate = new Date(slot.bookingDate.split('-').reverse().join('-'));
+        return bookingDate >= today;
+      }) : 
+      (status.code === "BOOKED" ? app.bookingStatus === "BOOKED" :
+      (status.code === "BOOKING_CREATED" ? app.bookingStatus === "BOOKING_CREATED" : true));
+  
+      return bookingNoMatch && statusMatch;
+    }) || [];
+  
+    setFilteredApplications(filtered);
   };
-
+  
   useEffect(() => {
     if (hallsBookingApplication) {
       const today = new Date();
@@ -74,9 +77,9 @@ export const CHBMyApplications = () => {
   }
 
   const statusOptions = [
-    { i18nKey: "Upcoming", code: "UPCOMING", value: t("CHB_STATUS_UPCOMING") },
-    { i18nKey: "Booked", code: "BOOKED", value: t("CHB_STATUS_BOOKED") },
-    { i18nKey: "Booking Created", code: "BOOKING_CREATED", value: t("CHB_STATUS_BOOKING_CREATED") }
+    { i18nKey: "Upcoming", code: "UPCOMING", value: t("CHB_UPCOMING") },
+    { i18nKey: "Past Booked", code: "BOOKED", value: t("CHB_PAST_BOOKING") },
+    { i18nKey: "Pending Payment", code: "BOOKING_CREATED", value: t("CHB_PENDING_PAYEMENT") }
   ];
 
   return (
