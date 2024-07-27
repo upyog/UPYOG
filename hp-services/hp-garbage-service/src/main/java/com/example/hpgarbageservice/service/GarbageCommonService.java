@@ -11,6 +11,9 @@ import com.example.hpgarbageservice.model.GarbageCommonRequest;
 import com.example.hpgarbageservice.repository.GrbgChargeRepository;
 import com.example.hpgarbageservice.repository.GrbgCollectionStaffRepository;
 import com.example.hpgarbageservice.repository.GrbgCollectionUnitRepository;
+import com.example.hpgarbageservice.repository.GrbgDeclarationRepository;
+import com.example.hpgarbageservice.repository.GrbgOldDetailsRepository;
+import com.example.hpgarbageservice.repository.GrbgScheduledRequestsRepository;
 
 @Service
 public class GarbageCommonService {
@@ -23,6 +26,15 @@ public class GarbageCommonService {
 
 	@Autowired
 	private GrbgChargeRepository grbgChargeRepository;
+
+	@Autowired
+	private GrbgOldDetailsRepository grbgOldDetailsRepository;
+
+	@Autowired
+	private GrbgScheduledRequestsRepository grbgScheduledRequestsRepository;
+
+	@Autowired
+	private GrbgDeclarationRepository grbgDeclarationRepository;
 	
 	public GarbageCommonRequest create(GarbageCommonRequest garbageCommonRequest) {
 		
@@ -95,9 +107,50 @@ public class GarbageCommonService {
 			});
 		}
 		
-		create tbl grbg_scheduled_requests(uuid, garbage_id, type(grbgActivation/grbgDeactivation), start_date, end_date, is_active)
-		create tbl grbg_old_details(uuid, garbage_id, old_garbage_id)
-		create tbl grbg_declaration(uuid, statement, is_active)
+		
+		if(!CollectionUtils.isEmpty(garbageCommonRequest.getCreatingGrbgOldDetails())) {
+			garbageCommonRequest.getCreatingGrbgOldDetails().stream().forEach(oldDetails -> {
+				if(StringUtils.isEmpty(oldDetails.getUuid())) {
+			// create garbage old details
+					oldDetails.setUuid(UUID.randomUUID().toString());
+					grbgOldDetailsRepository.create(oldDetails);
+				}else {
+			// update garbage old details
+					grbgOldDetailsRepository.update(oldDetails);
+				}
+			});
+		}
+		
+		
+
+		if(!CollectionUtils.isEmpty(garbageCommonRequest.getCreatingGrbgScheduledRequests())) {
+			garbageCommonRequest.getCreatingGrbgScheduledRequests().stream().forEach(schedule -> {
+				if(StringUtils.isEmpty(schedule.getUuid())) {
+			// create garbage scheduled request
+					schedule.setUuid(UUID.randomUUID().toString());
+					grbgScheduledRequestsRepository.create(schedule);
+				}else {
+			// update garbage scheduled request
+					grbgScheduledRequestsRepository.update(schedule);
+				}
+			});
+		}
+		
+
+		if(!CollectionUtils.isEmpty(garbageCommonRequest.getCreatingGrbgDeclaration())) {
+			garbageCommonRequest.getCreatingGrbgDeclaration().stream().forEach(declaration -> {
+				if(StringUtils.isEmpty(declaration.getUuid())) {
+			// create garbage declaration
+					declaration.setIsActive(true);
+					declaration.setUuid(UUID.randomUUID().toString());
+					grbgDeclarationRepository.create(declaration);
+				}else {
+			// update garbage declaration
+					grbgDeclarationRepository.update(declaration);
+				}
+			});
+		}
+		
 		
 		return garbageCommonRequest;
 	}

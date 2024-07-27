@@ -1,4 +1,4 @@
-package com.example.hpgarbageservice.controller;
+package com.example.hpgarbageservice.util;
 
 import org.springframework.stereotype.Component;
 
