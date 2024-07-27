@@ -431,7 +431,6 @@ public class PropertyQueryBuilder {
 					" No propertyid or uuid given for the property Bulk search");
 
 		StringBuilder builder = new StringBuilder(QUERY);
-		// Boolean appendAndQuery = false;
 		if (isPlainSearch) {
 			Set<String> tenantIds = criteria.getTenantIds();
 			if (!CollectionUtils.isEmpty(tenantIds)) {
@@ -471,22 +470,16 @@ public class PropertyQueryBuilder {
 		Set<String> propertyIds = criteria.getPropertyIds();
 		if (!CollectionUtils.isEmpty(propertyIds)) {
 			addClauseIfRequired(preparedStmtList, builder);
-			// if(appendAndQuery)
-			builder.append(AND_QUERY);
 			builder.append("property.propertyid IN (").append(createQuery(propertyIds)).append(")");
 			addToPreparedStatementWithUpperCase(preparedStmtList, propertyIds);
-			// appendAndQuery= true;
 		}
 
 		Set<String> uuids = criteria.getUuids();
 		if (!CollectionUtils.isEmpty(uuids)) {
 
 			addClauseIfRequired(preparedStmtList, builder);
-//if(appendAndQuery)
-			builder.append(AND_QUERY);
 			builder.append("property.id IN (").append(createQuery(uuids)).append(")");
 			addToPreparedStatement(preparedStmtList, uuids);
-			// appendAndQuery= true;
 		}
 		return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
 	}
