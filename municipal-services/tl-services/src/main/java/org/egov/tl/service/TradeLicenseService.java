@@ -301,7 +301,10 @@ public class TradeLicenseService {
         enrichPassedDates(licenses);
         
         // filter role based search TL
-        List<TradeLicense> tempLicenses = filterLicensesBasedOnRolesWithinTenantId(licenses, requestInfo, criteria);
+        List<TradeLicense> tempLicenses = licenses;
+		if (StringUtils.isEmpty(criteria.getApplicationNumber())) {
+			tempLicenses = filterLicensesBasedOnRolesWithinTenantId(licenses, requestInfo, criteria);
+		}
 		
 		return tempLicenses;
 
@@ -647,6 +650,7 @@ public class TradeLicenseService {
 		for(int i=0; i<tradeLicenseRequest.getLicenses().size(); i++) {
 			TradeLicense license = tradeLicenseRequest.getLicenses().get(i);
 			String action = license.getAction();
+			String comment = license.getComment();
 			
 			if(null == license.getTradeLicenseDetail()
 					&& (StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_VERIFIER, license.getAction())
@@ -668,6 +672,7 @@ public class TradeLicenseService {
 		         
 				//enrich input fields
 				licenses.get(0).setAction(action);
+				licenses.get(0).setComment(comment);
 				tempTradeLicenseRequest.getLicenses().add(licenses.get(0));
 			}
 			else {
