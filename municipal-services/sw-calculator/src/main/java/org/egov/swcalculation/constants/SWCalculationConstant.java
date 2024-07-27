@@ -137,7 +137,7 @@ public class SWCalculationConstant {
 
 	public static final String Demand_Generate_Date_String = "demandGenerationDateMillis";
 
-	public static final String Quaterly_Billing_Period = "quaterly";
+	public static final String Quaterly_Billing_Period = "quarterly";
 
 	public static final String Monthly_Billing_Period = "monthly";
 

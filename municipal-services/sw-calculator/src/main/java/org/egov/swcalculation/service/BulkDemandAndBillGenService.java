@@ -82,15 +82,15 @@ public class BulkDemandAndBillGenService {
 
 		List<Demand> createDemands = createDemands(requestInfo, calculations, masterMap, isForConnectionNo, limit);
 
-		GetBillCriteria updateDemandCriteria = GetBillCriteria.builder()
-				.consumerCodes(consumerCodes)
-				.tenantId(tenantId)
-				.build();
-		List<Demand> updateDemands = demandService.updateDemands(updateDemandCriteria, new RequestInfoWrapper(requestInfo), true);
+		/*
+		 * GetBillCriteria updateDemandCriteria = GetBillCriteria.builder()
+		 * .consumerCodes(consumerCodes) .tenantId(tenantId) .build();
+		 */
+		//List<Demand> updateDemands = demandService.updateDemands(updateDemandCriteria, new RequestInfoWrapper(requestInfo), true);
 
 		return BulkBillGenerator.builder()
 				.createDemands(createDemands)
-				.updateDemands(updateDemands)
+				//.updateDemands(updateDemands)
 				.migrationCount(null)
 				.requestInfo(requestInfo)
 				.build();
