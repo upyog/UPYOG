@@ -44,6 +44,9 @@ public class DemandGenerationConsumer {
 	@Autowired
 	private SWCalculationConfiguration config;
 	
+	@Autowired
+	private SWCalculationServiceImpl sWCalculationServiceImpl;
+	
 	@Value("${kafka.topics.bulk.bill.generation.audit}")
 	private String bulkBillGenAuditTopic;
 	
@@ -97,7 +100,7 @@ public class DemandGenerationConsumer {
 				.migrationCount(calculationReq.getMigrationCount())
 				.build();
 			
-		generateDemandInBatch(request);
+		generateDemandInBatch(request,masterMap);
 		log.info("Number of batch records:  " + records.size());
 	}
 	
@@ -125,7 +128,7 @@ public class DemandGenerationConsumer {
 					try {
 						log.info("Generating Demand for Criteria : " + calcCriteria);
 						// processing single
-						generateDemandInBatch(request);
+						generateDemandInBatch(request,masterMap);
 					} catch (final Exception e) {
 						StringBuilder builder = new StringBuilder();
 						builder.append("Error while generating Demand for Criteria: ").append(calcCriteria);
@@ -146,15 +149,18 @@ public class DemandGenerationConsumer {
 	 * 
 	 * @param request
 	 *            Calculation request
+	 * @param masterMap 
 	 */
-	private void generateDemandInBatch(CalculationReq request) {
+	private void generateDemandInBatch(CalculationReq request, Map<String, Object> masterMap) {
 		/*
 		 * this topic will be used by billing service to post message
 		 */
 		//request.getMigrationCount().setAuditTopic(bulkBillGenAuditTopic);
 		//request.getMigrationCount().setAuditTime(System.currentTimeMillis());
 		try {
-			bulkDemandAndBillGenService.bulkDemandGeneration(request);
+			sWCalculationServiceImpl.bulkDemandGeneration(request,masterMap);
+			StringBuilder str = new StringBuilder("Demand generated Successfully. For records : ").append(request.getCalculationCriteria());
+			log.info(str.toString());
 		} catch (Exception ex) {
 			/*
 			 * Error with message goes to audit topic
