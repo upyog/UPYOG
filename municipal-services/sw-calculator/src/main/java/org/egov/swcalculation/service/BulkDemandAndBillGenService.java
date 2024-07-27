@@ -82,15 +82,15 @@ public class BulkDemandAndBillGenService {
 
 		List<Demand> createDemands = createDemands(requestInfo, calculations, masterMap, isForConnectionNo, limit);
 
-		/*
-		 * GetBillCriteria updateDemandCriteria = GetBillCriteria.builder()
-		 * .consumerCodes(consumerCodes) .tenantId(tenantId) .build();
-		 */
-		//List<Demand> updateDemands = demandService.updateDemands(updateDemandCriteria, new RequestInfoWrapper(requestInfo), true);
+		GetBillCriteria updateDemandCriteria = GetBillCriteria.builder()
+				.consumerCodes(consumerCodes)
+				.tenantId(tenantId)
+				.build();
+		List<Demand> updateDemands = demandService.updateDemands(updateDemandCriteria, new RequestInfoWrapper(requestInfo), true);
 
 		return BulkBillGenerator.builder()
 				.createDemands(createDemands)
-				//.updateDemands(updateDemands)
+				.updateDemands(updateDemands)
 				.migrationCount(null)
 				.requestInfo(requestInfo)
 				.build();
@@ -155,14 +155,17 @@ public class BulkDemandAndBillGenService {
 	        Long fromDate =null;     Long toDate=null;
 	        fromDate = (Long) financialYearMaster.get(SWCalculationConstant.STARTING_DATE_APPLICABLES);
 			toDate = (Long) financialYearMaster.get(SWCalculationConstant.ENDING_DATE_APPLICABLES);
+			
 			/*
 			 * if (!billingPeriodMasterList.isEmpty()) { Map<String, Object>
 			 * firstBillingPeriod = billingPeriodMasterList.get(0); // Assuming there's at
 			 * least one element fromDate = (Long) firstBillingPeriod.get("taxPeriodFrom");
+			 * 
 			 * toDate = (Long) firstBillingPeriod.get("taxPeriodTo");
 			 * log.info("taxPeriodFrom: " + fromDate); log.info("taxPeriodTo: " + toDate); }
 			 * else { log.info("Billing_Period_Master list is empty"); }
 			 */
+			
 	        Long expiryDate = (Long) financialYearMaster.get(SWCalculationConstant.Demand_Expiry_Date_String);
 			BigDecimal minimumPayableAmount = isForConnectionNO ? configs.getMinimumPayableAmount()
 					: calculation.getTotalAmount();
