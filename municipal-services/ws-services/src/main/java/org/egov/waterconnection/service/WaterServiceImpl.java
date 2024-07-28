@@ -344,18 +344,15 @@ public class WaterServiceImpl implements WaterService {
 		}
 		
 		Map <String , String> adddetails=(Map<String, String>)waterConnectionRequest.getWaterConnection().getAdditionalDetails();
-		String ismeter=null;
-		String metermake=null;
-		if (!adddetails.containsKey("meterMakeentry")) {
-			ismeter="false";
-		}
-		else
-		{
-			 ismeter=adddetails.get("meterMakeentry");
-			 metermake=adddetails.get("meterMake");
-			 adddetails.put("isnumberchange", "new_value"); 
-			  ismeterentry=true;
-			  
+		
+		if (adddetails.containsKey("is_new_meter_number")) {
+			String ismeter=null;
+			if (adddetails.containsKey("new_meter_number")) 
+				 ismeter=adddetails.get("new_meter_number");
+			
+			else 
+				ismeter="0";
+			adddetails.put("meterMake", ismeter); 
 			waterDao.updateWaterConnection(waterConnectionRequest, true);
 			 return Arrays.asList(waterConnectionRequest.getWaterConnection());
 		}
