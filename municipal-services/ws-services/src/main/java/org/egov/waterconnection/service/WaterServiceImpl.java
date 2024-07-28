@@ -355,11 +355,8 @@ public class WaterServiceImpl implements WaterService {
 			 metermake=adddetails.get("meterMake");
 			 adddetails.put("isnumberchange", "new_value"); 
 			  ismeterentry=true;
-			  List<WaterConnection> waterConnectionList = new ArrayList<>();
-				waterConnectionList.add(waterConnectionRequest.getWaterConnection());
-				criteria.setTenantId(waterConnectionRequest.getWaterConnection().getTenantId());
-			  waterConnectionRequest.setWaterConnection(enrichmentService.enrichPropertyDetails(waterConnectionList, criteria, waterConnectionRequest.getRequestInfo()).get(0));
-			 waterDaoImpl.pushForEditNotification(waterConnectionRequest, true,ismeterentry);
+			  
+			waterDao.updateWaterConnection(waterConnectionRequest, true);
 			 return Arrays.asList(waterConnectionRequest.getWaterConnection());
 		}
 		
