@@ -4,7 +4,7 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start": "node ./src/bin/www"
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "axios": "^0.19.2",
