@@ -91,7 +91,7 @@ const CHBSlotDetails
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
         </CardSubHeader>
-        <ChbCancellationPolicy count={value?.bookingSlotDetails.length}/>
+        <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails}/>
       </Card>
         <FormStep
           config={config}
