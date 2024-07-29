@@ -78,6 +78,10 @@ const pgService = createProxyMiddleware({
   target: process.env.REACT_APP_PROXY_API_PAYMENT_GATEWAY || "https://dev.digit.org",
   changeOrigin: true,
 });
+const pdfService = createProxyMiddleware({
+  target: process.env.REACT_APP_PROXY_API_PDF_SERVICE || "https://dev.digit.org",
+  changeOrigin: true,
+});
 
 
 module.exports = function (app) {
@@ -121,7 +125,7 @@ module.exports = function (app) {
     "/noc-services",
     // "/egov-user-event",
     "/egov-document-uploader",
-    "/egov-pdf",
+    // "/egov-pdf",
     "/egov-survey-services",
     "/ws-services",
     "/sw-services",
@@ -151,6 +155,7 @@ module.exports = function (app) {
   ["/egov-hrms"].forEach((location)=> app.use(location, assetseHRMS));
   ["/collection-services"].forEach((location)=> app.use(location, collectionService));
   ["/pg-service"].forEach((location)=> app.use(location, pgService));
+  ["/egov-pdf"].forEach((location)=> app.use(location, pdfService));
   
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

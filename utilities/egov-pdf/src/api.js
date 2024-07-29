@@ -404,7 +404,7 @@ async function create_pdf_and_upload(tenantId, key, data, requestinfo) {
 }
 
 function checkIfCitizen(requestinfo) {
-  if (requestinfo.RequestInfo.userInfo.type == "CITIZEN") {
+  if (requestinfo?.RequestInfo?.userInfo?.type == "CITIZEN") {
     return true;
   } else {
     return false;

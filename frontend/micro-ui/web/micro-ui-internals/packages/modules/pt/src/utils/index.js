@@ -993,7 +993,9 @@ export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
 };
 
 export const DownloadReceipt = async (consumerCode, tenantId, businessService, pdfKey = "consolidatedreceipt") => {
+  console.log("DownloadReceipt===")
   tenantId = tenantId ? tenantId : Digit.ULBService.getCurrentTenantId();
+  
   await Digit.Utils.downloadReceipt(consumerCode, businessService, "consolidatedreceipt", tenantId);
 };
 

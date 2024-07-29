@@ -144,7 +144,7 @@ const Area = ({ t, config, onSelect, value, userType, formData, setError: setFor
       isDisabled={unitareaerror || areanotzeroerror || !floorarea}
       showErrorBelowChildren={true}
     >
-      <CardLabel>{`${t("PT_PLOT_SIZE_SQUARE_FEET_LABEL")}`}</CardLabel>
+      <CardLabel>{`${t("Plot Area(sq ft)")}`}</CardLabel>
       <TextInput
         t={t}
         type={"number"}

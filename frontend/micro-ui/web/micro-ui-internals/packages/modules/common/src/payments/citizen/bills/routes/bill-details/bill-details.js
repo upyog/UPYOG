@@ -191,7 +191,9 @@ const BillDetails = ({ paymentRules, businessService }) => {
           <RadioButtons
             selectedOption={paymentType}
             onSelect={setPaymentType}
-            options={paymentRules.partPaymentAllowed ? [t("CS_PAYMENT_FULL_AMOUNT"), t("CS_PAYMENT_CUSTOM_AMOUNT")] : [t("CS_PAYMENT_FULL_AMOUNT")]}
+            options={[t("CS_PAYMENT_FULL_AMOUNT")]}
+
+            // options={paymentRules.partPaymentAllowed ? [t("CS_PAYMENT_FULL_AMOUNT"), t("CS_PAYMENT_CUSTOM_AMOUNT")] : [t("CS_PAYMENT_FULL_AMOUNT")]}
           />
           <div style={{ position: "relative" }}>
             <span
