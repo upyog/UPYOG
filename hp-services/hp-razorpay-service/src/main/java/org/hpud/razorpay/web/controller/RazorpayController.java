@@ -32,10 +32,10 @@ public class RazorpayController {
 	ResponseInfo responseInfo;
 
 	@PostMapping("/_createOrder")
-	public ResponseEntity<?> createOrderforRazorpay(@RequestBody OrderRequest orderRequest, @RequestBody RequestInfoWrapper requestInfoWrapper) throws RazorpayException {
+	public ResponseEntity<?> createOrderforRazorpay(@RequestBody OrderRequest orderRequest) throws RazorpayException {
 		OrderResponse orderResponse = new OrderResponse();
 		try {
-			orderResponse = razorpayService.createOrderForRazorpay(orderRequest, orderResponse,requestInfoWrapper);
+			orderResponse = razorpayService.createOrderForRazorpay(orderRequest, orderResponse);
 			orderResponse.setStatus("SUCCESS");
 			orderResponse.setMsg("Order Response Fetched Successfully!!!");
 

@@ -1,13 +1,8 @@
 package org.hpud.razorpay.contract;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,31 +20,28 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserInfo {
-	@JsonProperty("tenantId")
-	@Size(max=256)
-	@NotNull
-	private String tenantId = null;
+	
+private Long id;
 
-	@JsonProperty("id")
-	private Integer id = null;
+@Size(max = 180)
+private String userName;
 
-	@JsonProperty("username")
-	@Size(max=64)
-	@NotNull
-	private String username = null;
+@Size(max = 250)
+private String name;
 
-	@JsonProperty("mobile")
-	@Pattern(regexp = "^[0-9]{10}$", message = "MobileNumber should be 10 digit number")
-	private String mobile = null;
+@Size(max = 50)
+private String type;
 
-	@JsonProperty("email")
-	@Size(max=128)
-	private String email = null;
+@Size(max = 150)
+private String mobileNumber;
 
-	@JsonProperty("primaryrole")
-	@NotNull
-	private List<Role> primaryrole = new ArrayList<Role>();
+@Size(max = 300)
+private String emailId;
 
-	@JsonProperty("additionalroles")
-	private List<TenantRole> additionalroles = new ArrayList<TenantRole>();
-}
+private List<Role> roles;
+
+@Size(max = 256)
+private String tenantId;
+
+@Size(max = 36)
+private String uuid;}
