@@ -1,7 +1,7 @@
 import { Loader, Modal, FormComposer } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 
-
+import { useHistory } from "react-router-dom";
 import { configASSETApproverApplication } from "../config";
 
 
@@ -25,7 +25,6 @@ const CloseBtn = (props) => {
 };
 
 const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode }) => {
-console.log("action",action);
   
   const { data: approverData, isLoading: PTALoading } = Digit.Hooks.useEmployeeSearch(
     
@@ -37,7 +36,7 @@ console.log("action",action);
     { enabled: !action?.isTerminateState }
   );
 
-  console.log("approverData",approverData)
+  const history = useHistory(); // Initialize useHistory
 
 
 
@@ -45,11 +44,8 @@ console.log("action",action);
   const [defaultValues, setDefaultValues] = useState({});
   const [approvers, setApprovers] = useState([]);
   const [selectedApprover, setSelectedApprover] = useState(null);
-  const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
-  const [error, setError] = useState(null);
- 
-  const [disableActionSubmit, setDisableActionSubmit] = useState(false);
+  
 
   
 
@@ -75,12 +71,15 @@ console.log("action",action);
           },
         
       });
-    //  } 
+     
    
   }
 
   useEffect(() => {
-    if (action) {
+    if(action?.state==="INITIATED"){
+      history.push(`/digit-ui/employee/asset/assetservice/edit/`+ `${applicationData?.applicationNo}`);
+    }
+    else {
       setConfig(
         configASSETApproverApplication({
             t,
