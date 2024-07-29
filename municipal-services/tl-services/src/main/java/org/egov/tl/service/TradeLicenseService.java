@@ -208,7 +208,7 @@ public class TradeLicenseService {
 
     private void enrichPreCreateNewTLValues(TradeLicenseRequest tradeLicenseRequest) {
     	tradeLicenseRequest.getLicenses().forEach(license -> {
-    		if(StringUtils.equals(license.getBusinessService(), TLConstants.businessService_NewTL)) {//need to change NewTL
+    		if(StringUtils.equals(license.getBusinessService(), TLConstants.businessService_NewTL)) {
         		enrichmentService.enrichCreateNewTLValues(tradeLicenseRequest.getRequestInfo().getUserInfo().getUuid(), license);
     		}
     	});
