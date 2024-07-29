@@ -107,6 +107,7 @@ public class EnrichmentService {
 		});
 		communityHallsBookingRequest.getHallsBookingApplication().setPaymentDate(auditDetails.getLastModifiedTime());
 		communityHallsBookingRequest.getHallsBookingApplication().setAuditDetails(auditDetails);
+		
 	}
 
 }

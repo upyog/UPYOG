@@ -48,9 +48,11 @@ public class CalculationService {
 		for (int i = 0; i < 4; i++) {
 			String basePath = CommunityHallBookingConstants.CHB_JSONPATH_CODE + "."
 					+ CommunityHallBookingConstants.CHB_CALCULATION_TYPE + ".[" + i + "].";
-			log.info("Calculkation data for CHB booking :" + JsonPath.read(response,
-					 CommunityHallBookingConstants.CHB_JSONPATH_CODE + "." +
-					 CommunityHallBookingConstants.CHB_CALCULATION_TYPE +".[0].feeType"));
+			/*
+			 * log.info("Calculation data for CHB booking :" + JsonPath.read(response,
+			 * CommunityHallBookingConstants.CHB_JSONPATH_CODE + "." +
+			 * CommunityHallBookingConstants.CHB_CALCULATION_TYPE +".[0].feeType"));
+			 */
 			Object amount = JsonPath.read(response, basePath + "amount");
 			CalculationType calculationType = CalculationType.builder().amount(new BigDecimal(amount.toString()))
 					.applicationType(JsonPath.read(response, basePath + "applicationType"))

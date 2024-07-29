@@ -2,6 +2,7 @@ package org.upyog.chb.validator;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -36,14 +37,13 @@ public class CommunityHallBookingValidator {
 		log.info("validating master data for create booking request for applicant mobile no : " + bookingRequest.getHallsBookingApplication()
 		.getApplicantDetail().getApplicantMobileNo());
 		 mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
-
+		 validateDuplicateDocuments(bookingRequest);
 	}
 
 	public void validateUpdate(CommunityHallBookingRequest bookingRequest, Object mdmsData) {
 		log.info("validating master data for update  booking request for  applicant mobile no : " + bookingRequest.getHallsBookingApplication()
 		.getApplicantDetail().getApplicantMobileNo());
-
-		// mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
+		mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
 	}
 
 	/**
@@ -51,8 +51,16 @@ public class CommunityHallBookingValidator {
 	 * 
 	 * @param bookingRequest
 	 */
-	private void validateApplicationDocuments(CommunityHallBookingRequest bookingRequest) {
-
+	private void validateDuplicateDocuments(CommunityHallBookingRequest bookingRequest) {
+		if (bookingRequest.getHallsBookingApplication().getUploadedDocumentDetails() != null) {
+			List<String> documentFileStoreIds = new LinkedList<String>();
+			bookingRequest.getHallsBookingApplication().getUploadedDocumentDetails().forEach(document -> {
+				if (documentFileStoreIds.contains(document.getFileStoreId()))
+					throw new CustomException(CommunityHallBookingConstants.DUPLICATE_DOCUMENT_UPLOADED, "Same document cannot be used multiple times");
+				else
+					documentFileStoreIds.add(document.getFileStoreId());
+			});
+		}
 	}
 
 	/**
@@ -65,17 +73,19 @@ public class CommunityHallBookingValidator {
 	public void validateSearch(RequestInfo requestInfo, CommunityHallBookingSearchCriteria criteria) {
 		log.info("Validating search request for criteria " + criteria);
 		String userType = requestInfo.getUserInfo().getType();
-		if (criteria.isEmpty())
-			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
-					"Search without any paramters is not allowed");
+		
+		
+		if (!requestInfo.getUserInfo().getType().equalsIgnoreCase(CommunityHallBookingConstants.CITIZEN) && criteria.isEmpty())
+			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Search without any paramters is not allowed");
 
-		if (!userType.equalsIgnoreCase(CommunityHallBookingConstants.EMPLOYEE)
-				&& !criteria.isEmpty() && criteria.getTenantId() == null)
+		if (!requestInfo.getUserInfo().getType().equalsIgnoreCase(CommunityHallBookingConstants.CITIZEN) && !criteria.tenantIdOnly()
+				&& criteria.getTenantId() == null)
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "TenantId is mandatory in search");
 
-		if (userType.equalsIgnoreCase(CommunityHallBookingConstants.EMPLOYEE)
-				&& !criteria.isEmpty() && criteria.getTenantId() == null)
+		if (requestInfo.getUserInfo().getType().equalsIgnoreCase(CommunityHallBookingConstants.CITIZEN) && !criteria.isEmpty()
+				&& !criteria.tenantIdOnly() && criteria.getTenantId() == null)
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "TenantId is mandatory in search");
+			
 
 		String allowedParamStr = null;
 
@@ -120,8 +130,11 @@ public class CommunityHallBookingValidator {
 
 		if (criteria.getLimit() != null && !allowedParams.contains("limit"))
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Search on limit is not allowed");
+		
+		if (criteria.getMobileNumber() != null && !allowedParams.contains("mobileNumber"))
+			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Search on mobiloe number is not allowed");
 
-		if (criteria.getFromDate() != null && !allowedParams.contains("limit") && (criteria.getFromDate() > new Date().getTime()))
+		if (criteria.getFromDate() != null  && (criteria.getFromDate() > new Date().getTime()))
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
 					"From date cannot be a future date");
 

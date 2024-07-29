@@ -198,7 +198,7 @@ public class CHBNotificationService {
 
 		MasterDetail masterDetail = new MasterDetail();
 		masterDetail.setName(CommunityHallBookingConstants.CHANNEL_LIST);
-		masterDetail.setFilter("[?(@['module'] == 'CHB' && @['action'] == 'BOOKING_CREATED')]");
+		masterDetail.setFilter("[?(@['module'] == 'CHB' && @['action'] == '"+ action +"')]");
 		List<MasterDetail> masterDetailList = new ArrayList<>();
 		masterDetailList.add(masterDetail);
 
