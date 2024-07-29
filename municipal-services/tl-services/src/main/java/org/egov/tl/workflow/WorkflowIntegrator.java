@@ -95,7 +95,9 @@ public class WorkflowIntegrator {
 			businessServiceFromMDMS = businessService_TL;
 		JSONArray array = new JSONArray();
 		for (TradeLicense license : tradeLicenseRequest.getLicenses()) {
-			if((businessServiceFromMDMS.equals(businessService_TL))||(!license.getAction().equalsIgnoreCase(TRIGGER_NOWORKFLOW))) {
+			if((businessServiceFromMDMS.equals(businessService_TL))
+					|| businessServiceFromMDMS.equals(businessService_NewTL)
+					||(!license.getAction().equalsIgnoreCase(TRIGGER_NOWORKFLOW))) {
 				JSONObject obj = new JSONObject();
 				List<Map<String, String>> uuidmaps = new LinkedList<>();
 				if(!CollectionUtils.isEmpty(license.getAssignee())){
@@ -128,6 +130,11 @@ public class WorkflowIntegrator {
 						obj.put(MODULENAMEKEY, BPAMODULENAMEVALUE);
 						break;
 						
+					case businessService_NewTL:
+//						case businessService_NewTL:
+							obj.put(BUSINESSSERVICEKEY, currentLicense.getWorkflowCode());
+							obj.put(MODULENAMEKEY, TLMODULENAMEVALUE);
+							break;
 				}
 				obj.put(ACTIONKEY, license.getAction());
 				obj.put(COMMENTKEY, license.getComment());

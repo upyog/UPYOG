@@ -84,6 +84,17 @@ public class ActionValidator {
                         errorMap.put("INVALID ACTION", "Action should be NOWORKFLOW during create");
                     }
                     break;
+                    
+                case businessService_NewTL:
+                        if (ACTION_APPLY.equalsIgnoreCase(license.getAction())) {
+                            if (license.getTradeLicenseDetail().getApplicationDocuments() == null)
+                                errorMap.put("INVALID ACTION", "Action cannot be changed to APPLY. Application document are not provided");
+                        }
+                        if (!ACTION_APPLY.equalsIgnoreCase(license.getAction()) &&
+                                !ACTION_INITIATE.equalsIgnoreCase(license.getAction())) {
+                            errorMap.put("INVALID ACTION", "Action can only be APPLY or INITIATE during create");
+                        }
+                        break;
             }
         });
         //    validateRole(request);

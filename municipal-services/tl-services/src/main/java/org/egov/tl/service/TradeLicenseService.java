@@ -185,7 +185,7 @@ public class TradeLicenseService {
 //       tlValidator.validateCreate(tradeLicenseRequest, mdmsData, billingSlabs);
        log.info("request is " + tradeLicenseRequest);
        userService.createUser(tradeLicenseRequest, false);
-       calculationService.addCalculation(tradeLicenseRequest);
+//       calculationService.addCalculation(tradeLicenseRequest);
 
         /*
          * call workflow service if it's enable else uses internal workflow process
@@ -208,7 +208,7 @@ public class TradeLicenseService {
 
     private void enrichPreCreateNewTLValues(TradeLicenseRequest tradeLicenseRequest) {
     	tradeLicenseRequest.getLicenses().forEach(license -> {
-    		if(StringUtils.equals(license.getBusinessService(), businessService_TL)) {
+    		if(StringUtils.equals(license.getBusinessService(), TLConstants.businessService_NewTL)) {//need to change NewTL
         		enrichmentService.enrichCreateNewTLValues(tradeLicenseRequest.getRequestInfo().getUserInfo().getUuid(), license);
     		}
     	});
@@ -587,6 +587,10 @@ public class TradeLicenseService {
                         tradeType = tradeType.split("\\.")[0];
                     businessServiceName = tradeType;
                     break;
+                    
+                case TLConstants.businessService_NewTL:
+                    businessServiceName = config.getTlBusinessServiceValue();
+                    break;
             }
             BusinessService businessService = workflowService.getBusinessService(tradeLicenseRequest.getLicenses().get(0).getTenantId(), tradeLicenseRequest.getRequestInfo(), businessServiceName);
             List<TradeLicense> searchResult = getLicensesWithOwnerInfo(tradeLicenseRequest);
@@ -621,10 +625,18 @@ public class TradeLicenseService {
                     endStates = tradeUtil.getBPAEndState(tradeLicenseRequest);
                     wfIntegrator.callWorkFlow(tradeLicenseRequest);
                     break;
+                    
+                case TLConstants.businessService_NewTL:
+                    if (config.getIsExternalWorkFlowEnabled()) {
+                        wfIntegrator.callWorkFlow(tradeLicenseRequest);
+                    } else {
+                        TLWorkflowService.updateStatus(tradeLicenseRequest);
+                    }
+                    break;
             }
             enrichmentService.postStatusEnrichment(tradeLicenseRequest,endStates,mdmsData);
             userService.createUser(tradeLicenseRequest, false);
-            calculationService.addCalculation(tradeLicenseRequest);
+//            calculationService.addCalculation(tradeLicenseRequest);
             repository.update(tradeLicenseRequest, idToIsStateUpdatableMap);
             licenceResponse=  tradeLicenseRequest.getLicenses();
         }
