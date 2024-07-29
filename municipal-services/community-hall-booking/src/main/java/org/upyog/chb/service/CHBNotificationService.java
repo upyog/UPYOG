@@ -47,6 +47,7 @@ public class CHBNotificationService {
 
 	public void process(CommunityHallBookingRequest bookingRequest) {
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
+		log.info("Processing notification for booking no : " + bookingDetail.getBookingNo() + " with status : " + bookingDetail.getBookingStatus());
 		String tenantId = bookingRequest.getHallsBookingApplication().getTenantId();
 		String action = bookingDetail.getBookingStatus();
 
@@ -56,7 +57,7 @@ public class CHBNotificationService {
 		Map<String, String> mobileNumberToOwner = new HashMap<String, String>();
 		mobileNumberToOwner.put(bookingDetail.getApplicantDetail().getApplicantMobileNo(),
 				bookingDetail.getApplicantDetail().getApplicantName());
-		
+		log.info("Fetching localization message for notification");
 		String localizationMessages = util.getLocalizationMessages(tenantId, bookingRequest.getRequestInfo());
 		String message = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages);
 		log.info("Message for sending sms and event : " + message);

@@ -30,7 +30,7 @@ public class NotificationConsumer {
 		CommunityHallBookingRequest bookingRequest = new CommunityHallBookingRequest();
 		try {
 
-			log.debug("Consuming record in CHB for notification: " + record.toString());
+			log.debug("Consuming record in CHB for notification: " + record.toString() + " from topic: " + topic);
 			bookingRequest = mapper.convertValue(record, CommunityHallBookingRequest.class);
 		} catch (final Exception e) {
 			log.error("Error while processing CHB notification to value: " + record + " on topic: " + topic + ": " + e);
