@@ -415,18 +415,11 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                 text={`${t(checkForNA(assetDetails?.manufacturer))}`}
               actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/assets`} />}
             />
-            <Row
-                label={t("AST_ASSIGNED_USER")}
-                text={`${t(checkForNA(assetDetails?.assignedUser))}`}
-              actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/assets`} />}
-            />
 
               <Row
                 label={t("AST_PURCHASE_COST")}
                 text={`${t(checkForNA(assetDetails?.purchaseCost))}`}
-              actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/assets`} />}
-
-
+               actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/assets`} />}
             />
           <Row
               label={t("AST_PURCHASE_DATE")}
