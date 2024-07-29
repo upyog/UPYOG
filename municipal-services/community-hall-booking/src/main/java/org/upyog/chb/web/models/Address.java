@@ -42,6 +42,7 @@ public class Address   {
         @NotBlank
         private String city;
         
+        @NotBlank
         private String cityCode;
 
         @NotBlank

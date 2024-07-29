@@ -84,6 +84,14 @@ public class CommunityHallBookingQueryBuilder {
 			builder.append(" ecbd.booking_no IN (").append(createQueryParams(applicationNos)).append(")");
 			addToPreparedStatement(preparedStmtList, applicationNos);
 		}
+		
+		String mobileNo = criteria.getMobileNumber();
+		if (mobileNo != null) {
+			List<String> mobileNos = Arrays.asList(mobileNo.split(","));
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" appl.applicant_mobile_no IN (").append(createQueryParams(mobileNos)).append(")");
+			addToPreparedStatement(preparedStmtList, mobileNos);
+		}
 
 		// createdby search criteria
 		List<String> createdBy = criteria.getCreatedBy();

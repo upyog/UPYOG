@@ -107,6 +107,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		for (Role role : info.getUserInfo().getRoles()) {
 			roles.add(role.getCode());
 		}
+		log.info("user roles for searching : " + roles);
 		if ((bookingSearchCriteria.tenantIdOnly() || bookingSearchCriteria.isEmpty())
 				&& roles.contains(CommunityHallBookingConstants.CITIZEN)) {
 			log.debug("loading data of created and by me");
