@@ -349,12 +349,12 @@ public class WaterServiceImpl implements WaterService {
 			if (adddetails.containsKey("new_meter_number")) 
 			{
 				 ismeter=adddetails.get("new_meter_number");
-				 log.info("New meter numbr"+ismeter);
+				 log.info("New meter numbr: "+ismeter);
 			}
 			else 
 				ismeter="0";
 			adddetails.put("meterMake", ismeter);
-			log.info("Request"+waterConnectionRequest);
+			log.info("Water Request: "+waterConnectionRequest);
 			waterDao.updateWaterConnection(waterConnectionRequest, true);
 			 return Arrays.asList(waterConnectionRequest.getWaterConnection());
 		}
