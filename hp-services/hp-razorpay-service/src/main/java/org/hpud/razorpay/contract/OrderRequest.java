@@ -17,7 +17,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class OrderRequest {
 
-
+	@JsonProperty("RequestInfo")
+	private RequestInfo requestInfo;
 	@JsonProperty("orders")
 	private CreateOrder createOrder;
 
