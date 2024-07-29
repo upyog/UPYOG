@@ -353,9 +353,7 @@ public class WaterServiceImpl implements WaterService {
 			}
 			else 
 				ismeter="0";
-			adddetails.replace("meterMake", ismeter);
-			adddetails.put("isnumberchange", "new_value"); 
-			adddetails.put("test", "abc"); 
+			adddetails.put("meterMake", ismeter);
 			log.info("Request"+waterConnectionRequest);
 			waterDao.updateWaterConnection(waterConnectionRequest, true);
 			 return Arrays.asList(waterConnectionRequest.getWaterConnection());
