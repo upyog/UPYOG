@@ -153,15 +153,19 @@ public class BulkDemandAndBillGenService {
 //				//financialYearMaster.get(SWCalculationConstant.ENDING_DATE_APPLICABLES);
 //			
 	        Long fromDate =null;     Long toDate=null;
-	        if (!billingPeriodMasterList.isEmpty()) {
-                Map<String, Object> firstBillingPeriod = billingPeriodMasterList.get(0); // Assuming there's at least one element
-                 fromDate = (Long) firstBillingPeriod.get("taxPeriodFrom");
-                 toDate = (Long) firstBillingPeriod.get("taxPeriodTo");
-                log.info("taxPeriodFrom: " + fromDate);
-                log.info("taxPeriodTo: " + toDate);
-            } else {
-            	  log.info("Billing_Period_Master list is empty");
-            }
+	        fromDate = (Long) financialYearMaster.get(SWCalculationConstant.STARTING_DATE_APPLICABLES);
+			toDate = (Long) financialYearMaster.get(SWCalculationConstant.ENDING_DATE_APPLICABLES);
+			
+			/*
+			 * if (!billingPeriodMasterList.isEmpty()) { Map<String, Object>
+			 * firstBillingPeriod = billingPeriodMasterList.get(0); // Assuming there's at
+			 * least one element fromDate = (Long) firstBillingPeriod.get("taxPeriodFrom");
+			 * 
+			 * toDate = (Long) firstBillingPeriod.get("taxPeriodTo");
+			 * log.info("taxPeriodFrom: " + fromDate); log.info("taxPeriodTo: " + toDate); }
+			 * else { log.info("Billing_Period_Master list is empty"); }
+			 */
+			
 	        Long expiryDate = (Long) financialYearMaster.get(SWCalculationConstant.Demand_Expiry_Date_String);
 			BigDecimal minimumPayableAmount = isForConnectionNO ? configs.getMinimumPayableAmount()
 					: calculation.getTotalAmount();

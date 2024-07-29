@@ -256,6 +256,8 @@ public class DemandService {
 
 			Long fromDate = (Long) financialYearMaster.get(SWCalculationConstant.STARTING_DATE_APPLICABLES);
 			Long toDate = (Long) financialYearMaster.get(SWCalculationConstant.ENDING_DATE_APPLICABLES);
+			fromDate = (Long) calculation.getTaxPeriodFrom();
+			toDate = (Long) calculation.getTaxPeriodTo();
 			Long expiryDate = (Long) financialYearMaster.get(SWCalculationConstant.Demand_Expiry_Date_String);
 			BigDecimal minimumPayableAmount = isForConnectionNO ? configs.getMinimumPayableAmount() : calculation.getTotalAmount();
 			String businessService = isForConnectionNO ? configs.getBusinessService() : ONE_TIME_FEE_SERVICE_FIELD;
@@ -1281,6 +1283,7 @@ public class DemandService {
 								.calculationCriteria(calculationCriteriaList)
 								.requestInfo(requestInfo)
 								.isconnectionCalculation(true)
+								.migrationCount(migrationCount)
 								.build();
 						log.info("Pushing calculation req to the kafka topic with bulk data of calculationCriteriaList size: {}", calculationCriteriaList.size());
 						kafkaTemplate.send(configs.getCreateDemand(), calculationReq);
@@ -1309,6 +1312,7 @@ public class DemandService {
 								.calculationCriteria(calculationCriteriaList)
 								.requestInfo(requestInfo)
 								.isconnectionCalculation(true)
+								.migrationCount(migrationCount)
 								.build();
 						log.info("Pushing calculation last req to the kafka topic with bulk data of calculationCriteriaList size: {}", calculationCriteriaList.size());
 						kafkaTemplate.send(configs.getCreateDemand(), calculationReq);

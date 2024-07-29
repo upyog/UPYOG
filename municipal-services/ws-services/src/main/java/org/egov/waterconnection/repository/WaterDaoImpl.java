@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -146,9 +147,9 @@ public class WaterDaoImpl implements WaterDao {
 	 * 
 	 * @param waterConnectionRequest
 	 */
-	public void pushForEditNotification(WaterConnectionRequest waterConnectionRequest, boolean isStateUpdatable, boolean ismeterentry) {
-		if (isStateUpdatable && (ismeterentry|| !WCConstants.EDIT_NOTIFICATION_STATE.contains(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction())))
-		{
+	public void pushForEditNotification(WaterConnectionRequest waterConnectionRequest, boolean isStateUpdatable) {
+		if (!WCConstants.EDIT_NOTIFICATION_STATE
+				.contains(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction())) {
 			waterConnectionProducer.push(wsConfiguration.getEditNotificationTopic(), waterConnectionRequest);
 		}
 	}
