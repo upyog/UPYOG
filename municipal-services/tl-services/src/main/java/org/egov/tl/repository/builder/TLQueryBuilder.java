@@ -304,7 +304,9 @@ public class TLQueryBuilder {
 
 
 	private void addBusinessServiceClause(TradeLicenseSearchCriteria criteria,List<Object> preparedStmtList,StringBuilder builder){
-        if ((criteria.getBusinessService() == null) || (businessServiceTL.equals(criteria.getBusinessService()))) {
+         //if need to add default businessService filter if not passed as input
+//		if ((criteria.getBusinessService() == null) || (businessServiceTL.equals(criteria.getBusinessService()))) {
+	    if (businessServiceTL.equals(criteria.getBusinessService())) {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" (tl.businessservice=? or tl.businessservice isnull) ");
             preparedStmtList.add(businessServiceTL);

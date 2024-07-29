@@ -1,5 +1,15 @@
 package org.egov.tl.workflow;
 
+import static org.egov.tl.util.TLConstants.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -8,15 +18,11 @@ import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.util.TLConstants;
 import org.egov.tl.web.models.TradeLicense;
 import org.egov.tl.web.models.TradeLicenseRequest;
-import org.egov.tl.web.models.workflow.BusinessService;
+import org.egov.tl.web.models.contract.BusinessService;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-
-import java.util.*;
-
-import static org.egov.tl.util.TLConstants.*;
 
 
 @Component
@@ -78,6 +84,17 @@ public class ActionValidator {
                         errorMap.put("INVALID ACTION", "Action should be NOWORKFLOW during create");
                     }
                     break;
+                    
+                case businessService_NewTL:
+                        if (ACTION_APPLY.equalsIgnoreCase(license.getAction())) {
+                            if (license.getTradeLicenseDetail().getApplicationDocuments() == null)
+                                errorMap.put("INVALID ACTION", "Action cannot be changed to APPLY. Application document are not provided");
+                        }
+                        if (!ACTION_APPLY.equalsIgnoreCase(license.getAction()) &&
+                                !ACTION_INITIATE.equalsIgnoreCase(license.getAction())) {
+                            errorMap.put("INVALID ACTION", "Action can only be APPLY or INITIATE during create");
+                        }
+                        break;
             }
         });
         //    validateRole(request);

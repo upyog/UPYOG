@@ -1,7 +1,15 @@
 package org.egov.tl.util;
 
-import com.jayway.jsonpath.JsonPath;
-import lombok.extern.slf4j.Slf4j;
+import static org.egov.tl.util.TLConstants.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
@@ -13,16 +21,15 @@ import org.egov.tl.repository.ServiceRequestRepository;
 import org.egov.tl.web.models.AuditDetails;
 import org.egov.tl.web.models.TradeLicense;
 import org.egov.tl.web.models.TradeLicenseRequest;
-import org.egov.tl.web.models.workflow.BusinessService;
+import org.egov.tl.web.models.contract.BusinessService;
 import org.egov.tl.workflow.WorkflowService;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import com.jayway.jsonpath.JsonPath;
 
-import static org.egov.tl.util.TLConstants.*;
-import static org.egov.tl.util.TLConstants.COMMON_MASTERS_MODULE;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j

@@ -11,9 +11,9 @@ import java.util.List;
 public class TLConstants {
 
 
-    public static  final String businessService_TL = "NewTL";
+    public static  final String businessService_TL = "TL";
     
-//    public static  final String businessService_NewTL = "NewTL";
+    public static  final String businessService_NewTL = "NewTL";
 
     public static  final String businessService_DIRECT_RENEWAL = "DIRECTRENEWAL";
     
@@ -457,5 +457,11 @@ public class TLConstants {
     public TLConstants() {}
 
     public static final String TENANTS_JSONPATH = "$.MdmsRes.tenant.tenants";
+    
+    public static String ROLE_CODE_EMPLOYEE = "EMPLOYEE";
+
+    public static String ROLE_CODE_TL_VERIFIER = "TL_VERIFIER";
+
+    public static String ROLE_CODE_TL_APPROVER = "TL_APPROVER";
 
 }
