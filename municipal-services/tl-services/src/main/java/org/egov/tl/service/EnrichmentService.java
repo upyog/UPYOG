@@ -1,5 +1,26 @@
 package org.egov.tl.service;
 
+import static org.egov.tl.util.TLConstants.ACTION_APPLY;
+import static org.egov.tl.util.TLConstants.ACTION_INITIATE;
+import static org.egov.tl.util.TLConstants.CITIZEN_SENDBACK_ACTION;
+import static org.egov.tl.util.TLConstants.STATUS_APPLIED;
+import static org.egov.tl.util.TLConstants.STATUS_INITIATED;
+import static org.egov.tl.util.TLConstants.businessService_BPA;
+import static org.egov.tl.util.TLConstants.businessService_TL;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -7,23 +28,24 @@ import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.repository.IdGenRepository;
 import org.egov.tl.util.TLConstants;
 import org.egov.tl.util.TradeUtil;
-import org.egov.tl.web.models.*;
+import org.egov.tl.web.models.AuditDetails;
+import org.egov.tl.web.models.OwnerInfo;
 import org.egov.tl.web.models.OwnerInfo.RelationshipEnum;
+import org.egov.tl.web.models.TradeLicense;
 import org.egov.tl.web.models.TradeLicense.ApplicationTypeEnum;
 import org.egov.tl.web.models.TradeLicense.LicenseTypeEnum;
+import org.egov.tl.web.models.TradeLicenseRequest;
+import org.egov.tl.web.models.TradeLicenseSearchCriteria;
 import org.egov.tl.web.models.Idgen.IdResponse;
+import org.egov.tl.web.models.contract.BusinessService;
 import org.egov.tl.web.models.user.UserDetailResponse;
-import org.egov.tl.web.models.workflow.BusinessService;
 import org.egov.tl.workflow.WorkflowService;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import com.jayway.jsonpath.JsonPath;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import static org.egov.tl.util.TLConstants.*;
+import com.jayway.jsonpath.JsonPath;
 
 
 @Service
@@ -89,6 +111,28 @@ public class EnrichmentService {
                             accessory.setActive(true);
                         });
                     break;
+                    
+                case TLConstants.businessService_NewTL:
+                    //TLR Changes
+                    if(tradeLicense.getApplicationType() != null && tradeLicense.getApplicationType().toString().equals(TLConstants.APPLICATION_TYPE_RENEWAL)){
+                        tradeLicense.setLicenseNumber(tradeLicenseRequest.getLicenses().get(0).getLicenseNumber());
+                        Map<String, Long> taxPeriods = tradeUtil.getTaxPeriods(tradeLicense, mdmsData);
+                        tradeLicense.setValidTo(taxPeriods.get(TLConstants.MDMS_ENDDATE));
+                        tradeLicense.setValidFrom(taxPeriods.get(TLConstants.MDMS_STARTDATE));
+                    }else{
+                        Map<String, Long> taxPeriods = tradeUtil.getTaxPeriods(tradeLicense, mdmsData);
+                        if (tradeLicense.getLicenseType().equals(TradeLicense.LicenseTypeEnum.PERMANENT) || tradeLicense.getValidTo() == null)
+                            tradeLicense.setValidTo(taxPeriods.get(TLConstants.MDMS_ENDDATE));
+                            tradeLicense.setValidFrom(taxPeriods.get(TLConstants.MDMS_STARTDATE));
+                    }
+                    if (!CollectionUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAccessories()))
+                        tradeLicense.getTradeLicenseDetail().getAccessories().forEach(accessory -> {
+                            accessory.setTenantId(tradeLicense.getTenantId());
+                            accessory.setId(UUID.randomUUID().toString());
+                            accessory.setActive(true);
+                        });
+                    break;
+                    
             }
             tradeLicense.getTradeLicenseDetail().getAddress().setTenantId(tradeLicense.getTenantId());
             tradeLicense.getTradeLicenseDetail().getAddress().setId(UUID.randomUUID().toString());
@@ -124,7 +168,8 @@ public class EnrichmentService {
                     });
             });
 
-            if ( !StringUtils.equalsIgnoreCase(businessService_TL, tradeLicense.getBusinessService())
+            if ( !(StringUtils.equalsIgnoreCase(tradeLicense.getBusinessService(), businessService_TL)
+            		  || StringUtils.equalsIgnoreCase(tradeLicense.getBusinessService(), TLConstants.businessService_NewTL))
             		&& tradeLicense.getTradeLicenseDetail().getSubOwnerShipCategory().contains(config.getInstitutional())) {
                 tradeLicense.getTradeLicenseDetail().getInstitution().setId(UUID.randomUUID().toString());
                 tradeLicense.getTradeLicenseDetail().getInstitution().setActive(true);
@@ -228,9 +273,9 @@ public class EnrichmentService {
                 applicationNumbers = getIdList(requestInfo, tenantId, config.getApplicationNumberIdgenNameBPA(), config.getApplicationNumberIdgenFormatBPA(), request.getLicenses().size());
                 break;
                 
-//            case businessService_NewTL:
-//            	applicationNumbers = getIdList(requestInfo, tenantId, config.getApplicationNumberIdgenNameTL(), config.getApplicationNumberIdgenFormatTL(), request.getLicenses().size());
-//                break;
+            case TLConstants.businessService_NewTL:
+            	applicationNumbers = getIdList(requestInfo, tenantId, config.getApplicationNumberIdgenNameTL(), config.getApplicationNumberIdgenFormatTL(), request.getLicenses().size());
+                break;
         }
         ListIterator<String> itr = applicationNumbers.listIterator();
 
@@ -245,7 +290,8 @@ public class EnrichmentService {
         licenses.forEach(tradeLicense -> {
         	String tempId = itr.next();
         	
-        	if(StringUtils.equals(tradeLicense.getBusinessService(), businessService_TL)) {
+        	if(StringUtils.equals(tradeLicense.getBusinessService(), businessService_TL)
+        			|| StringUtils.equals(tradeLicense.getBusinessService(), TLConstants.businessService_NewTL)) {
         		tempId = validateAndEnrichTLApplication(tradeLicense, tempId);
         	}
         	
@@ -429,6 +475,13 @@ public class EnrichmentService {
                 case businessService_BPA:
                     license.setStatus(STATUS_INITIATED);
                     break;
+                    
+                case TLConstants.businessService_NewTL:
+                    if (license.getAction().equalsIgnoreCase(ACTION_INITIATE))
+                        license.setStatus(STATUS_INITIATED);
+                    if (license.getAction().equalsIgnoreCase(ACTION_APPLY))
+                        license.setStatus(STATUS_APPLIED);
+                    break;
             }
         });
     }
@@ -551,6 +604,10 @@ public class EnrichmentService {
                     case businessService_BPA:
                         licenseNumbers = getIdList(requestInfo, tenantId, config.getLicenseNumberIdgenNameBPA(), config.getLicenseNumberIdgenFormatBPA(), count);
                         break;
+                        
+                    case TLConstants.businessService_NewTL:
+                        licenseNumbers = getIdList(requestInfo, tenantId, config.getLicenseNumberIdgenNameTL(), config.getLicenseNumberIdgenFormatTL(), count);
+                        break;
                 }
                 ListIterator<String> itr = licenseNumbers.listIterator();
 
@@ -578,7 +635,8 @@ public class EnrichmentService {
                             license.setValidTo(calendar.getTimeInMillis());
                             license.setValidFrom(time);
                         }
-                        if (businessService.equalsIgnoreCase(businessService_TL)) {
+                        if (businessService.equalsIgnoreCase(businessService_TL)
+                        		|| businessService.equalsIgnoreCase(TLConstants.businessService_NewTL)) {
                         	String tempId = validateAndEnrichTLApplication(license, license.getLicenseNumber());
                         	license.setLicenseNumber(tempId);
                             license.setValidFrom(new Date().getTime());

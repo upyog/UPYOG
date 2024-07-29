@@ -141,7 +141,11 @@ public class WorkflowValidator {
                 throw new CustomException("INVALID ROLE","User is not authorized to perform action");
             if(action!=null && !isStateChanging && !util.isRoleAvailable(roles,util.rolesAllowedInService(businessService)))
                 throw new CustomException("INVALID ROLE","User is not authorized to perform action");
-
+            if(isRoleAvailable) {
+            	processStateAndAction.getProcessInstanceFromRequest().setRole(roles.stream()
+                        .filter(action.getRoles()::contains)
+                        .findFirst().get());
+            }
 
 
 

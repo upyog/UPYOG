@@ -98,6 +98,7 @@ public class WorkflowRowMapper implements ResultSetExtractor<List<ProcessInstanc
                         .auditDetails(auditdetails)
                         .rating(rs.getInt("rating"))
                         .escalated(rs.getBoolean("escalated"))
+                        .role(rs.getString("role"))
                         .build();
             }
             addChildrenToProperty(rs,processInstance);

@@ -6,7 +6,6 @@ import static org.egov.tl.util.TLConstants.STATUS_APPROVED;
 import static org.egov.tl.util.TLConstants.STATUS_INITIATED;
 import static org.egov.tl.util.TLConstants.STATUS_PENDINGFORMODIFICATION;
 import static org.egov.tl.util.TLConstants.STATUS_REJECTED;
-import static org.egov.tl.util.TLConstants.STATUS_VERIFIED;
 import static org.egov.tl.util.TLConstants.TRADE_LICENSE_MODULE_CODE;
 import static org.egov.tl.util.TLConstants.businessService_BPA;
 import static org.egov.tl.util.TLConstants.businessService_TL;
@@ -18,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +31,9 @@ import javax.validation.ValidatorFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.response.ErrorResponse;
+import org.egov.common.contract.request.Role;
 import org.egov.tl.config.TLConfiguration;
+import org.egov.tl.repository.RestCallRepository;
 import org.egov.tl.repository.TLRepository;
 import org.egov.tl.service.notification.EditNotificationService;
 import org.egov.tl.util.TLConstants;
@@ -40,21 +41,27 @@ import org.egov.tl.util.TradeUtil;
 import org.egov.tl.validator.TLValidator;
 import org.egov.tl.web.models.ApplicationStatusChangeRequest;
 import org.egov.tl.web.models.Difference;
+import org.egov.tl.web.models.NextAction;
 import org.egov.tl.web.models.OwnerInfo;
+import org.egov.tl.web.models.RequestInfoWrapper;
 import org.egov.tl.web.models.TradeLicense;
+import org.egov.tl.web.models.TradeLicenseActionRequest;
+import org.egov.tl.web.models.TradeLicenseActionResponse;
 import org.egov.tl.web.models.TradeLicenseRequest;
 import org.egov.tl.web.models.TradeLicenseResponse;
 import org.egov.tl.web.models.TradeLicenseSearchCriteria;
 import org.egov.tl.web.models.TradeUnit;
 import org.egov.tl.web.models.UpdateTLStatusCriteriaRequest;
+import org.egov.tl.web.models.contract.BusinessService;
+import org.egov.tl.web.models.contract.BusinessServiceResponse;
 import org.egov.tl.web.models.contract.PDFRequest;
 import org.egov.tl.web.models.contract.ProcessInstance;
 import org.egov.tl.web.models.contract.ProcessInstanceRequest;
 import org.egov.tl.web.models.contract.ProcessInstanceResponse;
+import org.egov.tl.web.models.contract.State;
 import org.egov.tl.web.models.contract.Alfresco.DMSResponse;
 import org.egov.tl.web.models.contract.Alfresco.DmsRequest;
 import org.egov.tl.web.models.user.UserDetailResponse;
-import org.egov.tl.web.models.workflow.BusinessService;
 import org.egov.tl.workflow.ActionValidator;
 import org.egov.tl.workflow.TLWorkflowService;
 import org.egov.tl.workflow.WorkflowIntegrator;
@@ -64,11 +71,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
@@ -118,6 +124,12 @@ public class TradeLicenseService {
 
     @Autowired
     private AlfrescoService alfrescoService;
+
+    @Autowired
+    private RestCallRepository restCallRepository;
+    
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Value("${workflow.bpa.businessServiceCode.fallback_enabled}")
     private Boolean pickWFServiceNameFromTradeTypeOnly;
@@ -173,7 +185,7 @@ public class TradeLicenseService {
 //       tlValidator.validateCreate(tradeLicenseRequest, mdmsData, billingSlabs);
        log.info("request is " + tradeLicenseRequest);
        userService.createUser(tradeLicenseRequest, false);
-       calculationService.addCalculation(tradeLicenseRequest);
+//       calculationService.addCalculation(tradeLicenseRequest);
 
         /*
          * call workflow service if it's enable else uses internal workflow process
@@ -196,7 +208,7 @@ public class TradeLicenseService {
 
     private void enrichPreCreateNewTLValues(TradeLicenseRequest tradeLicenseRequest) {
     	tradeLicenseRequest.getLicenses().forEach(license -> {
-    		if(StringUtils.equals(license.getBusinessService(), businessService_TL)) {
+    		if(StringUtils.equals(license.getBusinessService(), TLConstants.businessService_NewTL)) {//need to change NewTL
         		enrichmentService.enrichCreateNewTLValues(tradeLicenseRequest.getRequestInfo().getUserInfo().getUuid(), license);
     		}
     	});
@@ -276,12 +288,74 @@ public class TradeLicenseService {
              licenses = getLicensesWithOwnerInfo(criteria,requestInfo);
          }
          
-         // calculate passed dates from creation date
-         enrichPassedDates(licenses);
-
+         // post search activity
+         licenses = enrichPostSearchLicense(licenses,requestInfo,criteria);
+         
          return licenses;       
     }
     
+	private List<TradeLicense> enrichPostSearchLicense(List<TradeLicense> licenses, RequestInfo requestInfo,
+			TradeLicenseSearchCriteria criteria) {
+
+		// calculate passed dates from creation date
+        enrichPassedDates(licenses);
+        
+        // filter role based search TL
+        List<TradeLicense> tempLicenses = licenses;
+		if (StringUtils.isEmpty(criteria.getApplicationNumber())) {
+			tempLicenses = filterLicensesBasedOnRolesWithinTenantId(licenses, requestInfo, criteria);
+		}
+		
+		return tempLicenses;
+
+	}
+
+
+	private List<TradeLicense> filterLicensesBasedOnRolesWithinTenantId(List<TradeLicense> licenses,
+			RequestInfo requestInfo, TradeLicenseSearchCriteria criteria) {
+		
+		List<TradeLicense> tempLicenses = licenses;
+		
+		if(StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), TLConstants.ROLE_CODE_EMPLOYEE)) {
+			
+			tempLicenses = licenses.stream().filter(license -> 
+						!StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_INITIATED))
+					.collect(Collectors.toList());
+			
+			List<String> rolesWithinTenant = getRolesWithinTenant(criteria.getTenantId(), requestInfo.getUserInfo().getRoles());
+			
+			if(!rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_VERIFIER)) {
+				tempLicenses = tempLicenses.stream().filter(license -> 
+				!StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORVERIFICATION))
+			.collect(Collectors.toList());
+			}
+			
+			if(!rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_APPROVER)) {
+				tempLicenses = tempLicenses.stream().filter(license -> 
+				!StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORAPPROVAL))
+			.collect(Collectors.toList());
+			}
+			
+		}
+		return tempLicenses;
+	}
+
+
+
+
+
+	private List<String> getRolesWithinTenant(String tenantId, List<Role> roles) {
+
+		List<String> roleCodes = roles.stream()
+				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(role -> role.getCode())
+				.collect(Collectors.toList());
+		return roleCodes;
+	}
+
+
+
+
+
 	private void enrichPassedDates(List<TradeLicense> licenses) {
 		licenses.stream().forEach(license -> {
 			
@@ -513,6 +587,10 @@ public class TradeLicenseService {
                         tradeType = tradeType.split("\\.")[0];
                     businessServiceName = tradeType;
                     break;
+                    
+                case TLConstants.businessService_NewTL:
+                    businessServiceName = config.getTlBusinessServiceValue();
+                    break;
             }
             BusinessService businessService = workflowService.getBusinessService(tradeLicenseRequest.getLicenses().get(0).getTenantId(), tradeLicenseRequest.getRequestInfo(), businessServiceName);
             List<TradeLicense> searchResult = getLicensesWithOwnerInfo(tradeLicenseRequest);
@@ -547,10 +625,18 @@ public class TradeLicenseService {
                     endStates = tradeUtil.getBPAEndState(tradeLicenseRequest);
                     wfIntegrator.callWorkFlow(tradeLicenseRequest);
                     break;
+                    
+                case TLConstants.businessService_NewTL:
+                    if (config.getIsExternalWorkFlowEnabled()) {
+                        wfIntegrator.callWorkFlow(tradeLicenseRequest);
+                    } else {
+                        TLWorkflowService.updateStatus(tradeLicenseRequest);
+                    }
+                    break;
             }
             enrichmentService.postStatusEnrichment(tradeLicenseRequest,endStates,mdmsData);
             userService.createUser(tradeLicenseRequest, false);
-            calculationService.addCalculation(tradeLicenseRequest);
+//            calculationService.addCalculation(tradeLicenseRequest);
             repository.update(tradeLicenseRequest, idToIsStateUpdatableMap);
             licenceResponse=  tradeLicenseRequest.getLicenses();
         }
@@ -576,6 +662,7 @@ public class TradeLicenseService {
 		for(int i=0; i<tradeLicenseRequest.getLicenses().size(); i++) {
 			TradeLicense license = tradeLicenseRequest.getLicenses().get(i);
 			String action = license.getAction();
+			String comment = license.getComment();
 			
 			if(null == license.getTradeLicenseDetail()
 					&& (StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_VERIFIER, license.getAction())
@@ -597,6 +684,7 @@ public class TradeLicenseService {
 		         
 				//enrich input fields
 				licenses.get(0).setAction(action);
+				licenses.get(0).setComment(comment);
 				tempTradeLicenseRequest.getLicenses().add(licenses.get(0));
 			}
 			else {
@@ -932,6 +1020,78 @@ public class TradeLicenseService {
 		tlObject.put("addressLine2", "your_address_line2_value");
 		tlObject.put("pincode", "your_pincode");
 		return tlObject;
+	}
+
+
+
+
+
+	public TradeLicenseActionResponse getActionsOnApplication(TradeLicenseActionRequest tradeLicenseActionRequest) {
+		
+		if(CollectionUtils.isEmpty(tradeLicenseActionRequest.getApplicationNumbers())) {
+			throw new CustomException("INVALID REQUEST","Provide Application Number.");
+		}
+		
+		Map<String, List<String>> applicationActionMaps = new HashMap<>();
+		
+		tradeLicenseActionRequest.getApplicationNumbers().stream().forEach(applicationNumber -> {
+			
+			// search application number
+			TradeLicenseSearchCriteria criteria = TradeLicenseSearchCriteria.builder()
+					.applicationNumber(applicationNumber)
+					.build();
+			List<TradeLicense> licenses = repository.getLicenses(criteria);
+			TradeLicense license = null != licenses ? licenses.get(0): null;
+			
+			if(null == license) {
+				throw new CustomException("LICENSE_NOT_FOUND","No License found with provided input.");
+			}
+			
+			String applicationStatus = license.getStatus();
+			String applicationTenantId = license.getTenantId();
+			String applicationBusinessId = license.getBusinessService();
+			List<String> rolesWithinTenant = getRolesWithinTenant(applicationTenantId, tradeLicenseActionRequest.getRequestInfo().getUserInfo().getRoles());
+			
+			
+			// fetch business service search
+			StringBuilder uri = new StringBuilder(config.getWfHost());
+			uri.append(config.getWfBusinessServiceSearchPath());
+			uri.append("?tenantId=").append(applicationTenantId);
+			uri.append("&businessServices=").append(applicationBusinessId);
+			RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
+					.requestInfo(tradeLicenseActionRequest.getRequestInfo()).build();
+			LinkedHashMap<String, Object> responseObject = (LinkedHashMap<String, Object>) restCallRepository.fetchResult(uri, requestInfoWrapper);
+			BusinessServiceResponse businessServiceResponse = objectMapper.convertValue(responseObject
+																					, BusinessServiceResponse.class);
+			
+			if(null == businessServiceResponse || CollectionUtils.isEmpty(businessServiceResponse.getBusinessServices())) {
+				throw new CustomException("NO_BUSINESS_SERVICE_FOUND","Business service not found for application number: "+applicationNumber);
+			}
+			List<State> stateList = businessServiceResponse.getBusinessServices().get(0).getStates().stream()
+					.filter(state -> StringUtils.equalsIgnoreCase(state.getApplicationStatus(), applicationStatus)
+										&& !StringUtils.equalsAnyIgnoreCase(state.getApplicationStatus(), TLConstants.STATUS_APPROVED)).collect(Collectors.toList());
+			
+			List<String> actions = new ArrayList<>();
+			stateList.stream().forEach(state -> {
+				state.getActions().stream()
+				.filter(action -> action.getRoles().stream().anyMatch(role -> rolesWithinTenant.contains(role)))
+				.forEach(action -> {
+					actions.add(action.getAction());
+				});
+			}) ;
+			
+			
+			applicationActionMaps.put(applicationNumber, actions);
+		});
+		
+		List<NextAction> nextActionList = new ArrayList<>();
+		applicationActionMaps.entrySet().stream().forEach(entry -> {
+			nextActionList.add(NextAction.builder().applicationNumber(entry.getKey()).action(entry.getValue()).build());
+		});
+		
+		TradeLicenseActionResponse tradeLicenseActionResponse = TradeLicenseActionResponse.builder().nextActions(nextActionList).build();
+		return tradeLicenseActionResponse;
+	
 	}
 
 }
