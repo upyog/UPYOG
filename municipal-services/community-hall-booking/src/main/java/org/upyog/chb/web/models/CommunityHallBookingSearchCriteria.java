@@ -10,12 +10,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
+@ToString
 public class CommunityHallBookingSearchCriteria {
 	@JsonProperty("tenantId")
 	private String tenantId;
@@ -47,7 +49,7 @@ public class CommunityHallBookingSearchCriteria {
 	@JsonProperty("createdBy")
 	@JsonIgnore
 	private List<String> createdBy;
-
+	
 	public boolean isEmpty() {
 		return (this.tenantId == null && this.status == null && this.bookingIds == null && this.bookingNo == null
 				&& this.mobileNumber == null && this.offset == null && this.limit == null

@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Import;
 //@EnableFeignClients
 public class CommunityHallBookingApplication {
 
-
+	//TODO: is devtools disable required on prod
     public static void main(String[] args) throws Exception {
     	System.setProperty("spring.devtools.restart.enabled", "false");
         SpringApplication.run(CommunityHallBookingApplication.class, args);
