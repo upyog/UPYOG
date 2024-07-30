@@ -43,6 +43,7 @@ const CHBApplicationDetails = () => {
     tenantId,
     filters: { bookingNo: acknowledgementIds },
   });
+  const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
 
   const [billData, setBillData] = useState(null);
 
@@ -126,17 +127,43 @@ const CHBApplicationDetails = () => {
   }
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
+    let application = data?.hallsBookingApplication?.[0];
+    let fileStoreId = application?.paymentReceiptFilestoreId
+    if (!fileStoreId) {
     let response = { filestoreIds: [payments?.fileStoreId] };
     response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "chbservice-receipt");
-    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-    window.open(fileStore[response?.filestoreIds[0]], "_blank");
+    const updatedApplication = {
+      ...application,
+      paymentReceiptFilestoreId: response?.filestoreIds[0]
+    };
+    await mutation.mutateAsync({
+      hallsBookingApplication: updatedApplication
+    });
+    fileStoreId = response?.filestoreIds[0];
+    }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+    window.open(fileStore[fileStoreId], "_blank");
   }
   async function getPermissionLetter({ tenantId, payments, ...params }) {
-    let response =await Digit.PaymentService.generatePdf(
-      tenantId,
-      { hallsBookingApplication: [data?.hallsBookingApplication?.[0]] }, "chbpermissionletter");
-    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-    window.open(fileStore[response?.filestoreIds[0]], "_blank");
+    let application = data?.hallsBookingApplication?.[0];
+    let fileStoreId = application?.permissionLetterFilestoreId;
+    if (!fileStoreId) {
+      const response = await Digit.PaymentService.generatePdf(
+        tenantId,
+        { hallsBookingApplication: [application] }, 
+        "chbpermissionletter"
+      );
+      const updatedApplication = {
+        ...application,
+        permissionLetterFilestoreId: response?.filestoreIds[0]
+      };
+      await mutation.mutateAsync({
+        hallsBookingApplication: updatedApplication
+      });
+      fileStoreId = response?.filestoreIds[0];
+    }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+    window.open(fileStore[fileStoreId], "_blank");
   }
 
   const handleDownload = async (document, tenantid) => {

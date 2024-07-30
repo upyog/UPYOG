@@ -148,11 +148,13 @@ const formdata={
     },
     bookingSlotDetails:data?.slotlist,
 
-  workflow : {
-      businessService: "chb-services",
-      action : "APPLY",
-      moduleName: "chb-services"
-    }
+    workflow:null
+
+  // workflow : {
+  //     businessService: "chb-services",
+  //     action : "APPLY",
+  //     moduleName: "chb-services"
+  //   }
   }
 }
 

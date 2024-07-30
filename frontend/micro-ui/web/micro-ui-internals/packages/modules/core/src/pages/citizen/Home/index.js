@@ -83,9 +83,9 @@ const Home = () => {
         onClick: () => history.push(citizenServicesObj?.props?.[2]?.navigationUrl),
       },
       {
-          name: t("COMMUNITY_HALL_BOOKING"),
+          name: t("ACTION_TEST_CHB"),
           Icon: <DropIcon/>,
-          // onClick: () => history.push("/digit-ui/citizen")
+          onClick: () => history.push("/digit-ui/citizen/chb-home")
       },
       {
         name: t(citizenServicesObj?.props?.[3]?.label),
