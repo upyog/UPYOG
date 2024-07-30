@@ -64,8 +64,6 @@ public class EwasteService {
 	public List<EwasteApplication> searchEwasteApplications(RequestInfo requestInfo,
 			EwasteApplicationSearchCriteria ewasteApplicationSearchCriteria) {
 
-		ewasteApplicationSearchCriteria.setUserUuidString(requestInfo.getUserInfo().getUuid());
-
 		List<EwasteApplication> applications = ewasteApplicationRepository
 				.getApplication(ewasteApplicationSearchCriteria);
 
