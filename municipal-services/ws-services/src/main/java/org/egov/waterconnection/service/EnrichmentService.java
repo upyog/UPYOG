@@ -496,17 +496,13 @@ public class EnrichmentService {
 						if (creationDate1.compareTo(creationDate2) == -1) {
 							connectionHashMap.put(connection.getConnectionNo(), connection);
 						}
-					} else if (connection.getApplicationStatus().equals(WCConstants.MODIFIED_FINAL_STATE)) {
-							connectionHashMap.put(connection.getConnectionNo(), connection);
-					} else {
-						if (connection.getApplicationStatus().equals(WCConstants
-								.DISCONNECTION_FINAL_STATE)) {
+					} else if (connection.getApplicationStatus().equals(WCConstants.MODIFIED_FINAL_STATE )) {
 							connectionHashMap.put(connection.getConnectionNo(), connection);
 					} 
 				}
 				
 			}
-		}});
+		});
 		return new ArrayList(connectionHashMap.values());
 	}
 

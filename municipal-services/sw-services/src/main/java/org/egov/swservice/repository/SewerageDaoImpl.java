@@ -129,17 +129,19 @@ public class SewerageDaoImpl implements SewerageDao {
 	public void updateSewerageConnection(SewerageConnectionRequest sewerageConnectionRequest,
 										 boolean isStateUpdatable) {
 		String reqAction = sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction();
-		if (isStateUpdatable) {
+			if (isStateUpdatable) {
 			if (SWConstants.EXECUTE_DISCONNECTION.equalsIgnoreCase(reqAction)) {
 				sewerageConnectionRequest.getSewerageConnection().setStatus(Connection.StatusEnum.INACTIVE);
 			}
+			if ((sewerageConnectionRequest.isReconnectRequest() || sewerageConnectionRequest.getSewerageConnection().getApplicationType().equalsIgnoreCase(SWConstants.SEWERAGE_RECONNECTION)) && SWConstants.ACTIVATE_CONNECTION_CONST.equalsIgnoreCase(reqAction)) {
+				sewerageConnectionRequest.getSewerageConnection().setStatus(Connection.StatusEnum.ACTIVE);
+			}
 			sewarageConnectionProducer.push(sewerageConnectionRequest.getSewerageConnection().getTenantId(), updateSewarageConnection, sewerageConnectionRequest);
-		} else if (SWConstants.EXECUTE_DISCONNECTION.equalsIgnoreCase(sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction())) {
-			sewerageConnectionRequest.getSewerageConnection().setStatus(Connection.StatusEnum.INACTIVE);
-			sewarageConnectionProducer.push(sewerageConnectionRequest.getSewerageConnection().getTenantId(), updateSewarageConnection, sewerageConnectionRequest);
-		} else {
+			}
+			else {
 			sewarageConnectionProducer.push(sewerageConnectionRequest.getSewerageConnection().getTenantId(), swConfiguration.getWorkFlowUpdateTopic(), sewerageConnectionRequest);
 		}
+
 	}
 
 	/**

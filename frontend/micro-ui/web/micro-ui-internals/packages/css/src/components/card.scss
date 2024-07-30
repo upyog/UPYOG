@@ -369,6 +369,7 @@
 
 .employee-application-details {
   display: flex !important;
+  flex-direction: column !important;
   justify-content: space-between !important;
   max-height: 70px !important;
   height: 70px !important;
