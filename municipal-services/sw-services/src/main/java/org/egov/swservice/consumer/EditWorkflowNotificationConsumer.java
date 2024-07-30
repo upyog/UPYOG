@@ -6,11 +6,13 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.Role;
 import org.egov.swservice.service.DiffService;
 import org.egov.swservice.service.SewerageService;
 import org.egov.swservice.service.SewerageServiceImpl;
 import org.egov.swservice.util.EncryptionDecryptionUtil;
 import org.egov.swservice.util.SWConstants;
+import org.egov.swservice.web.models.OwnerInfo;
 import org.egov.swservice.web.models.SearchCriteria;
 import org.egov.swservice.web.models.SewerageConnection;
 import org.egov.swservice.web.models.SewerageConnectionRequest;
