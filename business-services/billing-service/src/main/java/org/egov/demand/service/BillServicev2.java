@@ -379,11 +379,28 @@ public class BillServicev2 {
 	public BillResponseV2 noDues(BillSearchCriteria billCriteria, RequestInfo requestInfo) {
 
 		List<BillV2> bills = billRepository.findBill(billCriteria);
+		boolean finalbill=false;
 		for(BillV2 billv2:bills)
 		{
 			if(billv2.getStatus().equals(BillStatus.ACTIVE))
 			{
 				throw new CustomException("BILL_FOUND","Please pay your bills");
+			}
+			else if(billv2.getStatus().equals(BillStatus.PAID))
+			{
+				for(BillDetailV2 billdeatilv2:billv2.getBillDetails())
+				{
+					if(billdeatilv2.getPaymentPeriod().equalsIgnoreCase("Q4"))
+					{
+						finalbill=true;
+					}
+					else if(billdeatilv2.getPaymentPeriod().equalsIgnoreCase("H2"))
+					{
+						finalbill=true;
+					}
+				}
+				if(!finalbill)
+					throw new CustomException("BILL_FOUND","Please pay your bills");
 			}
 		}
 		
