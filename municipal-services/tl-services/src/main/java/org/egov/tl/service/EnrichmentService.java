@@ -1,5 +1,6 @@
 package org.egov.tl.service;
 
+import org.apache.logging.log4j.message.AsynchronouslyFormattable;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.repository.IdGenRepository;
@@ -16,12 +17,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import com.jayway.jsonpath.JsonPath;
 
+import jdk.internal.org.jline.utils.Log;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.*;
 import java.util.stream.Collectors;
 import static org.egov.tl.util.TLConstants.*;
 
 
 @Service
+@Slf4j
 public class EnrichmentService {
 
     private IdGenRepository idGenRepository;
@@ -51,7 +56,9 @@ public class EnrichmentService {
         RequestInfo requestInfo = tradeLicenseRequest.getRequestInfo();
         String uuid = requestInfo.getUserInfo().getUuid();
         AuditDetails auditDetails = tradeUtil.getAuditDetails(uuid, true);
+        log.info("TL request size====",tradeLicenseRequest.getLicenses().size());
         tradeLicenseRequest.getLicenses().forEach(tradeLicense -> {
+        	log.info("trade License");
             tradeLicense.setAuditDetails(auditDetails);
             tradeLicense.setId(UUID.randomUUID().toString());
             tradeLicense.setApplicationDate(auditDetails.getCreatedTime());
