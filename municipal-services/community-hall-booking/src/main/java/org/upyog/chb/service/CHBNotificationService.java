@@ -59,9 +59,16 @@ public class CHBNotificationService {
 				bookingDetail.getApplicantDetail().getApplicantName());
 		log.info("Fetching localization message for notification");
 		String localizationMessages = util.getLocalizationMessages(tenantId, bookingRequest.getRequestInfo());
-		String message = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages);
+		String message = null;
+		try {
+			 message = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages);
+		}catch (Exception e) {
+			log.error("Exception occcured while fetching message", e);
+			e.printStackTrace();
+		}
+		
 		log.info("Message for sending sms and event : " + message);
-
+        
 		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_SMS)) {
 			List<SMSRequest> smsRequests = new LinkedList<>();
 			if (config.getIsSMSNotificationEnabled()) {

@@ -149,23 +149,25 @@ public class NotificationUtil {
 	}
 
 	public String getCustomizedMsg(CommunityHallBookingDetail bookingDetail, String localizationMessage) {
-		String message = null, messageTemplate;
+		String message = null, messageTemplate = null;
 		String ACTION_STATUS = bookingDetail.getWorkflow() == null ? bookingDetail.getBookingStatus()
 				: bookingDetail.getWorkflow().getAction();
-
+		
 		BookingStatusEnum statusEnum = BookingStatusEnum.valueOf(ACTION_STATUS);
 
+		log.info(" customized message : " + statusEnum); 
 		switch (statusEnum) {
 
 		case BOOKING_CREATED:
-			String link = config.getUiAppHost() + config.getPayLinkSMS().replace("$consumerCode", bookingDetail.getBookingNo())
+			String paymentlink = config.getUiAppHost() + config.getPayLinkSMS().replace("$consumerCode", bookingDetail.getBookingNo())
 			.replace("$mobile", bookingDetail.getApplicantDetail().getApplicantMobileNo()).replace("$tenantId", bookingDetail.getTenantId())
 			.replace("$businessService", config.getBusinessServiceName());
 	        
-			link = getShortnerURL(link);
+		//	paymentlink = getShortnerURL(paymentlink);
 			messageTemplate = getMessageTemplate(config.getBookingCreatedTemplate(), localizationMessage);
+			
 			message = populateDynamicValues(bookingDetail, messageTemplate,
-					CommunityHallBookingConstants.CHB_PAYMENT_LINK, link);
+					CommunityHallBookingConstants.CHB_PAYMENT_LINK, paymentlink);
 			break;
 
 		case BOOKED:
@@ -174,8 +176,7 @@ public class NotificationUtil {
 			.replace("$mobile", bookingDetail.getApplicantDetail().getApplicantMobileNo()).replace("$tenantId", bookingDetail.getTenantId())
 			.replace("$businessService", config.getBusinessServiceName());
 	        
-			permissionLetterlink = getShortnerURL(permissionLetterlink);
-			messageTemplate = getMessageTemplate(config.getBookingCreatedTemplate(), localizationMessage);
+			// permissionLetterlink = getShortnerURL(permissionLetterlink);
 			messageTemplate = getMessageTemplate(config.getBookedTemplate(), localizationMessage);
 			message = populateDynamicValues(bookingDetail, messageTemplate,
 					CommunityHallBookingConstants.CHB_PERMISSION_LETTER_LINK, permissionLetterlink);
@@ -194,7 +195,8 @@ public class NotificationUtil {
 			break;
 
 		}
-
+		log.info(" customized message  messageTemplate : " + messageTemplate);
+		log.info(" customized message  message : " + message);
 		return message;
 	}
 
