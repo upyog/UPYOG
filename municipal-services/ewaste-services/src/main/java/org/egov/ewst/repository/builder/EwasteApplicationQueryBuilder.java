@@ -77,10 +77,6 @@ public class EwasteApplicationQueryBuilder {
 			query.append(" rq.createdtime <= CAST(? AS bigint) ");
 			preparedStmtList.add(criteria.getToDate());
 		}
-		if (!ObjectUtils.isEmpty(criteria.getUserUuidString())) {
-			query.append("rq.lastmodifiedbytime in [? , null]");
-			preparedStmtList.add(criteria.getToDate());
-		}
 		query.append(ORDERBY_CREATEDTIME);
 
 		return query.toString();
