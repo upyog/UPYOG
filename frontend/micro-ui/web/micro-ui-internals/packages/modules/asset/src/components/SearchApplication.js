@@ -1,10 +1,11 @@
-  import React, { useCallback, useMemo, useEffect } from "react"
+  import React, { useCallback, useMemo, useEffect, useState, useRef } from "react"
   import { useForm, Controller } from "react-hook-form";
-  import { TextInput, SubmitBar, DatePicker, SearchForm, Dropdown, SearchField, Table, Card, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
+  import { TextInput, SubmitBar, ActionBar, DatePicker, SearchForm, Dropdown, SearchField, Table, Card, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
   import { Link } from "react-router-dom";
   
+  
 
-  const ASSETSearchApplication = ({isLoading, t, onSubmit, data, count, setShowToast }) => {
+  const ASSETSearchApplication = ({isLoading, t, onSubmit, data, count, setShowToast, ActionBarStyle = {}, MenuStyle = {}, }) => {
       const isMobile = window.Digit.Utils.browser.isMobile();
       const todaydate = new Date();
       const today = todaydate.toISOString().split("T")[0];
@@ -26,6 +27,9 @@
         setValue("fromDate", today);
         setValue("toDate", today);
       },[register, setValue, today])
+
+
+      
 
 
       const { data: actionState } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Action" }],
@@ -91,28 +95,109 @@
               },
               disableSortBy: true,
             },
+            // {
+            //   Header: t("AST_ACTIONS"),
+            //   Cell: ({ row }) => {
+            //     console.log("rowwwwwwwwwwinactionsss",row)
+            //     return (
+            //       <div>
+            //         <span className="link">
+            //         {row?.original?.status==="APPROVED" ?
+            //         (row?.original?.assetAssignment?.isAssigned  ? 
+            //             <Link to={`/digit-ui/employee/asset/assetservice/return-assets/`+ `${row?.original?.["applicationNo"]}`}>
+            //                 <SubmitBar label={t("AST_RETURN")} />
+            //             </Link>
+            //           :
+            //             <Link to={`/digit-ui/employee/asset/assetservice/assign-assets/`+ `${row?.original?.["applicationNo"]}`}>
+            //               <SubmitBar label={t("AST_ASSIGN")} />
+            //             </Link>)
+            //           :
+            //           t('AST_SHOULD_BE_APPROVED_FIRST')
+            //         }
+            //         </span>
+            //       </div>
+            //     );
+            //   },
+            //   mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNo"]),
+            // },
+
+            
+
+            //later will convert it into the action bar same as i have iused in ApplicationDetailsActionBar.js file in template
             {
               Header: t("AST_ACTIONS"),
               Cell: ({ row }) => {
-                console.log("roeowowowinsearchdsjfinsearchhhhh",row);
-                return (
-                  <div>
-                    <span className="link">
-                    {row?.original?.assetAssignment?.isAssigned  ? 
-                        <Link to={`/digit-ui/employee/asset/assetservice/return-assets/`+ `${row?.original?.["applicationNo"]}`}>
-                            {t('AST_RETURN')}
-                        </Link>
-                      :
-                        <Link to={`/digit-ui/employee/asset/assetservice/assign-assets/`+ `${row?.original?.["applicationNo"]}`}>
-                          {t('AST_TRANSFER '+`${row?.original?.["assetParentCategory"]}`)}
-                        </Link>
-                    }
-                    </span>
+                const [isMenuOpen, setIsMenuOpen] = useState(false);
+                const menuRef = useRef();
+
+                const toggleMenu = () => {
+                  setIsMenuOpen(!isMenuOpen);
+                };
+
+                const closeMenu = (e) => {
+                  if (menuRef.current && !menuRef.current.contains(e.target)) {
+                    setIsMenuOpen(false);
+                  }
+                };
+
+                React.useEffect(() => {
+                  document.addEventListener("mousedown", closeMenu);
+                  return () => {
+                    document.removeEventListener("mousedown", closeMenu);
+                  };
+                }, []);
+                const actionOptions = [
+                  {
+                    label: row?.original?.assetAssignment?.isAssigned ? t("AST_RETURN") : t("AST_ASSIGN"),
+                    link: row?.original?.assetAssignment?.isAssigned
+                      ? `/digit-ui/employee/asset/assetservice/return-assets/${row?.original?.["applicationNo"]}`
+                      : `/digit-ui/employee/asset/assetservice/assign-assets/${row?.original?.["applicationNo"]}`,
+                  },
+                  {
+                    label: t("AST_DISPOSE"),
+                    link: `/digit-ui/employee/asset/assetservice/dispose-assets/${row?.original?.["applicationNo"]}`,
+                  },
+                  {
+                    label: t("AST_DEPRECIATION"),
+                    link: `/digit-ui/employee/asset/assetservice/depreciate-assets/${row?.original?.["applicationNo"]}`,
+                  },
+                ];
+
+                  return (
+                    <div ref={menuRef}>
+                    {row?.original?.status === "APPROVED" ? (
+                      <React.Fragment>
+                        <SubmitBar label={t("WF_TAKE_ACTION")} onSubmit={toggleMenu} />
+                        {isMenuOpen && (
+                          <div style={{
+                            position: 'absolute',
+                            backgroundColor: 'white',
+                            border: '1px solid #ccc',
+                            borderRadius: '4px',
+                            padding: '8px',
+                            zIndex: 1000,
+                          }}>
+                            {actionOptions.map((option, index) => (
+                              <Link key={index} to={option.link} style={{
+                                display: 'block',
+                                padding: '8px',
+                                textDecoration: 'none',
+                                color: 'black',
+                              }}>
+                                {option.label}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </React.Fragment>
+                    ) : (
+                      t("AST_SHOULD_BE_APPROVED_FIRST")
+                    )}
                   </div>
-                );
+                  );
               },
               mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNo"]),
-            },
+          },
         ]), [] )
 
       const onSort = useCallback((args) => {
@@ -170,7 +255,7 @@
                   <SearchField>
                       <label>{t("AST_FROM_DATE")}</label>
                       <Controller
-                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today}/>}
                           name="fromDate"
                           control={control}
                           />
@@ -178,7 +263,7 @@
                   <SearchField>
                       <label>{t("AST_TO_DATE")}</label>
                       <Controller
-                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today}/>}
                           name="toDate"
                           control={control}
                           />

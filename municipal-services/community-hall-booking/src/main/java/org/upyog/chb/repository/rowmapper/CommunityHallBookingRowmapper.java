@@ -46,6 +46,10 @@ public class CommunityHallBookingRowmapper implements ResultSetExtractor<List<Co
 						.bookingStatus(rs.getString("booking_status"))
 						.specialCategory(specialCategory).purpose(bookingPurpose)
 						.purposeDescription(rs.getString("purpose_description"))
+						.paymentDate(rs.getLong("payment_date"))
+						.receiptNo(rs.getString("receipt_no"))
+						.permissionLetterFilestoreId(rs.getString("permission_letter_filestore_id"))
+						.paymentReceiptFilestoreId(rs.getString("payment_receipt_filestore_id"))
 						.auditDetails(CommunityHallBookingUtil.getAuditDetails(rs))
 						.build();
 
@@ -103,8 +107,10 @@ public class CommunityHallBookingRowmapper implements ResultSetExtractor<List<Co
 				.addressLine1(rs.getString("address_line_1"))
 				.landmark(rs.getString("landmark"))
 				.city(rs.getString("city"))
+				.cityCode(rs.getString("city_code"))
 				.pincode(rs.getString("pincode"))
 				.streetName(rs.getString("street_name"))
+				.locality(rs.getString("locality"))
 				.localityCode(rs.getString("locality_code"))
 				.build();
 		

@@ -11,6 +11,8 @@ import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabiltityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 
+import digit.models.coremodels.PaymentDetail;
+
 public interface CommunityHallBookingService {
 
 	CommunityHallBookingDetail createBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest);
@@ -19,7 +21,7 @@ public interface CommunityHallBookingService {
 	
 	List<CommunityHallBookingDetail> getBookingDetails(CommunityHallBookingSearchCriteria bookingSearchCriteria, RequestInfo info);
 
-	CommunityHallBookingDetail updateBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest, String bookingNumber);
+	CommunityHallBookingDetail updateBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest, PaymentDetail paymentDetail);
 
 	List<CommunityHallSlotAvailabiltityDetail> getCommunityHallSlotAvailability(CommunityHallSlotSearchCriteria criteria);
 

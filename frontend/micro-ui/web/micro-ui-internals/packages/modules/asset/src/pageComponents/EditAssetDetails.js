@@ -16,83 +16,58 @@ import {
     import { checkForNA } from "../utils";
 
 
-    const createAssetcommonforAll = () => ({
-
-        department: "",
-        assignedUser: "",
-        designation: "",
-        employeeCode : "",
-        transferDate: "",
-        returnDate: "",
-        allocatedDepartment:"",
+    const EditAssetDet = () => ({
         key: Date.now(),
     });
 
-    const AssetAssign = ({ config, onSelect, formData, setError, formState, clearErrors }) => {
+    const EditAssetDetails = ({ config, onSelect, formData, setError, formState, clearErrors }) => {
     const { t } = useTranslation();
 
 
-    const [assigndetails, setassigndetails] = useState(formData?.assigndetails || [createAssetcommonforAll()]);
+    const [editAssetDetails, seteditAssetDetails] = useState(formData?.editAssetDetails || [EditAssetDet()]);
 
     const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
     useEffect(() => {
-    onSelect(config?.key, assigndetails);
+    onSelect(config?.key, editAssetDetails);
 
-    }, [assigndetails]);
-
-
-
-    const { data: departmentName } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Department" }],
-    {
-      select: (data) => {
-          const formattedData = data?.["ASSET"]?.["Department"]
-          const activeData = formattedData?.filter(item => item.active === true);
-          return activeData;
-      },
-  }); 
-  let departNamefromMDMS = [];
-
-  departmentName && departmentName.map((departmentname) => {
-    departNamefromMDMS.push({i18nKey: `${departmentname.name}`, code: `${departmentname.code}`, value: `${departmentname.name}`})
-  }) 
+    }, [editAssetDetails]);
 
 
 
     const commonProps = {
         focusIndex,
-        allAssets: assigndetails,
+        allAssets: editAssetDetails,
         setFocusIndex,
         formData,
         formState,
-        setassigndetails,
+        seteditAssetDetails,
         t,
         setError,
         clearErrors,
         config,
-        departNamefromMDMS
+        
     };
 
     return (
         <React.Fragment>
-        {assigndetails.map((assigndetails, index) => (
-            <OwnerForm key={assigndetails.key} index={index} assigndetails={assigndetails} {...commonProps} />
+        {editAssetDetails.map((editAssetDetails, index) => (
+            <OwnerForm key={editAssetDetails.key} index={index} editAssetDetails={editAssetDetails} {...commonProps} />
         ))}
         </React.Fragment>
     )
     };
     const OwnerForm = (_props) => {
     const {
-        assigndetails,
-        focusIndex,
-        allAssets,      
-        setassigndetails,
+        editAssetDetails,
+        focusIndex,     
+        seteditAssetDetails,
         t,
         config,
         setError,
         clearErrors,
         formState,
         setFocusIndex,
-        departNamefromMDMS
+       
     } = _props;
 
 
@@ -105,12 +80,12 @@ import {
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
     const [part, setPart] = React.useState({});
-
+    console.log("Editgenearldetails page application details",applicationDetails)
 
     useEffect(() => {
         if (!_.isEqual(part, formValue)) {
         setPart({ ...formValue });
-        setassigndetails((prev) => prev.map((o) => (o.key && o.key === assigndetails.key ? { ...o, ...formValue/*, ..._ownerType*/ } : { ...o })));
+        seteditAssetDetails((prev) => prev.map((o) => (o.key && o.key === editAssetDetails.key ? { ...o, ...formValue/*, ..._ownerType*/ } : { ...o })));
         trigger();
         }
     }, [formValue]);
@@ -127,42 +102,26 @@ import {
         <React.Fragment>
         <div style={{ marginBottom: "16px" }}>
             <div style={{ border: "1px solid #E3E3E3", padding: "16px", marginTop: "8px" }}>
-            {allAssets?.length > 2 ? (
-                <div style={{ marginBottom: "16px", padding: "5px", cursor: "pointer", textAlign: "right" }}>
-                X
-                </div>
-            ) : null}
 
-                <StatusTable>
-                <Row
-                    label={t("ES_ASSET_RESPONSE_CREATE_LABEL")}
-                    text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.applicationNo))}`}
-                />
-                </StatusTable>
-                <StatusTable>
-                <Row
-                    label={t("AST_DEPARTMENT_LABEL")}
-                    text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.department))}`}
-                />
-                </StatusTable>
                 <LabelFieldPair>
                     <CardLabel className="card-label-smaller">{t("AST_ASSIGNED_USER") }</CardLabel>
                     <div className="field">
                     <Controller
                         control={control}
                         name={"assignedUser"}
-                        defaultValue={assigndetails?.assignedUser}
+                        defaultValue={editAssetDetails?.assignedUser}
                         rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
                         }}
                         render={(props) => (
+                            console.log("propejesfhgewdgewhdesnf",props),
                         <TextInput
                             value={props.value}
-                            autoFocus={focusIndex.index === assigndetails?.key && focusIndex.type === "assignedUser"}
+                            autoFocus={focusIndex.index === editAssetDetails?.key && focusIndex.type === "assignedUser"}
                             onChange={(e) => {
                             props.onChange(e.target.value);
-                            setFocusIndex({ index: assigndetails.key, type: "assignedUser" });
+                            setFocusIndex({ index: editAssetDetails.key, type: "assignedUser" });
                             }}
                             onBlur={(e) => {
                             setFocusIndex({ index: -1 });
@@ -181,7 +140,7 @@ import {
                     <Controller
                         control={control}
                         name={"designation"}
-                        defaultValue={assigndetails?.designation}
+                        defaultValue={editAssetDetails?.designation}
                         rules={{
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
@@ -190,10 +149,10 @@ import {
                         <TextInput
                             value={props.value}
                             // disable={isEditScreen}
-                            autoFocus={focusIndex.index === assigndetails?.key && focusIndex.type === "designation"}
+                            autoFocus={focusIndex.index === editAssetDetails?.key && focusIndex.type === "designation"}
                             onChange={(e) => {
                             props.onChange(e.target.value);
-                            setFocusIndex({ index: assigndetails.key, type: "designation" });
+                            setFocusIndex({ index: editAssetDetails.key, type: "designation" });
                             }}
                             onBlur={(e) => {
                             setFocusIndex({ index: -1 });
@@ -211,7 +170,7 @@ import {
                     <Controller
                         control={control}
                         name={"employeeCode"}
-                        defaultValue={assigndetails?.employeeCode}
+                        defaultValue={editAssetDetails?.employeeCode}
                         rules={{
                             required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                             validate: {
@@ -223,10 +182,10 @@ import {
                         <TextInput
                             value={props.value}
                             // disable={isEditScreen}
-                            autoFocus={focusIndex.index === assigndetails?.key && focusIndex.type === "employeeCode"}
+                            autoFocus={focusIndex.index === editAssetDetails?.key && focusIndex.type === "employeeCode"}
                             onChange={(e) => {
                             props.onChange(e.target.value);
-                            setFocusIndex({ index: assigndetails.key, type: "employeeCode" });
+                            setFocusIndex({ index: editAssetDetails.key, type: "employeeCode" });
                             }}
                             onBlur={(e) => {
                             setFocusIndex({ index: -1 });
@@ -243,7 +202,7 @@ import {
                 <Controller
                 control={control}
                 name={"allocatedDepartment"}
-                defaultValue={assigndetails?.allocatedDepartment}
+                defaultValue={editAssetDetails?.allocatedDepartment}
               
                 render={(props) => (
                     <Dropdown
@@ -251,7 +210,7 @@ import {
                     selected={props.value}
                     select={props.onChange}
                     onBlur={props.onBlur}
-                    option={departNamefromMDMS}
+                    option={""}
                     optionKey="i18nKey"
                     t={t}
                     />
@@ -266,7 +225,7 @@ import {
                     <Controller
                         control={control}
                         name={"transferDate"}
-                        defaultValue={assigndetails?.transferDate}
+                        defaultValue={editAssetDetails?.transferDate}
                         rules={{
                             required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                             validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
@@ -285,13 +244,6 @@ import {
                     </div>
                 </LabelFieldPair>
                 <CardLabelError style={errorStyle}>{localFormState.touched.employeeCode ? errors?.employeeCode?.message : ""}</CardLabelError>
-                
-
-               
-
-                
-
-
 
             </div>
         </div>
@@ -307,4 +259,4 @@ import {
     );
     };
 
-    export default AssetAssign;
+    export default EditAssetDetails;

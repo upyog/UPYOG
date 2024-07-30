@@ -24,9 +24,9 @@ const getChbAcknowledgementData = async (application, tenantInfo, t) => {
       const startTime = bookingSlotDetails[0]?.bookingFromTime;
       // const endTime = bookingSlotDetails[bookingSlotDetails.length - 1]?.bookingToTime;
       const length = bookingSlotDetails.length;
-      let defaultEndTime = "11:59"; // Default end time for length 1
+      let defaultEndTime = "23:59"; // Default end time for length 1
       if (length === 2) {
-        defaultEndTime = "23:59"; // End time for length 2
+        defaultEndTime = "47:59"; // End time for length 2
       } else if (length === 3) {
         defaultEndTime = "71:59"; // End time for length 3
       }
@@ -82,7 +82,7 @@ const getChbAcknowledgementData = async (application, tenantInfo, t) => {
         values: [
           { title: t("CHB_PINCODE"), value: application?.address?.pincode },
           { title: t("CHB_CITY"), value: application?.address?.city },
-          { title: t("CHB_LOCALITY"), value: application?.address?.localityCode },
+          { title: t("CHB_LOCALITY"), value: application?.address?.locality },
           { title: t("CHB_STREET_NAME"), value: application?.address?.streetName },
           { title: t("CHB_HOUSE_NO"), value: application?.address?.houseNo },
           { title: t("CHB_LANDMARK"), value: application?.address?.landmark },

@@ -134,8 +134,7 @@ public class NotificationUtil {
 		for (SMSRequest smsRequest : smsRequestList) {
 			producer.push(config.getSmsNotifTopic(), smsRequest);
 			log.debug("SMS request object : " + smsRequest);
-			log.info("Sending SMS notification: ");
-			log.info("MobileNumber: " + smsRequest.getMobileNumber() + " Messages: " + smsRequest.getMessage());
+			log.info("Sending SMS notification to MobileNumber: " + smsRequest.getMobileNumber() + " Messages: " + smsRequest.getMessage());
 		}
 	}
 
@@ -150,10 +149,21 @@ public class NotificationUtil {
 	}
 
 	public String getCustomizedMsg(CommunityHallBookingDetail bookingDetail, String localizationMessage) {
-		String message = null, messageTemplate;
-		String ACTION_STATUS = bookingDetail.getWorkflow() == null ? bookingDetail.getBookingStatus()
-				: bookingDetail.getWorkflow().getAction();
-
+		String message = null, messageTemplate = null;
+		log.info(" booking status : " + bookingDetail.getBookingStatus());
+		
+		String ACTION_STATUS = null;
+		if(bookingDetail.getBookingStatus().equals(BookingStatusEnum.BOOKING_CREATED.toString()) || 
+				bookingDetail.getBookingStatus().equals(BookingStatusEnum.BOOKED.toString())){
+			ACTION_STATUS = bookingDetail.getBookingStatus();
+		} else {
+			ACTION_STATUS = bookingDetail.getWorkflow().getAction();
+		}
+		
+		log.info(" booking status bookingDetail.getWorkflow() : " + bookingDetail.getWorkflow()); 
+		
+		log.info(" booking status ACTION_STATUS : " + ACTION_STATUS); 
+		
 		BookingStatusEnum statusEnum = BookingStatusEnum.valueOf(ACTION_STATUS);
 
 		switch (statusEnum) {
@@ -163,8 +173,9 @@ public class NotificationUtil {
 			.replace("$mobile", bookingDetail.getApplicantDetail().getApplicantMobileNo()).replace("$tenantId", bookingDetail.getTenantId())
 			.replace("$businessService", config.getBusinessServiceName());
 	        
-			link = getShortnerURL(link);
+		//	link = getShortnerURL(link);
 			messageTemplate = getMessageTemplate(config.getBookingCreatedTemplate(), localizationMessage);
+			
 			message = populateDynamicValues(bookingDetail, messageTemplate,
 					CommunityHallBookingConstants.CHB_PAYMENT_LINK, link);
 			break;
@@ -175,8 +186,7 @@ public class NotificationUtil {
 			.replace("$mobile", bookingDetail.getApplicantDetail().getApplicantMobileNo()).replace("$tenantId", bookingDetail.getTenantId())
 			.replace("$businessService", config.getBusinessServiceName());
 	        
-			permissionLetterlink = getShortnerURL(permissionLetterlink);
-			messageTemplate = getMessageTemplate(config.getBookingCreatedTemplate(), localizationMessage);
+		//	permissionLetterlink = getShortnerURL(permissionLetterlink);
 			messageTemplate = getMessageTemplate(config.getBookedTemplate(), localizationMessage);
 			message = populateDynamicValues(bookingDetail, messageTemplate,
 					CommunityHallBookingConstants.CHB_PERMISSION_LETTER_LINK, permissionLetterlink);
@@ -195,7 +205,8 @@ public class NotificationUtil {
 			break;
 
 		}
-
+		log.info("getCustomizedMsg messageTemplate : " + messageTemplate);
+		log.info("getCustomizedMsg  message : " + message);
 		return message;
 	}
 
@@ -203,7 +214,7 @@ public class NotificationUtil {
 	// {COMMUNITY_HALL_NAME} is created. Please pay using link {CHB_PAYMENT_LINK}
 	// Hi {APPLICANT_NAME} your booking no {BOOKING_NO} for community hall
 	// {COMMUNITY_HALL_NAME} is confirmed. Please download permission letter using
-	// link {CHB_PAYMENT_LINK}
+	// link {CHB_PERMISSION_LETTER_LINK}
 	private String populateDynamicValues(CommunityHallBookingDetail bookingDetail, String message, String linkName,
 			String link) {
 		message = message.replace(CommunityHallBookingConstants.APPLICANT_NAME,

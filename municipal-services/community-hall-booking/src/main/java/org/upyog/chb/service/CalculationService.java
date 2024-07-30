@@ -48,11 +48,13 @@ public class CalculationService {
 		for (int i = 0; i < 4; i++) {
 			String basePath = CommunityHallBookingConstants.CHB_JSONPATH_CODE + "."
 					+ CommunityHallBookingConstants.CHB_CALCULATION_TYPE + ".[" + i + "].";
-			log.info("Calculkation data for CHB booking :" + JsonPath.read(response,
-					 CommunityHallBookingConstants.CHB_JSONPATH_CODE + "." +
-					 CommunityHallBookingConstants.CHB_CALCULATION_TYPE +".[0].feeType"));
-			int amount = JsonPath.read(response, basePath + "amount");
-			CalculationType calculationType = CalculationType.builder().amount(new BigDecimal(amount))
+			/*
+			 * log.info("Calculation data for CHB booking :" + JsonPath.read(response,
+			 * CommunityHallBookingConstants.CHB_JSONPATH_CODE + "." +
+			 * CommunityHallBookingConstants.CHB_CALCULATION_TYPE +".[0].feeType"));
+			 */
+			Object amount = JsonPath.read(response, basePath + "amount");
+			CalculationType calculationType = CalculationType.builder().amount(new BigDecimal(amount.toString()))
 					.applicationType(JsonPath.read(response, basePath + "applicationType"))
 					.feeType(JsonPath.read(response, basePath + "feeType"))
 					.serviceType(JsonPath.read(response, basePath + "serviceType")).build();
@@ -87,11 +89,11 @@ public class CalculationService {
 		final List<DemandDetail> demandDetails = new LinkedList<>();
 
 		List<CalculationType> variableDemand = new ArrayList<CalculationType>();
-
+		
 		for (CalculationType type : calculationTypes) {
 			if (!type.getFeeType().equals(CommunityHallBookingConstants.RENT_CALCULATION_TYPE)
-					|| !type.getFeeType().equals(CommunityHallBookingConstants.CGST_CALCULATION_TYPE)
-					|| !type.getFeeType().equals(CommunityHallBookingConstants.SGST_CALCULATION_TYPE)) {
+					&& !type.getFeeType().equals(CommunityHallBookingConstants.CGST_CALCULATION_TYPE)
+					&& !type.getFeeType().equals(CommunityHallBookingConstants.SGST_CALCULATION_TYPE)) {
 				variableDemand.add(type);
 			} else if (type.getFeeType().equals(CommunityHallBookingConstants.RENT_CALCULATION_TYPE)) {
 				bookingRequest.getHallsBookingApplication().getBookingSlotDetails().stream().forEach(slot -> {
@@ -119,7 +121,7 @@ public class CalculationService {
 						.equals(CommunityHallBookingConstants.RENT_CALCULATION_TYPE))
 				.map(DemandDetail::getTaxAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		log.info("Total Taxable amout for the booking : " + totalTaxableAmount);
+		log.info("Total Taxable amount for the booking : " + totalTaxableAmount);
 
 		for (CalculationType type : calculationTypes) {
 			if (type.getFeeType().equals(CommunityHallBookingConstants.CGST_CALCULATION_TYPE)

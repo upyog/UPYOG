@@ -5,16 +5,6 @@ import { Link } from "react-router-dom";
 
 const ChbApplication = ({ application, tenantId, buttonLabel }) => {
   const { t } = useTranslation();
-  const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
-    {
-      tenantId: application?.tenantId,
-      businessService: "chb-services",
-      consumerCodes: application?.bookingNo,
-      isEmployee: false,
-    },
-    { enabled: application?.bookingNo ? true : false }
-  );
-  console.log("reciept_data",reciept_data);
   const getBookingDateRange = (bookingSlotDetails) => {
     if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
       return t("CS_NA");
@@ -33,14 +23,14 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
     <Card>
       <KeyNote keyValue={t("CHB_BOOKING_NO")} note={application?.bookingNo} />
       <KeyNote keyValue={t("CHB_APPLICANT_NAME")} note={application?.applicantDetail?.applicantName} />
-      <KeyNote keyValue={t("CHB_COMMUNITY_HALL_NAME")} note={application?.communityHallCode} />
+      <KeyNote keyValue={t("CHB_COMMUNITY_HALL_NAME")} note={t(`${application?.communityHallCode}`)} />
       <KeyNote keyValue={t("CHB_BOOKING_DATE")} note={getBookingDateRange(application?.bookingSlotDetails)} />
-      <KeyNote keyValue={t("PT_COMMON_TABLE_COL_STATUS_LABEL")} note={t(`CHB_${application?.bookingStatus}`)} />
+      <KeyNote keyValue={t("PT_COMMON_TABLE_COL_STATUS_LABEL")} note={t(`${application?.bookingStatus}`)} />
       <div>
         <Link to={`/digit-ui/citizen/chb/application/${application?.bookingNo}/${application?.tenantId}`}>
           <SubmitBar label={buttonLabel} />
         </Link>
-        {reciept_data?.Payments[0]?.paymentStatus !== "DEPOSITED" && (
+        {application.bookingStatus !== "BOOKED" && (
           <Link
             to={{
               pathname: `/digit-ui/citizen/payment/my-bills/${"chb-services"}/${application?.bookingNo}`,

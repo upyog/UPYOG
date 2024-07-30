@@ -43,6 +43,7 @@ public class CommunityHallBookingConstants {
 	public static final String CITIZEN = "CITIZEN";
 	public static final String INVALID_SEARCH = "INVALID SEARCH";
 	public static final String CHB_WORKFLOW_ERROR = "CHB_WORKFLOW_ERROR";
+	public static final String DUPLICATE_DOCUMENT_UPLOADED = "DUPLICATE_DOCUMENT_UPLOADED";
 	
 	
 	// NOTIFICATION PLACEHOLDER

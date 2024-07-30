@@ -62,6 +62,10 @@ public class CommunityHallBookingDetail {
 	private String purposeDescription;
 	
 	private String receiptNo;
+	
+	private String permissionLetterFilestoreId;
+	
+	private String paymentReceiptFilestoreId;
 
 	@NotNull
 	@Valid

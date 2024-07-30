@@ -3,9 +3,10 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { returnConfig } from "../../../config/Create/returnConfig";
 
-const ReturnAsset = () => {
+import { editConfig } from "../../../config/Create/editConfig";
+
+const EditAsset = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const [canSubmit, setSubmitValve] = useState(false);
@@ -13,7 +14,8 @@ const ReturnAsset = () => {
   const history = useHistory();
   const { id: applicationNo } = useParams();
   const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
-  console.log("testttttttttttttttttttttttttttttttttttttttttttttttttttttt",applicationDetails);
+  sessionStorage.setItem("ApplicationDetails", JSON.stringify(applicationDetails));
+
    const [_formData, setFormData,_clear] = Digit.Hooks.useSessionStorage("store-data",null);
    const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", { });
@@ -40,21 +42,22 @@ const ReturnAsset = () => {
 
   const onSubmit = (data) => {
     
-    const returnDateEpoch = convertToEpoch(data?.returndetails?.[0]?.returnDate);
+    const assignedDateEpoch = convertToEpoch(data?.assigndetails?.[0]?.transferDate);
     const formData = {
       id: applicationDetails?.applicationData?.applicationData?.id,
       tenantId: tenantId,
       applicationNo: applicationDetails?.applicationData?.applicationData?.applicationNo,
       assetAssignment: {
-        assignmentId: applicationDetails?.applicationData?.applicationData?.assetAssignment?.assignmentId,
+        assignmentId: "",
+        assetApplicaltionNo:"",
         assetId: "",
-        assignedUserName: applicationDetails?.applicationData?.applicationData?.assetAssignment?.assignedUserName,
-        designation: applicationDetails?.applicationData?.applicationData?.assetAssignment?.designation || "",
-        department: applicationDetails?.applicationData?.applicationData?.assetAssignment?.department || "",    //later we need to send the procured department here.
-        assignedDate: applicationDetails?.applicationData?.applicationData?.assetAssignment?.assignedDate,
-        employeeCode:applicationDetails?.applicationData?.applicationData?.assetAssignment?.employeeCode,
-        isAssigned: false,
-        returnDate: returnDateEpoch,
+        assignedUserName: data?.assigndetails?.[0]?.assignedUser,
+        designation: data?.assigndetails?.[0]?.designation,
+        department: data?.assigndetails?.[0]?.allocatedDepartment?.code,    //later we need to send the procured department here.
+        assignedDate: assignedDateEpoch,
+        isAssigned: true,
+        allocatedDepartment:data?.assigndetails?.[0]?.allocatedDepartment?.code, 
+        employeeCode:data?.assigndetails?.[0]?.employeeCode,
         auditDetails: {
           createdBy: "",
           lastModifiedBy: "",
@@ -64,22 +67,18 @@ const ReturnAsset = () => {
       },   
     };
 
-    history.replace("/digit-ui/employee/asset/assetservice/return-response", { Asset: formData }); 
+    history.replace("/digit-ui/employee/asset/assetservice/edit-response", { Assets: formData }); 
     
 
   };
     
 
-   
-  
-
-  
-  const configs = returnConfig;    
+  const configs = editConfig;    
 
   
   return (
     <FormComposer
-      heading={t("AST_RETURN_ASSET")}
+      heading={t("AST_EDIT_ASSET")}
       isDisabled={!canSubmit}
       label={t("ES_COMMON_APPLICATION_SUBMIT")}
       config={configs.map((config) => {
@@ -94,12 +93,11 @@ const ReturnAsset = () => {
       onSubmit={onSubmit}
       defaultValues={defaultValues}
       onFormValueChange={onFormValueChange}
-     
     />
   );
 };
 
-export default ReturnAsset;
+export default EditAsset;
 
 
 

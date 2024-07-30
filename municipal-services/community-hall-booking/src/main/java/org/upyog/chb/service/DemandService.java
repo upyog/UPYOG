@@ -1,5 +1,6 @@
 package org.upyog.chb.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.util.MdmsUtil;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
+import org.upyog.chb.web.models.CommunityHallDemandEstimationCriteria;
 import org.upyog.chb.web.models.billing.Demand;
 import org.upyog.chb.web.models.billing.DemandDetail;
 
@@ -67,23 +69,29 @@ public class DemandService {
 		
 		List<Demand> demands = new ArrayList<>();
 		demands.add(demand);
-		if(generateDemand) {
-			
+		if(!generateDemand) {
+			BigDecimal totalAmount = demandDetails.stream().map(DemandDetail::getTaxAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+			demand.setAdditionalDetails(totalAmount);
+			return demands;
 		}
 		log.info("Sending call to billing service for generating demand for booking no : " + consumerCode);
 		return demandRepository.saveDemand(bookingRequest.getRequestInfo(), demands);
 	}
 	
 	
-	public List<Demand> getDemand(CommunityHallBookingRequest communityHallsBookingRequest){
+	public List<Demand> getDemand(CommunityHallDemandEstimationCriteria estimationCriteria){
 		log.info("Getting demand for request without booking no");
-		String tenantId = communityHallsBookingRequest.getHallsBookingApplication().getTenantId().split("\\.")[0];
-		if (communityHallsBookingRequest.getHallsBookingApplication().getTenantId().split("\\.").length == 1) {
+		String tenantId = estimationCriteria.getTenantId().split("\\.")[0];
+		if (estimationCriteria.getTenantId().split("\\.").length == 1) {
 			throw new CustomException(CommunityHallBookingConstants.INVALID_TENANT, "Please provide valid tenant id for booking creation");
 		}
-		
-		Object mdmsData = mdmsUtil.mDMSCall(communityHallsBookingRequest.getRequestInfo(), tenantId);
-		List<Demand> demands = createDemand(communityHallsBookingRequest, mdmsData, false);
+		CommunityHallBookingDetail bookingDetail = CommunityHallBookingDetail.builder().tenantId(tenantId)
+				.bookingSlotDetails(estimationCriteria.getBookingSlotDetails())
+				.communityHallCode(estimationCriteria.getCommunityHallCode()).build();
+		CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder().hallsBookingApplication(bookingDetail)
+				.requestInfo(estimationCriteria.getRequestInfo()).build();
+		Object mdmsData = mdmsUtil.mDMSCall(bookingRequest.getRequestInfo(), tenantId);
+		List<Demand> demands = createDemand(bookingRequest, mdmsData, false);
 		return demands;
 	}
 	

@@ -2,17 +2,14 @@ package org.upyog.chb.service;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.repository.ServiceRequestRepository;
-import org.upyog.chb.util.NotificationUtil;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
-import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 import org.upyog.chb.web.models.workflow.ProcessInstance;
 import org.upyog.chb.web.models.workflow.ProcessInstanceRequest;
 import org.upyog.chb.web.models.workflow.ProcessInstanceResponse;
@@ -42,7 +39,7 @@ public class PaymentNotificationService {
 
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
-	
+
 	@Autowired
 	private CommunityHallBookingService bookingService;
 
@@ -55,6 +52,7 @@ public class PaymentNotificationService {
 		log.info(" Receipt consumer class entry " + record.toString());
 		try {
 			PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
+			log.info("paymentRequest : " + paymentRequest);
 			String businessService = paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService();
 			log.info("Payment request processing in CHB method for businessService : " + businessService);
 			if (configs.getBusinessServiceName()
@@ -62,23 +60,30 @@ public class PaymentNotificationService {
 				String bookingNo = paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode();
 				log.info("Updating payment status for CHB booking : " + bookingNo);
 				/**
-				 * Workflow will come into picture once hall location is changes or
-				 * booking is cancelled
-				 * otherwise after payment booking will be auto approved
+				 * Workflow will come into picture once hall location is changes or booking is
+				 * cancelled otherwise after payment booking will be auto approved
 				 * 
 				 */
-				//String tenantId = paymentRequest.getPayment().getTenantId();
-			//	CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
-			//			.bookingNo(bookingNo)
-			//			.tenantId(tenantId).build();
-				//updateWorkflowStatus(paymentRequest);
-				//List<CommunityHallBookingDetail> bookingDetail = bookingService.getBookingDetails(bookingSearchCriteria, null);
-				bookingService.updateBooking(null, bookingNo);
+				// String tenantId = paymentRequest.getPayment().getTenantId();
+				// CommunityHallBookingSearchCriteria bookingSearchCriteria =
+				// CommunityHallBookingSearchCriteria.builder()
+				// .bookingNo(bookingNo)
+				// .tenantId(tenantId).build();
+				// updateWorkflowStatus(paymentRequest);
+				// List<CommunityHallBookingDetail> bookingDetail =
+				// bookingService.getBookingDetails(bookingSearchCriteria, null);
+				log.info("Reciept no of payment : " + paymentRequest.getPayment().getPaymentDetails().get(0).getReceiptNumber());
+				log.info("Payment date of payment : " + paymentRequest.getPayment().getPaymentDetails().get(0).getReceiptDate());
+				CommunityHallBookingDetail bookingDetail = CommunityHallBookingDetail.builder().bookingNo(bookingNo)
+						.build();
+				CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder()
+						.requestInfo(paymentRequest.getRequestInfo()).hallsBookingApplication(bookingDetail).build();
+				bookingService.updateBooking(bookingRequest, paymentRequest.getPayment().getPaymentDetails().get(0));
 			}
 		} catch (IllegalArgumentException e) {
-			log.error("Illegal argument exception occurred pet: " + e.getMessage());
+			log.error("Illegal argument exception occured while sending notification CHB : " + e.getMessage());
 		} catch (Exception e) {
-			log.error("An unexpected exception occurred pet: " + e.getMessage());
+			log.error("An unexpected exception occurred while sending notification CHB : ", e);
 		}
 
 	}

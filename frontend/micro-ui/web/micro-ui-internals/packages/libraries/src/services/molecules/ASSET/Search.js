@@ -133,7 +133,6 @@ export const ASSETSearch = {
             { title: "AST_BRAND", value: response?.additionalDetails?.brand },
             { title: "AST_INVOICE_DATE", value: response?.additionalDetails?.invoiceDate },
             { title: "AST_ASSET_AGE", value: response?.additionalDetails?.assetAge },
-            { title: "AST_ASSIGNED_USER", value: response?.additionalDetails?.assignedUser },
             { title: "AST_CURRENT_LOCATION", value: response?.additionalDetails?.currentLocation },
             { title: "AST_MANUFACTURER", value: response?.additionalDetails?.manufacturer },
             { title: "AST_PURCHASE_COST", value: response?.additionalDetails?.purchaseCost + " Rupees"},
@@ -194,8 +193,6 @@ export const ASSETSearch = {
     const filter = { applicationNo, ...args };
     const response = await ASSETSearch.application(tenantId, filter);
     
-    
-
     return {
       tenantId: response.tenantId,
       applicationDetails: ASSETSearch.RegistrationDetails({ Assets: response, t }),

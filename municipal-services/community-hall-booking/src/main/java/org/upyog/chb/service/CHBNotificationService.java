@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -48,6 +47,7 @@ public class CHBNotificationService {
 
 	public void process(CommunityHallBookingRequest bookingRequest) {
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
+		log.info("Processing notification for booking no : " + bookingDetail.getBookingNo() + " with status : " + bookingDetail.getBookingStatus());
 		String tenantId = bookingRequest.getHallsBookingApplication().getTenantId();
 		String action = bookingDetail.getBookingStatus();
 
@@ -57,22 +57,34 @@ public class CHBNotificationService {
 		Map<String, String> mobileNumberToOwner = new HashMap<String, String>();
 		mobileNumberToOwner.put(bookingDetail.getApplicantDetail().getApplicantMobileNo(),
 				bookingDetail.getApplicantDetail().getApplicantName());
-
-		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_SMS)) {
-			List<SMSRequest> smsRequests = new LinkedList<>();
-			if (config.getIsSMSNotificationEnabled()) {
-				enrichSMSRequest(bookingRequest, smsRequests, mobileNumberToOwner);
-				if (!CollectionUtils.isEmpty(smsRequests))
-					util.sendSMS(smsRequests);
-			}
+		log.info("Fetching localization message for notification");
+		String localizationMessages = util.getLocalizationMessages(tenantId, bookingRequest.getRequestInfo());
+		String message = null;
+		try {
+			 message = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages);
+		}catch (Exception e) {
+			log.error("Exception occcured while fetching message", e);
+			e.printStackTrace();
 		}
+		
+		log.info("Message for sending sms and event : " + message);
+		if (message != null) {
+			if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_SMS)) {
+				List<SMSRequest> smsRequests = new LinkedList<>();
+				if (config.getIsSMSNotificationEnabled()) {
+					enrichSMSRequest(bookingRequest, smsRequests, mobileNumberToOwner, message);
+					if (!CollectionUtils.isEmpty(smsRequests))
+						util.sendSMS(smsRequests);
+				}
+			}
 
-		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EVENT)) {
-			if (null != config.getIsUserEventsNotificationEnabled()) {
-				if (config.getIsUserEventsNotificationEnabled()) {
-					EventRequest eventRequest = getEventsForCommunityHallBooking(bookingRequest);
-					if (null != eventRequest)
-						util.sendEventNotification(eventRequest);
+			if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EVENT)) {
+				if (null != config.getIsUserEventsNotificationEnabled()) {
+					if (config.getIsUserEventsNotificationEnabled()) {
+						EventRequest eventRequest = getEventsForCommunityHallBooking(bookingRequest, message);
+						if (null != eventRequest)
+							util.sendEventNotification(eventRequest);
+					}
 				}
 			}
 		}
@@ -85,19 +97,14 @@ public class CHBNotificationService {
 	 * @param smsRequests List of SMSRequets
 	 */
 	private void enrichSMSRequest(CommunityHallBookingRequest bookingRequest, List<SMSRequest> smsRequests,
-			Map<String, String> mobileNumberToOwner) {
-		String tenantId = bookingRequest.getHallsBookingApplication().getTenantId();
-		String localizationMessages = util.getLocalizationMessages(tenantId, bookingRequest.getRequestInfo());
-		String message = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages);
-
+			Map<String, String> mobileNumberToOwner, String message) {
 		smsRequests.addAll(util.createSMSRequest(bookingRequest, message, mobileNumberToOwner));
 	}
 
-	private EventRequest getEventsForCommunityHallBooking(CommunityHallBookingRequest request) {
+	private EventRequest getEventsForCommunityHallBooking(CommunityHallBookingRequest request, String message) {
 
 		List<Event> events = new ArrayList<>();
 		String tenantId = request.getHallsBookingApplication().getTenantId();
-		String localizationMessages = util.getLocalizationMessages(tenantId, request.getRequestInfo());
 		List<String> toUsers = new ArrayList<>();
 
 		// Mobile no will be used to filter out user to send notification
@@ -110,8 +117,8 @@ public class CHBNotificationService {
 		}
 
 		toUsers.add(mapOfPhoneNoAndUUIDs.get(mobileNumber));
-		String message = util.getCustomizedMsg(request.getHallsBookingApplication(), localizationMessages);
-		log.info("Message for event in CHB module:" + message);
+		
+		log.info("Message for user event : " + message);
 		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
 		log.info("Recipient object in CHB event :" + recepient.toString());
 		events.add(Event.builder().tenantId(tenantId).description(message)
@@ -136,7 +143,6 @@ public class CHBNotificationService {
 	 * @param tenantId     - Tenant Id
 	 * @return Returns List of MobileNumbers and UUIDs
 	 */
-	@SuppressWarnings({ "unchecked" })
 	private Map<String, String> fetchUserUUIDs(String mobileNumber, RequestInfo requestInfo, String tenantId) {
 		Map<String, String> mapOfPhoneNoAndUUIDs = new HashMap<>();
 		StringBuilder uri = new StringBuilder();
@@ -149,18 +155,14 @@ public class CHBNotificationService {
 		try {
 
 			Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
-			log.info("User fetched in fetUserUUID method of pet notfication consumer" + user.toString());
+			log.info("User fetched in fetUserUUID method of CHB notfication consumer" + user.toString());
 //			if (null != user) {
 //				String uuid = JsonPath.read(user, "$.user[0].uuid");
-			if (user instanceof Optional) {
-				Optional<Object> optionalUser = (Optional<Object>) user;
-				if (optionalUser.isPresent()) {
-					String uuid = JsonPath.read(optionalUser.get(), "$.user[0].uuid");
+			if (user  != null) {
+					String uuid = JsonPath.read(user, "$.user[0].uuid");
 					mapOfPhoneNoAndUUIDs.put(mobileNumber, uuid);
-				}
-			} else {
-				log.error("Service returned null while fetching user for username - " + mobileNumber);
-			}
+					log.info("mapOfPhoneNoAndUUIDs : " + mapOfPhoneNoAndUUIDs);
+			} 
 		} catch (Exception e) {
 			log.error("Exception while fetching user for username - " + mobileNumber);
 			log.error("Exception trace: ", e);
@@ -185,8 +187,8 @@ public class CHBNotificationService {
 		uri.append(config.getMdmsHost()).append(config.getMdmsPath());
 		if (StringUtils.isEmpty(tenantId))
 			return masterData;
-		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForChannelList(requestInfo, tenantId);
-
+		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForChannelList(requestInfo, tenantId, moduleName, action);
+		//Can create filter as string using this
 		Filter masterDataFilter = filter(where(CommunityHallBookingConstants.MODULE).is(moduleName)
 				.and(CommunityHallBookingConstants.ACTION).is(action));
 
@@ -201,9 +203,11 @@ public class CHBNotificationService {
 		return masterData;
 	}
 
-	private MdmsCriteriaReq getMdmsRequestForChannelList(RequestInfo requestInfo, String tenantId) {
+	private MdmsCriteriaReq getMdmsRequestForChannelList(RequestInfo requestInfo, String tenantId, String moduleName, String action) {
+
 		MasterDetail masterDetail = new MasterDetail();
 		masterDetail.setName(CommunityHallBookingConstants.CHANNEL_LIST);
+		masterDetail.setFilter("[?(@['module'] == 'CHB' && @['action'] == '"+ action +"')]");
 		List<MasterDetail> masterDetailList = new ArrayList<>();
 		masterDetailList.add(masterDetail);
 

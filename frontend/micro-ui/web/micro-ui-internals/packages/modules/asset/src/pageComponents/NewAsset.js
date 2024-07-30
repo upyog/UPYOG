@@ -1756,10 +1756,10 @@ const NewAsset
                 style={{ width: "50%" }}
                 ValidationRequired={false}
                 {...(validation = {
-                  isRequired: false,
-                  pattern: "^[a-zA-Z ]+$",
-                  type: "tel",
-                  title: t("MATCH_THE_FORMAT"),
+                  isRequired: true,
+                  pattern: "^[a-zA-Z/-]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
                 })}
               />
               <CardLabel>{`${t("AST_INVOICE_DATE") + " *"}`}</CardLabel>
@@ -1791,10 +1791,10 @@ const NewAsset
                 style={{ width: "50%" }}
                 ValidationRequired={false}
                 {...(validation = {
-                  isRequired: false,
-                  pattern: "^[a-zA-Z ]+$",
-                  type: "tel",
-                  title: t("MATCH_THE_FORMAT"),
+                  isRequired: true,
+                  pattern: "^[a-zA-Z/-]*$",
+                  type: "text",
+                  title: t("PT_NAME_ERROR_MESSAGE"),
                 })}
               />
               <div>{t("AST_PURCHASE_COST")}

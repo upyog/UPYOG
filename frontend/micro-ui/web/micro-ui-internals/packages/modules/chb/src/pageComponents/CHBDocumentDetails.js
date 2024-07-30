@@ -62,7 +62,7 @@ const CHBDocumentDetails = ({ t, config, onSelect, userType, formData, setError:
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
         </CardSubHeader>
-        <ChbCancellationPolicy count={value?.bookingSlotDetails.length}/>
+        <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails}/>
       </Card>
       {!isLoading ? (
         <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={enableSubmit} onAdd={onAdd}>
