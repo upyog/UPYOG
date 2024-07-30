@@ -54,7 +54,7 @@ public class TLRenewalCalculation {
         BigDecimal rebate = getRebate(taxAmt, financialyear,timeBasedExemptionMasterMap.get(TLCalculatorConstants.REBATE_MASTER));
         BigDecimal penalty = BigDecimal.ZERO;
 
-        if (rebate.equals(BigDecimal.ZERO)) {
+        if (rebate.compareTo(BigDecimal.ZERO)==0) {
             penalty = getPenalty(taxAmt, financialyear, timeBasedExemptionMasterMap.get(TLCalculatorConstants.PENANLTY_MASTER));
         }
 
