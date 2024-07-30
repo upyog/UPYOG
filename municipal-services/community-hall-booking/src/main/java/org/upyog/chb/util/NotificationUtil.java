@@ -150,24 +150,34 @@ public class NotificationUtil {
 
 	public String getCustomizedMsg(CommunityHallBookingDetail bookingDetail, String localizationMessage) {
 		String message = null, messageTemplate = null;
-		String ACTION_STATUS = bookingDetail.getWorkflow() == null ? bookingDetail.getBookingStatus()
-				: bookingDetail.getWorkflow().getAction();
+		log.info(" booking status : " + bookingDetail.getBookingStatus());
+		
+		String ACTION_STATUS = null;
+		if(bookingDetail.getBookingStatus().equals(BookingStatusEnum.BOOKING_CREATED.toString()) || 
+				bookingDetail.getBookingStatus().equals(BookingStatusEnum.BOOKED.toString())){
+			ACTION_STATUS = bookingDetail.getBookingStatus();
+		} else {
+			ACTION_STATUS = bookingDetail.getWorkflow().getAction();
+		}
+		
+		log.info(" booking status bookingDetail.getWorkflow() : " + bookingDetail.getWorkflow()); 
+		
+		log.info(" booking status ACTION_STATUS : " + ACTION_STATUS); 
 		
 		BookingStatusEnum statusEnum = BookingStatusEnum.valueOf(ACTION_STATUS);
 
-		log.info(" customized message : " + statusEnum); 
 		switch (statusEnum) {
 
 		case BOOKING_CREATED:
-			String paymentlink = config.getUiAppHost() + config.getPayLinkSMS().replace("$consumerCode", bookingDetail.getBookingNo())
+			String link = config.getUiAppHost() + config.getPayLinkSMS().replace("$consumerCode", bookingDetail.getBookingNo())
 			.replace("$mobile", bookingDetail.getApplicantDetail().getApplicantMobileNo()).replace("$tenantId", bookingDetail.getTenantId())
 			.replace("$businessService", config.getBusinessServiceName());
 	        
-		//	paymentlink = getShortnerURL(paymentlink);
+		//	link = getShortnerURL(link);
 			messageTemplate = getMessageTemplate(config.getBookingCreatedTemplate(), localizationMessage);
 			
 			message = populateDynamicValues(bookingDetail, messageTemplate,
-					CommunityHallBookingConstants.CHB_PAYMENT_LINK, paymentlink);
+					CommunityHallBookingConstants.CHB_PAYMENT_LINK, link);
 			break;
 
 		case BOOKED:
@@ -176,7 +186,7 @@ public class NotificationUtil {
 			.replace("$mobile", bookingDetail.getApplicantDetail().getApplicantMobileNo()).replace("$tenantId", bookingDetail.getTenantId())
 			.replace("$businessService", config.getBusinessServiceName());
 	        
-			// permissionLetterlink = getShortnerURL(permissionLetterlink);
+		//	permissionLetterlink = getShortnerURL(permissionLetterlink);
 			messageTemplate = getMessageTemplate(config.getBookedTemplate(), localizationMessage);
 			message = populateDynamicValues(bookingDetail, messageTemplate,
 					CommunityHallBookingConstants.CHB_PERMISSION_LETTER_LINK, permissionLetterlink);
@@ -195,8 +205,8 @@ public class NotificationUtil {
 			break;
 
 		}
-		log.info(" customized message  messageTemplate : " + messageTemplate);
-		log.info(" customized message  message : " + message);
+		log.info("getCustomizedMsg messageTemplate : " + messageTemplate);
+		log.info("getCustomizedMsg  message : " + message);
 		return message;
 	}
 
