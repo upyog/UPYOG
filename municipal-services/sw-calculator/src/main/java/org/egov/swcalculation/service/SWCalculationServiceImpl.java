@@ -14,14 +14,20 @@ import static org.egov.swcalculation.web.models.TaxHeadCategory.CHARGES;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.swcalculation.constants.SWCalculationConstant;
+import org.egov.swcalculation.repository.SewerageCalculatorDao;
 import org.egov.swcalculation.util.CalculatorUtils;
+import org.egov.swcalculation.util.SWCalculationUtil;
 import org.egov.swcalculation.util.SewerageCessUtil;
 import org.egov.swcalculation.web.models.*;
 import org.egov.swcalculation.repository.SewerageCalculatorDao;
@@ -84,14 +90,15 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 			 masterMap = mDataService.loadMasterData(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
 			calculations = getCalculations(request, masterMap);
-			
 		} else if (request.getIsconnectionCalculation()) {
 			connectionRequest = request.getIsconnectionCalculation();
 			masterMap = mDataService.loadMasterData(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
 			calculations = getCalculations(request, masterMap);
+		//	demandService.generateDemand(request, calculations, masterMap, connectionRequest);
+		//	unsetSewerageConnection(calculations);
 		}
-		else if (request.getIsReconnectionRequest())	
+			else if (request.getIsReconnectionRequest())	
 		{
 			connectionRequest = (!request.getIsReconnectionRequest());
 			masterMap = mDataService.loadExemptionMaster(request.getRequestInfo(),
@@ -100,6 +107,7 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 			log.info("In reconnection request connectionRequest" + connectionRequest);
 		} 
 		else {
+
 			// Calculate and create demand for application
 			masterMap = mDataService.loadExemptionMaster(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
