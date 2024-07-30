@@ -89,6 +89,7 @@ public class SetBackService extends FeatureProcess {
             int i = 0;
             if (!block.getCompletelyExisting()) {
                 for (SetBack setback : block.getSetBacks()) {
+                	if(pl.getCoreArea().equalsIgnoreCase("No")) {
                     i++;
                     // if height not defined other than 0 level , then throw error.
                     if (setback.getLevel() == 0) {
@@ -146,6 +147,7 @@ public class SetBackService extends FeatureProcess {
 //                                    block.getName(), setback.getLevel().toString(), heightOfBuilding.toString()));
                     }
                 }
+            }
             }
         }
         if (errors.size() > 0)

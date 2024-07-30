@@ -134,6 +134,12 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 			b.setHeight(height);
 			b.getBuilding().setBuildingHeight(height);
 			b.getBuilding().setDeclaredBuildingHeight(height);
+			
+			String layerName1 = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + b.getNumber() + "_"  + 
+					layerNames.getLayerName("LAYER_NAME_HEIGHT_OF_BUILDING_EXCLUDING_MP"); // building height excluding mumty and parapet
+			BigDecimal heightExMP = Util.getSingleDimensionValueByLayer(pl.getDoc(), layerName1, pl);
+			b.getBuilding().setBuildingHeightExcludingMP(heightExMP);			
+			
 			if (height.compareTo(BigDecimal.valueOf(15)) > 0)
 				b.getBuilding().setIsHighRise(true);
 		}

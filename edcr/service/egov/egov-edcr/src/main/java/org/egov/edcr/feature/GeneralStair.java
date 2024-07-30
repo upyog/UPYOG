@@ -146,8 +146,10 @@ public class GeneralStair extends FeatureProcess {
                                 }
                             }
                         } else {
+                        	if (floor.getNumber() != generalStairCount)
+                        	{
                             stairAbsent.add("Block " + block.getNumber() + " floor " + floor.getNumber());
-                        }
+                        }}
 
                     }
                 }
