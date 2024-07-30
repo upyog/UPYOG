@@ -41,4 +41,5 @@ public class EwasteApplicationSearchCriteria {
 	@JsonProperty("toDate")
 	private String toDate;
 
+	private String userUuidString;
 }

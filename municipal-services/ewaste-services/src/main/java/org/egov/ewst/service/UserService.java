@@ -18,7 +18,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.ewst.models.EwasteApplication;
 import org.egov.ewst.models.EwasteRegistrationRequest;
-import org.egov.ewst.models.OwnerInfo;
+import org.egov.ewst.models.user.User;
 import org.egov.ewst.models.user.CreateUserRequest;
 import org.egov.ewst.models.user.UserDetailResponse;
 import org.egov.ewst.models.user.UserSearchRequest;
@@ -57,40 +57,40 @@ public class UserService {
 	private String userUpdateEndpoint;
 
 	/**
-	 * Creates user of the owners of pet if it is not created already
+	 * Creates user of the users of ewaste if it is not created already
 	 * 
-	 * @param request PetRegistrationRequest received for creating application
+	 * @param request Ewaste Request received for creating application
 	 */
 	public void createUser(EwasteRegistrationRequest request) {
 
 		EwasteApplication ewasteApplication = request.getEwasteApplication().get(0);
 		RequestInfo requestInfo = request.getRequestInfo();
 		Role role = getCitizenRole();
-		OwnerInfo owner = new OwnerInfo();
-		addUserDefaultFields(ewasteApplication.getTenantId(), role, owner);
-		UserDetailResponse userDetailResponse = userExists(owner, requestInfo);
-		List<OwnerInfo> existingUsersFromService = userDetailResponse.getUser();
-		Map<String, OwnerInfo> ownerMapFromSearch = existingUsersFromService.stream()
-				.collect(Collectors.toMap(OwnerInfo::getUuid, Function.identity()));
+		User user = new User();
+		addUserDefaultFields(ewasteApplication.getTenantId(), role, user);
+		UserDetailResponse userDetailResponse = userExists(user, requestInfo);
+		List<User> existingUsersFromService = userDetailResponse.getUser();
+		Map<String, User> userMapFromSearch = existingUsersFromService.stream()
+				.collect(Collectors.toMap(User::getUuid, Function.identity()));
 
 		if (CollectionUtils.isEmpty(existingUsersFromService)) {
 
-			owner.setUserName(UUID.randomUUID().toString());
-			userDetailResponse = createUser(requestInfo, owner);
+			user.setUserName(UUID.randomUUID().toString());
+			userDetailResponse = createUser(requestInfo, user);
 
 		} else {
 
-			String uuid = owner.getUuid();
-			if (uuid != null && ownerMapFromSearch.containsKey(uuid)) {
-				userDetailResponse = updateExistingUser(ewasteApplication, requestInfo, role, owner,
-						ownerMapFromSearch.get(uuid));
+			String uuid = user.getUuid();
+			if (uuid != null && userMapFromSearch.containsKey(uuid)) {
+				userDetailResponse = updateExistingUser(ewasteApplication, requestInfo, role, user,
+						userMapFromSearch.get(uuid));
 			} else {
 
-				owner.setUserName(UUID.randomUUID().toString());
-				userDetailResponse = createUser(requestInfo, owner);
+				user.setUserName(UUID.randomUUID().toString());
+				userDetailResponse = createUser(requestInfo, user);
 			}
 		}
-		setOwnerFields(owner, userDetailResponse, requestInfo);
+		setuserFields(user, userDetailResponse, requestInfo);
 	}
 
 	/**
@@ -98,34 +98,34 @@ public class UserService {
 	 * 
 	 */
 	private UserDetailResponse updateExistingUser(EwasteApplication ewasteApplication, RequestInfo requestInfo,
-			Role role, OwnerInfo ownerFromRequest, OwnerInfo ownerInfoFromSearch) {
+			Role role, User userFromRequest, User UserFromSearch) {
 
 		UserDetailResponse userDetailResponse;
 
-		ownerFromRequest.setId(ownerInfoFromSearch.getId());
-		ownerFromRequest.setUuid(ownerInfoFromSearch.getUuid());
-		addUserDefaultFields(ewasteApplication.getTenantId(), role, ownerFromRequest);
+		userFromRequest.setId(UserFromSearch.getId());
+		userFromRequest.setUuid(UserFromSearch.getUuid());
+		addUserDefaultFields(ewasteApplication.getTenantId(), role, userFromRequest);
 
 		StringBuilder uri = new StringBuilder(userHost).append(userContextPath).append(userUpdateEndpoint);
-		userDetailResponse = userCall(new CreateUserRequest(requestInfo, ownerFromRequest), uri);
+		userDetailResponse = userCall(new CreateUserRequest(requestInfo, userFromRequest), uri);
 		if (userDetailResponse.getUser().get(0).getUuid() == null) {
 			throw new CustomException("INVALID USER RESPONSE", "The user updated has uuid as null");
 		}
 		return userDetailResponse;
 	}
 
-	private UserDetailResponse createUser(RequestInfo requestInfo, OwnerInfo owner) {
+	private UserDetailResponse createUser(RequestInfo requestInfo, User user) {
 		UserDetailResponse userDetailResponse;
 		StringBuilder uri = new StringBuilder(userHost).append(userContextPath).append(userCreateEndpoint);
 
-		CreateUserRequest userRequest = CreateUserRequest.builder().requestInfo(requestInfo).user(owner).build();
+		CreateUserRequest userRequest = CreateUserRequest.builder().requestInfo(requestInfo).user(user).build();
 
 		userDetailResponse = userCall(userRequest, uri);
 
 		if (ObjectUtils.isEmpty(userDetailResponse)) {
 
 			throw new CustomException("INVALID USER RESPONSE",
-					"The user create has failed for the mobileNumber : " + owner.getUserName());
+					"The user create has failed for the mobileNumber : " + user.getUserName());
 
 		}
 		return userDetailResponse;
@@ -134,20 +134,20 @@ public class UserService {
 	/**
 	 * Sets the role,type,active and tenantId for a Citizen
 	 * 
-	 * @param tenantId TenantId of the pet application
+	 * @param tenantId TenantId of the ewaste application
 	 * @param role     The role of the user set in this case to CITIZEN
-	 * @param owner    The user whose fields are to be set
+	 * @param user     The user whose fields are to be set
 	 */
-	private void addUserDefaultFields(String tenantId, Role role, OwnerInfo owner) {
+	private void addUserDefaultFields(String tenantId, Role role, User user) {
 
-		owner.setActive(true);
-		owner.setTenantId(tenantId);
-		owner.setRoles(Collections.singletonList(role));
-		owner.setType("CITIZEN");
-		owner.setCreatedDate(null);
-		owner.setCreatedBy(null);
-		owner.setLastModifiedDate(null);
-		owner.setLastModifiedBy(null);
+		user.setActive(true);
+		user.setTenantId(tenantId);
+		user.setRoles(Collections.singletonList(role));
+		user.setType("CITIZEN");
+		user.setCreatedDate(null);
+		user.setCreatedBy(null);
+		user.setLastModifiedDate(null);
+		user.setLastModifiedBy(null);
 	}
 
 	private Role getCitizenRole() {
@@ -156,47 +156,47 @@ public class UserService {
 	}
 
 	/**
-	 * Searches if the owner is already created. Search is based on name of owner,
+	 * Searches if the user is already created. Search is based on name of user,
 	 * uuid and mobileNumber
 	 * 
-	 * @param owner       Owner which is to be searched
-	 * @param requestInfo RequestInfo from the PetRegistrationRequest
+	 * @param user        user which is to be searched
+	 * @param requestInfo RequestInfo from the Ewaste Request
 	 * @return UserDetailResponse containing the user if present and the
 	 *         responseInfo
 	 */
-	private UserDetailResponse userExists(OwnerInfo owner, RequestInfo requestInfo) {
+	private UserDetailResponse userExists(User user, RequestInfo requestInfo) {
 
-		UserSearchRequest userSearchRequest = getBaseUserSearchRequest(owner.getTenantId(), requestInfo);
-		userSearchRequest.setMobileNumber(owner.getMobileNumber());
-		userSearchRequest.setUserType(owner.getType());
-		userSearchRequest.setName(owner.getName());
+		UserSearchRequest userSearchRequest = getBaseUserSearchRequest(user.getTenantId(), requestInfo);
+		userSearchRequest.setMobileNumber(user.getMobileNumber());
+		userSearchRequest.setUserType(user.getType());
+		userSearchRequest.setName(user.getName());
 
 		StringBuilder uri = new StringBuilder(userHost).append(userSearchEndpoint);
 		return userCall(userSearchRequest, uri);
 	}
 
 	/**
-	 * Sets userName for the owner as mobileNumber if mobileNumber already assigned
+	 * Sets userName for the user as mobileNumber if mobileNumber already assigned
 	 * last 10 digits of currentTime is assigned as userName
 	 * 
-	 * @param owner              owner whose username has to be assigned
+	 * @param user               user whose username has to be assigned
 	 * @param listOfMobileNumber list of unique mobileNumbers in the
-	 *                           PetRegistrationRequest
+	 *                           Ewaste Request
 	 */
-	private void setUserName(OwnerInfo owner, Set<String> listOfMobileNumber) {
+	private void setUserName(User user, Set<String> listOfMobileNumber) {
 
-		if (listOfMobileNumber.contains(owner.getMobileNumber())) {
-			owner.setUserName(owner.getMobileNumber());
+		if (listOfMobileNumber.contains(user.getMobileNumber())) {
+			user.setUserName(user.getMobileNumber());
 			// Once mobileNumber is set as userName it is removed from the list
-			listOfMobileNumber.remove(owner.getMobileNumber());
+			listOfMobileNumber.remove(user.getMobileNumber());
 		} else {
 			String username = UUID.randomUUID().toString();
-			owner.setUserName(username);
+			user.setUserName(username);
 		}
 	}
 
 	/**
-	 * Returns user using user search based on petApplicationCriteria(owner
+	 * Returns user using user search based on ewaste ApplicationCriteria(user
 	 * name,mobileNumber,userName)
 	 * 
 	 * @param userSearchRequest
@@ -289,28 +289,28 @@ public class UserService {
 	}
 
 	/**
-	 * Sets owner fields (so that the owner table can be linked to user table)
+	 * Sets user fields (so that the user table can be linked to user table)
 	 * 
-	 * @param owner              Owner in the pet detail whose user is created
+	 * @param user               user in the ewaste detail whose user is created
 	 * @param userDetailResponse userDetailResponse from the user Service
-	 *                           corresponding to the given owner
+	 *                           corresponding to the given user
 	 */
-	private void setOwnerFields(OwnerInfo owner, UserDetailResponse userDetailResponse, RequestInfo requestInfo) {
+	private void setuserFields(User user, UserDetailResponse userDetailResponse, RequestInfo requestInfo) {
 
-		owner.setUuid(userDetailResponse.getUser().get(0).getUuid());
-		owner.setId(userDetailResponse.getUser().get(0).getId());
-		owner.setUserName((userDetailResponse.getUser().get(0).getUserName()));
-		owner.setCreatedBy(requestInfo.getUserInfo().getUuid());
-		owner.setCreatedDate(System.currentTimeMillis());
-		owner.setLastModifiedBy(requestInfo.getUserInfo().getUuid());
-		owner.setLastModifiedDate(System.currentTimeMillis());
-		owner.setActive(userDetailResponse.getUser().get(0).getActive());
+		user.setUuid(userDetailResponse.getUser().get(0).getUuid());
+		user.setId(userDetailResponse.getUser().get(0).getId());
+		user.setUserName((userDetailResponse.getUser().get(0).getUserName()));
+		user.setCreatedBy(requestInfo.getUserInfo().getUuid());
+		user.setCreatedDate(System.currentTimeMillis());
+		user.setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+		user.setLastModifiedDate(System.currentTimeMillis());
+		user.setActive(userDetailResponse.getUser().get(0).getActive());
 	}
 
 	/**
 	 * Updates user if present else creates new user
 	 * 
-	 * @param request PetRequest received from update
+	 * @param request Ewaste Request received from update
 	 */
 
 	/**
@@ -338,12 +338,12 @@ public class UserService {
 		return tenantId.split("\\.")[0];
 	}
 
-	private UserDetailResponse searchedSingleUserExists(OwnerInfo owner, RequestInfo requestInfo) {
+	private UserDetailResponse searchedSingleUserExists(User user, RequestInfo requestInfo) {
 
-		UserSearchRequest userSearchRequest = getBaseUserSearchRequest(owner.getTenantId(), requestInfo);
-		userSearchRequest.setUserType(owner.getType());
+		UserSearchRequest userSearchRequest = getBaseUserSearchRequest(user.getTenantId(), requestInfo);
+		userSearchRequest.setUserType(user.getType());
 		Set<String> uuids = new HashSet<String>();
-		uuids.add(owner.getUuid());
+		uuids.add(user.getUuid());
 		userSearchRequest.setUuid(uuids);
 
 		StringBuilder uri = new StringBuilder(userHost).append(userSearchEndpoint);

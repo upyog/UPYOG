@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.SafeHtml;
 
+@SuppressWarnings("deprecation")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

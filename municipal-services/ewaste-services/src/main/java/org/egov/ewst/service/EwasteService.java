@@ -44,12 +44,16 @@ public class EwasteService {
 	@Autowired
 	private EwasteApplicationRepository ewasteApplicationRepository;
 
+	@Autowired
+	private EwasteRequestValidator ewasteRequestValidator;
+
 	/**
 	 * Enriches the Request and pushes to the Queue
 	 *
 	 */
 	public List<EwasteApplication> createEwasteRequest(EwasteRegistrationRequest ewasteRegistrationRequest) {
 
+		ewasteRequestValidator.validateCreateRequest(ewasteRegistrationRequest);
 		enrichmentService.enrichEwasteApplication(ewasteRegistrationRequest);
 		wfService.updateWorkflowStatus(ewasteRegistrationRequest);
 		producer.push(config.getCreateEwasteTopic(), ewasteRegistrationRequest);
@@ -59,6 +63,8 @@ public class EwasteService {
 
 	public List<EwasteApplication> searchEwasteApplications(RequestInfo requestInfo,
 			EwasteApplicationSearchCriteria ewasteApplicationSearchCriteria) {
+
+		ewasteApplicationSearchCriteria.setUserUuidString(requestInfo.getUserInfo().getUuid());
 
 		List<EwasteApplication> applications = ewasteApplicationRepository
 				.getApplication(ewasteApplicationSearchCriteria);
@@ -92,11 +98,11 @@ public class EwasteService {
 		}
 
 		existingApplication.setWorkflow(payloadApplication.getWorkflow());
-		//Update the audit details upon update
+		// Update the audit details upon update
 		existingApplication.getAuditDetails()
 				.setLastModifiedBy(ewasteRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
 		existingApplication.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
-		
+
 		// Enrich the application with audit details upon update
 //		enrichmentService.enrichEwasteApplicationUponUpdate(ewasteRegistrationRequest);
 
@@ -105,8 +111,6 @@ public class EwasteService {
 		wfService.updateWorkflowStatus(ewasteRegistrationRequest);
 		// Push the updated application to the update topic
 		producer.push(config.getUpdateEwasteTopic(), ewasteRegistrationRequest);
-
-		// Return the updated application
 		return existingApplication;
 	}
 

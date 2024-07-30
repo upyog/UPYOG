@@ -30,7 +30,9 @@ public class EwasteMainApplication {
 	}
 
 	public static void main(String[] args) throws Exception {
+		System.setProperty("spring.devtools.restart.enabled", "false");
 		SpringApplication.run(EwasteMainApplication.class, args);
+
 	}
 
 }

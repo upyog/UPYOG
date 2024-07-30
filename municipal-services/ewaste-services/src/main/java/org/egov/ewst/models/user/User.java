@@ -25,6 +25,7 @@ import lombok.ToString;
 /**
  * User
  */
+@SuppressWarnings("deprecation")
 @Validated
 
 @Getter

@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.egov.ewst.models.user.User;
 import org.egov.ewst.models.workflow.State;
 
 import java.util.ArrayList;
