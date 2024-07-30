@@ -78,11 +78,11 @@ export const createWorkFlow = async body => {
       businessId: fireNOC.fireNOCDetails.applicationNumber,
       action: fireNOC.fireNOCDetails.action,
       comment: get(fireNOC.fireNOCDetails, "comment", null),
-      assignes: [(fireNOC.fireNOCDetails.assignee 
+      assignes: (fireNOC.fireNOCDetails.assignee 
         && fireNOC.fireNOCDetails.assignee[0] != null 
-        && fireNOC.fireNOCDetails.assignee[0] !='')
-        ? { uuid: fireNOC.fireNOCDetails.assignee[0] }
-        : null],
+       && fireNOC.fireNOCDetails.assignee[0] !='')
+        ? [{ uuid: fireNOC.fireNOCDetails.assignee[0] }]
+        : null,
       documents: get(fireNOC.fireNOCDetails, "wfDocuments", null),
       sla: 0,
       previousStatus: null,
@@ -100,13 +100,13 @@ export const createWorkFlow = async body => {
     RequestInfo: body.RequestInfo,
     ProcessInstances: processInstances
   };
-  //console.log("Workflow requestBody", JSON.stringify(requestBody));
+  console.log("Workflow requestBody", JSON.stringify(requestBody));
   let workflowResponse = await httpRequest({
     hostURL: envVariables.EGOV_WORKFLOW_HOST,
     endPoint: envVariables.EGOV_WORKFLOW_TRANSITION_ENDPOINT,
     requestBody
   });
-  // console.log("workflowResponse", JSON.stringify(workflowResponse));
+  console.log("workflowResponse", JSON.stringify(workflowResponse));
   return workflowResponse;
 };
 
