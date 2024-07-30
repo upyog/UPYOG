@@ -2,6 +2,7 @@ package org.egov.swcalculation.service;
 
 import static org.egov.swcalculation.constants.SWCalculationConstant.ONE_TIME_FEE_SERVICE_FIELD;
 
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,6 +33,10 @@ import org.egov.swcalculation.util.CalculatorUtils;
 import org.egov.swcalculation.util.SWCalculationUtil;
 import org.egov.swcalculation.validator.SWCalculationWorkflowValidator;
 import org.egov.swcalculation.web.models.*;
+import org.egov.swcalculation.web.models.BulkBillCriteria;
+import org.egov.swcalculation.web.models.Calculation;
+import org.egov.swcalculation.web.models.CalculationCriteria;
+import org.egov.swcalculation.web.models.CalculationReq;
 import org.egov.swcalculation.web.models.Demand.StatusEnum;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -174,10 +179,10 @@ public class DemandService {
 		}
 		List<Demand> createdDemands = new ArrayList<>();
 		if (!CollectionUtils.isEmpty(createCalculations))
-			createdDemands = createDemand(request.getRequestInfo(), createCalculations, masterMap, isForConnectionNo);
+			createdDemands = createDemand(request, createCalculations, masterMap, isForConnectionNo);
 
 		if (!CollectionUtils.isEmpty(updateCalculations))
-			createdDemands = updateDemandForCalculation(request.getRequestInfo(), updateCalculations, fromDate, toDate, isForConnectionNo,
+			createdDemands = updateDemandForCalculation(request, updateCalculations, fromDate, toDate, isForConnectionNo,
 					request.getIsDisconnectionRequest(),request.getIsReconnectionRequest());
 		return createdDemands;
 	}
@@ -189,7 +194,7 @@ public class DemandService {
 	 *            List of calculation object
 	 * @return Demands that are created
 	 */
-	private List<Demand> createDemand(RequestInfo requestInfo, List<Calculation> calculations,
+	private List<Demand> createDemand(CalculationReq calculationReq, List<Calculation> calculations,
 			Map<String, Object> masterMap,boolean isForConnectionNO) {
 		List<Demand> demands = new LinkedList<>();
 		Set<String> sewerageConnectionIds = new HashSet<>();
@@ -204,7 +209,7 @@ public class DemandService {
 								+ " Sewerage Connection with this number does not exist ");
 			
 			SewerageConnectionRequest sewerageConnectionRequest = SewerageConnectionRequest.builder()
-					.sewerageConnection(connection).requestInfo(requestInfo).build();
+					.sewerageConnection(connection).requestInfo(calculationReq.getRequestInfo()).build();
 			
 			Property property = sWCalculationUtil.getProperty(sewerageConnectionRequest);
 			String tenantId = calculation.getTenantId();
@@ -214,7 +219,7 @@ public class DemandService {
 			if (!CollectionUtils.isEmpty(sewerageConnectionRequest.getSewerageConnection().getConnectionHolders())) {
 				owner = sewerageConnectionRequest.getSewerageConnection().getConnectionHolders().get(0).toCommonUser();
 			}
-			owner = getPlainOwnerDetails(requestInfo,owner.getUuid(), tenantId);
+			owner = getPlainOwnerDetails(calculationReq.getRequestInfo(),owner.getUuid(), tenantId);
 			List<DemandDetail> demandDetails = new LinkedList<>();
 			
 			calculation.getTaxHeadEstimates().forEach(taxHeadEstimate -> {
@@ -245,16 +250,16 @@ public class DemandService {
 
 		String billingcycle = calculatorUtils.getBillingCycle(masterMap);
 		DemandNotificationObj notificationObj = DemandNotificationObj.builder()
-				.requestInfo(requestInfo)
+				.requestInfo(calculationReq.getRequestInfo())
 				.tenantId(calculations.get(0).getTenantId())
 				.sewerageConnetionIds(sewerageConnectionIds)
 				.billingCycle(billingcycle)
 				.build();
-		List<Demand> demandRes = demandRepository.saveDemand(requestInfo, demands,notificationObj);
-			if(calculationReq.getIsReconnectionRequest())
+		List<Demand> demandRes = demandRepository.saveDemand(calculationReq.getRequestInfo(), demands,notificationObj);
+		if(calculationReq.getIsReconnectionRequest())
 			fetchBillForReconnect(demandRes, calculationReq.getRequestInfo(), masterMap);
 		else if(isForConnectionNO && !calculationReq.getIsReconnectionRequest())
-			fetchBill(demandRes, requestInfo(),masterMap);
+			fetchBill(demandRes, calculationReq.getRequestInfo(),masterMap);
 		return demandRes;
 	}
 
@@ -542,8 +547,8 @@ public class DemandService {
 	 *            List of calculation object
 	 * @return Demands that are updated
 	 */
-	private List<Demand> updateDemandForCalculation(RequestInfo requestInfo, List<Calculation> calculations,
-			Long fromDate, Long toDate, boolean isForConnectionNo, Boolean isDisconnectionRequest) {
+	private List<Demand> updateDemandForCalculation(CalculationReq request, List<Calculation> calculations,
+			Long fromDate, Long toDate, boolean isForConnectionNo, Boolean isDisconnectionRequest, Boolean isReconnectionRequest) {
 
 		List<Demand> demands = new LinkedList<>();
 		Long fromDateSearch = isForConnectionNo ? fromDate : null;
@@ -557,9 +562,9 @@ public class DemandService {
 			List<Demand> searchResult = new ArrayList<>();
 			if (isDisconnectionRequest)
 				searchResult = searchDemandForDisconnectionRequest(calculation.getTenantId(), consumerCodes, null, toDateSearch,
-						requestInfo, null, isDisconnectionRequest);
+						request.getRequestInfo(), null, isDisconnectionRequest);
 			else
-				searchResult = searchDemand(calculation.getTenantId(), consumerCodes, fromDateSearch, toDateSearch, requestInfo,
+				searchResult = searchDemand(calculation.getTenantId(), consumerCodes, fromDateSearch, toDateSearch, request.getRequestInfo(),
 						null, isDisconnectionRequest,isReconnectionRequest);
 
 			if (CollectionUtils.isEmpty(searchResult))
@@ -589,7 +594,7 @@ public class DemandService {
 					if (!CollectionUtils.isEmpty(sewerageConnectionRequest.getSewerageConnection().getConnectionHolders())) {
 						owner = sewerageConnectionRequest.getSewerageConnection().getConnectionHolders().get(0).toCommonUser();
 					}
-					owner = getPlainOwnerDetails(requestInfo,owner.getUuid(), tenantId);
+					owner = getPlainOwnerDetails(request.getRequestInfo(),owner.getUuid(), tenantId);
 					if(!(demand.getPayer().getUuid().equalsIgnoreCase(owner.getUuid())))
 						demand.setPayer(owner);
 				}
