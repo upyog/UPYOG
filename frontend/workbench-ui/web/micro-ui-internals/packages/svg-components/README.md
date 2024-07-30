@@ -59,9 +59,10 @@ const { Accessibility } = SVG;
 <Accessibility />;
 ```
 
-# Changelog
+### Changelog
 
 ```bash
+1.0.0 Released as part of workbench v1.0
 1.0.0-beta workbench base version beta release
 0.0.8 Added RoundedCheck Icon and DeleteBtn icon with stories
 0.0.7 Added Info banner icon
@@ -73,18 +74,25 @@ const { Accessibility } = SVG;
 0.0.1 base version
 ```
 
-## Published from DIGIT Core
-
-Digit Core Repo (https://github.com/egovernments/Core-Platform/tree/digit-ui-core)
-
-# Contributors
+### Contributors
 
 [nabeelmd-egov] [anil-egov] [jagankumar-egov]
 
-# Reference
+## Documentation
+
+Documentation Site (https://core.digit.org/guides/developer-guide/ui-developer-guide/digit-ui)
+
+## Reference
 
 Home Page (https://unified-dev.digit.org/storybook-svg/)
 
-## License
+## Maintainer
 
-MIT © [jagankumar-egov](https://github.com/jagankumar-egov)
+- [jagankumar-egov](https://www.github.com/jagankumar-egov)
+
+
+### Published from DIGIT Frontend 
+DIGIT Frontend Repo (https://github.com/egovernments/Digit-Frontend/tree/master)
+
+
+![Logo](https://s3.ap-south-1.amazonaws.com/works-dev-asset/mseva-white-logo.png)

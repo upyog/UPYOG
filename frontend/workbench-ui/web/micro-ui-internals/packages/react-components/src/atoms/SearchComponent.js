@@ -18,7 +18,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
 
   if (fullConfig?.postProcessResult){
     //conditions can be added while calling postprocess function to pass different params
-    Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess(data, uiConfig) 
+    Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess(data, uiConfig)
   }
 
   const {
@@ -50,18 +50,19 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
     updatedFields = Object.values(formState?.dirtyFields)
   }, [formState])
 
-  const onSubmit = (data) => {
-    
+  const onSubmit = (data, e) => {
+
+    e?.preventDefault?.();
     //here -> added a custom validator function, if required add in UICustomizations
-    const isAnyError = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.customValidationCheck ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.customValidationCheck(data) : false 
-    if(isAnyError) {
+    const isAnyError = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.customValidationCheck ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.customValidationCheck(data) : false
+    if (isAnyError) {
       setShowToast(isAnyError)
-      setTimeout(closeToast,3000)
+      setTimeout(closeToast, 3000)
       return
     }
 
-    if(updatedFields.length >= uiConfig?.minReqFields) {
-     // here based on screenType call respective dispatch fn
+    if (updatedFields.length >= uiConfig?.minReqFields) {
+      // here based on screenType call respective dispatch fn
       dispatch({
         type: uiConfig?.type === "filter" ? "filterForm" : "searchForm",
         state: {
@@ -82,10 +83,10 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
       //need to pass form with empty strings 
     })
     dispatch({
-      type:"clearTableForm"
+      type: "clearTableForm"
     })
   }
- 
+
   const closeToast = () => {
     setShowToast(null);
   }
@@ -100,8 +101,8 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
   }
 
   const renderHeader = () => {
-    switch(uiConfig?.type) {
-      case "filter" : {
+    switch (uiConfig?.type) {
+      case "filter": {
         return (
           <div className="filter-header-wrapper">
             <div className="icon-filter"><FilterIcon></FilterIcon></div>
@@ -110,7 +111,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
           </div>
         )
       }
-      default : {
+      default: {
         return <Header styles={uiConfig?.headerStyle}>{t(header)}</Header>
       }
     }
@@ -123,10 +124,10 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
         <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
           <div>
             {uiConfig?.showFormInstruction && <p className="search-instruction-header">{t(uiConfig?.showFormInstruction)}</p>}
-            <div className={`search-field-wrapper ${screenType} ${uiConfig?.type} ${uiConfig?.formClassName?uiConfig?.formClassName:""}`}>
-              <RenderFormFields 
-                fields={uiConfig?.fields} 
-                control={control} 
+            <div className={`search-field-wrapper ${screenType} ${uiConfig?.type} ${uiConfig?.formClassName ? uiConfig?.formClassName : ""}`}>
+              <RenderFormFields
+                fields={uiConfig?.fields}
+                control={control}
                 formData={formData}
                 errors={errors}
                 register={register}
@@ -134,13 +135,17 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
                 getValues={getValues}
                 setError={setError}
                 clearErrors={clearErrors}
-                labelStyle={{fontSize: "16px"}}
+                labelStyle={{ fontSize: "16px" }}
                 apiDetails={apiDetails}
                 data={data}
-              />  
+              />
               <div className={`search-button-wrapper ${screenType} ${uiConfig?.type} ${uiConfig?.searchWrapperClassName}`} style={uiConfig?.searchWrapperStyles}>
-                { uiConfig?.secondaryLabel && <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel> }
-                { uiConfig?.primaryLabel && <SubmitBar label={t(uiConfig?.primaryLabel)} submit="submit" disabled={false}/> }
+                {uiConfig?.secondaryLabel && <LinkLabel style={{ marginBottom: 0, whiteSpace: 'nowrap' }} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel>}
+                {uiConfig?.isPopUp && uiConfig?.primaryLabel && <SubmitBar label={t(uiConfig?.primaryLabel)} onSubmit={(e) => {
+                  handleSubmit(onSubmit)(e);
+                  // onSubmit(formData, e)
+                }} disabled={false} />}
+                {!uiConfig?.isPopUp && uiConfig?.primaryLabel && <SubmitBar label={t(uiConfig?.primaryLabel)} submit="submit" disabled={false} />}
               </div>
             </div>
           </div> 
