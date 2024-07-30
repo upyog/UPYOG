@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
-import { initLibraries}  from "@egovernments/digit-ui-libraries";
+// import { initLibraries}  from "@egovernments/digit-ui-libraries";
 // import "@egovernments/digit-ui-css/dist/index.css";
 import "./index.css";
 import App from './App';
 import { TLCustomisations } from './Customisations/tl/TLCustomisation';
 
 
-initLibraries();
+// initLibraries();
 
 
 window.Digit.Customizations = { PGR: {} ,TL:TLCustomisations};
