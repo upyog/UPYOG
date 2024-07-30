@@ -77,31 +77,37 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 	public List<Calculation> getCalculation(CalculationReq request) {
 		List<Calculation> calculations;
 		boolean connectionRequest = false;
-		if (request.getDisconnectRequest()!= null && request.getDisconnectRequest()) {
+		Map<String, Object> masterMap;
+		if (request.getIsDisconnectionRequest()!= null && request.getIsDisconnectionRequest()) {
 			// Calculate and create demand for connection
-			connectionRequest = request.getDisconnectRequest();
-			Map<String, Object> masterMap = mDataService.loadMasterData(request.getRequestInfo(),
+			connectionRequest = request.getIsDisconnectionRequest();
+			 masterMap = mDataService.loadMasterData(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
 			calculations = getCalculations(request, masterMap);
-			demandService.generateDemand(request, calculations, masterMap, connectionRequest);
-			unsetSewerageConnection(calculations);
+			
 		} else if (request.getIsconnectionCalculation()) {
 			connectionRequest = request.getIsconnectionCalculation();
-			Map<String, Object> masterMap = mDataService.loadMasterData(request.getRequestInfo(),
+			masterMap = mDataService.loadMasterData(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
 			calculations = getCalculations(request, masterMap);
-			demandService.generateDemand(request, calculations, masterMap, connectionRequest);
-			unsetSewerageConnection(calculations);
-
-		} else {
-			// Calculate and create demand for application
-			Map<String, Object> masterData = mDataService.loadExemptionMaster(request.getRequestInfo(),
-					request.getCalculationCriteria().get(0).getTenantId());
-			calculations = getFeeCalculation(request, masterData);
-			demandService.generateDemand(request, calculations, masterData,
-					request.getIsconnectionCalculation());
-			unsetSewerageConnection(calculations);
 		}
+		else if (request.getIsReconnectionRequest())	
+		{
+			connectionRequest = (!request.getIsReconnectionRequest());
+			masterMap = mDataService.loadExemptionMaster(request.getRequestInfo(),
+					request.getCalculationCriteria().get(0).getTenantId());
+			calculations = getReconnectionFeeCalculation(request, masterMap);
+			log.info("In reconnection request connectionRequest" + connectionRequest);
+		} 
+		else {
+			// Calculate and create demand for application
+			masterMap = mDataService.loadExemptionMaster(request.getRequestInfo(),
+					request.getCalculationCriteria().get(0).getTenantId());
+			calculations = getFeeCalculation(request, masterMap);
+			connectionRequest = request.getIsconnectionCalculation();
+		}
+		demandService.generateDemand(request, calculations, masterMap,connectionRequest);
+		unsetSewerageConnection(calculations);
 		return calculations;
 	}
 
