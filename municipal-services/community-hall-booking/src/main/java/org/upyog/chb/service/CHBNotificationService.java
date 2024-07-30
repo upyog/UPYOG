@@ -68,22 +68,23 @@ public class CHBNotificationService {
 		}
 		
 		log.info("Message for sending sms and event : " + message);
-        
-		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_SMS)) {
-			List<SMSRequest> smsRequests = new LinkedList<>();
-			if (config.getIsSMSNotificationEnabled()) {
-				enrichSMSRequest(bookingRequest, smsRequests, mobileNumberToOwner, message);
-				if (!CollectionUtils.isEmpty(smsRequests))
-					util.sendSMS(smsRequests);
+		if (message != null) {
+			if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_SMS)) {
+				List<SMSRequest> smsRequests = new LinkedList<>();
+				if (config.getIsSMSNotificationEnabled()) {
+					enrichSMSRequest(bookingRequest, smsRequests, mobileNumberToOwner, message);
+					if (!CollectionUtils.isEmpty(smsRequests))
+						util.sendSMS(smsRequests);
+				}
 			}
-		}
 
-		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EVENT)) {
-			if (null != config.getIsUserEventsNotificationEnabled()) {
-				if (config.getIsUserEventsNotificationEnabled()) {
-					EventRequest eventRequest = getEventsForCommunityHallBooking(bookingRequest, message);
-					if (null != eventRequest)
-						util.sendEventNotification(eventRequest);
+			if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EVENT)) {
+				if (null != config.getIsUserEventsNotificationEnabled()) {
+					if (config.getIsUserEventsNotificationEnabled()) {
+						EventRequest eventRequest = getEventsForCommunityHallBooking(bookingRequest, message);
+						if (null != eventRequest)
+							util.sendEventNotification(eventRequest);
+					}
 				}
 			}
 		}
