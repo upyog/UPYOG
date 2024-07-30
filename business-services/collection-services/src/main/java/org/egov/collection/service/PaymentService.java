@@ -82,11 +82,12 @@ public class PaymentService {
 			paymentSearchCriteria.setOffset(0);
 			paymentSearchCriteria.setLimit(applicationProperties.getReceiptsSearchDefaultLimit());
 		}
-		if (requestInfo.getUserInfo().getType().equals("CITIZEN")) {
-			List<String> payerIds = new ArrayList<>();
-			payerIds.add(requestInfo.getUserInfo().getUuid());
-			paymentSearchCriteria.setPayerIds(payerIds);
-		}
+		/*
+		 * if (requestInfo.getUserInfo().getType().equals("CITIZEN")) { List<String>
+		 * payerIds = new ArrayList<>();
+		 * payerIds.add(requestInfo.getUserInfo().getUuid());
+		 * paymentSearchCriteria.setPayerIds(payerIds); }
+		 */		
 		List<Payment> payments = paymentRepository.fetchPayments(paymentSearchCriteria);
 		if (null != paymentSearchCriteria.getBusinessService() && null != paymentSearchCriteria.getConsumerCodes()) {
 			String businessservice = paymentSearchCriteria.getBusinessService();
