@@ -29,6 +29,8 @@ create table eg_chb_booking_detail(
   createdTime bigint  NOT NULL,
   lastModifiedBy character varying(64),
   lastModifiedTime bigint,
+  permission_letter_filestore_id character varying(64),
+  payment_receipt_filestore_id character varying(64),
   constraint eg_chb_booking_detail_pk primary key (booking_id)
 );
 
@@ -53,7 +55,9 @@ create table eg_chb_booking_detail_audit(
   createdBy character varying(64) NOT NULL,
   createdTime bigint  NOT NULL,
   lastModifiedBy character varying(64),
-  lastModifiedTime bigint
+  lastModifiedTime bigint,
+   permission_letter_filestore_id character varying(64),
+  payment_receipt_filestore_id character varying(64),
 );
 
 create table eg_chb_slot_detail(

@@ -47,6 +47,7 @@ public class CHBNotificationService {
 
 	public void process(CommunityHallBookingRequest bookingRequest) {
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
+		log.info("Processing notification for booking no : " + bookingDetail.getBookingNo() + " with status : " + bookingDetail.getBookingStatus());
 		String tenantId = bookingRequest.getHallsBookingApplication().getTenantId();
 		String action = bookingDetail.getBookingStatus();
 
@@ -56,26 +57,34 @@ public class CHBNotificationService {
 		Map<String, String> mobileNumberToOwner = new HashMap<String, String>();
 		mobileNumberToOwner.put(bookingDetail.getApplicantDetail().getApplicantMobileNo(),
 				bookingDetail.getApplicantDetail().getApplicantName());
-		
+		log.info("Fetching localization message for notification");
 		String localizationMessages = util.getLocalizationMessages(tenantId, bookingRequest.getRequestInfo());
-		String message = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages);
-		log.info("Message for sending sms and event : " + message);
-
-		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_SMS)) {
-			List<SMSRequest> smsRequests = new LinkedList<>();
-			if (config.getIsSMSNotificationEnabled()) {
-				enrichSMSRequest(bookingRequest, smsRequests, mobileNumberToOwner, message);
-				if (!CollectionUtils.isEmpty(smsRequests))
-					util.sendSMS(smsRequests);
-			}
+		String message = null;
+		try {
+			 message = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages);
+		}catch (Exception e) {
+			log.error("Exception occcured while fetching message", e);
+			e.printStackTrace();
 		}
+		
+		log.info("Message for sending sms and event : " + message);
+		if (message != null) {
+			if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_SMS)) {
+				List<SMSRequest> smsRequests = new LinkedList<>();
+				if (config.getIsSMSNotificationEnabled()) {
+					enrichSMSRequest(bookingRequest, smsRequests, mobileNumberToOwner, message);
+					if (!CollectionUtils.isEmpty(smsRequests))
+						util.sendSMS(smsRequests);
+				}
+			}
 
-		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EVENT)) {
-			if (null != config.getIsUserEventsNotificationEnabled()) {
-				if (config.getIsUserEventsNotificationEnabled()) {
-					EventRequest eventRequest = getEventsForCommunityHallBooking(bookingRequest, message);
-					if (null != eventRequest)
-						util.sendEventNotification(eventRequest);
+			if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EVENT)) {
+				if (null != config.getIsUserEventsNotificationEnabled()) {
+					if (config.getIsUserEventsNotificationEnabled()) {
+						EventRequest eventRequest = getEventsForCommunityHallBooking(bookingRequest, message);
+						if (null != eventRequest)
+							util.sendEventNotification(eventRequest);
+					}
 				}
 			}
 		}
@@ -198,7 +207,7 @@ public class CHBNotificationService {
 
 		MasterDetail masterDetail = new MasterDetail();
 		masterDetail.setName(CommunityHallBookingConstants.CHANNEL_LIST);
-		masterDetail.setFilter("[?(@['module'] == 'CHB' && @['action'] == 'BOOKING_CREATED')]");
+		masterDetail.setFilter("[?(@['module'] == 'CHB' && @['action'] == '"+ action +"')]");
 		List<MasterDetail> masterDetailList = new ArrayList<>();
 		masterDetailList.add(masterDetail);
 
