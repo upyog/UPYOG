@@ -131,6 +131,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ch.qos.logback.core.status.Status;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -375,6 +376,20 @@ public class BillServicev2 {
 				.bill(bills).build();
 	}
 
+	public BillResponseV2 noDues(BillSearchCriteria billCriteria, RequestInfo requestInfo) {
+
+		List<BillV2> bills = billRepository.findBill(billCriteria);
+		for(BillV2 billv2:bills)
+		{
+			if(billv2.getStatus().equals(BillStatus.ACTIVE))
+			{
+				throw new CustomException("BILL_FOUND","Please pay your bills");
+			}
+		}
+		
+		return BillResponseV2.builder().resposneInfo(responseFactory.getResponseInfo(requestInfo, HttpStatus.OK))
+				.build();
+	}
 	/**
 	 * Generate bill based on the given criteria
 	 * 

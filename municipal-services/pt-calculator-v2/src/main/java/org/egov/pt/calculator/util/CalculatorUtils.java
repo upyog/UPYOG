@@ -537,35 +537,38 @@ public class CalculatorUtils {
 		BillResponse res = mapper.convertValue(
 				repository.fetchResult(getBillSearchUrl(criteria), new RequestInfoWrapper(requestInfo)),
 				BillResponse.class);
-		if(res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q4")
-				||	res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("H2")
-				|| res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("YR"))
+		if(res!=null)
 		{
-			carryForward=res.getBill().get(0).getBillDetails().get(0).getAmount();
-		}
-		else if(res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q3"))
-		{
-			singleunitammount=res.getBill().get(0).getBillDetails().get(0).getAmount().divide(new BigDecimal(3));
-			singleunitammount=singleunitammount.multiply(new BigDecimal(4));
-			carryForward=carryForward.add(singleunitammount);
-		}
-		else if(res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q2"))
-		{
-			singleunitammount=res.getBill().get(0).getBillDetails().get(0).getAmount().divide(new BigDecimal(2));
-			singleunitammount=singleunitammount.multiply(new BigDecimal(4));
-			carryForward=carryForward.add(singleunitammount);
-		}
-		else if(res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q1"))
-		{
-			singleunitammount=res.getBill().get(0).getBillDetails().get(0).getAmount();
-			singleunitammount=singleunitammount.multiply(new BigDecimal(4));
-			carryForward=carryForward.add(singleunitammount);
-		}
-		else if(res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("H1"))
-		{
-			singleunitammount=res.getBill().get(0).getBillDetails().get(0).getAmount();
-			singleunitammount=singleunitammount.multiply(new BigDecimal(2));
-			carryForward=carryForward.add(singleunitammount);
+			if(res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q4")
+					||	res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("H2")
+					|| res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("YR"))
+			{
+				carryForward=res.getBill().get(0).getBillDetails().get(0).getAmount();
+			}
+			else if(res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q3"))
+			{
+				singleunitammount=res.getBill().get(0).getBillDetails().get(0).getAmount().divide(new BigDecimal(3));
+				singleunitammount=singleunitammount.multiply(new BigDecimal(4));
+				carryForward=carryForward.add(singleunitammount);
+			}
+			else if(res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q2"))
+			{
+				singleunitammount=res.getBill().get(0).getBillDetails().get(0).getAmount().divide(new BigDecimal(2));
+				singleunitammount=singleunitammount.multiply(new BigDecimal(4));
+				carryForward=carryForward.add(singleunitammount);
+			}
+			else if(res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q1"))
+			{
+				singleunitammount=res.getBill().get(0).getBillDetails().get(0).getAmount();
+				singleunitammount=singleunitammount.multiply(new BigDecimal(4));
+				carryForward=carryForward.add(singleunitammount);
+			}
+			else if(res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("H1"))
+			{
+				singleunitammount=res.getBill().get(0).getBillDetails().get(0).getAmount();
+				singleunitammount=singleunitammount.multiply(new BigDecimal(2));
+				carryForward=carryForward.add(singleunitammount);
+			}
 		}
 		System.out.println(res);
 		return carryForward;
