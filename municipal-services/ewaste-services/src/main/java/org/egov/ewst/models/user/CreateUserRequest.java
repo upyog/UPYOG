@@ -1,7 +1,6 @@
 package org.egov.ewst.models.user;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.ewst.models.OwnerInfo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -22,6 +21,6 @@ public class CreateUserRequest {
 	private RequestInfo requestInfo;
 
 	@JsonProperty("user")
-	private OwnerInfo user;
+	private User user;
 
 }

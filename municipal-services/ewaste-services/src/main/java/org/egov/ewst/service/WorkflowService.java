@@ -11,7 +11,7 @@ import org.egov.ewst.models.EwasteApplication;
 import org.egov.ewst.models.EwasteRegistrationRequest;
 import org.egov.ewst.models.ProcessInstance;
 import org.egov.ewst.models.ProcessInstanceRequest;
-import org.egov.ewst.models.User;
+import org.egov.ewst.models.user.User;
 import org.egov.ewst.models.Workflow;
 import org.egov.ewst.models.workflow.BusinessService;
 import org.egov.ewst.models.workflow.BusinessServiceResponse;
@@ -82,7 +82,7 @@ public class WorkflowService {
 	/**
 	 * Method to integrate with workflow
 	 *
-	 * takes the Pet request as parameter constructs the work-flow request
+	 * takes the Ewaste request as parameter constructs the work-flow request
 	 *
 	 * and sets the resultant status from wf-response back to trade-license object
 	 *

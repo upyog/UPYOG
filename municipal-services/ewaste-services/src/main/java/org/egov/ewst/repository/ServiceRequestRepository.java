@@ -29,7 +29,7 @@ public class ServiceRequestRepository {
 	 * Fetches results from a REST service using the uri and object
 	 * 
 	 * @return Object
-	 * @author Abhijeet
+	 * @author Abhijeet Verma
 	 */
 	public Optional<Object> fetchResult(StringBuilder uri, Object request) {
 

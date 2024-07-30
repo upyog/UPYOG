@@ -3,7 +3,6 @@ package org.egov.ewst.models.user;
 import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.ewst.models.OwnerInfo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -19,5 +18,5 @@ public class UserDetailResponse {
 	ResponseInfo responseInfo;
 
 	@JsonProperty("user")
-	List<OwnerInfo> user;
+	List<User> user;
 }

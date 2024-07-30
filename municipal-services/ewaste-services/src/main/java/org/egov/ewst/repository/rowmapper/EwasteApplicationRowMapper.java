@@ -16,7 +16,6 @@ import org.egov.ewst.models.EwasteDetails;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 @Component
 public class EwasteApplicationRowMapper implements ResultSetExtractor<List<EwasteApplication>> {
@@ -52,10 +51,9 @@ public class EwasteApplicationRowMapper implements ResultSetExtractor<List<Ewast
 						.build();
 
 				ewasteMap.put(uuid, ewasteApplication);
-				addDocToEwasteApplication(rs,ewasteApplication);
-			}
-			else {
-				addDocToEwasteApplication(rs,ewasteApplication);
+				addDocToEwasteApplication(rs, ewasteApplication);
+			} else {
+				addDocToEwasteApplication(rs, ewasteApplication);
 			}
 
 			addEwasteOverallDetails(rs, ewasteApplication);

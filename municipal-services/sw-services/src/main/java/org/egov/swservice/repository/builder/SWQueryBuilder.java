@@ -34,7 +34,7 @@ public class SWQueryBuilder {
 	
 	private static String holderSelectValues = "connectionholder.tenantid as holdertenantid, connectionholder.connectionid as holderapplicationId, userid, connectionholder.status as holderstatus, isprimaryholder, connectionholdertype, holdershippercentage, connectionholder.relationship as holderrelationship, connectionholder.createdby as holdercreatedby, connectionholder.createdtime as holdercreatedtime, connectionholder.lastmodifiedby as holderlastmodifiedby, connectionholder.lastmodifiedtime as holderlastmodifiedtime";
 	
-	private final static String SEWERAGE_SEARCH_QUERY = "SELECT conn.*, sc.*, document.*, plumber.*, sc.connectionExecutionDate,"
+	private final static String SEWERAGE_SEARCH_QUERY = "SELECT sc.connectionExecutionDate,"
 			+ "sc.noOfWaterClosets, sc.noOfToilets,sc.proposedWaterClosets, sc.proposedToilets, sc.connectionType, sc.connection_id as connection_Id, sc.appCreatedDate as sc_appCreatedDate,"
 			+ "  sc.detailsprovidedby, sc.estimationfileStoreId , sc.sanctionfileStoreId , sc.estimationLetterDate,"
 			+ " conn.id as conn_id, conn.tenantid, conn.applicationNo, conn.applicationStatus, conn.status, conn.connectionNo, conn.oldConnectionNo, conn.property_id,"
@@ -78,7 +78,7 @@ public class SWQueryBuilder {
 	
 	private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
 	
-	private static final String ORDER_BY_CLAUSE = " ORDER BY sc.appCreatedDate DESC";
+	private static final String ORDER_BY_CLAUSE = " ORDER BY sc_appCreatedDate DESC";
 
 	private static final String ORDER_BY_COUNT_CLAUSE = " ORDER BY appCreatedDate DESC";
 
