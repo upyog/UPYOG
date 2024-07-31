@@ -21,7 +21,7 @@
   "dependencies": {
     "@upyog-niua/upyog-css": "1.0.10",
     "@egovernments/digit-ui-libraries": "1.8.0",
-    "@egovernments/digit-ui-module-bills": "1.8.0",
+    "@egovernments/digit-ui-module-bills": "1.7.25",
     "@egovernments/digit-ui-module-common": "1.8.0",
     "@egovernments/digit-ui-module-core": "1.8.0",
     "@egovernments/digit-ui-module-engagement": "1.8.0",
