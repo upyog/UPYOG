@@ -580,6 +580,7 @@ public class CalculatorUtils {
 				}
 				else if(bill.getStatus().equals(BillStatusEnum.PAID))
 				{
+					carryForward=BigDecimal.ZERO;
 					for(BillDetail billdet:bill.getBillDetails())
 					{
 						if(billdet.getPaymentPeriod().equalsIgnoreCase("Q3"))
