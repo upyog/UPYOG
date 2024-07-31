@@ -6,6 +6,8 @@ import java.util.Set;
 import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.web.models.BillGenerationSearchCriteria;
+import org.egov.wscalculation.web.models.CancelDemand;
+import org.egov.wscalculation.web.models.CancelList;
 import org.egov.wscalculation.web.models.MeterReadingSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,6 +39,18 @@ public class WSCalculatorQueryBuilder {
 	// private static final String connectionNoListQuery = "SELECT
 	// distinct(conn.connectionno) FROM eg_ws_connection conn INNER JOIN
 	// eg_ws_service ws ON conn.id = ws.connection_id";
+	
+	
+	
+	
+	private static final String connectionNoListQueryCancel = "SELECT  distinct d.id, d.consumercode from egbs_demand_v1 d INNER JOIN egbs_demanddetail_v1 dd ON dd.demandid = d.id  ";
+	private static final String connectionNoListQueryUpdate = "UPDATE egbs_demand_v1 set ";
+	
+	private static final String connectionNoListQuerybill = "UPDATE egbs_bill_v1 " +
+            "SET status = 'CANCELLED' " +
+            "FROM egbs_billdetail_v1 " +
+            "WHERE egbs_bill_v1.id = egbs_billdetail_v1.billid " +
+            "AND egbs_billdetail_v1.demandid = ";
 
 	private static final String distinctTenantIdsCriteria = "SELECT distinct(tenantid) FROM eg_ws_connection ws";
 
@@ -622,4 +636,67 @@ public class WSCalculatorQueryBuilder {
 
 		return query.toString();
 	}
+
+	public String getCancelBill(String businessService, String tenantId, String consumerCode, Long taxPeriodTo, Long taxperiodfrom,
+			List<Object> preparedStatement) {
+StringBuilder query = new StringBuilder(connectionNoListQueryCancel);
+		
+		
+		// Add connection type
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.businessservice = ? ");
+		preparedStatement.add(businessService);
+		
+		//Add Businessservice
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.tenantId = ? ");
+		preparedStatement.add(tenantId);
+		
+		
+		//Add TenantId
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.consumercode = ? ");
+		preparedStatement.add(consumerCode);
+		
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.status = 'ACTIVE' ");
+		
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.ispaymentcompleted = 'false' ");
+				
+		//Add taxperiodfrom
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.taxperiodfrom >= ? ") ;
+		preparedStatement.add(taxperiodfrom);
+		
+		//Add taxperiodto
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.taxperiodto <= ? ");
+		preparedStatement.add(taxPeriodTo);
+
+		return query.toString();
+	}
+	
+	// DEMAND CANCELLED //
+	
+	public String getUpdateDemand(String demandId , List<Object> preparedStatement) {
+StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);     
+       query.append("status='CANCELLED' ");     
+       addClauseIfRequired(preparedStatement, query);
+       query.append("id= ? ");
+       preparedStatement.add(demandId);
+		return query.toString();
+	}
+	
+	
+	
+	// BILL EXPIRY//
+	public String getBillDemand(String demandId , List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(connectionNoListQuerybill);				       
+		 query.append(" ? ");		       
+	        preparedStatement.add(demandId);
+	        return query.toString();
+	    }
+	
+
 }

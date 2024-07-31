@@ -138,6 +138,14 @@ public class CalculatorController {
 		//return "Demand Generated successfully for consumer Code "+bulkBillReq.getBulkBillCriteria().getConsumerCode();
 	}
 	
+	
+		@PostMapping("/cancelDemand")
+	 public CancelDemand cancelDemand(@Valid @RequestBody CancelDemand cancelDemand) {
+		log.info("cancelDemand::");
+	            
+	            return demandService.cancelDemandForConsumer(cancelDemand);
+	        } 
+	
 	@PostMapping("/_applyAdhocTax")
 	public ResponseEntity<CalculationRes> applyAdhocTax(@Valid @RequestBody AdhocTaxReq adhocTaxReq) {
 		List<Calculation> calculations = wSCalculationServiceImpl.applyAdhocTax(adhocTaxReq);

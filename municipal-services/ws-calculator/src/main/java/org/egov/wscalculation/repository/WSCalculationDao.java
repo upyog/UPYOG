@@ -3,6 +3,8 @@ package org.egov.wscalculation.repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.wscalculation.web.models.CancelDemand;
+import org.egov.wscalculation.web.models.Canceldemandsearch;
 import org.egov.wscalculation.web.models.MeterConnectionRequest;
 import org.egov.wscalculation.web.models.MeterConnectionRequests;
 import org.egov.wscalculation.web.models.MeterReading;
@@ -48,4 +50,13 @@ public interface WSCalculationDao {
 	List<String> fetchUsageCategory(String consumerCodes);
 	List<String> fetchSewConnection(String consumerCodes); 
 	void updateBillStatus(List<String> consumerCodes, String string, String string2);
+	
+	public List<Canceldemandsearch> getConnectionCancel( String businessService, String tenantId, String consumerCode,  Long taxPeriodFrom,
+			Long taxPeriodTo );
+	
+	public Boolean getUpdate(String demandId);
+	
+	public Boolean getexpiryBill(String demandId);
+
+		
 }

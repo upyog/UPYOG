@@ -1289,7 +1289,7 @@ log.info("Is current Demand  "+isCurrentDemand);
 		}
 		return "Some error occured!!";
 	}
-
+	
 	public String SingleDemandGenerate(String tenantId, SingleDemand singledemand) {
 		singledemand.getRequestInfo().getUserInfo().setTenantId(tenantId);
 		Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterDatas(singledemand, tenantId);
@@ -1306,6 +1306,68 @@ log.info("Is current Demand  "+isCurrentDemand);
 
 		return generateDemandForSingle(billingMasterData, singledemand, tenantId, taxPeriodFrom, taxPeriodTo);
 	}
+	
+	
+	/*
+	 * CANCEL BILL
+	 */
+	
+	public CancelDemand cancelDemandForConsumer(CancelDemand cancelDemand ) {
+	
+		
+		for(CancelList CancelList : cancelDemand.getCancelList())
+		{
+			String businessService = CancelList.getBusinessService();
+			String consumerCode = CancelList.getConsumerCode();
+			String tenantId = cancelDemand.getTenantId();
+			Long taxPeriodFrom = cancelDemand.gettaxPeriodFrom();
+			Long taxPeriodTo = cancelDemand.gettaxPeriodTo();
+
+			 Set<String> consumerCodeset = new HashSet<>();
+			     consumerCodeset.add(consumerCode);	
+		        CancelList.setConsumerCode(consumerCode);
+		        consumerCodeset.add(businessService);
+		        CancelList.setBusinessService(businessService);
+		        consumerCodeset.add(tenantId);
+		        
+		        Set<Long> consumerCodesets = new HashSet<>();
+		        consumerCodesets.add(taxPeriodFrom);
+		        cancelDemand.settaxPeriodFrom(taxPeriodFrom);
+		        consumerCodesets.add(taxPeriodTo);
+		        cancelDemand.settaxPeriodFrom(taxPeriodTo);
+		        
+		       
+		List<Canceldemandsearch> connectionNos = waterCalculatorDao.getConnectionCancel(businessService, tenantId, consumerCode, taxPeriodFrom,
+					 taxPeriodTo);
+		if (!connectionNos.isEmpty()) 
+		{
+            for (Canceldemandsearch connectionNo : connectionNos) 
+            {
+            	boolean billCancelled =false;
+            Boolean Cancel=  waterCalculatorDao.getUpdate( connectionNo.getDemandid());  
+              if(Cancel) 
+              {            	  
+            	   billCancelled = waterCalculatorDao.getexpiryBill(connectionNo.getDemandid());          	  
+              }    
+              
+          if(!billCancelled)
+    			{
+        	  throw new CustomException("Bill_NOT_FOUND", "No Deamnds Found For Given Demand ID"+ connectionNos);
+                
+    		}
+            }
+		}	
+		     
+		else {
+			throw new CustomException("Demand_ID_NOT_FOUND", "No Demands Found For Given Consumer");
+            
+		}
+		
+		
+	            }
+		return cancelDemand;
+	}
+		
 
 	public String generateDemandForSingle(Map<String, Object> master, SingleDemand singleDemand, String tenantId,
 			Long taxPeriodFrom, Long taxPeriodTo) {
