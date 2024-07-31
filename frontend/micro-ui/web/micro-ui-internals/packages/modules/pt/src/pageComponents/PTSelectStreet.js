@@ -1,4 +1,4 @@
-import { CardLabel, FormStep, LabelFieldPair, TextInput, Dropdown, Loader, LinkButton, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { CardLabel, FormStep, LabelFieldPair, TextInput, Dropdown, Loader, LinkButton, CardLabelError } from "@upyog/digit-ui-react-components";
 
 import _ from "lodash";
 import React, { useEffect, useState } from "react";

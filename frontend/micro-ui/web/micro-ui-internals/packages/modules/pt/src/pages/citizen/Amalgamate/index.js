@@ -4,7 +4,7 @@ import { newConfigAmalgamate } from "../../../config/Amalgamate/config";
 
 import { useTranslation } from "react-i18next";
 import CheckPage from "./CheckPage";
-import { Card, Dropdown, FormComposer, Loader, Modal, ResponseComposer, Toast } from "@egovernments/digit-ui-react-components";
+import { Card, Dropdown, FormComposer, Loader, Modal, ResponseComposer, Toast } from "@upyog/digit-ui-react-components";
 
 const AmalgamationCitizen = (props) => {
   const { t } = useTranslation();

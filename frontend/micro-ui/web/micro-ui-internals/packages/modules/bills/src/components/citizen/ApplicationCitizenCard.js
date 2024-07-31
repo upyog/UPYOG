@@ -1,4 +1,4 @@
-import { Card, DetailsCard, FilterAction, Loader, PopUp, SearchAction } from "@egovernments/digit-ui-react-components";
+import { Card, DetailsCard, FilterAction, Loader, PopUp, SearchAction } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import SearchCitizenFilter from "./SearchCitizenFilter";
 import SearchCitizen from "./SearchCitizen";

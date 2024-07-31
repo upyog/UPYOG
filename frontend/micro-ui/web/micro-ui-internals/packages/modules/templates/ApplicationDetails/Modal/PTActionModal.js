@@ -1,4 +1,4 @@
-import { Loader, Modal, FormComposer, Dropdown } from "@egovernments/digit-ui-react-components";
+import { Loader, Modal, FormComposer, Dropdown } from "@upyog/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 
 import { configPTRejectApplication, configPTVerifyApplication, configPTApproverApplication, configPTAssessProperty } from "../config";

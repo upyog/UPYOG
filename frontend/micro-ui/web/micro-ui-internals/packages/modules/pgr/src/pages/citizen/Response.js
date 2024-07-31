@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Banner, CardText, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Card, Banner, CardText, SubmitBar } from "@upyog/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { PgrRoutes, getRoute } from "../../constants/Routes";

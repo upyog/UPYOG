@@ -1,4 +1,4 @@
-import { CheckBox, LinkButton, TextInput,Close, CardSubHeader } from "@egovernments/digit-ui-react-components";
+import { CheckBox, LinkButton, TextInput,Close, CardSubHeader } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 
 const PermissionCheck = ({ permissions, t }) => {
