@@ -31,7 +31,7 @@ const WSInbox = ({ parentRoute }) => {
     sortBy: "createdTime",
     limit: window.Digit.Utils.browser.isMobile() ? 50 : 10,
     offset: 0,
-    sortOrder: "ASC",
+    sortOrder: "DESC",
   };
   sessionStorage.removeItem("Digit.BILL.INBOX");
   sessionStorage.removeItem("Digit.SW.INBOX");
