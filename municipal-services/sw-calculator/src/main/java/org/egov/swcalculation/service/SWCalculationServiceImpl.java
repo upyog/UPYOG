@@ -90,8 +90,6 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 			 masterMap = mDataService.loadMasterData(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
 			calculations = getCalculations(request, masterMap);
-			//demandService.generateDemand(request, calculations, masterMap, connectionRequest);
-			//unsetSewerageConnection(calculations);
 		} else if (request.getIsconnectionCalculation()) {
 			connectionRequest = request.getIsconnectionCalculation();
 			masterMap = mDataService.loadMasterData(request.getRequestInfo(),
@@ -108,7 +106,8 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 			calculations = getReconnectionFeeCalculation(request, masterMap);
 			log.info("In reconnection request connectionRequest" + connectionRequest);
 		} 
-			else {
+		else {
+
 			// Calculate and create demand for application
 			masterMap = mDataService.loadExemptionMaster(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
