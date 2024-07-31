@@ -195,6 +195,7 @@ const NewApplication = () => {
       action: "INITIATE",
       applicationType: "NEW",
       workflowCode: "NewTL",
+      applicationDocuments,
       commencementDate,
       financialYear,
       licenseType,
