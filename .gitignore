@@ -4,6 +4,3 @@ frontend/micro-ui-internals/node_modules/*
 index.lock
 /.metadata/
 /.metadata/
-municipal-services/ws-calculator/src/main/resources/application.properties
-business-services/billing-service/src/main/resources/application.properties
-business-services/collection-services/src/main/resources/application.properties
