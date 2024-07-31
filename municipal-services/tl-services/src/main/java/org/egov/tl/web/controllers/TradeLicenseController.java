@@ -9,6 +9,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.notification.PaymentNotificationService;
 import org.egov.tl.service.notification.TLNotificationService;
@@ -178,10 +179,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
         return new ResponseEntity(object, headers, HttpStatus.OK);
     }
 
-    @PostMapping("/_actions")
-    public ResponseEntity<?> getActions(@RequestBody TradeLicenseActionRequest tradeLicenseActionRequest){
+
+    @PostMapping({"/fetch","/fetch/{value}"})
+    public ResponseEntity<?> calculateTLFee(@RequestBody TradeLicenseActionRequest tradeLicenseActionRequest
+    										, @PathVariable String value){
     	
-    	TradeLicenseActionResponse response = tradeLicenseService.getActionsOnApplication(tradeLicenseActionRequest);
+    	TradeLicenseActionResponse response = null;
+    	
+    	if(StringUtils.equalsIgnoreCase(value, "CALCULATEFEE")) {
+    		response = tradeLicenseService.calculateFeeOnApplications(tradeLicenseActionRequest);
+    	}else if(StringUtils.equalsIgnoreCase(value, "ACTIONS")){
+    		response = tradeLicenseService.getActionsOnApplication(tradeLicenseActionRequest);
+    	}else {
+    		return new ResponseEntity("Provide parameter to be fetched in URL.", HttpStatus.BAD_REQUEST);
+    	}
     	
     	return new ResponseEntity(response, HttpStatus.OK);
     }
