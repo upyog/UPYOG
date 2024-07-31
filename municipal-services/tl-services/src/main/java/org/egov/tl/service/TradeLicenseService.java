@@ -1214,9 +1214,13 @@ public class TradeLicenseService {
 		// enrich userDetails
 		Map<Object, Object> userDetails = new HashMap<>();
 		userDetails.put("UserName", license.getTradeName());
-		userDetails.put("Address", license.getTradeLicenseDetail().getAddress().getAddressLine1());
-		userDetails.put("MobileNo", null != license.getTradeLicenseDetail().getAdditionalDetail().get("applicantMobileNumber") ? license.getTradeLicenseDetail().getAdditionalDetail().get("applicantMobileNumber").asText() : null);
-		userDetails.put("Email", null != license.getTradeLicenseDetail().getAdditionalDetail().get("applicantEmail") ? license.getTradeLicenseDetail().getAdditionalDetail().get("applicantEmail").asText() : null);
+		userDetails.put("MobileNo", license.getTradeLicenseDetail().getOwners().get(0).getMobileNumber());
+		userDetails.put("Email", license.getTradeLicenseDetail().getOwners().get(0).getEmailId());
+		userDetails.put("Address", new String(license.getTradeLicenseDetail().getAddress().getAddressLine1())
+									.concat(license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("wardName").asText())
+									.concat(license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("UlbName").asText())
+									.concat(license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("district").asText())
+									.concat(license.getTradeLicenseDetail().getAddress().getPincode()));
 
 		applicationDetail.setUserDetails(userDetails);
 		
