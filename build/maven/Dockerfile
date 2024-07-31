@@ -16,7 +16,8 @@ RUN mvn -B -f /app/pom.xml package
 
 
 # Create runtime image
-FROM upyogio/8-openjdk-alpine
+#FROM upyogio/8-openjdk-alpine
+FROM  adoptopenjdk/openjdk8
 #FROM ghcr.io/egovernments/8-openjdk-alpine:latest
 
 
