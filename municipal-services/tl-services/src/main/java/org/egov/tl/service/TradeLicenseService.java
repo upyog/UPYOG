@@ -1109,6 +1109,7 @@ public class TradeLicenseService {
 					.applicationNumber(applicationNumber)
 					.build();
 			List<TradeLicense> licenses = repository.getLicenses(criteria);
+			licenses = enrichmentService.enrichTradeLicenseSearch(licenses,criteria,tradeLicenseActionRequest.getRequestInfo());
 			TradeLicense license = null != licenses ? licenses.get(0): null;
 			
 
@@ -1216,10 +1217,10 @@ public class TradeLicenseService {
 		userDetails.put("UserName", license.getTradeName());
 		userDetails.put("MobileNo", license.getTradeLicenseDetail().getOwners().get(0).getMobileNumber());
 		userDetails.put("Email", license.getTradeLicenseDetail().getOwners().get(0).getEmailId());
-		userDetails.put("Address", new String(license.getTradeLicenseDetail().getAddress().getAddressLine1())
-									.concat(license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("wardName").asText())
-									.concat(license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("UlbName").asText())
-									.concat(license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("district").asText())
+		userDetails.put("Address", new String(license.getTradeLicenseDetail().getAddress().getAddressLine1().concat(", "))
+									.concat(license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("wardName").asText().concat(", "))
+									.concat(license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("ulbName").asText().concat(", "))
+									.concat(license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("district").asText().concat(", "))
 									.concat(license.getTradeLicenseDetail().getAddress().getPincode()));
 
 		applicationDetail.setUserDetails(userDetails);
