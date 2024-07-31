@@ -232,7 +232,8 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
     <React.Fragment>     
       <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
         <Header>{t("WS_APPLICATION_DETAILS_HEADER")}</Header>
-        <div >
+        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+       
         {downloadOptions && downloadOptions.length > 0 && (
         <div ref={menuRef}>
         <MultiLink
