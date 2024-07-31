@@ -59,6 +59,7 @@ import org.egov.pt.calculator.web.models.ReceiptSearchCriteria;
 import org.egov.pt.calculator.web.models.collections.Payment;
 import org.egov.pt.calculator.web.models.collections.PaymentDetail;
 import org.egov.pt.calculator.web.models.demand.*;
+import org.egov.pt.calculator.web.models.demand.Bill.BillStatusEnum;
 import org.egov.pt.calculator.web.models.property.AuditDetails;
 import org.egov.pt.calculator.web.models.property.OwnerInfo;
 import org.egov.pt.calculator.web.models.property.Property;
@@ -539,36 +540,75 @@ public class CalculatorUtils {
 				BillResponse.class);
 		if(res!=null)
 		{
-			if(res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q4")
-					||	res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("H2")
-					|| res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("YR"))
+			for(Bill bill:res.getBill())
 			{
-				carryForward=res.getBill().get(0).getBillDetails().get(0).getAmount();
+				if(bill.getStatus().equals(BillStatusEnum.ACTIVE))
+				{
+					for(BillDetail billdet:bill.getBillDetails())
+					{
+						if(billdet.getPaymentPeriod().equalsIgnoreCase("Q4")
+								||billdet.getPaymentPeriod().equalsIgnoreCase("H2")	
+								||billdet.getPaymentPeriod().equalsIgnoreCase("YR"))
+						{
+							carryForward=billdet.getAmount();
+						}
+						else if(billdet.getPaymentPeriod().equalsIgnoreCase("Q3"))
+						{
+							singleunitammount=billdet.getAmount().divide(new BigDecimal(3));
+							singleunitammount=singleunitammount.multiply(new BigDecimal(4));
+							carryForward=carryForward.add(singleunitammount);
+						}
+						else if(billdet.getPaymentPeriod().equalsIgnoreCase("Q2"))
+						{
+							singleunitammount=billdet.getAmount().divide(new BigDecimal(2));
+							singleunitammount=singleunitammount.multiply(new BigDecimal(4));
+							carryForward=carryForward.add(singleunitammount);
+						}
+						else if(billdet.getPaymentPeriod().equalsIgnoreCase("Q1"))
+						{
+							singleunitammount=billdet.getAmount();
+							singleunitammount=singleunitammount.multiply(new BigDecimal(4));
+							carryForward=carryForward.add(singleunitammount);
+						}
+						else if(billdet.getPaymentPeriod().equalsIgnoreCase("H1"))
+						{
+							singleunitammount=billdet.getAmount();
+							singleunitammount=singleunitammount.multiply(new BigDecimal(2));
+							carryForward=carryForward.add(singleunitammount);
+						}
+					}
+				}
+				else if(bill.getStatus().equals(BillStatusEnum.PAID))
+				{
+					for(BillDetail billdet:bill.getBillDetails())
+					{
+						if(billdet.getPaymentPeriod().equalsIgnoreCase("Q3"))
+						{
+							singleunitammount=billdet.getAmount().divide(new BigDecimal(3));
+							carryForward=carryForward.add(singleunitammount);
+						}
+						else if(billdet.getPaymentPeriod().equalsIgnoreCase("Q2"))
+						{
+							singleunitammount=billdet.getAmount().divide(new BigDecimal(2));
+							singleunitammount=singleunitammount.multiply(new BigDecimal(2));
+							carryForward=carryForward.add(singleunitammount);
+						}
+						else if(billdet.getPaymentPeriod().equalsIgnoreCase("Q1"))
+						{
+							singleunitammount=billdet.getAmount();
+							singleunitammount=singleunitammount.multiply(new BigDecimal(3));
+							carryForward=carryForward.add(singleunitammount);
+						}
+						else if(billdet.getPaymentPeriod().equalsIgnoreCase("H1"))
+						{
+							singleunitammount=billdet.getAmount();
+							carryForward=carryForward.add(singleunitammount);
+						}
+					}
+					break;
+				}
 			}
-			else if(res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q3"))
-			{
-				singleunitammount=res.getBill().get(0).getBillDetails().get(0).getAmount().divide(new BigDecimal(3));
-				singleunitammount=singleunitammount.multiply(new BigDecimal(4));
-				carryForward=carryForward.add(singleunitammount);
-			}
-			else if(res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q2"))
-			{
-				singleunitammount=res.getBill().get(0).getBillDetails().get(0).getAmount().divide(new BigDecimal(2));
-				singleunitammount=singleunitammount.multiply(new BigDecimal(4));
-				carryForward=carryForward.add(singleunitammount);
-			}
-			else if(res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q1"))
-			{
-				singleunitammount=res.getBill().get(0).getBillDetails().get(0).getAmount();
-				singleunitammount=singleunitammount.multiply(new BigDecimal(4));
-				carryForward=carryForward.add(singleunitammount);
-			}
-			else if(res.getBill().get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("H1"))
-			{
-				singleunitammount=res.getBill().get(0).getBillDetails().get(0).getAmount();
-				singleunitammount=singleunitammount.multiply(new BigDecimal(2));
-				carryForward=carryForward.add(singleunitammount);
-			}
+			
 		}
 		System.out.println(res);
 		return carryForward;

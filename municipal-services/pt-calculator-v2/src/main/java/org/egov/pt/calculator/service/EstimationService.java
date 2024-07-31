@@ -70,6 +70,7 @@ import static org.egov.pt.calculator.util.CalculatorConstants.PT_AGE_FACTOR_TAX;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_COMPLEMENTARY_REBATE;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_MODEOFPAYMENT_REBATE;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_MANDATORY_PAYMENT;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_PASTDUE_CARRYFORWARD;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -1010,16 +1011,6 @@ public class EstimationService {
 
 		}
 		
-		TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(taxAmt.add(penalty), rebate.add(exemption).add(complementary_rebate).add(modeofpayment_rebate));
-
-		if (null != decimalEstimate) {
-			decimalEstimate.setCategory(taxHeadCategoryMap.get(decimalEstimate.getTaxHeadCode()));
-			estimates.add(decimalEstimate);
-			if (decimalEstimate.getEstimateAmount().compareTo(BigDecimal.ZERO)>=0)
-				taxAmt = taxAmt.add(decimalEstimate.getEstimateAmount());
-			else
-				rebate = rebate.add(decimalEstimate.getEstimateAmount());
-		}
 
 		BigDecimal totalAmount = taxAmt.add(penalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
 		BigDecimal mandatorypay=BigDecimal.ZERO;
@@ -1069,15 +1060,26 @@ public class EstimationService {
 		Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(requestInfo,criteria);
 		BigDecimal collectedAmtForOldDemand = demandService.getCarryForwardAndCancelOldDemand(ptTax, criteria, requestInfo,oldDemand, false);
 
+		TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(taxAmt.add(penalty).add(collectedAmtForOldDemand), rebate.add(exemption).add(complementary_rebate).add(modeofpayment_rebate));
+
+		if (null != decimalEstimate) {
+			decimalEstimate.setCategory(taxHeadCategoryMap.get(decimalEstimate.getTaxHeadCode()));
+			estimates.add(decimalEstimate);
+			if (decimalEstimate.getEstimateAmount().compareTo(BigDecimal.ZERO)>=0)
+				taxAmt = taxAmt.add(decimalEstimate.getEstimateAmount());
+			else
+				rebate = rebate.add(decimalEstimate.getEstimateAmount());
+		}
+		
 		if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
 			estimates.add(TaxHeadEstimate.builder()
-					.taxHeadCode(PT_ADVANCE_CARRYFORWARD)
+					.taxHeadCode(PT_PASTDUE_CARRYFORWARD)
 					.estimateAmount(collectedAmtForOldDemand).build());
 		else if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) < 0)
 			throw new CustomException(EG_PT_DEPRECIATING_ASSESSMENT_ERROR, EG_PT_DEPRECIATING_ASSESSMENT_ERROR_MSG_ESTIMATE);
 
 		return Calculation.builder()
-				.totalAmount(totalAmount.subtract(collectedAmtForOldDemand))
+				.totalAmount(totalAmount.add(collectedAmtForOldDemand))
 				.taxAmount(taxAmt)
 				.penalty(penalty)
 				.exemption(exemption)

@@ -46,6 +46,8 @@ public class CalculatorConstants {
 	public static final String PT_TIME_INTEREST = "PT_TIME_INTEREST";
 
 	public static final String PT_ADVANCE_CARRYFORWARD = "PT_ADVANCE_CARRYFORWARD";
+	
+	public static final String PT_PASTDUE_CARRYFORWARD = "PT_PASTDUE_CARRYFORWARD";
 
 	public static final String PT_FIRE_CESS = "PT_FIRE_CESS";
 
