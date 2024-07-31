@@ -44,6 +44,7 @@ public class CommunityHallBookingConstants {
 	public static final String INVALID_SEARCH = "INVALID SEARCH";
 	public static final String CHB_WORKFLOW_ERROR = "CHB_WORKFLOW_ERROR";
 	public static final String DUPLICATE_DOCUMENT_UPLOADED = "DUPLICATE_DOCUMENT_UPLOADED";
+	public static final String MULTIPLE_HALL_CODES_ERROR = "MULTIPLE_HALL_CODES_ERROR";
 	
 	
 	// NOTIFICATION PLACEHOLDER
@@ -80,7 +81,11 @@ public class CommunityHallBookingConstants {
 	public static final String LOCALIZATION_CODES_JSONPATH = "$.messages.*.code";
 
 	public static final String LOCALIZATION_MSGS_JSONPATH = "$.messages.*.message";
-
+	
+	public static final String SERVICE = "service";
+	
+	public static final String BILLING_SERVICE = "BillingService";
+	
 	// EVENT PAY
 	public static final String EVENT_PAY_TENANTID = "$tenantId";
 
@@ -100,6 +105,8 @@ public class CommunityHallBookingConstants {
 	public static final String CGST_CALCULATION_TYPE = "CGST";
 	
 	public static final String SGST_CALCULATION_TYPE = "SGST";
+	
+	public static final String SECURITY_DEPOSIT = "SECURITY_DEPOSIT";
 	
 
 }

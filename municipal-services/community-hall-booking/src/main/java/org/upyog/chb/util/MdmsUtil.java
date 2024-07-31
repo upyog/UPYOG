@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
@@ -15,10 +16,15 @@ import org.springframework.stereotype.Component;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.repository.ServiceRequestRepository;
+import org.upyog.chb.web.models.CalculationType;
+import org.upyog.chb.web.models.TaxHeadMaster;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
 
 @Slf4j
 @Component
@@ -29,6 +35,10 @@ public class MdmsUtil {
 
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
+	
+	@Autowired
+	private ObjectMapper mapper;
+
 
 	private static Object mdmsMap = null;
 
@@ -160,5 +170,111 @@ public class MdmsUtil {
 
 	public static Object getMDMSDataMap() {
 		return mdmsMap;
+	}
+	
+	
+	public List<TaxHeadMaster> getTaxHeadMasterList(RequestInfo requestInfo, String tenantId, String moduleName) {
+		List<TaxHeadMaster> taxHeadMasters = new ArrayList<>();
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getMdmsHost()).append(config.getMdmsPath());
+		
+		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestTaxHeadMaster(requestInfo, tenantId, moduleName);
+		//Can create filter as string using this
+		//Filter masterDataFilter = filter(where(CommunityHallBookingConstants.SERVICE).is(config.getBusinessServiceName()));
+
+		try {
+			Object response = serviceRequestRepository.fetchResult(uri, mdmsCriteriaReq);
+			org.upyog.chb.web.models.TaxHeadMasterResponse res = mapper.convertValue(response,
+					org.upyog.chb.web.models.TaxHeadMasterResponse.class);
+			log.info("getTaxHeadMasterList : " +JsonPath.parse(response).read("$.MdmsRes.BillingService.TaxHeadMaster"));
+			
+			//taxHeadMasters =  JsonPath.parse(response).read("$.MdmsRes.BillingService.TaxHeadMaster");
+			Map<String, Object> map=   JsonPath.parse(response).read("$.MdmsRes.BillingService");
+			
+		//	JSONArray jsonArray = (JSONArray) map.get("TaxHeadMaster");
+			
+			taxHeadMasters = mapper.readValue((JsonParser) map.get("TaxHeadMaster"),
+					mapper.getTypeFactory().constructCollectionType(List.class, TaxHeadMaster.class));
+			log.info("taxHeadMasters : " + map);
+		} catch (Exception e) {
+			log.error("Exception while fetching workflow states to ignore: ", e);
+		}
+
+		return taxHeadMasters;
+	}
+
+	private MdmsCriteriaReq getMdmsRequestTaxHeadMaster(RequestInfo requestInfo, String tenantId, String moduleName) {
+
+		MasterDetail masterDetail = new MasterDetail();
+		masterDetail.setName("TaxHeadMaster");
+		masterDetail.setFilter("$.[?(@.service=='chb-services')]");
+		List<MasterDetail> masterDetailList = new ArrayList<>();
+		masterDetailList.add(masterDetail);
+
+		ModuleDetail moduleDetail = new ModuleDetail();
+		moduleDetail.setMasterDetails(masterDetailList);
+		moduleDetail.setModuleName(CommunityHallBookingConstants.BILLING_SERVICE);
+		List<ModuleDetail> moduleDetailList = new ArrayList<>();
+		moduleDetailList.add(moduleDetail);
+
+		MdmsCriteria mdmsCriteria = new MdmsCriteria();
+		mdmsCriteria.setTenantId(tenantId);
+		mdmsCriteria.setModuleDetails(moduleDetailList);
+
+		MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
+		mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
+		mdmsCriteriaReq.setRequestInfo(requestInfo);
+
+		return mdmsCriteriaReq;
+	}
+
+	public List<CalculationType> getcalculationType(RequestInfo requestInfo, String tenantId, String billingService) {
+		List<CalculationType> calculationTypes = new ArrayList<>();
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getMdmsHost()).append(config.getMdmsPath());
+		
+		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestCalculationType(requestInfo, tenantId, config.getModuleName());
+		//Can create filter as string using this
+		//Filter masterDataFilter = filter(where(CommunityHallBookingConstants.SERVICE).is(config.getBusinessServiceName()));
+
+		try {
+			Object response = serviceRequestRepository.fetchResult(uri, mdmsCriteriaReq);
+			log.info("getTaxHeadMasterList : " +JsonPath.parse(response).read("$.MdmsRes.CHB.CalculationType"));
+			
+			calculationTypes = JsonPath.parse(response).read("$.MdmsRes.CHB.CalculationType");
+		//	taxHeadMasters = mapper.readValue(array,
+		//			mapper.getTypeFactory().constructCollectionType(List.class, TaxHeadMaster.class));
+			log.info("CalculationType : " + calculationTypes);
+		} catch (Exception e) {
+			log.error("Exception while fetching workflow states to ignore: ", e);
+		}
+
+		return calculationTypes;
+		
+	}
+	
+	private MdmsCriteriaReq getMdmsRequestCalculationType(RequestInfo requestInfo, String tenantId, String moduleName) {
+
+		MasterDetail masterDetail = new MasterDetail();
+		masterDetail.setName(CommunityHallBookingConstants.CHB_CALCULATION_TYPE);
+	//	masterDetail.setFilter("$.[?(@.service=='chb-services')]");
+		List<MasterDetail> masterDetailList = new ArrayList<>();
+		masterDetailList.add(masterDetail);
+
+		ModuleDetail moduleDetail = new ModuleDetail();
+		moduleDetail.setMasterDetails(masterDetailList);
+		moduleDetail.setModuleName(moduleName);
+		List<ModuleDetail> moduleDetailList = new ArrayList<>();
+		moduleDetailList.add(moduleDetail);
+
+		MdmsCriteria mdmsCriteria = new MdmsCriteria();
+		mdmsCriteria.setTenantId(tenantId);
+		mdmsCriteria.setModuleDetails(moduleDetailList);
+
+		MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
+		mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
+		mdmsCriteriaReq.setRequestInfo(requestInfo);
+
+		return mdmsCriteriaReq;
 	}
 }
