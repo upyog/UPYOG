@@ -623,7 +623,7 @@ export const newConfig =[
                 {
                     "type": "component",
                     "route": "property-photo",
-                    "isMandatory": true,
+                    "isMandatory": false,
                     "component": "PropertyPhoto",
                     "texts": {
                         "headerCaption": "",
