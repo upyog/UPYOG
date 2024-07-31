@@ -180,6 +180,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
     }
 
 
+    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping({"/fetch","/fetch/{value}"})
     public ResponseEntity<?> calculateTLFee(@RequestBody TradeLicenseActionRequest tradeLicenseActionRequest
     										, @PathVariable String value){
