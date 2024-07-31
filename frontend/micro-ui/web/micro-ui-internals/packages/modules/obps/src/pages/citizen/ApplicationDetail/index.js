@@ -82,7 +82,8 @@ const ApplicationDetails = () => {
       <div className="cardHeaderWithOptions" style={isMobile ? {} : {maxWidth:"980px"}}>
         {/* <div style={{display:'flex'}}> */}
         <Header styles={{ fontSize: "32px", marginLeft: isMobile ? "0px" : "10px" }}>{t("BPA_TASK_DETAILS_HEADER")}</Header>
-        <div  >
+        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+         
         {reciept_data?.Payments?.length > 0 && (
           // <div style={{right: "3%", top: "20px", position: "absolute"}}>
           <MultiLink
