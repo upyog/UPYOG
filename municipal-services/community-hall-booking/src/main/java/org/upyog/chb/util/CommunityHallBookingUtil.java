@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
@@ -58,21 +59,24 @@ public class CommunityHallBookingUtil {
 		return localDate;
 	}
 
+	public static Long minusOneDay(LocalDate date) {
+		return date.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+	}
+
 	public static String parseLocalDateToString(LocalDate date) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		// Format the LocalDate
 		String formattedDate = date.format(formatter);
 		return formattedDate;
 	}
-	
+
 	public static AuditDetails getAuditDetails(ResultSet rs) throws SQLException {
 		AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("createdBy"))
-				.createdTime(rs.getLong("createdTime"))
-				.lastModifiedBy(rs.getString("lastModifiedBy"))
+				.createdTime(rs.getLong("createdTime")).lastModifiedBy(rs.getString("lastModifiedBy"))
 				.lastModifiedTime(rs.getLong("lastModifiedTime")).build();
 		return auditdetails;
 	}
-	
+
 	public static String beuatifyJson(Object result) {
 		ObjectMapper mapper = new ObjectMapper();
 		String data = null;
@@ -84,10 +88,9 @@ public class CommunityHallBookingUtil {
 		}
 		return data;
 	}
-	
+
 	public static String getTenantId(String tenantId) {
 		return tenantId.split("\\.")[0];
 	}
-	
 
 }

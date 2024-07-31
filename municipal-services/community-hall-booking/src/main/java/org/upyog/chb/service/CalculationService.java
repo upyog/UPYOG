@@ -91,7 +91,7 @@ public class CalculationService {
 		List<CalculationType> variableDemand = new ArrayList<CalculationType>();
 		
 		for (CalculationType type : calculationTypes) {
-			if (!type.getFeeType().equals(CommunityHallBookingConstants.RENT_CALCULATION_TYPE)
+			if (!type.getFeeType().equals(CommunityHallBookingConstants.SECURITY_DEPOSIT)
 					&& !type.getFeeType().equals(CommunityHallBookingConstants.CGST_CALCULATION_TYPE)
 					&& !type.getFeeType().equals(CommunityHallBookingConstants.SGST_CALCULATION_TYPE)) {
 				variableDemand.add(type);
@@ -105,20 +105,18 @@ public class CalculationService {
 			}
 		}
 
-		bookingRequest.getHallsBookingApplication().getBookingSlotDetails().stream().forEach(slot -> {
-			BigDecimal hallCodeBookingDays = new BigDecimal(hallCodeBookingDaysMap.get(slot.getHallCode()));
+		BigDecimal hallCodeBookingDays = new BigDecimal(hallCodeBookingDaysMap.get(bookingRequest.getHallsBookingApplication().getBookingSlotDetails().get(0).getHallCode()));
 
-			List<DemandDetail> hallDemands = variableDemand.stream().map(data ->
-			// log.info("data :" + data);
-			DemandDetail.builder().taxAmount(data.getAmount().multiply(hallCodeBookingDays))
-					.taxHeadMasterCode(data.getFeeType()).tenantId(tenantId).build()).collect(Collectors.toList());
+		List<DemandDetail> hallDemands = variableDemand.stream().map(data ->
+		// log.info("data :" + data);
+		DemandDetail.builder().taxAmount(data.getAmount().multiply(hallCodeBookingDays))
+				.taxHeadMasterCode(data.getFeeType()).tenantId(tenantId).build()).collect(Collectors.toList());
 
-			demandDetails.addAll(hallDemands);
-		});
+		demandDetails.addAll(hallDemands);
 
 		BigDecimal totalTaxableAmount = demandDetails.stream()
 				.filter(demandDetail -> !demandDetail.getTaxHeadMasterCode()
-						.equals(CommunityHallBookingConstants.RENT_CALCULATION_TYPE))
+						.equals(CommunityHallBookingConstants.SECURITY_DEPOSIT))
 				.map(DemandDetail::getTaxAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		log.info("Total Taxable amount for the booking : " + totalTaxableAmount);

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
+import org.upyog.chb.web.models.BookingSlotDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 
@@ -36,6 +37,9 @@ public class CommunityHallBookingValidator {
 	public void validateCreate(CommunityHallBookingRequest bookingRequest, Object mdmsData) {
 		log.info("validating master data for create booking request for applicant mobile no : " + bookingRequest.getHallsBookingApplication()
 		.getApplicantDetail().getApplicantMobileNo());
+		if(!isSameHallCode(bookingRequest.getHallsBookingApplication().getBookingSlotDetails())) {
+			throw new CustomException(CommunityHallBookingConstants.MULTIPLE_HALL_CODES_ERROR, "Booking of multiple halls are not allowed");
+		}
 		 mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
 		 validateDuplicateDocuments(bookingRequest);
 	}
@@ -142,6 +146,13 @@ public class CommunityHallBookingValidator {
 				&& (criteria.getFromDate() > criteria.getToDate()))
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
 					"To date cannot be prior to from date");
+	}
+	
+	public boolean isSameHallCode(List<BookingSlotDetail> bookingSlotDetails) {
+		String hallCode = bookingSlotDetails.get(0).getHallCode();
+		boolean allSameCode = bookingSlotDetails.stream().allMatch(x -> x.getHallCode().equals(hallCode));
+		return allSameCode;
+
 	}
 
 }

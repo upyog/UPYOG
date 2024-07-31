@@ -1,6 +1,7 @@
 package org.upyog.chb.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.repository.DemandRepository;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.util.MdmsUtil;
+import org.upyog.chb.validator.CommunityHallBookingValidator;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallDemandEstimationCriteria;
@@ -33,6 +35,9 @@ public class DemandService {
 
 	@Autowired
 	private DemandRepository demandRepository;
+	
+	@Autowired
+	private CommunityHallBookingValidator bookingValidator;
 
 	@Autowired
 	private MdmsUtil mdmsUtil;
@@ -53,17 +58,18 @@ public class DemandService {
 		
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
 		User user =bookingRequest.getRequestInfo().getUserInfo();
-
 		
 		User owner = User.builder().name(user.getName()).emailId(user.getEmailId())
 				.mobileNumber(user.getMobileNumber()).tenantId(bookingDetail.getTenantId()).build();
 		
 		List<DemandDetail> demandDetails = calculationService.calculateDemand(bookingRequest);
-
+		
+		LocalDate maxdate = getMaxBookingDate(bookingDetail);
+		
 		Demand demand = Demand.builder().consumerCode(consumerCode)
 				 .demandDetails(demandDetails).payer(owner)
 				 .tenantId(tenantId)
-				.taxPeriodFrom(CommunityHallBookingUtil.getCurrentDateTime()).taxPeriodTo(CommunityHallBookingUtil.getCurrentDateTime())
+				.taxPeriodFrom(CommunityHallBookingUtil.getCurrentDateTime()).taxPeriodTo(CommunityHallBookingUtil.minusOneDay(maxdate))
 				.consumerType(config.getModuleName()).businessService(config.getBusinessServiceName()).additionalDetails(null).build();
 
 		
@@ -81,6 +87,11 @@ public class DemandService {
 	
 	public List<Demand> getDemand(CommunityHallDemandEstimationCriteria estimationCriteria){
 		log.info("Getting demand for request without booking no");
+
+		if(!bookingValidator.isSameHallCode(estimationCriteria.getBookingSlotDetails())) {
+			throw new CustomException(CommunityHallBookingConstants.MULTIPLE_HALL_CODES_ERROR, "Booking of multiple halls are not allowed");
+		}
+		
 		String tenantId = estimationCriteria.getTenantId().split("\\.")[0];
 		if (estimationCriteria.getTenantId().split("\\.").length == 1) {
 			throw new CustomException(CommunityHallBookingConstants.INVALID_TENANT, "Please provide valid tenant id for booking creation");
@@ -94,6 +105,15 @@ public class DemandService {
 		List<Demand> demands = createDemand(bookingRequest, mdmsData, false);
 		return demands;
 	}
+	
+	private LocalDate getMaxBookingDate(CommunityHallBookingDetail bookingDetail) {
+		
+		return bookingDetail.getBookingSlotDetails().stream().map(detail -> CommunityHallBookingUtil.parseStringToLocalDate(detail.getBookingDate()))
+				.max( LocalDate :: compareTo)
+		        .get();
+	}
+	
+	
 	
 
 }
