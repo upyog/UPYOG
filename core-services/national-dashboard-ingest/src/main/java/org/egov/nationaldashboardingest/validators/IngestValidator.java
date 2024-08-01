@@ -488,7 +488,7 @@ public class IngestValidator {
 	                List < HashMap < String, Object >> values = (List < HashMap < String, Object >> ) map.get(key);
 	                if (values!=null) {
 	                for (HashMap < String, Object > a: values) {
-	                    if (a.get("groupBy").equals("paymentChannelType") || a.get("groupBy").equals("paymentMode")) {
+	                    if (a.get("groupBy").equals("paymentChannelType") || a.get("groupBy").equals("paymentMode") || a.get("groupBy").equals("Channel")) {
 	                        List < HashMap < String, String >> valuess = (List < HashMap < String, String >> ) a.get("buckets");
 	                        for (HashMap < String, String > b: valuess)
 	                        	PaymentChannel.add(toCamelCase(b.get("name")));
