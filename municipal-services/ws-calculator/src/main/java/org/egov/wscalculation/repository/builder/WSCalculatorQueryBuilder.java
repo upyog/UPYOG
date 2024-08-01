@@ -1,17 +1,13 @@
 package org.egov.wscalculation.repository.builder;
 
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.StringJoiner;
 
 import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.web.models.BillGenerationSearchCriteria;
-import org.egov.wscalculation.web.models.BillSearch;
 import org.egov.wscalculation.web.models.CancelDemand;
 import org.egov.wscalculation.web.models.CancelList;
-import org.egov.wscalculation.web.models.Canceldemandsearch;
 import org.egov.wscalculation.web.models.MeterReadingSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -52,10 +48,9 @@ public class WSCalculatorQueryBuilder {
 	
 	private static final String connectionNoListQuerybill = "UPDATE egbs_bill_v1 " +
             "SET status = 'CANCELLED' " +
-            "FROM egbs_billdetail_v1 ";
-	
-	
-	private static final String connectionNoBill =  " select distinct(bill.id) from egbs_bill_v1 bill, egbs_billdetail_v1 bd  ";
+            "FROM egbs_billdetail_v1 " +
+            "WHERE egbs_bill_v1.id = egbs_billdetail_v1.billid " +
+            "AND egbs_billdetail_v1.demandid = ";
 
 	private static final String distinctTenantIdsCriteria = "SELECT distinct(tenantid) FROM eg_ws_connection ws";
 
@@ -684,79 +679,24 @@ StringBuilder query = new StringBuilder(connectionNoListQueryCancel);
 	
 	// DEMAND CANCELLED //
 	
-	public String getUpdateDemand(List<Canceldemandsearch> demandList, List<Object> preparedStatement) {
+	public String getUpdateDemand(String demandId , List<Object> preparedStatement) {
 StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);     
        query.append("status='CANCELLED' ");     
        addClauseIfRequired(preparedStatement, query);
-       // Add the IN clause with placeholders
-       query.append(" id IN (");
-       
-       // Use StringJoiner to build the placeholders string
-       StringJoiner placeholders = new StringJoiner(", ");
-       for (Canceldemandsearch demand : demandList) {
-           placeholders.add("?");
-           preparedStatement.add(demand.getDemandid());
-       }
-       query.append(placeholders.toString());
-       query.append(")");
+       query.append("id= ? ");
+       preparedStatement.add(demandId);
 		return query.toString();
 	}
 	
 	
+	
 	// BILL EXPIRY//
-	
-	
-	public String getBillid(String consumercode, String businessService, List<Object> preparedStatement) {
-		StringBuilder query = new StringBuilder(connectionNoBill);	
-		
-		
-		
-		
-		addClauseIfRequired(preparedStatement, query);
-		query.append(" bd.consumercode = ? ");
-		preparedStatement.add(consumercode);
-		addClauseIfRequired(preparedStatement, query);
-		query.append(" bd.billid=bill.id");
-				//Add Businessservice
-		addClauseIfRequired(preparedStatement, query);
-		query.append(" bd.businessService = ? ");
-		preparedStatement.add(businessService);
-		
-		addClauseIfRequired(preparedStatement, query);
-		query.append(" bill.status='ACTIVE'");
-		
-        return query.toString();
-        
-        
+	public String getBillDemand(String demandId , List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(connectionNoListQuerybill);				       
+		 query.append(" ? ");		       
+	        preparedStatement.add(demandId);
+	        return query.toString();
 	    }
-		public String getBillDemand(List<BillSearch> BillSearch, List<Object> preparedStatement) {
-			StringBuilder query = new StringBuilder(connectionNoListQuerybill);	
-			
-			
-			addClauseIfRequired(preparedStatement, query);
-
-			
-			query.append("  egbs_billdetail_v1.billid IN (");
-		        
-		        // Use StringJoiner to build the placeholders string
-		        StringJoiner placeholders = new StringJoiner(", ");
-		        for (BillSearch billSearch : BillSearch) {
-		            placeholders.add("?");
-		            preparedStatement.add(billSearch.getId());
-		        }
-		        query.append(placeholders.toString());
-		        query.append(")");
-		        
-		        
-		        
-		        
-		        addClauseIfRequired(preparedStatement, query);
-				query.append(" status = 'ACTIVE' ");
-				
-				addClauseIfRequired(preparedStatement, query);
-				query.append(" egbs_bill_v1.id = egbs_billdetail_v1.billid");
-				
-		        return query.toString();
-   }	
+	
 
 }

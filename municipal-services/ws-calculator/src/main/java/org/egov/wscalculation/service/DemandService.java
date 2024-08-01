@@ -1337,28 +1337,36 @@ log.info("Is current Demand  "+isCurrentDemand);
 		        cancelDemand.settaxPeriodFrom(taxPeriodTo);
 		        
 		       
-		List<Canceldemandsearch> demandlist = waterCalculatorDao.getConnectionCancel(businessService, tenantId, consumerCode, taxPeriodFrom,
+		List<Canceldemandsearch> connectionNos = waterCalculatorDao.getConnectionCancel(businessService, tenantId, consumerCode, taxPeriodFrom,
 					 taxPeriodTo);
-  	  List<BillSearch> billSearch = waterCalculatorDao.getBill(consumerCode,businessService); 
-
-		if (!demandlist.isEmpty()) 
+		if (!connectionNos.isEmpty()) 
 		{
-//            for (Canceldemandsearch connectionNo : demandlist) 
+            for (Canceldemandsearch connectionNo : connectionNos) 
             {
             	boolean billCancelled =false;
-            Boolean Cancel=  waterCalculatorDao.getUpdate(demandlist);  
+            Boolean Cancel=  waterCalculatorDao.getUpdate( connectionNo.getDemandid());  
               if(Cancel) 
-              {         
-            	   billCancelled = waterCalculatorDao.getexpiryBill(billSearch);          	  
+              {            	  
+            	   billCancelled = waterCalculatorDao.getexpiryBill(connectionNo.getDemandid());          	  
               }    
               
+          if(!billCancelled)
+    			{
+        	  throw new CustomException("Bill_NOT_FOUND", "No Deamnds Found For Given Demand ID"+ connectionNos);
+                
+    		}
             }
 		}	
-	
+		     
+		else {
+			throw new CustomException("Demand_ID_NOT_FOUND", "No Demands Found For Given Consumer");
+            
+		}
+		
+		
 	            }
 		return cancelDemand;
 	}
-
 		
 
 	public String generateDemandForSingle(Map<String, Object> master, SingleDemand singleDemand, String tenantId,

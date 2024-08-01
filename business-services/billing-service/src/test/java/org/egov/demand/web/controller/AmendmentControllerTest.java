@@ -105,7 +105,8 @@ class AmendmentControllerTest {
         AuditDetails auditDetails = new AuditDetails();
         MissingNode additionalDetails = MissingNode.getInstance();
         ProcessInstance workflow = new ProcessInstance();
-        amendmentUpdateRequest.setAmendmentUpdate(new AmendmentUpdate());
+        amendmentUpdateRequest.setAmendmentUpdate(new AmendmentUpdate("42", "42", "42", auditDetails, additionalDetails,
+                workflow, AmendmentStatus.ACTIVE, new ArrayList<>()));
         amendmentUpdateRequest.setRequestInfo(new RequestInfo());
         ObjectMapper objectMapper = new ObjectMapper();
         String Json = objectMapper.writeValueAsString(amendmentUpdateRequest);
@@ -250,7 +251,8 @@ class AmendmentControllerTest {
         AuditDetails auditDetails = new AuditDetails();
         MissingNode additionalDetails = MissingNode.getInstance();
         ProcessInstance workflow = new ProcessInstance();
-        amendmentUpdateRequest.setAmendmentUpdate(new AmendmentUpdate());
+        amendmentUpdateRequest.setAmendmentUpdate(new AmendmentUpdate("42", "42", "42", auditDetails, additionalDetails,
+                workflow, AmendmentStatus.ACTIVE, new ArrayList<>()));
         amendmentUpdateRequest.setRequestInfo(new RequestInfo());
         String content = (new ObjectMapper()).writeValueAsString(amendmentUpdateRequest);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/amendment/_update")
@@ -285,7 +287,8 @@ class AmendmentControllerTest {
         AuditDetails auditDetails1 = new AuditDetails();
         MissingNode additionalDetails = MissingNode.getInstance();
         ProcessInstance workflow1 = new ProcessInstance();
-        amendmentUpdateRequest.setAmendmentUpdate(new AmendmentUpdate());
+        amendmentUpdateRequest.setAmendmentUpdate(new AmendmentUpdate("42", "42", "42", auditDetails1, additionalDetails,
+                workflow1, AmendmentStatus.ACTIVE, new ArrayList<>()));
         amendmentUpdateRequest.setRequestInfo(new RequestInfo());
         String content = (new ObjectMapper()).writeValueAsString(amendmentUpdateRequest);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/amendment/_update")
@@ -318,7 +321,8 @@ class AmendmentControllerTest {
         AuditDetails auditDetails = new AuditDetails();
         MissingNode additionalDetails = MissingNode.getInstance();
         ProcessInstance workflow = new ProcessInstance();
-        amendmentUpdateRequest.setAmendmentUpdate(new AmendmentUpdate());
+        amendmentUpdateRequest.setAmendmentUpdate(new AmendmentUpdate("42", "42", "42", auditDetails, additionalDetails,
+                workflow, AmendmentStatus.INACTIVE, new ArrayList<>()));
         amendmentUpdateRequest.setRequestInfo(new RequestInfo());
         String content = (new ObjectMapper()).writeValueAsString(amendmentUpdateRequest);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/amendment/_update")
@@ -347,7 +351,8 @@ class AmendmentControllerTest {
         documentList.add(new Document());
         AuditDetails auditDetails = new AuditDetails();
         MissingNode additionalDetails = MissingNode.getInstance();
-        AmendmentUpdate amendmentUpdate = new AmendmentUpdate();
+        AmendmentUpdate amendmentUpdate = new AmendmentUpdate("42", "42", "42", auditDetails, additionalDetails,
+                new ProcessInstance(), AmendmentStatus.ACTIVE, documentList);
 
         AmendmentUpdateRequest amendmentUpdateRequest = new AmendmentUpdateRequest();
         amendmentUpdateRequest.setAmendmentUpdate(amendmentUpdate);
