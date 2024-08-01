@@ -583,7 +583,13 @@ public class CalculatorUtils {
 					carryForward=BigDecimal.ZERO;
 					for(BillDetail billdet:bill.getBillDetails())
 					{
-						if(billdet.getPaymentPeriod().equalsIgnoreCase("Q3"))
+						if(billdet.getPaymentPeriod().equalsIgnoreCase("Q4")
+								||billdet.getPaymentPeriod().equalsIgnoreCase("H2")	
+								||billdet.getPaymentPeriod().equalsIgnoreCase("YR"))
+						{
+							carryForward=BigDecimal.ZERO;
+						}
+						else if(billdet.getPaymentPeriod().equalsIgnoreCase("Q3"))
 						{
 							singleunitammount=billdet.getAmount().divide(new BigDecimal(3));
 							carryForward=carryForward.add(singleunitammount);
@@ -609,7 +615,7 @@ public class CalculatorUtils {
 					break;
 				}
 			}
-			
+
 		}
 		System.out.println(res);
 		return carryForward;
