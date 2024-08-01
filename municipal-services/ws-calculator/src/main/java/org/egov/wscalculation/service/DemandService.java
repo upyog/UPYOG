@@ -346,7 +346,15 @@ public class DemandService {
 					businessServices = "SW";
 					for (DemandDetail ddSew : demandDetails) {
 						DemandDetail dd1 = new DemandDetail();
-						dd1.setTaxHeadMasterCode("SW_CHARGE");
+						if(ddSew.getTaxHeadMasterCode().equalsIgnoreCase("WS_CHARGE")) {
+							dd1.setTaxHeadMasterCode("SW_CHARGE");
+						}else if (ddSew.getTaxHeadMasterCode().equalsIgnoreCase("WS_Round_Off")) {
+							dd1.setTaxHeadMasterCode("SW_Round_Off");
+						}else if (ddSew.getTaxHeadMasterCode().equalsIgnoreCase("WS_ADVANCE_CARRYFORWARD")) {
+							dd1.setTaxHeadMasterCode("SW_ADVANCE_CARRYFORWARD");
+						}else {
+							dd1.setTaxHeadMasterCode("SW_CHARGE");
+						}
 						dd1.setDemandId(ddSew.getDemandId());
 						dd1.setAuditDetails(ddSew.getAuditDetails());
 						dd1.setCollectionAmount(ddSew.getCollectionAmount());
@@ -489,7 +497,15 @@ public class DemandService {
 					businessServices = "SW";
 					for (DemandDetail ddSew : demandDetails) {
 						DemandDetail dd1 = new DemandDetail();
-						dd1.setTaxHeadMasterCode("SW_CHARGE");
+						if(ddSew.getTaxHeadMasterCode().equalsIgnoreCase("WS_CHARGE")) {
+							dd1.setTaxHeadMasterCode("SW_CHARGE");
+						}else if (ddSew.getTaxHeadMasterCode().equalsIgnoreCase("WS_Round_Off")) {
+							dd1.setTaxHeadMasterCode("SW_Round_Off");
+						}else if (ddSew.getTaxHeadMasterCode().equalsIgnoreCase("WS_ADVANCE_CARRYFORWARD")) {
+							dd1.setTaxHeadMasterCode("SW_ADVANCE_CARRYFORWARD");
+						}else {
+							dd1.setTaxHeadMasterCode("SW_CHARGE");
+						}
 						dd1.setDemandId(ddSew.getDemandId());
 						dd1.setAuditDetails(ddSew.getAuditDetails());
 						dd1.setCollectionAmount(ddSew.getCollectionAmount());
