@@ -648,6 +648,13 @@
         "$.code"
       ]
     },
+    "VacantLandUsageCategory": {
+      "masterName": "VacantLandUsageCategory",
+      "isStateLevel": true,
+      "uniqueKeys": [
+        "$.code"
+      ]
+    },
     "UsageCategoryMajor": {
       "masterName": "UsageCategoryMajor",
       "isStateLevel": true,

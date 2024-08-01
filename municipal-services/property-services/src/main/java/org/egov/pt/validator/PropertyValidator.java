@@ -354,7 +354,8 @@ public class PropertyValidator {
 						PTConstants.MDMS_PT_USAGECATEGORY,
 						PTConstants.MDMS_PT_OCCUPANCYTYPE,
 						PTConstants.MDMS_PT_CONSTRUCTIONTYPE,
-						PTConstants.MDMS_PT_ROADTYPE));
+						PTConstants.MDMS_PT_ROADTYPE,
+						PTConstants.MDMS_PT_VACANTUSAGECATEGORY));
 
 		//PTConstants.MDMS_PT_EXEMPTION
 
@@ -438,7 +439,8 @@ public class PropertyValidator {
 		}
 
 		if (property.getUsageCategory() != null && !codes.get(PTConstants.MDMS_PT_USAGECATEGORY).contains(property.getUsageCategory())) {
-			errorMap.put("Invalid USageCategory", "The USageCategory '" + property.getUsageCategory() + "' does not exists");
+			if(!codes.get(PTConstants.MDMS_PT_VACANTUSAGECATEGORY).contains(property.getUsageCategory()))
+				errorMap.put("Invalid USageCategory", "The USageCategory '" + property.getUsageCategory() + "' does not exists");
 		}
 
 		if (property.getAddress().getTypeOfRoad().getCode() != null && !codes.get(PTConstants.MDMS_PT_ROADTYPE).contains(property.getAddress().getTypeOfRoad().getCode())) {
@@ -719,9 +721,9 @@ public class PropertyValidator {
 		if(!CollectionUtils.isEmpty(criteria.getOwnerIds()) && !allowedParams.contains("ownerids"))
 			throw new CustomException("EG_PT_INVALID_SEARCH","Search based on ownerId is not available for : " + userType);
 	}
-	
-	
-	
+
+
+
 	public void validateAppealCriteria(AppealCriteria criteria,RequestInfo requestInfo) {
 
 		List<String> allowedParams = null;
@@ -730,14 +732,14 @@ public class PropertyValidator {
 		String userType = user.getType();
 		Boolean isUserCitizen = "CITIZEN".equalsIgnoreCase(userType);
 
-			if(criteria.getTenantId() == null)
-				throw new CustomException("EG_PT_INVALID_SEARCH"," TenantId is mandatory for search by " + userType);
+		if(criteria.getTenantId() == null)
+			throw new CustomException("EG_PT_INVALID_SEARCH"," TenantId is mandatory for search by " + userType);
 
-		
+
 		if(CollectionUtils.isEmpty(criteria.getPropertyIds()) || CollectionUtils.isEmpty(criteria.getApplicationNumber()))
 			throw new CustomException("EG_PT_INVALID_SEARCH","Search based on ids Property ids or Acknowledgement number ");
 
-		
+
 
 	}
 
@@ -896,11 +898,11 @@ public class PropertyValidator {
 
 			if (isOwnerCancelled && property.getOwners().size() == 1)
 				errorMap.put("EG_PT_MUTATION_OWNER_REMOVAL_ERROR", "Single owner of a property cannot be deactivated or removed in a mutation request");
-			
+
 			if(isOwnerDead)
 			{
 				if(StringUtils.isEmpty(dateofdeath))
-						errorMap.put("EG_PT_MUTATION_OWNER_DATEOFDEATH_ERROR", "if owner is dead date of death is required");
+					errorMap.put("EG_PT_MUTATION_OWNER_DATEOFDEATH_ERROR", "if owner is dead date of death is required");
 			}
 		}
 
@@ -1181,23 +1183,23 @@ public class PropertyValidator {
 			throw new CustomException(errorMap);
 
 	}
-	
-	
+
+
 	public void validateAppealCreateRequest(AppealRequest request) {
 
 		if(StringUtils.isEmpty(request.getAppeal().getPropertyId())) {
 			throw new CustomException("INVALID_UPIN","INvalid PropertyId Passed");
 		}
 	}
-	
+
 	public void validateAppealUpdateRequest(AppealRequest request) {
 
 		if(StringUtils.isEmpty(request.getAppeal().getPropertyId())) {
 			throw new CustomException("INVALID_UPIN","INvalid PropertyId Passed");
 		}
 	}
-	
-	
+
+
 	public void validateAppealWorkFlowRequestForAppeal(AppealRequest request,Appeal appealFromDb) {
 
 
@@ -1229,7 +1231,7 @@ public class PropertyValidator {
 
 		if(!CollectionUtils.isEmpty(errorMap))
 			throw new CustomException(errorMap);
-		
+
 		request.getAppeal().getWorkflow().setBusinessService("PT.APPEAL");
 		request.getAppeal().getWorkflow().setTenantId(appealFromDb.getTenantId());
 		request.getAppeal().getWorkflow().setBusinessId(request.getAppeal().getAcknowldgementNumber());
