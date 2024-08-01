@@ -171,13 +171,15 @@ public class DemandValidatorV1 {
 						taxHeadsNotFound.add(detail.getTaxHeadMasterCode());
 				});
 
-			if(demandRequest.getDemands().get(0).getBusinessService().equalsIgnoreCase("WS") && demandRequest.getDemands().get(0).getAdditionalDetails() !=null && demandRequest.getDemands().get(0).getAdditionalDetails().toString().contains("connectionType"))
+			if(demandRequest.getDemands().get(0).getBusinessService().equalsIgnoreCase("WS") && demandRequest.getDemands().get(0).getAdditionalDetails() !=null && demandRequest.getDemands().get(0).getAdditionalDetails().toString().contains("connectionType")
+		   || (demandRequest.getDemands().get(0).getBusinessService().equalsIgnoreCase("SW") || demandRequest.getDemands().get(0).getTenantId().equalsIgnoreCase("pb.amritsar") && demandRequest.getDemands().get(0).getAdditionalDetails().toString().contains("connectionType")))
 			{
-				
+				log.info("Demand settled for WS metered connection Or SW commercial connection in amritsar");
 			}
-			else
+			else {
 			validateTaxPeriod(taxPeriodBusinessMap, demand, errorMap, businessServicesWithNoTaxPeriods);
-			
+			log.info("Demand settled for WS non metered connection and all");
+			}
 			// by default demands are being set to active during create but validation should be done for inactive/ cancelled demand in another logic
 			if(demand.getStatus() == null) 
 				demand.setStatus(StatusEnum.ACTIVE);
