@@ -346,6 +346,8 @@ public class TLConstants {
 
     public static final String ACTION_STATUS_PAID  = "PAID";
 
+    public static final String ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT = "RETURN_TO_INITIATOR_FOR_PAYMENT";
+
     public static final String VARIABLE_ACTION = "action";
 
     public static final String VARIABLE_STATUS = "status";
