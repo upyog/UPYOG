@@ -24,6 +24,8 @@ public class PTConstants {
     public static final String MDMS_PT_MUTATIONREASON = "MutationReason";
     
     public static final String MDMS_PT_USAGECATEGORY = "UsageCategory";
+    
+    public static final String MDMS_PT_VACANTUSAGECATEGORY = "VacantLandUsageCategory";
 
     public static final String MDMS_PT_PROPERTYSUBTYPE = "PropertySubType";
 
