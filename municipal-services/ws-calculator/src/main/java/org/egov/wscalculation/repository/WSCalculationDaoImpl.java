@@ -11,6 +11,7 @@ import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.producer.WSCalculationProducer;
 import org.egov.wscalculation.repository.builder.WSCalculatorQueryBuilder;
 import org.egov.wscalculation.web.models.MeterConnectionRequests;
+import org.egov.wscalculation.repository.rowmapper.BillSearchRowMapper;
 import org.egov.wscalculation.repository.rowmapper.DemandSchedulerRowMapper;
 import org.egov.wscalculation.repository.rowmapper.Demandcancelwrapper;
 import org.egov.wscalculation.repository.rowmapper.MeterReadingCurrentReadingRowMapper;
@@ -18,6 +19,7 @@ import org.egov.wscalculation.repository.rowmapper.MeterReadingRowMapper;
 import org.egov.wscalculation.repository.rowmapper.WaterConnectionRowMapper;
 import org.egov.wscalculation.repository.rowmapper.WaterDemandRowMapper;
 import org.egov.wscalculation.repository.rowmapper.WaterRowMapper;
+import org.egov.wscalculation.web.models.BillSearch;
 import org.egov.wscalculation.web.models.CancelDemand;
 import org.egov.wscalculation.web.models.Canceldemandsearch;
 import org.egov.wscalculation.web.models.MeterConnectionRequest;
@@ -56,6 +58,11 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 	
 	@Autowired
 	private Demandcancelwrapper demandcancelwrapper;
+	
+	@Autowired
+	private BillSearchRowMapper billsearchMapper;
+	
+	
 	@Autowired
 	private WaterRowMapper waterRowMapper;
 
@@ -297,21 +304,35 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 	/* UPDATE */
 	
 	
-	public Boolean getUpdate(String demandId) {
-		
+	public Boolean getUpdate(List demandlist) {		
 			List<Object> preparedStatement = new ArrayList<>();
-			String query = queryBuilder.getUpdateDemand(demandId,preparedStatement);
+			String query = queryBuilder.getUpdateDemand(demandlist,preparedStatement);
 			log.info("preparedStatement: " + preparedStatement + " connection type: " + 
 					 " connection list : " + query);
 			jdbcTemplate.update(query, preparedStatement.toArray());	
 			return true;
 	}
+
 	
 	
-	public Boolean getexpiryBill(String demandId) {
+	
+	
+	public List<BillSearch> getBill(String consumercode,String businessService) {
 		
 		List<Object> preparedStatement = new ArrayList<>();
-		String query = queryBuilder.getBillDemand(demandId,preparedStatement);
+		String query = queryBuilder.getBillid(consumercode,businessService,preparedStatement);
+		log.info("preparedStatement: " + preparedStatement + " connection type: " + 
+				 " connection list : " + query);
+		return jdbcTemplate.query(query, preparedStatement.toArray(),billsearchMapper);
+	
+}
+
+	
+	
+	public Boolean getexpiryBill(List billSearch) {
+		
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getBillDemand(billSearch,preparedStatement);
 		log.info("preparedStatement: " + preparedStatement + " connection type: " + 
 				 " connection list : " + query);
 		jdbcTemplate.update(query, preparedStatement.toArray());	
