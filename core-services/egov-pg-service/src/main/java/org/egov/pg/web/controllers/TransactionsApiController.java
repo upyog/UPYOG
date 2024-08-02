@@ -17,6 +17,7 @@ import org.egov.pg.web.models.TransactionCreateResponse;
 import org.egov.pg.web.models.TransactionCriteria;
 import org.egov.pg.web.models.TransactionRequest;
 import org.egov.pg.web.models.TransactionResponse;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,9 +56,10 @@ public class TransactionsApiController {
      *
      * @param transactionRequest Request containing all information necessary for initiating payment
      * @return Transaction that has been created
+     * @throws RazorpayException 
      */
     @RequestMapping(value = "/transaction/v1/_create", method = RequestMethod.POST)
-    public ResponseEntity<TransactionCreateResponse> transactionsV1CreatePost(@Valid @RequestBody TransactionRequest transactionRequest) {
+    public ResponseEntity<TransactionCreateResponse> transactionsV1CreatePost(@Valid @RequestBody TransactionRequest transactionRequest) throws CustomException {
 
         Transaction transaction = transactionService.initiateTransaction(transactionRequest);
         ResponseInfo responseInfo = ResponseInfoFactory.createResponseInfoFromRequestInfo(transactionRequest

@@ -7,7 +7,7 @@ serviceMaps:
    fromTopic: save-pg-txns
    isTransaction: true
    queryMaps:
-    - query: INSERT INTO eg_pg_transactions (txn_id, txn_amount, txn_status, gateway, "module", order_id, product_info, user_name, mobile_number, email_id, name, user_tenant_id,  tenant_id, gateway_txn_id, gateway_payment_mode, gateway_status_code, gateway_status_msg, created_time, last_modified_time) VALUES (?, ?::numeric, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_pg_transactions (txn_id, txn_amount, txn_status, gateway,bill_id, "module", order_id, product_info,user_uuid, user_name, mobile_number, email_id, name, user_tenant_id,  tenant_id, gateway_txn_id, gateway_payment_mode, gateway_status_code, gateway_status_msg, created_time, last_modified_time) VALUES (?, ?::numeric, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
       basePath: Transaction
       jsonMaps:
@@ -19,12 +19,16 @@ serviceMaps:
        - jsonPath: $.Transaction.txnStatus
 
        - jsonPath: $.Transaction.gateway
+       
+       - jsonPath: $.Transaction.billId
 
        - jsonPath: $.Transaction.module
 
        - jsonPath: $.Transaction.orderId
 
        - jsonPath: $.Transaction.productInfo
+
+       - jsonPath: $.Transaction.user.uuid
 
        - jsonPath: $.Transaction.user.userName
 
@@ -46,9 +50,9 @@ serviceMaps:
 
        - jsonPath: $.Transaction.gatewayStatusMsg
 
-       - jsonPath: $.Transaction.createdTime
+       - jsonPath: $.Transaction.auditDetails.createdTime
 
-       - jsonPath: $.Transaction.lastModifiedTime
+       - jsonPath: $.Transaction.auditDetails.lastModifiedTime
 
 
 
@@ -72,9 +76,9 @@ serviceMaps:
          type: JSON
          dbType: JSONB
 
-       - jsonPath: $.TransactionDump.createdTime
+       - jsonPath: $.TransactionDump.auditDetails.createdTime
 
-       - jsonPath: $.TransactionDump.lastModifiedTime
+       - jsonPath: $.TransactionDump.auditDetails.lastModifiedTime
 
  - version: 1.0
    description: Update transaction
@@ -95,8 +99,8 @@ serviceMaps:
            - jsonPath: $.Transaction.gatewayStatusCode
 
            - jsonPath: $.Transaction.gatewayStatusMsg
-
-           - jsonPath: $.Transaction.lastModifiedTime
+           
+           - jsonPath: $.Transaction.auditDetails.lastModifiedTime
 
            - jsonPath: $.Transaction.txnId
 
@@ -116,6 +120,6 @@ serviceMaps:
              type: JSON
              dbType: JSONB
 
-           - jsonPath: $.TransactionDump.lastModifiedTime
+           - jsonPath: $.TransactionDump.auditDetails.lastModifiedTime
 
            - jsonPath: $.TransactionDump.txnId

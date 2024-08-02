@@ -1,6 +1,16 @@
 package org.egov.pg.service;
 
-import lombok.extern.slf4j.Slf4j;
+import java.net.URI;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeMap;
+
 import org.egov.pg.constants.PgConstants;
 import org.egov.pg.models.GatewayStatus;
 import org.egov.pg.models.Transaction;
@@ -8,8 +18,8 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.URI;
-import java.util.*;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -64,8 +74,9 @@ public class GatewayService {
      *
      * @param transaction Txn for which payment should be initiated
      * @return Redirect URI to the gateway
+     * @throws RazorpayException 
      */
-    URI initiateTxn(Transaction transaction) {
+    URI initiateTxn(Transaction transaction) throws CustomException {
         if (!isGatewayActive(transaction.getGateway()))
             throw new CustomException("INVALID_PAYMENT_GATEWAY", "Invalid or inactive payment gateway provided");
 

@@ -1,9 +1,10 @@
 package org.egov.pg.service;
 
-import org.egov.pg.models.Transaction;
-
 import java.net.URI;
 import java.util.Map;
+
+import org.egov.pg.models.Transaction;
+
 
 /**
  * Gateway operations
@@ -18,6 +19,7 @@ public interface Gateway {
      *
      * @param transaction for which payment gateway redirect URI is to be generated
      * @return redirect URI
+     * @throws RazorpayException 
      */
     URI generateRedirectURI(Transaction transaction);
 
