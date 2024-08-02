@@ -341,10 +341,9 @@ public class WaterServiceImpl implements WaterService {
 			// Received request to update the connection for modifyConnection WF
 			return updateWaterConnectionForModifyFlow(waterConnectionRequest);
 		}
-		
-		Map <String , String> adddetails=(Map<String, String>)waterConnectionRequest.getWaterConnection().getAdditionalDetails();
-		
-		if (adddetails.containsKey("is_new_meter_number")) {
+	
+		if (waterConnectionRequest.getWaterConnection().isIsworkflowdisabled()) 
+		{
 			log.info("Water Request: "+waterConnectionRequest);
 			waterDao.updateWaterConnection(waterConnectionRequest, true);
 			 return Arrays.asList(waterConnectionRequest.getWaterConnection());

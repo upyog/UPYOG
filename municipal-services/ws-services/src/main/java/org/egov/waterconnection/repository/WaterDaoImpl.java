@@ -119,15 +119,28 @@ public class WaterDaoImpl implements WaterDao {
 	@Override
 	public void updateWaterConnection(WaterConnectionRequest waterConnectionRequest, boolean isStateUpdatable) {
 		String reqAction = waterConnectionRequest.getWaterConnection().getProcessInstance().getAction();
-		if (isStateUpdatable) {
-			if (WCConstants.EXECUTE_DISCONNECTION.equalsIgnoreCase(reqAction)) {
+		
+		if (isStateUpdatable) 
+		{
+			if (WCConstants.EXECUTE_DISCONNECTION.equalsIgnoreCase(reqAction)) 
+			{
 				waterConnectionRequest.getWaterConnection().setStatus(Connection.StatusEnum.INACTIVE);
 			}
 			if ((waterConnectionRequest.isReconnectRequest() || waterConnectionRequest.getWaterConnection().getApplicationType().equalsIgnoreCase(WCConstants.WATER_RECONNECTION)) && WCConstants.ACTIVATE_CONNECTION_CONST.equalsIgnoreCase(reqAction)) {
 				waterConnectionRequest.getWaterConnection().setStatus(Connection.StatusEnum.ACTIVE);
 			}
-			waterConnectionProducer.push(updateWaterConnection, waterConnectionRequest);
-		} else {
+			else if(waterConnectionRequest.getWaterConnection().isIsworkflowdisabled())
+			{
+			// For meter number and rest details addition before payment (02-08-2024)
+				waterConnectionProducer.push(updateWaterConnection, waterConnectionRequest);
+			
+			}
+			else
+				waterConnectionProducer.push(updateWaterConnection, waterConnectionRequest);
+		} 
+		
+		
+		else {
 			waterConnectionProducer.push(wsConfiguration.getWorkFlowUpdateTopic(), waterConnectionRequest);
 		}
 	}
