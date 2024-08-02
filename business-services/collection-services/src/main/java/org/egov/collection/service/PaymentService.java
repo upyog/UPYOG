@@ -206,10 +206,10 @@ public class PaymentService {
 	private void setPropertyData(String receiptnumber, List<Payment> payments, String businessservice) {
 		List<String> consumercode = paymentRepository.fetchConsumerCodeByReceiptNumber(receiptnumber);
 		String connectionno = consumercode.get(0);
-		List<String> status=null;
-		if(!paymentRepository.fetchPropertyDetail(connectionno, businessservice).isEmpty())
+		List<String> status = paymentRepository.fetchPropertyDetail(connectionno, businessservice);
+		if(!status.isEmpty())
 		{
-				status = paymentRepository.fetchPropertyDetail(connectionno, businessservice);
+				
 		HashMap<String, String> additionalDetail = new HashMap<>();
 		if (!StringUtils.isEmpty(status.get(0)))
 			additionalDetail.put("oldConnectionno", status.get(0));

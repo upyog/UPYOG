@@ -403,22 +403,30 @@ public List<String> fetchPropertyDetail(String consumerCode,String businessservi
 			status.add("No value present"); 
 		
 		
-		
-		 if (meterMake.isEmpty()|| meterMake=="" || meterMake==null)
+		if(!additional.isEmpty())
+		{
+		 if (meterMake.isEmpty()|| meterMake=="" || meterMake==null && additional.isEmpty())
         	 status.add("No Value Found");  
          else 
         	 status.add(meterMake);
 		 
-		 if (avarageMeterReading.isEmpty()|| avarageMeterReading=="")
+		 if (avarageMeterReading.isEmpty()|| avarageMeterReading=="" && additional.isEmpty())
         	 status.add("No Value Found");  
          else 
         	 status.add(avarageMeterReading);
 		 
-		 if (initialMeterReading.isEmpty()|| initialMeterReading=="")
+		 if (initialMeterReading.isEmpty()|| initialMeterReading=="" && additional.isEmpty())
         	 status.add("No Value Found");  
          else 
         	 status.add(initialMeterReading);
-		 
+		}
+		else
+		{
+			 status.add("No Value Found");  
+			 status.add("No Value Found");  
+			 status.add("No Value Found");  
+			  
+		}
 		 
 		return status;                                                                     	
 	}                                                                                   	
