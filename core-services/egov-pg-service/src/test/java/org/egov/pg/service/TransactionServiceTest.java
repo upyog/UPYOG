@@ -23,6 +23,8 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.dao.TransientDataAccessResourceException;
 
+
+
 import lombok.extern.slf4j.Slf4j;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -84,10 +86,11 @@ public class TransactionServiceTest {
     /**
      * Valid test for initiating a transaction
      * @throws URISyntaxException
+     * @throws RazorpayException 
      */
 
     @Test
-    public void initiateTransactionSuccessTest() throws URISyntaxException {
+    public void initiateTransactionSuccessTest() throws URISyntaxException, CustomException {
         String redirectUrl = "https://paytm.com";
 
 
@@ -110,9 +113,10 @@ public class TransactionServiceTest {
 
     /**
      * Test for invalid or inactive gateway
+     * @throws RazorpayException 
      */
     @Test(expected = CustomException.class)
-    public void initiateTransactionFailTest(){
+    public void initiateTransactionFailTest() throws CustomException{
         Transaction txn = Transaction.builder().txnAmount("100")
                 .billId("ORDER0012")
                 .productInfo("Property Tax Payment")
@@ -128,9 +132,10 @@ public class TransactionServiceTest {
 
     /**
      * Test for invalid or inactive gateway
+     * @throws RazorpayException 
      */
     @Test
-    public void initiateTransactionSkipGatewayTest(){
+    public void initiateTransactionSkipGatewayTest() throws CustomException{
         Transaction txn = Transaction.builder().txnAmount("100")
                 .billId("ORDER0012")
                 .productInfo("Property Tax Payment")
