@@ -189,9 +189,7 @@ class PaymentEnricherTest {
         BigDecimal totalDue1 = BigDecimal.valueOf(42L);
         BigDecimal totalAmountPaid1 = BigDecimal.valueOf(42L);
         AuditDetails auditDetails = new AuditDetails();
-        Payment payment1 = new Payment("42", "42", totalDue1, totalAmountPaid1, "42", 4L, PaymentModeEnum.CASH, 4L, "42",
-                InstrumentStatusEnum.APPROVED, "Ifsc Code", auditDetails, MissingNode.getInstance(), paymentDetailList,
-                "Paid By", "42", "Payer Name", "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42", null, null, null, null);
+        Payment payment1 = new Payment();
 
         PaymentRequest paymentRequest = mock(PaymentRequest.class);
         when(paymentRequest.getRequestInfo()).thenReturn(new RequestInfo());
@@ -220,9 +218,7 @@ class PaymentEnricherTest {
         BigDecimal totalDue = BigDecimal.valueOf(42L);
         BigDecimal totalAmountPaid = BigDecimal.valueOf(42L);
         AuditDetails auditDetails = new AuditDetails();
-        Payment payment1 = new Payment("42", "42", totalDue, totalAmountPaid, "42", 4L, PaymentModeEnum.CASH, 4L, "42",
-                InstrumentStatusEnum.APPROVED, "Ifsc Code", auditDetails, MissingNode.getInstance(), paymentDetailList,
-                "Paid By", "42", "Payer Name", "42 Main St", "jane.doe@example.org", "42", PaymentStatusEnum.NEW, "42", null, null, null, null);
+        Payment payment1 = new Payment();
 
         PaymentRequest paymentRequest = mock(PaymentRequest.class);
         when(paymentRequest.getRequestInfo()).thenReturn(new RequestInfo());

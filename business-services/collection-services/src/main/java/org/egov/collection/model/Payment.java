@@ -48,6 +48,24 @@ public class Payment {
     @JsonProperty("transactionDate")
     private Long transactionDate;
 
+    @JsonProperty("meterMake")
+    private String meterMake;
+    
+    @JsonProperty("avarageMeterReading")
+    private String avarageMeterReading;
+    
+    
+    @JsonProperty("initialMeterReading")
+    private String initialMeterReading;
+    
+    
+    @JsonProperty("MeterId")
+    private String MeterId;
+    
+    @JsonProperty("MeterinstallationDate")
+    private String MeterinstallationDate;
+    
+    
     @NotNull
     @JsonProperty("paymentMode")
     private PaymentModeEnum paymentMode;

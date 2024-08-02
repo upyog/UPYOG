@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -89,6 +90,7 @@ public class PaymentService {
 		 * paymentSearchCriteria.setPayerIds(payerIds); }
 		 */		
 		List<Payment> payments = paymentRepository.fetchPayments(paymentSearchCriteria);
+		Collections.sort(payments.get(0).getPaymentDetails().get(0).getBill().getBillDetails(), (b1, b2) -> b2.getFromPeriod().compareTo(b1.getFromPeriod()));
 		if (null != paymentSearchCriteria.getBusinessService() && null != paymentSearchCriteria.getConsumerCodes()) {
 			String businessservice = paymentSearchCriteria.getBusinessService();
 			if ((paymentSearchCriteria.getBusinessService().equals("WS")
@@ -96,6 +98,30 @@ public class PaymentService {
 			 	  List<String> usageCategory = paymentRepository.fetchUsageCategoryByApplicationnos(paymentSearchCriteria.getConsumerCodes(), businessservice);
 		          List<String> address = paymentRepository.fetchAddressByApplicationnos(paymentSearchCriteria.getConsumerCodes(),businessservice);
 		          List<String> propertyIds = paymentRepository.fetchPropertyid(paymentSearchCriteria.getConsumerCodes(), businessservice);
+		          List<String> additional = paymentRepository.adddetails(paymentSearchCriteria.getConsumerCodes(), businessservice);
+		          List<String> meterdetails = paymentRepository.meterinstallmentdate(paymentSearchCriteria.getConsumerCodes(), businessservice);
+		          List<String> meterid = paymentRepository.meterid(paymentSearchCriteria.getConsumerCodes(), businessservice);
+		          String meterMake=null;
+		          String avarageMeterReading=null;
+		          String initialMeterReading=null;
+		          if (additional != null && !additional.isEmpty()) {
+		              ObjectMapper objectMapper = new ObjectMapper();
+
+		              for (String jsonString : additional) {
+		                  try {
+		                      Map<String, String> map = objectMapper.readValue(jsonString, new TypeReference<Map<String, String>>() {});
+		                      meterMake= (String) map.get("meterMake");
+		                      payments.get(0).setMeterMake(meterMake);
+		                      avarageMeterReading= (String) map.get("avarageMeterReading");
+		                      payments.get(0).setAvarageMeterReading(avarageMeterReading);
+		                      initialMeterReading= (String) map.get("initialMeterReading");
+		                      payments.get(0).setInitialMeterReading(initialMeterReading);
+		                      
+		                  } catch (Exception e) {
+		                      e.printStackTrace();
+		                  }
+		              }
+		          } 
 				// setPropertyData(receiptnumber,payments,businessservice);
 				if (usageCategory != null && !usageCategory.isEmpty())
 					payments.get(0).setUsageCategory(usageCategory.get(0));
@@ -103,6 +129,12 @@ public class PaymentService {
 					payments.get(0).setAddress(address.get(0));
 				if (propertyIds != null && !propertyIds.isEmpty())
 					payments.get(0).setPropertyId(propertyIds.get(0));
+				
+				
+				if (meterdetails != null && !meterdetails.isEmpty())
+					payments.get(0).setMeterinstallationDate(meterdetails.get(0));
+				if (meterid != null && !meterid.isEmpty())
+					payments.get(0).setMeterId(meterid.get(0));
 			}
 			return payments;
 		} else if (null != paymentSearchCriteria.getReceiptNumbers()) {
@@ -190,6 +222,21 @@ public class PaymentService {
 		payments.get(0).setAddress(status.get(4));
 		if (!StringUtils.isEmpty(status.get(2)))
 		payments.get(0).setUsageCategory(status.get(2));
+		
+		/////
+		
+		
+		if (!StringUtils.isEmpty(status.get(5)))
+			payments.get(0).setMeterinstallationDate(status.get(5));
+		if (!StringUtils.isEmpty(status.get(6)))
+			payments.get(0).setMeterId(status.get(6));
+		if (!StringUtils.isEmpty(status.get(8)))
+			payments.get(0).setAvarageMeterReading(status.get(8));
+		if (!StringUtils.isEmpty(status.get(9)))
+			payments.get(0).setInitialMeterReading(status.get(9));
+		if (!StringUtils.isEmpty(status.get(7)))
+			payments.get(0).setMeterinstallationDate(status.get(7));
+		
 		payments.get(0).setPropertyDetail(additionalDetail);}
 	}
 

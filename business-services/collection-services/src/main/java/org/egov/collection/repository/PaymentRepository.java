@@ -25,7 +25,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -316,13 +320,38 @@ public class PaymentRepository {
 	
 public List<String> fetchPropertyDetail(String consumerCode,String businessservice) {
 		List<String> status = new ArrayList<String>();                                     
-status = new ArrayList<String>();                                                    
+status = new ArrayList<String>();           
+ObjectMapper objectMapper = new ObjectMapper();
+
 		List<String> oldConnectionno = fetchOldConnectionNo(consumerCode,businessservice); 
 		List<String> plotSize = fetchLandArea(consumerCode,businessservice);               
 		List<String> usageCategory = fetchUsageCategory(consumerCode,businessservice);     
 		List<String> propertyid = fetchpropertyid(consumerCode,businessservice);           
-		List<String> adress = fetchadresss(consumerCode,businessservice);                  
-		if(oldConnectionno.size()>0) {                                                      
+		List<String> adress = fetchadresss(consumerCode,businessservice); 
+		 Set<String> consumerCodeSet = Collections.singleton(consumerCode);
+
+		 List<String> additional = adddetails(consumerCodeSet, businessservice);
+         List<String> meterdetails = meterinstallmentdate(consumerCodeSet, businessservice);
+         List<String> meterid = meterid(consumerCodeSet, businessservice);
+         String meterMake=null;
+         String avarageMeterReading=null;
+         String initialMeterReading=null;
+         if (additional != null && !additional.isEmpty()) {
+         
+
+             for (String jsonString : additional) {
+                 try {
+                     Map<String, String> map = objectMapper.readValue(jsonString, new TypeReference<Map<String, String>>() {});
+                     meterMake= (String) map.get("meterMake");                  
+                     avarageMeterReading= (String) map.get("avarageMeterReading");           
+                     initialMeterReading= (String) map.get("initialMeterReading");
+                     
+                 } catch (Exception e) {
+                     e.printStackTrace();
+                 }
+             }
+         } 
+                if(oldConnectionno.size()>0) {                                                      
 		status.add(oldConnectionno.get(0));  }
 		else { status.add("No Value Found");  }
 		
@@ -348,6 +377,37 @@ status = new ArrayList<String>();
 			status.add(adress.get(0));   
 		else                                 
 			status.add("No value present"); 
+		////
+		
+		if(meterdetails.size()>0 && !StringUtils.isBlank(meterdetails.get(0)))                                                                
+			status.add(meterdetails.get(0));   
+		else                                 
+			status.add("No value present"); 
+		
+		
+		if(meterid.size()>0 && !StringUtils.isBlank(meterid.get(0)))                                                                
+			status.add(meterid.get(0));   
+		else                                 
+			status.add("No value present"); 
+		
+		
+		
+		 if (meterMake.isEmpty()|| meterMake=="")
+        	 status.add("No Value Found");  
+         else 
+        	 status.add(meterMake);
+		 
+		 if (avarageMeterReading.isEmpty()|| avarageMeterReading=="")
+        	 status.add("No Value Found");  
+         else 
+        	 status.add(avarageMeterReading);
+		 
+		 if (initialMeterReading.isEmpty()|| initialMeterReading=="")
+        	 status.add("No Value Found");  
+         else 
+        	 status.add(initialMeterReading);
+		 
+		 
 		return status;                                                                     	
 	}                                                                                   	
 	
@@ -647,11 +707,11 @@ status = new ArrayList<String>();
 		Map<String, Object> preparedStatementValues = new HashMap<>();
 		String queryString;
 		if (businesssrvice.contains("WS")) {
-			 queryString = "select concat(a3.doorno,',',a3.plotno,',',a3.buildingname,',',a3.street',',',a3.landmark,',',a3.district ,',',a3.region,',',a3.city )  FROM eg_ws_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  inner join eg_pt_address as a3 on a2.id=a3.propertyid where   a1.status='Active' and a1.connectionno   ='"+consumercode+"';";
+			 queryString = "select concat(a3.doorno,',',a3.plotno,',',a3.buildingname,',',a3.street,',',a3.landmark,',',a3.district ,',',a3.region,',',a3.city )  FROM eg_ws_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  inner join eg_pt_address as a3 on a2.id=a3.propertyid where   a1.status='Active' and a1.connectionno   ='"+consumercode+"';";
 		log.info("Query for fetchAddressByApplicationno: " +queryString);
 		}
 		else {
-			 queryString = "select concat(a3.doorno,',',a3.plotno,',',a3.buildingname,',',a3.street',',',a3.landmark,',',a3.district ,',',a3.region,',',a3.city ) FROM eg_sw_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  inner join eg_pt_address as a3 on a2.id=a3.propertyid where   a1.status='Active' and a1.connectionno   ='"+consumercode+"';";
+			 queryString = "select concat(a3.doorno,',',a3.plotno,',',a3.buildingname,',',a3.street,',',a3.landmark,',',a3.district ,',',a3.region,',',a3.city ) FROM eg_sw_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  inner join eg_pt_address as a3 on a2.id=a3.propertyid where   a1.status='Active' and a1.connectionno   ='"+consumercode+"';";
 
 				log.info("Query for fetchAddressByApplicationno: " +queryString);
 		}
@@ -689,7 +749,89 @@ status = new ArrayList<String>();
 		}
 		return res;
 	}
+	
+	
+	public List<String> adddetails(Set<String> consumerCodes,String businesssrvice) {
+		List<String> res = new ArrayList<>();
+		String consumercode = null;
+		 Iterator<String> iterate = consumerCodes.iterator();
+		 while(iterate.hasNext()) {
+			    consumercode =   iterate.next();			  
+		}		
+		Map<String, Object> preparedStatementValues = new HashMap<>();
+		String queryString;
+		if (businesssrvice.contains("WS")) {
+			queryString = "select a1.additionaldetails  FROM eg_ws_connection a1  where a1.connectionno   ='"+consumercode+"';";
+		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
+		} else {
+			queryString = "select a1.additionaldetails  FROM eg_sw_connection a1 where  a1.connectionno   ='"+consumercode+"';";
 
+			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
+		}
+		try {
+			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+		} catch (Exception ex) {
+			log.error("Exception while reading usage category" + ex.getMessage());
+		}
+		return res;
+	}
+	
+	
+	
+	
+	
+	
+	public List<String> meterinstallmentdate(Set<String> consumerCodes,String businesssrvice) {
+		List<String> res = new ArrayList<>();
+		String consumercode = null;
+		 Iterator<String> iterate = consumerCodes.iterator();
+		 while(iterate.hasNext()) {
+			    consumercode =   iterate.next();			  
+		}		
+		Map<String, Object> preparedStatementValues = new HashMap<>();
+		String queryString;
+		if (businesssrvice.contains("WS")) {
+			queryString = "select a2.meterinstallationdate FROM eg_ws_connection a1   inner join eg_ws_service as a2 on a1.id=a2.connection_id where a1.connectionno   ='"+consumercode+"';";
+		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
+		} else {
+			queryString = "select a2.meterinstallationdate FROM eg_sw_connection a1 inner join eg_ws_service as a2 on a1.id=a2.connection_id where  a1.connectionno   ='"+consumercode+"';";
+
+			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
+		}
+		try {
+			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+		} catch (Exception ex) {
+			log.error("Exception while reading usage category" + ex.getMessage());
+		}
+		return res;
+	}
+	
+	public List<String> meterid(Set<String> consumerCodes,String businesssrvice) {
+		List<String> res = new ArrayList<>();
+		String consumercode = null;
+		 Iterator<String> iterate = consumerCodes.iterator();
+		 while(iterate.hasNext()) {
+			    consumercode =   iterate.next();			  
+		}		
+		Map<String, Object> preparedStatementValues = new HashMap<>();
+		String queryString;
+		if (businesssrvice.contains("WS")) {
+			queryString = "select a2.meterid FROM eg_ws_connection a1   inner join eg_ws_service as a2 on a1.id=a2.connection_id where a1.connectionno   ='"+consumercode+"';";
+		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
+		} else {
+			queryString = "select a2.meterid FROM eg_sw_connection a1 inner join eg_ws_service as a2 on a1.id=a2.connection_id where  a1.connectionno   ='"+consumercode+"';";
+
+			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
+		}
+		try {
+			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+		} catch (Exception ex) {
+			log.error("Exception while reading usage category" + ex.getMessage());
+		}
+		return res;
+	}
+	
+	
 	/**
 	 * API is to get the distinct ifsccode from payment
 	 * 
