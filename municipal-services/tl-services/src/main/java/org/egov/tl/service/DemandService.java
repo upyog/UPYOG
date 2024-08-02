@@ -36,7 +36,7 @@ public class DemandService {
     public List<Demand> generateDemand(RequestInfo requestInfo,TradeLicense license, String businessService){
 
     	// get total Tax
-    	ApplicationDetail applicationDetail = tradeLicenseService.calculateTotalTax(license, requestInfo);
+    	ApplicationDetail applicationDetail = tradeLicenseService.getApplicationBillUserDetail(license, requestInfo);
 		
     	DemandDetail demandDetail = DemandDetail.builder()
     								.taxHeadMasterCode("LCF.Trade_License_Fee_TAX")

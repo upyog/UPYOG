@@ -1133,7 +1133,7 @@ public class TradeLicenseService {
 
 
 
-	public TradeLicenseActionResponse calculateFeeOnApplications(TradeLicenseActionRequest tradeLicenseActionRequest) {
+	public TradeLicenseActionResponse getApplicationDetails(TradeLicenseActionRequest tradeLicenseActionRequest) {
 		
 		if(CollectionUtils.isEmpty(tradeLicenseActionRequest.getApplicationNumbers())) {
 			throw new CustomException("INVALID REQUEST","Provide Application Number.");
@@ -1155,7 +1155,7 @@ public class TradeLicenseService {
 			TradeLicense license = null != licenses ? licenses.get(0): null;
 			
 
-			ApplicationDetail applicationDetail = calculateTotalTax(license, tradeLicenseActionRequest.getRequestInfo());
+			ApplicationDetail applicationDetail = getApplicationBillUserDetail(license, tradeLicenseActionRequest.getRequestInfo());
 			
 			
 			tradeLicenseActionResponse.getApplicationDetails().add(applicationDetail);
@@ -1165,7 +1165,7 @@ public class TradeLicenseService {
 	}
 
 
-	public ApplicationDetail calculateTotalTax(TradeLicense license, RequestInfo requestInfo) {
+	public ApplicationDetail getApplicationBillUserDetail(TradeLicense license, RequestInfo requestInfo) {
 		ApplicationDetail applicationDetail = ApplicationDetail.builder()
 												.applicationNumber(license.getApplicationNumber())
 												.build();
@@ -1176,7 +1176,7 @@ public class TradeLicenseService {
 	    String zone = null;
 	    
 		if(StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)) {
-			calculateTotalTaxForNewTL(applicationDetail, license, requestInfo, businessService, scaleOfBusiness, tradeCategory, periodOfLicense, zone);
+			getApplicationBillUserDetailForNewTL(applicationDetail, license, requestInfo, businessService, scaleOfBusiness, tradeCategory, periodOfLicense, zone);
 		}
 		else if(StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_TL)) {
 
@@ -1189,7 +1189,7 @@ public class TradeLicenseService {
 
 
 
-	private ApplicationDetail calculateTotalTaxForNewTL(ApplicationDetail applicationDetail, TradeLicense license, RequestInfo requestInfo, String businessService, String scaleOfBusiness
+	private ApplicationDetail getApplicationBillUserDetailForNewTL(ApplicationDetail applicationDetail, TradeLicense license, RequestInfo requestInfo, String businessService, String scaleOfBusiness
 							, String tradeCategory, Integer periodOfLicense, String zone) {
 		
 		Double totalFee;

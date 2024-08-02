@@ -188,7 +188,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
     	TradeLicenseActionResponse response = null;
     	
     	if(StringUtils.equalsIgnoreCase(value, "CALCULATEFEE")) {
-    		response = tradeLicenseService.calculateFeeOnApplications(tradeLicenseActionRequest);
+    		response = tradeLicenseService.getApplicationDetails(tradeLicenseActionRequest);
     	}else if(StringUtils.equalsIgnoreCase(value, "ACTIONS")){
     		response = tradeLicenseService.getActionsOnApplication(tradeLicenseActionRequest);
     	}else {
