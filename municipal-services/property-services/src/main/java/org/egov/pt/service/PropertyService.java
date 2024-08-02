@@ -247,7 +247,7 @@ if(!request.getProperty().getCreationReason().equals(CreationReason.MUTATION))
 	
 	private void processMobileNumberUpdate(PropertyRequest request, Property propertyFromSearch) {
 		
-				if (CreationReason.CREATE.equals(request.getProperty().getCreationReason())) {
+		if (CreationReason.CREATE.equals(request.getProperty().getCreationReason()) && !request.getProperty().getStatus().equals("PENDINGWS") ) {
 					userService.createUser(request);
 				} else {			
 					updateOwnerMobileNumbers(request,propertyFromSearch);
