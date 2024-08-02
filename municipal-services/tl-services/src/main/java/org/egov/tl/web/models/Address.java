@@ -40,7 +40,7 @@ public class Address   {
         @JsonProperty("tenantId")
         private String tenantId = null;
 
-        @Size(max=64)
+        
         @SafeHtml
         @JsonProperty("doorNo")
         private String doorNo = null;
@@ -56,7 +56,7 @@ public class Address   {
         @JsonProperty("addressId")
         private String addressId = null;
 
-        @Size(max=64)
+        
         @SafeHtml
         @JsonProperty("addressNumber")
         private String addressNumber = null;
@@ -70,17 +70,17 @@ public class Address   {
         @JsonProperty("addressLine1")
         private String addressLine1 = null;
 
-        @Size(max=256)
+        
         @SafeHtml
         @JsonProperty("addressLine2")
         private String addressLine2 = null;
 
-        @Size(max=64)
+        
         @SafeHtml
         @JsonProperty("landmark")
         private String landmark = null;
 
-        @Size(max=64)
+        
         @SafeHtml
         @JsonProperty("city")
         private String city = null;
@@ -90,17 +90,17 @@ public class Address   {
         @JsonProperty("pincode")
         private String pincode = null;
 
-        @Size(max=64)
+        
         @SafeHtml
         @JsonProperty("detail")
         private String detail = null;
 
-        @Size(max=64)
+        
         @SafeHtml
         @JsonProperty("buildingName")
         private String buildingName = null;
 
-        @Size(max=64)
+        
         @SafeHtml
         @JsonProperty("street")
         private String street = null;
