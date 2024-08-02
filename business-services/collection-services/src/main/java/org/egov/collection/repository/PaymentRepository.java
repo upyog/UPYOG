@@ -320,8 +320,8 @@ public class PaymentRepository {
 	
 public List<String> fetchPropertyDetail(String consumerCode,String businessservice) {
 		List<String> status = new ArrayList<String>();                                     
-status = new ArrayList<String>();           
-ObjectMapper objectMapper = new ObjectMapper();
+		status = new ArrayList<String>();           
+		ObjectMapper objectMapper = new ObjectMapper();
 
 		List<String> oldConnectionno = fetchOldConnectionNo(consumerCode,businessservice); 
 		List<String> plotSize = fetchLandArea(consumerCode,businessservice);               
@@ -342,9 +342,21 @@ ObjectMapper objectMapper = new ObjectMapper();
              for (String jsonString : additional) {
                  try {
                      Map<String, String> map = objectMapper.readValue(jsonString, new TypeReference<Map<String, String>>() {});
-                     meterMake= (String) map.get("meterMake");                  
-                     avarageMeterReading= (String) map.get("avarageMeterReading");           
-                     initialMeterReading= (String) map.get("initialMeterReading");
+                     if (map.containsValue("meterMake"))
+                     meterMake= (String) map.get("meterMake");
+                     else 
+                    	 meterMake="No Meter Make Found";
+                     
+                      
+                     if (map.containsValue("avarageMeterReading"))
+                    	 avarageMeterReading= (String) map.get("avarageMeterReading"); 
+                         else 
+                        	 meterMake="No avarageMeterReading  Found";        
+                    
+                     if (map.containsValue("initialMeterReading"))
+                    	 initialMeterReading= (String) map.get("initialMeterReading");
+                         else 
+                        	 meterMake="No initialMeterReading Found";
                      
                  } catch (Exception e) {
                      e.printStackTrace();
