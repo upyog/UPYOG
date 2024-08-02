@@ -151,6 +151,18 @@ public class TLConfiguration {
     @Value("${egov.bill.gen.endpoint}")
     private String fetchBillEndpoint;
 
+    @Value("${egov.bill.search.endpoint}")
+    private String searchBillEndpoint;
+
+    @Value("${egov.demand.create.endpoint}")
+    private String demandCreateEndpoint;
+
+    @Value("${egov.demand.search.endpoint}")
+    private String demandSearchEndpoint;
+
+    @Value("${egov.demand.update.endpoint}")
+    private String demandUpdateEndpoint;
+
     //Institutional key word
     @Value("${egov.ownershipcategory.institutional}")
     private String institutional;

@@ -61,12 +61,13 @@ public class MDMSValidator {
 
         Map<String,String> tradeTypeUomMap = getTradeTypeUomMap(mdmsData);
         //Map<String,String> accessoryeUomMap = getAccessoryUomMap(mdmsData);
-        Map<String,String> billingSlabsTradeTypeUomMap = getBillingSlabsTradeTypeUomMap(billingSlabs);
-        Map<String,String> billingSlabsAccessoryUomMap = getBillingSlabsAccessoryUomMap(billingSlabs);
-
-
-
-        licenseRequest.getLicenses().forEach(license -> {
+		
+        if (null != billingSlabs) {
+			Map<String, String> billingSlabsTradeTypeUomMap = getBillingSlabsTradeTypeUomMap(billingSlabs);
+			Map<String, String> billingSlabsAccessoryUomMap = getBillingSlabsAccessoryUomMap(billingSlabs);
+		}
+        
+		licenseRequest.getLicenses().forEach(license -> {
 
             String businessService = license.getBusinessService();
             if (businessService == null)

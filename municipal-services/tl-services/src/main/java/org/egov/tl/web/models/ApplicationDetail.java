@@ -21,6 +21,7 @@ public class ApplicationDetail {
     private List<String> action;
     private Double totalPayableAmount;
 	private String feeCalculationFormula;
+	private Map<Object, Object> billDetails;
 	private Map<Object, Object> userDetails;
 
 }
