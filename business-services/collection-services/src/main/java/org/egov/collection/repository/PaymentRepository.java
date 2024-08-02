@@ -351,12 +351,12 @@ public List<String> fetchPropertyDetail(String consumerCode,String businessservi
                      if (map.containsValue("avarageMeterReading"))
                     	 avarageMeterReading= (String) map.get("avarageMeterReading"); 
                          else 
-                        	 meterMake="No avarageMeterReading  Found";        
+                        	 avarageMeterReading="No avarageMeterReading  Found";        
                     
                      if (map.containsValue("initialMeterReading"))
                     	 initialMeterReading= (String) map.get("initialMeterReading");
                          else 
-                        	 meterMake="No initialMeterReading Found";
+                        	 initialMeterReading="No initialMeterReading Found";
                      
                  } catch (Exception e) {
                      e.printStackTrace();
