@@ -342,7 +342,7 @@ public List<String> fetchPropertyDetail(String consumerCode,String businessservi
              for (String jsonString : additional) {
                  try {
                      Map<String, String> map = objectMapper.readValue(jsonString, new TypeReference<Map<String, String>>() {});
-                     if (map.containsValue("meterMake"))
+                     if (map.containsValue("meterMake") &&  (String) map.get("meterMake")!=null )
                      meterMake= (String) map.get("meterMake");
                      else 
                     	 meterMake="No Meter Make Found";
@@ -404,7 +404,7 @@ public List<String> fetchPropertyDetail(String consumerCode,String businessservi
 		
 		
 		
-		 if (meterMake.isEmpty()|| meterMake=="")
+		 if (meterMake.isEmpty()|| meterMake=="" || meterMake==null)
         	 status.add("No Value Found");  
          else 
         	 status.add(meterMake);

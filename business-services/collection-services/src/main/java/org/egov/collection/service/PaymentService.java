@@ -207,7 +207,8 @@ public class PaymentService {
 		List<String> consumercode = paymentRepository.fetchConsumerCodeByReceiptNumber(receiptnumber);
 		String connectionno = consumercode.get(0);
 		List<String> status=null;
-		if(!paymentRepository.fetchPropertyDetail(connectionno, businessservice).isEmpty()) {
+		if(!paymentRepository.fetchPropertyDetail(connectionno, businessservice).isEmpty())
+		{
 				status = paymentRepository.fetchPropertyDetail(connectionno, businessservice);
 		HashMap<String, String> additionalDetail = new HashMap<>();
 		if (!StringUtils.isEmpty(status.get(0)))
@@ -235,7 +236,7 @@ public class PaymentService {
 		if (!StringUtils.isEmpty(status.get(9)))
 			payments.get(0).setInitialMeterReading(status.get(9));
 		if (!StringUtils.isEmpty(status.get(7)))
-			payments.get(0).setMeterinstallationDate(status.get(7));
+			payments.get(0).setMeterMake(status.get(7));
 		
 		payments.get(0).setPropertyDetail(additionalDetail);}
 	}
