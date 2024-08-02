@@ -1262,8 +1262,9 @@ public class TradeLicenseService {
 				.build();
 		BillResponse billResponse = billService.searchBill(billSearchCriteria,requestInfo);
 		Map<Object, Object> billDetailsMap = new HashMap<>();
-		billDetailsMap.put("billId", billResponse.getBill().get(0).getId());
-		
+		if (!CollectionUtils.isEmpty(billResponse.getBill())) {
+			billDetailsMap.put("billId", billResponse.getBill().get(0).getId());
+		}
 		applicationDetail.setBillDetails(billDetailsMap);
 		
 		// enrich userDetails
