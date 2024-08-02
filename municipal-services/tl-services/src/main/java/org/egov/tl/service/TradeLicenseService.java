@@ -1,14 +1,6 @@
 package org.egov.tl.service;
 
-import static org.egov.tl.util.TLConstants.ACTION_STATUS_APPROVED;
-import static org.egov.tl.util.TLConstants.STATUS_APPLIED;
-import static org.egov.tl.util.TLConstants.STATUS_APPROVED;
-import static org.egov.tl.util.TLConstants.STATUS_INITIATED;
-import static org.egov.tl.util.TLConstants.STATUS_PENDINGFORMODIFICATION;
-import static org.egov.tl.util.TLConstants.STATUS_REJECTED;
-import static org.egov.tl.util.TLConstants.TRADE_LICENSE_MODULE_CODE;
-import static org.egov.tl.util.TLConstants.businessService_BPA;
-import static org.egov.tl.util.TLConstants.businessService_TL;
+import static org.egov.tl.util.TLConstants.*;
 import static org.egov.tracer.http.HttpUtils.isInterServiceCall;
 
 import java.io.IOException;
@@ -32,6 +24,7 @@ import javax.validation.ValidatorFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
+import org.egov.mdms.model.MdmsResponse;
 import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.repository.RestCallRepository;
 import org.egov.tl.repository.TLRepository;
@@ -39,9 +32,9 @@ import org.egov.tl.service.notification.EditNotificationService;
 import org.egov.tl.util.TLConstants;
 import org.egov.tl.util.TradeUtil;
 import org.egov.tl.validator.TLValidator;
+import org.egov.tl.web.models.ApplicationDetail;
 import org.egov.tl.web.models.ApplicationStatusChangeRequest;
 import org.egov.tl.web.models.Difference;
-import org.egov.tl.web.models.NextAction;
 import org.egov.tl.web.models.OwnerInfo;
 import org.egov.tl.web.models.RequestInfoWrapper;
 import org.egov.tl.web.models.TradeLicense;
@@ -52,8 +45,12 @@ import org.egov.tl.web.models.TradeLicenseResponse;
 import org.egov.tl.web.models.TradeLicenseSearchCriteria;
 import org.egov.tl.web.models.TradeUnit;
 import org.egov.tl.web.models.UpdateTLStatusCriteriaRequest;
+import org.egov.tl.web.models.contract.BillResponse;
+import org.egov.tl.web.models.contract.BillSearchCriteria;
 import org.egov.tl.web.models.contract.BusinessService;
 import org.egov.tl.web.models.contract.BusinessServiceResponse;
+import org.egov.tl.web.models.contract.Demand;
+import org.egov.tl.web.models.contract.GenerateBillCriteria;
 import org.egov.tl.web.models.contract.PDFRequest;
 import org.egov.tl.web.models.contract.ProcessInstance;
 import org.egov.tl.web.models.contract.ProcessInstanceRequest;
@@ -130,6 +127,12 @@ public class TradeLicenseService {
     
     @Autowired
     private ObjectMapper objectMapper;
+    
+    @Autowired
+    private DemandService demandService;
+    
+    @Autowired
+    private BillService billService;
 
     @Value("${workflow.bpa.businessServiceCode.fallback_enabled}")
     private Boolean pickWFServiceNameFromTradeTypeOnly;
@@ -208,7 +211,7 @@ public class TradeLicenseService {
 
     private void enrichPreCreateNewTLValues(TradeLicenseRequest tradeLicenseRequest) {
     	tradeLicenseRequest.getLicenses().forEach(license -> {
-    		if(StringUtils.equals(license.getBusinessService(), TLConstants.businessService_NewTL)) {//need to change NewTL
+    		if(StringUtils.equals(license.getBusinessService(), businessService_NewTL)) {
         		enrichmentService.enrichCreateNewTLValues(tradeLicenseRequest.getRequestInfo().getUserInfo().getUuid(), license);
     		}
     	});
@@ -578,6 +581,7 @@ public class TradeLicenseService {
             String businessServiceName = null;
             switch (businessServicefromPath) {
                 case businessService_TL:
+                case TLConstants.businessService_NewTL:
                     businessServiceName = config.getTlBusinessServiceValue();
                     break;
 
@@ -588,9 +592,6 @@ public class TradeLicenseService {
                     businessServiceName = tradeType;
                     break;
                     
-                case TLConstants.businessService_NewTL:
-                    businessServiceName = config.getTlBusinessServiceValue();
-                    break;
             }
             BusinessService businessService = workflowService.getBusinessService(tradeLicenseRequest.getLicenses().get(0).getTenantId(), tradeLicenseRequest.getRequestInfo(), businessServiceName);
             List<TradeLicense> searchResult = getLicensesWithOwnerInfo(tradeLicenseRequest);
@@ -614,6 +615,7 @@ public class TradeLicenseService {
             List<String> endStates = Collections.nCopies(tradeLicenseRequest.getLicenses().size(),STATUS_APPROVED);
             switch (businessServicefromPath) {
                 case businessService_TL:
+                case TLConstants.businessService_NewTL:
                     if (config.getIsExternalWorkFlowEnabled()) {
                         wfIntegrator.callWorkFlow(tradeLicenseRequest);
                     } else {
@@ -626,16 +628,11 @@ public class TradeLicenseService {
                     wfIntegrator.callWorkFlow(tradeLicenseRequest);
                     break;
                     
-                case TLConstants.businessService_NewTL:
-                    if (config.getIsExternalWorkFlowEnabled()) {
-                        wfIntegrator.callWorkFlow(tradeLicenseRequest);
-                    } else {
-                        TLWorkflowService.updateStatus(tradeLicenseRequest);
-                    }
-                    break;
             }
             enrichmentService.postStatusEnrichment(tradeLicenseRequest,endStates,mdmsData);
             userService.createUser(tradeLicenseRequest, false);
+            // generate demand and bill
+            generateDemandAndBill(tradeLicenseRequest);
 //            calculationService.addCalculation(tradeLicenseRequest);
             repository.update(tradeLicenseRequest, idToIsStateUpdatableMap);
             licenceResponse=  tradeLicenseRequest.getLicenses();
@@ -652,6 +649,43 @@ public class TradeLicenseService {
     }
 
 
+
+
+
+	private void generateDemandAndBill(TradeLicenseRequest tradeLicenseRequest) {
+		tradeLicenseRequest.getLicenses().stream().forEach(license -> {
+			
+			if(StringUtils.equalsIgnoreCase(TLConstants.businessService_NewTL, license.getBusinessService())
+					&& StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, license.getAction())) {
+				
+				// search demand
+				List<Demand> exisitingDemands = demandService.searchDemand(TLConstants.STATE_LEVEL_TENANT_ID
+															, Collections.singleton(license.getApplicationNumber())
+															,tradeLicenseRequest.getRequestInfo(),license.getBusinessService());
+				List<Demand> savedDemands = new ArrayList<>();
+				if(CollectionUtils.isEmpty(exisitingDemands)) {
+	            	// generate demand
+					savedDemands = demandService.generateDemand(tradeLicenseRequest.getRequestInfo(), license, businessService_TL);
+	            }
+	            
+
+		        if(CollectionUtils.isEmpty(savedDemands)
+		        		&& CollectionUtils.isEmpty(exisitingDemands)) {
+		            throw new CustomException("INVALID CONSUMERCODE","Bill not generated due to no Demand found for the given consumerCode");
+		        }
+
+				// fetch/create bill
+	            GenerateBillCriteria billCriteria = GenerateBillCriteria.builder()
+	            									.tenantId(TLConstants.STATE_LEVEL_TENANT_ID)
+	            									.businessService(license.getBusinessService())
+	            									.consumerCode(license.getApplicationNumber()).build();
+	            BillResponse billResponse = billService.generateBill(tradeLicenseRequest.getRequestInfo(),billCriteria);
+	            
+			}
+		});
+	}
+
+
 	private TradeLicenseRequest enrichPreUpdateNewTLValues(TradeLicenseRequest tradeLicenseRequest, String businessServicefromPath) {
 		
 		TradeLicenseRequest tempTradeLicenseRequest = TradeLicenseRequest.builder()
@@ -666,6 +700,7 @@ public class TradeLicenseService {
 			
 			if(null == license.getTradeLicenseDetail()
 					&& (StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_VERIFIER, license.getAction())
+							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_VERIFY, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_VERIFIER, license.getAction())
@@ -1084,14 +1119,167 @@ public class TradeLicenseService {
 			applicationActionMaps.put(applicationNumber, actions);
 		});
 		
-		List<NextAction> nextActionList = new ArrayList<>();
+		List<ApplicationDetail> nextActionList = new ArrayList<>();
 		applicationActionMaps.entrySet().stream().forEach(entry -> {
-			nextActionList.add(NextAction.builder().applicationNumber(entry.getKey()).action(entry.getValue()).build());
+			nextActionList.add(ApplicationDetail.builder().applicationNumber(entry.getKey()).action(entry.getValue()).build());
 		});
 		
-		TradeLicenseActionResponse tradeLicenseActionResponse = TradeLicenseActionResponse.builder().nextActions(nextActionList).build();
+		TradeLicenseActionResponse tradeLicenseActionResponse = TradeLicenseActionResponse.builder().applicationDetails(nextActionList).build();
 		return tradeLicenseActionResponse;
 	
+	}
+
+
+
+
+
+	public TradeLicenseActionResponse getApplicationDetails(TradeLicenseActionRequest tradeLicenseActionRequest) {
+		
+		if(CollectionUtils.isEmpty(tradeLicenseActionRequest.getApplicationNumbers())) {
+			throw new CustomException("INVALID REQUEST","Provide Application Number.");
+		}
+		
+		TradeLicenseActionResponse tradeLicenseActionResponse = TradeLicenseActionResponse.builder()
+																.applicationDetails(new ArrayList<>())
+																.build();
+//		Map<String, Object> totalTaxMap = new HashMap<>();
+		
+		tradeLicenseActionRequest.getApplicationNumbers().stream().forEach(applicationNumber -> {
+			
+			// search application number
+			TradeLicenseSearchCriteria criteria = TradeLicenseSearchCriteria.builder()
+					.applicationNumber(applicationNumber)
+					.build();
+			List<TradeLicense> licenses = repository.getLicenses(criteria);
+			licenses = enrichmentService.enrichTradeLicenseSearch(licenses,criteria,tradeLicenseActionRequest.getRequestInfo());
+			TradeLicense license = null != licenses ? licenses.get(0): null;
+			
+
+			ApplicationDetail applicationDetail = getApplicationBillUserDetail(license, tradeLicenseActionRequest.getRequestInfo());
+			
+			
+			tradeLicenseActionResponse.getApplicationDetails().add(applicationDetail);
+		});
+		
+		return tradeLicenseActionResponse;
+	}
+
+
+	public ApplicationDetail getApplicationBillUserDetail(TradeLicense license, RequestInfo requestInfo) {
+		ApplicationDetail applicationDetail = ApplicationDetail.builder()
+												.applicationNumber(license.getApplicationNumber())
+												.build();
+		String businessService = null;
+	    String scaleOfBusiness = null;
+	    String tradeCategory = null;
+	    Integer periodOfLicense = 0;
+	    String zone = null;
+	    
+		if(StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)) {
+			getApplicationBillUserDetailForNewTL(applicationDetail, license, requestInfo, businessService, scaleOfBusiness, tradeCategory, periodOfLicense, zone);
+		}
+		else if(StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_TL)) {
+
+		}
+		
+		return applicationDetail;
+	}
+
+
+
+
+
+	private ApplicationDetail getApplicationBillUserDetailForNewTL(ApplicationDetail applicationDetail, TradeLicense license, RequestInfo requestInfo, String businessService, String scaleOfBusiness
+							, String tradeCategory, Integer periodOfLicense, String zone) {
+		
+		Double totalFee;
+		// reading values from TL in DB
+		try {
+		    businessService = license.getBusinessService();
+		    scaleOfBusiness = license.getTradeLicenseDetail().getAdditionalDetail().get(TLConstants.SCALE_OF_BUSINESS).asText();
+		    tradeCategory = license.getTradeLicenseDetail().getAdditionalDetail().get(TLConstants.TRADE_CATEGORY).asText();
+		    periodOfLicense = license.getTradeLicenseDetail().getAdditionalDetail().get(TLConstants.PERIOD_OF_LICENSE).asInt();
+		    zone = license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get(TLConstants.ZONE).asText();
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to fetch values from trade license while calculating tax.");
+		}
+		
+		// validating values from TL in DB
+		if(StringUtils.isEmpty(scaleOfBusiness)
+				|| StringUtils.isEmpty(zone)
+				|| StringUtils.isEmpty(tradeCategory)) {
+			throw new RuntimeException("Tax can't be calculated for empty values.");
+		}
+		
+		// mdms call
+		MdmsResponse mdmsDataResponse = tradeUtil.mDMSCallCalculateFee(requestInfo, license, scaleOfBusiness, periodOfLicense, zone, tradeCategory);
+		
+		
+		List<Object> feeStructure = mdmsDataResponse.getMdmsRes().get(TLConstants.TRADE_LICENSE).get(TLConstants.FEE_STRUCTURE);
+		Double scaleOfBusinessToLicensePeriodPrice = 0.00;
+		Double tradeCategoryPrice = 0.00;
+		Double zonePrice = 0.00;
+		
+		// reading values from mdms
+		for (Object object : feeStructure) {
+		    Map<String, Object> map = (Map<String, Object>) object;
+		    
+		    if (StringUtils.equalsIgnoreCase(map.get(TLConstants.STRUCTURE_OF).toString(), TLConstants.ZONE) &&
+		        StringUtils.equalsIgnoreCase(map.get(TLConstants.TYPE).toString(), zone)) {
+		        zonePrice = ((Number) map.get(TLConstants.PRICE)).doubleValue();
+		    }
+		    else if (StringUtils.equalsIgnoreCase(map.get(TLConstants.STRUCTURE_OF).toString(), TLConstants.TRADE_CATEGORY) &&
+		            StringUtils.equalsIgnoreCase(map.get(TLConstants.TYPE).toString(), tradeCategory)) {
+		    	tradeCategoryPrice = ((Number) map.get(TLConstants.PRICE)).doubleValue();
+		    }
+		    else if (StringUtils.equalsIgnoreCase(map.get(TLConstants.STRUCTURE_OF).toString(), TLConstants.SCALE_OF_BUSINESS) &&
+		            StringUtils.equalsIgnoreCase(map.get(TLConstants.TYPE).toString(), scaleOfBusiness) &&
+		            map.get(TLConstants.PERIOD_OF_LICENSE) == periodOfLicense) {
+		    	scaleOfBusinessToLicensePeriodPrice = ((Number) map.get(TLConstants.PRICE)).doubleValue();
+		    }
+		}
+		
+		// total fee for NewTL
+		totalFee = scaleOfBusinessToLicensePeriodPrice + (tradeCategoryPrice * zonePrice);
+		applicationDetail.setTotalPayableAmount(totalFee);
+		
+		// formula for NewTL
+		StringBuilder feeCalculationFormula = new StringBuilder("Scale Of Business( ").append(scaleOfBusiness);
+		feeCalculationFormula.append(" ) and License Period ( ").append(periodOfLicense.toString());
+		feeCalculationFormula.append(" Year ) : ").append(scaleOfBusinessToLicensePeriodPrice);
+		feeCalculationFormula.append("  +  [Zone (").append(zone);
+		feeCalculationFormula.append("): ").append(zonePrice);
+		feeCalculationFormula.append(" * Category (").append(tradeCategory);
+		feeCalculationFormula.append("): ").append(tradeCategoryPrice).append(" ]");
+		
+		applicationDetail.setFeeCalculationFormula(feeCalculationFormula.toString());
+		
+		// search bill Details
+		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
+				.tenantId(TLConstants.STATE_LEVEL_TENANT_ID)
+				.consumerCode(Collections.singleton(applicationDetail.getApplicationNumber()))
+				.service(license.getBusinessService())
+				.build();
+		BillResponse billResponse = billService.searchBill(billSearchCriteria,requestInfo);
+		Map<Object, Object> billDetailsMap = new HashMap<>();
+		billDetailsMap.put("billId", billResponse.getBill().get(0).getId());
+		
+		applicationDetail.setBillDetails(billDetailsMap);
+		
+		// enrich userDetails
+		Map<Object, Object> userDetails = new HashMap<>();
+		userDetails.put("UserName", license.getTradeName());
+		userDetails.put("MobileNo", license.getTradeLicenseDetail().getOwners().get(0).getMobileNumber());
+		userDetails.put("Email", license.getTradeLicenseDetail().getOwners().get(0).getEmailId());
+		userDetails.put("Address", new String(license.getTradeLicenseDetail().getAddress().getAddressLine1().concat(", "))
+									.concat(license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("wardName").asText().concat(", "))
+									.concat(license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("ulbName").asText().concat(", "))
+									.concat(license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("district").asText().concat(", "))
+									.concat(license.getTradeLicenseDetail().getAddress().getPincode()));
+
+		applicationDetail.setUserDetails(userDetails);
+		
+		return applicationDetail;
 	}
 
 }

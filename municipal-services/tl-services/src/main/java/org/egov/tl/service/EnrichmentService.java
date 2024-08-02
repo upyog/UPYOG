@@ -703,11 +703,11 @@ public class EnrichmentService {
             businessService = businessService_TL;
         TradeLicenseSearchCriteria searchCriteria = enrichTLSearchCriteriaWithOwnerids(criteria,licenses);
      // if need to implement Locality/Ward/Zone/ULB validations
-//        switch (businessService) {
-//            case businessService_TL:
-//                enrichBoundary(new TradeLicenseRequest(requestInfo, licenses));
-//                break;
-//        }
+        switch (businessService) {
+            case businessService_TL:
+                enrichBoundary(new TradeLicenseRequest(requestInfo, licenses));
+                break;
+        }
         UserDetailResponse userDetailResponse = userService.getUser(searchCriteria,requestInfo);
         enrichOwner(userDetailResponse,licenses);
         return licenses;

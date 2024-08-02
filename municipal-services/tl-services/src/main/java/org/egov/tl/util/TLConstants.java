@@ -346,6 +346,8 @@ public class TLConstants {
 
     public static final String ACTION_STATUS_PAID  = "PAID";
 
+    public static final String ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT = "RETURN_TO_INITIATOR_FOR_PAYMENT";
+
     public static final String VARIABLE_ACTION = "action";
 
     public static final String VARIABLE_STATUS = "status";
@@ -463,5 +465,22 @@ public class TLConstants {
     public static String ROLE_CODE_TL_VERIFIER = "TL_VERIFIER";
 
     public static String ROLE_CODE_TL_APPROVER = "TL_APPROVER";
+
+    public static final String STATE_LEVEL_TENANT_ID = "hp";
+    
+    // TL Fee Calculation
+		// db keys
+    public static final String SCALE_OF_BUSINESS = "scaleOfBusiness";
+    public static final String TRADE_CATEGORY = "tradeCategory";
+    public static final String PERIOD_OF_LICENSE = "periodOfLicense";
+    public static final String ZONE = "zone";
+    
+    	// mdms keys
+    public static final String TRADE_LICENSE = "TradeLicense";
+    public static final String FEE_STRUCTURE = "FeeStructure";
+    public static final String CALCULATION_TYPE = "CalculationType";
+    public static final String STRUCTURE_OF = "feeStructureOf";
+    public static final String TYPE = "type";
+    public static final String PRICE = "price";
 
 }

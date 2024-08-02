@@ -99,13 +99,17 @@ public class Bill {
 
 
 	public enum StatusEnum {
-	  ACTIVE("ACTIVE"),
+		ACTIVE("ACTIVE"),
 
-	  CANCELLED("CANCELLED"),
+		CANCELLED("CANCELLED"),
 
-	  PAID("PAID"),
+		PAID("PAID"),
 
-	  EXPIRED("EXPIRED");
+		PARTIALLY_PAID("PARTIALLY_PAID"),
+
+		PAYMENT_CANCELLED("PAYMENT_CANCELLED"),
+
+		EXPIRED("EXPIRED");
 
 	  private String value;
 
