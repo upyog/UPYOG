@@ -174,7 +174,8 @@ const TLApplicationDetails = () => {
     <React.Fragment>
       <div className="cardHeaderWithOptions" style={isMobile ? {} : {maxWidth:"960px"}}>
         <Header>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
-        <div >
+        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+       
         <MultiLink
           className="multilinkWrapper"
           onHeadClick={() => setShowOptions(!showOptions)}
