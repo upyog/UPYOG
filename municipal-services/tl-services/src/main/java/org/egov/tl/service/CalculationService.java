@@ -83,13 +83,13 @@ public class CalculationService {
         licenses.forEach(license -> {
             criterias.add(new CalulationCriteria(license,license.getApplicationNumber(),license.getTenantId()));
             
-//            if(StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
-//            		&& uri.toString().contains("v1/_calculate")) {
-//            	int index = uri.indexOf("v1/_calculate");
-//                if (index != -1) {
-//                    uri.replace(index, index + "v1/_calculate".length(), "v1/NewTL/_calculate");
-//                }
-//            }
+            if(StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
+            		&& uri.toString().contains("v1/_calculate")) {
+            	int index = uri.indexOf("v1/_calculate");
+                if (index != -1) {
+                    uri.replace(index, index + "v1/_calculate".length(), "v1/NewTL/_calculate");
+                }
+            }
         });
 
         CalculationReq request = CalculationReq.builder().calulationCriteria(criterias)
