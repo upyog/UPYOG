@@ -287,31 +287,41 @@ if(!request.getProperty().getCreationReason().equals(CreationReason.MUTATION))
 
 		util.mergeAdditionalDetails(request, propertyFromSearch);
 
-		if(config.getIsWorkflowEnabled()) {
+		if(config.getIsWorkflowEnabled()) 
+		{
 
 			State state = wfService.updateWorkflow(request, CreationReason.UPDATE);
 
 			if (state.getIsStartState() == true
 					&& state.getApplicationStatus().equalsIgnoreCase(Status.INWORKFLOW.toString())
-					&& !propertyFromSearch.getStatus().equals(Status.INWORKFLOW)) {
-
-				propertyFromSearch.setStatus(Status.INACTIVE);
+					&& !propertyFromSearch.getStatus().equals(Status.INWORKFLOW))
+			{
+				if(request.getProperty().isIsinactive() && propertyFromSearch.getStatus().equals(Status.ACTIVE))
+					propertyFromSearch.setStatus(Status.INACTIVE);
+				else if(request.getProperty().isIsactive() && propertyFromSearch.getStatus().equals(Status.INACTIVE))
+					propertyFromSearch.setStatus(Status.ACTIVE);
 				producer.push(config.getUpdatePropertyTopic(), OldPropertyRequest);
 				util.saveOldUuidToRequest(request, propertyFromSearch.getId());
 				producer.push(config.getSavePropertyTopic(), request);
 
-			} else if (state.getIsTerminateState()
-					&& !state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString())) {
+			}
+			
+			
+			else if (state.getIsTerminateState()
+					&& !state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString())) 
+			{
 
 				terminateWorkflowAndReInstatePreviousRecord(request, propertyFromSearch);
-			}else {
+			}
+			else {
 				/*
 				 * If property is In Workflow then continue
 				 */
 				producer.push(config.getUpdatePropertyTopic(), request);
 			}
 
-		} else {
+		}
+		else {
 
 			/*
 			 * If no workflow then update property directly with mutation information

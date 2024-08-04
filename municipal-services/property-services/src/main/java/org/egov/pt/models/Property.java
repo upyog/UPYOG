@@ -83,6 +83,15 @@ public class Property extends PropertyInfo {
 
 	@JsonProperty("channel")
 	private Channel channel;
+	
+	@Builder.Default
+	@JsonProperty("isactive")
+	private boolean isactive = false;
+	
+	
+	@Builder.Default
+	@JsonProperty("isinactive")
+	private boolean isinactive = false;
 
 	@JsonProperty("documents")
 	@Valid
