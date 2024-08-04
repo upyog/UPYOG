@@ -1,5 +1,6 @@
 package org.egov.tl.web.models;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public class ApplicationDetail {
 	
 	private String applicationNumber;
     private List<String> action;
-    private Double totalPayableAmount;
+    private BigDecimal totalPayableAmount;
 	private String feeCalculationFormula;
 	private Map<Object, Object> billDetails;
 	private Map<Object, Object> userDetails;
