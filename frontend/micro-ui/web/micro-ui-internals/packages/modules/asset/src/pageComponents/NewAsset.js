@@ -16,7 +16,6 @@ import { Controller, useForm } from "react-hook-form";
 
 const NewAsset
   = ({ t, config, onSelect, formData }) => {
-    console.log("formdatats",formData);
     const { pathname: url } = useLocation();
     let index = window.location.href.charAt(window.location.href.length - 1);
     let validation = {};
@@ -1764,20 +1763,20 @@ const NewAsset
               />
               <CardLabel>{`${t("AST_INVOICE_DATE") + " *"}`}</CardLabel>
                <TextInput
-              t={t}
-              type={"date"}
-              isMandatory={false}
-              optionKey="i18nKey"
-              name="invoiceDate"
-              value={invoiceDate}
-              onChange={setInvoiceDate}
-              style={{ width: "50%" }}
-              max={new Date().toISOString().split('T')[0]}
-              rules={{
-                required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
-              }}
-            />
+                t={t}
+                type={"date"}
+                isMandatory={false}
+                optionKey="i18nKey"
+                name="invoiceDate"
+                value={invoiceDate}
+                onChange={setInvoiceDate}
+                style={{ width: "50%" }}
+                max={new Date().toISOString().split('T')[0]}
+                rules={{
+                  required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                  validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                }}
+              />
 
               <CardLabel>{`${t("AST_MANUFACTURER")}`}</CardLabel>
               <TextInput

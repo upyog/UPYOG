@@ -24,9 +24,12 @@ import NewResponse from "./pages/employee/TestApplication/Create/NewResponse";
 import AssetAssign from "./pageComponents/AssetAssign";
 import ReturnAsset from "./pages/employee/ReturnAsset";
 import ReturnAssignedAsset from "./pageComponents/ReturnAssignedAsset";
-import EditAsset from "./pages/employee/EditAsset";
+// import EditAsset from "./pages/employee/EditAsset";
+import EditAsset from "./pages/employee/EditAsset/EditAsset";
 import EditGeneralDetails from "./pageComponents/EditGeneralDetails";
 import EditAssetDetails from "./pageComponents/EditAssetDetails";
+import EditResponse from "./pages/employee/EditResponse";
+
 
 
 
@@ -52,6 +55,7 @@ const componentsToRegister = {
   editAsset:EditAsset,
   EditGeneralDetails,
   EditAssetDetails,
+  editResponse:EditResponse
   
   
 };
