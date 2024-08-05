@@ -227,7 +227,7 @@ public class GeneralLedgerReportAction extends BaseFormAction {
 				fund = (Fund) persistenceService.find("from Fund where id = ?", 0);
 			} else
 				fund = (Fund) persistenceService.find("from Fund where id = ?",
-						(Integer.parseInt(generalLedgerReportBean.getFund_id())));
+						Integer.parseInt(generalLedgerReportBean.getFund_id()));
 		
 		}
 		if (fund == null && glCode!=null) {
