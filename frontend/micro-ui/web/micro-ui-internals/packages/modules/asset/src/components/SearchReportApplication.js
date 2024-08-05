@@ -19,7 +19,6 @@ import QRCode from 'qrcode';
 
 
 const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, data, count, setShowToast }) => {
-    console.log("data",data);
     
     const isMobile = window.Digit.Utils.browser.isMobile();
     const todaydate = new Date();
@@ -108,7 +107,7 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
           {
             Header: t("AST_PINCODE"),
             Cell: ({ row }) => {
-              console.log("row in pincode",row);
+              
                 return GetCell(`${row?.original?.addressDetails?.["pincode"]}`)
               },
             disableSortBy: true,
@@ -163,7 +162,6 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
           head: [tableColumn],
           body: tableRows,
       });
-
       doc.save("Asset-Reports.pdf");
   }
 

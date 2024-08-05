@@ -14,7 +14,6 @@ const ASSETCreate = ({ parentRoute }) => {
   const stateId = Digit.ULBService.getStateId();
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("Asset_Test", {});
-  // let { data: commonFields } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig"); //  PROPERTY CONFIG HOOK , just for commkonfeild config 
   const goNext = (skipStep, index, isAddMultiple, key) => {
 
     

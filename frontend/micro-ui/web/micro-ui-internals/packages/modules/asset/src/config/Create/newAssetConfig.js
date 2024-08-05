@@ -9,8 +9,6 @@ export const newAssetConfig =
             "nextStep": "asset-deatils",
             "key": "Documents"
         },
-
-        
         {
         "route": "asset-deatils",
         "component": "NewAssetClassification",
@@ -27,7 +25,6 @@ export const newAssetConfig =
         },
     ],
     },
-
     {
     "head": "TITLE_ASSET_DEATIL",
     "body": [
@@ -47,7 +44,6 @@ export const newAssetConfig =
         },
     ],
     },
-    
     {
     "head": "AST_ADDRESS_DETAILS",
     "body": 
@@ -79,25 +75,8 @@ export const newAssetConfig =
         "isMandatory": true,
         "type": "component",
         },
-
-        {
-        "type": "component",
-        "route": "street",
-        "component": "AssetStreets",
-        "key": "address",
-        "withoutLabel": true,
-        "texts": {
-            "header": "AST_ADDRESS_DETAILS",
-            "submitBarLabel": "COMMON_NEXT",
-        },
-        "nextStep": "documents",
-        },
-
-        
     ],
     },
-        
-
     {
     "head": "ES_TITILE_DOCUMENT_DETAILS",
     "body": [
