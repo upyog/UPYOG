@@ -151,6 +151,9 @@ public class GarbageCommonService {
 			});
 		}
 		
+//		create tbl grbg_scheduled_requests(uuid, garbage_id, type(grbgActivation/grbgDeactivation), start_date, end_date, is_active)
+//		create tbl grbg_old_details(uuid, garbage_id, old_garbage_id)
+//		create tbl grbg_declaration(uuid, statement, is_active)
 		
 		return garbageCommonRequest;
 	}
