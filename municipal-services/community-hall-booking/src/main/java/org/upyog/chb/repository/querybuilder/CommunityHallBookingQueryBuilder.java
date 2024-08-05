@@ -33,7 +33,7 @@ public class CommunityHallBookingQueryBuilder {
 
 	private static final String documentDetailsQuery = "select * from public.eg_chb_document_detail  where booking_id in (";
 
-	private final String paginationWrapper = "SELECT * FROM " + "(SELECT *, DENSE_RANK() OVER () offset_ FROM " + "({})"
+	private final String paginationWrapper = "SELECT * FROM " + "(SELECT *, DENSE_RANK() OVER (ORDER BY application_date DESC) offset_ FROM " + "({})"
 			+ " result) result_offset " + "WHERE offset_ > ? AND offset_ <= ?";
 
 	private static final String COMMUNITY_HALL_SLOTS_AVAIALABILITY_QUERY = " SELECT ecbd.tenant_id, ecbd.community_hall_code, ecsd.capacity, ecsd.hall_code, ecsd.status,ecsd.booking_date \n"
@@ -100,15 +100,20 @@ public class CommunityHallBookingQueryBuilder {
 			addToPreparedStatement(preparedStmtList, createdBy);
 		}
 
-		// Approval from createddate and to createddate search criteria
+		// From payment_date and to payment_date search criteria
+		//TODO: check payment date between condition
 		if (criteria.getFromDate() != null && criteria.getToDate() != null) {
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" ecbd.createdtime BETWEEN ").append(criteria.getFromDate()).append(" AND ")
+			builder.append(" ecbd.payment_date BETWEEN ").append(criteria.getFromDate()).append(" AND ")
 					.append(criteria.getToDate());
 		} else if (criteria.getFromDate() != null && criteria.getToDate() == null) {
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" ecbd.createdtime >= ").append(criteria.getFromDate());
+			builder.append(" ecbd.payment_date >= ").append(criteria.getFromDate());
+		} else if (criteria.getFromDate() == null && criteria.getToDate() != null) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" ecbd.payment_date < ").append(criteria.getToDate());
 		}
+		
 		return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
 	}
 
