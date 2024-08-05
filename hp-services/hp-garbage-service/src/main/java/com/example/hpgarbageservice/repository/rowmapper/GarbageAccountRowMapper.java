@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
@@ -20,9 +21,16 @@ import com.example.hpgarbageservice.model.GarbageBill;
 import com.example.hpgarbageservice.model.GrbgApplication;
 import com.example.hpgarbageservice.model.GrbgCommercialDetails;
 import com.example.hpgarbageservice.model.GrbgDocument;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageAccount>> {
+	
+	@Autowired
+	private ObjectMapper objectMapper;
 
     @Override
     public List<GarbageAccount> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -51,11 +59,14 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                         .type(rs.getString("type"))
                         .name(rs.getString("name"))
                         .mobileNumber(rs.getString("mobile_number"))
+                        .gender(rs.getString("gender"))
+                        .emailId(rs.getString("email_id"))
                         .isOwner(rs.getBoolean("is_owner"))
                         .userUuid(rs.getString("user_uuid"))
                         .declarationUuid(rs.getString("declaration_uuid"))
                         .grbgCollectionAddressUuid(rs.getString("grbg_coll_address_uuid"))
                         .status(rs.getString("status"))
+                        .additionalDetail(getAdditionalDetail(rs, "additional_detail"))
 //                        .parentId(rs.getLong("parent_id"))
                         .documents(new ArrayList<>())
                         .garbageBills(new ArrayList<>())
@@ -144,7 +155,24 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
         return new ArrayList<>(accountsMap.values());
     }
 
-    private GrbgDocument populateGarbageDocument(ResultSet rs, String prefix) throws SQLException {
+    private JsonNode getAdditionalDetail(ResultSet rs, String columnLabel) {
+    	JsonNode jsonNode = null;
+    	try {
+    		String jsonString = rs.getString(columnLabel);
+            if (jsonString != null) {
+                jsonNode = objectMapper.readTree(jsonString);
+            }
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return jsonNode;
+	}
+
+	private GrbgDocument populateGarbageDocument(ResultSet rs, String prefix) throws SQLException {
 		
     	GrbgDocument garbageDocument = GrbgDocument.builder()
     			.uuid(rs.getString(prefix+"uuid"))
@@ -198,11 +226,14 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                 .type(rs.getString(prefix + "type"))
                 .name(rs.getString(prefix + "name"))
                 .mobileNumber(rs.getString(prefix + "mobile_number"))
+                .gender(rs.getString(prefix + "gender"))
+                .emailId(rs.getString(prefix + "email_id"))
                 .isOwner(rs.getBoolean(prefix + "is_owner"))
                 .userUuid(rs.getString(prefix + "user_uuid"))
                 .declarationUuid(rs.getString(prefix + "declaration_uuid"))
                 .grbgCollectionAddressUuid(rs.getString(prefix + "grbg_coll_address_uuid"))
                 .status(rs.getString(prefix + "status"))
+                .additionalDetail(getAdditionalDetail(rs, prefix + "additional_detail"))
 //                .parentId(rs.getLong(prefix + "parent_id"))
                 .documents(new ArrayList<>())
                 .garbageBills(new ArrayList<>())

@@ -2,6 +2,9 @@ package com.example.hpgarbageservice.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,6 +32,10 @@ public class GarbageAccount {
 
 	private String mobileNumber;
 
+	private String gender;
+
+	private String emailId;
+
 //	private Long parentId;
 	private Boolean isOwner; 
 	
@@ -41,6 +48,8 @@ public class GarbageAccount {
 	private String status;
 	
 	private GrbgApplication grbgApplication;
+	
+	private GrbgOldDetails grbgOldDetails;
 
 	private GrbgCommercialDetails grbgCommercialDetails;
 	
@@ -50,5 +59,12 @@ public class GarbageAccount {
 	
 	private List<GarbageBill> garbageBills;
 
+	private List<GrbgCollectionUnit> grbgCollectionUnits;
+
+	private List<GrbgAddress> addresses;
+
+    private JsonNode additionalDetail = null;
+
 	private List<GarbageAccount> childGarbageAccounts;
+	
 }

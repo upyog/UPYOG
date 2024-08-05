@@ -54,7 +54,7 @@ public class GarbageAccountService {
 				enrichCreateGarbageAccount(garbageAccount, createGarbageRequest.getRequestInfo());
 				
 				// enrich garbage document
-				enrichCreateGarbageDocuments(garbageAccount);
+//				enrichCreateGarbageDocuments(garbageAccount);
 
 				// enrich create garbage application
 				enrichCreateGarbageApplication(garbageAccount, createGarbageRequest.getRequestInfo());
@@ -63,7 +63,7 @@ public class GarbageAccountService {
 				garbageAccountsResponse.add(garbageAccountRepository.create(garbageAccount));
 				
 				// create garbage documents
-				createGarbageDocuments(garbageAccount);
+//				createGarbageDocuments(garbageAccount);
 				
 				// create garbage application
 				grbgApplicationRepository.create(garbageAccount.getGrbgApplication());

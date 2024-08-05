@@ -16,6 +16,8 @@ import org.springframework.util.CollectionUtils;
 import com.example.hpgarbageservice.model.GarbageAccount;
 import com.example.hpgarbageservice.model.SearchCriteriaGarbageAccount;
 import com.example.hpgarbageservice.repository.rowmapper.GarbageAccountRowMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.example.hpgarbageservice.repository.rowmapper.GarbageAccountRowMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,9 @@ public class GarbageAccountRepository {
 	
 	@Autowired
 	GarbageAccountRowMapper garbageAccountRowMapper;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	private static final String SELECT_QUERY_ACCOUNT = "SELECT acc.*, doc.uuid as doc_uuid, doc.doc_ref_id as doc_doc_ref_id, doc.doc_name as doc_doc_name, doc.doc_type as doc_doc_type, doc.doc_category as doc_doc_category, doc.tbl_ref_uuid as doc_tbl_ref_uuid "
 			+ ", bill.id as bill_id, bill.bill_ref_no as bill_bill_ref_no, bill.garbage_id as bill_garbage_id"
@@ -36,10 +41,10 @@ public class GarbageAccountRepository {
 			+ ", bill.payment_status as bill_payment_status, bill.created_by as bill_created_by, bill.created_date as bill_created_date, bill.last_modified_by as bill_last_modified_by"
 			+ ", bill.last_modified_date as bill_last_modified_date "
 			+ ", sub_acc.id as sub_acc_id, sub_acc.uuid as sub_acc_uuid, sub_acc.garbage_id as sub_acc_garbage_id, sub_acc.property_id as sub_acc_property_id, sub_acc.type as sub_acc_type "
-			+ ", sub_acc.name as sub_acc_name, sub_acc.mobile_number as sub_acc_mobile_number, sub_acc.is_owner as sub_acc_is_owner"
+			+ ", sub_acc.name as sub_acc_name, sub_acc.mobile_number as sub_acc_mobile_number, sub_acc.gender as sub_acc_gender, sub_acc.email_id as sub_acc_email_id, sub_acc.is_owner as sub_acc_is_owner"
 			+ ", sub_acc.user_uuid as sub_acc_user_uuid, sub_acc.declaration_uuid as sub_acc_declaration_uuid, sub_acc.grbg_coll_address_uuid as sub_acc_grbg_coll_address_uuid, sub_acc.status as sub_acc_status"
 			+ ", sub_acc.created_by as sub_acc_created_by, sub_acc.created_date as sub_acc_created_date, sub_acc.last_modified_by as sub_acc_last_modified_by"
-			+ ", sub_acc.last_modified_date as sub_acc_last_modified_date"
+			+ ", sub_acc.last_modified_date as sub_acc_last_modified_date, sub_acc.additional_detail as sub_acc_additional_detail"
 			+ ", sub_acc_bill.id as sub_acc_bill_id, sub_acc_bill.bill_ref_no as sub_acc_bill_bill_ref_no, sub_acc_bill.garbage_id as sub_acc_bill_garbage_id " 
 			+ ", sub_doc.uuid as sub_doc_uuid, sub_doc.doc_ref_id as sub_doc_doc_ref_id, sub_doc.doc_name as sub_doc_doc_name, sub_doc.doc_type as sub_doc_doc_type, sub_doc.doc_category as sub_doc_doc_category, sub_doc.tbl_ref_uuid as sub_doc_tbl_ref_uuid "
 		    + ", sub_acc_bill.bill_amount as sub_acc_bill_bill_amount, sub_acc_bill.arrear_amount as sub_acc_bill_arrear_amount, sub_acc_bill.panelty_amount as sub_acc_bill_panelty_amount " 
@@ -70,14 +75,14 @@ public class GarbageAccountRepository {
 
     
     private static final String INSERT_ACCOUNT = "INSERT INTO hpudd_grbg_account (id, uuid, garbage_id, property_id, type, name"
-    		+ ", mobile_number, is_owner, user_uuid, declaration_uuid, grbg_coll_address_uuid, status, created_by, created_date, last_modified_by, last_modified_date) "
-    		+ "VALUES (:id, :uuid, :garbageId, :propertyId, :type, :name, :mobileNumber, :isOwner, :userUuid, :declarationUuid, :grbgCollectionAddressUuid, :status, :createdBy, :createdDate, "
+    		+ ", mobile_number, is_owner, user_uuid, declaration_uuid, grbg_coll_address_uuid, status, gender, email_id, additional_detail, created_by, created_date, last_modified_by, last_modified_date) "
+    		+ "VALUES (:id, :uuid, :garbageId, :propertyId, :type, :name, :mobileNumber, :isOwner, :userUuid, :declarationUuid, :grbgCollectionAddressUuid, :status, :gender, :emailId, :additionalDetail :: JSONB, :createdBy, :createdDate, "
     		+ ":lastModifiedBy, :lastModifiedDate)";
     
     private static final String UPDATE_ACCOUNT_BY_ID = "UPDATE hpudd_grbg_account SET garbage_id = :garbageId, uuid =:uuid"
     		+ ", property_id = :propertyId, type = :type, name = :name, mobile_number = :mobileNumber, is_owner = :isOwner"
     		+ ", user_uuid = :userUuid, declaration_uuid = :declarationUuid, grbg_coll_address_uuid = :grbgCollectionAddressUuid, status = :status"
-    		+ ", last_modified_by = :lastModifiedBy, last_modified_date = :lastModifiedDate WHERE id = :id";
+    		+ ", gender = :gender, email_id = :emaiId, additional_detail = :additionalDetail :: JSONB, last_modified_by = :lastModifiedBy, last_modified_date = :lastModifiedDate WHERE id = :id";
 
 	public static final String SELECT_NEXT_SEQUENCE = "select nextval('seq_id_hpudd_grbg_account')";
     
@@ -106,6 +111,9 @@ public class GarbageAccountRepository {
         accountInputs.put("declarationUuid", account.getDeclarationUuid());
         accountInputs.put("grbgCollectionAddressUuid", account.getGrbgCollectionAddressUuid());
         accountInputs.put("status", account.getStatus());
+        accountInputs.put("gender", account.getGender());
+        accountInputs.put("emailId", account.getEmailId());
+        accountInputs.put("additionalDetail", objectMapper.convertValue(account.getAdditionalDetail(), ObjectNode.class).toString());
 //        accountInputs.put("parentId", account.getParentId());
         accountInputs.put("createdBy", account.getAuditDetails().getCreatedBy());
         accountInputs.put("createdDate", account.getAuditDetails().getCreatedDate());
@@ -134,6 +142,9 @@ public class GarbageAccountRepository {
         accountInputs.put("declarationUuid", newGarbageAccount.getDeclarationUuid());
         accountInputs.put("grbgCollectionAddressUuid", newGarbageAccount.getGrbgCollectionAddressUuid());
         accountInputs.put("status", newGarbageAccount.getStatus());
+        accountInputs.put("gender", newGarbageAccount.getGender());
+        accountInputs.put("emailId", newGarbageAccount.getEmailId());
+        accountInputs.put("additionalDetail", newGarbageAccount.getAdditionalDetail());
 //        accountInputs.put("parentId", newGarbageAccount.getParentId());
 //        accountInputs.put("createdBy", newGarbageAccount.getAuditDetails().getCreatedBy());
 //        accountInputs.put("createdDate", newGarbageAccount.getAuditDetails().getCreatedDate());
