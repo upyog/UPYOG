@@ -76,7 +76,7 @@ const MDMSAdd = ({ defaultFormData, updatesToUISchema, screenType = "add", onVie
         },
       };
   const reqCriteriaAdd = {
-    url: api ? api?.url : Digit.Utils.workbench.getMDMSActionURL(moduleName,masterName,"create"),
+    url: api ? api?.url : `/${Digit.Hooks.workbench.getMDMSContextPath()}/v2/_create/${moduleName}.${masterName}`,
     params: {},
     body: { ...body },
     config: {

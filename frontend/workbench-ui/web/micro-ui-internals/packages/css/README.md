@@ -42,7 +42,6 @@ frontend/micro-ui/web/public/index.html
 ### Changelog
 
 ```bash
-1.8.1 added workbench releated css for popup
 1.8.0 Workbench v1.0
 1.8.0-beta.13 fixed the login text styling issue
 1.8.0-beta.1 styles for login dropdown and homepage dropdowns

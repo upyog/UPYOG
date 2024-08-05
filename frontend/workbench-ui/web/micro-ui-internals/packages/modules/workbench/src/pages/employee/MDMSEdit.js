@@ -70,7 +70,7 @@ const MDMSEdit = ({...props}) => {
   
 
   const reqCriteriaUpdate = {
-    url:  Digit.Utils.workbench.getMDMSActionURL(moduleName,masterName,"update"),
+    url: `/${Digit.Hooks.workbench.getMDMSContextPath()}/v2/_update/${moduleName}.${masterName}`,
     params: {},
     body: {
       
@@ -104,7 +104,7 @@ const MDMSEdit = ({...props}) => {
 
     mutation.mutate(
       {
-        url:reqCriteriaUpdate?.url,
+        url:`/${Digit.Hooks.workbench.getMDMSContextPath()}/v2/_update/${moduleName}.${masterName}`,
         params: {},
         body: {
           Mdms:{
