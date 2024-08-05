@@ -200,6 +200,9 @@ public class CommunityHallBookingConfiguration {
 	@Value("${chb.notification.booked.template}")
 	private String bookedTemplate;
 	
+	@Value("${chb.claculation.tax.applicable}")
+	private String applicableTaxes;
+	
 
 	/*
 	 * @Bean public ObjectMapper objectMapper() { return new
