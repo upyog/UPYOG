@@ -90,7 +90,9 @@ public class PaymentService {
 		 * paymentSearchCriteria.setPayerIds(payerIds); }
 		 */		
 		List<Payment> payments = paymentRepository.fetchPayments(paymentSearchCriteria);
+		if (payments != null && !payments.isEmpty()) {
 		Collections.sort(payments.get(0).getPaymentDetails().get(0).getBill().getBillDetails(), (b1, b2) -> b2.getFromPeriod().compareTo(b1.getFromPeriod()));
+		}
 		if (null != paymentSearchCriteria.getBusinessService() && null != paymentSearchCriteria.getConsumerCodes()) {
 			String businessservice = paymentSearchCriteria.getBusinessService();
 			if ((paymentSearchCriteria.getBusinessService().equals("WS")
