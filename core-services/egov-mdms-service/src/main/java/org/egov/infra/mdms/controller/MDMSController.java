@@ -25,6 +25,7 @@ public class MDMSController {
     @Autowired
     private MDMSService mdmsService;
 
+    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("_search")
     @ResponseBody
     private ResponseEntity<?> search(@RequestBody @Valid MdmsCriteriaReq mdmsCriteriaReq) {
