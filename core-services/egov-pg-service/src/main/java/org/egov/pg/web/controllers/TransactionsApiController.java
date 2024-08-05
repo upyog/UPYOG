@@ -79,6 +79,7 @@ public class TransactionsApiController {
      * @param transactionCriteria Search Conditions that should be matched
      * @return List of transactions matching the search criteria
      */
+    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
     @RequestMapping(value = "/transaction/v1/_search", method = RequestMethod.POST)
     public ResponseEntity<TransactionResponse> transactionsV1SearchPost(@Valid @RequestBody RequestInfoWrapper
                                                                                 requestInfoWrapper, @Valid
