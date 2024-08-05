@@ -172,7 +172,7 @@ public class DemandValidatorV1 {
 				});
 
 			if(demandRequest.getDemands().get(0).getBusinessService().equalsIgnoreCase("WS") && demandRequest.getDemands().get(0).getAdditionalDetails() !=null && demandRequest.getDemands().get(0).getAdditionalDetails().toString().contains("connectionType")
-		   || (demandRequest.getDemands().get(0).getBusinessService().equalsIgnoreCase("SW") || demandRequest.getDemands().get(0).getTenantId().equalsIgnoreCase("pb.amritsar") && demandRequest.getDemands().get(0).getAdditionalDetails().toString().contains("connectionType")))
+			|| (demandRequest.getDemands().get(0).getBusinessService().equalsIgnoreCase("SW") && demandRequest.getDemands().get(0).getAdditionalDetails() !=null && demandRequest.getDemands().get(0).getTenantId().equalsIgnoreCase("pb.amritsar")  && demandRequest.getDemands().get(0).getAdditionalDetails().toString().contains("connectionType")))
 			{
 				log.info("Demand settled for WS metered connection Or SW commercial connection in amrit");
 			}
