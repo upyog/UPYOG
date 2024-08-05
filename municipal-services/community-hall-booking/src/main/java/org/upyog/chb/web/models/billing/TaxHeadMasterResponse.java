@@ -1,4 +1,4 @@
-package org.upyog.chb.web.models;
+package org.upyog.chb.web.models.billing;
 
 import java.util.List;
 

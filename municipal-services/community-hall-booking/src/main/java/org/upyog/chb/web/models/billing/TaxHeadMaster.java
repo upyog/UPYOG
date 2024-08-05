@@ -1,9 +1,12 @@
-package org.upyog.chb.web.models;
+package org.upyog.chb.web.models.billing;
 
 import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import org.upyog.chb.web.models.AuditDetails;
+import org.upyog.chb.web.models.GlCodeMaster;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

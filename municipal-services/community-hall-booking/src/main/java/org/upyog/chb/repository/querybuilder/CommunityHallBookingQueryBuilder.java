@@ -54,8 +54,6 @@ public class CommunityHallBookingQueryBuilder {
 	public String getCommunityHallBookingSearchQuery(CommunityHallBookingSearchCriteria criteria,
 			List<Object> preparedStmtList) {
 		StringBuilder builder = new StringBuilder(bookingDetailsQuery);
-		// String query = "SELECT * FROM public.eg_asset_assetdetails ORDER BY
-		// createdtime DESC;";
 
 		if (criteria.getTenantId() != null) {
 			if (criteria.getTenantId().split("\\.").length == 1) {
