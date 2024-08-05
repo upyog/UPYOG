@@ -32,7 +32,7 @@ const getEwAcknowledgementData = async (application, tenantInfo, t, response) =>
         values: [
           { title: t("EW_APPLICANT_NAME"), value: application?.applicant?.applicantName },
           { title: t("EW_MOBILE_NUMBER"), value: application?.applicant?.mobileNumber },
-          { title: t("EW_EMAIL_ID"), value: application?.applicant?.emailId },
+          { title: t("EWASTE_EMAIL_ID"), value: application?.applicant?.emailId },
         ],
       },
 
@@ -49,7 +49,16 @@ const getEwAcknowledgementData = async (application, tenantInfo, t, response) =>
           { title: t("EW_BUILDING_NAME"), value: application?.address?.buildingName },
         ],
       }, 
+ 
+      {
+        tableData: {
+          title: t("EW_PRODUCT_DETAILS"),
+          rows: application.ewasteDetails,
+        }
+      }
     ],
+
+
   };
 };
 

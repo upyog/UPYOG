@@ -127,7 +127,7 @@ const EWASTECitizenApplicationDetails = () => {
     const applications = application || {};
     const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
     const acknowldgementDataAPI = await getEwAcknowledgementData({ ...applications }, tenantInfo, t);
-    Digit.Utils.pdf.generate(acknowldgementDataAPI);
+    Digit.Utils.pdf.generateTable(acknowldgementDataAPI);
     //setAcknowldgementData(acknowldgementDataAPI);
   };
 
