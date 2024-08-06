@@ -61,12 +61,13 @@ public class MDMSValidator {
 
         Map<String,String> tradeTypeUomMap = getTradeTypeUomMap(mdmsData);
         //Map<String,String> accessoryeUomMap = getAccessoryUomMap(mdmsData);
-        Map<String,String> billingSlabsTradeTypeUomMap = getBillingSlabsTradeTypeUomMap(billingSlabs);
-        Map<String,String> billingSlabsAccessoryUomMap = getBillingSlabsAccessoryUomMap(billingSlabs);
-
-
-
-        licenseRequest.getLicenses().forEach(license -> {
+		
+        if (null != billingSlabs) {
+			Map<String, String> billingSlabsTradeTypeUomMap = getBillingSlabsTradeTypeUomMap(billingSlabs);
+			Map<String, String> billingSlabsAccessoryUomMap = getBillingSlabsAccessoryUomMap(billingSlabs);
+		}
+        
+		licenseRequest.getLicenses().forEach(license -> {
 
             String businessService = license.getBusinessService();
             if (businessService == null)
@@ -74,15 +75,15 @@ public class MDMSValidator {
             switch(businessService)
             {
                 case businessService_TL:
-                    if(!masterData.get(TLConstants.OWNERSHIP_CATEGORY)
-                            .contains(license.getTradeLicenseDetail().getSubOwnerShipCategory()))
-                        errorMap.put("INVALID OWNERSHIPCATEGORY", "The SubOwnerShipCategory '"
-                                + license.getTradeLicenseDetail().getSubOwnerShipCategory() + "' does not exists");
-
-                    if(!masterData.get(TLConstants.STRUCTURE_TYPE).
-                            contains(license.getTradeLicenseDetail().getStructureType()))
-                        errorMap.put("INVALID STRUCTURETYPE", "The structureType '"
-                                + license.getTradeLicenseDetail().getStructureType() + "' does not exists");
+//                    if(!masterData.get(TLConstants.OWNERSHIP_CATEGORY)
+//                            .contains(license.getTradeLicenseDetail().getSubOwnerShipCategory()))
+//                        errorMap.put("INVALID OWNERSHIPCATEGORY", "The SubOwnerShipCategory '"
+//                                + license.getTradeLicenseDetail().getSubOwnerShipCategory() + "' does not exists");
+//
+//                    if(!masterData.get(TLConstants.STRUCTURE_TYPE).
+//                            contains(license.getTradeLicenseDetail().getStructureType()))
+//                        errorMap.put("INVALID STRUCTURETYPE", "The structureType '"
+//                                + license.getTradeLicenseDetail().getStructureType() + "' does not exists");
 
 //                    license.getTradeLicenseDetail().getTradeUnits().forEach(unit -> {
 //                        if (!billingSlabsTradeTypeUomMap.containsKey(unit.getTradeType()))

@@ -54,7 +54,7 @@ public class BillValidator {
 		util.validateTenantIdForUserType(billCriteria.getTenantId(), requestInfo);
 		
 		if (billCriteria.getBillId() == null && CollectionUtils.isEmpty(billCriteria.getConsumerCode())
-				&& billCriteria.getMobileNumber() == null && billCriteria.getEmail() == null) {
+				&& billCriteria.getMobileNumber() == null && billCriteria.getEmail() == null && billCriteria.getBillNumber()==null) {
 
 			throw new CustomException("EGBS_MANDATORY_FIELDS_ERROR",
 					"BILL_SEARCH_MANDATORY_FIELDS_MISSING Any one of the fields additional to tenantId is mandatory like consumerCode,billId, mobileNumber or email");

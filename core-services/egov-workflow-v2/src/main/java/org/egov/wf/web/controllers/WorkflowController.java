@@ -53,7 +53,8 @@ public class WorkflowController {
 
 
 
-        @RequestMapping(value="/process/_transition", method = RequestMethod.POST)
+    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+    @RequestMapping(value="/process/_transition", method = RequestMethod.POST)
         public ResponseEntity<ProcessInstanceResponse> processTransition(@Valid @RequestBody ProcessInstanceRequest processInstanceRequest) {
                 List<ProcessInstance> processInstances =  workflowService.transition(processInstanceRequest);
                 ProcessInstanceResponse response = ProcessInstanceResponse.builder().processInstances(processInstances)
@@ -65,7 +66,8 @@ public class WorkflowController {
 
 
 
-        @RequestMapping(value="/process/_search", method = RequestMethod.POST)
+    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+    @RequestMapping(value="/process/_search", method = RequestMethod.POST)
         public ResponseEntity<ProcessInstanceResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                               @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
         List<ProcessInstance> processInstances = workflowService.search(requestInfoWrapper.getRequestInfo(),criteria);

@@ -76,7 +76,7 @@ class PaymentEnricherTest {
 
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setRequestInfo(new RequestInfo("42", "USER_INFO_INVALID", 4L, "USER_INFO_INVALID",
-                "USER_INFO_INVALID", "USER_INFO_INVALID", "42", "ABC123", "42", new User()));
+                "USER_INFO_INVALID", "USER_INFO_INVALID", "42", "ABC123", "42", null, new User()));
         paymentRequest.setPayment(payment);
         assertThrows(CustomException.class, () -> this.paymentEnricher.enrichPaymentPreValidate(paymentRequest));
         verify(payment).getTenantId();

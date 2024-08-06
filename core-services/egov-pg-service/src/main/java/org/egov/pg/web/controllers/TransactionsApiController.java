@@ -17,15 +17,18 @@ import org.egov.pg.web.models.TransactionCreateResponse;
 import org.egov.pg.web.models.TransactionCriteria;
 import org.egov.pg.web.models.TransactionRequest;
 import org.egov.pg.web.models.TransactionResponse;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,9 +57,11 @@ public class TransactionsApiController {
      *
      * @param transactionRequest Request containing all information necessary for initiating payment
      * @return Transaction that has been created
+     * @throws RazorpayException 
      */
+    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
     @RequestMapping(value = "/transaction/v1/_create", method = RequestMethod.POST)
-    public ResponseEntity<TransactionCreateResponse> transactionsV1CreatePost(@Valid @RequestBody TransactionRequest transactionRequest) {
+    public ResponseEntity<TransactionCreateResponse> transactionsV1CreatePost(@Valid @RequestBody TransactionRequest transactionRequest) throws CustomException {
 
         Transaction transaction = transactionService.initiateTransaction(transactionRequest);
         ResponseInfo responseInfo = ResponseInfoFactory.createResponseInfoFromRequestInfo(transactionRequest
@@ -74,6 +79,7 @@ public class TransactionsApiController {
      * @param transactionCriteria Search Conditions that should be matched
      * @return List of transactions matching the search criteria
      */
+    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
     @RequestMapping(value = "/transaction/v1/_search", method = RequestMethod.POST)
     public ResponseEntity<TransactionResponse> transactionsV1SearchPost(@Valid @RequestBody RequestInfoWrapper
                                                                                 requestInfoWrapper, @Valid
@@ -96,6 +102,7 @@ public class TransactionsApiController {
      * @param params             Parameters posted by the gateway
      * @return The current transaction status of the transaction
      */
+    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
     @RequestMapping(value = "/transaction/v1/_update", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity<TransactionResponse> transactionsV1UpdatePost(@RequestBody RequestInfoWrapper
                                                                                 requestInfoWrapper, @RequestParam
@@ -114,6 +121,7 @@ public class TransactionsApiController {
      *
      * @return list of active gateways that can be used for payments
      */
+    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
     @RequestMapping(value = "/gateway/v1/_search", method = RequestMethod.POST)
     public ResponseEntity<Set<String>> transactionsV1AvailableGatewaysPost() {
 

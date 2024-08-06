@@ -554,7 +554,7 @@ public class BillServicev2 {
 		else
 			billNumberFormat = billNumberFormat.replace(appProps.getTenantIdReplaceString(), "");
 
-		return idGenRepo.getId(requestInfo, tenantId, "billnumberid", billNumberFormat, count);
+		return idGenRepo.getId(requestInfo, tenantId, "idNameNotInMDMS", billNumberFormat, count);
 	}
 
 

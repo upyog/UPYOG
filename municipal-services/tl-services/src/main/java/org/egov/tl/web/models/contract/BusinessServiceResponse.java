@@ -1,4 +1,4 @@
-package org.egov.tl.web.models.workflow;
+package org.egov.tl.web.models.contract;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
 import org.egov.common.contract.response.ResponseInfo;
 
 import javax.validation.Valid;
@@ -15,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class BusinessServiceResponse {
 
     @JsonProperty("ResponseInfo")

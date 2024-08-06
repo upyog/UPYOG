@@ -1,28 +1,37 @@
 package org.egov.tl.util;
 
-import com.jayway.jsonpath.JsonPath;
-import lombok.extern.slf4j.Slf4j;
+import static org.egov.tl.util.TLConstants.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
+import org.egov.mdms.model.MdmsResponse;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.repository.ServiceRequestRepository;
 import org.egov.tl.web.models.AuditDetails;
 import org.egov.tl.web.models.TradeLicense;
 import org.egov.tl.web.models.TradeLicenseRequest;
-import org.egov.tl.web.models.workflow.BusinessService;
+import org.egov.tl.web.models.contract.BusinessService;
 import org.egov.tl.workflow.WorkflowService;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 
-import static org.egov.tl.util.TLConstants.*;
-import static org.egov.tl.util.TLConstants.COMMON_MASTERS_MODULE;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
@@ -33,6 +42,9 @@ public class TradeUtil {
     private ServiceRequestRepository serviceRequestRepository;
 
     private WorkflowService workflowService;
+    
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     public TradeUtil(TLConfiguration config, ServiceRequestRepository serviceRequestRepository,
@@ -71,6 +83,7 @@ public class TradeUtil {
             businessService = businessService_TL;
         switch (businessService) {
             case businessService_TL:
+            case businessService_NewTL:
                 uri.append(config.getCalculateEndpointTL());
                 break;
 
@@ -78,9 +91,6 @@ public class TradeUtil {
                 uri.append(config.getCalculateEndpointBPA());
                 break;
                 
-//            case businessService_NewTL:
-//            	uri.append(config.getCalculateEndpointTL());
-//            	break;
         }
         return uri;
     }
@@ -409,6 +419,42 @@ public class TradeUtil {
         List<Map<String, Object>> jsonOutput = JsonPath.read(result, jsonPath);
         String state = (String) jsonOutput.get(0).get("name");
         return state;
+    }
+    
+    public MdmsResponse mDMSCallCalculateFee(RequestInfo requestInfo, TradeLicense tradeLicense, String scaleOfBusiness, Integer periodOfLicense, String zone, String tradeCategory) {
+    	
+    	String tenantId = tradeLicense.getTenantId();
+    	List<MasterDetail> masterDetails = new ArrayList<>();
+    	
+    	// add criteria FeeStructure
+    	MasterDetail masterDetail = MasterDetail.builder()
+    			.name(TLConstants.FEE_STRUCTURE)
+    			.filter("[?((@."+STRUCTURE_OF+" =~ /.*"+SCALE_OF_BUSINESS+".*?/ && @."+TYPE+" == \""+scaleOfBusiness+"\" && @."+PERIOD_OF_LICENSE+" == "+periodOfLicense.toString()+" && @."+TENANT_ID+" == \""+tenantId+"\") || (@."+STRUCTURE_OF+" =~ /.*"+ZONE+".*?/ && @.type == \""+zone+"\" && @."+TENANT_ID+" == \""+tenantId+"\") || (@."+STRUCTURE_OF+" =~ /.*"+TRADE_CATEGORY+".*?/ && @."+TYPE+" == \""+tradeCategory+"\" && @."+TENANT_ID+" == \""+tenantId+"\") )]")
+    			.build();
+    	masterDetails.add(masterDetail);
+    	
+    	
+    	ModuleDetail moduleDetailTL = ModuleDetail.builder()
+    			.moduleName(TRADE_LICENSE_MODULE)
+    			.masterDetails(masterDetails)
+    			.build();
+        
+    	List<ModuleDetail> moduleDetails = new LinkedList<>();
+        moduleDetails.add(moduleDetailTL);
+
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder()
+							        		.moduleDetails(moduleDetails)
+							        		.tenantId(TLConstants.STATE_LEVEL_TENANT_ID)
+							                .build();
+
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder()
+							        		.mdmsCriteria(mdmsCriteria)
+							                .requestInfo(requestInfo)
+							                .build();
+        
+        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+        MdmsResponse mdmsResponse = objectMapper.convertValue(result, MdmsResponse.class);
+        return mdmsResponse;
     }
 
 }
