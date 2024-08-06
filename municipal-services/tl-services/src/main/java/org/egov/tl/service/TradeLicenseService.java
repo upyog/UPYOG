@@ -4,6 +4,7 @@ import static org.egov.tl.util.TLConstants.*;
 import static org.egov.tracer.http.HttpUtils.isInterServiceCall;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1192,7 +1193,7 @@ public class TradeLicenseService {
 	private ApplicationDetail getApplicationBillUserDetailForNewTL(ApplicationDetail applicationDetail, TradeLicense license, RequestInfo requestInfo, String businessService, String scaleOfBusiness
 							, String tradeCategory, Integer periodOfLicense, String zone) {
 		
-		Double totalFee;
+		BigDecimal totalFee;
 		// reading values from TL in DB
 		try {
 		    businessService = license.getBusinessService();
@@ -1240,7 +1241,7 @@ public class TradeLicenseService {
 		}
 		
 		// total fee for NewTL
-		totalFee = scaleOfBusinessToLicensePeriodPrice + (tradeCategoryPrice * zonePrice);
+		totalFee = BigDecimal.valueOf(scaleOfBusinessToLicensePeriodPrice + (tradeCategoryPrice * zonePrice));
 		applicationDetail.setTotalPayableAmount(totalFee);
 		
 		// formula for NewTL
@@ -1262,8 +1263,10 @@ public class TradeLicenseService {
 				.build();
 		BillResponse billResponse = billService.searchBill(billSearchCriteria,requestInfo);
 		Map<Object, Object> billDetailsMap = new HashMap<>();
-		billDetailsMap.put("billId", billResponse.getBill().get(0).getId());
-		
+		if (!CollectionUtils.isEmpty(billResponse.getBill())) {
+			billDetailsMap.put("billId", billResponse.getBill().get(0).getId());
+			applicationDetail.setTotalPayableAmount(billResponse.getBill().get(0).getTotalAmount());
+		}
 		applicationDetail.setBillDetails(billDetailsMap);
 		
 		// enrich userDetails

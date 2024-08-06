@@ -140,7 +140,7 @@ class PaymentValidatorTest {
         PaymentValidator paymentValidator = new PaymentValidator(paymentRepository, paymentWorkflowService,
                 new ApplicationProperties(), mock(ServiceRequestRepository.class));
         RequestInfo requestInfo = new RequestInfo("42", "INVALID_USER_INFO", 1L, "INVALID_USER_INFO", "INVALID_USER_INFO",
-                "INVALID_USER_INFO", "42", "ABC123", "42", new User());
+                "INVALID_USER_INFO", "42", "ABC123", "42", null, new User());
 
         HashMap<String, String> stringStringMap = new HashMap<>();
         paymentValidator.validateUserInfo(requestInfo, stringStringMap);
@@ -340,7 +340,7 @@ class PaymentValidatorTest {
         assertThrows(CustomException.class,
                 () -> paymentValidator.validateAndUpdateSearchRequestFromConfig(paymentSearchCriteria,
                         new RequestInfo("42", "INVALID_USER_INFO", 1L, "INVALID_USER_INFO", "INVALID_USER_INFO",
-                                "INVALID_USER_INFO", "42", "ABC123", "42", new User()),
+                                "INVALID_USER_INFO", "42", "ABC123", "42", null, new User()),
                         "Module Name"));
     }
 
