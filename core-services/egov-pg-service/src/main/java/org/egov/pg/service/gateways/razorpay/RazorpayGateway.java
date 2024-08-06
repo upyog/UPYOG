@@ -82,6 +82,7 @@ public class RazorpayGateway implements Gateway {
 		LinkedHashMap<Object, Object> additionalDetails = Optional.ofNullable(transaction.getAdditionalDetails())
 				.map(obj -> objectMapper.convertValue(obj, LinkedHashMap.class)).orElseGet(LinkedHashMap::new);
 
+		transaction.setOrderId(order.getOrderId());
 		additionalDetails.put(ORDER_ID, order.getOrderId());
 		transaction.setAdditionalDetails(additionalDetails);
 
