@@ -45,7 +45,7 @@ public class GarbageAccountRepository {
 			+ ", unit.uuid as unit_uuid, unit.unit_name as unit_unit_name, unit.unit_ward as unit_unit_ward, unit.ulb_name as unit_ulb_name, unit.type_of_ulb as unit_type_of_ulb, unit.garbage_id as unit_garbage_id, unit.unit_type as unit_unit_type, unit.category as unit_category, unit.sub_category as unit_sub_category, unit.sub_category_type as unit_sub_category_type, unit.is_active as unit_is_active"
 			+ ", sub_acc.id as sub_acc_id, sub_acc.uuid as sub_acc_uuid, sub_acc.garbage_id as sub_acc_garbage_id, sub_acc.property_id as sub_acc_property_id, sub_acc.type as sub_acc_type "
 			+ ", sub_acc.name as sub_acc_name, sub_acc.mobile_number as sub_acc_mobile_number, sub_acc.gender as sub_acc_gender, sub_acc.email_id as sub_acc_email_id, sub_acc.is_owner as sub_acc_is_owner"
-			+ ", sub_acc.user_uuid as sub_acc_user_uuid, sub_acc.declaration_uuid as sub_acc_declaration_uuid, sub_acc.grbg_coll_address_uuid as sub_acc_grbg_coll_address_uuid, sub_acc.status as sub_acc_status"
+			+ ", sub_acc.user_uuid as sub_acc_user_uuid, sub_acc.declaration_uuid as sub_acc_declaration_uuid, sub_acc.status as sub_acc_status"
 			+ ", sub_acc.created_by as sub_acc_created_by, sub_acc.created_date as sub_acc_created_date, sub_acc.last_modified_by as sub_acc_last_modified_by"
 			+ ", sub_acc.last_modified_date as sub_acc_last_modified_date, sub_acc.additional_detail as sub_acc_additional_detail"
 			+ ", sub_acc_bill.id as sub_acc_bill_id, sub_acc_bill.bill_ref_no as sub_acc_bill_bill_ref_no, sub_acc_bill.garbage_id as sub_acc_bill_garbage_id " 
@@ -87,13 +87,13 @@ public class GarbageAccountRepository {
 
     
     private static final String INSERT_ACCOUNT = "INSERT INTO hpudd_grbg_account (id, uuid, garbage_id, property_id, type, name"
-    		+ ", mobile_number, is_owner, user_uuid, declaration_uuid, grbg_coll_address_uuid, status, gender, email_id, additional_detail, created_by, created_date, last_modified_by, last_modified_date) "
-    		+ "VALUES (:id, :uuid, :garbageId, :propertyId, :type, :name, :mobileNumber, :isOwner, :userUuid, :declarationUuid, :grbgCollectionAddressUuid, :status, :gender, :emailId, :additionalDetail :: JSONB, :createdBy, :createdDate, "
+    		+ ", mobile_number, gender, email_id, is_owner, user_uuid, declaration_uuid, status, additional_detail, created_by, created_date, last_modified_by, last_modified_date) "
+    		+ "VALUES (:id, :uuid, :garbageId, :propertyId, :type, :name, :mobileNumber, :gender, :emailId, :isOwner, :userUuid, :declarationUuid, :status, :additionalDetail :: JSONB, :createdBy, :createdDate, "
     		+ ":lastModifiedBy, :lastModifiedDate)";
     
     private static final String UPDATE_ACCOUNT_BY_ID = "UPDATE hpudd_grbg_account SET garbage_id = :garbageId, uuid =:uuid"
     		+ ", property_id = :propertyId, type = :type, name = :name, mobile_number = :mobileNumber, is_owner = :isOwner"
-    		+ ", user_uuid = :userUuid, declaration_uuid = :declarationUuid, grbg_coll_address_uuid = :grbgCollectionAddressUuid, status = :status"
+    		+ ", user_uuid = :userUuid, declaration_uuid = :declarationUuid, status = :status"
     		+ ", gender = :gender, email_id = :emailId, additional_detail = :additionalDetail :: JSONB, last_modified_by = :lastModifiedBy, last_modified_date = :lastModifiedDate WHERE id = :id";
 
 	public static final String SELECT_NEXT_SEQUENCE = "select nextval('seq_id_hpudd_grbg_account')";
@@ -121,7 +121,7 @@ public class GarbageAccountRepository {
         accountInputs.put("isOwner", account.getIsOwner());
         accountInputs.put("userUuid", account.getUserUuid());
         accountInputs.put("declarationUuid", account.getDeclarationUuid());
-        accountInputs.put("grbgCollectionAddressUuid", account.getGrbgCollectionAddressUuid());
+//        accountInputs.put("grbgCollectionAddressUuid", account.getGrbgCollectionAddressUuid());
         accountInputs.put("status", account.getStatus());
         accountInputs.put("gender", account.getGender());
         accountInputs.put("emailId", account.getEmailId());
@@ -152,7 +152,7 @@ public class GarbageAccountRepository {
         accountInputs.put("isOwner", newGarbageAccount.getIsOwner());
         accountInputs.put("userUuid", newGarbageAccount.getUserUuid());
         accountInputs.put("declarationUuid", newGarbageAccount.getDeclarationUuid());
-        accountInputs.put("grbgCollectionAddressUuid", newGarbageAccount.getGrbgCollectionAddressUuid());
+//        accountInputs.put("grbgCollectionAddressUuid", newGarbageAccount.getGrbgCollectionAddressUuid());
         accountInputs.put("status", newGarbageAccount.getStatus());
         accountInputs.put("gender", newGarbageAccount.getGender());
         accountInputs.put("emailId", newGarbageAccount.getEmailId());

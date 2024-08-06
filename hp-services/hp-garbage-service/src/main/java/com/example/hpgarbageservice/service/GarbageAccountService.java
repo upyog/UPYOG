@@ -125,6 +125,7 @@ public class GarbageAccountService {
 	private void createGarbageUnit(GarbageAccount garbageAccount) {
 		if(!CollectionUtils.isEmpty(garbageAccount.getGrbgCollectionUnits())) {
 			garbageAccount.getGrbgCollectionUnits().stream().forEach(unit -> {
+				unit.setIsActive(true);
 				grbgCollectionUnitRepository.create(unit);
 			});
 		}
@@ -163,6 +164,7 @@ public class GarbageAccountService {
 
 		if(!CollectionUtils.isEmpty(garbageAccount.getAddresses())) {
 			garbageAccount.getAddresses().stream().forEach(address -> {
+				address.setIsActive(true);
 				grbgAddressRepository.create(address);
 			});
 		}		

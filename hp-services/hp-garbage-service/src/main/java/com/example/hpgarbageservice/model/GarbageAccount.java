@@ -43,7 +43,7 @@ public class GarbageAccount {
 
 	private String declarationUuid;
 
-	private String grbgCollectionAddressUuid;
+//	private String grbgCollectionAddressUuid;
 
 	private String status;
 	
