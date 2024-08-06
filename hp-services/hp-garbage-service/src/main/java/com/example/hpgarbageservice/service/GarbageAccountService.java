@@ -1,6 +1,7 @@
 package com.example.hpgarbageservice.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -476,7 +477,7 @@ public class GarbageAccountService {
 	public List<GarbageAccount> searchGarbageAccounts(SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
 		
 		//validate search criteria
-		validateSearchGarbageAccount(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount());
+		validateAndSearchSearchGarbageAccount(searchCriteriaGarbageAccountRequest);
 		
 		//search garbage account
 		List<GarbageAccount> grbgAccs = garbageAccountRepository.searchGarbageAccount(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount());
@@ -498,17 +499,23 @@ public class GarbageAccountService {
 //		grbgAccTemp.setChildGarbageAccounts(subAccs);
 //	}
 
-	private void validateSearchGarbageAccount(SearchCriteriaGarbageAccount searchCriteriaGarbageAccount) {
+	private void validateAndSearchSearchGarbageAccount(SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
+		RequestInfo requestInfo = searchCriteriaGarbageAccountRequest.getRequestInfo();
 		
-		if(CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getId()) &&
-		        CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getGarbageId()) &&
-		        CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getPropertyId()) &&
-		        CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getType()) &&
-		        CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getName()) &&
-		        CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getMobileNumber()) &&
-		        null == searchCriteriaGarbageAccount.getIsOwner()) {
-//		        CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getParentId())) {
-			throw new RuntimeException("Provide the parameters to search garbage accounts.");
+		if(CollectionUtils.isEmpty(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getId()) &&
+		        CollectionUtils.isEmpty(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getGarbageId()) &&
+		        CollectionUtils.isEmpty(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getPropertyId()) &&
+		        CollectionUtils.isEmpty(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getType()) &&
+		        CollectionUtils.isEmpty(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getName()) &&
+		        CollectionUtils.isEmpty(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getMobileNumber()) &&
+		        null == searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getIsOwner()) {
+
+				if(null != requestInfo && null != requestInfo.getUserInfo()
+						&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), "CITIZEN")) {
+					searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setCreatedBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()));
+				}else {
+					throw new RuntimeException("Provide the parameters to search garbage accounts.");
+				}
 		}
 		
 	}

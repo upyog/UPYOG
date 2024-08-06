@@ -198,9 +198,9 @@ public class GarbageAccountRepository {
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getPropertyId())
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getType())
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getName())
-        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getMobileNumber())){
-//        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getParentId())) {
-        	return null;
+        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getMobileNumber())
+        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy())) {
+        	throw new RuntimeException("Provide criteria to search garbage account.");
         }
 
         searchQuery.append(" WHERE");
@@ -209,6 +209,12 @@ public class GarbageAccountRepository {
         if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getId())) {
             isAppendAndClause = addAndClauseIfRequired(false, searchQuery);
             searchQuery.append(" acc.id IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getId(),
+                    preparedStatementValues)).append(" )");
+        }
+
+        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy())) {
+            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
+            searchQuery.append(" acc.created_by IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getCreatedBy(),
                     preparedStatementValues)).append(" )");
         }
         
