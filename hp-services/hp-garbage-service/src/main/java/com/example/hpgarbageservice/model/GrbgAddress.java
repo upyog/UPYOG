@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class GrbgAddress {
 
     private String uuid;
+    private Long garbageId;
     private String addressType;
     private String address1;
     private String address2;

@@ -16,5 +16,10 @@ public class GrbgCollectionUnit {
     private String unitWard;
     private String ulbName;
     private String typeOfUlb;
+    private Long garbageId;
+    private String unitType;
+    private String category;
+    private String subCategory;
+    private String subCategoryType;
     private Boolean isActive;
 }

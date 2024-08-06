@@ -16,13 +16,18 @@ public class GrbgAddressRepository {
     public void create(GrbgAddress grbgAddress) {
         jdbcTemplate.update(GrbgAddressQueryBuilder.CREATE_QUERY,
                 grbgAddress.getUuid(),
+                grbgAddress.getGarbageId(),
                 grbgAddress.getAddressType(),
                 grbgAddress.getAddress1(),
                 grbgAddress.getAddress2(),
                 grbgAddress.getCity(),
                 grbgAddress.getState(),
                 grbgAddress.getPincode(),
-                grbgAddress.getIsActive());
+                grbgAddress.getIsActive(),
+                grbgAddress.getZone(),
+                grbgAddress.getUlbName(),
+                grbgAddress.getUlbType(),
+                grbgAddress.getWardName());
     }
 
     public void update(GrbgAddress grbgAddress) {
@@ -34,6 +39,11 @@ public class GrbgAddressRepository {
                 grbgAddress.getState(),
                 grbgAddress.getPincode(),
                 grbgAddress.getIsActive(),
+                grbgAddress.getZone(),
+                grbgAddress.getUlbName(),
+                grbgAddress.getUlbType(),
+                grbgAddress.getWardName(),
+                grbgAddress.getGarbageId(),
                 grbgAddress.getUuid());
     }
 }
