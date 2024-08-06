@@ -135,7 +135,7 @@ const DesktopInbox = (props) => {
               let citizen_info = props?.fstprequest?.find((i) => row.original.tripDetails[0].referenceNo === i.applicationNo);
               return (
                 <div>
-                  <span>{t(`${citizen_info?.address?.locality?.code}`)}</span>
+                  <span>{t(`${citizen_info?.address?.locality?.name}`)}</span>
                 </div>
               );
             },

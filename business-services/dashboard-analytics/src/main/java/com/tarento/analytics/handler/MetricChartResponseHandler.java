@@ -23,6 +23,7 @@ import com.tarento.analytics.dto.Data;
 import com.tarento.analytics.dto.Plot;
 import com.tarento.analytics.helper.ComputeHelper;
 import com.tarento.analytics.helper.ComputeHelperFactory;
+import com.tarento.analytics.utils.ResponseRecorder;
 
 /**
  * This handles ES response for single index, multiple index to represent single data value

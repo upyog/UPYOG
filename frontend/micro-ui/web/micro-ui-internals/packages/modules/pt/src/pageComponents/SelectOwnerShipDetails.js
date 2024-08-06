@@ -73,7 +73,7 @@ const SelectOwnerShipDetails = ({ t, config, onSelect, userType, formData, onBlu
     if (userType === "employee") {
       const arr = ownerShipdropDown
         ?.filter((e) => e.code.split(".").length <= 2)
-        ?.splice(0, 4)
+        ?.splice(0, 10)
         ?.map((ownerShipDetails) => ({
           ...ownerShipDetails,
           i18nKey: `PT_OWNERSHIP_${
@@ -86,7 +86,7 @@ const SelectOwnerShipDetails = ({ t, config, onSelect, userType, formData, onBlu
     return (
       ownerShipdropDown &&
       ownerShipdropDown.length &&
-      ownerShipdropDown.splice(0, 4).map((ownerShipDetails) => ({
+      ownerShipdropDown.splice(0, 10).map((ownerShipDetails) => ({
         ...ownerShipDetails,
         i18nKey: `PT_OWNERSHIP_${ownerShipDetails.value.split(".")[1] ? ownerShipDetails.value.split(".")[1] : ownerShipDetails.value.split(".")[0]}`,
       }))

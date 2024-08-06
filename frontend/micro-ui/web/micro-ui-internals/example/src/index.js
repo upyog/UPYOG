@@ -11,7 +11,7 @@ import { initPGRComponents } from "@upyog/digit-ui-module-pgr";
 import { initDSSComponents } from "@upyog/digit-ui-module-dss";
 import { initHRMSComponents } from "@upyog/digit-ui-module-hrms";
 import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-receipts";
-// import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
+// import { initReportsComponents } from "@upyog/digit-ui-module-reports";
 import { initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
 import { initTLComponents } from "@upyog/digit-ui-module-tl";
 import { PaymentModule, PaymentLinks, paymentConfigs } from "@upyog/digit-ui-module-common";
@@ -24,16 +24,15 @@ import { DigitUI } from "@upyog/digit-ui-module-core";
 import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
 import { initBillsComponents, BillsModule } from "@upyog/digit-ui-module-bills";
 
-
-
-import { PTRModule, PTRLinks, PTRComponents } from "@upyog-niua/upyog-ui-module-ptr";
-
-
 // import {initCustomisationComponents} from "./customisations";
 
-// import { PGRModule, PGRLinks } from "@egovernments/digit-ui-module-pgr";
+// import { PGRModule, PGRLinks } from "@upyog/digit-ui-module-pgr";
 // import { Body, TopBar } from "@upyog/digit-ui-react-components";
 import "@upyog-niua/upyog-css/example/index.css";
+
+//import { PTRModule, PTRLinks, PTRComponents } from "@upyog-niua/upyog-ui-module-ptr";
+
+
 // import * as comps from "@upyog/digit-ui-react-components";
 
 // import { subFormRegistry } from "@upyog/digit-ui-libraries";
@@ -65,8 +64,7 @@ const enabledModules = [
   "BillAmendment",
   "FireNoc",
   "Birth",
-  "Death",
-  "PTR"
+  "Death"
 ];
 
 const initTokens = (stateCode) => {
@@ -109,12 +107,9 @@ const initDigitUI = () => {
     MCollectModule,
     HRMSModule,
     ReceiptsModule,
-    BillsModule,
+    BillsModule
     // TLModule,
     // TLLinks,
-    PTRModule,
-    PTRLinks,
-    ...PTRComponents
   });
 
   initFSMComponents();

@@ -63,8 +63,6 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const client = useQueryClient();
   const stateCode = Digit.ULBService.getStateId();
 
-  const { data: ReceivedPaymentTypeData, isLoading: receivedPaymentLoad } = Digit.Hooks.fsm.useMDMS(stateCode, "FSM", "ReceivedPaymentType");
-
   const { data: vehicleList, isLoading: isVehicleData, isSuccess: isVehicleDataLoaded } = Digit.Hooks.fsm.useMDMS(
     stateCode,
     "Vehicle",
@@ -131,24 +129,18 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [pitDetail, setPitDetail] = useState();
   const [fstpoRejectionReason, setFstpoRejectionReason] = useState();
   const [noOfTrips, setNoOfTrips] = useState(null);
-  const [receivedPaymentType, setReceivedPaymentType] = useState(null);
+
   const [defaultValues, setDefautValue] = useState({
     capacity: vehicle?.capacity,
     wasteCollected: vehicle?.capacity,
-    propertyID : applicationData?.additionalDetails?.propertyID,
-    distancefromroad: applicationData?.additionalDetails?.distancefromroad,
-    roadWidth: applicationData?.additionalDetails?.roadWidth,
     propertyType: applicationData?.propertyUsage.split('.')[0],
     subtype: applicationData?.propertyUsage,
     pitType: applicationData?.sanitationtype,
     pitDetail: applicationData?.pitDetail,
+    propertyID: applicationData?.additionalDetails?.propertyID,
+    roadWidth: applicationData?.additionalDetails?.roadWidth,
+    distancefromroad: applicationData?.additionalDetails?.distancefromroad
   });
-
-  useEffect(() => {
-    if (!receivedPaymentLoad) {
-      setReceivedPaymentType(ReceivedPaymentTypeData)
-    }
-  }, [receivedPaymentLoad, ReceivedPaymentTypeData]);
 
   useEffect(() => {
     if (isSuccess && isVehicleDataLoaded && applicationData) {
@@ -207,7 +199,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   useEffect(() => {
     if (isSuccess && isDsoSuccess && applicationData && applicationData.dsoId) {
       const [dso] = dsoData.filter((dso) => dso.id === applicationData.dsoId);
-      const vehicleNoList = dso?.vehicles?.filter((vehicle) => vehicle.capacity == applicationData?.vehicleCapacity);
+      const tempList = dso?.vehicles?.filter((vehicle) => vehicle.capacity == applicationData?.vehicleCapacity);
+      const vehicleNoList = tempList.sort((a,b) => (a.registrationNumber > b.registrationNumber ? 1 : -1 ));
       setVehicleNoList(vehicleNoList);
     }
   }, [isSuccess, isDsoSuccess]);
@@ -287,7 +280,6 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     if (data.subtype && typeof (data.subtype) === "object") applicationData.propertyUsage = data.subtype.code;
     if (data.subtype && typeof (data.subtype) === "string") applicationData.propertyUsage = data.subtype;
     if (data.noOfTrips) applicationData.noOfTrips = data.noOfTrips;
-    if (data.paymentMode) applicationData.additionalDetails.receivedPayment = data.paymentMode.code;
 
     if (fileStoreId) {
       if (applicationData.pitDetail.additionalDetails && applicationData.pitDetail.additionalDetails.fileStoreId) {
@@ -305,13 +297,14 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     if (cancelReason) addCommentToWorkflow(cancelReason, workflow, data);
     if (fstpoRejectionReason && data.comments) workflow.comments = data.comments;
     if (fstpoRejectionReason) workflow.fstpoRejectionReason = fstpoRejectionReason?.code;
-    if (data.distancefromroad) applicationData.additionalDetails.distancefromroad = data?.distancefromroad;
-    if (data.roadWidth) applicationData.additionalDetails.roadWidth = data?.roadWidth;
+
     submitAction({ fsm: applicationData, workflow });
   }
   useEffect(() => {
     switch (action) {
       case "UPDATE":
+      case "SCHEDULE":
+      case "ES_FSM_SCHEDULE":
         setFormValve(true);
         return setConfig(
           configUpdateTrips({
@@ -384,7 +377,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       case "COMPLETE":
       case "COMPLETED":
         setFormValve(true);
-        return setConfig(configCompleteApplication({ t, vehicle, vehicleCapacity: applicationData?.vehicleCapacity, noOfTrips: applicationData?.noOfTrips, applicationCreatedTime: applicationData?.auditDetails?.createdTime, receivedPaymentType: ReceivedPaymentTypeData, action, module }));
+        return setConfig(configCompleteApplication({ t, vehicle, vehicleCapacity: applicationData?.vehicleCapacity, noOfTrips: applicationData?.noOfTrips, applicationCreatedTime: applicationData?.auditDetails?.createdTime, action, module }));
       case "SUBMIT":
       case "FSM_SUBMIT":
         return history.push("/digit-ui/employee/fsm/modify-application/" + applicationNumber);
@@ -427,22 +420,22 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
             action,
           })
         );
-      case "SCHEDULE":
-      case "ES_FSM_SCHEDULE":
-        setFormValve(true);
-        return setConfig(
-          configScheduleDso({
-            t,
-            rejectMenu: Reason?.DeclineReason,
-            setReason: setDeclineReason,
-            reason: declineReason,
-            applicationCreatedTime: applicationData?.auditDetails?.createdTime,
-            vehicle,
-            vehicleCapacity: applicationData?.vehicleCapacity,
-            action,
-            noOfTrips: applicationData?.noOfTrips
-          })
-        );
+      // case "SCHEDULE":
+      // case "ES_FSM_SCHEDULE":
+        // setFormValve(true);
+        // return setConfig(
+          // configScheduleDso({
+            // t,
+            // rejectMenu: Reason?.DeclineReason,
+            // setReason: setDeclineReason,
+            // reason: declineReason,
+            // applicationCreatedTime: applicationData?.auditDetails?.createdTime,
+            // vehicle,
+            // vehicleCapacity: applicationData?.vehicleCapacity,
+            // action,
+            // noOfTrips: applicationData?.noOfTrips
+          // })
+        // );
 
       case "PAY":
       case "ADDITIONAL_PAY_REQUEST":

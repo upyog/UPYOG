@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Component
@@ -47,7 +49,7 @@ public class ElasticSearchRepository {
 
         String searchQuery = queryBuilder.getSearchQuery(criteria, uuids);
 
-        HttpHeaders headers = new HttpHeaders();
+        HttpHeaders headers = getHttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(searchQuery, headers);
         ResponseEntity response = null;
@@ -80,6 +82,25 @@ public class ElasticSearchRepository {
         builder.append(config.getIndexServiceHostSearchEndpoint());
 
         return builder.toString();
+    }
+
+    private HttpHeaders getHttpHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", getESEncodedCredentials());
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        List<MediaType> mediaTypes = new ArrayList<>();
+        mediaTypes.add(MediaType.APPLICATION_JSON);
+        headers.setAccept(mediaTypes);
+        return headers;
+    }
+
+    public String getESEncodedCredentials() {
+        String credentials = config.getUserName() + ":" + config.getPassword();
+        byte[] credentialsBytes = credentials.getBytes();
+        byte[] base64CredentialsBytes = Base64.getEncoder().encode(credentialsBytes);
+        return "Basic " + new String(base64CredentialsBytes);
     }
 
 }

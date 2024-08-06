@@ -8,7 +8,7 @@ import { Card, CardHeader, CardLabel, Rating, CheckBox, TextArea, SubmitBar } fr
 import { updateComplaints } from "../../../redux/actions/index";
 
 import { LOCALIZATION_KEY } from "../../../constants/Localization";
-//import { Storage } from "../../@egovernments/digit-utils/services/Storage";
+//import { Storage } from "../../@upyog/digit-utils/services/Storage";
 
 const RatingAndFeedBack = () => {
   const { id } = useParams();

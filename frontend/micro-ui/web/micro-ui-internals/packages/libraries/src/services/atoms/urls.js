@@ -1,11 +1,13 @@
 const Urls = {
   MDMS: `/egov-mdms-service/v1/_search`,
+  MDMSV2: `/mdms-v2/v1/_search`,
   WorkFlow: `/egov-workflow-v2/egov-wf/businessservice/_search`,
   WorkFlowProcessSearch: `/egov-workflow-v2/egov-wf/process/_search`,
   localization: `/localization/messages/v1/_search`,
   location: {
     localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality`,
     revenue_localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Locality`,
+    gramPanchayats: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=GP`,
   },
 
   pgr_search: `/pgr-services/v2/request/_search`,
@@ -197,7 +199,7 @@ const Urls = {
 digiLocker:{
   authorization:"/requester-services-dx/user/authorization/url",
   register :"/requester-services-dx/user/authorization/url/citizen",
-  token:"/requester-services-dx/user/token",
+  token:"/requester-services-dx/user/token/citizen",
   issueDoc:"/requester-services-dx/user/issuedfiles",
   uri:"/requester-services-dx/user/file"
 },
@@ -215,6 +217,11 @@ digiLocker:{
       delete: "/egov-survey-services/egov-ss/survey/_delete",
       submitResponse: "/egov-survey-services/egov-ss/survey/response/_submit",
       showResults: "/egov-survey-services/egov-ss/survey/response/_results",
+      createSurvey: "/service-request/service/definition/v1/_create",
+      cfdefinitionsearch: "/service-request/service/definition/v1/_search",
+      submitSurveyResponse: "/service-request/service/v1/_create",
+      selectedSurveySearch: "/service-request/service/v1/_search",
+      updateSurvey:"/service-request/service/definition/v1/_update",
     },
   },
 

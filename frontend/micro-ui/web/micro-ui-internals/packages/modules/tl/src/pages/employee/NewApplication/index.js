@@ -195,6 +195,7 @@ const NewApplication = () => {
       action: "INITIATE",
       applicationType: "NEW",
       workflowCode: "NewTL",
+      applicationDocuments,
       commencementDate,
       financialYear,
       licenseType,
@@ -290,6 +291,11 @@ const NewApplication = () => {
       return head;
     }
   }
+
+  console.log(configs,"configs");
+
+  // configs[1] = configs[0];
+  // configs[6] = configs[0];
 
   return (
     <div>

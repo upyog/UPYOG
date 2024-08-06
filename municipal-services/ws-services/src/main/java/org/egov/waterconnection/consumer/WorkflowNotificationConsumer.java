@@ -1,5 +1,6 @@
 package org.egov.waterconnection.consumer;
 
+import org.egov.waterconnection.service.MeterReadingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.Role;
@@ -7,6 +8,7 @@ import org.egov.waterconnection.constants.WCConstants;
 import org.egov.waterconnection.service.WaterService;
 import org.egov.waterconnection.service.WaterServiceImpl;
 import org.egov.waterconnection.service.WorkflowNotificationService;
+import org.slf4j.MDC;
 import org.egov.waterconnection.util.EncryptionDecryptionUtil;
 import org.egov.waterconnection.web.models.OwnerInfo;
 import org.egov.waterconnection.web.models.SearchCriteria;
@@ -32,6 +34,9 @@ public class WorkflowNotificationConsumer {
 	WorkflowNotificationService workflowNotificationService;
 
 	@Autowired
+	private MeterReadingService meterReadingService;
+
+	@Autowired
 	WaterService waterService;
 
 	@Autowired
@@ -49,11 +54,16 @@ public class WorkflowNotificationConsumer {
 	 * @param record
 	 * @param topic
 	 */
-	@KafkaListener(topics = { "${egov.waterservice.createwaterconnection.topic}" ,"${egov.waterservice.updatewaterconnection.topic}", "${egov.waterservice.updatewaterconnection.workflow.topic}"})
+	@KafkaListener(topicPattern = "${ws.kafka.consumer.topic.pattern}")
 	public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 		log.info("Record received in update Water connectuion is"+ record);
 		try {
 			WaterConnectionRequest waterConnectionRequest = mapper.convertValue(record, WaterConnectionRequest.class);
+			String tenantId = waterConnectionRequest.getWaterConnection().getTenantId();
+
+			// Adding in MDC so that tracer can add it in header
+			MDC.put(TENANTID_MDC_STRING, tenantId);
+
 			WaterConnection waterConnection = waterConnectionRequest.getWaterConnection();
 			String applicationStatus = waterConnection.getApplicationStatus();
 			if (!WCConstants.NOTIFICATION_ENABLE_FOR_STATUS.contains(waterConnection.getProcessInstance().getAction() + "_" + applicationStatus)) {
@@ -73,7 +83,6 @@ public class WorkflowNotificationConsumer {
 				waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnection,
 						WNS_PLUMBER_PLAIN_DECRYPTION_MODEL, WaterConnection.class, waterConnectionRequest.getRequestInfo()));
 			}
-			log.info("waterConnectionRequest is "+ waterConnectionRequest);
 
 			if (!waterConnectionRequest.isOldDataEncryptionRequest())
 				workflowNotificationService.process(waterConnectionRequest, topic);

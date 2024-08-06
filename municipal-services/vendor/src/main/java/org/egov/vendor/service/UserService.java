@@ -83,7 +83,7 @@ public class UserService {
 						foundOwner = userDetailResponse.getUser().get(i);
 					}
 				}
-				foundOwnerDetails(userDetailResponse, foundOwner, requestInfo);
+				owner = foundOwnerDetails(userDetailResponse, foundOwner, requestInfo);
 
 			} else {
 				owner = createVendorOwner(owner, vendorRequest.getRequestInfo());
@@ -96,6 +96,49 @@ public class UserService {
 			throw new CustomException(VendorErrorConstants.INVALID_OWNER_ERROR, "MobileNo is mandatory for ownerInfo");
 		}
 
+	}
+
+	/**
+	 * 
+	 * @param vendorRequest
+	 * @param requestInfo
+	 */
+	@SuppressWarnings("null")
+	public void vendorMobileExistanceCheck(VendorRequest vendorRequest, RequestInfo requestInfo) {
+
+		Vendor vendor = vendorRequest.getVendor();
+		User owner = vendor.getOwner();
+
+		UserDetailResponse userDetailResponse = null;
+
+		if (owner != null) {
+
+			userDetailResponse = userExists(owner);
+			if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser())) {
+
+				// validateVendorExists(userDetailResponse.getUser());
+				List<String> ownerIds = userDetailResponse.getUser().stream().map(User::getUuid)
+						.collect(Collectors.toList());
+				int count = vendorRepository.getExistingVenodrsCount(ownerIds);
+				log.debug("userDetailResponse SIZE==>" + userDetailResponse.getUser().size());
+
+				for (int i = 0; i < userDetailResponse.getUser().size(); i++) {
+					if (count > 0
+							&& vendorRequest.getVendor().getOwner().getMobileNumber()
+									.equals(userDetailResponse.getUser().get(i).getMobileNumber())
+							&& !userDetailResponse.getUser().get(i).getUuid()
+									.equals(vendorRequest.getVendor().getOwner().getUuid())) {
+						List<String> roleCodes = userDetailResponse.getUser().get(i).getRoles().stream()
+								.map(Role::getCode).collect(Collectors.toList());
+						if (roleCodes.contains(config.getDsoRole())) {
+							throw new CustomException(VendorErrorConstants.ALREADY_VENDOR_EXIST,
+									VendorErrorConstants.VENDOR_ERROR_MESSAGE);
+						}
+
+					}
+				}
+			}
+		}
 	}
 
 	private User foundOwnerDetails(UserDetailResponse userDetailResponse, User foundOwner, RequestInfo requestInfo) {
@@ -120,7 +163,7 @@ public class UserService {
 		return owner;
 	}
 
-	private void validateVendorExists(List<User> user) {
+	public void validateVendorExists(List<User> user) {
 		List<String> ownerIds = user.stream().map(User::getUuid).collect(Collectors.toList());
 		int count = vendorRepository.getExistingVenodrsCount(ownerIds);
 
@@ -220,8 +263,13 @@ public class UserService {
 
 		if (owner.getRoles() != null) {
 			owner.getRoles().add(getRolObj(config.getDsoRole(), config.getDsoRoleName()));
+			owner.getRoles().add(getRolObj(config.getCitizenRole(), config.getCitizenRoleName()));
 		} else {
-			owner.setRoles(Arrays.asList(getRolObj(config.getDsoRole(), config.getDsoRoleName())));
+			List<Role> roles = new ArrayList<>();
+			roles.add(getRolObj(config.getDsoRole(), config.getDsoRoleName()));
+			roles.add(getRolObj(config.getCitizenRole(), config.getCitizenRoleName()));
+			owner.setRoles(roles);
+
 		}
 
 		addUserDefaultFields(owner.getTenantId(), null, owner);
@@ -293,7 +341,7 @@ public class UserService {
 	/**
 	 * create Employee in HRMS for Vendor owner
 	 * 
-	 * @param owner
+	 * @param driver
 	 * @param requestInfo
 	 * @return
 	 */

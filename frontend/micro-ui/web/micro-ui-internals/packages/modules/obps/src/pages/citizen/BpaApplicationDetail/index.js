@@ -42,7 +42,7 @@ const BpaApplicationDetail = () => {
   const { data: stakeHolderDetails, isLoading: stakeHolderDetailsLoading } = Digit.Hooks.obps.useMDMS(stateCode, "StakeholderRegistraition", "TradeTypetoRoleMapping");
   const { isLoading: bpaDocsLoading, data: bpaDocs } = Digit.Hooks.obps.useMDMS(stateCode, "BPA", ["DocTypeMapping"]);
   const { data, isLoading } = Digit.Hooks.obps.useBPADetailsPage(tenantId, { applicationNo: id });
-  const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(tenantId.split(".")[0], "BPA", ["RiskTypeComputation"]);
+  const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(stateCode, "BPA", ["RiskTypeComputation"]);
   const mutation = Digit.Hooks.obps.useObpsAPI(data?.applicationData?.tenantId, false);
   let workflowDetails = Digit.Hooks.useWorkflowDetails({
     tenantId: data?.applicationData?.tenantId,
@@ -113,9 +113,9 @@ const BpaApplicationDetail = () => {
        response = { filestoreIds: [payments?.fileStoreId] };      
     }
     else{
-      response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, "bpa-receipt");
+      response = await Digit.PaymentService.generatePdf(stateCode, { Payments: [{...payments}] }, "bpa-receipt");
     }
-    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+    const fileStore = await Digit.PaymentService.printReciept(stateCode, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   }
 
@@ -410,16 +410,16 @@ const BpaApplicationDetail = () => {
     <Fragment>
       <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
         <Header styles={{fontSize: "32px", marginLeft: "10px"}}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
-        <div style={{display:"flex", alignItems:"center", color:"#A52A2A"}}>
-        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
-        </div>
+        <div >
         {dowloadOptions && dowloadOptions.length > 0 && <MultiLink
           className="multilinkWrapper"
           onHeadClick={() => setShowOptions(!showOptions)}
           displayOptions={showOptions}
           options={dowloadOptions}
-
         />}
+        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        </div>
+        
       </div>
       {data?.applicationDetails?.filter((ob) => Object.keys(ob).length > 0).map((detail, index, arr) => {
 

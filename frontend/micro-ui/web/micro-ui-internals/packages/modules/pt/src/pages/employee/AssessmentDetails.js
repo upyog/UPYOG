@@ -67,8 +67,8 @@ const AssessmentDetails = () => {
     ptCalculationEstimateMutate({ Assessment: AssessmentData });
     }, []);
     useEffect(()=>{
-      setPenalty(parseInt(ptCalculationEstimateData?.Calculation[0].taxHeadEstimates[6].estimateAmount))
-      setRebate(parseInt(ptCalculationEstimateData?.Calculation[0].taxHeadEstimates[5].estimateAmount))
+      setPenalty(parseInt(ptCalculationEstimateData?.Calculation[0]?.taxHeadEstimates[6]?.estimateAmount))
+      setRebate(parseInt(ptCalculationEstimateData?.Calculation[0]?.taxHeadEstimates[5]?.estimateAmount))
     },[ptCalculationEstimateLoading])
   useEffect(() => {
     if (applicationDetails) setAppDetailsToShow(_.cloneDeep(applicationDetails));

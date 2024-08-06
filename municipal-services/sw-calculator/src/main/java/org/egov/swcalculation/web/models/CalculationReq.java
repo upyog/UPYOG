@@ -49,6 +49,11 @@ public class CalculationReq   {
         private Boolean isDisconnectionRequest=Boolean.FALSE;
 
 
+    	/*
+         * Used by the bulk bill generator to send batch information through kafka
+         */
+        private MigrationCount migrationCount;
+
 		@Builder.Default
         @JsonProperty("isReconnectionRequest")
         private Boolean isReconnectionRequest=Boolean.FALSE;
@@ -57,7 +62,7 @@ public class CalculationReq   {
     	/*
          * Used by the bulk bill generator to send batch information through kafka
          */
-        private MigrationCount migrationCount;
+
 
         public CalculationReq addCalulationCriteriaItem(CalculationCriteria calulationCriteriaItem) {
         this.calculationCriteria.add(calulationCriteriaItem);

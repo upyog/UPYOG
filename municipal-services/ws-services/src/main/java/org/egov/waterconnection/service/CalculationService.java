@@ -151,17 +151,6 @@ public class CalculationService {
 		}
 		return isNoPayment;
 	}
-
-	private StringBuilder getFetchBillURL(String tenantId, String connectionNo) {
-
-		return new StringBuilder().append(config.getBillingServiceHost())
-				.append(config.getFetchBillEndPoint()).append(WCConstants.URL_PARAMS_SEPARATER)
-				.append(WCConstants.TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId)
-				.append(WCConstants.SEPARATER).append(WCConstants.CONSUMER_CODE_SEARCH_FIELD_NAME)
-				.append(connectionNo).append(WCConstants.SEPARATER)
-				.append(WCConstants.BUSINESSSERVICE_FIELD_FOR_SEARCH_URL)
-				.append(WCConstants.WATER_TAX_SERVICE_CODE);
-	}
 	
 	private StringBuilder getFetchBillURLForReconnect(String tenantId, String connectionNo) {
 
@@ -172,5 +161,16 @@ public class CalculationService {
 				.append(connectionNo).append(WCConstants.SEPARATER)
 				.append(WCConstants.BUSINESSSERVICE_FIELD_FOR_SEARCH_URL)
 				.append("WSReconnection");
+	}
+
+	private StringBuilder getFetchBillURL(String tenantId, String connectionNo) {
+
+		return new StringBuilder().append(config.getBillingServiceHost())
+				.append(config.getFetchBillEndPoint()).append(WCConstants.URL_PARAMS_SEPARATER)
+				.append(WCConstants.TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId)
+				.append(WCConstants.SEPARATER).append(WCConstants.CONSUMER_CODE_SEARCH_FIELD_NAME)
+				.append(connectionNo).append(WCConstants.SEPARATER)
+				.append(WCConstants.BUSINESSSERVICE_FIELD_FOR_SEARCH_URL)
+				.append(WCConstants.WATER_TAX_SERVICE_CODE);
 	}
 }

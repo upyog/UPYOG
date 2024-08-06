@@ -57,7 +57,7 @@ const PropertyDetails = () => {
   );
   const mutation = Digit.Hooks.pt.usePropertyAPI(tenantId, false);
 
-  const { data: UpdateNumberConfig } = Digit.Hooks.useCommonMDMS(Digit.ULBService.getStateId(), "PropertyTax", ["UpdateNumber"], {
+  const { data: UpdateNumberConfig } = Digit.Hooks.useCommonMDMSV2(Digit.ULBService.getStateId(), "PropertyTax", ["UpdateNumber"], {
     select: (data) => {
       return data?.PropertyTax?.UpdateNumber?.[0];
     },
@@ -120,7 +120,6 @@ const PropertyDetails = () => {
       lastActiveProperty.owners = lastActiveProperty?.owners?.filter((owner) => owner.status == "ACTIVE");
       if (lastActiveProperty) {
         let applicationDetails = appDetailsToShow?.transformToAppDetailsForEmployee({ property: lastActiveProperty, t });
-
         setAppDetailsToShow({ ...appDetailsToShow, applicationDetails });
       }
     }

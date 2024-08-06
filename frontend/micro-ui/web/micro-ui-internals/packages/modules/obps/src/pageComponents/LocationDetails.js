@@ -85,7 +85,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
 
   const [localities, setLocalities] = useState();
 
-  const [selectedLocality, setSelectedLocality] = useState(formData?.address?.locality ||null);
+  const [selectedLocality, setSelectedLocality] = useState(propertyData?.address.locality ||null);
   
 
   useEffect(() => {

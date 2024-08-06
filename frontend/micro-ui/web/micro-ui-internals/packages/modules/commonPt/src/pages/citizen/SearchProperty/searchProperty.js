@@ -171,8 +171,8 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
   useEffect(() => {
     if ( !(searchData?.filters?.mobileNumber && Object.values(searchData?.filters)?.filter(ob => ob !== undefined)?.length == 1) && 
       propertyData?.Properties.length > 0 &&
-      ptSearchConfig.maxResultValidation &&
-      propertyData?.Properties.length > ptSearchConfig.maxPropertyResult &&
+      ptSearchConfig?.maxResultValidation &&
+      propertyData?.Properties.length > ptSearchConfig?.maxPropertyResult &&
       !errorShown
     ) {
       setShowToast({ error: true, warning: true, label: "ERR_PLEASE_REFINED_UR_SEARCH" });
@@ -451,9 +451,9 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
 
   const onPropertySearch = async (data) => {
     if (
-      ptSearchConfig.maxResultValidation &&
+      ptSearchConfig?.maxResultValidation &&
       propertyData?.Properties.length > 0 &&
-      propertyData?.Properties.length > ptSearchConfig.maxPropertyResult &&
+      propertyData?.Properties.length > ptSearchConfig?.maxPropertyResult &&
       errorShown
     ) {
       seterrorShown(true);
@@ -570,7 +570,7 @@ setCityCode(city.code);
     return <Loader />;
   }
 
-  let validation = ptSearchConfig.maxResultValidation && !(searchData?.filters?.mobileNumber && Object.values(searchData?.filters)?.filter(ob => ob !== undefined)?.length == 1)   ? propertyData?.Properties.length<ptSearchConfig.maxPropertyResult && (showToast == null || (showToast !== null && !showToast?.error)) : true;
+  let validation = ptSearchConfig?.maxResultValidation && !(searchData?.filters?.mobileNumber && Object.values(searchData?.filters)?.filter(ob => ob !== undefined)?.length == 1)   ? propertyData?.Properties.length<ptSearchConfig?.maxPropertyResult && (showToast == null || (showToast !== null && !showToast?.error)) : true;
 
   if (propertyData && !propertyDataLoading && !error && validation) {
     let qs = {};
@@ -581,7 +581,7 @@ setCityCode(city.code);
       searchData?.filters?.locality &&
       propertyDataLoading &&
       propertyDataLoading?.Properties?.length &&
-      propertyDataLoading.Properties.length > ptSearchConfig.ptSearchCount
+      propertyDataLoading.Properties.length > ptSearchConfig?.ptSearchCount
     ) {
       !showToast && setShowToast({ error: true, label: "PT_MODIFY_SEARCH_CRITERIA" });
     } else if (propsConfig.action === "MUTATION") {
@@ -650,13 +650,14 @@ setCityCode(city.code);
         cardStyle={{marginBottom:"0",maxWidth:"960px"}}
       ></FormComposer>
        <div style={{display:"flex"}}>
-      <span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
-       
-        <Link to={window.location.href.includes("/ws/")?"/digit-ui/citizen/ws/create-application/create-property" : window.location.href.includes("/tl/tradelicence/") ? "/digit-ui/citizen/tl/tradelicence/new-application/create-property":window.location.href.includes("/obps/bpa/") ? "/digit-ui/citizen/obps/bpa/building_plan_scrutiny/new_construction/create-property":window.location.href.includes("/fsm/")? "/digit-ui/citizen/fsm/new-application/create-property":"/digit-ui/citizen/commonpt/property/new-application"}>{t("CPT_REG_NEW_PROPERTY")}</Link>
-      </span>
+ 
       {window.location.href.includes("/obps/bpa/") ?<span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
         <Link to={"/digit-ui/citizen/obps/bpa/building_plan_scrutiny/new_construction/location"}>{t("CORE_COMMON_SKIP_CONTINUE")}</Link>
-      </span>:""}
+      </span>:
+           <span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
+       
+           <Link to={window.location.href.includes("/ws/")?"/digit-ui/citizen/ws/create-application/create-property" : window.location.href.includes("/tl/tradelicence/") ? "/digit-ui/citizen/tl/tradelicence/new-application/create-property":window.location.href.includes("/fsm/")? "/digit-ui/citizen/fsm/new-application/create-property":"/digit-ui/citizen/commonpt/property/new-application"}>{t("CPT_REG_NEW_PROPERTY")}</Link>
+         </span>}
       </div>
       {showToast && (
         <Toast

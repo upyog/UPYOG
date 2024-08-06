@@ -1,5 +1,6 @@
 import React from "react";
 import { useQuery } from "react-query";
+import { MdmsServiceV2 } from "../../services/elements/MDMSV2";
 import { MdmsService } from "../../services/elements/MDMS";
 
 const useMDMS = {
@@ -7,7 +8,7 @@ const useMDMS = {
     useQuery(
       [tenantId, "TL_MDMS_APPLICATION_STATUS"],
       () =>
-        MdmsService.getDataByCriteria(
+      MdmsServiceV2.getDataByCriteria(
           tenantId,
           {
             details: {
@@ -28,7 +29,7 @@ const useMDMS = {
         ),
       {
         select: (data) =>
-          data.TradeLicense.ApplicationType.map((type) => ({
+          data.TradeLicense.ApplicationType?.map((type) => ({
             code: type.code.split(".")[1],
             i18nKey: `TL_APPLICATIONTYPE.${type.code.split(".")[1]}`,
           })),
@@ -39,7 +40,7 @@ const useMDMS = {
     useQuery(
       [tenantId, "FORM_CONFIG"],
       () =>
-        MdmsService.getDataByCriteria(
+      MdmsService.getDataByCriteria(
           tenantId,
           {
             details: {

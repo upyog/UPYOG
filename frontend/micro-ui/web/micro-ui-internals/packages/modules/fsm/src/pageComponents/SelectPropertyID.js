@@ -13,23 +13,13 @@ const inputs = [
     placeholder:"Enter a valid property ID",
     validation: {
     maxLength: 256,
+    
     },
   },
   ];
   const goNext=()=>{
     onSelect(config.key, { ...formData[config.key], ...data })
   }
-  useEffect(()=>{
-
-if(window.location.href.includes("employee/fsm/new-application"))
-{
-  setDisable(false)
-}
-else if(window.location.href.includes("employee"))
-{
-  setDisable(true)
-}
-  },[])
   useEffect(() => {
     setPropertyID(formData?.additionalDetails?.propertyID);
   }, [formData?.additionalDetails?.propertyID]);
@@ -41,7 +31,7 @@ else if(window.location.href.includes("employee"))
   }
   if (userType === "employee") {
     return (
-      <TextInput className="form-field" id="propertyID" value={propertyID} onChange={onChange} t={t} disable={disable}/>
+      <TextInput className="form-field" id="propertyID" value={propertyID} onChange={onChange} t={t} />
     );
   }
   const onSkip = () => onSelect();

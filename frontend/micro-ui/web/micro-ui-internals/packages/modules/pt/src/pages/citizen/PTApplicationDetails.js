@@ -7,7 +7,7 @@ import PropertyDocument from "../../pageComponents/PropertyDocument";
 import PTWFApplicationTimeline from "../../pageComponents/PTWFApplicationTimeline";
 import { getCityLocale, getPropertyTypeLocale, propertyCardBodyStyle, getMohallaLocale, pdfDownloadLink } from "../../utils";
 import PTCitizenFeedbackPopUp from "../../pageComponents/PTCitizenFeedbackPopUp";
-//import PTCitizenFeedback from "@egovernments/digit-ui-module-core/src/components/PTCitizenFeedback";
+//import PTCitizenFeedback from "@upyog/digit-ui-module-core/src/components/PTCitizenFeedback";
 
 import get from "lodash/get";
 import { size } from "lodash";
@@ -260,9 +260,8 @@ const PTApplicationDetails = () => {
       <div>
         <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
           <Header styles={{ fontSize: "32px" }}>{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
-          <div style={{display:"flex", alignItems:"center", color:"#A52A2A"}}>
-          <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
-          </div>
+          <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+       
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper"
@@ -271,6 +270,9 @@ const PTApplicationDetails = () => {
               options={dowloadOptions}
             />
           )}
+          <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+          </div>
+          
         </div>
         <Card>
           <StatusTable>

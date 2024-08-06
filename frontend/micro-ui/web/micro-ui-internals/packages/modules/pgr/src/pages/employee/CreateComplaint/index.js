@@ -129,7 +129,6 @@ const [description, setDescription] = useState("")
   };
 
   function selectLocality(locality) {
-    console.log("ddddddddd",locality)
     setSelectedLocality(locality);
   }
 
@@ -171,7 +170,6 @@ const [description, setDescription] = useState("")
   const handleMobileNumber = (event) => {
  
     const { value } = event.target;
-    console.log("handleMobileNumber",value)
     setMobileNumber(value);
   
   };

@@ -154,14 +154,29 @@ const HorBarChart = ({ data, setselectState = "" }) => {
 
     // console.log(index)
     // data?.splice(index, 1)
+    
+  
     var date = new Date();
     var months = [],
         monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
-    for(var i = 0; i < 12; i++) {
+    
+        for(var i = 0; i < 12; i++) {
         months.push(monthNames[date.getMonth()] + '-' + date.getFullYear());
         date.setMonth(date.getMonth() - 1);
     }    
-    console.log("months",months,data);
+  if(data?.[0])
+  {
+    let plotsss =  data[0].plots.map((data,index)=>
+      {
+       return {...data , name: months[index]}
+      })
+      data[0].plots = plotsss.reverse()
+      let plotulb =  data[1].plots.map((data,index)=>
+      {
+       return {...data , name: months[index]}
+      })
+      data[1].plots = plotulb.reverse()
+  }    
     let result = {};
     for (let i = 0; i < data?.length; i++) {
       const row = data[i];
@@ -209,7 +224,6 @@ const renderLegend = (value) => {
   }
 
   const bars = response?.responseData?.data?.map((bar) => bar?.headerName);
-
   return (
     <ResponsiveContainer
       width="50%"
@@ -401,7 +415,6 @@ const Home = ({ stateCode }) => {
           </div>
         ) : null}
         {dashboardConfig?.[0]?.visualizations.map((row, key) => {
-          console.log("visualizations",row,key)
           return (
             <div className="dss-card" key={key}>
               {row.vizArray.map((item, index) => {
