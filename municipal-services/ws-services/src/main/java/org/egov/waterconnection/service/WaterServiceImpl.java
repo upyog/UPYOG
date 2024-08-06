@@ -345,7 +345,7 @@ public class WaterServiceImpl implements WaterService {
 		if (waterConnectionRequest.getWaterConnection().isIsworkflowdisabled()) 
 		{
 			log.info("Water Request: "+waterConnectionRequest);
-			waterDao.updateWaterConnection(waterConnectionRequest, true);
+			waterDao.updateWaterConnection(waterConnectionRequest, waterConnectionRequest.getWaterConnection().isIsworkflowdisabled());
 			 return Arrays.asList(waterConnectionRequest.getWaterConnection());
 		}
 		
