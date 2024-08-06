@@ -12,26 +12,6 @@ ADD CONSTRAINT grbg_application_garbage_id_fk FOREIGN KEY (garbage_id) REFERENCE
 
 
 
-
--- Alter table hpudd_grbg_account
-ALTER TABLE hpudd_grbg_account
-ADD COLUMN user_uuid VARCHAR(225),
-ADD COLUMN declaration_uuid VARCHAR(225),
-ADD COLUMN grbg_coll_address_uuid VARCHAR(225),
-ADD COLUMN status VARCHAR(50),
-DROP COLUMN parent_id;
-
-
-
-
--- Alter table hpudd_grbg_bill
-ALTER TABLE hpudd_grbg_bill
-ADD COLUMN is_active BOOLEAN,
-ADD COLUMN bill_for VARCHAR(50);
-
-
-
-
 -- Create table grbg_commercial_details
 CREATE TABLE grbg_commercial_details (
     uuid VARCHAR(225) PRIMARY KEY,
@@ -51,12 +31,17 @@ ADD CONSTRAINT grbg_commercial_details_garbage_id_fk FOREIGN KEY (garbage_id) RE
 -- Create table grbg_collection_unit
 CREATE TABLE grbg_collection_unit (
     uuid VARCHAR(225) PRIMARY KEY,
+    garbage_id INT8,
     unit_name VARCHAR(225),
+    unit_type VARCHAR(100),
+    category VARCHAR(100),
+    sub_category VARCHAR(100),
+    sub_category_type VARCHAR(100),
     unit_ward VARCHAR(225),
     ulb_name VARCHAR(225),
-    type_of_ulb VARCHAR(225)
+    type_of_ulb VARCHAR(225),
+    is_active BOOLEAN
 );
-
 
 
 
@@ -130,16 +115,20 @@ ADD CONSTRAINT grbg_collection_staff_uuid_fk FOREIGN KEY (staff_uuid) REFERENCES
 -- Create table grbg_address
 CREATE TABLE grbg_address (
     uuid VARCHAR(225) PRIMARY KEY,
+    garbage_id INT8,
     address_type VARCHAR(100),
     address1 VARCHAR(255),
     address2 VARCHAR(255),
     city VARCHAR(225),
     state VARCHAR(225),
     pincode VARCHAR(100),
+    zone VARCHAR(100),
+    ulb_name VARCHAR(100),
+    ulb_type VARCHAR(100),
+    ward_name VARCHAR(100),
+    additional_detail JSONB,
     is_active BOOLEAN
 );
-
-
 
 
 
@@ -181,4 +170,5 @@ CREATE TABLE grbg_declaration (
     statement TEXT,
     is_active BOOLEAN
 );
+
 

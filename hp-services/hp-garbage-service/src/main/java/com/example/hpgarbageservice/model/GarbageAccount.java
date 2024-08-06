@@ -2,6 +2,9 @@ package com.example.hpgarbageservice.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonNode;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder(toBuilder = true)
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @EqualsAndHashCode(exclude = {"id","grbgApplication","grbgCommercialDetails","auditDetails","garbageBills","childGarbageAccounts"})
 public class GarbageAccount {
 
@@ -29,18 +33,23 @@ public class GarbageAccount {
 
 	private String mobileNumber;
 
-//	private Long parentId;
+	private String gender;
+
+	private String emailId;
+
 	private Boolean isOwner; 
 	
 	private String userUuid;
 
 	private String declarationUuid;
 
-	private String grbgCollectionAddressUuid;
+//	private String grbgCollectionAddressUuid;
 
 	private String status;
 	
 	private GrbgApplication grbgApplication;
+	
+	private GrbgOldDetails grbgOldDetails;
 
 	private GrbgCommercialDetails grbgCommercialDetails;
 	
@@ -50,5 +59,12 @@ public class GarbageAccount {
 	
 	private List<GarbageBill> garbageBills;
 
+	private List<GrbgCollectionUnit> grbgCollectionUnits;
+
+	private List<GrbgAddress> addresses;
+
+    private JsonNode additionalDetail = null;
+
 	private List<GarbageAccount> childGarbageAccounts;
+	
 }
