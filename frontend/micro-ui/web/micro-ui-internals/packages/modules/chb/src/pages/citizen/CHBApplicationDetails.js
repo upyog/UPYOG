@@ -39,7 +39,7 @@ const CHBApplicationDetails = () => {
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
 
-  const { isLoading, isError, error, data } = Digit.Hooks.chb.useChbSearch({
+  const { isLoading, isError, error, data,refetch } = Digit.Hooks.chb.useChbSearch({
     tenantId,
     filters: { bookingNo: acknowledgementIds },
   });
@@ -140,6 +140,7 @@ const CHBApplicationDetails = () => {
       hallsBookingApplication: updatedApplication
     });
     fileStoreId = response?.filestoreIds[0];
+    refetch();
     }
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
     window.open(fileStore[fileStoreId], "_blank");
@@ -161,6 +162,7 @@ const CHBApplicationDetails = () => {
         hallsBookingApplication: updatedApplication
       });
       fileStoreId = response?.filestoreIds[0];
+      refetch();
     }
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
     window.open(fileStore[fileStoreId], "_blank");
@@ -185,7 +187,7 @@ const CHBApplicationDetails = () => {
   //commented out, need later for download receipt and certificate
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
     dowloadOptions.push({
-      label: t("CHB_FEE_RECIEPT"),
+      label: t("CHB_FEE_RECEIPT"),
       onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
     });
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
