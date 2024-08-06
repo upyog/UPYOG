@@ -12,8 +12,10 @@ import org.egov.tlcalculator.utils.TLCalculatorConstants;
 import org.egov.tlcalculator.web.models.CalulationCriteria;
 import org.egov.tlcalculator.web.models.demand.Category;
 import org.egov.tlcalculator.web.models.demand.TaxHeadEstimate;
+import org.egov.tlcalculator.web.models.tradelicense.TradeLicense;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -26,308 +28,462 @@ import static org.egov.tlcalculator.utils.TLCalculatorConstants.MDMS_TRADELICENS
 @Service
 @Slf4j
 public class TLRenewalCalculation {
-    @Autowired
-    private MDMSService mdmsService;
+	@Autowired
+	private MDMSService mdmsService;
 
-    @Autowired
-    private ObjectMapper mapper;
+	@Autowired
+	private ObjectMapper mapper;
 
-    @Autowired
-    private ServiceRequestRepository repository;
+	@Autowired
+	private ServiceRequestRepository repository;
 
-    @Autowired
-    private CalculationUtils calculatorUtils;
+	@Autowired
+	private CalculationUtils calculatorUtils;
 
-    @Autowired
-    private TLCalculatorConfigs config;
+	@Autowired
+	private TLCalculatorConfigs config;
 
+	public List<TaxHeadEstimate> tlRenewalCalculation(RequestInfo requestInfo, CalulationCriteria calulationCriteria,
+			Object mdmsData, BigDecimal taxAmt) {
+		Map<String, JSONArray> timeBasedExemptionMasterMap = new HashMap<>();
+		Map<String, JSONArray> tenantMasterMap = new HashMap<>();
+		TaxHeadEstimate estimateRebate = new TaxHeadEstimate();
+		TaxHeadEstimate estimatePenalty = new TaxHeadEstimate();
+		List<TaxHeadEstimate> estimateList = new ArrayList<>();
+		String tenantId = calulationCriteria.getTenantId();
+		setPropertyMasterValues(requestInfo, tenantId, timeBasedExemptionMasterMap);
+		setTenantMasterValues(requestInfo, tenantId, tenantMasterMap);
 
-    public List<TaxHeadEstimate> tlRenewalCalculation(RequestInfo requestInfo, CalulationCriteria calulationCriteria, Object mdmsData, BigDecimal taxAmt){
-        Map<String, JSONArray> timeBasedExemptionMasterMap = new HashMap<>();
-        TaxHeadEstimate estimateRebate = new TaxHeadEstimate();
-        TaxHeadEstimate estimatePenalty = new TaxHeadEstimate();
-        List<TaxHeadEstimate> estimateList = new ArrayList<>();
-        String tenantId = calulationCriteria.getTenantId();
-        setTradeLicenseMasterValues(requestInfo, tenantId,timeBasedExemptionMasterMap);
-        String financialyear = calulationCriteria.getTradelicense().getFinancialYear();
+		String financialyear = calulationCriteria.getTradelicense().getFinancialYear();
 
-        BigDecimal rebate = getRebate(taxAmt, financialyear,timeBasedExemptionMasterMap.get(TLCalculatorConstants.REBATE_MASTER));
-        BigDecimal penalty = BigDecimal.ZERO;
+		BigDecimal rebate = getRebate(taxAmt, financialyear,
+				timeBasedExemptionMasterMap.get(TLCalculatorConstants.REBATE_MASTER));
+		BigDecimal penalty = BigDecimal.ZERO;
 
-        if (rebate.compareTo(BigDecimal.ZERO)==0) {
-            penalty = getPenalty(taxAmt, financialyear, timeBasedExemptionMasterMap.get(TLCalculatorConstants.PENANLTY_MASTER));
-        }
+		if (rebate.intValue() == 0) {
+			penalty = getPenalty(tenantId, taxAmt, financialyear,
+					timeBasedExemptionMasterMap.get(TLCalculatorConstants.PENANLTY_MASTER),
+					calulationCriteria.getTradelicense(), tenantMasterMap.get(TLCalculatorConstants.TENANT_MASTER));
+		}
 
-        estimateRebate.setCategory(Category.REBATE);
-        estimateRebate.setEstimateAmount(rebate.setScale(2, 2).negate());
-        estimateRebate.setTaxHeadCode(config.getTimeRebateTaxHead());
-        estimateList.add(estimateRebate);
+		estimateRebate.setCategory(Category.REBATE);
+		estimateRebate.setEstimateAmount(rebate.setScale(2, 2).negate());
+		estimateRebate.setTaxHeadCode(config.getTimeRebateTaxHead());
+		estimateList.add(estimateRebate);
 
-        estimatePenalty.setCategory(Category.PENALTY);
-        estimatePenalty.setEstimateAmount(penalty.setScale(2, 2));
-        estimatePenalty.setTaxHeadCode(config.getTimePenaltyTaxHead());
-        estimateList.add(estimatePenalty);
+		estimatePenalty.setCategory(Category.PENALTY);
+		estimatePenalty.setEstimateAmount(penalty.setScale(2, 2));
+		estimatePenalty.setTaxHeadCode(config.getTimePenaltyTaxHead());
+		estimateList.add(estimatePenalty);
 
+		return estimateList;
+	}
 
-        return estimateList;
-    }
+	/**
+	 * Method to enrich the property Master data Map
+	 *
+	 * @param requestInfo
+	 * @param tenantId
+	 */
+	public void setPropertyMasterValues(RequestInfo requestInfo, String tenantId,
+			Map<String, JSONArray> timeBasedExemptionMasterMap) {
 
+		MdmsResponse response = mapper.convertValue(fetchMdmsData(requestInfo, tenantId), MdmsResponse.class);
+		Map<String, JSONArray> res = response.getMdmsRes().get("TradeLicense");
+		System.out.println("MDMS--->" + res.toString());
+		for (Map.Entry<String, JSONArray> entry : res.entrySet())
+			timeBasedExemptionMasterMap.put(entry.getKey(), entry.getValue());
+	}
 
-    /**
-     * Returns the Amount of Rebate that can be applied on the given tax amount for
-     * the given period
-     *
-     * @param taxAmt
-     * @param financialyear
-     * @return
-     */
-    public BigDecimal getRebate(BigDecimal taxAmt, String financialyear, JSONArray rebateMasterList) {
+	@Cacheable(value = "mdmsData", sync = true, key = "tenantId")
+	private Object fetchMdmsData(RequestInfo requestInfo, String tenantId) {
+		return repository.fetchResult(calculatorUtils.getMdmsSearchUrl(),
+				getPropertyModuleRequest(requestInfo, tenantId));
+	}
 
-        BigDecimal rebateAmt = BigDecimal.ZERO;
-        Map<String, Object> rebate = getApplicableMaster(financialyear, rebateMasterList);
-        if (null == rebate) return rebateAmt;
+	@Cacheable(value = "mdmsData", sync = true, key = "tenantId")
+	private Object fetchTenantData(RequestInfo requestInfo, String tenantId) {
+		return repository.fetchResult(calculatorUtils.getMdmsSearchUrl(),
+				getTenantModuleRequest(requestInfo, tenantId));
+	}
 
-        String[] time = ((String) rebate.get(TLCalculatorConstants.ENDING_DATE_APPLICABLES)).split("/");
-        Calendar cal = Calendar.getInstance();
-        setDateToCalendar(financialyear, time, cal);
+	public MdmsCriteriaReq getTenantModuleRequest(RequestInfo requestInfo, String tenantId) {
 
-        if (cal.getTimeInMillis() > System.currentTimeMillis())
-            rebateAmt = calculateApplicables(taxAmt, rebate);
+		List<MasterDetail> details = new ArrayList<>();
+		details.add(MasterDetail.builder().name(TLCalculatorConstants.TENANT_MASTER).build());
 
-        return rebateAmt;
-    }
+		ModuleDetail mdDtl = ModuleDetail.builder().masterDetails(details).moduleName("tenant").build();
+		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(mdDtl)).tenantId(tenantId)
+				.build();
+		return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+	}
 
+	public void setTenantMasterValues(RequestInfo requestInfo, String tenantId,
+			Map<String, JSONArray> tenantMasterMap) {
 
-    /**
-     * Returns the Amount of penalty that has to be applied on the given tax amount for the given period
-     *
-     * @param taxAmt
-     * @param financialYear
-     * @return
-     */
-    public BigDecimal getPenalty(BigDecimal taxAmt, String financialYear, JSONArray penaltyMasterList) {
+		MdmsResponse response = mapper.convertValue(fetchTenantData(requestInfo, tenantId), MdmsResponse.class);
+		Map<String, JSONArray> res = response.getMdmsRes().get("tenant");
+		System.out.println("MDMS--->" + res.toString());
+		for (Map.Entry<String, JSONArray> entry : res.entrySet())
+			tenantMasterMap.put(entry.getKey(), entry.getValue());
+	}
 
-        BigDecimal penaltyAmt = BigDecimal.ZERO;
-        Map<String, Object> penalty = getApplicableMaster(financialYear, penaltyMasterList);
-        if (null == penalty) return penaltyAmt;
+	/**
+	 * Returns the Amount of Rebate that can be applied on the given tax amount for
+	 * the given period
+	 *
+	 * @param taxAmt
+	 * @param financialyear
+	 * @return
+	 */
+	public BigDecimal getRebate(BigDecimal taxAmt, String financialyear, JSONArray rebateMasterList) {
 
-        String[] time = getStartTime(financialYear,penalty);
-        Calendar cal = Calendar.getInstance();
-        setDateToCalendar(time, cal);
-        Long currentIST = System.currentTimeMillis()+TLCalculatorConstants.TIMEZONE_OFFSET;
+		BigDecimal rebateAmt = BigDecimal.ZERO;
+		Map<String, Object> rebate = getApplicableMaster(financialyear, rebateMasterList);
+		if (null == rebate)
+			return rebateAmt;
 
-        if (cal.getTimeInMillis() < currentIST)
-            penaltyAmt = calculateApplicables(taxAmt, penalty);
+		String[] time = ((String) rebate.get(TLCalculatorConstants.ENDING_DATE_APPLICABLES)).split("/");
+		Calendar cal = Calendar.getInstance();
+		setDateToCalendar(financialyear, time, cal);
 
-        return penaltyAmt;
-    }
+		if (cal.getTimeInMillis() > System.currentTimeMillis())
+			rebateAmt = calculateApplicables(taxAmt, rebate);
 
-    /**
-     * Method to call MDMS service to get Rebate and Penalty file data
-     *
-     * @param requestInfo
-     * @param tenantId
-     */
-    public void setTradeLicenseMasterValues(RequestInfo requestInfo, String tenantId, Map<String, JSONArray> timeBasedExemptionMasterMap) {
+		return rebateAmt;
+	}
 
-        MdmsResponse response = mapper.convertValue(repository.fetchResult(calculatorUtils.getMdmsSearchUrl(),
-                getPropertyModuleRequest(requestInfo, tenantId)), MdmsResponse.class);
-        Map<String, JSONArray> res = response.getMdmsRes().get(MDMS_TRADELICENSE);
-        for (Map.Entry<String, JSONArray> entry : res.entrySet())
-            timeBasedExemptionMasterMap.put(entry.getKey(), entry.getValue());
-    }
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> getApplicableMasterForPenalty(String assessmentYear, List<Object> masterList,
+			String ulbGrade) {
 
-    /**
-     * Methods to set MDMS criteria requirement for search
-     */
-    public MdmsCriteriaReq getPropertyModuleRequest(RequestInfo requestInfo, String tenantId) {
+		Map<String, Object> objToBeReturned = null;
+		String maxYearFromTheList = "0";
+		Long maxStartTime = 0l;
 
-        List<MasterDetail> details = new ArrayList<>();
-        details.add(MasterDetail.builder().name(TLCalculatorConstants.REBATE_MASTER).build());
-        details.add(MasterDetail.builder().name(TLCalculatorConstants.PENANLTY_MASTER).build());
+		for (Object object : masterList) {
 
-        ModuleDetail mdDtl = ModuleDetail.builder().masterDetails(details)
-                .moduleName(MDMS_TRADELICENSE).build();
-        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(mdDtl)).tenantId(tenantId)
-                .build();
-        return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
-    }
+			Map<String, Object> objMap = (Map<String, Object>) object;
+			String objFinYear = ((String) objMap.get(TLCalculatorConstants.FROMFY_FIELD_NAME)).split("-")[0];
+			if (!objMap.containsKey(TLCalculatorConstants.STARTING_DATE_APPLICABLES)) {
+				if (objFinYear.compareTo(assessmentYear.split("-")[0]) == 0)
+					objToBeReturned = objMap;
 
-    /**
-     * Returns the 'APPLICABLE' master object from the list of inputs
-     *
-     * filters the Input based on their effective financial year and starting day
-     *
-     * If an object is found with effective year same as financial year that master entity will be returned
-     *
-     * If exact match is not found then the entity with latest effective financial year which should be lesser than the financial year
-     *
-     *
-     *
-     * @param financalYear
-     * @param masterList
-     */
-    @SuppressWarnings("unchecked")
-    public Map<String, Object> getApplicableMaster(String financalYear, List<Object> masterList) {
+				else if (assessmentYear.split("-")[0].compareTo(objFinYear) > 0
+						&& maxYearFromTheList.compareTo(objFinYear) <= 0) {
+					maxYearFromTheList = objFinYear;
+					objToBeReturned = objMap;
+				}
+			} else {
+				String objStartDay = ((String) objMap.get(TLCalculatorConstants.STARTING_DATE_APPLICABLES));
+				if (assessmentYear.split("-")[0].compareTo(objFinYear) >= 0
+						&& maxYearFromTheList.compareTo(objFinYear) <= 0) {
+					maxYearFromTheList = objFinYear;
+					Long startTime = getStartDayInMillis(objStartDay);
+					Long currentTime = System.currentTimeMillis();
+					if (startTime < currentTime && maxStartTime < startTime
+							&& objMap.get("type").toString().contains(ulbGrade)) {
+						objToBeReturned = objMap;
+						maxStartTime = startTime;
+					}
+				}
+			}
 
-        Map<String, Object> objToBeReturned = null;
-        String maxYearFromTheList = "0";
-        Long maxStartTime = 0l;
+//            if(((String) objMap.get("type")).contains(ulbGrade))
+//                objToBeReturned = objMap;
+//            else
+//            	objToBeReturned=null;
+		}
+		return objToBeReturned;
+	}
+	   @SuppressWarnings("unchecked")
+	    public Map<String, Object> getApplicableMasterForTenant(String tenantId,String assessmentYear, List<Object> masterList) {
 
-        for (Object object : masterList) {
+	        Map<String, Object> objToBeReturned = null;
+	      
 
-            Map<String, Object> objMap = (Map<String, Object>) object;
-            String objFinYear = ((String) objMap.get(TLCalculatorConstants.FROMFY_FIELD_NAME)).split("-")[0];
-            if(!objMap.containsKey(TLCalculatorConstants.STARTING_DATE_APPLICABLES)){
-                if (objFinYear.compareTo(financalYear.split("-")[0]) == 0)
-                    return  objMap;
+	        for (Object object : masterList) {
 
-                else if (financalYear.split("-")[0].compareTo(objFinYear) > 0 && maxYearFromTheList.compareTo(objFinYear) <= 0) {
-                    maxYearFromTheList = objFinYear;
-                    objToBeReturned = objMap;
-                }
-            }
-            else{
-                String objStartDay = ((String) objMap.get(TLCalculatorConstants.STARTING_DATE_APPLICABLES));
-                if (financalYear.split("-")[0].compareTo(objFinYear) >= 0 && maxYearFromTheList.compareTo(objFinYear) <= 0) {
-                    maxYearFromTheList = objFinYear;
-                    Long startTime = getStartDayInMillis(objStartDay);
-                    Long currentTime = System.currentTimeMillis();
-                    if(startTime < currentTime && maxStartTime < startTime){
-                        objToBeReturned = objMap;
-                        maxStartTime = startTime;
-                    }
-                }
-            }
-        }
-        return objToBeReturned;
-    }
+	            Map<String, Object> objMap = (Map<String, Object>) object;
+	           
 
-    /**
-     * Converts startDay to epoch
-     * @param startDay StartDay of applicable
-     * @return
-     */
-    private Long getStartDayInMillis(String startDay){
+	            String tenantCode = ((String) objMap.get("code"));
+	            if(tenantCode.equalsIgnoreCase(tenantId))
+	            	return objMap;
+	            
+	             }
+	        return objToBeReturned;
+	    }
 
-        Long startTime = null;
-        try{
-            SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-            Date date = df.parse(startDay);
-            startTime = date.getTime();
-        }
-        catch (ParseException e) {
-            throw new CustomException("INVALID STARTDAY","The startDate of the penalty cannot be parsed");
-        }
+	/**
+	 * 
+	 * @param tenantId
+	 * @param taxAmt
+	 * @param financialYear
+	 * @param penaltyMasterList
+	 * @param tradeLicense
+	 * @param tenantList
+	 * @return
+	 */
+	public BigDecimal getPenalty(String tenantId, BigDecimal taxAmt, String financialYear, JSONArray penaltyMasterList,
+			TradeLicense tradeLicense, JSONArray tenantList) {
 
-        return startTime;
-    }
+		BigDecimal penaltyAmt = BigDecimal.ZERO;
+		Map<String, Object> ulbGrade = getApplicableMasterForTenant(tenantId, financialYear, tenantList);
+		Map<String, Object> configMap = (Map<String, Object>) ulbGrade;
+		Map<String, Object> configMapp = (Map<String, Object>) configMap.get("city");
 
-    /**
-     * Sets the date in to calendar based on the month and date value present in the time array
-     *
-     * @param financalYear
-     * @param time
-     * @param cal
-     */
-    private void setDateToCalendar(String financalYear, String[] time, Calendar cal) {
+		String ulbGradeFromTenantMaster = configMapp.get("ulbGrade").toString();
+		Map<String, Object> penalty = getApplicableMasterForPenalty(financialYear, penaltyMasterList,
+				ulbGradeFromTenantMaster);
 
-        cal.clear();
-        Integer day = Integer.valueOf(time[0]);
-        Integer month = Integer.valueOf(time[1])-1;
-        // One is subtracted because calender reads january as 0
-        Integer year = Integer.valueOf( financalYear.split("-")[0]);
-        if (month < 3) year += 1;
-        cal.set(year, month, day);
-    }
+		if (null == penalty)
+			return penaltyAmt;
+		Long commencementDate = tradeLicense.getCommencementDate();
+		Long applicationDate = tradeLicense.getApplicationDate();
+		String[] time = getStartTime(financialYear, penalty);
+		Calendar cal = Calendar.getInstance();
+		setDateToCalendar(time, cal);
+		long totalDays = 0;
+		Long currentIST = System.currentTimeMillis();
+		if (tradeLicense.getApplicationType().toString().equals("NEW")) {
+			if (commencementDate > cal.getTimeInMillis()) {
 
+				totalDays = (currentIST - commencementDate) / (24 * 60 * 60 * 1000);
+			} else {
+				totalDays = (currentIST - cal.getTimeInMillis()) / (24 * 60 * 60 * 1000);
+			}
+		} else {
+			if (applicationDate > cal.getTimeInMillis()) {
+				totalDays = (applicationDate - cal.getTimeInMillis()) / (24 * 60 * 60 * 1000);
+			} else
+				totalDays = 0;
 
+		}
+		BigDecimal applicableDays = new BigDecimal(totalDays);
+		if (cal.getTimeInMillis() < currentIST)
+			penaltyAmt = calculateApplicables(applicableDays, penalty);
 
-    /**
-     * Method to calculate exmeption based on the Amount and exemption map
-     *
-     * @param applicableAmount
-     * @param config
-     * @return
-     */
-    public BigDecimal calculateApplicables(BigDecimal applicableAmount, Object config) {
+		return penaltyAmt;
+	}
 
-        BigDecimal currentApplicable = BigDecimal.ZERO;
+	/**
+	 * Method to call MDMS service to get Rebate and Penalty file data
+	 *
+	 * @param requestInfo
+	 * @param tenantId
+	 */
+	public void setTradeLicenseMasterValues(RequestInfo requestInfo, String tenantId,
+			Map<String, JSONArray> timeBasedExemptionMasterMap) {
 
-        if (null == config)
-            return currentApplicable;
+		MdmsResponse response = mapper.convertValue(repository.fetchResult(calculatorUtils.getMdmsSearchUrl(),
+				getPropertyModuleRequest(requestInfo, tenantId)), MdmsResponse.class);
+		Map<String, JSONArray> res = response.getMdmsRes().get(MDMS_TRADELICENSE);
+		for (Map.Entry<String, JSONArray> entry : res.entrySet())
+			timeBasedExemptionMasterMap.put(entry.getKey(), entry.getValue());
+	}
 
-        @SuppressWarnings("unchecked")
-        Map<String, Object> configMap = (Map<String, Object>) config;
+	/**
+	 * Methods to set MDMS criteria requirement for search
+	 */
+	public MdmsCriteriaReq getPropertyModuleRequest(RequestInfo requestInfo, String tenantId) {
 
-        BigDecimal rate = null != configMap.get(TLCalculatorConstants.RATE_FIELD_NAME)
-                ? BigDecimal.valueOf(((Number) configMap.get(TLCalculatorConstants.RATE_FIELD_NAME)).doubleValue())
-                : null;
+		List<MasterDetail> details = new ArrayList<>();
+		details.add(MasterDetail.builder().name(TLCalculatorConstants.REBATE_MASTER).build());
+		details.add(MasterDetail.builder().name(TLCalculatorConstants.PENANLTY_MASTER).build());
 
-        BigDecimal maxAmt = null != configMap.get(TLCalculatorConstants.MAX_AMOUNT_FIELD_NAME)
-                ? BigDecimal.valueOf(((Number) configMap.get(TLCalculatorConstants.MAX_AMOUNT_FIELD_NAME)).doubleValue())
-                : null;
+		ModuleDetail mdDtl = ModuleDetail.builder().masterDetails(details).moduleName(MDMS_TRADELICENSE).build();
+		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(mdDtl)).tenantId(tenantId)
+				.build();
+		return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+	}
 
-        BigDecimal minAmt = null != configMap.get(TLCalculatorConstants.MIN_AMOUNT_FIELD_NAME)
-                ? BigDecimal.valueOf(((Number) configMap.get(TLCalculatorConstants.MIN_AMOUNT_FIELD_NAME)).doubleValue())
-                : null;
+	/**
+	 * Returns the 'APPLICABLE' master object from the list of inputs
+	 *
+	 * filters the Input based on their effective financial year and starting day
+	 *
+	 * If an object is found with effective year same as financial year that master
+	 * entity will be returned
+	 *
+	 * If exact match is not found then the entity with latest effective financial
+	 * year which should be lesser than the financial year
+	 *
+	 *
+	 *
+	 * @param financalYear
+	 * @param masterList
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> getApplicableMaster(String financalYear, List<Object> masterList) {
 
-        BigDecimal flatAmt = null != configMap.get(TLCalculatorConstants.FLAT_AMOUNT_FIELD_NAME)
-                ? BigDecimal.valueOf(((Number) configMap.get(TLCalculatorConstants.FLAT_AMOUNT_FIELD_NAME)).doubleValue())
-                : BigDecimal.ZERO;
+		Map<String, Object> objToBeReturned = null;
+		String maxYearFromTheList = "0";
+		Long maxStartTime = 0l;
 
-        if (null == rate)
-            currentApplicable = flatAmt.compareTo(applicableAmount) > 0 ? applicableAmount : flatAmt;
-        else {
-            currentApplicable = applicableAmount.multiply(rate.divide(TLCalculatorConstants.HUNDRED));
+		for (Object object : masterList) {
 
-            if (null != maxAmt && BigDecimal.ZERO.compareTo(maxAmt) < 0 && currentApplicable.compareTo(maxAmt) > 0)
-                currentApplicable = maxAmt;
-            else if (null != minAmt && currentApplicable.compareTo(minAmt) < 0)
-                currentApplicable = minAmt;
-        }
-        return currentApplicable;
-    }
+			Map<String, Object> objMap = (Map<String, Object>) object;
+			String objFinYear = ((String) objMap.get(TLCalculatorConstants.FROMFY_FIELD_NAME)).split("-")[0];
+			if (!objMap.containsKey(TLCalculatorConstants.STARTING_DATE_APPLICABLES)) {
+				if (objFinYear.compareTo(financalYear.split("-")[0]) == 0)
+					return objMap;
 
-    /**
-     * Fetch the fromFY and take the starting year of financialYear
-     * calculate the difference between the start of Tl financial year and fromFY
-     * Add the difference in year to the year in the starting day
-     * eg: financial year = 2017-18 and interestMap fetched from master due to fallback have fromFY = 2015-16
-     * and startingDay = 01/04/2016. Then diff = 2017-2015 = 2
-     * Therefore the starting day will be modified from 01/04/2016 to 01/04/2018
-     * @param financialYear Year of the TL
-     * @param interestMap The applicable master data
-     * @return list of string with 0'th element as day, 1'st as month and 2'nd as year
-     */
-    private String[] getStartTime(String financialYear,Map<String, Object> interestMap){
-        String financialYearOfApplicableEntry = ((String) interestMap.get(TLCalculatorConstants.FROMFY_FIELD_NAME)).split("-")[0];
-        Integer diffInYear = Integer.valueOf(financialYear.split("-")[0]) - Integer.valueOf(financialYearOfApplicableEntry);
-        String startDay = ((String) interestMap.get(TLCalculatorConstants.STARTING_DATE_APPLICABLES));
-        Integer yearOfStartDayInApplicableEntry = Integer.valueOf((startDay.split("/")[2]));
-        startDay = startDay.replace(String.valueOf(yearOfStartDayInApplicableEntry),String.valueOf(yearOfStartDayInApplicableEntry+diffInYear));
-        String[] time = startDay.split("/");
-        return time;
-    }
+				else if (financalYear.split("-")[0].compareTo(objFinYear) > 0
+						&& maxYearFromTheList.compareTo(objFinYear) <= 0) {
+					maxYearFromTheList = objFinYear;
+					objToBeReturned = objMap;
+				}
+			} else {
+				String objStartDay = ((String) objMap.get(TLCalculatorConstants.STARTING_DATE_APPLICABLES));
+				if (financalYear.split("-")[0].compareTo(objFinYear) >= 0
+						&& maxYearFromTheList.compareTo(objFinYear) <= 0) {
+					maxYearFromTheList = objFinYear;
+					Long startTime = getStartDayInMillis(objStartDay);
+					Long currentTime = System.currentTimeMillis();
+					if (startTime < currentTime && maxStartTime < startTime) {
+						objToBeReturned = objMap;
+						maxStartTime = startTime;
+					}
+				}
+			}
+		}
+		return objToBeReturned;
+	}
 
-    /**
-     * Overloaded method
-     * Sets the date in to calendar based on the month and date value present in the time array*
-     * @param time
-     * @param cal
-     */
-    private void setDateToCalendar(String[] time, Calendar cal) {
+	/**
+	 * Converts startDay to epoch
+	 * 
+	 * @param startDay StartDay of applicable
+	 * @return
+	 */
+	private Long getStartDayInMillis(String startDay) {
 
-        cal.clear();
-        TimeZone timeZone = TimeZone.getTimeZone(config.getEgovAppTimeZone());
-        cal.setTimeZone(timeZone);
-        Integer day = Integer.valueOf(time[0]);
-        Integer month = Integer.valueOf(time[1])-1;
-        // One is subtracted because calender reads january as 0
-        Integer year = Integer.valueOf(time[2]);
-        cal.set(year, month, day);
-    }
+		Long startTime = null;
+		try {
+			SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+			Date date = df.parse(startDay);
+			startTime = date.getTime();
+		} catch (ParseException e) {
+			throw new CustomException("INVALID STARTDAY", "The startDate of the penalty cannot be parsed");
+		}
 
+		return startTime;
+	}
 
+	/**
+	 * Sets the date in to calendar based on the month and date value present in the
+	 * time array
+	 *
+	 * @param financalYear
+	 * @param time
+	 * @param cal
+	 */
+	private void setDateToCalendar(String financalYear, String[] time, Calendar cal) {
+
+		cal.clear();
+		Integer day = Integer.valueOf(time[0]);
+		Integer month = Integer.valueOf(time[1]) - 1;
+		// One is subtracted because calender reads january as 0
+		Integer year = Integer.valueOf(financalYear.split("-")[0]);
+		if (month < 3)
+			year += 1;
+		cal.set(year, month, day);
+	}
+
+	/**
+	 * Method to calculate exmeption based on the Amount and exemption map
+	 *
+	 * @param applicableAmount
+	 * @param config
+	 * @return
+	 */
+	public BigDecimal calculateApplicables(BigDecimal applicableAmount, Object config) {
+
+		BigDecimal currentApplicable = BigDecimal.ZERO;
+
+		if (null == config)
+			return currentApplicable;
+
+		@SuppressWarnings("unchecked")
+		Map<String, Object> configMap = (Map<String, Object>) config;
+
+		BigDecimal rate = null != configMap.get(TLCalculatorConstants.RATE_FIELD_NAME)
+				? BigDecimal.valueOf(((Number) configMap.get(TLCalculatorConstants.RATE_FIELD_NAME)).doubleValue())
+				: null;
+
+		BigDecimal maxAmt = null != configMap.get(TLCalculatorConstants.MAX_AMOUNT_FIELD_NAME) ? BigDecimal
+				.valueOf(((Number) configMap.get(TLCalculatorConstants.MAX_AMOUNT_FIELD_NAME)).doubleValue()) : null;
+
+		BigDecimal minAmt = null != configMap.get(TLCalculatorConstants.MIN_AMOUNT_FIELD_NAME) ? BigDecimal
+				.valueOf(((Number) configMap.get(TLCalculatorConstants.MIN_AMOUNT_FIELD_NAME)).doubleValue()) : null;
+
+		BigDecimal flatAmt = null != configMap.get(TLCalculatorConstants.FLAT_AMOUNT_FIELD_NAME)
+				? BigDecimal
+						.valueOf(((Number) configMap.get(TLCalculatorConstants.FLAT_AMOUNT_FIELD_NAME)).doubleValue())
+				: BigDecimal.ZERO;
+
+		if (null == rate) {
+			// currentApplicable = flatAmt.compareTo(applicableAmount) > 0 ?
+			// applicableAmount : flatAmt;
+			currentApplicable = flatAmt.add(minAmt.multiply(applicableAmount));
+		} else {
+			if (!applicableAmount.equals(BigDecimal.ZERO)) {
+				currentApplicable = flatAmt.add((applicableAmount.subtract(BigDecimal.ONE)).multiply(rate));
+				if (null != maxAmt && BigDecimal.ZERO.compareTo(maxAmt) < 0 && currentApplicable.compareTo(maxAmt) > 0)
+					currentApplicable = maxAmt;
+				else if (null != minAmt && currentApplicable.compareTo(minAmt) < 0)
+					currentApplicable = minAmt;
+			} else
+
+				currentApplicable = BigDecimal.ZERO;
+		}
+		return currentApplicable;
+	}
+
+	/**
+	 * Fetch the fromFY and take the starting year of financialYear calculate the
+	 * difference between the start of Tl financial year and fromFY Add the
+	 * difference in year to the year in the starting day eg: financial year =
+	 * 2017-18 and interestMap fetched from master due to fallback have fromFY =
+	 * 2015-16 and startingDay = 01/04/2016. Then diff = 2017-2015 = 2 Therefore the
+	 * starting day will be modified from 01/04/2016 to 01/04/2018
+	 * 
+	 * @param financialYear Year of the TL
+	 * @param interestMap   The applicable master data
+	 * @return list of string with 0'th element as day, 1'st as month and 2'nd as
+	 *         year
+	 */
+	private String[] getStartTime(String financialYear, Map<String, Object> interestMap) {
+		String financialYearOfApplicableEntry = ((String) interestMap.get(TLCalculatorConstants.FROMFY_FIELD_NAME))
+				.split("-")[0];
+		Integer diffInYear = Integer.valueOf(financialYear.split("-")[0])
+				- Integer.valueOf(financialYearOfApplicableEntry);
+		String startDay = ((String) interestMap.get(TLCalculatorConstants.STARTING_DATE_APPLICABLES));
+		Integer yearOfStartDayInApplicableEntry = Integer.valueOf((startDay.split("/")[2]));
+		startDay = startDay.replace(String.valueOf(yearOfStartDayInApplicableEntry),
+				String.valueOf(yearOfStartDayInApplicableEntry + diffInYear));
+		String[] time = startDay.split("/");
+		return time;
+	}
+
+	/**
+	 * Overloaded method Sets the date in to calendar based on the month and date
+	 * value present in the time array*
+	 * 
+	 * @param time
+	 * @param cal
+	 */
+	private void setDateToCalendar(String[] time, Calendar cal) {
+
+		cal.clear();
+		TimeZone timeZone = TimeZone.getTimeZone(config.getEgovAppTimeZone());
+		cal.setTimeZone(timeZone);
+		Integer day = Integer.valueOf(time[0]);
+		Integer month = Integer.valueOf(time[1]) - 1;
+		// One is subtracted because calender reads january as 0
+		Integer year = Integer.valueOf(time[2]);
+		cal.set(year, month, day);
+	}
 
 }
