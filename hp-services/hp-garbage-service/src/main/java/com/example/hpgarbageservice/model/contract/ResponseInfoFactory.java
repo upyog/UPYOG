@@ -1,5 +1,6 @@
 package com.example.hpgarbageservice.model.contract;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.springframework.stereotype.Service;
 
 /**

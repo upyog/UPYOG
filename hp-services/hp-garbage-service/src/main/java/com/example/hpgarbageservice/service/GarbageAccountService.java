@@ -10,20 +10,22 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.example.hpgarbageservice.contract.workflow.ProcessInstance;
+import com.example.hpgarbageservice.contract.workflow.ProcessInstanceRequest;
+import com.example.hpgarbageservice.contract.workflow.WorkflowService;
 import com.example.hpgarbageservice.model.AuditDetails;
 import com.example.hpgarbageservice.model.GarbageAccount;
 import com.example.hpgarbageservice.model.GarbageAccountRequest;
 import com.example.hpgarbageservice.model.GrbgAddress;
 import com.example.hpgarbageservice.model.GrbgApplication;
 import com.example.hpgarbageservice.model.GrbgCollectionUnit;
-import com.example.hpgarbageservice.model.GrbgOldDetails;
 import com.example.hpgarbageservice.model.SearchCriteriaGarbageAccount;
 import com.example.hpgarbageservice.model.SearchCriteriaGarbageAccountRequest;
-import com.example.hpgarbageservice.model.contract.RequestInfo;
 import com.example.hpgarbageservice.repository.GarbageAccountRepository;
 import com.example.hpgarbageservice.repository.GrbgAddressRepository;
 import com.example.hpgarbageservice.repository.GrbgApplicationRepository;
@@ -57,6 +59,9 @@ public class GarbageAccountService {
 	@Autowired
 	private GrbgCollectionUnitRepository grbgCollectionUnitRepository;
 
+	@Autowired
+	private WorkflowService workflowService;
+
 	public List<GarbageAccount> create(GarbageAccountRequest createGarbageRequest) {
 
 		List<GarbageAccount> garbageAccountsResponse = new ArrayList<>();
@@ -75,6 +80,9 @@ public class GarbageAccountService {
 				
 			});
 		}
+		
+		// call workflow
+		callWfUpdate(createGarbageRequest);
 		
 		return garbageAccountsResponse;
 	}
@@ -107,7 +115,7 @@ public class GarbageAccountService {
 		validateGarbageAccount(garbageAccount);
 
 		// enrich create garbage account
-				enrichCreateGarbageAccount(garbageAccount, requestInfo);
+		enrichCreateGarbageAccount(garbageAccount, requestInfo);
 				
 		// enrich garbage address
 		validateAndsEnrichCreateGarbageAddress(garbageAccount);
@@ -216,7 +224,7 @@ public class GarbageAccountService {
 		GrbgApplication grbgApplication = GrbgApplication.builder()
 				.uuid(UUID.randomUUID().toString())
 				.applicationNo(ApplicationPropertiesAndConstant.APPLICATION_PREFIX.concat(garbageAccount.getGarbageId().toString()))
-				.status(ApplicationPropertiesAndConstant.APPLICATION_STATUS_DRAFT)
+				.status(ApplicationPropertiesAndConstant.APPLICATION_STATUS_INITIATED)
 				.garbageId(garbageAccount.getGarbageId())
 				.build();
 		
@@ -257,7 +265,8 @@ public class GarbageAccountService {
 		// generate garbage_id
 		garbageAccount.setUuid(UUID.randomUUID().toString());
 		garbageAccount.setGarbageId(System.currentTimeMillis());
-		garbageAccount.setStatus(ApplicationPropertiesAndConstant.ACCOUNT_STATUS_DRAFT);
+		garbageAccount.setStatus(ApplicationPropertiesAndConstant.ACCOUNT_STATUS_INITIATED);
+		garbageAccount.setWorkflowAction(ApplicationPropertiesAndConstant.WORKFLOW_ACTION_INITIATE);
 
 	}
 
@@ -308,12 +317,42 @@ public class GarbageAccountService {
 
 			// update other objects of garbage account
 				updateGarbageAccountObjects(newGarbageAccount, existingGarbageAccount);
-
+			
 				garbageAccountsResponse.add(newGarbageAccount);
 			});
 		}
 		
+		// call workflow
+		callWfUpdate(updateGarbageRequest);
+		
+		
 		return garbageAccountsResponse;
+	}
+
+
+	private void callWfUpdate(GarbageAccountRequest updateGarbageRequest) {
+		if (!CollectionUtils.isEmpty(updateGarbageRequest.getGarbageAccounts())) {
+			
+			ProcessInstanceRequest processInstanceRequest = null;
+			List<ProcessInstance> processInstances = new ArrayList<>();
+					
+			updateGarbageRequest.getGarbageAccounts().forEach(newGarbageAccount -> {
+				// build process instance request
+				if (null != newGarbageAccount.getGrbgApplication()) {
+					processInstances.add(ProcessInstance.builder().tenantId(newGarbageAccount.getTenantId())
+							.businessService("GarbageCollection").moduleName("GB")
+							.businessId(newGarbageAccount.getGrbgApplication().getApplicationNo())
+							.action(newGarbageAccount.getWorkflowAction()).build());
+				}
+				
+			});
+			
+			processInstanceRequest = ProcessInstanceRequest.builder().requestInfo(updateGarbageRequest.getRequestInfo())
+					.processInstances(processInstances).build();
+			
+			// call workflow
+			workflowService.callWf(processInstanceRequest);
+		}
 	}
 
 
