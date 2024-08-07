@@ -387,16 +387,34 @@ public class EnrichmentService {
 					"[?(@.code=='"+request.getProperty().getOwnershipCategory()+"')].OwnerShipCategoryCode", "$.MdmsRes.PropertyTax", request.getRequestInfo());
 			
 			String cityCode = codes.get("tenants").get(0);
-			String ownerShipCode = codesOwn.get("OwnerShipCategory").get(0);
+			//String ownerShipCode = codesOwn.get("OwnerShipCategory").get(0);
 			sb.append(cityCode);
-			sb.append(request.getProperty().getAddress().getLocality().getCode());
-			sb.append(ownerShipCode);
-			String[] propId = pId.split("PT");
+			//sb.append(request.getProperty().getAddress().getLocality().getCode());
+			//sb.append(ownerShipCode);
+			String code=request.getProperty().getAddress().getLocality().getCode();
+			if(!request.getProperty().getTenantId().equalsIgnoreCase("mn.imphal"))
+			code=code.replace("WD", "");
+			String lekaicode=code.substring(code.length()-3);
+			String wardcode=code.replace(lekaicode, "");
+			if(wardcode.length()==1)
+				wardcode="0"+wardcode;
+			String ownership=request.getProperty().getOwnershipCategory();
+			ownership=ownership.substring(ownership.length()-10);
+			if(ownership.equalsIgnoreCase("GOVERNMENT"))
+				ownership="0";
+			else
+				ownership="1";
+			sb.append(wardcode).append(lekaicode).append(ownership);
+			String[] serialnumber=pId.split("-");
+			String propid="MN"+serialnumber[serialnumber.length-1];
+			sb.append(propid);
+			//String[] propId = pId.split("PT");
 			
-			finalSb.append(propId[0]).append("PT-").append(sb).append(propId[1]);
+			//finalSb.append(propId[0]).append("PT-").append(sb).append(propId[1]);
 			//sb.append(propId[1]).append(hyphe);
 			
-			pId = finalSb.toString();
+			//pId = finalSb.toString();
+			pId=sb.toString();
 			System.out.println(pId);
 			
 			
