@@ -36,7 +36,7 @@ public interface SearchSoapService {
 	
 	public ResponseEntity<?> getData(@WebParam(name = "moduleName", targetNamespace = "") String moduleName,
 			@PathVariable("searchName") String searchName,
-			@RequestBody SearchRequest searchRequest, @RequestParam Map<String, Object> queryParams) ;	
+			@RequestBody SearchRequest searchRequest, @RequestParam Map<String, String> queryParams) ;	
 	
 }
 

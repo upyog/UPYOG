@@ -29,7 +29,7 @@ public class SearchSoapServiceImpl implements SearchSoapService {
 
 	@Override
 	public ResponseEntity<?> getData(String moduleName, String searchName, SearchRequest searchRequest,
-			Map<String, Object> queryParams) {
+			Map<String, String> queryParams) {
 
 		if (null == searchRequest.getSearchCriteria()) {
 			searchRequest.setSearchCriteria(queryParams);
