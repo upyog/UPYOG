@@ -23,11 +23,6 @@ public class RestCallRepository {
 
 	/**
 	 * Fetches results from the given API and request and handles errors.
-	 * 
-	 * @param requestInfo
-	 * @param serviceReqSearchCriteria
-	 * @return Object
-	 * @author vishal
 	 */
 	public Object fetchResult(StringBuilder uri, Object request) {
 		ObjectMapper mapper = new ObjectMapper();

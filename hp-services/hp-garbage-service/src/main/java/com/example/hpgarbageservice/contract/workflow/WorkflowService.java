@@ -25,7 +25,7 @@ public class WorkflowService {
 	ObjectMapper objectMapper;
 
 
-	public void callWf(ProcessInstanceRequest processInstanceRequest) {
+	public ProcessInstanceResponse callWf(ProcessInstanceRequest processInstanceRequest) {
 		StringBuilder url = new StringBuilder(applicationPropertiesAndConstant.getWorkflowHost());
 		url.append(applicationPropertiesAndConstant.workflowEndpointTransition);
 		Object response = restCallRepository.fetchResult(url, processInstanceRequest);
@@ -34,6 +34,8 @@ public class WorkflowService {
 		if(null == response && null == processInstanceResponse) {
 			throw new RuntimeException("Error ocurred while running workflow.");
 		}
+		
+		return processInstanceResponse;
 	}
 
 }
