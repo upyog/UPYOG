@@ -71,8 +71,4 @@ const getMDMSContextPath = () => {
   return window?.globalConfigs?.getConfig("MDMS_CONTEXT_PATH") || "mdms-v2";
 };
 
-const isSchemaCodeInMDMSAction = () => {
-  return window?.globalConfigs?.getConfig("MDMS_SCHEMACODE_INACTION")===false?false : true;
-};
-
-export { UICreateConfigGenerator, getMDMSContextPath,isSchemaCodeInMDMSAction };
+export { UICreateConfigGenerator, getMDMSContextPath };
