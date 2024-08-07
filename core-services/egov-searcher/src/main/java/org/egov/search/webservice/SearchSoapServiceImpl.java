@@ -14,21 +14,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-
 /**
  * 
  */
 
-@WebService(serviceName = "SearchSoapService", portName = "GetData",
-targetNamespace = "http://org.egov.search.webservice/",
-endpointInterface = "org.egov.search.webservice.SearchSoapService")
+@WebService(serviceName = "SearchSoapService", portName = "GetData", targetNamespace = "http://org.egov.search.webservice/", endpointInterface = "org.egov.search.webservice.SearchSoapService")
 public class SearchSoapServiceImpl implements SearchSoapService {
 	@Autowired
 	private SearchService searchService;
 
+	public SearchSoapServiceImpl(SearchService searchService) {
+		this.searchService = searchService;
+	}
+
 	@Override
 	public ResponseEntity<?> getData(String moduleName, String searchName, SearchRequest searchRequest,
 			Map<String, Object> queryParams) {
+
+		if (null == searchRequest.getSearchCriteria()) {
+			searchRequest.setSearchCriteria(queryParams);
+		}
 		Object searchResult = searchService.searchData(searchRequest, moduleName, searchName);
 		if (null != searchResult)
 			return new ResponseEntity<>(searchResult, HttpStatus.OK);
@@ -36,5 +41,4 @@ public class SearchSoapServiceImpl implements SearchSoapService {
 			throw new CustomException("SEARCH_ERROR", "Error occurred while searching : ");
 	}
 
-	
 }
