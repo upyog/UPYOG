@@ -238,7 +238,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	public boolean consumeEncumbranceBudget(final Long financialyearid, final Integer moduleid,
 			final String referencenumber, final String departmentcode, final Long functionid,
 			final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-			final List<Long> budgetheadid, final Integer fundid, final double amount,
+			final List<Long> budgetheadid, final Long fundid, final double amount,
 			final String appropriationnumber) {
 
 		final BigDecimal bd = getDetails(financialyearid, moduleid, referencenumber, departmentcode, functionid,
@@ -273,7 +273,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	public BudgetUsage consumeEncumbranceBudget(final String appropriationnumber, final Long financialyearid,
 			final Integer moduleid, final String referencenumber, final String departmentcode, final Long functionid,
 			final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-			final List<Long> budgetheadid, final Integer fundid, final double amount) {
+			final List<Long> budgetheadid, final Long fundid, final double amount) {
 
 		return getBudgetUsageDetails(financialyearid, moduleid, referencenumber, departmentcode, functionid,
 				functionaryid, schemeid, subschemeid, boundaryid, budgetheadid, fundid, amount, true,
@@ -319,7 +319,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	public void releaseEncumbranceBudget(final Long financialyearid, final Integer moduleid,
 			final String referencenumber, final String departmentcode, final Long functionid,
 			final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-			final List<Long> budgetheadid, final Integer fundid, final double amount,
+			final List<Long> budgetheadid, final Long fundid, final double amount,
 			final String appropriationnumber) {
 		getDetails(financialyearid, moduleid, referencenumber, departmentcode, functionid, functionaryid, schemeid,
 				subschemeid, boundaryid, budgetheadid, fundid, amount, false, appropriationnumber);
@@ -350,7 +350,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	public BudgetUsage releaseEncumbranceBudget(final String appropriationnumber, final Long financialyearid,
 			final Integer moduleid, final String referencenumber, final String departmentcode, final Long functionid,
 			final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-			final List<Long> budgetheadid, final Integer fundid, final double amount) {
+			final List<Long> budgetheadid, final Long fundid, final double amount) {
 		return getBudgetUsageDetails(financialyearid, moduleid, referencenumber, departmentcode, functionid,
 				functionaryid, schemeid, subschemeid, boundaryid, budgetheadid, fundid, amount, false,
 				appropriationnumber);
@@ -367,7 +367,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		Integer subschemeid = null;
 		Integer boundaryid = null;
 		List<Long> budgetheadid = null;
-		Integer fundid = null;
+		Long fundid = null;
 		double amount = 0.0d;
 		String appropriationnumber = null;
 		Boolean consumeOrRelease = null;
@@ -393,7 +393,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		if (detailsMap.containsKey(Constants.BUDGETHEAD))
 			budgetheadid = (List<Long>) detailsMap.get(Constants.BUDGETHEAD);
 		if (detailsMap.containsKey(Constants.FUNDID))
-			fundid = (Integer) detailsMap.get(Constants.FUNDID);
+			fundid = (Long) detailsMap.get(Constants.FUNDID);
 		if (detailsMap.containsKey(Constants.AMOUNT))
 			amount = (Double) detailsMap.get(Constants.AMOUNT);
 		if (detailsMap.containsKey(Constants.APPROPRIATIONNUMBER))
@@ -481,7 +481,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	@Deprecated
 	private BigDecimal getDetails(final Long financialyearid, final Integer moduleid, final String referencenumber,
 			final String departmentcode, final Long functionid, final Integer functionaryid, final Integer schemeid,
-			final Integer subschemeid, final Integer boundaryid, final List<Long> budgetheadid, final Integer fundid,
+			final Integer subschemeid, final Integer boundaryid, final List<Long> budgetheadid, final Long fundid,
 			final double amount, final boolean consumeOrRelease, final String appropriationnumber) {
 		try {
 			if (LOGGER.isDebugEnabled())
@@ -562,7 +562,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	private BudgetUsage getBudgetUsageDetails(final Long financialyearid, final Integer moduleid,
 			final String referencenumber, final String departmentcode, final Long functionid,
 			final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-			final List<Long> budgetheadid, final Integer fundid, final double amount, final boolean consumeOrRelease,
+			final List<Long> budgetheadid, final Long fundid, final double amount, final boolean consumeOrRelease,
 			final String appropriationnumber) {
 		try {
 			if (LOGGER.isDebugEnabled())
@@ -671,7 +671,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
 	private StringBuilder prepareAgregateQuery(final Integer departmentid, final Long functionid,
 			final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-			final Integer fundid, Map<String, Object> params) {
+			final Long fundid, Map<String, Object> params) {
 		StringBuilder query = new StringBuilder();
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Inside the prepareAgregateQuery... " + departmentid + " >>>" + fundid);
@@ -708,7 +708,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	}
 
 	private String prepareQuery(final String departmentCode, final Long functionid, final Integer functionaryid,
-			final Integer schemeid, final Integer subschemeid, final Integer boundaryid, final Integer fundid,
+			final Integer schemeid, final Integer subschemeid, final Integer boundaryid, final Long fundid,
 			Map<String, Object> params) {
 		final StringBuilder query = new StringBuilder();
 
@@ -778,7 +778,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
 	private String prepareQueryToGetBudgetDetails(final Integer departmentid, final Long functionid,
 			final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-			final Integer fundid, final Map<String, Object> params) {
+			final Long fundid, final Map<String, Object> params) {
 		StringBuilder query = new StringBuilder();
 
 		if (departmentid != null) {
@@ -857,7 +857,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	@Override
 	public BigDecimal getPlanningBudgetAvailable(final Long financialyearid, final String departmentcode,
 			final Long functionid, final Integer functionaryid, final Integer schemeid, final Integer subschemeid,
-			final Integer boundaryid, final List<Long> budgetheadid, final Integer fundid) {
+			final Integer boundaryid, final List<Long> budgetheadid, final Long fundid) {
 		try {
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("financialyearid===" + financialyearid + ",departmentid===" + departmentcode
@@ -910,7 +910,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	@Override
 	public List<BudgetDetail> getBudgetAvailableDetail(final Long financialyearid, final Integer departmentid,
 			final Long functionid, final Integer functionaryid, final Integer schemeid, final Integer subschemeid,
-			final Integer boundaryid, final List<Long> budgetheadid, final Integer fundid) {
+			final Integer boundaryid, final List<Long> budgetheadid, final Long fundid) {
 		try {
 
 			final Map<String, Object> params = new HashMap<>();
@@ -1335,7 +1335,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		Integer schemeid = null;
 		Integer subschemeid = null;
 		Long boundaryid = null;
-		Integer fundid = null;
+		Long fundid = null;
 		List<BudgetGroup> budgetHeadList = null;
 		Long financialyearid = null;
 
@@ -1353,7 +1353,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			if (paramMap.get(Constants.SUBSCHEMEID) != null)
 				subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
 			if (paramMap.get(Constants.FUNDID) != null)
-				fundid = (Integer) paramMap.get(Constants.FUNDID);
+				fundid = (Long) paramMap.get(Constants.FUNDID);
 			if (paramMap.get(Constants.BOUNDARYID) != null)
 				boundaryid = (Long) paramMap.get(Constants.BOUNDARYID);
 			if (paramMap.get(BUDGETHEADID) != null)
@@ -1428,7 +1428,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		Integer schemeid = null;
 		Integer subschemeid = null;
 		Integer boundaryid = null;
-		Integer fundid = null;
+		Long fundid = null;
 		List<BudgetGroup> budgetHeadList = null;
 		Long financialyearid = null;
 
@@ -1446,7 +1446,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			if (paramMap.get(Constants.SUBSCHEMEID) != null)
 				subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
 			if (paramMap.get(Constants.FUNDID) != null)
-				fundid = (Integer) paramMap.get(Constants.FUNDID);
+				fundid = (Long) paramMap.get(Constants.FUNDID);
 			if (paramMap.get(Constants.BOUNDARYID) != null)
 				boundaryid = (Integer) paramMap.get(Constants.BOUNDARYID);
 			if (paramMap.get(BUDGETHEADID) != null)
@@ -1510,7 +1510,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		Integer schemeid = null;
 		Integer subschemeid = null;
 		Integer boundaryid = null;
-		Integer fundid = null;
+		Long fundid = null;
 		List<BudgetGroup> budgetHeadList = null;
 		Long financialyearid = null;
 
@@ -1528,7 +1528,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			if (paramMap.get(Constants.SUBSCHEMEID) != null)
 				subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
 			if (paramMap.get(Constants.FUNDID) != null)
-				fundid = (Integer) paramMap.get(Constants.FUNDID);
+				fundid = (Long) paramMap.get(Constants.FUNDID);
 			if (paramMap.get(Constants.BOUNDARYID) != null)
 				boundaryid = (Integer) paramMap.get(Constants.BOUNDARYID);
 			if (paramMap.get(BUDGETHEADID) != null)
@@ -1603,7 +1603,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		Integer schemeid = null;
 		Integer subschemeid = null;
 		Integer boundaryid = null;
-		Integer fundid = null;
+		Long fundid = null;
 		List<Long> budgetHeadList = null;
 		Long financialyearid = null;
 		final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
@@ -1620,7 +1620,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			if (paramMap.get(Constants.SUBSCHEMEID) != null)
 				subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
 			if (paramMap.get(Constants.FUNDID) != null)
-				fundid = (Integer) paramMap.get(Constants.FUNDID);
+				fundid = (Long) paramMap.get(Constants.FUNDID);
 			if (paramMap.get(Constants.BOUNDARYID) != null)
 				boundaryid = (Integer) paramMap.get(Constants.BOUNDARYID);
 			if (paramMap.get(BUDGETHEADID) != null)
@@ -2325,7 +2325,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		Integer schemeid = null;
 		Integer subschemeid = null;
 		Long boundaryid = null;
-		Integer fundid = null;
+		Long fundid = null;
 		Long glcodeid = null;
 		Date fromdate = null;
 		Date asondate = null;
@@ -2344,7 +2344,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			if (paramMap.get(Constants.SCHEMEID) != null)
 				schemeid = (Integer) paramMap.get(Constants.SCHEMEID);
 			if (paramMap.get(Constants.FUNDID) != null)
-				fundid = (Integer) paramMap.get(Constants.FUNDID);
+				fundid = (Long) paramMap.get(Constants.FUNDID);
 			if (paramMap.get(Constants.SUBSCHEMEID) != null)
 				subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
 			if (paramMap.get(Constants.BOUNDARYID) != null)
@@ -2536,7 +2536,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		Integer schemeid = null;
 		Integer subschemeid = null;
 		Integer boundaryid = null;
-		Integer fundid = null;
+		Long fundid = null;
 		Long budgetheadid = null;
 		Long financialyearid = null;
 
@@ -2554,7 +2554,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			if (paramMap.get(Constants.SUBSCHEMEID) != null)
 				subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
 			if (paramMap.get(Constants.FUNDID) != null)
-				fundid = (Integer) paramMap.get(Constants.FUNDID);
+				fundid = (Long) paramMap.get(Constants.FUNDID);
 			if (paramMap.get(Constants.BOUNDARYID) != null)
 				boundaryid = (Integer) paramMap.get(Constants.BOUNDARYID);
 			if (paramMap.get(BUDGETHEADID) != null)
@@ -2795,7 +2795,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	 * @return
 	 */
 	@Override
-	public BigDecimal getPlannigBudgetBy(final Integer fundId, final Integer deptId, Date asOnDate1) {
+	public BigDecimal getPlannigBudgetBy(final Long fundId, final Integer deptId, Date asOnDate1) {
 		// 0.Validated
 		Date asOnDate = new Date();
 		if (fundId == null || fundId == -1)
@@ -2845,7 +2845,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	 * @param fund,function,department and account type @
 	 */
 	@Override
-	public List<CFunction> getFunctionsByFundAndDepartment(final Integer fund, final Long department) {
+	public List<CFunction> getFunctionsByFundAndDepartment(final Long fund, final Long department) {
 
 		List<CFunction> functionsList = new ArrayList<CFunction>();
 		try {
@@ -2861,7 +2861,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			session = getCurrentSession();
 			final Query qry = session.createQuery(qryStr.toString());
 			if (fund != null)
-				qry.setInteger("fund", fund);
+				qry.setLong("fund", fund);
 			if (department != null)
 				qry.setLong("department", department);
 
