@@ -23,7 +23,6 @@ const rowContainerStyle = {
 };
 
 const BannerPicker = (props) => {
-  console.log("props",props)
   return (
     <Banner
       message={GetActionMessage(props)}
@@ -37,7 +36,6 @@ const BannerPicker = (props) => {
 
 const NewResponse = ({ data, onSuccess }) => {
 
-  console.log("datatatata",data);
 
   
   const { t } = useTranslation();

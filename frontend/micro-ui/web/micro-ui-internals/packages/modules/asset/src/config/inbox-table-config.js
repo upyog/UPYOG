@@ -3,7 +3,7 @@ import React from "react";
   import { Link } from "react-router-dom";
 
   const GetCell = (value) => <span className="cell-text">{value}</span>;
-  //console.log("cell value", GetCell.value)
+  
 
   const GetSlaCell = (value) => {
     if (isNaN(value)) return <span className="sla-cell-success">0</span>;
@@ -77,7 +77,7 @@ import React from "react";
         {
           Header: t("AST_ACTION"),
           Cell: ({ row }) => {
-            console.log("ROWWWWWINACTIONNNNN",row);
+            
             return (
               <div>
                 <span className="link">

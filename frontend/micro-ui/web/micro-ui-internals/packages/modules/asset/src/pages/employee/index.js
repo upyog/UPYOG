@@ -8,7 +8,6 @@ import SearchReport from "./SearchReport";
 import Inbox from "./Inbox";
 
 const EmployeeApp = ({ path, url, userType }) => {
-  console.log("pathhhh",path,url);
   const { t } = useTranslation();
   const location = useLocation();
   const mobileView = innerWidth <= 640;
@@ -50,6 +49,7 @@ const EmployeeApp = ({ path, url, userType }) => {
 
   
   const NewAssetAssignApplication = Digit?.ComponentRegistryService?.getComponent("AssignAssetApplication");
+  const EditResponse = Digit?.ComponentRegistryService?.getComponent("editResponse");
   const EditAsset = Digit?.ComponentRegistryService?.getComponent("editAsset");
   const NewAssetReturnApplication = Digit?.ComponentRegistryService?.getComponent("returnAssets");
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
@@ -98,6 +98,7 @@ const EmployeeApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/assetservice/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />
           <PrivateRoute path={`${path}/assetservice/my-asset`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/assetservice/report`} component={(props) => <SearchReport {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/assetservice/edit-response`} component={(props) => <EditResponse {...props} parentRoute={path} />} />
 
         </div>
       </React.Fragment>

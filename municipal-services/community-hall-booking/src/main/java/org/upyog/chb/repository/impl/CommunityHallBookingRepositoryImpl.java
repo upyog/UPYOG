@@ -86,7 +86,7 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = queryBuilder.getCommunityHallBookingSearchQuery(bookingSearchCriteria, preparedStmtList);
 
-		log.info("getBookingDetails : Final query: " + query + "preparedStmtList :  " + preparedStmtList);
+		log.info("getBookingDetails : Final query: " + query + "   preparedStmtList :  " + preparedStmtList);
 		List<CommunityHallBookingDetail> bookingDetails = jdbcTemplate.query(query, preparedStmtList.toArray(),
 				bookingRowmapper);
 		

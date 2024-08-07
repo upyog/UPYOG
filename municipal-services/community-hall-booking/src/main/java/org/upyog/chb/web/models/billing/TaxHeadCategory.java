@@ -1,4 +1,4 @@
-package org.upyog.chb.web.models;
+package org.upyog.chb.web.models.billing;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
