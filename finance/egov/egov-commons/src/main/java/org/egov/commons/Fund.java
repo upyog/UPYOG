@@ -72,13 +72,13 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Table(name = "fund")
 @SequenceGenerator(name = Fund.SEQ, sequenceName = Fund.SEQ, allocationSize = 1)
 @Unique(fields = {"code", "name"}, enableDfltMsg = true)
-public class Fund extends AbstractPersistable<Long> {
+public class Fund extends AbstractPersistable<Integer> {
 
     public static final String SEQ = "SEQ_Fund";
     private static final long serialVersionUID = 7977534010758407945L;
     @Id
     @GeneratedValue(generator = Fund.SEQ, strategy = GenerationType.SEQUENCE)
-    private Long id;
+    private Integer id;
 
     @Length(max = 50, min = 2)
     @SafeHtml
@@ -111,11 +111,11 @@ public class Fund extends AbstractPersistable<Long> {
 
     private Date lastModifiedDate;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
