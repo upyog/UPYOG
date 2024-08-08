@@ -1,0 +1,1 @@
+ALTER TABLE hpudd_grbg_account ADD COLUMN tenant_id VARCHAR(100);
