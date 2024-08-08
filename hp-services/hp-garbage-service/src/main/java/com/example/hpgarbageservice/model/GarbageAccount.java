@@ -23,6 +23,8 @@ public class GarbageAccount {
 	
 	private String uuid;
 
+	private String tenantId;
+
 	private Long garbageId;
 
 	private Long propertyId;
@@ -43,7 +45,7 @@ public class GarbageAccount {
 
 	private String declarationUuid;
 
-//	private String grbgCollectionAddressUuid;
+	private String workflowAction;
 
 	private String status;
 	
