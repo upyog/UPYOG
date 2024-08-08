@@ -45,6 +45,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     ""
   );
   const stateId = Digit.ULBService.getStateId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const [dateRange, setDateRange] = useState([{
     startDate: null,
     endDate: null,
@@ -76,7 +77,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
 
   // Define the slot_search hook to refetch data on search
   const { data: slotSearchData, refetch } = Digit.Hooks.chb.useChbSlotSearch({
-    tenantId: "pg.citya",
+    tenantId:tenantId,
     filters: {
       communityHallCode:Searchdata.communityHallCode,
       bookingStartDate:Searchdata.bookingStartDate,
@@ -160,7 +161,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
       setShowDetails(prevShowDetails => !prevShowDetails); 
     } else {
       // Show toast message
-      setShowToast({ error: true, label: 'Please select a hall name.' });
+      setShowToast({ error: true, label: t("CHB_SELECT_HALL_NAME") });
     }
   };
 
@@ -256,7 +257,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
         setShowDateRangePicker(false); // Close date range picker when both dates are selected
       }
     } else {
-      setShowToast({ error: true, label: 'You can only select a date range of up to 3 days.' });
+      setShowToast({ error: true, label: t("CHB_DATE_RANGE_LIMIT") });
     }
   };
 
@@ -266,22 +267,22 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
   const endDate = dateRange[0].endDate ? format(dateRange[0].endDate, 'dd-MM-yyyy') : "";
   const selectedHallCode = hallCode?.code || "";
 
-  if (selectedHallName && startDate && endDate) {
+  if (selectedHallName && startDate && endDate && selectedHallCode) {
     // Find hallCodeId based on selectedHall.communityHallId
-    const hallCodeIds = hallCodeId.find(slot => selectedHall.communityHallId === slot.communityHallId);
+    // const hallCodeIds = hallCodeId.find(slot => selectedHall.communityHallId === slot.communityHallId);
 
     const filters = {
       communityHallCode: selectedHallName,
       bookingStartDate: startDate,
       bookingEndDate: endDate,
       hallAddress: selectedHall?.address,
-      hallCode: selectedHallCode || hallCodeIds.code,
-      capacity:hallCodeIds.capacity
+      hallCode: selectedHallCode,
+      capacity:hallCode?.capacity
     };
 
     setSearchData(filters);
   } else {
-    setShowToast({ error: true, label: 'Please select either Community Hall Name with Date or both.' });
+    setShowToast({ error: true, label: t("CHB_SELECT_COMMUNITY_HALL_DATE_HALLCODE")});
   }
 };
 
@@ -289,7 +290,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
 
   const handleBookClick = () => {
     if (!isCheckboxSelected) {
-      setShowToast({ error: true, label: 'Please select at least one hall slot to book.' });
+      setShowToast({ error: true, label:t("CHB_SELECT_AT_LEAST_ONE_SLOT")});
     } else {
       goNext();
     }
@@ -387,7 +388,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
               </div>
             )}
           </div>
-          <CardLabel>{`${t("CHB_HALL_CODE")}`}</CardLabel>
+          <CardLabel>{`${t("CHB_HALL_CODE")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
           <Controller
             control={control}
             name={"hallCode"}
