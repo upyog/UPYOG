@@ -297,7 +297,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 					Long.valueOf(detail.getGlcodeid().toString()));
 			paramMap.put("glcode", coa.getGlcode());
 			if (detail.getFunctionid() != null)
-				paramMap.put("functionid", Long.valueOf(detail.getFunctionid().toString()));
+				paramMap.put("functionid", detail.getFunction().getId());
 			paramMap.put("bill", billregister);
 			try {
 				result = budgetDetailsDAO.budgetaryCheckForBill(paramMap);
