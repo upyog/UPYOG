@@ -37,7 +37,7 @@ public class SearchSoapServiceImpl implements SearchSoapService {
 	}
 
 	@Override
-	public ResponseEntity<?> getData(String moduleName, String searchName, SearchRequest searchRequest,
+	public SoapRespnse getData(String moduleName, String searchName, SearchRequest searchRequest,
 			Map<String, String> queryParams) {
 
 		if (null == searchRequest.getSearchCriteria()) {
@@ -59,7 +59,7 @@ public class SearchSoapServiceImpl implements SearchSoapService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			return new ResponseEntity<>(response, HttpStatus.OK);
+			return response;
 		} else {
 			throw new CustomException("SEARCH_ERROR", "Error occurred while searching : ");
 		}

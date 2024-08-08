@@ -10,6 +10,7 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
 import org.egov.search.model.SearchRequest;
+import org.egov.search.model.SoapRespnse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,11 +31,11 @@ public interface SearchSoapService {
 	
     @ResponseWrapper(
                      targetNamespace = "http://org.egov.search.webservice/",
-                     className = "org.springframework.http.ResponseEntity")
+                     className = "org.egov.search.model.SoapRespnse")
    
 	//String sayHello(@WebParam(name = "myname", targetNamespace = "") String myname);
 	
-	public ResponseEntity<?> getData(@WebParam(name = "moduleName", targetNamespace = "") String moduleName,
+	public SoapRespnse getData(@WebParam(name = "moduleName", targetNamespace = "") String moduleName,
 			@PathVariable("searchName") String searchName,
 			@RequestBody SearchRequest searchRequest, @RequestParam Map<String, String> queryParams) ;	
 	
