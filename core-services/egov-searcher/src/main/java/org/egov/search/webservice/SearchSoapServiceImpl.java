@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import javax.jws.WebService;
 
 import org.egov.search.model.SearchRequest;
+import org.egov.search.model.SoapRespnse;
 import org.egov.search.service.SearchService;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ public class SearchSoapServiceImpl implements SearchSoapService {
 			searchRequest.setSearchCriteria(queryParams);
 		}
 		String results = "";
+		SoapRespnse response = new SoapRespnse();
 		Object searchResult = searchService.searchData(searchRequest, moduleName, searchName);
 		if (null != searchResult) {
 
@@ -51,12 +53,13 @@ public class SearchSoapServiceImpl implements SearchSoapService {
 				results = convertJsonToXml(results);
 				StringBuilder res =new StringBuilder().append("<![CDATA[").append(results).append("]]>");
 				results = res.toString();
+				response.setResponse(results);
 				log.info(results);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			return new ResponseEntity<>(results, HttpStatus.OK);
+			return new ResponseEntity<>(response, HttpStatus.OK);
 		} else {
 			throw new CustomException("SEARCH_ERROR", "Error occurred while searching : ");
 		}
