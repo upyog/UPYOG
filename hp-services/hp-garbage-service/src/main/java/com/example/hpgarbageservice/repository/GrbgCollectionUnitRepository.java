@@ -21,21 +21,29 @@ public class GrbgCollectionUnitRepository {
                 grbgCollectionUnit.getUnitName(),
                 grbgCollectionUnit.getUnitWard(),
                 grbgCollectionUnit.getUlbName(),
-                grbgCollectionUnit.getTypeOfUlb());
+                grbgCollectionUnit.getTypeOfUlb(),
+                grbgCollectionUnit.getIsActive(),
+                grbgCollectionUnit.getGarbageId(),
+                grbgCollectionUnit.getUnitType(),
+                grbgCollectionUnit.getCategory(),
+                grbgCollectionUnit.getSubCategory(),
+                grbgCollectionUnit.getSubCategoryType());
     }
+
 
     public void update(GrbgCollectionUnit grbgCollectionUnit) {
         jdbcTemplate.update(queryBuilder.UPDATE_QUERY,
-                grbgCollectionUnit.getUnitName(),
+        		grbgCollectionUnit.getUnitName(),
                 grbgCollectionUnit.getUnitWard(),
                 grbgCollectionUnit.getUlbName(),
                 grbgCollectionUnit.getTypeOfUlb(),
-                grbgCollectionUnit.getUuid());
-    }
-
-    public void deactivate(GrbgCollectionUnit grbgCollectionUnit) {
-        jdbcTemplate.update(queryBuilder.DEACTIVATE_QUERY,
+                grbgCollectionUnit.getGarbageId(),
+                grbgCollectionUnit.getUnitType(),
+                grbgCollectionUnit.getCategory(),
+                grbgCollectionUnit.getSubCategory(),
+                grbgCollectionUnit.getSubCategoryType(),
                 grbgCollectionUnit.getIsActive(),
                 grbgCollectionUnit.getUuid());
     }
+
 }

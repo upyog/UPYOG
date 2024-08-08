@@ -21,18 +21,24 @@ public class GarbageCommonRequest {
 	@JsonProperty("RequestInfo")
 	private RequestInfo requestInfo;
 	
-	public List<GrbgCollectionUnit> creatingGarbageCollectionUnits;
+	private List<GrbgCollectionUnit> creatingGarbageCollectionUnits;
 
-//	public List<GrbgCollectionUnit> updatingGarbageCollectionUnits;
+//	private List<GrbgCollectionUnit> updatingGarbageCollectionUnits;
 
-//	public List<GrbgCollectionUnit> deletingGarbageCollectionUnits;
+//	private List<GrbgCollectionUnit> deletingGarbageCollectionUnits;
 	
-	public List<GrbgCollectionStaff> creatingGrbgCollectionStaff;
+	private List<GrbgCollectionStaff> creatingGrbgCollectionStaff;
 
-//	public List<GrbgCollectionStaff> updatingGrbgCollectionStaff;
+//	private List<GrbgCollectionStaff> updatingGrbgCollectionStaff;
 
-//	public List<GrbgCollectionStaff> deletingGrbgCollectionStaff;
+//	private List<GrbgCollectionStaff> deletingGrbgCollectionStaff;
 
-	public List<GrbgCharge> creatingGrbgCharge;
+	private List<GrbgCharge> creatingGrbgCharge;
+
+	private List<GrbgOldDetails> creatingGrbgOldDetails;
+
+	private List<GrbgScheduledRequests> creatingGrbgScheduledRequests;
+
+	private List<GrbgDeclaration> creatingGrbgDeclaration;
 
 }

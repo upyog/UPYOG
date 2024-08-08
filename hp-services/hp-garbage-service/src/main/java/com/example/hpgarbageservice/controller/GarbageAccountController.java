@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,16 +22,19 @@ public class GarbageAccountController {
     @Autowired
     private GarbageAccountService service;
 
+    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/_create")
     public ResponseEntity<List<GarbageAccount>> create(@RequestBody GarbageAccountRequest createGarbageRequest) {
         return ResponseEntity.ok(service.create(createGarbageRequest));
     }
 
+    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/_update")
     public ResponseEntity<List<GarbageAccount>> update(@RequestBody GarbageAccountRequest createGarbageRequest) {
         return ResponseEntity.ok(service.update(createGarbageRequest));
     }
 
+    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/_search")
     public ResponseEntity<List<GarbageAccount>> search(@RequestBody SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
         return ResponseEntity.ok(service.searchGarbageAccounts(searchCriteriaGarbageAccountRequest));

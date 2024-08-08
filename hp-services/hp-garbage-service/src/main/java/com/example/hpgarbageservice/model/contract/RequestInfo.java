@@ -1,129 +1,81 @@
 package com.example.hpgarbageservice.model.contract;
 
-import java.util.Date;
+import java.io.IOException;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+/**
+ * RequestInfo should be used to carry meta information about the requests to
+ * the server as described in the fields below. All eGov APIs will use
+ * requestinfo as a part of the request body to carry this meta information.
+ * Some of this information will be returned back from the server as part of the
+ * ResponseInfo in the response body to ensure correlation. Author : Narendra
+ */
+
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@Builder
 public class RequestInfo {
+	@JsonProperty("apiId")
+	@NotNull
+	@Size(max = 128)
+	private String apiId = null;
 
-    private String apiId;
+	@JsonProperty("ver")
+	@NotNull
+	@Size(max = 32)
+	private String ver = null;
 
-    private String ver;
+	@JsonProperty("ts")
+	@NotNull
+	private Long ts = null;
 
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss", timezone = "IST")
-    private Date ts;
+	@JsonProperty("action")
+	@NotNull
+	@Size(max = 32)
+	private String action = null;
 
-    private String action;
+	@JsonProperty("did")
+	@Size(max = 1024)
+	private String did = null;
 
-    private String did;
+	@JsonProperty("key")
+	@Size(max = 256)
+	private String key = null;
 
-    private String key;
+	@JsonProperty("msgId")
+	@NotNull
+	@Size(max = 256)
+	private String msgId = null;
 
-    private String msgId;
+	@JsonProperty("requesterId")
+	@Size(max = 256)
+	private String requesterId = null;
 
-    private String authToken;
-    
-    private String requesterId;
+	@JsonProperty("authToken")
+	private String authToken = null;
 
-    private String correlationId;
+	@JsonProperty("userInfo")
+	private UserInfo userInfo = null;
 
-    private UserInfo userInfo;
-
-//    public String getApiId() {
-//        return apiId;
-//    }
-//
-//    public void setApiId(final String apiId) {
-//        this.apiId = apiId;
-//    }
-//
-//    public String getVer() {
-//        return ver;
-//    }
-//
-//    public void setVer(final String ver) {
-//        this.ver = ver;
-//    }
-//
-//    public Date getTs() {
-//        return ts;
-//    }
-//
-//    public void setTs(final Date ts) {
-//        this.ts = ts;
-//    }
-//
-//    public String getAction() {
-//        return action;
-//    }
-//
-//    public void setAction(final String action) {
-//        this.action = action;
-//    }
-//
-//    public String getDid() {
-//        return did;
-//    }
-//
-//    public void setDid(final String did) {
-//        this.did = did;
-//    }
-//	
-//    public String getKey() {
-//        return key;
-//    }
-//
-//    public void setKey(final String key) {
-//        this.key = key;
-//    }
-//
-//    public String getMsgId() {
-//        return msgId;
-//    }
-//
-//    public void setMsgId(final String msgId) {
-//        this.msgId = msgId;
-//    }
-//
-//    public String getAuthToken() {
-//        return authToken;
-//    }
-//
-//    public void setAuthToken(final String authToken) {
-//        this.authToken = authToken;
-//    }
-//
-//    public String getRequesterId() {
-//		return requesterId;
-//	}
-//
-//	public void setRequesterId(String requesterId) {
-//		this.requesterId = requesterId;
-//	}
-//
-//	public String getCorrelationId() {
-//        return correlationId;
-//    }
-//
-//    public void setCorrelationId(final String correlationId) {
-//        this.correlationId = correlationId;
-//    }
-//
-//    public UserInfo getUserInfo() {
-//        return userInfo;
-//    }
-//
-//    public void setUserInfo(final UserInfo userInfo) {
-//        this.userInfo = userInfo;
-//    }
-
+	@JsonProperty("correlationId")
+	private String correlationId = null;
+	
+	public static org.egov.common.contract.request.RequestInfo toCommonRequestInfo(RequestInfo requestInfo) throws IOException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+		String jsonInString = objectMapper.writeValueAsString(requestInfo);
+		org.egov.common.contract.request.RequestInfo requestInfo2 = objectMapper.readValue(jsonInString, org.egov.common.contract.request.RequestInfo.class);
+		return requestInfo2;
+	}
 }
