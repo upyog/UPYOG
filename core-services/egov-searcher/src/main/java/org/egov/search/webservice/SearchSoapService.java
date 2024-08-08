@@ -30,7 +30,7 @@ public interface SearchSoapService {
 	
     @ResponseWrapper(
                      targetNamespace = "http://org.egov.search.webservice/",
-                     className = "javax.xml.ws.ResponseWrapper")
+                     className = "org.springframework.http.ResponseEntity")
    
 	//String sayHello(@WebParam(name = "myname", targetNamespace = "") String myname);
 	
