@@ -28,9 +28,9 @@ public interface SearchSoapService {
                     className = "org.egov.search.webservice.GetData")
     @WebMethod(action = "urn:GetData")
 	
-    @ResponseWrapper(localName = "getDataResponse",
+    @ResponseWrapper(
                      targetNamespace = "http://org.egov.search.webservice/",
-                     className = "org.egov.search.webservice.GetDataResponse")
+                     className = "javax.xml.ws.ResponseWrapper")
    
 	//String sayHello(@WebParam(name = "myname", targetNamespace = "") String myname);
 	

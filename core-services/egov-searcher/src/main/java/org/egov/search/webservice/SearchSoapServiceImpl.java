@@ -20,10 +20,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.xml.XmlMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 
  */
-
+@Slf4j
 @WebService(serviceName = "SearchSoapService", portName = "GetData", targetNamespace = "http://org.egov.search.webservice/", endpointInterface = "org.egov.search.webservice.SearchSoapService")
 public class SearchSoapServiceImpl implements SearchSoapService {
 	@Autowired
@@ -45,6 +47,7 @@ public class SearchSoapServiceImpl implements SearchSoapService {
 			String results = (String) searchResult;
 			try {
 				results = convertJsonToXml(results);
+				log.info(results);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
