@@ -46,6 +46,7 @@ import org.egov.tl.web.models.TradeLicenseResponse;
 import org.egov.tl.web.models.TradeLicenseSearchCriteria;
 import org.egov.tl.web.models.TradeUnit;
 import org.egov.tl.web.models.UpdateTLStatusCriteriaRequest;
+import org.egov.tl.web.models.TradeLicense.ApplicationTypeEnum;
 import org.egov.tl.web.models.contract.BillResponse;
 import org.egov.tl.web.models.contract.BillSearchCriteria;
 import org.egov.tl.web.models.contract.BusinessService;
@@ -698,6 +699,7 @@ public class TradeLicenseService {
 			TradeLicense license = tradeLicenseRequest.getLicenses().get(i);
 			String action = license.getAction();
 			String comment = license.getComment();
+			String applicationType = license.getApplicationType().name();
 			
 			if(null == license.getTradeLicenseDetail()
 					&& (StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_VERIFIER, license.getAction())
@@ -721,6 +723,13 @@ public class TradeLicenseService {
 				//enrich input fields
 				licenses.get(0).setAction(action);
 				licenses.get(0).setComment(comment);
+				if(StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_VERIFIER, license.getAction())
+						&& StringUtils.equalsIgnoreCase(TLConstants.STATUS_APPROVED, licenses.get(0).getStatus())) {
+					// this scenario means application is initiated for renewal
+					licenses.get(0).setApplicationType(ApplicationTypeEnum.fromValue(applicationType));
+//					licenses.get(0).setValidTo(new Date().getTime()-1);
+//					licenses.get(0).setValidFrom(new Date().getTime());
+				}
 				tempTradeLicenseRequest.getLicenses().add(licenses.get(0));
 			}
 			else {

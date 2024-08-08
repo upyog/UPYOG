@@ -39,7 +39,7 @@ public class DemandService {
     	ApplicationDetail applicationDetail = tradeLicenseService.getApplicationBillUserDetail(license, requestInfo);
 		
     	DemandDetail demandDetail = DemandDetail.builder()
-    								.taxHeadMasterCode("LCF.Trade_License_Fee_TAX")
+    								.taxHeadMasterCode(TLConstants.BILLING_TAX_HEAD_MASTER_CODE)
     								.taxAmount(applicationDetail.getTotalPayableAmount())
     								.collectionAmount(BigDecimal.ZERO)
     								.build();
