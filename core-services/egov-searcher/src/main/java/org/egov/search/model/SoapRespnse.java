@@ -7,5 +7,6 @@ import lombok.Setter;
 @Setter
 public class SoapRespnse {
 
+	
 	private String response;
 }

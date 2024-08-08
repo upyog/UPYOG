@@ -3,11 +3,12 @@
  */
 package org.egov.search.webservice;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import javax.xml.soap.*;
 import javax.jws.WebService;
 
 import org.egov.search.model.SearchRequest;
@@ -52,10 +53,14 @@ public class SearchSoapServiceImpl implements SearchSoapService {
 			try {
 				results = convertJsonToXml(results);
 				StringBuilder res =new StringBuilder().append("<![CDATA[").append(results).append("]]>");
-				results = res.toString();
+				//results = res.toString();
+				results=generateDynamicSoapResponse(results);
 				response.setResponse(results);
-				log.info(results);
+				log.info(response.getResponse());
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SOAPException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -84,6 +89,32 @@ public class SearchSoapServiceImpl implements SearchSoapService {
 		matcher.appendTail(sb);
 		return sb.toString();
 	}
+
+	public static String generateDynamicSoapResponse(String dynamicValue) throws SOAPException {
+        MessageFactory messageFactory = MessageFactory.newInstance();
+        SOAPMessage soapMessage = messageFactory.createMessage();
+        SOAPFactory soapFactory = SOAPFactory.newInstance();
+        SOAPBody soapBody = soapMessage.getSOAPBody();
+
+        Name bodyElementName = soapFactory.createName("ResponseElement", "ns", "http://org.egov.search.webservice/");
+        SOAPBodyElement bodyElement = soapBody.addBodyElement(bodyElementName);
+
+        Name childElementName = soapFactory.createName("DynamicValue", "ns", "http://org.egov.search.webservice/");
+        SOAPElement childElement = bodyElement.addChildElement(childElementName);
+        childElement.addTextNode(dynamicValue);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+			soapMessage.writeTo(baos);
+		} catch (SOAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return baos.toString();
+    }
 
 	Map<String, Object> convertJson(String json) throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
