@@ -44,15 +44,7 @@ public class SearchSoapServiceImpl implements SearchSoapService {
 		}String results ="";
 		Object searchResult = searchService.searchDataSoap(searchRequest, moduleName, searchName);
 		if (null != searchResult) {
-			 results = (String) searchResult;
-			try {
-				results = convertJsonToXml(results);
-				log.info(results);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return new ResponseEntity<>(results, HttpStatus.OK);
+			 			return new ResponseEntity<>(searchResult, HttpStatus.OK);
 		} else {
 			throw new CustomException("SEARCH_ERROR", "Error occurred while searching : ");
 		}
