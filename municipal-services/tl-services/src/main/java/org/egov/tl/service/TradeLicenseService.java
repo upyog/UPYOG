@@ -699,7 +699,6 @@ public class TradeLicenseService {
 			TradeLicense license = tradeLicenseRequest.getLicenses().get(i);
 			String action = license.getAction();
 			String comment = license.getComment();
-			String applicationType = license.getApplicationType().name();
 			
 			if(null == license.getTradeLicenseDetail()
 					&& (StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_VERIFIER, license.getAction())
@@ -726,9 +725,10 @@ public class TradeLicenseService {
 				if(StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_VERIFIER, license.getAction())
 						&& StringUtils.equalsIgnoreCase(TLConstants.STATUS_APPROVED, licenses.get(0).getStatus())) {
 					// this scenario means application is initiated for renewal
-					licenses.get(0).setApplicationType(ApplicationTypeEnum.fromValue(applicationType));
-//					licenses.get(0).setValidTo(new Date().getTime()-1);
-//					licenses.get(0).setValidFrom(new Date().getTime());
+					if(null == license.getApplicationType()) {
+						throw new RuntimeException("Provide application type.");
+					}
+					licenses.get(0).setApplicationType(ApplicationTypeEnum.fromValue(TLConstants.APPLICATION_TYPE_RENEWAL));
 				}
 				tempTradeLicenseRequest.getLicenses().add(licenses.get(0));
 			}
