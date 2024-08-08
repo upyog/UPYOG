@@ -49,37 +49,7 @@ public class SearchService {
 	
 	public static final Logger log = LoggerFactory.getLogger(SearchService.class);
 
-	public Object searchDataSoap(SearchRequest searchRequest, String moduleName, String searchName) {
-		searchReqValidator.validate(searchRequest, moduleName, searchName);
-		Map<String, SearchDefinition> searchDefinitionMap = runner.getSearchDefinitionMap();
-		Definition searchDefinition = null;
-		searchDefinition = searchUtils.getSearchDefinition(searchDefinitionMap, moduleName, searchName);
-		List<String> maps = new ArrayList<>();
-		Object data = null;
-		try{
-			if(null != searchDefinition.getIsCustomerRowMapEnabled()) {
-				if(!searchDefinition.getIsCustomerRowMapEnabled()) {
-					maps = searchRepository.fetchData(searchRequest, searchDefinition);
-				}else {
-					//This is a custom logic for bill-genie, we'll need to write code seperately to support custom rowmap logic for any search.
-					data =  searchRepository.fetchWithCustomMapper(searchRequest, searchDefinition);
-					Map<String, Object> result = new HashMap<>();
-					result.put("ResponseInfo", responseInfoFactory.createResponseInfoFromRequestInfo(searchRequest.getRequestInfo(), true));
-					String outputKey = searchDefinition.getOutput().getOutJsonPath().split("\\.")[1];
-					result.put(outputKey, data);
-					data = result;
-				}
-			}else {
-				maps = searchRepository.fetchData(searchRequest, searchDefinition);
-			}
-		}catch(Exception e){
-			log.error("Exception: ",e);
-			throw new CustomException("DB_QUERY_EXECUTION_ERROR", "There was an error encountered at the Db");
-		}
 	
-		
-		return data;
-	}
 	public Object searchData(SearchRequest searchRequest, String moduleName, String searchName) {
 		searchReqValidator.validate(searchRequest, moduleName, searchName);
 		Map<String, SearchDefinition> searchDefinitionMap = runner.getSearchDefinitionMap();
