@@ -456,6 +456,8 @@ public class TLConstants {
 
     public static final String BILLINGSLAB_ACCESSORY_JSONPATH_UOM = "$.billingSlab.*.uom";
 
+    public static final String BILLING_TAX_HEAD_MASTER_CODE = "LCF.New_Trade_License_Fee_TAX";
+
     public TLConstants() {}
 
     public static final String TENANTS_JSONPATH = "$.MdmsRes.tenant.tenants";

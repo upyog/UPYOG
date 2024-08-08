@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-import com.example.hpgarbageservice.model.contract.RequestInfo;
-
 @AllArgsConstructor
 @Data
 @Builder(toBuilder = true)
@@ -26,6 +24,8 @@ public class SearchCriteriaGarbageAccount {
     private List<String> name;
 
     private List<String> mobileNumber;
+
+    private List<String> createdBy;
 
 //    private List<Long> parentId;
     private Boolean isOwner;

@@ -779,7 +779,7 @@ serviceMaps:
           - jsonPath: $.Licenses[*][?({id} in @.tradeLicenseDetail.verificationDocuments[*].id)].auditDetails.lastModifiedTime
 
 
-       - query: UPDATE eg_tl_tradelicense SET validfrom = ?, validto = ?, licenseNumber =?, issueddate = ?, action = ?, status = ?, workflowcode = ?, tradename = ?,  lastmodifiedby = ?,  lastmodifiedtime = ? WHERE id=?;
+       - query: UPDATE eg_tl_tradelicense SET validfrom = ?, validto = ?, licenseNumber =?, issueddate = ?, action = ?, status = ?, workflowcode = ?, tradename = ?,  lastmodifiedby = ?,  lastmodifiedtime = ?,  applicationtype = ? WHERE id=?;
          basePath: Licenses.*
          jsonMaps:
           - jsonPath: $.Licenses.*.validFrom
@@ -801,6 +801,8 @@ serviceMaps:
           - jsonPath: $.Licenses.*.auditDetails.lastModifiedBy
 
           - jsonPath: $.Licenses.*.auditDetails.lastModifiedTime
+
+          - jsonPath: $.Licenses.*.applicationType
 
           - jsonPath: $.Licenses.*.id
 

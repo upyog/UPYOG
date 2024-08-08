@@ -262,6 +262,8 @@ public class TLValidator {
         statuses.add(TLConstants.STATUS_APPROVED);
         statuses.add(TLConstants.STATUS_MANUALLYEXPIRED);
         statuses.add(TLConstants.STATUS_EXPIRED);
+        statuses.addAll(Arrays.asList(TLConstants.STATUS_PENDINGFORMODIFICATION,TLConstants.STATUS_PENDINGFORVERIFICATION
+        				,TLConstants.STATUS_PENDINGFORAPPROVAL,TLConstants.STATUS_PENDINGFORPAYMENT));
 
         criteria.setStatus(statuses);
         criteria.setBusinessService(request.getLicenses().get(0).getBusinessService());
@@ -285,7 +287,9 @@ public class TLValidator {
                     TradeLicense searchObj = licenseMap.get(license.getLicenseNumber());
                     Long currentFromDate = license.getValidFrom();
                     Long currentToDate = license.getValidTo();
-                    Long existingFromDate = searchObj.getValidFrom();
+                    
+                    // HPUDD is using existing application for RENEWAL
+                    /*Long existingFromDate = searchObj.getValidFrom();
                     Long existingToDate = searchObj.getValidTo();
                     if(currentFromDate < existingToDate){
                         throw new CustomException("INVALID FROM DATE","ValidFrom should be greater than the previous applications ValidTo Date");
@@ -298,7 +302,7 @@ public class TLValidator {
                     }
                     if(currentFromDate > currentToDate){
                         throw new CustomException("INVALID FROM DATE","ValidFrom cannot be greater than ValidTo Date");
-                    }          
+                    }*/          
                    
                 }else{
                     throw new CustomException("RENEWAL ERROR","The license applied for renewal is not present in the repository");
