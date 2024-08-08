@@ -74,6 +74,10 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
+import org.egov.commons.Scheme;
+import org.egov.commons.SubScheme;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionDAO;
@@ -81,6 +85,7 @@ import org.egov.egf.autonumber.BanNumberGenerator;
 import org.egov.egf.budget.model.BudgetControlType;
 import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
@@ -423,10 +428,10 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 				// need to update budget details
 				final Map<String, Object> params = new HashMap<>();
 				final String query = prepareQuery(departmentcode, functionid, functionaryid, schemeid, subschemeid,
-						boundaryid, fundid, params);
+						boundaryid, fundid);
 				final Query q = getCurrentSession().createQuery(
 						new StringBuilder(" from BudgetDetail bd where  bd.budget.financialYear.id=:finYearId")
-								.append(" and bd.budget.isbere=:type and bd.budgetGroup.id in (:bgId)").append(query)
+								.append(" and bd.budget.isbere=:type and bd.budgestGroup.id in (:bgId)").append(query)
 								.toString());
 				params.entrySet().forEach(entry -> q.setParameter(entry.getKey(), entry.getValue()));
 				if (budgetService.hasApprovedReForYear(financialyearid))
@@ -505,7 +510,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 				// need to update budget details
 				final Map<String, Object> params = new HashMap<>();
 				final String query = prepareQuery(departmentcode, functionid, functionaryid, schemeid, subschemeid,
-						boundaryid, fundid, params);
+						boundaryid, fundid);
 				final Query q = persistenceService.getSession().createQuery(
 						new StringBuilder(" from BudgetDetail bd where  bd.budget.financialYear.id=:finYearId ")
 								.append(" and  bd.budget.isbere=:type and bd.budgetGroup.id in (:bgId)").append(query)
@@ -590,7 +595,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			// need to update budget details
 			final Map<String, Object> params = new HashMap<>();
 			final String query = prepareQuery(departmentcode, functionid, functionaryid, schemeid, subschemeid,
-					boundaryid, fundid, params);
+					boundaryid, fundid);
 			final Query q = persistenceService.getSession().createQuery(
 					new StringBuilder(" from BudgetDetail bd where  bd.budget.financialYear.id=:finYearId  ")
 							.append("and  bd.budget.isbere=:type and bd.budgetGroup.id in (:bgId)").append(query)
@@ -707,74 +712,61 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		return new StringBuilder(" and bd.budget.status.code = 'Approved' ").append(query);
 	}
 
-	private String prepareQuery(final String departmentCode, final Long functionid, final Integer functionaryid,
-			final Integer schemeid, final Integer subschemeid, final Integer boundaryid, final Long fundid,
-			Map<String, Object> params) {
-		final StringBuilder query = new StringBuilder();
+	 private String prepareQuery(final String departmentCode, final Long functionid, final Integer functionaryid,
+	            final Integer schemeid, final Integer subschemeid, final Integer boundaryid, final Long fundid) {
+	        String query = EMPTY_STRING;
 
-		final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
-				BUDGETARY_CHECK_GROUPBY_VALUES);
-		if (list.isEmpty())
-			throw new ValidationException(EMPTY_STRING, "budgetaryCheck_groupby_values is not defined in AppConfig");
-		else {
-			final AppConfigValues appConfigValues = list.get(0);
-			final String[] values = StringUtils.split(appConfigValues.getValue(), ",");
-			for (final String value : values)
-				if (value.equals("department")) {
-					if (departmentCode == null || departmentCode == "0" || departmentCode == "")
-						throw new ValidationException(EMPTY_STRING, "Department is required");
-					else {
-						query.append(" and bd.executingDepartment=:departmentCode");
-						params.put("departmentCode", departmentCode);
-					}
-				} else if (value.equals("function")) {
-					if (functionid == null || functionid == 0)
-						throw new ValidationException(EMPTY_STRING, "Function is required");
-					else {
-						query.append(" and bd.function=:functionid");
-						params.put("functionid", functionid);
-					}
-				} else if ("functionary".equals(value)) {
-					if (functionaryid == null || functionaryid == 0)
-						throw new ValidationException(EMPTY_STRING, "Functionary is required");
-					else {
-						query.append(" and bd.functionary=:functionaryid");
-						params.put("functionaryid", functionaryid);
-					}
-				} else if (value.equals("fund")) {
-					if (fundid == null || fundid == 0)
-						throw new ValidationException(EMPTY_STRING, "Fund is required");
-					else {
-						query.append(" and bd.fund=:fundid");
-						params.put("fundid", fundid);
-					}
-				} else if (value.equals("scheme")) {
-					if (schemeid == null || schemeid == 0)
-						throw new ValidationException(EMPTY_STRING, "Scheme is required");
-					else {
-						query.append(" and bd.scheme=:schemeid");
-						params.put("schemeid", schemeid);
-					}
-				} else if (value.equals("subscheme")) {
-					if (subschemeid == null || subschemeid == 0)
-						throw new ValidationException(EMPTY_STRING, "Subscheme is required");
-					else {
-						query.append(" and bd.subScheme=:subschemeid");
-						params.put("subschemeid", subschemeid);
-					}
-				} else if (value.equals("boundary")) {
-					if (boundaryid == null || boundaryid == 0)
-						throw new ValidationException(EMPTY_STRING, "Boundary is required");
-					else {
-						query.append(" and bd.boundary=:boundaryId");
-						params.put("boundaryId", boundaryid.longValue());
-					}
-				} else
-					throw new ValidationException(EMPTY_STRING,
-							"budgetaryCheck_groupby_values is not matching=" + value);
-		}
-		return " and bd.budget.status.description='Approved' and bd.status.description='Approved'  " + query;
-	}
+	        final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
+	                BUDGETARY_CHECK_GROUPBY_VALUES);
+	        if (list.isEmpty())
+	            throw new ValidationException(EMPTY_STRING, "budgetaryCheck_groupby_values is not defined in AppConfig");
+	        else {
+	            final AppConfigValues appConfigValues = list.get(0);
+	            final String[] values = StringUtils.split(appConfigValues.getValue(), ",");
+	            for (final String value : values)
+	                if (value.equals("department")) {
+	                    if (departmentCode == null || departmentCode == "0" || departmentCode == "")
+	                        throw new ValidationException(EMPTY_STRING, "Department is required");
+	                    else
+	                        query = query
+	                                + ( " and bd.executingDepartment='"+departmentCode+"'");
+	                } else if (value.equals("function")) {
+	                    if (functionid == null || functionid == 0)
+	                        throw new ValidationException(EMPTY_STRING, "Function is required");
+	                    else
+	                        query = query + getQuery(CFunction.class, functionid, " and bd.function=");
+	                } else if ("functionary".equals(value)) {
+	                    if (functionaryid == null || functionaryid == 0)
+	                        throw new ValidationException(EMPTY_STRING, "Functionary is required");
+	                    else
+	                        query = query + getQuery(Functionary.class, functionaryid, " and bd.functionary=");
+	                } else if (value.equals("fund")) {
+	                    if (fundid == null || fundid == 0)
+	                        throw new ValidationException(EMPTY_STRING, "Fund is required");
+	                    else
+	                        query = query + getQuery(Fund.class, fundid, " and bd.fund=");
+	                } else if (value.equals("scheme")) {
+	                    if (schemeid == null || schemeid == 0)
+	                        throw new ValidationException(EMPTY_STRING, "Scheme is required");
+	                    else
+	                        query = query + getQuery(Scheme.class, schemeid, " and bd.scheme=");
+	                } else if (value.equals("subscheme")) {
+	                    if (subschemeid == null || subschemeid == 0)
+	                        throw new ValidationException(EMPTY_STRING, "Subscheme is required");
+	                    else
+	                        query = query + getQuery(SubScheme.class, subschemeid, " and bd.subScheme=");
+	                } else if (value.equals("boundary")) {
+	                    if (boundaryid == null || boundaryid == 0)
+	                        throw new ValidationException(EMPTY_STRING, "Boundary is required");
+	                    else
+	                        query = query + getQuery(Boundary.class, boundaryid.longValue(), " and bd.boundary=");
+	                } else
+	                    throw new ValidationException(EMPTY_STRING,
+	                            "budgetaryCheck_groupby_values is not matching=" + value);
+	        }
+	        return " and bd.budget.status.description='Approved' and bd.status.description='Approved'  " + query;
+	    }
+	    
 
 	private String prepareQueryToGetBudgetDetails(final Integer departmentid, final Long functionid,
 			final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
@@ -868,7 +860,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			validateParameters(financialyearid, functionid, budgetheadid);
 			final Map<String, Object> params = new HashMap<>();
 			final String query = prepareQuery(departmentcode, functionid, functionaryid, schemeid, subschemeid,
-					boundaryid, fundid, params);
+					boundaryid, fundid);
 
 			session = getCurrentSession();
 			final CFinancialYear financialyear = (CFinancialYear) financialYearHibDAO.findById(financialyearid, false);
@@ -1367,7 +1359,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 						+ ",budgetheadids " + budgetHeadList + ",financialyearid " + financialyearid);
 
 			query.append(prepareQuery(deptCode, functionid, functionaryid, schemeid, subschemeid,
-					boundaryid != null ? boundaryid.intValue() : null, fundid, params));
+					boundaryid != null ? boundaryid.intValue() : null, fundid));
 
 			// handle the list
 
@@ -1459,8 +1451,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 						+ ",schemeid " + schemeid + ",subschemeid " + subschemeid + ",boundaryid " + boundaryid
 						+ ",budgetheadids " + budgetHeadList + ",financialyearid " + financialyearid);
 
-			query.append(prepareQuery(deptCode, functionid, functionaryid, schemeid, subschemeid, boundaryid, fundid,
-					params));
+			query.append(prepareQuery(deptCode, functionid, functionaryid, schemeid, subschemeid, boundaryid, fundid));
 
 			// handle the list
 
@@ -1541,8 +1532,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 						+ ",schemeid " + schemeid + ",subschemeid " + subschemeid + ",boundaryid " + boundaryid
 						+ ",budgetheadids " + budgetHeadList + ",financialyearid " + financialyearid);
 
-			query.append(prepareQuery(deptcode, functionid, functionaryid, schemeid, subschemeid, boundaryid, fundid,
-					params));
+			query.append(prepareQuery(deptcode, functionid, functionaryid, schemeid, subschemeid, boundaryid, fundid));
 
 			// handle the list
 
@@ -2110,6 +2100,27 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
            * e.getMessage()); }
            */
 	}
+	
+	
+	public String getQuery(final Class clazz, final Serializable id, final String queryString) {
+
+        session = getCurrentSession();
+        String query = EMPTY_STRING;
+        if (id == null)
+            return query;
+        try {
+            final Object o = findById(clazz, id);
+            if (o != null)
+                query = queryString + id;
+        } catch (final ValidationException v) {
+            LOGGER.error("Exp in getQuery==" + v.getErrors());
+            throw new ValidationException(v.getErrors());
+        } catch (final Exception e) {
+            LOGGER.equals("Exp in getQuery==" + e.getMessage());
+            throw new ValidationException(EMPTY_STRING, e.getMessage());
+        }
+        return query;
+    }
 
 	/**
 	 * This API is handling the budget checking
@@ -2567,8 +2578,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 						+ ",schemeid " + schemeid + ",subschemeid " + subschemeid + ",boundaryid " + boundaryid
 						+ ",budgetheadid " + budgetheadid + ",financialyearid " + financialyearid);
 
-			query.append(prepareQuery(deptcode, functionid, functionaryid, schemeid, subschemeid, boundaryid, fundid,
-					params));
+			query.append(prepareQuery(deptcode, functionid, functionaryid, schemeid, subschemeid, boundaryid, fundid));
 
 			if (budgetheadid == null)
 				throw new ValidationException(EMPTY_STRING, "Budget head id is null or empty");
