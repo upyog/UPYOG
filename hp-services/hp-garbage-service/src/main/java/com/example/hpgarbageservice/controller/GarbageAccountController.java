@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.hpgarbageservice.model.GarbageAccount;
 import com.example.hpgarbageservice.model.GarbageAccountRequest;
+import com.example.hpgarbageservice.model.GarbageAccountResponse;
 import com.example.hpgarbageservice.model.SearchCriteriaGarbageAccountRequest;
 import com.example.hpgarbageservice.service.GarbageAccountService;
 
@@ -36,7 +37,7 @@ public class GarbageAccountController {
 
     @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/_search")
-    public ResponseEntity<List<GarbageAccount>> search(@RequestBody SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
+    public ResponseEntity<GarbageAccountResponse> search(@RequestBody SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
         return ResponseEntity.ok(service.searchGarbageAccounts(searchCriteriaGarbageAccountRequest));
     }
 

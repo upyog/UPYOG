@@ -2,7 +2,7 @@ package com.example.hpgarbageservice.model;
 
 import java.util.List;
 
-import com.example.hpgarbageservice.model.contract.RequestInfo;
+import org.egov.common.contract.request.RequestInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
