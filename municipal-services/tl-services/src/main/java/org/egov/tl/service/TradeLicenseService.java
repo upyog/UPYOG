@@ -722,13 +722,15 @@ public class TradeLicenseService {
 				//enrich input fields
 				licenses.get(0).setAction(action);
 				licenses.get(0).setComment(comment);
-				if(StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_VERIFIER, license.getAction())
-						&& StringUtils.equalsIgnoreCase(TLConstants.STATUS_APPROVED, licenses.get(0).getStatus())) {
+				if(StringUtils.equalsIgnoreCase(TLConstants.STATUS_APPROVED, licenses.get(0).getStatus())
+						&& ( StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR, license.getAction())
+								|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, license.getAction())
+								|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_VERIFIER, license.getAction()))) {
 					// this scenario means application is initiated for renewal
 					if(null == license.getApplicationType()) {
 						throw new RuntimeException("Provide application type.");
 					}
-					licenses.get(0).setApplicationType(ApplicationTypeEnum.fromValue(TLConstants.APPLICATION_TYPE_RENEWAL));
+					licenses.get(0).setApplicationType(license.getApplicationType());
 				}
 				tempTradeLicenseRequest.getLicenses().add(licenses.get(0));
 			}
