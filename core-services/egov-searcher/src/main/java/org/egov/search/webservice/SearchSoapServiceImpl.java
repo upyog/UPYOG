@@ -41,10 +41,10 @@ public class SearchSoapServiceImpl implements SearchSoapService {
 
 		if (null == searchRequest.getSearchCriteria()) {
 			searchRequest.setSearchCriteria(queryParams);
-		}
-		Object searchResult = searchService.searchData(searchRequest, moduleName, searchName);
+		}String results ="";
+		Object searchResult = searchService.searchDataSoap(searchRequest, moduleName, searchName);
 		if (null != searchResult) {
-			String results = (String) searchResult;
+			 results = (String) searchResult;
 			try {
 				results = convertJsonToXml(results);
 				log.info(results);
@@ -52,7 +52,7 @@ public class SearchSoapServiceImpl implements SearchSoapService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			return new ResponseEntity<>(searchResult, HttpStatus.OK);
+			return new ResponseEntity<>(results, HttpStatus.OK);
 		} else {
 			throw new CustomException("SEARCH_ERROR", "Error occurred while searching : ");
 		}
