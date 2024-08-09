@@ -27,6 +27,7 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails,a
     },
   };
   const [showSanctionFee, setShowSanctionFee] = useState(false);
+  const [showApplicationFee, setshowApplicationFee] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -102,7 +103,7 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails,a
   }
   function setLessAdjusmentVal(value) {
   if(/^[0-9]*$/.test(value)){
-    if(parseInt(value)>(parseInt(development)?parseInt(development):0)+(parseInt(otherCharges?parseInt(otherCharges):0))+parseInt(additionalDetails?.selfCertificationCharges?.BPA_MALBA_CHARGES)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_LABOUR_CESS)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_WATER_CHARGES)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_GAUSHALA_CHARGES_CESS)){
+    if(parseFloat(value)>(parseFloat(development)?parseFloat(development):0)+(parseFloat(otherCharges?parseFloat(otherCharges):0))+parseFloat(additionalDetails?.selfCertificationCharges?.BPA_MALBA_CHARGES)+parseFloat(additionalDetails?.selfCertificationCharges?.BPA_LABOUR_CESS)+parseFloat(additionalDetails?.selfCertificationCharges?.BPA_WATER_CHARGES)+parseFloat(additionalDetails?.selfCertificationCharges?.BPA_GAUSHALA_CHARGES_CESS)){
       alert("Less adjustment fees cannot be grater than Total of other P2 fees")
     }
     else{
@@ -139,6 +140,41 @@ function selectfile(e) {
               return <CardLabel style={{fontWeight:"400"}}>{value?.title}</CardLabel>
             })}
           </div>
+          {window.location.href.includes("employee") && scrutinyDetails?.values[0]?.title=="BPA_APPL_FEES_DETAILS" && 
+          <div>
+          {!showApplicationFee && (
+         <div style={styles.buttonStyle}>
+          <button
+            type="button"
+            onClick={() => {
+              setshowApplicationFee(true);
+            }}
+          >
+            {t("SHOW_P1_FEES_DETAILS")}
+          </button>
+        </div>
+      )}
+      {showApplicationFee && (
+        <div style={styles.buttonStyle}>
+          <button
+            type="button"
+            onClick={() => {
+              setshowApplicationFee(false);
+            }}
+          >
+            {t("HIDE_P1_FEES_DETAILS")}
+          </button>
+        </div>
+      )}
+      {showApplicationFee &&
+      <div>
+          <CardSubHeader>{t("BPA_P1_SUMMARY_FEE_EST")}</CardSubHeader>        
+          <Row className="border-none" label={t(`BUILDING_APPLICATION_FEES`)} text={`₹ ${Math.round((additionalDetails?.builtUpArea)*10.7639*2.5)}`}></Row>
+          <Row className="border-none" label={t(`BOUNDARY_WALL_FEES`)} text={`₹ ${additionalDetails?.boundaryWallLength*2.5}`}></Row>
+          <Row className="border-none"></Row>
+            </div>}
+          </div>
+          } 
           {window.location.href.includes("employee") && scrutinyDetails?.values[0]?.title=="BPA_APPL_FEES_DETAILS" && 
           <div>
           {!showSanctionFee && (
@@ -180,7 +216,7 @@ function selectfile(e) {
               isMandatory={false}
               optionKey="i18nKey"
               name="development"
-              defaultValue={additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES || ""}
+              defaultValue={additionalDetails?.selfCertificationCharges?.BPA_DEVELOPMENT_CHARGES || 0}
               value={development}
               disabled={!isEditApplication}
               onChange={(e) => {setDevelopmentVal(e.target.value)}}
@@ -193,13 +229,15 @@ function selectfile(e) {
               isMandatory={false}
               optionKey="i18nKey"
               name="otherCharges"
-              defaultValue={additionalDetails?.selfCertificationCharges?.BPA_OTHER_CHARGES || ""}
+              defaultValue={additionalDetails?.selfCertificationCharges?.BPA_OTHER_CHARGES || 0}
               value={otherCharges}
               disabled={!isEditApplication}
               onChange={(e) => {setOtherChargesVal(e.target.value)}}
               {...{ required: true, pattern: "^[0-9]*$", type: "text" }}
             />
-            <CardLabel>{t("BPA_COMMON_OTHER_AMT_DISCRIPTION")}</CardLabel>
+            {parseInt(otherCharges)>0?(
+              <div>
+                <CardLabel>{t("BPA_COMMON_OTHER_AMT_DISCRIPTION")}</CardLabel>
             <TextArea
               t={t}
               type={"text"}
@@ -210,6 +248,8 @@ function selectfile(e) {
               onChange={(e) => {setOtherChargesDis(e.target.value)}}
               {...{ required: true }}
             />
+              </div>
+            ):null}            
             <CardLabel>{t("BPA_COMMON_LESS_AMT")}</CardLabel>
             <TextInput
               t={t}
@@ -223,6 +263,8 @@ function selectfile(e) {
               onChange={(e) => {setLessAdjusmentVal(e.target.value)}}
               {...{ required: true, pattern: "^[0-9]*$", type: "text" }}
             />
+            {(parseInt(lessAdjusment)>0 && isEditApplication)  ?(
+              <div>
             <CardLabel>{t("BPA_COMMON_LESS_AMT_FILE")}</CardLabel>
             <UploadFile
                 id={"noc-doc"}
@@ -237,16 +279,17 @@ function selectfile(e) {
                 error={errorFile}
                 uploadMessage={uploadMessage}
             />
-            {docLessAdjustment?.fileStoreIds?.length && 
+            </div>):null}
+            {(docLessAdjustment?.fileStoreIds?.length && parseInt(additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT)>0) && 
             <CardLabel style={{marginTop:"15px"}}>{t("BPA_COMMON_LESS_AMT_PREVIOUS_FILE")}</CardLabel>            
             }
-            {docLessAdjustment?.fileStoreIds?.length &&             
+            {(docLessAdjustment?.fileStoreIds?.length && parseInt(additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT)>0)&&             
               <a   target="_blank" href={docLessAdjustment?.fileStoreIds[docLessAdjustment?.fileStoreIds?.length-1]?.url}>
               <PDFSvg />
             </a>
             }            
             <Row className="border-none"></Row>
-       <Row  className="border-none" label={t(`BPA_P2_TOTAL_FEE`)} text={`₹ ${((parseInt(development)?parseInt(development):0)+(parseInt(otherCharges?parseInt(otherCharges):0))+parseInt(additionalDetails?.selfCertificationCharges?.BPA_MALBA_CHARGES)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_LABOUR_CESS)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_WATER_CHARGES)+parseInt(additionalDetails?.selfCertificationCharges?.BPA_GAUSHALA_CHARGES_CESS))-(parseInt(lessAdjusment)?parseInt(lessAdjusment):0)}`} />
+       <Row  className="border-none" label={t(`BPA_P2_TOTAL_FEE`)} text={`₹ ${((parseFloat(development)?parseFloat(development):0)+(parseFloat(otherCharges?parseFloat(otherCharges):0))+parseFloat(additionalDetails?.selfCertificationCharges?.BPA_MALBA_CHARGES)+parseFloat(additionalDetails?.selfCertificationCharges?.BPA_LABOUR_CESS)+parseFloat(additionalDetails?.selfCertificationCharges?.BPA_WATER_CHARGES)+parseFloat(additionalDetails?.selfCertificationCharges?.BPA_GAUSHALA_CHARGES_CESS))-(parseFloat(lessAdjusment)?parseFloat(lessAdjusment):0)}`} />
             </div>}
           </div>
           }          

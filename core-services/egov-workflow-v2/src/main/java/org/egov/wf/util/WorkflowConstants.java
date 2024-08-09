@@ -18,6 +18,8 @@ public class WorkflowConstants {
 
     public static final String MDMS_AUTOESCALTION= "AutoEscalation";
 
+    public static final String EMPLOYEE = "EMPLOYEE";
+
     public static final String JSONPATH_AUTOESCALTION = "$.MdmsRes.Workflow.AutoEscalation";
 
     public static final String JSONPATH_BUSINESSSERVICE_STATELEVEL = "$.MdmsRes.Workflow.BusinessServiceMasterConfig";
@@ -47,9 +49,20 @@ public class WorkflowConstants {
     public static final String SENDBACKTOCITIZEN = "SENDBACKTOCITIZEN";
 
     public static final String RATE_ACTION = "RATE";
+    
+    public static final String AUTO_ESC_SMS_EMPLOYEE = "AUTONOTIFICATION";
 
     public static final String AUTO_ESC_EMPLOYEE_ROLE_CODE = "AUTO_ESCALATE";
     
     public static final String  FSM_MODULE="FSM";
+    
+    public static final String NOTIFICATION_LOCALE = "en_IN";
+   
+	public static final String HRMS_EMP_NAME_JSONPATH = "$.Employees.*.user.name";
+	    
+	public static final String HRMS_EMP_MOBILE_JSONPATH = "$.Employees.*.user.mobileNumber";
+	    
+	public static final String HRMS_EMP_UUID_JSONPATH = "$.Employees.*.user.uuid";
+
 
 }

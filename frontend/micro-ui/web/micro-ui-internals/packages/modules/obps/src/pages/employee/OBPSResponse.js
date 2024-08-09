@@ -87,7 +87,7 @@ const OBPSResponse = (props) => {
             style={{ padding: "10px" }}
             headerStyles={{ fontSize: "32px", wordBreak: "break-word" }}
           />
-          <CardText style={{ paddingBottom: "10px", marginBottom: "10px" }}>{getSubHeaderMessage()}</CardText>
+          <CardText style={{ paddingBottom: "10px", marginBottom: "10px" }}></CardText>
           {applicationData?.status == "PERMIT REVOCATION" ?
             <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} onClick={printReciept}>
               <svg width="20" height="23" viewBox="0 0 20 23" fill="none" xmlns="http://www.w3.org/2000/svg">

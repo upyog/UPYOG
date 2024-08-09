@@ -56,6 +56,15 @@ public class EscalationRepository {
         return  businessIdsFiltered;
 
     }
+    
+    public List<String> getBusinessSMSIds(EscalationSearchCriteria criteria,List<String> businessIds){
+
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getSMSQueryFiltered(criteria,businessIds, preparedStmtList);
+        List<String> businessIdsFiltered = jdbcTemplate.query(query, preparedStmtList.toArray(),  new SingleColumnRowMapper<>(String.class));
+        return  businessIdsFiltered;
+
+    }
 
 
 }

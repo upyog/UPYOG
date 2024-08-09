@@ -35,5 +35,8 @@ public class Escalation {
     @JsonProperty("topic")
     private String topic;
 
+    @JsonProperty("SmsNotiftopic")
+	public String smsNotifTopic;
+
 
 }

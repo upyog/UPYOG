@@ -140,7 +140,9 @@ const BpaApplicationDetail = () => {
       if (response.ResponseInfo.status==="Access Token generated successfully") {
         setIsOTPVerified(true);
         setOTPError(t("VERIFIED"));
-        setOTPVerifiedTimestamp(new Date());
+        const currentTimestamp = new Date();
+        setOTPVerifiedTimestamp(currentTimestamp);
+        sessionStorage.setItem('otpVerifiedTimestampcitizen', currentTimestamp.toISOString());
       } else {
         setIsOTPVerified(false);
         setOTPError(t("WRONG OTP"));
@@ -217,9 +219,9 @@ const BpaApplicationDetail = () => {
        response = { filestoreIds: [payments?.fileStoreId] };      
     }
     else{
-      response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, "bpa-receipt");
+      response = await Digit.PaymentService.generatePdf(stateCode, { Payments: [{...payments}] }, "bpa-receipt");
     }
-    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+    const fileStore = await Digit.PaymentService.printReciept(stateCode, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   }
 
@@ -383,6 +385,10 @@ const BpaApplicationDetail = () => {
     const updatedApplicationData = {
       ...data?.applicationData,
       documents: updatedDocuments,
+      additionalDetails: {
+        ...data?.applicationData?.additionalDetails,
+        otpVerifiedTimestampcitizen:sessionStorage.getItem("otpVerifiedTimestampcitizen")
+      }
     };
   
     mutation.mutate(
@@ -789,7 +795,7 @@ const BpaApplicationDetail = () => {
         <React.Fragment>
               <div>
             <CardLabel>{t("ARCHITECT_SHOULD_VERIFY_HIMSELF_BY_CLICKING_BELOW_BUTTON")}</CardLabel>
-            <SubmitBar label={t("BPA_VERIFY")} onSubmit={handleVerifyClick} />
+            <LinkButton label={t("BPA_VERIFY")} onClick={handleVerifyClick} />
             <br></br>
             {showMobileInput && (
               <React.Fragment>
@@ -806,7 +812,7 @@ const BpaApplicationDetail = () => {
                 {...{ required: true, pattern: "[0-9]{10}", type: "tel", title: t('CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID') }}
               />
         
-              <SubmitBar label={t("BPA_GET_OTP")} onSubmit={handleGetOTPClick} disabled={!isValidMobileNumber} />
+              <LinkButton label={t("BPA_GET_OTP")} onClick={handleGetOTPClick} disabled={!isValidMobileNumber} />
               </React.Fragment>
               )}
               {showOTPInput && (

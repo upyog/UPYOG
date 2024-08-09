@@ -200,6 +200,8 @@ public class Plan implements Serializable {
     private transient Map<String, List<Object>> mdmsMasterData;
     private transient Boolean mainDcrPassed = false;
     private List<ICT> icts = new ArrayList<>();
+    
+    private String coreArea;
 
     public List<BigDecimal> getCanopyDistanceFromPlotBoundary() {
         return canopyDistanceFromPlotBoundary;
@@ -646,5 +648,14 @@ public class Plan implements Serializable {
     public void setIcts(List<ICT> icts) {
         this.icts = icts;
     }
+    
+    public String getCoreArea() {
+        return coreArea;
+    }
+
+    public void setCoreArea(String coreArea) {
+        this.coreArea = coreArea;
+    }
+
 
 }

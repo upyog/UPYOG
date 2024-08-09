@@ -93,10 +93,10 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
       name: "BPA_TABLE_COL_FLOORAREA",
       id: "FloorArea",
     },
-    {
-      name: "BPA_TABLE_COL_CARPETAREA",
-      id: "CarpetArea",
-    },
+    // {
+    //   name: "BPA_TABLE_COL_CARPETAREA",
+    //   id: "CarpetArea",
+    // },
   ];
   const selectOccupancy = (e, data, num) => {
     let blocks = subOccupancyObject;

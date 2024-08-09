@@ -415,7 +415,7 @@ public class IngestValidator {
         int validCounts=0;
         
         Boolean isUsageCategoryInvalid = false;
-        if (ingestData.getModule() != null && ingestData.getModule().equals("COMMON") || ingestData.getModule().equals("PGR") || ingestData.getModule() != null && ingestData.getModule().equals("TL") || ingestData.getModule() != null && ingestData.getModule().equals("OBPS") || ingestData.getModule() != null && ingestData.getModule().equals("MCOLLECT") ) {
+        if (ingestData.getModule() != null && ingestData.getModule().equals("COMMON") || ingestData.getModule().equals("PGR") || ingestData.getModule() != null && ingestData.getModule().equals("TL") || ingestData.getModule() != null && ingestData.getModule().equals("BIRTH") || ingestData.getModule() != null && ingestData.getModule().equals("DEATH") || ingestData.getModule() != null && ingestData.getModule().equals("OBPS") || ingestData.getModule() != null && ingestData.getModule().equals("MCOLLECT") ) {
             keyToFetch = null;
             isUsageCategoryInvalid = true;
         }
@@ -476,7 +476,7 @@ public class IngestValidator {
 	            isPaymentChannelInvalid = true;
 	        }
 	    
-	        if (ingestData.getModule() != null && (ingestData.getModule().equals("PT")|| ingestData.getModule().equals("FIRENOC") || ingestData.getModule().equals("TL") || ingestData.getModule().equals("FSM") || ingestData.getModule().equals("WS") || ingestData.getModule().equals("OBPS")) ) {
+	        if (ingestData.getModule() != null && (ingestData.getModule().equals("PT")|| ingestData.getModule().equals("FIRENOC") || ingestData.getModule().equals("BIRTH") || ingestData.getModule().equals("DEATH") || ingestData.getModule().equals("TL") || ingestData.getModule().equals("FSM") || ingestData.getModule().equals("WS") || ingestData.getModule().equals("OBPS")) ) {
 	            keyToFetch = applicationProperties.getNationalDashboardpaymentChannel();
 	        }
 	        else if (ingestData.getModule() != null && ingestData.getModule().equals("MCOLLECT")) {
@@ -488,7 +488,7 @@ public class IngestValidator {
 	                List < HashMap < String, Object >> values = (List < HashMap < String, Object >> ) map.get(key);
 	                if (values!=null) {
 	                for (HashMap < String, Object > a: values) {
-	                    if (a.get("groupBy").equals("paymentChannelType") || a.get("groupBy").equals("paymentMode")) {
+	                    if (a.get("groupBy").equals("paymentChannelType") || a.get("groupBy").equals("paymentMode") || a.get("groupBy").equals("Channel")) {
 	                        List < HashMap < String, String >> valuess = (List < HashMap < String, String >> ) a.get("buckets");
 	                        for (HashMap < String, String > b: valuess)
 	                        	PaymentChannel.add(toCamelCase(b.get("name")));

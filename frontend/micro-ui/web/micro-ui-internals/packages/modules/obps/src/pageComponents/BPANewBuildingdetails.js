@@ -21,7 +21,6 @@
       const [proposedSite, setproposedSite] = useState(formData?.owners?.proposedSite || "");
       const [nameofApprovedcolony, setnameofApprovedcolony] = useState(formData?.owners?.nameofApprovedcolony || "");
       const [NocNumber, setNocNumber] = useState(formData?.owners?.NocNumber || "");
-      const [coreArea, setcoreArea] = useState(formData?.owners?.coreArea || "");
       const [schemesselection, setschemesselection] = useState(formData?.owners?.schemesselection || "");
       const [schemeName, setschemeName] = useState(formData?.owners?.schemeName || "");
       const [transferredscheme, settransferredscheme] = useState("Pre-Approved Standard Designs" || "");
@@ -93,9 +92,6 @@
       }, [files]);
 
 
-
-
-
       const approvedcolonyStatus = [
         {
           code: "YES",
@@ -110,21 +106,6 @@
           i18nKey: "LAL LAKEER"
         }
       ]
-      const ratingvalue = [
-        {
-          code: "PLATINUM",
-          i18nKey: "PLATINUM"
-        },
-        {
-          code: "GOLD",
-          i18nKey: "GOLD"
-        },
-        {
-          code: "BRONZE",
-          i18nKey: "BRONZE"
-        }
-      ]
-
       const common = [
         {
           code: "YES",
@@ -143,64 +124,12 @@
         }
       ]
 
-      const schemesselectiontype = [
-        {
-          code: "SCHEME",
-          i18nKey: "SCHEME"
-        },
-        {
-          code: "NON_SCHEME",
-          i18nKey: "NON SCHEME"
-        },
-      ]
-
-      const forschemes = [
-        {
-          code: "TP_SCHEMES",
-          i18nKey: "TP SCHEMES"
-        },
-        {
-          code: "DEVELOPMENT_SCHEMES",
-          i18nKey: "DEVELOPMENT SCHEMES"
-        },
-        {
-          code: "AFFORDABLE",
-          i18nKey: "AFFORDABLE"
-        }
-      ]
-
-      const status = [
-        {
-          code: "AUTHORIZED",
-          i18nKey: "Authorized"
-        },
-        {
-          code: "REGULARIZED",
-          i18nKey: "Regularized"
-        }
-      ]
-
-      const masterdropfields = [
-        {
-          code: "RESIDENT",
-          i18nKey: "Resident"
-        },
-        {
-          code: "COMMERCIAL",
-          i18nKey: "Commercial"
-        },
-        {
-          code: "INDUSTRIAL",
-          i18nKey: "Industrial"
-        }
-      ]
-
-      const tenantId = Digit.ULBService.getCurrentTenantId();
+      
       const stateId = Digit.ULBService.getStateId();
 
-      const { data: ULBLIST } = Digit.Hooks.obps.useUlbType(stateId, "BPA", "UlbType");
+      const { data: ulbList } = Digit.Hooks.obps.useUlbType(stateId, "BPA", "UlbType");
 
-      const { data: Menu } = Digit.Hooks.obps.useDistricts(stateId, "BPA", "Districts");
+      const { data: districtMenu } = Digit.Hooks.obps.useDistricts(stateId, "BPA", "Districts");
       const { data: ULB } = Digit.Hooks.obps.useULBList(stateId, "BPA", "Ulb");
 
       let ulblists = [];
@@ -208,29 +137,98 @@
       let menu = [];
       let ulb = [];
 
-      ULBLIST &&
-      ULBLIST.map((ulbtypelist) => {
+      ulbList &&
+      ulbList.map((ulbtypelist) => {
         if(ulbtypelist?.Districts === UlbName?.code)
-        ulblists.push({ i18nKey: `${ulbtypelist.code}`, code: `${ulbtypelist.code}`, value: `${ulbtypelist.name}` });
+        ulblists.push({ i18nKey: `${ulbtypelist.name}`, code: `${ulbtypelist.code}`, value: `${ulbtypelist.name}` });
         });
 
-      Menu &&
-        Menu.map((districts) => {
+      districtMenu &&
+        districtMenu.map((districts) => {
           // if(districts.UlbType == Ulblisttype?.code)
-          menu.push({ i18nKey: `${districts.code}`, code: `${districts.code}`, value: `${districts.name}` });
+          menu.push({ i18nKey: `${districts.name}`, code: `${districts.code}`, value: `${districts.name}` });
         });
 
         ULB &&
         ULB.map((ulblist) => {
           if (ulblist.Districts == UlbName?.code) {
             ulb.push({
-              i18nKey: `${ulblist.code}`,
+              i18nKey: `${ulblist.name}`,
               code: `${ulblist.code}`,
               value: `${ulblist.name}`
             });
           }
 
         });
+
+
+        // Custom hooks to get the Data directly from MDMS, No need to make file inside Libraries --> Hooks Folder  
+
+        const { data: commonBuilding } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "BPA", [{ name: "BuildingStatus" }],
+        {
+          select: (data) => {
+              const formattedData = data?.["BPA"]?.["BuildingStatus"]
+              return formattedData;
+          },
+      }); 
+      let building_status = [];
+  
+      commonBuilding && commonBuilding.map((selectBuilding) => {
+        building_status.push({i18nKey: `BPA_${selectBuilding.code}`, code: `${selectBuilding.code}`, value: `${selectBuilding.name}`})
+      }) 
+
+      const { data: commonrating } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "BPA", [{ name: "RatingValue" }],
+        {
+          select: (data) => {
+              const formattedData = data?.["BPA"]?.["RatingValue"]
+              return formattedData;
+          },
+      }); 
+      let selectRating = [];
+  
+      commonrating && commonrating.map((selectRatings) => {
+        selectRating.push({i18nKey: `BPA_${selectRatings.code}`, code: `${selectRatings.code}`, value: `${selectRatings.name}`})
+      })
+      
+      const { data: commonmasterFields } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "BPA", [{ name: "MasterFields" }],
+        {
+          select: (data) => {
+              const formattedData = data?.["BPA"]?.["MasterFields"]
+              return formattedData;
+          },
+      }); 
+      let selectmasterDrop = [];
+  
+      commonmasterFields && commonmasterFields.map((selectMaster) => {
+        selectmasterDrop.push({i18nKey: `BPA_${selectMaster.code}`, code: `${selectMaster.code}`, value: `${selectMaster.name}`})
+      })
+
+      const { data: commonScheme } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "BPA", [{ name: "Scheme" }],
+        {
+          select: (data) => {
+              const formattedData = data?.["BPA"]?.["Scheme"]
+              return formattedData;
+          },
+      }); 
+      let selectscheme = [];
+  
+      commonScheme && commonScheme.map((selectScheme) => {
+        selectscheme.push({i18nKey: `BPA_${selectScheme.code}`, code: `${selectScheme.code}`, value: `${selectScheme.name}`})
+      })
+
+      const { data: commonSchemeType } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "BPA", [{ name: "SchemeType" }],
+        {
+          select: (data) => {
+              const formattedData = data?.["BPA"]?.["SchemeType"]
+              return formattedData;
+          },
+      }); 
+      let selectschemetypes = [];
+  
+      commonSchemeType && commonSchemeType.map((selectscheme) => {
+        selectschemetypes.push({i18nKey: `BPA_${selectscheme.code}`, code: `${selectscheme.code}`, value: `${selectscheme.name}`})
+      })
+
 
       
       const { control } = useForm();
@@ -241,10 +239,6 @@
 
       function setMasterPlan(e) {
         setmasterPlan(e.target.value);
-      }
-
-      function setcorearea(e) {
-        setcoreArea(e.target.value);
       }
 
       function setRatings(e) {
@@ -322,7 +316,7 @@
 
       const goNext = () => {
         let owners = formData.owners && formData.owners[index];
-        let ownerStep = { ...owners, approvedColony, use, UlbName, Ulblisttype, District, rating, masterPlan, coreArea, buildingStatus, schemes, schemesselection,  purchasedFAR, greenbuilding, restrictedArea, proposedSite, nameofApprovedcolony, schemeName, transferredscheme, NocNumber, uploadedFile,greenuploadedFile };
+        let ownerStep = { ...owners, approvedColony, use, UlbName, Ulblisttype, District, rating, masterPlan, buildingStatus, schemes, schemesselection,  purchasedFAR, greenbuilding, restrictedArea, proposedSite, nameofApprovedcolony, schemeName, transferredscheme, NocNumber, uploadedFile,greenuploadedFile };
         let updatedFormData = { ...formData };
 
         // Check if owners array exists in formData if not , then it will add it 
@@ -464,7 +458,7 @@
                     className="form-field"
                     selected={rating}
                     select={setrating}
-                    option={ratingvalue}
+                    option={selectRating}
                     optionKey="i18nKey"
                     t={t}
                   />
@@ -497,7 +491,7 @@
                     className="form-field"
                     selected={use}
                     select={setUse}
-                    option={masterdropfields}
+                    option={selectmasterDrop}
                     optionKey="i18nKey"
                     t={t}
                   />
@@ -530,8 +524,8 @@
                   <Dropdown
                     className="form-field"
                     selected={schemesselection}
-                    select={setSchemeselection}
-                    option={forschemes}
+                    select={setschemesselection}
+                    option={selectschemetypes}
                     optionKey="i18nKey"
                     t={t}
                   />
@@ -594,7 +588,7 @@
           <FormStep
             config={config} onSelect={goNext} onSkip={onSkip} t={t}
           
-            isDisabled={!approvedColony || !masterPlan || !coreArea || !Ulblisttype|| !UlbName || !buildingStatus || !schemes || !purchasedFAR || !greenbuilding || !restrictedArea || !proposedSite/* || (approvedColony === "YES" && !nameofApprovedcolony) || (approvedColony === "NO" && !NocNumber)*/}
+            isDisabled={!approvedColony || !masterPlan || !Ulblisttype|| !UlbName || !buildingStatus || !schemes || !purchasedFAR || !greenbuilding || !restrictedArea || !proposedSite/* || (approvedColony === "YES" && !nameofApprovedcolony) || (approvedColony === "NO" && !NocNumber)*/}
           >
             <div>
               <CardLabel>{`${t("BPA_APPROVED_COLONY")}`}</CardLabel>
@@ -644,26 +638,6 @@
               />
               {Master_plan_render_fields()}
 
-               <CardLabel>{`${t("BPA_CORE_AREA")}`}</CardLabel>
-              <Controller
-                control={control}
-                name={"coreArea"}
-                defaultValue={coreArea}
-                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
-                render={(props) => (
-                  <Dropdown
-
-                    className="form-field"
-                    selected={coreArea}
-                    select={setcoreArea}
-                    option={common}
-                    optionKey="i18nKey"
-                    t={t}
-                  />
-
-                )}
-              />
-
             <CardLabel>{`${t("BPA_ULB_NAME")}`}</CardLabel>
               <Controller
                 control={control}
@@ -678,7 +652,6 @@
                     option={menu}
                     optionKey="i18nKey"
                     t={t}
-                    
                   />
                 )}
                 />
@@ -691,7 +664,6 @@
                 rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
                 render={(props) => (
                   <Dropdown
-
                     className="form-field"
                     selected={District}
                     select={setDistrict}
@@ -710,7 +682,6 @@
                 rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
                 render={(props) => (
                   <Dropdown
-
                     className="form-field"
                     selected={Ulblisttype}
                     select={setUlblisttype}
@@ -732,7 +703,7 @@
                     className="form-field"
                     selected={buildingStatus}
                     select={setbuildingStatus}
-                    option={status}
+                    option={building_status}
                     optionKey="i18nKey"
                     t={t}
                   />
@@ -750,7 +721,7 @@
                     className="form-field"
                     selected={schemes}
                     select={setschemes}
-                    option={schemesselectiontype}
+                    option={selectscheme}
                     optionKey="i18nKey"
                     t={t}
                   />

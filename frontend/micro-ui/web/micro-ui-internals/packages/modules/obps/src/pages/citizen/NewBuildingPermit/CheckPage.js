@@ -152,7 +152,9 @@ import {
         if (response.ResponseInfo.status==="Access Token generated successfully") {
           setIsOTPVerified(true);
           setOTPError(t("VERIFIED"));
-          setOTPVerifiedTimestamp(new Date());
+          const currentTimestamp = new Date();
+          setOTPVerifiedTimestamp(currentTimestamp);
+          sessionStorage.setItem('otpVerifiedTimestamp', currentTimestamp.toISOString());
         } else {
           setIsOTPVerified(false);
           setOTPError(t("WRONG OTP"));
@@ -213,9 +215,11 @@ import {
        setUploadedFileLess(value?.additionalDetails?.lessAdjustmentFeeFiles);
       }
 let plotArea = parseInt(sessionStorage.getItem("plotArea")) || datafromAPI?.planDetail?.planInformation?.plotArea || value?.additionalDetails?.area;
-const LabourCess = plotArea > 909 ?mdmsData?.BPA?.LabourCess[1].rate * plotArea : 0
- const GaushalaFees =  mdmsData?.BPA?.GaushalaFees[0].rate  
- const Malbafees = (plotArea <=500 ?mdmsData?.BPA?.MalbaCharges[0].rate :plotArea >500 && plotArea <=1000 ?mdmsData?.BPA?.MalbaCharges?.[1].rate :mdmsData?.BPA?.MalbaCharges[2].rate || 500)
+
+//plotArea*10.7639 conversion from sq mtrs to sq ft;
+const LabourCess =Math.round( (plotArea*10.7639) > 909 ?mdmsData?.BPA?.LabourCess[1].rate * (plotArea*10.7639) : 0)
+ const GaushalaFees = Math.round( mdmsData?.BPA?.GaushalaFees[0].rate  )
+ const Malbafees =Math.round( ((plotArea*10.7639) <=500 ?mdmsData?.BPA?.MalbaCharges[0].rate :(plotArea*10.7639) >500 && (plotArea*10.7639) <=1000 ?mdmsData?.BPA?.MalbaCharges?.[1].rate :mdmsData?.BPA?.MalbaCharges[2].rate || 500))
 sessionStorage.setItem("Malbafees",Malbafees)
 sessionStorage.setItem("WaterCharges",Malbafees/2)
 sessionStorage.setItem("GaushalaFees",GaushalaFees)
@@ -361,14 +365,22 @@ setWaterCharges(Malbafees/2)
     }
 
     function onSubmitCheck(){
-      if(development && otherCharges && lessAdjusment){
+      if(!development){
+        sessionStorage.setItem("development",0)
+      }
+      if(!lessAdjusment){
+        sessionStorage.setItem("lessAdjusment",0)
+      }
+      if(!otherCharges){
+        sessionStorage.setItem("otherCharges",0)
+      }
       if(parseInt(lessAdjusment)>(parseInt(development)+parseInt(otherCharges)+parseInt(malbafees)+parseInt(labourCess)+parseInt(waterCharges)+parseInt(gaushalaFees))){
         alert(t("Enterd Less Adjustment amount is invalid"));
       }
       else{
         onSubmit();
-      }
-    }}
+      }      
+  }
 
     function setOtherChargesVal(value) {
       if(/^[0-9]*$/.test(value)){
@@ -429,7 +441,7 @@ function selectfile(e) {
           <Row className="border-none" label={t(`BPA_BASIC_DETAILS_SERVICE_TYPE_LABEL`)} text={t(data?.serviceType)} />
           <Row className="border-none" label={t(`BPA_BASIC_DETAILS_OCCUPANCY_LABEL`)} text={data?.occupancyType}/>
           <Row className="border-none" label={t(`BPA_BASIC_DETAILS_RISK_TYPE_LABEL`)} text={t(`WF_BPA_${data?.riskType}`)} />
-          <Row className="border-none" label={t(`BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL`)} text={data?.applicantName} />
+          {/* <Row className="border-none" label={t(`BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL`)} text={data?.applicantName} /> */}
         </StatusTable>
     </Card>
     <Card style={{paddingRight:"16px"}}>
@@ -617,9 +629,11 @@ function selectfile(e) {
       ))} */}
        {/* <Row className="border-none" label={t(`BPA_COMMON_TOTAL_AMT`)} text={`₹ ${paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}`} /> */}
        <CardSubHeader>{t("BPA_P1_SUMMARY_FEE_EST")}</CardSubHeader> 
-       <Row className="border-none" label={t(`BPA_COMMON_P1_AMT`)} text={`₹ ${value?.additionalDetails?.P1charges || paymentDetails?.Bill[0]?.billDetails[0]?.amount}`} />
-       <CardSubHeader>{t("BPA_P2_SUMMARY_FEE_EST")}</CardSubHeader> 
-       
+       <Row className="border-none" label={t(`BPA_APPL_FEES`)} text={`₹ ${value?.additionalDetails?.P1charges || paymentDetails?.Bill[0]?.billDetails[0]?.amount}`} />
+       <Row className="border-none" label={t(`BUILDING_APPLICATION_FEES`)} text={`₹ ${Math.round((datafromAPI?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea)*10.7639*2.5)}`}></Row>
+       <Row className="border-none" label={t(`BOUNDARY_WALL_FEES`)} text={`₹ ${data?.boundaryWallLength*2.5}`}></Row>
+
+       <CardSubHeader>{t("BPA_P2_SUMMARY_FEE_EST")}</CardSubHeader>        
        <Row className="border-none" label={t(`BPA_COMMON_MALBA_AMT`)} text={`₹ ${malbafees}`} />
        <Row className="border-none" label={t(`BPA_COMMON_LABOUR_AMT`)} text={`₹ ${labourCess}`} />
        <Row className="border-none" label={t(`BPA_COMMON_WATER_AMT`)} text={`₹ ${waterCharges}`} />
@@ -653,6 +667,9 @@ function selectfile(e) {
               //disable={editScreen}
               {...{ required: true, pattern: /^[0-9]*$/ }}
             />
+            {parseInt(otherCharges)>0?
+            (
+            <div>
             <CardLabel>{t("BPA_COMMON_OTHER_AMT_DISCRIPTION")}</CardLabel>
             <TextArea
               t={t}
@@ -662,7 +679,8 @@ function selectfile(e) {
               value={otherChargesDisc}
               onChange={(e) => {setOtherChargesDis(e.target.value)}}
               {...{ required: true }}
-            />
+            /></div>):null
+            } 
             <CardLabel>{t("BPA_COMMON_LESS_AMT")}</CardLabel>
             <TextInput
               t={t}
@@ -677,8 +695,10 @@ function selectfile(e) {
               //disable={editScreen}
               {...{ required: true, pattern: "^[0-9]*$" }}
             />
-            <CardLabel>{t("BPA_COMMON_LESS_AMT_FILE")}</CardLabel>
-            <UploadFile
+            {parseInt(lessAdjusment)>0 ?(
+              <div>
+                <CardLabel>{t("BPA_COMMON_LESS_AMT_FILE")}</CardLabel>
+                <UploadFile
                 id={"noc-doc"}
                 style={{marginBottom:"200px"}}
                 onUpload={selectfile}
@@ -690,10 +710,13 @@ function selectfile(e) {
                 error={errorFile}
                 uploadMessage={uploadMessage}
             />
-            {docLessAdjustment?.fileStoreIds?.length && 
+              </div>
+            ):null
+            }
+            {(docLessAdjustment?.fileStoreIds?.length && parseInt(value?.additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT)>0) &&  
             <CardLabel style={{marginTop:"15px"}}>{t("BPA_COMMON_LESS_AMT_PREVIOUS_FILE")}</CardLabel>            
             }
-            {docLessAdjustment?.fileStoreIds?.length &&             
+            {(docLessAdjustment?.fileStoreIds?.length && parseInt(value?.additionalDetails?.selfCertificationCharges?.BPA_LESS_ADJUSMENT_PLOT)>0) &&             
               <a   target="_blank" href={docLessAdjustment?.fileStoreIds[0]?.url}>
               <PDFSvg />
             </a>
@@ -707,7 +730,7 @@ function selectfile(e) {
        {value?.status==="INITIATED" && (
        <div>
         <CardLabel>{t("ARCHITECT_SHOULD_VERIFY_HIMSELF_BY_CLICKING_BELOW_BUTTON")}</CardLabel>
-        <SubmitBar label={t("BPA_VERIFY")} onSubmit={handleVerifyClick} />
+        <LinkButton label={t("BPA_VERIFY")} onClick={handleVerifyClick} />
         <br></br>
         {showMobileInput && (
           <React.Fragment>
@@ -724,7 +747,7 @@ function selectfile(e) {
             {...{ required: true, pattern: "[0-9]{10}", type: "tel", title: t('CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID') }}
           />
     
-          <SubmitBar label={t("BPA_GET_OTP")} onSubmit={handleGetOTPClick} disabled={!isValidMobileNumber} />
+          <LinkButton label={t("BPA_GET_OTP")} onClick={handleGetOTPClick} disabled={!isValidMobileNumber} />
           </React.Fragment>
           )}
           <br></br>
@@ -768,7 +791,7 @@ function selectfile(e) {
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
       {/* <CardHeader>{t("BPA_COMMON_TOTAL_AMT")}</CardHeader> 
       <CardHeader>₹ {paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}</CardHeader>  */}
-      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmitCheck} disabled={ (!development||!otherCharges||!lessAdjusment || !agree || !isOTPVerified || !otherChargesDisc || !Architectvalidations)} id/>
+      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmitCheck} disabled={ ( !agree || !isOTPVerified || !Architectvalidations)} id/>
       </Card>
     </React.Fragment>
     );

@@ -1,5 +1,7 @@
 import { Fonts } from "./fonts";
+import React, { ReactDOM} from "react";
 const pdfMake = require("pdfmake/build/pdfmake.js");
+import QRCode from "qrcode";
 // const pdfFonts = require("pdfmake/build/vfs_fonts.js");
 // pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -51,11 +53,14 @@ const downloadPDFFileUsingBase64 = (receiptPDF, filename) => {
     receiptPDF.download(filename);
   }
 };
+const generateQRCodeDataUrl=async(value)=>{
+    const dataUrl=await QRCode.toDataURL(value);
+    return dataUrl;
+};
 
 function getBase64Image(tenantId) {
   try {
     const img = document.getElementById(`logo-${tenantId}`);
-    console.log("img", img)
     var canvas = document.createElement("canvas");
     canvas.width = img.width;
     canvas.height = img.height;
@@ -95,7 +100,32 @@ const defaultLogo =
       : email.length <= 60
       ? -100
       : -60;
- 
+
+  const baseUrl= window.location.origin;
+  let qrCodeDataUrl=""
+  const module=applicationNumber.split("-")[1]
+  
+  if(module==="PGR"){
+    
+    qrCodeDataUrl= await generateQRCodeDataUrl(`${baseUrl}/digit-ui/citizen/acknowledgement/details?tenantId=${tenantId}&acknowledgementNumber=${applicationNumber}&grievancetype=${details[0]?.values[1]?.value}&grievancesubtype=${details[0]?.values[2]?.value}&priority=${details[0]?.values[3]?.value}&address=${details[1]?.values[0]?.value},${details[1]?.values[1]?.value},${details[1]?.values[2]?.value},${details[1]?.values[3]?.value},${details[1]?.values[4]?.value},${details[1]?.values[5]?.value}`);
+    
+  }
+  else if(module==="AC"){
+    qrCodeDataUrl= await generateQRCodeDataUrl(`${baseUrl}/digit-ui/citizen/acknowledgement/details?tenantId=${tenantId}&acknowledgementNumber=${details[0]?.values[0]?.value}&propertyId=${details[0]?.values[0]?.value}&ownername=${details[1]?.values[0]?.value}&ownerMblNumber=${details[1]?.values[1]?.value}&propertyType=${details[2]?.values[1]?.value}&area=${details[2]?.values[2]?.value}&builtupArea=${details[2]?.values[18]?.value}&address=${details[3]?.values[0]?.value}, ${details[3]?.values[1]?.value}, ${details[3]?.values[2]?.value}, ${details[3]?.values[3]?.value}, ${details[3]?.values[4]?.value}, ${details[3]?.values[5]?.value}`);
+  }
+  else if(module==="FSM"){
+    qrCodeDataUrl= await generateQRCodeDataUrl(`${baseUrl}/digit-ui/citizen/acknowledgement/details?tenantId=${tenantId}&acknowledgementNumber=${applicationNumber}&name=${details[1]?.values[0]?.value}&mblnumber=${details[1]?.values[1]?.value}&propertyid=${details[2]?.values[0]?.value}&propertyType=${details[2]?.values[1]?.value}&propertysubtype=${details[2]?.values[2]?.value}&noofTrips=${details[4]?.values[5]?.value}&totalamount=${details[4]?.values[7]?.value}&advAmountDue=${details[4]?.values[8]?.value}`);
+  }
+  else if(module==="TL"){
+    qrCodeDataUrl= await generateQRCodeDataUrl(`${baseUrl}/digit-ui/citizen/acknowledgement/details?tenantId=${tenantId}&acknowledgementNumber=${applicationNumber}&structureType=${details[0]?.values[5]?.value}&ownerName=${details[4]?.values[0]?.value}&mblNumber=${details[4]?.values[1]?.value}&propertyID=${details[3]?.values[0]?.value}&propertyAddress=${details[3]?.values[1]?.value},${details[3]?.values[2]?.value},${details[3]?.values[3]?.value},${details[3]?.values[4]?.value},${details[3]?.values[5]?.value}`);
+  }
+  else if(module==="BP"){
+    qrCodeDataUrl= await generateQRCodeDataUrl(`${baseUrl}/digit-ui/citizen/acknowledgement/details?tenantId=${tenantId}&acknowledgementNumber=${applicationNumber}&edcrNo=${details[0]?.values[0]?.value}&applnType=${details[0]?.values[2]?.value}&serviceType=${details[0]?.values[3]?.value}&name=${details[0]?.values[6]?.value}&ownerName=${details[3]?.values[0]?.value}&ownerMblNumber=${details[3]?.values[2]?.value}&address=${details[4]?.values[0]?.value},${details[4]?.values[1]?.value},${details[4]?.values[2]?.value},${details[4]?.values[3]?.value},${details[4]?.values[4]?.value}`);
+  }
+  else{
+    qrCodeDataUrl= await generateQRCodeDataUrl(`${baseUrl}/digit-ui/citizen/acknowledgement/details?tenantId=${tenantId}&acknowledgementNumber=${applicationNumber}`);
+  }
+
   const dd = {
 
     background:[{
@@ -119,7 +149,7 @@ const defaultLogo =
     },
     content: [
       ...createHeaderDetails(details,name, phoneNumber, email, logo, tenantId, heading, applicationNumber),
-      ...createContent(details, phoneNumber,logo, tenantId,breakPageLimit),
+      ...createContent(details, applicationNumber, qrCodeDataUrl,phoneNumber,logo, tenantId,breakPageLimit),
       {
         text: t("PDF_SYSTEM_GENERATED_ACKNOWLEDGEMENT"),
         font: "Hind",
@@ -192,6 +222,15 @@ const jsPdfGeneratorv1 = async ({ breakPageLimit = null, tenantId, logo, name, e
                       : email.length <= 60
                         ? -100
                         : -60;
+const baseUrl= window.location.origin;
+let qrCodeDataUrl=""
+if(headerDetails?.[0]?.values?.[0]?.value.includes("WS")){
+  qrCodeDataUrl= await generateQRCodeDataUrl(`${baseUrl}/digit-ui/citizen/acknowledgement/details?tenantId=${tenantId}&acknowledgementNumber=${headerDetails?.[0]?.values?.[0]?.value}&ownerName=${details[0]?.values[1]?.value}&address=${details[0]?.values[2]?.value}&noOfTaps=${details[2]?.values[1]?.value}&connectionSize=${details[2]?.values[2]?.value}`);
+}
+else if(headerDetails?.[0]?.values?.[0]?.value.includes("SW")){
+   qrCodeDataUrl= await generateQRCodeDataUrl(`${baseUrl}/digit-ui/citizen/acknowledgement/details?tenantId=${tenantId}&acknowledgementNumber=${headerDetails?.[0]?.values?.[0]?.value}&ownerName=${details[0]?.values[1]?.value}&address=${details[0]?.values[2]?.value}&noOfclosets=${details[2]?.values[1]?.value}&noOfToiletSeats=${details[2]?.values[2]?.value}`);
+}
+
 
   const dd = {
     background:[{
@@ -219,13 +258,19 @@ const jsPdfGeneratorv1 = async ({ breakPageLimit = null, tenantId, logo, name, e
       //   bold: true,
       //   margin: [-25, 5, 0, 0],
       // },
-      ...createContentDetails(details),
+      ...createContentDetails(details, qrCodeDataUrl),
       {
         text: t("PDF_SYSTEM_GENERATED_ACKNOWLEDGEMENT"),
         font: "Hind",
         fontSize: 11,
         color: "#6f777c",
         margin: [10, 32],
+      },
+      {
+        image:qrCodeDataUrl,
+        width:150,
+        alignment:'center',
+        margin:[0, 20, 0, 0]
       },
       {
         text:"TERMS_AND_CONDITIONS_OF_LICENSE",
@@ -670,31 +715,71 @@ const createBodyContent = (details) => {
   return detailsHeaders
 }
 
-function createContentDetails(details) {
+function createContentDetails(details, qrCodeDataUrl) {
   let detailsHeaders = [];
   let counter=1;
   details.forEach((detail, index) => {
     if (detail?.title) {
-      detailsHeaders.push({
+      
+            const headerBody=
+        [
+          {
+            text:  `${counter}. ${detail?.title}`, 
+                  border:[true, true, true, false],
+                  color: "#454545",                 
+                  style: "header",
+                  fontSize: 14,
+                  bold: true               
+          }
+  ];
+
+
+if(counter===1){
+
+detailsHeaders.push({
+  columns:[
+    {
+      width:"*",
+      stack:[
+        {
         style: 'tableExample',
-        layout: "noBorders", 
-        margin:[20,30,20,0],
-        table: {
-          widths: ['101.8%', '*'],
-          body: [
-             [
-                    {
-                      text: `${counter}. ${detail?.title}`, 
-                      //border:[true, true, true, false], 
-                      color: "#454545",                 
-                      style: "header",
-                      fontSize: 14,
-                      bold: true
-                    }
-                         ]
-          ]
+          margin:[10,20,10,0],
+          layout:"noBorders",
+          table: {
+            widths: counter===1 ?  ['70%','30%']:['101.8%', '*'],
+            body: [
+              [headerBody]
+            ]
+          }
         }
-      })
+      ]
+    },
+    {
+     width:'auto', 
+    image:qrCodeDataUrl,
+    width:70,
+    alignment:'right',
+    margin:[0,10,10,0]
+    }
+  ]
+  
+ 
+});
+}else{
+detailsHeaders.push({
+style: 'tableExample',
+margin:[10,20,10,0],
+layout:"noBorders",
+table: {
+  widths: ['101.8%', '*'],
+  body: [
+    [headerBody]
+  ]
+}
+});
+}
+
+             
       counter++;
     }
     if (detail?.isAttachments && detail.values) {
@@ -848,7 +933,7 @@ headerData.push({
 })
 
   return headerData;
-  console.log("details", details)
+  
 }
 
 function createHeader(headerDetails,logo,tenantId) {
@@ -956,32 +1041,68 @@ headerData.push({
 })
   return headerData;
 }
-function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = null) {
+function createContent(details,applicationNumber, qrCodeDataUrl,logo, tenantId,phoneNumber, breakPageLimit = null) {
   const detailsHeaders = []; 
   let counter=1;
   details.forEach((detail, index) => {
     if (detail?.values?.length > 0) {
-      console.log("lennn", detail?.title.length)
-      detailsHeaders.push({
-        style: 'tableExample',
-        margin:[10,20,10,0],
-        layout:"noBorders",
-        table: {
-          widths: ['101.8%', '*'],
-          body: [
-              [
-                {
-                  text:  `${counter}. ${detail?.title}`, 
+      const headerBody=
+        [
+          {
+            text:  `${counter}. ${detail?.title}`, 
                   border:[true, true, true, false],
                   color: "#454545",                 
                   style: "header",
                   fontSize: 14,
-                  bold: true
+                  bold: true               
+          }
+        ];
+
+      if(counter===1){
+      
+      detailsHeaders.push({
+        columns:[
+          {
+            width:"*",
+            stack:[
+              {
+              style: 'tableExample',
+                margin:[10,20,10,0],
+                layout:"noBorders",
+                table: {
+                  widths: counter===1 ?  ['70%','30%']:['101.8%', '*'],
+                  body: [
+                    [headerBody]
+                  ]
                 }
-              ]
-          ]
-        }
-      })
+              }
+            ]
+          },
+          {
+           width:'auto', 
+          image:qrCodeDataUrl,
+          width:70,
+          alignment:'right',
+          margin:[0,10,10,0]
+          }
+        ]
+        
+       
+   });
+  }else{
+    detailsHeaders.push({
+      style: 'tableExample',
+      margin:[10,20,10,0],
+      layout:"noBorders",
+      table: {
+        widths: ['101.8%', '*'],
+        body: [
+          [headerBody]
+        ]
+      }
+    });
+  }
+    
       counter++;
     }
     if (detail?.isAttachments && detail.values) {

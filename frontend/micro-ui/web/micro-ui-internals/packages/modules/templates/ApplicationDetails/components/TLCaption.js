@@ -1,10 +1,11 @@
-import React from "react";
+import React,{useState} from "react";
 import { useTranslation } from "react-i18next";
 import { TelePhone, DisplayPhotos, UnMaskComponent } from "@upyog/digit-ui-react-components";
 import Reason from "./Reason";
 
 const TLCaption = ({ data,OpenImage,privacy={}}) => {
   
+  const [viewMore, setviewMore] = useState(false);
   const { t } = useTranslation();
   return (
     <div>
@@ -18,8 +19,36 @@ const TLCaption = ({ data,OpenImage,privacy={}}) => {
       {data.comment && <Reason otherComment={data?.otherComment} headComment={data?.comment}></Reason>}
       {data?.wfComment ? <div>{data?.wfComment?.map( e => 
       <div className="TLComments">
-        <h3>{t("WF_COMMON_COMMENTS")}</h3>
-        <p style={{overflowX:"scroll"}}>{e}</p>
+        <h3>{t("WF_COMMON_COMMENTS")}</h3>        
+        {!viewMore && (
+        <div>
+         <p style={{overflow:"hidden", textOverflow:"ellipsis",display:"-webkit-box", WebkitLineClamp:1, WebkitBoxOrient:"vertical"}}>{e}</p>
+          {e.length>36?(<button
+            type="button"
+            onClick={() => {
+              setviewMore(true);
+            }}
+            style={{color:"#800000"}}
+          >
+            {t("View More")}
+          </button>):null}
+        </div>
+      )}
+      {viewMore && (
+        <div >
+          <p style={{overflow:"visible"}}>{e}</p>
+          <button
+            type="button"
+            onClick={() => {
+              setviewMore(false);
+            }}
+            style={{color:"#800000"}}
+          >
+            {t("View Less")}
+          </button>
+        </div>
+      )}
+
       </div>
       )}</div> : null}
       {data?.thumbnailsToShow?.thumbs?.length > 0 ? <div className="TLComments">
