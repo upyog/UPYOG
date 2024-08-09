@@ -154,6 +154,7 @@ public class NICSMSServiceImpl extends BaseSMSService {
 					stringBuffer.append(line);
 				}
 				log.info("conn: " + conn.toString());
+				//TODO: Remove the logs staer testing
 				log.info("sms api url : " + smsProperties.getUrl());
 				log.info("sms response: " + stringBuffer.toString());
 				log.info("sms data: " + final_data);
