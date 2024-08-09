@@ -489,8 +489,8 @@ public class CalculatorUtil {
 		
 		log.info("prepareWSTaxPeriodMdmsRequest:: start");
 			MasterDetail masterDetail = MasterDetail.builder().name(WSCalculationConstant.TAXPERIOD_MASTERNAME)
-					// .filter("[?(@.periodCycle=='"+type+"' && @.service== '"+serviceName+"')]")
-					.filter("[?(@.periodCycle=='"+WSCalculationConstant.Quaterly_Billing_Period_MDMS_CALL+"' && @.service== '"+serviceName+"')]")
+					 .filter("[?(@.periodCycle=='"+type+"' && @.service== '"+serviceName+"')]")
+					//.filter("[?(@.periodCycle=='"+WSCalculationConstant.Quaterly_Billing_Period_MDMS_CALL+"' && @.service== '"+serviceName+"')]")
 					//.filter("[?(@.periodCycle=='QUATERLY' && @.service== '"+serviceName+"')]")
 					.build();
 			ModuleDetail moduleDetail = ModuleDetail.builder().moduleName(WSCalculationConstant.MODULE_NAME_BILLINGSERVICE)
