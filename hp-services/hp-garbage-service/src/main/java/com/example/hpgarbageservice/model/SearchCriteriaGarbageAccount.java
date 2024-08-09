@@ -27,6 +27,7 @@ public class SearchCriteriaGarbageAccount {
 
     private List<String> createdBy;
 
-//    private List<Long> parentId;
+    private List<String> applicationNumber;
+    
     private Boolean isOwner;
 }

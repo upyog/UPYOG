@@ -47,9 +47,15 @@ public class GarbageAccount {
 
 	private String workflowAction;
 
+	private String workflowComment;
+	
+	private Boolean isOnlyWorkflowCall = false;
+
 	private String status;
 	
 	private GrbgApplication grbgApplication;
+	
+	private String grbgApplicationNumber;
 	
 	private GrbgOldDetails grbgOldDetails;
 
