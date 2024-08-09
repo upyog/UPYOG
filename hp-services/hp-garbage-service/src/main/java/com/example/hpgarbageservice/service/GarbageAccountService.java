@@ -37,6 +37,7 @@ import com.example.hpgarbageservice.repository.GrbgCommercialDetailsRepository;
 import com.example.hpgarbageservice.repository.GrbgDocumentRepository;
 import com.example.hpgarbageservice.repository.GrbgOldDetailsRepository;
 import com.example.hpgarbageservice.util.ApplicationPropertiesAndConstant;
+import com.example.hpgarbageservice.util.ResponseInfoFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -71,10 +72,13 @@ public class GarbageAccountService {
 	
 	@Autowired
 	private ObjectMapper objectMapper;
+	
+	@Autowired
+	private ResponseInfoFactory responseInfoFactory;
 
-	public List<GarbageAccount> create(GarbageAccountRequest createGarbageRequest) {
+	public GarbageAccountResponse create(GarbageAccountRequest createGarbageRequest) {
 
-		List<GarbageAccount> garbageAccountsResponse = new ArrayList<>();
+		List<GarbageAccount> garbageAccounts = new ArrayList<>();
 		
 		if (!CollectionUtils.isEmpty(createGarbageRequest.getGarbageAccounts())) {
 			createGarbageRequest.getGarbageAccounts().forEach(garbageAccount -> {
@@ -83,7 +87,7 @@ public class GarbageAccountService {
 				validateAndEnrichCreateGarbageAccount(createGarbageRequest.getRequestInfo(), garbageAccount);
 
 				// create garbage account
-				garbageAccountsResponse.add(garbageAccountRepository.create(garbageAccount));
+				garbageAccounts.add(garbageAccountRepository.create(garbageAccount));
 				
 				// create garbage objects
 				createGarbageAccountObjects(garbageAccount);
@@ -94,7 +98,15 @@ public class GarbageAccountService {
 		// call workflow
 		callWfUpdate(createGarbageRequest);
 		
-		return garbageAccountsResponse;
+		GarbageAccountResponse garbageAccountResponse = GarbageAccountResponse.builder()
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(createGarbageRequest.getRequestInfo(), false))
+				.garbageAccounts(garbageAccounts)
+				.build();
+		if(!CollectionUtils.isEmpty(garbageAccounts)) {
+			garbageAccountResponse.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(createGarbageRequest.getRequestInfo(), true));
+		}
+		
+		return garbageAccountResponse;
 	}
 
 
@@ -307,9 +319,9 @@ public class GarbageAccountService {
 		}
 	}
 
-	public List<GarbageAccount> update(GarbageAccountRequest updateGarbageRequest) {
+	public GarbageAccountResponse update(GarbageAccountRequest updateGarbageRequest) {
 
-		List<GarbageAccount> garbageAccountsResponse = new ArrayList<>();
+		List<GarbageAccount> garbageAccounts = new ArrayList<>();
 
 
 		// search existing garbage accounts
@@ -346,6 +358,7 @@ public class GarbageAccountService {
 								.collect(Collectors.toMap(ProcessInstance::getBusinessId, instance -> instance.getState().getApplicationStatus()));
 		
 		
+		// update garbage account
 		if (!CollectionUtils.isEmpty(garbageAccountRequest.getGarbageAccounts())) {
 			garbageAccountRequest.getGarbageAccounts().stream()
 			.forEach(newGarbageAccount -> {
@@ -365,11 +378,20 @@ public class GarbageAccountService {
 				// update other objects of garbage account
 					updateGarbageAccountObjects(newGarbageAccount, existingGarbageAccount, applicationNumberToCurrentStatus);
 				
-				garbageAccountsResponse.add(newGarbageAccount);
+				garbageAccounts.add(newGarbageAccount);
 			});
 		}
 		
-		return garbageAccountsResponse;
+		
+		GarbageAccountResponse garbageAccountResponse = GarbageAccountResponse.builder()
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(updateGarbageRequest.getRequestInfo(), false))
+				.garbageAccounts(garbageAccounts)
+				.build();
+		if(!CollectionUtils.isEmpty(garbageAccounts)) {
+			garbageAccountResponse.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(updateGarbageRequest.getRequestInfo(), true));
+		}
+		
+		return garbageAccountResponse;
 	}
 
 
@@ -395,6 +417,10 @@ public class GarbageAccountService {
 				String comment = account.getWorkflowComment();
 				
 				GarbageAccount accountTemp = objectMapper.convertValue(existingGarbageApplicationAccountsMap.get(account.getGrbgApplicationNumber()), GarbageAccount.class);
+				
+				if(null != accountTemp) {
+					throw new RuntimeException("Garbage Account not found for workflow call.");
+				}
 				
 				accountTemp.setIsOnlyWorkflowCall(tempBol);
 				accountTemp.setGrbgApplicationNumber(tempApplicationNo);
@@ -656,6 +682,13 @@ public class GarbageAccountService {
 //		});
 		
 		GarbageAccountResponse garbageAccountResponse = getSearchResponseFromAccounts(grbgAccs);
+		
+		if(CollectionUtils.isEmpty(garbageAccountResponse.getGarbageAccounts())) {
+			garbageAccountResponse.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(searchCriteriaGarbageAccountRequest.getRequestInfo(), false));
+		}else {
+			garbageAccountResponse.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(searchCriteriaGarbageAccountRequest.getRequestInfo(), true));
+		}
+		
 		return garbageAccountResponse;
 	}
 
