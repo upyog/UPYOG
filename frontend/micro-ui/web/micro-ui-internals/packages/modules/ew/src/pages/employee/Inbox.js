@@ -4,7 +4,6 @@ import { Header } from "@nudmcdgnpm/digit-ui-react-components";
 
 import MobileInbox from "../../components/MobileInbox";
 import EWDesktopInbox from "../../components/EWDesktopInbox";
-// import ASTDesktopInbox from "../../../../asset/src/components/ASTDesktopInbox";
 
 const Inbox = ({
   useNewInboxAPI,
@@ -57,8 +56,6 @@ const Inbox = ({
         middlewareSearch,
       });
       
-      // console.log("searchparams in inbox::", searchParams)
-      // console.log("data from usenewinbox hook ::", data)
 
      const Session = Digit.SessionStorage.get("User");
      const uuid = Session?.info?.uuid;
@@ -71,15 +68,6 @@ const Inbox = ({
       }
      )
   }, [])  
-
-  // useEffect(() => {
-  //   if (uuid) {
-  //     setSearchParams((prevParams) => ({
-  //       ...prevParams,
-  //       lastModifiedBy: uuid,
-  //     }));
-  //   }
-  // }, [uuid]);
 
   useEffect(() => {
     setPageOffset(0);
@@ -131,7 +119,6 @@ const Inbox = ({
           EmptyResultInboxComp={EmptyResultInboxComp}
           useNewInboxAPI={useNewInboxAPI}
         />
-        // <div></div>
       );
     } else {
       return (

@@ -3,9 +3,7 @@ import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
-// import { newConfig } from "../../../config/Create/config";
 import { citizenConfig } from "../../../config/Create/citizenconfig";
-import { data } from "jquery";
 
 const EWCreate = ({ parentRoute }) => {
 
@@ -79,7 +77,6 @@ const EWCreate = ({ parentRoute }) => {
       setParams({ ...params, ...{ [key]: [...owners] } });
     } else if (key === "units") {
       let units = params.units || [];
-      // if(index){units[index] = data;}else{
       units = data;
 
       setParams({ ...params, units });

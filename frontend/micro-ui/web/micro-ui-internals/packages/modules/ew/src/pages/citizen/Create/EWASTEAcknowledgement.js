@@ -22,7 +22,6 @@ const rowContainerStyle = {
 };
 
 const BannerPicker = (props) => {
-  // console.log("ptopppppppspspspsps",props);
   
   return (
     <Banner
@@ -38,14 +37,11 @@ const BannerPicker = (props) => {
 
 const EWASTEAcknowledgement = ({ data, onSuccess }) => {
   
-// console.log("data",data,onSuccess)
   const { t } = useTranslation();
   
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const mutation = Digit.Hooks.ew.useEWCreateAPI(data?.address?.city?.code); 
-  // console.log("murat",mutation)
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
-  const match = useRouteMatch();
   const { tenants } = storeData || {};
 
 

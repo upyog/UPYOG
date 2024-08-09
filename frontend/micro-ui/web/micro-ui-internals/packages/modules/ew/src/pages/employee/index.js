@@ -25,7 +25,7 @@ const EmployeeApp = ({ path, url, userType }) => {
 
  
 
-  const PETBreadCrumbs = ({ location }) => {
+  const EWBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
     const search = useLocation().search;
     const fromScreen = new URLSearchParams(search).get("from") || null;
@@ -55,22 +55,14 @@ const EmployeeApp = ({ path, url, userType }) => {
   
     return <BreadCrumb style={isMobile?{display:"flex"}:{}}  spanStyle={{maxWidth:"min-content"}} crumbs={crumbs} />;
   }
-console.log("this dssssis path :: ", path)
-  const NewApplication = Digit?.ComponentRegistryService?.getComponent("PTRNewApplication");
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("EWApplicationDetails");
 
-  // const EditApplication = Digit?.ComponentRegistryService?.getComponent("PTEditApplication");
-  const Response = Digit?.ComponentRegistryService?.getComponent("PTRResponse");
-  const DocsRequired = Digit?.ComponentRegistryService?.getComponent("PTRDocsRequired");
-  const isRes = window.location.href.includes("ew/response");
-  const isNewRegistration = window.location.href.includes("new-application") || window.location.href.includes("modify-application") || window.location.href.includes("ew/application-details");
   return (
     <Switch>
       <React.Fragment>
         <div className="ground-container">
           
-          {!isRes ? <div style={isNewRegistration ? {marginLeft: "12px" } : {marginLeft:"-4px"}}><PETBreadCrumbs location={location} /></div> : null}
-          {/* <PrivateRoute exact path={`${path}/`} component={() => <PTRLinks matchPath={path} userType={userType} />} /> */}
+          {<div style={{marginLeft: "12px" }}><EWBreadCrumbs location={location} /></div>}
           <PrivateRoute
             path={`${path}/inbox`}
             component={() => (
@@ -84,10 +76,8 @@ console.log("this dssssis path :: ", path)
               />
             )}
           />
-          <PrivateRoute path={`${path}/new-application`} component={() => <NewApplication parentUrl={url} />} />
           <PrivateRoute path={`${path}/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
-          <PrivateRoute path={`${path}/response`} component={(props) => <Response {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />
           <PrivateRoute
             path={`${path}/searchold`}

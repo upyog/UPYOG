@@ -4,22 +4,14 @@ import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
 import getEwAcknowledgementData from "../../utils/getEwAcknowledgementData";
 import EWASTEWFApplicationTimeline from "../../pageComponents/EWASTEWFApplicationTimeline";
-import { pdfDownloadLink } from "../../utils";
 import ApplicationTable from "../../components/inbox/ApplicationTable";
-// import PropertyDocuments from "../../../../templates/ApplicationDetails/components/PropertyDocuments"
-
 import get from "lodash/get";
-import { size } from "lodash";
 
 const EWASTECitizenApplicationDetails = () => {
   const { t } = useTranslation();
-  const history = useHistory();
   const { requestId, tenantId } = useParams();
-  const [acknowldgementData, setAcknowldgementData] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
-  const [popup, setpopup] = useState(false);
   const [showToast, setShowToast] = useState(null);
-  // const tenantId = Digit.ULBService.getCurrentTenantId();
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
 
@@ -31,7 +23,6 @@ const EWASTECitizenApplicationDetails = () => {
     },
   );
 
-  // console.log("thi si is data in ewaste citizen applicateon:: ", data)
 
   const [billData, setBillData] = useState(null);
 
@@ -47,14 +38,8 @@ const EWASTECitizenApplicationDetails = () => {
     }
   })
 
-  // console.log("ewasteapplications and requestid :::", EwasteApplication, requestId)
-  console.log("this is ew-detaoishdjf:::", ew_details)
   const application = ew_details;
-  // console.log("application ::", application)
-
   sessionStorage.setItem("ew-storage", JSON.stringify(application));
-
-
 
   const [loading, setLoading] = useState(false);
 
@@ -81,15 +66,6 @@ const EWASTECitizenApplicationDetails = () => {
     }
   );
 
-  // const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
-  //   {
-  //     tenantId: tenantId,
-  //     businessService: "ewst",
-  //     consumerCodes: requestId,
-  //     isEmployee: false,
-  //   },
-  //   { enabled: requestId ? true : false }
-  // );
 
   if (!ew_details.workflow) {
     let workflow = {
@@ -107,49 +83,15 @@ const EWASTECitizenApplicationDetails = () => {
     ew_details.workflow = workflow;
   }
 
-
-
-
-
-
-  // let owners = [];
-  // owners = application?.owners;
-  // let docs = [];
-  // docs = application?.documents;
-
   if (isLoading || auditDataLoading) {
     return <Loader />;
   }
-
-
 
   const getAcknowledgementData = async () => {
     const applications = application || {};
     const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
     const acknowldgementDataAPI = await getEwAcknowledgementData({ ...applications }, tenantInfo, t);
-    Digit.Utils.pdf.generate(acknowldgementDataAPI);
-    //setAcknowldgementData(acknowldgementDataAPI);
-  };
-
-  let documentDate = t("CS_NA");
-  if (ew_details?.additionalDetails?.documentDate) {
-    const date = new Date(ew_details?.additionalDetails?.documentDate);
-    const month = Digit.Utils.date.monthNames[date.getMonth()];
-    documentDate = `${date.getDate()} ${month} ${date.getFullYear()}`;
-  }
-
-  async function getRecieptSearch({ tenantId, payments, ...params }) {
-    let response = { filestoreIds: [payments?.fileStoreId] };
-    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "ewservice-receipt");
-    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-    window.open(fileStore[response?.filestoreIds[0]], "_blank");
-  };
-
-  const handleDownload = async (document, tenantid) => {
-    let tenantId = tenantid ? tenantid : tenantId;
-    const res = await Digit.UploadServices.Filefetch([document?.fileStoreId], tenantId);
-    let documentLink = pdfDownloadLink(res.data, document?.fileStoreId);
-    window.open(documentLink, "_blank");
+    Digit.Utils.pdf.generateTable(acknowldgementDataAPI);
   };
 
   const printCertificate = async () => {
@@ -165,19 +107,10 @@ const EWASTECitizenApplicationDetails = () => {
     onClick: () => getAcknowledgementData(),
   });
 
-  //commented out, need later for download receipt and certificate 
-  // if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
-  //   dowloadOptions.push({
-  //     label: t("EWASTE_FEE_RECIEPT"),
-  //     onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
-  //   });
-
-
   // currentForms is added to select the data of current field only whose data is being used 
   const currentForms = data?.EwasteApplication?.filter(form => form.requestId === requestId);
 
   if (currentForms[0]?.requestStatus === "REQUESTCOMPLETED") {
-    // console.log("ewaste certificate if ::", data?.EwasteApplication, currentForms)
     dowloadOptions.push({
       label: t("EW_CERTIFICATE"),
       onClick: () => printCertificate(),
@@ -263,33 +196,13 @@ const EWASTECitizenApplicationDetails = () => {
           />
 
           <br></br>
-          {/* <StatusTable style={{ marginLeft: "20px" }}>
-            <Row
-              label={t("EWASTE_NET_PRICE")}
-              text={ew_details?.calculatedAmount}
-            />
-          </StatusTable> */}
-
           <CardSubHeader style={{ fontSize: "24px" }}>{t("ES_EW_ACTION_TRANSACTION_ID")}</CardSubHeader>
           <StatusTable>
             {ew_details.calculatedAmount && <Row className="border-none" label={t("EWASTE_NET_PRICE")} text={ew_details?.calculatedAmount} />}
             {ew_details.finalAmount && <Row className="border-none" label={t("ES_EW_ACTION_FINALAMOUNT")} text={ew_details?.finalAmount} />}
             {ew_details.transactionId && <Row className="border-none" label={t("ES_EW_ACTION_TRANSACTION_ID")} text={ew_details?.transactionId} />}
-            {ew_details.pickUpDate && <Row className="border-none" label={t("EWASTE_PICKUP_DATE")} text={ew_details?.pickUpDate} />}
+            {ew_details.pickUpDate && <Row className="border-none" label={t("EW_PICKUP_DATE")} text={ew_details?.pickUpDate} />}
           </StatusTable>
-
-
-          {/* <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_DOCUMENT_DETAILS")}</CardSubHeader>
-          <div>
-            {Array.isArray(docs) ? (
-              docs.length > 0 && <PTRDocument ew_details={ew_details}></PTRDocument>
-            ) : (
-              <StatusTable>
-                <Row className="border-none" text={t("PTR_NO_DOCUMENTS_MSG")} />
-              </StatusTable>
-            )}
-          </div> */}
-
 
           <EWASTEWFApplicationTimeline application={application} id={application?.requestId} userType={"citizen"} />
           {showToast && (
@@ -304,7 +217,6 @@ const EWASTECitizenApplicationDetails = () => {
           )}
         </Card>
 
-        {/* {popup && <PTCitizenFeedbackPopUp setpopup={setpopup} setShowToast={setShowToast} data={data} />} */}
       </div>
     </React.Fragment>
   );

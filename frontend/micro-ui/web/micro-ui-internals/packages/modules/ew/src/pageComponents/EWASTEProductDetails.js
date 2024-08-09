@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { FormStep, TextInput, CardLabel, RadioButtons, Dropdown, RadioOrSelect, Toast } from "@nudmcdgnpm/digit-ui-react-components";
-import { cardBodyStyle } from "../utils";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/EWASTETimeline";
 import { Controller, useForm } from "react-hook-form";
@@ -18,11 +17,16 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
   const [productQuantity, setProductQuantity] = useState(
     (formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.productQuantity) || formData?.ewdet?.productQuantity || "1"
   );
-  // const productPrice = (formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.productPrice) || formData?.ewdet?.productPrice || "0.0";
-  const [calculatedAmount, setCalculatedAmount] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.calculatedAmount) || formData?.ewdet?.calculatedAmount || "");
+  const [calculatedAmount, setCalculatedAmount] = useState(
+    (formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.calculatedAmount) || formData?.ewdet?.calculatedAmount || ""
+  );
 
-  const [prlistName, setPrlistName] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.prlistName) || formData?.ewdet?.prlistName || []);
-  const [prlistQuantity, setPrlistQuantity] = useState((formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.prlistQuantity) || formData?.ewdet?.prlistQuantity || []);
+  const [prlistName, setPrlistName] = useState(
+    (formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.prlistName) || formData?.ewdet?.prlistName || []
+  );
+  const [prlistQuantity, setPrlistQuantity] = useState(
+    (formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.prlistQuantity) || formData?.ewdet?.prlistQuantity || []
+  );
 
   const [showToast, setShowToast] = useState(null);
 
@@ -35,7 +39,12 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
 
   Menu?.Ewaste?.ProductName &&
     Menu?.Ewaste?.ProductName.map((ewasteDetails) => {
-      menu.push({ i18nKey: `EWASTE_${ewasteDetails.code}`, code: `${ewasteDetails.name}`, value: `${ewasteDetails.name}`, price: `${ewasteDetails.price}` });
+      menu.push({
+        i18nKey: `EWASTE_${ewasteDetails.code}`,
+        code: `${ewasteDetails.name}`,
+        value: `${ewasteDetails.name}`,
+        price: `${ewasteDetails.price}`,
+      });
     });
 
   const { control, setError, clearErrors } = useForm();
@@ -45,13 +54,10 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
     setProductQuantity(e.target.value);
   }
 
-  // const [prlistTotalprice, setPrlistTotalprice] = useState([]);
-
   const handleAddProduct = () => {
     if (!/^[1-9][0-9]*$/.test(productQuantity)) {
-      // alert(t("EWASTE_NUMBER_ERROR_MESSAGE"));
       setShowToast({
-        label: t("EWASTE_ZERO_ERROR_MESSAGE")
+        label: t("EWASTE_ZERO_ERROR_MESSAGE"),
       });
       return;
     }
@@ -63,17 +69,11 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
       setPrlistQuantity([...prlistQuantity, { code: productQuantity }]);
     } else {
       setShowToast({
-        label: t("EWASTE_DUPLICATE_PRODUCT_ERROR_MESSAGE")
+        label: t("EWASTE_DUPLICATE_PRODUCT_ERROR_MESSAGE"),
       });
     }
     setProductName("");
     setProductQuantity("");
-    // setPrlistName([...prlistName, { code: productName.code, i18nKey: productName.i18nKey, price: productName.price }]);
-    // setPrlistQuantity([...prlistQuantity, { code: productQuantity }]);
-    // setPrlistTotalprice([...prlistTotalprice, { code: productPrice }]);
-    // prlist.map((pr) => {
-    //   console.log("product is" + pr.code);
-    // })
   };
 
   const goNext = () => {
@@ -100,13 +100,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={1} /> : null}
 
-      <FormStep
-        config={config}
-        onSelect={goNext}
-        onSkip={onSkip}
-        t={t}
-        isDisabled={!calculatedAmount}
-      >
+      <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={!calculatedAmount}>
         <div>
           <CardLabel>{`${t("EWASTE_SEARCH_PRODUCT")}`}</CardLabel>
           <Controller
@@ -116,13 +110,13 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
             rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
             render={(props) => (
               <Dropdown
-              className="form-field" 
-              selected={productName} 
-              select={setProductName} 
-              option={menu} 
-              optionCardStyles={{overflowY: "auto", maxHeight: "300px"}}
-              optionKey="i18nKey" 
-              t={t} 
+                className="form-field"
+                selected={productName}
+                select={setProductName}
+                option={menu}
+                optionCardStyles={{ overflowY: "auto", maxHeight: "300px" }}
+                optionKey="i18nKey"
+                t={t}
               />
             )}
           />
@@ -146,7 +140,6 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
             })}
           />
 
-
           <CardLabel>{`${t("EWASTE_UNIT_PRICE")}`}</CardLabel>
           <TextInput
             t={t}
@@ -160,7 +153,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
             style={{ width: "86%" }}
             ValidationRequired={false}
           />
-           </div>
+        </div>
         <SubmitBar label="Add Product" style={{ marginBottom: "10px" }} onSubmit={handleAddProduct} />
       </FormStep>
 
@@ -172,18 +165,19 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
           prlistQuantity={prlistQuantity}
           setPrlistQuantity={setPrlistQuantity}
           setCalculatedAmount={setCalculatedAmount}
-          // prlistTotalprice={prlistTotalprice}
         />
       </div>
 
-      {showToast?.label && <Toast
-      label={showToast.label}
-      error={true}
-      isDleteBtn={true}
-      onClose={() => {
-        setShowToast(null)
-      }}
-      />}
+      {showToast?.label && (
+        <Toast
+          label={showToast.label}
+          error={true}
+          isDleteBtn={true}
+          onClose={() => {
+            setShowToast(null);
+          }}
+        />
+      )}
     </React.Fragment>
   );
 };

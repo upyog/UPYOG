@@ -16,9 +16,10 @@ export const getFixedFilename = (filename = "", size = 5) => {
 };
 
 export const shouldHideBackButton = (config = []) => {
-  return config.filter((key) => window.location.href.includes(key.screenPath)).length > 0 || window.location.href.includes("acknowledgement") ? true : false ;
+  return config.filter((key) => window.location.href.includes(key.screenPath)).length > 0 || window.location.href.includes("acknowledgement")
+    ? true
+    : false;
 };
-
 
 export const setAddressDetails = (data) => {
   let { address } = data;
@@ -42,106 +43,91 @@ export const setAddressDetails = (data) => {
 
 export const setProductDetails = (data) => {
   let { ewdet } = data;
-  // console.log("ewdet", ewdet)
 
-  let productDetails = ewdet?.prlistName.map((product, index) => {
-    return { 
-      productId: "",
-      productName: product.code,
-      quantity: ewdet?.prlistQuantity[index].code,
-      price: product.price * ewdet?.prlistQuantity[index].code
-    };
-  }) || [];
+  let productDetails =
+    ewdet?.prlistName.map((product, index) => {
+      return {
+        productId: "",
+        productName: product.code,
+        quantity: ewdet?.prlistQuantity[index].code,
+        price: product.price * ewdet?.prlistQuantity[index].code,
+      };
+    }) || [];
 
   data.calculatedAmount = ewdet.calculatedAmount;
   data.ewdet = productDetails;
   return data;
-}
+};
 
 export const EWDataConvert = (data) => {
- 
   data = setProductDetails(data);
   data = setAddressDetails(data);
 
-  console.log("this is data in ::", data)
-
   const formdata = {
     EwasteApplication: [
-    {
-      tenantId: data?.tenantId,
-      requestId: data.requestId || "",
-      transactionId: "",
-      pickUpDate: "",
-      vendorUuid: "345",
-      requestStatus: "New Request",
-      calculatedAmount: data?.calculatedAmount || null,
-      applicant: {
-        applicantName: data?.ownerKey?.applicantName,
-        mobileNumber: data?.ownerKey?.mobileNumber,
-        emailId: data?.ownerKey?.emailId,
-        altMobileNumber: data?.ownerKey?.altMobileNumber,
-      },
-      ewasteDetails: data?.ewdet,
-      address: {
+      {
         tenantId: data?.tenantId,
-        doorNo: data.address?.doorNo,
-        latitude: data.address?.latitude || null,
-        longitude: data.address?.longitude || null,
-        addressNumber: data.address?.addressNumber || "",
-        type: data.address?.type || "RESIDENTIAL",
-        addressLine1: data.address?.addressLine1 || "",
-        addressLine2: data.address?.addressLine2 || "",
-        landmark: data.address?.landmark || "",
-        city: data.address?.city || "",
-        pincode: data.address?.pincode || "",
-        detail: data.address?.detail || "",
-        buildingName: data.address?.buildingName || "",
-        street: data.address?.street || "",
-        locality: {
-          code: data.address?.locality?.code || "NA",
-          name: data.address?.locality?.name || ""
-        }
+        requestId: data.requestId || "",
+        transactionId: "",
+        pickUpDate: "",
+        vendorUuid: "345",
+        requestStatus: "New Request",
+        calculatedAmount: data?.calculatedAmount || null,
+        applicant: {
+          applicantName: data?.ownerKey?.applicantName,
+          mobileNumber: data?.ownerKey?.mobileNumber,
+          emailId: data?.ownerKey?.emailId,
+          altMobileNumber: data?.ownerKey?.altMobileNumber,
+        },
+        ewasteDetails: data?.ewdet,
+        address: {
+          tenantId: data?.tenantId,
+          doorNo: data.address?.doorNo,
+          latitude: data.address?.latitude || null,
+          longitude: data.address?.longitude || null,
+          addressNumber: data.address?.addressNumber || "",
+          type: data.address?.type || "RESIDENTIAL",
+          addressLine1: data.address?.addressLine1 || "",
+          addressLine2: data.address?.addressLine2 || "",
+          landmark: data.address?.landmark || "",
+          city: data.address?.city || "",
+          pincode: data.address?.pincode || "",
+          detail: data.address?.detail || "",
+          buildingName: data.address?.buildingName || "",
+          street: data.address?.street || "",
+          locality: {
+            code: data.address?.locality?.code || "NA",
+            name: data.address?.locality?.name || "",
+          },
+        },
+        documents: data.documents.documents || [],
+        workflow: {
+          businessService: "ewst",
+          action: "CREATE",
+          moduleName: "ewaste-services",
+        },
       },
-      documents: data.documents.documents || [],
-      workflow: {
-        businessService: "ewst",
-        action: "CREATE",
-        moduleName: "ewaste-services"
-      }
-    }
-  ]
+    ],
   };
- 
+
   return formdata;
 };
 
 export const CompareTwoObjects = (ob1, ob2) => {
   let comp = 0;
-Object.keys(ob1).map((key) =>{
-  if(typeof ob1[key] == "object")
-  {
-    if(key == "institution")
-    {
-      if((ob1[key].name || ob2[key].name) && ob1[key]?.name !== ob2[key]?.name)
-      comp=1
-      else if(ob1[key]?.type?.code !== ob2[key]?.type?.code)
-      comp=1
-      
+  Object.keys(ob1).map((key) => {
+    if (typeof ob1[key] == "object") {
+      if (key == "institution") {
+        if ((ob1[key].name || ob2[key].name) && ob1[key]?.name !== ob2[key]?.name) comp = 1;
+        else if (ob1[key]?.type?.code !== ob2[key]?.type?.code) comp = 1;
+      } else if (ob1[key]?.code !== ob2[key]?.code) comp = 1;
+    } else {
+      if ((ob1[key] || ob2[key]) && ob1[key] !== ob2[key]) comp = 1;
     }
-    else if(ob1[key]?.code !== ob2[key]?.code)
-    comp=1
-  }
-  else
-  {
-    if((ob1[key] || ob2[key]) && ob1[key] !== ob2[key])
-    comp=1
-  }
-});
-if(comp==1)
-return false
-else
-return true;
-}
+  });
+  if (comp == 1) return false;
+  else return true;
+};
 
 /*   method to check value  if not returns NA*/
 export const checkForNA = (value = "") => {
@@ -171,7 +157,7 @@ export const pdfDocumentName = (documentLink = "", index = 0) => {
 };
 
 /* methid to get date from epoch */
-export const convertEpochToDate = (dateEpoch,businessService) => {
+export const convertEpochToDate = (dateEpoch, businessService) => {
   // Returning null in else case because new Date(null) returns initial date from calender
   if (dateEpoch) {
     const dateFromApi = new Date(dateEpoch);
@@ -180,10 +166,8 @@ export const convertEpochToDate = (dateEpoch,businessService) => {
     let year = dateFromApi.getFullYear();
     month = (month > 9 ? "" : "0") + month;
     day = (day > 9 ? "" : "0") + day;
-    if(businessService == "ewst")
-    return `${day}-${month}-${year}`;
-    else
-    return `${day}/${month}/${year}`;
+    if (businessService == "ewst") return `${day}-${month}-${year}`;
+    else return `${day}/${month}/${year}`;
   } else {
     return null;
   }
@@ -211,9 +195,7 @@ export const checkArrayLength = (obj = [], length = 0) => {
 
 export const getWorkflow = (data = {}) => {
   return {
-
     businessService: `ewst`,
     moduleName: "ewaste-services",
   };
 };
-

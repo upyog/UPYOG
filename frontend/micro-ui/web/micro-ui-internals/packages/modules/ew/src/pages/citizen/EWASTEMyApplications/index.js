@@ -24,8 +24,6 @@ export const EWASTEMyApplications = () => {
     : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0",mobileNumber:user?.mobileNumber, tenantId };
 
   const { isLoading, isError, error, data } = Digit.Hooks.ew.useEWSearch({ filters: filter1 }, { filters: filter1 });
-
-  console.log("this is data of ewserach in my applications :: ", data)
   
   const {EwasteApplication: applicationsList } = data || {};
   let combinedApplicationNumber = applicationsList?.length > 0 ? applicationsList?.map((ob) => ob?.applicationNumber) : [];

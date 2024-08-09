@@ -13,7 +13,6 @@ const SearchApp = ({path}) => {
     const [showToast, setShowToast] = useState(null);
 
     function onSubmit (_data) {
-      console.log("dddd",_data)
         var fromDate = new Date(_data?.fromDate)
         fromDate?.setSeconds(fromDate?.getSeconds() - 19800 )
         var toDate = new Date(_data?.toDate)
@@ -38,14 +37,12 @@ const SearchApp = ({path}) => {
     const config = {
         enabled: !!( payload && Object.keys(payload).length > 0 )
     }
-console.log("sww",payload)
     const { isLoading, isSuccess, isError, error, data: {EwasteApplication: searchReult, Count: count} = {} } = Digit.Hooks.ew.useEWSearch(
         { tenantId,
           filters: payload
         },
        config,
       );
-      console.log("search", searchReult)
     return <React.Fragment>
         <EWSearchApplication t={t} isLoading={isLoading} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={  isSuccess && !isLoading ? (searchReult.length>0? searchReult : { display: "ES_COMMON_NO_DATA" } ):""} count={count} /> 
         {showToast && (

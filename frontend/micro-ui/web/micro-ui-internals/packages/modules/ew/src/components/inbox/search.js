@@ -18,17 +18,6 @@ import { useTranslation } from "react-i18next";
 const fieldComponents = {
   date: DatePicker,
   mobileNumber: MobileNumber,
-//   Locality: (props) => (
-//     <Localities
-//       tenantId={Digit.ULBService.getCurrentTenantId()}
-//       selectLocality={props.onChange}
-//       keepNull={false}
-//       boundaryType="revenue"
-//       selected={props.value}
-//       disableLoader={true}
-//       sortFn={(a, b) => (a.i18nkey < b.i18nkey ? -1 : 1)}
-//     />
-//   ),
 };
 
 const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams, isInboxPage, defaultSearchParams, clearSearch: _clearSearch }) => {
@@ -50,29 +39,6 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   };
 
   const mobileView = innerWidth <= 640;
-
-  // useEffect(() => {
-  //   searchFields.forEach(({ pattern, name, maxLength, minLength, errorMessages, ...el }) => {
-  //     const value = form[name];
-  //     const error = formState.errors[name];
-  //     if (pattern) {
-  //       if (!new RegExp(pattern).test(value) && !error)
-  //         setError(name, { type: "pattern", message: t(errorMessages?.pattern) || t(`PATTERN_${name.toUpperCase()}_FAILED`) });
-  //       else if (new RegExp(pattern).test(value) && error?.type === "pattern") clearErrors([name]);
-  //     }
-  //     if (minLength) {
-  //       if (value?.length < minLength && !error)
-  //         setError(name, { type: "minLength", message: t(errorMessages?.minLength || `MINLENGTH_${name.toUpperCase()}_FAILED`) });
-  //       else if (value?.length >= minLength && error?.type === "minLength") clearErrors([name]);
-  //     }
-  //     if (maxLength) {
-  //       if (value?.length > maxLength && !error)
-  //         setError(name, { type: "maxLength", message: t(errorMessages?.maxLength || `MAXLENGTH_${name.toUpperCase()}_FAILED`) });
-  //       else if (value?.length <= maxLength && error?.type === "maxLength") clearErrors([name]);
-  //     }
-  //   });
-  // }, [form, formState, setError, clearErrors]);
-
 
   const onSubmitInput = (data) => {
     if (!data.mobileNumber) {
@@ -133,7 +99,6 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                 ?.filter((e) => true)
                 ?.map((input, index) => (
                   <div key={input.name} className="input-fields">
-                    {/* <span className={index === 0 ? "complaint-input" : "mobile-input"}> */}
                     <span className={"mobile-input"}>
                       <Label>{t(input.label) + ` ${input.isMendatory ? "*" : ""}`}</Label>
                       {!input.type ? (
@@ -182,7 +147,6 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                     disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
                     submit
                   />
-                  {/* style={{ paddingTop: "16px", textAlign: "center" }} className="clear-search" */}
                   {!isInboxPage && <div>{clearAll()}</div>}
                 </div>
               )}

@@ -9,7 +9,6 @@ const EWASTEWFApplicationTimeline = (props) => {
 
   const { t } = useTranslation();
   const businessService = props?.application?.workflow?.businessService;
-  // const businessService = "ptr";
 
   const { isLoading, data } = Digit.Hooks.useWorkflowDetails({
     tenantId: props.application?.tenantId,
@@ -17,7 +16,6 @@ const EWASTEWFApplicationTimeline = (props) => {
     moduleCode: businessService,
   });
 
-  console.log("data in appictiontimeline ::", data);
 
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
@@ -113,23 +111,12 @@ const EWASTEWFApplicationTimeline = (props) => {
               {data?.timeline &&
                 data?.timeline.map((checkpoint, index) => {
 
-                  // let timelineStatusPostfix = "";
-                  // if (window.location.href.includes("/obps/")) {
-                  //   if (workflowDetails?.data?.timeline[index - 1]?.state?.includes("BACK_FROM") || workflowDetails?.data?.timeline[index - 1]?.state?.includes("SEND_TO_CITIZEN"))
-                  //     timelineStatusPostfix = `_NOT_DONE`
-                  //   else if (checkpoint?.performedAction === "SEND_TO_ARCHITECT")
-                  //     timelineStatusPostfix = `_BY_ARCHITECT_DONE`
-                  //   else
-                  //     timelineStatusPostfix = index == 0 ? "" : `_DONE`;
-                  // }
                   return (
                     <React.Fragment key={index}>
                       <CheckPoint
                         keyValue={index}
                         isCompleted={index === 0}
-                        //label={checkpoint.state ? t(`WF_${businessService}_${checkpoint.state}`) : "NA"}
                         label={t(
-                          // `ES_EWASTE_COMMON_STATUS_${data?.processInstances[index].state?.["state"]}${timelineStatusPostfix}`
                           `${data?.processInstances[index].state?.["state"]}`
                         )}
                         customChild={getTimelineCaptions(checkpoint)}
