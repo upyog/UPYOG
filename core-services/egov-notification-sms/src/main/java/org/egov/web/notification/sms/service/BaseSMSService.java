@@ -60,6 +60,8 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
     @Override
     public void sendSMS(Sms sms) {
         log.info("sendSMS() start: "+sms);
+    	log.info("sms api url : " + smsProperties.getUrl());
+    	log.info("sms api url : " + smsProperties.getGatewayToUse());
         if (!sms.isValid()) {
             log.error(String.format("Sms %s is not valid", sms));
             return;
