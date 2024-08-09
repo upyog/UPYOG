@@ -60,4 +60,6 @@ public class BillSearchCriteria {
 
 	@Pattern(regexp = "^[0-9]{10}$", message = "MobileNumber should be 10 digit number")
 	private String mobileNumber;
+	
+	private String demandId;
 }

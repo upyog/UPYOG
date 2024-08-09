@@ -49,8 +49,15 @@ import { MyProperties } from "./pages/citizen/MyProperties";
 import PTApplicationDetails from "./pages/citizen/PTApplicationDetails";
 import SearchPropertyComponent from "./pages/citizen/SearchProperty";
 import SearchResultsComponent from "./pages/citizen/SearchResults";
+import SearchAssessmentComponent from "./pages/citizen/SearchAssessment";
+import SearchAssessmentResultsComponent from "./pages/citizen/SearchAssessmentResult";
+
 import EditProperty from "./pages/citizen/EditProperty";
 import MutateProperty from "./pages/citizen/Mutate";
+import AmalgamateProperty from "./pages/citizen/Amalgamate";
+import ExemptionDetails from "./pageComponents/ExemptionDetails"
+import PropertyPhoto from "./pageComponents/PropertyPhoto";
+import UsageCategoryVacantLand from "./pageComponents/UsageCategoryVacantLand"
 
 import PropertyInformation from "./pages/citizen/MyProperties/propertyInformation";
 import PTWFCaption from "./pageComponents/PTWFCaption";
@@ -164,15 +171,23 @@ const componentsToRegister = {
   PTApplicationDetails: PTApplicationDetails,
   PTSearchPropertyComponent: SearchPropertyComponent,
   PTSearchResultsComponent: SearchResultsComponent,
+
+  PTSearchAssessmentComponent: SearchAssessmentComponent,
+  PTSearchAssessmentResultsComponent: SearchAssessmentResultsComponent,
+
   PTEditProperty: EditProperty,
   PTMutateProperty: MutateProperty,
+  PTAmalgamateProperty: AmalgamateProperty,
   //PTCitizenFeedbackPopUp,
   // PTCitizenFeedback,
   // PTAcknowledgementCF,
   SelectOtp, // To-do: Temp fix, Need to check why not working if selectOtp module is already imported from core module
   AcknowledgementCF,
   CitizenFeedback,
-  PTSelectLandmark
+  PTSelectLandmark,
+  ExemptionDetails,
+  PropertyPhoto,
+  UsageCategoryVacantLand
 };
 
 const addComponentsToRegistry = () => {
@@ -189,7 +204,7 @@ export const PTModule = ({ stateCode, userType, tenants }) => {
   const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
 
   addComponentsToRegistry();
-
+  console.log("tenants===",tenants)
   Digit.SessionStorage.set("PT_TENANTS", tenants);
   useEffect(
     () =>
@@ -243,6 +258,10 @@ export const PTLinks = ({ matchPath, userType }) => {
     {
       link: `${matchPath}/property/property-mutation`,
       i18nKey: t("PT_PROPERTY_MUTATION"),
+    },
+    {
+      link: `${matchPath}/property/property-amalgamation`,
+      i18nKey: t("PT_PROPERTY_AMALGAMATION_SEPERATION"),
     },
     {
       link: `${matchPath}/howItWorks`,

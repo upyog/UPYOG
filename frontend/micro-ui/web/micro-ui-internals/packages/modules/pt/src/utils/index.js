@@ -96,6 +96,13 @@ export const setAddressDetails = (data) => {
   return data;
 };
 
+export const setExemptionDetails = (data) => {
+  let { exemption } = data;
+
+  data.exemption = exemption && exemption.exemptionType ? exemption.exemptionType?.code : "";
+  return data;
+};
+
 export const setOwnerDetails = (data) => {
   const { address, owners } = data;
   let institution = {},
@@ -162,7 +169,7 @@ export const setOwnerDetails = (data) => {
 };
 
 export const setDocumentDetails = (data) => {
-  const { address, owners } = data;
+  const { address, owners, exemption, propertyPhoto } = data;
   let documents = [];
   if (address?.documents["ProofOfAddress"]?.id) {
     documents.push({
@@ -175,6 +182,34 @@ export const setDocumentDetails = (data) => {
     documents.push({
       fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
       documentType: address?.documents["ProofOfAddress"]?.documentType?.code || "",
+    });
+  }
+
+  if (exemption?.documents["exemptionProof"]?.id) {
+    documents.push({
+      fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
+      documentType: exemption?.documents["exemptionProof"]?.documentType || "",
+      id: exemption?.documents["exemptionProof"]?.id || "",
+      status: exemption?.documents["exemptionProof"]?.status || "",
+    });
+  } else {
+    documents.push({
+      fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
+      documentType: exemption?.documents["exemptionProof"]?.documentType || "",
+    });
+  }
+
+  if (propertyPhoto?.documents["propertyPhoto"]?.id) {
+    documents.push({
+      fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
+      documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType || "",
+      id: propertyPhoto?.documents["propertyPhoto"]?.id || "",
+      status: propertyPhoto?.documents["propertyPhoto"]?.status || "",
+    });
+  } else {
+    documents.push({
+      fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
+      documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType || "",
     });
   }
 
@@ -220,7 +255,7 @@ const getUsageType = (data) => {
   if (data?.isResdential?.code == "RESIDENTIAL") {
     return data?.isResdential?.code;
   } else {
-    return data?.usageCategoryMajor?.code;
+    return data?.usageCategory?.code;
   }
 };
 
@@ -520,6 +555,7 @@ export const setPropertyDetails = (data) => {
 
 /*   method to convert collected details to proeprty create object */
 export const convertToProperty = (data = {}) => {
+  console.log("convertToProperty=",data);
   let isResdential = data.isResdential;
   let propertyType = data.PropertyType;
   let selfOccupied = data.selfOccupied;
@@ -532,21 +568,55 @@ export const convertToProperty = (data = {}) => {
   let unit = data?.units;
   let basement1 = Array.isArray(data?.units) && data?.units["-1"] ? data?.units["-1"] : null;
   let basement2 = Array.isArray(data?.units) && data?.units["-2"] ? data?.units["-2"] : null;
+  let amalgamationDetails = null;
+  if(data?.amalgamationDetails && data?.amalgamationDetails?.action == "Amalgamation" && data?.amalgamationDetails?.propertyDetails.length>0) {
+    let arr=[];
+    data?.amalgamationDetails?.propertyDetails.map((e)=>{
+      let obj = {};
+      obj['propertyId'] = e.property_id;
+      obj['tenantId'] = e.tenantId;
+      arr.push(obj)
+    })
+    
+    amalgamationDetails = arr
+  };
+  let bifurcationDetails = null;
+  let parentPropertyId = null;
+  let maxBifurcation = null;
+  if(data?.bifurcationDetails && data?.bifurcationDetails?.action == "BIFURCATION" && data?.bifurcationDetails?.propertyDetails) {
+    let obj = {};
+      obj['propertyId'] = data?.bifurcationDetails?.propertyDetails?.propertyId;
+      obj['tenantId'] = data?.bifurcationDetails?.propertyDetails?.tenantId;
+    
+      bifurcationDetails = obj
+      parentPropertyId = data?.bifurcationDetails?.propertyDetails?.propertyId;
+      maxBifurcation = 2;
+  };
+  let isPartOfProperty = data?.isPartOfProperty;
   data = setDocumentDetails(data);
   data = setOwnerDetails(data);
   data = setAddressDetails(data);
   data = setPropertyDetails(data);
+  data = setExemptionDetails(data);
 
   const formdata = {
     Property: {
       tenantId: data.tenantId,
       address: data.address,
+      exemption: data.exemption,
+      usageCategory: data?.usageCategory?.code || '',
 
       ownershipCategory: data?.ownershipCategory?.value,
       owners: data.owners,
+
       institution: data.institution || null,
 
       documents: data.documents || [],
+      amalgamatedProperty: amalgamationDetails,
+      parentPropertyId: parentPropertyId,
+      maxBifurcation: maxBifurcation,
+      // bifurcatedProperty: bifurcationDetails,
+      isPartOfProperty: isPartOfProperty,
       ...data.propertyDetails,
 
       additionalDetails: {
@@ -564,9 +634,10 @@ export const convertToProperty = (data = {}) => {
         unit: unit,
         basement1: basement1,
         basement2: basement2,
+        
       },
 
-      creationReason: getCreationReason(data),
+      creationReason: data?.amalgamationDetails && data?.amalgamationDetails?.action == "Amalgamation" ? 'AMALGAMATION' : data?.bifurcationDetails && data?.bifurcationDetails?.action == "BIFURCATION" ? 'BIFURCATION' : getCreationReason(data),
       source: "MUNICIPAL_RECORDS",
       channel: "CITIZEN",
     },
@@ -680,7 +751,7 @@ export const setUpdateOwnerDetails = (data = []) => {
   return data;
 };
 export const setUpdatedDocumentDetails = (data) => {
-  const { address, owners } = data;
+  const { address, owners, exemption, propertyPhoto } = data;
   let documents = [];
   if (address?.documents["ProofOfAddress"]?.id) {
     documents.push({
@@ -696,6 +767,34 @@ export const setUpdatedDocumentDetails = (data) => {
     });
   }
 
+  if (exemption?.documents["exemptionProof"]?.id) {
+    documents.push({
+      fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
+      documentType: exemption?.documents["exemptionProof"]?.documentType?.code || "",
+      id: exemption?.documents["exemptionProof"]?.id || "",
+      status: exemption?.documents["exemptionProof"]?.status || "",
+    });
+  } else {
+    documents.push({
+      fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
+      documentType: exemption?.documents["exemptionProof"]?.documentType?.code || "",
+    });
+  }
+
+  if (propertyPhoto?.documents["propertyPhoto"]?.id) {
+    documents.push({
+      fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
+      documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType?.code || "",
+      id: propertyPhoto?.documents["propertyPhoto"]?.id || "",
+      status: propertyPhoto?.documents["propertyPhoto"]?.status || "",
+    });
+  } else {
+    documents.push({
+      fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
+      documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType?.code || "",
+    });
+  }
+
   owners &&
     owners.length > 0 &&
     owners.map((owner) => {
@@ -707,6 +806,7 @@ export const setUpdatedDocumentDetails = (data) => {
   return data;
 };
 export const convertToUpdateProperty = (data = {}, t) => {
+  console.log("convertToUpdateProperty==",data)
   let isResdential = data.isResdential;
   let propertyType = data.PropertyType;
   let selfOccupied = data.selfOccupied;
@@ -726,7 +826,9 @@ export const convertToUpdateProperty = (data = {}, t) => {
   data = setUpdateOwnerDetails(data);
   data = setUpdatedDocumentDetails(data);
   data = setPropertyDetails(data);
+  data = setExemptionDetails(data);
   data.address.city = data.address.city ? data.address.city : t(`TENANT_TENANTS_${stringReplaceAll(data?.tenantId.toUpperCase(),".","_")}`);
+  let isPartOfProperty = data?.isPartOfProperty;
 
   const formdata = {
     Property: {
@@ -737,10 +839,12 @@ export const convertToUpdateProperty = (data = {}, t) => {
       status: data.status || "INWORKFLOW",
       tenantId: data.tenantId,
       address: data.address,
-
+      exemption: data.exemption,
+      usageCategory: data?.usageCategory?.code || '',
       ownershipCategory: data?.ownershipCategory?.value,
       owners: data.owners,
       institution: data.institution || null,
+      isPartOfProperty: isPartOfProperty,
 
       documents: data.documents || [],
       ...data.propertyDetails,

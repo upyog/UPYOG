@@ -9,7 +9,7 @@ const CitizenSearchResults = (props) => {
   const { t } = useTranslation();
   const { path } = useRouteMatch();
   let config = propConfig ? [propConfig] : defaultConfig;
-
+  console.log("config===",config)
   const params = useMemo(() => {
     return config?.map?.((step) => {
       const texts = {};
@@ -20,6 +20,8 @@ const CitizenSearchResults = (props) => {
     });
   }, [config]);
 
+  console.log("params===",params)
+
   return (
     <Switch>
       <Route path={`${path}`} exact>
@@ -29,6 +31,7 @@ const CitizenSearchResults = (props) => {
           actionButtonLabel={params[0].texts.actionButtonLabel}
           t={t}
           isMutation={propConfig?.action === "MUTATION"}
+          isAmalgamation={propConfig?.action === "AMALGAMATION"}
           onSelect={onSelect}
           config={propConfig}
           clearParams={clearParams}

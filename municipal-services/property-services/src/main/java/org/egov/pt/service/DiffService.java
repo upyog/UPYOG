@@ -11,6 +11,7 @@ import java.util.List;
 import org.egov.pt.models.Document;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
+import org.egov.pt.models.UnitUsage;
 import org.egov.pt.util.PTConstants;
 import org.egov.tracer.model.CustomException;
 import org.javers.core.Javers;
@@ -23,12 +24,16 @@ import org.javers.core.diff.custom.BigDecimalComparatorWithFixedEquals;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Service
 public class DiffService {
 	
 	private Javers javers;
 	
 	private Javers javersForMutation;
+	
+	private ObjectMapper mapper;
 
     /**
      * Gives the field names whose values are different in the two classes
@@ -39,8 +44,10 @@ public class DiffService {
      */
     public List<String> getUpdatedFields(Object propertyFromUpdate, Object propertyFromSearch, String flowType) {
 
-        Javers javers = getJavers(flowType);
-
+    	//Property property=mapper.convertValue(propertyFromSearch, Property.class);
+    	
+        Javers javers = getAsmtJavers(flowType);
+        
         Diff diff = javers.compare(propertyFromUpdate, propertyFromSearch);
         List<ValueChange> changes = diff.getChangesByType(ValueChange.class);
 
@@ -139,7 +146,7 @@ public class DiffService {
 	private Javers getJavers(String flowType) {
 
 		Javers javersLocal = null;
-
+		
 		switch (flowType) {
 
 		case PTConstants.MUTATION_PROCESS_CONSTANT:
@@ -153,15 +160,48 @@ public class DiffService {
 			
 			javersLocal = javersForMutation;
 			break;
-
+		
 		default:
 			if (javers == null)
 				javers = JaversBuilder.javers()
 						.withListCompareAlgorithm(ListCompareAlgorithm.AS_SET)
-						.registerValue(BigDecimal.class, new BigDecimalComparatorWithFixedEquals()).build();
+						.registerValue(BigDecimal.class, new BigDecimalComparatorWithFixedEquals())
+						.build();
 			javersLocal = javers;
 		}
+		
+		return javersLocal;
+	}
+	
+	private Javers getAsmtJavers(String flowType) {
 
+		Javers javersLocal = null;
+		
+		switch (flowType) {
+
+		case PTConstants.MUTATION_PROCESS_CONSTANT:
+
+			if (javersForMutation == null)
+				javersForMutation = JaversBuilder.javers()
+						.withListCompareAlgorithm(ListCompareAlgorithm.AS_SET)
+						.registerValue(BigDecimal.class, new BigDecimalComparatorWithFixedEquals())
+						.registerIgnoredClass(OwnerInfo.class)
+						.registerIgnoredClass(Document.class).build();
+			
+			javersLocal = javersForMutation;
+			break;
+		
+		default:
+			if (javers == null)
+				javers = JaversBuilder.javers()
+						.withListCompareAlgorithm(ListCompareAlgorithm.AS_SET)
+						.registerValue(BigDecimal.class, new BigDecimalComparatorWithFixedEquals())
+						.registerIgnoredClass(UnitUsage.class)
+						.registerIgnoredClass(Document.class)
+						.build();
+			javersLocal = javers;
+		}
+		
 		return javersLocal;
 	}
 

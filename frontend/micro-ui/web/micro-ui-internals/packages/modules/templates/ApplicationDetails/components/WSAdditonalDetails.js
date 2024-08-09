@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { getQueryStringParams } from "../../../ws/src/utils";
 
 const cardSubHeaderStyles = () => {
-  return { fontSize: "24px", marginBottom: "16px", marginTop: "32px" };
+  return { fontSize: "16px", marginBottom: "16px", marginTop: "32px" };
 };
 
 const WSAdditonalDetails = ({ wsAdditionalDetails, oldValue }) => {

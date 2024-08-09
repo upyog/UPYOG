@@ -220,6 +220,7 @@ public class MinioRepository implements CloudFilesManager {
 		}
 		return resource;
 	}
+	
 
 	private Artifact mapToEntity(org.egov.filestore.domain.model.Artifact artifact) {
 

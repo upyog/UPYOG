@@ -36,7 +36,7 @@ public class EarlyReconciliationJobConfig {
         runEveryHours = runEvery / 60;
         runEveryMinutes = runEvery % 60;
 
-
+        
         CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
         cronTriggerFactoryBean.setJobDetail(earlyReconciliationJob);
 //        cronTriggerFactoryBean.setCronExpression("0 0/" + appProperties.getReconciliationTimeout().toString() + " * * * ?");

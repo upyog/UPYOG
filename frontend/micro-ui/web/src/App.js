@@ -11,7 +11,7 @@ import {
   PTComponents,
 } from "@egovernments/digit-ui-module-pt";
 import { MCollectModule, MCollectLinks, initMCollectComponents } from "@egovernments/digit-ui-module-mcollect";
-import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
+// import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 import {
   PaymentModule,
   PaymentLinks,
@@ -19,20 +19,20 @@ import {
 } from "@egovernments/digit-ui-module-common";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { initLibraries } from "@egovernments/digit-ui-libraries";
-import {
-  HRMSModule,
-  initHRMSComponents,
-} from "@egovernments/digit-ui-module-hrms";
-import {
-  TLModule,
-  TLLinks,
-  initTLComponents,
-} from "@egovernments/digit-ui-module-tl";
+// import {
+//   HRMSModule,
+//   initHRMSComponents,
+// } from "@egovernments/digit-ui-module-hrms";
+// import {
+//   TLModule,
+//   TLLinks,
+//   initTLComponents,
+// } from "@egovernments/digit-ui-module-tl";
 import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
-import { initOBPSComponents } from "@egovernments/digit-ui-module-obps";
-import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
+// import { initOBPSComponents } from "@egovernments/digit-ui-module-obps";
+// import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
 import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
-import { initWSComponents } from "@egovernments/digit-ui-module-ws";
+// import { initWSComponents } from "@egovernments/digit-ui-module-ws";
 import { initCustomisationComponents } from "./Customisations";
 import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
 import { initBillsComponents } from "@egovernments/digit-ui-module-bills";
@@ -74,23 +74,23 @@ window.Digit.ComponentRegistryService.setupRegistry({
   ...PTComponents,
   MCollectLinks,
   MCollectModule,
-  HRMSModule,
-  TLModule,
-  TLLinks,
+  // HRMSModule,
+  // TLModule,
+  // TLLinks,
   ReceiptsModule
 });
 
 initPGRComponents();
 initFSMComponents();
-initDSSComponents();
+// initDSSComponents();
 initMCollectComponents();
-initHRMSComponents();
-initTLComponents();
+// initHRMSComponents();
+// initTLComponents();
 initReceiptsComponents();
-initOBPSComponents();
-initNOCComponents();
+// initOBPSComponents();
+// initNOCComponents();
 initEngagementComponents();
-initWSComponents();
+// initWSComponents();
 initCommonPTComponents();
 initBillsComponents();
 // initReportsComponents();
@@ -101,9 +101,9 @@ const moduleReducers = (initData) => ({
 });
 
 function App() {
-  const stateCode =
-    window.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") ||
-    process.env.REACT_APP_STATE_LEVEL_TENANT_ID;
+  const stateCode = "mn"
+    // window.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") ||
+    // process.env.REACT_APP_STATE_LEVEL_TENANT_ID;
   if (!stateCode) {
     return <h1>stateCode is not defined</h1>;
   }

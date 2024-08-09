@@ -24,12 +24,18 @@ public class PTConstants {
     public static final String MDMS_PT_MUTATIONREASON = "MutationReason";
     
     public static final String MDMS_PT_USAGECATEGORY = "UsageCategory";
+    
+    public static final String MDMS_PT_VACANTUSAGECATEGORY = "VacantLandUsageCategory";
 
     public static final String MDMS_PT_PROPERTYSUBTYPE = "PropertySubType";
 
     public static final String MDMS_PT_OCCUPANCYTYPE = "OccupancyType";
 
     public static final String MDMS_PT_CONSTRUCTIONTYPE = "ConstructionType";
+    
+    public static final String MDMS_PT_ROADTYPE = "TypeOfRoad";
+    
+    public static final String MDMS_PT_EXEMPTION = "SpecialExemption";
 
     public static final String MDMS_PT_CONSTRUCTIONSUBTYPE = "ConstructionSubType";
 
@@ -457,6 +463,13 @@ public class PTConstants {
     public static final String CREATIONREASON_REPLACE = "$creationReason";
 
     public static final String TRANSACTIONID_REPLACE = "{TRANSACTION_ID}";
+    
+    public static final String AMALGAMATED_PROPERTY = "amalgamatedProperty";
+
+    public static final String CREATED_FROM_PROPERTY = "createdFromProperty";
+    
+    public static final String AMALGAMATED_CREATED_IDS_PROPERTY = "amagamtedFromPropertyIds";
+
 
 }
 

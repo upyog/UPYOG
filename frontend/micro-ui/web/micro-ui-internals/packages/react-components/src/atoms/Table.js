@@ -97,7 +97,7 @@ const Table = ({
          
         <thead>
           {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
+            <tr {...headerGroup.getHeaderGroupProps()} style={{color: "white", backgroundImage: "linear-gradient(358deg, #01458e, #03103f)"}}>
              {showAutoSerialNo&& <th style={{  verticalAlign: "top"}}>
               {showAutoSerialNo&& typeof showAutoSerialNo =="string"?t(showAutoSerialNo):t("TB_SNO")}
               </th>}

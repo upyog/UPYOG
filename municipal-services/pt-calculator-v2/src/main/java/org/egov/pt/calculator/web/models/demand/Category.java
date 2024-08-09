@@ -21,7 +21,7 @@ public enum Category {
 	PENALTY("PENALTY"),
 
 	FINES("FINES"),
-	
+	DEFICIT("DEFICIT"),
 	CHARGES("CHARGES");
 
 	private String value;

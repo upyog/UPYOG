@@ -51,6 +51,7 @@ public class OtpService {
             throw new UserNotExistingInSystemException();
 
         final String otpNumber = otpRepository.fetchOtp(otpRequest);
+        System.out.println("otpNumber----------->"+otpNumber);
         otpSMSSender.send(otpRequest, otpNumber);
     }
 

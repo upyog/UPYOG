@@ -24,6 +24,7 @@ public class MDMSService {
     public Map<String, Map<String, JSONArray>> searchMaster(MdmsCriteriaReq mdmsCriteriaReq) {
 
         Map<String, Map<String, Map<String, JSONArray>>> tenantIdMap = MDMSApplicationRunnerImpl.getTenantMap();
+        
 
         String tenantId = mdmsCriteriaReq.getMdmsCriteria().getTenantId();
 

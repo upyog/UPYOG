@@ -96,6 +96,12 @@ public class BillDetail {
     private Boolean callBackForApportioning;
 
     private String cancellationRemarks;
+    
+    @JsonProperty("partPaymentAllowed")
+	private boolean partPaymentAllowed;
+    
+    @JsonProperty("paymentPeriod")
+	private String paymentPeriod;
 
     public Boolean addBillAccountDetail(BillAccountDetail billAccountDetail) {
 
