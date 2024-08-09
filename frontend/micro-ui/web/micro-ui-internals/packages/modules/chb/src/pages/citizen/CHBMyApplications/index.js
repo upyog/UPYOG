@@ -10,7 +10,7 @@ export const CHBMyApplications = () => {
   const user = Digit.UserService.getUser().info;
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [status, setStatus] = useState("UPCOMING");
+  const [status, setStatus] = useState(null);
   const [filteredApplications, setFilteredApplications] = useState([]);
   const [applicationsList, setApplicationsList] = useState([]);
 
@@ -28,103 +28,100 @@ export const CHBMyApplications = () => {
     : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", mobileNumber: user?.mobileNumber, tenantId };
 
   const { isLoading, isError, error, data } = Digit.Hooks.chb.useChbSearch({ filters: filter1 }, { filters: filter1 });
-  
+
   const { hallsBookingApplication } = data || {};
 
   const handleSearch = () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-  
-    // Convert search term to lower case
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
-  
-    // Filter applications based on booking number or status
-    const filtered = hallsBookingApplication?.filter(app => {
+
+    const filtered = applicationsList?.filter(app => {
       const bookingNoMatch = searchTerm ? app.bookingNo.toLowerCase().includes(lowerCaseSearchTerm) : true;
-  
-      const statusMatch = status.code === "UPCOMING" ? app.bookingSlotDetails.some(slot => {
-        const bookingDate = new Date(slot.bookingDate.split('-').reverse().join('-'));
-        return bookingDate >= today;
-      }) : 
-      (status.code === "BOOKED" ? app.bookingStatus === "BOOKED" :
-      (status.code === "BOOKING_CREATED" ? app.bookingStatus === "BOOKING_CREATED" : true));
-  
+
+      const statusMatch = status?.code
+        ? (status.code === "BOOKED" ? app.bookingStatus === "BOOKED" :
+           status.code === "BOOKING_CREATED" ? app.bookingStatus === "BOOKING_CREATED" : true)
+        : true;
+
       return bookingNoMatch && statusMatch;
     }) || [];
-  
+
     setFilteredApplications(filtered);
   };
-  
+
   useEffect(() => {
     if (hallsBookingApplication) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      setFilteredApplications(
-        hallsBookingApplication.filter(app => 
-          app.bookingSlotDetails.some(slot => {
-            const bookingDate = new Date(slot.bookingDate.split('-').reverse().join('-'));
-            return bookingDate >= today;
-          })
-        )
+      // Filter applications based on status
+      const filteredHallsBookingApplication = hallsBookingApplication.filter(app =>
+        (status?.code === "BOOKED" && app.bookingStatus === "BOOKED") ||
+        (status?.code === "BOOKING_CREATED" && app.bookingStatus === "BOOKING_CREATED") ||
+        !status?.code
       );
-      setApplicationsList(hallsBookingApplication);
+  
+      // Update filteredApplications and applicationsList
+      setFilteredApplications(prevFilteredApplications => [
+        ...prevFilteredApplications,
+        ...filteredHallsBookingApplication
+      ]);
+  
+      setApplicationsList(prevApplicationsList => [
+        ...prevApplicationsList,
+        ...filteredHallsBookingApplication
+      ]);
     }
-  }, [hallsBookingApplication]);
+  }, [hallsBookingApplication, status]);
 
   if (isLoading) {
     return <Loader />;
   }
 
   const statusOptions = [
-    { i18nKey: "Upcoming", code: "UPCOMING", value: t("CHB_UPCOMING") },
-    { i18nKey: "Past Booked", code: "BOOKED", value: t("CHB_PAST_BOOKING") },
-    { i18nKey: "Pending Payment", code: "BOOKING_CREATED", value: t("CHB_PENDING_PAYEMENT") }
+    { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") },
+    { i18nKey: "Booking in Progres", code: "BOOKING_CREATED", value: t("CHB_BOOKING_IN_PROGRES") }
   ];
 
   return (
     <React.Fragment>
       <Header>{`${t("CHB_MY_APPLICATION_HEADER")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
       <Card>
-  <div style={{ marginLeft: "16px"}}>
-    <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "16px" }}>
-      <div style={{ flex: 1 }}>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <CardLabel>{t("CHB_BOOKING_NO")}</CardLabel>
-          <TextInput
-            placeholder={t("Enter Booking No.")}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: "100%", padding: "8px", height: '150%' }}
-          />
+        <div style={{ marginLeft: "16px" }}>
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "16px" }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <CardLabel>{t("CHB_BOOKING_NO")}</CardLabel>
+                <TextInput
+                  placeholder={t("Enter Booking No.")}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{ width: "100%", padding: "8px", height: '150%' }}
+                />
+              </div>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <CardLabel>{t("PT_COMMON_TABLE_COL_STATUS_LABEL")}</CardLabel>
+                <Dropdown
+                  className="form-field"
+                  selected={status}
+                  select={setStatus}
+                  option={statusOptions}
+                  placeholder={t("Select Status")}
+                  optionKey="value"
+                  style={{ width: "100%" }}
+                  t={t}
+                />
+              </div>
+            </div>
+            <div>
+              <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
+            </div>
+          </div>
+          <span className="link" style={{ display: "block" }}>
+            <Link to="/digit-ui/citizen/chb/bookHall/searchHall">
+              {t("CHB_NEW_BOOKING")}
+            </Link>
+          </span>
         </div>
-      </div>
-      <div style={{ flex: 1 }}>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <CardLabel>{t("PT_COMMON_TABLE_COL_STATUS_LABEL")}</CardLabel>
-          <Dropdown
-            className="form-field"
-            selected={status}
-            select={setStatus}
-            option={statusOptions}
-            placeholder={t("Select Status")}
-            optionKey="value"
-            style={{ width: "100%"}}
-            t={t}
-          />
-        </div>
-      </div>
-      <div>
-        <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
-      </div>
-    </div>
-    <span className="link" style={{ display: "block" }}>
-      <Link to="/digit-ui/citizen/chb/bookHall/searchHall">
-        {t("CHB_COMMON_CLICK_HERE_TO_REGISTER_NEW_BOOKING")}
-      </Link>
-    </span>
-  </div>
-</Card>
+      </Card>
       <div>
         {filteredApplications.length > 0 &&
           filteredApplications.map((application, index) => (
@@ -138,9 +135,8 @@ export const CHBMyApplications = () => {
           ))}
         {filteredApplications.length === 0 && !isLoading && (
           <p style={{ marginLeft: "16px", marginTop: "16px" }}>
-          {t("CHB_NO_APPLICATION_FOUND_MSG")}
+            {t("CHB_NO_APPLICATION_FOUND_MSG")}
           </p>
-          
         )}
 
         {filteredApplications.length !== 0 && (
