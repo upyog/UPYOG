@@ -45,7 +45,6 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
 
 
-  console.log("assetsss",asset,assetDetails,address);
 
 
 

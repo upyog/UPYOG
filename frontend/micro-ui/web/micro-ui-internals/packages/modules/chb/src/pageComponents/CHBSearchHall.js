@@ -144,7 +144,6 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
       ownerStep = { ...owner, bookingSlotDetails, selectedHall, hallCode,Searchdata };
       onSelect(config.key, ownerStep, false, index);
     }
-    console.log("slotBookingDetails-->",ownerStep);
   };
   
   const onSkip = () => onSelect();
@@ -191,7 +190,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
             } else {
               const allRows = data.filter(row => row.status.props.children === "Available");
               setBookingSlotDetails(allRows);
-              if(bookingSlotDetails.length>0){
+              if(data.length>0){
               setIsCheckboxSelected(true);
               }
             }
@@ -309,6 +308,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
       if (Searchdata.communityHallCode) {
         refetch();
         setBookingSlotDetails([]);
+        setIsCheckboxSelected(false);
       }
     }, [Searchdata]);
   return (

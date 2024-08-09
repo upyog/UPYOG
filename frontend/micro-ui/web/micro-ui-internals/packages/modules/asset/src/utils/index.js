@@ -99,9 +99,6 @@ export const convertEpochToDate = (dateEpoch,businessService) => {
 
 export const Assetdata = (data) => {
 
-  console.log("datajsfgjhewgfjhewf",data);
- 
-
   const formdata = {
     Asset: {
       accountId: "",

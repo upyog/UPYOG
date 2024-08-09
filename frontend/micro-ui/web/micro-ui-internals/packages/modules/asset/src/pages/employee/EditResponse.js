@@ -7,7 +7,7 @@ import { useQueryClient } from "react-query";
 
 
 const GetMessage = (type, action, isSuccess, isEmployee, t) => {
-  return t(`${isEmployee ? "E" : "C"}S_ASSET_RESPONSE_${action ? action : "ASSIGN"}_${type}${isSuccess ? "" : "_ERROR"}`);
+  return t(`${isEmployee ? "E" : "C"}S_ASSET_RESPONSE_${action ? action : "EDIT"}_${type}${isSuccess ? "" : "_ERROR"}`);
 };
 
 const GetActionMessage = (action, isSuccess, isEmployee, t) => {
@@ -33,7 +33,7 @@ const BannerPicker = (props) => {
   );
 };
 
-const Response = (props) => {
+const EditResponse = (props) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const history = useHistory();
@@ -52,8 +52,8 @@ const Response = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { state } = props.location;
 
-  const mutation = Digit.Hooks.asset.useAssignCreateAPI(tenantId, state.key !== "UPDATE");
-  const mutation1 = Digit.Hooks.asset.useAssignCreateAPI(tenantId, false);
+  const mutation = Digit.Hooks.asset.useEditUpdateAPI(tenantId, state.key !== "UPDATE");
+  const mutation1 = Digit.Hooks.asset.useEditUpdateAPI(tenantId, false);
 
   
 
@@ -111,12 +111,12 @@ const Response = (props) => {
       </Card>
       {showToast && <Toast error={showToast.key === "error" ? true : false} label={error} onClose={closeToast} />}
       <ActionBar>
-        <Link to={`${props.parentRoute.includes("employee") ? "/digit-ui/employee" : "/digit-ui/citizen"}`}>
-          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        <Link to={`${props.parentRoute.includes("employee") ? `/digit-ui/employee/asset/assetservice/applicationsearch/application-details/${mutation?.data?.Assets?.[0]?.applicationNo}` : false}`}>
+          <SubmitBar label={t("MY_APPLICATIONS")} />
         </Link>
       </ActionBar>
     </div>
   );
 };
 
-export default Response;
+export default EditResponse;

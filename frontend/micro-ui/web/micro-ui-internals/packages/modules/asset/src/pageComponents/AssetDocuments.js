@@ -6,18 +6,23 @@ import {
   UploadFile,
   Toast,
   Loader,
-  CardHeader,
-  CardSectionHeader,
 } from "@nudmcdgnpm/digit-ui-react-components";
+import { useParams } from "react-router-dom";
+
 
 import { useLocation } from "react-router-dom";
 const AssetDocuments = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {
-  const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const [documents, setDocuments] = useState(formData?.documents?.documents || []);
   const [error, setError] = useState(null);
 
   let action = "create";
+  const { id:applicationNo } = useParams();
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t,tenantId, applicationNo);
+  let comingDataFromAPI = applicationDetails?.applicationData?.applicationData?.documents
+
+
 
   const { pathname } = useLocation();
   
@@ -78,22 +83,18 @@ function AssetSelectDocument({
   t,
   document: doc,
   setDocuments,
-  error,
   setError,
   documents,
-  action,
-  formData,
   setFormError,
   clearFormErrors,
   config,
   formState,
-  fromRawData,
+  comingDataFromAPI,
   id
 }) {
   const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0];
-  ////console.log("ffffffff", filteredDocument);
 
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  
   const [selectedDocument, setSelectedDocument] = useState(
     filteredDocument
       ? { ...filteredDocument, active: filteredDocument?.status === "ACTIVE", code: filteredDocument?.documentType }
@@ -102,7 +103,7 @@ function AssetSelectDocument({
       : {}
   );
 
-  ////console.log("4444444444",selectedDocument);
+ 
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(() => filteredDocument?.fileStoreId || null);
 
@@ -206,14 +207,14 @@ function AssetSelectDocument({
       {doc?.hasDropdown ? (
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t(doc?.code.replaceAll(".", "_")) + "  *"}</CardLabel>
-          <Dropdown
+          {/* <Dropdown
             className="form-field"
             selected={selectedDocument}
             option={dropDownData.map((e) => ({ ...e, i18nKey: e.code?.replaceAll(".", "_") }))}
             select={handleAssetSelectDocument}
             optionKey="i18nKey"
             t={t}
-          />
+          /> */}
         </LabelFieldPair>
       ) : null}
       <LabelFieldPair>
@@ -221,6 +222,7 @@ function AssetSelectDocument({
         <div className="field">
           <UploadFile
             onUpload={selectfile}
+            selectedDocument={comingDataFromAPI?.[0]?.fileStoreId}
             onDelete={() => {
               setUploadedFile(null);
             }}

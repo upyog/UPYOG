@@ -13,7 +13,6 @@ const ServiceDoc = ({ t, config, onSelect, userType, formData }) => {
   
  
   const { isLoading, data: Documentsob = {} } = Digit.Hooks.asset.useAssetDocumentsMDMS(stateId, "ASSET", docType);
-  console.log("Documentsob",Documentsob);
   let docs = Documentsob?.ASSET?.Documents;
   function onSave() {}
 

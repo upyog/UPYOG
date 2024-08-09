@@ -86,7 +86,7 @@ export const CHBMyApplications = () => {
     <React.Fragment>
       <Header>{`${t("CHB_MY_APPLICATION_HEADER")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
       <Card>
-  <div style={{ margin: "16px" }}>
+  <div style={{ marginLeft: "16px"}}>
     <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "16px" }}>
       <div style={{ flex: 1 }}>
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -118,6 +118,11 @@ export const CHBMyApplications = () => {
         <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
       </div>
     </div>
+    <span className="link" style={{ display: "block" }}>
+      <Link to="/digit-ui/citizen/chb/bookHall/searchHall">
+        {t("CHB_COMMON_CLICK_HERE_TO_REGISTER_NEW_BOOKING")}
+      </Link>
+    </span>
   </div>
 </Card>
       <div>
@@ -132,7 +137,10 @@ export const CHBMyApplications = () => {
             </div>
           ))}
         {filteredApplications.length === 0 && !isLoading && (
-          <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("CHB_NO_APPLICATION_FOUND_MSG")}</p>
+          <p style={{ marginLeft: "16px", marginTop: "16px" }}>
+          {t("CHB_NO_APPLICATION_FOUND_MSG")}
+          </p>
+          
         )}
 
         {filteredApplications.length !== 0 && (
@@ -147,15 +155,6 @@ export const CHBMyApplications = () => {
           </div>
         )}
       </div>
-
-      <p style={{ marginLeft: "16px", marginTop: "16px" }}>
-        {t("chb_TEXT_NOT_ABLE_TO_FIND_THE_BOOKING")}{" "}
-        <span className="link" style={{ display: "block" }}>
-          <Link to="/digit-ui/citizen/chb/bookHall/searchHall">
-            {t("CHB_COMMON_CLICK_HERE_TO_REGISTER_NEW_BOOKING")}
-          </Link>
-        </span>
-      </p>
     </React.Fragment>
   );
 };

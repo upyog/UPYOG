@@ -6,7 +6,6 @@ import InboxLinks from "./inbox/InboxLink";
 import SearchApplication from "./inbox/search";
 
 const ASTDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
-  console.log("tttttttttttttt",tableConfig)
   const { data, useNewInboxAPI } = props;
   const { t } = useTranslation();
   const [FilterComponent, setComp] = useState(() => Digit.ComponentRegistryService?.getComponent(filterComponent));

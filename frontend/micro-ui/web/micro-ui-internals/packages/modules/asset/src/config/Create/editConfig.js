@@ -1,7 +1,7 @@
 export const editConfig =
 [
     {
-        "head": "ES_TITILE_OWNER_DETAILS",
+        "head": "ASSET_GENERAL_DETAILS",
         "body": [
             {
                 "component": "EditGeneralDetails",
@@ -11,21 +11,15 @@ export const editConfig =
             }
         ]
     },
-
     {
-        "head": "ES_TITILE_PET_DETAILS",
+        "head": "AST_DETAILS",
         "body": [
             {
                 "component": "EditAssetDetails",
                 "withoutLabel": true,
-                "key": "editAssetDetails",
+                "key": "editNewAssetDetails",
                 "type": "component"
             }
         ]
     },
-    
-
-    
-
-
 ];
