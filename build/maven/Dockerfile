@@ -1,30 +1,44 @@
-FROM maven:3.8.4-openjdk-11-slim AS build
-#FROM upyogio/alpine-maven-builder-jdk-8:1-master-NA-6036091e AS build
-# FROM ghcr.io/egovernments/alpine-maven-builder-jdk-8:1-master-na-6036091e AS build
+# Use an official OpenJDK 21 image as the base image
+FROM openjdk:21-jdk AS build
+
+# Set the Maven version
+ARG MAVEN_VERSION=3.9.4
+
+# Install Maven
+RUN apt-get update \
+    && apt-get install -y curl \
+    && curl -fsSL https://downloads.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz \
+    | tar -xzC /opt \
+    && ln -s /opt/apache-maven-${MAVEN_VERSION}/bin/mvn /usr/bin/mvn \
+    && apt-get clean
+
+# Set Maven home environment variable
+ENV MAVEN_HOME=/opt/apache-maven-${MAVEN_VERSION}
+
+# Verify Maven installation
+RUN mvn -version
+
+# Set the working directory
 ARG WORK_DIR
 WORKDIR /app
 
-# copy the project files
+# Copy the project files
 COPY ${WORK_DIR}/pom.xml ./pom.xml
 COPY build/maven/start.sh ./start.sh
 
-# not useful for stateless builds
-# RUN mvn -B dependency:go-offline
-
+# Copy source files and package the application
 COPY ${WORK_DIR}/src ./src
 RUN mvn -B -f /app/pom.xml package
 
-
-# Create runtime image
-#FROM upyogio/8-openjdk-alpine
-FROM  adoptopenjdk/openjdk8
-#FROM ghcr.io/egovernments/8-openjdk-alpine:latest
-
+# Create the runtime image using OpenJDK 21
+FROM openjdk:21-jdk
 
 WORKDIR /opt/egov
 
+# Copy the packaged JAR and start script from the build stage
 COPY --from=build /app/target/*.jar /app/start.sh /opt/egov/
 
 RUN chmod +x /opt/egov/start.sh
 
+# Default command to run the application
 CMD ["/opt/egov/start.sh"]
