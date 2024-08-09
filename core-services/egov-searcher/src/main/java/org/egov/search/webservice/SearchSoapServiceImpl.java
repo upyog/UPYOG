@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.soap.*;
 import javax.jws.WebService;
+import java.util.HashMap;
 
 import org.egov.search.model.SearchRequest;
 import org.egov.search.model.SoapRespnse;
@@ -48,11 +49,25 @@ public class SearchSoapServiceImpl implements SearchSoapService {
 		SoapRespnse response = new SoapRespnse();
 		Object searchResult = searchService.searchData(searchRequest, moduleName, searchName);
 		if (null != searchResult) {
-
-			results = (String) searchResult;
+	if (searchResult instanceof HashMap) 
+			{
+			    HashMap<String, Object> resultMap = (HashMap<String, Object>) searchResult;
+			    
+		
+			    ObjectMapper objectMapper = new ObjectMapper();
+			    try 
+			    {
+			        results = objectMapper.writeValueAsString(resultMap);
+			    } catch (Exception e) 
+			    {
+			     
+			        e.printStackTrace();
+			        results = ""; 
+			    }
+			}
 			try {
 				results = convertJsonToXml(results);
-				StringBuilder res =new StringBuilder().append("<![CDATA[").append(results).append("]]>");
+				//StringBuilder res =new StringBuilder().append("<![CDATA[").append(results).append("]]>");
 				//results = res.toString();
 				results=generateDynamicSoapResponse(results);
 				response.setResponse(results);
