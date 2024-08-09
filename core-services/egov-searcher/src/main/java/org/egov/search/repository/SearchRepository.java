@@ -62,7 +62,7 @@ public class SearchRepository {
 	        Map<String, String> business = (Map<String, String>) searchRequest.getSearchCriteria();
 	        
 	        String businesService=business.get("businesService");
-	        if (businesService.equalsIgnoreCase("SW")|| businesService.equalsIgnoreCase("WS") && !result.isEmpty())
+	     if ((businesService.equalsIgnoreCase("SW")|| businesService.equalsIgnoreCase("WS")) && !result.isEmpty())
 			Collections.sort(result.get(0).getBillDetails(), (b1, b2) -> b2.getFromPeriod().compareTo(b1.getFromPeriod()));
 
 
