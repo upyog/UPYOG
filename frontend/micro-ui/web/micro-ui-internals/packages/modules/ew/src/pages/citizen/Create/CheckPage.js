@@ -16,7 +16,6 @@ import { useHistory } from "react-router-dom";
 import { checkForNA, getFixedFilename } from "../../../utils";
 import Timeline from "../../../components/EWASTETimeline";
 import ApplicationTable from "../../../components/inbox/ApplicationTable";
-import EWASTEDocument from "../../../components/EWASTEDocumentView";
 
 const ActionButton = ({ jumpTo }) => {
   const { t } = useTranslation();
@@ -34,17 +33,10 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
   const {
     address,
-    pets,
-    index = 0, // set the initial value for tesing ,  need to check why when click on change it will not coming in address page and document page
-    isEditPET,
-    isUpdatePET,
     ownerKey,
-    vendorKey,  // created for vendor screen
     ewdet,
-    documents,
+    documents, // Maybe need to use in future
   } = value;
-
-  // const typeOfApplication = !isEditPET && !isUpdatePET ? `new-application` : `edit-application`;
 
   const productcolumns = [
     { Header: t("PRODUCT_NAME"), accessor: "name" },
@@ -53,16 +45,14 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     { Header: t("TOTAL_PRODUCT_PRICE"), accessor: "total_price" },
   ];
 
-  const productRows = ewdet?.prlistName?.map((product, index) => (
-    {
+  const productRows =
+    ewdet?.prlistName?.map((product, index) => ({
       name: product.code,
       quantity: ewdet?.prlistQuantity[index].code,
       unit_price: product.price,
       total_price: ewdet?.prlistQuantity[index].code * product.price,
-    }
-  )) || [];
+    })) || [];
 
-  console.log("documents data in checkpage ::", documents)
   const [agree, setAgree] = useState(false);
   const setdeclarationhandler = () => {
     setAgree(!agree);
@@ -99,11 +89,9 @@ const CheckPage = ({ onSubmit, value = {} }) => {
               label={t("EWASTE_NET_PRICE")}
               text={ewdet?.calculatedAmount}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/productdetails`}`} />}
-
             />
           </StatusTable>
           <br></br>
-
 
           <CardSubHeader>{t("EWASTE_TITLE_OWNER_DETAILS")}</CardSubHeader>
           <br></br>
@@ -112,7 +100,6 @@ const CheckPage = ({ onSubmit, value = {} }) => {
               label={t("EWASTE_APPLICANT_NAME")}
               text={`${t(checkForNA(ownerKey?.applicantName))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/owner-details`}`} />}
-            // actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/owners/`}${index}`} />}
             />
 
             <Row
@@ -128,17 +115,6 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             />
           </StatusTable>
           <br></br>
-
-          {/* <CardSubHeader>{t("EWASTE_TITLE_VENDOR_DETAILS")}</CardSubHeader>
-          <br></br>
-          <StatusTable>
-            <Row
-              label={t("EWASTE_VENDOR_NAME")}
-              text={`${t(checkForNA(vendorKey?.vendor?.code))}`}
-              actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/vendor-details`}`} />}
-            />
-          </StatusTable>
-          <br></br> */}
 
           <CardSubHeader>{t("EWASTE_TITLE_ADDRESS_DETAILS")}</CardSubHeader>
           <br></br>
@@ -193,33 +169,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
           </StatusTable>
           <br></br>
 
-          {/* <StatusTable>
-            <br></br>
-            <CardSubHeader>{t("EWASTE_DOCUMENTS_DETAILS")}</CardSubHeader>
-            <Card style={{ paddingRight: "16px" }}>
-              {documents && documents?.documents.map((doc, index) => (
-                <div key={`doc-${index}`}>
-
-                  {<div><CardSectionHeader>{t("EWASTE_" + (doc?.fileType?.split('.').slice(0, 2).join('_')))}</CardSectionHeader>
-                    <StatusTable>
-                      {<EWASTEDocument doc={doc} Code={doc?.fileType} index={index} />}
-                      {documents?.documents.length != index + 1 ? <hr style={{ color: "white", backgroundColor: "white", height: "2px", marginTop: "20px", marginBottom: "20px" }} /> : null}
-                    </StatusTable>
-                  </div>}
-
-                </div>
-              ))}
-            </Card>
-            <br></br>
-          </StatusTable>
-          <br></br> */}
-
-          <CheckBox
-            label={t("EWASTE_FINAL_DECLARATION_MESSAGE")}
-            onChange={setdeclarationhandler}
-            styles={{ height: "auto" }}
-          //disabled={!agree}
-          />
+          <CheckBox label={t("EWASTE_FINAL_DECLARATION_MESSAGE")} onChange={setdeclarationhandler} styles={{ height: "auto" }} />
         </div>
         <SubmitBar label={t("EWASTE_COMMON_BUTTON_SUBMIT")} onSubmit={onSubmit} disabled={!agree} />
       </Card>

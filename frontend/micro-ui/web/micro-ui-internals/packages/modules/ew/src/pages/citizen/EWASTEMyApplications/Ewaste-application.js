@@ -12,11 +12,6 @@ const EwasteApplication = ({ application, tenantId, buttonLabel }) => {
       <KeyNote keyValue={t("EW_REQUEST_ID")} note={application?.requestId} />
       <KeyNote keyValue={t("EWASTE_APPLICANT_NAME")} note={application?.applicant?.applicantName} />
       <KeyNote keyValue={t("EW_STATUS")} note={application?.requestStatus} />
-      {/* <KeyNote keyValue={t("EWASTE_SEARCH_TYPE")} note={application?.petDetails?.petType} /> */}
-      {/* {console.log("ewaste application ::", application)} */}
-      {/* <KeyNote keyValue={t("PT_COMMON_TABLE_COL_STATUS_LABEL")} note={t(`EWASTE_COMMON_${application?.status}`)} /> */}
-
-      {/* <Link to={`/digit-ui/citizen/ew/application/${application?.applicationNumber}/${application?.tenantId}`}> */}
       <Link to={`/digit-ui/citizen/ew/application/${application?.requestId}/${application?.tenantId}`}>
         <SubmitBar label={buttonLabel} />
       </Link>

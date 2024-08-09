@@ -97,7 +97,7 @@ const EWASTESelectAddress = ({ t, config, onSelect, userType, formData, setError
     onSelect(config.key, { city: selectedCity, locality: selectedLocality });
   }
 
-  const { control, formState: localFormState, watch, /*setError: setLocalError, clearErrors: clearLocalErrors,*/ setValue } = useForm();
+  const { control, formState: localFormState, watch, setValue } = useForm();
   const formValue = watch();
   const { errors } = localFormState;
   const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
@@ -110,7 +110,6 @@ const EWASTESelectAddress = ({ t, config, onSelect, userType, formData, setError
       if (!_.isEqual(formValue, part)) onSelect(config.key, { ...formData[config.key], ...formValue });
       for (let key in formValue) {
         if (!formValue[key] && !localFormState?.errors[key]) {
-          // setLocalError(key, { type: `${key.toUpperCase()}_REQUIRED`, message: t(`CORE_COMMON_REQUIRED_ERRMSG`) });
         } else if (formValue[key] && localFormState.errors[key]) {
           // clearLocalErrors([key]);
         }

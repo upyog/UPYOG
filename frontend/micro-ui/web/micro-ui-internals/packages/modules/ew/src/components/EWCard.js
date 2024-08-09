@@ -1,22 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { EmployeeModuleCard, PropertyHouse } from "@nudmcdgnpm/digit-ui-react-components";
 
 const EWCard = () => {
   const { t } = useTranslation();
 
-  
-
   if (!Digit.Utils.ewAccess()) {
     return null;
   }
   const links=[
-    //  {
-    //    count: isLoading ? "-" : total?.totalCount,
-    //    label: t("ES_COMMON_INBOX"),
-    //    link: `/digit-ui/employee/ptr/petservice/inbox`,
-    //  },
      {
        label: t("INBOX"),
        link: `/digit-ui/employee/ew/inbox`,

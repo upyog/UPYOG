@@ -7,10 +7,7 @@ const ApplicationLinks = ({ linkPrefix, classNameForMobileView="" }) => {
   const { t } = useTranslation();
 
   const allLinks = [
-    {
-      text: t("ES_TITLE_NEW_REGISTRATION"),
-      link: "/digit-ui/employee/ptr/new-application",
-    },
+
     {
       text: t("ES_TITILE_SEARCH_APPLICATION"),
       link: `${linkPrefix}/search`,
@@ -44,7 +41,7 @@ const ApplicationLinks = ({ linkPrefix, classNameForMobileView="" }) => {
       <span className="logo">
         <ShippingTruck />
       </span>{" "}
-      <span className="text">{t("ES_TITLE_PET_REGISTRATION")}</span>
+      <span className="text">{t("EWASTE_TITLE_INBOX")}</span>
     </div>
   );
 

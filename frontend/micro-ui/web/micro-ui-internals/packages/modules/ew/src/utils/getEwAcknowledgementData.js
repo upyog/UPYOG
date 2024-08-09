@@ -1,20 +1,7 @@
-import { values } from "lodash";
-
 const capitalize = (text) => text.substr(0, 1).toUpperCase() + text.substr(1);
 const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ");
 
-// const getAssessmentInfo = (application, t) => {
-//   console.log("apppllllll", application);
-//   let values = [];
-
-//   return {
-//     title: t("ES_TITILE_PET_DETAILS"),
-//     values: values,
-//   };
-// };
-
 const getEwAcknowledgementData = async (application, tenantInfo, t, response) => {
-  console.log("getget", application);
   const filesArray = application?.documents?.map((value) => value?.fileStoreId);
   const res = filesArray?.length > 0 && (await Digit.UploadServices.Filefetch(filesArray, Digit.ULBService.getStateId()));
 
@@ -25,7 +12,7 @@ const getEwAcknowledgementData = async (application, tenantInfo, t, response) =>
     email: tenantInfo?.emailId,
     applicationNumber: application?.requestId,
     phoneNumber: tenantInfo?.contactNumber,
-    heading: t("EW_ACKNOWLEDGEMENT"),
+    heading: t("ACKNOWLEDGEMENT"),
     details: [
       {
         title: t("EW_APPLICANT_DETAILS"),
@@ -36,7 +23,6 @@ const getEwAcknowledgementData = async (application, tenantInfo, t, response) =>
         ],
       },
 
-      // getAssessmentInfo(application, t),
       {
         title: t("EW_ADDRESS_DETAILS"),
         values: [
@@ -49,7 +35,7 @@ const getEwAcknowledgementData = async (application, tenantInfo, t, response) =>
           { title: t("EW_BUILDING_NAME"), value: application?.address?.buildingName },
         ],
       }, 
- 
+      
       {
         tableData: {
           title: t("EW_PRODUCT_DETAILS"),

@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useRouteMatch } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
-// import getEwAcknowledgementData from "../../utils/getEwAcknowledgementData";
 
 const EWApplicationDetails = () => {
   const { t } = useTranslation();
@@ -16,7 +15,6 @@ const EWApplicationDetails = () => {
   const [showToast, setShowToast] = useState(null);
   const [appDetailsToShow, setAppDetailsToShow] = useState({});
   const [showOptions, setShowOptions] = useState(false);
-  const [enableAudit, setEnableAudit] = useState(false);
 
   let businessService = "ewst"
 
@@ -27,7 +25,6 @@ const EWApplicationDetails = () => {
   }
 
   const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.ew.useEwApplicationDetail(t, tenantId, requestId);
-  console.log("applicationDetails", applicationDetails)
   const {
     isLoading: updatingApplication,
     isError: updateApplicationError,
@@ -43,8 +40,6 @@ const EWApplicationDetails = () => {
     role: "EW_VENDOR",
   });
 
-
-  console.log("workflowDetails", workflowDetails);
 
   const { isLoading: auditDataLoading, isError: isAuditError, data: auditData } = Digit.Hooks.ew.useEWSearch(
     {
@@ -83,7 +78,7 @@ const EWApplicationDetails = () => {
   //   Digit.Utils.pdf.generate(data);
   // };
 
-  // const petDetailsPDF = {
+  // const ewDetailsPDF = {
   //   order: 1,
   //   label: t("EW_APPLICATION"),
   //   onClick: () => handleDownloadPdf(),
@@ -130,7 +125,6 @@ const EWApplicationDetails = () => {
             options={downloadOptions}
             downloadBtnClassName={"employee-download-btn-className"}
             optionsClassName={"employee-options-btn-className"}
-          // ref={menuRef}
           />
         )}
       </div>
