@@ -68,6 +68,7 @@ public class StorageValidator {
 
 		MultipartFile file =  artifact.getMultipartFile();
 		String contentType = file.getContentType();
+		log.info("Content Type of file is: " +contentType);
 		String extension = (FilenameUtils.getExtension(artifact.getMultipartFile().getOriginalFilename())).toLowerCase();
 		log.info("Extension of file is: " +extension);
 
