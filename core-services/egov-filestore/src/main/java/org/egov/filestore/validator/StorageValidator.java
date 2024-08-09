@@ -55,6 +55,8 @@ public class StorageValidator {
 		} catch (IOException e) {
 			throw new CustomException("EG_FILESTORE_PARSING_ERROR","not able to parse the input please upload a proper file of allowed type : " + e.getMessage());
 		}
+				log.info("Extension of file is: " +inputFormat);
+
 		
 		if (!fileStoreConfig.getAllowedFormatsMap().get(extension).contains(inputFormat)) {
 			throw new CustomException("EG_FILESTORE_INVALID_INPUT", "Inalvid input provided for file, the extension does not match the file format. Please upload any of the allowed formats : "
