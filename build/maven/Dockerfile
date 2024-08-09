@@ -1,16 +1,15 @@
 # Use an official OpenJDK 21 image as the base image
-FROM openjdk:21-jdk AS build
+FROM openjdk:21-jdk-alpine AS build
 
 # Set the Maven version
 ARG MAVEN_VERSION=3.9.4
 
 # Install Maven
-RUN apt-get update \
-    && apt-get install -y curl \
+RUN apk update \
+    && apk add --no-cache curl tar \
     && curl -fsSL https://downloads.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz \
     | tar -xzC /opt \
-    && ln -s /opt/apache-maven-${MAVEN_VERSION}/bin/mvn /usr/bin/mvn \
-    && apt-get clean
+    && ln -s /opt/apache-maven-${MAVEN_VERSION}/bin/mvn /usr/bin/mvn
 
 # Set Maven home environment variable
 ENV MAVEN_HOME=/opt/apache-maven-${MAVEN_VERSION}
@@ -31,7 +30,7 @@ COPY ${WORK_DIR}/src ./src
 RUN mvn -B -f /app/pom.xml package
 
 # Create the runtime image using OpenJDK 21
-FROM openjdk:21-jdk
+FROM openjdk:21-jdk-alpine
 
 WORKDIR /opt/egov
 
