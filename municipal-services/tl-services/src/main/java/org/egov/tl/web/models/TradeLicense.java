@@ -79,7 +79,11 @@ public class  TradeLicense   {
     public enum ApplicationTypeEnum {
         NEW(TLConstants.APPLICATION_TYPE_NEW),
 
-        RENEWAL(TLConstants.APPLICATION_TYPE_RENEWAL);
+        RENEWAL(TLConstants.APPLICATION_TYPE_RENEWAL),
+
+        CLOSURE(TLConstants.APPLICATION_TYPE_CLOSURE),
+
+        MODIFICATION(TLConstants.APPLICATION_TYPE_MODIFICATION);
 
         private String value;
 
