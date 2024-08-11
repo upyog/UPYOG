@@ -228,6 +228,7 @@ public class GeneralLedgerReportAction extends BaseFormAction {
 			} else
 				fund = (Fund) persistenceService.find("from Fund where id = ?",
 						Long.valueOf(generalLedgerReportBean.getFund_id()));
+		
 		}
 		if (fund == null && glCode!=null) {
 			heading = "General Ledger Report for " + glCode.getGlcode() + ":" + glCode.getName() + " from "

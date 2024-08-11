@@ -12,7 +12,13 @@ module.exports = {
       {
         test: /\.(js)$/,
         exclude: /node_modules/,
-        use: ["babel-loader"],
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env", "@babel/preset-react"],
+            plugins: ["@babel/plugin-proposal-optional-chaining"]
+          }
+        }
       },
       {
         test: /\.css$/i,
@@ -23,7 +29,7 @@ module.exports = {
   output: {
     filename: "[name].bundle.js",
     path: path.resolve(__dirname, "build"),
-    publicPath: "/workbench-ui/",
+    publicPath: "/digit-ui/",
   },
   optimization: {
     splitChunks: {

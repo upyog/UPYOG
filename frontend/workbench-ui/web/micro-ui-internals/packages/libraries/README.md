@@ -55,8 +55,6 @@ export default App;
 ### Changelog
 
 ```bash
-1.8.3 commented the renderTenantLogos logic due to multilogo rendered issue
-1.8.2 Added mdms-v2 url & mdms v1 globalconfig MDMS_V1_CONTEXT_PATH to support both v1 and v2
 1.8.1 Added logoutRedirectURL for mgramseva workbench
 1.8.0 Released as part of workbench v1.0
 ```

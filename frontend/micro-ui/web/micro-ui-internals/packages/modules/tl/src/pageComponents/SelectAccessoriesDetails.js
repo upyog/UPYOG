@@ -83,7 +83,7 @@ const SelectAccessoriesDetails = ({ t, config, onSelect, userType, formData }) =
         return { code: item.licenseType, active: true };
       });
 
-      accessories?.((data) => {
+      accessories?.map((data) => {
         data.i18nKey = t(`TRADELICENSE_ACCESSORIESCATEGORY_${stringReplaceAll(data?.code?.toUpperCase(), "-", "_")}`);
       });
 

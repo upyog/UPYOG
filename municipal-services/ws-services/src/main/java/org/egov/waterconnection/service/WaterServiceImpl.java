@@ -616,8 +616,7 @@ public class WaterServiceImpl implements WaterService {
 	}
 
 	public void markOldApplication(WaterConnectionRequest waterConnectionRequest) {
-		String action = waterConnectionRequest.getWaterConnection().getProcessInstance().getAction();
-		if (action.equalsIgnoreCase(APPROVE_CONNECTION) || action.equalsIgnoreCase(EXECUTE_DISCONNECTION)) {
+		if (waterConnectionRequest.getWaterConnection().getProcessInstance().getAction().equalsIgnoreCase(APPROVE_CONNECTION)) {
 			String currentModifiedApplicationNo = waterConnectionRequest.getWaterConnection().getApplicationNo();
 			List<WaterConnection> previousConnectionsList = getAllWaterApplications(waterConnectionRequest);
 

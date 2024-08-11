@@ -1,8 +1,5 @@
-const mdmsV1Path = window?.globalConfigs?.getConfig("MDMS_V1_CONTEXT_PATH") || "egov-mdms-service";
-const mdmsV2Path = window?.globalConfigs?.getConfig("MDMS_V2_CONTEXT_PATH") || "mdms-v2";
 const Urls = {
-  MDMS_V2:`/${mdmsV2Path}/v1/_search`,
-  MDMS: `/${mdmsV1Path}/v1/_search`,
+  MDMS: `/egov-mdms-service/v1/_search`,
   WorkFlow: `/egov-workflow-v2/egov-wf/businessservice/_search`,
   WorkFlowProcessSearch: `/egov-workflow-v2/egov-wf/process/_search`,
   localization: `/localization/messages/v1/_search`,
