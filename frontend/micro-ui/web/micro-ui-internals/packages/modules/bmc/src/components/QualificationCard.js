@@ -6,7 +6,7 @@ import dropdownOptions from "../pagecomponents/dropdownOptions.json";
 
 const QualificationCard = ({ tenantId, onUpdate, initialRows = [], AddOption = true, AllowRemove = true, ...props }) => {
   const { t } = useTranslation();
-  
+
   const initialDefaultValues = {
     qualification: null,
     yearOfPassing: null,
@@ -17,21 +17,23 @@ const QualificationCard = ({ tenantId, onUpdate, initialRows = [], AddOption = t
   const processQualificationData = (items, headerLocale) => {
     if (!Array.isArray(items)) return null;
 
-    return items.map(item => {
-      if (typeof item === 'object' && item.qualificationid && item.qualification) {
-        return {
-          qualification: {
-            id: item.qualificationid,
-            qualification: item.qualification,
-            i18nKey: `${headerLocale}_ADMIN_${item.qualification}`,
-          },
-          percentage: item.percentage,
-          yearOfPassing: { label: item.yearofpassing, value: item.yearofpassing },
-          board: { label: item.board, value: item.board }
-        };
-      }
-      return null; // Handle cases where item is neither a string nor an object with id and name
-    }).filter(item => item !== null); // Filter out null values in case of invalid items
+    return items
+      .map((item) => {
+        if (typeof item === "object" && item.qualificationId && item.qualification) {
+          return {
+            qualification: {
+              id: item.qualificationId,
+              qualification: item.qualification,
+              i18nKey: `${headerLocale}_ADMIN_${item.qualification}`,
+            },
+            percentage: item.percentage,
+            yearOfPassing: { label: item.yearOfPassing, value: item.yearOfPassing },
+            board: { label: item.board, value: item.board },
+          };
+        }
+        return null; // Handle cases where item is neither a string nor an object with id and name
+      })
+      .filter((item) => item !== null); // Filter out null values in case of invalid items
   };
 
   const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
@@ -232,7 +234,6 @@ const QualificationCard = ({ tenantId, onUpdate, initialRows = [], AddOption = t
           </div>
         </div>
       </div>
-      {/* <button type="button" onClick={() => onUpdate(rows)}>Save Qualifications</button> */}
     </React.Fragment>
   );
 };

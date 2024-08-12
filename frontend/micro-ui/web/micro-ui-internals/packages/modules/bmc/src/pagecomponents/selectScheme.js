@@ -4,6 +4,7 @@ import { Link, useHistory } from "react-router-dom";
 import Timeline from "../components/bmcTimeline";
 import RadioButton from "../components/radiobutton";
 import Title from "../components/title";
+import { Modal } from "@egovernments/digit-ui-react-components";
 
 const SelectSchemePage = () => {
   const { t } = useTranslation();
@@ -15,6 +16,7 @@ const SelectSchemePage = () => {
   const history = useHistory();
   const [schemeHeads, setSchemeHeads] = useState([]);
   const [schemeDetails, setSchemeDetails] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getSchems = { SchemeSearchCriteria: { Status: 1 } };
 
@@ -68,6 +70,29 @@ const SelectSchemePage = () => {
     };
   };
 
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const Close = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
+      <path d="M0 0h24v24H0V0z" fill="none" />
+      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+    </svg>
+  );
+
+  const CloseBtn = (props) => {
+    return (
+      <div className="icon-bg-secondary" onClick={props.onClick}>
+        <Close />
+      </div>
+    );
+  };
+
   const qualificationFunction = (data) => {
     const SchemeData = processSchemeData(data, headerLocale);
     return { SchemeData };
@@ -81,6 +106,7 @@ const SelectSchemePage = () => {
     setRadioValueCheck(scheme.schemeID);
   };
 
+  console.log("selectedScheme", selectedScheme);
   const renderSchemeSections = () => {
     const groupedSchemes = schemeHeads.reduce((acc, schemeHead) => {
       acc[schemeHead.schemeHead] = schemeDetails.filter((detail) => detail.schemeHead === schemeHead.schemeHead);
@@ -98,7 +124,7 @@ const SelectSchemePage = () => {
               key={scheme.schemeID}
               t={t}
               optionsKey="label"
-              options={[{ label: scheme.i18nKey, value: scheme.schemeID }]}
+              options={[{ label: scheme.i18nKey, id: scheme.schemeID }]}
               onSelect={setSelectedRadio}
               onClick={() => handleSchemeSelect(scheme)}
               selectedOption={selectedRadio}
@@ -116,15 +142,15 @@ const SelectSchemePage = () => {
     return (
       <React.Fragment>
         <div className="bmc-row-card-header">
-          <p style={{ paddingLeft: "4rem" }}>{selectedScheme.schemeDesc}</p>
-          <p style={{ paddingLeft: "4rem" }}>
+          <div className="bmc-title">{selectedScheme.schemeDesc}</div>
+          <div className="bmc-card-row">
             {t("Following are the critierias to avail this scheme")}
-            <ul style={{ paddingLeft: "4rem" }}>
+            <div className="bmc-criteria">
               {selectedScheme.criteria.map((criterion, index) => (
-                <li key={index}>{`${criterion.criteriaType} ${criterion.criteriaCondition} ${criterion.criteriaValue}`}</li>
+                <span key={index}>{`${criterion.criteriaType} ${criterion.criteriaCondition} ${criterion.criteriaValue}`}</span>
               ))}
-            </ul>
-          </p>
+            </div>
+          </div>
         </div>
 
         {selectedScheme.courses.length > 0 && (
@@ -136,7 +162,9 @@ const SelectSchemePage = () => {
                     <RadioButton
                       t={t}
                       optionsKey="value"
-                      options={[{ label: course.i18nKey, value: course.i18nKey }]}
+                      options={[
+                        { label: course.i18nKey, value: course.i18nKey, id: course.courseID, type: "course", GrantAmount: course.courseAmount },
+                      ]}
                       selectedOption={radioValueCheck}
                       onSelect={setRadioValueCheck}
                       style={{ marginTop: "0", marginBottom: "0" }}
@@ -144,16 +172,16 @@ const SelectSchemePage = () => {
                       isMandatory={true}
                     />
                   </div>
-                  <div className="bmc-col-small-header" style={{ textAlign: "end" }}>
-                    <span>Amount: ₹ {course.courseAmount}</span>
+                  <div className="bmc-col-small-header">
+                    <div className="bmc-course-amount" style={{textAlign:"end"}}>Amount: ₹ {course.courseAmount}</div>
                   </div>
                 </div>
 
-                <p style={{ paddingLeft: "4rem" }}>
+                <div className="bmc-select-scheme">
                   <label htmlFor={`course-${course.courseID}`}>
                     <strong>{course.i18nKey}</strong>: {course.courseDesc} (Duration: {course.courseDuration})
                   </label>
-                </p>
+                </div>
                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
                   <button
                     style={{
@@ -165,10 +193,30 @@ const SelectSchemePage = () => {
                       borderBottom: "3px solid black",
                       outline: "none",
                     }}
+                    onClick={openModal}
                   >
                     View More
                   </button>
                 </div>
+                {isModalOpen && radioValueCheck.value === course.i18nKey && (
+                  <div className="bmc-modal">
+                    <Modal
+                      onClose={closeModal}
+                      fullScreen
+                      hideSubmit={true}
+                      headerBarEnd={<CloseBtn onClick={closeModal} />}
+                      headerBarMain={
+                        <h5 className="bmc-title" style={{ textAlign: "center", padding: "1rem" }}>
+                          Selected Course: {course.i18nKey}
+                        </h5>
+                      }
+                    >
+                      <p style={{ fontSize: "15px" }}>
+                        <strong>Course Description:</strong> {course.courseDesc}
+                      </p>
+                    </Modal>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -183,7 +231,9 @@ const SelectSchemePage = () => {
                     <RadioButton
                       t={t}
                       optionsKey="value"
-                      options={[{ label: machine.machName, value: machine.i18nKey }]}
+                      options={[
+                        { label: machine.machName, value: machine.i18nKey, id: machine.machID, type: "machine", GrantAmount: machine.machAmount },
+                      ]}
                       selectedOption={radioValueCheck}
                       onSelect={setRadioValueCheck}
                       style={{ marginTop: "0", marginBottom: "0" }}
@@ -191,15 +241,15 @@ const SelectSchemePage = () => {
                       isMandatory={true}
                     />
                   </div>
-                  <div className="bmc-col-small-header" style={{ textAlign: "end" }}>
-                    Amount: ₹ {machine.machAmount}
+                  <div className="bmc-col-small-header">
+                    <div className="bmc-course-amount" style={{textAlign:"end"}}>Amount: ₹ {machine.machAmount}</div>
                   </div>
                 </div>
-                <p style={{ paddingLeft: "4rem" }}>
+                <div className="bmc-select-scheme">
                   <label htmlFor={`machine-${machine.machID}`}>
                     <strong>{machine.i18nKey}</strong>: {machine.machDesc}
                   </label>
-                </p>
+                </div>
                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
                   <button
                     style={{
@@ -211,10 +261,33 @@ const SelectSchemePage = () => {
                       borderBottom: "3px solid black",
                       outline: "none",
                     }}
+                    onClick={openModal}
                   >
                     View More
                   </button>
                 </div>
+                {isModalOpen && radioValueCheck.value === machine.i18nKey && (
+                  <div className="bmc-modal">
+                    <Modal
+                      onClose={closeModal}
+                      fullScreen
+                      hideSubmit={true}
+                      headerBarEnd={<CloseBtn onClick={closeModal} />}
+                      headerBarMain={
+                        <h5 className="bmc-title" style={{ textAlign: "center", padding: "1rem" }}>
+                          Selected Machine : {machine.i18nKey}
+                        </h5>
+                      }
+                    >
+                      <p style={{ fontSize: "15px" }}>
+                        <strong>Machine Description:</strong> {machine.machDesc}
+                      </p>
+                      <p style={{ fontSize: "15px" }}>
+                        <strong>Machine Amount:</strong> {machine.machAmount}
+                      </p>
+                    </Modal>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -234,7 +307,7 @@ const SelectSchemePage = () => {
         <Link
           to={{
             pathname: "/digit-ui/citizen/bmc/ApplicationDetails",
-            state: { selectedScheme: selectedScheme, selectedRadio: selectedRadio },
+            state: { scheme: selectedRadio, schemeType: radioValueCheck, selectedScheme: selectedScheme },
           }}
           style={{ textDecoration: "none" }}
           disabled={!selectedRadio}

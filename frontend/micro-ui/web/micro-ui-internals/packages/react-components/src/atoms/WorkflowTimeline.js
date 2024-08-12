@@ -1,17 +1,17 @@
-import React, { Fragment,useState,useEffect } from 'react'
-import { Loader } from "./Loader"
+import React, { Fragment, useEffect, useState } from 'react';
+import { useTranslation } from "react-i18next";
+import BreakLine from './BreakLine';
 import CardSectionHeader from './CardSectionHeader';
 import { CheckPoint, ConnectingCheckPoints } from './ConnectingCheckPoints';
-import BreakLine from './BreakLine';
-import { useTranslation } from "react-i18next";
+import { Loader } from "./Loader";
 import TLCaption from './TLCaption';
 
 function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
 }
 
-const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineStatusPrefix="WF_SERVICE_" ,statusAttribute="status", ...props}) => {
-    const [additionalComment,setAdditionalComment] = useState(false)
+const WorkflowTimeline = ({ businessService, tenantId, applicationNo, timelineStatusPrefix = "WF_SERVICE_", statusAttribute = "status", ...props }) => {
+    const [additionalComment, setAdditionalComment] = useState(false)
     //for testing from url these 2 lines of code are kept here
     // const { estimateNumber } = Digit.Hooks.useQueryParams();
     // applicationNo = applicationNo? applicationNo : estimateNumber 
@@ -20,21 +20,21 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
     const getTimelineCaptions = (checkpoint, index) => {
 
         let captionDetails = {
-            name : '',
-            date : '',
-            mobileNumber : '',
-            wfComment : '',
-            additionalComment : '',
-            thumbnailsToShow : ''
+            name: '',
+            date: '',
+            mobileNumber: '',
+            wfComment: '',
+            additionalComment: '',
+            thumbnailsToShow: ''
         }
-        if(index === -1) {
+        if (index === -1) {
             captionDetails.name = checkpoint?.assignes?.[0]?.name;
             captionDetails.date = '';
             captionDetails.mobileNumber = '';
             captionDetails.wfComment = '';
             captionDetails.additionalComment = '';
             captionDetails.thumbnailsToShow = '';
-        }else {
+        } else {
             captionDetails.name = checkpoint?.assigner?.name;
             captionDetails.date = `${Digit.DateUtils?.ConvertTimestampToDate(checkpoint.auditDetails.lastModifiedEpoch)} ${Digit.DateUtils?.ConvertEpochToTimeInHours(
                 checkpoint.auditDetails.lastModifiedEpoch
@@ -55,7 +55,7 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
         };
 
         return <TLCaption data={caption} OpenImage={OpenImage} />;
-        
+
     };
 
     let workflowDetails = Digit.Hooks.useWorkflowDetailsV2(
@@ -75,12 +75,12 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
             setAdditionalComment(true)
         }
     }, [workflowDetails])
-    
-    
+
+
     return (
         <Fragment>
             {workflowDetails?.isLoading && <Loader />}
-            { workflowDetails?.data?.timeline?.length > 0 && (
+            {workflowDetails?.data?.timeline?.length > 0 && (
                 <React.Fragment>
                     {workflowDetails?.breakLineRequired === undefined ? <BreakLine /> : workflowDetails?.breakLineRequired ? <BreakLine /> : null}
                     {!workflowDetails?.isLoading && (
@@ -88,7 +88,7 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
                             <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
                                 {t("WORKS_WORKFLOW_TIMELINE")}
                             </CardSectionHeader>
-                            {workflowDetails?.data?.timeline && 
+                            {workflowDetails?.data?.timeline &&
                                 <ConnectingCheckPoints>
                                     {workflowDetails?.data?.timeline &&
                                         workflowDetails?.data?.timeline.map((checkpoint, index, arr) => {
@@ -96,29 +96,29 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
                                                 <React.Fragment key={index}>
                                                     {
                                                         index === 0 && !checkpoint?.isTerminateState &&
-                                                            <React.Fragment>
-                                                                <CheckPoint
-                                                                    keyValue={index}
-                                                                    isCompleted={index === 0}
-                                                                    label={t(
-                                                                        Digit.Utils.locale.getTransformedLocale(`${timelineStatusPrefix}STATE_${checkpoint?.["state"]}`)
-                                                                    )}
-                                                                    // customChild={getTimelineCaptions(checkpoint, -1)}
-                                                                    customClassName="checkpoint-connect-wrap"
-                                                                />
-                                                            </React.Fragment>
-                                                    }   
+                                                        <React.Fragment>
+                                                            <CheckPoint
+                                                                keyValue={index}
+                                                                isCompleted={index === 0}
+                                                                label={t(
+                                                                    Digit.Utils.locale.getTransformedLocale(`${timelineStatusPrefix}STATE_${checkpoint?.["state"]}`)
+                                                                )}
+                                                                // customChild={getTimelineCaptions(checkpoint, -1)}
+                                                                customClassName="checkpoint-connect-wrap"
+                                                            />
+                                                        </React.Fragment>
+                                                    }
                                                     <CheckPoint
                                                         keyValue={index}
                                                         isCompleted={checkpoint?.isTerminateState && index === 0}
                                                         label={t(
-                                                            Digit.Utils.locale.getTransformedLocale(`${timelineStatusPrefix}STATUS_${checkpoint?.performedAction === "EDIT" ? `${checkpoint?.performedAction}` :   `${checkpoint?.performedAction}`
-                                                            }`)
+                                                            Digit.Utils.locale.getTransformedLocale(`${timelineStatusPrefix}STATUS_${checkpoint?.performedAction === "EDIT" ? `${checkpoint?.performedAction}` : `${checkpoint?.performedAction}`
+                                                                }`)
                                                         )}
                                                         customChild={getTimelineCaptions(checkpoint, index)}
                                                     />
                                                 </React.Fragment>
-                                            );  
+                                            );
                                         })}
                                 </ConnectingCheckPoints>
                             }

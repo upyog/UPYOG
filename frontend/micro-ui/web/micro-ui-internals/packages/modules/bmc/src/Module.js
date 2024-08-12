@@ -15,6 +15,8 @@ import ApplicationDetail from "./pagecomponents/applicationDetail";
 import BMCReviewPage from "./pagecomponents/bmcReview";
 import SelectSchemePage from "./pagecomponents/selectScheme";
 import BMCCitizenHome from "./pages/citizen";
+import SchemeDetailsPage from "./components/schemeDetails"
+
 //Employee Pages
 import BMCCard from "./components/BMCCard";
 import InboxFilter from "./components/InboxFilter";
@@ -131,6 +133,7 @@ const componentsToRegister = {
   WorkflowActions,
   WorkflowPopup,
   SearchApplications,
+  SchemeDetailsPage,
   BMC_INBOX_FILTER: (props) => <InboxFilter {...props} />,
 };
 

@@ -134,7 +134,7 @@ const getLocaleRegion = () => {
  * @returns {string} 
  */
 const getLocaleDefault = () => {
-  return globalConfigs?.getConfig("LOCALE_DEFAULT") || "en";
+  return window?.globalConfigs?.getConfig("LOCALE_DEFAULT") || "en";
 };
 
 /**

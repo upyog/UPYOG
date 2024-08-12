@@ -1,8 +1,8 @@
-import React,{ useState,useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { FormComposer } from '../../hoc/FormComposer'
+import Modal from '../../hoc/Modal'
 import { Loader } from "../Loader"
 import configEstimateModal from './config/configEstimateModal'
-import Modal from '../../hoc/Modal'
-import { FormComposer } from '../../hoc/FormComposer'
 
 
 const Heading = (props) => {
@@ -35,7 +35,7 @@ const WorkflowPopup = ({ applicationDetails,...props}) => {
         businessService,
         moduleCode
     } = props
-
+debugger
     const enableAssignee = Digit?.Customizations?.["commonUiConfig"]?.enableHrmsSearch(businessService,action)
     // const [approvers,setApprovers] = useState([])
     const [config,setConfig] = useState(null)

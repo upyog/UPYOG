@@ -7,8 +7,8 @@ import Banner from "./atoms/Banner";
 import Body from "./atoms/Body";
 import BreadCrumb from "./atoms/BreadCrumb";
 import BreakLine from "./atoms/BreakLine";
-import ButtonSelector from "./atoms/ButtonSelector";
 import Button from "./atoms/Button";
+import ButtonSelector from "./atoms/ButtonSelector";
 import Card from "./atoms/Card";
 import CardCaption from "./atoms/CardCaption";
 import CardHeader from "./atoms/CardHeader";
@@ -26,12 +26,9 @@ import CitizenInfoLabel from "./atoms/CitizenInfoLabel";
 import { CheckPoint, ConnectingCheckPoints } from "./atoms/ConnectingCheckPoints";
 import CustomButton from "./atoms/CustomButton";
 import DatePicker from "./atoms/DatePicker";
-import DateRange from "./molecules/DateRange";
-import DateRangeNew from "./molecules/DateRangeNew";
 import DateWrap from "./atoms/DateWrap";
 import DisplayPhotos from "./atoms/DisplayPhotos";
 import Dropdown from "./atoms/Dropdown";
-import SearchableDropdown from "./atoms/SearchableDropdown";
 import EllipsisMenu from "./atoms/EllipsisMenu";
 import EmployeeAppContainer from "./atoms/EmployeeAppContainer";
 import { EmployeeModuleCard, ModuleCardFullWidth } from "./atoms/EmployeeModuleCard";
@@ -60,517 +57,255 @@ import PopUp from "./atoms/PopUp";
 import { PrivateRoute } from "./atoms/PrivateRoute";
 import RadioButtons from "./atoms/RadioButtons";
 import Rating from "./atoms/Rating";
-import UnMaskComponent from "./atoms/UnMaskComponent";
 import RoundedLabel from "./atoms/RoundedLabel";
+import SearchableDropdown from "./atoms/SearchableDropdown";
 import SectionalDropdown from "./atoms/SectionalDropdown";
+import StandaloneSearchBar from "./atoms/StandaloneSearchBar";
 import { LastRow, MediaRow, Row, StatusTable } from "./atoms/StatusTable";
 import SubmitBar from "./atoms/SubmitBar";
-import StandaloneSearchBar from "./atoms/StandaloneSearchBar";
 import ULBHomeCard from "./atoms/ULBHomeCard";
+import UnMaskComponent from "./atoms/UnMaskComponent";
 import ViewDetailsCard from "./atoms/ViewDetailsCard";
+import DateRange from "./molecules/DateRange";
+import DateRangeNew from "./molecules/DateRangeNew";
 
 import {
+  AddFileFilled,
+  AddFilled,
+  AddIcon,
+  AddNewIcon,
+  AddressBookIcon,
   AnnouncementIcon,
+  ArrowDirection,
   ArrowDown,
+  ArrowForward,
   ArrowLeft,
   ArrowLeftWhite,
   ArrowRightInbox,
+  ArrowVectorDown,
+  AttendanceIcon,
+  AttentionListIcon,
+  BillsIcon,
+  BioMetricIcon,
+  BirthIcon,
+  BPAHomeIcon,
+  BPAIcon,
   Calender,
+  CameraIcon,
   CaseIcon,
+  CheckSvg,
   CitizenTruck,
-  CloseSvg,
+  Clock,
   Close,
+  CloseSvg,
+  CollectionIcon,
+  CollectionsBookmarIcons,
   ComplaintIcon,
+  ContractIcon,
+  CreateEstimateIcon,
+  CreateLoiIcon,
+  DashboardIcon,
+  DeathIcon,
+  DeleteIcon,
+  DeleteIconv2,
   Details,
+  DocumentIcon,
+  DocumentIconSolid,
   DocumentSVG,
   DownloadIcon,
   DownloadImgIcon,
+  DownloadPrefixIcon,
   DownwardArrow,
   DropIcon,
+  DustbinIcon,
+  EDCRIcon,
+  EditIcon,
+  EditPencilIcon,
   Ellipsis,
   EmailIcon,
+  ErrorIcon,
+  EstimateIcon,
+  EventCalendar,
+  EventsIconSolid,
+  ExpenditureIcon,
+  ExternalLinkIcon,
+  FileIcon,
   FilterIcon,
-  GetApp,
-  HomeIcon,
-  PrevIcon,
-  ViewsIcon,
-  LanguageIcon,
   FilterSvg,
+  FinanceChartIcon,
+  FirenocIcon,
+  FSMIcon,
+  GalleryIcon,
+  GenericFileIcon,
+  GetApp,
+  GotoInboxIcon,
+  HelperIcon,
+  HelpIcon,
+  HelpLineIcon,
+  HistoryIcon,
+  HomeIcon,
+  HRIcon,
+  ImageIcon,
+  InboxIcon,
+  InfoBannerIcon,
+  InfoIconOutline,
+  LanguageIcon,
+  LocateIcon,
+  LocationIcon,
   LogoutIcon,
+  MapMarker,
+  MCollectIcon,
+  MuktaHomeIcon,
+  /* Works Management  */
+  NoResultsFoundIcon,
+  NotificationBell,
+  OBPSIcon,
+  OBPSIconSolidBg,
+  OrganisationIcon,
+  PaymentIcon,
+  PDFSvg,
   Person,
   PersonIcon,
+  PGRIcon,
+  PMBIcon,
+  PMBIconSolid,
   Poll,
+  PrevIcon,
+  PrintBtnCommon,
   PrintIcon,
+  PrivacyMaskIcon,
+  ProjectIcon,
   PropertyHouse,
   PTIcon,
   ReceiptIcon,
   RefreshIcon,
   RefreshSVG,
+  RemoveIcon,
   RupeeIcon,
+  RupeeSymbol,
+  SearchIcon,
   SearchIconSvg,
+  ServiceCenterIcon,
   ShareIcon,
   ShippingTruck,
   SortDown,
   SortSvg,
-  GenericFileIcon,
   SortUp,
-  UpwardArrow,
-  WhatsappIcon,
-  OBPSIcon,
-  EDCRIcon,
-  BPAIcon,
-  BPAHomeIcon,
-  DocumentIcon,
-  ExternalLinkIcon,
-  PMBIcon,
-  PDFSvg,
-  DownloadPrefixIcon,
-  HelpIcon,
-  TickMark,
-  NotificationBell,
-  MapMarker,
-  Clock,
-  EventCalendar,
-  ImageIcon,
-  EditIcon,
-  SearchIcon,
-  DeleteIcon,
-  CreateLoiIcon,
-  OBPSIconSolidBg,
-  DocumentIconSolid,
-  PMBIconSolid,
-  EventsIconSolid,
-  SurveyIconSolid,
-  DustbinIcon,
-  InfoBannerIcon,
-  WSICon,
-  ArrowForward,
-  ArrowVectorDown,
-  ArrowDirection,
-  CameraIcon,
-  EditPencilIcon,
-  GalleryIcon,
-  RemoveIcon,
-  CheckSvg,
-  AddressBookIcon,
-  LocationIcon,
-  CollectionsBookmarIcons,
-  FinanceChartIcon,
-  CollectionIcon,
-  FSMIcon,
-  MCollectIcon,
-  PGRIcon,
-  TLIcon,
-  BillsIcon,
-  ErrorIcon,
-  PrintBtnCommon,
-  WhatsappIconGreen,
-  HelpLineIcon,
-  ServiceCenterIcon,
-  TimerIcon,
-  RupeeSymbol,
-  ValidityTimeIcon,
-  AddIcon,
   SubtractIcon,
-  AddNewIcon,
-  InboxIcon,
-  ViewReportIcon,
-  PrivacyMaskIcon,
-  DeathIcon,
-  BirthIcon,
-  FirenocIcon,
-  CreateEstimateIcon,
-  GotoInboxIcon,
-  AddFilled,
-  AddFileFilled,
-  LocateIcon,
-
-  /* Works Management  */
-
-  NoResultsFoundIcon,
-  WorksMgmtIcon,
-  BioMetricIcon,
-  MuktaHomeIcon,
-  HRIcon,
-  ProjectIcon,
-  EstimateIcon,
-  ContractIcon,
-  AttendanceIcon,
-  WageseekerIcon,
-  OrganisationIcon,
-  HelperIcon,
-  DashboardIcon,
-  ExpenditureIcon,
-  PaymentIcon,
-  HistoryIcon,
-  WarningIcon,
-  AttentionListIcon,
+  SurveyIconSolid,
+  TickMark,
+  TimerIcon,
+  TLIcon,
   UploadIcon,
-  FileIcon,
-  DeleteIconv2,
-  InfoIconOutline
+  UpwardArrow,
+  ValidityTimeIcon,
+  ViewReportIcon,
+  ViewsIcon,
+  WageseekerIcon,
+  WarningIcon,
+  WhatsappIcon,
+  WhatsappIconGreen,
+  WorksMgmtIcon,
+  WSICon
 } from "./atoms/svgindex";
+
+import CardBasedOptions from "./atoms/CardBasedOptions";
+import EventCalendarView from "./atoms/EventCalendarView";
+import InboxLinks from "./atoms/InboxLinks";
+import InputTextAmount from "./atoms/InputTextAmount";
+import PopupHeadingLabel from "./atoms/PopupHeadingLabel";
+import { Phone } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
-import { Phone } from "./atoms/svgindex";
 import TextArea from "./atoms/TextArea";
-import InputTextAmount from "./atoms/InputTextAmount";
 import TextInput from "./atoms/TextInput";
 import Toast from "./atoms/Toast";
 import TopBar from "./atoms/TopBar";
 import UploadFile from "./atoms/UploadFile";
 import UploadImages from "./atoms/UploadImages";
-import CardBasedOptions from "./atoms/CardBasedOptions";
 import WhatsNewCard from "./atoms/WhatsNewCard";
-import EventCalendarView from "./atoms/EventCalendarView";
-import InboxLinks from "./atoms/InboxLinks";
-import PopupHeadingLabel from "./atoms/PopupHeadingLabel";
 
+import FileUploadModal from "./hoc/FileUploadModal";
 import { FormComposer } from "./hoc/FormComposer";
 import { FormComposer as FormComposerV2 } from "./hoc/FormComposerV2";
-import RenderFormFields from "./molecules/RenderFormFields";
-import Modal from "./hoc/Modal";
-import FileUploadModal from "./hoc/FileUploadModal"
-import ResponseComposer from "./hoc/ResponseComposer";
 import InboxComposer from "./hoc/InboxComposer";
+import Modal from "./hoc/Modal";
+import ResponseComposer from "./hoc/ResponseComposer";
+import RenderFormFields from "./molecules/RenderFormFields";
 
+import Amount from "./atoms/Amount";
+import CitizenConsentForm from "./atoms/CitizenConsentForm";
+import CollapseAndExpandGroups from "./atoms/CollapseAndExpandGroups";
+import HorizontalNav from "./atoms/HorizontalNav";
+import InboxSearchLinks from "./atoms/InboxSearchLinks";
+import NoResultsFound from "./atoms/NoResultsFound";
+import OpenLinkContainer from "./atoms/OpenLinkContainer";
+import Paragraph from "./atoms/Paragraph";
+import RemoveableTag from "./atoms/RemoveableTag";
+import { DownloadBtnCommon } from "./atoms/svgindex";
+import ToggleSwitch from "./atoms/ToggleSwitch";
+import { ViewImages } from "./atoms/ViewImages";
+import WeekPicker from "./atoms/WeekPicker";
+import WorkflowActions from "./atoms/WorkflowActions";
+import WorkflowTimeline from "./atoms/WorkflowTimeline";
+import InboxSearchComposer from "./hoc/InboxSearchComposer";
+import MobileSearchComponent from "./hoc/MobileView/MobileSearchComponent";
+import MobileSearchResults from "./hoc/MobileView/MobileSearchResults";
+import ResultsTable from "./hoc/ResultsTable";
+import UploadFileComposer from "./hoc/UploadFileComposer";
 import CityMohalla from "./molecules/CityMohalla";
+import CustomDropdown from "./molecules/CustomDropdown";
 import DashboardBox from "./molecules/DashboardBox";
 import DetailsCard from "./molecules/DetailsCard";
-import WorkflowModal from "./molecules/WorkflowModal";
 import FilterAction from "./molecules/FilterAction";
+import { FilterForm, FilterFormField } from "./molecules/FilterForm";
 import FormStep from "./molecules/FormStep";
-import CustomDropdown from "./molecules/CustomDropdown";
 import InputCard from "./molecules/InputCard";
 import Localities from "./molecules/Localities";
 import LocationSearchCard from "./molecules/LocationSearchCard";
+import MultiUploadWrapper from "./molecules/MultiUploadWrapper";
+import OnGroundEventCard from "./molecules/OnGroundEventCard";
+import PageBasedInput from "./molecules/PageBasedInput";
 import PitDimension from "./molecules/PitDimension";
 import RadioOrSelect from "./molecules/RadioOrSelect";
 import RatingCard from "./molecules/RatingCard";
-import RemoveableTag from "./atoms/RemoveableTag";
 import SearchAction from "./molecules/SearchAction";
-import SortAction from "./molecules/SortAction";
 import { SearchField, SearchForm } from "./molecules/SearchForm";
+import SearchOnRadioButtons from "./molecules/SearchOnRadioButtons";
+import SortAction from "./molecules/SortAction";
 import TextInputCard from "./molecules/TextInputCard";
 import TypeSelectCard from "./molecules/TypeSelectCard";
-import PageBasedInput from "./molecules/PageBasedInput";
-import SearchOnRadioButtons from "./molecules/SearchOnRadioButtons";
-import OnGroundEventCard from "./molecules/OnGroundEventCard";
-import MultiUploadWrapper from "./molecules/MultiUploadWrapper";
-import { FilterForm, FilterFormField } from "./molecules/FilterForm";
-import OpenLinkContainer from "./atoms/OpenLinkContainer";
 import UploadPitPhoto from "./molecules/UploadPitPhoto";
-import { DownloadBtnCommon } from "./atoms/svgindex";
-import ToggleSwitch from "./atoms/ToggleSwitch";
-import WeekPicker from "./atoms/WeekPicker";
-import CollapseAndExpandGroups from "./atoms/CollapseAndExpandGroups";
-import HorizontalNav from "./atoms/HorizontalNav";
-import NoResultsFound from "./atoms/NoResultsFound";
-import { ViewImages } from "./atoms/ViewImages";
-import InboxSearchComposer from "./hoc/InboxSearchComposer";
-import MobileSearchResults from "./hoc/MobileView/MobileSearchResults";
-import MobileSearchComponent from "./hoc/MobileView/MobileSearchComponent";
-import ResultsTable from "./hoc/ResultsTable";
-import InboxSearchLinks from "./atoms/InboxSearchLinks";
-import UploadFileComposer from "./hoc/UploadFileComposer";
-import WorkflowTimeline from "./atoms/WorkflowTimeline";
-import WorkflowActions from "./atoms/WorkflowActions";
-import Amount from "./atoms/Amount";
-import Paragraph from "./atoms/Paragraph";
-import CitizenConsentForm from "./atoms/CitizenConsentForm";
+import WorkflowModal from "./molecules/WorkflowModal";
 
 // Importing From SVG Library
-import {SVG} from "./atoms/SVG";
+import { SVG } from "./atoms/SVG";
 
 export {
-  InputTextAmount,
-  Button,
-  ViewImages,
-  Phone,
-  CitizenConsentForm,
-  Body,
-  Loader,
-  TopBar,
-  OpenLinkContainer,
-  HomeLink,
-  AppContainer,
-  EmployeeAppContainer,
-  Header,
-  ActionBar,
-  Menu,
-  LinkLabel,
-  BackButton,
-  BreakLine,
-  Card,
-  CardCaption,
-  CardHeader,
-  CardText,
-  CardLabel,
+  ActionBar, ActionLinks, AddFileFilled, AddFilled, AddIcon, AddNewIcon, AddressBookIcon, Amount, AnnouncementIcon, AppContainer, ApplyFilterBar, ArrowDirection, ArrowDown, ArrowForward, ArrowLeft,
+  ArrowLeftWhite, ArrowRightInbox, ArrowVectorDown, AttendanceIcon, AttentionListIcon, BackButton, Banner, BillsIcon, BioMetricIcon, BirthIcon, Body, BPAHomeIcon, BPAIcon, BreadCrumb, BreakLine, Button, ButtonSelector, Calender, CameraIcon, Card, CardBasedOptions, CardCaption,
+  CardHeader, CardLabel,
   CardLabelDesc,
-  CardLabelError,
-  CardTextButton,
-  RadioButtons,
-  DashboardBox,
-  Dropdown,
-  SearchableDropdown,
-  TextInput,
-  TextArea,
-  Paragraph,
-  Banner,
-  CardSubHeader,
-  CardSectionHeader,
-  CardSectionSubText,
-  SubmitBar,
-  ButtonSelector,
-  LinkButton,
-  StatusTable,
-  Row,
-  LastRow,
-  MediaRow,
-  DisplayPhotos,
-  ConnectingCheckPoints,
-  CheckPoint,
-  Rating,
-  CheckBox,
-  OTPInput,
-  LocationSearch,
-  UploadFile,
-  UploadImages,
-  ImageViewer,
-  ImageUploadHandler,
-  TypeSelectCard,
-  LocationSearchCard,
-  TextInputCard,
-  CityMohalla,
-  DetailsCard,
-  WorkflowModal,
-  FileUploadModal,
-  Label,
-  Table,
-  PopUp,
-  HeaderBar,
-  Toast,
-  DateWrap,
-  KeyNote,
-  TelePhone,
-  GreyOutText,
-  ActionLinks,
-  PrivateRoute,
-  SectionalDropdown,
-  RoundedLabel,
-  LabelFieldPair,
-  BreadCrumb,
-  DatePicker,
-  WeekPicker,
-  InfoBanner,
-  MobileNumber,
-  EllipsisMenu,
-  CitizenHomeCard,
-  EmployeeModuleCard,
-  StandaloneSearchBar,
-  CardBasedOptions,
-  WhatsNewCard,
-  EventCalendarView,
-  InboxLinks,
-  PopupHeadingLabel,
-  ToggleSwitch,
-  ULBHomeCard,
-  ViewDetailsCard,
-  CollapseAndExpandGroups,
-  HorizontalNav,
-  NoResultsFound,
-  Amount,
-  // Icons
-  GetApp,
-  ArrowLeft,
-  ArrowLeftWhite,
-  AddFileFilled,
-  HomeIcon,
-  LanguageIcon,
-  LogoutIcon,
-  NavBar,
-  Hamburger,
-  CustomButton,
-  CitizenInfoLabel,
-  SearchIconSvg,
-  ArrowRightInbox,
-  ArrowDown,
-  SortDown,
-  SortUp,
-  SortSvg,
-  ShippingTruck,
-  CloseSvg,
-  Close,
-  PropertyHouse,
-  MultiLink,
-  MultiSelectDropdown,
-  CaseIcon,
-  PTIcon,
-  DocumentIcon,
-  DocumentIconSolid,
-  PMBIconSolid,
-  EventsIconSolid,
-  SurveyIconSolid,
-  PMBIcon,
-  DustbinIcon,
-  GenericFileIcon,
-  HelpIcon,
-  InfoBannerIcon,
-  NotificationBell,
-  ImageIcon,
-  OBPSIconSolidBg,
-  AddFilled,
-  // Molecule
-  InputCard,
-  FormStep,
-  RatingCard,
-  SearchAction,
-  FilterAction,
-  ApplyFilterBar,
-  RemoveableTag,
-  RadioOrSelect,
-  Localities,
-  SearchForm,
-  SearchField,
-  PageBasedInput,
-  SearchOnRadioButtons,
-  OnGroundEventCard,
-  MultiUploadWrapper,
-  FilterForm,
+  CardLabelError, CardSectionHeader,
+  CardSectionSubText, CardSubHeader, CardText, CardTextButton, CaseIcon, CheckBox, CheckPoint, CheckSvg, CitizenConsentForm, CitizenHomeCard, CitizenInfoLabel, CitizenTruck, CityMohalla, Clock, Close, CloseSvg, CollapseAndExpandGroups, CollectionIcon, CollectionsBookmarIcons, ComplaintIcon, ConnectingCheckPoints, ContractIcon, CreateEstimateIcon, CreateLoiIcon, CustomButton, CustomDropdown, DashboardBox, DashboardIcon, DatePicker, DateRange,
+  DateRangeNew, DateWrap, DeathIcon, DeleteIcon, DeleteIconv2, Details, DetailsCard, DisplayPhotos, DocumentIcon,
+  DocumentIconSolid, DocumentSVG, DownloadBtnCommon, DownloadIcon, DownloadImgIcon, DownloadPrefixIcon, DownwardArrow, Dropdown, DropIcon, DustbinIcon, EDCRIcon, EditIcon, EditPencilIcon, Ellipsis, EllipsisMenu, EmailIcon, EmployeeAppContainer, EmployeeModuleCard, ErrorIcon, EstimateIcon, EventCalendar, EventCalendarView, EventsIconSolid, ExpenditureIcon, ExternalLinkIcon, FileIcon, FileUploadModal, FilterAction, FilterForm,
   FilterFormField,
-  SortAction,
-  CustomDropdown,
-  // hoc
-  FormComposer,
-  FormComposerV2,
-  RenderFormFields,
-  WorkflowTimeline,
-  WorkflowActions,
-  ResponseComposer,
-  PitDimension,
-  Modal,
-  UpwardArrow,
-  DownwardArrow,
-  DownloadImgIcon,
-  ViewsIcon,
-  PrevIcon,
-  DownloadIcon,
-  ExternalLinkIcon,
-  Ellipsis,
-  RefreshIcon,
-  RefreshSVG,
-  Poll,
-  Details,
-  InboxComposer,
-  InboxSearchComposer,
-  MobileSearchResults,
-  MobileSearchComponent,
-  ResultsTable,
-  InboxSearchLinks,
-  UploadFileComposer,
   // Icons
   FilterIcon,
-  FilterSvg,
-  PrintIcon,
-  ShareIcon,
-  Calender,
-  DropIcon,
-  RupeeIcon,
-  ComplaintIcon,
-  Person,
-  WhatsappIcon,
-  EmailIcon,
-  DocumentSVG,
-  PersonIcon,
-  ReceiptIcon,
-  AnnouncementIcon,
-  OBPSIcon,
-  CitizenTruck,
-  EDCRIcon,
-  BPAIcon,
-  BPAHomeIcon,
-  MapMarker,
-  Clock,
-  EventCalendar,
-  TickMark,
-  PDFSvg,
-  DownloadPrefixIcon,
-  DateRange,
-  DateRangeNew,
-  EditIcon,
-  SearchIcon,
-  DeleteIcon,
-  CreateLoiIcon,
-  WSICon,
-  CameraIcon,
-  EditPencilIcon,
-  GalleryIcon,
-  RemoveIcon,
-  UploadPitPhoto,
-  CheckSvg,
-  ModuleCardFullWidth,
-  ArrowForward,
-  ArrowVectorDown,
-  ArrowDirection,
-  AddressBookIcon,
-  LocationIcon,
-  CollectionsBookmarIcons,
-  FinanceChartIcon,
-  CollectionIcon,
-  FSMIcon,
-  MCollectIcon,
-  PGRIcon,
-  TLIcon,
-  BillsIcon,
-  ErrorIcon,
-  DownloadBtnCommon,
-  PrintBtnCommon,
-  WhatsappIconGreen,
-  HelpLineIcon,
-  ServiceCenterIcon,
-  TimerIcon,
-  RupeeSymbol,
-  ValidityTimeIcon,
-  AddIcon,
-  SubtractIcon,
-  AddNewIcon,
-  ViewReportIcon,
-  InboxIcon,
-  UnMaskComponent,
-  PrivacyMaskIcon,
-  DeathIcon,
-  BirthIcon,
-  FirenocIcon,
-  CreateEstimateIcon,
-  GotoInboxIcon,
-  LocateIcon,
-  UploadIcon,
-  FileIcon,
-  DeleteIconv2,
-  InfoIconOutline,
-
+  FilterSvg, FinanceChartIcon, FirenocIcon,
+  // hoc
+  FormComposer,
+  FormComposerV2, FormStep, FSMIcon, GalleryIcon, GenericFileIcon,
+  // Icons
+  GetApp, GotoInboxIcon, GreyOutText, Hamburger, Header, HeaderBar, HelperIcon, HelpIcon, HelpLineIcon, HistoryIcon, HomeIcon, HomeLink, HorizontalNav, HRIcon, ImageIcon, ImageUploadHandler, ImageViewer, InboxComposer, InboxIcon, InboxLinks, InboxSearchComposer, InboxSearchLinks, InfoBanner, InfoBannerIcon, InfoIconOutline,
+  // Molecule
+  InputCard, InputTextAmount, KeyNote, Label, LabelFieldPair, LanguageIcon, LastRow, LinkButton, LinkLabel, Loader, Localities, LocateIcon, LocationIcon, LocationSearch, LocationSearchCard, LogoutIcon, MapMarker, MCollectIcon, MediaRow, Menu, MobileNumber, MobileSearchComponent, MobileSearchResults, Modal, ModuleCardFullWidth, MuktaHomeIcon, MultiLink,
+  MultiSelectDropdown, MultiUploadWrapper, NavBar, NoResultsFound,
   /* Works Management  */
-
-  NoResultsFoundIcon,
-  WorksMgmtIcon,
-  BioMetricIcon,
-  MuktaHomeIcon,
-  HRIcon,
-  ProjectIcon,
-  EstimateIcon,
-  ContractIcon,
-  AttendanceIcon,
-  WageseekerIcon,
-  OrganisationIcon,
-  HelperIcon,
-  DashboardIcon,
-  ExpenditureIcon,
-  PaymentIcon,
-  HistoryIcon,
-  WarningIcon,
-  AttentionListIcon,
-
-
+  NoResultsFoundIcon, NotificationBell, OBPSIcon, OBPSIconSolidBg, OnGroundEventCard, OpenLinkContainer, OrganisationIcon, OTPInput, PageBasedInput, Paragraph, PaymentIcon, PDFSvg, Person, PersonIcon, PGRIcon, Phone, PitDimension, PMBIcon, PMBIconSolid, Poll, PopUp, PopupHeadingLabel, PrevIcon, PrintBtnCommon, PrintIcon, PrivacyMaskIcon, PrivateRoute, ProjectIcon, PropertyHouse, PTIcon, RadioButtons, RadioOrSelect, Rating, RatingCard, ReceiptIcon, RefreshIcon,
+  RefreshSVG, RemoveableTag, RemoveIcon, RenderFormFields, ResponseComposer, ResultsTable, RoundedLabel, Row, RupeeIcon, RupeeSymbol, SearchableDropdown, SearchAction, SearchField, SearchForm, SearchIcon, SearchIconSvg, SearchOnRadioButtons, SectionalDropdown, ServiceCenterIcon, ShareIcon, ShippingTruck, SortAction, SortDown, SortSvg, SortUp, StandaloneSearchBar, StatusTable, SubmitBar, SubtractIcon, SurveyIconSolid,
   // Exported all svgs from svg-component library
-  SVG
+  SVG, Table, TelePhone, TextArea, TextInput, TextInputCard, TickMark, TimerIcon, TLIcon, Toast, ToggleSwitch, TopBar, TypeSelectCard, ULBHomeCard, UnMaskComponent, UploadFile, UploadFileComposer, UploadIcon, UploadImages, UploadPitPhoto, UpwardArrow, ValidityTimeIcon, ViewDetailsCard, ViewImages, ViewReportIcon, ViewsIcon, WageseekerIcon, WarningIcon, WeekPicker, WhatsappIcon, WhatsappIconGreen, WhatsNewCard, WorkflowActions, WorkflowModal, WorkflowTimeline, WorksMgmtIcon, WSICon
 };
+

@@ -1,8 +1,8 @@
-import Urls from "../../atoms/urls";
-import { PersistantStorage } from "../../atoms/Utils/Storage";
 import i18next from "i18next";
-import { Request } from "../../atoms/Utils/Request";
 import { ApiCacheService } from "../../atoms/ApiCacheService";
+import Urls from "../../atoms/urls";
+import { Request } from "../../atoms/Utils/Request";
+import { PersistantStorage } from "../../atoms/Utils/Storage";
 
 const LOCALE_LIST = (locale) => `Locale.${locale}.List`;
 const LOCALE_ALL_LIST = () => `Locale.List`;
@@ -88,6 +88,7 @@ export const LocalizationService = {
     if (locale.indexOf(Digit.Utils.getLocaleRegion()) === -1) {
       locale += Digit.Utils.getLocaleRegion();
     }
+    console.log(locale,messages);
     LocalizationStore.updateResources(locale, messages);
   },
 };

@@ -1,5 +1,6 @@
 import { CardLabel, Dropdown, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useState } from "react";
+import isEqual from "lodash.isequal";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import ToggleSwitch from "./Toggle";
@@ -7,60 +8,34 @@ import ToggleSwitch from "./Toggle";
 const AddressDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = false, tenantId }) => {
   const { t } = useTranslation();
   const [isEditable, setIsEditable] = useState(AllowEdit);
-  const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
+  const headerLocale = useMemo(() => Digit.Utils.locale.getTransformedLocale(tenantId), [tenantId]);
+
   const {
     control,
     watch,
     formState: { errors, isValid },
     trigger,
     setValue,
-    clearErrors
+    clearErrors,
+    getValues,
   } = useForm({
     defaultValues: {
-      house: initialRows.house || "",
-      street: initialRows.street || "",
-      landMark: initialRows.landMark || "",
-      locality: initialRows.locality || "",
-      city: initialRows.city || "",
-      subDistrict: initialRows.subDistrict || "",
-      district: initialRows.district || "",
-      state: initialRows.state || "",
-      zoneName: initialRows.zoneName || "",
-      pincode: initialRows.pinCode || "",
-      blockName: initialRows.blockName || "",
-      wardName: initialRows.wardName || "",
+      house: initialRows?.address?.house || "",
+      street: initialRows?.address?.street || "",
+      landmark: initialRows?.address?.landmark || "",
+      locality: initialRows?.address?.locality || "",
+      city: initialRows?.address?.city || "",
+      subDistrict: initialRows?.address?.subDistrict || "",
+      district: initialRows?.address?.district || "",
+      state: initialRows?.address?.state || "",
+      zoneName: initialRows?.UserOtherDetails?.zoneName || "",
+      pinCode: initialRows?.address?.pinCode || "",
+      blockName: initialRows?.UserOtherDetails?.blockName || "",
+      wardName: initialRows?.UserOtherDetails?.wardName || "",
     },
-    mode: "onChange"
+    mode: "onChange",
   });
 
-  const processSingleData = (item, headerLocale) => {
-    if (!item) return null;
-  
-    const genderMapping = {
-      male: { id: 1, name: 'Male' },
-      female: { id: 2, name: 'Female' },
-      transgender: { id: 3, name: 'Transgender' },
-    };
-  
-    if (typeof item === 'string') {
-      const gender = genderMapping[item.toLowerCase()];
-      if (!gender) return null; // Handle cases where the item is not one of the expected values
-      return {
-        ...gender,
-        i18nKey: `${headerLocale}_ADMIN_${gender.name.toUpperCase()}`,
-      };
-    }
-  
-    if (typeof item === 'object' && item.id && item.name) {
-      return {
-        code: item.id,
-        name: item.name,
-        i18nKey: `${headerLocale}_ADMIN_${item.name}`,
-      };
-    }
-  
-    return null; // Handle cases where item is neither a string nor an object with id and name
-  };
   const [zones, setZones] = useState([]);
   const [blocks, setBlocks] = useState([]);
   const [wards, setWards] = useState([]);
@@ -97,9 +72,11 @@ const AddressDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = false, tena
           });
         });
       });
+
       setZones(zonesData);
       setBlocks(blocksData);
       setWards(wardsData);
+
       return {
         zonesData,
         blocksData,
@@ -108,100 +85,109 @@ const AddressDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = false, tena
     },
   });
 
-  const selectedZone = watch("zoneName");
-  const selectedBlock = watch("blockName");
+  const selectedWard = watch("wardName");
   const [filteredBlocks, setFilteredBlocks] = useState([]);
-  const [filteredWards, setFilteredWards] = useState([]);
+  const [filteredZones, setFilteredZones] = useState([]);
 
   useEffect(() => {
-    if (selectedZone && selectedZone.code) {
-      const filtered = blocks.filter((block) => block.zoneCode === selectedZone.code);
-      setFilteredBlocks(filtered);
-      setValue("blockName", null); // Reset block dropdown
-      setFilteredWards([]); // Clear wards when zone changes
-      setValue("wardName", null); // Reset ward dropdown
+    if (selectedWard && selectedWard.code) {
+      const selectedBlockCode = wards.find((ward) => ward.code === selectedWard.code)?.blockCode;
+      const selectedZoneCode = wards.find((ward) => ward.code === selectedWard.code)?.zoneCode;
+
+      if (selectedBlockCode) {
+        const filteredBlocks = blocks.filter((block) => block.code === selectedBlockCode);
+        setFilteredBlocks(filteredBlocks);
+        setValue("blockName", filteredBlocks[0]?.i18nKey || ""); // Automatically set the block name text field
+      } else {
+        setFilteredBlocks([]);
+        setValue("blockName", ""); // Reset block text field
+      }
+
+      if (selectedZoneCode) {
+        const filteredZones = zones.filter((zone) => zone.code === selectedZoneCode);
+        setFilteredZones(filteredZones);
+        setValue("zoneName", filteredZones[0]?.i18nKey || ""); // Automatically set the zone name text field
+      } else {
+        setFilteredZones([]);
+        setValue("zoneName", ""); // Reset zone text field
+      }
     } else {
       setFilteredBlocks([]);
+      setFilteredZones([]);
     }
-  }, [blocks, selectedZone, setValue]);
+  }, [wards, blocks, zones, selectedWard, setValue]);
 
   useEffect(() => {
-    if (selectedBlock && selectedBlock.code) {
-      const filtered = wards.filter((ward) => ward.blockCode === selectedBlock.code && ward.zoneCode === selectedZone.code);
-      setFilteredWards(filtered);
-      setValue("wardName", null); // Reset ward dropdown
-    } else {
-      setFilteredWards([]);
+    if (!selectedWard) {
+      setFilteredBlocks([]);
+      setFilteredZones([]);
+      setValue("blockName", ""); // Reset block text field
+      setValue("zoneName", ""); // Reset zone text field
     }
-  }, [wards, selectedBlock, selectedZone, setValue]);
+  }, [selectedWard, setValue]);
 
+  const formValuesRef = useRef(getValues());
   const formValues = watch();
 
+  const stableOnUpdate = useCallback(
+    (values, valid) => {
+      onUpdate(values, valid);
+    },
+    [onUpdate]
+  );
+
   useEffect(() => {
-    onUpdate(formValues, isValid);
-  }, [formValues, isValid, onUpdate]);
+    if (!isEqual(formValuesRef.current, formValues)) {
+      formValuesRef.current = formValues;
+      stableOnUpdate(formValues, isValid);
+    }
+  }, [formValues, isValid, stableOnUpdate]);
 
   useEffect(() => {
     trigger(); // Validate the form on mount to show errors if fields are empty
   }, [trigger]);
-  
-  function splitStringToArray(inputString, delimiter) {
-    // Check if the inputString is null or an empty string
-    if (!inputString) {
-      return [];
-    }
-    const dataArray = inputString.split(delimiter);
-    // Remove the last empty string caused by the trailing delimiter
-    const filteredArray = dataArray.filter(element => element !== "");
-    return filteredArray;
-  }
 
   useEffect(() => {
-  if (initialRows) {
-    //const addressArray = splitStringToArray(initialRows?.address,'|')
-    const addressArray = splitStringToArray(initialRows?.address, '|');
-    // Validate and set form values
-    if (addressArray.length >= 8) {
-      setValue("house", addressArray[0] || "");
-      setValue("street", addressArray[5] || "");
-      setValue("landMark", addressArray[3] || "");
-      setValue("locality", addressArray[7] || "");
-      setValue("subDistrict", addressArray[4] || "");
-      setValue("district", addressArray[8] || "");
-      setValue("state", addressArray[9] || "");
-    } else {
-      console.error("Address array does not have enough elements:", addressArray);
-    }
-
-    const zonedata = processSingleData(initialRows?.zone, headerLocale);
-    const blockdata = processSingleData(initialRows?.ward, headerLocale);
-    const warddata = processSingleData(initialRows?.subward, headerLocale);
-
+    if (initialRows) {
     
-    setValue("city", initialRows.city || "");
-    setValue("zoneName", zonedata || "");
-    setValue("pincode", initialRows.pinCode || "");
-    setValue("blockName", blockdata || "");
-    setValue("wardName", warddata || "");
+      setValue("house", initialRows?.address?.house || "");
+      setValue("street", initialRows?.address?.street || "");
+      setValue("landmark", initialRows?.address?.landmark || "");
+      setValue("locality", initialRows?.address?.locality || "");
+      setValue("subDistrict", initialRows?.address?.subDistrict || "");
+      setValue("district", initialRows?.address?.district || "");
+      setValue("state", initialRows?.address?.state || "");
 
-    // Clear errors for fields that received initial values
-    if (addressArray[0]) clearErrors("house");
-    if (addressArray[5]) clearErrors("street");
-    if (addressArray[3]) clearErrors("landMark");
-    if (addressArray[7]) clearErrors("locality");
-    if (addressArray[4]) clearErrors("subDistrict");
-    if (addressArray[8]) clearErrors("district");
-    if (addressArray[9]) clearErrors("state");
-    if (initialRows.city) clearErrors("city");
-    if (initialRows.pinCode) clearErrors("pincode");
-    if (zonedata) clearErrors("zoneName");
-    if (blockdata) clearErrors("blockName");
-    if (warddata) clearErrors("wardName");
-  }
-}, [initialRows, setValue, headerLocale, clearErrors]);
+      setValue("city", initialRows?.address?.city || "");
+      setValue("pinCode", initialRows?.address?.pinCode || "");
+
+      const zonedata = zones.find((zone) => zone.code === initialRows?.UserOtherDetails?.zone) || "";
+      const blockdata = blocks.find((block) => block.code === initialRows?.UserOtherDetails?.block) || "";
+      const warddata = wards.find((ward) => ward.code === initialRows?.UserOtherDetails?.ward) || "";
+
+      setValue("zoneName", zonedata?.name || "");
+      setValue("blockName", blockdata?.name || "");
+      setValue("wardName", warddata || "");
+
+      if (initialRows?.address?.house) clearErrors("house");
+      if (initialRows?.address?.street) clearErrors("street");
+      if (initialRows?.address?.landmark) clearErrors("landmark");
+      if (initialRows?.address?.locality) clearErrors("locality");
+      if (initialRows?.address?.subDistrict) clearErrors("subDistrict");
+      if (initialRows?.address?.district) clearErrors("district");
+      if (initialRows?.address?.state) clearErrors("state");
+      if (initialRows?.address?.city) clearErrors("city");
+      if (initialRows?.address?.pinCode) clearErrors("pinCode");
+      if (zonedata) clearErrors("zoneName");
+      if (blockdata) clearErrors("blockName");
+      if (warddata) clearErrors("wardName");
+    }
+  }, [initialRows, setValue, headerLocale, clearErrors, zones, blocks, wards]);
+
   const handleToggle = () => {
     setIsEditable(!isEditable);
   };
+
   return (
     <React.Fragment>
       <form className="bmc-row-card-header">
@@ -236,6 +222,8 @@ const AddressDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = false, tena
                       value={props.value}
                       onChange={(e) => props.onChange(e.target.value)}
                       onBlur={props.onBlur}
+                      optionKey="i18nKey"
+                      t={t}
                     />
                     {errors.house && <span style={{ color: "red" }}>{errors.house.message}</span>}
                   </div>
@@ -258,6 +246,8 @@ const AddressDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = false, tena
                       value={props.value}
                       onChange={(e) => props.onChange(e.target.value)}
                       onBlur={props.onBlur}
+                      optionKey="i18nKey"
+                      t={t}
                     />
                     {errors.street && <span style={{ color: "red" }}>{errors.street.message}</span>}
                   </div>
@@ -267,10 +257,10 @@ const AddressDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = false, tena
           </div>
           <div className="bmc-col3-card">
             <LabelFieldPair>
-              <CardLabel className="bmc-label">{"BMC_LANDMARK"}</CardLabel>
+              <CardLabel className="bmc-label">{"BMC_landmark"}</CardLabel>
               <Controller
                 control={control}
-                name={"landMark"}
+                name={"landmark"}
                 rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
                 render={(props) => (
                   <div>
@@ -280,8 +270,10 @@ const AddressDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = false, tena
                       value={props.value}
                       onChange={(e) => props.onChange(e.target.value)}
                       onBlur={props.onBlur}
+                      optionKey="i18nKey"
+                      t={t}
                     />
-                    {errors.landMark && <span style={{ color: "red" }}>{errors.landMark.message}</span>}
+                    {errors.landmark && <span style={{ color: "red" }}>{errors.landmark.message}</span>}
                   </div>
                 )}
               />
@@ -302,6 +294,8 @@ const AddressDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = false, tena
                       value={props.value}
                       onChange={(e) => props.onChange(e.target.value)}
                       onBlur={props.onBlur}
+                      optionKey="i18nKey"
+                      t={t}
                     />
                     {errors.locality && <span style={{ color: "red" }}>{errors.locality.message}</span>}
                   </div>
@@ -326,6 +320,8 @@ const AddressDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = false, tena
                       value={props.value}
                       onChange={(e) => props.onChange(e.target.value)}
                       onBlur={props.onBlur}
+                      optionKey="i18nKey"
+                      t={t}
                     />
                     {errors.city && <span style={{ color: "red" }}>{errors.city.message}</span>}
                   </div>
@@ -348,6 +344,8 @@ const AddressDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = false, tena
                       value={props.value}
                       onChange={(e) => props.onChange(e.target.value)}
                       onBlur={props.onBlur}
+                      optionKey="i18nKey"
+                      t={t}
                     />
                     {errors.subDistrict && <span style={{ color: "red" }}>{errors.subDistrict.message}</span>}
                   </div>
@@ -370,6 +368,8 @@ const AddressDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = false, tena
                       value={props.value}
                       onChange={(e) => props.onChange(e.target.value)}
                       onBlur={props.onBlur}
+                      optionKey="i18nKey"
+                      t={t}
                     />
                     {errors.district && <span style={{ color: "red" }}>{errors.district.message}</span>}
                   </div>
@@ -392,6 +392,8 @@ const AddressDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = false, tena
                       value={props.value}
                       onChange={(e) => props.onChange(e.target.value)}
                       onBlur={props.onBlur}
+                      optionKey="i18nKey"
+                      t={t}
                     />
                     {errors.state && <span style={{ color: "red" }}>{errors.state.message}</span>}
                   </div>
@@ -406,7 +408,7 @@ const AddressDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = false, tena
               <CardLabel className="bmc-label">{t("BMC_PINCODE")}</CardLabel>
               <Controller
                 control={control}
-                name="pincode"
+                name="pinCode"
                 rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
                 render={(props) => (
                   <div>
@@ -416,66 +418,10 @@ const AddressDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = false, tena
                       value={props.value}
                       onChange={(e) => props.onChange(e.target.value)}
                       onBlur={props.onBlur}
+                      optionKey="i18nKey"
+                      t={t}
                     />
-                    {errors.pincode && <span style={{ color: "red" }}>{errors.pincode.message}</span>}
-                  </div>
-                )}
-              />
-            </LabelFieldPair>
-          </div>
-          <div className="bmc-col3-card">
-            <LabelFieldPair>
-              <CardLabel className="bmc-label">{t("BMC_ZONENAME")}</CardLabel>
-              <Controller
-                control={control}
-                name="zoneName"
-                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-                render={(props) => (
-                  <div>
-                    {isEditable ? (
-                      <Dropdown
-                        placeholder={t("SELECT ZONE")}
-                        selected={props.value}
-                        select={(zone) => props.onChange(zone)}
-                        onBlur={props.onBlur}
-                        option={zones}
-                        optionKey="i18nKey"
-                        t={t}
-                        isMandatory={true}
-                      />
-                    ) : (
-                      <TextInput readOnly value={props.value?.label || ""} />
-                    )}
-                    {errors.zoneName && <span style={{ color: "red" }}>{errors.zoneName.message}</span>}
-                  </div>
-                )}
-              />
-            </LabelFieldPair>
-          </div>
-          <div className="bmc-col3-card">
-            <LabelFieldPair>
-              <CardLabel className="bmc-label">{t("BMC_BLOCKNAME")}</CardLabel>
-              <Controller
-                control={control}
-                name="blockName"
-                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-                render={(props) => (
-                  <div>
-                    {isEditable ? (
-                      <Dropdown
-                        placeholder={t("SELECT CASTE CATEGORY")}
-                        selected={props.value}
-                        select={(block) => props.onChange(block)}
-                        onBlur={props.onBlur}
-                        option={filteredBlocks}
-                        optionKey="i18nKey"
-                        t={t}
-                        isMandatory={true}
-                      />
-                    ) : (
-                      <TextInput readOnly value={props.value?.label || ""} />
-                    )}
-                    {errors.blockName && <span style={{ color: "red" }}>{errors.blockName.message}</span>}
+                    {errors.pinCode && <span style={{ color: "red" }}>{errors.pinCode.message}</span>}
                   </div>
                 )}
               />
@@ -496,15 +442,43 @@ const AddressDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = false, tena
                         selected={props.value}
                         select={(ward) => props.onChange(ward)}
                         onBlur={props.onBlur}
-                        option={filteredWards}
+                        option={wards}
                         optionKey="i18nKey"
                         t={t}
                         isMandatory={true}
                       />
                     ) : (
-                      <TextInput readOnly value={props.value?.label || ""} />
+                      <TextInput readOnly value={props.value?.name || ""} />
                     )}
                     {errors.wardName && <span style={{ color: "red" }}>{errors.wardName.message}</span>}
+                  </div>
+                )}
+              />
+            </LabelFieldPair>
+          </div>
+          <div className="bmc-col3-card">
+            <LabelFieldPair>
+              <CardLabel className="bmc-label">{t("BMC_ZONENAME")}</CardLabel>
+              <Controller
+                control={control}
+                name="zoneName"
+                render={(props) => (
+                  <div>
+                    <TextInput disabled readOnly value={props.value || ""} />
+                  </div>
+                )}
+              />
+            </LabelFieldPair>
+          </div>
+          <div className="bmc-col3-card">
+            <LabelFieldPair>
+              <CardLabel className="bmc-label">{t("BMC_BLOCKNAME")}</CardLabel>
+              <Controller
+                control={control}
+                name="blockName"
+                render={(props) => (
+                  <div>
+                    <TextInput disabled readOnly value={props.value || ""} />
                   </div>
                 )}
               />

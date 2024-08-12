@@ -31,7 +31,39 @@ const SchemeService = {
         auth: true,
         userService: true,
       })
-    }
+    },
+    saveUserDetails:(data)=>{
+      return Request({
+        data: data,
+        url: Urls.users.saveUserDetails,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+      })
+    },
+
+    saveSchemeDetails:(data)=>{
+      return Request({
+        data: data,
+        url: Urls.schemes.saveScheme,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+      })
+    },
+
+    getBanks: (data) =>{
+      return Request({
+        data: data,
+        url: Urls.common.getBanks,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+      })
+    },
 };
 
 export default SchemeService;

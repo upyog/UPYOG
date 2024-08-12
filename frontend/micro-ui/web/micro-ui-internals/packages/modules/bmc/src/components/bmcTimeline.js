@@ -10,7 +10,7 @@ const getAction = (flow) => {
       actions = [];
       break;
     default:
-      actions = ["BMC_Aadhaar_Verification", "BMC_Select_Scheme", "BMC_Application_fill", "BMC_Review"];
+      actions = ["BMC_AADHAAR_VERIFICATION", "BMC_SELECT_SCHEME", "BMC_APPLICATION_FILL", "BMC_REVIEW"];
   }
 };
 const Timeline = ({ currentStep = 1, flow = "" }) => {

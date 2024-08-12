@@ -11,6 +11,7 @@ import { PGRReducers, initPGRComponents } from "@egovernments/digit-ui-module-pg
 import { initUtilitiesComponents } from "@egovernments/digit-ui-module-utilities";
 import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
 import { BMCLinks, BMCModule, initBMCComponents } from "@tattva/digit-ui-module-bmc";
+import { DEONARModule, initDEONARComponents } from "@tattva/digit-ui-module-deonar";
 
 import { pgrCustomizations } from "./pgr";
 import { UICustomizations } from "./UICustomizations";
@@ -20,7 +21,8 @@ var Digit = window.Digit || {};
 const enabledModules = [ "DSS", "HRMS",
 "Workbench"
 ,"PGR","BMC",
-"Engagement" //"NDSS","QuickPayLinks", "Payment",
+"Engagement",
+"DEONAR" //"NDSS","QuickPayLinks", "Payment",
   // "Utilities",
 //added to check fsm
 //"FSM"
@@ -65,6 +67,7 @@ const initDigitUI = () => {
     BMCLinks,
     BMCModule,
     HRMSModule,
+    DEONARModule,
   });
 
   initDSSComponents();
@@ -73,6 +76,7 @@ const initDigitUI = () => {
   initUtilitiesComponents();
   initWorkbenchComponents();
   initPGRComponents();
+  initDEONARComponents();
 
 
   const moduleReducers = (initData) =>  ({

@@ -40,7 +40,6 @@ const Home = () => {
   const whatsNewSectionObj = uiHomePage?.whatsNewSection;
   const redirectURL = uiHomePage?.redirectURL;
 
-  console.log(citizenServicesObj);
   /* configure redirect URL only if it is required to overide the default citizen home screen */
   if (redirectURL) {
     history.push(`/${window?.contextPath}/citizen/${redirectURL}`);

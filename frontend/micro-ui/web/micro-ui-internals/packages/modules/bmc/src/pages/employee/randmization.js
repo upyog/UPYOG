@@ -6,6 +6,7 @@ import { useHistory } from "react-router-dom";
 import Pagination from "../../components/pagination";
 import Title from "../../components/title";
 import dropdownOptions from "../../pagecomponents/dropdownOptions.json";
+import SearchApplications from "../../components/SearchApplications";
 
 const data = [
   {
@@ -215,102 +216,15 @@ const RandmizationPage = () => {
     }
   };
 
+  const handleSearchCriteria = (critieria) => {
+    console.log(critieria);
+  };
+
   return (
     <React.Fragment>
       <Title text={t("BMC_Randomization")} />
       <div className="bmc-card-full">
-        <div className="bmc-row-card-header">
-          <div className="bmc-card-row">
-            <div className="bmc-col3-card">
-              <LabelFieldPair>
-                <CardLabel className="bmc-label">{t("BMC_Scheme_Type")}</CardLabel>
-                <Controller
-                  control={control}
-                  name={"scheme"}
-                  rules={{
-                    required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                  }}
-                  render={(props) => (
-                    <Dropdown
-                      placeholder={t("Select Scheme Type")}
-                      selected={props.value}
-                      select={(value) => {
-                        props.onChange(value);
-                      }}
-                      onBlur={props.onBlur}
-                      option={dropdownOptions.scheme}
-                      optionKey="value"
-                      t={t}
-                    />
-                  )}
-                />
-              </LabelFieldPair>
-            </div>
-            <div className="bmc-col3-card">
-              <LabelFieldPair>
-                <CardLabel className="bmc-label">{t("BMC_Scheme")}</CardLabel>
-                <Controller
-                  control={control}
-                  name={"machine"}
-                  rules={{
-                    required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                  }}
-                  render={(props) => (
-                    <Dropdown
-                      placeholder={t("Select Scheme")}
-                      selected={props.value}
-                      select={(value) => {
-                        props.onChange(value);
-                      }}
-                      onBlur={props.onBlur}
-                      option={dropdownOptions.machine}
-                      optionKey="value"
-                      t={t}
-                    />
-                  )}
-                />
-              </LabelFieldPair>
-            </div>
-            <div className="bmc-col3-card">
-              <LabelFieldPair>
-                <CardLabel className="bmc-label">{t("BMC_Scheme_Name")}</CardLabel>
-                <Controller
-                  control={control}
-                  name={"machine"}
-                  rules={{
-                    required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                  }}
-                  render={(props) => (
-                    <Dropdown
-                      placeholder={t("Select Scheme Name")}
-                      selected={props.value}
-                      select={(value) => {
-                        props.onChange(value);
-                      }}
-                      onBlur={props.onBlur}
-                      option={dropdownOptions.machine}
-                      optionKey="value"
-                      t={t}
-                    />
-                  )}
-                />
-              </LabelFieldPair>
-            </div>
-            <div className="bmc-col3-card">
-              <div className="bmc-search-button" style={{ textAlign: "end" }}>
-                <button
-                  type="button"
-                  className="bmc-card-button"
-                  style={{
-                    borderBottom: "3px solid black",
-                  }}
-                >
-                  {t("BMC_Search")}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <SearchApplications onUpdate={handleSearchCriteria} />
         <div className="bmc-row-card-header">
           <div className="bmc-card-row">
             <div className="bmc-table-container" style={{ padding: "0" }}>

@@ -3,167 +3,228 @@ import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-const bankDetails = {
-  IFSC001: {
-    bankName: "Bank A",
-    branchName: "Branch A1",
-    micrCode: "MICR001",
-  },
-  IFSC002: {
-    bankName: "Bank B",
-    branchName: "Branch B1",
-    micrCode: "MICR002",
-  },
-  // Add more bank details here
-};
+const BankDetailsForm = ({ tenantId, onUpdate, initialRows = [], AddOption = true, AllowRemove = true, ...props }) => {
+  const { t } = useTranslation();
+  /*
+TO DO
+still branch Id is not getting populated. 
+Also try to excute only when ifsc length =11. 
+fix length of input for 11
+*/
+  const initialDefaultValues = {
+    branchId: "",
+    name: "",
+    branchName: "",
+    ifsc: "",
+    micr: "",
+    accountNumber: "",
+  };
 
-const BankDetailsForm = ({ tenantId, initialRows = [], AddOption = true, AllowRemove = true }) => {
   const {
     control,
+    handleSubmit,
+    reset,
+    getValues,
     setValue,
     watch,
     formState: { errors },
-    handleSubmit,
-  } = useForm();
-  const { t } = useTranslation();
+  } = useForm({
+    defaultValues: initialDefaultValues,
+  });
+
   const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
+  const [bankData, setBankData] = useState([]);
   const [rows, setRows] = useState([]);
-  const ifscCode = watch("ifscCodes");
+  const ifsc = watch("ifsc");
+
+  const processBankData = (data, headerLocale) => {
+    return (
+      data?.BankDetails?.map((item) => ({
+        branchId: item.branchId,
+        name: item.name,
+        branchName: item.branchName,
+        ifsc: item.ifsc,
+        micr: item.micr,
+        accountNumber: item.accountNumber,
+        i18nKey: `${headerLocale}_ADMIN_${item.name}`,
+      })) || []
+    );
+  };
+
+  const bankFunction = (data) => {
+    const BankData = processBankData(data, headerLocale);
+    setBankData(BankData);
+    return { BankData };
+  };
+
+  const getBank = { BankSearchCriteria: { IFSC: ifsc } };
+  Digit.Hooks.bmc.useCommonGetBank(getBank, { select: bankFunction });
 
   useEffect(() => {
-    if (ifscCode) {
-      const details = bankDetails[ifscCode] || {};
-      setValue("name", details.bankName || "");
-      setValue("branchNames", details.branchName || "");
-      setValue("micrCodes", details.micrCode || "");
+    if (ifsc) {
+      const details = bankData.find((bank) => bank.ifsc === ifsc) || {};
+      setValue("branchId", details.branchId || "");
+      setValue("name", details.name || "");
+      setValue("branchName", details.branchName || "");
+      setValue("micr", details.micr || "");
     } else {
+      setValue("branchId", "");
       setValue("name", "");
-      setValue("branchNames", "");
-      setValue("micrCodes", "");
+      setValue("branchName", "");
+      setValue("micr", "");
     }
-  }, [ifscCode, setValue]);
-
-  const addRow = (data) => {
-    setRows([...rows, data]);
-  };
-
-  const removeRow = (index) => {
-    const updatedRows = rows.filter((_, i) => i !== index);
-    setRows(updatedRows);
-  };
+  }, [ifsc, bankData, setValue]);
 
   useEffect(() => {
     setRows(initialRows);
   }, [initialRows]);
 
-  return (
-    <div className="bmc-row-card-header">
-      <div className="bmc-card-row">
-        <div className="bmc-title">BANK DETAILS</div>
-        <div className="bmc-table-container" style={{ padding: "1rem" }}>
-          <form onSubmit={handleSubmit(addRow)}>
-            <table className="bmc-hover-table">
-              <thead>
-                <tr>
-                  <th scope="col">IFSC Code</th>
-                  <th scope="col">MICR Code</th>
-                  <th scope="col">Account Number</th>
-                  <th scope="col">Bank Name</th>
-                  <th scope="col">Branch Name</th>
-                  {AllowRemove && <th scope="col"></th>}
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td data-label="IFSC Code" style={{ textAlign: "left" }}>
-                    <Controller
-                      control={control}
-                      name="ifscCodes"
-                      render={(props) => (
-                        <div>
-                          <TextInput {...props} placeholder="IFSC Code" />
-                          {errors.ifscCodes && <span style={{ color: "red" }}>{errors.ifscCodes.message}</span>}
-                        </div>
-                      )}
-                    />
-                  </td>
-                  <td data-label="MICR Code" style={{ textAlign: "left" }}>
-                    <Controller
-                      control={control}
-                      name="micrCodes"
-                      render={(props) => (
-                        <div>
-                          <TextInput {...props} placeholder="MICR Code" disabled />
-                          {errors.micrCodes && <span style={{ color: "red" }}>{errors.micrCodes.message}</span>}
-                        </div>
-                      )}
-                    />
-                  </td>
-                  <td data-label="Account Number" style={{ textAlign: "left" }}>
-                    <Controller
-                      control={control}
-                      name="accountnumber"
-                      render={(props) => (
-                        <div>
-                          <TextInput {...props} placeholder="Account Number" type="number" />
-                          {errors.accountnumber && <span style={{ color: "red" }}>{errors.accountnumber.message}</span>}
-                        </div>
-                      )}
-                    />
-                  </td>
-                  <td data-label="Bank Name" style={{ textAlign: "left" }}>
-                    <Controller
-                      control={control}
-                      name="name"
-                      render={(props) => (
-                        <div>
-                          <TextInput {...props} placeholder="Bank Name" disabled />
-                          {/* {errors.bankName && <span style={{ color: 'red' }}>{errors.bankName.message}</span>} */}
-                        </div>
-                      )}
-                    />
-                  </td>
-                  <td data-label="Branch Name" style={{ textAlign: "left" }}>
-                    <Controller
-                      control={control}
-                      name="branchNames"
-                      render={(props) => (
-                        <div>
-                          <TextInput {...props} placeholder="Branch Name" disabled />
-                          {/* {errors.branchName && <span style={{ color: 'red' }}>{errors.branchName.message}</span>} */}
-                        </div>
-                      )}
-                    />
-                  </td>
-                  <td data-label="Add Row">
-                    <button type="submit">
-                      <AddIcon className="bmc-add-icon" />
-                    </button>
-                  </td>
-                </tr>
-                {rows.map((row, index) => (
-                  <tr key={index}>
-                    <td>{row.ifscCodes || "-"}</td>
-                    <td>{row.micrCodes || "-"}</td>
-                    <td>{row.accountnumber || "-"}</td>
-                    <td>{row.name || "-"}</td>
-                    <td>{row.branchNames || "-"}</td>
+  const addRow = () => {
+    const formData = getValues();
+    const branchId = bankData.find((item) => {
+      return item.branchId;
+    });
+    const updatedRows = [
+      ...rows,
+      {
+        branchId: branchId.branchId,
+        name: formData.name,
+        branchName: formData.branchName,
+        ifsc: formData.ifsc,
+        micr: formData.micr,
+        accountNumber: formData.accountNumber,
+      },
+    ];
+    setRows(updatedRows);
+   
+    reset(initialDefaultValues);
+    onUpdate(updatedRows);
+    console.log("Added Row: ", updatedRows);
+  };
 
-                    {AllowRemove && (
-                      <td data-label="Remove Row">
-                        <button type="button" onClick={() => removeRow(index)}>
-                          <RemoveIcon className="bmc-remove-icon" />
+  const removeRow = (index) => {
+    const updatedRows = rows.filter((_, i) => i !== index);
+    setRows(updatedRows);
+    onUpdate(updatedRows);
+  };
+
+  return (
+    <React.Fragment>
+      <div className="bmc-row-card-header">
+        <div className="bmc-card-row">
+          <div className="bmc-title">{t("BANK DETAILS")}</div>
+          <div className="bmc-table-container" style={{ padding: "1rem" }}>
+            <form onSubmit={handleSubmit(addRow)}>
+              <table className="bmc-hover-table">
+                <thead>
+                  <tr>
+                    <th scope="col">{t("IFSC Code")}</th>
+                    <th scope="col">{t("MICR Code")}</th>
+                    <th scope="col">{t("Account Number")}</th>
+                    <th scope="col">{t("Bank Name")}</th>
+                    <th scope="col">{t("Branch Name")}</th>
+                    {AllowRemove && <th scope="col"></th>}
+                  </tr>
+                </thead>
+                <tbody>
+                  {AddOption && (
+                    <tr>
+                      <td data-label={t("IFSC Code")} style={{ textAlign: "left" }}>
+                        <Controller
+                          control={control}
+                          name="ifsc"
+                          rules={{
+                            required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                            minLength: { value: 11, message: t("IFSC code must be 11 characters long") },
+                            maxLength: { value: 11, message: t("IFSC code must be 11 characters long") },
+                          }}
+                          render={(props) => (
+                            <div>
+                              <TextInput {...props} placeholder={t("IFSC Code")} />
+                              {errors.ifsc && <span style={{ color: "red" }}>{errors.ifsc.message}</span>}
+                            </div>
+                          )}
+                        />
+                      </td>
+                      <td data-label={t("MICR Code")} style={{ textAlign: "left" }}>
+                        <Controller
+                          control={control}
+                          name="micr"
+                          render={(props) => (
+                            <div>
+                              <TextInput {...props} placeholder={t("MICR Code")} disabled />
+                              {errors.micr && <span style={{ color: "red" }}>{errors.micr.message}</span>}
+                            </div>
+                          )}
+                        />
+                      </td>
+                      <td data-label={t("Account Number")} style={{ textAlign: "left" }}>
+                        <Controller
+                          control={control}
+                          name="accountNumber"
+                          rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                          render={(props) => (
+                            <div>
+                              <TextInput {...props} placeholder={t("Account Number")} type="number" value={props.value} onChange={props.onChange} />
+                              {errors.accountNumber && <span style={{ color: "red" }}>{errors.accountNumber.message}</span>}
+                            </div>
+                          )}
+                        />
+                      </td>
+                      <td data-label={t("Bank Name")} style={{ textAlign: "left" }}>
+                        <Controller
+                          control={control}
+                          name="name"
+                          render={(props) => (
+                            <div>
+                              <TextInput {...props} placeholder={t("Bank Name")} disabled />
+                            </div>
+                          )}
+                        />
+                      </td>
+                      <td data-label={t("Branch Name")} style={{ textAlign: "left" }}>
+                        <Controller
+                          control={control}
+                          name="branchName"
+                          render={(props) => (
+                            <div>
+                              <TextInput {...props} placeholder={t("Branch Name")} disabled />
+                            </div>
+                          )}
+                        />
+                      </td>
+                      <td data-label={t("Add Row")}>
+                        <button type="submit">
+                          <AddIcon className="bmc-add-icon" />
                         </button>
                       </td>
-                    )}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </form>
+                    </tr>
+                  )}
+
+                  {rows.map((row, index) => (
+                    <tr key={index}>
+                      <td style={{ display: "none" }}>{row.branchId || "-"}</td>
+                      <td>{row.ifsc || "-"}</td>
+                      <td>{row.micr || "-"}</td>
+                      <td>{row.accountNumber || "-"}</td>
+                      <td>{row.name || "-"}</td>
+                      <td>{row.branchName || "-"}</td>
+                      {AllowRemove && (
+                        <td data-label={t("Remove Row")}>
+                          <button type="button" onClick={() => removeRow(index)}>
+                            <RemoveIcon className="bmc-remove-icon" />
+                          </button>
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+    </React.Fragment>
   );
 };
 

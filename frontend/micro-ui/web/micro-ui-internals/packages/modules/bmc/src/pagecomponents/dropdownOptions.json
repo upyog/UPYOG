@@ -1,38 +1,4 @@
 {
-  "skill developement": [
-    {
-      "value": "For Women",
-      "label": "For Women"
-    },
-    {
-      "value": "For Transgender",
-      "label": "For Transgender"
-    }
-  ],
-  "skill developement1": [
-    {
-      "value": "For Divyang",
-      "label": "For Divyang"
-    }
-  ],
-  "empowerment": [
-    {
-      "value": "for Women",
-      "label": "For Women"
-    }
-  ],
-  "empowerment1": [
-    {
-      "value": "For divyang",
-      "label": "For Divyang"
-    }
-  ],
-  "pension": [
-    {
-      "value": "for Divyang",
-      "label": "For Divyang"
-    }
-  ],
   "occ": [
     {
       "value": "Employed",
@@ -67,84 +33,18 @@
       "label": "white card"
     }
   ],
-  "bankName": [
-    {
-      "value": "HDFC",
-      "label": "HDFC"
-    },
-    {
-      "value": "ICICI",
-      "label": "ICICI"
-    },
-    {
-      "value": "SBI",
-      "label": "SBI"
-    }
-  ],
-  "bankBranch": [
-    {
-      "value": "Aminabaad",
-      "label": "Aminabaad"
-    },
-    {
-      "value": "Vadodara",
-      "label": "Vadodara"
-    },
-    {
-      "value": "Surat",
-      "label": "Surat"
-    }
-  ],
-  "pension1": [
-    {
-      "value": "Pension",
-      "label": "Pension"
-    },
-    {
-      "value": "Pension1",
-      "label": "Pension1"
-    }
-  ],
-  "machine": [
-    {
-      "value": "Sewing Machine",
-      "label": "Sewing Machine"
-    },
-    {
-      "value": "Flour Mill",
-      "label": "Flour Mill"
-    },
-    {
-      "value": "Masala Mill",
-      "label": "Masala Mill"
-    }
-  ],
-  "Course": [
-    {
-      "value": "Course 1",
-      "label": "Course 1"
-    },
-    {
-      "value": "Course 2",
-      "label": "Course 2"
-    },
-    {
-      "value": "Course 3",
-      "label": "Course 3"
-    }
-  ],
   "Income": [
     {
-      "value": "1 Lakhs",
-      "label": "1 Lakhs"
+      "value": "100000",
+      "label": "100000"
     },
     {
-      "value": "2 Lakhs",
-      "label": "2 Lakhs"
+      "value": "200000",
+      "label": "200000"
     },
     {
-      "value": "3 Lakhs",
-      "label": "3 Lakhs"
+      "value": "300000",
+      "label": "300000"
     }
   ],
   "disablityType": [
@@ -157,26 +57,6 @@
       "label": "No"
     }
   ],
-  "cityName": [
-    {
-      "value": "Navi Mumbai",
-      "label": "Navi Mumbai"
-    },
-    {
-      "value": "",
-      "label": "Vadodara"
-    }
-  ],
-  "sector": [
-    {
-      "value": "Sector 1",
-      "label": "Sector 1"
-    },
-    {
-      "value": "Sector 2",
-      "label": "Sector 2"
-    }
-  ],
   "verification": [
     {
       "value": "Verified",
@@ -185,16 +65,6 @@
     {
       "value": "Non-Verified",
       "label": "Non-Verified"
-    }
-  ],
-  "scheme": [
-    {
-      "value": "scheme1",
-      "label": "scheme1"
-    },
-    {
-      "value": "scheme2",
-      "label": "scheme2"
     }
   ],
   "randomizationType": [
@@ -221,20 +91,6 @@
       "label": "No"
     }
   ],
-  "religion": [
-    {
-      "value": "Hindu",
-      "label": "Hindu"
-    },
-    {
-      "value": "Muslim",
-      "label": "Muslim"
-    },
-    {
-      "value": "Christian",
-      "label": "Christian"
-    }
-  ],
   "board":[
     {"value": "SSC",
       "label": "SSC"},
@@ -243,84 +99,17 @@
     {"value": "ICSE",
       "label": "ICSE"}
   ],
-  "caste": [
-    {
-      "value": "General",
-      "label": "General"
-    },
-    {
-      "value": "OBC",
-      "label": "OBC"
-    },
-    {
-      "value": "SC",
-      "label": "SC"
-    },
-    {
-      "value": "ST",
-      "label": "ST"
-    },
-    {
-      "value": "Other",
-      "label": "Other"
-    }
-  ],
-  "education":[
-    {
-        "qualification": {
-            "code": 3,
-            "name": "Senior Secondary",
-            "i18nKey": "MH_MUMBAI_ADMIN_Senior Secondary"
-        },
-        "yearOfPassing": {
-            "label": "1991",
-            "value": 1991
-        },
-        "percentage": "23",
-        "board": {
-            "value": "SSC",
-            "label": "SSC"
-        }
-    },
-    {
-        "qualification": {
-            "code": 1,
-            "name": "Primary",
-            "i18nKey": "MH_MUMBAI_ADMIN_Primary"
-        },
-        "yearOfPassing": {
-            "label": "1990",
-            "value": 1990
-        },
-        "percentage": "45",
-        "board": {
-            "value": "CBSE",
-            "label": "CBSE"
-        }
-    },
-    {
-        "qualification": {
-            "code": 6,
-            "name": "Postgraduate Diploma",
-            "i18nKey": "MH_MUMBAI_ADMIN_Postgraduate Diploma"
-        },
-        "yearOfPassing": {
-            "label": "1991",
-            "value": 1991
-        },
-        "percentage": "100",
-        "board": {
-            "value": "CBSE",
-            "label": "CBSE"
-        }
-    }
-],
 "gender":[
   {"id": 2,
-            "name": "Male"},
+            "name": "MALE"},
   {"id": 1,
-            "name": "Female"},
+            "name": "FEMALE"},
   {"id": 3,
-            "name": "Transgender"}
+            "name": "TRANSGENDER"}
+],
+"title":[
+  { "id": 1, "name": "MR" },
+  { "id": 2, "name": "MRS" },
+  { "id": 3, "name": "MISS" }
 ]
 }

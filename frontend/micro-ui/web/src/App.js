@@ -15,6 +15,7 @@ import {
 import { initUtilitiesComponents } from "@egovernments/digit-ui-module-utilities";
 import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
 import { BMCLinks, BMCModule, initBMCComponents } from "@tattva/digit-ui-module-bmc";
+import { DEONARModule, initDEONARComponents } from "@tattva/digit-ui-module-deonar";
 import React from "react";
 import { UICustomizations } from "./Customisations/UICustomizations";
 
@@ -28,7 +29,8 @@ const enabledModules = [
   "Engagement",
   "Workbench",
   "PGR",
-  "BMC"
+  "BMC",
+  "DEONAR",
 
 ];
 
@@ -42,7 +44,8 @@ const initDigitUI = () => {
     ...paymentConfigs,
     PaymentLinks,
     BMCLinks,
-    BMCModule
+    BMCModule,
+    DEONARModule,
   });
 
   initPGRComponents();
@@ -51,7 +54,8 @@ const initDigitUI = () => {
   initEngagementComponents();
   initUtilitiesComponents();
   initWorkbenchComponents();
-  initBMCComponents()
+  initBMCComponents();
+  initDEONARComponents()
 
   window.Digit.Customizations = {
     PGR: {},

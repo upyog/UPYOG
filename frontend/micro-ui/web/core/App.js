@@ -15,7 +15,8 @@ const enabledModules = [
   "Engagement",
   "Workbench",
   "PGR",
-  "BMC"
+  "BMC",
+  "DEONAR"
 ];
 
 const moduleReducers = (initData) => ({

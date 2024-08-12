@@ -83,7 +83,8 @@ import useSurveyUpdate from "./surveys/useUpdate";
 
 import useCommonGet from "./bmc/useCommon";
 import useCommonGetBank from "./bmc/useCommonGetBank";
-
+import useSaveUserDetail from "./bmc/useSaveUserDetail";
+import useSaveSchemes from './bmc/saveScheme';
 
 import useSchemesGet from "./bmc/getSchemes";
 import useUsersDetails from "./bmc/useUsers";
@@ -126,7 +127,9 @@ const bmc={
   useCommonGet,
   useSchemesGet,
   useCommonGetBank,
-  useUsersDetails
+  useUsersDetails,
+  useSaveUserDetail,
+  useSaveSchemes
 }
 
 const hrms = {

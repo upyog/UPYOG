@@ -17,7 +17,7 @@ const AadhaarEmployeePage = ({
 }) => {
   //const { businessService, applicationNo, moduleCode } = Digit.Hooks.useQueryParams();
   //console.log(tenantId, businessService, applicationNo, moduleCode);
-  console.log(formData);
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   return (
     <React.Fragment>
       <BMCReviewPage
@@ -34,7 +34,7 @@ const AadhaarEmployeePage = ({
         userType={userType}
         config={config}
       />
-      <WorkflowActions ActionBarStyle={{}} MenuStyle={{}} businessService={"bmc-schemes"} applicationNo={"MH-0001"} tenantId={"mh"} moduleCode={"BMC"} />
+      <WorkflowActions ActionBarStyle={{}} MenuStyle={{}} businessService={"bmc-schemes"} applicationNo={"MH-0001"} tenantId={tenantId} moduleCode={"BMC"} />
     </React.Fragment>
   );
 };

@@ -1,5 +1,6 @@
 import { CardLabel, Dropdown, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useState } from "react";
+import isEqual from "lodash.isequal";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import ToggleSwitch from "./Toggle";
@@ -10,7 +11,7 @@ const DisabilityCard = ({ tenantId, onUpdate, initialRows = {}, AllowEdit = fals
   const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
   const [rangeValue, setRangeValue] = useState(0);
   const [divyangs, setDivyangs] = useState([]);
-  const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
+  const headerLocale = useMemo(() => Digit.Utils.locale.getTransformedLocale(tenantId), [tenantId]);
 
   const initialDefaultValues = {
     divyangcardid: "",
@@ -24,9 +25,11 @@ const DisabilityCard = ({ tenantId, onUpdate, initialRows = {}, AllowEdit = fals
     formState: { errors, isValid },
     trigger,
     setValue,
-    clearErrors
+    clearErrors,
+    getValues,
   } = useForm({
     defaultValues: initialDefaultValues,
+    mode: "onChange",
   });
 
   const processCommonData = (data, headerLocale) => {
@@ -41,12 +44,13 @@ const DisabilityCard = ({ tenantId, onUpdate, initialRows = {}, AllowEdit = fals
 
   const processSingleData = (item, headerLocale) => {
     if (!item) return null;
-    if (typeof item === "object" && item.divyangid && item.divyangtype) {
+    console.log("item", typeof item === "object" && item.divyangcardid && item.disabilitytype);
+    if (typeof item === "object" && item.divyangcardid && item.disabilitytype) {
       return {
-        divyangtype: {
-          id: item.divyangid,
-          name: item.divyangtype,
-          i18nKey: `${headerLocale}_ADMIN_${item.divyangtype}`,
+        disabilitytype: {
+          id: item.disabilitytype.id,
+          name: item.disabilitytype.name,
+          i18nKey: `${headerLocale}_ADMIN_${item.disabilitytype.name}`,
         },
         divyangcardid: item.divyangcardid,
         divyangpercent: item.divyangpercent,
@@ -55,40 +59,38 @@ const DisabilityCard = ({ tenantId, onUpdate, initialRows = {}, AllowEdit = fals
     return null; // Handle cases where item is neither a string nor an object with id and name
   };
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     setRangeValue(parseInt(e.target.value));
-  };
+  }, []);
 
-  const divyangFunction = (data) => {
-    const divyangData = processCommonData(data, headerLocale);
-    setDivyangs(divyangData);
-    return { divyangData };
-  };
+  const divyangFunction = useCallback(
+    (data) => {
+      const divyangData = processCommonData(data, headerLocale);
+      setDivyangs(divyangData);
+      return { divyangData };
+    },
+    [headerLocale]
+  );
 
   const getDivyang = { CommonSearchCriteria: { Option: "divyang" } };
   Digit.Hooks.bmc.useCommonGet(getDivyang, { select: divyangFunction });
 
+  const formValuesRef = useRef(getValues());
   const formValues = watch();
 
-  useEffect(() => {
-    if (initialRows) {
-      const processeddata = processSingleData(initialRows, headerLocale);
-      if (processeddata) {
-        setValue("divyangcardid", processeddata.divyangcardid || "");
-        setValue("disabilitytype", processeddata.divyangtype || "");
-        setRangeValue(processeddata.divyangpercent || 0);
+  const stableOnUpdate = useCallback(
+    (values, valid) => {
+      onUpdate(values, valid);
+    },
+    [onUpdate]
+  );
 
-        // Clear errors for fields that received initial values
-        if (processeddata.divyangcardid) clearErrors("divyangcardid");
-        if (processeddata.divyangtype) clearErrors("disabilitytype");
-        if (processeddata.divyangpercent) clearErrors("divyangpercent");
-      }
+  useEffect(() => {
+    if (!isEqual(formValuesRef.current, formValues)) {
+      formValuesRef.current = formValues;
+      stableOnUpdate(formValues, isValid);
     }
-  }, [initialRows, setValue, headerLocale, clearErrors]);
-
-  useEffect(() => {
-    onUpdate(formValues, isValid);
-  }, [formValues, isValid, onUpdate]);
+  }, [formValues, isValid, stableOnUpdate]);
 
   useEffect(() => {
     trigger(); // Validate the form on mount to show errors if fields are empty
@@ -97,6 +99,22 @@ const DisabilityCard = ({ tenantId, onUpdate, initialRows = {}, AllowEdit = fals
   useEffect(() => {
     control.setValue("divyangpercent", rangeValue);
   }, [rangeValue, control]);
+
+  useEffect(() => {
+    if (initialRows) {
+      const processeddata = processSingleData(initialRows, headerLocale);
+      if (processeddata) {
+        setValue("divyangcardid", processeddata.divyangcardid || "");
+        setValue("disabilitytype", processeddata.disabilitytype || "");
+        setRangeValue(processeddata.divyangpercent || 0);
+
+        // Clear errors for fields that received initial values
+        if (processeddata.divyangcardid) clearErrors("divyangcardid");
+        if (processeddata.disabilitytype) clearErrors("disabilitytype");
+        if (processeddata.divyangpercent) clearErrors("divyangpercent");
+      }
+    }
+  }, [initialRows, setValue, headerLocale, clearErrors]);
 
   const handleToggle = () => {
     setIsEditable(!isEditable);
@@ -111,14 +129,7 @@ const DisabilityCard = ({ tenantId, onUpdate, initialRows = {}, AllowEdit = fals
               <div className="bmc-title">{t("DISABILITY DETAILS")}</div>
             </div>
             <div className="bmc-col-small-header" style={{ textAlign: "end" }}>
-              <ToggleSwitch
-                id={"DisabilityToggle"}
-                isOn={isEditable}
-                handleToggle={handleToggle}
-                onLabel="Yes"
-                offLabel="No"
-                disabled={!AllowEdit}
-              />
+              <ToggleSwitch id={"DisabilityToggle"} isOn={isEditable} handleToggle={handleToggle} onLabel="Yes" offLabel="No" disabled={!AllowEdit} />
             </div>
           </div>
           <div className="bmc-col3-card">

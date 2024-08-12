@@ -3,22 +3,21 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const createProxy = createProxyMiddleware({
   //target: process.env.REACT_APP_PROXY_API || "https://uat.digit.org",
   // target: process.env.REACT_APP_PROXY_API || "https://qa.digit.org",
-  target: process.env.REACT_APP_PROXY_API || "https://works-dev.digit.org",
+  target: process.env.REACT_APP_PROXY_API || "http://quickstart.dev-tattvafoundation.org",
   changeOrigin: true,
   secure:false
 });
 const assetsProxy = createProxyMiddleware({
-  target: process.env.REACT_APP_PROXY_ASSETS || "https://works-dev.digit.org",
+  target: process.env.REACT_APP_PROXY_ASSETS || "http://quickstart.dev-tattvafoundation.org",
   changeOrigin: true,
   secure:false
 });
 const mdmsProxy = createProxyMiddleware({
-  target: process.env.REACT_APP_PROXY_ASSETS || "http://localhost:8080",
+  target: process.env.REACT_APP_PROXY_ASSETS || "http://quickstart.dev-tattvafoundation.org",
   changeOrigin: true,
   secure:false
 });
 module.exports = function (app) {
-  ["/mdms-v2/v2/_create"].forEach((location) => app.use(location, mdmsProxy));
   [
     "/access/v1/actions/mdms",
     "/egov-mdms-service",
@@ -28,6 +27,7 @@ module.exports = function (app) {
     "/localization",
     "/egov-workflow-v2",
     "/pgr-services",
+    "/bmc",
     "/filestore",
     "/egov-hrms",
     "/user-otp",

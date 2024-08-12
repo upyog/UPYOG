@@ -1,11 +1,10 @@
-import { CardLabel, Dropdown, LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import Pagination from "../../components/pagination";
+import SearchApplications from "../../components/SearchApplications";
 import Title from "../../components/title";
-import dropdownOptions from "../../pagecomponents/dropdownOptions.json";
 
 const data = [
   {
@@ -51,9 +50,9 @@ const data = [
 ];
 
 const headers = ["Name", "Application Number", "Ward Name", "Gender", "Pincode"];
-
 const AadhaarVerifyPage = (_props) => {
   const { t } = useTranslation();
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   const { control } = useForm();
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -61,13 +60,18 @@ const AadhaarVerifyPage = (_props) => {
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = data.slice(indexOfFirstRow, indexOfLastRow);
-
+  
+  const handleSearchCriteria=(critieria)=>{
+    console.log(critieria)
+  }
+  
   return (
     <React.Fragment>
       <Title text={t("BMC_Aadhaar_Verify")} />
       <div className="bmc-card-full">
         <div className="bmc-row-card-header">
-          <div className="bmc-card-row">
+          <SearchApplications onUpdate={handleSearchCriteria}></SearchApplications>
+          {/* <div className="bmc-card-row">
             <div className="bmc-col3-card">
               <LabelFieldPair>
                 <CardLabel className="bmc-label">{t("BMC_Scheme_Type")}</CardLabel>
@@ -156,7 +160,7 @@ const AadhaarVerifyPage = (_props) => {
                 </button>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="bmc-row-card-header" style={{ padding: "0" }}>
           <div className="bmc-card-row">

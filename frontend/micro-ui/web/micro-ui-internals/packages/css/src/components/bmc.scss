@@ -45,6 +45,7 @@
 
 .circles.completed {
   background-color: #f47738;
+  display: flex;
 }
 
 .TLComments {
@@ -125,6 +126,10 @@
   width: 2em;
   margin-right: 0.2em;
   font-size: 1em;
+}
+
+.bmc-aadhaarText {
+  width: 60%;
 }
 
 .bmc-card-aadharimage {
@@ -502,6 +507,14 @@
     font-size: 0.8em;
   }
 
+  .bmc-aadhaarText {
+    width: 100%;
+  }
+
+  .bmc-card-aadharimage {
+    display: none;
+  }
+
   .bmc-col1-card,
   .bmc-col2-card,
   .bmc-col3-card,
@@ -608,12 +621,26 @@
   .bmc-hover-table td:last-child {
     border-bottom: 0;
   }
+
+  .bmc-criteria {
+    width: 100%;
+    justify-content: center;
+    height: auto;
+  }
 }
 
-@media only screen and (max-width: 480px) {
+@media only screen and (max-width: 480px) and (min-width: 320px) {
   .bmc-card-full {
     padding-left: 1rem;
     padding-right: 1rem;
+  }
+
+  .bmc-aadhaarText {
+    width: 100%;
+  }
+
+  .bmc-card-aadharimage {
+    display: none;
   }
 
   .aadhaar-input,
@@ -663,6 +690,11 @@
     padding: 3px 5px;
     font-size: 12px;
   }
+
+  .bmc-criteria {
+    gap: 8px;
+    padding: 8px;
+  }
 }
 
 .bmc-modal .header-content {
@@ -686,6 +718,10 @@
 
 .bmc-modal .popup-module-main {
   padding: 0;
+}
+
+.bmc-modal .popup-module-action-bar {
+  padding-bottom: 1rem;
 }
 
 .bmc-otp .text-input-width {
@@ -809,7 +845,8 @@
 
 .toggle-switch {
   position: relative;
-  width: 120px; /* Ensure this width is enough for the longest label */
+  width: 120px;
+  /* Ensure this width is enough for the longest label */
   display: inline-block;
   top: 10px;
 }
@@ -824,28 +861,35 @@
   cursor: pointer;
   border: 2px solid #ddd;
   border-radius: 10px;
-  height: 34px; /* Ensure height is sufficient for text */
+  height: 34px;
+  /* Ensure height is sufficient for text */
 }
 
 .toggle-switch-inner {
-  display: flex; /* Use flex to center content */
-  width: 200%; /* Ensure the inner width fits both labels */
+  display: flex;
+  /* Use flex to center content */
+  width: 200%;
+  /* Ensure the inner width fits both labels */
   margin-left: -100%;
   transition: margin 0.3s ease-in 0s;
 }
 
 .toggle-switch-inner:before,
 .toggle-switch-inner:after {
-  flex: 1; /* Each half takes up equal space */
+  flex: 1;
+  /* Each half takes up equal space */
   height: 100%;
-  padding: 0; /* Remove any padding */
-  line-height: 31px; /* Center text vertically */
+  padding: 0;
+  /* Remove any padding */
+  line-height: 31px;
+  /* Center text vertically */
   font-size: 12px;
   color: white;
   font-family: Trebuchet, Arial, sans-serif;
   font-weight: bold;
   box-sizing: border-box;
-  text-align: center; /* Center text horizontally */
+  text-align: center;
+  /* Center text horizontally */
 }
 
 .toggle-switch-inner:before {
@@ -862,13 +906,15 @@
 
 .toggle-switch-switch {
   display: block;
-  width: 31px; /* Match the height for a square switch */
+  width: 31px;
+  /* Match the height for a square switch */
   margin: 0;
   background: #f47738;
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 0px; /* Adjust left to start at the beginning of the switch */
+  left: 0px;
+  /* Adjust left to start at the beginning of the switch */
   border: 1px solid #ddd;
   border-radius: 10px;
   transition: all 0.3s ease-in 0s;
@@ -879,7 +925,8 @@
 }
 
 .toggle-switch-checkbox:checked + .toggle-switch-label .toggle-switch-switch {
-  left: calc(100% - 31px); /* Adjust to match the width */
+  left: calc(100% - 31px);
+  /* Adjust to match the width */
 }
 
 .toggle-switch.disabled .toggle-switch-label {
@@ -890,7 +937,8 @@
 .bmc-selected-options {
   display: flex;
   flex-direction: row;
-  gap: 8px; /* Adjust gap as needed */
+  gap: 8px;
+  /* Adjust gap as needed */
   margin-top: 10px;
 }
 
@@ -909,4 +957,19 @@
   justify-content: center;
   margin-left: 8px;
   cursor: pointer;
+}
+
+.bmc-select-scheme {
+  padding-left: 4rem;
+}
+
+.bmc-criteria {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: #f1f1f1;
+  width: fit-content;
+  padding: 12px;
+  align-items: center;
+  text-align: center;
 }
