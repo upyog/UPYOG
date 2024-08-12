@@ -334,7 +334,10 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
                 <Dropdown
                   className="form-field"
                   selected={selectedHall}
-                  select={setSelectedHall}
+                  select={(selected) => {
+                    setSelectedHall(selected);
+                    setHallCode("");  // Clear hallCode when a new hall is selected
+                  }}
                   placeholder={"Select Community Hall"}
                   option={HallName}
                   optionKey="i18nKey"
