@@ -92,7 +92,7 @@ const AddDriver = ({ parentUrl, heading }) => {
         queryClient.invalidateQueries("FSM_DRIVER_SEARCH");
         setTimeout(() => {
           closeToast();
-          history.push(`/digit-ui/employee/fsm/registry`);
+          history.push(`/digit-ui/employee/fsm/registry?selectedTabs=DRIVER`);
         }, 5000);
       },
     });

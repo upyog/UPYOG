@@ -293,18 +293,18 @@ const ApplicationDetails = (props) => {
     setShowAllTimeline((prev) => !prev);
   }
 
-  let deepCopy = _.cloneDeep(workflowDetails)
-  let index1 = 0
-  deepCopy?.data?.timeline.map((check,index) => {
-    if (check.status == "ASSING_DSO" && index1 ==0)
-    {
-        let obj= check
-        obj.status = "PENDING_PAYYY"
-        index1 +=1
-        workflowDetails.data.timeline[index].status ="ASSING_DSO_PAY"
-        workflowDetails.data.timeline.splice(index, 0, obj);
-    }
-  })
+  // let deepCopy = _.cloneDeep(workflowDetails)
+  // let index1 = 0
+  // deepCopy?.data?.timeline.map((check,index) => {
+  //   if (check.status == "ASSING_DSO" && index1 ==0)
+  //   {
+  //       let obj= check
+  //       obj.status = "PENDING_PAYYY"
+  //       index1 +=1
+  //       workflowDetails.data.timeline[index].status ="ASSING_DSO_PAY"
+  //       workflowDetails.data.timeline.splice(index, 0, obj);
+  //   }
+  // })
 
     return (
     <React.Fragment>
