@@ -1,6 +1,6 @@
 ALTER TABLE IF EXISTS eg_bmc_userqualification DROP CONSTRAINT IF EXISTS uni_user_qualification;
 ALTER TABLE IF EXISTS eg_bmc_userqualification
-    ADD CONSTRAINT uni_user_qualification UNIQUE (userid, qualificationId);
+    ADD CONSTRAINT uni_user_qualification UNIQUE (userID, qualificationID);
     
     
 ALTER TABLE IF EXISTS eg_bmc_userbank DROP CONSTRAINT IF EXISTS uni_user_bank;
