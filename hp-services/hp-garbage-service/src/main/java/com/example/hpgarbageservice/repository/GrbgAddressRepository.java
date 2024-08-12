@@ -6,12 +6,17 @@ import org.springframework.stereotype.Repository;
 
 import com.example.hpgarbageservice.model.GrbgAddress;
 import com.example.hpgarbageservice.repository.builder.GrbgAddressQueryBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Repository
 public class GrbgAddressRepository {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public void create(GrbgAddress grbgAddress) {
         jdbcTemplate.update(GrbgAddressQueryBuilder.CREATE_QUERY,
@@ -27,7 +32,8 @@ public class GrbgAddressRepository {
                 grbgAddress.getZone(),
                 grbgAddress.getUlbName(),
                 grbgAddress.getUlbType(),
-                grbgAddress.getWardName());
+                grbgAddress.getWardName(),
+                objectMapper.convertValue(grbgAddress.getAdditionalDetail(), ObjectNode.class).toString());
     }
 
     public void update(GrbgAddress grbgAddress) {
@@ -44,6 +50,7 @@ public class GrbgAddressRepository {
                 grbgAddress.getUlbType(),
                 grbgAddress.getWardName(),
                 grbgAddress.getGarbageId(),
-                grbgAddress.getUuid());
+                grbgAddress.getUuid(),
+                objectMapper.convertValue(grbgAddress.getAdditionalDetail(), ObjectNode.class).toString());
     }
 }
