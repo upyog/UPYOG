@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.client.RestTemplate;
 import org.thymeleaf.TemplateEngine;
@@ -125,11 +127,16 @@ public class PDFService {
 
 	private void addLogoContext(PDFRequest pdfRequest, Map<String, Object> pdfContextData) {
 		RequestInfo requestInfo = pdfRequest.getRequestInfo();
-		String logoBase64 = "data:image/png;base64," + getLogoFromMdms(requestInfo);
-		pdfContextData.put("logo", logoBase64);
+		List<String> logoBase64 = getLogoFromMdms(requestInfo);
+		if (!CollectionUtils.isEmpty(logoBase64) 
+				&& logoBase64.size() > 3) {
+			pdfContextData.put("logo", "data:image/png;base64," + logoBase64.get(0));
+			pdfContextData.put("logo1", "data:image/png;base64," + logoBase64.get(1));
+			pdfContextData.put("logo2", "data:image/png;base64," + logoBase64.get(2));
+		}
 	}
 
-	private String getLogoFromMdms(RequestInfo requestInfo) {
+	private List<String> getLogoFromMdms(RequestInfo requestInfo) {
 		log.info("Inside method getLogoFromMdms");
 		String apiUrl = mdmsHost + searchEndPoint;
 		HttpHeaders headers = new HttpHeaders();
@@ -140,9 +147,10 @@ public class PDFService {
 		String requestBody = "{\n" + "    \"RequestInfo\": {\n" + "        \"authToken\": \"" + authToken + "\"\n"
 				+ "    },\n" + "    \"MdmsCriteria\": {\n" + "        \"tenantId\": \"hp\",\n"
 				+ "        \"moduleDetails\": [\n" + "            {\n"
-				+ "                \"moduleName\": \"hpudd-logo\",\n" + "                \"masterDetails\": [\n"
-				+ "                    {\n" + "                        \"name\": \"logo\",\n"
-				+ "                        \"filter\": \"[?(@.code == \\\"v1-logo\\\")]\"\n" + "                    }\n"
+				+ "                \"moduleName\": \"logo-hpudd\",\n" + "                \"masterDetails\": [\n"
+				+ "                    {\n" + "                        \"name\": \"logo\"\n"
+//				+ "                        ,\"filter\": \"[?(@.code == \\\"v1-logo\\\")]\"\n" + ""
+				+ "                    }\n"
 				+ "                ]\n" + "            }\n" + "        ]\n" + "    }\n" + "}";
 
 		HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
@@ -151,7 +159,7 @@ public class PDFService {
 			ResponseEntity<String> responseEntity = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity,
 					String.class);
 			if (responseEntity.getStatusCode().is2xxSuccessful()) {
-				String responseData = extractDataFromResponse(responseEntity.getBody());
+				List<String> responseData = extractDataFromResponse(responseEntity.getBody());
 				log.info("logo fetched successfully.");
 				return responseData;
 			} else {
@@ -163,12 +171,15 @@ public class PDFService {
 		}
 	}
 
-	private String extractDataFromResponse(String jsonResponse) {
+	private List<String> extractDataFromResponse(String jsonResponse) {
 		log.info("Inside method extractDataFromResponse");
+		List<String> logoList = new ArrayList<>();
 		try {
 			JsonNode jsonNode = objectMapper.readTree(jsonResponse);
-			JsonNode dataNode = jsonNode.path("MdmsRes").path("hpudd-logo").path("logo").get(0).path("data");
-			return dataNode.asText();
+			logoList.add(jsonNode.path("MdmsRes").path("logo-hpudd").path("logo").get(0).path("data").asText());
+			logoList.add(jsonNode.path("MdmsRes").path("logo-hpudd").path("logo").get(1).path("data").asText());
+			logoList.add(jsonNode.path("MdmsRes").path("logo-hpudd").path("logo").get(0).path("data").asText());
+			return logoList;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

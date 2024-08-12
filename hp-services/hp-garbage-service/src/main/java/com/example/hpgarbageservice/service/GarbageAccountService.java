@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -671,7 +674,7 @@ public class GarbageAccountService {
 	public GarbageAccountResponse searchGarbageAccounts(SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
 		
 		//validate search criteria
-		validateAndSearchSearchGarbageAccount(searchCriteriaGarbageAccountRequest);
+		validateAndEnrichSearchGarbageAccount(searchCriteriaGarbageAccountRequest);
 		
 		//search garbage account
 		List<GarbageAccount> grbgAccs = garbageAccountRepository.searchGarbageAccount(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount());
@@ -713,7 +716,7 @@ public class GarbageAccountService {
 //		grbgAccTemp.setChildGarbageAccounts(subAccs);
 //	}
 
-	private void validateAndSearchSearchGarbageAccount(SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
+	private void validateAndEnrichSearchGarbageAccount(SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
 		RequestInfo requestInfo = searchCriteriaGarbageAccountRequest.getRequestInfo();
 		
 		if(null != searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount()) {
@@ -727,14 +730,20 @@ public class GarbageAccountService {
 			        null == searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getIsOwner()) {
 	
 					if(null != requestInfo && null != requestInfo.getUserInfo()
-							&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), "CITIZEN")) {
+							&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), ApplicationPropertiesAndConstant.USER_ROLE_CITIZEN)) {
 						searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setCreatedBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()));
+					}else if(null != requestInfo && null != requestInfo.getUserInfo()
+							&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), ApplicationPropertiesAndConstant.USER_ROLE_EMPLOYEE)) {
+						
+						List<String> listOfStatus = getAccountStatusListByRoles(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getTenantId(), requestInfo.getUserInfo().getRoles());
+						
+						searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setStatus(listOfStatus);
 					}else {
 						throw new RuntimeException("Provide the parameters to search garbage accounts.");
 					}
 			}
 		}else if(null != requestInfo && null != requestInfo.getUserInfo()
-				&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), "CITIZEN")) {
+				&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), ApplicationPropertiesAndConstant.USER_ROLE_CITIZEN)) {
 			searchCriteriaGarbageAccountRequest.setSearchCriteriaGarbageAccount(
 					SearchCriteriaGarbageAccount.builder().createdBy(Collections.singletonList(
 									requestInfo.getUserInfo().getUuid())).build());
@@ -742,7 +751,32 @@ public class GarbageAccountService {
 		
 	}
 	
+	private List<String> getAccountStatusListByRoles(String tenantId, List<Role> roles) {
+	
+	List<String> rolesWithinTenant = getRolesByTenantId(tenantId, roles);	
+	Set<String> statusWithRoles = new HashSet();
+	
+	rolesWithinTenant.stream().forEach(role -> {
+		
+		if(StringUtils.equalsIgnoreCase(role, ApplicationPropertiesAndConstant.USER_ROLE_GB_VERIFIER)) {
+			statusWithRoles.add(ApplicationPropertiesAndConstant.STATUS_PENDINGFORVERIFICATION);
+		}else if(StringUtils.equalsIgnoreCase(role, ApplicationPropertiesAndConstant.USER_ROLE_GB_APPROVER)) {
+			statusWithRoles.add(ApplicationPropertiesAndConstant.STATUS_PENDINGFORAPPROVAL);
+		}
+		
+	});
+	
+	return new ArrayList<>(statusWithRoles);
+}
 
+
+	private List<String> getRolesByTenantId(String tenantId, List<Role> roles) {
+
+		List<String> roleCodes = roles.stream()
+				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(role -> role.getCode())
+				.collect(Collectors.toList());
+		return roleCodes;
+	}
 
 	public void processResponse(GarbageAccountResponse response) {
 		

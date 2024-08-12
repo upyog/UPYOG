@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- <th:link href='https://fonts.googleapis.com/css?family=Karla' rel='stylesheet'> -->
+
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"
+	charset="UTF-8">
+</meta>
+<title>Document</title>
+<style>
+     
+.title {
+	text-align: center;
+	text-decoration: underline;
+	margin-bottom: 30px;
+}
+
+.sign {
+	text-align: center;
+	margin-top: 60px;
+}
+
+.sign .inside {
+	position: relative;
+	margin-left: 450px;
+}
+
+.copy {
+	margin-bottom: 20px;
+}
+
+.content {
+	margin-bottom: 20px;
+}
+
+body {
+	box-sizing: border-box;
+	/* font-family: Karla; */
+	font-family: Inter;
+	font-size: small;
+}
+
+ol {
+	list-style-type: decimal;
+	padding-left: 20px;
+}
+
+p {
+	margin: 0;
+}
+
+.to {
+	margin-top: 30px;
+}
+
+.content2 {
+	margin-bottom: 20px;
+}
+
+.footer {
+	border-top: 2px solid green;
+	padding-top: 15px;
+	position: fixed;
+	top: 900px;
+	horizontal-align: middle;
+	
+}
+
+.img_parent .child1, .img_parent .child2 {
+	height: 150px;
+	  width: 170px;
+	  margin-bottom: 10px;
+}
+
+.img_parent .child1 {
+	 height: 150px;
+	width: 180px; 
+}
+
+.img_parent .child2 {
+	margin-top: -100px;
+	margin-left: 540px;
+	height: 110px;
+	width: 140px;
+}
+
+.child1, .child2 {
+	padding-top: -100px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+
+
+.child2 {
+	margin-top: -30px;
+	margin-left: 500px;
+}
+</style>
+</head>
+
+<body>
+	
+<!--	<table style="width: 100%;">-->
+<!--		<tr>-->
+<!--			<td>-->
+				<div class="img_parent" style="width: 30%;">
+			
+					 <!--  <img class="child1" height="80px" width= "150px" src="https://imgtr.ee/images/2024/01/26/f5fa602ef8771936445d455446355a43.png" alt="f5fa602ef8771936445d455446355a43.png" border="0" /> -->
+					<img class="child1"  height="40px" width= "40px" th:src="${logo}" src="/qr.png"  alt="logo+qr.png" />
+					<p>logo</p>
+					<img class="child1"  height="40px" width= "40px" th:src="${logo}" src="/logo.png"  alt="logo+logo.png" />
+					<p>logo1</p>
+					<img class="child1"  height="40px" width= "40px" th:src="${logo1}" src="/logo.png"  alt="logo1+logo.png" />
+					<p>logo2</p>
+					<img class="child1"  height="40px" width= "40px" th:src="${logo2}" src="/logo.png"  alt="logo2+logo.png" />
+					 <img class="child2" th:src="${qrCode}" src="/qr.png" alt="" />
+			
+				</div>
+<!--			</td>-->
+<!--			<td>-->
+				<div>
+					<p>
+						<span th:text="${ulbname}">NA</span>
+					</p>
+					<br></br>
+					<p>
+						TRADE LICENSE
+					</p>
+					<br></br>
+					<p>
+						(UNDER SECTION XXX OF XXXX ACT, YYYY)
+						<br></br>
+						Issued to <span th:text="${nameoflicensee}">NA</span>
+					</p>
+				</div>
+<!--			</td>-->
+<!--			<td>-->
+				<div class="img_parent">
+			
+					 <!--  <img class="child1" height="80px" width= "150px" src="https://imgtr.ee/images/2024/01/26/f5fa602ef8771936445d455446355a43.png" alt="f5fa602ef8771936445d455446355a43.png" border="0" /> -->
+					<img class="child1"  height="40px" width= "40px" th:src="${logo}" src="/qr.png"  alt="logo+qr.png" />
+					 <img class="child2" th:src="${qrCode}" src="/qr.png" alt="qrCode+qr.png" />
+			
+				</div>
+<!--			</td>-->
+<!--		</tr>-->
+<!--	</table>-->
+
+
+<!--	<hr style="border-top: 1px solid black;"></hr>-->
+
+
+	<div class="row">
+		<table border="1" cellpadding="5" cellspacing="0">
+			<tr>
+				<td>Trade License No:</td>
+				<td><span th:text="${tradeLicenseNo}">NA</span></td>
+			</tr>
+			<tr>
+				<td>Trade Registration No:</td>
+				<td><span th:text="${tradeRegistrationNo}">NA</span></td>
+			</tr>
+			<tr>
+				<td>Trade Name:</td>
+				<td><span th:text="${tradeName}">NA</span></td>
+			</tr>
+			<tr>
+				<td>Trade Premises Address:</td>
+				<td><span th:text="${tradePremisesAddress}">NA</span></td>
+			</tr>
+			<tr>
+				<td>License Issue Date:</td>
+				<td><span th:text="${licenseIssueDate}">NA</span></td>
+			</tr>
+			<tr>
+				<td>License Validity:</td>
+				<td><span th:text="${licenseValidity}">NA</span></td>
+			</tr>
+			<tr>
+				<td>License Category:</td>
+				<td><span th:text="${licenseCategory}">NA</span></td>
+			</tr>
+			<tr>
+				<td>License Applicant Name:</td>
+				<td><span th:text="${licenseApplicantName}">NA</span></td>
+			</tr>
+			<tr>
+				<td>Applicant Contact No:</td>
+				<td><span th:text="${applicantContactNo}">NA</span></td>
+			</tr>
+			<tr>
+				<td>Applicant Address:</td>
+				<td><span th:text="${applicantAddress}">NA</span></td>
+			</tr>
+		</table>
+		
+		
+	</div>
+
+
+	<h2>Term and Conditions of this License:</h2>
+
+	<p>
+	    I. This is a category [] license and is valid for the trade/business of: [],[],[].
+	</p>
+	<p>
+	    II. The licensee shall apply for renewal of license at least two months prior to the date of expiry of license period to the licensing officer.
+	</p>
+	<p>
+	    III. The licensee shall maintain proper record of the articles kept for sale or storage in the premises as may be required by the licensing officer. Further the licensee shall comply with the directions and instructions issued to him by the commissioner or the licensing officer from time to time.
+	</p>
+	<p>
+	    IV. The licensee will ensure timely payment of corporation dues.
+	</p>
+	<p>
+	    V. The permission shall, unless specified otherwise in the license, be valid in the entire ULB limits, subject to such conditions as may be imposed but the Commissioner/ Executive Officer/ Secretary.
+	</p>
+	<p>
+	    VI. The owner/occupier of the premises shall have to produce the license before the inspector or the licensing officer at any point of time as may ordered by them.
+	</p>
+	<p>
+	    VII. The Commissioner/ Executive Officer/ Secretary shall have a right to impose or alter any of conditions in the license as may be deemed fit by the Commissioner under the provisions of section XXX of the XXXX Act, XXXX.
+	</p>
+	<p>
+	    VIII. The license shall be responsible to obtain the NOC form the concerned department required as per category of license.
+	</p>
+	<p>
+	    IX. The license shall be responsible to register premises with ULB for door-to-door garbage collection.
+	</p>
+	<p>
+	    X. The license shall be responsible to install fire distinguishers in the premises as per the requirement and consultation with fire department.
+	</p>
+	<p>
+	    XI. The license shall not encroach upon Municipal Corporation /Government of H.P. drain /road/path/land.
+	</p>
+	<p>
+	    XII. XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+	</p>
+
+
+
+	<div class="img_parent">
+		 <!--  <img class="child1" height="80px" width= "150px" src="https://imgtr.ee/images/2024/01/26/f5fa602ef8771936445d455446355a43.png" alt="f5fa602ef8771936445d455446355a43.png" border="0" /> -->
+		<img class="child1"  height="80px" width= "150px" th:src="${logo}" src="/qr.png"  alt="logo+qr.png" />
+		 <img class="child2" th:src="${qrCode}" src="/qr.png" alt="" />
+	</div>
+
+
+	<!-- Industrial Planning & Development Committee (37-B) -->
+	<div class="sign">
+		<div class="inside">
+			<p class="first">
+				(<span th:text="${approverName}">approverName</span>)
+			</p>
+			<p class="second">Member Secretary/</p>
+			<p class="third">Dy. Town Planner IPDC</p>
+			<p class="fourth">Goa-IDC</p>
+		</div>
+	</div>
+
+
+</body>
+
+</html>
