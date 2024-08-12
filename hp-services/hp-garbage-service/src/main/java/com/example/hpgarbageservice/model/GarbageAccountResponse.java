@@ -2,9 +2,10 @@ package com.example.hpgarbageservice.model;
 
 import java.util.List;
 
+import org.egov.common.contract.response.ResponseInfo;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +19,8 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GarbageAccountResponse {
 
+	private ResponseInfo responseInfo;
+	
 	private List<GarbageAccount> garbageAccounts;
 	
     @JsonProperty("applicationInitiated")

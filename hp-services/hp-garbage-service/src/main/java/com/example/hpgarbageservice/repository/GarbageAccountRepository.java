@@ -201,6 +201,7 @@ public class GarbageAccountRepository {
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getType())
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getName())
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getMobileNumber())
+        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getApplicationNumber())
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy())) {
         	throw new RuntimeException("Provide criteria to search garbage account.");
         }
@@ -251,11 +252,11 @@ public class GarbageAccountRepository {
                     preparedStatementValues)).append(" )");
         }
 
-//        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getParentId())) {
-//            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
-//            searchQuery.append(" acc.parent_id IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getParentId(),
-//                    preparedStatementValues)).append(" )");
-//        }
+        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getApplicationNumber())) {
+            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
+            searchQuery.append(" app.application_no IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getApplicationNumber(),
+                    preparedStatementValues)).append(" )");
+        }
         
         if (null != searchCriteriaGarbageAccount.getIsOwner()) {
         	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);

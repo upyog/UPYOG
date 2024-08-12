@@ -244,6 +244,10 @@ public class TLConstants {
     public static final String APPLICATION_TYPE_RENEWAL = "RENEWAL";
 
     public static final String APPLICATION_TYPE_NEW = "NEW";
+
+    public static final String APPLICATION_TYPE_MODIFICATION = "MODIFICATION";
+
+    public static final String APPLICATION_TYPE_CLOSURE = "CLOSURE";
     
     // error constants
 
@@ -286,6 +290,8 @@ public class TLConstants {
     public static final String ACTION_RETURN_TO_INITIATOR  = "RETURN_TO_INITIATOR";
 
     public static final String ACTION_RETURN_TO_VERIFIER  = "RETURN_TO_VERIFIER";
+
+    public static final String ACTION_CLOSE  = "CLOSE";
 
 
     public static final String STATUS_INITIATED = "INITIATED";

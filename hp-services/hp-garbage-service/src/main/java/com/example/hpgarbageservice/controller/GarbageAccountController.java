@@ -25,13 +25,13 @@ public class GarbageAccountController {
 
     @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/_create")
-    public ResponseEntity<List<GarbageAccount>> create(@RequestBody GarbageAccountRequest createGarbageRequest) {
+    public ResponseEntity<GarbageAccountResponse> create(@RequestBody GarbageAccountRequest createGarbageRequest) {
         return ResponseEntity.ok(service.create(createGarbageRequest));
     }
 
     @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/_update")
-    public ResponseEntity<List<GarbageAccount>> update(@RequestBody GarbageAccountRequest createGarbageRequest) {
+    public ResponseEntity<GarbageAccountResponse> update(@RequestBody GarbageAccountRequest createGarbageRequest) {
         return ResponseEntity.ok(service.update(createGarbageRequest));
     }
 
