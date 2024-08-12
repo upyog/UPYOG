@@ -34,8 +34,8 @@ public class Qualification {
     @Column(name = "percentage")
     private BigDecimal percentage;
 
-    @Column(name = "bord")
-    private String bord;
+    @Column(name = "board")
+    private String board;
 
     @Column(name = "createdOn")
     private Long createdOn;

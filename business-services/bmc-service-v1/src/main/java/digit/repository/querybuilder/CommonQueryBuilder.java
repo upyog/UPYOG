@@ -11,7 +11,7 @@ public class CommonQueryBuilder {
     // for Caste
     private static final String BASE_QUERY = """
             SELECT  \
-            id , name \
+            id , UPPER(name) as name \
             FROM \
             """;
 
@@ -29,6 +29,12 @@ public class CommonQueryBuilder {
                 break;
             case "qualification":
                 query.append("eg_bmc_qualificationmaster as tbl");
+                break;
+            case "divyang":
+                query.append("eg_bmc_divyang as tbl");
+                break;
+            case "document":
+                query.append("eg_bmc_document as tbl");
                 break;
             default:
                 query.append("(Select 0 as id, 'No Record found'  as name) as tbl ");

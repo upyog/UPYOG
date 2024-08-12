@@ -17,7 +17,7 @@ public class UserOtherDetailsService {
         UserOtherDetails userOtherDetails = new UserOtherDetails();
          userOtherDetails.setUserId(schemeApplicationRequest.getUserId());
          userOtherDetails.setTenantId(schemeApplicationRequest.getTenantId());
-         userOtherDetails.setReligionId(schemeApplicationRequest.getReligionId()); 
+//       userOtherDetails.setReligion(schemeApplicationRequest.getReligion()); 
          userOtherDetails.setDivyangCardId(schemeApplicationRequest.getDivyangCardId());
          userOtherDetails.setDivyangPercent(schemeApplicationRequest.getDivyangPercent());
          userOtherDetails.setTransgenderId(schemeApplicationRequest.getTransgenderId());

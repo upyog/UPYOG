@@ -1,11 +1,11 @@
 package digit.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
@@ -13,13 +13,25 @@ import org.egov.common.contract.user.CreateUserRequest;
 import org.egov.common.contract.user.UserDetailResponse;
 import org.egov.common.contract.user.UserSearchRequest;
 import org.egov.tracer.model.CustomException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
+import org.springframework.util.ObjectUtils;
+import digit.bmc.model.AadharUser;
+import digit.bmc.model.UserOtherDetails;
 import digit.config.BmcConfiguration;
+import digit.kafka.Producer;
+import digit.repository.BmcUserRepository;
+import digit.repository.UserRepository;
+import digit.repository.UserSearchCriteria;
 import digit.util.UserUtil;
+import digit.web.models.BankDetails;
+import digit.web.models.BmcUser;
 import digit.web.models.SchemeApplication;
 import digit.web.models.SchemeApplicationRequest;
+import digit.web.models.user.InputTest;
+import digit.web.models.user.QualificationSave;
+import digit.web.models.user.UserDetails;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,6 +41,15 @@ public class UserService {
 
 	private UserUtil userUtils;
 	private BmcConfiguration config;
+
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private Producer producer;
+
+	@Autowired
+	BmcUserRepository bmcUserRepository;
 
 	@Inject
 	public UserService(UserUtil userUtils, BmcConfiguration config) {
@@ -43,13 +64,11 @@ public class UserService {
 	 */
 	public void callUserService(SchemeApplicationRequest request) {
 
-		
-		  request.getSchemeApplications().forEach(application -> { 
-			  if (application != null && application.getUser() != null && application.getUser().getId() != null) {
-		            enrichUser(application, request.getRequestInfo());
-		        }
-		    });
-		 
+		request.getSchemeApplications().forEach(application -> {
+			if (application != null && application.getUser() != null && application.getUser().getId() != null) {
+				enrichUser(application, request.getRequestInfo());
+			}
+		});
 
 	}
 
@@ -182,4 +201,106 @@ public class UserService {
 
 		return users.stream().collect(Collectors.toMap(User::getId, Function.identity()));
 	}
+
+	public List<UserDetails> getUserDetails(RequestInfo requestInfo, UserSearchCriteria searchcriteria) {
+		// Fetch applications from database according to the given search criteria
+		List<UserDetails> common = userRepository.getUserDetails(searchcriteria);
+		// If no applications are found matching the given criteria, return an empty
+		// list
+		if (CollectionUtils.isEmpty(common))
+			return new ArrayList<>();
+		return common;
+	}
+
+	public Object saveUserDetails(InputTest userRequest) throws Exception {
+
+		Long userId = userRequest.getRequestInfo().getUserInfo().getId();
+		String tenantId = userRequest.getRequestInfo().getUserInfo().getTenantId();
+		Long time = System.currentTimeMillis();
+
+		userRequest.setAadharUser(new AadharUser());
+		userRequest.getAadharUser().setUserId(userId);
+		userRequest.getAadharUser().setTenantId(tenantId);
+		userRequest.getAadharUser().setAadharDob(userRequest.getPersonalDetails().getAadharDob());
+		userRequest.getAadharUser().setAadharName(userRequest.getPersonalDetails().getTitle().getName() + ". " + userRequest.getPersonalDetails().getAadharName());
+		userRequest.getAadharUser().setAadharFatherName(userRequest.getPersonalDetails().getAadharFatherName());
+		userRequest.getAadharUser().setGender(userRequest.getPersonalDetails().getGender().getName());
+		userRequest.getAadharUser().setAadharMobile(userRequest.getRequestInfo().getUserInfo().getMobileNumber());
+		userRequest.getAadharUser().setCreatedBy("system");
+		userRequest.getAadharUser().setCreatedOn(time);
+		userRequest.getAadharUser().setAadharRef(userRequest.getPersonalDetails().getAadharRef());
+
+		userRequest.setUserOtherDetails(new UserOtherDetails());
+		userRequest.getUserOtherDetails().setCaste(userRequest.getPersonalDetails().getCaste());
+		userRequest.getUserOtherDetails().setReligion(userRequest.getPersonalDetails().getReligion());
+		userRequest.getUserOtherDetails().setTransgenderId(userRequest.getPersonalDetails().getTransgenderId());
+		userRequest.getUserOtherDetails().setUserId(userId);
+		userRequest.getUserOtherDetails().setTenantId(tenantId);
+		userRequest.getUserOtherDetails().setCreatedBy("system");
+		userRequest.getUserOtherDetails().setCreatedOn(time);
+		userRequest.getUserOtherDetails().setDivyang(userRequest.getDivyangDetails().getDivyangtype());
+		userRequest.getUserOtherDetails().setModifiedBy("system");
+		userRequest.getUserOtherDetails().setModifiedOn(time);
+		userRequest.getUserOtherDetails().setDivyangCardId(userRequest.getDivyangDetails().getDivyangcardid());
+		userRequest.getUserOtherDetails().setDivyangPercent(userRequest.getDivyangDetails().getDivyangpercent());
+		userRequest.getUserOtherDetails().setZone(userRequest.getUserAddressDetails().getZoneName());
+		userRequest.getUserOtherDetails().setBlock(userRequest.getUserAddressDetails().getBlockName());
+		userRequest.getUserOtherDetails().setWard(userRequest.getUserAddressDetails().getWardName().getCode());
+
+        Long addressId = null;
+		UserSearchCriteria userSearchCriteria = new UserSearchCriteria();
+		userSearchCriteria.setOption("address");
+		userSearchCriteria.setTenantId(tenantId);
+		userSearchCriteria.setUserId(userId);
+		List<UserDetails> userDetails = userRepository.getUserDetails(userSearchCriteria);
+		if(!userDetails.isEmpty()){
+           addressId = userDetails.get(0).getAddress().getId();
+		}
+		if(addressId != null && addressId != 0){
+			userRequest.getUserAddressDetails().setId(addressId);
+ 			producer.push("update-useraddress", userRequest);
+		} else {
+			addressId = userRepository.getUserAddressMaxId() + 1;
+			userRequest.getUserAddressDetails().setId(addressId);
+			userRequest.getUserAddressDetails().setUserId(userId);
+			userRequest.getUserAddressDetails().setTenantId(tenantId);
+			producer.push("insert-useraddress", userRequest);
+		}
+
+		for (BankDetails details : userRequest.getBankDetailsList()) {
+			details.setUserId(userId);
+			details.setTenantId(tenantId);
+			details.setCreatedBy("system");
+			details.setModifiedBy("system");
+			details.setModifiedOn(time);
+			userRequest.setBankDetails(details);
+			producer.push("upsert-userbank", userRequest);
+		}
+		if (!ObjectUtils.isEmpty(userRequest.getQualificationDetailsList())) {
+			for (QualificationSave details : userRequest.getQualificationDetailsList()) {
+
+				details.setUserId(userId);
+
+				details.setCreatedBy("system");
+				details.setCreatedOn(time);
+				details.setModifiedBy("system");
+				details.setModifiedOn(time);
+				userRequest.setQualificationDetails(details);
+				producer.push("upsert-userqualification", userRequest);
+			}
+		}
+		producer.push("upsert-aadharuser", userRequest);
+		producer.push("upsert-userotherdetails", userRequest);
+
+		// for temporary purpose
+		BmcUser bmcUser = new BmcUser();
+		bmcUser.setId(userId);
+		bmcUser.setTenantId(tenantId);
+		bmcUser.setUsername(userRequest.getRequestInfo().getUserInfo().getUserName());
+		log.info("Saving BMC User with ID: {}", userId);
+	    bmcUserRepository.save(bmcUser);
+
+		return userRequest;
+	}
+
 }

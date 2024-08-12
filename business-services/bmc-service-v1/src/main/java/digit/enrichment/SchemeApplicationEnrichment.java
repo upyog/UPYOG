@@ -9,12 +9,14 @@ import org.egov.common.contract.user.UserDetailResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import digit.bmc.model.UserSchemeApplication;
 import digit.config.BmcConfiguration;
 import digit.service.UserService;
 import digit.util.IdgenUtil;
 import digit.util.UserUtil;
 import digit.web.models.SchemeApplication;
 import digit.web.models.SchemeApplicationRequest;
+import digit.web.models.UserSchemeApplicationRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -38,14 +40,14 @@ public class SchemeApplicationEnrichment {
      *
      * @param schemeApplicationRequest The request to be enriched.
      */
-    public void enrichSchemeApplication(SchemeApplicationRequest schemeApplicationRequest) {
+    public void enrichSchemeApplication(UserSchemeApplicationRequest schemeApplicationRequest) {
 
-        List<String> schemeApplicationIdList = idgenUtil.getIdList(schemeApplicationRequest.getRequestInfo(), schemeApplicationRequest.getSchemeApplications().get(0).getTenantId(),configuration.getBmcIdGenName(),configuration.getBmcIdGenFormat(), schemeApplicationRequest.getSchemeApplications().size());
-        SchemeApplication application = schemeApplicationRequest.getSchemeApplications().get(0);
+        List<String> schemeApplicationIdList = idgenUtil.getIdList(schemeApplicationRequest.getRequestInfo(), schemeApplicationRequest.getRequestInfo().getUserInfo().getTenantId(),configuration.getBmcIdGenName(),configuration.getBmcIdGenFormat(), schemeApplicationRequest.getSchemeApplicationList().size());
+        schemeApplicationRequest.getSchemeApplicationList().get(0).setApplicationNumber(schemeApplicationIdList.get(0));;
 
             // Enrich audit details
             AuditDetails auditDetails = AuditDetails.builder().createdBy(schemeApplicationRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(schemeApplicationRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
-            application.setAuditDetails(auditDetails);
+            schemeApplicationRequest.getSchemeApplicationList().get(0).setAuditDetails(auditDetails);
 
             // Enrich UserOtherDetails
          //   UserOtherDetails userOtherDetails = userOtherDetailsService.getbyUserOtherDetailsByApplication(schemeApplicationRequest);
@@ -88,13 +90,13 @@ public class SchemeApplicationEnrichment {
         User user = userResponse.getUser().get(0);
         log.info(user.toString());
         User enrichedUser = User.builder()
-                .mobileNumber(user.getMobileNumber())
-                .id(user.getId())
-                .name(user.getName())
-                .userName((user.getUserName()))
-                .type(user.getType())
-                .roles(user.getRoles())
-                .uuid(user.getUuid()).build();
+            .mobileNumber(user.getMobileNumber())
+            .id(user.getId())
+            .name(user.getName())
+            .userName((user.getUserName()))
+            .type(user.getType())
+            .roles(user.getRoles())
+            .uuid(user.getUuid()).build();
         application.setUser(enrichedUser);
     }
 }

@@ -22,6 +22,7 @@ public class SchemeBeneficiarySearchCritaria {
 
     
     private Long userId;
+    private String tenantId; 
     private Boolean submitted;
     private String optedId;
     private String name;

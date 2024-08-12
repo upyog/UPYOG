@@ -13,38 +13,38 @@ public class SchemeCourse {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "schemeid")
-    private Integer schemeId;
+    private Long schemeId;
 
     @Column(name = "courseid")
-    private Integer courseId;
+    private Long courseId;
 
     @Column(name = "grantamount")
     private Double grantAmount;
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public Integer getSchemeId() {
+	public Long getSchemeId() {
 		return schemeId;
 	}
 
-	public void setSchemeId(Integer schemeId) {
+	public void setSchemeId(Long schemeId) {
 		this.schemeId = schemeId;
 	}
 
-	public Integer getCourseId() {
+	public Long getCourseId() {
 		return courseId;
 	}
 
-	public void setCourseId(Integer courseId) {
+	public void setCourseId(Long courseId) {
 		this.courseId = courseId;
 	}
 

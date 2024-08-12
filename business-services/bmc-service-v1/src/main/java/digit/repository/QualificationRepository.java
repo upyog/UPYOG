@@ -19,7 +19,7 @@ public class QualificationRepository {
             qualificationDetails.getQualification(),
             qualificationDetails.getPassingYear(),
             qualificationDetails.getPercentage(),
-            qualificationDetails.getBord(),
+            qualificationDetails.getBoard(),
             qualificationDetails.getCreatedOn(),
             qualificationDetails.getModifiedOn(),
             qualificationDetails.getCreatedBy(),

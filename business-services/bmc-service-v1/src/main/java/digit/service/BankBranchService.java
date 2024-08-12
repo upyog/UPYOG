@@ -46,4 +46,8 @@ public class BankBranchService {
     //   return  bankBranchRepository.getBankBranchByBranchCode(schemeApplicationRequest.getBranchcode());
     // }
 
+    public BankBranch saveBankBranch(BankBranch branch){
+       return bankBranchRepository.save(branch) ;
+    }
+
 }

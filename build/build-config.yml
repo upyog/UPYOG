@@ -26,13 +26,13 @@ config:
       - work-dir: "business-services/billing-service/src/main/resources/db"
         image-name: "billing-service-db"
 
-  - name: "builds/upyog/business-services/bmc"
+  - name: "builds/upyog/business-services/bmc-service-v1"
     build:
-      - work-dir: "business-services/bmc"
-        image-name: "bmc"
+      - work-dir: "business-services/bmc-service-v1"
+        image-name: "bmc-service-v1"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "business-services/bmc/src/main/resources/db"
-        image-name: "bmc-service-db"      
+      - work-dir: "business-services/bmc-service-v1/src/main/resources/db"
+        image-name: "bmc-service-v1-db"      
 
   - name: "builds/upyog/business-services/collection-services"
     build:

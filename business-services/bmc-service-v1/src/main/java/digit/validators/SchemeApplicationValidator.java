@@ -1,44 +1,64 @@
 package digit.validators;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import digit.bmc.model.SchemeCriteria;
+import digit.bmc.model.UserCompleteDetails;
+import digit.bmc.model.VerificationDetails;
+import digit.common.CriteriaType;
 import digit.repository.SchemeApplicationRepository;
 import digit.repository.SchemeBeneficiarySearchCritaria;
+import digit.repository.UserRepository;
+import digit.repository.UserSearchCriteria;
 import digit.web.models.EligibilityResponse;
 import digit.web.models.SchemeApplication;
 import digit.web.models.SchemeApplicationRequest;
 import digit.web.models.SchemeApplicationSearchCriteria;
 import digit.web.models.SchemeBeneficiaryDetails;
+import digit.web.models.SchemeValidationResponse;
+import digit.web.models.user.DocumentDetails;
+import digit.web.models.user.QualificationDetails;
+import digit.web.models.user.UserDetails;
+
+
 
 @Service
 public class SchemeApplicationValidator {
 
     private final SchemeApplicationRepository repository;
+
+    private final SchemeBeneficiarySearchCritaria schemeBeneficiarySearchCritaria;
     
-    private  final SchemeBeneficiarySearchCritaria schemeBeneficiarySearchCritaria;
-    
-     EligibilityResponse eligibilityResponse = new EligibilityResponse();
+    @Autowired
+    UserRepository userRepository;
+
+    EligibilityResponse eligibilityResponse = new EligibilityResponse();
 
     /**
-     * Constructor for SchemeApplicationValidator with repository injection.machineTaken
+     * Constructor for SchemeApplicationValidator with repository
+     * injection.machineTaken
      *
      * @param repository The repository to be injected.
      */
- 
-    @Autowired(required=true)
-    public SchemeApplicationValidator(SchemeApplicationRepository repository, SchemeBeneficiarySearchCritaria schemeBeneficiarySearchCritaria) {
+
+    @Autowired(required = true)
+    public SchemeApplicationValidator(SchemeApplicationRepository repository,
+            SchemeBeneficiarySearchCritaria schemeBeneficiarySearchCritaria) {
         this.repository = repository;
         this.schemeBeneficiarySearchCritaria = schemeBeneficiarySearchCritaria;
     }
-
 
     /**
      * Validates the SchemeApplicationRequest.
@@ -64,157 +84,187 @@ public class SchemeApplicationValidator {
         List<SchemeApplication> existingApplications = repository.getApplications(
                 SchemeApplicationSearchCriteria.builder()
                         .applicationNumber(schemeApplication.getApplicationNumber())
-                        .build()
-        );
+                        .build());
 
         if (existingApplications.isEmpty()) {
-            throw new CustomException("BMC_APP_NOT_FOUND", "No scheme application found with the given application number");
+            throw new CustomException("BMC_APP_NOT_FOUND",
+                    "No scheme application found with the given application number");
         }
 
         return existingApplications.get(0);
     }
 
-  /*     public void validateWomenEmpowermentScheme(SchemeApplication application) {
-        if (!isGenderEligible(application, List.of("Female", "Transgender"))) {
-            throw new CustomException("BMC_APP_ERR", "Gender must be Female or Transgender");
-        }
-        if (!hasValidRationCard(application, List.of("Yellow", "Orange"))) {
-            throw new CustomException("BMC_APP_ERR", "Valid ration card with Yellow or Orange category required");
-        }
-
-       
+    public SchemeValidationResponse criteriaCheck(SchemeApplicationRequest request) {
+        SchemeValidationResponse response = new SchemeValidationResponse();
         
+        UserSearchCriteria userSearchCriteria = new UserSearchCriteria();
+        userSearchCriteria.setOption("full");
+        userSearchCriteria.setTenantId(request.getRequestInfo().getUserInfo().getTenantId());
+        userSearchCriteria.setUserId(request.getRequestInfo().getUserInfo().getId());
+        List<UserDetails> userDetails = userRepository.getUserDetails(userSearchCriteria);
+        request.setAadhardob(userDetails.get(0).getAadharUser().getAadharDob());
+        request.setGender(userDetails.get(0).getAadharUser().getGender());
+        request.setDivyangPercent(userDetails.get(0).getDivyang().getDivyangpercent());
+        List<String> documentNames = userDetails.get(0).getDocumentDetails().stream()
+                .map(DocumentDetails::getDocumentName)
+                .collect(Collectors.toList());
+        Long maxQualificationId = userDetails.get(0).getQualificationDetails().stream()
+                .map(QualificationDetails::getQualificationId)
+                .max(Comparator.naturalOrder())
+                .orElse(null);
+
+        boolean age = true, disability = true, gender = false, income = true, education = true, document = true;
+        Long schemeId = request.getSchemeId().longValue();
+        List<SchemeCriteria> criteriaList = repository.getCriteriaBySchemeIdAndType(schemeId);
+
+        for (SchemeCriteria criteria : criteriaList) {
+            CriteriaType criteriaType = CriteriaType.fromDisplayName(criteria.getCriteriaType());
+            String condition = criteria.getCriteriaCondition();
+            String value = criteria.getCriteriaValue();
+
+            switch (criteriaType) {
+                case GENDER:
+                    if (request.getGender() != null && !gender) {
+                        gender = evaluateCondition(request.getGender().toLowerCase(), condition, value.toLowerCase());
+                    }
+                    response.setGenderEligibility(gender);
+                    break;
+
+                case DISABILITY:
+                    if (disability) {
+                        disability = evaluateCondition(request.getDivyangPercent(), condition,
+                                Double.parseDouble(value));
+                    }
+                    response.setDisability(disability);
+                    break;
+
+                case AGE:
+                    if (age) {
+                        int dobAge = calculateAge(request.getAadhardob());
+                        age = evaluateCondition(dobAge, condition, Integer.parseInt(value));
+                    }
+                    response.setAgeEligibility(age);
+                    break;
+
+                case INCOME:
+                    if (income) {
+                        income = evaluateCondition(request.getIncome(), condition, Double.parseDouble(value));
+                    }
+                    response.setIncomeEligibility(income);
+                    break;
+
+                case EDUCATION:
+                    if (education) {
+                        education = evaluateCondition(maxQualificationId, condition,
+                                Boolean.parseBoolean(value));
+                    }
+                    response.setEducationEligibility(education);
+                    break;
+                case DOCUMENT :
+                    if(document) {
+                        document = false;
+                        for (String documentName : documentNames ) {
+                            document = evaluateCondition(documentName,condition,value); 
+                            if(document)
+                               break;
+                        }
+                        
+                    }
+                    response.setRationCardEligibility(document);
+                    break;
+  
+                default:
+                    throw new IllegalArgumentException("Invalid criteria: " + criteriaType);
+            }
+
+        }
+        response.setSchemeType(repository.getSchemeById(schemeId));
+        StringBuilder message = new StringBuilder();
+        if(!age){
+            message.append("Age is not eligible for this scheme ");
+            message.append("\n");
+        }
+        if(!disability){
+            message.append("Disability is not eligible for this scheme ");
+            message.append("\n");
+        }
+        if(!income){
+            message.append("income is not eligible for this scheme ");
+            message.append("\n");
+        }
+        if(!education){
+            message.append("Education is not eligible for this scheme ");
+            message.append("\n");
+        }
+        if(!document){
+            message.append("Document is not eligible for this scheme ");
+            message.append("\n");
+        }
+        response.setError(message);
+        return response;
     }
 
-    public void validateDivyangSelfEmploymentScheme(SchemeApplication application) {
-        if (!isGenderEligible(application, List.of("Male", "Female", "Transgender"))) {
-            throw new CustomException("BMC_APP_ERR", "Gender must be Male, Female, or Transgender");
-        }
+    public boolean evaluateCondition(Object obj1, String condition, Object obj2) {
 
-       
-        if (!hasValidUDID(application, 70)) {
-            throw new CustomException("BMC_APP_ERR", "UDID number must have more than 70% disability");
-        }
-
-        if (!hasMinimumEducation(application)) {
-            throw new CustomException("BMC_APP_ERR", "Minimum 10th pass certificate required from SSC, CBSC, ICSC boards");
-        }
-
-      if (hasTakenBenefitInLastFiveYears(application)) {
-            throw new CustomException("BMC_APP_ERR", "Already taken benefit in the last five years");
-        }  
-
-        
+        Comparable c1 = (Comparable) obj1;
+        Comparable c2 = (Comparable) obj2;
+        if (c1 != null) {
+            switch (condition) {
+                case "=":
+                    return c1.compareTo(c2) == 0;
+                case ">=":
+                    return c1.compareTo(c2) >= 0;
+                case "<=":
+                    return c1.compareTo(c2) <= 0;
+                case ">":
+                    return c1.compareTo(c2) > 0;
+                case "<":
+                    return c1.compareTo(c2) < 0;
+                case "!=":
+                    return c1.compareTo(c2) != 0;
+                default:
+                    throw new IllegalArgumentException("Invalid condition: " + condition);
+            }
+        } else
+            return false;
     }
 
-    public void validateDivyangPensionScheme(SchemeApplication application) {
-        if (!isGenderEligible(application, List.of("Male", "Female", "Transgender"))) {
-            throw new CustomException("BMC_APP_ERR", "Gender must be Male, Female, or Transgender");
+    public static int calculateAge(Date dob) {
+        try {
+            LocalDate birthDate = dob.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate currentDate = LocalDate.now();
+            return Period.between(birthDate, currentDate).getYears();
+        } catch (Exception e) {
+            return -1;
         }
-
-    
-
-        // int disabilityPercentage = application.getDisabilityPercentage(); // To be fetched from UDID portal based on UDID number
-        // if (disabilityPercentage < 40) {
-        //     throw new CustomException("BMC_APP_ERR", "Disability percentage must be more than 40%");
-        // }
-
-        // if (disabilityPercentage >= 40 && disabilityPercentage <= 80 ) {
-        //     PensionAmount = 12000;
-        // }
-
-        // if (disabilityPercentage > 80 ) {
-        //     pensionAmount = 36000;
-        // }
-
-        
     }
 
-    public void validateWomenSkillDevelopmentScheme(SchemeApplication application) {
-       
-
-        if (!hasValidRationCard(application, List.of("Yellow", "Orange"))) {
-            throw new CustomException("BMC_APP_ERR", "Valid ration card with Yellow or Orange category required");
-        }
-
-        if (!hasMinimumEducation(application)) {
-            throw new CustomException("BMC_APP_ERR", "Minimum 10th pass certificate required from SSC, CBSC, ICSC boards");
-        }
-
-        
-    }
-
-    public void validateDivyangSkillDevelopmentScheme(SchemeApplication application) {
-        if (!isAddressFromBMCArea(application)) {
-            throw new CustomException("BMC_APP_ERR", "Address must be from BMC area");
-        }
-
-        if (!hasValidUDID(application, 70)) {
-            throw new CustomException("BMC_APP_ERR", "UDID number must have more than 70% disability");
-        }
-
-        if (!hasMinimumEducation(application)) {
-            throw new CustomException("BMC_APP_ERR", "Minimum 10th pass certificate required from SSC, CBSC, ICSC boards");
-        }
-
-        
-    }
-
-    public void validateTransgenderSkillDevelopmentScheme(SchemeApplication application) {
-        if (!isAddressFromBMCArea(application)) {
-            throw new CustomException("BMC_APP_ERR", "Address must be from BMC area");
-        }
-
-        // if (application.getTransgenderRegistrationNumber() == null) {
-        //     throw new CustomException("BMC_APP_ERR", "Transgender registration number is required");
-        // }
-
-        if (!hasMinimumEducation(application)) {
-            throw new CustomException("BMC_APP_ERR", "Minimum 10th pass certificate required from SSC, CBSC, ICSC boards");
-        }
-
-        
-    }  
-
-    
-
-    private boolean isGenderEligible(User user, List<String> validGenders) {
-        return validGenders.contains(user.getGender());
-    }
-
-    
-    private boolean hasValidRationCard(UserOtherDetails uod, List<String> validCategories) {
-        return validCategories.contains(uod.getRationCardCategory());
-    }
-
-    private boolean hasValidUDID(UserOtherDetails uod, int requiredDisabilityPercentage) {
-        return uod.getUdidNumber() != null && uod.getDivyangPercent() > requiredDisabilityPercentage;
-    }
-
-    private boolean hasMinimumEducation(UserOtherDetails uod) {
-        String education = uod.getEducationLevel();
-        return "SSC".equalsIgnoreCase(education) || "CBSC".equalsIgnoreCase(education) || "ICSC".equalsIgnoreCase(education);
-    } */
-    
-
-    public EligibilityResponse getBeneficiaryInfo(User user) {
-        schemeBeneficiarySearchCritaria.setUserId(user.getId());
+    public EligibilityResponse getBeneficiaryInfo(UserCompleteDetails user) {
+        schemeBeneficiarySearchCritaria.setUserId(user.getRequestInfo().getUserInfo().getId());
+        schemeBeneficiarySearchCritaria.setTenantId(user.getRequestInfo().getUserInfo().getTenantId());
         schemeBeneficiarySearchCritaria.setSubmitted(true);
+        schemeBeneficiarySearchCritaria.setForMachine(true);
+        schemeBeneficiarySearchCritaria.setForCourse(true);
+        schemeBeneficiarySearchCritaria.setForPension(true);
         schemeBeneficiarySearchCritaria.setName("pension");
-        
-        eligibilityResponse.setMachineTaken(hasTakenMachineInLastFiveYears(schemeBeneficiarySearchCritaria));
-        eligibilityResponse.setCourseTaken(hasTakenCourse(schemeBeneficiarySearchCritaria)); 
-        eligibilityResponse.setPensionApplied(hasAppliedPension(schemeBeneficiarySearchCritaria)) ;
-        
-       
-        
-        return eligibilityResponse; 
+
+        List<SchemeBeneficiaryDetails> schemeBeneficiaryDetails = repository
+                .initialEligibilityCheck(schemeBeneficiarySearchCritaria);
+
+        eligibilityResponse.setMachineTaken(hasTakenMachineInLastFiveYears(schemeBeneficiaryDetails));
+        eligibilityResponse.setCourseTaken(hasTakenCourse(schemeBeneficiaryDetails));
+
+        eligibilityResponse.setPensionApplied(hasAppliedPension(schemeBeneficiaryDetails));
+
+        return eligibilityResponse;
 
     }
 
-    public boolean hasTakenMachineInLastFiveYears(SchemeBeneficiarySearchCritaria critaria) {
-        critaria.setForMachine(true);
-        List<SchemeBeneficiaryDetails> schemeBeneficiaryDetails = repository.initialEligibilityCheck(schemeBeneficiarySearchCritaria);
+    public boolean hasTakenMachineInLastFiveYears(List<SchemeBeneficiaryDetails> schemeBeneficiaryDetails) {
+
+        if (schemeBeneficiaryDetails == null || schemeBeneficiaryDetails.isEmpty()) {
+            return false;
+        }
         Instant lastBenefitInstant = schemeBeneficiaryDetails.get(0).getStartDate();
         if (lastBenefitInstant == null) {
             return false;
@@ -224,12 +274,13 @@ public class SchemeApplicationValidator {
         long diffInMillis = currentDate.getTime() - lastBenefitDate.getTime();
         long diffInYears = diffInMillis / (1000L * 60 * 60 * 24 * 365);
         return diffInYears < 5;
-    } 
+    }
 
-   
-    public boolean hasTakenCourse(SchemeBeneficiarySearchCritaria critaria) {
-        critaria.setForCourse(true);
-        List<SchemeBeneficiaryDetails> schemeBeneficiaryDetails = repository.initialEligibilityCheck(schemeBeneficiarySearchCritaria);
+    public boolean hasTakenCourse(List<SchemeBeneficiaryDetails> schemeBeneficiaryDetails) {
+
+        if (schemeBeneficiaryDetails == null || schemeBeneficiaryDetails.isEmpty()) {
+            return false;
+        }
         Instant startDate = schemeBeneficiaryDetails.get(0).getStartDate();
         Instant endDate = schemeBeneficiaryDetails.get(0).getEndDate();
         if (startDate == null) {
@@ -239,28 +290,35 @@ public class SchemeApplicationValidator {
         Date currentDate = new Date();
         long diffInMillis = currentDate.getTime() - lastBenefitDate.getTime();
         long diffInYears = diffInMillis / (1000L * 60 * 60 * 24 * 365);
-        return diffInYears <=1;
-    } 
-
-    public EligibilityResponse isAddressFromBMCArea(SchemeApplication application) {
-        eligibilityResponse.setAddressValidated("BMC".equalsIgnoreCase(application.getAddress().getCity()));
+        return diffInYears <= 1;
+    }
+    // sundeep: need to check later
+    public EligibilityResponse isAddressFromBMCArea(UserCompleteDetails user) {
+        eligibilityResponse.setAddressValidated("Mumbai".equalsIgnoreCase(user.getAddress().getCity()));
         return eligibilityResponse;
     }
 
-    public boolean hasAppliedPension(SchemeBeneficiarySearchCritaria critaria) {
+    public boolean hasAppliedPension(List<SchemeBeneficiaryDetails> schemeBeneficiaryDetails) {
 
-        critaria.setForPension(true);
-        List<SchemeBeneficiaryDetails> schemeBeneficiaryDetails = repository.initialEligibilityCheck(schemeBeneficiarySearchCritaria);
-        if(schemeBeneficiaryDetails.get(0).getHas_applied_for_pension() >0){
+        if (schemeBeneficiaryDetails == null || schemeBeneficiaryDetails.isEmpty()) {
+            return false;
+        }
+        if (schemeBeneficiaryDetails.get(0).getHas_applied_for_pension() > 0) {
             return true;
         }
 
-       return false;
+        return false;
     }
 
-    public SchemeBeneficiarySearchCritaria getSchemeBeneficiarySearchCritaria() {
-        return schemeBeneficiarySearchCritaria;
+    private boolean hasValidUDID(SchemeApplicationRequest request) {
+        return request.getUdid() != null;// && request.getDivyangPercent() >= requiredDisabilityPercentage;
+    }
+
+    private boolean hasMinimumEducation(SchemeApplicationRequest request) {
+        String education = request.getEducationLevel();
+        List<String> qualification = repository.getQualifications();
+
+        return qualification.contains(education);
     }
 
 }
-

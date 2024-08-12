@@ -10,7 +10,9 @@ import org.springframework.util.CollectionUtils;
 
 import digit.repository.CommonRepository;
 import digit.repository.CommonSearchCriteria;
+import digit.web.models.BankDetails;
 import digit.web.models.common.CommonDetails;
+import digit.web.models.scheme.UserBankDetails;
 
 @Service
 public class CommonService {
@@ -24,5 +26,15 @@ public class CommonService {
             return new ArrayList<>();
         return common;
     }
+  /*   public List<UserBankDetails> getBankInfos(RequestInfo requestInfo){
+
+        List<UserBankDetails> banks = commonRepository.getBankDetails(requestInfo.getUserInfo().getId(),requestInfo.getUserInfo().getTenantId());
+
+        return banks;
+
+    } */
+    // public List<BankDetails> getAllBankDetails() {
+    //     return commonRepository.getBankDetails();
+    // }
 
 }

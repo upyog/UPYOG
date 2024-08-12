@@ -1,5 +1,7 @@
 package digit.web.models;
 
+import org.egov.common.contract.response.ResponseInfo;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -15,8 +17,11 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class EligibilityResponse {
 
+public class EligibilityResponse {
+    
+    @JsonProperty("ResponseInfo")
+    private ResponseInfo responseInfo;
 
     @JsonProperty
     private Boolean machineTaken;

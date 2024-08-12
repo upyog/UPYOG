@@ -13,6 +13,7 @@ public class DivyangService {
     private DivyangRepository divyangRepository;
 
     public Divyang getBDivyangByApplication(SchemeApplicationRequest  request) {
+        
         Divyang divyang = new  Divyang();
 
         divyang.setId(request.getId());

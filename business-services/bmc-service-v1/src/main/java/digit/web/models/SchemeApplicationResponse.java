@@ -27,6 +27,8 @@ public class SchemeApplicationResponse {
    @JsonProperty("SchemeApplications")
    private List<SchemeApplication> schemeApplications;
 
+   private UserSchemeApplication userSchemeApplication;
+
    private List<UserSchemeApplication> randomizedCitizens;
 
 

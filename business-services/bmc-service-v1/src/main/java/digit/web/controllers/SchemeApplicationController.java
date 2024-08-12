@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import digit.web.models.SchemeApplication;
 import digit.web.models.SchemeApplicationRequest;
 import digit.web.models.SchemeApplicationResponse;
 import digit.web.models.SchemeApplicationSearchRequest;
+import digit.web.models.UserSchemeApplicationRequest;
 import io.swagger.annotations.ApiParam;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -82,39 +84,56 @@ public class SchemeApplicationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
     @PostMapping(value = "/v1/_rendomize")
     public ResponseEntity<SchemeApplicationResponse> schemeApplicationRandomizePost(
-        @ApiParam(value = "Details for Randomize citizen for Scheme Application(s) + RequestInfo meta data.", required = true)
-        @Valid @RequestBody SchemeApplicationRequest schemeApplicationRequest) {
+            @ApiParam(value = "Details for Randomize citizen for Scheme Application(s) + RequestInfo meta data.", required = true) @Valid @RequestBody SchemeApplicationRequest schemeApplicationRequest) {
 
-        List<UserSchemeApplication> randomizedCitizens = schemeApplicationService.rendomizeCitizens(schemeApplicationRequest);
+        List<UserSchemeApplication> randomizedCitizens = schemeApplicationService
+                .rendomizeCitizens(schemeApplicationRequest);
         List<SchemeApplication> schemeApplications = randomizedCitizens.stream()
-            .map(this::convertToSchemeApplication)
-            .collect(Collectors.toList());
+                .map(this::convertToSchemeApplication)
+                .collect(Collectors.toList());
 
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(schemeApplicationRequest.getRequestInfo(), true);
+        ResponseInfo responseInfo = responseInfoFactory
+                .createResponseInfoFromRequestInfo(schemeApplicationRequest.getRequestInfo(), true);
         SchemeApplicationResponse response = SchemeApplicationResponse.builder()
-            .schemeApplications(schemeApplications)
-            .randomizedCitizens(randomizedCitizens) 
-            .responseInfo(responseInfo)
-            .build();
+                .schemeApplications(schemeApplications)
+                .randomizedCitizens(randomizedCitizens)
+                .responseInfo(responseInfo)
+                .build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
 
     private SchemeApplication convertToSchemeApplication(UserSchemeApplication userSchemeApplication) {
         SchemeApplication schemeApplication = new SchemeApplication();
         return schemeApplication;
     }
-    
-    
+
     @PostMapping(value = "/v1/_bmc")
-    public ResponseEntity<SchemeApplicationResponse> SchemeApplicationPresnalDetails(@ApiParam(value = "Details for the new Scheme Application(s) + RequestInfo meta data.", required = true) @Valid @RequestBody SchemeApplicationRequest schemeApplicationRequest) {
+    public ResponseEntity<SchemeApplicationResponse> SchemeApplicationPresnalDetails(
+            @ApiParam(value = "Details for the new Scheme Application(s) + RequestInfo meta data.", required = true) @Valid @RequestBody SchemeApplicationRequest schemeApplicationRequest) {
         List<SchemeApplication> applications = schemeApplicationService.savePersnaldetails(schemeApplicationRequest);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(schemeApplicationRequest.getRequestInfo(), true);
-        SchemeApplicationResponse response = SchemeApplicationResponse.builder().schemeApplications(applications).responseInfo(responseInfo).build();
+        ResponseInfo responseInfo = responseInfoFactory
+                .createResponseInfoFromRequestInfo(schemeApplicationRequest.getRequestInfo(), true);
+        SchemeApplicationResponse response = SchemeApplicationResponse.builder().schemeApplications(applications)
+                .responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
+    @PostMapping("/_saveApplication")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<SchemeApplicationResponse> saveSchemeApplication(
+        @ApiParam(value = "Details for the new Scheme Application(s) + RequestInfo meta data.", required = true) @Valid @RequestBody UserSchemeApplicationRequest schemeApplicationRequest) throws Exception  {
+    
+        UserSchemeApplication applications = schemeApplicationService.saveApplicationDetails(schemeApplicationRequest);
+
+        ResponseInfo responseInfo = responseInfoFactory
+        .createResponseInfoFromRequestInfo(schemeApplicationRequest.getRequestInfo(), true);
+         SchemeApplicationResponse response = SchemeApplicationResponse.builder().userSchemeApplication(applications)
+        .responseInfo(responseInfo).build();
+         return new ResponseEntity<>(response, HttpStatus.OK);
+
+        }
 }

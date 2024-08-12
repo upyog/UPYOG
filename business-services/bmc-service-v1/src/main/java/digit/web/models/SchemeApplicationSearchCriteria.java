@@ -2,6 +2,8 @@ package digit.web.models;
 
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -20,6 +22,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Component
 public class SchemeApplicationSearchCriteria {
     @JsonProperty("tenantId")
     private String tenantId; 
@@ -46,5 +49,12 @@ public class SchemeApplicationSearchCriteria {
 
     @JsonProperty("endDate")
     private Long endDate; 
+    
+    @JsonProperty("schemeId")
+    private Long schemeId;
+    @JsonProperty("machineId")
+    private Long machineId;
+    @JsonProperty("courseId")
+    private Long courseId;
     
 }

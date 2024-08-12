@@ -57,4 +57,11 @@ public class UserSchemeApplication {
     @Column(name = "modifiedby")
     private String modifiedBy;
 
+    @Column(name = "agreetopay")
+    private Boolean agreeToPay;
+
+    @Column(name = "statement")
+    private Boolean statement;
+
+
 }

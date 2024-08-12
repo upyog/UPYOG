@@ -2,15 +2,17 @@ package digit.web.models;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 import org.egov.common.contract.models.Address;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import digit.web.models.user.UserRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,6 +46,10 @@ public class SchemeApplicationRequest {
     return this;
   }
 
+  public SchemeApplicationRequest() {
+    //TODO Auto-generated constructor stub
+  }
+
   private String aadharRef;
 
   private Long id;
@@ -54,7 +60,12 @@ public class SchemeApplicationRequest {
 
   private String aadharname;
 
+  @JsonProperty("aadhardob")
   private Date aadhardob;
+
+  private Double income;
+
+  private String gender;
 
   private String aadharmobile;
 
@@ -214,5 +225,11 @@ public class SchemeApplicationRequest {
   private Long version;
 
   private Long chequeFormatId;
+
+
+  @JsonProperty("RegisteredDetails")
+  private UserRequest userRequest;
+
+  
 
 }

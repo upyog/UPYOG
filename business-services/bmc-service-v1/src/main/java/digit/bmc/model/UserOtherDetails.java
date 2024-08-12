@@ -1,5 +1,6 @@
 package digit.bmc.model;
 
+import digit.web.models.Religion;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,9 +10,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 @Data
 @Entity
+@Builder
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "eg_bmc_userotherdetails")
 public class UserOtherDetails {
 
@@ -30,8 +41,12 @@ public class UserOtherDetails {
     @JoinColumn(name = "casteid", referencedColumnName = "id")
     private Caste caste;
 
-    @Column(name = "religionid")
-    private Integer religionId;
+    // @Column(name = "religionid")
+    // private Integer religionId;
+   
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "religionid", referencedColumnName = "id")
+    private Religion religion;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "divyangid", referencedColumnName = "id")
@@ -66,5 +81,12 @@ public class UserOtherDetails {
 
     @Column(name = "udid")
     private String udid;
+
+
+    private String zone;
+
+    private String ward;
+
+    private String block;
 
 }

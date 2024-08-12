@@ -21,9 +21,9 @@ public class SchemeDetailQueryBuilder {
             sch.name as SchemeName, \
             sch.description as SchemeDescription, \
             cri.id as criteriaID, \
-            cri.criteriatype, \
+            crty.criteriatype, \
             cri.criteriavalue, \
-            cri.criteriacondition, \
+            crco.criteriacondition, \
             schgrp.name as schemeHead, \
             schgrp.description as schemeheadDesc \
             """;
@@ -61,6 +61,8 @@ public class SchemeDetailQueryBuilder {
             left join eg_bmc_courses cr on cr.id = schcr.courseid \
             left join eg_bmc_schememachine schmac on schmac.schemeid = sch.id \
             left join eg_bmc_machines mac on mac.id = schmac.machineid \
+            left join eg_bmc_criteriacondition crco on crco.id = cri.criteriacondition \
+	        left join eg_bmc_criteriatype crty on crty.id = cri.criteriatype \
             """;
     private static final String ORDERBY_MODIFIEDTIME = " ORDER BY sch.id, cri.criteriatype DESC ";
 
@@ -69,6 +71,11 @@ public class SchemeDetailQueryBuilder {
         query.append(COURSE_QUERY);
         query.append(MAC_QUERY);
         query.append(FROM_TABLES);
+        
+        Integer sla = criteria.getSla();
+        if (sla == null) {
+            sla = 0;  // Set default value if SLA is not provided
+        }
 
         // Add where clause for Status if it is not empty
         if (!ObjectUtils.isEmpty(criteria.getStatus())) {
@@ -86,9 +93,10 @@ public class SchemeDetailQueryBuilder {
                 case PRESENT:
                     addClauseIfRequired(query, preparedStmtList);
                     query.append(
-                            " to_timestamp(ev.startdt)::date <= Cast(? as date) and to_timestamp(coalesce(ev.enddt,4102444799))::date >= Cast(? as date) ");
-                            preparedStmtList.add(LocalDate.now());
-                            preparedStmtList.add(LocalDate.now());
+                        " to_timestamp(ev.startdt)::date <= Cast(? as date) and (to_timestamp(coalesce(ev.enddt, 4102444799)) + (? || ' days')::interval)::date >= Cast(? as date) ");
+                    preparedStmtList.add(LocalDate.now());
+                    preparedStmtList.add(sla);
+                    preparedStmtList.add(LocalDate.now());
                     break;
                 default:
                     if (!ObjectUtils.isEmpty(criteria.getStartDate())) {

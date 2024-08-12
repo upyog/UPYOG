@@ -33,7 +33,7 @@ public class QualificationService {
 
         qualification.setId(qualifications.getId());
         qualification.setQualification(qualifications.getQualification());
-        qualification.setBord(qualifications.getBord());
+        qualification.setBoard(qualifications.getBoard());
         qualification.setPassingYear(qualifications.getPassingYear());
         qualification.setPercentage(qualifications.getPercentage());
         logger.info("Saving UserSchemeApplication: {}", qualification);

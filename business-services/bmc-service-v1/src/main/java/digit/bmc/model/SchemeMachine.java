@@ -13,38 +13,38 @@ public class SchemeMachine {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "machineid")
-    private Integer machineId;
+    private Long machineId;
 
     @Column(name = "schemeid")
-    private Integer schemeId;
+    private Long schemeId;
 
     @Column(name = "grantamount")
     private Double grantAmount;
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public Integer getMachineId() {
+	public Long getMachineId() {
 		return machineId;
 	}
 
-	public void setMachineId(Integer machineId) {
+	public void setMachineId(Long machineId) {
 		this.machineId = machineId;
 	}
 
-	public Integer getSchemeId() {
+	public Long getSchemeId() {
 		return schemeId;
 	}
 
-	public void setSchemeId(Integer schemeId) {
+	public void setSchemeId(Long schemeId) {
 		this.schemeId = schemeId;
 	}
 

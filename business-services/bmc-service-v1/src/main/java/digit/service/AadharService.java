@@ -20,17 +20,17 @@ public class AadharService {
     public AadharUser getAadharUserByApplication(SchemeApplicationRequest schemeApplicationRequest) {
        
         AadharUser aadharUser = new AadharUser();
-         aadharUser.setAadharRef(schemeApplicationRequest.getAadharRef()); 
-         aadharUser.setUuid(schemeApplicationRequest.getUdid()); 
-         aadharUser.setAadhar_fatherName(schemeApplicationRequest.getAadharfatherName()); 
-         aadharUser.setAadhar_name(schemeApplicationRequest.getAadharname()); 
-         aadharUser.setAadhar_dob(schemeApplicationRequest.getAadhardob()); 
-         aadharUser.setAadhar_mobile(schemeApplicationRequest.getAadharmobile()); 
-         aadharUser.setCreatedOn(schemeApplicationRequest.getCreatedOn());; 
-         aadharUser.setModifiedOn(schemeApplicationRequest.getModifiedOn()); 
-         aadharUser.setCreatedBy(schemeApplicationRequest.getCreatedBy()); 
-         aadharUser.setModifiedBy(schemeApplicationRequest.getModifiedby()); 
-        return addAadharRepository.save(aadharUser);
+ /*        aadharUser.setAadharRef(schemeApplicationRequest.getAadharRef()); 
+//       aadharUser.setUuid(schemeApplicationRequest.getUdid()); 
+         aadharUser.setAadharFatherName(schemeApplicationRequest.getAadharfatherName()); 
+         aadharUser.setAadharName(schemeApplicationRequest.getAadharname()); 
+         aadharUser.setAadharDob(schemeApplicationRequest.getAadhardob()); 
+         aadharUser.setAadharMobile(schemeApplicationRequest.getAadharmobile()); 
+        //  aadharUser.setCreatedOn(schemeApplicationRequest.getCreatedOn());; 
+        //  aadharUser.setModifiedOn(schemeApplicationRequest.getModifiedOn()); 
+        //  aadharUser.setCreatedBy(schemeApplicationRequest.getCreatedBy()); 
+        //  aadharUser.setModifiedBy(schemeApplicationRequest.getModifiedby()); 
+    */   return addAadharRepository.save(aadharUser);
     }
 
 

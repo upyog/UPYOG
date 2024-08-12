@@ -11,11 +11,11 @@ import jakarta.persistence.Table;
 import lombok.Data;
 @Entity
 @Data
-@Table(name="bankbranch")
+@Table(name="eg_bmc_bankbranch")
 public class BankBranch {
 	
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "branchcode")
@@ -41,6 +41,8 @@ public class BankBranch {
 
     @Column(name = "branchphone")
     private String branchphone;
+    @Column(name = "ifsc")
+	private String ifsc;
 
     @Column(name = "branchfax")
     private String branchfax;
