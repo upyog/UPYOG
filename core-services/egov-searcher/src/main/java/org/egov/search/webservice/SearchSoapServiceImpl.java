@@ -49,7 +49,7 @@ public class SearchSoapServiceImpl implements SearchSoapService {
 		SoapRespnse response = new SoapRespnse();
 		Object searchResult = searchService.searchData(searchRequest, moduleName, searchName);
 		if (null != searchResult) {
-	if (searchResult instanceof HashMap) 
+			if (searchResult instanceof HashMap) 
 			{
 			    HashMap<String, Object> resultMap = (HashMap<String, Object>) searchResult;
 			    
@@ -66,19 +66,16 @@ public class SearchSoapServiceImpl implements SearchSoapService {
 			    }
 			}
 			try {
-				results = convertJsonToXml(results);
-				//StringBuilder res =new StringBuilder().append("<![CDATA[").append(results).append("]]>");
-				//results = res.toString();
-				results=generateDynamicSoapResponse(results);
+				results = convertJsonToXml((String)searchResult);
+				StringBuilder res =new StringBuilder().append("<![CDATA[").append(results).append("]]>");
+				results = res.toString();
+				//results=generateDynamicSoapResponse(results);
 				response.setResponse(results);
 				log.info(response.getResponse());
-			} catch (IOException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (SOAPException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			} 
 			return response;
 		} else {
 			throw new CustomException("SEARCH_ERROR", "Error occurred while searching : ");
@@ -122,10 +119,10 @@ public class SearchSoapServiceImpl implements SearchSoapService {
         try {
 			soapMessage.writeTo(baos);
 		} catch (SOAPException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
         return baos.toString();
