@@ -253,6 +253,8 @@ public class UserService {
 		userSearchCriteria.setTenantId(tenantId);
 		userSearchCriteria.setUserId(userId);
 		List<UserDetails> userDetails = userRepository.getUserDetails(userSearchCriteria);
+		userRequest.getUserAddressDetails().setUserId(userId);
+		userRequest.getUserAddressDetails().setTenantId(tenantId);
 		if(!userDetails.isEmpty()){
            addressId = userDetails.get(0).getAddress().getId();
 		}
@@ -262,8 +264,7 @@ public class UserService {
 		} else {
 			addressId = userRepository.getUserAddressMaxId() + 1;
 			userRequest.getUserAddressDetails().setId(addressId);
-			userRequest.getUserAddressDetails().setUserId(userId);
-			userRequest.getUserAddressDetails().setTenantId(tenantId);
+
 			producer.push("insert-useraddress", userRequest);
 		}
 

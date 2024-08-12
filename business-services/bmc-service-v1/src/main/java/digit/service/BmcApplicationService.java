@@ -192,7 +192,7 @@ public class BmcApplicationService {
         request.setIncome(Double.parseDouble(
                 schemeApplicationRequest.getSchemeApplication().getUpdateSchemeData().getIncome().getValue()));
         request.setSchemeId(schemeApplicationRequest.getSchemeApplication().getSchemes().getId().intValue());
-        // SchemeValidationResponse response = validator.criteriaCheck(request);
+     //   SchemeValidationResponse response = validator.criteriaCheck(request);
 
         // if(!ObjectUtils.isEmpty(response.getError()) || response.getError() != null){
         // throw new CustomException("Not eligible for this Scheme",
@@ -237,7 +237,7 @@ public class BmcApplicationService {
             schemeApplicationRequest.setUserSchemeApplication(userSchemeApplication);
             producer.push("save-user-scheme-application", schemeApplicationRequest);
         }
-        // workflowService.updateWorkflowStatus(schemeApplicationRequest);
+  //       workflowService.updateWorkflowStatus(schemeApplicationRequest);
 
         for (DocumentDetails details : schemeApplicationRequest.getSchemeApplication().getUpdateSchemeData()
                 .getDocuments()) {

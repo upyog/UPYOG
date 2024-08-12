@@ -25,6 +25,7 @@ import digit.web.models.ProcessInstanceRequest;
 import digit.web.models.ProcessInstanceResponse;
 import digit.web.models.SchemeApplication;
 import digit.web.models.SchemeApplicationRequest;
+import digit.web.models.UserSchemeApplicationRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -40,8 +41,9 @@ public class WorkflowService {
     @Autowired
     private BmcConfiguration config;
 
-    public void updateWorkflowStatus(SchemeApplicationRequest schemeApplicationRequest) {
-        schemeApplicationRequest.getSchemeApplications().forEach(application -> {
+
+    public void updateWorkflowStatus(UserSchemeApplicationRequest schemeApplicationRequest) {
+        schemeApplicationRequest.getSchemeApplicationList().forEach(application -> {
             ProcessInstance processInstance = getProcessInstanceForSchemeApplication(application, schemeApplicationRequest.getRequestInfo());
             ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(schemeApplicationRequest.getRequestInfo(), Collections.singletonList(processInstance));
             callWorkFlow(workflowRequest);
@@ -63,26 +65,22 @@ public class WorkflowService {
         Workflow workflow = application.getWorkflow();
 
         ProcessInstance processInstance = new ProcessInstance();
-        processInstance.setBusinessId(application.getApplicationNumber());
-        processInstance.setAction(workflow.getAction());
-        processInstance.setModuleName("bmc-schemes");
-        processInstance.setTenantId(application.getTenantId());
-        processInstance.setBusinessService("BMC");
-        processInstance.setDocuments(workflow.getDocuments());
-        processInstance.setComment(workflow.getComments());
-
-        if(!CollectionUtils.isEmpty(workflow.getAssignes())){
-            List<User> users = new ArrayList<>();
-
-            workflow.getAssignes().forEach(uuid -> {
-                User user = new User();
-                user.setUuid(uuid);
-                users.add(user);
-            });
-
-            processInstance.setAssignes(null);
-        }
-
+         processInstance.setBusinessId(application.getApplicationNumber());
+         processInstance.setAction(workflow.getAction());
+         processInstance.setModuleName("BMC");
+         processInstance.setTenantId("mh");
+         processInstance.setBusinessService("bmc-schemes");
+         processInstance.setDocuments(workflow.getDocuments());
+         processInstance.setComment(workflow.getComments());
+         if(!CollectionUtils.isEmpty(workflow.getAssignes())){
+             List<User> users = new ArrayList<>();
+             workflow.getAssignes().forEach(uuid -> {
+                 User user = new User();
+                 user.setUuid(uuid);
+                 users.add(user);
+             });
+             processInstance.setAssignes(null);
+         }  
         return processInstance;
     }
 
