@@ -1,0 +1,1 @@
+{"type":"object","$schema":"http://json-schema.org/draft-07/schema#","required":["module","code","enabled","fetchConsumerUrl","fecthBillUrl"],"x-unique":["code"],"properties":{"code":{"type":"string"},"module":{"type":"string"},"enabled":{"type":"boolean","default":true},"fecthBillUrl":{"type":"string"},"fetchConsumerUrl":{"type":"string"}},"additionalProperties":false}
