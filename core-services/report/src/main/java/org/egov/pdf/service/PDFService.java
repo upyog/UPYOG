@@ -1,5 +1,8 @@
 package org.egov.pdf.service;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
@@ -7,12 +10,15 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+
+import javax.imageio.ImageIO;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.pdf.model.HtmlContentResponse;
@@ -46,6 +52,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 
 import lombok.extern.slf4j.Slf4j;
+import net.glxn.qrgen.javase.QRCode;
 
 @Slf4j
 @Service
@@ -241,9 +248,9 @@ public class PDFService {
 				value = parseDate(Long.valueOf(value.toString()));
 			}
 
-//			if ("QRCODE".equals(valueType)) {
-//				value = generateQRCodeImage(value.toString());
-//			}
+			if ("QRCODE".equals(valueType)) {
+				value = generateQRCodeImage(value.toString());
+			}
 			pdfContextData.put(variable, value);
 		}
 	}
@@ -299,22 +306,65 @@ public class PDFService {
 		}
 	}
 
-//	public String generateQRCodeImage(String barcodeText) {
-//		try {
-//			ByteArrayOutputStream stream = QRCode.from(barcodeText).withSize(250, 250).stream();
-//			ByteArrayInputStream bis = new ByteArrayInputStream(stream.toByteArray());
-//
-//			final ByteArrayOutputStream os = new ByteArrayOutputStream();
-//			StringBuffer qr = new StringBuffer("data:image/png;base64,");
-//
-//			ImageIO.write(ImageIO.read(bis), "png", os);
-//			qr.append(Base64.getEncoder().encodeToString(os.toByteArray()));
-//			return qr.toString();
-//		} catch (final IOException ioe) {
-//			throw new CustomException("error while genrating qrcode", ioe.getMessage());
-//		}
-//
-//	}
+	public String generateQRCodeImage(String barcodeText) {
+		try {
+			
+			ByteArrayOutputStream stream = null;
+			
+		    // Adjust size dynamically based on the length of the barcodeText
+		    int size = 250 + (barcodeText.length() * 10); // base = 250
+		    
+		    if(size > ReportUtils.PDF_BARCODE_MAX_SIZE) {
+		    	barcodeText = "MAX size for barcode breached.";
+		    	// generate barcode with red color as warning
+		    	stream = generateRedQRCode(barcodeText, 9000, 9000);
+		    }else {
+		    	stream = QRCode.from(barcodeText).withSize(size, size).stream();
+		    }
+		    
+			
+			ByteArrayInputStream bis = new ByteArrayInputStream(stream.toByteArray());
+
+			final ByteArrayOutputStream os = new ByteArrayOutputStream();
+			StringBuffer qr = new StringBuffer("data:image/png;base64,");
+
+			ImageIO.write(ImageIO.read(bis), "png", os);
+			qr.append(Base64.getEncoder().encodeToString(os.toByteArray()));
+			return qr.toString();
+		} catch (final IOException ioe) {
+			throw new CustomException("error while genrating qrcode", ioe.getMessage());
+		}
+
+	}
+
+	private ByteArrayOutputStream generateRedQRCode(String text, int width, int height) throws IOException {
+        // Generate the QR code normally (in black and white)
+        ByteArrayOutputStream stream = QRCode.from(text).withSize(width, height).stream();
+
+        // Convert the QR code to a BufferedImage
+        BufferedImage image = ImageIO.read(new ByteArrayInputStream(stream.toByteArray()));
+
+        // Create a new BufferedImage for the red-colored QR code
+        BufferedImage redImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+        // Replace black pixels with red in the new image
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                int pixel = image.getRGB(x, y);
+                if (pixel == Color.BLACK.getRGB()) {
+                    redImage.setRGB(x, y, Color.RED.getRGB()); // Set red color
+                } else {
+                    redImage.setRGB(x, y, pixel); // Keep the white/transparent pixels unchanged
+                }
+            }
+        }
+
+        // Write the red-colored QR code back to ByteArrayOutputStream
+        ByteArrayOutputStream redStream = new ByteArrayOutputStream();
+        ImageIO.write(redImage, "png", redStream);
+
+        return redStream;
+    }
 
 	public HtmlContentResponse generateConvertedHtmlContent(PDFRequest pdfRequest) throws IOException {
 
