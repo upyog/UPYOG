@@ -50,7 +50,8 @@ public class DemandService {
                 .minimumAmountPayable(applicationDetail.getTotalPayableAmount())
                 .tenantId(TLConstants.STATE_LEVEL_TENANT_ID)
                 .taxPeriodFrom(new Date().getTime())
-                .taxPeriodTo(new Date((Calendar.getInstance().getTimeInMillis() + (long) 365 * 24 * 60 * 60 * 1000)).getTime())
+                .taxPeriodTo(license.getValidTo())
+//                .taxPeriodTo(new Date((Calendar.getInstance().getTimeInMillis() + (long) 365 * 24 * 60 * 60 * 1000)).getTime())
                 .consumerType(license.getBusinessService())
                 .businessService(license.getBusinessService())
                 .build();
