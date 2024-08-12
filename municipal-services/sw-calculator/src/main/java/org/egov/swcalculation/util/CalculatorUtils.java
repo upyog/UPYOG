@@ -499,8 +499,8 @@ public class CalculatorUtils {
 		}
 		
 			MasterDetail masterDetail = MasterDetail.builder().name(SWCalculationConstant.TAXPERIOD_MASTERNAME)
-					// .filter("[?(@.periodCycle=='"+type+"' && @.service== '"+serviceName+"')]")
-					.filter("[?(@.periodCycle=='QUATERLY' && @.service== '"+serviceName+"')]")
+					 .filter("[?(@.periodCycle=='"+type+"' && @.service== '"+serviceName+"')]")
+					//.filter("[?(@.periodCycle=='QUATERLY' && @.service== '"+serviceName+"')]")
 					.build();
 			ModuleDetail moduleDetail = ModuleDetail.builder().moduleName(SWCalculationConstant.MODULE_NAME_BILLINGSERVICE)
 					.masterDetails(Arrays.asList(masterDetail)).build();
