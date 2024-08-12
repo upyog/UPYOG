@@ -421,7 +421,7 @@ public class GarbageAccountService {
 				
 				GarbageAccount accountTemp = objectMapper.convertValue(existingGarbageApplicationAccountsMap.get(account.getGrbgApplicationNumber()), GarbageAccount.class);
 				
-				if(null != accountTemp) {
+				if(null == accountTemp) {
 					throw new RuntimeException("Garbage Account not found for workflow call.");
 				}
 				
