@@ -1012,6 +1012,8 @@ public class TradeLicenseService {
 	
 	public Resource createNoSavePDF(TradeLicense tradeLicense, RequestInfo requestInfo) {
 		
+		// validate trade license for certificate generation
+		validateTradeLicenseCertificateGeneration(tradeLicense);
 		// generate pdf
 		PDFRequest pdfRequest = generatePdfRequestByTradeLicense(tradeLicense, requestInfo);
 		Resource resource = reportService.createNoSavePDF(pdfRequest);
@@ -1027,6 +1029,35 @@ public class TradeLicenseService {
 		
 		return resource;
 	}
+
+
+	private void validateTradeLicenseCertificateGeneration(TradeLicense tradeLicense) {
+		
+		if (StringUtils.isEmpty(tradeLicense.getLicenseNumber())
+			    && StringUtils.isEmpty(tradeLicense.getApplicationNumber())
+			    && StringUtils.isEmpty(tradeLicense.getTradeName())
+			    && StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAddress().getAddressLine1())
+			    && (tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("district") == null 
+			        || StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("district").asText()))
+			    && (tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("wardName") == null 
+			        || StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("wardName").asText()))
+			    && StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAddress().getPincode())
+			    && tradeLicense.getIssuedDate() == null
+			    && tradeLicense.getValidTo() == null
+			    && (tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("tradeCategory") == null 
+			        || StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("tradeCategory").asText()))
+			    && (tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantName") == null 
+			        || StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantName").asText()))
+			    && (tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantMobileNumber") == null 
+			        || StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantMobileNumber").asText()))
+			    && StringUtils.isEmpty(tradeLicense.getBusinessService())) {
+			    
+			    throw new RuntimeException("PDF can't be generated with null values.");
+			}
+	}
+
+
+
 
 
 	private DmsRequest generateDmsRequestByTradeLicense(Resource resource, TradeLicense tradeLicense,
