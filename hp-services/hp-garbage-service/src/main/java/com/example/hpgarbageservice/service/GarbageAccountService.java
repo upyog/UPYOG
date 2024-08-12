@@ -15,6 +15,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -736,7 +737,9 @@ public class GarbageAccountService {
 							&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), ApplicationPropertiesAndConstant.USER_ROLE_EMPLOYEE)) {
 						
 						List<String> listOfStatus = getAccountStatusListByRoles(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getTenantId(), requestInfo.getUserInfo().getRoles());
-						
+						if(CollectionUtils.isEmpty(listOfStatus)) {
+							throw new CustomException("SEARCH_ACCOUNT_BY_ROLES","Search can't be performed by this Employee due to lack of roles.");
+						}
 						searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setStatus(listOfStatus);
 					}else {
 						throw new RuntimeException("Provide the parameters to search garbage accounts.");
