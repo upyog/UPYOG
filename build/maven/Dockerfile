@@ -15,7 +15,7 @@ RUN mvn -B -f /app/pom.xml package
 
 
 # Create runtime image
-FROM tattvafoundation/maven3.9
+FROM openjdk:21-ea-13-jdk-slim-bullseye
 #FROM ghcr.io/egovernments/8-openjdk-alpine:latest
 
 
