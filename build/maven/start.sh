@@ -8,4 +8,4 @@ if [ x"${JAVA_ENABLE_DEBUG}" != x ] && [ "${JAVA_ENABLE_DEBUG}" != "false" ]; th
     java_debug_args="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${JAVA_DEBUG_PORT:-5005}"
 fi
 
-exec java ${java_debug_args} ${JAVA_OPTS} ${JAVA_ARGS}  -jar /opt/egov/*.jar
+exec java ${java_debug_args} ${JAVA_OPTS} ${JAVA_ARGS}  --enable-preview  -jar /opt/egov/*.jar
