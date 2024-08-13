@@ -72,6 +72,7 @@ import org.egov.demand.repository.AmendmentRepository;
 import org.egov.demand.repository.BillRepositoryV2;
 import org.egov.demand.repository.DemandRepository;
 import org.egov.demand.repository.ServiceRequestRepository;
+import org.egov.demand.util.Constants;
 import org.egov.demand.util.DemandEnrichmentUtil;
 import org.egov.demand.util.Util;
 import org.egov.demand.web.contract.DemandRequest;
@@ -276,7 +277,11 @@ public class DemandService {
 				.tenantId(tenantId)
 				.build();
 		
-		if (ObjectUtils.isEmpty(paymentBackUpdateAudit)) {
+		if(org.apache.commons.lang3.StringUtils.equalsIgnoreCase(businessService, Constants.NEWTL_BUSINESS_SERVICE)
+				|| org.apache.commons.lang3.StringUtils.equalsIgnoreCase(businessService, Constants.NEWTL_BUSINESS_SERVICE)) {
+			validateDemandAndUpdateBill(demandRequest, updateBillCriteria);
+		}
+		else if (ObjectUtils.isEmpty(paymentBackUpdateAudit)) {
 			
 			updateBillCriteria.setStatusToBeUpdated(BillStatus.EXPIRED);
 			billRepoV2.updateBillStatus(updateBillCriteria);
@@ -289,6 +294,31 @@ public class DemandService {
 		return new DemandResponse(responseInfoFactory.getResponseInfo(requestInfo, HttpStatus.CREATED), demands);
 	}
 
+
+	private void validateDemandAndUpdateBill(DemandRequest demandRequest, UpdateBillCriteria updateBillCriteria) {
+		
+		Boolean skipUpdate = false;
+		
+		if(!CollectionUtils.isEmpty(demandRequest.getDemands())) {
+			
+			for(Demand demand : demandRequest.getDemands()) {
+				BigDecimal totoalTax = demand.getDemandDetails().stream().map(DemandDetail::getTaxAmount)
+						.reduce(BigDecimal.ZERO, BigDecimal::add);
+				BigDecimal totalCollection = demand.getDemandDetails().stream().map(DemandDetail::getCollectionAmount)
+						.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+				skipUpdate = totoalTax.compareTo(totalCollection) != 0 ? true : false ;
+			}
+			
+		}
+				
+		// update bill as paid
+		if(!skipUpdate) {
+			updateBillCriteria.setStatusToBeUpdated(BillStatus.PAID);
+			billRepoV2.updateBillStatus(updateBillCriteria);
+		}
+		
+	}
 
 	/**
 	 * Search method to fetch demands from DB
