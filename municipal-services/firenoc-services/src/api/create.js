@@ -19,6 +19,8 @@ export default ({ config }) => {
   api.post(
     "/_create",
     asyncHandler(async ({ body }, res, next) => {
+      let isPrimaryowner = true 
+      body.FireNOCs[0].fireNOCDetails.applicantDetails.owners[0] ={...body.FireNOCs[0].fireNOCDetails.applicantDetails.owners[0], "isPrimaryowner" : true};
       let response = await createApiResponse({ body }, res, next);
       if(response.Errors)
         res.status(400);
@@ -28,6 +30,7 @@ export default ({ config }) => {
   return api;
 };
 export const createApiResponse = async ({ body }, res, next) => {
+  //console.log("Create Body :"+JSON.stringify(body));
   let payloads = [];
   //getting mdms data
   let mdms = await mdmsData(body.RequestInfo, body.FireNOCs[0].tenantId);
@@ -57,7 +60,7 @@ export const createApiResponse = async ({ body }, res, next) => {
     return;
   }
 
-  // console.log(JSON.stringify(mdms));
+  //console.log("Hello Body : "+JSON.stringify(body));
   body = await addUUIDAndAuditDetails(body, "_create");
   //console.log("Created Body:  "+JSON.stringify(body));
   let workflowResponse = await createWorkFlow(body);
@@ -66,10 +69,12 @@ export const createApiResponse = async ({ body }, res, next) => {
   //need to implement notification
   //calculate call
   let { FireNOCs, RequestInfo } = body;
+  //console.log("test body"+ JSON.stringify(body))
   for (var i = 0; i < FireNOCs.length; i++) {
     let firenocResponse = await calculate(FireNOCs[i], RequestInfo);
   }
   body.FireNOCs = updateStatus(FireNOCs, workflowResponse);
+  //console.log("Final Requested Body"+JSON.stringify(body));
   payloads.push({
     topic: envVariables.KAFKA_TOPICS_FIRENOC_CREATE,
     messages: JSON.stringify(body)

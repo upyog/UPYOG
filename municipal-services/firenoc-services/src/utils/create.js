@@ -4,9 +4,11 @@ import get from "lodash/get";
 import userService from "../services/userService";
 import isEmpty from "lodash/isEmpty";
 import { status } from "./search";
+import { application } from "express";
 
 export const addUUIDAndAuditDetails = async (request, method = "_update") => {
   let { FireNOCs, RequestInfo } = request;
+  let applicationAssignee ;
   //for loop should be replaced new alternative
   for (var i = 0; i < FireNOCs.length; i++) {
     let id = get(FireNOCs[i], "id");
@@ -83,12 +85,15 @@ export const addUUIDAndAuditDetails = async (request, method = "_update") => {
       !isEmpty(FireNOCs[i].fireNOCDetails.applicantDetails.owners)
     ) {
       let owners = FireNOCs[i].fireNOCDetails.applicantDetails.owners;
+
+      console.log("Owner"+JSON.stringify(owners))
       for (var owneriter = 0; owneriter < owners.length; owneriter++) {
         let userResponse = {};
         let userSearchReqCriteria = {};
         let userSearchResponse = {};
-
-        userSearchReqCriteria.mobileNumber = owners[owneriter].mobileNumber;
+        
+        userSearchReqCriteria.userName = owners[owneriter].mobileNumber;
+        //userSearchReqCriteria.mobileNumber = owners[owneriter].mobileNumber;
         userSearchReqCriteria.name = owners[owneriter].name;
         userSearchReqCriteria.tenantId = envVariables.EGOV_DEFAULT_STATE_ID;
 
@@ -98,6 +103,7 @@ export const addUUIDAndAuditDetails = async (request, method = "_update") => {
         );
         
         if (get(userSearchResponse, "user", []).length > 0) {
+         
         userResponse = await userService.updateUser(RequestInfo, {
         ...userSearchResponse.user[0],
         ...owners[owneriter]
@@ -106,7 +112,9 @@ export const addUUIDAndAuditDetails = async (request, method = "_update") => {
         else{
           userResponse = await createUser(
             RequestInfo,
-            owners[owneriter],
+            owners[owneriter]={
+              ...owners[owneriter], "userName":owners[owneriter].mobileNumber
+            },
             envVariables.EGOV_DEFAULT_STATE_ID
           );
         }
@@ -117,6 +125,15 @@ export const addUUIDAndAuditDetails = async (request, method = "_update") => {
           ...get(userResponse, "user.0", []),
           ownerUUID: ownerUUID && method != "_create" ? ownerUUID : uuidv1()
         };
+        if(get(owners[owneriter], "isPrimaryowner")=== true){
+          applicationAssignee=get(owners[owneriter], "uuid")
+        }
+      }
+    }
+    let ownervar= FireNOCs[i].fireNOCDetails.applicantDetails.owners.length
+    for(var j=0; j<ownervar; j++){
+      FireNOCs[i].fireNOCDetails.applicantDetails.owners[j]={
+        ...FireNOCs[i].fireNOCDetails.applicantDetails.owners[j], "applicationAssignee":applicationAssignee
       }
     }
     FireNOCs[i].dateOfApplied = FireNOCs[i].dateOfApplied
