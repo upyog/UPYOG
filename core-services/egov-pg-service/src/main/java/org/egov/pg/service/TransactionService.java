@@ -3,9 +3,11 @@ package org.egov.pg.service;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.config.AppProperties;
 import org.egov.pg.models.Bill;
@@ -163,7 +165,34 @@ public class TransactionService {
 				new org.egov.pg.models.TransactionRequest(requestInfo, newTxn));
 		producer.push(appProperties.getUpdateTxnDumpTopic(), new TransactionDumpRequest(requestInfo, dump));
 
+		// update demands and bill
+		updateDemandsAndBillByTransactionDetails(newTxn, requestInfo);
+		
 		return Collections.singletonList(newTxn);
+	}
+
+	
+	private void updateDemandsAndBillByTransactionDetails(Transaction newTxn, RequestInfo requestInfo) {
+		
+		if (StringUtils.equalsIgnoreCase(newTxn.getTxnStatus().name(), "SUCCESS")) {
+			
+			// make request
+			Map<String, Object> inputs = new HashMap();
+			inputs.put("tenantId", newTxn.getTenantId());
+			inputs.put("businessService", newTxn.getModule());
+			inputs.put("consumerCode", newTxn.getTenantId());
+			inputs.put("isPaymentCompleted", true);
+			inputs.put("txnAmount", newTxn.getTxnAmount());
+			
+			Map<String, Object> request = new HashMap<>();
+			request.put("requestInfo", requestInfo);
+			request.put("inputs", inputs);
+			
+			// rest call to billing service
+			
+			
+		}
+		
 	}
 
 }
