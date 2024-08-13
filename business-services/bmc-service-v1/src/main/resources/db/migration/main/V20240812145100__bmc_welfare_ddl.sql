@@ -1,3 +1,5 @@
           
+
+ALTER TABLE IF EXISTS eg_bmc_usersubschememapping DROP COLUMN IF EXISTS schemeid;
 ALTER TABLE IF EXISTS eg_bmc_usersubschememapping
-RENAME COLUMN IF EXISTS schemeid TO machineid;
+    ADD COLUMN IF NOT EXISTS machineid bigint;
