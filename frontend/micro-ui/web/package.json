@@ -18,7 +18,7 @@
     "@egovernments/digit-ui-module-core": "1.7.24",
     "@egovernments/digit-ui-module-engagement": "1.7.24",
     "@egovernments/digit-ui-module-dss": "1.7.24",
-    "@egovernments/digit-ui-module-fsm": "1.7.33",
+    "@egovernments/digit-ui-module-fsm": "1.7.34",
     "@egovernments/digit-ui-module-hrms": "1.7.24",
     "@egovernments/digit-ui-module-mcollect": "1.7.24",
     "@egovernments/digit-ui-module-commonpt":"1.7.24",
