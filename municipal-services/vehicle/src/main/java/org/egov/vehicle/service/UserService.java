@@ -68,7 +68,7 @@ public class UserService {
 		if (owner != null) {
 			userDetailResponse = userExists(owner);
 
-			if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser()) && !isUpdate) {
+			if (userDetailResponse != null && CollectionUtils.isEmpty(userDetailResponse.getUser()) && !isUpdate) {
 
 				Boolean notFoundUser = Boolean.FALSE;
 				for (int j = 0; j < userDetailResponse.getUser().size(); j++) {
