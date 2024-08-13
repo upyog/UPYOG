@@ -1,1 +1,0 @@
-{"type":"object","$schema":"http://json-schema.org/draft-07/schema#","required":["stateCode","stateName","code","name","active","module"],"x-unique":["code"],"properties":{"code":{"type":"string"},"name":{"type":"string"},"active":{"type":"boolean"},"module":{"type":"string"},"stateCode":{"type":"string"},"stateName":{"type":"string"}},"additionalProperties":false}

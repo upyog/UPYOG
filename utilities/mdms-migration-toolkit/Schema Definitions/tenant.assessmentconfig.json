@@ -1,1 +1,0 @@
-{"type":"object","$schema":"http://json-schema.org/draft-07/schema#","required":["tenant","enabled","financialyear","isRented"],"x-unique":["tenant"],"properties":{"tenant":{"type":"string"},"enabled":{"type":"boolean"},"isRented":{"type":"boolean"},"financialyear":{"type":"string"}},"additionalProperties":false}
