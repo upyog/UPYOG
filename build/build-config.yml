@@ -457,6 +457,14 @@ config:
       - work-dir: "municipal-services/pgr-services/src/main/resources/db"
         image-name: "pgr-services-db"
 
+  - name: "builds/upyog/municipal-services/bmc-service-v1"
+    build:
+      - work-dir: "municipal-services/bmc-service-v1"
+        image-name: "bmc-service-v1"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/bmc-service-v1/src/main/resources/db"
+        image-name: "bmc-service-v1"      
+
   - name: "builds/upyog/municipal-services/tl-calculator"
     build:
       - work-dir: "municipal-services/tl-calculator"
