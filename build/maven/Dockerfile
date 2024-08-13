@@ -1,4 +1,4 @@
-FROM tattvafoundation/maven3.9 AS build
+FROM openjdk:17-jdk-slim AS build
 #FROM ghcr.io/egovernments/alpine-maven-builder-jdk-8:1-master-na-6036091e AS build
 ARG WORK_DIR
 WORKDIR /app
@@ -15,7 +15,7 @@ RUN mvn -B -f /app/pom.xml package
 
 
 # Create runtime image
-FROM openjdk:21-ea-13-jdk-slim-bullseye
+FROM openjdk:17-jdk-slim
 #FROM ghcr.io/egovernments/8-openjdk-alpine:latest
 
 
