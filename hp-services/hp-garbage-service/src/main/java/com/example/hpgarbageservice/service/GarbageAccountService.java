@@ -15,11 +15,11 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
+import com.example.hpgarbageservice.contract.bill.*;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
 import com.example.hpgarbageservice.contract.workflow.ProcessInstance;
 import com.example.hpgarbageservice.contract.workflow.ProcessInstanceRequest;
 import com.example.hpgarbageservice.contract.workflow.ProcessInstanceResponse;
@@ -80,6 +80,12 @@ public class GarbageAccountService {
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
 
+	@Autowired
+	private DemandService demandService;
+
+	@Autowired
+	private BillService billService;
+	
 	public GarbageAccountResponse create(GarbageAccountRequest createGarbageRequest) {
 
 		List<GarbageAccount> garbageAccounts = new ArrayList<>();
@@ -387,6 +393,10 @@ public class GarbageAccountService {
 		}
 		
 		
+		// generate demand and fetch bill
+		generateDemandAndBill(updateGarbageRequest);
+		
+		// RESPONSE
 		GarbageAccountResponse garbageAccountResponse = GarbageAccountResponse.builder()
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(updateGarbageRequest.getRequestInfo(), false))
 				.garbageAccounts(garbageAccounts)
@@ -399,6 +409,32 @@ public class GarbageAccountService {
 	}
 
 
+
+
+	private void generateDemandAndBill(GarbageAccountRequest updateGarbageRequest) {
+		updateGarbageRequest.getGarbageAccounts().stream().forEach(account -> {
+			
+			if(StringUtils.equalsIgnoreCase(ApplicationPropertiesAndConstant.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, account.getWorkflowAction())) {
+				
+				List<Demand> savedDemands = new ArrayList<>();
+            	// generate demand
+				savedDemands = demandService.generateDemand(updateGarbageRequest.getRequestInfo(), account, ApplicationPropertiesAndConstant.BUSINESS_SERVICE);
+	            
+
+		        if(CollectionUtils.isEmpty(savedDemands)) {
+		            throw new CustomException("INVALID CONSUMERCODE","Bill not generated due to no Demand found for the given consumerCode");
+		        }
+
+				// fetch/create bill
+	            GenerateBillCriteria billCriteria = GenerateBillCriteria.builder()
+	            									.tenantId(account.getTenantId())
+	            									.businessService(applicationPropertiesAndConstant.BUSINESS_SERVICE)
+	            									.consumerCode(account.getGrbgApplicationNumber()).build();
+	            BillResponse billResponse = billService.generateBill(updateGarbageRequest.getRequestInfo(),billCriteria);
+	            
+			}
+		});
+	}
 
 
 	private GarbageAccountRequest loadUpdateGarbageAccountRequestFromMap(GarbageAccountRequest updateGarbageRequest,

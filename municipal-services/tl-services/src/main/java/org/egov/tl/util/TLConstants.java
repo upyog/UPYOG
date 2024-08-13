@@ -291,6 +291,8 @@ public class TLConstants {
 
     public static final String ACTION_RETURN_TO_VERIFIER  = "RETURN_TO_VERIFIER";
 
+    public static final String ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT = "RETURN_TO_INITIATOR_FOR_PAYMENT";
+
     public static final String ACTION_CLOSE  = "CLOSE";
 
 
@@ -351,8 +353,6 @@ public class TLConstants {
     public static final String ACTION_FORWARD_CITIZENACTIONREQUIRED  = "FORWARDTOEMPLOYEE_FIELDINSPECTION";
 
     public static final String ACTION_STATUS_PAID  = "PAID";
-
-    public static final String ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT = "RETURN_TO_INITIATOR_FOR_PAYMENT";
 
     public static final String VARIABLE_ACTION = "action";
 

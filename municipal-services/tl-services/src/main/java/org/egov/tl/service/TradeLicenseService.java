@@ -1172,11 +1172,11 @@ public class TradeLicenseService {
 					.applicationNumber(applicationNumber)
 					.build();
 			List<TradeLicense> licenses = repository.getLicenses(criteria);
-			TradeLicense license = null != licenses ? licenses.get(0): null;
-			
-			if(null == license) {
+			if(CollectionUtils.isEmpty(licenses)) {
 				throw new CustomException("LICENSE_NOT_FOUND","No License found with provided input.");
 			}
+			
+			TradeLicense license = null != licenses ? licenses.get(0): null;
 			
 			String applicationStatus = license.getStatus();
 			String applicationTenantId = license.getTenantId();

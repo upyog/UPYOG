@@ -50,7 +50,7 @@ public class GrbgAddressRepository {
                 grbgAddress.getUlbType(),
                 grbgAddress.getWardName(),
                 grbgAddress.getGarbageId(),
-                grbgAddress.getUuid(),
-                objectMapper.convertValue(grbgAddress.getAdditionalDetail(), ObjectNode.class).toString());
+                objectMapper.convertValue(grbgAddress.getAdditionalDetail(), ObjectNode.class).toString(),
+                grbgAddress.getUuid());
     }
 }

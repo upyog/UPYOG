@@ -10,7 +10,7 @@ import lombok.Data;
 public class ApplicationPropertiesAndConstant {
 
 
-//	public static final String ACCOUNT_STATUS_INITIATED = "INITIATED";
+	public static final String STATE_LEVEL_TENANT_ID = "hp";
 
 	public static final String APPLICATION_PREFIX = "GB-";
 
@@ -34,7 +34,19 @@ public class ApplicationPropertiesAndConstant {
 
     public static final String WORKFLOW_ACTION_INITIATE  = "INITIATE";
 
+    public static final String ACTION_FORWARD_TO_VERIFIER  = "FORWARD_TO_VERIFIER";
+
+    public static final String ACTION_FORWARD_TO_APPROVER  = "FORWARD_TO_APPROVER";
+
+    public static final String ACTION_RETURN_TO_INITIATOR  = "RETURN_TO_INITIATOR";
+
+    public static final String ACTION_RETURN_TO_VERIFIER  = "RETURN_TO_VERIFIER";
+
+    public static final String ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT = "RETURN_TO_INITIATOR_FOR_PAYMENT";
+
     public static final String WORKFLOW_BUSINESS_SERVICE = "GarbageCollection";
+
+    public static final String BUSINESS_SERVICE = "GB";
 
     public static final String WORKFLOW_MODULE_NAME  = "GB";
 
@@ -45,6 +57,8 @@ public class ApplicationPropertiesAndConstant {
     public static final String USER_ROLE_GB_VERIFIER = "GB_VERIFIER";
 
     public static final String USER_ROLE_GB_APPROVER = "GB_APPROVER";
+
+    public static final String BILLING_TAX_HEAD_MASTER_CODE = "LCF.Garbage_Collection_Fee";
     
 
     @Value("${workflow.context.path}")
@@ -52,5 +66,23 @@ public class ApplicationPropertiesAndConstant {
     
     @Value("${workflow.transition.path}")
     public String workflowEndpointTransition;
+
+    @Value("${egov.bill.context.host}")
+    public String billHost;
+    
+    @Value("${egov.bill.endpoint.fetch}")
+    public String fetchBillEndpoint;
+    
+    @Value("${egov.bill.endpoint.search}")
+    public String searchBillEndpoint;
+    
+    @Value("${egov.demand.create.endpoint}")
+    public String demandCreateEndpoint;
+    
+    @Value("${egov.demand.search.endpoint}")
+    public String demandSearchEndpoint;
+    
+    @Value("${egov.demand.update.endpoint}")
+    public String demandUpdateEndpoint;
     
 }
