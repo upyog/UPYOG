@@ -14,6 +14,7 @@ import org.egov.collection.repository.PaymentRepository;
 import org.egov.collection.util.PaymentEnricher;
 import org.egov.collection.util.PaymentValidator;
 import org.egov.collection.web.contract.Bill;
+import org.egov.collection.web.contract.PropertyDetail;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,42 +89,52 @@ public class PaymentService {
 		 * payerIds = new ArrayList<>();
 		 * payerIds.add(requestInfo.getUserInfo().getUuid());
 		 * paymentSearchCriteria.setPayerIds(payerIds); }
-		 */		
+		 */
 		List<Payment> payments = paymentRepository.fetchPayments(paymentSearchCriteria);
 		if (payments != null && !payments.isEmpty()) {
-		Collections.sort(payments.get(0).getPaymentDetails().get(0).getBill().getBillDetails(), (b1, b2) -> b2.getFromPeriod().compareTo(b1.getFromPeriod()));
+			Collections.sort(payments.get(0).getPaymentDetails().get(0).getBill().getBillDetails(),
+					(b1, b2) -> b2.getFromPeriod().compareTo(b1.getFromPeriod()));
 		}
-		if (null != paymentSearchCriteria.getBusinessService() && null != paymentSearchCriteria.getConsumerCodes()) {
+		if (null != paymentSearchCriteria.getBusinessService() && null != paymentSearchCriteria.getConsumerCodes()
+				&& payments != null && !payments.isEmpty()) {
 			String businessservice = paymentSearchCriteria.getBusinessService();
 			if ((paymentSearchCriteria.getBusinessService().equals("WS")
 					|| paymentSearchCriteria.getBusinessService().equals("SW"))) {
-			 	  List<String> usageCategory = paymentRepository.fetchUsageCategoryByApplicationnos(paymentSearchCriteria.getConsumerCodes(), businessservice);
-		          List<String> address = paymentRepository.fetchAddressByApplicationnos(paymentSearchCriteria.getConsumerCodes(),businessservice);
-		          List<String> propertyIds = paymentRepository.fetchPropertyid(paymentSearchCriteria.getConsumerCodes(), businessservice);
-		          List<String> additional = paymentRepository.adddetails(paymentSearchCriteria.getConsumerCodes(), businessservice);
-		          List<String> meterdetails = paymentRepository.meterinstallmentdate(paymentSearchCriteria.getConsumerCodes(), businessservice);
-		          List<String> meterid = paymentRepository.meterid(paymentSearchCriteria.getConsumerCodes(), businessservice);
-		          String meterMake=null;
-		          String avarageMeterReading=null;
-		          String initialMeterReading=null;
-		          if (additional != null && !additional.isEmpty()) {
-		              ObjectMapper objectMapper = new ObjectMapper();
+				List<String> usageCategory = paymentRepository
+						.fetchUsageCategoryByApplicationnos(paymentSearchCriteria.getConsumerCodes(), businessservice);
+				List<String> address = paymentRepository
+						.fetchAddressByApplicationnos(paymentSearchCriteria.getConsumerCodes(), businessservice);
+				List<String> propertyIds = paymentRepository.fetchPropertyid(paymentSearchCriteria.getConsumerCodes(),
+						businessservice);
+				List<String> additional = paymentRepository.adddetails(paymentSearchCriteria.getConsumerCodes(),
+						businessservice);
+				List<String> meterdetails = paymentRepository
+						.meterinstallmentdate(paymentSearchCriteria.getConsumerCodes(), businessservice);
+				List<String> meterid = paymentRepository.meterid(paymentSearchCriteria.getConsumerCodes(),
+						businessservice);
+				String meterMake = null;
+				String avarageMeterReading = null;
+				String initialMeterReading = null;
+				if (additional != null && !additional.isEmpty()) {
+					ObjectMapper objectMapper = new ObjectMapper();
 
-		              for (String jsonString : additional) {
-		                  try {
-		                      Map<String, String> map = objectMapper.readValue(jsonString, new TypeReference<Map<String, String>>() {});
-		                      meterMake= (String) map.get("meterMake");
-		                      payments.get(0).setMeterMake(meterMake);
-		                      avarageMeterReading= (String) map.get("avarageMeterReading");
-		                      payments.get(0).setAvarageMeterReading(avarageMeterReading);
-		                      initialMeterReading= (String) map.get("initialMeterReading");
-		                      payments.get(0).setInitialMeterReading(initialMeterReading);
-		                      
-		                  } catch (Exception e) {
-		                      e.printStackTrace();
-		                  }
-		              }
-		          } 
+					for (String jsonString : additional) {
+						try {
+							Map<String, String> map = objectMapper.readValue(jsonString,
+									new TypeReference<Map<String, String>>() {
+									});
+							meterMake = (String) map.get("meterMake");
+							payments.get(0).setMeterMake(meterMake);
+							avarageMeterReading = (String) map.get("avarageMeterReading");
+							payments.get(0).setAvarageMeterReading(avarageMeterReading);
+							initialMeterReading = (String) map.get("initialMeterReading");
+							payments.get(0).setInitialMeterReading(initialMeterReading);
+
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
 				// setPropertyData(receiptnumber,payments,businessservice);
 				if (usageCategory != null && !usageCategory.isEmpty())
 					payments.get(0).setUsageCategory(usageCategory.get(0));
@@ -131,15 +142,14 @@ public class PaymentService {
 					payments.get(0).setAddress(address.get(0));
 				if (propertyIds != null && !propertyIds.isEmpty())
 					payments.get(0).setPropertyId(propertyIds.get(0));
-				
-				
+
 				if (meterdetails != null && !meterdetails.isEmpty())
 					payments.get(0).setMeterinstallationDate(meterdetails.get(0));
 				if (meterid != null && !meterid.isEmpty())
 					payments.get(0).setMeterId(meterid.get(0));
 			}
 			return payments;
-		} else if (null != paymentSearchCriteria.getReceiptNumbers()) {
+		} else if (null != paymentSearchCriteria.getReceiptNumbers() && payments != null && !payments.isEmpty()) {
 			String receiptnumber = null;
 			Iterator<String> iterate = paymentSearchCriteria.getReceiptNumbers().iterator();
 			while (iterate.hasNext()) {
@@ -147,14 +157,12 @@ public class PaymentService {
 			}
 			String receipts[] = receiptnumber.split("/");
 
-		
-			String businessservice[]= receipts[0].split("_");
+			String businessservice[] = receipts[0].split("_");
 			if (businessservice[0].equals("WS") || businessservice[0].equals("SW")) {
-				
 
 				setPropertyData(receiptnumber, payments, businessservice[0]);
 			}
-			
+
 			return payments;
 
 		} else {
@@ -208,39 +216,54 @@ public class PaymentService {
 	private void setPropertyData(String receiptnumber, List<Payment> payments, String businessservice) {
 		List<String> consumercode = paymentRepository.fetchConsumerCodeByReceiptNumber(receiptnumber);
 		String connectionno = consumercode.get(0);
-		List<String> status = paymentRepository.fetchPropertyDetail(connectionno, businessservice);
-		if(!status.isEmpty())
-		{
-				
-		HashMap<String, String> additionalDetail = new HashMap<>();
-		if (!StringUtils.isEmpty(status.get(0)))
-			additionalDetail.put("oldConnectionno", status.get(0));
-		if (!StringUtils.isEmpty(status.get(1)))
-			additionalDetail.put("landArea", status.get(1));
-		if (!StringUtils.isEmpty(status.get(2)))
-			additionalDetail.put("usageCategory", status.get(2));
-		if (!StringUtils.isEmpty(status.get(3)))
-		   payments.get(0).setPropertyId(status.get(3));
-		if (!StringUtils.isEmpty(status.get(4)))
-		payments.get(0).setAddress(status.get(4));
-		if (!StringUtils.isEmpty(status.get(2)))
-		payments.get(0).setUsageCategory(status.get(2));
-		
-		/////
-		
-		
-		if (!StringUtils.isEmpty(status.get(5)))
-			payments.get(0).setMeterinstallationDate(status.get(5));
-		if (!StringUtils.isEmpty(status.get(6)))
-			payments.get(0).setMeterId(status.get(6));
-		if (!StringUtils.isEmpty(status.get(8)))
-			payments.get(0).setAvarageMeterReading(status.get(8));
-		if (!StringUtils.isEmpty(status.get(9)))
-			payments.get(0).setInitialMeterReading(status.get(9));
-		if (!StringUtils.isEmpty(status.get(7)))
-			payments.get(0).setMeterMake(status.get(7));
-		
-		payments.get(0).setPropertyDetail(additionalDetail);}
+		PropertyDetail status = paymentRepository.fetchPropertyDetail(connectionno, businessservice);
+
+		if (status != null) {
+			HashMap<String, String> additionalDetail = new HashMap<>();
+
+			if (!StringUtils.isEmpty(status.getOldConnectionNo())) {
+				additionalDetail.put("oldConnectionno", status.getOldConnectionNo());
+			}
+
+			if (!StringUtils.isEmpty(status.getPlotSize())) {
+				additionalDetail.put("landArea", status.getPlotSize());
+			}
+
+			if (!StringUtils.isEmpty(status.getUsageCategory())) {
+				additionalDetail.put("usageCategory", status.getUsageCategory());
+				payments.get(0).setUsageCategory(status.getUsageCategory());
+			}
+
+			if (!StringUtils.isEmpty(status.getPropertyId())) {
+				payments.get(0).setPropertyId(status.getPropertyId());
+			}
+
+			if (!StringUtils.isEmpty(status.getAddress())) {
+				payments.get(0).setAddress(status.getAddress());
+			}
+
+			if (!StringUtils.isEmpty(status.getMeterDetails())) {
+				payments.get(0).setMeterinstallationDate(status.getMeterDetails());
+			}
+
+			if (!StringUtils.isEmpty(status.getMeterId())) {
+				payments.get(0).setMeterId(status.getMeterId());
+			}
+
+			if (!StringUtils.isEmpty(status.getAverageMeterReading())) {
+				payments.get(0).setAvarageMeterReading(status.getAverageMeterReading());
+			}
+
+			if (!StringUtils.isEmpty(status.getInitialMeterReading())) {
+				payments.get(0).setInitialMeterReading(status.getInitialMeterReading());
+			}
+
+			if (!StringUtils.isEmpty(status.getMeterMake())) {
+				payments.get(0).setMeterMake(status.getMeterMake());
+			}
+
+			payments.get(0).setPropertyDetail(additionalDetail);
+		}
 	}
 
 	/**

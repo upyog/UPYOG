@@ -16,6 +16,7 @@ import org.egov.collection.repository.querybuilder.PaymentQueryBuilder;
 import org.egov.collection.repository.rowmapper.BillRowMapper;
 import org.egov.collection.repository.rowmapper.PaymentRowMapper;
 import org.egov.collection.web.contract.Bill;
+import org.egov.collection.web.contract.PropertyDetail;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -318,119 +319,51 @@ public class PaymentRepository {
 	}
 
 	
-public List<String> fetchPropertyDetail(String consumerCode,String businessservice) {
-		List<String> status = new ArrayList<String>();                                     
-		status = new ArrayList<String>();           
-		ObjectMapper objectMapper = new ObjectMapper();
+    public PropertyDetail fetchPropertyDetail(String consumerCode, String businessservice) {
+        PropertyDetail propertyDetail = new PropertyDetail();
 
-		List<String> oldConnectionno = fetchOldConnectionNo(consumerCode,businessservice); 
-		List<String> plotSize = fetchLandArea(consumerCode,businessservice);               
-		List<String> usageCategory = fetchUsageCategory(consumerCode,businessservice);     
-		List<String> propertyid = fetchpropertyid(consumerCode,businessservice);           
-		List<String> adress = fetchadresss(consumerCode,businessservice); 
-		 Set<String> consumerCodeSet = Collections.singleton(consumerCode);
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<String> oldConnectionno = fetchOldConnectionNo(consumerCode, businessservice);
+        List<String> plotSize = fetchLandArea(consumerCode, businessservice);
+        List<String> usageCategory = fetchUsageCategory(consumerCode, businessservice);
+        List<String> propertyid = fetchpropertyid(consumerCode, businessservice);
+        List<String> address = fetchadresss(consumerCode, businessservice);
+        Set<String> consumerCodeSet = Collections.singleton(consumerCode);
 
-		 List<String> additional = adddetails(consumerCodeSet, businessservice);
-         List<String> meterdetails = meterinstallmentdate(consumerCodeSet, businessservice);
-         List<String> meterid = meterid(consumerCodeSet, businessservice);
-         String meterMake=null;
-         String avarageMeterReading=null;
-         String initialMeterReading=null;
-         if (additional != null && !additional.isEmpty()) {
-         
+        List<String> additional = adddetails(consumerCodeSet, businessservice);
+        List<String> meterdetails = meterinstallmentdate(consumerCodeSet, businessservice);
+        List<String> meterid = meterid(consumerCodeSet, businessservice);
+        String meterMake = null;
+        String averageMeterReading = null;
+        String initialMeterReading = null;
 
-             for (String jsonString : additional) {
-                 try {
-                     Map<String, String> map = objectMapper.readValue(jsonString, new TypeReference<Map<String, String>>() {});
-                     if (map.containsValue("meterMake") &&  (String) map.get("meterMake")!=null )
-                     meterMake= (String) map.get("meterMake");
-                     else 
-                    	 meterMake="No Meter Make Found";
-                     
-                      
-                     if (map.containsValue("avarageMeterReading"))
-                    	 avarageMeterReading= (String) map.get("avarageMeterReading"); 
-                         else 
-                        	 avarageMeterReading="No avarageMeterReading  Found";        
-                    
-                     if (map.containsValue("initialMeterReading"))
-                    	 initialMeterReading= (String) map.get("initialMeterReading");
-                         else 
-                        	 initialMeterReading="No initialMeterReading Found";
-                     
-                 } catch (Exception e) {
-                     e.printStackTrace();
-                 }
-             }
-         } 
-                if(oldConnectionno.size()>0) {                                                      
-		status.add(oldConnectionno.get(0));  }
-		else { status.add("No Value Found");  }
-		
-		if(plotSize.size()>0 && !StringUtils.isBlank(plotSize.get(0)) )                                                              
-		status.add(plotSize.get(0));  
-		else
-			status.add("No Value Found");  
-		
-		
-		if(usageCategory.size()>0 && !StringUtils.isBlank(usageCategory.get(0)))                                                         
-		status.add(usageCategory.get(0)); 
-		else                                 
-			status.add("No value present");    
-		
-		
-		if(propertyid.size()>0 && !StringUtils.isBlank(propertyid.get(0)))                                                            
-			status.add(propertyid.get(0));  
-		else
-			status.add("No value present");  
-		
-		
-		if(adress.size()>0 && !StringUtils.isBlank(adress.get(0)))                                                                
-			status.add(adress.get(0));   
-		else                                 
-			status.add("No value present"); 
-		////
-		
-		if(meterdetails.size()>0 && !StringUtils.isBlank(meterdetails.get(0)))                                                                
-			status.add(meterdetails.get(0));   
-		else                                 
-			status.add("No value present"); 
-		
-		
-		if(meterid.size()>0 && !StringUtils.isBlank(meterid.get(0)))                                                                
-			status.add(meterid.get(0));   
-		else                                 
-			status.add("No value present"); 
-		
-		
-		if(!additional.isEmpty())
-		{
-		 if (meterMake.isEmpty()|| meterMake=="" || meterMake==null && additional.isEmpty())
-        	 status.add("No Value Found");  
-         else 
-        	 status.add(meterMake);
-		 
-		 if (avarageMeterReading.isEmpty()|| avarageMeterReading=="" && additional.isEmpty())
-        	 status.add("No Value Found");  
-         else 
-        	 status.add(avarageMeterReading);
-		 
-		 if (initialMeterReading.isEmpty()|| initialMeterReading=="" && additional.isEmpty())
-        	 status.add("No Value Found");  
-         else 
-        	 status.add(initialMeterReading);
-		}
-		else
-		{
-			 status.add("No Value Found");  
-			 status.add("No Value Found");  
-			 status.add("No Value Found");  
-			  
-		}
-		 
-		return status;                                                                     	
-	}                                                                                   	
-	
+        if (additional != null && !additional.isEmpty()) {
+            for (String jsonString : additional) {
+                try {
+                    Map<String, String> map = objectMapper.readValue(jsonString, new TypeReference<Map<String, String>>() {});
+                    meterMake = map.getOrDefault("meterMake", "No Meter Make Found");
+                    averageMeterReading = map.getOrDefault("avarageMeterReading", "No avarageMeterReading Found");
+                    initialMeterReading = map.getOrDefault("initialMeterReading", "No initialMeterReading Found");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        propertyDetail.setOldConnectionNo(!oldConnectionno.isEmpty() ? oldConnectionno.get(0) : "No oldConnectionno Found");
+        propertyDetail.setPlotSize(!plotSize.isEmpty() && !StringUtils.isBlank(plotSize.get(0)) ? plotSize.get(0) : "No plotSize Found");
+        propertyDetail.setUsageCategory(!usageCategory.isEmpty() && !StringUtils.isBlank(usageCategory.get(0)) ? usageCategory.get(0) : "No usageCategory present");
+        propertyDetail.setPropertyId(!propertyid.isEmpty() && !StringUtils.isBlank(propertyid.get(0)) ? propertyid.get(0) : "No propertyid present");
+        propertyDetail.setAddress(!address.isEmpty() && !StringUtils.isBlank(address.get(0)) ? address.get(0) : "No address present");
+        propertyDetail.setMeterDetails(!meterdetails.isEmpty() && !StringUtils.isBlank(meterdetails.get(0)) ? meterdetails.get(0) : "No meterdetails present");
+        propertyDetail.setMeterId(!meterid.isEmpty() && !StringUtils.isBlank(meterid.get(0)) ? meterid.get(0) : "No meterid present");
+
+        propertyDetail.setMeterMake(meterMake);
+        propertyDetail.setAverageMeterReading(averageMeterReading);
+        propertyDetail.setInitialMeterReading(initialMeterReading);
+
+        return propertyDetail;
+    }
 	
 	
 	public List<String> fetchOldConnectionNo(String consumerCode, String businessservice) {
@@ -811,10 +744,10 @@ public List<String> fetchPropertyDetail(String consumerCode,String businessservi
 		Map<String, Object> preparedStatementValues = new HashMap<>();
 		String queryString;
 		if (businesssrvice.contains("WS")) {
-			queryString = "select a2.meterinstallationdate FROM eg_ws_connection a1   inner join eg_ws_service as a2 on a1.id=a2.connection_id where a1.connectionno   ='"+consumercode+"';";
+			queryString = "select a2.meterinstallationdate FROM eg_ws_connection a1   inner join eg_ws_service as a2 on a1.id=a2.connection_id where a1.applicationno   ='"+consumercode+"';";
 		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		} else {
-			queryString = "select a2.meterinstallationdate FROM eg_sw_connection a1 inner join eg_ws_service as a2 on a1.id=a2.connection_id where  a1.connectionno   ='"+consumercode+"';";
+			queryString = "select a2.meterinstallationdate FROM eg_sw_connection a1 inner join eg_ws_service as a2 on a1.id=a2.connection_id where  a1.applicationno   ='"+consumercode+"';";
 
 			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		}
@@ -836,10 +769,10 @@ public List<String> fetchPropertyDetail(String consumerCode,String businessservi
 		Map<String, Object> preparedStatementValues = new HashMap<>();
 		String queryString;
 		if (businesssrvice.contains("WS")) {
-			queryString = "select a2.meterid FROM eg_ws_connection a1   inner join eg_ws_service as a2 on a1.id=a2.connection_id where a1.connectionno   ='"+consumercode+"';";
+			queryString = "select a2.meterid FROM eg_ws_connection a1   inner join eg_ws_service as a2 on a1.id=a2.connection_id where a1.applicationno   ='"+consumercode+"';";
 		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		} else {
-			queryString = "select a2.meterid FROM eg_sw_connection a1 inner join eg_ws_service as a2 on a1.id=a2.connection_id where  a1.connectionno   ='"+consumercode+"';";
+			queryString = "select a2.meterid FROM eg_sw_connection a1 inner join eg_ws_service as a2 on a1.id=a2.connection_id where  a1.applicationno   ='"+consumercode+"';";
 
 			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		}
