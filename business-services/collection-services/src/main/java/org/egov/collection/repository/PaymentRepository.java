@@ -781,10 +781,10 @@ public List<String> fetchPropertyDetail(String consumerCode,String businessservi
 		Map<String, Object> preparedStatementValues = new HashMap<>();
 		String queryString;
 		if (businesssrvice.contains("WS")) {
-			queryString = "select a1.additionaldetails  FROM eg_ws_connection a1  where a1.connectionno   ='"+consumercode+"';";
+			queryString = "select a1.additionaldetails  FROM eg_ws_connection a1  where a1.applicationno   ='"+consumercode+"';";
 		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		} else {
-			queryString = "select a1.additionaldetails  FROM eg_sw_connection a1 where  a1.connectionno   ='"+consumercode+"';";
+			queryString = "select a1.additionaldetails  FROM eg_sw_connection a1 where  a1.applicationno   ='"+consumercode+"';";
 
 			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		}
