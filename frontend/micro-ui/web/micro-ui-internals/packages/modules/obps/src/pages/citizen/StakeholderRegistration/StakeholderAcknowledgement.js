@@ -1,9 +1,10 @@
 import { BackButton, Banner, Card, CardText, LinkButton, Loader, SubmitBar } from "@egovernments/digit-ui-react-components";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { convertToStakeholderObject } from "../../../utils/index";
-
+import getAcknowledgementData from "../../../../getAcknowlegment";
 const GetActionMessage = ( props) => {
   const LicenseType=props?.data?.Licenses?.[0]?.tradeLicenseDetail?.tradeUnits?.[0]?.tradeType?.split(".")[0] || "ARCHITECT";
   const { t } = useTranslation();
@@ -37,6 +38,7 @@ const BannerPicker = (props) => {
 
 const StakeholderAcknowledgement = ({ data, onSuccess }) => {
   const { t } = useTranslation();
+  const {id}= useParams();
   //const isPropertyMutation = window.location.href.includes("property-mutation");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const mutation = Digit.Hooks.obps.useStakeholderAPI(data?.address?.city ? data.address?.city?.code : tenantId, true);
@@ -58,13 +60,21 @@ const StakeholderAcknowledgement = ({ data, onSuccess }) => {
     } catch (err) {
     }
   }, []);
-
+  const state = tenantId?.split('.')[0]
+  const workflowDetails = Digit.Hooks.useWorkflowDetails({
+    tenantId: tenantId?.split('.')[0],
+    id: id,
+    moduleCode: "BPAREG",
+  });
+  const {  data: applicationDetails } = Digit.Hooks.obps.useLicenseDetails(state, { applicationNumber: id, tenantId: state }, {});
   const handleDownloadPdf = async () => {
-    // const { Properties = [] } = mutation.data;
-    // const Property = (Properties && Properties[0]) || {};
-    // const tenantInfo = tenants.find((tenant) => tenant.code === Property.tenantId);
-    // const data = await getPTAcknowledgementData({ ...Property }, tenantInfo, t);
-    // Digit.Utils.pdf.generate(data);
+    const Property = applicationDetails ;
+    const tenantInfo  = tenants.find((tenant) => tenant.code === Property.tenantId);
+
+    const acknowledgementData = await getAcknowledgementData(Property, tenantInfo, t);
+   
+    Digit.Utils.pdf.generate(acknowledgementData);
+    
   };
 
   return mutation.isLoading || mutation.isIdle ? (
@@ -88,6 +98,11 @@ const StakeholderAcknowledgement = ({ data, onSuccess }) => {
             >
               <SubmitBar label={t("COMMON_MAKE_PAYMENT")} />
             </Link>
+          )}
+          {mutation.isSuccess &&(
+              <div style={{marginTop:"10px"}}>
+              <SubmitBar label={t("CS_COMMON_DOWNLOAD")} onSubmit={handleDownloadPdf}/>
+              </div>
           )}
           {!isOpenLinkFlow && (
             <Link to={`/digit-ui/citizen`}>

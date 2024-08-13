@@ -121,10 +121,11 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
   const arr = isMutation ? result?.data?.Properties?.filter((e) => e.status === "ACTIVE") : result?.data?.Properties;
 
   const searchResults = arr?.map((property) => {
+   
     let addr = property?.address || {};
     return {
       property_id: property?.propertyId,
-      owner_name: (property?.owners || [])[0]?.name,
+      owner_name: (property?.owners || []).sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence)?.[0]?.name,
       property_address: [addr.doorNo || "", addr.buildingName || "", addr.street || "", t(`TENANTS_MOHALLA_${addr.locality?.code}`) || "", t(addr.tenantId) || ""]
         .filter((a) => a)
         .join(", "),
@@ -134,6 +135,7 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
       owner_mobile: (property?.owners || [])[0]?.mobileNumber,
       address:property?.address,
       owners:property.owners,
+      propertyDetails:property,
       privacy: {
         property_address : {
           uuid: property?.owners?.[0]?.uuid, 
@@ -161,6 +163,7 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
 
   const sendOtpToUser = async (record) => {
     sessionStorage.setItem("Digit_OBPS_PT",JSON.stringify(record))
+    sessionStorage.setItem("Digit_FSM_PT",JSON.stringify(record))
     if(onSelect) {  
       onSelect('cptId', { id: record.property_id });
     } else {

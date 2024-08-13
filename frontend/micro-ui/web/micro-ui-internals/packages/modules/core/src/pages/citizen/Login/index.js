@@ -186,7 +186,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       const { mobileNumber, otp, name } = params;
       if (isUserRegistered) {
         const requestData = {
-          username: mobileNumber,
+          username: mobileNumber ? mobileNumber:sessionStorage.getItem("userName"),
           password: otp,
           tenantId: stateCode,
           userType: getUserType(),

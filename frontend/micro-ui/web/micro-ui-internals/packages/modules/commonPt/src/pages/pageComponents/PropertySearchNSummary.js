@@ -58,6 +58,7 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
   }, [error, propertyDetails]);
   useEffect(() => {
     onSelect("cpt", { details: propertyDetails?.Properties[0] });
+    sessionStorage.setItem("Digit_FSM_PT",JSON.stringify(propertyDetails?.Properties[0]))
     localStorage.setItem("pgrProperty",JSON.stringify(propertyDetails?.Properties[0]))
   }, [propertyDetails, pathname]);
 
@@ -95,7 +96,7 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
 
   const getOwnerNames = (propertyData) => {
     const getActiveOwners = propertyData?.owners?.filter(owner => owner?.active);
-    const getOwnersList = getActiveOwners?.map(activeOwner => activeOwner?.name)?.join(",");
+    const getOwnersList = getActiveOwners.sort((a,b)=> a?.additionalDetails?.ownerSequence- b?.additionalDetails?.ownerSequence)?.map(activeOwner => activeOwner?.name)?.join(",");
     return getOwnersList ? getOwnersList : t("NA");
   }
 

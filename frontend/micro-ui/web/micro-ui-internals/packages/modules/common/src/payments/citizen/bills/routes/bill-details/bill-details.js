@@ -16,6 +16,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
   const [bill, setBill] = useState(state?.bill);
   const tenantId = state?.tenantId || _tenantId || Digit.UserService.getUser().info?.tenantId;
   const propertyId = state?.propertyId;
+  const applicationNumber = state?.applicationNumber;
   if (wrkflow === "WNS" && consumerCode.includes("?")) consumerCode = consumerCode.substring(0, consumerCode.indexOf("?"));
   const { data, isLoading } = state?.bill
     ? { isLoading: false }
@@ -46,7 +47,8 @@ const BillDetails = ({ paymentRules, businessService }) => {
     { enabled: pathname.includes("FSM") ? true : false },
     "CITIZEN"
   );
-  let { minAmountPayable, isAdvanceAllowed } = paymentRules;
+  
+  let { minAmountPayable, isAdvanceAllowed } = paymentRules; 
   minAmountPayable = wrkflow === "WNS" ? 100 : minAmountPayable;
   const billDetails = bill?.billDetails?.sort((a, b) => b.fromPeriod - a.fromPeriod)?.[0] || [];
   const Arrears =
@@ -124,7 +126,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
   }, [paymentType, amount]);
 
   useEffect(() => {
-    if (!isFSMLoading && application?.pdfData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT_CITIZEN") {
+    if (!isFSMLoading && (application?.pdfData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT_CITIZEN" || application?.pdfData?.applicationStatus ==="PENDING_APPL_FEE_PAYMENT")) {
       setPaymentAllowed(true);
       setPaymentType(t("CS_PAYMENT_ADV_COLLECTION"));
     }
@@ -135,12 +137,12 @@ const BillDetails = ({ paymentRules, businessService }) => {
       let requiredBill = data.Bill.filter((e) => e.consumerCode == (wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode))[0];
       setBill(requiredBill);
     }
-  }, [isLoading]);
+  }, [isLoading]); 
 
-  const onSubmit = () => {
+  const onSubmit = () => {debugger
     let paymentAmount =
       paymentType === t("CS_PAYMENT_FULL_AMOUNT")
-        ? getTotal()
+        ? businessService === "FSM.TRIP_CHARGES"?application?.pdfData?.advanceAmount:getTotal()
         : amount || businessService === "FSM.TRIP_CHARGES"
         ? application?.pdfData?.advanceAmount
         : amount;
@@ -203,8 +205,8 @@ const BillDetails = ({ paymentRules, businessService }) => {
             <div>
               <KeyNote keyValue={t("ES_PAYMENT_DETAILS_TOTAL_AMOUNT")} note={application?.pdfData?.totalAmount} />
               <KeyNote keyValue={t("ES_PAYMENT_DETAILS_ADV_AMOUNT")} note={application?.pdfData?.advanceAmount} />
-              {application?.pdfData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT_CITIZEN" ? (
-                <KeyNote keyValue={t("FSM_DUE_AMOUNT_TO_BE_PAID")} note={bill?.totalAmount} />
+              {application?.pdfData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT_CITIZEN" || application?.pdfData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT" ? (
+                <KeyNote keyValue={t("FSM_DUE_AMOUNT_TO_BE_PAID")} note={application?.pdfData?.totalAmount-application?.pdfData?.advanceAmount} />
               ) : null}
             </div>
           ) : (
@@ -237,15 +239,18 @@ const BillDetails = ({ paymentRules, businessService }) => {
             >
               ₹
             </span>
+            {console.log(bill,"bill")}
             {paymentType !== t("CS_PAYMENT_FULL_AMOUNT") ? (
               businessService === "FSM.TRIP_CHARGES" ? (
                 <TextInput className="text-indent-xl" onChange={() => {}} value={getAdvanceAmount()} disable={true} />
               ) : (
                 <TextInput className="text-indent-xl" onChange={(e) => onChangeAmount(e.target.value)} value={amount} disable={getTotal() === 0} />
               )
-            ) : (
+            ) : businessService === "FSM.TRIP_CHARGES" ? (
+              <TextInput className="text-indent-xl" value={application?.pdfData?.advanceAmount} onChange={() => {}} disable={true} />
+            ):((
               <TextInput className="text-indent-xl" value={getTotal()} onChange={() => {}} disable={true} />
-            )}
+            ))}
             {formError === "CS_CANT_PAY_BELOW_MIN_AMOUNT" ? (
               <span className="card-label-error">
                 {t(formError)}: {"₹" + minAmountPayable}

@@ -23,6 +23,7 @@ import org.egov.tracer.model.CustomException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -208,6 +209,8 @@ public class SewerageServiceImpl implements SewerageService {
 	 * @return List of matching sewerage connection
 	 */
 	public List<SewerageConnection> search(SearchCriteria criteria, RequestInfo requestInfo) {
+		sewerageConnectionValidator.validateSearch(criteria);
+
 		//Creating copies of apiPlainAcessRequests for decryption process
 		//Any decryption process returns the  requestInfo with only the already used plain Access Request fields
 		PlainAccessRequest apiPlainAccessRequest = null, apiPlainAccessRequestCopy = null;
@@ -264,7 +267,7 @@ public class SewerageServiceImpl implements SewerageService {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param criteria
 	 *            SewerageConnectionSearchCriteria contains search criteria on
 	 *            sewerage connection
@@ -275,14 +278,6 @@ public class SewerageServiceImpl implements SewerageService {
 		criteria.setIsCountCall(Boolean.TRUE);
 		return getSewerageConnectionsCount(criteria, requestInfo);
 	}
-
-	/**
-	 * 
-	 * @param criteria    SewerageConnectionSearchCriteria contains search criteria
-	 *                    on sewerage connection
-	 * @param requestInfo - Request Info Object
-	 * @return Count of List of matching sewerage connection
-	 */
 
 	public Integer getSewerageConnectionsCount(SearchCriteria criteria, RequestInfo requestInfo) {
 		return sewerageDao.getSewerageConnectionsCount(criteria, requestInfo);
@@ -320,7 +315,7 @@ public class SewerageServiceImpl implements SewerageService {
 		BusinessService businessService = workflowService.getBusinessService(config.getBusinessServiceValue(),
 				sewerageConnectionRequest.getSewerageConnection().getTenantId(),
 				sewerageConnectionRequest.getRequestInfo());
-		SewerageConnection searchResult = getConnectionForUpdateRequest(
+		SewerageConnection searchResult = getConnectionForUpdateRequest(sewerageConnectionRequest.getSewerageConnection().getTenantId(),
 				sewerageConnectionRequest.getSewerageConnection().getId(), sewerageConnectionRequest.getRequestInfo());
 
 		Boolean isStateUpdatable = sewerageServicesUtil.getStatusForUpdate(businessService, previousApplicationStatus);
@@ -349,6 +344,22 @@ public class SewerageServiceImpl implements SewerageService {
 
 		/* encrypt here */
 		sewerageConnectionRequest.setSewerageConnection(encryptConnectionDetails(sewerageConnectionRequest.getSewerageConnection()));
+
+		/* encrypt here for connection holder details */
+		sewerageConnectionRequest.setSewerageConnection(encryptConnectionHolderDetails(sewerageConnectionRequest.getSewerageConnection()));
+
+		sewerageDao.updateSewerageConnection(sewerageConnectionRequest, isStateUpdatable);
+
+		if (!StringUtils.isEmpty(sewerageConnectionRequest.getSewerageConnection().getTenantId()))
+			criteria.setTenantId(sewerageConnectionRequest.getSewerageConnection().getTenantId());
+		enrichmentService.enrichProcessInstance(Arrays.asList(sewerageConnectionRequest.getSewerageConnection()), criteria, sewerageConnectionRequest.getRequestInfo());
+
+		/* decrypt here */
+		sewerageConnectionRequest.setSewerageConnection(decryptConnectionDetails(sewerageConnectionRequest.getSewerageConnection(), sewerageConnectionRequest.getRequestInfo()));
+
+
+		/* encrypt here */
+		sewerageConnectionRequest.setSewerageConnection(encryptConnectionDetails(sewerageConnectionRequest.getSewerageConnection()));
 		/* encrypt here for connection holder details */
 		sewerageConnectionRequest.setSewerageConnection(encryptConnectionHolderDetails(sewerageConnectionRequest.getSewerageConnection()));
 
@@ -366,7 +377,6 @@ public class SewerageServiceImpl implements SewerageService {
 
 	private List<SewerageConnection> updateSewerageConnectionForDisconnectFlow(SewerageConnectionRequest sewerageConnectionRequest) {
 		SearchCriteria criteria = new SearchCriteria();
-
 		sewerageConnectionValidator.validateSewerageConnection(sewerageConnectionRequest, SWConstants.DISCONNECT_CONNECTION);
 		mDMSValidator.validateMasterData(sewerageConnectionRequest, SWConstants.DISCONNECT_CONNECTION);
 		Property property = validateProperty.getOrValidateProperty(sewerageConnectionRequest);
@@ -378,7 +388,7 @@ public class SewerageServiceImpl implements SewerageService {
 		BusinessService businessService = workflowService.getBusinessService(config.getDisconnectBusinessServiceName(),
 				sewerageConnectionRequest.getSewerageConnection().getTenantId(),
 				sewerageConnectionRequest.getRequestInfo());
-		SewerageConnection searchResult = getConnectionForUpdateRequest(
+		SewerageConnection searchResult = getConnectionForUpdateRequest(sewerageConnectionRequest.getSewerageConnection().getTenantId(),
 				sewerageConnectionRequest.getSewerageConnection().getId(), sewerageConnectionRequest.getRequestInfo());
 
 		Boolean isStateUpdatable = sewerageServicesUtil.getStatusForUpdate(businessService, previousApplicationStatus);
@@ -405,6 +415,9 @@ public class SewerageServiceImpl implements SewerageService {
 		}
 		// Call workflow
 		wfIntegrator.callWorkFlow(sewerageConnectionRequest, property);
+		// Enrich file store Id After payment
+		enrichmentService.enrichFileStoreIds(sewerageConnectionRequest);
+		enrichmentService.postStatusEnrichment(sewerageConnectionRequest);
 
 		/* encrypt here */
 		sewerageConnectionRequest.setSewerageConnection(encryptConnectionDetails(sewerageConnectionRequest.getSewerageConnection()));
@@ -446,7 +459,7 @@ public class SewerageServiceImpl implements SewerageService {
 		BusinessService businessService = workflowService.getBusinessService(config.getReconnectBusinessServiceName(),
 				sewerageConnectionRequest.getSewerageConnection().getTenantId(),
 				sewerageConnectionRequest.getRequestInfo());
-		SewerageConnection searchResult = getConnectionForUpdateRequest(
+		SewerageConnection searchResult = getConnectionForUpdateRequest(sewerageConnectionRequest.getSewerageConnection().getTenantId(),
 				sewerageConnectionRequest.getSewerageConnection().getId(), sewerageConnectionRequest.getRequestInfo());
 
 		Boolean isStateUpdatable = sewerageServicesUtil.getStatusForUpdate(businessService, previousApplicationStatus);
@@ -508,10 +521,11 @@ public class SewerageServiceImpl implements SewerageService {
 	 * @param requestInfo - Request Info Object
 	 * @return sewerage connection
 	 */
-	public SewerageConnection getConnectionForUpdateRequest(String id, RequestInfo requestInfo) {
+	public SewerageConnection getConnectionForUpdateRequest(String tenantId, String id, RequestInfo requestInfo) {
 		SearchCriteria criteria = new SearchCriteria();
 		Set<String> ids = new HashSet<>(Arrays.asList(id));
 		criteria.setIds(ids);
+		criteria.setTenantId(tenantId);
 		List<SewerageConnection> connections = getSewerageConnectionsList(criteria, requestInfo);
 		if (CollectionUtils.isEmpty(connections)) {
 			StringBuilder builder = new StringBuilder();
@@ -531,6 +545,7 @@ public class SewerageServiceImpl implements SewerageService {
 		SearchCriteria criteria = SearchCriteria.builder()
 				.connectionNumber(Stream.of(sewerageConnection.getConnectionNo().toString()).collect(Collectors.toSet())).isCountCall(false)
 				.build();
+		criteria.setTenantId(sewerageConnection.getTenantId());
 		if(sewerageConnectionRequest.isDisconnectRequest() ||
 				!StringUtils.isEmpty(sewerageConnection.getConnectionNo()))
 			criteria.setIsInternalCall(true);
@@ -554,7 +569,7 @@ public class SewerageServiceImpl implements SewerageService {
 		BusinessService businessService = workflowService.getBusinessService(config.getModifySWBusinessServiceName(),
 				sewerageConnectionRequest.getSewerageConnection().getTenantId(),
 				sewerageConnectionRequest.getRequestInfo());
-		SewerageConnection searchResult = getConnectionForUpdateRequest(
+		SewerageConnection searchResult = getConnectionForUpdateRequest(sewerageConnectionRequest.getSewerageConnection().getTenantId(),
 				sewerageConnectionRequest.getSewerageConnection().getId(), sewerageConnectionRequest.getRequestInfo());
 
 		Boolean isStateUpdatable = sewerageServicesUtil.getStatusForUpdate(businessService, previousApplicationStatus);
@@ -587,7 +602,8 @@ public class SewerageServiceImpl implements SewerageService {
 	}
 
 	public void markOldApplication(SewerageConnectionRequest sewerageConnectionRequest) {
-		if (sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction().equalsIgnoreCase(APPROVE_CONNECTION)) {
+		String action = sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction();
+		if (action.equalsIgnoreCase(APPROVE_CONNECTION) || action.equalsIgnoreCase(EXECUTE_DISCONNECTION)) {
 			String currentModifiedApplicationNo = sewerageConnectionRequest.getSewerageConnection().getApplicationNo();
 			List<SewerageConnection> sewerageConnectionList = getAllSewerageApplications(sewerageConnectionRequest);
 
@@ -602,7 +618,6 @@ public class SewerageServiceImpl implements SewerageService {
 			}
 		}
 	}
-	
 	public List<SewerageConnection> plainSearch(SearchCriteria criteria, RequestInfo requestInfo) {
 		criteria.setIsSkipLevelSearch(Boolean.TRUE);
 		List<SewerageConnection> sewerageConnectionList = getSewerageConnectionsPlainSearchList(criteria, requestInfo);
@@ -611,7 +626,6 @@ public class SewerageServiceImpl implements SewerageService {
 		enrichmentService.enrichConnectionHolderDeatils(sewerageConnectionList, criteria, requestInfo);
 		return sewerageConnectionList;
 	}
-	
 	public List<SewerageConnection> getSewerageConnectionsPlainSearchList(SearchCriteria criteria, RequestInfo requestInfo) {
 		return sewerageDao.getSewerageConnectionPlainSearchList(criteria, requestInfo);
 	}

@@ -31,6 +31,7 @@ const BpaApplicationDetail = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [checkBoxVisible, setCheckBoxVisible] = useState(false);
   const [isEnableLoader, setIsEnableLoader] = useState(false);
+  const [viewTimeline, setViewTimeline]=useState(false);
   sessionStorage.removeItem("BPA_SUBMIT_APP");
   sessionStorage.setItem("isEDCRDisable", JSON.stringify(true));
   sessionStorage.setItem("BPA_IS_ALREADY_WENT_OFF_DETAILS", JSON.stringify(false));
@@ -107,8 +108,13 @@ const BpaApplicationDetail = () => {
 
 
   async function getRecieptSearch({tenantId, payments, ...params}) {
-    let response = { filestoreIds: [payments?.fileStoreId] };
-    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, "bpa-receipt");
+    let response=null;
+    if (payments?.fileStoreId ) {
+       response = { filestoreIds: [payments?.fileStoreId] };      
+    }
+    else{
+      response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, "bpa-receipt");
+    }
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   }
@@ -380,6 +386,13 @@ const BpaApplicationDetail = () => {
       </div>
     )
   }
+  const handleViewTimeline=()=>{ 
+    const timelineSection=document.getElementById('timeline');
+      if(timelineSection){
+        timelineSection.scrollIntoView({behavior: 'smooth'});
+      } 
+      setViewTimeline(true);   
+  };
 
   const results = data?.applicationDetails?.filter(element => {
     if (Object.keys(element).length !== 0) {
@@ -397,6 +410,9 @@ const BpaApplicationDetail = () => {
     <Fragment>
       <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
         <Header styles={{fontSize: "32px", marginLeft: "10px"}}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
+        <div style={{display:"flex", alignItems:"center", color:"#A52A2A"}}>
+        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
+        </div>
         {dowloadOptions && dowloadOptions.length > 0 && <MultiLink
           className="multilinkWrapper"
           onHeadClick={() => setShowOptions(!showOptions)}
@@ -502,6 +518,7 @@ const BpaApplicationDetail = () => {
             {index === arr.length - 1 && (
               <Card>
                 <Fragment>
+                  <div id="timeline">
                   <BPAApplicationTimeline application={data?.applicationData} id={id} />
                   {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length > 0 && !isFromSendBack && checkBoxVisible && (
                     <CheckBox
@@ -512,6 +529,7 @@ const BpaApplicationDetail = () => {
                       onChange={() => { setIsTocAccepted(!isTocAccepted); isTocAccepted ? setDisplayMenu(!isTocAccepted) : "" }}
                     />
                   )}
+                  </div>
                   {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length > 1 && (
                     //removed this styles to fix the action button in application details UM-5347
                     <ActionBar /*style={{ position: "relative", boxShadow: "none", minWidth: "240px", maxWidth: "310px", padding: "0px" }}*/>

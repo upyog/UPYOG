@@ -60,7 +60,7 @@ public class VehicleTripService {
 			throw new CustomException(VehicleTripConstants.CREATE_VEHICLETRIP_ERROR,
 					"vehicleTrip not found in the Request" + request.getVehicleTrip());
 		}
-		validator.validateCreateOrUpdateRequest(request);
+		// validator.validateCreateOrUpdateRequest(request);
 		vehicleLogEnrichmentService.setInsertData(request);
 		wfIntegrator.callWorkFlow(request);
 		vehicleLogRepository.save(request);

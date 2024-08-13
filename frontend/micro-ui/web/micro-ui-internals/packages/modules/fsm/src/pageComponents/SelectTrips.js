@@ -61,14 +61,14 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
       type: "text",
       name: "distancefromroad",
       default: formData?.tripData?.distancefromroad,
-      //isMandatory: true,
+      isMandatory: true,
     },
     {
       label: "ES_NEW_APPLICATION_ROAD_WIDTH",
       type: "text",
       name: "roadWidth",
       default: formData?.tripData?.roadWidth,
-      //isMandatory: true,
+      isMandatory: true,
     }
   ];
 
@@ -84,6 +84,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
   function setValue(value, input) {
     value && input && onSelect(config.key, { ...formData[config.key], [input]: value });
   }
+
   useEffect(() => {
     (async () => {
       if (formData?.tripData?.vehicleType !== vehicle) {
@@ -116,10 +117,13 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
 
         const billSlab = billingDetails?.billingSlab?.length && billingDetails?.billingSlab[0];
         if (billSlab?.price || billSlab?.price === 0) {
-          setValue({
-            amountPerTrip: billSlab.price,
-            amount: billSlab.price * formData.tripData.noOfTrips,
-          });
+          // setValue({
+          //   amountPerTrip: billSlab.price,
+          //   amount: billSlab.price * formData.tripData.noOfTrips,
+          // });
+          // onSelect(config.key, { ...formData[config.key], amount: amount, amountPerTrip: billSlab.price });
+          setValue(billSlab.price,"amountPerTrip");
+          setValue(billSlab.price * formData.tripData.noOfTrips,"amount");
           setError(false);
         } else {
           setValue({
@@ -132,6 +136,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
     })();
   }, [formData?.propertyType, formData?.subtype, formData?.address, formData?.tripData?.vehicleType?.capacity, formData?.tripData?.noOfTrips, formData?.address?.propertyLocation?.code]);
 
+  // console.log(formData,"formData 1111111111")
   return isVehicleMenuLoading && isDsoLoading ? (
     <Loader />
   ) : (

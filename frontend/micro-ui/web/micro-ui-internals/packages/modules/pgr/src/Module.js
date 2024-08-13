@@ -19,6 +19,7 @@ import { ComplaintsList } from "./pages/citizen/ComplaintsList";
 import ComplaintDetailsPage from "./pages/citizen/ComplaintDetails";
 import SelectRating from "./pages/citizen/Rating/SelectRating";
 import ResponseCitizen from "./pages/citizen/Response";
+import EditApplication from "./pages/employee/EditApplication";
 
 
 export const PGRReducers = getRootReducer;
@@ -75,7 +76,8 @@ const componentsToRegister = {
   PGRComplaintsList : ComplaintsList,
   PGRComplaintDetailsPage : ComplaintDetailsPage,
   PGRSelectRating : SelectRating,
-  PGRResponseCitzen : ResponseCitizen
+  PGRResponseCitzen : ResponseCitizen,
+  PGREditApplication: EditApplication,
 };
 
 export const initPGRComponents = () => {

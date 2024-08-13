@@ -140,7 +140,7 @@ console.log("errorrrrrr",e)
         Header: t("WS_COMMON_TABLE_COL_SERVICE_LABEL"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(t(`WS_${row.original?.["service"]}`));
+          return GetCell(row?.original?.applicationNo.includes("WS")?`Water Service`:'Sewerage Service');
         },
       },
 

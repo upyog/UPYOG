@@ -73,6 +73,9 @@ import UpdateNumber from "./pages/citizen/MyProperties/updateNumber";
 import EmployeeUpdateOwnerNumber from "./pages/employee/updateNumber";
 //import PTCitizenFeedback from "@egovernments/digit-ui-module-core/src/components/PTCitizenFeedback";
 import PTSelectLandmark from "./pageComponents/PTSelectLandmark";
+import PropertyStructureDetails from "./pageComponents/PropertyStructureDetails";
+//import PTCitizenFeedback from "@egovernments/digit-ui-module-core/src/components/PTCitizenFeedback";
+
 import EmployeeApp from "./pages/employee";
 import PTCard from "./components/PTCard";
 import InboxFilter from "./components/inbox/NewInboxFilter";
@@ -121,6 +124,7 @@ const componentsToRegister = {
   Area,
   UID,
   Electricity,
+  PropertyStructureDetails,
   IsResidential,
   PropertyType,
   PropertyUsageType,

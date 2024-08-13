@@ -28,6 +28,14 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
     },
   ];
 
+  if (formData && formData.address) {
+    // Check if propertyLocation does not exist in address
+    if (!formData.address.hasOwnProperty("propertyLocation")) {
+      // Assign default value to propertyLocation
+      formData.address.propertyLocation = inputs[0];
+    }
+  }
+
   const { pincode, city } = formData?.address || "";
   const cities =
     userType === "employee"

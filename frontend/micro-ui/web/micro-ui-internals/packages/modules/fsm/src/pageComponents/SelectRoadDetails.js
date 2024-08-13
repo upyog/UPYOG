@@ -9,7 +9,6 @@ const SelectRoadDetails = ({ t, config, onSelect, userType, formData, formState,
   const onSkip = () => onSelect();
 
   const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
-console.log("formData",formData)
   const {
     watch,
     trigger,
@@ -30,6 +29,7 @@ console.log("formData",formData)
         label: "ES_NEW_APPLICATION_ROAD_WIDTH",
         type: "text",
         name: "roadWidth",
+        isMandatory: true,
         placeholder:"Enter road width in meters",
         validation: {
             maxlength: 256,
@@ -40,6 +40,7 @@ console.log("formData",formData)
         label: "ES_NEW_APPLICATION_DISTANCE_FROM_ROAD",
         type: "text",
         name: "distancefromroad",
+        isMandatory:true,
         placeholder:"Enter distance of pit from road",
         validation: {
            maxlength: 256,
@@ -97,6 +98,7 @@ console.log("formData",formData)
       {window.location.href.includes("/tl") ? <Timeline currentStep={2} /> : <Timeline currentStep={1} flow="APPLY" />}
       <FormStep
         config={{ ...config, inputs }}
+        isMandatory={true}
         _defaultValues={{ roadWidth: formData?.roadWidth?.roadWidth || "", distancefromroad: formData?.roadWidth?.distancefromroad || ""}}
         onChange={handleSkip}
         onSelect={(data) => onSelect(config.key, data)}

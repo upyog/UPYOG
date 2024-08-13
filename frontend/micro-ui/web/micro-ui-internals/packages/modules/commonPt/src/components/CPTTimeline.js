@@ -15,12 +15,14 @@ const getAction = (flow) => {
       'WS_COMMON_SUMMARY',
     ]
       break;
-    default: actions = [
+    case "TL":  actions = [
       'TL_COMMON_TR_DETAILS',
       'TL_LOCATION_AND_OWNER_DETAILS',
       'TL_DOCUMENT_DETAIL',
       'TL_COMMON_SUMMARY',
     ]
+    default: actions = []
+      break;
   }
 }
 const CPTTimeline = ({ currentStep = 1, flow = "" }) => {

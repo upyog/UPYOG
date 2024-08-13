@@ -138,11 +138,11 @@ public class RestEdcrApplicationController {
 
     @Autowired
     private EdcrValidator edcrValidator;
-
+    
     @PostMapping(value = "/scrutinizeplan", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> scrutinizePlan(@RequestBody MultipartFile planFile,
-            @RequestParam String edcrRequest) {
+            @RequestParam String edcrRequest) throws Exception {
         EdcrDetail edcrDetail = new EdcrDetail();
         EdcrRequest edcr = new EdcrRequest();
         boolean isValid = isValidJson(edcrRequest);
@@ -174,7 +174,7 @@ public class RestEdcrApplicationController {
     @PostMapping(value = "/scrutinizeocplan", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> scrutinizeOccupancyPlan(@RequestBody MultipartFile planFile,
-            @RequestParam String edcrRequest) {
+            @RequestParam String edcrRequest) throws Exception {
         EdcrDetail edcrDetail = new EdcrDetail();
         EdcrRequest edcr = new EdcrRequest();
         boolean isValid = isValidJson(edcrRequest);
@@ -210,7 +210,7 @@ public class RestEdcrApplicationController {
             MediaType.MULTIPART_FORM_DATA_VALUE }, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> scrutinize(@RequestPart("planFile") MultipartFile planFile,
-            @RequestParam("edcrRequest") String edcrRequest, final HttpServletRequest request) {
+            @RequestParam("edcrRequest") String edcrRequest, final HttpServletRequest request) throws Exception {
         String userInfo = request.getHeader(USER_INFO_HEADER_NAME);
         LOGGER.info("###User Info####"+userInfo);
         EdcrDetail edcrDetail = new EdcrDetail();
@@ -230,6 +230,7 @@ public class RestEdcrApplicationController {
                 enrichUser.setUuid(userInfoReq.getUuid());
                 enrichUser.setMobile(userInfoReq.getMobile());
                 enrichUser.setTenantId(userInfoReq.getTenantId());
+                enrichUser.setName(userInfoReq.getName());
                 edcr.getRequestInfo().setUserInfo(enrichUser);
             }
             ErrorDetail edcRes = edcrValidator.validate(edcr);

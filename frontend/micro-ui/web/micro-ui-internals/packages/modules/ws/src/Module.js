@@ -42,6 +42,7 @@ import WSInbox from "./components/WSInbox";
 import BillAmendmentCard from "./components/BillAmendmentCard";
 import SearchApplication from "./components/SearchApplication";
 import SearchWaterConnection from "./components/SearchWaterConnection";
+import BulkBillSearch from "./components/SearchWaterConnection/BulkBillSearch"
 import WSCard from "./components/WSCard";
 import SWCard from "./components/SWCard";
 import BillIAmendMentInbox from "./components/BillIAmendMentInbox";
@@ -94,6 +95,7 @@ import SearchWaterConnectionIntegrated from "./pages/employee/SearchWaterConnect
 import SearchIntegrated from "./pages/employee/SearchIntegrated";
 import SearchWaterConnectionViewIntegrated
  from "./pages/employee/SearchWaterConnection/SearchWaterConnectionViewIntegrated";
+ import BulkBillGeneration from "./pages/employee/BulkBillGeneration"
 
 
 const WSModule = ({ stateCode, userType, tenants }) => {
@@ -194,6 +196,7 @@ const componentsToRegister = {
   BillAmendmentCard,
   WSSearchApplication: SearchApplication,
   WSSearchWaterConnection: SearchWaterConnection,
+  WSBulkBillSearch:BulkBillSearch,
   WSCard,
   SWCard,
   WSBillIAmendMentInbox: BillIAmendMentInbox,
@@ -243,7 +246,8 @@ const componentsToRegister = {
   WSResubmitDisconnection: ResubmitDisconnection,
   WSSearchWaterConnectionIntegrated:SearchWaterConnectionIntegrated,
   WSSearchIntegrated:SearchIntegrated,
-  WSSearchWaterConnectionViewIntegrated :SearchWaterConnectionViewIntegrated
+  WSSearchWaterConnectionViewIntegrated :SearchWaterConnectionViewIntegrated,
+  WSBulkBillGeneration:BulkBillGeneration
 };
 
 export const initWSComponents = () => {

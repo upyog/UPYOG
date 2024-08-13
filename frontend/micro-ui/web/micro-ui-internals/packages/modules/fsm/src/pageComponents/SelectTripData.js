@@ -91,7 +91,9 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
   }
 
   function setValue(object) {
-    onSelect(config.key, { ...formData[config.key], ...object });
+    let a = {...formData[config.key],...object}
+    console.log("config.key",config.key,a)
+    onSelect(config.key,  a);
   }
   useEffect(() => {
     (async () => {
@@ -109,7 +111,7 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
           capacity,
           slum,
         });
-
+        console.log("billingDetails",billingDetails)
         const billSlab = billingDetails?.billingSlab?.length && billingDetails?.billingSlab[0];
         if (billSlab?.price || billSlab?.price === 0) {
           setValue({

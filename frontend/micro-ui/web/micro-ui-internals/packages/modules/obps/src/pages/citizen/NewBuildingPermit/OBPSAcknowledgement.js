@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import {convertToNocObject, convertToBPAObject, stringReplaceAll} from "../../../utils/index";
+import getBPAAcknowledgement from "../../../../getBPAAcknowledgement";
 
 const GetActionMessage = (props) => {
   const bpaData = props?.data?.BPA?.[0];
@@ -68,7 +69,7 @@ const OBPSAcknowledgement = ({ data, onSuccess }) => {
   );
    const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
-
+  sessionStorage.removeItem("Digit_OBPS_PT")
   useEffect(() => {
     try {
       let tenantid = data?.address?.city ? data.address?.city?.code : tenantId;
@@ -88,6 +89,12 @@ const OBPSAcknowledgement = ({ data, onSuccess }) => {
     } catch (err) {
     }
   }, []);
+  const handleDownloadPdf = async () => {
+    const Property = data;
+    const tenantInfo  = tenants.find((tenant) => tenant.code === Property.tenantId);
+    const acknowledgementData = await getBPAAcknowledgement(Property, tenantInfo, t);
+    Digit.Utils.pdf.generate(acknowledgementData);
+  };
 
   return mutation1.isLoading || mutation1.isIdle ? (
     <Loader />
@@ -101,6 +108,11 @@ const OBPSAcknowledgement = ({ data, onSuccess }) => {
       }}>
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
+      {mutation1.isSuccess &&(
+        <div style={{marginTop:"10px"}}>
+          <SubmitBar label={t("CS_COMMON_DOWNLOAD")} onSubmit={handleDownloadPdf}/>
+        </div>
+      )}
     </Card>
   );
 };

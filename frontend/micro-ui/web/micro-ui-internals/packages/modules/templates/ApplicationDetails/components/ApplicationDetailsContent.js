@@ -8,6 +8,7 @@ import {
   Loader,
   Row,
   StatusTable,
+  LinkButton
 } from "@egovernments/digit-ui-react-components";
 import { values } from "lodash";
 import React, { Fragment, useEffect,useState } from "react";
@@ -40,6 +41,7 @@ function ApplicationDetailsContent({
   applicationData,
   businessService,
   timelineStatusPrefix,
+  id,
   showTimeLine = true,
   statusAttribute = "status",
   paymentsList,
@@ -47,6 +49,9 @@ function ApplicationDetailsContent({
   isInfoLabel = false
 }) {
   const { t } = useTranslation();
+  
+const ownersSequences= applicationDetails?.applicationData?.owners
+console.log("appl", applicationDetails)
 
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
@@ -207,7 +212,8 @@ function ApplicationDetailsContent({
       return "WS_CLICK_ON_INFO_LABEL"
     }
   }
-
+  
+  const [showAllTimeline, setShowAllTimeline]=useState(false);
   const getClickInfoDetails1 = () => {
     if (window.location.href.includes("disconnection") || window.location.href.includes("application")) {
         return "WS_DISCONNECTION_CLICK_ON_INFO1_LABEL"
@@ -215,6 +221,10 @@ function ApplicationDetailsContent({
         return ""
     }
   }
+  const toggleTimeline=()=>{
+    setShowAllTimeline((prev)=>!prev);
+  }
+  // console.log("applicationDetails?.applicationDetails",applicationDetails?.applicationDetails)
   return (
     <Card style={{ position: "relative" }} className={"employeeCard-override"}>
       {/* For UM-4418 changes */}
@@ -414,6 +424,7 @@ function ApplicationDetailsContent({
           {(workflowDetails?.isLoading || isDataLoading) && <Loader />}
           {!workflowDetails?.isLoading && !isDataLoading && (
             <Fragment>
+              <div id="timeline">
               <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
                 {t("ES_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
               </CardSectionHeader>
@@ -426,7 +437,7 @@ function ApplicationDetailsContent({
               ) : (
                 <ConnectingCheckPoints>
                   {workflowDetails?.data?.timeline &&
-                    workflowDetails?.data?.timeline.map((checkpoint, index, arr) => {
+                    workflowDetails?.data?.timeline.slice(0,showAllTimeline? workflowDetails?.data.timeline.length:2).map((checkpoint, index, arr) => {
                       let timelineStatusPostfix = "";
                       if (window.location.href.includes("/obps/")) {
                         if(workflowDetails?.data?.timeline[index-1]?.state?.includes("BACK_FROM") || workflowDetails?.data?.timeline[index-1]?.state?.includes("SEND_TO_CITIZEN"))
@@ -455,6 +466,11 @@ function ApplicationDetailsContent({
                     })}
                 </ConnectingCheckPoints>
               )}
+              {workflowDetails?.data?.timeline?.length > 2 && (
+                <LinkButton label={showAllTimeline? t("COLLAPSE") : t("VIEW_TIMELINE")} onClick={toggleTimeline}>
+                </LinkButton>   
+              )} 
+              </div>
             </Fragment>
           )}
         </React.Fragment>

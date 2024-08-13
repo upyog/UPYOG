@@ -137,6 +137,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     subtype: applicationData?.propertyUsage,
     pitType: applicationData?.sanitationtype,
     pitDetail: applicationData?.pitDetail,
+    propertyID: applicationData?.additionalDetails?.propertyID,
+    roadWidth: applicationData?.additionalDetails?.roadWidth,
+    distancefromroad: applicationData?.additionalDetails?.distancefromroad
   });
 
   useEffect(() => {

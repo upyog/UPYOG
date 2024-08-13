@@ -141,7 +141,7 @@ const TopBar = ({
                     profilePic == null ? (
                       <TextToImg name={userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"} />
                     ) : (
-                      <img src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/Upyog-logo.png" style={{ height: "48px", width: "48px", borderRadius: "50%" }} />
+                      <img src={profilePic} style={{ height: "48px", width: "48px", borderRadius: "50%" }} />
                     )
                   }
                 />

@@ -23,7 +23,6 @@ export const CreateComplaint = () => {
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage(PGR_CITIZEN_CREATE_COMPLAINT, {});
   // const [customConfig, setConfig] = Digit.Hooks.useSessionStorage(PGR_CITIZEN_COMPLAINT_CONFIG, {});
   const config = useMemo(() => defaultConfig);
-  
   const [paramState, setParamState] = useState(params);
   const [nextStep, setNextStep] = useState("");
   const [canSubmit, setCanSubmit] = useState(false);
@@ -65,10 +64,9 @@ export const CreateComplaint = () => {
       submitComplaint();
     }
   };
-
-  const submitComplaint = async () => {debugger
+  const submitComplaint = async () => {
     if (paramState?.complaintType) {
-      const { city_complaint, locality_complaint, uploadedImages, complaintType, subType, details, ...values } = paramState;
+      const { city_complaint, locality_complaint, uploadedImages, complaintType, subType, prioritylevel, details, ...values } = paramState;
       const { code: cityCode, name: city } = city_complaint;
       const { code: localityCode, name: localityName } = locality_complaint;
       const storedpropertyid =sessionStorage.getItem("propertyid")
@@ -81,9 +79,10 @@ export const CreateComplaint = () => {
 
       const data = {
         ...values,
-        complaintType: subType?.key,
+        complaintType: subType.key,
         cityCode,
         city,
+        prioritylevel: prioritylevel ,
         description: details,
         district: city,
         region: city,
@@ -106,8 +105,10 @@ export const CreateComplaint = () => {
     let c = JSON.parse(sessionStorage.getItem("complaintType"))
     if(data?.subType)
     {
+      
       let data2 ={"complaintType":c}
-      setParams({ ...params, ...data  });
+      console.log("handleSelect",data,data2)
+      setParams({ ...params, ...data ,...data2 });
       goNext();
     }
     else {
@@ -121,6 +122,7 @@ export const CreateComplaint = () => {
   };
 
   if (isLoading) return null;
+
   return (
     <Switch>
       {Object.keys(config.routes).map((route, index) => {

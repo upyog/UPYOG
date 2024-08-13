@@ -468,30 +468,6 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
                   select={(e) => selectOccupancy(index, e)}
                 />
               </div>
-              <CardLabel>{`${t("PT_STRUCTURE_TYPE")}*`}</CardLabel>
-              <div className={"form-pt-dropdown-only"}>
-                <Dropdown
-                  t={t}
-                  optionKey="i18nKey"
-                  isMandatory={config.isMandatory}
-                  option={structureType}
-                  selected={field?.structureType}
-                  placeholder={"Select structure type"}
-                  select={(e) => selectstructureType(index, e)}
-                />
-              </div>
-              <CardLabel>{`${t("PT_AGE_OF_PROPERTY")}*`}</CardLabel>
-              <div className={"form-pt-dropdown-only"}>
-                <Dropdown
-                  t={t}
-                  optionKey="i18nKey"
-                  isMandatory={config.isMandatory}
-                  option={ageOfProperty}
-                  selected={field?.ageOfProperty}
-                  placeholder={"Select Age of Property"}
-                  select={(e) => selectageOfProperty(index, e)}
-                />
-              </div>
               {field?.occupancyType?.code && field.occupancyType.code.includes("RENTED") && (
                 <>
                   <CardLabel>{`${t("PT_FORM2_TOTAL_ANNUAL_RENT")}*`}</CardLabel>

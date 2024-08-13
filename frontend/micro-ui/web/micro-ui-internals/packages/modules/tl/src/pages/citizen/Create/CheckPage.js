@@ -200,11 +200,11 @@ const WrapCheckPage = ({ onSubmit, value }) => {
             </React.Fragment>
           )}
         </StatusTable>
-        <div style={{ textAlign: "left" }}>
+        {/* <div style={{ textAlign: "left" }}>
           <Link to={`/digit-ui/citizen/commonpt/view-property?propertyId=${cpt?.details?.propertyId || cptId?.id || value?.tradeLicenseDetail?.additionalDetail?.propertyId}&tenantId=${cpt?.details?.tenantId || value?.tenantId}`}>
             <LinkButton style={{ textAlign: "left" }} label={t("TL_VIEW_PROPERTY")} />
           </Link>
-        </div>
+        </div> */}
       </Card>}
       <Card>
         <StatusTable>
@@ -225,6 +225,7 @@ const WrapCheckPage = ({ onSubmit, value }) => {
                 <Row className="border-none" label={t("TL_MOBILE_NUMBER_LABEL")} text={t(owner?.mobilenumber)} />
                 <Row className="border-none" label={t("TL_GUARDIAN_S_NAME_LABEL")} text={t(owner?.fatherOrHusbandName) || t("CS_NA")} />
                 <Row className="border-none" label={t("TL_RELATIONSHIP_WITH_GUARDIAN_LABEL")} text={t(owner?.relationship?.i18nKey) || t("CS_NA")} />
+                <Row className="border-none" label={t("TL_EMAIL_ID_LABEL")} text={t(owner?.emailId) || t("CS_NA")} />
                 <Row
                   className="border-none"
                   label={t("TL_CORRESPONDENCE_ADDRESS")}

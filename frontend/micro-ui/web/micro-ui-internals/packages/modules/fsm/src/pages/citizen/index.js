@@ -6,6 +6,8 @@ import { Redirect, Switch, useLocation } from "react-router-dom";
 const CitizenApp = ({ path }) => {
   const location = useLocation();
   const { t } = useTranslation();
+  let isCommonPTPropertyScreen = window.location.href.includes("/ws/create-application/property-details");
+  let isAcknowledgement = window.location.href.includes("/acknowledgement") || window.location.href.includes("/disconnect-acknowledge");
   const NewApplicationCitizen = Digit.ComponentRegistryService.getComponent("FSMNewApplicationCitizen");
   const MyApplications = Digit.ComponentRegistryService.getComponent("FSMMyApplications");
   const EmployeeApplicationDetails = Digit.ComponentRegistryService.getComponent("FSMEmployeeApplicationDetails");

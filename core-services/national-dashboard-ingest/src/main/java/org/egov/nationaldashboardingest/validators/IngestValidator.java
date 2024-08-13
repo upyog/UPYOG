@@ -150,10 +150,11 @@ public class IngestValidator {
     public void verifyDataStructure(Data ingestData){
 
         validateDateFormat(ingestData.getDate());
-        validateStringNotNumeric(ingestData.getWard());
         validateStringNotNumeric(ingestData.getUlb());
+        validateStringNotNumeric(ingestData.getWard());
         validateStringNotNumeric(ingestData.getRegion());
         validateStringNotNumeric(ingestData.getState());
+
         if(ingestData.getWard().contains(":"))
         	ingestData.setWard(ingestData.getWard().replace(":"," "));
 		
@@ -439,7 +440,7 @@ public class IngestValidator {
                     if (a.get("groupBy").equals("usageCategory") || a.get("groupBy").equals("usageType")) {
                         List < HashMap < String, String >> valuess = (List < HashMap < String, String >> ) a.get("buckets");
                         for (HashMap < String, String > b: valuess)
-                            usageCategory.add(b.get("name"));
+                            usageCategory.add(toCamelCase(b.get("name")));
                     }
                 }
                 }
@@ -514,8 +515,9 @@ public class IngestValidator {
         Set<String> uniquenessHash = new HashSet<>();
         IngestAckData hashedData = new IngestAckData();
         List<AckEntity> ackEntityList = new ArrayList<>();
+        
         ingestData.forEach(data -> {
-	    if(data.getWard().contains(":"))
+            if(data.getWard().contains(":"))
         	 data.setWard(data.getWard().replace(":"," "));
             StringBuilder currKeyData = new StringBuilder();
             currKeyData.append(data.getDate()).append(":").append(data.getModule()).append(":").append(data.getWard()).append(":").append(data.getUlb()).append(":").append(data.getRegion()).append(":").append(data.getState());

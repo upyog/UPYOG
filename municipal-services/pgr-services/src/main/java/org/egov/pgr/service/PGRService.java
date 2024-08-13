@@ -1,19 +1,24 @@
 package org.egov.pgr.service;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pgr.config.PGRConfiguration;
 import org.egov.pgr.producer.Producer;
 import org.egov.pgr.repository.PGRRepository;
 import org.egov.pgr.util.MDMSUtils;
 import org.egov.pgr.validator.ServiceRequestValidator;
-import org.egov.pgr.web.models.ServiceWrapper;
 import org.egov.pgr.web.models.RequestSearchCriteria;
+import org.egov.pgr.web.models.Service;
 import org.egov.pgr.web.models.ServiceRequest;
+import org.egov.pgr.web.models.ServiceWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-
-import java.util.*;
 
 @org.springframework.stereotype.Service
 public class PGRService {
@@ -61,11 +66,12 @@ public class PGRService {
      * @return
      */
     public ServiceRequest create(ServiceRequest request){
+        String tenantId = request.getService().getTenantId();
         Object mdmsData = mdmsUtils.mDMSCall(request);
         validator.validateCreate(request, mdmsData);
         enrichmentService.enrichCreateRequest(request);
         workflowService.updateWorkflowStatus(request);
-        producer.push(config.getCreateTopic(),request);
+        producer.push(tenantId,config.getCreateTopic(),request);
         return request;
     }
 
@@ -94,7 +100,7 @@ public class PGRService {
         if(CollectionUtils.isEmpty(serviceWrappers))
             return new ArrayList<>();;
 
-        userService.enrichUsers(serviceWrappers);
+        userService.enrichUsers(serviceWrappers,requestInfo,criteria.getTenantId());
         List<ServiceWrapper> enrichedServiceWrappers = workflowService.enrichWorkflow(requestInfo,serviceWrappers);
         Map<Long, List<ServiceWrapper>> sortedWrappers = new TreeMap<>(Collections.reverseOrder());
         for(ServiceWrapper svc : enrichedServiceWrappers){
@@ -120,11 +126,12 @@ public class PGRService {
      * @return
      */
     public ServiceRequest update(ServiceRequest request){
+        String tenantId = request.getService().getTenantId();
         Object mdmsData = mdmsUtils.mDMSCall(request);
         validator.validateUpdate(request, mdmsData);
         enrichmentService.enrichUpdateRequest(request);
         workflowService.updateWorkflowStatus(request);
-        producer.push(config.getUpdateTopic(),request);
+        producer.push(tenantId,config.getUpdateTopic(),request);
         return request;
     }
 
@@ -161,7 +168,7 @@ public class PGRService {
             return new ArrayList<>();
         }
 
-        userService.enrichUsers(serviceWrappers);
+        userService.enrichUsers(serviceWrappers,requestInfo,criteria.getTenantId());
         List<ServiceWrapper> enrichedServiceWrappers = workflowService.enrichWorkflow(requestInfo, serviceWrappers);
 
         Map<Long, List<ServiceWrapper>> sortedWrappers = new TreeMap<>(Collections.reverseOrder());

@@ -19,6 +19,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     const [isPrimaryOwner, setisPrimaryOwner] = useState(false);
     const [gender, setGender] = useState(formData?.owners?.gender);
     const [mobileNumber, setMobileNumber] = useState(formData?.owners?.mobileNumber || "");
+    const [emailId, setEmail] = useState(formData?.owners?.emailId || "");
     const [showToast, setShowToast] = useState(null);
     const [isDisable, setIsDisable] = useState(false);
     const [ownerRoleCheck, setownerRoleCheck] = useState({});
@@ -33,7 +34,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
     useEffect(() => {
         var flag=0;
-        fields.map((ob) => {
+        fields?.map((ob) => {
             if(ob.isPrimaryOwner)
             flag=1;
             if (ob.name && ob.mobileNumber && ob.gender) {
@@ -123,7 +124,15 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             setCanmovenext(false);
         }
     }
-
+    function setOwnerEmail(i, e) {
+        let units = [...fields];
+        units[i].emailId = e.target.value;
+        setEmail(e.target.value);
+        setFeilds(units);
+        if (units[i].gender && units[i].mobileNumber && units[i].name) {
+            setCanmovenext(false);
+        }
+    }
     function setGenderName(i, value) {
         let units = [...fields];
         units[i].gender = value;
@@ -282,10 +291,14 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             setError("BPA_ERROR_MULTIPLE_OWNER");
         }
         else {
+            let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"));
+            if(!formData?.address?.locality?.code){
+                formData.address = propertyData?.address;
+            }
             let owner = formData.owners;
             let ownerStep;
             ownerStep = { ...owner, owners: fields, ownershipCategory: ownershipCategory };
-
+            console.log(formData.address,"formData.address")
             if (!formData?.id) {
                 setIsDisable(true);
                 //for owners conversion
@@ -309,7 +322,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
                 const userInfo = Digit.UserService.getUser();
                 const accountId = userInfo?.info?.uuid;
-                payload.tenantId = formData?.address?.city?.code;
+                payload.tenantId = formData?.address?.city?.code || formData?.address?.tenantId;
                 payload.workflow = { action: "INITIATE", assignes : [userInfo?.info?.uuid] };
                 payload.accountId = accountId;
                 payload.documents = null;
@@ -324,7 +337,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.landInfo = {};
                 //For Address
                 payload.landInfo.address = {};
-                if (formData?.address?.city?.code) payload.landInfo.address.city = formData?.address?.city?.code;
+                if (formData?.address?.city?.code) payload.landInfo.address.city = formData?.address?.city?.code || formData?.address?.tenantId;
                 if (formData?.address?.locality?.code) payload.landInfo.address.locality = { code: formData?.address?.locality?.code };
                 if (formData?.address?.pincode) payload.landInfo.address.pincode = formData?.address?.pincode;
                 if (formData?.address?.landmark) payload.landInfo.address.landmark = formData?.address?.landmark;
@@ -333,7 +346,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
                 payload.landInfo.owners = conversionOwners;
                 payload.landInfo.ownershipCategory = ownershipCategory.code;
-                payload.landInfo.tenantId = formData?.address?.city?.code;
+                payload.landInfo.tenantId = formData?.address?.city?.code || formData?.address?.tenantId;
 
                 //for units
                 const blockOccupancyDetails = formData;
@@ -392,7 +405,9 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         return true;
     }
 let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"))
-fields =propertyData.owners.map((owner) =>{
+if(propertyData?.owners)
+{
+fields =propertyData?.owners.map((owner) =>{
     let gender
     if (owner.gender =="FEMALE")
     {
@@ -414,9 +429,11 @@ fields =propertyData.owners.map((owner) =>{
     }
 
 })
+}
+
 useEffect(()=>{
     let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"))
-    if(propertyData.owners.length == 1)
+    if(propertyData?.owners?.length == 1)
     {let value ={
         "code": "INDIVIDUAL.SINGLEOWNER",
         "active": true,
@@ -424,7 +441,7 @@ useEffect(()=>{
     }
     selectedValue(value);
     }
-    else if(propertyData.owners.length > 1)
+    else if(propertyData?.owners?.length > 1)
     {
         let value={
             "code": "INDIVIDUAL.MULTIPLEOWNERS",
@@ -453,10 +470,10 @@ useEffect(()=>{
                             value={ownershipCategory}
                             labelKey="PT_OWNERSHIP"
                             isDependent={true}
-                            disabled = {true}
+                           disabled = {propertyData?.owners ?true:false}
                         />
                     </div>
-                    {fields.map((field, index) => {
+                    {fields?.map((field, index) => {
                         return (
                             <div key={`${field}-${index}`}>
                                 <div style={{ border: "solid", borderRadius: "5px", padding: "10px", paddingTop: "20px", marginTop: "10px", borderColor: "#f3f3f3", background: "#FAFAFA" }}>
@@ -484,7 +501,7 @@ useEffect(()=>{
                                                     type: "tel",
                                                     title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID"),
                                                 })}
-                                                disabled={true}
+                                                disabled={propertyData?.owners ?true:false}
                                             />
                                             <div style={{ position: "relative", zIndex: "100", right: "35px", marginTop: "-24px", marginRight:Webview?"-20px":"-20px" }} onClick={(e) => getOwnerDetails(index, e)}> <SearchIcon /> </div>
                                         </div>
@@ -505,7 +522,7 @@ useEffect(()=>{
                                             type: "text",
                                             title: t("TL_NAME_ERROR_MESSAGE"),
                                         })}
-                                        disabled={true}
+                                        disabled={propertyData?.owners ?true:false}
                                     />
                                     <CardLabel>{`${t("BPA_APPLICANT_GENDER_LABEL")} *`}</CardLabel>
                                     <RadioOrSelect
@@ -515,7 +532,25 @@ useEffect(()=>{
                                     optionKey="i18nKey"
                                     onSelect={(e) => setGenderName(index, e)}
                                     t={t}
-                                    disabled={true}
+                                    disabled={propertyData?.owners ? true:false}
+                                    />
+                                     <CardLabel>{`${t("CORE_EMAIL_ID")}`}</CardLabel>
+                                    <TextInput
+                                        style={{ background: "#FAFAFA" }}
+                                        t={t}
+                                        type={"emailId"}
+                                        isMandatory={false}
+                                        optionKey="i18nKey"
+                                        name="emailId"
+                                        value={field.emailId}
+                                        onChange={(e) => setOwnerEmail(index, e)}
+                                        {...(validation = {
+                                            isRequired: true,
+                                            pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$",
+                                            type: "emailId",
+                                            title: t("TL_EMAIL_ID_ERROR_MESSAGE"),
+                                        })}
+                                        //disabled={propertyData?.address ?true:false}
                                     />
                                     {ismultiple && (
                                         <CheckBox

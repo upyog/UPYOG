@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Map;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -141,6 +143,9 @@ public class WSConfiguration {
     @Value("${ws.meterreading.create.topic}")
     private String createMeterReading;
 
+    @Value("${ws.meterreading.create.topic.pattern}")
+    private String createMeterReadingPattern;
+
     @Value("${ws.meterreading.create.endpoint}")
     private String createMeterReadingEndpoint;
 
@@ -209,44 +214,40 @@ public class WSConfiguration {
 
     @Value("${egov.collection.host}")
     private String collectionHost;
-    
-	@Value("${reconnection.ws.workflow.name}")
-	private String wsWorkflowReconnectionName;
 
     @Value("${state.level.tenant.id}")
     private String stateLevelTenantId;
 
     //mdms
-    @Value("${egov.mdms.host}")
+//    @Value("${egov.mdms.host}")
+//    private String mdmsHost;
+//
+//    @Value("${egov.mdms.search.endpoint}")
+//    private String mdmsUrl;
+    
+	@Value("${mdms.v2.host}")
     private String mdmsHost;
 
-    @Value("${egov.mdms.search.endpoint}")
+    @Value("${mdms.v2.search.endpoint}")
     private String mdmsUrl;
+    
+//	@Value("${mdms.v2.host}")
+//    private String mdmsHost;
+//
+//    @Value("${mdms.v2.search.endpoint}")
+//    private String mdmsUrl;
 
     @Value("${egov.disconnect.businessservice}")
     private String disconnectBusinessServiceName;
 
-    @Value("${egov.reconnect.businessservice}")
-    private String reconnectBusinessServiceName;
-    
     @Value("${egov.idgen.wdcid.name}")
     private String waterDisconnectionIdGenName;
 
     @Value("${egov.idgen.wdcid.format}")
     private String waterDisconnectionIdGenFormat;
-    
+
     @Value("${egov.receipt.disconnection.businessservice.topic}")
     private String receiptDisconnectionBusinessservice;
-
-    @Value("${egov.receipt.reconnection.businessservice.topic}")
-    private String receiptReconnectionBusinessservice;
-    
-	/*
-	 * @Value("${egov.idgen.wrcid.name}") private String waterReconnectionIdGenName;
-	 * 
-	 * @Value("${egov.idgen.wrcid.format}") private String
-	 * waterResconnectionIdGenFormat;
-	 */
 
     @Value("${egov.water.connection.document.access.audit.kafka.topic}")
     private String documentAuditTopic;
@@ -256,5 +257,12 @@ public class WSConfiguration {
 
     @Value("${egov.fetch.bill.endpoint}")
     private String fetchBillEndPoint;
+
+    // central-instance configs
+    @Value("#{${egov.ui.app.host.map}}")
+    private Map<String, String> uiAppHostMap;
+
+    @Value("${egov.url.shortner.host}")
+    private String urlShortnerHost;
 
 }

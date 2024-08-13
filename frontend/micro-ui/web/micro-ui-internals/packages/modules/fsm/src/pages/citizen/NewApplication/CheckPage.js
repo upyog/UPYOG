@@ -74,8 +74,8 @@ const CheckPage = ({ onSubmit, value }) => {
           )}
           <Row
             label={t("CS_CHECK_PROPERTY_ID")}
-            text={t(propertyID?. propertyID)}
-            actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/property-id" />}
+            text={value?.cptId?.id ? value?.cptId?.id : "NA"}
+            actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/know-your-property" />}
           />
           <Row
             label={t("CS_CHECK_PROPERTY_TYPE")}

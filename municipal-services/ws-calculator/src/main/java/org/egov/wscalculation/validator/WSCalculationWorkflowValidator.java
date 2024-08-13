@@ -3,9 +3,11 @@ package org.egov.wscalculation.validator;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.constants.MRConstants;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.util.CalculatorUtil;
+import org.egov.wscalculation.web.models.MeterReading;
 import org.egov.wscalculation.web.models.Property;
 import org.egov.wscalculation.web.models.Status;
 import org.egov.wscalculation.web.models.WaterConnection;
@@ -15,10 +17,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
@@ -30,6 +29,9 @@ public class WSCalculationWorkflowValidator {
 
 	@Autowired
 	private MDMSValidator mdmsValidator;
+
+	@Autowired
+	private WSCalculationConfiguration config;
 
 	 public Boolean applicationValidation(RequestInfo requestInfo,String tenantId,String connectionNo, Boolean genratedemand){
 	    Map<String,String> errorMap = new HashMap<>();
@@ -57,6 +59,33 @@ public class WSCalculationWorkflowValidator {
 
         return genratedemand;
 	}
+	 
+	 
+	 public Boolean applicationValidationBulk(RequestInfo requestInfo,MeterReading mr, Boolean genratedemand){
+		    Map<String,String> errorMap = new HashMap<>();
+			 List<WaterConnection> waterConnectionList = util.getWaterConnection(requestInfo,mr.getConnectionNo(),mr.getTenantId());
+			 WaterConnection waterConnection = null;
+			 if(waterConnectionList != null){
+				 int size = waterConnectionList.size();
+				 waterConnection = waterConnectionList.get(size-1);
+
+				 String waterApplicationNumber = waterConnection.getApplicationNo();
+				 waterConnectionValidation(requestInfo, mr.getTenantId(), waterApplicationNumber, errorMap);
+
+				 String propertyId = waterConnection.getPropertyId();
+				 Property property = util.getProperty(requestInfo,mr.getTenantId(),propertyId);
+				 //String propertyApplicationNumber = property.getAcknowldgementNumber();
+				 propertyValidation(requestInfo,mr.getTenantId(),property,errorMap);
+			 }
+			 else{
+				 genratedemand=false;
+				 mr.setStatus("Water connection object is null");
+			 }
+
+	      
+	        return genratedemand;
+		}
+
 
 	public void waterConnectionValidation(RequestInfo requestInfo, String tenantId, String waterApplicationNumber,
 			Map<String, String> errorMap) {
@@ -114,7 +143,7 @@ public class WSCalculationWorkflowValidator {
 		return isApplicationApproved;
 	}
 	public JSONObject getWnsPTworkflowConfig(RequestInfo requestInfo, String tenantId){
-		tenantId = tenantId.split("\\.")[0];
+		tenantId = config.getStateLevelTenantId();
 		List<String> propertyModuleMasters = new ArrayList<>(Arrays.asList("PTWorkflow"));
 		Map<String, List<String>> codes = mdmsValidator.getAttributeValues(tenantId,MRConstants.PROPERTY_MASTER_MODULE, propertyModuleMasters, "$.*",
 				MRConstants.PROPERTY_JSONPATH_ROOT,requestInfo);

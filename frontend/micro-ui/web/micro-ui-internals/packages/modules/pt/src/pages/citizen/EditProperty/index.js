@@ -449,6 +449,7 @@ const EditProperty = ({ parentRoute }) => {
       }
       sessionStorage.setItem("propertyInitialObject", JSON.stringify({ ...application }));
       let propertyEditDetails = getPropertyEditDetails(application);
+      console.log("propertyEditDetails",propertyEditDetails)
       setParams({ ...params, ...propertyEditDetails });
     }
   }, [data]);

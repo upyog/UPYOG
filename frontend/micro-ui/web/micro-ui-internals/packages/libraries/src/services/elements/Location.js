@@ -19,4 +19,13 @@ export const LocationService = {
     });
     return response;
   },
+  getGramPanchayats: async (tenantId) => {
+    const response = await ServiceRequest({
+      serviceName: "getGramPanchayats",
+      url: Urls.location.gramPanchayats,
+      params: { tenantId: tenantId },
+      useCache: true,
+    });
+    return response;
+  },
 };

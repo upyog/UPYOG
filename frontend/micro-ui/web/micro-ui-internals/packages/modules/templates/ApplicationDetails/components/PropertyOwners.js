@@ -3,6 +3,13 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 
 function PropertyOwners({ owners }) {
+  let ownerSequences={};
+  if (window.location.href.includes("/employee/pt/")) {
+   ownerSequences=owners.slice().reverse()
+  } 
+  else{
+    ownerSequences=owners;
+  }
   const { t } = useTranslation();
 
   const checkLocation = true;
@@ -36,7 +43,7 @@ function PropertyOwners({ owners }) {
   return (
     <React.Fragment>
       <div className="owner-details">
-      {owners.map((owner, index) => (
+      {ownerSequences.map((owner, index) => (
         <div key={t(owner?.title)} style={cardStyles} className="owner-details-child">
           {/* TODO, Later will move to classes */}
           <CardSubHeader

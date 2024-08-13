@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { FormComposer, Loader } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Header, Loader } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 const isConventionalSpecticTank = (tankDimension) => tankDimension === "lbd";
@@ -22,6 +22,7 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
     clearSuccessData();
     clearError();
   }, []);
+
   var defaultValues = {
     channel: channelMenu.filter((channel) => channel.code === applicationData.source)[0],
     applicationData: {
@@ -38,8 +39,11 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
           : undefined,
       vehicleType: { capacity: applicationData?.vehicleCapacity },
       vehicleCapacity: applicationData?.vehicleCapacity,
+      distancefromroad:applicationData?.additionalDetails?.distancefromroad,
+      roadWidth:applicationData?.additionalDetails?.roadWidth
     },
     propertyType: applicationData.propertyUsage.split(".")[0],
+    propertyID: applicationData?.additionalDetails?.propertyID,
     subtype: applicationData.propertyUsage,
     address: {
       pincode: applicationData.address.pincode,
@@ -209,7 +213,7 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
           longitude: data?.address?.longitude ? data?.address?.longitude : applicationData.address.geoLocation.longitude,
         },
         additionalDetails: {
-          boundaryType: propertyLocation === "FROM_GRAM_PANCHAYAT" ? (village?.code ? "Village" : "GP") : "Locality",
+          boundaryType: propertyLocation === "FROM_GRAM_PANCHAYAT" ? "GP" : "Locality",
           gramPanchayat: {
             code: gramPanchayat?.code,
             name: gramPanchayat?.name,
@@ -246,7 +250,7 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
   }
 
   const configs = [...preFields, ...commonFields];
-
+  console.log(configs,"configs");
   return (
     // <>
     //   <div style={{ marginLeft: "15px" }}>

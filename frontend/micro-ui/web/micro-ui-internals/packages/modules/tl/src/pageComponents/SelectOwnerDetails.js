@@ -177,21 +177,38 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         return false;
       } else return true;
     } else if (typeOfOwner === "MULTIOWNER") {
-      return ownersData.reduce((acc, ownerData) => {
-        if (ownerData?.name && ownerData?.gender && ownerData?.mobilenumber) {
+      ownersData.forEach((ownerData, index)=>{
+        if (ownerData[index]?.gender===null){
           setError("TL_ERROR_FILL_ALL_MANDATORY_DETAILS");
           return false;
-        }
-      }, true);
+        }else return true;
+      });
     }
   }
 
   const goNext = () => {
-    if (!checkMandatoryFieldsForEachOwner(formState)) {
+    if (!checkMandatoryFieldsForEachOwner(formState) && (typeOfOwner==="SINGLEOWNER" || typeOfOwner==="INSTITUTIONAL")) {
       let owner = formData.owners;
       let ownerStep;
       ownerStep = { ...owner, owners: formState };
       onSelect(config.key, ownerStep);
+    }
+    else if(checkMandatoryFieldsForEachOwner(formState)){
+      setError("please fill mandatory fields")
+    }
+    else if(typeOfOwner==="MULTIOWNER"){
+      if(formState?.length<2){
+        setError(t("TL_ERROR_MULTIPLE_OWNER"))
+      }
+      else if(checkMandatoryFieldsForEachOwner(formState)){
+        setError("please fill mandatory fields")
+      }
+      else{
+        let owner = formData.owners;
+        let ownerStep;
+        ownerStep = { ...owner, owners: formState };
+        onSelect(config.key, ownerStep);
+      }
     }
   };
 
@@ -219,7 +236,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     {...{
                       validation: {
                         isRequired: true,
-                        pattern: "^[a-z0-9]+( [a-z0-9]+)*$",
+                        pattern: "^[a-zA-Z_@./()#&+- ]*$",
                         type: "text",
                         title: t("TL_NAME_ERROR_MESSAGE"),
                       },
@@ -335,6 +352,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                       validation: {
                         // isRequired: true,
                         // pattern: getPattern("Email"),
+                        pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$",
                         type: "text",
                         title: t("TL_EMAIL_ERROR_MESSAGE"),
                       },
@@ -493,6 +511,15 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                   labelKey=""
                   isPTFlow={true}
                 />
+                <CardLabel>{`${t("TL_EMAIL_ID_LABEL")}`}</CardLabel>
+                <TextInput
+                  t={t}
+                  isMandatory={false}
+                  name="emailId"
+                  value={field.emailId}
+                  onChange={(e) => handleTextInputField(index, e, "emailId")}
+                  {...{ required: true, pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", title: t("CORE_COMMON_APPLICANT_EMAILI_ID_INVALID") }}
+                />
                 {typeOfOwner === "MULTIOWNER" && (
                   <CheckBox
                     label={t("TL_PRIMARY_OWNER_LABEL")}
@@ -511,13 +538,22 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         {typeOfOwner === "MULTIOWNER" && (
           <div>
             {/* <hr color="#d6d5d4" className="break-line"></hr> */}
-            <div style={{ justifyContent: "center", display: "flex", paddingBottom: "15px", color: "#FF8C00" }}>
+            <div style={{ justifyContent: "left", display: "flex", paddingBottom: "15px", color: "#FF8C00" }}>
               <button type="button" style={{ paddingTop: "10px" }} onClick={() => dispatch({ type: "ADD_NEW_OWNER" })}>
                 {t("TL_ADD_OWNER_LABEL")}
               </button>
             </div>
           </div>
         )}
+        {typeOfOwner==="MULTIOWNER" &&
+            formState?.length<2 && (
+              <div>
+                <div style={{ justifyContent: "left", display: "flex", paddingBottom: "15px", fontSize: "15px",color: "#FF8C00" }}>
+                  {t("TL_ERROR_MULTIPLE_OWNER")}
+                </div>
+              </div>
+            )
+        }
       </FormStep>
     </React.Fragment>
   );

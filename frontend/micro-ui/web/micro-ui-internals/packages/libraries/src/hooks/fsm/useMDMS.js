@@ -95,7 +95,6 @@ const useMDMS = (tenantId, moduleCode, type, config = {}, payload = []) => {
     return useQuery("FSM_RECEIVED_PAYMENT_TYPE", () => MdmsService.getWSTaxHeadMaster(tenantId, moduleCode, type), queryConfig);
   };
 
-
   switch (type) {
     case "SanitationType":
       return useSanitationType();

@@ -14,41 +14,28 @@ import static org.egov.swcalculation.web.models.TaxHeadCategory.CHARGES;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.swcalculation.constants.SWCalculationConstant;
-import org.egov.swcalculation.repository.SewerageCalculatorDao;
 import org.egov.swcalculation.util.CalculatorUtils;
-import org.egov.swcalculation.util.SWCalculationUtil;
 import org.egov.swcalculation.util.SewerageCessUtil;
-import org.egov.swcalculation.web.models.AdhocTaxReq;
-import org.egov.swcalculation.web.models.BulkBillCriteria;
-import org.egov.swcalculation.web.models.Calculation;
-import org.egov.swcalculation.web.models.CalculationCriteria;
-import org.egov.swcalculation.web.models.CalculationReq;
-import org.egov.swcalculation.web.models.Demand;
-import org.egov.swcalculation.web.models.DemandDetail;
-import org.egov.swcalculation.web.models.Property;
-import org.egov.swcalculation.web.models.SewerageConnection;
-import org.egov.swcalculation.web.models.SewerageConnectionRequest;
-import org.egov.swcalculation.web.models.TaxHeadCategory;
-import org.egov.swcalculation.web.models.TaxHeadEstimate;
-import org.egov.swcalculation.web.models.TaxHeadMaster;
+import org.egov.swcalculation.web.models.*;
+import org.egov.swcalculation.repository.SewerageCalculatorDao;
+import org.egov.swcalculation.util.SWCalculationUtil;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
+
+import static org.egov.swcalculation.constants.SWCalculationConstant.*;
+import static org.egov.swcalculation.web.models.TaxHeadCategory.CHARGES;
 
 @Service
 @Slf4j
@@ -90,39 +77,31 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 	public List<Calculation> getCalculation(CalculationReq request) {
 		List<Calculation> calculations;
 		boolean connectionRequest = false;
-		Map<String, Object> masterMap;
-		if (request.getIsDisconnectionRequest()!= null && request.getIsDisconnectionRequest()) {
+		if (request.getDisconnectRequest()!= null && request.getDisconnectRequest()) {
 			// Calculate and create demand for connection
-			connectionRequest = request.getIsDisconnectionRequest();
-			 masterMap = mDataService.loadMasterData(request.getRequestInfo(),
+			connectionRequest = request.getDisconnectRequest();
+			Map<String, Object> masterMap = mDataService.loadMasterData(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
 			calculations = getCalculations(request, masterMap);
-			
+			demandService.generateDemand(request, calculations, masterMap, connectionRequest);
+			unsetSewerageConnection(calculations);
 		} else if (request.getIsconnectionCalculation()) {
 			connectionRequest = request.getIsconnectionCalculation();
-			masterMap = mDataService.loadMasterData(request.getRequestInfo(),
+			Map<String, Object> masterMap = mDataService.loadMasterData(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
 			calculations = getCalculations(request, masterMap);
-			
+			demandService.generateDemand(request, calculations, masterMap, connectionRequest);
+			unsetSewerageConnection(calculations);
 
-		}
-		else if (request.getIsReconnectionRequest())	
-		{
-			connectionRequest = (!request.getIsReconnectionRequest());
-			masterMap = mDataService.loadExemptionMaster(request.getRequestInfo(),
-					request.getCalculationCriteria().get(0).getTenantId());
-			calculations = getReconnectionFeeCalculation(request, masterMap);
-			log.info("In reconnection request connectionRequest" + connectionRequest);
-		} 
-		else {
+		} else {
 			// Calculate and create demand for application
-			masterMap = mDataService.loadExemptionMaster(request.getRequestInfo(),
+			Map<String, Object> masterData = mDataService.loadExemptionMaster(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
-			calculations = getFeeCalculation(request, masterMap);
-			connectionRequest = request.getIsconnectionCalculation();
+			calculations = getFeeCalculation(request, masterData);
+			demandService.generateDemand(request, calculations, masterData,
+					request.getIsconnectionCalculation());
+			unsetSewerageConnection(calculations);
 		}
-		demandService.generateDemand(request, calculations, masterMap,connectionRequest);
-		unsetSewerageConnection(calculations);
 		return calculations;
 	}
 

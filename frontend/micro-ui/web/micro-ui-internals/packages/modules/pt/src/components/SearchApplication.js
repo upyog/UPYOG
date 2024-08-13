@@ -86,7 +86,7 @@ const PTSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, set
           },
           {
             Header: t("PT_COMMON_TABLE_COL_OWNER_NAME"),
-            accessor: (row) => GetCell(row.owners.map( o => o.name ). join(",") || ""),
+            accessor: (row) => GetCell(row.owners?.[0]?.additionalDetails?.ownerSequence ? row.owners.sort((a,b)=>a.additionalDetails.ownerSequence-b.additionalDetails.ownerSequence).map( o => o.name ). join(",") || "" : row.owners.map( o => o.name ). join(",") || ""),
             disableSortBy: true,
           },
           {

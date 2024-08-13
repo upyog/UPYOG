@@ -8,7 +8,12 @@ const FSMSelectStreet = ({ t, config, onSelect, userType, formData, formState, s
   const onSkip = () => onSelect();
 
   const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
-
+//const property = JSON.parse(sessionStorage.getItem("Digit_FSM_PT")|| "{}")
+let property = sessionStorage?.getItem("Digit_FSM_PT")
+if (property !== "undefined")
+{
+  property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
+}
   const {
     control,
     formState: localFormState,
@@ -23,8 +28,8 @@ const FSMSelectStreet = ({ t, config, onSelect, userType, formData, formState, s
   const { errors } = localFormState;
   const checkLocation = window.location.href.includes("tl/new-application") || window.location.href.includes("tl/renew-application-details") || window.location.href.includes("tl/edit-application-details/") || window.location.href.includes("/tl/tradelicence/new-application/street") || window.location.href.includes("/tl/tradelicence/renew-trade") || window.location.href.includes("/tl/tradelicence/edit-application") ;
   const isRenewal = window.location.href.includes("edit-application") || window.location.href.includes("tl/renew-application-details");
-  const [street, setStreet] = useState();
-  const [doorNo, setDoorNo] = useState();
+  const [street, setStreet] = useState(property?.propertyDetails?.address?.street);
+  const [doorNo, setDoorNo] = useState(property?.propertyDetails?.address?.doorNo);
   let inputs;
   if (window.location.href.includes("tl")) {
     inputs = config.inputs;
@@ -38,6 +43,7 @@ const FSMSelectStreet = ({ t, config, onSelect, userType, formData, formState, s
         label: "PT_PROPERTY_ADDRESS_STREET_NAME",
         type: "text",
         name: "street",
+        isMandatory: true,
         validation: {
           pattern: "[a-zA-Z0-9 ]{1,255}",
           // maxlength: 256,
@@ -48,6 +54,7 @@ const FSMSelectStreet = ({ t, config, onSelect, userType, formData, formState, s
         label: "PT_PROPERTY_ADDRESS_HOUSE_NO",
         type: "text",
         name: "doorNo",
+        isMandatory: true,
         validation: {
           pattern: "[A-Za-z0-9#,/ -]{1,63}",
           // maxlength: 256,
@@ -78,7 +85,7 @@ const FSMSelectStreet = ({ t, config, onSelect, userType, formData, formState, s
   };
 
   useEffect(() => {
-    if(window.location.href.includes("employee/tl/") && formData?.cpt?.details)
+    if(window.location.href.includes("employee/fsm/") && formData?.cpt?.details)
     {
       setValue("doorNo", formData?.cpt?.details?.address?.doorNo);
       setValue("street", formData?.cpt?.details?.address?.street);
@@ -115,7 +122,7 @@ const FSMSelectStreet = ({ t, config, onSelect, userType, formData, formState, s
   }, [formValue]);
 
   useEffect(() => {
-    if (formData?.cpt?.details && window.location.href.includes("tl")) {
+    if (formData?.cpt?.details && window.location.href.includes("fsm")) {
       inputs?.map((input) => {
         if (getValues(input.name) !== formData?.cpt?.details?.address?.[input.name]) {
           setValue(
@@ -143,7 +150,7 @@ const FSMSelectStreet = ({ t, config, onSelect, userType, formData, formState, s
         <LabelFieldPair key={index}>
           <CardLabel className="card-label-smaller">
             {t(input.label)}
-            {config.isMandatory ? " * " : null}
+            {input.isMandatory ? " * " : null}
           </CardLabel>
           <div className="field">
             <Controller
@@ -202,10 +209,11 @@ const FSMSelectStreet = ({ t, config, onSelect, userType, formData, formState, s
   }
   return (
     <React.Fragment>
-      {window.location.href.includes("/tl") ? <Timeline currentStep={2} /> : <Timeline currentStep={1} flow="APPLY" />}
+      {window.location.href.includes("/fsm") ? <Timeline currentStep={2} /> : <Timeline currentStep={1} flow="APPLY" />}
       <FormStep
         config={{ ...config, inputs }}
-        _defaultValues={{ street: formData?.address.street, doorNo: formData?.address.doorNo }}
+        isMandatory={true}
+        _defaultValues={{ street: property.propertyDetails.address.street, doorNo: property.propertyDetails.address.doorNo }}
         onChange={handleSkip}
         onSelect={(data) => onSelect(config.key, data)}
         onSkip={onSkip}

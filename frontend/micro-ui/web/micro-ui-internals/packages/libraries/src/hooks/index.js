@@ -220,6 +220,7 @@ import WSuseSearch from "./ws/useSearch";
 import useOldValue from "./ws/useOldValue";
 import useSewSearch from "./ws/useSewSearch";
 import useSearchWS from "./ws/useSearchWS";
+import useBulkSearchWS from "./ws/useBulkSearchWS"
 import useMypaymentWS from "./ws/useMypaymentWS";
 import useWSDetailsPage from "./ws/useWSDetailsPage";
 import useWSApplicationActions from "./ws/useApplicationActions";
@@ -245,6 +246,7 @@ import useWaterPropertySearch from "./ws/useWaterPropertySearch";
 import useDisconnectionWorkflow from "./ws/useDisconnectionWorkflow";
 import useDisConnectionDetails from "./ws/useDisConnectionDetails";
 import useWSModifyDetailsPage from "./ws/useWSModifyDetailsPage";
+import useBulkMeterReadingCreateAPI from "./ws/useBulkMeterCreate";
 
 import useGetHowItWorksJSON from "./useHowItWorksJSON";
 import useGetFAQsJSON from "./useGetFAQsJSON";
@@ -257,6 +259,21 @@ import useToCheckPrivacyEnablement from "./ws/useToCheckPrivacyEnablement";
 import useWSConfigMDMS from "./ws/useWSConfigMDMS";
 import useFeedBackSearch from "./useFeedBackSearch";
 
+import usePetMDMS from "./ptr/usePetMDMS";
+import useBreedTypeMDMS from "./ptr/useBreedTypeMDMS";
+import usePTRCreateAPI from "./ptr/usePTRCreateAPI";
+import usePTRPetMDMS from "./ptr/usePTRPetMDMS";
+import usePTRGenderMDMS from "./ptr/usePTRGenderMDMS";
+import usePTRSearch from "./ptr/usePTRSearch";
+import usePtrApplicationDetail from "./ptr/usePtrApplicationDetail";
+import usePTRApplicationAction from "./ptr/usePTRApplicationAction";
+import useServiceSearchPTR from "./ptr/useServiceSearchPTR";
+import usePetDocumentSearch from "./ptr/usePetDocumentSearch";
+import useMyPetPayments from "./ptr/useMyPetPayments";
+import useTenantsPTR from "./ptr/useTenants";
+
+
+import createTokenAPI from "./digiLockerApi/createTokenAPI";
 
 const pgr = {
   useComplaintDetails,
@@ -276,6 +293,7 @@ const pgr = {
   useTradeLicenseBillingslab,
   useMDMS: usePGRMDMS,
 };
+
 
 const fsm = {
   useTenants: useTenantsFSM,
@@ -316,6 +334,22 @@ const fsm = {
   useVehicleTripCreate,
   useVendorSearch,
   useAdvanceBalanceCalulation,
+};
+const ptr = {
+  usePetMDMS,
+  usePTRPetMDMS,
+  useBreedTypeMDMS,
+  usePTRCreateAPI,
+  usePTRApplicationAction,
+  usePTRGenderMDMS,
+  usePTRSearch,
+  usePtrApplicationDetail,
+  // useTenantsPTR,
+  useServiceSearchPTR,
+  usePetDocumentSearch,
+  useMyPetPayments,
+  useTenants: useTenantsPTR
+ 
 };
 
 const pt = {
@@ -475,6 +509,7 @@ const ws = {
   WSuseSearch,
   useSewSearch,
   useSearchWS,
+  useBulkSearchWS,
   useWSDetailsPage,
   useWSApplicationActions,
   useApplicationActionsBillAmendUpdate,
@@ -497,6 +532,7 @@ const ws = {
   useDisConnectionDetails,
   useWSModifyDetailsPage,
   useToCheckPrivacyEnablement,
+  useBulkMeterReadingCreateAPI,
   useWSConfigMDMS: useWSConfigMDMS,
 };
 
@@ -545,6 +581,7 @@ const Hooks = {
   pgr,
   fsm,
   pt,
+  ptr,
   dss,
   mcollect,
   hrms,
@@ -568,6 +605,7 @@ const Hooks = {
   useBulkPdfDetails,
   useBillAmendmentInbox,
   useAudit,
+  createTokenAPI
 };
 
 export default Hooks;

@@ -49,6 +49,7 @@ const getBPAEditDetails = async (data, APIScrutinyDetails,mdmsData,nocdata,t,OCD
     applicationDate: data?.auditDetails?.createdTime,
     applicationType: APIScrutinyDetails?.appliactionType,
     holdingNumber: data?.additionalDetails?.holdingNo,
+    boundaryWallLength: data?.additionalDetails?.boundaryWallLength,
     bpaData:OCData,
     occupancyType: APIScrutinyDetails?.planDetail?.planInformation?.occupancy,
     registrationDetails: data?.additionalDetails?.registrationDetails,

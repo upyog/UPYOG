@@ -28,10 +28,135 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
   let allCities = Digit.Hooks.pt.useTenants()?.sort((a, b) => a?.i18nKey?.localeCompare?.(b?.i18nKey));
   // if called from tl module get tenants from tl usetenants
   allCities = allCities ? allCities : Digit.Hooks.tl.useTenants()?.sort((a, b) => a?.i18nKey?.localeCompare?.(b?.i18nKey));  
-  if(window.location.href.includes("obps"))
+  
+  if(window.location.href.includes("obps") )
   {
     allCities = Digit.SessionStorage.get("OBPS_TENANTS")
   }
+  else if(window.location.href.includes("fsm") )
+  {
+    allCities = [
+      {
+          "i18nKey": "TENANT_TENANTS_PG_CITYA",
+          "code": "pg.citya",
+          "name": "City A",
+          "description": "City A",
+          "pincode": [
+              143001,
+              143002,
+              143003,
+              143004,
+              143005
+          ],
+          "logoId": "https://in-egov-assets.s3.ap-south-1.amazonaws.com/in.citya/logo.png",
+          "imageId": null,
+          "domainUrl": "https://www.upyog.niua.org",
+          "type": "CITY",
+          "twitterUrl": null,
+          "facebookUrl": null,
+          "emailId": "citya@gmail.com",
+          "OfficeTimings": {
+              "Mon - Fri": "9.00 AM - 6.00 PM"
+          },
+          "city": {
+              "name": "City A",
+              "localName": null,
+              "districtCode": "CITYA",
+              "districtName": null,
+              "districtTenantCode": "pg.citya",
+              "regionName": null,
+              "ulbGrade": "Municipal Corporation",
+              "longitude": 75.5761829,
+              "latitude": 31.3260152,
+              "shapeFileLocation": null,
+              "captcha": null,
+              "code": "1013",
+              "ddrName": "DDR A"
+          },
+          "address": "City A Municipal Corporation",
+          "contactNumber": "001-2345876"
+      },
+      {
+          "i18nKey": "TENANT_TENANTS_PG_CITYB",
+          "code": "pg.cityb",
+          "name": "City B",
+          "description": null,
+          "pincode": [
+              143006,
+              143007,
+              143008,
+              143009,
+              143010
+          ],
+          "logoId": "https://in-egov-assets.s3.ap-south-1.amazonaws.com/in.citya/logo.png",
+          "imageId": null,
+          "domainUrl": "https://www.upyog.niua.org",
+          "type": "CITY",
+          "twitterUrl": null,
+          "facebookUrl": null,
+          "emailId": "cityb@gmail.com",
+          "OfficeTimings": {
+              "Mon - Fri": "9.00 AM - 6.00 PM",
+              "Sat": "9.00 AM - 12.00 PM"
+          },
+          "city": {
+              "name": "City B",
+              "localName": null,
+              "districtCode": "CITYB",
+              "districtName": null,
+              "districtTenantCode": "pg.cityb",
+              "regionName": null,
+              "ulbGrade": "Municipal Corporation",
+              "longitude": 74.8722642,
+              "latitude": 31.6339793,
+              "shapeFileLocation": null,
+              "captcha": null,
+              "code": "107",
+              "ddrName": "DDR B"
+          },
+          "address": "City B Municipal Corporation Address",
+          "contactNumber": "0978-7645345",
+          "helpLineNumber": "0654-8734567"
+      },
+      {
+          "i18nKey": "TENANT_TENANTS_PG_CITYC",
+          "code": "pg.cityc",
+          "name": "City C",
+          "description": null,
+          "logoId": "https://in-egov-assets.s3.ap-south-1.amazonaws.com/in.citya/logo.png",
+          "imageId": null,
+          "domainUrl": "https://www.upyog.niua.org",
+          "type": "CITY",
+          "twitterUrl": null,
+          "facebookUrl": null,
+          "emailId": "cityc@gmail.com",
+          "OfficeTimings": {
+              "Mon - Fri": "9.00 AM - 6.00 PM",
+              "Sat": "9.00 AM - 12.00 PM"
+          },
+          "city": {
+              "name": "City C",
+              "localName": null,
+              "districtCode": "CITYC",
+              "districtName": null,
+              "districtTenantCode": "pg.cityc",
+              "regionName": null,
+              "ulbGrade": "Municipal Corporation",
+              "longitude": 73.8722642,
+              "latitude": 31.6339793,
+              "shapeFileLocation": null,
+              "captcha": null,
+              "code": "108",
+              "ddrName": "DDR C"
+          },
+          "address": "City C Municipal Corporation Address",
+          "contactNumber": "0978-7645345",
+          "helpLineNumber": "0654-8734567"
+      }
+  ]
+    
+  }
+  console.log("allCities",allCities)
   const [cityCode, setCityCode] = useState();
   const [formValue, setFormValue] = useState();
   const [errorShown, seterrorShown] = useState(false);
@@ -142,11 +267,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
                 {...customProps}
                 selected={props.value}
                 select={(d) => {
-                  Digit.LocalizationService.getLocale({
-                    modules: [`rainmaker-${props?.value?.code}`],
-                    locale: Digit.StoreData.getCurrentLanguage(),
-                    tenantId: `${props?.value?.code}`,
-                  });
+                  "pg.citya"              
                   if (d.code !== cityCode) props.setValue("locality", null);
                   props.onChange(d);
                 }}
@@ -418,8 +539,9 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
     const mobileNumberLength = data?.[mobileNumber.name]?.length;
     const oldPropId = data?.[oldProperty.name];
     const propId = data?.[property.name];
-    const city = data?.city;
-
+    const city = data?.city || allCities[0];
+console.log("citycity",city)
+setCityCode(city.code);
     // if ((city!=null && Object.keys(city).length !=0) && !(mobileNumberLength > 0 || oldPropId!="" || propId!="")){
     //   setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
     // }
@@ -527,9 +649,15 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
         onFormValueChange={onFormValueChange}
         cardStyle={{marginBottom:"0",maxWidth:"960px"}}
       ></FormComposer>
+       <div style={{display:"flex"}}>
       <span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
-        <Link to={window.location.href.includes("/ws/")?"/digit-ui/citizen/ws/create-application/create-property" : window.location.href.includes("/tl/tradelicence/") ? "/digit-ui/citizen/tl/tradelicence/new-application/create-property":window.location.href.includes("/obps/bpa/") ? "/digit-ui/citizen/obps/bpa/building_plan_scrutiny/new_construction/create-property":"/digit-ui/citizen/commonpt/property/new-application"}>{t("CPT_REG_NEW_PROPERTY")}</Link>
+       
+        <Link to={window.location.href.includes("/ws/")?"/digit-ui/citizen/ws/create-application/create-property" : window.location.href.includes("/tl/tradelicence/") ? "/digit-ui/citizen/tl/tradelicence/new-application/create-property":window.location.href.includes("/obps/bpa/") ? "/digit-ui/citizen/obps/bpa/building_plan_scrutiny/new_construction/create-property":window.location.href.includes("/fsm/")? "/digit-ui/citizen/fsm/new-application/create-property":"/digit-ui/citizen/commonpt/property/new-application"}>{t("CPT_REG_NEW_PROPERTY")}</Link>
       </span>
+      {window.location.href.includes("/obps/bpa/") ?<span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
+        <Link to={"/digit-ui/citizen/obps/bpa/building_plan_scrutiny/new_construction/location"}>{t("CORE_COMMON_SKIP_CONTINUE")}</Link>
+      </span>:""}
+      </div>
       {showToast && (
         <Toast
           isDleteBtn={true}

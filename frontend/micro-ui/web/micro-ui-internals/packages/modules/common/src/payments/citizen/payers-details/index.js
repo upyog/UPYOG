@@ -170,7 +170,7 @@ const SelectPaymentType = (props) => {
       <BackButton>{t("CS_COMMON_BACK")}</BackButton>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/*  <Header>{t("PAYMENT_CS_HEADER")}</Header> */}
-        <Header>{t("PT_PAYERS_DETAILS_HEADER")}</Header>
+        <Header>{t("PAYERS_DETAILS_HEADER")}</Header>
         <Card>
           <span className="card-label-error">{t(mobileNumberError)}</span>
           <RadioButtons

@@ -7,6 +7,7 @@ const Urls = {
   location: {
     localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality`,
     revenue_localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Locality`,
+    gramPanchayats: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=GP`,
   },
 
   pgr_search: `/pgr-services/v2/request/_search`,
@@ -89,6 +90,17 @@ const Urls = {
     
   },
 
+  ptr: {  
+    
+    create:"/pet-services/pet-registration/_create",
+    search:"/pet-services/pet-registration/_search",
+    update:"/pet-services/pet-registration/_update",
+    fetch_payment_details: "/billing-service/bill/v2/_fetchbill",
+    payment_search: "/collection-services/payments/pet-services/_search",
+    
+  },
+
+
   dss: {
     dashboardConfig: "/dashboard-analytics/dashboard/getDashboardConfig",
     getCharts: "/dashboard-analytics/dashboard/getChartV2",
@@ -141,7 +153,6 @@ const Urls = {
     edcrreportdownload: "/bpa-services/v1/bpa/_permitorderedcr",
     getSearchDetails: "/inbox/v1/dss/_search",
   },
-
   edcr: {
     create: "/edcr/rest/dcr/scrutinize",
   },
@@ -174,6 +185,7 @@ const Urls = {
     billAmendmentCreate: "/billing-service/amendment/_create",
     billAmendmentUpdate: "/billing-service/amendment/_update",
     ws_meter_conncetion_create: "/ws-calculator/meterConnection/_create",
+    ws_meter_conncetion_bulk_create: "/ws-calculator/meterConnection/_bulkReading",
     sw_meter_conncetion_create: "/sw-calculator/meterConnection/_create",
     wns_group_bill: "/egov-pdf/download/WNS/wnsgroupbill",
     cancel_group_bill: "/pdf-service/v1/_cancelProcess",
@@ -182,8 +194,15 @@ const Urls = {
     sewerage_applyAdhocTax: "/sw-calculator/sewerageCalculator/_applyAdhocTax",
     getSearchDetails: "/inbox/v1/dss/_search",
     disconnection_notice: "/pdf-service/v1/_createnosave",
+    meter_search:"/ws-calculator/meterConnection/_search"
   },
-
+digiLocker:{
+  authorization:"/requester-services-dx/user/authorization/url",
+  register :"/requester-services-dx/user/authorization/url/citizen",
+  token:"/requester-services-dx/user/token",
+  issueDoc:"/requester-services-dx/user/issuedfiles",
+  uri:"/requester-services-dx/user/file"
+},
   engagement: {
     document: {
       search: "/egov-document-uploader/egov-du/document/_search",

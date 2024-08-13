@@ -54,10 +54,29 @@ public class ServiceDefinitionRequestRepository {
 
 
 
+        System.out.println("inside get service definition");
+        System.out.println(criteria);
         String query = serviceDefinitionQueryBuilder.getServiceDefinitionSearchQuery(criteria, preparedStmtList);
         log.info("query for search: " + query + " params: " + preparedStmtList);
         return jdbcTemplate.query(query, preparedStmtList.toArray(), serviceDefinitionRowMapper);
 
+    }
+
+    public Integer fetchTotalSurveyCount(ServiceDefinitionSearchRequest ServiceDefinitionSearchRequest) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        ServiceDefinitionCriteria ServiceDefinitionCriteria = ServiceDefinitionSearchRequest.getServiceDefinitionCriteria();
+
+        if(CollectionUtils.isEmpty(ServiceDefinitionCriteria.getIds()))
+            return 0;
+
+        // Omit pagination in case of count
+        ServiceDefinitionCriteria.setIsCountCall(Boolean.TRUE);
+        String query = serviceDefinitionQueryBuilder.getSurveyCountQuery(ServiceDefinitionSearchRequest, preparedStmtList);
+        ServiceDefinitionCriteria.setIsCountCall(Boolean.FALSE);
+
+        log.info("query for count search call: " + query + " params: " + preparedStmtList);
+
+        return jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
     }
 
     public List<Service> getService(ServiceCriteria criteria) {

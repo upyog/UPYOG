@@ -16,10 +16,14 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
     { staleTime: Infinity }
   );
 
-  const [vehicle, setVehicle] = useState({ label: formData?.tripData?.vehicleCapacity });
+  const [vehicle, setVehicle] = useState({
+    label: formData?.tripData?.vehicleCapacity,
+  });
   const [billError, setError] = useState(false);
 
-  const { isLoading: isVehicleMenuLoading, data: vehicleData } = Digit.Hooks.fsm.useMDMS(state, "Vehicle", "VehicleType", { staleTime: Infinity });
+  const { isLoading: isVehicleMenuLoading, data: vehicleData } = Digit.Hooks.fsm.useMDMS(state, "Vehicle", "VehicleType", {
+    staleTime: Infinity,
+  });
 
   const { data: dsoData, isLoading: isDsoLoading, isSuccess: isDsoSuccess, error: dsoError } = Digit.Hooks.fsm.useDsoSearch(tenantId, {
     limit: -1,
@@ -38,7 +42,7 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
         title: t("ES_NEW_APPLICATION_AMOUNT_INVALID"),
       },
 
-      default: url.includes("modify") ? applicationData?.advanceAmount : formData?.advanceAmount,
+      default: formData?.advanceAmount,
       isMandatory: true,
     },
   ];
@@ -89,6 +93,7 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
               advanceAmount: advanceBalanceAmount,
             });
           }
+
           setError(false);
         } else {
           sessionStorage.removeItem("Digit.total_amount");
@@ -111,15 +116,7 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
         Digit.SessionStorage.set("advance_amount", advanceBalanceAmount);
         setTotalAmount(totaltripAmount);
         setAdvanceAmounts(advanceBalanceAmount);
-        if (formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" && url.includes("modify")) {
-          setValue({
-            advanceAmount: 0,
-          });
-        } else if (
-          !url.includes("modify") ||
-          url.includes("modify") ||
-          (formData?.advancepaymentPreference?.advanceAmount > 0 && advanceBalanceAmount > formData?.advancepaymentPreference?.advanceAmount)
-        ) {
+        if (!url.includes("modify") || (url.includes("modify") && advanceBalanceAmount > formData?.advancepaymentPreference?.advanceAmount)) {
           setValue({
             advanceAmount: advanceBalanceAmount,
           });
@@ -129,6 +126,7 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
       }
     })();
   }, [formData.tripData.noOfTrips, formData.tripData.amountPerTrip]);
+
   return isVehicleMenuLoading && isDsoLoading ? (
     <Loader />
   ) : (
@@ -136,6 +134,7 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
       {formData?.tripData?.amountPerTrip !== 0 &&
         inputs?.map((input, index) => {
           let currentValue = formData && formData[config.key] && formData[config.key][input.name];
+
           return (
             <React.Fragment key={index}>
               <LabelFieldPair key={index}>
@@ -145,36 +144,51 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
                 </CardLabel>
                 <div className="field">
                   <TextInput
-                    disabled={
-                      url.includes("modify")
-                        ? formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" && applicationData?.advanceAmount > 0
-                          ? false
-                          : true
-                        : false
-                    }
+                    disabled={url.includes("modify") ? true : false}
                     type={input.type}
                     key={input.name}
                     style={FSMTextFieldStyle}
                     onChange={(e) => setAdvanceAmount(e.target.value)}
-                    value={formData && formData[config.key] ? formData[config.key][input.name] : applicationData?.advanceAmount}
+                    value={input.default ? input.default : formData && formData[config.key] ? formData[config.key][input.name] : 0}
                     {...input.validation}
                   />
                   {currentValue > TotalAmount && (
-                    <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "14px", marginBottom: "0px" }}>
+                    <CardLabelError
+                      style={{
+                        width: "100%",
+                        marginTop: "-15px",
+                        fontSize: "14px",
+                        marginBottom: "0px",
+                      }}
+                    >
                       {t("FSM_ADVANCE_AMOUNT_MAX")}
                     </CardLabelError>
                   )}
                   {currentValue < AdvanceAmount && (
-                    <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "14px", marginBottom: "0px" }}>
+                    <CardLabelError
+                      style={{
+                        width: "100%",
+                        marginTop: "-15px",
+                        fontSize: "14px",
+                        marginBottom: "0px",
+                      }}
+                    >
                       {t("FSM_ADVANCE_AMOUNT_MIN")}
                     </CardLabelError>
                   )}
                   {url.includes("modify-application") &&
+                    Number(AdvanceAmount) === 0 &&
                     applicationData?.advanceAmount > 0 &&
-                    Number(formData?.tripData?.amountPerTrip) > 0 &&
                     Number(currentValue) === 0 && (
-                      <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "14px", marginBottom: "0px" }}>
-                        {t("FSM_ADVANCE_AMOUNT_LESS_THAN_AMOUNT_PER_TRIP")}
+                      <CardLabelError
+                        style={{
+                          width: "100%",
+                          marginTop: "-15px",
+                          fontSize: "14px",
+                          marginBottom: "0px",
+                        }}
+                      >
+                        {t("FSM_ADVANCE_AMOUNT_NOT_ZERO")}
                       </CardLabelError>
                     )}
                 </div>

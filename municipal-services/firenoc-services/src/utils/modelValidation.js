@@ -37,6 +37,7 @@ export const validateFireNOCModel = (data, mdmsData) => {
 
   ajv.addKeyword("valid_htmlData", {
     validate: function(schema, data) {
+      if (data == null) return true;
       return (xss(data)==data) ? true : false;
     },
     errors: false
@@ -92,7 +93,7 @@ export const validateFireNOCModel = (data, mdmsData) => {
   //   },
   //   errors: false
   // });
-
+  
   let validate = ajv.compile(fireNOCSchema);
   var valid = validate(data);
   let errors = [];
@@ -104,6 +105,7 @@ export const validateFireNOCModel = (data, mdmsData) => {
 
 export const validateFireNOCSearchModel = data => {
   const ajv = getAjvInstance();
+
   let validate = ajv.compile(fireNOCSearchSchema);
   var valid = validate(data);
   let errors = [];

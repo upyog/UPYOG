@@ -1,5 +1,5 @@
-import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar } from "@egovernments/digit-ui-react-components";
-import React, { Fragment } from "react";
+import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, LinkButton, Loader, SubmitBar } from "@egovernments/digit-ui-react-components";
+import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import PTWFCaption from "./PTWFCaption";
@@ -12,7 +12,7 @@ const PTWFApplicationTimeline = (props) => {
     id: props.id,
     moduleCode: businessService,
   });
-
+  const [showAllTimeline, setShowAllTimeline]=useState(false);
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
@@ -117,7 +117,10 @@ const PTWFApplicationTimeline = (props) => {
   if (isLoading) {
     return <Loader />;
   }
-
+  const toggleTimeline=()=>{
+    setShowAllTimeline((prev)=>!prev);
+  }
+  
   return (
     <React.Fragment>
       {!isLoading && (
@@ -135,34 +138,38 @@ const PTWFApplicationTimeline = (props) => {
             />
           ) : (
             <ConnectingCheckPoints>
-              {data?.timeline &&
-                data?.timeline.map((checkpoint, index, arr) => {
-                  let timelineStatusPostfix = "";
-                  if (window.location.href.includes("/obps/")) {
-                    if(workflowDetails?.data?.timeline[index-1]?.state?.includes("BACK_FROM") || workflowDetails?.data?.timeline[index-1]?.state?.includes("SEND_TO_CITIZEN"))
-                    timelineStatusPostfix = `_NOT_DONE`
-                    else if(checkpoint?.performedAction === "SEND_TO_ARCHITECT")
-                    timelineStatusPostfix = `_BY_ARCHITECT_DONE`
-                    else
-                    timelineStatusPostfix = index == 0 ? "" : `_DONE`;
-                  }
-                  return (
-                    <React.Fragment key={index}>
-                      <CheckPoint
-                        keyValue={index}
-                        isCompleted={index === 0}
-                       // label={checkpoint.state ? t(`WF_${businessService}_${checkpoint.state}`) : "NA"}
-                       label={t(
-                        `ES_PT_COMMON_STATUS_${data?.processInstances[index].state?.["state"]
-                        }${timelineStatusPostfix}`
-                      )}
-                        customChild={getTimelineCaptions(checkpoint)}
-                      />
+            {data?.timeline &&
+              data?.timeline.slice(0,showAllTimeline? data.timeline.length:2).map((checkpoint, index, arr) => {
+                let timelineStatusPostfix = "";
+                if (window.location.href.includes("/obps/")) {
+                  if(workflowDetails?.data?.timeline[index-1]?.state?.includes("BACK_FROM") || workflowDetails?.data?.timeline[index-1]?.state?.includes("SEND_TO_CITIZEN"))
+                  timelineStatusPostfix = `_NOT_DONE`
+                  else if(checkpoint?.performedAction === "SEND_TO_ARCHITECT")
+                  timelineStatusPostfix = `_BY_ARCHITECT_DONE`
+                  else
+                  timelineStatusPostfix = index == 0 ? "" : `_DONE`;
+                }
+                return (
+                  <React.Fragment key={index}>
+                    <CheckPoint
+                      keyValue={index}
+                      isCompleted={index === 0}
+                     // label={checkpoint.state ? t(`WF_${businessService}_${checkpoint.state}`) : "NA"}
+                    label={t(
+                    `ES_PT_COMMON_STATUS_${data?.processInstances[index].state?.["state"]
+                    }${timelineStatusPostfix}`
+                 )}
+                      customChild={getTimelineCaptions(checkpoint)}
+                    />
                     </React.Fragment>
-                  );
-                })}
-            </ConnectingCheckPoints>
+                );
+              })}
+          </ConnectingCheckPoints>
           )}
+          {data?.timeline?.length > 2 && (
+            <LinkButton label={showAllTimeline? t("COLLAPSE") : t("VIEW_TIMELINE")} onClick={toggleTimeline}>
+            </LinkButton>   
+          )} 
         </Fragment>
       )}
       {data && showNextActions(data?.nextActions)}

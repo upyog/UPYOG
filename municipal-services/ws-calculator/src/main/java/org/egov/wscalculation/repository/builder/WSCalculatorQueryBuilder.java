@@ -21,6 +21,8 @@ public class WSCalculatorQueryBuilder {
 			+ " mr.currentReadingDate, mr.createdBy as mr_createdBy, mr.tenantid, mr.lastModifiedBy as mr_lastModifiedBy,"
 			+ " mr.createdTime as mr_createdTime, mr.lastModifiedTime as mr_lastModifiedTime FROM eg_ws_meterreading mr";
 
+	private final static String Locality_Query="select mr.connectionNo as connectionId,mr.id,ms.property_id,pa.locality, mr.billingPeriod, mr.meterStatus, mr.lastReading, mr.lastReadingDate, mr.currentReading,mr.currentReadingDate,mr.createdBy as mr_createdBy, mr.tenantid, mr.lastModifiedBy as mr_lastModifiedBy,"
+			+ " mr.createdTime as mr_createdTime, mr.lastModifiedTime as mr_lastModifiedTime from (select * from eg_ws_meterreading mr where (mr.connectionNo,mr.createdTime) in (select connectionNo, max(createdTime) from eg_ws_meterreading group by connectionNo)) mr INNER JOIN (select * from eg_ws_connection ws where (connectionNo,createdtime) in (select connectionNo,max(createdTime) from eg_ws_connection group by connectionNo)) ms ON  mr.connectionNo=ms.connectionno INNER JOIN (select * from eg_pt_property  where (propertyid,createdtime) in (select propertyid,max(createdTime) from eg_pt_property group by propertyid)) pt on pt.propertyid=ms.property_id INNER JOIN eg_pt_address pa ON  pa.propertyid=pt.id where ms.status='Active' ";
 	private final static String noOfConnectionSearchQuery = "SELECT count(*) FROM eg_ws_meterreading WHERE";
     
 	private final static String noOfConnectionSearchQueryForCurrentMeterReading= "select mr.currentReading from eg_ws_meterreading mr";
@@ -121,7 +123,15 @@ public class WSCalculatorQueryBuilder {
 	public String getSearchQueryString(MeterReadingSearchCriteria criteria, List<Object> preparedStatement) {
 		if(criteria.isEmpty()){return  null;}
 		StringBuilder query = new StringBuilder(Query);
-		if(!StringUtils.isEmpty(criteria.getTenantId())){
+		if(!StringUtils.isEmpty(criteria.getLocality()))
+			query=new StringBuilder(Locality_Query);
+		
+		if(!StringUtils.isEmpty(criteria.getTenantId()) && !StringUtils.isEmpty(criteria.getLocality())){
+			query.append(" AND");
+			query.append(" mr.tenantid= ? ");
+			preparedStatement.add(criteria.getTenantId());
+		}
+		else if(!StringUtils.isEmpty(criteria.getTenantId())){
 			addClauseIfRequired(preparedStatement, query);
 			query.append(" mr.tenantid= ? ");
 			preparedStatement.add(criteria.getTenantId());
@@ -130,6 +140,12 @@ public class WSCalculatorQueryBuilder {
 			addClauseIfRequired(preparedStatement, query);
 			query.append(" mr.connectionNo IN (").append(createQuery(criteria.getConnectionNos())).append(" )");
 			addToPreparedStatement(preparedStatement, criteria.getConnectionNos());
+		}
+		
+		if (!StringUtils.isEmpty(criteria.getLocality())) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" pa.locality =?");
+			preparedStatement.add(criteria.getLocality());		
 		}
 		addOrderBy(query);
 		return addPaginationWrapper(query, preparedStatement, criteria);

@@ -67,7 +67,7 @@ const Response = (props) => {
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("FSM_MUTATION_SUCCESS_DATA", false);
   const [displayMenu, setDisplayMenu] = useState(false);
   const [selectedAction, setSelectedAction] = useState(null);
-
+  sessionStorage.removeItem("Digit_FSM_PT")
   const onError = (error, variables) => {
     setErrorInfo(error?.response?.data?.Errors[0]?.code || error?.message || "ERROR");
     setMutationHappened(true);
