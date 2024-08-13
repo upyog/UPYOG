@@ -358,7 +358,7 @@ public DemandResponse updateDemandsForAssessmentCancel(GetBillCriteria getBillCr
 		if (CollectionUtils.isEmpty(res.getDemands())) {
 			Map<String, String> map = new HashMap<>();
 			map.put(CalculatorConstants.EMPTY_DEMAND_ERROR_CODE, CalculatorConstants.EMPTY_DEMAND_ERROR_MESSAGE);
-			throw new CustomException(map);
+			//throw new CustomException(map);
 		}
 //if(!CollectionUtils.isEmpty(resBill.getDemands()))
 
@@ -378,10 +378,8 @@ public DemandResponse updateDemandsForAssessmentCancel(GetBillCriteria getBillCr
 			}
 		});
 		
-		if (CollectionUtils.isEmpty(consumerCodeToDemandMap))
-			throw new CustomException(CalculatorConstants.EMPTY_DEMAND_ERROR_CODE,
-					"No demands were found for the given consumerCodes : " + getBillCriteria.getConsumerCodes());
-
+		if (!CollectionUtils.isEmpty(consumerCodeToDemandMap)) {
+			
 		List<Demand> demandsToBeUpdated = new LinkedList<>();
 
 		String tenantId = getBillCriteria.getTenantId();
@@ -426,14 +424,16 @@ public DemandResponse updateDemandsForAssessmentCancel(GetBillCriteria getBillCr
 
 			}
 		}
-
+		
 
 		/**
 		 * Call demand update in bulk to update the interest or penalty
 		 */
 		DemandRequest request = DemandRequest.builder().demands(demandsToBeUpdated).requestInfo(requestInfo).build();
 		StringBuilder updateDemandUrl = utils.getUpdateDemandUrl();
+		
 		repository.fetchResult(updateDemandUrl, request);
+		}
 		return res;
 	}
 
