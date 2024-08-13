@@ -452,7 +452,8 @@ public Integer cancelBill(UpdateBillRequest updateBillRequest) {
 
 		System.out.println("demandsWithMultipleActive::"+demandsWithMultipleActive.size());
  		if (demandsWithMultipleActive.isEmpty()) {
-			throw new CustomException(EG_BS_BILL_NO_DEMANDS_FOUND_KEY, EG_BS_BILL_NO_DEMANDS_FOUND_MSG);
+			//throw new CustomException(EG_BS_BILL_NO_DEMANDS_FOUND_KEY, EG_BS_BILL_NO_DEMANDS_FOUND_MSG);
+ 			return null;
 		}
 		
 		//filter the demands which are fully paid
