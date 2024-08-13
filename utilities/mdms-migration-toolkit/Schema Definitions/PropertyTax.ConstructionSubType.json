@@ -1,1 +1,0 @@
-{"type":"object","$schema":"http://json-schema.org/draft-07/schema#","required":["name","code","active"],"x-unique":["code"],"properties":{"id":{"type":"string"},"code":{"type":"string"},"name":{"type":"string"},"active":{"type":"boolean","default":true}},"additionalProperties":false}

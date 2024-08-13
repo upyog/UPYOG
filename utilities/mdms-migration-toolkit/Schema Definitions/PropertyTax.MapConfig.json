@@ -1,1 +1,0 @@
-{"type":"object","$schema":"http://json-schema.org/draft-07/schema#","required":["defaultConfig"],"x-unique":["defaultConfig"],"properties":{"defaultConfig":{"type":"object","required":["lat","lng"],"properties":{"lat":{"type":"number","default":31.6160638},"lng":{"type":"number","default":74.8978579}},"additionalProperties":false}},"additionalProperties":false}
