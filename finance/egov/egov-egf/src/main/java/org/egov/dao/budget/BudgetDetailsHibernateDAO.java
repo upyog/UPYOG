@@ -968,7 +968,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		Integer schemeid = null;
 		Integer subschemeid = null;
 		Integer boundaryid = null;
-		Integer fundid = null;
+		Long fundid = null;
 		Long budgetheadid = null;
 		Date fromdate = null;
 		Date asondate = null;
@@ -986,7 +986,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			if (paramMap.get(Constants.SCHEMEID) != null)
 				schemeid = (Integer) paramMap.get(Constants.SCHEMEID);
 			if (paramMap.get(Constants.FUNDID) != null)
-				fundid = (Integer) paramMap.get(Constants.FUNDID);
+				fundid =  (Long) paramMap.get(Constants.FUNDID);
 			if (paramMap.get(Constants.SUBSCHEMEID) != null)
 				subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
 			if (paramMap.get(Constants.BOUNDARYID) != null)
