@@ -1,4 +1,4 @@
-FROM maven:3.8.3-openjdk-17 AS build
+FROM jelastic/maven:3.9.5-openjdk-21 AS build
 #FROM ghcr.io/egovernments/alpine-maven-builder-jdk-8:1-master-na-6036091e AS build
 ARG WORK_DIR
 WORKDIR /app
