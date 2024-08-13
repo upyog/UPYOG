@@ -21,8 +21,7 @@ FROM tattvafoundation/maven3.9
 
 WORKDIR /opt/egov
 
-COPY --from=build /app/target/*.jar 
-COPY --from=build /app/start.sh /opt/egov/
+COPY --from=build /app/target/*.jar /app/start.sh /opt/egov/
 
 RUN chmod +x /opt/egov/start.sh
 
