@@ -15,7 +15,7 @@ RUN mvn -B -f /app/pom.xml package
 
 
 # Create runtime image
-FROM openjdk:17-jdk-slim
+FROM jelastic/maven:3.9.5-openjdk-21
 #FROM ghcr.io/egovernments/8-openjdk-alpine:latest
 
 
