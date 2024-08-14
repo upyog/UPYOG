@@ -1300,87 +1300,83 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	 */
 	@Override
 	public BigDecimal getBudgetedAmtForYear(final Map<String, Object> paramMap) {
-		String deptCode = null;
-		Long functionid = null;
-		Integer functionaryid = null;
-		Integer schemeid = null;
-		Integer subschemeid = null;
-		Long boundaryid = null;
-		Long fundid = null;
-		List<BudgetGroup> budgetHeadList = null;
-		Long financialyearid = null;
+		 String deptCode = null;
+	        Long functionid = null;
+	        Integer functionaryid = null;
+	        Integer schemeid = null;
+	        Integer subschemeid = null;
+	        Long boundaryid = null;
+	        Long fundid = null;
+	        List<BudgetGroup> budgetHeadList = null;
+	        Long financialyearid = null;
 
-		final StringBuilder query = new StringBuilder();
-		final Map<String, Object> params = new HashMap<>();
-		try {
-			if (paramMap.get(Constants.DEPTID) != null)
-				deptCode = paramMap.get(Constants.DEPTID).toString();
-			if (paramMap.get(Constants.FUNCTIONID) != null)
-				functionid = (Long) paramMap.get(Constants.FUNCTIONID);
-			if (paramMap.get(Constants.FUNCTIONARYID) != null)
-				functionaryid = (Integer) paramMap.get(Constants.FUNCTIONARYID);
-			if (paramMap.get(Constants.SCHEMEID) != null)
-				schemeid = (Integer) paramMap.get(Constants.SCHEMEID);
-			if (paramMap.get(Constants.SUBSCHEMEID) != null)
-				subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
-			if (paramMap.get(Constants.FUNDID) != null)
-				fundid = (Long) paramMap.get(Constants.FUNDID);
-			if (paramMap.get(Constants.BOUNDARYID) != null)
-				boundaryid = (Long) paramMap.get(Constants.BOUNDARYID);
-			if (paramMap.get(BUDGETHEADID) != null)
-				budgetHeadList = (List) paramMap.get(BUDGETHEADID);
-			if (paramMap.get("financialyearid") != null)
-				financialyearid = (Long) paramMap.get("financialyearid");
+	        String query = EMPTY_STRING;
+	        try {
+	            if (paramMap.get(Constants.DEPTID) != null)
+	                deptCode = paramMap.get(Constants.DEPTID).toString();
+	            if (paramMap.get(Constants.FUNCTIONID) != null)
+	                functionid = (Long) paramMap.get(Constants.FUNCTIONID);
+	            if (paramMap.get(Constants.FUNCTIONARYID) != null)
+	                functionaryid = (Integer) paramMap.get(Constants.FUNCTIONARYID);
+	            if (paramMap.get(Constants.SCHEMEID) != null)
+	                schemeid = (Integer) paramMap.get(Constants.SCHEMEID);
+	            if (paramMap.get(Constants.SUBSCHEMEID) != null)
+	                subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
+	            if (paramMap.get(Constants.FUNDID) != null)
+	                fundid = (Long) paramMap.get(Constants.FUNDID);
+	            if (paramMap.get(Constants.BOUNDARYID) != null)
+	                boundaryid = (Long) paramMap.get(Constants.BOUNDARYID);
+	            if (paramMap.get(BUDGETHEADID) != null)
+	                budgetHeadList = (List) paramMap.get(BUDGETHEADID);
+	            if (paramMap.get("financialyearid") != null)
+	                financialyearid = (Long) paramMap.get("financialyearid");
 
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("deptCode " + deptCode + ",functionid " + functionid + ",functionaryid " + functionaryid
-						+ ",schemeid " + schemeid + ",subschemeid " + subschemeid + ",boundaryid " + boundaryid
-						+ ",budgetheadids " + budgetHeadList + ",financialyearid " + financialyearid);
+	                LOGGER.info("deptCode " + deptCode + ",functionid " + functionid + ",functionaryid " + functionaryid
+	                        + ",schemeid " + schemeid + ",subschemeid " + subschemeid + ",boundaryid " + boundaryid
+	                        + ",budgetheadids " + budgetHeadList + ",financialyearid " + financialyearid);
 
-			query.append(prepareQuery(deptCode, functionid, functionaryid, schemeid, subschemeid,
-					boundaryid != null ? boundaryid.intValue() : null, fundid));
+	            query = prepareQuery(deptCode, functionid, functionaryid, schemeid, subschemeid,
+	                    boundaryid != null ? boundaryid.intValue() : null, fundid);
 
-			// handle the list
+	            // handle the list
 
-			if (financialyearid == null)
-				throw new ValidationException(EMPTY_STRING, "Financial Year id is null");
-			query.append(" and bd.budget.financialYear=:financialyearid");
-			params.put("financialyearid", financialyearid);
-			if (budgetHeadList == null || budgetHeadList.size() == 0)
-				throw new ValidationException(EMPTY_STRING, "Budget head id is null or empty");
-			query.append(" and bd.budgetGroup in ( :budgetHeadList )");
-			params.put("budgetHeadList", budgetHeadList);
+	            if (financialyearid == null)
+	                throw new ValidationException(EMPTY_STRING, "Financial Year id is null");
+	            query = query + getQuery(CFinancialYear.class, financialyearid, " and bd.budget.financialYear=");
+	            if (budgetHeadList == null || budgetHeadList.size() == 0)
+	                throw new ValidationException(EMPTY_STRING, "Budget head id is null or empty");
+	            query = query + " and bd.budgetGroup in ( :budgetHeadList )";
 
-			// check any RE is available for the passed parameters.if RE is not
-			// exist, take BE's Approved Amount
-			String finalquery;
-			if (budgetService.hasApprovedReForYear(financialyearid))
-				finalquery = " from BudgetDetail bd where bd.budget.isbere='RE' " + query;
-			else
-				finalquery = " from BudgetDetail bd where bd.budget.isbere='BE' " + query;
+	            // check any RE is available for the passed parameters.if RE is not
+	            // exist, take BE's Approved Amount
+	            String finalquery;
+	            if (budgetService.hasApprovedReForYear(financialyearid))
+	                finalquery = " from BudgetDetail bd where bd.budget.isbere='RE' " + query;
+	            else
+	                finalquery = " from BudgetDetail bd where bd.budget.isbere='BE' " + query;
 
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("Final query=" + finalquery);
-			final Query hibQuery = getCurrentSession().createQuery(finalquery);
-			params.entrySet().forEach(entry -> hibQuery.setParameter(entry.getKey(), entry.getValue()));
-			final List<BudgetDetail> bdList = hibQuery.list();
-			if (bdList == null || bdList.size() == 0)
-				// return BigDecimal.ZERO;
-				throw new ValidationException(
-						new ValidationError("Budget Check failed: Budget not defined for the given combination.",
-								"Budget Check failed: Budget not defined for the given combination."));
-			else
-				return getApprovedAmt(bdList);
-		} catch (final ValidationException v) {
-			LOGGER.error("Exp in getBudgetedAmtForYear==" + v.getErrors());
-	                     throw new ValidationException(EMPTY_STRING, "Exp in getBudgetedAmtForYear==" + v.getMessage());
+	                LOGGER.info("Final query=" + finalquery);
+	            // Query hibQuery =getCurrentSession().createQuery(finalquery);
+	            final Query hibQuery = getCurrentSession().createQuery(finalquery);
 
-        } /*
-           * catch (final Exception e) {
-           * LOGGER.error("Exp in getBudgetedAmtForYear==" + e.getMessage());
-           * throw new ValidationException(EMPTY_STRING,
-           * "Exp in getBudgetedAmtForYear==" + e.getMessage()); }
-           */
+	            hibQuery.setParameterList("budgetHeadList", budgetHeadList);
+	            final List<BudgetDetail> bdList = hibQuery.list();
+	            if (bdList == null || bdList.size() == 0)
+	                // return BigDecimal.ZERO;
+	                throw new ValidationException(
+	                        new ValidationError("Budget Check failed: Budget not defined for the given combination.",
+	                                "Budget Check failed: Budget not defined for the given combination."));
+	            else
+	                return getApprovedAmt(bdList);
+	        } catch (final ValidationException v) {
+	        	v.printStackTrace();
+	            LOGGER.error("Exp in getBudgetedAmtForYear==" + v.getErrors());
+	            throw new ValidationException(v.getErrors());
+	        } catch (final Exception e) {
+	        	e.printStackTrace();
+	            LOGGER.error("Exp in getBudgetedAmtForYear==" + e.getMessage());
+	            throw new ValidationException(EMPTY_STRING, "Exp in getBudgetedAmtForYear==" + e.getMessage());
+	        }
 	}
 
 	/**
