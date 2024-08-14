@@ -1039,7 +1039,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			final int majorcodelength = Integer.valueOf(appList.get(0).getValue());
 
 			if (budgetgroup.getMinCode() != null) {
-				query.append(" and substr(gl.glcode,1,:minCodeLength<=:minGlcode ");
+				query.append(" and substr(gl.glcode,1,:minCodeLength<=:minGlcode) ");
 				params.put("minCodeLength", budgetgroup.getMinCode().getGlcode().length());
 				params.put("minGlcode", budgetgroup.getMinCode().getGlcode());
 				if (budgetgroup.getMaxCode() == null)
