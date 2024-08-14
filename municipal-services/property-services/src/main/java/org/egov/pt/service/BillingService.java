@@ -47,8 +47,10 @@ public class BillingService {
         		LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>)response.get();
                 BillResponse billResponse = mapper.convertValue(responseMap,BillResponse.class);
                 return billResponse;
-        	}else {
-        		throw new CustomException("IllegalArgumentException","Did not get any response from the billing services");
+        	}
+        	
+        	else {
+        		return null;
         		
         	}
         }
