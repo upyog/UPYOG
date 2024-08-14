@@ -2308,172 +2308,150 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	}
 
 	@Override
-	public BigDecimal getBillAmountForBudgetCheck(final Map<String, Object> paramMap) {
-		String deptCode = null;
-		Long functionid = null;
-		Integer functionaryid = null;
-		Integer schemeid = null;
-		Integer subschemeid = null;
-		Long boundaryid = null;
-		Long fundid = null;
-		Long glcodeid = null;
-		Date fromdate = null;
-		Date asondate = null;
-		BigDecimal totalBillUtilized = new BigDecimal(0);
+    public BigDecimal getBillAmountForBudgetCheck(final Map<String, Object> paramMap) {
+	 String deptCode = null;
+    Long functionid = null;
+    Integer functionaryid = null;
+    Integer schemeid = null;
+    Integer subschemeid = null;
+    Long boundaryid = null;
+    Long fundid = null;
+    Long glcodeid = null;
+    Date fromdate = null;
+    Date asondate = null;
+    BigDecimal totalBillUtilized = new BigDecimal(0);
 
-		final StringBuilder query = new StringBuilder();
-		final Map<String, Object> queryParams = new HashMap<>();
-		StringBuilder query1 = new StringBuilder();
-		try {
-			if (paramMap.get(Constants.DEPTID) != null)
-				deptCode = paramMap.get(Constants.DEPTID).toString();
-			if (paramMap.get(Constants.FUNCTIONID) != null)
-				functionid = (Long) paramMap.get(Constants.FUNCTIONID);
-			if (paramMap.get(Constants.FUNCTIONARYID) != null)
-				functionaryid = (Integer) paramMap.get(Constants.FUNCTIONARYID);
-			if (paramMap.get(Constants.SCHEMEID) != null)
-				schemeid = (Integer) paramMap.get(Constants.SCHEMEID);
-			if (paramMap.get(Constants.FUNDID) != null)
-				fundid = (Long) paramMap.get(Constants.FUNDID);
-			if (paramMap.get(Constants.SUBSCHEMEID) != null)
-				subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
-			if (paramMap.get(Constants.BOUNDARYID) != null)
-				boundaryid = (Long) paramMap.get(Constants.BOUNDARYID);
-			if (paramMap.get(GLCODEID) != null)
-				glcodeid = (Long) paramMap.get(GLCODEID);
-			if (paramMap.get(Constants.ASONDATE) != null)
-				asondate = (java.util.Date) paramMap.get(Constants.ASONDATE);
-			if (paramMap.get("fromdate") != null)
-				fromdate = (java.util.Date) paramMap.get("fromdate");
+    String query = EMPTY_STRING;
+    String query1 = EMPTY_STRING;
+    try {
+        if (paramMap.get(Constants.DEPTID) != null)
+            deptCode = paramMap.get(Constants.DEPTID).toString();
+        if (paramMap.get(Constants.FUNCTIONID) != null)
+            functionid = (Long) paramMap.get(Constants.FUNCTIONID);
+        if (paramMap.get(Constants.FUNCTIONARYID) != null)
+            functionaryid = (Integer) paramMap.get(Constants.FUNCTIONARYID);
+        if (paramMap.get(Constants.SCHEMEID) != null)
+            schemeid = (Integer) paramMap.get(Constants.SCHEMEID);
+        if (paramMap.get(Constants.FUNDID) != null)
+            fundid = (Long) paramMap.get(Constants.FUNDID);
+        if (paramMap.get(Constants.SUBSCHEMEID) != null)
+            subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
+        if (paramMap.get(Constants.BOUNDARYID) != null)
+            boundaryid = (Long) paramMap.get(Constants.BOUNDARYID);
+        if (paramMap.get(GLCODEID) != null)
+            glcodeid = (Long) paramMap.get(GLCODEID);
+        if (paramMap.get(Constants.ASONDATE) != null)
+            asondate = (java.util.Date) paramMap.get(Constants.ASONDATE);
+        if (paramMap.get("fromdate") != null)
+            fromdate = (java.util.Date) paramMap.get("fromdate");
 
-			// get the financialyear from asondate
-			final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
-			final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
-			if (finyear == null)
-				throw new ValidationException(EMPTY_STRING,
-						"Financial year is not defined for this date [" + sdf.format(asondate) + "]");
-			fromdate = finyear.getStartingDate();
+        // get the financialyear from asondate
+        final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
+        if (finyear == null)
+            throw new ValidationException(EMPTY_STRING,
+                    "Financial year is not defined for this date [" + sdf.format(asondate) + "]");
+        fromdate = finyear.getStartingDate();
 
-			paramMap.put("financialyearid", Long.valueOf(finyear.getId()));
-			paramMap.put("fromdate", fromdate);
-			paramMap.put(Constants.ASONDATE, finyear.getEndingDate());
+        paramMap.put("financialyearid", Long.valueOf(finyear.getId()));
+        paramMap.put("fromdate", fromdate);
+        paramMap.put(Constants.ASONDATE, finyear.getEndingDate());
 
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("deptCode=" + deptCode + ",functionid=" + functionid + ",functionaryid=" + functionaryid
-						+ ",schemeid=" + schemeid + ",subschemeid=" + subschemeid + ",boundaryid=" + boundaryid
-						+ ",glcodeid=" + glcodeid + ",asondate=" + asondate);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("deptCode=" + deptCode + ",functionid=" + functionid + ",functionaryid=" + functionaryid
+                    + ",schemeid=" + schemeid + ",subschemeid=" + subschemeid + ",boundaryid=" + boundaryid
+                    + ",glcodeid=" + glcodeid + ",asondate=" + asondate);
 
-			if (asondate == null)
-				throw new ValidationException(EMPTY_STRING, "As On Date is null");
+        if (asondate == null)
+            throw new ValidationException(EMPTY_STRING, "As On Date is null");
 
-			final List<AppConfigValues> budgetGrouplist = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
-					BUDGETARY_CHECK_GROUPBY_VALUES);
-			if (budgetGrouplist.isEmpty())
-				throw new ValidationException(EMPTY_STRING,
-						"budgetaryCheck_groupby_values is not defined in AppConfig");
-			else {
-				final AppConfigValues appConfigValues = budgetGrouplist.get(0);
-				final String[] values = StringUtils.split(appConfigValues.getValue(), ",");
-				for (final String value : values)
-					if (value.equals("department")) {
-						if (deptCode == null || deptCode == "0")
-							throw new ValidationException(EMPTY_STRING, "Department is required");
-						else {
-							query.append(" and bmis.departmentcode=:deptCode");
-							queryParams.put("deptCode", deptCode);
-						}
-					} else if (value.equals("function")) {
-						if (functionid == null || functionid == 0)
-							throw new ValidationException(EMPTY_STRING, "Function is required");
-						else {
-							query.append(" and bd.functionid=:functionid");
-							queryParams.put("functionid", functionid);
-						}
-					} else if (value.equals("functionary")) {
-						if (functionaryid == null || functionaryid == 0)
-							throw new ValidationException(EMPTY_STRING, "Functionary is required");
-						else {
-							query.append(" and bmis.functionaryid.id=:functionaryid");
-							queryParams.put("functionaryid", functionaryid);
-						}
-					} else if (value.equals("fund")) {
-						if (fundid == null || fundid == 0)
-							throw new ValidationException(EMPTY_STRING, "Fund is required");
-						else {
-							query.append(" and bmis.fund.id=:fundid");
-							queryParams.put("fundid", fundid);
-						}
-					} else if (value.equals("scheme")) {
-						if (schemeid == null || schemeid == 0)
-							throw new ValidationException(EMPTY_STRING, "Scheme is required");
-						else {
-							query.append(" and bmis.scheme.id=:schemeid");
-							queryParams.put("schemeid", schemeid);
-						}
-					} else if (value.equals("subscheme")) {
-						if (subschemeid == null || subschemeid == 0)
-							throw new ValidationException(EMPTY_STRING, "Sub scheme is required");
-						else {
-							query.append(" and bmis.subScheme.id=:subschemeid");
-							queryParams.put("subschemeid", subschemeid);
-						}
-					} else if (value.equals("boundary")) {
-						if (boundaryid == null || boundaryid == 0)
-							throw new ValidationException(EMPTY_STRING, "Boundary is required");
-						else {
-							query.append(" and bmis.fieldid.id=:boundaryid");
-							queryParams.put("boundaryid", boundaryid);
-						}
-					} else
-						throw new ValidationException(EMPTY_STRING,
-								"budgetaryCheck_groupby_values is not matching=" + value);
-			}
-			if (asondate != null) {
-				query.append(" and br.billdate <=:asondate ");
-				queryParams.put("asondate", asondate);
-			}
-			if (fromdate != null) {
-				query.append(" and  br.billdate>=:fromdate ");
-				queryParams.put("fromdate", fromdate);
-			}
+        final List<AppConfigValues> budgetGrouplist = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
+                BUDGETARY_CHECK_GROUPBY_VALUES);
+        if (budgetGrouplist.isEmpty())
+            throw new ValidationException(EMPTY_STRING,
+                    "budgetaryCheck_groupby_values is not defined in AppConfig");
+        else {
+            final AppConfigValues appConfigValues = budgetGrouplist.get(0);
+            final String[] values = StringUtils.split(appConfigValues.getValue(), ",");
+            for (final String value : values)
+                if (value.equals("department")) {
+                    if (deptCode == null || deptCode == "0")
+                        throw new ValidationException(EMPTY_STRING, "Department is required");
+                    else
+                        query = query + ( " and bmis.departmentcode='"+deptCode+"'");
+                } else if (value.equals("function")) {
+                    if (functionid == null || functionid == 0)
+                        throw new ValidationException(EMPTY_STRING, "Function is required");
+                    else
+                        query = query + getQuery(CFunction.class, functionid, " and bd.functionid=");
+                } else if (value.equals("functionary")) {
+                    if (functionaryid == null || functionaryid == 0)
+                        throw new ValidationException(EMPTY_STRING, "Functionary is required");
+                    else
+                        query = query + getQuery(Functionary.class, functionaryid, " and bmis.functionaryid.id=");
+                } else if (value.equals("fund")) {
+                    if (fundid == null || fundid == 0)
+                        throw new ValidationException(EMPTY_STRING, "Fund is required");
+                    else
+                        query = query + getQuery(Fund.class, fundid, " and bmis.fund.id=");
+                } else if (value.equals("scheme")) {
+                    if (schemeid == null || schemeid == 0)
+                        throw new ValidationException(EMPTY_STRING, "Scheme is required");
+                    else
+                        query = query + getQuery(Scheme.class, schemeid, " and bmis.scheme.id=");
+                } else if (value.equals("subscheme")) {
+                    if (subschemeid == null || subschemeid == 0)
+                        throw new ValidationException(EMPTY_STRING, "Sub scheme is required");
+                    else
+                        query = query + getQuery(SubScheme.class, subschemeid, " and bmis.subScheme.id=");
+                } else if (value.equals("boundary")) {
+                    if (boundaryid == null || boundaryid == 0)
+                        throw new ValidationException(EMPTY_STRING, "Boundary is required");
+                    else
+                        query = query + getQuery(Boundary.class, boundaryid, " and bmis.fieldid.id=");
+                } else
+                    throw new ValidationException(EMPTY_STRING,
+                            "budgetaryCheck_groupby_values is not matching=" + value);
+        }
+        if (asondate != null)
+            query = query + " and br.billdate <=? ";
+        if (fromdate != null)
+            query = query + " and  br.billdate>=? ";
 
-			query.append(" and bd.glcodeid=:glcodeid");
-			queryParams.put("glcodeid", glcodeid);
+        query = query + " and bd.glcodeid='" + glcodeid + "'";
+        query1 = "select sum(case when bd.debitamount is null then 0 ELSE bd.debitamount end -case when bd.creditamount is null then 0 else bd.creditamount end)  "
+                + " from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis  "
+                + " where br.id=bd.egBillregister.id and br.id=bmis.egBillregister.id and (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true)  and bmis.voucherHeader is null and upper(br.status.description) not in ('CANCELLED') "
+                + "    " + query;
 
-			query1 = new StringBuilder("select sum(case when bd.debitamount is null then 0").append(
-					" ELSE bd.debitamount end -case when bd.creditamount is null then 0 else bd.creditamount end)  ")
-					.append(" from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis  ")
-					.append(" where br.id=bd.egBillregister.id and br.id=bmis.egBillregister.id")
-					.append(" and (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true)  and bmis.voucherHeader is null")
-					.append(" and upper(br.status.description) not in ('CANCELLED') ").append(query);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("getBillAmountForBudgetCheck query============" + query1);
+        Object ob = null;
+        if (fromdate != null)
+            ob = persistenceService.find(query1, asondate, fromdate);
+        else
+            ob = persistenceService.find(query1, asondate);
 
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("getBillAmountForBudgetCheck query============" + query1);
-			final Query qry = persistenceService.getSession().createQuery(query1.toString());
-			queryParams.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
-			Object ob = qry.list().get(0);
+        final BigDecimal billAmountWhereCancelledVouchers = getBillAmountWhereCancelledVouchers(query, fromdate,
+                asondate);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Total Amount from all bills where vouchers are cancelled is : "
+                    + billAmountWhereCancelledVouchers);
+        if (ob == null)
+            totalBillUtilized = billAmountWhereCancelledVouchers;
+        else
+            totalBillUtilized = new BigDecimal(ob.toString()).add(billAmountWhereCancelledVouchers);
+        return totalBillUtilized;
 
-			final BigDecimal billAmountWhereCancelledVouchers = getBillAmountWhereCancelledVouchers(query.toString(),
-					fromdate, asondate, queryParams);
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("Total Amount from all bills where vouchers are cancelled is : "
-						+ billAmountWhereCancelledVouchers);
-			if (ob == null)
-				totalBillUtilized = billAmountWhereCancelledVouchers;
-			else
-				totalBillUtilized = new BigDecimal(ob.toString()).add(billAmountWhereCancelledVouchers);
-			return totalBillUtilized;
+    } catch (final ValidationException v) {
+        LOGGER.error("Exp in getBillAmountForBudgetCheck API()===" + v.getErrors());
+        throw new ValidationException(v.getErrors());
+    } catch (final Exception e) {
+        LOGGER.error("Exp in getBillAmountForBudgetCheck API()===" + e.getMessage());
+        throw new ValidationException(EMPTY_STRING, "Exp in getBillAmountForBudgetCheck API()===" + e.getMessage());
+    }
+}
 
-		} catch (final ValidationException v) {
-			LOGGER.error("Exp in getBillAmountForBudgetCheck API()===" + v.getErrors());
-			throw new ValidationException(v.getErrors());
-        } /*
-           * catch (final Exception e) {
-           * LOGGER.error("Exp in getBillAmountForBudgetCheck API()===" +
-           * e.getMessage()); throw new ValidationException(EMPTY_STRING,
-           * "Exp in getBillAmountForBudgetCheck API()===" + e.getMessage()); }
-           */
-	}
 
 	/**
 	 * This API is to get the total bill amount where bill vouchers are created but
@@ -2486,29 +2464,26 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	 * @return @
 	 */
 
-	private BigDecimal getBillAmountWhereCancelledVouchers(final String query, final Date fromdate, final Date asondate,
-			Map<String, Object> queryParams) {
+	private BigDecimal getBillAmountWhereCancelledVouchers(final String query, final Date fromdate,
+            final Date asondate) {
 
-		final StringBuilder newQuery = new StringBuilder(
-				"select sum(case when bd.debitamount is null then 0 else bd.debitamount end -")
-						.append(" case when bd.creditamount is null then 0 else bd.creditamount end )  ")
-						.append(" from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis,CVoucherHeader vh  ")
-						.append(" where br.id=bd.egBillregister.id and br.id=bmis.egBillregister.id")
-						.append(" and (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true)  and bmis.voucherHeader=vh.id")
-						.append(" and upper(br.status.description) not in ('CANCELLED') and vh.status=4  ")
-						.append(query);
+        final String newQuery = "select sum(case when bd.debitamount is null then 0 else bd.debitamount end - case when bd.creditamount is null then 0 else bd.creditamount end )  "
+                + " from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis,CVoucherHeader vh  "
+                + " where br.id=bd.egBillregister.id and br.id=bmis.egBillregister.id and (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true)  and bmis.voucherHeader=vh.id and upper(br.status.description) not in ('CANCELLED') "
+                + "  and vh.status=4  " + query;
 
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("getBillAmountWhereCancelledVouchers query============" + newQuery);
-		final Query qry = persistenceService.getSession().createQuery(newQuery.toString());
-		queryParams.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
-		Object ob = qry.list().get(0);
-		if (ob == null)
-			return BigDecimal.ZERO;
-		else
-			return new BigDecimal(ob.toString());
+            LOGGER.info("getBillAmountWhereCancelledVouchers query============" + newQuery);
+        Object ob = null;
+        if (fromdate != null)
+            ob = persistenceService.find(newQuery, asondate, fromdate);
+        else
+            ob = persistenceService.find(newQuery, asondate);
+        if (ob == null)
+            return BigDecimal.ZERO;
+        else
+            return new BigDecimal(ob.toString());
 
-	}
+    }
 
 	/**
 	 * This parameter HashMap contains deptid,functionid, functionaryid,schemeid,
