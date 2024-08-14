@@ -94,7 +94,7 @@ public class GarbageAccountService {
 	private DemandService demandService;
 
 	@Autowired
-	private BillService billService;
+	private BillService billService;;
 	
 	public GarbageAccountResponse create(GarbageAccountRequest createGarbageRequest) {
 
@@ -860,6 +860,7 @@ public class GarbageAccountService {
 		
 		GarbageAccountActionResponse garbageAccountActionResponse = GarbageAccountActionResponse.builder()
 																.applicationDetails(new ArrayList<>())
+																.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(garbageAccountActionRequest.getRequestInfo(), true))
 																.build();
 		
 //		garbageAccountActionRequest.getApplicationNumbers().stream().forEach(applicationNumber -> {
@@ -954,7 +955,9 @@ public class GarbageAccountService {
 		});
 		
 		// build response
-		GarbageAccountActionResponse garbageAccountActionResponse = GarbageAccountActionResponse.builder().applicationDetails(garbageDetailList).build();
+		GarbageAccountActionResponse garbageAccountActionResponse = GarbageAccountActionResponse.builder()
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(garbageAccountActionRequest.getRequestInfo(), true))
+				.applicationDetails(garbageDetailList).build();
 		return garbageAccountActionResponse;
 	
 	}
