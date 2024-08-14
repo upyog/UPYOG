@@ -1,14 +1,17 @@
 package com.example.hpgarbageservice.contract.workflow;
 
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.egov.common.contract.request.RequestInfo;
+import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.request.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.hpgarbageservice.model.GarbageAccount;
+import com.example.hpgarbageservice.model.GarbageAccountActionRequest;
 import com.example.hpgarbageservice.util.ApplicationPropertiesAndConstant;
+import com.example.hpgarbageservice.util.RequestInfoWrapper;
 import com.example.hpgarbageservice.util.RestCallRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -37,5 +40,21 @@ public class WorkflowService {
 		
 		return processInstanceResponse;
 	}
+	
+
+	public BusinessServiceResponse businessServiceSearch(GarbageAccountActionRequest garbageAccountActionRequest,
+			String applicationTenantId, String applicationBusinessId) {
+		StringBuilder uri = new StringBuilder(applicationPropertiesAndConstant.getWorkflowHost());
+		uri.append(applicationPropertiesAndConstant.getWorkflowBusinessServiceSearchPath());
+		uri.append("?tenantId=").append(applicationTenantId);
+		uri.append("&businessServices=").append(applicationBusinessId);
+		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
+				.requestInfo(garbageAccountActionRequest.getRequestInfo()).build();
+		LinkedHashMap<String, Object> responseObject = (LinkedHashMap<String, Object>) restCallRepository.fetchResult(uri, requestInfoWrapper);
+		BusinessServiceResponse businessServiceResponse = objectMapper.convertValue(responseObject
+																				, BusinessServiceResponse.class);
+		return businessServiceResponse;
+	}
+	
 
 }

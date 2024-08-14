@@ -1202,6 +1202,7 @@ public class TradeLicenseService {
 					.filter(state -> StringUtils.equalsIgnoreCase(state.getApplicationStatus(), applicationStatus)
 										&& !StringUtils.equalsAnyIgnoreCase(state.getApplicationStatus(), TLConstants.STATUS_APPROVED)).collect(Collectors.toList());
 			
+			// filtering actions based on roles
 			List<String> actions = new ArrayList<>();
 			stateList.stream().forEach(state -> {
 				state.getActions().stream()

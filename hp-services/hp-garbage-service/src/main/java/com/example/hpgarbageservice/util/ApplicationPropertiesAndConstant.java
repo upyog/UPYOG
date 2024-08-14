@@ -66,6 +66,9 @@ public class ApplicationPropertiesAndConstant {
     
     @Value("${workflow.transition.path}")
     public String workflowEndpointTransition;
+    
+    @Value("${workflow.business.search}")
+    public String workflowBusinessServiceSearchPath;
 
     @Value("${egov.bill.context.host}")
     public String billHost;
