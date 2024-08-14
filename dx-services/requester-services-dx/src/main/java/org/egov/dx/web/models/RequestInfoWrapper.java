@@ -20,4 +20,7 @@ public class RequestInfoWrapper {
 
 	@JsonProperty("RequestInfo")
 	private RequestInfo requestInfo;
+	
+	@JsonProperty("pdfUrl")
+	private String pdfUrl;
 }
