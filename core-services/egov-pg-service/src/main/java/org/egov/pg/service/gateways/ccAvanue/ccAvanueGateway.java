@@ -128,6 +128,7 @@ public class ccAvanueGateway implements Gateway {
         List<KeyValuePair> pairList = new ArrayList<>();
         String ccaRequest="";
         // Adding elements to the list
+	pairList.add(new KeyValuePair("TID", tid));   
         pairList.add(new KeyValuePair("merchant_id", MERCHANT_KEY_ID));
         pairList.add(new KeyValuePair("order_id",transaction.getTxnId()));
         pairList.add(new KeyValuePair("currency", "INR"));
@@ -157,21 +158,24 @@ public class ccAvanueGateway implements Gateway {
         
         pairList.add(new KeyValuePair("promo_code", ""));
         pairList.add(new KeyValuePair("customer_identifier", transaction.getConsumerCode()));
-	     pairList.add(new KeyValuePair("TID", tid));
         
-        for (KeyValuePair pair : pairList) {
-        	ccaRequest = ccaRequest + pair.getKey() + "=" + pair.getValue() + "&";
-            System.out.println("Key: " + pair.getKey() + ", Value: " + pair.getValue());
-           
+        int andValue= 0;
+        for (KeyValuePair pair : pairList) {   	 
+        	 ccaRequest = ccaRequest + pair.getKey() + "=" + pair.getValue();
+        	 if(andValue<(pairList.size()-1)) {
+        		ccaRequest = ccaRequest + "&";
+        	 }       
+        	  andValue++;
+        	  log.info("Key: " + pair.getKey() + ", Value: " + pair.getValue());
         }
-        System.out.println("Key2:"+ ccaRequest);
-        System.out.println("Key2:"+ MERCHANT_WORKING_KEY);
+        log.info("Key2:"+ ccaRequest);
+        log.info("Key2:"+ MERCHANT_WORKING_KEY);
 
         AesUtil aesUtil=new AesUtil(MERCHANT_WORKING_KEY);
    	 String encRequest = aesUtil.encrypt(ccaRequest);
 System.out.println("ENC REq "+encRequest);
-        System.out.println("Merchant Id "+MERCHANT_KEY_ID);
-          System.out.println("Access "+MERCHANT_ACCESS_CODE);
+        log.info("Merchant Id "+MERCHANT_KEY_ID);
+          log.info("Access "+MERCHANT_ACCESS_CODE);
 MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 params.add("command", "initiateTransaction");
 params.add("encRequest", encRequest);
@@ -238,12 +242,7 @@ params.add("access_code", MERCHANT_ACCESS_CODE);
                  String ccaRequest="";         
                  String orderId= currentStatus.getTxnId();
 	         String encResp = params.get("encResp");
-	         String refNo = getRefNo(params.get("encResp"));
-	         if (refNo != null && !refNo.equalsIgnoreCase("null") && !refNo.isEmpty()) {
-     			 ccaRequest =  "{'reference_no': '"+refNo+"'}";    			 
-     		}else {
-     			 ccaRequest =  "{'order_no': '"+orderId+"'}";
-     		}
+	         ccaRequest =  "{'order_no': '"+orderId+"'}";
   		String pCommand="orderStatusTracker";
  		String pRequestType="JSON";
  		String pResponseType="JSON";
