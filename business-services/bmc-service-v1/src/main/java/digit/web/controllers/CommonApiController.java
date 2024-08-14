@@ -45,7 +45,7 @@ public class CommonApiController {
     }
 
     @PostMapping("/common/_get")
-    @CrossOrigin(origins = "http://localhost:3000")
+//  @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<CommonResponse>registrationSearchPost(
             @ApiParam(value = "Details for Schemes", required = true) 
             @Valid @RequestBody CommonRequest commonSearchRequest) {
