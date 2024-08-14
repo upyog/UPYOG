@@ -123,7 +123,7 @@ public class SchemeApplicationController {
 
 
     @PostMapping("/_saveApplication")
-    @CrossOrigin(origins = "http://localhost:3000")
+//    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<SchemeApplicationResponse> saveSchemeApplication(
         @ApiParam(value = "Details for the new Scheme Application(s) + RequestInfo meta data.", required = true) @Valid @RequestBody UserSchemeApplicationRequest schemeApplicationRequest) throws Exception  {
     
