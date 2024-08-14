@@ -35,7 +35,7 @@ public class BankApiController {
     
 
     @PostMapping("/_get")
-    @CrossOrigin(origins = "http://localhost:3000")
+ // @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<BankSearchResponse> getBankDetails(@ApiParam(value = "Bank Details", required = true) @RequestBody BankSearchRequest searchRequest) {
 
         try {
