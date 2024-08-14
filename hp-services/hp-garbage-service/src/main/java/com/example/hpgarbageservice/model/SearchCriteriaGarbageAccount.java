@@ -28,6 +28,10 @@ public class SearchCriteriaGarbageAccount {
     private List<String> createdBy;
 
     private List<String> applicationNumber;
+
+    private String tenantId;
+
+    private List<String> status;
     
     private Boolean isOwner;
 }

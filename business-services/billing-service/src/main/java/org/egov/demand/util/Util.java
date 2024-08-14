@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.demand.amendment.model.ProcessInstance;
@@ -228,6 +230,10 @@ public class Util {
 		BigDecimal totalCollection = demand.getDemandDetails().stream().map(DemandDetail::getCollectionAmount)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
+		if(StringUtils.equalsIgnoreCase(demand.getBusinessService(), "NewTL")) {
+			isUpdateFromPayment = true;
+		}
+		
 		if (totoalTax.compareTo(totalCollection) == 0 && isUpdateFromPayment)
 			demand.setIsPaymentCompleted(true);
 		else if (totoalTax.compareTo(totalCollection) != 0)

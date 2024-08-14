@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -202,7 +203,9 @@ public class GarbageAccountRepository {
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getName())
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getMobileNumber())
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getApplicationNumber())
-        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy())) {
+        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy())
+        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getStatus())
+        		&& StringUtils.isEmpty(searchCriteriaGarbageAccount.getTenantId())) {
         	throw new RuntimeException("Provide criteria to search garbage account.");
         }
 
@@ -256,6 +259,17 @@ public class GarbageAccountRepository {
             isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
             searchQuery.append(" app.application_no IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getApplicationNumber(),
                     preparedStatementValues)).append(" )");
+        }
+
+        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getStatus())) {
+            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
+            searchQuery.append(" acc.status IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getStatus(),
+                    preparedStatementValues)).append(" )");
+        }
+        
+        if (null != searchCriteriaGarbageAccount.getTenantId()) {
+        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
+            searchQuery.append(" acc.tenant_id = ").append("'"+searchCriteriaGarbageAccount.getTenantId()+"'");
         }
         
         if (null != searchCriteriaGarbageAccount.getIsOwner()) {
