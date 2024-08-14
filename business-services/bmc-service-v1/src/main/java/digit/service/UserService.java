@@ -293,14 +293,7 @@ public class UserService {
 		producer.push("upsert-aadharuser", userRequest);
 		producer.push("upsert-userotherdetails", userRequest);
 
-		// for temporary purpose
-		BmcUser bmcUser = new BmcUser();
-		bmcUser.setId(userId);
-		bmcUser.setTenantId(tenantId);
-		bmcUser.setUsername(userRequest.getRequestInfo().getUserInfo().getUserName());
-		log.info("Saving BMC User with ID: {}", userId);
-	    bmcUserRepository.save(bmcUser);
-
+		
 		return userRequest;
 	}
 
