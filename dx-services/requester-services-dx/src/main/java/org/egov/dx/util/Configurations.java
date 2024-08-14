@@ -60,5 +60,30 @@ public class Configurations {
 	@Value("${dl.flow}")
 	private String dlFlow;
 
+	@Value("${esign.democontent}")
+	private String demoContent;
 	
+	@Value("${esign.responseurl}")
+	private String responseUrl;
+	
+	@Value("${esign.redirecturl}")
+	private String redirectUrl;
+	
+	@Value("${esign.licencefile}" )
+	private String licenceFile;
+	
+	@Value("${esign.pfxpath}")
+	private String pfxPath;
+	
+	@Value("${esign.pfxpassword}")
+	private String pfxPassword;
+	
+	@Value("${esign.pfxallias}")
+	private String pfxAllias;
+	
+	@Value("${esign.pdf}")
+	private String pdf;
+	
+	@Value("${esign.tempfolder}")
+	private String tempFolder;
 }
