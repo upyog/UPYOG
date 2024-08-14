@@ -199,13 +199,7 @@ public class BmcApplicationService {
         // response.getError().toString());
         // }
 
-        // for temporary purpose
-        BmcUser bmcUser = new BmcUser();
-        bmcUser.setId(userId);
-        bmcUser.setTenantId(tenantId);
-        bmcUser.setUsername(schemeApplicationRequest.getRequestInfo().getUserInfo().getUserName());
-        log.info("Saving BMC User with ID: {}", userId);
-        bmcUserRepository.save(bmcUser);
+       
 
         List<SchemeApplication> schemeApplicationList = new ArrayList<>();
         schemeApplicationList.add(schemeApplicationRequest.getSchemeApplication());
