@@ -32,7 +32,7 @@ public class ApplicationPropertiesAndConstant {
 
     public static final String STATUS_CANCELLED  = "CANCELLED";
 
-    public static final String WORKFLOW_ACTION_INITIATE  = "INITIATE";
+    public static final String ACTION_INITIATE  = "INITIATE";
 
     public static final String ACTION_FORWARD_TO_VERIFIER  = "FORWARD_TO_VERIFIER";
 

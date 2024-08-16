@@ -308,7 +308,7 @@ public class GarbageAccountService {
 		garbageAccount.setUuid(UUID.randomUUID().toString());
 		garbageAccount.setGarbageId(System.currentTimeMillis());
 		garbageAccount.setStatus(ApplicationPropertiesAndConstant.STATUS_INITIATED);
-		garbageAccount.setWorkflowAction(ApplicationPropertiesAndConstant.WORKFLOW_ACTION_INITIATE);
+		garbageAccount.setWorkflowAction(ApplicationPropertiesAndConstant.ACTION_INITIATE);
 
 	}
 
@@ -357,23 +357,12 @@ public class GarbageAccountService {
 		}
 		
 		
-		// load garbage account from backend if required
+		// load garbage account from backend if workflow = true
 		GarbageAccountRequest garbageAccountRequest = loadUpdateGarbageAccountRequestFromMap(updateGarbageRequest, existingGarbageApplicationAccountsMap);
 		
 		
-		// enrich account for IsOnlyWorkflowCall = true, bcoz complete payload will not pass in this case
-		try {
-			updateGarbageRequest.getGarbageAccounts().stream().filter(account -> account.getIsOnlyWorkflowCall())
-					.forEach(account -> {
-						account.setTenantId(existingGarbageApplicationAccountsMap.get(account.getGrbgApplicationNumber())
-								.getTenantId());
-					});
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to enrich details for workflow accounts.");
-		}
-
 		// call workflow
-		ProcessInstanceResponse processInstanceResponse = callWfUpdate(updateGarbageRequest);
+		ProcessInstanceResponse processInstanceResponse = callWfUpdate(garbageAccountRequest);
 		Map<String, String> applicationNumberToCurrentStatus = processInstanceResponse.getProcessInstances().stream()
 								.collect(Collectors.toMap(ProcessInstance::getBusinessId, instance -> instance.getState().getApplicationStatus()));
 		
@@ -383,7 +372,8 @@ public class GarbageAccountService {
 			garbageAccountRequest.getGarbageAccounts().stream()
 			.forEach(newGarbageAccount -> {
 
-				// validate garbage account request
+				if(!newGarbageAccount.getIsOnlyWorkflowCall()) {
+					// validate garbage account request
 					validateGarbageAccount(newGarbageAccount);
 					
 				// get existing garbage account from map
@@ -397,6 +387,7 @@ public class GarbageAccountService {
 
 				// update other objects of garbage account
 					updateGarbageAccountObjects(newGarbageAccount, existingGarbageAccount, applicationNumberToCurrentStatus);
+				}
 				
 				garbageAccounts.add(newGarbageAccount);
 			});
@@ -404,15 +395,15 @@ public class GarbageAccountService {
 		
 		
 		// generate demand and fetch bill
-		generateDemandAndBill(updateGarbageRequest);
+		generateDemandAndBill(garbageAccountRequest);
 		
-		// RESPONSE
+		// RESPONSE builder
 		GarbageAccountResponse garbageAccountResponse = GarbageAccountResponse.builder()
-				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(updateGarbageRequest.getRequestInfo(), false))
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(garbageAccountRequest.getRequestInfo(), false))
 				.garbageAccounts(garbageAccounts)
 				.build();
 		if(!CollectionUtils.isEmpty(garbageAccounts)) {
-			garbageAccountResponse.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(updateGarbageRequest.getRequestInfo(), true));
+			garbageAccountResponse.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(garbageAccountRequest.getRequestInfo(), true));
 		}
 		
 		return garbageAccountResponse;
@@ -487,6 +478,7 @@ public class GarbageAccountService {
 			
 		});
 		
+
 		return garbageAccountRequestTemp;
 	}
 
@@ -494,12 +486,13 @@ public class GarbageAccountService {
 	public String getStatusFromAction(String action, Boolean fetchValue) {
 		
 		Map<String, String> map = new HashMap<>();
-		map.put("INITIATE", "INITIATED");
-		map.put("FORWARD_TO_VERIFIER", "PENDINGFORVERIFICATION");
-		map.put("RETURN_TO_INITIATOR_FOR_PAYMENT", "PENDINGFORPAYMENT");
-		map.put("RETURN_TO_INITIATOR", "PENDINGFORMODIFICATION");
-		map.put("VERIFY", "PENDINGFORAPPROVAL");
-		map.put("APPROVE", "APPROVED");
+		
+		map.put(ApplicationPropertiesAndConstant.ACTION_INITIATE, ApplicationPropertiesAndConstant.STATUS_INITIATED);
+        map.put(ApplicationPropertiesAndConstant.ACTION_FORWARD_TO_VERIFIER, ApplicationPropertiesAndConstant.STATUS_PENDINGFORVERIFICATION);
+        map.put(ApplicationPropertiesAndConstant.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, ApplicationPropertiesAndConstant.STATUS_PENDINGFORPAYMENT);
+        map.put(ApplicationPropertiesAndConstant.ACTION_RETURN_TO_INITIATOR, ApplicationPropertiesAndConstant.STATUS_PENDINGFORMODIFICATION);
+        map.put(ApplicationPropertiesAndConstant.ACTION_FORWARD_TO_APPROVER, ApplicationPropertiesAndConstant.STATUS_PENDINGFORAPPROVAL);
+        map.put(ApplicationPropertiesAndConstant.STATUS_APPROVED, ApplicationPropertiesAndConstant.STATUS_APPROVED);
 		
 		if(!fetchValue){
 			// return key
