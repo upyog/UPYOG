@@ -1,4 +1,4 @@
-import { Header, CloseSvg, DownloadImgIcon, CustomButton, Loader, BackButton, PDFSvg, DownloadBtnCommon} from "@egovernments/digit-ui-react-components";
+import { Header, CloseSvg, DownloadImgIcon, CustomButton, Loader, BackButton, PDFSvg, DownloadBtnCommon} from "@upyog/digit-ui-react-components";
 import React, { useState, Fragment }from "react";
 import { useTranslation } from "react-i18next";
 

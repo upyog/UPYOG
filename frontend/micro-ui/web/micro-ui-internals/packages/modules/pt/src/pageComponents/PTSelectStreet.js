@@ -1,4 +1,4 @@
-import { CardLabel, FormStep, LabelFieldPair, TextInput, Dropdown, Loader, LinkButton, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { CardLabel, FormStep, LabelFieldPair, TextInput, Dropdown, Loader, LinkButton, CardLabelError } from "@upyog/digit-ui-react-components";
 
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -236,7 +236,7 @@ const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
     />
 
 
-    <CardLabel>{`${t("PT_PROPERTY_ADDRESS_TYPE_OF_ROAD")}`}</CardLabel>
+    <CardLabel>{`${t("Type of Road *")}`}</CardLabel>
     <div className={"form-pt-dropdown-only"}>
       <Dropdown
         t={t}

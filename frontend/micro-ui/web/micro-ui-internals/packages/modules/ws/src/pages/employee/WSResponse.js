@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, SubmitBar, ActionBar } from "@egovernments/digit-ui-react-components";
+import { Banner, Card, CardText, SubmitBar, ActionBar } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import getPDFData from "../../utils/getWSAcknowledgementData";

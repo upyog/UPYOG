@@ -1098,6 +1098,7 @@ export const downloadReceipt = async (
   tenantId = Digit.ULBService.getCurrentTenantId(),
   receiptNumber = null
 ) => {
+  console.log("pdf.js")
   const response = await Digit.ReceiptsService.receipt_download(businessService, consumerCode, tenantId, pdfKey, receiptNumber);
   const responseStatus = parseInt(response.status, 10);
   if (responseStatus === 201 || responseStatus === 200) {
