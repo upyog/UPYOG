@@ -57,7 +57,7 @@ public class PetRegistrationService {
 
 		// Enrich/Upsert user in upon pet registration
 		// userService.callUserService(petRegistrationRequest); need to build the method
-//		wfService.updateWorkflowStatus(petRegistrationRequest);
+		wfService.updateWorkflowStatus(petRegistrationRequest);
 		producer.push(config.getCreatePtrTopic(), petRegistrationRequest);
 
 		return petRegistrationRequest.getPetRegistrationApplications();
@@ -87,7 +87,7 @@ public class PetRegistrationService {
 //				.equals("APPROVE")) {
 //			demandService.createDemand(petRegistrationRequest);
 //		}
-//		wfService.updateWorkflowStatus(petRegistrationRequest);
+		wfService.updateWorkflowStatus(petRegistrationRequest);
 		producer.push(config.getUpdatePtrTopic(), petRegistrationRequest);
 
 		return petRegistrationRequest.getPetRegistrationApplications().get(0);

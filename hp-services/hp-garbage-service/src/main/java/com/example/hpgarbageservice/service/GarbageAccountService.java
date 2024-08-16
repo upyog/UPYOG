@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +18,6 @@ import org.egov.common.contract.request.Role;
 
 import com.example.hpgarbageservice.contract.bill.*;
 import org.egov.tracer.model.CustomException;
-import org.javers.common.collections.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -50,7 +48,6 @@ import com.example.hpgarbageservice.repository.GrbgCommercialDetailsRepository;
 import com.example.hpgarbageservice.repository.GrbgDocumentRepository;
 import com.example.hpgarbageservice.repository.GrbgOldDetailsRepository;
 import com.example.hpgarbageservice.util.ApplicationPropertiesAndConstant;
-import com.example.hpgarbageservice.util.RequestInfoWrapper;
 import com.example.hpgarbageservice.util.ResponseInfoFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -865,24 +862,59 @@ public class GarbageAccountService {
 					.build();
 			List<GarbageAccount> accounts = garbageAccountRepository.searchGarbageAccount(criteria);
 
-			GarbageAccountDetail applicationDetail = getApplicationBillUserDetail(accounts, garbageAccountActionRequest.getRequestInfo());
+			List<GarbageAccountDetail> applicationDetails = getApplicationBillUserDetail(accounts, garbageAccountActionRequest.getRequestInfo());
 			
-			garbageAccountActionResponse.getApplicationDetails().add(applicationDetail);
+			garbageAccountActionResponse.setApplicationDetails(applicationDetails);
 //		});
 		
 		return garbageAccountActionResponse;
 	}
 
 
-	private GarbageAccountDetail getApplicationBillUserDetail(List<GarbageAccount> accounts, RequestInfo requestInfo) {
+	private List<GarbageAccountDetail> getApplicationBillUserDetail(List<GarbageAccount> accounts, RequestInfo requestInfo) {
 		
-		/*
-		 * PENDING TO CODE
-		 * 
-		 * */
+		List<GarbageAccountDetail> garbageAccountDetails = new ArrayList<>();
 		
+		accounts.stream().forEach(account -> {
+			GarbageAccountDetail garbageAccountDetail = GarbageAccountDetail.builder().build();
+			
+			// search bill Details
+			BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
+					.tenantId(account.getTenantId())
+					.consumerCode(Collections.singleton(account.getGrbgApplication().getApplicationNo()))
+					.service("GB")// business service
+					.build();
+			BillResponse billResponse = billService.searchBill(billSearchCriteria,requestInfo);
+			Map<Object, Object> billDetailsMap = new HashMap<>();
+			if (!CollectionUtils.isEmpty(billResponse.getBill())) {
+				billDetailsMap.put("billId", billResponse.getBill().get(0).getId());
+				garbageAccountDetail.setTotalPayableAmount(billResponse.getBill().get(0).getTotalAmount());
+			}
+			garbageAccountDetail.setBillDetails(billDetailsMap);
+			
+			
+			
+			// enrich userDetails
+			Map<Object, Object> userDetails = new HashMap<>();
+			userDetails.put("UserName", account.getName());
+			userDetails.put("MobileNo", account.getMobileNumber());
+			userDetails.put("Email", account.getEmailId());
+			userDetails.put("Address", new String(account.getAddresses().get(0).getAddress1().concat(", "))
+										.concat(account.getAddresses().get(0).getPincode().concat(", "))
+										.concat(account.getAddresses().get(0).getZone().concat(", "))
+										.concat(account.getAddresses().get(0).getUlbName().concat(", "))
+										.concat(account.getAddresses().get(0).getWardName().concat(", "))
+										.concat(account.getAddresses().get(0).getAdditionalDetail().get("district").asText()));
+
+			garbageAccountDetail.setUserDetails(userDetails);
+			
+			
+			
+			
+			garbageAccountDetails.add(garbageAccountDetail);
+		});
 		
-		return null;
+		return garbageAccountDetails;
 	}
 
 

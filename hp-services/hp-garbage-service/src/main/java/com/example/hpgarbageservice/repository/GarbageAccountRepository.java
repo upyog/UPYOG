@@ -158,7 +158,7 @@ public class GarbageAccountRepository {
         accountInputs.put("status", newGarbageAccount.getStatus());
         accountInputs.put("gender", newGarbageAccount.getGender());
         accountInputs.put("emailId", newGarbageAccount.getEmailId());
-        accountInputs.put("additionalDetail", objectMapper.convertValue(newGarbageAccount.getAdditionalDetail(), ObjectNode.class).toString());
+        accountInputs.put("additionalDetail", null == newGarbageAccount.getAdditionalDetail() ? null : objectMapper.convertValue(newGarbageAccount.getAdditionalDetail(), ObjectNode.class).toString());
 //        accountInputs.put("parentId", newGarbageAccount.getParentId());
 //        accountInputs.put("createdBy", newGarbageAccount.getAuditDetails().getCreatedBy());
 //        accountInputs.put("createdDate", newGarbageAccount.getAuditDetails().getCreatedDate());
