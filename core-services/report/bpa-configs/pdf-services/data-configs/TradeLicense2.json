@@ -28,9 +28,9 @@
           },
           
           {
-           "variable":"applicantAddress",
+           "variable":"licenseeMobileNumber",
             "value":{
-              "path":"$.applicantAddress"
+              "path":"$.licenseeMobileNumber"
             }
           },
           {
@@ -57,6 +57,12 @@
               "path":"$.licenseCategory"
             }
           },
+          {
+           "variable":"licenseSubCategory",
+            "value":{
+              "path":"$.licenseSubCategory"
+            }
+          },
            {
            "variable":"tradeName",
             "value":{
@@ -73,6 +79,36 @@
            "variable":"licenseValidity",
             "value":{
               "path":"$.licenseValidity"
+            }
+          },
+          {
+           "variable":"ulbName",
+            "value":{
+              "path":"$.ulbName"
+            }
+          },
+          {
+           "variable":"ulbType",
+            "value":{
+              "path":"$.ulbType"
+            }
+          },
+          {
+           "variable":"approverName",
+            "value":{
+              "path":"$.approverName"
+            }
+          },
+          {
+           "variable":"approvalTime",
+            "value":{
+              "path":"$.approvalTime"
+            }
+          },
+          {
+           "variable":"ownerName",
+            "value":{
+              "path":"$.ownerName"
             }
           }
         ]
