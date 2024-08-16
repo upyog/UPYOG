@@ -187,6 +187,7 @@ public class PropertyMigrationValidator {
 			errorMap.put("Invalid OWNERSHIPCATEGORY", "The OwnershipCategory '" + property.getOwnershipCategory() + "' does not exists");
 		}
 
+
 		if (property.getUsageCategory() != null && !codes.get(PTConstants.MDMS_PT_USAGECATEGORY).contains(property.getUsageCategory()) ) {
 			if(!codes.get(PTConstants.MDMS_PT_VACANTUSAGECATEGORY).contains(property.getUsageCategory()))
 				errorMap.put("Invalid USageCategory", "The USageCategory '" + property.getUsageCategory() + "' does not exists");

@@ -96,6 +96,13 @@ public class TranslationService {
             propertyDetail.put("subOwnershipCategory", subOwnershipCategory);
         }
 
+        if(property.getVacantusagecategory()!=null){
+            String[] vacantusagecategoryMasterData  = property.getVacantusagecategory().split("\\_");
+            String vacantusagecategory = null;
+            vacantusagecategory = vacantusagecategoryMasterData[1];
+            
+            propertyDetail.put("VacantUsagecategory", vacantusagecategory);
+        }
 
         propertyDetail.put("noOfFloors", property.getNoOfFloors());
         propertyDetail.put("landArea", property.getLandArea());

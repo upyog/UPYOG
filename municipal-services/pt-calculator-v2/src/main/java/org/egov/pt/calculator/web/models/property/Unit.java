@@ -79,5 +79,7 @@ public class Unit   {
     	
     	@JsonProperty("ageOfProperty")
     	private String ageOfProperty;
+    	
+    	private BigDecimal taxamount;
 }
 

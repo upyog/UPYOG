@@ -140,6 +140,7 @@ public class Configurations {
 	@Value("${pt.mutation.minpayable.amount}")
 	private BigDecimal ptMutationMinPayable;
 	
-
+	@Value("${egov.bill.search.endpoint}")
+	private String BillSearchEndpoint;
 
 }

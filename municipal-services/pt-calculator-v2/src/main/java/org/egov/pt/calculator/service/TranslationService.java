@@ -108,6 +108,14 @@ public class TranslationService {
         ownershipCategory = ownershipCategoryMasterData[0];
         if(ownershipCategoryMasterData.length > 1)
             subOwnershipCategory = ownershipCategoryMasterData[1];
+        
+        if(property.getVacantusagecategory()!=null){
+            String[] vacantusagecategoryMasterData  = property.getVacantusagecategory().split("\\_");
+            String vacantusagecategory = null;
+            vacantusagecategory = vacantusagecategoryMasterData[1];
+            
+            propertyDetail.put("VacantUsagecategory", vacantusagecategory);
+        }
 
 
         propertyDetail.put("noOfFloors", property.getNoOfFloors());

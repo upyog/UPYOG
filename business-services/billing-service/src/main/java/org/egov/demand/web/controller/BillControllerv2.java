@@ -108,4 +108,14 @@ public class BillControllerv2 {
 		responseMap.put(Constants.MESSAGE_STRING, responseMsg);
 		return new ResponseEntity<>(responseMap, status);
 	}
+	
+	@PostMapping("_nodues")
+	@ResponseBody
+	public ResponseEntity<?> nodues(@RequestBody @Valid final RequestInfoWrapper requestInfoWrapper,
+			@ModelAttribute @Valid final BillSearchCriteria billCriteria) {
+
+		RequestInfo requestInfo = requestInfoWrapper.getRequestInfo();
+		billValidator.validateBillSearchCriteria(billCriteria, requestInfo);
+		return new ResponseEntity<>(billService.noDues(billCriteria,requestInfo), HttpStatus.OK);
+	}
 }
