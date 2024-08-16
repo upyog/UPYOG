@@ -1,10 +1,25 @@
-import { Card, KeyNote, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
-import React from "react";
+import { Card, KeyNote, SubmitBar,Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useEffect, useState } from "react";
+
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link,useHistory } from "react-router-dom";
 
 const ChbApplication = ({ application, tenantId, buttonLabel }) => {
   const { t } = useTranslation();
+  const history = useHistory();
+  const [showToast, setShowToast] = useState(null);
+
+  const { data: slotSearchData, refetch } = Digit.Hooks.chb.useChbSlotSearch({
+    tenantId: application?.tenantId,
+    filters: {
+      communityHallCode: application?.communityHallCode,
+      bookingStartDate: application?.bookingSlotDetails?.[0]?.bookingDate,
+      bookingEndDate: application?.bookingSlotDetails?.[application.bookingSlotDetails.length - 1]?.bookingDate,
+      hallCode: application?.bookingSlotDetails?.[0]?.hallCode,
+    },
+    enabled: false, // Disable automatic refetch
+  });
+
   const getBookingDateRange = (bookingSlotDetails) => {
     if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
       return t("CS_NA");
@@ -18,7 +33,30 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
       return startDate && endDate ? `${startDate}  -  ${endDate}` : t("CS_NA");
     }
   };
+  const handleMakePayment = async () => {
+    const result = await refetch();
+    const isSlotBooked = result?.data?.hallSlotAvailabiltityDetails?.some(
+      (slot) => slot.slotStaus === "BOOKED"
+    );
 
+    if (isSlotBooked) {
+      setShowToast({ error: true, label: t("CHB_COMMUNITY_HALL_ALREADY_BOOKED") });
+    } else {
+      history.push({
+        pathname: `/digit-ui/citizen/payment/my-bills/${"chb-services"}/${application?.bookingNo}`,
+        state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo },
+      });
+    }
+  };
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(null);
+      }, 2000); // Close toast after 2 seconds
+
+      return () => clearTimeout(timer); // Clear timer on cleanup
+    }
+  }, [showToast]);
   return (
     <Card>
       <KeyNote keyValue={t("CHB_BOOKING_NO")} note={application?.bookingNo} />
@@ -31,17 +69,19 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
           <SubmitBar label={buttonLabel} />
         </Link>
         {application.bookingStatus !== "BOOKED" && (
-          <Link
-            to={{
-              pathname: `/digit-ui/citizen/payment/my-bills/${"chb-services"}/${application?.bookingNo}`,
-              state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo },
-            }}
-            style={{ margin: "20px" }}
-          >
-            <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
-          </Link>
+        <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment}  style={{ margin: "20px" }}/>
         )}
       </div>
+      {showToast && (
+      <Toast
+        error={showToast.error}
+        warning={showToast.warning}
+        label={t(showToast.label)}
+        onClose={() => {
+          setShowToast(null);
+        }}
+      />
+    )}
     </Card>
   );
 };

@@ -11,8 +11,7 @@ export const CHBMyApplications = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [status, setStatus] = useState(null);
-  const [filteredApplications, setFilteredApplications] = useState([]);
-  const [applicationsList, setApplicationsList] = useState([]);
+  const [filters, setFilters] = useState(null);
 
   let filter = window.location.href.split("/").pop();
   let t1;
@@ -23,52 +22,29 @@ export const CHBMyApplications = () => {
   } else {
     t1 = 4;
   }
-  let filter1 = !isNaN(parseInt(filter))
+
+  let initialFilters = !isNaN(parseInt(filter))
     ? { limit: "50", sortOrder: "ASC", sortBy: "createdTime", offset: off, tenantId }
     : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", mobileNumber: user?.mobileNumber, tenantId };
 
-  const { isLoading, isError, error, data } = Digit.Hooks.chb.useChbSearch({ filters: filter1 }, { filters: filter1 });
+  useEffect(() => {
+    setFilters(initialFilters);
+  }, [filter]);
 
-  const { hallsBookingApplication } = data || {};
+  // Use the search hook with dynamic filters
+  const { isLoading, data } = Digit.Hooks.chb.useChbSearch({ filters });
 
   const handleSearch = () => {
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-
-    const filtered = applicationsList?.filter(app => {
-      const bookingNoMatch = searchTerm ? app.bookingNo.toLowerCase().includes(lowerCaseSearchTerm) : true;
-
-      const statusMatch = status?.code
-        ? (status.code === "BOOKED" ? app.bookingStatus === "BOOKED" :
-           status.code === "BOOKING_CREATED" ? app.bookingStatus === "BOOKING_CREATED" : true)
-        : true;
-
-      return bookingNoMatch && statusMatch;
-    }) || [];
-
-    setFilteredApplications(filtered);
+    const trimmedSearchTerm = searchTerm.trim();
+    const searchFilters = {
+      ...initialFilters,
+      bookingNo: trimmedSearchTerm || undefined,
+      bookingStatus: status?.code || undefined,
+    };
+    
+    // Update the filters state to trigger refetch
+    setFilters(searchFilters);
   };
-
-  useEffect(() => {
-    if (hallsBookingApplication) {
-      // Filter applications based on status
-      const filteredHallsBookingApplication = hallsBookingApplication.filter(app =>
-        (status?.code === "BOOKED" && app.bookingStatus === "BOOKED") ||
-        (status?.code === "BOOKING_CREATED" && app.bookingStatus === "BOOKING_CREATED") ||
-        !status?.code
-      );
-  
-      // Update filteredApplications and applicationsList
-      setFilteredApplications(prevFilteredApplications => [
-        ...prevFilteredApplications,
-        ...filteredHallsBookingApplication
-      ]);
-  
-      setApplicationsList(prevApplicationsList => [
-        ...prevApplicationsList,
-        ...filteredHallsBookingApplication
-      ]);
-    }
-  }, [hallsBookingApplication, status]);
 
   if (isLoading) {
     return <Loader />;
@@ -79,9 +55,11 @@ export const CHBMyApplications = () => {
     { i18nKey: "Booking in Progres", code: "BOOKING_CREATED", value: t("CHB_BOOKING_IN_PROGRES") }
   ];
 
+  const filteredApplications = data?.hallsBookingApplication || [];
+
   return (
     <React.Fragment>
-      <Header>{`${t("CHB_MY_APPLICATION_HEADER")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
+      <Header>{`${t("CHB_MY_APPLICATION_HEADER")} (${filteredApplications.length})`}</Header>
       <Card>
         <div style={{ marginLeft: "16px" }}>
           <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "16px" }}>
