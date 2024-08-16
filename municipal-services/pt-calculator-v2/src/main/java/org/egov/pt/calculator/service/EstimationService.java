@@ -291,10 +291,16 @@ public class EstimationService {
 
 		List<TaxHeadEstimate> taxHeadEstimates=null;
 		List<TaxHeadEstimate> taxHeadEstimate=null;
+		List<Unit> unitList=null;
 
 		List<BigDecimal> typeofroad=new ArrayList<BigDecimal>();
 		List<BigDecimal> agefactor=new ArrayList<BigDecimal>();
 		List<BigDecimal> structuretype=new ArrayList<BigDecimal>();
+		List<BigDecimal> vacantlandamount=new ArrayList<BigDecimal>();
+		List<Boolean> vacantlandlist=new ArrayList<Boolean>();
+		boolean vacantland=false;
+		
+
 
 		if(criteria.getFromDate()==null || criteria.getToDate()==null)
 			enrichmentService.enrichDemandPeriod(criteria,assessmentYear,masterMap);
@@ -393,6 +399,9 @@ public class EstimationService {
 				taxAmt = taxAmt.add(currentUnitTax);
 				usageExemption = usageExemption
 						.add(getExemption(unit, currentUnitTax, assessmentYear, propertyBasedExemptionMasterMap));
+
+				unit.setTaxamount(taxAmt);
+				unitList.add(unit);
 				i++;
 			}
 
@@ -401,28 +410,31 @@ public class EstimationService {
 			 * making call to get unbuilt area tax estimate
 			 */
 
+
+			BigDecimal unbuiltAmount = getUnBuiltRate(detail, unBuiltRate, groundUnitsCount, groundUnitsArea);
+			BigDecimal unbuiltarea=getUnBuiltAre(detail, unBuiltRate, groundUnitsCount, groundUnitsArea);
+
+
+			/*
+			 * taxHeadEstimate = getBiilinfEstimatesForTax(requestInfo,unbuiltarea,
+			 * usageExemption, property, propertyBasedExemptionMasterMap,
+			 * timeBasedExemptionMasterMap,masterMap,typeofroad,structuretype,agefactor,null
+			 * );
+			 */
+
+			unbuiltAmount =	getApplicableTaxForRoadType(unbuiltAmount,propertyBasedExemptionMasterMap,detail,"UNBUILT");
+
+			unbuiltAmount = getApplicableTaxForAgeOfProperty(unbuiltAmount,propertyBasedExemptionMasterMap,detail,"UNBUILT",null);
+
+			unbuiltAmount=getApplicableTaxForOwnerUsageCategory(unbuiltarea, propertyBasedExemptionMasterMap, detail,null);
+			
+			vacantlandamount.add(unbuiltarea);
 			if(detail.getVacantusagecategory().equalsIgnoreCase("COMMERCIAL"))
 			{
-				BigDecimal unbuiltAmount = getUnBuiltRate(detail, unBuiltRate, groundUnitsCount, groundUnitsArea);
-				BigDecimal unbuiltarea=getUnBuiltAre(detail, unBuiltRate, groundUnitsCount, groundUnitsArea);
-
-
-				/*
-				 * taxHeadEstimate = getBiilinfEstimatesForTax(requestInfo,unbuiltarea,
-				 * usageExemption, property, propertyBasedExemptionMasterMap,
-				 * timeBasedExemptionMasterMap,masterMap,typeofroad,structuretype,agefactor,null
-				 * );
-				 */
-
-				unbuiltAmount =	getApplicableTaxForRoadType(unbuiltAmount,propertyBasedExemptionMasterMap,detail,"UNBUILT");
-
-				unbuiltAmount = getApplicableTaxForAgeOfProperty(unbuiltAmount,propertyBasedExemptionMasterMap,detail,"UNBUILT",null);
-
-				unbuiltAmount=getApplicableTaxForOwnerUsageCategory(unbuiltarea, propertyBasedExemptionMasterMap, detail,null);
-
 				taxAmt = taxAmt.add(unbuiltAmount);
+				vacantland=true;
 			}
-
+			vacantlandlist.add(vacantland);
 
 			/*
 			 * special case to handle property with one unit
@@ -452,6 +464,9 @@ public class EstimationService {
 		Map<String,List> estimatesAndBillingSlabs = new HashMap<>();
 		estimatesAndBillingSlabs.put("estimates",taxHeadEstimates);
 		estimatesAndBillingSlabs.put("billingSlabIds",billingSlabIds);
+		estimatesAndBillingSlabs.put("units", unitList);
+		estimatesAndBillingSlabs.put("vacandlandamount", vacantlandamount);
+		estimatesAndBillingSlabs.put("vacantland", vacantlandlist);
 
 		return estimatesAndBillingSlabs;
 
@@ -907,6 +922,9 @@ public class EstimationService {
 
 		List<TaxHeadEstimate> estimates = estimatesAndBillingSlabs.get("estimates");
 		List<String> billingSlabIds = estimatesAndBillingSlabs.get("billingSlabIds");
+		List<Unit> units=estimatesAndBillingSlabs.get("units");
+		List<BigDecimal> vacantlandamount=estimatesAndBillingSlabs.get("vacandlandamount");
+		List<Boolean> vacantland=estimatesAndBillingSlabs.get("vacantland");
 
 		Property property = criteria.getProperty();
 		PropertyDetail detail = property.getPropertyDetails().get(0);
@@ -967,7 +985,7 @@ public class EstimationService {
 		BigDecimal complementary_rebate=BigDecimal.ZERO;
 		if(exemption.compareTo(BigDecimal.ZERO)==0)
 		{
-			
+
 			switch (criteria.getModeOfPayment()) {
 			case "QUARTERLY":
 				modeofpayment_rebate=taxAmt.multiply(new BigDecimal(3).divide(new BigDecimal(100)).negate());
@@ -992,7 +1010,7 @@ public class EstimationService {
 			}
 
 
-			
+
 			complementary_rebate=updatedtaxammount.multiply(new BigDecimal(92).divide(new BigDecimal(100)).negate());
 			complementary_rebate=complementary_rebate.setScale(2,2);
 
@@ -1010,7 +1028,7 @@ public class EstimationService {
 			estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_COMPLEMENTARY_REBATE).category(Category.REBATE).estimateAmount( complementary_rebate).build());
 
 		}
-		
+
 
 		BigDecimal totalAmount = taxAmt.add(penalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
 		BigDecimal mandatorypay=BigDecimal.ZERO;
@@ -1053,9 +1071,9 @@ public class EstimationService {
 					totalAmount=new BigDecimal(200);
 				}
 			}
-				
+
 		}
-		
+
 		// false in the argument represents that the demand shouldn't be updated from this call
 		Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(requestInfo,criteria);
 		BigDecimal collectedAmtForOldDemand = demandService.getCarryForwardAndCancelOldDemand(ptTax, criteria, requestInfo,oldDemand, false);
@@ -1070,7 +1088,7 @@ public class EstimationService {
 			else
 				rebate = rebate.add(decimalEstimate.getEstimateAmount());
 		}
-		
+
 		if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
 			estimates.add(TaxHeadEstimate.builder()
 					.taxHeadCode(PT_PASTDUE_CARRYFORWARD)
@@ -1090,6 +1108,9 @@ public class EstimationService {
 				.serviceNumber(property.getPropertyId())
 				.taxHeadEstimates(estimates)
 				.billingSlabIds(billingSlabIds)
+				.units(units)
+				.vacantlandamount(vacantlandamount)
+				.vacantland(vacantland)
 				.build();
 	}
 
