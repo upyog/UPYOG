@@ -334,8 +334,6 @@ public class GarbageAccountService {
 		if (null != newGarbageAccount.getGrbgApplication()) {
 			newGarbageAccount.setStatus(
 					applicationNumberToCurrentStatus.get(newGarbageAccount.getGrbgApplication().getApplicationNo()));
-			newGarbageAccount.getGrbgApplication().setStatus(
-					applicationNumberToCurrentStatus.get(newGarbageAccount.getGrbgApplication().getApplicationNo()));
 		}
 	}
 
@@ -372,7 +370,7 @@ public class GarbageAccountService {
 			garbageAccountRequest.getGarbageAccounts().stream()
 			.forEach(newGarbageAccount -> {
 
-				if(!newGarbageAccount.getIsOnlyWorkflowCall()) {
+//				if(!newGarbageAccount.getIsOnlyWorkflowCall()) {
 					// validate garbage account request
 					validateGarbageAccount(newGarbageAccount);
 					
@@ -387,7 +385,7 @@ public class GarbageAccountService {
 
 				// update other objects of garbage account
 					updateGarbageAccountObjects(newGarbageAccount, existingGarbageAccount, applicationNumberToCurrentStatus);
-				}
+//				}
 				
 				garbageAccounts.add(newGarbageAccount);
 			});
@@ -454,7 +452,7 @@ public class GarbageAccountService {
 				Boolean tempBol = account.getIsOnlyWorkflowCall();
 				String tempApplicationNo = account.getGrbgApplicationNumber();
 				String action = account.getWorkflowAction();
-				String status = getStatusFromAction(action, true);
+				String status = getStatusOrAction(action, true);
 				String comment = account.getWorkflowComment();
 				
 				GarbageAccount accountTemp = objectMapper.convertValue(existingGarbageApplicationAccountsMap.get(account.getGrbgApplicationNumber()), GarbageAccount.class);
@@ -483,7 +481,7 @@ public class GarbageAccountService {
 	}
 
 
-	public String getStatusFromAction(String action, Boolean fetchValue) {
+	public String getStatusOrAction(String action, Boolean fetchValue) {
 		
 		Map<String, String> map = new HashMap<>();
 		
@@ -532,7 +530,7 @@ public class GarbageAccountService {
 							.businessService(applicationPropertiesAndConstant.WORKFLOW_BUSINESS_SERVICE)
 							.moduleName(applicationPropertiesAndConstant.WORKFLOW_MODULE_NAME)
 							.businessId(newGarbageAccount.getGrbgApplication().getApplicationNo())
-							.action(null != newGarbageAccount.getWorkflowAction() ? newGarbageAccount.getWorkflowAction() : getStatusFromAction(newGarbageAccount.getStatus(), false))
+							.action(null != newGarbageAccount.getWorkflowAction() ? newGarbageAccount.getWorkflowAction() : getStatusOrAction(newGarbageAccount.getStatus(), false))
 							.comment(newGarbageAccount.getWorkflowComment()).build());
 				}
 				
@@ -556,6 +554,9 @@ public class GarbageAccountService {
 		if(null != newGarbageAccount.getGrbgApplication()
 				&& !newGarbageAccount.getGrbgApplication().equals(existingGarbageAccount.getGrbgApplication()))
 		{
+			// enrich application
+			newGarbageAccount.getGrbgApplication().setStatus(applicationNumberToCurrentStatus.get(newGarbageAccount.getGrbgApplication().getApplicationNo()));
+			// update application
 			grbgApplicationRepository.update(newGarbageAccount.getGrbgApplication());
 		}
 		
