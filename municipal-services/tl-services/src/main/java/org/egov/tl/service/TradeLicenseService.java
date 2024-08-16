@@ -1,10 +1,19 @@
 package org.egov.tl.service;
 
-import static org.egov.tl.util.TLConstants.*;
+import static org.egov.tl.util.TLConstants.ACTION_STATUS_APPROVED;
+import static org.egov.tl.util.TLConstants.STATUS_APPLIED;
+import static org.egov.tl.util.TLConstants.STATUS_APPROVED;
+import static org.egov.tl.util.TLConstants.STATUS_INITIATED;
+import static org.egov.tl.util.TLConstants.STATUS_PENDINGFORMODIFICATION;
+import static org.egov.tl.util.TLConstants.STATUS_REJECTED;
+import static org.egov.tl.util.TLConstants.TRADE_LICENSE_MODULE_CODE;
+import static org.egov.tl.util.TLConstants.businessService_BPA;
+import static org.egov.tl.util.TLConstants.businessService_NewTL;
+import static org.egov.tl.util.TLConstants.businessService_TL;
 import static org.egov.tracer.http.HttpUtils.isInterServiceCall;
 
-import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,7 +55,6 @@ import org.egov.tl.web.models.TradeLicenseResponse;
 import org.egov.tl.web.models.TradeLicenseSearchCriteria;
 import org.egov.tl.web.models.TradeUnit;
 import org.egov.tl.web.models.UpdateTLStatusCriteriaRequest;
-import org.egov.tl.web.models.TradeLicense.ApplicationTypeEnum;
 import org.egov.tl.web.models.contract.BillResponse;
 import org.egov.tl.web.models.contract.BillSearchCriteria;
 import org.egov.tl.web.models.contract.BusinessService;
@@ -58,7 +66,6 @@ import org.egov.tl.web.models.contract.ProcessInstance;
 import org.egov.tl.web.models.contract.ProcessInstanceRequest;
 import org.egov.tl.web.models.contract.ProcessInstanceResponse;
 import org.egov.tl.web.models.contract.State;
-import org.egov.tl.web.models.contract.Alfresco.DMSResponse;
 import org.egov.tl.web.models.contract.Alfresco.DmsRequest;
 import org.egov.tl.web.models.user.UserDetailResponse;
 import org.egov.tl.workflow.ActionValidator;
@@ -1076,7 +1083,7 @@ public class TradeLicenseService {
 	private PDFRequest generatePdfRequestByTradeLicense(TradeLicense tradeLicense, RequestInfo requestInfo) {
 		
 		Map<String, Object> map = new HashMap<>();
-		Map<String, Object> map2 = generateDataForTradeLicensePdfCreate(tradeLicense);
+		Map<String, Object> map2 = generateDataForTradeLicensePdfCreate(tradeLicense, requestInfo);
 		
 		map.put("tl", map2);
 		
@@ -1091,10 +1098,15 @@ public class TradeLicenseService {
 	}
 
 
-	private Map<String, Object> generateDataForTradeLicensePdfCreate(TradeLicense tradeLicense) {
+	private Map<String, Object> generateDataForTradeLicensePdfCreate(TradeLicense tradeLicense, RequestInfo requestInfo) {
 
 		Map<String, Object> tlObject = new HashMap<>();
-
+		long longtime = tradeLicense.getIssuedDate();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyy");
+		String date = dateFormat.format(new Date(longtime));
+//		Date date = (Date) dateFormat.parseObject(longtime);
+		
+		
 		// map variables and values
 		tlObject.put("tradeLicenseNo", tradeLicense.getLicenseNumber());//Trade License No
 		tlObject.put("tradeRegistrationNo", tradeLicense.getApplicationNumber()); //Trade Registration No
@@ -1106,10 +1118,15 @@ public class TradeLicenseService {
 		tlObject.put("licenseIssueDate", tradeLicense.getIssuedDate());// License Issue Date
 		tlObject.put("licenseValidity", tradeLicense.getValidTo());//License Validity
 		tlObject.put("licenseCategory", tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("tradeCategory").asText());// License Category
+		tlObject.put("licenseSubCategory", tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("tradeSubType").asText());// License Sub Category
 		tlObject.put("licenseApplicantName", tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantName").asText());// License Applicant Name
 		tlObject.put("applicantContactNo", tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantMobileNumber").asText());// Applicant Contact No
-		tlObject.put("applicantAddress", tradeLicense.getBusinessService());// Applicant Address
-		
+		tlObject.put("ulbType", tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("ulbType").asText());// ulbType
+		tlObject.put("ulbName", tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("ulbName").asText());// ulbName
+		tlObject.put("licenseeMobileNumber", !CollectionUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getOwners()) ? tradeLicense.getTradeLicenseDetail().getOwners().get(0).getMobileNumber() : null);// Applicant Address
+		tlObject.put("approverName", null!=requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);// Approver Name
+		tlObject.put("approvalTime", date);// Approval Time
+		tlObject.put("ownerName", !CollectionUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getOwners()) ? tradeLicense.getTradeLicenseDetail().getOwners().get(0).getName() : null);// Owner Name
 		// generate QR code from attributes
 		StringBuilder qr = new StringBuilder();
 		getQRCodeForPdfCreate(tlObject, qr);

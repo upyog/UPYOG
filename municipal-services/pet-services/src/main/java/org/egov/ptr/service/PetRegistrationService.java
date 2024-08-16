@@ -57,7 +57,7 @@ public class PetRegistrationService {
 
 		// Enrich/Upsert user in upon pet registration
 		// userService.callUserService(petRegistrationRequest); need to build the method
-		wfService.updateWorkflowStatus(petRegistrationRequest);
+//		wfService.updateWorkflowStatus(petRegistrationRequest);
 		producer.push(config.getCreatePtrTopic(), petRegistrationRequest);
 
 		return petRegistrationRequest.getPetRegistrationApplications();
@@ -79,15 +79,15 @@ public class PetRegistrationService {
 		PetRegistrationApplication existingApplication = validator
 				.validateApplicationExistence(petRegistrationRequest.getPetRegistrationApplications().get(0));
 		existingApplication.setWorkflow(petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow());
-		petRegistrationRequest.setPetRegistrationApplications(Collections.singletonList(existingApplication));
+//		petRegistrationRequest.setPetRegistrationApplications(Collections.singletonList(existingApplication));
 
 		enrichmentService.enrichPetApplicationUponUpdate(petRegistrationRequest);
-
-		if (petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction()
-				.equals("APPROVE")) {
-			demandService.createDemand(petRegistrationRequest);
-		}
-		wfService.updateWorkflowStatus(petRegistrationRequest);
+//............................NEED TO IMPLEMENT BELOW...............................................
+//		if (petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction()
+//				.equals("APPROVE")) {
+//			demandService.createDemand(petRegistrationRequest);
+//		}
+//		wfService.updateWorkflowStatus(petRegistrationRequest);
 		producer.push(config.getUpdatePtrTopic(), petRegistrationRequest);
 
 		return petRegistrationRequest.getPetRegistrationApplications().get(0);
