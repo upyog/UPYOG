@@ -116,7 +116,7 @@ export const CHBMyApplications = () => {
             </div>
           </div>
           <span className="link" style={{ display: "block" }}>
-            <Link to="/digit-ui/citizen/chb/bookHall/searchHall">
+            <Link to="/digit-ui/citizen/chb/bookHall/searchhall">
               {t("CHB_NEW_BOOKING")}
             </Link>
           </span>
