@@ -82,11 +82,11 @@ public class PetRegistrationService {
 //		petRegistrationRequest.setPetRegistrationApplications(Collections.singletonList(existingApplication));
 
 		enrichmentService.enrichPetApplicationUponUpdate(petRegistrationRequest);
-//............................NEED TO IMPLEMENT BELOW...............................................
-//		if (petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction()
-//				.equals("APPROVE")) {
-//			demandService.createDemand(petRegistrationRequest);
-//		}
+
+		if (petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction()
+				.equals("APPROVE")) {
+			demandService.createDemand(petRegistrationRequest);
+		}
 		wfService.updateWorkflowStatus(petRegistrationRequest);
 		producer.push(config.getUpdatePtrTopic(), petRegistrationRequest);
 
