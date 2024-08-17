@@ -10,5 +10,4 @@ cp $INTERNALS/example/src/UICustomizations.js src/Customisations
 
 cd $INTERNALS && echo "Branch: $(git branch --show-current)" && echo "$(git log -1 --pretty=%B)" && echo "installing packages"
 
-
-# yarn install
+#yarn install
