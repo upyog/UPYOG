@@ -1,18 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CardLabel, Dropdown, LabelFieldPair, TextInput, DatePicker } from "@egovernments/digit-ui-react-components";
 import { Controller, useForm } from "react-hook-form";
+import { paymentModeOptions } from "../../../constants/dummyData";
 
-const PaymentModeField = () => {
+const PaymentModeField = ({control, setData, data}) => {
   const { t } = useTranslation();
+  const [error, setError] = useState("");
+  const [options, setOptions] = useState([]);
 
-  const {
-    control,
-    setValue,
-    handleSubmit,
-    getValues,
-    formState: { errors, isValid },
-  } = useForm({ defaultValues: {}, mode: "onChange" });
+  useEffect(() => {
+    if (!data.paymentMode) {
+      setError("REQUIRED_FIELD");
+    }
+    else {
+      setError("");
+    }
+  }, [data]);
+
+  useEffect(() => {
+    setOptions(paymentModeOptions);
+  }, []);
 
   return (
     <div className="bmc-col3-card">
@@ -22,15 +30,21 @@ const PaymentModeField = () => {
                 control={control}
                 name="paymentMode"
                 rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-                render={({ value, onChange, onBlur }) => (
+                render={(props) => (
                     <div>
                     <Dropdown
-                        value={value}
                         name="paymentMode"
-                        selected={value}
-                        select={(value) => onChange(value)}
-                        onBlur={onBlur}
-                        optionKey="value"
+                        selected={props.value}
+                        select={(value) => {
+                          props.onChange(value);
+                          const newData = {
+                            ...data,
+                            paymentMode: value
+                          };
+                          setData(newData);
+                        }}
+                        onBlur={props.onBlur}
+                        optionKey="name"
                         t={t}
                         placeholder={t("DEONAR_PAYMENT_MODE")}
                     />

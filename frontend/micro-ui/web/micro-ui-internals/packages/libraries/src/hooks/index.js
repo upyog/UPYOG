@@ -85,6 +85,7 @@ import useCommonGet from "./bmc/useCommon";
 import useCommonGetBank from "./bmc/useCommonGetBank";
 import useSaveUserDetail from "./bmc/useSaveUserDetail";
 import useSaveSchemes from './bmc/saveScheme';
+import useVerifierSchemeDetail from './bmc/useVerifierScheme';
 
 import useSchemesGet from "./bmc/getSchemes";
 import useUsersDetails from "./bmc/useUsers";
@@ -129,7 +130,8 @@ const bmc={
   useCommonGetBank,
   useUsersDetails,
   useSaveUserDetail,
-  useSaveSchemes
+  useSaveSchemes,
+  useVerifierSchemeDetail
 }
 
 const hrms = {

@@ -12,7 +12,7 @@ const ParkingTimeField = ({control, setData, data}) => {
 
   useEffect(() => {
     if (!data.parkingTime) {
-      setError(t("REQUIRED_FIELD"));
+      setError("REQUIRED_FIELD");
     } else {
       setError("");
     }

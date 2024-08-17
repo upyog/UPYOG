@@ -212,22 +212,23 @@ const Urls = {
   },
 
   common: {
-    get: "http://localhost:8081/bmc/common/_get",
-    getBanks: "http://localhost:8081/bmc/bank/_get",
+    get: "/bmc-service-v1/common/_get",
+    getBanks: "/bmc-service-v1/bank/_get",
   },
 
   schemes: {
-    getSchemes: "http://localhost:8081/bmc/scheme/_search",
-    saveScheme: "http://localhost:8081/bmc/schemeApplication/_saveApplication",
+    getSchemes: "/bmc-service-v1/scheme/_search",
+    saveScheme: "/bmc-service-v1/application/_save",
+    getVerifierScheme: "/bmc-service-v1/verifier/_getapplications",
   },
 
   users: {
-    getUserDetails: "http://localhost:8081/bmc/user/_get",
-    saveUserDetails: "http://localhost:8081/bmc/user/_save",
+    getUserDetails: "/bmc-service-v1/user/_get",
+    saveUserDetails: "/bmc-service-v1/user/_save",
   },
 
   banksDetails: {
-    getBankDetails: "http://localhost:8081/bmc/bank/_getDetails",
+    getBankDetails: "/bmc-service-v1/bank/_getDetails",
   },
 
   noc: {

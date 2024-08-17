@@ -18,6 +18,8 @@ import useCreateUuid from "../../../hooks/useCreateUuid";
 import { arrivalMockData } from "../../../constants/dummyData";
 import NumberOfDeadAnimalsField from "../commonFormFields/numberOfDeadAnimals";
 import GawalNameField from "../commonFormFields/gawalName";
+import useDate from "../../../hooks/useCurrentDate";
+import useCurrentTime from "../../../hooks/useCurrentTime";
 
 const SecurityCheckPage = () => {
   const { t } = useTranslation();
@@ -35,13 +37,14 @@ const SecurityCheckPage = () => {
       arrivalUuid: '',
       importType: '',
       importPermissionNumber: '',
-      importPermissionDate: '',
+      importPermissionDate: useDate(-2),
       traderName: '',
       licenseNumber: '',
       vehicleNumber: '',
       numberOfAliveAnimals: '',
-      arrivalDate: '',
-      arrivalTime: '',
+      arrivalDate: useDate(0),
+      arrivalTime: useCurrentTime(),
+      gawalName: ''
     },
     mode: "onChange",
   });
@@ -102,7 +105,7 @@ const SecurityCheckPage = () => {
           <MainFormHeader title={"DEONAR_SECURITY_CHECK"} />
           <div className="bmc-row-card-header">
             <div className="bmc-card-row">
-              <ArrivalUuidField control={control} setData={setData} data={data} uuid={val.current} />
+              <ArrivalUuidField control={control} setData={setData} data={data} uuid={val.current} disabled={true} />
               <ImportTypeField control={control} setData={setData} data={data} />
               <ImportPermissionNumberField control={control} setData={setData} data={data} />
               <SearchButtonField onSearch={handleSearch} />

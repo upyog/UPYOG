@@ -11,7 +11,7 @@ const ParkingDateField = ({ control, data, setData }) => {
 
   useEffect(() => {
     if (!data.parkingDate) {
-      setError(t("REQUIRED_FIELD"));
+      setError("REQUIRED_FIELD");
     } else {
       setError("");
     }

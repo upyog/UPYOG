@@ -10,7 +10,7 @@ const SelectSchemePage = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
-  const [radioValueCheck, setRadioValueCheck] = useState();
+  const [radioValueCheck, setRadioValueCheck] = useState({});
   const [selectedRadio, setSelectedRadio] = useState("");
   const [selectedScheme, setSelectedScheme] = useState(null);
   const history = useHistory();
@@ -18,7 +18,7 @@ const SelectSchemePage = () => {
   const [schemeDetails, setSchemeDetails] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const getSchems = { SchemeSearchCriteria: { Status: 1 } };
+  const getSchemes = { SchemeSearchCriteria: { Status: 1 } };
 
   const processSchemeData = (data, headerLocale) => {
     const schemeHeadsData = [];
@@ -98,15 +98,23 @@ const SelectSchemePage = () => {
     return { SchemeData };
   };
 
-  Digit.Hooks.bmc.useSchemesGet(getSchems, { select: qualificationFunction });
+  Digit.Hooks.bmc.useSchemesGet(getSchemes, { select: qualificationFunction });
 
   const handleSchemeSelect = (scheme) => {
     setSelectedScheme(scheme);
     setSelectedRadio(scheme.schemeID);
-    setRadioValueCheck(scheme.schemeID);
+
+    const type = scheme.courses.length ? "course" : scheme.machines.length ? "machine" : "pension";
+    if (type === "pension") {
+      setRadioValueCheck({});
+    } else {
+      setRadioValueCheck({
+        id: scheme.schemeID,
+        label: scheme.i18nKey,
+      });
+    }
   };
 
-  console.log("selectedScheme", selectedScheme);
   const renderSchemeSections = () => {
     const groupedSchemes = schemeHeads.reduce((acc, schemeHead) => {
       acc[schemeHead.schemeHead] = schemeDetails.filter((detail) => detail.schemeHead === schemeHead.schemeHead);
@@ -173,7 +181,9 @@ const SelectSchemePage = () => {
                     />
                   </div>
                   <div className="bmc-col-small-header">
-                    <div className="bmc-course-amount" style={{textAlign:"end"}}>Amount: ₹ {course.courseAmount}</div>
+                    <div className="bmc-course-amount" style={{ textAlign: "end" }}>
+                      Amount: ₹ {course.courseAmount}
+                    </div>
                   </div>
                 </div>
 
@@ -242,7 +252,9 @@ const SelectSchemePage = () => {
                     />
                   </div>
                   <div className="bmc-col-small-header">
-                    <div className="bmc-course-amount" style={{textAlign:"end"}}>Amount: ₹ {machine.machAmount}</div>
+                    <div className="bmc-course-amount" style={{ textAlign: "end" }}>
+                      Amount: ₹ {machine.machAmount}
+                    </div>
                   </div>
                 </div>
                 <div className="bmc-select-scheme">
@@ -307,7 +319,11 @@ const SelectSchemePage = () => {
         <Link
           to={{
             pathname: "/digit-ui/citizen/bmc/ApplicationDetails",
-            state: { scheme: selectedRadio, schemeType: radioValueCheck, selectedScheme: selectedScheme },
+            state: {
+              scheme: selectedRadio,
+              schemeType: radioValueCheck,
+              selectedScheme: selectedScheme,
+            },
           }}
           style={{ textDecoration: "none" }}
           disabled={!selectedRadio}

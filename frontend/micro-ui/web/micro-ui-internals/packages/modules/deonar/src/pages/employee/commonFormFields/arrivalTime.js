@@ -12,7 +12,7 @@ const ArrivalTimeField = ({ control, data, setData }) => {
 
   useEffect(() => {
     if (!data.arrivalTime) {
-      setError(t("REQUIRED_FIELD"));
+      setError("REQUIRED_FIELD");
     } else {
       setError("");
     }

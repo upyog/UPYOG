@@ -27,17 +27,16 @@ const ReligiousPersonal = ({stage, control, data, setData}) => {
   return (
     <React.Fragment>
       <div className="bmc-card-full">
-        <form onSubmit={onSubmit}>
         <TraderNameField control={control} setData={setData} data={data} />
-        <BrokerNameField />
+        <BrokerNameField control={control} setData={setData} data={data} />
         <GawalNameField control={control} setData={setData} data={data} />
-        <CitizenNameField />
-          <NumberOfAnimalsField />
-          <AnimalTokenNumberField />
+        <CitizenNameField control={control} setData={setData} data={data} />
+          <NumberOfAnimalsField control={control} setData={setData} data={data} disabled={false} />
+          <AnimalTokenNumberField control={control} setData={setData} data={data} />
               {
                 (stage === "COLLECTION_POINT") ? 
                   <React.Fragment>
-                    <RemovalFeeAmountField />
+                    <RemovalFeeAmountField control={control} setData={setData} data={data} />
                     <PaymentModeField />
                     <PaymentReferenceNumberField />
                     <SubmitPrintButtonFields />
@@ -48,15 +47,14 @@ const ReligiousPersonal = ({stage, control, data, setData}) => {
               {
                 (stage === "SECURITY_CHECKPOINT") ?
                   <React.Fragment>
-                    <RemovalDateField />
-                    <RemovalTimeField />
+                    <RemovalDateField control={control} data={data} setData={setData} />
+                    <RemovalTimeField control={control} data={data} setData={setData} />
                     <SubmitButtonField />
                   </React.Fragment>
                 :
                   <React.Fragment></React.Fragment>
               }
               
-        </form>
       </div>
     </React.Fragment>
   );

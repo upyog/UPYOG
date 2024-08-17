@@ -28,10 +28,10 @@ const Pagination = ({ totalRecords, rowsPerPage, currentPage, onPageChange, onRo
           Showing {(currentPage - 1) * rowsPerPage + 1} to {Math.min(currentPage * rowsPerPage, totalRecords)} of {totalRecords} records
           <span style={{ paddingLeft: "10px" }}>Rows per page:</span>
           <select value={rowsPerPage} onChange={(e) => onRowsPerPageChange(Number(e.target.value))}>
-            <option value={5}>5</option>
-            <option value={10}>10</option>
             <option value={15}>15</option>
-            <option value={20}>20</option>
+            <option value={30}>30</option>
+            <option value={45}>45</option>
+            <option value={60}>60</option>
           </select>
         </div>
         <ul className="bmc-pagination">

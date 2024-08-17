@@ -15,7 +15,7 @@ fix length of input for 11
     branchId: "",
     name: "",
     branchName: "",
-    ifsc: "",
+    ifsc: "SBIN0000454",
     micr: "",
     accountNumber: "",
   };

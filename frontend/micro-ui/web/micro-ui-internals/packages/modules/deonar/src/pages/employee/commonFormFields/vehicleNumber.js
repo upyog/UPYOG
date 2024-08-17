@@ -46,7 +46,7 @@ const VehicleNumberField = ({ control, data, setData }) => {
           )}
         />
       </LabelFieldPair>
-      {error && <div style={{ color: "red" }}>{t(error)}</div>}
+      {error && <div style={{ color: "red" }}>{error}</div>}
     </div>
   );
 };

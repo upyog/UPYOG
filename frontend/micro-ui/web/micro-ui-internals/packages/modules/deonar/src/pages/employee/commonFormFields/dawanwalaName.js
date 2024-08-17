@@ -1,18 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CardLabel, Dropdown, LabelFieldPair, TextInput, DatePicker } from "@egovernments/digit-ui-react-components";
 import { Controller, useForm } from "react-hook-form";
+import { dawanwalaNameOptions } from "../../../constants/dummyData";
 
-const DawanwalaNameField = () => {
+const DawanwalaNameField = ({control, data, setData}) => {
   const { t } = useTranslation();
+  const [error, setError] = useState("");
+  const [options, setOptions] = useState([]);
 
-  const {
-    control,
-    setValue,
-    handleSubmit,
-    getValues,
-    formState: { errors, isValid },
-  } = useForm({ defaultValues: {}, mode: "onChange" });
+  useEffect(() => {
+    if (!data.dawanwalaName) {
+      setError("REQUIRED_FIELD");
+    }
+    else {
+      setError("");
+    }
+  }, [data]);
+
+  useEffect(() => {
+    setOptions(dawanwalaNameOptions);
+  }, []);
 
   return (
     <div className="bmc-col3-card">
@@ -22,15 +30,22 @@ const DawanwalaNameField = () => {
             control={control}
             name="dawanwalaName"
             rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-            render={({ value, onChange, onBlur }) => (
+            render={(props) => (
                 <div>
                 <Dropdown
-                    value={value}
                     name="dawanwalaName"
-                    selected={value}
-                    select={(value) => onChange(value)}
-                    onBlur={onBlur}
-                    optionKey="value"
+                    selected={props.value}
+                    select={(value) => {
+                      props.onChange(value);
+                      const newData = {
+                        ...data,
+                        dawanwalaName: value
+                      };
+                      setData(newData);
+                    }}
+                    onBlur={props.onBlur}
+                    optionKey="name"
+                    option={options}
                     t={t}
                     placeholder={t("DEONAR_DAWANWALA_NAME")}
                 />
@@ -38,6 +53,7 @@ const DawanwalaNameField = () => {
             )}
             />
         </LabelFieldPair>
+        {error && <div style={{ color: "red" }}>{error}</div>}
     </div>
   );
 };

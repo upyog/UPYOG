@@ -101,8 +101,8 @@ const StablingFeePage = () => {
                         <ArrivalUuidField control={control} setData={setData} data={data} />
                         <TraderNameField control={control} setData={setData} data={data} />
                         <GawalNameField control={control} setData={setData} data={data} />
-                            <BrokerNameField />
-                            <ShadeNumberField />
+                        <BrokerNameField control={control} setData={setData} data={data} />
+                        <ShadeNumberField />
                             <NumberOfAnimalsField />
                             <AnimalTokenNumberField />
                             <StablingDaysField />

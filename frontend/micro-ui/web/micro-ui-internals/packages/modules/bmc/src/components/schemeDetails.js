@@ -113,22 +113,16 @@ const SchemeDetailsPage = ({ onUpdate, initialRows = {}, AllowEdit = true, tenan
       <div className="bmc-row-card-header">
         <div className="bmc-card-row">
           <div className="bmc-col-large-header">
-            {schemeType && schemeType.type === "machine" ? (
-              <React.Fragment>
-                {schemeType && (
-                  <div className="bmc-title" index={schemeType.key}>
-                    Selected Machine: {schemeType?.value}
-                  </div>
-                )}
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                {schemeType && (
-                  <div className="bmc-title" index={schemeType.key}>
-                    Selected Course: {schemeType?.value}
-                  </div>
-                )}
-              </React.Fragment>
+            {schemeType && (
+              <div className="bmc-title" index={schemeType.key}>
+                {schemeType.type === "machine"
+                  ? `Selected Machine: ${schemeType.value}`
+                  : schemeType.type === "course"
+                  ? `Selected Course: ${schemeType.value}`
+                  : schemeType.type === "pension"
+                  ? null
+                  : null}
+              </div>
             )}
           </div>
           <div className="bmc-col-small-header" style={{ textAlign: "end" }}>

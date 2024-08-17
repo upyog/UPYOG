@@ -1,18 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CardLabel, Dropdown, LabelFieldPair, TextInput, DatePicker } from "@egovernments/digit-ui-react-components";
 import { Controller, useForm } from "react-hook-form";
 
-const RemovalFeeAmountField = () => {
+const RemovalFeeAmountField = ({control, setData, data}) => {
   const { t } = useTranslation();
+  const [error, setError] = useState("");
 
-  const {
-    control,
-    setValue,
-    handleSubmit,
-    getValues,
-    formState: { errors, isValid },
-  } = useForm({ defaultValues: {}, mode: "onChange" });
+  useEffect(() => {
+    if (!data.removalFeeAmount) {
+      setError("REQUIRED_FIELD");
+    }
+    else {
+      setError("");
+    }
+  }, [data]);
 
   return (
     <div className="bmc-col3-card">
@@ -22,12 +24,19 @@ const RemovalFeeAmountField = () => {
               control={control}
               name="removalFeeAmount"
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={({ value, onChange, onBlur }) => (
+              render={(props) => (
               <div>
                   <TextInput
-                  value={value}
-                  onChange={(e) => onChange(e.target.value)}
-                  onBlur={onBlur}
+                  value={props.value}
+                  onChange={(e) => {
+                    props.onChange(e.target.value);
+                    const newData = {
+                      ...data,
+                      removalFeeAmount: e.target.value,
+                    };
+                    setData(newData);
+                  }}
+                  onBlur={props.onBlur}
                   optionKey="i18nKey"
                   t={t}
                   placeholder={t("DEONAR_REMOVAL_FEE_AMOUNT")}
@@ -36,6 +45,7 @@ const RemovalFeeAmountField = () => {
               )}
           />
       </LabelFieldPair>
+      {error && <div style={{ color: "red" }}>{error}</div>}
     </div>
   );
 };

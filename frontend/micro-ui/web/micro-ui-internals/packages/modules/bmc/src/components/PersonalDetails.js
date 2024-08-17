@@ -246,7 +246,7 @@ const PersonalDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = true, tena
                         isMandatory={true}
                       />
                     ) : (
-                      <TextInput readOnly value={props.value?.name || ""} />
+                      <TextInput disabled={!isEditable} readOnly={!isEditable} value={props.value?.name || ""} />
                     )}
                     {errors.title && <span style={{ color: "red" }}>{errors.title.message}</span>}
                   </div>
@@ -342,7 +342,7 @@ const PersonalDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = true, tena
                         isMandatory={true}
                       />
                     ) : (
-                      <TextInput readOnly value={props.value?.i18nKey || ""} />
+                      <TextInput disabled={!isEditable} readOnly={!isEditable} value={props.value?.i18nKey || ""} />
                     )}
                     {errors.religion && <span style={{ color: "red" }}>{errors.religion.message}</span>}
                   </div>
@@ -371,7 +371,7 @@ const PersonalDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = true, tena
                         isMandatory={true}
                       />
                     ) : (
-                      <TextInput readOnly value={t(props.value?.i18nKey) || ""} />
+                      <TextInput disabled={!isEditable} readOnly={!isEditable} value={t(props.value?.i18nKey) || ""} />
                     )}
                     {errors.casteCategory && <span style={{ color: "red" }}>{errors.casteCategory.message}</span>}
                   </div>
@@ -403,7 +403,7 @@ const PersonalDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = true, tena
                         isMandatory={true}
                       />
                     ) : (
-                      <TextInput readOnly value={props.value?.name || ""} />
+                      <TextInput disabled={!isEditable} readOnly={!isEditable} value={props.value?.name || ""} />
                     )}
                     {errors.gender && <span style={{ color: "red" }}>{errors.gender.message}</span>}
                   </div>

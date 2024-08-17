@@ -23,6 +23,7 @@ const SearchApplications = ({ onUpdate }) => {
   const [selectedSchemeHead, setSelectedSchemeHead] = useState("");
   const [selectedScheme, setSelectedScheme] = useState("");
   const [selectedDetail, setSelectedDetail] = useState("");
+  const [selectedType, setSelectedType] = useState("");
   const getSchemes = { SchemeSearchCriteria: { Status: 1, sla: 30 } };
   const { data: SCHEME_DATA } = Digit.Hooks.bmc.useSchemesGet(getSchemes);
   //console.log(SCHEME_DATA1.SchemeDetails);
@@ -56,6 +57,7 @@ const SearchApplications = ({ onUpdate }) => {
     setSelectedSchemeHead(selected);
     setSelectedScheme("");
     setSelectedDetail("");
+    setSelectedType("");
     setDetails([]);
     clearErrors("schemeHead");
     const selectedSchemeDetails = schemeHeads.find((head) => head.schemeHead === selected.value)?.schemeDetails || [];
@@ -65,6 +67,7 @@ const SearchApplications = ({ onUpdate }) => {
   const handleSchemeChange = (selected) => {
     setSelectedScheme(selected.value);
     setSelectedDetail("");
+    setSelectedType("");
 
     const selectedScheme = schemes.find((scheme) => scheme.schemeID === selected.value);
     const details = [...(selectedScheme.courses || []), ...(selectedScheme.machines || [])];
@@ -74,11 +77,19 @@ const SearchApplications = ({ onUpdate }) => {
 
   const handleDetailChange = (selected) => {
     setSelectedDetail(selected.value);
+    setSelectedType(selected.type);
   };
 
   const schemeHeadOptions = schemeHeads.map((head) => ({ value: head.schemeHead, label: head.schemeHead }));
   const schemeOptions = schemes.map((scheme) => ({ value: scheme.schemeID, label: scheme.schemeName }));
-  const detailOptions = details.map((detail) => ({ value: detail.machID || detail.courseID, label: detail.machName || detail.courseName }));
+
+  const detailOptions = details.map((detail) => ({
+    value: detail.machID || detail.courseID,
+    label: detail.machName || detail.courseName,
+    type: detail.machID ? "machine" : "course",
+  }));
+
+  console.log("Detail Options: ", detailOptions);
 
   const handleSearch = () => {
     let searchCriteria = {};
@@ -93,7 +104,9 @@ const SearchApplications = ({ onUpdate }) => {
       searchCriteria.detailID = selectedDetail;
     }
 
-    console.log("Search Criteria: ", searchCriteria);
+    if (selectedType) {
+      searchCriteria.type = selectedType;
+    }
 
     if (onUpdate) {
       onUpdate(searchCriteria);

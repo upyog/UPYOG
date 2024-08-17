@@ -8,7 +8,6 @@ const ImportPermissionNumberField = ({control, setData, data}) => {
 
   const [formField, setFormField] = useState("");
   const [error, setError] = useState("");
-  const [options, setOptions] = useState([]);
 
   useEffect(() => {
     if (formField.length === 0) {

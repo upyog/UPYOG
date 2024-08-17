@@ -16,52 +16,23 @@ import SubmitPrintButtonFields from "../../commonFormFields/submitPrintBtn";
 
 const ReligiousPersonalRemovalSubform = ({control, data, setData}) => {
   const { t } = useTranslation();
-  const [disabledFlag, setDisabledFlag] = useState(false);
-
-  // const {
-  //   setValue,
-  //   handleSubmit,
-  //   getValues,
-  //   formState: { errors, isValid },
-  // } = useForm({ defaultValues: {
-  //     traderName: {},
-  //     brokerName: {},
-  //     gawalName: {},
-  //     assignDate: '',
-  //     citizenName: '',
-  //     numberOfAnimals: 0,
-  //     animalTokenNumber: '',
-  //     removalFeeAmount: '',
-  //     paymentMode: '',
-  //     paymentReferenceNumber: ''
-  // }, mode: "onChange" });
-
-  const onSubmit = (formData) => {
-    console.log("Form data submitted:", formData);
-    const jsonData = JSON.stringify(formData);
-    console.log("Generated JSON:", jsonData);
-  };
 
   return (
     <React.Fragment>
       <div className="bmc-card-full">
-        <form onSubmit={onSubmit}>
-          <div className="bmc-row-card-header">
             <div className="bmc-card-row">
             <TraderNameField control={control} setData={setData} data={data} />
-            <BrokerNameField />
-            <GawalNameField control={control} setData={setData} data={data} disabled={disabledFlag} />
-            <AssignDateField />
-              <CitizenNameField />
-              <NumberOfAnimalsField />
-              <AnimalTokenNumberField />
-              <RemovalFeeAmountField />
-              <PaymentModeField />
-              <PaymentReferenceNumberField />
+            <BrokerNameField control={control} setData={setData} data={data} />
+            <GawalNameField control={control} setData={setData} data={data} />
+            <AssignDateField control={control} setData={setData} data={data} />
+              <CitizenNameField control={control} setData={setData} data={data} />
+              <NumberOfAnimalsField control={control} setData={setData} data={data} />
+              <AnimalTokenNumberField control={control} setData={setData} data={data} />
+              <RemovalFeeAmountField control={control} setData={setData} data={data} />
+              <PaymentModeField control={control} setData={setData} data={data} />
+              <PaymentReferenceNumberField control={control} setData={setData} data={data} />
             </div>
             <SubmitPrintButtonFields />
-          </div>
-        </form>
       </div>
     </React.Fragment>
   );

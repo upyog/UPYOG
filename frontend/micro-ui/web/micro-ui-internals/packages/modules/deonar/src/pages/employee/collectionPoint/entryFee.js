@@ -59,7 +59,7 @@ const EntryFeeCollection = () => {
           <div className="bmc-row-card-header">
             <div className="bmc-card-row">
             <ImportPermissionNumberField control={control} setData={setData} data={data} />
-            <ArrivalUuidField control={control} setData={setData} data={data} />
+            <ArrivalUuidField control={control} setData={setData} data={data} disabled={false} />
             <TraderNameField control={control} setData={setData} data={data} />
             <LicenseNumberField control={control} setData={setData} data={data} />
             <VehicleNumberField control={control} setData={setData} data={data} />
@@ -67,10 +67,10 @@ const EntryFeeCollection = () => {
             <ArrivalDateField control={control} setData={setData} data={data} />
               <ArrivalTimeField control={control} setData={setData} data={data} />
               <GawalNameField control={control} setData={setData} data={data} disabled={disabledFlag} />
-              <BrokerNameField />
-              <EntryFeeField />
-              <ReceiptModeField />
-              <PaymentReferenceNumberField />
+              <BrokerNameField control={control} setData={setData} data={data} />
+              <EntryFeeField control={control} setData={setData} data={data} />
+              <ReceiptModeField control={control} setData={setData} data={data} />
+              <PaymentReferenceNumberField control={control} setData={setData} data={data} />
             </div>
             <SubmitPrintButtonFields />
           </div>

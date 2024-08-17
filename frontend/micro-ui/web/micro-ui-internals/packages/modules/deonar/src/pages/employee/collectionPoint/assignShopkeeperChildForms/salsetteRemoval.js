@@ -17,59 +17,32 @@ import SubmitPrintButtonFields from "../../commonFormFields/submitPrintBtn";
 const SalsetteRemovalSubform = ({isShopkeeperAssignment, control, data, setData}) => {
   const { t } = useTranslation();
 
-  const fetchDataByReferenceNumber = async (referenceNumber) => {
-    const mockData = {
-      arrivalUuid: referenceNumber,
-      importType: "Type A",
-      importPermissionNumber: "123456",
-      importPermissionDate: new Date(),
-      traderName: "John Doe",
-      licenseNumber: "LIC123",
-      vehicleNumber: "ABC123",
-      numberOfAliveAnimals: 5,
-      numberOfDeadAnimals: 2,
-      arrivalDate: new Date(),
-      arrivalTime: "12:00",
-    };
-    return mockData;
-  };
-
-  const onSubmit = (formData) => {
-    console.log("Form data submitted:", formData);
-    const jsonData = JSON.stringify(formData);
-    console.log("Generated JSON:", jsonData);
-  };
-
   return (
     <React.Fragment>
       <div className="bmc-card-full">
-        <form onSubmit={onSubmit}>
-          <div className="bmc-row-card-header">
             <div className="bmc-card-row">
             <TraderNameField control={control} setData={setData} data={data} />
-            <BrokerNameField />
+            <BrokerNameField control={control} setData={setData} data={data} />
             <GawalNameField control={control} setData={setData} data={data} />
                 {
                     isShopkeeperAssignment ? 
-                        <AssignDateField />
+                        <AssignDateField control={control} setData={setData} data={data} />
                     :
                         <React.Fragment></React.Fragment>
                 }
-                <DairywalaNameField />
-                <NumberOfAnimalsField />
-                <AnimalTokenNumberField />
+                <DairywalaNameField control={control} setData={setData} data={data} />
+                <NumberOfAnimalsField control={control} setData={setData} data={data} />
+                <AnimalTokenNumberField control={control} setData={setData} data={data} />
             {
                 isShopkeeperAssignment ? 
-                    <SalsetteFeeAmountField />
+                    <SalsetteFeeAmountField control={control} setData={setData} data={data} />
                 :
-                    <RemovalFeeAmountField />
+                    <RemovalFeeAmountField control={control} setData={setData} data={data} />
             }
-            <PaymentModeField />
-            <PaymentReferenceNumberField />
+            <PaymentModeField control={control} setData={setData} data={data} />
+            <PaymentReferenceNumberField control={control} setData={setData} data={data} />
             </div>
             <SubmitPrintButtonFields />
-          </div>
-        </form>
       </div>
     </React.Fragment>
   );

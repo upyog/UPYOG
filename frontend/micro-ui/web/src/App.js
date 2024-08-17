@@ -8,10 +8,6 @@ import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
-import {
-  initPGRComponents,
-  PGRReducers,
-} from "@egovernments/digit-ui-module-pgr";
 import { initUtilitiesComponents } from "@egovernments/digit-ui-module-utilities";
 import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
 import { BMCLinks, BMCModule, initBMCComponents } from "@tattva/digit-ui-module-bmc";
@@ -34,9 +30,7 @@ const enabledModules = [
 
 ];
 
-const moduleReducers = (initData) => ({
-  initData, pgr: PGRReducers(initData),
-});
+
 
 const initDigitUI = () => {
   window.Digit.ComponentRegistryService.setupRegistry({
@@ -48,7 +42,7 @@ const initDigitUI = () => {
     DEONARModule,
   });
 
-  initPGRComponents();
+
   initDSSComponents();
   initHRMSComponents();
   initEngagementComponents();
@@ -79,7 +73,6 @@ function App() {
     <DigitUI
       stateCode={stateCode}
       enabledModules={enabledModules}
-      moduleReducers={moduleReducers}
       // defaultLanding="employee"
     />
   );

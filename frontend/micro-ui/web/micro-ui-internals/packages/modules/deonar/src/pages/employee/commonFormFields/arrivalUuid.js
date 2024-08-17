@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { CardLabel, TextInput, LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import { Controller } from "react-hook-form";
 
-const ArrivalUuidField = ({ control, setData, data, uuid }) => {
+const ArrivalUuidField = ({ control, setData, data, uuid, disabled }) => {
   const { t } = useTranslation();
 
   return (
@@ -21,7 +21,7 @@ const ArrivalUuidField = ({ control, setData, data, uuid }) => {
                 optionKey="i18nKey"
                 t={t}
                 placeholder={t("DEONAR_ARRIVAL_UUID")}
-                disabled={true}
+                disabled={disabled}
               />
             )}
           />

@@ -1,18 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { CardLabel, Dropdown, LabelFieldPair, TextInput, DatePicker } from "@egovernments/digit-ui-react-components";
 import { Controller, useForm } from "react-hook-form";
+import useDate from "../../../hooks/useCurrentDate";
 
-const RemovalDateField = () => {
+const RemovalDateField = ({ control, data, setData }) => {
   const { t } = useTranslation();
+  const currentDate = useDate(0);
+  const [error, setError] = useState("");
 
-  const {
-    control,
-    setValue,
-    handleSubmit,
-    getValues,
-    formState: { errors, isValid },
-  } = useForm({ defaultValues: {}, mode: "onChange" });
+  useEffect(() => {
+    if (!data.removalDate) {
+      setError("REQUIRED_FIELD");
+    } else {
+      setError("");
+    }
+  }, [data?.removalDate]);
 
   return (
     <div className="bmc-col3-card">
@@ -22,14 +25,26 @@ const RemovalDateField = () => {
             control={control}
             name="removalDate"
             rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-            render={({ value, onChange, onBlur }) => (
+            render={(props) => (
                 <div>
-                <DatePicker date={value} onChange={onChange} onBlur={onBlur} placeholder={t("DEONAR_REMOVAL_DATE")} />
+                <DatePicker 
+                  date={props.value || currentDate} 
+                  onChange={(e) => {
+                    props.onChange(e);
+                    const newData = {
+                      ...data,
+                      removalDate: e,
+                    };
+                    setData(newData);
+                  }} 
+                  onBlur={props.onBlur} 
+                  placeholder={t("DEONAR_REMOVAL_DATE")} />
                 </div>
             )}
             />
         </LabelFieldPair>
-    </div>
+        {error && <div style={{ color: "red" }}>{error}</div>}
+      </div>
   );
 };
 

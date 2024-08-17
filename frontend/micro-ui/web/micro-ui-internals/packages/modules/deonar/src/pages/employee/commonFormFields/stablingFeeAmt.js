@@ -3,16 +3,9 @@ import { useTranslation } from "react-i18next";
 import { CardLabel, Dropdown, LabelFieldPair, TextInput, DatePicker } from "@egovernments/digit-ui-react-components";
 import { Controller, useForm } from "react-hook-form";
 
-const StablingFeeAmountField = () => {
+const StablingFeeAmountField = ({control, setData, data}) => {
   const { t } = useTranslation();
-
-  const {
-    control,
-    setValue,
-    handleSubmit,
-    getValues,
-    formState: { errors, isValid },
-  } = useForm({ defaultValues: {}, mode: "onChange" });
+  const [error, setError] = useState("");
 
   return (
     <div className="bmc-col3-card">
@@ -22,12 +15,19 @@ const StablingFeeAmountField = () => {
                 control={control}
                 name="stablingFeeAmount"
                 rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-                render={({ value, onChange, onBlur }) => (
+                render={(props) => (
                 <div>
                     <TextInput
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    onBlur={onBlur}
+                    value={props.value}
+                    onChange={(e) => {
+                      props.onChange(e.target.value);
+                      const newData = {
+                        ...data,
+                        stablingFeeAmount: e.target.value
+                      };
+                      setData(newData);
+                    }}
+                    onBlur={props.onBlur}
                     optionKey="i18nKey"
                     t={t}
                     placeholder={t("DEONAR_STABLING_FEE_AMOUNT")}
@@ -36,7 +36,8 @@ const StablingFeeAmountField = () => {
                 )}
             />
         </LabelFieldPair>
-    </div>
+        {error && <div style={{ color: "red" }}>{error}</div>}
+      </div>
   );
 };
 

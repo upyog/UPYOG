@@ -13,7 +13,7 @@ const ArrivalDateField = ({ control, data, setData }) => {
   useEffect(() => {
     const validateArrivalDate = () => {
       if (!data.arrivalDate) {
-        setError(t("REQUIRED_FIELD"));
+        setError("REQUIRED_FIELD");
         return;
       }
 

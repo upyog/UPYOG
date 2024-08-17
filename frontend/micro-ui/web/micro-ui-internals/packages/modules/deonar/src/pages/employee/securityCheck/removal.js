@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CardLabel, Dropdown, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import Salsette from "../removalChildForms/salsette";
 import ReligiousPersonal from "../removalChildForms/religious_personal";
 import NotSold from "../removalChildForms/notSold";
@@ -16,13 +15,17 @@ import RemovalFeeReceiptNumberField from "../commonFormFields/removalFeeReceiptN
 import RejectedRemovalTypesDropdownField from "../commonFormFields/rejectedRemovalTypesDropdown";
 import DeathRemovalTypesDropdownField from "../commonFormFields/deathRemovalTypesDropdown";
 import SearchButtonField from "../commonFormFields/searchBtn";
+import { deathAfterTradingMockData, deathBeforeTradingMockData, notSoldMockData, rejectionAfterTradingMockData, rejectionBeforeTradingMockData, religiousPersonalMockData, salsetteRemovalMockData } from "../../../constants/dummyData";
 
 const RemovalPage = () => {
   const { t } = useTranslation();
   const [data, setData] = useState({});
-  const [subFormType, setSubFormType] = useState(null);
+  const [subFormType, setSubFormType] = useState({});
   const [rejectedType, setRejectedType] = useState(null);
   const [deathType, setDeathType] = useState(null);
+  const [defaults, setDefaults] = useState({});
+  const [disabledFlag, setDisabledFlag] = useState(false);
+  const [options, setOptions] = useState([]);
 
   const {
     control,
@@ -30,37 +33,129 @@ const RemovalPage = () => {
     handleSubmit,
     getValues,
     formState: { errors, isValid },
-  } = useForm({ defaultValues: {}, mode: "onChange" });
+  } = useForm({ defaultValues: defaults, mode: "onChange" });
 
-  const fetchDataByReferenceNumber = (referenceNumber) => {
-    const mockData = {
-      arrivalUuid: referenceNumber,
-      importType: "Type A",
-      importPermissionNumber: "123456",
-      importPermissionDate: new Date(),
-      traderName: "John Doe",
-      licenseNumber: "LIC123",
-      vehicleNumber: "ABC123",
-      numberOfAliveAnimals: 5,
-      numberOfDeadAnimals: 2,
-      arrivalDate: new Date(),
-      arrivalTime: "12:00",
-    };
-    return mockData;
+  useEffect(() => {
+    let obj = {};
+    if (
+        (subFormType.name === "REJECTED_REMOVAL" && rejectedType === "REJECTION_BEFORE_TRADING") || 
+        (subFormType.name === "DEATH_REMOVAL" && rejectedType === "DEATH_BEFORE_TRADING")
+      ) {
+      obj = {
+        traderName: {},
+        brokerName: {},
+        gawalName: {},
+        numberOfAnimals: 0,
+        animalTokenNumber: 0,
+        removalDate: new Date().toISOString().split('T')[0],
+        removalTime: new Date().toTimeString().split(' ')[0]
+      };
+    }
+    else if (
+      (subFormType.name === "REJECTED_REMOVAL" && rejectedType === "REJECTION_AFTER_TRADING") ||
+      (subFormType.name === "DEATH_REMOVAL" && rejectedType === "DEATH_AFTER_TRADING")
+    ) {
+      obj = {
+        shopkeeperName: {},
+        dawanwalaName: {},
+        numberOfAnimals: 0,
+        animalTokenNumber: 0,
+        removalDate: new Date().toISOString().split('T')[0],
+        removalTime: new Date().toTimeString().split(' ')[0]
+      };
+    }
+    else if (subFormType.name === "SALSETTE") {
+      obj = {
+        removalType: subFormType,
+        removalFeeReceiptNumber: '',
+        traderName: {},
+        brokerName: {},
+        gawalName: {},
+        dairywalaName: {},
+        numberOfAnimals: 0,
+        animalTokenNumber: 0,
+        removalDate: new Date().toISOString().split('T')[0],
+        removalTime: new Date().toTimeString().split(' ')[0]
+      };
+    }
+    else if (subFormType.name === "RELIGIOUS_PERSONAL_PURPOSE") {
+      obj = {
+        traderName: {},
+        brokerName: {},
+        gawalName: {},
+        citizenName: '',
+        numberOfAnimals: 0,
+        animalTokenNumber: 0,
+        removalDate: new Date().toISOString().split('T')[0],
+        removalTime: new Date().toTimeString().split(' ')[0]
+      };
+    }
+    else if (subFormType.name === "REMOVAL_OF_NOT_SOLD_ANIMALS") {
+      obj = {
+        traderName: {},
+        brokerName: {},
+        gawalName: {},
+        numberOfAnimals: 0,
+        animalTokenNumber: 0,
+        removalDate: new Date().toISOString().split('T')[0],
+        removalTime: new Date().toTimeString().split(' ')[0]
+      };
+    }
+    setDefaults(obj);
+  }, [subFormType, rejectedType, deathType]);
+
+  const fetchDataByReferenceNumber = async () => {
+    if (subFormType.name === "REJECTED_REMOVAL" && rejectedType === "REJECTION_BEFORE_TRADING") {
+      return rejectionBeforeTradingMockData;
+    }
+    else if (subFormType.name === "REJECTED_REMOVAL" && rejectedType === "REJECTION_AFTER_TRADING")
+    {
+      return rejectionAfterTradingMockData;
+    }
+    else if (subFormType.name === "DEATH_REMOVAL" && deathType === "DEATH_BEFORE_TRADING") {
+      return deathBeforeTradingMockData;
+    }
+    else if (subFormType.name === "DEATH_REMOVAL" && deathType === "DEATH_AFTER_TRADING") {
+      return deathAfterTradingMockData;
+    }
+    else if (subFormType.name === "SALSETTE") {
+      return salsetteRemovalMockData;
+    }
+    else if (subFormType.name === "RELIGIOUS_PERSONAL_PURPOSE") {
+      return religiousPersonalMockData;
+    }
+    else if (subFormType.name === "REMOVAL_OF_NOT_SOLD_ANIMALS") {
+      return notSoldMockData;
+    }
+    else {
+      return {};
+    }
   };
 
+  useEffect(() => {
+    setOptions(removalTypes);
+  }, []);
+
   const handleSearch = async () => {
+    console.log("handle search");
+    console.log(data);
     const referenceNumber = getValues("removalFeeReceiptNumber");
     if (referenceNumber) {
       try {
-        const result = await fetchDataByReferenceNumber(referenceNumber);
+        const result = await fetchDataByReferenceNumber();
         setData(result);
         Object.keys(result).forEach((key) => {
           setValue(key, result[key]);
         });
+        setValue("removalFeeReceiptNumber", referenceNumber);
+        setValue("removalType", subFormType);
+        console.log(subFormType);
         setSubFormType(getValues("removalType"));
+        setDisabledFlag(true);
+        console.log(result);
       } catch (error) {
         console.error("Failed to fetch data", error);
+        setDisabledFlag(false);
       }
     }
   };
@@ -78,74 +173,73 @@ const RemovalPage = () => {
           <MainFormHeader title={"DEONAR_REMOVAL_FEE"} />
           <div className="bmc-row-card-header">
             <div className="bmc-card-row">
-              <RemovalTypeOptionsField setSubFormType={setSubFormType} options={removalTypes} />
-              <RemovalFeeReceiptNumberField />
+              <RemovalTypeOptionsField control={control} setData={setData} data={data} setSubFormType={setSubFormType} options={removalTypes} />
+              <RemovalFeeReceiptNumberField control={control} setData={setData} data={data} />
               
               {
-                (subFormType === "REJECTED_REMOVAL") ?
-                  <RejectedRemovalTypesDropdownField setRejectedType={setRejectedType} options={rejectedRemovalTypes} />
+                (subFormType.name === "REJECTED_REMOVAL") ?
+                  <RejectedRemovalTypesDropdownField control={control} setData={setData} data={data} setRejectedType={setRejectedType} options={rejectedRemovalTypes} disabled={disabledFlag} />
               :
                 <React.Fragment></React.Fragment>
               }
               {
-                (subFormType === "DEATH_REMOVAL") ?
-                  <DeathRemovalTypesDropdownField setDeathType={setDeathType} options={deathRemovalTypes} />
+                (subFormType.name === "DEATH_REMOVAL") ?
+                  <DeathRemovalTypesDropdownField control={control} setData={setData} data={data} setDeathType={setDeathType} options={deathRemovalTypes} disabled={disabledFlag} />
               :
                 <React.Fragment></React.Fragment>
               }
-              <SearchButtonField />
+              <SearchButtonField onSearch={handleSearch} />
             </div>
           </div>
-          </form>
           { subFormType ? (
             <React.Fragment>
               {
-                (subFormType === 'SALSETTE') ? 
+                (subFormType.name === 'SALSETTE') ? 
                   <div className="bmc-row-card-header">
                     <div className="bmc-card-row">
-                      <Salsette stage="SECURITY_CHECKPOINT" control={control} setData={setData} data={data} />
+                      <Salsette stage="SECURITY_CHECKPOINT" control={control} setData={setData} data={data} disabled={disabledFlag} />
                     </div>
                   </div> 
                 :
-                (subFormType === 'RELIGIOUS_PERSONAL_PURPOSE') ?
+                (subFormType.name === 'RELIGIOUS_PERSONAL_PURPOSE') ?
                   <div className="bmc-row-card-header">
                     <div className="bmc-card-row">
-                      <ReligiousPersonal stage="SECURITY_CHECKPOINT" control={control} setData={setData} data={data} /> 
+                      <ReligiousPersonal stage="SECURITY_CHECKPOINT" control={control} setData={setData} data={data} disabled={disabledFlag} /> 
                     </div>
                   </div>
                 :
-                (subFormType === 'REMOVAL_OF_NOT_SOLD_ANIMALS') ?
+                (subFormType.name === 'REMOVAL_OF_NOT_SOLD_ANIMALS') ?
                   <div className="bmc-row-card-header">
                     <div className="bmc-card-row">
-                      <NotSold stage="SECURITY_CHECKPOINT" control={control} setData={setData} data={data} /> 
+                      <NotSold stage="SECURITY_CHECKPOINT" control={control} setData={setData} data={data} disabled={disabledFlag} /> 
                     </div>
                   </div>
                 :
-                (subFormType === 'REJECTED_REMOVAL' && rejectedType === 'REJECTION_BEFORE_TRADING') ?
+                (subFormType.name === 'REJECTED_REMOVAL' && rejectedType === 'REJECTION_BEFORE_TRADING') ?
                   <div className="bmc-row-card-header">
                     <div className="bmc-card-row">
-                      <RejectedBefore stage="SECURITY_CHECKPOINT" control={control} setData={setData} data={data} /> 
+                      <RejectedBefore stage="SECURITY_CHECKPOINT" control={control} setData={setData} data={data} disabled={disabledFlag} /> 
                     </div>
                   </div>
                 :
-                (subFormType === 'REJECTED_REMOVAL' && rejectedType === 'REJECTION_AFTER_TRADING') ?
+                (subFormType.name === 'REJECTED_REMOVAL' && rejectedType === 'REJECTION_AFTER_TRADING') ?
                   <div className="bmc-row-card-header">
                     <div className="bmc-card-row">
-                      <RejectedAfter stage="SECURITY_CHECKPOINT" control={control} setData={setData} data={data} /> 
+                      <RejectedAfter stage="SECURITY_CHECKPOINT" control={control} setData={setData} data={data} disabled={disabledFlag} /> 
                     </div>
                   </div>
                 :
-                (subFormType === 'DEATH_REMOVAL' && deathType === 'DEATH_BEFORE_TRADING') ?
+                (subFormType.name === 'DEATH_REMOVAL' && deathType === 'DEATH_BEFORE_TRADING') ?
                   <div className="bmc-row-card-header">
                     <div className="bmc-card-row">
-                      <DeathBefore stage="SECURITY_CHECKPOINT" control={control} setData={setData} data={data} /> 
+                      <DeathBefore stage="SECURITY_CHECKPOINT" control={control} setData={setData} data={data} disabled={disabledFlag} /> 
                     </div>
                   </div>
                 :
-                (subFormType === 'DEATH_REMOVAL' && deathType === 'DEATH_AFTER_TRADING') ?
+                (subFormType.name === 'DEATH_REMOVAL' && deathType === 'DEATH_AFTER_TRADING') ?
                   <div className="bmc-row-card-header">
                     <div className="bmc-card-row">
-                      <DeathAfter stage="SECURITY_CHECKPOINT" control={control} setData={setData} data={data} /> 
+                      <DeathAfter stage="SECURITY_CHECKPOINT" control={control} setData={setData} data={data} disabled={disabledFlag} /> 
                     </div>
                   </div>
                 :
@@ -155,7 +249,7 @@ const RemovalPage = () => {
           ):
             <React.Fragment></React.Fragment>
           }
-        
+        </form>
       </div>
     </React.Fragment>
   );

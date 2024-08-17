@@ -12,7 +12,7 @@ import Title from "../components/title";
 import SchemeDetailsPage from "../components/schemeDetails";
 import { Modal } from "@egovernments/digit-ui-react-components";
 
-const BMCReviewPage = ({}) => {
+const BMCReviewPage = () => {
   const location = useLocation();
   const history = useHistory();
   const { t } = useTranslation();
@@ -54,13 +54,11 @@ const BMCReviewPage = ({}) => {
     console.log(data);
   }, []);
 
-  console.log("userDetail", userDetail);
-
-  // const closeModal = () => {
-  //   setIsModalOpen(false);
-  //   history.push("/digit-ui/citizen/bmc/review");
-  //   window.location.reload();
-  // };
+  const handleModalSave = () => {
+    history.push({
+      pathname: "/digit-ui/citizen",
+    });
+  };
 
   return (
     <React.Fragment>
@@ -68,7 +66,7 @@ const BMCReviewPage = ({}) => {
         {window.location.href.includes("/citizen") ? <Timeline currentStep={4} /> : null}
         <Title text={"Review Application"} />
         <PersonalDetailCard onUpdate={handleCallback} initialRows={userDetail} tenantId={tenantId} AllowEdit={false} />
-        <AddressDetailCard onUpdate={handleCallback} initialRows={userDetail.address} tenantId={tenantId} AllowEdit={false} />
+        <AddressDetailCard onUpdate={handleCallback} initialRows={userDetail} tenantId={tenantId} AllowEdit={false} />
         <QualificationCard
           initialRows={userDetail.UserQualification}
           tenantId={tenantId}
@@ -76,7 +74,7 @@ const BMCReviewPage = ({}) => {
           AllowRemove={false}
           onUpdate={handleCallback}
         />
-        <BankDetails onUpdate={handleCallback} initialRows={userDetail.bankDetail} tenantId={tenantId} AddOption={false} AllowRemove={false} />
+        <BankDetails onUpdate={handleCallback} initialRows={userDetail.UserBank} tenantId={tenantId} AddOption={false} AllowRemove={false} />
         <DisabilityCard onUpdate={handleCallback} initialRows={userDetail.divyang} tenantId={tenantId} AllowEdit={false} />
         <SchemeDetailsPage
           onUpdate={handleCallback}
@@ -116,7 +114,9 @@ const BMCReviewPage = ({}) => {
               <strong>Application Submitted Successfully</strong>
             </p>
             {applicationNumber && <p>Your Application Number is: {applicationNumber}</p>}
-            <button>ok</button>
+            <button onClick={handleModalSave} className="bmc-card-button">
+              OK
+            </button>
           </Modal>
         </div>
       )}

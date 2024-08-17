@@ -17,26 +17,19 @@ import SubmitPrintButtonFields from "../commonFormFields/submitPrintBtn";
 const NotSold = ({stage, control, data, setData}) => {
   const { t } = useTranslation();
 
-  const onSubmit = (formData) => {
-    console.log("Form data submitted:", formData);
-    const jsonData = JSON.stringify(formData);
-    console.log("Generated JSON:", jsonData);
-  };
-
   return (
     <React.Fragment>
       <div className="bmc-card-full">
-        <form onSubmit={onSubmit}>
         <TraderNameField control={control} setData={setData} data={data} />
-        <BrokerNameField />
+        <BrokerNameField control={control} setData={setData} data={data} />
         <GawalNameField control={control} setData={setData} data={data} />
-          <NumberOfAnimalsField />
-          <AnimalTokenNumberField />
+          <NumberOfAnimalsField control={control} setData={setData} data={data} />
+          <AnimalTokenNumberField control={control} setData={setData} data={data} />
               {
                 (stage === "SECURITY_CHECKPOINT") ?
                   <React.Fragment>
-                    <RemovalDateField />
-                    <RemovalTimeField />
+                    <RemovalDateField control={control} setData={setData} data={data} />
+                    <RemovalTimeField control={control} setData={setData} data={data} />
                     <SubmitButtonField />
                   </React.Fragment>
                 :
@@ -45,15 +38,14 @@ const NotSold = ({stage, control, data, setData}) => {
               {
                 (stage === "COLLECTION_POINT") ? 
                   <React.Fragment>
-                    <RemovalFeeAmountField />
-                    <PaymentModeField />
-                    <PaymentReferenceNumberField />
+                    <RemovalFeeAmountField control={control} setData={setData} data={data} />
+                    <PaymentModeField control={control} setData={setData} data={data} />
+                    <PaymentReferenceNumberField control={control} setData={setData} data={data} />
                     <SubmitPrintButtonFields />
                   </React.Fragment>
                 :
                   <React.Fragment></React.Fragment>
               }
-        </form>
       </div>
     </React.Fragment>
   );

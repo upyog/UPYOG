@@ -10,7 +10,7 @@ const ImportPermissionDateField = ({ control, data, setData }) => {
   useEffect(() => {
     const validateImportPermissionDate = () => {
       if (!data.importPermissionDate) {
-        setError(t("REQUIRED_FIELD"));
+        setError("REQUIRED_FIELD");
         return;
       }
 

@@ -448,7 +448,7 @@ const AddressDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = false, tena
                         isMandatory={true}
                       />
                     ) : (
-                      <TextInput readOnly value={props.value?.name || ""} />
+                      <TextInput disabled={!isEditable} readOnly={!isEditable} value={props.value?.name || ""} />
                     )}
                     {errors.wardName && <span style={{ color: "red" }}>{errors.wardName.message}</span>}
                   </div>

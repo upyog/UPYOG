@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Controller, useForm } from "react-hook-form";
 import ShopkeeperNameField from "../commonFormFields/shopkeeperName";
 import DawanwalaNameField from "../commonFormFields/dawanwalaName";
 import NumberOfAnimalsField from "../commonFormFields/numberOfAnimals";
@@ -13,59 +12,26 @@ import PaymentModeField from "../commonFormFields/paymentMode";
 import PaymentReferenceNumberField from "../commonFormFields/paymentReferenceNumber";
 import SubmitPrintButtonFields from "../commonFormFields/submitPrintBtn";
 
-const DeathAfter = ({stage}) => {
+const DeathAfter = ({stage, control, data, setData}) => {
   const { t } = useTranslation();
-  const [data, setData] = useState(null);
-
-  const {
-    control,
-    setValue,
-    handleSubmit,
-    getValues,
-    formState: { errors, isValid },
-  } = useForm({ defaultValues: {}, mode: "onChange" });
-
-  const fetchDataByReferenceNumber = async (referenceNumber) => {
-    const mockData = {
-      arrivalUuid: referenceNumber,
-      importType: "Type A",
-      importPermissionNumber: "123456",
-      importPermissionDate: new Date(),
-      traderName: "John Doe",
-      licenseNumber: "LIC123",
-      vehicleNumber: "ABC123",
-      numberOfAliveAnimals: 5,
-      numberOfDeadAnimals: 2,
-      arrivalDate: new Date(),
-      arrivalTime: "12:00",
-    };
-    return mockData;
-  };
-
-  const onSubmit = (formData) => {
-    console.log("Form data submitted:", formData);
-    const jsonData = JSON.stringify(formData);
-    console.log("Generated JSON:", jsonData);
-  };
 
   return (
     <React.Fragment>
       <div className="bmc-card-full">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <ShopkeeperNameField />
-          <DawanwalaNameField />
+          <ShopkeeperNameField control={control} data={data} setData={setData} />
+          <DawanwalaNameField control={control} data={data} setData={setData} />
               {
                 (stage === "COLLECTION_POINT") ?
-                  <NumberOfAnimalsField />
+                  <NumberOfAnimalsField control={control} data={data} setData={setData} />
                 :
                   <React.Fragment></React.Fragment>
               }
-              <AnimalTokenNumberField />
+              <AnimalTokenNumberField control={control} data={data} setData={setData} />
               {
                 (stage === "SECURITY_CHECKPOINT") ?
                 <React.Fragment>
-                  <RemovalDateField />
-                  <RemovalTimeField />
+                  <RemovalDateField control={control} data={data} setData={setData} />
+                  <RemovalTimeField control={control} data={data} setData={setData} />
                   <SubmitButtonField />
               </React.Fragment>
               :
@@ -75,15 +41,14 @@ const DeathAfter = ({stage}) => {
             {
               (stage === "COLLECTION_POINT") ?
                 <React.Fragment>
-                  <RemovalFeeAmountField />
-                  <PaymentModeField />
-                  <PaymentReferenceNumberField />
+                  <RemovalFeeAmountField control={control} data={data} setData={setData} />
+                  <PaymentModeField control={control} data={data} setData={setData} />
+                  <PaymentReferenceNumberField control={control} data={data} setData={setData} />
                   <SubmitPrintButtonFields />
                 </React.Fragment>
               :
                 <React.Fragment></React.Fragment>
             }
-        </form>
       </div>
     </React.Fragment>
   );

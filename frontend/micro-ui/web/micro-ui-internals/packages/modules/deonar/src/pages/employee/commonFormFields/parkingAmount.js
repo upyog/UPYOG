@@ -10,7 +10,7 @@ const ParkingAmountField = ({control, data, setData}) => {
 
   useEffect(() => {
     if (!data.parkingAmount) {
-      setError(t("REQUIRED_FIELD"));
+      setError("REQUIRED_FIELD");
     } else {
       setError("");
     }

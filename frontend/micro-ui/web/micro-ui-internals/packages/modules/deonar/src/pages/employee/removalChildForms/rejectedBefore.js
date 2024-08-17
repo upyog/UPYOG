@@ -1,7 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { CardLabel, Dropdown, LabelFieldPair, TextInput, DatePicker } from "@egovernments/digit-ui-react-components";
-import { Controller, useForm } from "react-hook-form";
 import TraderNameField from "../commonFormFields/traderName";
 import BrokerNameField from "../commonFormFields/brokerName";
 import GawalNameField from "../commonFormFields/gawalName";
@@ -16,25 +14,18 @@ import SubmitPrintButtonFields from "../commonFormFields/submitPrintBtn";
 const RejectedBefore = ({stage, control, data, setData}) => {
   const { t } = useTranslation();
 
-  const onSubmit = (formData) => {
-    console.log("Form data submitted:", formData);
-    const jsonData = JSON.stringify(formData);
-    console.log("Generated JSON:", jsonData);
-  };
-
   return (
     <React.Fragment>
       <div className="bmc-card-full">
-        <form onSubmit={onSubmit}>
         <TraderNameField control={control} setData={setData} data={data} />
-        <BrokerNameField />
+        <BrokerNameField control={control} setData={setData} data={data} />
         <GawalNameField control={control} setData={setData} data={data} />
           {
               (stage === "SECURITY_CHECKPOINT") ?
                 <React.Fragment>
-                  <RemovalDateField />
-                  <RemovalTimeField />
-                  <SubmitButtonField />
+                  <RemovalDateField control={control} setData={setData} data={data} />
+                  <RemovalTimeField control={control} setData={setData} data={data} />
+                  <SubmitButtonField control={control} setData={setData} data={data} />
                 </React.Fragment>
               :
                 <React.Fragment></React.Fragment>
@@ -43,15 +34,14 @@ const RejectedBefore = ({stage, control, data, setData}) => {
             {
               (stage === "COLLECTION_POINT") ?
                 <React.Fragment>
-                  <RemovalFeeAmountField />
-                  <PaymentModeField />
-                  <PaymentReferenceNumberField />
-                  <SubmitPrintButtonFields />
+                  <RemovalFeeAmountField control={control} setData={setData} data={data} />
+                  <PaymentModeField control={control} setData={setData} data={data} />
+                  <PaymentReferenceNumberField control={control} setData={setData} data={data} />
+                  <SubmitPrintButtonFields control={control} setData={setData} data={data} />
                 </React.Fragment>
               :
                 <React.Fragment></React.Fragment>
             }
-        </form>
       </div>
     </React.Fragment>
   );

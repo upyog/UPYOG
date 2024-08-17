@@ -15,47 +15,39 @@ import PaymentModeField from "../commonFormFields/paymentMode";
 import PaymentReferenceNumberField from "../commonFormFields/paymentReferenceNumber";
 import SubmitPrintButtonFields from "../commonFormFields/submitPrintBtn";
 
-const Salsette = ({stage, control, data, setData}) => {
+const Salsette = ({stage, control, data, setData, disabled}) => {
   const { t } = useTranslation();
-
-  const onSubmit = (formData) => {
-    console.log("Form data submitted:", formData);
-    const jsonData = JSON.stringify(formData);
-    console.log("Generated JSON:", jsonData);
-  };
 
   return (
     <React.Fragment>
       <div className="bmc-card-full">
-        <form>
-        <TraderNameField control={control} setData={setData} data={data} />
-        <BrokerNameField />
-        <GawalNameField control={control} setData={setData} data={data} />
-          <DairywalaNameField />
-          <NumberOfAnimalsField />
-          <AnimalTokenNumberField />
-              {
-                (stage === "SECURITY_CHECKPOINT") ? 
-                <React.Fragment>
-                  <RemovalDateField />
-                  <RemovalTimeField />
-                  <SubmitButtonField />
-                </React.Fragment>
-                :
-                  <React.Fragment></React.Fragment>
-              }
+        <TraderNameField control={control} setData={setData} data={data} disabled={disabled} />
+        <BrokerNameField control={control} setData={setData} data={data} disabled={disabled} />
+        <GawalNameField control={control} setData={setData} data={data} disabled={disabled} />
+        <DairywalaNameField control={control} setData={setData} data={data} disabled={disabled} />
+        <NumberOfAnimalsField control={control} setData={setData} data={data} disabled={disabled} />
+        <AnimalTokenNumberField control={control} setData={setData} data={data} disabled={disabled} />
+        {
+          (stage === "SECURITY_CHECKPOINT") ? 
+          <React.Fragment>
+            <RemovalDateField control={control} setData={setData} data={data} disabled={disabled} />
+            <RemovalTimeField control={control} setData={setData} data={data} disabled={disabled} />
+            <SubmitButtonField control={control} />
+          </React.Fragment>
+          :
+            <React.Fragment></React.Fragment>
+        }
               {
                 (stage === "COLLECTION_POINT") ?
                   <React.Fragment>
-                    <RemovalFeeAmountField />
-                    <PaymentModeField />
-                    <PaymentReferenceNumberField />
-                    <SubmitPrintButtonFields />
+                    <RemovalFeeAmountField control={control} setData={setData} data={data} disabled={disabled} />
+                    <PaymentModeField control={control} setData={setData} data={data} disabled={disabled} />
+                    <PaymentReferenceNumberField control={control} setData={setData} data={data} disabled={disabled} />
+                    <SubmitPrintButtonFields control={control} setData={setData} data={data} disabled={disabled} />
                   </React.Fragment>
                 :
                   <React.Fragment></React.Fragment>
               }
-        </form>
       </div>
     </React.Fragment>
   );

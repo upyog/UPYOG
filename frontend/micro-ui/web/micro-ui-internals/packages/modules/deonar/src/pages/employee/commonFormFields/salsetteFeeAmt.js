@@ -3,16 +3,18 @@ import { useTranslation } from "react-i18next";
 import { CardLabel, Dropdown, LabelFieldPair, TextInput, DatePicker } from "@egovernments/digit-ui-react-components";
 import { Controller, useForm } from "react-hook-form";
 
-const SalsetteFeeAmountField = () => {
+const SalsetteFeeAmountField = ({control, data, setData}) => {
   const { t } = useTranslation();
+  const [error, setError] = useState("");
 
-  const {
-    control,
-    setValue,
-    handleSubmit,
-    getValues,
-    formState: { errors, isValid },
-  } = useForm({ defaultValues: {}, mode: "onChange" });
+  useState(() => {
+    if (!data.salsetteFeeAmount) {
+      setError("REQUIRED_FIELD");
+    }
+    else {
+      setError("");
+    }
+  }, [data]);
 
   return (
     <div className="bmc-col3-card">
@@ -22,12 +24,19 @@ const SalsetteFeeAmountField = () => {
                 control={control}
                 name="salsetteFeeAmount"
                 rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-                render={({ value, onChange, onBlur }) => (
+                render={(props) => (
                 <div>
                     <TextInput
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    onBlur={onBlur}
+                    value={props.value}
+                    onChange={(e) => {
+                      props.onChange(e.target.value);
+                      const newData = {
+                        ...data,
+                        salsetteFeeAmount: e.target.value
+                      };
+                      setData(newData);
+                    }}
+                    onBlur={props.onBlur}
                     optionKey="i18nKey"
                     t={t}
                     placeholder={t("DEONAR_SALSETTE_FEE_AMOUNT")}
