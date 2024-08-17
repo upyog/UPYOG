@@ -876,7 +876,7 @@ public class GarbageAccountService {
 		List<GarbageAccountDetail> garbageAccountDetails = new ArrayList<>();
 		
 		accounts.stream().forEach(account -> {
-			GarbageAccountDetail garbageAccountDetail = GarbageAccountDetail.builder().build();
+			GarbageAccountDetail garbageAccountDetail = GarbageAccountDetail.builder().applicationNumber(account.getGrbgApplication().getApplicationNo()).build();
 			
 			// search bill Details
 			BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
