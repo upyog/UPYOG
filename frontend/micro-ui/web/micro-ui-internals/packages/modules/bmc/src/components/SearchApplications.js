@@ -26,7 +26,6 @@ const SearchApplications = ({ onUpdate }) => {
   const [selectedType, setSelectedType] = useState("");
   const getSchemes = { SchemeSearchCriteria: { Status: 1, sla: 30 } };
   const { data: SCHEME_DATA } = Digit.Hooks.bmc.useSchemesGet(getSchemes);
-  //console.log(SCHEME_DATA1.SchemeDetails);
 
   useEffect(() => {
     if (SCHEME_DATA && SCHEME_DATA.SchemeDetails) {
@@ -88,8 +87,6 @@ const SearchApplications = ({ onUpdate }) => {
     label: detail.machName || detail.courseName,
     type: detail.machID ? "machine" : "course",
   }));
-
-  console.log("Detail Options: ", detailOptions);
 
   const handleSearch = () => {
     let searchCriteria = {};

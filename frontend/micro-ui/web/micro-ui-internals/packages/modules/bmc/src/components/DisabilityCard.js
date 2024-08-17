@@ -44,7 +44,6 @@ const DisabilityCard = ({ tenantId, onUpdate, initialRows = {}, AllowEdit = fals
 
   const processSingleData = (item, headerLocale) => {
     if (!item) return null;
-    console.log("item", typeof item === "object" && item.divyangcardid && item.disabilitytype);
     if (typeof item === "object" && item.divyangcardid && item.disabilitytype) {
       return {
         disabilitytype: {

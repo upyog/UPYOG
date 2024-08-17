@@ -72,9 +72,17 @@ const QualificationCard = ({ tenantId, onUpdate, initialRows = [], AddOption = t
     setRows(processedRows);
   }, [initialRows, headerLocale]);
 
-  const years = Array.from({ length: new Date().getFullYear() - 1989 }, (v, k) => ({
-    label: `${1990 + k}`,
-    value: 1990 + k,
+  // const years = Array.from({ length: new Date().getFullYear() - 1989 }, (v, k) => ({
+  //   label: `${1990 + k}`,
+  //   value: 1990 + k,
+  // }));
+
+  const dynamicStartYear = new Date().getFullYear() - 100;
+  const currentYear = new Date().getFullYear();
+
+  const years = Array.from({ length: currentYear - dynamicStartYear + 1 }, (v, k) => ({
+    label: `${dynamicStartYear + k}`,
+    value: dynamicStartYear + k,
   }));
 
   const addRow = () => {
@@ -89,7 +97,7 @@ const QualificationCard = ({ tenantId, onUpdate, initialRows = [], AddOption = t
       },
     ];
     setRows(updatedRows);
-    reset(initialDefaultValues);
+    // reset(initialDefaultValues);
     onUpdate(updatedRows); // Call the callback function to update the parent component
   };
 
@@ -134,6 +142,7 @@ const QualificationCard = ({ tenantId, onUpdate, initialRows = [], AddOption = t
                                 optionKey="i18nKey"
                                 t={t}
                                 isMandatory={true}
+                                className="employee-select-wrap bmc-form-field"
                               />
                               {errors.qualification && <span style={{ color: "red" }}>{errors.qualification.message}</span>}
                             </div>
@@ -155,6 +164,7 @@ const QualificationCard = ({ tenantId, onUpdate, initialRows = [], AddOption = t
                                 optionKey="value"
                                 t={t}
                                 isMandatory={true}
+                                className="employee-select-wrap bmc-form-field"
                               />
                               {errors.yearOfPassing && <span style={{ color: "red" }}>{errors.yearOfPassing.message}</span>}
                             </div>
@@ -178,7 +188,14 @@ const QualificationCard = ({ tenantId, onUpdate, initialRows = [], AddOption = t
                           }}
                           render={(props) => (
                             <div>
-                              <TextInput name="percentage" value={props.value} onChange={props.onChange} placeholder="Percentage" type="number" />
+                              <TextInput
+                                name="percentage"
+                                value={props.value}
+                                onChange={props.onChange}
+                                placeholder="Percentage"
+                                type="number"
+                                optionKey="value"
+                              />
                               {errors.percentage && <span style={{ color: "red" }}>{errors.percentage.message}</span>}
                             </div>
                           )}

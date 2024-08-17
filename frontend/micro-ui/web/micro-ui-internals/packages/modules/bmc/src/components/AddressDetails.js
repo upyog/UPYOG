@@ -446,6 +446,7 @@ const AddressDetailCard = ({ onUpdate, initialRows = {}, AllowEdit = false, tena
                         optionKey="i18nKey"
                         t={t}
                         isMandatory={true}
+                        className="employee-select-wrap bmc-form-field"
                       />
                     ) : (
                       <TextInput disabled={!isEditable} readOnly={!isEditable} value={props.value?.name || ""} />

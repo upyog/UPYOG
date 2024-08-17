@@ -85,19 +85,21 @@ const BMCReviewPage = () => {
           schemeType={schemeType}
           selectedScheme={selectedScheme}
         />
-        <div className="bmc-card-row" style={{ textAlign: "end" }}>
-          <button
-            type="submit"
-            className="bmc-card-button"
-            style={{
-              borderBottom: "3px solid black",
-              outline: "none",
-            }}
-            onClick={handleSaveData}
-          >
-            {t("BMC_Save")}
-          </button>
-        </div>
+        {window.location.href.includes("/citizen") && (
+          <div className="bmc-card-row" style={{ textAlign: "end" }}>
+            <button
+              type="submit"
+              className="bmc-card-button"
+              style={{
+                borderBottom: "3px solid black",
+                outline: "none",
+              }}
+              onClick={handleSaveData}
+            >
+              {t("BMC_Save")}
+            </button>
+          </div>
+        )}
         <WorkflowActions
           ActionBarStyle={{}}
           MenuStyle={{}}
