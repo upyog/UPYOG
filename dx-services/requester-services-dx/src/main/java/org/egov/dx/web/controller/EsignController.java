@@ -41,7 +41,11 @@
 package org.egov.dx.web.controller;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -73,7 +77,7 @@ public class EsignController {
 	eSignService esignService;
 	
     @RequestMapping("/process")
-    public ResponseEntity<String> processPDF(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
+    public ResponseEntity<String> processPDF(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) throws URISyntaxException {
         try {
             String responseUrl = esignService.processPDF(requestInfoWrapper);
             return new ResponseEntity<>(responseUrl, HttpStatus.OK);
@@ -81,14 +85,14 @@ public class EsignController {
             return new ResponseEntity<>("Error processing PDF: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-//    @RequestMapping("/redirect")
-//    public ResponseEntity<String> getEsignedPDF(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
-//        try {
-//            String responseUrl = esignService.getEsignedPDF(requestInfoWrapper);
-//            return new ResponseEntity<>(responseUrl, HttpStatus.OK);
-//        } catch (IOException e) {
-//            return new ResponseEntity<>("Error processing PDF: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }  
+    @RequestMapping("/redirect")
+    public ResponseEntity<String> getEsignedPDF(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        try {
+            String responseUrl = esignService.getEsignedPDF( request, response);
+            return new ResponseEntity<>(responseUrl, HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<>("Error processing PDF: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }  
 }
     

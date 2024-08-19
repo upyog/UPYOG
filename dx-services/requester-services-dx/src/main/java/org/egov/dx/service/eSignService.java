@@ -1,12 +1,16 @@
 package org.egov.dx.service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Base64;
 import javax.servlet.ServletException;
@@ -27,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.Document;
 
+import com.emudhra.esign.ReturnDocument;
 import com.emudhra.esign.eSign;
 import com.emudhra.esign.eSignInput;
 import com.emudhra.esign.eSignInputBuilder;
@@ -43,16 +48,36 @@ public class eSignService {
     private static final String TEMP_FOLDER = "C:\\Users\\Administrator\\Documents";   // Update the path
 
     private final RestTemplate restTemplate = new RestTemplate();
+    
+    private byte[] readInputStreamToByteArray(InputStream inputStream) throws IOException {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, length);
+            }
+            return outputStream.toByteArray();
+        }
+    }
+    public String getPdfAsBase64(String pdfUrl) throws IOException {
+        URL url = new URL(pdfUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
 
+        try (InputStream inputStream = connection.getInputStream()) {
+            byte[] data = readInputStreamToByteArray(inputStream);
+            return Base64.getEncoder().encodeToString(data);
+        }
+    }
+    
     public String processPDF(RequestInfoWrapper requestInfoWrapper) throws IOException {
 
-         URL u = new URL(requestInfoWrapper.getPdfUrl());
-         int contentLength = u.openConnection().getContentLength();
-//         InputStream openStream = u.openStream();
-         byte[] binaryData = new byte[contentLength];
-         String pdfBase64 = new String(Base64.getEncoder().encode(binaryData), StandardCharsets.UTF_8);
 
-        // Create eSignInput object
+         String pdfBase64 = getPdfAsBase64(requestInfoWrapper.getPdfUrl());
+////         InputStream openStream = u.openStream();
+//         byte[] binaryData = new byte[contentLength];
+         //String pdfBase64 = new String(Base64.getEncoder().encode(binaryData), StandardCharsets.UTF_8);
+         //String pdfBase64 = new String (Files.readAllBytes(Paths.get("C:/Users/Administrator/Downloads/Base64.txt")));
         eSignInput signInput = eSignInputBuilder.init()
                 .setDocBase64(pdfBase64)
                 .setDocInfo("1723479092483kqKfUdtnch.pdf")//pdf name
@@ -73,8 +98,9 @@ public class eSignService {
 
         // Obtain the gateway parameter
         eSignServiceReturn serviceReturn = eSignObj.getGatewayParameter(
-                inputList, "Manvi", "", "", requestInfoWrapper.getPdfUrl(), TEMP_FOLDER, eSign.eSignAPIVersion.V2, eSign.AuthMode.OTP);
-
+                inputList, "Manvi", "", configurations.getRedirectUrl(),configurations.getRedirectUrl(), TEMP_FOLDER, eSign.eSignAPIVersion.V2, eSign.AuthMode.OTP);
+        
+//        return serviceReturn.getErrorMessage() + "-" + serviceReturn.getErrorCode() + "-" + serviceReturn;
         String gatewayParam = serviceReturn.getGatewayParameter();
         String gatewayURL = "https://authenticate.sandbox.emudhra.com/AadhaareSign.jsp"; // Adjust if needed
 
@@ -82,59 +108,60 @@ public class eSignService {
         return gatewayURL + "?txnref=" + gatewayParam;
     }
     
-//    public ResponseEntity getEsignedPDF(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        response.setContentType("text/html;charset=UTF-8");
-//        InputStream xmlStream;
-//        String xml = "";
-//        String txnref = null;
-//        try {
-//            // Get response from gateway
-//            xmlStream = request.getInputStream();
-//            txnref = Utilities.getStringFromInputStream(xmlStream);
-//
-//            String txns = URLDecoder.decode(txnref).substring(7).split("&")[0];
-//
-//            String txn = new String(java.util.Base64.getDecoder().decode(txns.getBytes()));
-//            String[] strArr = txn.split("\\|");
-//            String txnid = strArr[0];
-//
-//            eSign eSign = new eSign(configurations.getLicenceFile(), configurations.getPfxPath(), configurations.getPfxPassword(), configurations.getPfxAllias());
-//            eSignServiceReturn returnService = eSign.getStatus(txnid);
-//            xml = returnService.getResponseXML();
-//
-//            Document doc = Utilities.convertStringToDocument(xml);
-//
-//            XPath xPath = XPathFactory.newInstance().newXPath();
-//            String status = Utilities.GetXpathValue(xPath, "/EsignResp/@status", doc);
-//            String txnId = Utilities.GetXpathValue(xPath, "/EsignResp/@txn", doc);
-//
-//            if ("1".equals(status)) {
-//
-//                // complete signing
-//                eSignServiceReturn serviceReturn = eSign.getSigedDocument(xml, configurations.getTempFolder() + File.separator + txnId + ".sig");
-//
-//                // To convert signed pdf from base 64 encoded string to pdf file
-//                if (serviceReturn.getStatus() == 1) {
-//                    ArrayList<ReturnDocument> returnDocuments = serviceReturn.getReturnDocuments();
-//                    int i = 0;
-//                    for (ReturnDocument returnDocument : returnDocuments) {
-//                        String pdfBase64 = returnDocument.getSignedDocument();
-//                        byte[] signedBytes = esign.text.pdf.codec.Base64.decode(pdfBase64);
-//                        String pdfPath = configurations.getOUTPUT_FOLDER() + File.separator + txnId + "_" + i + ".pdf";
-//                        try (FileOutputStream fos = new FileOutputStream(pdfPath)) {
-//                            fos.write(signedBytes);
-//                        }
-//                        i++;
-//                    }
-//                }
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return new ResponseEntity("Document Signed and saved successfully", HttpStatus.OK);
-//
-//
-//    }
+    public String getEsignedPDF(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+       System.out.println("getsignedPdf");
+        InputStream xmlStream;
+        String xml = "";
+        String txnref = null;
+        try {
+            // Get response from gateway
+            xmlStream = request.getInputStream();
+            txnref = Utilities.getStringFromInputStream(xmlStream);
+
+            String txns = URLDecoder.decode(txnref).substring(7).split("&")[0];
+
+            String txn = new String(java.util.Base64.getDecoder().decode(txns.getBytes()));
+            String[] strArr = txn.split("\\|");
+            String txnid = strArr[0];
+
+            eSign eSign = new eSign(configurations.getLicenceFile(), configurations.getPfxPath(), configurations.getPfxPassword(), configurations.getPfxAllias());
+            eSignServiceReturn returnService = eSign.getStatus(txnid);
+            xml = returnService.getResponseXML();
+
+            Document doc = Utilities.convertStringToDocument(xml);
+
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            String status = Utilities.GetXpathValue(xPath, "/EsignResp/@status", doc);
+            String txnId = Utilities.GetXpathValue(xPath, "/EsignResp/@txn", doc);
+
+            if ("1".equals(status)) {
+
+                // complete signing
+                eSignServiceReturn serviceReturn = eSign.getSigedDocument(xml, configurations.getTempFolder() + File.separator + txnId + ".sig");
+
+                // To convert signed pdf from base 64 encoded string to pdf file
+                if (serviceReturn.getStatus() == 1) {
+                    ArrayList<ReturnDocument> returnDocuments = serviceReturn.getReturnDocuments();
+                    int i = 0;
+                    for (ReturnDocument returnDocument : returnDocuments) {
+                        String pdfBase64 = returnDocument.getSignedDocument();
+                        byte[] signedBytes = esign.text.pdf.codec.Base64.decode(pdfBase64);
+                        String pdfPath = configurations.getOutputFolder() + File.separator + txnId + "_" + i + ".pdf";
+                        try (FileOutputStream fos = new FileOutputStream(pdfPath)) {
+                            fos.write(signedBytes);
+                        }
+                        i++;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ("Document Signed and saved successfully");
+
+
+    }
 
 
 }
