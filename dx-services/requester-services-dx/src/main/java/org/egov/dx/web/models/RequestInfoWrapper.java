@@ -23,4 +23,7 @@ public class RequestInfoWrapper {
 	
 	@JsonProperty("pdfUrl")
 	private String pdfUrl;
+	
+	@JsonProperty("redirectUrl")
+	private String redirectUrl;
 }

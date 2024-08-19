@@ -86,4 +86,8 @@ public class Configurations {
 	
 	@Value("${esign.tempfolder}")
 	private String tempFolder;
+	
+	@Value("${esign.outputfolder}")
+	private String outputFolder;
+	
 }
