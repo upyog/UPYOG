@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Dropdown, Header, Toast } from "@egovernments/digit-ui-react-components";
+import { Dropdown, Header, Toast } from "@upyog/digit-ui-react-components";
 import { Switch, useLocation, Link } from "react-router-dom";
 // import NoticeForAssesment from "./NoticeTemplates/NoticeForAssesment";
 // import NoticeForRectification from "./NoticeTemplates/NoticeForRectification";

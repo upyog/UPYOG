@@ -1,5 +1,5 @@
 //HAVE TO CHANGE THI
-import { stringReplaceAll } from "@egovernments/digit-ui-module-pt/src/utils";
+import { stringReplaceAll } from "@upyog/digit-ui-module-pt/src/utils";
 import { ApiCacheService } from "../atoms/ApiCacheService";
 import Urls from "../atoms/urls";
 import { Request, ServiceRequest } from "../atoms/Utils/Request";

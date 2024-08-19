@@ -1,4 +1,4 @@
-import { Card, CaseIcon } from "@egovernments/digit-ui-react-components";
+import { Card, CaseIcon } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";

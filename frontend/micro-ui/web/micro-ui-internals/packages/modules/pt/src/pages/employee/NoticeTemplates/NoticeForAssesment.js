@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CardLabel, DatePicker, Dropdown, Header, Modal, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, DatePicker, Dropdown, Header, Modal, TextInput } from "@upyog/digit-ui-react-components";
 
 
 const NoticeForAssesment = (props) => {
@@ -8,66 +8,40 @@ const NoticeForAssesment = (props) => {
 
   const { t } = useTranslation();
   const [financialYears, setFinancialYears] = useState([]);
-  const [selectedFinancialYear, setSelectedFinancialYear] = useState(null);
-  const [submissionDate, setSubmissionDate] = useState();
+  const [selectedFinancialYear, setSelectedFinancialYear] = useState(props?.noticeData && props?.noticeData.assessmentYear? {code: props?.noticeData.assessmentYear, name: props?.noticeData.assessmentYear} : null);
+  const [dateOfAnnualRet, setDateOfAnnualRet] = useState(props?.noticeData?.dateOfAnnualRet ? props?.noticeData?.dateOfAnnualRet : props?.noticeData?.dateOfOrder ? props?.noticeData?.dateOfOrder : null);
 
-  const noticeList = [
-    { code: '1', name: 'Notice for rectification of mistakes in a Defective Return' },
-    { code: '2', name: 'Notice for Assessment' }
-  ]
   const [notice, setNotice] = useState();
   const [showModal, setShowModal] = useState(false)
   const [showDateModal, setShowDateModal] = useState(false)
-  const handleChangeNotice = (value) => {
-
-  }
-  const [name, setName] = useState();
+  const [name, setName] = useState(props?.noticeData?.ownerName ? props?.noticeData?.ownerName : props?.noticeData?.name ? props?.noticeData?.name : null);
   const onChangeName = (e) => {
     setName(e.target?.value)
   }
-  const [propertyAddress, setPropertyAddress] = useState();
+  const [address, setAddress] = useState(props?.noticeData?.address ? props?.noticeData?.address : props?.noticeData?.propertyAddress ? props?.noticeData?.propertyAddress : null);
   const onChangePtAddress = (e) => {
-    setPropertyAddress(e.target?.value)
+    setAddress(e.target?.value)
   }
-  const [propertyId, setPropertyId] = useState();
+  const [propertyId, setPropertyId] = useState(props?.noticeData?.propertyId ? props?.noticeData?.propertyId : null);
   const onChangePtId = (e) => {
     setPropertyId(e.target?.value)
   }
-  const [acknowledgementNo, setAcknowledgementNo] = useState();
+  const [acknowledgementNumber, setAcknowledgementNumber] = useState(props?.noticeData?.acknowledgementNumber ? props?.noticeData?.acknowledgementNumber : props?.noticeData?.acknowldgementNumber ? props?.noticeData?.acknowldgementNumber : null);
   const onChangeAcknowledgementNo=(e)=>{
-    setAcknowledgementNo(e.target.value)
+    setAcknowledgementNumber(e.target.value)
   }
   const [returnFormData, setReturnFormData] = useState({
-    particulars: null,
-    asPerReturnFiled: null,
-    asPerMunicipality: null,
-    remarks: null
+    particulars: props?.noticeData?.particulars ? props?.noticeData?.particulars : null,
+    asPerReturnFiled: props?.noticeData?.asPerReturnFiled ? props?.noticeData?.asPerReturnFiled : null,
+    asPerMunicipality: props?.noticeData?.asPerMunicipality ? props?.noticeData?.asPerMunicipality : null,
+    remarks: props?.noticeData?.remarks ? props?.noticeData?.remarks : null,
   });
   const [returnTimeFormData, setReturnTimeFormData] = useState({
-    time: null,
-    date: null
+    entryTime: props?.noticeData?.entryTime ? props?.noticeData?.entryTime : null,
+    entryDate: props?.noticeData?.entryDate ? props?.noticeData?.entryDate : null
   });
-  // const [particulars, setParticulars] = useState();
-  // const [asPerReturnFiled, setAsPerReturnFiled] = useState();
-  // const [asPerMunicipality, setAsPerMunicipality] = useState();
-  // const [remarks, setRemarks] = useState();
   const [tableList, setTableList] = useState([]);
-  const [timeMeridian, setTimeMeridian] = useState('');
-  const [time, setTime] = useState();
-  const [editDate, setEditDate] = useState();
 
-  const onChangeParticulars = (e)=>{
-    setParticulars(e.target.value)
-  }
-  const onChangeAsPerReturnFiled = (e)=>{
-    setAsPerReturnFiled(e.target.value)
-  }
-  const onChangeMunicipality = (e)=>{
-    setAsPerMunicipality(e.target.value)
-  }
-  const onChangeRemarks = (e)=>{
-    setRemarks(e.target.value)
-  }
 
   const { isLoading: financialYearsLoading, data: financialYearsData } = Digit.Hooks.pt.useMDMS(
     Digit.ULBService.getStateId(),
@@ -233,17 +207,17 @@ const NoticeForAssesment = (props) => {
     e.preventDefault();
     let noticeDetails = {
       name: name,
-      propertyAddress: propertyAddress,
+      address: address,
       "propertyId": propertyId,
-      "acknowledgementNumber": acknowledgementNo,
-      assessmentDate: submissionDate,
+      "acknowledgementNumber": acknowledgementNumber,
+      dateOfAnnualRet: dateOfAnnualRet,
       "assessmentYear": selectedFinancialYear?.code,
-      "noticeType": "Notice for Assessment",      
+      "noticeType": "Notice for Assessment",  
       "tenantId": tenantId,      
       "channel": "CITIZEN",
       "noticeComment": tableList,
-      noticeDate: returnTimeFormData?.date,
-      noticeTime: returnTimeFormData?.time
+      entryDate: returnTimeFormData?.entryDate,
+      entryTime: returnTimeFormData?.entryTime
     }
     props.submit(noticeDetails)
 
@@ -251,6 +225,9 @@ const NoticeForAssesment = (props) => {
   const onCancelNotice = () => {
     
   }
+  const citizenStyle = props?.isCitizen ? { width: "100%" } : {};
+  const citizenStyleMaxWidth = props?.isCitizen ? {  } : {maxWidth: "100%"};
+
   return (
     <div>
       
@@ -259,7 +236,7 @@ const NoticeForAssesment = (props) => {
           <form>
             <div id="form-print">
             {<Header>{t("Notice For Assessment")}</Header>}
-              <div className="row card" style={{ maxWidth: '100%' }}>
+              <div className="row card" style={{ ...citizenStyleMaxWidth }}>
                 <div >
                   <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
                     <CardLabel>{`${t("Name")}`}</CardLabel>
@@ -270,19 +247,19 @@ const NoticeForAssesment = (props) => {
                       value={name}
                       onChange={(e) => onChangeName(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
                   <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
                     <CardLabel>{`${t("Property Address")}`}</CardLabel>
                     <TextInput
                       style={{ background: "#FAFAFA" }}
-                      key={'propertyAddress'}
-                      name={'propertyAddress'}
-                      value={propertyAddress}
+                      key={'address'}
+                      name={'address'}
+                      value={address}
                       onChange={(e) => onChangePtAddress(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
                 </div>
@@ -296,19 +273,19 @@ const NoticeForAssesment = (props) => {
                       value={propertyId}
                       onChange={(e) => onChangePtId(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
                   <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
                     <CardLabel>{`${t("Return Acknowledgement Number")}`}</CardLabel>
                     <TextInput
                       style={{ background: "#FAFAFA" }}
-                      key={'acknowledgementNo'}
-                      name={'acknowledgementNo'}
-                      value={acknowledgementNo}
+                      key={'acknowledgementNumber'}
+                      name={'acknowledgementNumber'}
+                      value={acknowledgementNumber}
                       onChange={(e) => onChangeAcknowledgementNo(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
 
@@ -328,17 +305,21 @@ const NoticeForAssesment = (props) => {
                       // className={`${props.disabled ? "disabled" : ""}`}
                       style={{ width: "calc(100%-62px)" }}
                       // style={{ right: "6px", zIndex: "100", top: 6, position: "absolute", opacity: 0, width: "100%" }}
-                      value={submissionDate ? submissionDate : ""}
+                      value={dateOfAnnualRet ? dateOfAnnualRet : ""}
                       type="date"
                       onChange={(d) => {
-                        setSubmissionDate(d.target.value);
+                        setDateOfAnnualRet(d.target.value);
                       }}
                       required={false}
+                      readOnly={props?.isCitizen ? true : false}
+                      disabled={props?.isCitizen ? true : false}
                     />
                   </div>
                   <div className="col-sm-4 assment-yr-cls" style={{ width: '48%', display: 'inline-block', position: 'relative', top: '0px' }}>
                     <CardLabel>{`${t("Assessment Year")}`}</CardLabel>
-                    <Dropdown isMandatory optionCardStyles={{ zIndex: 111111 }} selected={selectedFinancialYear} optionKey="name" option={financialYears} select={setSelectedFinancialYear} t={t} />
+                    <Dropdown isMandatory optionCardStyles={{ zIndex: 111111 }} selected={selectedFinancialYear} optionKey="name" option={financialYears} select={setSelectedFinancialYear} t={t} 
+                    isDisabled={props?.isCitizen ? true : false}
+                    disable={props?.isCitizen ? true : false} />
 
                   </div>
                 </div>
@@ -346,15 +327,15 @@ const NoticeForAssesment = (props) => {
                 <div style={{ marginTop: '20px' }}>
                   <p><span style={{ fontWeight: 600 }}>Sub: Notice under Rule 33/ Rule 34 of Manipur Municipalities (Property Tax) Rules, 2019 </span>
                     <ul style={{ marginTop: '10px' }} className="notice-txt">
-                      <li style={{ width: '60%', listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
+                      <li style={{ width: '60%', listStyle: 'auto', marginLeft: '16px', padding: '6px', ...citizenStyle }}>
                         This is reference to the Property Tax Return field under Rule 17/Rule 18/Rule 19/ No Return filed under Rule 17/ Rectification of Mistakes under Rule 38
                       </li>
                       <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
-                        <div style={{ width: '60%', display: 'inline-flex' }}>
+                        <div style={{ width: '60%', display: 'inline-flex', ...citizenStyle }}>
                           The following information in the return appears to be incorrect / No return has been filed under Rule 17
                         </div>
                         
-                        <div style={{ width: '40%', display: 'inline' }}>
+                        {!props?.isCitizen && <div style={{ width: '40%', display: 'inline' }}>
                           <button id="printPageButton" onClick={(e) => onAddTabData(e)} className="submit-bar"
                             style={{
                               color: 'white',
@@ -364,7 +345,7 @@ const NoticeForAssesment = (props) => {
                           >
                             + {t("Add")}
                           </button>
-                        </div>
+                        </div>}
                       </li>
                       {tableList && tableList.length>0 && <li style={{ marginLeft: '16px', padding: '6px' }}>
                         <div style={{ width: '100%' }}>
@@ -376,7 +357,6 @@ const NoticeForAssesment = (props) => {
                               <th>Remarks</th>
                             </tr>
                             {tableList.map((e)=>{
-                              console.log("tableList===",tableList);
                               return (<tr>
                                 <td style={{paddingLeft: "10px"}}>{e?.particulars}</td>
                                 <td>{e.asPerReturnFiled}</td>
@@ -388,10 +368,10 @@ const NoticeForAssesment = (props) => {
                         </div>
                       </li>}
                       <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
-                        <div style={{ width: '60%' }}>
-                          If therefore purpose to modify the Annual Property Value (APV) and the property tax on the basis of the information available with the municipality. In case, you disagree with the assessment and the process increase, you may case with all available records either in person or through and authorized representative on {returnTimeFormData?.date && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.date}</span>}{!returnTimeFormData?.date && <span>__________________</span>} at {returnTimeFormData?.time && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.time}</span>} {!returnTimeFormData?.time && <span>________________ </span>}in the chamber of the undersigned.
+                        <div style={{ width: '60%', ...citizenStyle }}>
+                          If therefore purpose to modify the Annual Property Value (APV) and the property tax on the basis of the information available with the municipality. In case, you disagree with the assessment and the process increase, you may case with all available records either in person or through and authorized representative on {returnTimeFormData?.entryDate && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.entryDate}</span>}{!returnTimeFormData?.entryDate && <span>__________________</span>} at {returnTimeFormData?.entryTime && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.entryTime}</span>} {!returnTimeFormData?.entryTime && <span>________________ </span>}in the chamber of the undersigned.
                         </div>
-                        <div style={{ width: '40%', display: 'inline' }}>
+                        {!props?.isCitizen && <div style={{ width: '40%', display: 'inline' }}>
                           <button id="printPageButton" onClick={(e) => onEditDate(e)} className="submit-bar"
                             style={{
                               color: 'white',
@@ -402,16 +382,16 @@ const NoticeForAssesment = (props) => {
                           >
                             {t("Edit")}
                           </button>
-                        </div>
+                        </div>}
                       </li>
-                      <li style={{ width: '60%', listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
+                      <li style={{ width: '60%', listStyle: 'auto', marginLeft: '16px', padding: '6px', ...citizenStyle }}>
                         In case you fail to appear on the appointed date and time or otherwise explain why the APV and tax should not be assessed as above, the assessment will be frames under Rule 33/ Rule 34/ Rule 38 on the basis of the information available with the municipality as indicated above.
                       </li>
                     </ul>
                   </p>
                 </div>
               </div>
-              <div className="card" style={{ maxWidth: '100%' }}>
+              <div className="card" style={{ ...citizenStyleMaxWidth }}>
                 <div className="row">
                   <div className="" style={{display: "inline-block", width: "90%", paddingLeft: "15px"}}>
                       <span>Date</span>
@@ -425,7 +405,7 @@ const NoticeForAssesment = (props) => {
               </div>
             </div>
             
-            <div className="card" style={{ maxWidth: '100%' }}>
+            <div className="card" style={{ ...citizenStyleMaxWidth }}>
               <div style={{display: 'inline-flex'}}>
                 <div style={{ width: '100%', display: 'inline' }}>
                   <button onClick={(e) => printDiv(e,'form-print')} className="submit-bar"
@@ -437,7 +417,7 @@ const NoticeForAssesment = (props) => {
                     {t("Print")}
                   </button>
                 </div>
-                <div style={{  display: 'inline' }}>
+                {!props?.isCitizen && <div style={{  display: 'inline' }}>
                   <button onClick={() => onCancelNotice()} className="submit-bar"
                     style={{
                       color: 'white',
@@ -446,8 +426,8 @@ const NoticeForAssesment = (props) => {
                   >
                     {t("Cancel")}
                   </button>
-                </div>
-                <div style={{ display: 'inline' }}>
+                </div>}
+                {!props?.isCitizen && <div style={{ display: 'inline' }}>
                   <button onClick={onSubmit} className="submit-bar"
                     style={{
                       color: 'white',
@@ -457,7 +437,7 @@ const NoticeForAssesment = (props) => {
                   >
                     {t("Submit")}
                   </button>
-                </div>
+                </div>}
               </div>
             </div>
           </form>
@@ -576,10 +556,10 @@ const NoticeForAssesment = (props) => {
                   required={false}
                 /> */}
                 <label for="formControlInputReturnDate" class="form-label">Date*</label>
-                <input type="date" className={fieldError.date ? "form-control error-message" : "form-control"} id="formControlInputReturnDate" name="date" placeholder="Enter Date" value={returnTimeFormData.date} onChange={handleChangeTimeReturn} required />
-                {fieldError.date &&
+                <input type="date" className={fieldError.entryDate ? "form-control error-message" : "form-control"} id="formControlInputReturnDate" name="entryDate" placeholder="Enter Date" value={returnTimeFormData.entryDate} onChange={handleChangeTimeReturn} required />
+                {fieldError.entryDate &&
                     <span className="error-message">
-                        {fieldError.date}
+                        {fieldError.entryDate}
                     </span>
                 }
               </div>
@@ -596,10 +576,10 @@ const NoticeForAssesment = (props) => {
                   type={'number'}
                 /> */}
                 <label for="formControlInputReturnTime" class="form-label">Time*</label>
-                <input type="time" className={fieldError.time ? "form-control error-message" : "form-control"} id="formControlInputReturnTime" name="time" placeholder="Enter Time" value={returnTimeFormData.time} onChange={handleChangeTimeReturn} required />
-                {fieldError.time &&
+                <input type="time" className={fieldError.entryTime ? "form-control error-message" : "form-control"} id="formControlInputReturnTime" name="entryTime" placeholder="Enter Time" value={returnTimeFormData.entryTime} onChange={handleChangeTimeReturn} required />
+                {fieldError.entryTime &&
                     <span className="error-message">
-                        {fieldError.time}
+                        {fieldError.entryTime}
                     </span>
                 }
               </div>

@@ -1,4 +1,4 @@
-import { CheckBox } from "@egovernments/digit-ui-react-components";
+import { CheckBox } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 const AppealDetails = (props) =>{

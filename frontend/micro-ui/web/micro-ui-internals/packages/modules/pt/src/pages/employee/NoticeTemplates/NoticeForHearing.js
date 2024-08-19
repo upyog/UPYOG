@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CardLabel, DatePicker, Dropdown, Header, Modal, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, DatePicker, Dropdown, Header, Modal, TextInput } from "@upyog/digit-ui-react-components";
 
 
 const NoticeForHearing = (props) => {
@@ -9,7 +9,7 @@ const NoticeForHearing = (props) => {
   const { t } = useTranslation();
   const [financialYears, setFinancialYears] = useState([]);
   const [selectedFinancialYear, setSelectedFinancialYear] = useState(props?.noticeData && props?.noticeData.assessmentYear? {code: props?.noticeData.assessmentYear, name: props?.noticeData.assessmentYear} : null);
-  const [dateOfAnnualRet, setDateOfAnnualRet] = useState(props?.noticeData?.dateOfAnnualRet ? props?.noticeData?.dateOfAnnualRet : null);
+  const [dateOfAnnualRet, setDateOfAnnualRet] = useState(props?.noticeData?.dateOfAnnualRet ? props?.noticeData?.dateOfAnnualRet : props?.noticeData?.dateOfOrder ? props?.noticeData?.dateOfOrder : null);
 
   const { isLoading: financialYearsLoading, data: financialYearsData } = Digit.Hooks.pt.useMDMS(
     Digit.ULBService.getStateId(),
@@ -30,17 +30,13 @@ const NoticeForHearing = (props) => {
     }
   }, [financialYearsData]);
 
-  const [notice, setNotice] = useState();
   const [showModal, setShowModal] = useState(false)
   const [showDateModal, setShowDateModal] = useState(false)
-  const handleChangeNotice = (value) => {
-
-  }
   const [name, setName] = useState(props?.noticeData?.ownerName ? props?.noticeData?.ownerName : props?.noticeData?.name ? props?.noticeData?.name : null);
   const onChangeName = (e) => {
     setName(e.target?.value)
   }
-  const [address, setAddress] = useState(props?.noticeData?.address ? props?.noticeData?.address : null);
+  const [address, setAddress] = useState(props?.noticeData?.address ? props?.noticeData?.address : props?.noticeData?.propertyAddress ? props?.noticeData?.propertyAddress : null);
   const onChangePtAddress = (e) => {
     setAddress(e.target?.value)
   }
@@ -48,7 +44,7 @@ const NoticeForHearing = (props) => {
   const onChangePtId = (e) => {
     setPropertyId(e.target?.value)
   }
-  const [acknowledgementNumber, setAcknowledgementNumber] = useState(props?.noticeData?.acknowledgementNumber ? props?.noticeData?.acknowledgementNumber : null);
+  const [acknowledgementNumber, setAcknowledgementNumber] = useState(props?.noticeData?.acknowledgementNumber ? props?.noticeData?.acknowledgementNumber : props?.noticeData?.acknowldgementNumber ? props?.noticeData?.acknowldgementNumber : null);
   const onChangeAcknowledgementNo=(e)=>{
     setAcknowledgementNumber(e.target.value)
   }
@@ -59,26 +55,7 @@ const NoticeForHearing = (props) => {
   const [returnTimeFormData, setReturnTimeFormData] = useState({
     entryTime: props?.noticeData?.entryTime ? props?.noticeData?.entryTime : null,
     entryDate: props?.noticeData?.entryDate ? props?.noticeData?.entryDate : null
-  });
-  // const [particulars, setParticulars] = useState();
-  // const [asPerReturnFiled, setAsPerReturnFiled] = useState();
-  // const [asPerMunicipality, setAsPerMunicipality] = useState();
-  // const [remarks, setRemarks] = useState();
-
-  const onChangeParticulars = (e)=>{
-    setParticulars(e.target.value)
-  }
-  const onChangeAsPerReturnFiled = (e)=>{
-    setAsPerReturnFiled(e.target.value)
-  }
-  const onChangeMunicipality = (e)=>{
-    setAsPerMunicipality(e.target.value)
-  }
-  const onChangeRemarks = (e)=>{
-    setRemarks(e.target.value)
-  }
-
- 
+  }); 
   const onAddTabData = (e) => {
     e.preventDefault();
     setShowModal(true)
@@ -213,6 +190,7 @@ const NoticeForHearing = (props) => {
   }
   const citizenStyle = props?.isCitizen ? { width: "100%" } : {};
   const citizenStyleMaxWidth = props?.isCitizen ? {  } : {maxWidth: "100%"};
+  
   return (
     <div>
       

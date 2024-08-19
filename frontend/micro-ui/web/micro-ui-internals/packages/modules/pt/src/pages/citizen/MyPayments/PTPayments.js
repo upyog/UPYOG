@@ -1,4 +1,4 @@
-import { Card, KeyNote, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Card, KeyNote, SubmitBar } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -19,7 +19,8 @@ const PTPayments = ({ application }) => {
       <KeyNote keyValue={t("PT_RECEIPT_NO_LABEL")} note={t(application?.paymentDetails?.[0]?.receiptNumber)} />
       <SubmitBar
         label={t("PT_DOWNLOAD_RECEIPT")}
-        onSubmit={(e) => DownloadReceipt(application?.paymentDetails?.[0]?.bill?.consumerCode, application?.tenantId, "PT")}
+        // onSubmit={(e) => DownloadReceipt(application?.paymentDetails?.[0]?.bill?.consumerCode, application?.tenantId, "PT")}
+        onSubmit={(e) => DownloadReceipt(application?.paymentDetails?.[0]?.bill?.consumerCode, application?.tenantId, "PT",application?.paymentDetails?.[0]?.receiptNumber,application)}
       />
     </Card>
   );
