@@ -291,7 +291,7 @@ public class EstimationService {
 
 		List<TaxHeadEstimate> taxHeadEstimates=null;
 		List<TaxHeadEstimate> taxHeadEstimate=null;
-		List<Unit> unitList=null;
+		List<Unit> unitList=new ArrayList<Unit>();
 
 		List<BigDecimal> typeofroad=new ArrayList<BigDecimal>();
 		List<BigDecimal> agefactor=new ArrayList<BigDecimal>();
