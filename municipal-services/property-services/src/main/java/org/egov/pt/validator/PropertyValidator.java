@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.swing.Spring;
 
+import org.apache.tomcat.util.digester.ArrayStack;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.pt.config.PropertyConfiguration;
@@ -925,18 +926,25 @@ public class PropertyValidator {
 		} else {
 			errorMap.put("MASTER_FETCH_FAILED", "Couldn't fetch master data for validation");
 		}
-
-		if (!codes.get(PTConstants.MDMS_PT_MUTATIONREASON).contains(reasonForTransfer))
-			errorMap.put("EG_PT_MT_REASON_ERROR",
-					"The reason for tranfer provided is invalid, please provide a valid mdms data");
+		
+		for(String s : reasonForTransfer.split(",")) {
+			if (!codes.get(PTConstants.MDMS_PT_MUTATIONREASON).contains(s))
+				errorMap.put("EG_PT_MT_REASON_ERROR",
+						"The reason for tranfer provided is invalid, please provide a valid mdms data");
+		}
+		
 
 
 		Boolean isDocsEmpty = CollectionUtils.isEmpty(property.getDocuments());
 		Boolean isTransferDocPresent = false;
 		if (!isDocsEmpty) {
-
-			isTransferDocPresent = property.getDocuments().stream().map(doc -> doc.getDocumentType().toUpperCase())
-					.collect(Collectors.toSet()).contains(reasonForTransfer.toUpperCase());
+			
+			Set<String> multiDocPresent = new HashSet<>();
+			
+			multiDocPresent = property.getDocuments().stream().map(doc -> doc.getDocumentType().toUpperCase())
+					.collect(Collectors.toSet());
+			Set<String> a = new HashSet <String>( Arrays.asList(reasonForTransfer.split(",")));
+			isTransferDocPresent = a.containsAll(multiDocPresent);	
 		}
 
 		if (isDocsEmpty || !isTransferDocPresent) {
