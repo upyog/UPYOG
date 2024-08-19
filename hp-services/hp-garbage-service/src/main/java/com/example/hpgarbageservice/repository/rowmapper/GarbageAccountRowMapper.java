@@ -168,7 +168,7 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
 
                 if (null != rs.getString("sub_old_dtl_uuid")
                 		&& null == subGarbageAccount.getGrbgOldDetails()) {
-                	GrbgOldDetails grbgOldDetails = populateGrbgOldDetails(rs, "sub_old_");
+                	GrbgOldDetails grbgOldDetails = populateGrbgOldDetails(rs, "sub_old_dtl_");
                 	subGarbageAccount.setGrbgOldDetails(grbgOldDetails);
                 }
                 
@@ -178,7 +178,7 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                     GrbgCollectionUnit grbgCollectionUnit = findUnitByUuid(garbageAccount.getGrbgCollectionUnits(), unitUuid);
                     if (null == grbgCollectionUnit) {
                     	GrbgCollectionUnit GrbgCollectionUnit1 = populateGarbageUnit(rs, "sub_unit_");
-                        garbageAccount.getGrbgCollectionUnits().add(GrbgCollectionUnit1);
+                    	subGarbageAccount.getGrbgCollectionUnits().add(GrbgCollectionUnit1);
                     }
                 }
                 
@@ -197,6 +197,16 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                     if (null == subAccGarbageBill) {
                         GarbageBill subAccGarbageBill1 = populateGarbageBill(rs, "sub_acc_bill_");
                         subGarbageAccount.getGarbageBills().add(subAccGarbageBill1);
+                    }
+                }
+
+                
+                if (null != rs.getString("sub_address_uuid")) {
+                    String addressUuid = rs.getString("sub_address_uuid");
+                    GrbgAddress grbgAddress = findAddressByUuid(garbageAccount.getAddresses(), addressUuid);
+                    if (null == grbgAddress) {
+                    	GrbgAddress grbgAddress1 = populateAddress(rs, "sub_address_");
+                    	subGarbageAccount.getAddresses().add(grbgAddress1);
                     }
                 }
             }
@@ -356,6 +366,8 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
 //                .parentId(rs.getLong(prefix + "parent_id"))
                 .documents(new ArrayList<>())
                 .garbageBills(new ArrayList<>())
+                .grbgCollectionUnits(new ArrayList<>())
+                .addresses(new ArrayList<>())
                 .auditDetails(AuditDetails.builder()
                         .createdBy(rs.getString(prefix + "created_by"))
                         .createdDate(rs.getLong(prefix + "created_date"))

@@ -1,6 +1,7 @@
 package org.egov.ptr.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.egov.ptr.config.PetConfiguration;
@@ -70,6 +71,21 @@ public class EnrichmentService {
 				.setLastModifiedTime(System.currentTimeMillis());
 		petRegistrationRequest.getPetRegistrationApplications().get(0).getAuditDetails()
 				.setLastModifiedBy(petRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
+		
+		// enrich documents
+		if(null != petRegistrationRequest.getPetRegistrationApplications()
+				&& CollectionUtils.isEmpty(petRegistrationRequest.getPetRegistrationApplications().get(0).getDocuments())) {
+			petRegistrationRequest.getPetRegistrationApplications().get(0).getDocuments().stream().forEach(document -> {
+				Optional.ofNullable(document.getAuditDetails()).ifPresent(auditDetails -> {
+				    Optional.ofNullable(petRegistrationRequest.getRequestInfo())
+				            .map(requestInfo -> requestInfo.getUserInfo())
+				            .map(userInfo -> userInfo.getUuid())
+				            .ifPresent(auditDetails::setLastModifiedBy);
+				    
+				    auditDetails.setLastModifiedTime(System.currentTimeMillis());
+				});
+			});
+		}
 	}
 
 }

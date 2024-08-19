@@ -230,7 +230,7 @@ public class Util {
 		BigDecimal totalCollection = demand.getDemandDetails().stream().map(DemandDetail::getCollectionAmount)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		if(StringUtils.equalsIgnoreCase(demand.getBusinessService(), "NewTL")) {
+		if(StringUtils.equalsIgnoreCase(demand.getBusinessService(), Constants.NEWTL_BUSINESS_SERVICE)) {
 			isUpdateFromPayment = true;
 		}
 		

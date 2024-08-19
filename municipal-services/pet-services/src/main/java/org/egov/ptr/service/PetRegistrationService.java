@@ -79,7 +79,7 @@ public class PetRegistrationService {
 		PetRegistrationApplication existingApplication = validator
 				.validateApplicationExistence(petRegistrationRequest.getPetRegistrationApplications().get(0));
 		existingApplication.setWorkflow(petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow());
-		petRegistrationRequest.setPetRegistrationApplications(Collections.singletonList(existingApplication));
+//		petRegistrationRequest.setPetRegistrationApplications(Collections.singletonList(existingApplication));
 
 		enrichmentService.enrichPetApplicationUponUpdate(petRegistrationRequest);
 

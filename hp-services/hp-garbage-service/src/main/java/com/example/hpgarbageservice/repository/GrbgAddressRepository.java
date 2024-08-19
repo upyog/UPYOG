@@ -33,7 +33,7 @@ public class GrbgAddressRepository {
                 grbgAddress.getUlbName(),
                 grbgAddress.getUlbType(),
                 grbgAddress.getWardName(),
-                objectMapper.convertValue(grbgAddress.getAdditionalDetail(), ObjectNode.class).toString());
+                null == grbgAddress.getAdditionalDetail() ? null : objectMapper.convertValue(grbgAddress.getAdditionalDetail(), ObjectNode.class).toString());
     }
 
     public void update(GrbgAddress grbgAddress) {
@@ -50,7 +50,7 @@ public class GrbgAddressRepository {
                 grbgAddress.getUlbType(),
                 grbgAddress.getWardName(),
                 grbgAddress.getGarbageId(),
-                objectMapper.convertValue(grbgAddress.getAdditionalDetail(), ObjectNode.class).toString(),
+                null == grbgAddress.getAdditionalDetail() ? null : objectMapper.convertValue(grbgAddress.getAdditionalDetail(), ObjectNode.class).toString(),
                 grbgAddress.getUuid());
     }
 }

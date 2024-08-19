@@ -129,10 +129,10 @@ public class PDFService {
 		RequestInfo requestInfo = pdfRequest.getRequestInfo();
 		List<String> logoBase64 = getLogoFromMdms(requestInfo);
 		if (!CollectionUtils.isEmpty(logoBase64) 
-				&& logoBase64.size() > 3) {
-			pdfContextData.put("logo", "data:image/png;base64," + logoBase64.get(0));
-			pdfContextData.put("logo1", "data:image/png;base64," + logoBase64.get(1));
-			pdfContextData.put("logo2", "data:image/png;base64," + logoBase64.get(2));
+				&& logoBase64.size() >= 3) {
+			pdfContextData.put("hpLogo", "data:image/png;base64," + logoBase64.get(0));
+			pdfContextData.put("UDDLogo", "data:image/png;base64," + logoBase64.get(1));
+			pdfContextData.put("UpyogLogo", "data:image/png;base64," + logoBase64.get(2));
 		}
 	}
 
