@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import SubMenu from "./SubMenu";
-import { Loader, SearchIcon } from "@egovernments/digit-ui-react-components";
+import { Loader, SearchIcon } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import NavItem from "./NavItem";
 import _, { findIndex } from "lodash";
@@ -24,7 +24,7 @@ import {
   DeathIcon,
   FirenocIcon,
   LoginIcon
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
 import LogoutDialog from "../../Dialog/LogoutDialog";
 import ChangeCity from "../../ChangeCity";

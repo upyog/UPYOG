@@ -3,7 +3,7 @@ import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch, usePar
 import { newConfigAmalgamate } from "../../../config/Amalgamate/config";
 
 import { useTranslation } from "react-i18next";
-// import { Card, Dropdown, FormComposer, Loader, Modal, ResponseComposer, Toast } from "@egovernments/digit-ui-react-components";
+// import { Card, Dropdown, FormComposer, Loader, Modal, ResponseComposer, Toast } from "@upyog/digit-ui-react-components";
 import Timeline from "../../../components/TLTimeline";
 import {
     CardLabel,
@@ -17,7 +17,7 @@ import {
     Modal,
     RadioButtons,
     UploadFile,
-  } from "@egovernments/digit-ui-react-components";
+  } from "@upyog/digit-ui-react-components";
 // import AppealDetails from "./AppealDetails";
 // import AppealAcknowledgement from "./AppealAcknowledgement";
 

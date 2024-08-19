@@ -1,4 +1,4 @@
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 import React ,{Fragment, useState}from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";

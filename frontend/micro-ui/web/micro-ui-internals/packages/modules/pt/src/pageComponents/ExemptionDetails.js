@@ -1,4 +1,4 @@
-import { CardLabel,LabelFieldPair, TextInput, CardLabelError, RadioButtons, Dropdown, UploadFile  } from "@egovernments/digit-ui-react-components";
+import { CardLabel,LabelFieldPair, TextInput, CardLabelError, RadioButtons, Dropdown, UploadFile  } from "@upyog/digit-ui-react-components";
 
 import  FormStep  from "../../../../react-components/src/molecules/FormStep";
 import React, { useEffect, useState } from "react";

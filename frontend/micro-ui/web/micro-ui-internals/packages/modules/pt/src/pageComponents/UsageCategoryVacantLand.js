@@ -1,4 +1,4 @@
-import { CardLabel, CardLabelDesc, Dropdown, FormStep, UploadFile } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CardLabelDesc, Dropdown, FormStep, UploadFile } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { stringReplaceAll } from "../utils";
@@ -22,7 +22,7 @@ const UsageCategoryVacantLand = ({ t, config, onSelect, userType, formData }) =>
   const { data: mdmsData, isLoading } = Digit.Hooks.useCommonMDMS(
     Digit.ULBService.getStateId(),
     "PropertyTax",
-    [ "UsageCategory"],
+    [ "UsageCategory","VacantLandUsageCategory"],
     {
       select: (data) => {
         // let usageCategory = data?.PropertyTax?.UsageCategory?.map((category) => getUsageCategory(category.code))
@@ -43,6 +43,10 @@ const UsageCategoryVacantLand = ({ t, config, onSelect, userType, formData }) =>
 
         return {
           UsageCategory: data?.PropertyTax?.UsageCategory?.filter((category) => category.active)?.map((category) => ({
+            i18nKey: `PROPERTYTAX_${category.code}`,
+            code: category.code,
+          })),
+          VacantLandUsageCategory: data?.PropertyTax?.VacantLandUsageCategory?.filter((category) => category.active)?.map((category) => ({
             i18nKey: `PROPERTYTAX_${category.code}`,
             code: category.code,
           })),
@@ -83,7 +87,7 @@ const UsageCategoryVacantLand = ({ t, config, onSelect, userType, formData }) =>
         optionKey="i18nKey"
         isMandatory={config.isMandatory}
         option={[
-            ...(mdmsData?.UsageCategory ? mdmsData?.UsageCategory : []),
+            ...(formData?.PropertyType?.i18nKey !== "COMMON_PROPTYPE_VACANT" ? (mdmsData?.UsageCategory ? mdmsData?.UsageCategory : []) : mdmsData?.VacantLandUsageCategory ? mdmsData?.VacantLandUsageCategory : []),
         ]}
         selected={UsageCategory}
         select={selectUsageCategory}

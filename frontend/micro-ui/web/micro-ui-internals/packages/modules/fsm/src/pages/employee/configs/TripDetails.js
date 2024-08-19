@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Dropdown } from "@egovernments/digit-ui-react-components";
+import { Dropdown } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { getVehicleType } from "../../../utils";
 

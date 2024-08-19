@@ -28,7 +28,7 @@ public class PTConstants {
     public static final String MDMS_PT_VACANTUSAGECATEGORY = "VacantLandUsageCategory";
 
     public static final String MDMS_PT_PROPERTYSUBTYPE = "PropertySubType";
-
+   
     public static final String MDMS_PT_OCCUPANCYTYPE = "OccupancyType";
 
     public static final String MDMS_PT_CONSTRUCTIONTYPE = "ConstructionType";

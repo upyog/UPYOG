@@ -1,4 +1,4 @@
-import { CardLabel, CardLabelError, FormStep, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CardLabelError, FormStep, LabelFieldPair, TextInput } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
@@ -24,9 +24,9 @@ const PTSelectPincode = ({ t, config, onSelect, formData = {}, userType, registe
       validation: {
         minlength: 6,
         maxlength: 7,
-        pattern: "[0-9]+",
+        pattern: "^[1-9][0-9]{5}$",
         max: "9999999",
-        title: t("PT_PROPERTY_ADDRESS_PINCODE_INVALID"),
+        // title: t("PT_PROPERTY_ADDRESS_PINCODE_INVALID"),
       },
     },
   ];

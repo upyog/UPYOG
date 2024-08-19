@@ -1,18 +1,18 @@
 # digit-ui-libraries
 
-> Made with @egovernments/create-ui-library
+> Made with @upyog/create-ui-library
 
 ## Install
 
 ```bash
-npm install --save @egovernments/digit-ui-libraries
+npm install --save @upyog/digit-ui-libraries
 ```
 
 ## Usage
 
 ```jsx
 import React from "react";
-import initLibraries from "@egovernments/digit-ui-libraries";
+import initLibraries from "@upyog/digit-ui-libraries";
 
 import defaultConfig from "./config";
 

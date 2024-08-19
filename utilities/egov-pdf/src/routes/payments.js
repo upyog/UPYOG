@@ -16,6 +16,7 @@ function renderError(res, errorMessage, errorCode) {
 router.post(
   "/consolidatedreceipt",
   asyncMiddleware(async function (req, res, next) {
+    console.log("consolidatedreceipt1")
     var tenantId = req.query.tenantId;
     var consumerCode = req.query.consumerCode;
     var bussinessService = req.query.bussinessService;
@@ -42,6 +43,7 @@ router.post(
 
     try {
       try {
+        console.log("consolidatedreceipt2")
         resProperty = await search_payment(consumerCode, tenantId, requestinfo, bussinessService, receiptNumbers);
       } catch (ex) {
         

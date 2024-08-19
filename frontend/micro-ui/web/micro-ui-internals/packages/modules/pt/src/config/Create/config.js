@@ -213,7 +213,8 @@ export const newConfig =[
                     "component": "PTLandArea",
                     "texts": {
                         "headerCaption": "",
-                        "header": "PT_PLOT_SIZE_HEADER",
+                        // "header": "PT_PLOT_SIZE_HEADER",
+                        "header": "Land Area",
                         "cardText": "",
                         "submitBarLabel": "PT_COMMON_NEXT"
                     },
@@ -229,7 +230,7 @@ export const newConfig =[
                     "component": "Area",
                     "texts": {
                         "headerCaption": "",
-                        "header": "PT_PLOT_SIZE_HEADER",
+                        "header": "Plot Area",
                         "cardText": "PT_FORM2_PLOT_SIZE_PLACEHOLDER",
                         "submitBarLabel": "PT_COMMON_NEXT"
                     },
@@ -622,7 +623,7 @@ export const newConfig =[
                 {
                     "type": "component",
                     "route": "property-photo",
-                    "isMandatory": true,
+                    "isMandatory": false,
                     "component": "PropertyPhoto",
                     "texts": {
                         "headerCaption": "",

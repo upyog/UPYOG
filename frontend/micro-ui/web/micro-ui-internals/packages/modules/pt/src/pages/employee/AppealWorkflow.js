@@ -1,4 +1,4 @@
-import { Header, MultiLink } from "@egovernments/digit-ui-react-components";
+import { Header, MultiLink } from "@upyog/digit-ui-react-components";
 import _, { forEach } from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
