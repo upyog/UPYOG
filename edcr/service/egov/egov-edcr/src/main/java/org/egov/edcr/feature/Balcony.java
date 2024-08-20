@@ -69,7 +69,7 @@ import org.springframework.stereotype.Service;
 public class Balcony extends FeatureProcess {
     private static final Logger LOG = LogManager.getLogger(Balcony.class);
     private static final String FLOOR = "Floor";
-    private static final String RULE45_IV = "45-iv";
+    private static final String RULE45_IV = "4.4.4 (iii)";
     private static final String WIDTH_BALCONY_DESCRIPTION = "Minimum width for balcony %s";
     private static final BigDecimal ONE_POINTNINEONE = BigDecimal.valueOf(0.91);
 
