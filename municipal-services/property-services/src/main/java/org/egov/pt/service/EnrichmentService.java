@@ -116,17 +116,24 @@ public class EnrichmentService {
 	//	Boolean iswfStarting = propertyFromDb.getStatus().equals(Status.ACTIVE);
 	//	Boolean isactiveexist = propertyFromDb.getStatus().equals(Status.INACTIVE);
 
-		if (!isWfEnabled) {
+		if (!isWfEnabled)
+		{
 
 			property.setStatus(Status.ACTIVE);
 			property.getAddress().setId(propertyFromDb.getAddress().getId());
 
-		} else if (isWfEnabled && ( property.isIsinactive() || property.isIsactive())) {
-
-			enrichPropertyForNewWf(requestInfo, property, false);
+		} 
+		
+		else if (isWfEnabled )
+		{
+			
+			if (property.isIsinactive()|| property.isIsactive())
+			{
+				enrichPropertyForNewWf(requestInfo, property, false);
+			}
+			
 		}
 		
-	
 		
 		if (!CollectionUtils.isEmpty(property.getDocuments()))
 			property.getDocuments().forEach(doc -> {
