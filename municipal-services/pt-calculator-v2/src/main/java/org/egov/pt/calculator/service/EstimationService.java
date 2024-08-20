@@ -149,6 +149,9 @@ public class EstimationService {
 	private static final String CALCULTED_ROAD_TYPE_TAX_WITH_TAX_AMT = "CALCULTED_ROAD_TYPE_TAX_WITH_TAX_AMT";
 
 	private static final String CALCULTED_ROAD_TYPE_TAX = "CALCULTED_ROAD_TYPE_TAX";
+	
+	@Autowired
+	ObjectMapper objectmapper;
 
 	@Autowired
 	private BillingSlabService billingSlabService;
@@ -933,8 +936,10 @@ public class EstimationService {
 		String tenantId = null != property.getTenantId() ? property.getTenantId() : criteria.getTenantId();
 
 
-		Map<String, Category> taxHeadCategoryMap = ((List<TaxHeadMaster>)masterMap.get(TAXHEADMASTER_MASTER_KEY)).stream()
-				.collect(Collectors.toMap(TaxHeadMaster::getCode, TaxHeadMaster::getCategory));
+		log.info("masterMap::::"+masterMap);
+		Map<String, Category> taxHeadCategoryMap=objectmapper.convertValue(masterMap.get(TAXHEADMASTER_MASTER_KEY), Map.class);
+		//Map<String, Category> taxHeadCategoryMap = ((List<TaxHeadMaster>)masterMap.get(TAXHEADMASTER_MASTER_KEY)).stream()
+				//.collect(Collectors.toMap(TaxHeadMaster::getCode, TaxHeadMaster::getCategory));
 
 
 
@@ -1489,7 +1494,7 @@ public class EstimationService {
 
 	public Map<String, Calculation> mutationCalculator(PropertyV2 property, RequestInfo requestInfo) {
 		Map<String, Calculation> feeStructure = new HashMap<>();
-		Map<String,Object> additionalDetails = mapper.convertValue(property.getAdditionalDetails(),Map.class);
+		Map<String,Object> additionalDetails = objectmapper.convertValue(property.getAdditionalDetails(),Map.class);
 		calcValidator.validatePropertyForMutationCalculation(additionalDetails);
 		Calculation calculation = new Calculation();
 		calculation.setTenantId(property.getTenantId());
@@ -1526,7 +1531,7 @@ public class EstimationService {
 	public List<TaxPeriod> getTaxPeriodList(RequestInfo requestInfo, String tenantId) {
 
 		StringBuilder uri = getTaxPeriodSearchUrl(tenantId);
-		TaxPeriodResponse res = mapper.convertValue(
+		TaxPeriodResponse res = objectmapper.convertValue(
 				repository.fetchResult(uri, RequestInfoWrapper.builder().requestInfo(requestInfo).build()),
 				TaxPeriodResponse.class);
 		return res.getTaxPeriods();
