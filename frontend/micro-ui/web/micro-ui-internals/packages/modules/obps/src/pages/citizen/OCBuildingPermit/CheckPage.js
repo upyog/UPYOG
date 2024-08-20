@@ -202,7 +202,6 @@ const CheckPage = ({ onSubmit, value }) => {
           <Row className="border-none" label={`${t(`BPA_BOUNDARY_PLOT_AREA_LABEL`)}`} text={datafromAPI?.planDetail?.planInformation?.plotArea ? `${datafromAPI?.planDetail?.planInformation?.plotArea} ${t(`BPA_SQ_MTRS_LABEL`)}` : t("CS_NA")} textStyle={{paddingLeft:"12px"}}/>
           <Row className="border-none" label={`${t(`BPA_PLOT_NUMBER_LABEL`)}`} text={datafromAPI?.planDetail?.planInformation?.plotNo || t("CS_NA")} />
           <Row className="border-none" label={`${t(`BPA_KHATHA_NUMBER_LABEL`)}`} text={datafromAPI?.planDetail?.planInformation?.khataNo || t("CS_NA")} />
-          <Row className="border-none" label={`${t(`BPA_HOLDING_NUMBER_LABEL`)}`} text={data?.holdingNumber || t("CS_NA")} />
           <Row className="border-none" label={`${t(`BPA_BOUNDARY_LAND_REG_DETAIL_LABEL`)}`} text={data?.registrationDetails || t("CS_NA")} />
         </StatusTable>
       </Card>
