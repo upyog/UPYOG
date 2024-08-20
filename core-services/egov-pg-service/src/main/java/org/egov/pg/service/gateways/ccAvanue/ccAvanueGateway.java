@@ -128,7 +128,7 @@ public class ccAvanueGateway implements Gateway {
         List<KeyValuePair> pairList = new ArrayList<>();
         String ccaRequest="";
         // Adding elements to the list
-	pairList.add(new KeyValuePair("TID", tid));   
+	pairList.add(new KeyValuePair("tid", tid));   
         pairList.add(new KeyValuePair("merchant_id", MERCHANT_KEY_ID));
         pairList.add(new KeyValuePair("order_id",transaction.getTxnId()));
         pairList.add(new KeyValuePair("currency", "INR"));
