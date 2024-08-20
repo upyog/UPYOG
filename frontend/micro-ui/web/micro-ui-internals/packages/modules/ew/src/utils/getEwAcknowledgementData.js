@@ -40,7 +40,15 @@ const getEwAcknowledgementData = async (application, tenantInfo, t, response) =>
         tableData: {
           title: t("EW_PRODUCT_DETAILS"),
           rows: application.ewasteDetails,
-        }
+
+        },
+      },
+      {
+        title: t("ES_EW_ACTION_FINALAMOUNT"),
+        values: [
+          { title: t("EWASTE_NET_PRICE"), value: application?.calculatedAmount },
+         
+        ],
       }
     ],
 

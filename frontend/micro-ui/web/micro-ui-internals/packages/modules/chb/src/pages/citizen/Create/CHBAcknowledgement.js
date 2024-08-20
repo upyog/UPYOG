@@ -75,10 +75,10 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
          <Link to={`/digit-ui/citizen`}>
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
          </Link>
-        <SubmitBar
+        {/* <SubmitBar
           label={t("CHB_DOWNLOAD_ACK_FORM")}
           onSubmit={handleDownloadPdf}
-        />
+        /> */}
         <Link to={`/digit-ui/citizen/payment/my-bills/${"chb-services"}/${mutation.data?.hallsBookingApplication[0].bookingNo}`}>
           <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
         </Link>

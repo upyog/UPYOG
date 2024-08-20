@@ -177,12 +177,12 @@ const CHBApplicationDetails = () => {
 
   let dowloadOptions = [];
 
-  // Payment Receipt Button on Acknowledgement Page
-  if (reciept_data?.Payments[0]?.paymentStatus !== "DEPOSITED")
-  dowloadOptions.push({
-    label: t("CHB_DOWNLOAD_ACK_FORM"),
-    onClick: () => getChbAcknowledgement(),
-  });
+  // // Payment Receipt Button on Acknowledgement Page
+  // if (reciept_data?.Payments[0]?.paymentStatus !== "DEPOSITED")
+  // dowloadOptions.push({
+  //   label: t("CHB_DOWNLOAD_ACK_FORM"),
+  //   onClick: () => getChbAcknowledgement(),
+  // });
 
   //commented out, need later for download receipt and certificate
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
