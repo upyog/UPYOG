@@ -12,6 +12,7 @@ import static org.egov.tl.util.TLConstants.businessService_NewTL;
 import static org.egov.tl.util.TLConstants.businessService_TL;
 import static org.egov.tracer.http.HttpUtils.isInterServiceCall;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -66,6 +67,7 @@ import org.egov.tl.web.models.contract.ProcessInstance;
 import org.egov.tl.web.models.contract.ProcessInstanceRequest;
 import org.egov.tl.web.models.contract.ProcessInstanceResponse;
 import org.egov.tl.web.models.contract.State;
+import org.egov.tl.web.models.contract.Alfresco.DMSResponse;
 import org.egov.tl.web.models.contract.Alfresco.DmsRequest;
 import org.egov.tl.web.models.user.UserDetailResponse;
 import org.egov.tl.workflow.ActionValidator;
@@ -641,9 +643,15 @@ public class TradeLicenseService {
                     
             }
             enrichmentService.postStatusEnrichment(tradeLicenseRequest,endStates,mdmsData);
+            
             userService.createUser(tradeLicenseRequest, false);
+
+            // create and upload pdf
+            createAndUploadPDF(licenceResponse, tradeLicenseRequest);
+            
             // generate demand and bill
             generateDemandAndBill(tradeLicenseRequest);
+            
 //            calculationService.addCalculation(tradeLicenseRequest);
             repository.update(tradeLicenseRequest, idToIsStateUpdatableMap);
             licenceResponse=  tradeLicenseRequest.getLicenses();
@@ -651,15 +659,10 @@ public class TradeLicenseService {
         
 //        // send notifications
 //        sendTLNotifications(licenceResponse);
-//        
-//        // create and upload pdf
-//        createAndUploadPDF(licenceResponse, tradeLicenseRequest.getRequestInfo());
         
         return licenceResponse;
         
     }
-
-
 
 
 
@@ -718,6 +721,7 @@ public class TradeLicenseService {
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_VERIFY, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_VERIFIER, license.getAction())
+							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_APPROVER, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_APPROVE, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_CLOSE, license.getAction()))
 					&& StringUtils.isNotEmpty(license.getApplicationNumber())) {
@@ -809,11 +813,40 @@ public class TradeLicenseService {
 	}
 
 
-	private void createAndUploadPDF(List<TradeLicense> licenceResponse, RequestInfo requestInfo) {
+	private void createAndUploadPDF(List<TradeLicense> licenceResponse, TradeLicenseRequest tradeLicenseRequest) {
 		
 		licenceResponse.stream().forEach(license -> {
-			Resource object = createNoSavePDF(license
-					, requestInfo);
+			
+			Thread pdfGenerationThread = new Thread(() -> {
+				
+					// for NEW TL
+	    	if((StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
+	    			&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(), TLConstants.APPLICATION_TYPE_NEW)
+	    			&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE))
+	    		|| // for RENEWAL TL
+	    		(StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
+		    			&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(), TLConstants.APPLICATION_TYPE_RENEWAL)
+		    			&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE))) {
+		    		
+		    		// validate trade license
+					validateTradeLicenseCertificateGeneration(license);
+					
+					// create pdf
+					Resource resource = createNoSavePDF(license, tradeLicenseRequest.getRequestInfo());
+	
+					//upload pdf
+					DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, license, tradeLicenseRequest.getRequestInfo());
+					try {
+						DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest, tradeLicenseRequest.getRequestInfo());
+					} catch (IOException e) {
+						throw new CustomException("UPLOAD_ATTACHMENT_FAILED", "Upload Attachment failed." + e.getMessage());
+					}
+		    	}
+	    	
+			});
+
+			pdfGenerationThread.start();
+			
 		});
 		
 		
@@ -1019,20 +1052,9 @@ public class TradeLicenseService {
 	
 	public Resource createNoSavePDF(TradeLicense tradeLicense, RequestInfo requestInfo) {
 		
-		// validate trade license for certificate generation
-		validateTradeLicenseCertificateGeneration(tradeLicense);
 		// generate pdf
 		PDFRequest pdfRequest = generatePdfRequestByTradeLicense(tradeLicense, requestInfo);
 		Resource resource = reportService.createNoSavePDF(pdfRequest);
-		
-		
-		//upload pdf
-//		DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, tradeLicense, requestInfo);
-//		try {
-//			DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest, requestInfo);
-//		} catch (IOException e) {
-//			throw new CustomException("UPLOAD_ATTACHMENT_FAILED", "Upload Attachment failed." + e.getMessage());
-//		}
 		
 		return resource;
 	}
@@ -1059,7 +1081,7 @@ public class TradeLicenseService {
 			        || StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantMobileNumber").asText()))
 			    && StringUtils.isEmpty(tradeLicense.getBusinessService())) {
 			    
-			    throw new RuntimeException("PDF can't be generated with null values.");
+			    throw new RuntimeException("PDF can't be generated with null values for application number: "+tradeLicense.getApplicationNumber());
 			}
 	}
 
@@ -1072,9 +1094,10 @@ public class TradeLicenseService {
 
 //		MultipartFile multipartFile = convertResourceToMultipartFile(resource, "filename");
 
-		DmsRequest dmsRequest = DmsRequest.builder().userId("123").objectId("1222").description("TL certificate")
-				.id("").type("PDF").objectName("TL").comments("Signed Certificate").status(STATUS_APPROVED).file(resource)
-				.build();
+		DmsRequest dmsRequest = DmsRequest.builder().userId(requestInfo.getUserInfo().getId().toString())
+				.objectId(tradeLicense.getId()).description(TLConstants.ALFRESCO_COMMON_CERTIFICATE_DESCRIPTION).id(TLConstants.ALFRESCO_COMMON_CERTIFICATE_ID).type(TLConstants.ALFRESCO_COMMON_CERTIFICATE_TYPE).objectName(businessService_NewTL)
+				.comments(TLConstants.ALFRESCO_TL_CERTIFICATE_COMMENT).status(STATUS_APPROVED).file(resource).servicetype(tradeLicense.getBusinessService())
+				.documentType(TLConstants.ALFRESCO_DOCUMENT_TYPE).documentId(TLConstants.ALFRESCO_COMMON_DOCUMENT_ID).build();
 
 		return dmsRequest;
 	}

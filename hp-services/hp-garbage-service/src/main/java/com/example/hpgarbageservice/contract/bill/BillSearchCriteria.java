@@ -2,9 +2,9 @@ package com.example.hpgarbageservice.contract.bill;
 
 import java.util.Set;
 
-import com.example.hpgarbageservice.contract.bill.Demand.StatusEnum;
+import javax.validation.constraints.Pattern;
 
-import jakarta.validation.constraints.Pattern;
+import com.example.hpgarbageservice.contract.bill.Demand.StatusEnum;
 
 //import javax.validation.constraints.Email;
 //import javax.validation.constraints.NotNull;
