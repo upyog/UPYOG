@@ -244,6 +244,10 @@ public class TLConstants {
     public static final String APPLICATION_TYPE_RENEWAL = "RENEWAL";
 
     public static final String APPLICATION_TYPE_NEW = "NEW";
+
+    public static final String APPLICATION_TYPE_MODIFICATION = "MODIFICATION";
+
+    public static final String APPLICATION_TYPE_CLOSURE = "CLOSURE";
     
     // error constants
 
@@ -286,6 +290,10 @@ public class TLConstants {
     public static final String ACTION_RETURN_TO_INITIATOR  = "RETURN_TO_INITIATOR";
 
     public static final String ACTION_RETURN_TO_VERIFIER  = "RETURN_TO_VERIFIER";
+
+    public static final String ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT = "RETURN_TO_INITIATOR_FOR_PAYMENT";
+
+    public static final String ACTION_CLOSE  = "CLOSE";
 
 
     public static final String STATUS_INITIATED = "INITIATED";
@@ -345,8 +353,6 @@ public class TLConstants {
     public static final String ACTION_FORWARD_CITIZENACTIONREQUIRED  = "FORWARDTOEMPLOYEE_FIELDINSPECTION";
 
     public static final String ACTION_STATUS_PAID  = "PAID";
-
-    public static final String ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT = "RETURN_TO_INITIATOR_FOR_PAYMENT";
 
     public static final String VARIABLE_ACTION = "action";
 
@@ -455,6 +461,8 @@ public class TLConstants {
     public static final String BILLINGSLAB_ACCESSORY_JSONPATH_CODE = "$.billingSlab.*.accessoryCategory";
 
     public static final String BILLINGSLAB_ACCESSORY_JSONPATH_UOM = "$.billingSlab.*.uom";
+
+    public static final String BILLING_TAX_HEAD_MASTER_CODE = "LCF.New_Trade_License_Fee_TAX";
 
     public TLConstants() {}
 

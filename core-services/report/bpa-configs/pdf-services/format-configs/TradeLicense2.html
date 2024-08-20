@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- <th:link href='https://fonts.googleapis.com/css?family=Karla' rel='stylesheet'> -->
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
+	</meta>
+	<title>Document</title>
+	<style>
+		/* hemant */
+		body {
+			font-family: 'Arial', sans-serif;
+			font-size: 14px;
+		}
+		.top-header {
+			width: 100%;
+			border-collapse: collapse;
+			border-bottom: solid 4px #49627e;
+		}
+
+
+		.top-header td {
+			padding: 8px;
+			text-align: left;
+		}
+
+		.hp-govt {
+			width: 180px;
+		}
+
+		.udd-logo {
+			width: 140px;
+			float: right;
+			right: 0px;
+		}
+
+		.header-text {
+			margin-top: 20px;
+			text-align: center;
+			font-size: 22px;
+			font-weight: bold;
+			color: #49627e;
+		}
+
+		.service-name {
+			text-align: center;
+			font-size: 20px;
+			color: #333;
+			font-weight: bold;
+		}
+
+		.license-description {
+			text-align: center;
+			font-size: 14px;
+			text-align: center;
+			color: #666;
+		}
+
+		.license-details {
+			margin-top: 10px;
+			display: inline-block;
+			width: 60%;
+			border: solid 1px #ccc;
+			border-collapse: collapse;
+			font-size: 14px;
+			background-color: #f9f9f9;
+		}
+
+		.license-details td {
+			border: solid 1px #ccc;
+			padding: 5px;
+		}
+
+		.qr-code-table {
+			display: inline-block;
+			width: 35%;
+			margin-bottom: 12px;
+		}
+
+		.qr-code {
+			width: 220px;
+			position: relative;
+			padding-left: 50px;
+			margin-top: 0px;
+			float: right;
+			right: 0;
+		}
+
+		/* Terms and Conditions Styling */
+		.terms-condition {
+			font-size: 20px;
+			color: #49627e;
+			margin-top: 30px;
+			text-align: left;
+			border-bottom: dashed 1px #49627e;
+			padding-bottom: 5px;
+		}
+
+		.terms-condition-details {
+			font-size: 14px;
+			text-align: justify;
+			color: #333;
+			margin-top: 10px;
+		}
+
+		.terms-condition-details ol {
+			padding-left: 20px;
+		}
+
+		.terms-condition-details li {
+			margin: 5px 0;
+		}
+
+
+
+		.terms-condition-details{
+			font-size:10px;
+			text-align: justify;
+		}
+		li {
+  			margin: 5px 0;
+		}
+		.sign {
+			position: relative;
+			float: right;
+			margin-top: 0px;
+			text-align: right;
+		}
+		.signature-details{
+			margin-top: -20px;
+
+		}
+		.signature-details span {
+			display: block;
+			text-align: right;
+			line-height: 1; 
+			margin: 0; 
+
+		}
+		.hp-govt{
+			text-align: right !important;
+			float: right;
+		}
+	</style>
+</head>
+
+<body>
+	<table class="top-header">
+		<tr><td>
+				<img class="hp-govt"
+					th:src="${hpLogo}"
+					alt="Government of Himachal Pradesh" />
+			</td>
+			<td>
+				<h2 class="header-text"><span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span></h2>
+				<h3 class="service-name">New Trade License</h3>
+				<span class="license-description">(UNDER SECTION 202 OF Himachal Pradesh Municipal ACT, 1994)</span> <br />
+				<span class="license-description">Issed to: <span th:text="${ownerName}">NA</span></span>
+			</td>
+			<td>
+				<img class="udd-logo"
+					th:src="${UDDLogo}"
+					alt="Directorate of Urban Development" />
+			</td>
+		</tr>
+	</table>
+	<table class="license-details">
+		<tr>
+			<td>Trade License No:</td>
+			<td><span th:text="${tradeLicenseNo}">NA</span></td>
+
+		</tr>
+		<tr>
+			<td>Trade Registration No:</td>
+			<td><span th:text="${tradeRegistrationNo}">NA</span></td>
+		</tr>
+		<tr>
+			<td>Trade Name:</td>
+			<td><span th:text="${tradeName}">NA</span></td>
+		</tr>
+		<tr>
+			<td>Trade Premises Address:</td>
+			<td><span th:text="${tradePremisesAddress}">NA</span></td>
+		</tr>
+		<tr>
+			<td>License Issue Date:</td>
+			<td><span th:text="${licenseIssueDate}">NA</span></td>
+		</tr>
+		<tr>
+			<td>License Validity:</td>
+			<td><span th:text="${licenseValidity}">NA</span></td>
+		</tr>
+		<tr>
+			<td>Trade Sector Category:</td>
+			<td><span th:text="${licenseCategory}">NA</span></td>
+		</tr>
+		<tr>
+			<td>Trade Type Category:</td>
+			<td><span th:text="${licenseSubCategory}">NA</span></td>
+		</tr>
+		<tr>
+			<td>Licensee Name:</td>
+			<td><span th:text="${licenseApplicantName}">NA</span></td>
+		</tr>
+		<tr>
+			<td>Licensee Contact No:</td>
+			<td><span th:text="${licenseeMobileNumber}">NA</span></td>
+		</tr>
+	</table>
+	<table class="qr-code-table">
+		<tr>
+			<td>
+				<img class="qr-code" th:src="${qrCode}" src="/qr.png" alt="" />
+			</td>
+		</tr>
+	</table>
+
+	<h2 class="terms-condition">Term and Conditions of this License:</h2>
+	<p class="terms-condition-details">
+	<ol>
+		<li>This license is for the Trade Sector <b><span th:text="${licenseCategory}">NA</span></b> and is valid for the trade/ business of: <b><span th:text="${licenseSubCategory}">NA</span></b>. </li>
+		<li>The licensee shall apply for renewal of license at least two months prior to the date of expiry of license
+			period to the licensing officer.</li>
+		<li>The trade license is solely for the purpose of conducting business activities as specified within the
+			license.</li>
+		<li>The trade license cannot be used as collateral or security for obtaining any form of loan, credit, or
+			financial borrowing from banks, financial institutions, or any other entities.</li>
+		<li>Any attempt to use the trade license as collateral for loans will be considered a violation of the terms and
+			conditions of the license. Such actions may lead to the revocation of the trade license and potential legal
+			consequences as per applicable laws and regulations.</li>
+		<li>The licensee shall maintain proper record of the articles kept for sale or storage in the premises as may be
+			required by the licensing officer. Further the licensee shall comply with the directions and instructions
+			issued to him by the commissioner or the licensing officer from time to time.</li>
+		<li>The licensee will ensure timely payment of corporation dues.</li>
+		<li>The permission shall, unless specified otherwise in the license, be valid in the entire ULB. limits, subject
+			to such conditions as may be imposed but the Commissioner/ Executive Officer/ Secretary.</li>
+		<li>The owner/occupier of the premises shall have to produce the license before the inspector or the licensing
+			officer at any point of time as may ordered by them.</li>
+		<li>The Commissioner/ Executive Officer/ Secretary shall have a right to impose or alter any of conditions in
+			the license as may be deemed fit by the Commissioner under the provisions of section XXX of the XXXX Act,
+			XXXX.</li>
+		<li>The license shall be responsible to obtain the NOC form the concerned department required as per category of
+			license.</li>
+		<li>The license shall be responsible to register premises with ULB for door-to-door garbage collection.</li>
+		<li>The license shall be responsible to install fire distinguishers in the premises as per the requirement and
+			consultation with fire department.</li>
+		<li>The license shall not encroach upon Municipal Corporation /Government of H.P. drain /road/path/land.</li>
+
+	</ol>
+	</p>
+	<div class="sign">
+	  <img
+	  	 src="data:image/jpeg;base64,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" 
+	   />
+	   <p class="signature-details">
+			Digitally Signed at <span th:text="${approvalTime}">NA</span>
+			<span th:text="${approverName}">NA</span>
+<!--			<span >Approve</span>-->
+			<span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span>
+	   </p>
+	</div>
+
+
+</body>
+
+</html>

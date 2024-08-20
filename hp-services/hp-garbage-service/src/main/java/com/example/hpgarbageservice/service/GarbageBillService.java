@@ -6,19 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import com.example.hpgarbageservice.model.AuditDetails;
-import com.example.hpgarbageservice.model.GarbageAccount;
 import com.example.hpgarbageservice.model.GarbageBill;
 import com.example.hpgarbageservice.model.GarbageBillRequest;
 import com.example.hpgarbageservice.model.GarbageBillSearchCriteria;
-import com.example.hpgarbageservice.model.SearchCriteriaGarbageAccount;
-import com.example.hpgarbageservice.model.SearchCriteriaGarbageAccountRequest;
 import com.example.hpgarbageservice.model.SearchGarbageBillRequest;
-import com.example.hpgarbageservice.model.contract.RequestInfo;
 import com.example.hpgarbageservice.repository.GarbageBillRepository;
 
 @Service

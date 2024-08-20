@@ -15,6 +15,8 @@ CREATE TABLE hpudd_grbg_bill (
     bank_discount_amount NUMERIC(10, 2),
     payment_id VARCHAR(255),
     payment_status VARCHAR(50),
+    bill_for VARCHAR(50),
+    is_active BOOLEAN,
     created_by VARCHAR(255),
     created_date int8,
     last_modified_by VARCHAR(255),
@@ -25,3 +27,5 @@ ALTER TABLE hpudd_grbg_bill ADD CONSTRAINT pk_id_hpudd_grbg_bill PRIMARY KEY (id
 ALTER TABLE hpudd_grbg_bill ADD CONSTRAINT fk_garbage_id_hpudd_grbg_bill FOREIGN KEY (garbage_id) REFERENCES hpudd_grbg_account(garbage_id);
 
 CREATE sequence seq_id_hpudd_grbg_bill start WITH 1 increment BY 1 no minvalue no maxvalue cache 1;
+
+
