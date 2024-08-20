@@ -1094,9 +1094,10 @@ public class TradeLicenseService {
 
 //		MultipartFile multipartFile = convertResourceToMultipartFile(resource, "filename");
 
-		DmsRequest dmsRequest = DmsRequest.builder().userId("123").objectId("1222").description("TL certificate")
-				.id("").type("PDF").objectName("TL").comments("Signed Certificate").status(STATUS_APPROVED).file(resource)
-				.build();
+		DmsRequest dmsRequest = DmsRequest.builder().userId(requestInfo.getUserInfo().getId().toString())
+				.objectId(tradeLicense.getId()).description(TLConstants.ALFRESCO_COMMON_CERTIFICATE_DESCRIPTION).id(TLConstants.ALFRESCO_COMMON_CERTIFICATE_ID).type(TLConstants.ALFRESCO_COMMON_CERTIFICATE_TYPE).objectName(businessService_NewTL)
+				.comments(TLConstants.ALFRESCO_TL_CERTIFICATE_COMMENT).status(STATUS_APPROVED).file(resource).servicetype(tradeLicense.getBusinessService())
+				.documentType(TLConstants.ALFRESCO_DOCUMENT_TYPE).documentId(TLConstants.ALFRESCO_COMMON_DOCUMENT_ID).build();
 
 		return dmsRequest;
 	}

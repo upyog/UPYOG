@@ -25,5 +25,8 @@ public class DmsRequest {
 	private String objectName;
 	private String comments;
 	private String status;
+	private String servicetype;
+	private String documentType;
+	private Long documentId;
 	
 }
