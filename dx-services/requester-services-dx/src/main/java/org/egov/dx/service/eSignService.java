@@ -96,7 +96,7 @@ public class eSignService {
 
         // Obtain the gateway parameter
         eSignServiceReturn serviceReturn = eSignObj.getGatewayParameter(
-                inputList, "Manvi", "", configurations.getRedirectUrl(),configurations.getRedirectUrl(), TEMP_FOLDER, eSign.eSignAPIVersion.V2, eSign.AuthMode.OTP);
+                inputList, "Manvi", "", configurations.getRedirectUrl(),configurations.getRedirectUrl(), configurations.getTempFolder(), eSign.eSignAPIVersion.V2, eSign.AuthMode.OTP);
         
 //        return serviceReturn.getErrorMessage() + "-" + serviceReturn.getErrorCode() + "-" + serviceReturn;
         String gatewayParam = serviceReturn.getGatewayParameter();
