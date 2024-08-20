@@ -93,11 +93,15 @@ public class eSignService {
         inputList.add(signInput);
         
         eSign eSignObj = new eSign(configurations.getLicenceFile(), configurations.getPfxPath(),configurations.getPfxPassword(), configurations.getPfxAllias());
+        System.out.println("Object passed");
 
         // Obtain the gateway parameter
         eSignServiceReturn serviceReturn = eSignObj.getGatewayParameter(
                 inputList, "Manvi", "", configurations.getRedirectUrl(),configurations.getRedirectUrl(), configurations.getTempFolder(), eSign.eSignAPIVersion.V2, eSign.AuthMode.OTP);
         
+        System.out.println("Error is" + serviceReturn.getErrorCode());
+        System.out.println("Error is" + serviceReturn.getErrorMessage());
+
 //        return serviceReturn.getErrorMessage() + "-" + serviceReturn.getErrorCode() + "-" + serviceReturn;
         String gatewayParam = serviceReturn.getGatewayParameter();
         String gatewayURL = "https://authenticate.sandbox.emudhra.com/AadhaareSign.jsp"; // Adjust if needed
