@@ -66,7 +66,7 @@ const EWASTEAcknowledgement = ({ data, onSuccess }) => {
     let tenantId = EW.tenantId || tenantId;
    
     const data = await getEwAcknowledgementData({ ...EW }, tenantInfo, t);
-    Digit.Utils.pdf.generate(data);
+    Digit.Utils.pdf.generateTable(data);
   };
 
   return mutation.isLoading || mutation.isIdle ? (

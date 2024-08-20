@@ -136,7 +136,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
               isRequired: false,
               pattern: "^[1-9][0-9]*$",
               type: "text",
-              title: t("EWASTE_NUMBER_ERROR_MESSAGE"),
+              
             })}
           />
 

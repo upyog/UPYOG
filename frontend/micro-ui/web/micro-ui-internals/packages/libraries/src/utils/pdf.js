@@ -1144,7 +1144,7 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
 function tableContent(t, details) {
 
   let tableBody = [
-    [ t("PRODUCT_NAME"), t("PRODUCT_QUANTITY"), t("UNIT_PRICE"), t("TOTAL_PRODUCT_PRICE") ]
+    [t("S_NO"), t("PRODUCT_NAME"), t("PRODUCT_QUANTITY"), t("UNIT_PRICE"), t("TOTAL_PRODUCT_PRICE") ]
   ]
 
   const detailsHeaders = []; 
@@ -1246,8 +1246,12 @@ function tableContent(t, details) {
     if(detail.tableData){
       if(detail?.tableData?.rows){
         tableBody.push(
-          ...detail.tableData.rows.map((d) => {
+          ...detail.tableData.rows.map((d,index) => {
           return [
+            {
+              text: index+1, 
+              fontSize: 10,
+            },
             {
               text: d.productName, 
               fontSize: 10,
@@ -1274,7 +1278,7 @@ function tableContent(t, details) {
         margin:[10,0,10,0],
         table: {
           headerRows: 1,
-          widths: ['24%', '24%', '24%', '24%'],
+          widths: ['12%', '22%', '22%', '22%','22%'],
           body: tableBody,
         }
       }
