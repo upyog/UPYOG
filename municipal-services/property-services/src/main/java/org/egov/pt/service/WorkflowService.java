@@ -121,9 +121,14 @@ public class WorkflowService {
 			request.getProperty().setPropertyId(pId);
 		}
 		
-		if(request.getProperty().getCreationReason().equals(CreationReason.STATUS) && request.getProperty().getWorkflow().getAction().equalsIgnoreCase("APPROVE"))
+		if(request.getProperty().getCreationReason().equals(CreationReason.STATUS) && request.getProperty().getWorkflow().getAction().equalsIgnoreCase("APPROVE") && property.isIsinactive())
 		{	
 			request.getProperty().setStatus(Status.INACTIVE);
+		}
+		
+		else if(request.getProperty().getCreationReason().equals(CreationReason.STATUS) && request.getProperty().getWorkflow().getAction().equalsIgnoreCase("APPROVE") && property.isIsactive())
+		{	
+			request.getProperty().setStatus(Status.ACTIVE);
 		}
 		else
 		request.getProperty().setStatus(Status.fromValue(state.getApplicationStatus()));

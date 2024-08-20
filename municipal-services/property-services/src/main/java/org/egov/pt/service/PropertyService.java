@@ -156,12 +156,16 @@ public class PropertyService {
 		
 		boolean isRequestForStatusChange=CreationReason.STATUS.equals(request.getProperty().getCreationReason());
 
-		if (isRequestForOwnerMutation)
-			processOwnerMutation(request, propertyFromSearch);
-		else if(isNumberDifferent)
+		if(isNumberDifferent)
+		{
 			processMobileNumberUpdate(request, propertyFromSearch);
-			
+		}
+		else if (isRequestForOwnerMutation)
+		{	processOwnerMutation(request, propertyFromSearch);
+		
+		}
 		else
+	
 		{
 			if(isRequestForStatusChange)
 			{
@@ -299,7 +303,11 @@ if(!request.getProperty().getCreationReason().equals(CreationReason.MUTATION))
 				if(request.getProperty().isIsinactive() && propertyFromSearch.getStatus().equals(Status.ACTIVE))
 					propertyFromSearch.setStatus(Status.INACTIVE);
 				else if(request.getProperty().isIsactive() && propertyFromSearch.getStatus().equals(Status.INACTIVE))
+					
+				{
 					propertyFromSearch.setStatus(Status.ACTIVE);
+					propertyFromSearch.setCreationReason(CreationReason.UPDATE);
+				}
 				producer.push(config.getUpdatePropertyTopic(), OldPropertyRequest);
 				util.saveOldUuidToRequest(request, propertyFromSearch.getId());
 				producer.push(config.getSavePropertyTopic(), request);
