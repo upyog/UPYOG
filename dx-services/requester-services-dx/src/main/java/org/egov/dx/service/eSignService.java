@@ -94,6 +94,8 @@ public class eSignService {
         
         eSign eSignObj = new eSign(configurations.getLicenceFile(), configurations.getPfxPath(),configurations.getPfxPassword(), configurations.getPfxAllias());
         System.out.println("Object passed");
+        System.out.println("Path is" + configurations.getLicenceFile());
+
 
         // Obtain the gateway parameter
         eSignServiceReturn serviceReturn = eSignObj.getGatewayParameter(
