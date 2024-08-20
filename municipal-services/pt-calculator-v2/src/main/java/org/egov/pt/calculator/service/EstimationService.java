@@ -937,9 +937,9 @@ public class EstimationService {
 
 
 		log.info("masterMap::::"+masterMap);
-		Map<String, Category> taxHeadCategoryMap=objectmapper.convertValue(masterMap.get(TAXHEADMASTER_MASTER_KEY), Map.class);
-		//Map<String, Category> taxHeadCategoryMap = ((List<TaxHeadMaster>)masterMap.get(TAXHEADMASTER_MASTER_KEY)).stream()
-				//.collect(Collectors.toMap(TaxHeadMaster::getCode, TaxHeadMaster::getCategory));
+		//Map<String, Category> taxHeadCategoryMap=objectmapper.convertValue(masterMap.get(TAXHEADMASTER_MASTER_KEY), Map.class);
+		Map<String, Category> taxHeadCategoryMap = ((List<TaxHeadMaster>)masterMap.get(TAXHEADMASTER_MASTER_KEY)).stream()
+				.collect(Collectors.toMap(TaxHeadMaster::getCode, TaxHeadMaster::getCategory));
 
 
 
