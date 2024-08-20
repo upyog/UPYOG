@@ -45,8 +45,6 @@ public class eSignService {
 	Configurations configurations;
 	
 
-    private static final String TEMP_FOLDER = "C:\\Users\\Administrator\\Documents";   // Update the path
-
     private final RestTemplate restTemplate = new RestTemplate();
     
     private byte[] readInputStreamToByteArray(InputStream inputStream) throws IOException {
