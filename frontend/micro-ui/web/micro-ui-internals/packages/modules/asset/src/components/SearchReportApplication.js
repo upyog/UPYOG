@@ -16,6 +16,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import QRCode from 'qrcode';
+import { checkArrayLength } from "../../../ptr/src/utils";
 
 
 const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, data, count, setShowToast }) => {
@@ -105,10 +106,10 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
             disableSortBy: true,
           },
           {
-            Header: t("AST_PINCODE"),
+            Header: t("AST_TYPE"),
             Cell: ({ row }) => {
-              
-                return GetCell(`${row?.original?.addressDetails?.["pincode"]}`)
+              console.log("roeoeoeoeoeinpincodeeee",row);
+                return GetCell(`${row?.original?.["assetSubCategory"]}`)
               },
             disableSortBy: true,
           },
@@ -154,7 +155,7 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
           row.assetClassification,
           row.assetParentCategory,
           row.assetName,
-          row.addressDetails?.pincode,
+          row.assetSubCategory,
           row.department
       ]);
       
