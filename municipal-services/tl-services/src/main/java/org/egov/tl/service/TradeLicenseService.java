@@ -645,8 +645,13 @@ public class TradeLicenseService {
             enrichmentService.postStatusEnrichment(tradeLicenseRequest,endStates,mdmsData);
             
             userService.createUser(tradeLicenseRequest, false);
+
+            // create and upload pdf
+            createAndUploadPDF(licenceResponse, tradeLicenseRequest);
+            
             // generate demand and bill
             generateDemandAndBill(tradeLicenseRequest);
+            
 //            calculationService.addCalculation(tradeLicenseRequest);
             repository.update(tradeLicenseRequest, idToIsStateUpdatableMap);
             licenceResponse=  tradeLicenseRequest.getLicenses();
@@ -654,9 +659,6 @@ public class TradeLicenseService {
         
 //        // send notifications
 //        sendTLNotifications(licenceResponse);
-//        
-        // create and upload pdf
-        createAndUploadPDF(licenceResponse, tradeLicenseRequest.getRequestInfo());
         
         return licenceResponse;
         
@@ -811,14 +813,12 @@ public class TradeLicenseService {
 	}
 
 
-	private void createAndUploadPDF(List<TradeLicense> licenceResponse, RequestInfo requestInfo) {
+	private void createAndUploadPDF(List<TradeLicense> licenceResponse, TradeLicenseRequest tradeLicenseRequest) {
 		
 		licenceResponse.stream().forEach(license -> {
 			
 			Thread pdfGenerationThread = new Thread(() -> {
 				
-				
-
 					// for NEW TL
 	    	if((StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
 	    			&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(), TLConstants.APPLICATION_TYPE_NEW)
@@ -827,23 +827,22 @@ public class TradeLicenseService {
 	    		(StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
 		    			&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(), TLConstants.APPLICATION_TYPE_RENEWAL)
 		    			&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE))) {
-	    		
-	    		// validate trade license
-				validateTradeLicenseCertificateGeneration(license);
-				
-				// create pdf
-				Resource resource = createNoSavePDF(license, requestInfo);
-
-				//upload pdf
-				DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, license, requestInfo);
-				try {
-					DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest, requestInfo);
-				} catch (IOException e) {
-					throw new CustomException("UPLOAD_ATTACHMENT_FAILED", "Upload Attachment failed." + e.getMessage());
-				}
-	    	}
+		    		
+		    		// validate trade license
+					validateTradeLicenseCertificateGeneration(license);
+					
+					// create pdf
+					Resource resource = createNoSavePDF(license, tradeLicenseRequest.getRequestInfo());
+	
+					//upload pdf
+					DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, license, tradeLicenseRequest.getRequestInfo());
+					try {
+						DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest, tradeLicenseRequest.getRequestInfo());
+					} catch (IOException e) {
+						throw new CustomException("UPLOAD_ATTACHMENT_FAILED", "Upload Attachment failed." + e.getMessage());
+					}
+		    	}
 	    	
-				
 			});
 
 			pdfGenerationThread.start();
