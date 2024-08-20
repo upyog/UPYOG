@@ -47,7 +47,7 @@ public class CommunityHallBookingQueryBuilder {
 	/**
 	 * To give the Search query based on the requirements.
 	 * 
-	 * @param criteria         ASSET search criteria
+	 * @param criteria         Community Hall booking search criteria
 	 * @param preparedStmtList values to be replaced on the query
 	 * @return Final Search Query
 	 */
@@ -81,6 +81,13 @@ public class CommunityHallBookingQueryBuilder {
 			addClauseIfRequired(preparedStmtList, builder);
 			builder.append(" ecbd.booking_no IN (").append(createQueryParams(applicationNos)).append(")");
 			addToPreparedStatement(preparedStmtList, applicationNos);
+		}
+		
+		String status = criteria.getStatus();
+		if (status != null) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" ecbd.booking_status =  ? ");
+			preparedStmtList.add(status);
 		}
 		
 		String mobileNo = criteria.getMobileNumber();
