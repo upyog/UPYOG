@@ -216,7 +216,7 @@ public class TLQueryBuilder {
             
             if(criteria.getOwnerName() != null) {
                 addClauseIfRequired(preparedStmtList, builder);
-                builder.append("  LOWER(tl.owners.additionalDetails ->>'ownerName') LIKE ?");
+                builder.append("  LOWER(tl.tradeLicenseDetail.owners ->>'name') LIKE ?");
                 preparedStmtList.add('%' +criteria.getOwnerName().toLowerCase()+ '%');
             }
 
