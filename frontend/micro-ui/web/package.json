@@ -11,9 +11,8 @@
     "micro-ui-internals/packages/modules/ew",
     "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/common",
+    "micro-ui-internals/packages/modules/ptr",
     "micro-ui-internals/packages/modules/dss"
-
-
 
   ],
   "engines": {

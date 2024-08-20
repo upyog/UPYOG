@@ -154,11 +154,11 @@ export const ASSETSearch = {
             title: "AST_ALLOCATION_DETAILS",
             asSectionHeader: true,
             values: [
-              { title: "AST_EMP_CODE", value: response?.assetAssignment?.employeeCode },
+              // { title: "AST_EMP_CODE", value: response?.assetAssignment?.employeeCode },
               { title: "AST_ASSIGNED_USER", value: response?.assetAssignment?.assignedUserName },
               { title: "AST_DEPARTMENT", value: response?.assetAssignment?.department },
               { title: "AST_ASSIGNED_DATE", value: formatDate(response?.assetAssignment?.assignedDate) },
-              { title: "AST_DESIGNATION", value: response?.assetAssignment?.designation },
+              // { title: "AST_DESIGNATION", value: response?.assetAssignment?.designation },
             ],
           }
         ]
