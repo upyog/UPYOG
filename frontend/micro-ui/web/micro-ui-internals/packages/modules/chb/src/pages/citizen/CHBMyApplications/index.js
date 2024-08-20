@@ -39,7 +39,7 @@ export const CHBMyApplications = () => {
     const searchFilters = {
       ...initialFilters,
       bookingNo: trimmedSearchTerm || undefined,
-      bookingStatus: status?.code || undefined,
+      status: status?.code || undefined,
     };
     
     // Update the filters state to trigger refetch
