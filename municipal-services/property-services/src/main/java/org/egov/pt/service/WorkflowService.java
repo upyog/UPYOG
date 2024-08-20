@@ -1,5 +1,6 @@
 package org.egov.pt.service;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -21,8 +22,9 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 @Service
 public class WorkflowService {
@@ -111,7 +113,18 @@ public class WorkflowService {
 	public State updateWorkflow(PropertyRequest request, CreationReason creationReasonForWorkflow) {
 
 		Property property = request.getProperty();
-		
+			JsonNode jsonNode = request.getProperty().getAdditionalDetails();
+        
+        // Initialize the variable to hold the propertytobestatus value
+        String propertyToBeStatus = null;
+        
+        // Check if jsonNode is not null and retrieve the value
+        if (jsonNode != null && jsonNode.has("propertytobestatus")) {
+            JsonNode propertyToBeStatusNode = jsonNode.get("propertytobestatus");
+            if (propertyToBeStatusNode != null && !propertyToBeStatusNode.isNull()) {
+                propertyToBeStatus = propertyToBeStatusNode.asText();
+            }
+        }
 		ProcessInstanceRequest workflowReq = utils.getWfForPropertyRegistry(request, creationReasonForWorkflow);
 		State state = callWorkFlow(workflowReq);
 		
@@ -121,12 +134,12 @@ public class WorkflowService {
 			request.getProperty().setPropertyId(pId);
 		}
 		
-		if(request.getProperty().getCreationReason().equals(CreationReason.STATUS) && request.getProperty().getWorkflow().getAction().equalsIgnoreCase("APPROVE") && property.isIsinactive())
+		if(request.getProperty().getCreationReason().equals(CreationReason.STATUS) && request.getProperty().getWorkflow().getAction().equalsIgnoreCase("APPROVE") && propertyToBeStatus.equalsIgnoreCase("INACTIVE"))
 		{	
 			request.getProperty().setStatus(Status.INACTIVE);
 		}
 		
-		else if(request.getProperty().getCreationReason().equals(CreationReason.STATUS) && request.getProperty().getWorkflow().getAction().equalsIgnoreCase("APPROVE") && property.isIsactive())
+		else if(request.getProperty().getCreationReason().equals(CreationReason.STATUS) && request.getProperty().getWorkflow().getAction().equalsIgnoreCase("APPROVE") && propertyToBeStatus.equalsIgnoreCase("ACTIVE"))
 		{	
 			request.getProperty().setStatus(Status.ACTIVE);
 		}
