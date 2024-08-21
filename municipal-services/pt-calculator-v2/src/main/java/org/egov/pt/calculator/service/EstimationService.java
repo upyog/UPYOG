@@ -431,8 +431,8 @@ public class EstimationService {
 
 			unbuiltAmount=getApplicableTaxForOwnerUsageCategory(unbuiltarea, propertyBasedExemptionMasterMap, detail,null);
 			
-			vacantlandamount.add(unbuiltarea);
-			if(detail.getPropertyType().equalsIgnoreCase("BUILTUP.INDEPENDENTPROPERTY"))
+			vacantlandamount.add(unbuiltAmount);
+			if(detail.getPropertySubType().equalsIgnoreCase("INDEPENDENTPROPERTY"))
 			{
 				if(detail.getVacantusagecategory().equalsIgnoreCase("COMMERCIAL"))
 				{
@@ -442,6 +442,8 @@ public class EstimationService {
 			}
 			else
 				taxAmt = taxAmt.add(unbuiltAmount);
+			
+			//To Be Reviewd The Function
 			vacantlandlist.add(vacantland);
 
 			/*
