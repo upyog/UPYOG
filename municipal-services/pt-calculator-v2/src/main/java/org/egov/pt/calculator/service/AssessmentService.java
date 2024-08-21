@@ -212,12 +212,24 @@ public class AssessmentService {
 					: (Boolean) configData.get(CalculatorConstants.IS_RENTED));
 
 			int count = repository.getActivePropertyCount(assessmentRequest);
-			Long limit = configs.getMaxSearchLimit();
-			Long offset = configs.getDefaultOffset();
-			while (limit < count) {
+			
+		
+			if (assessmentRequest.getLimit() != null && assessmentRequest.getLimit() > configs.getMaxSearchLimit())
+				assessmentRequest.setLimit(configs.getMaxSearchLimit());
+			
+			if (assessmentRequest.getLimit() == null)
+				assessmentRequest.setLimit(configs.getDefaultLimit());
+			
+			if (assessmentRequest.getOffset() == null)
+				assessmentRequest.setOffset(configs.getDefaultOffset());
+			
+			
+			Long limit = assessmentRequest.getLimit();
+			Long offset = assessmentRequest.getOffset();
+			while (offset < count) {
 
 				assessmentRequest.setOffset(offset);
-				assessmentRequest.setLimit(configs.getDefaultLimit());
+				assessmentRequest.setLimit(limit);
 
 				List<Property> properties = repository.fetchAllActivePropertieswithLimit(assessmentRequest);
 				for (Property property : properties) {
@@ -251,8 +263,8 @@ public class AssessmentService {
 					}
 
 				}
-				offset = limit;
-				limit = limit + configs.getMaxSearchLimit();
+				
+				offset = limit +offset;
 			}
 		}
 		return assessedProperties;

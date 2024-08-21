@@ -162,12 +162,7 @@ public class AssessmentRepository {
 		StringBuilder query = new StringBuilder(PROPERTY_ACTIVE_SEARCH_QUERY);
 		final Map<String, Object> params = new HashMap<>();
 
-		if (request.getLimit() != null && request.getLimit() > config.getMaxSearchLimit())
-			request.setLimit(config.getMaxSearchLimit());
-		if (request.getLimit() == null)
-			request.setLimit(config.getDefaultLimit());
-		if (request.getOffset() == null)
-			request.setOffset(config.getDefaultOffset());
+
 
 		if (request.getLocality() != null) {
 			query.append(" and addr.locality in (:locality) ");
@@ -196,9 +191,9 @@ public class AssessmentRepository {
 
 		query.append(" and prop.tenantid=:tenantid");
 		params.put("tenantid", request.getTenantId());
-		query.append(" offset :offset_ AND limit :limit");
+		query.append(" offset :offset_ limit :limit");
 		params.put("offset_", request.getOffset());
-		params.put("limit", request.getLimit() + request.getOffset());
+		params.put("limit", request.getLimit());
 		return namedParameterJdbcTemplate.query(query.toString(), params, propertyRowMapper);
 	}
 
