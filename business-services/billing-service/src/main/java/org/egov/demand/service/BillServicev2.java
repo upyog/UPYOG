@@ -384,7 +384,16 @@ public class BillServicev2 {
 		{
 			if(billv2.getStatus().equals(BillStatus.ACTIVE))
 			{
-				throw new CustomException("BILL_FOUND","Please pay your bills");
+				Long date=billv2.getBillDate();
+				Date expiry = new Date((date));
+				SimpleDateFormat date_format = new SimpleDateFormat("yyyy-mm-dd");
+				String date_string = date_format.format(expiry);
+				BigDecimal ammount=BigDecimal.ZERO;
+				for(BillDetailV2 billdeatilv2:billv2.getBillDetails())
+				{
+					ammount=ammount.add(billdeatilv2.getAmount());
+				}
+				throw new CustomException("BILL_FOUND","Please pay your bills for year "+date_string.split("-")[0]+" and ammount "+ammount+"");
 			}
 			else if(billv2.getStatus().equals(BillStatus.PAID))
 			{
@@ -400,7 +409,7 @@ public class BillServicev2 {
 					}
 				}
 				if(!finalbill)
-					throw new CustomException("BILL_FOUND","Please pay your bills");
+					throw new CustomException("BILL_FOUND","Please pay your Quaterly or Halfyearly bills for this year");
 			}
 		}
 		

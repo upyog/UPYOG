@@ -115,7 +115,7 @@ public class BillControllerv2 {
 			@ModelAttribute @Valid final BillSearchCriteria billCriteria) {
 
 		RequestInfo requestInfo = requestInfoWrapper.getRequestInfo();
-		billValidator.validateBillSearchCriteria(billCriteria, requestInfo);
+		billValidator.validateNoduesBillSearchCriteria(billCriteria, requestInfo);
 		return new ResponseEntity<>(billService.noDues(billCriteria,requestInfo), HttpStatus.OK);
 	}
 }
