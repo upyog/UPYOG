@@ -201,6 +201,9 @@ digiLocker:{
   issueDoc:"/requester-services-dx/user/issuedfiles",
   uri:"/requester-services-dx/user/file"
 },
+eSign:{
+pdfUrl:"/requester-services-dx/eSign/process"
+},
   engagement: {
     document: {
       search: "/egov-document-uploader/egov-du/document/_search",
