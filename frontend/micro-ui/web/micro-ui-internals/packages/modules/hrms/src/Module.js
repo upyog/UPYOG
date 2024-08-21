@@ -23,7 +23,7 @@ import Inbox from "./pages/Inbox";
 import Response from "./pages/Response";
 
 export const HRMSModule = ({ stateCode, userType, tenants }) => {
-  const moduleCode = "HRMS";
+  const moduleCode = "HR";
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
 

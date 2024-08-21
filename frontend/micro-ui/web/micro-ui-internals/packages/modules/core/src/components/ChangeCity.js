@@ -1,5 +1,6 @@
 import { Dropdown } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { CustomButton, Menu } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
 
 const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
@@ -20,7 +21,7 @@ const ChangeCity = (prop) => {
 
   const handleChangeCity = (city) => {
     const loggedInData = Digit.SessionStorage.get("citizen.userRequestObject");
-    const filteredRoles = Digit.SessionStorage.get("citizen.userRequestObject")?.info?.roles?.filter((role) => role.tenantId === city.value);
+    const filteredRoles = Digit.SessionStorage.get("citizen.userRequestObject")?.info?.roles?.filter(role => role.tenantId === city.value);
     if (filteredRoles?.length > 0) {
       loggedInData.info.roles = filteredRoles;
       loggedInData.info.tenantId = city?.value;
@@ -28,8 +29,8 @@ const ChangeCity = (prop) => {
     Digit.SessionStorage.set("Employee.tenantId", city?.value);
     Digit.UserService.setUser(loggedInData);
     setDropDownData(city);
-    if (window.location.href.includes(`/${window?.contextPath}/employee/`)) {
-      const redirectPath = location.state?.from || `/${window?.contextPath}/employee`;
+    if (window.location.href.includes("/digit-ui/employee/")) {
+      const redirectPath = location.state?.from || "/digit-ui/employee";
       history.replace(redirectPath);
     }
     window.location.reload();
@@ -37,35 +38,29 @@ const ChangeCity = (prop) => {
 
   useEffect(() => {
     const userloggedValues = Digit.SessionStorage.get("citizen.userRequestObject");
-    let teantsArray = [],
-      filteredArray = [];
-    userloggedValues?.info?.roles?.forEach((role) => teantsArray.push(role.tenantId));
+    let teantsArray = [], filteredArray = [];
+    userloggedValues?.info?.roles?.forEach(role => teantsArray.push(role.tenantId));
     let unique = teantsArray.filter((item, i, ar) => ar.indexOf(item) === i);
-    unique?.forEach((uniCode) => {
+    unique?.forEach(uniCode => {
       filteredArray.push({
-        label: `TENANT_TENANTS_${stringReplaceAll(uniCode, ".", "_")?.toUpperCase()}`,
-        value: uniCode,
-      });
+        label: prop?.t(`TENANT_TENANTS_${stringReplaceAll(uniCode, ".", "_")?.toUpperCase()}`),
+        value: uniCode
+      })
     });
-    selectedCities = filteredArray?.filter((select) => select.value == Digit.SessionStorage.get("Employee.tenantId"));
+    selectedCities = filteredArray?.filter(select => select.value == Digit.SessionStorage.get("Employee.tenantId"));
     setSelectCityData(filteredArray);
   }, [dropDownData]);
 
   // if (isDropdown) {
   return (
-    <div style={prop?.mobileView ? { color: "#767676" } : {}}>
+    <div style={prop?.mobileView ? {color: "#767676"} : {}}>
       <Dropdown
-        t={prop?.t}
         option={selectCityData}
         selected={selectCityData.find((cityValue) => cityValue.value === dropDownData?.value)}
         optionKey={"label"}
         select={handleChangeCity}
         freeze={true}
-        customSelector={
-          <label className="cp">
-            {prop?.t(`TENANT_TENANTS_${stringReplaceAll(Digit.SessionStorage.get("Employee.tenantId"), ".", "_")?.toUpperCase()}`)}
-          </label>
-        }
+        customSelector={<label className="cp">{prop?.t(`TENANT_TENANTS_${stringReplaceAll(Digit.SessionStorage.get("Employee.tenantId"), ".", "_")?.toUpperCase()}`)}</label>}
       />
     </div>
   );

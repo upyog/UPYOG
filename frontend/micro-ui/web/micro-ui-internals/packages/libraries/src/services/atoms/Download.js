@@ -1,5 +1,6 @@
 import ReactDOM from "react-dom";
 import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import XLSX from "xlsx";
 import domtoimage from "dom-to-image";
 
@@ -59,9 +60,6 @@ const Download = {
   },
 
   PDF: (node, fileName, share, resolve = null) => {
-
-
-
     const saveAs = (uri, filename) => {
       if(window.mSewaApp && window.mSewaApp.isMsewaApp()){
         window.mSewaApp.downloadBase64File(uri, filename);

@@ -3,8 +3,7 @@ import Card from "../atoms/Card"
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-const InboxLinks = ({logoIcon, headerText, links, customClass}) => {
- 
+const InboxLinks = ({logoIcon, headerText, links}) => {
     const { t } = useTranslation();
     
     const GetLogo = () => <div className="header">
@@ -14,7 +13,7 @@ const InboxLinks = ({logoIcon, headerText, links, customClass}) => {
         <span className="text">{t(headerText)}</span>
     </div>
     
-    return <Card className={`employeeCard filter inboxLinks ${customClass}`}>
+    return <Card className="employeeCard filter inboxLinks">
     <div className="complaint-links-container">
       {GetLogo()}
       <div className="body">

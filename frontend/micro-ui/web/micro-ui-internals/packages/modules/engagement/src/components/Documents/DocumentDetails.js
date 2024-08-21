@@ -45,7 +45,7 @@ const DocumentDetails = ({ location, match, history, }) => {
                 ...details
             }
             history.push({
-                pathname: `/${window?.contextPath}/employee/engagement/documents/inbox/update`,
+                pathname: `/digit-ui/employee/engagement/documents/inbox/update`,
                 state: { DocumentEntity }
             })
         }
@@ -61,7 +61,7 @@ const DocumentDetails = ({ location, match, history, }) => {
             ...details
         }
         history.push({
-            pathname: `/${window?.contextPath}/employee/engagement/documents/delete-response`,
+            pathname: `/digit-ui/employee/engagement/documents/delete-response`,
             state: { DocumentEntity }
         })
     }

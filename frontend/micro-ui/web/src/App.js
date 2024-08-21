@@ -1,68 +1,106 @@
-import { initLibraries } from "@egovernments/digit-ui-libraries";
+import React from "react";
+
 import {
-  paymentConfigs,
-  PaymentLinks,
+  initPGRComponents,
+  PGRReducers,
+} from "@egovernments/digit-ui-module-pgr";
+import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
+import {
+  PTModule,
+  PTLinks,
+  PTComponents,
+} from "@upyog/digit-ui-module-pt";
+import { MCollectModule, MCollectLinks, initMCollectComponents } from "@egovernments/digit-ui-module-mcollect";
+import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
+import {
   PaymentModule,
+  PaymentLinks,
+  paymentConfigs,
 } from "@egovernments/digit-ui-module-common";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
-import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
+import { initLibraries } from "@egovernments/digit-ui-libraries";
+import {
+  HRMSModule,
+  initHRMSComponents,
+} from "@egovernments/digit-ui-module-hrms";
+import {
+  TLModule,
+  TLLinks,
+  initTLComponents,
+} from "@upyog/digit-ui-module-tl";
+import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
+import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
+import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
 import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
-import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
-import { initUtilitiesComponents } from "@egovernments/digit-ui-module-utilities";
-import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
-import { BMCLinks, BMCModule, initBMCComponents } from "@tattva/digit-ui-module-bmc";
-import { DEONARModule, initDEONARComponents } from "@tattva/digit-ui-module-deonar";
-import React from "react";
-import { UICustomizations } from "./Customisations/UICustomizations";
+import { initWSComponents } from "@upyog/digit-ui-module-ws";
+import { initCustomisationComponents } from "./Customisations";
+import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
+import { initBillsComponents } from "@egovernments/digit-ui-module-bills";
+// import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
 
-window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
+initLibraries();
 
 const enabledModules = [
+  "PGR",
+  "FSM",
+  "Payment",
+  "PT",
+  "QuickPayLinks",
   "DSS",
   "NDSS",
-  "Utilities",
+  "MCollect",
   "HRMS",
+  "TL",
+  "Receipts",
+  "OBPS",
+  "NOC",
   "Engagement",
-  "Workbench",
-  "PGR",
-  "BMC",
-  "DEONAR",
-
+  "CommonPT",
+  "WS",
+  "Reports",
+  "Bills",
+  "SW",
+  "BillAmendment",
+  "FireNoc",
+  "Birth",
+  "Death",
 ];
+window.Digit.ComponentRegistryService.setupRegistry({
+  ...paymentConfigs,
+  PTModule,
+  PTLinks,
+  PaymentModule,
+  PaymentLinks,
+  ...PTComponents,
+  MCollectLinks,
+  MCollectModule,
+  HRMSModule,
+  TLModule,
+  TLLinks,
+  ReceiptsModule,
+});
 
+initPGRComponents();
+initFSMComponents();
+initDSSComponents();
+initMCollectComponents();
+initHRMSComponents();
+initTLComponents();
+initReceiptsComponents();
+initOBPSComponents();
+initNOCComponents();
+initEngagementComponents();
+initWSComponents();
+initCommonPTComponents();
+initBillsComponents();
+// initReportsComponents();
+initCustomisationComponents();
 
-
-const initDigitUI = () => {
-  window.Digit.ComponentRegistryService.setupRegistry({
-    PaymentModule,
-    ...paymentConfigs,
-    PaymentLinks,
-    BMCLinks,
-    BMCModule,
-    DEONARModule,
-  });
-
-
-  initDSSComponents();
-  initHRMSComponents();
-  initEngagementComponents();
-  initUtilitiesComponents();
-  initWorkbenchComponents();
-  initBMCComponents();
-  initDEONARComponents()
-
-  window.Digit.Customizations = {
-    PGR: {},
-    commonUiConfig: UICustomizations,
-  };
-};
-
-initLibraries().then(() => {
-  initDigitUI();
+const moduleReducers = (initData) => ({
+  pgr: PGRReducers(initData),
 });
 
 function App() {
-  window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
   const stateCode =
     window.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") ||
     process.env.REACT_APP_STATE_LEVEL_TENANT_ID;
@@ -73,7 +111,7 @@ function App() {
     <DigitUI
       stateCode={stateCode}
       enabledModules={enabledModules}
-      // defaultLanding="employee"
+      moduleReducers={moduleReducers}
     />
   );
 }

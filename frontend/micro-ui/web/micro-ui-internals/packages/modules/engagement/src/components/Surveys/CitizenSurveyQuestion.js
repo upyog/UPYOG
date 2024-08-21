@@ -2,7 +2,7 @@ import { Card, CardLabelError, CheckBox, RadioButtons, TextArea, TextInput } fro
 import React, { Fragment } from "react";
 import { Controller } from "react-hook-form";
 
-const CitizenSurveyQuestion = ({ t, question, control, register, values, formState,formDisabled }) => {
+const CitizenSurveyQuestion = ({t, question, control, register, values, formState,formDisabled, index }) => {
   const formErrors = formState?.errors;
   
   if (!question) return;
@@ -100,6 +100,8 @@ const CitizenSurveyQuestion = ({ t, question, control, register, values, formSta
                         }}
                         checked={typeof value === "string" ? !!([value]?.find(e => e === option)) : !!value?.find(e => e === option)}
                         label={option}
+                        checkboxWidth = {{width:"34px",height:"34px"}}
+                        style={{marginTop:"5px", overflowWrap:"break-word"}}
                       />
                     );
                   })}
@@ -195,7 +197,7 @@ const CitizenSurveyQuestion = ({ t, question, control, register, values, formSta
   return (
     <Card>
       <div className="surveyQuestion-wrapper">
-        <span className="question-title">{question.questionStatement} {question?.required? "*":""}</span>
+        <span className="question-title">{index+1}. {question.questionStatement} {question?.required? "*":""}</span>
         <span>{displayAnswerField(question.type)}</span>
       </div>
     </Card>

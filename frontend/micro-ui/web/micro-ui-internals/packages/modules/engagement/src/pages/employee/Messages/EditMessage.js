@@ -53,7 +53,7 @@ const EditMessage = () => {
         }
       ]
     }
-    history.push(`/${window?.contextPath}/employee/engagement/messages/response?update=true`, details)
+    history.push("/digit-ui/employee/engagement/messages/response?update=true", details)
   }
 
   const defaultValues = useMemo(() => {

@@ -128,13 +128,21 @@ const InboxComposer = ({
       t,
     };
 
+    const getSearchActionText = () => {
+      if (window.location.href.includes("/obps")) {
+        return t("ES_INBOX_COMMON_SEARCH")
+      } else {
+        return t("ES_COMMON_SEARCH")
+      }
+    }
+
     return (
       <div className="InboxComposerWrapper">
         {/* TODO fix design for card */}
         {/* <InboxLinks {...PropsForInboxLinks} /> */}
         <div className="searchBox">
           <SearchAction
-            text={t("ES_COMMON_SEARCH")}
+            text={getSearchActionText()}
             handleActionClick={() => setActiveMobileModal({ type: "set", payload: "SearchFormComponent" })}
           />
           <FilterAction
@@ -162,11 +170,11 @@ const InboxComposer = ({
 
   const isEnabledCommonModules =
     window.location.href.includes("/obps/") ||
-    window.location.href.includes("/noc/") ||
-    window.location.href.includes("/ws/water/bill-amendment/inbox") ||
-    window.location.href.includes("/ws/sewerage/bill-amendment/inbox");
+    window.location.href.includes("/noc/") ;
 
-  const isEnabledWSCommonModules = window.location.href.includes("/ws/water/inbox") || window.location.href.includes("/ws/sewerage/inbox");
+  const isEnabledWSCommonModules = window.location.href.includes("/ws/water/inbox") || window.location.href.includes("/ws/sewerage/inbox") ||
+  window.location.href.includes("/ws/water/bill-amendment/inbox") ||
+  window.location.href.includes("/ws/sewerage/bill-amendment/inbox");
 
   if (isEnabledCommonModules) {
     return (
@@ -182,7 +190,7 @@ const InboxComposer = ({
             </FilterForm>
           </div>
         </div>
-        <div style={{ flex: 1 }}>
+        <div style={propsForInboxTable?.tableStyle ? { flex: 1, ...propsForInboxTable?.tableStyle}:{flex: 1}}>
           <SearchForm onSubmit={onSearchFormSubmit} handleSubmit={handleSearchFormSubmit} id="search-form" className="rm-mb form-field-flex-one">
             <SearchFormFields
               registerRef={registerSearchFormField}
@@ -191,7 +199,7 @@ const InboxComposer = ({
               searchFieldComponents={
                 <div style={window.location.href.includes("/citizen/obps") ? {display : "flex"} : {}}>
                   <SubmitBar label={t("ES_COMMON_SEARCH")} submit form="search-form" className="submit-bar-search" />
-                  <p onClick={onResetSearchForm} className="clear-search" style={{ paddingTop: "9px", color: " #f47738" }}>
+                  <p onClick={onResetSearchForm} className="clear-search" style={{ paddingTop: "9px", color: " #a82227" }}>
                     {t(`ES_COMMON_CLEAR_SEARCH`)}
                   </p>
                 </div>

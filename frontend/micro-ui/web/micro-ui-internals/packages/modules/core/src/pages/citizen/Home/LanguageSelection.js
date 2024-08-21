@@ -30,7 +30,7 @@ const LanguageSelection = () => {
   );
 
   function onSubmit() {
-    history.push(`/${window?.contextPath}/citizen/select-location`);
+    history.push(`/digit-ui/citizen/select-location`);
   }
 
   return isLoading ? (

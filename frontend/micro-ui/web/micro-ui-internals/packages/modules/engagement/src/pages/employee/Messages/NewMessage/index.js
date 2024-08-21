@@ -38,7 +38,7 @@ const NewEvents = () => {
         }
       ]
     }
-    history.push(`/${window?.contextPath}/employee/engagement/messages/response`, details)
+    history.push("/digit-ui/employee/engagement/messages/response", details)
   }
 
   return (

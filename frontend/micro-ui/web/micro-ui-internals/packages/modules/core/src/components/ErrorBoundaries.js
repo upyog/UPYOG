@@ -2,7 +2,7 @@ import React from "react";
 import ErrorComponent from "./ErrorComponent";
 
 const Redircter = () => {
-  const path = Digit.UserService.getType() === "employee" ? `/${window?.contextPath}/employee/user/error` : `/${window?.contextPath}/citizen/error`;
+  const path = Digit.UserService.getType() === "employee" ? "/digit-ui/employee/user/error" : "/digit-ui/citizen/error";
   if (
     window.location.href.includes("employee/user/error") ||
     window.location.href.includes("citizen/error") ||

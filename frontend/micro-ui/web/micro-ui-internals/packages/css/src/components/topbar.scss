@@ -18,9 +18,8 @@
     }
 
     &.state {
-      height: 20px;
-      max-height: 20px;
-      width: auto;
+      min-height: 50px;
+      width: 80px;
     }
   }
 
@@ -39,7 +38,7 @@
     }
 
     .user-img-txt {
-      background: theme(colors.primary.main);
+      background: #a82227;
       padding: 10px 15px;
       border-radius: 50%;
       color: white;
@@ -131,10 +130,10 @@
   flex-direction: row;
   padding: 10px;
   column-gap: 10px;
-  color: theme(colors.text.secondary);
+  color: #505a5f;
 
   &:hover {
-    background: theme(colors.grey.mid);
+    background: #eeeeee;
   }
 }
 
@@ -146,8 +145,4 @@ video::-webkit-media-controls-panel {
   top: 55%;
   position: absolute;
   width: 100%;
-}
-
-.topbarOptionsClassName {
-  right: -3rem !important
 }

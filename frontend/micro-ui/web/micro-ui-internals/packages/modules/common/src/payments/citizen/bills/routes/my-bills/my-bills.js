@@ -84,7 +84,7 @@ export const BillList = ({ billsList, currentPath, businessService }) => {
           >
             {t("PT_TEXT_NOT_ABLE_TO_FIND_THE_PROPERTY")}
             <span className="link">
-              <Link to={`/${window?.contextPath}/citizen/pt/property/citizen-search`}>{t("PT_COMMON_CLICK_HERE")}</Link>
+              <Link to="/digit-ui/citizen/pt/property/citizen-search">{t("PT_COMMON_CLICK_HERE")}</Link>
             </span>
           </p>
         )}

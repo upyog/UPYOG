@@ -25,6 +25,7 @@ import {
   LogoutIcon,
   EditPencilIcon,
   LanguageIcon,
+  LoginIcon
 } from "./svgindex";
 import { BirthIcon, DeathIcon, FirenocIcon } from "..";
 
@@ -60,13 +61,19 @@ const IconsObject = {
   LogoutIcon: <LogoutIcon className="icon" />,
   Phone: <Phone className="icon" />,
   LanguageIcon: <LanguageIcon className="icon" />,
+  LoginIcon: <LoginIcon className="icon" />
 };
-const NavBar = ({ open, toggleSidebar, profileItem, menuItems, onClose, Footer, isEmployee, search, setSearch }) => {
+const NavBar = ({ open, toggleSidebar, profileItem, menuItems, onClose, Footer, isEmployee, search, setSearch,isSideBarScroll }) => {
   const node = useRef();
   const location = useLocation();
   const { pathname } = location;
   const { t } = useTranslation();
   Digit.Hooks.useClickOutside(node, open ? onClose : null, open);
+
+  if(isSideBarScroll &&  !Digit.clikOusideFired)
+  {
+    document.getElementById("sideBarMenu").scrollTo(0,0);
+  }
 
   const MenuItem = ({ item }) => {
     let itemComponent;
@@ -92,7 +99,7 @@ const NavBar = ({ open, toggleSidebar, profileItem, menuItems, onClose, Footer, 
       );
     }
     if (item.type === "link") {
-      if (item.link.indexOf(`/${window?.contextPath}`) === -1 && isEmployee) {
+      if (item.link.indexOf("/digit-ui") === -1 && isEmployee) {
         const getOrigin = window.location.origin;
         return (
           <a href={getOrigin + "/employee/" + item.link}>
@@ -174,7 +181,7 @@ const NavBar = ({ open, toggleSidebar, profileItem, menuItems, onClose, Footer, 
           }}
         >
           {profileItem}
-          <div className="drawer-list">
+          <div className="drawer-list" id="sideBarMenu">
             {isEmployee ? renderSearch() : null}
             {menuItems?.map((item, index) => (
               <div className={`sidebar-list ${pathname === item.link ? "active" : ""}`} key={index}>

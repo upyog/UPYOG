@@ -30,7 +30,7 @@ export const loginSteps = [
   },
   {
     texts: {
-      header: "CS_LOGIN_PROVIDE_NAME",
+      header: "CS_LOGIN_PROVIDE_NAME_DOB",
       cardText: "CS_LOGIN_NAME_TEXT",
       nextText: "CS_COMMONS_NEXT",
       submitBarLabel: "CS_COMMONS_NEXT",
@@ -44,8 +44,19 @@ export const loginSteps = [
         validation: {
           required: true,
           minLength: 1,
-          pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+          pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i
         },
+      },
+      {
+        label: "CORE_COMMON_DOB",
+        type: "date",
+        name: "dob",
+        error : "please enter valid date",
+        validation: {
+          required: true,
+          
+        },
+       
       },
     ],
   },

@@ -8,8 +8,8 @@ const PGRCard = () => {
   const { t } = useTranslation();
 
   const allLinks = [
-    { text: t("ES_PGR_INBOX"), link: `/${window?.contextPath}/employee/pgr/inbox` },
-    { text: t("ES_PGR_NEW_COMPLAINT"), link: `/${window?.contextPath}/employee/pgr/complaint/create`, accessTo: ["CSR"] },
+    { text: t("ES_PGR_INBOX"), link: "/digit-ui/employee/pgr/inbox" },
+    { text: t("ES_PGR_NEW_COMPLAINT"), link: "/digit-ui/employee/pgr/complaint/create", accessTo: ["CSR"] },
   ];
 
   if (!Digit.Utils.pgrAccess()) {
@@ -24,7 +24,7 @@ const PGRCard = () => {
   let propsForCSR =[
     {
       label: t("ES_PGR_NEW_COMPLAINT"),
-      link: `/${window?.contextPath}/employee/pgr/complaint/create`,
+      link: `/digit-ui/employee/pgr/complaint/create`,
       role: "CSR"
     }
   ]
@@ -37,17 +37,17 @@ const PGRCard = () => {
     kpis: [
         {
             label: t("TOTAL_PGR"),
-            link: `/${window?.contextPath}/employee/pgr/inbox`
+            link: `/digit-ui/employee/pgr/inbox`
         },
         {
             label: t("TOTAL_NEARING_SLA"),
-            link: `/${window?.contextPath}/employee/pgr/inbox`
+            link: `/digit-ui/employee/pgr/inbox`
         }
     ],
     links: [
     {
         label: t("ES_PGR_INBOX"),
-        link: `/${window?.contextPath}/employee/pgr/inbox`
+        link: `/digit-ui/employee/pgr/inbox`
     },
     ...propsForCSR
     ]

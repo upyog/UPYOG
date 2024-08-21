@@ -90,7 +90,7 @@ const Inbox = ({ parentRoute }) => {
     headerText: "CS_COMMON_SURVEYS",
     links: [{
       text: t("CS_COMMON_NEW_SURVEY"),
-      link: `/${window?.contextPath}/employee/engagement/surveys/inbox/create`,
+      link: "/digit-ui/employee/engagement/surveys/inbox/create",
     }]
   }
 

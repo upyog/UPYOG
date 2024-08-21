@@ -29,7 +29,7 @@
   div {
     display: block;
     position: relative;
-    background-color: theme(colors.grey.light);
+    background-color: #fafafa;
     width: calc((100% - 16px) / 3);
     margin-right: 8px;
 
@@ -44,7 +44,7 @@
   }
 
   .upload-img-container {
-    border: 1px dashed theme(colors.border);
+    border: 1px dashed #d6d5d4;
     margin: 0 !important;
 
     img {
@@ -74,7 +74,20 @@
 .upload-file-max-width {
   max-width: 540px;
 }
-
+.digilocker-btn{
+  touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    border-radius: 4px;
+    user-select: none;
+    background: #f0f0f0c9;
+    display: flex;
+    font-weight: bold;
+}
 .upload-file {
   min-height: 56px;
   @apply relative border border-input-border w-full;

@@ -1,13 +1,13 @@
-import { ServiceRequest } from "../atoms/Utils/Request";
+import { Request } from "../atoms/Utils/Request";
 import Urls from "../atoms/urls";
 
 const AccessControlService = {
   getAccessControl: (roles = []) =>
-  ServiceRequest({
+    Request({
       url: Urls.access_control,
       method: "POST",
       auth: true,
-      useCache: true,
+      useCache: false,
       userService: true,
       data: {
         roleCodes: roles,

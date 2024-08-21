@@ -45,7 +45,7 @@ const EventDetails = () => {
   function onActionSelect(action) {
     // setSelectedAction(action);
     if (action === "EDIT") {
-      history.push(`/${window?.contextPath}/employee/engagement/event/edit-event/${id}`)
+      history.push(`/digit-ui/employee/engagement/event/edit-event/${id}`)
     }
     if (action === "DELETE") {
       setShowModal(true);
@@ -62,7 +62,7 @@ const EventDetails = () => {
         },
       ],
     };
-    history.push(`/${window?.contextPath}/employee/engagement/event/response?delete=true`, details);
+    history.push("/digit-ui/employee/engagement/event/response?delete=true", details);
   };
 
   return (

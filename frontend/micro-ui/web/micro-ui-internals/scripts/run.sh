@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MODULES=( "components" "core" "libraries" "example" )
+MODULES=( "components" "common" "core" "libraries" "example" )
 
 RUNARGS=()
 BUILDARGS=()
@@ -12,7 +12,7 @@ do
 done
 
 a=0
-while [ "$a" -lt 3 ]
+while [ "$a" -lt 4 ]
 do 
     BUILD[$a]=build:${MODULES[$a]}
     a=` expr $a + 1 `
@@ -22,7 +22,7 @@ echo "BUILDING MODULES:-" ${BUILD[*]} ${BUILDARGS[*]}
 yarn run-p ${BUILD[*]} ${BUILDARGS[*]}
 
 b=0
-while [ "$b" -lt 4 ]
+while [ "$b" -lt 5 ]
 do 
     RUN[$b]=dev:${MODULES[$b]}
     b=` expr $b + 1 `

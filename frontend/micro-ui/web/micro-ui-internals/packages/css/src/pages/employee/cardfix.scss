@@ -1,6 +1,7 @@
 .flex-fit{
     @apply flex w-full border-b border-solid border-border;
-    padding : 8px 10px;
+    border-bottom: 0px !important;
+    padding-top: 5px
 }
 .card-count{
     @apply pr-xl;

@@ -2,53 +2,30 @@ import { useQuery, useQueryClient } from "react-query";
 import { CustomService } from "../services/elements/CustomService";
 
 /**
- * Custom hook which can make api call and format response
+ * Custom hook which can gives the privacy functions to access
  *
  * @author jagankumar-egov
  *
+ * Feature :: Privacy
  *
  * @example
- * 
- const requestCriteria = [
-      "/user/_search",             // API details
-    {},                            //requestParam
-    {data : {uuid:[Useruuid]}},    // requestBody
-    {} ,                           // privacy value 
-    {                              // other configs
-      enabled: privacyState,
-      cacheTime: 100,
-      select: (data) => {
-                                    // format data
-        return  _.get(data, loadData?.jsonPath, value);
-      },
-    },
-  ];
-  const { isLoading, data, revalidate } = Digit.Hooks.useCustomAPIHook(...requestCriteria);
-
+ *         const { privacy , updatePrivacy } = Digit.Hooks.usePrivacyContext()
  *
- * @returns {Object} Returns the object which contains data and isLoading flag
+ * @returns {Object} Returns the object which contains privacy value and updatePrivacy method
  */
-
-
-const useCustomAPIHook = ({ url, params, body, config = {}, plainAccessRequest,changeQueryName="Random" }) => {
+const useCustomAPIHook = (url, params, body, plainAccessRequest, options = {}) => {
   const client = useQueryClient();
-
-  const { isLoading, data, isFetching,refetch } = useQuery(
-    [url,changeQueryName].filter((e) => e),
-    () => CustomService.getResponse({ url, params, body, plainAccessRequest }),
-    {
-      cacheTime:0,
-      ...config,
-    }
+  //api name, querystr, reqbody
+  const { isLoading, data } = useQuery(
+    ["CUSTOM", { ...params, ...body, ...plainAccessRequest }].filter((e) => e),
+    () => CustomService.getResponse({ url, params, ...body, plainAccessRequest }),
+    options
   );
-
   return {
     isLoading,
-    isFetching,
     data,
-    refetch,
     revalidate: () => {
-      data && client.invalidateQueries({ queryKey: [url].filter((e) => e) });
+      data && client.invalidateQueries({ queryKey: ["CUSTOM", { ...params, ...body, ...plainAccessRequest }] });
     },
   };
 };

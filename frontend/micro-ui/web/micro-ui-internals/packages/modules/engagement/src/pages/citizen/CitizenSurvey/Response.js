@@ -63,7 +63,7 @@ const Acknowledgement = (props) => {
           : null}
       </CardText>
       <ActionBar>
-        <Link to={`/${window?.contextPath}/citizen/engagement/surveys/list`}>
+        <Link to={"/digit-ui/citizen/engagement/surveys/list"}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       </ActionBar>

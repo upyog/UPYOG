@@ -16,7 +16,6 @@ import { useParams } from "react-router-dom";
 import { checkCurrentScreen } from "../components/DSSCard";
 import FilterContext from "../components/FilterContext";
 import Filters from "../components/Filters";
-import CustomFilter from "../components/CustomFilter";
 import FiltersNational from "../components/FiltersNational";
 import Layout from "../components/Layout";
 
@@ -51,7 +50,7 @@ const DashBoard = ({ stateCode }) => {
       filters: {
         tenantId,
       },
-      moduleLevel: moduleLevel
+      moduleLevel: moduleLevel,
     };
   });
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
@@ -65,8 +64,8 @@ const DashBoard = ({ stateCode }) => {
     select: (data) => {
       let screenConfig = data?.["dss-dashboard"]["dashboard-config"][0].MODULE_LEVEL;
       let reduced_array = [];
-      for(let i = 0 ; i < screenConfig.length ; i++){
-        if(screenConfig[i].dashboard !== null ){
+      for (let i = 0; i < screenConfig.length; i++) {
+        if (screenConfig[i].dashboard !== null) {
           reduced_array.push(screenConfig[i]);
         }
       }
@@ -74,11 +73,11 @@ const DashBoard = ({ stateCode }) => {
       const serviceJS = reduced_array.map((obj, idx) => {
         return {
           code: obj[Object.keys(obj)[0]].filterKey,
-          name: Digit.Utils.locale.getTransformedLocale(`DSS_${obj[Object.keys(obj)[0]].services_name}`)
-        }
-      }) ;
-      return serviceJS
-    }
+          name: Digit.Utils.locale.getTransformedLocale(`DSS_${obj[Object.keys(obj)[0]].services_name}`),
+        };
+      });
+      return serviceJS;
+    },
   });
   const { data: nationalInfo, isLoadingNAT } = Digit.Hooks.dss.useMDMS(stateCode, "tenant", ["nationalInfo"], {
     select: (data) => {
@@ -153,9 +152,9 @@ const DashBoard = ({ stateCode }) => {
   const removeService = () => {
     handleFilters({
       ...filters,
-      moduleLevel: "" ,
+      moduleLevel: "",
     });
-  }
+  };
 
   const removeTenant = (id) => {
     handleFilters({
@@ -176,7 +175,7 @@ const DashBoard = ({ stateCode }) => {
   };
   const clearAllServices = () => {
     handleFilters({ ...filters, moduleLevel: "" });
-  }
+  };
 
   const dashboardConfig = response?.responseData;
   let tabArrayObj =
@@ -271,16 +270,15 @@ const DashBoard = ({ stateCode }) => {
             {t(dashboardConfig?.[0]?.name)}
           </Header>
           {mobileView ? null : (
-            <div className="divToBeHidden" style={{marginRight:"1.5rem"}}>
-              <div className="mrlg divToBeHidden" >
+            <div className="divToBeHidden">
+              <div className="mrlg divToBeHidden">
                 <MultiLink
                   className="multilink-block-wrapper divToBeHidden"
                   label={t(`ES_DSS_SHARE`)}
-                  icon={<ShareIcon className="mrsm" fill="#f18f5e"/>}
+                  icon={<ShareIcon className="mrsm" />}
                   // showOptions={(e) => {
                   // setShowOptions(e)}
                   // }
-                  setShowOptions={setShowOptions}
                   onHeadClick={(e) => {
                     setShowOptions(!showOptions);
                   }}
@@ -288,9 +286,9 @@ const DashBoard = ({ stateCode }) => {
                   options={shareOptions}
                 />
               </div>
-              <div className="mrsm divToBeHidden icon-label-download" onClick={handlePrint} >
-                <DownloadIcon fill="#f18f5e" className="mrsm divToBeHidden" />
-                <p>{t(`ES_DSS_DOWNLOAD`)}</p>
+              <div className="mrsm divToBeHidden" onClick={handlePrint}>
+                <DownloadIcon className="mrsm divToBeHidden" />
+                {t(`ES_DSS_DOWNLOAD`)}
               </div>
             </div>
           )}
@@ -303,13 +301,7 @@ const DashBoard = ({ stateCode }) => {
             closeFilters={() => setIsFilterModalOpen(false)}
             isNational={isNational}
           />
-        ) : dashboardConfig[0]?.filter == 'CustomFilter' && dashboardConfig[0]?.filterConfig ? (
-        <CustomFilter
-          t={t}
-          filterConfig={dashboardConfig[0]?.filterConfig}
-          isOpen={isFilterModalOpen}
-          closeFilters={() => setIsFilterModalOpen(false)}
-        />) : (
+        ) : (
           <Filters
             t={t}
             showModuleFilter={!isNational && dashboardConfig?.[0]?.name.includes("OVERVIEW") ? true : false}
@@ -318,7 +310,7 @@ const DashBoard = ({ stateCode }) => {
             isOpen={isFilterModalOpen}
             closeFilters={() => setIsFilterModalOpen(false)}
             isNational={isNational}
-            showDateRange= {dashboardConfig?.[0]?.name.includes("DSS_FINANCE_DASHBOARD") ? false : true}
+            showDateRange={dashboardConfig?.[0]?.name.includes("DSS_FINANCE_DASHBOARD") ? false : true}
           />
         )}
         {filters?.filters?.tenantId?.length > 0 && (
@@ -433,9 +425,13 @@ const DashBoard = ({ stateCode }) => {
         )}
         {filters?.moduleLevel?.length > 0 && (
           <div className="tag-container">
-            {!showFilters &&
-              filters?.moduleLevel &&
-              (<RemoveableTag key={filters?.moduleLevel} text={`${t(`DSS_HEADER_SERVICE`)}: ${t(filters?.moduleLevel)}`} onClick={() => removeService()} />)}
+            {!showFilters && filters?.moduleLevel && (
+              <RemoveableTag
+                key={filters?.moduleLevel}
+                text={`${t(`DSS_HEADER_SERVICE`)}: ${t(filters?.moduleLevel)}`}
+                onClick={() => removeService()}
+              />
+            )}
             <p className="clearText cursorPointer" onClick={clearAllServices}>
               {t(`DSS_FILTER_CLEAR`)}
             </p>
@@ -451,7 +447,7 @@ const DashBoard = ({ stateCode }) => {
               <MultiLink
                 className="multilink-block-wrapper"
                 label={t(`ES_DSS_SHARE`)}
-                icon={<ShareIcon className="mrsm" fill="#f18f5e"/>}
+                icon={<ShareIcon className="mrsm" />}
                 onHeadClick={(e) => {
                   setShowOptions(!showOptions);
                 }}
@@ -459,8 +455,8 @@ const DashBoard = ({ stateCode }) => {
                 options={shareOptions}
               />
             </div>
-            <div onClick={handlePrint} className="divToBeHidden icon-label-download" >
-              <DownloadIcon fill="#f18f5e"/>
+            <div onClick={handlePrint} className="divToBeHidden">
+              <DownloadIcon />
               {t(`ES_DSS_DOWNLOAD`)}
             </div>
           </div>
@@ -481,7 +477,7 @@ const DashBoard = ({ stateCode }) => {
         {dashboardConfig?.[0]?.visualizations
           .filter((row) => row.name === tabState)
           .map((row, key) => {
-            return <Layout rowData={row} key={key} />;
+            return <Layout rowData={row} key={key} services={screenConfig} configName={dashboardConfig?.[0]?.name} />;
           })}
       </div>
     </FilterContext.Provider>

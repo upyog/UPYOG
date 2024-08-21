@@ -64,7 +64,7 @@ export const newConfig = [
 
       {
         type: "component",
-        component: "HRBanner",
+        component: "Banner",
         key: "Banner1",
         withoutLabel: true,
         texts: {

@@ -10,13 +10,14 @@
   height: 2.5rem;
 }
 .bannerCard .customBtn {
-  border-color: theme(colors.text.secondary);
+  border-color: #505a5f;
 }
 .bannerCard .customBtn:focus {
   outline: none;
 }
 .bannerCard .customBtn-selected {
   border-color: transparent;
+  background-color: #5a1166 !important;
 }
 .bannerCard .bannerHeader p {
   font-size: 19px;

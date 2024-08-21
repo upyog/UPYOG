@@ -1025,18 +1025,7 @@ class ShowField extends Component {
     //     reportResultArray.push(reportDataArray);
     //   })
     // }
-  
-  let url=window.location.href
-  //uncomment below line for localhost environment
-  //let redirectingUrl=url.split("report")[0] +"digit-ui/employee/pgr/complaint/details/"
 
-  //comment below line for local host environment   
-  let redirectingUrl=url.split("employee")[0]+"digit-ui/employee/pgr/complaint/details/"  
-  
-  function redirectToPage(e,grievanceId){
-    e.preventDefault()
-    window.location.href=redirectingUrl+grievanceId;
-  }
     return (
       <tbody>
         {reportResult.hasOwnProperty("reportData") &&
@@ -1081,19 +1070,6 @@ class ShowField extends Component {
                   //array for particular row
                   var respHeader = reportHeaderObj[itemIndex];
                   if (respHeader.showColumn) {
-                    if(window.location.href.includes("GrievanceReopenRecord") && reportResult.reportHeader[0].name=="businessid"){
-                      return (
-                        <td
-                          key={itemIndex}
-                          style={this.getStyleForCell(itemIndex)}
-                  
-                          onClick={(e)=> redirectToPage(e,dataItem[0])}                     
-                        >
-                          {respHeader.defaultValue ? <a href="javascript:void(0)">{checkIfDate(item, itemIndex)}</a> : checkIfDate(item, itemIndex)}
-                        </td>
-                      );
-
-                    }
                     return (
                       <td
                         key={itemIndex}

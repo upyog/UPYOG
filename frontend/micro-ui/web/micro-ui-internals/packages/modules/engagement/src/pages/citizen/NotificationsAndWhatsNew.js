@@ -32,7 +32,7 @@ const NotificationsAndWhatsNew = ({ variant, parentRoute }) => {
   const { data: EventsData, isLoading: EventsDataLoading } = Digit.Hooks.useEvents({ tenantId, variant });
 
   // if (!Digit.UserService?.getUser()?.access_token) {
-  //     return <Redirect to={{ pathname: `/${window?.contextPath}/citizen/login`, state: { from: location.pathname + location.search } }} />
+  //     return <Redirect to={{ pathname: `/digit-ui/citizen/login`, state: { from: location.pathname + location.search } }} />
   // }
 
   if (EventsDataLoading) return <Loader />;
@@ -55,7 +55,7 @@ const NotificationsAndWhatsNew = ({ variant, parentRoute }) => {
         return <Header>{t("CS_HEADER_WHATSNEW")}</Header>;
 
       default:
-        return <Redirect to={{ pathname: `/${window?.contextPath}/citizen`, state: { from: location.pathname + location.search } }} />;
+        return <Redirect to={{ pathname: `/digit-ui/citizen`, state: { from: location.pathname + location.search } }} />;
     }
   };
 

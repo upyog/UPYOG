@@ -37,7 +37,7 @@
   padding: 1em 0em;
 }
 .document_list_searchbar {
-  border: 1px solid theme(colors.text.secondary) !important;
+  border: 1px solid #505A5F !important;
   border-radius: 0px !important;
   margin: 20px 0;
 }
@@ -67,7 +67,7 @@
   font-weight: normal;
   font-size: 12px;
   line-height: 24px;
-  color: theme(colors.text.secondary);
+  color: #505A5F;
   padding-right: 5px;
   padding-left: 15px;
   min-width: 80px;
@@ -81,7 +81,7 @@
   font-weight: normal;
   font-size: 12px;
   line-height: 14px;
-  color: theme(colors.text.secondary);
+  color: #505A5F;
 }
 .notice_and_circular_caption {
   margin-top: 10px;
@@ -109,7 +109,7 @@
         font-weight: normal;
         font-size: 16px;
         line-height: 19px;
-        color: theme(colors.primary.main);
+        color: #a82227;
       }
     }
   }
@@ -129,7 +129,7 @@
           font-weight: normal;
           font-size: 16px;
           line-height: 19px;
-          color: theme(colors.primary.main);
+          color: #a82227;
         }
       }
     }
