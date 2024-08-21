@@ -159,10 +159,11 @@ public class PropertyService {
 		if(isNumberDifferent)
 		{
 			processMobileNumberUpdate(request, propertyFromSearch);
+			return request.getProperty();
 		}
 		else if (isRequestForOwnerMutation)
 		{	processOwnerMutation(request, propertyFromSearch);
-		
+		return request.getProperty();
 		}
 		else
 	
