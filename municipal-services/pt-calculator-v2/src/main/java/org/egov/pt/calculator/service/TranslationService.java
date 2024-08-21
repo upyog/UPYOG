@@ -84,10 +84,10 @@ public class TranslationService {
         String[] propertyTypeMasterData = property.getPropertyType().split("\\.");
         String propertyType = null,propertySubType = null;
         propertyType = propertyTypeMasterData[0];
-		/*
-		 * if(propertyTypeMasterData.length > 1) propertySubType =
-		 * propertyTypeMasterData[1];
-		 */
+		
+		  if(propertyTypeMasterData.length > 1) 
+			  propertySubType = propertyTypeMasterData[1];
+		 
 
         String[] usageCategoryMasterData = null;
         String usageCategoryMajor = null,usageCategoryMinor = null;

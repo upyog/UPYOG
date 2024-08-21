@@ -788,6 +788,7 @@ public class PropertyValidator {
 
 		List<String> fieldsUpdated = diffService.getUpdatedFields(property, propertyFromSearch, PTConstants.MUTATION_PROCESS_CONSTANT);
 		// only editable field in mutation other than owners, additional details.
+	//	System.out.println(fieldsUpdated);
 		fieldsUpdated.remove("ownershipCategory");
 
 		if (configs.getIsMutationWorkflowEnabled()) {
@@ -804,7 +805,8 @@ public class PropertyValidator {
 			 */
 			fieldsUpdated.remove("creationReason");
 		}
-
+		
+		
 		if (!CollectionUtils.isEmpty(fieldsUpdated))
 			throw new CustomException("EG_PT_MUTATION_ERROR",
 					"The property mutation doesnt allow change of these fields " + fieldsUpdated);
@@ -944,7 +946,7 @@ public class PropertyValidator {
 			multiDocPresent = property.getDocuments().stream().map(doc -> doc.getDocumentType().toUpperCase())
 					.collect(Collectors.toSet());
 			Set<String> a = new HashSet <String>( Arrays.asList(reasonForTransfer.split(",")));
-			isTransferDocPresent = a.containsAll(multiDocPresent);	
+			isTransferDocPresent = multiDocPresent.containsAll(a);	
 		}
 
 		if (isDocsEmpty || !isTransferDocPresent) {

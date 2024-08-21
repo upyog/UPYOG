@@ -431,12 +431,19 @@ public class EstimationService {
 
 			unbuiltAmount=getApplicableTaxForOwnerUsageCategory(unbuiltarea, propertyBasedExemptionMasterMap, detail,null);
 			
-			vacantlandamount.add(unbuiltarea);
-			if(detail.getVacantusagecategory().equalsIgnoreCase("COMMERCIAL"))
+			vacantlandamount.add(unbuiltAmount);
+			if(detail.getPropertySubType().equalsIgnoreCase("INDEPENDENTPROPERTY"))
 			{
-				taxAmt = taxAmt.add(unbuiltAmount);
-				vacantland=true;
+				if(detail.getVacantusagecategory().equalsIgnoreCase("COMMERCIAL"))
+				{
+					taxAmt = taxAmt.add(unbuiltAmount);
+					vacantland=true;
+				}
 			}
+			else
+				taxAmt = taxAmt.add(unbuiltAmount);
+			
+			//To Be Reviewd The Function
 			vacantlandlist.add(vacantland);
 
 			/*
