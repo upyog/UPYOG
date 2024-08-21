@@ -300,14 +300,10 @@ if(!request.getProperty().getCreationReason().equals(CreationReason.MUTATION))
 					&& state.getApplicationStatus().equalsIgnoreCase(Status.INWORKFLOW.toString())
 					&& !propertyFromSearch.getStatus().equals(Status.INWORKFLOW))
 			{
-				if(request.getProperty().isIsinactive() && propertyFromSearch.getStatus().equals(Status.ACTIVE))
 					propertyFromSearch.setStatus(Status.INACTIVE);
-				else if(request.getProperty().isIsactive() && propertyFromSearch.getStatus().equals(Status.INACTIVE))
-					
-				{
-					propertyFromSearch.setStatus(Status.ACTIVE);
-					propertyFromSearch.setCreationReason(CreationReason.UPDATE);
-				}
+				
+				
+				
 				producer.push(config.getUpdatePropertyTopic(), OldPropertyRequest);
 				util.saveOldUuidToRequest(request, propertyFromSearch.getId());
 				producer.push(config.getSavePropertyTopic(), request);

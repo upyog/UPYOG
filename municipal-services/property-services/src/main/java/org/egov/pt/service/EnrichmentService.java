@@ -113,6 +113,9 @@ public class EnrichmentService {
         
         
 		Boolean isWfEnabled = config.getIsWorkflowEnabled();
+		/**
+		 *  commenting given boolean value AS added in else if
+		 */
 	//	Boolean iswfStarting = propertyFromDb.getStatus().equals(Status.ACTIVE);
 	//	Boolean isactiveexist = propertyFromDb.getStatus().equals(Status.INACTIVE);
 
@@ -124,14 +127,9 @@ public class EnrichmentService {
 
 		} 
 		
-		else if (isWfEnabled )
+		else if ((propertyFromDb.getStatus().equals(Status.ACTIVE)|| propertyFromDb.getStatus().equals(Status.INACTIVE)) && isWfEnabled)
 		{
-			
-			if (property.isIsinactive()|| property.isIsactive())
-			{
-				enrichPropertyForNewWf(requestInfo, property, false);
-			}
-			
+				enrichPropertyForNewWf(requestInfo, property, false);	
 		}
 		
 		
