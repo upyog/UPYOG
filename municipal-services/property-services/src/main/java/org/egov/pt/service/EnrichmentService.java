@@ -389,6 +389,7 @@ public class EnrichmentService {
 			String Districtcode=districtCodemap(tenantId,property);
 			String cityCode = codes.get("tenants").get(0);
 			//String ownerShipCode = codesOwn.get("OwnerShipCategory").get(0);
+			sb.append(Districtcode);
 			sb.append(cityCode);
 			//sb.append(request.getProperty().getAddress().getLocality().getCode());
 			//sb.append(ownerShipCode);
@@ -405,7 +406,7 @@ public class EnrichmentService {
 				ownership="0";
 			else
 				ownership="1";
-			sb.append(Districtcode).append(wardcode).append(lekaicode).append(ownership);
+			sb.append(wardcode).append(lekaicode).append(ownership);
 			String[] serialnumber=pId.split("-");
 			String propid="MN"+serialnumber[serialnumber.length-1];
 			sb.append(propid);
@@ -462,6 +463,10 @@ public class EnrichmentService {
 			else
 				return "2";
 		}
+		else if(tenantId.equalsIgnoreCase("mn.imphal"))
+		{
+			return "7";
+		}
 		else
 		{
 			Map<String, String> distCity=new HashMap<String, String>();
@@ -488,9 +493,9 @@ public class EnrichmentService {
 			distCity.put("mn.sekmai", "Imphal West");
 			distCity.put("mn.lamlai", "Imphal East");
 			distCity.put("mn.heirok", "Thoubal");
-			
+
 			String district=distCity.get(tenantId);
-			
+
 			if(district.equalsIgnoreCase("Imphal East"))
 				return "1";
 			else if(district.equalsIgnoreCase("Imphal West"))
