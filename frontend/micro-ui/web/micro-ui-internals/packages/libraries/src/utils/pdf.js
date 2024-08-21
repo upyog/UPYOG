@@ -1261,11 +1261,11 @@ function tableContent(t, details) {
               fontSize: 10,
             },
             {
-              text: d.price, 
+              text: d.price/d.quantity, 
               fontSize: 10,
             },
             {
-              text: d.quantity * d.price, 
+              text: d.price, 
               fontSize: 10,
             }
 

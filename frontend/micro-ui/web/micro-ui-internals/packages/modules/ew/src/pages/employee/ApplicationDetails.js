@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useRouteMatch } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
+import getEwAcknowledgementData from "../../utils/getEwAcknowledgementData";
+
 
 const EWApplicationDetails = () => {
   const { t } = useTranslation();
@@ -59,42 +61,14 @@ const EWApplicationDetails = () => {
     }
   }, [applicationDetails]);
 
+  const handleDownloadPdf = async () => {
+    const EwasteApplication = appDetailsToShow?.applicationData;
+    tenants.find((tenant) => tenant.code === EwasteApplication.tenantId);
+    const tenantInfo = tenantId;
+    const data = await getEwAcknowledgementData(EwasteApplication.applicationData, tenantInfo, t);
+    Digit.Utils.pdf.generateTable(data);
+  };
 
-
-  // useEffect(() => {
-
-  //   if (workflowDetails?.data?.applicationBusinessService && !(workflowDetails?.data?.applicationBusinessService === "ewst" && businessService === "ewst")) {
-  //     setBusinessService(workflowDetails?.data?.applicationBusinessService);
-  //   }
-  // }, [workflowDetails.data]);
-
-
-  // const handleDownloadPdf = async () => {
-  //   const EwasteApplication = appDetailsToShow?.applicationData;
-  //   console.log("ewaste",EwasteApplication)
-  //   const tenantInfo = "pg.citya"
-  //   tenants.find((tenant) => tenant.code === EwasteApplication.tenantId);
-  //   const data = await getEwAcknowledgementData(EwasteApplication.applicationData, tenantInfo, t);
-  //   Digit.Utils.pdf.generate(data);
-  // };
-
-  // const ewDetailsPDF = {
-  //   order: 1,
-  //   label: t("EW_APPLICATION"),
-  //   onClick: () => handleDownloadPdf(),
-  // };
-
-  
-  // const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
-    //   {
-      //     tenantId: tenantId,
-      //     businessService: "ewst",
-  //     consumerCodes: appDetailsToShow?.applicationData?.applicationData?.requestId,
-  //     isEmployee: false,
-  //   },
-  //   { enabled: appDetailsToShow?.applicationData?.applicationData?.requestId ? true : false }
-  // );
-  
   let downloadOptions = [""];
 
   const printCertificate = async () => {
@@ -102,16 +76,22 @@ const EWApplicationDetails = () => {
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   };
-
+  
+  if (appDetailsToShow?.applicationData?.applicationData?.requestStatus === "REQUESTCOMPLETED") {
+    downloadOptions.push({
+      label: t("EWASTE_DOWNLOAD_ACK_FORM"),
+      onClick: () => handleDownloadPdf(),
+    });
+  }
 
   if (appDetailsToShow?.applicationData?.applicationData?.requestStatus === "REQUESTCOMPLETED") {
     downloadOptions.push({
       label: t("EW_CERTIFICATE"),
       onClick: () => printCertificate(),
     });
+    
   }
-
-
+  
   return (
     <div>
       <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
