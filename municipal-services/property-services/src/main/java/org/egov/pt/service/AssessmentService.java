@@ -164,7 +164,7 @@ public class AssessmentService {
 			demRequest.setDemands(demaListToBeUpdated);
 			demRequest.setRequestInfo(request.getRequestInfo());
 			DemandResponse resp = billingService.updateDemand(demRequest);
-			System.out.println(resp);
+			//System.out.println(resp);
 			}
 	}
 	
