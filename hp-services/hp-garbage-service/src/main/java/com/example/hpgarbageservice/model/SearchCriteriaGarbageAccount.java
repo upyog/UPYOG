@@ -17,7 +17,7 @@ public class SearchCriteriaGarbageAccount {
 
     private List<Long> garbageId;
 
-    private List<Long> propertyId;
+    private List<String> propertyId;
 
     private List<String> type;
 

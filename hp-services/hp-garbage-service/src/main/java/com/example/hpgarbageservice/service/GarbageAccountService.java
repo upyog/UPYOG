@@ -97,23 +97,34 @@ public class GarbageAccountService {
 
 		List<GarbageAccount> garbageAccounts = new ArrayList<>();
 		
+
+		List<String> propertyIds = createGarbageRequest.getGarbageAccounts().stream().map(account -> account.getPropertyId()).collect(Collectors.toList());
+		// search existing account
+		List<GarbageAccount> existingAccounts = garbageAccountRepository.searchGarbageAccount(SearchCriteriaGarbageAccount.builder().propertyId(propertyIds).build());
+		
+		
 		if (!CollectionUtils.isEmpty(createGarbageRequest.getGarbageAccounts())) {
 			createGarbageRequest.getGarbageAccounts().forEach(garbageAccount -> {
 
 				// validate and enrich
-				validateAndEnrichCreateGarbageAccount(createGarbageRequest.getRequestInfo(), garbageAccount);
+				validateAndEnrichCreateGarbageAccount(createGarbageRequest.getRequestInfo(), garbageAccount,
+						existingAccounts);
+
+			});
+
+			// call workflow
+			ProcessInstanceResponse processInstanceResponse = callWfUpdate(createGarbageRequest);
+			
+			createGarbageRequest.getGarbageAccounts().forEach(garbageAccount -> {
 
 				// create garbage account
 				garbageAccounts.add(garbageAccountRepository.create(garbageAccount));
-				
+
 				// create garbage objects
 				createGarbageAccountObjects(garbageAccount);
-				
+
 			});
 		}
-		
-		// call workflow
-		callWfUpdate(createGarbageRequest);
 		
 		GarbageAccountResponse garbageAccountResponse = GarbageAccountResponse.builder()
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(createGarbageRequest.getRequestInfo(), false))
@@ -149,9 +160,9 @@ public class GarbageAccountService {
 
 
 	private void validateAndEnrichCreateGarbageAccount(RequestInfo requestInfo,
-			GarbageAccount garbageAccount) {
+			GarbageAccount garbageAccount, List<GarbageAccount> existingAccounts) {
 		// validate create garbage account
-		validateGarbageAccount(garbageAccount);
+		validateGarbageAccount(garbageAccount, existingAccounts);
 
 		// enrich create garbage account
 		enrichCreateGarbageAccount(garbageAccount, requestInfo);
@@ -173,7 +184,6 @@ public class GarbageAccountService {
 	private void createGarbageUnit(GarbageAccount garbageAccount) {
 		if(!CollectionUtils.isEmpty(garbageAccount.getGrbgCollectionUnits())) {
 			garbageAccount.getGrbgCollectionUnits().stream().forEach(unit -> {
-				unit.setIsActive(true);
 				grbgCollectionUnitRepository.create(unit);
 			});
 		}
@@ -185,6 +195,7 @@ public class GarbageAccountService {
 		if(!CollectionUtils.isEmpty(garbageAccount.getGrbgCollectionUnits())) {
 			garbageAccount.getGrbgCollectionUnits().stream().forEach(unit -> {
 				unit.setUuid(UUID.randomUUID().toString());
+				unit.setIsActive(true);
 				unit.setGarbageId(garbageAccount.getGarbageId());
 			});
 		}
@@ -212,10 +223,9 @@ public class GarbageAccountService {
 
 		if(!CollectionUtils.isEmpty(garbageAccount.getAddresses())) {
 			garbageAccount.getAddresses().stream().forEach(address -> {
-				address.setIsActive(true);
 				grbgAddressRepository.create(address);
 			});
-		}		
+		}
 	}
 
 
@@ -231,6 +241,7 @@ public class GarbageAccountService {
 				
 				// enrich address
 				address.setUuid(UUID.randomUUID().toString());
+				address.setIsActive(true);
 				address.setGarbageId(garbageAccount.getGarbageId());
 			});
 		}
@@ -271,7 +282,7 @@ public class GarbageAccountService {
 	}
 
 
-	private void validateGarbageAccount(GarbageAccount garbageAccount) {
+	private void validateGarbageAccount(GarbageAccount garbageAccount, List<GarbageAccount> existingAccounts) {
 
 		// validate nullability
 		if (null == garbageAccount
@@ -283,7 +294,12 @@ public class GarbageAccountService {
 		}
 		
 		// validate duplicate owner with same properyId
-		
+		Boolean duplicateOwner = existingAccounts.stream().filter(account -> account.getIsOwner())
+				.anyMatch(account -> account.getPropertyId().equals(garbageAccount.getPropertyId())
+						&& account.getIsOwner().equals(garbageAccount.getIsOwner()));
+		if(BooleanUtils.isTrue(duplicateOwner)) {
+			throw new RuntimeException("Duplicate Owner Found for given property.");
+		}
 
 	}
 
@@ -369,9 +385,15 @@ public class GarbageAccountService {
 
 //				if(!newGarbageAccount.getIsOnlyWorkflowCall()) {
 					// validate garbage account request
-					validateGarbageAccount(newGarbageAccount);
+					validateGarbageAccount(newGarbageAccount, existingGarbageIdAccountsMap.entrySet().stream().map(entry -> entry.getValue()).collect(Collectors.toList()));
 					
-				// get existing garbage account from map
+			});
+			
+			
+			garbageAccountRequest.getGarbageAccounts().stream()
+			.forEach(newGarbageAccount -> {
+
+//				// get existing garbage account from map
 					GarbageAccount existingGarbageAccount = existingGarbageIdAccountsMap
 							.get(newGarbageAccount.getGarbageId());
 
@@ -386,6 +408,7 @@ public class GarbageAccountService {
 				
 				garbageAccounts.add(newGarbageAccount);
 			});
+			
 		}
 		
 		
@@ -418,7 +441,7 @@ public class GarbageAccountService {
 	            
 
 		        if(CollectionUtils.isEmpty(savedDemands)) {
-		            throw new CustomException("INVALID CONSUMERCODE","Bill not generated due to no Demand found for the given consumerCode");
+		            throw new CustomException("INVALID_CONSUMERCODE","Bill not generated due to no Demand found for the given consumerCode");
 		        }
 
 				// fetch/create bill
@@ -756,6 +779,8 @@ public class GarbageAccountService {
 
 	private void validateAndEnrichSearchGarbageAccount(SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
 		RequestInfo requestInfo = searchCriteriaGarbageAccountRequest.getRequestInfo();
+		
+		// validate duplicate owner
 		
 		if(null != searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount()) {
 			if(CollectionUtils.isEmpty(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getId()) &&

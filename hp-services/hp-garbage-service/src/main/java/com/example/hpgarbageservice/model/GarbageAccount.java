@@ -27,7 +27,7 @@ public class GarbageAccount {
 
 	private Long garbageId;
 
-	private Long propertyId;
+	private String propertyId;
 
 	private String type;
 
