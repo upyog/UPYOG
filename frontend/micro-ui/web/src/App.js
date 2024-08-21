@@ -44,13 +44,11 @@ const enabledModules = [
   "PGR",
   "FSM",
   "Payment",
-  "PT",
   "QuickPayLinks",
   "DSS",
   "NDSS",
   "MCollect",
   "HRMS",
-  "TL",
   "Receipts",
   "OBPS",
   "NOC",
@@ -64,6 +62,7 @@ const enabledModules = [
   "FireNoc",
   "Birth",
   "Death",
+  "bmc"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
