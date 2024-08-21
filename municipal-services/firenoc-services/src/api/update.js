@@ -77,7 +77,7 @@ export const updateApiResponse = async ({ body }, next = {}) => {
   }
 
   body.FireNOCs = updateStatus(FireNOCs, workflowResponse);
-  console.log("Fire NoC body"+JSON.stringify(body.FireNOCs));
+  console.log("FireNoc Request Body for Update"+JSON.stringify(body.FireNOCs));
 
   payloads.push({
     topic: envVariables.KAFKA_TOPICS_FIRENOC_UPDATE,
