@@ -189,8 +189,8 @@ public class DiffService {
 						.registerValue(BigDecimal.class, new BigDecimalComparatorWithFixedEquals())
 						.registerIgnoredClass(OwnerInfo.class)
 						.registerIgnoredClass(Document.class)
-						.registerIgnoredClass(TypeOfRoad.class)
-						.registerIgnoredClass(GeoLocation.class)
+						//.registerIgnoredClass(TypeOfRoad.class) //  uncomment  while testing in local
+						//.registerIgnoredClass(GeoLocation.class)
 						.build();
 						
 			

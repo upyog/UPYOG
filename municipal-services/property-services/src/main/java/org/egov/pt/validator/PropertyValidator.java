@@ -788,7 +788,7 @@ public class PropertyValidator {
 
 		List<String> fieldsUpdated = diffService.getUpdatedFields(property, propertyFromSearch, PTConstants.MUTATION_PROCESS_CONSTANT);
 		// only editable field in mutation other than owners, additional details.
-		System.out.println(fieldsUpdated);
+	//	System.out.println(fieldsUpdated);
 		fieldsUpdated.remove("ownershipCategory");
 
 		if (configs.getIsMutationWorkflowEnabled()) {
