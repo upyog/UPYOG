@@ -1,7 +1,7 @@
 import {
   CardLabel, CardLabelError, CitizenInfoLabel, Dropdown, FormStep, LabelFieldPair, RadioButtons
 } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 
 var Digit = window.Digit || {};
@@ -15,63 +15,58 @@ const TLUsageType = ({ t, config, onSelect, userType, formData, formState, setEr
   
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = tenantId.split(".")[0];
-  const { data: Menu = { }, isLoading: menuLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "UsageCategory") || { };
-  let usagecat = [];
-  usagecat = Menu?.PropertyTax?.UsageCategory || [];
-  let i;
-  let menu = [];
+  const { data: Menu = {}, isLoading: menuLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "UsageCategory") || {};
+  
+  const usagecat = Menu?.PropertyTax?.UsageCategory || [];
+  const menu = [];
 
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
 
-  function usageCategoryMajorMenu(usagecat) {
+  const usageCategoryMajorMenu = useCallback((usagecat) => {
     if (userType === "employee") {
-      const catMenu = usagecat
+      return usagecat
         ?.filter((e) => e?.code.split(".").length <= 2 && e.code !== "NONRESIDENTIAL")
         ?.map((item) => {
           const arr = item?.code.split(".");
-          if (arr.length == 2) return { i18nKey: "PROPERTYTAX_BILLING_SLAB_" + arr[1], code: item?.code };
+          if (arr.length === 2) return { i18nKey: "PROPERTYTAX_BILLING_SLAB_" + arr[1], code: item?.code };
           else return { i18nKey: "PROPERTYTAX_BILLING_SLAB_" + item?.code, code: item?.code };
         });
-      return catMenu;
     } else {
-      for (i = 0; i < 10; i++) {
+      for (let i = 0; i < 10; i++) {
         if (
           Array.isArray(usagecat) &&
           usagecat.length > 0 &&
-          usagecat[i].code.split(".")[0] == "NONRESIDENTIAL" &&
-          usagecat[i].code.split(".").length == 2
+          usagecat[i].code.split(".")[0] === "NONRESIDENTIAL" &&
+          usagecat[i].code.split(".").length === 2
         ) {
           menu.push({ i18nKey: "PROPERTYTAX_BILLING_SLAB_" + usagecat[i].code.split(".")[1], code: usagecat[i].code });
         }
       }
       return menu;
     }
-  }
+  }, [userType]);
 
   useEffect(() => {
     if (!menuLoading && presentInModifyApplication && userType === "employee") {
       const original = formData?.originalData?.usageCategory;
-      const selectedOption = usageCategoryMajorMenu(usagecat).filter((e) => e.code === original)[0];
+      const selectedOption = usageCategoryMajorMenu(usagecat).find((e) => e.code === original);
       setPropertyPurpose(selectedOption);
     }
-  }, [menuLoading]);
+  }, [menuLoading, presentInModifyApplication, userType, formData?.originalData?.usageCategory, usageCategoryMajorMenu, usagecat]);
 
   const onSkip = () => onSelect();
 
-
-  function selectPropertyPurpose(value) {
+  const selectPropertyPurpose = (value) => {
     setPropertyPurpose(value);
-  }
+  };
 
-  function goNext() {
-    if (usageCategoryMajor?.i18nKey === "PROPERTYTAX_BILLING_SLAB_OTHERS") {
-      usageCategoryMajor.i18nKey = "PROPERTYTAX_BILLING_SLAB_NONRESIDENTIAL";
-      onSelect(config.key, usageCategoryMajor);
-    } else {
-      onSelect(config.key, usageCategoryMajor);
-    }
-  }
+  const goNext = () => {
+    const updatedCategory = usageCategoryMajor?.i18nKey === "PROPERTYTAX_BILLING_SLAB_OTHERS"
+      ? { ...usageCategoryMajor, i18nKey: "PROPERTYTAX_BILLING_SLAB_NONRESIDENTIAL" }
+      : usageCategoryMajor;
+    onSelect(config.key, updatedCategory);
+  };
 
   useEffect(() => {
     if (userType === "employee") {
@@ -82,7 +77,7 @@ const TLUsageType = ({ t, config, onSelect, userType, formData, formState, setEr
       }
       goNext();
     }
-  }, [usageCategoryMajor]);
+  }, [usageCategoryMajor, userType, setError, clearErrors, config.key, t, goNext]);
 
   if (userType === "employee") {
     return (
@@ -119,8 +114,7 @@ const TLUsageType = ({ t, config, onSelect, userType, formData, formState, setEr
             t={t}
             optionsKey="i18nKey"
             isMandatory={config.isMandatory}
-            //options={menu}
-            options={usageCategoryMajorMenu(usagecat) || { }}
+            options={usageCategoryMajorMenu(usagecat) || []}
             selectedOption={usageCategoryMajor}
             onSelect={selectPropertyPurpose}
           />
@@ -128,7 +122,7 @@ const TLUsageType = ({ t, config, onSelect, userType, formData, formState, setEr
           <button>to say this is different element</button>
         </div>
       </FormStep>
-      {<CitizenInfoLabel info={t("CS_FILE_APPLICATION_INFO_LABEL")} text={t("PT_USAGE_TYPE_INFO_MSG", usageCategoryMajor)} />}
+      <CitizenInfoLabel info={t("CS_FILE_APPLICATION_INFO_LABEL")} text={t("PT_USAGE_TYPE_INFO_MSG", usageCategoryMajor)} />
     </React.Fragment>
   );
 };
