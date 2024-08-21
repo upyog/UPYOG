@@ -10,9 +10,9 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>hp-garbage-service</artifactId>
+	<artifactId>garbage-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>hp-garbage-service</name>
+	<name>garbage-service</name>
 	<description>Himachal Pradesh Garbage collection and payment service</description>
 	<properties>
 		<java.version>1.8</java.version>
