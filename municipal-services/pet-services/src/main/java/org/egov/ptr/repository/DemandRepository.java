@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class DemandRepository {
@@ -37,11 +38,11 @@ public class DemandRepository {
 		DemandRequest request = new DemandRequest(requestInfo, demand);
 		System.out.println("Request object for fetchResult: " + request);
 		System.out.println("URL for fetchResult: " + url);
-		Object result = serviceRequestRepository.fetchResult(url, request);
+		Optional<Object> result = serviceRequestRepository.fetchResult(url, request);
 		System.out.println("Result from fetchResult method: " + result);
 		DemandResponse response = null;
 		try {
-			response = mapper.convertValue(result, DemandResponse.class);
+			response = mapper.convertValue(result.get(), DemandResponse.class);
 			System.out.println("Demand response mapper: " + response);
 		} catch (IllegalArgumentException e) {
 			throw new CustomException("PARSING ERROR", "Failed to parse response of create demand");
