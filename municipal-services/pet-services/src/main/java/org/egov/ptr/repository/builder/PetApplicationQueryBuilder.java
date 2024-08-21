@@ -10,7 +10,7 @@ import java.util.List;
 @Component
 public class PetApplicationQueryBuilder {
 
-	private static final String BASE_PTR_QUERY = " SELECT ptr.id as pid, ptr.tenantid as ptenantid, ptr.applicationnumber as papplicationnumber, ptr.applicantname as papplicantname, ptr.fathername as pfathername, ptr.mobileNumber as pmobileNumber, ptr.emailId as pemailId, ptr.createdby as pcreatedby, ptr.lastmodifiedby as plastmodifiedby, ptr.createdtime as pcreatedtime, ptr.lastmodifiedtime as plastmodifiedtime, ptr.aadharnumber as paadharnumber, ";
+	private static final String BASE_PTR_QUERY = " SELECT ptr.id as pid, ptr.tenantid as ptenantid, ptr.applicationnumber as papplicationnumber, ptr.applicantname as papplicantname, ptr.fathername as pfathername, ptr.mobileNumber as pmobileNumber, ptr.emailId as pemailId, ptr.createdby as pcreatedby, ptr.lastmodifiedby as plastmodifiedby, ptr.createdtime as pcreatedtime, ptr.lastmodifiedtime as plastmodifiedtime, ptr.aadharnumber as paadharnumber, ptr.additionaldetail as padditionaldetail, ";
 
 	private static final String PET_SELECT_QUERY = "  pet.id as ptid, pet.petName as ptpetname, pet.petType as ptpetType, pet.breedType as ptbreedtype, pet.petAge as ptpetage, pet.petGender as ptpetgender, pet.clinicName as ptclinicname, pet.doctorName as ptdoctorname, pet.lastVaccineDate as ptlastvaccinedate, pet.petDetailsId as ptpetdetails, pet.vaccinationNumber as ptvaccinationNumber,";
 
