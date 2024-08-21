@@ -213,6 +213,12 @@ public class TLQueryBuilder {
                 builder.append("  LOWER(tl.tradename) = LOWER(?) ");
                 preparedStmtList.add(criteria.getTradeName());
             }
+            
+            if(criteria.getOwnerName() != null) {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append("  LOWER(tl.tradeLicenseDetail.owners ->>'name') LIKE ?");
+                preparedStmtList.add('%' +criteria.getOwnerName().toLowerCase()+ '%');
+            }
 
             if (criteria.getIssuedFrom() != null) {
                 addClauseIfRequired(preparedStmtList, builder);
