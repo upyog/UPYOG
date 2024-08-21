@@ -14,7 +14,7 @@
     "packages/modules/commonPt",
     "packages/modules/pt",
     "packages/modules/mCollect",
-    "packages/modules/obps"
+    "packages/modules/obps",
     "packages/modules/bmc"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
