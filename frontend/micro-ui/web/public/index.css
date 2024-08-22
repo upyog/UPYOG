@@ -9054,7 +9054,8 @@ body {
   margin: 0 8px; }
 
 .form-pt-dropdown-only .options-card {
-  position: unset; }
+  /* position: unset;  */
+}
 
 .application-table-container {
   margin-top: 24px;

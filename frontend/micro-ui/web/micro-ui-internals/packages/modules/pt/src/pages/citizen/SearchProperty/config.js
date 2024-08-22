@@ -38,7 +38,8 @@ export const config = [
             message: "ERR_INVALID_PROPERTY_ID",
           },
         },
-      }, {
+      }, 
+      {
         label: "PT_SEARCHPROPERTY_TABEL_OWNERNAME",
         type: "text",
         name: "name",

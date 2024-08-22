@@ -19,8 +19,8 @@ const ExemptionDetails = ({ t, config, onSelect, value, userType, formData, setE
   const [uploadedFile, setUploadedFile] = useState(
     !isMutation ? formData?.exemption?.documents?.exemptionProof?.fileStoreId || null : formData?.[config.key]?.fileStoreId
   );
-
-  const [exemptionRequired, setExemptionRequired] = useState(formData?.exemption ? {code: 'PT_COMMON_YES', i18nKey: "PT_COMMON_YES"}: {code: 'PT_COMMON_NO', i18nKey: "PT_COMMON_NO"});
+//  {code: 'PT_COMMON_YES', i18nKey: "PT_COMMON_YES"}: {code: 'PT_COMMON_NO', i18nKey: "PT_COMMON_NO"}
+  const [exemptionRequired, setExemptionRequired] = useState(formData?.exemption?.exemptionRequired || {code: 'PT_COMMON_NO', i18nKey: "PT_COMMON_NO"});
   const [exemptionType, setExemptionType] = useState(formData?.exemption);
   const [file, setFile] = useState(formData?.exemption?.documents?.exemptionProof);
   

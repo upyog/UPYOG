@@ -421,7 +421,7 @@ const NoticeForImpositionOfPenalty = (props) => {
         </div>
       </div>
       {showModal && <Modal
-          headerBarMain={<Heading label={t('Return appears to be incorrect')} />}
+          headerBarMain={<Heading label={t('Return found to be incorrect')} />}
           headerBarEnd={<CloseBtn onClick={closeModal} />}
           actionCancelOnSubmit={closeModal}
           hideSubmit={true}

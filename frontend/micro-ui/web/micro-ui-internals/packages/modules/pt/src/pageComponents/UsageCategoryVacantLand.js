@@ -81,13 +81,13 @@ const UsageCategoryVacantLand = ({ t, config, onSelect, userType, formData }) =>
         t={t}
         isDisabled={ !UsageCategory}
       >
-        <CardLabel>{`${t("PT_FORM2_USAGE_TYPE")}*`}</CardLabel>
+        <CardLabel>{`${t("Vacant Land Usage Type")}*`}</CardLabel>
         <Dropdown
         t={t}
         optionKey="i18nKey"
         isMandatory={config.isMandatory}
         option={[
-            ...(formData?.PropertyType?.i18nKey !== "COMMON_PROPTYPE_VACANT" ? (mdmsData?.UsageCategory ? mdmsData?.UsageCategory : []) : mdmsData?.VacantLandUsageCategory ? mdmsData?.VacantLandUsageCategory : []),
+            ...((formData?.PropertyType?.i18nKey !== "COMMON_PROPTYPE_VACANT" && formData?.PropertyType?.i18nKey !== "COMMON_PROPTYPE_BUILTUP_INDEPENDENTPROPERTY") ? (mdmsData?.UsageCategory ? mdmsData?.UsageCategory : []) : mdmsData?.VacantLandUsageCategory ? mdmsData?.VacantLandUsageCategory : []),
         ]}
         selected={UsageCategory}
         select={selectUsageCategory}

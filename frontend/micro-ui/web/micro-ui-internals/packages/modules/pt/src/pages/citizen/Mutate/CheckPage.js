@@ -63,7 +63,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     landArea,
     UnOccupiedArea
    } = property;
-
+   console.log("property===",property)
    useEffect(async ()=>{
       const res = await Digit.PaymentService.searchBill(tenantId, {Service: "PT.MUTATION", consumerCode: property?.acknowldgementNumber});
       if(! res.Bill.length) {

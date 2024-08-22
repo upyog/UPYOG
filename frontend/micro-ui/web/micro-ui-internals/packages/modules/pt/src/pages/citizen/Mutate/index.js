@@ -27,7 +27,11 @@ const MutationCitizen = (props) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });
 
-  function handleSelect(key, data, skipStep, index, isAddMultiple = false, configObj) {
+  function handleSelect(key, data, skipStep, index, isAddMultiple = false, configObj,tt) {
+    console.log("handleSelect===",key, data, skipStep, index, configObj,tt)
+    // if(key == 'transferReasonProof' && tt && tt?.reasonForTransfer?.length>0) {
+    //   selectParams("additionalDetails", tt);
+    // }
     let pathArray = pathname.split("/");
     let currentPath = pathArray.pop();
     if (configObj?.nesting) {
@@ -64,6 +68,7 @@ const MutationCitizen = (props) => {
   }, [submit]);
 
   const handleSubmit = () => {
+    let resoneForTransfer = ""
     const originalProperty = params.searchResult.property;
     const { additionalDetails, ownershipCategory, addressProof, transferReasonProof } = params;
     const ownersArray = ownershipCategory?.code.includes("INDIVIDUAL") ? params.Owners : params.owners;
@@ -76,12 +81,24 @@ const MutationCitizen = (props) => {
       })
       .flat();
 
-    const otherDocs = [addressProof, transferReasonProof].map((e, index) => {
+    const otherDocs = [addressProof].map((e, index) => {
       const { documentType, fileStoreId } = e;
       return { documentType: index === 1 ? documentType.code.split(".")[2] : documentType.code, fileStoreId };
     });
+    const transferReasonProofDocs = transferReasonProof.map((e, index) => {
+      const { documentType, fileStoreId } = e;
+      if(documentType && documentType?.code) {
+        if(resoneForTransfer) {
+          resoneForTransfer = resoneForTransfer +", "+documentType.code.split(".").pop();
+        } else {
+          resoneForTransfer = documentType.code.split(".").pop();
+        }
+        
+      }
+      return { documentType: documentType.code.split(".").pop(), fileStoreId };
+    });
 
-    const newDocs = [...ownerDocs, ...otherDocs];
+    const newDocs = [...ownerDocs, ...otherDocs, ...transferReasonProofDocs];
     originalProperty.owners = originalProperty?.owners.filter((owner) => owner.status == "ACTIVE");
     const data = {
       Property: {
@@ -106,7 +123,8 @@ const MutationCitizen = (props) => {
         additionalDetails: {
           ...additionalDetails,
           isMutationInCourt: additionalDetails.isMutationInCourt?.code,
-          reasonForTransfer: additionalDetails?.reasonForTransfer.code,
+          reasonForTransfer: resoneForTransfer,
+          // additionalDetails?.reasonForTransfer.code,
           isPropertyUnderGovtPossession: additionalDetails.isPropertyUnderGovtPossession.code,
           documentDate: new Date(additionalDetails?.documentDate).getTime(),
           marketValue: Number(additionalDetails?.marketValue),

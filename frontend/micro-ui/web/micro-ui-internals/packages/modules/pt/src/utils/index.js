@@ -527,6 +527,7 @@ export const setPropertyDetails = (data) => {
       noOfFloors: data?.noOfFloors?.code+1,
       superBuiltUpArea: null,
       usageCategory: data?.units?.[0]?.usageCategory,
+      VacantUsagecategory: getUsageType(data),
     };
   } else {
     propertyDetails = {

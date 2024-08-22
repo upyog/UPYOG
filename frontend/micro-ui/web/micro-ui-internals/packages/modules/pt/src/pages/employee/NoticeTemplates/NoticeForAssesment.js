@@ -332,7 +332,7 @@ const NoticeForAssesment = (props) => {
                       </li>
                       <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
                         <div style={{ width: '60%', display: 'inline-flex', ...citizenStyle }}>
-                          The following information in the return appears to be incorrect / No return has been filed under Rule 17
+                          The following information in the return found to be incorrect / No return has been filed under Rule 17
                         </div>
                         
                         {!props?.isCitizen && <div style={{ width: '40%', display: 'inline' }}>
@@ -444,7 +444,7 @@ const NoticeForAssesment = (props) => {
         </div>
       </div>
       {showModal && <Modal
-          headerBarMain={<Heading label={t('Return appears to be incorrect')} />}
+          headerBarMain={<Heading label={t('Return found to be incorrect')} />}
           headerBarEnd={<CloseBtn onClick={closeModal} />}
           actionCancelOnSubmit={closeModal}
           hideSubmit={true}

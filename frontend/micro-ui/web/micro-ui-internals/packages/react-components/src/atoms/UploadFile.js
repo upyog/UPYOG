@@ -227,6 +227,7 @@ const UploadFile = (props) => {
   // }
 
   const handleDelete = () => {
+    console.log("handleDelete==",inpRef)
     inpRef.current.value = "";
     props.onDelete();
   };

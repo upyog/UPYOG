@@ -344,7 +344,7 @@ export const newConfig =[
                         "cardText": "PT_FLAT_DETAILS_DESC",
                         "submitBarLabel": "PT_COMMON_NEXT"
                     },
-                    "nextStep": "pincode",
+                    "nextStep": "usageCategory",
                     "key": "units",
                     "withoutLabel": true,
                     "hideInEmployee": true

@@ -24,7 +24,7 @@ const CreateProperty = ({ parentRoute }) => {
 
   let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig");
   const goNext = (skipStep, index, isAddMultiple, key) => {
-    let currentPath = pathname.split("/").pop(),
+     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
       isMultiple = false,
       nextPage;
@@ -107,7 +107,7 @@ const CreateProperty = ({ parentRoute }) => {
     if (!isNaN(nextStep.split("/").pop())) {
       nextPage = `${match.path}/${nextStep}`;
     } else {
-      nextPage = isMultiple && nextStep !== "pincode" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
+      nextPage = isMultiple && nextStep !== "pincode" && nextStep !== "usageCategory" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
     }
 
     redirectWithHistory(nextPage);
