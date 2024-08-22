@@ -17,6 +17,7 @@ RUN yarn add @egovernments/digit-ui-module-common
 RUN yarn add @egovernments/digit-ui-module-commonpt
 RUN yarn add @egovernments/digit-ui-module-workbench
 RUN yarn add @tattvafoundation/digit-ui-module-bmc
+yarn add @tattvafoundation/digit-ui-module-deonar
 RUN yarn add @upyog/digit-ui-module-ws
 RUN yarn add @upyog/digit-ui-module-pt
 RUN yarn add @upyog/digit-ui-module-fsm
