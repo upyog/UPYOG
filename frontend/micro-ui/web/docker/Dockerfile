@@ -18,6 +18,7 @@ RUN yarn add @egovernments/digit-ui-module-common
 RUN yarn add @upyog/digit-ui-module-ws
 RUN yarn add @egovernments/digit-ui-module-commonpt
 RUN yarn add @tattvafoundation/digit-ui-module-bmc
+RUN yarn add @egovernments/digit-ui-module-utilities
 ARG WORK_DIR
 WORKDIR /app
 ENV NODE_OPTIONS "--max-old-space-size=4096"
