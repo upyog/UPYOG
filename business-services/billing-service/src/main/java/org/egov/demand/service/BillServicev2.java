@@ -131,6 +131,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ch.qos.logback.core.status.Status;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -370,11 +371,51 @@ public class BillServicev2 {
 	public BillResponseV2 searchBill(BillSearchCriteria billCriteria, RequestInfo requestInfo) {
 
 		List<BillV2> bills = billRepository.findBill(billCriteria);
-
+		
 		return BillResponseV2.builder().resposneInfo(responseFactory.getResponseInfo(requestInfo, HttpStatus.OK))
 				.bill(bills).build();
 	}
 
+	public BillResponseV2 noDues(BillSearchCriteria billCriteria, RequestInfo requestInfo) {
+
+		List<BillV2> bills = billRepository.findBill(billCriteria);
+		boolean finalbill=false;
+		for(BillV2 billv2:bills)
+		{
+			if(billv2.getStatus().equals(BillStatus.ACTIVE))
+			{
+				Long date=billv2.getBillDate();
+				Date expiry = new Date((date));
+				SimpleDateFormat date_format = new SimpleDateFormat("yyyy-mm-dd");
+				String date_string = date_format.format(expiry);
+				BigDecimal ammount=BigDecimal.ZERO;
+				for(BillDetailV2 billdeatilv2:billv2.getBillDetails())
+				{
+					ammount=ammount.add(billdeatilv2.getAmount());
+				}
+				throw new CustomException("BILL_FOUND","Please pay your bills for year "+date_string.split("-")[0]+" and ammount "+ammount+"");
+			}
+			else if(billv2.getStatus().equals(BillStatus.PAID))
+			{
+				for(BillDetailV2 billdeatilv2:billv2.getBillDetails())
+				{
+					if(billdeatilv2.getPaymentPeriod().equalsIgnoreCase("Q4"))
+					{
+						finalbill=true;
+					}
+					else if(billdeatilv2.getPaymentPeriod().equalsIgnoreCase("H2"))
+					{
+						finalbill=true;
+					}
+				}
+				if(!finalbill)
+					throw new CustomException("BILL_FOUND","Please pay your Quaterly or Halfyearly bills for this year");
+			}
+		}
+		
+		return BillResponseV2.builder().resposneInfo(responseFactory.getResponseInfo(requestInfo, HttpStatus.OK))
+				.build();
+	}
 	/**
 	 * Generate bill based on the given criteria
 	 * 

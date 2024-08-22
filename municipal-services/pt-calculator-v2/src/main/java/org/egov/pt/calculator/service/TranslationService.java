@@ -84,10 +84,10 @@ public class TranslationService {
         String[] propertyTypeMasterData = property.getPropertyType().split("\\.");
         String propertyType = null,propertySubType = null;
         propertyType = propertyTypeMasterData[0];
-		/*
-		 * if(propertyTypeMasterData.length > 1) propertySubType =
-		 * propertyTypeMasterData[1];
-		 */
+		
+		  if(propertyTypeMasterData.length > 1) 
+			  propertySubType = propertyTypeMasterData[1];
+		 
 
         String[] usageCategoryMasterData = null;
         String usageCategoryMajor = null,usageCategoryMinor = null;
@@ -108,6 +108,14 @@ public class TranslationService {
         ownershipCategory = ownershipCategoryMasterData[0];
         if(ownershipCategoryMasterData.length > 1)
             subOwnershipCategory = ownershipCategoryMasterData[1];
+        
+        if(property.getVacantusagecategory()!=null){
+            String[] vacantusagecategoryMasterData  = property.getVacantusagecategory().split("\\_");
+            String vacantusagecategory = null;
+            vacantusagecategory = vacantusagecategoryMasterData[1];
+            
+            propertyDetail.put("VacantUsagecategory", vacantusagecategory);
+        }
 
 
         propertyDetail.put("noOfFloors", property.getNoOfFloors());

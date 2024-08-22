@@ -83,15 +83,16 @@ public class PropertyV2 extends PropertyInfoV2 {
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;
 
-
-
+	@JsonProperty("VacantUsagecategory")
+	private String vacantusagecategory;
+	
 	@Builder
 	public PropertyV2(String id, String propertyId, String surveyId, List<String> linkedProperties, String tenantId,
 					  String accountId, String oldPropertyId, String status, Address addressV2, String acknowldgementNumber,
 					  String propertyType, String ownershipCategory, List<OwnerInfo> owners, InstitutionV2 institutionV2,
 					  String creationReason, String usageCategory, Long noOfFloors, Double landArea,
 					  BigDecimal superBuiltUpArea, String source, String channel, List<DocumentV2> documentV2s, List<UnitV2> units,
-					  Object additionalDetails, AuditDetails auditDetails,String exemption) {
+					  Object additionalDetails, AuditDetails auditDetails,String exemption, String vacantusagecategory) {
 		super(id, propertyId, surveyId, linkedProperties, tenantId, accountId, oldPropertyId, status, addressV2);
 		this.acknowldgementNumber = acknowldgementNumber;
 		this.propertyType = propertyType;
@@ -110,6 +111,7 @@ public class PropertyV2 extends PropertyInfoV2 {
 		this.additionalDetails = additionalDetails;
 		this.auditDetails = auditDetails;
 		this.exemption = exemption;
+		this.vacantusagecategory=vacantusagecategory;
 	}
 
 	public PropertyV2 addOwnersItem(OwnerInfo ownersItem) {

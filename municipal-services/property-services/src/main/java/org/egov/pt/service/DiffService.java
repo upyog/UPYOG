@@ -9,8 +9,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.egov.pt.models.Document;
+import org.egov.pt.models.GeoLocation;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
+import org.egov.pt.models.TypeOfRoad;
 import org.egov.pt.models.UnitUsage;
 import org.egov.pt.util.PTConstants;
 import org.egov.tracer.model.CustomException;
@@ -50,7 +52,7 @@ public class DiffService {
         
         Diff diff = javers.compare(propertyFromUpdate, propertyFromSearch);
         List<ValueChange> changes = diff.getChangesByType(ValueChange.class);
-
+ 
         List<String> updatedFields = new LinkedList<>();
 
         if (CollectionUtils.isEmpty(changes))
@@ -186,7 +188,11 @@ public class DiffService {
 						.withListCompareAlgorithm(ListCompareAlgorithm.AS_SET)
 						.registerValue(BigDecimal.class, new BigDecimalComparatorWithFixedEquals())
 						.registerIgnoredClass(OwnerInfo.class)
-						.registerIgnoredClass(Document.class).build();
+						.registerIgnoredClass(Document.class)
+						//.registerIgnoredClass(TypeOfRoad.class) //  uncomment  while testing in local
+						//.registerIgnoredClass(GeoLocation.class)
+						.build();
+						
 			
 			javersLocal = javersForMutation;
 			break;

@@ -84,7 +84,7 @@ public class BillRowMapperV2 implements ResultSetExtractor<List<BillV2>>{
 					.amount(rs.getBigDecimal("bd_totalamount"))
 					//.partPaymentAllowed(null!=rs.getObject("bd_partpaymentallowed")?rs.getBoolean("bd_partpaymentallowed"):false)
 					.expiryDate(rs.getLong("bd_expirydate"))
-					
+					.paymentPeriod(rs.getString("bd_paymentperiod"))
 					.additionalDetails(util.getJsonValue((PGobject) rs.getObject("bd_additionaldetails")))
 					
 					.build();

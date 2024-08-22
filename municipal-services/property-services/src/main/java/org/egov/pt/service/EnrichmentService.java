@@ -4,6 +4,7 @@ import java.text.Collator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -364,8 +365,8 @@ public class EnrichmentService {
 
 			property.setStatus(Status.ACTIVE);
 		}
-		
-		
+
+
 		String pId = propertyutil.getIdList(requestInfo, tenantId, config.getPropertyIdGenName(), config.getPropertyIdGenFormat(), 1).get(0);
 		String ackNo = propertyutil.getIdList(requestInfo, tenantId, config.getAckIdGenName(), config.getAckIdGenFormat(), 1).get(0);
 		if(!config.isDefaultPropertyId()) {
@@ -373,37 +374,143 @@ public class EnrichmentService {
 			String hyphe = "-";
 			StringBuffer sb =  new StringBuffer();
 			StringBuffer finalSb = new StringBuffer();
-			
+
 			List<String> masterNames = new ArrayList<>(
 					Arrays.asList("tenants"));
 
 			Map<String, List<String>> codes = propertyutil.getAttributeValues(config.getStateLevelTenantId(), "tenant", masterNames,
 					"[?(@.city.districtTenantCode== '"+request.getProperty().getTenantId()+"')].city.code", "$.MdmsRes.tenant", request.getRequestInfo());
-			
+
 			List<String> masterNamesOwn = new ArrayList<>(
 					Arrays.asList("OwnerShipCategory"));
 
 			Map<String, List<String>> codesOwn = propertyutil.getAttributeValues(config.getStateLevelTenantId(), "PropertyTax", masterNamesOwn,
 					"[?(@.code=='"+request.getProperty().getOwnershipCategory()+"')].OwnerShipCategoryCode", "$.MdmsRes.PropertyTax", request.getRequestInfo());
-			
+			String Districtcode=districtCodemap(tenantId,property);
 			String cityCode = codes.get("tenants").get(0);
-			String ownerShipCode = codesOwn.get("OwnerShipCategory").get(0);
+			//String ownerShipCode = codesOwn.get("OwnerShipCategory").get(0);
+			sb.append(Districtcode);
 			sb.append(cityCode);
-			sb.append(request.getProperty().getAddress().getLocality().getCode());
-			sb.append(ownerShipCode);
-			String[] propId = pId.split("PT");
-			
-			finalSb.append(propId[0]).append("PT-").append(sb).append(propId[1]);
+			//sb.append(request.getProperty().getAddress().getLocality().getCode());
+			//sb.append(ownerShipCode);
+			String code=request.getProperty().getAddress().getLocality().getCode();
+			if(!request.getProperty().getTenantId().equalsIgnoreCase("mn.imphal"))
+				code=code.replace("WD", "");
+			String lekaicode=code.substring(code.length()-3);
+			String wardcode=code.replace(lekaicode, "");
+			if(wardcode.length()==1)
+				wardcode="0"+wardcode;
+			String ownership=request.getProperty().getOwnershipCategory();
+			ownership=ownership.substring(ownership.length()-10);
+			if(ownership.equalsIgnoreCase("GOVERNMENT"))
+				ownership="0";
+			else
+				ownership="1";
+			sb.append(wardcode).append(lekaicode).append(ownership);
+			String[] serialnumber=pId.split("-");
+			String propid="MN"+serialnumber[serialnumber.length-1];
+			sb.append(propid);
+			//String[] propId = pId.split("PT");
+
+			//finalSb.append(propId[0]).append("PT-").append(sb).append(propId[1]);
 			//sb.append(propId[1]).append(hyphe);
-			
-			pId = finalSb.toString();
+
+			//pId = finalSb.toString();
+			pId=sb.toString();
 			System.out.println(pId);
-			
-			
-		
+
+
+
 		}
 		property.setPropertyId(pId);
 		property.setAcknowldgementNumber(ackNo);
+	}
+
+
+	private String districtCodemap(String tenantId, Property property) {
+		// TODO Auto-generated method stub
+		if(tenantId.equalsIgnoreCase("mn.nambol"))
+		{
+			if(property.getAddress().getLocality().getArea().equalsIgnoreCase("Nambol Mongjing Leikai"))
+				return "2";
+			else if(property.getAddress().getLocality().getArea().equalsIgnoreCase("Phoijing Awang Leikai"))
+				return "2";
+			else if(property.getAddress().getLocality().getArea().equalsIgnoreCase("Utlou Heibi Makhong"))
+				return "2";
+			else if(property.getAddress().getLocality().getArea().equalsIgnoreCase("Khajri Maning Leikai-ward 1"))
+				return "2";
+			else if(property.getAddress().getLocality().getArea().equalsIgnoreCase("Khajri Maning Leikai-ward 2"))
+				return "2";
+			else if(property.getAddress().getLocality().getArea().equalsIgnoreCase("Khajri Mamang Leikai"))
+				return "2";
+			else if(property.getAddress().getLocality().getArea().equalsIgnoreCase("Phoijing Chingning"))
+				return "2";
+			else if(property.getAddress().getLocality().getArea().equalsIgnoreCase("Thangtek"))
+				return "2";
+			else if(property.getAddress().getLocality().getArea().equalsIgnoreCase("Hidakshungba"))
+				return "2";
+			else if(property.getAddress().getLocality().getArea().equalsIgnoreCase("Tera makhong-ward 18"))
+				return "2";
+			else if(property.getAddress().getLocality().getArea().equalsIgnoreCase("Tera makhong-ward 3"))
+				return "2";
+			else
+				return "3";
+		}
+		else if(tenantId.equalsIgnoreCase("mn.samurou"))
+		{
+			if(property.getAddress().getLocality().getArea().equalsIgnoreCase("Lilong Haoreibi Makha Leikai"))
+				return "6";
+			else
+				return "2";
+		}
+		else if(tenantId.equalsIgnoreCase("mn.imphal"))
+		{
+			return "7";
+		}
+		else
+		{
+			Map<String, String> distCity=new HashMap<String, String>();
+			distCity.put("mn.thoubal", "Thoubal");
+			distCity.put("mn.lilongthoubal", "Thoubal");
+			distCity.put("mn.kakching", "Kakching");
+			distCity.put("mn.mayangimphal", "Imphal West");
+			distCity.put("mn.bishnupur", "Bishnupur");
+			distCity.put("mn.kakchingkhunou", "Kakching");
+			distCity.put("mn.lilongimphal", "Imphal West");
+			distCity.put("mn.moirang", "Bishnupur");
+			distCity.put("mn.ningthoukhong", "Bishnupur");
+			distCity.put("mn.yairipok", "Thoubal");
+			distCity.put("mn.kumbi", "Bishnupur");
+			distCity.put("mn.wangoi", "Imphal West");
+			distCity.put("mn.andro", "Imphal East");
+			distCity.put("mn.kwakta", "Bishnupur");
+			distCity.put("mn.lamsang", "Imphal West");
+			distCity.put("mn.wanjinglamding", "Thoubal");
+			distCity.put("mn.shikhongsekmai", "Thoubal");
+			distCity.put("mn.jiribam", "Jiribam");
+			distCity.put("mn.oinam", "Bishnupur");
+			distCity.put("mn.sugnu", "Kakching");
+			distCity.put("mn.sekmai", "Imphal West");
+			distCity.put("mn.lamlai", "Imphal East");
+			distCity.put("mn.heirok", "Thoubal");
+
+			String district=distCity.get(tenantId);
+
+			if(district.equalsIgnoreCase("Imphal East"))
+				return "1";
+			else if(district.equalsIgnoreCase("Imphal West"))
+				return "2";
+			else if(district.equalsIgnoreCase("Bishnupur"))
+				return "3";
+			else if(district.equalsIgnoreCase("Jiribam"))
+				return "4";
+			else if(district.equalsIgnoreCase("Kakching"))
+				return "5";
+			else if(district.equalsIgnoreCase("Thoubal"))
+				return "6";
+		}
+
+		return null;
 	}
 
 

@@ -437,5 +437,13 @@ public class PropertyConfiguration {
 	
 	@Value("${default.propertyid}")
 	private boolean defaultPropertyId;
+	
+	@Value("${egbs.fetchdemand.endpoint}")
+	private String fetchdemandEndpoint;
+	
+	@Value("${egbs.updatedemand.endpoint}")
+	private String updateDemandEndpoint;
+	
+	
 	    
 }

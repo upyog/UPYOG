@@ -2,6 +2,7 @@ package org.egov.demand.repository.querybuilder;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.egov.demand.model.BillSearchCriteria;
 import org.egov.demand.model.BillV2.BillStatus;
@@ -56,7 +57,7 @@ public class BillQueryBuilder {
 			+ " bd.billno AS bd_billno, bd.billdate AS bd_billdate, bd.consumercode AS bd_consumercode,bd.consumertype AS bd_consumertype,"
 			+ " bd.billdescription AS bd_billdescription, bd.displaymessage AS bd_displaymessage, bd.minimumamount AS bd_minimumamount,"
 			+ " bd.totalamount AS bd_totalamount, bd.callbackforapportioning AS bd_callbackforapportioning,bd.expirydate AS bd_expirydate,"
-			+ " bd.partpaymentallowed AS bd_partpaymentallowed, bd.isadvanceallowed as bd_isadvanceallowed,bd.collectionmodesnotallowed AS bd_collectionmodesnotallowed,"
+			+ " bd.partpaymentallowed AS bd_partpaymentallowed, bd.isadvanceallowed as bd_isadvanceallowed,bd.collectionmodesnotallowed AS bd_collectionmodesnotallowed,bd.paymentperiod as bd_paymentperiod,"
 			+ " ad.id AS ad_id, ad.tenantid AS ad_tenantid, ad.billdetail AS ad_billdetail, ad.glcode AS ad_glcode,"
 			+ " ad.orderno AS ad_orderno, ad.accountdescription AS ad_accountdescription,"
 			+ " ad.amount AS ad_amount, ad.adjustedamount AS ad_adjustedamount, ad.taxheadcode AS ad_taxheadcode, ad.demanddetailid,"
@@ -203,15 +204,14 @@ public class BillQueryBuilder {
 	 * @param preparedStmtList
 	 * @param query
 	 */
-	private void appendListToQuery(Collection<String> values, List<Object> preparedStmtList, StringBuilder query) {
+	private void appendListToQuery(Set<String> values, List<Object> preparedStmtList, StringBuilder query) {
 		int length = values.size();
 		String[] valueArray = values.toArray(new String[length]);
-
 		for (int i = 0; i < length; i++) {
 			query.append(" ?");
 			if (i != length - 1)
 				query.append(",");
-			preparedStmtList.add(valueArray[i]);
+			preparedStmtList.add(valueArray[i].replace("[", "").replace("]", ""));
 		}
 		query.append(")");
 	}

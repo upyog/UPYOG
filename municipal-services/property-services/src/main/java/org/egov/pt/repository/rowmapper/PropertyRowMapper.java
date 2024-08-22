@@ -104,6 +104,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 						.parentPropertyId(rs.getString("parentpropertyid"))
 						.isPartOfProperty(null!=rs.getString("ispartofproperty")?rs.getBoolean("ispartofproperty"):false)
 						.parentPropertyUuId(rs.getString("parentpropertyuuid"))
+						.vacantusagecategory(null!=rs.getString("vacantusagecategory")?rs.getString("vacantusagecategory"):null)
 						.build();
 
 				
