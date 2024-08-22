@@ -9,8 +9,9 @@ import SubmitPrintButtonFields from "../commonFormFields/submitPrintBtn";
 import RemovalFeeAmountField from "../commonFormFields/removalFeeAmt";
 import PaymentModeField from "../commonFormFields/paymentMode";
 import PaymentReferenceNumberField from "../commonFormFields/paymentReferenceNumber";
+import NumberOfAnimalsField from "../commonFormFields/numberOfAnimals";
 
-const DeathBefore = ({stage, control, data, setData}) => {
+const DeathBefore = ({stage, control, data, setData, setValues}) => {
   const { t } = useTranslation();
 
   return (
@@ -33,7 +34,8 @@ const DeathBefore = ({stage, control, data, setData}) => {
             {
               (stage === "COLLECTION_POINT") ?
                 <React.Fragment>
-                  <RemovalFeeAmountField control={control} setData={setData} data={data} />
+                  <NumberOfAnimalsField control={control} setData={setData} data={data} setValues={setValues} source="removal" />
+                  <RemovalFeeAmountField control={control} setData={setData} data={data} disabled={true} />
                   <PaymentModeField control={control} setData={setData} data={data} />
                   <PaymentReferenceNumberField control={control} setData={setData} data={data} />
                   <SubmitPrintButtonFields control={control} setData={setData} data={data} />

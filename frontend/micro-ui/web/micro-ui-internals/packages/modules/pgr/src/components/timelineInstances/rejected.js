@@ -13,7 +13,7 @@ const Rejected = ({ action, nextActions, complaintDetails, ComplainMaxIdleTime=3
     let actions =
       nextActions &&
       nextActions.map((action, index) => {
-        if (action && action !== "COMMENT" && action !== "CANCEL") {
+        if (action && action !== "COMMENT") {
           return (
             <Link key={index} to={`/digit-ui/citizen/pgr/${action.toLowerCase()}/${serviceRequestId}`}>
               <ActionLinks>{t(`CS_COMMON_${action}`)}</ActionLinks>
@@ -39,7 +39,7 @@ const Rejected = ({ action, nextActions, complaintDetails, ComplainMaxIdleTime=3
     let actions =
       nextActions &&
       nextActions.map((action, index) => {
-        if (action && (action !== "COMMENT")&& action !== "CANCEL" ) {
+        if (action && (action !== "COMMENT") ) {
           if((action!== "REOPEN" || (action === "REOPEN" && (Date?.now() - complaintDetails?.service?.auditDetails?.lastModifiedTime) < ComplainMaxIdleTime)))
           return (
             <Link key={index} to={`/digit-ui/citizen/pgr/${action.toLowerCase()}/${serviceRequestId}`}>

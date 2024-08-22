@@ -34,7 +34,7 @@ const Documents = () => {
       tenantIds: data.ULB.map((e) => e.code),
     };
 
-    history.push("/digit-ui/employee/engagement/documents/response", { DocumentEntity });
+    history.push(`/${window?.contextPath}/employee/engagement/documents/response`, { DocumentEntity });
   };
 
   return (

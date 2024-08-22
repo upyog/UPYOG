@@ -1,0 +1,975 @@
+.timeline-box {
+  display: flex;
+  margin: 0 8px 15px;
+}
+
+.timeline-checkpoints {
+  position: relative;
+  flex: 1;
+  z-index: 1;
+}
+
+.timeline-contents {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.timeline-contents span {
+  text-align: center;
+  color: white;
+}
+
+.timeline-contents .secondary-colors {
+  color: #0b0c0c;
+  padding: 5px;
+  font-size: small;
+}
+
+.line {
+  position: absolute;
+  top: 7px;
+  left: calc(50% + 14px);
+  right: calc(-50% + 14px);
+  border-top: 16px solid #fff;
+  z-index: -1;
+}
+
+.circles {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  text-align: center;
+  border: 2px solid #f47738;
+}
+
+.circles.completed {
+  background-color: #f47738;
+  display: flex;
+}
+
+.TLComments {
+  max-width: 360px;
+  margin-bottom: 8px;
+  padding: 8px;
+  background-color: #f0f0f0;
+}
+
+.TLComments h3 {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.TLComments p {
+  font-size: 16px;
+}
+
+@media screen and (max-width: 768px) {
+  .line {
+    top: 10px;
+    border-top-width: 10px;
+  }
+
+  .TLComments {
+    width: 320px;
+  }
+
+  .TLComments h3 {
+    font-size: 12px;
+  }
+
+  .TLComments p {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .timeline-box {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .secondary-colors {
+    display: none;
+  }
+
+  .line {
+    border-top-width: 10px;
+  }
+
+  .TLComments {
+    width: 280px;
+  }
+
+  .TLComments h3 {
+    font-size: 10px;
+  }
+
+  .TLComments p {
+    font-size: 12px;
+  }
+}
+
+.bmc-card-full {
+  width: 100%;
+  float: left;
+  padding: 0 4rem;
+}
+
+.aadhaar-container,
+.otp-container {
+  display: flex;
+}
+
+.aadhaar-input,
+.otp-input {
+  width: 2em;
+  margin-right: 0.2em;
+  font-size: 1em;
+}
+
+.bmc-aadhaarText {
+  width: 60%;
+}
+
+.bmc-card-aadharimage {
+  background-image: url("../img/aadhaarCard.png");
+  height: 60vh;
+  width: 100%;
+  background-size: cover;
+  background-repeat: round;
+}
+
+.bmc-row-card-header {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  width: 100%;
+  float: left;
+  transition: box-shadow 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.bmc-card-row {
+  width: 100%;
+  float: left;
+}
+
+.bmc-col-large-header {
+  width: 80%;
+  box-sizing: border-box;
+  float: left;
+}
+
+.bmc-col-small-header {
+  width: 20%;
+  box-sizing: border-box;
+  float: left;
+}
+
+.bmc-col1-card {
+  width: 33.33%;
+  padding: 5px;
+  box-sizing: border-box;
+  float: left;
+}
+
+.bmc-col2-card {
+  width: 50%;
+  padding: 5px;
+  box-sizing: border-box;
+  float: left;
+}
+
+.bmc-col3-card {
+  width: 25%;
+  padding: 5px;
+  box-sizing: border-box;
+  float: left;
+}
+
+.bmc-col4-card {
+  width: 20%;
+  padding: 5px;
+  box-sizing: border-box;
+  float: left;
+}
+
+.bmc-card-button-cancel {
+  background-color: #b1b4b6;
+  width: 147px;
+  height: 48px;
+  color: black;
+  outline: none;
+}
+
+.bmc-card-button-cancel:focus {
+  outline: none;
+}
+
+.bmc-radio-wrap {
+  margin-top: 8px;
+  display: block;
+  line-height: 2.5rem;
+  margin-bottom: 24px;
+}
+
+.bmc-radio-wrap div {
+  display: block;
+}
+
+.bmc-radio-wrap .bmc-radio-btn-wrap {
+  display: block;
+  float: left;
+  position: relative;
+}
+
+.bmc-radio-wrap .bmc-radio-btn-wrap:hover .bmc-radio-btn-checkmark {
+  border-color: #f47738;
+}
+
+.bmc-radio-wrap .bmc-radio-btn {
+  opacity: 0;
+  position: absolute;
+  cursor: pointer;
+  height: 2rem;
+  width: 2rem;
+}
+
+.bmc-radio-wrap .bmc-radio-btn-checkmark {
+  height: 2rem;
+  width: 2rem;
+  border: 1px solid #464646;
+  border-radius: 9999px;
+  display: block;
+}
+
+.bmc-radio-wrap label {
+  color: #0b0c0c;
+  font-size: 16px;
+  line-height: 20px;
+  padding-left: 10px;
+}
+
+.bmc-radio-wrap .bmc-radio-btn-checkmark:after {
+  content: "";
+}
+
+.bmc-radio-wrap .bmc-radio-btn:checked + .bmc-radio-btn-checkmark {
+  border-color: #f47738;
+}
+
+.bmc-radio-wrap .bmc-radio-btn:checked + .bmc-radio-btn-checkmark:after {
+  display: block;
+  background-color: #f47738;
+  height: 1.25rem;
+  width: 1.25rem;
+  border-radius: 9999px;
+  position: absolute;
+  top: 6px;
+  left: 6px;
+}
+
+.bmc-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #0b0c0c;
+  padding-bottom: 1rem;
+}
+
+.bmc-card-button {
+  background-color: #f47738;
+  width: 147px;
+  height: 48px;
+  color: white;
+  outline: none;
+}
+
+.bmc-card-view-button {
+  background-color: #f47738;
+  color: white;
+  outline: none;
+  display: inline-block;
+}
+
+.bmc-card-link {
+  display: none;
+}
+
+.bmc-card-button:focus {
+  outline: none;
+}
+
+.bmc-card-master-button {
+  background-color: #5aae06;
+  width: 174px;
+  height: 48px;
+  color: white;
+  outline: none;
+}
+
+.bmc-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.bmc-range-slider {
+  width: 100%;
+}
+
+.bmc-range-container {
+  position: relative;
+}
+
+.bmc-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+}
+
+.bmc-range-slider::-webkit-slider-runnable-track {
+  height: 4px;
+}
+
+.bmc-range-slider::-moz-range-track {
+  height: 4px;
+}
+
+.bmc-range-slider::-ms-track {
+  height: 4px;
+}
+
+.bmc-range-slider::-moz-range-progress {
+  background-color: #4caf50;
+}
+
+.bmc-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  margin-top: -5px;
+}
+
+.bmc-range-slider::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+}
+
+.bmc-range-slider::-ms-thumb {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+}
+
+.bmc-range-container::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: #ccc;
+}
+
+.bmc-range-slider::-webkit-slider-runnable-track::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: #ccc;
+}
+
+.bmc-range-slider::-webkit-slider-thumb::before {
+  content: attr(value);
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: #333;
+}
+
+.bmc-pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.bmc-pagination-info {
+  font-size: 14px;
+}
+
+.bmc-pagination {
+  display: inline-block;
+  padding: 0;
+  margin: 20px 0;
+  list-style-type: none;
+}
+
+.bmc-pagination li {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.bmc-pagination li button {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  color: #333;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.bmc-pagination li button:hover {
+  background-color: #e9ecef;
+}
+
+.bmc-pagination li.active button {
+  background-color: #f47738;
+  color: #fff;
+}
+
+.bmc-pagination li.disabled button {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.bmc-pagination li:first-child button::before {
+  content: "\00AB";
+}
+
+.bmc-pagination li:last-child button::after {
+  content: "\00BB";
+}
+
+.bmc-table-container {
+  max-width: 100%;
+  padding: 2rem;
+}
+
+.bmc-hover-table {
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  margin: 0;
+  padding: 2rem;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.bmc-hover-table tr {
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  padding: 0.35em;
+}
+
+.bmc-hover-table th,
+.bmc-hover-table td {
+  padding: 0.625em;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+.bmc-hover-table th {
+  font-size: 0.85em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.bmc-card-view-button {
+  background-color: #f47738;
+  color: white;
+  border: none;
+  width: 147px;
+  height: 42px;
+  padding: 8px 16px;
+}
+
+.bmc-search-button {
+  padding-top: 2.8rem;
+  padding-right: 3rem;
+}
+
+@media only screen and (max-width: 768px) {
+  .bmc-card-full {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .aadhaar-input,
+  .otp-input {
+    width: 1.5em;
+    font-size: 0.8em;
+  }
+
+  .bmc-aadhaarText {
+    width: 100%;
+  }
+
+  .bmc-card-aadharimage {
+    display: none;
+  }
+
+  .bmc-col1-card,
+  .bmc-col2-card,
+  .bmc-col3-card,
+  .bmc-col4-card {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+    float: left;
+  }
+
+  .bmc-card-button-cancel,
+  .bmc-card-button,
+  .bmc-search-button {
+    width: 100%;
+    padding: 0;
+  }
+
+  .bmc-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bmc-col-large-header {
+    width: 70%;
+  }
+
+  .bmc-col-small-header {
+    width: 30%;
+  }
+
+  .bmc-responsive-checkbox {
+    width: 35px;
+    height: 35px;
+  }
+
+  .bmc-card-link {
+    display: inline-block;
+  }
+
+  .bmc-card-view-button {
+    display: none;
+  }
+
+  .bmc-card-link {
+    display: inline-block;
+    text-decoration: none;
+    color: #f47738;
+    border-bottom: none;
+  }
+
+  .bmc-pagination-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .bmc-pagination {
+    width: 100%;
+    text-align: center;
+  }
+
+  .bmc-pagination li {
+    margin-right: 0;
+    margin-bottom: 5px;
+  }
+
+  .bmc-pagination li button {
+    width: 100%;
+  }
+
+  .bmc-hover-table {
+    border: 0;
+  }
+
+  .bmc-hover-table thead {
+    border: none;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+
+  .bmc-hover-table tr {
+    border-bottom: 3px solid #ddd;
+    display: block;
+    margin-bottom: 0.625em;
+  }
+
+  .bmc-hover-table td {
+    border-bottom: 1px solid #ddd;
+    display: block;
+    font-size: 0.8em;
+    text-align: right;
+  }
+
+  .bmc-hover-table td::before {
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .bmc-hover-table td:last-child {
+    border-bottom: 0;
+  }
+
+  .bmc-criteria {
+    width: 100%;
+    justify-content: center;
+    height: auto;
+  }
+}
+
+@media only screen and (max-width: 480px) and (min-width: 320px) {
+  .bmc-card-full {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .bmc-aadhaarText {
+    width: 100%;
+  }
+
+  .bmc-card-aadharimage {
+    display: none;
+  }
+
+  .aadhaar-input,
+  .otp-input {
+    width: 1.2em;
+    font-size: 0.6em;
+    margin-right: 0.1em;
+  }
+
+  .bmc-col1-card,
+  .bmc-col2-card,
+  .bmc-col3-card,
+  .bmc-col4-card {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+    float: left;
+  }
+
+  .bmc-card-button-cancel,
+  .bmc-card-button,
+  .bmc-search-button {
+    width: 100%;
+    padding: 0;
+  }
+
+  .bmc-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bmc-col-large-header {
+    width: 100%;
+    float: none;
+  }
+
+  .bmc-col-small-header {
+    width: 100%;
+    float: none;
+    margin-top: 10px;
+  }
+
+  .bmc-pagination-info {
+    font-size: 12px;
+  }
+
+  .bmc-pagination li button {
+    padding: 3px 5px;
+    font-size: 12px;
+  }
+
+  .bmc-criteria {
+    gap: 8px;
+    padding: 8px;
+  }
+}
+
+.bmc-modal .header-content {
+  width: 100%;
+}
+
+.bmc-modal .header-wrap {
+  margin: 0;
+  margin-bottom: 0;
+}
+
+.bmc-modal .popup-module {
+  width: 650px;
+  text-align: center;
+  padding-bottom: 1rem;
+  border-radius: 10px;
+  --bg-opacity: 1;
+  background-color: #fff;
+  background-color: rgba(255, 255, 255, var(--bg-opacity));
+}
+
+.bmc-modal .popup-module-main {
+  padding: 0;
+}
+
+.bmc-modal .popup-module-action-bar {
+  padding-bottom: 1rem;
+}
+
+.bmc-otp .text-input-width {
+  width: 2rem;
+  margin-right: 0.5rem;
+}
+
+.aadhaar-inputs,
+.bmc-otp {
+  display: flex;
+  margin-bottom: 1em;
+}
+
+.aadhaar-inputs,
+.bmc-aadhaar {
+  display: flex;
+  margin-bottom: 1em;
+}
+
+.aadhaar-input,
+.otp-input {
+  width: 2em;
+  margin-right: 0.2em;
+}
+
+@media (max-width: 768px) {
+  .aadhaar-input,
+  .otp-input {
+    width: 1.5em;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .aadhaar-input,
+  .otp-input {
+    width: 1.8em;
+  }
+}
+
+.bmc-checkbox .checkbox-wrap input {
+  top: 0;
+  left: 0;
+}
+
+.bmc-checkbox .checkbox-wrap .custom-checkbox {
+  width: 30px;
+  height: 30px;
+  top: -7px;
+}
+
+.bmc-checkbox .checkbox-wrap .label {
+  margin-left: 45px;
+}
+
+.bmc-checkbox .checkbox-wrap {
+  margin-bottom: 0;
+}
+
+.bmc-tooltip {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 5px;
+  border-radius: 3px;
+  font-size: 12px;
+  z-index: 100;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.bmc-tooltip::before {
+  content: "";
+  position: absolute;
+  border-width: 5px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.bmc-add-icon {
+  width: 30px;
+  height: 30px;
+  background-color: #4caf50;
+  border-radius: 50%;
+}
+
+.bmc-employee-modal .header-content {
+  width: 100%;
+}
+
+.bmc-employee-modal .header-wrap {
+  margin: 0;
+  margin-bottom: 0;
+}
+
+.bmc-employee-modal .popup-module {
+  width: 650px;
+  padding-bottom: 1rem;
+  border-radius: 10px;
+  --bg-opacity: 1;
+  background-color: #fff;
+  background-color: rgba(255, 255, 255, var(--bg-opacity));
+}
+
+.bmc-employee-modal .popup-module-main {
+  padding: 0;
+}
+
+.aadhaar-dash {
+  font-size: 2rem;
+  font-weight: 500;
+  padding-right: 0.2rem;
+}
+
+.employee-card-input .disabled {
+  color: #0b0c0c;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 120px;
+  /* Ensure this width is enough for the longest label */
+  display: inline-block;
+  top: 10px;
+}
+
+.toggle-switch-checkbox {
+  display: none;
+}
+
+.toggle-switch-label {
+  display: block;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  height: 34px;
+  /* Ensure height is sufficient for text */
+}
+
+.toggle-switch-inner {
+  display: flex;
+  /* Use flex to center content */
+  width: 200%;
+  /* Ensure the inner width fits both labels */
+  margin-left: -100%;
+  transition: margin 0.3s ease-in 0s;
+}
+
+.toggle-switch-inner:before,
+.toggle-switch-inner:after {
+  flex: 1;
+  /* Each half takes up equal space */
+  height: 100%;
+  padding: 0;
+  /* Remove any padding */
+  line-height: 31px;
+  /* Center text vertically */
+  font-size: 12px;
+  color: white;
+  font-family: Trebuchet, Arial, sans-serif;
+  font-weight: bold;
+  box-sizing: border-box;
+  text-align: center;
+  /* Center text horizontally */
+}
+
+.toggle-switch-inner:before {
+  content: attr(data-yes);
+  background-color: #038403;
+  color: #fff;
+}
+
+.toggle-switch-inner:after {
+  content: attr(data-no);
+  background-color: #940202;
+  color: #fff;
+}
+
+.toggle-switch-switch {
+  display: block;
+  width: 31px;
+  /* Match the height for a square switch */
+  margin: 0;
+  background: #f47738;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0px;
+  /* Adjust left to start at the beginning of the switch */
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  transition: all 0.3s ease-in 0s;
+}
+
+.toggle-switch-checkbox:checked + .toggle-switch-label .toggle-switch-inner {
+  margin-left: 0;
+}
+
+.toggle-switch-checkbox:checked + .toggle-switch-label .toggle-switch-switch {
+  left: calc(100% - 31px);
+  /* Adjust to match the width */
+}
+
+.toggle-switch.disabled .toggle-switch-label {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.bmc-selected-options {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  /* Adjust gap as needed */
+  margin-top: 10px;
+}
+
+.bmc-selected-option {
+  display: flex;
+  align-items: center;
+  background-color: #f0f0f0;
+  border-radius: 16px;
+  padding: 4px 8px;
+  font-size: 14px;
+}
+
+.bmc-clear-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.bmc-select-scheme {
+  padding-left: 4rem;
+}
+
+.bmc-criteria {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: #f1f1f1;
+  width: fit-content;
+  padding: 12px;
+  align-items: center;
+  text-align: center;
+}

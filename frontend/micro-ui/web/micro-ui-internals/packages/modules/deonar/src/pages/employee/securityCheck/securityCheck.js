@@ -20,6 +20,8 @@ import NumberOfDeadAnimalsField from "../commonFormFields/numberOfDeadAnimals";
 import GawalNameField from "../commonFormFields/gawalName";
 import useDate from "../../../hooks/useCurrentDate";
 import useCurrentTime from "../../../hooks/useCurrentTime";
+import useSubmitForm from "../../../hooks/useSubmitForm";
+import { COLLECTION_POINT_ENDPOINT } from "../../../constants/apiEndpoints";
 
 const SecurityCheckPage = () => {
   const { t } = useTranslation();
@@ -49,17 +51,11 @@ const SecurityCheckPage = () => {
     mode: "onChange",
   });
 
-  const fetchDataByReferenceNumber = async (referenceNumber) => {
-    //setTimeout(() => {
-      return arrivalMockData;
-    //}, 1000);
-  };
+  const { submitForm, isSubmitting, response, error } = useSubmitForm(COLLECTION_POINT_ENDPOINT);
 
-  // useEffect(() => {
-  //   console.log(getValues("arrivalUuid"));
-  //   console.log(getValues("importType"));
-  //   console.log(getValues("importPermissionNumber"));
-  // });
+  const fetchDataByReferenceNumber = async (referenceNumber) => {
+      return arrivalMockData;
+  };
 
   const val = useRef(useCreateUuid(5));
   useEffect(() => {
@@ -92,10 +88,15 @@ const SecurityCheckPage = () => {
     }
   };
 
-  const onSubmit = (formData) => {
-    console.log("Form data submitted:", formData);
-    const jsonData = JSON.stringify(formData);
-    console.log("Generated JSON:", jsonData);
+  const onSubmit = async (formData) => {
+    try {
+      const result = await submitForm(formData);
+      console.log("Form successfully submitted:", result);
+      alert("Form submission successful ! Your ArrivalUUID is: " + formData.arrivalUuid);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Form submission failed !");
+    }
   };
 
   return (

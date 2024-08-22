@@ -27,6 +27,7 @@ const ParkingAmountField = ({control, data, setData}) => {
                 render={(field) => (
                 <div>
                     <TextInput
+                      type="number"
                       value={field.value}
                       onChange={(e) => {
                         field.onChange(e.target.value);

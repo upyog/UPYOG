@@ -37,7 +37,7 @@ const ApplicationCard = ({
 
     const details = responseData?.find((item) => (areEqual(item?.user?.name, data["Posted By"]) && areEqual(item.name, data["Title"])));
     if (details) {
-      history.push(`/digit-ui/employee/engagement/messages/inbox/details/${details?.id  }`,)}
+      history.push(`/${window?.contextPath}/employee/engagement/messages/inbox/details/${details?.id  }`,)}
   }
 
   let result;

@@ -34,7 +34,7 @@ export const processLinkData = (newData, code, t) => {
     const roleBasedLoginRoutes = [
       {
         role: "FSM_DSO",
-        from: "/digit-ui/citizen/fsm/dso-dashboard",
+        from: `/${window?.contextPath}/citizen/fsm/dso-dashboard`,
         dashoardLink: "CS_LINK_DSO_DASHBOARD",
         loginLink: "CS_LINK_LOGIN_DSO",
       },
@@ -48,7 +48,7 @@ export const processLinkData = (newData, code, t) => {
         });
       else
         newObj?.links?.push({
-          link: `/digit-ui/citizen/login`,
+          link: `/${window?.contextPath}/citizen/login`,
           state: { role: "FSM_DSO", from },
           i18nKey: t(loginLink),
         });
@@ -79,10 +79,14 @@ const iconSelector = (code) => {
       return <PTIcon className="fill-path-primary-main" />;
   }
 };
+
+
 const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => {
+
   const paymentModule = modules.filter(({ code }) => code === "Payment")[0];
   const moduleArr = modules.filter(({ code }) => code !== "Payment");
   const moduleArray = [paymentModule, ...moduleArr];
+
   const { t } = useTranslation();
   if (isLoading) {
     return <Loader />;
@@ -91,8 +95,8 @@ const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => 
   return (
     <React.Fragment>
       <div className="citizen-all-services-wrapper">
-        <BackButton />
-        <div className="citizenAllServiceGrid" style={{display:"flex", flexDirection:"column",justifyContent:"center" }}>
+        {location.pathname.includes("sanitation-ui/citizen/all-services") ? null : <BackButton />}
+        <div className="citizenAllServiceGrid">
           {moduleArray
             .filter((mod) => mod)
             .map(({ code }, index) => {
@@ -127,7 +131,6 @@ const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => 
 };
 
 const EmployeeHome = ({ modules }) => {
-  if(window.Digit.SessionStorage.get("PT_CREATE_EMP_TRADE_NEW_FORM")) window.Digit.SessionStorage.set("PT_CREATE_EMP_TRADE_NEW_FORM",{})
   return (
     <div className="employee-app-container">
       <div className="ground-container moduleCardWrapper gridModuleWrapper">

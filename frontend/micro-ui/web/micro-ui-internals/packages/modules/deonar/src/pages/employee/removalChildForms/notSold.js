@@ -14,7 +14,7 @@ import PaymentModeField from "../commonFormFields/paymentMode";
 import PaymentReferenceNumberField from "../commonFormFields/paymentReferenceNumber";
 import SubmitPrintButtonFields from "../commonFormFields/submitPrintBtn";
 
-const NotSold = ({stage, control, data, setData}) => {
+const NotSold = ({stage, control, data, setData, setValues}) => {
   const { t } = useTranslation();
 
   return (
@@ -23,7 +23,7 @@ const NotSold = ({stage, control, data, setData}) => {
         <TraderNameField control={control} setData={setData} data={data} />
         <BrokerNameField control={control} setData={setData} data={data} />
         <GawalNameField control={control} setData={setData} data={data} />
-          <NumberOfAnimalsField control={control} setData={setData} data={data} />
+          <NumberOfAnimalsField control={control} setData={setData} data={data} setValues={setValues} source="removal" />
           <AnimalTokenNumberField control={control} setData={setData} data={data} />
               {
                 (stage === "SECURITY_CHECKPOINT") ?
@@ -38,7 +38,7 @@ const NotSold = ({stage, control, data, setData}) => {
               {
                 (stage === "COLLECTION_POINT") ? 
                   <React.Fragment>
-                    <RemovalFeeAmountField control={control} setData={setData} data={data} />
+                    <RemovalFeeAmountField control={control} setData={setData} data={data} disabled={true} />
                     <PaymentModeField control={control} setData={setData} data={data} />
                     <PaymentReferenceNumberField control={control} setData={setData} data={data} />
                     <SubmitPrintButtonFields />

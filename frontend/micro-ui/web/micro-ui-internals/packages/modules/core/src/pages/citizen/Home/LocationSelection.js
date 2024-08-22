@@ -41,7 +41,7 @@ const LocationSelection = () => {
       const redirectBackTo = location.state?.redirectBackTo;
       if (redirectBackTo) {
         history.replace(redirectBackTo);
-      } else history.push("/digit-ui/citizen");
+      } else history.push(`/${window?.contextPath}/citizen`);
     } else {
       setShowError(true);
     }

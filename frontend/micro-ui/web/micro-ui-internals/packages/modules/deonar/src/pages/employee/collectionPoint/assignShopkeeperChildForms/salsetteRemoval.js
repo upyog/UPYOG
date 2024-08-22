@@ -14,7 +14,7 @@ import PaymentModeField from "../../commonFormFields/paymentMode";
 import PaymentReferenceNumberField from "../../commonFormFields/paymentReferenceNumber";
 import SubmitPrintButtonFields from "../../commonFormFields/submitPrintBtn";
 
-const SalsetteRemovalSubform = ({isShopkeeperAssignment, control, data, setData}) => {
+const SalsetteRemovalSubform = ({isShopkeeperAssignment, control, data, setData, setValues}) => {
   const { t } = useTranslation();
 
   return (
@@ -31,13 +31,13 @@ const SalsetteRemovalSubform = ({isShopkeeperAssignment, control, data, setData}
                         <React.Fragment></React.Fragment>
                 }
                 <DairywalaNameField control={control} setData={setData} data={data} />
-                <NumberOfAnimalsField control={control} setData={setData} data={data} />
+                <NumberOfAnimalsField control={control} setData={setData} data={data} setValues={setValues} source="removal" />
                 <AnimalTokenNumberField control={control} setData={setData} data={data} />
             {
                 isShopkeeperAssignment ? 
                     <SalsetteFeeAmountField control={control} setData={setData} data={data} />
                 :
-                    <RemovalFeeAmountField control={control} setData={setData} data={data} />
+                    <RemovalFeeAmountField control={control} setData={setData} data={data} disabled={true} />
             }
             <PaymentModeField control={control} setData={setData} data={data} />
             <PaymentReferenceNumberField control={control} setData={setData} data={data} />

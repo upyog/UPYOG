@@ -10,6 +10,8 @@ import ParkingAmountField from "../commonFormFields/parkingAmount";
 import SubmitPrintButtonFields from "../commonFormFields/submitPrintBtn";
 import useDate from "../../../hooks/useCurrentDate";
 import useCurrentTime from "../../../hooks/useCurrentTime";
+import useSubmitForm from "../../../hooks/useSubmitForm";
+import { PARKING_ENDPOINT } from "../../../constants/apiEndpoints";
 
 const ParkingFeePage = () => {
   const { t } = useTranslation();
@@ -30,10 +32,17 @@ const ParkingFeePage = () => {
     mode: "onChange"
   });
 
-  const onSubmit = (formData) => {
-    console.log("Form data submitted:", formData);
-    const jsonData = JSON.stringify(formData);
-    console.log("Generated JSON:", jsonData);
+  const { submitForm, isSubmitting, response, error } = useSubmitForm(PARKING_ENDPOINT);
+
+  const onSubmit = async (formData) => {
+    try {
+      const result = await submitForm(formData);
+      console.log("Form successfully submitted:", result);
+      alert("Form submission successful !");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Form submission failed !");
+    }
   };
 
   return (

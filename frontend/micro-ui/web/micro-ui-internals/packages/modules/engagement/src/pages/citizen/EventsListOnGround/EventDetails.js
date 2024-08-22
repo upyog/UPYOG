@@ -16,7 +16,7 @@ const EventDetails = () => {
   if (!Digit.UserService?.getUser()?.access_token) {
     localStorage.clear();
     sessionStorage.clear();
-    return <Redirect to={{ pathname: `/digit-ui/citizen/login`, state: { from: location.pathname + location.search } }} />;
+    return <Redirect to={{ pathname: `/${window?.contextPath}/citizen/login`, state: { from: location.pathname + location.search } }} />;
   }
 
   function onGroundEventCardPropsForEventDetails(DataParamsInEvent) {

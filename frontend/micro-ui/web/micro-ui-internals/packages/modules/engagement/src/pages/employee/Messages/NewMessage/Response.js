@@ -81,7 +81,7 @@ const Response = (props) => {
           {searchParams?.update ? t(`ENGAGEMENT_PUBLIC_BRDCST_MESSAGES`) : t(`ENGAGEMENT_PUBLIC_BRDCST_MESSAGES`)}
         </CardText>
         <ActionBar>
-          <Link to={"/digit-ui/employee"}>
+          <Link to={`/${window?.contextPath}/employee`}>
             <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
           </Link>
         </ActionBar>
@@ -102,7 +102,7 @@ const Response = (props) => {
         isLoading={(mutation.isIdle && !mutationHappened) || mutation.isLoading}
       />
       <ActionBar>
-        <Link to={"/digit-ui/employee"}>
+        <Link to={`/${window?.contextPath}/employee`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       </ActionBar>

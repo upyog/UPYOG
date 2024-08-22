@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CardLabel, Dropdown, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
 import { Controller, useForm } from "react-hook-form";
 import ReligiousPersonal from "../removalChildForms/religious_personal";
 import NotSold from "../removalChildForms/notSold";
@@ -9,66 +8,113 @@ import DeathBefore from "../removalChildForms/deathBefore";
 import DeathAfter from "../removalChildForms/deathAfter";
 import RejectedAfter from "../removalChildForms/rejectedAfter";
 import RemovalTypeOptionsField from "../commonFormFields/removalTypesDropdown";
-import RemovalFeeReceiptNumberField from "../commonFormFields/removalFeeReceiptNumber";
 import RejectedRemovalTypesDropdownField from "../commonFormFields/rejectedRemovalTypesDropdown";
 import DeathRemovalTypesDropdownField from "../commonFormFields/deathRemovalTypesDropdown";
-import SearchButtonField from "../commonFormFields/searchBtn";
 import { deathRemovalTypes, rejectedRemovalTypes, removalTypes } from "../../../constants/removalTypes";
 import Salsette from "../removalChildForms/salsette";
 import MainFormHeader from "../commonFormFields/formMainHeading";
+import useSubmitForm from "../../../hooks/useSubmitForm";
+import { COLLECTION_POINT_ENDPOINT } from "../../../constants/apiEndpoints";
 
 const RemovalFeePage = () => {
   const { t } = useTranslation();
   const [data, setData] = useState({});
-  const [subFormType, setSubFormType] = useState(null);
-  const [rejectedType, setRejectedType] = useState(null);
-  const [deathType, setDeathType] = useState(null);
-
+  const [subFormType, setSubFormType] = useState({});
+  const [rejectedType, setRejectedType] = useState({});
+  const [deathType, setDeathType] = useState({});
+  const [defaults, setDefaults] = useState({});
+  
   const {
     control,
     setValue,
     handleSubmit,
     getValues,
     formState: { errors, isValid },
-  } = useForm({ defaultValues: {}, mode: "onChange" });
+  } = useForm({ defaultValues: defaults, mode: "onChange" });
 
-  const fetchDataByReferenceNumber = async (referenceNumber) => {
-    const mockData = {
-      arrivalUuid: referenceNumber,
-      importType: "Type A",
-      importPermissionNumber: "123456",
-      importPermissionDate: new Date(),
-      traderName: "John Doe",
-      licenseNumber: "LIC123",
-      vehicleNumber: "ABC123",
-      numberOfAliveAnimals: 5,
-      numberOfDeadAnimals: 2,
-      arrivalDate: new Date(),
-      arrivalTime: "12:00",
-    };
-    return mockData;
-  };
-
-  const handleSearch = async () => {
-    const referenceNumber = getValues("removalFeeReceiptNumber");
-    if (referenceNumber) {
-      try {
-        const result = await fetchDataByReferenceNumber(referenceNumber);
-        setData(result);
-        Object.keys(result).forEach((key) => {
-          setValue(key, result[key]);
-        });
-        setSubFormType(getValues("removalType"));
-      } catch (error) {
-        console.error("Failed to fetch data", error);
-      }
+  const { submitForm, isSubmitting, response, error } = useSubmitForm(COLLECTION_POINT_ENDPOINT);
+ 
+  useEffect(() => {
+    let obj = {};
+    if (
+        (subFormType.name === "REJECTED_REMOVAL" && rejectedType.name === "REJECTION_BEFORE_TRADING") || 
+        (subFormType.name === "DEATH_REMOVAL" && rejectedType.name === "DEATH_BEFORE_TRADING")
+      ) {
+      obj = {
+        traderName: {},
+        brokerName: {},
+        gawalName: {},
+        numberOfAnimals: 0,
+        animalTokenNumber: 0,
+        removalFeeAmount: 0,
+        paymentMode: {},
+        paymentReferenceNumber: ""
+      };
     }
-  };
+    else if (
+      (subFormType.name === "REJECTED_REMOVAL" && rejectedType.name === "REJECTION_AFTER_TRADING") ||
+      (subFormType.name === "DEATH_REMOVAL" && rejectedType.name === "DEATH_AFTER_TRADING")
+    ) {
+      obj = {
+        shopkeeperName: {},
+        dawanwalaName: {},
+        numberOfAnimals: 0,
+        animalTokenNumber: 0,
+        removalFeeAmount: 0,
+        paymentMode: {},
+        paymentReferenceNumber: ""
+      };
+    }
+    else if (subFormType.name === "SALSETTE") {
+      obj = {
+        traderName: {},
+        brokerName: {},
+        gawalName: {},
+        dairywalaName: {},
+        numberOfAnimals: 0,
+        animalTokenNumber: 0,
+        removalFeeAmount: 0,
+        paymentMode: {},
+        paymentReferenceNumber: ""
+      };
+    }
+    else if (subFormType.name === "RELIGIOUS_PERSONAL_PURPOSE") {
+      obj = {
+        traderName: {},
+        brokerName: {},
+        gawalName: {},
+        citizenName: '',
+        numberOfAnimals: 0,
+        animalTokenNumber: 0,
+        removalFeeAmount: 0,
+        paymentMode: {},
+        paymentReferenceNumber: ""
+      };
+    }
+    else if (subFormType.name === "REMOVAL_OF_NOT_SOLD_ANIMALS") {
+      obj = {
+        traderName: {},
+        brokerName: {},
+        gawalName: {},
+        numberOfAnimals: 0,
+        animalTokenNumber: 0,
+        removalFeeAmount: 0,
+        paymentMode: {},
+        paymentReferenceNumber: ""
+      };
+    }
+    setDefaults(obj);
+  }, [subFormType, rejectedType, deathType]);
 
-  const onSubmit = (formData) => {
-    console.log("Form data submitted:", formData);
-    const jsonData = JSON.stringify(formData);
-    console.log("Generated JSON:", jsonData);
+  const onSubmit = async (formData) => {
+    try {
+      const result = await submitForm(formData);
+      console.log("Form successfully submitted:", result);
+      alert("Form submission successful!");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Form submission failed");
+    }
   };
 
   return (
@@ -78,73 +124,71 @@ const RemovalFeePage = () => {
           <MainFormHeader title={"DEONAR_REMOVAL_FEE"} />
           <div className="bmc-row-card-header">
             <div className="bmc-card-row">
-              <RemovalTypeOptionsField setSubFormType={setSubFormType} options={removalTypes} />
+              <RemovalTypeOptionsField setSubFormType={setSubFormType} options={removalTypes} control={control} data={data} setData={setData} />
               
               {
-                (subFormType === "REJECTED_REMOVAL") ?
-                  <RejectedRemovalTypesDropdownField setRejectedType={setRejectedType} options={rejectedRemovalTypes} />
+                (subFormType.name === "REJECTED_REMOVAL") ?
+                  <RejectedRemovalTypesDropdownField setRejectedType={setRejectedType} options={rejectedRemovalTypes} control={control} data={data} setData={setData} />
               :
                 <React.Fragment></React.Fragment>
               }
               {
-                (subFormType === "DEATH_REMOVAL") ?
-                  <DeathRemovalTypesDropdownField setDeathType={setDeathType} options={deathRemovalTypes} />
+                (subFormType.name === "DEATH_REMOVAL") ?
+                  <DeathRemovalTypesDropdownField setDeathType={setDeathType} options={deathRemovalTypes} control={control} data={data} setData={setData} />
               :
                 <React.Fragment></React.Fragment>
               }
-              <SearchButtonField />
             </div>
           </div>
-          </form>
           { subFormType ? (
             <React.Fragment>
               {
-                (subFormType === 'SALSETTE') ? 
+                (subFormType.name === 'SALSETTE') ? 
                   <div className="bmc-row-card-header">
                     <div className="bmc-card-row">
-                      <Salsette stage="COLLECTION_POINT" control={control} setData={setData} data={data} />
+                      <Salsette stage="COLLECTION_POINT" control={control} setData={setData} data={data} setValues={setValue} disabled={false} />
                     </div>
                   </div> 
                 :
-                (subFormType === 'RELIGIOUS_PERSONAL_PURPOSE') ?
+                (subFormType.name === 'RELIGIOUS_PERSONAL_PURPOSE') ?
                   <div className="bmc-row-card-header">
                     <div className="bmc-card-row">
-                      <ReligiousPersonal stage="COLLECTION_POINT" control={control} setData={setData} data={data} /> 
+                      <ReligiousPersonal stage="COLLECTION_POINT" control={control} setData={setData} data={data} setValues={setValue} /> 
                     </div>
                   </div>
                 :
-                (subFormType === 'REMOVAL_OF_NOT_SOLD_ANIMALS') ?
+                (subFormType.name === 'REMOVAL_OF_NOT_SOLD_ANIMALS') ?
                   <div className="bmc-row-card-header">
                     <div className="bmc-card-row">
-                      <NotSold stage="COLLECTION_POINT" control={control} setData={setData} data={data} /> 
+                      <NotSold stage="COLLECTION_POINT" control={control} setData={setData} data={data} setValues={setValue} /> 
                     </div>
                   </div>
                 :
-                (subFormType === 'REJECTED_REMOVAL' && rejectedType === 'REJECTION_BEFORE_TRADING') ?
+                (subFormType.name === 'REJECTED_REMOVAL' && rejectedType.name === 'REJECTION_BEFORE_TRADING') ?
                   <div className="bmc-row-card-header">
                     <div className="bmc-card-row">
-                      <RejectedBefore stage="COLLECTION_POINT" control={control} setData={setData} data={data} /> 
+                      <RejectedBefore stage="COLLECTION_POINT" control={control} setData={setData} data={data} setValues={setValue} /> 
                     </div>
                   </div>
                 :
-                (subFormType === 'REJECTED_REMOVAL' && rejectedType === 'REJECTION_AFTER_TRADING') ?
+                (subFormType.name === 'REJECTED_REMOVAL' && rejectedType.name === 'REJECTION_AFTER_TRADING') ?
                   <div className="bmc-row-card-header">
                     <div className="bmc-card-row">
-                      <RejectedAfter stage="COLLECTION_POINT" control={control} setData={setData} data={data} /> 
+                      <RejectedAfter stage="COLLECTION_POINT" control={control} setData={setData} data={data} setValues={setValue} /> 
                     </div>
                   </div>
                 :
-                (subFormType === 'DEATH_REMOVAL' && deathType === 'DEATH_BEFORE_TRADING') ?
+                (subFormType.name === 'DEATH_REMOVAL' && deathType.name === 'DEATH_BEFORE_TRADING') ?
                   <div className="bmc-row-card-header">
                     <div className="bmc-card-row">
-                      <DeathBefore stage="COLLECTION_POINT" control={control} setData={setData} data={data} /> 
+                      <DeathBefore stage="COLLECTION_POINT" control={control} setData={setData} data={data} setValues={setValue} /> 
                     </div>
                   </div>
                 :
-                (subFormType === 'DEATH_REMOVAL' && deathType === 'DEATH_AFTER_TRADING') ?
+                (subFormType.name === 'DEATH_REMOVAL' && deathType.name === 'DEATH_AFTER_TRADING') ?
                   <div className="bmc-row-card-header">
                     <div className="bmc-card-row">
-                      <DeathAfter stage="COLLECTION_POINT" control={control} setData={setData} data={data} /> 
+                      <DeathAfter stage="COLLECTION_POINT" control={control} setData={setData} data={data} setValues={setValue} /> 
                     </div>
                   </div>
                 :
@@ -154,7 +198,7 @@ const RemovalFeePage = () => {
           ):
             <React.Fragment></React.Fragment>
           }
-        
+        </form>
       </div>
     </React.Fragment>
   );

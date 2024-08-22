@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { CardLabel, Dropdown, LabelFieldPair, TextInput, DatePicker } from "@egovernments/digit-ui-react-components";
 import { Controller, useForm } from "react-hook-form";
 
-const RemovalFeeAmountField = ({control, setData, data}) => {
+const RemovalFeeAmountField = ({control, setData, data, disabled}) => {
   const { t } = useTranslation();
   const [error, setError] = useState("");
 
@@ -27,19 +27,21 @@ const RemovalFeeAmountField = ({control, setData, data}) => {
               render={(props) => (
               <div>
                   <TextInput
-                  value={props.value}
-                  onChange={(e) => {
-                    props.onChange(e.target.value);
-                    const newData = {
-                      ...data,
-                      removalFeeAmount: e.target.value,
-                    };
-                    setData(newData);
-                  }}
-                  onBlur={props.onBlur}
-                  optionKey="i18nKey"
-                  t={t}
-                  placeholder={t("DEONAR_REMOVAL_FEE_AMOUNT")}
+                    type="number"
+                    value={props.value}
+                    onChange={(e) => {
+                      props.onChange(e.target.value);
+                      const newData = {
+                        ...data,
+                        removalFeeAmount: e.target.value,
+                      };
+                      setData(newData);
+                    }}
+                    onBlur={props.onBlur}
+                    optionKey="i18nKey"
+                    t={t}
+                    placeholder={t("DEONAR_REMOVAL_FEE_AMOUNT")}
+                    disabled={disabled}
                   />
               </div>
               )}

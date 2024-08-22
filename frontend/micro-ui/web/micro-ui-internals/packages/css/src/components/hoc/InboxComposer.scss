@@ -43,7 +43,7 @@
     .SubmitAndClearAllContainer {
       width: 100%;
       display: flex;
-      justify-content: end;
+      justify-content: flex-end;
       align-items: center;
       .clear-search {
         width: 30%;
@@ -96,7 +96,7 @@
       justify-content: unset;
       margin-bottom: 0;
       .complaint-input-container {
-        display: grid !important;
+        display: grid;
         grid-template-columns: 33.33% 33.33% 33.33%;
       }
       .form-field {

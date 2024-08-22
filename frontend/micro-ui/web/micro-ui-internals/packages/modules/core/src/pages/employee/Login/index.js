@@ -1,13 +1,31 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AppContainer } from "@egovernments/digit-ui-react-components";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
-import { loginConfig } from "./config";
+import { loginConfig as defaultLoginConfig } from "./config";
 import LoginComponent from "./login";
 
 const EmployeeLogin = () => {
   const { t } = useTranslation();
   const { path } = useRouteMatch();
+  const [loginConfig, setloginConfig] = useState(defaultLoginConfig);
+
+  const { data: mdmsData, isLoading } = Digit.Hooks.useCommonMDMS(Digit.ULBService.getStateId(), "commonUiConfig", ["LoginConfig"], {
+    select: (data) => {
+      return {
+        config: data?.commonUiConfig?.LoginConfig
+      };
+    },
+    retry: false,
+  });
+
+  //let loginConfig = mdmsData?.config ? mdmsData?.config : defaultLoginConfig;
+  useEffect(() => {
+    if(isLoading == false && mdmsData?.config)
+    {  
+      setloginConfig(mdmsData?.config)
+    }
+  },[mdmsData, isLoading])
+
 
   const loginParams = useMemo(() =>
     loginConfig.map(

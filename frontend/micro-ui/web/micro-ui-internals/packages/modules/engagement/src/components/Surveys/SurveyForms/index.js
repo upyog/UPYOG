@@ -24,6 +24,7 @@ const CreateNewSurvey = ({ t, initialFormValues, onSubmit, isFormDisabled = fals
   useEffect(() => {
     registerRef("questions");
   }, []);
+
   return (
     <div style={{margin:"8px"}}>
       <FormProvider {...{

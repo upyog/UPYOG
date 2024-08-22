@@ -55,7 +55,7 @@ const EditEvents = () => {
         }
       ]
     }
-    history.push("/digit-ui/employee/engagement/event/response?update=true", details)
+    history.push(`/${window?.contextPath}/employee/engagement/event/response?update=true`, details)
   }
 
   if (isLoading) {

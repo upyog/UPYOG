@@ -15,7 +15,7 @@ import PaymentModeField from "../commonFormFields/paymentMode";
 import PaymentReferenceNumberField from "../commonFormFields/paymentReferenceNumber";
 import SubmitPrintButtonFields from "../commonFormFields/submitPrintBtn";
 
-const Salsette = ({stage, control, data, setData, disabled}) => {
+const Salsette = ({stage, control, data, setData, disabled, setValues}) => {
   const { t } = useTranslation();
 
   return (
@@ -25,7 +25,12 @@ const Salsette = ({stage, control, data, setData, disabled}) => {
         <BrokerNameField control={control} setData={setData} data={data} disabled={disabled} />
         <GawalNameField control={control} setData={setData} data={data} disabled={disabled} />
         <DairywalaNameField control={control} setData={setData} data={data} disabled={disabled} />
-        <NumberOfAnimalsField control={control} setData={setData} data={data} disabled={disabled} />
+        {
+          (stage === "SECURITY_CHECKPOINT") ?
+            <NumberOfAnimalsField control={control} setData={setData} data={data} disabled={disabled} setValues={null} />
+          :
+            <NumberOfAnimalsField control={control} setData={setData} data={data} disabled={disabled} setValues={setValues} source="removal" />
+        }
         <AnimalTokenNumberField control={control} setData={setData} data={data} disabled={disabled} />
         {
           (stage === "SECURITY_CHECKPOINT") ? 
@@ -35,19 +40,13 @@ const Salsette = ({stage, control, data, setData, disabled}) => {
             <SubmitButtonField control={control} />
           </React.Fragment>
           :
-            <React.Fragment></React.Fragment>
+          <React.Fragment>
+            <RemovalFeeAmountField control={control} setData={setData} data={data} disabled={true} />
+            <PaymentModeField control={control} setData={setData} data={data} disabled={disabled} />
+            <PaymentReferenceNumberField control={control} setData={setData} data={data} disabled={disabled} />
+            <SubmitPrintButtonFields control={control} />
+          </React.Fragment>
         }
-              {
-                (stage === "COLLECTION_POINT") ?
-                  <React.Fragment>
-                    <RemovalFeeAmountField control={control} setData={setData} data={data} disabled={disabled} />
-                    <PaymentModeField control={control} setData={setData} data={data} disabled={disabled} />
-                    <PaymentReferenceNumberField control={control} setData={setData} data={data} disabled={disabled} />
-                    <SubmitPrintButtonFields control={control} setData={setData} data={data} disabled={disabled} />
-                  </React.Fragment>
-                :
-                  <React.Fragment></React.Fragment>
-              }
       </div>
     </React.Fragment>
   );

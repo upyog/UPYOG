@@ -6,27 +6,17 @@ import FilterContext from "./FilterContext";
 import { ArrowDownwardElement } from "./ArrowDownward";
 import { ArrowUpwardElement } from "./ArrowUpward";
 
-const MetricData = ({ t, data, code, indexValuesWithStar }) => {
+const MetricData = ({ t, data, code }) => {
   const { value } = useContext(FilterContext);
-  const insight = data?.insight?.value?.replace(/[+-]/g, "")?.split("%");
+  const insight=data?.insight?.value?.replace(/[+-]/g, "")?.split('%');
   return (
     <div>
       <p className="heading-m" style={{ textAlign: "right", paddingTop: "0px", whiteSpace: "nowrap" }}>
-        {indexValuesWithStar?.includes(code) ? (
-          <Rating toolTipText={t("COMMON_RATING_LABEL")} currentRating={Math.round(data?.headerValue * 10) / 10} styles={{ width: "unset", marginBottom:"unset" }} starStyles={{ width: "25px" }} />
-        ) : data?.headerName.includes("AVG") ? (
-          `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, "Unit", true)} ${
-             code === "fsmtotalsludgetreated" || code === "totalSludgeTreated" ? t(`DSS_KL`) : ""
-          }`
-        ):
-
-        data?.headerName.includes("DSS_STATE_GDP_REVENUE_COLLECTION") ||  data?.headerName.includes("DSS_STATE_GDP_PT_REVENUE_COLLECTION") ?(`${Number(data?.headerValue*100).toFixed(4)}`):
-        data?.headerName.includes("DSS_PT_TAX_REVENUE_PER_HOUSEHOLD")|| data?.headerName.includes("DSS_NON_TAX_REVENUE_PER_HOUSEHOLD") ?(`${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, "Unit", true)}`):
-
-        
-        (
+        {code === "citizenAvgRating" ? (
+          <Rating currentRating={Math.round(data?.headerValue * 10) / 10} styles={{ width: "unset" }} starStyles={{ width: "25px" }} />
+        ) : (
           `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, value?.denomination, true, t)} ${
-            code === "fsmtotalsludgetreated" || code === "totalSludgeTreated"? t(`DSS_KL`) : ""
+            code === "totalSludgeTreated" ? t(`DSS_KL`) : ""
           }`
         )}
       </p>
@@ -40,10 +30,7 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
         >
           {data?.insight?.indicator === "upper_green" ? ArrowUpwardElement("10px") : ArrowDownwardElement("10px")}
           <p className={`${data?.insight.colorCode}`} style={{ whiteSpace: "pre" }}>
-            {insight?.[0] &&
-              `${Digit.Utils.dss.formatter(insight[0], "number", value?.denomination, true, t)}% ${t(
-                Digit.Utils.locale.getTransformedLocale("DSS" + insight?.[1] || "")
-              )}`}
+            {insight?.[0]&&`${Digit.Utils.dss.formatter(insight[0], 'number', value?.denomination, true, t)}% ${t(Digit.Utils.locale.getTransformedLocale('DSS'+insight?.[1]||""))}`}
           </p>
         </div>
       )}
@@ -51,7 +38,69 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
   );
 };
 
-const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexValuesWithStar }) => {
+const ColumnMetricData = ({data, setChartDenomination, index }) => {
+  const { id, chartType } = data;
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const { t } = useTranslation();
+  const { value } = useContext(FilterContext);
+  const [showDateOrCount, setShowDateOrCount] = useState({});
+  const isMobile = window.Digit.Utils.browser.isMobile();
+  const { isLoading, data: response } = Digit.Hooks.dss.useGetChart({
+    key: id,
+    type: chartType,
+    tenantId,
+    requestDate: { ...value?.requestDate, startDate: value?.range?.startDate?.getTime(), endDate: value?.range?.endDate?.getTime() },
+    filters: value?.filters,
+    moduleLevel: value?.moduleLevel
+  });
+
+  useEffect(() => {
+    if (response) {
+      let plots = response?.responseData?.data?.[0]?.plots || null;
+      if (plots && Array.isArray(plots) && plots.length > 0 && plots?.every((e) => e.value))
+      setShowDateOrCount(oldstate=>({...oldstate,[id]:{
+          todaysDate: Digit.DateUtils.ConvertEpochToDate(plots?.[0]?.value),
+          lastUpdatedTime: Digit.DateUtils.ConvertEpochToTimeInHours(plots?.[1]?.value),
+          count: plots?.[2]?.value
+        }}));
+      index === 0 && setChartDenomination(response?.responseData?.data?.[0]?.headerSymbol);
+    } else {
+      setShowDateOrCount({});
+    }
+  }, [response]);
+
+  if (isLoading) {
+    return false;
+  }
+  
+    return (
+      <div style={{marginLeft: "8px", marginRight: "8px", maxWidth: "21%", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
+        {response ? <p className="heading-m" style={{ textAlign: "center", paddingTop: "0px", wordWrap: "break-word", paddingBottom: "0px", marginLeft: "0px",marginBottom:"0px"}}>
+            {`${Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, value?.denomination, true, t)}`}
+        </p> : <div style={{ whiteSpace: "pre" }}>{t("DSS_NO_DATA")}</div>}
+        <div className={`tooltip`} style={{marginLeft: "42px", paddingLeft: "32px"}}>
+        <span
+          className="tooltiptext"
+          style={{
+            fontSize: "medium",
+            width:"max-content" ,
+            minWidth:  t(`TIP_${data.name}`).length < 20 ? t(`TIP_${data.name}`).length * 4 : 120,
+            maxWidth: 400,
+            whiteSpace: "normal",
+            visibility: "visible"
+          }}
+        >
+          <span style={{ fontWeight: "500", color: "white" }}>{t(`TIP_${data.name}`)}</span>
+        </span>
+        </div>
+        <div style={{ textAlign: "center", paddingTop: "0px", wordWrap: "break-word" }}>{`${response?.responseData?.data?.[0]?.plots?.[2]?.value != 0 ? `${response?.responseData?.data?.[0]?.plots?.[2]?.value} ` : ""}${t(`${data.name}`)}`}</div>
+      </div>
+      
+    );
+  
+};
+
+const MetricChartRow = ({ data, setChartDenomination, index }) => {
   const { id, chartType } = data;
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
@@ -64,36 +113,19 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
     tenantId,
     requestDate: { ...value?.requestDate, startDate: value?.range?.startDate?.getTime(), endDate: value?.range?.endDate?.getTime() },
     filters: value?.filters,
-    moduleLevel: value?.moduleLevel || moduleCode,
+    moduleLevel: value?.moduleLevel
   });
 
   useEffect(() => {
     if (response) {
       let plots = response?.responseData?.data?.[0]?.plots || null;
       if (plots && Array.isArray(plots) && plots.length > 0 && plots?.every((e) => e.value))
-        setShowDate((oldstate) => ({
-          ...oldstate,
-          [id]: {
-            todaysDate: Digit.DateUtils.ConvertEpochToDate(plots?.[0]?.value),
-            lastUpdatedTime: Digit.DateUtils.ConvertEpochToTimeInHours(plots?.[1]?.value),
-          },
-        }));
+        setShowDate(oldstate=>({...oldstate,[id]:{
+          todaysDate: Digit.DateUtils.ConvertEpochToDate(plots?.[0]?.value),
+          lastUpdatedTime: Digit.DateUtils.ConvertEpochToTimeInHours(plots?.[1]?.value),
+        }}));
       index === 0 && setChartDenomination(response?.responseData?.data?.[0]?.headerSymbol);
-      if (response?.responseData?.visualizationCode.includes("todaysLastYearCollectionv3")) {
-
-        const today = new Date();
-        const previousYearDate = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
-        const previousYear = previousYearDate.getFullYear();
-        const previousMonth = previousYearDate.getMonth() + 1; // Month is zero-based, so adding 1
-        const previousDay = previousYearDate.getDate();
-        const formattedPreviousYearDate = `${previousDay < 10 ? '0' + previousDay : previousDay}/${previousMonth < 10 ? '0' + previousMonth : previousMonth}/${previousYear}`;
-       setShowDate(oldstate=>({...oldstate,[id]:{
-         todaysDate: formattedPreviousYearDate,
-         lastUpdatedTime: "",
-       }}));
-     }
     } else {
-      
       setShowDate({});
     }
   }, [response]);
@@ -105,49 +137,46 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
   if (!response) {
     return (
       <div className="row">
-        <div className={`tooltip`}>
-          {t(data.name)}
-          <span
-            className="tooltiptext"
-            style={{
-              fontSize: "medium",
-              width : t(`TIP_${data.name}`).length < 50 ? 200 : 400,
-              height: 50,
-              whiteSpace: "normal",
-            }}
-          >
-            <span style={{ fontWeight: "500", color: "white" }}>{t(`TIP_${data.name}`)}</span>
-          </span>
-        </div>
-        <span style={{ whiteSpace: "pre" }}>{t("DSS_NO_DATA")}</span>
+      <div className={`tooltip`} >
+        {t(data.name)}
+        <span
+          className="tooltiptext"
+          style={{
+            fontSize: "medium",
+            width: t(`TIP_${data.name}`).length < 50 ? "fit-content" : 400,
+            height: 50,
+            whiteSpace: "normal",
+          }}
+        >
+          <span style={{ fontWeight: "500", color: "white" }}>{t(`TIP_${data.name}`)}</span>
+        </span>
       </div>
+        <span style={{ whiteSpace: "pre" }}>{t("DSS_NO_DATA")}</span>
+    </div>
     );
   }
-  let name = t(data?.name) || "";
+  let name=t(data?.name)||"";
 
   const getWidth = (data) => {
     if (isMobile) return "auto";
-    else return t(`TIP_${data.name}`).length < 50 ? 200 : 400;
+    else return t(`TIP_${data.name}`).length < 50 ? "fit-content" : 400;
     // if (isMobile) return t(`TIP_${data.name}`).length < 50 ? "fit-content" : 300;
     // else return t(`TIP_${data.name}`).length < 50 ? "fit-content" : 400;
-  };
+  }
 
   const getHeight = (data) => {
     if (isMobile) return "auto";
     else return 50;
     // if (isMobile) return t(`TIP_${data.name}`).length < 50 ? 50 : "auto";
     // else return 50;
-  };
+  }
 
   return (
     <div className="row">
-      <div className={`tooltip`}>
-        {typeof name == "string" && name}
-        {Array.isArray(name) && name?.filter((ele) => ele)?.map((ele) => <div style={{ whiteSpace: "pre" }}>{ele}</div>)}
-        <span className="dss-white-pre" style={{ display: "block" }}>
-          {" "}
-          {showDate?.[id]?.todaysDate}
-        </span>
+      <div className={`tooltip`} >
+        {typeof name=="string"&&name}
+        {Array.isArray(name)&&name?.filter(ele=>ele)?.map(ele=><div style={{ whiteSpace: "pre" }}>{ele}</div>)}
+        <span className="dss-white-pre" style={{ display: "block" }}> {showDate?.[id]?.todaysDate}</span>
         <span
           className="tooltiptext"
           style={{
@@ -161,29 +190,27 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
           <span style={{ color: "white" }}> {showDate?.[id]?.lastUpdatedTime}</span>
         </span>
       </div>
-      <MetricData t={t} data={response?.responseData?.data?.[0]} code={response?.responseData?.visualizationCode} indexValuesWithStar={indexValuesWithStar} />
+      <MetricData t={t} data={response?.responseData?.data?.[0]} code={response?.responseData?.visualizationCode} />
       {/* <div>{`${displaySymbol(response.headerSymbol)} ${response.headerValue}`}</div> */}
     </div>
   );
 };
 
-const MetricChart = ({ data, setChartDenomination, moduleCode }) => {
+const MetricChart = ({ data, setChartDenomination }) => {
   const { charts } = data;
-  const indexValuesWithStar = [
-    "citizenAvgRating",
-    "nssOverviewCitizenFeedbackScore",
-    "nssPtCitizenFeedbackScore",
-    "sdssPtCitizenFeedbackScore",
-    "sdssOverviewCitizenFeedbackScore",
-    "AvgCitizenRating"
-  ];
   return (
     <>
-      <span className="chart-metric-wrapper">
-        {charts.map((chart, index) => (
-          <MetricChartRow data={chart} key={index} index={index} moduleCode={moduleCode} setChartDenomination={setChartDenomination} indexValuesWithStar={indexValuesWithStar} />
-        ))}
-      </span>
+    <span className={`chart-metric-wrapper`} style={data?.isHorizontalChart ?{flexWrap: "wrap", display: "flex",justifyContent: "space-evenly"} : {flexWrap: "wrap", display: "flex"}}>
+  
+      {charts.map((chart, index) => (
+        
+        data?.isHorizontalChart ? (
+          <ColumnMetricData data={chart} key={index} index={index} setChartDenomination={setChartDenomination} />
+        ) : (
+          <MetricChartRow data={chart} key={index} index={index} setChartDenomination={setChartDenomination} />
+        )
+      ))}
+        </span>
     </>
   );
 };

@@ -15,14 +15,8 @@ import RemovalDateField from "../commonFormFields/removalDate";
 import RemovalTimeField from "../commonFormFields/removalTime";
 import SubmitButtonField from "../commonFormFields/submitBtn";
 
-const ReligiousPersonal = ({stage, control, data, setData}) => {
+const ReligiousPersonal = ({stage, control, data, setData, setValues}) => {
   const { t } = useTranslation();
-
-  const onSubmit = (formData) => {
-    console.log("Form data submitted:", formData);
-    const jsonData = JSON.stringify(formData);
-    console.log("Generated JSON:", jsonData);
-  };
 
   return (
     <React.Fragment>
@@ -31,14 +25,14 @@ const ReligiousPersonal = ({stage, control, data, setData}) => {
         <BrokerNameField control={control} setData={setData} data={data} />
         <GawalNameField control={control} setData={setData} data={data} />
         <CitizenNameField control={control} setData={setData} data={data} />
-          <NumberOfAnimalsField control={control} setData={setData} data={data} disabled={false} />
+          <NumberOfAnimalsField control={control} setData={setData} data={data} disabled={false} setValues={setValues} source="removal" />
           <AnimalTokenNumberField control={control} setData={setData} data={data} />
               {
                 (stage === "COLLECTION_POINT") ? 
                   <React.Fragment>
-                    <RemovalFeeAmountField control={control} setData={setData} data={data} />
-                    <PaymentModeField />
-                    <PaymentReferenceNumberField />
+                    <RemovalFeeAmountField control={control} setData={setData} data={data} disabled={true} />
+                    <PaymentModeField control={control} data={data} setData={setData} />
+                    <PaymentReferenceNumberField control={control} data={data} setData={setData} />
                     <SubmitPrintButtonFields />
                   </React.Fragment>
                 :

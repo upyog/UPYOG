@@ -66,7 +66,7 @@ const TLCaption = ({ data, comments }) => {
       {comments?.map( e => 
         <div className="TLComments">
           <h3>{t("WF_COMMON_COMMENTS")}</h3>
-          <p style={{overflowX:"scroll"}}>{e}</p>
+          <p>{e}</p>
         </div>
       )}
     </div>
@@ -81,8 +81,7 @@ const ComplaintDetailsModal = ({ workflowDetails, complaintDetails, close, popup
   const useEmployeeData = Digit.Hooks.pgr.useEmployeeFilter(
     tenantId, 
     stateArray?.[0]?.assigneeRoles?.length > 0 ? stateArray?.[0]?.assigneeRoles?.join(",") : "",
-    complaintDetails,
-    true
+    complaintDetails
     );
   const employeeData = useEmployeeData
     ? useEmployeeData.map((departmentData) => {
@@ -171,10 +170,8 @@ const ComplaintDetailsModal = ({ workflowDetails, complaintDetails, close, popup
               : t("CS_COMMON_RESOLVE")
       }
       actionSaveOnSubmit={() => {
-        if(!comments)
+        if(selectedAction === "REJECT" && !comments)
         setError(t("CS_MANDATORY_COMMENTS"));
-        // if(selectedAction === "REJECT" && !comments)
-        // setError(t("CS_MANDATORY_COMMENTS"));
         else
         onAssign(selectedEmployee, comments, uploadedFile);
       }}
@@ -397,7 +394,7 @@ export const ComplaintDetails = (props) => {
       {comment ? <div>{comment?.map( e => 
         <div className="TLComments">
           <h3>{t("WF_COMMON_COMMENTS")}</h3>
-          <p style={{overflowX:"scroll"}}>{e}</p>
+          <p>{e}</p>
         </div>
       )}</div> : null}
       {checkpoint.status !== "COMPLAINT_FILED" && thumbnailsToShow?.thumbs?.length > 0 ? <div className="TLComments">

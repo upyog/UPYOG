@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { getCityThatUserhasAccess } from "./Utils";
 
 const Filter = ({ searchParams, onFilterChange, onSearch, removeParam, ...props }) => {
+  
   const [filters, onSelectFilterRoles] = useState(searchParams?.filters?.role || { role: [] });
   const [_searchParams, setSearchParams] = useState(() => searchParams);
   const [selectedRoles, onSelectFilterRolessetSelectedRole] = useState(null);
@@ -73,6 +74,9 @@ const Filter = ({ searchParams, onFilterChange, onSearch, removeParam, ...props 
         });
         setSearchParams({ ..._searchParams, roles: [...res].join(",") });
       }
+    }
+    else if(filters.role && filters.role.length===0) {
+      setSearchParams({ ..._searchParams, roles: undefined });
     }
   }, [filters.role]);
 

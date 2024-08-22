@@ -16,13 +16,15 @@ import RejectedRemovalTypesDropdownField from "../commonFormFields/rejectedRemov
 import DeathRemovalTypesDropdownField from "../commonFormFields/deathRemovalTypesDropdown";
 import SearchButtonField from "../commonFormFields/searchBtn";
 import { deathAfterTradingMockData, deathBeforeTradingMockData, notSoldMockData, rejectionAfterTradingMockData, rejectionBeforeTradingMockData, religiousPersonalMockData, salsetteRemovalMockData } from "../../../constants/dummyData";
+import useSubmitForm from "../../../hooks/useSubmitForm";
+import { SECURITY_CHECKPOINT_REMOVAL_ENDPOINT } from "../../../constants/apiEndpoints";
 
 const RemovalPage = () => {
   const { t } = useTranslation();
   const [data, setData] = useState({});
   const [subFormType, setSubFormType] = useState({});
-  const [rejectedType, setRejectedType] = useState(null);
-  const [deathType, setDeathType] = useState(null);
+  const [rejectedType, setRejectedType] = useState({});
+  const [deathType, setDeathType] = useState({});
   const [defaults, setDefaults] = useState({});
   const [disabledFlag, setDisabledFlag] = useState(false);
   const [options, setOptions] = useState([]);
@@ -35,11 +37,13 @@ const RemovalPage = () => {
     formState: { errors, isValid },
   } = useForm({ defaultValues: defaults, mode: "onChange" });
 
+  const { submitForm, isSubmitting, response, error } = useSubmitForm(SECURITY_CHECKPOINT_REMOVAL_ENDPOINT);
+
   useEffect(() => {
     let obj = {};
     if (
-        (subFormType.name === "REJECTED_REMOVAL" && rejectedType === "REJECTION_BEFORE_TRADING") || 
-        (subFormType.name === "DEATH_REMOVAL" && rejectedType === "DEATH_BEFORE_TRADING")
+        (subFormType.name === "REJECTED_REMOVAL" && rejectedType.name === "REJECTION_BEFORE_TRADING") || 
+        (subFormType.name === "DEATH_REMOVAL" && rejectedType.name === "DEATH_BEFORE_TRADING")
       ) {
       obj = {
         traderName: {},
@@ -52,8 +56,8 @@ const RemovalPage = () => {
       };
     }
     else if (
-      (subFormType.name === "REJECTED_REMOVAL" && rejectedType === "REJECTION_AFTER_TRADING") ||
-      (subFormType.name === "DEATH_REMOVAL" && rejectedType === "DEATH_AFTER_TRADING")
+      (subFormType.name === "REJECTED_REMOVAL" && rejectedType.name === "REJECTION_AFTER_TRADING") ||
+      (subFormType.name === "DEATH_REMOVAL" && rejectedType.name === "DEATH_AFTER_TRADING")
     ) {
       obj = {
         shopkeeperName: {},
@@ -105,17 +109,17 @@ const RemovalPage = () => {
   }, [subFormType, rejectedType, deathType]);
 
   const fetchDataByReferenceNumber = async () => {
-    if (subFormType.name === "REJECTED_REMOVAL" && rejectedType === "REJECTION_BEFORE_TRADING") {
+    if (subFormType.name === "REJECTED_REMOVAL" && rejectedType.name === "REJECTION_BEFORE_TRADING") {
       return rejectionBeforeTradingMockData;
     }
-    else if (subFormType.name === "REJECTED_REMOVAL" && rejectedType === "REJECTION_AFTER_TRADING")
+    else if (subFormType.name === "REJECTED_REMOVAL" && rejectedType.name === "REJECTION_AFTER_TRADING")
     {
       return rejectionAfterTradingMockData;
     }
-    else if (subFormType.name === "DEATH_REMOVAL" && deathType === "DEATH_BEFORE_TRADING") {
+    else if (subFormType.name === "DEATH_REMOVAL" && deathType.name === "DEATH_BEFORE_TRADING") {
       return deathBeforeTradingMockData;
     }
-    else if (subFormType.name === "DEATH_REMOVAL" && deathType === "DEATH_AFTER_TRADING") {
+    else if (subFormType.name === "DEATH_REMOVAL" && deathType.name === "DEATH_AFTER_TRADING") {
       return deathAfterTradingMockData;
     }
     else if (subFormType.name === "SALSETTE") {
@@ -150,6 +154,7 @@ const RemovalPage = () => {
         setValue("removalFeeReceiptNumber", referenceNumber);
         setValue("removalType", subFormType);
         console.log(subFormType);
+        console.log(rejectedType);
         setSubFormType(getValues("removalType"));
         setDisabledFlag(true);
         console.log(result);
@@ -160,10 +165,15 @@ const RemovalPage = () => {
     }
   };
 
-  const onSubmit = (formData) => {
-    console.log("Form data submitted:", formData);
-    const jsonData = JSON.stringify(formData);
-    console.log("Generated JSON:", jsonData);
+  const onSubmit = async (formData) => {
+    try {
+      const result = await submitForm(formData);
+      console.log("Form successfully submitted:", result);
+      alert("Form submission successful!");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Form submission failed");
+    }
   };
 
   return (
@@ -215,28 +225,28 @@ const RemovalPage = () => {
                     </div>
                   </div>
                 :
-                (subFormType.name === 'REJECTED_REMOVAL' && rejectedType === 'REJECTION_BEFORE_TRADING') ?
+                (subFormType.name === 'REJECTED_REMOVAL' && rejectedType.name === 'REJECTION_BEFORE_TRADING') ?
                   <div className="bmc-row-card-header">
                     <div className="bmc-card-row">
                       <RejectedBefore stage="SECURITY_CHECKPOINT" control={control} setData={setData} data={data} disabled={disabledFlag} /> 
                     </div>
                   </div>
                 :
-                (subFormType.name === 'REJECTED_REMOVAL' && rejectedType === 'REJECTION_AFTER_TRADING') ?
+                (subFormType.name === 'REJECTED_REMOVAL' && rejectedType.name === 'REJECTION_AFTER_TRADING') ?
                   <div className="bmc-row-card-header">
                     <div className="bmc-card-row">
                       <RejectedAfter stage="SECURITY_CHECKPOINT" control={control} setData={setData} data={data} disabled={disabledFlag} /> 
                     </div>
                   </div>
                 :
-                (subFormType.name === 'DEATH_REMOVAL' && deathType === 'DEATH_BEFORE_TRADING') ?
+                (subFormType.name === 'DEATH_REMOVAL' && deathType.name === 'DEATH_BEFORE_TRADING') ?
                   <div className="bmc-row-card-header">
                     <div className="bmc-card-row">
                       <DeathBefore stage="SECURITY_CHECKPOINT" control={control} setData={setData} data={data} disabled={disabledFlag} /> 
                     </div>
                   </div>
                 :
-                (subFormType.name === 'DEATH_REMOVAL' && deathType === 'DEATH_AFTER_TRADING') ?
+                (subFormType.name === 'DEATH_REMOVAL' && deathType.name === 'DEATH_AFTER_TRADING') ?
                   <div className="bmc-row-card-header">
                     <div className="bmc-card-row">
                       <DeathAfter stage="SECURITY_CHECKPOINT" control={control} setData={setData} data={data} disabled={disabledFlag} /> 

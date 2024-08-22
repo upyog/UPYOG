@@ -45,6 +45,7 @@ const PaymentModeField = ({control, setData, data}) => {
                         }}
                         onBlur={props.onBlur}
                         optionKey="name"
+                        option={options}
                         t={t}
                         placeholder={t("DEONAR_PAYMENT_MODE")}
                     />
@@ -52,6 +53,7 @@ const PaymentModeField = ({control, setData, data}) => {
                 )}
             />
         </LabelFieldPair>
+        {error && <div style={{ color: "red" }}>{error}</div>}
     </div>
   );
 };

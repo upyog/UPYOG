@@ -11,6 +11,8 @@ import RemovalTypeOptionsField from "../commonFormFields/removalTypesDropdown";
 import SearchButtonField from "../commonFormFields/searchBtn";
 import MainFormHeader from "../commonFormFields/formMainHeading";
 import { religiousPersonalRemovalMockData, salsetteRemovalShopkeeperAssignmentMockData, slaughterInAbbatoirMockData } from "../../../constants/dummyData";
+import useSubmitForm from "../../../hooks/useSubmitForm";
+import { COLLECTION_POINT_ENDPOINT } from "../../../constants/apiEndpoints";
 
 const AssignShopkeeperAfterTrading = () => {
   const { t } = useTranslation();
@@ -26,6 +28,8 @@ const AssignShopkeeperAfterTrading = () => {
     getValues,
     formState: { errors, isValid },
   } = useForm({ defaultValues: defaults, mode: "onChange" });
+
+  const { submitForm, isSubmitting, response, error } = useSubmitForm(COLLECTION_POINT_ENDPOINT);
 
   useEffect(() => {
     let obj = {};
@@ -115,10 +119,15 @@ const AssignShopkeeperAfterTrading = () => {
     }
   };
 
-  const onSubmit = (formData) => {
-    console.log("Form data submitted:", formData);
-    const jsonData = JSON.stringify(formData);
-    console.log("Generated JSON:", jsonData);
+  const onSubmit = async (formData) => {
+    try {
+      const result = await submitForm(formData);
+      console.log("Form successfully submitted:", result);
+      alert("Form submission successful!");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Form submission failed");
+    }
   };
 
   return (
@@ -141,21 +150,21 @@ const AssignShopkeeperAfterTrading = () => {
                     (subFormType.name === 'SLAUGHTER_IN_ABBATOIR') ? 
                         <div className="bmc-row-card-header">
                             <div className="bmc-card-row">
-                                <SlaughterInAbbatoirSubform control={control} setData={setData} data={data}  />
+                                <SlaughterInAbbatoirSubform control={control} setData={setData} data={data} setValues={setValue}  />
                             </div>
                         </div> 
                     :
                     (subFormType.name === 'RELIGIOUS_PERSONAL_PURPOSE') ?
                         <div className="bmc-row-card-header">
                             <div className="bmc-card-row">
-                                <ReligiousPersonalRemovalSubform control={control} setData={setData} data={data} /> 
+                                <ReligiousPersonalRemovalSubform control={control} setData={setData} data={data} setValues={setValue} /> 
                             </div>
                         </div>
                     :
                     (subFormType.name === 'SALSETTE_REMOVAL') ?
                         <div className="bmc-row-card-header">
                             <div className="bmc-card-row">
-                                <SalsetteRemovalSubform isShopkeeperAssignment={true} control={control} setData={setData} data={data} />
+                                <SalsetteRemovalSubform isShopkeeperAssignment={true} control={control} setData={setData} data={data} setValues={setValue} />
                             </div>
                         </div>
                     :

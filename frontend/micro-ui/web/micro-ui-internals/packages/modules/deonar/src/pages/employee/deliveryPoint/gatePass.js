@@ -89,7 +89,7 @@ const GatePass = () => {
                 <VehicleNumberField control={control} setData={setData} data={data} />
                 <ReceiverField name="receiverNameField" label="DEONAR_RECEIVER_NAME" />
                 <ReceiverField name="receiverContact" label="DEONAR_RECEIVER_CONTACT" />
-                <NumberOfAnimalsField />
+                <NumberOfAnimalsField setValues={null} source="gatePass" />
                 <HealthStatDropdownField name="typeOfMeat" label="DEONAR_TYPE_OF_MEAT" />
                 <WeightField name="weight" label="DEONAR_WEIGHT_IN_KG" />
                 <ReferenceNumberField />

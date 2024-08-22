@@ -7,126 +7,38 @@ import FilterContext from "./FilterContext";
 import NoData from "./NoData";
 import { checkCurrentScreen } from "./DSSCard";
 
-const formatValue = (value, symbol,type) => {
+const formatValue = (value, symbol) => {
   if (symbol?.toLowerCase() === "percentage") {
     /*   Removed by  percentage formatter.
     const Pformatter = new Intl.NumberFormat("en-IN", { maximumSignificantDigits: 3 });
     return `${Pformatter.format(Number(value).toFixed(2))}`;
     */
-   
     return `${Number(value).toFixed()}`;
-  }
-  else if(type =="revenue")
-  {
-    return   Number(((value) / 1000000000).toFixed(2) || 0);
-  }
-  else if(type =="population")
-  {
-    return   Number(((value) / 100).toFixed(2) || 0);
-  }
-  else {
-    return  Number((value).toFixed(4) || 0);
+  } else {
+    return value;
   }
 };
-let flag= 0
-let flag2=0
-const CustomLabel = ({ x, y, name, stroke, value, maxValue ,data}) => {
-  console.log("hhhhhh",maxValue,data)
 
-  const currencyFormatter = new Intl.NumberFormat("en-IN", { currency: "INR" });
+const CustomLabel = ({ x, y, name, stroke, value, maxValue }) => {
   const { t } = useTranslation();
-  
-  let possibleValues = ["pttopPerformingStatesRevenue","ptbottomPerformingStatesRevenue","tltopPerformingStatesRevenue","tlbottomPerformingStatesRevenue","obpstopPerformingStatesRevenue","obpsbottomPerformingStatesRevenue","noctopPerformingStatesRevenue","nocbottomPerformingStatesRevenue","wstopPerformingStatesRevenue","wsbottomPerformingStatesRevenue","OverviewtopPerformingStates","OverviewbottomPerformingStates"]
-if( possibleValues.includes(data?.id) ) 
-{
-
   return (
     <>
       <text
         x={x}
         y={y}
-        dx={0}
-        dy={30}
+        dx={-55}
+        dy={10}
         fill={stroke}
         width="35"
         style={{ fontSize: "medium", textAlign: "right", fontVariantNumeric: "proportional-nums" }}
       >
-        {`₹ ${maxValue?.[t(name)]} ${t("ES_DSS_CR")}`}
+        {`${maxValue?.[t(name)]}%`}
       </text>
       <text x={x} y={y} dx={-200} dy={10}>
         {t(`DSS_TB_${Digit.Utils.locale.getTransformedLocale(name)}`)}
       </text>
     </>
   );
-}
-else if(data?.id.includes("GDP") )
-{
-  
-  Object.keys(maxValue)?.forEach(key => { 
-    console.log("reee123",maxValue[key],name)
-    maxValue[key] = maxValue[key];
-  });
-  return (
-    <>
-      <text
-        x={x}
-        y={y}
-        dx={0}
-        dy={30}
-        fill={stroke}
-        width="35"
-        style={{ fontSize: "medium", textAlign: "right", fontVariantNumeric: "proportional-nums" }}
-      >
-        {`${maxValue?.[t(name)]} %`}
-      </text>
-      <text x={x} y={y} dx={-200} dy={10}>
-        {t(`DSS_TB_${Digit.Utils.locale.getTransformedLocale(name)}`)}
-      </text>
-    </>
-  );
-}
-else if (data?.id.includes("Population") || data?.id.includes("Household"))
-{
-  return (
-    <>
-      <text
-        x={x}
-        y={y}
-        dx={0}
-        dy={30}
-        fill={stroke}
-        width="35"
-        style={{ fontSize: "medium", textAlign: "right", fontVariantNumeric: "proportional-nums" }}
-      >
-        {`₹ ${maxValue?.[t(name)]}`}
-      </text>
-      <text x={x} y={y} dx={-200} dy={10}>
-        {t(`DSS_TB_${Digit.Utils.locale.getTransformedLocale(name)}`)}
-      </text>
-    </>
-  );
-}
-else {
-
-return (
-    <>
-      <text
-        x={x}
-        y={y}
-        dx={0}
-        dy={30}
-        fill={stroke}
-        width="35"
-        style={{ fontSize: "medium", textAlign: "right", fontVariantNumeric: "proportional-nums" }}
-      >
-        {`${maxValue?.[t(name)]}`}
-      </text>
-      <text x={x} y={y} dx={-200} dy={10}>
-        {t(`DSS_TB_${Digit.Utils.locale.getTransformedLocale(name)}`)}
-      </text>
-    </>
-  );
-}
 };
 const COLORS = { RED: "#00703C", GREEN: "#D4351C", default: "#00703C" };
 
@@ -143,7 +55,6 @@ const CustomBarChart = ({
   data,
   title,
   setChartDenomination,
-  moduleCode,
 }) => {
   const { id } = data;
   const { t } = useTranslation();
@@ -157,46 +68,19 @@ const CustomBarChart = ({
     tenantId,
     requestDate: { ...value?.requestDate, startDate: value?.range?.startDate?.getTime(), endDate: value?.range?.endDate?.getTime() },
     filters: value?.filters,
-    moduleLevel: value?.moduleLevel || moduleCode,
+    moduleLevel: value?.moduleLevel
   });
-  console.log("hhhhhhhh",data)
   const chartData = useMemo(() => {
     if (!response) return null;
-    console.log("ressssssssss",response?.responseData)
-    let possibleValues = ["pttopPerformingStatesRevenue","ptbottomPerformingStatesRevenue","tltopPerformingStatesRevenue","tlbottomPerformingStatesRevenue","obpstopPerformingStatesRevenue","obpsbottomPerformingStatesRevenue","noctopPerformingStatesRevenue","nocbottomPerformingStatesRevenue","wstopPerformingStatesRevenue","wsbottomPerformingStatesRevenue","OverviewtopPerformingStates","OverviewbottomPerformingStates"]
-   
-    setChartDenomination("number");
+    setChartDenomination(response?.responseData?.data?.[0]?.headerSymbol);
     const dd = response?.responseData?.data?.map((bar) => {
       let plotValue = bar?.plots?.[0].value || 0;
-      console.log("barrrrrrr",plotValue,data)
-      let type =""
-      if(possibleValues.includes(data?.id))
-      {
-        type="revenue"
-        return {
-          name: t(bar?.plots?.[0].name),
-          value: formatValue(plotValue, bar?.plots?.[0].symbol,type),
-          // value: Digit.Utils.dss.formatter(plotValue, bar?.plots?.[0].symbol),
-        };
-      }
-      else if (data.id.includes("Population") || data.id.includes("Household"))
-      {
-        type="population"
-        return {
-          name: t(bar?.plots?.[0].name),
-          value: formatValue(plotValue, bar?.plots?.[0].symbol,type),
-          // value: Digit.Utils.dss.formatter(plotValue, bar?.plots?.[0].symbol),
-        };
-      }
-      else {
-
-      type="others"
       return {
         name: t(bar?.plots?.[0].name),
-        value: formatValue(plotValue, bar?.plots?.[0].symbol,type),
+        value: formatValue(plotValue, bar?.plots?.[0].symbol),
         // value: Digit.Utils.dss.formatter(plotValue, bar?.plots?.[0].symbol),
-      };}
-    })
+      };
+    });
     let newMax = Math.max(...dd.map((e) => Number(e.value)));
     let newObj = {};
     let newReturn = dd.map((ele) => {
@@ -209,7 +93,7 @@ const CustomBarChart = ({
 
   const goToDrillDownCharts = () => {
     history.push(
-      `/digit-ui/employee/dss/drilldown?chart=${response?.responseData?.visualizationCode}&ulb=${
+      `/${window?.contextPath}/employee/dss/drilldown?chart=${response?.responseData?.visualizationCode}&ulb=${
         value?.filters?.tenantId
       }&title=${title}&fromModule=${Digit.Utils.dss.getCurrentModuleName()}&type=performing-metric&fillColor=${fillColor}&isNational=${
         checkCurrentScreen() ? "YES" : "NO"
@@ -222,11 +106,9 @@ const CustomBarChart = ({
   if (chartData?.length === 0 || !chartData) {
     return <NoData t={t} />;
   }
-  console.log("Loading chart",data)
-  let url=window.location.href
   return (
     <Fragment>
-      <ResponsiveContainer width="98%" height={url.includes("drilldown")?730:400}>
+      <ResponsiveContainer width="98%" height={320}>
         <BarChart
           width="70%"
           height="100%"
@@ -243,7 +125,7 @@ const CustomBarChart = ({
             dataKey={xDataKey}
             fill={COLORS[fillColor]}
             background={{ fill: "#D6D5D4", radius: 8 }}
-            label={<CustomLabel stroke={COLORS[fillColor]} maxValue={maxValue} data={data}/>}
+            label={<CustomLabel stroke={COLORS[fillColor]} maxValue={maxValue} />}
             radius={[8, 8, 8, 8]}
             isAnimationActive={false}
           />

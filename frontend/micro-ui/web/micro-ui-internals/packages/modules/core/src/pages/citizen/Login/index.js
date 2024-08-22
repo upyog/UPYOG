@@ -1,16 +1,16 @@
+import { AppContainer, BackButton, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AppContainer, BackButton, Toast } from "@egovernments/digit-ui-react-components";
-import { Route, Switch, useHistory, useRouteMatch, useLocation } from "react-router-dom";
+import { Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
-import SelectOtp from "./SelectOtp";
 import SelectName from "./SelectName";
-import { subYears, format } from "date-fns";
+import SelectOtp from "./SelectOtp";
+
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
-const DEFAULT_REDIRECT_URL = "/digit-ui/citizen";
+const DEFAULT_REDIRECT_URL = `/${window?.contextPath}/citizen`;
 
 /* set citizen details to enable backward compatiable */
 const setCitizenDetail = (userObject, token, tenantId) => {
@@ -72,7 +72,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     setCitizenDetail(user?.info, user?.access_token, stateCode);
     const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
     if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
-      history.replace("/digit-ui/citizen/select-location", {
+      history.replace(`/${window?.contextPath}/citizen/select-location`, {
         redirectBackTo: redirectPath,
       });
     } else {
@@ -121,7 +121,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       } else {
         setCanSubmitNo(true);
         if (!(location.state && location.state.role === "FSM_DSO")) {
-          history.push(`/digit-ui/citizen/register/name`, { from: getFromLocation(location.state, searchParams), data: data });
+          history.push(`/${window?.contextPath}/citizen/register/name`, { from: getFromLocation(location.state, searchParams), data: data });
         }
       }
       if (location.state?.role) {
@@ -138,17 +138,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       setCanSubmitNo(true);
     }
   };
-  function selectCommencementDate(value) {
-    const appDate= new Date();
-    const proposedDate= format(subYears(appDate, 18), 'yyyy-MM-dd').toString();
 
-    if( convertDateToEpoch(proposedDate)  <= convertDateToEpoch(value)){
-      return true     
-    }
-    else {
-      return false;     
-    }    
-  }
   const selectName = async (name) => {
     const data = {
       ...params,
@@ -156,27 +146,15 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       userType: getUserType(),
       ...name,
     };
-    console.log("name",name)
-    if (selectCommencementDate(name.dob))
-    {
-      setError("Minimum age should be 18 years");
-      setTimeout(() => {
-        setError(false);
-      }, 3000);
+    setParmas({ ...params, ...name });
+    setCanSubmitName(true);
+    const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
+    if (res) {
+      setCanSubmitName(false);
+      history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
+    } else {
+      setCanSubmitName(false);
     }
-    else {
-      setParmas({ ...params, ...name });
-      setCanSubmitName(true);
-      const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
-      if (res) {
-        setCanSubmitName(false);
-        history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
-      } else {
-        setCanSubmitName(false);
-      }
-    }
-    
-  
   };
 
   const selectOtp = async () => {
@@ -290,18 +268,3 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 };
 
 export default Login;
-export const convertDateToEpoch = (dateString, dayStartOrEnd = "dayend") => {
-  //example input format : "2018-10-02"
-  try {
-    const parts = dateString.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
-    const DateObj = new Date(Date.UTC(parts[1], parts[2] - 1, parts[3]));
-    DateObj.setMinutes(DateObj.getMinutes() + DateObj.getTimezoneOffset());
-    if (dayStartOrEnd === "dayend") {
-      DateObj.setHours(DateObj.getHours() + 24);
-      DateObj.setSeconds(DateObj.getSeconds() - 1);
-    }
-    return DateObj.getTime();
-  } catch (e) {
-    return dateString;
-  }
-};

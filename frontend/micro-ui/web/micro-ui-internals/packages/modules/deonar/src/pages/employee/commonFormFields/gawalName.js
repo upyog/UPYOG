@@ -19,12 +19,6 @@ const GawalNameField = ({control, data, setData, disabled}) => {
   }, [data]);
 
   useEffect(() => {
-    if (disabled) {
-      setError("");
-    }
-  }, [disabled]);
-
-  useEffect(() => {
     setOptions(gawalNameOptions);
   }, []);
 
@@ -38,6 +32,7 @@ const GawalNameField = ({control, data, setData, disabled}) => {
                 rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
                 render={(props) => (
                     <Dropdown
+                      name="gawalName"
                       selected={props.value}
                       select={(value) => {
                         props.onChange(value);

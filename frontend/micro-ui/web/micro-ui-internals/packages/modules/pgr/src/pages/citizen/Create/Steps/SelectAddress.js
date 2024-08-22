@@ -4,24 +4,10 @@ import { CardLabel, Dropdown, FormStep, RadioButtons } from "@egovernments/digit
 const SelectAddress = ({ t, config, onSelect, value }) => {
   const allCities = Digit.Hooks.pgr.useTenants();
   const cities = value?.pincode ? allCities.filter((city) => city?.pincode?.some((pin) => pin == value["pincode"])) : allCities;
-  const pttype=sessionStorage.getItem("type")
-  const citynew=sessionStorage.getItem("tenantId")  
-  const localitynew=sessionStorage.getItem("localityCode")
-  let value2=value
+
   const [selectedCity, setSelectedCity] = useState(() => {
-    if(pttype=="PT"){
-      let filteredcities=cities.filter(city=>city.code === citynew);
-      console.log("filteredcities",filteredcities)
-      if(filteredcities){
-         value2=filteredcities[0]
-      }
-      console.log("val2",value2)
-      return value2;
-    }
-    else{
     const { city_complaint } = value;
     return city_complaint ? city_complaint : null;
-    }
   });
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
     selectedCity?.code,
@@ -38,20 +24,11 @@ const SelectAddress = ({ t, config, onSelect, value }) => {
     return locality_complaint ? locality_complaint : null;
   });
 
-  useEffect(async () => {
+  useEffect(() => {
     if (selectedCity && fetchedLocalities) {
       const { pincode } = value;
       let __localityList = pincode ? fetchedLocalities.filter((city) => city["pincode"] == pincode) : fetchedLocalities;
-      await setLocalities(__localityList);
-      if (pttype == "PT") {
-        let filteredLocalities = __localityList.filter(locality => locality.code === localitynew);
-        if (filteredLocalities) {
-          setSelectedLocality(filteredLocalities[0])
-        }
-      }
-      else {
-        setLocalities(__localityList);
-      }
+      setLocalities(__localityList);
     }
   }, [selectedCity, fetchedLocalities]);
 

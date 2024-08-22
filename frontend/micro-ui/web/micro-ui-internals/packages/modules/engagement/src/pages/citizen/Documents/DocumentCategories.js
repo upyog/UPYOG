@@ -51,7 +51,7 @@ const DocumentCategories = ({ t, parentRoute }) => {
   );
 
   if (!Digit.UserService?.getUser()?.access_token) {
-    return <Redirect to={{ pathname: `/digit-ui/citizen/login`, state: { from: location.pathname + location.search } }} />;
+    return <Redirect to={{ pathname: `/${window?.contextPath}/citizen/login`, state: { from: location.pathname + location.search } }} />;
   }
 
   const showDocuments = (category, count) => {

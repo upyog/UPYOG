@@ -11,15 +11,16 @@ const TLCaption = ({ data,OpenImage,privacy={}}) => {
       {data.date && <p>{data.date}</p>}
       <p>{data.name}</p>
       {data.mobileNumber && <span style={{ display: "inline-flex", width: "fit-content", marginLeft: "10px" }}>
-        <TelePhone mobile={data.mobileNumber}  privacy={privacy} />
+        <TelePhone mobile={data.mobileNumber} />
         <p>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+        <UnMaskComponent privacy={privacy}></UnMaskComponent>
       </span>}
       {data.source && <p>{t("ES_APPLICATION_DETAILS_APPLICATION_CHANNEL_" + data.source.toUpperCase())}</p>}
       {data.comment && <Reason otherComment={data?.otherComment} headComment={data?.comment}></Reason>}
       {data?.wfComment ? <div>{data?.wfComment?.map( e => 
       <div className="TLComments">
         <h3>{t("WF_COMMON_COMMENTS")}</h3>
-        <p style={{overflowX:"scroll"}}>{e}</p>
+        <p>{e}</p>
       </div>
       )}</div> : null}
       {data?.thumbnailsToShow?.thumbs?.length > 0 ? <div className="TLComments">

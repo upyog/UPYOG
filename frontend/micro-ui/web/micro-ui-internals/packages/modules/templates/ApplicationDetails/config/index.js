@@ -11,8 +11,23 @@ import { configBPAApproverApplication } from "./BPAApproverApplication";
 import { configNOCApproverApplication } from "./NOCApproverApplication";
 import { configWSApproverApplication } from "./WSApproverApplication";
 import { configWSDisConnectApplication } from "./WSDisconnectApplication";
+import configCheckModal from "./configCheckModal"
+import configApproveModal from "./configApproveModal"
+import configRejectModal from "./configRejectModal"
+import configAttendanceApproveModal from "./configAttendanceApproveModal";
+import configAttendanceCheckModal from "./configAttendanceCheckModal";
+import configAttendanceRejectModal from "./configAttendanceRejectModal";
+import configViewBillApproveModal from "./configViewBillApproveModal";
+import configViewBillCheckModal from "./configViewBillCheckModal";
+import configViewBillRejectModal from "./configViewBillRejectModal";
 
 export {
+  configAttendanceRejectModal,
+  configAttendanceCheckModal,
+  configAttendanceApproveModal,
+  configCheckModal,
+  configApproveModal,
+  configRejectModal,
   configAssignDso,
   configCompleteApplication,
   configReassignDSO,
@@ -25,5 +40,8 @@ export {
   configBPAApproverApplication,
   configNOCApproverApplication,
   configWSApproverApplication,
-  configWSDisConnectApplication
+  configWSDisConnectApplication,
+  configViewBillRejectModal,
+  configViewBillCheckModal,
+  configViewBillApproveModal
 };

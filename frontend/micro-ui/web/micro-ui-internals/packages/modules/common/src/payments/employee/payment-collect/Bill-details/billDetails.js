@@ -115,38 +115,6 @@ export const BillDetailsFormConfig = (props, t) => ({
       ],
     },
   ],
-  "WSReconnection": [
-    {
-      head: t("COMMON_PAY_SCREEN_HEADER"),
-      body: [
-        {
-          withoutLabel: true,
-          type: "custom",
-          populators: {
-            name: "amount",
-            customProps: { businessService: "WSReconnection", consumerCode: props.consumerCode },
-            component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
-          },
-        },
-      ],
-    },
-  ],
-  "SWReconnection": [
-    {
-      head: t("COMMON_PAY_SCREEN_HEADER"),
-      body: [
-        {
-          withoutLabel: true,
-          type: "custom",
-          populators: {
-            name: "amount",
-            customProps: { businessService: "SWReconnection", consumerCode: props.consumerCode },
-            component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
-          },
-        },
-      ],
-    },
-  ],
   SW: [
     {
       head: t("COMMON_PAY_SCREEN_HEADER"),
@@ -208,7 +176,7 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
   const getTotal = () => (bill?.totalAmount ? bill?.totalAmount : 0);
   const getTotalFSM = () => (application?.totalAmount ? application?.totalAmount : 0);
   const getAdvanceAmount = () => (applicationData?.advanceAmount ? applicationData?.advanceAmount : 0);
-  const dueAmountTobePaid = () => ( bill?.totalAmount ? bill?.totalAmount - applicationData?.advanceAmount:0);
+  const dueAmountTobePaid = () => (bill?.totalAmount ? bill?.totalAmount : 0);
   const getAmountPerTrip = () => (application?.additionalDetails?.tripAmount ? application?.additionalDetails?.tripAmount : 0);
 
   const arrears =
@@ -551,7 +519,7 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
                 className="text-indent-xl"
                 onChange={(e) => onChangeAmount(e.target.value)}
                 value={amount}
-                disable={businessService === "WS" || "SW"?false:getTotal() === 0}
+                disable={getTotal() === 0}
               />
             ) : (
               <TextInput style={{ width: "30%" }} className="text-indent-xl" value={getTotal()} disable={true} />

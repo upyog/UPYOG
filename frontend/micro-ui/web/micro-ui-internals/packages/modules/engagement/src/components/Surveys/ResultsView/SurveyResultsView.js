@@ -36,23 +36,17 @@ function transformTime (time) {
   return time.join (''); // return adjusted time or original string
 }
 
-const getUserData = async (data,tenant) => {
-    let obj = {}
-    let userresponse = [];
-    userresponse = data?.map(ans => {
-        return Digit.UserService.userSearch(tenant, { uuid: [ans?.citizenId] }, {}).then((ob) => {return ob})
-    })
-    //getting user data from citizen uuid
-    userresponse = await Promise.all(userresponse);
-    userresponse && userresponse?.length>0 && userresponse.map((ob) => {
-        obj[`+91 ${ob?.user?.[0]?.mobileNumber}`] = ob?.user?.[0]?.emailId
+const getUserData = (data) => {
+    const obj = {}
+    data?.map(ans => {
+        obj[ans.mobileNumber]=ans.emailId
     })
     return obj;
 }
 
 
 
-const displayResult = (ques,ans,type,resCount=0,t) => {
+const displayResult = (ques,ans,type,resCount=0) => {
         switch(type) {
             case "Short Answer":
                  return (
@@ -72,7 +66,7 @@ const displayResult = (ques,ans,type,resCount=0,t) => {
                         // </div>
                         <div style={{"margin":"30px"}}>
                             <CardSectionHeader>{ques.questionStatement}</CardSectionHeader>
-                            <header style={{"fontWeight":"bold"}}>{`${resCount} ${t("SURVEY_RESPONSES")}`}</header>
+                            <header style={{"fontWeight":"bold"}}>{`${resCount} Responses`}</header>
                             <div className='responses-container'>
                             {ans?.map(el=> <div className='response-result responses-container-line'>{el}<BreakLine style={{"marginTop":"10px"}} /></div>)}
                             </div>
@@ -84,7 +78,7 @@ const displayResult = (ques,ans,type,resCount=0,t) => {
                         
                         <div style={{"margin":"30px"}}>
                             <CardSectionHeader>{ques.questionStatement}</CardSectionHeader>
-                            <header style={{"fontWeight":"bold"}}>{`${resCount} ${t("SURVEY_RESPONSES")}`}</header>
+                            <header style={{"fontWeight":"bold"}}>{`${resCount} Responses`}</header>
                             {/* <div className="responses-container-date">
                             {ans?.map(el=> <div className='date-time'>{transformDate(el).date}</div>)}
                             </div> */}
@@ -105,7 +99,7 @@ const displayResult = (ques,ans,type,resCount=0,t) => {
                 return (
                         <div style={{"margin":"30px"}}>
                             <CardSectionHeader>{ques.questionStatement}</CardSectionHeader>
-                           <header style={{"fontWeight":"bold"}}>{`${resCount} ${t("SURVEY_RESPONSES")}`}</header>
+                           <header style={{"fontWeight":"bold"}}>{`${resCount} Responses`}</header>
                             {/* <div className='responses-container-date'>
                             {ans?.map(el=> <div className='date-time'><strong>{el}</strong></div>)}
                             </div> */}
@@ -132,7 +126,7 @@ const displayResult = (ques,ans,type,resCount=0,t) => {
                         // </div>
                         <div style={{"margin":"30px"}}>
                             <CardSectionHeader>{ques.questionStatement}</CardSectionHeader>
-                            <header style={{"fontWeight":"bold"}}>{`${resCount} ${t("SURVEY_RESPONSES")}`}</header>
+                            <header style={{"fontWeight":"bold"}}>{`${resCount} Responses`}</header>
                             <div className='responses-container'>
                             {ans?.map(el=> <div className='response-result responses-container-line'>{el}<BreakLine style={{"marginTop":"10px"}} /></div>)}
                             </div>
@@ -154,7 +148,7 @@ const displayResult = (ques,ans,type,resCount=0,t) => {
                         // </div>
                         <div style={{"margin":"30px"}}>
                             <CardSectionHeader>{ques.questionStatement}</CardSectionHeader>
-                            <header style={{"fontWeight":"bold"}}>{`${resCount} ${t("SURVEY_RESPONSES")}`}</header>
+                            <header style={{"fontWeight":"bold"}}>{`${resCount} Responses`}</header>
                             {/* {ans?.map(el=> <p>{el}<BreakLine /></p>)} */}
                             <div className='responses-container' style={{"padding":"30px"}}>
                             <CheckBoxChart data={ques}/>
@@ -166,7 +160,7 @@ const displayResult = (ques,ans,type,resCount=0,t) => {
                 return (
                         <div style={{"margin":"30px"}}>
                             <CardSectionHeader>{ques.questionStatement}</CardSectionHeader>
-                            <header style={{"fontWeight":"bold"}}>{`${resCount} ${t("SURVEY_RESPONSES")}`}</header>
+                            <header style={{"fontWeight":"bold"}}>{`${resCount} Responses`}</header>
                             {/* {ans?.map(el=> <p>{el}<BreakLine /></p>)} */}
                             <div className='responses-container' style={{overflow:"-moz-hidden-unscrollable"}}>
                             <McqChart data={ques}/>
@@ -183,13 +177,12 @@ const SurveyResultsView = ({surveyInfo,responsesInfoMutation}) => {
     
     const { t } = useTranslation();
     const [data,setData]=useState(null);
-    const [userInfo,setUserInfo] = useState({})
-    const tenant = Digit.ULBService.getCurrentTenantId();
-    useEffect( async() => {
+    const [userInfo,setUserInfo] = useState(null)
+    useEffect(() => {
         if(responsesInfoMutation.isSuccess){
         const dp = bindQuesWithAns(surveyInfo?.questions,responsesInfoMutation.data.answers)
         setData(dp)
-        const ue = await getUserData(responsesInfoMutation.data.answers,tenant.split(".")[0])
+        const ue = getUserData(responsesInfoMutation.data.answers)
         setUserInfo(ue);
         }
     },[responsesInfoMutation])
@@ -255,7 +248,7 @@ const SurveyResultsView = ({surveyInfo,responsesInfoMutation}) => {
             </div>
             <WhoHasResponded t={t} userInfo={userInfo}/>
             {data?.map(element =>( 
-                displayResult(element,element?.answers,element?.type,element?.answers?.length,t)
+                displayResult(element,element?.answers,element?.type,element?.answers?.length)
             ))}
         </Card>
     </div>

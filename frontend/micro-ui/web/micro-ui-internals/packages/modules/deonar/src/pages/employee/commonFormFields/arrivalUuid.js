@@ -5,6 +5,26 @@ import { Controller } from "react-hook-form";
 
 const ArrivalUuidField = ({ control, setData, data, uuid, disabled }) => {
   const { t } = useTranslation();
+  const [val, setVal] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!data.arrivalUuid) {
+      setError("REQUIRED_FIELD");
+    }
+    else {
+      setError("");
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (uuid) {
+      setVal(uuid);
+    }
+    else {
+      setVal("");
+    }
+  }, [uuid]);
 
   return (
     <React.Fragment>
@@ -17,7 +37,17 @@ const ArrivalUuidField = ({ control, setData, data, uuid, disabled }) => {
             rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
             render={(props) => (
               <TextInput
-                value={uuid}
+                value={val}
+                onChange={(e) => {
+                  props.onChange(e.target.value);
+                  const newData = {
+                    ...data,
+                    arrivalUuid: e.target.value
+                  };
+                  setData(newData);
+                  setVal(e.target.value);
+                }}
+                onBlur={props.onBlur}
                 optionKey="i18nKey"
                 t={t}
                 placeholder={t("DEONAR_ARRIVAL_UUID")}
@@ -26,6 +56,7 @@ const ArrivalUuidField = ({ control, setData, data, uuid, disabled }) => {
             )}
           />
         </LabelFieldPair>
+        {error && <div style={{ color: "red" }}>{error}</div>}
       </div>    
     </React.Fragment>
   );

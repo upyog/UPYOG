@@ -14,7 +14,7 @@ import PaymentModeField from "../commonFormFields/paymentMode";
 import PaymentReferenceNumberField from "../commonFormFields/paymentReferenceNumber";
 import SubmitPrintButtonFields from "../commonFormFields/submitPrintBtn";
 
-const RejectedAfter = ({stage, control, data, setData}) => {
+const RejectedAfter = ({stage, control, data, setData, setValues}) => {
   const { t } = useTranslation();
 
   return (
@@ -24,7 +24,7 @@ const RejectedAfter = ({stage, control, data, setData}) => {
           <DawanwalaNameField control={control} setData={setData} data={data} />
               {
                 (stage === "COLLECTION_POINT") ?
-                  <NumberOfAnimalsField control={control} data={data} setData={setData} disabled={false} />
+                  <NumberOfAnimalsField control={control} data={data} setData={setData} disabled={false} setValues={setValues} source="removal" />
                 :
                   <React.Fragment></React.Fragment>
               }
@@ -43,7 +43,7 @@ const RejectedAfter = ({stage, control, data, setData}) => {
               {
                 (stage === "COLLECTION_POINT") ?
                   <React.Fragment>
-                    <RemovalFeeAmountField control={control} data={data} setData={setData} />
+                    <RemovalFeeAmountField control={control} data={data} setData={setData} disabled={true} />
                     <PaymentModeField control={control} data={data} setData={setData} />
                     <PaymentReferenceNumberField control={control} data={data} setData={setData} />
                     <SubmitPrintButtonFields />

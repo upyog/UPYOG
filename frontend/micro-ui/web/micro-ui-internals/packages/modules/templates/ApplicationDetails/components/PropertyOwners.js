@@ -31,13 +31,11 @@ function PropertyOwners({ owners }) {
     cardStyles = { ...cardStyles, maxWidth: "950px" };
     rowContainerStyle = {};
   }
-  let owners1 = owners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence})
 
   return (
     <React.Fragment>
-      <div className="owner-details">
       {owners.map((owner, index) => (
-        <div key={t(owner?.title)} style={cardStyles} className="owner-details-child">
+        <div key={t(owner?.title)} style={cardStyles}>
           {/* TODO, Later will move to classes */}
           <CardSubHeader
             style={
@@ -89,7 +87,6 @@ function PropertyOwners({ owners }) {
           </React.Fragment>
         </div>
       ))}
-      </div>
     </React.Fragment>
   );
 }

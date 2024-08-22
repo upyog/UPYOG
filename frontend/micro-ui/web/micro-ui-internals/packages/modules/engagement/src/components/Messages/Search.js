@@ -95,7 +95,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
               </span>
             </div>
           )}
-          <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%",display:"grid" }}>
+          <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%" }}>
             {searchFields
               ?.map((input, index) => (
                 <div key={input.name} className="input-fields">

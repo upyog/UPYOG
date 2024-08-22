@@ -44,7 +44,7 @@ const Inbox = () => {
         headerText: "CS_COMMON_TEXT",
         links: [{
             text: "TL_NEW_APPLICATION",
-            link: "/digit-ui/employee/engagement/messages/create",
+            link: `/${window?.contextPath}/employee/engagement/messages/create`,
             businessService: "TL",
             roles: ["TL_CEMP"],
           }]

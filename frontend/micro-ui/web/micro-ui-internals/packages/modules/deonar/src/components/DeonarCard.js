@@ -5,13 +5,24 @@ import { useTranslation } from "react-i18next";
 const DEONARCard = () => {
   const { t } = useTranslation();
 
+  const formatLabel = (label) => {
+    const [beforeDash, afterDash] = label.split(" - ");
+    return (
+      <React.Fragment>
+        <strong>{beforeDash}</strong>
+        <br />
+        {afterDash}
+      </React.Fragment>
+    );
+  };
+
   const propsForModuleCard = {
     Icon: <PersonIcon />,
     moduleName: t("DEONAR"),
     kpis: [],
     links: [
       {
-        label: t("SECURITY CHECK - ARRIVAL"),
+        label: formatLabel(t("SECURITY CHECK - ARRIVAL")),
         link: `/${window?.contextPath}/employee/deonar/securitycheck`,
       },
       {
@@ -23,7 +34,7 @@ const DEONARCard = () => {
         link: `/${window?.contextPath}/employee/deonar/removal`,
       },
       {
-        label: t("COLLECTION POINT - ASSIGN SHOPKEEPER"),
+        label: formatLabel(t("COLLECTION POINT - ASSIGN SHOPKEEPER")),
         link: `/${window?.contextPath}/employee/deonar/assignshopkeeper`,
       },
       {
@@ -39,7 +50,7 @@ const DEONARCard = () => {
         link: `/${window?.contextPath}/employee/deonar/stablingfee`,
       },
       {
-        label: t("INSPECTION POINT - ANTE MORTEM INSPECTION"),
+        label: formatLabel(t("INSPECTION POINT - ANTE MORTEM INSPECTION")),
         link: `/${window?.contextPath}/employee/deonar/antemorteminspection`,
       },
       {
@@ -55,11 +66,11 @@ const DEONARCard = () => {
         link: `/${window?.contextPath}/employee/deonar/postmorteminspection`,
       },
       {
-        label: t("SLAUGHTER RECOVERY POINT - SLAUGHTER FEE RECOVERY"),
+        label: formatLabel(t("SLAUGHTER RECOVERY POINT - SLAUGHTER FEE RECOVERY")),
         link: `/${window?.contextPath}/employee/deonar/slaughterfeerecovery`,
       },
       {
-        label: t("DELIVERY POINT - VEHICLE WASHING CHARGE COLLECTION"),
+        label: formatLabel(t("DELIVERY POINT - VEHICLE WASHING CHARGE COLLECTION")),
         link: `/${window?.contextPath}/employee/deonar/vehiclewashing`,
       },
       {

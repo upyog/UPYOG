@@ -1,18 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CardLabel, Dropdown, LabelFieldPair, TextInput, DatePicker } from "@egovernments/digit-ui-react-components";
 import { Controller, useForm } from "react-hook-form";
 
-const DeathRemovalTypesDropdownField = ({setDeathType, options}) => {
+const DeathRemovalTypesDropdownField = ({setDeathType, options, control, data, setData}) => {
   const { t } = useTranslation();
+  const [error, setError] = useState("");
 
-  const {
-    control,
-    setValue,
-    handleSubmit,
-    getValues,
-    formState: { errors, isValid },
-  } = useForm({ defaultValues: {}, mode: "onChange" });
+  useEffect(() => {
+    if (!data.deathRemovalType) {
+      setError("REQUIRED_FIELD");
+    }
+    else {
+      setError("");
+    }
+  }, [data]);
 
   return (
     <div className="bmc-col3-card">
@@ -20,18 +22,23 @@ const DeathRemovalTypesDropdownField = ({setDeathType, options}) => {
             <CardLabel className="bmc-label">{t("DEONAR_DEATH_REMOVAL_TYPE")}</CardLabel>
             <Controller
             control={control}
-            name={"deathRemovalType"}
+            name="deathRemovalType"
             rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-            render={({ value, onChange, onBlur }) => (
+            render={(props) => (
                 <Dropdown
-                selected={value}
+                selected={props.value}
                 select={
                     (value) => {
-                    onChange(value);
-                    setDeathType(value.name);
+                      props.onChange(value);
+                      const newData = {
+                        ...data,
+                        deathRemovalType: value
+                      };
+                      setData(newData);
+                      setDeathType(value);
                     }
                 }
-                onBlur={onBlur}
+                onBlur={props.onBlur}
                 optionKey="name"
                 t={t}
                 placeholder={t("DEONAR_DEATH_REMOVAL_TYPE")}
@@ -40,6 +47,7 @@ const DeathRemovalTypesDropdownField = ({setDeathType, options}) => {
             )}
             />
         </LabelFieldPair>
+        {error && <div style={{ color: "red" }}>{error}</div>}
     </div>
   );
 };

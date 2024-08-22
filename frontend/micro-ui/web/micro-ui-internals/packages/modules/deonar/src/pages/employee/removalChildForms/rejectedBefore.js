@@ -10,8 +10,9 @@ import RemovalFeeAmountField from "../commonFormFields/removalFeeAmt";
 import PaymentModeField from "../commonFormFields/paymentMode";
 import PaymentReferenceNumberField from "../commonFormFields/paymentReferenceNumber";
 import SubmitPrintButtonFields from "../commonFormFields/submitPrintBtn";
+import NumberOfAnimalsField from "../commonFormFields/numberOfAnimals";
 
-const RejectedBefore = ({stage, control, data, setData}) => {
+const RejectedBefore = ({stage, control, data, setData, setValues}) => {
   const { t } = useTranslation();
 
   return (
@@ -34,7 +35,8 @@ const RejectedBefore = ({stage, control, data, setData}) => {
             {
               (stage === "COLLECTION_POINT") ?
                 <React.Fragment>
-                  <RemovalFeeAmountField control={control} setData={setData} data={data} />
+                  <NumberOfAnimalsField control={control} setData={setData} data={data} setValues={setValues} source="removal" />
+                  <RemovalFeeAmountField control={control} setData={setData} data={data} disabled={true} />
                   <PaymentModeField control={control} setData={setData} data={data} />
                   <PaymentReferenceNumberField control={control} setData={setData} data={data} />
                   <SubmitPrintButtonFields control={control} setData={setData} data={data} />

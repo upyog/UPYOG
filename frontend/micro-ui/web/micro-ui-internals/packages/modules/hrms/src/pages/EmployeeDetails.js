@@ -52,7 +52,7 @@ const Details = () => {
       case "ACTIVATE_EMPLOYEE_HEAD":
         return setShowModal(true);
       case "COMMON_EDIT_EMPLOYEE_HEADER":
-        return history.push(`/digit-ui/employee/hrms/edit/${tenantId}/${employeeId}`);
+        return history.push(`/${window?.contextPath}/employee/hrms/edit/${tenantId}/${employeeId}`);
       default:
         break;
     }

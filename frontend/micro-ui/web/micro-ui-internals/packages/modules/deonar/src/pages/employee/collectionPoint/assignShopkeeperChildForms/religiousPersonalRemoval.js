@@ -14,7 +14,7 @@ import PaymentModeField from "../../commonFormFields/paymentMode";
 import PaymentReferenceNumberField from "../../commonFormFields/paymentReferenceNumber";
 import SubmitPrintButtonFields from "../../commonFormFields/submitPrintBtn";
 
-const ReligiousPersonalRemovalSubform = ({control, data, setData}) => {
+const ReligiousPersonalRemovalSubform = ({control, data, setData, setValues}) => {
   const { t } = useTranslation();
 
   return (
@@ -26,9 +26,9 @@ const ReligiousPersonalRemovalSubform = ({control, data, setData}) => {
             <GawalNameField control={control} setData={setData} data={data} />
             <AssignDateField control={control} setData={setData} data={data} />
               <CitizenNameField control={control} setData={setData} data={data} />
-              <NumberOfAnimalsField control={control} setData={setData} data={data} />
+              <NumberOfAnimalsField control={control} setData={setData} data={data} setValues={setValues} source="removal" />
               <AnimalTokenNumberField control={control} setData={setData} data={data} />
-              <RemovalFeeAmountField control={control} setData={setData} data={data} />
+              <RemovalFeeAmountField control={control} setData={setData} data={data} disabled={true} />
               <PaymentModeField control={control} setData={setData} data={data} />
               <PaymentReferenceNumberField control={control} setData={setData} data={data} />
             </div>

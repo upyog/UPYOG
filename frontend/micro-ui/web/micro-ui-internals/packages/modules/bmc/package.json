@@ -1,5 +1,5 @@
 {
-  "name": "@tattvafoundation/digit-ui-module-bmc",
+  "name": "@tattva/digit-ui-module-bmc",
   "version": "1.0.0",
   "license": "MIT",
   "main": "dist/index.js",

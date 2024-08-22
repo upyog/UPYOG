@@ -11,8 +11,8 @@ const Header = () => {
 
   return (
     <div className="bannerHeader">
-      {/* <img className="bannerLogo" src={stateInfo?.logoUrl} />
-      <p>{t(`TENANT_TENANTS_${stateInfo?.code.toUpperCase()}`)}</p> */}
+      <img className="bannerLogo" src={stateInfo?.logoUrl} />
+      <p>{t(`TENANT_TENANTS_${stateInfo?.code.toUpperCase()}`)}</p>
     </div>
   );
 }

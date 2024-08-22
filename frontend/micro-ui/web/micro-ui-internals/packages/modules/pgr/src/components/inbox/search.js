@@ -61,7 +61,7 @@ const SearchComplaint = ({ onSearch, type, onClose, searchParams }) => {
                 </span>
               </div>
             )}
-            <div className="complaint-input-container" style={{display:"grid"}}>
+            <div className="complaint-input-container">
               <span className="complaint-input">
                 <Label>{t("CS_COMMON_COMPLAINT_NO")}.</Label>
                 <TextInput

@@ -1,4 +1,5 @@
-import { FormComposer, Toast ,Loader, Header} from "@egovernments/digit-ui-react-components";
+import { FormComposer, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -73,8 +74,15 @@ const CreateEmployee = () => {
       }]
   }
 
+  const employeeCreateSession = Digit.Hooks.useSessionStorage("NEW_EMPLOYEE_CREATE", {});
+  const [sessionFormData,setSessionFormData, clearSessionFormData] = employeeCreateSession;
 
   const onFormValueChange = (setValue = true, formData) => {
+
+    if (!_.isEqual(sessionFormData, formData)) {
+        setSessionFormData({...sessionFormData,...formData});
+    }
+
     if (formData?.SelectEmployeePhoneNumber?.mobileNumber) {
       setMobileNumber(formData?.SelectEmployeePhoneNumber?.mobileNumber);
     } else {
@@ -124,8 +132,10 @@ const CreateEmployee = () => {
   };
 
   const navigateToAcknowledgement = (Employees) => {
-    history.replace("/digit-ui/employee/hrms/response", { Employees, key: "CREATE", action: "CREATE" });
+    history.replace(`/${window?.contextPath}/employee/hrms/response`, { Employees, key: "CREATE", action: "CREATE" });
   }
+
+  
 
 
   const onSubmit = (data) => {
@@ -162,6 +172,7 @@ const CreateEmployee = () => {
         user: {
           mobileNumber: data?.SelectEmployeePhoneNumber?.mobileNumber,
           name: data?.SelectEmployeeName?.employeeName,
+          fatherOrHusbandName:"test",
           correspondenceAddress: data?.SelectEmployeeCorrespondenceAddress?.correspondenceAddress,
           emailId: data?.SelectEmployeeEmailId?.emailId ? data?.SelectEmployeeEmailId?.emailId : undefined,
           gender: data?.SelectEmployeeGender?.gender.code,
@@ -200,7 +211,8 @@ const CreateEmployee = () => {
         <Header>{t("HR_COMMON_CREATE_EMPLOYEE_HEADER")}</Header>
       </div>
       <FormComposer
-        defaultValues={defaultValues}
+        // defaultValues={defaultValues}
+        defaultValues = {sessionFormData}
         heading={t("")}
         config={config}
         onSubmit={onSubmit}

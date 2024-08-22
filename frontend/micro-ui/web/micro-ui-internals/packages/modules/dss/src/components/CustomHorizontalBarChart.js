@@ -2,14 +2,15 @@ import { Loader } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useContext, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis,LabelList } from "recharts";
 import FilterContext from "./FilterContext";
 import NoData from "./NoData";
 
-const barColors = ["#048BD0", "#FBC02D", "#8E29BF", "#EA8A3B", "#0BABDE", "#6E8459", "#D4351C", "#0CF7E4", "#F80BF4", "#22F80B"];
+const barColors = ["#048BD0", "#FBC02D", "#8E29BF", "#EA8A3B", "#0BABDE" , "#6E8459", "#D4351C","#0CF7E4","#F80BF4","#22F80B"]
+const barColorsv2 = ["#048BD0","#5AD8A6","#F47738","#FBC02D","#2DD6FB"]
 
-const renderPlot = (plot, key, denomination) => {
-  const plotValue = key ? plot?.[key] : plot?.value || 0;
+const renderPlot = (plot,key,denomination) => {
+  const plotValue = key?plot?.[key]:plot?.value || 0;
   if (plot?.symbol?.toLowerCase() === "amount") {
     switch (denomination) {
       case "Unit":
@@ -17,7 +18,7 @@ const renderPlot = (plot, key, denomination) => {
       case "Lac":
         return Number((plotValue / 100000).toFixed(2));
       case "Cr":
-        return Number((plotValue / 10000000).toFixed(2));
+        return Number((plotValue/ 10000000).toFixed(2));
       default:
         return "";
     }
@@ -40,7 +41,7 @@ const CustomHorizontalBarChart = ({
   title,
   showDrillDown = false,
   setChartDenomination,
-  moduleCode,
+  horizontalBarv2=false,
 }) => {
   const { id } = data;
   const { t } = useTranslation();
@@ -53,15 +54,16 @@ const CustomHorizontalBarChart = ({
     tenantId,
     requestDate: { ...value?.requestDate, startDate: value?.range?.startDate?.getTime(), endDate: value?.range?.endDate?.getTime() },
     filters: value?.filters,
-    moduleLevel: value?.moduleLevel || moduleCode,
+    moduleLevel: value?.moduleLevel
   });
-  const constructChartData = (data, denomination) => {
+  
+  const constructChartData = (data,denomination) => {
     let result = {};
     for (let i = 0; i < data?.length; i++) {
       const row = data[i];
       for (let j = 0; j < row.plots.length; j++) {
         const plot = row.plots[j];
-        result[plot.name] = { ...result[plot.name], [t(row.headerName)]: renderPlot(plot, "value", denomination), name: t(plot.name) };
+        result[plot.name] = { ...result[plot.name], [t(row.headerName)]: renderPlot(plot,'value',denomination), name: t(plot.name) };
       }
     }
     return Object.keys(result).map((key) => {
@@ -73,33 +75,35 @@ const CustomHorizontalBarChart = ({
   };
 
   const goToDrillDownCharts = () => {
-    history.push(`/digit-ui/employee/dss/drilldown?chart=${response?.responseData?.drillDownChartId}&ulb=${value?.filters?.tenantId}&title=${title}`);
+    history.push(`/${window?.contextPath}/employee/dss/drilldown?chart=${response?.responseData?.drillDownChartId}&ulb=${value?.filters?.tenantId}&title=${title}`);
   };
 
   const tooltipFormatter = (value, name) => {
     if (id === "fsmMonthlyWasteCal") {
-      return [
-        `${Digit.Utils.dss.formatter(Math.round((value + Number.EPSILON) * 100) / 100, "number", value?.denomination, true, t)} ${t("DSS_KL")}`,
-        name,
-      ];
+      return [`${Digit.Utils.dss.formatter(Math.round((value + Number.EPSILON) * 100) / 100, 'number', value?.denomination, true, t)} ${t("DSS_KL")}`, name];
     }
-    return [Digit.Utils.dss.formatter(Math.round((value + Number.EPSILON) * 100) / 100, "number", value?.denomination, true, t), name];
+    return [Digit.Utils.dss.formatter(Math.round((value + Number.EPSILON) * 100) / 100  , 'number', value?.denomination, true, t), name];
   };
 
-  useEffect(() => {
-    if (response) setChartDenomination(response?.responseData?.data?.[0]?.headerSymbol);
-  }, [response]);
+  useEffect(()=>{
+    if(response)
+    setChartDenomination(response?.responseData?.data?.[0]?.headerSymbol);
+  },[response])
 
-  const chartData = useMemo(() => constructChartData(response?.responseData?.data, value?.denomination), [response, value?.denomination]);
+  let chartData = useMemo(() => constructChartData(response?.responseData?.data,value?.denomination), [response,value?.denomination]);
 
   const renderLegend = (value) => <span style={{ fontSize: "14px", color: "#505A5F" }}>{value}</span>;
 
   const tickFormatter = (value) => {
     if (typeof value === "string") {
-      return value.replace("-", ", ");
-    } else if (typeof value === "number") return Digit.Utils.dss.formatter(value, "number", value?.denomination, true, t);
+      return value
+      // return value.replace("-", ", ");
+    }
+    else if(typeof value === "number")
+      return Digit.Utils.dss.formatter(value, 'number', value?.denomination, true, t);
     return value;
   };
+
 
   if (isLoading) {
     return <Loader />;
@@ -111,18 +115,75 @@ const CustomHorizontalBarChart = ({
     return `${tickFormat}`;
   };
 
-  const getVerticalWidth = (layout) => {
-    if (window?.location.href.includes("dss/dashboard/pgr")) {
-      return layout === "vertical" ? 150 : 60 
-    } else {
-      return layout === "vertical" ? 120 : 60
-    }
-  }
-
   const bars = response?.responseData?.data?.map((bar) => bar?.headerName);
+  if(horizontalBarv2){
+  chartData = chartData.map((row,idx)=> {
+    row.fill = barColorsv2[idx]
+    return row
+  })
+}
   return (
     <Fragment>
-      <ResponsiveContainer
+      {horizontalBarv2 ? 
+       <ResponsiveContainer
+       width="90%"
+       height={chartData?.length === 0 ? 250 : chartData?.length === 1 ? 40 : chartData?.length * 48 + 10}
+       margin={{
+         top: 5,
+         right: 5,
+         left: 0,
+         bottom: 0,
+       }}
+     >
+       {chartData?.length === 0 || !chartData ? (
+         <NoData t={t} />
+       ) : (
+         <BarChart 
+           width="110%"
+           height="90%"
+           margin={{
+             top: 0,
+             right: 60,
+             left: 0,
+             bottom: -32,
+           }}
+           layout={layout}
+           data={chartData}
+           barCategoryGap={10}
+           barGap={0}
+         >
+           <CartesianGrid display={"none"} strokeDasharray="2 2"/>
+           <YAxis
+             dataKey={yDataKey}
+             type={yAxisType}
+             axisLine={true}
+             tickLine={false}
+            //  domain={[-100, 'dataMax']}
+             tick={{ fontSize: "14px"}}
+             label={{
+               value: yAxisLabel,
+               angle: 90,
+               position: "left",
+               fontSize: "14px",
+               fill: "#505A5F",
+             }}
+             tickCount={10}
+             tickFormatter={tickFormatter}
+             unit={id === "fsmCapacityUtilization" ? "%" : ""}
+             width={layout === "vertical" ? 78 : 60}
+           />
+           <XAxis display={"none"} dataKey={xDataKey} type={xAxisType} tick={{ fontSize: "14px", fill: "#505A5F" }} tickCount={10} tickFormatter={tickFormatter} />
+           {bars?.map((bar, idx) => ( <Bar key={idx} dataKey={t(bar)} fill={barColors[idx]} stackId={bars?.length > 2 ? 1 : idx} barSize={22} >
+           <LabelList dataKey={t(bar)} position={"right"} offset={"3"} fill={"#828282"} />
+          </Bar>
+       ))}
+           {/* <Legend formatter={renderLegend} iconType="circle" /> */}
+           <Tooltip cursor={false} formatter={tooltipFormatter} />
+         </BarChart>
+       )}
+     </ResponsiveContainer>
+       : 
+       <ResponsiveContainer
         width="94%"
         height={450}
         margin={{
@@ -139,7 +200,7 @@ const CustomHorizontalBarChart = ({
             width="100%"
             height="100%"
             margin={{
-              top: 5,
+              top: 40,
               right: 5,
               left: 5,
               bottom: 5,
@@ -149,7 +210,7 @@ const CustomHorizontalBarChart = ({
             barGap={12}
             barSize={12}
           >
-            <CartesianGrid strokeDasharray="2 2" />
+            <CartesianGrid strokeDasharray="2 2"/>
             <YAxis
               dataKey={yDataKey}
               type={yAxisType}
@@ -164,18 +225,17 @@ const CustomHorizontalBarChart = ({
               }}
               tickCount={10}
               tickFormatter={tickFormatter}
-              unit={id === "fssmCapacityUtilization"  || id === "fsmCapacityUtilization"? "%" : ""}
-              width={getVerticalWidth(layout)}
+              unit={id === "fsmCapacityUtilization" ? "%" : ""}
+              width={layout === "vertical" ? 120 : 60}
             />
             <XAxis dataKey={xDataKey} type={xAxisType} tick={{ fontSize: "14px", fill: "#505A5F" }} tickCount={10} tickFormatter={tickFormatter} />
-            {bars?.map((bar, id) => (
-              <Bar key={id} dataKey={t(bar)} fill={barColors[id]} stackId={bars?.length > 2 ? 1 : id} />
-            ))}
-            <Legend formatter={renderLegend} iconType="circle" />
+            {bars?.map((bar, id) => ( <Bar key={id} dataKey={t(bar)} fill={barColors[id]} stackId={bars?.length > 2 ? 1 : id} />
+        ))}
+            <Legend formatter={renderLegend} iconType="circle" wrapperStyle={{ marginBottom: '-1rem' }} />
             <Tooltip cursor={false} formatter={tooltipFormatter} />
           </BarChart>
         )}
-      </ResponsiveContainer>
+      </ResponsiveContainer>}
       {showDrillDown && (
         <p className="showMore" onClick={goToDrillDownCharts}>
           {t("DSS_SHOW_MORE")}
