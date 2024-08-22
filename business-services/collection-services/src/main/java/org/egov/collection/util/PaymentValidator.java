@@ -19,6 +19,7 @@ import static org.egov.collection.util.Utils.jsonMerge;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -400,7 +401,7 @@ public class PaymentValidator {
                                                   Map<String, String> errorMap) {
 
         Bill bill = paymentDetail.getBill();
-
+bill.setTotalAmount(  bill.getTotalAmount().setScale(0, RoundingMode.HALF_UP).setScale(2));
         // If IsAdvanceAllowed is null it is interpretated as not allowed
         Boolean isAdvanceAllowed = !(bill.getIsAdvanceAllowed() == null || !bill.getIsAdvanceAllowed());
 
