@@ -10,8 +10,8 @@ import { initEngagementComponents } from "@egovernments/digit-ui-module-engageme
 import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import { initUtilitiesComponents } from "@egovernments/digit-ui-module-utilities";
 import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
-import { BMCLinks, BMCModule, initBMCComponents } from "@tattva/digit-ui-module-bmc";
-import { DEONARModule, initDEONARComponents } from "@tattva/digit-ui-module-deonar";
+import { BMCLinks, BMCModule, initBMCComponents } from "@tattvafoundation/digit-ui-module-bmc";
+import { DEONARModule, initDEONARComponents } from "@tattvafoundation/digit-ui-module-deonar";
 import React from "react";
 import { UICustomizations } from "./Customisations/UICustomizations";
 

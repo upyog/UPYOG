@@ -1,5 +1,5 @@
 {
-  "name": "@tattva/digit-ui-module-deonar",
+  "name": "@tattvafoundation/digit-ui-module-deonar",
   "version": "1.0.0",
   "license": "MIT",
   "main": "dist/index.js",
