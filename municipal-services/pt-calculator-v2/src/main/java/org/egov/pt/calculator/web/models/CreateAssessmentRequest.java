@@ -22,14 +22,16 @@ import lombok.Setter;
 public class CreateAssessmentRequest {
 
 	@JsonProperty("RequestInfo")
-	private RequestInfo  requestInfo;
-	
-	private String assessmentYear;
-	
-	private List<String> locality;
-	
-	private List<String> propertyType;
+	private RequestInfo requestInfo;
 
+	private String assessmentYear;
+
+	private List<String> locality;
+
+	private List<String> propertyType;
+	private Long offset;
+
+	private Long limit;
 	private String tenantId;
 
 	private Boolean isRented = true;

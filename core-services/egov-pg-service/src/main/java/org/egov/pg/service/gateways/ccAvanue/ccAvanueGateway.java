@@ -128,7 +128,7 @@ public class ccAvanueGateway implements Gateway {
         List<KeyValuePair> pairList = new ArrayList<>();
         String ccaRequest="";
         // Adding elements to the list
-	pairList.add(new KeyValuePair("TID", tid));   
+	pairList.add(new KeyValuePair("tid", tid));   
         pairList.add(new KeyValuePair("merchant_id", MERCHANT_KEY_ID));
         pairList.add(new KeyValuePair("order_id",transaction.getTxnId()));
         pairList.add(new KeyValuePair("currency", "INR"));
@@ -214,13 +214,14 @@ params.add("access_code", MERCHANT_ACCESS_CODE);
     }
    private String generateTID() {
     	  // Generate a unique UUID as a transaction ID
-        String tid = UUID.randomUUID().toString();
+        //String tid = UUID.randomUUID().toString();
         // Get the current timestamp
         long currentTimeMillis = System.currentTimeMillis();
         // Add 24 hours to the current time
         long expirationTimeMillis = currentTimeMillis + (24 * 60 * 60 * 1000);
         // Include expiration time in the TID
-        tid += "|" + expirationTimeMillis;
+       // tid += "|" + expirationTimeMillis;
+	String tid = String.valueOf(expirationTimeMillis);
         return tid;
 	}
     public static boolean isTIDValid(String tid) {
