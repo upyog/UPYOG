@@ -39,7 +39,6 @@ const NewAssetApplication = () => {
   };
 
   const onSubmit = (data) => {
-    console.log("datatatatattatatta",data);
     const assignedDateEpoch = convertToEpoch(data?.assigndetails?.[0]?.transferDate);
     const formData = {
       id: applicationDetails?.applicationData?.applicationData?.id,

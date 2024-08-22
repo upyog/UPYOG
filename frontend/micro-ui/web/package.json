@@ -11,7 +11,9 @@
     "micro-ui-internals/packages/modules/ew",
     "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/common",
-    "micro-ui-internals/packages/modules/dss"
+    "micro-ui-internals/packages/modules/dss",
+    "micro-ui-internals/packages/modules/ptr"
+
 
 
   ],
@@ -19,7 +21,7 @@
     "node": ">=14"
   },
   "dependencies": {
-    "@nudmcdgnpm/upyog-css": "1.2.0",
+    "@nudmcdgnpm/upyog-css": "1.2.1",
     "@nudmcdgnpm/digit-ui-libraries": "1.2.0",
     "@nudmcdgnpm/digit-ui-module-bills": "1.2.0",
     "@nudmcdgnpm/digit-ui-module-common": "1.2.0",

@@ -96,7 +96,7 @@ const PTRCitizenDetails
       isDisabled={!applicantName || !mobileNumber || !fatherName || !emailId}
     >
       <div>
-        <CardLabel>{`${t("PTR_APPLICANT_NAME")}`} <span style={{ color: '#a82227' }}>*</span></CardLabel>
+        <CardLabel>{`${t("PTR_APPLICANT_NAME")}`} <span className="astericColor">*</span></CardLabel>
         <TextInput
           t={t}
           type={"text"}
@@ -116,7 +116,7 @@ const PTRCitizenDetails
          
         />
        
-        <CardLabel>{`${t("PTR_MOBILE_NUMBER")}`} <span style={{ color: '#a82227' }}>*</span></CardLabel>
+        <CardLabel>{`${t("PTR_MOBILE_NUMBER")}`} <span className="astericColor">*</span></CardLabel>
         <MobileNumber
           value={mobileNumber}
           name="mobileNumber"
@@ -131,7 +131,7 @@ const PTRCitizenDetails
             onChange={(value) => setAltMobileNo({ target: { value } })}
             {...{ required: false, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
           />
-        <CardLabel>{`${t("PTR_FATHER_HUSBAND_NAME")}`} <span style={{ color: '#a82227' }}>*</span></CardLabel>
+        <CardLabel>{`${t("PTR_FATHER_HUSBAND_NAME")}`} <span className="astericColor">*</span></CardLabel>
         <TextInput
           t={t}
           type={"text"}
@@ -148,7 +148,7 @@ const PTRCitizenDetails
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
         />
-      <CardLabel>{`${t("PTR_EMAIL_ID")}`} <span style={{ color: '#a82227' }}>*</span></CardLabel>
+      <CardLabel>{`${t("PTR_EMAIL_ID")}`} <span className="astericColor">*</span></CardLabel>
       <TextInput
         t={t}
         type={"email"}

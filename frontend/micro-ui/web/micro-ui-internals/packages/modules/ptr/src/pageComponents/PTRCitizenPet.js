@@ -179,7 +179,7 @@ const PTRCitizenPet
           isDisabled={!petType || !breedType || !petGender || !petName || !petAge || !doctorName || !clinicName || !lastVaccineDate || !vaccinationNumber}
         >
           <div>
-            <CardLabel>{`${t("PTR_SEARCH_PET_TYPE")}`} <span style={{ color: 'a82227' }}>*</span></CardLabel>
+            <CardLabel>{`${t("PTR_SEARCH_PET_TYPE")}`} <span className="astericColor">*</span></CardLabel>
             <Controller
               control={control}
               name={"petType"}
@@ -197,7 +197,7 @@ const PTRCitizenPet
                 />
               )}
             />
-            <CardLabel>{`${t("PTR_SEARCH_BREED_TYPE")}`} <span style={{ color: 'a82227' }}>*</span></CardLabel>
+            <CardLabel>{`${t("PTR_SEARCH_BREED_TYPE")}`} <span className="astericColor">*</span></CardLabel>
             <Controller
               control={control}
               name={"breedType"}
@@ -217,7 +217,7 @@ const PTRCitizenPet
             />
 
 
-            <CardLabel>{`${t("PTR_PET_NAME")}`} <span style={{ color: 'a82227' }}>*</span></CardLabel>
+            <CardLabel>{`${t("PTR_PET_NAME")}`} <span className="astericColor">*</span></CardLabel>
             <TextInput
               t={t}
               type={"text"}
@@ -236,7 +236,7 @@ const PTRCitizenPet
               })}
             />
 
-            <CardLabel>{`${t("PTR_PET_SEX")}`} <span style={{ color: 'a82227' }}>*</span></CardLabel>
+            <CardLabel>{`${t("PTR_PET_SEX")}`} <span className="astericColor">*</span></CardLabel>
             <Controller
               control={control}
               name={"petGender"}
@@ -255,7 +255,7 @@ const PTRCitizenPet
               )}
             />
 
-            <CardLabel>{`${t("PTR_PET_AGE") + " (in months)"}`} <span style={{ color: 'a82227' }}>*</span></CardLabel>
+            <CardLabel>{`${t("PTR_PET_AGE") + " (in months)"}`} <span className="astericColor">*</span></CardLabel>
             <TextInput
               t={t}
               type={"text"}
@@ -285,7 +285,7 @@ const PTRCitizenPet
 
             <br></br>
 
-            <CardLabel>{`${t("PTR_DOCTOR_NAME")}`} <span style={{ color: 'a82227' }}>*</span></CardLabel>
+            <CardLabel>{`${t("PTR_DOCTOR_NAME")}`} <span className="astericColor">*</span></CardLabel>
             <TextInput
               t={t}
               type={"text"}
@@ -304,7 +304,7 @@ const PTRCitizenPet
               })}
             />
 
-            <CardLabel>{`${t("PTR_CLINIC_NAME")}`} <span style={{ color: 'a82227' }}>*</span></CardLabel>
+            <CardLabel>{`${t("PTR_CLINIC_NAME")}`} <span className="astericColor">*</span></CardLabel>
             <TextInput
               t={t}
               type={"text"}
@@ -323,7 +323,7 @@ const PTRCitizenPet
               })}
             />
 
-            <CardLabel>{`${t("PTR_VACCINATED_DATE")}`} <span style={{ color: 'a82227' }}>*</span></CardLabel>
+            <CardLabel>{`${t("PTR_VACCINATED_DATE")}`} <span className="astericColor">*</span></CardLabel>
             <TextInput
               t={t}
               type={"date"}
@@ -341,7 +341,7 @@ const PTRCitizenPet
 
             />
 
-            <CardLabel>{`${t("PTR_VACCINATION_NUMBER")}`} <span style={{ color: 'a82227' }}>*</span></CardLabel>
+            <CardLabel>{`${t("PTR_VACCINATION_NUMBER")}`} <span className="astericColor">*</span></CardLabel>
             <TextInput
               t={t}
               type={"text"}

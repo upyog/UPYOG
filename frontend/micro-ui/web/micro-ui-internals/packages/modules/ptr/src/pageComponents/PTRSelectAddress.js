@@ -184,7 +184,7 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, setError, c
       {window.location.href.includes("/citizen") ? <Timeline currentStep={3} /> : null}
       <FormStep config={config} onSelect={onSubmit} t={t} isDisabled={selectedLocality ? false : true}>
         <div>
-          <CardLabel>{`${t("MYCITY_CODE_LABEL")} `} <span style={{ color: 'a82227' }}>*</span></CardLabel>
+          <CardLabel>{`${t("MYCITY_CODE_LABEL")} `} <span className="astericColor">*</span></CardLabel>
           <span className={"form-ptr-dropdown-only"}>
             <RadioOrSelect
               options={cities.sort((a, b) => a.name.localeCompare(b.name))}
@@ -196,7 +196,7 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, setError, c
               disabled={isEditAddress}
             />
           </span>
-          {selectedCity && localities && <CardLabel>{`${t("PTR_LOCALITY")} `} <span style={{ color: 'a82227' }}>*</span></CardLabel>}
+          {selectedCity && localities && <CardLabel>{`${t("PTR_LOCALITY")} `} <span className="astericColor">*</span></CardLabel>}
           {selectedCity && localities && (
             <span className={"form-ptr-dropdown-only"}>
               <RadioOrSelect
