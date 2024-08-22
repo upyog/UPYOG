@@ -96,7 +96,7 @@ const PTRCitizenDetails
       isDisabled={!applicantName || !mobileNumber || !fatherName || !emailId}
     >
       <div>
-        <CardLabel>{`${t("PTR_APPLICANT_NAME")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+        <CardLabel>{`${t("PTR_APPLICANT_NAME")}`} <span style={{ color: '#a82227' }}>*</span></CardLabel>
         <TextInput
           t={t}
           type={"text"}
@@ -116,7 +116,7 @@ const PTRCitizenDetails
          
         />
        
-        <CardLabel>{`${t("PTR_MOBILE_NUMBER")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+        <CardLabel>{`${t("PTR_MOBILE_NUMBER")}`} <span style={{ color: '#a82227' }}>*</span></CardLabel>
         <MobileNumber
           value={mobileNumber}
           name="mobileNumber"
@@ -131,7 +131,7 @@ const PTRCitizenDetails
             onChange={(value) => setAltMobileNo({ target: { value } })}
             {...{ required: false, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
           />
-        <CardLabel>{`${t("PTR_FATHER_HUSBAND_NAME")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+        <CardLabel>{`${t("PTR_FATHER_HUSBAND_NAME")}`} <span style={{ color: '#a82227' }}>*</span></CardLabel>
         <TextInput
           t={t}
           type={"text"}
@@ -148,21 +148,22 @@ const PTRCitizenDetails
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
         />
-
+      <CardLabel>{`${t("PTR_EMAIL_ID")}`} <span style={{ color: '#a82227' }}>*</span></CardLabel>
       <TextInput
         t={t}
-        type={"text"}
+        type={"email"}
         isMandatory={true}
         optionKey="i18nKey"
         name="emailId"
         value={emailId}
         onChange={setOwnerEmail}
         ValidationRequired={true}
-        validation={{
+        {...(validation = {
           isRequired: true,
-          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z]+\\.[a-z]{2,}$",
-          type: "email", 
-        }}
+          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z]+\\.[a-zA-Z]{3,4}$",
+          type: "email",
+          title: t("PT_NAME_ERROR_MESSAGE"),
+        })}
       />
         
         
