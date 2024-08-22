@@ -50,7 +50,7 @@ export const configBPAApproverApplication = ({
           {
             label: t("WF_COMMON_COMMENTS"),
             type: "textarea",
-            isMandatory: isCommentRequired,
+            isMandatory: true,
             populators: {
               name: "comments",
             },

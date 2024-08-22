@@ -17,6 +17,8 @@ import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import { useParams, useHistory, useLocation, Redirect } from "react-router-dom";
 import { stringReplaceAll } from "../bills/routes/bill-details/utils";
+import $ from "jquery";
+import { makePayment } from "./payGov";
 
 export const SelectPaymentType = (props) => {
   const { state = {} } = useLocation();
@@ -61,7 +63,7 @@ export const SelectPaymentType = (props) => {
         billId: billDetails.id,
         consumerCode: consumerCode,
         productInfo: "Common Payment",
-        gateway: d.paymentType,
+        gateway: d?.paymentType || "AXIS",
         taxAndPayments: [
           {
             billId: billDetails.id,
@@ -69,14 +71,15 @@ export const SelectPaymentType = (props) => {
           },
         ],
         user: {
-          name: (name || userInfo?.info?.name || billDetails?.payerName).trim(),
+          name: name || userInfo?.info?.name || billDetails?.payerName,
           mobileNumber: mobileNumber || userInfo?.info?.mobileNumber || billDetails?.mobileNumber,
           tenantId: billDetails?.tenantId,
+          emailId: "sriranjan.srivastava@owc.com"
         },
         // success
         callbackUrl: window.location.href.includes("mcollect") || wrkflow === "WNS"
-          ? `${window.location.protocol}//${window.location.host}/${window?.contextPath}/citizen/payment/success/${businessService}/${wrkflow === "WNS"? encodeURIComponent(consumerCode):consumerCode}/${tenantId}?workflow=${wrkflow === "WNS"? wrkflow : "mcollect"}`
-          : `${window.location.protocol}//${window.location.host}/${window?.contextPath}/citizen/payment/success/${businessService}/${wrkflow === "WNS"? encodeURIComponent(consumerCode):consumerCode}/${tenantId}?propertyId=${propertyId}`,
+          ? `${window.location.protocol}//${window.location.host}/digit-ui/citizen/payment/success/${businessService}/${wrkflow === "WNS"? consumerCode:consumerCode}/${tenantId}?workflow=${wrkflow === "WNS"? wrkflow : "mcollect"}`
+          : `${window.location.protocol}//${window.location.host}/digit-ui/citizen/payment/success/${businessService}/${wrkflow === "WNS"? encodeURIComponent(consumerCode):consumerCode}/${tenantId}?propertyId=${consumerCode}`,
         additionalDetails: {
           isWhatsapp: false,
         },
@@ -86,7 +89,91 @@ export const SelectPaymentType = (props) => {
     try {
       const data = await Digit.PaymentService.createCitizenReciept(billDetails?.tenantId, filterData);
       const redirectUrl = data?.Transaction?.redirectUrl;
-      window.location = redirectUrl;
+      if (d?.paymentType == "AXIS") {
+        window.location = redirectUrl;
+      }
+      else if (d?.paymentType == "NTTDATA") {
+        let redirect= redirectUrl.split("returnURL=")
+        let url=redirect[0].split("?")[1].split("&")
+        const options = {
+          "atomTokenId": url[0].split("=")[1],
+          "merchId": url[1].split("=")[1],
+          "custEmail": "sriranjan.srivastava@owc.com",
+          "custMobile": url[3].split("=")[1],
+          "returnUrl": redirect[1]
+        }
+        let atom = new AtomPaynetz(options, 'uat');
+      }
+      else {
+        // new payment gatewayfor UPYOG pay
+        try {
+          const gatewayParam = redirectUrl
+            ?.split("?")
+            ?.slice(1)
+            ?.join("?")
+            ?.split("&")
+            ?.reduce((curr, acc) => {
+              var d = acc.split("=");
+              curr[d[0]] = d[1];
+              return curr;
+            }, {});
+          var newForm = $("<form>", {
+            action: gatewayParam.txURL,
+            method: "POST",
+            target: "_top",
+          });
+          const orderForNDSLPaymentSite = [
+            "checksum",
+            "messageType",
+            "merchantId",
+            "serviceId",
+            "orderId",
+            "customerId",
+            "transactionAmount",
+            "currencyCode",
+            "requestDateTime",
+            "successUrl",
+            "failUrl",
+            "additionalField1",
+            "additionalField2",
+            "additionalField3",
+            "additionalField4",
+            "additionalField5",
+          ];
+
+          // override default date for UPYOG Custom pay
+          gatewayParam["requestDateTime"] = gatewayParam["requestDateTime"]?.split(new Date().getFullYear()).join(`${new Date().getFullYear()} `);
+
+          gatewayParam["successUrl"]= redirectUrl?.split("successUrl=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
+          gatewayParam["failUrl"]= redirectUrl?.split("failUrl=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
+          // gatewayParam["successUrl"]= data?.Transaction?.callbackUrl;
+          // gatewayParam["failUrl"]= data?.Transaction?.callbackUrl;
+
+          // var formdata = new FormData();
+
+          for (var key of orderForNDSLPaymentSite) {
+
+            // formdata.append(key,gatewayParam[key]);
+
+            newForm.append(
+              $("<input>", {
+                name: key,
+                value: gatewayParam[key],
+                // type: "hidden",
+              })
+            );
+          }
+          $(document.body).append(newForm);
+          newForm.submit();
+
+          makePayment(gatewayParam.txURL,newForm);
+
+        } catch (e) {
+          console.log("Error in payment redirect ", e);
+          //window.location = redirectionUrl;
+        }
+      }
+     // window.location = redirectUrl;
     } catch (error) {
       let messageToShow = "CS_PAYMENT_UNKNOWN_ERROR_ON_SERVER";
       if (error.response?.data?.Errors?.[0]) {
@@ -100,7 +187,7 @@ export const SelectPaymentType = (props) => {
   if (authorization === "true" && !userInfo.access_token) {
     localStorage.clear();
     sessionStorage.clear();
-    window.location.href = `/${window?.contextPath}/citizen/login?from=${encodeURIComponent(pathname + search)}`;
+    window.location.href = `/digit-ui/citizen/login?from=${encodeURIComponent(pathname + search)}`;
   }
 
   if (isLoading || paymentLoading) {

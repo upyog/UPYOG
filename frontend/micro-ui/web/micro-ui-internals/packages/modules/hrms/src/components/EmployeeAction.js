@@ -13,11 +13,9 @@ const EmployeeAction = ({ t, action, tenantId, closeModal, submitAction, applica
   const [error, setError] = useState(null);
   const [Reasons, setReasons] = useState([]);
   const [selectedReason, selecteReason] = useState("");
-  const tenant = Digit.ULBService.getStateId() || tenantId?.split(".")?.[0];
-  const { isLoading, isError, errors, data, ...rest } = Digit.Hooks.hrms.useHrmsMDMS(tenant, "egov-hrms", "DeactivationReason");
+  const { isLoading, isError, errors, data, ...rest } = Digit.Hooks.hrms.useHrmsMDMS(tenantId, "egov-hrms", "DeactivationReason");
 
   useEffect(() => {
-    if(Reasons?.length > 0)
     switch (action) {
       case "DEACTIVATE_EMPLOYEE_HEAD":
         return setConfig(
@@ -83,7 +81,7 @@ const EmployeeAction = ({ t, action, tenantId, closeModal, submitAction, applica
         return ele;
       })
     );
-  }, [data, isLoading]);
+  }, [data]);
 
   useEffect(() => {
     (async () => {
@@ -123,13 +121,13 @@ const EmployeeAction = ({ t, action, tenantId, closeModal, submitAction, applica
         applicationData.Employees[0]["documents"].push(documents);
       }
 
-      set(Employees[0], 'deactivationDetails[0].effectiveFrom', data?.effectiveFrom);
+      set(Employees[0], 'deactivationDetails[0].effectiveFrom', new Date()?.getTime());
       set(Employees[0], 'deactivationDetails[0].orderNo', data?.orderNo);
       set(Employees[0], 'deactivationDetails[0].reasonForDeactivation', data?.reasonForDeactivation);
       set(Employees[0], 'deactivationDetails[0].remarks', data?.remarks);
 
       Employees[0].isActive = false;
-      history.replace( `/${window?.contextPath}/employee/hrms/response`, { Employees, key: "UPDATE", action: "DEACTIVATION" });
+      history.replace("/digit-ui/employee/hrms/response", { Employees, key: "UPDATE", action: "DEACTIVATION" });
     } else {
       if (file) {
         let documents = {
@@ -140,13 +138,13 @@ const EmployeeAction = ({ t, action, tenantId, closeModal, submitAction, applica
         applicationData.Employees[0]["documents"].push(documents);
       }
 
-      set(Employees[0], 'reactivationDetails[0].effectiveFrom', data?.effectiveFrom);
+      set(Employees[0], 'reactivationDetails[0].effectiveFrom', new Date()?.getTime());
       set(Employees[0], 'reactivationDetails[0].orderNo', data?.orderNo);
       set(Employees[0], 'reactivationDetails[0].reasonForDeactivation', data?.reasonForDeactivation);
       set(Employees[0], 'reactivationDetails[0].remarks', data?.remarks);
       Employees[0].isActive = true;
 
-      history.replace( `/${window?.contextPath}/employee/hrms/response`, { Employees, key: "UPDATE", action: "ACTIVATION" });
+      history.replace("/digit-ui/employee/hrms/response", { Employees, key: "UPDATE", action: "ACTIVATION" });
     }
   }
 

@@ -80,7 +80,8 @@ const getCitizenStyles = (value) => {
       },
       tagContainerStyles: {
        margin: "0px",
-       padding: "0px"
+       padding: "0px",
+       width: "46%"
       },
       tagStyles: {
         height: "auto", 
@@ -90,20 +91,19 @@ const getCitizenStyles = (value) => {
         margin: "5px"
       },
       textStyles: {
-        wordBreak: "break-all",
+        wordBreak: "break-word",
         height: "auto",
         lineHeight: "16px",
         overflow: "hidden",
         // minHeight: "35px",
-        maxHeight: "34px",
-        maxWidth: "100%"
+        maxHeight: "34px"
       },   
       inputStyles: {
-        width: "42%",
+        width: "43%",
         minHeight: "42px",
         maxHeight: "42px",
-        top: "12px",
-        left: "12px"
+        top: "5px",
+        left: "5px"
       },
       buttonStyles: {
         height: "auto",
@@ -150,7 +150,6 @@ const UploadFile = (props) => {
 
   // for common aligmnent issues added common styles
   extraStyles = getCitizenStyles("OBPS");
-  
 
   // if (window.location.href.includes("/obps") || window.location.href.includes("/noc")) {
   //   extraStyles = getCitizenStyles("OBPS");
@@ -195,12 +194,12 @@ const UploadFile = (props) => {
   return (
     <Fragment>
       {showHint && <p className="cell-text">{t(props?.hintText)}</p>}
-      <div className={`upload-file ${props?.customClass} ${user_type === "employee" ? "":"upload-file-max-width"} ${props.disabled ? " disabled" : ""}`} style={extraStyles?.uploadFile ? {...extraStyles?.uploadFile,padding:"0.5rem"} : {}}>
+      <div className={`upload-file ${user_type === "employee" ? "":"upload-file-max-width"} ${props.disabled ? " disabled" : ""}`} style={extraStyles?.uploadFile ? extraStyles?.uploadFile : {}}>
         <div style= {extraStyles ? extraStyles?.containerStyles : null}>
           <ButtonSelector
             theme="border"
             label={t("CS_COMMON_CHOOSE_FILE")}
-            style={{ ...(extraStyles ? extraStyles?.buttonStyles : {}), ...(!props.enableButton ? { opacity: 0.5 } : {}) }}
+            style={{ ...(extraStyles ? extraStyles?.buttonStyles : {}), ...(props.disabled ? { display: "none" } : {}) }}
             textStyles={props?.textStyles}
             type={props.buttonType}
           />
@@ -210,11 +209,24 @@ const UploadFile = (props) => {
                 <RemoveableTag extraStyles={extraStyles} key={index} text={file[0]} onClick={(e) => props?.removeTargetedFile(fileDetailsData, e)} />
               </div>
             })}
-          {props?.uploadedFiles.length === 0 && <h2 className="file-upload-status">{props.message}</h2>}
+          {!hasFile || props.error ? (
+            <h2 className="file-upload-status">{props.message}</h2>
+          ) : (
+            <div className="tag-container" style={extraStyles ? extraStyles?.tagContainerStyles : null}>
+              <div className="tag" style={extraStyles ? extraStyles?.tagStyles : null}>
+                <span className="text" style={extraStyles ? extraStyles?.textStyles : null}>
+                   {(typeof inpRef.current.files[0]?.name !== "undefined") && !(props?.file)  ? inpRef.current.files[0]?.name : props.file?.name} 
+                </span>
+                <span onClick={() => handleDelete()} style={extraStyles ? extraStyles?.closeIconStyles : null}>
+                  <Close style={props.Multistyle} className="close" />
+                </span>
+              </div>
+            </div>
+          )}
         </div>
         <input
           className={props.disabled ? "disabled" : "" + "input-mirror-selector-button"}
-          style={{...(extraStyles ? { ...extraStyles?.inputStyles, ...props?.inputStyles } : { ...props?.inputStyles }), cursor: 'pointer'}}
+          style={extraStyles ? { ...extraStyles?.inputStyles, ...props?.inputStyles } : { ...props?.inputStyles }}
           ref={inpRef}
           type="file"
           id={props.id || `document-${getRandomId()}`}
@@ -224,17 +236,13 @@ const UploadFile = (props) => {
           disabled={props.disabled}
           onChange={(e) => props.onUpload(e)}
           onClick ={ event => {
-            if (!props?.enableButton) {
-              event.preventDefault()
-            } else {
-              const { target = {} } = event || {};
-              target.value = "";
-            }
+            const { target = {} } = event || {};
+            target.value = "";
           }}
         />
       </div>
       {props.iserror && <p style={{color: "red"}}>{props.iserror}</p>}
-      {props?.showHintBelow && <p className="cell-text" style={{paddingTop: '3px'}}>{t(props?.hintText)}</p>}
+      {props?.showHintBelow && <p className="cell-text">{t(props?.hintText)}</p>}
     </Fragment>
   );
 };

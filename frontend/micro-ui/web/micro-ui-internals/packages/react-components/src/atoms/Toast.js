@@ -52,13 +52,13 @@ const Toast = (props) => {
 Toast.propTypes = {
   label: PropTypes.string,
   onClose: PropTypes.func,
-  isDleteBtn: PropTypes.bool
+  isDleteBtn: PropTypes.string
 };
 
 Toast.defaultProps = {
   label: "",
   onClose: undefined,
-  isDleteBtn: false
+  isDleteBtn: ""
 };
 
 export default Toast;

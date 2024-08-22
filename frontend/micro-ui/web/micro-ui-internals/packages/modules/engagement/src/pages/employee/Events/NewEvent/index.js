@@ -32,7 +32,7 @@ const NewEvents = () => {
         }
       ]
     }
-    history.push(`/${window?.contextPath}/employee/engagement/event/response`, details)
+    history.push("/digit-ui/employee/engagement/event/response", details)
   }
 
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_EVENT_MUTATION_HAPPENED", false);

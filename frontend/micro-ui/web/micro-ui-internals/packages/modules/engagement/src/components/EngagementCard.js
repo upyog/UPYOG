@@ -66,18 +66,18 @@ const EngagementCard = () => {
       {
         count: totalSurveysCount,
         label: t("TOTAL_SURVEYS"),
-        link: `/${window?.contextPath}/employee/engagement/surveys/inbox`,
+        link: `/digit-ui/employee/engagement/surveys/inbox`,
       },
     ],
     links: [
       {
         count: totalSurveysCount,
         label: t("ES_TITLE_INBOX"),
-        link: `/${window?.contextPath}/employee/engagement/surveys/inbox`,
+        link: `/digit-ui/employee/engagement/surveys/inbox`,
       },
       {
         label: t("CS_COMMON_NEW_SURVEY"),
-        link: `/${window?.contextPath}/employee/engagement/surveys/create`,
+        link: `/digit-ui/employee/engagement/surveys/create`,
       },
     ],
   };
@@ -89,7 +89,7 @@ const EngagementCard = () => {
       {
         count: totalMessagesCount,
         label: t("TOTAL_MESSAGES"),
-        link: `/${window?.contextPath}/employee/engagement/messages/inbox`,
+        link: `/digit-ui/employee/engagement/messages/inbox`,
       },
     ],
 
@@ -97,11 +97,11 @@ const EngagementCard = () => {
       {
         count: totalMessagesCount,
         label: t("ES_TITLE_INBOX"),
-        link: `/${window?.contextPath}/employee/engagement/messages/inbox`,
+        link: `/digit-ui/employee/engagement/messages/inbox`,
       },
       {
         label: t("NEW_PUBLIC_MESSAGE_BUTTON_LABEL"),
-        link: `/${window?.contextPath}/employee/engagement/messages/create`,
+        link: `/digit-ui/employee/engagement/messages/create`,
       },
     ],
   };
@@ -112,7 +112,7 @@ const EngagementCard = () => {
       {
         count: totalEventsCount,
         label: t("TOTAL_EVENTS"),
-        link: `/${window?.contextPath}/employee/engagement/event/inbox`,
+        link: `/digit-ui/employee/engagement/event/inbox`,
       },
     ],
 
@@ -120,11 +120,11 @@ const EngagementCard = () => {
       {
         count: totalEventsCount,
         label: t("ES_TITLE_INBOX"),
-        link: `/${window?.contextPath}/employee/engagement/event/inbox`,
+        link: `/digit-ui/employee/engagement/event/inbox`,
       },
       {
         label: t("ES_TITLE_NEW_EVENTS"),
-        link: `/${window?.contextPath}/employee/engagement/event/new-event`,
+        link: `/digit-ui/employee/engagement/event/new-event`,
       },
     ],
   };
@@ -135,18 +135,18 @@ const EngagementCard = () => {
       {
         count: totalDocsCount,
         label: t("TOTAL_DOCUMENTS"),
-        link: `/${window?.contextPath}/employee/engagement/documents/inbox`,
+        link: `/digit-ui/employee/engagement/documents/inbox`,
       },
     ],
     links: [
       {
         count: totalDocsCount,
         label: t("ES_TITLE_INBOX"),
-        link: `/${window?.contextPath}/employee/engagement/documents/inbox`,
+        link: `/digit-ui/employee/engagement/documents/inbox`,
       },
       {
         label: t("NEW_DOCUMENT_TEXT"),
-        link: `/${window?.contextPath}/employee/engagement/documents/new-doc`,
+        link: `/digit-ui/employee/engagement/documents/new-doc`,
       },
     ],
   };

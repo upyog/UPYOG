@@ -4,10 +4,14 @@ body {
 
 .body-container {
   @apply bg-grey-bg h-full min-h-screen overflow-x-hidden;
+  position: relative !important;
+
+
 }
 
 .navbar {
   @apply text-white bg-secondary p-md w-full mb-md;
+  background: linear-gradient(to right, #feeee7, #a82227,#feeee7) !important;
   img {
     height: 24px;
   }
@@ -47,11 +51,10 @@ body {
 
 .bread-crumb {
   font-size: 14px;
-  color: theme(colors.text.secondary);
+  color: #505a5f;
   display: flex;
   margin-bottom: 10px;
-  list-style: none;
-  padding: 0;
+  flex-wrap: wrap
 }
 .bread-crumb--item {
   margin-left: 5px;
@@ -65,7 +68,7 @@ body {
   }
 
   .last {
-    color: theme(colors.text.primary);
+    color: #0b0c0c;
   }
 }
 

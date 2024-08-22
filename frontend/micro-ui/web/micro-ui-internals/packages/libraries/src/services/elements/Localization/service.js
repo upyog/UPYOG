@@ -1,8 +1,8 @@
-import i18next from "i18next";
-import { ApiCacheService } from "../../atoms/ApiCacheService";
 import Urls from "../../atoms/urls";
-import { Request } from "../../atoms/Utils/Request";
 import { PersistantStorage } from "../../atoms/Utils/Storage";
+import i18next from "i18next";
+import { Request } from "../../atoms/Utils/Request";
+import { ApiCacheService } from "../../atoms/ApiCacheService";
 
 const LOCALE_LIST = (locale) => `Locale.${locale}.List`;
 const LOCALE_ALL_LIST = () => `Locale.List`;
@@ -61,9 +61,9 @@ const LocalizationStore = {
 };
 
 export const LocalizationService = {
-  getLocale: async ({ modules = [], locale = Digit.Utils.getDefaultLanguage(), tenantId }) => {
-    if (locale.indexOf(Digit.Utils.getLocaleRegion()) === -1) {
-      locale += Digit.Utils.getLocaleRegion();
+  getLocale: async ({ modules = [], locale = "en_IN", tenantId }) => {
+    if (locale.indexOf("_IN") === -1) {
+      locale += "_IN";
     }
     const [newModules, messages] = LocalizationStore.get(locale, modules);
     if (newModules.length > 0) {
@@ -84,11 +84,10 @@ export const LocalizationService = {
     Digit.SessionStorage.set("locale", locale);
     i18next.changeLanguage(locale);
   },
-  updateResources: (locale = Digit.Utils.getDefaultLanguage(), messages) => {
-    if (locale.indexOf(Digit.Utils.getLocaleRegion()) === -1) {
-      locale += Digit.Utils.getLocaleRegion();
+  updateResources: (locale = "en_IN", messages) => {
+    if (locale.indexOf("_IN") === -1) {
+      locale += "_IN";
     }
-    console.log(locale,messages);
     LocalizationStore.updateResources(locale, messages);
   },
 };

@@ -1,5 +1,5 @@
-import { CardLabelError, CardText, FormStep, OTPInput } from "@egovernments/digit-ui-react-components";
-import React, { Fragment, useState } from "react";
+import React, { useState, Fragment } from "react";
+import { ButtonSelector, CardText, FormStep, LinkButton, OTPInput, CardLabelError } from "@egovernments/digit-ui-react-components";
 import useInterval from "../../../hooks/useInterval";
 
 const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, userType = "citizen", canSubmit }) => {
@@ -24,7 +24,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
         {timeLeft > 0 ? (
           <CardText>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
         ) : (
-          <p className="card-text-button resend-otp" onClick={handleResendOtp}>
+          <p className="card-text-button" onClick={handleResendOtp}>
             {t("CS_RESEND_OTP")}
           </p>
         )}

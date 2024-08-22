@@ -75,7 +75,7 @@ const Inbox = ({ tenants, parentRoute }) => {
   const links = [
     {
       text: t("NEW_PUBLIC_MESSAGE_BUTTON_LABEL"),
-      link: `/${window?.contextPath}/employee/engagement/messages/inbox/create`,
+      link: "/digit-ui/employee/engagement/messages/inbox/create",
     }
   ]
 

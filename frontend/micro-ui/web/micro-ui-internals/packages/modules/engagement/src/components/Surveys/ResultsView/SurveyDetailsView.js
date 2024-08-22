@@ -1,6 +1,6 @@
-import { TextInput, Dropdown, RemoveableTag, LinkButton,SearchField,SubmitBar } from '@egovernments/digit-ui-react-components'
+import { TextInput, Dropdown, RemoveableTag, LinkButton,LinkLabel, SearchField,SubmitBar } from '@egovernments/digit-ui-react-components'
 import React,{useMemo} from 'react'
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 
 const SurveyDetailsView = ({surveyTitle,surveyDesc,t,surveyId}) => {
     const history = useHistory()
@@ -29,16 +29,21 @@ const SurveyDetailsView = ({surveyTitle,surveyDesc,t,surveyId}) => {
                     />
                     <RemoveableTag
                       key={"tag"}
-                      text={userUlbs[0].name}
+                      text={t(userUlbs[0].i18nKey)}
+                      extraStyles={{tagStyles : {display:"flex"}}}
                     />
             </div>  
-        <button
+        {/* <button
           type={"button"}
-          style={{ border: "2px solid #F47738", backgroundColor: "white", padding: "8px 8px",width:"200px",marginLeft:"50px",marginTop:"-45px" }}
-          onClick={() => history.push(`/${window?.contextPath}/employee/engagement/surveys/inbox/details/${surveyId}`)}
+          style={{ border: "2px solid #a82227", backgroundColor: "white", padding: "8px 8px",width:"200px",marginLeft:"50px",marginTop:"-45px" }}
+          onClick={() => history.push(`/digit-ui/employee/engagement/surveys/inbox/details/${surveyId}`)}
         >
-          <header style={{ color:"#F47738"}}>{t("SURVEY_QUESTIONS")}</header>
-        </button>
+          <header style={{ color:"#a82227"}}>{t("SURVEY_QUESTIONS")}</header>
+        </button> */}
+        <LinkLabel  onClick={() => history.push(`/digit-ui/employee/engagement/surveys/inbox/details/${surveyId}`)}>
+        {t("VIEW_SURVEY_QUESTIONS")}
+        </LinkLabel>
+        
         </span>
     
         <span className="surveyformfield">

@@ -70,7 +70,7 @@ const Inbox = ({ tenants }) => {
     const links = [
         {
             text: t('NEW_DOCUMENT_TEXT'),
-            link: `/${window?.contextPath}/employee/engagement/documents/inbox/new-doc`,
+            link: "/digit-ui/employee/engagement/documents/inbox/new-doc",
         }
     ]
     if (isMobile) {

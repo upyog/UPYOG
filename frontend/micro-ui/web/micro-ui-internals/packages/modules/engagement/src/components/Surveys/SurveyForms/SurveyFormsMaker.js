@@ -7,6 +7,8 @@ const defaultFormsConfig = {
   answerType: "Short Answer",
   required: false,
   options: [],
+  uuid : "",
+  qorder : null,
 };
 
 const initialSurveyFormState = [defaultFormsConfig];
@@ -39,9 +41,13 @@ const surveyFormReducer = (state, { type, payload }) => {
 
   const renderPreviewForms = () => {
     return surveyState.length
-      ? surveyState.map((config, index) => (
-        <NewSurveyForm key={index} {...config} addOption={addOption} t={t} index={index} disableInputs={disableInputs} dispatch={passingSurveyConfigInDispatch} isPartiallyEnabled={isPartiallyEnabled} formDisabled={formDisabled} controlSurveyForm={controlSurveyForm} />
-        ))
+      ? surveyState.map((config, index) => {
+        return(
+        <NewSurveyForm key={index}
+        {...(config.formConfig ? config?.formConfig : config)}
+        //  type={config?.formConfig?.type} 
+         addOption={addOption} t={t} index={index} disableInputs={disableInputs} dispatch={passingSurveyConfigInDispatch} isPartiallyEnabled={isPartiallyEnabled} formDisabled={formDisabled} controlSurveyForm={controlSurveyForm} />
+        )})
       : null;
   };
 

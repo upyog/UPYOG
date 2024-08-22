@@ -2,38 +2,74 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import { initLibraries } from "@egovernments/digit-ui-libraries";
-// import { paymentConfigs, PaymentLinks, PaymentModule } from "@egovernments/digit-ui-module-common";
-import "@egovernments/digit-ui-css/example/index.css";
-import { DigitUI } from "@egovernments/digit-ui-module-core";
+import { PGRReducers } from "@egovernments/digit-ui-module-pgr";
+import { PTModule, PTLinks, PTComponents } from "@upyog/digit-ui-module-pt";
+import { MCollectModule, MCollectLinks } from "@egovernments/digit-ui-module-mcollect";
+// import { TLModule, TLLinks } from "@upyog/digit-ui-module-tl";
+import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
+import { initPGRComponents } from "@egovernments/digit-ui-module-pgr";
 import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
-import { HRMSModule, initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
-import { PGRReducers, initPGRComponents } from "@egovernments/digit-ui-module-pgr";
-import { initUtilitiesComponents } from "@egovernments/digit-ui-module-utilities";
-import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
-import { BMCLinks, BMCModule, initBMCComponents } from "@tattvafoundation/digit-ui-module-bmc";
-import { DEONARModule, initDEONARComponents } from "@tattvafoundation/digit-ui-module-deonar";
+import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
+import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
+// import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
+import { initMCollectComponents } from "@egovernments/digit-ui-module-mcollect";
+import { initTLComponents } from "@upyog/digit-ui-module-tl";
+import { PaymentModule, PaymentLinks, paymentConfigs } from "@egovernments/digit-ui-module-common";
+import { HRMSModule } from "@egovernments/digit-ui-module-hrms";
+import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
+import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
+import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
+import { initWSComponents } from "@upyog/digit-ui-module-ws";
+import { DigitUI } from "@egovernments/digit-ui-module-core";
+import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
+import { initBillsComponents, BillsModule } from "@egovernments/digit-ui-module-bills";
 
-import { pgrCustomizations } from "./pgr";
-import { UICustomizations } from "./UICustomizations";
+// import {initCustomisationComponents} from "./customisations";
+
+// import { PGRModule, PGRLinks } from "@egovernments/digit-ui-module-pgr";
+// import { Body, TopBar } from "@egovernments/digit-ui-react-components";
+import "@upyog-niua/upyog-css/example/index.css";
+// import * as comps from "@egovernments/digit-ui-react-components";
+
+// import { subFormRegistry } from "@egovernments/digit-ui-libraries";
+
+import { pgrCustomizations, pgrComponents } from "./pgr";
 
 var Digit = window.Digit || {};
 
-const enabledModules = [ "DSS", "HRMS",
-"Workbench"
-,"PGR","BMC",
-"Engagement",
-"DEONAR" //"NDSS","QuickPayLinks", "Payment",
-  // "Utilities",
-//added to check fsm
-//"FSM"
+const enabledModules = [
+  "PGR",
+  "FSM",
+  "Payment",
+  "PT",
+  "QuickPayLinks",
+  "DSS",
+  "MCollect",
+  "HRMS",
+  "TL",
+  "Receipts",
+  "Reports",
+  "OBPS",
+  "Engagement",
+  "NOC",
+  "WS",
+  "CommonPT",
+  "NDSS",
+  "Bills",
+  "SW",
+  "BillAmendment",
+  "FireNoc",
+  "Birth",
+  "Death"
 ];
 
 const initTokens = (stateCode) => {
   const userType = window.sessionStorage.getItem("userType") || process.env.REACT_APP_USER_TYPE || "CITIZEN";
-  const token = window.localStorage.getItem("token") || process.env[`REACT_APP_${userType}_TOKEN`];
 
-  const citizenInfo = window.localStorage.getItem("Citizen.user-info");
-
+  const token = window.localStorage.getItem("token")|| process.env[`REACT_APP_${userType}_TOKEN`];
+ 
+  const citizenInfo = window.localStorage.getItem("Citizen.user-info")
+ 
   const citizenTenantId = window.localStorage.getItem("Citizen.tenant-id") || stateCode;
 
   const employeeInfo = window.localStorage.getItem("Employee.user-info");
@@ -55,38 +91,58 @@ const initTokens = (stateCode) => {
 };
 
 const initDigitUI = () => {
-  window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH") || "digit-ui";
-  window.Digit.Customizations = {
-    PGR: pgrCustomizations,
-    commonUiConfig: UICustomizations
-  };
   window?.Digit.ComponentRegistryService.setupRegistry({
-    // PaymentModule,
-    // ...paymentConfigs,
-    // PaymentLinks,
-    BMCLinks,
-    BMCModule,
+    ...pgrComponents,
+    PaymentModule,
+    ...paymentConfigs,
+    PaymentLinks,
+    PTModule,
+    PTLinks,
+    ...PTComponents,
+    MCollectLinks,
+    MCollectModule,
     HRMSModule,
-    DEONARModule,
+    ReceiptsModule,
+    BillsModule,
+    // TLModule,
+    // TLLinks,
   });
 
-  initDSSComponents();
-  initHRMSComponents();
-  initBMCComponents();
-  initUtilitiesComponents();
-  initWorkbenchComponents();
+  initFSMComponents();
   initPGRComponents();
-  initDEONARComponents();
+  initDSSComponents();
+  initMCollectComponents();
+  initHRMSComponents();
+  initTLComponents();
+  initReceiptsComponents();
+  // initReportsComponents();
+  initOBPSComponents();
+  initEngagementComponents();
+  initNOCComponents();
+  initWSComponents();
+  initCommonPTComponents();
+  initBillsComponents();
 
+  // initCustomisationComponents();
 
-  const moduleReducers = (initData) =>  ({
+  const moduleReducers = (initData) => ({
     pgr: PGRReducers(initData),
   });
 
-  const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "mh";
+  window.Digit.Customizations = {
+    PGR: pgrCustomizations,
+    TL: {
+      customiseCreateFormData: (formData, licenceObject) => licenceObject,
+      customiseRenewalCreateFormData: (formData, licenceObject) => licenceObject,
+      customiseSendbackFormData: (formData, licenceObject) => licenceObject,
+    },
+  };
+
+  const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
   initTokens(stateCode);
 
-  ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules}       defaultLanding="employee"  moduleReducers={moduleReducers} />, document.getElementById("root"));
+  const registry = window?.Digit.ComponentRegistryService.getRegistry();
+  ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />, document.getElementById("root"));
 };
 
 initLibraries().then(() => {

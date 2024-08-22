@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const ToggleSwitch = ({ value, onChange, label, name, ref, style,disabled, ...props }) => {
+const ToggleSwitch = ({ value, onChange, label, name, ref, style, ...props }) => {
   return (
     <div style={style}>
       <input
@@ -10,8 +10,6 @@ const ToggleSwitch = ({ value, onChange, label, name, ref, style,disabled, ...pr
         className="react-switch-checkbox"
         id={name}
         type="checkbox"
-        readOnly={props.readonly}
-        disabled={disabled}
       />
       <label
         style={{ background: value && '#fcefe7' }}

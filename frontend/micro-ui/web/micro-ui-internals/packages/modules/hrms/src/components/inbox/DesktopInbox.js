@@ -1,17 +1,17 @@
-import { Card, Loader } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import InboxLinks from "../inbox/ApplicationLinks";
 import ApplicationTable from "../inbox/ApplicationTable";
+import { Card, Loader } from "@egovernments/digit-ui-react-components";
+import InboxLinks from "../inbox/ApplicationLinks";
 import SearchApplication from "./search";
+import { Link } from "react-router-dom";
 
 const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
   const { t } = useTranslation();
   const tenantIds = Digit.SessionStorage.get("HRMS_TENANTS");
   const GetCell = (value) => <span className="cell-text">{t(value)}</span>;
   const GetSlaCell = (value) => {
-    return value == "INACTIVE" ? <span className="sla-cell-error">{t(value) || ""}</span> : <span className="sla-cell-success">{t(value) || ""}</span>;
+    return value == "INACTIVE" ? <span className="sla-cell-error">{ t(value )|| ""}</span> : <span className="sla-cell-success">{ t(value) || ""}</span>;
   };
   const data = props?.data?.Employees;
 
@@ -25,7 +25,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
         Cell: ({ row }) => {
           return (
             <span className="link">
-              <Link to={`/${window?.contextPath}/employee/hrms/details/${row.original.tenantId}/${row.original.code}`}>{row.original.code}</Link>
+              <Link to={`/digit-ui/employee/hrms/details/${row.original.tenantId}/${row.original.code}`}>{row.original.code}</Link>
             </span>
           );
         },
@@ -44,7 +44,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
             <div className="tooltip">
               {" "}
               {GetCell(`${row.original?.user?.roles.length}`)}
-              <span className="tooltiptext" style={{ whiteSpace: "nowrap" }}>
+              <span className="tooltiptext" style={{whiteSpace: "nowrap"}}>
                 {row.original?.user?.roles.map((ele, index) => (
                   <span>
                     {`${index + 1}. ` + t(`ACCESSCONTROL_ROLES_ROLES_${ele.code}`)} <br />{" "}
@@ -61,9 +61,10 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
         disableSortBy: true,
         Cell: ({ row }) => {
           return GetCell(
-            `${t(
-              "COMMON_MASTERS_DESIGNATION_" + row.original?.assignments?.sort((a, b) => new Date(a.fromDate) - new Date(b.fromDate))[0]?.designation
-            ) || ""
+            `${
+              t(
+                "COMMON_MASTERS_DESIGNATION_" + row.original?.assignments?.sort((a, b) => new Date(a.fromDate) - new Date(b.fromDate))[0]?.designation
+              ) || ""
             }`
           );
         },
@@ -73,9 +74,10 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
         disableSortBy: true,
         Cell: ({ row }) => {
           return GetCell(
-            `${t(
-              "COMMON_MASTERS_DEPARTMENT_" + row.original?.assignments?.sort((a, b) => new Date(a.fromDate) - new Date(b.fromDate))[0]?.department
-            ) || ""
+            `${
+              t(
+                "COMMON_MASTERS_DEPARTMENT_" + row.original?.assignments?.sort((a, b) => new Date(a.fromDate) - new Date(b.fromDate))[0]?.department
+              ) || ""
             }`
           );
         },
@@ -129,6 +131,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
         pageSizeLimit={props.pageSizeLimit}
         onSort={props.onSort}
         disableSort={props.disableSort}
+        onPageSizeChange={props.onPageSizeChange}
         sortParams={props.sortParams}
         totalRecords={props.totalRecords}
       />
@@ -136,7 +139,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
   }
 
   return (
-    <div className="inbox-container" style={{ overflow: "auto", scrollbarWidth: "none", msOverflowStyle: "none" }}>
+    <div className="inbox-container">
       {!props.isSearch && (
         <div className="filters-container">
           <InboxLinks
@@ -144,7 +147,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
             allLinks={[
               {
                 text: "HR_COMMON_CREATE_EMPLOYEE_HEADER",
-                link: `/${window?.contextPath}/employee/hrms/create`,
+                link: "/digit-ui/employee/hrms/create",
                 businessService: "hrms",
                 roles: ["HRMS_ADMIN"],
               },

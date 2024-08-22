@@ -1,140 +1,33 @@
+# UPYOG UI
+UPYOG (Urban Platform for deliverY of Online Governance) is India's largest platform for governance services. Visit [UPYOG documentation portal](https://upyog-docs.gitbook.io/upyog-v-1.0/) for more details.
 
-# workbench ui 
+This repository contains source code for web implementation of the UPYOG UI modules with dependencies and libraries.
 
-A React App built on top of DIGIT UI Core.
+#### Starting local server
+1. To run server locally first change directory to **web** subdirectory
+1. In the project run **yarn install** to install node modules and dependencies 
+1. Run **yarn start** to start the local server
 
-# DIGIT
+#### Updating modules
+To update the modules run *install-dep.sh* script this will pull all the updates from *micro-ui-internals* subfolder
 
-DIGIT eGovernance Platform Services
+#### Reference Docs
 
-DIGIT (Digital Infrastructure for Governance, Impact & Transformation) is India's largest platform for governance services. Visit https://core.digit.org/ for more details.
+###### Module wise reference docs
+Module | Reference Docs
+------ | --------------
+PGR | [PGR: UI Implementation - Guidelines & FAQs](https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/customize-upyog/upyog-ui-implementation-development-guidelines-and-faqs/pgr-ui-implementation-guidelines-and-faqs)
+FSM | [FSM: UI Implementation - Guidelines & FAQs](https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/customize-upyog/upyog-ui-implementation-development-guidelines-and-faqs/fsm-ui-implementation-guidelines-and-faqs)
+UPYOG Services | [UPYOG Service Stack](https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/configure-upyog/configuring-upyog-service-stack)
 
-DIGIT platform is microservices based API platform enabling quick rebundling of services as per specific needs. This is a repo that lays down the core platform on top of which other mission services depend.
+###### Dependencies and their references
+1. https://www.npmjs.com/package/react-query
+2. https://react-redux.js.org/
+3. https://react-hook-form.com/
+4. https://www.npmjs.com/package/react-table
+5. https://www.npmjs.com/package/react-time-picker
+6. https://reactrouter.com/web/guides/quick-start
+7. https://recharts.org/
 
-
-# DIGIT UI 
-
-
-This repository contains source code for web implementation of the new Digit UI modules with dependencies and libraries.
-
-Workbench module is used to Manage the master data (MDMS V2 Service) used across the DIGIT Services / Applications
-
-It is also used to manage the Localisation data present in the system (Localisation service)
-
-
-## Run Locally
-
-Clone the project
-
-```bash
-  git clone https://github.com/egovernments/DIGIT-Frontend.git
-```
-
-Go to the Sub directory to run UI
-```bash
-    cd into micro-ui/web/micro-ui-internals
-```
-
-Install dependencies
-
-```bash
-  yarn install
-```
-
-Add .env file
-```bash
-    micro-ui/web/micro-ui-internals/example/.env
-```
-
-Start the server
-
-```bash
-  yarn start
-```
-
-
-## Environment Variables
-
-To run this project, you will need to add the following environment variables to your .env file
-
-`REACT_APP_PROXY_API` ::  `{{server url}}`
-
-`REACT_APP_GLOBAL`  ::  `{{server url}}`
-
-`REACT_APP_PROXY_ASSETS`  ::  `{{server url}}`
-
-`REACT_APP_USER_TYPE`  ::  `{{EMPLOYEE||CITIZEN}}`
-
-`SKIP_PREFLIGHT_CHECK` :: `true`
-
-[sample .env file](https://github.com/egovernments/Digit-Core/blob/workbench/frontend/micro-ui/web/micro-ui-internals/example/.env-unifieddev)
-
-## Tech Stack
-
-**Libraries:** 
-
-[React](https://react.dev/)
-
-[React Hook Form](https://www.react-hook-form.com/)
-
-[React Query](https://tanstack.com/query/v3/)
-
-[Tailwind CSS](https://tailwindcss.com/)
-
-[Webpack](https://webpack.js.org/)
-
-## License
-
-[MIT](https://choosealicense.com/licenses/mit/)
-
-
-## Author
-
-- [@jagankumar-egov](https://www.github.com/jagankumar-egov)
-
-
-## Documentation
-
-[Documentation](https://https://core.digit.org/guides/developer-guide/ui-developer-guide/digit-ui)
-
-
-## Support
-
-For support, add the issues in https://github.com/egovernments/DIGIT-core/issues.
-
-
-## Modules
-
-    1. Core
-    2. Workbench
-    3. HRMS
-    4. Dashboard
-    5. Engagement
-    6. Payment
-
-## Starting with Digit-UI App (Impelmentation Teams) - MICRO-UI
-
-
-Go to the Sub directory to run UI
-
-```bash
-    cd into micro-ui/web
-```
-    
-```bash
-  yarn install
-```
-
-Add .env file
-```bash
-    micro-ui/web/.env
-```
-
-Start the server
-
-```bash
-  yarn start
-```
-
-
-![Logo](https://s3.ap-south-1.amazonaws.com/works-dev-asset/mseva-white-logo.png)
+#### License
+UPYOG Source Code is open sources under License [UPYOG CODE, COPYRIGHT AND CONTRIBUTION LICENSE TERMS](https://upyog.niua.org/employee/Upyog%20Code%20and%20Copyright%20License_v1.pdf)

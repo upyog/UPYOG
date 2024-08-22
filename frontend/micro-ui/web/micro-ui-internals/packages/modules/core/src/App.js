@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
-import CitizenApp from "./pages/citizen";
 import EmployeeApp from "./pages/employee";
+import CitizenApp from "./pages/citizen";
 
-export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData ,defaultLanding="citizen"}) => {
+export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData }) => {
   const history = useHistory();
   const { pathname } = useLocation();
   const innerWidth = window.innerWidth;
@@ -11,7 +11,6 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData ,de
   const userDetails = Digit.UserService.getUser();
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { stateInfo } = storeData || {};
-  
   const DSO = Digit.UserService.hasAccess(["FSM_DSO"]);
   let CITIZEN = userDetails?.info?.type === "CITIZEN" || !window.location.pathname.split("/").includes("employee") ? true : false;
 
@@ -29,11 +28,11 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData ,de
     if (!pathname?.includes("dss")) {
       Digit.SessionStorage.del("DSS_FILTERS");
     }
-    if (pathname?.toString() === `/${window?.contextPath}/employee`) {
+    if (pathname?.toString() === "/digit-ui/employee") {
       Digit.SessionStorage.del("SEARCH_APPLICATION_DETAIL");
       Digit.SessionStorage.del("WS_EDIT_APPLICATION_DETAILS");
     }
-    if (pathname?.toString() === `/${window?.contextPath}/citizen` || pathname?.toString() === `/${window?.contextPath}/employee`) {
+    if (pathname?.toString() === "/digit-ui/citizen" || pathname?.toString() === "/digit-ui/employee") {
       Digit.SessionStorage.del("WS_DISCONNECTION");
     }
   }, [pathname]);
@@ -66,14 +65,14 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData ,de
   };
   return (
     <Switch>
-      <Route path={`/${window?.contextPath}/employee`}>
+      <Route path="/digit-ui/employee">
         <EmployeeApp {...commonProps} />
       </Route>
-      <Route path={`/${window?.contextPath}/citizen`}>
+      <Route path="/digit-ui/citizen">
         <CitizenApp {...commonProps} />
       </Route>
       <Route>
-        <Redirect to={`/${window?.contextPath}/${defaultLanding}`} />
+        <Redirect to="/digit-ui/citizen" />
       </Route>
     </Switch>
   );

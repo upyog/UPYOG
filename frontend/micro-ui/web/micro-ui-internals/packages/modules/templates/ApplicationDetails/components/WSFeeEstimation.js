@@ -58,16 +58,19 @@ const WSFeeEstimation = ({ wsAdditionalDetails, workflowDetails }) => {
 
     useEffect(() => {
         const data = { ...wsAdditionalDetails?.additionalDetails?.appDetails?.additionalDetails };
-        setSessionFormData(data);
-        setFields(data);
         if (sessionFormData?.billDetails?.length > 0) {
             const values = [
-                { title: "WS_APPLICATION_FEE_HEADER", value: sessionFormData?.billDetails?.[0]?.fee },
-                { title: "WS_SERVICE_FEE_HEADER", value: sessionFormData?.billDetails?.[0]?.charge },
-                { title: "WS_TAX_HEADER", value: sessionFormData?.billDetails?.[0]?.taxAmount },
+                { title: "WS_APPLICATION_FEE_HEADER", value: <span>&#8377;{sessionFormData?.billDetails?.[0]?.fee}</span>},
+                { title: "WS_SERVICE_FEE_HEADER", value: <span>&#8377;{sessionFormData?.billDetails?.[0]?.charge}</span>},
+                { title: "WS_TAX_HEADER", value: <span>&#8377;{sessionFormData?.billDetails?.[0]?.taxAmount}</span>},
             ];
             setValues(values);
             setBillDetails(sessionFormData?.billDetails?.[0]);
+        }
+        else
+        {
+            setSessionFormData(data);
+            setFields(data);
         }
     }, []);
 
@@ -163,7 +166,14 @@ const WSFeeEstimation = ({ wsAdditionalDetails, workflowDetails }) => {
 
     const selectedValuesData = (value, isDropDownValue = false, e) => {
         let values = { ...fields };
-        if (isDropDownValue) {
+        if((value == "adhocPenalty"||value=="adhocRebate") && e.target.value){
+            const targetValueSign = e?.target?.value ==0 ? 1 : Math.sign(e?.target?.value)||-1;
+            if(targetValueSign == 1){
+                values[value] = e.target.value;
+            }else{
+                values[value] = '';
+            }
+        }else if (isDropDownValue) {
             values[`${value}_data`] = e;
             values[value] = e.title;
             if (e.title == "PT_OTHERS" && value == "adhocPenaltyReason") values[`adhocPenaltyComment`] = "";
@@ -181,12 +191,12 @@ const WSFeeEstimation = ({ wsAdditionalDetails, workflowDetails }) => {
                     <StatusTable>
                         <div>
                             {values?.map((value, index) => {
-                                return <Row className="border-none" key={`${value.title}`} label={`${t(`${value.title}`)}`} text={value?.value ? Number(value?.value).toFixed(2) : ""} />
+                                return <Row className="border-none" key={`${value.title}`} label={`${t(`${value.title}`)}`} text={value?.value ? value?.value : ""} />
                             })}
                         </div>
                         <hr style={{ border: "1px solid #D6D5D4", color: "#D6D5D4", margin: "16px 0px" }}></hr>
                         <div>
-                            <Row className="border-none" key={`WS_COMMON_TOTAL_AMT`} label={`${t(`WS_COMMON_TOTAL_AMT`)}`} text={Number(billDetails?.totalAmount).toFixed(2) || 0} />
+                            <Row className="border-none" key={`WS_COMMON_TOTAL_AMT`} label={`${t(`WS_COMMON_TOTAL_AMT`)}`} text={<span>&#8377;{billDetails?.totalAmount || 0}</span>} textStyle={{fontSize: "24px", fontWeight: "700"}}/>
                             <Row className="border-none" key={`CS_INBOX_STATUS_FILTER`} label={`${t(`CS_INBOX_STATUS_FILTER`)}`} text={isPaid ? t("WS_COMMON_PAID_LABEL") : t("WS_COMMON_NOT_PAID")} textStyle={!isPaid ? { color: "#D4351C" } : { color: "#00703C" }} />
                         </div>
                     </StatusTable>}
@@ -196,7 +206,7 @@ const WSFeeEstimation = ({ wsAdditionalDetails, workflowDetails }) => {
                             showPopUp(true)
                         }}
                     >
-                        <span style={{ cursor: "pointer", color: "#F47738" }}>{t("WS_PAYMENT_ADD_REBATE_PENALTY")}</span>
+                        <span style={{ cursor: "pointer", color: "#a82227" }}>{t("WS_PAYMENT_ADD_REBATE_PENALTY")}</span>
                     </div> : null
                 }
                 {popup &&
@@ -250,7 +260,7 @@ const WSFeeEstimation = ({ wsAdditionalDetails, workflowDetails }) => {
                                                 onChange={(e) => selectedValuesData("adhocPenaltyComment", false, e)}
                                                 {...(validation = {
                                                     isRequired: true,
-                                                    pattern: "^[a-zA-Z-.`' ]*$",
+                                                    pattern: "^[a-zA-Z ]*$",
                                                     type: "text",
                                                     title: t("TL_NAME_ERROR_MESSAGE"),
                                                 })}
@@ -303,7 +313,7 @@ const WSFeeEstimation = ({ wsAdditionalDetails, workflowDetails }) => {
                                             onChange={(e) => selectedValuesData("adhocRebateComment", false, e)}
                                             {...(validation = {
                                                 isRequired: true,
-                                                pattern: "^[a-zA-Z-.`' ]*$",
+                                                pattern: "^[a-zA-Z ]*$",
                                                 type: "text",
                                                 title: t("TL_NAME_ERROR_MESSAGE"),
                                             })}
