@@ -168,13 +168,15 @@ public class Configurations {
 	@Value("${egov.localization.search.endpoint}")
 	private String localizationSearchEndpoint;
 
-	@Value("pt.search.pagination.default.limit")
-	private Long defaultLimit;
+	@Value("${pt.search.pagination.default.limit}")
+    private Long defaultLimit;
 
-	@Value("pt.search.pagination.default.offset")
-	private Long defaultOffset;
-	@Value("pt.search.pagination.default.offset")
-	private Long maxSearchLimit;
+    @Value("${pt.search.pagination.default.offset}")
+    private Long defaultOffset;
+    
+    @Value("${pt.search.pagination.max.search.limit}")
+    private Long maxSearchLimit;
+    
 	@Value("${pt.search.pagination.max.search.limit}")
 	private String kafkaWhatsappAdoptionDataTopic;
 
