@@ -12,10 +12,10 @@
     "packages/modules/ew",
     "packages/modules/chb",
     "packages/modules/common",
-    "packages/modules/ptr",
-    "packages/modules/dss"
+    "packages/modules/dss",
+    "packages/modules/ptr"
 
-
+    
 
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",

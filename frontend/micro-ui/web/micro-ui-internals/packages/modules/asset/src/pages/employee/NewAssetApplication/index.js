@@ -39,7 +39,6 @@ const NewAssetApplication = () => {
   };
 
   const onSubmit = (data) => {
-    
     const assignedDateEpoch = convertToEpoch(data?.assigndetails?.[0]?.transferDate);
     const formData = {
       id: applicationDetails?.applicationData?.applicationData?.id,
@@ -55,7 +54,7 @@ const NewAssetApplication = () => {
         assignedDate: assignedDateEpoch,
         isAssigned: true,
         allocatedDepartment:data?.assigndetails?.[0]?.allocatedDepartment?.code, 
-        employeeCode:data?.assigndetails?.[0]?.employeeCode,
+        employeecode:data?.assigndetails?.[0]?.employeeCode,
         auditDetails: {
           createdBy: "",
           lastModifiedBy: "",
