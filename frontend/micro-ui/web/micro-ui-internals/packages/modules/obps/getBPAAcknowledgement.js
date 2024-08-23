@@ -46,7 +46,7 @@ const getMohallaLocale = (value = "", tenantId = "") => {
   const getBPAAcknowledgement=async(application,tenantInfo,t)=>{
     const user = Digit.UserService.getUser();
     
-    
+    console.log("application",application);
     const owner=application?.landInfo?.owners
     return{
         t: t,
@@ -261,7 +261,7 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                     },
                     { 
                         title: t("BPA_CORE_AREA"), 
-                        value: application?.additionalDetails?.coreArea || "NA" 
+                        value: application?.data?.edcrDetails?.planDetail?.coreArea || "NA" 
                     }, 
                 ]
              },
