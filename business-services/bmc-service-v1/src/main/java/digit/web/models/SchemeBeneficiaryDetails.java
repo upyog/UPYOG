@@ -12,7 +12,11 @@ public class SchemeBeneficiaryDetails {
     private Long machineId;
     private Long optedId;
     private Long courseId;
+    private Long schemeGroupId;
+    private String schemeGroupName;
     private int has_applied_for_pension;
     private Instant startDate;
     private Instant endDate;
+    private String applicationNumber;
+
 }

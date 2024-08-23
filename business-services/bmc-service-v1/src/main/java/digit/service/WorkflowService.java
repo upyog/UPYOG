@@ -8,6 +8,7 @@ import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+
 import org.egov.common.contract.workflow.State;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import digit.config.BmcConfiguration;
+import digit.repository.SchemeApplicationRepository;
 import digit.repository.ServiceRequestRepository;
 import digit.web.models.BusinessService;
 import digit.web.models.BusinessServiceResponse;
@@ -24,7 +26,7 @@ import digit.web.models.ProcessInstance;
 import digit.web.models.ProcessInstanceRequest;
 import digit.web.models.ProcessInstanceResponse;
 import digit.web.models.SchemeApplication;
-import digit.web.models.SchemeApplicationRequest;
+
 import digit.web.models.UserSchemeApplicationRequest;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,11 +43,15 @@ public class WorkflowService {
     @Autowired
     private BmcConfiguration config;
 
+    @Autowired
+    private SchemeApplicationRepository schemeApplicationRepository;
 
     public void updateWorkflowStatus(UserSchemeApplicationRequest schemeApplicationRequest) {
         schemeApplicationRequest.getSchemeApplicationList().forEach(application -> {
-            ProcessInstance processInstance = getProcessInstanceForSchemeApplication(application, schemeApplicationRequest.getRequestInfo());
-            ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(schemeApplicationRequest.getRequestInfo(), Collections.singletonList(processInstance));
+            ProcessInstance processInstance = getProcessInstanceForSchemeApplication(application,
+                    schemeApplicationRequest.getRequestInfo());
+            ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(
+                    schemeApplicationRequest.getRequestInfo(), Collections.singletonList(processInstance));
             callWorkFlow(workflowRequest);
         });
     }
@@ -61,26 +67,36 @@ public class WorkflowService {
         return response.getProcessInstances().get(0).getState();
     }
 
-    private ProcessInstance getProcessInstanceForSchemeApplication(SchemeApplication application, RequestInfo requestInfo) {
+    private ProcessInstance getProcessInstanceForSchemeApplication(SchemeApplication application,
+            RequestInfo requestInfo) {
         Workflow workflow = application.getWorkflow();
-
+        String action = workflow.getAction();
         ProcessInstance processInstance = new ProcessInstance();
-         processInstance.setBusinessId(application.getApplicationNumber());
-         processInstance.setAction(workflow.getAction());
-         processInstance.setModuleName("BMC");
-         processInstance.setTenantId("mh");
-         processInstance.setBusinessService("bmc-schemes");
-         processInstance.setDocuments(workflow.getDocuments());
-         processInstance.setComment(workflow.getComments());
-         if(!CollectionUtils.isEmpty(workflow.getAssignes())){
-             List<User> users = new ArrayList<>();
-             workflow.getAssignes().forEach(uuid -> {
-                 User user = new User();
-                 user.setUuid(uuid);
-                 users.add(user);
-             });
-             processInstance.setAssignes(null);
-         }  
+        processInstance.setBusinessId(application.getApplicationNumber());
+        processInstance.setAction(workflow.getAction());
+        processInstance.setModuleName("BMC");
+        processInstance.setTenantId("mh.mumbai");
+        processInstance.setBusinessService("bmc-services");
+        processInstance.setDocuments(workflow.getDocuments());
+        processInstance.setComment(workflow.getComments());
+        processInstance.setPreviousStatus(application.getProcessInstance().getPreviousStatus());
+        if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
+            List<User> users = new ArrayList<>();
+            workflow.getAssignes().forEach(uuid -> {
+                User user = new User();
+                user.setUuid(uuid);
+                users.add(user);
+            });
+            processInstance.setAssignes(null);
+        }
+        List<String> previousStateList = schemeApplicationRepository
+                .getPreviousStatesByActionAndTenant(action.toUpperCase(), requestInfo.getUserInfo().getTenantId());
+        if (previousStateList.size() > 1) {
+            if (action.equalsIgnoreCase("approve"))
+                processInstance.setPreviousStatus(previousStateList.get(1));
+        } else {
+            processInstance.setPreviousStatus(previousStateList.get(0));
+        }
         return processInstance;
     }
 
@@ -92,7 +108,8 @@ public class WorkflowService {
             throw new CustomException("WORKFLOW_ERROR", "Workflow service response is null");
         }
         ProcessInstanceResponse response = mapper.convertValue(res, ProcessInstanceResponse.class);
-        if(response != null && !CollectionUtils.isEmpty(response.getProcessInstances()) && response.getProcessInstances().get(0) != null)
+        if (response != null && !CollectionUtils.isEmpty(response.getProcessInstances())
+                && response.getProcessInstances().get(0) != null)
             return response.getProcessInstances().get(0);
         return null;
     }
@@ -107,7 +124,8 @@ public class WorkflowService {
         }
         BusinessServiceResponse response = mapper.convertValue(result, BusinessServiceResponse.class);
         if (CollectionUtils.isEmpty(response.getBusinessServices()))
-            throw new CustomException("BUSINESSSERVICE_NOT_FOUND", "The businessService BMC_SCHEME_APPLICATION is not found");
+            throw new CustomException("BUSINESSSERVICE_NOT_FOUND",
+                    "The businessService BMC_SCHEME_APPLICATION is not found");
         return response.getBusinessServices().get(0);
     }
 

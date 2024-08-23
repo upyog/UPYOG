@@ -35,20 +35,5 @@ public class UserRequest {
     @Builder.Default
     private UserSearchCriteria userSearchCriteria = null;
     
-    @JsonProperty("ApplicantDetails")
-    private UserDetails userDetails;
     
-    private String house;
-    private String street;
-    private String landmark;
-    private String locality;
-    private String city;
-    private String subDistrict;
-    private String district;
-    private String state;
-    private String pinCode;
-    private String zoneName;
-    private String blockName;
-    private String wardName;
-
 }

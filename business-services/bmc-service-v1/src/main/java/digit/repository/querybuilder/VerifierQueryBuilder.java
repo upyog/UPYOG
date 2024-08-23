@@ -15,15 +15,21 @@ public class VerifierQueryBuilder {
                 select eb.applicationnumber ,eb.userid ,eb.tenantid,
                 bs.name as scheme
             """;
+    private static final String EMPLOYEE_WARD_QUERY = """
+
+               select ebe.ward from eg_bmc_employeewardmapper where
+            """;
 
     private static final String FROM_TABLES = """
-            FROM public.eg_bmc_userschemeapplication eb
-            LEFT JOIN public.eg_bmc_aadharuser eba ON eb.userid = eba.userid AND eb.tenantid = eba.tenantid
-            LEFT JOIN public.eg_bmc_schemes bs ON eb.optedid = bs.id
-            LEFT JOIN public.eg_bmc_schememachine ebs ON eb.optedid = ebs.schemeid
-            LEFT JOIN public.eg_bmc_machines ebm ON ebs.machineid = ebm.id
-            LEFT JOIN public.eg_bmc_schemecourse ebs2 ON eb.optedid = ebs2.schemeid
-            LEFT JOIN public.eg_bmc_courses bc ON ebs2.courseid = bc.id
+            FROM eg_bmc_userschemeapplication eb
+            LEFT JOIN eg_wf_processinstance_v2 wf on wf.businessid = eb.applicationnumber
+            LEFT JOIN eg_bmc_aadharuser eba ON eb.userid = eba.userid AND eb.tenantid = eba.tenantid
+            LEFT JOIN eg_bmc_schemes bs ON eb.optedid = bs.id
+            LEFT JOIN eg_bmc_schememachine ebs ON eb.optedid = ebs.schemeid
+            LEFT JOIN eg_bmc_machines ebm ON ebs.machineid = ebm.id
+            LEFT JOIN eg_bmc_schemecourse ebs2 ON eb.optedid = ebs2.schemeid
+            LEFT JOIN eg_bmc_courses bc ON ebs2.courseid = bc.id
+            LEFT JOIN eg_bmc_userotherdetails uod ON  eb.userid = uod.userid AND eb.tenantid = uod.tenantid
             """;
 
     private static final String BASE_GROUP_BY = """
@@ -67,9 +73,28 @@ public class VerifierQueryBuilder {
             query.append(" bs.id = ? ");
             preparedStmtList.add(criteria.getSchemeId());
         }
+        //commented due to eg_bmc_employeewardmapper table is empty_
+        // if (!ObjectUtils.isEmpty(criteria.getUuid())) {
+        //     addClauseIfRequired(query, preparedStmtList);
+        //     query.append(" uod.ward = (select ebe.ward from eg_bmc_employeewardmapper where ebe.uuid = ?) ");
+        //     preparedStmtList.add(criteria.getUuid());
+        // }
+        if(!ObjectUtils.isEmpty(criteria.getState()))
+        {
+           
+           if(criteria.getState().equalsIgnoreCase("verify")  ||
+               criteria.getState().equalsIgnoreCase("randomize") ||
+               criteria.getState().equalsIgnoreCase("approv")) {
+            
+                addClauseIfRequired(query, preparedStmtList); 
+                query.append("wf.action = ? ");
+                preparedStmtList.add(criteria.getState().toUpperCase());
+               }
+           
+        }
         addClauseIfRequired(query, preparedStmtList);
         // query.append("ud.available = true ");
-        query.append(" eb.verificationstatus != true ");
+        query.append(" eb.verificationstatus != true AND eb.applicationstatus = true ");
         query.append(BASE_GROUP_BY);
 
         if (!ObjectUtils.isEmpty(criteria.getMachineId())) {

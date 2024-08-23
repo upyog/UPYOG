@@ -18,15 +18,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import digit.bmc.model.AadharUser;
+import digit.bmc.model.Divyang;
 import digit.bmc.model.UserOtherDetails;
 import digit.config.BmcConfiguration;
 import digit.kafka.Producer;
-import digit.repository.BmcUserRepository;
 import digit.repository.UserRepository;
 import digit.repository.UserSearchCriteria;
+
 import digit.util.UserUtil;
 import digit.web.models.BankDetails;
-import digit.web.models.BmcUser;
 import digit.web.models.SchemeApplication;
 import digit.web.models.SchemeApplicationRequest;
 import digit.web.models.user.InputTest;
@@ -48,8 +48,7 @@ public class UserService {
 	@Autowired
 	private Producer producer;
 
-	@Autowired
-	BmcUserRepository bmcUserRepository;
+
 
 	@Inject
 	public UserService(UserUtil userUtils, BmcConfiguration config) {
@@ -217,6 +216,7 @@ public class UserService {
 		Long userId = userRequest.getRequestInfo().getUserInfo().getId();
 		String tenantId = userRequest.getRequestInfo().getUserInfo().getTenantId();
 		Long time = System.currentTimeMillis();
+        
 
 		userRequest.setAadharUser(new AadharUser());
 		userRequest.getAadharUser().setUserId(userId);
@@ -238,14 +238,18 @@ public class UserService {
 		userRequest.getUserOtherDetails().setTenantId(tenantId);
 		userRequest.getUserOtherDetails().setCreatedBy("system");
 		userRequest.getUserOtherDetails().setCreatedOn(time);
-		userRequest.getUserOtherDetails().setDivyang(userRequest.getDivyangDetails().getDivyangtype());
-		userRequest.getUserOtherDetails().setModifiedBy("system");
-		userRequest.getUserOtherDetails().setModifiedOn(time);
-		userRequest.getUserOtherDetails().setDivyangCardId(userRequest.getDivyangDetails().getDivyangcardid());
-		userRequest.getUserOtherDetails().setDivyangPercent(userRequest.getDivyangDetails().getDivyangpercent());
+		if (userRequest.getDivyangDetails() != null) {
+			userRequest.getUserOtherDetails().setDivyang(userRequest.getDivyangDetails().getDivyangtype());
+			userRequest.getUserOtherDetails().setDivyangCardId(userRequest.getDivyangDetails().getDivyangcardid());
+			userRequest.getUserOtherDetails().setDivyangPercent(userRequest.getDivyangDetails().getDivyangpercent());
+		}else{
+			userRequest.getUserOtherDetails().setDivyang(new Divyang());
+		}
 		userRequest.getUserOtherDetails().setZone(userRequest.getUserAddressDetails().getZoneName());
 		userRequest.getUserOtherDetails().setBlock(userRequest.getUserAddressDetails().getBlockName());
 		userRequest.getUserOtherDetails().setWard(userRequest.getUserAddressDetails().getWardName().getCode());
+		userRequest.getUserOtherDetails().setModifiedBy("system");
+		userRequest.getUserOtherDetails().setModifiedOn(time);
 
         Long addressId = null;
 		UserSearchCriteria userSearchCriteria = new UserSearchCriteria();
@@ -274,8 +278,6 @@ public class UserService {
 			details.setCreatedBy("system");
 			details.setModifiedBy("system");
 			details.setModifiedOn(time);
-			userRequest.setBankDetails(details);
-			producer.push("upsert-userbank", userRequest);
 		}
 		if (!ObjectUtils.isEmpty(userRequest.getQualificationDetailsList())) {
 			for (QualificationSave details : userRequest.getQualificationDetailsList()) {
@@ -286,15 +288,16 @@ public class UserService {
 				details.setCreatedOn(time);
 				details.setModifiedBy("system");
 				details.setModifiedOn(time);
-				userRequest.setQualificationDetails(details);
-				producer.push("upsert-userqualification", userRequest);
 			}
 		}
+		producer.push("upsert-userbank", userRequest);
+		producer.push("upsert-userqualification", userRequest);
 		producer.push("upsert-aadharuser", userRequest);
 		producer.push("upsert-userotherdetails", userRequest);
 
-		
 		return userRequest;
 	}
+
+
 
 }

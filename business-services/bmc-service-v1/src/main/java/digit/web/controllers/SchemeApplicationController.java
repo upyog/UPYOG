@@ -1,6 +1,5 @@
 package digit.web.controllers;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +37,8 @@ public class SchemeApplicationController {
 
     private final BmcApplicationService schemeApplicationService;
 
+    private UserSchemeApplication application;
+
     @Autowired
     private ResponseInfoFactory responseInfoFactory;
 
@@ -46,18 +47,6 @@ public class SchemeApplicationController {
         this.objectMapper = objectMapper;
         this.request = request;
         this.schemeApplicationService = schemeApplicationService;
-    }
-
-    @PostMapping(value = "/v1/_create")
-    public ResponseEntity<SchemeApplicationResponse> SchemeApplicationCreatePost(
-            @ApiParam(value = "Details for the new Scheme Application(s) + RequestInfo meta data.", required = true) @Valid @RequestBody SchemeApplicationRequest schemeApplicationRequest) {
-        List<SchemeApplication> applications = schemeApplicationService
-                .registerSchemeApplication(schemeApplicationRequest);
-        ResponseInfo responseInfo = responseInfoFactory
-                .createResponseInfoFromRequestInfo(schemeApplicationRequest.getRequestInfo(), true);
-        SchemeApplicationResponse response = SchemeApplicationResponse.builder().schemeApplications(applications)
-                .responseInfo(responseInfo).build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping(value = "/v1/_search")
@@ -73,16 +62,6 @@ public class SchemeApplicationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/v1/_update")
-    public ResponseEntity<SchemeApplicationResponse> SchemeApplicationUpdatePost(
-            @ApiParam(value = "Details for updating Scheme Application(s) + RequestInfo meta data.", required = true) @Valid @RequestBody SchemeApplicationRequest schemeApplicationRequest) {
-        SchemeApplication application = schemeApplicationService.updateSchemeApplication(schemeApplicationRequest);
-        ResponseInfo responseInfo = responseInfoFactory
-                .createResponseInfoFromRequestInfo(schemeApplicationRequest.getRequestInfo(), true);
-        SchemeApplicationResponse response = SchemeApplicationResponse.builder()
-                .schemeApplications(Collections.singletonList(application)).responseInfo(responseInfo).build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
 
     @PostMapping(value = "/v1/_rendomize")
     public ResponseEntity<SchemeApplicationResponse> schemeApplicationRandomizePost(
@@ -110,28 +89,22 @@ public class SchemeApplicationController {
         return schemeApplication;
     }
 
-    @PostMapping(value = "/v1/_bmc")
-    public ResponseEntity<SchemeApplicationResponse> SchemeApplicationPresnalDetails(
-            @ApiParam(value = "Details for the new Scheme Application(s) + RequestInfo meta data.", required = true) @Valid @RequestBody SchemeApplicationRequest schemeApplicationRequest) {
-        List<SchemeApplication> applications = schemeApplicationService.savePersnaldetails(schemeApplicationRequest);
-        ResponseInfo responseInfo = responseInfoFactory
-                .createResponseInfoFromRequestInfo(schemeApplicationRequest.getRequestInfo(), true);
-        SchemeApplicationResponse response = SchemeApplicationResponse.builder().schemeApplications(applications)
-                .responseInfo(responseInfo).build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
 
     @PostMapping("/_save")
-//    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<SchemeApplicationResponse> saveSchemeApplication(
         @ApiParam(value = "Details for the new Scheme Application(s) + RequestInfo meta data.", required = true) @Valid @RequestBody UserSchemeApplicationRequest schemeApplicationRequest) throws Exception  {
-    
-        UserSchemeApplication applications = schemeApplicationService.saveApplicationDetails(schemeApplicationRequest);
-
+                String message =null;
+         try {
+             application = schemeApplicationService.saveApplicationDetails(schemeApplicationRequest);             
+        } catch (Exception e) {
+                message = e.getMessage();  
+                System.out.println("Message: " + message);
+        }
         ResponseInfo responseInfo = responseInfoFactory
         .createResponseInfoFromRequestInfo(schemeApplicationRequest.getRequestInfo(), true);
-         SchemeApplicationResponse response = SchemeApplicationResponse.builder().userSchemeApplication(applications)
+         SchemeApplicationResponse response = SchemeApplicationResponse.builder().userSchemeApplication(application)
+        .message(message)
         .responseInfo(responseInfo).build();
          return new ResponseEntity<>(response, HttpStatus.OK);
 

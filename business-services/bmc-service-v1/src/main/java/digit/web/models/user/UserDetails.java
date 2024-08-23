@@ -2,8 +2,6 @@ package digit.web.models.user;
 
 import java.util.List;
 
-import org.egov.common.contract.models.Address;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import digit.bmc.model.AadharUser;

@@ -24,15 +24,7 @@ public class SchemeBeneficiarySearchCritaria {
     private Long userId;
     private String tenantId; 
     private Boolean submitted;
-    private String optedId;
-    private String name;
-    private int has_applied_for_pension;
-    private Boolean forMachine;
-    private Boolean forCourse;
-    private Boolean forPension;
-
-    
-
+    private Long optedId;
 
 }
 

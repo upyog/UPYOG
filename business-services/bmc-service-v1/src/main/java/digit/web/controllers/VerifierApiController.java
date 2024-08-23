@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import digit.bmc.model.VerificationDetails;
 import digit.service.VerifierService;
 import digit.util.ResponseInfoFactory;
-import digit.web.models.SchemeValidationResponse;
+
 import digit.web.models.VerifierRequest;
 import digit.web.models.VerifierResponse;
 import io.swagger.annotations.ApiParam;
@@ -34,6 +35,7 @@ public class VerifierApiController {
     private VerifierService service;
 
     @PostMapping("/verifier/_getapplications")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<VerifierResponse> getApplicationsForVerification(@ApiParam(value = "Details for Schemes", required = true) 
      @Valid @RequestBody VerifierRequest request ) {
       

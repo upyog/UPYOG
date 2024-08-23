@@ -44,14 +44,8 @@ public class SchemeApiController {
         this.schemesService = schemesService;
     }
 
-    @PostMapping("/scheme/events")
-    public ResponseEntity<Void> schemeEventsPost() {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
     @PostMapping("/scheme/_search")
-//    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<SchemeSearchResponse> v1RegistrationSearchPost(
             @ApiParam(value = "Details for Schemes", required = true) 
             @Valid @RequestBody SchemeSearchRequest schemeSearchRequest) {

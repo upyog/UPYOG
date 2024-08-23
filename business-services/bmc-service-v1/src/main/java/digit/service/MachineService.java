@@ -15,26 +15,4 @@ public class MachineService {
         this.machinesRepository = machinesRepository;
     }
 
-
-    public Machines getMachineByApplication(SchemeApplicationRequest request) {
-    Machines machines = new Machines();
-
-     machines.setId(request.getId());
-     machines.setName(request.getName());
-     machines.setAmount(request.getAmount());
-     machines.setDescription(request.getDescription());
-    
-
-     return  machinesRepository.save(machines);
-    }
-
-
-    //  public List<Machines> getAllMachines(SchemeApplicationRequest schemeApplicationRequest) {
-    //     return machinesRepository.getALLList();
-    // }
-
-    // public Machines getMachineByAmount(SchemeApplicationRequest schemeApplicationRequest) {
-    //     return machinesRepository.getByAmount(schemeApplicationRequest.getName());
-    // }
-
 }

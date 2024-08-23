@@ -32,6 +32,6 @@ public class SchemeSearchCriteria {
     @JsonProperty("SchemeHeadDesc")
     private String schemeheaddesc;
 
-    @JsonProperty("slaDays")
+    @JsonProperty("sla")
     private Integer sla;
 }

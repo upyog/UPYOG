@@ -24,6 +24,8 @@ import lombok.ToString;
 @Builder
 @Component
 public class SchemeApplicationSearchCriteria {
+
+    private String uuid;
     @JsonProperty("tenantId")
     private String tenantId; 
     @JsonProperty("ids")
@@ -53,8 +55,16 @@ public class SchemeApplicationSearchCriteria {
     @JsonProperty("schemeId")
     private Long schemeId;
     @JsonProperty("machineId")
-    private Long machineId;
+    private Long machineId = null;
     @JsonProperty("courseId")
     private Long courseId;
+    
+    @JsonProperty("state")
+    private String state;
+    
+    @JsonProperty("number")
+    private Long randomizationNumber;
+
+    private String previousState = null;
     
 }

@@ -50,11 +50,8 @@ UserOtherDetails userOtherDetails;
 @JsonProperty("updatedPersonalDetails")
 PersonalDetails personalDetails;
 
-@JsonProperty("UserBank")
-BankDetails bankDetails;
 
-@JsonProperty("UserQualification")
-QualificationSave qualificationDetails;
+
 
 
 

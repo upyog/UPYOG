@@ -64,6 +64,10 @@ public class ProcessInstance {
 
 	    @JsonProperty("assignes")
 	    private List<User> assignes;
+		
+		@JsonProperty("previousStatus")
+		@Size(max=128)
+        private String previousStatus = null;
 
 	    public ProcessInstance addDocumentsItem(Document documentsItem) {
 	        if (this.documents == null) {

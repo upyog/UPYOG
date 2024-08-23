@@ -23,19 +23,7 @@ public class SchemeService {
 
     private static final Logger logger = LoggerFactory.getLogger(SchemeService.class);
 
-    public Schemes getSchemesByApplication(SchemeApplicationRequest request) {
-    	
-    	Schemes scheme = request.getSchemeApplications().get(0).getSchemes();
 
-        Schemes schemes = new Schemes();
-
-        schemes.setId(scheme.getId());
-        schemes.setName(scheme.getName());
-        schemes.setDescription(scheme.getDescription());
-        schemes.setCreatedOn(scheme.getCreatedOn());
-        logger.info("Saving UserSchemeApplication: {}", schemes);
-        return  null;
-    }
 
     public List<EventDetails> getSchemes(RequestInfo requestInfo,SchemeSearchCriteria searchcriteria){
         // Fetch applications from database according to the given search criteria

@@ -14,7 +14,9 @@ public class UserQueryBuilder {
                 eba.aadharfathername ,to_timestamp(eba.aadhardob/1000)::date as aadhardob ,eba.aadharmobile ,UPPER(eba.gender) as gender ,eba.aadharname, eba.aadharref, \
                 UPPER(ebc."name") as caste ,ebc.id as casteid, \
                 UPPER(ebr."name") as religion ,ebr.id as religionid , \
-                ebu4.transgenderid, ebu4.zone, ebu4.block, ebu4.ward \
+                ebu4.transgenderid, ebu4.zone, ebu4.block, ebu4.ward ,ebu4.occupation,ebu4.income, \
+                ebu4.divyangcardid, ebu4.divyangpercent,ebu4.createdon, \
+                ebu4.modifiedon,ebu4.createdby,ebu4.modifiedby \
             """;
 
     private static final String QUALIFICATION_QUERY = """

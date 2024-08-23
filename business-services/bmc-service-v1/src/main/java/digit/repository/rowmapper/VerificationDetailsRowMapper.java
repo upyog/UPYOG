@@ -42,6 +42,8 @@ public class VerificationDetailsRowMapper implements ResultSetExtractor<List<Ver
             if (verificationDetails == null) {
                 verificationDetails = new VerificationDetails();
                 verificationDetails.setApplicationNumber(applicationNumber);
+                verificationDetails.setAgreeToPay(rs.getBoolean("agreetopay"));
+                verificationDetails.setStatement(rs.getBoolean("statement"));
                 verificationDetails.setUserId(rs.getLong("userid"));
                 verificationDetails.setTenantId(rs.getString("tenantid"));
                 verificationDetails.setScheme(rs.getString("scheme"));

@@ -4,9 +4,12 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.egov.tracer.model.CustomException;
@@ -32,15 +35,13 @@ import digit.web.models.user.DocumentDetails;
 import digit.web.models.user.QualificationDetails;
 import digit.web.models.user.UserDetails;
 
-
-
 @Service
 public class SchemeApplicationValidator {
 
     private final SchemeApplicationRepository repository;
 
     private final SchemeBeneficiarySearchCritaria schemeBeneficiarySearchCritaria;
-    
+
     @Autowired
     UserRepository userRepository;
 
@@ -96,7 +97,7 @@ public class SchemeApplicationValidator {
 
     public SchemeValidationResponse criteriaCheck(SchemeApplicationRequest request) {
         SchemeValidationResponse response = new SchemeValidationResponse();
-        
+        StringBuilder message = new StringBuilder();
         UserSearchCriteria userSearchCriteria = new UserSearchCriteria();
         userSearchCriteria.setOption("full");
         userSearchCriteria.setTenantId(request.getRequestInfo().getUserInfo().getTenantId());
@@ -112,11 +113,57 @@ public class SchemeApplicationValidator {
                 .map(QualificationDetails::getQualificationId)
                 .max(Comparator.naturalOrder())
                 .orElse(null);
-
-        boolean age = true, disability = true, gender = false, income = true, education = true, document = true;
+        boolean age = true, disability = true, gender = false, income = true, education = true, document = false,
+                benefitted = false,dflag = false,gflag=false;
         Long schemeId = request.getSchemeId().longValue();
         List<SchemeCriteria> criteriaList = repository.getCriteriaBySchemeIdAndType(schemeId);
 
+        response.setUserOtherDetails(userDetails.get(0).getUserOtherDetails());
+
+        Optional<SchemeCriteria> matchingCriteria = criteriaList.stream()
+                    .filter(benifittedCriteria -> "benifitted".equalsIgnoreCase(benifittedCriteria.getCriteriaType()))
+                    .findFirst();
+            if (matchingCriteria.isPresent()) {
+                SchemeCriteria benifittedCriteria = matchingCriteria.get();
+
+                schemeBeneficiarySearchCritaria.setUserId(request.getRequestInfo().getUserInfo().getId());
+                schemeBeneficiarySearchCritaria.setTenantId(request.getRequestInfo().getUserInfo().getTenantId());
+                schemeBeneficiarySearchCritaria.setOptedId(schemeId);
+                // schemeBeneficiarySearchCritaria.setSubmitted(true);
+                List<SchemeBeneficiaryDetails> schemeBeneficiaryDetailsList = repository
+                        .initialEligibilityCheck(schemeBeneficiarySearchCritaria);
+                for (SchemeBeneficiaryDetails schemeBeneficiaryDetails : schemeBeneficiaryDetailsList) {
+                    if (schemeBeneficiaryDetails.getMachineId() != 0) {
+
+                        benefitted = evaluateCondition(hasTakenMachineInLastFiveYears(schemeBeneficiaryDetails),
+                                benifittedCriteria.getCriteriaCondition(),
+                                Long.parseLong(benifittedCriteria.getCriteriaValue().replace(",", "")));
+
+                    } else if (schemeBeneficiaryDetails.getCourseId() != 0 ) {
+
+                        benefitted = evaluateCondition(hasTakenCourse(schemeBeneficiaryDetails),
+                                benifittedCriteria.getCriteriaCondition(),
+                                Long.parseLong(benifittedCriteria.getCriteriaValue().replace(",", "")));
+                    } else {
+                        
+                        benefitted = evaluateCondition(hasAppliedPension(schemeBeneficiaryDetails),
+                                benifittedCriteria.getCriteriaCondition(),
+                                Long.parseLong(benifittedCriteria.getCriteriaValue().replace(",", "")));;
+                    }
+                    if(benefitted){
+                        response.setBenifittedDate(Date.from(schemeBeneficiaryDetails.getStartDate()));
+                        response.setSchemeName(schemeBeneficiaryDetails.getSchemeGroupName());
+                    }
+                }
+
+            }
+            if(benefitted){
+
+                response.setError(message.append("you have already benifitted for ")
+                .append(response.getSchemeName())
+                .append(response.getBenifittedDate().toString()));
+                return response;
+            }
         for (SchemeCriteria criteria : criteriaList) {
             CriteriaType criteriaType = CriteriaType.fromDisplayName(criteria.getCriteriaType());
             String condition = criteria.getCriteriaCondition();
@@ -128,6 +175,7 @@ public class SchemeApplicationValidator {
                         gender = evaluateCondition(request.getGender().toLowerCase(), condition, value.toLowerCase());
                     }
                     response.setGenderEligibility(gender);
+                    gflag =true;
                     break;
 
                 case DISABILITY:
@@ -156,48 +204,54 @@ public class SchemeApplicationValidator {
                 case EDUCATION:
                     if (education) {
                         education = evaluateCondition(maxQualificationId, condition,
-                                Boolean.parseBoolean(value));
+                                Long.parseLong(value));
                     }
                     response.setEducationEligibility(education);
                     break;
-                case DOCUMENT :
-                    if(document) {
-                        document = false;
-                        for (String documentName : documentNames ) {
-                            document = evaluateCondition(documentName,condition,value); 
-                            if(document)
-                               break;
+                case DOCUMENT:
+                    if (!document) {
+                        for (String documentName : documentNames) {
+                            document = evaluateCondition(documentName, condition, value);
+                            if (document) {
+                                break;
+                            }
                         }
-                        
+                        response.setRationCardEligibility(document);
+                        dflag =true;
                     }
-                    response.setRationCardEligibility(document);
+
                     break;
-  
+                case BENIFITTED:
+                    break;
+
                 default:
                     throw new IllegalArgumentException("Invalid criteria: " + criteriaType);
             }
 
         }
         response.setSchemeType(repository.getSchemeById(schemeId));
-        StringBuilder message = new StringBuilder();
-        if(!age){
+        if (!age) {
             message.append("Age is not eligible for this scheme ");
             message.append("\n");
         }
-        if(!disability){
+        if (!disability) {
             message.append("Disability is not eligible for this scheme ");
             message.append("\n");
         }
-        if(!income){
+        if (!income) {
             message.append("income is not eligible for this scheme ");
             message.append("\n");
         }
-        if(!education){
+        if (!education) {
             message.append("Education is not eligible for this scheme ");
             message.append("\n");
         }
-        if(!document){
+        if (!document && dflag) {
             message.append("Document is not eligible for this scheme ");
+            message.append("\n");
+        }
+        if (!gender && gflag) {
+            message.append("Gender is not eligible for this scheme ");
             message.append("\n");
         }
         response.setError(message);
@@ -231,7 +285,12 @@ public class SchemeApplicationValidator {
 
     public static int calculateAge(Date dob) {
         try {
-            LocalDate birthDate = dob.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(dob);
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH) + 1; 
+            int day = cal.get(Calendar.DAY_OF_MONTH);
+            LocalDate birthDate = LocalDate.of(year, month, day);
             LocalDate currentDate = LocalDate.now();
             return Period.between(birthDate, currentDate).getYears();
         } catch (Exception e) {
@@ -239,86 +298,58 @@ public class SchemeApplicationValidator {
         }
     }
 
-    public EligibilityResponse getBeneficiaryInfo(UserCompleteDetails user) {
-        schemeBeneficiarySearchCritaria.setUserId(user.getRequestInfo().getUserInfo().getId());
-        schemeBeneficiarySearchCritaria.setTenantId(user.getRequestInfo().getUserInfo().getTenantId());
-        schemeBeneficiarySearchCritaria.setSubmitted(true);
-        schemeBeneficiarySearchCritaria.setForMachine(true);
-        schemeBeneficiarySearchCritaria.setForCourse(true);
-        schemeBeneficiarySearchCritaria.setForPension(true);
-        schemeBeneficiarySearchCritaria.setName("pension");
+    public long hasTakenMachineInLastFiveYears(SchemeBeneficiaryDetails schemeBeneficiaryDetails) {
 
-        List<SchemeBeneficiaryDetails> schemeBeneficiaryDetails = repository
-                .initialEligibilityCheck(schemeBeneficiarySearchCritaria);
-
-        eligibilityResponse.setMachineTaken(hasTakenMachineInLastFiveYears(schemeBeneficiaryDetails));
-        eligibilityResponse.setCourseTaken(hasTakenCourse(schemeBeneficiaryDetails));
-
-        eligibilityResponse.setPensionApplied(hasAppliedPension(schemeBeneficiaryDetails));
-
-        return eligibilityResponse;
-
-    }
-
-    public boolean hasTakenMachineInLastFiveYears(List<SchemeBeneficiaryDetails> schemeBeneficiaryDetails) {
-
-        if (schemeBeneficiaryDetails == null || schemeBeneficiaryDetails.isEmpty()) {
-            return false;
+        if (schemeBeneficiaryDetails == null) {
+            return -1;
         }
-        Instant lastBenefitInstant = schemeBeneficiaryDetails.get(0).getStartDate();
+        Instant lastBenefitInstant = schemeBeneficiaryDetails.getStartDate();
         if (lastBenefitInstant == null) {
-            return false;
+            return -1;
         }
         Date lastBenefitDate = Date.from(lastBenefitInstant);
         Date currentDate = new Date();
         long diffInMillis = currentDate.getTime() - lastBenefitDate.getTime();
         long diffInYears = diffInMillis / (1000L * 60 * 60 * 24 * 365);
-        return diffInYears < 5;
+        return diffInMillis;
     }
 
-    public boolean hasTakenCourse(List<SchemeBeneficiaryDetails> schemeBeneficiaryDetails) {
+    public long hasTakenCourse(SchemeBeneficiaryDetails schemeBeneficiaryDetails) {
 
-        if (schemeBeneficiaryDetails == null || schemeBeneficiaryDetails.isEmpty()) {
-            return false;
+        if (schemeBeneficiaryDetails == null) {
+            return -1;
         }
-        Instant startDate = schemeBeneficiaryDetails.get(0).getStartDate();
-        Instant endDate = schemeBeneficiaryDetails.get(0).getEndDate();
-        if (startDate == null) {
-            return false;
+        Instant lastBenefitInstant = schemeBeneficiaryDetails.getStartDate();
+        if (lastBenefitInstant == null) {
+            return -1;
         }
-        Date lastBenefitDate = Date.from(endDate);
+        Date lastBenefitDate = Date.from(lastBenefitInstant);
         Date currentDate = new Date();
         long diffInMillis = currentDate.getTime() - lastBenefitDate.getTime();
         long diffInYears = diffInMillis / (1000L * 60 * 60 * 24 * 365);
-        return diffInYears <= 1;
+        return diffInMillis;
     }
+
     // sundeep: need to check later
     public EligibilityResponse isAddressFromBMCArea(UserCompleteDetails user) {
         eligibilityResponse.setAddressValidated("Mumbai".equalsIgnoreCase(user.getAddress().getCity()));
         return eligibilityResponse;
     }
 
-    public boolean hasAppliedPension(List<SchemeBeneficiaryDetails> schemeBeneficiaryDetails) {
-
-        if (schemeBeneficiaryDetails == null || schemeBeneficiaryDetails.isEmpty()) {
-            return false;
+    public long hasAppliedPension(SchemeBeneficiaryDetails schemeBeneficiaryDetails) {
+        
+        if (schemeBeneficiaryDetails == null) {
+            return -1;
         }
-        if (schemeBeneficiaryDetails.get(0).getHas_applied_for_pension() > 0) {
-            return true;
+        Instant lastBenefitInstant = schemeBeneficiaryDetails.getStartDate();
+        if (lastBenefitInstant == null) {
+            return -1;
         }
-
-        return false;
-    }
-
-    private boolean hasValidUDID(SchemeApplicationRequest request) {
-        return request.getUdid() != null;// && request.getDivyangPercent() >= requiredDisabilityPercentage;
-    }
-
-    private boolean hasMinimumEducation(SchemeApplicationRequest request) {
-        String education = request.getEducationLevel();
-        List<String> qualification = repository.getQualifications();
-
-        return qualification.contains(education);
+        Date lastBenefitDate = Date.from(lastBenefitInstant);
+        Date currentDate = new Date();
+        long diffInMillis = currentDate.getTime() - lastBenefitDate.getTime();
+        long diffInYears = diffInMillis / (1000L * 60 * 60 * 24 * 365);
+        return diffInMillis;
     }
 
 }

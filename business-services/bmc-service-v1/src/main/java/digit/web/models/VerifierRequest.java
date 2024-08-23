@@ -21,9 +21,13 @@ public class VerifierRequest {
     private RequestInfo requestInfo;
     @JsonProperty("schemeId")
     private Long schemeId;
-    @JsonProperty("machineId")
-    private Long machineId;
-    @JsonProperty("courseId")
-    private Long courseId;
+    @JsonProperty("detailID")
+    private Long detailId;
+    @JsonProperty("type")
+    private String type;
+    @JsonProperty("action")
+    private String action;
 
+    private String previousState;
 }
+

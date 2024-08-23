@@ -1,8 +1,5 @@
 package digit.web.models;
 
-import java.util.List;
-
-import org.apache.kafka.common.protocol.types.Field.Str;
 import org.egov.common.contract.models.Address;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Workflow;
@@ -20,12 +17,10 @@ import digit.bmc.model.Courses;
 import digit.bmc.model.Divyang;
 import digit.bmc.model.Machines;
 import digit.bmc.model.Schemes;
-import digit.bmc.model.Sector;
 import digit.bmc.model.UserOtherDetails;
 import digit.bmc.model.UserSchemeApplication;
 import digit.web.models.scheme.SchemeTypeDTO;
 import digit.web.models.scheme.UpdateSchemeDataDTO;
-import digit.web.models.user.DocumentDetails;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -88,17 +83,9 @@ public class SchemeApplication {
 
     @JsonProperty("address")
     private Address address;
-   
-    @JsonProperty("bank")
-    private Bank bank;
-    @JsonProperty("bank_Account")
-    private BankAccount bankAccount;
-    @JsonProperty("bank_Branch")
-    private BankBranch bankBranch;
+
     @JsonProperty("aadharUser")
     private AadharUser aadharUser;
-    @JsonProperty("sector")
-    private Sector sector;
     
     @JsonProperty("caste")
     private Caste caste;
@@ -117,12 +104,7 @@ public class SchemeApplication {
 
     @JsonProperty ("wards")
     private Ward wards;
-    @JsonProperty("qualification")
-    private Qualification qualification;
-    @JsonProperty("egBmcUserQualification")
-    private EgBmcUserQualification egBmcUserQualification;
-    @JsonProperty("egBoundary")
-    private EgBoundary egBoundary;    
+       
     @Valid
     @JsonProperty("workflow")
     private Workflow workflow = null;

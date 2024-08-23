@@ -35,14 +35,14 @@ public class BankApiController {
     
 
     @PostMapping("/_get")
- // @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<BankSearchResponse> getBankDetails(@ApiParam(value = "Bank Details", required = true) @RequestBody BankSearchRequest searchRequest) {
 
         try {
             
             if (searchRequest.getBankSearchCriteria() == null ||
                     StringUtils.isEmpty(searchRequest.getBankSearchCriteria().getIfsc())) {
-                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST); 
+                return new ResponseEntity<>(null, HttpStatus.OK); 
             }
            List<BankDetails> bankDetails = bankService.getBankDetails(searchRequest.getBankSearchCriteria());
             if(ObjectUtils.isEmpty(bankDetails)){

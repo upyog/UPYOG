@@ -1,0 +1,52 @@
+{
+    "aadhaarNumber": "111111111111",
+    "otp": "111111",
+    "aadhaarInfo": {
+        "firstName": "Bal",
+        "middleName": "krishna",
+        "lastName": "Yadav",
+        "dob": "1990-05-02",
+        "gender": {
+            "value": "MALE",
+            "label": "Male"
+        },
+        "father": "Ram krishna Yadav",
+        "house": "127/14",
+        "street": "Sector 2",
+        "landMark": "Gomati Nagar Extension",
+        "locality": "Lucknow",
+        "city": "Lucknow",
+        "subDistrict": "Lucknow",
+        "district": "Lucknow",
+        "state": "Uttar Pradesh",
+        "pincode": "226006",
+        "religion": {
+            "code": 2,
+            "name": "Islam",
+            "i18nKey": "MH_ADMIN_Islam"
+        },
+        "zoneName": {
+            "code": "Z-1",
+            "name": "Zone 1",
+            "i18nKey": "MH_MUMBAI_ADMIN_Z-1"
+        },
+        "blockName": {
+            "code": "WARD-A",
+            "name": "WARD A",
+            "zoneCode": "Z-1",
+            "i18nKey": "MH_MUMBAI_ADMIN_WARD-A"
+        },
+        "wardName": {
+            "code": "NG_03",
+            "name": "Shivalik Vihar Naya Gaon - WARD A",
+            "zoneCode": "Z-1",
+            "blockCode": "WARD-A",
+            "i18nKey": "MH_MUMBAI_ADMIN_NG_03"
+        },
+        "casteCategory": {
+            "code": 3,
+            "name": "Scheduled Tribe",
+            "i18nKey": "MH_MUMBAI_ADMIN_Scheduled Tribe"
+        }
+    }
+}

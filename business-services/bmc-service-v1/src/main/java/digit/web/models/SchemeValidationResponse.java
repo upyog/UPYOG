@@ -1,9 +1,12 @@
 package digit.web.models;
 
+import java.util.Date;
+
 import org.egov.common.contract.response.ResponseInfo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import digit.bmc.model.UserOtherDetails;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +23,11 @@ public class SchemeValidationResponse {
    
    @JsonProperty
    private String schemeType;
+
+
+   private String schemeName;
+
+   private Date benifittedDate;
    
    @JsonProperty("Error")
    private StringBuilder error;
@@ -35,6 +43,8 @@ public class SchemeValidationResponse {
    private Boolean educationEligibility;
 
    private Boolean rationCardEligibility;
+
+   private UserOtherDetails userOtherDetails;
 
 
 

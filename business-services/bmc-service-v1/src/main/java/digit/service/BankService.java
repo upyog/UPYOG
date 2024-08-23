@@ -34,18 +34,7 @@ public class BankService {
         this.bankRepository = bankRepository;
     }
 
-   /*  public  Bank getBankByApplication(SchemeApplicationRequest schemeApplicationRequest) {
-
-        Bank bank = new Bank();
-        bank.setName(schemeApplicationRequest.getName());
-        bank.setCode(schemeApplicationRequest.getCode());
-        bank.setId(schemeApplicationRequest.getBankid());
-        bank.setIsActive(schemeApplicationRequest.getIsActive());
-        bank.setNarration(schemeApplicationRequest.getNarration());
-        bank.setType(schemeApplicationRequest.getType());
-        bank.setVersion(schemeApplicationRequest.getVersion());
-        return bankRepository.save(bank);  
-    }  */
+  
 
       public List<BankDetails> getBankDetails(BankSearchCriteria criteria) {
         List<BankDetails> details = bankRepository.getCommonDetails(criteria);

@@ -1,0 +1,115 @@
+{
+  "occ": [
+    {
+      "value": "Employed",
+      "label": "Employed"
+    },
+    {
+      "value": "Unemployed",
+      "label": "Unemployed"
+    }
+  ],
+  "employymentType": [
+    {
+      "value": "Service",
+      "label": "Service"
+    },
+    {
+      "value": "Business",
+      "label": "Business"
+    }
+  ],
+  "rationcardtype": [
+    {
+      "value": "yellow Card",
+      "label": "Yellow Card"
+    },
+    {
+      "value": "orange Card",
+      "label": "Orange Card"
+    },
+    {
+      "value": "white card",
+      "label": "white card"
+    }
+  ],
+  "Income": [
+    {
+      "value": "100000",
+      "label": "100000"
+    },
+    {
+      "value": "200000",
+      "label": "200000"
+    },
+    {
+      "value": "300000",
+      "label": "300000"
+    }
+  ],
+  "disablityType": [
+    {
+      "value": "Yes",
+      "label": "Yes"
+    },
+    {
+      "value": "No",
+      "label": "No"
+    }
+  ],
+  "verification": [
+    {
+      "value": "Verified",
+      "label": "Verified"
+    },
+    {
+      "value": "Non-Verified",
+      "label": "Non-Verified"
+    }
+  ],
+  "randomizationType": [
+    {
+      "value": "First Round",
+      "label": "First Round"
+    },
+    {
+      "value": "Second Round",
+      "label": "Second Round"
+    },
+    {
+      "value": "Third Round",
+      "label": "Third Round"
+    }
+  ],
+  "disabled": [
+    {
+      "value": "Yes",
+      "label": "Yes"
+    },
+    {
+      "value": "No",
+      "label": "No"
+    }
+  ],
+  "board":[
+    {"value": "SSC",
+      "label": "SSC"},
+    {"value": "CBSE",
+      "label": "CBSE"},
+    {"value": "ICSE",
+      "label": "ICSE"}
+  ],
+"gender":[
+  {"id": 2,
+            "name": "MALE"},
+  {"id": 1,
+            "name": "FEMALE"},
+  {"id": 3,
+            "name": "TRANSGENDER"}
+],
+"title":[
+  { "id": 1, "name": "MR" },
+  { "id": 2, "name": "MRS" },
+  { "id": 3, "name": "MISS" }
+]
+}

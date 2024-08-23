@@ -2,6 +2,8 @@ package digit.repository.rowmapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,15 +28,18 @@ public class SchemeBeneficiaryRowMapper implements ResultSetExtractor<List<Schem
         while (rs.next()) {
             Long optedId = rs.getLong("optedid");
             SchemeBeneficiaryDetails schemeDetails = schemeDetailsMap.get(optedId);
+            long createdOnTimestamp = rs.getLong("createdon");
+            Instant createdOnInstant = Instant.ofEpochMilli(createdOnTimestamp);
             if (schemeDetails == null) {
                
                 schemeDetails = SchemeBeneficiaryDetails.builder()
                         .machineId(rs.getLong("machineid"))
                         .optedId(optedId)
                         .courseId(rs.getLong("courseid"))
-                        .has_applied_for_pension(rs.getInt("has_applied_for_pension"))
-                        .startDate(rs.getTimestamp("startdt").toInstant())
-                        .endDate(rs.getTimestamp("enddt").toInstant())
+                        .startDate(createdOnInstant)
+                        .schemeGroupId(rs.getLong("id"))
+                        .schemeGroupName(rs.getString("name"))
+                        .applicationNumber(rs.getString("applicationnumber"))
                         .build();
                 schemeDetailsMap.put(optedId, schemeDetails);
             }
