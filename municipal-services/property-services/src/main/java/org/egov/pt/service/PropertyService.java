@@ -150,11 +150,13 @@ public class PropertyService {
 	public Property updateProperty(PropertyRequest request) {
 
 		Property propertyFromSearch = unmaskingUtil.getPropertyUnmasked(request);
-		propertyValidator.validateCommonUpdateInformation(request, propertyFromSearch);
-
-		boolean isRequestForOwnerMutation = CreationReason.MUTATION.equals(request.getProperty().getCreationReason());
 
 		boolean isNumberDifferent = checkIsRequestForMobileNumberUpdate(request, propertyFromSearch);
+		if (!isNumberDifferent) {
+			propertyValidator.validateCommonUpdateInformation(request, propertyFromSearch);
+		}
+
+		boolean isRequestForOwnerMutation = CreationReason.MUTATION.equals(request.getProperty().getCreationReason());
 
 		boolean isRequestForStatusChange = CreationReason.STATUS.equals(request.getProperty().getCreationReason());
 
