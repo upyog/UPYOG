@@ -647,7 +647,7 @@ public class TradeLicenseService {
             userService.createUser(tradeLicenseRequest, false);
 
             // create and upload pdf
-            createAndUploadPDF(licenceResponse, tradeLicenseRequest);
+            createAndUploadPDF(tradeLicenseRequest);
             
             // generate demand and bill
             generateDemandAndBill(tradeLicenseRequest);
@@ -720,6 +720,7 @@ public class TradeLicenseService {
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_VERIFY, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR, license.getAction())
+							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_APPROVER, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_VERIFIER, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_APPROVER, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_APPROVE, license.getAction())
@@ -813,9 +814,9 @@ public class TradeLicenseService {
 	}
 
 
-	private void createAndUploadPDF(List<TradeLicense> licenceResponse, TradeLicenseRequest tradeLicenseRequest) {
+	private void createAndUploadPDF(TradeLicenseRequest tradeLicenseRequest) {
 		
-		licenceResponse.stream().forEach(license -> {
+		tradeLicenseRequest.getLicenses().stream().forEach(license -> {
 			
 			Thread pdfGenerationThread = new Thread(() -> {
 				
