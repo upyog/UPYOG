@@ -3,6 +3,7 @@ package org.egov.demand.repository.querybuilder;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.egov.demand.model.BillSearchCriteria;
 import org.egov.demand.model.BillV2.BillStatus;
 import org.egov.demand.model.UpdateBillCriteria;
@@ -145,11 +146,14 @@ public class BillQueryBuilder {
 		
 		StringBuilder finalQuery;
 
-		if (searchBillCriteria.getRetrieveOldest())
-			finalQuery = new StringBuilder(BILL_MIN_QUERY.replace(REPLACE_STRING, selectQuery));
-		else
-			finalQuery = new StringBuilder(BILL_MAX_QUERY.replace(REPLACE_STRING, selectQuery));
-
+		if (BooleanUtils.isFalse(searchBillCriteria.getRetrieveAll())) {
+			if (searchBillCriteria.getRetrieveOldest())
+				finalQuery = new StringBuilder(BILL_MIN_QUERY.replace(REPLACE_STRING, selectQuery));
+			else
+				finalQuery = new StringBuilder(BILL_MAX_QUERY.replace(REPLACE_STRING, selectQuery));
+		}else {
+			finalQuery = selectQuery;
+		}
 		if (searchBillCriteria.isOrderBy()) {
 			finalQuery.append(" ORDER BY billresult.bd_consumercode ");
 		}

@@ -79,6 +79,8 @@ public class PetRegistrationApplication {
 	@Valid
 	@JsonProperty("workflow")
 	private Workflow workflow = null;
+	
+	private Boolean isOnlyWorkflowCall = false;
 
     private JsonNode additionalDetail = null;
 
