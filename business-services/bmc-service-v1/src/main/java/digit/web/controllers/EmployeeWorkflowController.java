@@ -42,7 +42,6 @@ public class EmployeeWorkflowController {
 
 
     @PostMapping("/workflow/_transit")
-    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<ApplicationStatusResponse> transitSchemeApplicationWorkflow(
         @ApiParam(value = "update the workflow of scheme application + RequestInfo meta data.", required = true) @Valid @RequestBody ApplicationStatusRequest request) throws Exception  {
         
