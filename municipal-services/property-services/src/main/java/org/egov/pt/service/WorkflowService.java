@@ -142,7 +142,7 @@ public class WorkflowService {
 			} else if (propertyToBeStatus.equalsIgnoreCase("ACTIVE")) {
 				request.getProperty().setStatus(Status.ACTIVE);
 			}
-			request.getProperty().setCreationReason(CreationReason.UPDATE);
+			//request.getProperty().setCreationReason(CreationReason.UPDATE);
 			
 		}
 

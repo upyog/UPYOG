@@ -279,9 +279,9 @@ public class PropertyService {
 			request.getProperty().setOwners(util.getCopyOfOwners(propertyFromSearch.getOwners()));
 		}
 
-		if (request.getProperty().getStatus().equals(Status.ACTIVE)) {
-			request.getProperty().setCreationReason(CreationReason.UPDATE);
-		}
+//		if (request.getProperty().getStatus().equals(Status.ACTIVE)) {
+//			request.getProperty().setCreationReason(CreationReason.UPDATE);
+//		}
 		enrichmentService.enrichAssignes(request.getProperty());
 		enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
 
