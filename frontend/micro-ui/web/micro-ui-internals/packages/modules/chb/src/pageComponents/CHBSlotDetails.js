@@ -102,9 +102,7 @@ const CHBSlotDetails
         >
           <div>
 
-            <CardLabel>{`${t("CHB_SPECIAL_CATEGORY")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
-
-
+            <CardLabel>{`${t("CHB_SPECIAL_CATEGORY")}`} <span className="check-page-link-button">*</span></CardLabel>
             <Controller
               control={control}
               name={"specialCategory"}
@@ -126,9 +124,7 @@ const CHBSlotDetails
 
             />
 
-            <CardLabel>{`${t("CHB_PURPOSE")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
-
-
+            <CardLabel>{`${t("CHB_PURPOSE")}`} <span className="check-page-link-button">*</span></CardLabel>
             <Controller
               control={control}
               name={"purpose"}
@@ -149,7 +145,7 @@ const CHBSlotDetails
               )}
                 />
 
-          <CardLabel>{`${t("CHB_PURPOSE_DESCRIPTION")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+          <CardLabel>{`${t("CHB_PURPOSE_DESCRIPTION")}`} <span className="check-page-link-button">*</span></CardLabel>
           <TextArea
             t={t}
             type={"textarea"}

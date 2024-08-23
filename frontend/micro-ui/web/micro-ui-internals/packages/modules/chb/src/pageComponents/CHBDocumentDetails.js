@@ -203,7 +203,7 @@ function CHBSelectDocument({
     <div style={{ marginBottom: "24px" }}>
       {doc?.hasDropdown ? (
         <LabelFieldPair>
-          <CardLabel className="card-label-smaller">{t("CHB_"+(doc?.code.replaceAll(".", "_"))) } <span style={{ color: 'red' }}>*</span></CardLabel>
+          <CardLabel className="card-label-smaller">{t("CHB_"+(doc?.code.replaceAll(".", "_"))) } <span className="check-page-link-button">*</span></CardLabel>
           <Dropdown
             className="form-field"
             selected={selectedDocument}

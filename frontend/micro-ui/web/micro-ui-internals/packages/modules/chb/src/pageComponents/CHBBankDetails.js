@@ -158,7 +158,7 @@ const CHBBankDetails
     >
       
       <div>
-        <CardLabel>{`${t("CHB_ACCOUNT_NUMBER")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+        <CardLabel>{`${t("CHB_ACCOUNT_NUMBER")}`} <span className="check-page-link-button">*</span></CardLabel>
         <TextInput
           t={t}
           type={"text"}
@@ -181,7 +181,7 @@ const CHBBankDetails
          
         />
        
-        <CardLabel>{`${t("CHB_CONFIRM_ACCOUNT_NUMBER")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+        <CardLabel>{`${t("CHB_CONFIRM_ACCOUNT_NUMBER")}`} <span className="check-page-link-button">*</span></CardLabel>
         <TextInput
           t={t}
           type={"text"}
@@ -204,7 +204,7 @@ const CHBBankDetails
          
         />
        
-        <CardLabel>{`${t("CHB_IFSC_CODE")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+        <CardLabel>{`${t("CHB_IFSC_CODE")}`} <span className="check-page-link-button">*</span></CardLabel>
         <TextInput
             t={t}
             type={"text"}
@@ -223,7 +223,7 @@ const CHBBankDetails
             })}
           />
        
-        <CardLabel>{`${t("CHB_BANK_NAME")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+        <CardLabel>{`${t("CHB_BANK_NAME")}`} <span className="check-page-link-button">*</span></CardLabel>
         <TextInput
             t={t}
             type={"text"}
@@ -236,7 +236,7 @@ const CHBBankDetails
             disabled={true}
           />
        
-        <CardLabel>{`${t("CHB_BANK_BRANCH_NAME")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+        <CardLabel>{`${t("CHB_BANK_BRANCH_NAME")}`} <span className="check-page-link-button">*</span></CardLabel>
         <TextInput
             t={t}
             type={"text"}
@@ -248,7 +248,7 @@ const CHBBankDetails
             onChange={setApplicantBankBranchName}
             disabled={true}
           />
-        <CardLabel>{`${t("CHB_ACCOUNT_HOLDER_NAME")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+        <CardLabel>{`${t("CHB_ACCOUNT_HOLDER_NAME")}`} <span className="check-page-link-button">*</span></CardLabel>
         <TextInput
           t={t}
           type={"text"}

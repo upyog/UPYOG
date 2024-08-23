@@ -90,7 +90,12 @@ export const CHBMyApplications = () => {
               </div>
             </div>
             <div>
+              <div style={{marginTop:"17%"}}>
               <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
+              <p className="link" style={{marginLeft:"30%",marginTop:"10px",display: "block"}}
+                      onClick={() => {setSearchTerm(""),setStatus("") }}>{t(`ES_COMMON_CLEAR_ALL`)}
+                </p>
+              </div>
             </div>
           </div>
           <span className="link" style={{ display: "block" }}>

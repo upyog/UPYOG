@@ -101,7 +101,7 @@ const CHBCitizenDetails
     >
       
       <div>
-        <CardLabel>{`${t("CHB_APPLICANT_NAME")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+        <CardLabel>{`${t("CHB_APPLICANT_NAME")}`} <span className="check-page-link-button">*</span></CardLabel>
         <TextInput
           t={t}
           type={"text"}
@@ -122,7 +122,7 @@ const CHBCitizenDetails
          
         />
        
-        <CardLabel>{`${t("CHB_MOBILE_NUMBER")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+        <CardLabel>{`${t("CHB_MOBILE_NUMBER")}`} <span className="check-page-link-button">*</span></CardLabel>
         <MobileNumber
           value={mobileNumber}
           name="mobileNumber"
@@ -140,7 +140,7 @@ const CHBCitizenDetails
             {...{ required: false, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
           />
 
-        <CardLabel>{`${t("CHB_EMAIL_ID")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+        <CardLabel>{`${t("CHB_EMAIL_ID")}`} <span className="check-page-link-button">*</span></CardLabel>
         <TextInput
           t={t}
           type={"email"}
