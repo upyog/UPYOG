@@ -647,7 +647,7 @@ public class TradeLicenseService {
             userService.createUser(tradeLicenseRequest, false);
 
             // create and upload pdf
-            createAndUploadPDF(licenceResponse, tradeLicenseRequest);
+            createAndUploadPDF(tradeLicenseRequest);
             
             // generate demand and bill
             generateDemandAndBill(tradeLicenseRequest);
@@ -813,41 +813,48 @@ public class TradeLicenseService {
 	}
 
 
-	private void createAndUploadPDF(List<TradeLicense> licenceResponse, TradeLicenseRequest tradeLicenseRequest) {
+	private void createAndUploadPDF(TradeLicenseRequest tradeLicenseRequest) {
 		
-		licenceResponse.stream().forEach(license -> {
-			
-			Thread pdfGenerationThread = new Thread(() -> {
-				
-					// for NEW TL
-	    	if((StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
-	    			&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(), TLConstants.APPLICATION_TYPE_NEW)
-	    			&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE))
-	    		|| // for RENEWAL TL
-	    		(StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
-		    			&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(), TLConstants.APPLICATION_TYPE_RENEWAL)
-		    			&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE))) {
-		    		
-		    		// validate trade license
-					validateTradeLicenseCertificateGeneration(license);
-					
-					// create pdf
-					Resource resource = createNoSavePDF(license, tradeLicenseRequest.getRequestInfo());
-	
-					//upload pdf
-					DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, license, tradeLicenseRequest.getRequestInfo());
-					try {
-						DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest, tradeLicenseRequest.getRequestInfo());
-					} catch (IOException e) {
-						throw new CustomException("UPLOAD_ATTACHMENT_FAILED", "Upload Attachment failed." + e.getMessage());
-					}
-		    	}
-	    	
-			});
+		if (!CollectionUtils.isEmpty(tradeLicenseRequest.getLicenses())) {
+			tradeLicenseRequest.getLicenses().stream().forEach(license -> {
 
-			pdfGenerationThread.start();
-			
-		});
+				Thread pdfGenerationThread = new Thread(() -> {
+
+					// for NEW TL
+					if ((StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
+							&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(),
+									TLConstants.APPLICATION_TYPE_NEW)
+							&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE)) || // for RENEWAL TL
+							(StringUtils.equalsIgnoreCase(license.getBusinessService(),
+									TLConstants.businessService_NewTL)
+									&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(),
+											TLConstants.APPLICATION_TYPE_RENEWAL)
+									&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE))) {
+
+						// validate trade license
+						validateTradeLicenseCertificateGeneration(license);
+
+						// create pdf
+						Resource resource = createNoSavePDF(license, tradeLicenseRequest.getRequestInfo());
+
+						//upload pdf
+						DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, license,
+								tradeLicenseRequest.getRequestInfo());
+						try {
+							DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest,
+									tradeLicenseRequest.getRequestInfo());
+						} catch (IOException e) {
+							throw new CustomException("UPLOAD_ATTACHMENT_FAILED",
+									"Upload Attachment failed." + e.getMessage());
+						}
+					}
+
+				});
+
+				pdfGenerationThread.start();
+
+			});
+		}
 		
 		
 	}
