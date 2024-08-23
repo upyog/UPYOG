@@ -76,6 +76,11 @@ public class PetApplicationQueryBuilder {
 			query.append(" ptr.createdtime <= CAST(? AS bigint) ");
 			preparedStmtList.add(criteria.getToDate());
 		}
+		if (!ObjectUtils.isEmpty(criteria.getCreatedBy())) {
+			addClauseIfRequired(query, preparedStmtList);
+			query.append(" ptr.createdby = ? ");
+			preparedStmtList.add(criteria.getCreatedBy());
+		}
 		// order pet registration applications based on their createdtime in latest
 		// first manner
 		query.append(ORDERBY_CREATEDTIME);

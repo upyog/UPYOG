@@ -41,4 +41,7 @@ public class PetApplicationSearchCriteria {
 	@JsonProperty("breedType")
 	private String breedType = null;
 
+	@JsonProperty("createdBy")
+	private String createdBy;
+
 }
