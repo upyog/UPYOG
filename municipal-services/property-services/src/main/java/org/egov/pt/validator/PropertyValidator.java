@@ -930,7 +930,7 @@ public class PropertyValidator {
 		}
 		
 		for(String s : reasonForTransfer.split(",")) {
-			if (!codes.get(PTConstants.MDMS_PT_MUTATIONREASON).contains(s))
+			if (!codes.get(PTConstants.MDMS_PT_MUTATIONREASON).contains(s.strip()))
 				errorMap.put("EG_PT_MT_REASON_ERROR",
 						"The reason for tranfer provided is invalid, please provide a valid mdms data");
 		}
