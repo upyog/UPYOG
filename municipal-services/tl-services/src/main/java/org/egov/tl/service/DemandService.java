@@ -39,7 +39,7 @@ public class DemandService {
     	ApplicationDetail applicationDetail = tradeLicenseService.getApplicationBillUserDetail(license, requestInfo);
 		
     	DemandDetail demandDetail = DemandDetail.builder()
-    								.taxHeadMasterCode("LCF.Trade_License_Fee_TAX")
+    								.taxHeadMasterCode(TLConstants.BILLING_TAX_HEAD_MASTER_CODE)
     								.taxAmount(applicationDetail.getTotalPayableAmount())
     								.collectionAmount(BigDecimal.ZERO)
     								.build();
@@ -50,7 +50,8 @@ public class DemandService {
                 .minimumAmountPayable(applicationDetail.getTotalPayableAmount())
                 .tenantId(TLConstants.STATE_LEVEL_TENANT_ID)
                 .taxPeriodFrom(new Date().getTime())
-                .taxPeriodTo(new Date((Calendar.getInstance().getTimeInMillis() + (long) 365 * 24 * 60 * 60 * 1000)).getTime())
+                .taxPeriodTo(license.getValidTo())
+//                .taxPeriodTo(new Date((Calendar.getInstance().getTimeInMillis() + (long) 365 * 24 * 60 * 60 * 1000)).getTime())
                 .consumerType(license.getBusinessService())
                 .businessService(license.getBusinessService())
                 .build();

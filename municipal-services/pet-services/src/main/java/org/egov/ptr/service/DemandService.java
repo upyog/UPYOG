@@ -41,7 +41,7 @@ public class DemandService {
 
 		Demand demand = Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner)
 				.minimumAmountPayable(BigDecimal.valueOf(500.00)).tenantId(tenantId)
-				.taxPeriodFrom(Long.valueOf("1680307199000")).taxPeriodTo(Long.valueOf("1711929599000"))
+				.taxPeriodFrom(new Date().getTime()).taxPeriodTo(new Date().getTime() + 31536000L)	// fee for 1year
 				.consumerType("ptr").businessService("pet-services").additionalDetails(null).build();
 		List<Demand> demands = new ArrayList<>();
 		demands.add(demand);

@@ -10,6 +10,7 @@ import org.jsoup.parser.Parser;
 
 public class ReportUtils {
 
+	public static Integer PDF_BARCODE_MAX_SIZE = 15000;
 	// Map to store HTML character replacements
 	private static final Map<String, String> HTML_CHARACTER_REPLACEMENT_MAP = new HashMap<>();
 

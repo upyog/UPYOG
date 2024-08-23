@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -78,6 +79,10 @@ public class PetRegistrationApplication {
 	@Valid
 	@JsonProperty("workflow")
 	private Workflow workflow = null;
+	
+	private Boolean isOnlyWorkflowCall = false;
+
+    private JsonNode additionalDetail = null;
 
 	public PetRegistrationApplication addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {

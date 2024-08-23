@@ -1,10 +1,20 @@
 package org.egov.tl.service;
 
-import static org.egov.tl.util.TLConstants.*;
+import static org.egov.tl.util.TLConstants.ACTION_STATUS_APPROVED;
+import static org.egov.tl.util.TLConstants.STATUS_APPLIED;
+import static org.egov.tl.util.TLConstants.STATUS_APPROVED;
+import static org.egov.tl.util.TLConstants.STATUS_INITIATED;
+import static org.egov.tl.util.TLConstants.STATUS_PENDINGFORMODIFICATION;
+import static org.egov.tl.util.TLConstants.STATUS_REJECTED;
+import static org.egov.tl.util.TLConstants.TRADE_LICENSE_MODULE_CODE;
+import static org.egov.tl.util.TLConstants.businessService_BPA;
+import static org.egov.tl.util.TLConstants.businessService_NewTL;
+import static org.egov.tl.util.TLConstants.businessService_TL;
 import static org.egov.tracer.http.HttpUtils.isInterServiceCall;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -568,12 +578,14 @@ public class TradeLicenseService {
         TradeLicense licence = tradeLicenseRequest.getLicenses().get(0);
         TradeLicense.ApplicationTypeEnum applicationType = licence.getApplicationType();
         List<TradeLicense> licenceResponse = null;
-        if(applicationType != null && (applicationType).toString().equals(TLConstants.APPLICATION_TYPE_RENEWAL ) &&
-                licence.getAction().equalsIgnoreCase(TLConstants.TL_ACTION_INITIATE) && (licence.getStatus().equals(TLConstants.STATUS_APPROVED) || licence.getStatus().equals(TLConstants.STATUS_MANUALLYEXPIRED) || licence.getStatus().equals(TLConstants.STATUS_EXPIRED) )){
-            List<TradeLicense> createResponse = create(tradeLicenseRequest, businessServicefromPath);
-            licenceResponse =  createResponse;
-        }
-        else{
+//        if(applicationType != null && (applicationType).toString().equals(TLConstants.APPLICATION_TYPE_RENEWAL ) 
+//        		&& licence.getAction().equalsIgnoreCase(TLConstants.TL_ACTION_INITIATE) 
+//                && (licence.getStatus().equals(TLConstants.STATUS_APPROVED) 
+//                		|| licence.getStatus().equals(TLConstants.STATUS_MANUALLYEXPIRED) 
+//                		|| licence.getStatus().equals(TLConstants.STATUS_EXPIRED) )){
+//            List<TradeLicense> createResponse = create(tradeLicenseRequest, businessServicefromPath);
+//            licenceResponse =  createResponse;
+//        }else{
             if (businessServicefromPath == null)
                 businessServicefromPath = businessService_TL;
             tlValidator.validateBusinessService(tradeLicenseRequest, businessServicefromPath);
@@ -631,25 +643,26 @@ public class TradeLicenseService {
                     
             }
             enrichmentService.postStatusEnrichment(tradeLicenseRequest,endStates,mdmsData);
+            
             userService.createUser(tradeLicenseRequest, false);
+
+            // create and upload pdf
+            createAndUploadPDF(licenceResponse, tradeLicenseRequest);
+            
             // generate demand and bill
             generateDemandAndBill(tradeLicenseRequest);
+            
 //            calculationService.addCalculation(tradeLicenseRequest);
             repository.update(tradeLicenseRequest, idToIsStateUpdatableMap);
             licenceResponse=  tradeLicenseRequest.getLicenses();
-        }
+//        }
         
 //        // send notifications
 //        sendTLNotifications(licenceResponse);
-//        
-//        // create and upload pdf
-//        createAndUploadPDF(licenceResponse, tradeLicenseRequest.getRequestInfo());
         
         return licenceResponse;
         
     }
-
-
 
 
 
@@ -659,19 +672,22 @@ public class TradeLicenseService {
 			if(StringUtils.equalsIgnoreCase(TLConstants.businessService_NewTL, license.getBusinessService())
 					&& StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, license.getAction())) {
 				
-				// search demand
-				List<Demand> exisitingDemands = demandService.searchDemand(TLConstants.STATE_LEVEL_TENANT_ID
-															, Collections.singleton(license.getApplicationNumber())
-															,tradeLicenseRequest.getRequestInfo(),license.getBusinessService());
+				// search demands which are taxPeriodTo > current date
+//				List<Demand> exisitingDemands = demandService.searchDemand(TLConstants.STATE_LEVEL_TENANT_ID
+//															, Collections.singleton(license.getApplicationNumber())
+//															,tradeLicenseRequest.getRequestInfo(),license.getBusinessService());
+//				
+//				List<Demand> exisitingDemandsAfterValidTo = ;
 				List<Demand> savedDemands = new ArrayList<>();
-				if(CollectionUtils.isEmpty(exisitingDemands)) {
+//				if(CollectionUtils.isEmpty(exisitingDemands)) {
 	            	// generate demand
 					savedDemands = demandService.generateDemand(tradeLicenseRequest.getRequestInfo(), license, businessService_TL);
-	            }
+//	            }
 	            
 
 		        if(CollectionUtils.isEmpty(savedDemands)
-		        		&& CollectionUtils.isEmpty(exisitingDemands)) {
+//		        		&& CollectionUtils.isEmpty(exisitingDemands)
+		        		) {
 		            throw new CustomException("INVALID CONSUMERCODE","Bill not generated due to no Demand found for the given consumerCode");
 		        }
 
@@ -705,7 +721,9 @@ public class TradeLicenseService {
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_VERIFY, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_VERIFIER, license.getAction())
-							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_APPROVE, license.getAction()))
+							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_APPROVER, license.getAction())
+							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_APPROVE, license.getAction())
+							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_CLOSE, license.getAction()))
 					&& StringUtils.isNotEmpty(license.getApplicationNumber())) {
 				// search TL by application number
 				TradeLicenseSearchCriteria tradeLicenseSearchCriteria = TradeLicenseSearchCriteria.builder()
@@ -715,12 +733,27 @@ public class TradeLicenseService {
 						.build();
 				List<TradeLicense> licenses = getLicensesWithOwnerInfo(tradeLicenseSearchCriteria,tradeLicenseRequest.getRequestInfo());
 				
-				// calculate passed dates from creation date
-		         enrichPassedDates(licenses);
-		         
 				//enrich input fields
 				licenses.get(0).setAction(action);
 				licenses.get(0).setComment(comment);
+				if(StringUtils.equalsIgnoreCase(TLConstants.STATUS_APPROVED, licenses.get(0).getStatus())
+						&& ( StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR, license.getAction())
+								|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, license.getAction())
+								|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_VERIFIER, license.getAction())
+								|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_CLOSE, license.getAction()))) {
+					// this scenario means application is initiated for renewal
+					if(null == license.getApplicationType()) {
+						throw new RuntimeException("Provide application type.");
+					}
+					licenses.get(0).setApplicationType(license.getApplicationType());
+					if(!StringUtils.equalsIgnoreCase(TLConstants.ACTION_CLOSE, license.getAction())) {
+						licenses.get(0).getAuditDetails().setCreatedTime(new Date().getTime());
+					}
+				}
+				
+				// calculate passed dates from creation date
+		        enrichPassedDates(licenses);
+		         
 				tempTradeLicenseRequest.getLicenses().add(licenses.get(0));
 			}
 			else {
@@ -780,11 +813,40 @@ public class TradeLicenseService {
 	}
 
 
-	private void createAndUploadPDF(List<TradeLicense> licenceResponse, RequestInfo requestInfo) {
+	private void createAndUploadPDF(List<TradeLicense> licenceResponse, TradeLicenseRequest tradeLicenseRequest) {
 		
 		licenceResponse.stream().forEach(license -> {
-			Resource object = createNoSavePDF(license
-					, requestInfo);
+			
+			Thread pdfGenerationThread = new Thread(() -> {
+				
+					// for NEW TL
+	    	if((StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
+	    			&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(), TLConstants.APPLICATION_TYPE_NEW)
+	    			&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE))
+	    		|| // for RENEWAL TL
+	    		(StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
+		    			&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(), TLConstants.APPLICATION_TYPE_RENEWAL)
+		    			&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE))) {
+		    		
+		    		// validate trade license
+					validateTradeLicenseCertificateGeneration(license);
+					
+					// create pdf
+					Resource resource = createNoSavePDF(license, tradeLicenseRequest.getRequestInfo());
+	
+					//upload pdf
+					DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, license, tradeLicenseRequest.getRequestInfo());
+					try {
+						DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest, tradeLicenseRequest.getRequestInfo());
+					} catch (IOException e) {
+						throw new CustomException("UPLOAD_ATTACHMENT_FAILED", "Upload Attachment failed." + e.getMessage());
+					}
+		    	}
+	    	
+			});
+
+			pdfGenerationThread.start();
+			
 		});
 		
 		
@@ -994,17 +1056,37 @@ public class TradeLicenseService {
 		PDFRequest pdfRequest = generatePdfRequestByTradeLicense(tradeLicense, requestInfo);
 		Resource resource = reportService.createNoSavePDF(pdfRequest);
 		
-		
-		//upload pdf
-		DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, tradeLicense, requestInfo);
-		try {
-			DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest, requestInfo);
-		} catch (IOException e) {
-			throw new CustomException("UPLOAD_ATTACHMENT_FAILED", "Upload Attachment failed." + e.getMessage());
-		}
-		
 		return resource;
 	}
+
+
+	private void validateTradeLicenseCertificateGeneration(TradeLicense tradeLicense) {
+		
+		if (StringUtils.isEmpty(tradeLicense.getLicenseNumber())
+			    && StringUtils.isEmpty(tradeLicense.getApplicationNumber())
+			    && StringUtils.isEmpty(tradeLicense.getTradeName())
+			    && StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAddress().getAddressLine1())
+			    && (tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("district") == null 
+			        || StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("district").asText()))
+			    && (tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("wardName") == null 
+			        || StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("wardName").asText()))
+			    && StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAddress().getPincode())
+			    && tradeLicense.getIssuedDate() == null
+			    && tradeLicense.getValidTo() == null
+			    && (tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("tradeCategory") == null 
+			        || StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("tradeCategory").asText()))
+			    && (tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantName") == null 
+			        || StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantName").asText()))
+			    && (tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantMobileNumber") == null 
+			        || StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantMobileNumber").asText()))
+			    && StringUtils.isEmpty(tradeLicense.getBusinessService())) {
+			    
+			    throw new RuntimeException("PDF can't be generated with null values for application number: "+tradeLicense.getApplicationNumber());
+			}
+	}
+
+
+
 
 
 	private DmsRequest generateDmsRequestByTradeLicense(Resource resource, TradeLicense tradeLicense,
@@ -1012,9 +1094,10 @@ public class TradeLicenseService {
 
 //		MultipartFile multipartFile = convertResourceToMultipartFile(resource, "filename");
 
-		DmsRequest dmsRequest = DmsRequest.builder().userId("123").objectId("1222").description("TL certificate")
-				.id("").type("PDF").objectName("TL").comments("Signed Certificate").status(STATUS_APPROVED).file(resource)
-				.build();
+		DmsRequest dmsRequest = DmsRequest.builder().userId(requestInfo.getUserInfo().getId().toString())
+				.objectId(tradeLicense.getId()).description(TLConstants.ALFRESCO_COMMON_CERTIFICATE_DESCRIPTION).id(TLConstants.ALFRESCO_COMMON_CERTIFICATE_ID).type(TLConstants.ALFRESCO_COMMON_CERTIFICATE_TYPE).objectName(businessService_NewTL)
+				.comments(TLConstants.ALFRESCO_TL_CERTIFICATE_COMMENT).status(STATUS_APPROVED).file(resource).servicetype(tradeLicense.getBusinessService())
+				.documentType(TLConstants.ALFRESCO_DOCUMENT_TYPE).documentId(TLConstants.ALFRESCO_COMMON_DOCUMENT_ID).build();
 
 		return dmsRequest;
 	}
@@ -1023,13 +1106,13 @@ public class TradeLicenseService {
 	private PDFRequest generatePdfRequestByTradeLicense(TradeLicense tradeLicense, RequestInfo requestInfo) {
 		
 		Map<String, Object> map = new HashMap<>();
-		Map<String, Object> map2 = generateDataForTradeLicensePdfCreate();
+		Map<String, Object> map2 = generateDataForTradeLicensePdfCreate(tradeLicense, requestInfo);
 		
 		map.put("tl", map2);
 		
 		PDFRequest pdfRequest = PDFRequest.builder()
 				.RequestInfo(requestInfo)
-				.key("TradeLicense")
+				.key("TradeLicense2")
 				.tenantId("hp")
 				.data(map)
 				.build();
@@ -1038,24 +1121,76 @@ public class TradeLicenseService {
 	}
 
 
-	private Map<String, Object> generateDataForTradeLicensePdfCreate() {
+	private Map<String, Object> generateDataForTradeLicensePdfCreate(TradeLicense tradeLicense, RequestInfo requestInfo) {
 
 		Map<String, Object> tlObject = new HashMap<>();
-
-		tlObject.put("applicationno", "PB-TL-2024-07-04-000098");
-		tlObject.put("qrCodeText", "your_qr_code_text_value");
-		tlObject.put("approvalDate", 1730636800000L);
-		tlObject.put("serviceType", "your_service_type_value");
-		tlObject.put("plotNo", "your_plot_no_value");
-		tlObject.put("phaseNo", "your_phase_no_value");
-		tlObject.put("permitNo", "your_permit_no_value");
-		tlObject.put("lesseeName", "your_lessee_name_value");
-		tlObject.put("approverName", "your_approver_name_value");
-		tlObject.put("estate", "your_estate_value");
-		tlObject.put("addressLine1", "your_address_line1_value");
-		tlObject.put("addressLine2", "your_address_line2_value");
-		tlObject.put("pincode", "your_pincode");
+		long longtime = tradeLicense.getIssuedDate();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyy");
+		String date = dateFormat.format(new Date(longtime));
+//		Date date = (Date) dateFormat.parseObject(longtime);
+		
+		
+		// map variables and values
+		tlObject.put("tradeLicenseNo", tradeLicense.getLicenseNumber());//Trade License No
+		tlObject.put("tradeRegistrationNo", tradeLicense.getApplicationNumber()); //Trade Registration No
+		tlObject.put("tradeName", tradeLicense.getTradeName());//Trade Name
+		tlObject.put("tradePremisesAddress", tradeLicense.getTradeLicenseDetail().getAddress().getAddressLine1().concat(", ")
+			.concat(tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("district").asText()).concat(", ")
+			.concat(tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("wardName").asText()).concat(", ")
+			.concat(tradeLicense.getTradeLicenseDetail().getAddress().getPincode()));// Trade Premises Address
+		tlObject.put("licenseIssueDate", tradeLicense.getIssuedDate());// License Issue Date
+		tlObject.put("licenseValidity", tradeLicense.getValidTo());//License Validity
+		tlObject.put("licenseCategory", tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("tradeCategory").asText());// License Category
+		tlObject.put("licenseSubCategory", tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("tradeSubType").asText());// License Sub Category
+		tlObject.put("licenseApplicantName", tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantName").asText());// License Applicant Name
+		tlObject.put("applicantContactNo", tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantMobileNumber").asText());// Applicant Contact No
+		tlObject.put("ulbType", tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("ulbType").asText());// ulbType
+		tlObject.put("ulbName", tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("ulbName").asText());// ulbName
+		tlObject.put("licenseeMobileNumber", !CollectionUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getOwners()) ? tradeLicense.getTradeLicenseDetail().getOwners().get(0).getMobileNumber() : null);// Applicant Address
+		tlObject.put("approverName", null!=requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);// Approver Name
+		tlObject.put("approvalTime", date);// Approval Time
+		tlObject.put("ownerName", !CollectionUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getOwners()) ? tradeLicense.getTradeLicenseDetail().getOwners().get(0).getName() : null);// Owner Name
+		// generate QR code from attributes
+		StringBuilder qr = new StringBuilder();
+		getQRCodeForPdfCreate(tlObject, qr);
+		
+		tlObject.put("qrCodeText", qr.toString());
+		
 		return tlObject;
+	}
+
+
+
+
+
+	private void getQRCodeForPdfCreate(Map<String, Object> tlObject, StringBuilder qr) {
+		tlObject.entrySet().stream()
+		.filter(entry1 -> Arrays.asList("tradeLicenseNo","tradeRegistrationNo","tradeName","tradePremisesAddress","licenseIssueDate","licenseValidity","licenseCategory","licenseApplicantName","applicantContactNo","applicantAddress")
+		.contains(entry1.getKey())).forEach(entry -> {
+			qr.append(entry.getKey());
+			qr.append(": ");
+			qr.append(entry.getValue());
+			qr.append("\r\n");
+		});
+		
+	    replaceInStringBuilder(qr, "tradeLicenseNo", "Trade License No");
+	    replaceInStringBuilder(qr, "tradeRegistrationNo", "Trade Registration No");
+	    replaceInStringBuilder(qr, "tradeName", "Trade Name");
+	    replaceInStringBuilder(qr, "tradePremisesAddress", "Trade Premises Address");
+	    replaceInStringBuilder(qr, "licenseIssueDate", "License Issue Date");
+	    replaceInStringBuilder(qr, "licenseValidity", "License Validity");
+	    replaceInStringBuilder(qr, "licenseCategory", "License Category");
+	    replaceInStringBuilder(qr, "licenseApplicantName", "License Applicant Name");
+	    replaceInStringBuilder(qr, "applicantContactNo", "Applicant Contact No");
+	    replaceInStringBuilder(qr, "applicantAddress", "Applicant Address");
+		
+	}
+	
+	private void replaceInStringBuilder(StringBuilder sb, String target, String replacement) {
+	    int start;
+	    while ((start = sb.indexOf(target)) != -1) {
+	        sb.replace(start, start + target.length(), replacement);
+	    }
 	}
 
 
@@ -1077,11 +1212,11 @@ public class TradeLicenseService {
 					.applicationNumber(applicationNumber)
 					.build();
 			List<TradeLicense> licenses = repository.getLicenses(criteria);
-			TradeLicense license = null != licenses ? licenses.get(0): null;
-			
-			if(null == license) {
+			if(CollectionUtils.isEmpty(licenses)) {
 				throw new CustomException("LICENSE_NOT_FOUND","No License found with provided input.");
 			}
+			
+			TradeLicense license = null != licenses ? licenses.get(0): null;
 			
 			String applicationStatus = license.getStatus();
 			String applicationTenantId = license.getTenantId();
@@ -1107,6 +1242,7 @@ public class TradeLicenseService {
 					.filter(state -> StringUtils.equalsIgnoreCase(state.getApplicationStatus(), applicationStatus)
 										&& !StringUtils.equalsAnyIgnoreCase(state.getApplicationStatus(), TLConstants.STATUS_APPROVED)).collect(Collectors.toList());
 			
+			// filtering actions based on roles
 			List<String> actions = new ArrayList<>();
 			stateList.stream().forEach(state -> {
 				state.getActions().stream()

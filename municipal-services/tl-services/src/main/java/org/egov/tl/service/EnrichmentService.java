@@ -584,6 +584,13 @@ public class EnrichmentService {
                 TradeLicense license = licenses.get(i);
                 Long time = System.currentTimeMillis();
                 license.setIssuedDate(time);
+                
+                if(StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE)
+                		&& StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_APPROVED)) {
+                    license.setValidFrom(new Date().getTime());
+                	license.setValidTo(getValidToDateFromLicensePeriod(license));
+                }
+                
             }
         }else {
             for (int i = 0; i < licenses.size(); i++) {

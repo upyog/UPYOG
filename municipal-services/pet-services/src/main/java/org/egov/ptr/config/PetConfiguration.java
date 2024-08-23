@@ -179,4 +179,7 @@ public class PetConfiguration {
 	@Value("${egov.bill.gen.endpoint}")
 	private String billGenerateEndpoint;
 
+	@Value("${egov.bill.search.endpoint}")
+	private String billSearchEndpoint;
+
 }

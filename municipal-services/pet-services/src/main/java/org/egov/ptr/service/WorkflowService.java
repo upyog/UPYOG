@@ -54,28 +54,32 @@ public class WorkflowService {
 	private ProcessInstance getProcessInstanceForPTR(PetRegistrationApplication application, RequestInfo requestInfo) {
 		Workflow workflow = application.getWorkflow();
 
-		ProcessInstance processInstance = new ProcessInstance();
-		processInstance.setBusinessId(application.getApplicationNumber());
-		processInstance.setAction(workflow.getAction());
-		processInstance.setModuleName("pet-services");
-		processInstance.setTenantId(application.getTenantId());
-		processInstance.setBusinessService("ptr");
-		processInstance.setDocuments(workflow.getDocuments());
-		processInstance.setComment(workflow.getComments());
+		if(null != workflow) {
+			ProcessInstance processInstance = new ProcessInstance();
+			processInstance.setBusinessId(application.getApplicationNumber());
+			processInstance.setAction(workflow.getAction());
+			processInstance.setModuleName("PTR");
+			processInstance.setTenantId(application.getTenantId());
+			processInstance.setBusinessService("PTR");
+			processInstance.setDocuments(workflow.getDocuments());
+			processInstance.setComment(workflow.getComments());
 
-		if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
-			List<User> users = new ArrayList<>();
+			if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
+				List<User> users = new ArrayList<>();
 
-			workflow.getAssignes().forEach(uuid -> {
-				User user = new User();
-				user.setUuid(uuid);
-				users.add(user);
-			});
+				workflow.getAssignes().forEach(uuid -> {
+					User user = new User();
+					user.setUuid(uuid);
+					users.add(user);
+				});
 
-			processInstance.setAssignes(users);
+				processInstance.setAssignes(users);
+			}
+
+			return processInstance;
 		}
-
-		return processInstance;
+		
+		return null;
 
 	}
 
