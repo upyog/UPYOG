@@ -31,7 +31,7 @@ public class UserApiController {
     private ResponseInfoFactory responseInfoFactory;
 
     @PostMapping("/user/_get")
-    @CrossOrigin(origins = "http://localhost:3000")
+
     public ResponseEntity<UserResponse>registrationSearchPost(
             @ApiParam(value = "Details for Users", required = true) 
             @Valid @RequestBody UserRequest userRequest) {
@@ -48,7 +48,7 @@ public class UserApiController {
     }
 
     @PostMapping("/user/_save")
-    @CrossOrigin(origins = "http://localhost:3000")
+
     public ResponseEntity<String> saveUserDetails(@RequestBody InputTest userRequest) {
         try {
             userService.saveUserDetails(userRequest);
