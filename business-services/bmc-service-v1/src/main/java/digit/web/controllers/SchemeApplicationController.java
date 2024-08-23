@@ -91,7 +91,6 @@ public class SchemeApplicationController {
 
 
     @PostMapping("/_save")
-    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<SchemeApplicationResponse> saveSchemeApplication(
         @ApiParam(value = "Details for the new Scheme Application(s) + RequestInfo meta data.", required = true) @Valid @RequestBody UserSchemeApplicationRequest schemeApplicationRequest) throws Exception  {
                 String message =null;
