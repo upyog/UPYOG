@@ -58,6 +58,7 @@ public class TLRepository {
     public List<TradeLicense> getLicenses(TradeLicenseSearchCriteria criteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getTLSearchQuery(criteria, preparedStmtList,false);
+        log.info("Query is" +query);
         List<TradeLicense> licenses =  jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
         sortChildObjectsById(licenses);
         return licenses;
