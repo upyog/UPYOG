@@ -8,6 +8,7 @@ import org.egov.ptr.config.PetConfiguration;
 import org.egov.ptr.models.AuditDetails;
 import org.egov.ptr.models.PetRegistrationApplication;
 import org.egov.ptr.models.PetRegistrationRequest;
+import org.egov.ptr.util.PTRConstants;
 import org.egov.ptr.util.PetUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,7 @@ public class EnrichmentService {
 					.lastModifiedTime(System.currentTimeMillis()).build();
 			application.setAuditDetails(auditDetails); // Enrich audit details
 			application.setId(UUID.randomUUID().toString()); // Enrich UUID
+			application.setStatus(PTRConstants.APPLICATION_STATUS_INITIATED);
 			application.getAddress().setRegistrationId(application.getId()); // Enrich registration Id
 			application.getAddress().setId(UUID.randomUUID().toString()); // Enrich address UUID
 			application.getPetDetails().setPetDetailsId(application.getId());

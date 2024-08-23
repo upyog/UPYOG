@@ -18,7 +18,7 @@ public class PetApplicationSearchCriteria {
 	private String tenantId;
 
 	@JsonProperty("status")
-	private String status;
+	private List<String> status;
 
 	@JsonProperty("ids")
 	private List<String> ids;

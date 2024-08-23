@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.ptr.config.PetConfiguration;
 import org.egov.ptr.models.Demand;
@@ -76,6 +77,8 @@ public class PetRegistrationService {
 	public List<PetRegistrationApplication> searchPtrApplications(RequestInfo requestInfo,
 			PetApplicationSearchCriteria petApplicationSearchCriteria) {
 
+		validateAndEnrichSearchCriteria(requestInfo, petApplicationSearchCriteria);
+		
 		List<PetRegistrationApplication> applications = petRegistrationRepository
 				.getApplications(petApplicationSearchCriteria);
 
@@ -83,6 +86,20 @@ public class PetRegistrationService {
 			return new ArrayList<>();
 
 		return applications;
+	}
+
+	private void validateAndEnrichSearchCriteria(RequestInfo requestInfo,
+			PetApplicationSearchCriteria petApplicationSearchCriteria) {
+//		PetApplicationSearchCriteria tempPetApplicationSearchCriteria = PetApplicationSearchCriteria.builder().build();
+		if(null != requestInfo && null != requestInfo.getUserInfo()
+				&& StringUtils.equalsAnyIgnoreCase(requestInfo.getUserInfo().getType(), "CITIZEN")) {
+			petApplicationSearchCriteria.setCreatedBy(requestInfo.getUserInfo().getUuid());
+//			return PetApplicationSearchCriteria.builder().createdBy(requestInfo.getUserInfo().getUuid()).build();
+//			petApplicationSearchCriteria = PetApplicationSearchCriteria.builder().createdBy(requestInfo.getUserInfo().getUuid()).build();
+		}
+		
+		
+//		return null;
 	}
 
 	public PetRegistrationApplication updatePtrApplication(PetRegistrationRequest petRegistrationRequest) {
