@@ -434,11 +434,17 @@ public class EstimationService {
 			vacantlandamount.add(unbuiltAmount);
 			if(detail.getPropertySubType().equalsIgnoreCase("INDEPENDENTPROPERTY"))
 			{
-				if(detail.getVacantusagecategory().equalsIgnoreCase("COMMERCIAL"))
+				if(detail.getVacantusagecategory()!=null)
 				{
-					taxAmt = taxAmt.add(unbuiltAmount);
-					vacantland=true;
+					if(detail.getVacantusagecategory().equalsIgnoreCase("COMMERCIAL"))
+					{
+						taxAmt = taxAmt.add(unbuiltAmount);
+						vacantland=true;
+					}
 				}
+				else 
+					taxAmt = taxAmt.add(unbuiltAmount);
+				
 			}
 			else
 				taxAmt = taxAmt.add(unbuiltAmount);
