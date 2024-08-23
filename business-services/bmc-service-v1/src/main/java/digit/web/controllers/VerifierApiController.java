@@ -35,7 +35,7 @@ public class VerifierApiController {
     private VerifierService service;
 
     @PostMapping("/verifier/_getapplications")
-    @CrossOrigin(origins = "http://localhost:3000")
+
     public ResponseEntity<VerifierResponse> getApplicationsForVerification(@ApiParam(value = "Details for Schemes", required = true) 
      @Valid @RequestBody VerifierRequest request ) {
       
