@@ -8,15 +8,11 @@
     "example",
     "packages/react-components",
     "packages/modules/core",
-    "packages/modules/asset", 
-    "packages/modules/ew",
-    "packages/modules/chb",
     "packages/modules/common",
     "packages/modules/dss",
-    "packages/modules/ptr"
-
-    
-
+    "packages/modules/asset", 
+    "packages/modules/ew",
+    "packages/modules/chb"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
@@ -70,7 +66,7 @@
     "buildD:tl": "cd packages/modules/tl && yarn build",
     "buildD:hrms": "cd packages/modules/hrms && yarn build",
     "buildD:obps": "cd packages/modules/obps && yarn build",
-    "build:ptr": "cd packages/modules/ptr && yarn build",
+    "buildD:ptr": "cd packages/modules/ptr && yarn build",
     "build:asset": "cd packages/modules/asset && yarn build",
     "build:ew": "cd packages/modules/ew && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
