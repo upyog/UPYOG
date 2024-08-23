@@ -184,6 +184,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
         <input
           type="checkbox"
           checked={bookingSlotDetails.length === data.length}
+          disabled={data.every(row => row.status.props.children !== "Available")} 
           onChange={() => {
             if (bookingSlotDetails.length === data.length) {
               setBookingSlotDetails([]);
@@ -323,7 +324,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
       >
         <CardHeader>{`${t("CHB_SEARCH_COMMUNITY_HALL_HEADER")}`}/{`${t("CHB_PARK")}`}</CardHeader>
         <div>
-          <CardLabel>{`${t("CHB_SELECT_HALL_NAME")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+          <CardLabel>{`${t("CHB_SELECT_HALL_NAME")}`} <span className="check-page-link-button">*</span></CardLabel>
           <div style={{ display: "flex", flexDirection: "row", gap: "10px"}}>
             <Controller
               control={control}
@@ -352,7 +353,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
               )}
             </div>
           </div>
-          <div className="filter-label"><CardLabel>{`${t("CHB_SELECT_DATE")}`} <span style={{ color: 'red' }}>*</span></CardLabel></div>
+          <div className="filter-label"><CardLabel>{`${t("CHB_SELECT_DATE")}`} <span className="check-page-link-button">*</span></CardLabel></div>
           <div className="employee-select-wrap" style={{ width: "50%" }}>
             <div className="select">
               <input
@@ -391,7 +392,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
               </div>
             )}
           </div>
-          <CardLabel>{`${t("CHB_HALL_CODE")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+          <CardLabel>{`${t("CHB_HALL_CODE")}`} <span className="check-page-link-button">*</span></CardLabel>
           <Controller
             control={control}
             name={"hallCode"}

@@ -79,7 +79,7 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
   };
   return (
     <div>
-      <CardSubHeader style={{ color: '#FE7A51', fontSize: '18px'}}>
+      <CardSubHeader style={{ color: '#a82227', fontSize: '18px'}}>
         Total Booking Amount
       </CardSubHeader>
       <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -88,13 +88,13 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
         </div>
         <div 
           onClick={handlePriceBreakupClick} 
-          style={{ cursor: 'pointer', margin: '0 20px', color: '#FE7A51', fontSize: '16px', textDecoration: 'none' }}
+          style={{ cursor: 'pointer', margin: '0 20px', color: '#a82227', fontSize: '16px', textDecoration: 'none' }}
         >
           VIEW ESTIMATE PRICE BREAKUP
         </div>
         <div 
           onClick={handleCancellationPolicyClick} 
-          style={{ cursor: 'pointer', color: '#FE7A51', fontSize: '16px', textDecoration: 'none' }}
+          style={{ cursor: 'pointer', color: '#a82227', fontSize: '16px', textDecoration: 'none' }}
         >
           VIEW CANCELLATION POLICY
         </div>
@@ -102,7 +102,7 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
 
       {showCancellationPolicy && (
         <Modal
-          headerBarMain={<CardSubHeader style={{ color: '#FE7A51', margin: '25px' }}>Cancellation Policy</CardSubHeader>}
+          headerBarMain={<CardSubHeader style={{ color: '#a82227', margin: '25px' }}>Cancellation Policy</CardSubHeader>}
           headerBarEnd={<CloseBtn onClick={handleCancellationPolicyClick} />}
           popupStyles={{ backgroundColor: "#fff", position: 'relative', maxHeight: '90vh', width: '80%', overflowY: 'auto' }}
           children={
@@ -138,7 +138,7 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
       )}
       {showPriceBreakup && (
         <Modal
-          headerBarMain={<CardSubHeader style={{ color: '#FE7A51', margin: '25px' }}>Price Breakup</CardSubHeader>}
+          headerBarMain={<CardSubHeader style={{ color: '#a82227', margin: '25px' }}>Price Breakup</CardSubHeader>}
           headerBarEnd={<CloseBtn onClick={handlePriceBreakupClick} />}
           popupStyles={{ backgroundColor: "#fff", position: 'relative', maxHeight: '90vh', width: '60%', overflowY: 'auto' }}
           children={
