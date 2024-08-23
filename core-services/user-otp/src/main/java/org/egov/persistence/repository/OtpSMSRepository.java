@@ -64,7 +64,6 @@ public class OtpSMSRepository {
             localisedMsgs.put(LOCALIZATION_KEY_REGISTER_SMS, "Dear Citizen, Your OTP to complete your mSeva Registration is %s.");
             localisedMsgs.put(LOCALIZATION_KEY_LOGIN_SMS, "Dear Citizen, Your Login OTP is %s.");
             localisedMsgs.put(LOCALIZATION_KEY_PWD_RESET_SMS, "Dear Citizen, Your OTP for recovering password is %s.");
-	    localisedMsgs.put(LOCALIZATION_KEY_LOGIN_SMS_MARATHI, "प्रिय नागरिकांनो, BMC सिटिझन सर्व्हिसेसमध्ये लॉग इन OTP %s आहे. TOTP %s मिनिटांसाठी वैध आहे. कृपया, कोणाशीही शेअर करू नका.");	
         }
         String message = null;
 

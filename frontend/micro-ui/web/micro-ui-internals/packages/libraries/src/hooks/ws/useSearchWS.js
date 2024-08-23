@@ -17,7 +17,7 @@ const getAddress = (address, t, shortAddress) => {
 
 const getOwnerNames = (propertyData) => {
   const getActiveOwners = propertyData?.owners?.filter((owner) => owner?.active);
-  const getOwnersList = getActiveOwners?.map((activeOwner) => activeOwner?.name)?.join(",");
+  const getOwnersList = getActiveOwners.sort((a,b)=>a.additionalDetails?.ownerSequence- b.additionalDetails?.ownerSequence)?.map((activeOwner) => activeOwner?.name)?.join(",");
   return getOwnersList ? getOwnersList : t("NA");
 };
 

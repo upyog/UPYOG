@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Header, CardSectionHeader, PDFSvg, StatusTable, Row, MultiLink } from "@egovernments/digit-ui-react-components";
+import { Header, CardSectionHeader, PDFSvg, StatusTable, Row, MultiLink, LinkButton } from "@upyog/digit-ui-react-components";
 import ApplicationDetailsTemplate from "../../../../../templates/ApplicationDetails";
 import { downloadAndPrintReciept } from "../../../utils";
 
@@ -14,7 +14,7 @@ const ApplicationDetail = () => {
   const [showOptions, setShowOptions] = useState(false);
   const { isLoading, data: applicationDetails } = Digit.Hooks.obps.useLicenseDetails(state, { applicationNumber: id, tenantId: state }, {});
   const isMobile = window.Digit.Utils.browser.isMobile();
-
+  const [viewTimeline, setViewTimeline]=useState(false);
   const {
     isLoading: updatingApplication,
     isError: updateApplicationError,
@@ -32,13 +32,20 @@ const ApplicationDetail = () => {
   const closeToast = () => {
     setShowToast(null);
   };
-
-  let dowloadOptions = [];
   
+  const handleViewTimeline=()=>{
+    setViewTimeline(true);
+      const timelineSection=document.getElementById('timeline');
+      if(timelineSection){
+        timelineSection.scrollIntoView({behavior: 'smooth'});
+      } 
+  };
+  let dowloadOptions = [];
+  console.log("applicationDetails",applicationDetails)
   if (applicationDetails?.payments?.length > 0) {
     dowloadOptions.push({
       label: t("TL_RECEIPT"),
-      onClick: () => downloadAndPrintReciept(applicationDetails?.payments?.[0]?.paymentDetails?.[0]?.businessService || "BPAREG", applicationDetails?.applicationData?.applicationNumber, applicationDetails?.applicationData?.tenantId),
+      onClick: () => downloadAndPrintReciept(applicationDetails?.payments?.[0]?.paymentDetails?.[0]?.businessService || "BPAREG", applicationDetails?.applicationData?.applicationNumber, applicationDetails?.applicationData?.tenantId,applicationDetails?.payments),
     })
   }
 
@@ -46,6 +53,11 @@ const ApplicationDetail = () => {
     <div className={"employee-main-application-details"}>
         <div  className={"employee-application-details"}>
         <Header>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
+        {workflowDetails?.data?.timeline?.length>0 && (
+        <div style={{color:"#A52A2A"}}>
+        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
+        </div>
+        )}
         {applicationDetails?.payments?.length > 0 && 
         <MultiLink
           className="multilinkWrapper employee-mulitlink-main-div"
@@ -59,6 +71,7 @@ const ApplicationDetail = () => {
       <ApplicationDetailsTemplate
         applicationDetails={applicationDetails}
         isLoading={isLoading}
+        id={"timeline"}
         isDataLoading={isLoading}
         applicationData={applicationDetails?.applicationData}
         mutate={mutate}

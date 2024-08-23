@@ -168,8 +168,8 @@
 										<spring:message code="lbl.select" text="Select"/>
 									</option>
 									<option value="true"><spring:message code="lbl.yes" text="Yes"/></option>
-									<option value="false"><spring:message code="lbl.no" text="No"/>
-									<option value=""><spring:message code="lbl.all" text="All"/>
+									<option value="false"><spring:message code="lbl.no" text="No"/></:option>
+									<option value=""><spring:message code="lbl.all" text="All"/></:option>
 									</select>
 							</div>
 
@@ -182,13 +182,13 @@
 										<spring:message code="lbl.select" text="Select"/>
 									</option>
 									<option value="true"><spring:message code="lbl.yes" text="Yes"/>
-										
+										</:option>
 									
 									<option value="false"><spring:message code="lbl.no" text="No"/>
-										
+										</:option>
 									
 									<option value=""><spring:message code="lbl.all" text="All"/>
-										
+										</:option>
 								
 								</select>
 
@@ -205,13 +205,13 @@
 										<spring:message code="lbl.select" text="Select"/>
 									</option>
 									<option value="true"><spring:message code="lbl.yes" text="Yes"/>
-										
+										</:option>
 									
 									<option value="false"><spring:message code="lbl.no" text="No"/>
-										
+										</:option>
 									
 									<option value=""><spring:message code="lbl.all" text="All"/>
-										
+										</:option>
 								
 								</select>
 							</div>

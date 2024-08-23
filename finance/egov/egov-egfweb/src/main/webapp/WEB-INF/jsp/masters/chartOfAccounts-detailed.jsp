@@ -51,7 +51,7 @@
 <%@ page language="java"%>
 <html>
 <head>
-<title><s:text name="lbl.add.detailed.chart.of.accounts" /></title>
+<title><s:text name="lbl.add.detailed.chart.of.accounts"/></title>
 <script type="text/javascript">
 		function validateAndSubmit(){
 			if(document.getElementById('glCode').value == null || document.getElementById('glCode').value==''){
@@ -106,9 +106,7 @@
 	<s:actionerror />
 	<s:fielderror />
 	<div class="formmainbox">
-		<div class="subheadnew">
-			<s:text name="lbl.add.detailed.chart.of.accounts" />
-		</div>
+		<div class="subheadnew"><s:text name="lbl.add.detailed.chart.of.accounts"/></div>
 		<s:form name="chartOfAccountsForm" action="chartOfAccounts"
 			theme="simple">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0"
@@ -153,8 +151,7 @@
 								name="chartOfAccount.purpose" />:</strong></td>
 					<td class="bluebox"><s:select list="dropdownData.purposeList"
 							listKey="id" listValue="name" name="purposeId" headerKey=""
-							headerValue="%{getText('lbl.choose.options')}"
-							value="model.purpose"></s:select></td>
+							headerValue="%{getText('lbl.choose.options')}" value="model.purpose"></s:select></td>
 					<td width="10%" class="bluebox"><strong><s:text
 								name="chartOfAccount.accountDetailType" />:</strong></td>
 					<td width="22%"><s:select
@@ -182,16 +179,14 @@
 			<br />
 			<br />
 			<div class="buttonbottom">
-				<input type="submit" class="buttonsubmit"
-					value='<s:text name="lbl.save"/>' id="Save" name="Save"
-					onclick="return validateAndSubmit();" /> <input type="button"
-					value="<s:text name="lbl.close"/>"
-					onclick="javascript:window.parent.postMessage('close','*');"
+				<input type="submit" class="buttonsubmit" value='<s:text name="lbl.save"/>' id="Save"
+					name="Save" onclick="return validateAndSubmit();" /> <input
+					type="button" value="<s:text name="lbl.close"/>" onclick="javascript:window.parent.postMessage('close','*');"
 					class="button" />
 			</div>
 			<s:token />
 		</s:form>
-		<script type="text/javascript">		
+		<script type="text/javascript">
 	var allGlcodes = [];
 	<s:iterator value="allChartOfAccounts">
 		allGlcodes.push("<s:property value="glcode"/>-<s:property value="name.replaceAll('\n',' ')"/>")
@@ -212,7 +207,7 @@
 		        oDS: oDS, 
 		        oAC: oAC 
 		    }; 
-		}(); 		
+		}(); 
 </script>
 	</div>
 </body>

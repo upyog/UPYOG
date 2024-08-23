@@ -1199,7 +1199,7 @@ public class CreateVoucher {
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", ve.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
-        } catch (final Exception e) { //--Pankaj Changes
+        } catch (final TaskFailedException e) {
             LOGGER.error(ERR, e);
             throw new ApplicationRuntimeException(e.getMessage());
         }

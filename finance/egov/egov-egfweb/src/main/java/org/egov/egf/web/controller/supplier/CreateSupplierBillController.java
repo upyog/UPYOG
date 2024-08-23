@@ -79,8 +79,6 @@ import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.egf.budget.model.BudgetControlType;
 import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.egf.commons.CommonsUtil;
-import org.egov.egf.masters.repository.PurchaseItemRepository;
-import org.egov.egf.masters.repository.PurchaseItemsBillRegisterRepository;
 import org.egov.egf.masters.services.PurchaseOrderService;
 import org.egov.egf.masters.services.SupplierService;
 import org.egov.egf.supplierbill.service.SupplierBillService;
@@ -94,18 +92,14 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.BillType;
 import org.egov.model.bills.DocumentUpload;
 import org.egov.model.bills.EgBillPayeedetails;
-import org.egov.model.bills.EgBillPurchaseItemsDetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
-import org.egov.model.masters.PurchaseItems;
 import org.egov.model.masters.PurchaseOrder;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.HTTPUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -115,10 +109,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author venki
@@ -191,13 +183,6 @@ public class CreateSupplierBillController extends BaseBillController {
 
 	@Autowired
 	private CommonsUtil commonsUtil;
-	
-	@Autowired
-	private PurchaseItemRepository purchaseItemRepository;
-	
-	@Autowired
-	private PurchaseItemsBillRegisterRepository purchaseItemsBillRegisterRepository;
-	
 
 	public CreateSupplierBillController(final AppConfigValueService appConfigValuesService) {
 		super(appConfigValuesService);
@@ -220,62 +205,20 @@ public class CreateSupplierBillController extends BaseBillController {
 	public String showNewForm(@ModelAttribute("egBillregister") final EgBillregister egBillregister, final Model model,
 			HttpServletRequest request) {
 		setDropDownValues(model);
-		//final PurchaseOrder purchaseOrder = purchaseOrderService.getById(id);
-	//	List<PurchaseItems> purchaseItems1 = purchaseItemRepository.findByPurchaseOrder(name);
 		model.addAttribute("billNumberGenerationAuto", supplierBillService.isBillNumberGenerationAuto());
 		model.addAttribute(STATE_TYPE, egBillregister.getClass().getSimpleName());
-		/*
-		 * model.addAttribute(SUPPLIER_ID, purchaseOrderService
-		 * .getByOrderNumber(egBillregister.getWorkordernumber()).getSupplier().getId())
-		 * ;
-		 */
-		prepareWorkflow(model, egBillregister, new WorkflowContainer());		
+		prepareWorkflow(model, egBillregister, new WorkflowContainer());
 		prepareValidActionListByCutOffDate(model);
 		if (isBillDateDefaultValue) {
 			egBillregister.setBilldate(new Date());
 		}
 		return SUPPLIERBILL_FORM;
 	}
-	
-	
 
-	// TODO      Ajax call for get purchaseItems
-	@GetMapping(value = "/get/purchaseItems")
-	@ResponseBody
-	public List<PurchaseItems> getPurchaseItem(@RequestParam("orderNumber") @SafeHtml final String orderNumber, final Model model){
-		System.out.println("orderNumber : "+orderNumber);
-		List<PurchaseItems> purchaseItems = purchaseItemRepository.findbyOrderNumber(orderNumber);
-		model.addAttribute("purchaseItems", purchaseItems);
-		//model.addAttribute("orderValue", purchaseItems);
-		return purchaseItems;
-	}
-	
-	@PostMapping("/checkQuantity")
-    @ResponseBody
-    public String checkQuantity(@RequestParam String orderNumber, @RequestParam int quantity) {
-		List<PurchaseItems> purchaseItems = purchaseItemRepository.findbyOrderNumber(orderNumber);
-
-		for (PurchaseItems purchaseItem : purchaseItems) {
-	        // Check if the quantity is available for each PurchaseItems object
-	        if (quantity <= purchaseItem.getQuantity()) {
-	            return "available";
-	        }
-	    }
-
-	    // If the loop completes and no matching item is found
-	    return "unavailable";
-    }
-	
-	
 	@PostMapping(value = "/create")
 	public String create(@Valid @ModelAttribute("egBillregister") final EgBillregister egBillregister,
 			final Model model, final BindingResult resultBinder, final HttpServletRequest request,
 			@RequestParam @SafeHtml final String workFlowAction) throws IOException, ParseException {
-		
-		
-		//System.out.println(egBillregister.getPurchaseItems().size());
-			
-		
 		if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workFlowAction) && !commonsUtil
 				.isValidApprover(egBillregister, Long.valueOf(request.getParameter(APPROVAL_POSITION)))) {
 			populateDataOnErrors(egBillregister, model, request);
@@ -588,11 +531,4 @@ public class CreateSupplierBillController extends BaseBillController {
 		egBillregister.setDocumentDetail(documentDetailsList);
 		return egBillregister;
 	}
-	
-	/*
-	 * private populatePurchaseItems(final PurchaseOrder purchaseOrder) {
-	 * 
-	 * 
-	 * return purchaseOrder; }
-	 */
 }

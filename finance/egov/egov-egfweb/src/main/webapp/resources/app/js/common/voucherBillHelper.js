@@ -61,9 +61,8 @@ $(document).ready(function(){
 		$("#fundSource").val($fundSourceId).prop('selected','selected');
 	loadScheme($('#fund').val());
 	loadSubScheme($schemeId);
-	var functionName = new Bloodhound({		
+	var functionName = new Bloodhound({
 		datumTokenizer : function(datum) {
-			
 			return Bloodhound.tokenizers.whitespace(datum.value);
 		},
 		queryTokenizer : Bloodhound.tokenizers.whitespace,
@@ -81,7 +80,7 @@ $(document).ready(function(){
 			}
 		}
 	});
-	
+
 	functionName.initialize();
 $('#function').typeahead({
 		hint : true,
@@ -184,4 +183,3 @@ $('#scheme').change(function () {
 	$('#subScheme').append($('<option>').text('Select from below').attr('value', ''));
 	loadSubScheme($('#scheme').val());
 });
-    

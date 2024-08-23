@@ -1,4 +1,4 @@
-import { CardSectionHeader, Loader, RadioButtons, Row, StatusTable, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardSectionHeader, Loader, RadioButtons, Row, StatusTable, TextInput } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { BillDetailsKeyNoteConfig } from "./billDetailsConfig";
@@ -208,7 +208,8 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
   const getTotal = () => (bill?.totalAmount ? bill?.totalAmount : 0);
   const getTotalFSM = () => (application?.totalAmount ? application?.totalAmount : 0);
   const getAdvanceAmount = () => (applicationData?.advanceAmount ? applicationData?.advanceAmount : 0);
-  const dueAmountTobePaid = () => ( bill?.totalAmount ? bill?.totalAmount - applicationData?.advanceAmount:0);
+  //const dueAmountTobePaid = () => ( bill?.totalAmount ? bill?.totalAmount - applicationData?.advanceAmount:0);
+  const dueAmountTobePaid = () => ( application?.totalAmount ? application?.totalAmount - applicationData?.advanceAmount:0);
   const getAmountPerTrip = () => (application?.additionalDetails?.tripAmount ? application?.additionalDetails?.tripAmount : 0);
 
   const arrears =
@@ -407,7 +408,7 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
               />
             ))}
 
-          {applicationData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT" ? (
+          {(applicationData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT" || applicationData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT_CITIZEN") ? (
             <Row
               label={t("FSM_DUE_AMOUNT_TO_BE_PAID")}
               textStyle={{ fontWeight: "bold", textAlign: "left" }}

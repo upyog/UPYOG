@@ -10,7 +10,7 @@ import {
   MobileNumber,
   CheckBox,
   CitizenConsentForm
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { useParams, useHistory, useLocation } from "react-router-dom";
@@ -170,7 +170,7 @@ const SelectPaymentType = (props) => {
       <BackButton>{t("CS_COMMON_BACK")}</BackButton>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/*  <Header>{t("PAYMENT_CS_HEADER")}</Header> */}
-        <Header>{t("PT_PAYERS_DETAILS_HEADER")}</Header>
+        <Header>{t("PAYERS_DETAILS_HEADER")}</Header>
         <Card>
           <span className="card-label-error">{t(mobileNumberError)}</span>
           <RadioButtons

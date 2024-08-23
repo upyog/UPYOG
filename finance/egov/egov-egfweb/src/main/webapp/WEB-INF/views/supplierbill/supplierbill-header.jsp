@@ -51,10 +51,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<script>
-document.getElementById("billamount").readOnly = true;
-</script>
-
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		
@@ -108,9 +104,9 @@ document.getElementById("billamount").readOnly = true;
 			<span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
-			<form:select path="workordernumber" data-first-option="false" id="purchaseOrder" class="form-control" required="required" onchange="getPurchaseItemsByOrderId()">
+			<form:select path="workordernumber" data-first-option="false" id="purchaseOrder" class="form-control" required="required"  >
 				<form:option value=""><spring:message code="lbl.select" text="Select"/></form:option>
-				<form:options items="${purchaseOrders}" itemValue="name" itemLabel="orderNumber"/>
+				<form:options items="${purchaseOrders}" itemValue="name" itemLabel="orderNumber" />
 			</form:select>
 			<form:errors path="workordernumber" cssClass="add-margin error-msg" />
 		</div>
@@ -124,7 +120,6 @@ document.getElementById("billamount").readOnly = true;
 		<div class="col-sm-3 add-margin">
 			<form:hidden class="form-control patternvalidation" path="egBillregistermis.fund" id="fundId"  />
 			<form:input class="form-control patternvalidation" path="egBillregistermis.fund.name" id="fundName"  value="${fundName}" disabled="true"/>
-			
 		</div>
 		
 		<label class="col-sm-2 control-label text-right">
@@ -203,8 +198,7 @@ document.getElementById("billamount").readOnly = true;
 			<spring:message code="lbl.party.bill.amount" text="Party Bill Amount"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
-		<form:hidden path="" name="netPayableAmount" id="netPayableAmount" value="${netPayableAmount}"/>
-			<form:input  path="billamount" id="billamount" class="form-control patternvalidation" data-pattern="decimalvalue" required="required" onkeydown="return false;"/>
+			<form:input  path="billamount" id="billamount" class="form-control patternvalidation" data-pattern="decimalvalue" required="required"/>
 			<form:errors path="billamount" cssClass="add-margin error-msg" />		
 		</div>
 		

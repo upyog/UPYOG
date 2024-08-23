@@ -84,13 +84,11 @@
 	    	bootbox.alert("<s:text name='msg.please.select.approver'/> ");
 			return false;
 	    }
-	    
 	    if((name=="Create And Approve")) {
 
 		    if(!validateCutOff())
 	    		return false;
 	    }
-	    
 	    </s:if>
 	    return  onSubmit();
 	}

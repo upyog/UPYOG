@@ -62,8 +62,7 @@
 			      <div class="text-center">
 			        <button type='submit' class='btn btn-primary' id="buttonSubmit"> <spring:message code='lbl.create' text="Create"/> </button>
 			        <input type="button" class="btn btn-default" value='<spring:message code='lbl.clear' text="Clear"/>' id="button" name="clear" onclick="this.form.reset();">&nbsp;
-			        <!-- <a href='javascript:void(0)' class='btn btn-default' onclick="javascript:window.parent.postMessage('close','*');"><spring:message code='lbl.close' text="Close"/></a>-->
-			        <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message code='lbl.close' text="Close"/></a>
+			        <a href='javascript:void(0)' class='btn btn-default' onclick="javascript:window.parent.postMessage('close','*');"><spring:message code='lbl.close' text="Close"/></a>
 			      </div>
 			    </div>
 		    </div>
