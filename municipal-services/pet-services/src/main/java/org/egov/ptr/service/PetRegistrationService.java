@@ -2,6 +2,7 @@ package org.egov.ptr.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -158,7 +159,9 @@ public class PetRegistrationService {
 		
 		if(BooleanUtils.isTrue(petRegistrationRequest.getPetRegistrationApplications().get(0).getIsOnlyWorkflowCall())
 				&& null != petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow()) {
-			petRegistrationRequest.setPetRegistrationApplications(Collections.singletonList(existingApplication));	
+			String status = getStatusOrAction(petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction(), false);
+			petRegistrationRequest.setPetRegistrationApplications(Collections.singletonList(existingApplication));
+			petRegistrationRequest.getPetRegistrationApplications().get(0).setStatus(status);
 		}
 		
 //		petRegistrationRequest.setPetRegistrationApplications(Collections.singletonList(existingApplication));
@@ -166,7 +169,7 @@ public class PetRegistrationService {
 		enrichmentService.enrichPetApplicationUponUpdate(petRegistrationRequest);
 
 		if (petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction()
-				.equals("APPROVE")) {
+				.equals(PTRConstants.WORKFLOW_ACTION_APPROVE)) {
 			
 			// create demands
 			List<Demand> savedDemands = demandService.createDemand(petRegistrationRequest);
@@ -187,6 +190,30 @@ public class PetRegistrationService {
 		producer.push(config.getUpdatePtrTopic(), petRegistrationRequest);
 
 		return petRegistrationRequest.getPetRegistrationApplications().get(0);
+	}
+	
+
+	public String getStatusOrAction(String action, Boolean fetchValue) {
+		
+		Map<String, String> map = new HashMap<>();
+		
+		map.put(PTRConstants.WORKFLOW_ACTION_INITIATE, PTRConstants.APPLICATION_STATUS_INITIATED);
+        map.put(PTRConstants.WORKFLOW_ACTION_FORWARD_TO_VERIFIER, PTRConstants.APPLICATION_STATUS_PENDINGFORVERIFICATION);
+        map.put(PTRConstants.WORKFLOW_ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, PTRConstants.APPLICATION_STATUS_PENDINGFORPAYMENT);
+        map.put(PTRConstants.WORKFLOW_ACTION_RETURN_TO_INITIATOR, PTRConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION);
+        map.put(PTRConstants.WORKFLOW_ACTION_FORWARD_TO_APPROVER, PTRConstants.APPLICATION_STATUS_PENDINGFORAPPROVAL);
+        map.put(PTRConstants.WORKFLOW_ACTION_APPROVED, PTRConstants.APPLICATION_STATUS_APPROVED);
+		
+		if(!fetchValue){
+			// return key
+			for (Map.Entry<String, String> entry : map.entrySet()) {
+		        if (entry.getValue().equals(action)) {
+		            return entry.getKey();
+		        }
+		    }
+		}
+		// return value
+		return map.get(action);
 	}
 
 	public Object enrichResponseDetail(List<PetRegistrationApplication> applications) {
