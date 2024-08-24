@@ -20,14 +20,14 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class GarbageBillService {
 
-    @Autowired
-    private GarbageBillRepository repository;
+	@Autowired
+	private GarbageBillRepository repository;
 
-    public List<GarbageBill> createGarbageBills(GarbageBillRequest garbageBillRequest) {
-    	
-    	List<GarbageBill> garbageBills = new ArrayList<>();
-    	
-    	if (!CollectionUtils.isEmpty(garbageBillRequest.getGarbageBills())) {
+	public List<GarbageBill> createGarbageBills(GarbageBillRequest garbageBillRequest) {
+
+		List<GarbageBill> garbageBills = new ArrayList<>();
+
+		if (!CollectionUtils.isEmpty(garbageBillRequest.getGarbageBills())) {
 			garbageBillRequest.getGarbageBills().forEach(garbageBill -> {
 
 				// validate create grbg bill
@@ -41,34 +41,28 @@ public class GarbageBillService {
 
 			});
 		}
-        
-        return garbageBills;
-    }
 
-    private void enrichCreateGarbageBill(GarbageBill garbageBill, RequestInfo requestInfo) {
-    	AuditDetails auditDetails = null;
+		return garbageBills;
+	}
 
-		if (null != requestInfo
-				&& null != requestInfo.getUserInfo()) {
-			auditDetails = AuditDetails.builder()
-					.createdBy(requestInfo.getUserInfo().getUuid())
-					.createdDate(new Date().getTime())
-					.lastModifiedBy(requestInfo.getUserInfo().getUuid())
+	private void enrichCreateGarbageBill(GarbageBill garbageBill, RequestInfo requestInfo) {
+		AuditDetails auditDetails = null;
+
+		if (null != requestInfo && null != requestInfo.getUserInfo()) {
+			auditDetails = AuditDetails.builder().createdBy(requestInfo.getUserInfo().getUuid())
+					.createdDate(new Date().getTime()).lastModifiedBy(requestInfo.getUserInfo().getUuid())
 					.lastModifiedDate(new Date().getTime()).build();
 			garbageBill.setAuditDetails(auditDetails);
 		}
 
 		// generate garbage_id
-		garbageBill.setBillRefNo("GRBG_BILL_REF_"+Long.toString(System.currentTimeMillis()));
+		garbageBill.setBillRefNo("GRBG_BILL_REF_" + Long.toString(System.currentTimeMillis()));
 		garbageBill.setPaymentStatus("PENDING");
 	}
 
 	private void validateCreateGarbageBill(GarbageBill garbageBill) {
-    	if (null == garbageBill
-				|| null == garbageBill.getGarbageId()
-				|| null == garbageBill.getBillAmount()
-				|| null == garbageBill.getTotalBillAmount()
-				|| null == garbageBill.getBillDueDate()
+		if (null == garbageBill || null == garbageBill.getGarbageId() || null == garbageBill.getBillAmount()
+				|| null == garbageBill.getTotalBillAmount() || null == garbageBill.getBillDueDate()
 				|| null == garbageBill.getBillPeriod()) {
 			throw new RuntimeException("Provide garbage bill details.");
 		}
@@ -77,10 +71,12 @@ public class GarbageBillService {
 	public List<GarbageBill> updateGarbageBills(GarbageBillRequest garbageBillRequest) {
 
 		List<GarbageBill> garbageBillsResponse = new ArrayList<>();
-		GarbageBillSearchCriteria garbageBillSearchCriteria = createSearchCriteriaByGarbageBills(garbageBillRequest.getGarbageBills());
-		Map<Long, GarbageBill> existingGarbageBillsMap = searchGarbageBillMap(garbageBillSearchCriteria, garbageBillRequest.getRequestInfo());
-		
-		if(!CollectionUtils.isEmpty(garbageBillRequest.getGarbageBills())) {
+		GarbageBillSearchCriteria garbageBillSearchCriteria = createSearchCriteriaByGarbageBills(
+				garbageBillRequest.getGarbageBills());
+		Map<Long, GarbageBill> existingGarbageBillsMap = searchGarbageBillMap(garbageBillSearchCriteria,
+				garbageBillRequest.getRequestInfo());
+
+		if (!CollectionUtils.isEmpty(garbageBillRequest.getGarbageBills())) {
 			garbageBillRequest.getGarbageBills().forEach(newGarbageBill -> {
 				// search existing grbg bill
 				GarbageBill existingGarbageBill = existingGarbageBillsMap.get(newGarbageBill.getId());
@@ -98,18 +94,16 @@ public class GarbageBillService {
 				garbageBillsResponse.add(newGarbageBill);
 			});
 		}
-		
+
 		return garbageBillsResponse;
 	}
 
-    private void enrichUpdateGarbageBill(GarbageBill newGarbageBill, GarbageBill existingGarbageBill,
+	private void enrichUpdateGarbageBill(GarbageBill newGarbageBill, GarbageBill existingGarbageBill,
 			RequestInfo requestInfo) {
 
 		AuditDetails auditDetails = null;
-		if (null != requestInfo
-				&& null != requestInfo.getUserInfo()) {
-			auditDetails = AuditDetails.builder()
-					.lastModifiedBy(requestInfo.getUserInfo().getUuid())
+		if (null != requestInfo && null != requestInfo.getUserInfo()) {
+			auditDetails = AuditDetails.builder().lastModifiedBy(requestInfo.getUserInfo().getUuid())
 					.lastModifiedDate(new Date().getTime()).build();
 		}
 		if (null != existingGarbageBill.getAuditDetails()) {
@@ -132,37 +126,34 @@ public class GarbageBillService {
 
 	private Map<Long, GarbageBill> searchGarbageBillMap(GarbageBillSearchCriteria garbageBillSearchCriteria,
 			RequestInfo requestInfo) {
-		
-    	SearchGarbageBillRequest searchGarbageBillRequest = SearchGarbageBillRequest.builder()
-				.garbageBillSearchCriteria(garbageBillSearchCriteria)
-				.requestInfo(requestInfo)
-				.build();
-		
+
+		SearchGarbageBillRequest searchGarbageBillRequest = SearchGarbageBillRequest.builder()
+				.garbageBillSearchCriteria(garbageBillSearchCriteria).requestInfo(requestInfo).build();
+
 		List<GarbageBill> garbageBills = searchGarbageBills(searchGarbageBillRequest);
-		
+
 		Map<Long, GarbageBill> existingGarbageBillMap = new HashMap<>();
 		garbageBills.stream().forEach(bill -> {
 			existingGarbageBillMap.put(bill.getId(), bill);
 		});
-		
+
 		return existingGarbageBillMap;
 	}
 
 	private GarbageBillSearchCriteria createSearchCriteriaByGarbageBills(List<GarbageBill> garbageBills) {
-		
+
 		GarbageBillSearchCriteria searchCriteriaGarbageBill = GarbageBillSearchCriteria.builder().build();
 		List<Long> ids = new ArrayList<>();
 //		List<Long> garbageIds = new ArrayList<>();
-		
+
 		garbageBills.stream().forEach(grbgBill -> {
-			if(null != grbgBill.getId() && 0 <= grbgBill.getId()) {
+			if (null != grbgBill.getId() && 0 <= grbgBill.getId()) {
 				ids.add(grbgBill.getId());
 			}
 //			if(null != grbgAcc.getGarbageId() && 0 <= grbgAcc.getGarbageId()) {
 //				garbageIds.add(grbgAcc.getGarbageId());
 //			}
 		});
-		
 
 		if (!CollectionUtils.isEmpty(ids)) {
 			searchCriteriaGarbageBill.setIds(ids);
@@ -170,32 +161,32 @@ public class GarbageBillService {
 //		if (!CollectionUtils.isEmpty(garbageIds)) {
 //			searchCriteriaGarbageAccount.setGarbageId(garbageIds);
 //		}
-		
-		
+
 		return searchCriteriaGarbageBill;
 	}
 
 	public List<GarbageBill> searchGarbageBills(SearchGarbageBillRequest searchGarbageBillRequest) {
 
-		//validate search criteria
+		// validate search criteria
 		validateGarbageBillSearchCriteria(searchGarbageBillRequest.getGarbageBillSearchCriteria());
-		
-		//search garbage account
-		List<GarbageBill> garbageBills = repository.searchGarbageBills(searchGarbageBillRequest.getGarbageBillSearchCriteria());
-		
+
+		// search garbage account
+		List<GarbageBill> garbageBills = repository
+				.searchGarbageBills(searchGarbageBillRequest.getGarbageBillSearchCriteria());
+
 		return garbageBills;
-    }
+	}
 
 	private void validateGarbageBillSearchCriteria(GarbageBillSearchCriteria garbageBillSearchCriteria) {
 
-		if(CollectionUtils.isEmpty(garbageBillSearchCriteria.getIds()) &&
-		        CollectionUtils.isEmpty(garbageBillSearchCriteria.getBillRefNos()) &&
-		        CollectionUtils.isEmpty(garbageBillSearchCriteria.getGarbageIds()) &&
-		        CollectionUtils.isEmpty(garbageBillSearchCriteria.getPaymentIds()) &&
-		        CollectionUtils.isEmpty(garbageBillSearchCriteria.getPaymentStatus())) {
+		if (CollectionUtils.isEmpty(garbageBillSearchCriteria.getIds())
+				&& CollectionUtils.isEmpty(garbageBillSearchCriteria.getBillRefNos())
+				&& CollectionUtils.isEmpty(garbageBillSearchCriteria.getGarbageIds())
+				&& CollectionUtils.isEmpty(garbageBillSearchCriteria.getPaymentIds())
+				&& CollectionUtils.isEmpty(garbageBillSearchCriteria.getPaymentStatus())) {
 			throw new RuntimeException("Provide the parameters to search garbage bills.");
 		}
-		
+
 	}
 
 }
