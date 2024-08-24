@@ -239,4 +239,12 @@ public class PTRConstants {
 	public static final String APPLICATION_STATUS_PENDINGFORAPPROVAL = "PENDINGFORAPPROVAL";
 	public static final String APPLICATION_STATUS_APPROVED = "APPROVED";
 
+	
+	public static final String USER_TYPE_CITIZEN = "CITIZEN";
+	
+	public static final String USER_TYPE_EMPLOYEE = "EMPLOYEE";
+	
+	public static final String USER_ROLE_PTR_VERIFIER = "PTR_VERIFIER";
+	
+	public static final String USER_ROLE_PTR_APPROVER = "PTR_APPROVER";
 }

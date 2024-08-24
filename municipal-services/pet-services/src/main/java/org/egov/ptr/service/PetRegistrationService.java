@@ -2,11 +2,15 @@ package org.egov.ptr.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.ptr.config.PetConfiguration;
 import org.egov.ptr.models.Demand;
 import org.egov.ptr.models.PetApplicationSearchCriteria;
@@ -16,6 +20,7 @@ import org.egov.ptr.models.collection.BillResponse;
 import org.egov.ptr.models.collection.GenerateBillCriteria;
 import org.egov.ptr.producer.Producer;
 import org.egov.ptr.repository.PetRegistrationRepository;
+import org.egov.ptr.util.PTRConstants;
 import org.egov.ptr.validator.PetApplicationValidator;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,17 +95,58 @@ public class PetRegistrationService {
 
 	private void validateAndEnrichSearchCriteria(RequestInfo requestInfo,
 			PetApplicationSearchCriteria petApplicationSearchCriteria) {
-//		PetApplicationSearchCriteria tempPetApplicationSearchCriteria = PetApplicationSearchCriteria.builder().build();
+		
+		// search criteria for CITIZEN
 		if(null != requestInfo && null != requestInfo.getUserInfo()
-				&& StringUtils.equalsAnyIgnoreCase(requestInfo.getUserInfo().getType(), "CITIZEN")) {
+				&& StringUtils.equalsAnyIgnoreCase(requestInfo.getUserInfo().getType(), PTRConstants.USER_TYPE_CITIZEN)) {
 			petApplicationSearchCriteria.setCreatedBy(requestInfo.getUserInfo().getUuid());
-//			return PetApplicationSearchCriteria.builder().createdBy(requestInfo.getUserInfo().getUuid()).build();
-//			petApplicationSearchCriteria = PetApplicationSearchCriteria.builder().createdBy(requestInfo.getUserInfo().getUuid()).build();
+		}
+		
+		// search criteria for EMPLOYEE
+		if(null != requestInfo && null != requestInfo.getUserInfo()
+				&& StringUtils.equalsAnyIgnoreCase(requestInfo.getUserInfo().getType(), PTRConstants.USER_TYPE_EMPLOYEE)) {
+			if(petApplicationSearchCriteria == null || StringUtils.isEmpty(petApplicationSearchCriteria.getTenantId())) {
+				throw new CustomException("TENANTID_MANDATORY", "TenantId is mandatory for employee to search registrations.");
+			}
+			
+			List<String> listOfStatus = getAccountStatusListByRoles(petApplicationSearchCriteria.getTenantId(), requestInfo.getUserInfo().getRoles());
+			if(CollectionUtils.isEmpty(listOfStatus)) {
+				throw new CustomException("SEARCH_ACCOUNT_BY_ROLES","Search can't be performed by this Employee due to lack of roles.");
+			}
+			petApplicationSearchCriteria.setStatus(listOfStatus);
 		}
 		
 		
-//		return null;
+		
 	}
+	
+	private List<String> getAccountStatusListByRoles(String tenantId, List<Role> roles) {
+		
+		List<String> rolesWithinTenant = getRolesByTenantId(tenantId, roles);	
+		Set<String> statusWithRoles = new HashSet();
+		
+		rolesWithinTenant.stream().forEach(role -> {
+			
+			if(StringUtils.equalsIgnoreCase(role, PTRConstants.USER_ROLE_PTR_VERIFIER)) {
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORVERIFICATION);
+			}else if(StringUtils.equalsIgnoreCase(role, PTRConstants.USER_ROLE_PTR_APPROVER)) {
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORAPPROVAL);
+			}
+			
+		});
+		
+		return new ArrayList<>(statusWithRoles);
+	}
+	
+
+	private List<String> getRolesByTenantId(String tenantId, List<Role> roles) {
+
+		List<String> roleCodes = roles.stream()
+				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(role -> role.getCode())
+				.collect(Collectors.toList());
+		return roleCodes;
+	}
+
 
 	public PetRegistrationApplication updatePtrApplication(PetRegistrationRequest petRegistrationRequest) {
 		PetRegistrationApplication existingApplication = validator
