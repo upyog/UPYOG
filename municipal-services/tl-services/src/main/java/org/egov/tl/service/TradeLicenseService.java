@@ -1388,14 +1388,16 @@ public class TradeLicenseService {
 		totalFee = BigDecimal.valueOf(scaleOfBusinessToLicensePeriodPrice + (tradeCategoryPrice * zonePrice));
 		applicationDetail.setTotalPayableAmount(totalFee);
 		
+//		Scale Of Business( <b>Small</b>) and License Period ( <b>1 Year </b> ) : <b>15.0</b> <br /> + [Zone (<b>zone1</b>): <b>50.0<b><br /> * Category (<b>Agriculture</b>): <b>0.0</b> ]
+		
 		// formula for NewTL
-		StringBuilder feeCalculationFormula = new StringBuilder("Scale Of Business( ").append(scaleOfBusiness);
-		feeCalculationFormula.append(" ) and License Period ( ").append(periodOfLicense.toString());
-		feeCalculationFormula.append(" Year ) : ").append(scaleOfBusinessToLicensePeriodPrice);
-		feeCalculationFormula.append("  +  [Zone (").append(zone);
-		feeCalculationFormula.append("): ").append(zonePrice);
-		feeCalculationFormula.append(" * Category (").append(tradeCategory);
-		feeCalculationFormula.append("): ").append(tradeCategoryPrice).append(" ]");
+		StringBuilder feeCalculationFormula = new StringBuilder("Scale Of Business( <b>").append(scaleOfBusiness);
+		feeCalculationFormula.append("</b> ) and License Period ( <b>").append(periodOfLicense.toString());
+		feeCalculationFormula.append("</b> Year ) : <b>").append(scaleOfBusinessToLicensePeriodPrice);
+		feeCalculationFormula.append("</b>  +  [Zone ( <b>").append(zone);
+		feeCalculationFormula.append("</b>): <b>").append(zonePrice);
+		feeCalculationFormula.append("</b> * Category ( <b>").append(tradeCategory);
+		feeCalculationFormula.append("</b>): <b>").append(tradeCategoryPrice).append("</b> ]");
 		
 		applicationDetail.setFeeCalculationFormula(feeCalculationFormula.toString());
 		

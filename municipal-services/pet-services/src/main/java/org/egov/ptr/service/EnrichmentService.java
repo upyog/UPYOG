@@ -76,7 +76,7 @@ public class EnrichmentService {
 		
 		// enrich documents
 		if(null != petRegistrationRequest.getPetRegistrationApplications()
-				&& CollectionUtils.isEmpty(petRegistrationRequest.getPetRegistrationApplications().get(0).getDocuments())) {
+				&& !CollectionUtils.isEmpty(petRegistrationRequest.getPetRegistrationApplications().get(0).getDocuments())) {
 			petRegistrationRequest.getPetRegistrationApplications().get(0).getDocuments().stream().forEach(document -> {
 				Optional.ofNullable(document.getAuditDetails()).ifPresent(auditDetails -> {
 				    Optional.ofNullable(petRegistrationRequest.getRequestInfo())
