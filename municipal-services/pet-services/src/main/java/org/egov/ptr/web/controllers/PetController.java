@@ -58,7 +58,7 @@ public class PetController {
 		ResponseInfo responseInfo = responseInfoFactory
 				.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
 		PetRegistrationResponse response = PetRegistrationResponse.builder().petRegistrationApplications(applications)
-				.responseInfo(responseInfo).build();
+				.responseDetail(petRegistrationService.enrichResponseDetail(applications)).responseInfo(responseInfo).build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 

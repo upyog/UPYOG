@@ -2,8 +2,10 @@ package org.egov.ptr.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -185,6 +187,26 @@ public class PetRegistrationService {
 		producer.push(config.getUpdatePtrTopic(), petRegistrationRequest);
 
 		return petRegistrationRequest.getPetRegistrationApplications().get(0);
+	}
+
+	public Object enrichResponseDetail(List<PetRegistrationApplication> applications) {
+		
+		Map<String, Object> responseDetail = new HashMap<>();
+
+		responseDetail.put("applicationInitiated", applications.stream().filter(application -> StringUtils
+				.equalsIgnoreCase(application.getStatus(), PTRConstants.APPLICATION_STATUS_INITIATED)).count());
+		responseDetail.put("applicationApplied", applications.stream().filter(application -> StringUtils
+				.equalsAnyIgnoreCase(application.getStatus(), PTRConstants.APPLICATION_STATUS_PENDINGFORVERIFICATION
+															, PTRConstants.APPLICATION_STATUS_PENDINGFORAPPROVAL
+															, PTRConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION)).count());
+		responseDetail.put("applicationPendingForPayment", applications.stream().filter(application -> StringUtils
+				.equalsIgnoreCase(application.getStatus(), PTRConstants.APPLICATION_STATUS_PENDINGFORPAYMENT)).count());
+		responseDetail.put("applicationRejected", applications.stream().filter(application -> StringUtils
+				.equalsIgnoreCase(application.getStatus(), PTRConstants.APPLICATION_STATUS_REJECTED)).count());
+		responseDetail.put("applicationApproved", applications.stream().filter(application -> StringUtils
+				.equalsIgnoreCase(application.getStatus(), PTRConstants.APPLICATION_STATUS_APPROVED)).count());
+
+		return responseDetail;
 	}
 
 }

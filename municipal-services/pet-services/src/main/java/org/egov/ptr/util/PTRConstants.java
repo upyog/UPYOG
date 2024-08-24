@@ -238,6 +238,7 @@ public class PTRConstants {
 	public static final String APPLICATION_STATUS_PENDINGFORVERIFICATION = "PENDINGFORVERIFICATION";
 	public static final String APPLICATION_STATUS_PENDINGFORAPPROVAL = "PENDINGFORAPPROVAL";
 	public static final String APPLICATION_STATUS_APPROVED = "APPROVED";
+	public static final String APPLICATION_STATUS_REJECTED = "REJECTED";
 
 	
 	public static final String USER_TYPE_CITIZEN = "CITIZEN";
