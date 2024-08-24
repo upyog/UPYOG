@@ -41,7 +41,7 @@ import org.egov.garbageservice.repository.GrbgCollectionUnitRepository;
 import org.egov.garbageservice.repository.GrbgCommercialDetailsRepository;
 import org.egov.garbageservice.repository.GrbgDocumentRepository;
 import org.egov.garbageservice.repository.GrbgOldDetailsRepository;
-import org.egov.garbageservice.util.PTRConstants;
+import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.garbageservice.util.ResponseInfoFactory;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +78,7 @@ public class GarbageAccountService {
 	private WorkflowService workflowService;
 
 	@Autowired
-	private PTRConstants applicationPropertiesAndConstant;
+	private GrbgConstants applicationPropertiesAndConstant;
 	
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -260,7 +260,7 @@ public class GarbageAccountService {
 		
 		garbageAccount.getDocuments().stream().forEach(doc -> {
 			doc.setUuid(UUID.randomUUID().toString());
-			if(StringUtils.equalsIgnoreCase(doc.getDocCategory(), PTRConstants.DOCUMENT_ACCOUNT)) {
+			if(StringUtils.equalsIgnoreCase(doc.getDocCategory(), GrbgConstants.DOCUMENT_ACCOUNT)) {
 				doc.setTblRefUuid(garbageAccount.getUuid());
 			}
 		});
@@ -272,8 +272,8 @@ public class GarbageAccountService {
 		
 		GrbgApplication grbgApplication = GrbgApplication.builder()
 				.uuid(UUID.randomUUID().toString())
-				.applicationNo(PTRConstants.APPLICATION_PREFIX.concat(garbageAccount.getGarbageId().toString()))
-				.status(PTRConstants.STATUS_INITIATED)
+				.applicationNo(GrbgConstants.APPLICATION_PREFIX.concat(garbageAccount.getGarbageId().toString()))
+				.status(GrbgConstants.STATUS_INITIATED)
 				.garbageId(garbageAccount.getGarbageId())
 				.build();
 		
@@ -319,8 +319,8 @@ public class GarbageAccountService {
 		// generate garbage_id
 		garbageAccount.setUuid(UUID.randomUUID().toString());
 		garbageAccount.setGarbageId(System.currentTimeMillis());
-		garbageAccount.setStatus(PTRConstants.STATUS_INITIATED);
-		garbageAccount.setWorkflowAction(PTRConstants.ACTION_INITIATE);
+		garbageAccount.setStatus(GrbgConstants.STATUS_INITIATED);
+		garbageAccount.setWorkflowAction(GrbgConstants.ACTION_INITIATE);
 
 	}
 
@@ -432,11 +432,11 @@ public class GarbageAccountService {
 	private void generateDemandAndBill(GarbageAccountRequest updateGarbageRequest) {
 		updateGarbageRequest.getGarbageAccounts().stream().forEach(account -> {
 			
-			if(StringUtils.equalsIgnoreCase(PTRConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, account.getWorkflowAction())) {
+			if(StringUtils.equalsIgnoreCase(GrbgConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, account.getWorkflowAction())) {
 				
 				List<Demand> savedDemands = new ArrayList<>();
             	// generate demand
-				savedDemands = demandService.generateDemand(updateGarbageRequest.getRequestInfo(), account, PTRConstants.BUSINESS_SERVICE);
+				savedDemands = demandService.generateDemand(updateGarbageRequest.getRequestInfo(), account, GrbgConstants.BUSINESS_SERVICE);
 	            
 
 		        if(CollectionUtils.isEmpty(savedDemands)) {
@@ -504,12 +504,12 @@ public class GarbageAccountService {
 		
 		Map<String, String> map = new HashMap<>();
 		
-		map.put(PTRConstants.ACTION_INITIATE, PTRConstants.STATUS_INITIATED);
-        map.put(PTRConstants.ACTION_FORWARD_TO_VERIFIER, PTRConstants.STATUS_PENDINGFORVERIFICATION);
-        map.put(PTRConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, PTRConstants.STATUS_PENDINGFORPAYMENT);
-        map.put(PTRConstants.ACTION_RETURN_TO_INITIATOR, PTRConstants.STATUS_PENDINGFORMODIFICATION);
-        map.put(PTRConstants.ACTION_FORWARD_TO_APPROVER, PTRConstants.STATUS_PENDINGFORAPPROVAL);
-        map.put(PTRConstants.STATUS_APPROVED, PTRConstants.STATUS_APPROVED);
+		map.put(GrbgConstants.ACTION_INITIATE, GrbgConstants.STATUS_INITIATED);
+        map.put(GrbgConstants.ACTION_FORWARD_TO_VERIFIER, GrbgConstants.STATUS_PENDINGFORVERIFICATION);
+        map.put(GrbgConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, GrbgConstants.STATUS_PENDINGFORPAYMENT);
+        map.put(GrbgConstants.ACTION_RETURN_TO_INITIATOR, GrbgConstants.STATUS_PENDINGFORMODIFICATION);
+        map.put(GrbgConstants.ACTION_FORWARD_TO_APPROVER, GrbgConstants.STATUS_PENDINGFORAPPROVAL);
+        map.put(GrbgConstants.STATUS_APPROVED, GrbgConstants.STATUS_APPROVED);
 		
 		if(!fetchValue){
 			// return key
@@ -791,10 +791,10 @@ public class GarbageAccountService {
 			        null == searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getIsOwner()) {
 	
 					if(null != requestInfo && null != requestInfo.getUserInfo()
-							&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), PTRConstants.USER_ROLE_CITIZEN)) {
+							&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_ROLE_CITIZEN)) {
 						searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setCreatedBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()));
 					}else if(null != requestInfo && null != requestInfo.getUserInfo()
-							&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), PTRConstants.USER_ROLE_EMPLOYEE)) {
+							&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_ROLE_EMPLOYEE)) {
 						
 						List<String> listOfStatus = getAccountStatusListByRoles(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getTenantId(), requestInfo.getUserInfo().getRoles());
 						if(CollectionUtils.isEmpty(listOfStatus)) {
@@ -806,7 +806,7 @@ public class GarbageAccountService {
 					}
 			}
 		}else if(null != requestInfo && null != requestInfo.getUserInfo()
-				&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), PTRConstants.USER_ROLE_CITIZEN)) {
+				&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_ROLE_CITIZEN)) {
 			searchCriteriaGarbageAccountRequest.setSearchCriteriaGarbageAccount(
 					SearchCriteriaGarbageAccount.builder().createdBy(Collections.singletonList(
 									requestInfo.getUserInfo().getUuid())).build());
@@ -821,10 +821,10 @@ public class GarbageAccountService {
 	
 	rolesWithinTenant.stream().forEach(role -> {
 		
-		if(StringUtils.equalsIgnoreCase(role, PTRConstants.USER_ROLE_GB_VERIFIER)) {
-			statusWithRoles.add(PTRConstants.STATUS_PENDINGFORVERIFICATION);
-		}else if(StringUtils.equalsIgnoreCase(role, PTRConstants.USER_ROLE_GB_APPROVER)) {
-			statusWithRoles.add(PTRConstants.STATUS_PENDINGFORAPPROVAL);
+		if(StringUtils.equalsIgnoreCase(role, GrbgConstants.USER_ROLE_GB_VERIFIER)) {
+			statusWithRoles.add(GrbgConstants.STATUS_PENDINGFORVERIFICATION);
+		}else if(StringUtils.equalsIgnoreCase(role, GrbgConstants.USER_ROLE_GB_APPROVER)) {
+			statusWithRoles.add(GrbgConstants.STATUS_PENDINGFORAPPROVAL);
 		}
 		
 	});
@@ -961,7 +961,7 @@ public class GarbageAccountService {
 		
 		
 		String applicationTenantId = accounts.get(0).getTenantId();
-		String applicationBusinessId = PTRConstants.WORKFLOW_BUSINESS_SERVICE;
+		String applicationBusinessId = GrbgConstants.WORKFLOW_BUSINESS_SERVICE;
 		
 		// fetch business service search
 		BusinessServiceResponse businessServiceResponse = workflowService.businessServiceSearch(garbageAccountActionRequest, applicationTenantId,

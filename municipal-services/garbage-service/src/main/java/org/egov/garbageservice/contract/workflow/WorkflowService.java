@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.Role;
 import org.egov.garbageservice.model.GarbageAccountActionRequest;
-import org.egov.garbageservice.util.PTRConstants;
+import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.garbageservice.util.RequestInfoWrapper;
 import org.egov.garbageservice.util.RestCallRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class WorkflowService {
 	private RestCallRepository restCallRepository;
 
 	@Autowired
-	private PTRConstants applicationPropertiesAndConstant;
+	private GrbgConstants applicationPropertiesAndConstant;
 	
 	@Autowired
 	ObjectMapper objectMapper;
