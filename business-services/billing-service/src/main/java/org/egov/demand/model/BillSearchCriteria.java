@@ -34,6 +34,9 @@ public class BillSearchCriteria {
 	@Default
 	private Boolean retrieveOldest = false;
 
+	@Default
+	private Boolean retrieveAll = false;
+
 	private Boolean isActive;
 
 	private Boolean isCancelled;

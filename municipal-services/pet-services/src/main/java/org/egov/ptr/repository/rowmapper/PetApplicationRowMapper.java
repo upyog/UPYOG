@@ -1,10 +1,17 @@
 package org.egov.ptr.repository.rowmapper;
 
 import org.egov.ptr.models.*;
+import org.postgresql.util.PGobject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,6 +23,9 @@ import java.util.Map;
 @Component
 public class PetApplicationRowMapper implements ResultSetExtractor<List<PetRegistrationApplication>> {
 
+    @Autowired
+    private ObjectMapper mapper;
+    
 	public List<PetRegistrationApplication> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
 		Map<String, PetRegistrationApplication> petRegistrationApplicationMap = new LinkedHashMap<>();
@@ -40,13 +50,28 @@ public class PetApplicationRowMapper implements ResultSetExtractor<List<PetRegis
 						.vaccinationNumber(rs.getString("ptvaccinationNumber")).petAge(rs.getString("ptpetAge"))
 						.petGender(rs.getString("ptpetGender")).petDetailsId(rs.getString("ptpetdetails")).build();
 
+
 				petRegistrationApplication = PetRegistrationApplication.builder()
 						.applicationNumber(rs.getString("papplicationnumber")).tenantId(rs.getString("ptenantid"))
 						.id(rs.getString("pid")).applicantName(rs.getString("papplicantname"))
 						.fatherName(rs.getString("pfathername")).emailId(rs.getString("pemailId"))
 						.mobileNumber(rs.getString("pmobileNumber")).petDetails(petdetails).auditDetails(auditdetails)
-						.aadharNumber(rs.getString("paadharnumber")).build();
+						.aadharNumber(rs.getString("paadharnumber")).status(rs.getString("pstatus")).build();
 				addDocToPetApplication(rs, petRegistrationApplication);
+
+				PGobject pgObj = (PGobject) rs.getObject("padditionaldetail");
+				if (pgObj != null) {
+					JsonNode additionalDetail = null;
+					try {
+						additionalDetail = mapper.readTree(pgObj.getValue());
+					} catch (JsonMappingException e) {
+						e.printStackTrace();
+					} catch (JsonProcessingException e) {
+						e.printStackTrace();
+					}
+					petRegistrationApplication.setAdditionalDetail(additionalDetail);
+				}
+	            
 
 			} else {
 				addDocToPetApplication(rs, petRegistrationApplication);
