@@ -1393,9 +1393,9 @@ public class TradeLicenseService {
 		StringBuilder feeCalculationFormula = new StringBuilder("Scale Of Business( <b>").append(scaleOfBusiness);
 		feeCalculationFormula.append("</b> ) and License Period ( <b>").append(periodOfLicense.toString());
 		feeCalculationFormula.append("</b> Year ) : <b>").append(scaleOfBusinessToLicensePeriodPrice);
-		feeCalculationFormula.append("</b>  +  [Zone ( <b>").append(zone);
+		feeCalculationFormula.append("</b> <br />  +  [Zone ( <b>").append(zone);
 		feeCalculationFormula.append("</b>): <b>").append(zonePrice);
-		feeCalculationFormula.append("</b> * Category ( <b>").append(tradeCategory);
+		feeCalculationFormula.append("</b> <br />* Category ( <b>").append(tradeCategory);
 		feeCalculationFormula.append("</b>): <b>").append(tradeCategoryPrice).append("</b> ]");
 		
 		applicationDetail.setFeeCalculationFormula(feeCalculationFormula.toString());
