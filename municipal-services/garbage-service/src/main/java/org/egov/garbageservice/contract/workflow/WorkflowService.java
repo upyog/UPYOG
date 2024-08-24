@@ -10,6 +10,7 @@ import org.egov.garbageservice.model.GarbageAccountActionRequest;
 import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.garbageservice.util.RequestInfoWrapper;
 import org.egov.garbageservice.util.RestCallRepository;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +36,7 @@ public class WorkflowService {
 		ProcessInstanceResponse processInstanceResponse = objectMapper.convertValue(response, ProcessInstanceResponse.class);
 		
 		if(null == response && null == processInstanceResponse) {
-			throw new RuntimeException("Error ocurred while running workflow.");
+			throw new CustomException("WORKFLOW_RESPONSE_NULL","Error ocurred while running workflow.");
 		}
 		
 		return processInstanceResponse;

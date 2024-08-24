@@ -743,7 +743,7 @@ public class TradeLicenseService {
 								|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_CLOSE, license.getAction()))) {
 					// this scenario means application is initiated for renewal
 					if(null == license.getApplicationType()) {
-						throw new RuntimeException("Provide application type.");
+						throw new CustomException("APPLICATION_TYPE_MISSING","Provide application type.");
 					}
 					licenses.get(0).setApplicationType(license.getApplicationType());
 					if(!StringUtils.equalsIgnoreCase(TLConstants.ACTION_CLOSE, license.getAction())) {
@@ -1088,7 +1088,7 @@ public class TradeLicenseService {
 			        || StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantMobileNumber").asText()))
 			    && StringUtils.isEmpty(tradeLicense.getBusinessService())) {
 			    
-			    throw new RuntimeException("PDF can't be generated with null values for application number: "+tradeLicense.getApplicationNumber());
+			    throw new CustomException("NULL_APPLICATION_NUMBER","PDF can't be generated with null values for application number: "+tradeLicense.getApplicationNumber());
 			}
 	}
 
@@ -1345,14 +1345,14 @@ public class TradeLicenseService {
 		    periodOfLicense = license.getTradeLicenseDetail().getAdditionalDetail().get(TLConstants.PERIOD_OF_LICENSE).asInt();
 		    zone = license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get(TLConstants.ZONE).asText();
 		} catch (Exception e) {
-			throw new RuntimeException("Failed to fetch values from trade license while calculating tax.");
+			throw new CustomException("FETCH_LICENSE_FAILED","Failed to fetch values from trade license while calculating tax.");
 		}
 		
 		// validating values from TL in DB
 		if(StringUtils.isEmpty(scaleOfBusiness)
 				|| StringUtils.isEmpty(zone)
 				|| StringUtils.isEmpty(tradeCategory)) {
-			throw new RuntimeException("Tax can't be calculated for empty values.");
+			throw new CustomException("EMPTY_VALUES","Tax can't be calculated for empty values.");
 		}
 		
 		// mdms call

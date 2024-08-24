@@ -235,7 +235,7 @@ public class GarbageAccountService {
 				//validate address
 				if(StringUtils.isEmpty(address.getAddress1())
 						&& StringUtils.isEmpty(address.getAddress1())) {
-					throw new RuntimeException("Provide mendatory details of address.");
+					throw new CustomException("MISSING_ADDRESS_DETAILS","Provide mendatory details of address.");
 				}
 				
 				// enrich address
@@ -289,7 +289,7 @@ public class GarbageAccountService {
 				|| null == garbageAccount.getName()) {
 //				|| null == garbageAccount.getType()
 //				|| null == garbageAccount.getPropertyId()) {
-			throw new RuntimeException("Provide garbage account details.");
+			throw new CustomException("MISSING_GARBAGE_ACCOUNT_DETAILS","Provide garbage account details.");
 		}
 		
 		// validate duplicate owner with same properyId
@@ -297,7 +297,7 @@ public class GarbageAccountService {
 				.anyMatch(account -> account.getPropertyId().equals(garbageAccount.getPropertyId())
 						&& account.getIsOwner().equals(garbageAccount.getIsOwner()));
 		if(BooleanUtils.isTrue(duplicateOwner)) {
-			throw new RuntimeException("Duplicate Owner Found for given property.");
+			throw new CustomException("DUPLICATE_OWNER","Duplicate Owner Found for given property.");
 		}
 
 	}
@@ -363,7 +363,7 @@ public class GarbageAccountService {
 			existingGarbageApplicationAccountsMap = existingGarbageIdAccountsMap.entrySet().stream()
 					.collect(Collectors.toMap(a -> a.getValue().getGrbgApplication().getApplicationNo(), b -> b.getValue()));
 		} catch (Exception e) {
-			throw new RuntimeException("Search Garbage account details failed.");
+			throw new CustomException("FAILED_SEARCH_GARBAGE_ACCOUNTS","Search Garbage account details failed.");
 		}
 		
 		
@@ -477,7 +477,7 @@ public class GarbageAccountService {
 				GarbageAccount accountTemp = objectMapper.convertValue(existingGarbageApplicationAccountsMap.get(account.getGrbgApplicationNumber()), GarbageAccount.class);
 				
 				if(null == accountTemp) {
-					throw new RuntimeException("Garbage Account not found for workflow call.");
+					throw new CustomException("FAILED_SEARCH_GARBAGE_ACCOUNTS","Garbage Account not found for workflow call.");
 				}
 				
 				accountTemp.setIsOnlyWorkflowCall(tempBol);
@@ -802,7 +802,7 @@ public class GarbageAccountService {
 						}
 						searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setStatus(listOfStatus);
 					}else {
-						throw new RuntimeException("Provide the parameters to search garbage accounts.");
+						throw new CustomException("MISSING_SEARCH_PARAMETER","Provide the parameters to search garbage accounts.");
 					}
 			}
 		}else if(null != requestInfo && null != requestInfo.getUserInfo()
