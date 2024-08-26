@@ -239,6 +239,7 @@ public class BillServicev2 {
 			log.info( "If bills are empty" +bills.size());
 			//if(!billCriteria.getBusinessService().equalsIgnoreCase("WS") && !billCriteria.getBusinessService().equalsIgnoreCase("SW"))
 			//if(!billCriteria.getBusinessService().equalsIgnoreCase("SW"))
+			if(!billCriteria.getBusinessService().equalsIgnoreCase("BPA"))
 			updateDemandsForexpiredBillDetails(billCriteria.getBusinessService(), billCriteria.getConsumerCode(), billCriteria.getTenantId(), requestInfoWrapper);
 			return generateBill(billCriteria, requestInfo);
 		}
