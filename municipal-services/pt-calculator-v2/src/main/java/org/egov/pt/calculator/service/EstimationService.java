@@ -438,13 +438,14 @@ public class EstimationService {
 			vctland.setVacantlandtype(detail.getVacantusagecategory());
 			vacantland.add(vctland);
 			
-			 String[] vacantusagecategoryMasterData  = detail.getVacantusagecategory().split("\\_");
-	            String vacantusagecategory = vacantusagecategoryMasterData[1];
+			 
 			
 			if(detail.getPropertySubType().equalsIgnoreCase("INDEPENDENTPROPERTY"))
 			{
 				if(detail.getVacantusagecategory()!=null)
 				{
+					String[] vacantusagecategoryMasterData  = detail.getVacantusagecategory().split("\\_");
+		            String vacantusagecategory = vacantusagecategoryMasterData[1];
 					if(vacantusagecategory.equalsIgnoreCase("COMMERCIAL"))
 					{
 						taxAmt = taxAmt.add(unbuiltAmount);
