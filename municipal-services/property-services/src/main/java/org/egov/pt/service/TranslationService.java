@@ -97,9 +97,9 @@ public class TranslationService {
         }
 
         if(property.getVacantusagecategory()!=null){
-            String[] vacantusagecategoryMasterData  = property.getVacantusagecategory().split("\\_");
-            String vacantusagecategory = null;
-            vacantusagecategory = vacantusagecategoryMasterData[1];
+           // String[] vacantusagecategoryMasterData  = property.getVacantusagecategory().split("\\_");
+            String vacantusagecategory = property.getVacantusagecategory();
+            //vacantusagecategory = vacantusagecategoryMasterData[1];
             
             propertyDetail.put("VacantUsagecategory", vacantusagecategory);
         }
