@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.kafka.common.protocol.types.Field.Bool;
 import org.egov.pt.calculator.web.models.property.Unit;
+import org.egov.pt.calculator.web.models.property.Vacantland;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -60,8 +61,8 @@ public class Calculation   {
         
         private List<Unit> units;
         
-        private List<BigDecimal> vacantlandamount;
+        private List<Boolean> commercial;
         
-        private List<Boolean> vacantland;
+        private List<Vacantland> vacantland;
 }
 
