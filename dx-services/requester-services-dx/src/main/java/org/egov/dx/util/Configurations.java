@@ -96,8 +96,8 @@ public class Configurations {
 //	@Value("${esign.tlredirecturl}")
 //	private String tlRedirectUrl;
 	
-	@Value("${eSign.s3bucket}")
-	private String s3Bucket;
+//	@Value("${eSign.s3bucket}")
+//	private String s3Bucket;
 //	
 //	@Value("${api.documenthost}")
 //	private String documentHost;
