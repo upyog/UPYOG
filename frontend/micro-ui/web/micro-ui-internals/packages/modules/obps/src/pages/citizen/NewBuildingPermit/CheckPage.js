@@ -48,7 +48,6 @@ import {
     const { data, address, owners, nocDocuments, documents, additionalDetails, subOccupancy,PrevStateDocuments,PrevStateNocDocuments,applicationNo } = value;
     const isEditApplication = window.location.href.includes("editApplication");
 
-
     const [agree, setAgree] = useState(false);
     const setdeclarationhandler = () => {
       setAgree(!agree);
@@ -251,6 +250,8 @@ setWaterCharges(Malbafees/2)
     const { data:datafromAPI, isLoading, refetch } = Digit.Hooks.obps.useScrutinyDetails(tenantId,value?.data?.scrutinyNumber, {
         enabled: value?.data?.scrutinyNumber?true:false,
       })
+
+
     let consumerCode=value?.applicationNo;
     const fetchBillParams = { consumerCode };
 
@@ -455,7 +456,6 @@ function selectfile(e) {
           <Row className="border-none" textStyle={{paddingLeft:"12px"}} label={t(`BPA_BOUNDARY_PLOT_AREA_LABEL`)} text={datafromAPI?.planDetail?.planInformation?.plotArea ? `${datafromAPI?.planDetail?.planInformation?.plotArea} ${t(`BPA_SQ_MTRS_LABEL`)}` : t("CS_NA")} />
           <Row className="border-none" label={t(`BPA_PLOT_NUMBER_LABEL`)} text={datafromAPI?.planDetail?.planInformation?.plotNo || t("CS_NA")} />
           <Row className="border-none" label={t(`BPA_KHATHA_NUMBER_LABEL`)} text={datafromAPI?.planDetail?.planInformation?.khataNo || t("CS_NA")}/>
-          <Row className="border-none" label={t(`BPA_HOLDING_NUMBER_LABEL`)} text={data?.holdingNumber || t("CS_NA")} />
           <Row className="border-none" label={t(`BPA_BOUNDARY_LAND_REG_DETAIL_LABEL`)} text={data?.registrationDetails || t("CS_NA")} />
           <Row className="border-none" label={t(`BPA_BOUNDARY_WALL_LENGTH_LABEL`)} text={data?.boundaryWallLength|| t("CS_NA")} />
           <Row className="border-none" label={t(`BPA_KHASRA_NUMBER_LABEL`)} text={data?.khasraNumber|| value?.additionalDetails?.khasraNumber|| t("CS_NA")} />
@@ -563,14 +563,14 @@ function selectfile(e) {
       <Card style={{paddingRight:"16px"}}>
         <StatusTable>
         <CardHeader>{t("BPA_ADDITIONAL_BUILDING_DETAILS")}</CardHeader>
-        <Row className="border-none" label={t(`BPA_APPROVED_COLONY_LABEL`)} text={owners?.approvedColony?.value || value?.additionalDetails?.approvedColony || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_APPROVED_COLONY_LABEL`)} text={owners?.approvedColony?.i18nKey || value?.additionalDetails?.approvedColony || t("CS_NA")} />
         <Row className="border-none" label={t(`BPA_ULB_TYPE_LABEL`)} text={owners?.Ulblisttype?.value || value?.additionalDetails?.Ulblisttype || t("CS_NA")} />
         <Row className="border-none" label={t(`BPA_ULB_NAME_LABEL`)} text={owners?.UlbName?.code || value?.additionalDetails?.UlbName || t("CS_NA")} />
         <Row className="border-none" label={t(`BPA_DISTRICT_LABEL`)} text={owners?.District?.code || value?.additionalDetails?.District || t("CS_NA")} />
         <Row className="border-none" label={t(`BPA_BUILDING_STATUS_LABEL`)} text={owners?.buildingStatus?.code || value?.additionalDetails?.buildingStatus || t("CS_NA")} />
-        <Row className="border-none" label={t(`BPA_CORE_AREA_LABEL`)} text={owners?.coreArea?.code || value?.additionalDetails?.coreArea || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_CORE_AREA_LABEL`)} text={datafromAPI?.planDetail?.coreArea || value?.additionalDetails?.coreArea || t("CS_NA")} />
         <Row className="border-none" label={t(`BPA_PROPOSED_SITE_LABEL`)} text={owners?.proposedSite?.code || value?.additionalDetails?.proposedSite || t("CS_NA")} />
-        <Row className="border-none" label={t(`BPA_SCHEME_TYPE_LABEL`)} text={owners?.schemesselection?.code || value?.additionalDetails?.schemesselection || t("CS_NA")} />
+        <Row className="border-none" label={t(`BPA_SCHEME_TYPE_LABEL`)} text={owners?.schemesselection?.value || value?.additionalDetails?.schemesselection || t("CS_NA")} />
         <Row className="border-none" label={t(`BPA_SCHEME_NAME_LABEL`)} text={owners?.schemeName || value?.additionalDetails?.schemeName || t("CS_NA")} />
         <Row className="border-none" label={t(`BPA_TRANFERRED_SCHEME_LABEL`)} text={owners?.transferredscheme || value?.additionalDetails?.transferredscheme || t("CS_NA")} />
         <Row className="border-none" label={t(`BPA_PURCHASED_FAR_LABEL`)} text={owners?.purchasedFAR?.code || value?.additionalDetails?.purchasedFAR || t("CS_NA")} />

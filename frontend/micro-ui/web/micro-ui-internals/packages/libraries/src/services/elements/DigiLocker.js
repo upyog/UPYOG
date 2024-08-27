@@ -47,6 +47,15 @@ export const DigiLockerService = {
       userService: true,
       data:data
       
+    }),
+    pdfUrl:(data) =>
+    Request({
+      url: Urls.eSign.pdfUrl,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      data:{pdfUrl:data?.TokenReq?.pdfUrl,redirectUrl:""}
     })
 };
 
