@@ -239,6 +239,7 @@ public class BillServicev2 {
 			log.info( "If bills are empty" +bills.size());
 			//if(!billCriteria.getBusinessService().equalsIgnoreCase("WS") && !billCriteria.getBusinessService().equalsIgnoreCase("SW"))
 			//if(!billCriteria.getBusinessService().equalsIgnoreCase("SW"))
+			if(!billCriteria.getBusinessService().equalsIgnoreCase("BPA.NC_SAN_FEE"))
 			updateDemandsForexpiredBillDetails(billCriteria.getBusinessService(), billCriteria.getConsumerCode(), billCriteria.getTenantId(), requestInfoWrapper);
 			return generateBill(billCriteria, requestInfo);
 		}
@@ -379,7 +380,7 @@ public class BillServicev2 {
 			consumerCodes.addAll(billCriteria.getConsumerCode());
 
 		DemandCriteria demandCriteria=new DemandCriteria();
-		if(billCriteria.getBusinessService().equalsIgnoreCase("WS") || billCriteria.getBusinessService().equalsIgnoreCase("SW"))
+		if(billCriteria.getBusinessService().equalsIgnoreCase("WS") || billCriteria.getBusinessService().equalsIgnoreCase("SW") || billCriteria.getBusinessService().equalsIgnoreCase("BPA.NC_SAN_FEE"))
 			demandCriteria = DemandCriteria.builder()
 				.status(org.egov.demand.model.Demand.StatusEnum.ACTIVE.toString())
 				.businessService(billCriteria.getBusinessService())
