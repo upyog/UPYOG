@@ -1132,9 +1132,10 @@ public class TradeLicenseService {
 
 		Map<String, Object> tlObject = new HashMap<>();
 		
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyy");
-		String date = dateFormat.format(new Date(tradeLicense.getIssuedDate()));
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		String approvalTime = dateFormat.format(new Date(tradeLicense.getIssuedDate()));
 		String licenseValidity = dateFormat.format(new Date(tradeLicense.getValidTo()));
+		String licenseIssueDate = dateFormat.format(new Date(tradeLicense.getIssuedDate()));
 		
 		// map variables and values
 		tlObject.put("tradeLicenseNo", tradeLicense.getLicenseNumber());//Trade License No
@@ -1144,7 +1145,7 @@ public class TradeLicenseService {
 			.concat(tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("district").asText()).concat(", ")
 			.concat(tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("wardName").asText()).concat(", ")
 			.concat(tradeLicense.getTradeLicenseDetail().getAddress().getPincode()));// Trade Premises Address
-		tlObject.put("licenseIssueDate", tradeLicense.getIssuedDate());// License Issue Date
+		tlObject.put("licenseIssueDate", licenseIssueDate);// License Issue Date
 		tlObject.put("licenseValidity", licenseValidity);//License Validity
 		tlObject.put("licenseCategory", tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("tradeCategory").asText());// License Category
 		tlObject.put("licenseSubCategory", tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("tradeSubType").asText());// License Sub Category
@@ -1154,7 +1155,7 @@ public class TradeLicenseService {
 		tlObject.put("ulbName", tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("ulbName").asText());// ulbName
 		tlObject.put("licenseeMobileNumber", !CollectionUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getOwners()) ? tradeLicense.getTradeLicenseDetail().getOwners().get(0).getMobileNumber() : null);// Applicant Address
 		tlObject.put("approverName", null!=requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);// Approver Name
-		tlObject.put("approvalTime", date);// Approval Time
+		tlObject.put("approvalTime", approvalTime);// Approval Time
 		tlObject.put("ownerName", !CollectionUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getOwners()) ? tradeLicense.getTradeLicenseDetail().getOwners().get(0).getName().toUpperCase() : null);// Owner Name
 		// generate QR code from attributes
 		StringBuilder qr = new StringBuilder();
