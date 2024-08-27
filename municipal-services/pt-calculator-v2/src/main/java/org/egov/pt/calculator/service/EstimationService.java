@@ -406,7 +406,7 @@ public class EstimationService {
 				usageExemption = usageExemption
 						.add(getExemption(unit, currentUnitTax, assessmentYear, propertyBasedExemptionMasterMap));
 
-				unit.setTaxamount(taxAmt);
+				unit.setTaxamount(currentUnitTax);
 				unitList.add(unit);
 				i++;
 			}
@@ -437,8 +437,6 @@ public class EstimationService {
 			vctland.setVacantlandamount(unbuiltAmount);
 			vctland.setVacantlandtype(detail.getVacantusagecategory());
 			vacantland.add(vctland);
-			
-			 
 			
 			if(detail.getPropertySubType().equalsIgnoreCase("INDEPENDENTPROPERTY"))
 			{
