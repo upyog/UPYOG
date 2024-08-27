@@ -1131,11 +1131,10 @@ public class TradeLicenseService {
 	private Map<String, Object> generateDataForTradeLicensePdfCreate(TradeLicense tradeLicense, RequestInfo requestInfo) {
 
 		Map<String, Object> tlObject = new HashMap<>();
-		long longtime = tradeLicense.getIssuedDate();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyy");
-		String date = dateFormat.format(new Date(longtime));
-//		Date date = (Date) dateFormat.parseObject(longtime);
 		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyy");
+		String date = dateFormat.format(new Date(tradeLicense.getIssuedDate()));
+		String licenseValidity = dateFormat.format(new Date(tradeLicense.getValidTo()));
 		
 		// map variables and values
 		tlObject.put("tradeLicenseNo", tradeLicense.getLicenseNumber());//Trade License No
@@ -1146,7 +1145,7 @@ public class TradeLicenseService {
 			.concat(tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("wardName").asText()).concat(", ")
 			.concat(tradeLicense.getTradeLicenseDetail().getAddress().getPincode()));// Trade Premises Address
 		tlObject.put("licenseIssueDate", tradeLicense.getIssuedDate());// License Issue Date
-		tlObject.put("licenseValidity", tradeLicense.getValidTo());//License Validity
+		tlObject.put("licenseValidity", licenseValidity);//License Validity
 		tlObject.put("licenseCategory", tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("tradeCategory").asText());// License Category
 		tlObject.put("licenseSubCategory", tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("tradeSubType").asText());// License Sub Category
 		tlObject.put("licenseApplicantName", tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantName").asText());// License Applicant Name
@@ -1156,7 +1155,7 @@ public class TradeLicenseService {
 		tlObject.put("licenseeMobileNumber", !CollectionUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getOwners()) ? tradeLicense.getTradeLicenseDetail().getOwners().get(0).getMobileNumber() : null);// Applicant Address
 		tlObject.put("approverName", null!=requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);// Approver Name
 		tlObject.put("approvalTime", date);// Approval Time
-		tlObject.put("ownerName", !CollectionUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getOwners()) ? tradeLicense.getTradeLicenseDetail().getOwners().get(0).getName() : null);// Owner Name
+		tlObject.put("ownerName", !CollectionUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getOwners()) ? tradeLicense.getTradeLicenseDetail().getOwners().get(0).getName().toUpperCase() : null);// Owner Name
 		// generate QR code from attributes
 		StringBuilder qr = new StringBuilder();
 		getQRCodeForPdfCreate(tlObject, qr);
