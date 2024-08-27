@@ -13,7 +13,7 @@ const Close = () => (
 
 const CloseBtn = (props) => {
     return (
-        <div className="icon-bg-secondary" onClick={props.onClick} style={{ backgroundColor: "#FFFFFF" }}>
+        <div className="icon-bg-secondary" onClick={props.onClick} style={{ cursor: "pointer" }}>
             <Close />
         </div>
     );
@@ -33,7 +33,7 @@ const CitizenConsentForm = ({ t, styles, mdmsConfig = "", setMdmsConfig, labels 
     }
 
     const url = labels?.filter(data => data.linkId == mdmsConfig)?.[0]?.[Digit.StoreData.getCurrentLanguage()];
-
+    console.log("CitizenConsentForm==",mdmsConfig,url,labels)
     return (
         <div style={styles ? styles : {}}>
             {showModal ? <Modal
@@ -44,7 +44,7 @@ const CitizenConsentForm = ({ t, styles, mdmsConfig = "", setMdmsConfig, labels 
                 popupStyles={{ width: "750px", overflow: "auto" }}
                 style={{ minHeight: "45px", height: "auto", width: "160px" }}
                 hideSubmit={true}
-                headerBarMainStyle={{ margin: "0px", height: "35px" }}
+                headerBarMainStyle={{ margin: "0px", height: "50px" }}
 
             >
                 {url ?

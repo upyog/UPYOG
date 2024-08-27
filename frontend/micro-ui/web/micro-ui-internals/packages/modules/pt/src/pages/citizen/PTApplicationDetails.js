@@ -523,7 +523,7 @@ const PTApplicationDetails = () => {
                         <Row className="border-none" label={t("PT_FORM3_MOBILE_NUMBER")} text={owner?.mobileNumber} />
                         <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={`${owner?.emailId || t("CS_NA")}`} />
                         <Row className="border-none" label={t("PT_MUTATION_TRANSFEROR_SPECIAL_CATEGORY")} text={(owner?.ownerType).toLowerCase()} />
-                        <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={owner?.correspondenceAddress || t("CS_NA")} />
+                        <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={owner?.permanentAddress || t("CS_NA")} />
                       </StatusTable>
                     </div>
                   ))}

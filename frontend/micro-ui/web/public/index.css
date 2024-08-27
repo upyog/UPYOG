@@ -1909,7 +1909,10 @@ img, video {
   outline-offset: 2px;
   padding-left: 24px;
   padding-right: 24px;
-  opacity: .5; }
+  opacity: .5;
+  float: right;
+  height: 30px; 
+}
   .selector-button-primary-disabled:focus {
     outline: 2px solid transparent;
     outline-offset: 2px; }
@@ -3011,7 +3014,8 @@ img, video {
 @media (min-width: 780px) {
   .key-note-pair .caption, .key-note-pair p {
     font-size: 16px;
-    line-height: 0px; }
+    /* line-height: 0px;  */
+  }
   .key-note-pair .caption {
     --text-opacity:1;
     color: #505a5f;

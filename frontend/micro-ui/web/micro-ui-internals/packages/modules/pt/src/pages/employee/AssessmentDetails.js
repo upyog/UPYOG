@@ -34,7 +34,8 @@ const AssessmentDetails = () => {
   const fourth_temp=useRef();
   
   const getPropertyTypeLocale = (value) => {
-    return `PROPERTYTAX_${value?.split(".")[0]}`;
+    // return `PROPERTYTAX_${value?.split(".")[1]}`;
+    return `${value?.split(".")[1]}`.toLocaleLowerCase();
   };
   
   const getPropertySubtypeLocale = (value) => `PROPERTYTAX_${value}`;  
@@ -442,10 +443,12 @@ const Penality_menu=[
                   { title: "PT_ASSESMENT_INFO_USAGE_TYPE", value: getPropertySubtypeLocale(applicationDetails?.applicationData?.usageCategory) },
                   { title: "PT_ASSESMENT_INFO_PLOT_SIZE", value: applicationDetails?.applicationData?.landArea },
                   { title: "PT_ASSESMENT_INFO_NO_OF_FLOOR", value: applicationDetails?.applicationData?.noOfFloors },
+                  { title: "Vacant Land Usage Type", value: "COMMON_PROPUSGTYPE_NONRESIDENTIAL_"+ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandtype },
+                  { title: "Vacant Land Tax Amount", value: ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandamount }
                 ],
                 additionalDetails: {
-                  floors: applicationDetails?.applicationData?.units
-                    ?.filter((e) => e.active)
+                  floors: ptCalculationEstimateData?.Calculation[0]?.units
+                    // ?.filter((e) => e.active)
                     ?.sort?.((a, b) => a.floorNo - b.floorNo)
                     ?.map((unit, index) => {
                       let floorName = `PROPERTYTAX_FLOOR_${unit.floorNo}`;
@@ -460,7 +463,8 @@ const Penality_menu=[
                         },
                         {
                           title: "PT_ASSESSMENT_UNIT_USAGE_TYPE",
-                          value: `PROPERTYTAX_${ unit?.usageCategory
+                          // value: `PROPERTYTAX_${ unit?.usageCategory
+                          value: `PROPERTYTAX_${ unit?.usageCategoryMajor
                           }`,
                         },
                         {
@@ -469,11 +473,16 @@ const Penality_menu=[
                         },
                         {
                           title: "PT_FORM2_BUILT_AREA",
-                          value: unit?.constructionDetail?.builtUpArea,
+                          value: unit?.unitArea
+                          // value: unit?.constructionDetail?.builtUpArea,
+                        },
+                        {
+                          title: "Tax Amount",
+                          value: unit?.taxamount || 0,
                         },
                       ];
         
-                      if (unit.occupancyType === "RENTED") values.push({ title: "PT_FORM2_TOTAL_ANNUAL_RENT", value: unit.arv });
+                      // if (unit.occupancyType === "RENTED") values.push({ title: "PT_FORM2_TOTAL_ANNUAL_RENT", value: unit.arv });
         
                       return {
                         //title: floorName,
