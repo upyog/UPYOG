@@ -180,7 +180,7 @@ public class eSignService {
         		  .addFormDataPart("tenantId","pg")
         		  .addFormDataPart("module","TL")
         		  .addFormDataPart("file",pdfPath,
-        		    RequestBody.create(MediaType.parse("application/octet-stream"),
+        		    RequestBody.create(MediaType.parse("application/pdf"),
         		    new File(pdfPath)))
         		  .build();
         		Request request1 = new Request.Builder()

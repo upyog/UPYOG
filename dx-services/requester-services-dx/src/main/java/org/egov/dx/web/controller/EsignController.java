@@ -95,7 +95,7 @@ public class EsignController {
         }
     }
     @RequestMapping("/redirect")
-    public ResponseEntity<?> getEsignedPDF(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    public ResponseEntity<Object> getEsignedPDF(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         try {
             //byte[] byteArray = esignService.getEsignedPDF( request, response);
             
@@ -108,7 +108,7 @@ public class EsignController {
             redirectURL.append(configurations.getUIURL()+"?filestore="+ff);
             httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString())
                     .queryParams(null).build().encode().toUri());
-            return new ResponseEntity<>(httpHeaders, HttpStatus.OK);
+            return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);
 
                    
         } catch (IOException e) {
