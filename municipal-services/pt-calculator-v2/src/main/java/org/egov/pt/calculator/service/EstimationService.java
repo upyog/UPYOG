@@ -125,6 +125,7 @@ import org.egov.pt.calculator.web.models.property.Property;
 import org.egov.pt.calculator.web.models.property.PropertyDetail;
 import org.egov.pt.calculator.web.models.property.RequestInfoWrapper;
 import org.egov.pt.calculator.web.models.property.Unit;
+import org.egov.pt.calculator.web.models.property.Vacantland;
 import org.egov.pt.calculator.web.models.propertyV2.AssessmentResponseV2;
 import org.egov.pt.calculator.web.models.propertyV2.AssessmentV2;
 import org.egov.pt.calculator.web.models.propertyV2.PropertyV2;
@@ -299,9 +300,11 @@ public class EstimationService {
 		List<BigDecimal> typeofroad=new ArrayList<BigDecimal>();
 		List<BigDecimal> agefactor=new ArrayList<BigDecimal>();
 		List<BigDecimal> structuretype=new ArrayList<BigDecimal>();
-		List<BigDecimal> vacantlandamount=new ArrayList<BigDecimal>();
-		List<Boolean> vacantlandlist=new ArrayList<Boolean>();
-		boolean vacantland=false;
+		List<Vacantland> vacantland=new ArrayList<Vacantland>();
+		List<Boolean> commercial=new ArrayList<Boolean>();
+		
+		Vacantland vctland=new Vacantland();
+		boolean iscommercial=false;
 		
 
 
@@ -403,7 +406,7 @@ public class EstimationService {
 				usageExemption = usageExemption
 						.add(getExemption(unit, currentUnitTax, assessmentYear, propertyBasedExemptionMasterMap));
 
-				unit.setTaxamount(taxAmt);
+				unit.setTaxamount(currentUnitTax);
 				unitList.add(unit);
 				i++;
 			}
@@ -431,20 +434,31 @@ public class EstimationService {
 
 			unbuiltAmount=getApplicableTaxForOwnerUsageCategory(unbuiltarea, propertyBasedExemptionMasterMap, detail,null);
 			
-			vacantlandamount.add(unbuiltAmount);
+			vctland.setVacantlandamount(unbuiltAmount);
+			vctland.setVacantlandtype(detail.getVacantusagecategory());
+			vacantland.add(vctland);
+			
 			if(detail.getPropertySubType().equalsIgnoreCase("INDEPENDENTPROPERTY"))
 			{
-				if(detail.getVacantusagecategory().equalsIgnoreCase("COMMERCIAL"))
+				if(detail.getVacantusagecategory()!=null)
 				{
-					taxAmt = taxAmt.add(unbuiltAmount);
-					vacantland=true;
+					String[] vacantusagecategoryMasterData  = detail.getVacantusagecategory().split("\\_");
+		            String vacantusagecategory = vacantusagecategoryMasterData[1];
+					if(vacantusagecategory.equalsIgnoreCase("COMMERCIAL"))
+					{
+						taxAmt = taxAmt.add(unbuiltAmount);
+						iscommercial=true;
+					}
 				}
+				else 
+					taxAmt = taxAmt.add(unbuiltAmount);
+				
 			}
 			else
 				taxAmt = taxAmt.add(unbuiltAmount);
 			
 			//To Be Reviewd The Function
-			vacantlandlist.add(vacantland);
+			commercial.add(iscommercial);
 
 			/*
 			 * special case to handle property with one unit
@@ -475,8 +489,8 @@ public class EstimationService {
 		estimatesAndBillingSlabs.put("estimates",taxHeadEstimates);
 		estimatesAndBillingSlabs.put("billingSlabIds",billingSlabIds);
 		estimatesAndBillingSlabs.put("units", unitList);
-		estimatesAndBillingSlabs.put("vacandlandamount", vacantlandamount);
-		estimatesAndBillingSlabs.put("vacantland", vacantlandlist);
+		estimatesAndBillingSlabs.put("vacandland", vacantland);
+		estimatesAndBillingSlabs.put("commercial", commercial);
 
 		return estimatesAndBillingSlabs;
 
@@ -933,8 +947,8 @@ public class EstimationService {
 		List<TaxHeadEstimate> estimates = estimatesAndBillingSlabs.get("estimates");
 		List<String> billingSlabIds = estimatesAndBillingSlabs.get("billingSlabIds");
 		List<Unit> units=estimatesAndBillingSlabs.get("units");
-		List<BigDecimal> vacantlandamount=estimatesAndBillingSlabs.get("vacandlandamount");
-		List<Boolean> vacantland=estimatesAndBillingSlabs.get("vacantland");
+		List<Vacantland> vacantland=estimatesAndBillingSlabs.get("vacandland");
+		List<Boolean> commercial=estimatesAndBillingSlabs.get("commercial");
 
 		Property property = criteria.getProperty();
 		PropertyDetail detail = property.getPropertyDetails().get(0);
@@ -1121,8 +1135,8 @@ public class EstimationService {
 				.taxHeadEstimates(estimates)
 				.billingSlabIds(billingSlabIds)
 				.units(units)
-				.vacantlandamount(vacantlandamount)
 				.vacantland(vacantland)
+				.commercial(commercial)
 				.build();
 	}
 
