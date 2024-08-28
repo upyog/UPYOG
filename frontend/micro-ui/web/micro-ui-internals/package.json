@@ -13,7 +13,8 @@
     "packages/modules/dss",
     "packages/modules/pt",
     "packages/modules/tl",
-    "packages/modules/obps"
+    "packages/modules/obps",
+    "packages/modules/hrms"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
