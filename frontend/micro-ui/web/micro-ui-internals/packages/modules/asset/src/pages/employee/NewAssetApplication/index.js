@@ -54,7 +54,7 @@ const NewAssetApplication = () => {
         assignedDate: assignedDateEpoch,
         isAssigned: true,
         allocatedDepartment:data?.assigndetails?.[0]?.allocatedDepartment?.code, 
-        employeecode:data?.assigndetails?.[0]?.employeeCode,
+        employeeCode:data?.assigndetails?.[0]?.employeeCode,
         auditDetails: {
           createdBy: "",
           lastModifiedBy: "",
