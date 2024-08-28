@@ -55,7 +55,7 @@ import RenewTrade from "./pages/citizen/Renewal/renewTrade";
 import SearchTradeComponent from "./pages/citizen/SearchTrade";
 import SelectTradeUnitsInitial from "./pageComponents/SelectTradeUnitsInitial";
 import TLTradeUnitsEmployeeInitial from "./pageComponents/TLTradeUnitsEmployeeInitial";
-import CommonRedirect from "../src/pageComponents/CommonRedirect"
+import CommonRedirect from "./pageComponents/CommonRedirect"
 import CitizenApp from "./pages/citizen";
 import EmployeeApp from "./pages/employee";
 
