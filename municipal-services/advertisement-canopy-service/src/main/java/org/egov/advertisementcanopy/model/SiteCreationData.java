@@ -43,4 +43,8 @@ public class SiteCreationData {
 	private JsonNode additionalDetail = null;
 	private AuditDetails auditDetails;
 	private String siteType;
+	@JsonProperty("active")
+	private boolean isActive;
+	private String status;
+	private String tenantId;
 }

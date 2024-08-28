@@ -66,31 +66,41 @@ public class SiteRepository {
 				siteCreation.getAuditDetails().getCreatedBy(), siteCreation.getAuditDetails().getCreatedDate(),
 				siteCreation.getAuditDetails().getLastModifiedBy(),
 				siteCreation.getAuditDetails().getLastModifiedDate(), siteCreation.getSiteType(),
-				siteCreation.getAccountId());
+				siteCreation.getAccountId(),siteCreation.getStatus(),siteCreation.isActive(),
+				siteCreation.getTenantId());
 	}
 
-	public List<SiteCreationData> searchSiteIds(String siteName, String districtName, String ulbName, String wardNumber) {
-
-//		jdbcTemplate.update(queryBuilder.SEARCH_EXISTING_SITE, siteName,districtName,ulbName,wardNumber);
-		
-		Object object = jdbcTemplate.query(queryBuilder.SEARCH_EXISTING_SITE
-				, Arrays.asList(siteName,districtName,ulbName,wardNumber).toArray()
-				, siteApplicationRowMapper);
-		
-		List<SiteCreationData> list = objectMapper.convertValue(object, ArrayList.class);
-		return list;
-
-	}
-
-	public void searchSites(SiteCreationData siteCreationData) {
-
+	public List<SiteCreationData> searchSiteIds(String siteName, String districtName, String ulbName,
+			String wardNumber) {
+		List<SiteCreationData> list = new ArrayList<>();
 		try {
-			jdbcTemplate.update(queryBuilder.SEARCH_QUERY_FOR_SITE_UPDATE, siteCreationData.getId(),
-					siteCreationData.getUuid(), siteCreationData.getSiteID());
+			Object object = jdbcTemplate.query(queryBuilder.SEARCH_EXISTING_SITE,
+					Arrays.asList(siteName, districtName, ulbName, wardNumber).toArray(), siteApplicationRowMapper);
+
+			list = objectMapper.convertValue(object, ArrayList.class);
 
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
+
+		return list;
+
+	}
+
+	public List<SiteCreationData> searchSites(SiteCreationData siteCreationData) {
+		List<SiteCreationData> list = new ArrayList<>();
+		try {
+			Object object = jdbcTemplate.query(queryBuilder.SEARCH_QUERY_FOR_SITE_UPDATE,
+					Arrays.asList(siteCreationData.getId(), siteCreationData.getUuid(), siteCreationData.getSiteID()).toArray(),
+					siteApplicationRowMapper);
+			
+			list = objectMapper.convertValue(object, ArrayList.class);
+
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+		
+		return list;
 	}
 
 	public void updateSiteData(SiteCreationData siteUpdationData) {

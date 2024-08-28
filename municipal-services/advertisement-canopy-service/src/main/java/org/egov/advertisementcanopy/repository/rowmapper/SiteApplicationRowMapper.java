@@ -39,12 +39,6 @@ public class SiteApplicationRowMapper implements ResultSetExtractor<List<SiteCre
 							.createdDate(rs.getLong("created_date")).lastModifiedBy(rs.getString("last_modified_by"))
 							.lastModifiedDate(rs.getLong("last_modified_date")).build();
 					
-					
-//					Object obj = rs.getObject("additional_detail");
-//					if (null != obj) {
-//						additinalDetail = rs.getObject("additional_detail", JsonNode.class);
-//					}
-					
 					SiteCreationData siteCreationData = SiteCreationData.builder()
 							.id(rs.getLong("id"))
 						    .uuid(rs.getString("uuid"))
@@ -71,6 +65,8 @@ public class SiteApplicationRowMapper implements ResultSetExtractor<List<SiteCre
 						    .auditDetails(auditDetail)
 						    .siteType(rs.getString("site_type"))
 						    .accountId(rs.getString("account_id"))
+						    .status(rs.getString("status"))
+						    .isActive(rs.getBoolean("is_active"))
 						    .build();
 					
 					

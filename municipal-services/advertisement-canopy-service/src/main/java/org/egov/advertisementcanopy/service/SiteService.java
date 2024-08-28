@@ -98,9 +98,10 @@ public class SiteService {
 
 	public SiteUpdationResponse update(SiteUpdateRequest updateSiteRequest) {
 		SiteUpdationResponse siteupdationResponse = null;
-		try {
+		List<SiteCreationData> list = new ArrayList<>();
+//		try {
 			if (null != updateSiteRequest.getSiteUpdationData()) {
-				siteRepository.searchSites(updateSiteRequest.getSiteUpdationData());
+				list=siteRepository.searchSites(updateSiteRequest.getSiteUpdationData());
 			}
 			enrichUpdatedSite(updateSiteRequest);
 			updateSiteData(updateSiteRequest);
@@ -114,9 +115,9 @@ public class SiteService {
 						.createResponseInfoFromRequestInfo(updateSiteRequest.getRequestInfo(), true));
 			}
 
-		} catch (Exception e) {
-			throw new RuntimeException("Details provided for Site Updation are invalid!!!");
-		}
+//		} catch (Exception e) {
+//			throw new RuntimeException("Details provided for Site Updation are invalid!!!");
+//		}
 
 		return siteupdationResponse;
 	}
