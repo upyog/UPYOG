@@ -77,13 +77,11 @@ const EWApplicationDetails = () => {
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   };
   
-  {
     downloadOptions.push({
       label: t("EWASTE_DOWNLOAD_ACK_FORM"),
       onClick: () => handleDownloadPdf(),
     });
-  }
-
+  
   if (appDetailsToShow?.applicationData?.applicationData?.requestStatus === "REQUESTCOMPLETED") {
     downloadOptions.push({
       label: t("EW_CERTIFICATE"),
