@@ -21,7 +21,7 @@ RUN yarn add @upyog-niua/upyog-ui-module-ptr@1.0.8
 RUN yarn add @upyog/digit-ui-react-components@1.7.0-beta.4
 ARG WORK_DIR
 WORKDIR /app
-ENV NODE_OPTIONS "--max-old-space-size=4096"
+ENV NODE_OPTIONS "--max-old-space-size=8192"
 ENV GENERATE_SOURCEMAP "false"
 
 COPY ${WORK_DIR} .
@@ -30,7 +30,7 @@ RUN ls -lah
 #RUN node web/envs.js
 RUN cd web/ \
     && node envs.js \
-    && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(4096*4096))' \
+    && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(8192*8192))' \
     &&  ./install-deps.sh \
     && yarn install \
     && yarn build 
