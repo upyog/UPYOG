@@ -172,6 +172,7 @@ public class BPAService {
 			criteria.setEdcrNumber(ocBpas.get(0).getEdcrNumber());
 			ocService.validateAdditionalData(bpaRequest, criteria);
 			bpaRequest.getBPA().setLandInfo(ocBpas.get(0).getLandInfo());
+			
 		}
 	}
 	
@@ -524,6 +525,7 @@ public class BPAService {
 			}
 			
 			additionalDetails.put("landId", bpas.get(0).getLandId());
+			additionalDetails.put("riskType", bpas.get(0).getRiskType());
 			criteria.setEdcrNumber(bpas.get(0).getEdcrNumber());
 			ocService.validateAdditionalData(bpaRequest, criteria);
 			bpaRequest.getBPA().setLandInfo(bpas.get(0).getLandInfo());

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 @Component
 @Slf4j
@@ -54,11 +55,12 @@ public class BPARowMapper implements ResultSetExtractor<List<BPA>> {
 				Object additionalDetails = new Gson().fromJson(rs.getString("additionalDetails").equals("{}")
 						|| rs.getString("additionalDetails").equals("null") ? null : rs.getString("additionalDetails"),
 						Object.class);
-				
+
 				AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("bpa_createdBy"))
 						.createdTime(rs.getLong("bpa_createdTime")).lastModifiedBy(rs.getString("bpa_lastModifiedBy"))
 						.lastModifiedTime(lastModifiedTime).build();
 
+				String riskType = new Gson().fromJson(rs.getString("additionalDetails").equals("{}") || rs.getString("additionalDetails").equals("null") ? "{}" : rs.getString("additionalDetails"), JsonObject.class).get("riskType").getAsString();
 
 				currentbpa = BPA.builder()
 						.auditDetails(auditdetails)
@@ -74,6 +76,7 @@ public class BPARowMapper implements ResultSetExtractor<List<BPA>> {
 						.id(id)
 						.additionalDetails(additionalDetails)
 						.businessService(rs.getString("businessService"))
+						.riskType(riskType)
 						.build();
 
 				buildingMap.put(id, currentbpa);
