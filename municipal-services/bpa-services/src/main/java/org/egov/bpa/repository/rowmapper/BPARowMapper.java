@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 @Component
@@ -60,7 +61,19 @@ public class BPARowMapper implements ResultSetExtractor<List<BPA>> {
 						.createdTime(rs.getLong("bpa_createdTime")).lastModifiedBy(rs.getString("bpa_lastModifiedBy"))
 						.lastModifiedTime(lastModifiedTime).build();
 
-				String riskType = new Gson().fromJson(rs.getString("additionalDetails").equals("{}") || rs.getString("additionalDetails").equals("null") ? "{}" : rs.getString("additionalDetails"), JsonObject.class).get("riskType").getAsString();
+				JsonObject jsonObject = new Gson().fromJson(
+						rs.getString("additionalDetails").equals("{}") || rs.getString("additionalDetails").equals("null") ? "{}" : rs.getString("additionalDetails"),
+					    JsonObject.class
+					);
+
+					String riskType = null;
+					if (jsonObject.has("riskType")) {
+					    JsonElement riskTypeElement = jsonObject.get("riskType");
+					    if (riskTypeElement != null && !riskTypeElement.isJsonNull()) {
+					        riskType = riskTypeElement.getAsString();
+					    }
+					}
+				//String riskType = new Gson().fromJson(rs.getString("additionalDetails").equals("{}") || rs.getString("additionalDetails").equals("null") ? "{}" : rs.getString("additionalDetails"), JsonObject.class).get("riskType").getAsString();
 
 				currentbpa = BPA.builder()
 						.auditDetails(auditdetails)

@@ -283,6 +283,7 @@ public class BPAValidator {
 		bpaRequest.getBPA().getAuditDetails()
 				.setCreatedTime(idToBPAFromSearch.get(bpaRequest.getBPA().getId()).getAuditDetails().getCreatedTime());
 		bpaRequest.getBPA().setStatus(idToBPAFromSearch.get(bpaRequest.getBPA().getId()).getStatus());
+
 	}
 
 
@@ -644,6 +645,10 @@ public class BPAValidator {
 			if((obj.get("typeOfArchitect").toString().equalsIgnoreCase("DESIGNER") || obj.get("typeOfArchitect").toString().equalsIgnoreCase("SUPERVISOR")) && area.intValue()>250)
 				throw new CustomException(null,"Designer/Supervisor can apply for area less then 500 sq. yards. in self declaration");
 			
+		}
+		if (obj.get("riskType")!= null )
+		{
+			obj.put("riskType", bpaRequest.getBPA().getRiskType());
 		}
 	}
 }
