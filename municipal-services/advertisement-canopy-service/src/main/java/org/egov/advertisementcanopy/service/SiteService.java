@@ -15,6 +15,7 @@ import org.egov.advertisementcanopy.repository.SiteRepository;
 import org.egov.advertisementcanopy.util.ResponseInfoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class SiteService {
@@ -44,9 +45,9 @@ public class SiteService {
 				ids = siteRepository.searchSiteIds(createSiteRequest.getCreationData().getSiteName(),
 						createSiteRequest.getCreationData().getDistrictName(),
 						createSiteRequest.getCreationData().getUlbName(),
-						 createSiteRequest.getCreationData().getWardNumber());
+						createSiteRequest.getCreationData().getWardNumber());
 			}
-			if (null != ids && !ids.isEmpty()) {
+			if (!CollectionUtils.isEmpty(ids)) {
 				throw new RuntimeException("Site already exists...Duplicate Site!!!");
 			}
 			// enrich Site
@@ -100,20 +101,25 @@ public class SiteService {
 		SiteUpdationResponse siteupdationResponse = null;
 		List<SiteCreationData> list = new ArrayList<>();
 //		try {
-			if (null != updateSiteRequest.getSiteUpdationData()) {
-				list=siteRepository.searchSites(updateSiteRequest.getSiteUpdationData());
-			}
+		if (null != updateSiteRequest.getSiteUpdationData()) {
+			list = siteRepository.searchSites(updateSiteRequest.getSiteUpdationData());
+		}
+		if (!CollectionUtils.isEmpty(list)) {
 			enrichUpdatedSite(updateSiteRequest);
 			updateSiteData(updateSiteRequest);
+		}
+		else {
+			throw new RuntimeException("No Site exists with the Details Provided!!!");
+		}
 
-			siteupdationResponse = SiteUpdationResponse.builder()
-					.responseInfo(responseInfoFactory
-							.createResponseInfoFromRequestInfo(updateSiteRequest.getRequestInfo(), false))
-					.siteCreationData(updateSiteRequest.getSiteUpdationData()).build();
-			if (null != siteupdationResponse) {
-				siteupdationResponse.setResponseInfo(responseInfoFactory
-						.createResponseInfoFromRequestInfo(updateSiteRequest.getRequestInfo(), true));
-			}
+		siteupdationResponse = SiteUpdationResponse
+				.builder().responseInfo(responseInfoFactory
+						.createResponseInfoFromRequestInfo(updateSiteRequest.getRequestInfo(), false))
+				.siteCreationData(updateSiteRequest.getSiteUpdationData()).build();
+		if (null != siteupdationResponse) {
+			siteupdationResponse.setResponseInfo(
+					responseInfoFactory.createResponseInfoFromRequestInfo(updateSiteRequest.getRequestInfo(), true));
+		}
 
 //		} catch (Exception e) {
 //			throw new RuntimeException("Details provided for Site Updation are invalid!!!");
@@ -123,19 +129,19 @@ public class SiteService {
 	}
 
 	private void updateSiteData(SiteUpdateRequest updateSiteRequest) {
-		siteRepository.updateSiteData(updateSiteRequest.getSiteUpdationData());
+		siteRepository.updateSiteData(updateSiteRequest);
 
 	}
 
 	private void enrichUpdatedSite(SiteUpdateRequest updateSiteRequest) {
 		AuditDetails auditDetails = null;
 		if (null != updateSiteRequest.getRequestInfo().getUserInfo()) {
-			auditDetails = AuditDetails.builder().createdBy(updateSiteRequest.getRequestInfo().getUserInfo().getUuid())
-					.createdDate(new Date().getTime())
+			auditDetails = AuditDetails.builder()
 					.lastModifiedBy(updateSiteRequest.getRequestInfo().getUserInfo().getUuid())
 					.lastModifiedDate(new Date().getTime()).build();
 		}
 		updateSiteRequest.getSiteUpdationData().setAuditDetails(auditDetails);
+		updateSiteRequest.getSiteUpdationData().setAccountId(updateSiteRequest.getRequestInfo().getUserInfo().getUuid());
 
 	}
 

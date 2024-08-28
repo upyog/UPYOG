@@ -1,5 +1,7 @@
 package org.egov.advertisementcanopy.model;
 
+import javax.validation.constraints.Email;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 

@@ -66,7 +66,7 @@ public class SiteRepository {
 				siteCreation.getAuditDetails().getCreatedBy(), siteCreation.getAuditDetails().getCreatedDate(),
 				siteCreation.getAuditDetails().getLastModifiedBy(),
 				siteCreation.getAuditDetails().getLastModifiedDate(), siteCreation.getSiteType(),
-				siteCreation.getAccountId(),siteCreation.getStatus(),siteCreation.isActive(),
+				siteCreation.getAccountId(), siteCreation.getStatus(), siteCreation.isActive(),
 				siteCreation.getTenantId());
 	}
 
@@ -91,31 +91,45 @@ public class SiteRepository {
 		List<SiteCreationData> list = new ArrayList<>();
 		try {
 			Object object = jdbcTemplate.query(queryBuilder.SEARCH_QUERY_FOR_SITE_UPDATE,
-					Arrays.asList(siteCreationData.getId(), siteCreationData.getUuid(), siteCreationData.getSiteID()).toArray(),
+					Arrays.asList(siteCreationData.getId(), siteCreationData.getUuid(), siteCreationData.getSiteID())
+							.toArray(),
 					siteApplicationRowMapper);
-			
+
 			list = objectMapper.convertValue(object, ArrayList.class);
 
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
-		
+
 		return list;
 	}
 
-	public void updateSiteData(SiteCreationData siteUpdationData) {
-		jdbcTemplate.update(queryBuilder.UPDATE_QUERY, siteUpdationData.getSiteName(),
-				siteUpdationData.getSiteDescription(), siteUpdationData.getGpsLocation(),
-				siteUpdationData.getSiteAddress(), siteUpdationData.getSiteCost(), siteUpdationData.getSitePhotograph(),
-				siteUpdationData.getStructure(), siteUpdationData.getSizeLength(), siteUpdationData.getSizeWidth(),
-				siteUpdationData.getLedSelection(), siteUpdationData.getSecurityAmount(), siteUpdationData.getPowered(),
-				siteUpdationData.getOthers(), siteUpdationData.getDistrictName(), siteUpdationData.getUlbName(),
-				siteUpdationData.getUlbType(), siteUpdationData.getWardNumber(), siteUpdationData.getPinCode(),
-				siteUpdationData.getAdditionalDetail(), siteUpdationData.getAuditDetails().getCreatedBy(),
-				siteUpdationData.getAuditDetails().getCreatedDate(),
-				siteUpdationData.getAuditDetails().getLastModifiedBy(),
-				siteUpdationData.getAuditDetails().getLastModifiedDate(), siteUpdationData.getSiteType(),
-				siteUpdationData.getAccountId());
+	public void updateSiteData(SiteUpdateRequest updateSiteRequest) {
+		jdbcTemplate.update(queryBuilder.UPDATE_QUERY, updateSiteRequest.getSiteUpdationData().getSiteName(),
+				updateSiteRequest.getSiteUpdationData().getSiteDescription(),
+				updateSiteRequest.getSiteUpdationData().getGpsLocation(),
+				updateSiteRequest.getSiteUpdationData().getSiteAddress(),
+				updateSiteRequest.getSiteUpdationData().getSiteCost(),
+				updateSiteRequest.getSiteUpdationData().getSitePhotograph(),
+				updateSiteRequest.getSiteUpdationData().getStructure(),
+				updateSiteRequest.getSiteUpdationData().getSizeLength(),
+				updateSiteRequest.getSiteUpdationData().getSizeWidth(),
+				updateSiteRequest.getSiteUpdationData().getLedSelection(),
+				updateSiteRequest.getSiteUpdationData().getSecurityAmount(),
+				updateSiteRequest.getSiteUpdationData().getPowered(),
+				updateSiteRequest.getSiteUpdationData().getOthers(),
+				updateSiteRequest.getSiteUpdationData().getDistrictName(),
+				updateSiteRequest.getSiteUpdationData().getUlbName(),
+				updateSiteRequest.getSiteUpdationData().getUlbType(),
+				updateSiteRequest.getSiteUpdationData().getWardNumber(),
+				updateSiteRequest.getSiteUpdationData().getPinCode(),
+				updateSiteRequest.getSiteUpdationData().getAdditionalDetail(),
+				updateSiteRequest.getSiteUpdationData().getAuditDetails().getLastModifiedBy(),
+				updateSiteRequest.getSiteUpdationData().getAuditDetails().getLastModifiedDate(),
+				updateSiteRequest.getSiteUpdationData().getSiteType(),
+				updateSiteRequest.getSiteUpdationData().getAccountId(),
+				updateSiteRequest.getSiteUpdationData().getStatus(), updateSiteRequest.getSiteUpdationData().isActive(),
+				updateSiteRequest.getSiteUpdationData().getUuid(), updateSiteRequest.getSiteUpdationData().getId());
 
 	}
 
