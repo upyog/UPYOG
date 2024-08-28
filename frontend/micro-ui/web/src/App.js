@@ -68,8 +68,7 @@ const enabledModules = [
   "BillAmendment",
   "FireNoc",
   "Birth",
-  "Death",
-  "PTR"
+  "Death"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
