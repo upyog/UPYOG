@@ -260,4 +260,6 @@ public class PTRConstants {
 	public static final String USER_ROLE_PTR_VERIFIER = "PTR_VERIFIER";
 	
 	public static final String USER_ROLE_PTR_APPROVER = "PTR_APPROVER";
+
+	public static final String STATE_LEVEL_TENANT_ID = "hp";
 }
