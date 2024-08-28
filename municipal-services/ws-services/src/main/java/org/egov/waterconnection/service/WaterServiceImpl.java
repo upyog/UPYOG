@@ -121,6 +121,11 @@ public class WaterServiceImpl implements WaterService {
 
 		else if (wsUtil.isModifyConnectionRequest(waterConnectionRequest)) {
 			List<WaterConnection> previousConnectionsList = getAllWaterApplications(waterConnectionRequest);
+			if (previousConnectionsList.size()>0) {
+				for(WaterConnection previousConnectionsListObj: previousConnectionsList) {
+				waterDaoImpl.updateWaterApplicationStatus(previousConnectionsListObj.getId(), WCConstants.INACTIVE_STATUS);
+				}
+			}			
 			// Validate any process Instance exists with WF
 			if (!CollectionUtils.isEmpty(previousConnectionsList)) {
 				workflowService.validateInProgressWF(previousConnectionsList, waterConnectionRequest.getRequestInfo(),
