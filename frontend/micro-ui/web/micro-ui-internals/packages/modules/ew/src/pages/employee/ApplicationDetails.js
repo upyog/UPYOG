@@ -69,7 +69,7 @@ const EWApplicationDetails = () => {
     Digit.Utils.pdf.generateTable(data);
   };
 
-  let downloadOptions = [""];
+  let downloadOptions = [];
 
   const printCertificate = async () => {
     let response = await Digit.PaymentService.generatePdf(tenantId, { EwasteApplication: [applicationDetails?.applicationData?.applicationData] }, "ewasteservicecertificate");
@@ -77,13 +77,11 @@ const EWApplicationDetails = () => {
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   };
   
-  if (appDetailsToShow?.applicationData?.applicationData?.requestStatus === "REQUESTCOMPLETED") {
     downloadOptions.push({
       label: t("EWASTE_DOWNLOAD_ACK_FORM"),
       onClick: () => handleDownloadPdf(),
     });
-  }
-
+  
   if (appDetailsToShow?.applicationData?.applicationData?.requestStatus === "REQUESTCOMPLETED") {
     downloadOptions.push({
       label: t("EW_CERTIFICATE"),
