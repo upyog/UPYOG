@@ -1,5 +1,6 @@
 package org.egov.garbageservice.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -912,9 +913,16 @@ public class GarbageAccountService {
 			if (!CollectionUtils.isEmpty(billResponse.getBill())) {
 				billDetailsMap.put("billId", billResponse.getBill().get(0).getId());
 				garbageAccountDetail.setTotalPayableAmount(billResponse.getBill().get(0).getTotalAmount());
+			}else {
+				garbageAccountDetail.setTotalPayableAmount(new BigDecimal(100.00));
 			}
 			garbageAccountDetail.setBillDetails(billDetailsMap);
 			
+			
+			// enrich formula
+			if(!CollectionUtils.isEmpty(account.getGrbgCollectionUnits())) {
+				garbageAccountDetail.setFeeCalculationFormula("category: ("+account.getGrbgCollectionUnits().get(0).getCategory()+"), SubCategory: ("+account.getGrbgCollectionUnits().get(0).getSubCategory()+")");
+			}
 			
 			
 			// enrich userDetails
