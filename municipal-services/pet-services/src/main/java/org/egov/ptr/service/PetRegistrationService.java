@@ -320,12 +320,12 @@ public class PetRegistrationService {
 		userDetails.put("MobileNo", petRegistrationApplication.getMobileNumber());
 		userDetails.put("Email", petRegistrationApplication.getEmailId());
 		userDetails.put("Address", new String(petRegistrationApplication.getAddress().getAddressLine1().concat(", "))
-									.concat(petRegistrationApplication.getAddress().getAddressLine2().concat(", "))
-									.concat(petRegistrationApplication.getAddress().getDoorNo().concat(", "))
-									.concat(petRegistrationApplication.getAddress().getBuildingName().concat(", "))
-									.concat(petRegistrationApplication.getAddress().getStreet().concat(", "))
-									.concat(petRegistrationApplication.getAddress().getLandmark().concat(", "))
-									.concat(petRegistrationApplication.getAddress().getCity().concat(", "))
+//									.concat(petRegistrationApplication.getAddress().getAddressLine2().concat(", "))
+//									.concat(petRegistrationApplication.getAddress().getDoorNo().concat(", "))
+//									.concat(petRegistrationApplication.getAddress().getBuildingName().concat(", "))
+//									.concat(petRegistrationApplication.getAddress().getStreet().concat(", "))
+//									.concat(petRegistrationApplication.getAddress().getLandmark().concat(", "))
+//									.concat(petRegistrationApplication.getAddress().getCity().concat(", "))
 									.concat(petRegistrationApplication.getAddress().getPincode()));
 
 		applicationDetail.setUserDetails(userDetails);
