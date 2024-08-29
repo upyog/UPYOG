@@ -216,8 +216,9 @@ public class GeneralStair extends FeatureProcess {
                 System.out.println("landnig" + totalLandings);
                 System.out.println("flights" + totalFlights);
                
-                
+                if(flrHt != null) {
                 BigDecimal riserHeight = flrHt.divide(totalSteps, 2, RoundingMode.HALF_UP);
+                
 
                 
                 System.out.println("riserHt====" + riserHeight);
@@ -230,7 +231,8 @@ public class GeneralStair extends FeatureProcess {
                 } else {
                 	setReportOutputDetailsFloorStairWise(plan, RULE, "", "", "" + 0.19, "" + 
                             riserHeight, Result.Not_Accepted.getResultVal(), scrutinyDetail4);
-                }
+                }}
+                	
                 
                
 
