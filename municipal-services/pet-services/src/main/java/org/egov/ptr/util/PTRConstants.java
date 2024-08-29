@@ -50,6 +50,8 @@ public class PTRConstants {
 
 	public static final String WORKFLOW_ACTION_INITIATE = "INITIATE";
 
+	public static final String WORKFLOW_ACTION_VERIFY = "VERIFY";
+
     public static final String WORKFLOW_ACTION_FORWARD_TO_VERIFIER  = "FORWARD_TO_VERIFIER";
 
     public static final String WORKFLOW_ACTION_FORWARD_TO_APPROVER  = "FORWARD_TO_APPROVER";
