@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { MdmsService } from "./MDMS";
 import React from "react";
 import { UploadServices } from "../atoms/UploadServices";
+import { PTService } from "./PT";
 
 export const OBPSService = {
   scrutinyDetails: (tenantId, params) =>
@@ -265,6 +266,12 @@ export const OBPSService = {
   },
   BPADetailsPage: async (tenantId, filters) => {
     const response = await OBPSService.BPASearch(tenantId, filters);
+    sessionStorage.setItem("BPA_WORKFLOW_STATUS", response?.BPA[0]?.status);
+    let PTResponse={};
+    if(response!==undefined && response?.BPA[0]?.additionalDetails?.propertyID ){
+      PTResponse = response?.BPA[0]?.additionalDetails?.propertyID &&
+       (await Digit.PTService.search({ tenantId, filters: { propertyIds: response?.BPA[0]?.additionalDetails?.propertyID } }));
+    }
     let appDocumentFileStoreIds = response?.BPA?.[0]?.documents?.map(docId => docId.fileStoreId);
     if(!appDocumentFileStoreIds) appDocumentFileStoreIds = [];
     response?.BPA?.[0]?.additionalDetails?.fieldinspection_pending?.map(fiData => {
@@ -537,7 +544,7 @@ export const OBPSService = {
         { title: "BPA_KHATHA_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.khataNo || "NA", isNotTranslated: true  },
         { title: "BPA_HOLDING_NUMBER_LABEL", value: BPA?.additionalDetails?.holdingNo || "NA", isNotTranslated: true  },
         { title: "BPA_BOUNDARY_LAND_REG_DETAIL_LABEL", value: BPA?.additionalDetails?.registrationDetails || "NA", isNotTranslated: true },
-        { title: "BPA_BOUNDARY_WALL_LENGTH_LABEL", value: BPA?.additionalDetails?.boundaryWallLength || "NA", isNotTranslated: true }
+        { title: "BPA_PROPERTY_ID", value: BPA?.additionalDetails?.propertyID || "NA" }
       ]
     };
 

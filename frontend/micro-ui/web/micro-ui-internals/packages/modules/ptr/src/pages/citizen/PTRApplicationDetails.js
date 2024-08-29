@@ -1,4 +1,4 @@
-import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
@@ -166,11 +166,12 @@ fetchBillData();
       label: t("PTR_FEE_RECIEPT"),
       onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
     });
-  if (data?.ResponseInfo?.status === "successful")
-    dowloadOptions.push({
-      label: t("PTR_CERTIFICATE"),
-      onClick: () => printCertificate(),
-    });
+    if (reciept_data?.Payments[0]?.paymentStatus === "DEPOSITED")
+      dowloadOptions.push({
+        label: t("PTR_CERTIFICATE"),
+        onClick: () => printCertificate(),
+      });
+
   
   return (
     <React.Fragment>

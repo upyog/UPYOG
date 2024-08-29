@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Toast, Header } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Toast, Header } from "@upyog/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
 import DriverConfig from "../../configs/DriverConfig";
 import { useQueryClient } from "react-query";
@@ -92,7 +92,7 @@ const AddDriver = ({ parentUrl, heading }) => {
         queryClient.invalidateQueries("FSM_DRIVER_SEARCH");
         setTimeout(() => {
           closeToast();
-          history.push(`/digit-ui/employee/fsm/registry`);
+          history.push(`/digit-ui/employee/fsm/registry?selectedTabs=DRIVER`);
         }, 5000);
       },
     });

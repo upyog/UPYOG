@@ -12,7 +12,7 @@ import {
     StatusTable,
     Row,
     PDFSvg
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { getPattern, convertDateToEpoch, convertEpochToDate } from "../utils";
 
 const OCeDCRScrutiny = ({ t, config, onSelect, userType, formData, ownerIndex = 0, addNewOwner, isShowToast }) => {

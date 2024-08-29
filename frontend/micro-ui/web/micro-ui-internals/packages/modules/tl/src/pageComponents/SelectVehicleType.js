@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Loader, TypeSelectCard } from "@egovernments/digit-ui-react-components";
-import { FormStep, RadioOrSelect, RadioButtons } from "@egovernments/digit-ui-react-components";
+import { Loader, TypeSelectCard } from "@upyog/digit-ui-react-components";
+import { FormStep, RadioOrSelect, RadioButtons } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/TLTimeline";
 
 const SelectVehicleType = ({ t, config, onSelect, userType, formData }) => {
+  console.log("formData",formData)
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const [VehicleType, setVehicleType] = useState(formData?.TradeDetails?.VehicleType);

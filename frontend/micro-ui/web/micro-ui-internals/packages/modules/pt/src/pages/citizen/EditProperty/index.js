@@ -1,5 +1,5 @@
 // import React from "react";
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
@@ -402,10 +402,10 @@ const getPropertyEditDetails = (data = { }) => {
       data.noOfFloors = data?.additionalDetails?.noOfFloors || data?.noOfFloors;
       data.noOofBasements = data?.additionalDetails?.noOofBasements;
       data.units = data?.additionalDetails?.unit;
-      data.units[0].selfOccupied = data?.additionalDetails?.unit[0]?.selfOccupied;
-      data.units["-1"] = data?.additionalDetails?.basement1;
-      data.units["-2"] = data?.additionalDetails?.basement2;
-      data.landArea = { floorarea:data?.landArea}
+     // data.units[0].selfOccupied = data?.additionalDetails?.unit[0]?.selfOccupied;
+      // data.units["-1"] = data?.additionalDetails?.basement1 || "";
+      // data.units["-2"] = data?.additionalDetails?.basement2 || "";
+      // data.landArea = { floorarea:data?.landArea}
     }
   }
   return data;

@@ -22,7 +22,7 @@ frontend/micro-ui/web/package.json
 ```
 
 ```json
-"@egovernments/digit-ui-react-components":"1.5.24",
+"@upyog/digit-ui-react-components":"1.5.24",
 ```
 
 then navigate to App.js
@@ -35,7 +35,7 @@ Syntax for importing any component;
 
 ```jsx
 import React, { Component } from "react";
-import MyComponent from "@egovernments/digit-ui-react-components";
+import MyComponent from "@upyog/digit-ui-react-components";
 
 class Example extends Component {
   render() {

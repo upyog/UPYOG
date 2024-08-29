@@ -19,19 +19,19 @@ const MDMSAdd = ({ defaultFormData, updatesToUISchema, screenType = "add", onVie
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [spinner, toggleSpinner] = useState(false);
   // const stateId = Digit.ULBService.getStateId();
-  const FormSession = Digit.Hooks.useSessionStorage(`MDMS_${screenType}`, {});
-  const [sessionFormData, setSessionFormData, clearSessionFormData] = FormSession;
-  const [session, setSession] = useState(sessionFormData);
-  const [formSchema, setFormSchema] = useState({});
+
   const [uiSchema, setUiSchema] = useState({});
   const [api, setAPI] = useState(false);
 
   const [noSchema, setNoSchema] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [disableForm, setDisableForm] = useState(false);
-
   const [showToast, setShowToast] = useState(false);
   const { moduleName, masterName } = Digit.Hooks.useQueryParams();
+  const FormSession = Digit.Hooks.useSessionStorage(`MDMS_${screenType}_${moduleName}_${masterName}`, {});
+  const [sessionFormData, setSessionFormData, clearSessionFormData] = FormSession;
+  const [formSchema, setFormSchema] = useState({});
+  const [session, setSession] = useState(sessionFormData);
 
   useEffect(() => {
     setSession({ ...session, ...defaultFormData });

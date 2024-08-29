@@ -1,4 +1,4 @@
-import { Header, CitizenHomeCard, PTIcon } from "@egovernments/digit-ui-react-components";
+import { Header, CitizenHomeCard, PTRIcon } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
@@ -30,8 +30,8 @@ import NewApplication from "./pages/employee/NewApplication";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import Response from "./pages/Response";
 import SelectOtp from "../../core/src/pages/citizen/Login/SelectOtp";
-import CitizenFeedback from "@egovernments/digit-ui-module-core/src/components/CitizenFeedback";
-import AcknowledgementCF from "@egovernments/digit-ui-module-core/src/components/AcknowledgementCF";
+import CitizenFeedback from "@upyog/digit-ui-module-core/src/components/CitizenFeedback";
+import AcknowledgementCF from "../../core/src/components/AcknowledgementCF";
 
 
 
@@ -133,7 +133,7 @@ export const PTRLinks = ({ matchPath, userType }) => {
     },
   ];
 
-  return <CitizenHomeCard header={t("ACTION_TEST_PTR")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
+  return <CitizenHomeCard header={t("ACTION_TEST_PTR")} links={links} Icon={() => <PTRIcon className="fill-path-primary-main" />} />;
 };
 
 export const PTRComponents = {

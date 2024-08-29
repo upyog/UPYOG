@@ -1,4 +1,4 @@
-  import { FormComposer, Loader } from "@egovernments/digit-ui-react-components";
+  import { FormComposer, Loader } from "@upyog/digit-ui-react-components";
   import React, { useEffect, useState } from "react";
   import { useTranslation } from "react-i18next";
   import { useHistory } from "react-router-dom";
@@ -17,8 +17,14 @@
     const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
     const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", { });
   
-    // const { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(Digit.ULBService.getStateId(), "PropertyTax", "CommonFieldsConfig");
-
+    const { data: commonFields } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "CommonFieldsConfigEmp" }],
+    {
+      select: (data) => {
+          const formattedData = data?.["PetService"]?.["CommonFieldsConfigEmp"]
+          return formattedData;
+      },
+  });  
+  
     useEffect(() => {
       setMutationHappened(false);
       clearSuccessData();
@@ -72,15 +78,10 @@
       
 
     
-    // if (isLoading) {
-    //   return <Loader />;
-    // }
-
-    /* use newConfig instead of commonFields for local development in case needed */
+   
 
     
-    // const configs = commonFields? newConfig: commonFields;    \
-    const configs =  newConfig;    
+    const configs = commonFields? commonFields: newConfig;
 
 
     

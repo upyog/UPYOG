@@ -1,11 +1,10 @@
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 import React ,{Fragment}from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
-// import { newConfig } from "../../../config/Create/config";
 import { citizenConfig } from "../../../config/Create/citizenconfig";
-import { data } from "jquery";
+
 
 const PTRCreate = ({ parentRoute }) => {
 
@@ -14,14 +13,16 @@ const PTRCreate = ({ parentRoute }) => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const history = useHistory();
-  const stateId = Digit.ULBService.getStateId();
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PTR_CREATE_PET", {});
-  let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig"); //  PROPERTY CONFIG HOOK , just for commkonfeild config 
+  let { data: commonFields, isLoading } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "CommonFieldsConfig" }],
+  {
+    select: (data) => {
+        const formattedData = data?.["PetService"]?.["CommonFieldsConfig"]
+        return formattedData;
+    },
+});
   const goNext = (skipStep, index, isAddMultiple, key) => {
-
-    
-    
     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
       isMultiple = false,
@@ -42,7 +43,7 @@ const PTRCreate = ({ parentRoute }) => {
     if (!isNaN(lastchar)) {
       isMultiple = true;
     }
-    // let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
+    
     let { nextStep = {} } = config.find((routeObj) => routeObj.route === (currentPath || '0'));
 
 
@@ -106,9 +107,8 @@ const PTRCreate = ({ parentRoute }) => {
     return <Loader />;
   }
 
-  // commonFields=newConfig;
-  /* use newConfig instead of commonFields for local development in case needed */
-  commonFields = citizenConfig;
+ 
+  commonFields = commonFields? commonFields:citizenConfig;
   commonFields.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });

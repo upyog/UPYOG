@@ -1,6 +1,6 @@
 {
   "name": "@egovernments/digit-ui-react-components",
-  "version": "1.8.0-beta.1",
+  "version": "1.8.1",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
@@ -46,18 +46,22 @@
     "dist"
   ],
   "dependencies": {
-    "@egovernments/digit-ui-svg-components":"1.0.0-beta",
+    "@egovernments/digit-ui-svg-components":"1.0.0",
     "@googlemaps/js-api-loader": "1.13.10",
     "@hookform/resolvers": "1.3.7",
-    "ajv": "^8.12.0",
-    "ajv-errors": "^3.0.0",
-    "ajv-formats": "^2.1.1",
-    "json-schema-to-yup": "^1.8.8",
+    "ajv": "8.11.2",
+    "ajv-errors": "3.0.0",
+    "ajv-formats": "2.1.1",
+    "json-schema-to-yup": "1.8.8",
     "react-date-range": "1.3.0",
-    "react-drag-drop-files": "^2.3.10",
+    "react-drag-drop-files": "2.3.10",
     "react-hook-form": "6.15.8",
     "react-i18next": "11.16.2",
     "react-table": "7.7.0"
+  },
+  "resolutions": {
+    "**/ajv": "8.11.2",
+    "fast-uri":"2.1.0"
   },
   "browserslist": {
     "production": [

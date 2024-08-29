@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Header, CardSectionHeader, PDFSvg, StatusTable, Row, MultiLink, LinkButton } from "@egovernments/digit-ui-react-components";
+import { Header, CardSectionHeader, PDFSvg, StatusTable, Row, MultiLink, LinkButton } from "@upyog/digit-ui-react-components";
 import ApplicationDetailsTemplate from "../../../../../templates/ApplicationDetails";
 import { downloadAndPrintReciept } from "../../../utils";
 
@@ -53,20 +53,22 @@ const ApplicationDetail = () => {
     <div className={"employee-main-application-details"}>
         <div  className={"employee-application-details"}>
         <Header>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
-        {workflowDetails?.data?.timeline?.length>0 && (
-        <div style={{color:"#A52A2A"}}>
-        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
-        </div>
-        )}
+        <div>
+        <div style={{zIndex: "10",  position: "relative"}}>
         {applicationDetails?.payments?.length > 0 && 
         <MultiLink
-          className="multilinkWrapper employee-mulitlink-main-div"
+          className="multilinkWrapper"
           onHeadClick={() => setShowOptions(!showOptions)}
           displayOptions={showOptions}
           options={dowloadOptions}
           downloadBtnClassName={"employee-download-btn-className"}
           optionsClassName={"employee-options-btn-className"}
         />}
+        </div>
+        {workflowDetails?.data?.timeline?.length>0 && (
+        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        )}
+        </div>
         </div>
       <ApplicationDetailsTemplate
         applicationDetails={applicationDetails}

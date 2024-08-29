@@ -42,7 +42,7 @@ const CustomSelectWidget = (props) => {
       MdmsCriteria: {
         tenantId: tenantId,
         schemaCode: schemaCode,
-        limit: 100,
+        limit: 200,
         offset: 0
       },
     },

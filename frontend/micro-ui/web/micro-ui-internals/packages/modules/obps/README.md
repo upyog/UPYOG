@@ -4,7 +4,7 @@
 ## Install
 
 ```bash
-npm install --save @egovernments/digit-ui-module-obps
+npm install --save @upyog/digit-ui-module-obps
 ```
 
 ## Limitation
@@ -22,7 +22,7 @@ frontend/micro-ui/web/package.json
 ```
 
 ```json
-"@egovernments/digit-ui-module-obps":"^1.5.0",
+"@upyog/digit-ui-module-obps":"^1.5.0",
 ```
 
 then navigate to App.js
@@ -35,7 +35,7 @@ then navigate to App.js
 ```jsx
 /** add this import **/
 
-import { initobpsComponents } from "@egovernments/digit-ui-module-obps";
+import { initobpsComponents } from "@upyog/digit-ui-module-obps";
 
 /** inside enabledModules add this new module key **/
 

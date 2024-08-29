@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowRightInbox, ShippingTruck, EmployeeModuleCard, AddNewIcon, ViewReportIcon, InboxIcon } from "@egovernments/digit-ui-react-components";
+import { ArrowRightInbox, ShippingTruck, EmployeeModuleCard, AddNewIcon, ViewReportIcon, InboxIcon } from "@upyog/digit-ui-react-components";
 import { checkForEmployee } from "../utils";
 const ArrowRight = ({ to }) => (
   <Link to={to}>
@@ -81,7 +81,7 @@ const FSMCard = () => {
   const moduleForSomeFSMAdmin = FSM_ADMIN
     ? [
         {
-          link: "/digit-ui/employee/fsm/registry",
+          link: "/digit-ui/employee/fsm/registry?selectedTabs=VENDOR",
           label: t("ES_TITLE_FSM_REGISTRY"),
           icon: <AddNewIcon />,
         },

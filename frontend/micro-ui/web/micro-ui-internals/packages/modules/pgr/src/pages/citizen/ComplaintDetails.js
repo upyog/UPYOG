@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { LinkButton } from "@egovernments/digit-ui-react-components";
+import { LinkButton } from "@upyog/digit-ui-react-components";
 
 import { LOCALIZATION_KEY } from "../../constants/Localization";
 
@@ -17,7 +17,7 @@ import {
   ImageViewer,
   Loader,
   Toast,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 import TimeLine from "../../components/TimeLine";
 
@@ -141,9 +141,11 @@ const ComplaintDetailsPage = (props) => {
   return (
     <React.Fragment>
       <div className="complaint-summary">
+        <div style={{display:"flex",justifyContent:"space-between",maxWidth:"960px"}}>
         <Header>{t(`${LOCALIZATION_KEY.CS_HEADER}_COMPLAINT_SUMMARY`)}</Header>
-        <div style={{marginLeft:"500px", color:"#A52A2A"}}>
+        <div style={{ color:"#A52A2A"}}>
         <LinkButton label={t("VIEW_TIMELINE")}  onClick={handleViewTimeline} ></LinkButton>
+        </div>
         </div>
         {Object.keys(complaintDetails).length > 0 ? (
           <React.Fragment>

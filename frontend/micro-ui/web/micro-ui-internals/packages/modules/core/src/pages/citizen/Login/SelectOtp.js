@@ -1,5 +1,5 @@
 import React, { useState, Fragment, useEffect } from "react";
-import { ButtonSelector, CardText, FormStep, LinkButton, OTPInput, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { ButtonSelector, CardText, FormStep, LinkButton, OTPInput, CardLabelError } from "@upyog/digit-ui-react-components";
 import useInterval from "../../../hooks/useInterval";
 
 const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, userType = "citizen", canSubmit }) => {
@@ -27,7 +27,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
     }
     console.log("token",code,TokenReq,sessionStorage.getItem("code_verfier_register"))
     const data = await Digit.DigiLockerService.token({TokenReq })
-   registerUser(data)
+    registerUser(data)
   // fetch('https://api.digitallocker.gov.in/public/oauth2/1/token', {
   //   method: 'POST',
   //   mode: 'cors',
@@ -59,21 +59,20 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
   }
   else if (window.location.href.includes("error="))
   {
-    console.log("errrrrorrrrr")
     window.location.href = window.location.href.split("/otp")[0]
-   //history.replace(`${path}/login`, { from: getFromLocation(location.state, searchParams) });
-    
   }
   },[])
   const registerUser = async (response) => {
-    console.log("registerUser",response)
+    console.log("registerUser",response?.TokenRes?.mobile)
     const data = {
-      dob: response?.dob.substring(0, 2) +"/"+response?.dob.substring(2,4)+"/"+response?.dob.substring(4, 8),
-      mobileNumber: response.mobile,
-      name: response.name,
+      dob: response?.TokenRes?.dob.substring(0, 2) +"/"+response?.TokenRes?.dob.substring(2,4)+"/"+response?.TokenRes?.dob.substring(4, 8),
+      mobileNumber: response?.TokenRes?.mobile,
+      name: response?.TokenRes?.name,
       tenantId: "pg",
       userType: getUserType(),
     };
+      sessionStorage.setItem("userName",response?.TokenRes?.mobile)
+      console.log("datadatadata",data,sessionStorage.getItem("userName"))
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
       if (!err) {
         history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
@@ -81,7 +80,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
       }
       else {
         const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } })
-        sessionStorage.setItem("userName",response.mobile)
+        sessionStorage.setItem("userName",response?.TokenRes?.mobile)
       }
   }; 
   const handleResendOtp = () => {

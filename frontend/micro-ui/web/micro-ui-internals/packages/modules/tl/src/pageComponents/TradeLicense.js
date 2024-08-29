@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardSubHeader, CardText, CitizenInfoLabel, Loader, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Card, CardHeader, CardSubHeader, CardText, CitizenInfoLabel, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { stringReplaceAll } from "../utils";
 

@@ -21,7 +21,7 @@ import {
   Header,
   ImageViewer,
   MultiLink,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 import ActionModal from "./Modal";
 import TLCaption from "../../../components/TLCaption";
@@ -293,26 +293,26 @@ const ApplicationDetails = (props) => {
     setShowAllTimeline((prev) => !prev);
   }
 
-  let deepCopy = _.cloneDeep(workflowDetails)
-  let index1 = 0
-  deepCopy?.data?.timeline.map((check,index) => {
-    if (check.status == "ASSING_DSO" && index1 ==0)
-    {
-        let obj= check
-        obj.status = "PENDING_PAYYY"
-        index1 +=1
-        workflowDetails.data.timeline[index].status ="ASSING_DSO_PAY"
-        workflowDetails.data.timeline.splice(index, 0, obj);
-    }
-  })
+  // let deepCopy = _.cloneDeep(workflowDetails)
+  // let index1 = 0
+  // deepCopy?.data?.timeline.map((check,index) => {
+  //   if (check.status == "ASSING_DSO" && index1 ==0)
+  //   {
+  //       let obj= check
+  //       obj.status = "PENDING_PAYYY"
+  //       index1 +=1
+  //       workflowDetails.data.timeline[index].status ="ASSING_DSO_PAY"
+  //       workflowDetails.data.timeline.splice(index, 0, obj);
+  //   }
+  // })
 
     return (
     <React.Fragment>
       {!isLoading ? (
         <React.Fragment>
-          <Header style={{ marginBottom: "16px" }}>{t("ES_TITLE_APPLICATION_DETAILS")}</Header>
-          <div style={{ display: "flex", marginLeft: '500px', color: "#A52A2A" }}>
-            <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
+          <div style={{display:"flex",justifyContent:"space-between"}}>
+          <Header style={{ marginBottom: "16px" }}>{t("ES_TITLE_APPLICATION_DETAILS")}</Header>           
+          <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
           </div>
           <Card className="fsm" style={{ position: "relative" }}>
             {/* {!DSO && (

@@ -1,4 +1,4 @@
-import { StatusTable, Header, Card, CardHeader, Row, PDFSvg, CardSectionHeader, MultiLink, Loader, LinkButton } from "@egovernments/digit-ui-react-components";
+import { StatusTable, Header, Card, CardHeader, Row, PDFSvg, CardSectionHeader, MultiLink, Loader, LinkButton } from "@upyog/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -80,11 +80,10 @@ const ApplicationDetails = () => {
   return (
     <Fragment>
       <div className="cardHeaderWithOptions" style={isMobile ? {} : {maxWidth:"980px"}}>
-        <div style={{display:'flex', alignItems:'center', justifyContent:'center'}}>
+        {/* <div style={{display:'flex'}}> */}
         <Header styles={{ fontSize: "32px", marginLeft: isMobile ? "0px" : "10px" }}>{t("BPA_TASK_DETAILS_HEADER")}</Header>
-        <div style={{display:"flex", alignItems:"center", color:"#A52A2A"}}></div>
-        <LinkButton label={t("VIEW_TIMELINE")} styles={{ fontSize: "32px", marginLeft: isMobile ? "0px" : "10px" }} onClick={handleViewTimeline}></LinkButton>
-        </div>
+        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+         
         {reciept_data?.Payments?.length > 0 && (
           // <div style={{right: "3%", top: "20px", position: "absolute"}}>
           <MultiLink
@@ -94,7 +93,11 @@ const ApplicationDetails = () => {
             options={dowloadOptions}
             style={{ top: "90px" }}
           />
-        )}
+        )}        
+        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        {/* </div> */}
+        </div>
+        
       </div>
       <div>
         <Card>

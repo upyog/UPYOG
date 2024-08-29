@@ -1,11 +1,35 @@
 package org.egov.tl.service;
 
+import static org.egov.tl.util.TLConstants.ACTION_APPLY;
+import static org.egov.tl.util.TLConstants.ACTION_INITIATE;
+import static org.egov.tl.util.TLConstants.CITIZEN_SENDBACK_ACTION;
+import static org.egov.tl.util.TLConstants.STATUS_APPLIED;
+import static org.egov.tl.util.TLConstants.STATUS_INITIATED;
+import static org.egov.tl.util.TLConstants.businessService_BPA;
+import static org.egov.tl.util.TLConstants.businessService_TL;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.repository.IdGenRepository;
 import org.egov.tl.util.TLConstants;
 import org.egov.tl.util.TradeUtil;
-import org.egov.tl.web.models.*;
+import org.egov.tl.web.models.AuditDetails;
+import org.egov.tl.web.models.OwnerInfo;
+import org.egov.tl.web.models.TradeLicense;
+import org.egov.tl.web.models.TradeLicenseRequest;
+import org.egov.tl.web.models.TradeLicenseSearchCriteria;
 import org.egov.tl.web.models.Idgen.IdResponse;
 import org.egov.tl.web.models.user.UserDetailResponse;
 import org.egov.tl.web.models.workflow.BusinessService;
@@ -14,14 +38,14 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
 import com.jayway.jsonpath.JsonPath;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import static org.egov.tl.util.TLConstants.*;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Service
+@Slf4j
 public class EnrichmentService {
 
     private IdGenRepository idGenRepository;
@@ -51,7 +75,9 @@ public class EnrichmentService {
         RequestInfo requestInfo = tradeLicenseRequest.getRequestInfo();
         String uuid = requestInfo.getUserInfo().getUuid();
         AuditDetails auditDetails = tradeUtil.getAuditDetails(uuid, true);
+        log.info("TL request size====",tradeLicenseRequest.getLicenses().size());
         tradeLicenseRequest.getLicenses().forEach(tradeLicense -> {
+        	log.info("trade License");
             tradeLicense.setAuditDetails(auditDetails);
             tradeLicense.setId(UUID.randomUUID().toString());
             tradeLicense.setApplicationDate(auditDetails.getCreatedTime());
@@ -94,18 +120,23 @@ public class EnrichmentService {
             });
 
             if (tradeLicense.getAction().equalsIgnoreCase(ACTION_APPLY)) {
+            	if(tradeLicense.getTradeLicenseDetail().getApplicationDocuments()!=null) {
                 tradeLicense.getTradeLicenseDetail().getApplicationDocuments().forEach(document -> {
                     document.setId(UUID.randomUUID().toString());
                     document.setActive(true);
                 });
+            	}
             }
             
             if(tradeLicense.getApplicationType() !=null && tradeLicense.getApplicationType().toString().equals(TLConstants.APPLICATION_TYPE_RENEWAL)){
                 if(tradeLicense.getAction().equalsIgnoreCase(ACTION_APPLY) || tradeLicense.getAction().equalsIgnoreCase(TLConstants.TL_ACTION_INITIATE)){
-                    tradeLicense.getTradeLicenseDetail().getApplicationDocuments().forEach(document -> {
+                	if(tradeLicense.getTradeLicenseDetail().getApplicationDocuments()!=null) {
+
+                	tradeLicense.getTradeLicenseDetail().getApplicationDocuments().forEach(document -> {
                         document.setId(UUID.randomUUID().toString());
                         document.setActive(true);
                     });
+                	}
                 }
                                
             }

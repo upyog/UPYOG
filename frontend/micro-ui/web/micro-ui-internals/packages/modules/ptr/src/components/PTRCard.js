@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { EmployeeModuleCard, PropertyHouse } from "@egovernments/digit-ui-react-components";
+import { EmployeeModuleCard, PTRIcon } from "@upyog/digit-ui-react-components";
 
 const PTRCard = () => {
   const { t } = useTranslation();
@@ -45,7 +45,7 @@ const PTRCard = () => {
   ]
   const PTR_CEMP = Digit.UserService.hasAccess(["PTR_APPROVER", "PTR_CEMP", "PTR_VERIFIER"]) || false;
   const propsForModuleCard = {
-    Icon: <PropertyHouse />,
+    Icon: <PTRIcon />,
     moduleName: t("PTR_TITLE_PET_REGISTRATION"),
     kpis: [
       {

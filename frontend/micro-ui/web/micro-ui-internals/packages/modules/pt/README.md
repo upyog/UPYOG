@@ -4,7 +4,7 @@
 ## Install
 
 ```bash
-npm install --save @egovernments/digit-ui-module-pt
+npm install --save @upyog/digit-ui-module-pt
 ```
 
 ## Limitation
@@ -22,7 +22,7 @@ frontend/micro-ui/web/package.json
 ```
 
 ```json
-"@egovernments/digit-ui-module-pt":"^1.5.0",
+"@upyog/digit-ui-module-pt":"^1.5.0",
 ```
 
 then navigate to App.js
@@ -35,7 +35,7 @@ then navigate to App.js
 ```jsx
 /** add this import **/
 
-import { initPTComponents } from "@egovernments/digit-ui-module-pt";
+import { initPTComponents } from "@upyog/digit-ui-module-pt";
 
 /** inside enabledModules add this new module key **/
 

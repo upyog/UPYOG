@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo,Fragment  } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { Dropdown, Loader,Header } from "@egovernments/digit-ui-react-components";
+import { Dropdown, Loader,Header } from "@upyog/digit-ui-react-components";
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { useQueryClient } from "react-query";
 import { FormComposer } from "../../../components/FormComposer";

@@ -1,4 +1,4 @@
-    import { Header, MultiLink } from "@egovernments/digit-ui-react-components";
+    import { Header, MultiLink } from "@upyog/digit-ui-react-components";
     import _ from "lodash";
     import React, { useEffect, useState } from "react";
     import { useTranslation } from "react-i18next";
@@ -132,7 +132,7 @@
       };
 
 
-      if (reciept_data?.Payments[0]?.instrumentStatus === "APPROVED")
+      if (reciept_data?.Payments[0]?.paymentStatus === "DEPOSITED")
       dowloadOptions.push({
         label: t("PTR_CERTIFICATE"),
         onClick: () => printCertificate(),

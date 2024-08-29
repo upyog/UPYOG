@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons,RadioOrSelect, LabelFieldPair, Dropdown, CheckBox, LinkButton, Loader, Toast, SearchIcon, DeleteIcon } from "@egovernments/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons,RadioOrSelect, LabelFieldPair, Dropdown, CheckBox, LinkButton, Loader, Toast, SearchIcon, DeleteIcon } from "@upyog/digit-ui-react-components";
 import { stringReplaceAll, getPattern, convertDateTimeToEpoch, convertDateToEpoch } from "../utils";
 import Timeline from "../components/Timeline";
 import cloneDeep from "lodash/cloneDeep";
+import { PTService } from "../../../../libraries/src/services/elements/PT";
 
 const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     let validation = {};
@@ -224,7 +225,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             setShowToast({ key: "true", error: true, message: "ERR_OWNER_ALREADY_ADDED" });
             return;
         } else {
-            const usersResponse = await Digit.UserService.userSearch(window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE") ? Digit.ULBService.getStateId()?.split(".")?.[0] : Digit.ULBService.getStateId(), { userName: fields?.[indexValue]?.mobileNumber }, {});
+            const usersResponse = await Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: fields?.[indexValue]?.mobileNumber }, {});
             let found = usersResponse?.user?.[0]?.roles?.filter(el => el.code === "BPA_ARCHITECT" || el.code === "BPA_SUPERVISOR")?.[0];
             if (usersResponse?.user?.length === 0) {
                 setShowToast({ key: "true", warning: true, message: "ERR_MOBILE_NUMBER_NOT_REGISTERED" });
@@ -259,7 +260,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         let flag = false;
         let userresponse = [];
         userresponse = fields?.map((ob,indexValue) => {
-            return Digit.UserService.userSearch(window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE") ? Digit.ULBService.getStateId()?.split(".")?.[0] : Digit.ULBService.getStateId(), { userName: fields?.[indexValue]?.mobileNumber }, {});
+            return Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: fields?.[indexValue]?.mobileNumber }, {}).then((ob) => {return ob})
         })
         //getting user data from citizen uuid
         userresponse = await Promise.all(userresponse);
@@ -291,14 +292,10 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             setError("BPA_ERROR_MULTIPLE_OWNER");
         }
         else {
-            let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"));
-            if(!formData?.address?.locality?.code){
-                formData.address = propertyData?.address;
-            }
             let owner = formData.owners;
             let ownerStep;
             ownerStep = { ...owner, owners: fields, ownershipCategory: ownershipCategory };
-            console.log(formData.address,"formData.address")
+
             if (!formData?.id) {
                 setIsDisable(true);
                 //for owners conversion
@@ -314,6 +311,40 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         fatherOrHusbandName: "NAME"
                     })
                 });
+                let Property= {}
+                let createdProp={}
+                if(!formData?.cptId){
+                
+                    Property.tenantId= formData?.address?.city?.code,
+                    Property.landInfo = {};
+                    //For Address
+                    Property.address = {};
+                    if (formData?.address?.city?.code) Property.address.city = formData?.address?.city?.code;
+                    if (formData?.address?.locality?.code) Property.address.locality = { code: formData?.address?.locality?.code };
+                    if (formData?.address?.pincode) Property.address.pincode = formData?.address?.pincode;
+                    if (formData?.address?.landmark) Property.address.landmark = formData?.address?.landmark;
+                    if (formData?.address?.street) Property.address.street = formData?.address?.street;
+                    if (formData?.address?.geoLocation) Property.address.geoLocation = formData?.address?.geoLocation;
+                    Property.propertyType= "VACANT",
+                   // ...data.propertyDetails,
+                   Property.ownershipCategory= ownershipCategory.code,
+                   Property.usageCategory= formData?.data?.occupancyType.toUpperCase();
+                   Property.owners= conversionOwners.map(owner=>({
+                        ...owner,
+                     ownerType:"NONE",
+                      permanentaddress:"",
+                    })),
+                    Property.landArea=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea.toFixed(2);
+                    Property.noOfFloors=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalFloors;
+                    Property.additionalDetails= {
+                      isRainwaterHarvesting:false,
+                    },
+                    Property.creationReason= "CREATE";
+                    Property.source= "MUNICIPAL_RECORDS";
+                    Property.channel= "SYSTEM";
+                 
+                     createdProp = await PTService.create({Property, tenantId})
+              }
                 let payload = {};
                 payload.edcrNumber = formData?.edcrNumber?.edcrNumber ? formData?.edcrNumber?.edcrNumber :formData?.data?.scrutinyNumber?.edcrNumber;
                 payload.riskType = formData?.data?.riskType;
@@ -322,7 +353,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
                 const userInfo = Digit.UserService.getUser();
                 const accountId = userInfo?.info?.uuid;
-                payload.tenantId = formData?.address?.city?.code || formData?.address?.tenantId;
+                payload.tenantId = formData?.address?.city?.code;
                 payload.workflow = { action: "INITIATE", assignes : [userInfo?.info?.uuid] };
                 payload.accountId = accountId;
                 payload.documents = null;
@@ -337,7 +368,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.landInfo = {};
                 //For Address
                 payload.landInfo.address = {};
-                if (formData?.address?.city?.code) payload.landInfo.address.city = formData?.address?.city?.code || formData?.address?.tenantId;
+                if (formData?.address?.city?.code) payload.landInfo.address.city = formData?.address?.city?.code;
                 if (formData?.address?.locality?.code) payload.landInfo.address.locality = { code: formData?.address?.locality?.code };
                 if (formData?.address?.pincode) payload.landInfo.address.pincode = formData?.address?.pincode;
                 if (formData?.address?.landmark) payload.landInfo.address.landmark = formData?.address?.landmark;
@@ -346,7 +377,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
                 payload.landInfo.owners = conversionOwners;
                 payload.landInfo.ownershipCategory = ownershipCategory.code;
-                payload.landInfo.tenantId = formData?.address?.city?.code || formData?.address?.tenantId;
+                payload.landInfo.tenantId = formData?.address?.city?.code;
 
                 //for units
                 const blockOccupancyDetails = formData;
@@ -368,6 +399,10 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                             result.BPA[0].address.locality = formData.address.locality;
                             result.BPA[0].placeName = formData?.address?.placeName;
                             result.BPA[0].data = formData.data;
+                            result.BPA[0].additionalDetails.propertyID=formData?.cptId ?formData?.cptId?.id: createdProp?.Properties[0]?.propertyId ;
+                            if(createdProp?.Properties){
+                                result.BPA[0].additionalDetails.propertyAcknowldgementNumber=createdProp?.Properties[0]?.acknowldgementNumber;
+                            }
                             result.BPA[0].BlockIds = getBlockIds(result.BPA[0].landInfo.unit);
                             result.BPA[0].subOccupancy= formData?.subOccupancy;
                             result.BPA[0].uiFlow = formData?.uiFlow;
@@ -545,7 +580,7 @@ useEffect(()=>{
                                         value={field.emailId}
                                         onChange={(e) => setOwnerEmail(index, e)}
                                         {...(validation = {
-                                            isRequired: true,
+                                            //isRequired: true,
                                             pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$",
                                             type: "emailId",
                                             title: t("TL_EMAIL_ID_ERROR_MESSAGE"),

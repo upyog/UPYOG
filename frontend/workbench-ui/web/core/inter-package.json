@@ -4,10 +4,8 @@
   "main": "index.js",
   "workspaces": [
     "packages/libraries",
-    "example",
-    "packages/css",
     "packages/react-components",
-    "packages/modules/*"
+    "packages/modules/workbench"
   ],
   "author": "JaganKumar <jagan.kumar@egov.org.in>",
   "license": "MIT",
@@ -27,6 +25,7 @@
     "dev:example": "cd example && yarn start",
     "dev:core": "cd packages/modules/core && yarn start",
     "dev:dss": "cd packages/modules/dss && yarn start",
+    "dev:pgr": "cd packages/modules/pgr && yarn start",
     "dev:hrms": "cd packages/modules/hrms && yarn start",
     "devD:common": "cd packages/modules/common && yarn start",
     "devD:utilities": "cd packages/modules/utilities && yarn start",
@@ -36,19 +35,22 @@
     "build:libraries": "cd packages/libraries && yarn build",
     "build:components": "cd packages/react-components && yarn build",
     "build:svgcomponents": "cd packages/svg-components && yarn build",
-    "build:dss": "cd packages/modules/dss && yarn build",
-    "build:core": "cd packages/modules/core && yarn build",
-    "build:hrms": "cd packages/modules/hrms && yarn build",
-    "build:common": "cd packages/modules/common && yarn build",
-    "build:utilities": "cd packages/modules/utilities && yarn build",
-    "build:engagement": "cd packages/modules/engagement && yarn build",
+    "buildD:dss": "cd packages/modules/dss && yarn build",
+    "buildD:core": "cd packages/modules/core && yarn build",
+    "buildD:pgr": "cd packages/modules/pgr && yarn build",
+    "buildD:hrms": "cd packages/modules/hrms && yarn build",
+    "buildD:common": "cd packages/modules/common && yarn build",
+    "buildD:utilities": "cd packages/modules/utilities && yarn build",
+    "buildD:engagement": "cd packages/modules/engagement && yarn build",
     "build:workbench": "cd packages/modules/workbench && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh",
     "clean": "rm -rf node_modules"
   },
   "resolutions": {
     "**/@babel/runtime": "7.20.1",
-    "**/babel-preset-react-app": "10.0.0"
+    "**/babel-preset-react-app": "10.0.0",
+    "**/ajv": "8.11.2",
+    "fast-uri":"2.1.0"
   },
   "devDependencies": {
     "husky": "7.0.4",
@@ -63,7 +65,7 @@
   "dependencies": {
     "lodash": "4.17.21",
     "microbundle-crl": "0.13.11",
-    "@egovernments/digit-ui-react-components": "1.8.0-beta.1",
+    "@egovernments/digit-ui-react-components": "1.8.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-hook-form": "6.15.8",

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { FormComposer, Header, Loader } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Header, Loader } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 const isConventionalSpecticTank = (tankDimension) => tankDimension === "lbd";
@@ -213,7 +213,7 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
           longitude: data?.address?.longitude ? data?.address?.longitude : applicationData.address.geoLocation.longitude,
         },
         additionalDetails: {
-          boundaryType: propertyLocation === "FROM_GRAM_PANCHAYAT" ? (village?.code ? "Village" : "GP") : "Locality",
+          boundaryType: propertyLocation === "FROM_GRAM_PANCHAYAT" ? "GP" : "Locality",
           gramPanchayat: {
             code: gramPanchayat?.code,
             name: gramPanchayat?.name,

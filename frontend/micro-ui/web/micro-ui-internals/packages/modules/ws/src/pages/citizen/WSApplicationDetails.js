@@ -11,7 +11,7 @@ import {
   CardText,
   CardHeader,
   SubmitBar,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
@@ -229,8 +229,12 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
   //const application = data?.Properties[0];
   sessionStorage.setItem("ApplicationNoState", applicationNobyData);
   return (
-    <React.Fragment>
-      {downloadOptions && downloadOptions.length > 0 && (
+    <React.Fragment>     
+      <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
+        <Header>{t("WS_APPLICATION_DETAILS_HEADER")}</Header>
+        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+       
+        {downloadOptions && downloadOptions.length > 0 && (
         <div ref={menuRef}>
         <MultiLink
         className="multilinkWrapper"
@@ -241,10 +245,7 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
         />
         </div>        
         )}
-      <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
-        <Header>{t("WS_APPLICATION_DETAILS_HEADER")}</Header>
-        <div style={{display:"flex", alignItems:"center", color:"#A52A2A"}}>
-        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
+        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
         </div>
       </div>
       {checkifPrivacyenabled && <WSInfoLabel t={t} /> }

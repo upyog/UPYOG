@@ -4,7 +4,7 @@
 ## Install
 
 ```bash
-npm install --save @egovernments/digit-ui-module-commonpt
+npm install --save @upyog/digit-ui-module-commonpt
 ```
 
 ## Limitation
@@ -22,7 +22,7 @@ frontend/micro-ui/web/package.json
 ```
 
 ```json
-"@egovernments/digit-ui-module-commonpt":"^1.5.0",
+"@upyog/digit-ui-module-commonpt":"^1.5.0",
 ```
 
 then navigate to App.js
@@ -35,7 +35,7 @@ then navigate to App.js
 ```jsx
 /** add this import **/
 
-import { initcommonptComponents } from "@egovernments/digit-ui-module-commonpt";
+import { initcommonptComponents } from "@upyog/digit-ui-module-commonpt";
 
 /** inside enabledModules add this new module key **/
 

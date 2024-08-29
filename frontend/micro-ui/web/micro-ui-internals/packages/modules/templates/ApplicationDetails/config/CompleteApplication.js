@@ -1,5 +1,5 @@
 import React from "react";
-import { DatePicker } from "@egovernments/digit-ui-react-components";
+import { DatePicker } from "@upyog/digit-ui-react-components";
 
 export const configCompleteApplication = ({ t, vehicle, applicationCreatedTime = 0, action }) => ({
   label: {

@@ -1,4 +1,4 @@
-import { CardLabel, FormStep, LinkButton, Loader, RadioOrSelect, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, FormStep, LinkButton, Loader, RadioOrSelect, TextInput } from "@upyog/digit-ui-react-components";
 import isUndefined from "lodash/isUndefined";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -83,7 +83,7 @@ const SelectAccessoriesDetails = ({ t, config, onSelect, userType, formData }) =
         return { code: item.licenseType, active: true };
       });
 
-      accessories?.((data) => {
+      accessories?.map((data) => {
         data.i18nKey = t(`TRADELICENSE_ACCESSORIESCATEGORY_${stringReplaceAll(data?.code?.toUpperCase(), "-", "_")}`);
       });
 

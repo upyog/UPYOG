@@ -20,7 +20,7 @@ import {
   ActionBar,
   Dropdown,
   InfoIcon
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import DisconnectTimeline from "../components/DisconnectTimeline";
@@ -139,7 +139,7 @@ const WSDisconnectionForm = ({ t, config, onSelect, userType }) => {
         setError(false);
       }, 3000);
     }
-    if( data?.type?.value?.name == "Temporary" && convertDateToEpoch(data?.endDate)  <= convertDateToEpoch(data?.date)){
+    else if( data?.type?.value?.name == "Temporary" && convertDateToEpoch(data?.endDate)  <= convertDateToEpoch(data?.date)){
       setError({key: "error", message: "PROPOSED_DISCONNECTION_INVALID_END_DATE"});
       setTimeout(() => {
         setError(false);
@@ -215,7 +215,7 @@ const WSDisconnectionForm = ({ t, config, onSelect, userType }) => {
     
   } ;
 
-  if (isMdmsLoading || wsDocsLoading || isEnableLoader || slaLoading || loading) return <Loader />
+  if (isMdmsLoading || wsDocsLoading || isEnableLoader || slaLoading) return <Loader />
 
 
 if(userType === 'citizen') {
@@ -312,7 +312,6 @@ if(userType === 'citizen') {
               onSubmit={() => {
                 const appDate= new Date();
                 const proposedDate= format(addDays(appDate, slaData?.slaDays), 'yyyy-MM-dd').toString();
-console.log("disconnectionData",disconnectionData)
                 if( convertDateToEpoch(disconnectionData?.date)  <= convertDateToEpoch(proposedDate)){
                   setError({key: "error", message: "PROPOSED_DISCONNECTION_INVALID_DATE"});
                   setTimeout(() => {
