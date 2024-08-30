@@ -2,7 +2,7 @@ import React from "react";
 
 const Reason = ({ headComment, otherComment }) => (
   <div className="checkpoint-comments-wrap">
-    <h4>{headComment}</h4>
+    <h2>{headComment}</h2>
     <p>{otherComment}</p>
   </div>
 );
