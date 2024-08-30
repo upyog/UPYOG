@@ -660,6 +660,7 @@ public class BillServicev2 {
 		crd.setTime(currentDate);
 		Integer cuurentMonth = crd.get(Calendar.MONTH)+4;
 		Integer currentyear =  crd.get(Calendar.YEAR);
+		Integer nextYear = currentyear+1;
 
 		Integer b= c.get(Calendar.YEAR);
 		financialYearFromDemand.append(b.toString().substring(2,4));
@@ -887,7 +888,7 @@ public class BillServicev2 {
 			else if(q4.contains(cuurentMonth))
 			{
 				paymentPeriod=Q4;
-				expiryDate="31-03-"+currentyear;
+				expiryDate="31-03-"+nextYear;
 				
 				String expiryDateQ1 = "30-06-"+currentyear;
 				String startDateQ1 ="01-04-"+currentyear;
@@ -948,7 +949,7 @@ public class BillServicev2 {
 				
 				
 				mpdObj = new ModeOfPaymentDetails();
-				mpdObj = getModeOfPaymentDetails(newTotalAmountForModeOfPayment,"01-01-"+currentyear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString());
+				mpdObj = getModeOfPaymentDetails(newTotalAmountForModeOfPayment,"01-01-"+nextYear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString());
 				mpdList.add(mpdObj);
 				allquaterammount=allquaterammount.add(quaterlyammount);
 				totalAmountForDemand = newTotalAmountForModeOfPayment.add(allquaterammount);
@@ -980,15 +981,33 @@ public class BillServicev2 {
 
 				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(2));
 				totalAmountForDemand = newTotalAmountForModeOfPayment.add(allhalfyearammount);
+				
+				mpdObj = new ModeOfPaymentDetails();
+				mpdObj = getModeOfPaymentDetails(totalAmountForDemand,"01-04-"+currentyear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString());
+				mpdList.add(mpdObj);
 			}
 			else if(h2.contains(cuurentMonth))
 			{
 				paymentPeriod=H2;
-				expiryDate="31-12-"+currentyear;
+				String startDateh1="01-04-"+currentyear;
+				String expiryDateh1="30-09-"+currentyear;
+				String startDateh2="01-10-"+currentyear;
+				expiryDate="31-03-"+nextYear;
 
 				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(2));
+				if(!successtransactionMapForHalfyearly.containsKey(H1)) {
 				if(!failedtransactionMapForHalfYearly.containsKey(H1) && !alltransactionForHalfYearly.containsKey(H1))
-					halfyearlyammount=ammountForTransactionperiod(H1,ammountforhalfyearly);
+					
+				halfyearlyammount=ammountForTransactionperiod(H1,ammountforhalfyearly);
+				mpdObj = new ModeOfPaymentDetails();
+				mpdObj = getModeOfPaymentDetails(halfyearlyammount,startDateh2, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString());
+				mpdList.add(mpdObj);
+				
+				}else {
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(newTotalAmountForModeOfPayment,startDateh1, expiryDateh1,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString());
+					mpdList.add(mpdObj);
+				}
 				allhalfyearammount=allhalfyearammount.add(halfyearlyammount);
 				totalAmountForDemand = newTotalAmountForModeOfPayment.add(allhalfyearammount);
 			}
@@ -997,7 +1016,12 @@ public class BillServicev2 {
 
 		case YEARLY:
 			paymentPeriod=YR;
+			String startDateh1="01-04-"+currentyear;
 			expiryDate="31-12-"+currentyear;
+			
+			mpdObj = new ModeOfPaymentDetails();
+			mpdObj = getModeOfPaymentDetails(totalAmountForDemand,startDateh1, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString());
+			mpdList.add(mpdObj);
 			break;
 		default:
 			break;
