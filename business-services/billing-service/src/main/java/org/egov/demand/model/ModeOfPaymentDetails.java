@@ -23,6 +23,8 @@ public class ModeOfPaymentDetails {
 	@JsonProperty("amount")
 	private BigDecimal amount;
 	
+	private BigDecimal pastAmount;
+	
 	@JsonProperty("status")
 	private TxnStatusEnum status;
 	
