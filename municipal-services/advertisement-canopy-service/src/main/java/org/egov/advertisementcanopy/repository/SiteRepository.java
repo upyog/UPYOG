@@ -2,8 +2,9 @@ package org.egov.advertisementcanopy.repository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -15,8 +16,8 @@ import org.egov.advertisementcanopy.repository.rowmapper.SiteApplicationRowMappe
 import org.egov.advertisementcanopy.service.SiteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -36,6 +37,8 @@ public class SiteRepository {
 
 	@Autowired
 	ObjectMapper objectMapper;
+	@Autowired
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	@Autowired
 	private SiteApplicationQueryBuilder queryBuilder;
@@ -222,9 +225,33 @@ public class SiteRepository {
 		return true;
 	}
 
-	public void count(String ulbName) {
-		// TODO Auto-generated method stub
+	public int siteCount(String ulbName) {
+		String query = queryBuilder.SELECT_SITE_COUNT;
+		 final Map<String, Object> parametersMap = new HashMap<String, Object>();
+		 parametersMap.put("ulbName", ulbName);
+		 int siteCount1 = namedParameterJdbcTemplate.queryForObject(query,parametersMap,Integer.class);
+		return siteCount1;
 		
+	}
+
+	public int siteAvailableCount(String ulbName) {
+		String query = queryBuilder.SELECT_AVAILABLE_COUNT;
+		String available="Available";
+		final Map<String, Object> parametersMap = new HashMap<String, Object>();
+		parametersMap.put("ulbName", ulbName);
+		parametersMap.put("status", available);
+		int siteAvailableCount1 = namedParameterJdbcTemplate.queryForObject(query,parametersMap,Integer.class);
+		return siteAvailableCount1;
+	}
+
+	public int siteBookedCount(String ulbName) {
+		String query = queryBuilder.SELECT_BOOKED_COUNT;
+		String booked="Booked";
+		final Map<String, Object> parametersMap = new HashMap<String, Object>();
+		parametersMap.put("ulbName", ulbName);
+		parametersMap.put("status", booked);
+		int siteBookedCount1 = namedParameterJdbcTemplate.queryForObject(query,parametersMap,Integer.class);
+		return siteBookedCount1;
 	}
 
 }
