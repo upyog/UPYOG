@@ -570,9 +570,13 @@ function selectfile(e) {
         <Row className="border-none" label={t(`BPA_BUILDING_STATUS_LABEL`)} text={owners?.buildingStatus?.code || value?.additionalDetails?.buildingStatus || t("CS_NA")} />
         <Row className="border-none" label={t(`BPA_CORE_AREA_LABEL`)} text={datafromAPI?.planDetail?.coreArea || value?.additionalDetails?.coreArea || t("CS_NA")} />
         <Row className="border-none" label={t(`BPA_PROPOSED_SITE_LABEL`)} text={owners?.proposedSite?.code || value?.additionalDetails?.proposedSite || t("CS_NA")} />
+        {owners?.schemes?.code === "SCHEME" && (
+      <React.Fragment>
         <Row className="border-none" label={t(`BPA_SCHEME_TYPE_LABEL`)} text={owners?.schemesselection?.value || value?.additionalDetails?.schemesselection || t("CS_NA")} />
         <Row className="border-none" label={t(`BPA_SCHEME_NAME_LABEL`)} text={owners?.schemeName || value?.additionalDetails?.schemeName || t("CS_NA")} />
         <Row className="border-none" label={t(`BPA_TRANFERRED_SCHEME_LABEL`)} text={owners?.transferredscheme || value?.additionalDetails?.transferredscheme || t("CS_NA")} />
+      </React.Fragment>
+    )}
         <Row className="border-none" label={t(`BPA_PURCHASED_FAR_LABEL`)} text={owners?.purchasedFAR?.code || value?.additionalDetails?.purchasedFAR || t("CS_NA")} />
         <Row className="border-none" label={t(`BPA_MASTER_PLAN_LABEL`)} text={owners?.masterPlan?.code || value?.additionalDetails?.masterPlan || t("CS_NA")} />
         <Row className="border-none" label={t(`BPA_GREEN_BUILDING_LABEL`)} text={owners?.greenbuilding?.code || value?.additionalDetails?.greenbuilding || t("CS_NA")} />

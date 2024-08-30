@@ -153,7 +153,27 @@ public class GeneralStair extends FeatureProcess {
 
                     }
                 }
+                System.out.println("landnig" + totalLandings);
+                System.out.println("flights" + totalFlights);
+               
+                if(flrHt != null) {
+                BigDecimal riserHeight = flrHt.divide(totalSteps, 2, RoundingMode.HALF_UP);
+                
 
+                
+                System.out.println("riserHt====" + riserHeight);
+                
+                if (riserHeight.compareTo(BigDecimal.valueOf(0.19)) <= 0) {
+                    setReportOutputDetailsFloorStairWise(plan, RULE, "","", "" + 0.19, "" + 
+                            riserHeight,
+                           
+                             Result.Accepted.getResultVal(), scrutinyDetail4);
+                } else {
+                	setReportOutputDetailsFloorStairWise(plan, RULE, "", "", "" + 0.19, "" + 
+                            riserHeight, Result.Not_Accepted.getResultVal(), scrutinyDetail4);
+                }}
+                	
+                
                 if (
                         !stairAbsent.isEmpty()) {
                     for (String error : stairAbsent) {
