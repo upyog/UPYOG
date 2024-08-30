@@ -2,18 +2,21 @@ package org.egov.advertisementcanopy.repository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.advertisementcanopy.model.SiteCreationData;
+import org.egov.advertisementcanopy.model.SiteSearchRequest;
 import org.egov.advertisementcanopy.model.SiteUpdateRequest;
-import org.egov.advertisementcanopy.model.SiteUpdationData;
 import org.egov.advertisementcanopy.repository.builder.SiteApplicationQueryBuilder;
 import org.egov.advertisementcanopy.repository.rowmapper.SiteApplicationRowMapper;
 import org.egov.advertisementcanopy.service.SiteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -51,10 +54,15 @@ public class SiteRepository {
 		siteCreation.setId(getNextSequence());
 		if (siteCreation.getSiteType().equals(siteService.ADVERTISEMENT_HOARDING)) {
 			siteCreation.setSiteID("AHS" + "/" + siteCreation.getUlbName() + "/" + getNextSiteSequence());
+			siteCreation.setSiteName("AHS" + "_" + siteCreation.getDistrictName() + "_" + siteCreation.getUlbName()
+					+ "_" + siteCreation.getWardNumber() + "_" + siteCreation.getSiteName());
 		}
 		if (siteCreation.getSiteType().equals(siteService.CANOPY)) {
 			siteCreation.setSiteID("ACS" + "/" + siteCreation.getUlbName() + "/" + getNextSiteSequence());
+			siteCreation.setSiteName("ACS" + "_" + siteCreation.getDistrictName() + "_" + siteCreation.getUlbName()
+					+ "_" + siteCreation.getWardNumber() + "_" + siteCreation.getSiteName());
 		}
+
 		jdbcTemplate.update(queryBuilder.CREATE_QUERY, siteCreation.getId(), siteCreation.getUuid(),
 				siteCreation.getSiteID(), siteCreation.getSiteName(), siteCreation.getSiteDescription(),
 				siteCreation.getGpsLocation(), siteCreation.getSiteAddress(), siteCreation.getSiteCost(),
@@ -105,8 +113,7 @@ public class SiteRepository {
 	}
 
 	public void updateSiteData(SiteUpdateRequest updateSiteRequest) {
-		jdbcTemplate.update(queryBuilder.UPDATE_QUERY, updateSiteRequest.getSiteUpdationData().getSiteName(),
-				updateSiteRequest.getSiteUpdationData().getSiteDescription(),
+		jdbcTemplate.update(queryBuilder.UPDATE_QUERY, updateSiteRequest.getSiteUpdationData().getSiteDescription(),
 				updateSiteRequest.getSiteUpdationData().getGpsLocation(),
 				updateSiteRequest.getSiteUpdationData().getSiteAddress(),
 				updateSiteRequest.getSiteUpdationData().getSiteCost(),
@@ -131,6 +138,93 @@ public class SiteRepository {
 				updateSiteRequest.getSiteUpdationData().getStatus(), updateSiteRequest.getSiteUpdationData().isActive(),
 				updateSiteRequest.getSiteUpdationData().getUuid(), updateSiteRequest.getSiteUpdationData().getId());
 
+	}
+
+	public List<SiteCreationData> searchSites(SiteSearchRequest searchSiteRequest) {
+		StringBuilder siteSearchQuery = null;
+		final List preparedStatementValues = new ArrayList<>();
+
+		List<SiteCreationData> resultList = new ArrayList<>();
+		try {
+			// Generate site search query
+			siteSearchQuery = getSiteSearchQueryByCriteria(searchSiteRequest, siteSearchQuery, preparedStatementValues);
+			resultList = jdbcTemplate.query(siteSearchQuery.toString(), preparedStatementValues.toArray(),
+					siteApplicationRowMapper);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+
+		return resultList;
+	}
+
+	private StringBuilder getSiteSearchQueryByCriteria(SiteSearchRequest searchSiteRequest,
+			StringBuilder siteSearchQuery, List preparedStatementValues) {
+		siteSearchQuery = new StringBuilder(queryBuilder.SELECT_SITE_QUERY);
+		siteSearchQuery = addWhereClause(siteSearchQuery, preparedStatementValues, searchSiteRequest);
+		return siteSearchQuery;
+	}
+
+	private StringBuilder addWhereClause(StringBuilder siteSearchQuery, List preparedStatementValues,
+			SiteSearchRequest searchSiteRequest) {
+		boolean isAppendAndClause = false;
+		try {
+			if (null == searchSiteRequest.getSiteSearchData()
+					|| (StringUtils.isEmpty(searchSiteRequest.getSiteSearchData().getAdvertisementType())
+							&& StringUtils.isEmpty(searchSiteRequest.getSiteSearchData().getDistrictName())
+							&& StringUtils.isEmpty(searchSiteRequest.getSiteSearchData().getStatus())
+							&& StringUtils.isEmpty(searchSiteRequest.getSiteSearchData().getUlbName())
+							&& StringUtils.isEmpty(searchSiteRequest.getSiteSearchData().getWardNumber())
+							&& BooleanUtils.isFalse(searchSiteRequest.getSiteSearchData().isActive()))) {
+				return siteSearchQuery;
+			}
+			siteSearchQuery.append(" WHERE");
+			if (null != searchSiteRequest.getSiteSearchData().getAdvertisementType()
+					&& !searchSiteRequest.getSiteSearchData().getAdvertisementType().isEmpty()) {
+				isAppendAndClause = true;
+				isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, siteSearchQuery);
+				siteSearchQuery.append(" eg_site_application.site_type = ")
+						.append(searchSiteRequest.getSiteSearchData().getAdvertisementType());
+			}
+			if (null != searchSiteRequest.getSiteSearchData().getDistrictName()
+					&& !searchSiteRequest.getSiteSearchData().getDistrictName().isEmpty()) {
+				isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, siteSearchQuery);
+				siteSearchQuery.append(" eg_site_application.district_name = ")
+						.append(searchSiteRequest.getSiteSearchData().getAdvertisementType());
+			}
+			if (null != searchSiteRequest.getSiteSearchData().getStatus()
+					&& !searchSiteRequest.getSiteSearchData().getStatus().isEmpty()) {
+				isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, siteSearchQuery);
+				siteSearchQuery.append(" eg_site_application.status = ")
+						.append(searchSiteRequest.getSiteSearchData().getStatus());
+			}
+			if (null != searchSiteRequest.getSiteSearchData().getWardNumber()
+					&& !searchSiteRequest.getSiteSearchData().getWardNumber().isEmpty()) {
+				isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, siteSearchQuery);
+				siteSearchQuery.append(" eg_site_application.ward_number = ")
+						.append(searchSiteRequest.getSiteSearchData().getWardNumber());
+			}
+			if (true == searchSiteRequest.getSiteSearchData().isActive()) {
+				isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, siteSearchQuery);
+				siteSearchQuery.append(" eg_site_application.is_active = ")
+						.append(searchSiteRequest.getSiteSearchData().isActive());
+			}
+
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+		return siteSearchQuery;
+	}
+
+	private boolean addAndClauseIfRequired(boolean appendAndClauseFlag, StringBuilder siteSearchQuery) {
+		if (appendAndClauseFlag)
+			siteSearchQuery.append(" AND");
+
+		return true;
+	}
+
+	public void count(String ulbName) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
