@@ -129,6 +129,7 @@ public class BPAService {
 		
 		Map<String, String> values = edcrService.validateEdcrPlan(bpaRequest, mdmsData);
 		String applicationType = values.get(BPAConstants.APPLICATIONTYPE);
+
 		this.validateCreateOC(applicationType, values, requestInfo, bpaRequest);
 		bpaValidator.validateCreate(bpaRequest, mdmsData, values);
 		if (!applicationType.equalsIgnoreCase(BPAConstants.BUILDING_PLAN_OC)) {
@@ -525,6 +526,7 @@ public class BPAService {
 			}
 			
 			additionalDetails.put("landId", bpas.get(0).getLandId());
+			additionalDetails.put("riskType", bpas.get(0).getRiskType());
 			criteria.setEdcrNumber(bpas.get(0).getEdcrNumber());
 			ocService.validateAdditionalData(bpaRequest, criteria);
 			bpaRequest.getBPA().setLandInfo(bpas.get(0).getLandInfo());

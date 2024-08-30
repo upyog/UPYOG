@@ -54,8 +54,16 @@ public class BPAValidator {
 	private NocService nocService;
 	
 	public void validateCreate(BPARequest bpaRequest, Object mdmsData, Map<String, String> values) {
+        @SuppressWarnings("unchecked")
+		Map<String, String> additionalDetails = bpaRequest.getBPA().getAdditionalDetails() != null
+                ? (Map<String, String>) bpaRequest.getBPA().getAdditionalDetails()
+                : new HashMap<String, String>();
 		mdmsValidator.validateMdmsData(bpaRequest, mdmsData);
-		validateApplicationDocuments(bpaRequest, mdmsData, null, values);
+		validateApplicationDocuments(bpaRequest, mdmsData, null, values);		
+        if (bpaRequest.getBPA().getRiskType() != null) {
+            additionalDetails.put(BPAConstants.RISKTYPE, bpaRequest.getBPA().getRiskType());
+        }
+		
 	}
 
 
