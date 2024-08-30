@@ -8,14 +8,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Component;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 @Component
-@Slf4j
 public class EscalationRepository {
 
 
@@ -46,8 +43,6 @@ public class EscalationRepository {
         else {
         	query = queryBuilder.getEscalationQuery(criteria, preparedStmtList);
         }
-        log.info("query is"+query);
-        log.info("params are " +preparedStmtList.toString());
         List<String> businessIds = jdbcTemplate.query(query, preparedStmtList.toArray(),  new SingleColumnRowMapper<>(String.class));
         return  businessIds;
 

@@ -640,10 +640,10 @@ public class BPAValidator {
 			if(height.intValue()>15)
 				throw new CustomException(null,"Height should not be more than 15 metres");
 		
-//			if((obj.get("typeOfArchitect").toString().equalsIgnoreCase("ARCHITECT") || obj.get("typeOfArchitect").toString().equalsIgnoreCase("ENGINEER")) && area.intValue()>500)
-//				throw new CustomException(null,"Architect/Engineer can apply for area less then 500 sq. yards. in self declaration");
-//			if((obj.get("typeOfArchitect").toString().equalsIgnoreCase("DESIGNER") || obj.get("typeOfArchitect").toString().equalsIgnoreCase("SUPERVISOR")) && area.intValue()>250)
-//				throw new CustomException(null,"Designer/Supervisor can apply for area less then 500 sq. yards. in self declaration");
+			if((obj.get("typeOfArchitect").toString().equalsIgnoreCase("ARCHITECT") || obj.get("typeOfArchitect").toString().equalsIgnoreCase("ENGINEER")) && area.intValue()>500)
+				throw new CustomException(null,"Architect/Engineer can apply for area less then 500 sq. yards. in self declaration");
+			if((obj.get("typeOfArchitect").toString().equalsIgnoreCase("DESIGNER") || obj.get("typeOfArchitect").toString().equalsIgnoreCase("SUPERVISOR")) && area.intValue()>250)
+				throw new CustomException(null,"Designer/Supervisor can apply for area less then 500 sq. yards. in self declaration");
 			
 		}
 		if (obj.get("riskType")!= null )

@@ -123,8 +123,6 @@ public class EscalationService {
             Integer numberOfBusinessIds = businessIds.size();
             Integer batchSize = config.getEscalationBatchSize();
 
-            log.info("Records to process"+numberOfBusinessIds);
-            
             for(int i = 0; i < numberOfBusinessIds; i = i + batchSize){
 
                 // Processing the businessIds in batches
