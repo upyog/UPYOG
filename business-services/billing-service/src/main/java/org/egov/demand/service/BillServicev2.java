@@ -809,8 +809,11 @@ public class BillServicev2 {
 			{
 				paymentPeriod=Q2;
 				expiryDate="30-09-"+currentyear;
+				
 				String expiryDateQ1 = "30-06-"+currentyear;
 				String startDateQ1 ="01-04-"+currentyear;
+				
+				
 				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
 				if(!successtransactionMapForQuater.containsKey(Q1)) {
 					if(!failedtransactionMapForQuater.containsKey(Q1) && !alltransactionForQuater.containsKey(Q1)) {
@@ -843,15 +846,41 @@ public class BillServicev2 {
 				String startDateQ2 ="01-07-"+currentyear;
 				
 				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
-
-				if(!failedtransactionMapForQuater.containsKey(Q1) && !alltransactionForQuater.containsKey(Q1))
-					quaterlyammount=ammountForTransactionperiod(Q1,amountforquaterly);
-
-				if(!failedtransactionMapForQuater.containsKey(Q2) && !alltransactionForQuater.containsKey(Q2))
-					quaterlyammount=ammountForTransactionperiod(Q2,amountforquaterly);
-
+				
+				if(!successtransactionMapForQuater.containsKey(Q1)) {
+					if(!failedtransactionMapForQuater.containsKey(Q1) && !alltransactionForQuater.containsKey(Q1)) {
+						quaterlyammount=ammountForTransactionperiod(Q1,amountforquaterly);
+						mpdObj = new ModeOfPaymentDetails();
+						mpdObj = getModeOfPaymentDetails(quaterlyammount,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString());
+						mpdList.add(mpdObj);
+					}
+				}
+				else {
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(newTotalAmountForModeOfPayment,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString());
+					mpdList.add(mpdObj);
+				}
+				
+				if(!successtransactionMapForQuater.containsKey(Q2)) {
+					if(!failedtransactionMapForQuater.containsKey(Q2) && !alltransactionForQuater.containsKey(Q2)) {
+						quaterlyammount=ammountForTransactionperiod(Q2,amountforquaterly);
+						mpdObj = new ModeOfPaymentDetails();
+						mpdObj = getModeOfPaymentDetails(quaterlyammount,startDateQ2, expiryDateQ2,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString());
+						mpdList.add(mpdObj);
+						
+					}
+				}
+				else {
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(newTotalAmountForModeOfPayment,startDateQ2, expiryDateQ2,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString());
+					mpdList.add(mpdObj);
+				}
+				
+				
+				mpdObj = new ModeOfPaymentDetails();
+				mpdObj = getModeOfPaymentDetails(newTotalAmountForModeOfPayment,"01-10-"+currentyear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString());
+				mpdList.add(mpdObj);
 				allquaterammount=allquaterammount.add(quaterlyammount);
-
 				totalAmountForDemand = newTotalAmountForModeOfPayment.add(allquaterammount);
 
 			}
@@ -859,18 +888,69 @@ public class BillServicev2 {
 			{
 				paymentPeriod=Q4;
 				expiryDate="31-03-"+currentyear;
+				
+				String expiryDateQ1 = "30-06-"+currentyear;
+				String startDateQ1 ="01-04-"+currentyear;
+				
+				String expiryDateQ2 = "30-09-"+currentyear;
+				String startDateQ2 ="01-07-"+currentyear;
+				
+				String startDateQ3 = "01-10-"+currentyear;
+				String expiryDateQ3="31-12-"+currentyear;
+				
 				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
-				if(!failedtransactionMapForQuater.containsKey(Q1) && !alltransactionForQuater.containsKey(Q1))
-					quaterlyammount=ammountForTransactionperiod(Q1,amountforquaterly);
+				
+				if(!successtransactionMapForQuater.containsKey(Q1)) {
+					if(!failedtransactionMapForQuater.containsKey(Q1) && !alltransactionForQuater.containsKey(Q1)) {
+						quaterlyammount=ammountForTransactionperiod(Q1,amountforquaterly);
+						mpdObj = new ModeOfPaymentDetails();
+						mpdObj = getModeOfPaymentDetails(quaterlyammount,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString());
+						mpdList.add(mpdObj);
+					}
+				}
+				else {
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(newTotalAmountForModeOfPayment,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString());
+					mpdList.add(mpdObj);
+				}
+					
 
-				if(!failedtransactionMapForQuater.containsKey(Q2) && !alltransactionForQuater.containsKey(Q2))
-					quaterlyammount=ammountForTransactionperiod(Q2,amountforquaterly);
-
-				if(!failedtransactionMapForQuater.containsKey(Q3) && !alltransactionForQuater.containsKey(Q3))
-					quaterlyammount=ammountForTransactionperiod(Q3,amountforquaterly);
-
+				if(!successtransactionMapForQuater.containsKey(Q2)) {
+					if(!failedtransactionMapForQuater.containsKey(Q2) && !alltransactionForQuater.containsKey(Q2)) {
+						quaterlyammount=ammountForTransactionperiod(Q2,amountforquaterly);
+						mpdObj = new ModeOfPaymentDetails();
+						mpdObj = getModeOfPaymentDetails(quaterlyammount,startDateQ2, expiryDateQ2,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString());
+						mpdList.add(mpdObj);
+						
+					}
+				}
+				else {
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(newTotalAmountForModeOfPayment,startDateQ2, expiryDateQ2,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString());
+					mpdList.add(mpdObj);
+				}
+				
+				if(!successtransactionMapForQuater.containsKey(Q3)) {
+					if(!failedtransactionMapForQuater.containsKey(Q3) && !alltransactionForQuater.containsKey(Q3))
+					{
+						quaterlyammount=ammountForTransactionperiod(Q3,amountforquaterly);
+						mpdObj = new ModeOfPaymentDetails();
+						mpdObj = getModeOfPaymentDetails(quaterlyammount,startDateQ3, expiryDateQ3,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString());
+						mpdList.add(mpdObj);
+					}
+				}
+				else {
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(newTotalAmountForModeOfPayment,startDateQ3, expiryDateQ3,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString());
+					mpdList.add(mpdObj);
+				}
+				
+				
+				
+				mpdObj = new ModeOfPaymentDetails();
+				mpdObj = getModeOfPaymentDetails(newTotalAmountForModeOfPayment,"01-01-"+currentyear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString());
+				mpdList.add(mpdObj);
 				allquaterammount=allquaterammount.add(quaterlyammount);
-
 				totalAmountForDemand = newTotalAmountForModeOfPayment.add(allquaterammount);
 
 			}
