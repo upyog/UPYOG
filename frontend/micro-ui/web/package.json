@@ -11,7 +11,6 @@
     "micro-ui-internals/packages/modules/commonPt",
     "micro-ui-internals/packages/modules/dss",
     "micro-ui-internals/packages/modules/pt",
-    "micro-ui-internals/packages/modules/tl",
     "micro-ui-internals/packages/modules/obps"
   ],
   "engines": {
