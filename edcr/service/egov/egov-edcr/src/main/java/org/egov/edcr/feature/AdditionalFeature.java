@@ -78,7 +78,7 @@ import org.springframework.stereotype.Service;
 public class AdditionalFeature extends FeatureProcess {
     private static final Logger LOG = LogManager.getLogger(AdditionalFeature.class);
 
-    private static final String RULE_38 = "4.4.4 (ii)";
+    private static final String RULE_38 = "38";
     private static final String RULE_39 = "39";
     private static final String RULE = "5.2.1";
     private static final String RULE_41_I_B = "41-i-b";
@@ -376,7 +376,7 @@ public class AdditionalFeature extends FeatureProcess {
 				String maxPermissibleFloorHeight = StringUtils.EMPTY;
 				
 				minRequiredFloorHeight = "2.75" + DcrConstants.IN_METER;
-				maxPermissibleFloorHeight = "4.40" + DcrConstants.IN_METER;
+				//maxPermissibleFloorHeight = "4.40" + DcrConstants.IN_METER;
 				floor.setIsStiltFloor(false);
 				
 				if(floor.getIsStiltFloor() == false) {

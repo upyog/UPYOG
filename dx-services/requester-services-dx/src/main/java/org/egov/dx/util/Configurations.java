@@ -90,16 +90,4 @@ public class Configurations {
 	@Value("${esign.outputfolder}")
 	private String outputFolder;
 	
-	@Value("${esign.UIURL}")
-	private String uIURL;
-	
-//	@Value("${esign.tlredirecturl}")
-//	private String tlRedirectUrl;
-	
-//	@Value("${eSign.s3bucket}")
-//	private String s3Bucket;
-//	
-//	@Value("${api.documenthost}")
-//	private String documentHost;
-	
 }

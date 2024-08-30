@@ -205,47 +205,6 @@ const SelectDocument = React.memo(function MyComponent({
         e && setfileArray([...fileArray,e.file]);
     }
 
-    // function getData(e) {
-    //     let key = selectedDocument.code;
-    //     let data,newArr;
-    //     if (e?.length > 0) {
-    //         data = Object.fromEntries(e);
-    //         newArr = Object.values(data);
-    //         newArr = formData?.documents?.documents?.filter((ob) => ob.documentType === selectedDocument.code);
-    //         setnewArray(newArr);
-    //         // const filteredDocumentsByFileStoreId = documents?.filter((item) => item?.fileStoreId !== uploadedFile.fileStoreId) || []
-    //         let newfiles = [];
-    //         e?.map((doc, index) => {
-    //             newfiles.push({
-    //                     documentType: selectedDocument?.code,
-    //                     additionalDetails:{category:selectedDocument?.code/*.split(".").slice(0,2).join('_')*/},
-    //                     fileStoreId: doc?.[1]?.fileStoreId?.fileStoreId,
-    //                     documentUid: doc?.[1].fileStoreId?.fileStoreId,
-    //                     fileName: doc?.[0] || "",
-    //                     id:documents? documents.find(x => x.documentType === selectedDocument?.code)?.id:undefined,
-    //             })
-    //         })
-    //         const __documents = [
-    //             ...documents.filter(e => e.documentType !== key ),
-    //             ...newfiles,
-    //         ]
-    //         setDocuments(__documents)
-    //     }else if(e?.length==0){
-    //         const __documents = [
-    //             ...documents.filter(e => e.documentType !== key ),
-    //         ]
-    //         setDocuments(__documents);
-    //     }
-    
-    //     newArr?.map((ob) => {
-    //         if(!ob?.file){
-    //             ob.file = {}
-    //         }
-    //       ob.file.documentType = key;
-    //       selectfile(ob,key);
-    //     })
-    //   }
-
     function getData(e) {
         let key = selectedDocument.code;
         let data, newArr;
@@ -258,8 +217,14 @@ const SelectDocument = React.memo(function MyComponent({
                     setLatitude(location.latitude);
                     setLongitude(location.longitude);
                     {if (doc?.code === "SITEPHOTOGRAPH.ONE"){
+                        if(location.latitude !==null && location.longitude !==null){
                         sessionStorage.setItem("Latitude",location.latitude)
                         sessionStorage.setItem("Longitude",location.longitude)
+                        }
+                        else{
+                            sessionStorage.removeItem("Latitude");
+                            sessionStorage.removeItem("Longitude");
+                        }
                     }}
                     
 
@@ -423,20 +388,19 @@ const SelectDocument = React.memo(function MyComponent({
         {doc?.uploadedDocuments?.length && <DocumentsPreview isSendBackFlow={true} documents={doc?.uploadedDocuments} />}
 
         {doc?.code === "SITEPHOTOGRAPH.ONE" && (
-            (sessionStorage.getItem("Latitude")  ?  true : false ) ? (
-                <div>
-                    <p>Latitude: {sessionStorage.getItem("Latitude")}</p>
-                    <p>Longitude: {sessionStorage.getItem("Longitude")}</p>
-                    {setIsNextButtonDisabled(false)} {/* Enable the "Next" button */}
-                </div>
-            ): 
-            (
-                <div>
-                <p style={{ color: 'red' }}>Please upload a Photo with Location details.</p>
-                {setIsNextButtonDisabled(true)} {/* Disable the "Next" button */}
-                </div>
-             )
-        )}
+                sessionStorage.getItem("Latitude") && sessionStorage.getItem("Longitude") ? (
+                    <div>
+                        <p>Latitude: {sessionStorage.getItem("Latitude")}</p>
+                        <p>Longitude: {sessionStorage.getItem("Longitude")}</p>
+                        {setIsNextButtonDisabled(false)} {/* Enable the "Next" button */}
+                    </div>
+                ) : (
+                    <div>
+                        <p style={{ color: 'red' }}>Please upload a Photo with Location details.</p>
+                        {setIsNextButtonDisabled(true)} {/* Disable the "Next" button */}
+                    </div>
+                )
+            )}
        
         </div>
     );

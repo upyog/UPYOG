@@ -43,12 +43,12 @@ public class EscalationQueryBuilder {
         preparedStmtList.add(criteria.getStatus());
 
         if(criteria.getStateSlaExceededBy() != null){
-            builder.append(" AND (select extract(epoch from current_timestamp)) * 1000 - wf.createdtime > ? ");
+            builder.append(" AND (select extract(epoch from current_timestamp)) * 1000 - wf.createdtime - wf.statesla > ? ");
             preparedStmtList.add(criteria.getStateSlaExceededBy());
         }
 
         if(criteria.getBusinessSlaExceededBy() != null){
-            builder.append(" AND (select extract(epoch from current_timestamp)) * 1000 - wf.createdtime > ? ");
+            builder.append(" AND (select extract(epoch from current_timestamp)) * 1000 - wf.createdtime - wf.businessservicesla > ? ");
             preparedStmtList.add(criteria.getBusinessSlaExceededBy());
         }
 
@@ -92,7 +92,7 @@ public class EscalationQueryBuilder {
         }
 
         if(criteria.getBusinessSlaExceededBy() != null){
-            builder.append(" AND (select extract(epoch from current_timestamp)) * 1000 - wf.createdtime > ? ");
+            builder.append(" AND (select extract(epoch from current_timestamp)) * 1000 - wf.createdtime - wf.businessservicesla > ? ");
             preparedStmtList.add(criteria.getBusinessSlaExceededBy());
         }
 

@@ -256,7 +256,7 @@ const ApplicationDetails = () => {
      const TLcertificatefile = await Digit.PaymentService.generatePdf(tenantId, { Licenses: res?.Licenses }, "tlcertificate");
      const receiptFile = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: TLcertificatefile.filestoreIds[0] });
      fetchDigiLockerDocuments(receiptFile[TLcertificatefile.filestoreIds[0]])
-     window.open(receiptFile[TLcertificatefile.filestoreIds[0]], "_blank");
+     //window.open(receiptFile[TLcertificatefile.filestoreIds[0]], "_blank");
      setIsDisplayDownloadMenu(false)
   }
   const [isDisplayDownloadMenu, setIsDisplayDownloadMenu] = useState(false);

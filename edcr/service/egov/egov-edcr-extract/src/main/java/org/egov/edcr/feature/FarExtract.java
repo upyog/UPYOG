@@ -536,7 +536,7 @@ public class FarExtract extends FeatureExtract {
         String floorHeightLayerName = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + block.getNumber() + "_"
                 + layerNames.getLayerName("LAYER_NAME_FLOOR_NAME_PREFIX") + floor.getNumber() + "_"
                 + layerNames.getLayerName("LAYER_NAME_FLOOR_HEIGHT_PREFIX");
-        List<BigDecimal> flrHeights = Util.getListOfDimensionValueByLayer(pl, floorHeightLayerName);
+       // List<BigDecimal> flrHeights = Util.getListOfDimensionValueByLayer(pl, floorHeightLayerName);
 //    	String isStiltFloor = Util.getMtextByLayerName(pl.getDoc(), floorHeightLayerName, "STILT_FLR_HT");
 //    	
 //    	if (!isBlank(isStiltFloor)) {
@@ -566,11 +566,11 @@ public class FarExtract extends FeatureExtract {
 //		}
 //
 //        
-   		 if (!flrHeights.isEmpty()) {
-   			floor.setFloorHeights(flrHeights);
-   		} else {
-   			pl.addError(FLOOR_HEIGHT_DESC, getLocaleMessage(OBJECTNOTDEFINED, FLOOR_HEIGHT_DESC + floor.getNumber()));
-   		}
+//   		 if (!flrHeights.isEmpty()) {
+//   			floor.setFloorHeights(flrHeights);
+//   		} else {
+//   			pl.addError(FLOOR_HEIGHT_DESC, getLocaleMessage(OBJECTNOTDEFINED, FLOOR_HEIGHT_DESC + floor.getNumber()));
+//   		}
     }
 
     @Override
