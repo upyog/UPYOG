@@ -7,7 +7,7 @@
     width: 100%;
     height: 2.2rem !important;
     --border-opacity: 1;
-    border: 1px solid #464646;
+    border: 100px solid #464646;
     border-color: rgba(70, 70, 70, var(--border-opacity));
     --bg-opacity: 1;
     background-color: #fff;
