@@ -15,7 +15,7 @@
   2. jsPDF for downloading the PDF
 
   */
-  import React, { useState } from 'react';
+  import React, { useState, useEffect } from 'react';
   import Modal from 'react-modal';
   import { useLocation } from "react-router-dom";
   import { SubmitBar } from '@upyog/digit-ui-react-components';
@@ -32,7 +32,7 @@
     const user = Digit.UserService.getUser();
     const architecname = user?.info?.name;
     const architectmobileNumber = user?.info.mobileNumber
-    const [params] = Digit.Hooks.useSessionStorage("BUILDING_PERMIT", state?.edcrNumber ? { data: { scrutinyNumber: { edcrNumber: state?.edcrNumber } } } : {});
+    const [params, setParams] = Digit.Hooks.useSessionStorage("BUILDING_PERMIT", state?.edcrNumber ? { data: { scrutinyNumber: { edcrNumber: state?.edcrNumber } } } : {});
     const [isUploading, setIsUploading] = useState(false); // it will check whether the file upload is in process or not
     const [isFileUploaded, setIsFileUploaded] = useState(false);
     const architectid = params?.additionalDetails?.architectid;
@@ -49,7 +49,18 @@
     const TimeStamp = otpVerifiedTimestamp;
 
 
-     
+    useEffect(() => {
+      if (params?.additionalDetails && !params.additionalDetails.TimeStamp) {
+        setParams(prevParams => ({
+          ...prevParams,
+          additionalDetails: {
+            ...prevParams.additionalDetails,
+            TimeStamp: otpVerifiedTimestamp
+          }
+        }));
+      }
+    }, [params, otpVerifiedTimestamp, setParams]);
+
 
     const selfdeclarationform =
     `
