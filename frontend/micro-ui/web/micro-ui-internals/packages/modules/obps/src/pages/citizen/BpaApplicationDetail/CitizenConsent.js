@@ -1,12 +1,10 @@
 
-  import React, { useState } from 'react';
+  import React, { useState, useEffect } from 'react';
   import Modal from 'react-modal';
-  import jsPDF from 'jspdf';
   import { SubmitBar } from '@upyog/digit-ui-react-components';
   import { useTranslation } from "react-i18next";
   import { useParams } from "react-router-dom";
-  import Axios from "axios";
-  import Urls from '../../../../../../libraries/src/services/atoms/urls';
+  
 
 
 
@@ -44,8 +42,23 @@
     const architectid = data?.applicationData?.additionalDetails?.architectid
     const architecttype =  data?.applicationData?.additionalDetails?.typeOfArchitect
     const TimeStamp = otpVerifiedTimestamp;
-    
     const ulbselection = data?. applicationData?.additionalDetails?.Ulblisttype === "Municipal Corporation" ? "Commissioner" : "Executive Officer"
+
+    const updatedAdditionalDetails = {
+      ...data?.applicationData?.additionalDetails,
+      TimeStamp: otpVerifiedTimestamp,
+    };
+  
+    // Update the entire data object with the new additionalDetails
+    const updatedData = {
+      ...data,
+      applicationData: {
+        ...data?.applicationData,
+        additionalDetails: updatedAdditionalDetails,
+      },
+    };
+  
+
 
 
     const selfdeclarationform =
@@ -120,7 +133,7 @@
       try {
         setIsUploading(true); // Set isUploading to true before starting the upload
         
-        let result = await Digit.PaymentService.generatePdf(Digit.ULBService.getStateId(), { Bpa: [data] }, "ownerconsent");
+        let result = await Digit.PaymentService.generatePdf(Digit.ULBService.getStateId(), { Bpa: [updatedData] }, "ownerconsent");
 
       if (result?.filestoreIds[0]?.length > 0) {
         alert("File Uploaded Successfully");
