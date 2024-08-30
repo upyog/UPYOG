@@ -43,7 +43,7 @@ public class SiteController {
 	        return ResponseEntity.ok(siteService.search(searchSiteRequest));
 	    }
 	 @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
-	    @PostMapping("/_search")
+	    @PostMapping("/_count")
 	    public ResponseEntity<SiteCountResponse> siteCount(@RequestBody SiteCountRequest siteCountRequest) {
 	        return ResponseEntity.ok(siteService.totalCount(siteCountRequest));
 	    }

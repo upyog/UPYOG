@@ -26,5 +26,10 @@ public class SiteApplicationQueryBuilder {
 	
 	public static final String SELECT_SITE_QUERY= "SELECT * FROM eg_site_application";
 	
-	public static final String SELECT_SITE_COUNT = "SELECT COUNT(*) FROM eg_site_application where ulbName = ?";
+	public static final String SELECT_SITE_COUNT = "SELECT COUNT(*) FROM eg_site_application WHERE ulb_name =:ulbName";
+	
+	public static final String SELECT_AVAILABLE_COUNT = "SELECT COUNT(*) FROM eg_site_application WHERE ulb_name =:ulbName AND status =:status";
+	
+	public static final String SELECT_BOOKED_COUNT = "SELECT COUNT(*) FROM eg_site_application WHERE ulb_name =:ulbName AND status =:status";
+	
 }

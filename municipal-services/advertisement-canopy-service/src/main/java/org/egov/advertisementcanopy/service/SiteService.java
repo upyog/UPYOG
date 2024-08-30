@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.egov.advertisementcanopy.model.AuditDetails;
+import org.egov.advertisementcanopy.model.SiteCountData;
 import org.egov.advertisementcanopy.model.SiteCountRequest;
 import org.egov.advertisementcanopy.model.SiteCountResponse;
 import org.egov.advertisementcanopy.model.SiteCreationData;
@@ -178,22 +179,31 @@ public class SiteService {
 
 	public SiteCountResponse totalCount(SiteCountRequest siteCountRequest) {
 		SiteCountResponse countResponse = new SiteCountResponse();
-		String []ulb=null;
-		String ulbName=null;
-		try {
-			if(null!=siteCountRequest.getTenantId() && !siteCountRequest.getTenantId().isEmpty()) {
-				ulb = siteCountRequest.getTenantId().split(".");
+		String ulbName = null;
+		/*try {*/
+			if (null != siteCountRequest.getTenantId() && !siteCountRequest.getTenantId().isEmpty()) {
+				String[] ulb = siteCountRequest.getTenantId().split("\\.");
 				ulbName = ulb[1];
-				//siteRepository.count(siteCountRequest);
-			}
-			else
-			{
+				int siteCount = siteRepository.siteCount(ulbName);
+				int statusCountAvailable = siteRepository.siteAvailableCount(ulbName);
+				int statusCountBooked = siteRepository.siteBookedCount(ulbName);
+				countResponse = SiteCountResponse.builder()
+						.responseinfo(responseInfoFactory
+								.createResponseInfoFromRequestInfo(siteCountRequest.getRequestInfo(), false))
+						.siteCountData(SiteCountData.builder().siteCount(siteCount)
+								.siteBookedCount(statusCountBooked).siteAvailableCount(statusCountAvailable).build())
+						.build();
+				if (null != countResponse) {
+					countResponse.setResponseinfo(responseInfoFactory
+							.createResponseInfoFromRequestInfo(siteCountRequest.getRequestInfo(), true));
+				}
+			} else {
 				throw new RuntimeException("Please provide valid Tenant Id!!!");
 			}
-			
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
-		}
+
+			/*
+			 * } catch (Exception e) { throw new RuntimeException(e.getMessage()); }
+			 */
 		return countResponse;
 	}
 
