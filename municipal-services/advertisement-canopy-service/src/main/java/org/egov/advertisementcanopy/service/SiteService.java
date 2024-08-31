@@ -6,15 +6,21 @@ import java.util.List;
 import java.util.UUID;
 
 import org.egov.advertisementcanopy.model.AuditDetails;
+import org.egov.advertisementcanopy.model.SiteCountData;
+import org.egov.advertisementcanopy.model.SiteCountRequest;
+import org.egov.advertisementcanopy.model.SiteCountResponse;
 import org.egov.advertisementcanopy.model.SiteCreationData;
 import org.egov.advertisementcanopy.model.SiteCreationRequest;
 import org.egov.advertisementcanopy.model.SiteCreationResponse;
+import org.egov.advertisementcanopy.model.SiteSearchRequest;
+import org.egov.advertisementcanopy.model.SiteSearchResponse;
 import org.egov.advertisementcanopy.model.SiteUpdateRequest;
 import org.egov.advertisementcanopy.model.SiteUpdationResponse;
 import org.egov.advertisementcanopy.repository.SiteRepository;
 import org.egov.advertisementcanopy.util.ResponseInfoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class SiteService {
@@ -44,9 +50,9 @@ public class SiteService {
 				ids = siteRepository.searchSiteIds(createSiteRequest.getCreationData().getSiteName(),
 						createSiteRequest.getCreationData().getDistrictName(),
 						createSiteRequest.getCreationData().getUlbName(),
-						 createSiteRequest.getCreationData().getWardNumber());
+						createSiteRequest.getCreationData().getWardNumber());
 			}
-			if (null != ids && !ids.isEmpty()) {
+			if (!CollectionUtils.isEmpty(ids)) {
 				throw new RuntimeException("Site already exists...Duplicate Site!!!");
 			}
 			// enrich Site
@@ -98,12 +104,17 @@ public class SiteService {
 
 	public SiteUpdationResponse update(SiteUpdateRequest updateSiteRequest) {
 		SiteUpdationResponse siteupdationResponse = null;
+		List<SiteCreationData> list = new ArrayList<>();
 		try {
 			if (null != updateSiteRequest.getSiteUpdationData()) {
-				siteRepository.searchSites(updateSiteRequest.getSiteUpdationData());
+				list = siteRepository.searchSites(updateSiteRequest.getSiteUpdationData());
 			}
-			enrichUpdatedSite(updateSiteRequest);
-			updateSiteData(updateSiteRequest);
+			if (!CollectionUtils.isEmpty(list)) {
+				enrichUpdatedSite(updateSiteRequest);
+				updateSiteData(updateSiteRequest);
+			} else {
+				throw new RuntimeException("No Site exists with the Details Provided!!!");
+			}
 
 			siteupdationResponse = SiteUpdationResponse.builder()
 					.responseInfo(responseInfoFactory
@@ -122,20 +133,78 @@ public class SiteService {
 	}
 
 	private void updateSiteData(SiteUpdateRequest updateSiteRequest) {
-		siteRepository.updateSiteData(updateSiteRequest.getSiteUpdationData());
+		siteRepository.updateSiteData(updateSiteRequest);
 
 	}
 
 	private void enrichUpdatedSite(SiteUpdateRequest updateSiteRequest) {
 		AuditDetails auditDetails = null;
 		if (null != updateSiteRequest.getRequestInfo().getUserInfo()) {
-			auditDetails = AuditDetails.builder().createdBy(updateSiteRequest.getRequestInfo().getUserInfo().getUuid())
-					.createdDate(new Date().getTime())
+			auditDetails = AuditDetails.builder()
 					.lastModifiedBy(updateSiteRequest.getRequestInfo().getUserInfo().getUuid())
 					.lastModifiedDate(new Date().getTime()).build();
 		}
 		updateSiteRequest.getSiteUpdationData().setAuditDetails(auditDetails);
+		updateSiteRequest.getSiteUpdationData()
+				.setAccountId(updateSiteRequest.getRequestInfo().getUserInfo().getUuid());
 
+	}
+
+	public SiteSearchResponse search(SiteSearchRequest searchSiteRequest) {
+		SiteSearchResponse siteSearchResponse = new SiteSearchResponse();
+		List<SiteCreationData> siteSearchData = new ArrayList<>();
+		try {
+			siteSearchData = siteRepository.searchSites(searchSiteRequest);
+			if (!CollectionUtils.isEmpty(siteSearchData)) {
+				siteSearchResponse = getSearchResponseFromAccounts(siteSearchData);
+			}
+			if (CollectionUtils.isEmpty(siteSearchResponse.getSiteCreationData())) {
+				siteSearchResponse.setResponseInfo(responseInfoFactory
+						.createResponseInfoFromRequestInfo(searchSiteRequest.getRequestInfo(), false));
+			}
+			if (!CollectionUtils.isEmpty(siteSearchResponse.getSiteCreationData())) {
+				siteSearchResponse.setResponseInfo(responseInfoFactory
+						.createResponseInfoFromRequestInfo(searchSiteRequest.getRequestInfo(), true));
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+		return siteSearchResponse;
+	}
+
+	private SiteSearchResponse getSearchResponseFromAccounts(List<SiteCreationData> siteSearchData) {
+		SiteSearchResponse responseFromDB = SiteSearchResponse.builder().siteCreationData(siteSearchData).build();
+		return responseFromDB;
+	}
+
+	public SiteCountResponse totalCount(SiteCountRequest siteCountRequest) {
+		SiteCountResponse countResponse = new SiteCountResponse();
+		String ulbName = null;
+		/*try {*/
+			if (null != siteCountRequest.getTenantId() && !siteCountRequest.getTenantId().isEmpty()) {
+				String[] ulb = siteCountRequest.getTenantId().split("\\.");
+				ulbName = ulb[1];
+				int siteCount = siteRepository.siteCount(ulbName);
+				int statusCountAvailable = siteRepository.siteAvailableCount(ulbName);
+				int statusCountBooked = siteRepository.siteBookedCount(ulbName);
+				countResponse = SiteCountResponse.builder()
+						.responseinfo(responseInfoFactory
+								.createResponseInfoFromRequestInfo(siteCountRequest.getRequestInfo(), false))
+						.siteCountData(SiteCountData.builder().siteCount(siteCount)
+								.siteBookedCount(statusCountBooked).siteAvailableCount(statusCountAvailable).build())
+						.build();
+				if (null != countResponse) {
+					countResponse.setResponseinfo(responseInfoFactory
+							.createResponseInfoFromRequestInfo(siteCountRequest.getRequestInfo(), true));
+				}
+			} else {
+				throw new RuntimeException("Please provide valid Tenant Id!!!");
+			}
+
+			/*
+			 * } catch (Exception e) { throw new RuntimeException(e.getMessage()); }
+			 */
+		return countResponse;
 	}
 
 }

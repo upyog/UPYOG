@@ -26,7 +26,10 @@ CREATE TABLE eg_site_application (
     last_modified_by VARCHAR(255),
     last_modified_date int8,
     site_type VARCHAR(200),
-    account_id VARCHAR(200)
+    account_id VARCHAR(200),
+    status VARCHAR(100),
+    is_active boolean,
+    tenant_id VARCHAR(50)
 );
 
 ALTER TABLE eg_site_application ADD CONSTRAINT pk_id_eg_site_application PRIMARY KEY (id);

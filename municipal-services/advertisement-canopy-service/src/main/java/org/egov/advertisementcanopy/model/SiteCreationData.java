@@ -1,5 +1,7 @@
 package org.egov.advertisementcanopy.model;
 
+import javax.validation.constraints.Email;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -43,4 +45,8 @@ public class SiteCreationData {
 	private JsonNode additionalDetail = null;
 	private AuditDetails auditDetails;
 	private String siteType;
+	@JsonProperty("active")
+	private boolean isActive;
+	private String status;
+	private String tenantId;
 }
