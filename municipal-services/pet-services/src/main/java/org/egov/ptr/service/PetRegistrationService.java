@@ -183,7 +183,7 @@ public class PetRegistrationService {
 		enrichmentService.enrichPetApplicationUponUpdate(petRegistrationRequest);
 
 		if (petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction()
-				.equals(PTRConstants.WORKFLOW_ACTION_APPROVE)) {
+				.equals(PTRConstants.WORKFLOW_ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT)) {
 			
 			// create demands
 			List<Demand> savedDemands = demandService.createDemand(petRegistrationRequest);
@@ -304,7 +304,7 @@ public class PetRegistrationService {
 		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
 				.tenantId(petRegistrationApplication.getTenantId())
 				.consumerCode(Collections.singleton(applicationDetail.getApplicationNumber()))
-				.service("PTR")
+				.service("pet-services")
 				.build();
 		List<Bill> bills = billingService.searchBill(billSearchCriteria,requestInfo);
 		Map<Object, Object> billDetailsMap = new HashMap<>();
