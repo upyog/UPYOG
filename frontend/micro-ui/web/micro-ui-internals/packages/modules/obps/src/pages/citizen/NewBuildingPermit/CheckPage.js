@@ -393,7 +393,7 @@ setWaterCharges(Malbafees/2)
       }      
   }
     function setDevelopmentVal(value) {
-      if(/^[0-9]*$/.test(value)){
+      if(/^\d{0,10}$/.test(value)){
         setDevelopment(value);
         sessionStorage.setItem("development",value)
       }
