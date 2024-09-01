@@ -40,6 +40,7 @@
 
 package org.egov.dx.web.controller;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
@@ -47,18 +48,23 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
+import org.springframework.http.MediaType;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.dx.service.eSignService;
+import org.egov.dx.util.Configurations;
 import org.egov.dx.web.models.ResponseInfoFactory;
 import org.egov.dx.web.models.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponentsBuilder;
+
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -76,6 +82,9 @@ public class EsignController {
 	@Autowired
 	eSignService esignService;
 	
+	@Autowired
+	Configurations configurations;
+	
     @RequestMapping("/process")
     public ResponseEntity<String> processPDF(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) throws URISyntaxException {
         try {
@@ -86,12 +95,24 @@ public class EsignController {
         }
     }
     @RequestMapping("/redirect")
-    public ResponseEntity<String> getEsignedPDF(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    public ResponseEntity<Object> getEsignedPDF(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         try {
-            String responseUrl = esignService.getEsignedPDF( request, response);
-            return new ResponseEntity<>(responseUrl, HttpStatus.OK);
+            //byte[] byteArray = esignService.getEsignedPDF( request, response);
+            
+           String ff = esignService.getEsignedPDF( request, response);
+
+            HttpHeaders httpHeaders = new HttpHeaders();
+//            httpHeaders.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=report.pdf");
+//            httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE);
+            StringBuilder redirectURL = new StringBuilder();
+            redirectURL.append(configurations.getUIURL()+"?filestore="+ff);
+            httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString())
+                    .queryParams(null).build().encode().toUri());
+            return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);
+
+                   
         } catch (IOException e) {
-            return new ResponseEntity<>("Error processing PDF: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }  
 }
