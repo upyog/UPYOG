@@ -13,6 +13,8 @@ CREATE TABLE eg_site_booking (
     hoarding_type VARCHAR(225),
     structure VARCHAR(225),
     is_active BOOLEAN,
+    status VARCHAR(100),
+    tenant_id VARCHAR(100),
     additional_detail JSONB,
     created_by VARCHAR(255),
     created_date int8,
