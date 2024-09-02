@@ -1,5 +1,6 @@
 package org.egov.ptr.models;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -34,6 +35,7 @@ public class Document {
 
 	@Size(max = 64)
 	@SafeHtml
+	@NotNull
 	@JsonProperty("documentType")
 	private String documentType = null;
 

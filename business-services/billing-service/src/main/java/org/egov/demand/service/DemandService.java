@@ -43,8 +43,10 @@ import static org.egov.demand.util.Constants.ADVANCE_TAXHEAD_JSONPATH_CODE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -52,6 +54,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.demand.amendment.model.Amendment;
@@ -72,6 +76,7 @@ import org.egov.demand.repository.AmendmentRepository;
 import org.egov.demand.repository.BillRepositoryV2;
 import org.egov.demand.repository.DemandRepository;
 import org.egov.demand.repository.ServiceRequestRepository;
+import org.egov.demand.util.Constants;
 import org.egov.demand.util.DemandEnrichmentUtil;
 import org.egov.demand.util.Util;
 import org.egov.demand.web.contract.DemandRequest;
@@ -276,7 +281,11 @@ public class DemandService {
 				.tenantId(tenantId)
 				.build();
 		
-		if (ObjectUtils.isEmpty(paymentBackUpdateAudit)) {
+		if(org.apache.commons.lang3.StringUtils.equalsIgnoreCase(businessService, Constants.NEWTL_BUSINESS_SERVICE)
+				|| org.apache.commons.lang3.StringUtils.equalsIgnoreCase(businessService, Constants.NEWTL_BUSINESS_SERVICE)) {
+			validateDemandAndUpdateBill(demandRequest, updateBillCriteria);
+		}
+		else if (ObjectUtils.isEmpty(paymentBackUpdateAudit)) {
 			
 			updateBillCriteria.setStatusToBeUpdated(BillStatus.EXPIRED);
 			billRepoV2.updateBillStatus(updateBillCriteria);
@@ -289,6 +298,31 @@ public class DemandService {
 		return new DemandResponse(responseInfoFactory.getResponseInfo(requestInfo, HttpStatus.CREATED), demands);
 	}
 
+
+	private void validateDemandAndUpdateBill(DemandRequest demandRequest, UpdateBillCriteria updateBillCriteria) {
+		
+		Boolean skipUpdate = false;
+		
+		if(!CollectionUtils.isEmpty(demandRequest.getDemands())) {
+			
+			for(Demand demand : demandRequest.getDemands()) {
+				BigDecimal totoalTax = demand.getDemandDetails().stream().map(DemandDetail::getTaxAmount)
+						.reduce(BigDecimal.ZERO, BigDecimal::add);
+				BigDecimal totalCollection = demand.getDemandDetails().stream().map(DemandDetail::getCollectionAmount)
+						.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+				skipUpdate = totoalTax.compareTo(totalCollection) != 0 ? true : false ;
+			}
+			
+		}
+				
+		// update bill as paid
+		if(!skipUpdate) {
+			updateBillCriteria.setStatusToBeUpdated(BillStatus.PAID);
+			billRepoV2.updateBillStatus(updateBillCriteria);
+		}
+		
+	}
 
 	/**
 	 * Search method to fetch demands from DB
@@ -513,6 +547,56 @@ public class DemandService {
 		}
 
 		return updateListForConsumedAmendments;
+	}
+
+	public Object updateInternally(@Valid LinkedHashMap<String, Object> demandRequest) {
+		
+		RequestInfo requestInfo = mapper.convertValue(demandRequest.get("requestInfo"), RequestInfo.class);
+		LinkedHashMap<String, Object> inputs = mapper.convertValue(demandRequest.get("inputs"), LinkedHashMap.class);
+		BigDecimal txnAmount = (BigDecimal)inputs.get("txnAmount");
+		DemandRequest demandRequest2 = null;
+		
+		DemandCriteria demandCriteria = DemandCriteria.builder()
+										.tenantId((String)inputs.get("tenantId"))
+										.businessService((String)inputs.get("businessService"))
+										.consumerCode(new HashSet<>(Arrays.asList((String) inputs.get("consumerCode"))))
+										.isPaymentCompleted((Boolean)inputs.get("isPaymentCompleted"))
+										.build();
+		// search demands
+		List<Demand> demands = getDemands(demandCriteria, requestInfo);
+		
+		// validate amount
+		Boolean completePaymentDone = validateAmountOfTransactionAndDemands(txnAmount, demands);
+		
+		if(completePaymentDone) {
+			
+			// enrich collection amount = tax amount
+			demands.stream().forEach(demand -> {
+				demand.getDemandDetails().stream().forEach(detail -> {
+					detail.setCollectionAmount(detail.getTaxAmount());
+				});
+			});
+			
+			// update demands
+			demandRequest2 = DemandRequest.builder().requestInfo(requestInfo).demands(demands).build();
+			updateAsync(demandRequest2, null);
+		}
+		
+		return demandRequest2;
+	}
+
+	private Boolean validateAmountOfTransactionAndDemands(BigDecimal txnAmount, List<Demand> demands) {
+		
+		if (CollectionUtils.isEmpty(demands)) {
+	        return false;
+	    }
+
+	    BigDecimal totalTaxAmountOfDemands = demands.stream()
+	            .flatMap(demand -> demand.getDemandDetails().stream())
+	            .map(DemandDetail::getTaxAmount)
+	            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+	    return txnAmount.compareTo(totalTaxAmountOfDemands) == 0;	    
 	}
 	
 }

@@ -115,11 +115,17 @@
 			<artifactId>flying-saucer-pdf</artifactId>
 			<version>9.1.22</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.github.kenglxn.QRGen/javase -->
 <!--		<dependency>-->
-<!--			<groupId>com.github.kenglxn.qrgen</groupId>-->
-<!--			<artifactId>javase</artifactId>-->
-<!--			<version>2.6.0</version>-->
+<!--		    <groupId>com.github.kenglxn.QRGen</groupId>-->
+<!--		    <artifactId>javase</artifactId>-->
+<!--		    <version>2.6.0</version>-->
 <!--		</dependency>-->
+		<dependency>
+		    <groupId>com.github.kenglxn.qrgen</groupId>
+		    <artifactId>javase</artifactId>
+		    <version>2.6.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
@@ -153,7 +159,12 @@
             <name>eGov ERP Releases Repository</name>
             <url>https://nexus-repo.egovernments.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
+    
     <build>
         <plugins>
             <plugin>

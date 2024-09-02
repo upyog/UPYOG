@@ -308,6 +308,9 @@ public class UserService{
             dobFormat = "dd/MM/yyyy";
         try{
             LinkedHashMap responseMap = (LinkedHashMap)serviceRequestRepository.fetchResult(uri, userRequest);
+            if(null==responseMap) {
+            	throw new CustomException("NO_RESPONSE_FROM_USER_SERVICE","Failed to get response from User Service.");
+            }
             parseResponse(responseMap,dobFormat);
             UserDetailResponse userDetailResponse = mapper.convertValue(responseMap,UserDetailResponse.class);
             return userDetailResponse;

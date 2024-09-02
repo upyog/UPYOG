@@ -244,6 +244,10 @@ public class TLConstants {
     public static final String APPLICATION_TYPE_RENEWAL = "RENEWAL";
 
     public static final String APPLICATION_TYPE_NEW = "NEW";
+
+    public static final String APPLICATION_TYPE_MODIFICATION = "MODIFICATION";
+
+    public static final String APPLICATION_TYPE_CLOSURE = "CLOSURE";
     
     // error constants
 
@@ -286,6 +290,10 @@ public class TLConstants {
     public static final String ACTION_RETURN_TO_INITIATOR  = "RETURN_TO_INITIATOR";
 
     public static final String ACTION_RETURN_TO_VERIFIER  = "RETURN_TO_VERIFIER";
+
+    public static final String ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT = "RETURN_TO_INITIATOR_FOR_PAYMENT";
+
+    public static final String ACTION_CLOSE  = "CLOSE";
 
 
     public static final String STATUS_INITIATED = "INITIATED";
@@ -345,8 +353,6 @@ public class TLConstants {
     public static final String ACTION_FORWARD_CITIZENACTIONREQUIRED  = "FORWARDTOEMPLOYEE_FIELDINSPECTION";
 
     public static final String ACTION_STATUS_PAID  = "PAID";
-
-    public static final String ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT = "RETURN_TO_INITIATOR_FOR_PAYMENT";
 
     public static final String VARIABLE_ACTION = "action";
 
@@ -456,6 +462,8 @@ public class TLConstants {
 
     public static final String BILLINGSLAB_ACCESSORY_JSONPATH_UOM = "$.billingSlab.*.uom";
 
+    public static final String BILLING_TAX_HEAD_MASTER_CODE = "LCF.New_Trade_License_Fee_TAX";
+
     public TLConstants() {}
 
     public static final String TENANTS_JSONPATH = "$.MdmsRes.tenant.tenants";
@@ -483,4 +491,11 @@ public class TLConstants {
     public static final String TYPE = "type";
     public static final String PRICE = "price";
 
+    // Alfresco keys
+    public static final Long ALFRESCO_COMMON_DOCUMENT_ID = 0L;
+    public static final String ALFRESCO_COMMON_CERTIFICATE_DESCRIPTION = "TL certificate";
+    public static final String ALFRESCO_COMMON_CERTIFICATE_ID = "";
+    public static final String ALFRESCO_COMMON_CERTIFICATE_TYPE = "PDF";
+    public static final String ALFRESCO_DOCUMENT_TYPE = "CERT";
+    public static final String ALFRESCO_TL_CERTIFICATE_COMMENT = "Signed Certificate";
 }

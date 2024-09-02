@@ -1,0 +1,318 @@
+serviceMaps:
+ serviceName: PetRegistration
+ mappings:
+ - version: 1.0
+   name: pet-registration
+   description: Persists Pet Registration Application
+   fromTopic: save-ptr-application
+   isTransaction: true
+   queryMaps:
+    - query: INSERT INTO eg_ptr_registration (id, tenantid, applicationnumber, applicantname,fathername, mobilenumber, emailid, aadharnumber,createdby, lastmodifiedby, createdtime, lastmodifiedtime, additionaldetail) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+      basePath: PetRegistrationApplications.*
+      jsonMaps:
+
+       - jsonPath: $.PetRegistrationApplications.*.id
+
+       - jsonPath: $.PetRegistrationApplications.*.tenantId
+
+       - jsonPath: $.PetRegistrationApplications.*.applicationNumber
+
+       - jsonPath: $.PetRegistrationApplications.*.applicantName
+
+       - jsonPath: $.PetRegistrationApplications.*.fatherName
+
+       - jsonPath: $.PetRegistrationApplications.*.mobileNumber
+
+       - jsonPath: $.PetRegistrationApplications.*.emailId
+
+       - jsonPath: $.PetRegistrationApplications.*.aadharNumber
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.createdBy
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.lastModifiedBy
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.createdTime
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.lastModifiedTime
+
+       - jsonPath: $.PetRegistrationApplications.*.additionalDetail
+         type: JSON
+         dbType: JSONB
+
+    
+    
+    
+    - query: INSERT INTO eg_ptr_petdetails (id, petname, pettype, breedtype,petage, petgender, clinicname, doctorname,lastvaccinedate, vaccinationnumber, petdetailsid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+      basePath: PetRegistrationApplications.*.petDetails.
+      jsonMaps:
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.id
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.petName
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.petType
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.breedType
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.petAge
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.petGender
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.clinicName
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.doctorName
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.lastVaccineDate
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.vaccinationNumber
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.petDetailsId
+
+    
+    
+    
+    - query: INSERT INTO eg_ptr_address (id, tenantid, doorno, latitude, longitude, buildingname, addressid, addressnumber, type, addressline1, addressline2, landmark, street, city, locality, pincode, detail, registrationid, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+      basePath: PetRegistrationApplications.*.address.
+      jsonMaps:
+
+       - jsonPath: $.PetRegistrationApplications.*.address.id
+
+       - jsonPath: $.PetRegistrationApplications.*.address.tenantId
+
+       - jsonPath: $.PetRegistrationApplications.*.address.doorNo
+
+       - jsonPath: $.PetRegistrationApplications.*.address.latitude
+
+       - jsonPath: $.PetRegistrationApplications.*.address.longitude
+
+       - jsonPath: $.PetRegistrationApplications.*.address.buildingName
+
+       - jsonPath: $.PetRegistrationApplications.*.address.addressId
+
+       - jsonPath: $.PetRegistrationApplications.*.address.addressNumber
+
+       - jsonPath: $.PetRegistrationApplications.*.address.type
+
+       - jsonPath: $.PetRegistrationApplications.*.address.addressLine1
+
+       - jsonPath: $.PetRegistrationApplications.*.address.addressLine2
+
+       - jsonPath: $.PetRegistrationApplications.*.address.landmark
+
+       - jsonPath: $.PetRegistrationApplications.*.address.street
+
+       - jsonPath: $.PetRegistrationApplications.*.address.city
+
+       - jsonPath: $.PetRegistrationApplications.*.address.locality.code
+
+       - jsonPath: $.PetRegistrationApplications.*.address.pincode
+
+       - jsonPath: $.PetRegistrationApplications.*.address.detail
+
+       - jsonPath: $.PetRegistrationApplications.*.address.registrationId
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.createdBy
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.lastModifiedBy
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.createdTime
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.lastModifiedTime
+
+
+
+    
+    
+    
+    - query: INSERT INTO eg_ptr_applicationdocuments (id, tenantid, documenttype, filestoreid, documentuid, petapplicationid, active, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+      basePath: PetRegistrationApplications.*.documents.*
+      jsonMaps:
+
+       - jsonPath: $.PetRegistrationApplications.*.documents.*.id
+
+       - jsonPath: $.PetRegistrationApplications.*.documents.*.tenantId
+
+       - jsonPath: $.PetRegistrationApplications.*.documents.*.documentType
+
+       - jsonPath: $.PetRegistrationApplications.*.documents.*.filestoreId
+
+       - jsonPath: $.PetRegistrationApplications.*.documents.*.documentUid
+
+       - jsonPath: $.PetRegistrationApplications[*][?({id} in @.documents[*].id)].id
+
+#       - jsonPath: $.PetRegistrationApplications.*.id
+
+       - jsonPath: $.PetRegistrationApplications.*.documents.*.active
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.createdBy
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.lastModifiedBy
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.createdTime
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.lastModifiedTime
+
+
+
+
+
+
+ - version: 1.0
+   name: pet-registration
+   description: Update Pet Registration Application
+   fromTopic: update-ptr-application
+   isTransaction: true
+   queryMaps:
+    - query: UPDATE eg_ptr_registration SET tenantid = ?, applicationnumber = ?, applicantname = ?, fathername = ?, mobilenumber = ?, emailid = ?, aadharnumber = ?, createdby = ?, lastmodifiedby = ?, createdtime = ?, lastmodifiedtime = ?, additionaldetail = ? WHERE id = ?;
+
+      basePath: PetRegistrationApplications.*
+      jsonMaps:
+
+       - jsonPath: $.PetRegistrationApplications.*.tenantId
+
+       - jsonPath: $.PetRegistrationApplications.*.applicationNumber
+
+       - jsonPath: $.PetRegistrationApplications.*.applicantName
+
+       - jsonPath: $.PetRegistrationApplications.*.fatherName
+
+       - jsonPath: $.PetRegistrationApplications.*.mobileNumber
+
+       - jsonPath: $.PetRegistrationApplications.*.emailId
+
+       - jsonPath: $.PetRegistrationApplications.*.aadharNumber
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.createdBy
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.lastModifiedBy
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.createdTime
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.lastModifiedTime
+
+       - jsonPath: $.PetRegistrationApplications.*.additionalDetail
+         type: JSON
+         dbType: JSONB
+
+       - jsonPath: $.PetRegistrationApplications.*.id
+
+    
+    
+    
+    - query: UPDATE eg_ptr_petdetails SET petname = ?, pettype = ?, breedtype = ?, petage = ?, petgender = ?, clinicname = ?, doctorname = ?, lastvaccinedate = ?, vaccinationnumber = ?, petdetailsid = ? WHERE id = ?;
+
+      basePath: PetRegistrationApplications.*.petDetails.
+      jsonMaps:
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.petName
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.petType
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.breedType
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.petAge
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.petGender
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.clinicName
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.doctorName
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.lastVaccineDate
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.vaccinationNumber
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.petDetailsId
+
+       - jsonPath: $.PetRegistrationApplications.*.petDetails.id
+
+    
+    
+    
+    - query: UPDATE eg_ptr_address SET tenantid = ?, doorno = ?, latitude = ?, longitude = ?, buildingname = ?, addressid = ?, addressnumber = ?, type = ?, addressline1 = ?, addressline2 = ?, landmark = ?, street = ?, city = ?, locality = ?, pincode = ?, detail = ?, registrationid = ?, createdby = ?, lastmodifiedby = ?, createdtime = ?, lastmodifiedtime = ? WHERE id = ?;
+
+      basePath: PetRegistrationApplications.*.address.
+      jsonMaps:
+
+       - jsonPath: $.PetRegistrationApplications.*.address.tenantId
+
+       - jsonPath: $.PetRegistrationApplications.*.address.doorNo
+
+       - jsonPath: $.PetRegistrationApplications.*.address.latitude
+
+       - jsonPath: $.PetRegistrationApplications.*.address.longitude
+
+       - jsonPath: $.PetRegistrationApplications.*.address.buildingName
+
+       - jsonPath: $.PetRegistrationApplications.*.address.addressId
+
+       - jsonPath: $.PetRegistrationApplications.*.address.addressNumber
+
+       - jsonPath: $.PetRegistrationApplications.*.address.type
+
+       - jsonPath: $.PetRegistrationApplications.*.address.addressLine1
+
+       - jsonPath: $.PetRegistrationApplications.*.address.addressLine2
+
+       - jsonPath: $.PetRegistrationApplications.*.address.landmark
+
+       - jsonPath: $.PetRegistrationApplications.*.address.street
+
+       - jsonPath: $.PetRegistrationApplications.*.address.city
+
+       - jsonPath: $.PetRegistrationApplications.*.address.locality.code
+
+       - jsonPath: $.PetRegistrationApplications.*.address.pincode
+
+       - jsonPath: $.PetRegistrationApplications.*.address.detail
+
+       - jsonPath: $.PetRegistrationApplications.*.address.registrationId
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.createdBy
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.lastModifiedBy
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.createdTime
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.lastModifiedTime
+
+       - jsonPath: $.PetRegistrationApplications.*.address.id
+
+
+
+    
+    
+    
+    - query: UPDATE eg_ptr_applicationdocuments SET tenantid = ?, documenttype = ?, filestoreid = ?, documentuid = ?, petapplicationid = ?, active = ?, createdby = ?, lastmodifiedby = ?, createdtime = ?, lastmodifiedtime = ? WHERE id = ?;
+
+      basePath: PetRegistrationApplications.*.documents.*
+      jsonMaps:
+
+       - jsonPath: $.PetRegistrationApplications.*.documents.*.tenantId
+
+       - jsonPath: $.PetRegistrationApplications.*.documents.*.documentType
+
+       - jsonPath: $.PetRegistrationApplications.*.documents.*.filestoreId
+
+       - jsonPath: $.PetRegistrationApplications.*.documents.*.documentUid
+
+       - jsonPath: $.PetRegistrationApplications[*][?({id} in @.documents[*].id)].id
+
+#       - jsonPath: $.PetRegistrationApplications.*.id
+
+       - jsonPath: $.PetRegistrationApplications.*.documents.*.active
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.createdBy
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.lastModifiedBy
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.createdTime
+
+       - jsonPath: $.PetRegistrationApplications.*.auditDetails.lastModifiedTime
+
+       - jsonPath: $.PetRegistrationApplications.*.documents.*.id
+

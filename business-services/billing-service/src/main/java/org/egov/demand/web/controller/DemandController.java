@@ -39,6 +39,7 @@
  */
 package org.egov.demand.web.controller;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -129,6 +130,12 @@ public class DemandController {
 
 		Map<String, String> resultMap = migrationService.migrateToV1(batchStart, batchSizeInput);
 		return new ResponseEntity<>(resultMap, HttpStatus.OK);
+	}
+
+	@PostMapping("v1/_update")
+	public ResponseEntity<?> updateInternally(@RequestBody @Valid LinkedHashMap<String, Object> demandRequest) {
+
+		return new ResponseEntity<>(demandService.updateInternally(demandRequest), HttpStatus.OK);
 	}
     
 }
