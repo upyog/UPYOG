@@ -15,8 +15,6 @@ import org.egov.advertisementcanopy.model.SiteBooking;
 import org.egov.advertisementcanopy.util.AdvtConstants;
 import org.egov.advertisementcanopy.util.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.garbageservice.model.GarbageAccount;
-import org.egov.garbageservice.util.GrbgConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
