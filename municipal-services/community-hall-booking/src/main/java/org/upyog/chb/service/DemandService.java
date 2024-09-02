@@ -69,7 +69,7 @@ public class DemandService {
 		Demand demand = Demand.builder().consumerCode(consumerCode)
 				 .demandDetails(demandDetails).payer(owner)
 				 .tenantId(tenantId)
-				.taxPeriodFrom(CommunityHallBookingUtil.getCurrentDateTime()).taxPeriodTo(CommunityHallBookingUtil.minusOneDay(maxdate))
+				.taxPeriodFrom(CommunityHallBookingUtil.getCurrentTimestamp()).taxPeriodTo(CommunityHallBookingUtil.minusOneDay(maxdate))
 				.consumerType(config.getModuleName()).businessService(config.getBusinessServiceName()).additionalDetails(null).build();
 
 		

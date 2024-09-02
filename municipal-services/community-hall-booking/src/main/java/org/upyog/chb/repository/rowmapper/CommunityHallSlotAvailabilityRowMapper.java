@@ -8,19 +8,19 @@ import java.util.List;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
-import org.upyog.chb.web.models.CommunityHallSlotAvailabiltityDetail;
+import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
 
 @Component
-public class CommunityHallSlotAvailabilityRowMapper implements ResultSetExtractor<List<CommunityHallSlotAvailabiltityDetail>> {
+public class CommunityHallSlotAvailabilityRowMapper implements ResultSetExtractor<List<CommunityHallSlotAvailabilityDetail>> {
 
 	@Override
-	public List<CommunityHallSlotAvailabiltityDetail> extractData(ResultSet rs) throws SQLException, DataAccessException {
-		List<CommunityHallSlotAvailabiltityDetail> availabiltityDetails = new ArrayList<>();
+	public List<CommunityHallSlotAvailabilityDetail> extractData(ResultSet rs) throws SQLException, DataAccessException {
+		List<CommunityHallSlotAvailabilityDetail> availabiltityDetails = new ArrayList<>();
 		while (rs.next()) {
 			/**
 			 * chbd.tenant_id, chbd.community_hall_code, bsd.hall_code, bsd.status,bsd.booking_date
 			 */
-			CommunityHallSlotAvailabiltityDetail availabiltityDetail = CommunityHallSlotAvailabiltityDetail.builder()
+			CommunityHallSlotAvailabilityDetail availabiltityDetail = CommunityHallSlotAvailabilityDetail.builder()
 					.bookingDate(rs.getString("booking_date"))
 					.communityHallCode(rs.getString("community_hall_code"))
 					.hallCode(rs.getString("hall_code"))

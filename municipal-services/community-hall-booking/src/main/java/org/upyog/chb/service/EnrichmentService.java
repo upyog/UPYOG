@@ -97,14 +97,16 @@ public class EnrichmentService {
 		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
 	}
 
-	public void enrichUpdateBookingRequest(CommunityHallBookingRequest communityHallsBookingRequest) {
+	public void enrichUpdateBookingRequest(CommunityHallBookingRequest communityHallsBookingRequest, BookingStatusEnum statusEnum) {
 		AuditDetails auditDetails = CommunityHallBookingUtil.getAuditDetails(communityHallsBookingRequest.getRequestInfo().getUserInfo().getUuid(), false);
 		CommunityHallBookingDetail bookingDetail = communityHallsBookingRequest.getHallsBookingApplication();
-		bookingDetail.setBookingStatus(BookingStatusEnum.BOOKED.toString());
-		//bookingDetail.setReceiptNo(paymentRequest.getPayment().getTransactionNumber());;
-		bookingDetail.getBookingSlotDetails().stream().forEach(slot -> {
-			slot.setStatus(BookingStatusEnum.BOOKED.toString());
-		});
+		if(statusEnum != null) {
+			bookingDetail.setBookingStatus(statusEnum.toString());
+			//bookingDetail.setReceiptNo(paymentRequest.getPayment().getTransactionNumber());;
+			bookingDetail.getBookingSlotDetails().stream().forEach(slot -> {
+				slot.setStatus(statusEnum.toString());
+			});
+		}
 		communityHallsBookingRequest.getHallsBookingApplication().setPaymentDate(auditDetails.getLastModifiedTime());
 		communityHallsBookingRequest.getHallsBookingApplication().setAuditDetails(auditDetails);
 		

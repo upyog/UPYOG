@@ -23,7 +23,7 @@ import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallDemandEstimationCriteria;
 import org.upyog.chb.web.models.CommunityHallDemandEstimationResponse;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabilityResponse;
-import org.upyog.chb.web.models.CommunityHallSlotAvailabiltityDetail;
+import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 import org.upyog.chb.web.models.RequestInfoWrapper;
 import org.upyog.chb.web.models.ResponseInfo;
@@ -83,7 +83,7 @@ public class CommunityHallBookingController {
 	@RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
 	public ResponseEntity<CommunityHallBookingResponse> v1UpdateBooking(
 			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @Valid @RequestBody CommunityHallBookingRequest communityHallsBookingRequest) {
-		CommunityHallBookingDetail bookingDetail = bookingService.updateBooking(communityHallsBookingRequest, null);
+		CommunityHallBookingDetail bookingDetail = bookingService.updateBooking(communityHallsBookingRequest, null, null);
 		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(communityHallsBookingRequest.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_UPDATED,
 				StatusEnum.SUCCESSFUL);
 		CommunityHallBookingResponse communityHallResponse = CommunityHallBookingResponse.builder().responseInfo(info)
@@ -106,7 +106,7 @@ public class CommunityHallBookingController {
 	@RequestMapping(value = "/v1/_slot-search", method = RequestMethod.POST)
 	public ResponseEntity<CommunityHallSlotAvailabilityResponse> v1GetCommmunityHallSlotAvailablity(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
             @Valid @ModelAttribute CommunityHallSlotSearchCriteria criteria) {
-		List<CommunityHallSlotAvailabiltityDetail> applications = bookingService.getCommunityHallSlotAvailability(criteria);
+		List<CommunityHallSlotAvailabilityDetail> applications = bookingService.getCommunityHallSlotAvailability(criteria);
 		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_AVIALABILITY_SEARCH,
 				StatusEnum.SUCCESSFUL);
 		CommunityHallSlotAvailabilityResponse response = CommunityHallSlotAvailabilityResponse.builder()
