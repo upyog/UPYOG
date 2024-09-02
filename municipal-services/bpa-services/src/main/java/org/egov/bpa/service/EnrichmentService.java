@@ -258,14 +258,17 @@ public class EnrichmentService {
 				DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
 				Object plot = context.read("edcrDetail[0].planDetail.planInformation.plotArea");
 				Double	plotArea = Double.valueOf(String.valueOf(plot));
-				Object bldgHgt = context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeight");
+				Object bldgHgt = context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeightExcludingMP");
 				Double	buildingHeight = Double.valueOf(String.valueOf(bldgHgt));
 
 			
 				List jsonOutput = JsonPath.read(masterData, BPAConstants.RISKTYPE_COMPUTATION);
-				String filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
-						+ ") || ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
-						+ buildingHeight + "  ))].riskType";
+//				String filterExp = "$.[?((@.fromPlotArea < " + plotArea + " && @.toPlotArea >= " + plotArea
+//						+ ") || ( @.fromBuildingHeight < " + buildingHeight + "  &&  @.toBuildingHeight >= "
+//						+ buildingHeight + "  ))].riskType";
+//				
+				String filterExp = "$.[?(@.fromBuildingHeight < " + buildingHeight + ""
+						+ " && @.toBuildingHeight >= " + buildingHeight + ")].riskType";
 
 				List<String> riskTypes = JsonPath.read(jsonOutput, filterExp);
 				                                                                                     

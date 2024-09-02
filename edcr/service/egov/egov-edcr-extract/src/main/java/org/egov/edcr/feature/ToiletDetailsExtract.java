@@ -39,80 +39,53 @@ public class ToiletDetailsExtract extends FeatureExtract {
 
     @Override
     public PlanDetail extract(PlanDetail planDetail) {
-        List<DXFLWPolyline> toiletMeasurements = null;
-        List<DXFLWPolyline> toiletVentilationMeasurements = null;
-        List<Measurement> roomMeasurements = null;
-        List<BigDecimal> roomHeights;
-        List<RoomHeight> roomHeightsList;
-
-        
-      
-       
-        for (Block block : planDetail.getBlocks())
-            if (block.getBuilding() != null && block.getBuilding().getFloors() != null)
+        for (Block block : planDetail.getBlocks()) {
+            if (block.getBuilding() != null && block.getBuilding().getFloors() != null) {
                 for (Floor f : block.getBuilding().getFloors()) {
-                	 List<Toilet> toilets = new ArrayList<>();
+                    List<Toilet> toilets = new ArrayList<>();
                     String layerName = String.format(layerNames.getLayerName("LAYER_NAME_BLK_FLR_TOILET"), block.getNumber(),
                             f.getNumber(), "+\\d");
- 
-                	List<String> names = Util.getLayerNamesLike(planDetail.getDoc(), layerName);
-                	
-                	
-                		for (String toiletLayer : names) {
-                             toiletMeasurements = Util.getPolyLinesByLayer(planDetail.getDoc(), toiletLayer);
-                             
 
-                            if (!toiletMeasurements.isEmpty()) {
-                            	Toilet toiletObj = new Toilet();
-                                List<Measurement> toiletMeasurementList = new ArrayList<>();
-                                toiletMeasurements.forEach(toilet -> {
-                                	
-                                	 Measurement measurementToilet = new MeasurementDetail(toilet, true);
-                                     toiletMeasurementList.add(measurementToilet);
-                                     
-                                    
-                                });
-                                
-                                toiletObj.setToilets(toiletMeasurementList);
-                                toilets.add(toiletObj);
-                                                          }
-                            
-                           
+                    List<String> names = Util.getLayerNamesLike(planDetail.getDoc(), layerName);
+
+                    for (String toiletLayer : names) {
+                        List<DXFLWPolyline> toiletMeasurements = Util.getPolyLinesByLayer(planDetail.getDoc(), toiletLayer);
+
+                        if (!toiletMeasurements.isEmpty()) {
+                            Toilet toiletObj = new Toilet();
+                            List<Measurement> toiletMeasurementList = new ArrayList<>();
+                            toiletMeasurements.forEach(toilet -> {
+                                Measurement measurementToilet = new MeasurementDetail(toilet, true);
+                                toiletMeasurementList.add(measurementToilet);
+                            });
+
+                            toiletObj.setToilets(toiletMeasurementList);
+                            toilets.add(toiletObj);
                         }
-                                  	
-                		
-                        
-                        String toiletVentilationLayer = String.format(layerNames.getLayerName("LAYER_NAME_BLK_FLR_TOILET_VENTILATION"), block.getNumber(),
-                                f.getNumber(), "+\\d");
-                        List<String> ventilationList = Util.getLayerNamesLike(planDetail.getDoc(), toiletVentilationLayer);
-
-                        List<BigDecimal> ventilation = new ArrayList<>();
-                        
-                        for (String ventilationHeightLayer : ventilationList) {
-                        	toiletVentilationMeasurements = Util.getPolyLinesByLayer(planDetail.getDoc(), ventilationHeightLayer);
-                        	String windowHeight = Util.getMtextByLayerName(planDetail.getDoc(), ventilationHeightLayer);
-                        	
-                            	Toilet toiletObj = new Toilet();
-                            	BigDecimal windowHeight1 = windowHeight != null
-										? BigDecimal.valueOf(
-												Double.valueOf(windowHeight.replaceAll("WINDOW_HT_M=", "")))
-										: BigDecimal.ZERO;
-								
-                                
-                                
-                                toiletObj.setToiletVentilation(windowHeight1);
-                                toilets.add(toiletObj);
-                        
-
-                        
-                                        
-                        }
-                        f.setToilet(toilets);
-                       
                     }
-                
+
+                    String toiletVentilationLayer = String.format(layerNames.getLayerName("LAYER_NAME_BLK_FLR_TOILET_VENTILATION"), block.getNumber(),
+                            f.getNumber(), "+\\d");
+                    List<String> ventilationList = Util.getLayerNamesLike(planDetail.getDoc(), toiletVentilationLayer);
+
+                    for (String ventilationHeightLayer : ventilationList) {
+                        List<DXFLWPolyline> toiletVentilationMeasurements = Util.getPolyLinesByLayer(planDetail.getDoc(), ventilationHeightLayer);
+                        String windowHeight = Util.getMtextByLayerName(planDetail.getDoc(), ventilationHeightLayer);
+
+                        BigDecimal windowHeight1 = windowHeight != null
+                                ? BigDecimal.valueOf(Double.parseDouble(windowHeight.replaceAll("WINDOW_HT_M=", "")))
+                                : BigDecimal.ZERO;
+
+                        for (Toilet toiletObj : toilets) {
+                            toiletObj.setToiletVentilation(windowHeight1);
+                        }
+                    }
+                    
+                    f.setToilet(toilets);
+                }
+            }
+        }
 
         return planDetail;
     }
-
 }

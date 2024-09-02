@@ -1151,45 +1151,57 @@ public class PlanReportService {
 
                             if (!occupancies.isEmpty()) {
 
-                                for (Occupancy occupancy : occupancies) {
-                                    String occupancyName = "";
-                                    if (occupancy.getTypeHelper() != null)
-                                        if (occupancy.getTypeHelper().getSubtype() != null)
-                                            occupancyName = occupancy.getTypeHelper().getSubtype().getName();
-                                        else {
-                                            if (occupancy.getTypeHelper().getType() != null)
-                                                occupancyName = occupancy.getTypeHelper().getType().getName();
-                                        }
-                                    DcrReportFloorDetail dcrReportFloorDetail = new DcrReportFloorDetail();
-                                    String floorNo;
-                                    if (floor.getTerrace())
-                                        floorNo = "Terrace";
-                                    else if (occupancy.getIsMezzanine())
-                                        floorNo = floor.getNumber() + " (Mezzanine " + floor.getNumber() + ")";
-                                    else
-                                        floorNo = String.valueOf(floor.getNumber());
-                                    dcrReportFloorDetail.setFloorNo(floorNo);
-                                    dcrReportFloorDetail.setOccupancy(occupancyName);
-                                    dcrReportFloorDetail.setBuiltUpArea(
-                                            occupancy.getExistingBuiltUpArea().compareTo(BigDecimal.ZERO) > 0
-                                                    ? occupancy.getBuiltUpArea()
-                                                            .subtract(occupancy.getExistingBuiltUpArea())
-                                                    : occupancy.getBuiltUpArea());
-                                    dcrReportFloorDetail.setFloorArea(
-                                            occupancy.getExistingFloorArea().compareTo(BigDecimal.ZERO) > 0
-                                                    ? occupancy.getFloorArea()
-                                                            .subtract(occupancy.getExistingFloorArea())
-                                                    : occupancy.getFloorArea());
-                                    dcrReportFloorDetail.setBuiltUpDeductionArea(occupancy.getDeduction() == null ? BigDecimal.ZERO : occupancy.getDeduction());
-//                                    dcrReportFloorDetail.setCarpetArea(
-//                                            occupancy.getExistingCarpetArea().compareTo(BigDecimal.ZERO) > 0
-//                                                    ? occupancy.getCarpetArea()
-//                                                            .subtract(occupancy.getExistingCarpetArea())
-//                                                    : occupancy.getCarpetArea());
-                                    if (dcrReportFloorDetail.getBuiltUpArea().compareTo(BigDecimal.ZERO) > 0) {
-                                        dcrReportFloorDetails.add(dcrReportFloorDetail);
-                                    }
-                                }
+                            	for (Occupancy occupancy : occupancies) {
+                            	    String occupancyName = "";
+                            	    if (occupancy.getTypeHelper() != null) {
+                            	        if (occupancy.getTypeHelper().getSubtype() != null) {
+                            	            occupancyName = occupancy.getTypeHelper().getSubtype().getName();
+                            	        } else {
+                            	            if (occupancy.getTypeHelper().getType() != null) {
+                            	                occupancyName = occupancy.getTypeHelper().getType().getName();
+                            	            }
+                            	        }
+                            	    }
+                            	    
+                            	    DcrReportFloorDetail dcrReportFloorDetail = new DcrReportFloorDetail();
+                            	    String floorNo;
+                            	    if (floor.getTerrace()) {
+                            	        floorNo = "Terrace";
+                            	    } else if (occupancy.getIsMezzanine()) {
+                            	        floorNo = floor.getNumber() + " (Mezzanine " + floor.getNumber() + ")";
+                            	    } else {
+                            	        floorNo = String.valueOf(floor.getNumber());
+                            	    }
+                            	    dcrReportFloorDetail.setFloorNo(floorNo);
+                            	    dcrReportFloorDetail.setOccupancy(occupancyName);
+                            	    
+                            	    // Built-up Area
+                            	    BigDecimal builtUpArea = occupancy.getExistingBuiltUpArea().compareTo(BigDecimal.ZERO) > 0
+                            	            ? occupancy.getBuiltUpArea().subtract(occupancy.getExistingBuiltUpArea())
+                            	            : occupancy.getBuiltUpArea();
+                            	    dcrReportFloorDetail.setBuiltUpArea(builtUpArea.setScale(2, BigDecimal.ROUND_HALF_UP));
+                            	    
+                            	    // Floor Area
+                            	    BigDecimal floorArea = occupancy.getExistingFloorArea().compareTo(BigDecimal.ZERO) > 0
+                            	            ? occupancy.getFloorArea().subtract(occupancy.getExistingFloorArea())
+                            	            : occupancy.getFloorArea();
+                            	    dcrReportFloorDetail.setFloorArea(floorArea.setScale(2, BigDecimal.ROUND_HALF_UP));
+                            	    
+                            	    // Built-up Deduction Area
+                            	    BigDecimal builtUpDeductionArea = occupancy.getDeduction() == null ? BigDecimal.ZERO : occupancy.getDeduction();
+                            	    dcrReportFloorDetail.setBuiltUpDeductionArea(builtUpDeductionArea.setScale(2, BigDecimal.ROUND_HALF_UP));
+                            	    
+                            	    // Optionally process Carpet Area if required
+                            	    // dcrReportFloorDetail.setCarpetArea(
+                            	    //         occupancy.getExistingCarpetArea().compareTo(BigDecimal.ZERO) > 0
+                            	    //                 ? occupancy.getCarpetArea().subtract(occupancy.getExistingCarpetArea())
+                            	    //                 : occupancy.getCarpetArea());
+
+                            	    if (dcrReportFloorDetail.getBuiltUpArea().compareTo(BigDecimal.ZERO) > 0) {
+                            	        dcrReportFloorDetails.add(dcrReportFloorDetail);
+                            	    }
+                            	}
+
 
                             }
 
