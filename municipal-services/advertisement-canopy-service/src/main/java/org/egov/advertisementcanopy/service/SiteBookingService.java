@@ -94,6 +94,7 @@ public class SiteBookingService {
 			booking.setUuid(UUID.randomUUID().toString());
 			booking.setApplicationNo(String.valueOf(System.currentTimeMillis()));
 			booking.setIsActive(true);
+			booking.setStatus("INITIATED");
 			
 			booking.setWorkflowAction("INITIATE");
 			booking.setTenantId("hp.Shimla");

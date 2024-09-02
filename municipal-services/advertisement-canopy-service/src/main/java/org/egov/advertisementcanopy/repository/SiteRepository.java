@@ -15,6 +15,7 @@ import org.egov.advertisementcanopy.model.SiteUpdateRequest;
 import org.egov.advertisementcanopy.repository.builder.SiteApplicationQueryBuilder;
 import org.egov.advertisementcanopy.repository.rowmapper.SiteApplicationRowMapper;
 import org.egov.advertisementcanopy.service.SiteService;
+import org.egov.advertisementcanopy.util.AdvtConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -30,9 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 public class SiteRepository {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-
-	@Autowired
-	SiteService siteService;
 
 	@Autowired
 	SiteApplicationRowMapper siteApplicationRowMapper;
@@ -57,12 +55,12 @@ public class SiteRepository {
 
 	public void create(SiteCreationData siteCreation) {
 		siteCreation.setId(getNextSequence());
-		if (siteCreation.getSiteType().equals(siteService.ADVERTISEMENT_HOARDING)) {
+		if (siteCreation.getSiteType().equals(AdvtConstants.ADVERTISEMENT_HOARDING)) {
 			siteCreation.setSiteID("AHS" + "/" + siteCreation.getUlbName() + "/" + getNextSiteSequence());
 			siteCreation.setSiteName("AHS" + "_" + siteCreation.getDistrictName() + "_" + siteCreation.getUlbName()
 					+ "_" + siteCreation.getWardNumber() + "_" + siteCreation.getSiteName());
 		}
-		if (siteCreation.getSiteType().equals(siteService.CANOPY)) {
+		if (siteCreation.getSiteType().equals(AdvtConstants.CANOPY)) {
 			siteCreation.setSiteID("ACS" + "/" + siteCreation.getUlbName() + "/" + getNextSiteSequence());
 			siteCreation.setSiteName("ACS" + "_" + siteCreation.getDistrictName() + "_" + siteCreation.getUlbName()
 					+ "_" + siteCreation.getWardNumber() + "_" + siteCreation.getSiteName());

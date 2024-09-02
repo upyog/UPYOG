@@ -39,6 +39,9 @@ public class AdvtConstants {
     @Value("${egov.demand.update.endpoint}")
     public String demandUpdateEndpoint;
 
+	public static final String ADVERTISEMENT_HOARDING = "Advertising Hoarding";
+	public static final String CANOPY = "Canopy";
+
 	public static final String SITE_BOOKING_CREATE_KAFKA_TOPIC = "create-site-booking";
 
 	public static final String SITE_BOOKING_UPDATE_KAFKA_TOPIC = "update-site-booking";
