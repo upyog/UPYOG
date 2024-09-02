@@ -41,7 +41,24 @@ CREATE INDEX index_tenant_eg_vehicle ON eg_vehicle
 (tenantid);
 
 CREATE TABLE IF NOT EXISTS eg_vehicle_auditlog(
-	@@ -62,5 +62,5 @@ lastmodifiedby character varying(64),
+id character varying(64) NOT NULL,
+tenantid character varying(64),
+registrationNumber character varying(128),
+model character varying(256),
+type character varying(64),
+tankcapicity int,
+suctionType character varying(64),
+pollutionCertiValidTill bigint,
+InsuranceCertValidTill bigint,
+fitnessValidTill bigint,
+roadTaxPaidTill bigint,
+gpsEnabled boolean,
+source character varying(64),
+status character varying(64),
+owner_id character varying(64) NOT NULL,
+additionalDetails JSONB,
+createdby character varying(64),
+lastmodifiedby character varying(64),
 createdtime bigint,
 lastmodifiedtime bigint
 );
