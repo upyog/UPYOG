@@ -58,7 +58,7 @@ const useMDMS = {
           },
           "TL"
         ),
-      { select: (d) => d.TradeLicense.CommonFieldsConfig, ...config }
+      { select: (d) => d.TradeLicense?.CommonFieldsConfig, ...config }
     ),
 };
 
