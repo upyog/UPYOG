@@ -506,7 +506,7 @@ public class HeightOfRoom extends FeatureProcess {
 									&& floor.getNonaHabitationalDoors().size() > 0) {
 								for (Door door : floor.getNonaHabitationalDoors()) {
 									if (door != null) {
-										BigDecimal doorHeight = door.getNonHabitationDoorHeight();
+										BigDecimal doorHeight = door.getNonHabitationDoorHeight().setScale(2, BigDecimal.ROUND_HALF_UP);
 										BigDecimal doorWidth = door.getNonHabitationDoorWidth();
 										// BigDecimal minDoorHeight = BigDecimal.valueOf(2.0);
 										BigDecimal minDoorWidth = BigDecimal.valueOf(0.75);
@@ -533,7 +533,7 @@ public class HeightOfRoom extends FeatureProcess {
 //                          // Calculation For Windows  Added by Neha
 							if (floor.getWindows() != null && floor.getWindows().size() > 0) {
 								for (Window window : floor.getWindows()) {
-									BigDecimal windowHeight = window.getWindowHeight();
+									BigDecimal windowHeight = window.getWindowHeight().setScale(2, BigDecimal.ROUND_HALF_UP);
 									BigDecimal windowWidth = window.getWindowWidth();
 									BigDecimal minWindowHeight = BigDecimal.valueOf(.50);
 									BigDecimal minWindowWidth = BigDecimal.valueOf(.50);
@@ -628,7 +628,7 @@ public class HeightOfRoom extends FeatureProcess {
 								// Now perform the check for each window against the minimum dimensions
 								if (room.getWindows() != null && !room.getWindows().isEmpty()) {
 									for (Window window : room.getWindows()) {
-										BigDecimal windowHeight = window.getWindowHeight();
+										BigDecimal windowHeight = window.getWindowHeight().setScale(2, BigDecimal.ROUND_HALF_UP);
 										BigDecimal windowWidth = window.getWindowWidth();
 
 										// Check each window's dimensions
@@ -696,7 +696,7 @@ public class HeightOfRoom extends FeatureProcess {
 									// Now perform the check for each Door against the minimum dimensions
 									if (room.getDoors() != null && !room.getDoors().isEmpty()) {
 										for (Door door : room.getDoors()) {
-											BigDecimal doorHeight = door.getDoorHeight();
+											BigDecimal doorHeight = door.getDoorHeight().setScale(2, BigDecimal.ROUND_HALF_UP);
 											BigDecimal doorWidth = door.getDoorWidth();
 											System.out.println("rum number" + room.getNumber());
 

@@ -199,7 +199,7 @@ public class Kitchen extends FeatureProcess {
                             subRule = SUBRULE_41_III;
 
                             if (!kitchenAreas.isEmpty()) {
-                                totalArea = kitchenAreas.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+                                totalArea = kitchenAreas.stream().reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP);
                                 minimumHeight = MINIMUM_AREA_5;
                                 subRuleDesc = String.format(SUBRULE_41_III_AREA_DESC, KITCHEN);
 
@@ -216,7 +216,7 @@ public class Kitchen extends FeatureProcess {
                                 boolean isTypicalRepititiveFloor = false;
                                 Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor,
                                         isTypicalRepititiveFloor);
-                                BigDecimal minRoomWidth = kitchenWidths.stream().reduce(BigDecimal::min).get();
+                                BigDecimal minRoomWidth = kitchenWidths.stream().reduce(BigDecimal::min).get().setScale(2, BigDecimal.ROUND_HALF_UP);
                                 minWidth = MINIMUM_WIDTH_1_8;
                                 subRuleDesc = String.format(SUBRULE_41_III_TOTAL_WIDTH, KITCHEN);
                                 buildResult(pl, floor, minWidth, subRule, subRuleDesc, minRoomWidth, valid, typicalFloorValues);

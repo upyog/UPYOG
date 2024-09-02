@@ -349,8 +349,9 @@ public class Parking extends FeatureProcess {
         BigDecimal requiredVisitorParkingArea = Util.roundOffTwoDecimal(BigDecimal.valueOf(requiredVisitorParkArea));
         BigDecimal providedVisitorParkingArea = Util.roundOffTwoDecimal(providedVisitorParkArea);
         
-        double totalECS = roundedValueOpen + roundedValueCover + roundedValueBsmnt + roundedValueStilt;
-        
+        BigDecimal totalECS = new BigDecimal(roundedValueOpen + roundedValueCover + roundedValueBsmnt + roundedValueStilt)
+                .setScale(2, BigDecimal.ROUND_HALF_UP);
+ 
         if (totalProvidedCarParkArea.doubleValue() == 0) {
             pl.addError(RULE__DESCRIPTION,
                     getLocaleMessage("msg.error.not.defined", RULE__DESCRIPTION));
