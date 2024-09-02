@@ -44,7 +44,7 @@ public class PaymentUpdateConsumer {
 			@Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
 		log.info("CHB Appplication payment status update for  : " + topic + " and record : " + record);
-		paymentNotificationService.processTransaction(record, topic, BookingStatusEnum.BOOKING_CREATED);
+		paymentNotificationService.processTransaction(record, topic, null);
 
 	}
 	

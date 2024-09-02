@@ -137,14 +137,15 @@ public class PaymentNotificationService {
 
         RequestInfo requestInfo = transactionRequest.getRequestInfo();
         Transaction transaction = transactionRequest.getTransaction();
-
+        
         if(configs.getBusinessServiceName()
 				.equals(transaction.getModule()) && (transaction.getTxnStatus().equals(Transaction.TxnStatusEnum.FAILURE) ||
 						transaction.getTxnStatus().equals(Transaction.TxnStatusEnum.PENDING))){
         	if(transaction.getTxnStatus().equals(Transaction.TxnStatusEnum.FAILURE)){
         		status = BookingStatusEnum.PAYMENT_FAILED;
         	}
-        	String bookingNo = transactionRequest.getTransaction().getBillId();
+        	String bookingNo = transactionRequest.getTransaction().getConsumerCode();
+        	log.info("For booking no : " + bookingNo + " transaction status : " + transaction.getTxnStatus());
         	CommunityHallBookingDetail bookingDetail = CommunityHallBookingDetail.builder().bookingNo(bookingNo)
 					.build();
 			CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder()
