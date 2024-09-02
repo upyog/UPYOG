@@ -1,30 +1,4 @@
 
-/** 
- * @author - Shivank Shukla  - NIUA
-  
- * Addition of feature of fetching Latitude and Longitude from uploaded photo 
-
-    - i have added a function (extractGeoLocation)  to extract latitude and longitude from an uploaded image file.
-    - It takes the file object as input and returns a promise.
-    - Within the promise, EXIF.get() is called with the file object to extract EXIF data.
-    - Latitude and longitude are then retrieved from the EXIF data and converted to decimal format using the convertToDecimal function.
-    - If latitude and longitude are found, the promise is resolved with an object containing latitude and longitude. 
-      Otherwise, if not found still it resolve the promise with latitude and longitude as NULL value.
-    - The convertToDecimal function converts GPS coordinates from degrees, minutes, and seconds format to decimal format.
-
-    - The getData function is modified to include the geolocation extraction logic.
-    - When files are uploaded (e?.length > 0), the function extractGeoLocation extracts geolocation if any
-    - If geolocation extraction is successful, it logs the latitude and longitude to the console.
-    - After extracting geolocation, the function continues with the existing logic to handle the uploaded files. 
-*/
-
-
-
-
-
-
-
-
 
 import React, { useEffect, useMemo, useState } from "react";
 import {
@@ -159,6 +133,22 @@ const SelectDocument = React.memo(function MyComponent({
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
 ////////////////////////////////////////////////////////////
+/*
+ * Addition of feature of fetching Latitude and Longitude from uploaded photo 
+
+    - i have added a function (extractGeoLocation)  to extract latitude and longitude from an uploaded image file.
+    - It takes the file object as input and returns a promise.
+    - Within the promise, EXIF.get() is called with the file object to extract EXIF data.
+    - Latitude and longitude are then retrieved from the EXIF data and converted to decimal format using the convertToDecimal function.
+    - If latitude and longitude are found, the promise is resolved with an object containing latitude and longitude. 
+      Otherwise, if not found still it resolve the promise with latitude and longitude as NULL value.
+    - The convertToDecimal function converts GPS coordinates from degrees, minutes, and seconds format to decimal format.
+
+    - The getData function is modified to include the geolocation extraction logic.
+    - When files are uploaded (e?.length > 0), the function extractGeoLocation extracts geolocation if any
+    - If geolocation extraction is successful, it logs the latitude and longitude to the console.
+    - After extracting geolocation, the function continues with the existing logic to handle the uploaded files. 
+*/
     function extractGeoLocation(file) {
         return new Promise((resolve) => {
             EXIF.getData(file, function() {
