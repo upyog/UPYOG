@@ -35,12 +35,16 @@ public class CommunityHallBookingUtil {
 		return responseInfo;
 	}
 
-	public static Long getCurrentDateTime() {
+	public static Long getCurrentTimestamp() {
 		return Instant.now().toEpochMilli();
+	}
+	
+	public static LocalDate getCurrentDate() {
+		return LocalDate.now();
 	}
 
 	public static AuditDetails getAuditDetails(String by, Boolean isCreate) {
-		Long time = System.currentTimeMillis();
+		Long time = getCurrentTimestamp();
 		if (isCreate)
 			// TODO: check if we can set lastupdated details to empty
 			return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time)
@@ -48,6 +52,11 @@ public class CommunityHallBookingUtil {
 		else
 			return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
 	}
+	
+	/*Commented and used Instant
+	 * public static Long getCurrentTimestamp() { return System.currentTimeMillis();
+	 * }
+	 */
 
 	public static String getRandonUUID() {
 		return UUID.randomUUID().toString();

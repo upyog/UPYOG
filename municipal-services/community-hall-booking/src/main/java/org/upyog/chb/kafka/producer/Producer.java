@@ -1,15 +1,13 @@
 package org.upyog.chb.kafka.producer;
 
-import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.kafka.CustomKafkaTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.kafka.core.KafkaTemplate;
 
 // NOTE: If tracer is disabled change CustomKafkaTemplate to KafkaTemplate in autowiring
 
-@Service
-@Slf4j
+@Service("chbProducer")
+//@Slf4j
 public class Producer {
 
     @Autowired

@@ -11,10 +11,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Details for new booking of community halls
  */
+
+
 @ApiModel(description = "Details for slot availabiltity of community halls")
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-19T11:17:29.419+05:30")
@@ -23,11 +26,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EqualsAndHashCode(of = { "bookingDate", "hallCode", "communityHallCode" })
-public class CommunityHallSlotAvailabiltityDetail {
+@ToString
+@EqualsAndHashCode(of = { "tenantId", "hallCode", "communityHallCode", "bookingDate"})
+public class CommunityHallSlotAvailabilityDetail {
 
 	private String communityHallCode;
-
+	
 	private String hallCode;
 	
 	private String bookingDate;
@@ -40,5 +44,7 @@ public class CommunityHallSlotAvailabiltityDetail {
 
 	@JsonProperty("slotStaus")
 	private String slotStaus;
+	
+	
 
 }

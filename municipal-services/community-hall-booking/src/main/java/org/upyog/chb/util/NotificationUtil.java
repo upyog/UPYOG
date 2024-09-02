@@ -117,6 +117,7 @@ public class NotificationUtil {
 			Map<String, String> mobileNumberToOwnerName) {
 
 		List<SMSRequest> smsRequest = new LinkedList<>();
+	//	message  = "Dear Citizen, Your OTP to complete your UPYOG Registration is 12345.\\n\\nUPYOG" + "#1207167462318135756#1207167462307097438" ;
 		for (Map.Entry<String, String> entryset : mobileNumberToOwnerName.entrySet()) {
 			smsRequest.add(new SMSRequest(entryset.getKey(), message));
 		}
@@ -130,7 +131,7 @@ public class NotificationUtil {
 	 */
 	public void sendSMS(List<SMSRequest> smsRequestList) {
 		if (CollectionUtils.isEmpty(smsRequestList))
-			log.info("Messages from localization couldn't be fetched!");
+			log.info("Messages fobject is empty in send sms!");
 		for (SMSRequest smsRequest : smsRequestList) {
 			producer.push(config.getSmsNotifTopic(), smsRequest);
 			log.debug("SMS request object : " + smsRequest);
@@ -148,62 +149,57 @@ public class NotificationUtil {
 		producer.push(config.getSaveUserEventsTopic(), request);
 	}
 
-	public String getCustomizedMsg(CommunityHallBookingDetail bookingDetail, String localizationMessage) {
+	public String getCustomizedMsg(CommunityHallBookingDetail bookingDetail, String localizationMessage, String actionStatus) {
 		String message = null, messageTemplate = null;
 		log.info(" booking status : " + bookingDetail.getBookingStatus());
+		log.info(" booking status ACTION_STATUS : " + actionStatus); 
 		
-		String ACTION_STATUS = null;
-		if(bookingDetail.getBookingStatus().equals(BookingStatusEnum.BOOKING_CREATED.toString()) || 
-				bookingDetail.getBookingStatus().equals(BookingStatusEnum.BOOKED.toString())){
-			ACTION_STATUS = bookingDetail.getBookingStatus();
-		} else {
-			ACTION_STATUS = bookingDetail.getWorkflow().getAction();
-		}
-		
-		log.info(" booking status bookingDetail.getWorkflow() : " + bookingDetail.getWorkflow()); 
-		
-		log.info(" booking status ACTION_STATUS : " + ACTION_STATUS); 
-		
-		BookingStatusEnum statusEnum = BookingStatusEnum.valueOf(ACTION_STATUS);
+		BookingStatusEnum notificationType = BookingStatusEnum.valueOf(actionStatus);
 
-		switch (statusEnum) {
+		switch (notificationType) {
 
 		case BOOKING_CREATED:
-			String link = config.getUiAppHost() + config.getPayLinkSMS().replace("$consumerCode", bookingDetail.getBookingNo())
-			.replace("$mobile", bookingDetail.getApplicantDetail().getApplicantMobileNo()).replace("$tenantId", bookingDetail.getTenantId())
-			.replace("$businessService", config.getBusinessServiceName());
-	        
-		//	link = getShortnerURL(link);
+			//Fetch message template from localization message for localization code
 			messageTemplate = getMessageTemplate(config.getBookingCreatedTemplate(), localizationMessage);
-			
-			message = populateDynamicValues(bookingDetail, messageTemplate,
-					CommunityHallBookingConstants.CHB_PAYMENT_LINK, link);
+			//Update placeholder in messages
+			message = populateDynamicValues(bookingDetail, messageTemplate);
+			//Shorten URL part of notification message
+			String shortUrl = getActionLink(bookingDetail, actionStatus);
+			//Update payment link placeholder in message
+			message = message.replace(CommunityHallBookingConstants.CHB_PAYMENT_LINK, shortUrl);
 			break;
 
 		case BOOKED:
-			
-			String permissionLetterlink = config.getUiAppHost() + config.getPermissionLetterLink().replace("$consumerCode", bookingDetail.getBookingNo())
-			.replace("$mobile", bookingDetail.getApplicantDetail().getApplicantMobileNo()).replace("$tenantId", bookingDetail.getTenantId())
-			.replace("$businessService", config.getBusinessServiceName());
-	        
-		//	permissionLetterlink = getShortnerURL(permissionLetterlink);
 			messageTemplate = getMessageTemplate(config.getBookedTemplate(), localizationMessage);
-			message = populateDynamicValues(bookingDetail, messageTemplate,
-					CommunityHallBookingConstants.CHB_PERMISSION_LETTER_LINK, permissionLetterlink);
+			message = populateDynamicValues(bookingDetail, messageTemplate);
+			String permissionLetterShortUrl = getActionLink(bookingDetail, actionStatus);
+			message = message.replace(CommunityHallBookingConstants.CHB_PERMISSION_LETTER_LINK, permissionLetterShortUrl);
 			break;
 
 		case CANCELLATION_REQUESTED:
 			// TODO: Implement
 			messageTemplate = getMessageTemplate("", localizationMessage);
-			message = populateDynamicValues(bookingDetail, messageTemplate, null, null);
+			message = populateDynamicValues(bookingDetail, messageTemplate);
 			break;
 
 		case CANCELLED:
 			// TODO: Implement
 			messageTemplate = getMessageTemplate("", localizationMessage);
-			message = populateDynamicValues(bookingDetail, messageTemplate, null, null);
+			message = populateDynamicValues(bookingDetail, messageTemplate);
 			break;
-
+			
+		case PAYMENT_FAILED:
+			messageTemplate = getMessageTemplate(config.getBookingCreatedTemplate(), localizationMessage);
+			break;
+			
+		case PENDING_FOR_PAYMENT:
+			//Notification not required in this case
+			break;
+			
+		default:
+			message = "Localization message not available for  status : " + actionStatus;
+			break;
+			
 		}
 		log.info("getCustomizedMsg messageTemplate : " + messageTemplate);
 		log.info("getCustomizedMsg  message : " + message);
@@ -215,18 +211,34 @@ public class NotificationUtil {
 	// Hi {APPLICANT_NAME} your booking no {BOOKING_NO} for community hall
 	// {COMMUNITY_HALL_NAME} is confirmed. Please download permission letter using
 	// link {CHB_PERMISSION_LETTER_LINK}
-	private String populateDynamicValues(CommunityHallBookingDetail bookingDetail, String message, String linkName,
-			String link) {
+	private String populateDynamicValues(CommunityHallBookingDetail bookingDetail, String message) {
 		message = message.replace(CommunityHallBookingConstants.APPLICANT_NAME,
 				bookingDetail.getApplicantDetail().getApplicantName());
 		message = message.replace(CommunityHallBookingConstants.BOOKING_NO, bookingDetail.getBookingNo());
 		message = message.replace(CommunityHallBookingConstants.COMMUNITY_HALL_NAME,
 				bookingDetail.getCommunityHallCode());
-		if (null != link && null != linkName) {
-			String shortUrl = getShortnerURL(link);
-			message = message.replace(linkName, shortUrl);
-		}
+		
 		return message;
+	}
+	
+	private String getActionLink(CommunityHallBookingDetail bookingDetail, String status) {
+		String link = null;
+		if(BookingStatusEnum.BOOKING_CREATED.toString().equals(status)) {
+			//Payment Link
+			link = config.getUiAppHost() + config.getPayLinkSMS().replace("$consumerCode", bookingDetail.getBookingNo())
+					.replace("$mobile", bookingDetail.getApplicantDetail().getApplicantMobileNo()).replace("$tenantId", bookingDetail.getTenantId())
+					.replace("$businessService", config.getBusinessServiceName());
+		} else if(BookingStatusEnum.BOOKING_CREATED.toString().equals(status)) {
+			//Permission letter link
+			link = config.getUiAppHost() + config.getPermissionLetterLink().replace("$consumerCode", bookingDetail.getBookingNo())
+					.replace("$mobile", bookingDetail.getApplicantDetail().getApplicantMobileNo()).replace("$tenantId", bookingDetail.getTenantId())
+					.replace("$businessService", config.getBusinessServiceName());
+		}
+		String shortUrl =  "";
+		if (null != link) {
+			shortUrl = getShortnerURL(link);
+		}
+		return shortUrl;
 	}
 
 	private String getShortnerURL(String actualURL) {

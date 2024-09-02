@@ -34,11 +34,11 @@ public class CommunityHallSlotAvailabilityResponse   {
 	
 	@JsonProperty("hallSlotAvailabiltityDetails")
 	@Valid
-	private List<CommunityHallSlotAvailabiltityDetail> hallSlotAvailabiltityDetails; 
+	private List<CommunityHallSlotAvailabilityDetail> hallSlotAvailabiltityDetails; 
 	
-	public void addNewHallsBookingApplication(CommunityHallSlotAvailabiltityDetail slotAvailabiltityDetail) {
+	public void addNewHallsBookingApplication(CommunityHallSlotAvailabilityDetail slotAvailabiltityDetail) {
 		if(this.hallSlotAvailabiltityDetails == null) {
-			this.hallSlotAvailabiltityDetails = new ArrayList<CommunityHallSlotAvailabiltityDetail>();
+			this.hallSlotAvailabiltityDetails = new ArrayList<CommunityHallSlotAvailabilityDetail>();
 		}
 		this.hallSlotAvailabiltityDetails.add(slotAvailabiltityDetail);
 	}

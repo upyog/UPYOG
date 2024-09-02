@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
+import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.enums.SlotStatusEnum;
 import org.upyog.chb.repository.CommunityHallBookingRepository;
 import org.upyog.chb.service.CommunityHallBookingService;
@@ -25,7 +26,7 @@ import org.upyog.chb.validator.CommunityHallBookingValidator;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
-import org.upyog.chb.web.models.CommunityHallSlotAvailabiltityDetail;
+import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 
 import digit.models.coremodels.PaymentDetail;
@@ -52,7 +53,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 	@Autowired
 	private MdmsUtil mdmsUtil;
-
+	
 	@Override
 	public CommunityHallBookingDetail createBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest) {
 		log.info("Create community hall booking for user : "
@@ -135,7 +136,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 	@Override
 	public CommunityHallBookingDetail updateBooking(CommunityHallBookingRequest communityHallsBookingRequest,
-			PaymentDetail paymentDetail) {
+			PaymentDetail paymentDetail, BookingStatusEnum status) {
 		String bookingNo = communityHallsBookingRequest.getHallsBookingApplication().getBookingNo();
 		log.info("Updating booking for booking no : " + bookingNo);
 		if (bookingNo == null) {
@@ -151,7 +152,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 		convertBookingRequest(communityHallsBookingRequest, bookingDetails.get(0));
 
-		enrichmentService.enrichUpdateBookingRequest(communityHallsBookingRequest);
+		enrichmentService.enrichUpdateBookingRequest(communityHallsBookingRequest, status);
 		if (paymentDetail != null) {
 			communityHallsBookingRequest.getHallsBookingApplication().setReceiptNo(paymentDetail.getReceiptNumber());
 			communityHallsBookingRequest.getHallsBookingApplication().setPaymentDate(paymentDetail.getReceiptDate());
@@ -178,36 +179,39 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	}
 
 	@Override
-	public List<CommunityHallSlotAvailabiltityDetail> getCommunityHallSlotAvailability(
+	public List<CommunityHallSlotAvailabilityDetail> getCommunityHallSlotAvailability(
 			CommunityHallSlotSearchCriteria criteria) {
 		if (criteria.getCommunityHallCode() == null || CollectionUtils.isEmpty(criteria.getHallCodes())) {
 
 		}
 
-		List<CommunityHallSlotAvailabiltityDetail> availabiltityDetails = bookingRepository
+		List<CommunityHallSlotAvailabilityDetail> availabiltityDetails = bookingRepository
 				.getCommunityHallSlotAvailability(criteria);
 		log.info("Availabiltity details fetched from DB :" + availabiltityDetails);
-
-		List<CommunityHallSlotAvailabiltityDetail> availabiltityDetailsResponse = convertToCommunityHallAvailabilityResponse(
+		
+		List<CommunityHallSlotAvailabilityDetail> availabiltityDetailsResponse = convertToCommunityHallAvailabilityResponse(
 				criteria, availabiltityDetails);
+
 		log.info("Availabiltity details response after updating status :" + availabiltityDetailsResponse);
 		return availabiltityDetailsResponse;
 	}
 
 	/**
+	 * 
 	 * @param criteria
 	 * @param availabiltityDetails
 	 * @return
 	 */
-	private List<CommunityHallSlotAvailabiltityDetail> convertToCommunityHallAvailabilityResponse(
-			CommunityHallSlotSearchCriteria criteria, List<CommunityHallSlotAvailabiltityDetail> availabiltityDetails) {
+	private List<CommunityHallSlotAvailabilityDetail> convertToCommunityHallAvailabilityResponse(
+			CommunityHallSlotSearchCriteria criteria, List<CommunityHallSlotAvailabilityDetail> availabiltityDetails) {
 
-		List<CommunityHallSlotAvailabiltityDetail> availabiltityDetailsResponse = new ArrayList<CommunityHallSlotAvailabiltityDetail>();
+		List<CommunityHallSlotAvailabilityDetail> availabiltityDetailsResponse = new ArrayList<CommunityHallSlotAvailabilityDetail>();
 		LocalDate startDate = CommunityHallBookingUtil.parseStringToLocalDate(criteria.getBookingStartDate());
 
 		LocalDate endDate = CommunityHallBookingUtil.parseStringToLocalDate(criteria.getBookingEndDate());
 
 		List<LocalDate> totalDates = new ArrayList<>();
+		//Calculating list of dates for booking
 		while (!startDate.isAfter(endDate)) {
 			totalDates.add(startDate);
 			startDate = startDate.plusDays(1);
@@ -225,6 +229,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			});
 		});
 
+		//Setting hall status to booked if it is already booked by checking in the database entry
 		availabiltityDetailsResponse.stream().forEach(detail -> {
 			if (availabiltityDetails.contains(detail)) {
 				detail.setSlotStaus(SlotStatusEnum.BOOKED.toString());
@@ -234,10 +239,11 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		return availabiltityDetailsResponse;
 	}
 
-	private CommunityHallSlotAvailabiltityDetail createCommunityHallSlotAvailabiltityDetail(
+	private CommunityHallSlotAvailabilityDetail createCommunityHallSlotAvailabiltityDetail(
 			CommunityHallSlotSearchCriteria criteria, LocalDate date, String hallCode) {
-		CommunityHallSlotAvailabiltityDetail availabiltityDetail = CommunityHallSlotAvailabiltityDetail.builder()
+		CommunityHallSlotAvailabilityDetail availabiltityDetail = CommunityHallSlotAvailabilityDetail.builder()
 				.communityHallCode(criteria.getCommunityHallCode()).hallCode(hallCode)
+			//Setting slot status available for every hall and hall code
 				.slotStaus(SlotStatusEnum.AVAILABLE.toString()).tenantId(criteria.getTenantId())
 				.bookingDate(CommunityHallBookingUtil.parseLocalDateToString(date)).build();
 		return availabiltityDetail;

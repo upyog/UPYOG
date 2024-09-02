@@ -45,11 +45,11 @@ public class CHBNotificationService {
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
 
-	public void process(CommunityHallBookingRequest bookingRequest) {
+	public void process(CommunityHallBookingRequest bookingRequest, String status) {
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
-		log.info("Processing notification for booking no : " + bookingDetail.getBookingNo() + " with status : " + bookingDetail.getBookingStatus());
+		log.info("Processing notification for booking no : " + bookingDetail.getBookingNo() + " with status : " + status);
 		String tenantId = bookingRequest.getHallsBookingApplication().getTenantId();
-		String action = bookingDetail.getBookingStatus();
+		String action = status;
 
 		List<String> configuredChannelNames = fetchChannelList(new RequestInfo(), tenantId.split("\\.")[0], config.getModuleName(),
 				action);
@@ -61,7 +61,7 @@ public class CHBNotificationService {
 		String localizationMessages = util.getLocalizationMessages(tenantId, bookingRequest.getRequestInfo());
 		String message = null;
 		try {
-			 message = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages);
+			 message = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages, status);
 		}catch (Exception e) {
 			log.error("Exception occcured while fetching message", e);
 			e.printStackTrace();
