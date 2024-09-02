@@ -3,6 +3,7 @@ package org.egov.advertisementcanopy.repository;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -211,6 +213,11 @@ public class SiteRepository {
 				siteSearchQuery.append(" eg_site_application.is_active = ")
 						.append(searchSiteRequest.getSiteSearchData().isActive());
 			}
+			if (!CollectionUtils.isEmpty(searchSiteRequest.getSiteSearchData().getUuids())) {
+	            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, siteSearchQuery);
+	            siteSearchQuery.append(" eg_site_application.uuid IN ( ").append(getQueryForCollection(searchSiteRequest.getSiteSearchData().getUuids(),
+	                    preparedStatementValues)).append(" )");
+	        }
 
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
@@ -224,6 +231,19 @@ public class SiteRepository {
 
 		return true;
 	}
+	
+	private String getQueryForCollection(List<?> ids, List<Object> preparedStmtList) {
+        StringBuilder builder = new StringBuilder();
+        Iterator<?> iterator = ids.iterator();
+        while (iterator.hasNext()) {
+            builder.append(" ?");
+            preparedStmtList.add(iterator.next());
+
+            if (iterator.hasNext())
+                builder.append(",");
+        }
+        return builder.toString();
+    }
 
 	public int siteCount(String ulbName) {
 		String query = queryBuilder.SELECT_SITE_COUNT;

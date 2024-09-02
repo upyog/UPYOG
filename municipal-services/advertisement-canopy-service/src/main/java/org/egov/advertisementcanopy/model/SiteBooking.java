@@ -25,7 +25,12 @@ public class SiteBooking {
 	private Integer periodInDays;
 	private String hoardingType;
 	private String structure;
+	private Boolean isOnlyWorkflowCall = false;
+	private String action;
+	private String comments;
+	private String tenantId;
 	private Boolean isActive;
+	private String status;
 	private JsonNode additionalDetail;
 	private AuditDetails auditDetails;
 }

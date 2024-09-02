@@ -1,5 +1,6 @@
 package org.egov.advertisementcanopy.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.advertisementcanopy.model.AuditDetails;
 import org.egov.advertisementcanopy.model.SiteBooking;
@@ -14,13 +16,20 @@ import org.egov.advertisementcanopy.model.SiteBookingRequest;
 import org.egov.advertisementcanopy.model.SiteBookingResponse;
 import org.egov.advertisementcanopy.model.SiteBookingSearchCriteria;
 import org.egov.advertisementcanopy.model.SiteBookingSearchRequest;
+import org.egov.advertisementcanopy.model.SiteCreationData;
+import org.egov.advertisementcanopy.model.SiteSearchData;
+import org.egov.advertisementcanopy.model.SiteSearchRequest;
 import org.egov.advertisementcanopy.producer.Producer;
 import org.egov.advertisementcanopy.repository.SiteBookingRepository;
+import org.egov.advertisementcanopy.repository.SiteRepository;
+import org.egov.advertisementcanopy.util.AdvtConstants;
 import org.egov.advertisementcanopy.util.ResponseInfoFactory;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class SiteBookingService {
@@ -34,6 +43,18 @@ public class SiteBookingService {
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
 
+	@Autowired
+	private SiteRepository siteRepository;
+
+	@Autowired
+	private WorkflowService workflowService;
+
+	@Autowired
+	private ObjectMapper objectMapper;
+
+	@Autowired
+	private AdvtConstants advtConstants;
+
 	public SiteBookingResponse createBooking(SiteBookingRequest siteBookingRequest) {
 		
 		// validate request
@@ -43,13 +64,13 @@ public class SiteBookingService {
 		enrichCreateBooking(siteBookingRequest);
 		
 		// save create request
-		producer.push("save-site-booking", siteBookingRequest);
+		producer.push(AdvtConstants.SITE_BOOKING_CREATE_KAFKA_TOPIC, siteBookingRequest);
 //		siteBookingRequest.getSiteBookings().stream().forEach(booking -> {
 //			repository.save(booking);
 //		});
 		
 		// call workflow
-		
+		workflowService.updateWorkflowStatus(siteBookingRequest);
 		
 		SiteBookingResponse siteBookingResponse = SiteBookingResponse.builder()
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(siteBookingRequest.getRequestInfo(), true))
@@ -64,6 +85,9 @@ public class SiteBookingService {
 			booking.setUuid(UUID.randomUUID().toString());
 			booking.setApplicationNo(String.valueOf(System.currentTimeMillis()));
 			booking.setIsActive(true);
+			
+			booking.setAction("INITIATE");
+			booking.setTenantId("hp.Shimla");
 			
 			if(null != siteBookingRequest.getRequestInfo()
 					&& null != siteBookingRequest.getRequestInfo().getUserInfo()) {
@@ -93,8 +117,31 @@ public class SiteBookingService {
 		});
 		
 		// validate site occupancy
-		// need to be done:::::::::::::::::::::::::
+		validateSiteWhileBooking(siteBookingRequest);
 		
+		
+	}
+
+	private void validateSiteWhileBooking(SiteBookingRequest siteBookingRequest) {
+		SiteSearchRequest searchSiteRequest = SiteSearchRequest.builder()
+				.requestInfo(siteBookingRequest.getRequestInfo())
+				.siteSearchData(SiteSearchData.builder()
+								.uuids(siteBookingRequest.getSiteBookings().stream()
+										.map(booking -> booking.getSiteUuid()).collect(Collectors.toList()))
+								.build())
+				.build();
+		List<SiteCreationData> siteSearchDatas = siteRepository.searchSites(searchSiteRequest);
+		Map<String, SiteCreationData> map = siteSearchDatas.stream().collect(Collectors.toMap(SiteCreationData::getUuid, site->site));
+		
+		siteBookingRequest.getSiteBookings().stream().forEach(booking -> {
+			SiteCreationData tempSite = map.get(booking.getSiteUuid());
+			if(null == tempSite) {
+				throw new CustomException("SITE_NOT_FOUND","Site not found for given site uuid: "+booking.getSiteUuid());
+			}
+			if(StringUtils.equalsIgnoreCase(tempSite.getStatus(), "AVAILABLE")) {
+				throw new CustomException("SITE_CANT_BE_BOOKED","Site "+ tempSite.getSiteName() +" can't be booked.");
+			}
+		});
 	}
 	
 	
@@ -156,16 +203,19 @@ public class SiteBookingService {
 		validateSiteUpdateRequest(siteBookingRequest);
 		
 		// fetch existing
-		Map<String, SiteBooking> siteBookingMap = searchSiteBookingFromRequest(siteBookingRequest);
+		Map<String, SiteBooking> appNoToSiteBookingMap = searchSiteBookingFromRequest(siteBookingRequest);
 		
 		// enrich update request
-		enrichUpdateSiteBooking(siteBookingRequest);
+		validateAndEnrichUpdateSiteBooking(siteBookingRequest, appNoToSiteBookingMap);
 		
 		// update request
-		producer.push("update-site-booking", siteBookingRequest);
+		producer.push(AdvtConstants.SITE_BOOKING_UPDATE_KAFKA_TOPIC, siteBookingRequest);
 //		siteBookingRequest.getSiteBookings().stream().forEach(booking -> {
 //			repository.update(booking);
 //		});
+
+		// call workflow
+		workflowService.updateWorkflowStatus(siteBookingRequest);
 		
 		SiteBookingResponse siteBookingResponse = SiteBookingResponse.builder()
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(siteBookingRequest.getRequestInfo(), true))
@@ -173,39 +223,94 @@ public class SiteBookingService {
 		return siteBookingResponse;
 	}
 
-	private void enrichUpdateSiteBooking(SiteBookingRequest siteBookingRequest) {
-		
+	private SiteBookingRequest validateAndEnrichUpdateSiteBooking(SiteBookingRequest siteBookingRequest, Map<String, SiteBooking> appNoToSiteBookingMap) {
+
+		SiteBookingRequest siteBookingRequestTemp = SiteBookingRequest.builder()
+				.requestInfo(siteBookingRequest.getRequestInfo()).siteBookings(new ArrayList<>()).build();
+
 		siteBookingRequest.getSiteBookings().stream().forEach(booking -> {
-			booking.getAuditDetails().setLastModifiedBy(siteBookingRequest.getRequestInfo().getUserInfo().getUuid());
-			booking.getAuditDetails().setLastModifiedDate(new Date().getTime());
+			SiteBooking existingSiteBooking = appNoToSiteBookingMap.get(booking.getUuid());
+			
+			// validate existence
+			if(null == existingSiteBooking) {
+				throw new CustomException("BOOKING_NOT_FOUND","Booking id not found: "+booking.getApplicationNo());
+			}
+			
+			if(!booking.getIsOnlyWorkflowCall()) {
+				// enrich some existing data in request
+				booking.setApplicationNo(existingSiteBooking.getApplicationNo());
+				booking.setAuditDetails(existingSiteBooking.getAuditDetails());
+				booking.getAuditDetails().setLastModifiedBy(siteBookingRequest.getRequestInfo().getUserInfo().getUuid());
+				booking.getAuditDetails().setLastModifiedDate(new Date().getTime());
+
+				siteBookingRequestTemp.getSiteBookings().add(booking);
+			
+			}else {
+				// enrich all existing data in request except WF attributes
+				Boolean isWfCall = booking.getIsOnlyWorkflowCall();
+				String tempApplicationNo = booking.getApplicationNo();
+				String action = booking.getAction();
+				String status = advtConstants.getStatusOrAction(action, true);
+				String comments = booking.getComments();
+				
+				SiteBooking bookingTemp = objectMapper.convertValue(appNoToSiteBookingMap.get(booking.getApplicationNo()), SiteBooking.class);
+				
+				if(null == bookingTemp) {
+					throw new CustomException("FAILED_SEARCH_GARBAGE_ACCOUNTS","Garbage Account not found for workflow call.");
+				}
+				
+				bookingTemp.setIsOnlyWorkflowCall(isWfCall);
+				bookingTemp.setApplicationNo(tempApplicationNo);
+				bookingTemp.setAction(action);
+				bookingTemp.setComments(comments);
+				bookingTemp.setStatus(status);
+				
+				siteBookingRequestTemp.getSiteBookings().add(bookingTemp);
+			
+			}
+			
 		});
-		
+		return siteBookingRequestTemp;
 	}
 
 	private void validateSiteUpdateRequest(SiteBookingRequest siteBookingRequest) {
 
+		// validate bookings present or not
 		if(CollectionUtils.isEmpty(siteBookingRequest.getSiteBookings())) {
 			throw new CustomException("EMPTY_REQUEST","Provide bookings to update.");
 		}
 		
-		siteBookingRequest.getSiteBookings().stream().forEach(booking -> {
-			if(StringUtils.isEmpty(booking.getUuid())) {
-				throw new CustomException("EMPTY_REQUEST","Provide bookings to update.");
-			}
-		});
-		
+		// validate booking uuid
+		siteBookingRequest.getSiteBookings().stream()
+	    .filter(booking -> BooleanUtils.isFalse(booking.getIsOnlyWorkflowCall()))
+	    .forEach(booking -> {
+	        if (StringUtils.isEmpty(booking.getUuid())) {
+	            throw new CustomException("EMPTY_REQUEST", "Provide bookings uuid to update.");
+	        }
+	    });
+
+
+		// validate SITE availability if booking is active
+		SiteBookingRequest activeSiteBookingRequest = SiteBookingRequest
+				.builder().requestInfo(siteBookingRequest.getRequestInfo()).siteBookings(siteBookingRequest
+						.getSiteBookings().stream().filter(site -> site.getIsActive()).collect(Collectors.toList()))
+				.build();
+		if (!CollectionUtils.isEmpty(activeSiteBookingRequest.getSiteBookings())) {
+			validateSiteWhileBooking(activeSiteBookingRequest);
+		}
+
 	}
 
 	private Map<String, SiteBooking> searchSiteBookingFromRequest(SiteBookingRequest siteBookingRequest) {
 		
 		SiteBookingSearchCriteria criteria = SiteBookingSearchCriteria.builder()
-				.uuids(siteBookingRequest.getSiteBookings().stream().map(booking -> booking.getUuid()).collect(Collectors.toList()))
+				.applicationNumbers(siteBookingRequest.getSiteBookings().stream().map(booking -> booking.getApplicationNo()).collect(Collectors.toList()))
 				.build();
 		
 		// search bookings
 		List<SiteBooking> siteBookings = repository.search(criteria);
 				
-		return siteBookings.stream().collect(Collectors.toMap(SiteBooking::getUuid, booking->booking));
+		return siteBookings.stream().collect(Collectors.toMap(SiteBooking::getApplicationNo, booking->booking));
 	}
 
 }
