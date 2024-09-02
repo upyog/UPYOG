@@ -55,7 +55,7 @@ export const newConfig1=[
                 "label": "BPA_WARD_NUMBER_LABEL",
                 "type": "text",
                 "validation": {
-                    "pattern": "^[a-zA-Z0-9]",
+                    "pattern": "^[a-zA-Z0-9/]+$",
                     "required": true
                   },
                 "name": "wardnumber"
@@ -64,8 +64,8 @@ export const newConfig1=[
                 "label": "BPA_ZONE_NUMBER_LABEL",
                 "type": "text",
                 "validation": {
-                    "pattern": "^[a-zA-Z0-9/]",
-                    "required": true},
+                    "pattern": "^[a-zA-Z0-9/]+$",
+                    "required": false},
                 "name": "zonenumber"
             },
             {
@@ -87,19 +87,19 @@ export const newConfig1=[
             {
                 "label": "BPA_PROPERTY_UID",
                 "type": "text",
-                "validation": {"pattern": "^[a-zA-Z0-9/]"},
+                "validation": {},
                 "name": "propertyuid"
             },
             {
                 "label": "BPA_NUMBER_OF_BATHS",
                 "type": "text",
-                "validation": {"pattern": "^[0-9]"},
+                "validation": {},
                 "name": "bathnumber"
             },
             {
                 "label": "BPA_NUMBER_OF_KITCHENS",
                 "type": "text",
-                "validation": {"pattern": "^[0-9]"},
+                "validation": {},
                 "name": "kitchenNumber"
             },
             {
@@ -111,7 +111,7 @@ export const newConfig1=[
             {
                 "label": "BPA_DISTANCE_FROM_SEWER",
                 "type": "text",
-                "validation": {"pattern": "^[0-9]"},
+                "validation": {},
                 "name": "distancefromsewer"
             },
             {
