@@ -10,6 +10,9 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.advertisementcanopy.contract.bill.BillResponse;
+import org.egov.advertisementcanopy.contract.bill.Demand;
+import org.egov.advertisementcanopy.contract.bill.GenerateBillCriteria;
 import org.egov.advertisementcanopy.model.AuditDetails;
 import org.egov.advertisementcanopy.model.SiteBooking;
 import org.egov.advertisementcanopy.model.SiteBookingRequest;
@@ -33,6 +36,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class SiteBookingService {
+
+	@Autowired
+	private BillService billService;
+
+	@Autowired
+	private DemandService demandService;
 
 	@Autowired
 	private SiteBookingRepository repository;
@@ -86,7 +95,7 @@ public class SiteBookingService {
 			booking.setApplicationNo(String.valueOf(System.currentTimeMillis()));
 			booking.setIsActive(true);
 			
-			booking.setAction("INITIATE");
+			booking.setWorkflowAction("INITIATE");
 			booking.setTenantId("hp.Shimla");
 			
 			if(null != siteBookingRequest.getRequestInfo()
@@ -216,11 +225,40 @@ public class SiteBookingService {
 
 		// call workflow
 		workflowService.updateWorkflowStatus(siteBookingRequest);
+
+		// generate demand and fetch bill
+		generateDemandAndBill(siteBookingRequest);
+		
 		
 		SiteBookingResponse siteBookingResponse = SiteBookingResponse.builder()
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(siteBookingRequest.getRequestInfo(), true))
 				.siteBookings(siteBookingRequest.getSiteBookings()).build();
 		return siteBookingResponse;
+	}
+
+	private void generateDemandAndBill(SiteBookingRequest siteBookingRequest) {
+		siteBookingRequest.getSiteBookings().stream().forEach(booking -> {
+			
+			if(StringUtils.equalsIgnoreCase(AdvtConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, booking.getWorkflowAction())) {
+				
+				List<Demand> savedDemands = new ArrayList<>();
+            	// generate demand
+				savedDemands = demandService.generateDemand(siteBookingRequest.getRequestInfo(), booking, AdvtConstants.BUSINESS_SERVICE);
+	            
+
+		        if(CollectionUtils.isEmpty(savedDemands)) {
+		            throw new CustomException("INVALID_CONSUMERCODE","Bill not generated due to no Demand found for the given consumerCode");
+		        }
+
+				// fetch/create bill
+	            GenerateBillCriteria billCriteria = GenerateBillCriteria.builder()
+	            									.tenantId(booking.getTenantId())
+	            									.businessService(AdvtConstants.BUSINESS_SERVICE)
+	            									.consumerCode(booking.getApplicationNo()).build();
+	            BillResponse billResponse = billService.generateBill(siteBookingRequest.getRequestInfo(),billCriteria);
+	            
+			}
+		});
 	}
 
 	private SiteBookingRequest validateAndEnrichUpdateSiteBooking(SiteBookingRequest siteBookingRequest, Map<String, SiteBooking> appNoToSiteBookingMap) {
@@ -249,7 +287,7 @@ public class SiteBookingService {
 				// enrich all existing data in request except WF attributes
 				Boolean isWfCall = booking.getIsOnlyWorkflowCall();
 				String tempApplicationNo = booking.getApplicationNo();
-				String action = booking.getAction();
+				String action = booking.getWorkflowAction();
 				String status = advtConstants.getStatusOrAction(action, true);
 				String comments = booking.getComments();
 				
@@ -261,7 +299,7 @@ public class SiteBookingService {
 				
 				bookingTemp.setIsOnlyWorkflowCall(isWfCall);
 				bookingTemp.setApplicationNo(tempApplicationNo);
-				bookingTemp.setAction(action);
+				bookingTemp.setWorkflowAction(action);
 				bookingTemp.setComments(comments);
 				bookingTemp.setStatus(status);
 				

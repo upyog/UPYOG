@@ -26,7 +26,7 @@ public class SiteBooking {
 	private String hoardingType;
 	private String structure;
 	private Boolean isOnlyWorkflowCall = false;
-	private String action;
+	private String workflowAction;
 	private String comments;
 	private String tenantId;
 	private Boolean isActive;

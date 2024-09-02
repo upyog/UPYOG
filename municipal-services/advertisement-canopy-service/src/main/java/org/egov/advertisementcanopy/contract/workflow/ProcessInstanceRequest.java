@@ -1,4 +1,4 @@
-package org.egov.advertisementcanopy.workflow;
+package org.egov.advertisementcanopy.contract.workflow;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;

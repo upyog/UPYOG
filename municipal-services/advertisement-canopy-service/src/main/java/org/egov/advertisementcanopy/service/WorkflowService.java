@@ -5,17 +5,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.egov.advertisementcanopy.contract.workflow.BusinessService;
+import org.egov.advertisementcanopy.contract.workflow.BusinessServiceResponse;
+import org.egov.advertisementcanopy.contract.workflow.ProcessInstance;
+import org.egov.advertisementcanopy.contract.workflow.ProcessInstanceRequest;
+import org.egov.advertisementcanopy.contract.workflow.ProcessInstanceResponse;
+import org.egov.advertisementcanopy.contract.workflow.State;
 import org.egov.advertisementcanopy.model.SiteBooking;
 import org.egov.advertisementcanopy.model.SiteBookingRequest;
 import org.egov.advertisementcanopy.util.AdvtConstants;
 import org.egov.advertisementcanopy.util.RequestInfoWrapper;
 import org.egov.advertisementcanopy.util.RestCallRepository;
-import org.egov.advertisementcanopy.workflow.BusinessService;
-import org.egov.advertisementcanopy.workflow.BusinessServiceResponse;
-import org.egov.advertisementcanopy.workflow.ProcessInstance;
-import org.egov.advertisementcanopy.workflow.ProcessInstanceRequest;
-import org.egov.advertisementcanopy.workflow.ProcessInstanceResponse;
-import org.egov.advertisementcanopy.workflow.State;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -57,7 +57,7 @@ public class WorkflowService {
 //		if(null != siteBooking) {
 			ProcessInstance processInstance = new ProcessInstance();
 			processInstance.setBusinessId(siteBooking.getApplicationNo());
-			processInstance.setAction(siteBooking.getAction());
+			processInstance.setAction(siteBooking.getWorkflowAction());
 			processInstance.setModuleName("ADVT");
 			processInstance.setTenantId(siteBooking.getTenantId());
 			processInstance.setBusinessService("ADVT");

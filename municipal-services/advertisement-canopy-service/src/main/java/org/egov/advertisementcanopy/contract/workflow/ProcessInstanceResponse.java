@@ -1,4 +1,4 @@
-package org.egov.advertisementcanopy.workflow;
+package org.egov.advertisementcanopy.contract.workflow;
 
 import java.util.ArrayList;
 import java.util.List;
