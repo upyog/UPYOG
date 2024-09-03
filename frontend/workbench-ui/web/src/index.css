@@ -1,0 +1,11 @@
+.employee-card-banner {
+  background-color: red;
+  width: 88%;
+  bottom: 0;
+  position: absolute;
+  margin: 0 auto -10%;
+  left: 6%;
+  -webkit-box-shadow: 1px 5px 6px 0 #e3e4e3;
+  box-shadow: 1px 5px 6px 0 #e3e4e3;
+  border-radius: 10px;
+}
