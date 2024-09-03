@@ -61,7 +61,7 @@ public class OtpSMSRepository {
         Map<String, String> localisedMsgs = localizationService.getLocalisedMessages(tenantId, "en_IN", "egov-user");
         if (localisedMsgs.isEmpty()) {
             log.info("Localization Service didn't return any msgs so using default...");
-            localisedMsgs.put(LOCALIZATION_KEY_REGISTER_SMS, "Dear Citizen, Your OTP to complete your mSeva Registration is %s.");
+            localisedMsgs.put(LOCALIZATION_KEY_REGISTER_SMS, "प्रिय नागरिकांनो, BMC सिटिझन सर्व्हिसेसमध्ये लॉग इन OTP %s आहे . OTP 5 मिनिटांसाठी वैध आहे. कृपया, कोणाशीही शेअर करू");
             localisedMsgs.put(LOCALIZATION_KEY_LOGIN_SMS, "Dear Citizen, Your Login OTP is %s.");
             localisedMsgs.put(LOCALIZATION_KEY_PWD_RESET_SMS, "Dear Citizen, Your OTP for recovering password is %s.");
         }
