@@ -235,7 +235,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
           <Row
             className="border-none"
             label={t("BPA_UPLOADED_PLAN_DIAGRAM")}
-            text={<ActionButton label={t("BPA_UPLOADED_PLAN_DXF")} jumpTo={data?.updatedDxfFile} />}
+            text={<ActionButton label={t("Uploaded Plan.pdf")} jumpTo={data?.updatedDxfFile} />}
           ></Row>
           <Row
             className="border-none"
