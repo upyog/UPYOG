@@ -635,7 +635,7 @@ function selectfile(e) {
        <CardSubHeader>{t("BPA_P1_SUMMARY_FEE_EST")}</CardSubHeader> 
        <Row className="border-none" label={t(`BPA_APPL_FEES`)} text={`₹ ${value?.additionalDetails?.P1charges || paymentDetails?.Bill[0]?.billDetails[0]?.amount}`} />
        <Row className="border-none" label={t(`BUILDING_APPLICATION_FEES`)} text={`₹ ${Math.round((datafromAPI?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea)*10.7639*2.5)}`}></Row>
-       <Row className="border-none" label={t(`BOUNDARY_WALL_FEES`)} text={`₹ ${data?.boundaryWallLength*2.5}`}></Row>
+       <Row className="border-none" label={t(`BOUNDARY_WALL_FEES`)} text={`₹ ${Math.round(data?.boundaryWallLength*2.5)}`}></Row>
 
        <CardSubHeader>{t("BPA_P2_SUMMARY_FEE_EST")}</CardSubHeader>        
        <Row className="border-none" label={t(`BPA_COMMON_MALBA_AMT`)} text={`₹ ${malbafees}`} />
