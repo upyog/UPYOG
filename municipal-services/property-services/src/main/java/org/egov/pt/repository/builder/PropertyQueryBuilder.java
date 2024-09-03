@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.PropertyCriteria;
@@ -315,12 +316,12 @@ public class PropertyQueryBuilder {
 			addToPreparedStatementWithUpperCase(preparedStmtList, propertyIds);
 		}
 		
-		
-		if (!CollectionUtils.isEmpty(criteria.getAcknowledgementIds())) {
-			String searchPattern="%" + criteria.getAcknowledgementIds().toLowerCase() + "%";
-			addClauseIfRequired(preparedStmtList,builder);
-			builder.append(" LOWER(property.acknowldgement) LIKE ?");
-			preparedStmtList.add(searchPattern);
+		Set<String> acknowledgementIds = criteria.getAcknowledgementIds();
+		if (!CollectionUtils.isEmpty(acknowledgementIds)) {
+			addClauseIfRequired(preparedStmtList, builder);
+			String searchPattern= acknowledgementIds.stream().filter(id -> id!= null && !id.isEmpty()).map(id-> "LOWER(property.acknowldgementnumber) LIKE ?").collect(Collectors.joining("OR", " (", ") "));
+			builder.append(searchPattern);
+			acknowledgementIds.forEach(id-> preparedStmtList.add("%" +id.toLowerCase() + "%"));
 		}
 		
 		Set<String> uuids = criteria.getUuids();
