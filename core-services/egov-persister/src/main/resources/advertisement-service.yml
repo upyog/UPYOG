@@ -1,0 +1,118 @@
+serviceMaps:
+ serviceName: AdvertisementService
+ mappings:
+ - version: 1.0
+   name: advertisement-service
+   description: Create Site Booking
+   fromTopic: save-site-booking
+   isTransaction: true
+   queryMaps:
+    - query: INSERT INTO eg_site_booking (uuid, application_no, site_uuid, applicant_name, applicant_father_name, gender, mobile_number, email_id, advertisement_type, from_date, period_in_days, hoarding_type, structure, is_active, status, tenant_id, additional_detail, created_by, created_date, last_modified_by, last_modified_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+      basePath: SiteBookings.*
+      jsonMaps:
+
+       - jsonPath: $.SiteBookings.*.uuid
+
+       - jsonPath: $.SiteBookings.*.applicationNo
+
+       - jsonPath: $.SiteBookings.*.siteUuid
+
+       - jsonPath: $.SiteBookings.*.applicantName
+
+       - jsonPath: $.SiteBookings.*.applicantFatherName
+
+       - jsonPath: $.SiteBookings.*.gender
+
+       - jsonPath: $.SiteBookings.*.mobileNumber
+
+       - jsonPath: $.SiteBookings.*.emailId
+
+       - jsonPath: $.SiteBookings.*.advertisementType
+
+       - jsonPath: $.SiteBookings.*.fromDate
+
+       - jsonPath: $.SiteBookings.*.periodInDays
+
+       - jsonPath: $.SiteBookings.*.hoardingType
+
+       - jsonPath: $.SiteBookings.*.structure
+
+       - jsonPath: $.SiteBookings.*.isActive
+
+       - jsonPath: $.SiteBookings.*.status
+
+       - jsonPath: $.SiteBookings.*.tenantId
+
+       - jsonPath: $.SiteBookings.*.additionalDetail
+         type: JSON
+         dbType: JSONB
+
+       - jsonPath: $.SiteBookings.*.auditDetails.createdBy
+
+       - jsonPath: $.SiteBookings.*.auditDetails.createdDate
+
+       - jsonPath: $.SiteBookings.*.auditDetails.lastModifiedBy
+
+       - jsonPath: $.SiteBookings.*.auditDetails.lastModifiedDate
+
+
+
+ - version: 1.0
+   description: Update Site Booking
+   fromTopic: update-site-booking
+   isTransaction: true
+   queryMaps:
+
+    - query: UPDATE eg_site_booking SET application_no = ?, site_uuid = ?, applicant_name = ?, applicant_father_name = ?, gender = ?, mobile_number = ?, email_id = ?, advertisement_type = ?, from_date = ?, period_in_days = ?, hoarding_type = ?, structure = ?, is_active = ?, status = ?, tenant_id = ?, additional_detail = ?, created_by = ?, created_date = ?, last_modified_by = ?, last_modified_date = ? WHERE uuid = ?;
+
+      basePath: SiteBookings.*
+      jsonMaps:
+
+       - jsonPath: $.SiteBookings.*.applicationNo
+
+       - jsonPath: $.SiteBookings.*.siteUuid
+
+       - jsonPath: $.SiteBookings.*.applicantName
+
+       - jsonPath: $.SiteBookings.*.applicantFatherName
+
+       - jsonPath: $.SiteBookings.*.gender
+
+       - jsonPath: $.SiteBookings.*.mobileNumber
+
+       - jsonPath: $.SiteBookings.*.emailId
+
+       - jsonPath: $.SiteBookings.*.advertisementType
+
+       - jsonPath: $.SiteBookings.*.fromDate
+
+       - jsonPath: $.SiteBookings.*.periodInDays
+
+       - jsonPath: $.SiteBookings.*.hoardingType
+
+       - jsonPath: $.SiteBookings.*.structure
+
+       - jsonPath: $.SiteBookings.*.isActive
+
+       - jsonPath: $.SiteBookings.*.status
+
+       - jsonPath: $.SiteBookings.*.tenantId
+
+       - jsonPath: $.SiteBookings.*.additionalDetail
+         type: JSON
+         dbType: JSONB
+
+       - jsonPath: $.SiteBookings.*.auditDetails.createdBy
+
+       - jsonPath: $.SiteBookings.*.auditDetails.createdDate
+
+       - jsonPath: $.SiteBookings.*.auditDetails.lastModifiedBy
+
+       - jsonPath: $.SiteBookings.*.auditDetails.lastModifiedDate
+       
+       - jsonPath: $.SiteBookings.*.uuid
+
+       
+
+ 

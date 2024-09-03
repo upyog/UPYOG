@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.garbageservice.util.ApplicationPropertiesAndConstant;
+import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.garbageservice.util.RequestInfoWrapper;
 import org.egov.garbageservice.util.RestCallRepository;
 import org.egov.tracer.model.CustomException;
@@ -22,7 +22,7 @@ public class DemandRepository {
     private RestCallRepository restCallRepository;
 
     @Autowired
-    private ApplicationPropertiesAndConstant config;
+    private GrbgConstants config;
 
     @Autowired
     private ObjectMapper objectMapper;

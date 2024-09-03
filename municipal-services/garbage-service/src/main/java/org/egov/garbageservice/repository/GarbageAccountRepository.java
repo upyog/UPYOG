@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
 import org.egov.garbageservice.repository.rowmapper.GarbageAccountRowMapper;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -205,7 +206,7 @@ public class GarbageAccountRepository {
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy())
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getStatus())
         		&& StringUtils.isEmpty(searchCriteriaGarbageAccount.getTenantId())) {
-        	throw new RuntimeException("Provide criteria to search garbage account.");
+        	throw new CustomException("INCORRECT_SEARCH_CRITERIA","Provide criteria to search garbage account.");
         }
 
         searchQuery.append(" WHERE");

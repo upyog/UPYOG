@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Component
-public class ApplicationPropertiesAndConstant {
+public class GrbgConstants {
 
 
 	public static final String STATE_LEVEL_TENANT_ID = "hp";

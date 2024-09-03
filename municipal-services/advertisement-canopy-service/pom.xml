@@ -10,7 +10,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.egov.advertisementcanopy</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>advertisement-canopy-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>advertisement-canopy-service</name>
 	<description>Advertisement Hoarding and Canopy Mangement Module</description>

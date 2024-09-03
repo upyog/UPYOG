@@ -20,5 +20,6 @@ public class AuditDetails {
 
 	private String lastModifiedBy;
 
+	@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 	private Long lastModifiedDate;
 }

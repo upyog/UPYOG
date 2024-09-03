@@ -20,14 +20,6 @@
             "type":"QRCODE"
           },
           {
-           "variable":"licenseIssueDate",
-            "value":{
-              "path":"$.licenseIssueDate"
-            },
-            "type":"date"
-          },
-          
-          {
            "variable":"licenseeMobileNumber",
             "value":{
               "path":"$.licenseeMobileNumber"
@@ -79,6 +71,12 @@
            "variable":"licenseValidity",
             "value":{
               "path":"$.licenseValidity"
+            }
+          },
+          {
+           "variable":"licenseIssueDate",
+            "value":{
+              "path":"$.licenseIssueDate"
             }
           },
           {

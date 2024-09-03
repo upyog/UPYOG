@@ -48,7 +48,21 @@ public class PTRConstants {
 
 	public static final String CITIZEN_SENDBACK_ACTION = "SENDBACKTOCITIZEN";
 
-	public static final String WORKFLOW_START_ACTION = "INITIATE";
+	public static final String WORKFLOW_ACTION_INITIATE = "INITIATE";
+
+	public static final String WORKFLOW_ACTION_VERIFY = "VERIFY";
+
+    public static final String WORKFLOW_ACTION_FORWARD_TO_VERIFIER  = "FORWARD_TO_VERIFIER";
+
+    public static final String WORKFLOW_ACTION_FORWARD_TO_APPROVER  = "FORWARD_TO_APPROVER";
+
+    public static final String WORKFLOW_ACTION_RETURN_TO_INITIATOR  = "RETURN_TO_INITIATOR";
+
+    public static final String WORKFLOW_ACTION_RETURN_TO_VERIFIER  = "RETURN_TO_VERIFIER";
+
+    public static final String WORKFLOW_ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT = "RETURN_TO_INITIATOR_FOR_PAYMENT";
+
+    public static final String WORKFLOW_ACTION_APPROVE = "APPROVE";
 
 	public static final String ASMT_WORKFLOW_CODE = "ASMT";
 
@@ -76,7 +90,7 @@ public class PTRConstants {
 
 	public static final String WF_STATUS_CANCELLED = "CANCELLED";
 
-	public static final String WF_STATUS_APPROVED = "APPROVED";
+	public static final String WORKFLOW_ACTION_APPROVED = "APPROVED";
 
 	public static final String WF_STATUS_OPEN = "OPEN";
 
@@ -231,4 +245,23 @@ public class PTRConstants {
 
 	public static final String USREVENTS_EVENT_POSTEDBY = "SYSTEM-PTR";
 
+	// APPLICATION STATUS
+	public static final String APPLICATION_STATUS_INITIATED = "INITIATED";
+	public static final String APPLICATION_STATUS_PENDINGFORMODIFICATION = "PENDINGFORMODIFICATION";
+	public static final String APPLICATION_STATUS_PENDINGFORPAYMENT = "PENDINGFORPAYMENT";
+	public static final String APPLICATION_STATUS_PENDINGFORVERIFICATION = "PENDINGFORVERIFICATION";
+	public static final String APPLICATION_STATUS_PENDINGFORAPPROVAL = "PENDINGFORAPPROVAL";
+	public static final String APPLICATION_STATUS_APPROVED = "APPROVED";
+	public static final String APPLICATION_STATUS_REJECTED = "REJECTED";
+
+	
+	public static final String USER_TYPE_CITIZEN = "CITIZEN";
+	
+	public static final String USER_TYPE_EMPLOYEE = "EMPLOYEE";
+	
+	public static final String USER_ROLE_PTR_VERIFIER = "PTR_VERIFIER";
+	
+	public static final String USER_ROLE_PTR_APPROVER = "PTR_APPROVER";
+
+	public static final String STATE_LEVEL_TENANT_ID = "hp";
 }
