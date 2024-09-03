@@ -60,7 +60,7 @@ public class WorkflowService {
 			processInstance.setAction(workflow.getAction());
 			processInstance.setModuleName("PTR");
 			processInstance.setTenantId(application.getTenantId());
-			processInstance.setBusinessService("PTR");
+			processInstance.setBusinessService("pet-services");
 			processInstance.setDocuments(workflow.getDocuments());
 			processInstance.setComment(workflow.getComments());
 

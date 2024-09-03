@@ -1,6 +1,7 @@
 package org.egov.ptr.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -111,10 +112,10 @@ public class BillingService {
         uri = uri.concat("&service=").concat(billCriteria.getService());
         uri = uri.concat("&consumerCode=").concat(StringUtils.join(billCriteria.getConsumerCode(), ","));
 
-        Object result = serviceRequestRepository.fetchResult(new StringBuilder(uri),RequestInfoWrapper.builder()
+        Optional<Object> result = serviceRequestRepository.fetchResult(new StringBuilder(uri),RequestInfoWrapper.builder()
                                                              .requestInfo(requestInfo).build());
         
-        BillResponse billResponse = mapper.convertValue(result, BillResponse.class);
+        BillResponse billResponse = mapper.convertValue(result.get(), BillResponse.class);
         
         return billResponse.getBill();
 	}

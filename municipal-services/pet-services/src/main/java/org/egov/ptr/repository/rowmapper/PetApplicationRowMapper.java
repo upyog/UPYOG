@@ -56,7 +56,7 @@ public class PetApplicationRowMapper implements ResultSetExtractor<List<PetRegis
 						.id(rs.getString("pid")).applicantName(rs.getString("papplicantname"))
 						.fatherName(rs.getString("pfathername")).emailId(rs.getString("pemailId"))
 						.mobileNumber(rs.getString("pmobileNumber")).petDetails(petdetails).auditDetails(auditdetails)
-						.aadharNumber(rs.getString("paadharnumber")).build();
+						.aadharNumber(rs.getString("paadharnumber")).status(rs.getString("pstatus")).build();
 				addDocToPetApplication(rs, petRegistrationApplication);
 
 				PGobject pgObj = (PGobject) rs.getObject("padditionaldetail");
