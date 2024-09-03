@@ -278,6 +278,7 @@ public class SiteBookingService {
 			if(!booking.getIsOnlyWorkflowCall()) {
 				// enrich some existing data in request
 				booking.setApplicationNo(existingSiteBooking.getApplicationNo());
+				booking.setStatus(existingSiteBooking.getStatus());
 				booking.setAuditDetails(existingSiteBooking.getAuditDetails());
 				booking.getAuditDetails().setLastModifiedBy(siteBookingRequest.getRequestInfo().getUserInfo().getUuid());
 				booking.getAuditDetails().setLastModifiedDate(new Date().getTime());
@@ -295,7 +296,7 @@ public class SiteBookingService {
 				SiteBooking bookingTemp = objectMapper.convertValue(appNoToSiteBookingMap.get(booking.getApplicationNo()), SiteBooking.class);
 				
 				if(null == bookingTemp) {
-					throw new CustomException("FAILED_SEARCH_GARBAGE_ACCOUNTS","Garbage Account not found for workflow call.");
+					throw new CustomException("FAILED_SEARCH_SITE_BOOKING","Site Booking not found for workflow call.");
 				}
 				
 				bookingTemp.setIsOnlyWorkflowCall(isWfCall);
