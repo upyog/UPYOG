@@ -16,6 +16,7 @@
 #       image-name: < Docker image name  >
 # -
 # -
+#
 config:
 # Business Services
   - name: "builds/upyog/business-services/billing-service"
@@ -804,3 +805,10 @@ config:
         dockerfile: build/maven/Dockerfile        
         
    
+  - name: "builds/municipal-services/garbage-service"
+      build:
+        - work-dir: "garbage-service"
+          image-name: "garbage-service"
+          dockerfile: "build/maven/Dockerfile"
+        - work-dir: "garbage-service/src/main/resources/db"
+          image-name: "garbage-service-db"
