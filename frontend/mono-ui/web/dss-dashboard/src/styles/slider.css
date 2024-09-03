@@ -1,8 +1,9 @@
+
 .rc-slider-dot{
     border-radius: 0px !important;
     width: 0px;
     height: 20px;
-    border: 1px solid gray;
+    border: 10px solid gray;
     margin-left: 1px;
 }
 .rc-slider-handle {
