@@ -806,7 +806,7 @@ config:
         
    
   - name: "builds/municipal-services/garbage-service"
-      build:
+    build:
         - work-dir: "garbage-service"
           image-name: "garbage-service"
           dockerfile: "build/maven/Dockerfile"
