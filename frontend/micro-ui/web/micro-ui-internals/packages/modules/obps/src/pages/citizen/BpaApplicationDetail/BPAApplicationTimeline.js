@@ -16,25 +16,16 @@ const BPAApplicationTimeline = (props) => {
   function OpenImage(imageSource, index,thumbnailsToShow){
     window.open(thumbnailsToShow?.fullImage?.[0],"_blank");
   }
-  const getTimelineCaptions = (checkpoint) => {
-    // if (checkpoint.state === "INITIATE") {
-    //   const caption = {
-    //     date: Digit.DateUtils.ConvertEpochToDate(props.application?.auditDetails?.createdTime),
-    //     source: props.application?.tradeLicenseDetail?.channel || "",
-    //   };
-    //   return <BPACaption data={caption} />;
-    // }  
-    //else {
-      const caption = {
-        date: checkpoint?.auditDetails?.lastModified,
-        name: checkpoint?.assignes?.[0]?.name,
-        mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
-        comment: t(checkpoint?.comment),
-        wfComment : checkpoint.wfComment,
-        thumbnailsToShow : checkpoint?.thumbnailsToShow,
-      };
-      return <BPACaption data={caption} OpenImage={OpenImage} />;
-    //}
+  const getTimelineCaptions = (checkpoint, index, timeline) => {
+    const previousCheckpoint = timeline[index - 1];
+    const caption = {
+      date: checkpoint?.auditDetails?.lastModified,
+      name: checkpoint?.assignes?.[0]?.name,
+      mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
+      wfComment: previousCheckpoint ? previousCheckpoint.wfComment : [], // Get wfComment from the previous checkpoint
+      thumbnailsToShow: checkpoint?.thumbnailsToShow,
+    };
+    return <BPACaption data={caption} OpenImage={OpenImage} />;
   };
 
   if (isLoading) {
@@ -78,7 +69,7 @@ const BPAApplicationTimeline = (props) => {
                         keyValue={index}
                         isCompleted={index === 0}
                         label={checkpoint.state ? t(`WF_${businessService}_${checkpoint.state}${timelineStatusPostfix}`) : "NA"}
-                        customChild={getTimelineCaptions(checkpoint)}
+                        customChild={getTimelineCaptions(checkpoint,index,data.timeline)}
                       />
                     </React.Fragment>
                   );

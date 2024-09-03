@@ -56,7 +56,7 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
         },
         {
             Header: t("ES_INBOX_SLA_DAYS_REMAINING"),
-            accessor: row => GetStatusCell(row?.sla),
+            accessor: row => row?.state == "PENDING_SANC_FEE_PAYMENT" ? "NA" : GetStatusCell(row?.sla),
         }
         ]
     })

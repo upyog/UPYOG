@@ -24,7 +24,19 @@ function DocumentsPreview({ documents, svgStyles = {}, isSendBackFlow = false, i
                                 {isSendBackFlow ? value?.documentType?.includes("NOC") ? <p style={{ textAlign: "center" }}>{t(value?.documentType.split(".")[1])}</p> : <p style={{ textAlign: "center" }}>{t(value?.documentType)}</p> : ""}
                             </a>
                             </div>
-                        )) : !(window.location.href.includes("citizen")) && <div><p>{t("BPA_NO_DOCUMENTS_UPLOADED_LABEL")}</p></div>}
+                        )) : !(window.location.href.includes("citizen")) && <div><p>{t("BPA_NO_DOCUMENTS_UPLOADED_LABEL")}</p>
+                        
+                        <div style={{width: "180px",}}>
+                            <CardSubHeader style={titleStyles ? titleStyles : { marginTop: "32px", marginBottom: "8px", color: "#505A5F", fontSize: "24px" }}></CardSubHeader>
+                            <div   style={{ minWidth: "80px", marginRight: "10px", maxWidth: "100px", height: "auto", minWidth: "100px" }} key={index}>
+                                <div style={{ display: "flex", justifyContent: "flex-start" }}>
+                                    <PDFSvg />
+                                </div>
+                                <p style={{ marginTop: "8px", fontWeight: "bold", textAlign: "start", color: "#505A5F"  }}></p>
+                                {isSendBackFlow ? value?.documentType?.includes("NOC") ? <p style={{ textAlign: "center" }}></p> : <p style={{ textAlign: "center" }}></p> : ""}
+                            </div>
+                            </div>
+                        </div>}
                     </div>
                     {isHrLine && documents?.length != index + 1 ? <hr style={{ color: "#D6D5D4", backgroundColor: "#D6D5D4", height: "2px", marginTop: "20px", marginBottom: "20px" }} /> : null}
                     </div>
