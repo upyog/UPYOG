@@ -647,7 +647,7 @@ public class TradeLicenseService {
             userService.createUser(tradeLicenseRequest, false);
 
             // create and upload pdf
-            createAndUploadPDF(licenceResponse, tradeLicenseRequest);
+            createAndUploadPDF(tradeLicenseRequest);
             
             // generate demand and bill
             generateDemandAndBill(tradeLicenseRequest);
@@ -743,7 +743,7 @@ public class TradeLicenseService {
 								|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_CLOSE, license.getAction()))) {
 					// this scenario means application is initiated for renewal
 					if(null == license.getApplicationType()) {
-						throw new RuntimeException("Provide application type.");
+						throw new CustomException("APPLICATION_TYPE_MISSING","Provide application type.");
 					}
 					licenses.get(0).setApplicationType(license.getApplicationType());
 					if(!StringUtils.equalsIgnoreCase(TLConstants.ACTION_CLOSE, license.getAction())) {
@@ -813,41 +813,48 @@ public class TradeLicenseService {
 	}
 
 
-	private void createAndUploadPDF(List<TradeLicense> licenceResponse, TradeLicenseRequest tradeLicenseRequest) {
+	private void createAndUploadPDF(TradeLicenseRequest tradeLicenseRequest) {
 		
-		licenceResponse.stream().forEach(license -> {
-			
-			Thread pdfGenerationThread = new Thread(() -> {
-				
-					// for NEW TL
-	    	if((StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
-	    			&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(), TLConstants.APPLICATION_TYPE_NEW)
-	    			&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE))
-	    		|| // for RENEWAL TL
-	    		(StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
-		    			&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(), TLConstants.APPLICATION_TYPE_RENEWAL)
-		    			&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE))) {
-		    		
-		    		// validate trade license
-					validateTradeLicenseCertificateGeneration(license);
-					
-					// create pdf
-					Resource resource = createNoSavePDF(license, tradeLicenseRequest.getRequestInfo());
-	
-					//upload pdf
-					DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, license, tradeLicenseRequest.getRequestInfo());
-					try {
-						DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest, tradeLicenseRequest.getRequestInfo());
-					} catch (IOException e) {
-						throw new CustomException("UPLOAD_ATTACHMENT_FAILED", "Upload Attachment failed." + e.getMessage());
-					}
-		    	}
-	    	
-			});
+		if (!CollectionUtils.isEmpty(tradeLicenseRequest.getLicenses())) {
+			tradeLicenseRequest.getLicenses().stream().forEach(license -> {
 
-			pdfGenerationThread.start();
-			
-		});
+				Thread pdfGenerationThread = new Thread(() -> {
+
+					// for NEW TL
+					if ((StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
+							&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(),
+									TLConstants.APPLICATION_TYPE_NEW)
+							&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE)) || // for RENEWAL TL
+							(StringUtils.equalsIgnoreCase(license.getBusinessService(),
+									TLConstants.businessService_NewTL)
+									&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(),
+											TLConstants.APPLICATION_TYPE_RENEWAL)
+									&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE))) {
+
+						// validate trade license
+						validateTradeLicenseCertificateGeneration(license);
+
+						// create pdf
+						Resource resource = createNoSavePDF(license, tradeLicenseRequest.getRequestInfo());
+
+						//upload pdf
+						DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, license,
+								tradeLicenseRequest.getRequestInfo());
+						try {
+							DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest,
+									tradeLicenseRequest.getRequestInfo());
+						} catch (IOException e) {
+							throw new CustomException("UPLOAD_ATTACHMENT_FAILED",
+									"Upload Attachment failed." + e.getMessage());
+						}
+					}
+
+				});
+
+				pdfGenerationThread.start();
+
+			});
+		}
 		
 		
 	}
@@ -1081,7 +1088,7 @@ public class TradeLicenseService {
 			        || StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantMobileNumber").asText()))
 			    && StringUtils.isEmpty(tradeLicense.getBusinessService())) {
 			    
-			    throw new RuntimeException("PDF can't be generated with null values for application number: "+tradeLicense.getApplicationNumber());
+			    throw new CustomException("NULL_APPLICATION_NUMBER","PDF can't be generated with null values for application number: "+tradeLicense.getApplicationNumber());
 			}
 	}
 
@@ -1124,11 +1131,11 @@ public class TradeLicenseService {
 	private Map<String, Object> generateDataForTradeLicensePdfCreate(TradeLicense tradeLicense, RequestInfo requestInfo) {
 
 		Map<String, Object> tlObject = new HashMap<>();
-		long longtime = tradeLicense.getIssuedDate();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyy");
-		String date = dateFormat.format(new Date(longtime));
-//		Date date = (Date) dateFormat.parseObject(longtime);
 		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		String approvalTime = dateFormat.format(new Date(tradeLicense.getIssuedDate()));
+		String licenseValidity = dateFormat.format(new Date(tradeLicense.getValidTo()));
+		String licenseIssueDate = dateFormat.format(new Date(tradeLicense.getIssuedDate()));
 		
 		// map variables and values
 		tlObject.put("tradeLicenseNo", tradeLicense.getLicenseNumber());//Trade License No
@@ -1138,8 +1145,8 @@ public class TradeLicenseService {
 			.concat(tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("district").asText()).concat(", ")
 			.concat(tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("wardName").asText()).concat(", ")
 			.concat(tradeLicense.getTradeLicenseDetail().getAddress().getPincode()));// Trade Premises Address
-		tlObject.put("licenseIssueDate", tradeLicense.getIssuedDate());// License Issue Date
-		tlObject.put("licenseValidity", tradeLicense.getValidTo());//License Validity
+		tlObject.put("licenseIssueDate", licenseIssueDate);// License Issue Date
+		tlObject.put("licenseValidity", licenseValidity);//License Validity
 		tlObject.put("licenseCategory", tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("tradeCategory").asText());// License Category
 		tlObject.put("licenseSubCategory", tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("tradeSubType").asText());// License Sub Category
 		tlObject.put("licenseApplicantName", tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantName").asText());// License Applicant Name
@@ -1148,8 +1155,8 @@ public class TradeLicenseService {
 		tlObject.put("ulbName", tradeLicense.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("ulbName").asText());// ulbName
 		tlObject.put("licenseeMobileNumber", !CollectionUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getOwners()) ? tradeLicense.getTradeLicenseDetail().getOwners().get(0).getMobileNumber() : null);// Applicant Address
 		tlObject.put("approverName", null!=requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);// Approver Name
-		tlObject.put("approvalTime", date);// Approval Time
-		tlObject.put("ownerName", !CollectionUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getOwners()) ? tradeLicense.getTradeLicenseDetail().getOwners().get(0).getName() : null);// Owner Name
+		tlObject.put("approvalTime", approvalTime);// Approval Time
+		tlObject.put("ownerName", !CollectionUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getOwners()) ? tradeLicense.getTradeLicenseDetail().getOwners().get(0).getName().toUpperCase() : null);// Owner Name
 		// generate QR code from attributes
 		StringBuilder qr = new StringBuilder();
 		getQRCodeForPdfCreate(tlObject, qr);
@@ -1338,14 +1345,14 @@ public class TradeLicenseService {
 		    periodOfLicense = license.getTradeLicenseDetail().getAdditionalDetail().get(TLConstants.PERIOD_OF_LICENSE).asInt();
 		    zone = license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get(TLConstants.ZONE).asText();
 		} catch (Exception e) {
-			throw new RuntimeException("Failed to fetch values from trade license while calculating tax.");
+			throw new CustomException("FETCH_LICENSE_FAILED","Failed to fetch values from trade license while calculating tax.");
 		}
 		
 		// validating values from TL in DB
 		if(StringUtils.isEmpty(scaleOfBusiness)
 				|| StringUtils.isEmpty(zone)
 				|| StringUtils.isEmpty(tradeCategory)) {
-			throw new RuntimeException("Tax can't be calculated for empty values.");
+			throw new CustomException("EMPTY_VALUES","Tax can't be calculated for empty values.");
 		}
 		
 		// mdms call
@@ -1380,14 +1387,16 @@ public class TradeLicenseService {
 		totalFee = BigDecimal.valueOf(scaleOfBusinessToLicensePeriodPrice + (tradeCategoryPrice * zonePrice));
 		applicationDetail.setTotalPayableAmount(totalFee);
 		
+//		Scale Of Business( <b>Small</b>) and License Period ( <b>1 Year </b> ) : <b>15.0</b> <br /> + [Zone (<b>zone1</b>): <b>50.0<b><br /> * Category (<b>Agriculture</b>): <b>0.0</b> ]
+		
 		// formula for NewTL
-		StringBuilder feeCalculationFormula = new StringBuilder("Scale Of Business( ").append(scaleOfBusiness);
-		feeCalculationFormula.append(" ) and License Period ( ").append(periodOfLicense.toString());
-		feeCalculationFormula.append(" Year ) : ").append(scaleOfBusinessToLicensePeriodPrice);
-		feeCalculationFormula.append("  +  [Zone (").append(zone);
-		feeCalculationFormula.append("): ").append(zonePrice);
-		feeCalculationFormula.append(" * Category (").append(tradeCategory);
-		feeCalculationFormula.append("): ").append(tradeCategoryPrice).append(" ]");
+		StringBuilder feeCalculationFormula = new StringBuilder("Scale Of Business( <b>").append(scaleOfBusiness);
+		feeCalculationFormula.append("</b> ) and License Period ( <b>").append(periodOfLicense.toString());
+		feeCalculationFormula.append("</b> Year ) : <b>").append(scaleOfBusinessToLicensePeriodPrice);
+		feeCalculationFormula.append("</b> <br />  +  [Zone ( <b>").append(zone);
+		feeCalculationFormula.append("</b>): <b>").append(zonePrice);
+		feeCalculationFormula.append("</b> <br />* Category ( <b>").append(tradeCategory);
+		feeCalculationFormula.append("</b>): <b>").append(tradeCategoryPrice).append("</b> ]");
 		
 		applicationDetail.setFeeCalculationFormula(feeCalculationFormula.toString());
 		

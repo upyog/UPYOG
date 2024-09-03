@@ -13,7 +13,7 @@ import org.egov.garbageservice.contract.bill.DemandDetail;
 import org.egov.garbageservice.contract.bill.DemandRepository;
 import org.egov.garbageservice.contract.bill.DemandResponse;
 import org.egov.garbageservice.model.GarbageAccount;
-import org.egov.garbageservice.util.ApplicationPropertiesAndConstant;
+import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.garbageservice.util.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public class DemandService {
     	BigDecimal taxAmount = new BigDecimal("100.00");
     	
     	DemandDetail demandDetail = DemandDetail.builder()
-    								.taxHeadMasterCode(ApplicationPropertiesAndConstant.BILLING_TAX_HEAD_MASTER_CODE)
+    								.taxHeadMasterCode(GrbgConstants.BILLING_TAX_HEAD_MASTER_CODE)
     								.taxAmount(taxAmount)
     								.collectionAmount(BigDecimal.ZERO)
     								.build();
@@ -49,7 +49,7 @@ public class DemandService {
                 .taxPeriodTo(new Date((Calendar.getInstance().getTimeInMillis() + (long) 30 * 24 * 60 * 60 * 1000)).getTime())
 //                .taxPeriodTo(new Date((Calendar.getInstance().getTimeInMillis() + (long) 365 * 24 * 60 * 60 * 1000)).getTime())
                 .consumerType(garbageAccount.getGrbgApplicationNumber())
-                .businessService(ApplicationPropertiesAndConstant.BUSINESS_SERVICE)
+                .businessService(GrbgConstants.BUSINESS_SERVICE)
                 .build();
     	
     	List<Demand> demands = Arrays.asList(demandOne);
