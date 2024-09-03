@@ -96,13 +96,13 @@ public class BPAQueryBuilder {
         }
 
         String applicationNo = criteria.getApplicationNo();
-        if (applicationNo != null) {
+        if (applicationNo != null) {
         	List<String> applicationNos=new ArrayList<String>();
         	if(applicationNo.contains(",")) {
         		applicationNos = Arrays.asList(applicationNo.split(","));
-            addClauseIfRequired(preparedStmtList, builder);
-            builder.append(" bpa.applicationNo IN (").append(createQuery(applicationNos)).append(")");
-            addToPreparedStatement(preparedStmtList, applicationNos);
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" bpa.applicationNo IN (").append(createQuery(applicationNos)).append(")");
+                addToPreparedStatement(preparedStmtList, applicationNos);
         	}
         	else
         	{
