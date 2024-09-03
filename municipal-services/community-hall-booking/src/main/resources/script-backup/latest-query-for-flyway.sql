@@ -31,7 +31,8 @@ create table eg_chb_booking_detail(
   lastModifiedTime bigint,
   permission_letter_filestore_id character varying(64),
   payment_receipt_filestore_id character varying(64),
-  constraint eg_chb_booking_detail_pk primary key (booking_id)
+  constraint eg_chb_booking_detail_pk primary key (booking_id),
+  constraint eg_chb_booking_detail_booking_no_uk UNIQUE (booking_no)
 );
 
 CREATE INDEX IF NOT EXISTS idx_eg_chb_booking_detail_booking_no ON eg_chb_booking_detail(booking_no);

@@ -29,7 +29,10 @@ create table eg_chb_booking_detail(
   createdTime bigint  NOT NULL,
   lastModifiedBy character varying(64),
   lastModifiedTime bigint,
-  constraint eg_chb_booking_detail_pk primary key (booking_id)
+  permission_letter_filestore_id character varying(64),
+  payment_receipt_filestore_id character varying(64),
+  constraint eg_chb_booking_detail_pk primary key (booking_id),
+  constraint eg_chb_booking_detail_booking_no_uk UNIQUE (booking_no)
 );
 
 CREATE INDEX IF NOT EXISTS idx_eg_chb_booking_detail_booking_no ON eg_chb_booking_detail(booking_no);
@@ -53,7 +56,9 @@ create table eg_chb_booking_detail_audit(
   createdBy character varying(64) NOT NULL,
   createdTime bigint  NOT NULL,
   lastModifiedBy character varying(64),
-  lastModifiedTime bigint
+  lastModifiedTime bigint,
+   permission_letter_filestore_id character varying(64),
+  payment_receipt_filestore_id character varying(64),
 );
 
 create table eg_chb_slot_detail(
@@ -76,7 +81,7 @@ create table eg_chb_slot_detail(
      ON DELETE NO ACTION
 );
 
-create table eg_chb_slot_detai_audit(
+create table eg_chb_slot_detail_audit(
    slot_id character varying(64) NOT NULL,
    booking_id character varying(64) NOT NULL,
    hall_code character varying(64) NOT NULL,
