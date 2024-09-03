@@ -1,6 +1,6 @@
 .employee .customEmployeeCard:nth-child(2n+1) .employeeCustomCard 
 {
-    background: white;
+    background: white !important;
 }
 
 
