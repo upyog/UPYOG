@@ -138,10 +138,10 @@ public class TLQueryBuilder {
             }
 
             if (criteria.getApplicationNumber() != null) {
-                List<String> applicationNumber = Arrays.asList(criteria.getApplicationNumber().split(","));
+                String searchPattern="%" + criteria.getApplicationNumber().toLowerCase() + "%";
                 addClauseIfRequired(preparedStmtList, builder);
-                builder.append(" LOWER(tl.applicationnumber) IN (").append(createQuery(applicationNumber)).append(")");
-                addToPreparedStatement(preparedStmtList, applicationNumber);
+                builder.append(" LOWER(tl.applicationnumber) like ? ");
+                preparedStmtList.add(searchPattern);
             }
 
             List<String> status = criteria.getStatus();
@@ -212,12 +212,6 @@ public class TLQueryBuilder {
                 addClauseIfRequired(preparedStmtList, builder);
                 builder.append("  LOWER(tl.tradename) = LOWER(?) ");
                 preparedStmtList.add(criteria.getTradeName());
-            }
-            
-            if (criteria.getOwnerName() != null) {
-                addClauseIfRequired(preparedStmtList, builder);
-                builder.append(" LOWER (tlowner.additionaldetails ->> 'ownerName') LIKE ? ");
-                preparedStmtList.add('%' +criteria.getOwnerName().toLowerCase()+ '%');
             }
 
             if (criteria.getIssuedFrom() != null) {

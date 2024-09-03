@@ -89,28 +89,20 @@ public class BPAQueryBuilder {
 
         String edcrNumber = criteria.getEdcrNumber();
         if (edcrNumber != null) {
-            List<String> edcrNumbers = Arrays.asList(edcrNumber.split(","));
+            
             addClauseIfRequired(preparedStmtList, builder);
-            builder.append(" bpa.edcrNumber IN (").append(createQuery(edcrNumbers)).append(")");
-            addToPreparedStatement(preparedStmtList, edcrNumbers);
+            builder.append(" bpa.edcrNumber LIKE ?");
+            preparedStmtList.add('%' + edcrNumber + '%');
         }
 
         String applicationNo = criteria.getApplicationNo();
-        if (applicationNo != null) {
-        	List<String> applicationNos=new ArrayList<String>();
-        	if(applicationNo.contains(",")) {
-        		applicationNos = Arrays.asList(applicationNo.split(","));
-            addClauseIfRequired(preparedStmtList, builder);
-            builder.append(" bpa.applicationNo IN (").append(createQuery(applicationNos)).append(")");
-            addToPreparedStatement(preparedStmtList, applicationNos);
-        	}
-        	else
-        	{
-        		addClauseIfRequired(preparedStmtList, builder);
-                builder.append(" bpa.applicationNo LIKE ?");
-                preparedStmtList.add('%' + applicationNo + '%');
-        	}
+        
+       if(applicationNo != null){
+        	addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" bpa.applicationNo LIKE ?");
+            preparedStmtList.add('%' + applicationNo + '%');
         }
+       
 
         String approvalNo = criteria.getApprovalNo();
         if (approvalNo != null) {

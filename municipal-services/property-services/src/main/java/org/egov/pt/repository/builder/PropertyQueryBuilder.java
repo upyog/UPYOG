@@ -315,12 +315,12 @@ public class PropertyQueryBuilder {
 			addToPreparedStatementWithUpperCase(preparedStmtList, propertyIds);
 		}
 		
-		Set<String> acknowledgementIds = criteria.getAcknowledgementIds();
-		if (!CollectionUtils.isEmpty(acknowledgementIds)) {
-
+		
+		if (!CollectionUtils.isEmpty(criteria.getAcknowledgementIds())) {
+			String searchPattern="%" + criteria.getAcknowledgementIds().toLowerCase() + "%";
 			addClauseIfRequired(preparedStmtList,builder);
-			builder.append("property.acknowldgementnumber IN (").append(createQuery(acknowledgementIds)).append(")");
-			addToPreparedStatementWithUpperCase(preparedStmtList, acknowledgementIds);
+			builder.append(" LOWER(property.acknowldgement) LIKE ?");
+			preparedStmtList.add(searchPattern);
 		}
 		
 		Set<String> uuids = criteria.getUuids();
