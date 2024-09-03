@@ -1,5 +1,5 @@
 .employee-card-banner {
-  background-color: red;
+  background-color: red !important;
   width: 88%;
   bottom: 0;
   position: absolute;
