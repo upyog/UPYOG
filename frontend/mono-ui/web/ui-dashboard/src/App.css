@@ -1,4 +1,7 @@
-.card { background-color: #000 !important; width: 80%;}
+.employee .customEmployeeCard:nth-child(2n+1) .employeeCustomCard 
+{
+    background: white;
+}
 
 
 .recharts-legend-item-text {
