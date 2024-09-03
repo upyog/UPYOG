@@ -15,7 +15,7 @@ create table  IF NOT EXISTS eg_chb_booking_detail_init(
 
 create table eg_chb_booking_detail(
   booking_id character varying(64) NOT NULL,
-  booking_no character varying(64),
+  booking_no character varying(64) UNIQUE,
   payment_date bigint,
   application_date bigint not null,
   tenant_id character varying(64) NOT NULL,
@@ -31,8 +31,7 @@ create table eg_chb_booking_detail(
   lastModifiedTime bigint,
   permission_letter_filestore_id character varying(64),
   payment_receipt_filestore_id character varying(64),
-  constraint eg_chb_booking_detail_pk primary key (booking_id),
-  constraint eg_chb_booking_detail_booking_no_uk UNIQUE (booking_no)
+  constraint eg_chb_booking_detail_pk primary key (booking_id)
 );
 
 CREATE INDEX IF NOT EXISTS idx_eg_chb_booking_detail_booking_no ON eg_chb_booking_detail(booking_no);
@@ -58,7 +57,7 @@ create table eg_chb_booking_detail_audit(
   lastModifiedBy character varying(64),
   lastModifiedTime bigint,
    permission_letter_filestore_id character varying(64),
-  payment_receipt_filestore_id character varying(64),
+  payment_receipt_filestore_id character varying(64)
 );
 
 create table eg_chb_slot_detail(
