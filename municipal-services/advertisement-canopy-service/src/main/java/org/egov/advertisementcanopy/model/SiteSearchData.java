@@ -20,4 +20,5 @@ public class SiteSearchData {
 	private String status;
 	@JsonProperty("active")
 	private boolean isActive;
+	private String siteID;
 }

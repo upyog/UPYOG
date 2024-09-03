@@ -20,6 +20,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -73,7 +74,9 @@ public class SiteRepository {
 				siteCreation.getSizeWidth(), siteCreation.getLedSelection(), siteCreation.getSecurityAmount(),
 				siteCreation.getPowered(), siteCreation.getOthers(), siteCreation.getDistrictName(),
 				siteCreation.getUlbName(), siteCreation.getUlbType(), siteCreation.getWardNumber(),
-				siteCreation.getPinCode(), siteCreation.getAdditionalDetail(),
+				siteCreation.getPinCode(),
+				(null == siteCreation.getAdditionalDetail() || siteCreation.getAdditionalDetail().isEmpty()) ? null
+						: objectMapper.convertValue(siteCreation.getAdditionalDetail(), ObjectNode.class).toString(),
 				siteCreation.getAuditDetails().getCreatedBy(), siteCreation.getAuditDetails().getCreatedDate(),
 				siteCreation.getAuditDetails().getLastModifiedBy(),
 				siteCreation.getAuditDetails().getLastModifiedDate(), siteCreation.getSiteType(),
@@ -185,31 +188,37 @@ public class SiteRepository {
 					&& !searchSiteRequest.getSiteSearchData().getAdvertisementType().isEmpty()) {
 				isAppendAndClause = true;
 				isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, siteSearchQuery);
-				siteSearchQuery.append(" eg_site_application.site_type = ")
-						.append(searchSiteRequest.getSiteSearchData().getAdvertisementType());
+				siteSearchQuery.append(" eg_site_application.site_type = ").append("'")
+						.append(searchSiteRequest.getSiteSearchData().getAdvertisementType()).append("'");
 			}
 			if (null != searchSiteRequest.getSiteSearchData().getDistrictName()
 					&& !searchSiteRequest.getSiteSearchData().getDistrictName().isEmpty()) {
 				isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, siteSearchQuery);
-				siteSearchQuery.append(" eg_site_application.district_name = ")
-						.append(searchSiteRequest.getSiteSearchData().getAdvertisementType());
+				siteSearchQuery.append(" eg_site_application.district_name = ").append("'")
+						.append(searchSiteRequest.getSiteSearchData().getAdvertisementType()).append("'");
 			}
 			if (null != searchSiteRequest.getSiteSearchData().getStatus()
 					&& !searchSiteRequest.getSiteSearchData().getStatus().isEmpty()) {
 				isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, siteSearchQuery);
-				siteSearchQuery.append(" eg_site_application.status = ")
-						.append(searchSiteRequest.getSiteSearchData().getStatus());
+				siteSearchQuery.append(" eg_site_application.status = ").append("'")
+						.append(searchSiteRequest.getSiteSearchData().getStatus()).append("'");
 			}
 			if (null != searchSiteRequest.getSiteSearchData().getWardNumber()
 					&& !searchSiteRequest.getSiteSearchData().getWardNumber().isEmpty()) {
 				isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, siteSearchQuery);
-				siteSearchQuery.append(" eg_site_application.ward_number = ")
-						.append(searchSiteRequest.getSiteSearchData().getWardNumber());
+				siteSearchQuery.append(" eg_site_application.ward_number = ").append("'")
+						.append(searchSiteRequest.getSiteSearchData().getWardNumber()).append("'");
 			}
 			if (true == searchSiteRequest.getSiteSearchData().isActive()) {
 				isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, siteSearchQuery);
 				siteSearchQuery.append(" eg_site_application.is_active = ")
 						.append(searchSiteRequest.getSiteSearchData().isActive());
+			}
+			if (null != searchSiteRequest.getSiteSearchData().getSiteID()
+					&& !searchSiteRequest.getSiteSearchData().getSiteID().isEmpty()) {
+				isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, siteSearchQuery);
+				siteSearchQuery.append(" eg_site_application.site_id =  ").append("'")
+						.append(searchSiteRequest.getSiteSearchData().getSiteID()).append("'");
 			}
 
 		} catch (Exception e) {
@@ -227,30 +236,30 @@ public class SiteRepository {
 
 	public int siteCount(String ulbName) {
 		String query = queryBuilder.SELECT_SITE_COUNT;
-		 final Map<String, Object> parametersMap = new HashMap<String, Object>();
-		 parametersMap.put("ulbName", ulbName);
-		 int siteCount1 = namedParameterJdbcTemplate.queryForObject(query,parametersMap,Integer.class);
+		final Map<String, Object> parametersMap = new HashMap<String, Object>();
+		parametersMap.put("ulbName", ulbName);
+		int siteCount1 = namedParameterJdbcTemplate.queryForObject(query, parametersMap, Integer.class);
 		return siteCount1;
-		
+
 	}
 
 	public int siteAvailableCount(String ulbName) {
 		String query = queryBuilder.SELECT_AVAILABLE_COUNT;
-		String available="Available";
+		String available = "Available";
 		final Map<String, Object> parametersMap = new HashMap<String, Object>();
 		parametersMap.put("ulbName", ulbName);
 		parametersMap.put("status", available);
-		int siteAvailableCount1 = namedParameterJdbcTemplate.queryForObject(query,parametersMap,Integer.class);
+		int siteAvailableCount1 = namedParameterJdbcTemplate.queryForObject(query, parametersMap, Integer.class);
 		return siteAvailableCount1;
 	}
 
 	public int siteBookedCount(String ulbName) {
 		String query = queryBuilder.SELECT_BOOKED_COUNT;
-		String booked="Booked";
+		String booked = "Booked";
 		final Map<String, Object> parametersMap = new HashMap<String, Object>();
 		parametersMap.put("ulbName", ulbName);
 		parametersMap.put("status", booked);
-		int siteBookedCount1 = namedParameterJdbcTemplate.queryForObject(query,parametersMap,Integer.class);
+		int siteBookedCount1 = namedParameterJdbcTemplate.queryForObject(query, parametersMap, Integer.class);
 		return siteBookedCount1;
 	}
 
