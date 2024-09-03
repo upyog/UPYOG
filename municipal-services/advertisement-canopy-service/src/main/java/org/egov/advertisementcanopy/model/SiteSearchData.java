@@ -25,4 +25,5 @@ public class SiteSearchData {
 	private List<String> uuids;
 	@JsonProperty("active")
 	private boolean isActive;
+	private String siteID;
 }

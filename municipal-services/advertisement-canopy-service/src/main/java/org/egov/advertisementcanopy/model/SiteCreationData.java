@@ -42,7 +42,7 @@ public class SiteCreationData {
 	private String ulbType;
 	private String wardNumber;
 	private String pinCode;
-	private JsonNode additionalDetail = null;
+	private JsonNode additionalDetail;
 	private AuditDetails auditDetails;
 	private String siteType;
 	@JsonProperty("active")
