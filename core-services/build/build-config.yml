@@ -250,8 +250,9 @@ config:
   
   - name: "builds/core-services/libraries/services-common"
     build:
-      - work-dir: "core-services/libraries/services-common"
+      - work-dir: "libraries/services-common"
         image-name: "services-common"
+        dockerfile: "build/maven/Dockerfile"
 
   - name: "builds/core-services/nlp-engine"
     build:
