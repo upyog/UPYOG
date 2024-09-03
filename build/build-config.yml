@@ -369,7 +369,6 @@ config:
     build:
       - work-dir: "libraries/services-common"
         image-name: "services-common"
-        dockerfile: "build/maven/Dockerfile"
         
   - name: "builds/upyog/core-services/libraries/digit-models"
     build:
