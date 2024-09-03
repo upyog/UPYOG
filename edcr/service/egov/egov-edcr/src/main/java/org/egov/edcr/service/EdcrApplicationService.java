@@ -358,19 +358,19 @@ public class EdcrApplicationService {
             graphicsState.setAlphaSourceFlag(true);
             contentStream.setGraphicsStateParameters(graphicsState);
 
-            InputStream imageStream = EdcrApplication.class.getResourceAsStream("/tcpicon.jpg");
-            java.awt.image.BufferedImage image1 = ImageIO.read(imageStream);
-            PDImageXObject image = LosslessFactory.createFromImage(document, image1);
+//            InputStream imageStream = EdcrApplication.class.getResourceAsStream("/tcpicon.jpg");
+//            java.awt.image.BufferedImage image1 = ImageIO.read(imageStream);
+//            PDImageXObject image = LosslessFactory.createFromImage(document, image1);
 
            
             float scale = 10f; 
-            float watermarkWidth = image.getWidth() * scale;
-            float watermarkHeight = image.getHeight() * scale;
-            float watermarkXPos = (pageWidth - watermarkWidth) / 2; 
-            float watermarkYPos = (pageHeight - watermarkHeight) / 2;
-
-            
-            contentStream.drawImage(image, watermarkXPos, watermarkYPos, watermarkWidth, watermarkHeight);
+//            float watermarkWidth = image.getWidth() * scale;
+//            float watermarkHeight = image.getHeight() * scale;
+//            float watermarkXPos = (pageWidth - watermarkWidth) / 2; 
+//            float watermarkYPos = (pageHeight - watermarkHeight) / 2;
+//
+//            
+//            contentStream.drawImage(image, watermarkXPos, watermarkYPos, watermarkWidth, watermarkHeight);
 
             //Add timestamp
             String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
