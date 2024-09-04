@@ -21,9 +21,12 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import java.util.Iterator;
+import java.util.Map;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.fasterxml.jackson.databind.node.ObjectNode;
 @Service
 public class WorkflowService {
 
@@ -126,7 +129,32 @@ public class WorkflowService {
 			request.getProperty().setStatus(Status.INACTIVE);
 		}
 		else
-		request.getProperty().setStatus(Status.fromValue(state.getApplicationStatus()));
+		{
+			request.getProperty().setStatus(Status.fromValue(state.getApplicationStatus()));
+			ObjectNode objectNodeDetail;
+
+			JsonNode additionalDetails = request.getProperty().getAdditionalDetails();
+			if (null == additionalDetails || (null != additionalDetails && additionalDetails.isNull())) {
+				objectNodeDetail = mapper.createObjectNode();
+
+			} else {
+
+				objectNodeDetail = (ObjectNode) additionalDetails;
+			}
+
+			if(!objectNodeDetail.has("applicationStatus"))
+			{
+				objectNodeDetail.put("applicationStatus",state.getState());
+			}
+			else
+			{
+				objectNodeDetail.remove("applicationStatus");
+				objectNodeDetail.put("applicationStatus",state.getState());
+
+			}
+			request.getProperty().setAdditionalDetails(objectNodeDetail);
+
+			  }		
 		request.getProperty().getWorkflow().setState(state);
 		return state;
 	}
