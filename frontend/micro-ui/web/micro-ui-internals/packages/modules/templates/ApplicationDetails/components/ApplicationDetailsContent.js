@@ -153,7 +153,7 @@ console.log("appl", applicationDetails)
       const caption = {
         date: convertEpochToDateDMY(applicationData?.auditDetails?.lastModifiedTime),
         name: checkpoint?.assignes?.[0]?.name,
-        wfComment: previousComment || checkpoint?.wfComment,
+        wfComment: checkpoint?.wfComment,
         mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
       };
       

@@ -17,15 +17,16 @@ const BPAApplicationTimeline = (props) => {
     window.open(thumbnailsToShow?.fullImage?.[0],"_blank");
   }
   const getTimelineCaptions = (checkpoint, index, timeline) => {
-    const previousCheckpoint = timeline[index - 1];
-    const caption = {
-      date: checkpoint?.auditDetails?.lastModified,
-      name: checkpoint?.assignes?.[0]?.name,
-      mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
-      wfComment: previousCheckpoint ? previousCheckpoint.wfComment : [], // Get wfComment from the previous checkpoint
-      thumbnailsToShow: checkpoint?.thumbnailsToShow,
-    };
-    return <BPACaption data={caption} OpenImage={OpenImage} />;
+
+      const previousCheckpoint = timeline[index - 1];
+      const caption = {
+        date: checkpoint?.auditDetails?.lastModified,
+        name: checkpoint?.assignes?.[0]?.name,
+        mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
+        wfComment: previousCheckpoint ? previousCheckpoint?.wfComment : [], // Get wfComment from the previous checkpoint
+        thumbnailsToShow: checkpoint?.thumbnailsToShow,
+      };
+      return <BPACaption data={caption} OpenImage={OpenImage} />;
   };
 
   if (isLoading) {
@@ -48,7 +49,7 @@ const BPAApplicationTimeline = (props) => {
             <CheckPoint
               isCompleted={true}
               label={t((data?.timeline[0]?.state && `WF_${businessService}_${data.timeline[0].state}`) || "NA")}
-              customChild={getTimelineCaptions(data?.timeline[0])}
+              customChild={getTimelineCaptions(data?.timeline[0],0,data.timeline)}
             />
           ) : (
             <ConnectingCheckPoints>
@@ -69,7 +70,7 @@ const BPAApplicationTimeline = (props) => {
                         keyValue={index}
                         isCompleted={index === 0}
                         label={checkpoint.state ? t(`WF_${businessService}_${checkpoint.state}${timelineStatusPostfix}`) : "NA"}
-                        customChild={getTimelineCaptions(checkpoint,index,data.timeline)}
+                        customChild={getTimelineCaptions(checkpoint,index,data?.timeline)}
                       />
                     </React.Fragment>
                   );
