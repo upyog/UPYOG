@@ -19,8 +19,10 @@ const useArchitectInbox = ({ tenantId, filters, withEDCRData = true, isTotalCoun
 			businessService: businessService?.length > 0 ? [businessService] : ["BPA_LOW", "BPA", "BPA_OC"],
             ...(applicationStatus?.length > 0 ? {status: applicationStatus} : {}),
         },
+        limit,
+        offset,
 		moduleSearchCriteria: {
-            assignee,
+            //assignee,
             ...(mobileNumber ? {mobileNumber}: {}),
             ...(applicationType && applicationType.length > 0 ? { applicationType } : {}),
             ...(serviceType ? { serviceType } : {}),

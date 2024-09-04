@@ -49,7 +49,7 @@ const Inbox = ({ tenants, parentRoute }) => {
         applicationStatus: searchParams?.applicationStatus,
         applicationType: searchParams?.applicationType ? searchParams?.applicationType : [],
         locality: [],
-        assignee: "ASSIGNED_TO_ALL"
+       // assignee: "ASSIGNED_TO_ALL"
       }
     },
     config: {},

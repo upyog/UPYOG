@@ -12,8 +12,7 @@
     "packages/modules/commonPt",
     "packages/modules/dss",
     "packages/modules/pt",
-    "packages/modules/tl",
-    "packages/modules/obps"
+    "packages/modules/tl"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
