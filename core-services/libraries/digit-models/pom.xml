@@ -8,6 +8,7 @@
     <version>1.0.0-beta-SNAPSHOT</version>
     <name>digit-models</name>
     <description>Shared classes among services</description>
+    
     <distributionManagement>
         <repository>
             <id>repo.digit.org</id>
@@ -20,6 +21,7 @@
             <url>https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
+    
     <repositories>
         <repository>
             <id>repo.digit.org</id>
@@ -32,12 +34,14 @@
             <url>https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
+    
     <properties>
         <log4j2.version>2.17.1</log4j2.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    
     <dependencies>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -82,9 +86,11 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
+    
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>8</source>
@@ -101,14 +107,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
             </plugin>
         </plugins>
     </build>
