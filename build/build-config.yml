@@ -629,7 +629,7 @@ config:
       - work-dir: "municipal-services/garbage-service"
         image-name: "garbage-service"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "garbage-service/src/main/resources/db"
+      - work-dir: "municipal-services/garbage-service/src/main/resources/db"
         image-name: "garbage-service-db" 
  
  # Utilities
