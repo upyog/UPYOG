@@ -84,6 +84,7 @@
     </dependencies>
     <build>
         <plugins>
+            <!-- Maven Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -93,19 +94,33 @@
                     <target>8</target>
                 </configuration>
             </plugin>
+
+            <!-- Maven Source Plugin - For source JARs -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.3.1</version>
                 <executions>
+                    <!-- Attach sources for main code -->
                     <execution>
-                        <id>attach-sources</id>
+                        <id>attach-sources-main</id>
                         <goals>
                             <goal>jar</goal>
                         </goals>
                         <phase>package</phase>
                         <configuration>
                             <classifier>sources</classifier>
+                        </configuration>
+                    </execution>
+                    <!-- Attach sources for tests -->
+                    <execution>
+                        <id>attach-sources-test</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <classifier>test-sources</classifier>
                         </configuration>
                     </execution>
                 </executions>
