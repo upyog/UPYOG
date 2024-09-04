@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.egov.services</groupId>
     <artifactId>digit-models</artifactId>
-    <version>1.0.0-beta-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>digit-models</name>
     <description>Shared classes among services</description>
     <distributionManagement>
@@ -84,46 +84,31 @@
     </dependencies>
     <build>
         <plugins>
-            <!-- Maven Compiler Plugin -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
                 <configuration>
                     <source>8</source>
                     <target>8</target>
                 </configuration>
             </plugin>
-
-            <!-- Maven Source Plugin - For source JARs -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.1</version>
                 <executions>
-                    <!-- Attach sources for main code -->
                     <execution>
-                        <id>attach-sources-main</id>
+                        <id>attach-sources</id>
                         <goals>
                             <goal>jar</goal>
                         </goals>
-                        <phase>package</phase>
-                        <configuration>
-                            <classifier>sources</classifier>
-                        </configuration>
-                    </execution>
-                    <!-- Attach sources for tests -->
-                    <execution>
-                        <id>attach-sources-test</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <phase>package</phase>
-                        <configuration>
-                            <classifier>test-sources</classifier>
-                        </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>
