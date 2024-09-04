@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 const CommonRedirect = () => {
   const [receipt, setReceipt] = useState("");
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getStateId();
 
   useEffect(() => {
     const fetchReceipt = async () => {
