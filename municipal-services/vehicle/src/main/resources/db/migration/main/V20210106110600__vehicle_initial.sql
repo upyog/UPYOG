@@ -22,22 +22,22 @@ lastmodifiedtime bigint,
 CONSTRAINT pk_eg_vehicle PRIMARY KEY (id)
 );
 
-CREATE INDEX IF NOT EXISTS index_id_eg_vehicle ON eg_vehicle
+CREATE INDEX index_id_eg_vehicle ON eg_vehicle
 (id);
 
-CREATE INDEX IF NOT EXISTS index_regnum_eg_vehicle ON eg_vehicle
+CREATE INDEX index_regnum_eg_vehicle ON eg_vehicle
 (registrationNumber);
 
-CREATE INDEX IF NOT EXISTS index_owner_eg_vehicle ON eg_vehicle
+CREATE INDEX index_owner_eg_vehicle ON eg_vehicle
 (owner_id);
 
-CREATE INDEX IF NOT EXISTS eg_vehicle_suctype_index ON eg_vehicle
+CREATE INDEX eg_vehicle_suctype_index ON eg_vehicle
 (suctionType);
 
-CREATE INDEX IF NOT EXISTS eg_vehicle_status_index ON eg_vehicle
+CREATE INDEX eg_vehicle_status_index ON eg_vehicle
 (status);
 
-CREATE INDEX IF NOT EXISTS index_tenant_eg_vehicle ON eg_vehicle
+CREATE INDEX index_tenant_eg_vehicle ON eg_vehicle
 (tenantid);
 
 CREATE TABLE IF NOT EXISTS eg_vehicle_auditlog(
@@ -62,5 +62,5 @@ lastmodifiedby character varying(64),
 createdtime bigint,
 lastmodifiedtime bigint
 );
-CREATE INDEX IF NOT EXISTS index_id_eg_vehicle_auditlog ON eg_vehicle_auditlog
+CREATE INDEX index_id_eg_vehicle_auditlog ON eg_vehicle_auditlog
 (id);
