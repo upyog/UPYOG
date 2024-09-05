@@ -70,7 +70,7 @@ public class SiteBookingService {
 		validateCreateBooking(siteBookingRequest);
 
 		// validate site occupancy
-		searchAndValidateSiteWhileBooking(siteBookingRequest);
+		searchValidateSiteAndEnrichSiteBooking(siteBookingRequest);
 		
 		// enrich create request
 		enrichCreateBooking(siteBookingRequest);
@@ -100,7 +100,7 @@ public class SiteBookingService {
 			booking.setStatus("INITIATED");
 			
 			booking.setWorkflowAction("INITIATE");
-			booking.setTenantId("hp.Shimla");
+//			booking.setTenantId("hp.Shimla");
 			
 			if(null != booking.getFromDate() && null != booking.getToDate()) {
 				booking.setPeriodInDays(Math.toIntExact( booking.getFromDate()-booking.getToDate() / (1000 * 60 * 60 * 24) ));
@@ -139,7 +139,7 @@ public class SiteBookingService {
 		
 	}
 
-	private Map<String, SiteCreationData> searchAndValidateSiteWhileBooking(SiteBookingRequest siteBookingRequest) {
+	private Map<String, SiteCreationData> searchValidateSiteAndEnrichSiteBooking(SiteBookingRequest siteBookingRequest) {
 		SiteSearchRequest searchSiteRequest = SiteSearchRequest.builder()
 				.requestInfo(siteBookingRequest.getRequestInfo())
 				.siteSearchData(SiteSearchData.builder()
@@ -152,12 +152,15 @@ public class SiteBookingService {
 		
 		siteBookingRequest.getSiteBookings().stream().forEach(booking -> {
 			SiteCreationData tempSite = siteMap.get(booking.getSiteUuid());
+			// validate site
 			if(null == tempSite) {
 				throw new CustomException("SITE_NOT_FOUND","Site not found for given site uuid: "+booking.getSiteUuid());
 			}
 			if(!StringUtils.equalsIgnoreCase(tempSite.getStatus(), "AVAILABLE")) {
 				throw new CustomException("SITE_CANT_BE_BOOKED","Site "+ tempSite.getSiteName() +" is not Available.");
 			}
+			// enrich tenant from site to booking
+			booking.setTenantId(tempSite.getTenantId());
 		});
 		return siteMap;
 	}
@@ -344,7 +347,7 @@ public class SiteBookingService {
 						.getSiteBookings().stream().filter(site -> site.getIsActive()).collect(Collectors.toList()))
 				.build();
 		if (!CollectionUtils.isEmpty(activeSiteBookingRequest.getSiteBookings())) {
-			searchAndValidateSiteWhileBooking(activeSiteBookingRequest);
+			searchValidateSiteAndEnrichSiteBooking(activeSiteBookingRequest);
 		}
 
 	}
