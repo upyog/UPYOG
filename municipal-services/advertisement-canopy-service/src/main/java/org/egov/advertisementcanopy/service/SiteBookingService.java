@@ -148,8 +148,8 @@ public class SiteBookingService {
 			if(null == tempSite) {
 				throw new CustomException("SITE_NOT_FOUND","Site not found for given site uuid: "+booking.getSiteUuid());
 			}
-			if(StringUtils.equalsIgnoreCase(tempSite.getStatus(), "AVAILABLE")) {
-				throw new CustomException("SITE_CANT_BE_BOOKED","Site "+ tempSite.getSiteName() +" can't be booked.");
+			if(!StringUtils.equalsIgnoreCase(tempSite.getStatus(), "AVAILABLE")) {
+				throw new CustomException("SITE_CANT_BE_BOOKED","Site "+ tempSite.getSiteName() +" is not Available.");
 			}
 		});
 	}
