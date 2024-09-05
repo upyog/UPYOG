@@ -789,7 +789,11 @@ config:
       - work-dir: frontend/workbench-ui/
         dockerfile: frontend/workbench-ui/web/workbench/Dockerfile
         image-name: workbench-ui
-
+  - name: builds/upyog/frontend/micro-ui/tqm-ui
+    build:
+      - work-dir: frontend/tqm-ui/
+        dockerfile: frontend/tqm-ui/web/docker/Dockerfile
+        image-name: tqm-ui
   #EDCR
   
   - name: builds/upyog/edcr/dcr-client/egov-dcr
