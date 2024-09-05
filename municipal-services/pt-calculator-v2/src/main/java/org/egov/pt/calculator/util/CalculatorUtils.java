@@ -542,7 +542,7 @@ public class CalculatorUtils {
 		{
 			for(Bill bill:res.getBill())
 			{
-				if(bill.getStatus().equals(BillStatusEnum.ACTIVE))
+				if(bill.getStatus().equals(BillStatusEnum.ACTIVE) ||bill.getStatus().equals(BillStatusEnum.EXPIRED) )
 				{
 					for(BillDetail billdet:bill.getBillDetails())
 					{

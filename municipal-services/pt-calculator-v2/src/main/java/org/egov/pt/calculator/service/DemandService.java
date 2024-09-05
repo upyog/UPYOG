@@ -135,13 +135,19 @@ public class DemandService {
 				.findAny();
 			if(advanceCarryforwardEstimate.isPresent())
 				newTax = advanceCarryforwardEstimate.get().getEstimateAmount();
-
+			
+		
+			
 			Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(request.getRequestInfo(),criteria);
 
 			// true represents that the demand should be updated from this call
 			BigDecimal carryForwardCollectedAmount = getCarryForwardAndCancelOldDemand(newTax, criteria,
 					request.getRequestInfo(),oldDemand, true);
-
+		
+			
+			//Current_demand --->1500 advance 500
+			//amount = amount-advance adjusted amount --500 , current 1000 advance 0
+			//
 			if (carryForwardCollectedAmount.doubleValue() >= 0.0) {
 
 				Demand demand = prepareDemand(property, calculation ,oldDemand);
@@ -658,7 +664,9 @@ public class DemandService {
 					.collectionAmount(BigDecimal.ZERO)
 					.tenantId(tenantId).build());
 		}
-
+		
+		
+		
 		return details;
 	}
 
