@@ -128,7 +128,9 @@ public class SiteBookingService {
 		// validate attributes
 		siteBookingRequest.getSiteBookings().stream().forEach(booking -> {
 			if(StringUtils.isEmpty(booking.getApplicantName())
-					|| StringUtils.isEmpty(booking.getMobileNumber())) {
+					|| StringUtils.isEmpty(booking.getMobileNumber())
+					|| null == booking.getToDate()
+					|| null == booking.getFromDate()) {
 				throw new CustomException("ATTRIBUTES_VALIDATION_FAILED","Provide mandatory inputs.");
 			}
 		});
