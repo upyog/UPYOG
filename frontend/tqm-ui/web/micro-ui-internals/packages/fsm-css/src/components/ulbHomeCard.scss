@@ -1,0 +1,23 @@
+.employeeCard.home-card-tiles-container {
+  margin: 0;
+  background-color: transparent;
+  box-shadow: none;
+  padding-top: 0;
+  .tiles-card-container {
+    display: grid;
+    grid-template-columns: 30% 30% 30%;
+    text-align: center;
+    justify-content: space-between;
+  }
+  .employeeCard.tiles-card {
+    margin: 0;
+    min-width: 6.5rem;
+    height: 8rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    overflow-wrap: break-word;
+  }
+}

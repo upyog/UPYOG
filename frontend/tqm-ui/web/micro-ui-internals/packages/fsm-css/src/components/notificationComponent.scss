@@ -1,0 +1,61 @@
+.notification {
+  padding: 1rem;
+  .card-header {
+    color: #000;
+    font-family: Roboto;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+  .notification-flex-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .icon {
+      margin-right: 0.5rem;
+      svg {
+        width: 1.5rem;
+      }
+    }
+    .label {
+      font-size: 0.875rem;
+      font-weight: 400;
+      color: #000;
+      margin-bottom: unset;
+    }
+    .selector-button-secondary {
+      margin-left: auto;
+      display: flex;
+      padding: 0.25rem 1rem;
+      border: 1px solid #f47738;
+      color: #f47738;
+      font-weight: 700;
+    }
+  }
+  .sla-cell-success {
+    padding: 0.125rem 0.5rem;
+    color: #00703c;
+    font-size: 0.75rem;
+    font-weight: 400;
+    background-color: #bad6c9;
+  }
+  .sla-cell-error {
+    padding: 0.125rem 0.5rem;
+    color: #00703c;
+    font-size: 0.75rem;
+    font-weight: 400;
+    background-color: #bad6c9;
+  }
+  .sla-cell-warning {
+    padding: 0.125rem 0.5rem;
+    color: #886b03;
+    font-size: 0.75rem;
+    font-weight: 400;
+    background-color: #ffedad;
+  }
+  .action-link {
+    display: flex;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,388 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+@import "react-date-range/dist/styles.css";
+@import "react-date-range/dist/theme/default.css";
+@import "./components/card.scss";
+@import "./components/toggleSwitch.scss";
+@import "./components/plusMinus.scss";
+@import "./components/table.scss";
+@import "./pages/employee/index.scss";
+@import "./pages/employee/login.scss";
+@import "./components/notificationComponent.scss";
+@import "./components/ulbHomeCard.scss";
+@import "./components/InboxSearchComposer.scss";
+@import "./pages/employee/overridestyles.scss";
+@import "./pages/employee/inboxTag.scss";
+@import "./pages/employee/tqmHome.scss";
+@import "./pages/employee/tqmPopUp.scss";
+@import "./components/DetailsCard.scss";
+@import "./components/sla.scss";
+@import "./components/Notification.scss";
+@import "./components/tqmHeader.scss";
+@import "./pages/employee/create.scss";
+@import "./pages/employee/registry.scss";
+@import "./components/applicationTable.scss";
+
+@media screen and (max-width: 768px) {
+  .employeeCard.fsm {
+    margin-bottom: 70px !important;
+    margin-left: 16px !important;
+    margin-right: 16px !important;
+  }
+}
+
+@media (min-width: 780px) {
+  .fsm-citizen-wrapper {
+    width: calc(100% - 219px);
+    padding-left: 16px;
+    padding-right: 16px;
+    margin-top: 1rem;
+  }
+  .employeeCard.testwf {
+    margin: 0;
+    margin-right: 0.5rem;
+  }
+}
+
+.fsm-inline-style {
+  background: #fafafa;
+  border: 1px solid #d6d5d4;
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 40px;
+  width: 90%;
+}
+.employee {
+  .ground-container {
+    margin-left: unset;
+  }
+}
+
+.employee-data-table .row h2 {
+  width: 25%;
+}
+.employee-data-table .row {
+  @media (min-width: 1024px) {
+    justify-content: flex-start;
+  }
+}
+
+input::-webkit-calendar-picker-indicator {
+  position: absolute;
+  right: 1%;
+  width: 30px;
+  height: 30px;
+}
+
+.employeeCard {
+  .card-section-header.fsm-registry {
+    margin-top: 40px;
+    margin-bottom: 16px;
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+}
+@media (min-width: 780px) {
+  .card-home {
+    width: max-content !important;
+  }
+  .complaint-links-container {
+    .header {
+      align-items: center !important;
+    }
+    .removeHeight {
+      padding-right: 16px;
+    }
+    .flex-fit {
+      padding: 8px 16px;
+    }
+  }
+}
+.CitizenHomeCard {
+  border-radius: 4px;
+}
+.fsm-citizen-wrapper {
+  min-height: 100vh;
+  .card {
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+  }
+  .card-text {
+    margin-bottom: 10px;
+  }
+}
+
+.primary-label-btn {
+  display: flex;
+}
+
+@media screen and (max-width: 768px) {
+  .card {
+    .card-sub-header {
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+  }
+}
+
+.fsm-citizen-rating-wrapper {
+  .card-label {
+    margin-bottom: 20px;
+  }
+  .custom-checkbox {
+    width: 24px;
+    height: 24px;
+  }
+  .checkbox-wrap {
+    input {
+      width: 24px;
+      height: 24px;
+    }
+    .label {
+      padding-top: 5px !important;
+      margin-left: 45px;
+    }
+  }
+
+  .primary-label-btn {
+    display: flex;
+  }
+}
+.radio-wrap {
+  .radio-btn {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  .radio-btn-checkmark {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  .radio-btn-checkmark::after {
+    width: 0.75rem !important;
+    height: 0.75rem !important;
+    top: 6px !important;
+    left: 6px !important;
+  }
+}
+.radio-wrap div {
+  display: flex;
+  align-items: center;
+}
+
+.gender-label-row {
+  display: flex;
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+  h2 {
+    width: 50%;
+    font-weight: bold;
+  }
+  .value {
+    width: 50%;
+  }
+}
+
+.info-banner-wrap h2 {
+  color: #0b0c0c;
+}
+.multi-upload-wrap div .delete {
+  border-radius: unset;
+  top: 0;
+  right: 0;
+}
+.stepper-gender-wrap {
+  border-bottom-width: 2px;
+  border-color: #d6d5d4;
+  margin-bottom: 16px;
+  h2 {
+    margin-bottom: 10px;
+  }
+}
+
+.fsm-citizen-payment-label-wrapper {
+  border-bottom-width: 2px;
+  margin-bottom: 16px;
+  border-color: #d6d5d4;
+  .key-note-pair {
+    display: flex;
+    justify-content: space-between;
+    h3 {
+      width: 40%;
+      word-break: unset;
+    }
+  }
+}
+
+.fsm-citizen-property-subtype-container {
+  .card-header {
+    white-space: nowrap;
+  }
+}
+
+.citizen-payment-error {
+  margin-bottom: 16px;
+}
+
+.fsm-payment-logo {
+  padding-right: 10px;
+}
+
+.navbar {
+  a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  img {
+    width: 80%;
+    object-fit: contain;
+  }
+  h3 {
+    margin-left: unset;
+  }
+}
+
+.margin-unset {
+  margin: unset !important;
+}
+
+.select-wrap {
+  .options-card {
+    max-height: 200px;
+    overflow: auto;
+  }
+}
+
+.rating-star-wrap {
+  justify-content: center;
+}
+
+.fsm-citizen-reponse-page {
+  padding: 0;
+  .fsm-response-button-wrap {
+    padding: 12px;
+  }
+  p {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+.check-page-uploaded-images {
+  flex-direction: column;
+  h2 {
+    margin-bottom: 8px;
+  }
+  .value {
+    width: unset !important;
+  }
+  .multi-upload-wrap {
+    margin-bottom: unset;
+  }
+}
+
+.select-pit-wrapper {
+  .toast-success {
+    bottom: 111px;
+  }
+}
+
+.action-bar-wrap {
+  .card-link {
+    margin-top: 4px;
+  }
+}
+
+.employeeCard {
+  .card-section-header {
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 670px) {
+  .toast-success {
+    width: 100%;
+    bottom: 57px;
+    border-radius: 0;
+    margin: 0;
+    z-index: 1000;
+  }
+}
+
+.tqm-document-title {
+  text-align: left;
+  margin-top: 8px;
+  font-weight: 700;
+  line-height: 18.75px;
+  color: #505a5f;
+  font-size: 16px;
+}
+
+.employee-select-wrap {
+  .options-card {
+    top: 100%;
+    border-left-width: 0 !important;
+    border-right-width: 0 !important;
+  }
+}
+.employee-select-wrap.fsm-registry-dropdown {
+  .options-card {
+    top: unset !important;
+  }
+}
+.inbox-search-links-container {
+  .header {
+    grid-template-columns: 12% 1fr;
+    grid-gap: 0.81rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .employee-select-wrap {
+    .options-card.date-range {
+      top: unset;
+      bottom: 100%;
+    }
+  }
+}
+
+@media (min-width: 780px){
+  .employeeCard .card-caption {
+    font-size: 16px;
+    line-height: 32px;
+  }
+}
+
+/*
+PART OF VEHICLE TRACKING
+
+.sla-cell-success {
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0 24px;
+  border-radius: 11px;
+  background-color: rgba(0, 112, 60, 0.12);
+  color: #00703c !important;
+}
+
+.sla-cell-error {
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 11px;
+  padding: 0 24px;
+  color: #d4351c !important;
+  background-color: rgb(212, 53, 28, 0.12);
+}
+
+.sla-cell-warning {
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0 24px;
+  border-radius: 11px;
+  color: #f47738 !important;
+  background-color: rgb(241, 143, 94, 0.12);
+}
+*/

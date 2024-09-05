@@ -1,0 +1,55 @@
+{
+  "name": "egovernments",
+  "version": "1.5.0",
+  "main": "index.js",
+  "workspaces": [
+    "packages/libraries",
+    "packages/fsm-libraries",
+    "packages/css",
+    "packages/fsm-css",
+    "example",
+    "packages/react-components",
+    "packages/modules/*"
+  ],
+  "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "SKIP_PREFLIGHT_CHECK=true run-s build start:dev",
+    "sprint": "SKIP_PREFLIGHT_CHECK=true run-s start:script",
+    "start:dev": "run-p dev:**",
+    "start:script": "./scripts/create.sh",
+    "dev:fsmcss": "cd packages/fsm-css && yarn start",
+    "publish:fsmcss": "cd packages/fsm-css && yarn publish --access public",
+    "dev:libraries": "cd packages/libraries && yarn start",
+    "dev:fsmlibraries": "cd packages/fsm-libraries && yarn start",
+    "dev:components": "cd packages/react-components && yarn start",
+    "dev:fsm": "cd packages/modules/fsm && yarn start",
+    "dev:tqm": "cd packages/modules/tqm && yarn start",
+    "dev:example": "cd example && yarn start",
+    "build": "run-p build:**",
+    "build:libraries": "cd packages/libraries && yarn build",
+    "build:fsmlibraries": "cd packages/fsm-libraries && yarn build",
+    "build:components": "cd packages/react-components && yarn build",
+    "build:fsm": "cd packages/modules/fsm && yarn build",
+    "build:tqm": "cd packages/modules/tqm && yarn build",
+    "deploy:jenkins": "./scripts/jenkins.sh"
+  },
+  "devDependencies": {
+    "husky": "7.0.4",
+    "lint-staged": "12.3.7",
+    "npm-run-all": "4.1.5",
+    "prettier": "2.1.2"
+  },
+  "husky": {},
+  "lint-staged": {
+    "*.{js,css,md}": "prettier --write"
+  },
+  "dependencies": {
+    "lodash": "4.17.21",
+    "microbundle-crl": "0.13.11"
+  }
+}

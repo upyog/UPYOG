@@ -1,0 +1,91 @@
+.employeeCard {
+  margin: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 1rem 0.5rem;
+}
+.employeeCard.fsm {
+  margin-bottom: 16px !important;
+  margin-left: 0px !important;
+  margin-right: 16px !important;
+}
+
+.employeeCard.card-tqm-message {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-wrap: wrap;
+  text-align: center;
+  margin: 0;
+  &.success {
+    border: 1px solid #00703c;
+    color: #00703c;
+  }
+  &.error {
+    border: 1px solid #d4351c;
+    color: #d4351c;
+  }
+  p {
+    font-size: 1rem;
+  }
+}
+
+.employeeCard.tqm-card-reading {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: #f7f8fc;
+  border: 1px solid #d6d5d4;
+  box-shadow: none;
+  svg {
+    margin-right: 0.5rem;
+  }
+  .row.tqm-readings-info {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    h2 {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .value {
+      font-weight: 700;
+      font-size: 1rem;
+      &.success {
+        color: #00703c;
+      }
+      &.error {
+        color: #d4351c;
+      }
+    }
+  }
+}
+
+.employee-card-sub-header {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+.employeeCard .card-sub-header,
+.employeeCard .employee-card-sub-header {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.employeeCard {
+  .employeeCard.tqm-card-reading {
+    margin-left: unset;
+    margin-top: 1rem;
+  }
+}
+.employeeCard {
+  .complaint-links-container {
+    .body {
+      .links-wrapper > .link:first-child {
+        margin-bottom: 0.75rem;
+        margin-top: 0.75rem;
+      }
+      .links-wrapper > .link {
+        margin-bottom: 0.75rem;
+      }
+    }
+  }
+}
