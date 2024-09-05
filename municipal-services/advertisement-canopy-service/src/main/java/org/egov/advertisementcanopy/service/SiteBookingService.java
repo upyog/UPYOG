@@ -103,7 +103,7 @@ public class SiteBookingService {
 //			booking.setTenantId("hp.Shimla");
 			
 			if(null != booking.getFromDate() && null != booking.getToDate()) {
-				booking.setPeriodInDays(Math.toIntExact( booking.getFromDate()-booking.getToDate() / (1000 * 60 * 60 * 24) ));
+				booking.setPeriodInDays(Math.toIntExact( booking.getToDate()-booking.getFromDate() / (1000 * 60 * 60 * 24) ));
 			}
 			
 			if(null != siteBookingRequest.getRequestInfo()
