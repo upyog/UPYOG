@@ -23,6 +23,8 @@ export default ({ config }) => {
   api.post(
     "/_update",
     asyncHandler(async ({ body }, res, next) => {
+      let isPrimaryowner = true 
+      body.FireNOCs[0].fireNOCDetails.applicantDetails.owners[0] ={...body.FireNOCs[0].fireNOCDetails.applicantDetails.owners[0], "isPrimaryowner" : true};
       let response = await updateApiResponse({ body }, true, next);
       if(response.Errors)
         res.status(400);
