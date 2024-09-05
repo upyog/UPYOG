@@ -43,13 +43,13 @@ export const convertEpochToDate = (dateEpoch) => {
     staleTime: Infinity,
     refetchOnWindowFocus: false,
   });
-  console.log("datatatataty",data)
+  
   const cities = Digit.Hooks.useTenants();
   let ulbType=""
   const loginCity=JSON.parse(sessionStorage.getItem("Digit.User"))?.value?.info?.permanentCity
   if(cities.data!==undefined){
-    const selectedTenantData = cities.data.find(item => item.city.districtTenantCode=== loginCity);
-    ulbType=selectedTenantData.city.ulbGrade  
+    const selectedTenantData = cities.data.find(item => item?.city?.districtTenantCode=== loginCity);
+    ulbType=selectedTenantData?.city?.ulbGrade  
   }
 
   const { label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService: business_service }, { enabled: false });
