@@ -83,7 +83,6 @@ const Response = ({ data, onSuccess }) => {
               gender: selectGender?.code,
             },
             tenantId: city?.code,
-            additionalDetails: {},
             propertyUsage: subtype?.code,
             address: {
               tenantId: city?.code,
@@ -136,6 +135,7 @@ const Response = ({ data, onSuccess }) => {
               propertyID : propertyID?.propertyID,
               distancefromroad : data?.roadWidth?.distancefromroad,
               roadWidth: data?.roadWidth?.roadWidth,
+              propertyID : data?.cptId?.id
             },
             advanceAmount: typeof advanceAmount === "number" ? JSON.stringify(advanceAmount) : advanceAmount,
           },
