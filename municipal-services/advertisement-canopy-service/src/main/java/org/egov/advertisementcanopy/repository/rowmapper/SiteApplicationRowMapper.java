@@ -67,6 +67,7 @@ public class SiteApplicationRowMapper implements ResultSetExtractor<List<SiteCre
 						    .accountId(rs.getString("account_id"))
 						    .status(rs.getString("status"))
 						    .isActive(rs.getBoolean("is_active"))
+						    .tenantId(rs.getString("tenant_id"))
 						    .build();
 					
 					
