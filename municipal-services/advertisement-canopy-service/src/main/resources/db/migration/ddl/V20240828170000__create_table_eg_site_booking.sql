@@ -9,6 +9,7 @@ CREATE TABLE eg_site_booking (
     email_id VARCHAR(255),
     advertisement_type VARCHAR(100),
     from_date INT8,
+    to_date INT8,
     period_in_days INT,
     hoarding_type VARCHAR(225),
     structure VARCHAR(225),

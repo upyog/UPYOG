@@ -7,7 +7,7 @@ serviceMaps:
    fromTopic: save-site-booking
    isTransaction: true
    queryMaps:
-    - query: INSERT INTO eg_site_booking (uuid, application_no, site_uuid, applicant_name, applicant_father_name, gender, mobile_number, email_id, advertisement_type, from_date, period_in_days, hoarding_type, structure, is_active, status, tenant_id, additional_detail, created_by, created_date, last_modified_by, last_modified_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_site_booking (uuid, application_no, site_uuid, applicant_name, applicant_father_name, gender, mobile_number, email_id, advertisement_type, from_date, to_date, period_in_days, hoarding_type, structure, is_active, status, tenant_id, additional_detail, created_by, created_date, last_modified_by, last_modified_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
       basePath: SiteBookings.*
       jsonMaps:
@@ -31,6 +31,8 @@ serviceMaps:
        - jsonPath: $.SiteBookings.*.advertisementType
 
        - jsonPath: $.SiteBookings.*.fromDate
+
+       - jsonPath: $.SiteBookings.*.toDate
 
        - jsonPath: $.SiteBookings.*.periodInDays
 
@@ -64,7 +66,7 @@ serviceMaps:
    isTransaction: true
    queryMaps:
 
-    - query: UPDATE eg_site_booking SET application_no = ?, site_uuid = ?, applicant_name = ?, applicant_father_name = ?, gender = ?, mobile_number = ?, email_id = ?, advertisement_type = ?, from_date = ?, period_in_days = ?, hoarding_type = ?, structure = ?, is_active = ?, status = ?, tenant_id = ?, additional_detail = ?, created_by = ?, created_date = ?, last_modified_by = ?, last_modified_date = ? WHERE uuid = ?;
+    - query: UPDATE eg_site_booking SET application_no = ?, site_uuid = ?, applicant_name = ?, applicant_father_name = ?, gender = ?, mobile_number = ?, email_id = ?, advertisement_type = ?, from_date = ?, to_date = ?, period_in_days = ?, hoarding_type = ?, structure = ?, is_active = ?, status = ?, tenant_id = ?, additional_detail = ?, created_by = ?, created_date = ?, last_modified_by = ?, last_modified_date = ? WHERE uuid = ?;
 
       basePath: SiteBookings.*
       jsonMaps:
@@ -86,6 +88,8 @@ serviceMaps:
        - jsonPath: $.SiteBookings.*.advertisementType
 
        - jsonPath: $.SiteBookings.*.fromDate
+
+       - jsonPath: $.SiteBookings.*.toDate
 
        - jsonPath: $.SiteBookings.*.periodInDays
 

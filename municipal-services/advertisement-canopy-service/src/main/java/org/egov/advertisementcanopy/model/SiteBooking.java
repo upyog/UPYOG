@@ -22,6 +22,7 @@ public class SiteBooking {
 	private String emailId;
 	private String advertisementType;
 	private Long fromDate;
+	private Long toDate;
 	private Integer periodInDays;
 	private String hoardingType;
 	private String structure;
