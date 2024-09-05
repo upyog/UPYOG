@@ -10,7 +10,7 @@ CREATE TABLE eg_site_booking (
     advertisement_type VARCHAR(100),
     from_date INT8,
     to_date INT8,
-    period_in_days INT,
+    period_in_days INT8,
     hoarding_type VARCHAR(225),
     structure VARCHAR(225),
     is_active BOOLEAN,

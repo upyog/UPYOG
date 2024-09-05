@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -103,7 +104,8 @@ public class SiteBookingService {
 //			booking.setTenantId("hp.Shimla");
 			
 			if(null != booking.getFromDate() && null != booking.getToDate()) {
-				booking.setPeriodInDays(Math.toIntExact( booking.getToDate()-booking.getFromDate() / (1000 * 60 * 60 * 24) ));
+				booking.setPeriodInDays(TimeUnit.MILLISECONDS.toDays(booking.getToDate()-booking.getFromDate()));
+//				booking.setPeriodInDays(Math.toIntExact( booking.getToDate()-booking.getFromDate() / (1000 * 60 * 60 * 24) ));
 			}
 			
 			if(null != siteBookingRequest.getRequestInfo()
