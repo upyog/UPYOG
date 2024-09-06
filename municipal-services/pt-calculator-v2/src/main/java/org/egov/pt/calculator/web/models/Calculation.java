@@ -64,5 +64,7 @@ public class Calculation   {
         private BigDecimal remainAdvanceamount;
         
         private List<Vacantland> vacantland;
+        
+        private List<ModeOfPaymentDetails> modeOfPaymentDetails;
 }
 

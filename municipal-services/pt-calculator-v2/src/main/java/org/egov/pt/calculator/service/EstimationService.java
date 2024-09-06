@@ -1171,6 +1171,7 @@ public class EstimationService {
 				.units(units)
 				.vacantland(vacantland)
 				.remainAdvanceamount(remainAdvanceAmount)
+				.modeOfPaymentDetails(modeOfPaymentDetails)
 				.build();
 	}
 
