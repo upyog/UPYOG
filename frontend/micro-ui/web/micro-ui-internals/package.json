@@ -2,12 +2,12 @@
   "name": "egovernments",
   "version": "1.5.4",
   "main": "index.js",
-  "workspaces":  [
+  "workspaces": [
     "packages/libraries",
     "packages/css",
     "example",
     "packages/react-components",
-    "packages/modules/*"   
+    "packages/modules/*"
   ],
   "license": "MIT",
   "private": true,
@@ -80,7 +80,7 @@
     "microbundle-crl": "^0.13.11"
   },
   "resolutions": {
-    "**/babel-loader": "8.2.2",
+    "**/babel-loader": "8.1.0",
     "**/@babel/core": "7.14.0",
     "**/@babel/preset-env": "7.14.0",
     "**/@babel/plugin-transform-modules-commonjs": "7.14.0"
