@@ -1170,7 +1170,7 @@ public class EstimationService {
 				.billingSlabIds(billingSlabIds)
 				.units(units)
 				.vacantland(vacantland)
-				.commercial(commercial)
+				.remainAdvanceamount(remainAdvanceAmount)
 				.build();
 	}
 
