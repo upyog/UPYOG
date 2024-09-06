@@ -363,6 +363,7 @@ public class DemandService {
 		if (BigDecimal.ZERO.compareTo(carryForward) > 0 || !cancelDemand) return carryForward;
 		
 		demand.setStatus(Demand.DemandStatusEnum.CANCELLED);
+		demand.setAdvanceAmount(carryForward);
 		DemandRequest request = DemandRequest.builder().demands(Arrays.asList(demand)).requestInfo(requestInfo).build();
 		StringBuilder updateDemandUrl = utils.getUpdateDemandUrl();
 		repository.fetchResult(updateDemandUrl, request);

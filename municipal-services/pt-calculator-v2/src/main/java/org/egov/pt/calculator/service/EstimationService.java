@@ -1109,7 +1109,39 @@ public class EstimationService {
 		// false in the argument represents that the demand shouldn't be updated from this call
 		Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(requestInfo,criteria);
 		BigDecimal collectedAmtForOldDemand = demandService.getCarryForwardAndCancelOldDemand(ptTax, criteria, requestInfo,oldDemand, false);
-
+		BigDecimal remainAdvanceAmount=BigDecimal.ZERO;
+		
+		if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
+		{
+			if(collectedAmtForOldDemand.compareTo(totalAmount)>0)
+			{
+				totalAmount=BigDecimal.ZERO;
+				remainAdvanceAmount=collectedAmtForOldDemand.subtract(totalAmount);
+				collectedAmtForOldDemand=totalAmount.negate();
+			}
+			else if(collectedAmtForOldDemand.compareTo(totalAmount)==0)
+			{
+				collectedAmtForOldDemand=totalAmount.negate();
+				remainAdvanceAmount=BigDecimal.ZERO;
+			}
+			else if(collectedAmtForOldDemand.compareTo(totalAmount)<0)
+			{
+				totalAmount=totalAmount.subtract(collectedAmtForOldDemand);
+				collectedAmtForOldDemand=collectedAmtForOldDemand.negate();
+			}
+			estimates.add(TaxHeadEstimate.builder()
+					.taxHeadCode(PT_ADVANCE_CARRYFORWARD)
+					.estimateAmount(collectedAmtForOldDemand).build());
+		}
+		else if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) < 0)
+		{
+			collectedAmtForOldDemand=collectedAmtForOldDemand.negate();
+			estimates.add(TaxHeadEstimate.builder()
+					.taxHeadCode(PT_PASTDUE_CARRYFORWARD)
+					.estimateAmount(collectedAmtForOldDemand).build());
+			totalAmount=totalAmount.add(collectedAmtForOldDemand);
+		}
+		
 		TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(taxAmt.add(penalty).add(collectedAmtForOldDemand), rebate.add(exemption).add(complementary_rebate).add(modeofpayment_rebate));
 
 		if (null != decimalEstimate) {
@@ -1121,12 +1153,6 @@ public class EstimationService {
 				rebate = rebate.add(decimalEstimate.getEstimateAmount());
 		}
 
-		if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
-			estimates.add(TaxHeadEstimate.builder()
-					.taxHeadCode(PT_PASTDUE_CARRYFORWARD)
-					.estimateAmount(collectedAmtForOldDemand).build());
-		else if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) < 0)
-			throw new CustomException(EG_PT_DEPRECIATING_ASSESSMENT_ERROR, EG_PT_DEPRECIATING_ASSESSMENT_ERROR_MSG_ESTIMATE);
 
 		modeOfPaymentDetails=modeOfPaymentDetails(totalAmount,collectedAmtForOldDemand,criteria.getModeOfPayment());
 
