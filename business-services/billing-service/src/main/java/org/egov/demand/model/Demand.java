@@ -86,6 +86,11 @@ public class Demand {
     @Default
     @JsonProperty("minimumAmountPayable")
     private BigDecimal minimumAmountPayable = BigDecimal.ZERO;
+    
+    
+    @Default
+    @JsonProperty("advanceAmount") 
+    private BigDecimal advanceAmount = BigDecimal.ZERO;
 
     @Default
     private Boolean isPaymentCompleted = false;

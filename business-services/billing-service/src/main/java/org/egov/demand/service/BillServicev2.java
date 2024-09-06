@@ -101,11 +101,15 @@ import org.egov.demand.model.DemandDetail;
 import org.egov.demand.model.GenerateBillCriteria;
 import org.egov.demand.model.ModeOfPaymentDetails;
 import org.egov.demand.model.ModeOfPaymentDetails.TxnPeriodEnum;
+import org.egov.demand.model.TaxAndPayment;
 import org.egov.demand.model.TaxHeadMaster;
 import org.egov.demand.model.TaxHeadMasterCriteria;
 import org.egov.demand.model.Transaction;
+import org.egov.demand.model.Transaction.TxnStatusEnum;
+import org.egov.demand.model.TransactionCreateResponse;
 import org.egov.demand.model.TransactionRequest;
 import org.egov.demand.model.TransactionResponse;
+import org.egov.demand.model.TransactionUser;
 import org.egov.demand.model.UpdateBillCriteria;
 import org.egov.demand.model.UpdateBillRequest;
 import org.egov.demand.producer.Producer;
@@ -633,7 +637,7 @@ public class BillServicev2 {
 		BigDecimal pastDue=BigDecimal.ZERO;
 		boolean billsFound=false;
 		
-		System.out.println("");
+		
 		/*
 		 * Map to store the bill account detail object with TaxHead code
 		 * To accommodate conversion of multiple DemandDetails with same tax head code to single BillAccountDetail
@@ -643,7 +647,7 @@ public class BillServicev2 {
 		for(DemandDetail demandDetail : demand.getDemandDetails()) {
 
 			TaxHeadMaster taxHead = taxHeadMap.get(demandDetail.getTaxHeadMasterCode());
-			BigDecimal amountForAccDeatil = demandDetail.getTaxAmount().subtract(demandDetail.getCollectionAmount());
+			BigDecimal amountForAccDeatil = demandDetail.getTaxAmount();//.subtract(demandDetail.getCollectionAmount());
 
 			addOrUpdateBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap, demandDetail, taxHead, billDetailId);
 
@@ -652,12 +656,29 @@ public class BillServicev2 {
 			if(taxHead.getCode().equalsIgnoreCase("PT_PASTDUE_CARRYFORWARD"))
 				pastDue=demandDetail.getTaxAmount();
 		}
+		totalAmountForDemand = BigDecimal.ZERO;
+		if(totalAmountForDemand.compareTo(new BigDecimal(0))==0) {
+			
+			
+			return BillDetailV2.builder()
+					.billAccountDetails(new ArrayList<>(taxCodeAccountdetailMap.values()))
+					.amount(totalAmountForDemand)
+					.expiryDate(endPeriod)
+					.demandId(demand.getId())
+					.fromPeriod(startPeriod)
+					.toPeriod(endPeriod)
+					.tenantId(tenantId)
+					.paymentPeriod("YR")
+					.modeOfPaymentDetails(mpdList)
+					.additionalDetails(demand.getAdditionalDetails())
+					.build();
+		}
 	
 		//PAST DUE CALCULATION
 		totalAmountForDemand=totalAmountForDemand.subtract(pastDue);
 		
 		//Getting Financial year from Demand
-		Date startDate = new Date(startPeriod);
+ 		Date startDate = new Date(startPeriod);
 		Date endDate = new Date(endPeriod);
 		Calendar c = Calendar.getInstance();
 		c.setTime(startDate);
@@ -758,7 +779,7 @@ public class BillServicev2 {
 		List<BillV2> bills = billRepository.findBill(billCriteria);
 		BigDecimal failedBillAmount=new BigDecimal(0);
 		BigDecimal successBillAmount=new BigDecimal(0);
-		BigDecimal advancedBillAmount=new BigDecimal(1000);//Will Be coming from Demand
+		BigDecimal advancedBillAmount=new BigDecimal(1500);//Will Be coming from Demand
 		if(null!=bills) {
 			quaterCheckMap = new HashMap<>();
 			billsFound =true;
@@ -900,7 +921,7 @@ public class BillServicev2 {
 				if(!successtransactionMapForQuater.containsKey(Q1)) {
 					if(!failedtransactionMapForQuater.containsKey(Q1) || failedtransactionMapForQuater.containsKey(Q1)) {
 						quaterlyammount=ammountForTransactionperiod(Q1,amountforquaterly);
-						quaterlyammount=quaterlyammount.add(pastDue);
+						
 						mpdObj = new ModeOfPaymentDetails();
 						mpdObj = getModeOfPaymentDetails(quaterlyammount,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
 						mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
@@ -913,6 +934,7 @@ public class BillServicev2 {
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
 					mpdList.add(mpdObj);
 				}
+				quaterlyammount=quaterlyammount.add(pastDue);
 				allquaterammount=allquaterammount.add(quaterlyammount);
 				
 				mpdObj = new ModeOfPaymentDetails();
@@ -970,10 +992,6 @@ public class BillServicev2 {
 				if(!successtransactionMapForQuater.containsKey(Q2)) {
 					if(!failedtransactionMapForQuater.containsKey(Q2) || failedtransactionMapForQuater.containsKey(Q2)) {
 						quaterlyammount=ammountForTransactionperiod(Q2,amountforquaterly);
-						if(failedtransactionMapForQuater.containsKey(Q2)) {
-							quaterlyammount=failedtransactionMapForQuater.get(Q2);
-							
-						}
 						//quaterlyammount=quaterlyammount.add(pastDue);
 						mpdObj = new ModeOfPaymentDetails();
 						mpdObj = getModeOfPaymentDetails(quaterlyammount,startDateQ2, expiryDateQ2,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
@@ -1016,7 +1034,7 @@ public class BillServicev2 {
 				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
 				
 				if(!successtransactionMapForQuater.containsKey(Q1)) {
-					if(!failedtransactionMapForQuater.containsKey(Q1) && !alltransactionForQuater.containsKey(Q1)) {
+					if(!failedtransactionMapForQuater.containsKey(Q1) || failedtransactionMapForQuater.containsKey(Q1)) {
 						quaterlyammount=ammountForTransactionperiod(Q1,amountforquaterly);
 					//	quaterlyammount=amountforquaterly;
 						mpdObj = new ModeOfPaymentDetails();
@@ -1034,7 +1052,7 @@ public class BillServicev2 {
 					
 
 				if(!successtransactionMapForQuater.containsKey(Q2)) {
-					if(!failedtransactionMapForQuater.containsKey(Q2) && !alltransactionForQuater.containsKey(Q2)) {
+					if(!failedtransactionMapForQuater.containsKey(Q2) || failedtransactionMapForQuater.containsKey(Q2)) {
 						quaterlyammount=ammountForTransactionperiod(Q2,amountforquaterly);
 						//quaterlyammount=amountforquaterly;
 						mpdObj = new ModeOfPaymentDetails();
@@ -1052,7 +1070,7 @@ public class BillServicev2 {
 				}
 				
 				if(!successtransactionMapForQuater.containsKey(Q3)) {
-					if(!failedtransactionMapForQuater.containsKey(Q3) && !alltransactionForQuater.containsKey(Q3))
+					if(!failedtransactionMapForQuater.containsKey(Q3) || failedtransactionMapForQuater.containsKey(Q3))
 					{
 						quaterlyammount=ammountForTransactionperiod(Q3,amountforquaterly);
 						//quaterlyammount=amountforquaterly;
@@ -1191,9 +1209,6 @@ public class BillServicev2 {
 	}
 	
 	
-	private BigDecimal getAdvanceAmountAfterDeduction(BigDecimal quaterlyAmount, BigDecimal advancedAmount) {
-		
-	}
 	
 	private Long getDateInMilisec(String date,boolean start) {
 		Calendar datexp = Calendar.getInstance();
@@ -1390,6 +1405,63 @@ public class BillServicev2 {
 
 		if (!CollectionUtils.isEmpty(billRequest.getBills()))
 		billRepository.saveBill(billRequest);
+		
+		//Update Bill Status to Paid for bill with amount 0
+		 List<BillV2> filteredBills = new ArrayList<>();
+			
+			  for(BillV2 b: billRequest.getBills()) {	  
+			  if(b.getBillDetails().get(0).getAmount().compareTo(new BigDecimal(0))==0) {
+				  	filteredBills.add(b); 
+			  } 
+			 }
+			  String transactiontUrl = new StringBuilder().append(appProps.getPgSeriviceHost()).append(appProps.getPgCreateEndpoint())
+						.append(URL_PARAMS_SEPARATER).append("tenantId=").append(billRequest.getRequestInfo().getUserInfo().getTenantId()).toString();
+			  
+			  StringBuilder url = new StringBuilder("http://mnptapp.manipurpropertytax.org/digit-ui/citizen/payment/success/PT/");
+					  
+			TransactionRequest transactionRequest = null;
+			TransactionCreateResponse resp = null;
+			List<TaxAndPayment> taxAndPayment =null;
+			TaxAndPayment tp = null;
+			TransactionUser user = null;
+			for(BillV2 b:filteredBills) {
+				transactionRequest = new TransactionRequest();
+				transactionRequest.setRequestInfo(billRequest.getRequestInfo());
+				Transaction tr = new Transaction();
+				taxAndPayment = new ArrayList<>();
+				tp = new TaxAndPayment();
+				tr.setBillId(b.getId());
+				tr.setTenantId(b.getTenantId());
+				tr.setGateway("PAYGOV");
+				tr.setTxnAmount(b.getBillDetails().get(0).getAmount().toString());
+				url.append(b.getConsumerCode()).append("/").append(b.getTenantId()).append("?").append("propertyId=").append(b.getConsumerCode());
+				tr.setCallbackUrl(url.toString());
+				user = new TransactionUser();
+				user.setName(billRequest.getRequestInfo().getUserInfo().getName());
+				user.setMobileNumber(billRequest.getRequestInfo().getUserInfo().getMobileNumber());
+				user.setTenantId(billRequest.getRequestInfo().getUserInfo().getTenantId());
+				
+				tr.setUser(user);
+				tr.setConsumerCode(b.getConsumerCode());
+				tr.setProductInfo("Common Payment");
+				tr.setModule("PT");
+				
+				tp.setTaxAmount(b.getBillDetails().get(0).getAmount());
+				tp.setAmountPaid(b.getBillDetails().get(0).getAmount());
+				tp.setBillId(b.getId());
+				taxAndPayment.add(tp);
+				tr.setTaxAndPayments(taxAndPayment);
+				tr.setTxnStatus(TxnStatusEnum.SUCCESS);
+				transactionRequest.setTransaction(tr);
+				resp = restTemplate.postForObject(transactiontUrl, transactionRequest, TransactionCreateResponse.class);
+				System.out.println(resp);
+			}
+			 
+		 
+		/* String transactiontUrl = new StringBuilder().append(appProps.getPgSeriviceHost()).append(appProps.getPgSeriviceEndpoint())
+					.append(URL_PARAMS_SEPARATER).append("billId=").toString();*/
+		 
+		 
 		return getBillResponse(billRequest.getBills());
 	}
 
