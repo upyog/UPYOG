@@ -359,6 +359,7 @@ public class DemandService {
 		 * BigDecimal.valueOf(-1); }
 		 */
 
+		//need to check for manipur
 		if (BigDecimal.ZERO.compareTo(carryForward) > 0 || !cancelDemand) return carryForward;
 		
 		demand.setStatus(Demand.DemandStatusEnum.CANCELLED);
