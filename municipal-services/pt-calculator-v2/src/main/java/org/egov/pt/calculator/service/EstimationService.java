@@ -1121,8 +1121,8 @@ public class EstimationService {
 			}
 			else if(collectedAmtForOldDemand.compareTo(totalAmount)==0)
 			{
+				totalAmount=BigDecimal.ZERO;
 				collectedAmtForOldDemand=totalAmount.negate();
-				remainAdvanceAmount=BigDecimal.ZERO;
 			}
 			else if(collectedAmtForOldDemand.compareTo(totalAmount)<0)
 			{
