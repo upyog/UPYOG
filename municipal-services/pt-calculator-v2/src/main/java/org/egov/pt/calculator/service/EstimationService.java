@@ -1156,12 +1156,20 @@ public class EstimationService {
 
 		SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
 		SimpleDateFormat year=new SimpleDateFormat("yyyy");
+		SimpleDateFormat month=new SimpleDateFormat("M");
 		Date currentDate=new Date();
 		String formateDate=sdf.format(currentDate);
 		String dateyear=year.format(currentDate);
 		int currentyear=Integer.parseInt((dateyear));
 		currentyear=currentyear+1;
 		String nextyear=String.valueOf(currentyear);
+		String datemonth=month.format(currentDate);
+		if(datemonth.equalsIgnoreCase("1") || datemonth.equalsIgnoreCase("2") || datemonth.equalsIgnoreCase("3"))
+		{
+			nextyear=dateyear;
+			currentyear=currentyear-1;
+			dateyear=String.valueOf(currentyear);
+		}
 
 		switch (modeOfPayment) {
 		case "QUARTERLY":
