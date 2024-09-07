@@ -119,4 +119,164 @@ serviceMaps:
 
        
 
- 
+ - version: 1.0
+   description: Create Site
+   fromTopic: create-site
+   isTransaction: true
+   queryMaps:
+
+    - query: INSERT INTO eg_site_application (id, uuid, site_id, site_name, site_description, gps_location, site_address, site_cost, site_photograph, structure, size_length, size_width, led_selection, security_amount, powered, others, district_name, ulb_name, ulb_type, ward_number, pincode, additional_detail, created_by, created_date, last_modified_by, last_modified_date, site_type, account_id, status, is_active, tenant_id, booking_start_date, booking_end_date, application_start_date, application_end_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::JSONB, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+      basePath: SiteCreationData.
+      jsonMaps:
+
+       - jsonPath: $.SiteCreationData.id
+
+       - jsonPath: $.SiteCreationData.uuid
+
+       - jsonPath: $.SiteCreationData.siteID
+
+       - jsonPath: $.SiteCreationData.siteName
+
+       - jsonPath: $.SiteCreationData.siteDescription
+
+       - jsonPath: $.SiteCreationData.gpsLocation
+
+       - jsonPath: $.SiteCreationData.siteAddress
+
+       - jsonPath: $.SiteCreationData.siteCost
+
+       - jsonPath: $.SiteCreationData.sitePhotograph
+
+       - jsonPath: $.SiteCreationData.structure
+
+       - jsonPath: $.SiteCreationData.sizeLength
+
+       - jsonPath: $.SiteCreationData.sizeWidth
+
+       - jsonPath: $.SiteCreationData.ledSelection
+
+       - jsonPath: $.SiteCreationData.securityAmount
+
+       - jsonPath: $.SiteCreationData.powered
+
+       - jsonPath: $.SiteCreationData.others
+
+       - jsonPath: $.SiteCreationData.districtName
+
+       - jsonPath: $.SiteCreationData.ulbName
+
+       - jsonPath: $.SiteCreationData.ulbType
+
+       - jsonPath: $.SiteCreationData.wardNumber
+
+       - jsonPath: $.SiteCreationData.pinCode
+
+       - jsonPath: $.SiteCreationData.additionalDetail
+         type: JSON
+         dbType: JSONB
+
+       - jsonPath: $.SiteCreationData.auditDetails.createdBy
+
+       - jsonPath: $.SiteCreationData.auditDetails.createdDate
+
+       - jsonPath: $.SiteCreationData.auditDetails.lastModifiedBy
+
+       - jsonPath: $.SiteCreationData.auditDetails.lastModifiedDate
+       
+       - jsonPath: $.SiteCreationData.siteType
+       
+       - jsonPath: $.SiteCreationData.accountId
+       
+       - jsonPath: $.SiteCreationData.status
+       
+       - jsonPath: $.SiteCreationData.isActive
+       
+       - jsonPath: $.SiteCreationData.tenantId
+       
+       - jsonPath: $.SiteCreationData.bookingPeriodStartDate
+       
+       - jsonPath: $.SiteCreationData.bookingPeriodEndDate
+       
+       - jsonPath: $.SiteCreationData.applicationStartDate
+       
+       - jsonPath: $.SiteCreationData.applicationEndDate
+       
+       
+       
+ - version: 1.0
+   description: Update Site
+   fromTopic: update-site
+   isTransaction: true
+   queryMaps:
+
+    - query: UPDATE eg_site_application SET site_description = ?, gps_location = ?, site_address = ?, site_cost = ?, site_photograph = ?, structure = ?, size_length = ?, size_width = ?, led_selection = ?, security_amount = ?, powered = ?, others = ?, district_name = ?, ulb_name = ?, ulb_type = ?, ward_number = ?, pincode = ?, additional_detail = ?::JSONB, last_modified_by = ?, last_modified_date = ?, site_type = ?, account_id = ?, status = ?, is_active = ?, booking_start_date = ?, booking_end_date = ?, application_start_date = ?, application_end_date = ? WHERE uuid = ? AND id = ?;
+
+      basePath: SiteCreationData.
+      jsonMaps:
+
+       - jsonPath: $.SiteCreationData.siteDescription
+
+       - jsonPath: $.SiteCreationData.gpsLocation
+
+       - jsonPath: $.SiteCreationData.siteAddress
+
+       - jsonPath: $.SiteCreationData.siteCost
+
+       - jsonPath: $.SiteCreationData.sitePhotograph
+
+       - jsonPath: $.SiteCreationData.structure
+
+       - jsonPath: $.SiteCreationData.sizeLength
+
+       - jsonPath: $.SiteCreationData.sizeWidth
+
+       - jsonPath: $.SiteCreationData.ledSelection
+
+       - jsonPath: $.SiteCreationData.securityAmount
+
+       - jsonPath: $.SiteCreationData.powered
+
+       - jsonPath: $.SiteCreationData.others
+
+       - jsonPath: $.SiteCreationData.districtName
+
+       - jsonPath: $.SiteCreationData.ulbName
+
+       - jsonPath: $.SiteCreationData.ulbType
+
+       - jsonPath: $.SiteCreationData.wardNumber
+
+       - jsonPath: $.SiteCreationData.pinCode
+
+       - jsonPath: $.SiteCreationData.additionalDetail
+         type: JSON
+         dbType: JSONB
+
+       - jsonPath: $.SiteCreationData.auditDetails.lastModifiedBy
+
+       - jsonPath: $.SiteCreationData.auditDetails.lastModifiedDate
+       
+       - jsonPath: $.SiteCreationData.siteType
+       
+       - jsonPath: $.SiteCreationData.accountId
+       
+       - jsonPath: $.SiteCreationData.status
+       
+       - jsonPath: $.SiteCreationData.isActive
+       
+       - jsonPath: $.SiteCreationData.tenantId
+       
+       - jsonPath: $.SiteCreationData.bookingPeriodStartDate
+       
+       - jsonPath: $.SiteCreationData.bookingPeriodEndDate
+       
+       - jsonPath: $.SiteCreationData.applicationStartDate
+       
+       - jsonPath: $.SiteCreationData.applicationEndDate
+       
+       - jsonPath: $.SiteCreationData.uuid
+
+       - jsonPath: $.SiteCreationData.id
+
+       

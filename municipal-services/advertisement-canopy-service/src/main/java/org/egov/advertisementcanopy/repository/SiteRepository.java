@@ -81,7 +81,8 @@ public class SiteRepository {
 				siteCreation.getAuditDetails().getLastModifiedBy(),
 				siteCreation.getAuditDetails().getLastModifiedDate(), siteCreation.getSiteType(),
 				siteCreation.getAccountId(), siteCreation.getStatus(), siteCreation.isActive(),
-				siteCreation.getTenantId());
+				siteCreation.getTenantId(),siteCreation.getBookingPeriodStartDate(),siteCreation.getBookingPeriodEndDate(),
+				siteCreation.getApplicationStartDate(),siteCreation.getApplicationEndDate());
 	}
 
 	public List<SiteCreationData> searchSiteIds(String siteName, String districtName, String ulbName,

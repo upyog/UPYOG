@@ -16,7 +16,9 @@ import org.egov.advertisementcanopy.model.SiteSearchRequest;
 import org.egov.advertisementcanopy.model.SiteSearchResponse;
 import org.egov.advertisementcanopy.model.SiteUpdateRequest;
 import org.egov.advertisementcanopy.model.SiteUpdationResponse;
+import org.egov.advertisementcanopy.producer.Producer;
 import org.egov.advertisementcanopy.repository.SiteRepository;
+import org.egov.advertisementcanopy.util.AdvtConstants;
 import org.egov.advertisementcanopy.util.ResponseInfoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,9 @@ public class SiteService {
 
 	@Autowired
 	ResponseInfoFactory responseInfoFactory;
+
+	@Autowired
+	Producer producer;
 
 	public static final String ADVERTISEMENT_HOARDING = "Advertising Hoarding";
 	public static final String CANOPY = "Canopy";
@@ -98,8 +103,8 @@ public class SiteService {
 	}
 
 	private void createSiteObjects(SiteCreationRequest createSiteRequest) {
-		siteRepository.create(createSiteRequest.getCreationData());
-
+//		siteRepository.create(createSiteRequest.getCreationData());
+		producer.push(AdvtConstants.SITE_CREATION, createSiteRequest);
 	}
 
 	public SiteUpdationResponse update(SiteUpdateRequest updateSiteRequest) {
@@ -134,7 +139,7 @@ public class SiteService {
 
 	private void updateSiteData(SiteUpdateRequest updateSiteRequest) {
 		siteRepository.updateSiteData(updateSiteRequest);
-
+		producer.push(AdvtConstants.SITE_UPDATION, updateSiteRequest);
 	}
 
 	private void enrichUpdatedSite(SiteUpdateRequest updateSiteRequest) {
