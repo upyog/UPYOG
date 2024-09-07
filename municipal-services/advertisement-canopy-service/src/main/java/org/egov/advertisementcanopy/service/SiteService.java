@@ -18,6 +18,7 @@ import org.egov.advertisementcanopy.model.SiteUpdateRequest;
 import org.egov.advertisementcanopy.model.SiteUpdationResponse;
 import org.egov.advertisementcanopy.producer.Producer;
 import org.egov.advertisementcanopy.repository.SiteRepository;
+import org.egov.advertisementcanopy.repository.builder.SiteApplicationQueryBuilder;
 import org.egov.advertisementcanopy.util.AdvtConstants;
 import org.egov.advertisementcanopy.util.ResponseInfoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,9 +92,31 @@ public class SiteService {
 						.lastModifiedBy(createSiteRequest.getRequestInfo().getUserInfo().getUuid())
 						.lastModifiedDate(new Date().getTime()).build();
 			}
+
 			createSiteRequest.getCreationData().setAuditDetails(auditDetails);
+			createSiteRequest.getCreationData().setId(siteRepository.getNextSequence());
 			createSiteRequest.getCreationData()
 					.setAccountId(createSiteRequest.getRequestInfo().getUserInfo().getUuid());
+			if (createSiteRequest.getCreationData().getSiteType().equals(AdvtConstants.ADVERTISEMENT_HOARDING)) {
+				createSiteRequest.getCreationData()
+						.setSiteID("AHS" + "/" + createSiteRequest.getCreationData().getUlbName() + "/"
+								+ siteRepository.getNextSiteSequence());
+				createSiteRequest.getCreationData()
+						.setSiteName("AHS" + "_" + createSiteRequest.getCreationData().getDistrictName() + "_"
+								+ createSiteRequest.getCreationData().getUlbName() + "_"
+								+ createSiteRequest.getCreationData().getWardNumber() + "_"
+								+ createSiteRequest.getCreationData().getSiteName());
+			}
+			if (createSiteRequest.getCreationData().getSiteType().equals(AdvtConstants.CANOPY)) {
+				createSiteRequest.getCreationData()
+						.setSiteID("ACS" + "/" + createSiteRequest.getCreationData().getUlbName() + "/"
+								+ siteRepository.getNextSiteSequence());
+				createSiteRequest.getCreationData()
+						.setSiteName("ACS" + "_" + createSiteRequest.getCreationData().getDistrictName() + "_"
+								+ createSiteRequest.getCreationData().getUlbName() + "_"
+								+ createSiteRequest.getCreationData().getWardNumber() + "_"
+								+ createSiteRequest.getCreationData().getSiteName());
+			}
 			createSiteRequest.getCreationData().setUuid(UUID.randomUUID().toString());
 
 		} catch (Exception e) {
@@ -103,7 +126,7 @@ public class SiteService {
 	}
 
 	private void createSiteObjects(SiteCreationRequest createSiteRequest) {
-//		siteRepository.create(createSiteRequest.getCreationData());
+		//siteRepository.create(createSiteRequest.getCreationData());
 		producer.push(AdvtConstants.SITE_CREATION, createSiteRequest);
 	}
 
@@ -185,31 +208,31 @@ public class SiteService {
 	public SiteCountResponse totalCount(SiteCountRequest siteCountRequest) {
 		SiteCountResponse countResponse = new SiteCountResponse();
 		String ulbName = null;
-		/*try {*/
-			if (null != siteCountRequest.getTenantId() && !siteCountRequest.getTenantId().isEmpty()) {
-				String[] ulb = siteCountRequest.getTenantId().split("\\.");
-				ulbName = ulb[1];
-				int siteCount = siteRepository.siteCount(ulbName);
-				int statusCountAvailable = siteRepository.siteAvailableCount(ulbName);
-				int statusCountBooked = siteRepository.siteBookedCount(ulbName);
-				countResponse = SiteCountResponse.builder()
-						.responseinfo(responseInfoFactory
-								.createResponseInfoFromRequestInfo(siteCountRequest.getRequestInfo(), false))
-						.siteCountData(SiteCountData.builder().siteCount(siteCount)
-								.siteBookedCount(statusCountBooked).siteAvailableCount(statusCountAvailable).build())
-						.build();
-				if (null != countResponse) {
-					countResponse.setResponseinfo(responseInfoFactory
-							.createResponseInfoFromRequestInfo(siteCountRequest.getRequestInfo(), true));
-				}
-			} else {
-				throw new RuntimeException("Please provide valid Tenant Id!!!");
+		/* try { */
+		if (null != siteCountRequest.getTenantId() && !siteCountRequest.getTenantId().isEmpty()) {
+			String[] ulb = siteCountRequest.getTenantId().split("\\.");
+			ulbName = ulb[1];
+			int siteCount = siteRepository.siteCount(ulbName);
+			int statusCountAvailable = siteRepository.siteAvailableCount(ulbName);
+			int statusCountBooked = siteRepository.siteBookedCount(ulbName);
+			countResponse = SiteCountResponse.builder()
+					.responseinfo(responseInfoFactory
+							.createResponseInfoFromRequestInfo(siteCountRequest.getRequestInfo(), false))
+					.siteCountData(SiteCountData.builder().siteCount(siteCount).siteBookedCount(statusCountBooked)
+							.siteAvailableCount(statusCountAvailable).build())
+					.build();
+			if (null != countResponse) {
+				countResponse.setResponseinfo(
+						responseInfoFactory.createResponseInfoFromRequestInfo(siteCountRequest.getRequestInfo(), true));
 			}
+		} else {
+			throw new RuntimeException("Please provide valid Tenant Id!!!");
+		}
 
-			/*
-			 * } catch (Exception e) { throw new RuntimeException(e.getMessage()); }
-			 */
+		/*
+		 * } catch (Exception e) { throw new RuntimeException(e.getMessage()); }
+		 */
 		return countResponse;
 	}
-	
+
 }
