@@ -26,18 +26,16 @@ public class Address {
 
 	@JsonProperty("houseNoAndStreetName")
 	
-	@Size(max=160)
+	
 	public String houseNoAndStreetName;
 
 	@NotNull
 	@JsonProperty("mohalla")
 	
-	@Size(max=30)
+	
 	public String mohalla;
 	
 	@JsonProperty("locality")
-	
-	@Size(max=100)
 	public String locality;
 
 	@NotNull
