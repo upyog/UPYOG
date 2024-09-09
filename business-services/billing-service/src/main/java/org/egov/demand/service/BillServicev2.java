@@ -711,13 +711,14 @@ public class BillServicev2 {
 		if(appProps.getFinYearStart()>assesmentDoneForYearStart && appProps.getFinYearEnd()>assesmentDoneForYearEnd) {
 			cuurentMonth= 3;
 		}
+		cuurentMonth= 3;
 		Integer nextYear =assesmentDoneForYearEnd ;
 		
 
 		Integer b= c.get(Calendar.YEAR);
 		financialYearFromDemand.append(b.toString().substring(2,4));
 
-		cuurentMonth= 3;
+
 
 		String assesmentUrl = new StringBuilder().append(appProps.getAssessmentServiceHost()).append(appProps.getAssessmentSearchEndpoint())
 				.append(URL_PARAMS_SEPARATER).append("propertyIds=").append(propertyId).append(URL_PARAM_SEPERATOR)
@@ -726,10 +727,13 @@ public class BillServicev2 {
 		String transactiontUrl = new StringBuilder().append(appProps.getPgSeriviceHost()).append(appProps.getPgSeriviceEndpoint())
 				.append(URL_PARAMS_SEPARATER).append("billId=").toString();
 		
-		StringBuilder collectionServiceUrl = new StringBuilder().append(appProps.getCollectionSeriviceHost()).append(appProps.getCollectionSeriviceSearch())
-				.append(URL_PARAMS_SEPARATER)
-				.append("tenantId=").append(tenantId)
-				.append(URL_PARAM_SEPERATOR).append("billIds=");
+		/*
+		 * StringBuilder collectionServiceUrl = new
+		 * StringBuilder().append(appProps.getCollectionSeriviceHost()).append(appProps.
+		 * getCollectionSeriviceSearch()) .append(URL_PARAMS_SEPARATER)
+		 * .append("tenantId=").append(tenantId)
+		 * .append(URL_PARAM_SEPERATOR).append("billIds=");
+		 */
 
 		TransactionRequest transactionRequest = null;
 		RequestInfoWrapper requestInfoWrapper=RequestInfoWrapper.builder().requestInfo(requestInfo).build();
@@ -762,6 +766,7 @@ public class BillServicev2 {
 		BillSearchCriteria billCriteria = new BillSearchCriteria();
 		billCriteria.setTenantId(demand.getTenantId());
 		billCriteria.setDemandId(demand.getId());
+		//billCriteria.setRetrieveOldest(true);
 		List<Transaction> transactionForQuaterBills = new ArrayList<>();
 		List<Transaction> transactionForHalfYearBills = new ArrayList<>();
 		Map<String,String> quaterCheckMap = null;
@@ -778,16 +783,21 @@ public class BillServicev2 {
 		
 		BigDecimal amountforquaterly=totalAmountForDemand.divide(new BigDecimal(4));
 		BigDecimal ammountforhalfyearly=totalAmountForDemand.divide(new BigDecimal(2));
-
+		billCriteria.setSearchAllForDemand(true);
 		List<BillV2> bills = billRepository.findBill(billCriteria);
 		BigDecimal failedBillAmount=new BigDecimal(0);
 		BigDecimal successBillAmount=new BigDecimal(0);
 		BigDecimal paidBillAmount=BigDecimal.ZERO;
 		BigDecimal advancedBillAmount=demand.getAdvanceAmount();//Will Be coming from Demand
 		if(null!=bills) {
+		//	bills = bills.stream().sorted((x,y)->y.getAuditDetails().getCreatedTime().compareTo(x.getAuditDetails().getCreatedTime())).collect(Collectors.toList());
 			quaterCheckMap = new HashMap<>();
 			billsFound =true;
 			for(BillV2 bl:bills) {
+				StringBuilder collectionServiceUrl = new StringBuilder().append(appProps.getCollectionSeriviceHost()).append(appProps.getCollectionSeriviceSearch())
+						.append(URL_PARAMS_SEPARATER)
+						.append("tenantId=").append(tenantId)
+						.append(URL_PARAM_SEPERATOR).append("billIds=");
 				transactionRequest = new TransactionRequest();
 				transactionRequest.setRequestInfo(requestInfo);
 				Transaction tr = new Transaction();
@@ -800,7 +810,6 @@ public class BillServicev2 {
 				Set<String>ids = new HashSet<>();
 				PaymentSearchCriteria payment = new PaymentSearchCriteria();
 				pr.setPayment(payment);
-				//ids.add("8c91c4f3-e29a-488f-a5c6-cdb73ccd6753");
 				ids.add(bl.getId());
 				pr.getPayment().setBillIds(ids);
 				
@@ -824,7 +833,8 @@ public class BillServicev2 {
 					 * successtransactionMapForHalfyearly.put(bl.getBillDetails().get(0).
 					 * getPaymentPeriod(), pay.getPayments().get(0).getTotalAmountPaid()); }
 					 */
-					successBillAmount = successBillAmount.add(pay.getPayments().get(0).getTotalAmountPaid());
+					
+					successBillAmount = pay.getPayments().get(0).getTotalAmountPaid();
 					advancedBillAmount =successBillAmount.subtract(bl.getBillDetails().get(0).getAmount());
 					paidBillAmount=paidBillAmount.add(bl.getBillDetails().get(0).getAmount());
 				}
@@ -1113,9 +1123,13 @@ public class BillServicev2 {
 				String expiryDateQ3="31-12-"+currentyear;
 				
 				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+			
+				//450
 				quaterlyammount=ammountForTransactionperiod(Q3,amountforquaterly);
+				//1050
 				quaterlyammount=quaterlyammount.add(pastDue);
-				
+				System.out.println(quaterlyammount.compareTo(paidBillAmount)==0);
+				System.out.println(quaterlyammount.compareTo(paidBillAmount)>0);
 				if(quaterlyammount.compareTo(paidBillAmount)==0)
 				{
 					quaterlyammount=BigDecimal.ZERO;
@@ -1123,7 +1137,7 @@ public class BillServicev2 {
 					{
 						if(i==1)
 						{
-							newTotalAmountForModeOfPayment=newTotalAmountForModeOfPayment.add(pastDue);
+							//newTotalAmountForModeOfPayment=newTotalAmountForModeOfPayment.add(pastDue);
 							mpdObj = new ModeOfPaymentDetails();
 							mpdObj = getModeOfPaymentDetails(newTotalAmountForModeOfPayment,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(),pastDue);
 							mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
@@ -1145,13 +1159,14 @@ public class BillServicev2 {
 						}	
 					}
 				}
-				else if(quaterlyammount.compareTo(paidBillAmount)<0)
+				
+				else if(quaterlyammount.compareTo(paidBillAmount)>0)
 				{
 					for(int i=1;i<=3;i++)
 					{
 						if(i==1)
 						{
-							newTotalAmountForModeOfPayment=newTotalAmountForModeOfPayment.add(pastDue);
+						//	newTotalAmountForModeOfPayment=newTotalAmountForModeOfPayment.add(pastDue);
 							mpdObj = new ModeOfPaymentDetails();
 							mpdObj = getModeOfPaymentDetails(newTotalAmountForModeOfPayment,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
 							mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
