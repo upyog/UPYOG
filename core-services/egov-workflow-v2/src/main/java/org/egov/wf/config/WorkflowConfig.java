@@ -95,5 +95,6 @@ public class WorkflowConfig {
 	@Value("${kafka.topics.notification.sms}")
 	private String smsNotifTopic;
 
-
+    @Value("${persister.create.escalation.demand.topic}")
+    private String demandGenerateTopic;
 }
