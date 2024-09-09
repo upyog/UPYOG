@@ -41,7 +41,7 @@ public class Address {
 	@NotNull
 	@JsonProperty("city")
 	
-	@Size(max=30)
+	
 	public String city;
 
 	@JsonProperty("latitude")
@@ -52,7 +52,7 @@ public class Address {
 
 	@JsonProperty("landmark")
 	
-	@Size(max=160)
+	
 	public String landmark;
 	
 	@JsonProperty("tenantId")
