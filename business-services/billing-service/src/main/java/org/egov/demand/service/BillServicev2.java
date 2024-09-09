@@ -62,6 +62,7 @@ import static org.egov.demand.util.Constants.YR;
 
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -120,6 +121,7 @@ import org.egov.demand.util.Util;
 import org.egov.demand.web.contract.BillRequestV2;
 import org.egov.demand.web.contract.BillResponseV2;
 import org.egov.demand.web.contract.BusinessServiceDetailCriteria;
+import org.egov.demand.web.contract.DemandRequest;
 import org.egov.demand.web.contract.Payment;
 import org.egov.demand.web.contract.PaymentResponse;
 import org.egov.demand.web.contract.PaymentSearchCriteria;
@@ -656,7 +658,8 @@ public class BillServicev2 {
 			if(taxHead.getCode().equalsIgnoreCase("PT_PASTDUE_CARRYFORWARD"))
 				pastDue=demandDetail.getTaxAmount();
 		}
-		totalAmountForDemand = BigDecimal.ZERO;
+		//totalAmountForDemand = BigDecimal.ZERO;
+		totalAmountForDemand = totalAmountForDemand.setScale(0, RoundingMode.CEILING);
 		if(totalAmountForDemand.compareTo(new BigDecimal(0))==0) {
 			
 			
@@ -697,7 +700,7 @@ public class BillServicev2 {
 		Calendar crd = Calendar.getInstance();
 		crd.setTime(currentDate);
 		Integer cuurentMonth = crd.get(Calendar.MONTH)+1;
-		
+		//cuurentMonth =5;
 		//currentYear reference the year for which assesment is done to changed to different variable
 		Integer currentyear =  c.get(Calendar.YEAR);
 		
@@ -714,7 +717,7 @@ public class BillServicev2 {
 		Integer b= c.get(Calendar.YEAR);
 		financialYearFromDemand.append(b.toString().substring(2,4));
 
-
+		cuurentMonth= 3;
 
 		String assesmentUrl = new StringBuilder().append(appProps.getAssessmentServiceHost()).append(appProps.getAssessmentSearchEndpoint())
 				.append(URL_PARAMS_SEPARATER).append("propertyIds=").append(propertyId).append(URL_PARAM_SEPERATOR)
@@ -780,7 +783,7 @@ public class BillServicev2 {
 		BigDecimal failedBillAmount=new BigDecimal(0);
 		BigDecimal successBillAmount=new BigDecimal(0);
 		BigDecimal paidBillAmount=BigDecimal.ZERO;
-		BigDecimal advancedBillAmount=new BigDecimal(1500);//Will Be coming from Demand
+		BigDecimal advancedBillAmount=demand.getAdvanceAmount();//Will Be coming from Demand
 		if(null!=bills) {
 			quaterCheckMap = new HashMap<>();
 			billsFound =true;
@@ -822,8 +825,8 @@ public class BillServicev2 {
 					 * getPaymentPeriod(), pay.getPayments().get(0).getTotalAmountPaid()); }
 					 */
 					successBillAmount = successBillAmount.add(pay.getPayments().get(0).getTotalAmountPaid());
-					advancedBillAmount =advancedBillAmount.add(successBillAmount.subtract(bl.getBillDetails().get(0).getAmount()));
-					paidBillAmount=bl.getBillDetails().get(0).getAmount();
+					advancedBillAmount =successBillAmount.subtract(bl.getBillDetails().get(0).getAmount());
+					paidBillAmount=paidBillAmount.add(bl.getBillDetails().get(0).getAmount());
 				}
 				/*
 				 * else {
@@ -920,9 +923,11 @@ public class BillServicev2 {
 				String expiryDateQ1 = "30-06-"+currentyear;
 				String startDateQ1 ="01-04-"+currentyear;
 				
-				
+				//150
 				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+				//750
 				quaterlyammount=ammountForTransactionperiod(Q1,amountforquaterly);
+				//750
 				quaterlyammount=quaterlyammount.add(pastDue);
 				
 				if(quaterlyammount.compareTo(paidBillAmount)==0)
@@ -966,15 +971,16 @@ public class BillServicev2 {
 				totalAmountForDemand = newTotalAmountForModeOfPayment.add(quaterlyammount);
 				
 				if(advancedBillAmount.compareTo(totalAmountForDemand)>0) {
-					totalAmountForDemand = new BigDecimal(0);
 					advancedBillAmount = advancedBillAmount.subtract(totalAmountForDemand);
+					totalAmountForDemand = new BigDecimal(0);
+					
 				}
 				
-				if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
+				else if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
 					totalAmountForDemand = totalAmountForDemand.subtract(advancedBillAmount);
 					advancedBillAmount = new BigDecimal(0);
 				}
-				if(totalAmountForDemand.compareTo(advancedBillAmount)==0) {
+				else if(totalAmountForDemand.compareTo(advancedBillAmount)==0) {
 					totalAmountForDemand = new BigDecimal(0);
 					advancedBillAmount = new BigDecimal(0);
 				}
@@ -991,8 +997,8 @@ public class BillServicev2 {
 				String startDateQ2 ="01-07-"+currentyear;
 				
 				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
-				quaterlyammount=ammountForTransactionperiod(Q2,amountforquaterly);
-				quaterlyammount=quaterlyammount.add(pastDue);
+				quaterlyammount=ammountForTransactionperiod(Q2,amountforquaterly); 
+				quaterlyammount=quaterlyammount.add(pastDue); 
 				
 				if(quaterlyammount.compareTo(paidBillAmount)==0)
 				{
@@ -1082,11 +1088,11 @@ public class BillServicev2 {
 					advancedBillAmount = advancedBillAmount.subtract(totalAmountForDemand);
 				}
 				
-				if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
+				else if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
 					totalAmountForDemand = totalAmountForDemand.subtract(advancedBillAmount);
 					advancedBillAmount = new BigDecimal(0);
 				}
-				if(totalAmountForDemand.compareTo(advancedBillAmount)==0) {
+				else if(totalAmountForDemand.compareTo(advancedBillAmount)==0) {
 					totalAmountForDemand = new BigDecimal(0);
 					advancedBillAmount = new BigDecimal(0);
 				}
@@ -1316,8 +1322,9 @@ public class BillServicev2 {
 				mpdList.add(mpdObj);
 				
 				if(advancedBillAmount.compareTo(totalAmountForDemand)>0) {
-					totalAmountForDemand = new BigDecimal(0);
 					advancedBillAmount = advancedBillAmount.subtract(totalAmountForDemand);
+					totalAmountForDemand = new BigDecimal(0);
+					
 				}
 				
 				if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
@@ -1346,6 +1353,7 @@ public class BillServicev2 {
 			if(advancedBillAmount.compareTo(totalAmountForDemand)>0) {
 				totalAmountForDemand = new BigDecimal(0);
 				advancedBillAmount = advancedBillAmount.subtract(totalAmountForDemand);
+			
 			}
 			
 			if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
@@ -1360,7 +1368,16 @@ public class BillServicev2 {
 		default:
 			break;
 		}
-
+		DemandRequest dmr = new DemandRequest();
+		
+		demand.setAdvanceAmount(advancedBillAmount);
+		dmr.setRequestInfo(requestInfo);
+		
+		List<Demand> demandTobeupdateForAdvance = new ArrayList<>();
+		demandTobeupdateForAdvance.add(demand);
+		dmr.setDemands(demandTobeupdateForAdvance);
+		demandService.updateAsync(dmr,null);
+		
 		//Long billExpiryDate = getExpiryDateForDemand(demand);
 		Long billExpiryDate = getDateInMilisec(expiryDate,false);
 				
@@ -1370,7 +1387,7 @@ public class BillServicev2 {
 	//	JsonNode additionalDetails = mapper.convertValue(demand.getAdditionalDetails(),JsonNode.class);
 		additionalDetails.put("paymentModeDetails", mpdList);
        
-		
+		//totalAmountForDemand = totalAmountForDemand.add(new BigDecimal(200));//advanced testing
 		return BillDetailV2.builder()
 				.billAccountDetails(new ArrayList<>(taxCodeAccountdetailMap.values()))
 				.amount(totalAmountForDemand)
@@ -1588,15 +1605,16 @@ public class BillServicev2 {
 		 List<BillV2> filteredBills = new ArrayList<>();
 			
 			  for(BillV2 b: billRequest.getBills()) {	  
-			  if(b.getBillDetails().get(0).getAmount().compareTo(new BigDecimal(0))==0) {
+			  //if(b.getBillDetails().get(0).getAmount().compareTo(new BigDecimal(0))==0) {
 				  	filteredBills.add(b); 
-			  } 
+			 // } 
 			 }
 			  String transactiontUrl = new StringBuilder().append(appProps.getPgSeriviceHost()).append(appProps.getPgCreateEndpoint())
 						.append(URL_PARAMS_SEPARATER).append("tenantId=").append(billRequest.getRequestInfo().getUserInfo().getTenantId()).toString();
 			  
 			  StringBuilder url = new StringBuilder("http://mnptapp.manipurpropertytax.org/digit-ui/citizen/payment/success/PT/");
-					  
+			  
+			  //To Be Updated to Topic based request 
 			TransactionRequest transactionRequest = null;
 			TransactionCreateResponse resp = null;
 			List<TaxAndPayment> taxAndPayment =null;
@@ -1632,7 +1650,6 @@ public class BillServicev2 {
 				tr.setTxnStatus(TxnStatusEnum.SUCCESS);
 				transactionRequest.setTransaction(tr);
 				resp = restTemplate.postForObject(transactiontUrl, transactionRequest, TransactionCreateResponse.class);
-				System.out.println(resp);
 			}
 			 
 		 
