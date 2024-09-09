@@ -28,7 +28,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 0, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
 
@@ -60,7 +60,7 @@ class WorkflowQueryBuilderTest {
     void testGetProcessInstanceIds2() {
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 0, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
 
@@ -98,7 +98,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
 
@@ -137,7 +137,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 0, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
 
@@ -177,7 +177,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, null, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
 
@@ -210,7 +210,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -304,7 +304,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -401,7 +401,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -459,7 +459,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -554,7 +554,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -648,7 +648,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -741,7 +741,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -834,7 +834,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -928,7 +928,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -1022,7 +1022,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
 
@@ -1118,7 +1118,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
 
@@ -1214,7 +1214,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, null);
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, null ,  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
 
@@ -1310,7 +1310,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
 
@@ -1933,7 +1933,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
 
@@ -1972,7 +1972,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 0, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
 
@@ -2011,7 +2011,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, null, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
 
@@ -2041,7 +2041,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -2132,7 +2132,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -2227,7 +2227,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -2319,7 +2319,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -2410,7 +2410,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -2501,7 +2501,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -2592,7 +2592,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -2683,7 +2683,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -2772,7 +2772,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -2828,7 +2828,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", false, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", false, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -2920,7 +2920,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", null, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", null, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -2976,7 +2976,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(0);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         ProcessInstanceSearchCriteria processInstanceSearchCriteria = mock(ProcessInstanceSearchCriteria.class);
@@ -5796,7 +5796,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(1);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         RequestInfo requestInfo = mock(RequestInfo.class);
@@ -5887,7 +5887,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 0, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(1);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         RequestInfo requestInfo = mock(RequestInfo.class);
@@ -5979,7 +5979,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, null, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(1);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         RequestInfo requestInfo = mock(RequestInfo.class);
@@ -6035,7 +6035,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(1);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         RequestInfo requestInfo = mock(RequestInfo.class);
@@ -6126,7 +6126,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(1);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         RequestInfo requestInfo = mock(RequestInfo.class);
@@ -6216,7 +6216,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(1);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         RequestInfo requestInfo = mock(RequestInfo.class);
@@ -6306,7 +6306,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(1);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         RequestInfo requestInfo = mock(RequestInfo.class);
@@ -6396,7 +6396,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(1);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         RequestInfo requestInfo = mock(RequestInfo.class);
@@ -6954,7 +6954,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(1);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         RequestInfo requestInfo = mock(RequestInfo.class);
@@ -7046,7 +7046,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 0, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(1);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         RequestInfo requestInfo = mock(RequestInfo.class);
@@ -7138,7 +7138,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, null, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(1);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         RequestInfo requestInfo = mock(RequestInfo.class);
@@ -7195,7 +7195,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(1);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         RequestInfo requestInfo = mock(RequestInfo.class);
@@ -7287,7 +7287,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(1);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         RequestInfo requestInfo = mock(RequestInfo.class);
@@ -7378,7 +7378,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(1);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         RequestInfo requestInfo = mock(RequestInfo.class);
@@ -7468,7 +7468,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(1);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         RequestInfo requestInfo = mock(RequestInfo.class);
@@ -7560,7 +7560,7 @@ class WorkflowQueryBuilderTest {
 
         WorkflowConfig workflowConfig = new WorkflowConfig("UTC", 1, 1, 3, "Save Transition Topic",
                 "Save Business Service Topic", "2020-03-01", "localhost", "https://config.us-east-2.amazonaws.com", "localhost",
-                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic");
+                "https://config.us-east-2.amazonaws.com", true, "MD", 3, "Send SMS Topic",  "Generate Demand Topic");
         workflowConfig.setDefaultLimit(1);
         WorkflowQueryBuilder workflowQueryBuilder = new WorkflowQueryBuilder(workflowConfig);
         RequestInfo requestInfo = mock(RequestInfo.class);
