@@ -18,13 +18,11 @@ RUN cd web/ \
     && yarn install \
     && yarn build:webpack 
 
-#FROM nginx:mainline-alpine
+FROM nginx:mainline-alpine
 #FROM ghcr.io/egovernments/nginx:mainline-alpine
-FROM odhub/nginx-unprivileged
-ENV WORK_DIR=/var/web/tqm-ui
+ENV WORK_DIR=/var/web/digit-ui
 
-#RUN mkdir -p ${WORK_DIR}
-WORKDIR /var/web/tqm-ui
+RUN mkdir -p ${WORK_DIR}
 
 COPY --from=build /app/web/build ${WORK_DIR}/
 COPY --from=build /app/web/docker/nginx.conf /etc/nginx/conf.d/default.conf
