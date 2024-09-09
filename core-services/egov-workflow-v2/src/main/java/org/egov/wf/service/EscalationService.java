@@ -5,6 +5,8 @@ import org.egov.wf.config.WorkflowConfig;
 import org.egov.wf.producer.Producer;
 import org.egov.wf.repository.EscalationRepository;
 import org.egov.wf.util.EscalationUtil;
+import org.egov.wf.web.models.BPAEscalationInstance;
+import org.egov.wf.web.models.BPAEscalationRequest;
 import org.egov.wf.web.models.Escalation;
 import org.egov.wf.web.models.EscalationSearchCriteria;
 import org.egov.wf.web.models.ProcessInstance;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -125,16 +128,35 @@ public class EscalationService {
 
             log.info("Records to process"+numberOfBusinessIds);
             
+            if(escalation.getBusinessService().equalsIgnoreCase("BPA"))                
+            {
+                for(int i = 0; i < numberOfBusinessIds; i = i + 1)
+                	{
+            	BPAEscalationInstance processInstance=new BPAEscalationInstance();
+            	processInstance.setBusinessId(businessIds.get(i));
+            	processInstance.setTenantId(tenantId);
+            	processInstance.setAuthToken(requestInfo.getAuthToken());
+            	processInstance.setUserInfo(requestInfo.getUserInfo());
+            	List<BPAEscalationInstance> processInstances=new ArrayList<BPAEscalationInstance>();
+            	processInstances.add(processInstance);
+            	BPAEscalationRequest processInstanceRequest=new BPAEscalationRequest();
+            	processInstanceRequest.setBPAEscalationInstance(processInstances);
+            	producer.push(config.getDemandGenerateTopic(), processInstanceRequest);
+                	}
+            }
+            else
+            {
             for(int i = 0; i < numberOfBusinessIds; i = i + batchSize){
 
                 // Processing the businessIds in batches
                 Integer start = i;
                 Integer end = ((i + batchSize) < numberOfBusinessIds ? (i + batchSize) : numberOfBusinessIds) ;
-
-                List<ProcessInstance> processInstances = escalationUtil.getProcessInstances(tenantId, businessIds.subList(start,end), escalation);
-                processInstances = workflowService.transition(new ProcessInstanceRequest(requestInfo, processInstances));
-                producer.push(escalation.getTopic(),new ProcessInstanceRequest(requestInfo, processInstances));
-
+                
+             
+                	List<ProcessInstance> processInstances = escalationUtil.getProcessInstances(tenantId, businessIds.subList(start,end), escalation);
+                    processInstances = workflowService.transition(new ProcessInstanceRequest(requestInfo, processInstances));
+                    producer.push(escalation.getTopic(),new ProcessInstanceRequest(requestInfo, processInstances));                   
+                }
             }
 
         }
