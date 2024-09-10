@@ -183,7 +183,7 @@ public class EnrichmentService {
 	 * @param businessService
 	 */
 	public void enrichBPAUpdateRequest(BPARequest bpaRequest, BusinessService businessService) {
-
+		log.debug("Entred BPA UPDATE Request ");
 		RequestInfo requestInfo = bpaRequest.getRequestInfo();
 		AuditDetails auditDetails = bpaUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), false);
 		auditDetails.setCreatedBy(bpaRequest.getBPA().getAuditDetails().getCreatedBy());

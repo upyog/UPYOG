@@ -201,6 +201,8 @@ public class BPAService {
 	 * @return List of bpa for the given criteria
 	 */
 	public List<BPA> search(BPASearchCriteria criteria, RequestInfo requestInfo) {
+		log.info("Entering Search function");
+
 		List<BPA> bpas = new LinkedList<>();
 		bpaValidator.validateSearch(requestInfo, criteria);
 		LandSearchCriteria landcriteria = new LandSearchCriteria();
@@ -214,6 +216,8 @@ public class BPAService {
 			for (Role role : requestInfo.getUserInfo().getRoles()) {
 				roles.add(role.getCode());
 			}
+			log.info("Entering Search function1");
+
 			if ((criteria.tenantIdOnly() || criteria.isEmpty()) && roles.contains(BPAConstants.CITIZEN)) {
 				log.debug("loading data of created and by me");
 				bpas =  this.getBPACreatedForByMe(criteria, requestInfo, landcriteria, edcrNos);
@@ -376,6 +380,7 @@ public class BPAService {
 	 */
 	@SuppressWarnings("unchecked")
 	public BPA update(BPARequest bpaRequest) {
+		log.info("Entering Update function");
 		RequestInfo requestInfo = bpaRequest.getRequestInfo();
 		String tenantId = bpaRequest.getBPA().getTenantId().split("\\.")[0];
 		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
@@ -407,6 +412,7 @@ public class BPAService {
 		}
 		
 		this.processOcUpdate(applicationType,  edcrResponse.get(BPAConstants.PERMIT_NO), bpaRequest, requestInfo, additionalDetails);
+		log.debug("OcUpdate done ");
 
 		bpaRequest.getBPA().setAuditDetails(searchResult.get(0).getAuditDetails());
 		
@@ -426,6 +432,7 @@ public class BPAService {
                 if ((businessSrvc.equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE)
                         || businessSrvc.equalsIgnoreCase(BPAConstants.BPA_BUSINESSSERVICE))
                         && state.equalsIgnoreCase(BPAConstants.PENDING_APPROVAL_STATE)) {
+            		log.debug("Entering BPA calculator");
                     calculationService.addCalculation(bpaRequest, BPAConstants.SANCTION_FEE_KEY);
                 }
                 
@@ -457,7 +464,7 @@ public class BPAService {
                  * enrichmentService.skipPayment(bpaRequest); enrichmentService.postStatusEnrichment(bpaRequest); }
                  */
 
-		
+		log.info("hitting consumer for update");
 		repository.update(bpaRequest, workflowService.isStateUpdatable(bpa.getStatus(), businessService));
 		return bpaRequest.getBPA();
 
