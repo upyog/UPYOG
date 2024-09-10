@@ -597,9 +597,9 @@ public class CalculatorUtils {
 							paidBillAmount = paidBillAmount.add(paidAmount);
 					}
 					else if(bill.getBillDetails().get(0).getPaymentPeriod().charAt(0)=='Y') {
-						if(paidAmount.compareTo(ammountforhalfyearly)<0) 
-							zeroAmount=zeroAmount.add(ammountforhalfyearly);
-						else if(paidAmount.compareTo(ammountforhalfyearly)>=0)
+						if(paidAmount.compareTo(totalAmountForDemand)<0) 
+							zeroAmount=zeroAmount.add(totalAmountForDemand);
+						else if(paidAmount.compareTo(totalAmountForDemand)>=0)
 							paidBillAmount = paidBillAmount.add(paidAmount);
 					}
 					
