@@ -210,73 +210,69 @@ serviceMaps:
    isTransaction: true
    queryMaps:
 
-    - query: UPDATE eg_site_application SET site_description = ?, gps_location = ?, site_address = ?, site_cost = ?, site_photograph = ?, structure = ?, size_length = ?, size_width = ?, led_selection = ?, security_amount = ?, powered = ?, others = ?, district_name = ?, ulb_name = ?, ulb_type = ?, ward_number = ?, pincode = ?, additional_detail = ?::JSONB, last_modified_by = ?, last_modified_date = ?, site_type = ?, account_id = ?, status = ?, is_active = ?, booking_start_date = ?, booking_end_date = ?, application_start_date = ?, application_end_date = ? WHERE uuid = ? AND id = ?;
+    - query: UPDATE eg_site_application SET site_description = ?, gps_location = ?, site_address = ?, site_cost = ?, site_photograph = ?, structure = ?, size_length = ?, size_width = ?, led_selection = ?, security_amount = ?, powered = ?, others = ?, district_name = ?, ulb_name = ?, ulb_type = ?, ward_number = ?, pincode = ?, additional_detail = ?::JSONB, last_modified_by = ?, last_modified_date = ?, site_type = ?, status = ?, is_active = ?, booking_start_date = ?, booking_end_date = ?, application_start_date = ?, application_end_date = ? WHERE uuid = ? AND id = ?;
 
-      basePath: SiteCreationData
+      basePath: siteUpdationData
       jsonMaps:
 
-       - jsonPath: $.siteCreationData.siteDescription
+       - jsonPath: $.siteUpdationData.siteDescription
 
-       - jsonPath: $.siteCreationData.gpsLocation
+       - jsonPath: $.siteUpdationData.gpsLocation
 
-       - jsonPath: $.siteCreationData.siteAddress
+       - jsonPath: $.siteUpdationData.siteAddress
 
-       - jsonPath: $.siteCreationData.siteCost
+       - jsonPath: $.siteUpdationData.siteCost
 
-       - jsonPath: $.siteCreationData.sitePhotograph
+       - jsonPath: $.siteUpdationData.sitePhotograph
 
-       - jsonPath: $.siteCreationData.structure
+       - jsonPath: $.siteUpdationData.structueType
 
-       - jsonPath: $.siteCreationData.sizeLength
+       - jsonPath: $.siteUpdationData.sizeLength
 
-       - jsonPath: $.siteCreationData.sizeWidth
+       - jsonPath: $.siteUpdationData.sizeWidth
 
-       - jsonPath: $.siteCreationData.ledSelection
+       - jsonPath: $.siteUpdationData.ledSelection
 
-       - jsonPath: $.siteCreationData.securityAmount
+       - jsonPath: $.siteUpdationData.securityAmount
 
-       - jsonPath: $.siteCreationData.powerSelection
+       - jsonPath: $.siteUpdationData.powerSelection
 
-       - jsonPath: $.siteCreationData.otherDetails
+       - jsonPath: $.siteUpdationData.otherDetails
 
-       - jsonPath: $.siteCreationData.districtName
+       - jsonPath: $.siteUpdationData.districtName
 
-       - jsonPath: $.siteCreationData.ulbName
+       - jsonPath: $.siteUpdationData.ulbName
 
-       - jsonPath: $.siteCreationData.ulbType
+       - jsonPath: $.siteUpdationData.ulbType
 
-       - jsonPath: $.siteCreationData.wardNumber
+       - jsonPath: $.siteUpdationData.wardNumber
 
-       - jsonPath: $.siteCreationData.pinCode
+       - jsonPath: $.siteUpdationData.pinCode
 
-       - jsonPath: $.siteCreationData.additionalDetail
+       - jsonPath: $.siteUpdationData.additionalDetail
          type: JSON
          dbType: JSONB
 
-       - jsonPath: $.siteCreationData.auditDetails.lastModifiedBy
+       - jsonPath: $.siteUpdationData.auditDetails.lastModifiedBy
 
-       - jsonPath: $.siteCreationData.auditDetails.lastModifiedDate
+       - jsonPath: $.siteUpdationData.auditDetails.lastModifiedDate
        
-       - jsonPath: $.siteCreationData.siteType
+       - jsonPath: $.siteUpdationData.siteType
        
-       - jsonPath: $.siteCreationData.accountId
+       - jsonPath: $.siteUpdationData.status
        
-       - jsonPath: $.siteCreationData.status
+       - jsonPath: $.siteUpdationData.active
        
-       - jsonPath: $.siteCreationData.active
+       - jsonPath: $.siteUpdationData.bookingPeriodStartDate
        
-       - jsonPath: $.siteCreationData.tenantId
+       - jsonPath: $.siteUpdationData.bookingPeriodEndDate
        
-       - jsonPath: $.siteCreationData.bookingPeriodStartDate
+       - jsonPath: $.siteUpdationData.applicationStartDate
        
-       - jsonPath: $.siteCreationData.bookingPeriodEndDate
+       - jsonPath: $.siteUpdationData.applicationEndDate
        
-       - jsonPath: $.siteCreationData.applicationStartDate
-       
-       - jsonPath: $.siteCreationData.applicationEndDate
-       
-       - jsonPath: $.siteCreationData.uuid
+       - jsonPath: $.siteUpdationData.uuid
 
-       - jsonPath: $.siteCreationData.id
+       - jsonPath: $.siteUpdationData.id
 
        
