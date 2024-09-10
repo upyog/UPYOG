@@ -67,6 +67,11 @@ public class SiteApplicationRowMapper implements ResultSetExtractor<List<SiteCre
 						    .accountId(rs.getString("account_id"))
 						    .status(rs.getString("status"))
 						    .isActive(rs.getBoolean("is_active"))
+						    .tenantId(rs.getString("tenant_id"))
+						    .applicationStartDate(rs.getLong("application_start_date"))
+						    .applicationEndDate(rs.getLong("application_end_date"))
+						    .bookingPeriodStartDate(rs.getLong("booking_start_date"))
+						    .bookingPeriodEndDate(rs.getLong("booking_end_date"))
 						    .build();
 					
 					

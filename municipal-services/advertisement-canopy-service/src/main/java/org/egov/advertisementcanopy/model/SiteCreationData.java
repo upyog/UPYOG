@@ -49,4 +49,8 @@ public class SiteCreationData {
 	private boolean isActive;
 	private String status;
 	private String tenantId;
+	private Long applicationStartDate;
+	private Long applicationEndDate;
+	private Long bookingPeriodStartDate;
+	private Long bookingPeriodEndDate;
 }

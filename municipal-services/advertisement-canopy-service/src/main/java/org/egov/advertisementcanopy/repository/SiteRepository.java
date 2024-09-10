@@ -46,26 +46,17 @@ public class SiteRepository {
 	public static final String SELECT_NEXT_SEQUENCE = "select nextval('seq_id_eg_site_application')";
 	public static final String SELECT_NEXT_SITE_SEQUENCE = "select nextval('seq_id_eg_site_type')";
 
-	private Long getNextSequence() {
+	public Long getNextSequence() {
 		return jdbcTemplate.queryForObject(SELECT_NEXT_SEQUENCE, Long.class);
 	}
 
-	private Long getNextSiteSequence() {
+	public Long getNextSiteSequence() {
 		return jdbcTemplate.queryForObject(SELECT_NEXT_SITE_SEQUENCE, Long.class);
 	}
 
 	public void create(SiteCreationData siteCreation) {
 		siteCreation.setId(getNextSequence());
-		if (siteCreation.getSiteType().equals(AdvtConstants.ADVERTISEMENT_HOARDING)) {
-			siteCreation.setSiteID("AHS" + "/" + siteCreation.getUlbName() + "/" + getNextSiteSequence());
-			siteCreation.setSiteName("AHS" + "_" + siteCreation.getDistrictName() + "_" + siteCreation.getUlbName()
-					+ "_" + siteCreation.getWardNumber() + "_" + siteCreation.getSiteName());
-		}
-		if (siteCreation.getSiteType().equals(AdvtConstants.CANOPY)) {
-			siteCreation.setSiteID("ACS" + "/" + siteCreation.getUlbName() + "/" + getNextSiteSequence());
-			siteCreation.setSiteName("ACS" + "_" + siteCreation.getDistrictName() + "_" + siteCreation.getUlbName()
-					+ "_" + siteCreation.getWardNumber() + "_" + siteCreation.getSiteName());
-		}
+		
 
 		jdbcTemplate.update(queryBuilder.CREATE_QUERY, siteCreation.getId(), siteCreation.getUuid(),
 				siteCreation.getSiteID(), siteCreation.getSiteName(), siteCreation.getSiteDescription(),
@@ -81,7 +72,8 @@ public class SiteRepository {
 				siteCreation.getAuditDetails().getLastModifiedBy(),
 				siteCreation.getAuditDetails().getLastModifiedDate(), siteCreation.getSiteType(),
 				siteCreation.getAccountId(), siteCreation.getStatus(), siteCreation.isActive(),
-				siteCreation.getTenantId());
+				siteCreation.getTenantId(),siteCreation.getBookingPeriodStartDate(),siteCreation.getBookingPeriodEndDate(),
+				siteCreation.getApplicationStartDate(),siteCreation.getApplicationEndDate());
 	}
 
 	public List<SiteCreationData> searchSiteIds(String siteName, String districtName, String ulbName,

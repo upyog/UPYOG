@@ -22,7 +22,8 @@ public class SiteBooking {
 	private String emailId;
 	private String advertisementType;
 	private Long fromDate;
-	private Integer periodInDays;
+	private Long toDate;
+	private Long periodInDays;
 	private String hoardingType;
 	private String structure;
 	private Boolean isOnlyWorkflowCall = false;

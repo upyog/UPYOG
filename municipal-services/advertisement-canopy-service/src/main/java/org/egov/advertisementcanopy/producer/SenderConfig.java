@@ -66,7 +66,7 @@ public class SenderConfig {
     public void createTopicsIfNotExist() throws ExecutionException, InterruptedException {
         AdminClient adminClient = kafkaAdminClient();
 
-        String[] topics = {"save-site-booking", "update-site-booking"};
+        String[] topics = {"save-site-booking", "update-site-booking", "create-site", "update-site"};
 
         for (String topic : topics) {
             Map<String, TopicListing> topicListingMap = adminClient.listTopics().namesToListings().get();
