@@ -1,5 +1,6 @@
 package org.upyog.chb.service.impl;
 
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +18,15 @@ import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.enums.SlotStatusEnum;
 import org.upyog.chb.repository.CommunityHallBookingRepository;
+import org.upyog.chb.service.CHBEncryptionService;
 import org.upyog.chb.service.CommunityHallBookingService;
 import org.upyog.chb.service.DemandService;
 import org.upyog.chb.service.EnrichmentService;
 import org.upyog.chb.util.CommunityHallBookingUtil;
+import org.upyog.chb.util.EncryptionDecryptionUtil;
 import org.upyog.chb.util.MdmsUtil;
 import org.upyog.chb.validator.CommunityHallBookingValidator;
+import org.upyog.chb.web.models.ApplicantDetail;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
@@ -54,6 +58,10 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	@Autowired
 	private MdmsUtil mdmsUtil;
 	
+	@Autowired
+	private CHBEncryptionService encryptionService;
+	
+	
 	@Override
 	public CommunityHallBookingDetail createBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest) {
 		log.info("Create community hall booking for user : "
@@ -70,7 +78,10 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		// 1. Validate request master data to confirm it has only valid data in records
 		hallBookingValidator.validateCreate(communityHallsBookingRequest, mdmsData);
 		// 2. Add fields that has custom logic like booking no, ids using UUID
-		enrichmentService.enrichCreateBookingRequest(communityHallsBookingRequest, communityHallsBookingRequest);
+		enrichmentService.enrichCreateBookingRequest(communityHallsBookingRequest);
+		
+		//ENcrypt PII data of applicant
+		encryptionService.encryptObject(communityHallsBookingRequest);
 
 		/**
 		 * Workflow will come into picture once hall location changes or booking is
@@ -89,7 +100,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 		return communityHallsBookingRequest.getHallsBookingApplication();
 	}
-
+	
 	@Override
 	public CommunityHallBookingDetail createInitBooking(
 			@Valid CommunityHallBookingRequest communityHallsBookingRequest) {
@@ -116,6 +127,8 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		} else {
 			bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
 		}
+		
+		bookingDetails = encryptionService.decryptObject(bookingDetails, info);
 
 		return bookingDetails;
 	}

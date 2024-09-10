@@ -42,7 +42,8 @@ public class NotificationConsumer {
 		log.info("CHB Appplication Received with booking no : "
 				+ bookingRequest.getHallsBookingApplication().getBookingNo() + " and for status : " +  bookingStatus);
 		
-		if (BookingStatusEnum.PENDING_FOR_PAYMENT.toString().equals(bookingStatus)) {
+		//Send notification to user except PENDING_FOR_PAYMENT status
+		if (!BookingStatusEnum.PENDING_FOR_PAYMENT.toString().equals(bookingStatus)) {
 			CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
 			if (bookingDetail.getWorkflow() == null || bookingDetail.getWorkflow().getAction() == null) {
 				bookingStatus = bookingDetail.getBookingStatus();
