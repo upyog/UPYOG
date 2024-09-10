@@ -400,7 +400,7 @@ const BPANewBuildingdetails = ({ t, config, onSelect, formData }) => {
                   ValidationRequired={false}
                   {...(validation = {
                     //isRequired: true,
-                    pattern: "^[a-zA-Z0-9]*$",
+                    pattern: "^[a-zA-Z0-9/]*$",
                     type: "text",
                     title: t("TL_NAME_ERROR_MESSAGE"),
                 })}
@@ -695,7 +695,6 @@ const BPANewBuildingdetails = ({ t, config, onSelect, formData }) => {
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG")}}
               render={(props) => (
                 <Dropdown
-
                   className="form-field"
                   selected={buildingStatus}
                   select={setbuildingStatus}
