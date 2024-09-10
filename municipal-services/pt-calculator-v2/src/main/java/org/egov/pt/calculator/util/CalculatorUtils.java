@@ -554,7 +554,7 @@ public class CalculatorUtils {
 			 */ 
 			
 			if(detail.getTaxHeadMasterCode().equalsIgnoreCase("PT_PASTDUE_CARRYFORWARD"))
-				pastDue=detail.getTaxAmount();
+				pastDue=pastDue.add(detail.getTaxAmount());
 		}
 		
 		totalAmountForDemand = totalAmountForDemand.setScale(0, RoundingMode.CEILING);

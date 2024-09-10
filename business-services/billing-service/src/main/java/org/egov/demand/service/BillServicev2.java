@@ -916,7 +916,7 @@ public class BillServicev2 {
 					}
 				}
 
-				else if(quaterly!=null || halfyearly!=null){
+				else {
 
 					if(bl.getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q1") || !quaterly.contains("Q1"))
 					{
