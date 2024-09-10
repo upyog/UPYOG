@@ -48,6 +48,10 @@ public class PTRConstants {
 
 	public static final String CITIZEN_SENDBACK_ACTION = "SENDBACKTOCITIZEN";
 
+	public static final String WORKFLOW_BUSINESS_SERVICE = "pet-services";
+
+	public static final String WORKFLOW_MODULE_SERVICE = "PTR";
+
 	public static final String WORKFLOW_ACTION_INITIATE = "INITIATE";
 
 	public static final String WORKFLOW_ACTION_VERIFY = "VERIFY";

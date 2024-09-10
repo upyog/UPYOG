@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -168,20 +167,72 @@ public class PetRegistrationService {
 	public PetRegistrationApplication updatePtrApplication(PetRegistrationRequest petRegistrationRequest) {
 		PetRegistrationApplication existingApplication = validator
 				.validateApplicationExistence(petRegistrationRequest.getPetRegistrationApplications().get(0));
-		existingApplication.setWorkflow(petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow());
-		existingApplication.setIsOnlyWorkflowCall(petRegistrationRequest.getPetRegistrationApplications().get(0).getIsOnlyWorkflowCall());
 		
-		if(BooleanUtils.isTrue(petRegistrationRequest.getPetRegistrationApplications().get(0).getIsOnlyWorkflowCall())
-				&& null != petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow()) {
-			String status = getStatusOrAction(petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction(), false);
-			petRegistrationRequest.setPetRegistrationApplications(Collections.singletonList(existingApplication));
-			petRegistrationRequest.getPetRegistrationApplications().get(0).setStatus(status);
-		}
+		// enrich
+		enrichmentService.enrichPetApplicationUponUpdate(petRegistrationRequest, existingApplication);
+
+        // create and upload pdf
+//        createAndUploadPDF(petRegistrationRequest);
+        
+		// generate demand and bill
+		generateDemandAndBill(petRegistrationRequest);
 		
-//		petRegistrationRequest.setPetRegistrationApplications(Collections.singletonList(existingApplication));
+		// wf call
+		wfService.updateWorkflowStatus(petRegistrationRequest);
+		
+		// update
+		producer.push(config.getUpdatePtrTopic(), petRegistrationRequest);
 
-		enrichmentService.enrichPetApplicationUponUpdate(petRegistrationRequest);
+		return petRegistrationRequest.getPetRegistrationApplications().get(0);
+	}
 
+//	private void createAndUploadPDF(PetRegistrationRequest petRegistrationRequest) {
+//		
+//		if (!CollectionUtils.isEmpty(petRegistrationRequest.getPetRegistrationApplications())) {
+//			petRegistrationRequest.getPetRegistrationApplications().stream().forEach(license -> {
+//
+//				Thread pdfGenerationThread = new Thread(() -> {
+//
+//					// for NEW TL
+//					if ((PTRConstants.businessService_NewTL
+//							&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(),
+//									TLConstants.APPLICATION_TYPE_NEW)
+//							&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE)) || // for RENEWAL TL
+//							(StringUtils.equalsIgnoreCase(license.getBusinessService(),
+//									TLConstants.businessService_NewTL)
+//									&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(),
+//											TLConstants.APPLICATION_TYPE_RENEWAL)
+//									&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE))) {
+//
+//						// validate trade license
+//						validateTradeLicenseCertificateGeneration(license);
+//
+//						// create pdf
+//						Resource resource = createNoSavePDF(license, tradeLicenseRequest.getRequestInfo());
+//
+//						//upload pdf
+//						DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, license,
+//								tradeLicenseRequest.getRequestInfo());
+//						try {
+//							DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest,
+//									tradeLicenseRequest.getRequestInfo());
+//						} catch (IOException e) {
+//							throw new CustomException("UPLOAD_ATTACHMENT_FAILED",
+//									"Upload Attachment failed." + e.getMessage());
+//						}
+//					}
+//
+//				});
+//
+//				pdfGenerationThread.start();
+//
+//			});
+//		}
+//		
+//		
+//	}
+
+	private void generateDemandAndBill(PetRegistrationRequest petRegistrationRequest) {
 		if (petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction()
 				.equals(PTRConstants.WORKFLOW_ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT)) {
 			
@@ -200,36 +251,8 @@ public class PetRegistrationService {
             BillResponse billResponse = billingService.generateBill(petRegistrationRequest.getRequestInfo(),billCriteria);
             
 		}
-		wfService.updateWorkflowStatus(petRegistrationRequest);
-		producer.push(config.getUpdatePtrTopic(), petRegistrationRequest);
-
-		return petRegistrationRequest.getPetRegistrationApplications().get(0);
 	}
 	
-
-	public String getStatusOrAction(String action, Boolean fetchValue) {
-		
-		Map<String, String> map = new HashMap<>();
-		
-		map.put(PTRConstants.WORKFLOW_ACTION_INITIATE, PTRConstants.APPLICATION_STATUS_INITIATED);
-        map.put(PTRConstants.WORKFLOW_ACTION_FORWARD_TO_VERIFIER, PTRConstants.APPLICATION_STATUS_PENDINGFORVERIFICATION);
-        map.put(PTRConstants.WORKFLOW_ACTION_VERIFY, PTRConstants.APPLICATION_STATUS_PENDINGFORAPPROVAL);
-        map.put(PTRConstants.WORKFLOW_ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, PTRConstants.APPLICATION_STATUS_PENDINGFORPAYMENT);
-        map.put(PTRConstants.WORKFLOW_ACTION_RETURN_TO_INITIATOR, PTRConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION);
-        map.put(PTRConstants.WORKFLOW_ACTION_FORWARD_TO_APPROVER, PTRConstants.APPLICATION_STATUS_PENDINGFORAPPROVAL);
-        map.put(PTRConstants.WORKFLOW_ACTION_APPROVE, PTRConstants.APPLICATION_STATUS_APPROVED);
-		
-		if(!fetchValue){
-			// return key
-			for (Map.Entry<String, String> entry : map.entrySet()) {
-		        if (entry.getValue().equals(action)) {
-		            return entry.getKey();
-		        }
-		    }
-		}
-		// return value
-		return map.get(action);
-	}
 
 	public Object enrichResponseDetail(List<PetRegistrationApplication> applications) {
 		

@@ -18,6 +18,7 @@ import org.egov.ptr.models.workflow.BusinessServiceResponse;
 import org.egov.ptr.models.workflow.ProcessInstanceResponse;
 import org.egov.ptr.models.workflow.State;
 import org.egov.ptr.repository.ServiceRequestRepository;
+import org.egov.ptr.util.PTRConstants;
 import org.egov.ptr.web.contracts.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,9 +59,9 @@ public class WorkflowService {
 			ProcessInstance processInstance = new ProcessInstance();
 			processInstance.setBusinessId(application.getApplicationNumber());
 			processInstance.setAction(workflow.getAction());
-			processInstance.setModuleName("PTR");
+			processInstance.setModuleName(PTRConstants.WORKFLOW_BUSINESS_SERVICE);
 			processInstance.setTenantId(application.getTenantId());
-			processInstance.setBusinessService("pet-services");
+			processInstance.setBusinessService(PTRConstants.WORKFLOW_MODULE_SERVICE);
 			processInstance.setDocuments(workflow.getDocuments());
 			processInstance.setComment(workflow.getComments());
 
