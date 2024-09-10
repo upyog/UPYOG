@@ -557,7 +557,7 @@ public class CalculatorUtils {
 				pastDue=pastDue.add(detail.getTaxAmount());
 		}
 		
-		totalAmountForDemand = totalAmountForDemand.setScale(0, RoundingMode.CEILING);
+		totalAmountForDemand = totalAmountForDemand.setScale(0, RoundingMode.HALF_UP);
 		totalAfterPastDueDeduct = totalAmountForDemand.subtract(pastDue);
 		carryForward=demand.getAdvanceAmount();
 		if(carryForward.compareTo(BigDecimal.ZERO)>0)
@@ -569,11 +569,9 @@ public class CalculatorUtils {
 		}
 
 		BigDecimal amountforquaterly=totalAfterPastDueDeduct.divide(new BigDecimal(4));
-		amountforquaterly=amountforquaterly.setScale(0, RoundingMode.CEILING);
+		amountforquaterly=amountforquaterly.setScale(0, RoundingMode.HALF_UP);
 		BigDecimal ammountforhalfyearly=totalAfterPastDueDeduct.divide(new BigDecimal(2));
-		ammountforhalfyearly=ammountforhalfyearly.setScale(0, RoundingMode.CEILING);
-		BigDecimal paidBillAmount=BigDecimal.ZERO;
-		BigDecimal zeroAmount=BigDecimal.ZERO;
+		ammountforhalfyearly=ammountforhalfyearly.setScale(0, RoundingMode.HALF_UP);
 
 		BillSearchCriteria criteria=new BillSearchCriteria();
 		criteria.setTenantId(demand.getTenantId());
@@ -637,7 +635,7 @@ public class CalculatorUtils {
 				pastDue=detail.getTaxAmount();
 		}
 		
-		totalAmountForDemand = totalAmountForDemand.setScale(0, RoundingMode.CEILING);
+		totalAmountForDemand = totalAmountForDemand.setScale(0, RoundingMode.HALF_UP);
 		totalAfterPastDueDeduct = totalAmountForDemand.subtract(pastDue);
 		carryForward=demand.getAdvanceAmount();
 		if(carryForward.compareTo(BigDecimal.ZERO)>0) {
@@ -652,11 +650,9 @@ public class CalculatorUtils {
 		}
 
 		BigDecimal amountforquaterly=totalAfterPastDueDeduct.divide(new BigDecimal(4));
-		amountforquaterly=amountforquaterly.setScale(0, RoundingMode.CEILING);
+		amountforquaterly=amountforquaterly.setScale(0, RoundingMode.HALF_UP);
 		BigDecimal ammountforhalfyearly=totalAfterPastDueDeduct.divide(new BigDecimal(2));
-		ammountforhalfyearly=ammountforhalfyearly.setScale(0, RoundingMode.CEILING);
-		BigDecimal paidBillAmount=BigDecimal.ZERO;
-		BigDecimal zeroAmount=BigDecimal.ZERO;
+		ammountforhalfyearly=ammountforhalfyearly.setScale(0, RoundingMode.HALF_UP);
 
 		BillSearchCriteria criteria=new BillSearchCriteria();
 		criteria.setTenantId(demand.getTenantId());

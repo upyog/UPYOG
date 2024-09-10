@@ -77,11 +77,13 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -1110,6 +1112,7 @@ public class EstimationService {
 		Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(requestInfo,criteria);
 		BigDecimal collectedAmtForOldDemand = demandService.getCarryForwardAndCancelOldDemand(ptTax, criteria, requestInfo,oldDemand, false);
 		BigDecimal remainAdvanceAmount=BigDecimal.ZERO;
+		BigDecimal pastdue=BigDecimal.ZERO;
 		
 		if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
 		{
@@ -1136,6 +1139,7 @@ public class EstimationService {
 		else if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) < 0)
 		{
 			collectedAmtForOldDemand=collectedAmtForOldDemand.negate();
+			pastdue=collectedAmtForOldDemand;
 			estimates.add(TaxHeadEstimate.builder()
 					.taxHeadCode(PT_PASTDUE_CARRYFORWARD)
 					.estimateAmount(collectedAmtForOldDemand).build());
@@ -1155,7 +1159,7 @@ public class EstimationService {
 		}
 
 
-		modeOfPaymentDetails=modeOfPaymentDetails(totalAmount,collectedAmtForOldDemand,criteria.getModeOfPayment());
+		modeOfPaymentDetails=modeOfPaymentDetails(totalAmount,pastdue,criteria.getModeOfPayment());
 
 		return Calculation.builder()
 				.totalAmount(totalAmount)
@@ -1179,9 +1183,18 @@ public class EstimationService {
 	private List<ModeOfPaymentDetails> modeOfPaymentDetails(BigDecimal totalAmount, BigDecimal collectedAmtForOldDemand,
 			String modeOfPayment) {
 		// TODO Auto-generated method stub
+		totalAmount=totalAmount.subtract(collectedAmtForOldDemand);
 		List<ModeOfPaymentDetails> modeOfPaymentDetails=new ArrayList<ModeOfPaymentDetails>();
 		ModeOfPaymentDetails paymentDetails=null;
 
+		Set<String> q1 = new HashSet<>(Arrays.asList("4","5","6"));
+		Set<String> q2 = new HashSet<>(Arrays.asList("7","8","9"));
+		Set<String> q3 = new HashSet<>(Arrays.asList("10","11","12"));
+		Set<String> q4 = new HashSet<>(Arrays.asList("1","2","3"));
+
+		Set<String> h1 = new HashSet<>(Arrays.asList("4","5","6","7","8","9"));
+		Set<String> h2 = new HashSet<>(Arrays.asList("10","11","12","1","2","3"));
+		
 		SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
 		SimpleDateFormat year=new SimpleDateFormat("yyyy");
 		SimpleDateFormat month=new SimpleDateFormat("M");
@@ -1211,16 +1224,16 @@ public class EstimationService {
 			String q4endDate="31/03/"+nextyear;
 
 			int quater=0;
-			if(q1startDate.compareTo(formateDate)<=0 && q1endDate.compareTo(formateDate)>=0)
+			if(q1.contains(datemonth))
 				quater=1;
-			else if(q2startDate.compareTo(formateDate)<=0 && q2endDate.compareTo(formateDate)>=0)
+			else if(q2.contains(datemonth))
 				quater=2;
-			else if(q3startDate.compareTo(formateDate)<=0 && q3endDate.compareTo(formateDate)>=0)
+			else if(q3.contains(datemonth))
 				quater=3;
-			else if(q4startDate.compareTo(formateDate)<=0 && q4endDate.compareTo(formateDate)>=0)
+			else if(q4.contains(datemonth))
 				quater=4;
 
-			BigDecimal taxAmount=totalAmount.divide(new BigDecimal(4)).setScale(2, 2);
+			BigDecimal taxAmount=totalAmount.divide(new BigDecimal(4)).setScale(0, RoundingMode.HALF_UP);
 			for(int i=1;i<=quater;i++)
 			{
 				paymentDetails=new ModeOfPaymentDetails();
@@ -1277,12 +1290,12 @@ public class EstimationService {
 			String h2endDate="31/03/"+nextyear;
 
 			int halfyear=0;
-			if(h1startDate.compareTo(formateDate)<=0 && h1endDate.compareTo(formateDate)>=0)
+			if(h1.contains(datemonth))
 				halfyear=1;
-			else if(h2startDate.compareTo(formateDate)<=0 && h2endDate.compareTo(formateDate)>=0)
+			else if(h2.contains(datemonth))
 				halfyear=2;
 
-			BigDecimal htaxAmount=totalAmount.divide(new BigDecimal(2)).setScale(2, 2);
+			BigDecimal htaxAmount=totalAmount.divide(new BigDecimal(2)).setScale(0, RoundingMode.HALF_UP);
 			for(int i=1;i<=halfyear;i++)
 			{
 				paymentDetails=new ModeOfPaymentDetails();

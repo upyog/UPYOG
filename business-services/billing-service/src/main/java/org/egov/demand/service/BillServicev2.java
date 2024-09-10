@@ -659,7 +659,7 @@ public class BillServicev2 {
 				pastDue=pastDue.add(demandDetail.getTaxAmount());
 		}
 		//totalAmountForDemand = BigDecimal.ZERO;
-		totalAmountForDemand = totalAmountForDemand.setScale(0, RoundingMode.CEILING);
+		totalAmountForDemand = totalAmountForDemand.setScale(0, RoundingMode.HALF_UP);
 		if(totalAmountForDemand.compareTo(new BigDecimal(0))==0) {
 
 
@@ -788,9 +788,9 @@ public class BillServicev2 {
 
 
 		BigDecimal amountforquaterly=totalAmountForDemand.divide(new BigDecimal(4));
-		amountforquaterly=amountforquaterly.setScale(0, RoundingMode.CEILING);
+		amountforquaterly=amountforquaterly.setScale(0, RoundingMode.HALF_UP);
 		BigDecimal ammountforhalfyearly=totalAmountForDemand.divide(new BigDecimal(2));
-		ammountforhalfyearly=ammountforhalfyearly.setScale(0, RoundingMode.CEILING);
+		ammountforhalfyearly=ammountforhalfyearly.setScale(0, RoundingMode.HALF_UP);
 		billCriteria.setSearchAllForDemand(true);
 		List<BillV2> bills = billRepository.findBill(billCriteria);
 		BigDecimal failedBillAmount=new BigDecimal(0);
