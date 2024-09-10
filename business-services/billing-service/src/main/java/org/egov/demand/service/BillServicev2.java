@@ -918,46 +918,6 @@ public class BillServicev2 {
 
 				else {
 
-					if(bl.getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q1") || !quaterly.contains("Q1"))
-					{
-						amountforquaterly=amountforquaterly.add(pastDue);
-						String expiryDateQ1 = "30-06-"+currentyear;
-						String startDateQ1 ="01-04-"+currentyear;
-						mpdObj = new ModeOfPaymentDetails();
-						mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
-						mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
-						mpdObj.setPastAmount(pastDue);
-						mpdList.add(mpdObj);
-					}
-					else if(bl.getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q2") || !quaterly.contains("Q2"))
-					{
-						String expiryDateQ2 = "30-09-"+currentyear;
-						String startDateQ2 ="01-07-"+currentyear;
-						mpdObj = new ModeOfPaymentDetails();
-						mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ2, expiryDateQ2,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),BigDecimal.ZERO);
-						mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2);
-						mpdList.add(mpdObj);
-					}
-					else if(bl.getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q3") || !quaterly.contains("Q3"))
-					{
-						String startDateQ3 = "01-10-"+currentyear;
-						String expiryDateQ3="31-12-"+currentyear;
-						mpdObj = new ModeOfPaymentDetails();
-						mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ3, expiryDateQ3,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),BigDecimal.ZERO);
-						mpdObj.setPeriod(TxnPeriodEnum.QUARTER_3);
-						mpdList.add(mpdObj);
-					}
-					else if(bl.getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("H1") || !halfyearly.contains("H1"))
-					{
-						ammountforhalfyearly=ammountforhalfyearly.add(pastDue);
-						String startDateh1="01-04-"+currentyear;
-						String expiryDateh1="30-09-"+currentyear;
-						mpdObj = new ModeOfPaymentDetails();
-						mpdObj = getModeOfPaymentDetails(ammountforhalfyearly,startDateh1, expiryDateh1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),BigDecimal.ZERO);
-						mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_1);
-						mpdList.add(mpdObj);
-					}
-
 					/* if(assessmentV2.getModeOfPayment().toString().equalsIgnoreCase(QUARTERLY)) {
 					 * failedtransactionMapForQuater.put(bl.getBillDetails().get(0).getPaymentPeriod
 					 * (), bl.getBillDetails().get(0).getAmount()); }
@@ -1038,9 +998,21 @@ public class BillServicev2 {
 			}
 			else if(q2.contains(cuurentMonth))
 			{
+				if(!quaterly.contains("Q1"))
+				{
+					amountforquaterly=amountforquaterly.add(pastDue);
+					String expiryDateQ1 = "30-06-"+currentyear;
+					String startDateQ1 ="01-04-"+currentyear;
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
+					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
+					mpdObj.setPastAmount(pastDue);
+					mpdList.add(mpdObj);
+				}
+				
 				paymentPeriod=Q2;
 				expiryDate="30-09-"+currentyear;
-
+				
 				//150
 				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
 				//750
@@ -1097,8 +1069,30 @@ public class BillServicev2 {
 			}
 			else if(q3.contains(cuurentMonth))
 			{
+				if(!quaterly.contains("Q1"))
+				{
+					amountforquaterly=amountforquaterly.add(pastDue);
+					String expiryDateQ1 = "30-06-"+currentyear;
+					String startDateQ1 ="01-04-"+currentyear;
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
+					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
+					mpdObj.setPastAmount(pastDue);
+					mpdList.add(mpdObj);
+				}
+				if(!quaterly.contains("Q2"))
+				{
+					String expiryDateQ2 = "30-09-"+currentyear;
+					String startDateQ2 ="01-07-"+currentyear;
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ2, expiryDateQ2,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),BigDecimal.ZERO);
+					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2);
+					mpdList.add(mpdObj);
+				}
+				
 				paymentPeriod=Q3;
 				expiryDate="31-12-"+currentyear;
+				
 
 				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
 				quaterlyammount=ammountForTransactionperiod(Q2,amountforquaterly); 
@@ -1169,9 +1163,37 @@ public class BillServicev2 {
 			}
 			else if(q4.contains(cuurentMonth))
 			{
+				if(!quaterly.contains("Q1"))
+				{
+					amountforquaterly=amountforquaterly.add(pastDue);
+					String expiryDateQ1 = "30-06-"+currentyear;
+					String startDateQ1 ="01-04-"+currentyear;
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
+					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
+					mpdObj.setPastAmount(pastDue);
+					mpdList.add(mpdObj);
+				}
+				if(!quaterly.contains("Q2"))
+				{
+					String expiryDateQ2 = "30-09-"+currentyear;
+					String startDateQ2 ="01-07-"+currentyear;
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ2, expiryDateQ2,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),BigDecimal.ZERO);
+					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2);
+					mpdList.add(mpdObj);
+				}
+				if( !quaterly.contains("Q3"))
+				{
+					String startDateQ3 = "01-10-"+currentyear;
+					String expiryDateQ3="31-12-"+currentyear;
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ3, expiryDateQ3,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),BigDecimal.ZERO);
+					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_3);
+					mpdList.add(mpdObj);
+				}
 				paymentPeriod=Q4;
 				expiryDate="31-03-"+nextYear;
-
 				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
 
 				//450
@@ -1289,6 +1311,16 @@ public class BillServicev2 {
 			}
 			else if(h2.contains(cuurentMonth))
 			{
+				if( !halfyearly.contains("H1"))
+				{
+					ammountforhalfyearly=ammountforhalfyearly.add(pastDue);
+					String startDateh1="01-04-"+currentyear;
+					String expiryDateh1="30-09-"+currentyear;
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(ammountforhalfyearly,startDateh1, expiryDateh1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),BigDecimal.ZERO);
+					mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_1);
+					mpdList.add(mpdObj);
+				}
 				paymentPeriod=H2;
 				String startDateh2="01-10-"+currentyear;
 				expiryDate="31-03-"+nextYear;
