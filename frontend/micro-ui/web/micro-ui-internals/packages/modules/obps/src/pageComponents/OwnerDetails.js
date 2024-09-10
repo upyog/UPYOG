@@ -417,6 +417,12 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 let parsedArchitectName = nameOfAchitect ? JSON.parse(nameOfAchitect) : "ARCHITECT";
                 payload.additionalDetails.typeOfArchitect = parsedArchitectName;
                 payload.additionalDetails.stakeholderName=JSON.parse(sessionStorage.getItem("BPA_STAKEHOLDER_NAME"))
+                payload.additionalDetails.ownersWithAddress= conversionOwners.map(owner=> {
+                    let landmark=formData?.address?.landmark.length!==0 ? formData?.address?.doorNo : "NA";
+                    let street=formData?.address?.street.length!==0 ? formData?.address?.street : "NA";
+                    let pincode=formData?.address?.pincode!==undefined && formData?.address?.pincode.length!==0? formData?.address?.pincode :"NA";        
+                    return `${owner.name} (${street}, ${landmark}, ${formData?.address?.city?.city?.name}, ${formData?.address?.locality.name}, ${pincode})`
+                }).join("; ");
                 payload.additionalDetails.stakeholderRegistrationNumber=JSON.parse(sessionStorage.getItem("BPA_STAKEHOLDER_REGISTRATION_NUMBER"));
                 payload.additionalDetails.stakeholderAddress=JSON.parse(sessionStorage.getItem("BPA_STAKEHOLDER_ADDRESS"))
                 let isSelfCertificationRequired=sessionStorage.getItem("isSelfCertificationRequired");
