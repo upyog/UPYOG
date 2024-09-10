@@ -29,7 +29,11 @@ CREATE TABLE eg_site_application (
     account_id VARCHAR(200),
     status VARCHAR(100),
     is_active boolean,
-    tenant_id VARCHAR(50)
+    tenant_id VARCHAR(50),
+    booking_start_date int8,
+    booking_end_date int8,
+    application_start_date int8,
+    application_end_date int8
 );
 
 ALTER TABLE eg_site_application ADD CONSTRAINT pk_id_eg_site_application PRIMARY KEY (id);

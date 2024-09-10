@@ -41,7 +41,7 @@ public class SiteBookingRowMapper implements RowMapper<SiteBooking> {
                 .emailId(rs.getString("email_id"))
                 .advertisementType(rs.getString("advertisement_type"))
                 .fromDate(rs.getLong("from_date"))
-                .periodInDays(rs.getInt("period_in_days"))
+                .periodInDays(rs.getLong("period_in_days"))
                 .hoardingType(rs.getString("hoarding_type"))
                 .structure(rs.getString("structure"))
                 .isActive(rs.getBoolean("is_active"))

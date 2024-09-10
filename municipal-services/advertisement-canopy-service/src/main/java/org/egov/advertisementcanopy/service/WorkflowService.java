@@ -85,6 +85,9 @@ public class WorkflowService {
 		StringBuilder url = new StringBuilder(configs.getWorkflowHost().concat(configs.getWorkflowEndpointTransition()));
 		Object optional = restRepo.fetchResult(url, workflowReq);
 		response = mapper.convertValue(optional, ProcessInstanceResponse.class);
+		if(null == response) {
+			throw new CustomException("WORKFLOW_SERVICE_CALL_FAILED","Failed to run Workflow Service.");
+		}
 		return response.getProcessInstances().get(0).getState();
 	}
 

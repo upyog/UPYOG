@@ -89,22 +89,22 @@ public class SiteBookingRepository {
     }
 
 
-    public int save(SiteBooking egSiteBooking) {
-        String sql = "INSERT INTO eg_site_booking (uuid, application_no, site_uuid, applicant_name, applicant_father_name, gender, mobile_number, email_id, advertisement_type, from_date, period_in_days, hoarding_type, structure, is_active, additional_detail :: JSONB, created_by, created_date, last_modified_by, last_modified_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        return jdbcTemplate.update(sql, egSiteBooking.getUuid(), egSiteBooking.getApplicationNo(), egSiteBooking.getSiteUuid(),
-                egSiteBooking.getApplicantName(), egSiteBooking.getApplicantFatherName(), egSiteBooking.getGender(),
-                egSiteBooking.getMobileNumber(), egSiteBooking.getEmailId(), egSiteBooking.getAdvertisementType(),
-                egSiteBooking.getFromDate(), egSiteBooking.getPeriodInDays(), egSiteBooking.getHoardingType(), egSiteBooking.getStructure()
-                , egSiteBooking.getIsActive(), egSiteBooking.getAdditionalDetail(), egSiteBooking.getAuditDetails().getCreatedBy(), egSiteBooking.getAuditDetails().getCreatedDate(), egSiteBooking.getAuditDetails().getLastModifiedBy(), egSiteBooking.getAuditDetails().getLastModifiedDate());
-    }
-
-    public int update(SiteBooking egSiteBooking) {
-        String sql = "UPDATE eg_site_booking SET application_no = ?, site_uuid = ?, applicant_name = ?, applicant_father_name = ?, gender = ?, mobile_number = ?, email_id = ?, advertisement_type = ?, from_date = ?, period_in_days = ?, hoarding_type = ?, structure = ? WHERE uuid = ?";
-        return jdbcTemplate.update(sql, egSiteBooking.getApplicationNo(), egSiteBooking.getSiteUuid(),
-                egSiteBooking.getApplicantName(), egSiteBooking.getApplicantFatherName(), egSiteBooking.getGender(),
-                egSiteBooking.getMobileNumber(), egSiteBooking.getEmailId(), egSiteBooking.getAdvertisementType(),
-                egSiteBooking.getFromDate(), egSiteBooking.getPeriodInDays(), egSiteBooking.getHoardingType(), egSiteBooking.getStructure(),
-                egSiteBooking.getUuid());
-    }
+//    public int save(SiteBooking egSiteBooking) {
+//        String sql = "INSERT INTO eg_site_booking (uuid, application_no, site_uuid, applicant_name, applicant_father_name, gender, mobile_number, email_id, advertisement_type, from_date, period_in_days, hoarding_type, structure, is_active, additional_detail :: JSONB, created_by, created_date, last_modified_by, last_modified_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+//        return jdbcTemplate.update(sql, egSiteBooking.getUuid(), egSiteBooking.getApplicationNo(), egSiteBooking.getSiteUuid(),
+//                egSiteBooking.getApplicantName(), egSiteBooking.getApplicantFatherName(), egSiteBooking.getGender(),
+//                egSiteBooking.getMobileNumber(), egSiteBooking.getEmailId(), egSiteBooking.getAdvertisementType(),
+//                egSiteBooking.getFromDate(), egSiteBooking.getPeriodInDays(), egSiteBooking.getHoardingType(), egSiteBooking.getStructure()
+//                , egSiteBooking.getIsActive(), egSiteBooking.getAdditionalDetail(), egSiteBooking.getAuditDetails().getCreatedBy(), egSiteBooking.getAuditDetails().getCreatedDate(), egSiteBooking.getAuditDetails().getLastModifiedBy(), egSiteBooking.getAuditDetails().getLastModifiedDate());
+//    }
+//
+//    public int update(SiteBooking egSiteBooking) {
+//        String sql = "UPDATE eg_site_booking SET application_no = ?, site_uuid = ?, applicant_name = ?, applicant_father_name = ?, gender = ?, mobile_number = ?, email_id = ?, advertisement_type = ?, from_date = ?, period_in_days = ?, hoarding_type = ?, structure = ? WHERE uuid = ?";
+//        return jdbcTemplate.update(sql, egSiteBooking.getApplicationNo(), egSiteBooking.getSiteUuid(),
+//                egSiteBooking.getApplicantName(), egSiteBooking.getApplicantFatherName(), egSiteBooking.getGender(),
+//                egSiteBooking.getMobileNumber(), egSiteBooking.getEmailId(), egSiteBooking.getAdvertisementType(),
+//                egSiteBooking.getFromDate(), egSiteBooking.getPeriodInDays(), egSiteBooking.getHoardingType(), egSiteBooking.getStructure(),
+//                egSiteBooking.getUuid());
+//    }
 
 }

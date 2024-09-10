@@ -41,6 +41,10 @@ public class AdvtConstants {
 
 	public static final String ADVERTISEMENT_HOARDING = "Advertising Hoarding";
 	public static final String CANOPY = "Canopy";
+	
+	public static final String SITE_CREATION = "create-site";
+	
+	public static final String SITE_UPDATION = "update-site";
 
 	public static final String SITE_BOOKING_CREATE_KAFKA_TOPIC = "create-site-booking";
 
