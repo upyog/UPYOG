@@ -11,7 +11,10 @@ import org.egov.bpa.web.model.CalulationCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class CalculationService {
 
 	private ServiceRequestRepository serviceRequestRepository;
@@ -41,6 +44,7 @@ public class CalculationService {
 		List<CalulationCriteria> criterias = Arrays.asList(calculationCriteria);
 		calulcationRequest.setCalulationCriteria(criterias);
 		StringBuilder url = new StringBuilder();
+		log.debug("Control moving to BPA calculator ");
 		url.append(this.config.getCalculatorHost());
 		url.append(this.config.getCalulatorEndPoint());
 
