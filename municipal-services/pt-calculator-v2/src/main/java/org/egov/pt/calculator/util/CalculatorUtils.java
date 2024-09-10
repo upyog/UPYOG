@@ -568,6 +568,7 @@ public class CalculatorUtils {
 		criteria.setTenantId(demand.getTenantId());
 		criteria.setConsumerCode(consumercode);
 		criteria.setDemandId(demand.getId());
+		criteria.setSearchAllForDemand(true);
 
 		BillResponse res = mapper.convertValue(
 				repository.fetchResult(getBillSearchUrl(criteria), new RequestInfoWrapper(requestInfo)),
