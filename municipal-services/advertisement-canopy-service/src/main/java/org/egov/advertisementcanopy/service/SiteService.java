@@ -161,7 +161,7 @@ public class SiteService {
 	}
 
 	private void updateSiteData(SiteUpdateRequest updateSiteRequest) {
-		siteRepository.updateSiteData(updateSiteRequest);
+		//siteRepository.updateSiteData(updateSiteRequest);
 		producer.push(AdvtConstants.SITE_UPDATION, updateSiteRequest);
 	}
 
