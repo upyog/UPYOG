@@ -242,7 +242,7 @@ const CHBApplicationDetails = () => {
         communityHallCode: `${t(chb_details?.communityHallCode)}`,
         hallCode:slot.hallCode + " - " + slot.capacity,
         bookingDate:slot.bookingDate + " (" + slot.bookingFromTime + " - " + slot.bookingToTime + ")",
-        bookingStatus:slot.status
+        bookingStatus:`${t(slot.status)}`
       }
     )) || [];
   return (

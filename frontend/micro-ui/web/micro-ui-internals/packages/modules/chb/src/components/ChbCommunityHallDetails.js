@@ -44,7 +44,7 @@ const ChbCommunityHallDetails = ({ hallId }) => {
   }, [hallId, communityHalls]);
 
   const handleClosePopup = () => {
-    setShowPopup(false);
+    setShowPopup(!showPopup);
   };
 
   const renderList = (text) => {
@@ -116,7 +116,7 @@ const ChbCommunityHallDetails = ({ hallId }) => {
           hideSubmit={true}  // Ensure submit is hidden
           style={{}}
           popupModuleMianStyles={{ padding: "10px" }}
-          headerBarMainStyle={{ backgroundColor: "#f5f5f5" }}
+          headerBarMainStyle={{ position: "sticky",top: 0,backgroundColor: "#f5f5f5" }}
           isOBPSFlow={false}
           popupModuleActionBarStyles={{ display: 'none' }}  // Hide Action Bar
           isOpen={showPopup}  // Pass isOpen prop
