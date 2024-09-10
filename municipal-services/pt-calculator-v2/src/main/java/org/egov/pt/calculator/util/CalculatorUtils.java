@@ -648,7 +648,7 @@ public class CalculatorUtils {
 			}
 
 		}
-		carryForward=totalAmountForDemand.subtract(paidBillAmount);
+		carryForward=paidBillAmount.subtract(totalAmountForDemand);
 		System.out.println(res);
 		return carryForward;
 	}
