@@ -3,6 +3,7 @@ package org.egov.bpa.consumer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.egov.bpa.web.model.Workflow;
 
 import org.egov.bpa.service.BPAService;
 import org.egov.bpa.service.notification.BPANotificationService;
@@ -53,8 +54,8 @@ public class BPAConsumer {
 		BPAEscalationRequest processInstanceRequest = new BPAEscalationRequest();
 		List<BPA> bpas=new ArrayList<BPA>();
 		RequestInfo requestInfo=new RequestInfo();
-
-		try {
+       		Workflow workflow = new Workflow();
+			try {
 			log.info("Consuming record: " + record);
 			processInstanceRequest = mapper.convertValue(record, BPAEscalationRequest.class);
 			requestInfo.setAuthToken(processInstanceRequest.getBPAEscalationInstances().get(0).getAuthToken());
@@ -75,15 +76,17 @@ public class BPAConsumer {
 
         if (!bpas.isEmpty()) {
         	log.info("inside update");
-        	bpas.get(0).getWorkflow().setAssignes(null);
-        	bpas.get(0).getWorkflow().setAction(BPAConstants.ACTION_APPROVE);
-        	bpas.get(0).getWorkflow().setVarificationDocuments(null);
-			log.info("Proceeding for Update call");
+        	workflow.setAssignes(null);
+            	workflow.setAction(BPAConstants.ACTION_APPROVE); 
+            	workflow.setVarificationDocuments(null);
+        	BPARequest bpaRequest=new BPARequest().BPA(bpas.get(0)).requestInfo(requestInfo);
+        	bpas.get(0).setWorkflow(workflow);
+		log.info("Proceeding for Update call");
 
         	//bpasearch (response)  -> Approve bpa request
         	BPARequest bpaRequest=new BPARequest().BPA(bpas.get(0)).requestInfo(requestInfo);
-			log.info("Proceeding for Update call2");
-            bpaService.update(bpaRequest);
+		log.info("Proceeding for Update call2");
+            	bpaService.update(bpaRequest);
 	}
 }
 }
