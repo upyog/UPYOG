@@ -71,9 +71,9 @@ public class PayService {
 					payments,taxPeriod);
 		}
 
-		estimates.put(CalculatorConstants.PT_TIME_REBATE, rebate.setScale(2, 2).negate());
-		estimates.put(CalculatorConstants.PT_TIME_PENALTY, penalty.setScale(2, 2));
-		estimates.put(CalculatorConstants.PT_TIME_INTEREST, interest.setScale(2, 2));
+		estimates.put(CalculatorConstants.PT_TIME_REBATE, rebate.setScale(2, 0).negate());
+		estimates.put(CalculatorConstants.PT_TIME_PENALTY, penalty.setScale(2, 0));
+		estimates.put(CalculatorConstants.PT_TIME_INTEREST, interest.setScale(2, 0));
 		return estimates;
 	}
 	public Map<String, BigDecimal> applyPenaltyRebateAndInterest(BigDecimal taxAmt,BigDecimal collectedPtTax,
@@ -131,31 +131,31 @@ public class PayService {
 					estimates.put(CalculatorConstants.PT_TIME_REBATE, rebateamount.abs());
 				}
 				else if (taxAmt.compareTo(oldCollectedTaxAmount) >0 && rebate.compareTo(BigDecimal.ZERO) > 0 ) {
-					estimates.put(CalculatorConstants.PT_TIME_REBATE, rebate.setScale(2, 2).negate());
+					estimates.put(CalculatorConstants.PT_TIME_REBATE, rebate.setScale(2, 0).negate());
 				}
 				else 
 					estimates.put(CalculatorConstants.PT_TIME_REBATE, rebateamount);
 				if (taxAmt.compareTo(oldCollectedTaxAmount) == 0) {
 					estimates.put(CalculatorConstants.PT_TIME_PENALTY, penaltyAmount);
 				} else {
-					estimates.put(CalculatorConstants.PT_TIME_PENALTY, penaltyCalculated.setScale(2, 2));
+					estimates.put(CalculatorConstants.PT_TIME_PENALTY, penaltyCalculated.setScale(2, 0));
 				}
 				if (taxAmt.compareTo(oldCollectedTaxAmount) == 0) {
 					estimates.put(CalculatorConstants.PT_TIME_INTEREST, intersetAmount);
 		}
 
 				else {
-					estimates.put(CalculatorConstants.PT_TIME_INTEREST, interestCalculated.setScale(2, 2));
+					estimates.put(CalculatorConstants.PT_TIME_INTEREST, interestCalculated.setScale(2, 0));
 				}
 			} else {
-				estimates.put(CalculatorConstants.PT_TIME_REBATE, rebate.setScale(2, 2).negate());
-				estimates.put(CalculatorConstants.PT_TIME_PENALTY, penaltyCalculated.setScale(2, 2));
-				estimates.put(CalculatorConstants.PT_TIME_INTEREST, interestCalculated.setScale(2, 2));
+				estimates.put(CalculatorConstants.PT_TIME_REBATE, rebate.setScale(2, 0).negate());
+				estimates.put(CalculatorConstants.PT_TIME_PENALTY, penaltyCalculated.setScale(2, 0));
+				estimates.put(CalculatorConstants.PT_TIME_INTEREST, interestCalculated.setScale(2, 0));
 			}
 		} else {
-		estimates.put(CalculatorConstants.PT_TIME_REBATE, rebate.setScale(2, 2).negate());
-			estimates.put(CalculatorConstants.PT_TIME_PENALTY, penaltyCalculated.setScale(2, 2));
-			estimates.put(CalculatorConstants.PT_TIME_INTEREST, interestCalculated.setScale(2, 2));
+		estimates.put(CalculatorConstants.PT_TIME_REBATE, rebate.setScale(2, 0).negate());
+			estimates.put(CalculatorConstants.PT_TIME_PENALTY, penaltyCalculated.setScale(2, 0));
+			estimates.put(CalculatorConstants.PT_TIME_INTEREST, interestCalculated.setScale(2, 0));
 		}
 		return estimates;
 	}
@@ -521,7 +521,7 @@ public class PayService {
 		BigDecimal roundOffNeg = BigDecimal.ZERO;
 
 		BigDecimal result = creditAmount.add(debitAmount);
-		BigDecimal roundOffAmount = result.setScale(2, 2);
+		BigDecimal roundOffAmount = result.setScale(2, 0);
 		BigDecimal reminder = roundOffAmount.remainder(BigDecimal.ONE);
 
 		if (reminder.doubleValue() >= 0.5)
@@ -543,7 +543,7 @@ public class PayService {
 
 		BigDecimal roundOff = BigDecimal.ZERO;
 
-		BigDecimal roundOffAmount = amount.setScale(2, 2);
+		BigDecimal roundOffAmount = amount.setScale(2, 0);
 		BigDecimal reminder = roundOffAmount.remainder(BigDecimal.ONE);
 
 		if (reminder.doubleValue() >= 0.5)
