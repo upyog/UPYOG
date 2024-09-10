@@ -175,7 +175,7 @@ public class MdmsUtil {
 			headMasters = mapper.readValue(jsonArray.toJSONString(),
 					mapper.getTypeFactory().constructCollectionType(List.class, TaxHeadMaster.class));
 		} catch (JsonProcessingException e) {
-			log.info("Exception occured while converting calculation type : " + e);
+			log.info("Exception occured while converting tax haead master list : " + e);
 		} 
 
 		return headMasters;

@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 
 public class CommunityHallBookingConstants {
 
-
 	public static final String COMMUNITY_HALL_BOOKING_INIT_CREATED = "Your community hall booking details saved successfully";
 	
 	public static final String COMMUNITY_HALL_BOOKING_CREATED = "Your community hall booking created successfully";
@@ -108,5 +107,11 @@ public class CommunityHallBookingConstants {
 	
 	public static final String SECURITY_DEPOSIT = "SECURITY_DEPOSIT";
 	
+	
+	public static final String CHB_APPLICANT_DETAIL_ENCRYPTION_KEY = "CHBApplicantDetail";
+	
+	public static final String CHB_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY = "CHBApplicantDetailDecrypDisabled";
+
+	public static final String CHB_APPLICANT_DETAIL_PLAIN_DECRYPTION_PURPOSE = "CHBApplicantDetailDecryptionDisabled";
 
 }

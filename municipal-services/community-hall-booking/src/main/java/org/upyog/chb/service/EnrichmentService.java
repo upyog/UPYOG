@@ -29,7 +29,7 @@ public class EnrichmentService {
 	@Autowired
 	private IdGenRepository idGenRepository;
 
-	public void enrichCreateBookingRequest(CommunityHallBookingRequest bookingRequest, Object mdmsData) {
+	public void enrichCreateBookingRequest(CommunityHallBookingRequest bookingRequest) {
 		String bookingId = CommunityHallBookingUtil.getRandonUUID();
 		log.info("Enriching booking request for booking id :" + bookingId);
 		
