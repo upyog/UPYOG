@@ -78,8 +78,11 @@ public class BPAConsumer {
         	bpas.get(0).getWorkflow().setAssignes(null);
         	bpas.get(0).getWorkflow().setAction(BPAConstants.ACTION_APPROVE);
         	bpas.get(0).getWorkflow().setVarificationDocuments(null);
+			log.info("Proceeding for Update call");
+
         	//bpasearch (response)  -> Approve bpa request
         	BPARequest bpaRequest=new BPARequest().BPA(bpas.get(0)).requestInfo(requestInfo);
+			log.info("Proceeding for Update call2");
             bpaService.update(bpaRequest);
 	}
 }
