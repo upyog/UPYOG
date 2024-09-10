@@ -799,6 +799,7 @@ public class BillServicev2 {
 		BigDecimal count=BigDecimal.ZERO;
 		BigDecimal zeroAmount=BigDecimal.ZERO;
 		BigDecimal advancedBillAmount=demand.getAdvanceAmount();//Will Be coming from Demand
+		mpdList = new ArrayList<>();
 		if(null!=bills) {
 			//	bills = bills.stream().sorted((x,y)->y.getAuditDetails().getCreatedTime().compareTo(x.getAuditDetails().getCreatedTime())).collect(Collectors.toList());
 			quaterCheckMap = new HashMap<>();
@@ -844,11 +845,29 @@ public class BillServicev2 {
 					 * successtransactionMapForHalfyearly.put(bl.getBillDetails().get(0).
 					 * getPaymentPeriod(), pay.getPayments().get(0).getTotalAmountPaid()); }
 					 */
-					zeroAmount=bl.getBillDetails().get(0).getAmount();
-					if(zeroAmount.compareTo(BigDecimal.ZERO)==0 && Paymentmode.equalsIgnoreCase("QUARTERLY"))
-						zeroAmount=zeroAmount.add(amountforquaterly);
-					else if(zeroAmount.compareTo(BigDecimal.ZERO)==0 && Paymentmode.equalsIgnoreCase("HALFYEARLY"))
-						zeroAmount=zeroAmount.add(ammountforhalfyearly);
+					// count 750 0 100
+					count=bl.getBillDetails().get(0).getAmount();
+					//zero 100 150 300
+					
+					//paid 750
+					
+					if(Paymentmode.equalsIgnoreCase("QUARTERLY")) {
+					if( count.compareTo(amountforquaterly)<0)
+						zeroAmount=amountforquaterly;
+					else if(count.compareTo(amountforquaterly)>=0)
+						paidBillAmount = paidBillAmount.add(count);
+					}
+					else if(Paymentmode.equalsIgnoreCase("HALFYEARLY")) {
+						if(count.compareTo(ammountforhalfyearly)<0) 
+							zeroAmount=zeroAmount.add(ammountforhalfyearly);
+						else if(count.compareTo(ammountforhalfyearly)>=0)
+							paidBillAmount = paidBillAmount.add(count);
+						
+					}
+						
+				//	else if(count.compareTo(amountforquaterly)==0)
+						
+					
 					successBillAmount = pay.getPayments().get(0).getTotalAmountPaid();
 					advancedBillAmount =successBillAmount.subtract(bl.getBillDetails().get(0).getAmount());
 					if(advancedBillAmount.compareTo(BigDecimal.ZERO)==0)
@@ -985,7 +1004,7 @@ public class BillServicev2 {
 
 		}
 		//Bi totalFailedSuccess = failedBillAmount.add(successBillAmount);)
-		mpdList = new ArrayList<>();
+		
 		switch (Paymentmode) {
 		case QUARTERLY:
 			//calcualtion of all quaterly ammount
@@ -1590,9 +1609,9 @@ public class BillServicev2 {
 		List<BillV2> filteredBills = new ArrayList<>();
 
 		for(BillV2 b: billRequest.getBills()) {	  
-			//if(b.getBillDetails().get(0).getAmount().compareTo(new BigDecimal(0))==0) {
-			filteredBills.add(b); 
-			// } 
+			if(b.getBillDetails().get(0).getAmount().compareTo(new BigDecimal(0))==0) {
+				filteredBills.add(b); 
+			 } 
 		}
 		String transactiontUrl = new StringBuilder().append(appProps.getPgSeriviceHost()).append(appProps.getPgCreateEndpoint())
 				.append(URL_PARAMS_SEPARATER).append("tenantId=").append(billRequest.getRequestInfo().getUserInfo().getTenantId()).toString();

@@ -542,7 +542,7 @@ public class CalculatorUtils {
 		 * carryForward = carryForward.add(detail.getTaxAmount().negate()); }
 		 */
 		carryForward=demand.getAdvanceAmount();
-		if(carryForward.compareTo(BigDecimal.ZERO)==0)
+		if(carryForward.compareTo(BigDecimal.ZERO)>0)
 			return carryForward;
 
 		BillSearchCriteria criteria=new BillSearchCriteria();
@@ -561,8 +561,19 @@ public class CalculatorUtils {
 				PaymentResponse payment = mapper.convertValue(
 						repository.fetchResult(getCollectionSearchUrl(demand.getTenantId(), bill.getId()), new RequestInfoWrapper(requestInfo)),
 						PaymentResponse.class);
-				paidAmount=payment.getPayments().get(0).getTotalAmountPaid();
-
+				if(null!=payment && null!= payment.getPayments() && !payment.getPayments().isEmpty())
+					paidAmount=payment.getPayments().get(0).getTotalAmountPaid();
+				
+				
+				//advance 
+				//bill
+				//demand amount
+						//paidamount-demand
+						//100-100=0
+						//100-600 = 500 carryfoward to be added in new deamnd
+						//1000-600 = 400 as advance to be deducted in new demand
+				//bill paid amount - demand amount
+				
 				for(BillDetail billdet:bill.getBillDetails())
 				{
 					if(billdet.getPaymentPeriod().equalsIgnoreCase("Q4")
