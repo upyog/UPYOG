@@ -141,15 +141,18 @@ public class DemandService {
 			Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(request.getRequestInfo(),criteria);
 
 			// true represents that the demand should be updated from this call
-			BigDecimal carryForwardCollectedAmount = getCarryForwardAndCancelOldDemand(newTax, criteria,
-					request.getRequestInfo(),oldDemand, true);
-		
 			
+			
+			//BigDecimal carryForwardCollectedAmount = getCarryForwardAndCancelOldDemand(newTax, criteria,
+			//		request.getRequestInfo(),oldDemand, true);
+		
+			Map<String,BigDecimal>collectedAmountForLastFinYear = getCarryForwardAndCancelOldDemandMap(newTax, criteria,request.getRequestInfo(),oldDemand, true);
 			//Current_demand --->1500 advance 500
 			//amount = amount-advance adjusted amount --500 , current 1000 advance 0
 			//
-			if (carryForwardCollectedAmount.doubleValue() >= 0.0) {
-
+			if (null!=collectedAmountForLastFinYear)
+				//collectedAmountForLastFinYear.containsKey(propertyCalculationMap) carryForwardCollectedAmount.doubleValue() >= 0.0) {
+			{
 				Demand demand = prepareDemand(property, calculation ,oldDemand);
 
 				// Add billingSLabs in demand additionalDetails as map with key calculationDescription
@@ -342,7 +345,8 @@ public class DemandService {
 	//	Demand demand = getLatestDemandForCurrentFinancialYear(requestInfo, property);
 		
 		if(null == demand) return carryForward;
-
+		
+		Map<String, BigDecimal> collectedMap = utils.getTotalCollectedAmountAndPreviousCarryForwardMap(demand,requestInfo);
 		carryForward = utils.getTotalCollectedAmountAndPreviousCarryForward(demand,requestInfo);
 		
 		/*
@@ -372,6 +376,29 @@ public class DemandService {
 		 */
 
 		return carryForward;
+	}
+	
+	
+	
+	protected Map<String,BigDecimal> getCarryForwardAndCancelOldDemandMap(BigDecimal newTax, CalculationCriteria criteria, RequestInfo requestInfo
+			,Demand demand, boolean cancelDemand) {
+
+		Property property = criteria.getProperty();
+
+		BigDecimal carryForward = BigDecimal.ZERO;
+		BigDecimal oldTaxAmt = BigDecimal.ZERO;
+
+		if(null == property.getPropertyId()) return null;
+
+	//	Demand demand = getLatestDemandForCurrentFinancialYear(requestInfo, property);
+		
+		if(null == demand) return null;
+		
+		Map<String, BigDecimal> collectedMap = utils.getTotalCollectedAmountAndPreviousCarryForwardMap(demand,requestInfo);
+		
+		
+		
+		return collectedMap;
 	}
 
 /*	*//**
@@ -442,6 +469,7 @@ public class DemandService {
 				.consumerCode(consumerCode).payer(owner.toCommonUser()).taxPeriodFrom(calculation.getFromDate())
 				.taxPeriodTo(calculation.getToDate()).status(Demand.DemandStatusEnum.ACTIVE)
 				.minimumAmountPayable(BigDecimal.valueOf(configs.getPtMinAmountPayable())).demandDetails(details)
+				.advanceAmount(calculation.getRemainAdvanceamount())
 				.build();
 	}
 

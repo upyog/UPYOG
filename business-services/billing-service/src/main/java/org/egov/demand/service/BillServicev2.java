@@ -656,7 +656,7 @@ public class BillServicev2 {
 			/* Total tax and collection for the whole demand/bill-detail */
 			totalAmountForDemand = totalAmountForDemand.add(amountForAccDeatil);
 			if(taxHead.getCode().equalsIgnoreCase("PT_PASTDUE_CARRYFORWARD"))
-				pastDue=demandDetail.getTaxAmount();
+				pastDue=pastDue.add(demandDetail.getTaxAmount());
 		}
 		//totalAmountForDemand = BigDecimal.ZERO;
 		totalAmountForDemand = totalAmountForDemand.setScale(0, RoundingMode.CEILING);

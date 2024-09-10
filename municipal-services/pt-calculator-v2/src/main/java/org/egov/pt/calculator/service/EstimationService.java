@@ -1141,8 +1141,9 @@ public class EstimationService {
 					.estimateAmount(collectedAmtForOldDemand).build());
 			totalAmount=totalAmount.add(collectedAmtForOldDemand);
 		}
-		
-		TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(taxAmt.add(penalty).add(collectedAmtForOldDemand), rebate.add(exemption).add(complementary_rebate).add(modeofpayment_rebate));
+		//Added For Manipur 
+		TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(totalAmount, BigDecimal.ZERO);
+		//TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(taxAmt.add(penalty).add(collectedAmtForOldDemand), rebate.add(exemption).add(complementary_rebate).add(modeofpayment_rebate));
 
 		if (null != decimalEstimate) {
 			decimalEstimate.setCategory(taxHeadCategoryMap.get(decimalEstimate.getTaxHeadCode()));
@@ -1157,7 +1158,7 @@ public class EstimationService {
 		modeOfPaymentDetails=modeOfPaymentDetails(totalAmount,collectedAmtForOldDemand,criteria.getModeOfPayment());
 
 		return Calculation.builder()
-				.totalAmount(totalAmount.add(collectedAmtForOldDemand))
+				.totalAmount(totalAmount)
 				.taxAmount(taxAmt)
 				.penalty(penalty)
 				.exemption(exemption)
