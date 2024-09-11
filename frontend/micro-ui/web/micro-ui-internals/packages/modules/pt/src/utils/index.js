@@ -370,7 +370,7 @@ export const getunits = (data) => {
 };
 
 export const getunitarray = (i, unitsdata, unit, data) => {
-  console.log("unitsdataunitsdataunitsdata"),unitsdata
+  console.log("unitsdataunitsdataunitsdata",unitsdata)
   if (unitsdata[i].active === true) {
     unit.push(unitsdata[i]);
   } else if (
@@ -575,7 +575,7 @@ export const convertToProperty = (data = {}) => {
         electricity:data.electricity.electricity,
         uid:data.uid.uid,
         ageOfProperty: data.propertyStructureDetails.ageOfProperty,
-        structureType:data.propertyStructureDetails.structureType,
+        structureType:data?.propertyStructureDetails?.structureType,
 
       },
 
@@ -774,7 +774,7 @@ export const convertToUpdateProperty = (data = {}, t) => {
         basement1: basement1,
         basement2: basement2,
         ageOfProperty: data.propertyStructureDetails.ageOfProperty,
-        structureType:data.propertyStructureDetails.structureType,
+        structureType:data?.propertyStructureDetails?.structureType,
       },
 
       creationReason: getCreationReason(data),
