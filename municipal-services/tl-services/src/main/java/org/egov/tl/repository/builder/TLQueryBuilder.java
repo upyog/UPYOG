@@ -112,7 +112,6 @@ public class TLQueryBuilder {
                 preparedStmtList.add(criteria.getApplicationType());
             }
             
-        	return addPaginationWrapper(builder.toString(),preparedStmtList,criteria);
 
         }
         
