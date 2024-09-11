@@ -1419,7 +1419,8 @@ public class BillServicev2 {
 		Long billExpiryDate = getDateInMilisec(expiryDate,false);
 
 		totalAmountForDemand = roundOfDecimals(totalAmountForDemand);
-
+		
+		mpdList=mpdList.stream().sorted((x,y)->x.getPeriod().compareTo(y.getPeriod())).collect(Collectors.toList());
 		Map<String, Object> additionalDetails = mapper.convertValue(demand.getAdditionalDetails(), Map.class);
 		//	JsonNode additionalDetails = mapper.convertValue(demand.getAdditionalDetails(),JsonNode.class);
 		additionalDetails.put("paymentModeDetails", mpdList);
