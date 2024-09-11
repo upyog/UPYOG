@@ -1646,6 +1646,7 @@ public class DemandService {
             try {
                 log.info("Sleeping for 15 seconds before processing the next batch...");
                 Thread.sleep(configs.getSleepvalue() );
+                break;
             } catch (InterruptedException ie) {
                 Thread.currentThread().interrupt(); // Restore interrupted status
                 log.error("Sleep interrupted", ie);
