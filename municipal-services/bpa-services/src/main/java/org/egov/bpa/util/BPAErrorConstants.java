@@ -50,6 +50,8 @@ public class BPAErrorConstants {
 
 	public static final String INVALID_OCCUPANCY = "INVALID OCCUPANCY TYPE";
 
+	public static final String INVALID_BUILDING_HEIGHT = "INVALID BUILDING HEIGHT";
+
 	public static final String INVALID_RISK_TYPE = "INVALID RISK TYPE";
 
 	public static final String DUPLICATE_EDCR = "DUPLICATE EDCR";

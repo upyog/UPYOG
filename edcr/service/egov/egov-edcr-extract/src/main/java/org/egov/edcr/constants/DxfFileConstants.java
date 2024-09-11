@@ -152,6 +152,10 @@ public class DxfFileConstants {
     public static final String FIRE_PROTECTION_AND_FIRE_SAFETY_REQUIREMENTS = "FIRE_PROTECTION_AND_FIRE_SAFETY_REQUIREMENTS";
     public static final String NOC_FOR_CONSTRUCTION_NEAR_MONUMENT = "NOC_FOR_CONSTRUCTION_NEAR_MONUMENT";
     public static final String NOC_FOR_CONSTRUCTION_NEAR_AIRPORT = "NOC_FOR_CONSTRUCTION_NEAR_AIRPORT";
+    public static final String NOC_FOR_FIRE_DEPT = "NOC_FOR_FIRE_DEPT";
+    public static final String NOC_FROM_NEIGHBOUR = "NOC_FROM_NEIGHBOUR";
+    public static final String IDEMNITY_BASEMENT = "IDEMNITY_BASEMENT";
+    public static final String NOC_FROM_NHAI = "NOC_FROM_NHAI";
     public static final String NOC_FOR_CONSTRUCTION_NEAR_DEFENCE_AERODOMES = "NOC_FOR_CONSTRUCTION_NEAR_DEFENCE_AERODOMES";
     public static final String NOC_STATE_ENV_IMPACT = "NOC_STATE_ENV_IMPACT";
     public static final String NOC_RAILWAY = "NOC_RAILWAY";
@@ -159,9 +163,12 @@ public class DxfFileConstants {
     public static final String NOC_IRRIGATION_DEPT = "NOC_IRRIGATION_DEPT";
     public static final String NOC_FIRE_DEPT = "NOC_FIRE_DEPT";
     public static final String PLOT_NO = "PLOT_NO";
-    public static final String KHATA_NO = "KHATA_NO";
+  //  public static final String KHATA_NO = "KHATA_NO";
+    public static final String KHASRA_NO = "KHASRA_NO";
+    public static final String KHATUNI_NO = "KHATUNI_NO";
     public static final String DISTRICT = "DISTRICT";
-    public static final String MAUZA = "MAUZA";
+    public static final String CITY = "CITY";
+  //  public static final String MAUZA = "MAUZA";
     public static final String RWH_DECLARED = "RWH_DECLARED";
     public static final int RESIDENTIAL_ROOM_COLOR = 1;
     public static final int COMMERCIAL_ROOM_COLOR = 2;

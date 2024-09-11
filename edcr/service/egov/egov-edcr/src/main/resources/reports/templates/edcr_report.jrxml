@@ -627,7 +627,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["KHATA NO"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["KHASRA NO"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="418" y="225" width="130" height="21" uuid="a3b7760f-a182-4336-91dc-39f9c990f235"/>
@@ -642,7 +642,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getKhataNo()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getKhasraNo()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="418" y="123" width="130" height="21" uuid="7776029d-8555-4904-8dbe-2a76cae77301"/>
@@ -717,7 +717,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["MAUZA"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["KHATUNI NO"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="142" y="246" width="146" height="21" uuid="83458a69-6cf0-44af-b9f1-d27925ba674b"/>
@@ -732,7 +732,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getMauza()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getKhatuniNo()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="142" y="165" width="406" height="21" uuid="eb3c9a40-3143-4f3c-b8a7-1bc769be2c4d"/>
@@ -807,7 +807,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["DISTRICT"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["CITY"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="418" y="246" width="130" height="21" uuid="f1329572-0b6b-4770-b290-d9167fa99096"/>
@@ -942,7 +942,7 @@
 					<font size="10"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["NOC from the concerned airport authority if site under reference falling air funnel zone or within vicinity of airport available? "]]></textFieldExpression>
+				<textFieldExpression><![CDATA["NOC from the concerned airport authority if site under reference falling air funnel zone or within vicinity of airport available?"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="371" y="420" width="177" height="30" uuid="148c27fd-a793-4703-930b-7adfcd5bb119"/>
@@ -1032,7 +1032,7 @@
 					<font size="10"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["NOC from State Environmental/MoEF Impact Assessment Authority available?"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["NOC from fire department available?"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="371" y="480" width="177" height="30" uuid="a0ebbafd-7003-4b9e-919e-f47ee55e7b8a"/>
@@ -1047,7 +1047,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getNocStateEnvImpact()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getNocFireDept()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="12" y="450" width="16" height="30" uuid="e69a735a-46bc-4d97-8826-98f319d8a636"/>
@@ -1077,7 +1077,7 @@
 					<font size="10"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["NOC from Heritage Conservation Committee (National Monuments Authority) available?"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Indemnity bond for Basement available?"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="371" y="510" width="177" height="30" uuid="b1921a1c-b5e2-4f42-9556-0745ac52338d"/>
@@ -1092,7 +1092,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getNocNearMonument()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getIndemnityBasement()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="12" y="480" width="16" height="30" uuid="41df6618-b136-4128-9eef-e9cfb4c946b8"/>
@@ -1122,7 +1122,7 @@
 					<font size="10"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["NOC from Railways available?"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["NOC from neighbouring plot for basement?"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="371" y="540" width="177" height="25" uuid="80d9a919-c613-4ddb-9600-c39edb19ed05"/>
@@ -1137,7 +1137,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getNocRailways()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getNocNeighbour()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="12" y="510" width="16" height="30" uuid="fdceed65-f55a-4089-a933-da6f310f911e"/>
@@ -1244,7 +1244,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["8"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="28" y="370" width="343" height="25" uuid="d4d02a1e-db23-48c0-8e69-f4cce4da1cae"/>
 				<box>
 					<pen lineWidth="0.5"/>
@@ -1257,7 +1257,7 @@
 					<font size="10"/>
 					<paragraph lineSpacingSize="1.0" leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Whether building near government building?"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Noc From Airport?"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="371" y="370" width="177" height="25" uuid="004298e8-45f6-4095-a084-809e0658e44c"/>
@@ -1272,7 +1272,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getBuildingNearGovtBuilding()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getBuildingNearGovtBuilding() != null && !$F{planInformation}.getBuildingNearGovtBuilding().isEmpty() ? $F{planInformation}.getBuildingNearGovtBuilding() : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="28" y="395" width="343" height="25" uuid="3ef13b8a-34a4-4be3-a714-84484de4a776"/>
@@ -1287,7 +1287,7 @@
 					<font size="10"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Whether building present near monument?"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["NOC From NHAI?"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="371" y="395" width="177" height="25" uuid="277ae2bb-2372-44a0-a330-ab75596da242"/>
@@ -1302,7 +1302,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getBuildingNearMonument()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getNocFromNHAI()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="12" y="595" width="16" height="40" uuid="dc76f7c2-e44d-4674-8950-3f55f8d76414"/>

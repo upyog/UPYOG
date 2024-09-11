@@ -192,6 +192,13 @@ public class EDCRService {
 
 			List<String> riskTypes = JsonPath.read(jsonOutput, filterExp);
 
+			if(CollectionUtils.isEmpty(riskTypes)) {
+				 
+						throw new CustomException(BPAErrorConstants.INVALID_BUILDING_HEIGHT,
+								"Building height should be greater than zero");
+					
+			}
+				
 			if (!CollectionUtils.isEmpty(riskTypes) && OccupancyType.equals(BPAConstants.RESIDENTIAL_OCCUPANCY)) {
 				String expectedRiskType  = riskTypes.get(0);
 
@@ -203,6 +210,7 @@ public class EDCRService {
 						"The OccupancyType " + OccupancyType + " is not supported! ");
 			}
 		}
+			
 	}
 
 	/**

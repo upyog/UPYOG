@@ -153,7 +153,6 @@ public class HeightOfRoom extends FeatureProcess {
 						scrutinyDetail.addColumnHeading(5, REQUIRED);
 						scrutinyDetail.addColumnHeading(6, PROVIDED);
 						scrutinyDetail.addColumnHeading(7, STATUS);
-
 						scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + " Room Area");
 
 						ScrutinyDetail scrutinyDetail2 = new ScrutinyDetail();
@@ -540,7 +539,7 @@ public class HeightOfRoom extends FeatureProcess {
 									subRule = SUBRULE_41_II_B;
 									subRuleDesc = SUBRULE_41_II_B;
 //									if (windowHeight.compareTo(MIN_WINDOW_HEIGHT) >= 0 && windowWidth.compareTo(MIN_WINDOW_WIDTH) >= 0) {
-									setReportOutputDetails(pl, subRule, subRuleDesc3, floor.getNumber().toString(), "-", "" + "",
+									setReportOutputDetails(pl,"", subRuleDesc3, floor.getNumber().toString(), "-", "" + "",
 											"Height = " + windowHeight + ", Width = " + windowWidth,
 											Result.Accepted.getResultVal(), scrutinyDetail3);
 									// } else {

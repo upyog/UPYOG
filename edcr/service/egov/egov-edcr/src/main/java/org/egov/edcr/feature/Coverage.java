@@ -252,7 +252,7 @@ public class Coverage extends FeatureProcess {
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
 
 		if(coreArea.equalsIgnoreCase("Yes")) {
-			permissibleCoverage = BigDecimal.valueOf(100);
+			permissibleCoverage = BigDecimal.valueOf(90);
 		}else {
 		if (plotArea.compareTo(BigDecimal.valueOf(150)) <= 0) {
             permissibleCoverage = BigDecimal.valueOf(90); // 90% coverage for plot area up to 150 sqm

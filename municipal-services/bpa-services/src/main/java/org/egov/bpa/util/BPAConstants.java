@@ -358,7 +358,7 @@ public class BPAConstants {
 
 	public static final String OC_OCCUPANCY = "$.edcrDetail[0].planDetail.planInformation.occupancy";
 
-	public static final String OC_KHATHANO = "$.edcrDetail[0].planDetail.planInformation.khataNo";
+	public static final String OC_KHASRANO = "$.edcrDetail[0].planDetail.planInformation.khasraNo";
 
 	public static final String OC_PLOTNO = "$.edcrDetail[0].planDetail.planInformation.plotNo";
 	
