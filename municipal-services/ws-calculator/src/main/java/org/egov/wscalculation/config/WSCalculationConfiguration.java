@@ -177,6 +177,10 @@ public class WSCalculationConfiguration {
     	@Value("${ws.demand.based.batch.size}")
     	private Integer batchSize;
     
+    	@Value("${bulk.demand.sleep.value}")
+    	private Integer sleepvalue;
+    	
+    	
     	@Value("${persister.demand.based.dead.letter.topic.batch}")
     	private String deadLetterTopicBatch;
 
