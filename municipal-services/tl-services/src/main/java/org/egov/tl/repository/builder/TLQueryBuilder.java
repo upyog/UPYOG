@@ -101,7 +101,7 @@ public class TLQueryBuilder {
              }
         	
             addClauseIfRequired(preparedStmtList,builder);
-            builder.append(" tl.accountid = ? ");
+            builder.append(" (tl.accountid = ? ");
             preparedStmtList.add(criteria.getAccountId());
 
             List<String> ownerIds = criteria.getOwnerIds();
@@ -109,7 +109,7 @@ public class TLQueryBuilder {
                 builder.append(" OR (tlowner.id IN (").append(createQuery(ownerIds)).append(")");
                 addToPreparedStatement(preparedStmtList,ownerIds);
                 addBusinessServiceClause(criteria,preparedStmtList,builder);
-                builder.append(" AND tlowner.active = ? )");
+                builder.append(" AND tlowner.active = ? ))");
                 preparedStmtList.add(true);
             }            
            
