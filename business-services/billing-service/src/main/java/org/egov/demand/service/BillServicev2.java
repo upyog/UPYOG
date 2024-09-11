@@ -847,11 +847,9 @@ public class BillServicev2 {
 					 * successtransactionMapForHalfyearly.put(bl.getBillDetails().get(0).
 					 * getPaymentPeriod(), pay.getPayments().get(0).getTotalAmountPaid()); }
 					 */
-					// count 750 0 100
+					// zeroAmount is added for summing up paid amount to exact bill amount in a situation where bill amount could be zero
+					// or less than amountforquaterly so that after adding amountforquaterly we will get the paid amount
 					count=bl.getBillDetails().get(0).getAmount();
-					//zero 100 150 300
-
-					//paid 750
 
 					if(Paymentmode.equalsIgnoreCase("QUARTERLY")) {
 						if( count.compareTo(amountforquaterly)<0)
