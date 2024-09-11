@@ -393,12 +393,12 @@ setWaterCharges(Malbafees/2)
       }      
   }
     function setDevelopmentVal(value) {
-      if(/^\d{0,10}$/.test(value)){
+      if(/^\d{0,9}$/.test(value)){
         setDevelopment(value);
         sessionStorage.setItem("development",value)
       }
       else{
-        alert(t("Please enter numbers"))
+        alert(t("Please enter only upto 9 numbers"))
       }      
     }
     function setLessAdjusmentVal(value) {

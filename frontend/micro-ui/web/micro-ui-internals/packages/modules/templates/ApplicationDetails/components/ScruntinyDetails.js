@@ -93,7 +93,7 @@ const ScruntinyDetails = ({ scrutinyDetails, paymentsList=[],additionalDetails,a
     }      
 }
   function setDevelopmentVal(value) {
-    if(/^\d{0,10}$/.test(value)){
+    if(/^\d{0,9}$/.test(value)){
       setDevelopment(value);
       sessionStorage.setItem("development",value)
     }
