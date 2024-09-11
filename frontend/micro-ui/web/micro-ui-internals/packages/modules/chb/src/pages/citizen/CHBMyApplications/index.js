@@ -25,7 +25,7 @@ export const CHBMyApplications = () => {
 
   let initialFilters = !isNaN(parseInt(filter))
     ? { limit: "50", sortOrder: "ASC", sortBy: "createdTime", offset: off, tenantId }
-    : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", mobileNumber: user?.mobileNumber, tenantId };
+    : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", tenantId };
 
   useEffect(() => {
     setFilters(initialFilters);

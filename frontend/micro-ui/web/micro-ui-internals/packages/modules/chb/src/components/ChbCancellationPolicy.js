@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CardLabel, CardText, CardLabelDesc, CardSubHeader, Modal } from '@nudmcdgnpm/digit-ui-react-components';
-
+import { useTranslation } from "react-i18next";
 // Close button component
 const Close = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
@@ -21,6 +21,7 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
   const [showCancellationPolicy, setShowCancellationPolicy] = useState(false);
   const [showPriceBreakup, setShowPriceBreakup] = useState(false);
   const [showdemandEstimation,setShowDemandEstimation]=useState(false);
+  const { t } = useTranslation();
   const stateId = Digit.ULBService.getStateId();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const { data: cancelpolicyData } = Digit.Hooks.useCustomMDMS(stateId, "CHB", [{ name: "CommunityHalls" }],
@@ -129,7 +130,7 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
           hideSubmit={true}  // Ensure submit is hidden
           style={{}}
           popupModuleMianStyles={{ padding: "10px" }}
-          headerBarMainStyle={{ backgroundColor: "#f5f5f5" }}
+          headerBarMainStyle={{position: "sticky",top: 0, backgroundColor: "#f5f5f5" }}
           isOBPSFlow={false}
           popupModuleActionBarStyles={{ display: 'none' }}  // Hide Action Bar
           isOpen={showCancellationPolicy}  // Pass isOpen prop
@@ -143,12 +144,12 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
           popupStyles={{ backgroundColor: "#fff", position: 'relative', maxHeight: '90vh', width: '60%', overflowY: 'auto' }}
           children={
             <div>
-              <CardText style={{ marginBottom: '15px' }}>Estimate Price Details</CardText>
+              <CardLabelDesc style={{ marginBottom: '15px' }}>Estimate Price Details</CardLabelDesc>
               <ul>
                 {mutation.data?.demands[0]?.demandDetails && mutation.data?.demands[0]?.demandDetails.map((demands, index) => (
                   <li key={index} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <CardLabelDesc>{demands.taxHeadMasterCode}</CardLabelDesc>
-                    <CardLabelDesc>Rs {demands.taxAmount}</CardLabelDesc>
+                    <CardText>{t(`${demands.taxHeadMasterCode}`)}</CardText>
+                    <CardText>Rs {demands.taxAmount}</CardText>
                   </li>
                 ))}
               </ul>
@@ -172,7 +173,7 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
           hideSubmit={true}  // Ensure submit is hidden
           style={{}}
           // popupModuleMianStyles={{ padding: "10px" }}
-          headerBarMainStyle={{ backgroundColor: "#f5f5f5" }}
+          headerBarMainStyle={{position: "sticky",top: 0, backgroundColor: "#f5f5f5" }}
           isOBPSFlow={false}
           popupModuleActionBarStyles={{ display: 'none' }}  // Hide Action Bar
           isOpen={showPriceBreakup}  // Pass isOpen prop
