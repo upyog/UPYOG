@@ -111,6 +111,9 @@ public class TLQueryBuilder {
                 builder.append("  tl.applicationtype = ? ");
                 preparedStmtList.add(criteria.getApplicationType());
             }
+            
+        	return addPaginationWrapper(builder.toString(),preparedStmtList,criteria);
+
         }
         
         else {
