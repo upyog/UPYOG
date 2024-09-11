@@ -1315,6 +1315,12 @@ public class ElasticSearchDaoImpl implements ElasticSearchDao {
 						queryMap.put(ElasticProperties.Query.MATCH_CONDITION, queryInnerMap1);
 
 					}
+					else
+					{
+						Map<String, List<Object>> queryInnerMap1 = new HashMap<String, List<Object>>();
+						queryInnerMap1.put(filterDateField, valueList);
+						queryMap.put(ElasticProperties.Query.MATCH_CONDITION, queryInnerMap1);
+					}
 				}
 			}
 		}
