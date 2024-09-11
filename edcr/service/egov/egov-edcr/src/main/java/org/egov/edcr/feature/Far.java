@@ -1297,7 +1297,7 @@ public class Far extends FeatureProcess {
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, OCCUPANCY);
 		scrutinyDetail.addColumnHeading(3, AREA_TYPE);
-		scrutinyDetail.addColumnHeading(4, ROAD_WIDTH);
+		//scrutinyDetail.addColumnHeading(4, ROAD_WIDTH);
 		scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
 		scrutinyDetail.addColumnHeading(6, PROVIDED);
 		scrutinyDetail.addColumnHeading(7, STATUS);
@@ -1309,7 +1309,7 @@ public class Far extends FeatureProcess {
 		details.put(RULE_NO, RULE);
 		details.put(OCCUPANCY, occupancyName);
 		details.put(AREA_TYPE, typeOfArea);
-		details.put(ROAD_WIDTH, roadWidth.toString());
+	//	details.put(ROAD_WIDTH, roadWidth.toString());
 		details.put(PERMISSIBLE, expectedResult);
 		details.put(PROVIDED, actualResult);
 		details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
@@ -1322,7 +1322,7 @@ public class Far extends FeatureProcess {
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, "Area Type");
-		scrutinyDetail.addColumnHeading(3, "Road Width");
+		//scrutinyDetail.addColumnHeading(3, "Road Width");
 		scrutinyDetail.addColumnHeading(4, PERMISSIBLE);
 		scrutinyDetail.addColumnHeading(5, PROVIDED);
 		scrutinyDetail.addColumnHeading(6, STATUS);

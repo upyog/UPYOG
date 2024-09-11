@@ -310,7 +310,7 @@ public class PlanReportService {
 
                     StringBuilder text = new StringBuilder();
 
-                    String coveredAreaText = "1. Covered Area is " + (dcrReportBlockDetail.getCoverageArea() != null
+                    String coveredAreaText = "1. Plot Coverage Area is " + (dcrReportBlockDetail.getCoverageArea() != null
                             ? dcrReportBlockDetail.getCoverageArea().setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
                                     DcrConstants.ROUNDMODE_MEASUREMENTS)
                             : BigDecimal.ZERO) + " m²";
@@ -460,7 +460,7 @@ public class PlanReportService {
 //                        .setWidth(100).setStyle(reportService.getTotalNumberStyle()).build();
 
                 AbstractColumn coverageArea = ColumnBuilder.getNew()
-                        .setColumnProperty("totalCoverageArea", BigDecimal.class.getName()).setTitle("Covered Area in m²")
+                        .setColumnProperty("totalCoverageArea", BigDecimal.class.getName()).setTitle("Plot Coverage Area in m²")
                         .setWidth(100).setStyle(reportService.getTotalNumberStyle()).build();
 
                 AbstractColumn constructedArea = ColumnBuilder.getNew()

@@ -47,11 +47,21 @@
 
 package org.egov.edcr.feature;
 
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
 import org.egov.common.entity.edcr.Plan;
+import org.egov.common.entity.edcr.PlanInformation;
+import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.Road;
+import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.edcr.utility.DcrConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -59,13 +69,46 @@ public class RoadReserve extends FeatureProcess {
 
     @Override
     public Plan validate(Plan pl) {
-        return pl;
-    }
-
+    	
+           return pl;
+       }
     @Override
     public Plan process(Plan pl) {
+    	 List<Road> roadReserves = pl.getRoadReserves();
+    	 
+    	 ScrutinyDetail scrutinyDetail8 = new ScrutinyDetail();
+			scrutinyDetail8.addColumnHeading(1, RULE_NO);
+			scrutinyDetail8.addColumnHeading(2, DESCRIPTION);
+			//scrutinyDetail8.addColumnHeading(3, FLOOR_NO);
+			scrutinyDetail8.addColumnHeading(3, Room);
+			scrutinyDetail8.addColumnHeading(4, REQUIRED);
+			scrutinyDetail8.addColumnHeading(5, PROVIDED);
+			scrutinyDetail8.addColumnHeading(6, STATUS);
+			scrutinyDetail8.setKey("Common_" + "Road Reserve ");
+        System.out.println("ii" + pl.getRoadReserveFront() +  pl.getRoadReserveFront());
+         
+     	setReportOutputDetails(pl, "", "Road Width Front And Rear", "", "" ,
+				"" + pl.getRoadReserveFront() + " & " +  pl.getRoadReserveRear(), Result.Accepted.getResultVal(), scrutinyDetail8);
+		//LOG.info("Room Height Validation True: (Expected/Actual) " + "" + "/" + "");
+        // setReportOutputDetails(pl, "Road Width Rear", "" + pl.getRoadReserveRear(), scrutinyDetail);
+    
+       
         return pl;
     }
+    private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc,   String room, String expected,
+			String actual, String status, ScrutinyDetail scrutinyDetail) {
+		Map<String, String> details = new HashMap<>();
+		details.put(RULE_NO, ruleNo);
+		details.put(DESCRIPTION, ruleDesc);
+		//details.put(FLOOR_NO, ruleDesc);
+		
+		details.put(Room, room);
+		details.put(REQUIRED, expected);
+		details.put(PROVIDED, actual);
+		details.put(STATUS, status);
+		scrutinyDetail.getDetail().add(details);
+		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+	}
 
     @Override
     public Map<String, Date> getAmendments() {

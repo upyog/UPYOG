@@ -64,14 +64,14 @@ public class OCService {
 			}
 		});
 		ArrayList<String> riskType = new ArrayList<String>();
-		ArrayList<String> khathaNos = new ArrayList<String>();
+		ArrayList<String> khasraNos = new ArrayList<String>();
 		ArrayList<String> plotNos = new ArrayList<String>();
 		ArrayList<String> occupancy = new ArrayList<String>();
 
 		if (data.size() >= 2) {
 			
-			this.extractEdcrData(data, riskType, khathaNos, plotNos, occupancy, requestInfo, criteria);
-			this.validateRiskKhataplotOccupancyType(riskType, khathaNos, plotNos, occupancy);
+			this.extractEdcrData(data, riskType, khasraNos, plotNos, occupancy, requestInfo, criteria);
+			this.validateRiskKhataplotOccupancyType(riskType, khasraNos, plotNos, occupancy);
 			
 				
 
@@ -82,14 +82,14 @@ public class OCService {
 	 * extrade khataNo,plotno,occupancy fromt the EDCR Data
 	 * @param edcrData
 	 * @param riskType
-	 * @param khathaNos
+	 * @param khasraNos
 	 * @param plotNos
 	 * @param occupancy
 	 * @param requestInfo
 	 * @param criteria
 	 */
 	private void extractEdcrData(ArrayList<LinkedHashMap<String, Object>> edcrData,
-			ArrayList<String> riskType,ArrayList<String> khathaNos,
+			ArrayList<String> riskType,ArrayList<String> khasraNos,
 			ArrayList<String> plotNos,ArrayList<String> occupancy,
 			org.egov.common.contract.request.RequestInfo requestInfo,
 			 BPASearchCriteria criteria) {
@@ -118,7 +118,7 @@ public class OCService {
 			List<String> riskTypes = JsonPath.read(OcData.get(0), filterExp);
 			riskType.add(riskTypes.get(0));
 
-			khathaNos.add(JsonPath.read(edcrDetail, BPAConstants.OC_KHATHANO));
+			khasraNos.add(JsonPath.read(edcrDetail, BPAConstants.OC_KHASRANO));
 
 			plotNos.add(JsonPath.read(edcrDetail, BPAConstants.OC_PLOTNO));
 
@@ -130,11 +130,11 @@ public class OCService {
 	/**
 	 * validates the riskType, kahataNos, plotNos, occupancy 
 	 * @param riskType
-	 * @param khathaNos
+	 * @param khasraNos
 	 * @param plotNos
 	 * @param occupancy
 	 */
-	private  void validateRiskKhataplotOccupancyType(ArrayList<String> riskType,ArrayList<String> khathaNos,ArrayList<String> plotNos,ArrayList<String> occupancy) {
+	private  void validateRiskKhataplotOccupancyType(ArrayList<String> riskType,ArrayList<String> khasraNos,ArrayList<String> plotNos,ArrayList<String> occupancy) {
 		
 		if (riskType.size() > 1) {
 			if(riskType.get(1).equalsIgnoreCase("LOW")){
@@ -151,10 +151,10 @@ public class OCService {
 			}
 		}
 		
-		if (khathaNos.size() > 1) {
-			if (!khathaNos.get(0).equalsIgnoreCase(khathaNos.get(1))) {
+		if (khasraNos.size() > 1) {
+			if (!khasraNos.get(0).equalsIgnoreCase(khasraNos.get(1))) {
 				throw new CustomException(BPAErrorConstants.INVALID_CREATE,
-						"Khata number from BPA edcr is not matching with the khata number from occupancy certificate edcr. You cannot proceed with the application");
+						"Khasra number from BPA edcr is not matching with the khasra number from occupancy certificate edcr. You cannot proceed with the application");
 			}
 
 		}
