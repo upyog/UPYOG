@@ -106,6 +106,11 @@ public class TLQueryBuilder {
                 builder.append(" AND tlowner.active = ? )");
                 preparedStmtList.add(true);
             }            
+            if (criteria.getApplicationType() != null) {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append("  tl.applicationtype = ? ");
+                preparedStmtList.add(criteria.getApplicationType());
+            }
         }
         
         else {
