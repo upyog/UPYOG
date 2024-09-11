@@ -94,6 +94,12 @@ public class TLQueryBuilder {
 
 
         if(criteria.getAccountId()!=null){
+        	 if (criteria.getApplicationType() != null) {
+                 addClauseIfRequired(preparedStmtList, builder);
+                 builder.append("  tl.applicationtype = ? ");
+                 preparedStmtList.add(criteria.getApplicationType());
+             }
+        	
             addClauseIfRequired(preparedStmtList,builder);
             builder.append(" tl.accountid = ? ");
             preparedStmtList.add(criteria.getAccountId());
@@ -106,11 +112,7 @@ public class TLQueryBuilder {
                 builder.append(" AND tlowner.active = ? )");
                 preparedStmtList.add(true);
             }            
-            if (criteria.getApplicationType() != null) {
-                addClauseIfRequired(preparedStmtList, builder);
-                builder.append("  tl.applicationtype = ? ");
-                preparedStmtList.add(criteria.getApplicationType());
-            }
+           
             
 
         }
