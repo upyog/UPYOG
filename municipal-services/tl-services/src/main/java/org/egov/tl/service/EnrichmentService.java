@@ -547,6 +547,12 @@ public class EnrichmentService {
            // criteria.setTenantId(requestInfo.getUserInfo().getTenantId());
         }
         
+        if(criteria.tenantIdApplicationTypeOnly() && requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN")){
+            criteria.setAccountId(requestInfo.getUserInfo().getUuid());
+            criteria.setMobileNumber(requestInfo.getUserInfo().getUserName());        
+            // criteria.setTenantId(requestInfo.getUserInfo().getTenantId());
+        }
+        
         if(requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN") && criteria.mobileNumberOnly()) {
         	criteria.setTenantId(requestInfo.getUserInfo().getTenantId());
         	criteria.setOnlyMobileNumber(true);
