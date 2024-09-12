@@ -77,33 +77,33 @@ public class RoadReserve extends FeatureProcess {
     	 List<Road> roadReserves = pl.getRoadReserves();
     	 
     	 ScrutinyDetail scrutinyDetail8 = new ScrutinyDetail();
-			scrutinyDetail8.addColumnHeading(1, RULE_NO);
+			//scrutinyDetail8.addColumnHeading(1, RULE_NO);
 			scrutinyDetail8.addColumnHeading(2, DESCRIPTION);
 			//scrutinyDetail8.addColumnHeading(3, FLOOR_NO);
-			scrutinyDetail8.addColumnHeading(3, Room);
-			scrutinyDetail8.addColumnHeading(4, REQUIRED);
+			//scrutinyDetail8.addColumnHeading(3, Room);
+			//scrutinyDetail8.addColumnHeading(4, REQUIRED);
 			scrutinyDetail8.addColumnHeading(5, PROVIDED);
 			scrutinyDetail8.addColumnHeading(6, STATUS);
 			scrutinyDetail8.setKey("Common_" + "Road Reserve ");
-        System.out.println("ii" + pl.getRoadReserveFront() +  pl.getRoadReserveFront());
+        System.out.println("ii" + pl.getRoadReserveFront() +  pl.getRoadReserveRear());
          
-     	setReportOutputDetails(pl, "", "Road Width Front And Rear", "", "" ,
-				"" + pl.getRoadReserveFront() + " & " +  pl.getRoadReserveRear(), Result.Accepted.getResultVal(), scrutinyDetail8);
+     	setReportOutputDetails(pl, "Road Width Front And Rear",
+				"" + pl.getRoadReserveFront() + " & " +  pl.getRoadReserveRear(), "", scrutinyDetail8);
 		//LOG.info("Room Height Validation True: (Expected/Actual) " + "" + "/" + "");
         // setReportOutputDetails(pl, "Road Width Rear", "" + pl.getRoadReserveRear(), scrutinyDetail);
     
        
         return pl;
     }
-    private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc,   String room, String expected,
+    private void setReportOutputDetails(Plan pl, String ruleDesc,  
 			String actual, String status, ScrutinyDetail scrutinyDetail) {
 		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, ruleNo);
+	//	details.put(RULE_NO, ruleNo);
 		details.put(DESCRIPTION, ruleDesc);
 		//details.put(FLOOR_NO, ruleDesc);
 		
-		details.put(Room, room);
-		details.put(REQUIRED, expected);
+//		details.put(Room, room);
+//		details.put(REQUIRED, expected);
 		details.put(PROVIDED, actual);
 		details.put(STATUS, status);
 		scrutinyDetail.getDetail().add(details);
