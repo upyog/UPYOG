@@ -27,10 +27,10 @@ const SubOccupancyTable = ({ edcrDetails, applicationData }) => {
       name: "BPA_TABLE_COL_FLOORAREA",
       id: "FloorArea",
     },
-    {
-      name: "BPA_TABLE_COL_CARPETAREA",
-      id: "CarpetArea",
-    }
+    // {
+    //   name: "BPA_TABLE_COL_CARPETAREA",
+    //   id: "CarpetArea",
+    // }
   ]
 
   const accessData = (plot) => {

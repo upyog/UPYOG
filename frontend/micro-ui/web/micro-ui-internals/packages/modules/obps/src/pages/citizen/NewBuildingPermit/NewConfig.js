@@ -94,55 +94,66 @@ export const newConfig1=[
             {
                 "label": "BPA_NUMBER_OF_BATHS",
                 "type": "text",
-                "validation": {},
+                "validation": {
+                    "pattern": "^[0-9]*$",
+                    "required": false
+                },
                 "name": "bathnumber"
             },
             {
                 "label": "BPA_NUMBER_OF_KITCHENS",
                 "type": "text",
-                "validation": {},
+                "validation": {"pattern": "^[0-9]*$",
+                    "required": false},
                 "name": "kitchenNumber"
             },
             {
                 "label": "BPA_APPROX_INHABITANTS_FOR_ACCOMODATION",
                 "type": "text",
-                "validation": {},
+                "validation": {"pattern": "^[0-9]*$",
+                    "required": false},
                 "name": "approxinhabitants"
             },
             {
                 "label": "BPA_DISTANCE_FROM_SEWER",
                 "type": "text",
-                "validation": {},
+                "validation": {"pattern": "^[0-9]*$",
+                    "required": false},
                 "name": "distancefromsewer"
             },
             {
                 "label": "BPA_SOURCE_OF_WATER",
                 "type": "text",
-                "validation": {},
+                "validation": {"pattern": "^[a-zA-Z]*$",
+                    "required": false},
                 "name": "sourceofwater"
             },
             {
                 "label": "BPA_NUMBER_OF_WATER_CLOSETS",
                 "type": "text",
-                "validation": {},
+                "validation": {"pattern": "^[0-9]*$",
+                    "required": false},
                 "name": "watercloset"
             },
             {
                 "label": "BPA_MATERIAL_TO-BE_USED_IN_WALLS",
                 "type": "text",
-                "validation": {},
+                "validation": {"pattern": "^[a-zA-Z]*$",
+                    "required": false},
                 "name": "materialused"
             },
             {
                 "label": "BPA_MATERIAL_TO-BE_USED_IN_FLOOR",
                 "type": "text",
-                "validation": {},
+               "validation": {"pattern": "^[a-zA-Z]*$",
+                    "required": false},
                 "name": "materialusedinfloor"
             },
             {
                 "label": "BPA_MATERIAL_TO-BE_USED_IN_ROOFS",
                 "type": "text",
-                "validation": {},
+                "validation": {"pattern": "^[a-zA-Z]*$",
+                    "required": false},
                 "name": "materialusedinroofs"
             },
 

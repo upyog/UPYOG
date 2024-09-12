@@ -98,7 +98,6 @@ const CreateEDCR = ({ parentRoute }) => {
   config.indexRoute = "home";
 
   const EDCRAcknowledgement = Digit?.ComponentRegistryService?.getComponent('EDCRAcknowledgement') ;
-
   return (
     <Switch>
       {config.map((routeObj, index) => {
