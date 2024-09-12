@@ -59,7 +59,7 @@ public class WorkflowService {
 			ProcessInstance processInstance = new ProcessInstance();
 			processInstance.setBusinessId(application.getApplicationNumber());
 			processInstance.setAction(workflow.getAction());
-			processInstance.setModuleName(PTRConstants.WORKFLOW_MODULE_SERVICE);
+			processInstance.setModuleName(PTRConstants.BUSINESS_SERVICE);
 			processInstance.setTenantId(application.getTenantId());
 			processInstance.setBusinessService(PTRConstants.WORKFLOW_BUSINESS_SERVICE);
 			processInstance.setDocuments(workflow.getDocuments());

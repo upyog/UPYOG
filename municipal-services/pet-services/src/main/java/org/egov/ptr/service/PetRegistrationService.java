@@ -1,8 +1,12 @@
 package org.egov.ptr.service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -34,9 +38,13 @@ import org.egov.ptr.repository.PetRegistrationRepository;
 import org.egov.ptr.repository.ServiceRequestRepository;
 import org.egov.ptr.util.PTRConstants;
 import org.egov.ptr.validator.PetApplicationValidator;
+import org.egov.ptr.web.contracts.PDFRequest;
 import org.egov.ptr.web.contracts.RequestInfoWrapper;
+import org.egov.ptr.web.contracts.alfresco.DMSResponse;
+import org.egov.ptr.web.contracts.alfresco.DmsRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -77,6 +85,12 @@ public class PetRegistrationService {
 
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
+
+	@Autowired
+	private ReportService reportService;
+
+	@Autowired
+	private AlfrescoService alfrescoService;
 
 	/**
 	 * Enriches the Request and pushes to the Queue
@@ -172,7 +186,7 @@ public class PetRegistrationService {
 		enrichmentService.enrichPetApplicationUponUpdate(petRegistrationRequest, existingApplication);
 
         // create and upload pdf
-//        createAndUploadPDF(petRegistrationRequest);
+        createAndUploadPDF(petRegistrationRequest);
         
 		// generate demand and bill
 		generateDemandAndBill(petRegistrationRequest);
@@ -186,51 +200,155 @@ public class PetRegistrationService {
 		return petRegistrationRequest.getPetRegistrationApplications().get(0);
 	}
 
-//	private void createAndUploadPDF(PetRegistrationRequest petRegistrationRequest) {
-//		
-//		if (!CollectionUtils.isEmpty(petRegistrationRequest.getPetRegistrationApplications())) {
-//			petRegistrationRequest.getPetRegistrationApplications().stream().forEach(license -> {
-//
-//				Thread pdfGenerationThread = new Thread(() -> {
-//
-//					// for NEW TL
-//					if ((PTRConstants.businessService_NewTL
-//							&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(),
-//									TLConstants.APPLICATION_TYPE_NEW)
-//							&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE)) || // for RENEWAL TL
-//							(StringUtils.equalsIgnoreCase(license.getBusinessService(),
-//									TLConstants.businessService_NewTL)
-//									&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(),
-//											TLConstants.APPLICATION_TYPE_RENEWAL)
-//									&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE))) {
-//
-//						// validate trade license
-//						validateTradeLicenseCertificateGeneration(license);
-//
-//						// create pdf
-//						Resource resource = createNoSavePDF(license, tradeLicenseRequest.getRequestInfo());
-//
-//						//upload pdf
-//						DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, license,
-//								tradeLicenseRequest.getRequestInfo());
-//						try {
-//							DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest,
-//									tradeLicenseRequest.getRequestInfo());
-//						} catch (IOException e) {
-//							throw new CustomException("UPLOAD_ATTACHMENT_FAILED",
-//									"Upload Attachment failed." + e.getMessage());
-//						}
-//					}
-//
-//				});
-//
-//				pdfGenerationThread.start();
-//
-//			});
-//		}
-//		
-//		
-//	}
+	private void createAndUploadPDF(PetRegistrationRequest petRegistrationRequest) {
+		
+		if (!CollectionUtils.isEmpty(petRegistrationRequest.getPetRegistrationApplications())) {
+			petRegistrationRequest.getPetRegistrationApplications().stream().forEach(license -> {
+
+				Thread pdfGenerationThread = new Thread(() -> {
+
+					// for NEW TL
+					if (StringUtils.equalsIgnoreCase(license.getWorkflow().getAction(), PTRConstants.WORKFLOW_ACTION_APPROVE)) {
+
+						// validate trade license
+						validateTradeLicenseCertificateGeneration(license);
+
+						// create pdf
+						Resource resource = createNoSavePDF(license, petRegistrationRequest.getRequestInfo());
+
+						//upload pdf
+						DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, license,
+								petRegistrationRequest.getRequestInfo());
+						try {
+							DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest,
+									petRegistrationRequest.getRequestInfo());
+						} catch (IOException e) {
+							throw new CustomException("UPLOAD_ATTACHMENT_FAILED",
+									"Upload Attachment failed." + e.getMessage());
+						}
+					}
+
+				});
+
+				pdfGenerationThread.start();
+
+			});
+		}
+		
+		
+	}
+
+	private DmsRequest generateDmsRequestByTradeLicense(Resource resource, PetRegistrationApplication petRegistrationApplication,
+			RequestInfo requestInfo) {
+
+		DmsRequest dmsRequest = DmsRequest.builder().userId(requestInfo.getUserInfo().getId().toString())
+				.objectId(petRegistrationApplication.getId()).description(PTRConstants.ALFRESCO_COMMON_CERTIFICATE_DESCRIPTION).id(PTRConstants.ALFRESCO_COMMON_CERTIFICATE_ID).type(PTRConstants.ALFRESCO_COMMON_CERTIFICATE_TYPE).objectName(PTRConstants.BUSINESS_SERVICE)
+				.comments(PTRConstants.ALFRESCO_TL_CERTIFICATE_COMMENT).status(PTRConstants.APPLICATION_STATUS_APPROVED).file(resource).servicetype(PTRConstants.BUSINESS_SERVICE)
+				.documentType(PTRConstants.ALFRESCO_DOCUMENT_TYPE).documentId(PTRConstants.ALFRESCO_COMMON_DOCUMENT_ID).build();
+
+		return dmsRequest;
+	}
+
+	private Resource createNoSavePDF(PetRegistrationApplication petRegistrationApplication, RequestInfo requestInfo) {
+		
+		// generate pdf
+		PDFRequest pdfRequest = generatePdfRequestByTradeLicense(petRegistrationApplication, requestInfo);
+		Resource resource = reportService.createNoSavePDF(pdfRequest);
+		
+		return resource;
+	}
+
+	private PDFRequest generatePdfRequestByTradeLicense(
+			PetRegistrationApplication petRegistrationApplication, RequestInfo requestInfo) {
+		
+		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map2 = generateDataForTradeLicensePdfCreate(petRegistrationApplication, requestInfo);
+		
+		map.put("tl", map2);
+		
+		PDFRequest pdfRequest = PDFRequest.builder()
+				.RequestInfo(requestInfo)
+				.key("TradeLicense2")
+				.tenantId("hp")
+				.data(map)
+				.build();
+		
+		return pdfRequest;
+	}
+
+	private Map<String, Object> generateDataForTradeLicensePdfCreate(
+			PetRegistrationApplication petRegistrationApplication, RequestInfo requestInfo) {
+
+		Map<String, Object> tlObject = new HashMap<>();
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		String createdTime = dateFormat.format(new Date(petRegistrationApplication.getAuditDetails().getCreatedTime()));
+		String lastVaccineDate = dateFormat.format(new Date(petRegistrationApplication.getPetDetails().getLastVaccineDate()));
+		
+		// map variables and values
+		tlObject.put("applicationNumber", petRegistrationApplication.getApplicationNumber());//Trade License No
+		tlObject.put("petName", petRegistrationApplication.getPetDetails().getPetName()); //Trade Registration No
+		tlObject.put("breedType", petRegistrationApplication.getPetDetails().getBreedType());//Trade Name
+		tlObject.put("address", petRegistrationApplication.getAddress().getAddressLine1().concat(", ")
+			.concat(petRegistrationApplication.getAddress().getCity().concat(", ")
+			.concat(petRegistrationApplication.getAddress().getPincode())));// Trade Premises Address
+		tlObject.put("createdTime", createdTime);// License Issue Date
+		tlObject.put("lastVaccineDate", lastVaccineDate);//License Validity
+		tlObject.put("applicantName", petRegistrationApplication.getApplicantName());
+		tlObject.put("mobileNumber", petRegistrationApplication.getMobileNumber());
+		// generate QR code from attributes
+		StringBuilder qr = new StringBuilder();
+		getQRCodeForPdfCreate(tlObject, qr);
+		
+		tlObject.put("qrCodeText", qr.toString());
+		
+		return tlObject;
+	}
+
+	private void getQRCodeForPdfCreate(Map<String, Object> tlObject, StringBuilder qr) {
+		tlObject.entrySet().stream()
+		.filter(entry1 -> Arrays.asList("tradeLicenseNo","tradeRegistrationNo","tradeName","tradePremisesAddress","licenseIssueDate","licenseValidity","licenseCategory","licenseApplicantName","applicantContactNo","applicantAddress")
+		.contains(entry1.getKey())).forEach(entry -> {
+			qr.append(entry.getKey());
+			qr.append(": ");
+			qr.append(entry.getValue());
+			qr.append("\r\n");
+		});
+		
+	    replaceInStringBuilder(qr, "tradeLicenseNo", "Trade License No");
+	    replaceInStringBuilder(qr, "tradeRegistrationNo", "Trade Registration No");
+	    replaceInStringBuilder(qr, "tradeName", "Trade Name");
+	    replaceInStringBuilder(qr, "tradePremisesAddress", "Trade Premises Address");
+	    replaceInStringBuilder(qr, "licenseIssueDate", "License Issue Date");
+	    replaceInStringBuilder(qr, "licenseValidity", "License Validity");
+	    replaceInStringBuilder(qr, "licenseCategory", "License Category");
+	    replaceInStringBuilder(qr, "licenseApplicantName", "License Applicant Name");
+	    replaceInStringBuilder(qr, "applicantContactNo", "Applicant Contact No");
+	    replaceInStringBuilder(qr, "applicantAddress", "Applicant Address");
+		
+	}
+
+	private void replaceInStringBuilder(StringBuilder qr, String target, String replacement) {
+	    int start;
+	    while ((start = qr.indexOf(target)) != -1) {
+	        qr.replace(start, start + target.length(), replacement);
+	    }
+	}
+
+	private void validateTradeLicenseCertificateGeneration(PetRegistrationApplication petRegistrationApplication) {
+		
+		if (StringUtils.isEmpty(petRegistrationApplication.getApplicationNumber())
+			    || StringUtils.isEmpty(petRegistrationApplication.getPetDetails().getPetName())
+			    || StringUtils.isEmpty(petRegistrationApplication.getPetDetails().getBreedType())
+			    || StringUtils.isEmpty(petRegistrationApplication.getAddress().getAddressLine1())
+			    || null == petRegistrationApplication.getAuditDetails().getCreatedTime()
+			    || StringUtils.isEmpty(petRegistrationApplication.getPetDetails().getLastVaccineDate())
+			    || StringUtils.isEmpty(petRegistrationApplication.getApplicantName())
+			    || StringUtils.isEmpty(petRegistrationApplication.getMobileNumber())) {
+			    
+			    throw new CustomException("NULL_APPLICATION_NUMBER","PDF can't be generated with null values for application number: "+petRegistrationApplication.getApplicationNumber());
+			}
+	}
 
 	private void generateDemandAndBill(PetRegistrationRequest petRegistrationRequest) {
 		if (petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction()
