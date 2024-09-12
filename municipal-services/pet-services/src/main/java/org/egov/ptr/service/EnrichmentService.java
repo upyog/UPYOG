@@ -83,7 +83,7 @@ public class EnrichmentService {
 			petRegistrationRequest.getPetRegistrationApplications().get(0).setStatus(status);
 		}
 		
-		// Enrich lastModifiedTime and lastModifiedBy in case of update
+		// Enrich in case of update
 		petRegistrationRequest.getPetRegistrationApplications().get(0).setStatus(getStatusOrAction(petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction(),true));
 		petRegistrationRequest.getPetRegistrationApplications().get(0).setAuditDetails(existingApplication.getAuditDetails());
 		petRegistrationRequest.getPetRegistrationApplications().get(0).getAuditDetails()

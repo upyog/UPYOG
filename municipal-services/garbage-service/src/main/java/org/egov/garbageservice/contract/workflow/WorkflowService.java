@@ -35,7 +35,7 @@ public class WorkflowService {
 		Object response = restCallRepository.fetchResult(url, processInstanceRequest);
 		ProcessInstanceResponse processInstanceResponse = objectMapper.convertValue(response, ProcessInstanceResponse.class);
 		
-		if(null == response && null == processInstanceResponse) {
+		if(null == response || null == processInstanceResponse) {
 			throw new CustomException("WORKFLOW_RESPONSE_NULL","Error ocurred while running workflow.");
 		}
 		
