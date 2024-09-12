@@ -96,15 +96,13 @@ public class BillQueryBuilder {
 			appendListToQuery(searchBill.getBillId(), preparedStatementValues, selectQuery);
 		}
 
-		if (!searchBill.getRetrieveOldest()) {
-			if (searchBill.getStatus() != null) {
-				selectQuery.append(" AND b.status = ?");
-				preparedStatementValues.add(searchBill.getStatus().toString());
-			}
-		} else {
-			selectQuery.append(" AND b.status != ?");
-			preparedStatementValues.add(BillStatus.CANCELLED.toString());
-		}
+		/*
+		 * if (!searchBill.getRetrieveOldest()) { if (searchBill.getStatus() != null) {
+		 * selectQuery.append(" AND b.status = ?");
+		 * preparedStatementValues.add(searchBill.getStatus().toString()); } } else {
+		 * selectQuery.append(" AND b.status != ?");
+		 * preparedStatementValues.add(BillStatus.CANCELLED.toString()); }
+		 */
 
 		if (searchBill.getEmail() != null) {
 			selectQuery.append(" AND b.payeremail = ?");
