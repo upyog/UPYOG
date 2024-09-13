@@ -1,10 +1,14 @@
-// import React, { useState } from "react";
+// Description: CMSearchCertificate component renders a form having certificate type, certificate number and a captcha for verification and display's a table as a result
+// @author: Khalid Rashid
+
+// Hcaptcha library is used for captcha
+// @github: https://github.com/hCaptcha/react-hcaptcha
+// npm command: npm install @hcaptcha/react-hcaptcha --save
+
+import React, { useEffect, useState, useRef } from "react";
 import { Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-
-
-import React, { useEffect, useState, useRef } from "react";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 // import { hcaptchaDetails } from "../utils";
 import { convertEpochToDate } from "../utils";
@@ -19,8 +23,6 @@ import {
   Card,
   Header,
 } from "@nudmcdgnpm/digit-ui-react-components";
-
-// import CMSearchApplication from "../components/SearchApplication";
 
 const CMSearchCertificate = ({ path }) => {
   const { variant } = useParams();
@@ -39,6 +41,7 @@ const CMSearchCertificate = ({ path }) => {
   const [certificate_name, setCertificate_name] = useState("");
   const [certificate_No, setCertificate_No] = useState("");
 
+  // function to reset captcha
   const resetCaptcha = () => {
     if (captcha.current) {
       captcha.current.resetCaptcha();
@@ -49,6 +52,7 @@ const CMSearchCertificate = ({ path }) => {
     setCertificate_No(e.target.value);
   }
 
+  // Initialized form handling using the useForm hook from React Hook Form, setting default values for pagination, sorting, and date range filters.
   const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
     defaultValues: {
       offset: 0,
@@ -60,6 +64,7 @@ const CMSearchCertificate = ({ path }) => {
     },
   });
 
+  // sets ishuman to be true based on token
   useEffect(() => {
     if (token) {
       setIshuman(true);
@@ -85,6 +90,7 @@ const CMSearchCertificate = ({ path }) => {
     { Header: t("CERTIFICATE_STATUS"), accessor: "certificateStatus" },
   ];
 
+  // defined a state to handle data object
   const [updatedData, setUpdatedData] = useState([
     {
       name: "",
@@ -195,6 +201,7 @@ const CMSearchCertificate = ({ path }) => {
 
   };
 
+  // Functions defined to use services of different modules to access and structure data to render in table
   async function ewCertificate(certificate_No) {
     const applicationDetails = await Digit.EwService.search({ tenantId, filters: { requestId: certificate_No } });
     const dataew = applicationDetails?.EwasteApplication[0];
@@ -692,27 +699,6 @@ const CMSearchCertificate = ({ path }) => {
       </div>
     </React.Fragment>
   );
-
-  // return (
-  //   <React.Fragment>
-  //     <CMSearchApplication
-  //       t={t}
-  //       tenantId={tenantId}
-  //       setShowToast={setShowToast}
-  //     />
-  //     {showToast && (
-  //       <Toast
-  //         error={showToast.error}
-  //         warning={showToast.warning}
-  //         label={t(showToast.label)}
-  //         isDleteBtn={true}
-  //         onClose={() => {
-  //           setShowToast(null);
-  //         }}
-  //       />
-  //     )}
-  //   </React.Fragment>
-  // );
 };
 
 export default CMSearchCertificate;
