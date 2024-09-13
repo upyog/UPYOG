@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.garbageservice.contract.bill.*;
+import org.egov.garbageservice.contract.bill.Bill.StatusEnum;
 import org.egov.garbageservice.contract.workflow.BusinessServiceResponse;
 import org.egov.garbageservice.contract.workflow.ProcessInstance;
 import org.egov.garbageservice.contract.workflow.ProcessInstanceRequest;
@@ -926,8 +928,17 @@ public class GarbageAccountService {
 			BillResponse billResponse = billService.searchBill(billSearchCriteria,requestInfo);
 			Map<Object, Object> billDetailsMap = new HashMap<>();
 			if (!CollectionUtils.isEmpty(billResponse.getBill())) {
-				billDetailsMap.put("billId", billResponse.getBill().get(0).getId());
-				garbageAccountDetail.setTotalPayableAmount(billResponse.getBill().get(0).getTotalAmount());
+				// enrich all bills
+				garbageAccountDetail.setBills(billResponse.getBill());
+				Optional<Bill> activeBill = billResponse.getBill().stream()
+						.filter(bill -> StatusEnum.ACTIVE.name().equalsIgnoreCase(bill.getStatus().name()))
+			            .findFirst();
+				activeBill.ifPresent(bill -> {
+					// enrich active bill details
+					billDetailsMap.put("billId", bill.getId());
+					garbageAccountDetail.setTotalPayableAmount(bill.getTotalAmount());
+				});
+					
 			}else {
 				garbageAccountDetail.setTotalPayableAmount(new BigDecimal(100.00));
 			}
