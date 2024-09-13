@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
-import org.upyog.chb.enums.SlotStatusEnum;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 
@@ -39,7 +38,7 @@ public class CommunityHallBookingQueryBuilder {
 	private static final String COMMUNITY_HALL_SLOTS_AVAIALABILITY_QUERY = " SELECT ecbd.tenant_id, ecbd.community_hall_code, ecsd.capacity, ecsd.hall_code, ecsd.status,ecsd.booking_date \n"
 			+ "	FROM eg_chb_booking_detail ecbd, eg_chb_slot_detail ecsd\n"
 			+ "where ecbd.booking_id = ecsd.booking_id and ecbd.tenant_id= ? and ecbd.community_hall_code = ?\n"
-			+ " and ecsd.status = ? and \n"
+			+ " and ecsd.status in ('BOOKED', 'PENDING_FOR_PAYMENT') and \n"
 			+ "	ecsd.booking_date >= ? and ecsd.booking_date <=  ? ";
 		//	+ "	AND ecsd.hall_code in (?)";
 	
@@ -243,7 +242,7 @@ public class CommunityHallBookingQueryBuilder {
 
 		paramsList.add(searchCriteria.getTenantId());
 		paramsList.add(searchCriteria.getCommunityHallCode());
-		paramsList.add(SlotStatusEnum.BOOKED.toString());
+//		paramsList.add(SlotStatusEnum.BOOKED.toString());
 		paramsList.add(searchCriteria.getBookingStartDate());
 		paramsList.add(searchCriteria.getBookingEndDate());
 

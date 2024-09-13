@@ -11,6 +11,7 @@ import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.MdmsResponse;
 import org.egov.mdms.model.ModuleDetail;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
@@ -190,6 +191,9 @@ public class MdmsUtil {
 		
 		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestCalculationType(requestInfo, tenantId, moduleName, bookingDetail.getCommunityHallCode());
 		MdmsResponse mdmsResponse = mapper.convertValue(serviceRequestRepository.fetchResult(uri, mdmsCriteriaReq), MdmsResponse.class);
+		if(mdmsResponse.getMdmsRes().get(config.getModuleName()) == null) {
+			throw new CustomException("FEE_NOT_AVAILABLE", "Community Hall Fee not available.");
+		}
 		JSONArray jsonArray = mdmsResponse.getMdmsRes().get(config.getModuleName()).get(getCalculationTypeMasterName(bookingDetail.getCommunityHallCode()));
 		
 		try {

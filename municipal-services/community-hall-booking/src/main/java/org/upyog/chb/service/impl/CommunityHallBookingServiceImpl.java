@@ -16,17 +16,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.enums.BookingStatusEnum;
-import org.upyog.chb.enums.SlotStatusEnum;
 import org.upyog.chb.repository.CommunityHallBookingRepository;
 import org.upyog.chb.service.CHBEncryptionService;
 import org.upyog.chb.service.CommunityHallBookingService;
 import org.upyog.chb.service.DemandService;
 import org.upyog.chb.service.EnrichmentService;
 import org.upyog.chb.util.CommunityHallBookingUtil;
-import org.upyog.chb.util.EncryptionDecryptionUtil;
 import org.upyog.chb.util.MdmsUtil;
 import org.upyog.chb.validator.CommunityHallBookingValidator;
-import org.upyog.chb.web.models.ApplicantDetail;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
@@ -245,7 +242,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		//Setting hall status to booked if it is already booked by checking in the database entry
 		availabiltityDetailsResponse.stream().forEach(detail -> {
 			if (availabiltityDetails.contains(detail)) {
-				detail.setSlotStaus(SlotStatusEnum.BOOKED.toString());
+				detail.setSlotStaus(BookingStatusEnum.BOOKED.toString());
 			}
 		});
 
@@ -257,7 +254,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		CommunityHallSlotAvailabilityDetail availabiltityDetail = CommunityHallSlotAvailabilityDetail.builder()
 				.communityHallCode(criteria.getCommunityHallCode()).hallCode(hallCode)
 			//Setting slot status available for every hall and hall code
-				.slotStaus(SlotStatusEnum.AVAILABLE.toString()).tenantId(criteria.getTenantId())
+				.slotStaus(BookingStatusEnum.AVAILABLE.toString()).tenantId(criteria.getTenantId())
 				.bookingDate(CommunityHallBookingUtil.parseLocalDateToString(date)).build();
 		return availabiltityDetail;
 	}
