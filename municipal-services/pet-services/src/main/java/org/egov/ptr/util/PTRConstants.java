@@ -1,13 +1,30 @@
 package org.egov.ptr.util;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@AllArgsConstructor
+@Data
 public class PTRConstants {
 
 	private PTRConstants() {
 	}
+	
+
+
+    @Value("${egov.report.host}")
+    private String reportHost;
+
+    @Value("${egov.report.endpoint.create}")
+    private String reportCreateEndPoint;
+
+    @Value("${egov.alfresco.host}")
+    private String alfrescoHost;
+
+    @Value("${egov.alfresco.endpoint.upload}")
+    private String alfrescoUploadEndPoint;
 
 	public static final String MDMS_PT_OWNERTYPE = "OwnerType";
 
@@ -47,6 +64,10 @@ public class PTRConstants {
 	public static final String VARIABLE_OWNER = "ownerInfo";
 
 	public static final String CITIZEN_SENDBACK_ACTION = "SENDBACKTOCITIZEN";
+
+	public static final String BUSINESS_SERVICE = "PTR";
+
+	public static final String WORKFLOW_BUSINESS_SERVICE = "pet-services";
 
 	public static final String WORKFLOW_ACTION_INITIATE = "INITIATE";
 
@@ -89,8 +110,6 @@ public class PTRConstants {
 	public static final String WF_STATUS_DOCVERIFIED = "DOCVERIFIED";
 
 	public static final String WF_STATUS_CANCELLED = "CANCELLED";
-
-	public static final String WORKFLOW_ACTION_APPROVED = "APPROVED";
 
 	public static final String WF_STATUS_OPEN = "OPEN";
 
@@ -264,4 +283,12 @@ public class PTRConstants {
 	public static final String USER_ROLE_PTR_APPROVER = "PTR_APPROVER";
 
 	public static final String STATE_LEVEL_TENANT_ID = "hp";
+	
+    // Alfresco keys
+    public static final Long ALFRESCO_COMMON_DOCUMENT_ID = 0L;
+    public static final String ALFRESCO_COMMON_CERTIFICATE_DESCRIPTION = "PET certificate";
+    public static final String ALFRESCO_COMMON_CERTIFICATE_ID = "";
+    public static final String ALFRESCO_COMMON_CERTIFICATE_TYPE = "PDF";
+    public static final String ALFRESCO_DOCUMENT_TYPE = "CERT";
+    public static final String ALFRESCO_TL_CERTIFICATE_COMMENT = "Signed Certificate";
 }

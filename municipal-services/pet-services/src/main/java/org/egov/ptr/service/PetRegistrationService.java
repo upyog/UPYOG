@@ -1,8 +1,12 @@
 package org.egov.ptr.service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -12,7 +16,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -35,9 +38,13 @@ import org.egov.ptr.repository.PetRegistrationRepository;
 import org.egov.ptr.repository.ServiceRequestRepository;
 import org.egov.ptr.util.PTRConstants;
 import org.egov.ptr.validator.PetApplicationValidator;
+import org.egov.ptr.web.contracts.PDFRequest;
 import org.egov.ptr.web.contracts.RequestInfoWrapper;
+import org.egov.ptr.web.contracts.alfresco.DMSResponse;
+import org.egov.ptr.web.contracts.alfresco.DmsRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -78,6 +85,12 @@ public class PetRegistrationService {
 
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
+
+	@Autowired
+	private ReportService reportService;
+
+	@Autowired
+	private AlfrescoService alfrescoService;
 
 	/**
 	 * Enriches the Request and pushes to the Queue
@@ -168,20 +181,176 @@ public class PetRegistrationService {
 	public PetRegistrationApplication updatePtrApplication(PetRegistrationRequest petRegistrationRequest) {
 		PetRegistrationApplication existingApplication = validator
 				.validateApplicationExistence(petRegistrationRequest.getPetRegistrationApplications().get(0));
-		existingApplication.setWorkflow(petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow());
-		existingApplication.setIsOnlyWorkflowCall(petRegistrationRequest.getPetRegistrationApplications().get(0).getIsOnlyWorkflowCall());
 		
-		if(BooleanUtils.isTrue(petRegistrationRequest.getPetRegistrationApplications().get(0).getIsOnlyWorkflowCall())
-				&& null != petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow()) {
-			String status = getStatusOrAction(petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction(), false);
-			petRegistrationRequest.setPetRegistrationApplications(Collections.singletonList(existingApplication));
-			petRegistrationRequest.getPetRegistrationApplications().get(0).setStatus(status);
+		// enrich
+		enrichmentService.enrichPetApplicationUponUpdate(petRegistrationRequest, existingApplication);
+
+        // create and upload pdf
+        createAndUploadPDF(petRegistrationRequest);
+        
+		// generate demand and bill
+		generateDemandAndBill(petRegistrationRequest);
+		
+		// wf call
+		wfService.updateWorkflowStatus(petRegistrationRequest);
+		
+		// update
+		producer.push(config.getUpdatePtrTopic(), petRegistrationRequest);
+
+		return petRegistrationRequest.getPetRegistrationApplications().get(0);
+	}
+
+	private void createAndUploadPDF(PetRegistrationRequest petRegistrationRequest) {
+		
+		if (!CollectionUtils.isEmpty(petRegistrationRequest.getPetRegistrationApplications())) {
+			petRegistrationRequest.getPetRegistrationApplications().stream().forEach(license -> {
+
+				Thread pdfGenerationThread = new Thread(() -> {
+
+					// for NEW TL
+					if (StringUtils.equalsIgnoreCase(license.getWorkflow().getAction(), PTRConstants.WORKFLOW_ACTION_APPROVE)) {
+
+						// validate trade license
+						validateTradeLicenseCertificateGeneration(license);
+
+						// create pdf
+						Resource resource = createNoSavePDF(license, petRegistrationRequest.getRequestInfo());
+
+						//upload pdf
+						DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, license,
+								petRegistrationRequest.getRequestInfo());
+						try {
+							DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest,
+									petRegistrationRequest.getRequestInfo());
+						} catch (IOException e) {
+							throw new CustomException("UPLOAD_ATTACHMENT_FAILED",
+									"Upload Attachment failed." + e.getMessage());
+						}
+					}
+
+				});
+
+				pdfGenerationThread.start();
+
+			});
 		}
 		
-//		petRegistrationRequest.setPetRegistrationApplications(Collections.singletonList(existingApplication));
+		
+	}
 
-		enrichmentService.enrichPetApplicationUponUpdate(petRegistrationRequest);
+	private DmsRequest generateDmsRequestByTradeLicense(Resource resource, PetRegistrationApplication petRegistrationApplication,
+			RequestInfo requestInfo) {
 
+		DmsRequest dmsRequest = DmsRequest.builder().userId(requestInfo.getUserInfo().getId().toString())
+				.objectId(petRegistrationApplication.getId()).description(PTRConstants.ALFRESCO_COMMON_CERTIFICATE_DESCRIPTION).id(PTRConstants.ALFRESCO_COMMON_CERTIFICATE_ID).type(PTRConstants.ALFRESCO_COMMON_CERTIFICATE_TYPE).objectName(PTRConstants.BUSINESS_SERVICE)
+				.comments(PTRConstants.ALFRESCO_TL_CERTIFICATE_COMMENT).status(PTRConstants.APPLICATION_STATUS_APPROVED).file(resource).servicetype(PTRConstants.BUSINESS_SERVICE)
+				.documentType(PTRConstants.ALFRESCO_DOCUMENT_TYPE).documentId(PTRConstants.ALFRESCO_COMMON_DOCUMENT_ID).build();
+
+		return dmsRequest;
+	}
+
+	private Resource createNoSavePDF(PetRegistrationApplication petRegistrationApplication, RequestInfo requestInfo) {
+		
+		// generate pdf
+		PDFRequest pdfRequest = generatePdfRequestByTradeLicense(petRegistrationApplication, requestInfo);
+		Resource resource = reportService.createNoSavePDF(pdfRequest);
+		
+		return resource;
+	}
+
+	private PDFRequest generatePdfRequestByTradeLicense(
+			PetRegistrationApplication petRegistrationApplication, RequestInfo requestInfo) {
+		
+		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map2 = generateDataForTradeLicensePdfCreate(petRegistrationApplication, requestInfo);
+		
+		map.put("tl", map2);
+		
+		PDFRequest pdfRequest = PDFRequest.builder()
+				.RequestInfo(requestInfo)
+				.key("TradeLicense2")
+				.tenantId("hp")
+				.data(map)
+				.build();
+		
+		return pdfRequest;
+	}
+
+	private Map<String, Object> generateDataForTradeLicensePdfCreate(
+			PetRegistrationApplication petRegistrationApplication, RequestInfo requestInfo) {
+
+		Map<String, Object> tlObject = new HashMap<>();
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		String createdTime = dateFormat.format(new Date(petRegistrationApplication.getAuditDetails().getCreatedTime()));
+		String lastVaccineDate = dateFormat.format(new Date(petRegistrationApplication.getPetDetails().getLastVaccineDate()));
+		
+		// map variables and values
+		tlObject.put("applicationNumber", petRegistrationApplication.getApplicationNumber());//Trade License No
+		tlObject.put("petName", petRegistrationApplication.getPetDetails().getPetName()); //Trade Registration No
+		tlObject.put("breedType", petRegistrationApplication.getPetDetails().getBreedType());//Trade Name
+		tlObject.put("address", petRegistrationApplication.getAddress().getAddressLine1().concat(", ")
+			.concat(petRegistrationApplication.getAddress().getCity().concat(", ")
+			.concat(petRegistrationApplication.getAddress().getPincode())));// Trade Premises Address
+		tlObject.put("createdTime", createdTime);// License Issue Date
+		tlObject.put("lastVaccineDate", lastVaccineDate);//License Validity
+		tlObject.put("applicantName", petRegistrationApplication.getApplicantName());
+		tlObject.put("mobileNumber", petRegistrationApplication.getMobileNumber());
+		// generate QR code from attributes
+		StringBuilder qr = new StringBuilder();
+		getQRCodeForPdfCreate(tlObject, qr);
+		
+		tlObject.put("qrCodeText", qr.toString());
+		
+		return tlObject;
+	}
+
+	private void getQRCodeForPdfCreate(Map<String, Object> tlObject, StringBuilder qr) {
+		tlObject.entrySet().stream()
+		.filter(entry1 -> Arrays.asList("tradeLicenseNo","tradeRegistrationNo","tradeName","tradePremisesAddress","licenseIssueDate","licenseValidity","licenseCategory","licenseApplicantName","applicantContactNo","applicantAddress")
+		.contains(entry1.getKey())).forEach(entry -> {
+			qr.append(entry.getKey());
+			qr.append(": ");
+			qr.append(entry.getValue());
+			qr.append("\r\n");
+		});
+		
+	    replaceInStringBuilder(qr, "tradeLicenseNo", "Trade License No");
+	    replaceInStringBuilder(qr, "tradeRegistrationNo", "Trade Registration No");
+	    replaceInStringBuilder(qr, "tradeName", "Trade Name");
+	    replaceInStringBuilder(qr, "tradePremisesAddress", "Trade Premises Address");
+	    replaceInStringBuilder(qr, "licenseIssueDate", "License Issue Date");
+	    replaceInStringBuilder(qr, "licenseValidity", "License Validity");
+	    replaceInStringBuilder(qr, "licenseCategory", "License Category");
+	    replaceInStringBuilder(qr, "licenseApplicantName", "License Applicant Name");
+	    replaceInStringBuilder(qr, "applicantContactNo", "Applicant Contact No");
+	    replaceInStringBuilder(qr, "applicantAddress", "Applicant Address");
+		
+	}
+
+	private void replaceInStringBuilder(StringBuilder qr, String target, String replacement) {
+	    int start;
+	    while ((start = qr.indexOf(target)) != -1) {
+	        qr.replace(start, start + target.length(), replacement);
+	    }
+	}
+
+	private void validateTradeLicenseCertificateGeneration(PetRegistrationApplication petRegistrationApplication) {
+		
+		if (StringUtils.isEmpty(petRegistrationApplication.getApplicationNumber())
+			    || StringUtils.isEmpty(petRegistrationApplication.getPetDetails().getPetName())
+			    || StringUtils.isEmpty(petRegistrationApplication.getPetDetails().getBreedType())
+			    || StringUtils.isEmpty(petRegistrationApplication.getAddress().getAddressLine1())
+			    || null == petRegistrationApplication.getAuditDetails().getCreatedTime()
+			    || StringUtils.isEmpty(petRegistrationApplication.getPetDetails().getLastVaccineDate())
+			    || StringUtils.isEmpty(petRegistrationApplication.getApplicantName())
+			    || StringUtils.isEmpty(petRegistrationApplication.getMobileNumber())) {
+			    
+			    throw new CustomException("NULL_APPLICATION_NUMBER","PDF can't be generated with null values for application number: "+petRegistrationApplication.getApplicationNumber());
+			}
+	}
+
+	private void generateDemandAndBill(PetRegistrationRequest petRegistrationRequest) {
 		if (petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction()
 				.equals(PTRConstants.WORKFLOW_ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT)) {
 			
@@ -200,36 +369,8 @@ public class PetRegistrationService {
             BillResponse billResponse = billingService.generateBill(petRegistrationRequest.getRequestInfo(),billCriteria);
             
 		}
-		wfService.updateWorkflowStatus(petRegistrationRequest);
-		producer.push(config.getUpdatePtrTopic(), petRegistrationRequest);
-
-		return petRegistrationRequest.getPetRegistrationApplications().get(0);
 	}
 	
-
-	public String getStatusOrAction(String action, Boolean fetchValue) {
-		
-		Map<String, String> map = new HashMap<>();
-		
-		map.put(PTRConstants.WORKFLOW_ACTION_INITIATE, PTRConstants.APPLICATION_STATUS_INITIATED);
-        map.put(PTRConstants.WORKFLOW_ACTION_FORWARD_TO_VERIFIER, PTRConstants.APPLICATION_STATUS_PENDINGFORVERIFICATION);
-        map.put(PTRConstants.WORKFLOW_ACTION_VERIFY, PTRConstants.APPLICATION_STATUS_PENDINGFORAPPROVAL);
-        map.put(PTRConstants.WORKFLOW_ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, PTRConstants.APPLICATION_STATUS_PENDINGFORPAYMENT);
-        map.put(PTRConstants.WORKFLOW_ACTION_RETURN_TO_INITIATOR, PTRConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION);
-        map.put(PTRConstants.WORKFLOW_ACTION_FORWARD_TO_APPROVER, PTRConstants.APPLICATION_STATUS_PENDINGFORAPPROVAL);
-        map.put(PTRConstants.WORKFLOW_ACTION_APPROVE, PTRConstants.APPLICATION_STATUS_APPROVED);
-		
-		if(!fetchValue){
-			// return key
-			for (Map.Entry<String, String> entry : map.entrySet()) {
-		        if (entry.getValue().equals(action)) {
-		            return entry.getKey();
-		        }
-		    }
-		}
-		// return value
-		return map.get(action);
-	}
 
 	public Object enrichResponseDetail(List<PetRegistrationApplication> applications) {
 		
