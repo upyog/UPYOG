@@ -101,7 +101,12 @@ public class TarentoServiceImpl implements ClientService {
 	                    request.getModuleLevel().equals(module)) {
 	
 	                indexName = query.get(Constants.JsonPaths.INDEX_NAME).asText();
+	                
+	                logger.info("query is "+query.toString());
 	                String initialIndexName = indexName;
+	                
+	                logger.info("initialIndexName :: {} "+initialIndexName);
+
 	                boolean isDefaultPresent = false;
 	                boolean isRequestContainsInterval = null == request.getRequestDate() ? false : (request.getRequestDate().getInterval() != null && !request.getRequestDate().getInterval().isEmpty());
 	                String interval = isRequestContainsInterval ? request.getRequestDate().getInterval() : (isDefaultPresent ? chartNode.get(Constants.JsonPaths.INTERVAL).asText() : "");
