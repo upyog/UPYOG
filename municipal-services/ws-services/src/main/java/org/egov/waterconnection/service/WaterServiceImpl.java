@@ -165,9 +165,12 @@ Boolean isMigration=false;
 		enrichmentService.enrichWaterConnection(waterConnectionRequest, reqType);
 		userService.createUser(waterConnectionRequest);
 		// call work-flow
+		if (!isMigration)
+		{
+
 		if (config.getIsExternalWorkFlowEnabled())
 			wfIntegrator.callWorkFlow(waterConnectionRequest, property);
-
+		}
 		/* encrypt here */
 		// waterConnectionRequest.setWaterConnection(encryptConnectionDetails(waterConnectionRequest.getWaterConnection()));
 		/* encrypt here for connection holder details */
