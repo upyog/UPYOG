@@ -24,7 +24,7 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
   const { t } = useTranslation();
   const stateId = Digit.ULBService.getStateId();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-  const { data: cancelpolicyData } = Digit.Hooks.useCustomMDMS(stateId, "CHB", [{ name: "CommunityHalls" }],
+  const { data: cancelpolicyData } = Digit.Hooks.useCustomMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }],
     {
       select: (data) => {
         const formattedData = data?.["CHB"]?.["CommunityHalls"];
@@ -64,7 +64,7 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
     const policyLines = policy
       .split('\n')
       .filter(line => line.trim() !== '')
-      .map((line, index) => `${index + 1}. ${line.trim()}`);
+      .map((line, index) => `${line.trim()}`);
 
     return (
       <ol style={{ paddingLeft: '20px' }}>
@@ -89,28 +89,28 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
         </div>
         <div 
           onClick={handlePriceBreakupClick} 
-          style={{ cursor: 'pointer', margin: '0 20px', color: '#a82227', fontSize: '16px', textDecoration: 'none' }}
+          style={{ cursor: 'pointer', margin: '0 18px', color: '#a82227', fontSize: '20px', textDecoration: 'none' }}
         >
-          VIEW ESTIMATE PRICE BREAKUP
+          Estimate Price Breakup
         </div>
         <div 
           onClick={handleCancellationPolicyClick} 
-          style={{ cursor: 'pointer', color: '#a82227', fontSize: '16px', textDecoration: 'none' }}
+          style={{ cursor: 'pointer', color: '#a82227', fontSize: '20px', textDecoration: 'none' }}
         >
-          VIEW CANCELLATION POLICY
+          Terms and Conditions
         </div>
       </div>
 
       {showCancellationPolicy && (
         <Modal
-          headerBarMain={<CardSubHeader style={{ color: '#a82227', margin: '25px' }}>Cancellation Policy</CardSubHeader>}
+          headerBarMain={<CardSubHeader style={{ color: '#a82227', margin: '25px' }}>Terms and Conditions</CardSubHeader>}
           headerBarEnd={<CloseBtn onClick={handleCancellationPolicyClick} />}
           popupStyles={{ backgroundColor: "#fff", position: 'relative', maxHeight: '90vh', width: '80%', overflowY: 'auto' }}
           children={
             <div>
               {cancelpolicyData ? (
                 <div>
-                  {renderCancellationPolicy(cancelpolicyData[0].cancellationPolicy)}
+                  {renderCancellationPolicy(cancelpolicyData[0].termsAndCondition)}
                 </div>
               ) : (
                 <CardLabel style={{ fontSize: '20px' }}>Loading...</CardLabel>

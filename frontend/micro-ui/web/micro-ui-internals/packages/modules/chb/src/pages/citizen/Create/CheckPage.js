@@ -221,36 +221,36 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <Row
             label={t("CHB_PINCODE")}
             text={`${t(checkForNA(address?.pincode))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/address-details`} />}
 
         />
          <Row
             label={t("CHB_CITY")}
             text={`${t(checkForNA(address?.city?.city?.name))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/address-details`} />}
 
         />
          <Row
             label={t("CHB_LOCALITY")}
             text={`${t(checkForNA(address?.locality?.name))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/address-details`} />}
 
         />
          
          <Row
             label={t("CHB_STREET_NAME")}
             text={`${t(checkForNA(address?.streetName))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/address-details`} />}
         />
          <Row
             label={t("CHB_HOUSE_NO")}
             text={`${t(checkForNA(address?.houseNo))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/address-details`} />}
         />
          <Row
             label={t("CHB_LANDMARK")}
             text={`${t(checkForNA(address?.landmark))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/chb/${typeOfApplication}/address-details`} />}
         />
         </StatusTable>
         <CardSubHeader style={{ fontSize: "24px" }}>{t("SLOT_DETAILS")}</CardSubHeader>
