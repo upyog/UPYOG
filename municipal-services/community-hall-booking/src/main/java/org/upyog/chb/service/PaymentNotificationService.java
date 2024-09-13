@@ -149,7 +149,7 @@ public class PaymentNotificationService {
 				.equals(moduleName) && (Transaction.TxnStatusEnum.FAILURE.equals(transactionStatus) ||
 						Transaction.TxnStatusEnum.PENDING.equals(transactionStatus))){
         	
-        	if(transaction.getTxnStatus().equals(Transaction.TxnStatusEnum.FAILURE)){
+        	if(Transaction.TxnStatusEnum.FAILURE.equals(transactionStatus)){
         		status = BookingStatusEnum.PAYMENT_FAILED;
         	}
         	String bookingNo = transactionRequest.getTransaction().getConsumerCode();
