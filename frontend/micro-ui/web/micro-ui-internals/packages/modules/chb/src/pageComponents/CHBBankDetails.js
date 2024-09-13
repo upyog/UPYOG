@@ -158,6 +158,7 @@ const CHBBankDetails
     >
       
       <div>
+        <CardSubHeader>{t(`CHB_BANK_DETAILS_FOR_REFUND`)}</CardSubHeader>
         <CardLabel>{`${t("CHB_ACCOUNT_NUMBER")}`} <span className="check-page-link-button">*</span></CardLabel>
         <TextInput
           t={t}

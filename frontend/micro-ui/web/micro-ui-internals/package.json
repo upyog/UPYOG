@@ -11,7 +11,9 @@
     "packages/modules/common",
     "packages/modules/dss",
     "packages/modules/ew",
-    "packages/modules/cm"
+    "packages/modules/cm",
+    "packages/modules/chb"
+
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
