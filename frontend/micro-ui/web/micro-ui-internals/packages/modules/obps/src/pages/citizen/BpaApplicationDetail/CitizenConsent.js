@@ -12,7 +12,7 @@
     
     const { t } = useTranslation();
     const user = Digit.UserService.getUser();
-    const ownername = user?.info?.name;
+    
     const ownermobileNumber = user?.info.mobileNumber
     const ownerEmail = user?.info?.emailId 
     const { id } = useParams();
@@ -27,8 +27,12 @@
       }
     });
 
+    const ownername = data?.applicationData?.additionalDetails?.ownerName;
+    const ownerAddress = data?.applicationData?.landInfo?.address?.street;
+    const ownerLocality = data?.applicationData?.landInfo?.address?.locality?.name
     const [isUploading, setIsUploading] = useState(false); // it will check whether the file upload is in process or not
     const [isFileUploaded, setIsFileUploaded] = useState(false);
+    const applicationNumber = data?.applicationNo
     const architectname = workflowDetails?.data?.timeline?.[0]?.assigner?.name
     const mobileNumber = workflowDetails?.data?.timeline?.[0]?.assigner?.mobileNumber
     const khasranumber = data?.applicationData?.additionalDetails?.khasraNumber;
@@ -36,15 +40,13 @@
     const district = data?.applicationData?.additionalDetails?.District;
     const ward = data?.applicationData?.additionalDetails?.wardnumber;
     const area = data?.applicationData?.additionalDetails?.area;
-    const applicationnumber = data?.applicationNo
     const architectid = data?.applicationData?.additionalDetails?.architectid
     const architecttype =  data?.applicationData?.additionalDetails?.typeOfArchitect
     const TimeStamp = otpVerifiedTimestamp;
     const ulbselection = data?. applicationData?.additionalDetails?.Ulblisttype === "Municipal Corporation" ? "Commissioner" : "Executive Officer"
-
     const updatedAdditionalDetails = {
       ...data?.applicationData?.additionalDetails,
-      TimeStamp: otpVerifiedTimestamp,
+      TimeStamp: sessionStorage.getItem("otpVerifiedTimestampcitizen"),
     };
   
     // Update the entire data object with the new additionalDetails
@@ -61,40 +63,35 @@
 
     const selfdeclarationform =
     `
-    To,
-    <b>${ulbselection}</b>
-    <b>${ulbname}</b> 
-    
-    Dear Sir or Madam,
+To,
+<b>${ulbselection}</b>
+<b>${ulbname}</b> 
 
-    I/We, Shri/Smt/Kum. <b>${ownername}</b> under signed owner of land bearing Kh. No. <b>${khasranumber}</b> of ULB 
-    <b>${ulbname}</b> Area <b>${area}</b> (Sq.mts.), ward number <b>${ward}</b>, City <b>${district}</b>
-    
-    I/We hereby declare that the Architect name <b>${architectname}</b> (<b>${architecttype}</b>) Architect ID 
-    <b>${architectid}</b> is appointed by me/us and is authorized to make representation/application 
-    with regard to aforesaid construction to any of the authorities.
+Dear Sir or Madam,
 
-    I/We further declare that I am/We are aware of all the action taken or representation made 
-    by the <b>${architecttype}</b> authorized by me/us.
+I/We, Shri/Smt/Kum. <b>${ownername}</b> under signed owner of land bearing Kh. No. <b>${khasranumber}</b> of ULB <b>${ulbname}</b> Area <b>${area}</b> (Sq.mts.), ward number <b>${ward}</b>, City <b>${district}</b>
 
-    i) That I am/We are sole owner of the site.
+I/We hereby declare that <b>${architectname}</b> (<b>${architecttype}</b>) Registration Number <b>${architectid}</b> is appointed by me/us and is authorized to make representation/application with regard to aforesaid construction to any of the authorities.
 
-    ii) There is no dispute regarding the site and if any dispute arises then I shall be solely resp
-    -onsible for the same.
+I/We further declare that I am/We are aware of all the action taken or representation made by the <b>${architecttype}</b> authorized by me/us.
 
-    iii) That construction of the building will be undertaken as per the approved building plans 
-    and strutural design given by the Structural Engineer.
+i) That I am/We are sole owner of the site.
 
-    That above stated facts are true and the requisite documents have been uploaded with this E-
-    Naksha plan.
+ii) There is no dispute regarding the site and if any dispute arises then I shall be solely responsible for the same.
+
+iii) That construction of the building will be undertaken as per the approved building plans and strutural design given by the Structural Engineer.
+
+That above stated facts are true and the requisite documents have been uploaded with this E-Naksha plan.
 
 
     This Document is Verified By OTP at <b>${TimeStamp}
 
 
     Name of Owner - <b>${ownername}</b>
+    Application Number - <b>${applicationNumber}</b>
+    Address - <b>${ownerAddress}</b> <b>${ownerLocality}</b>
     Mobile Number - <b>${ownermobileNumber}</b>
-    Email Id  - <b>${ownerEmail}</b>
+    Email - <b>${ownerEmail}</b>
                                                                   
     `;
 
@@ -103,7 +100,9 @@
     const isRightAlignedLine = (line) => [
       `Name of Owner - <b>${ownername}</b>`,
       `Mobile Number - <b>${ownermobileNumber}</b>`,
-      `Email Id  - <b>${ownerEmail}</b>`,
+      `Address - <b>${ownerAddress}</b> <b>${ownerLocality}</b>`,
+      `Application Number - <b>${applicationNumber}</b>`,
+      `Email - <b>${ownerEmail}</b>`
     ].includes(line.trim());
   
     const shouldAddSpacing = (currentLine, nextLine) => {

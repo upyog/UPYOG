@@ -270,6 +270,15 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
                 : t("NA")
             }
           ></Row>
+          <Row
+            className="border-none"
+            label={t("BPA_SECTION_HEIGHT_EXCLUDING_MUMTY_PARAPET")}
+            text={
+              data?.planDetail?.blocks?.[0]?.building?.buildingHeightExcludingMP
+                ? `${data?.planDetail?.blocks?.[0]?.building?.buildingHeightExcludingMP} ${t("BPA_MTRS_LABEL")}`
+                : t("NA")
+            }
+          ></Row>
         </StatusTable>
         <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />
         <CardSubHeader style={{ fontSize: "20px" }}>{t("BPA_OCC_SUBOCC_HEADER")}</CardSubHeader>

@@ -97,7 +97,22 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
     };
 
     if (isLoading || isSubmitBtnDisable) {
-        return <Loader />;
+        return (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Loader />
+            <span
+              style={{
+                display: 'block',
+                textAlign: 'center',
+                marginTop: '16px',
+                fontWeight: 'bold',
+                fontSize: '18px' // You can adjust this value as needed
+              }}
+            >
+              {t("BPA_LOADING_TEXT")}
+            </span>
+          </div>
+        )
     }
     
     return (

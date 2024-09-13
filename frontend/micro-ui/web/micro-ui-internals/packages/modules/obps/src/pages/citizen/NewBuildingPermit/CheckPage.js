@@ -53,19 +53,8 @@ import {
       setAgree(!agree);
     };
 
-
-
-
-    
-
     const Architectvalidations = sessionStorage.getItem("ArchitectConsentdocFilestoreid") ? true : false ;
-
-    
-
-
     const architectmobilenumber = user?.info?.mobileNumber
-    
-    
     const [showTermsPopup, setShowTermsPopup] = useState(false);
     const [showMobileInput, setShowMobileInput] = useState(false);
     const [mobileNumber, setMobileNumber] = useState(architectmobilenumber || '');
@@ -153,7 +142,7 @@ import {
           setOTPError(t("VERIFIED"));
           const currentTimestamp = new Date();
           setOTPVerifiedTimestamp(currentTimestamp);
-          sessionStorage.setItem('otpVerifiedTimestamp', currentTimestamp.toISOString());
+          sessionStorage.setItem('otpVerifiedTimestamp', currentTimestamp.toString().replace(/GMT.*\((.*)\)/, '').trim());
         } else {
           setIsOTPVerified(false);
           setOTPError(t("WRONG OTP"));
@@ -196,6 +185,8 @@ import {
       sessionStorage.setItem("uploadedFileLess",JSON.stringify(uploadedFileLess));
   },[uploadedFileLess])
 
+  const sitePhotographOne = value?.documents?.documents.find(doc => doc?.documentType==="SITEPHOTOGRAPH.ONE.ONE")
+  
 
     useEffect(()=>{
       if (value?.additionalDetails?.lessAdjustmentFeeFiles?.length) {
@@ -299,10 +290,10 @@ setWaterCharges(Malbafees/2)
             name:"BPA_TABLE_COL_FLOORAREA",
             id:"FloorArea",
         },
-        {
-            name:"BPA_TABLE_COL_CARPETAREA",
-            id:"CarpetArea",
-        }
+        // {
+        //     name:"BPA_TABLE_COL_CARPETAREA",
+        //     id:"CarpetArea",
+        // }
     ]
 
     const accessData = (plot) => {
@@ -464,6 +455,7 @@ function selectfile(e) {
 
     </StatusTable>
     </Card>
+
     <Card style={{paddingRight:"16px"}}>
     <CardHeader>{t("BPA_STEPPER_SCRUTINY_DETAILS_HEADER")}</CardHeader>
     <CardSubHeader style={{fontSize: "20px"}}>{t("BPA_EDCR_DETAILS")}</CardSubHeader>
@@ -488,6 +480,7 @@ function selectfile(e) {
       <Row className="border-none" label={t("BPA_TOTAL_BUILT_UP_AREA_HEADER")} text={`${datafromAPI?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea} ${t("BPA_SQ_MTRS_LABEL")}`}></Row>
       <Row className="border-none" label={t("BPA_SCRUTINY_DETAILS_NUMBER_OF_FLOORS_LABEL")} text={datafromAPI?.planDetail?.blocks?.[0]?.building?.totalFloors}></Row>
       <Row className="border-none" label={t("BPA_HEIGHT_FROM_GROUND_LEVEL_FROM_MUMTY")} text={`${datafromAPI?.planDetail?.blocks?.[0]?.building?.declaredBuildingHeight} ${t("BPA_MTRS_LABEL")}`}></Row>
+      <Row className="border-none" label={t("BPA_SECTION_HEIGHT_EXCLUDING_MUMTY_PARAPET")} text={`${datafromAPI?.planDetail?.blocks?.[0]?.building?.buildingHeightExcludingMP} ${t("BPA_MTRS_LABEL")}`}></Row>
       </StatusTable>
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
       <CardSubHeader style={{fontSize: "20px"}}>{t("BPA_OCC_SUBOCC_HEADER")}</CardSubHeader>
@@ -535,6 +528,9 @@ function selectfile(e) {
           <Row className="border-none" label={t(`BPA_LOC_MOHALLA_LABEL`)} text={address?.locality?.name || t("CS_NA")} />
           <Row className="border-none" label={t(`BPA_DETAILS_SRT_NAME_LABEL`)} text={address?.street || t("CS_NA")} />
           <Row className="border-none" label={t(`ES_NEW_APPLICATION_LOCATION_LANDMARK`)} text={address?.landmark || t("CS_NA")} />
+          <Row className="border-none" label={t(`BPA_SITEPHOTOGRAPH_LATITUDE`)} text={sitePhotographOne?.additionalDetails?.latitude || t("CS_NA")} />
+          <Row className="border-none" label={t(`BPA_SITEPHOTOGRAPH_LONGITUDE`)} text={sitePhotographOne?.additionalDetails?.longitude || t("CS_NA")} />
+
       </StatusTable>
       </Card>
       <Card style={{paddingRight:"16px"}}>
@@ -558,12 +554,21 @@ function selectfile(e) {
         </div>))}
         </StatusTable>
       </Card>
-      
 
       <Card style={{paddingRight:"16px"}}>
         <StatusTable>
         <CardHeader>{t("BPA_ADDITIONAL_BUILDING_DETAILS")}</CardHeader>
         <Row className="border-none" label={t(`BPA_APPROVED_COLONY_LABEL`)} text={owners?.approvedColony?.i18nKey || value?.additionalDetails?.approvedColony || t("CS_NA")} />
+        {owners?.approvedColony?.i18nKey==="YES" && (
+          <React.Fragment>
+            <Row className="border-none" label={t(`BPA_APPROVED_COLONY_NAME`)} text={owners?.nameofApprovedcolony || value?.additionalDetails?.nameofApprovedcolony || t("CS_NA")} />
+          </React.Fragment>
+        )}
+        {owners?.approvedColony?.i18nKey==="NO" && (
+          <React.Fragment>
+            <Row className="border-none" label={t(`BPA_NOC_NUMBER`)} text={owners?.NocNumber || value?.additionalDetails?.NocNumber || t("CS_NA")} />
+          </React.Fragment>
+        )}
         <Row className="border-none" label={t(`BPA_ULB_TYPE_LABEL`)} text={owners?.Ulblisttype?.value || value?.additionalDetails?.Ulblisttype || t("CS_NA")} />
         <Row className="border-none" label={t(`BPA_ULB_NAME_LABEL`)} text={owners?.UlbName?.code || value?.additionalDetails?.UlbName || t("CS_NA")} />
         <Row className="border-none" label={t(`BPA_DISTRICT_LABEL`)} text={owners?.District?.code || value?.additionalDetails?.District || t("CS_NA")} />
