@@ -344,10 +344,11 @@ public class GarbageAccountService {
 		newGarbageAccount.setId(existingGarbageAccount.getId());
 		newGarbageAccount.setGarbageId(existingGarbageAccount.getGarbageId());
 		
-		if (null != newGarbageAccount.getGrbgApplication()) {
-			newGarbageAccount.setStatus(
-					applicationNumberToCurrentStatus.get(newGarbageAccount.getGrbgApplication().getApplicationNo()));
-		}
+//		if (null != newGarbageAccount.getGrbgApplication()) {
+//			
+////			newGarbageAccount.setStatus(
+////					applicationNumberToCurrentStatus.get(newGarbageAccount.getGrbgApplication().getApplicationNo()));
+//		}
 	}
 
 	public GarbageAccountResponse update(GarbageAccountRequest updateGarbageRequest) {
@@ -467,6 +468,7 @@ public class GarbageAccountService {
 		
 		updateGarbageRequest.getGarbageAccounts().stream().forEach(account -> {
 			
+			
 			if(BooleanUtils.isTrue(account.getIsOnlyWorkflowCall())) {
 
 				Boolean tempBol = account.getIsOnlyWorkflowCall();
@@ -474,11 +476,10 @@ public class GarbageAccountService {
 				String action = account.getWorkflowAction();
 				String status = getStatusOrAction(action, true);
 				String comment = account.getWorkflowComment();
-				
+
 				GarbageAccount accountTemp = objectMapper.convertValue(existingGarbageApplicationAccountsMap.get(account.getGrbgApplicationNumber()), GarbageAccount.class);
-				
 				if(null == accountTemp) {
-					throw new CustomException("FAILED_SEARCH_GARBAGE_ACCOUNTS","Garbage Account not found for workflow call.");
+					throw new CustomException("FAILED_SEARCH_GARBAGE_ACCOUNTS","Garbage Account not found to run workflow.");
 				}
 				
 				accountTemp.setIsOnlyWorkflowCall(tempBol);
@@ -490,6 +491,11 @@ public class GarbageAccountService {
 				
 				garbageAccountRequestTemp.getGarbageAccounts().add(accountTemp);
 			}else {
+				GarbageAccount accountTemp = objectMapper.convertValue(existingGarbageApplicationAccountsMap.get(account.getGrbgApplication().getApplicationNo()), GarbageAccount.class);
+				if(null == accountTemp) {
+					throw new CustomException("FAILED_SEARCH_GARBAGE_ACCOUNTS","Garbage Account not found to update.");
+				}
+				account.setGrbgApplication(accountTemp.getGrbgApplication());
 				garbageAccountRequestTemp.getGarbageAccounts().add(account);
 			}
 			
@@ -575,6 +581,7 @@ public class GarbageAccountService {
 				&& !newGarbageAccount.getGrbgApplication().equals(existingGarbageAccount.getGrbgApplication()))
 		{
 			// enrich application
+			newGarbageAccount.getGrbgApplication().setUuid(existingGarbageAccount.getGrbgApplication().getUuid());
 			newGarbageAccount.getGrbgApplication().setStatus(applicationNumberToCurrentStatus.get(newGarbageAccount.getGrbgApplication().getApplicationNo()));
 			// update application
 			grbgApplicationRepository.update(newGarbageAccount.getGrbgApplication());
@@ -586,9 +593,13 @@ public class GarbageAccountService {
 			//create commercial details
 			grbgCommercialDetailsRepository.create(newGarbageAccount.getGrbgCommercialDetails());
 		}
-		else if(null != newGarbageAccount.getGrbgCommercialDetails()
+		else 
+		if(null != newGarbageAccount.getGrbgCommercialDetails()
 				&& StringUtils.isNotEmpty(newGarbageAccount.getGrbgCommercialDetails().getUuid())
 				&& !newGarbageAccount.getGrbgCommercialDetails().equals(existingGarbageAccount.getGrbgCommercialDetails())){
+			// enrich
+//			newGarbageAccount.getGrbgCommercialDetails().setUuid(existingGarbageAccount.getGrbgCommercialDetails().getUuid());
+			newGarbageAccount.getGrbgCommercialDetails().setGarbageId(existingGarbageAccount.getGrbgCommercialDetails().getGarbageId());
 			//update commercial details
 			grbgCommercialDetailsRepository.update(newGarbageAccount.getGrbgCommercialDetails());
 		}
@@ -600,9 +611,13 @@ public class GarbageAccountService {
 			//create grbgOldDetails
 			grbgOldDetailsRepository.create(newGarbageAccount.getGrbgOldDetails());
 		}
-		else if(null != newGarbageAccount.getGrbgOldDetails()
+		else 
+		if(null != newGarbageAccount.getGrbgOldDetails()
 				&& StringUtils.isNotEmpty(newGarbageAccount.getGrbgOldDetails().getUuid())
 				&& !newGarbageAccount.getGrbgOldDetails().equals(existingGarbageAccount.getGrbgOldDetails())){
+			// enrich
+			newGarbageAccount.getGrbgOldDetails().setUuid(existingGarbageAccount.getGrbgOldDetails().getUuid());
+			newGarbageAccount.getGrbgOldDetails().setGarbageId(existingGarbageAccount.getGrbgOldDetails().getGarbageId());
 			//update grbgOldDetails
 			grbgOldDetailsRepository.update(newGarbageAccount.getGrbgOldDetails());
 		}
