@@ -207,11 +207,16 @@ public class TarentoServiceImpl implements ClientService {
 		int randIndexCount = 1;
 		for(JsonNode query : queries) {
 			String module = query.get(Constants.JsonPaths.MODULE).asText();
+			logger.info("module is ===================="+module);
+			logger.info("request.getModuleLevel() is ===================="+request.getModuleLevel());
+
 			if(request.getModuleLevel().equals(Constants.Modules.HOME_REVENUE) || 
 					request.getModuleLevel().equals(Constants.Modules.HOME_SERVICES) ||
 					query.get(Constants.JsonPaths.MODULE).asText().equals(Constants.Modules.COMMON) ||
 					request.getModuleLevel().equals(module)) {
 				
+				logger.info("Inside module condition");
+
 				String indexName = query.get(Constants.JsonPaths.INDEX_NAME).asText();
 				logger.info("indexName in  executeConfiguredQueries:: {}"+indexName);
 				ObjectNode objectNode = queryService.getChartConfigurationQuery(request, query, indexName, interval);
