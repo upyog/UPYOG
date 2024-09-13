@@ -53,12 +53,17 @@ public class FSMQueryBuilder {
 
 		List<String> applicationNumber = criteria.getApplicationNos();
 		if (!CollectionUtils.isEmpty(applicationNumber)) {
-			for (String applicationNo : applicationNumber)
-			{
-				String searchPattern="%" + applicationNo.toLowerCase() + "%";
-				addClauseIfRequired(preparedStmtList, builder);
-	            builder.append(" LOWER(tl.applicationnumber) like ? ");
-	            preparedStmtList.add(searchPattern);
+			addClauseIfRequired(preparedStmtList, builder);
+			StringBuilder likeConditions = new StringBuilder();
+			for(int i=0; i< applicationNumber.size();i++) {
+				if(i > 0) {
+					likeConditions.append(" OR ");
+				}
+				likeConditions.append("fsm.applicationNo LIKE ?");
+			}
+			builder.append("(").append(likeConditions).append(")");
+			for(String appNumber : applicationNumber) {
+				preparedStmtList.add("%" + appNumber + "%"); 
 			}
             
 		}
