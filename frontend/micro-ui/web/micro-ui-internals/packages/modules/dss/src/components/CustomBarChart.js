@@ -13,8 +13,13 @@ const formatValue = (value, symbol,type) => {
     const Pformatter = new Intl.NumberFormat("en-IN", { maximumSignificantDigits: 3 });
     return `${Pformatter.format(Number(value).toFixed(2))}`;
     */
-   
-    return `${Number(value).toFixed()}`;
+   if(type == "others" && value >100)
+   {
+    return `${Number(100).toFixed()}`;
+   }
+    else {
+      return `${Number(value).toFixed()}`;
+    }
   }
   else if(type =="revenue")
   {

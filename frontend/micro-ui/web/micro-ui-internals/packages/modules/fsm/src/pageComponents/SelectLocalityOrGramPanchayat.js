@@ -13,13 +13,15 @@ const SelectLocalityOrGramPanchayat = ({ t, config, onSelect, userType, formData
   const { data: urcConfig } = Digit.Hooks.fsm.useMDMS(tenantId, "FSM", "UrcConfig");
   const isUrcEnable = urcConfig && urcConfig.length > 0 && urcConfig[0].URCEnable;
   const { pincode, city, propertyLocation } = formData?.address || "";
+  const localityNew = window.sessionStorage.getItem("Digit_OBPS_PT")
+  const localitySelected = JSON.parse(localityNew)
   const cities =
     userType === "employee"
       ? allCities.filter((city) => city?.code === tenantId)
       : pincode
       ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode))
       : allCities;
-  const [selectedLocality, setSelectedLocality] = useState();
+  const [selectedLocality, setSelectedLocality] = useState(localitySelected?.address?.locality || "");
   const [localities, setLocalities] = useState();
   const [gramPanchayats, setGramPanchayats] = useState();
   const [selectedGp, setSelectedGp] = useState(() =>
@@ -48,7 +50,6 @@ const SelectLocalityOrGramPanchayat = ({ t, config, onSelect, userType, formData
     },
     t
   );
-
   var { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
     selectedCity?.code,
     "revenue",
@@ -191,7 +192,7 @@ const SelectLocalityOrGramPanchayat = ({ t, config, onSelect, userType, formData
                 selected={selectedGp}
                 option={gramPanchayats?.sort((a, b) => a.name.localeCompare(b.name))}
                 select={selectGramPanchayat}
-                optionKey="i18nkey"
+                optionKey="name"
                 t={t}
               />
             </LabelFieldPair>
@@ -240,7 +241,7 @@ const SelectLocalityOrGramPanchayat = ({ t, config, onSelect, userType, formData
                   selected={selectedLocality}
                   option={fetchedLocalities?.sort((a, b) => a.name.localeCompare(b.name))}
                   select={selectLocality}
-                  optionKey="i18nkey"
+                  optionKey="name"
                   t={t}
                 />
               </LabelFieldPair>
@@ -284,7 +285,7 @@ const SelectLocalityOrGramPanchayat = ({ t, config, onSelect, userType, formData
                 selected={selectedLocality}
                 option={fetchedLocalities?.sort((a, b) => a.name.localeCompare(b.name))}
                 select={selectLocality}
-                optionKey="i18nkey"
+                optionKey="name"
                 t={t}
               />
             </LabelFieldPair>

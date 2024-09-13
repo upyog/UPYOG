@@ -92,13 +92,20 @@ public class PropertyRepository {
 	public List<Property> getProperties(PropertyCriteria criteria, Boolean isApiOpen, Boolean isPlainSearch) {
 
 		List<Object> preparedStmtList = new ArrayList<>();
-		String query = queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, isPlainSearch, false);
+		String query;
+		
+		if(criteria.getIsDefaulterNoticeSearch())
+		query=queryBuilder.getPropertySearchQueryForDeafauterNotice(criteria,preparedStmtList);
+		else
+		query = queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, isPlainSearch, false);
 		try {
 			query = centralUtil.replaceSchemaPlaceholder(query, criteria.getTenantId());
 		} catch (InvalidTenantIdException e) {
 			throw new CustomException("EG_PT_AS_TENANTID_ERROR",
 					"TenantId length is not sufficient to replace query schema in a multi state instance");
 		}
+		log.info("Query for Property search is " + query + " with parameters " +  preparedStmtList.toArray().toString());
+
 		if (isApiOpen)
 			return jdbcTemplate.query(query, preparedStmtList.toArray(), openRowMapper);
 		if(criteria.getIsDefaulterNoticeSearch())
