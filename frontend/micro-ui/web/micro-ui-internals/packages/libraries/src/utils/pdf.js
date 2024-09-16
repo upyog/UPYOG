@@ -151,9 +151,46 @@ const defaultLogo =
   pdfMake.vfs = Fonts;
   let locale = Digit.SessionStorage.get("locale") || "en_IN";
   let Hind = pdfFonts[locale] || pdfFonts["Hind"];
+  let ack;
+  if(applicationNumber!==undefined &&applicationNumber.split("-")[0]==="FSM"){
+    ack="FSM-AckForm"
+  }
+  else if(applicationNumber!==undefined &&applicationNumber.split("-")[1]==="PGR"){
+    ack="PGR-AckForm"
+  }
+  else if(applicationNumber!==undefined &&applicationNumber.split("-")[1]==="TL"){
+    ack="TL-AckForm"
+  }
+  else if(applicationNumber!==undefined &&applicationNumber.split("_")[0]==="WS"){
+    ack="WS-AckForm"
+  }
+  else if(applicationNumber!==undefined &&applicationNumber.split("_")[0]==="SW"){
+    ack="SW-AckForm"
+  }
+  else if(applicationNumber!==undefined &&applicationNumber.split("-")[1]==="AC"){
+    ack="PT-AckForm"
+  }
+  else if(applicationNumber!==undefined &&applicationNumber.split("-")[1]==="BP"){
+    ack="BPA-AckForm"
+  }
+  else if(applicationNumber===undefined)
+  {
+    module=details[0]?.values[0]?.value
+    if(module.split("-")[1]==="MT"){
+      ack="PT-AckForm"
+    }
+    else{
+      ack="acknowledgement"
+    }
+    
+  }
+  else{
+    ack="acknowledgement"
+  }
+ 
   pdfMake.fonts = { Hind: { ...Hind } };
   const generatedPDF = pdfMake.createPdf(dd);
-  downloadPDFFileUsingBase64(generatedPDF, "acknowledgement.pdf");
+  downloadPDFFileUsingBase64(generatedPDF, ack);
 };
 
 
@@ -253,7 +290,17 @@ const jsPdfGeneratorv1 = async ({ breakPageLimit = null, tenantId, logo, name, e
   let Hind = pdfFonts[locale] || pdfFonts["Hind"];
   pdfMake.fonts = { Hind: { ...Hind } };
   const generatedPDF = pdfMake.createPdf(dd);
-  downloadPDFFileUsingBase64(generatedPDF, "acknowledgement.pdf");
+  let ack;
+  if(headerDetails[0]?.values[0].value.split("_")[0]==="WS"){
+    ack="WS-AckForm"
+  }
+  else if(headerDetails[0]?.values[0].value.split("_")[0]==="SW"){
+    ack="SW-AckForm"
+  }
+  else{
+    ack="acknowledgement.pdf"
+  }
+  downloadPDFFileUsingBase64(generatedPDF, ack);
 };
 
 /**
