@@ -150,11 +150,12 @@ public class DemandService {
 			//Current_demand --->1500 advance 500
 			//amount = amount-advance adjusted amount --500 , current 1000 advance 0
 			//
-			if (null!=collectedAmountForLastFinYear)
+			if (collectedAmountForLastFinYear.containsKey("PT_PASTDUE_CARRYFORWARD") || 
+					collectedAmountForLastFinYear.containsKey("PT_ADVANCE_CARRYFORWARD"))
 				//collectedAmountForLastFinYear.containsKey(propertyCalculationMap) carryForwardCollectedAmount.doubleValue() >= 0.0) {
 			{
 				Demand demand = prepareDemand(property, calculation ,oldDemand);
-
+				
 				// Add billingSLabs in demand additionalDetails as map with key calculationDescription
 				demand.setAdditionalDetails(Collections.singletonMap(BILLINGSLAB_KEY, calculation.getBillingSlabIds()));
 
@@ -384,17 +385,19 @@ public class DemandService {
 			,Demand demand, boolean cancelDemand) {
 
 		Property property = criteria.getProperty();
-
+		
+		Map<String, BigDecimal> collectedMap = new HashMap<>();
 		BigDecimal carryForward = BigDecimal.ZERO;
 		BigDecimal oldTaxAmt = BigDecimal.ZERO;
-
+		collectedMap.put("PT_PASTDUE_CARRYFORWARD",BigDecimal.ZERO );
+		collectedMap.put("PT_ADVANCE_CARRYFORWARD",BigDecimal.ZERO );
 		if(null == property.getPropertyId()) return null;
 
 	//	Demand demand = getLatestDemandForCurrentFinancialYear(requestInfo, property);
 		
-		if(null == demand) return null;
+		if(null == demand) return collectedMap;
 		
-		Map<String, BigDecimal> collectedMap = utils.getTotalCollectedAmountAndPreviousCarryForwardMap(demand,requestInfo);
+		 collectedMap = utils.getTotalCollectedAmountAndPreviousCarryForwardMap(demand,requestInfo);
 		
 		
 		
