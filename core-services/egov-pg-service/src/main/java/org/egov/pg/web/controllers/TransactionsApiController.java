@@ -109,6 +109,22 @@ public class TransactionsApiController {
     }
 
 
+    @RequestMapping(value = "/transaction/v1/_reconcile", method = {RequestMethod.POST, RequestMethod.GET})
+    public ResponseEntity<TransactionResponse> transactionsV1ReconcilePost(@RequestBody RequestInfoWrapper
+                                                                                requestInfoWrapper, @RequestParam
+                                                                                Map<String,
+                                                                                        String> params) {
+        List<Transaction> transactions = transactionService.updateTransactionByReference(requestInfoWrapper.getRequestInfo(), params);
+        ResponseInfo responseInfo = ResponseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper
+                .getRequestInfo(), true);
+        TransactionResponse response = new TransactionResponse(responseInfo, transactions);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+
+    
+
     /**
      * Active payment gateways that can be used for payments
      *
