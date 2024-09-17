@@ -201,6 +201,7 @@ export const convertEpochToDate = (dateEpoch) => {
         else {
           let details
 
+          let businessServ=payments.Payments[0].paymentDetails[0].businessService;
           if(payments.Payments[0].paymentDetails[0].businessService=="BPAREG")
           {
               details = {...payments.Payments[0].additionalDetails,
@@ -212,6 +213,26 @@ export const convertEpochToDate = (dateEpoch) => {
           console.log("generatedpdfkey",generatePdfKey)
           if(business_service=="WS" || business_service=="SW"){
             response = await Digit.PaymentService.generatePdf(state, { Payments: [{...paymentData}] }, generatePdfKeyForWs);
+          }
+          else if(businessServ.includes("BPA")){
+            let queryObj = { applicationNo: payments.Payments[0].paymentDetails[0]?.bill?.consumerCode };
+            let bpaResponse = await Digit.OBPSService.BPASearch( payments.Payments[0].tenantId, queryObj);
+            console.log("bpppp", bpaResponse)
+            const updatedpayments={
+              ...paymentData,
+             
+                  paymentDetails:[
+                    {
+                      ...paymentData.paymentDetails?.[0],
+                      additionalDetails:{
+                        ...paymentData.paymentDetails[0].additionalDetails,
+                        "propertyID":bpaResponse?.BPA[0]?.additionalDetails?.propertyID,
+                      },
+                    },
+                  ],  
+               
+            }
+            response = await Digit.PaymentService.generatePdf(state, { Payments: [{...updatedpayments}] }, generatePdfKey);
           }
           else{
             response = await Digit.PaymentService.generatePdf(state, { Payments: [{...paymentData}] }, generatePdfKey);
