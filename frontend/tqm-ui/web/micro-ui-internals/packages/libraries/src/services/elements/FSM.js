@@ -87,17 +87,6 @@ export const FSMService = {
     });
   },
 
-  workerSearch: ({ tenantId, details, params }) =>
-    Request({
-      url: Urls.fsm.workerSearch,
-      data: details,
-      useCache: false,
-      userService: true,
-      method: "POST",
-      params: { tenantId, ...params },
-      auth: true,
-    }),
-
   vehicleTripCreate: (details) => {
     return Request({
       url: Urls.fsm.vehicleTripCreate,
