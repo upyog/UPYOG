@@ -58,7 +58,7 @@ export const COMMONMODULELinks = ({ matchPath, userType }) => {
   const links = [];
 
   // returns CitizenHomeCard component while passing links to be used in card and an Icon to display
-  return <CitizenHomeCard header={t("ACTION_TEST_EW")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
+  return <CitizenHomeCard header={t("ACTION_TEST_CM")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
 };
 
 // components exported outside of module
