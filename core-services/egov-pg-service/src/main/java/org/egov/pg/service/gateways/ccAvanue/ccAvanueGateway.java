@@ -243,12 +243,17 @@ params.add("access_code", MERCHANT_ACCESS_CODE);
                  String ccaRequest="";         
                  String orderId= currentStatus.getTxnId();
 	         String encResp = params.get("encResp");
-	         ccaRequest =  "{'order_no': '"+orderId+"'}";
+	        
   		String pCommand="orderStatusTracker";
  		String pRequestType="JSON";
  		String pResponseType="JSON";
  		String pVersion="1.2";
  		String vResponse="";
+ 		  String isRef = params.get("isReference");	         
+	         if(isRef.equalsIgnoreCase("true")) {
+	        	txn =  fetchStatusByReferenceNo(currentStatus,params);
+	         }else {
+	        	 ccaRequest =  "{'order_no': '"+orderId+"'}";
  		AesUtil aesUtilenc=new AesUtil(MERCHANT_WORKING_KEY);
 
        		String encRequest = aesUtilenc.encrypt(ccaRequest);
@@ -274,12 +279,68 @@ params.add("access_code", MERCHANT_ACCESS_CODE);
 	         		 System.out.println(keyValuePairs1[1]);
 	         		 txn =  transformRawResponseNew(keyValuePairs1, currentStatus,status); 
 	         		 return txn; 
+  	     
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	    }
 		return txn;
     }
+ 
+ public Transaction fetchStatusByReferenceNo(Transaction currentStatus, Map<String, String> params) {
+	 Transaction txn =null;
+      String ccaRequest="";         
+      String orderId= currentStatus.getTxnId();
+      String encResp = params.get("encResp");
+      AesUtil aesUtilenc=new AesUtil("MERCHANT_WORKING_KEY");
+      String decRespp = aesUtilenc.decrypt(encResp);
+		  log.info(decRespp);
+		  String[] keyValuePairs2 = decRespp.split(",");
+		  String referenceno = keyValuePairs2[0];
+		  log.info("Reference no is"+referenceno);
+		  referenceno = referenceno.substring(17, (referenceno.length())-1);
+		  log.info("correct Reference no is"+referenceno);
+	      ccaRequest =  "{'reference_no': '"+referenceno+"'}";    
+
+	      String pCommand="orderStatusTracker";
+	      String pRequestType="JSON";
+	      String pResponseType="JSON";
+	      String pVersion="1.2";
+	      String vResponse="";
+
+
+	String encRequest = aesUtilenc.encrypt(ccaRequest);
+	System.out.println("ENC REq "+encRequest);  
+	StringBuffer wsDataBuff=new StringBuffer();
+	wsDataBuff.append("enc_request="+encRequest+"&access_code="+MERCHANT_ACCESS_CODE+"&command="+pCommand+"&response_type="+pResponseType+"&request_type="+pRequestType+"&version="+pVersion);
+
+ try {
+            log.info("ENC WS Data Buff "+wsDataBuff.toString());
+            log.info("Merchant URL "+MERCHANT_URL_STATUS);
+	  vResponse = processUrlConnectionReq(wsDataBuff.toString(), MERCHANT_URL_STATUS);
+     	log.info("Response: "+vResponse);
+	      String[] keyValuePairs = vResponse.toString().split("&");
+  		 //String[] keyValuePairs = response.toString().split("&");
+     	  String resp = keyValuePairs[1];
+    	   String status = keyValuePairs[0];
+   	        log.info("Complete response: "+resp);
+	        String resp1= resp.substring(13, resp.length());
+      	        log.info("Response to decrypt: "+resp1);
+     		 String decResp = aesUtilenc.decrypt(resp.substring(13, resp.length()));
+     		 String[] keyValuePairs1 = decResp.split(",");
+     		// List<String> keyValueList = Arrays.asList(keyValuePairs1);
+     		 System.out.println(keyValuePairs1[1]);
+     		 txn =  transformRawResponseNew(keyValuePairs1, currentStatus,status); 
+     		 return txn; 
+} catch (Exception e) {
+	// TODO Auto-generated catch block
+	e.printStackTrace();
+}
+return txn;
+}
+ 
+ 
  private String getRefNo(String encResp) {
 	    AesUtil aesUtilenc=new AesUtil(MERCHANT_WORKING_KEY);
         String decRespp = aesUtilenc.decrypt(encResp);
