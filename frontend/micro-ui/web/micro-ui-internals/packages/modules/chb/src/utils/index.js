@@ -26,6 +26,7 @@ export const sethallDetails = (data) => {
   let hallDetails = slotlist?.bookingSlotDetails.map((slot) => {
     return { 
       communityHallCode:slot.code,
+      communityHallName:slot.name,
       hallCode: slot.hallCode1,
       bookingDate:slot.bookingDate,
       bookingFromTime:"10:00",
@@ -140,6 +141,7 @@ const formdata={
     ...data.documents,
     bookingStatus:"BOOKING_CREATED",
     communityHallCode:data.slotlist[0]?.communityHallCode,
+    communityHallName:data.slotlist[0]?.communityHallName,
     specialCategory:{
       category:data.slots?.specialCategory?.value
     },
