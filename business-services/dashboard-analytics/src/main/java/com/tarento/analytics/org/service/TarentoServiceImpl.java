@@ -101,7 +101,12 @@ public class TarentoServiceImpl implements ClientService {
 	                    request.getModuleLevel().equals(module)) {
 	
 	                indexName = query.get(Constants.JsonPaths.INDEX_NAME).asText();
+	                
+	                logger.info("query is "+query.toString());
 	                String initialIndexName = indexName;
+	                
+	                logger.info("initialIndexName :: {} "+initialIndexName);
+
 	                boolean isDefaultPresent = false;
 	                boolean isRequestContainsInterval = null == request.getRequestDate() ? false : (request.getRequestDate().getInterval() != null && !request.getRequestDate().getInterval().isEmpty());
 	                String interval = isRequestContainsInterval ? request.getRequestDate().getInterval() : (isDefaultPresent ? chartNode.get(Constants.JsonPaths.INTERVAL).asText() : "");
@@ -207,11 +212,16 @@ public class TarentoServiceImpl implements ClientService {
 		int randIndexCount = 1;
 		for(JsonNode query : queries) {
 			String module = query.get(Constants.JsonPaths.MODULE).asText();
+			logger.info("module is ===================="+module);
+			logger.info("request.getModuleLevel() is ===================="+request.getModuleLevel());
+
 			if(request.getModuleLevel().equals(Constants.Modules.HOME_REVENUE) || 
 					request.getModuleLevel().equals(Constants.Modules.HOME_SERVICES) ||
 					query.get(Constants.JsonPaths.MODULE).asText().equals(Constants.Modules.COMMON) ||
 					request.getModuleLevel().equals(module)) {
 				
+				logger.info("Inside module condition");
+
 				String indexName = query.get(Constants.JsonPaths.INDEX_NAME).asText();
 				logger.info("indexName in  executeConfiguredQueries:: {}"+indexName);
 				ObjectNode objectNode = queryService.getChartConfigurationQuery(request, query, indexName, interval);
