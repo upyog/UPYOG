@@ -55,7 +55,8 @@ import { ASSETService } from "./services/elements/ASSET";
 import { CHBServices } from "./services/elements/CHB";  
 
 import { EwService } from "./services/elements/EW";
-import {CustomService} from "./services/elements/CustomService";    
+import {CustomService} from "./services/elements/CustomService";  
+// imported Birth and Death service  
 import { BnDService } from "./services/elements/BnD";
    
 

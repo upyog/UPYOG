@@ -1,7 +1,10 @@
+// Birth and Death services for search requests
+
 import { Request } from "../atoms/Utils/Request"
 import Urls from "../atoms/urls";
 
 export const BnDService = {
+    // Birth search request
     Bsearch: ({ tenantId, filters }) =>
         Request({
             url: Urls.bnd.bsearch,
@@ -12,6 +15,7 @@ export const BnDService = {
             params: { tenantId, ...filters },
         }),
 
+    // Death search Request
     Dsearch: ({ tenantId, filters }) =>
         Request({
             url: Urls.bnd.dsearch,
