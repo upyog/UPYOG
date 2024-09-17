@@ -1,6 +1,7 @@
 import {
   BackButton,
   BillsIcon,
+  CHBIcon,
   CitizenHomeCard,
   CitizenInfoLabel,
   FSMIcon,
@@ -73,6 +74,8 @@ const iconSelector = (code) => {
       return <TLIcon className="fill-path-primary-main" />;
     case "OBPS":
       return <OBPSIcon className="fill-path-primary-main" />;
+    case "CHB":
+      return <CHBIcon className="fill-path-primary-main" />;
     case "Bills":
       return <BillsIcon className="fill-path-primary-main" />;
     default:
