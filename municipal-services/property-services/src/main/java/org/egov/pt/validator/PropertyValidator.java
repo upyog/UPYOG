@@ -177,7 +177,14 @@ public class PropertyValidator {
 				fieldsUpdated.remove("creationReason");
 				isstateUpdatable = true;
 
-			} else {
+			} 
+			else	if (property.getWorkflow().getAction().equalsIgnoreCase(configs.getMutationOpenState())
+					&& propertyFromSearch.getStatus().equals(Status.INACTIVE)) {
+				fieldsUpdated.remove("creationReason");
+				isstateUpdatable = true;
+
+			} 
+			else {
 
 				State currentState = workflowService.getCurrentState(request.getRequestInfo(), property.getTenantId(),
 						property.getAcknowldgementNumber());

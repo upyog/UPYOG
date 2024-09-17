@@ -113,17 +113,25 @@ public class EnrichmentService {
         
         
 		Boolean isWfEnabled = config.getIsWorkflowEnabled();
-		Boolean iswfStarting = propertyFromDb.getStatus().equals(Status.ACTIVE);
+		/**
+		 *  commenting given boolean value AS added in else if
+		 */
+	//	Boolean iswfStarting = propertyFromDb.getStatus().equals(Status.ACTIVE);
+	//	Boolean isactiveexist = propertyFromDb.getStatus().equals(Status.INACTIVE);
 
-		if (!isWfEnabled) {
+		if (!isWfEnabled)
+		{
 
 			property.setStatus(Status.ACTIVE);
 			property.getAddress().setId(propertyFromDb.getAddress().getId());
 
-		} else if (isWfEnabled && iswfStarting) {
-
-			enrichPropertyForNewWf(requestInfo, property, false);
+		} 
+		
+		else if ((propertyFromDb.getStatus().equals(Status.ACTIVE)|| propertyFromDb.getStatus().equals(Status.INACTIVE)) && isWfEnabled)
+		{
+				enrichPropertyForNewWf(requestInfo, property, false);	
 		}
+		
 		
 		if (!CollectionUtils.isEmpty(property.getDocuments()))
 			property.getDocuments().forEach(doc -> {

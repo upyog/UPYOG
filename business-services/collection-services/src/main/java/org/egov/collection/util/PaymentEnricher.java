@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.math.RoundingMode;
+
 
 import org.egov.collection.model.AuditDetails;
 import org.egov.collection.model.Payment;
@@ -103,7 +105,7 @@ public class PaymentEnricher {
 				else {
 					bill.setPaidBy(payment.getPaidBy());
 					//payment.setPayerName(bill.getPayerName());
-					//payment.setPayerAddress(bill.getPayerAddress());
+					payment.setPayerAddress(bill.getPayerAddress());
 					//payment.setMobileNumber(bill.getMobileNumber());
 					try{
 						List<String> collectionsModeNotAllowed = (List<String>)billingServiceMaster.get(MASTER_COLLECTIONMODESNOTALLOWED_KEY);
@@ -137,12 +139,22 @@ public class PaymentEnricher {
 			}
 			paymentDetail.setReceiptType(ReceiptType.BILLBASED.toString());
 		
-			paymentDetail.setTotalDue(billIdToBillMap.get(paymentDetail.getBillId()).getTotalAmount());
+			paymentDetail.setTotalDue(billIdToBillMap.get(paymentDetail.getBillId()).getTotalAmount().setScale(0, RoundingMode.HALF_UP)
+				    .setScale(2));
 		});
 		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
-		BigDecimal result = payment.getPaymentDetails().stream().map(PaymentDetail :: getTotalDue).collect(Collectors.toList())
-										.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+		
+		/**
+		 * This IS for if total amount value is in fraction changes made on 22-08-2024
+		 * PI Number PI-16460
+		 */
+		BigDecimal result = payment.getPaymentDetails()
+			    .stream()
+			    .map(PaymentDetail::getTotalDue)
+			    .reduce(BigDecimal.ZERO, BigDecimal::add)
+			    .setScale(0, RoundingMode.HALF_UP)
+			    .setScale(2);
 		payment.setTotalDue(result);
 		payment.setId(UUID.randomUUID().toString());
 		payment.setAuditDetails(auditDetails);
