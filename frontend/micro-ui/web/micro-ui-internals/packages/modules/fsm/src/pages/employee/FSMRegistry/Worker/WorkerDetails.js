@@ -19,7 +19,7 @@ import {
   Dropdown,
   AddIcon,
   AddNewIcon,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 import { useQueryClient } from "react-query";
 
