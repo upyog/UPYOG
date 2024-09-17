@@ -293,7 +293,7 @@ params.add("access_code", MERCHANT_ACCESS_CODE);
       String ccaRequest="";         
       String orderId= currentStatus.getTxnId();
       String encResp = params.get("encResp");
-      AesUtil aesUtilenc=new AesUtil("MERCHANT_WORKING_KEY");
+      AesUtil aesUtilenc=new AesUtil(MERCHANT_WORKING_KEY);
       String decRespp = aesUtilenc.decrypt(encResp);
 		  log.info(decRespp);
 		  String[] keyValuePairs2 = decRespp.split(",");
