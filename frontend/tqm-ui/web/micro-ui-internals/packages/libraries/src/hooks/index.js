@@ -5,6 +5,7 @@ import useQueryParams from './useQueryParams';
 import useDocumentSearch from './useDocumentSearch';
 import useClickOutside from './useClickOutside';
 import useLocation from "./useLocation";
+import useWorkerSearch from './fsm/useWorkerSearch.js';
 import {
   useFetchPayment,
   usePaymentUpdate,
@@ -185,6 +186,7 @@ const Hooks = {
   useDynamicData,
   useGenderMDMS,
   useLocation,
+  useWorkerSearch,
   useScrollPersistence
 };
 

@@ -4,7 +4,7 @@ RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
 RUN yarn add @upyog/digit-ui-libraries
 RUN yarn add @upyog/digit-ui-module-pt
-RUN yarn add @upyog/digit-ui-module-fsm
+RUN yarn add @egovernments/digit-ui-module-fsm
 RUN yarn add @upyog/digit-ui-module-tl
 RUN yarn add @upyog/digit-ui-module-dss
 RUN yarn add @upyog/digit-ui-module-mcollect

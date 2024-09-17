@@ -12,7 +12,7 @@
     "@upyog/digit-ui-module-bills": "1.8.0",
     "@upyog/digit-ui-module-common": "1.8.0",
     "@upyog/digit-ui-module-engagement": "1.8.0",
-    "@upyog/digit-ui-module-fsm": "1.8.4",
+    "@egovernments/digit-ui-module-fsm": "1.8.4-beta1",
     "@upyog/digit-ui-module-mcollect": "1.8.0",
     "@upyog/digit-ui-module-noc": "1.8.0",
     "@upyog/digit-ui-module-obps": "1.8.2",
