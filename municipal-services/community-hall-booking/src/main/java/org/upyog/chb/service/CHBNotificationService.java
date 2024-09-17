@@ -44,9 +44,14 @@ public class CHBNotificationService {
 	private NotificationUtil util;
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
+	@Autowired
+	private CHBEncryptionService chbEncryptionService;
 
 	public void process(CommunityHallBookingRequest bookingRequest, String status) {
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
+		//Decrypt applicant detail it will be used in notification
+		bookingDetail = chbEncryptionService.decryptObject(bookingDetail, bookingRequest.getRequestInfo());
+		
 		log.info("Processing notification for booking no : " + bookingDetail.getBookingNo() + " with status : " + status);
 		String tenantId = bookingRequest.getHallsBookingApplication().getTenantId();
 		String action = status;
@@ -58,6 +63,7 @@ public class CHBNotificationService {
 		mobileNumberToOwner.put(bookingDetail.getApplicantDetail().getApplicantMobileNo(),
 				bookingDetail.getApplicantDetail().getApplicantName());
 		log.info("Fetching localization message for notification");
+		//All notification messages are part of this messages object
 		String localizationMessages = util.getLocalizationMessages(tenantId, bookingRequest.getRequestInfo());
 		String message = null;
 		try {

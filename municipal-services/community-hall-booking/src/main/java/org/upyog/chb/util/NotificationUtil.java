@@ -149,6 +149,16 @@ public class NotificationUtil {
 		producer.push(config.getSaveUserEventsTopic(), request);
 	}
 
+	/**
+	 * 
+	 * Get message from {@code localizationMessage} for particular event
+	 * Replace dynamic values of messages
+	 * 
+	 * @param bookingDetail
+	 * @param localizationMessage
+	 * @param actionStatus
+	 * @return
+	 */
 	public String getCustomizedMsg(CommunityHallBookingDetail bookingDetail, String localizationMessage, String actionStatus) {
 		String message = null, messageTemplate = null;
 		log.info(" booking status : " + bookingDetail.getBookingStatus());
@@ -216,7 +226,7 @@ public class NotificationUtil {
 				bookingDetail.getApplicantDetail().getApplicantName());
 		message = message.replace(CommunityHallBookingConstants.BOOKING_NO, bookingDetail.getBookingNo());
 		message = message.replace(CommunityHallBookingConstants.COMMUNITY_HALL_NAME,
-				bookingDetail.getCommunityHallCode());
+				bookingDetail.getCommunityHallName());
 		
 		return message;
 	}
