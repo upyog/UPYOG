@@ -47,6 +47,8 @@ public class CommunityHallBookingDetail {
 	@NotBlank
 	private String communityHallCode;
 	
+	private String communityHallName;
+	
 	@JsonProperty("bookingStatus")
 	private String bookingStatus;
 

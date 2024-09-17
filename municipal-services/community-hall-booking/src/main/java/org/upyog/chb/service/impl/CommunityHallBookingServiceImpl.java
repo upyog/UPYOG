@@ -163,6 +163,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		convertBookingRequest(communityHallsBookingRequest, bookingDetails.get(0));
 
 		enrichmentService.enrichUpdateBookingRequest(communityHallsBookingRequest, status);
+		//Update payment date and receipt no on successful payment when payment detail object is received
 		if (paymentDetail != null) {
 			communityHallsBookingRequest.getHallsBookingApplication().setReceiptNo(paymentDetail.getReceiptNumber());
 			communityHallsBookingRequest.getHallsBookingApplication().setPaymentDate(paymentDetail.getReceiptDate());
