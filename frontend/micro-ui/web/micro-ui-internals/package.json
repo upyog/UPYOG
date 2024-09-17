@@ -10,9 +10,10 @@
     "packages/modules/core",
     "packages/modules/common",
     "packages/modules/dss",
-    "packages/modules/asset", 
     "packages/modules/ew",
+    "packages/modules/cm",
     "packages/modules/chb"
+
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
@@ -34,6 +35,7 @@
     "dev:core": "cd packages/modules/core && yarn start",
     "dev:pgr": "cd packages/modules/pgr && yarn start",
     "dev:ew": "cd packages/modules/ew && yarn start",
+    "dev:cm": "cd packages/modules/cm && yarn start",
     "dev:fsm": "cd packages/modules/fsm && yarn start",
     "dev:commonPt": "cd packages/modules/commonPt && yarn start",
     "dev:dss": "cd packages/modules/dss && yarn start",
@@ -69,6 +71,7 @@
     "buildD:ptr": "cd packages/modules/ptr && yarn build",
     "build:asset": "cd packages/modules/asset && yarn build",
     "build:ew": "cd packages/modules/ew && yarn build",
+    "build:cm": "cd packages/modules/cm && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
     "buildD:noc": "cd packages/modules/noc && yarn build",
     "build:chb": "cd packages/modules/chb && yarn build",

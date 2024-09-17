@@ -56,6 +56,7 @@ import { CHBServices } from "./services/elements/CHB";
 
 import { EwService } from "./services/elements/EW";
 import {CustomService} from "./services/elements/CustomService";    
+import { BnDService } from "./services/elements/BnD";
    
 
 
@@ -122,6 +123,7 @@ const initLibraries = () => {
   setupLibraries("ASSETService", ASSETService);
   setupLibraries("CHBServices", CHBServices);
   setupLibraries("EwService", EwService);
+  setupLibraries("BnDService", BnDService);
 
   return new Promise((resolve) => {
     initI18n(resolve);

@@ -303,6 +303,8 @@ import useChbHallCode from "./chb/useChbHallCode"
 import useChbSlotSearch from "./chb/useChbSlotSearch";
 import useDemandEstimation from "./chb/useDemandEstimation"
 
+import useCMSearch from "./cm/useCMSearch";
+
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
 
 const pgr = {
@@ -563,6 +565,10 @@ const noc = {
   useNOCSearchApplication,
 };
 
+const cm = {
+  useCMSearch
+}
+
 const ws = {
   WSSearchMdmsTypes,
   usewsTenants,
@@ -662,6 +668,7 @@ const Hooks = {
   noc,
   ws,
   asset,
+  cm,
   useCustomMDMS,
   useCustomAPIHook,
   reports,

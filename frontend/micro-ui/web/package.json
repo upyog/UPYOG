@@ -9,9 +9,10 @@
     "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/common",
     "micro-ui-internals/packages/modules/dss",
-    "micro-ui-internals/packages/modules/asset",
-    "micro-ui-internals/packages/modules/chb",
-    "micro-ui-internals/packages/modules/ew"
+    "micro-ui-internals/packages/modules/ew",
+    "micro-ui-internals/packages/modules/cm",
+    "micro-ui-internals/packages/modules/chb"
+
   ],
   "engines": {
     "node": ">=14"
@@ -40,6 +41,7 @@
     "@nudmcdgnpm/upyog-ui-module-asset": "1.2.1",
     "@nudmcdgnpm/upyog-ui-module-ew":"1.2.0",
     "@nudmcdgnpm/upyog-ui-module-chb":"1.2.0",
+    "@nudmcdgnpm/upyog-ui-module-cm":"1.2.0",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
