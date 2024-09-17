@@ -1,5 +1,5 @@
 import React from "react";
-import { CardLabelError, Dropdown, MultiSelectDropdown, RemoveableTag, LabelFieldPair, CardLabel } from "@egovernments/digit-ui-react-components";
+import { CardLabelError, Dropdown, MultiSelectDropdown, RemoveableTag, LabelFieldPair, CardLabel } from "@upyog/digit-ui-react-components";
 
 // steps
 // get individualIds array from workers array in vendor object
