@@ -86,6 +86,7 @@ export const FSMService = {
       auth: true,
     });
   },
+
   vehicleTripCreate: (details) => {
     return Request({
       url: Urls.fsm.vehicleTripCreate,

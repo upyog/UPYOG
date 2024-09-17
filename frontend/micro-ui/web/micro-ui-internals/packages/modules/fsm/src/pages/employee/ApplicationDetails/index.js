@@ -421,6 +421,7 @@ const ApplicationDetails = (props) => {
               submitAction={submitAction}
               actionData={workflowDetails?.data?.timeline}
               module={workflowDetails?.data?.applicationBusinessService}
+              applicationDetails={applicationDetails}
             />
           ) : null}
           {showToast && (

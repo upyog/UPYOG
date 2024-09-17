@@ -53,6 +53,7 @@ const Urls = {
     updateDriver: "/vendor/driver/v1/_update",
     vehicleTripCreate: "/vehicle/trip/v1/_create",
     advanceBalanceCalculate: "/fsm-calculator/v1/_advancebalancecalculate",
+    workerSearch: "/individual/v1/_search",
   },
 
   payment: {
