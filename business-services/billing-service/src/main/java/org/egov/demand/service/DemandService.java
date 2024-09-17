@@ -580,6 +580,7 @@ public class DemandService {
 				.tenantId(demands.get(0).getTenantId())
 				.status(Stream.of(AmendmentStatus.ACTIVE.toString()).collect(Collectors.toSet()))
 				.consumerCode(consumerCodes)
+				.businessService(demands.get(0).getBusinessService())
 				.build();
 		List<Amendment> amendmentsFromSearch = amendmentRepository.getAmendments(amendmentCriteria);
 		Map<String, List<Amendment>> mapOfConsumerCodeAndAmendmentsList = amendmentsFromSearch.stream()
