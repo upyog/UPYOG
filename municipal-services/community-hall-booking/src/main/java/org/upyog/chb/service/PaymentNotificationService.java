@@ -141,7 +141,15 @@ public class PaymentNotificationService {
         log.info("Transaction in process transaction : " + transaction);
         
         Transaction.TxnStatusEnum transactionStatus = transaction.getTxnStatus();
+        String bookingNo = transaction.getConsumerCode();
+        
         String moduleName = transaction.getModule();
+        
+        //Payment failure status JSON does not contain module name so added this condition
+        if(null == moduleName && null != bookingNo) {
+        	//Update module name from consumer code
+        	moduleName = bookingNo.startsWith("CHB") ? configs.getBusinessServiceName() : null;
+        }
         
         log.info("moduleName : " + moduleName + "  transactionStatus  : " + transactionStatus);
         
@@ -152,8 +160,7 @@ public class PaymentNotificationService {
         	if(Transaction.TxnStatusEnum.FAILURE.equals(transactionStatus)){
         		status = BookingStatusEnum.PAYMENT_FAILED;
         	}
-        	String bookingNo = transactionRequest.getTransaction().getConsumerCode();
-        	log.info("For booking no : " + bookingNo + " transaction status : " + transaction.getTxnStatus());
+        	log.info("For booking no : " + bookingNo + " transaction id : " + transaction.getTxnId());
         	
         	CommunityHallBookingDetail bookingDetail = CommunityHallBookingDetail.builder().bookingNo(bookingNo)
 					.build();
