@@ -51,9 +51,8 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     endDate: null,
     key: 'selection'
   }]);
-  const { data: hallList } = Digit.Hooks.chb.useChbCommunityHalls(stateId, "CHB", "ChbCommunityHalls");
-  const { data: Hall } = Digit.Hooks.chb.useChbHallCode(stateId, "CHB", "ChbHallCode");
-  
+  const { data: hallList } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "ChbCommunityHalls");
+  const { data: Hall } = Digit.Hooks.chb.useChbHallCode(tenantId, "CHB", "ChbHallCode");
   let HallName = [];
   let HallId = [];
 
@@ -158,7 +157,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
   const handleViewReportClick = () => {
     if (selectedHall) {
       // Trigger the popup
-      setShowDetails(prevShowDetails => !prevShowDetails); 
+      setShowDetails(true); 
     } else {
       // Show toast message
       setShowToast({ error: true, label: t("CHB_SELECT_HALL_NAME") });
@@ -347,11 +346,11 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
               )}
             />
             <div onClick={handleViewReportClick} style={{ cursor: "pointer",display: "flex", marginTop:"10px"}}>
-              <InfoIcon/>
-              {showDetails &&(
-              <ChbCommunityHallDetails hallId={selectedHall.communityHallId} />
-              )}
+               <InfoIcon/>
             </div>
+            {showDetails &&(
+              <ChbCommunityHallDetails hallId={selectedHall.communityHallId} setShowDetails={setShowDetails}/>
+              )}
           </div>
           <div className="filter-label"><CardLabel>{`${t("CHB_SELECT_DATE")}`} <span className="check-page-link-button">*</span></CardLabel></div>
           <div className="employee-select-wrap" style={{ width: "50%" }}>

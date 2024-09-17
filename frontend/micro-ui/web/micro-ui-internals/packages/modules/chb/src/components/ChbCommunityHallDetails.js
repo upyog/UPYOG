@@ -17,12 +17,13 @@ const CloseBtn = (props) => {
   );
 };
 
-const ChbCommunityHallDetails = ({ hallId }) => {
+const ChbCommunityHallDetails = ({ hallId, setShowDetails }) => {
   const [selectedHall, setSelectedHall] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const stateId = Digit.ULBService.getStateId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
 
-  const { data: communityHalls } = Digit.Hooks.useCustomMDMS(stateId, "CHB", [{ name: "CommunityHalls" }], {
+  const { data: communityHalls } = Digit.Hooks.useCustomMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }], {
     select: (data) => {
       const formattedData = data?.["CHB"]?.["CommunityHalls"];
       return formattedData;
@@ -45,6 +46,7 @@ const ChbCommunityHallDetails = ({ hallId }) => {
 
   const handleClosePopup = () => {
     setShowPopup(!showPopup);
+    setShowDetails(false);
   };
 
   const renderList = (text) => {
@@ -93,14 +95,14 @@ const ChbCommunityHallDetails = ({ hallId }) => {
               <CardLabelDesc>
                 <ul>{renderList(selectedHall.termsAndCondition)}</ul>
               </CardLabelDesc>
-              <CardLabel style={{ fontSize: '20px', marginTop: '15px' }}>Disclaimer</CardLabel>
+              {/* <CardLabel style={{ fontSize: '20px', marginTop: '15px' }}>Disclaimer</CardLabel>
               <CardLabelDesc>{selectedHall.disclaimer}</CardLabelDesc>
               <CardLabel style={{ fontSize: '20px', marginTop: '15px' }}>Cancellation Policy</CardLabel>
               <CardLabelDesc>
                 <ul>{renderList(selectedHall.cancellationPolicy)}</ul>
               </CardLabelDesc>
               <CardLabel style={{ fontSize: '20px', marginTop: '15px' }}>Remarks</CardLabel>
-              <CardLabelDesc>{selectedHall.remarks}</CardLabelDesc>
+              <CardLabelDesc>{selectedHall.remarks}</CardLabelDesc> */}
             </div>
           }
           actionCancelLabel={null}  // Hide Cancel button
