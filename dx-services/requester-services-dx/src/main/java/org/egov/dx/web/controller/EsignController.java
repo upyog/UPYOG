@@ -95,10 +95,10 @@ public class EsignController {
         }
     }
     @RequestMapping("/redirect")
-    public ResponseEntity<Object> getEsignedPDF(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    public ResponseEntity<Object> getEsignedPDF(HttpServletRequest request, HttpServletResponse response, @RequestParam("module") String module) throws ServletException {
         try {
             //byte[] byteArray = esignService.getEsignedPDF( request, response);
-            
+            log.info("MOdule is===================" + module);
            String ff = esignService.getEsignedPDF( request, response);
 
             HttpHeaders httpHeaders = new HttpHeaders();
