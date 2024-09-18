@@ -360,7 +360,7 @@ public class CalculatorUtils {
 	public StringBuilder getCollectionSearchUrl(String tenantId,String billId) {
 
 		return new StringBuilder().append(configurations.getCollectionServiceHost())
-				.append(configurations.getCollectionSeriviceSearch()).append(URL_PARAMS_SEPARATER)
+				.append(configurations.getPaymentSearchEndpoint()).append(URL_PARAMS_SEPARATER)
 				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId)
 				.append(SEPARATER)
 				.append("billIds=").append(billId);

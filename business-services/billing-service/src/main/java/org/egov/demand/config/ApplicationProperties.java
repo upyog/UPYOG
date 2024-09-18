@@ -212,6 +212,7 @@ public class ApplicationProperties {
 	
 	@Value("${egov.collection.service.host}")
 	private String collectionSeriviceHost;
+	
 	@Value("${egov.collection.service.search.endpoint}")
 	private String collectionSeriviceSearch;
 	

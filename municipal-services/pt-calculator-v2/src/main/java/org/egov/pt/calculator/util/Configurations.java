@@ -83,8 +83,10 @@ public class Configurations {
 	@Value("${egov.payment.search.endpoint}")
 	private String	PaymentSearchEndpoint;
 	
-	@Value("${egov.collection.service.search.endpoint}")
-	private String collectionSeriviceSearch;
+	/*
+	 * @Value("${egov.collection.service.search.endpoint}") private String
+	 * collectionSeriviceSearch;
+	 */
 	
 	// billing slab configs
 		
