@@ -55,7 +55,7 @@ export const newConfig1=[
                 "label": "BPA_WARD_NUMBER_LABEL",
                 "type": "text",
                 "validation": {
-                    "pattern": "^[a-zA-Z0-9]*$",
+                    "pattern": "^[a-zA-Z0-9 ]*$",
                     "title": "Special Character are not allowed",
                     "required": true
                   },
@@ -65,7 +65,7 @@ export const newConfig1=[
                 "label": "BPA_ZONE_NUMBER_LABEL",
                 "type": "text",
                 "validation": {
-                    "pattern": "^[a-zA-Z0-9]*$",
+                    "pattern": "^[a-zA-Z0-9 ]*$",
                     "required": false},
                 "name": "zonenumber"
             },
