@@ -191,6 +191,7 @@ import InboxLinks from "./atoms/InboxLinks";
 import PopupHeadingLabel from "./atoms/PopupHeadingLabel";
 
 import { FormComposer } from "./hoc/FormComposer";
+import { FormComposerV2 } from "./hoc/FormComposerV2";
 import Modal from "./hoc/Modal";
 import ResponseComposer from "./hoc/ResponseComposer";
 import InboxComposer from "./hoc/InboxComposer";
@@ -370,6 +371,7 @@ export {
   SortAction,
   // hoc
   FormComposer,
+  FormComposerV2,
   ResponseComposer,
   PitDimension,
   Modal,
@@ -460,5 +462,5 @@ export {
   InfoIcon,
   LoginIcon,
   CitizenConsentForm,
-  PTRIcon
+  PTRIcon,
 };

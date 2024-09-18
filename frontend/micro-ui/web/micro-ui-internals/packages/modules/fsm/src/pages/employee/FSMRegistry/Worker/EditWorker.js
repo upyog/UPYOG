@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Toast, Header, FormComposerV2, Loader } from "@upyog/digit-ui-react-components";
+import { Toast, Header, Loader } from "@upyog/digit-ui-react-components";
+import { FormComposerV2 } from "../../../../../../../react-components/src";
+
 import { useHistory } from "react-router-dom";
-import WorkerConfig from "../../configs/WorkerConfig";
+import WorkerConfig from "../../../employee/configs/WorkerConfig";
 import { useQueryClient } from "react-query";
 
 // IND-2023-11-24-010875
@@ -68,8 +70,9 @@ const EditWorker = ({ parentUrl, heading }) => {
     setEmployer(tempEmp);
   }, [mdmsOptions, ismdms]);
 
-
-  const { isLoading: isLoading, isError: vendorCreateError, data: updateResponse, error: updateError, mutate } = Digit.Hooks.fsm.useWorkerUpdate(tenantId);
+  const { isLoading: isLoading, isError: vendorCreateError, data: updateResponse, error: updateError, mutate } = Digit.Hooks.fsm.useWorkerUpdate(
+    tenantId
+  );
 
   const { data: workerData, isLoading: WorkerLoading } = Digit.Hooks.fsm.useWorkerSearch({
     tenantId,
@@ -89,7 +92,13 @@ const EditWorker = ({ parentUrl, heading }) => {
     setConfig(WorkerConfig({ t, disabled: true, skillsOption, defaultSkill: workerDetails?.skills?.filter((i) => i.isDeleted === false), employer }));
   }, [skillsOption, employer, workerData]);
 
-  const { data: vendorData, isLoading: isVendorLoading, isSuccess: isVendorSuccess, error: vendorError, refetch: refetchVendor } = Digit.Hooks.fsm.useDsoSearch(
+  const {
+    data: vendorData,
+    isLoading: isVendorLoading,
+    isSuccess: isVendorSuccess,
+    error: vendorError,
+    refetch: refetchVendor,
+  } = Digit.Hooks.fsm.useDsoSearch(
     tenantId,
     { sortBy: "name", sortOrder: "ASC", status: "ACTIVE", individualIds: workerData?.Individual?.[0]?.id },
     { enabled: workerData && !WorkerLoading, cacheTime: 0 },
@@ -162,7 +171,7 @@ const EditWorker = ({ parentUrl, heading }) => {
   }
 
   useEffect(() => {
-    if (workerData && workerData?.Individual  && !isVendorLoading && vendorData ) {
+    if (workerData && workerData?.Individual && !isVendorLoading && vendorData) {
       const workerDetails = workerData?.Individual?.[0];
       const respSkills = workerDetails?.skills?.filter((i) => i.isDeleted === false);
       setWorkerinfo(workerDetails);
@@ -242,7 +251,10 @@ const EditWorker = ({ parentUrl, heading }) => {
       formData?.employementDetails?.vendor &&
       (!formData?.AddWorkerRoles || formData?.AddWorkerRoles?.length === 0 || (formData?.AddWorkerRoles?.length > 0 && checkRoleField))
     ) {
-      if (errors?.SelectEmployeePhoneNumber?.isMobilePresent && formData?.SelectEmployeePhoneNumber?.mobileNumber !== workerData?.Individual?.[0]?.mobileNumber) {
+      if (
+        errors?.SelectEmployeePhoneNumber?.isMobilePresent &&
+        formData?.SelectEmployeePhoneNumber?.mobileNumber !== workerData?.Individual?.[0]?.mobileNumber
+      ) {
         setSubmitValve(false);
       } else {
         setSubmitValve(true);
@@ -275,7 +287,9 @@ const EditWorker = ({ parentUrl, heading }) => {
     let respSkills = workerinfo?.skills;
 
     // if skills are not there but present in resp then remove
-    respSkills = respSkills.filter((resp_item) => skills.some((mydata_item) => resp_item.type === mydata_item.type && resp_item.level === mydata_item.level));
+    respSkills = respSkills.filter((resp_item) =>
+      skills.some((mydata_item) => resp_item.type === mydata_item.type && resp_item.level === mydata_item.level)
+    );
     // respSkills.forEach((resp_item) => {
     //   const existsInSelected = skills.some((selected_item) => resp_item.type === selected_item.type && resp_item.level === selected_item.level);
     //   resp_item.isDeleted = !existsInSelected;
@@ -306,7 +320,9 @@ const EditWorker = ({ parentUrl, heading }) => {
       restructuredData.push(restructuredItem);
     });
 
-    const driverLicenses = roleDetails?.filter((entry) => entry.fn_role && entry.fn_role.code === "DRIVER" && entry.licenseNo).map((entry) => entry.licenseNo);
+    const driverLicenses = roleDetails
+      ?.filter((entry) => entry.fn_role && entry.fn_role.code === "DRIVER" && entry.licenseNo)
+      .map((entry) => entry.licenseNo);
     const roleDetailsArray = [];
 
     if (roleDetails) {
