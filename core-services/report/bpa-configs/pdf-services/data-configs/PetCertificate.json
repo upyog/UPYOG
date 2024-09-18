@@ -55,10 +55,16 @@
               "path":"$.applicantName"
             }
           },
-           {
+          {
            "variable":"mobileNumber",
             "value":{
               "path":"$.mobileNumber"
+            }
+          },
+          {
+           "variable":"petPhotoURL",
+            "value":{
+              "path":"$.petPhotoURL"
             }
           }
         ]
