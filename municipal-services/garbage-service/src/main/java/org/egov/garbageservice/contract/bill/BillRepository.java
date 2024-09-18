@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.garbageservice.util.PTRConstants;
+import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.garbageservice.util.RequestInfoWrapper;
 import org.egov.garbageservice.util.RestCallRepository;
 import org.egov.tracer.model.CustomException;
@@ -36,7 +36,7 @@ public class BillRepository {
     private RestCallRepository restCallRepository;
 
     @Autowired
-    private PTRConstants config;
+    private GrbgConstants config;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -68,6 +68,7 @@ public class BillRepository {
 		String uri = config.getBillHost().concat(config.getSearchBillEndpoint());
         uri = uri.concat("?tenantId=").concat(billCriteria.getTenantId());
         uri = uri.concat("&service=").concat(billCriteria.getService());
+        uri = uri.concat("&retrieveAll=").concat("true");
         uri = uri.concat("&consumerCode=").concat(StringUtils.join(billCriteria.getConsumerCode(), ","));
 
         Object result = restCallRepository.fetchResult(new StringBuilder(uri),RequestInfoWrapper.builder()

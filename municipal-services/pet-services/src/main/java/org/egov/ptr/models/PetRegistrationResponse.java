@@ -34,6 +34,8 @@ public class PetRegistrationResponse {
 	@JsonProperty("PetRegistrationApplications")
 	@Valid
 	private List<PetRegistrationApplication> petRegistrationApplications = null;
+	
+	private Object responseDetail;
 
 	public PetRegistrationResponse addPetRegistrationApplicationsItem(
 			PetRegistrationApplication petRegistrationApplicationsItem) {

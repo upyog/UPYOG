@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Component
-public class PTRConstants {
+public class GrbgConstants {
 
 
 	public static final String STATE_LEVEL_TENANT_ID = "hp";
@@ -44,7 +44,7 @@ public class PTRConstants {
 
     public static final String ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT = "RETURN_TO_INITIATOR_FOR_PAYMENT";
 
-    public static final String WORKFLOW_BUSINESS_SERVICE = "GarbageCollection";
+    public static final String WORKFLOW_BUSINESS_SERVICE = "GB";
 
     public static final String BUSINESS_SERVICE = "GB";
 

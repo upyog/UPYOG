@@ -11,6 +11,7 @@ import org.egov.hrms.repository.RestCallRepository;
 import org.egov.hrms.utils.HRMSConstants;
 import org.egov.hrms.web.contract.ProcessInstance;
 import org.egov.hrms.web.contract.ProcessInstanceRequest;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -128,7 +129,7 @@ public class WorkflowService {
 	        }
 
 	    } else {
-	        throw new RuntimeException("Provide correct Process Instance Request.");
+	        throw new CustomException("INCORRECT_REQUEST","Provide correct Process Instance Request.");
 	    }
 
 	    final String userInspectorTenantId = finalInspectorUserTenantId;
@@ -138,12 +139,12 @@ public class WorkflowService {
 	        if (StringUtils.equalsIgnoreCase(instance.getBusinessService(), "NewTL")
 	                && StringUtils.equalsIgnoreCase(instance.getAction(), "VERIFY")
 	                && !StringUtils.equalsIgnoreCase(instance.getTenantId(), userInspectorTenantId)) {
-	            throw new RuntimeException("Inspector can only verify its own ULB TL applications.");
+	            throw new CustomException("WORKFLOW_PERMISSION_FAILED","Inspector can only verify its own ULB TL applications.");
 	        }
 	        if (StringUtils.equalsIgnoreCase(instance.getBusinessService(), "NewTL")
 	                && StringUtils.equalsIgnoreCase(instance.getAction(), "APPROVE")
 	                && !StringUtils.equalsIgnoreCase(instance.getTenantId(), userSuperintendentTenantId)) {
-	            throw new RuntimeException("Superintendent can only approve its own ULB TL applications.");
+	            throw new CustomException("WORKFLOW_PERMISSION_FAILED","Superintendent can only approve its own ULB TL applications.");
 	        }
 	    });
 	}
