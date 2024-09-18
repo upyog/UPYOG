@@ -1,4 +1,20 @@
+////////////////////////////////////////////////////////////
+/*
+ * Addition of feature of fetching Latitude and Longitude from uploaded photo 
 
+    - i have added a function (extractGeoLocation)  to extract latitude and longitude from an uploaded image file.
+    - It takes the file object as input and returns a promise.
+    - Within the promise, EXIF.get() is called with the file object to extract EXIF data.
+    - Latitude and longitude are then retrieved from the EXIF data and converted to decimal format using the convertToDecimal function.
+    - If latitude and longitude are found, the promise is resolved with an object containing latitude and longitude. 
+      Otherwise, if not found still it resolve the promise with latitude and longitude as NULL value.
+    - The convertToDecimal function converts GPS coordinates from degrees, minutes, and seconds format to decimal format.
+
+    - The getData function is modified to include the geolocation extraction logic.
+    - When files are uploaded (e?.length > 0), the function extractGeoLocation extracts geolocation if any
+    - If geolocation extraction is successful, it logs the latitude and longitude to the console.
+    - After extracting geolocation, the function continues with the existing logic to handle the uploaded files. 
+*/
 
 import React, { useEffect, useMemo, useState } from "react";
 import {
@@ -9,7 +25,9 @@ import {
     Loader,
     FormStep,
     MultiUploadWrapper,
-    CitizenInfoLabel
+    CitizenInfoLabel,
+    SubmitBar,
+    SearchIcon
 } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 import DocumentsPreview from "../../../templates/ApplicationDetails/components/DocumentsPreview";
@@ -17,19 +35,91 @@ import { stringReplaceAll } from "../utils";
 import cloneDeep from "lodash/cloneDeep";
 import EXIF from 'exif-js';
 
-const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {
+const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState, onSubmit }) => {
+    console.log("formData",formData);
     const stateId = Digit.ULBService.getStateId();
-    const [documents, setDocuments] = useState(formData?.documents?.documents || []);
+    const tenantId = "pg.citya";
+    const [documents, setDocuments] = useState(formData?.documents || []);
     const [error, setError] = useState(null);
     const [enableSubmit, setEnableSubmit] = useState(true)
     const [checkRequiredFields, setCheckRequiredFields] = useState(false);
     const checkingFlow = formData?.uiFlow?.flow;
 
     const [isNextButtonDisabled, setIsNextButtonDisabled] = useState(false);
-
+    console.log("documentsdocuments",documents);
 
     const beforeUploadDocuments = cloneDeep(formData?.PrevStateDocuments || []);
     const {data: bpaTaxDocuments, isLoading} = Digit.Hooks.obps.useBPATaxDocuments(stateId, formData, beforeUploadDocuments || []);
+
+    const handleSaveAsDraft = () => {
+        // Clone formData to avoid directly modifying the original object
+        let updatedFormData = { ...formData };
+    
+        // Nest the documentStep (i.e., documents array) inside formData.documents
+        updatedFormData.documents = { ...formData.documents, documents };
+    
+        // Construct the BPA object using only the required fields
+        let BPA = {
+            id: updatedFormData.id,
+            applicationNo: updatedFormData.applicationNo,
+            approvalNo: updatedFormData.approvalNo,
+            accountId: updatedFormData.accountId,
+            edcrNumber: updatedFormData.edcrNumber,
+            riskType: updatedFormData.riskType,
+            businessService: updatedFormData.businessService,
+            landId: updatedFormData.landId,
+            tenantId: updatedFormData.tenantId,
+            approvalDate: updatedFormData.approvalDate,
+            applicationDate: updatedFormData.applicationDate,
+            status: updatedFormData.status,
+            documents: updatedFormData.documents.documents, // Include only necessary document details
+            landInfo: {
+                ...updatedFormData.landInfo,
+                address: {
+                    ...updatedFormData.landInfo?.address,
+                    city: updatedFormData.landInfo?.address?.city?.code, // Ensure city is a string
+                },
+                owners: updatedFormData.landInfo?.owners.map(owner => ({
+                    ...owner,
+                    gender: owner.gender?.code // Ensure gender is a string
+                })),
+                unit: updatedFormData.landInfo?.unit.map(unit => ({
+                    id: unit.id,
+                    floorNo: unit.floorNo,
+                    unitType: unit.unitType,
+                    blockIndex: unit.blockIndex,
+                    usageCategory: unit.usageCategory,
+                    occupancyType: unit.occupancyType // Only necessary fields
+                })),
+            },
+        
+            assignee: updatedFormData.assignee || [], // Assuming this can be an empty array
+            workflow: {
+                action: "SAVE_AS_DRAFT", // Always set action as SAVE_AS_DRAFT
+                assignes: null,
+                comments: null,
+                varificationDocuments: null
+            },
+            auditDetails: updatedFormData.auditDetails,
+            additionalDetails: updatedFormData.additionalDetails,
+            applicationType: "BUILDING_PLAN_SCRUTINY",
+            serviceType: "NEW_CONSTRUCTION",
+            occupancyType: "A"
+        };
+        
+        // Call the update service to save as draft
+        Digit.OBPSService.update({ BPA }, tenantId)
+            .then(response => {
+                console.log("Draft saved successfully", response);
+            })
+            .catch(error => {
+                console.error("Error saving draft", error);
+            });
+        
+    };
+    
+
+
     const handleSubmit = () => {
         let document = formData.documents;
         let documentStep;
@@ -97,6 +187,13 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
                         );
                     })}
                     {error && <Toast label={error} onClose={() => setError(null)} error />}
+                    {/*Adding Save As Draft Button */}
+                    <SubmitBar 
+                    label={t("BPA_SAVE_AS_DRAFT")}
+                    onSubmit={handleSaveAsDraft}
+                    disabled={enableSubmit}
+                    />
+                <br></br>
                 </FormStep>: <Loader />}
                 {(window.location.href.includes("/bpa/building_plan_scrutiny/new_construction") || window.location.href.includes("/ocbpa/building_oc_plan_scrutiny/new_construction")) && formData?.applicationNo ? <CitizenInfoLabel info={t("CS_FILE_APPLICATION_INFO_LABEL")} text={`${t("BPA_APPLICATION_NUMBER_LABEL")} ${formData?.applicationNo} ${t("BPA_DOCS_INFORMATION")}`} className={"info-banner-wrap-citizen-override"} /> : ""}
         </div>
@@ -128,27 +225,10 @@ const SelectDocument = React.memo(function MyComponent({
     const [uploadedFile, setUploadedFile] = useState(() => documents?.filter((item) => item?.documentType?.includes(doc?.code)).map( e => ({fileStoreId: e?.fileStoreId, fileName: e?.fileName || ""}) ) || null);
     const [newArray, setnewArray ] = useState([]);
     const [uploadedfileArray, setuploadedfileArray] = useState([]);
-    const [fileArray, setfileArray] = useState([] || formData?.documents?.documents.filter((ob) => ob.documentType === selectedDocument.code) );
-    
+    const [fileArray, setfileArray] = useState([] || formData?.documents.filter((ob) => ob.documentType === selectedDocument.code) );
+    console.log("")
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
-////////////////////////////////////////////////////////////
-/*
- * Addition of feature of fetching Latitude and Longitude from uploaded photo 
-
-    - i have added a function (extractGeoLocation)  to extract latitude and longitude from an uploaded image file.
-    - It takes the file object as input and returns a promise.
-    - Within the promise, EXIF.get() is called with the file object to extract EXIF data.
-    - Latitude and longitude are then retrieved from the EXIF data and converted to decimal format using the convertToDecimal function.
-    - If latitude and longitude are found, the promise is resolved with an object containing latitude and longitude. 
-      Otherwise, if not found still it resolve the promise with latitude and longitude as NULL value.
-    - The convertToDecimal function converts GPS coordinates from degrees, minutes, and seconds format to decimal format.
-
-    - The getData function is modified to include the geolocation extraction logic.
-    - When files are uploaded (e?.length > 0), the function extractGeoLocation extracts geolocation if any
-    - If geolocation extraction is successful, it logs the latitude and longitude to the console.
-    - After extracting geolocation, the function continues with the existing logic to handle the uploaded files. 
-*/
     function extractGeoLocation(file) {
         return new Promise((resolve) => {
             EXIF.getData(file, function() {
@@ -170,15 +250,12 @@ const SelectDocument = React.memo(function MyComponent({
             });
         });
     }
-    
     function convertToDecimal(coordinate) {
         const degrees = coordinate[0];
         const minutes = coordinate[1];
         const seconds = coordinate[2];
         return degrees + minutes / 60 + seconds / 3600;
     }
-
-    //////////////////////////
     const handleSelectDocument = (value) => {
         if(filteredDocument?.documentType){
             filteredDocument.documentType=value?.code;
@@ -189,7 +266,6 @@ const SelectDocument = React.memo(function MyComponent({
         }
         setSelectedDocument(value);
     };
-
     function selectfile(e, key) {
         e && setFile(e.file);
         e && setfileArray([...fileArray,e.file]);
@@ -221,13 +297,15 @@ const SelectDocument = React.memo(function MyComponent({
                     // Continue with your existing codezz
                     data = Object.fromEntries(e);
                     newArr = Object.values(data);
-                    newArr = formData?.documents?.documents?.filter((ob) => ob.documentType === selectedDocument.code);
+                    newArr = formData?.documents?.filter((ob) => ob.documentType === selectedDocument.code);
                     setnewArray(newArr);
                     // const filteredDocumentsByFileStoreId = documents?.filter((item) => item?.fileStoreId !== uploadedFile.fileStoreId) || []
                     let newfiles = [];
                     e?.map((doc, index) => {
+                        console.log("docinnewfilessss",doc);
                         newfiles.push({
                             documentType: selectedDocument?.code,
+                            fileName: doc?.[0] || "",
                             additionalDetails:{category:selectedDocument?.code.split(".").slice(0,2).join('_'),
                             latitude: location.latitude,
                             longitude: location.longitude,
@@ -283,6 +361,7 @@ const SelectDocument = React.memo(function MyComponent({
                     newfiles.push({
                         documentType: selectedDocument?.code,
                             fileStoreId: doc.fileStoreId,
+                            fileName: fileArray[index]?.name || "",
                             additionalDetails:{category:selectedDocument?.code.split(".").slice(0,2).join('_'),
                             latitude: latitude,
                             longitude: longitude,
@@ -317,7 +396,6 @@ const SelectDocument = React.memo(function MyComponent({
                             if (normalDocumentType == selectedDocumentType) {
                                 if (data?.documentType) data.documentType = selectedDocument?.code;
                                 if (data?.file?.documentType) data.file.documentType = selectedDocument?.code;
-                                
                             }
                         });
                     }
@@ -347,11 +425,12 @@ const SelectDocument = React.memo(function MyComponent({
 
     const uploadedFilesPreFill = useMemo(()=>{
         let selectedUplDocs=[];
-        formData?.documents?.documents?.filter((ob) => ob.documentType === selectedDocument.code).forEach(e =>
+        formData?.documents?.filter((ob) => ob.documentType === selectedDocument.code).forEach(e =>
             selectedUplDocs.push([e.fileName, {file: {name: e.fileName, type: e.documentType}, fileStoreId: {fileStoreId: e.fileStoreId, tenantId}}])
             )
         return selectedUplDocs;
     },[formData])
+    
 
     return (
         <div /* style={{ marginBottom: "24px" }} */>
@@ -382,8 +461,15 @@ const SelectDocument = React.memo(function MyComponent({
                     <div>
                         <p>Latitude: {sessionStorage.getItem("Latitude")}</p>
                         <p>Longitude: {sessionStorage.getItem("Longitude")}</p>
+                        <div
+                        style={{ position: "relative", zIndex: "100", right: "-500px", marginTop: "-24px", marginRight: "20px", cursor: "pointer" }}
+                        onClick={() => window.open(`http://maps.google.com/maps?q=${sessionStorage.getItem("Latitude")},${sessionStorage.getItem("Longitude")}`, '_blank')}
+                    >
+                        <SearchIcon />
+                    </div>
                         {setIsNextButtonDisabled(false)} {/* Enable the "Next" button */}
                     </div>
+                    
                 ) : (
                     <div>
                         <p style={{ color: 'red' }}>Please upload a Photo with Location details.</p>

@@ -232,7 +232,7 @@ export const getDocumentforBPA = (docs, PrevStateDocs) => {
           documentType: ob.documentType,
           fileStoreId: ob.fileStoreId,
           fileStore: ob.fileStoreId,
-          fileName: "",
+          fileName: ob.fileName,
           fileUrl: "",
           additionalDetails: {},
           id: ob.id,
@@ -249,7 +249,7 @@ export const getDocumentforBPA = (docs, PrevStateDocs) => {
           documentType: ob.documentType,
           fileStoreId: ob.fileStoreId,
           fileStore: ob.fileStoreId,
-          fileName: "",
+          fileName: ob.fileName,
           fileUrl: "",
           additionalDetails: {},
         };
