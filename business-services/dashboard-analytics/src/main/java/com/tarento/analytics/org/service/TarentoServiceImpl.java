@@ -90,6 +90,10 @@ public class TarentoServiceImpl implements ClientService {
 		// Load Chart API configuration to Object Node for easy retrieval later
 		ObjectNode node = configurationLoader.get(Constants.ConfigurationFiles.CHART_API_CONFIG);
 		ObjectNode chartNode = (ObjectNode) node.get(internalChartId);
+		ObjectMapper mapper2 = new ObjectMapper();
+	    String json2 = mapper2.writerWithDefaultPrettyPrinter().writeValueAsString(chartNode);
+		logger.info("chartNode===================="+json2);
+		
 		// added pivot code from here
 		ArrayNode queries = (ArrayNode) chartNode.get(Constants.JsonPaths.QUERIES);
 	        queries.forEach(query -> {
