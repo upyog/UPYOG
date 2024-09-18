@@ -886,27 +886,30 @@ public class GarbageAccountService {
 
 	public GarbageAccountActionResponse getApplicationDetails(GarbageAccountActionRequest garbageAccountActionRequest) {
 		
+		SearchCriteriaGarbageAccount criteria = SearchCriteriaGarbageAccount.builder().build();
+		GarbageAccountActionResponse garbageAccountActionResponse = GarbageAccountActionResponse.builder()
+				.applicationDetails(new ArrayList<>())
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(garbageAccountActionRequest.getRequestInfo(), true))
+				.build();
+
 		if(CollectionUtils.isEmpty(garbageAccountActionRequest.getApplicationNumbers())) {
-			throw new CustomException("INVALID REQUEST","Provide Application Number.");
+			if(null != garbageAccountActionRequest.getRequestInfo()
+					&& null != garbageAccountActionRequest.getRequestInfo().getUserInfo()
+					&& !StringUtils.isEmpty(garbageAccountActionRequest.getRequestInfo().getUserInfo().getUuid())) {
+				criteria.setCreatedBy(Collections.singletonList(garbageAccountActionRequest.getRequestInfo().getUserInfo().getUuid()));
+			}else {
+				throw new CustomException("INVALID REQUEST","Provide Application Number.");
+			}
+		}else {
+			criteria.setApplicationNumber(garbageAccountActionRequest.getApplicationNumbers());
 		}
 		
-		GarbageAccountActionResponse garbageAccountActionResponse = GarbageAccountActionResponse.builder()
-																.applicationDetails(new ArrayList<>())
-																.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(garbageAccountActionRequest.getRequestInfo(), true))
-																.build();
-		
-//		garbageAccountActionRequest.getApplicationNumbers().stream().forEach(applicationNumber -> {
-			
-			// search application number
-			SearchCriteriaGarbageAccount criteria = SearchCriteriaGarbageAccount.builder()
-					.applicationNumber(garbageAccountActionRequest.getApplicationNumbers())
-					.build();
-			List<GarbageAccount> accounts = garbageAccountRepository.searchGarbageAccount(criteria);
+		// search application number
+		List<GarbageAccount> accounts = garbageAccountRepository.searchGarbageAccount(criteria);
 
-			List<GarbageAccountDetail> applicationDetails = getApplicationBillUserDetail(accounts, garbageAccountActionRequest.getRequestInfo());
-			
-			garbageAccountActionResponse.setApplicationDetails(applicationDetails);
-//		});
+		List<GarbageAccountDetail> applicationDetails = getApplicationBillUserDetail(accounts, garbageAccountActionRequest.getRequestInfo());
+		
+		garbageAccountActionResponse.setApplicationDetails(applicationDetails);
 		
 		return garbageAccountActionResponse;
 	}
