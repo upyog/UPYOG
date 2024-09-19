@@ -44,6 +44,8 @@ public class SiteBookingRowMapper implements RowMapper<SiteBooking> {
                 .periodInDays(rs.getLong("period_in_days"))
                 .hoardingType(rs.getString("hoarding_type"))
                 .structure(rs.getString("structure"))
+                .tenantId(rs.getString("tenant_id"))
+                .status(rs.getString("status"))
                 .isActive(rs.getBoolean("is_active"))
                 .additionalDetail(getAdditionalDetail(rs, "additional_detail"))
                 .auditDetails(audit)

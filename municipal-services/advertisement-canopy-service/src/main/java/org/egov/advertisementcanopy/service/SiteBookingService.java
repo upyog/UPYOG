@@ -144,17 +144,22 @@ public class SiteBookingService {
 	}
 
 	private Map<String, SiteCreationData> searchValidateSiteAndEnrichSiteBooking(SiteBookingRequest siteBookingRequest) {
+		
+		List<String> siteUuids = siteBookingRequest.getSiteBookings().stream()
+//				.filter(siteBooking -> BooleanUtils.isFalse(siteBooking.getIsOnlyWorkflowCall()))
+				.map(booking -> booking.getSiteUuid()).collect(Collectors.toList());
 		SiteSearchRequest searchSiteRequest = SiteSearchRequest.builder()
 				.requestInfo(siteBookingRequest.getRequestInfo())
 				.siteSearchData(SiteSearchData.builder()
-								.uuids(siteBookingRequest.getSiteBookings().stream()
-										.map(booking -> booking.getSiteUuid()).collect(Collectors.toList()))
+								.uuids(siteUuids)
 								.build())
 				.build();
 		List<SiteCreationData> siteSearchDatas = siteRepository.searchSites(searchSiteRequest);
 		Map<String, SiteCreationData> siteMap = siteSearchDatas.stream().collect(Collectors.toMap(SiteCreationData::getUuid, site->site));
 		
-		siteBookingRequest.getSiteBookings().stream().forEach(booking -> {
+		siteBookingRequest.getSiteBookings().stream()
+//		.filter(siteBooking -> BooleanUtils.isFalse(siteBooking.getIsOnlyWorkflowCall()))
+		.forEach(booking -> {
 			SiteCreationData tempSite = siteMap.get(booking.getSiteUuid());
 			// validate site
 			if(null == tempSite) {
@@ -231,7 +236,7 @@ public class SiteBookingService {
 		Map<String, SiteBooking> appNoToSiteBookingMap = searchSiteBookingFromRequest(siteBookingRequest);
 		
 		// enrich update request
-		validateAndEnrichUpdateSiteBooking(siteBookingRequest, appNoToSiteBookingMap);
+		siteBookingRequest = validateAndEnrichUpdateSiteBooking(siteBookingRequest, appNoToSiteBookingMap);
 		
 		// update request
 		producer.push(AdvtConstants.SITE_BOOKING_UPDATE_KAFKA_TOPIC, siteBookingRequest);
@@ -283,7 +288,7 @@ public class SiteBookingService {
 				.requestInfo(siteBookingRequest.getRequestInfo()).siteBookings(new ArrayList<>()).build();
 
 		siteBookingRequest.getSiteBookings().stream().forEach(booking -> {
-			SiteBooking existingSiteBooking = appNoToSiteBookingMap.get(booking.getUuid());
+			SiteBooking existingSiteBooking = appNoToSiteBookingMap.get(booking.getApplicationNo());
 			
 			// validate existence
 			if(null == existingSiteBooking) {
@@ -330,6 +335,8 @@ public class SiteBookingService {
 
 	private void validateSiteUpdateRequest(SiteBookingRequest siteBookingRequest) {
 
+		SiteBookingRequest activeSiteBookingRequest = SiteBookingRequest.builder().requestInfo(siteBookingRequest.getRequestInfo()).build();
+		
 		// validate bookings present or not
 		if(CollectionUtils.isEmpty(siteBookingRequest.getSiteBookings())) {
 			throw new CustomException("EMPTY_REQUEST","Provide bookings to update.");
@@ -343,13 +350,12 @@ public class SiteBookingService {
 	            throw new CustomException("EMPTY_REQUEST", "Provide bookings uuid to update.");
 	        }
 	    });
-
+		
 
 		// validate SITE availability if booking is active
-		SiteBookingRequest activeSiteBookingRequest = SiteBookingRequest
-				.builder().requestInfo(siteBookingRequest.getRequestInfo()).siteBookings(siteBookingRequest
-						.getSiteBookings().stream().filter(site -> site.getIsActive()).collect(Collectors.toList()))
-				.build();
+		activeSiteBookingRequest.setSiteBookings(siteBookingRequest
+				.getSiteBookings().stream().filter(site -> BooleanUtils.isTrue(site.getIsActive()) && BooleanUtils.isFalse(site.getIsOnlyWorkflowCall())).collect(Collectors.toList()));
+		
 		if (!CollectionUtils.isEmpty(activeSiteBookingRequest.getSiteBookings())) {
 			searchValidateSiteAndEnrichSiteBooking(activeSiteBookingRequest);
 		}

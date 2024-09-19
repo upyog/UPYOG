@@ -41,7 +41,7 @@ public class WorkflowService {
 		
 		List<ProcessInstance> processInstances = new ArrayList<>();
 		siteBookingRequest.getSiteBookings().forEach(booking -> {
-			ProcessInstance processInstance = getProcessInstanceForPTR(booking,
+			ProcessInstance processInstance = getProcessInstanceForAdvt(booking,
 					siteBookingRequest.getRequestInfo());
 			processInstances.add(processInstance);
 		});
@@ -52,7 +52,7 @@ public class WorkflowService {
 		
 	}
 
-	private ProcessInstance getProcessInstanceForPTR(SiteBooking siteBooking, RequestInfo requestInfo) {
+	private ProcessInstance getProcessInstanceForAdvt(SiteBooking siteBooking, RequestInfo requestInfo) {
 
 //		if(null != siteBooking) {
 			ProcessInstance processInstance = new ProcessInstance();
