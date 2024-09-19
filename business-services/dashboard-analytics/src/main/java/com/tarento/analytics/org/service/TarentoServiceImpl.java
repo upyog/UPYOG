@@ -130,10 +130,9 @@ public class TarentoServiceImpl implements ClientService {
 					}
 					indexes.put(indexName, initialIndexName);
 					logger.info("after constructing indexName :: {} "+indexName);
+					logger.info("Before setting indexName to NODE :: {} "+indexName);
+		            ((ObjectNode) query).put(Constants.JsonPaths.INDEX_NAME, indexName);
 	            }
-	            logger.info("Before setting indexName to NODE :: {} "+indexName);
-	            ((ObjectNode) query).put(Constants.JsonPaths.INDEX_NAME, indexName);
-	            
 	        });
 	        ((ObjectNode) chartNode).put(Constants.JsonPaths.QUERIES, queries);
 		InsightsConfiguration insightsConfig = null;
