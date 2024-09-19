@@ -12,7 +12,7 @@ RUN yarn add @upyog/digit-ui-module-noc@1.7.0-beta.3
 RUN yarn add @upyog/digit-ui-module-engagement@1.7.0-beta.4
 RUN yarn add @upyog/digit-ui-module-hrms@1.7.0-beta.3
 RUN yarn add @upyog/digit-ui-module-core@1.7.0-beta.3
-RUN yarn add @upyog/digit-ui-module-obps@1.7.0-beta.15
+RUN yarn add @upyog/digit-ui-module-obps@1.7.0-beta.16
 RUN yarn add @upyog/digit-ui-module-common@1.7.0-beta.5
 RUN yarn add @upyog/digit-ui-module-ws@1.7.0-beta.12
 RUN yarn add @upyog/digit-ui-module-commonpt@1.7.0-beta.4
