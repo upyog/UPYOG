@@ -92,7 +92,6 @@ public class TarentoServiceImpl implements ClientService {
 		ObjectNode chartNode = (ObjectNode) node.get(internalChartId);
 		ObjectMapper mapper2 = new ObjectMapper();
 	    String json2 = mapper2.writerWithDefaultPrettyPrinter().writeValueAsString(chartNode);
-		logger.info("chartNode===================="+json2);
 		
 		// added pivot code from here
 		ArrayNode queries = (ArrayNode) chartNode.get(Constants.JsonPaths.QUERIES);
@@ -106,10 +105,8 @@ public class TarentoServiceImpl implements ClientService {
 	
 	                indexName = query.get(Constants.JsonPaths.INDEX_NAME).asText();
 	                
-	                logger.info("query is "+query.toString());
 	                String initialIndexName = indexName;
 	                
-	                logger.info("initialIndexName :: {} "+initialIndexName);
 
 	                boolean isDefaultPresent = false;
 	                boolean isRequestContainsInterval = null == request.getRequestDate() ? false : (request.getRequestDate().getInterval() != null && !request.getRequestDate().getInterval().isEmpty());
@@ -118,19 +115,15 @@ public class TarentoServiceImpl implements ClientService {
 					logger.info("VisualizationCode :: {} "+request.getVisualizationCode());
 					logger.info("Before constructing indexName :: {} "+indexName);
 					if (indexName.contains("*") && !StringUtils.isBlank(interval)) {
-						logger.info("entered into if block :: "+indexName);
 						//if interval is coming as year changed to month to match data
 						if(interval.equals("year")){
 							interval = "month";
 						}
 						indexName = indexName.replace("*", interval);
 					} else if (indexName.contains("*") && StringUtils.isBlank(interval)) {
-						logger.info("entered into else if block :: "+indexName);
 						indexName = indexName.replace("*", "month");
 					}
 					indexes.put(indexName, initialIndexName);
-					logger.info("after constructing indexName :: {} "+indexName);
-					logger.info("Before setting indexName to NODE :: {} "+indexName);
 		            ((ObjectNode) query).put(Constants.JsonPaths.INDEX_NAME, indexName);
 	            }
 	        });
@@ -186,15 +179,12 @@ public class TarentoServiceImpl implements ClientService {
 		if(!queries.isEmpty())
 			queries.forEach(query -> {
 	            String indexName = indexes.get(query.get(Constants.JsonPaths.INDEX_NAME).asText());
-	            logger.info("VisualizationCode During indexname reset :: {} "+request.getVisualizationCode());
-	            logger.info("Index name from CHART NODE:::::::"+query.get(Constants.JsonPaths.INDEX_NAME).asText());
-	            logger.info("Index name from Map:::::::"+indexName);
+	       
 	            if(!StringUtils.isBlank(indexName))
 	            	((ObjectNode) query).put(Constants.JsonPaths.INDEX_NAME, indexName);
 	        });
 		ObjectMapper mapper = new ObjectMapper();
 	    String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(chartNode.get(Constants.JsonPaths.QUERIES));
-		logger.info("Index name after resetting CHART NODE :: {}"+json);
 		return aggregateDto;
 	}
 
@@ -215,15 +205,12 @@ public class TarentoServiceImpl implements ClientService {
 		int randIndexCount = 1;
 		for(JsonNode query : queries) {
 			String module = query.get(Constants.JsonPaths.MODULE).asText();
-			logger.info("module is ===================="+module);
-			logger.info("request.getModuleLevel() is ===================="+request.getModuleLevel());
-
+		
 			if(request.getModuleLevel().equals(Constants.Modules.HOME_REVENUE) || 
 					request.getModuleLevel().equals(Constants.Modules.HOME_SERVICES) ||
 					query.get(Constants.JsonPaths.MODULE).asText().equals(Constants.Modules.COMMON) ||
 					request.getModuleLevel().equals(module)) {
 				
-				logger.info("Inside module condition");
 
 				String indexName = query.get(Constants.JsonPaths.INDEX_NAME).asText();
 				logger.info("indexName in  executeConfiguredQueries:: {}"+indexName);
