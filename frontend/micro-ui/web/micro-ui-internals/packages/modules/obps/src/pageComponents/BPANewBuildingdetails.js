@@ -634,7 +634,7 @@ const BPANewBuildingdetails = ({ t, config, onSelect, formData }) => {
             />
             {Master_plan_render_fields()}
 
-          <CardLabel>{`${t("BPA_ULB_NAME")}`}</CardLabel>
+          <CardLabel>{`${t("BPA_DISTRICT")}`}</CardLabel>
             <Controller
               control={control}
               name={"UlbName"}
@@ -652,7 +652,7 @@ const BPANewBuildingdetails = ({ t, config, onSelect, formData }) => {
               )}
               />
 
-            <CardLabel>{`${t("BPA_DISTRICT")}`}</CardLabel>
+            <CardLabel>{`${t("BPA_ULB_NAME")}`}</CardLabel>
             <Controller  
               control={control}
               name={"District"}

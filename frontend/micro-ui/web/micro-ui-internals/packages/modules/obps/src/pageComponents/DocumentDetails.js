@@ -36,17 +36,16 @@ import cloneDeep from "lodash/cloneDeep";
 import EXIF from 'exif-js';
 
 const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState, onSubmit }) => {
-    console.log("formData",formData);
     const stateId = Digit.ULBService.getStateId();
     const tenantId = "pg.citya";
-    const [documents, setDocuments] = useState(formData?.documents || []);
+    const [documents, setDocuments] = useState(formData?.documents?.documents || []);
     const [error, setError] = useState(null);
     const [enableSubmit, setEnableSubmit] = useState(true)
     const [checkRequiredFields, setCheckRequiredFields] = useState(false);
     const checkingFlow = formData?.uiFlow?.flow;
 
     const [isNextButtonDisabled, setIsNextButtonDisabled] = useState(false);
-    console.log("documentsdocuments",documents);
+    
 
     const beforeUploadDocuments = cloneDeep(formData?.PrevStateDocuments || []);
     const {data: bpaTaxDocuments, isLoading} = Digit.Hooks.obps.useBPATaxDocuments(stateId, formData, beforeUploadDocuments || []);
@@ -188,11 +187,11 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
                     })}
                     {error && <Toast label={error} onClose={() => setError(null)} error />}
                     {/*Adding Save As Draft Button */}
-                    <SubmitBar 
+                    {/* <SubmitBar 
                     label={t("BPA_SAVE_AS_DRAFT")}
                     onSubmit={handleSaveAsDraft}
                     disabled={enableSubmit}
-                    />
+                    /> */}
                 <br></br>
                 </FormStep>: <Loader />}
                 {(window.location.href.includes("/bpa/building_plan_scrutiny/new_construction") || window.location.href.includes("/ocbpa/building_oc_plan_scrutiny/new_construction")) && formData?.applicationNo ? <CitizenInfoLabel info={t("CS_FILE_APPLICATION_INFO_LABEL")} text={`${t("BPA_APPLICATION_NUMBER_LABEL")} ${formData?.applicationNo} ${t("BPA_DOCS_INFORMATION")}`} className={"info-banner-wrap-citizen-override"} /> : ""}
@@ -225,8 +224,8 @@ const SelectDocument = React.memo(function MyComponent({
     const [uploadedFile, setUploadedFile] = useState(() => documents?.filter((item) => item?.documentType?.includes(doc?.code)).map( e => ({fileStoreId: e?.fileStoreId, fileName: e?.fileName || ""}) ) || null);
     const [newArray, setnewArray ] = useState([]);
     const [uploadedfileArray, setuploadedfileArray] = useState([]);
-    const [fileArray, setfileArray] = useState([] || formData?.documents.filter((ob) => ob.documentType === selectedDocument.code) );
-    console.log("")
+    const [fileArray, setfileArray] = useState([] || formData?.documents?.documents.filter((ob) => ob.documentType === selectedDocument.code) );
+    
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
     function extractGeoLocation(file) {
@@ -297,12 +296,12 @@ const SelectDocument = React.memo(function MyComponent({
                     // Continue with your existing codezz
                     data = Object.fromEntries(e);
                     newArr = Object.values(data);
-                    newArr = formData?.documents?.filter((ob) => ob.documentType === selectedDocument.code);
+                    newArr = formData?.documents?.documents?.filter((ob) => ob.documentType === selectedDocument.code);
                     setnewArray(newArr);
                     // const filteredDocumentsByFileStoreId = documents?.filter((item) => item?.fileStoreId !== uploadedFile.fileStoreId) || []
                     let newfiles = [];
                     e?.map((doc, index) => {
-                        console.log("docinnewfilessss",doc);
+                        
                         newfiles.push({
                             documentType: selectedDocument?.code,
                             fileName: doc?.[0] || "",
@@ -425,7 +424,7 @@ const SelectDocument = React.memo(function MyComponent({
 
     const uploadedFilesPreFill = useMemo(()=>{
         let selectedUplDocs=[];
-        formData?.documents?.filter((ob) => ob.documentType === selectedDocument.code).forEach(e =>
+        formData?.documents?.documents?.filter((ob) => ob.documentType === selectedDocument.code).forEach(e =>
             selectedUplDocs.push([e.fileName, {file: {name: e.fileName, type: e.documentType}, fileStoreId: {fileStoreId: e.fileStoreId, tenantId}}])
             )
         return selectedUplDocs;
