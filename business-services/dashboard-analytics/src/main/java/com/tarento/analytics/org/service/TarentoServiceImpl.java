@@ -68,7 +68,7 @@ public class TarentoServiceImpl implements ClientService {
 
 
 	@Override
-	@Cacheable(value="versions", key="#request.hashKey")
+	//@Cacheable(value="versions", key="#request.hashKey")
 	public AggregateDto getAggregatedData(AggregateRequestDto request, List<RoleDto> roles) throws AINException, IOException {
 		// Read visualization Code
 		logger.info("inside Tarento AggregateDto");
@@ -90,6 +90,10 @@ public class TarentoServiceImpl implements ClientService {
 		// Load Chart API configuration to Object Node for easy retrieval later
 		ObjectNode node = configurationLoader.get(Constants.ConfigurationFiles.CHART_API_CONFIG);
 		ObjectNode chartNode = (ObjectNode) node.get(internalChartId);
+		ObjectMapper mapper2 = new ObjectMapper();
+	    String json2 = mapper2.writerWithDefaultPrettyPrinter().writeValueAsString(chartNode);
+		logger.info("chartNode===================="+json2);
+		
 		// added pivot code from here
 		ArrayNode queries = (ArrayNode) chartNode.get(Constants.JsonPaths.QUERIES);
 	        queries.forEach(query -> {
@@ -126,10 +130,9 @@ public class TarentoServiceImpl implements ClientService {
 					}
 					indexes.put(indexName, initialIndexName);
 					logger.info("after constructing indexName :: {} "+indexName);
+					logger.info("Before setting indexName to NODE :: {} "+indexName);
+		            ((ObjectNode) query).put(Constants.JsonPaths.INDEX_NAME, indexName);
 	            }
-	            logger.info("Before setting indexName to NODE :: {} "+indexName);
-	            ((ObjectNode) query).put(Constants.JsonPaths.INDEX_NAME, indexName);
-	            
 	        });
 	        ((ObjectNode) chartNode).put(Constants.JsonPaths.QUERIES, queries);
 		InsightsConfiguration insightsConfig = null;
