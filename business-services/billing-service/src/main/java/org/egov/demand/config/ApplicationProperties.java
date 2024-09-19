@@ -218,6 +218,7 @@ public class ApplicationProperties {
 	
 	@Value("${current.finyear.start}")
 	private Integer finYearStart;
+	
 	@Value("${current.finyear.end}")
 	private Integer finYearEnd;
 	
