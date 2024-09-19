@@ -140,6 +140,9 @@ public class Property extends PropertyInfo {
 	@JsonProperty("VacantUsagecategory")
 	private String vacantusagecategory;
 
+	@JsonProperty("BuildingPermission")
+	private boolean  BuildingPermission;
+	
 	@Builder
 	public Property(String id, String propertyId, String surveyId, List<String> linkedProperties, String tenantId,
 			String accountId, String oldPropertyId, Status status, Address address, String acknowldgementNumber,
@@ -147,7 +150,7 @@ public class Property extends PropertyInfo {
 			CreationReason creationReason, String usageCategory, Long noOfFloors, Double landArea,
 			BigDecimal superBuiltUpArea, Source source, Channel channel, List<Document> documents, List<Unit> units,
 			JsonNode additionalDetails, AuditDetails auditDetails, ProcessInstance workflow,String exemption,
-			String parentPropertyId,boolean isPartOfProperty,String parentPropertyUuId, String vacantusagecategory) {
+			String parentPropertyId,boolean isPartOfProperty,String parentPropertyUuId, String vacantusagecategory, boolean  BuildingPermission) {
 		super(id, propertyId, surveyId, linkedProperties, tenantId, accountId, oldPropertyId, status, address);
 		this.acknowldgementNumber = acknowldgementNumber;
 		this.propertyType = propertyType;
@@ -171,6 +174,7 @@ public class Property extends PropertyInfo {
 		this.parentPropertyId= parentPropertyId;
 		this.parentPropertyUuId=parentPropertyUuId;
 		this.vacantusagecategory=vacantusagecategory;
+		this.BuildingPermission=BuildingPermission;
 	}
 
 	public Property addOwnersItem(OwnerInfo ownersItem) {

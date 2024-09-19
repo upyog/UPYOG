@@ -62,4 +62,6 @@ public class BillSearchCriteria {
 	private String mobileNumber;
 	
 	private String demandId;
+	
+	private boolean searchAllForDemand;
 }

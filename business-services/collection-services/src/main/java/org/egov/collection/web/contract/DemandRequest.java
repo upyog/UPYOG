@@ -37,22 +37,18 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.pt.calculator.web.models.demand;
+package org.egov.collection.web.contract;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import org.egov.collection.model.v1.Demand;
+import org.egov.common.contract.request.RequestInfo;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
-import org.egov.common.contract.request.User;
-import org.egov.pt.calculator.web.models.property.AuditDetails;
-import org.egov.pt.calculator.web.models.property.OwnerInfo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -64,93 +60,15 @@ import lombok.Builder.Default;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Demand   {
+public class DemandRequest {
 
-	@JsonProperty("id")
-	private String id;
-
-	@JsonProperty("tenantId")
-	private String tenantId;
-
-	@JsonProperty("consumerCode")
-	private String consumerCode;
-
-	@JsonProperty("consumerType")
-	private String consumerType;
-
-	@JsonProperty("businessService")
-	private String businessService;
-
-	@Valid
-	@JsonProperty("payer")
-	private User payer;
-
-	@JsonProperty("taxPeriodFrom")
-	private Long taxPeriodFrom;
-
-	@JsonProperty("taxPeriodTo")
-	private Long taxPeriodTo;
-
-	@Builder.Default
-	@JsonProperty("demandDetails")
-	@Valid
-	private List<DemandDetail> demandDetails = new ArrayList<>();
-
-	@JsonProperty("auditDetails")
-	private AuditDetails auditDetails;
-
-	@JsonProperty("additionalDetails")
-	private Object additionalDetails;
-
-	@Builder.Default
-	@JsonProperty("minimumAmountPayable")
-	private BigDecimal minimumAmountPayable = BigDecimal.ZERO;
+	@NotNull
+	@JsonProperty("RequestInfo")
+	private RequestInfo requestInfo;
 	
+	@Valid
+	@NotNull
 	@Default
-    @JsonProperty("advanceAmount") 
-    private BigDecimal advanceAmount = BigDecimal.ZERO;
-
-	/**
-	 * Gets or Sets status
-	 */
-	public enum DemandStatusEnum {
-
-		ACTIVE("ACTIVE"),
-
-		CANCELLED("CANCELLED"),
-
-		ADJUSTED("ADJUSTED");
-
-		private String value;
-
-		DemandStatusEnum(String value) {
-			this.value = value;
-		}
-
-		@Override
-		@JsonValue
-		public String toString() {
-			return String.valueOf(value);
-		}
-
-		@JsonCreator
-		public static DemandStatusEnum fromValue(String text) {
-			for (DemandStatusEnum b : DemandStatusEnum.values()) {
-				if (String.valueOf(b.value).equalsIgnoreCase(text)) {
-					return b;
-				}
-			}
-			return null;
-		}
-	}
-
-	@JsonProperty("status")
-	private DemandStatusEnum status;
-
-
-	public Demand addDemandDetailsItem(DemandDetail demandDetailsItem) {
-		this.demandDetails.add(demandDetailsItem);
-		return this;
-	}
-
+	@JsonProperty("Demands")
+	private List<Demand> demands = new ArrayList<>();
 }

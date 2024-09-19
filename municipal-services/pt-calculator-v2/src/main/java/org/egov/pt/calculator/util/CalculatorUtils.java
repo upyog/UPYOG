@@ -22,6 +22,7 @@ import static org.egov.pt.calculator.util.CalculatorConstants.TENANT_ID_FIELD_FO
 import static org.egov.pt.calculator.util.CalculatorConstants.URL_PARAMS_SEPARATER;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -351,7 +352,18 @@ public class CalculatorUtils {
 				.append(SERVICE_FIELD_FOR_SEARCH_URL)
 				.append(SERVICE_FIELD_VALUE_PT)
 				.append(SEPARATER)
-				.append(DEMAND_ID_SEARCH_FIELD_NAME).append(criteria.getDemandId());
+				.append(DEMAND_ID_SEARCH_FIELD_NAME).append(criteria.getDemandId())
+				.append(SEPARATER)
+				.append("searchAllForDemand=true");
+	}
+
+	public StringBuilder getCollectionSearchUrl(String tenantId,String billId) {
+
+		return new StringBuilder().append(configurations.getCollectionServiceHost())
+				.append(configurations.getPaymentSearchEndpoint()).append(URL_PARAMS_SEPARATER)
+				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId)
+				.append(SEPARATER)
+				.append("billIds=").append(billId);
 	}
 
 	/**
@@ -522,103 +534,165 @@ public class CalculatorUtils {
 
 		BigDecimal carryForward = BigDecimal.ZERO;
 		BigDecimal singleunitammount=BigDecimal.ZERO;
+		BigDecimal paidAmount=BigDecimal.ZERO;
+		
+		BigDecimal totalpaidAmountFromPayment=BigDecimal.ZERO;
+		BigDecimal totalBillAmount=BigDecimal.ZERO;
+		BigDecimal totalAmountForDemand = BigDecimal.ZERO;
 		Set<String> consumercode=new HashSet<String>();
 		consumercode.add(demand.getConsumerCode());
-		/*
-		 * for (DemandDetail detail : demand.getDemandDetails()) {
-		 * 
-		 * carryForward = carryForward.add(detail.getCollectionAmount()); if
-		 * (detail.getTaxHeadMasterCode().equalsIgnoreCase(PT_ADVANCE_CARRYFORWARD))
-		 * carryForward = carryForward.add(detail.getTaxAmount().negate()); }
-		 */
+		BigDecimal pastDue= BigDecimal.ZERO;
+		BigDecimal totalAfterPastDueDeduct= BigDecimal.ZERO;
+		for (DemandDetail detail : demand.getDemandDetails()) 
+		{
+			BigDecimal amountForAccDeatil = detail.getTaxAmount();
+			totalAmountForDemand = totalAmountForDemand.add(amountForAccDeatil);
+			/*
+			 * carryForward = carryForward.add(detail.getCollectionAmount()); if
+			 * (detail.getTaxHeadMasterCode().equalsIgnoreCase(PT_ADVANCE_CARRYFORWARD))
+			 * carryForward = carryForward.add(detail.getTaxAmount().negate());
+			 */ 
+			
+			if(detail.getTaxHeadMasterCode().equalsIgnoreCase("PT_PASTDUE_CARRYFORWARD"))
+				pastDue=pastDue.add(detail.getTaxAmount());
+		}
+		
+		totalAmountForDemand = totalAmountForDemand.setScale(0, RoundingMode.HALF_UP);
+		totalAfterPastDueDeduct = totalAmountForDemand.subtract(pastDue);
+		carryForward=demand.getAdvanceAmount();
+		if(carryForward.compareTo(BigDecimal.ZERO)>0)
+			return carryForward;
+		else if(totalAmountForDemand.compareTo(BigDecimal.ZERO)==0)
+		{
+			carryForward=BigDecimal.ZERO;
+			return carryForward;
+		}
+
+		BigDecimal amountforquaterly=totalAfterPastDueDeduct.divide(new BigDecimal(4));
+		amountforquaterly=amountforquaterly.setScale(0, RoundingMode.HALF_UP);
+		BigDecimal ammountforhalfyearly=totalAfterPastDueDeduct.divide(new BigDecimal(2));
+		ammountforhalfyearly=ammountforhalfyearly.setScale(0, RoundingMode.HALF_UP);
+
 		BillSearchCriteria criteria=new BillSearchCriteria();
 		criteria.setTenantId(demand.getTenantId());
 		criteria.setConsumerCode(consumercode);
 		criteria.setDemandId(demand.getId());
+		criteria.setSearchAllForDemand(true);
+
 		BillResponse res = mapper.convertValue(
 				repository.fetchResult(getBillSearchUrl(criteria), new RequestInfoWrapper(requestInfo)),
 				BillResponse.class);
+
 		if(res!=null)
 		{
 			for(Bill bill:res.getBill())
 			{
-				if(bill.getStatus().equals(BillStatusEnum.ACTIVE))
+				PaymentResponse payment = mapper.convertValue(
+						repository.fetchResult(getCollectionSearchUrl(demand.getTenantId(), bill.getId()), new RequestInfoWrapper(requestInfo)),
+						PaymentResponse.class);
+				if(null!=payment && null!= payment.getPayments() && !payment.getPayments().isEmpty())
 				{
-					for(BillDetail billdet:bill.getBillDetails())
-					{
-						if(billdet.getPaymentPeriod().equalsIgnoreCase("Q4")
-								||billdet.getPaymentPeriod().equalsIgnoreCase("H2")	
-								||billdet.getPaymentPeriod().equalsIgnoreCase("YR"))
-						{
-							carryForward=billdet.getAmount();
-						}
-						else if(billdet.getPaymentPeriod().equalsIgnoreCase("Q3"))
-						{
-							singleunitammount=billdet.getAmount().divide(new BigDecimal(3));
-							singleunitammount=singleunitammount.multiply(new BigDecimal(4));
-							carryForward=carryForward.add(singleunitammount);
-						}
-						else if(billdet.getPaymentPeriod().equalsIgnoreCase("Q2"))
-						{
-							singleunitammount=billdet.getAmount().divide(new BigDecimal(2));
-							singleunitammount=singleunitammount.multiply(new BigDecimal(4));
-							carryForward=carryForward.add(singleunitammount);
-						}
-						else if(billdet.getPaymentPeriod().equalsIgnoreCase("Q1"))
-						{
-							singleunitammount=billdet.getAmount();
-							singleunitammount=singleunitammount.multiply(new BigDecimal(4));
-							carryForward=carryForward.add(singleunitammount);
-						}
-						else if(billdet.getPaymentPeriod().equalsIgnoreCase("H1"))
-						{
-							singleunitammount=billdet.getAmount();
-							singleunitammount=singleunitammount.multiply(new BigDecimal(2));
-							carryForward=carryForward.add(singleunitammount);
-						}
-					}
+					paidAmount=bill.getBillDetails().get(0).getAmount();
+					totalpaidAmountFromPayment =totalpaidAmountFromPayment.add (payment.getPayments().get(0).getTotalAmountPaid());
+					totalBillAmount = totalBillAmount.add(bill.getBillDetails().get(0).getAmount());
+					
 				}
-				else if(bill.getStatus().equals(BillStatusEnum.PAID))
-				{
-					carryForward=BigDecimal.ZERO;
-					for(BillDetail billdet:bill.getBillDetails())
-					{
-						if(billdet.getPaymentPeriod().equalsIgnoreCase("Q4")
-								||billdet.getPaymentPeriod().equalsIgnoreCase("H2")	
-								||billdet.getPaymentPeriod().equalsIgnoreCase("YR"))
-						{
-							carryForward=BigDecimal.ZERO;
-						}
-						else if(billdet.getPaymentPeriod().equalsIgnoreCase("Q3"))
-						{
-							singleunitammount=billdet.getAmount().divide(new BigDecimal(3));
-							carryForward=carryForward.add(singleunitammount);
-						}
-						else if(billdet.getPaymentPeriod().equalsIgnoreCase("Q2"))
-						{
-							singleunitammount=billdet.getAmount().divide(new BigDecimal(2));
-							singleunitammount=singleunitammount.multiply(new BigDecimal(2));
-							carryForward=carryForward.add(singleunitammount);
-						}
-						else if(billdet.getPaymentPeriod().equalsIgnoreCase("Q1"))
-						{
-							singleunitammount=billdet.getAmount();
-							singleunitammount=singleunitammount.multiply(new BigDecimal(3));
-							carryForward=carryForward.add(singleunitammount);
-						}
-						else if(billdet.getPaymentPeriod().equalsIgnoreCase("H1"))
-						{
-							singleunitammount=billdet.getAmount();
-							carryForward=carryForward.add(singleunitammount);
-						}
-					}
-					break;
-				}
+				
 			}
 
 		}
+		
+		carryForward=totalpaidAmountFromPayment.subtract(totalAmountForDemand);
 		System.out.println(res);
 		return carryForward;
+	}
+	
+	
+	public Map<String,BigDecimal> getTotalCollectedAmountAndPreviousCarryForwardMap(Demand demand, RequestInfo requestInfo) {
+
+		BigDecimal carryForward = BigDecimal.ZERO;
+		BigDecimal singleunitammount=BigDecimal.ZERO;
+		BigDecimal paidAmount=BigDecimal.ZERO;
+		Map<String,BigDecimal>collectedMap = new HashMap<String, BigDecimal>();
+		BigDecimal totalpaidAmountFromPayment=BigDecimal.ZERO;
+		BigDecimal totalBillAmount=BigDecimal.ZERO;
+		BigDecimal totalAmountForDemand = BigDecimal.ZERO;
+		Set<String> consumercode=new HashSet<String>();
+		consumercode.add(demand.getConsumerCode());
+		BigDecimal pastDue= BigDecimal.ZERO;
+		BigDecimal totalAfterPastDueDeduct= BigDecimal.ZERO;
+		for (DemandDetail detail : demand.getDemandDetails()) 
+		{
+			BigDecimal amountForAccDeatil = detail.getTaxAmount();
+			totalAmountForDemand = totalAmountForDemand.add(amountForAccDeatil);
+			/*
+			 * carryForward = carryForward.add(detail.getCollectionAmount()); if
+			 * (detail.getTaxHeadMasterCode().equalsIgnoreCase(PT_ADVANCE_CARRYFORWARD))
+			 * carryForward = carryForward.add(detail.getTaxAmount().negate());
+			 */ 
+			
+			if(detail.getTaxHeadMasterCode().equalsIgnoreCase("PT_PASTDUE_CARRYFORWARD"))
+				pastDue=detail.getTaxAmount();
+		}
+		
+		totalAmountForDemand = totalAmountForDemand.setScale(0, RoundingMode.HALF_UP);
+		totalAfterPastDueDeduct = totalAmountForDemand.subtract(pastDue);
+		carryForward=demand.getAdvanceAmount();
+		if(carryForward.compareTo(BigDecimal.ZERO)>0) {
+			collectedMap.put("PT_ADVANCE_CARRYFORWARD",carryForward );
+			return  collectedMap;
+		}
+			
+		else if(totalAmountForDemand.compareTo(BigDecimal.ZERO)==0)
+		{
+			collectedMap.put("PT_PASTDUE_CARRYFORWARD",BigDecimal.ZERO );
+			return  collectedMap;
+		}
+
+		BigDecimal amountforquaterly=totalAfterPastDueDeduct.divide(new BigDecimal(4));
+		amountforquaterly=amountforquaterly.setScale(0, RoundingMode.HALF_UP);
+		BigDecimal ammountforhalfyearly=totalAfterPastDueDeduct.divide(new BigDecimal(2));
+		ammountforhalfyearly=ammountforhalfyearly.setScale(0, RoundingMode.HALF_UP);
+
+		BillSearchCriteria criteria=new BillSearchCriteria();
+		criteria.setTenantId(demand.getTenantId());
+		criteria.setConsumerCode(consumercode);
+		criteria.setDemandId(demand.getId());
+		criteria.setSearchAllForDemand(true);
+
+		BillResponse res = mapper.convertValue(
+				repository.fetchResult(getBillSearchUrl(criteria), new RequestInfoWrapper(requestInfo)),
+				BillResponse.class);
+
+		if(res!=null)
+		{
+			for(Bill bill:res.getBill())
+			{
+				PaymentResponse payment = mapper.convertValue(
+						repository.fetchResult(getCollectionSearchUrl(demand.getTenantId(), bill.getId()), new RequestInfoWrapper(requestInfo)),
+						PaymentResponse.class);
+				if(null!=payment && null!= payment.getPayments() && !payment.getPayments().isEmpty())
+				{
+					paidAmount=bill.getBillDetails().get(0).getAmount();
+					totalpaidAmountFromPayment =totalpaidAmountFromPayment.add (payment.getPayments().get(0).getTotalAmountPaid());
+					totalBillAmount = totalBillAmount.add(bill.getBillDetails().get(0).getAmount());
+					
+				}
+				
+			}
+
+		}
+		//ADVANCE CASE
+		if(totalpaidAmountFromPayment.compareTo(totalAmountForDemand)>0) {
+			collectedMap.put("PT_ADVANCE_CARRYFORWARD",totalpaidAmountFromPayment.subtract(totalAmountForDemand));
+		}
+		else if(totalpaidAmountFromPayment.compareTo(totalAmountForDemand)<=0) {
+			carryForward=totalAmountForDemand.subtract(totalpaidAmountFromPayment);
+			collectedMap.put("PT_PASTDUE_CARRYFORWARD",BigDecimal.ZERO );
+		}
+		
+		
+		return collectedMap;
 	}
 
 	public AuditDetails getAuditDetails(String by, boolean isCreate) {

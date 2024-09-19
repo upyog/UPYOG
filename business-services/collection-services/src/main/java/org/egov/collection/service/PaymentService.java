@@ -133,6 +133,8 @@ public class PaymentService {
 				for(BillDetail billDetail:billDetails)
 				{
 					billDetail.setAmountPaid(amountPaid);
+					
+					//update the demand
 				}
 			}
 

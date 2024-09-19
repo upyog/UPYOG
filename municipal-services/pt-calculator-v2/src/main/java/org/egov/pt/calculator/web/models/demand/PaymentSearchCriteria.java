@@ -1,4 +1,4 @@
-package org.egov.collection.model;
+package org.egov.pt.calculator.web.models.demand;
 
 import java.util.List;
 import java.util.Set;
@@ -21,7 +21,7 @@ public class PaymentSearchCriteria {
     private Set<String> ids;
 
     private Set<String> billIds;
- 
+
     private String tenantId;
 
     private Set<String> tenantIds;

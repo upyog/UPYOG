@@ -44,6 +44,8 @@ public class BillQueryBuilder {
 			+ " INNER JOIN (SELECT bd_consumercode, max(b_createddate) as maxdate FROM billresult GROUP BY bd_consumercode) as uniqbill"
 			+ " ON uniqbill.bd_consumercode=billresult.bd_consumercode AND uniqbill.maxdate=billresult.b_createddate ";
 	
+	public static final String BILL_ALL_FOR_DEMAND = "WITH billresult AS ({replace}) SELECT * FROM billresult ";
+	
 	public static final String BILL_MIN_QUERY = "WITH billresult AS ({replace}) SELECT * FROM billresult "
 			+ " INNER JOIN (SELECT bd_consumercode, min(b_createddate) as mindate FROM billresult GROUP BY bd_consumercode) as uniqbill"
 			+ " ON uniqbill.bd_consumercode=billresult.bd_consumercode AND uniqbill.mindate=billresult.b_createddate ";
@@ -94,15 +96,13 @@ public class BillQueryBuilder {
 			appendListToQuery(searchBill.getBillId(), preparedStatementValues, selectQuery);
 		}
 
-		if (!searchBill.getRetrieveOldest()) {
-			if (searchBill.getStatus() != null) {
-				selectQuery.append(" AND b.status = ?");
-				preparedStatementValues.add(searchBill.getStatus().toString());
-			}
-		} else {
-			selectQuery.append(" AND b.status != ?");
-			preparedStatementValues.add(BillStatus.CANCELLED.toString());
-		}
+		/*
+		 * if (!searchBill.getRetrieveOldest()) { if (searchBill.getStatus() != null) {
+		 * selectQuery.append(" AND b.status = ?");
+		 * preparedStatementValues.add(searchBill.getStatus().toString()); } } else {
+		 * selectQuery.append(" AND b.status != ?");
+		 * preparedStatementValues.add(BillStatus.CANCELLED.toString()); }
+		 */
 
 		if (searchBill.getEmail() != null) {
 			selectQuery.append(" AND b.payeremail = ?");
@@ -150,14 +150,19 @@ public class BillQueryBuilder {
 			final BillSearchCriteria searchBillCriteria) {
 		
 		StringBuilder finalQuery;
-
-		if (searchBillCriteria.getRetrieveOldest())
-			finalQuery = new StringBuilder(BILL_MIN_QUERY.replace(REPLACE_STRING, selectQuery));
-		else
-			finalQuery = new StringBuilder(BILL_MAX_QUERY.replace(REPLACE_STRING, selectQuery));
-
-		if (searchBillCriteria.isOrderBy()) {
-			finalQuery.append(" ORDER BY billresult.bd_consumercode ");
+		
+		if(searchBillCriteria.isSearchAllForDemand()) {
+			finalQuery = new StringBuilder(BILL_ALL_FOR_DEMAND.replace(REPLACE_STRING, selectQuery));
+		}else {
+		
+			if (searchBillCriteria.getRetrieveOldest())
+				finalQuery = new StringBuilder(BILL_MIN_QUERY.replace(REPLACE_STRING, selectQuery));
+			else
+				finalQuery = new StringBuilder(BILL_MAX_QUERY.replace(REPLACE_STRING, selectQuery));
+	
+			if (searchBillCriteria.isOrderBy()) {
+				finalQuery.append(" ORDER BY billresult.bd_consumercode ");
+			}
 		}
 
 		return finalQuery;

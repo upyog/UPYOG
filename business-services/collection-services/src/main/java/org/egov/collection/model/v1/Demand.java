@@ -1,4 +1,4 @@
-package org.egov.demand.model;
+package org.egov.collection.model.v1;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,7 +8,9 @@ import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.egov.demand.web.contract.User;
+
+import org.egov.collection.model.AuditDetails;
+import org.egov.common.contract.request.User;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.validation.Valid;

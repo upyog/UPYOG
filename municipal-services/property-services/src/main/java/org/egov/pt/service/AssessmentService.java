@@ -114,18 +114,13 @@ public class AssessmentService {
 		crt.setFinancialYear(request.getAssessment().getFinancialYear());
 		crt.setStatus(Status.ACTIVE);
 
-		
-		
-		
-		 
-		
+
 		List<Assessment> earlierAssesmentForTheFinancialYear =  searchAssessments(crt, request.getRequestInfo());
 		if(earlierAssesmentForTheFinancialYear.size()>0)
 			throw new CustomException("ASSESMENT_EXCEPTION","Property assessment is already completed for this property for the financial year "+crt.getFinancialYear());
 
 		//Call For Previous Year Demand Deactivation
-		deactivateOldDemandsForPreiousYears(request);
-
+		
 		if(config.getIsAssessmentWorkflowEnabled()){
 			assessmentEnrichmentService.enrichWorkflowForInitiation(request);
 			ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(request.getRequestInfo(),
@@ -136,7 +131,8 @@ public class AssessmentService {
 		else {
 			calculationService.calculateTax(request, property);
 		}
-
+		
+		deactivateOldDemandsForPreiousYears(request);
 		producer.push(props.getCreateAssessmentTopic(), request);
 
 		return request.getAssessment();
@@ -158,6 +154,7 @@ public class AssessmentService {
 		List<Demand>demaListToBeUpdated = new ArrayList<>();
 		if(null!=dmr.getDemands() &&!dmr.getDemands().isEmpty()) {
 			for(Demand dm:dmr.getDemands()) {
+				if(dm.getTaxPeriodTo().compareTo(System.currentTimeMillis()) < 0)
 				dm.setStatus(StatusEnum.CANCELLED);
 				demaListToBeUpdated.add(dm);
 			}

@@ -17,5 +17,7 @@ public class BillSearchCriteria {
 	private String service;
 	
 	private String demandId;
+	
+	private boolean searchAllForDemand;
 
 }

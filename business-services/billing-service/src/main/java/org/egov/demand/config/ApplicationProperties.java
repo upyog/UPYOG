@@ -209,4 +209,20 @@ public class ApplicationProperties {
 	@Value("${egov.pgservice.host}")
 	private String pgSeriviceHost;
 	
+	
+	@Value("${egov.collection.service.host}")
+	private String collectionSeriviceHost;
+	
+	@Value("${egov.collection.service.search.endpoint}")
+	private String collectionSeriviceSearch;
+	
+	@Value("${current.finyear.start}")
+	private Integer finYearStart;
+	@Value("${current.finyear.end}")
+	private Integer finYearEnd;
+	
+	
+	@Value("${egov.pgservice.create.endpoint}")
+	private String pgCreateEndpoint;
+	
 }
