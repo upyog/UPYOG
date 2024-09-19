@@ -74,7 +74,7 @@ export const createApiResponse = async ({ body }, res, next) => {
     let firenocResponse = await calculate(FireNOCs[i], RequestInfo);
   }
   body.FireNOCs = updateStatus(FireNOCs, workflowResponse);
-  //console.log("Final Requested Body"+JSON.stringify(body));
+  console.log("Final Requested Body for Create"+JSON.stringify(body));
   payloads.push({
     topic: envVariables.KAFKA_TOPICS_FIRENOC_CREATE,
     messages: JSON.stringify(body)

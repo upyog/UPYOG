@@ -23,6 +23,8 @@ export default ({ config }) => {
   api.post(
     "/_update",
     asyncHandler(async ({ body }, res, next) => {
+      let isPrimaryowner = true 
+      body.FireNOCs[0].fireNOCDetails.applicantDetails.owners[0] ={...body.FireNOCs[0].fireNOCDetails.applicantDetails.owners[0], "isPrimaryowner" : true};
       let response = await updateApiResponse({ body }, true, next);
       if(response.Errors)
         res.status(400);
@@ -77,7 +79,7 @@ export const updateApiResponse = async ({ body }, next = {}) => {
   }
 
   body.FireNOCs = updateStatus(FireNOCs, workflowResponse);
-  console.log("Fire NoC body"+JSON.stringify(body.FireNOCs));
+  console.log("FireNoc Request Body for Update"+JSON.stringify(body.FireNOCs));
 
   payloads.push({
     topic: envVariables.KAFKA_TOPICS_FIRENOC_UPDATE,
