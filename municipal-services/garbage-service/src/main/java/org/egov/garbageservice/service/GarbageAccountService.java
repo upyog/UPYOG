@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.garbageservice.contract.bill.*;
+import org.egov.garbageservice.contract.bill.Bill.StatusEnum;
 import org.egov.garbageservice.contract.workflow.BusinessServiceResponse;
 import org.egov.garbageservice.contract.workflow.ProcessInstance;
 import org.egov.garbageservice.contract.workflow.ProcessInstanceRequest;
@@ -884,27 +886,30 @@ public class GarbageAccountService {
 
 	public GarbageAccountActionResponse getApplicationDetails(GarbageAccountActionRequest garbageAccountActionRequest) {
 		
+		SearchCriteriaGarbageAccount criteria = SearchCriteriaGarbageAccount.builder().build();
+		GarbageAccountActionResponse garbageAccountActionResponse = GarbageAccountActionResponse.builder()
+				.applicationDetails(new ArrayList<>())
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(garbageAccountActionRequest.getRequestInfo(), true))
+				.build();
+
 		if(CollectionUtils.isEmpty(garbageAccountActionRequest.getApplicationNumbers())) {
-			throw new CustomException("INVALID REQUEST","Provide Application Number.");
+			if(null != garbageAccountActionRequest.getRequestInfo()
+					&& null != garbageAccountActionRequest.getRequestInfo().getUserInfo()
+					&& !StringUtils.isEmpty(garbageAccountActionRequest.getRequestInfo().getUserInfo().getUuid())) {
+				criteria.setCreatedBy(Collections.singletonList(garbageAccountActionRequest.getRequestInfo().getUserInfo().getUuid()));
+			}else {
+				throw new CustomException("INVALID REQUEST","Provide Application Number.");
+			}
+		}else {
+			criteria.setApplicationNumber(garbageAccountActionRequest.getApplicationNumbers());
 		}
 		
-		GarbageAccountActionResponse garbageAccountActionResponse = GarbageAccountActionResponse.builder()
-																.applicationDetails(new ArrayList<>())
-																.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(garbageAccountActionRequest.getRequestInfo(), true))
-																.build();
-		
-//		garbageAccountActionRequest.getApplicationNumbers().stream().forEach(applicationNumber -> {
-			
-			// search application number
-			SearchCriteriaGarbageAccount criteria = SearchCriteriaGarbageAccount.builder()
-					.applicationNumber(garbageAccountActionRequest.getApplicationNumbers())
-					.build();
-			List<GarbageAccount> accounts = garbageAccountRepository.searchGarbageAccount(criteria);
+		// search application number
+		List<GarbageAccount> accounts = garbageAccountRepository.searchGarbageAccount(criteria);
 
-			List<GarbageAccountDetail> applicationDetails = getApplicationBillUserDetail(accounts, garbageAccountActionRequest.getRequestInfo());
-			
-			garbageAccountActionResponse.setApplicationDetails(applicationDetails);
-//		});
+		List<GarbageAccountDetail> applicationDetails = getApplicationBillUserDetail(accounts, garbageAccountActionRequest.getRequestInfo());
+		
+		garbageAccountActionResponse.setApplicationDetails(applicationDetails);
 		
 		return garbageAccountActionResponse;
 	}
@@ -926,8 +931,17 @@ public class GarbageAccountService {
 			BillResponse billResponse = billService.searchBill(billSearchCriteria,requestInfo);
 			Map<Object, Object> billDetailsMap = new HashMap<>();
 			if (!CollectionUtils.isEmpty(billResponse.getBill())) {
-				billDetailsMap.put("billId", billResponse.getBill().get(0).getId());
-				garbageAccountDetail.setTotalPayableAmount(billResponse.getBill().get(0).getTotalAmount());
+				// enrich all bills
+				garbageAccountDetail.setBills(billResponse.getBill());
+				Optional<Bill> activeBill = billResponse.getBill().stream()
+						.filter(bill -> StatusEnum.ACTIVE.name().equalsIgnoreCase(bill.getStatus().name()))
+			            .findFirst();
+				activeBill.ifPresent(bill -> {
+					// enrich active bill details
+					billDetailsMap.put("billId", bill.getId());
+					garbageAccountDetail.setTotalPayableAmount(bill.getTotalAmount());
+				});
+					
 			}else {
 				garbageAccountDetail.setTotalPayableAmount(new BigDecimal(100.00));
 			}

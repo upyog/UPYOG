@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,18 +73,19 @@ public class PropertyController {
     	{
     		if(!owner.getOwnerType().equals("NONE"))
     		{
-    			for(Document document:owner.getDocuments())
-    				if(document.getDocumentType().contains("OWNER.SPECIALCATEGORYPROOF"))
-    				{
-    					PropertyCriteria propertyCriteria=new PropertyCriteria();
-    					propertyCriteria.setTenantId(owner.getTenantId());
-    					propertyCriteria.setDocumentNumbers(new HashSet<>(Arrays.asList(document.getDocumentUid())));
-    					List<Property> properties=propertyService.searchProperty(propertyCriteria,propertyRequest.getRequestInfo());
-    					if(!properties.isEmpty())
-    						throw new CustomException(null,"Document numbers added in Owner Information is already present in the system.");
- 
-    				}
-    				
+    			if (!CollectionUtils.isEmpty(owner.getDocuments())) {
+    				for(Document document:owner.getDocuments())
+	    				if(document.getDocumentType().contains("OWNER.SPECIALCATEGORYPROOF"))
+	    				{
+	    					PropertyCriteria propertyCriteria=new PropertyCriteria();
+	    					propertyCriteria.setTenantId(owner.getTenantId());
+	    					propertyCriteria.setDocumentNumbers(new HashSet<>(Arrays.asList(document.getDocumentUid())));
+	    					List<Property> properties=propertyService.searchProperty(propertyCriteria,propertyRequest.getRequestInfo());
+	    					if(!properties.isEmpty())
+	    						throw new CustomException(null,"Document numbers added in Owner Information is already present in the system.");
+	 
+	    				}
+    			}
     		}
     	}
         Property property = propertyService.createProperty(propertyRequest);
@@ -103,17 +105,21 @@ public class PropertyController {
     	{
     		if(!owner.getOwnerType().equals("NONE"))
     		{
-    			for(Document document:owner.getDocuments())
-    				if(document.getDocumentType().contains("OWNER.SPECIALCATEGORYPROOF"))
-    				{
-    					PropertyCriteria propertyCriteria=new PropertyCriteria();
-    					propertyCriteria.setTenantId(owner.getTenantId());
-    					propertyCriteria.setDocumentNumbers(new HashSet<>(Arrays.asList(document.getDocumentUid())));
-    					List<Property> properties=propertyService.searchProperty(propertyCriteria,propertyRequest.getRequestInfo());
-    					if(!properties.isEmpty())
-    						throw new CustomException(null,"Document numbers added in Owner Information is already present in the system.");
- 
-    				}
+    			if (!CollectionUtils.isEmpty(owner.getDocuments())) {
+					for (Document document : owner.getDocuments())
+						if (document.getDocumentType().contains("OWNER.SPECIALCATEGORYPROOF")) {
+							PropertyCriteria propertyCriteria = new PropertyCriteria();
+							propertyCriteria.setTenantId(owner.getTenantId());
+							propertyCriteria
+									.setDocumentNumbers(new HashSet<>(Arrays.asList(document.getDocumentUid())));
+							List<Property> properties = propertyService.searchProperty(propertyCriteria,
+									propertyRequest.getRequestInfo());
+							if (!properties.isEmpty())
+								throw new CustomException(null,
+										"Document numbers added in Owner Information is already present in the system.");
+
+						} 
+				}
     				
     		}
     	}
