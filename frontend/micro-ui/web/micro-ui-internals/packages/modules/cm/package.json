@@ -1,5 +1,6 @@
 {
   "name": "@nudmcdgnpm/upyog-ui-module-cm",
+  "description": "Commonmodule is created to get details of applications from any module in upyog with its unique application number",
   "author": "Khalid Rashid - NIUA",
   "version": "1.2.0",
   "license": "MIT",

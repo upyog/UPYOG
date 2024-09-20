@@ -243,11 +243,13 @@ const Urls = {
     },
   },
 
+  // Urls defined for birth and death services
   bnd: {
+    // url for birth
     bsearch: "/birth-death-services/birth/_search",
+    // url for death
     dsearch: "/birth-death-services/death/_search",
   },
-
 
   noc: {
     nocSearch: "/noc-services/v1/noc/_search",

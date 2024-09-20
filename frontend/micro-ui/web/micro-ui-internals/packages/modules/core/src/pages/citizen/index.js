@@ -26,7 +26,7 @@ const sidebarHiddenFor = [
   "/digit-ui/citizen/select-location",
   "/digit-ui/citizen/login",
   "/digit-ui/citizen/register/otp",
-  "/digit-ui/citizen/commonmodule/cmservice/verify"
+  "/digit-ui/citizen/commonmodule/cmservice/verify" // path added for commonmodule
 ];
 
 const getTenants = (codes, tenants) => {

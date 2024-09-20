@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { EmployeeModuleCard, PTIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { EmployeeModuleCard,CHBIcon } from "@nudmcdgnpm/digit-ui-react-components";
 
 const CHBCard = () => {
   const { t } = useTranslation();
@@ -40,8 +40,8 @@ const CHBCard = () => {
   ]
   const CHB_CEMP = Digit.UserService.hasAccess(["CHB_APPROVER","CHB_VERIFIER"]) || false;
   const propsForModuleCard = {
-    Icon: <PTIcon />,
-    moduleName: t("CHB_COMMUNITY_HALL_BOOKING"),
+    Icon: <CHBIcon/>,
+    moduleName: t("ACTION_TEST_CHB"),
     kpis: [
       {
         count: total?.totalCount,
