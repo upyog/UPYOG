@@ -110,6 +110,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	@Override
 	public List<CommunityHallBookingDetail> getBookingDetails(CommunityHallBookingSearchCriteria bookingSearchCriteria,
 			RequestInfo info) {
+		log.info("bookingSearchCriteria : " + bookingSearchCriteria);
 		hallBookingValidator.validateSearch(info, bookingSearchCriteria);
 		List<CommunityHallBookingDetail> bookingDetails = new ArrayList<CommunityHallBookingDetail>();
 		List<String> roles = new ArrayList<>();
@@ -119,9 +120,10 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		log.info("user roles for searching : " + roles);
 		if ((bookingSearchCriteria.tenantIdOnly() || bookingSearchCriteria.isEmpty())
 				&& roles.contains(CommunityHallBookingConstants.CITIZEN)) {
-			log.debug("loading data of created and by me");
+			log.info("loading data of created and by me");
 			bookingDetails = this.getBookingCreatedByMe(bookingSearchCriteria, info);
 		} else {
+			log.info("loading data based on criteria");
 			bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
 		}
 		
