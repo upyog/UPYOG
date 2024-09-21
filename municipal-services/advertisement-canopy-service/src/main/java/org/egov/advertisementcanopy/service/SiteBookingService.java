@@ -22,6 +22,8 @@ import org.egov.advertisementcanopy.contract.bill.BillResponse;
 import org.egov.advertisementcanopy.contract.bill.BillSearchCriteria;
 import org.egov.advertisementcanopy.contract.bill.Demand;
 import org.egov.advertisementcanopy.contract.bill.GenerateBillCriteria;
+import org.egov.advertisementcanopy.contract.workflow.BusinessServiceResponse;
+import org.egov.advertisementcanopy.contract.workflow.State;
 import org.egov.advertisementcanopy.model.AuditDetails;
 import org.egov.advertisementcanopy.model.SiteBooking;
 import org.egov.advertisementcanopy.model.SiteBookingActionRequest;
@@ -40,6 +42,7 @@ import org.egov.advertisementcanopy.repository.SiteRepository;
 import org.egov.advertisementcanopy.util.AdvtConstants;
 import org.egov.advertisementcanopy.util.ResponseInfoFactory;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -528,6 +531,83 @@ public class SiteBookingService {
 		});
 		
 		return sitegarbageAccountDetails;
+	}
+
+	public SiteBookingActionResponse getActionsOnApplication(SiteBookingActionRequest siteBookingActionRequest) {
+		
+		if(CollectionUtils.isEmpty(siteBookingActionRequest.getApplicationNumbers())) {
+			throw new CustomException("INVALID REQUEST","Provide Application Number.");
+		}
+		
+		Map<String, List<String>> applicationActionMaps = new HashMap<>();
+		
+		// search garbage accounts by application numbers
+		SiteBookingSearchCriteria criteria = SiteBookingSearchCriteria.builder()
+				.applicationNumbers(siteBookingActionRequest.getApplicationNumbers())
+				.build();
+		List<SiteBooking> accounts = siteBookingRepository.search(criteria);
+		if(CollectionUtils.isEmpty(accounts)) {	
+			throw new CustomException("SITE_BOOKING_NOT_FOUND","No Site Bookings found with given application number.");
+		}
+		Map<String, SiteBooking> mapAccounts = accounts.stream().collect(Collectors.toMap(acc->acc.getApplicationNo(), acc->acc));
+		
+		
+		String applicationTenantId = accounts.get(0).getTenantId();
+		String applicationBusinessId = AdvtConstants.BUSINESS_SERVICE;
+		
+		// fetch business service search
+		BusinessServiceResponse businessServiceResponse = workflowService.businessServiceSearch(siteBookingActionRequest, applicationTenantId,
+				applicationBusinessId);
+		
+		if(null == businessServiceResponse || CollectionUtils.isEmpty(businessServiceResponse.getBusinessServices())) {
+			throw new CustomException("NO_BUSINESS_SERVICE_FOUND","Business service not found for application numbers: "+siteBookingActionRequest.getApplicationNumbers().toString());
+		}
+		
+		
+		List<String> rolesWithinTenant = getRolesWithinTenant(applicationTenantId, siteBookingActionRequest.getRequestInfo().getUserInfo().getRoles());
+		
+		
+		
+		siteBookingActionRequest.getApplicationNumbers().stream().forEach(applicationNumber -> {
+		
+			String status = mapAccounts.get(applicationNumber).getStatus();
+			List<State> stateList = businessServiceResponse.getBusinessServices().get(0).getStates().stream()
+					.filter(state -> StringUtils.equalsIgnoreCase(state.getApplicationStatus(), status)
+										&& !StringUtils.equalsAnyIgnoreCase(state.getApplicationStatus(), AdvtConstants.STATUS_APPROVED)
+										).collect(Collectors.toList());
+			
+			// filtering actions based on roles
+			List<String> actions = new ArrayList<>();
+			stateList.stream().forEach(state -> {
+				state.getActions().stream()
+				.filter(action -> action.getRoles().stream().anyMatch(role -> rolesWithinTenant.contains(role)))
+				.forEach(action -> {
+					actions.add(action.getAction());
+				});
+			}) ;
+			
+			
+			applicationActionMaps.put(applicationNumber, actions);
+		});
+		
+		List<SiteBookingDetail> garbageDetailList = new ArrayList<>();
+		applicationActionMaps.entrySet().stream().forEach(entry -> {
+			garbageDetailList.add(SiteBookingDetail.builder().applicationNumber(entry.getKey()).action(entry.getValue()).build());
+		});
+		
+		// build response
+		SiteBookingActionResponse garbageAccountActionResponse = SiteBookingActionResponse.builder()
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(siteBookingActionRequest.getRequestInfo(), true))
+				.applicationDetails(garbageDetailList).build();
+		return garbageAccountActionResponse;
+	
+	}
+
+	private List<String> getRolesWithinTenant(String tenantId, List<Role> roles) {
+		List<String> roleCodes = roles.stream()
+				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(role -> role.getCode())
+				.collect(Collectors.toList());
+		return roleCodes;
 	}
 
 }

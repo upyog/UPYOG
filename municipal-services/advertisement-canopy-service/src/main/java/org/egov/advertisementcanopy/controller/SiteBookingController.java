@@ -52,7 +52,7 @@ public class SiteBookingController {
     	if(StringUtils.equalsIgnoreCase(value, "CALCULATEFEE")) {
     		response = service.getApplicationDetails(siteBookingActionRequest);
     	}else if(StringUtils.equalsIgnoreCase(value, "ACTIONS")){
-//    		response = service.getActionsOnApplication(siteBookingActionRequest);
+    		response = service.getActionsOnApplication(siteBookingActionRequest);
     	}else {
     		return new ResponseEntity("Provide parameter to be fetched in URL.", HttpStatus.BAD_REQUEST);
     	}
