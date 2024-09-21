@@ -1,22 +1,31 @@
 package org.egov.advertisementcanopy.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.advertisementcanopy.contract.bill.Bill;
+import org.egov.advertisementcanopy.contract.bill.Bill.StatusEnum;
 import org.egov.advertisementcanopy.contract.bill.BillResponse;
+import org.egov.advertisementcanopy.contract.bill.BillSearchCriteria;
 import org.egov.advertisementcanopy.contract.bill.Demand;
 import org.egov.advertisementcanopy.contract.bill.GenerateBillCriteria;
 import org.egov.advertisementcanopy.model.AuditDetails;
 import org.egov.advertisementcanopy.model.SiteBooking;
+import org.egov.advertisementcanopy.model.SiteBookingActionRequest;
+import org.egov.advertisementcanopy.model.SiteBookingActionResponse;
+import org.egov.advertisementcanopy.model.SiteBookingDetail;
 import org.egov.advertisementcanopy.model.SiteBookingRequest;
 import org.egov.advertisementcanopy.model.SiteBookingResponse;
 import org.egov.advertisementcanopy.model.SiteBookingSearchCriteria;
@@ -29,6 +38,7 @@ import org.egov.advertisementcanopy.repository.SiteBookingRepository;
 import org.egov.advertisementcanopy.repository.SiteRepository;
 import org.egov.advertisementcanopy.util.AdvtConstants;
 import org.egov.advertisementcanopy.util.ResponseInfoFactory;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,6 +75,9 @@ public class SiteBookingService {
 
 	@Autowired
 	private AdvtConstants advtConstants;
+
+	@Autowired
+	private SiteBookingRepository siteBookingRepository;
 
 	public SiteBookingResponse createBooking(SiteBookingRequest siteBookingRequest) {
 		
@@ -412,6 +425,92 @@ public class SiteBookingService {
 		List<SiteBooking> siteBookings = repository.search(criteria);
 				
 		return siteBookings.stream().collect(Collectors.toMap(SiteBooking::getApplicationNo, booking->booking));
+	}
+
+	public SiteBookingActionResponse getApplicationDetails(SiteBookingActionRequest siteBookingActionRequest) {
+		
+		SiteBookingSearchCriteria criteria = SiteBookingSearchCriteria.builder().build();
+		SiteBookingActionResponse garbageAccountActionResponse = SiteBookingActionResponse.builder()
+				.applicationDetails(new ArrayList<>())
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(siteBookingActionRequest.getRequestInfo(), true))
+				.build();
+
+		if(CollectionUtils.isEmpty(siteBookingActionRequest.getApplicationNumbers())) {
+			if(null != siteBookingActionRequest.getRequestInfo()
+					&& null != siteBookingActionRequest.getRequestInfo().getUserInfo()
+					&& !StringUtils.isEmpty(siteBookingActionRequest.getRequestInfo().getUserInfo().getUuid())) {
+				criteria.setCreatedBy(Collections.singletonList(siteBookingActionRequest.getRequestInfo().getUserInfo().getUuid()));
+			}else {
+				throw new CustomException("INVALID REQUEST","Provide Application Number.");
+			}
+		}else {
+			criteria.setApplicationNumbers(siteBookingActionRequest.getApplicationNumbers());
+		}
+		
+		// search application number
+		List<SiteBooking> accounts = siteBookingRepository.search(criteria);
+
+		List<SiteBookingDetail> applicationDetails = getApplicationBillUserDetail(accounts, siteBookingActionRequest.getRequestInfo());
+		
+		garbageAccountActionResponse.setApplicationDetails(applicationDetails);
+		
+		return garbageAccountActionResponse;
+	}
+
+	private List<SiteBookingDetail> getApplicationBillUserDetail(List<SiteBooking> accounts, RequestInfo requestInfo) {
+		
+		List<SiteBookingDetail> sitegarbageAccountDetails = new ArrayList<>();
+		
+		accounts.stream().forEach(account -> {
+			SiteBookingDetail garbageAccountDetail = SiteBookingDetail.builder().applicationNumber(account.getApplicationNo()).build();
+			
+			// search bill Details
+			BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
+					.tenantId(account.getTenantId())
+					.consumerCode(Collections.singleton(account.getApplicationNo()))
+					.service("GB")// business service
+					.build();
+			BillResponse billResponse = billService.searchBill(billSearchCriteria,requestInfo);
+			Map<Object, Object> billDetailsMap = new HashMap<>();
+			if (!CollectionUtils.isEmpty(billResponse.getBill())) {
+				// enrich all bills
+				garbageAccountDetail.setBills(billResponse.getBill());
+				Optional<Bill> activeBill = billResponse.getBill().stream()
+						.filter(bill -> StatusEnum.ACTIVE.name().equalsIgnoreCase(bill.getStatus().name()))
+			            .findFirst();
+				activeBill.ifPresent(bill -> {
+					// enrich active bill details
+					billDetailsMap.put("billId", bill.getId());
+					garbageAccountDetail.setTotalPayableAmount(bill.getTotalAmount());
+				});
+					
+			}else {
+				garbageAccountDetail.setTotalPayableAmount(new BigDecimal(100.00));
+			}
+			garbageAccountDetail.setBillDetails(billDetailsMap);
+			
+			
+			// enrich formula
+				garbageAccountDetail.setFeeCalculationFormula("NEED to DECIDE.");
+//				garbageAccountDetail.setFeeCalculationFormula("category: ("+account.getGrbgCollectionUnits().get(0).getCategory()+"), SubCategory: ("+account.getGrbgCollectionUnits().get(0).getSubCategory()+")");
+			
+			
+			// enrich userDetails
+			Map<Object, Object> userDetails = new HashMap<>();
+			userDetails.put("UserName", account.getApplicantName());
+			userDetails.put("MobileNo", account.getMobileNumber());
+			userDetails.put("Email", account.getEmailId());
+			userDetails.put("Address", "NEED to DECIDE");
+
+			garbageAccountDetail.setUserDetails(userDetails);
+			
+			
+			
+			
+			sitegarbageAccountDetails.add(garbageAccountDetail);
+		});
+		
+		return sitegarbageAccountDetails;
 	}
 
 }
