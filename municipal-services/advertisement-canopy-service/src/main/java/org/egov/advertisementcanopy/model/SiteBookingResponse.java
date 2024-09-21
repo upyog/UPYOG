@@ -24,4 +24,28 @@ public class SiteBookingResponse {
 	@JsonProperty("SiteBookings")
 	private List<SiteBooking> siteBookings;
 
+    @JsonProperty("Count")
+    private int count;
+    
+    @JsonProperty("applicationsIssued")
+    private int applicationsIssued;
+    
+    @JsonProperty("applicationsRenewed")
+    private int applicationsRenewed;
+    
+    @JsonProperty("applicationValidity")
+    private int validity;
+    
+    @JsonProperty("applicationInitiated")
+    private int applicationInitiated;
+    
+    @JsonProperty("applicationApplied")
+    private int applicationApplied;
+    
+    @JsonProperty("applicationPendingForPayment")
+    private int applicationPendingForPayment;
+    
+    @JsonProperty("applicationApproved")
+    private int applicationApproved;
+
 }

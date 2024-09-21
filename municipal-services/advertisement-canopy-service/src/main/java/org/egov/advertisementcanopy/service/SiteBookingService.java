@@ -192,9 +192,36 @@ public class SiteBookingService {
 		SiteBookingResponse siteBookingResponse = SiteBookingResponse.builder()
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(siteBookingSearchRequest.getRequestInfo(), true))
 				.siteBookings(siteBookings).build();
+		
+		// process search response
+		processSiteBookingResoponse(siteBookingResponse);
+		
 		return siteBookingResponse;
 	}
 	
+
+	private void processSiteBookingResoponse(SiteBookingResponse siteBookingResponse) {
+		
+		// categorize each bookings
+		if (!CollectionUtils.isEmpty(siteBookingResponse.getSiteBookings())
+				) {
+			siteBookingResponse.setCount(siteBookingResponse.getSiteBookings().size());
+			siteBookingResponse.setApplicationInitiated((int) siteBookingResponse.getSiteBookings().stream()
+					.filter(license -> StringUtils.equalsIgnoreCase(AdvtConstants.STATUS_INITIATED, license.getStatus())).count());
+			siteBookingResponse.setApplicationApplied((int) siteBookingResponse.getSiteBookings().stream()
+					.filter(license -> StringUtils.equalsAnyIgnoreCase(license.getStatus()
+							, AdvtConstants.STATUS_PENDINGFORVERIFICATION
+							, AdvtConstants.STATUS_PENDINGFORAPPROVAL
+							, AdvtConstants.STATUS_PENDINGFORMODIFICATION)).count());
+			siteBookingResponse.setApplicationPendingForPayment((int) siteBookingResponse.getSiteBookings().stream()
+					.filter(license -> StringUtils.equalsIgnoreCase(AdvtConstants.STATUS_PENDINGFORPAYMENT, license.getStatus())).count());
+			siteBookingResponse.setApplicationApproved((int) siteBookingResponse.getSiteBookings().stream()
+					.filter(license -> StringUtils.equalsIgnoreCase(AdvtConstants.STATUS_APPROVED, license.getStatus()))
+					.count());
+		}
+		
+		
+	}
 
 	private void validateSearchCriteria(SiteBookingSearchRequest siteBookingSearchRequest) {
 		
