@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.advertisementcanopy.model.SiteBooking;
 import org.egov.advertisementcanopy.model.SiteBookingSearchCriteria;
 import org.egov.advertisementcanopy.repository.rowmapper.SiteBookingRowMapper;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 @Repository
 public class SiteBookingRepository {
@@ -37,7 +39,8 @@ public class SiteBookingRepository {
 
         if (CollectionUtils.isEmpty(siteBookingSearchCriteria.getUuids()) 
         		&& CollectionUtils.isEmpty(siteBookingSearchCriteria.getApplicationNumbers())
-        		&& CollectionUtils.isEmpty(siteBookingSearchCriteria.getCreatedBy())) {
+        		&& CollectionUtils.isEmpty(siteBookingSearchCriteria.getCreatedBy())
+        		&& StringUtils.isEmpty(siteBookingSearchCriteria.getTenantId())) {
         	return searchQuery;
         }
         
@@ -62,6 +65,12 @@ public class SiteBookingRepository {
             searchQuery.append(" created_by IN ( ").append(getQueryForCollection(siteBookingSearchCriteria.getCreatedBy(),
                     preparedStatementValues)).append(" )");
         }
+
+		if (!ObjectUtils.isEmpty(siteBookingSearchCriteria.getTenantId())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
+			searchQuery.append(" tenant_id = ? ");
+			preparedStatementValues.add(siteBookingSearchCriteria.getTenantId());
+		}
 
         
         

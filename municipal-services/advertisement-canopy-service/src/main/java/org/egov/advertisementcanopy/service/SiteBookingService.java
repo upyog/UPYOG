@@ -2,6 +2,7 @@ package org.egov.advertisementcanopy.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -197,13 +198,17 @@ public class SiteBookingService {
 
 	private void validateSearchCriteria(SiteBookingSearchRequest siteBookingSearchRequest) {
 		
+		if(null == siteBookingSearchRequest.getSiteBookingSearchCriteria()) {
+			throw new CustomException("NULL_SEARCH_CTITERIA","Provide Search Criteria.");
+		}
 		if((null != siteBookingSearchRequest.getRequestInfo()
 				&& null != siteBookingSearchRequest.getRequestInfo().getUserInfo()
 				&& !StringUtils.equalsIgnoreCase(siteBookingSearchRequest.getRequestInfo().getUserInfo().getType(), "CITIZEN"))
 			&& (null != siteBookingSearchRequest.getSiteBookingSearchCriteria()
 					&& CollectionUtils.isEmpty(siteBookingSearchRequest.getSiteBookingSearchCriteria().getApplicationNumbers())
 					&& CollectionUtils.isEmpty(siteBookingSearchRequest.getSiteBookingSearchCriteria().getUuids())
-					&& CollectionUtils.isEmpty(siteBookingSearchRequest.getSiteBookingSearchCriteria().getCreatedBy()))) {
+					&& CollectionUtils.isEmpty(siteBookingSearchRequest.getSiteBookingSearchCriteria().getCreatedBy())
+					&& StringUtils.isEmpty(siteBookingSearchRequest.getSiteBookingSearchCriteria().getTenantId()))) {
 			
 			throw new CustomException("INVALID_SEARCH_PARAMETER", "Provide search criteria.");
 			
@@ -214,7 +219,15 @@ public class SiteBookingService {
 
 	private void enrichSearchCriteria(SiteBookingSearchRequest siteBookingSearchRequest) {
 		
-		if(null != siteBookingSearchRequest.getSiteBookingSearchCriteria()
+		if(null == siteBookingSearchRequest.getSiteBookingSearchCriteria()
+				&& StringUtils.equalsIgnoreCase(siteBookingSearchRequest.getRequestInfo().getUserInfo().getType(), "CITIZEN")) {
+			siteBookingSearchRequest
+					.setSiteBookingSearchCriteria(SiteBookingSearchCriteria.builder()
+							.createdBy(Collections
+									.singletonList(siteBookingSearchRequest.getRequestInfo().getUserInfo().getUuid()))
+							.build());
+		}
+		else if(null != siteBookingSearchRequest.getSiteBookingSearchCriteria()
 				&& null != siteBookingSearchRequest.getRequestInfo()
 				&& null != siteBookingSearchRequest.getRequestInfo().getUserInfo()
 				&& StringUtils.equalsIgnoreCase(siteBookingSearchRequest.getRequestInfo().getUserInfo().getType(), "CITIZEN")) {
