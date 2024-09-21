@@ -4,13 +4,15 @@ import org.springframework.beans.factory.annotation.Value;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @Data
+@NoArgsConstructor
 public class PTRConstants {
 
-	private PTRConstants() {
-	}
+//	private PTRConstants() {
+//	}
 	
 
 
