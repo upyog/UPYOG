@@ -172,6 +172,7 @@ public class SiteRepository {
 							&& StringUtils.isEmpty(searchSiteRequest.getSiteSearchData().getStatus())
 							&& StringUtils.isEmpty(searchSiteRequest.getSiteSearchData().getUlbName())
 							&& StringUtils.isEmpty(searchSiteRequest.getSiteSearchData().getWardNumber())
+							&& CollectionUtils.isEmpty(searchSiteRequest.getSiteSearchData().getUuids())
 							&& BooleanUtils.isFalse(searchSiteRequest.getSiteSearchData().isActive()))) {
 				return siteSearchQuery;
 			}
