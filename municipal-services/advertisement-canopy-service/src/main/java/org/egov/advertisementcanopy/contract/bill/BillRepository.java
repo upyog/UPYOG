@@ -63,7 +63,7 @@ public class BillRepository {
         
         BillResponse billResponse = objectMapper.convertValue(result, BillResponse.class);
         
-        return billResponse.getBill();
+        return ( null == billResponse ? null : billResponse.getBill()) ; 
 	}
 	
 	

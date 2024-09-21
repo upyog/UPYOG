@@ -1,6 +1,7 @@
 package org.egov.advertisementcanopy.service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -462,37 +463,53 @@ public class SiteBookingService {
 		List<SiteBookingDetail> sitegarbageAccountDetails = new ArrayList<>();
 		
 		accounts.stream().forEach(account -> {
-			SiteBookingDetail garbageAccountDetail = SiteBookingDetail.builder().applicationNumber(account.getApplicationNo()).build();
+			
+			if(null == account.getSiteCreationData()
+					|| null == account.getSiteCreationData().getSiteCost()
+					|| null == account.getFromDate()
+					|| null == account.getToDate()) {
+				throw new CustomException("MISSING_VALUES_FOR_CALCULATE_FEE","Mendatory parameters are missing to calculate fees.");
+			}
+			
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			String fromDate = dateFormat.format(new Date(account.getFromDate()));
+			String toDate = dateFormat.format(new Date(account.getToDate()));
+			
+			
+			SiteBookingDetail siteBookingDetail = SiteBookingDetail.builder().applicationNumber(account.getApplicationNo()).build();
+			Long numberOfDays = (account.getToDate() - account.getFromDate()) / (1000 * 60 * 60 * 24);
+			
+			// enrich formula
+				siteBookingDetail.setFeeCalculationFormula("NEED to DECIDE.");
+				siteBookingDetail.setFeeCalculationFormula("From Date: ("+fromDate+"), To Date: ("+toDate+"), Cost per day: "+account.getSiteCreationData().getSiteCost());
+			
 			
 			// search bill Details
 			BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
 					.tenantId(account.getTenantId())
 					.consumerCode(Collections.singleton(account.getApplicationNo()))
-					.service("GB")// business service
+					.service("ADVT")// business service
 					.build();
 			BillResponse billResponse = billService.searchBill(billSearchCriteria,requestInfo);
 			Map<Object, Object> billDetailsMap = new HashMap<>();
 			if (!CollectionUtils.isEmpty(billResponse.getBill())) {
 				// enrich all bills
-				garbageAccountDetail.setBills(billResponse.getBill());
+				siteBookingDetail.setBills(billResponse.getBill());
 				Optional<Bill> activeBill = billResponse.getBill().stream()
 						.filter(bill -> StatusEnum.ACTIVE.name().equalsIgnoreCase(bill.getStatus().name()))
 			            .findFirst();
 				activeBill.ifPresent(bill -> {
 					// enrich active bill details
 					billDetailsMap.put("billId", bill.getId());
-					garbageAccountDetail.setTotalPayableAmount(bill.getTotalAmount());
+					siteBookingDetail.setTotalPayableAmount(bill.getTotalAmount());
 				});
 					
-			}else {
-				garbageAccountDetail.setTotalPayableAmount(new BigDecimal(100.00));
+			}else if(null != account.getSiteCreationData()) {
+				// set payable amount
+				BigDecimal totalPayableAmount = BigDecimal.valueOf(numberOfDays).multiply(new BigDecimal(account.getSiteCreationData().getSiteCost()));
+				siteBookingDetail.setTotalPayableAmount(totalPayableAmount);
 			}
-			garbageAccountDetail.setBillDetails(billDetailsMap);
-			
-			
-			// enrich formula
-				garbageAccountDetail.setFeeCalculationFormula("NEED to DECIDE.");
-//				garbageAccountDetail.setFeeCalculationFormula("category: ("+account.getGrbgCollectionUnits().get(0).getCategory()+"), SubCategory: ("+account.getGrbgCollectionUnits().get(0).getSubCategory()+")");
+			siteBookingDetail.setBillDetails(billDetailsMap);
 			
 			
 			// enrich userDetails
@@ -502,12 +519,12 @@ public class SiteBookingService {
 			userDetails.put("Email", account.getEmailId());
 			userDetails.put("Address", "NEED to DECIDE");
 
-			garbageAccountDetail.setUserDetails(userDetails);
+			siteBookingDetail.setUserDetails(userDetails);
 			
 			
 			
 			
-			sitegarbageAccountDetails.add(garbageAccountDetail);
+			sitegarbageAccountDetails.add(siteBookingDetail);
 		});
 		
 		return sitegarbageAccountDetails;
