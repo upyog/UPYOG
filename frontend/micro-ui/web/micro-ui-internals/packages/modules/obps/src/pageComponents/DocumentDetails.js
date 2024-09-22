@@ -37,8 +37,8 @@ import EXIF from 'exif-js';
 
 const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState, onSubmit }) => {
     const stateId = Digit.ULBService.getStateId();
-    const tenantId = "pg.citya";
-    const [documents, setDocuments] = useState(formData?.documents?.documents || []);
+    const tenantId = Digit.ULBService.getCurrentTenantId();
+    const [documents, setDocuments] = useState(formData?.documents?.documents|| formData?.documents ||[]);
     const [error, setError] = useState(null);
     const [enableSubmit, setEnableSubmit] = useState(true)
     const [checkRequiredFields, setCheckRequiredFields] = useState(false);
@@ -78,17 +78,17 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
                     ...updatedFormData.landInfo?.address,
                     city: updatedFormData.landInfo?.address?.city?.code, // Ensure city is a string
                 },
-                owners: updatedFormData.landInfo?.owners.map(owner => ({
+                owners: updatedFormData?.landInfo?.owners.map(owner => ({
                     ...owner,
                     gender: owner.gender?.code // Ensure gender is a string
                 })),
-                unit: updatedFormData.landInfo?.unit.map(unit => ({
-                    id: unit.id,
-                    floorNo: unit.floorNo,
-                    unitType: unit.unitType,
-                    blockIndex: unit.blockIndex,
-                    usageCategory: unit.usageCategory,
-                    occupancyType: unit.occupancyType // Only necessary fields
+                unit: updatedFormData?.landInfo?.unit?.map(unit => ({
+                    id: unit?.id,
+                    floorNo: unit?.floorNo,
+                    unitType: unit?.unitType,
+                    blockIndex: unit?.blockIndex,
+                    usageCategory: unit?.usageCategory,
+                    occupancyType: unit?.occupancyType // Only necessary fields
                 })),
             },
         
@@ -123,7 +123,7 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
         let document = formData.documents;
         let documentStep;
         let RealignedDocument = [];
-        bpaTaxDocuments && bpaTaxDocuments.map((ob) => {
+        bpaTaxDocuments && bpaTaxDocuments?.map((ob) => {
             documents && documents.filter(x => ob.code === stringReplaceAll(x?.additionalDetails.category,"_",".")).map((doc) => {
                 RealignedDocument.push(doc);
             })
@@ -187,11 +187,11 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
                     })}
                     {error && <Toast label={error} onClose={() => setError(null)} error />}
                     {/*Adding Save As Draft Button */}
-                    {/* <SubmitBar 
+                    <SubmitBar 
                     label={t("BPA_SAVE_AS_DRAFT")}
                     onSubmit={handleSaveAsDraft}
                     disabled={enableSubmit}
-                    /> */}
+                    />
                 <br></br>
                 </FormStep>: <Loader />}
                 {(window.location.href.includes("/bpa/building_plan_scrutiny/new_construction") || window.location.href.includes("/ocbpa/building_oc_plan_scrutiny/new_construction")) && formData?.applicationNo ? <CitizenInfoLabel info={t("CS_FILE_APPLICATION_INFO_LABEL")} text={`${t("BPA_APPLICATION_NUMBER_LABEL")} ${formData?.applicationNo} ${t("BPA_DOCS_INFORMATION")}`} className={"info-banner-wrap-citizen-override"} /> : ""}
@@ -422,13 +422,21 @@ const SelectDocument = React.memo(function MyComponent({
 
     const allowedFileTypes = /(.*?)(jpg|jpeg|png|image|pdf)$/i;
 
-    const uploadedFilesPreFill = useMemo(()=>{
-        let selectedUplDocs=[];
-        formData?.documents?.documents?.filter((ob) => ob.documentType === selectedDocument.code).forEach(e =>
-            selectedUplDocs.push([e.fileName, {file: {name: e.fileName, type: e.documentType}, fileStoreId: {fileStoreId: e.fileStoreId, tenantId}}])
-            )
+    const uploadedFilesPreFill = useMemo(() => {
+        if (!formData) return [];
+        const docs = formData.documents?.documents || formData.documents || [];
+        const selectedUplDocs = docs
+            .filter(ob => ob.documentType === selectedDocument.code)
+            .map(e => [
+                e.fileName,
+                {
+                    file: { name: e.fileName, type: e.documentType },
+                    fileStoreId: { fileStoreId: e.fileStoreId, tenantId },
+                },
+            ]);
         return selectedUplDocs;
-    },[formData])
+    }, [formData, selectedDocument.code, tenantId]);
+    
     
 
     return (
