@@ -307,7 +307,11 @@ export const convertEpochToDate = (dateEpoch) => {
       setTimeout(() => URL.revokeObjectURL(link.href), 7000);
     }
   };
-
+  // let workflowDetails = Digit.Hooks.useWorkflowDetails({
+  //   tenantId: data?.[0]?.tenantId,
+  //   id: data?.[0]?.applicationNo,
+  //   moduleCode: "OBPS",
+  // });
   const getPermitOccupancyOrderSearch = async(order, mode="download") => {
     let queryObj = { applicationNo: bpaData?.[0]?.applicationNo };
     let bpaResponse = await Digit.OBPSService.BPASearch(bpaData?.[0]?.tenantId, queryObj);
@@ -321,12 +325,14 @@ export const convertEpochToDate = (dateEpoch) => {
     const state = Digit.ULBService.getStateId();
 
     let count=0;
-    for(let i=0;i<workflowDetails?.data?.processInstances?.length;i++){
-      if((workflowDetails?.data?.processInstances[i]?.action==="POST_PAYMENT_APPLY" ||workflowDetails?.data?.processInstances[i]?.action==="PAY" ) && (workflowDetails?.data?.processInstances?.[i]?.state?.applicationStatus==="APPROVAL_INPROGRESS")   && count==0 ){
-          reqData.additionalDetails.submissionDate=workflowDetails?.data?.processInstances[i]?.auditDetails?.createdTime;
-          count=1;
-        }
-    }
+    // console.log("workflowDetails",workflowDetails)
+    // debugger
+    // for(let i=0;i<workflowDetails?.data?.processInstances?.length;i++){
+    //   if((workflowDetails?.data?.processInstances[i]?.action==="POST_PAYMENT_APPLY" ||workflowDetails?.data?.processInstances[i]?.action==="PAY" ) && (workflowDetails?.data?.processInstances?.[i]?.state?.applicationStatus==="APPROVAL_INPROGRESS")   && count==0 ){
+    //       reqData.additionalDetails.submissionDate=workflowDetails?.data?.processInstances[i]?.auditDetails?.createdTime;
+    //       count=1;
+    //     }
+    // }
 
     if(reqData?.additionalDetails?.approvedColony=="NO"){
       reqData.additionalDetails.permitData= "The plot has been officially regularized under No."+reqData?.additionalDetails?.NocNumber +"  dated dd/mm/yyyy, registered in the name of <name as per the NOC>. This regularization falls within the jurisdiction of "+ state +".Any form of misrepresentation of the NoC is strictly prohibited. Such misrepresentation renders the building plan null and void, and it will be regarded as an act of impersonation. Criminal proceedings will be initiated against the owner and concerned architect / engineer/ building designer / supervisor involved in such actions"
