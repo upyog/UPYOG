@@ -79,12 +79,13 @@ const CustomTable = ({ data = {}, onSearch, setChartData, setChartDenomination, 
     return response?.responseData?.data?.map((rows, id) => {
       const lyData = lastYearResponse?.responseData?.data?.find((lyRow) => lyRow?.headerName === rows?.headerName);
       return rows?.plots?.reduce((acc, row, currentIndex) => {
-        let cellValue = row?.value !== null ? row?.value : row?.label || "";
+        let cellValue = row?.value !== null ? row?.value : row?.label || 0;
         if (row?.strValue && row?.symbol === "string" && !row?.label) {
           cellValue = row?.strValue;
         }
         let prevData = lyData?.plots?.[currentIndex]?.value;
         let insight = null;
+        console.log("cellValuecellValue",cellValue)
         //Commented since it was causing mismatch data for the Capacity FSM: SM-1282
         // if (row?.name === "CapacityUtilization" && chartKey !== "fsmVehicleLogReportByVehicleNo") {
         //   const { range } = value;
@@ -105,6 +106,7 @@ const CustomTable = ({ data = {}, onSearch, setChartData, setChartDenomination, 
         //   prevData = calculateFSTPCapacityUtilization(prevData, tankCapcity?.value);
 
         // }
+        console.log("ddddddddd",row)
         if (
           (row?.symbol === "number" || row?.symbol === "percentage" || row?.symbol === "amount") &&
           row?.name !== "CitizenAverageRating" &&
@@ -123,21 +125,60 @@ const CustomTable = ({ data = {}, onSearch, setChartData, setChartDenomination, 
         acc[t(`DSS_HEADER_${Digit.Utils.locale.getTransformedLocale(row?.name)}`)] =
           insight !== null ? { value: cellValue, insight } : row?.name === "S.N." ? id + 1 : cellValue;
         acc["key"] = rows?.headerName;
+        console.log("accacc",acc)
         return acc;
       }, {});
     });
   }, [response, lastYearResponse]);
+  function addMissingFinancialYears(data) {
+    // Get the current year and calculate the last three financial years dynamically
+    const currentYear = new Date().getFullYear();
+    const lastThreeYears = [
+      `${currentYear - 1}-${currentYear}`,    // 2023-2024
+      `${currentYear - 2}-${currentYear - 1}`, // 2022-2023
+      `${currentYear }-${currentYear + 1}`  // 2021-2022
+  ];
+    // Iterate over the data array
+    data.forEach(item => {
+        lastThreeYears.forEach(year => {
+            // Check if the year is missing in the object, if so, add it with value 0
+            if (!item[year]) {
+                item[year] = 0;
+            }
+        });
+    });
 
+    return data;
+}
   useEffect(() => {
     if (tableData) {
-      const result = tableData?.map((row) => {
-        return Object.keys(row).reduce((acc, key) => {
-          if (key === "key") return acc;
-          acc[key] = typeof row?.[key] === "object" ? row?.[key]?.value : row?.[key];
-          return acc;
-        }, {});
-      });
-      setChartData(result);
+      if(window.location.href.includes("national-propertytax") && tableData?.[0]?.State =="Jharkhand")
+      {
+        const updatedData = addMissingFinancialYears(tableData);
+
+        console.log("updatedData",updatedData)
+        const result = updatedData?.map((row) => {
+          console.log("tableDatatableData",tableData)
+          return Object.keys(row).reduce((acc, key) => {
+            if (key === "key") return acc;
+            acc[key] = typeof row?.[key] === "object" ? row?.[key]?.value : row?.[key];
+            return acc;
+          }, {});
+        });
+        setChartData(result);
+      }
+      else {
+        const result = tableData?.map((row) => {
+          console.log("tableDatatableData",tableData)
+          return Object.keys(row).reduce((acc, key) => {
+            if (key === "key") return acc;
+            acc[key] = typeof row?.[key] === "object" ? row?.[key]?.value : row?.[key];
+            return acc;
+          }, {});
+        });
+        setChartData(result);
+      }
+   
     } else {
       const result = [];
       setChartData(result);
@@ -305,13 +346,7 @@ if(chartKey == "xptFyByStatesv3")
             "strValue": null,
             "symbol": "text"
         },
-        {
-            "label": null,
-            "name": "2021-22",
-            "value": "",
-            "strValue": null,
-            "symbol": "number"
-        },
+       
         {
             "label": null,
             "name": "2022-23",
@@ -325,7 +360,14 @@ if(chartKey == "xptFyByStatesv3")
             "value": "",
             "strValue": null,
             "symbol": "number"
-        }
+        },
+        {
+          "label": null,
+          "name": "2024-25",
+          "value": "",
+          "strValue": null,
+          "symbol": "number"
+      }
     ]
   }
   
@@ -351,13 +393,7 @@ if(chartKey == "xptFyByStatesv3")
             "strValue": null,
             "symbol": "text"
         },
-        {
-            "label": null,
-            "name": "2021-22",
-            "value": "",
-            "strValue": null,
-            "symbol": "number"
-        },
+      
         {
             "label": null,
             "name": "2022-23",
@@ -371,7 +407,14 @@ if(chartKey == "xptFyByStatesv3")
             "value": "",
             "strValue": null,
             "symbol": "number"
-        }
+        },
+        {
+          "label": null,
+          "name": "2024-25",
+          "value": "",
+          "strValue": null,
+          "symbol": "number"
+      }
     ]
   }
 }
@@ -399,13 +442,6 @@ else if (chartKey == "xptFyByWardv3")
         },
         {
             "label": null,
-            "name": "2021-22",
-            "value": "",
-            "strValue": null,
-            "symbol": "number"
-        },
-        {
-            "label": null,
             "name": "2022-23",
             "value": "",
             "strValue": null,
@@ -417,7 +453,14 @@ else if (chartKey == "xptFyByWardv3")
             "value": "",
             "strValue": null,
             "symbol": "number"
-        }
+        },
+        {
+          "label": null,
+          "name": "2024-25",
+          "value": "",
+          "strValue": null,
+          "symbol": "number"
+      },
     ]
   }
 }
