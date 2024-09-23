@@ -58,7 +58,14 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 	@Override
 	public List<SewerageDetails> getConnectionsNoListsingle(String tenantId, String connectionType,Long fromDate, Long toDate, String Connectionno) {
 		List<Object> preparedStatement = new ArrayList<>();
-		String query = queryBuilder.getConnectionNumberListsingle(tenantId, connectionType, preparedStatement, fromDate, toDate,Connectionno);
+		//String query = queryBuilder.getConnectionNumberListsingle(tenantId, connectionType, preparedStatement, fromDate, toDate,Connectionno);
+		String query = "";	
+		if((tenantId.equals("pb.amritsar"))) {
+			 query = queryBuilder.getConnectionNumberListForNonCommercial(tenantId, connectionType,SWCalculationConstant.ACTIVE, fromDate, toDate, Connectionno, preparedStatement);
+		         log.info("Demand will not generate for water metered connections in Amritsar: "+query);
+		}else {
+			query = queryBuilder.getConnectionNumberListsingle(tenantId, connectionType, preparedStatement, fromDate, toDate,Connectionno);
+		}
 		
 		log.info(query.toString());	log.info(preparedStatement.toString());
 		return jdbcTemplate.query(query, preparedStatement.toArray(), demandSchedulerRowMapper);
