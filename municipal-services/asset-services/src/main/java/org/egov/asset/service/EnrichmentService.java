@@ -58,7 +58,7 @@ public class EnrichmentService {
 		assetRequest.getAsset().setAuditDetails(auditDetails);
 		assetRequest.getAsset().setId(UUID.randomUUID().toString());
 		String tenantId = assetRequest.getAsset().getTenantId().split("\\.")[1];
-		assetRequest.getAsset().setAssetId("MCH"+"/"+tenantId+assetRepository.getNextSequence() );
+		assetRequest.getAsset().setAssetId("MCH"+"/"+tenantId+"/"+assetRepository.getNextSequence());
 
 		assetRequest.getAsset().setAccountId(assetRequest.getAsset().getAuditDetails().getCreatedBy());
 		// String applicationType = values.get(AssetConstants.ASSET_PARENT_CATEGORY);
