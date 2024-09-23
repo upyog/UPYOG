@@ -13,6 +13,9 @@ import org.egov.advertisementcanopy.contract.workflow.ProcessInstanceResponse;
 import org.egov.advertisementcanopy.contract.workflow.State;
 import org.egov.advertisementcanopy.model.SiteBooking;
 import org.egov.advertisementcanopy.model.SiteBookingRequest;
+import org.egov.advertisementcanopy.model.SiteCreationData;
+import org.egov.advertisementcanopy.model.SiteCreationRequest;
+import org.egov.advertisementcanopy.model.SiteUpdateRequest;
 import org.egov.advertisementcanopy.util.AdvtConstants;
 import org.egov.advertisementcanopy.util.RequestInfoWrapper;
 import org.egov.advertisementcanopy.util.RestCallRepository;
@@ -51,6 +54,31 @@ public class WorkflowService {
 		callWorkFlow(workflowRequest);
 		
 	}
+	
+	public void createWorkflowStatus(SiteCreationRequest siteCreationRequest ) {
+		List<ProcessInstance> processInstances = new ArrayList<>();
+		
+			ProcessInstance processInstance = getProcessInstanceForSite(siteCreationRequest.getCreationData(),
+					siteCreationRequest.getRequestInfo());
+			processInstances.add(processInstance);
+		ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(siteCreationRequest.getRequestInfo(),
+				processInstances);
+		//workflowRequest.setProcessInstances(Collections.singletonList(processInstance));
+		callWorkFlow(workflowRequest);
+		
+	}
+	public void createWorkflowStatusForUpdate(SiteUpdateRequest siteCreationRequest ) {
+		List<ProcessInstance> processInstances = new ArrayList<>();
+		
+			ProcessInstance processInstance = getProcessInstanceForSite(siteCreationRequest.getSiteUpdationData(),
+					siteCreationRequest.getRequestInfo());
+			processInstances.add(processInstance);
+		ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(siteCreationRequest.getRequestInfo(),
+				processInstances);
+		//workflowRequest.setProcessInstances(Collections.singletonList(processInstance));
+		callWorkFlow(workflowRequest);
+		
+	}
 
 	private ProcessInstance getProcessInstanceForPTR(SiteBooking siteBooking, RequestInfo requestInfo) {
 
@@ -62,6 +90,24 @@ public class WorkflowService {
 			processInstance.setTenantId(siteBooking.getTenantId());
 			processInstance.setBusinessService("ADVT");
 			processInstance.setComment(siteBooking.getComments());
+//			processInstance.setAssignes(Collections.singletonList(User.builder().uuid(requestInfo.getUserInfo().getUuid()).build()));
+
+			return processInstance;
+//		}
+//		
+//		return null;
+
+	}
+	private ProcessInstance getProcessInstanceForSite(SiteCreationData siteCreationData, RequestInfo requestInfo) {
+
+//		if(null != siteBooking) {
+			ProcessInstance processInstance = new ProcessInstance();
+			processInstance.setBusinessId(siteCreationData.getAccountId());
+			processInstance.setAction(siteCreationData.getWorkflowAction());
+			processInstance.setModuleName("SITE");
+			processInstance.setTenantId(siteCreationData.getTenantId());
+			processInstance.setBusinessService("SITE");
+			processInstance.setComment(siteCreationData.getComments());
 //			processInstance.setAssignes(Collections.singletonList(User.builder().uuid(requestInfo.getUserInfo().getUuid()).build()));
 
 			return processInstance;
