@@ -308,10 +308,11 @@ export const convertEpochToDate = (dateEpoch) => {
     }
   };
   // let workflowDetails = Digit.Hooks.useWorkflowDetails({
-  //   tenantId: data?.[0]?.tenantId,
-  //   id: data?.[0]?.applicationNo,
+  //   tenantId: "pg.citya",
+  //   id: "PG-BP-2024-09-23-001337",
   //   moduleCode: "OBPS",
   // });
+  // console.log("workflowDetails",workflowDetails)
   const getPermitOccupancyOrderSearch = async(order, mode="download") => {
     let queryObj = { applicationNo: bpaData?.[0]?.applicationNo };
     let bpaResponse = await Digit.OBPSService.BPASearch(bpaData?.[0]?.tenantId, queryObj);
@@ -325,9 +326,8 @@ export const convertEpochToDate = (dateEpoch) => {
     const state = Digit.ULBService.getStateId();
 
     let count=0;
-    // console.log("workflowDetails",workflowDetails)
-    // debugger
-    // for(let i=0;i<workflowDetails?.data?.processInstances?.length;i++){
+    reqData.additionalDetails.submissionDate=bpaData?.[0]?.workflowData?.auditDetails?.createdTime;
+    // for(let i=0;i<bpaData?.[0]?.data?.processInstances?.length;i++){
     //   if((workflowDetails?.data?.processInstances[i]?.action==="POST_PAYMENT_APPLY" ||workflowDetails?.data?.processInstances[i]?.action==="PAY" ) && (workflowDetails?.data?.processInstances?.[i]?.state?.applicationStatus==="APPROVAL_INPROGRESS")   && count==0 ){
     //       reqData.additionalDetails.submissionDate=workflowDetails?.data?.processInstances[i]?.auditDetails?.createdTime;
     //       count=1;
