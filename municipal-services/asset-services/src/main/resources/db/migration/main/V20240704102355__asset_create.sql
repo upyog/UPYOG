@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS eg_asset_assetdetails (
     createdby character varying(256),
     lastmodifiedby character varying(256),
     remarks character varying(256),
+    asset_id character varying(256),
     CONSTRAINT pk_eg_asset_assetdetails PRIMARY KEY (id)
 );
 
