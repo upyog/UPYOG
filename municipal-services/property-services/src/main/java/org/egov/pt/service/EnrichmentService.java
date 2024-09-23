@@ -494,6 +494,7 @@ public class EnrichmentService {
 			distCity.put("mn.lamlai", "Imphal East");
 			distCity.put("mn.heirok", "Thoubal");
 			distCity.put("mn.thongkhongluxmi", "Imphal West");
+			distCity.put("mn.lilongimphalwest", "Imphal West");
 
 			String district=distCity.get(tenantId);
 
