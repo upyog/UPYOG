@@ -18,6 +18,7 @@ const combineResponse = (applications, workflowData) => {
   const workflowInstances = mapWfBybusinessId(workflowData);
   return applications.map(application => ({
     ...application,
+    workflowData: workflowData?.[0],
     assignee: workflowInstances[application?.applicationNo]?.assignes?.[0]?.name,
     sla: application?.status.match(/^(APPROVED)$/) ? "CS_NA" : convertMillisecondsToDays(workflowInstances[application?.applicationNo].businesssServiceSla),
     state: workflowInstances[application?.applicationNo]?.state?.state,
