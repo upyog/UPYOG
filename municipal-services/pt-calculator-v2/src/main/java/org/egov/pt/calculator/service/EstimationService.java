@@ -1017,7 +1017,7 @@ public class EstimationService {
 		BigDecimal modeofpayment_rebate=BigDecimal.ZERO;
 		BigDecimal updatedtaxammount=BigDecimal.ZERO;
 		BigDecimal complementary_rebate=BigDecimal.ZERO;
-		if(exemption.compareTo(BigDecimal.ZERO)==0)
+		if(exemption.compareTo(BigDecimal.ZERO)==0 && taxAmt.compareTo(BigDecimal.ZERO)>0)
 		{
 
 			switch (criteria.getModeOfPayment()) {
@@ -1067,7 +1067,7 @@ public class EstimationService {
 		BigDecimal totalAmount = taxAmt.add(penalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
 		BigDecimal mandatorypay=BigDecimal.ZERO;
 		Map<String, BigDecimal> lowervalue=lowervaluemap();
-		if(exemption.compareTo(BigDecimal.ZERO)==0) {
+		if(exemption.compareTo(BigDecimal.ZERO)==0 && taxAmt.compareTo(BigDecimal.ZERO)>0) {
 			if(tenantId.equalsIgnoreCase("mn.imphal"))
 			{
 				if(totalAmount.compareTo(new BigDecimal(600)) < 0)
@@ -1584,8 +1584,8 @@ public class EstimationService {
 			BigDecimal currentExemption = mDataService.calculateApplicables(taxAmt,
 					applicableOwnerType.get(EXEMPTION_FIELD_NAME));
 
-			//userExemption = taxAmt.multiply(currentExemption);
-			userExemption = taxAmt.add(currentExemption);
+			userExemption = taxAmt.multiply(currentExemption);
+			//userExemption = taxAmt.add(currentExemption);
 		}
 
 		return userExemption;

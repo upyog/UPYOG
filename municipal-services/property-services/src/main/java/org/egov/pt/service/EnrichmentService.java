@@ -485,7 +485,7 @@ public class EnrichmentService {
 			distCity.put("mn.andro", "Imphal East");
 			distCity.put("mn.kwakta", "Bishnupur");
 			distCity.put("mn.lamsang", "Imphal West");
-			distCity.put("mn.wanjinglamding", "Thoubal");
+			distCity.put("mn.wangjinglamding", "Thoubal");
 			distCity.put("mn.shikhongsekmai", "Thoubal");
 			distCity.put("mn.jiribam", "Jiribam");
 			distCity.put("mn.oinam", "Bishnupur");
@@ -493,6 +493,8 @@ public class EnrichmentService {
 			distCity.put("mn.sekmai", "Imphal West");
 			distCity.put("mn.lamlai", "Imphal East");
 			distCity.put("mn.heirok", "Thoubal");
+			distCity.put("mn.thongkhongluxmi", "Imphal West");
+			distCity.put("mn.lilongimphalwest", "Imphal West");
 
 			String district=distCity.get(tenantId);
 
