@@ -95,6 +95,7 @@ public class SiteBookingRowMapper implements RowMapper<SiteBooking> {
                 .applicationEndDate(rs.getLong(prefix + "application_end_date"))
                 .bookingPeriodStartDate(rs.getLong(prefix + "booking_start_date"))
                 .bookingPeriodEndDate(rs.getLong(prefix + "booking_end_date"))
+                .additionalDetail(getAdditionalDetail(rs, prefix + "additional_detail"))
                 .build();
     }
 
