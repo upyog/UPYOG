@@ -1,6 +1,6 @@
 {
   "name": "@upyog/digit-ui-module-dss",
-  "version": "1.8.0",
+  "version": "1.8.2",
   "license": "MIT",
   "description": "Digit Dashboard Module",
   "main": "dist/index.js",

@@ -13,10 +13,11 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
   let electricity;
   let setElectricity;
   const [hidden, setHidden] = useState(true);
+  console.log("formData",formData,!isNaN(index))
   if (!isNaN(index)) {
     [electricity, setElectricity] = useState(formData?.originalData?.additionalDetails?.electricity || "");
   } else {
-    [electricity, setElectricity] = useState(formData?.originalData?.additionalDetails?.electricity || "");
+    [electricity, setElectricity] = useState(formData?.originalData?.additionalDetails?.electricity || formData?.electricity?.electricity ||formData?.additionalDetails?.electricity ||"");
   }
   const [error, setError] = useState(null);
   const { pathname } = useLocation();

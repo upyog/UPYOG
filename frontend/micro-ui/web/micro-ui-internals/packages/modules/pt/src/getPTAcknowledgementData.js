@@ -15,10 +15,12 @@ const capitalize = (text) => text.substr(0, 1).toUpperCase() + text.substr(1);
 const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ");
 
 const getOwner = (application, t, customTitle) => {
+  console.log("application",application)
   let owners = [];
   if(customTitle && customTitle.includes("TRANSFEROR")){
   if (application?.isTransferor && application?.transferorDetails) {
     application.ownershipCategory = application?.transferorDetails?.ownershipCategory
+    owners = [...(application?.transferorDetails?.owners) || []];
   } else if(application?.ownersInit){
     owners = [...(application?.ownersInit) || []];
   } else {
@@ -94,36 +96,23 @@ const getAssessmentInfo = (application, t) => {
     { title: t("PT_ASSESMENT_INFO_NO_OF_FLOOR"), value: t(application?.noOfFloors) || t("CS_NA") },
     { title: t("PT_ASSESMENT_INFO_ELECTRICITY_ID"), value: t(application?.additionalDetails?.electricity) || t("CS_NA") },
     { title: t("PT_ASSESMENT_INFO_ELECTRICITY_UID"), value: t(application?.additionalDetails?.uid) || t("CS_NA") },
-    { title:  t("PT_FORM2_PROPERTY_TYPE"),value: t(application?.additionalDetails?.structureType.i18nKey) || t("CS_NA")},
-     {title:  t("PT_FORM2_AGE_OF_PROPERTY"),value: t(application?.additionalDetails?.ageOfProperty.code)|| t("CS_NA")},
+    { title:  t("PT_FORM2_PROPERTY_TYPE"),value: t(application?.additionalDetails?.structureType?.i18nKey) || t("CS_NA")},
+     {title:  t("PT_FORM2_AGE_OF_PROPERTY"),value: t(application?.additionalDetails?.ageOfProperty?.code)|| t("CS_NA")},
   ];
   application.units = application?.units?.filter((unit) => unit.active == true) || [];
   let flrno,
     i = 0;
   flrno = application.units && application.units[0]?.floorNo;
-  application.units.map((unit) => {
+  application.units.map((unit, index) => {
+    const unitDetail=application?.additionalDetails?.unit[index] || {};
+    
     let doc = [
       {
         title: (flrno !== unit?.floorNo ? (i = 1) : (i = i + 1)) && i === 1 ? t(`PROPERTYTAX_FLOOR_${unit?.floorNo}`) : "",
       },
-      {
-        title: t(""),
-      },
-      {
-        title: t(""),
-      },
-      {
-        title: t(""),
-      },
-      { title: t("PT_UNIT")+" "+ i },
-      {
-        title: t(""),
-      },
-      {
-        title: t(""),
-      },
-      {
-        title: t(""),
+      { 
+        title: t("PT_UNIT")+" "+ i,
+        value:" " 
       },
       {
         title: (flrno = unit?.floorNo) > -3 ? t("PT_ASSESSMENT_UNIT_USAGE_TYPE") : "",
@@ -161,7 +150,7 @@ const getAssessmentInfo = (application, t) => {
       value:
         (flrno = unit?.floorNo) > -3
           ? t(getPropertyOccupancyTypeLocale(unit?.occupancyType)) === "Rented"
-            ? (application?.additionalDetails?.unit?.[0]?.rentedMonths ) || t("CS_NA")
+            ? (unitDetail?.RentedMonths) || t("CS_NA")
             : t("")
           : "",
     },
@@ -175,7 +164,7 @@ const getAssessmentInfo = (application, t) => {
       value:
         (flrno = unit?.floorNo) > -3
           ? t(getPropertyOccupancyTypeLocale(unit?.occupancyType)) === "Rented"
-            ? (application?.additionalDetails?.unit?.[0]?.nonRentedMonthsUsage ) || t("CS_NA")
+            ? (unitDetail?.NonRentedMonthsUsage) || t("CS_NA")
             : t("")
           : "",
     },

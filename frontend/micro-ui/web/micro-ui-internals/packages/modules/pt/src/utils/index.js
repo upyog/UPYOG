@@ -370,7 +370,7 @@ export const getunits = (data) => {
 };
 
 export const getunitarray = (i, unitsdata, unit, data) => {
-  console.log("unitsdataunitsdataunitsdata"),unitsdata
+  console.log("unitsdataunitsdataunitsdata",unitsdata)
   if (unitsdata[i].active === true) {
     unit.push(unitsdata[i]);
   } else if (
@@ -529,6 +529,23 @@ export const convertToProperty = (data = {}) => {
   //   let additionalDetails = { "structureType": value?.structureType, "ageOfProperty": value?.ageOfProperty }
   //   return { ...value, additionalDetails }
   // })
+  const unitValues=[];
+  unitValues.length=0;
+    if(data?.units && data?.units.length!==0 && Array.isArray(data.units)){
+        data.units.forEach((unit)=>{
+            const unitDetails={
+                RentedMonths:unit?.rentedMonths || null,
+                NonRentedMonthsUsage: unit?.nonRentedMonthsUsage || null,
+                floorNo: unit?.floorNo?.code || null,
+
+            };
+            console.log("unitdetails", unitDetails)
+            //if(unitDetails.RentedMonths!==null && unitDetails.NonRentedMonthsUsage!==null){
+                unitValues.push(unitDetails)
+            //}
+            
+        })
+    }
   let isResdential = data.isResdential;
   let propertyType = data.PropertyType;
   let selfOccupied = data.selfOccupied;
@@ -572,10 +589,11 @@ export const convertToProperty = (data = {}) => {
         noOofBasements: noOofBasements,
         basement1: basement1,
         basement2: basement2,
+        unit:unitValues,
         electricity:data.electricity.electricity,
         uid:data.uid.uid,
         ageOfProperty: data.propertyStructureDetails.ageOfProperty,
-        structureType:data.propertyStructureDetails.structureType,
+        structureType:data?.propertyStructureDetails?.structureType,
 
       },
 
@@ -774,7 +792,7 @@ export const convertToUpdateProperty = (data = {}, t) => {
         basement1: basement1,
         basement2: basement2,
         ageOfProperty: data.propertyStructureDetails.ageOfProperty,
-        structureType:data.propertyStructureDetails.structureType,
+        structureType:data?.propertyStructureDetails?.structureType,
       },
 
       creationReason: getCreationReason(data),
