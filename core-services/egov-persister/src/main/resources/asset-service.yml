@@ -7,7 +7,7 @@ serviceMaps:
    fromTopic: save-asset-assetdetails
    isTransaction: true
    queryMaps:
-     - query: INSERT INTO eg_asset_assetdetails (id, bookrefno, name, description, classification, parentcategory, category, subcategory, department, applicationno, approvalno, tenantid, status, action, businessservice, additionaldetails, createdtime, lastmodifiedtime, approvaldate, applicationdate, accountid, createdby, lastmodifiedby, remarks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+     - query: INSERT INTO eg_asset_assetdetails (id, bookrefno, name, description, classification, parentcategory, category, subcategory, department, applicationno, approvalno, tenantid, status, action, businessservice, additionaldetails, createdtime, lastmodifiedtime, approvaldate, applicationdate, accountid, createdby, lastmodifiedby, remarks, asset_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
        basePath: Asset
        jsonMaps:
@@ -61,6 +61,8 @@ serviceMaps:
         - jsonPath: $.Asset.auditDetails.lastModifiedBy
 
         - jsonPath: $.Asset.remarks
+
+        - jsonPath: $.Asset.assetId
 
 
      - query: INSERT INTO eg_asset_addressdetails (tenantid, doorno, latitude, longitude, addressid, addressnumber, type, addressline1, addressline2, landmark, city, pincode, detail, buildingname, street, locality_code, locality_name, locality_label, locality_latitude, locality_longitude, locality_materializedpath, asset_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
