@@ -1,0 +1,143 @@
+{
+    "requestInfo": {
+    "apiId": "Rainmaker",
+    "ver": ".01",
+    "ts": null,
+    "action": "_create",
+    "did": "1",
+    "key": "",
+    "msgId": "20170310130900|en_IN",
+    "authToken": "44dbcb2b-eb5e-493e-962b-695f49946f5b",
+    "userInfo": {
+      "id": 23287,
+      "uuid": "4632c941-cb1e-4b83-b2d4-200022c1a137",
+      "userName": "PalashS",
+      "name": "Palash S",
+      "mobileNumber": "9949032246",
+      "emailId": null,
+      "type": "EMPLOYEE",
+      "roles": [
+        {
+          "name": "superuser",
+          "code": "SUPERUSER",
+          "tenantId": "pg"
+        },
+        {
+          "name": "Citizen",
+          "code": "Citizen",
+          "tenantId": "pg"
+        }
+      ],
+      "tenantId": "pg"
+    }
+  },
+    "BusinessServices": [
+        {
+            "tenantId": "pg",
+            "businessService": "chb",
+            "business": "chb-services",
+            "businessServiceSla": null,
+            "states": [
+                {
+                    "sla": null,
+                    "state": null,
+                    "applicationStatus": null,
+                    "docUploadRequired": true,
+                    "isStartState": true,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "APPLY",
+                            "nextState": "APPLIED",
+                            "roles": [
+                                "CITIZEN"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "APPLIED",
+                    "applicationStatus": "APPLIED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "action": "PAY",
+                            "nextState": "PAYMENT_DONE",
+                            "roles": [
+                                "CITIZEN"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "PAYMENT_DONE",
+                    "applicationStatus": "PAYMENT_DONE",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "action": "APPROVE",
+                            "nextState": "APPROVED",
+                            "roles": [
+                                "CHB_APPROVER"
+                            ]
+                        },
+                        {
+                            "action": "REJECT",
+                            "nextState": "REJECTED",
+                            "roles": [
+                                "CHB_APPROVER"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "APPROVED",
+                    "applicationStatus": "APPROVED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "action": "REFUND",
+                            "nextState": "BOOKING_COMPLETED",
+                            "roles": [
+                                "CHB_APPROVER"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "REJECTED",
+                    "applicationStatus": "REJECTED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": null
+                },
+                {
+                    "sla": null,
+                    "state": "BOOKING_COMPLETED",
+                    "applicationStatus": "BOOKING_COMPLETED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": null
+                }
+            ]
+        }
+    ]
+}

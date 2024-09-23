@@ -36,6 +36,9 @@ public class SiteService {
 
 	@Autowired
 	Producer producer;
+	
+	@Autowired
+	WorkflowService workflowService;
 
 	public static final String ADVERTISEMENT_HOARDING = "Advertising Hoarding";
 	public static final String CANOPY = "Canopy";
@@ -65,6 +68,7 @@ public class SiteService {
 			enrichSiteWhileCreation(createSiteRequest);
 			// Create Sites
 			createSiteObjects(createSiteRequest);
+			workflowService.createWorkflowStatus(createSiteRequest);
 			siteCreationResponse = SiteCreationResponse.builder()
 					.responseInfo(responseInfoFactory
 							.createResponseInfoFromRequestInfo(createSiteRequest.getRequestInfo(), false))
@@ -143,7 +147,7 @@ public class SiteService {
 			} else {
 				throw new RuntimeException("No Site exists with the Details Provided!!!");
 			}
-
+			workflowService.createWorkflowStatusForUpdate(updateSiteRequest);
 			siteupdationResponse = SiteUpdationResponse.builder()
 					.responseInfo(responseInfoFactory
 							.createResponseInfoFromRequestInfo(updateSiteRequest.getRequestInfo(), false))
