@@ -257,6 +257,6 @@ public class MdmsUtil {
 	}
 	
 	private String getCalculationTypeMasterName(String communityHallCode) {
-		return CommunityHallBookingConstants.CHB_CALCULATION_TYPE + '_' + communityHallCode;
+		return CommunityHallBookingConstants.CHB_CALCULATION_TYPE /* + '_' + communityHallCode */;
 	}
 }

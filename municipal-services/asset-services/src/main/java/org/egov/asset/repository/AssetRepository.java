@@ -35,6 +35,8 @@ public class AssetRepository {
 	@Autowired
 	AssetRowMapper rowMapper;
 	
+	public static final String SELECT_NEXT_SEQUENCE = "select nextval('seq_id_eg_asset_application')";
+	
 	
 	/**
 	 * Pushes the request on save topic through kafka
@@ -55,7 +57,10 @@ public class AssetRepository {
 	public void update(AssetRequest assetRequest) {
 		producer.push(config.getUpdateTopic(), assetRequest);
 	}
-
+ 
+	public Long getNextSequence() {
+		return jdbcTemplate.queryForObject(SELECT_NEXT_SEQUENCE, Long.class);
+	}
 
 	public List<Asset> getAssetData(AssetSearchCriteria searchCriteria) {
 		List<Object> preparedStmtList = new ArrayList<>();

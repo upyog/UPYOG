@@ -8,6 +8,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.egov.asset.config.AssetConfiguration;
+import org.egov.asset.repository.AssetRepository;
 import org.egov.asset.repository.IdGenRepository;
 import org.egov.asset.util.AssetErrorConstants;
 import org.egov.asset.util.AssetUtil;
@@ -36,6 +37,9 @@ public class EnrichmentService {
 
 	@Autowired
 	private IdGenRepository idGenRepository;
+	
+	@Autowired
+	private AssetRepository assetRepository;
 
 	// @Autowired
 	// private WorkflowService workflowService;
@@ -53,6 +57,8 @@ public class EnrichmentService {
 		AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 		assetRequest.getAsset().setAuditDetails(auditDetails);
 		assetRequest.getAsset().setId(UUID.randomUUID().toString());
+		String tenantId = assetRequest.getAsset().getTenantId().split("\\.")[1];
+		assetRequest.getAsset().setAssetId("MCH"+"/"+tenantId+assetRepository.getNextSequence() );
 
 		assetRequest.getAsset().setAccountId(assetRequest.getAsset().getAuditDetails().getCreatedBy());
 		// String applicationType = values.get(AssetConstants.ASSET_PARENT_CATEGORY);

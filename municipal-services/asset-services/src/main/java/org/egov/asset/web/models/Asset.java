@@ -40,6 +40,9 @@ public class Asset   {
 
         @JsonProperty("tenantId")
         private String tenantId = null;
+        
+        @JsonProperty("assetId")
+        private String assetId;
 
         @JsonProperty("assetBookRefNo")
         private String assetBookRefNo = null;

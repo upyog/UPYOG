@@ -52,11 +52,12 @@ public class EnrichmentService {
 		});
 		
 		//Updating id booking in documents
-		bookingDetail.getUploadedDocumentDetails().stream().forEach(document -> {
-			document.setBookingId(bookingId);
-			document.setDocumentDetailId(CommunityHallBookingUtil.getRandonUUID());
-			document.setAuditDetails(auditDetails);
-		});
+		/*
+		 * bookingDetail.getUploadedDocumentDetails().stream().forEach(document -> {
+		 * document.setBookingId(bookingId);
+		 * document.setDocumentDetailId(CommunityHallBookingUtil.getRandonUUID());
+		 * document.setAuditDetails(auditDetails); });
+		 */
 
 
 		bookingDetail.getApplicantDetail().setBookingId(bookingId);
