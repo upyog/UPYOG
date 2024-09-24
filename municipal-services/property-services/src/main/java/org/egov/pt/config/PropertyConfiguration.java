@@ -444,6 +444,13 @@ public class PropertyConfiguration {
 	@Value("${egbs.updatedemand.endpoint}")
 	private String updateDemandEndpoint;
 	
+	@Value("${current.finyear.start}")
+	private Integer finYearStart;
 	
+	@Value("${current.finyear.end}")
+	private Integer finYearEnd;
+	
+	@Value("${assesment.start.year}")
+	private Integer assesmentStartyear;
 	    
 }
