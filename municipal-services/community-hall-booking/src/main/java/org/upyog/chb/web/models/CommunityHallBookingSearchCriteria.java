@@ -45,6 +45,8 @@ public class CommunityHallBookingSearchCriteria {
 
 	@JsonProperty("toDate")
 	private Long toDate;
+	
+	private boolean isCountCall;
 
 	@JsonProperty("createdBy")
 	@JsonIgnore

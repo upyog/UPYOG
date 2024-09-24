@@ -24,6 +24,8 @@ import org.upyog.chb.repository.ServiceRequestRepository;
 import org.upyog.chb.util.NotificationUtil;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
+import org.upyog.chb.web.models.events.Action;
+import org.upyog.chb.web.models.events.ActionItem;
 import org.upyog.chb.web.models.events.Event;
 import org.upyog.chb.web.models.events.EventRequest;
 import org.upyog.chb.web.models.events.Recepient;
@@ -49,48 +51,103 @@ public class CHBNotificationService {
 
 	public void process(CommunityHallBookingRequest bookingRequest, String status) {
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
-		//Decrypt applicant detail it will be used in notification
+		// Decrypt applicant detail it will be used in notification
 		bookingDetail = chbEncryptionService.decryptObject(bookingDetail, bookingRequest.getRequestInfo());
-		
-		log.info("Processing notification for booking no : " + bookingDetail.getBookingNo() + " with status : " + status);
+
+		log.info("Processing notification for booking no : " + bookingDetail.getBookingNo() + " with status : "
+				+ status);
 		String tenantId = bookingRequest.getHallsBookingApplication().getTenantId();
 		String action = status;
 
-		List<String> configuredChannelNames = fetchChannelList(new RequestInfo(), tenantId.split("\\.")[0], config.getModuleName(),
-				action);
+		List<String> configuredChannelNames = fetchChannelList(new RequestInfo(), tenantId.split("\\.")[0],
+				config.getModuleName(), action);
 
-		Map<String, String> mobileNumberToOwner = new HashMap<String, String>();
-		mobileNumberToOwner.put(bookingDetail.getApplicantDetail().getApplicantMobileNo(),
-				bookingDetail.getApplicantDetail().getApplicantName());
 		log.info("Fetching localization message for notification");
-		//All notification messages are part of this messages object
+		// All notification messages are part of this messages object
 		String localizationMessages = util.getLocalizationMessages(tenantId, bookingRequest.getRequestInfo());
-		String message = null;
+
+		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_SMS)) {
+			sendEventNotification(localizationMessages, bookingRequest, status);
+		}
+
+		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EVENT)) {
+			sendMessageNotification(localizationMessages, bookingRequest, status);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param localizationMessages
+	 * @param bookingRequest
+	 * @param status
+	 */
+	private void  sendMessageNotification(String localizationMessages, CommunityHallBookingRequest bookingRequest, String status) {
+		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
+		Map<String, String> messageMap = new HashMap<String, String>();
+    	String message = null;
 		try {
-			 message = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages, status);
+			messageMap = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages, status
+					 , CommunityHallBookingConstants.CHANNEL_NAME_SMS);
+			
+			message = messageMap.get(NotificationUtil.MESSAGE_TEXT);
+			 /**
+			  * Dynamic values Place holders
+			  * {APPLICANT_NAME} 
+			  * {BOOKING_NO}
+			  * {COMMUNITY_HALL_NAME}
+			  * {LINK} - Optional			 
+			  */
+			 message = String.format(message, bookingDetail.getApplicantDetail().getApplicantName(), 
+					 bookingDetail.getBookingNo(), bookingDetail.getCommunityHallName(), messageMap.get(NotificationUtil.ACTION_LINK));
 		}catch (Exception e) {
 			log.error("Exception occcured while fetching message", e);
 			e.printStackTrace();
 		}
-		
 		log.info("Message for sending sms and event : " + message);
 		if (message != null) {
-			if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_SMS)) {
-				List<SMSRequest> smsRequests = new LinkedList<>();
-				if (config.getIsSMSNotificationEnabled()) {
-					enrichSMSRequest(bookingRequest, smsRequests, mobileNumberToOwner, message);
-					if (!CollectionUtils.isEmpty(smsRequests))
-						util.sendSMS(smsRequests);
-				}
+			List<SMSRequest> smsRequests = new LinkedList<>();
+			if (config.getIsSMSNotificationEnabled()) {
+				Map<String, String> mobileNumberToOwner = new HashMap<String, String>();
+				mobileNumberToOwner.put(bookingDetail.getApplicantDetail().getApplicantMobileNo(),
+						bookingDetail.getApplicantDetail().getApplicantName());
+				enrichSMSRequest(bookingRequest, smsRequests, mobileNumberToOwner, message);
+				if (!CollectionUtils.isEmpty(smsRequests))
+					util.sendSMS(smsRequests);
 			}
-
-			if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EVENT)) {
-				if (null != config.getIsUserEventsNotificationEnabled()) {
-					if (config.getIsUserEventsNotificationEnabled()) {
-						EventRequest eventRequest = getEventsForCommunityHallBooking(bookingRequest, message);
-						if (null != eventRequest)
-							util.sendEventNotification(eventRequest);
-					}
+		}
+		
+	}
+	
+    private void sendEventNotification(String localizationMessages, CommunityHallBookingRequest bookingRequest, String status) {
+    	CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
+    	Map<String, String> messageMap = new HashMap<String, String>();
+    	String message = null;
+		try {
+			messageMap = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages, status
+					 , CommunityHallBookingConstants.CHANNEL_NAME_SMS);
+			
+			message = messageMap.get(NotificationUtil.MESSAGE_TEXT);
+			 /**
+			  * Dynamic values Place holders
+			  * {APPLICANT_NAME} 
+			  * {BOOKING_NO}
+			  * {COMMUNITY_HALL_NAME}
+			  * {LINK} - Optional			 
+			  */
+			 message = String.format(message, bookingDetail.getApplicantDetail().getApplicantName(), 
+					 bookingDetail.getBookingNo(), bookingDetail.getCommunityHallName());
+			 
+		}catch (Exception e) {
+			log.error("Exception occcured while fetching message", e);
+			e.printStackTrace();
+		}
+		log.info("Message for sending sms and event : " + message);
+		if (message != null) {
+			if (null != config.getIsUserEventsNotificationEnabled()) {
+				if (config.getIsUserEventsNotificationEnabled()) {
+					EventRequest eventRequest = getEventsForCommunityHallBooking(bookingRequest, message, messageMap.get( NotificationUtil.ACTION_LINK));
+					if (null != eventRequest)
+						util.sendEventNotification(eventRequest);
 				}
 			}
 		}
@@ -107,7 +164,7 @@ public class CHBNotificationService {
 		smsRequests.addAll(util.createSMSRequest(bookingRequest, message, mobileNumberToOwner));
 	}
 
-	private EventRequest getEventsForCommunityHallBooking(CommunityHallBookingRequest request, String message) {
+	private EventRequest getEventsForCommunityHallBooking(CommunityHallBookingRequest request, String message, String actionLink) {
 
 		List<Event> events = new ArrayList<>();
 		String tenantId = request.getHallsBookingApplication().getTenantId();
@@ -127,10 +184,20 @@ public class CHBNotificationService {
 		log.info("Message for user event : " + message);
 		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
 		log.info("Recipient object in CHB event :" + recepient.toString());
+		
+		ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code("LINK").build();
+		List<ActionItem> actionItems = new ArrayList<>();
+		actionItems.add(actionItem);
+		
+		Action action = Action.builder().tenantId(tenantId).id(mobileNumber).actionUrls(actionItems)
+				.eventId(CommunityHallBookingConstants.CHANNEL_NAME_EVENT ).build();
+				//new Action(tenantId, mobileNumber, CommunityHallBookingConstants.CHANNEL_NAME_EVENT , null) ;
+		
 		events.add(Event.builder().tenantId(tenantId).description(message)
 				.eventType(CommunityHallBookingConstants.USREVENTS_EVENT_TYPE)
 				.name(CommunityHallBookingConstants.USREVENTS_EVENT_NAME)
 				.postedBy(CommunityHallBookingConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP)
+				.actions(action)
 				.recepient(recepient).eventDetails(null).actions(null).build());
 
 		if (!CollectionUtils.isEmpty(events)) {
@@ -233,5 +300,7 @@ public class CHBNotificationService {
 
 		return mdmsCriteriaReq;
 	}
+	
+	
 
 }

@@ -31,6 +31,7 @@ import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 
 import digit.models.coremodels.PaymentDetail;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -110,40 +111,50 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	@Override
 	public List<CommunityHallBookingDetail> getBookingDetails(CommunityHallBookingSearchCriteria bookingSearchCriteria,
 			RequestInfo info) {
-		log.info("bookingSearchCriteria : " + bookingSearchCriteria);
 		hallBookingValidator.validateSearch(info, bookingSearchCriteria);
 		List<CommunityHallBookingDetail> bookingDetails = new ArrayList<CommunityHallBookingDetail>();
-		List<String> roles = new ArrayList<>();
-		for (Role role : info.getUserInfo().getRoles()) {
-			roles.add(role.getCode());
-		}
-		log.info("user roles for searching : " + roles);
-		if ((bookingSearchCriteria.tenantIdOnly() || bookingSearchCriteria.isEmpty())
-				&& roles.contains(CommunityHallBookingConstants.CITIZEN)) {
-			log.info("loading data of created and by me");
-			bookingDetails = this.getBookingCreatedByMe(bookingSearchCriteria, info);
-		} else {
-			log.info("loading data based on criteria");
-			bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
-		}
+		bookingSearchCriteria  = addCreatedByMeToCriteria(bookingSearchCriteria, info);
+		log.info("loading data based on criteria" + bookingSearchCriteria);
 		
+		bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
 		bookingDetails = encryptionService.decryptObject(bookingDetails, info);
 
 		return bookingDetails;
 	}
+	
+	@Override
+	public Integer getBookingCount(@Valid CommunityHallBookingSearchCriteria criteria,
+			@NonNull RequestInfo requestInfo) {
+		criteria.setCountCall(true);
+		Integer bookingCount = 0;
+		
+		criteria  = addCreatedByMeToCriteria(criteria, requestInfo);
+		bookingCount = bookingRepository.getBookingCount(criteria);
+		
+		return bookingCount;
+	}
 
-	private List<CommunityHallBookingDetail> getBookingCreatedByMe(CommunityHallBookingSearchCriteria criteria,
-			RequestInfo requestInfo) {
-		List<CommunityHallBookingDetail> bookingDetails = new ArrayList<CommunityHallBookingDetail>();
-
+	
+	private CommunityHallBookingSearchCriteria addCreatedByMeToCriteria(CommunityHallBookingSearchCriteria criteria, RequestInfo requestInfo) {
+		if(requestInfo.getUserInfo() == null) {
+			log.info("Request info is null returning criteira");
+			return criteria;
+		}
+		List<String> roles = new ArrayList<>();
+		for (Role role : requestInfo.getUserInfo().getRoles()) {
+			roles.add(role.getCode());
+		}
+		log.info("user roles for searching : " + roles);
+		/**
+		 * Citizen can see booking details only booked by him
+		 */
 		List<String> uuids = new ArrayList<>();
-		if (requestInfo.getUserInfo() != null && !StringUtils.isEmpty(requestInfo.getUserInfo().getUuid())) {
+		if (roles.contains(CommunityHallBookingConstants.CITIZEN) && !StringUtils.isEmpty(requestInfo.getUserInfo().getUuid())) {
 			uuids.add(requestInfo.getUserInfo().getUuid());
 			criteria.setCreatedBy(uuids);
+			log.debug("loading data of created and by me" + uuids.toString());
 		}
-		log.debug("loading data of created and by me" + uuids.toString());
-		bookingDetails = bookingRepository.getBookingDetails(criteria);
-		return bookingDetails;
+		return criteria;
 	}
 
 	@Override
@@ -261,5 +272,6 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 				.bookingDate(CommunityHallBookingUtil.parseLocalDateToString(date)).build();
 		return availabiltityDetail;
 	}
+
 
 }
