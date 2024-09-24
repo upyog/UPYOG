@@ -103,7 +103,7 @@ public class CHBNotificationService {
 			log.error("Exception occcured while fetching message", e);
 			e.printStackTrace();
 		}
-		log.info("Message for sending sms and event : " + message);
+		log.info("Message for sending sms notification : " + message);
 		if (message != null) {
 			List<SMSRequest> smsRequests = new LinkedList<>();
 			if (config.getIsSMSNotificationEnabled()) {
@@ -124,7 +124,7 @@ public class CHBNotificationService {
     	String message = null;
 		try {
 			messageMap = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages, status
-					 , CommunityHallBookingConstants.CHANNEL_NAME_SMS);
+					 , CommunityHallBookingConstants.CHANNEL_NAME_EVENT);
 			
 			message = messageMap.get(NotificationUtil.MESSAGE_TEXT);
 			 /**
@@ -141,7 +141,7 @@ public class CHBNotificationService {
 			log.error("Exception occcured while fetching message", e);
 			e.printStackTrace();
 		}
-		log.info("Message for sending sms and event : " + message);
+		log.info("Message for sending event notification : " + message);
 		if (message != null) {
 			if (null != config.getIsUserEventsNotificationEnabled()) {
 				if (config.getIsUserEventsNotificationEnabled()) {
