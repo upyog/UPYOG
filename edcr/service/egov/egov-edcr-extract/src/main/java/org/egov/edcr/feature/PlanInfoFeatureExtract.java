@@ -505,49 +505,49 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		} else
 			pi.setNocNearAirport(DcrConstants.NA);
 		
-//		String nocFireDept = planInfoProperties.get(DxfFileConstants.NOC_FOR_FIRE_DEPT);
-//		if (StringUtils.isNotBlank(nocFireDept)) {
-//			if (nocFireDept.equalsIgnoreCase(DcrConstants.YES))
-//				pi.setNocNearAirport(DcrConstants.YES);
-//			else if (nocFireDept.equalsIgnoreCase(DcrConstants.NO))
-//				pi.setNocFireDept(nocFireDept);
-//			else
-//				pi.setNocFireDept(DcrConstants.NA);
-//		} else
-//			pi.setNocFireDept(DcrConstants.NA);
+		String nocFireDept = planInfoProperties.get(DxfFileConstants.NOC_FOR_FIRE_DEPT);
+		if (StringUtils.isNotBlank(nocFireDept)) {
+			if (nocFireDept.equalsIgnoreCase(DcrConstants.YES))
+				pi.setNocNearAirport(DcrConstants.YES);
+			else if (nocFireDept.equalsIgnoreCase(DcrConstants.NO))
+				pi.setNocFireDept(nocFireDept);
+			else
+				pi.setNocFireDept(DcrConstants.NA);
+		} else
+			pi.setNocFireDept(DcrConstants.NA);
 //		
-//		String nocFromNHAI = planInfoProperties.get(DxfFileConstants.NOC_FROM_NHAI);
-//		if (StringUtils.isNotBlank(nocFromNHAI)) {
-//			if (nocFromNHAI.equalsIgnoreCase(DcrConstants.YES))
-//				pi.setNocFromNHAI(nocFromNHAI);
-//			else if (nocFromNHAI.equalsIgnoreCase(DcrConstants.NO))
-//				pi.setNocFromNHAI(nocFromNHAI);
-//			else
-//				pi.setNocFromNHAI(DcrConstants.NA);
-//		} else
-//			pi.setNocFromNHAI(DcrConstants.NA);
+		String nocFromNHAI = planInfoProperties.get(DxfFileConstants.NOC_FROM_NHAI);
+		if (StringUtils.isNotBlank(nocFromNHAI)) {
+			if (nocFromNHAI.equalsIgnoreCase(DcrConstants.YES))
+				pi.setNocFromNHAI(nocFromNHAI);
+			else if (nocFromNHAI.equalsIgnoreCase(DcrConstants.NO))
+				pi.setNocFromNHAI(nocFromNHAI);
+			else
+				pi.setNocFromNHAI(DcrConstants.NA);
+		} else
+			pi.setNocFromNHAI(DcrConstants.NA);
 //		
-//		String nocNeighbour = planInfoProperties.get(DxfFileConstants.NOC_FROM_NEIGHBOUR);
-//		if (StringUtils.isNotBlank(nocNeighbour)) {
-//			if (nocNeighbour.equalsIgnoreCase(DcrConstants.YES))
-//				pi.setNocNeighbour(nocNeighbour);
-//			else if (nocNeighbour.equalsIgnoreCase(DcrConstants.NO))
-//				pi.setNocNeighbour(nocNeighbour);
-//			else
-//				pi.setNocNeighbour(DcrConstants.NA);
-//		} else
-//			pi.setNocNeighbour(DcrConstants.NA);
+		String nocNeighbour = planInfoProperties.get(DxfFileConstants.NOC_FROM_NEIGHBOUR);
+		if (StringUtils.isNotBlank(nocNeighbour)) {
+			if (nocNeighbour.equalsIgnoreCase(DcrConstants.YES))
+				pi.setNocNeighbour(nocNeighbour);
+			else if (nocNeighbour.equalsIgnoreCase(DcrConstants.NO))
+				pi.setNocNeighbour(nocNeighbour);
+			else
+				pi.setNocNeighbour(DcrConstants.NA);
+		} else
+			pi.setNocNeighbour(DcrConstants.NA);
 //
-//		String indemnityBasement = planInfoProperties.get(DxfFileConstants.IDEMNITY_BASEMENT);
-//		if (StringUtils.isNotBlank(indemnityBasement)) {
-//			if (indemnityBasement.equalsIgnoreCase(DcrConstants.YES))
-//				pi.setIndemnityBasement(indemnityBasement);
-//			else if (indemnityBasement.equalsIgnoreCase(DcrConstants.NO))
-//				pi.setIndemnityBasement(indemnityBasement);
-//			else
-//				pi.setIndemnityBasement(DcrConstants.NA);
-//		} else
-//			pi.setIndemnityBasement(DcrConstants.NA);
+		String indemnityBasement = planInfoProperties.get(DxfFileConstants.IDEMNITY_BASEMENT);
+		if (StringUtils.isNotBlank(indemnityBasement)) {
+			if (indemnityBasement.equalsIgnoreCase(DcrConstants.YES))
+				pi.setIndemnityBasement(indemnityBasement);
+			else if (indemnityBasement.equalsIgnoreCase(DcrConstants.NO))
+				pi.setIndemnityBasement(indemnityBasement);
+			else
+				pi.setIndemnityBasement(DcrConstants.NA);
+		} else
+			pi.setIndemnityBasement(DcrConstants.NA);
 
 		String nocCollectorGvtLand = planInfoProperties.get(DxfFileConstants.NOC_COLLECTOR_GVT_LAND);
 		if (StringUtils.isNotBlank(nocCollectorGvtLand)) {

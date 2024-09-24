@@ -78,21 +78,22 @@ public class RoadReserve extends FeatureProcess {
     	 
     	 ScrutinyDetail scrutinyDetail8 = new ScrutinyDetail();
 			//scrutinyDetail8.addColumnHeading(1, RULE_NO);
-			scrutinyDetail8.addColumnHeading(2, DESCRIPTION);
+			scrutinyDetail8.addColumnHeading(1, DESCRIPTION);
 			//scrutinyDetail8.addColumnHeading(3, FLOOR_NO);
 			//scrutinyDetail8.addColumnHeading(3, Room);
 			//scrutinyDetail8.addColumnHeading(4, REQUIRED);
-			scrutinyDetail8.addColumnHeading(5, PROVIDED);
-			scrutinyDetail8.addColumnHeading(6, STATUS);
+			scrutinyDetail8.addColumnHeading(2, PROVIDED);
+			scrutinyDetail8.addColumnHeading(3, STATUS);
 			scrutinyDetail8.setKey("Common_" + "Road Reserve ");
         System.out.println("ii" + pl.getRoadReserveFront() +  pl.getRoadReserveRear());
          
+        if(pl.getRoadReserveFront() != BigDecimal.ZERO &&  pl.getRoadReserveRear() != BigDecimal.ZERO) {
      	setReportOutputDetails(pl, "Road Width Front And Rear",
-				"" + pl.getRoadReserveFront() + " & " +  pl.getRoadReserveRear(), "", scrutinyDetail8);
+				"" + pl.getRoadReserveFront() + "m" +  " & " +  pl.getRoadReserveRear() +"m", "", scrutinyDetail8);
 		//LOG.info("Room Height Validation True: (Expected/Actual) " + "" + "/" + "");
         // setReportOutputDetails(pl, "Road Width Rear", "" + pl.getRoadReserveRear(), scrutinyDetail);
     
-       
+        }
         return pl;
     }
     private void setReportOutputDetails(Plan pl, String ruleDesc,  

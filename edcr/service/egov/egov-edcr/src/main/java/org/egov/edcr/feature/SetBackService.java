@@ -124,6 +124,9 @@ public class SetBackService extends FeatureProcess {
 //                            errors.put("side2yardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Side Setback 2 ",
 //                                    block.getName(), setback.getLevel().toString()));
                     }
+                    
+                   
+
 
                     // if height of setback greater than building height ?
                     // last level height should match with building height.
@@ -146,6 +149,7 @@ public class SetBackService extends FeatureProcess {
 //                            errors.put("side2yardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Side Setback 2 ",
 //                                    block.getName(), setback.getLevel().toString(), heightOfBuilding.toString()));
                     }
+                   
                 }
             }
             }
@@ -158,16 +162,33 @@ public class SetBackService extends FeatureProcess {
 
     @Override
     public Plan process(Plan pl) {
-        validate(pl);
-        
+        validate(pl);HashMap<String, String> errors = new HashMap<>();
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
 		if (depthOfPlot != null && depthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
 			frontYardService.processFrontYard(pl);
-			  if( pl.getPlot().getArea().compareTo(TWO_HUNDRED) > 0) {
-			rearYardService.processRearYard(pl);
-			  }
-		}
+//			  if( pl.getPlot().getArea().compareTo(TWO_HUNDRED) > 0) {
+//			rearYardService.processRearYard(pl);
+//			  }
+			 if (pl.getRoadReserveRear() != BigDecimal.ZERO && pl.getCoreArea().equalsIgnoreCase("No")){
+				 for (Block block : pl.getBlocks()) {
+				 for (SetBack setback : block.getSetBacks()) {
+                 // Rear yard call is mandatory if reserve is not null, irrespective of plot area
+                 if (setback.getRearYard() == null) {
+                     // Throw an error if rear yard is not present
+                 	errors.put("rearyardNodeDefined",
+                             getLocaleMessage(OBJECTNOTDEFINED, " Rear Setback of  " + block.getName()  + 
+                 	"Rear setback is mandatory when rear road width is present."));
+                 }
+                 rearYardService.processRearYard(pl);
+             }}} else if (pl.getPlot().getArea().compareTo(TWO_HUNDRED) > 0 &&
+            		 pl.getCoreArea().equalsIgnoreCase("No")) {
+                 // Process rear yard only if roadreserverear is null and plot area is greater than 200
+                 rearYardService.processRearYard(pl);
+             }
+			
 
+		}
+		
 //		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
 //		if (widthOfPlot != null && widthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
 //			sideYardService.processSideYard(pl);
