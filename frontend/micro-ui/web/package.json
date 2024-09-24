@@ -9,7 +9,6 @@
     "micro-ui-internals/packages/pt",
     "micro-ui-internals/packages/tl",
     "micro-ui-internals/packages/ws",
-    "micro-ui-internals/packages/dss",
     "micro-ui-internals/packages/common",
     "micro-ui-internals/packages/core"
   ],
