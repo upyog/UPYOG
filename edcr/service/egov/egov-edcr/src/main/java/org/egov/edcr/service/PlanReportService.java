@@ -487,7 +487,7 @@ public class PlanReportService {
 //                        .setWidth(120).setStyle(reportService.getTotalNumberStyle()).build();
 
                 AbstractColumn coverageArea = ColumnBuilder.getNew()
-                        .setColumnProperty("totalCoverageArea", BigDecimal.class.getName()).setTitle("Covered Area in m²")
+                        .setColumnProperty("totalCoverageArea", BigDecimal.class.getName()).setTitle("Plot Coverage Area in m²")
                         .setWidth(120).setStyle(reportService.getTotalNumberStyle()).build();
 
                 frb.addColumn(builtUpArea);
