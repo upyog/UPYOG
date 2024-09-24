@@ -51,10 +51,7 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
     const {data: bpaTaxDocuments, isLoading} = Digit.Hooks.obps.useBPATaxDocuments(stateId, formData, beforeUploadDocuments || []);
 
     const handleSaveAsDraft = () => {
-        // Clone formData to avoid directly modifying the original object
         let updatedFormData = { ...formData };
-    
-        // Nest the documentStep (i.e., documents array) inside formData.documents
         updatedFormData.documents = { ...formData.documents, documents };
     
         // Construct the BPA object using only the required fields
@@ -117,8 +114,6 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
         
     };
     
-
-
     const handleSubmit = () => {
         let document = formData.documents;
         let documentStep;
@@ -304,10 +299,10 @@ const SelectDocument = React.memo(function MyComponent({
                         
                         newfiles.push({
                             documentType: selectedDocument?.code,
-                            fileName: doc?.[0] || "",
                             additionalDetails:{category:selectedDocument?.code.split(".").slice(0,2).join('_'),
                             latitude: location.latitude,
                             longitude: location.longitude,
+                            fileName: doc?.[0] || "",
                         },
                             fileStoreId: doc?.[1]?.fileStoreId?.fileStoreId,
                             documentUid: doc?.[1].fileStoreId?.fileStoreId,
@@ -360,10 +355,10 @@ const SelectDocument = React.memo(function MyComponent({
                     newfiles.push({
                         documentType: selectedDocument?.code,
                             fileStoreId: doc.fileStoreId,
-                            fileName: fileArray[index]?.name || "",
                             additionalDetails:{category:selectedDocument?.code.split(".").slice(0,2).join('_'),
                             latitude: latitude,
                             longitude: longitude,
+                            fileName: fileArray[index]?.name || "",
                         },
                             documentUid: doc.fileStoreId,
                             fileName: fileArray[index]?.name || "",
@@ -428,16 +423,16 @@ const SelectDocument = React.memo(function MyComponent({
         const selectedUplDocs = docs
             .filter(ob => ob.documentType === selectedDocument.code)
             .map(e => [
-                e.fileName,
+                e.additionalDetails.fileName,
                 {
-                    file: { name: e.fileName, type: e.documentType },
+                    file: { name: e.additionalDetails.fileName, type: e.documentType },
                     fileStoreId: { fileStoreId: e.fileStoreId, tenantId },
                 },
             ]);
         return selectedUplDocs;
     }, [formData, selectedDocument.code, tenantId]);
     
-    
+    const sitePhotographDoc = documents.filter(doc => doc.documentType === "SITEPHOTOGRAPH.ONE.ONE");
 
     return (
         <div /* style={{ marginBottom: "24px" }} */>
@@ -462,29 +457,29 @@ const SelectDocument = React.memo(function MyComponent({
                 acceptFiles= "image/*, .pdf, .png, .jpeg, .jpg"
             /> 
         {doc?.uploadedDocuments?.length && <DocumentsPreview isSendBackFlow={true} documents={doc?.uploadedDocuments} />}
+        {doc?.code === "SITEPHOTOGRAPH.ONE" && (() => {
+            const latitude = sessionStorage.getItem("Latitude") || sitePhotographDoc?.[0]?.additionalDetails?.latitude;
+            const longitude = sessionStorage.getItem("Longitude") || sitePhotographDoc?.[0]?.additionalDetails?.longitude;
 
-        {doc?.code === "SITEPHOTOGRAPH.ONE" && (
-                sessionStorage.getItem("Latitude") && sessionStorage.getItem("Longitude") ? (
-                    <div>
-                        <p>Latitude: {sessionStorage.getItem("Latitude")}</p>
-                        <p>Longitude: {sessionStorage.getItem("Longitude")}</p>
-                        <div
+            return latitude && longitude ? (
+                <div>
+                    <p>Latitude: {latitude}</p>
+                    <p>Longitude: {longitude}</p>
+                    <div
                         style={{ position: "relative", zIndex: "100", right: "-500px", marginTop: "-24px", marginRight: "20px", cursor: "pointer" }}
-                        onClick={() => window.open(`http://maps.google.com/maps?q=${sessionStorage.getItem("Latitude")},${sessionStorage.getItem("Longitude")}`, '_blank')}
+                        onClick={() => window.open(`http://maps.google.com/maps?q=${latitude},${longitude}`, '_blank')}
                     >
                         <SearchIcon />
                     </div>
-                        {setIsNextButtonDisabled(false)} {/* Enable the "Next" button */}
-                    </div>
-                    
-                ) : (
-                    <div>
-                        <p style={{ color: 'red' }}>Please upload a Photo with Location details.</p>
-                        {setIsNextButtonDisabled(true)} {/* Disable the "Next" button */}
-                    </div>
-                )
-            )}
-       
+                    {setIsNextButtonDisabled(false)} {/* Enable the "Next" button */}
+                </div>
+            ) : (
+                <div>
+                    <p style={{ color: 'red' }}>Please upload a Photo with Location details.</p>
+                    {setIsNextButtonDisabled(true)} {/* Disable the "Next" button */}
+                </div>
+            );
+        })()}   
         </div>
     );
     });
