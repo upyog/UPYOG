@@ -64,6 +64,7 @@ public class OcComparisonService {
         String ocdcrNo = comparisonRequest.getOcdcrNumber();
         String dcrNo = comparisonRequest.getEdcrNumber();
         String tenantId = comparisonRequest.getTenantId();
+        String propertyId = comparisonRequest.getPropertyId();
         ComparisonDetail comparisonDetail = new ComparisonDetail();
 
         OcComparisonDetail ocComparisonDetail = ocComparisonDetailService.findByOcDcrNoAndDcrNumberAndTenant(ocdcrNo, dcrNo,
@@ -99,6 +100,7 @@ public class OcComparisonService {
             ocComparisonDetailE.setOcdcrNumber(ocdcrNo);
             ocComparisonDetailE.setDcrNumber(dcrNo);
             ocComparisonDetailE.setTenantId(tenantId);
+            ocComparisonDetailE.setPropertyId(propertyId);
 
             InputStream ocreportStream = generateOcComparisonReport(applicationDate, amd, ocDcr, permitDcr, ocComparisonDetailE);
 
