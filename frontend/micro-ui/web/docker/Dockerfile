@@ -6,7 +6,7 @@ RUN yarn add @upyog/digit-ui-libraries
 RUN yarn add @upyog/digit-ui-module-pt
 RUN yarn add @upyog/digit-ui-module-fsm
 RUN yarn add @upyog/digit-ui-module-tl
-RUN yarn add @upyog/digit-ui-module-dss
+RUN yarn add @upyog/digit-ui-module-dss@1.8.3
 RUN yarn add @upyog/digit-ui-module-mcollect
 RUN yarn add @upyog/digit-ui-module-pgr
 RUN yarn add @upyog/digit-ui-module-noc
