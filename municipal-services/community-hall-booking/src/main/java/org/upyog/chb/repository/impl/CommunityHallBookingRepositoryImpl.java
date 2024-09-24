@@ -119,6 +119,18 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 		});
 		return bookingDetails;
 	}
+	
+	@Override
+	public Integer getBookingCount(@Valid CommunityHallBookingSearchCriteria criteria) {
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getCommunityHallBookingSearchQuery(criteria, preparedStatement);
+		
+		if (query == null)
+			return 0;
+
+		Integer count = jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
+		return count;
+	}
 
 	@Override
 	public void updateBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest) {
@@ -163,5 +175,6 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 		log.info("Fetched slot availabilty details : " + availabiltityDetails);
 		return availabiltityDetails;
 	}
+
 
 }

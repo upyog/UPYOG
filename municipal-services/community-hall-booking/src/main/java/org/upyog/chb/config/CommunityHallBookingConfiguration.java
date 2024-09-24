@@ -199,13 +199,6 @@ public class CommunityHallBookingConfiguration {
 	@Value("${egov.url.shortner.endpoint}")
 	private String shortenerEndpoint;
 	
-	//Notification Template
-	@Value("${chb.notification.booking.created.template}")
-	private String bookingCreatedTemplate;
-
-	@Value("${chb.notification.booked.template}")
-	private String bookedTemplate;
-	
 	@Value("${chb.claculation.tax.applicable}")
 	private String applicableTaxes;
 	
