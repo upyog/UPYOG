@@ -43,6 +43,12 @@ public class BpaMdmsUtil {
         masterDetailOccupancyType.setFilter("$.[?(@.active==true)]");
         bpaMasterDtls.add(masterDetailOccupancyType);
         
+        MasterDetail masterDetailEdcrRules = new MasterDetail();
+        masterDetailEdcrRules.setName("EdcrRulesFeatures");
+        //masterDetailEdcrRules.setFilter(filterCode);
+        bpaMasterDtls.add(masterDetailEdcrRules);
+        
+        
         MasterDetail masterDetailSubOccupancyType = new MasterDetail();
         masterDetailSubOccupancyType.setName("SubOccupancyType");
         masterDetailSubOccupancyType.setFilter("$.[?(@.active==true)]");
