@@ -2,6 +2,9 @@ package org.egov.pt.service;
 
 import static org.egov.pt.util.PTConstants.ASSESSMENT_BUSINESSSERVICE;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -100,23 +103,59 @@ public class AssessmentService {
 	 * @return
 	 */
 	public Assessment createAssessment(AssessmentRequest request) {
-
+		AssessmentSearchCriteria crt = new AssessmentSearchCriteria();
+		Set<String>propertyIds = new HashSet<>();
+		
 		Property property = utils.getPropertyForAssessment(request);
 		validator.validateAssessmentCreate(request, property);
+		List<Assessment> earlierAssesmentForTheFinancialYear =null;
+		SimpleDateFormat year=new SimpleDateFormat("yyyy");
+		Timestamp stamp = new Timestamp(property.getAuditDetails().getCreatedTime());
+		Date date = new Date(stamp.getTime());
+		String propertyCreationYear = year.format(date);
+		String currentFinYearStart = props.getFinYearStart().toString();
+		boolean found=true;
+		StringBuilder sb = new StringBuilder("Please complete the assesment of previous years : ");
+		/*if(props.getAssesmentStartyear()>=Integer.parseInt(propertyCreationYear))
+		{*/
+			propertyIds.add(property.getPropertyId());
+			crt.setPropertyIds(propertyIds);
+			String assemtmentyearFromRequest = request.getAssessment().getFinancialYear().split("-")[0].toString();
+			for(int i=0;i<Integer.parseInt(assemtmentyearFromRequest)-props.getAssesmentStartyear();i++) {
+				Integer checkForYearStart = props.getAssesmentStartyear()+i;
+				Integer checkForYearEnd = props.getAssesmentStartyear()+1+i;
+				
+				//if(checkForYearStart.compareTo(props.getFinYearStart())!=0 && checkForYearEnd.compareTo(props.getFinYearEnd())!=0) {
+					crt.setFinancialYear(checkForYearStart.toString()+"-"+checkForYearEnd.toString().substring(2));
+					earlierAssesmentForTheFinancialYear=  searchAssessments(crt, request.getRequestInfo());
+					if(null==earlierAssesmentForTheFinancialYear || earlierAssesmentForTheFinancialYear.isEmpty()) {
+						found=false;
+						sb.append(" "+checkForYearStart.toString()+"-"+checkForYearEnd.toString().substring(2)+",");
+				}
+				
+					
+				//}
+			}
+			
+		//}
+		if(!found) {
+			throw new CustomException("ASSESMENT_EXCEPTION",sb.toString());
+		}
+		
+		//property.getAuditDetails().getCreatedTime()
+		
 		assessmentEnrichmentService.enrichAssessmentCreate(request);
 
 		//For Checking Assesmnt Done for the year
-
-		AssessmentSearchCriteria crt = new AssessmentSearchCriteria();
-		Set<String>propertyIds = new HashSet<>();
+		earlierAssesmentForTheFinancialYear=null;
 		propertyIds.add(property.getPropertyId());
 		crt.setPropertyIds(propertyIds);
 		crt.setFinancialYear(request.getAssessment().getFinancialYear());
 		crt.setStatus(Status.ACTIVE);
 
 
-		List<Assessment> earlierAssesmentForTheFinancialYear =  searchAssessments(crt, request.getRequestInfo());
-		if(earlierAssesmentForTheFinancialYear.size()>0)
+		 earlierAssesmentForTheFinancialYear =  searchAssessments(crt, request.getRequestInfo());
+		if(null!=earlierAssesmentForTheFinancialYear&&earlierAssesmentForTheFinancialYear.size()>0)
 			throw new CustomException("ASSESMENT_EXCEPTION","Property assessment is already completed for this property for the financial year "+crt.getFinancialYear());
 
 		//Call For Previous Year Demand Deactivation

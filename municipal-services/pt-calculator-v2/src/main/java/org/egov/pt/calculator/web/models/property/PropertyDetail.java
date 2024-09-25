@@ -7,13 +7,10 @@ import java.util.List;
 import java.util.Set;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
-import org.hibernate.validator.constraints.SafeHtml;
-import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,8 +29,7 @@ import lombok.ToString;
 /**
  * PropertyDetail
  */
-@Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-05-11T14:12:44.497+05:30")
+
 
 @Getter
 @Setter
@@ -48,9 +45,9 @@ public class PropertyDetail   {
 	/**
 	 * Source of a assessment data. The properties will be created in a system based on the data avaialble in their manual records or during field survey. There can be more from client to client.
 	 */
-
+	@Default
 	@JsonProperty("VacantUsagecategory")
-	private String vacantusagecategory;
+	private String vacantusagecategory=null;
 	
 	@JsonProperty("exemption")
 	private String exemption;
