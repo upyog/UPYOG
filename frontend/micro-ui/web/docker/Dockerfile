@@ -4,6 +4,15 @@ RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
 
 RUN yarn add @upyog/digit-ui-libraries
+RUN yarn add @upyog/digit-ui-react-components
+RUN yarn add @upyog/digit-ui-module-common
+RUN yarn add @upyog/digit-ui-module-commonpt
+RUN yarn add @upyog/digit-ui-module-bills
+RUN yarn add @upyog/digit-ui-module-mcollect
+RUN yarn add @upyog/digit-ui-module-pgr
+RUN yarn add @upyog/digit-ui-module-noc
+RUN yarn add @upyog/digit-ui-module-engagement
+RUN yarn add @upyog/digit-ui-module-hrms
 
 ARG WORK_DIR
 WORKDIR /app
