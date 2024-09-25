@@ -48,6 +48,8 @@ public class CalculatorConstants {
 	public static final String PT_ADVANCE_CARRYFORWARD = "PT_ADVANCE_CARRYFORWARD";
 	
 	public static final String PT_PASTDUE_CARRYFORWARD = "PT_PASTDUE_CARRYFORWARD";
+	
+	public static final String PT_ADVANCE_REBATE="PT_ADVANCE_REBATE";
 
 	public static final String PT_FIRE_CESS = "PT_FIRE_CESS";
 

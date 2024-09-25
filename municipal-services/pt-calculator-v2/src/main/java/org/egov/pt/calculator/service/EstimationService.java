@@ -71,6 +71,7 @@ import static org.egov.pt.calculator.util.CalculatorConstants.PT_COMPLEMENTARY_R
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_MODEOFPAYMENT_REBATE;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_MANDATORY_PAYMENT;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_PASTDUE_CARRYFORWARD;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADVANCE_REBATE;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -1113,9 +1114,17 @@ public class EstimationService {
 		BigDecimal collectedAmtForOldDemand = demandService.getCarryForwardAndCancelOldDemand(ptTax, criteria, requestInfo,oldDemand, false);
 		BigDecimal remainAdvanceAmount=BigDecimal.ZERO;
 		BigDecimal pastdue=BigDecimal.ZERO;
+		BigDecimal advanceRebate=taxAmt.multiply(new BigDecimal(75).divide(new BigDecimal(100)));
 		
 		if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
 		{
+			if(advanceRebate.compareTo(collectedAmtForOldDemand)>=0)
+			{
+				advanceRebate=taxAmt.multiply(new BigDecimal(20).divide(new BigDecimal(100)).negate());
+				estimates.add(TaxHeadEstimate.builder()
+						.taxHeadCode(PT_ADVANCE_REBATE)
+						.estimateAmount(advanceRebate).build());
+			}
 			if(collectedAmtForOldDemand.compareTo(totalAmount)>0)
 			{
 				totalAmount=BigDecimal.ZERO;
@@ -1135,6 +1144,9 @@ public class EstimationService {
 			estimates.add(TaxHeadEstimate.builder()
 					.taxHeadCode(PT_ADVANCE_CARRYFORWARD)
 					.estimateAmount(collectedAmtForOldDemand).build());
+			
+			totalAmount=totalAmount.add(collectedAmtForOldDemand).add(advanceRebate);
+			
 		}
 		else if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) < 0)
 		{
@@ -1143,6 +1155,7 @@ public class EstimationService {
 			estimates.add(TaxHeadEstimate.builder()
 					.taxHeadCode(PT_PASTDUE_CARRYFORWARD)
 					.estimateAmount(collectedAmtForOldDemand).build());
+			
 			totalAmount=totalAmount.add(collectedAmtForOldDemand);
 		}
 		//Added For Manipur 
