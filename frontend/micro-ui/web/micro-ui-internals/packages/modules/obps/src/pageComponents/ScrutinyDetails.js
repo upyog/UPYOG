@@ -166,7 +166,6 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
         if (formData?.data?.registrationDetails) payload.additionalDetails.registrationDetails = formData?.data?.registrationDetails;
         if (formData?.data?.applicationType) payload.additionalDetails.applicationType = formData?.data?.applicationType;
         if (formData?.data?.serviceType) payload.additionalDetails.serviceType = formData?.data?.serviceType;
-        if(formData?.data?.bpaData?.bpaApprovalResponse[0]?.additionalDetails?.propertyID) payload.additionalDetails.propertyID=formData?.data?.bpaData?.bpaApprovalResponse[0]?.additionalDetails?.propertyID
 
         //For LandInfo
         payload.landInfo = formData?.data?.bpaData?.bpaApprovalResponse?.[0].landInfo || {};

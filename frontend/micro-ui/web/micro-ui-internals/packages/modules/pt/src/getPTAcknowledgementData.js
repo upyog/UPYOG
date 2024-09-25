@@ -103,17 +103,12 @@ const getAssessmentInfo = (application, t) => {
   let flrno,
     i = 0;
   flrno = application.units && application.units[0]?.floorNo;
-  application.units.map((unit, index) => {
-    const unitDetail=application?.additionalDetails?.unit[index] || {};
-    
+  application.units.map((unit) => {
     let doc = [
       {
         title: (flrno !== unit?.floorNo ? (i = 1) : (i = i + 1)) && i === 1 ? t(`PROPERTYTAX_FLOOR_${unit?.floorNo}`) : "",
       },
-      { 
-        title: t("PT_UNIT")+" "+ i,
-        value:" " 
-      },
+      { title: t("PT_UNIT")+" "+ i },
       {
         title: (flrno = unit?.floorNo) > -3 ? t("PT_ASSESSMENT_UNIT_USAGE_TYPE") : "",
         value: (flrno = unit?.floorNo) > -3 ? t(getPropertySubUsageTypeLocale(unit?.usageCategory)) || t("CS_NA") : "",
@@ -150,7 +145,7 @@ const getAssessmentInfo = (application, t) => {
       value:
         (flrno = unit?.floorNo) > -3
           ? t(getPropertyOccupancyTypeLocale(unit?.occupancyType)) === "Rented"
-            ? (unitDetail?.RentedMonths) || t("CS_NA")
+            ? (application?.additionalDetails?.unit?.[0]?.rentedMonths ) || t("CS_NA")
             : t("")
           : "",
     },
@@ -164,7 +159,7 @@ const getAssessmentInfo = (application, t) => {
       value:
         (flrno = unit?.floorNo) > -3
           ? t(getPropertyOccupancyTypeLocale(unit?.occupancyType)) === "Rented"
-            ? (unitDetail?.NonRentedMonthsUsage) || t("CS_NA")
+            ? (application?.additionalDetails?.unit?.[0]?.nonRentedMonthsUsage ) || t("CS_NA")
             : t("")
           : "",
     },

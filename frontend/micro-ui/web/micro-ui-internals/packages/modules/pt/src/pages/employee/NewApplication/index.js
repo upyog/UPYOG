@@ -21,24 +21,8 @@ const NewApplication = () => {
     clearSuccessData();
   }, []);
 
-  const unitValues=[];
   const onFormValueChange = (setValue, formData, formState) => {
     console.log("formData, formState",formData, formState)
-    unitValues.length=0;
-    if(formData?.units && formData?.units.length!==0 && Array.isArray(formData.units)){
-        formData.units.forEach((unit)=>{
-            const unitDetails={
-                RentedMonths:unit?.RentedMonths || null,
-                NonRentedMonthsUsage: unit?.NonRentedMonthsUsage || null,
-                floorNo: unit?.floorNo?.code || null,
-
-            };
-            //if(unitDetails.RentedMonths!==null && unitDetails.NonRentedMonthsUsage!==null){
-                unitValues.push(unitDetails)
-            //}
-            
-        })
-    }
     setSubmitValve(!Object.keys(formState.errors).length);
     if (Object.keys(formState.errors).length === 1 && formState.errors?.units?.message === "arv") {
       setSubmitValve(!formData?.units.some((unit) => unit.occupancyType === "RENTED" && !unit.arv));
@@ -73,7 +57,6 @@ const NewApplication = () => {
       noOfFloors: Number(data?.noOfFloors),
       ownershipCategory: data?.ownershipCategory?.code,
       additionalDetails:{
-        unit: unitValues,
       //RentedMonths: data?.units[0]?.RentedMonths,
       //NonRentedMonthsUsage: data?.units[0]?.NonRentedMonthsUsage,
        ageOfProperty:data?.propertyStructureDetails?.ageOfProperty,
