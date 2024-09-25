@@ -14,6 +14,7 @@ import ErrorBoundary from "./components/ErrorBoundaries";
 import { useState } from "react";
 
 const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers }) => {
+  console.log("DigitUIWrapper",enabledModules)
   const { isLoading, data: initData } = Digit.Hooks.useInitStore(stateCode, enabledModules);
   if (isLoading) {
     return <Loader page={true} />;

@@ -141,9 +141,9 @@ const initDigitUI = () => {
     },
   };
 
-  const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
+  const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pg";
   initTokens(stateCode);
-
+console.log("enabledModules1111",enabledModules,stateCode)
   const registry = window?.Digit.ComponentRegistryService.getRegistry();
   ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />, document.getElementById("root"));
 };
