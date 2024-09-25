@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, {useEffect} from 'react';
 import { useQuery, useQueryClient } from "react-query";
 
 const useTradeLicenseSearch = ({ tenantId, filters, auth }, config = {}) => {
