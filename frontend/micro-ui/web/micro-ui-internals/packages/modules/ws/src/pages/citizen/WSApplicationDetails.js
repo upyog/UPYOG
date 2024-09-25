@@ -142,7 +142,7 @@ const WSApplicationDetails = () => {
   const wsEstimateDownloadObject = {
     order: 1,
     label: t("WS_ESTIMATION_NOTICE"),
-    onClick: () => data?.WaterConnection?.[0] ? getFiles([data?.WaterConnection?.[0]?.additionalDetails?.estimationFileStoreId], tenantId) : getFiles([data?.SewerageConnections?.[0]?.additionalDetails?.estimationFileStoreId], tenantId),
+    onClick: () => data?.WaterConnection?.[0] ? getFiles([data?.WaterConnection?.[0]?.additionalDetails?.estimationFileStoreId], stateCode) : getFiles([data?.SewerageConnections?.[0]?.additionalDetails?.estimationFileStoreId], stateCode),
   };
 
   const sanctionDownloadObject = {

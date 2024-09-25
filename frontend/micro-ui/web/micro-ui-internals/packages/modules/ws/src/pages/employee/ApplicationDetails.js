@@ -382,7 +382,7 @@ const ApplicationDetails = () => {
         const response = await Digit.WSService.search({tenantId : applicationDetails?.tenantId, filters: { ...filters }, businessService: serviceType == "WATER" ? "WS" : "SW"})
         let details = serviceType == "WATER" ? response?.WaterConnection?.[0] : response?.SewerageConnections?.[0];
         if (details?.additionalDetails?.estimationFileStoreId) {
-          getFiles([details?.additionalDetails?.estimationFileStoreId], tenantId)
+          getFiles([details?.additionalDetails?.estimationFileStoreId], stateCode)
         } else {
           sessionStorage.setItem("WARINIG_COUNT", warningCountDetails ? warningCountDetails + 1 : 1);
           setTimeout(() => {
