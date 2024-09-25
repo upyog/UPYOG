@@ -26,6 +26,7 @@ import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.TypeOfRoad;
+import org.egov.pt.models.enums.CreationReason;
 import org.egov.pt.models.enums.NoticeType;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.user.User;
@@ -645,18 +646,63 @@ public class EnrichmentService {
 	private void enrichPropertyForNewWf(RequestInfo requestInfo, Property property, Boolean isMutation) {
 
 		String ackNo;
-
+		String pId ="";
 		if (isMutation) {
 			ackNo = propertyutil.getIdList(requestInfo, property.getTenantId(), config.getMutationIdGenName(), config.getMutationIdGenFormat(), 1).get(0);
 		} else
 			ackNo = propertyutil.getIdList(requestInfo, property.getTenantId(), config.getAckIdGenName(), config.getAckIdGenFormat(), 1).get(0);
 
-		String pId = propertyutil.getIdList(requestInfo, property.getTenantId(), config.getPropertyIdGenName(), config.getPropertyIdGenFormat(), 1).get(0);
+		if(property.getCreationReason().equals(CreationReason.UPDATE))
+			pId = property.getPropertyId();
+		else {
+			pId=getPorpertyIdForAmBiMt(requestInfo,property);
+		}
 		property.setPropertyId(pId);
 		property.setId(UUID.randomUUID().toString());
 		property.setAcknowldgementNumber(ackNo);
 
 		enrichUuidsForNewUpdate(requestInfo, property);
+	}
+	
+	//Creating new Property for Mutation, Amalgamation, Bifurcation
+	public String getPorpertyIdForAmBiMt(RequestInfo request, Property property) {
+
+
+		String hyphe = "-";
+		StringBuffer sb =  new StringBuffer();
+		String pId = propertyutil.getIdList(request, property.getTenantId(), config.getPropertyIdGenName(), config.getPropertyIdGenFormat(), 1).get(0);
+		List<String> masterNames = new ArrayList<>(
+				Arrays.asList("tenants"));
+		Map<String, List<String>> codes = propertyutil.getAttributeValues(config.getStateLevelTenantId(), "tenant", masterNames,
+				"[?(@.city.districtTenantCode== '"+property.getTenantId()+"')].city.code", "$.MdmsRes.tenant", request);
+
+		String Districtcode=districtCodemap(property.getTenantId(),property);
+		String cityCode = codes.get("tenants").get(0);
+		sb.append(Districtcode);
+		sb.append(cityCode);
+		String code=property.getAddress().getLocality().getCode();
+		if(!property.getTenantId().equalsIgnoreCase("mn.imphal"))
+			code=code.replace("WD", "");
+		String lekaicode=code.substring(code.length()-3);
+		String wardcode=code.replace(lekaicode, "");
+		if(wardcode.length()==1)
+			wardcode="0"+wardcode;
+		String ownership=property.getOwnershipCategory();
+		ownership=ownership.substring(ownership.length()-10);
+		if(ownership.equalsIgnoreCase("GOVERNMENT"))
+			ownership="0";
+		else
+			ownership="1";
+		sb.append(wardcode).append(lekaicode).append(ownership);
+		String[] serialnumber=pId.split("-");
+		String propid="MN"+serialnumber[serialnumber.length-1];
+		sb.append(propid);
+		pId=sb.toString();
+		System.out.println(pId);
+
+		return pId;
+
+	
 	}
 
 	private void enrichPropertyForBifurcation(RequestInfo requestInfo, Property property) {

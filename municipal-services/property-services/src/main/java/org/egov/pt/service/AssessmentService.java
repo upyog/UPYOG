@@ -112,33 +112,32 @@ public class AssessmentService {
 		SimpleDateFormat year=new SimpleDateFormat("yyyy");
 		Timestamp stamp = new Timestamp(property.getAuditDetails().getCreatedTime());
 		Date date = new Date(stamp.getTime());
-		String propertyCreationYear = "2022";//year.format(date);
+		String propertyCreationYear = year.format(date);
 		String currentFinYearStart = props.getFinYearStart().toString();
 		boolean found=true;
 		StringBuilder sb = new StringBuilder("Please complete the assesment of previous years : ");
-		if(props.getAssesmentStartyear()>=Integer.parseInt(propertyCreationYear))
-		{
+		/*if(props.getAssesmentStartyear()>=Integer.parseInt(propertyCreationYear))
+		{*/
 			propertyIds.add(property.getPropertyId());
 			crt.setPropertyIds(propertyIds);
-			
-			for(int i=0;i<=props.getFinYearStart()-props.getAssesmentStartyear();i++) {
+			String assemtmentyearFromRequest = request.getAssessment().getFinancialYear().split("-")[0].toString();
+			for(int i=0;i<Integer.parseInt(assemtmentyearFromRequest)-props.getAssesmentStartyear();i++) {
 				Integer checkForYearStart = props.getAssesmentStartyear()+i;
 				Integer checkForYearEnd = props.getAssesmentStartyear()+1+i;
-				if(checkForYearStart==props.getFinYearStart() && checkForYearEnd ==props.getFinYearEnd()) {
-					break;
-				}
-				else {
+				
+				//if(checkForYearStart.compareTo(props.getFinYearStart())!=0 && checkForYearEnd.compareTo(props.getFinYearEnd())!=0) {
 					crt.setFinancialYear(checkForYearStart.toString()+"-"+checkForYearEnd.toString().substring(2));
 					earlierAssesmentForTheFinancialYear=  searchAssessments(crt, request.getRequestInfo());
 					if(null==earlierAssesmentForTheFinancialYear || earlierAssesmentForTheFinancialYear.isEmpty()) {
 						found=false;
 						sb.append(" "+checkForYearStart.toString()+"-"+checkForYearEnd.toString().substring(2)+",");
-					}
-					
 				}
+				
+					
+				//}
 			}
 			
-		}
+		//}
 		if(!found) {
 			throw new CustomException("ASSESMENT_EXCEPTION",sb.toString());
 		}
