@@ -1,5 +1,5 @@
 import useInbox from "../useInbox";
-import { useEffect } from "react";
+import React, {useEffect} from 'react';
 
 const useWSInbox = ({ tenantId, filters, config = {} }) => {
   const { filterForm, searchForm, tableForm } = filters;
