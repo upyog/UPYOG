@@ -9,16 +9,15 @@ import Timeline from "../components/ASTTimeline";
 const AssetAddress = ({ t, config, onSelect, userType, formData, formState }) => {
   const allCities = Digit.Hooks.asset.useTenants();
   let tenantId = Digit.ULBService.getCurrentTenantId();
+  const user = Digit.UserService.getUser().info;
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
 
-  
-
   let isEditAddress = formData?.isEditAddress || false;
   if (presentInModifyApplication) isEditAddress = true;
-  
+  console.log("usertype data-->",user);
   const { pincode, city } = formData?.address || "";
-  const cities = userType === "employee" ? allCities.filter((city) => city.code === tenantId) : pincode  ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode)) : allCities;
+  const cities = user.type === "EMPLOYEE" ? allCities.filter((city) => city.code === tenantId) : pincode  ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode)) : allCities;
 
   const [selectedCity, setSelectedCity] = useState(() => {
     return formData?.address?.city || null;
@@ -33,11 +32,8 @@ const AssetAddress = ({ t, config, onSelect, userType, formData, formState }) =>
     t
   );
 
- 
-
   const [localities, setLocalities] = useState();
-
-  const [selectedLocality, setSelectedLocality] = useState();
+ const [selectedLocality, setSelectedLocality] = useState();
 
   useEffect(() => {
     if (userType === "employee" && presentInModifyApplication && localities?.length) {
@@ -197,6 +193,19 @@ const AssetAddress = ({ t, config, onSelect, userType, formData, formState }) =>
               //labelKey="TENANT_TENANTS"
               disabled={isEditAddress}
             />
+            {/* <Dropdown
+            options={tenantId}
+            selectedOption={selectedCity}
+            optionKey="i18nKey"
+            onSelect={selectCity}
+            t={t}
+            isPTFlow={true}
+            //isDependent={true}
+            //labelKey="TENANT_TENANTS"
+            disabled={isEditAddress}
+            /> */}
+
+    
           </span>
           {selectedCity && localities && <CardLabel>{`${t("AST_LOCALITY")} `}</CardLabel>}
           {selectedCity && localities && (
