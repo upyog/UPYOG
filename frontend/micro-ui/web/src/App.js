@@ -57,7 +57,6 @@ const enabledModules = [
   "NOC",
   "Engagement",
   "CommonPT",
-  "WS",
   "Reports",
   "Bills",
   "SW",
