@@ -80,6 +80,7 @@ public class OwnerInfo extends User {
 		if (this.documents == null) {
 			this.documents = new ArrayList<>();
 		}
+		if(null!=this.documents)
 		this.documents.add(documentsItem);
 		return this;
 	}
