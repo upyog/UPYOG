@@ -1026,6 +1026,21 @@ public class BillServicev2 {
 				{
 					quaterlyammount=quaterlyammount.subtract(paidBillAmount);
 				}
+				
+				if(advancedBillAmount.compareTo(quaterlyammount)>0) {
+					advancedBillAmount = advancedBillAmount.subtract(quaterlyammount);
+					quaterlyammount = new BigDecimal(0);
+
+				}
+
+				else if(quaterlyammount.compareTo(advancedBillAmount)>0) {
+					quaterlyammount = quaterlyammount.subtract(advancedBillAmount);
+					advancedBillAmount = new BigDecimal(0);
+				}
+				else if(quaterlyammount.compareTo(quaterlyammount)==0) {
+					quaterlyammount = new BigDecimal(0);
+					advancedBillAmount = new BigDecimal(0);
+				}
 				/*
 				 * if(!successtransactionMapForQuater.containsKey(Q1)) {
 				 * if(!failedtransactionMapForQuater.containsKey(Q1) ||
@@ -1104,6 +1119,20 @@ public class BillServicev2 {
 				else if(quaterlyammount.compareTo(paidBillAmount)>0)
 				{
 					quaterlyammount=quaterlyammount.subtract(paidBillAmount);
+				}
+				
+				if(advancedBillAmount.compareTo(quaterlyammount)>0) {
+					advancedBillAmount = advancedBillAmount.subtract(quaterlyammount);
+					quaterlyammount = new BigDecimal(0);
+
+				}
+				else if(quaterlyammount.compareTo(advancedBillAmount)>0) {
+					quaterlyammount = quaterlyammount.subtract(advancedBillAmount);
+					advancedBillAmount = new BigDecimal(0);
+				}
+				else if(quaterlyammount.compareTo(quaterlyammount)==0) {
+					quaterlyammount = new BigDecimal(0);
+					advancedBillAmount = new BigDecimal(0);
 				}
 
 				/*
@@ -1199,8 +1228,7 @@ public class BillServicev2 {
 				quaterlyammount=ammountForTransactionperiod(Q3,amountforquaterly);
 				//1050
 				quaterlyammount=quaterlyammount.add(pastDue);
-				System.out.println(quaterlyammount.compareTo(paidBillAmount)==0);
-				System.out.println(quaterlyammount.compareTo(paidBillAmount)>0);
+				
 				if(quaterlyammount.compareTo(paidBillAmount)==0)
 				{
 					quaterlyammount=BigDecimal.ZERO;
@@ -1209,6 +1237,20 @@ public class BillServicev2 {
 				else if(quaterlyammount.compareTo(paidBillAmount)>0)
 				{
 					quaterlyammount=quaterlyammount.subtract(paidBillAmount);
+				}
+				
+				if(advancedBillAmount.compareTo(quaterlyammount)>0) {
+					advancedBillAmount = advancedBillAmount.subtract(quaterlyammount);
+					quaterlyammount = new BigDecimal(0);
+
+				}
+				else if(quaterlyammount.compareTo(advancedBillAmount)>0) {
+					quaterlyammount = quaterlyammount.subtract(advancedBillAmount);
+					advancedBillAmount = new BigDecimal(0);
+				}
+				else if(quaterlyammount.compareTo(quaterlyammount)==0) {
+					quaterlyammount = new BigDecimal(0);
+					advancedBillAmount = new BigDecimal(0);
 				}
 				/*
 				 * if(!successtransactionMapForQuater.containsKey(Q1)) {
