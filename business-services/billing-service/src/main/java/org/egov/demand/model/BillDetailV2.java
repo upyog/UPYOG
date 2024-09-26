@@ -66,6 +66,10 @@ public class BillDetailV2 {
 	private List<ModeOfPaymentDetails> modeOfPaymentDetails;
 	
 	
+	@JsonProperty("penalty")
+	private InterestAndPenalty interestAndPenalty;
+	
+	
 
 	public BillDetailV2 addBillAccountDetailsItem(BillAccountDetailV2 billAccountDetailsItem) {
 		if (this.billAccountDetails == null) {

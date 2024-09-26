@@ -17,12 +17,15 @@ public class InterestAndPenalty {
 	private BigDecimal initialTotalAmountCalculated;
 	private BigDecimal updatedTotalAmountCalculated;
 	private String type;
-	private String fromDate;
+	private Long fromDate;
 	//For Reference
-	private String IntialtoDate;
+	private Long IntialToDate;
 	//To date will be calculated form updatetoDate
-	private String updatetoDate;
+	private Long updatedToDate;
 	private Long noOfdays;
+	private BigDecimal interestPercentage;
+	private BigDecimal billAmountInterestCalculated;
+	
 	
 
 }
