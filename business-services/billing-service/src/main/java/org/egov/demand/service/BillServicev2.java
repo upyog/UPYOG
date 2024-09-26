@@ -1055,10 +1055,11 @@ public class BillServicev2 {
 					dayDifference= getDateDifference(firstDayAfterexpiryDateQ1,currentDateWithAssesmentYear(currentyear.toString()));
 					if(dayDifference.compareTo(zeroAmount)>0) {
 						interestPercentOntaxAmount = appProps.getInterestPercent().divide(divideValue).multiply(quaterlyammount).multiply(dayDifference);
+						inp= getInterestPenalty("", interestPercentOntaxAmount, interestPercentOntaxAmount, "INTEREST", 
+								getDateInMilisec(firstDayAfterexpiryDateQ1,true), getDateInMilisec(currentDateWithAssesmentYear(nextYear.toString()),false), Long.parseLong(dayDifference.toString()),quaterlyammount);
 					}
 
-					inp= getInterestPenalty("", interestPercentOntaxAmount, interestPercentOntaxAmount, "INTEREST", 
-							getDateInMilisec(firstDayAfterexpiryDateQ1,true), getDateInMilisec(currentDateWithAssesmentYear(nextYear.toString()),false), Long.parseLong(dayDifference.toString()),quaterlyammount);
+					
 				}
 
 
@@ -1163,9 +1164,10 @@ public class BillServicev2 {
 					dayDifference= getDateDifference(firstDayAfterexpiryDateQ2,currentDateWithAssesmentYear(currentyear.toString()));
 					if(dayDifference.compareTo(zeroAmount)>0) {
 						interestPercentOntaxAmount = appProps.getInterestPercent().divide(divideValue).multiply(quaterlyammount).multiply(dayDifference);
+						inp= getInterestPenalty("", interestPercentOntaxAmount, interestPercentOntaxAmount, "INTEREST", 
+								getDateInMilisec(firstDayAfterexpiryDateQ2,true), getDateInMilisec(currentDateWithAssesmentYear(nextYear.toString()),false), Long.parseLong(dayDifference.toString()),quaterlyammount);
 					}
-					inp= getInterestPenalty("", interestPercentOntaxAmount, interestPercentOntaxAmount, "INTEREST", 
-							getDateInMilisec(firstDayAfterexpiryDateQ2,true), getDateInMilisec(currentDateWithAssesmentYear(nextYear.toString()),false), Long.parseLong(dayDifference.toString()),quaterlyammount);
+					
 				}
 
 				/*
@@ -1293,11 +1295,12 @@ public class BillServicev2 {
 					dayDifference= getDateDifference(firstDayAfterexpiryDateQ3,currentDateWithAssesmentYear(nextYear.toString()));
 					if(dayDifference.compareTo(zeroAmount)>0) {
 						interestPercentOntaxAmount = appProps.getInterestPercent().divide(divideValue).multiply(quaterlyammount).multiply(dayDifference);
+						inp= getInterestPenalty("", interestPercentOntaxAmount, interestPercentOntaxAmount, "INTEREST", 
+								getDateInMilisec(firstDayAfterexpiryDateQ3,true), getDateInMilisec(currentDateWithAssesmentYear(nextYear.toString()),false), Long.parseLong(dayDifference.toString()),quaterlyammount);
+
 					}
 
-					inp= getInterestPenalty("", interestPercentOntaxAmount, interestPercentOntaxAmount, "INTEREST", 
-							getDateInMilisec(firstDayAfterexpiryDateQ3,true), getDateInMilisec(currentDateWithAssesmentYear(nextYear.toString()),false), Long.parseLong(dayDifference.toString()),quaterlyammount);
-
+					
 				}
 				/*
 				 * if(!successtransactionMapForQuater.containsKey(Q1)) {
@@ -1446,7 +1449,6 @@ public class BillServicev2 {
 					dayDifference= getDateDifference(firstDayAfterexpiryDateH1,currentDateWithAssesmentYear(nextYear.toString()));
 					if(dayDifference.compareTo(zeroAmount)>0) {
 						interestPercentOntaxAmount = appProps.getInterestPercent().divide(divideValue).multiply(halfyearlyammount).multiply(dayDifference);
-
 
 						inp= getInterestPenalty("", interestPercentOntaxAmount, interestPercentOntaxAmount, "INTEREST", 
 								getDateInMilisec(firstDayAfterexpiryDateH1,true), getDateInMilisec(currentDateWithAssesmentYear(nextYear.toString()),false), Long.parseLong(dayDifference.toString()),halfyearlyammount);
