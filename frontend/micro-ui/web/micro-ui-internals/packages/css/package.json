@@ -1,6 +1,6 @@
 {
   "name": "@upyog-niua/upyog-css",
-  "version": "1.8.1",
+  "version": "1.8.8",
   "license": "MIT",
   "main": "dist/index.css",
   "author": "Jagankumar <jagan.kumar@egov.org.in>",
@@ -45,7 +45,7 @@
     "postcss-prefixer": "2.1.3",
     "postcss-preset-env": "6.7.1",
     "postcss-scss": "3.0.5",
-    "sass": "^1.26.11"
+    "sass": "1.26.11"
   },
   "files": [
     "dist/index.min.css",
