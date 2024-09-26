@@ -145,7 +145,7 @@ const EmployeeHome = ({ modules}) => {
     <div className="employee-app-container">
       {/* This Code is written for ULB Level Dashboard */}
       <br></br>
-      <div style={{marginLeft:"34%",fontWeight:"bold", fontSize:"20px", marginBottom:"5px"}}>
+      <div style={{marginLeft:"42%",fontWeight:"bold", fontSize:"20px", marginBottom:"5px"}}>
         {t("COMMON_ULB_DASHBOARD")}
       </div>
       <div className="ground-container moduleCardWrapper gridModuleWrapper">
