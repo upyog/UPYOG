@@ -44,7 +44,7 @@ public class SiteBookingController {
 
     @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping({"/fetch","/fetch/{value}"})
-    public ResponseEntity<?> calculateTLFee(@RequestBody SiteBookingActionRequest siteBookingActionRequest
+    public ResponseEntity<?> calculateFee(@RequestBody SiteBookingActionRequest siteBookingActionRequest
     										, @PathVariable String value){
     	
     	SiteBookingActionResponse response = null;
