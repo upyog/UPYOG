@@ -204,7 +204,7 @@ public class SiteService {
 					&& searchSiteRequest.getRequestInfo().getUserInfo().getType().equalsIgnoreCase("EMPLOYEE")) {
 
 				List<String> wfStatus = getAccountStatusListByRoles(
-						searchSiteRequest.getRequestInfo().getUserInfo().getUuid(),
+						searchSiteRequest.getRequestInfo().getUserInfo().getRoles().get(0).getTenantId(),
 						searchSiteRequest.getRequestInfo().getUserInfo().getRoles());
 				searchSiteRequest.getSiteSearchData().setWorkflowStatus(wfStatus);
 				siteSearchData = siteRepository.searchSites(searchSiteRequest);
@@ -230,12 +230,12 @@ public class SiteService {
 		return siteSearchResponse;
 	}
 
-	private List<String> getAccountStatusListByRoles(String uuid, List<Role> roles) {
-		List<String> rolesWithinTenant = getRolesByTenantId(uuid, roles);
+	private List<String> getAccountStatusListByRoles(String tenantId, List<Role> roles) {
+		List<String> rolesWithinTenant = getRolesByTenantId(tenantId, roles);
 		Set<String> statusWithRoles = new HashSet();
 		rolesWithinTenant.stream().forEach(role -> {
 
-			if (StringUtils.equalsIgnoreCase(role, PTRConstants.USER_ROLE_SITE_VERIFIER)) {
+			if (StringUtils.equalsIgnoreCase(role, PTRConstants.USER_ROLE_SITE_REVIEWER)) {
 				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION);
 				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_INITIATED);
 				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORVERIFICATION);
@@ -252,8 +252,8 @@ public class SiteService {
 		return new ArrayList<>(statusWithRoles);
 	}
 
-	private List<String> getRolesByTenantId(String uuid, List<Role> roles) {
-		List<String> roleCodes = roles.stream().filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), uuid))
+	private List<String> getRolesByTenantId(String tenantId, List<Role> roles) {
+		List<String> roleCodes = roles.stream().filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId))
 				.map(role -> role.getCode()).collect(Collectors.toList());
 		return roleCodes;
 	}
