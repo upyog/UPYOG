@@ -34,4 +34,5 @@ public class SiteBooking {
 	private String status;
 	private JsonNode additionalDetail;
 	private AuditDetails auditDetails;
+	private SiteCreationData siteCreationData;
 }

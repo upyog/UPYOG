@@ -50,9 +50,9 @@ public class GrbgConstants {
 
     public static final String WORKFLOW_MODULE_NAME  = "GB";
 
-    public static final String USER_ROLE_CITIZEN  = "CITIZEN";
+    public static final String USER_TYPE_CITIZEN  = "CITIZEN";
 
-    public static final String USER_ROLE_EMPLOYEE = "EMPLOYEE";
+    public static final String USER_TYPE_EMPLOYEE = "EMPLOYEE";
 
     public static final String USER_ROLE_GB_VERIFIER = "GB_VERIFIER";
 
