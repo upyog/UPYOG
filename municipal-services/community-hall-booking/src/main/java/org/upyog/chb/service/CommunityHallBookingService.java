@@ -13,6 +13,7 @@ import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 
 import digit.models.coremodels.PaymentDetail;
+import lombok.NonNull;
 
 public interface CommunityHallBookingService {
 
@@ -25,5 +26,7 @@ public interface CommunityHallBookingService {
 	CommunityHallBookingDetail updateBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest, PaymentDetail paymentDetail, BookingStatusEnum bookingStatusEnum);
 
 	List<CommunityHallSlotAvailabilityDetail> getCommunityHallSlotAvailability(CommunityHallSlotSearchCriteria criteria);
+
+	Integer getBookingCount(@Valid CommunityHallBookingSearchCriteria criteria, @NonNull RequestInfo requestInfo);
 
 }

@@ -19,13 +19,13 @@ public class CommunityHallBookingQueryBuilder {
 	private static final StringBuilder bookingDetailsQuery = new StringBuilder(
 			"SELECT ecbd.booking_id, booking_no, payment_date, application_date, tenant_id, community_hall_code, \n"
 					+ "booking_status, special_category, purpose, purpose_description, receipt_no, ecbd.createdby, ecbd.createdtime, \n"
-					+ "ecbd.lastmodifiedby, ecbd.lastmodifiedtime,ecbd.permission_letter_filestore_id, ecbd.payment_receipt_filestore_id, \n" + "	\n"
+					+ "ecbd.lastmodifiedby, ecbd.lastmodifiedtime,ecbd.permission_letter_filestore_id, ecbd.payment_receipt_filestore_id, \n" 
 					+ "appl.applicant_detail_id, applicant_name, applicant_email_id, applicant_mobile_no,\n"
 					+ "applicant_alternate_mobile_no, account_no, ifsc_code, bank_name, bank_branch_name, \n"
-					+ "account_holder_name, \n" + "\n" + "address_id, door_no, house_no, address_line_1, \n"
-					+ "landmark, city, city_code, pincode, street_name, locality, locality_code\n" + "	\n"
+					+ "account_holder_name, address_id, door_no, house_no, address_line_1, \n"
+					+ "landmark, city, city_code, pincode, street_name, locality, locality_code \n" 
 					+ "FROM public.eg_chb_booking_detail ecbd \n"
-					+ "join public.eg_chb_applicant_detail appl on ecbd.booking_id = appl.booking_id\n"
+					+ "join public.eg_chb_applicant_detail appl on ecbd.booking_id = appl.booking_id \n"
 					+ "join public.eg_chb_address_detail addr on appl.applicant_detail_id = addr.applicant_detail_id ");
 
 	private static final String slotDetailsQuery = "select * from public.eg_chb_slot_detail where booking_id in (";
@@ -42,6 +42,12 @@ public class CommunityHallBookingQueryBuilder {
 			+ "	ecsd.booking_date >= ? and ecsd.booking_date <=  ? ";
 		//	+ "	AND ecsd.hall_code in (?)";
 	
+	//private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
+	
+	private static final String bookingDetailsCountCount = "SELECT count(ecbd.booking_id) \n" 
+			+ "FROM public.eg_chb_booking_detail ecbd \n"
+	+ "join public.eg_chb_applicant_detail appl on ecbd.booking_id = appl.booking_id \n";
+	
 
 	/**
 	 * To give the Search query based on the requirements.
@@ -52,8 +58,14 @@ public class CommunityHallBookingQueryBuilder {
 	 */
 	public String getCommunityHallBookingSearchQuery(CommunityHallBookingSearchCriteria criteria,
 			List<Object> preparedStmtList) {
-		StringBuilder builder = new StringBuilder(bookingDetailsQuery);
-
+		StringBuilder builder;
+		
+		if(criteria.isCountCall()) {
+			builder = new StringBuilder(bookingDetailsCountCount);
+		}else {
+			builder = new StringBuilder(bookingDetailsQuery);
+		}
+		
 		if (criteria.getTenantId() != null) {
 			if (criteria.getTenantId().split("\\.").length == 1) {
 
@@ -120,7 +132,17 @@ public class CommunityHallBookingQueryBuilder {
 			builder.append(" ecbd.payment_date < ").append(criteria.getToDate());
 		}
 		
-		return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
+		String query = null;
+		
+		if(criteria.isCountCall()) {
+			//pagination attributes not required for count query
+			query = builder.toString();
+		} else {
+			//Add pagination attributes for booking details query
+			query = addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
+		}
+		
+		return query;
 	}
 
 	/**

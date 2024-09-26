@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
+import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.service.CommunityHallBookingService;
 import org.upyog.chb.service.DemandService;
 import org.upyog.chb.util.CommunityHallBookingUtil;
@@ -83,7 +84,16 @@ public class CommunityHallBookingController {
 	@RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
 	public ResponseEntity<CommunityHallBookingResponse> v1UpdateBooking(
 			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @Valid @RequestBody CommunityHallBookingRequest communityHallsBookingRequest) {
-		CommunityHallBookingDetail bookingDetail = bookingService.updateBooking(communityHallsBookingRequest, null, null);
+		
+		/**
+		 * This update booking method will be called for below two tasks : 
+		 * 1.Update filestoreid for payment link and permission letter link
+		 * 2. Update status when cancelled
+		 * 
+		 */
+		
+		CommunityHallBookingDetail bookingDetail = bookingService.updateBooking(communityHallsBookingRequest, null, 
+				 BookingStatusEnum.valueOf(communityHallsBookingRequest.getHallsBookingApplication().getBookingStatus()));
 		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(communityHallsBookingRequest.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_UPDATED,
 				StatusEnum.SUCCESSFUL);
 		CommunityHallBookingResponse communityHallResponse = CommunityHallBookingResponse.builder().responseInfo(info)
@@ -96,9 +106,14 @@ public class CommunityHallBookingController {
 	public ResponseEntity<CommunityHallBookingResponse> v1SearchCommunityHallBooking(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
             @Valid @ModelAttribute CommunityHallBookingSearchCriteria criteria) {
 		List<CommunityHallBookingDetail> applications = bookingService.getBookingDetails(criteria, requestInfoWrapper.getRequestInfo());
+		
+		/**
+		 * Count : it is used to show load more booking attribute on front end 
+		 */
+		Integer count = bookingService.getBookingCount(criteria, requestInfoWrapper.getRequestInfo());
 		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_LIST,
 				StatusEnum.SUCCESSFUL);
-		CommunityHallBookingResponse response = CommunityHallBookingResponse.builder().hallsBookingApplication(applications)
+		CommunityHallBookingResponse response = CommunityHallBookingResponse.builder().hallsBookingApplication(applications).count(count)
 				.responseInfo(info).build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
