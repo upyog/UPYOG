@@ -194,10 +194,10 @@ public class AssessmentService {
 	public void deactivateOldDemandsForPreiousYears(AssessmentRequest request) {
 		
 		String assemtmentyearFromRequest = request.getAssessment().getFinancialYear().split("-")[1].toString();
-		assemtmentyearFromRequest = "31-12-20"+assemtmentyearFromRequest;
+		assemtmentyearFromRequest = "31-03-20"+assemtmentyearFromRequest;
 		DemandResponse dmr = billingService.fetchDemand(request);
 		DemandRequest demRequest = new DemandRequest();
-		List<Demand>demaListToBeUpdated = new ArrayList<>();
+		List<Demand>demaListToBeUpdated = null;
 		
 		Calendar datexp = Calendar.getInstance();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -205,26 +205,26 @@ public class AssessmentService {
 		try {
 			java.util.Date parsedDate =  dateFormat.parse(assemtmentyearFromRequest);
 			datexp.setTime(parsedDate);
-			datexp.set(datexp.get(Calendar.YEAR), datexp.get(Calendar.MONTH), datexp.get(Calendar.DATE), 23, 59, 59);
+			//datexp.set(datexp.get(Calendar.YEAR), datexp.get(Calendar.MONTH), datexp.get(Calendar.DATE), 23, 59, 59);
 		}catch (ParseException e) {
 
 			e.printStackTrace();
 		}
 
 		if(null!=dmr.getDemands() &&!dmr.getDemands().isEmpty()) {
+			demaListToBeUpdated = new ArrayList<>();
 			for(Demand dm:dmr.getDemands()) {
+				if(dm.getTaxPeriodTo().compareTo(datexp.getTimeInMillis()) < 0) {
+					dm.setStatus(StatusEnum.CANCELLED);
+					demaListToBeUpdated.add(dm);
+				}
 				
-				System.out.println(dm.getTaxPeriodTo());
-				System.out.println(datexp.getTimeInMillis());
-				System.out.println(dm.getTaxPeriodTo().compareTo(datexp.getTimeInMillis()) < 0);
-				//if(dm.getTaxPeriodTo().compareTo(System.currentTimeMillis()) < 0)
-				if(dm.getTaxPeriodTo().compareTo(datexp.getTimeInMillis()) < 0)
-				dm.setStatus(StatusEnum.CANCELLED);
-				demaListToBeUpdated.add(dm);
 			}
-			demRequest.setDemands(demaListToBeUpdated);
-			demRequest.setRequestInfo(request.getRequestInfo());
-			DemandResponse resp = billingService.updateDemand(demRequest);
+			if(null!=demaListToBeUpdated&&demaListToBeUpdated.size()>0 && !demaListToBeUpdated.isEmpty()) {
+				demRequest.setDemands(demaListToBeUpdated);
+				demRequest.setRequestInfo(request.getRequestInfo());
+				DemandResponse resp = billingService.updateDemand(demRequest);
+			}
 			}
 	}
 	
