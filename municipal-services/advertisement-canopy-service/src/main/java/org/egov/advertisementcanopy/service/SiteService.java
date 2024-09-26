@@ -1,10 +1,16 @@
 package org.egov.advertisementcanopy.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.advertisementcanopy.model.AuditDetails;
 import org.egov.advertisementcanopy.model.SiteCountData;
 import org.egov.advertisementcanopy.model.SiteCountRequest;
@@ -18,9 +24,10 @@ import org.egov.advertisementcanopy.model.SiteUpdateRequest;
 import org.egov.advertisementcanopy.model.SiteUpdationResponse;
 import org.egov.advertisementcanopy.producer.Producer;
 import org.egov.advertisementcanopy.repository.SiteRepository;
-import org.egov.advertisementcanopy.repository.builder.SiteApplicationQueryBuilder;
 import org.egov.advertisementcanopy.util.AdvtConstants;
+import org.egov.advertisementcanopy.util.PTRConstants;
 import org.egov.advertisementcanopy.util.ResponseInfoFactory;
+import org.egov.common.contract.request.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -36,7 +43,7 @@ public class SiteService {
 
 	@Autowired
 	Producer producer;
-	
+
 	@Autowired
 	WorkflowService workflowService;
 
@@ -130,7 +137,7 @@ public class SiteService {
 	}
 
 	private void createSiteObjects(SiteCreationRequest createSiteRequest) {
-		//siteRepository.create(createSiteRequest.getCreationData());
+		// siteRepository.create(createSiteRequest.getCreationData());
 		producer.push(AdvtConstants.SITE_CREATION, createSiteRequest);
 	}
 
@@ -165,7 +172,7 @@ public class SiteService {
 	}
 
 	private void updateSiteData(SiteUpdateRequest updateSiteRequest) {
-		//siteRepository.updateSiteData(updateSiteRequest);
+		// siteRepository.updateSiteData(updateSiteRequest);
 		producer.push(AdvtConstants.SITE_UPDATION, updateSiteRequest);
 	}
 
@@ -186,6 +193,25 @@ public class SiteService {
 		SiteSearchResponse siteSearchResponse = new SiteSearchResponse();
 		List<SiteCreationData> siteSearchData = new ArrayList<>();
 		try {
+			
+			if (null != searchSiteRequest.getRequestInfo()
+					&& searchSiteRequest.getRequestInfo().getUserInfo().getType().equalsIgnoreCase("CITIZEN")) {
+				searchSiteRequest.getSiteSearchData().setStatus("Available");
+				searchSiteRequest.getSiteSearchData().setWorkflowStatus(Collections.singletonList("Approved"));
+				searchSiteRequest.getSiteSearchData().setActive(true);
+				siteSearchData = siteRepository.searchSites(searchSiteRequest);
+			} else if (null != searchSiteRequest.getRequestInfo()
+					&& searchSiteRequest.getRequestInfo().getUserInfo().getType().equalsIgnoreCase("EMPLOYEE")) {
+
+				List<String> wfStatus = getAccountStatusListByRoles(
+						searchSiteRequest.getRequestInfo().getUserInfo().getUuid(),
+						searchSiteRequest.getRequestInfo().getUserInfo().getRoles());
+				searchSiteRequest.getSiteSearchData().setWorkflowStatus(wfStatus);
+				siteSearchData = siteRepository.searchSites(searchSiteRequest);
+			}
+			else {
+				siteSearchData = siteRepository.searchSites(searchSiteRequest);
+			}
 			siteSearchData = siteRepository.searchSites(searchSiteRequest);
 			if (!CollectionUtils.isEmpty(siteSearchData)) {
 				siteSearchResponse = getSearchResponseFromAccounts(siteSearchData);
@@ -202,6 +228,34 @@ public class SiteService {
 			throw new RuntimeException(e.getMessage());
 		}
 		return siteSearchResponse;
+	}
+
+	private List<String> getAccountStatusListByRoles(String uuid, List<Role> roles) {
+		List<String> rolesWithinTenant = getRolesByTenantId(uuid, roles);
+		Set<String> statusWithRoles = new HashSet();
+		rolesWithinTenant.stream().forEach(role -> {
+
+			if (StringUtils.equalsIgnoreCase(role, PTRConstants.USER_ROLE_SITE_VERIFIER)) {
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION);
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_INITIATED);
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORVERIFICATION);
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_APPROVED);
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_REJECTED);
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORAPPROVAL);
+			} else if (StringUtils.equalsIgnoreCase(role, PTRConstants.USER_ROLE_SITE_APPROVER)) {
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_APPROVED);
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_REJECTED);
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORAPPROVAL);
+			}
+
+		});
+		return new ArrayList<>(statusWithRoles);
+	}
+
+	private List<String> getRolesByTenantId(String uuid, List<Role> roles) {
+		List<String> roleCodes = roles.stream().filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), uuid))
+				.map(role -> role.getCode()).collect(Collectors.toList());
+		return roleCodes;
 	}
 
 	private SiteSearchResponse getSearchResponseFromAccounts(List<SiteCreationData> siteSearchData) {

@@ -26,4 +26,5 @@ public class SiteSearchData {
 	@JsonProperty("active")
 	private boolean isActive;
 	private String siteID;
+	private List<String> workflowStatus;
 }
