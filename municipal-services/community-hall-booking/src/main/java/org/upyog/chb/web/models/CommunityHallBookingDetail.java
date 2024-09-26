@@ -37,6 +37,8 @@ public class CommunityHallBookingDetail {
 	
 	private String bookingNo;
 	
+	private String bookingRefNo;
+	
 	private Long paymentDate;
 	
 	private Long applicationDate;

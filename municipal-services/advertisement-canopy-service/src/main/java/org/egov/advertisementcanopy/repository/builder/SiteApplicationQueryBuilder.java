@@ -33,4 +33,6 @@ public class SiteApplicationQueryBuilder {
 	
 	public static final String SELECT_BOOKED_COUNT = "SELECT COUNT(*) FROM eg_site_application WHERE ulb_name =:ulbName AND status =:status";
 	
+	public static final String SELECT_SITE_FOR_CITIZEN="SELECT * FROM eg_site_application";
+	
 }

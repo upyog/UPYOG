@@ -11,6 +11,7 @@ import org.springframework.util.CollectionUtils;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.repository.IdGenRepository;
+import org.upyog.chb.repository.impl.CommunityHallBookingRepositoryImpl;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.AuditDetails;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
@@ -29,29 +30,36 @@ public class EnrichmentService {
 	@Autowired
 	private IdGenRepository idGenRepository;
 
+	@Autowired
+	private CommunityHallBookingRepositoryImpl communityHallBookingRepositoryImpl;
+
 	public void enrichCreateBookingRequest(CommunityHallBookingRequest bookingRequest) {
-		String bookingId = CommunityHallBookingUtil.getRandonUUID();
+		 String bookingId = CommunityHallBookingUtil.getRandonUUID();
+		String bookingRefNo = "CHB" + "/" + "B" + "/"
+				+ bookingRequest.getHallsBookingApplication().getAddress().getAddressId()+"/"
+				+ communityHallBookingRepositoryImpl.getNextSequence();
 		log.info("Enriching booking request for booking id :" + bookingId);
-		
+
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
 		RequestInfo requestInfo = bookingRequest.getRequestInfo();
 		AuditDetails auditDetails = CommunityHallBookingUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
-		
+
 		bookingDetail.setAuditDetails(auditDetails);
 		bookingDetail.setBookingId(bookingId);
+		bookingDetail.setBookingRefNo(bookingRefNo);
 		bookingDetail.setApplicationDate(auditDetails.getCreatedTime());
 		bookingDetail.setBookingStatus(BookingStatusEnum.valueOf(bookingDetail.getBookingStatus()).toString());
-		
-		//Updating id and status for slot details
+
+		// Updating id and status for slot details
 		bookingDetail.getBookingSlotDetails().stream().forEach(slot -> {
 			slot.setBookingId(bookingId);
 			slot.setSlotId(CommunityHallBookingUtil.getRandonUUID());
-			//Check Slot staus before setting TODO: booking_created
+			// Check Slot staus before setting TODO: booking_created
 			slot.setStatus(BookingStatusEnum.valueOf(slot.getStatus()).toString());
 			slot.setAuditDetails(auditDetails);
 		});
-		
-		//Updating id booking in documents
+
+		// Updating id booking in documents
 		/*
 		 * bookingDetail.getUploadedDocumentDetails().stream().forEach(document -> {
 		 * document.setBookingId(bookingId);
@@ -59,18 +67,16 @@ public class EnrichmentService {
 		 * document.setAuditDetails(auditDetails); });
 		 */
 
-
 		bookingDetail.getApplicantDetail().setBookingId(bookingId);
 		bookingDetail.getApplicantDetail().setApplicantDetailId(CommunityHallBookingUtil.getRandonUUID());
 		bookingDetail.getApplicantDetail().setAuditDetails(auditDetails);
-	
-		
+
 		bookingDetail.getAddress().setAddressId(CommunityHallBookingUtil.getRandonUUID());
 		bookingDetail.getAddress().setApplicantDetailId(bookingDetail.getApplicantDetail().getApplicantDetailId());
 
 		List<String> customIds = getIdList(requestInfo, bookingDetail.getTenantId(),
 				config.getCommunityHallBookingIdKey(), config.getCommunityHallBookingIdFromat(), 1);
-		
+
 		log.info("Enriched booking request for booking no :" + customIds.get(0));
 
 		bookingDetail.setBookingNo(customIds.get(0));
@@ -98,19 +104,21 @@ public class EnrichmentService {
 		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
 	}
 
-	public void enrichUpdateBookingRequest(CommunityHallBookingRequest communityHallsBookingRequest, BookingStatusEnum statusEnum) {
-		AuditDetails auditDetails = CommunityHallBookingUtil.getAuditDetails(communityHallsBookingRequest.getRequestInfo().getUserInfo().getUuid(), false);
+	public void enrichUpdateBookingRequest(CommunityHallBookingRequest communityHallsBookingRequest,
+			BookingStatusEnum statusEnum) {
+		AuditDetails auditDetails = CommunityHallBookingUtil
+				.getAuditDetails(communityHallsBookingRequest.getRequestInfo().getUserInfo().getUuid(), false);
 		CommunityHallBookingDetail bookingDetail = communityHallsBookingRequest.getHallsBookingApplication();
-		if(statusEnum != null) {
+		if (statusEnum != null) {
 			bookingDetail.setBookingStatus(statusEnum.toString());
-			//bookingDetail.setReceiptNo(paymentRequest.getPayment().getTransactionNumber());;
+			// bookingDetail.setReceiptNo(paymentRequest.getPayment().getTransactionNumber());;
 			bookingDetail.getBookingSlotDetails().stream().forEach(slot -> {
 				slot.setStatus(statusEnum.toString());
 			});
 		}
 		communityHallsBookingRequest.getHallsBookingApplication().setPaymentDate(auditDetails.getLastModifiedTime());
 		communityHallsBookingRequest.getHallsBookingApplication().setAuditDetails(auditDetails);
-		
+
 	}
 
 }
