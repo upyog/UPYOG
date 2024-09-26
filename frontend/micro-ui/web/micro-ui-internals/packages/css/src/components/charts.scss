@@ -114,6 +114,53 @@
   color: #a82227 !important;
 }
 
+.status-card {
+  width: 20%;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.status-card .count {
+  font-size: 36px;
+  font-weight: bold;
+  display: block;
+}
+
+.status-card .title {
+  font-size: 18px;
+  margin-top: 10px;
+  display: block;
+}
+
+.status-card .more-info {
+  font-size: 12px;
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  text-align: center;
+}
+
+.status-card.blue {
+  background-color: #007bff;
+}
+
+.status-card.teal {
+  background-color: #20c997;
+}
+
+.status-card.purple {
+  background-color: #6f42c1;
+}
+
+.status-card.green {
+  background-color: #28a745;
+}
+
+
 @media (max-width: 420px) { 
   .recharts-default-tooltip {
     width: 85%;

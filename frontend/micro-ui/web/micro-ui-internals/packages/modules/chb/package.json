@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@nudmcdgnpm/digit-ui-libraries": "1.2.0",
-    "@nudmcdgnpm/digit-ui-react-components": "1.2.0",
+    "@nudmcdgnpm/digit-ui-react-components": "1.2.1",
     "lodash.merge": "^4.6.2",
     "microbundle-crl": "^0.13.11",
     "react": "17.0.2",

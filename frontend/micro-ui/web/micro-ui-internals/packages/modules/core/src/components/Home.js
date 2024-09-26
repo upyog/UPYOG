@@ -129,10 +129,36 @@ const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => 
   );
 };
 
-const EmployeeHome = ({ modules }) => {
+
+
+const cardData = [
+  { title: "Initiated", count: 0, color: "blue" }, // Add respective values
+  { title: "Payments Due", count: 0, color: "teal" },
+  { title: "Submitted", count: 0, color: "purple" },
+  { title: "Approved", count: 0, color: "green" },
+];
+
+const EmployeeHome = ({ modules}) => {
+  const { t } = useTranslation();
   if(window.Digit.SessionStorage.get("PT_CREATE_EMP_TRADE_NEW_FORM")) window.Digit.SessionStorage.set("PT_CREATE_EMP_TRADE_NEW_FORM",{})
   return (
     <div className="employee-app-container">
+      {/* This Code is written for ULB Level Dashboard */}
+      <br></br>
+      <div style={{marginLeft:"34%",fontWeight:"bold", fontSize:"20px", marginBottom:"5px"}}>
+        {t("COMMON_ULB_DASHBOARD")}
+      </div>
+      <div className="ground-container moduleCardWrapper gridModuleWrapper">
+        {cardData.map(({ title, count, color }, index) => (
+          <div key={index} className={`status-card ${color}`}>
+            <div className="card-content">
+              <span className="count">{count}</span>
+              <span className="title">{title}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
       <div className="ground-container moduleCardWrapper gridModuleWrapper">
         {modules.map(({ code }, index) => {
           const Card = Digit.ComponentRegistryService.getComponent(`${code}Card`) || (() => <React.Fragment />);

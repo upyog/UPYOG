@@ -122,6 +122,9 @@ const Urls = {
     estimateCreate: "/chb-services/booking/v1/_estimate"
   },
 
+  fnoc:{
+    create:"/firenoc-services/v1/_create"
+  },
 
 
   dss: {

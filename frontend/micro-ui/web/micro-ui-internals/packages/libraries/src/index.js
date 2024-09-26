@@ -53,7 +53,7 @@ import { CFService } from "./services/elements/CF";
 import { PTRService } from "./services/elements/PTR";   
 import { ASSETService } from "./services/elements/ASSET";  
 import { CHBServices } from "./services/elements/CHB";  
-
+import { FNOCService } from "./services/elements/FNOC";
 import { EwService } from "./services/elements/EW";
 import {CustomService} from "./services/elements/CustomService";  
 // imported Birth and Death service  
@@ -122,6 +122,7 @@ const initLibraries = () => {
   setupLibraries("AuditService",AuditService);
   setupLibraries("PTRService", PTRService);
   setupLibraries("ASSETService", ASSETService);
+  setupLibraries("FNOCService", FNOCService);
   setupLibraries("CHBServices", CHBServices);
   setupLibraries("EwService", EwService);
   setupLibraries("BnDService", BnDService);

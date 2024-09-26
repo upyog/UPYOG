@@ -14,8 +14,7 @@ import Timeline from "../components/ASTTimeline";
 import { Controller, useForm } from "react-hook-form";
 
 
-const NewAsset
-  = ({ t, config, onSelect, formData }) => {
+const NewAsset = ({ t, config, onSelect, formData }) => {
     const { pathname: url } = useLocation();
     let index = window.location.href.charAt(window.location.href.length - 1);
     let validation = {};
