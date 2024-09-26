@@ -1,6 +1,6 @@
 {
   "name": "@upyog-niua/upyog-css",
-  "version": "1.8.8",
+  "version": "1.8.11",
   "license": "MIT",
   "main": "dist/index.css",
   "author": "Jagankumar <jagan.kumar@egov.org.in>",

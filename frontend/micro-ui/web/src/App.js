@@ -57,8 +57,10 @@ const enabledModules = [
   "NOC",
   "Engagement",
   "CommonPT",
+  "WS",
   "Reports",
   "Bills",
+  "SW",
   "BillAmendment",
   "FireNoc",
   "Birth",
@@ -106,7 +108,6 @@ function App() {
   if (!stateCode) {
     return <h1>stateCode is not defined</h1>;
   }
-  console.log("enabledModulesenabledModules",enabledModules)
   return (
     <DigitUI
       stateCode={stateCode}
