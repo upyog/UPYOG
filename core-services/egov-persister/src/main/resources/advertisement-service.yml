@@ -272,11 +272,11 @@ serviceMaps:
        - jsonPath: $.siteUpdationData.applicationStartDate
        
        - jsonPath: $.siteUpdationData.applicationEndDate
+
+       - jsonPath: $.siteUpdationData.workFlowStatus
        
        - jsonPath: $.siteUpdationData.uuid
 
        - jsonPath: $.siteUpdationData.id
-
-       - jsonPath: $.siteUpdationData.workFlowStatus
 
        
