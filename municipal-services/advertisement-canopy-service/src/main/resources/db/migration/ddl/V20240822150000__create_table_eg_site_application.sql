@@ -33,7 +33,8 @@ CREATE TABLE eg_site_application (
     booking_start_date int8,
     booking_end_date int8,
     application_start_date int8,
-    application_end_date int8
+    application_end_date int8,
+    workflow_status VARCHAR(50)
 );
 
 ALTER TABLE eg_site_application ADD CONSTRAINT pk_id_eg_site_application PRIMARY KEY (id);

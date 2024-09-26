@@ -102,7 +102,7 @@ public class WorkflowService {
 
 //		if(null != siteBooking) {
 			ProcessInstance processInstance = new ProcessInstance();
-			processInstance.setBusinessId(siteCreationData.getAccountId());
+			processInstance.setBusinessId(siteCreationData.getSiteID());
 			processInstance.setAction(siteCreationData.getWorkflowAction());
 			processInstance.setModuleName("SITE");
 			processInstance.setTenantId(siteCreationData.getTenantId());

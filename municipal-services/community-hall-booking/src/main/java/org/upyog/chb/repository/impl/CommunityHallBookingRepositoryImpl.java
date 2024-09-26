@@ -55,12 +55,18 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 	private JdbcTemplate jdbcTemplate;
 	@Autowired
 	private CommunityHallSlotAvailabilityRowMapper availabilityRowMapper;
+	
+	public static final String SELECT_NEXT_SEQUENCE = "select nextval('seq_id_eg_chb_booking')";
 
 	@Override
 	public void saveCommunityHallBooking(CommunityHallBookingRequest bookingRequest) {
 		log.info("Saving community hall booking request data for booking no : " + bookingRequest.getHallsBookingApplication().getBookingNo());
 		producer.push(bookingConfiguration.getCommunityHallBookingSaveTopic(), bookingRequest);
 
+	}
+	
+	public Long getNextSequence() {
+		return jdbcTemplate.queryForObject(SELECT_NEXT_SEQUENCE, Long.class);
 	}
 
 	@Override

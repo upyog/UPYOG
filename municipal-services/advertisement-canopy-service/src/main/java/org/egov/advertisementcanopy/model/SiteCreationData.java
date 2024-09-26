@@ -56,4 +56,5 @@ public class SiteCreationData {
 	private String workflowAction;
 	private String comments;
 	private Boolean isOnlyWorkflowCall = false;
+	private String workFlowStatus;
 }
