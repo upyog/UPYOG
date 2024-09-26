@@ -45,6 +45,7 @@ import lombok.ToString;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -225,5 +226,10 @@ public class ApplicationProperties {
 	
 	@Value("${egov.pgservice.create.endpoint}")
 	private String pgCreateEndpoint;
+	
+	@Value("${interest.perecent}")
+	private BigDecimal interestPercent;
+	
+	
 	
 }

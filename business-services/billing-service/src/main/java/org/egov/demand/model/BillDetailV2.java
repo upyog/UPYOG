@@ -64,6 +64,8 @@ public class BillDetailV2 {
 	
 	@JsonProperty("paymentModeStatus")
 	private List<ModeOfPaymentDetails> modeOfPaymentDetails;
+	
+	
 
 	public BillDetailV2 addBillAccountDetailsItem(BillAccountDetailV2 billAccountDetailsItem) {
 		if (this.billAccountDetails == null) {
