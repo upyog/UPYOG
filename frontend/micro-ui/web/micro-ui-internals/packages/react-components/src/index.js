@@ -196,6 +196,7 @@ import ResponseComposer from "./hoc/ResponseComposer";
 import InboxComposer from "./hoc/InboxComposer";
 
 import CityMohalla from "./molecules/CityMohalla";
+import PropertySearch from "./molecules/PropertySearch";
 import DashboardBox from "./molecules/DashboardBox";
 import DetailsCard from "./molecules/DetailsCard";
 import FilterAction from "./molecules/FilterAction";
@@ -458,5 +459,6 @@ export {
   InfoIcon,
   LoginIcon,
   CitizenConsentForm,
-  CHBIcon
+  CHBIcon,
+  PropertySearch,
 };

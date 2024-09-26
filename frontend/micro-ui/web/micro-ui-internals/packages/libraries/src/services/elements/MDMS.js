@@ -866,6 +866,22 @@ const getPTFloorList = (tenantId, moduleCode, type) => ({
   },
 });
 
+const getFnocDocumentsCategory = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: "FireNoc",
+        masterDetails: [
+          {
+            name: "Documents",
+          },
+        ],
+      },
+    ],
+  },
+});
+
 const getReasonCriteria = (tenantId, moduleCode, type, payload) => ({
   type,
   details: {
@@ -1346,6 +1362,15 @@ const GetPropertySubtype = (MdmsRes) =>
       };
     });
     //return MdmsRes;
+  };
+
+  const getFnocDocuments = (MdmsRes) => {
+    MdmsRes["FireNoc"].Documents.filter((Documents) => Documents.active).map((dropdownData) => {
+      return {
+        ...Documents,
+        i18nKey: `${dropdownData.code}`,
+      };
+    });
   };
 
   const getAssetparentsubcategory= (MdmsRes) => {
@@ -1981,7 +2006,8 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
 
     case "AST_PARENT":
       return AST_PARENT(MdmsRes);
-  
+    case "Documents":
+      return getFnocDocuments(MdmsRes);
     case "assetParentCategory":
       return getAssetParent(MdmsRes);
 
@@ -2188,6 +2214,10 @@ export const MdmsService = {
 
   getAssetDocuments: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getAssetDocumentsCategory(tenantId, moduleCode), moduleCode);
+  },
+
+  getFNOCDocuments: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getFnocDocumentsCategory(tenantId, moduleCode), moduleCode);
   },
 
   AssetSubTypeParent: (tenantId, moduleCode, type) => {
