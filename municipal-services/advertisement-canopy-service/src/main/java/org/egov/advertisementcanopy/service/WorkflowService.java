@@ -1,9 +1,8 @@
 package org.egov.advertisementcanopy.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Optional;
 
 import org.egov.advertisementcanopy.contract.workflow.BusinessService;
 import org.egov.advertisementcanopy.contract.workflow.BusinessServiceResponse;
@@ -12,6 +11,7 @@ import org.egov.advertisementcanopy.contract.workflow.ProcessInstanceRequest;
 import org.egov.advertisementcanopy.contract.workflow.ProcessInstanceResponse;
 import org.egov.advertisementcanopy.contract.workflow.State;
 import org.egov.advertisementcanopy.model.SiteBooking;
+import org.egov.advertisementcanopy.model.SiteBookingActionRequest;
 import org.egov.advertisementcanopy.model.SiteBookingRequest;
 import org.egov.advertisementcanopy.model.SiteCreationData;
 import org.egov.advertisementcanopy.model.SiteCreationRequest;
@@ -20,7 +20,6 @@ import org.egov.advertisementcanopy.util.AdvtConstants;
 import org.egov.advertisementcanopy.util.RequestInfoWrapper;
 import org.egov.advertisementcanopy.util.RestCallRepository;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +34,7 @@ public class WorkflowService {
 	private AdvtConstants configs;
 
 	@Autowired
-	private RestCallRepository restRepo;
+	private RestCallRepository restCallRepository;
 
 	@Autowired
 	private ObjectMapper mapper;
@@ -44,7 +43,7 @@ public class WorkflowService {
 		
 		List<ProcessInstance> processInstances = new ArrayList<>();
 		siteBookingRequest.getSiteBookings().forEach(booking -> {
-			ProcessInstance processInstance = getProcessInstanceForPTR(booking,
+			ProcessInstance processInstance = getProcessInstanceForAdvt(booking,
 					siteBookingRequest.getRequestInfo());
 			processInstances.add(processInstance);
 		});
@@ -80,7 +79,7 @@ public class WorkflowService {
 		
 	}
 
-	private ProcessInstance getProcessInstanceForPTR(SiteBooking siteBooking, RequestInfo requestInfo) {
+	private ProcessInstance getProcessInstanceForAdvt(SiteBooking siteBooking, RequestInfo requestInfo) {
 
 //		if(null != siteBooking) {
 			ProcessInstance processInstance = new ProcessInstance();
@@ -129,7 +128,7 @@ public class WorkflowService {
 
 		ProcessInstanceResponse response = null;
 		StringBuilder url = new StringBuilder(configs.getWorkflowHost().concat(configs.getWorkflowEndpointTransition()));
-		Object optional = restRepo.fetchResult(url, workflowReq);
+		Object optional = restCallRepository.fetchResult(url, workflowReq);
 		response = mapper.convertValue(optional, ProcessInstanceResponse.class);
 		if(null == response) {
 			throw new CustomException("WORKFLOW_SERVICE_CALL_FAILED","Failed to run Workflow Service.");
@@ -148,7 +147,7 @@ public class WorkflowService {
 
 		StringBuilder url = getSearchURLWithParams(tenantId, businessService);
 		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-		Object result = restRepo.fetchResult(url, requestInfoWrapper);
+		Object result = restCallRepository.fetchResult(url, requestInfoWrapper);
 		BusinessServiceResponse response = null;
 		try {
 			response = mapper.convertValue(result, BusinessServiceResponse.class);
@@ -222,7 +221,7 @@ public class WorkflowService {
 
 		StringBuilder url = getWorkflowSearchURLWithParams(tenantId, businessId);
 
-		Object res = restRepo.fetchResult(url, requestInfoWrapper);
+		Object res = restCallRepository.fetchResult(url, requestInfoWrapper);
 		ProcessInstanceResponse response = null;
 
 		try {
@@ -236,6 +235,21 @@ public class WorkflowService {
 			return response.getProcessInstances().get(0).getState();
 
 		return null;
+	}
+
+	
+	public BusinessServiceResponse businessServiceSearch(SiteBookingActionRequest garbageAccountActionRequest,
+			String applicationTenantId, String applicationBusinessId) {
+		StringBuilder uri = new StringBuilder(configs.getWorkflowHost());
+		uri.append(configs.getWorkflowBusinessServiceSearchPath());
+		uri.append("?tenantId=").append(applicationTenantId);
+		uri.append("&businessServices=").append(applicationBusinessId);
+		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
+				.requestInfo(garbageAccountActionRequest.getRequestInfo()).build();
+		LinkedHashMap<String, Object> responseObject = (LinkedHashMap<String, Object>) restCallRepository.fetchResult(uri, requestInfoWrapper);
+		BusinessServiceResponse businessServiceResponse = mapper.convertValue(responseObject
+																				, BusinessServiceResponse.class);
+		return businessServiceResponse;
 	}
 
 }
