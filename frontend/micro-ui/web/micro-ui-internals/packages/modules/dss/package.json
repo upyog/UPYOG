@@ -1,6 +1,6 @@
 {
   "name": "@upyog/digit-ui-module-dss",
-  "version": "1.8.2",
+  "version": "1.8.9",
   "license": "MIT",
   "description": "Digit Dashboard Module",
   "main": "dist/index.js",
@@ -33,6 +33,6 @@
     "react-simple-maps": "2.0.0",
     "react-time-picker": "4.2.1",
     "react-tooltip": "4.1.2",
-    "recharts": "^2.0.9"
+    "recharts": "2.0.9"
   }
 }
