@@ -543,6 +543,8 @@ public class CalculatorUtils {
 		consumercode.add(demand.getConsumerCode());
 		BigDecimal pastDue= BigDecimal.ZERO;
 		BigDecimal totalAfterPastDueDeduct= BigDecimal.ZERO;
+		BigDecimal unpaidbillAmount=BigDecimal.ZERO;
+		
 		for (DemandDetail detail : demand.getDemandDetails()) 
 		{
 			BigDecimal amountForAccDeatil = detail.getTaxAmount();
@@ -597,11 +599,15 @@ public class CalculatorUtils {
 					totalBillAmount = totalBillAmount.add(bill.getBillDetails().get(0).getAmount());
 					
 				}
+				else
+					unpaidbillAmount=unpaidbillAmount.add(bill.getBillDetails().get(0).getAmount());
 				
 			}
 
 		}
 		
+		if(unpaidbillAmount.compareTo(totalAmountForDemand)>0)
+			totalAmountForDemand=unpaidbillAmount;
 		carryForward=totalpaidAmountFromPayment.subtract(totalAmountForDemand);
 		System.out.println(res);
 		return carryForward;
@@ -621,6 +627,8 @@ public class CalculatorUtils {
 		consumercode.add(demand.getConsumerCode());
 		BigDecimal pastDue= BigDecimal.ZERO;
 		BigDecimal totalAfterPastDueDeduct= BigDecimal.ZERO;
+		BigDecimal unpaidbillAmount=BigDecimal.ZERO;
+		
 		for (DemandDetail detail : demand.getDemandDetails()) 
 		{
 			BigDecimal amountForAccDeatil = detail.getTaxAmount();
@@ -678,17 +686,21 @@ public class CalculatorUtils {
 					totalBillAmount = totalBillAmount.add(bill.getBillDetails().get(0).getAmount());
 					
 				}
+				else
+					unpaidbillAmount=unpaidbillAmount.add(bill.getBillDetails().get(0).getAmount());
 				
 			}
 
 		}
+		if(unpaidbillAmount.compareTo(totalAmountForDemand)>0)
+			totalAmountForDemand=unpaidbillAmount;
 		//ADVANCE CASE
 		if(totalpaidAmountFromPayment.compareTo(totalAmountForDemand)>0) {
 			collectedMap.put("PT_ADVANCE_CARRYFORWARD",totalpaidAmountFromPayment.subtract(totalAmountForDemand));
 		}
 		else if(totalpaidAmountFromPayment.compareTo(totalAmountForDemand)<=0) {
 			carryForward=totalAmountForDemand.subtract(totalpaidAmountFromPayment);
-			collectedMap.put("PT_PASTDUE_CARRYFORWARD",BigDecimal.ZERO );
+			collectedMap.put("PT_PASTDUE_CARRYFORWARD",carryForward);
 		}
 		
 		
