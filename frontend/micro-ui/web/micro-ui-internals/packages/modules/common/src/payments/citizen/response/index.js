@@ -165,7 +165,7 @@ export const convertEpochToDate = (dateEpoch) => {
       let assessmentYear="",assessmentYearForReceipt="";
       let count=0;
       let toDate,fromDate;
-	  if(payments.Payments[0].paymentDetails[0].businessService=="PT"){
+	  if(payments?.Payments?.[0]?.paymentDetails?.[0].businessService=="PT" || payments?.Payments?.[0].paymentDetails[0].businessService=="PT.MUTATION"){
        
       payments.Payments[0].paymentDetails[0].bill.billDetails.map(element => {
 
