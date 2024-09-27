@@ -28,8 +28,6 @@ public class SiteSearchResponse {
 	@JsonProperty("initiate")
 	private Integer initiate;
 	
-	@JsonProperty("forwardToApprover")
-	private Integer forwardToApprover;
 	
 	@JsonProperty("pendingForModification")
 	private Integer pendingForModification;
@@ -43,4 +41,7 @@ public class SiteSearchResponse {
 	@JsonProperty("returnToInitiator")
 	private Integer returnToInitiator;
 	
+	@JsonProperty("Count")
+    private int count;
+    
 }

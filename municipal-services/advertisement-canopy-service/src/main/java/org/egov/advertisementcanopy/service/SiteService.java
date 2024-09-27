@@ -28,6 +28,7 @@ import org.egov.advertisementcanopy.util.AdvtConstants;
 import org.egov.advertisementcanopy.util.PTRConstants;
 import org.egov.advertisementcanopy.util.ResponseInfoFactory;
 import org.egov.common.contract.request.Role;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -150,6 +151,7 @@ public class SiteService {
 			}
 			if (!CollectionUtils.isEmpty(list)) {
 				enrichUpdatedSite(updateSiteRequest);
+				updateExistingSiteData(updateSiteRequest, list);
 				updateSiteData(updateSiteRequest);
 			} else {
 				throw new RuntimeException("No Site exists with the Details Provided!!!");
@@ -169,6 +171,44 @@ public class SiteService {
 		}
 
 		return siteupdationResponse;
+	}
+
+	private void updateExistingSiteData(SiteUpdateRequest updateSiteRequest, List<SiteCreationData> list) {
+		try {
+			if (updateSiteRequest.getSiteUpdationData().getIsOnlyWorkflowCall()) {
+				for (SiteCreationData i : list) {
+					updateSiteRequest.getSiteUpdationData().setSiteDescription(i.getSiteDescription());
+					updateSiteRequest.getSiteUpdationData().setGpsLocation(i.getGpsLocation());
+					updateSiteRequest.getSiteUpdationData().setSiteAddress(i.getSiteAddress());
+					updateSiteRequest.getSiteUpdationData().setSiteCost(i.getSiteCost());
+					updateSiteRequest.getSiteUpdationData().setSitePhotograph(i.getSitePhotograph());
+					updateSiteRequest.getSiteUpdationData().setStructure(i.getStructure());
+					updateSiteRequest.getSiteUpdationData().setSizeLength(i.getSizeLength());
+					updateSiteRequest.getSiteUpdationData().setSizeWidth(i.getSizeWidth());
+					updateSiteRequest.getSiteUpdationData().setLedSelection(i.getLedSelection());
+					updateSiteRequest.getSiteUpdationData().setSecurityAmount(i.getSecurityAmount());
+					updateSiteRequest.getSiteUpdationData().setPowered(i.getPowered());
+					updateSiteRequest.getSiteUpdationData().setOthers(i.getOthers());
+					updateSiteRequest.getSiteUpdationData().setDistrictName(i.getDistrictName());
+					updateSiteRequest.getSiteUpdationData().setUlbName(i.getUlbName());
+					updateSiteRequest.getSiteUpdationData().setWardNumber(i.getWardNumber());
+					updateSiteRequest.getSiteUpdationData().setPinCode(i.getPinCode());
+					updateSiteRequest.getSiteUpdationData().setAdditionalDetail(i.getAdditionalDetail());
+					updateSiteRequest.getSiteUpdationData().setSiteType(i.getSiteType());
+					updateSiteRequest.getSiteUpdationData().setStatus(i.getStatus());
+					updateSiteRequest.getSiteUpdationData().setActive(i.isActive());
+					updateSiteRequest.getSiteUpdationData().setTenantId(i.getTenantId());
+					updateSiteRequest.getSiteUpdationData().setApplicationStartDate(i.getApplicationStartDate());
+					updateSiteRequest.getSiteUpdationData().setApplicationEndDate(i.getApplicationEndDate());
+					updateSiteRequest.getSiteUpdationData().setBookingPeriodStartDate(i.getBookingPeriodStartDate());
+					updateSiteRequest.getSiteUpdationData().setBookingPeriodEndDate(i.getBookingPeriodEndDate());
+				}
+			}
+
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage(), "Data not Found to Update!!!");
+		}
+
 	}
 
 	private void updateSiteData(SiteUpdateRequest updateSiteRequest) {
@@ -193,7 +233,7 @@ public class SiteService {
 		SiteSearchResponse siteSearchResponse = new SiteSearchResponse();
 		List<SiteCreationData> siteSearchData = new ArrayList<>();
 		try {
-			
+
 			if (null != searchSiteRequest.getRequestInfo()
 					&& searchSiteRequest.getRequestInfo().getUserInfo().getType().equalsIgnoreCase("CITIZEN")) {
 				searchSiteRequest.getSiteSearchData().setStatus("Available");
@@ -208,11 +248,10 @@ public class SiteService {
 						searchSiteRequest.getRequestInfo().getUserInfo().getRoles());
 				searchSiteRequest.getSiteSearchData().setWorkflowStatus(wfStatus);
 				siteSearchData = siteRepository.searchSites(searchSiteRequest);
-			}
-			else {
+			} else {
 				siteSearchData = siteRepository.searchSites(searchSiteRequest);
 			}
-			siteSearchData = siteRepository.searchSites(searchSiteRequest);
+			/* siteSearchData = siteRepository.searchSites(searchSiteRequest); */
 			if (!CollectionUtils.isEmpty(siteSearchData)) {
 				siteSearchResponse = getSearchResponseFromAccounts(siteSearchData);
 			}
@@ -220,14 +259,53 @@ public class SiteService {
 				siteSearchResponse.setResponseInfo(responseInfoFactory
 						.createResponseInfoFromRequestInfo(searchSiteRequest.getRequestInfo(), false));
 			}
-			if (!CollectionUtils.isEmpty(siteSearchResponse.getSiteCreationData())) {
-				siteSearchResponse.setResponseInfo(responseInfoFactory
-						.createResponseInfoFromRequestInfo(searchSiteRequest.getRequestInfo(), true));
-			}
+			processSiteResponse(siteSearchResponse);
+			/*
+			 * if (!CollectionUtils.isEmpty(siteSearchResponse.getSiteCreationData())) {
+			 * siteSearchResponse.setResponseInfo(responseInfoFactory
+			 * .createResponseInfoFromRequestInfo(searchSiteRequest.getRequestInfo(),
+			 * true)); }
+			 */
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
 		return siteSearchResponse;
+	}
+
+	private void processSiteResponse(SiteSearchResponse siteSearchResponse) {
+		try {
+			if (!CollectionUtils.isEmpty(siteSearchResponse.getSiteCreationData())) {
+				siteSearchResponse.setCount(siteSearchResponse.getSiteCreationData().size());
+				siteSearchResponse
+						.setInitiate((int) siteSearchResponse.getSiteCreationData().stream()
+								.filter(license -> StringUtils.equalsIgnoreCase(
+										PTRConstants.APPLICATION_STATUS_INITIATED, license.getWorkFlowStatus()))
+								.count());
+				siteSearchResponse.setPendingForModification((int) siteSearchResponse.getSiteCreationData().stream()
+						.filter(license -> StringUtils.equalsIgnoreCase(
+								PTRConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION, license.getWorkFlowStatus()))
+						.count());
+				siteSearchResponse
+						.setReject((int) siteSearchResponse.getSiteCreationData().stream()
+								.filter(license -> StringUtils.equalsIgnoreCase(
+										PTRConstants.APPLICATION_STATUS_REJECTED, license.getWorkFlowStatus()))
+								.count());
+				siteSearchResponse
+						.setApprove((int) siteSearchResponse.getSiteCreationData().stream()
+								.filter(license -> StringUtils.equalsIgnoreCase(
+										PTRConstants.APPLICATION_STATUS_APPROVED, license.getWorkFlowStatus()))
+								.count());
+				siteSearchResponse
+						.setReturnToInitiator((int) siteSearchResponse.getSiteCreationData().stream()
+								.filter(license -> StringUtils.equalsIgnoreCase(
+										PTRConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION, license.getWorkFlowStatus()))
+								.count());
+			}
+
+		} catch (Exception e) {
+			throw new CustomException(e.getMessage(), "Count not found for the logged in User!!!");
+		}
+
 	}
 
 	private List<String> getAccountStatusListByRoles(String tenantId, List<Role> roles) {
@@ -253,8 +331,9 @@ public class SiteService {
 	}
 
 	private List<String> getRolesByTenantId(String tenantId, List<Role> roles) {
-		List<String> roleCodes = roles.stream().filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId))
-				.map(role -> role.getCode()).collect(Collectors.toList());
+		List<String> roleCodes = roles.stream()
+				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(role -> role.getCode())
+				.collect(Collectors.toList());
 		return roleCodes;
 	}
 
