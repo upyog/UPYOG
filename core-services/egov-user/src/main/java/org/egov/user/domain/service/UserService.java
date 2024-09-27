@@ -222,6 +222,7 @@ public class UserService {
         /* encrypt here */
         user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
         validateUserUniqueness(user);
+      //  validateUserMobileNumberUniqueness(user);
         if (isEmpty(user.getPassword())) {
             user.setPassword(UUID.randomUUID().toString());
         } else {
@@ -239,9 +240,16 @@ public class UserService {
 
     private void validateUserUniqueness(User user) {
         if (userRepository.isUserPresent(user.getUsername(), getStateLevelTenantForCitizen(user.getTenantId(), user
-                .getType()), user.getType()))
+                .getType()), user.getType(),"username"))
             throw new DuplicateUserNameException(UserSearchCriteria.builder().userName(user.getUsername()).type(user
                     .getType()).tenantId(user.getTenantId()).build());
+    }
+    
+    private void validateUserMobileNumberUniqueness(User user) {
+        if (userRepository.isUserPresent(user.getMobileNumber(), getStateLevelTenantForCitizen(user.getTenantId(), user
+                .getType()), user.getType(),"mobilenumber"))
+            throw new DuplicateMobileNumberException(UserSearchCriteria.builder().userName(user.getMobileNumber()).type(user
+                    .getType()).tenantId(user.getTenantId()).build(),"Mobile Number Already Exist");
     }
 
     private String getStateLevelTenantForCitizen(String tenantId, UserType userType) {

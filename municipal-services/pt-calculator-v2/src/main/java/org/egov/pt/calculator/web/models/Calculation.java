@@ -61,8 +61,10 @@ public class Calculation   {
         
         private List<Unit> units;
         
-        private List<Boolean> commercial;
+        private BigDecimal remainAdvanceamount;
         
         private List<Vacantland> vacantland;
+        
+        private List<ModeOfPaymentDetails> modeOfPaymentDetails;
 }
 

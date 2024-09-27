@@ -48,9 +48,8 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 	public List<Property> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
 		Map<String, Property> propertyMap = new LinkedHashMap<>();
-
 		while (rs.next()) {
-
+			
 			String propertyUuId = rs.getString("pid");
 			Property currentProperty = propertyMap.get(propertyUuId);
 			String tenanId = rs.getString("ptenantid");
@@ -105,6 +104,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 						.isPartOfProperty(null!=rs.getString("ispartofproperty")?rs.getBoolean("ispartofproperty"):false)
 						.parentPropertyUuId(rs.getString("parentpropertyuuid"))
 						.vacantusagecategory(null!=rs.getString("vacantusagecategory")?rs.getString("vacantusagecategory"):null)
+						.BuildingPermission(null!=rs.getString("BuildingPermission")?rs.getBoolean("BuildingPermission"):false)
 						.build();
 
 				
@@ -121,9 +121,10 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 				setPropertyInfo(currentProperty, rs, tenanId, propertyUuId, linkedProperties, address);
 
 				addChildrenToProperty(rs, currentProperty);
+				
 				propertyMap.put(propertyUuId, currentProperty);
 			}
-
+			
 			addChildrenToProperty(rs, currentProperty);
 		}
 
@@ -248,6 +249,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 		
 		String uuid = rs.getString("userid");
 		List<OwnerInfo> owners = property.getOwners();
+		
 
 		if (!CollectionUtils.isEmpty(owners))
 			for (OwnerInfo owner : owners) {
@@ -293,28 +295,36 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 	 */
 	private void addDocToOwner(ResultSet rs, OwnerInfo owner) throws SQLException {
 		
-		String docId = rs.getString("owndocid");
-		String 	entityId = rs.getString("owndocentityId");
-		List<Document> docs = owner.getDocuments();
-
-		if (!(null != docId && entityId.equals(owner.getOwnerInfoUuid())))
-			return;
-
-		if (!CollectionUtils.isEmpty(docs))
-			for (Document doc : docs) {
-				if (doc.getId().equals(docId))
-					return;
-			}
-	
-		Document doc = Document.builder()
-			.status(Status.fromValue(rs.getString("owndocstatus")))
-			.fileStoreId(rs.getString("owndocfileStore"))
-			.documentType(rs.getString("owndoctype"))
-			.documentUid(rs.getString("owndocuid"))
-			.id(docId)
-			.build();
 		
-		owner.addDocumentsItem(doc);
+		
+		while(rs.next()) {
+			String docId = rs.getString("owndocid");
+			String 	entityId = rs.getString("owndocentityId");
+			List<Document> docs = owner.getDocuments();
+
+			if (!(null != docId && entityId.equals(owner.getOwnerInfoUuid())))
+				return;
+
+			if (!CollectionUtils.isEmpty(docs))
+				for (Document doc : docs) {
+					if (doc.getId().equals(docId))
+						return;
+				}
+		
+			Document doc = Document.builder()
+				.status(Status.fromValue(rs.getString("owndocstatus")))
+				.fileStoreId(rs.getString("owndocfileStore"))
+				.documentType(rs.getString("owndoctype"))
+				.documentUid(rs.getString("owndocuid"))
+				.id(docId)
+				.build();
+			
+			owner.addDocumentsItem(doc);
+			
+		}
+		
+		//System.out.println("Entity ID"+entityId);
+		
 	}
 
 	

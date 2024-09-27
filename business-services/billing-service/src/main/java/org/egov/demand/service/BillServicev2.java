@@ -62,6 +62,7 @@ import static org.egov.demand.util.Constants.YR;
 
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -87,21 +88,29 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.demand.config.ApplicationProperties;
 import org.egov.demand.model.AssessmentResponseV2;
 import org.egov.demand.model.AssessmentV2;
+import org.egov.demand.model.AssessmentV2.ModeOfPayment;
 import org.egov.demand.model.BillAccountDetailV2;
 import org.egov.demand.model.BillDetailV2;
 import org.egov.demand.model.BillSearchCriteria;
 import org.egov.demand.model.BillV2;
 import org.egov.demand.model.BillV2.BillStatus;
 import org.egov.demand.model.BusinessServiceDetail;
+import org.egov.demand.model.CollectionPaymentCriteriaRequest;
 import org.egov.demand.model.Demand;
 import org.egov.demand.model.DemandCriteria;
 import org.egov.demand.model.DemandDetail;
 import org.egov.demand.model.GenerateBillCriteria;
+import org.egov.demand.model.ModeOfPaymentDetails;
+import org.egov.demand.model.ModeOfPaymentDetails.TxnPeriodEnum;
+import org.egov.demand.model.TaxAndPayment;
 import org.egov.demand.model.TaxHeadMaster;
 import org.egov.demand.model.TaxHeadMasterCriteria;
 import org.egov.demand.model.Transaction;
+import org.egov.demand.model.Transaction.TxnStatusEnum;
+import org.egov.demand.model.TransactionCreateResponse;
 import org.egov.demand.model.TransactionRequest;
 import org.egov.demand.model.TransactionResponse;
+import org.egov.demand.model.TransactionUser;
 import org.egov.demand.model.UpdateBillCriteria;
 import org.egov.demand.model.UpdateBillRequest;
 import org.egov.demand.producer.Producer;
@@ -112,6 +121,10 @@ import org.egov.demand.util.Util;
 import org.egov.demand.web.contract.BillRequestV2;
 import org.egov.demand.web.contract.BillResponseV2;
 import org.egov.demand.web.contract.BusinessServiceDetailCriteria;
+import org.egov.demand.web.contract.DemandRequest;
+import org.egov.demand.web.contract.Payment;
+import org.egov.demand.web.contract.PaymentResponse;
+import org.egov.demand.web.contract.PaymentSearchCriteria;
 import org.egov.demand.web.contract.RequestInfoWrapper;
 import org.egov.demand.web.contract.User;
 import org.egov.demand.web.contract.UserResponse;
@@ -129,6 +142,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ch.qos.logback.core.status.Status;
@@ -371,7 +385,7 @@ public class BillServicev2 {
 	public BillResponseV2 searchBill(BillSearchCriteria billCriteria, RequestInfo requestInfo) {
 
 		List<BillV2> bills = billRepository.findBill(billCriteria);
-		
+
 		return BillResponseV2.builder().resposneInfo(responseFactory.getResponseInfo(requestInfo, HttpStatus.OK))
 				.bill(bills).build();
 	}
@@ -412,7 +426,7 @@ public class BillServicev2 {
 					throw new CustomException("BILL_FOUND","Please pay your Quaterly or Halfyearly bills for this year");
 			}
 		}
-		
+
 		return BillResponseV2.builder().resposneInfo(responseFactory.getResponseInfo(requestInfo, HttpStatus.OK))
 				.build();
 	}
@@ -452,7 +466,7 @@ public class BillServicev2 {
 
 		List<BillV2> bills;
 
-		
+
 		if (!demands.isEmpty())
 			bills = prepareBill(demands, requestInfo,billCriteria.getModeOfPayment());
 		else
@@ -619,10 +633,13 @@ public class BillServicev2 {
 		String tenantId = demand.getTenantId();
 		String propertyId=demand.getConsumerCode();
 
+		ModeOfPaymentDetails mpdObj =null;
+		List<ModeOfPaymentDetails> mpdList = null;
 		BigDecimal totalAmountForDemand = BigDecimal.ZERO;
+		BigDecimal pastDue=BigDecimal.ZERO;
 		boolean billsFound=false;
 
-		System.out.println("");
+
 		/*
 		 * Map to store the bill account detail object with TaxHead code
 		 * To accommodate conversion of multiple DemandDetails with same tax head code to single BillAccountDetail
@@ -632,13 +649,36 @@ public class BillServicev2 {
 		for(DemandDetail demandDetail : demand.getDemandDetails()) {
 
 			TaxHeadMaster taxHead = taxHeadMap.get(demandDetail.getTaxHeadMasterCode());
-			BigDecimal amountForAccDeatil = demandDetail.getTaxAmount().subtract(demandDetail.getCollectionAmount());
+			BigDecimal amountForAccDeatil = demandDetail.getTaxAmount();//.subtract(demandDetail.getCollectionAmount());
 
 			addOrUpdateBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap, demandDetail, taxHead, billDetailId);
 
 			/* Total tax and collection for the whole demand/bill-detail */
 			totalAmountForDemand = totalAmountForDemand.add(amountForAccDeatil);
+			if(taxHead.getCode().equalsIgnoreCase("PT_PASTDUE_CARRYFORWARD"))
+				pastDue=pastDue.add(demandDetail.getTaxAmount());
 		}
+		//totalAmountForDemand = BigDecimal.ZERO;
+		totalAmountForDemand = totalAmountForDemand.setScale(0, RoundingMode.HALF_UP);
+		if(totalAmountForDemand.compareTo(new BigDecimal(0))==0) {
+
+
+			return BillDetailV2.builder()
+					.billAccountDetails(new ArrayList<>(taxCodeAccountdetailMap.values()))
+					.amount(totalAmountForDemand)
+					.expiryDate(endPeriod)
+					.demandId(demand.getId())
+					.fromPeriod(startPeriod)
+					.toPeriod(endPeriod)
+					.tenantId(tenantId)
+					.paymentPeriod("YR")
+					.modeOfPaymentDetails(mpdList)
+					.additionalDetails(demand.getAdditionalDetails())
+					.build();
+		}
+
+		//PAST DUE CALCULATION
+		totalAmountForDemand=totalAmountForDemand.subtract(pastDue);
 
 		//Getting Financial year from Demand
 		Date startDate = new Date(startPeriod);
@@ -646,16 +686,34 @@ public class BillServicev2 {
 		Calendar c = Calendar.getInstance();
 		c.setTime(startDate);
 		StringBuilder financialYearFromDemand = new StringBuilder();
+
+		//Assesment Done for year 
+		Integer assesmentDoneForYearStart=c.get(Calendar.YEAR);
+
 		financialYearFromDemand.append(c.get(Calendar.YEAR));
 		financialYearFromDemand.append("-");
 		c = Calendar.getInstance();
 		c.setTime(endDate);
+		Integer assesmentDoneForYearEnd = c.get(Calendar.YEAR);
 		//current Date
 		Date currentDate = new Date(System.currentTimeMillis());
 		Calendar crd = Calendar.getInstance();
 		crd.setTime(currentDate);
-		Integer cuurentMonth = crd.get(Calendar.MONTH)+4;
-		Integer currentyear =  crd.get(Calendar.YEAR);
+		Integer cuurentMonth = crd.get(Calendar.MONTH)+1;
+		//cuurentMonth =5;
+		//currentYear reference the year for which assesment is done to changed to different variable
+		Integer currentyear =  c.get(Calendar.YEAR);
+
+		Integer currentYearOfAssesment = crd.get(Calendar.YEAR);
+		//get current financial year
+		currentyear = assesmentDoneForYearStart;
+
+		if(appProps.getFinYearStart()>assesmentDoneForYearStart && appProps.getFinYearEnd()>assesmentDoneForYearEnd) {
+			cuurentMonth= 3;
+		}
+		cuurentMonth= 3;
+		Integer nextYear =assesmentDoneForYearEnd ;
+
 
 		Integer b= c.get(Calendar.YEAR);
 		financialYearFromDemand.append(b.toString().substring(2,4));
@@ -668,6 +726,14 @@ public class BillServicev2 {
 
 		String transactiontUrl = new StringBuilder().append(appProps.getPgSeriviceHost()).append(appProps.getPgSeriviceEndpoint())
 				.append(URL_PARAMS_SEPARATER).append("billId=").toString();
+
+		/*
+		 * StringBuilder collectionServiceUrl = new
+		 * StringBuilder().append(appProps.getCollectionSeriviceHost()).append(appProps.
+		 * getCollectionSeriviceSearch()) .append(URL_PARAMS_SEPARATER)
+		 * .append("tenantId=").append(tenantId)
+		 * .append(URL_PARAM_SEPERATOR).append("billIds=");
+		 */
 
 		TransactionRequest transactionRequest = null;
 		RequestInfoWrapper requestInfoWrapper=RequestInfoWrapper.builder().requestInfo(requestInfo).build();
@@ -683,6 +749,12 @@ public class BillServicev2 {
 
 		}
 
+		System.out.println("modeOfpayment:"+PaymentType);
+		String Paymentmode;
+		if(assessmentV2!=null)
+			Paymentmode=assessmentV2.getModeOfPayment().toString();
+		else
+			Paymentmode=PaymentType;
 
 		Set<Integer> q1 = new HashSet<>(Arrays.asList(4,5,6));
 		Set<Integer> q2 = new HashSet<>(Arrays.asList(7,8,9));
@@ -700,128 +772,509 @@ public class BillServicev2 {
 		BillSearchCriteria billCriteria = new BillSearchCriteria();
 		billCriteria.setTenantId(demand.getTenantId());
 		billCriteria.setDemandId(demand.getId());
+		//billCriteria.setRetrieveOldest(true);
 		List<Transaction> transactionForQuaterBills = new ArrayList<>();
 		List<Transaction> transactionForHalfYearBills = new ArrayList<>();
 		Map<String,String> quaterCheckMap = null;
 		Map<String, BigDecimal> failedtransactionMapForQuater = new HashMap<>();
 		Map<String, BigDecimal> failedtransactionMapForHalfYearly = new HashMap<>();
 
+		Map<String, BigDecimal> successtransactionMapForQuater = new HashMap<>();
+		Map<String, BigDecimal> successtransactionMapForHalfyearly = new HashMap<>();
+
 		Map<String, BigDecimal> alltransactionForQuater = new HashMap<>();
 		Map<String, BigDecimal> alltransactionForHalfYearly = new HashMap<>();
 
-		BigDecimal amountforquaterly=totalAmountForDemand.divide(new BigDecimal(4));
-		BigDecimal ammountforhalfyearly=totalAmountForDemand.divide(new BigDecimal(2));
 
+
+		BigDecimal amountforquaterly=totalAmountForDemand.divide(new BigDecimal(4));
+		amountforquaterly=amountforquaterly.setScale(0, RoundingMode.HALF_UP);
+		BigDecimal ammountforhalfyearly=totalAmountForDemand.divide(new BigDecimal(2));
+		ammountforhalfyearly=ammountforhalfyearly.setScale(0, RoundingMode.HALF_UP);
+		billCriteria.setSearchAllForDemand(true);
 		List<BillV2> bills = billRepository.findBill(billCriteria);
+		BigDecimal failedBillAmount=new BigDecimal(0);
+		BigDecimal successBillAmount=new BigDecimal(0);
+		BigDecimal paidBillAmount=BigDecimal.ZERO;
+		BigDecimal count=BigDecimal.ZERO;
+		BigDecimal zeroAmount=BigDecimal.ZERO;
+		List<String> quaterly=new ArrayList<String>();
+		List<String> halfyearly=new ArrayList<String>();
+		BigDecimal advancedBillAmount=demand.getAdvanceAmount();//Will Be coming from Demand
+		mpdList = new ArrayList<>();
 		if(null!=bills) {
+			//	bills = bills.stream().sorted((x,y)->y.getAuditDetails().getCreatedTime().compareTo(x.getAuditDetails().getCreatedTime())).collect(Collectors.toList());
 			quaterCheckMap = new HashMap<>();
 			billsFound =true;
+			mpdList = new ArrayList<>();
 			for(BillV2 bl:bills) {
+				StringBuilder collectionServiceUrl = new StringBuilder().append(appProps.getCollectionSeriviceHost()).append(appProps.getCollectionSeriviceSearch())
+						.append(URL_PARAMS_SEPARATER)
+						.append("tenantId=").append(tenantId)
+						.append(URL_PARAM_SEPERATOR).append("billIds=");
 				transactionRequest = new TransactionRequest();
 				transactionRequest.setRequestInfo(requestInfo);
 				Transaction tr = new Transaction();
 				tr.setBillId(bl.getId());
 				transactionRequest.setTransaction(tr);
-				TransactionResponse tres = restTemplate.postForObject(transactiontUrl+bl.getId(), transactionRequest, TransactionResponse.class);
-				List<Transaction> failedtransactions=tres.getTransactions().stream().filter(t->t.getTxnStatus().equals(Transaction.TxnStatusEnum.FAILURE)).collect(Collectors.toList());
-				List<Transaction> alltrnasactions=tres.getTransactions();
-				if(null!=failedtransactions && !failedtransactions.isEmpty() ) {
-					if(assessmentV2.getModeOfPayment().toString().equalsIgnoreCase(QUARTERLY)) {
-						failedtransactionMapForQuater.put(bl.getBillDetails().get(0).getPaymentPeriod(), new BigDecimal(failedtransactions.get(0).getTxnAmount()));
+
+
+				CollectionPaymentCriteriaRequest pr = new CollectionPaymentCriteriaRequest();
+				pr.setRequestInfo(requestInfo);
+				Set<String>ids = new HashSet<>();
+				PaymentSearchCriteria payment = new PaymentSearchCriteria();
+				pr.setPayment(payment);
+				ids.add(bl.getId());
+				pr.getPayment().setBillIds(ids);
+
+				String collectUrl = collectionServiceUrl.append(bl.getId()).toString();
+				PaymentResponse pay =  restTemplate.postForObject(collectUrl, pr, PaymentResponse.class);
+
+				TransactionResponse tres =null;// restTemplate.postForObject(transactiontUrl+bl.getId(), transactionRequest, TransactionResponse.class);
+				List<Transaction> failedtransactions=null;//tres.getTransactions().stream().filter(t->t.getTxnStatus().equals(Transaction.TxnStatusEnum.FAILURE)|| t.getTxnStatus().equals(Transaction.TxnStatusEnum.PENDING)).collect(Collectors.toList());
+				List<Transaction> successTransactions=null;//tres.getTransactions().stream().filter(t->t.getTxnStatus().equals(Transaction.TxnStatusEnum.SUCCESS)).collect(Collectors.toList());
+				List<Transaction> alltrnasactions=null;//tres.getTransactions();
+
+
+
+				//success
+				if(null!=pay && pay.getPayments()!=null && !pay.getPayments().isEmpty()) {
+					/*
+					 * if(assessmentV2.getModeOfPayment().toString().equalsIgnoreCase(QUARTERLY)) {
+					 * successtransactionMapForQuater.put(bl.getBillDetails().get(0).
+					 * getPaymentPeriod(), pay.getPayments().get(0).getTotalAmountPaid()); }
+					 * if(assessmentV2.getModeOfPayment().toString().equalsIgnoreCase(HALFYEARLY)) {
+					 * successtransactionMapForHalfyearly.put(bl.getBillDetails().get(0).
+					 * getPaymentPeriod(), pay.getPayments().get(0).getTotalAmountPaid()); }
+					 */
+					// zeroAmount is added for summing up paid amount to exact bill amount in a situation where bill amount could be zero
+					// or less than amountforquaterly so that after adding amountforquaterly we will get the paid amount
+					count=bl.getBillDetails().get(0).getAmount();
+
+					if(Paymentmode.equalsIgnoreCase("QUARTERLY")) {
+						if( count.compareTo(amountforquaterly)<0)
+							zeroAmount=amountforquaterly;
+						else if(count.compareTo(amountforquaterly)>=0)
+							paidBillAmount = paidBillAmount.add(count);
+						quaterly.add(bl.getBillDetails().get(0).getPaymentPeriod());
 					}
-					if(assessmentV2.getModeOfPayment().toString().equalsIgnoreCase(HALFYEARLY)) {
-						failedtransactionMapForHalfYearly.put(bl.getBillDetails().get(0).getPaymentPeriod(), new BigDecimal(failedtransactions.get(0).getTxnAmount()));
+					else if(Paymentmode.equalsIgnoreCase("HALFYEARLY")) {
+						if(count.compareTo(ammountforhalfyearly)<0) 
+							zeroAmount=zeroAmount.add(ammountforhalfyearly);
+						else if(count.compareTo(ammountforhalfyearly)>=0)
+							paidBillAmount = paidBillAmount.add(count);
+						halfyearly.add(bl.getBillDetails().get(0).getPaymentPeriod());
 					}
 
-				}
-				if(alltrnasactions==null)
-				{
-					if(assessmentV2.getModeOfPayment().toString().equalsIgnoreCase(QUARTERLY)) {
-						alltransactionForQuater.put(bl.getBillDetails().get(0).getPaymentPeriod(), bl.getBillDetails().get(0).getAmount());
+					//	else if(count.compareTo(amountforquaterly)==0)
+
+
+					successBillAmount = pay.getPayments().get(0).getTotalAmountPaid();
+					advancedBillAmount =successBillAmount.subtract(bl.getBillDetails().get(0).getAmount());
+					if(advancedBillAmount.compareTo(BigDecimal.ZERO)==0)
+						advancedBillAmount=demand.getAdvanceAmount();
+					paidBillAmount=paidBillAmount.add(zeroAmount);
+
+
+					if(bl.getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q1"))
+					{
+						String expiryDateQ1 = "30-06-"+currentyear;
+						String startDateQ1 ="01-04-"+currentyear;
+						mpdObj = new ModeOfPaymentDetails();
+						mpdObj = getModeOfPaymentDetails(bl.getBillDetails().get(0).getAmount(),startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(),pastDue);
+						mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
+						mpdList.add(mpdObj);
 					}
-					if(assessmentV2.getModeOfPayment().toString().equalsIgnoreCase(HALFYEARLY)) {
-						alltransactionForHalfYearly.put(bl.getBillDetails().get(0).getPaymentPeriod(), bl.getBillDetails().get(0).getAmount());
+					else if(bl.getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q2"))
+					{
+						String expiryDateQ2 = "30-09-"+currentyear;
+						String startDateQ2 ="01-07-"+currentyear;
+						mpdObj = new ModeOfPaymentDetails();
+						mpdObj = getModeOfPaymentDetails(bl.getBillDetails().get(0).getAmount(),startDateQ2, expiryDateQ2,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(),BigDecimal.ZERO);
+						mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2);
+						mpdList.add(mpdObj);
+					}
+					else if(bl.getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q3"))
+					{
+						String startDateQ3 = "01-10-"+currentyear;
+						String expiryDateQ3="31-12-"+currentyear;
+						mpdObj = new ModeOfPaymentDetails();
+						mpdObj = getModeOfPaymentDetails(bl.getBillDetails().get(0).getAmount(),startDateQ3, expiryDateQ3,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(),BigDecimal.ZERO);
+						mpdObj.setPeriod(TxnPeriodEnum.QUARTER_3);
+						mpdList.add(mpdObj);
+					}
+					else if(bl.getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("H1"))
+					{
+						String startDateh1="01-04-"+currentyear;
+						String expiryDateh1="30-09-"+currentyear;
+						mpdObj = new ModeOfPaymentDetails();
+						mpdObj = getModeOfPaymentDetails(bl.getBillDetails().get(0).getAmount(),startDateh1, expiryDateh1,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(),BigDecimal.ZERO);
+						mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_1);
+						mpdList.add(mpdObj);
 					}
 				}
+
+				else {
+
+					/* if(assessmentV2.getModeOfPayment().toString().equalsIgnoreCase(QUARTERLY)) {
+					 * failedtransactionMapForQuater.put(bl.getBillDetails().get(0).getPaymentPeriod
+					 * (), bl.getBillDetails().get(0).getAmount()); }
+					 * if(assessmentV2.getModeOfPayment().toString().equalsIgnoreCase(HALFYEARLY)) {
+					 * failedtransactionMapForHalfYearly.put(bl.getBillDetails().get(0).
+					 * getPaymentPeriod(), bl.getBillDetails().get(0).getAmount()); }
+					 * 
+					 * failedBillAmount =
+					 * failedBillAmount.add(bl.getBillDetails().get(0).getAmount());*/
+				}
+
+
+
+
+				//added
+				/*
+				 * if(null!=alltrnasactions && !alltrnasactions.isEmpty()) {
+				 * if(null==successTransactions) { if(null!=failedtransactions &&
+				 * !failedtransactions.isEmpty() ) {
+				 * if(assessmentV2.getModeOfPayment().toString().equalsIgnoreCase(QUARTERLY)) {
+				 * failedtransactionMapForQuater.put(bl.getBillDetails().get(0).getPaymentPeriod
+				 * (), new BigDecimal(failedtransactions.get(0).getTxnAmount())); }
+				 * if(assessmentV2.getModeOfPayment().toString().equalsIgnoreCase(HALFYEARLY)) {
+				 * failedtransactionMapForHalfYearly.put(bl.getBillDetails().get(0).
+				 * getPaymentPeriod(), new
+				 * BigDecimal(failedtransactions.get(0).getTxnAmount())); }
+				 * 
+				 * } }else {
+				 * if(assessmentV2.getModeOfPayment().toString().equalsIgnoreCase(QUARTERLY)) {
+				 * successtransactionMapForQuater.put(bl.getBillDetails().get(0).
+				 * getPaymentPeriod(), new
+				 * BigDecimal(successTransactions.get(0).getTxnAmount())); }
+				 * if(assessmentV2.getModeOfPayment().toString().equalsIgnoreCase(HALFYEARLY)) {
+				 * successtransactionMapForHalfyearly.put(bl.getBillDetails().get(0).
+				 * getPaymentPeriod(), new
+				 * BigDecimal(successTransactions.get(0).getTxnAmount())); } }
+				 * 
+				 * } if(alltrnasactions==null) {
+				 * if(assessmentV2.getModeOfPayment().toString().equalsIgnoreCase(QUARTERLY)) {
+				 * alltransactionForQuater.put(bl.getBillDetails().get(0).getPaymentPeriod(),
+				 * bl.getBillDetails().get(0).getAmount()); }
+				 * if(assessmentV2.getModeOfPayment().toString().equalsIgnoreCase(HALFYEARLY)) {
+				 * alltransactionForHalfYearly.put(bl.getBillDetails().get(0).getPaymentPeriod()
+				 * , bl.getBillDetails().get(0).getAmount()); } }
+				 */
 			}
 
 		}
+		//Bi totalFailedSuccess = failedBillAmount.add(successBillAmount);)
 
-		System.out.println("modeOfpayment:"+PaymentType);
-		String Paymentmode;
-		if(assessmentV2!=null)
-			Paymentmode=assessmentV2.getModeOfPayment().toString();
-		else
-			Paymentmode=PaymentType;
 		switch (Paymentmode) {
 		case QUARTERLY:
 			//calcualtion of all quaterly ammount
 			BigDecimal failedquaterammount=BigDecimal.ZERO;
 			BigDecimal allquaterammount=BigDecimal.ZERO;
 			BigDecimal quaterlyammount=BigDecimal.ZERO;
-			for(BigDecimal failedquatervalue:failedtransactionMapForQuater.values())
-			{
-				failedquaterammount=failedquaterammount.add(failedquatervalue);
-			}
+			/*
+			 * for(BigDecimal failedquatervalue:failedtransactionMapForQuater.values()) {
+			 * failedquaterammount=failedquaterammount.add(failedquatervalue); }
+			 * 
+			 * for(BigDecimal allquatervalue:alltransactionForQuater.values()) {
+			 * allquaterammount=allquaterammount.add(allquatervalue); }
+			 * 
+			 * allquaterammount=allquaterammount.add(failedquaterammount);
+			 */
 
-			for(BigDecimal allquatervalue:alltransactionForQuater.values())
-			{
-				allquaterammount=allquaterammount.add(allquatervalue);
-			}
-
-			allquaterammount=allquaterammount.add(failedquaterammount);
 
 			if(q1.contains(cuurentMonth)) {
 				paymentPeriod=Q1;
-				expiryDate="30-06-"+currentyear;
+				expiryDate= "30-06-"+currentyear;
 				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
-				totalAmountForDemand = newTotalAmountForModeOfPayment.add(allquaterammount);
+				totalAmountForDemand = amountforquaterly.add(allquaterammount).add(pastDue);
+				mpdObj = new ModeOfPaymentDetails();
+				mpdObj = getModeOfPaymentDetails(totalAmountForDemand,"01-04-"+currentyear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),pastDue);
+				mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
+				mpdObj.setPastAmount(pastDue);
+				mpdList.add(mpdObj);
+
 			}
 			else if(q2.contains(cuurentMonth))
 			{
+				if(!quaterly.contains("Q1"))
+				{
+					amountforquaterly=amountforquaterly.add(pastDue);
+					String expiryDateQ1 = "30-06-"+currentyear;
+					String startDateQ1 ="01-04-"+currentyear;
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
+					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
+					mpdObj.setPastAmount(pastDue);
+					mpdList.add(mpdObj);
+				}
+				
 				paymentPeriod=Q2;
 				expiryDate="30-09-"+currentyear;
+				
+				//150
 				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
-				if(!failedtransactionMapForQuater.containsKey(Q1) && !alltransactionForQuater.containsKey(Q1))
-					quaterlyammount=ammountForTransactionperiod(Q1,amountforquaterly);
-				allquaterammount=allquaterammount.add(quaterlyammount);
-				totalAmountForDemand = newTotalAmountForModeOfPayment.add(allquaterammount);
+				//750
+				quaterlyammount=ammountForTransactionperiod(Q1,amountforquaterly);
+				//750
+				quaterlyammount=quaterlyammount.add(pastDue);
+				if(quaterlyammount.compareTo(paidBillAmount)==0)
+				{
+					quaterlyammount=BigDecimal.ZERO;
+				}
+				else if(quaterlyammount.compareTo(paidBillAmount)>0)
+				{
+					quaterlyammount=quaterlyammount.subtract(paidBillAmount);
+				}
+				/*
+				 * if(!successtransactionMapForQuater.containsKey(Q1)) {
+				 * if(!failedtransactionMapForQuater.containsKey(Q1) ||
+				 * failedtransactionMapForQuater.containsKey(Q1)) {
+				 * quaterlyammount=ammountForTransactionperiod(Q1,amountforquaterly);
+				 * 
+				 * mpdObj = new ModeOfPaymentDetails(); mpdObj =
+				 * getModeOfPaymentDetails(quaterlyammount,startDateQ1,
+				 * expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),
+				 * pastDue); mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
+				 * mpdObj.setPastAmount(pastDue); mpdList.add(mpdObj); } }else { mpdObj = new
+				 * ModeOfPaymentDetails(); mpdObj =
+				 * getModeOfPaymentDetails(newTotalAmountForModeOfPayment,startDateQ1,
+				 * expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(),pastDue);
+				 * mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1); mpdList.add(mpdObj); }
+				 * quaterlyammount=quaterlyammount.add(pastDue);
+				 * allquaterammount=allquaterammount.add(quaterlyammount);
+				 */
+				mpdObj = new ModeOfPaymentDetails();
+				mpdObj = getModeOfPaymentDetails(amountforquaterly,"01-07-"+currentyear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),BigDecimal.ZERO);
+				mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2);
+				mpdList.add(mpdObj);
+				totalAmountForDemand = amountforquaterly.add(quaterlyammount);
+
+				if(advancedBillAmount.compareTo(totalAmountForDemand)>0) {
+					advancedBillAmount = advancedBillAmount.subtract(totalAmountForDemand);
+					totalAmountForDemand = new BigDecimal(0);
+
+				}
+
+				else if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
+					totalAmountForDemand = totalAmountForDemand.subtract(advancedBillAmount);
+					advancedBillAmount = new BigDecimal(0);
+				}
+				else if(totalAmountForDemand.compareTo(advancedBillAmount)==0) {
+					totalAmountForDemand = new BigDecimal(0);
+					advancedBillAmount = new BigDecimal(0);
+				}
 
 			}
 			else if(q3.contains(cuurentMonth))
 			{
+				if(!quaterly.contains("Q1"))
+				{
+					amountforquaterly=amountforquaterly.add(pastDue);
+					String expiryDateQ1 = "30-06-"+currentyear;
+					String startDateQ1 ="01-04-"+currentyear;
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
+					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
+					mpdObj.setPastAmount(pastDue);
+					mpdList.add(mpdObj);
+				}
+				if(!quaterly.contains("Q2"))
+				{
+					String expiryDateQ2 = "30-09-"+currentyear;
+					String startDateQ2 ="01-07-"+currentyear;
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ2, expiryDateQ2,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),BigDecimal.ZERO);
+					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2);
+					mpdList.add(mpdObj);
+				}
+				
 				paymentPeriod=Q3;
 				expiryDate="31-12-"+currentyear;
+				
+
 				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+				quaterlyammount=ammountForTransactionperiod(Q2,amountforquaterly); 
+				quaterlyammount=quaterlyammount.add(pastDue); 
 
-				if(!failedtransactionMapForQuater.containsKey(Q1) && !alltransactionForQuater.containsKey(Q1))
-					quaterlyammount=ammountForTransactionperiod(Q1,amountforquaterly);
+				if(quaterlyammount.compareTo(paidBillAmount)==0)
+				{
+					quaterlyammount=BigDecimal.ZERO;
+				}
+				else if(quaterlyammount.compareTo(paidBillAmount)>0)
+				{
+					quaterlyammount=quaterlyammount.subtract(paidBillAmount);
+				}
 
-				if(!failedtransactionMapForQuater.containsKey(Q2) && !alltransactionForQuater.containsKey(Q2))
-					quaterlyammount=ammountForTransactionperiod(Q2,amountforquaterly);
+				/*
+				 * if(!successtransactionMapForQuater.containsKey(Q1)) {
+				 * if(!failedtransactionMapForQuater.containsKey(Q1) &&
+				 * !alltransactionForQuater.containsKey(Q1)) {
+				 * quaterlyammount=ammountForTransactionperiod(Q1,amountforquaterly); mpdObj =
+				 * new ModeOfPaymentDetails(); mpdObj =
+				 * getModeOfPaymentDetails(quaterlyammount,startDateQ1,
+				 * expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),
+				 * pastDue); mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1); mpdList.add(mpdObj); } }
+				 * else { mpdObj = new ModeOfPaymentDetails(); mpdObj =
+				 * getModeOfPaymentDetails(newTotalAmountForModeOfPayment,startDateQ1,
+				 * expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(),pastDue);
+				 * mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1); mpdList.add(mpdObj); }
+				 * 
+				 * 
+				 * if(!successtransactionMapForQuater.containsKey(Q2)) {
+				 * if(!failedtransactionMapForQuater.containsKey(Q2) ||
+				 * failedtransactionMapForQuater.containsKey(Q2)) {
+				 * quaterlyammount=ammountForTransactionperiod(Q2,amountforquaterly);
+				 * //quaterlyammount=quaterlyammount.add(pastDue); mpdObj = new
+				 * ModeOfPaymentDetails(); mpdObj =
+				 * getModeOfPaymentDetails(quaterlyammount,startDateQ2,
+				 * expiryDateQ2,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),
+				 * pastDue); mpdObj.setPastAmount(pastDue);
+				 * mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2); mpdList.add(mpdObj);
+				 * 
+				 * } } else { mpdObj = new ModeOfPaymentDetails(); mpdObj =
+				 * getModeOfPaymentDetails(newTotalAmountForModeOfPayment,startDateQ2,
+				 * expiryDateQ2,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(),pastDue);
+				 * mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2); mpdList.add(mpdObj); }
+				 */
 
-				allquaterammount=allquaterammount.add(quaterlyammount);
+				mpdObj = new ModeOfPaymentDetails();
+				mpdObj = getModeOfPaymentDetails(amountforquaterly,"01-10-"+currentyear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),BigDecimal.ZERO);
+				mpdObj.setPeriod(TxnPeriodEnum.QUARTER_3);
+				mpdList.add(mpdObj);
+				//allquaterammount=allquaterammount.add(quaterlyammount);
+				totalAmountForDemand = amountforquaterly.add(quaterlyammount);
 
-				totalAmountForDemand = newTotalAmountForModeOfPayment.add(allquaterammount);
+				if(advancedBillAmount.compareTo(totalAmountForDemand)>0) {
+					totalAmountForDemand = new BigDecimal(0);
+					advancedBillAmount = advancedBillAmount.subtract(totalAmountForDemand);
+				}
+
+				else if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
+					totalAmountForDemand = totalAmountForDemand.subtract(advancedBillAmount);
+					advancedBillAmount = new BigDecimal(0);
+				}
+				else if(totalAmountForDemand.compareTo(advancedBillAmount)==0) {
+					totalAmountForDemand = new BigDecimal(0);
+					advancedBillAmount = new BigDecimal(0);
+				}
 
 			}
 			else if(q4.contains(cuurentMonth))
 			{
+				if(!quaterly.contains("Q1"))
+				{
+					amountforquaterly=amountforquaterly.add(pastDue);
+					String expiryDateQ1 = "30-06-"+currentyear;
+					String startDateQ1 ="01-04-"+currentyear;
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
+					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
+					mpdObj.setPastAmount(pastDue);
+					mpdList.add(mpdObj);
+				}
+				if(!quaterly.contains("Q2"))
+				{
+					String expiryDateQ2 = "30-09-"+currentyear;
+					String startDateQ2 ="01-07-"+currentyear;
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ2, expiryDateQ2,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),BigDecimal.ZERO);
+					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2);
+					mpdList.add(mpdObj);
+				}
+				if( !quaterly.contains("Q3"))
+				{
+					String startDateQ3 = "01-10-"+currentyear;
+					String expiryDateQ3="31-12-"+currentyear;
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ3, expiryDateQ3,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),BigDecimal.ZERO);
+					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_3);
+					mpdList.add(mpdObj);
+				}
 				paymentPeriod=Q4;
-				expiryDate="31-03-"+currentyear;
+				expiryDate="31-03-"+nextYear;
 				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
-				if(!failedtransactionMapForQuater.containsKey(Q1) && !alltransactionForQuater.containsKey(Q1))
-					quaterlyammount=ammountForTransactionperiod(Q1,amountforquaterly);
 
-				if(!failedtransactionMapForQuater.containsKey(Q2) && !alltransactionForQuater.containsKey(Q2))
-					quaterlyammount=ammountForTransactionperiod(Q2,amountforquaterly);
+				//450
+				quaterlyammount=ammountForTransactionperiod(Q3,amountforquaterly);
+				//1050
+				quaterlyammount=quaterlyammount.add(pastDue);
+				System.out.println(quaterlyammount.compareTo(paidBillAmount)==0);
+				System.out.println(quaterlyammount.compareTo(paidBillAmount)>0);
+				if(quaterlyammount.compareTo(paidBillAmount)==0)
+				{
+					quaterlyammount=BigDecimal.ZERO;
+				}
 
-				if(!failedtransactionMapForQuater.containsKey(Q3) && !alltransactionForQuater.containsKey(Q3))
-					quaterlyammount=ammountForTransactionperiod(Q3,amountforquaterly);
+				else if(quaterlyammount.compareTo(paidBillAmount)>0)
+				{
+					quaterlyammount=quaterlyammount.subtract(paidBillAmount);
+				}
+				/*
+				 * if(!successtransactionMapForQuater.containsKey(Q1)) {
+				 * if(!failedtransactionMapForQuater.containsKey(Q1) ||
+				 * failedtransactionMapForQuater.containsKey(Q1)) {
+				 * quaterlyammount=ammountForTransactionperiod(Q1,amountforquaterly); //
+				 * quaterlyammount=amountforquaterly; mpdObj = new ModeOfPaymentDetails();
+				 * mpdObj = getModeOfPaymentDetails(quaterlyammount,startDateQ1,
+				 * expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),
+				 * pastDue); mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1); mpdList.add(mpdObj); } }
+				 * else { mpdObj = new ModeOfPaymentDetails(); mpdObj =
+				 * getModeOfPaymentDetails(newTotalAmountForModeOfPayment,startDateQ1,
+				 * expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(),pastDue);
+				 * mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1); mpdList.add(mpdObj); }
+				 * 
+				 * 
+				 * if(!successtransactionMapForQuater.containsKey(Q2)) {
+				 * if(!failedtransactionMapForQuater.containsKey(Q2) ||
+				 * failedtransactionMapForQuater.containsKey(Q2)) {
+				 * quaterlyammount=ammountForTransactionperiod(Q2,amountforquaterly);
+				 * //quaterlyammount=amountforquaterly; mpdObj = new ModeOfPaymentDetails();
+				 * mpdObj = getModeOfPaymentDetails(quaterlyammount,startDateQ2,
+				 * expiryDateQ2,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),
+				 * pastDue); mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2); mpdList.add(mpdObj);
+				 * 
+				 * } } else { mpdObj = new ModeOfPaymentDetails(); mpdObj =
+				 * getModeOfPaymentDetails(newTotalAmountForModeOfPayment,startDateQ2,
+				 * expiryDateQ2,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(),pastDue);
+				 * mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2); mpdList.add(mpdObj); }
+				 * 
+				 * if(!successtransactionMapForQuater.containsKey(Q3)) {
+				 * if(!failedtransactionMapForQuater.containsKey(Q3) ||
+				 * failedtransactionMapForQuater.containsKey(Q3)) {
+				 * quaterlyammount=ammountForTransactionperiod(Q3,amountforquaterly);
+				 * //quaterlyammount=amountforquaterly;
+				 * quaterlyammount=quaterlyammount.add(pastDue); mpdObj = new
+				 * ModeOfPaymentDetails(); mpdObj =
+				 * getModeOfPaymentDetails(quaterlyammount,startDateQ3,
+				 * expiryDateQ3,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),
+				 * pastDue); mpdObj.setPastAmount(pastDue);
+				 * mpdObj.setPeriod(TxnPeriodEnum.QUARTER_3); mpdList.add(mpdObj); } } else {
+				 * mpdObj = new ModeOfPaymentDetails(); mpdObj =
+				 * getModeOfPaymentDetails(newTotalAmountForModeOfPayment,startDateQ3,
+				 * expiryDateQ3,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(),pastDue);
+				 * mpdObj.setPeriod(TxnPeriodEnum.QUARTER_3); mpdList.add(mpdObj); }
+				 */	
+				mpdObj = new ModeOfPaymentDetails();
+				mpdObj = getModeOfPaymentDetails(amountforquaterly,"01-01-"+nextYear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),BigDecimal.ZERO);
+				mpdObj.setPeriod(TxnPeriodEnum.QUARTER_4);
+				mpdList.add(mpdObj);
+				//allquaterammount=allquaterammount.add(quaterlyammount);
+				totalAmountForDemand = amountforquaterly.add(quaterlyammount);
 
-				allquaterammount=allquaterammount.add(quaterlyammount);
+				if(advancedBillAmount.compareTo(totalAmountForDemand)>0) {
+					totalAmountForDemand = new BigDecimal(0);
+					advancedBillAmount = advancedBillAmount.subtract(totalAmountForDemand);
+				}
 
-				totalAmountForDemand = newTotalAmountForModeOfPayment.add(allquaterammount);
+				if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
+					totalAmountForDemand = totalAmountForDemand.subtract(advancedBillAmount);
+					advancedBillAmount = new BigDecimal(0);
+				}
+				if(totalAmountForDemand.compareTo(advancedBillAmount)==0) {
+					totalAmountForDemand = new BigDecimal(0);
+					advancedBillAmount = new BigDecimal(0);
+				}
 
 			}
 
@@ -832,15 +1285,14 @@ public class BillServicev2 {
 			BigDecimal failedhalfyearammount=BigDecimal.ZERO;
 			BigDecimal allhalfyearammount=BigDecimal.ZERO;
 			BigDecimal halfyearlyammount=BigDecimal.ZERO;
-			for(BigDecimal failedhalfyearvalue:failedtransactionMapForHalfYearly.values())
-			{
-				failedhalfyearammount=failedhalfyearammount.add(failedhalfyearvalue);
-			}
-
-			for(BigDecimal allhalfyearvalue:alltransactionForHalfYearly.values())
-			{
-				allhalfyearammount=allhalfyearammount.add(allhalfyearvalue);
-			}
+			/*
+			 * for(BigDecimal
+			 * failedhalfyearvalue:failedtransactionMapForHalfYearly.values()) {
+			 * failedhalfyearammount=failedhalfyearammount.add(failedhalfyearvalue); }
+			 * 
+			 * for(BigDecimal allhalfyearvalue:alltransactionForHalfYearly.values()) {
+			 * allhalfyearammount=allhalfyearammount.add(allhalfyearvalue); }
+			 */
 
 			allhalfyearammount=allhalfyearammount.add(failedhalfyearammount);
 
@@ -849,48 +1301,132 @@ public class BillServicev2 {
 				expiryDate="30-09-"+currentyear;
 
 				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(2));
-				totalAmountForDemand = newTotalAmountForModeOfPayment.add(allhalfyearammount);
+				totalAmountForDemand = ammountforhalfyearly.add(allhalfyearammount);
+
+				mpdObj = new ModeOfPaymentDetails();
+				mpdObj = getModeOfPaymentDetails(totalAmountForDemand,"01-04-"+currentyear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),pastDue);
+				mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_1);
+				mpdList.add(mpdObj);
 			}
 			else if(h2.contains(cuurentMonth))
 			{
+				if( !halfyearly.contains("H1"))
+				{
+					ammountforhalfyearly=ammountforhalfyearly.add(pastDue);
+					String startDateh1="01-04-"+currentyear;
+					String expiryDateh1="30-09-"+currentyear;
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(ammountforhalfyearly,startDateh1, expiryDateh1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
+					mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_1);
+					mpdList.add(mpdObj);
+				}
 				paymentPeriod=H2;
-				expiryDate="31-12-"+currentyear;
+				String startDateh2="01-10-"+currentyear;
+				expiryDate="31-03-"+nextYear;
 
 				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(2));
-				if(!failedtransactionMapForHalfYearly.containsKey(H1) && !alltransactionForHalfYearly.containsKey(H1))
-					halfyearlyammount=ammountForTransactionperiod(H1,ammountforhalfyearly);
-				allhalfyearammount=allhalfyearammount.add(halfyearlyammount);
-				totalAmountForDemand = newTotalAmountForModeOfPayment.add(allhalfyearammount);
+				halfyearlyammount=ammountForTransactionperiod(H1,ammountforhalfyearly);
+				halfyearlyammount=halfyearlyammount.add(pastDue);
+				if(halfyearlyammount.compareTo(paidBillAmount)==0)
+				{
+					halfyearlyammount=BigDecimal.ZERO;
+
+				}
+				else if(halfyearlyammount.compareTo(paidBillAmount)>0)
+				{
+					halfyearlyammount=halfyearlyammount.subtract(paidBillAmount);
+				}
+				/*
+				 * if(!successtransactionMapForHalfyearly.containsKey(H1)) {
+				 * if(!failedtransactionMapForHalfYearly.containsKey(H1) &&
+				 * !alltransactionForHalfYearly.containsKey(H1))
+				 * 
+				 * halfyearlyammount=ammountForTransactionperiod(H1,ammountforhalfyearly);
+				 * mpdObj = new ModeOfPaymentDetails(); mpdObj =
+				 * getModeOfPaymentDetails(halfyearlyammount,startDateh2,
+				 * expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),
+				 * pastDue); mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_1); mpdList.add(mpdObj);
+				 * 
+				 * }else { mpdObj = new ModeOfPaymentDetails(); mpdObj =
+				 * getModeOfPaymentDetails(newTotalAmountForModeOfPayment,startDateh1,
+				 * expiryDateh1,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(),pastDue);
+				 * mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_1); mpdList.add(mpdObj); }
+				 */
+				//allhalfyearammount=allhalfyearammount.add(halfyearlyammount);
+				totalAmountForDemand = ammountforhalfyearly.add(halfyearlyammount);
+				mpdObj = new ModeOfPaymentDetails();
+				mpdObj = getModeOfPaymentDetails(totalAmountForDemand,startDateh2, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),BigDecimal.ZERO);
+				mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_2);
+				mpdList.add(mpdObj);
+
+				if(advancedBillAmount.compareTo(totalAmountForDemand)>0) {
+					advancedBillAmount = advancedBillAmount.subtract(totalAmountForDemand);
+					totalAmountForDemand = new BigDecimal(0);
+
+				}
+
+				if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
+					totalAmountForDemand = totalAmountForDemand.subtract(advancedBillAmount);
+					advancedBillAmount = new BigDecimal(0);
+				}
+				if(totalAmountForDemand.compareTo(advancedBillAmount)==0) {
+					totalAmountForDemand = new BigDecimal(0);
+					advancedBillAmount = new BigDecimal(0);
+				}
 			}
 
 			break;
 
 		case YEARLY:
 			paymentPeriod=YR;
-			expiryDate="31-12-"+currentyear;
+			String startDateh1="01-04-"+currentyear;
+			expiryDate="31-03-"+nextYear;
+			mpdObj = new ModeOfPaymentDetails();
+			mpdObj = getModeOfPaymentDetails(totalAmountForDemand,startDateh1, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),pastDue);
+			mpdObj.setPeriod(TxnPeriodEnum.YEARLY);
+			mpdList.add(mpdObj);
+
+			totalAmountForDemand=totalAmountForDemand.add(pastDue);
+
+			if(advancedBillAmount.compareTo(totalAmountForDemand)>0) {
+				totalAmountForDemand = new BigDecimal(0);
+				advancedBillAmount = advancedBillAmount.subtract(totalAmountForDemand);
+
+			}
+
+			if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
+				totalAmountForDemand = totalAmountForDemand.subtract(advancedBillAmount);
+				advancedBillAmount = new BigDecimal(0);
+			}
+			if(totalAmountForDemand.compareTo(advancedBillAmount)==0) {
+				totalAmountForDemand = new BigDecimal(0);
+				advancedBillAmount = new BigDecimal(0);
+			}
 			break;
 		default:
 			break;
 		}
+		DemandRequest dmr = new DemandRequest();
 
-		Calendar datexp = Calendar.getInstance();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		demand.setAdvanceAmount(advancedBillAmount);
+		dmr.setRequestInfo(requestInfo);
 
-		try {
-			java.util.Date parsedDate =  dateFormat.parse(expiryDate);
-			datexp.setTime(parsedDate);
-			datexp.set(datexp.get(Calendar.YEAR), datexp.get(Calendar.MONTH), datexp.get(Calendar.DATE), 23, 59, 59);
-		} catch (ParseException e) {
-
-			e.printStackTrace();
-		}
+		List<Demand> demandTobeupdateForAdvance = new ArrayList<>();
+		demandTobeupdateForAdvance.add(demand);
+		dmr.setDemands(demandTobeupdateForAdvance);
+		demandService.updateAsync(dmr,null);
 
 		//Long billExpiryDate = getExpiryDateForDemand(demand);
-		Long billExpiryDate = datexp.getTimeInMillis();
-		
-		
+		Long billExpiryDate = getDateInMilisec(expiryDate,false);
+
 		totalAmountForDemand = roundOfDecimals(totalAmountForDemand);
 		
+		mpdList=mpdList.stream().sorted((x,y)->x.getPeriod().compareTo(y.getPeriod())).collect(Collectors.toList());
+		Map<String, Object> additionalDetails = mapper.convertValue(demand.getAdditionalDetails(), Map.class);
+		//	JsonNode additionalDetails = mapper.convertValue(demand.getAdditionalDetails(),JsonNode.class);
+		additionalDetails.put("paymentModeDetails", mpdList);
+
+		//totalAmountForDemand = totalAmountForDemand.add(new BigDecimal(200));//advanced testing
 		return BillDetailV2.builder()
 				.billAccountDetails(new ArrayList<>(taxCodeAccountdetailMap.values()))
 				.amount(totalAmountForDemand)
@@ -900,8 +1436,40 @@ public class BillServicev2 {
 				.toPeriod(endPeriod)
 				.tenantId(tenantId)
 				.paymentPeriod(paymentPeriod)
-				.additionalDetails(demand.getAdditionalDetails())
+				.modeOfPaymentDetails(mpdList)
+				.additionalDetails(additionalDetails)
 				.build();
+
+	}
+
+
+
+	private Long getDateInMilisec(String date,boolean start) {
+		Calendar datexp = Calendar.getInstance();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+		try {
+			java.util.Date parsedDate =  dateFormat.parse(date);
+			datexp.setTime(parsedDate);
+			if(start)
+				datexp.set(datexp.get(Calendar.YEAR), datexp.get(Calendar.MONTH), datexp.get(Calendar.DATE), 00, 00, 00);
+			else
+				datexp.set(datexp.get(Calendar.YEAR), datexp.get(Calendar.MONTH), datexp.get(Calendar.DATE), 23, 59, 59);
+		} catch (ParseException e) {
+
+			e.printStackTrace();
+		}
+		return datexp.getTimeInMillis();
+	}
+
+	private ModeOfPaymentDetails getModeOfPaymentDetails(BigDecimal amount, String startDate, String endDate,String status,BigDecimal pastDue) {
+		ModeOfPaymentDetails mpdObj = new ModeOfPaymentDetails();
+		mpdObj.setAmount(amount);
+		mpdObj.setFromPeriod(getDateInMilisec(startDate, true));
+		mpdObj.setToPeriod(getDateInMilisec(endDate, false));
+		mpdObj.setStatus(ModeOfPaymentDetails.TxnStatusEnum.valueOf(status));
+		mpdObj.setPastAmount(pastDue);
+		return mpdObj;
 	}
 
 	private BigDecimal ammountForTransactionperiod(String paymentPeriod, BigDecimal amountforquater) {
@@ -916,14 +1484,14 @@ public class BillServicev2 {
 	 * 
 	 * @return expiryDate
 	 */
-	
-	
-	
+
+
+
 	public BigDecimal roundOfDecimals(BigDecimal totalAmount ) {
 		BigDecimal roundOffPos = BigDecimal.ZERO;
 		BigDecimal roundOffNeg = BigDecimal.ZERO;
 
-		
+
 		BigDecimal roundOffAmount = totalAmount.setScale(2, 2);
 		BigDecimal reminder = roundOffAmount.remainder(BigDecimal.ONE);
 
@@ -931,16 +1499,16 @@ public class BillServicev2 {
 			roundOffPos = roundOffPos.add(BigDecimal.ONE.subtract(reminder));
 			totalAmount = totalAmount.add(roundOffPos);
 			totalAmount =totalAmount.setScale(2, 2);
-		
+
 		}
-			
+
 		else if (reminder.doubleValue() < 0.5) {
 			roundOffNeg = roundOffNeg.add(reminder).negate();
 			totalAmount =totalAmount.add(roundOffNeg);
 			totalAmount =totalAmount.setScale(2, 2);
 		}
 		return totalAmount;
-			
+
 	}
 	private Long getExpiryDateForDemand(Demand demand) {
 
@@ -1070,7 +1638,64 @@ public class BillServicev2 {
 	public BillResponseV2 create(BillRequestV2 billRequest) {
 
 		if (!CollectionUtils.isEmpty(billRequest.getBills()))
-		billRepository.saveBill(billRequest);
+			billRepository.saveBill(billRequest);
+
+		//Update Bill Status to Paid for bill with amount 0
+		List<BillV2> filteredBills = new ArrayList<>();
+
+		for(BillV2 b: billRequest.getBills()) {	  
+			if(b.getBillDetails().get(0).getAmount().compareTo(new BigDecimal(0))==0) {
+				filteredBills.add(b); 
+			} 
+		}
+		String transactiontUrl = new StringBuilder().append(appProps.getPgSeriviceHost()).append(appProps.getPgCreateEndpoint())
+				.append(URL_PARAMS_SEPARATER).append("tenantId=").append(billRequest.getRequestInfo().getUserInfo().getTenantId()).toString();
+
+		StringBuilder url = new StringBuilder("http://mnptapp.manipurpropertytax.org/digit-ui/citizen/payment/success/PT/");
+
+		//To Be Updated to Topic based request 
+		TransactionRequest transactionRequest = null;
+		TransactionCreateResponse resp = null;
+		List<TaxAndPayment> taxAndPayment =null;
+		TaxAndPayment tp = null;
+		TransactionUser user = null;
+		for(BillV2 b:filteredBills) {
+			transactionRequest = new TransactionRequest();
+			transactionRequest.setRequestInfo(billRequest.getRequestInfo());
+			Transaction tr = new Transaction();
+			taxAndPayment = new ArrayList<>();
+			tp = new TaxAndPayment();
+			tr.setBillId(b.getId());
+			tr.setTenantId(b.getTenantId());
+			tr.setGateway("PAYGOV");
+			tr.setTxnAmount(b.getBillDetails().get(0).getAmount().toString());
+			url.append(b.getConsumerCode()).append("/").append(b.getTenantId()).append("?").append("propertyId=").append(b.getConsumerCode());
+			tr.setCallbackUrl(url.toString());
+			user = new TransactionUser();
+			user.setName(billRequest.getRequestInfo().getUserInfo().getName());
+			user.setMobileNumber(billRequest.getRequestInfo().getUserInfo().getMobileNumber());
+			user.setTenantId(billRequest.getRequestInfo().getUserInfo().getTenantId());
+
+			tr.setUser(user);
+			tr.setConsumerCode(b.getConsumerCode());
+			tr.setProductInfo("Common Payment");
+			tr.setModule("PT");
+
+			tp.setTaxAmount(b.getBillDetails().get(0).getAmount());
+			tp.setAmountPaid(b.getBillDetails().get(0).getAmount());
+			tp.setBillId(b.getId());
+			taxAndPayment.add(tp);
+			tr.setTaxAndPayments(taxAndPayment);
+			tr.setTxnStatus(TxnStatusEnum.SUCCESS);
+			transactionRequest.setTransaction(tr);
+			resp = restTemplate.postForObject(transactiontUrl, transactionRequest, TransactionCreateResponse.class);
+		}
+
+
+		/* String transactiontUrl = new StringBuilder().append(appProps.getPgSeriviceHost()).append(appProps.getPgSeriviceEndpoint())
+					.append(URL_PARAMS_SEPARATER).append("billId=").toString();*/
+
+
 		return getBillResponse(billRequest.getBills());
 	}
 
