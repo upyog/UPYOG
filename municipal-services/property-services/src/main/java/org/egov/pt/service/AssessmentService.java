@@ -4,9 +4,11 @@ import static org.egov.pt.util.PTConstants.ASSESSMENT_BUSINESSSERVICE;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -42,6 +44,9 @@ import org.egov.pt.web.contracts.DemandResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
+
 import org.egov.tracer.model.CustomException;
 import org.json.JSONObject;
 
@@ -188,19 +193,38 @@ public class AssessmentService {
 	
 	public void deactivateOldDemandsForPreiousYears(AssessmentRequest request) {
 		
+		String assemtmentyearFromRequest = request.getAssessment().getFinancialYear().split("-")[1].toString();
+		assemtmentyearFromRequest = "31-03-20"+assemtmentyearFromRequest;
 		DemandResponse dmr = billingService.fetchDemand(request);
 		DemandRequest demRequest = new DemandRequest();
-		List<Demand>demaListToBeUpdated = new ArrayList<>();
+		List<Demand>demaListToBeUpdated = null;
+		
+		Calendar datexp = Calendar.getInstance();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+		try {
+			java.util.Date parsedDate =  dateFormat.parse(assemtmentyearFromRequest);
+			datexp.setTime(parsedDate);
+			//datexp.set(datexp.get(Calendar.YEAR), datexp.get(Calendar.MONTH), datexp.get(Calendar.DATE), 23, 59, 59);
+		}catch (ParseException e) {
+
+			e.printStackTrace();
+		}
+
 		if(null!=dmr.getDemands() &&!dmr.getDemands().isEmpty()) {
+			demaListToBeUpdated = new ArrayList<>();
 			for(Demand dm:dmr.getDemands()) {
-				if(dm.getTaxPeriodTo().compareTo(System.currentTimeMillis()) < 0)
-				dm.setStatus(StatusEnum.CANCELLED);
-				demaListToBeUpdated.add(dm);
+				if(dm.getTaxPeriodTo().compareTo(datexp.getTimeInMillis()) < 0) {
+					dm.setStatus(StatusEnum.CANCELLED);
+					demaListToBeUpdated.add(dm);
+				}
+				
 			}
-			demRequest.setDemands(demaListToBeUpdated);
-			demRequest.setRequestInfo(request.getRequestInfo());
-			DemandResponse resp = billingService.updateDemand(demRequest);
-			//System.out.println(resp);
+			if(null!=demaListToBeUpdated&&demaListToBeUpdated.size()>0 && !demaListToBeUpdated.isEmpty()) {
+				demRequest.setDemands(demaListToBeUpdated);
+				demRequest.setRequestInfo(request.getRequestInfo());
+				DemandResponse resp = billingService.updateDemand(demRequest);
+			}
 			}
 	}
 	
