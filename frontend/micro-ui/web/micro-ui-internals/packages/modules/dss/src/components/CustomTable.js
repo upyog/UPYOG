@@ -68,6 +68,28 @@ const CustomTable = ({ data = {}, onSearch, setChartData, setChartDenomination, 
     addlFilter: filterStack[filterStack.length - 1]?.addlFilter,
     moduleLevel: value?.moduleLevel || moduleCode,
   });
+  const addMissingFinancialYears = (data) => {
+    // Get the current year and calculate the last three financial years dynamically
+    const currentYear = new Date().getFullYear();
+    const lastThreeYears = [
+      `${currentYear - 1}-${currentYear}`,    // 2023-2024
+      `${currentYear - 2}-${currentYear - 1}`, // 2022-2023
+      `${currentYear}-${currentYear + 1}`  // 2024-2025
+    ];
+
+    // Iterate over the data array
+    data.forEach(item => {
+        lastThreeYears.forEach(year => {
+            // Check if the year is missing in the object, if so, add it with value 0
+            if (!item[year]) {
+                item[year] = 0;
+            }
+        });
+    });
+
+    return data;
+};
+
   useEffect(() => {
     const { id } = data;
     setChartKey(id);
@@ -85,7 +107,6 @@ const CustomTable = ({ data = {}, onSearch, setChartData, setChartDenomination, 
         }
         let prevData = lyData?.plots?.[currentIndex]?.value;
         let insight = null;
-        console.log("cellValuecellValue",cellValue)
         //Commented since it was causing mismatch data for the Capacity FSM: SM-1282
         // if (row?.name === "CapacityUtilization" && chartKey !== "fsmVehicleLogReportByVehicleNo") {
         //   const { range } = value;
@@ -106,7 +127,6 @@ const CustomTable = ({ data = {}, onSearch, setChartData, setChartDenomination, 
         //   prevData = calculateFSTPCapacityUtilization(prevData, tankCapcity?.value);
 
         // }
-        console.log("ddddddddd",row)
         if (
           (row?.symbol === "number" || row?.symbol === "percentage" || row?.symbol === "amount") &&
           row?.name !== "CitizenAverageRating" &&
@@ -130,26 +150,8 @@ const CustomTable = ({ data = {}, onSearch, setChartData, setChartDenomination, 
       }, {});
     });
   }, [response, lastYearResponse]);
-  function addMissingFinancialYears(data) {
-    // Get the current year and calculate the last three financial years dynamically
-    const currentYear = new Date().getFullYear();
-    const lastThreeYears = [
-      `${currentYear - 1}-${currentYear}`,    // 2023-2024
-      `${currentYear - 2}-${currentYear - 1}`, // 2022-2023
-      `${currentYear }-${currentYear + 1}`  // 2021-2022
-  ];
-    // Iterate over the data array
-    data.forEach(item => {
-        lastThreeYears.forEach(year => {
-            // Check if the year is missing in the object, if so, add it with value 0
-            if (!item[year]) {
-                item[year] = 0;
-            }
-        });
-    });
+ 
 
-    return data;
-}
   useEffect(() => {
     if (tableData) {
       if(window.location.href.includes("national-propertytax") && tableData?.[0]?.State =="Jharkhand")
@@ -185,6 +187,7 @@ const CustomTable = ({ data = {}, onSearch, setChartData, setChartDenomination, 
     }
   }, [tableData]);
 
+ 
   const filterValue = useCallback((rows, id, filterValue = "") => {
     return rows.filter((row) => {
       const res = Object.keys(row?.values).find((key) => {
