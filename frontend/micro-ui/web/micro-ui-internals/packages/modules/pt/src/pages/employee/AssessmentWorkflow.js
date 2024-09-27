@@ -237,6 +237,10 @@ const { isLoading: assessmentLoading, mutate: assessmentMutate } = Digit.Hooks.p
   else{
       address_to_display=address_to_display?.locality?.area+','+address_to_display?.city;
   }
+  const getDate = (date)=> {
+    let convertedDate = new Date(date).toDateString()
+    return convertedDate
+  }
 
   return (
     <div>
@@ -272,6 +276,53 @@ const { isLoading: assessmentLoading, mutate: assessmentMutate } = Digit.Hooks.p
                 title:"PT_TAX_ESTIMATION_HEADER",
                 additionalDetails: {
                   taxHeadEstimatesCalculation: ptCalculationEstimateData?.Calculation[0],
+                },
+              },
+              {
+                title: "Mode of Payments",
+                additionalDetails: {
+                  floors: ptCalculationEstimateData?.Calculation[0]?.modeOfPaymentDetails
+                    // ?.filter((e) => e.active)
+                    // ?.sort?.((a, b) => a.floorNo - b.floorNo)
+                    ?.map((paymentMode, index) => {
+                      const values = [
+                        // {
+                        //   title: `${t("ES_APPLICATION_DETAILS_UNIT")} ${index + 1}`,
+                        //   value: "",
+                        // },
+                        {
+                          title: "Payment Mode",
+                          value: paymentMode?.paymentMode,
+                        },
+                        {
+                          title: "From Date",
+                          // value: `PROPERTYTAX_${ unit?.usageCategory
+                          value: paymentMode?.formDate ? getDate(paymentMode?.formDate) : '' ,
+                        },
+                        {
+                          title: "To Date",
+                          value: paymentMode?.toDate ? getDate(paymentMode?.toDate) : '',
+                        },
+                        {
+                          title: "Tax Amount",
+                          value: paymentMode?.taxAmount
+                          // value: unit?.constructionDetail?.builtUpArea,
+                        }
+                      ];
+        
+                      // if (unit.occupancyType === "RENTED") values.push({ title: "PT_FORM2_TOTAL_ANNUAL_RENT", value: unit.arv });
+        
+                      return {
+                        //title: floorName,
+                        title:"",
+                        values: [
+                          {
+                            title: "",
+                            values,
+                          },
+                        ],
+                      };
+                    }),
                 },
               },
               // {

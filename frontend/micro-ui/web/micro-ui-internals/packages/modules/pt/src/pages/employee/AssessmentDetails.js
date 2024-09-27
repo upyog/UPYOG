@@ -119,8 +119,8 @@ const AssessmentDetails = () => {
         { Assessment:AssessmentData},
         {
           onError: (error, variables) => {
-            setShowToast({ key: "error", action: error?.response?.data?.Errors[0]?.message || error.message, error : {  message:error?.response?.data?.Errors[0]?.message || error.message } });
-            setTimeout(closeToast, 5000);
+            setShowToast({ key: "error", action: error?.response?.data?.Errors[0]?.message || error.message, error : {  message:error?.response?.data?.Errors[0]?.message || error.message, isAssessmentError: true } });
+            setTimeout(closeToast, 50000);
           },
           onSuccess: (data, variables) => {
             sessionStorage.setItem("IsPTAccessDone", data?.Assessments?.[0]?.auditDetails?.lastModifiedTime);
