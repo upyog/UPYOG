@@ -236,8 +236,23 @@ export const newConfig =[
                     },
                     "key": "units",
                     "withoutLabel": true,
-                    "nextStep": "usageCategory",
+                    "nextStep": "usageCategoryVacant",
                     "hideInEmployee": true
+                },
+                {
+                    "route": "usageCategoryVacant",
+                    "component": "UsageCategoryVacantLand",
+                    "texts": {
+                        "headerCaption": "",
+                        "header": "PT_USAGE_CATEGORY",
+                        "cardText": "",
+                        "submitBarLabel": "PT_COMMON_NEXT",
+                        // "skipText": "CORE_COMMON_SKIP_CONTINUE"
+                    },
+                    "withoutLabel": true,
+                    "key": "usageCategory",
+                    "nextStep": "pincode",
+                    "type": "component"
                 },
                 {
                     "route": "usageCategory",
@@ -246,10 +261,25 @@ export const newConfig =[
                         "headerCaption": "",
                         "header": "PT_USAGE_CATEGORY",
                         "cardText": "",
-                        "submitBarLabel": "PT_COMMON_NEXT"
+                        "submitBarLabel": "PT_COMMON_NEXT",
+                        "skipText": "CORE_COMMON_SKIP_CONTINUE"
                     },
                     "withoutLabel": true,
                     "key": "usageCategory",
+                    "nextStep": "buildingPermission",
+                    "type": "component"
+                },
+                {
+                    "route": "buildingPermission",
+                    "component": "PTBuildingPermission",
+                    "texts": {
+                        "headerCaption": "",
+                        "header": "Building Permission",
+                        "cardText": "",
+                        "submitBarLabel": "PT_COMMON_NEXT"
+                    },
+                    "withoutLabel": true,
+                    "key": "buildingPermission",
                     "nextStep": "pincode",
                     "type": "component"
                 },
@@ -524,7 +554,8 @@ export const newConfig =[
                     },
                     "key": "owners",
                     "withoutLabel": true,
-                    "nextStep": 'exemption-details',
+                    "nextStep": null,
+                    // "nextStep": 'exemption-details',
                     "hideInEmployee": true
                 },
                 {
@@ -629,7 +660,8 @@ export const newConfig =[
                         "headerCaption": "",
                         "header": "PT_PROPERTY_PHOTO",
                         "cardText": "",
-                        "submitBarLabel": "PT_COMMONS_NEXT"
+                        "submitBarLabel": "PT_COMMONS_NEXT",
+                        "skipText": "CORE_COMMON_SKIP_CONTINUE"
                     },
                     "nextStep": null,
                     "key": "propertyPhoto",

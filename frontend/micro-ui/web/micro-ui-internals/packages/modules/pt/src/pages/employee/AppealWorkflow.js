@@ -23,14 +23,12 @@ const PrimaryDownlaodIconCustom = () => (
 
 // const assessmentDataSearch =async (tenantId)=>{
 //     const assData = await Digit.PTService.assessmentSearch({ tenantId, filters: { assessmentNumbers:'MN-AS-2024-04-14-000289' } });
-//     console.log("assData===",assData)
 //     return assData?.Assessments;
 // } 
 
 const getAppealData = async (tenantId, appealId, setAppDetailsToShow, updateCanFetchBillData) => {
     const appealData = await Digit.PTService.appealSearch({ tenantId, filters: { appealid:appealId } });
     let billData = {};
-    console.log("Appeal Workflow===",appealData)
     if (appealData?.Appeals?.length > 0) {
         setAppDetailsToShow(appealData?.Appeals[0])
      
@@ -43,7 +41,6 @@ const getAppealData = async (tenantId, appealId, setAppDetailsToShow, updateCanF
   };
   const getFileData = async (filesArray,tenantId, setPdfFiles,updateCanFetchFileData) => {
     const fileData = await Digit.UploadServices.Filefetch(filesArray, tenantId);
-    console.log("fileData==",fileData)
     if (fileData?.data) {
         setPdfFiles(fileData.data)
      
@@ -87,7 +84,6 @@ const AppealWorkflow = () => {
 if(appealId && billData?.canLoad) {
     getAppealData(tenantId, appealId, setAppDetailsToShow,updateCanFetchBillData)
 }
-  console.log("appDetailsToShow===",appDetailsToShow)
 
   const [pdfFiles, setPdfFiles] = useState({});
   const [fileData, updateCanFetchFileData] = useState({
@@ -117,10 +113,8 @@ if(appealId && billData?.canLoad) {
         moduleCode: businessService,
         role: "PT_CEMP",
     });
-    console.log("workflowDetails==",workflowDetails)
   
   
-   console.log("pdfFiles===",pdfFiles)
    const {
     isLoading: updatingApplication,
     isError: updateApplicationError,
@@ -130,7 +124,6 @@ if(appealId && billData?.canLoad) {
   } = Digit.Hooks.pt.useApplicationActions(tenantId, 'PT.APPEAL');
 
    function onActionSelect(action) {
-    console.log("onActionSelect==",action)
     if (action) {
       if(action?.isToast){
         setShowToast({ key: "error", error: { message: action?.toastMessage } });
@@ -209,7 +202,6 @@ if(appealId && billData?.canLoad) {
           setTimeout(closeToast, 5000);
         },
         onSuccess: (data, variables) => {
-            console.log("data===",data)
           sessionStorage.removeItem("WS_SESSION_APPLICATION_DETAILS");
           setIsEnableLoader(false);
           if(data?.Appeals[0]?.workflow?.action==="GENERATENOTICE") {

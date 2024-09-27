@@ -2,10 +2,8 @@ import { CheckBox } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 const AppealDetails = (props) =>{
-    console.log("AppealDetails==",props)
     const { t } = useTranslation();
     const onChangeCheck = (e)=>{
-        console.log("onChangeCheck==",e.target.checked);
         props.setdeclarationhandler(e.target.checked)
     }
 

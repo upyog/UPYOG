@@ -23,7 +23,7 @@ const getPropertyEditDetails = (data = { }) => {
     }
 
   if (data?.ownershipCategory === "INSTITUTIONALPRIVATE" || data?.ownershipCategory === "INSTITUTIONALGOVERNMENT") {
-    let document = [];
+    let document = {};
     if (data?.owners[0]?.documents[0]?.documentType?.includes("IDENTITYPROOF")) {
       data.owners[0].documents[0].documentType = {
         code: data?.owners[0]?.documents[0]?.documentType,
@@ -40,9 +40,9 @@ const getPropertyEditDetails = (data = { }) => {
     data.owners[0].isCorrespondenceAddress = data?.owners[0]?.isCorrespondenceAddress;
   } else {
     data.owners.map((owner) => {
-      let document = [];
+      let document = {};
       owner.documents &&
-        owner.documents.map((doc) => {
+        owner?.documents?.map((doc) => {
           if (doc?.documentType && typeof doc?.documentType == "string" && doc?.documentType?.includes("SPECIALCATEGORYPROOF")) {
             doc.documentType = { code: doc?.documentType, i18nKey: stringReplaceAll(doc?.documentType, ".", "_") };
             document["specialProofIdentity"] = doc;
@@ -79,22 +79,64 @@ const getPropertyEditDetails = (data = { }) => {
   data.address.pincode = data?.address?.pincode;
   data.address.city = { code: data?.tenantId, i18nKey: `TENANT_TENANTS_${stringReplaceAll(data?.tenantId.toUpperCase(),".","_")}` };
   data.address.locality.i18nkey = data?.tenantId.replace(".", "_").toUpperCase() + "_" + "REVENUE" + "_" + data?.address?.locality?.code;
-  let addressDocs = data?.documents?.filter((doc) => doc?.documentType?.includes("ADDRESSPROOF"));
+  let addressDocs = data?.documents?.filter((doc) => doc?.documentType?.includes("ADDRESSPROOF")).map(doc => ({ ...doc }));;
   if (checkArrayLength(addressDocs)) {
     addressDocs[0].documentType = { code: addressDocs[0]?.documentType, i18nKey: stringReplaceAll(addressDocs[0]?.documentType, ".", "_") };
+    if (data?.address?.documents) {
+      data.address.documents["ProofOfAddress"] = addressDocs[0];
+    } else {
+      data.address.documents = {};
+      data.address.documents["ProofOfAddress"] = addressDocs && Array.isArray(addressDocs) && addressDocs.length > 0 && addressDocs[0];
+    }
   }
   if(!data.documents)
   {
     data = {...data,documents:[]}
   }
-  if (data?.address?.documents) {
-    data.address.documents["ProofOfAddress"] = addressDocs[0];
-  } else {
-    data.address.documents = [];
-    data.address.documents["ProofOfAddress"] = addressDocs && Array.isArray(addressDocs) && addressDocs.length > 0 && addressDocs[0];
+  
+  // data.documents["ProofOfAddress"] = addressDocs && Array.isArray(addressDocs) && addressDocs.length > 0 && addressDocs[0];
+  console.log("data?.documents==",data?.documents)
+  if(data?.exemption) {
+    let exemptionDoc = data?.documents?.filter((doc) => doc?.documentType?.includes("PROOF_OF_EXEMPTION")).map(doc => ({ ...doc }));;
+    if (checkArrayLength(exemptionDoc)) {
+      data.exemption = {
+        exemptionRequired: {code: "PT_COMMON_YES", i18nKey: "PT_COMMON_YES"},
+        exemptionType: {code: data?.exemption, i18nKey: "PT_EXEMPTION_TYPE_"+data?.exemption}
+        
+      }
+    } else {
+      data.exemption = {
+        exemptionRequired: {code: "PT_COMMON_NO", i18nKey: "PT_COMMON_NO"},
+        exemptionType: {},
+        documents: {}
+      }
+    }
+    if (data?.exemption?.documents) {
+      data.exemption.documents["exemptionProof"] = exemptionDoc[0];
+    } else {
+      data.exemption.documents = {};
+      data.exemption.documents["exemptionProof"] = exemptionDoc && Array.isArray(exemptionDoc) && exemptionDoc.length > 0 && exemptionDoc[0];
+    }
+  }else {
+    data.exemption = {
+      exemptionRequired: {code: "PT_COMMON_NO", i18nKey: "PT_COMMON_NO"},
+      exemptionType: {},
+      documents:{}
+    }
   }
-  data.documents["ProofOfAddress"] = addressDocs && Array.isArray(addressDocs) && addressDocs.length > 0 && addressDocs[0];
-
+  let buildingpermissionDoc = data?.documents?.filter((doc) => doc?.documentType?.includes("PROOF_OF_BUILDINGPERMISSION")).map(doc => ({ ...doc }));;
+  if (checkArrayLength(buildingpermissionDoc)) {
+    data.buildingPermission = {
+      buildingPermissionRequired: {code: "PT_COMMON_YES", i18nKey: "PT_COMMON_YES"},      
+    }
+    if (data?.buildingPermission?.documents) {
+      data.buildingPermission.documents["buildingPermissionProof"] = buildingpermissionDoc[0];
+    } else {
+      data.buildingPermission.documents = {};
+      data.buildingPermission.documents["buildingPermissionProof"] = buildingpermissionDoc && Array.isArray(buildingpermissionDoc) && buildingpermissionDoc.length > 0 && buildingpermissionDoc[0];
+    }
+  }
+  
   const getunitobjectforInd = (data, ob, flrno, extraunits, unitedit) => {
     let totbuiltarea = 0;
     let selfoccupiedtf = false,
@@ -408,6 +450,14 @@ const getPropertyEditDetails = (data = { }) => {
       data.landArea = { floorarea:data?.landArea}
     }
   }
+  if(data?.PropertyType?.code === 'VACANT') {
+    data.usageCategory = {code: data?.usageCategory, i18nKey: 'PROPERTYTAX_'+data?.usageCategory}
+  }
+  if(data?.PropertyType?.code === 'BUILTUP.INDEPENDENTPROPERTY' ) {
+    if(data?.VacantUsagecategory) data.usageCategory = {code: data?.VacantUsagecategory, i18nKey: 'PROPERTYTAX_'+data?.VacantUsagecategory}
+    else data.usageCategory = ""
+  }
+  console.log("Edit Property DATA==",data)
   return data;
 };
 const EditProperty = ({ parentRoute }) => {
@@ -454,6 +504,7 @@ const EditProperty = ({ parentRoute }) => {
   }, [data]);
 
   const goNext = (skipStep, index, isAddMultiple, key) => {
+    console.log("goNext==")
     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
       isMultiple = false,
@@ -536,7 +587,7 @@ const EditProperty = ({ parentRoute }) => {
     if (!isNaN(nextStep.split("/").pop())) {
       nextPage = `${match.path}/${nextStep}`;
     } else {
-      nextPage = isMultiple && nextStep !== "pincode" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
+      nextPage = isMultiple && nextStep !== "pincode" && nextStep !== "usageCategory" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
     }
 
     redirectWithHistory(nextPage);

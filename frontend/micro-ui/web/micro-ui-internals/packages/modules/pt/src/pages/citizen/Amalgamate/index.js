@@ -72,7 +72,6 @@ const AmalgamationCitizen = (props) => {
       tenantId: property?.tenantId,
     };
   });
-  console.log("searchResults==",searchResults)
 
 
 
@@ -107,7 +106,6 @@ const AmalgamationCitizen = (props) => {
   let [propertyDetails, setPropertyDetails]=useState([]);
 
   const onSubmit = (data) => {
-    console.log("onSubmit==",data)
     if(Number(data.total_due) > 0){
       setShowToast(true);
       return;
@@ -129,7 +127,6 @@ const AmalgamationCitizen = (props) => {
   }, 10000);
   
   const onAmalgamate = () =>{
-    console.log("propertyDetails.length==",propertyDetails.length,propertyDetails)
     if(propertyDetails.length>=2) {
       history.push({pathname: "/digit-ui/citizen/pt/property/new-application", state: {propertyDetails: propertyDetails, action: 'Amalgamation'}})
     }else {
@@ -139,7 +136,6 @@ const AmalgamationCitizen = (props) => {
   const removeProperty = (result, index)=> {
     propertyDetails.splice(index, 1);
     // setPropertyDetails(pDetails);
-    console.log("propertyDetails--",propertyDetails)
   }
  
   

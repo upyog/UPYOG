@@ -22,23 +22,24 @@ export const config = [
         error: "ERR_INVALID_PROPERTY_ID",
         validation: {
           pattern: {
-            value: "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
+            value: "",
+            // "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
             message: "ERR_INVALID_PROPERTY_ID",
           },
         },
       },
-      {
-        label: "PT_EXISTING_PROPERTY_ID",
-        type: "text",
-        name: "oldPropertyId",
-        error: "ERR_INVALID_PROPERTY_ID",
-        validation: {
-          pattern: {
-            value: "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
-            message: "ERR_INVALID_PROPERTY_ID",
-          },
-        },
-      }, 
+      // {
+      //   label: "PT_EXISTING_PROPERTY_ID",
+      //   type: "text",
+      //   name: "oldPropertyId",
+      //   error: "ERR_INVALID_PROPERTY_ID",
+      //   validation: {
+      //     pattern: {
+      //       value: "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
+      //       message: "ERR_INVALID_PROPERTY_ID",
+      //     },
+      //   },
+      // }, 
       {
         label: "PT_SEARCHPROPERTY_TABEL_OWNERNAME",
         type: "text",

@@ -77,7 +77,7 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
     },
   });
 
-  const [mobileNumber, property, oldProperty, name, doorNo] = propsConfig.inputs;
+  const [mobileNumber, property, name, doorNo] = propsConfig.inputs;
 
   const config = [
     {
@@ -106,7 +106,6 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
                   props?.setValue("mobileNumber", "");
                   props?.setValue("propertyIds", "");
                   props?.setValue("doorNo", "");
-                  props?.setValue("oldPropertyId", "");
                   props?.setValue("name", "");
                   history.replace(`${history.location.pathname}?action=${action == 0 ? 1 : 0}`);
                 }}
@@ -176,23 +175,23 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
             defaultValue: "",
             validation: property?.validation,
           },
-          ...description,
+          // ...description,
           isMandatory: false,
           isInsideBox: true,
           placementinbox: 1,
         },
-        {
-          label: oldProperty.label,
-          type: oldProperty.type,
-          populators: {
-            name: oldProperty.name,
-            defaultValue: "",
-            validation: oldProperty?.validation,
-          },
-          isMandatory: false,
-          isInsideBox: true,
-          placementinbox: 2,
-        },
+        // {
+        //   label: oldProperty.label,
+        //   type: oldProperty.type,
+        //   populators: {
+        //     name: oldProperty.name,
+        //     defaultValue: "",
+        //     validation: oldProperty?.validation,
+        //   },
+        //   isMandatory: false,
+        //   isInsideBox: true,
+        //   placementinbox: 2,
+        // },
       ],
       body1: [
         {
@@ -219,7 +218,7 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
                   props?.setValue("mobileNumber", "");
                   props?.setValue("propertyIds", "");
                   props?.setValue("doorNo", "");
-                  props?.setValue("oldPropertyId", "");
+                  // props?.setValue("oldPropertyId", "");
                   props?.setValue("name", "");
                   history.replace(`${history.location.pathname}?action=${action == 0 ? 1 : 0}`);
                 }}
@@ -327,7 +326,7 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
       return;
     }
     if (action == 0) {
-      if (!(data?.mobileNumber || data?.propertyIds || data?.oldPropertyId)) {
+      if (!(data?.mobileNumber || data?.propertyIds)) {
         setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
         return;
       }
@@ -339,10 +338,10 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
         setShowToast({ warning: true, label: property?.validation?.pattern?.message });
         return;
       }
-      if (data?.oldPropertyId && !data.oldPropertyId?.match(oldProperty?.validation?.pattern?.value)) {
-        setShowToast({ warning: true, label: oldProperty?.validation?.pattern?.message });
-        return;
-      }
+      // if (data?.oldPropertyId && !data.oldPropertyId?.match(oldProperty?.validation?.pattern?.value)) {
+      //   setShowToast({ warning: true, label: oldProperty?.validation?.pattern?.message });
+      //   return;
+      // }
     } else {
       if (!data?.locality?.code) {
         setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
@@ -385,7 +384,7 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
       data["propertyIds"] = "";
     }
     const mobileNumberLength = data?.[mobileNumber.name]?.length;
-    const oldPropId = data?.[oldProperty.name];
+    // const oldPropId = data?.[oldProperty.name];
     const propId = data?.[property.name];
     const city = data?.city;
     const locality = data?.locality;

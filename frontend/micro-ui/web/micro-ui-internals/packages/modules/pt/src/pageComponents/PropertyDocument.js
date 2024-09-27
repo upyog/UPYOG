@@ -14,6 +14,7 @@ function PropertyDocument({ property = {} }) {
   const { isLoading, isError, error, data } = Digit.Hooks.pt.usePropertyDocumentSearch({
     property,
   });
+  console.log("data====",data)
   const documents = property?.documents || [];
 
   if (isLoading) {

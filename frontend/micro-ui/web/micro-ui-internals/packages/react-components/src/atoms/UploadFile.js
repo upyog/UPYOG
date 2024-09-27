@@ -41,7 +41,8 @@ const getCitizenStyles = (value) => {
         marginTop: "0px"
       },
       closeIconStyles: {
-        width : "20px"
+        width : "20px",
+        marginLeft: "10px"
       },
       containerStyles: {
         padding: "10px", 
@@ -114,7 +115,8 @@ const getCitizenStyles = (value) => {
         padding: "0px"
       },
       closeIconStyles: {
-        width : "20px"
+        width : "20px",
+        marginLeft: "10px"
       },
       uploadFile: {
         minHeight: "50px"
@@ -166,7 +168,8 @@ const getCitizenStyles = (value) => {
         padding: "1px !important"
       },
       closeIconStyles: {
-        width : "20px"
+        width : "20px",
+        marginLeft: "10px"
       },
       uploadFile: {
         minHeight: "37px",
@@ -227,7 +230,6 @@ const UploadFile = (props) => {
   // }
 
   const handleDelete = () => {
-    console.log("handleDelete==",inpRef)
     inpRef.current.value = "";
     props.onDelete();
   };
@@ -269,7 +271,12 @@ const UploadFile = (props) => {
               </div>
             })}
           {!hasFile || props.error ? (
-            <h2 className="file-upload-status">{props.message}</h2>
+            <>
+              <h2 className="file-upload-status">{props.message}</h2>
+              { props?.hasFile && <span onClick={() => handleDelete()} style={extraStyles ? extraStyles?.closeIconStyles : null}>
+                <Close style={props.Multistyle} className="close" />
+              </span>}
+            </>
           ) : (
             <div className="tag-container" style={extraStyles ? extraStyles?.tagContainerStyles : null}>
               <div className="tag" style={extraStyles ? extraStyles?.tagStyles : null}>

@@ -33,7 +33,6 @@ const CitizenConsentForm = ({ t, styles, mdmsConfig = "", setMdmsConfig, labels 
     }
 
     const url = labels?.filter(data => data.linkId == mdmsConfig)?.[0]?.[Digit.StoreData.getCurrentLanguage()];
-    console.log("CitizenConsentForm==",mdmsConfig,url,labels)
     return (
         <div style={styles ? styles : {}}>
             {showModal ? <Modal

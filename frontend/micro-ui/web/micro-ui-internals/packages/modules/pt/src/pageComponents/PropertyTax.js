@@ -39,7 +39,6 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
     isBifurcation = true;
     bifurcationDetails =  config?.amalgamationState
   }
-  console.log("config========next===",config)
   const isMobile = window.Digit.Utils.browser.isMobile();
 
   return (

@@ -18,7 +18,6 @@ const description = {
 };
 
 const SearchAssessment = ({ config: propsConfig, onSelect }) => {
-    console.log("propsConfig==",propsConfig)
   const { t } = useTranslation();
   const history = useHistory();
   const { action = 0 } = Digit.Hooks.useQueryParams();
@@ -43,7 +42,6 @@ const SearchAssessment = ({ config: propsConfig, onSelect }) => {
   );
   useEffect(() => {
     if (financialYearsData && financialYearsData["egf-master"]) {
-      console.log("=====",financialYearsData["egf-master"]?.["FinancialYear"]);
       setFinancialYears(financialYearsData["egf-master"]?.["FinancialYear"]);
     }
   }, [financialYearsData]);
@@ -158,7 +156,6 @@ const SearchAssessment = ({ config: propsConfig, onSelect }) => {
   ];
 
   const onPropertySearch = async (data) => {
-    console.log("onPropertySearch==",data)
     if (
       ptSearchConfig.maxResultValidation &&
       propertyData?.Properties.length > 0 &&
@@ -220,7 +217,6 @@ const SearchAssessment = ({ config: propsConfig, onSelect }) => {
       .filter((k) => data[k])
       .reduce((acc, key) => ({ ...acc, [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {});
     let city = tempObject.city;
-    console.log("tempObject==",tempObject)
     delete tempObject.addParam;
     delete tempObject.addParam1;
     delete tempObject.city;
@@ -229,7 +225,6 @@ const SearchAssessment = ({ config: propsConfig, onSelect }) => {
   };
   
   const onFormValueChange = (setValue, data, formState) => {
-    console.log("onFormValueChange==",data)
     
     const propId = data?.[property.name];
     const city = data?.city;

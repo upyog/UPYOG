@@ -93,10 +93,8 @@ const CitizenAppeal = (props) => {
   const actionButtonLabel = 'Select'
   const consumerCode = propertyIds && result?.data?.Properties?.map((a) => a.propertyId).join(",");
   const propertyOwnerName = propertyIds && result?.data?.Properties[0]?.owners?.map((a) => a.name).join(",");
-  console.log("propertyOwnerName==",propertyOwnerName)
   
   
-  console.log("ownerName==",ownerName)
   const ptAddress = propertyIds && result?.data?.Properties[0]?.address;
   let obj = {
     doorNo: ptAddress?.doorNo,
@@ -161,7 +159,6 @@ const CitizenAppeal = (props) => {
     setFieldError(newErrors);
   };
   const validateForm = (data) => {
-    console.log("validateForm==",data)
     const errors = {};
 
     var exists = Object.keys(data).forEach(function(k) {
@@ -231,7 +228,6 @@ const CitizenAppeal = (props) => {
     try {
       // TODO: change module in file storage
       const response = await Digit.PTService.appealCreate({Appeal:payloadData});
-      console.log("response==",response)
       if (response?.Appeals?.length > 0) {
         setShowAcknowledgement(true);
         setAppealResponse(response);
@@ -256,7 +252,6 @@ const CitizenAppeal = (props) => {
   const removeProperty = (result, index)=> {
     propertyDetails.splice(index, 1);
     // setPropertyDetails(pDetails);
-    console.log("propertyDetails--",propertyDetails)
   }
   const [payloadData, setPayloadData] = useState({});
   
@@ -283,7 +278,6 @@ const CitizenAppeal = (props) => {
     }
     setPayloadData(payload)
     setCurrentStep(2);
-    console.log("payload===",payload);
   } else {
       return;
   }
@@ -318,7 +312,6 @@ const CitizenAppeal = (props) => {
               setError(t("PT_FILE_UPLOAD_ERROR"));
             }
           } catch (err) {
-            console.log("err==",err?.response?.data)
             setError(err?.response?.data?.Errors[0].message);
           }
         }
@@ -378,7 +371,6 @@ const CitizenAppeal = (props) => {
 
  const [agree, setAgree] = useState(false);
   const setdeclarationhandler = (e) => {
-    console.log("setdeclarationhandler==",e)
     setAgree(e);
     
   };

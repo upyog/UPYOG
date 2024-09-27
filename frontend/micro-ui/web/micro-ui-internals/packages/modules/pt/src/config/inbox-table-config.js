@@ -90,7 +90,6 @@ export const TableConfig = (t) => ({
       {
         Header: t("ES_INBOX_UNIQUE_PROPERTY_ID"),
         Cell: ({ row }) => {
-          console.log("row===========",row)
           return (
             <div>
               <span className="link">

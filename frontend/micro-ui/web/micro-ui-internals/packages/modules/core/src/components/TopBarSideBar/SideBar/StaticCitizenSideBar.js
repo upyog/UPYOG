@@ -138,9 +138,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   const filteredTenantContact = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
 
   let menuItems2 = [...SideBarMenu(t, showProfilePage, redirectToLoginPage, isEmployee, storeData, tenantId)];
-  console.log("menuItems1==",menuItems2);
   let menuItems = menuItems2.filter((item) => item.element !== "LANGUAGE");
-  console.log("menuItems==",menuItems);
   
   const MenuItem = ({ item }) => {
     const leftIconArray = item?.icon || item.icon?.type?.name;
@@ -261,7 +259,6 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
       element.style.padding = "0";
     });
   };
-  console.log("menuItems222222==",menuItems)
   return (
     <React.Fragment>
       <div>

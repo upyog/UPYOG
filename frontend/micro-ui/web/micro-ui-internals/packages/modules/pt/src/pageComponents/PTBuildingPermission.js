@@ -5,9 +5,9 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
 
-const ExemptionDetails = ({ t, config, onSelect, value, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState, onBlur }) => {
+const PTBuildingPermission = ({ t, config, onSelect, value, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState, onBlur }) => {
   //let index = window.location.href.charAt(window.location.href.length - 1);
-  console.log("formData11----",formData)
+  console.log("formData11-PTBuildingPermission----",formData)
   let index = window.location.href.split("/").pop();
   let validation = {};
   const onSkip = () => onSelect();
@@ -17,46 +17,47 @@ const ExemptionDetails = ({ t, config, onSelect, value, userType, formData, setE
 
 
   const [uploadedFile, setUploadedFile] = useState(
-    !isMutation ? formData?.exemption?.documents?.exemptionProof?.fileStoreId || null : formData?.[config.key]?.fileStoreId
+    !isMutation ? formData?.buildingPermission?.documents?.buildingPermissionProof?.fileStoreId || null : formData?.[config.key]?.fileStoreId
   );
 //  {code: 'PT_COMMON_YES', i18nKey: "PT_COMMON_YES"}: {code: 'PT_COMMON_NO', i18nKey: "PT_COMMON_NO"}
-  const [exemptionRequired, setExemptionRequired] = useState((formData?.exemption  && formData?.exemption?.exemptionRequired?.code=='PT_COMMON_YES') ?{code: 'PT_COMMON_YES', i18nKey: "PT_COMMON_YES"}: {code: 'PT_COMMON_NO', i18nKey: "PT_COMMON_NO"});
-  const [exemptionType, setExemptionType] = useState(formData?.exemption?.exemptionType);
-  const [file, setFile] = useState(formData?.exemption?.documents?.exemptionProof);
+
+  const [buildingPermissionRequired, setBuildingPermissionRequired] = useState(formData?.buildingPermission?.buildingPermissionRequired || {code: 'PT_COMMON_NO', i18nKey: "PT_COMMON_NO"});
+  const [file, setFile] = useState(formData?.buildingPermission?.documents?.buildingPermissionProof);
   
   const [hidden, setHidden] = useState(true);
  
   const [error, setError] = useState(null);
 
   
-//  useEffect(()=>{
-//   if(formData?.documents && formData?.documents.length>0) {
-//     let obj = formData?.documents.find(o => o.documentType === "PROOF_OF_EXEMPTION") || null;
-//       if(obj) {
-//         setExemptionRequired({code: 'PT_COMMON_YES', i18nKey: "PT_COMMON_YES"});
-//         setFile(obj);
-//         setUploadedFile(!isMutation ? obj?.fileStoreId || null : formData?.[config.key]?.fileStoreId)
-//       }
-//   }
-//  },[])
+  // useEffect(()=>{
+  //   if(formData?.documents){
+  //     let obj = formData?.documents.find(o => o.documentType === "PROOF_OF_BUILDINGPERMISSION") || null;
+  //     if(obj) {
+  //       setBuildingPermissionRequired({code: 'PT_COMMON_YES', i18nKey: "PT_COMMON_YES"});
+  //       setFile(obj);
+  //       setUploadedFile(obj?.fileStoreId)
+  //     }
+  //   }
+  // },[])
+ 
   
   const goNext=()=> {
-    // sessionStorage.setItem("exemption", electricity.i18nKey);
+    // sessionStorage.setItem("buildingPermission", electricity.i18nKey);
     let fileStoreId = uploadedFile;
     let fileDetails = file;
-    if (fileDetails) fileDetails.documentType = 'PROOF_OF_EXEMPTION';
+    if (fileDetails) fileDetails.documentType = 'PROOF_OF_BUILDINGPERMISSION';
     if (fileDetails) fileDetails.fileStoreId = fileStoreId ? fileStoreId : null;
-    let exemption =  { exemptionRequired: exemptionRequired,  exemptionType: exemptionType};
-    if (exemption && exemption.documents) {
-      exemption.documents["exemptionProof"] = fileDetails;
+    let buildingPermission =  { buildingPermissionRequired: buildingPermissionRequired};
+
+    if (buildingPermission && buildingPermission.documents) {
+        buildingPermission.documents['buildingPermissionProof'] = fileDetails;
     } else {
-      exemption["documents"] = {};
-      exemption.documents["exemptionProof"] = fileDetails;
+      buildingPermission["documents"] = {};
+      buildingPermission.documents['buildingPermissionProof'] = fileDetails;
     }
-    console.log("exemption==",exemption)
-    // if (!isMutation) onSelect(config.key, exemption, "", index);
+    // if (!isMutation) onSelect(config.key, buildingPermission, "", index);
     // else onSelect(config.key, { documentType: dropdownValue, fileStoreId }, "", index);
-    onSelect("exemption", exemption, "", index);
+    onSelect("buildingPermission", buildingPermission, "", index);
   };
 
   useEffect(() => {
@@ -99,26 +100,20 @@ const ExemptionDetails = ({ t, config, onSelect, value, userType, formData, setE
       enable: false,
     }
   );
-  // useEffect(()=>{
-  //   if(formData?.exemption?.exemptionType?.code && mdmsData?.ExemptionList?.length>0) {
-  //     let eData = mdmsData?.ExemptionList.filter(e=> e.code == formData?.exemption?.exemptionType?.code);
-  //     setExemptionType(eData && eData.length>0 ? eData[0] : '')
-  //   }
-  // },[mdmsData])
   
-  function selectExemptionRequired(value) {
-    setExemptionRequired(value);
+  function selectBuildingPermissionRequired(value) {
+    setBuildingPermissionRequired(value);
     if(value?.code == 'PT_COMMON_NO') {
-      selectExemptionType('')
+        setFile('')
     }
   }
-  function selectExemptionType(value) {
-    setExemptionType(value)
-  }
+//   function selectBuildingPermissionType(value) {
+//     setBuildingPermissionType(value)
+//   }
   function isAllowedNext() {
-    if(!exemptionRequired){
+    if(!buildingPermissionRequired){
       return true
-    }else if(exemptionRequired && exemptionRequired?.code == 'PT_COMMON_YES' && !exemptionType) {
+    }else if(buildingPermissionRequired && buildingPermissionRequired?.code == 'PT_COMMON_YES' && !file) {
       return true
     } else {
       return false;
@@ -166,7 +161,7 @@ const ExemptionDetails = ({ t, config, onSelect, value, userType, formData, setE
   }
   return (
     <React.Fragment>
-      {window.location.href.includes("/citizen") ? <Timeline currentStep={4} /> : null}
+      {window.location.href.includes("/citizen") ? <Timeline currentStep={1} /> : null}
       
         <FormStep
           config={config}
@@ -175,29 +170,29 @@ const ExemptionDetails = ({ t, config, onSelect, value, userType, formData, setE
           t={t}
           isDisabled={isAllowedNext()}
         >
-          <CardLabel>{`${t("PT_ELIGIBLE_FOR_EXEMPTION")}*`}</CardLabel>
+          <CardLabel>{`${t("Obtained Building Permission")}*`}</CardLabel>
           <RadioButtons
             t={t}
             optionsKey="i18nKey"
             isMandatory={config.isMandatory}
             //options={menu}
             options={[{code: 'PT_COMMON_YES', i18nKey: "PT_COMMON_YES"},{code: 'PT_COMMON_NO', i18nKey: "PT_COMMON_NO"}]}
-            selectedOption={exemptionRequired}
-            onSelect={selectExemptionRequired}
+            selectedOption={buildingPermissionRequired}
+            onSelect={selectBuildingPermissionRequired}
           />
-          {exemptionRequired?.code =='PT_COMMON_YES' && (
+          {buildingPermissionRequired?.code =='PT_COMMON_YES' && (
             <div>
-              <CardLabel>{`${t("PT_EXEMPTION_TYPE")}*`}</CardLabel>
+              {/* <CardLabel>{`${t("PT_EXEMPTION_TYPE")}*`}</CardLabel>
               <div className={"form-pt-dropdown-only"}>
                 <Dropdown
                   t={t}
                   optionKey="i18nKey"
                   isMandatory={config.isMandatory}
                   option={mdmsData?.ExemptionList}
-                  selected={exemptionType}
+                  selected={formData?.buildingPermission?.exemptionType}
                   select={(e) => selectExemptionType(e)}
                 />
-              </div>
+              </div> */}
               <UploadFile
                 id={"pt-doc"}
                 extraStyleName={"propertyCreate"}
@@ -223,4 +218,4 @@ const ExemptionDetails = ({ t, config, onSelect, value, userType, formData, setE
 
 };
 
-export default ExemptionDetails;
+export default PTBuildingPermission;

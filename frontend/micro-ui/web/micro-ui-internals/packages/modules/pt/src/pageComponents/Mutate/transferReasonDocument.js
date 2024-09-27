@@ -34,7 +34,6 @@ const TransferProof = ({ t, config, onSelect, userType, formData }) => {
       data.i18nKey = stringReplaceAll(data.code, ".", "_");
     });
   }
-  console.log("dropdownData===",dropdownData)
   const [fields, setFields] = useState(
     formData?.transferReasonProof || [
       {
@@ -91,7 +90,6 @@ const TransferProof = ({ t, config, onSelect, userType, formData }) => {
     let fileStoreId = uploadedFile;
     let fileDetails = [];
     let optAr = [];
-    console.log("fields===",fields);
     
     if(fields && fields.length>0) {
       fields.map((e,i)=>{
@@ -126,7 +124,6 @@ const TransferProof = ({ t, config, onSelect, userType, formData }) => {
   const onSkip = () => onSelect();
 
   async function selectfile(i,e) {
-    console.log("selectFile==",i,e)
     if(e) {
       let file = e.target.files[0]
       if (file) {

@@ -50,7 +50,6 @@ import { Link } from "react-router-dom";
 //   );
 // };
 const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen = false, className, styles, FsmHideCount }) => {
-  console.log("EmployeeModuleCard==",kpis,moduleName)
   return (
     <div style={{display: "inline-flex"}}>
       {/* <div className="ServicesSection">

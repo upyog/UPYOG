@@ -28,7 +28,6 @@ const MutationCitizen = (props) => {
   });
 
   function handleSelect(key, data, skipStep, index, isAddMultiple = false, configObj,tt) {
-    console.log("handleSelect===",key, data, skipStep, index, configObj,tt)
     // if(key == 'transferReasonProof' && tt && tt?.reasonForTransfer?.length>0) {
     //   selectParams("additionalDetails", tt);
     // }

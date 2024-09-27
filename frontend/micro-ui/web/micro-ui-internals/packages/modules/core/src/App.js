@@ -71,7 +71,6 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData }) 
     pathname,
     initData,
   };
-  console.log("commonProps==",commonProps)
   return (
     <div className={scroll ? "main-header" : "main-header"}>
       {/* className={scroll ? "main-header scrolled" : "main-header"} */}

@@ -8,6 +8,7 @@ const PropertyPhoto = ({ t, config, onSelect, userType, formData }) => {
   //let index = window.location.href.charAt(window.location.href.length - 1);
   const { pathname: url } = useLocation();
   const isMutation = url.includes("property-mutation");
+  console.log("propertyPhoto=",formData)
 
   let index = window.location.href.split("/").pop();
   const [uploadedFile, setUploadedFile] = useState(
@@ -19,18 +20,26 @@ const PropertyPhoto = ({ t, config, onSelect, userType, formData }) => {
   const isUpdateProperty = formData?.isUpdateProperty || false;
   const isEditProperty = formData?.isEditProperty || false;
   
-
+  useEffect(()=>{
+    if(formData?.documents && formData?.documents.length>0) {
+      let obj = formData?.documents.find(o => o.documentType === "PROPERTY_PHOTO") || null;
+        if(obj) {
+          setFile(obj);
+          setUploadedFile(!isMutation ? obj?.fileStoreId || null : formData?.[config.key]?.fileStoreId)
+        }
+    }
+   },[])
 
   const handleSubmit = () => {
     let fileStoreId = uploadedFile;
-    let fileDetails = file;
+    let fileDetails = {};
     if (fileDetails) fileDetails.documentType = "PROPERTY_PHOTO";
     if (fileDetails) fileDetails.fileStoreId = fileStoreId ? fileStoreId : null;
     let propertyPhoto = formData && formData.propertyPhoto ? formData.propertyPhoto : {};
     if (propertyPhoto && propertyPhoto.documents) {
         propertyPhoto.documents["propertyPhoto"] = fileDetails;
     } else {
-        propertyPhoto["documents"] = [];
+        propertyPhoto["documents"] = {};
         propertyPhoto.documents["propertyPhoto"] = fileDetails;
     }
     console.log("propertyPhoto=",propertyPhoto)
@@ -91,6 +100,7 @@ const PropertyPhoto = ({ t, config, onSelect, userType, formData }) => {
           }}
           message={uploadedFile ? `1 ${t(`PT_ACTION_FILEUPLOADED`)}` : t(`PT_ACTION_NO_FILEUPLOADED`)}
           error={error}
+          hasFile={uploadedFile ? true : false}
         />
         {error ? <div style={{ height: "20px", width: "100%", fontSize: "20px", color: "red", marginTop: "5px" }}>{error}</div> : ""}
         <div style={{ disabled: "true", height: "20px", width: "100%" }}></div>

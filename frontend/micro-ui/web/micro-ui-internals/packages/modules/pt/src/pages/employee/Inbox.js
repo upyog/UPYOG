@@ -57,7 +57,6 @@ const Inbox = ({
         middlewareSearch,
       });
 
-    console.log("-----------",searchResponseKey, data, searchFields)
 
   useEffect(() => {
     setPageOffset(0);

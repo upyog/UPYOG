@@ -212,7 +212,6 @@ const EmployeeSideBar = () => {
     return result
   }
   const splitKeyValue = () => {
-    console.log("configEmployeeSideBar===",configEmployeeSideBar)
     const keys = Object.keys(configEmployeeSideBar);
     keys.sort((a, b) => a.orderNumber - b.orderNumber);
     for (let i = 0; i < keys.length; i++) {

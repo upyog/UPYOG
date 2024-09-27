@@ -123,7 +123,6 @@ const handleClick=()=>{
   setshowModal(true)
 }
 const onBifurcate = () =>{
-  console.log("property.onBifurcate==",property.length,property)
   history.push({pathname: "/digit-ui/citizen/pt/property/new-application", state: {propertyDetails: property, action: 'BIFURCATION'}})
 }
 const onAppeal =()=>{
@@ -191,7 +190,6 @@ const onAppeal =()=>{
 
       setIsEnableLoader(true);
       if (typeof data?.customFunctionToExecute === "function") {
-        console.log("customFunctionToExecute")
        
         data?.customFunctionToExecute({ ...data });
        
@@ -275,7 +273,6 @@ const onAppeal =()=>{
     return <Loader />;
   }
   const closeModal = () => {
-    console.log("closeModal")
     setshowModal(false)
   };
 
@@ -291,7 +288,6 @@ const onAppeal =()=>{
   sessionStorage.setItem("propertyid",data.Properties[0].propertyId)  ;
   history.push(`/digit-ui/citizen/pgr/create-complaint/complaint-type?propertyId=${property.propertyId}`);
   }
-  console.log("data78", data)
   return (
     <React.Fragment>
       <Header>{t("PT_PROPERTY_INFORMATION")}</Header>

@@ -1,7 +1,7 @@
 import { CardLabel, CardLabelDesc, Dropdown, FormStep, UploadFile } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { stringReplaceAll } from "../utils";
+import { checkArrayLength, stringReplaceAll } from "../utils";
 import Timeline from "../components/TLTimeline";
 
 const Proof = ({ t, config, onSelect, userType, formData }) => {
@@ -36,6 +36,25 @@ const Proof = ({ t, config, onSelect, userType, formData }) => {
     });
   }
 
+  // useEffect(()=>{
+  //   if(formData && formData?.documents?.length>0){
+  //     let addressDocs = formData?.documents?.filter((doc) => doc?.documentType?.includes("ADDRESSPROOF"));
+  //     if (checkArrayLength(addressDocs) && !isMutation) {
+  //       setDropdownValue({ code: addressDocs[0]?.documentType, i18nKey: stringReplaceAll(addressDocs[0]?.documentType, ".", "_") })
+  //       setUploadedFile(addressDocs[0]?.fileStoreId)
+  //       // addressDocs[0].documentType = { code: addressDocs[0]?.documentType, i18nKey: stringReplaceAll(addressDocs[0]?.documentType, ".", "_") };
+  //     }
+  //     // console.log("addressDocs22===",addressDocs)
+  //     // let obj = formData?.documents.find(o => o.documentType.includes("ADDRESSPROOF")) || null;
+  //     // if(obj && !isMutation) {
+
+  //     //   setBuildingPermissionRequired({code: 'PT_COMMON_YES', i18nKey: "PT_COMMON_YES"});
+  //     //   setFile(obj);
+  //     //   setUploadedFile(obj?.fileStoreId)
+  //     // }
+  //   }
+  // },[])
+
   function setTypeOfDropdownValue(dropdownValue) {
     setDropdownValue(dropdownValue);
   }
@@ -50,7 +69,7 @@ const Proof = ({ t, config, onSelect, userType, formData }) => {
     if (address && address.documents) {
       address.documents["ProofOfAddress"] = fileDetails;
     } else {
-      address["documents"] = [];
+      address["documents"] = {};
       address.documents["ProofOfAddress"] = fileDetails;
     }
     if (!isMutation) onSelect(config.key, address, "", index);
@@ -119,6 +138,7 @@ const Proof = ({ t, config, onSelect, userType, formData }) => {
           }}
           message={uploadedFile ? `1 ${t(`PT_ACTION_FILEUPLOADED`)}` : t(`PT_ACTION_NO_FILEUPLOADED`)}
           error={error}
+          hasFile={uploadedFile ? true : false}
         />
         {error ? <div style={{ height: "20px", width: "100%", fontSize: "20px", color: "red", marginTop: "5px" }}>{error}</div> : ""}
         <div style={{ disabled: "true", height: "20px", width: "100%" }}></div>

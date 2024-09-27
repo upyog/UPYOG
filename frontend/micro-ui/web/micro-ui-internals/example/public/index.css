@@ -988,7 +988,8 @@ img, video {
       .app-container form .card .field-container, .app-container form .card-emp .field-container {
         max-width: 540px; }
       .app-container form .card button, .app-container form .card-emp button {
-        max-width: 240px; }
+        max-width: 240px; 
+        margin-top: 10px; }
       .app-container form .card .card-text-button, .app-container form .card-emp .card-text-button, .app-container form .card .input-otp-wrap, .app-container form .card-emp .input-otp-wrap {
         text-align: left; }
   .h1 {
@@ -2228,7 +2229,7 @@ img, video {
     -webkit-box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
     box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
     position: absolute;
-    z-index: 200;
+    z-index: 99999;
     margin-top: 4px;
     --bg-opacity:1;
     background-color: #fff;
@@ -9666,7 +9667,7 @@ input[type=number], .checkbox-wrap .input-emp[type=number] {
     margin-bottom: 10px;
   }
   .employee-data-table {
-    left: 32px;
+    /* left: 32px; */
   }
   .citizen-card-txt {
     position: relative;

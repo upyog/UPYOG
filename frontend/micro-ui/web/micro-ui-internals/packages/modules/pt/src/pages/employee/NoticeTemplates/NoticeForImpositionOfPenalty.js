@@ -79,7 +79,6 @@ const NoticeForImpositionOfPenalty = (props) => {
   );
   useEffect(() => {
     if (financialYearsData && financialYearsData["egf-master"]) {
-      console.log("=====", financialYearsData["egf-master"]?.["FinancialYear"]);
       setFinancialYears(financialYearsData["egf-master"]?.["FinancialYear"]);
     }
   }, [financialYearsData]);
@@ -141,7 +140,6 @@ const NoticeForImpositionOfPenalty = (props) => {
     setFieldError(newErrors);
   };
   const validateForm = (data) => {
-    console.log("validateForm==",data)
     const errors = {};
 
     var exists = Object.keys(data).forEach(function(k) {

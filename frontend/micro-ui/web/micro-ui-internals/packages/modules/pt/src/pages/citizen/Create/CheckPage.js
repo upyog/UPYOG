@@ -88,9 +88,9 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   const onSetIsApportion = (e) => {
     setIsPartOfProperty(e.target.checked);
   };
-  useEffect(() => {
-    setIsPartOfProperty(!isPartOfProperty);
-  }, [value?.isPartOfProperty]);
+  // useEffect(() => {
+  //   setIsPartOfProperty(!isPartOfProperty);
+  // }, [value?.isPartOfProperty]);
   const onclickSubmit = ()=>{
     onSubmit('isPartOfProperty', isPartOfProperty);
   }
@@ -112,7 +112,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
           />
           <Row
             label={t("PT_PROOF_OF_ADDRESS_SUB_HEADER")}
-            text={`${(address?.documents?.ProofOfAddress?.name && getFixedFilename(address.documents.ProofOfAddress.name)) || "na"}`}
+            text={`${(address?.documents?.ProofOfAddress?.name && getFixedFilename(address.documents.ProofOfAddress.name)) || (address?.documents?.ProofOfAddress?.documentType?.i18nKey ? t(address?.documents?.ProofOfAddress?.documentType?.i18nKey) : "na")}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/proof`} />}
           />
         </StatusTable>
@@ -202,7 +202,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                       /> */}
                       <Row
                         label={t("PT_PROOF_IDENTITY_HEADER")}
-                        text={`${(owner?.documents["proofIdentity"]?.name && getFixedFilename(owner.documents["proofIdentity"].name)) || "na"}`}
+                        text={`${(owner?.documents["proofIdentity"]?.name && getFixedFilename(owner.documents["proofIdentity"].name)) || (owner?.documents?.proofIdentity?.documentType?.i18nKey ? t(owner?.documents?.proofIdentity?.documentType?.i18nKey) : "na")}`}
                         actionButton={
                           <ActionButton jumpTo={`${`/digit-ui/citizen/pt/property/${typeOfApplication}/institutional-proof-of-identity/`}${index}`} />
                         }
@@ -258,7 +258,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                         <Row
                           label={t("PT_SPECIAL_OWNER_CATEGORY_PROOF_HEADER")}
                           text={`${
-                            (owner?.documents["specialProofIdentity"]?.name && getFixedFilename(owner.documents["specialProofIdentity"].name)) || "na"
+                            (owner?.documents["specialProofIdentity"]?.name && getFixedFilename(owner.documents["specialProofIdentity"].name)) || (owner?.documents?.specialProofIdentity?.documentType?.i18nKey ? t(owner?.documents?.specialProofIdentity?.documentType?.i18nKey) : "na")
                           }`}
                           actionButton={
                             <ActionButton jumpTo={`${`/digit-ui/citizen/pt/property/${typeOfApplication}/special-owner-category-proof/`}${index}`} />
@@ -269,7 +269,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                       )}
                       <Row
                         label={t("PT_PROOF_IDENTITY_HEADER")}
-                        text={`${(owner?.documents["proofIdentity"]?.name && getFixedFilename(owner.documents["proofIdentity"].name)) || "na"}`}
+                        text={`${(owner?.documents["proofIdentity"]?.name && getFixedFilename(owner.documents["proofIdentity"].name)) || (owner?.documents?.proofIdentity?.documentType?.i18nKey ? t(owner?.documents?.proofIdentity?.documentType?.i18nKey) : "na")}`}
                         actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/pt/property/${typeOfApplication}/proof-of-identity/`}${index}`} />}
                       />
                     </StatusTable>
@@ -603,21 +603,22 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             <StatusTable>
               <Row
                 label={t("PT_EXEMPTION_TYPE")}
-                text={`${exemption?.exemptionType ? ` ${t(exemption?.exemptionType?.i18nKey)} ` : ""} `}
+                text={`${exemption?.exemptionType ? ` ${t(exemption?.exemptionType?.i18nKey)} ` : "NA"} `}
                 actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/exemption-details`} />}
               />
               <Row
                 label={t("PT_PROOF_OF_EXEMPTION")}
-                text={`${(exemption?.documents?.exemptionProof?.name && getFixedFilename(exemption.documents.exemptionProof.name)) || "na"}`}
+                text={`${(exemption?.documents?.exemptionProof?.name && getFixedFilename(exemption.documents.exemptionProof.name)) || (exemption?.documents?.exemptionProof?.documentType ? t(exemption?.documents?.exemptionProof?.documentType) : "na")}`}
                 actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/exemption-details`} />}
               />
             </StatusTable>
           </div>
         )} 
         <CheckBox
-          label={t("Is this property is a portion of property?")}
+          label={t("Is this property an apportioned property?")}
           onChange={onSetIsApportion}
           styles={{ height: "auto",paddingBottom: '10px' }}
+          checked={isPartOfProperty || false}
           //disabled={!agree}
         />
         <CheckBox

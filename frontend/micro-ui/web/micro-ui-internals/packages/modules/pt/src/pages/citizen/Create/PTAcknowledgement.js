@@ -37,7 +37,7 @@ let isBifurcation = false;
 let bifurcationDetails=null;
 
 const PTAcknowledgement = ({ data, onSuccess }) => {
-  console.log("PTAcknowledgement===data==",data,onSuccess)
+  console.log("PTAcknowledgement===data==",data)
   const { t } = useTranslation();
   const isPropertyMutation = window.location.href.includes("property-mutation");
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -60,11 +60,7 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
     try {
       let tenantId = isPropertyMutation ? data.Property?.address.tenantId : data?.address?.city ? data.address?.city?.code : tenantId;
       data.tenantId = tenantId;
-      let formdata = !window.location.href.includes("edit-application")
-        ? isPropertyMutation
-          ? data
-          : convertToProperty(data)
-        : convertToUpdateProperty(data,t);
+      let formdata = !window.location.href.includes("edit-application") ? isPropertyMutation ? data : convertToProperty(data) : convertToUpdateProperty(data,t);
       formdata.Property.tenantId = formdata?.Property?.tenantId || tenantId;
       mutation.mutate(formdata, {
         onSuccess,

@@ -12,7 +12,6 @@ const CreateProperty = ({ parentRoute }) => {
   const { pathname } = useLocation();
   const  location = useLocation();
   const history = useHistory();
-  console.log("history==",history,location)
   const stateId = Digit.ULBService.getStateId();
   let config = [];
   const [amalgamationState, setAmalgamationState] = useState(location?.state ? location.state : null);
@@ -44,7 +43,6 @@ const CreateProperty = ({ parentRoute }) => {
     if (!isNaN(lastchar)) {
       isMultiple = true;
     }
-    console.log("currentPath==",currentPath);
     let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
     if (typeof nextStep == "object" && nextStep != null && isMultiple != false) {
       if (nextStep[sessionStorage.getItem("ownershipCategory")]) {
@@ -175,7 +173,6 @@ const CreateProperty = ({ parentRoute }) => {
       
       {config.map((routeObj, index) => {
         const { component, texts, inputs, key } = routeObj;
-        // console.log("routeObj==",routeObj)
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
           <Route path={`${match.path}/${routeObj.route}`} key={index}>

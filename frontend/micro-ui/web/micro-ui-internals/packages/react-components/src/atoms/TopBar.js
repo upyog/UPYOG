@@ -29,7 +29,6 @@ const TopBar = ({
   //     return <BackButton className="top-back-btn" />;
   //   }
   // };
-  console.log("hambuger-back-wrapper==",cityOfCitizenShownBesideLogo,hideNotificationIconOnSomeUrlsWhenNotLoggedIn)
   return (
     <div className="navbar">
       <div className="center-container back-wrapper" style={{display:"flex",justifyContent:"space-between"}}>

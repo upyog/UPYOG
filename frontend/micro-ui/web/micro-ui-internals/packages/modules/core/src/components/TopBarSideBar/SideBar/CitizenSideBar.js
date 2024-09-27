@@ -85,7 +85,6 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
   const { stateInfo } = storeData || {};
   const user = Digit.UserService.getUser();
   const [search, setSearch] = useState("");
-console.log("CitizenSideBar--isMobile===",isMobile)
   const { t } = useTranslation();
   const history = useHistory();
   const closeSidebar = () => {
@@ -240,7 +239,6 @@ console.log("CitizenSideBar--isMobile===",isMobile)
     profileItem = <span></span>;
     menuItems = menuItems.filter((ele) => ele.element === "LANGUAGE");
   }
-  console.log("isMobile===",isMobile)
   return isMobile ? (
     <NavBar
       open={isOpen}

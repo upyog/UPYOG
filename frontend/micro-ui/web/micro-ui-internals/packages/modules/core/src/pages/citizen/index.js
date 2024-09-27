@@ -104,7 +104,7 @@ const Home = ({
         return a.orderNumber - b.orderNumber;
       });
     // }
-    console.log("mdmsDataObj===",mdmsDataObj)
+    // console.log("mdmsDataObj===",mdmsDataObj)
     return (
       <React.Fragment>
         <Route key={index} path={`${path}/${code.toLowerCase()}-home`}>

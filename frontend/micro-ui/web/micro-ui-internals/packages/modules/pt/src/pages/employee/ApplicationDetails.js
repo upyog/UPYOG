@@ -48,7 +48,6 @@ const ApplicationDetails = () => {
     },
     { enabled: enableAudit, select: (data) => data.Properties?.filter((e) => e.status === "ACTIVE") }
   );
-  console.log("Application Details==", auditData)
 
 
   const showTransfererDetails = React.useCallback(() => {

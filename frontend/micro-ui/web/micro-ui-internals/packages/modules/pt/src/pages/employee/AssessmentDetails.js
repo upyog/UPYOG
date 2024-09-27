@@ -128,7 +128,6 @@ const AssessmentDetails = () => {
             let userType = JSON.parse(user)
             setShowToast({ key: "success", action: { action: "ASSESSMENT" } });
             setTimeout(closeToast, 5000);
-            console.log("useType.value.info.type",userType,typeof(userType))
             // queryClient.clear();
             // queryClient.setQueryData(["PT_ASSESSMENT", propertyId, location?.state?.Assessment?.financialYear], true);
             if(userType?.value?.info?.type == "CITIZEN")

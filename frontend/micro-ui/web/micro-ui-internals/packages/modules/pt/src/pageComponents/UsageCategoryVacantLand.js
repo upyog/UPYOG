@@ -10,13 +10,15 @@ const UsageCategoryVacantLand = ({ t, config, onSelect, userType, formData }) =>
   const isMutation = url.includes("property-mutation");
 
   let index = window.location.href.split("/").pop();
-  
+  console.log("UsageCategoryVacantLand-formData==",formData)
   const [error, setError] = useState(null);
   const cityDetails = Digit.ULBService.getCurrentUlb();
   const isUpdateProperty = formData?.isUpdateProperty || false;
   const isEditProperty = formData?.isEditProperty || false;
   const [UsageCategory, setUsageCategory] = useState(
-    formData?.usageCategory ? {i18nKey: `PROPERTYTAX_${formData.usageCategory?.code}`,code: formData.usageCategory.code} : ''
+    (formData?.usageCategory ? {i18nKey: `PROPERTYTAX_${formData.usageCategory?.code}`,code: formData.usageCategory.code} : '')
+    // (formData?.PropertyType?.i18nKey === "COMMON_PROPTYPE_BUILTUP_SHAREDPROPERTY") ? (formData?.usageCategory ? {i18nKey: `PROPERTYTAX_${formData.usageCategory?.code}`,code: formData.usageCategory.code} : '') : (formData?.VacantUsagecategory ? {i18nKey: `PROPERTYTAX_${formData?.VacantUsagecategory}`,code: formData?.VacantUsagecategory} : '')
+    // formData?.usageCategory ? {i18nKey: `PROPERTYTAX_${formData.usageCategory?.code}`,code: formData.usageCategory.code} : ''
   );
 
   const { data: mdmsData, isLoading } = Digit.Hooks.useCommonMDMS(
@@ -81,11 +83,11 @@ const UsageCategoryVacantLand = ({ t, config, onSelect, userType, formData }) =>
         t={t}
         isDisabled={ !UsageCategory}
       >
-        <CardLabel>{`${t("Vacant Land Usage Type")}*`}</CardLabel>
+        <CardLabel>{`${t("Vacant Land Usage Type")}`}</CardLabel>
         <Dropdown
         t={t}
         optionKey="i18nKey"
-        isMandatory={config.isMandatory}
+        // isMandatory={config.isMandatory}
         option={[
             ...((formData?.PropertyType?.i18nKey !== "COMMON_PROPTYPE_VACANT" && formData?.PropertyType?.i18nKey !== "COMMON_PROPTYPE_BUILTUP_INDEPENDENTPROPERTY") ? (mdmsData?.UsageCategory ? mdmsData?.UsageCategory : []) : mdmsData?.VacantLandUsageCategory ? mdmsData?.VacantLandUsageCategory : []),
         ]}
