@@ -77,6 +77,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -1115,6 +1118,7 @@ public class EstimationService {
 		BigDecimal remainAdvanceAmount=BigDecimal.ZERO;
 		BigDecimal pastdue=BigDecimal.ZERO;
 		BigDecimal advanceRebate=taxAmt.multiply(new BigDecimal(75).divide(new BigDecimal(100)));
+		BigDecimal pastduePenalty=BigDecimal.ZERO;
 		
 		if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
 		{
@@ -1155,6 +1159,15 @@ public class EstimationService {
 			estimates.add(TaxHeadEstimate.builder()
 					.taxHeadCode(PT_PASTDUE_CARRYFORWARD)
 					.estimateAmount(collectedAmtForOldDemand).build());
+			
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MM yyyy");
+			String date = "31 03 ";
+			LocalDate endDate = LocalDate.now();
+			date=date.concat(String.valueOf(endDate.getYear()));
+			LocalDate startDate = LocalDate.parse(date, dtf);
+			BigDecimal daysdiff=new BigDecimal(ChronoUnit.DAYS.between(startDate, endDate));
+			
+			pastduePenalty=collectedAmtForOldDemand.multiply(new BigDecimal(0.027).divide(new BigDecimal(100)).multiply(daysdiff));
 			
 			totalAmount=totalAmount.add(collectedAmtForOldDemand);
 		}
