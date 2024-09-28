@@ -40,7 +40,7 @@ public class PetController {
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
 
-	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+	@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
 	public ResponseEntity<PetRegistrationResponse> petRegistrationCreate(
 			@ApiParam(value = "Details for the new Pet Registration Application(s) + RequestInfo meta data.", required = true) @Valid @RequestBody PetRegistrationRequest petRegistrationRequest) {
@@ -53,7 +53,7 @@ public class PetController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+	@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
 	public ResponseEntity<PetRegistrationResponse> petRegistrationSearch(
 			@RequestBody RequestInfoWrapper requestInfoWrapper,
@@ -67,7 +67,7 @@ public class PetController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+	@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
     @RequestMapping(value = "/_update", method = RequestMethod.POST)
 	public ResponseEntity<PetRegistrationResponse> petRegistrationUpdate(
 			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @Valid @RequestBody PetRegistrationRequest petRegistrationRequest) {
@@ -80,7 +80,7 @@ public class PetController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+    @CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping({"/fetch","/fetch/{value}"})
     public ResponseEntity<?> calculateTLFee(@RequestBody PetRegistrationActionRequest ptradeLicenseActionRequest
     										, @PathVariable String value){
