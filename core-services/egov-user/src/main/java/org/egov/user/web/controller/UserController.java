@@ -227,7 +227,7 @@ public class UserController {
     }
 
 	@PostMapping("/_landingPage")
-	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+	@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
     private ResponseEntity<?> landingPage(@RequestParam(value = "token") String token){
     	log.info("## landing page token : "+token);
     	ResponseEntity<?> response = ssoService.getHpSsoValidateTokenResponse(token);
