@@ -47,7 +47,7 @@ public class BillControllerv2 {
 	@Autowired
 	private BillHelperV2 billHelper;
 	
-	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+	@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("_search")
 	@ResponseBody
 	public ResponseEntity<?> search(@RequestBody @Valid final RequestInfoWrapper requestInfoWrapper,
@@ -59,7 +59,7 @@ public class BillControllerv2 {
 	}
 
 
-	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+	@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("_fetchbill")
 	@ResponseBody
 	public ResponseEntity<?> fetchBill(@RequestBody RequestInfoWrapper requestInfoWrapper, 
@@ -70,7 +70,7 @@ public class BillControllerv2 {
 	}
 	
 	
-	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+	@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("_generate")
 	@ResponseBody
 	public ResponseEntity<?> genrateBill(@RequestBody RequestInfoWrapper requestInfoWrapper,
@@ -79,7 +79,7 @@ public class BillControllerv2 {
 		throw new CustomException("EG_BS_API_ERROR", "The Generate bill API has been deprecated, Access the fetchBill");
 	}
 	
-	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+	@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("_create")
 	@ResponseBody
 	public ResponseEntity<?> create(@RequestBody @Valid BillRequestV2 billRequest, BindingResult bindingResult){

@@ -236,7 +236,7 @@ public class UserController {
 	
 	
 	@PostMapping("/_login")
-	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+	@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
 	public Object employeeUserLogin(@RequestBody LoginRequest loginRequest) {
 		if (StringUtils.isEmpty(loginRequest.getUserType())) {
 			throw new RuntimeException("Employee login failed.");
