@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.garbageservice.contract.bill.Bill;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
@@ -24,5 +26,7 @@ public class GarbageAccountDetail {
 	private String feeCalculationFormula;
 	private Map<Object, Object> billDetails;
 	private Map<Object, Object> userDetails;
+	private GarbageAccount garbageAccount;
+	private List<Bill> bills;
 	
 }

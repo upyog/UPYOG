@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+   <!-- <th:link href='https://fonts.googleapis.com/css?family=Karla' rel='stylesheet'> -->
+   <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
+      </meta>
+      <title>Document</title>
+      <style>
+         /* hemant */
+         body {
+         font-family: 'Arial', sans-serif;
+         font-size: 14px;
+         }
+         .top-header {
+         width: 100%;
+         border-collapse: collapse;
+         border-bottom: solid 4px #49627e;
+         }
+         .top-header td {
+         padding: 8px;
+         text-align: left;
+         }
+         .hp-govt {
+         width: 180px;
+         }
+         .udd-logo {
+         width: 140px;
+         float: right;
+         right: 0px;
+         }
+         .header-text {
+         margin-top: 20px;
+         text-align: center;
+         font-size: 22px;
+         font-weight: bold;
+         color: #49627e;
+         }
+         .service-name {
+         text-align: center;
+         font-size: 20px;
+         color: #333;
+         font-weight: bold;
+         }
+         .license-description {
+         text-align: center;
+         font-size: 14px;
+         text-align: center;
+         color: #666;
+         }
+         .pet-details {
+         margin-top: 10px;
+         display: inline-block;
+         width: 100%;
+         border: solid 1px #ccc;
+         border-collapse: collapse;
+         font-size: 14px;
+         background-color: #f9f9f9;
+         }
+         .pet-details table tr {
+         width: 100%;
+         border: solid 1px #ccc;
+         padding: 5px;
+         }
+         .pet-details td {
+         width: 50%;
+         border: solid 1px #ccc;
+         padding: 5px;
+         }
+         .qr-code-table {
+         margin-top: 20px;
+         display: inline-block;
+         width: 40%;
+         margin-bottom: 12px;
+         }
+         .qr-code {
+         width: 120px;
+         position: relative;
+         padding-left: 50px;
+         margin-top: 0px;
+         float: right;
+         right: 0;
+         }
+         /* Terms and Conditions Styling */
+         .terms-condition {
+         font-size: 20px;
+         color: #49627e;
+         margin-top: 30px;
+         text-align: left;
+         border-bottom: dashed 1px #49627e;
+         padding-bottom: 5px;
+         }
+         .terms-condition-details {
+         font-size: 14px;
+         text-align: justify;
+         color: #333;
+         margin-top: 10px;
+         }
+         .terms-condition-details ol {
+         padding-left: 20px;
+         }
+         .terms-condition-details li {
+         margin: 5px 0;
+         }
+         .terms-condition-details{
+         font-size:10px;
+         text-align: justify;
+         }
+         li {
+         margin: 5px 0;
+         }
+         .sign {
+         position: relative;
+         float: right;
+         margin-top: 0px;
+         text-align: right;
+         }
+         .signature-details{
+         margin-top: -20px;
+         }
+         .signature-details span {
+         display: block;
+         text-align: right;
+         line-height: 1; 
+         margin: 0; 
+         }
+         .hp-govt{
+         text-align: right !important;
+         float: right;
+         }
+      </style>
+   </head>
+   <body>
+      <table class="top-header">
+         <tr>
+            <td>
+               <img class="hp-govt"
+                  th:src="${hpLogo}"
+                  alt="Government of Himachal Pradesh" />
+            </td>
+            <td>
+               <!--				<h2 class="header-text"><span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span></h2>-->
+               <h3 class="service-name">Pet Registration Certificate</h3>
+               <span class="license-description">(UNDER SECTION 202 OF Himachal Pradesh Municipal ACT, 1994)</span> <br />
+               <span class="license-description">Issued to: <span th:text="${applicantName}">NA</span></span>
+            </td>
+            <td>
+               <img class="udd-logo"
+                  th:src="${UDDLogo}"
+                  alt="Directorate of Urban Development" />
+            </td>
+         </tr>
+      </table>
+      <table width="100%">
+         <tr style="width: 100%;">
+            <td  style="width: 60%;">
+               <table class="pet-details" style="width: 100%;">
+                  <tr>
+                     <td>Pet Registration No:</td>
+                     <td><span th:text="${applicationNumber}">NA</span></td>
+                  </tr>
+                  <tr>
+                     <td>Pet Name:</td>
+                     <td><span th:text="${petName}">NA</span></td>
+                  </tr>
+                  <tr>
+                     <td>Pet Breed:</td>
+                     <td><span th:text="${breedType}">NA</span></td>
+                  </tr>
+                  <tr>
+                     <td>Pet Address:</td>
+                     <td><span th:text="${address}">NA</span></td>
+                  </tr>
+                  <tr>
+                     <td>Registration Issue Date:</td>
+                     <td><span th:text="${createdTime}">NA</span></td>
+                  </tr>
+                  <tr>
+                     <td>Vaccine Expiry Date:</td>
+                     <td><span th:text="${lastVaccineDate}">NA</span></td>
+                  </tr>
+                  <tr>
+                     <td>Pet Owner Name:</td>
+                     <td><span th:text="${applicantName}">NA</span></td>
+                  </tr>
+                  <tr>
+                     <td>Pet Owner Mobile No:</td>
+                     <td><span th:text="${mobileNumber}">NA</span></td>
+                  </tr>
+               </table>
+            </td>
+            <td  style="width: 40%;">
+               <table class="qr-code-table">
+                  <tr>
+                     <td>
+                        <img class="qr-code" th:src="${petPhotoURL}"  alt="" />
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>
+                        <img class="qr-code" th:src="${qrCode}" src="/qr.png" alt="" />
+                     </td>
+                  </tr>
+               </table>
+            </td>
+         </tr>
+      </table>
+      <h2 class="terms-condition">Term and Conditions of this License:</h2>
+      <p class="terms-condition-details">
+      <ol>
+         <li>The owner of the pet dog shall be responsible for the controlled breeding, immunization, neutering and licensing in 
+            accordance with the provisions of these Bye-Laws.
+         </li>
+         <li>Any dog not wearing metal ticket or registration in accordance with clause 3(3) of these Bye-laws may, if found in any public 
+            place be removed and will be liable to be dealt under the orders of the Veterinary Public Health Officer, Municipal 
+            Corporation, Shimla, if not claimed within 7 days by the owner.
+         </li>
+         <li>For the purpose of these bye-laws any person in possession or in charge of the dog, during the absence of the real owner 
+            from the limits of M.C. Shimla, shall be deemed to be the owner of the dog.
+         </li>
+         <li>That it shall be mandatory for each owner to carry disposable bags during the time when the dog is put on Municipal street.</li>
+         <li>No owner or person in charge of the Dog shall allow his Dog to defecate on any road/street/drain within Municipal Limits. 
+            In case any dog is found defecating on the road/street/ drain, it shall be the duty of the owner concerned to clean the excreta 
+            and pack it in a disposable bag to be disposed of in the same manner in which human excreta is disposed of.and regulations.
+         </li>
+         <li>The Commissioner/ Executive Officer/ Secretary shall have a right to impose or alter any of conditions in the license as may 
+            be deemed fit by the Commissioner under the provisions of section XXX of the XXXX Act, XXXX.
+         </li>
+      </ol>
+      </p>
+      <div class="sign">
+         <img th:src="${UpyogLogo}"
+            alt="UPYOG Logo" 
+            />
+         <p class="signature-details">
+            Digitally Signed at <span th:text="${approvalTime}">NA</span>
+            <span th:text="${approverName}">NA</span>
+            <!--			<span >Approve</span>-->
+            <span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span>
+         </p>
+      </div>
+   </body>
+</html>

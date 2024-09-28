@@ -24,4 +24,24 @@ public class SiteSearchResponse {
 
 	@JsonProperty("siteSearchResponseData")
 	private List<SiteCreationData> siteCreationData;
+	
+	@JsonProperty("initiate")
+	private Integer initiate;
+	
+	
+	@JsonProperty("pendingForModification")
+	private Integer pendingForModification;
+	
+	@JsonProperty("approve")
+	private Integer approve;
+	
+	@JsonProperty("reject")
+	private Integer reject;
+	
+	@JsonProperty("returnToInitiator")
+	private Integer returnToInitiator;
+	
+	@JsonProperty("Count")
+    private int count;
+    
 }
