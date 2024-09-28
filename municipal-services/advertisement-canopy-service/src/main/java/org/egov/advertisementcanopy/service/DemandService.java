@@ -49,7 +49,7 @@ public class DemandService {
                 .taxPeriodTo(new Date((Calendar.getInstance().getTimeInMillis() + (long) 30 * 24 * 60 * 60 * 1000)).getTime())
 //                .taxPeriodTo(new Date((Calendar.getInstance().getTimeInMillis() + (long) 365 * 24 * 60 * 60 * 1000)).getTime())
                 .consumerType(siteBooking.getApplicationNo())
-                .businessService(AdvtConstants.BUSINESS_SERVICE)
+                .businessService(AdvtConstants.BUSINESS_SERVICE_SITE_BOOKING)
                 .build();
     	
     	List<Demand> demands = Arrays.asList(demandOne);
