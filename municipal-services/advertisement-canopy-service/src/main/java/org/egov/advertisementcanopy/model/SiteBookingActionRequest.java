@@ -22,4 +22,6 @@ public class SiteBookingActionRequest {
     
 	private List<String> applicationNumbers;
 	
+	private String businessService;
+	
 }
