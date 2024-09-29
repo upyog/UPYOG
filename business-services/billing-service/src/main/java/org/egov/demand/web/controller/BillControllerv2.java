@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,7 +47,8 @@ public class BillControllerv2 {
 	@Autowired
 	private BillHelperV2 billHelper;
 	
-	@PostMapping("_search")
+	@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
+    @PostMapping("_search")
 	@ResponseBody
 	public ResponseEntity<?> search(@RequestBody @Valid final RequestInfoWrapper requestInfoWrapper,
 			@ModelAttribute @Valid final BillSearchCriteria billCriteria) {
@@ -57,7 +59,8 @@ public class BillControllerv2 {
 	}
 
 
-	@PostMapping("_fetchbill")
+	@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
+    @PostMapping("_fetchbill")
 	@ResponseBody
 	public ResponseEntity<?> fetchBill(@RequestBody RequestInfoWrapper requestInfoWrapper, 
 			@ModelAttribute @Valid GenerateBillCriteria generateBillCriteria){
@@ -67,7 +70,8 @@ public class BillControllerv2 {
 	}
 	
 	
-	@PostMapping("_generate")
+	@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
+    @PostMapping("_generate")
 	@ResponseBody
 	public ResponseEntity<?> genrateBill(@RequestBody RequestInfoWrapper requestInfoWrapper,
 			@ModelAttribute @Valid GenerateBillCriteria generateBillCriteria) {
@@ -75,7 +79,8 @@ public class BillControllerv2 {
 		throw new CustomException("EG_BS_API_ERROR", "The Generate bill API has been deprecated, Access the fetchBill");
 	}
 	
-	@PostMapping("_create")
+	@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
+    @PostMapping("_create")
 	@ResponseBody
 	public ResponseEntity<?> create(@RequestBody @Valid BillRequestV2 billRequest, BindingResult bindingResult){
 

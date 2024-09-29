@@ -84,6 +84,9 @@ public class PetRegistrationApplication {
 
     private JsonNode additionalDetail = null;
 
+	@JsonProperty("status")
+	private String status;
+
 	public PetRegistrationApplication addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {
 			this.documents = new ArrayList<>();

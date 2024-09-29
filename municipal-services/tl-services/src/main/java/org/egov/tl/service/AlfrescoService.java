@@ -85,6 +85,9 @@ public class AlfrescoService {
 			requestBody.add("objectName", dmsRequest.getObjectName());
 			requestBody.add("comments", dmsRequest.getComments());
 			requestBody.add("status", dmsRequest.getStatus());
+			requestBody.add("documentId", dmsRequest.getDocumentId());
+			requestBody.add("serviceType", dmsRequest.getServicetype());
+			requestBody.add("documentType", dmsRequest.getDocumentType());
 
 			ResponseEntity<LinkedHashMap> responseEntity = restTemplate.postForEntity(urlBuilder.toString(),
 					requestBody, LinkedHashMap.class);

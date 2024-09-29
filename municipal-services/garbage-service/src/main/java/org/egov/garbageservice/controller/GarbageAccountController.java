@@ -24,25 +24,25 @@ public class GarbageAccountController {
     @Autowired
     private GarbageAccountService service;
 
-    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+    @CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/_create")
     public ResponseEntity<GarbageAccountResponse> create(@RequestBody GarbageAccountRequest createGarbageRequest) {
         return ResponseEntity.ok(service.create(createGarbageRequest));
     }
 
-    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+    @CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/_update")
     public ResponseEntity<GarbageAccountResponse> update(@RequestBody GarbageAccountRequest createGarbageRequest) {
         return ResponseEntity.ok(service.update(createGarbageRequest));
     }
 
-    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+    @CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/_search")
     public ResponseEntity<GarbageAccountResponse> search(@RequestBody SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
         return ResponseEntity.ok(service.searchGarbageAccounts(searchCriteriaGarbageAccountRequest));
     }
     
-    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+    @CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping({"/fetch","/fetch/{value}"})
     public ResponseEntity<?> calculateTLFee(@RequestBody GarbageAccountActionRequest garbageAccountActionRequest
     										, @PathVariable String value){

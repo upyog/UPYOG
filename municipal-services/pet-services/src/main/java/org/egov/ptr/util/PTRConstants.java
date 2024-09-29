@@ -1,13 +1,34 @@
 package org.egov.ptr.util;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@Data
+@NoArgsConstructor
+@Component
 public class PTRConstants {
 
-	private PTRConstants() {
-	}
+//	private PTRConstants() {
+//	}
+	
+
+
+    @Value("${egov.report.host}")
+    private String reportHost;
+
+    @Value("${egov.report.endpoint.create}")
+    private String reportCreateEndPoint;
+
+    @Value("${egov.alfresco.host}")
+    private String alfrescoHost;
+
+    @Value("${egov.alfresco.endpoint.upload}")
+    private String alfrescoUploadEndPoint;
 
 	public static final String MDMS_PT_OWNERTYPE = "OwnerType";
 
@@ -48,7 +69,25 @@ public class PTRConstants {
 
 	public static final String CITIZEN_SENDBACK_ACTION = "SENDBACKTOCITIZEN";
 
-	public static final String WORKFLOW_START_ACTION = "INITIATE";
+	public static final String BUSINESS_SERVICE = "PTR";
+
+	public static final String WORKFLOW_BUSINESS_SERVICE = "pet-services";
+
+	public static final String WORKFLOW_ACTION_INITIATE = "INITIATE";
+
+	public static final String WORKFLOW_ACTION_VERIFY = "VERIFY";
+
+    public static final String WORKFLOW_ACTION_FORWARD_TO_VERIFIER  = "FORWARD_TO_VERIFIER";
+
+    public static final String WORKFLOW_ACTION_FORWARD_TO_APPROVER  = "FORWARD_TO_APPROVER";
+
+    public static final String WORKFLOW_ACTION_RETURN_TO_INITIATOR  = "RETURN_TO_INITIATOR";
+
+    public static final String WORKFLOW_ACTION_RETURN_TO_VERIFIER  = "RETURN_TO_VERIFIER";
+
+    public static final String WORKFLOW_ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT = "RETURN_TO_INITIATOR_FOR_PAYMENT";
+
+    public static final String WORKFLOW_ACTION_APPROVE = "APPROVE";
 
 	public static final String ASMT_WORKFLOW_CODE = "ASMT";
 
@@ -75,8 +114,6 @@ public class PTRConstants {
 	public static final String WF_STATUS_DOCVERIFIED = "DOCVERIFIED";
 
 	public static final String WF_STATUS_CANCELLED = "CANCELLED";
-
-	public static final String WF_STATUS_APPROVED = "APPROVED";
 
 	public static final String WF_STATUS_OPEN = "OPEN";
 
@@ -231,4 +268,31 @@ public class PTRConstants {
 
 	public static final String USREVENTS_EVENT_POSTEDBY = "SYSTEM-PTR";
 
+	// APPLICATION STATUS
+	public static final String APPLICATION_STATUS_INITIATED = "INITIATED";
+	public static final String APPLICATION_STATUS_PENDINGFORMODIFICATION = "PENDINGFORMODIFICATION";
+	public static final String APPLICATION_STATUS_PENDINGFORPAYMENT = "PENDINGFORPAYMENT";
+	public static final String APPLICATION_STATUS_PENDINGFORVERIFICATION = "PENDINGFORVERIFICATION";
+	public static final String APPLICATION_STATUS_PENDINGFORAPPROVAL = "PENDINGFORAPPROVAL";
+	public static final String APPLICATION_STATUS_APPROVED = "APPROVED";
+	public static final String APPLICATION_STATUS_REJECTED = "REJECTED";
+
+	
+	public static final String USER_TYPE_CITIZEN = "CITIZEN";
+	
+	public static final String USER_TYPE_EMPLOYEE = "EMPLOYEE";
+	
+	public static final String USER_ROLE_PTR_VERIFIER = "PTR_VERIFIER";
+	
+	public static final String USER_ROLE_PTR_APPROVER = "PTR_APPROVER";
+
+	public static final String STATE_LEVEL_TENANT_ID = "hp";
+	
+    // Alfresco keys
+    public static final Long ALFRESCO_COMMON_DOCUMENT_ID = 0L;
+    public static final String ALFRESCO_COMMON_CERTIFICATE_DESCRIPTION = "PET certificate";
+    public static final String ALFRESCO_COMMON_CERTIFICATE_ID = "";
+    public static final String ALFRESCO_COMMON_CERTIFICATE_TYPE = "PDF";
+    public static final String ALFRESCO_DOCUMENT_TYPE = "CERT";
+    public static final String ALFRESCO_TL_CERTIFICATE_COMMENT = "Signed Certificate";
 }

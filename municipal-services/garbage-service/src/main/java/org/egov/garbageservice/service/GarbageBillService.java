@@ -13,6 +13,7 @@ import org.egov.garbageservice.model.GarbageBillRequest;
 import org.egov.garbageservice.model.GarbageBillSearchCriteria;
 import org.egov.garbageservice.model.SearchGarbageBillRequest;
 import org.egov.garbageservice.repository.GarbageBillRepository;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -64,7 +65,7 @@ public class GarbageBillService {
 		if (null == garbageBill || null == garbageBill.getGarbageId() || null == garbageBill.getBillAmount()
 				|| null == garbageBill.getTotalBillAmount() || null == garbageBill.getBillDueDate()
 				|| null == garbageBill.getBillPeriod()) {
-			throw new RuntimeException("Provide garbage bill details.");
+			throw new CustomException("MISSING_BILL_DETAILS","Provide garbage bill details.");
 		}
 	}
 
@@ -118,7 +119,7 @@ public class GarbageBillService {
 
 	private void validateUpdateGarbageBill(GarbageBill newGarbageBill, GarbageBill existingGarbageBill) {
 		if (null == existingGarbageBill) {
-			throw new RuntimeException("Provided garbage account doesn't exist.");
+			throw new CustomException("GARBAGE_ACCOUNT_MISSING","Provided garbage account doesn't exist.");
 		}
 		// validate grbg acc req
 		validateCreateGarbageBill(newGarbageBill);
@@ -179,12 +180,12 @@ public class GarbageBillService {
 
 	private void validateGarbageBillSearchCriteria(GarbageBillSearchCriteria garbageBillSearchCriteria) {
 
-		if (CollectionUtils.isEmpty(garbageBillSearchCriteria.getIds())
-				&& CollectionUtils.isEmpty(garbageBillSearchCriteria.getBillRefNos())
-				&& CollectionUtils.isEmpty(garbageBillSearchCriteria.getGarbageIds())
-				&& CollectionUtils.isEmpty(garbageBillSearchCriteria.getPaymentIds())
-				&& CollectionUtils.isEmpty(garbageBillSearchCriteria.getPaymentStatus())) {
-			throw new RuntimeException("Provide the parameters to search garbage bills.");
+		if(CollectionUtils.isEmpty(garbageBillSearchCriteria.getIds()) &&
+		        CollectionUtils.isEmpty(garbageBillSearchCriteria.getBillRefNos()) &&
+		        CollectionUtils.isEmpty(garbageBillSearchCriteria.getGarbageIds()) &&
+		        CollectionUtils.isEmpty(garbageBillSearchCriteria.getPaymentIds()) &&
+		        CollectionUtils.isEmpty(garbageBillSearchCriteria.getPaymentStatus())) {
+			throw new CustomException("MISSING_SEARCH_CRITERIA","Provide the parameters to search garbage bills.");
 		}
 
 	}
