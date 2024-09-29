@@ -631,6 +631,14 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/garbage-service/src/main/resources/db"
         image-name: "garbage-service-db" 
+        
+  - name: "builds/municipal-services/advertisement-canopy-service"
+    build:
+      - work-dir: "municipal-services/advertisement-canopy-service"
+        image-name: "advertisement-canopy-service"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "advertisement-canopy-service/src/main/resources/db"
+        image-name: "advertisement-canopy-service-db" 
  
  # Utilities
  
