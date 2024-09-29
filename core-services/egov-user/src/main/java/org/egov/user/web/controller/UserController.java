@@ -227,7 +227,7 @@ public class UserController {
     }
 
 	@PostMapping("/_landingPage")
-	@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
+	@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://localhost:443"}, allowedHeaders = "*", allowCredentials = "true")
     private ResponseEntity<?> landingPage(@RequestParam(value = "token") String token){
     	log.info("## landing page token : "+token);
     	ResponseEntity<?> response = ssoService.getHpSsoValidateTokenResponse(token);
@@ -236,7 +236,7 @@ public class UserController {
 	
 	
 	@PostMapping("/_login")
-	@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
+	@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://localhost:443"}, allowedHeaders = "*", allowCredentials = "true")
 	public Object employeeUserLogin(@RequestBody LoginRequest loginRequest) {
 		if (StringUtils.isEmpty(loginRequest.getUserType())) {
 			throw new RuntimeException("Employee login failed.");
