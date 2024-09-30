@@ -49,7 +49,7 @@ const NewAssetApplication = () => {
         assetApplicaltionNo:"",
         assetId: "",
         assignedUserName: data?.assigndetails?.[0]?.assignedUser,
-        designation: data?.assigndetails?.[0]?.designation,
+        designation: data?.assigndetails?.[0]?.designation?.code,
         department: data?.assigndetails?.[0]?.allocatedDepartment?.code,    //later we need to send the procured department here.
         assignedDate: assignedDateEpoch,
         isAssigned: true,
