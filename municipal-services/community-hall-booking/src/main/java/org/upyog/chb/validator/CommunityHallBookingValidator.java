@@ -155,10 +155,18 @@ public class CommunityHallBookingValidator {
 
 		if (criteria.getFromDate() != null) {
 			LocalDate fromDate = CommunityHallBookingUtil.parseStringToLocalDate(criteria.getFromDate());
-			if (fromDate.isBefore(LocalDate.now())) {
+			if (fromDate.isAfter(LocalDate.now())) {
 				throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
 						"From date cannot be a future date");
 			}
+		}
+		
+		if(criteria.getFromDate() != null) {
+			LocalDate fromDate = CommunityHallBookingUtil.parseStringToLocalDate(criteria.getFromDate());
+			 if (fromDate.isBefore(CommunityHallBookingUtil.getMonthsAgo(6))) {
+				 throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
+							"From date cannot be prior 6 months");
+		     }
 		}
 
 		if (criteria.getToDate() != null && criteria.getFromDate() != null) {
