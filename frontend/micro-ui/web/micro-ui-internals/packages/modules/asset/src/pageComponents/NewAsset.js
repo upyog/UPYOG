@@ -1653,7 +1653,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                 style={{ width: "50%" }}
                 ValidationRequired={false}
                 {...(validation = {
-                  isRequired: true,
+                  isRequired: false,
                   pattern: "^[a-zA-Z-.`' ]*$",
                   type: "text",
                   title: t("PT_NAME_ERROR_MESSAGE"),
