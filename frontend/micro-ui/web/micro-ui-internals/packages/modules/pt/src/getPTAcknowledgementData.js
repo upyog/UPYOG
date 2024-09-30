@@ -230,6 +230,7 @@ const getPTAcknowledgementData = async (application, tenantInfo, t) => {
       email: tenantInfo?.emailId,
       phoneNumber: tenantInfo?.contactNumber,
       heading: t("PT_ACKNOWLEDGEMENT"),
+      applicationNumber:application?.acknowldgementNumber,
       details: [
         {
           title: t("CS_TITLE_APPLICATION_DETAILS"),

@@ -103,7 +103,7 @@ const Response = ({ data, onSuccess }) => {
               },
               street: street?.trim(),
               doorNo: doorNo?.trim(),
-              landmark: landmark?.trim(),
+              landmark: landmark,
               slumName: slum,
               city: city?.name,
               pincode,
