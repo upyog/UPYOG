@@ -296,7 +296,8 @@ export const OBPSService = {
     const bpaResponse = await OBPSService.BPASearch(tenantId, { ...filter });
        const comparisionRep = {
          ocdcrNumber: BPA?.edcrNumber.includes("OCDCR")? BPA?.edcrNumber:bpaResponse?.BPA?.[0]?.edcrNumber,
-         edcrNumber: bpaResponse?.BPA?.[0]?.edcrNumber.includes("OCDCR")? BPA?.edcrNumber: bpaResponse?.BPA?.[0]?.edcrNumber
+         edcrNumber: bpaResponse?.BPA?.[0]?.edcrNumber.includes("OCDCR")? BPA?.edcrNumber: bpaResponse?.BPA?.[0]?.edcrNumber,
+         propertyId: BPA?.additionalDetails?.propertyID
       }
     const comparisionReport = await OBPSService.comparisionReport(BPA?.tenantId, { ...comparisionRep });
 
@@ -558,7 +559,7 @@ export const OBPSService = {
           { title: BPA?.businessService !== "BPA_OC" ? "BPA_EDCR_NO_LABEL" : "BPA_OC_EDCR_NO_LABEL", value: BPA?.edcrNumber || "NA" },
         ],
         scruntinyDetails: [
-          { title: "BPA_UPLOADED_PLAN_DIAGRAM", value: edcr?.updatedDxfFile, text: "BPA_UPLOADED_PLAN_DXF" },
+          { title: "BPA_UPLOADED_PLAN_DIAGRAM", value: edcr?.updatedDxfFile, text: "Uploaded Plan.pdf" },
           { title: "BPA_SCRUNTINY_REPORT_OUTPUT", value: edcr?.planReport, text: "BPA_SCRUTINY_REPORT_PDF" },
         ]
       }

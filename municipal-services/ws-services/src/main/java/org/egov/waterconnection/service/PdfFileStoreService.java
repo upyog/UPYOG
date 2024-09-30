@@ -123,7 +123,11 @@ public class PdfFileStoreService {
 					item.setTaxHeadCode(item.getTaxHeadCode().substring(3));
 				});
 				waterObject.put(pdfTaxhead, cal.getTaxHeadEstimates());
+				log.info("Tax heads are ::" +  cal.getTaxHeadEstimates());			
+
 			}
+			
+			
 			waterObject.put(sanctionLetterDate, System.currentTimeMillis());
 			BigDecimal slaDays = workflowService.getSlaForState(waterConnectionRequest.getWaterConnection().getTenantId(), 
 					waterConnectionRequest.getRequestInfo(),applicationStatus, config.getBusinessServiceValue());

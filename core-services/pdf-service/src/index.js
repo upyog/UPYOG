@@ -1105,8 +1105,9 @@ const generateQRCodes = async (
     if(key == 'mcollect-challan' || key == 'firenoc-receipt' || key == 'property-receipt' || key == 'bpa-receipt' || key == 'consolidatedreceipt' || key == 'tradelicense-receipt' || key == 'fsm-receipt' || key == 'misc-receipt' || key == 'ws-onetime-receipt')
     {
       urlQR=egov_host;
+      urlQR=urlQR.concat(qrmapping.value);
 
-      urlQR=qrmapping.value.concat(" ").concat(urlQR);
+      //urlQR=qrmapping.value.concat(" ").concat(urlQR);
     }
     if(urlQR=='')
     qrtext = mustache.render(qrmapping.value, variableTovalueMap);

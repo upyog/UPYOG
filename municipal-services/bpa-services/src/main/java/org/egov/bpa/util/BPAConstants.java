@@ -12,6 +12,8 @@ public class BPAConstants {
 	public static final String BPA_BusinessService = "BPA";
 
 	public static final String BPA_MODULE_CODE = "BPA";
+	
+	public static final String RISKTYPE = "riskType";
 
 	public static final String BPA_LOW_MODULE_CODE = "BPA_LOW";
 

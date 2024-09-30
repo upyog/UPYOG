@@ -7,7 +7,8 @@
     "packages/css",
     "example",
     "packages/react-components",
-    "packages/modules/*"   
+    "packages/modules/*"
+
   ],
   "license": "MIT",
   "private": true,
@@ -46,7 +47,7 @@
     "build:libraries": "cd packages/libraries && yarn build",
     "build:components": "cd packages/react-components && yarn build",
     "buildD:common": "cd packages/modules/common && yarn build",
-    "build:pt": "cd packages/modules/pt && yarn build",
+    "buildD:pt": "cd packages/modules/pt && yarn build",
     "build:ptr": "cd packages/modules/ptr && yarn build",
     "buildD:commonPt": "cd packages/modules/commonPt && yarn build",
     "buildD:core": "cd packages/modules/core && yarn build",
@@ -60,7 +61,7 @@
     "buildD:obps": "cd packages/modules/obps && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
     "buildD:noc": "cd packages/modules/noc && yarn build",
-    "buildD:ws": "cd packages/modules/ws && yarn build",
+    "build:ws": "cd packages/modules/ws && yarn build",
     "buildD:bills": "cd packages/modules/bills && yarn build",
     "buildR:reports": "cd packages/modules/reports && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"

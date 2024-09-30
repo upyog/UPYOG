@@ -128,7 +128,7 @@ const defaultLogo =
         margin: [10, 10],
       },
       {
-        text:"TERMS_AND_CONDITIONS_OF_LICENSE",
+        text:t("TERMS_AND_CONDITIONS_OF_LICENSE"),
         fontSize:16, 
         bold:true, 
         alignment:"center",
@@ -137,7 +137,7 @@ const defaultLogo =
         margin:[0, 25, 0, 0],
       },
       {
-        text:"TERMS_AND_CONDITIONS_OF_LICENSE_CONTENT",
+        text:t("TERMS_AND_CONDITIONS_OF_LICENSE_CONTENT"),
         fontSize:8,
         margin:[10, 20, 10,0] 
       },
@@ -151,9 +151,46 @@ const defaultLogo =
   pdfMake.vfs = Fonts;
   let locale = Digit.SessionStorage.get("locale") || "en_IN";
   let Hind = pdfFonts[locale] || pdfFonts["Hind"];
+  let ack;
+  if(applicationNumber!==undefined &&applicationNumber.split("-")[0]==="FSM"){
+    ack="FSM-AckForm"
+  }
+  else if(applicationNumber!==undefined &&applicationNumber.split("-")[1]==="PGR"){
+    ack="PGR-AckForm"
+  }
+  else if(applicationNumber!==undefined &&applicationNumber.split("-")[1]==="TL"){
+    ack="TL-AckForm"
+  }
+  else if(applicationNumber!==undefined &&applicationNumber.split("_")[0]==="WS"){
+    ack="WS-AckForm"
+  }
+  else if(applicationNumber!==undefined &&applicationNumber.split("_")[0]==="SW"){
+    ack="SW-AckForm"
+  }
+  else if(applicationNumber!==undefined &&applicationNumber.split("-")[1]==="AC"){
+    ack="PT-AckForm"
+  }
+  else if(applicationNumber!==undefined &&applicationNumber.split("-")[1]==="BP"){
+    ack="BPA-AckForm"
+  }
+  else if(applicationNumber===undefined)
+  {
+    module=details[0]?.values[0]?.value
+    if(module.split("-")[1]==="MT"){
+      ack="PT-AckForm"
+    }
+    else{
+      ack="acknowledgement"
+    }
+    
+  }
+  else{
+    ack="acknowledgement"
+  }
+ 
   pdfMake.fonts = { Hind: { ...Hind } };
   const generatedPDF = pdfMake.createPdf(dd);
-  downloadPDFFileUsingBase64(generatedPDF, "acknowledgement.pdf");
+  downloadPDFFileUsingBase64(generatedPDF, ack);
 };
 
 
@@ -228,7 +265,7 @@ const jsPdfGeneratorv1 = async ({ breakPageLimit = null, tenantId, logo, name, e
         margin: [10, 32],
       },
       {
-        text:"TERMS_AND_CONDITIONS_OF_LICENSE",
+        text: t("TERMS_AND_CONDITIONS_OF_LICENSE"),
         fontSize:16, 
         bold:true, 
         alignment:"center",
@@ -237,7 +274,7 @@ const jsPdfGeneratorv1 = async ({ breakPageLimit = null, tenantId, logo, name, e
         margin:[0, 25, 0, 0],
       },
       {
-        text:"TERMS_AND_CONDITIONS_OF_LICENSE_CONTENT",
+        text: t("TERMS_AND_CONDITIONS_OF_LICENSE_CONTENT"),
         fontSize:8,
         margin:[10, 20, 10,0] 
         
@@ -253,7 +290,17 @@ const jsPdfGeneratorv1 = async ({ breakPageLimit = null, tenantId, logo, name, e
   let Hind = pdfFonts[locale] || pdfFonts["Hind"];
   pdfMake.fonts = { Hind: { ...Hind } };
   const generatedPDF = pdfMake.createPdf(dd);
-  downloadPDFFileUsingBase64(generatedPDF, "acknowledgement.pdf");
+  let ack;
+  if(headerDetails[0]?.values[0].value.split("_")[0]==="WS"){
+    ack="WS-AckForm"
+  }
+  else if(headerDetails[0]?.values[0].value.split("_")[0]==="SW"){
+    ack="SW-AckForm"
+  }
+  else{
+    ack="acknowledgement.pdf"
+  }
+  downloadPDFFileUsingBase64(generatedPDF, ack);
 };
 
 /**
@@ -960,6 +1007,7 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
   const detailsHeaders = []; 
   let counter=1;
   details.forEach((detail, index) => {
+    console.log("detail",detail)
     if (detail?.values?.length > 0) {
       console.log("lennn", detail?.title.length)
       detailsHeaders.push({
@@ -1004,7 +1052,7 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
           ]
     }})
     } else {
-      detail?.values?.map((indData, index) => {
+      Array.isArray(detail?.values)&& detail?.values?.map((indData, index) => {
         detailsHeaders.push({
           style: 'tableExample',
           layout: "noBorders", 

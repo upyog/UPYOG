@@ -74,6 +74,10 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
+import org.egov.commons.Scheme;
+import org.egov.commons.SubScheme;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionDAO;
@@ -81,6 +85,7 @@ import org.egov.egf.autonumber.BanNumberGenerator;
 import org.egov.egf.budget.model.BudgetControlType;
 import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
@@ -238,7 +243,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	public boolean consumeEncumbranceBudget(final Long financialyearid, final Integer moduleid,
 			final String referencenumber, final String departmentcode, final Long functionid,
 			final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-			final List<Long> budgetheadid, final Integer fundid, final double amount,
+			final List<Long> budgetheadid, final Long fundid, final double amount,
 			final String appropriationnumber) {
 
 		final BigDecimal bd = getDetails(financialyearid, moduleid, referencenumber, departmentcode, functionid,
@@ -273,7 +278,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	public BudgetUsage consumeEncumbranceBudget(final String appropriationnumber, final Long financialyearid,
 			final Integer moduleid, final String referencenumber, final String departmentcode, final Long functionid,
 			final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-			final List<Long> budgetheadid, final Integer fundid, final double amount) {
+			final List<Long> budgetheadid, final Long fundid, final double amount) {
 
 		return getBudgetUsageDetails(financialyearid, moduleid, referencenumber, departmentcode, functionid,
 				functionaryid, schemeid, subschemeid, boundaryid, budgetheadid, fundid, amount, true,
@@ -319,7 +324,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	public void releaseEncumbranceBudget(final Long financialyearid, final Integer moduleid,
 			final String referencenumber, final String departmentcode, final Long functionid,
 			final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-			final List<Long> budgetheadid, final Integer fundid, final double amount,
+			final List<Long> budgetheadid, final Long fundid, final double amount,
 			final String appropriationnumber) {
 		getDetails(financialyearid, moduleid, referencenumber, departmentcode, functionid, functionaryid, schemeid,
 				subschemeid, boundaryid, budgetheadid, fundid, amount, false, appropriationnumber);
@@ -350,7 +355,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	public BudgetUsage releaseEncumbranceBudget(final String appropriationnumber, final Long financialyearid,
 			final Integer moduleid, final String referencenumber, final String departmentcode, final Long functionid,
 			final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-			final List<Long> budgetheadid, final Integer fundid, final double amount) {
+			final List<Long> budgetheadid, final Long fundid, final double amount) {
 		return getBudgetUsageDetails(financialyearid, moduleid, referencenumber, departmentcode, functionid,
 				functionaryid, schemeid, subschemeid, boundaryid, budgetheadid, fundid, amount, false,
 				appropriationnumber);
@@ -367,7 +372,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		Integer subschemeid = null;
 		Integer boundaryid = null;
 		List<Long> budgetheadid = null;
-		Integer fundid = null;
+		Long fundid = null;
 		double amount = 0.0d;
 		String appropriationnumber = null;
 		Boolean consumeOrRelease = null;
@@ -393,7 +398,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		if (detailsMap.containsKey(Constants.BUDGETHEAD))
 			budgetheadid = (List<Long>) detailsMap.get(Constants.BUDGETHEAD);
 		if (detailsMap.containsKey(Constants.FUNDID))
-			fundid = (Integer) detailsMap.get(Constants.FUNDID);
+			fundid = (Long) detailsMap.get(Constants.FUNDID);
 		if (detailsMap.containsKey(Constants.AMOUNT))
 			amount = (Double) detailsMap.get(Constants.AMOUNT);
 		if (detailsMap.containsKey(Constants.APPROPRIATIONNUMBER))
@@ -423,10 +428,10 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 				// need to update budget details
 				final Map<String, Object> params = new HashMap<>();
 				final String query = prepareQuery(departmentcode, functionid, functionaryid, schemeid, subschemeid,
-						boundaryid, fundid, params);
+						boundaryid, fundid);
 				final Query q = getCurrentSession().createQuery(
 						new StringBuilder(" from BudgetDetail bd where  bd.budget.financialYear.id=:finYearId")
-								.append(" and bd.budget.isbere=:type and bd.budgetGroup.id in (:bgId)").append(query)
+								.append(" and bd.budget.isbere=:type and bd.budgestGroup.id in (:bgId)").append(query)
 								.toString());
 				params.entrySet().forEach(entry -> q.setParameter(entry.getKey(), entry.getValue()));
 				if (budgetService.hasApprovedReForYear(financialyearid))
@@ -481,7 +486,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	@Deprecated
 	private BigDecimal getDetails(final Long financialyearid, final Integer moduleid, final String referencenumber,
 			final String departmentcode, final Long functionid, final Integer functionaryid, final Integer schemeid,
-			final Integer subschemeid, final Integer boundaryid, final List<Long> budgetheadid, final Integer fundid,
+			final Integer subschemeid, final Integer boundaryid, final List<Long> budgetheadid, final Long fundid,
 			final double amount, final boolean consumeOrRelease, final String appropriationnumber) {
 		try {
 			if (LOGGER.isDebugEnabled())
@@ -505,7 +510,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 				// need to update budget details
 				final Map<String, Object> params = new HashMap<>();
 				final String query = prepareQuery(departmentcode, functionid, functionaryid, schemeid, subschemeid,
-						boundaryid, fundid, params);
+						boundaryid, fundid);
 				final Query q = persistenceService.getSession().createQuery(
 						new StringBuilder(" from BudgetDetail bd where  bd.budget.financialYear.id=:finYearId ")
 								.append(" and  bd.budget.isbere=:type and bd.budgetGroup.id in (:bgId)").append(query)
@@ -562,7 +567,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	private BudgetUsage getBudgetUsageDetails(final Long financialyearid, final Integer moduleid,
 			final String referencenumber, final String departmentcode, final Long functionid,
 			final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-			final List<Long> budgetheadid, final Integer fundid, final double amount, final boolean consumeOrRelease,
+			final List<Long> budgetheadid, final Long fundid, final double amount, final boolean consumeOrRelease,
 			final String appropriationnumber) {
 		try {
 			if (LOGGER.isDebugEnabled())
@@ -590,7 +595,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			// need to update budget details
 			final Map<String, Object> params = new HashMap<>();
 			final String query = prepareQuery(departmentcode, functionid, functionaryid, schemeid, subschemeid,
-					boundaryid, fundid, params);
+					boundaryid, fundid);
 			final Query q = persistenceService.getSession().createQuery(
 					new StringBuilder(" from BudgetDetail bd where  bd.budget.financialYear.id=:finYearId  ")
 							.append("and  bd.budget.isbere=:type and bd.budgetGroup.id in (:bgId)").append(query)
@@ -671,7 +676,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
 	private StringBuilder prepareAgregateQuery(final Integer departmentid, final Long functionid,
 			final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-			final Integer fundid, Map<String, Object> params) {
+			final Long fundid, Map<String, Object> params) {
 		StringBuilder query = new StringBuilder();
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Inside the prepareAgregateQuery... " + departmentid + " >>>" + fundid);
@@ -707,78 +712,65 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		return new StringBuilder(" and bd.budget.status.code = 'Approved' ").append(query);
 	}
 
-	private String prepareQuery(final String departmentCode, final Long functionid, final Integer functionaryid,
-			final Integer schemeid, final Integer subschemeid, final Integer boundaryid, final Integer fundid,
-			Map<String, Object> params) {
-		final StringBuilder query = new StringBuilder();
+	 private String prepareQuery(final String departmentCode, final Long functionid, final Integer functionaryid,
+	            final Integer schemeid, final Integer subschemeid, final Integer boundaryid, final Long fundid) {
+	        String query = EMPTY_STRING;
 
-		final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
-				BUDGETARY_CHECK_GROUPBY_VALUES);
-		if (list.isEmpty())
-			throw new ValidationException(EMPTY_STRING, "budgetaryCheck_groupby_values is not defined in AppConfig");
-		else {
-			final AppConfigValues appConfigValues = list.get(0);
-			final String[] values = StringUtils.split(appConfigValues.getValue(), ",");
-			for (final String value : values)
-				if (value.equals("department")) {
-					if (departmentCode == null || departmentCode == "0" || departmentCode == "")
-						throw new ValidationException(EMPTY_STRING, "Department is required");
-					else {
-						query.append(" and bd.executingDepartment=:departmentCode");
-						params.put("departmentCode", departmentCode);
-					}
-				} else if (value.equals("function")) {
-					if (functionid == null || functionid == 0)
-						throw new ValidationException(EMPTY_STRING, "Function is required");
-					else {
-						query.append(" and bd.function=:functionid");
-						params.put("functionid", functionid);
-					}
-				} else if ("functionary".equals(value)) {
-					if (functionaryid == null || functionaryid == 0)
-						throw new ValidationException(EMPTY_STRING, "Functionary is required");
-					else {
-						query.append(" and bd.functionary=:functionaryid");
-						params.put("functionaryid", functionaryid);
-					}
-				} else if (value.equals("fund")) {
-					if (fundid == null || fundid == 0)
-						throw new ValidationException(EMPTY_STRING, "Fund is required");
-					else {
-						query.append(" and bd.fund=:fundid");
-						params.put("fundid", fundid);
-					}
-				} else if (value.equals("scheme")) {
-					if (schemeid == null || schemeid == 0)
-						throw new ValidationException(EMPTY_STRING, "Scheme is required");
-					else {
-						query.append(" and bd.scheme=:schemeid");
-						params.put("schemeid", schemeid);
-					}
-				} else if (value.equals("subscheme")) {
-					if (subschemeid == null || subschemeid == 0)
-						throw new ValidationException(EMPTY_STRING, "Subscheme is required");
-					else {
-						query.append(" and bd.subScheme=:subschemeid");
-						params.put("subschemeid", subschemeid);
-					}
-				} else if (value.equals("boundary")) {
-					if (boundaryid == null || boundaryid == 0)
-						throw new ValidationException(EMPTY_STRING, "Boundary is required");
-					else {
-						query.append(" and bd.boundary=:boundaryId");
-						params.put("boundaryId", boundaryid.longValue());
-					}
-				} else
-					throw new ValidationException(EMPTY_STRING,
-							"budgetaryCheck_groupby_values is not matching=" + value);
-		}
-		return " and bd.budget.status.description='Approved' and bd.status.description='Approved'  " + query;
-	}
+	        final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
+	                BUDGETARY_CHECK_GROUPBY_VALUES);
+	        if (list.isEmpty())
+	            throw new ValidationException(EMPTY_STRING, "budgetaryCheck_groupby_values is not defined in AppConfig");
+	        else {
+	            final AppConfigValues appConfigValues = list.get(0);
+	            final String[] values = StringUtils.split(appConfigValues.getValue(), ",");
+	            for (final String value : values)
+	                if (value.equals("department")) {
+	                    if (departmentCode == null || departmentCode == "0" || departmentCode == "")
+	                        throw new ValidationException(EMPTY_STRING, "Department is required");
+	                    else
+	                        query = query
+	                                + ( " and bd.executingDepartment='"+departmentCode+"'");
+	                } else if (value.equals("function")) {
+	                    if (functionid == null || functionid == 0)
+	                        throw new ValidationException(EMPTY_STRING, "Function is required");
+	                    else
+	                        query = query + getQuery(CFunction.class, functionid, " and bd.function=");
+	                } else if ("functionary".equals(value)) {
+	                    if (functionaryid == null || functionaryid == 0)
+	                        throw new ValidationException(EMPTY_STRING, "Functionary is required");
+	                    else
+	                        query = query + getQuery(Functionary.class, functionaryid, " and bd.functionary=");
+	                } else if (value.equals("fund")) {
+	                    if (fundid == null || fundid == 0)
+	                        throw new ValidationException(EMPTY_STRING, "Fund is required");
+	                    else
+	                        query = query + getQuery(Fund.class, fundid, " and bd.fund=");
+	                } else if (value.equals("scheme")) {
+	                    if (schemeid == null || schemeid == 0)
+	                        throw new ValidationException(EMPTY_STRING, "Scheme is required");
+	                    else
+	                        query = query + getQuery(Scheme.class, schemeid, " and bd.scheme=");
+	                } else if (value.equals("subscheme")) {
+	                    if (subschemeid == null || subschemeid == 0)
+	                        throw new ValidationException(EMPTY_STRING, "Subscheme is required");
+	                    else
+	                        query = query + getQuery(SubScheme.class, subschemeid, " and bd.subScheme=");
+	                } else if (value.equals("boundary")) {
+	                    if (boundaryid == null || boundaryid == 0)
+	                        throw new ValidationException(EMPTY_STRING, "Boundary is required");
+	                    else
+	                        query = query + getQuery(Boundary.class, boundaryid.longValue(), " and bd.boundary=");
+	                } else
+	                    throw new ValidationException(EMPTY_STRING,
+	                            "budgetaryCheck_groupby_values is not matching=" + value);
+	        }
+	        return " and bd.budget.status.description='Approved' and bd.status.description='Approved'  " + query;
+	    }
+	    
 
 	private String prepareQueryToGetBudgetDetails(final Integer departmentid, final Long functionid,
 			final Integer functionaryid, final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-			final Integer fundid, final Map<String, Object> params) {
+			final Long fundid, final Map<String, Object> params) {
 		StringBuilder query = new StringBuilder();
 
 		if (departmentid != null) {
@@ -857,7 +849,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	@Override
 	public BigDecimal getPlanningBudgetAvailable(final Long financialyearid, final String departmentcode,
 			final Long functionid, final Integer functionaryid, final Integer schemeid, final Integer subschemeid,
-			final Integer boundaryid, final List<Long> budgetheadid, final Integer fundid) {
+			final Integer boundaryid, final List<Long> budgetheadid, final Long fundid) {
 		try {
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("financialyearid===" + financialyearid + ",departmentid===" + departmentcode
@@ -868,7 +860,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			validateParameters(financialyearid, functionid, budgetheadid);
 			final Map<String, Object> params = new HashMap<>();
 			final String query = prepareQuery(departmentcode, functionid, functionaryid, schemeid, subschemeid,
-					boundaryid, fundid, params);
+					boundaryid, fundid);
 
 			session = getCurrentSession();
 			final CFinancialYear financialyear = (CFinancialYear) financialYearHibDAO.findById(financialyearid, false);
@@ -910,7 +902,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	@Override
 	public List<BudgetDetail> getBudgetAvailableDetail(final Long financialyearid, final Integer departmentid,
 			final Long functionid, final Integer functionaryid, final Integer schemeid, final Integer subschemeid,
-			final Integer boundaryid, final List<Long> budgetheadid, final Integer fundid) {
+			final Integer boundaryid, final List<Long> budgetheadid, final Long fundid) {
 		try {
 
 			final Map<String, Object> params = new HashMap<>();
@@ -970,147 +962,126 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	// budgetheadid
 	@Override
 	public BigDecimal getActualBudgetUtilized(final Map<String, Object> paramMap) {
-		String deptCode = null;
-		Long functionid = null;
-		Integer functionaryid = null;
-		Integer schemeid = null;
-		Integer subschemeid = null;
-		Integer boundaryid = null;
-		Integer fundid = null;
-		Long budgetheadid = null;
-		Date fromdate = null;
-		Date asondate = null;
+        String deptCode = null;
+        Long functionid = null;
+        Integer functionaryid = null;
+        Integer schemeid = null;
+        Integer subschemeid = null;
+        Integer boundaryid = null;
+        Long fundid = null;
+        Long budgetheadid = null;
+        Date fromdate = null;
+        Date asondate = null;
 
-		final StringBuilder query = new StringBuilder();
-		String select = EMPTY_STRING;
-		BudgetGroup budgetgroup = null;
-		try {
-			if (paramMap.get(Constants.DEPTID) != null)
-				deptCode = paramMap.get(Constants.DEPTID).toString();
-			if (paramMap.get(Constants.FUNCTIONID) != null)
-				functionid = (Long) paramMap.get(Constants.FUNCTIONID);
-			if (paramMap.get(Constants.FUNCTIONARYID) != null)
-				functionaryid = (Integer) paramMap.get(Constants.FUNCTIONARYID);
-			if (paramMap.get(Constants.SCHEMEID) != null)
-				schemeid = (Integer) paramMap.get(Constants.SCHEMEID);
-			if (paramMap.get(Constants.FUNDID) != null)
-				fundid = (Integer) paramMap.get(Constants.FUNDID);
-			if (paramMap.get(Constants.SUBSCHEMEID) != null)
-				subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
-			if (paramMap.get(Constants.BOUNDARYID) != null)
-				boundaryid = (Integer) paramMap.get(Constants.BOUNDARYID);
-			if (paramMap.get(BUDGETHEADID) != null)
-				budgetheadid = (Long) paramMap.get(BUDGETHEADID);
-			if (paramMap.get(Constants.ASONDATE) != null)
-				asondate = (java.util.Date) paramMap.get(Constants.ASONDATE);
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("deptCode=" + deptCode + ",functionid=" + functionid + ",functionaryid=" + functionaryid
-						+ ",schemeid=" + schemeid + ",subschemeid=" + subschemeid + ",boundaryid=" + boundaryid
-						+ ",budgetheadid=" + budgetheadid + ",asondate=" + asondate);
+        String query = EMPTY_STRING, select = EMPTY_STRING;
+        BudgetGroup budgetgroup = null;
+        try {
+            if (paramMap.get(Constants.DEPTID) != null)
+                deptCode = paramMap.get(Constants.DEPTID).toString();
+            if (paramMap.get(Constants.FUNCTIONID) != null)
+                functionid = (Long) paramMap.get(Constants.FUNCTIONID);
+            if (paramMap.get(Constants.FUNCTIONARYID) != null)
+                functionaryid = (Integer) paramMap.get(Constants.FUNCTIONARYID);
+            if (paramMap.get(Constants.SCHEMEID) != null)
+                schemeid = (Integer) paramMap.get(Constants.SCHEMEID);
+            if (paramMap.get(Constants.FUNDID) != null)
+                fundid = (Long) paramMap.get(Constants.FUNDID);
+            if (paramMap.get(Constants.SUBSCHEMEID) != null)
+                subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
+            if (paramMap.get(Constants.BOUNDARYID) != null)
+                boundaryid = (Integer) paramMap.get(Constants.BOUNDARYID);
+            if (paramMap.get(BUDGETHEADID) != null)
+                budgetheadid = (Long) paramMap.get(BUDGETHEADID);
+            if (paramMap.get(Constants.ASONDATE) != null)
+                asondate = (java.util.Date) paramMap.get(Constants.ASONDATE);
+                LOGGER.info("deptCode=" + deptCode + ",functionid=" + functionid + ",functionaryid=" + functionaryid
+                        + ",schemeid=" + schemeid + ",subschemeid=" + subschemeid + ",boundaryid=" + boundaryid
+                        + ",budgetheadid=" + budgetheadid + ",asondate=" + asondate);
 
-			if (asondate == null)
-				throw new ValidationException(EMPTY_STRING, "As On Date is null");
+            if (asondate == null)
+                throw new ValidationException(EMPTY_STRING, "As On Date is null");
 
-			final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
+            final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
 
-			final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
-			if (finyear == null)
-				throw new ValidationException(EMPTY_STRING,
-						"Financial year is not fefined for this date [" + sdf.format(asondate) + "]");
-			fromdate = finyear.getStartingDate();
+            final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
+            if (finyear == null)
+                throw new ValidationException(EMPTY_STRING,
+                        "Financial year is not fefined for this date [" + sdf.format(asondate) + "]");
+            fromdate = finyear.getStartingDate();
 
-			final Map<String, Object> params = new HashMap<>();
-			query.append(" and gl.functionId=:functionid and vmis.departmentcode=:deptCode")
-					.append(" and vmis.functionary=:functionaryid and vmis.schemeid=:schemeid")
-					.append(" and vmis.subschemeid=:subschemeid and vh.fundId=:fundid")
-					.append(" and vmis.divisionid=:boundaryid");
+            query = query + getQuery(CFunction.class, functionid, " and gl.functionId=");
+            query = query + (" and vmis.departmentcode='"+deptCode+"'");
+            query = query + getQuery(Functionary.class, functionaryid, " and vmis.functionary=");
+            query = query + getQuery(Scheme.class, schemeid, " and vmis.schemeid=");
+            query = query + getQuery(SubScheme.class, subschemeid, " and vmis.subschemeid=");
+            query = query + getQuery(Fund.class, fundid, " and vh.fundId=");
+            query = query + getQuery(Boundary.class, boundaryid, " and vmis.divisionid=");
 
-			params.put("functionid", functionid);
-			params.put("deptCode", deptCode);
-			params.put("functionaryid", functionaryid);
-			params.put("schemeid", schemeid);
-			params.put("subschemeid", subschemeid);
-			params.put("fundid", fundid);
-			params.put("boundaryid", boundaryid);
+            if (budgetheadid == null || budgetheadid.equals(EMPTY_STRING))
+                throw new ValidationException(EMPTY_STRING, "Budget head id is null or empty");
+            budgetgroup = (BudgetGroup) budgetGroupService.findById(budgetheadid, false);
+            if (budgetgroup == null || budgetgroup.getId() == null)
+                throw new ValidationException(EMPTY_STRING,
+                        "Budget Head is not defined for this id [ " + budgetheadid + " ]");
 
-			if (budgetheadid == null || budgetheadid.equals(EMPTY_STRING))
-				throw new ValidationException(EMPTY_STRING, "Budget head id is null or empty");
-			budgetgroup = (BudgetGroup) budgetGroupService.findById(budgetheadid, false);
-			if (budgetgroup == null || budgetgroup.getId() == null)
-				throw new ValidationException(EMPTY_STRING,
-						"Budget Head is not defined for this id [ " + budgetheadid + " ]");
+            final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
+                    "coa_majorcode_length");
+            if (appList.isEmpty())
+                throw new ValidationException(EMPTY_STRING, "coa_majorcode_length is not defined in AppConfig");
+            final int majorcodelength = Integer.valueOf(appList.get(0).getValue());
 
-			final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
-					"coa_majorcode_length");
-			if (appList.isEmpty())
-				throw new ValidationException(EMPTY_STRING, "coa_majorcode_length is not defined in AppConfig");
-			final int majorcodelength = Integer.valueOf(appList.get(0).getValue());
+            if (budgetgroup.getMinCode() != null) {
+                query = query + " and substr(gl.glcode,1," + budgetgroup.getMinCode().getGlcode().length() + ")<='"
+                        + budgetgroup.getMinCode().getGlcode() + "' ";
+                if (budgetgroup.getMaxCode() == null)
+                    query = query + " and substr(gl.glcode,1," + budgetgroup.getMinCode().getGlcode().length() + ")>='"
+                            + budgetgroup.getMinCode().getGlcode() + "' ";
+                else
+                    query = query + " and substr(gl.glcode,1," + budgetgroup.getMinCode().getGlcode().length() + ")>='"
+                            + budgetgroup.getMaxCode().getGlcode() + "' ";
+            } else if (budgetgroup.getMajorCode() != null)
+                query = query + " and substr(gl.glcode,1," + majorcodelength + ")='"
+                        + budgetgroup.getMajorCode().getGlcode() + "'";
 
-			if (budgetgroup.getMinCode() != null) {
-				query.append(" and substr(gl.glcode,1,:minCodeLength<=:minGlcode ");
-				params.put("minCodeLength", budgetgroup.getMinCode().getGlcode().length());
-				params.put("minGlcode", budgetgroup.getMinCode().getGlcode());
-				if (budgetgroup.getMaxCode() == null)
-					query.append(" and substr(gl.glcode,1,:minCodeLength)>=:minGlcode ");
-				else {
-					query.append(" and substr(gl.glcode,1,:maxCodeLength)>=:maxGlcode ");
-					params.put("maxCodeLength", budgetgroup.getMinCode().getGlcode().length());
-					params.put("maxGlcode", budgetgroup.getMaxCode().getGlcode());
-				}
-			} else if (budgetgroup.getMajorCode() != null) {
-				query.append(" and substr(gl.glcode,1,:majorcodelength)=:majorGlcode");
-				params.put("majorcodelength", majorcodelength);
-				params.put("majorGlcode", budgetgroup.getMajorCode().getGlcode());
-			}
-			if (BudgetAccountType.REVENUE_RECEIPTS.equals(budgetgroup.getAccountType())
-					|| BudgetAccountType.CAPITAL_RECEIPTS.equals(budgetgroup.getAccountType()))
-				select = " SELECT SUM(gl.creditAmount)-SUM(gl.debitAmount) ";
-			else if (BudgetAccountType.REVENUE_EXPENDITURE.equals(budgetgroup.getAccountType())
-					|| BudgetAccountType.CAPITAL_EXPENDITURE.equals(budgetgroup.getAccountType()))
-				select = " SELECT SUM(gl.debitAmount)-SUM(gl.creditAmount) ";
-			else
-				select = " SELECT SUM(gl.debitAmount)-SUM(gl.creditAmount) ";
+            if (BudgetAccountType.REVENUE_RECEIPTS.equals(budgetgroup.getAccountType())
+                    || BudgetAccountType.CAPITAL_RECEIPTS.equals(budgetgroup.getAccountType()))
+                select = " SELECT SUM(gl.creditAmount)-SUM(gl.debitAmount) ";
+            else if (BudgetAccountType.REVENUE_EXPENDITURE.equals(budgetgroup.getAccountType())
+                    || BudgetAccountType.CAPITAL_EXPENDITURE.equals(budgetgroup.getAccountType()))
+                select = " SELECT SUM(gl.debitAmount)-SUM(gl.creditAmount) ";
+            else
+                select = " SELECT SUM(gl.debitAmount)-SUM(gl.creditAmount) ";
 
-			final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
-					"exclude_status_forbudget_actual");
-			if (list.isEmpty())
-				throw new ValidationException(EMPTY_STRING,
-						"exclude_status_forbudget_actual is not defined in AppConfig");
+            final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
+                    "exclude_status_forbudget_actual");
+            if (list.isEmpty())
+                throw new ValidationException(EMPTY_STRING,
+                        "exclude_status_forbudget_actual is not defined in AppConfig");
 
-			final String voucherstatusExclude = list.get(0).getValue();
+            final String voucherstatusExclude = list.get(0).getValue();
 
-			final StringBuilder qryString = new StringBuilder(select)
-					.append(" FROM CGeneralLedger gl,CVoucherHeader vh,Vouchermis vmis where  ")
-					.append(" vh.id = gl.voucherHeaderId.id AND vh.id=vmis.voucherheaderid")
-					.append(" and (vmis.budgetCheckReq is null or  vmis.budgetCheckReq=true)")
-					.append(" and vh.status not in (:voucherstatusExclude)")
-					.append(" and vh.voucherDate>=:fromdate and vh.voucherDate <=:asondate ").append(query);
+            query = select + " FROM CGeneralLedger gl,CVoucherHeader vh,Vouchermis vmis where  "
+                    + " vh.id = gl.voucherHeaderId.id AND vh.id=vmis.voucherheaderid and (vmis.budgetCheckReq is null or  vmis.budgetCheckReq=true) and vh.status not in ("
+                    + voucherstatusExclude + ") and vh.voucherDate>=? and vh.voucherDate <=? " + query;
 
-			params.put("voucherstatusExclude", voucherstatusExclude);
-			params.put("fromdate", fromdate);
-			params.put("asondate", asondate);
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("loadActualBudget query============" + query);
+            final Object ob = persistenceService.find(query, fromdate, asondate);
+            if (ob == null)
+                return BigDecimal.ZERO;
+            else
+                return new BigDecimal(ob.toString());
+        } catch (final ValidationException v) {
+        	v.printStackTrace();
+            LOGGER.error("Exp in getActualBudgetUtilized API()####" + v.getErrors());
+            throw new ValidationException(v.getErrors());
+        } catch (final Exception e) {
+        	e.printStackTrace();
+            LOGGER.error("Exp in getActualBudgetUtilized API()===" + e.getMessage());
+            throw new ValidationException(EMPTY_STRING, "Exp in getActualBudgetUtilized API()===" + e.getMessage());
+        }
+    }
 
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("loadActualBudget query============" + query);
-
-			final Query qry = persistenceService.getSession().createQuery(qryString.toString());
-			params.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
-
-			final Object ob = qry.list().get(0);
-			if (ob == null)
-				return BigDecimal.ZERO;
-			else
-				return new BigDecimal(ob.toString());
-		} catch (final ValidationException v) {
-			LOGGER.error("Exp in getActualBudgetUtilized API()####" + v.getErrors());
-                        throw new ValidationException(EMPTY_STRING, "Exp in getActualBudgetUtilized API()===" + v.getMessage());
-        } /*
-           * catch (final Exception e) {
-           * LOGGER.error("Exp in getActualBudgetUtilized API()===" +
-           * e.getMessage()); throw new ValidationException(EMPTY_STRING,
-           * "Exp in getActualBudgetUtilized API()===" + e.getMessage()); }
-           */
-	}
 
 	/**
 	 * API to load the budget consumed for the previous year/current year. it'll
@@ -1138,147 +1109,126 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	@Override
 	public BigDecimal getActualBudgetUtilizedForBudgetaryCheck(final Map<String, Object> paramMap) {
 		String deptCode = null;
-		Long functionid = null;
-		Integer functionaryid = null;
-		Integer schemeid = null;
-		Integer subschemeid = null;
-		Long boundaryid = null;
-		Integer fundid = null;
-		final Long budgetheadid = null;
-		Date fromdate = null;
-		Date asondate = null;
+        Long functionid = null;
+        Integer functionaryid = null;
+        Integer schemeid = null;
+        Integer subschemeid = null;
+        Long boundaryid = null;
+        Long fundid = null;
+        final Long budgetheadid = null;
+        Date fromdate = null;
+        Date asondate = null;
 
-		final StringBuilder query = new StringBuilder();
-		final Map<String, Object> params = new HashMap<>();
-		String select = EMPTY_STRING;
-		try {
-			if (paramMap.get(Constants.DEPTID) != null)
-				deptCode = paramMap.get(Constants.DEPTID).toString();
-			if (paramMap.get(Constants.FUNCTIONID) != null)
-				functionid = (Long) paramMap.get(Constants.FUNCTIONID);
-			if (paramMap.get(Constants.FUNCTIONARYID) != null)
-				functionaryid = (Integer) paramMap.get(Constants.FUNCTIONARYID);
-			if (paramMap.get(Constants.SCHEMEID) != null)
-				schemeid = (Integer) paramMap.get(Constants.SCHEMEID);
-			if (paramMap.get(Constants.FUNDID) != null)
-				fundid = (Integer) paramMap.get(Constants.FUNDID);
-			if (paramMap.get(Constants.SUBSCHEMEID) != null)
-				subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
-			if (paramMap.get(Constants.BOUNDARYID) != null)
-				boundaryid = (Long) paramMap.get(Constants.BOUNDARYID);
-			/*
-			 * if(paramMap.get(BUDGETHEADID)!=null) budgetheadid =
-			 * (Long)paramMap.get(BUDGETHEADID);
-			 */
-			if (paramMap.get(Constants.ASONDATE) != null)
-				asondate = (java.util.Date) paramMap.get(Constants.ASONDATE);
+        String query = EMPTY_STRING, select = EMPTY_STRING;
+        try {
+            if (paramMap.get(Constants.DEPTID) != null)
+                deptCode = paramMap.get(Constants.DEPTID).toString();
+            if (paramMap.get(Constants.FUNCTIONID) != null)
+                functionid = (Long) paramMap.get(Constants.FUNCTIONID);
+            if (paramMap.get(Constants.FUNCTIONARYID) != null)
+                functionaryid = (Integer) paramMap.get(Constants.FUNCTIONARYID);
+            if (paramMap.get(Constants.SCHEMEID) != null)
+                schemeid = (Integer) paramMap.get(Constants.SCHEMEID);
+            if (paramMap.get(Constants.FUNDID) != null)
+                fundid = (Long) paramMap.get(Constants.FUNDID);
+            if (paramMap.get(Constants.SUBSCHEMEID) != null)
+                subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
+            if (paramMap.get(Constants.BOUNDARYID) != null)
+                boundaryid = (Long) paramMap.get(Constants.BOUNDARYID);
+            /*
+             * if(paramMap.get(BUDGETHEADID)!=null) budgetheadid =
+             * (Long)paramMap.get(BUDGETHEADID);
+             */
+            if (paramMap.get(Constants.ASONDATE) != null)
+                asondate = (java.util.Date) paramMap.get(Constants.ASONDATE);
 
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("deptCode=" + deptCode + ",functionid=" + functionid + ",functionaryid=" + functionaryid
-						+ ",schemeid=" + schemeid + ",subschemeid=" + subschemeid + ",boundaryid=" + boundaryid
-						+ ",budgetheadid=" + budgetheadid + ",asondate=" + asondate);
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("deptCode=" + deptCode + ",functionid=" + functionid + ",functionaryid=" + functionaryid
+                        + ",schemeid=" + schemeid + ",subschemeid=" + subschemeid + ",boundaryid=" + boundaryid
+                        + ",budgetheadid=" + budgetheadid + ",asondate=" + asondate);
 
-			if (asondate == null)
-				throw new ValidationException(EMPTY_STRING, "As On Date is null");
+            if (asondate == null)
+                throw new ValidationException(EMPTY_STRING, "As On Date is null");
 
-			final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
+            final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
 
-			final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
-			if (finyear == null)
-				throw new ValidationException(EMPTY_STRING,
-						"Financial year is not fefined for this date [" + sdf.format(asondate) + "]");
-			fromdate = finyear.getStartingDate();
+            final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
+            if (finyear == null)
+                throw new ValidationException(EMPTY_STRING,
+                        "Financial year is not fefined for this date [" + sdf.format(asondate) + "]");
+            fromdate = finyear.getStartingDate();
 
-			final List<AppConfigValues> budgetGrouplist = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
-					BUDGETARY_CHECK_GROUPBY_VALUES);
-			if (budgetGrouplist.isEmpty())
-				throw new ValidationException(EMPTY_STRING,
-						"budgetaryCheck_groupby_values is not defined in AppConfig");
-			else {
-				final AppConfigValues appConfigValues = budgetGrouplist.get(0);
-				final String[] values = StringUtils.split(appConfigValues.getValue(), ",");
-				for (final String value : values)
-					if (value.equals("department")) {
-						query.append(" and vmis.departmentcode=:deptCode");
-						params.put("deptCode", deptCode);
-					} else if (value.equals("function")) {
-						query.append(" and gl.functionId=:functionid");
-						params.put("functionid", functionid);
-					} else if (value.equals("functionary")) {
-						query.append(" and vmis.functionary=:functionaryid");
-						params.put("functionaryid", functionaryid);
-					} else if (value.equals("fund")) {
-						query.append(" and vh.fundId=:fundid");
-						params.put("fundid", fundid);
-					} else if (value.equals("scheme")) {
-						query.append(" and vmis.schemeid=:schemeid");
-						params.put("schemeid", schemeid);
-					} else if (value.equals("subscheme")) {
-						query.append(" and vmis.subschemeid=:subschemeid");
-						params.put("subschemeid", subschemeid);
-					} else if (value.equals("boundary")) {
-						query.append(" and vmis.divisionid=:boundaryid");
-						params.put("boundaryid", boundaryid);
-					} else
-						throw new ValidationException(EMPTY_STRING,
-								"budgetaryCheck_groupby_values is not matching=" + value);
-			}
+            final List<AppConfigValues> budgetGrouplist = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
+                    BUDGETARY_CHECK_GROUPBY_VALUES);
+            if (budgetGrouplist.isEmpty())
+                throw new ValidationException(EMPTY_STRING,
+                        "budgetaryCheck_groupby_values is not defined in AppConfig");
+            else {
+                final AppConfigValues appConfigValues = budgetGrouplist.get(0);
+                final String[] values = StringUtils.split(appConfigValues.getValue(), ",");
+                for (final String value : values)
+                    if (value.equals("department"))
+                        query = query + ( " and vmis.departmentcode='"+deptCode+"'");
+                    else if (value.equals("function"))
+                        query = query + getQuery(CFunction.class, functionid, " and gl.functionId=");
+                    else if (value.equals("functionary"))
+                        query = query + getQuery(Functionary.class, functionaryid, " and vmis.functionary=");
+                    else if (value.equals("fund"))
+                        query = query + getQuery(Fund.class, fundid, " and vh.fundId=");
+                    else if (value.equals("scheme"))
+                        query = query + getQuery(Scheme.class, schemeid, " and vmis.schemeid=");
+                    else if (value.equals("subscheme"))
+                        query = query + getQuery(SubScheme.class, subschemeid, " and vmis.subschemeid=");
+                    else if (value.equals("boundary"))
+                        query = query + getQuery(Boundary.class, boundaryid, " and vmis.divisionid=");
+                    else
+                        throw new ValidationException(EMPTY_STRING,
+                                "budgetaryCheck_groupby_values is not matching=" + value);
+            }
 
-			String glcode = EMPTY_STRING;
-			if (paramMap.get("glcode") != null)
-				glcode = paramMap.get("glcode").toString();
-			if (EMPTY_STRING.equals(glcode))
-				throw new ValidationException(EMPTY_STRING, "Glcode is null");
+            String glcode = EMPTY_STRING;
+            if (paramMap.get("glcode") != null)
+                glcode = paramMap.get("glcode").toString();
+            if (EMPTY_STRING.equals(glcode))
+                throw new ValidationException(EMPTY_STRING, "Glcode is null");
 
-			query.append(" and gl.glcode=:glcode");
-			params.put("glcode", glcode);
+            query = query + " and gl.glcode='" + glcode + "'";
 
-			final CChartOfAccounts coa = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(glcode);
-			if (coa == null)
-				throw new ValidationException(EMPTY_STRING, "Chartofaccounts is null for this glcode:" + glcode);
+            final CChartOfAccounts coa = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(glcode);
+            if (coa == null)
+                throw new ValidationException(EMPTY_STRING, "Chartofaccounts is null for this glcode:" + glcode);
 
-			if ("I".equalsIgnoreCase(coa.getType().toString()) || "L".equalsIgnoreCase(coa.getType().toString()))
-				select = " SELECT SUM(gl.creditAmount)-SUM(gl.debitAmount) ";
-			else
-				select = " SELECT SUM(gl.debitAmount)-SUM(gl.creditAmount) ";
+            if ("I".equalsIgnoreCase(coa.getType().toString()) || "L".equalsIgnoreCase(coa.getType().toString()))
+                select = " SELECT SUM(gl.creditAmount)-SUM(gl.debitAmount) ";
+            else
+                select = " SELECT SUM(gl.debitAmount)-SUM(gl.creditAmount) ";
 
-			final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
-					"exclude_status_forbudget_actual");
-			if (list.isEmpty())
-				throw new ValidationException(EMPTY_STRING,
-						"exclude_status_forbudget_actual is not defined in AppConfig");
+            final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
+                    "exclude_status_forbudget_actual");
+            if (list.isEmpty())
+                throw new ValidationException(EMPTY_STRING,
+                        "exclude_status_forbudget_actual is not defined in AppConfig");
 
-			list.get(0).getValue();
+            list.get(0).getValue();
+            query = select + " FROM CGeneralLedger gl,CVoucherHeader vh,Vouchermis vmis where  "
+                    + " vh.id = gl.voucherHeaderId.id AND vh.id=vmis.voucherheaderid and (vmis.budgetCheckReq=null or vmis.budgetCheckReq=true) and vh.status !=4 and vh.voucherDate>=? and vh.voucherDate <=? "
+                    + query;
 
-			final StringBuilder queryString = new StringBuilder(select)
-					.append(" FROM CGeneralLedger gl,CVoucherHeader vh,Vouchermis vmis where  ")
-					.append(" vh.id = gl.voucherHeaderId.id AND vh.id=vmis.voucherheaderid")
-					.append(" and (vmis.budgetCheckReq=null or vmis.budgetCheckReq=true) and vh.status !=4 ")
-					.append("and vh.voucherDate>=:fromdate and vh.voucherDate <=:asondate ").append(query);
-			params.put("fromdate", fromdate);
-			params.put("asondate", asondate);
-
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("loadActualBudget query============" + query);
-			final Query qry = persistenceService.getSession().createQuery(queryString.toString());
-			params.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
-			final Object ob = qry.list().get(0);
-			if (ob == null)
-				return BigDecimal.ZERO;
-			else
-				return new BigDecimal(ob.toString());
-		} catch (final ValidationException v) {
-			LOGGER.error("Exp in getActualBudgetUtilizedForBudgetaryCheck API()===" + v.getErrors());
-			throw new ValidationException(EMPTY_STRING,
-                                "Exp in getActualBudgetUtilizedForBudgetaryCheck API()===" + v.getMessage());
-        } /*
-           * catch (final Exception e) { LOGGER.
-           * error("Exp in getActualBudgetUtilizedForBudgetaryCheck API()===" +
-           * e.getMessage()); throw new ValidationException(EMPTY_STRING,
-           * "Exp in getActualBudgetUtilizedForBudgetaryCheck API()===" +
-           * e.getMessage()); }
-           */
-	}
+                LOGGER.info("loadActualBudget query============" + query);
+            final Object ob = persistenceService.find(query, fromdate, asondate);
+            if (ob == null)
+                return BigDecimal.ZERO;
+            else
+                return new BigDecimal(ob.toString());
+        } catch (final ValidationException v) {
+            LOGGER.error("Exp in getActualBudgetUtilizedForBudgetaryCheck API()===" + v.getErrors());
+            throw new ValidationException(v.getErrors());
+        } catch (final Exception e) {
+            LOGGER.error("Exp in getActualBudgetUtilizedForBudgetaryCheck API()===" + e.getMessage());
+            throw new ValidationException(EMPTY_STRING,
+                    "Exp in getActualBudgetUtilizedForBudgetaryCheck API()===" + e.getMessage());
+        }
+    }
 
 	@Override
 	public BigDecimal getPlanningBudgetUsage(final BudgetDetail bd) {
@@ -1329,87 +1279,83 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	 */
 	@Override
 	public BigDecimal getBudgetedAmtForYear(final Map<String, Object> paramMap) {
-		String deptCode = null;
-		Long functionid = null;
-		Integer functionaryid = null;
-		Integer schemeid = null;
-		Integer subschemeid = null;
-		Long boundaryid = null;
-		Integer fundid = null;
-		List<BudgetGroup> budgetHeadList = null;
-		Long financialyearid = null;
+		 String deptCode = null;
+	        Long functionid = null;
+	        Integer functionaryid = null;
+	        Integer schemeid = null;
+	        Integer subschemeid = null;
+	        Long boundaryid = null;
+	        Long fundid = null;
+	        List<BudgetGroup> budgetHeadList = null;
+	        Long financialyearid = null;
 
-		final StringBuilder query = new StringBuilder();
-		final Map<String, Object> params = new HashMap<>();
-		try {
-			if (paramMap.get(Constants.DEPTID) != null)
-				deptCode = paramMap.get(Constants.DEPTID).toString();
-			if (paramMap.get(Constants.FUNCTIONID) != null)
-				functionid = (Long) paramMap.get(Constants.FUNCTIONID);
-			if (paramMap.get(Constants.FUNCTIONARYID) != null)
-				functionaryid = (Integer) paramMap.get(Constants.FUNCTIONARYID);
-			if (paramMap.get(Constants.SCHEMEID) != null)
-				schemeid = (Integer) paramMap.get(Constants.SCHEMEID);
-			if (paramMap.get(Constants.SUBSCHEMEID) != null)
-				subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
-			if (paramMap.get(Constants.FUNDID) != null)
-				fundid = (Integer) paramMap.get(Constants.FUNDID);
-			if (paramMap.get(Constants.BOUNDARYID) != null)
-				boundaryid = (Long) paramMap.get(Constants.BOUNDARYID);
-			if (paramMap.get(BUDGETHEADID) != null)
-				budgetHeadList = (List) paramMap.get(BUDGETHEADID);
-			if (paramMap.get("financialyearid") != null)
-				financialyearid = (Long) paramMap.get("financialyearid");
+	        String query = EMPTY_STRING;
+	        try {
+	            if (paramMap.get(Constants.DEPTID) != null)
+	                deptCode = paramMap.get(Constants.DEPTID).toString();
+	            if (paramMap.get(Constants.FUNCTIONID) != null)
+	                functionid = (Long) paramMap.get(Constants.FUNCTIONID);
+	            if (paramMap.get(Constants.FUNCTIONARYID) != null)
+	                functionaryid = (Integer) paramMap.get(Constants.FUNCTIONARYID);
+	            if (paramMap.get(Constants.SCHEMEID) != null)
+	                schemeid = (Integer) paramMap.get(Constants.SCHEMEID);
+	            if (paramMap.get(Constants.SUBSCHEMEID) != null)
+	                subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
+	            if (paramMap.get(Constants.FUNDID) != null)
+	                fundid = (Long) paramMap.get(Constants.FUNDID);
+	            if (paramMap.get(Constants.BOUNDARYID) != null)
+	                boundaryid = (Long) paramMap.get(Constants.BOUNDARYID);
+	            if (paramMap.get(BUDGETHEADID) != null)
+	                budgetHeadList = (List) paramMap.get(BUDGETHEADID);
+	            if (paramMap.get("financialyearid") != null)
+	                financialyearid = (Long) paramMap.get("financialyearid");
 
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("deptCode " + deptCode + ",functionid " + functionid + ",functionaryid " + functionaryid
-						+ ",schemeid " + schemeid + ",subschemeid " + subschemeid + ",boundaryid " + boundaryid
-						+ ",budgetheadids " + budgetHeadList + ",financialyearid " + financialyearid);
+	                LOGGER.info("deptCode " + deptCode + ",functionid " + functionid + ",functionaryid " + functionaryid
+	                        + ",schemeid " + schemeid + ",subschemeid " + subschemeid + ",boundaryid " + boundaryid
+	                        + ",budgetheadids " + budgetHeadList + ",financialyearid " + financialyearid);
 
-			query.append(prepareQuery(deptCode, functionid, functionaryid, schemeid, subschemeid,
-					boundaryid != null ? boundaryid.intValue() : null, fundid, params));
+	            query = prepareQuery(deptCode, functionid, functionaryid, schemeid, subschemeid,
+	                    boundaryid != null ? boundaryid.intValue() : null, fundid);
 
-			// handle the list
+	            // handle the list
 
-			if (financialyearid == null)
-				throw new ValidationException(EMPTY_STRING, "Financial Year id is null");
-			query.append(" and bd.budget.financialYear=:financialyearid");
-			params.put("financialyearid", financialyearid);
-			if (budgetHeadList == null || budgetHeadList.size() == 0)
-				throw new ValidationException(EMPTY_STRING, "Budget head id is null or empty");
-			query.append(" and bd.budgetGroup in ( :budgetHeadList )");
-			params.put("budgetHeadList", budgetHeadList);
+	            if (financialyearid == null)
+	                throw new ValidationException(EMPTY_STRING, "Financial Year id is null");
+	            query = query + getQuery(CFinancialYear.class, financialyearid, " and bd.budget.financialYear=");
+	            if (budgetHeadList == null || budgetHeadList.size() == 0)
+	                throw new ValidationException(EMPTY_STRING, "Budget head id is null or empty");
+	            query = query + " and bd.budgetGroup in ( :budgetHeadList )";
 
-			// check any RE is available for the passed parameters.if RE is not
-			// exist, take BE's Approved Amount
-			String finalquery;
-			if (budgetService.hasApprovedReForYear(financialyearid))
-				finalquery = " from BudgetDetail bd where bd.budget.isbere='RE' " + query;
-			else
-				finalquery = " from BudgetDetail bd where bd.budget.isbere='BE' " + query;
+	            // check any RE is available for the passed parameters.if RE is not
+	            // exist, take BE's Approved Amount
+	            String finalquery;
+	            if (budgetService.hasApprovedReForYear(financialyearid))
+	                finalquery = " from BudgetDetail bd where bd.budget.isbere='RE' " + query;
+	            else
+	                finalquery = " from BudgetDetail bd where bd.budget.isbere='BE' " + query;
 
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("Final query=" + finalquery);
-			final Query hibQuery = getCurrentSession().createQuery(finalquery);
-			params.entrySet().forEach(entry -> hibQuery.setParameter(entry.getKey(), entry.getValue()));
-			final List<BudgetDetail> bdList = hibQuery.list();
-			if (bdList == null || bdList.size() == 0)
-				// return BigDecimal.ZERO;
-				throw new ValidationException(
-						new ValidationError("Budget Check failed: Budget not defined for the given combination.",
-								"Budget Check failed: Budget not defined for the given combination."));
-			else
-				return getApprovedAmt(bdList);
-		} catch (final ValidationException v) {
-			LOGGER.error("Exp in getBudgetedAmtForYear==" + v.getErrors());
-	                     throw new ValidationException(EMPTY_STRING, "Exp in getBudgetedAmtForYear==" + v.getMessage());
+	                LOGGER.info("Final query=" + finalquery);
+	            // Query hibQuery =getCurrentSession().createQuery(finalquery);
+	            final Query hibQuery = getCurrentSession().createQuery(finalquery);
 
-        } /*
-           * catch (final Exception e) {
-           * LOGGER.error("Exp in getBudgetedAmtForYear==" + e.getMessage());
-           * throw new ValidationException(EMPTY_STRING,
-           * "Exp in getBudgetedAmtForYear==" + e.getMessage()); }
-           */
+	            hibQuery.setParameterList("budgetHeadList", budgetHeadList);
+	            final List<BudgetDetail> bdList = hibQuery.list();
+	            if (bdList == null || bdList.size() == 0)
+	                // return BigDecimal.ZERO;
+	                throw new ValidationException(
+	                        new ValidationError("Budget Check failed: Budget not defined for the given combination.",
+	                                "Budget Check failed: Budget not defined for the given combination."));
+	            else
+	                return getApprovedAmt(bdList);
+	        } catch (final ValidationException v) {
+	        	v.printStackTrace();
+	            LOGGER.error("Exp in getBudgetedAmtForYear==" + v.getErrors());
+	            throw new ValidationException(v.getErrors());
+	        } catch (final Exception e) {
+	        	e.printStackTrace();
+	            LOGGER.error("Exp in getBudgetedAmtForYear==" + e.getMessage());
+	            throw new ValidationException(EMPTY_STRING, "Exp in getBudgetedAmtForYear==" + e.getMessage());
+	        }
 	}
 
 	/**
@@ -1428,7 +1374,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		Integer schemeid = null;
 		Integer subschemeid = null;
 		Integer boundaryid = null;
-		Integer fundid = null;
+		Long fundid = null;
 		List<BudgetGroup> budgetHeadList = null;
 		Long financialyearid = null;
 
@@ -1446,7 +1392,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			if (paramMap.get(Constants.SUBSCHEMEID) != null)
 				subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
 			if (paramMap.get(Constants.FUNDID) != null)
-				fundid = (Integer) paramMap.get(Constants.FUNDID);
+				fundid = (Long) paramMap.get(Constants.FUNDID);
 			if (paramMap.get(Constants.BOUNDARYID) != null)
 				boundaryid = (Integer) paramMap.get(Constants.BOUNDARYID);
 			if (paramMap.get(BUDGETHEADID) != null)
@@ -1459,8 +1405,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 						+ ",schemeid " + schemeid + ",subschemeid " + subschemeid + ",boundaryid " + boundaryid
 						+ ",budgetheadids " + budgetHeadList + ",financialyearid " + financialyearid);
 
-			query.append(prepareQuery(deptCode, functionid, functionaryid, schemeid, subschemeid, boundaryid, fundid,
-					params));
+			query.append(prepareQuery(deptCode, functionid, functionaryid, schemeid, subschemeid, boundaryid, fundid));
 
 			// handle the list
 
@@ -1510,7 +1455,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		Integer schemeid = null;
 		Integer subschemeid = null;
 		Integer boundaryid = null;
-		Integer fundid = null;
+		Long fundid = null;
 		List<BudgetGroup> budgetHeadList = null;
 		Long financialyearid = null;
 
@@ -1528,7 +1473,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			if (paramMap.get(Constants.SUBSCHEMEID) != null)
 				subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
 			if (paramMap.get(Constants.FUNDID) != null)
-				fundid = (Integer) paramMap.get(Constants.FUNDID);
+				fundid = (Long) paramMap.get(Constants.FUNDID);
 			if (paramMap.get(Constants.BOUNDARYID) != null)
 				boundaryid = (Integer) paramMap.get(Constants.BOUNDARYID);
 			if (paramMap.get(BUDGETHEADID) != null)
@@ -1541,8 +1486,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 						+ ",schemeid " + schemeid + ",subschemeid " + subschemeid + ",boundaryid " + boundaryid
 						+ ",budgetheadids " + budgetHeadList + ",financialyearid " + financialyearid);
 
-			query.append(prepareQuery(deptcode, functionid, functionaryid, schemeid, subschemeid, boundaryid, fundid,
-					params));
+			query.append(prepareQuery(deptcode, functionid, functionaryid, schemeid, subschemeid, boundaryid, fundid));
 
 			// handle the list
 
@@ -1603,7 +1547,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		Integer schemeid = null;
 		Integer subschemeid = null;
 		Integer boundaryid = null;
-		Integer fundid = null;
+		Long fundid = null;
 		List<Long> budgetHeadList = null;
 		Long financialyearid = null;
 		final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
@@ -1620,7 +1564,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			if (paramMap.get(Constants.SUBSCHEMEID) != null)
 				subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
 			if (paramMap.get(Constants.FUNDID) != null)
-				fundid = (Integer) paramMap.get(Constants.FUNDID);
+				fundid = (Long) paramMap.get(Constants.FUNDID);
 			if (paramMap.get(Constants.BOUNDARYID) != null)
 				boundaryid = (Integer) paramMap.get(Constants.BOUNDARYID);
 			if (paramMap.get(BUDGETHEADID) != null)
@@ -2110,6 +2054,27 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
            * e.getMessage()); }
            */
 	}
+	
+	
+	public String getQuery(final Class clazz, final Serializable id, final String queryString) {
+
+        session = getCurrentSession();
+        String query = EMPTY_STRING;
+        if (id == null)
+            return query;
+        try {
+            final Object o = findById(clazz, id);
+            if (o != null)
+                query = queryString + id;
+        } catch (final ValidationException v) {
+            LOGGER.error("Exp in getQuery==" + v.getErrors());
+            throw new ValidationException(v.getErrors());
+        } catch (final Exception e) {
+            LOGGER.equals("Exp in getQuery==" + e.getMessage());
+            throw new ValidationException(EMPTY_STRING, e.getMessage());
+        }
+        return query;
+    }
 
 	/**
 	 * This API is handling the budget checking
@@ -2318,172 +2283,150 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	}
 
 	@Override
-	public BigDecimal getBillAmountForBudgetCheck(final Map<String, Object> paramMap) {
-		String deptCode = null;
-		Long functionid = null;
-		Integer functionaryid = null;
-		Integer schemeid = null;
-		Integer subschemeid = null;
-		Long boundaryid = null;
-		Integer fundid = null;
-		Long glcodeid = null;
-		Date fromdate = null;
-		Date asondate = null;
-		BigDecimal totalBillUtilized = new BigDecimal(0);
+    public BigDecimal getBillAmountForBudgetCheck(final Map<String, Object> paramMap) {
+	 String deptCode = null;
+    Long functionid = null;
+    Integer functionaryid = null;
+    Integer schemeid = null;
+    Integer subschemeid = null;
+    Long boundaryid = null;
+    Long fundid = null;
+    Long glcodeid = null;
+    Date fromdate = null;
+    Date asondate = null;
+    BigDecimal totalBillUtilized = new BigDecimal(0);
 
-		final StringBuilder query = new StringBuilder();
-		final Map<String, Object> queryParams = new HashMap<>();
-		StringBuilder query1 = new StringBuilder();
-		try {
-			if (paramMap.get(Constants.DEPTID) != null)
-				deptCode = paramMap.get(Constants.DEPTID).toString();
-			if (paramMap.get(Constants.FUNCTIONID) != null)
-				functionid = (Long) paramMap.get(Constants.FUNCTIONID);
-			if (paramMap.get(Constants.FUNCTIONARYID) != null)
-				functionaryid = (Integer) paramMap.get(Constants.FUNCTIONARYID);
-			if (paramMap.get(Constants.SCHEMEID) != null)
-				schemeid = (Integer) paramMap.get(Constants.SCHEMEID);
-			if (paramMap.get(Constants.FUNDID) != null)
-				fundid = (Integer) paramMap.get(Constants.FUNDID);
-			if (paramMap.get(Constants.SUBSCHEMEID) != null)
-				subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
-			if (paramMap.get(Constants.BOUNDARYID) != null)
-				boundaryid = (Long) paramMap.get(Constants.BOUNDARYID);
-			if (paramMap.get(GLCODEID) != null)
-				glcodeid = (Long) paramMap.get(GLCODEID);
-			if (paramMap.get(Constants.ASONDATE) != null)
-				asondate = (java.util.Date) paramMap.get(Constants.ASONDATE);
-			if (paramMap.get("fromdate") != null)
-				fromdate = (java.util.Date) paramMap.get("fromdate");
+    String query = EMPTY_STRING;
+    String query1 = EMPTY_STRING;
+    try {
+        if (paramMap.get(Constants.DEPTID) != null)
+            deptCode = paramMap.get(Constants.DEPTID).toString();
+        if (paramMap.get(Constants.FUNCTIONID) != null)
+            functionid = (Long) paramMap.get(Constants.FUNCTIONID);
+        if (paramMap.get(Constants.FUNCTIONARYID) != null)
+            functionaryid = (Integer) paramMap.get(Constants.FUNCTIONARYID);
+        if (paramMap.get(Constants.SCHEMEID) != null)
+            schemeid = (Integer) paramMap.get(Constants.SCHEMEID);
+        if (paramMap.get(Constants.FUNDID) != null)
+            fundid = (Long) paramMap.get(Constants.FUNDID);
+        if (paramMap.get(Constants.SUBSCHEMEID) != null)
+            subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
+        if (paramMap.get(Constants.BOUNDARYID) != null)
+            boundaryid = (Long) paramMap.get(Constants.BOUNDARYID);
+        if (paramMap.get(GLCODEID) != null)
+            glcodeid = (Long) paramMap.get(GLCODEID);
+        if (paramMap.get(Constants.ASONDATE) != null)
+            asondate = (java.util.Date) paramMap.get(Constants.ASONDATE);
+        if (paramMap.get("fromdate") != null)
+            fromdate = (java.util.Date) paramMap.get("fromdate");
 
-			// get the financialyear from asondate
-			final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
-			final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
-			if (finyear == null)
-				throw new ValidationException(EMPTY_STRING,
-						"Financial year is not defined for this date [" + sdf.format(asondate) + "]");
-			fromdate = finyear.getStartingDate();
+        // get the financialyear from asondate
+        final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
+        if (finyear == null)
+            throw new ValidationException(EMPTY_STRING,
+                    "Financial year is not defined for this date [" + sdf.format(asondate) + "]");
+        fromdate = finyear.getStartingDate();
 
-			paramMap.put("financialyearid", Long.valueOf(finyear.getId()));
-			paramMap.put("fromdate", fromdate);
-			paramMap.put(Constants.ASONDATE, finyear.getEndingDate());
+        paramMap.put("financialyearid", Long.valueOf(finyear.getId()));
+        paramMap.put("fromdate", fromdate);
+        paramMap.put(Constants.ASONDATE, finyear.getEndingDate());
 
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("deptCode=" + deptCode + ",functionid=" + functionid + ",functionaryid=" + functionaryid
-						+ ",schemeid=" + schemeid + ",subschemeid=" + subschemeid + ",boundaryid=" + boundaryid
-						+ ",glcodeid=" + glcodeid + ",asondate=" + asondate);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("deptCode=" + deptCode + ",functionid=" + functionid + ",functionaryid=" + functionaryid
+                    + ",schemeid=" + schemeid + ",subschemeid=" + subschemeid + ",boundaryid=" + boundaryid
+                    + ",glcodeid=" + glcodeid + ",asondate=" + asondate);
 
-			if (asondate == null)
-				throw new ValidationException(EMPTY_STRING, "As On Date is null");
+        if (asondate == null)
+            throw new ValidationException(EMPTY_STRING, "As On Date is null");
 
-			final List<AppConfigValues> budgetGrouplist = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
-					BUDGETARY_CHECK_GROUPBY_VALUES);
-			if (budgetGrouplist.isEmpty())
-				throw new ValidationException(EMPTY_STRING,
-						"budgetaryCheck_groupby_values is not defined in AppConfig");
-			else {
-				final AppConfigValues appConfigValues = budgetGrouplist.get(0);
-				final String[] values = StringUtils.split(appConfigValues.getValue(), ",");
-				for (final String value : values)
-					if (value.equals("department")) {
-						if (deptCode == null || deptCode == "0")
-							throw new ValidationException(EMPTY_STRING, "Department is required");
-						else {
-							query.append(" and bmis.departmentcode=:deptCode");
-							queryParams.put("deptCode", deptCode);
-						}
-					} else if (value.equals("function")) {
-						if (functionid == null || functionid == 0)
-							throw new ValidationException(EMPTY_STRING, "Function is required");
-						else {
-							query.append(" and bd.functionid=:functionid");
-							queryParams.put("functionid", functionid);
-						}
-					} else if (value.equals("functionary")) {
-						if (functionaryid == null || functionaryid == 0)
-							throw new ValidationException(EMPTY_STRING, "Functionary is required");
-						else {
-							query.append(" and bmis.functionaryid.id=:functionaryid");
-							queryParams.put("functionaryid", functionaryid);
-						}
-					} else if (value.equals("fund")) {
-						if (fundid == null || fundid == 0)
-							throw new ValidationException(EMPTY_STRING, "Fund is required");
-						else {
-							query.append(" and bmis.fund.id=:fundid");
-							queryParams.put("fundid", fundid);
-						}
-					} else if (value.equals("scheme")) {
-						if (schemeid == null || schemeid == 0)
-							throw new ValidationException(EMPTY_STRING, "Scheme is required");
-						else {
-							query.append(" and bmis.scheme.id=:schemeid");
-							queryParams.put("schemeid", schemeid);
-						}
-					} else if (value.equals("subscheme")) {
-						if (subschemeid == null || subschemeid == 0)
-							throw new ValidationException(EMPTY_STRING, "Sub scheme is required");
-						else {
-							query.append(" and bmis.subScheme.id=:subschemeid");
-							queryParams.put("subschemeid", subschemeid);
-						}
-					} else if (value.equals("boundary")) {
-						if (boundaryid == null || boundaryid == 0)
-							throw new ValidationException(EMPTY_STRING, "Boundary is required");
-						else {
-							query.append(" and bmis.fieldid.id=:boundaryid");
-							queryParams.put("boundaryid", boundaryid);
-						}
-					} else
-						throw new ValidationException(EMPTY_STRING,
-								"budgetaryCheck_groupby_values is not matching=" + value);
-			}
-			if (asondate != null) {
-				query.append(" and br.billdate <=:asondate ");
-				queryParams.put("asondate", asondate);
-			}
-			if (fromdate != null) {
-				query.append(" and  br.billdate>=:fromdate ");
-				queryParams.put("fromdate", fromdate);
-			}
+        final List<AppConfigValues> budgetGrouplist = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
+                BUDGETARY_CHECK_GROUPBY_VALUES);
+        if (budgetGrouplist.isEmpty())
+            throw new ValidationException(EMPTY_STRING,
+                    "budgetaryCheck_groupby_values is not defined in AppConfig");
+        else {
+            final AppConfigValues appConfigValues = budgetGrouplist.get(0);
+            final String[] values = StringUtils.split(appConfigValues.getValue(), ",");
+            for (final String value : values)
+                if (value.equals("department")) {
+                    if (deptCode == null || deptCode == "0")
+                        throw new ValidationException(EMPTY_STRING, "Department is required");
+                    else
+                        query = query + ( " and bmis.departmentcode='"+deptCode+"'");
+                } else if (value.equals("function")) {
+                    if (functionid == null || functionid == 0)
+                        throw new ValidationException(EMPTY_STRING, "Function is required");
+                    else
+                        query = query + getQuery(CFunction.class, functionid, " and bd.functionid=");
+                } else if (value.equals("functionary")) {
+                    if (functionaryid == null || functionaryid == 0)
+                        throw new ValidationException(EMPTY_STRING, "Functionary is required");
+                    else
+                        query = query + getQuery(Functionary.class, functionaryid, " and bmis.functionaryid.id=");
+                } else if (value.equals("fund")) {
+                    if (fundid == null || fundid == 0)
+                        throw new ValidationException(EMPTY_STRING, "Fund is required");
+                    else
+                        query = query + getQuery(Fund.class, fundid, " and bmis.fund.id=");
+                } else if (value.equals("scheme")) {
+                    if (schemeid == null || schemeid == 0)
+                        throw new ValidationException(EMPTY_STRING, "Scheme is required");
+                    else
+                        query = query + getQuery(Scheme.class, schemeid, " and bmis.scheme.id=");
+                } else if (value.equals("subscheme")) {
+                    if (subschemeid == null || subschemeid == 0)
+                        throw new ValidationException(EMPTY_STRING, "Sub scheme is required");
+                    else
+                        query = query + getQuery(SubScheme.class, subschemeid, " and bmis.subScheme.id=");
+                } else if (value.equals("boundary")) {
+                    if (boundaryid == null || boundaryid == 0)
+                        throw new ValidationException(EMPTY_STRING, "Boundary is required");
+                    else
+                        query = query + getQuery(Boundary.class, boundaryid, " and bmis.fieldid.id=");
+                } else
+                    throw new ValidationException(EMPTY_STRING,
+                            "budgetaryCheck_groupby_values is not matching=" + value);
+        }
+        if (asondate != null)
+            query = query + " and br.billdate <=? ";
+        if (fromdate != null)
+            query = query + " and  br.billdate>=? ";
 
-			query.append(" and bd.glcodeid=:glcodeid");
-			queryParams.put("glcodeid", glcodeid);
+        query = query + " and bd.glcodeid='" + glcodeid + "'";
+        query1 = "select sum(case when bd.debitamount is null then 0 ELSE bd.debitamount end -case when bd.creditamount is null then 0 else bd.creditamount end)  "
+                + " from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis  "
+                + " where br.id=bd.egBillregister.id and br.id=bmis.egBillregister.id and (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true)  and bmis.voucherHeader is null and upper(br.status.description) not in ('CANCELLED') "
+                + "    " + query;
 
-			query1 = new StringBuilder("select sum(case when bd.debitamount is null then 0").append(
-					" ELSE bd.debitamount end -case when bd.creditamount is null then 0 else bd.creditamount end)  ")
-					.append(" from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis  ")
-					.append(" where br.id=bd.egBillregister.id and br.id=bmis.egBillregister.id")
-					.append(" and (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true)  and bmis.voucherHeader is null")
-					.append(" and upper(br.status.description) not in ('CANCELLED') ").append(query);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("getBillAmountForBudgetCheck query============" + query1);
+        Object ob = null;
+        if (fromdate != null)
+            ob = persistenceService.find(query1, asondate, fromdate);
+        else
+            ob = persistenceService.find(query1, asondate);
 
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("getBillAmountForBudgetCheck query============" + query1);
-			final Query qry = persistenceService.getSession().createQuery(query1.toString());
-			queryParams.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
-			Object ob = qry.list().get(0);
+        final BigDecimal billAmountWhereCancelledVouchers = getBillAmountWhereCancelledVouchers(query, fromdate,
+                asondate);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Total Amount from all bills where vouchers are cancelled is : "
+                    + billAmountWhereCancelledVouchers);
+        if (ob == null)
+            totalBillUtilized = billAmountWhereCancelledVouchers;
+        else
+            totalBillUtilized = new BigDecimal(ob.toString()).add(billAmountWhereCancelledVouchers);
+        return totalBillUtilized;
 
-			final BigDecimal billAmountWhereCancelledVouchers = getBillAmountWhereCancelledVouchers(query.toString(),
-					fromdate, asondate, queryParams);
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("Total Amount from all bills where vouchers are cancelled is : "
-						+ billAmountWhereCancelledVouchers);
-			if (ob == null)
-				totalBillUtilized = billAmountWhereCancelledVouchers;
-			else
-				totalBillUtilized = new BigDecimal(ob.toString()).add(billAmountWhereCancelledVouchers);
-			return totalBillUtilized;
+    } catch (final ValidationException v) {
+        LOGGER.error("Exp in getBillAmountForBudgetCheck API()===" + v.getErrors());
+        throw new ValidationException(v.getErrors());
+    } catch (final Exception e) {
+        LOGGER.error("Exp in getBillAmountForBudgetCheck API()===" + e.getMessage());
+        throw new ValidationException(EMPTY_STRING, "Exp in getBillAmountForBudgetCheck API()===" + e.getMessage());
+    }
+}
 
-		} catch (final ValidationException v) {
-			LOGGER.error("Exp in getBillAmountForBudgetCheck API()===" + v.getErrors());
-			throw new ValidationException(v.getErrors());
-        } /*
-           * catch (final Exception e) {
-           * LOGGER.error("Exp in getBillAmountForBudgetCheck API()===" +
-           * e.getMessage()); throw new ValidationException(EMPTY_STRING,
-           * "Exp in getBillAmountForBudgetCheck API()===" + e.getMessage()); }
-           */
-	}
 
 	/**
 	 * This API is to get the total bill amount where bill vouchers are created but
@@ -2496,29 +2439,26 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	 * @return @
 	 */
 
-	private BigDecimal getBillAmountWhereCancelledVouchers(final String query, final Date fromdate, final Date asondate,
-			Map<String, Object> queryParams) {
+	private BigDecimal getBillAmountWhereCancelledVouchers(final String query, final Date fromdate,
+            final Date asondate) {
 
-		final StringBuilder newQuery = new StringBuilder(
-				"select sum(case when bd.debitamount is null then 0 else bd.debitamount end -")
-						.append(" case when bd.creditamount is null then 0 else bd.creditamount end )  ")
-						.append(" from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis,CVoucherHeader vh  ")
-						.append(" where br.id=bd.egBillregister.id and br.id=bmis.egBillregister.id")
-						.append(" and (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true)  and bmis.voucherHeader=vh.id")
-						.append(" and upper(br.status.description) not in ('CANCELLED') and vh.status=4  ")
-						.append(query);
+        final String newQuery = "select sum(case when bd.debitamount is null then 0 else bd.debitamount end - case when bd.creditamount is null then 0 else bd.creditamount end )  "
+                + " from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis,CVoucherHeader vh  "
+                + " where br.id=bd.egBillregister.id and br.id=bmis.egBillregister.id and (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true)  and bmis.voucherHeader=vh.id and upper(br.status.description) not in ('CANCELLED') "
+                + "  and vh.status=4  " + query;
 
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("getBillAmountWhereCancelledVouchers query============" + newQuery);
-		final Query qry = persistenceService.getSession().createQuery(newQuery.toString());
-		queryParams.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
-		Object ob = qry.list().get(0);
-		if (ob == null)
-			return BigDecimal.ZERO;
-		else
-			return new BigDecimal(ob.toString());
+            LOGGER.info("getBillAmountWhereCancelledVouchers query============" + newQuery);
+        Object ob = null;
+        if (fromdate != null)
+            ob = persistenceService.find(newQuery, asondate, fromdate);
+        else
+            ob = persistenceService.find(newQuery, asondate);
+        if (ob == null)
+            return BigDecimal.ZERO;
+        else
+            return new BigDecimal(ob.toString());
 
-	}
+    }
 
 	/**
 	 * This parameter HashMap contains deptid,functionid, functionaryid,schemeid,
@@ -2536,7 +2476,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		Integer schemeid = null;
 		Integer subschemeid = null;
 		Integer boundaryid = null;
-		Integer fundid = null;
+		Long fundid = null;
 		Long budgetheadid = null;
 		Long financialyearid = null;
 
@@ -2554,7 +2494,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			if (paramMap.get(Constants.SUBSCHEMEID) != null)
 				subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
 			if (paramMap.get(Constants.FUNDID) != null)
-				fundid = (Integer) paramMap.get(Constants.FUNDID);
+				fundid = (Long) paramMap.get(Constants.FUNDID);
 			if (paramMap.get(Constants.BOUNDARYID) != null)
 				boundaryid = (Integer) paramMap.get(Constants.BOUNDARYID);
 			if (paramMap.get(BUDGETHEADID) != null)
@@ -2567,8 +2507,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 						+ ",schemeid " + schemeid + ",subschemeid " + subschemeid + ",boundaryid " + boundaryid
 						+ ",budgetheadid " + budgetheadid + ",financialyearid " + financialyearid);
 
-			query.append(prepareQuery(deptcode, functionid, functionaryid, schemeid, subschemeid, boundaryid, fundid,
-					params));
+			query.append(prepareQuery(deptcode, functionid, functionaryid, schemeid, subschemeid, boundaryid, fundid));
 
 			if (budgetheadid == null)
 				throw new ValidationException(EMPTY_STRING, "Budget head id is null or empty");
@@ -2795,7 +2734,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	 * @return
 	 */
 	@Override
-	public BigDecimal getPlannigBudgetBy(final Integer fundId, final Integer deptId, Date asOnDate1) {
+	public BigDecimal getPlannigBudgetBy(final Long fundId, final Integer deptId, Date asOnDate1) {
 		// 0.Validated
 		Date asOnDate = new Date();
 		if (fundId == null || fundId == -1)
@@ -2845,7 +2784,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	 * @param fund,function,department and account type @
 	 */
 	@Override
-	public List<CFunction> getFunctionsByFundAndDepartment(final Integer fund, final Long department) {
+	public List<CFunction> getFunctionsByFundAndDepartment(final Long fund, final Long department) {
 
 		List<CFunction> functionsList = new ArrayList<CFunction>();
 		try {
@@ -2861,7 +2800,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			session = getCurrentSession();
 			final Query qry = session.createQuery(qryStr.toString());
 			if (fund != null)
-				qry.setInteger("fund", fund);
+				qry.setLong("fund", fund);
 			if (department != null)
 				qry.setLong("department", department);
 

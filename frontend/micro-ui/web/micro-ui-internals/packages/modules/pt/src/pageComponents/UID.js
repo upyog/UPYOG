@@ -16,7 +16,7 @@ const UID = ({ t, config, onSelect, value, userType, formData, setError: setForm
   if (!isNaN(index)) {
     [uid, setUid] = useState(formData?.originalData?.additionalDetails?.uid || "");
   } else {
-    [uid, setUid] = useState(formData?.originalData?.additionalDetails?.uid || "");
+    [uid, setUid] = useState(formData?.originalData?.additionalDetails?.uid || formData?.uid?.uid || formData?.additionalDetails?.uid||"");
 
   }
   const [error, setError] = useState(null);

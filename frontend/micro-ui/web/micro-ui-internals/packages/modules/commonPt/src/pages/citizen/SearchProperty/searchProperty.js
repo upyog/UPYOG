@@ -302,7 +302,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
               <h2>{t(property.label)}</h2>
               <InfoBannerIcon fill="#0b0c0c" />
               <span className="tooltiptext" style={{ position:"absolute",width:"72%", marginLeft:"50%", fontSize:"medium" }}>
-              {t(property.description) + " " + ptSearchConfig?.propertyIdFormat}
+              {t(property.description) + " " + "PG-PT-xxxx-xxxxxx"}
               </span>
               </div>
             </div>

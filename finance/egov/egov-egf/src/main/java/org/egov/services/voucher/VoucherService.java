@@ -294,10 +294,10 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 			paramMap.put("debitAmt", detail.getDebitamount());
 			paramMap.put("creditAmt", detail.getCreditamount());
 			coa = (CChartOfAccounts) persistenceService.find(" from CChartOfAccounts where id=?",
-					Integer.parseInt(detail.getGlcodeid().toString()));
+					Long.valueOf(detail.getGlcodeid().toString()));
 			paramMap.put("glcode", coa.getGlcode());
 			if (detail.getFunctionid() != null)
-				paramMap.put("functionid", Integer.parseInt(detail.getFunctionid().toString()));
+				paramMap.put("functionid", Long.valueOf(detail.getFunctionid().toString()));
 			paramMap.put("bill", billregister);
 			try {
 				result = budgetDetailsDAO.budgetaryCheckForBill(paramMap);

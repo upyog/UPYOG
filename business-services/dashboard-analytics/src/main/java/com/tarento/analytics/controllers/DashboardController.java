@@ -130,12 +130,12 @@ public class DashboardController {
 		AggregateRequestDto requestInfo = requestDto.getAggregationRequestDto();
 
 		// For performance enhancement, this creates a key which will cache the response
-		String requestBodyString = objectMapper.writeValueAsString(requestInfo);
-		String headersString = objectMapper.writeValueAsString(requestDto.getHeaders());
-		StringBuilder finalString = new StringBuilder(requestBodyString).append(headersString);
-		requestInfo.setHashKey(finalString.toString().hashCode());
-
-		logger.info("hashKey:: "+finalString.toString().hashCode());
+//		String requestBodyString = objectMapper.writeValueAsString(requestInfo);
+//		String headersString = objectMapper.writeValueAsString(requestDto.getHeaders());
+//		StringBuilder finalString = new StringBuilder(requestBodyString).append(headersString);
+//		requestInfo.setHashKey(finalString.toString().hashCode());
+//
+//		logger.info("hashKey:: "+finalString.toString().hashCode());
 		Map<String, Object> headers = requestDto.getHeaders();
 		String response = "";
 		try {

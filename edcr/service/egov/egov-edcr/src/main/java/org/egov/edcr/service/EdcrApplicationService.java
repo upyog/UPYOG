@@ -3,6 +3,7 @@ package org.egov.edcr.service;
 import static org.egov.edcr.utility.DcrConstants.FILESTORE_MODULECODE;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -10,17 +11,27 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageTree;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
+import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
@@ -33,7 +44,6 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.microservice.models.RequestInfo;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.hibernate.Session;
@@ -46,6 +56,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.aspose.cad.Color;
+import com.aspose.cad.Image;
+import com.aspose.cad.fileformats.cad.CadDrawTypeMode;
+import com.aspose.cad.imageoptions.CadRasterizationOptions;
+import com.aspose.cad.imageoptions.PdfOptions;
 
 @Service
 @Transactional(readOnly = true)
@@ -257,23 +273,156 @@ public class EdcrApplicationService {
         return fileAsString;
     }
 
+//    private void updateFile(Plan pl, EdcrApplication edcrApplication) {
+//        String readFile = readFile(edcrApplication.getSavedDxfFile());
+//        String replace = readFile.replace("ENTITIES", "ENTITIES\n0\n" + pl.getAdditionsToDxf());
+//        String newFile = edcrApplication.getDxfFile().getOriginalFilename().replace(".dxf", "_system_scrutinized.dxf");
+//        File f = new File(newFile);
+//        try (FileOutputStream fos = new FileOutputStream(f)) {
+//            if (!f.exists())
+//                f.createNewFile();
+//            fos.write(replace.getBytes());
+//            fos.flush();
+//            FileStoreMapper fileStoreMapper = fileStoreService.store(f, f.getName(),
+//                    edcrApplication.getDxfFile().getContentType(), FILESTORE_MODULECODE);
+//            edcrApplication.getEdcrApplicationDetails().get(0).setScrutinizedDxfFileId(fileStoreMapper);
+//        } catch (IOException e) {
+//            LOG.error("Error occurred when reading file!!!!!", e);
+//        }
+//    }
+    
+    
     private void updateFile(Plan pl, EdcrApplication edcrApplication) {
-        String readFile = readFile(edcrApplication.getSavedDxfFile());
-        String replace = readFile.replace("ENTITIES", "ENTITIES\n0\n" + pl.getAdditionsToDxf());
-        String newFile = edcrApplication.getDxfFile().getOriginalFilename().replace(".dxf", "_system_scrutinized.dxf");
-        File f = new File(newFile);
-        try (FileOutputStream fos = new FileOutputStream(f)) {
-            if (!f.exists())
-                f.createNewFile();
-            fos.write(replace.getBytes());
-            fos.flush();
-            FileStoreMapper fileStoreMapper = fileStoreService.store(f, f.getName(),
-                    edcrApplication.getDxfFile().getContentType(), FILESTORE_MODULECODE);
-            edcrApplication.getEdcrApplicationDetails().get(0).setScrutinizedDxfFileId(fileStoreMapper);
+        String filePath = edcrApplication.getSavedDxfFile().getAbsolutePath();
+        String newFile = edcrApplication.getDxfFile().getOriginalFilename().replace(".dxf", "_system_scrutinized.pdf");
+
+        
+        Image objImage = Image.load(filePath);
+
+      
+        PdfOptions pdfOptions = new PdfOptions();
+
+        
+        CadRasterizationOptions rasterizationOptions = new CadRasterizationOptions();
+        rasterizationOptions.setBackgroundColor(Color.getWhite()); 
+        rasterizationOptions.setDrawType(CadDrawTypeMode.UseObjectColor); 
+
+        // Set the page size (A0 size in points)
+        rasterizationOptions.setPageWidth(3370); 
+        rasterizationOptions.setPageHeight(2384);
+
+        
+        rasterizationOptions.setAutomaticLayoutsScaling(true);
+        rasterizationOptions.setNoScaling(false);
+
+        pdfOptions.setVectorRasterizationOptions(rasterizationOptions);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        // Export CAD to PDF
+        objImage.save(outputStream, pdfOptions);
+
+        byte[] pdfBytes = outputStream.toByteArray();
+
+        try (PDDocument document = PDDocument.load(pdfBytes)) {
+            
+            PDPageTree pages = document.getPages();
+            PDPage page = pages.get(0);
+
+           
+            PDPageXYZDestination dest = new PDPageXYZDestination();
+            dest.setPage(page);
+
+            
+            float pageWidth = page.getMediaBox().getWidth();
+            float pageHeight = page.getMediaBox().getHeight();
+            int centerX = (int) (pageWidth / 2.0f);
+            int centerY = (int) (pageHeight / 2.0f);
+
+            dest.setLeft(centerX);
+            dest.setTop(centerY);
+            dest.setZoom(1.0f); 
+
+            
+            PDDocumentCatalog catalog = document.getDocumentCatalog();
+            catalog.setOpenAction(dest);
+
+            byte[] modifiedPdfBytes;
+
+           // Watermark
+            PDPageContentStream contentStream = new PDPageContentStream(document, page,
+                    PDPageContentStream.AppendMode.APPEND, true, true);
+
+            PDExtendedGraphicsState graphicsState = new PDExtendedGraphicsState();
+            graphicsState.setNonStrokingAlphaConstant(0.2f); 
+            graphicsState.setAlphaSourceFlag(true);
+            contentStream.setGraphicsStateParameters(graphicsState);
+
+//            InputStream imageStream = EdcrApplication.class.getResourceAsStream("/tcpicon.jpg");
+//            java.awt.image.BufferedImage image1 = ImageIO.read(imageStream);
+//            PDImageXObject image = LosslessFactory.createFromImage(document, image1);
+
+           
+            float scale = 10f; 
+//            float watermarkWidth = image.getWidth() * scale;
+//            float watermarkHeight = image.getHeight() * scale;
+//            float watermarkXPos = (pageWidth - watermarkWidth) / 2; 
+//            float watermarkYPos = (pageHeight - watermarkHeight) / 2;
+//
+//            
+//            contentStream.drawImage(image, watermarkXPos, watermarkYPos, watermarkWidth, watermarkHeight);
+
+            //Add timestamp
+            String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+            contentStream.beginText();
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 200);
+
+           
+            float textWidth = (PDType1Font.HELVETICA_BOLD.getStringWidth(timestamp) / 1000) * 200;
+
+           
+            float xPos = pageWidth - textWidth - 700; 
+            float yPos = 10; 
+
+            contentStream.newLineAtOffset(xPos, yPos); 
+            PDExtendedGraphicsState graphicsState1 = new PDExtendedGraphicsState();
+            graphicsState1.setNonStrokingAlphaConstant(0.7f); // Set text opacity
+            contentStream.setGraphicsStateParameters(graphicsState1);
+
+            contentStream.showText(timestamp);
+            contentStream.endText();
+
+          
+
+            
+            contentStream.close();
+
+            
+            ByteArrayOutputStream modifiedPdfStream = new ByteArrayOutputStream();
+            document.save(modifiedPdfStream);
+            document.close();
+
+            
+            modifiedPdfBytes = modifiedPdfStream.toByteArray();
+
+            File f = new File(newFile);
+            try (FileOutputStream fos = new FileOutputStream(f)) {
+                if (!f.exists())
+                    f.createNewFile();
+                fos.write(modifiedPdfBytes);
+                fos.flush();
+                FileStoreMapper fileStoreMapper = fileStoreService.store(f, f.getName(),
+                        edcrApplication.getDxfFile().getContentType(), FILESTORE_MODULECODE);
+                edcrApplication.getEdcrApplicationDetails().get(0).setScrutinizedDxfFileId(fileStoreMapper);
+            } catch (IOException e) {
+                LOG.error("Error occurred when reading file!!!!!", e);
+            }
         } catch (IOException e) {
-            LOG.error("Error occurred when reading file!!!!!", e);
+            LOG.error("Error occurred when processing PDF!!!!!", e);
         }
     }
+    
+    
 
     @Transactional
     public EdcrApplication createRestEdcr(final EdcrApplication edcrApplication){
