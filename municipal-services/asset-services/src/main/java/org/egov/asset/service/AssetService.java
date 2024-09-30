@@ -91,8 +91,10 @@ public class AssetService {
 		List<Asset> assets = new LinkedList<>();
 		assetValidator.validateSearch(requestInfo, criteria);
 		List<String> roles = new ArrayList<>();
-		for (Role role : requestInfo.getUserInfo().getRoles()) {
-			roles.add(role.getCode());
+		if( requestInfo.getUserInfo() != null) {
+			for (Role role : requestInfo.getUserInfo().getRoles()) {
+				roles.add(role.getCode());
+			}
 		}
 		//if ((criteria.tenantIdOnly() || criteria.isEmpty()) && roles.contains(AssetConstants.ASSET_INITIATOR)) {
 		if ((criteria.tenantIdOnly() || criteria.isEmpty())) {

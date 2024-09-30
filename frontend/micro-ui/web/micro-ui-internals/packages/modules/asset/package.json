@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@nudmcdgnpm/digit-ui-libraries": "1.2.0",
-    "@nudmcdgnpm/digit-ui-react-components": "1.2.0",
+    "@nudmcdgnpm/digit-ui-react-components": "1.2.1",
     "exif-js": "^2.3.0",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",

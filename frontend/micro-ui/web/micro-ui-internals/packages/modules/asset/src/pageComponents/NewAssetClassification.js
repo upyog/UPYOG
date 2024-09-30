@@ -110,14 +110,7 @@
     departmentName && departmentName.map((departmentname) => {
       departNamefromMDMS.push({i18nKey: `${departmentname.name}`, code: `${departmentname.code}`, value: `${departmentname.name}`})
     }) 
-
-    
-
-
-
-
-
-      let menu_Asset = [];   //variable name for assetCalssification
+   let menu_Asset = [];   //variable name for assetCalssification
 
       let asset_type = [];  //variable name for asset type
 
@@ -131,12 +124,6 @@
       Menu_Asset.map((asset_mdms) => {
           menu_Asset.push({ i18nKey: `${asset_mdms.name}`, code: `${asset_mdms.code}`, value: `${asset_mdms.name}` });
       });
-    
-      
-
-        
-    
-    
     
       Asset_Type &&
       Asset_Type.map((asset_type_mdms) => {
@@ -175,16 +162,7 @@
       
           });
     
-
-      
-
-
-
-    
-
-
-
-    function setAssetClassification(e) {
+  function setAssetClassification(e) {
       setassetclassification(e.target.value);
     }
     function setAssetType(e) {

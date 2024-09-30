@@ -306,6 +306,8 @@ import useDemandEstimation from "./chb/useDemandEstimation"
 import useCMSearch from "./cm/useCMSearch";
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
+import useFnocDoc from "./fnoc/useFnocDoc";
+import useTenantsFNOC from "./fnoc/useTenants"
 
 const pgr = {
   useComplaintDetails,
@@ -324,6 +326,10 @@ const pgr = {
   useComplaintStatusCount,
   useTradeLicenseBillingslab,
   useMDMS: usePGRMDMS,
+};
+const fnoc = {
+  useFnocDoc,
+  useTenants: useTenantsFNOC,
 };
 
 const ew = {
@@ -656,6 +662,7 @@ const Hooks = {
   ptr,
   ew,
   dss,
+  fnoc,
   mcollect,
   hrms,
   tl,
