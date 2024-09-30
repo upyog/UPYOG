@@ -66,6 +66,10 @@ public class CommunityHallBookingQueryBuilder {
 			builder = new StringBuilder(bookingDetailsQuery);
 		}
 		
+		if(criteria.getFromDate() != null || criteria.getToDate() != null) {
+			builder.append(" join public.eg_chb_slot_detail ecsd ON ecsd.booking_id = ecbd.booking_id ");
+		}
+		
 		if (criteria.getTenantId() != null) {
 			if (criteria.getTenantId().split("\\.").length == 1) {
 
@@ -109,7 +113,7 @@ public class CommunityHallBookingQueryBuilder {
 			addToPreparedStatement(preparedStmtList, mobileNos);
 		}
 
-		// createdby search criteria
+		//createdby search criteria
 		List<String> createdBy = criteria.getCreatedBy();
 		if (!CollectionUtils.isEmpty(createdBy)) {
 
@@ -118,18 +122,22 @@ public class CommunityHallBookingQueryBuilder {
 			addToPreparedStatement(preparedStmtList, createdBy);
 		}
 
-		// From payment_date and to payment_date search criteria
-		//TODO: check payment date between condition
+		//From booking date to booking date search criteria
+		final String DATE_CAST = " ?::DATE ";
 		if (criteria.getFromDate() != null && criteria.getToDate() != null) {
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" ecbd.payment_date BETWEEN ").append(criteria.getFromDate()).append(" AND ")
-					.append(criteria.getToDate());
+			builder.append(" ecsd.booking_date BETWEEN ").append(DATE_CAST).append(" AND ")
+					.append(DATE_CAST);
+			preparedStmtList.add(criteria.getFromDate());
+			preparedStmtList.add(criteria.getToDate());
 		} else if (criteria.getFromDate() != null && criteria.getToDate() == null) {
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" ecbd.payment_date >= ").append(criteria.getFromDate());
+			builder.append(" ecsd.booking_date >= ").append(DATE_CAST);
+			preparedStmtList.add(criteria.getFromDate());
 		} else if (criteria.getFromDate() == null && criteria.getToDate() != null) {
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" ecbd.payment_date < ").append(criteria.getToDate());
+			builder.append(" ecsd.booking_date <= ").append(DATE_CAST);
+			preparedStmtList.add(criteria.getToDate());
 		}
 		
 		String query = null;
@@ -144,6 +152,7 @@ public class CommunityHallBookingQueryBuilder {
 		
 		return query;
 	}
+	
 
 	/**
 	 * add if clause to the Statement if required or else AND

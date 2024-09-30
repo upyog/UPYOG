@@ -153,17 +153,30 @@ public class CommunityHallBookingValidator {
 		if (criteria.getMobileNumber() != null && !allowedParams.contains("mobileNumber"))
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Search on mobiloe number is not allowed");
 
-		/*
-		 * if (criteria.getFromDate() != null &&
-		 * (criteria.getFromDate().isBefore(LocalDate.now()))) throw new
-		 * CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
-		 * "From date cannot be a future date");
-		 * 
-		 * if (criteria.getToDate() != null && criteria.getFromDate() != null &&
-		 * (criteria.getToDate().isBefore(criteria.getFromDate()))) throw new
-		 * CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
-		 * "To date cannot be prior to from date");
-		 */
+		if (criteria.getFromDate() != null) {
+			LocalDate fromDate = CommunityHallBookingUtil.parseStringToLocalDate(criteria.getFromDate());
+			if (fromDate.isAfter(LocalDate.now())) {
+				throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
+						"From date cannot be a future date");
+			}
+		}
+		
+		if(criteria.getFromDate() != null) {
+			LocalDate fromDate = CommunityHallBookingUtil.parseStringToLocalDate(criteria.getFromDate());
+			 if (fromDate.isBefore(CommunityHallBookingUtil.getMonthsAgo(6))) {
+				 throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
+							"From date cannot be prior 6 months");
+		     }
+		}
+
+		if (criteria.getToDate() != null && criteria.getFromDate() != null) {
+			LocalDate fromDate = CommunityHallBookingUtil.parseStringToLocalDate(criteria.getFromDate());
+			LocalDate toDate = CommunityHallBookingUtil.parseStringToLocalDate(criteria.getToDate());
+			if (toDate.isBefore(fromDate)) {
+				throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
+						"To date cannot be prior to from date");
+			}
+		}
 	}
 	
 	public boolean isSameHallCode(List<BookingSlotDetail> bookingSlotDetails) {

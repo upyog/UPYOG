@@ -103,5 +103,13 @@ public class CommunityHallBookingUtil {
 	public static String getTenantId(String tenantId) {
 		return tenantId.split("\\.")[0];
 	}
+	
+	public static LocalDate getMonthsAgo(int month) {
+		LocalDate currentDate = LocalDate.now();
+		// Calculate the date given months ago
+		LocalDate monthsAgo = currentDate.minusMonths(month);
+		
+        return monthsAgo;
+	}
 
 }

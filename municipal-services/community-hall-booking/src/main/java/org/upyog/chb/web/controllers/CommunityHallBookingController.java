@@ -60,10 +60,11 @@ public class CommunityHallBookingController {
 	private DemandService demandService;
 	
 	
-	 @InitBinder
-	    public void initBinder(WebDataBinder binder) {
-	        binder.registerCustomEditor(LocalDate.class, new CustomDateEditor(new SimpleDateFormat("yyyy-MM-dd"), true));
-	    }
+	/*
+	 * @InitBinder public void initBinder(WebDataBinder binder) {
+	 * binder.registerCustomEditor(LocalDate.class, new CustomDateEditor(new
+	 * SimpleDateFormat("yyyy-MM-dd"), true)); }
+	 */
 
 	@RequestMapping(value = "/v1/_create", method = RequestMethod.POST) 
 	public ResponseEntity<CommunityHallBookingResponse> createBooking(

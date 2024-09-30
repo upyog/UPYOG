@@ -51,6 +51,7 @@ public class CommunityHallBookingApplication {
 	public ObjectMapper objectMapper() {
 		return new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 				.setTimeZone(TimeZone.getTimeZone(timeZone))//.registerModule(new JavaTimeModule())
+				//Added to resolve parsing issue of String to Local date in NotificationConsumer
 				.findAndRegisterModules();
 	}
 
