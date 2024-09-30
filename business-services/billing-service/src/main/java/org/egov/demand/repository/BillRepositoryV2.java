@@ -231,7 +231,7 @@ public class BillRepositoryV2 {
 		String queryStr = billQueryBuilder.getBillStatusUpdateQuery(updateBillCriteria, preparedStmtList);
 		log.info("Query for expiring bills is"+ queryStr);
 		log.info("parameters are "+ preparedStmtList.toArray());
-		return jdbcTemplate.update(queryStr, preparedStmtList.toArray());
+		return jdbcTemplate.update(queryStr, preparedStmtList.toString());
 	}
 	
 }
