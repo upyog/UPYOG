@@ -1,13 +1,18 @@
 package org.upyog.chb.web.controllers;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,8 +28,8 @@ import org.upyog.chb.web.models.CommunityHallBookingResponse;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallDemandEstimationCriteria;
 import org.upyog.chb.web.models.CommunityHallDemandEstimationResponse;
-import org.upyog.chb.web.models.CommunityHallSlotAvailabilityResponse;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
+import org.upyog.chb.web.models.CommunityHallSlotAvailabilityResponse;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 import org.upyog.chb.web.models.RequestInfoWrapper;
 import org.upyog.chb.web.models.ResponseInfo;
@@ -53,6 +58,12 @@ public class CommunityHallBookingController {
 	
 	@Autowired
 	private DemandService demandService;
+	
+	
+	 @InitBinder
+	    public void initBinder(WebDataBinder binder) {
+	        binder.registerCustomEditor(LocalDate.class, new CustomDateEditor(new SimpleDateFormat("yyyy-MM-dd"), true));
+	    }
 
 	@RequestMapping(value = "/v1/_create", method = RequestMethod.POST) 
 	public ResponseEntity<CommunityHallBookingResponse> createBooking(

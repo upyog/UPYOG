@@ -40,10 +40,13 @@ public class CommunityHallBookingConstants {
 
 	public static final String EMPLOYEE = "EMPLOYEE";
 	public static final String CITIZEN = "CITIZEN";
+	
 	public static final String INVALID_SEARCH = "INVALID SEARCH";
 	public static final String CHB_WORKFLOW_ERROR = "CHB_WORKFLOW_ERROR";
 	public static final String DUPLICATE_DOCUMENT_UPLOADED = "DUPLICATE_DOCUMENT_UPLOADED";
 	public static final String MULTIPLE_HALL_CODES_ERROR = "MULTIPLE_HALL_CODES_ERROR";
+	public static final String EMPTY_DOCUMENT_ERROR = "EMPTY_DOCUMENT_ERROR";
+	public static final String INVALID_BOOKING_DATE = "INVALID_BOOKING_DATE";
 	
 	
 	// NOTIFICATION PLACEHOLDER

@@ -1,9 +1,14 @@
 package org.upyog.chb.web.models;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 import javax.validation.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import io.micrometer.core.lang.NonNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,14 +38,17 @@ public class BookingSlotDetail {
 	@NotBlank
 	private String capacity;
 	
-	@NotBlank
-	private String bookingDate = null;
+	@NonNull
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	private LocalDate bookingDate;
 	
-	@NotBlank
-	private String bookingFromTime;
+	@NonNull
+	@JsonFormat(pattern = "HH:mm")
+	private LocalTime bookingFromTime;
 	
-	@NotBlank
-	private String bookingToTime;
+	@NonNull
+	@JsonFormat(pattern = "HH:mm")
+	private LocalTime bookingToTime;
 	
 	@JsonProperty("status")
 	private String status = null;

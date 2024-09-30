@@ -19,6 +19,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 
 public class CommunityHallBookingUtil {
+	
+	public final static String DATE_FORMAT = "yyyy-MM-dd";
 
 	public static ResponseInfo createReponseInfo(final RequestInfo requestInfo, String resMsg, StatusEnum status) {
 
@@ -63,7 +65,7 @@ public class CommunityHallBookingUtil {
 	}
 
 	public static LocalDate parseStringToLocalDate(String date) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 		LocalDate localDate = LocalDate.parse(date, formatter);
 		return localDate;
 	}
@@ -73,7 +75,7 @@ public class CommunityHallBookingUtil {
 	}
 
 	public static String parseLocalDateToString(LocalDate date) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 		// Format the LocalDate
 		String formattedDate = date.format(formatter);
 		return formattedDate;

@@ -108,7 +108,7 @@ public class DemandService {
 	
 	private LocalDate getMaxBookingDate(CommunityHallBookingDetail bookingDetail) {
 		
-		return bookingDetail.getBookingSlotDetails().stream().map(detail -> CommunityHallBookingUtil.parseStringToLocalDate(detail.getBookingDate()))
+		return bookingDetail.getBookingSlotDetails().stream().map(detail -> detail.getBookingDate())
 				.max( LocalDate :: compareTo)
 		        .get();
 	}
