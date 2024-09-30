@@ -1,12 +1,7 @@
 package org.egov.common.contract.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+
 
 @Getter
 @Setter
@@ -34,6 +29,8 @@ public class RequestInfo {
     private String authToken;
 
     private String correlationId;
+
+    private PlainAccessRequest plainAccessRequest;
 
     private User userInfo;
 }
