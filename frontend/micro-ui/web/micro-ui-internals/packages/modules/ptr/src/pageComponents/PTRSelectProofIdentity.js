@@ -181,7 +181,7 @@ function PTRSelectDocument({
     <div style={{ marginBottom: "24px" }}>
       {doc?.hasDropdown ? (
         <LabelFieldPair>
-          <CardLabel className="card-label-smaller">{t(doc?.code.replaceAll(".", "_")) + "  *"}</CardLabel>
+          <CardLabel className="card-label-smaller">{t(doc?.code.replaceAll(".", "_"))} <span className="astericColor">*</span></CardLabel>
           <Dropdown
             className="form-field"
             selected={selectedDocument}

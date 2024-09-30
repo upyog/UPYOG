@@ -70,6 +70,7 @@ module.exports = function (app) {
     "/asset-services/v1/assets/_search",
     "/asset-services/v1/assets/_update",
     "/asset-services/v1/assets/assignment/_create",
+    "/asset-services/v1/assets/assignment/_update",
     "/ewaste-services/ewaste-request/_create",
     "/ewaste-services/ewaste-request/_search",
     "/ewaste-services/ewaste-request/_update",
@@ -77,6 +78,7 @@ module.exports = function (app) {
     "/chb-services/booking/v1/_search",
     "/chb-services/booking/v1/_update",
     "/chb-services/booking/v1/_slot-search",
+    "/chb-services/booking/v1/_estimate",
     "/billing-service/bill/v2/_fetchbill",
     "/collection-services/payments/pet-services/_search",
     "/requester-services-dx"

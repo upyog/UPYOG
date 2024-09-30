@@ -1102,7 +1102,7 @@ const generateQRCodes = async (
     let qrmapping = qrcodeMappings[i];
     let varname = qrmapping.variable;
     let urlQR='',qrtext;
-    if(key == 'mcollect-challan' || key == 'firenoc-receipt' || key == 'property-receipt' || key == 'bpa-receipt' || key == 'consolidatedreceipt' || key == 'tradelicense-receipt' || key == 'fsm-receipt' || key == 'misc-receipt' || key == 'ws-onetime-receipt')
+    if(key == 'mcollect-challan' || key == 'firenoc-receipt' || key == 'property-receipt' || key == 'bpa-receipt' || key == 'consolidatedreceipt' || key == 'tradelicense-receipt' || key == 'fsm-receipt' || key == 'misc-receipt' || key == 'ws-onetime-receipt'|| key == 'chbservice-receipt')
     {
       urlQR=egov_host;
 

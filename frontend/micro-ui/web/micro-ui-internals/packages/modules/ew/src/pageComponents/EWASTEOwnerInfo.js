@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber } from "@nudmcdgnpm/digit-ui-react-components";
-import { cardBodyStyle } from "../utils";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import Timeline from "../components/EWASTETimeline";
-import { flatMap } from "lodash";
 
 const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) => {
   const { pathname: url } = useLocation();
 
   let index = 0;
-  // window.location.href.charAt(window.location.href.length - 1);
-
   let validation = {};
 
   const user = Digit.UserService.getUser().info;
@@ -92,12 +88,11 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
             value={applicantName}
             onChange={setOwnerName}
             ValidationRequired={true}
-            {...(validation = {
+            validation = {{
               isRequired: true,
               pattern: "^[a-zA-Z-.`' ]*$",
               type: "text",
-              title: t("EWASTE_NAME_ERROR_MESSAGE"),
-            })}
+            }}
           />
 
           <CardLabel>{`${t("EWASTE_MOBILE_NUMBER")}`}</CardLabel>
@@ -105,7 +100,7 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
             value={mobileNumber}
             name="mobileNumber"
             onChange={(value) => setMobileNo({ target: { value } })}
-            {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
+            {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel",}}
           />
 
           <CardLabel>{`${t("EWASTE_ALT_MOBILE_NUMBER")}`}</CardLabel>
@@ -113,7 +108,7 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
             value={altMobileNumber}
             name="altmobileNumber"
             onChange={(value) => setAltMobileNo({ target: { value } })}
-            {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_ALT_MOBILE_NUMBER_INVALID") }}
+            {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel", }}
           />
 
           <CardLabel>{`${t("EWASTE_EMAIL_ID")}`}</CardLabel>
@@ -128,9 +123,8 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
-              pattern: "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$",
+              pattern: "[A-Za-z]{i}\.[A-Za-z]{i}\.[A-Za-z]{i}",
               type: "email",
-              title: t("EWASTE_NAME_ERROR_MESSAGE"),
             })}
           />
         </div>

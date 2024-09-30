@@ -1,10 +1,13 @@
-  import React, { useCallback, useMemo, useEffect } from "react"
+  import React, { useCallback, useMemo, useEffect, useState, useRef } from "react"
   import { useForm, Controller } from "react-hook-form";
-  import { TextInput, SubmitBar, DatePicker, SearchForm, Dropdown, SearchField, Table, Card, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
+  import { TextInput, SubmitBar, ActionBar, DatePicker, SearchForm, Dropdown, SearchField, Table, Card, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
   import { Link } from "react-router-dom";
+  import jsPDF from 'jspdf';
+  import QRCode from 'qrcode';
+  
   
 
-  const ASSETSearchApplication = ({isLoading, t, onSubmit, data, count, setShowToast }) => {
+  const ASSETSearchApplication = ({isLoading, t, onSubmit, data, count, setShowToast, ActionBarStyle = {}, MenuStyle = {}, }) => {
       const isMobile = window.Digit.Utils.browser.isMobile();
       const todaydate = new Date();
       const today = todaydate.toISOString().split("T")[0];
@@ -26,6 +29,9 @@
         setValue("fromDate", today);
         setValue("toDate", today);
       },[register, setValue, today])
+
+
+      
 
 
       const { data: actionState } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Action" }],
@@ -91,22 +97,109 @@
               },
               disableSortBy: true,
             },
+            // {
+            //   Header: t("AST_ACTIONS"),
+            //   Cell: ({ row }) => {
+            //     console.log("rowwwwwwwwwwinactionsss",row)
+            //     return (
+            //       <div>
+            //         <span className="link">
+            //         {row?.original?.status==="APPROVED" ?
+            //         (row?.original?.assetAssignment?.isAssigned  ? 
+            //             <Link to={`/digit-ui/employee/asset/assetservice/return-assets/`+ `${row?.original?.["applicationNo"]}`}>
+            //                 <SubmitBar label={t("AST_RETURN")} />
+            //             </Link>
+            //           :
+            //             <Link to={`/digit-ui/employee/asset/assetservice/assign-assets/`+ `${row?.original?.["applicationNo"]}`}>
+            //               <SubmitBar label={t("AST_ASSIGN")} />
+            //             </Link>)
+            //           :
+            //           t('AST_SHOULD_BE_APPROVED_FIRST')
+            //         }
+            //         </span>
+            //       </div>
+            //     );
+            //   },
+            //   mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNo"]),
+            // },
+
+            
+
+            //later will convert it into the action bar same as i have iused in ApplicationDetailsActionBar.js file in template
             {
-              Header: t("AST_TRANSFER"),
+              Header: t("AST_ACTIONS"),
               Cell: ({ row }) => {
-                console.log("roeowowowinsearchdsjf",row);
-                return (
-                  <div>
-                    <span className="link">
-                    <Link to={`/digit-ui/employee/asset/assetservice/assign-assets/`+ `${row?.original?.["applicationNo"]}`}>
-                        {t('AST_TRANSFER '+`${row?.original?.["assetParentCategory"]}`)}
-                      </Link>
-                    </span>
+                const [isMenuOpen, setIsMenuOpen] = useState(false);
+                const menuRef = useRef();
+
+                const toggleMenu = () => {
+                  setIsMenuOpen(!isMenuOpen);
+                };
+
+                const closeMenu = (e) => {
+                  if (menuRef.current && !menuRef.current.contains(e.target)) {
+                    setIsMenuOpen(false);
+                  }
+                };
+
+                React.useEffect(() => {
+                  document.addEventListener("mousedown", closeMenu);
+                  return () => {
+                    document.removeEventListener("mousedown", closeMenu);
+                  };
+                }, []);
+                const actionOptions = [
+                  {
+                    label: row?.original?.assetAssignment?.isAssigned ? t("AST_RETURN") : t("AST_ASSIGN"),
+                    link: row?.original?.assetAssignment?.isAssigned
+                      ? `/digit-ui/employee/asset/assetservice/return-assets/${row?.original?.["applicationNo"]}`
+                      : `/digit-ui/employee/asset/assetservice/assign-assets/${row?.original?.["applicationNo"]}`,
+                  },
+                  {
+                    label: t("AST_DISPOSE"),
+                    link: `/digit-ui/employee/asset/assetservice/dispose-assets/${row?.original?.["applicationNo"]}`,
+                  },
+                  {
+                    label: t("AST_DEPRECIATION"),
+                    link: `/digit-ui/employee/asset/assetservice/depreciate-assets/${row?.original?.["applicationNo"]}`,
+                  },
+                ];
+
+                  return (
+                    <div ref={menuRef}>
+                    {row?.original?.status === "APPROVED" ? (
+                      <React.Fragment>
+                        <SubmitBar label={t("WF_TAKE_ACTION")} onSubmit={toggleMenu} />
+                        {isMenuOpen && (
+                          <div style={{
+                            position: 'absolute',
+                            backgroundColor: 'white',
+                            border: '1px solid #ccc',
+                            borderRadius: '4px',
+                            padding: '8px',
+                            zIndex: 1000,
+                          }}>
+                            {actionOptions.map((option, index) => (
+                              <Link key={index} to={option.link} style={{
+                                display: 'block',
+                                padding: '8px',
+                                textDecoration: 'none',
+                                color: 'black',
+                              }}>
+                                {option.label}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </React.Fragment>
+                    ) : (
+                      t("AST_SHOULD_BE_APPROVED_FIRST")
+                    )}
                   </div>
-                );
+                  );
               },
               mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNo"]),
-            },
+          },
         ]), [] )
 
       const onSort = useCallback((args) => {
@@ -128,6 +221,49 @@
           setValue("offset", getValues("offset") - getValues("limit") )
           handleSubmit(onSubmit)()
       }
+
+      const downloadQRReport = async () => {
+        const doc = new jsPDF();
+        const generateQRCode = async (text) => {
+          return await QRCode.toDataURL(text);
+        };
+      
+        // Add a title for the entire page
+        doc.setFontSize(16);
+        doc.text("Asset QR Code Report", 70, 10);
+      
+        const batchSize = 3; // Define batch size to process and add in a page so that QR code generation and PDF creation don't overwhelm the system's memory.
+        for (let i = 0; i < data.length; i += batchSize) {
+          const batch = data.slice(i, i + batchSize);
+          const qrPromises = batch.map(async (row, index) => {
+            const url = `https://niuatt.niua.in/digit-ui/employee/asset/assetservice/applicationsearch/application-details/${row.applicationNo}`;
+            const qrCodeURL = await generateQRCode(url);
+            const yOffset = (index % batchSize) * 90;
+      
+            // Add QR code image
+            doc.addImage(qrCodeURL, 'JPEG', 10, 20 + yOffset, 50, 50);
+      
+            // Add details below QR code
+            doc.setFontSize(12);
+            doc.text(`Application No: ${row.applicationNo}`, 70, 30 + yOffset);
+            doc.text(`Asset Classification: ${row.assetClassification}`, 70, 40 + yOffset);
+            doc.text(`Asset Parent Category: ${row.assetParentCategory}`, 70, 50 + yOffset);
+            doc.text(`Asset Name: ${row.assetName}`, 70, 60 + yOffset);
+      
+            // Add horizontal line
+            doc.line(10, 80 + yOffset, 200, 80 + yOffset);
+          });
+      
+          await Promise.all(qrPromises);
+      
+          // Add a new page after processing each batch except for the last batch
+          if (i + batchSize < data.length) {
+            doc.addPage();
+          }
+        }
+      
+        doc.save("Asset-QR-Reports.pdf");
+      };
   
 
       return <React.Fragment>
@@ -164,7 +300,7 @@
                   <SearchField>
                       <label>{t("AST_FROM_DATE")}</label>
                       <Controller
-                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today}/>}
                           name="fromDate"
                           control={control}
                           />
@@ -172,7 +308,7 @@
                   <SearchField>
                       <label>{t("AST_TO_DATE")}</label>
                       <Controller
-                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today}/>}
                           name="toDate"
                           control={control}
                           />
@@ -196,6 +332,16 @@
                       }}>{t(`ES_COMMON_CLEAR_ALL`)}</p>
                   </SearchField>
               </SearchForm>
+
+              <br></br>
+           { data !== "" ? 
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: "10px" }}>
+            <button onClick={downloadQRReport} style = {{ color: "maroon", border: "2px solid #333", padding: "10px 20px",cursor: "pointer", marginLeft:"15px"}}>Download QR Report</button> 
+
+            </div>
+            : "" }
+
+            <br></br>
               {!isLoading && data?.display ? <Card style={{ marginTop: 20 }}>
                   {
                   t(data.display)

@@ -104,26 +104,4 @@ export const citizenConfig =
 
                 ],
         },
-
-
-        // {
-        //     "head": "EWASTE_TITLE_VENDOR_DETAILS",
-        //     "body": [
-        //         {
-        //             "route": "vendor-details",
-        //             "component": "EWASTEVendorDetails",
-        //             "withoutLabel": true,
-        //             "key": "vendorKey",
-        //             "type": "component",
-        //             "isMandatory": true,
-        //             "hideInEmployee": true,
-        //             // "nextStep": "summary-ewaste",
-        //             "nextStep": null,
-        //             "texts": {
-        //                 "submitBarLabel": "EWASTE_COMMON_NEXT",
-        //             }
-        //         },
-        //     ],
-        // },
-
     ];

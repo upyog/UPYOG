@@ -20,7 +20,7 @@ import lombok.Builder;
 /**
  * Contract class to receive process instance request.
  */
-@ApiModel(description = "Contract class to process instance receive request. Array of TradeLicense items are used in case of create, whereas single TradeLicense item is used for update")
+@ApiModel(description = "Contract class to process instance receive request. Array of Ewaste items are used in case of create, whereas single Ewaste item is used for update")
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
 

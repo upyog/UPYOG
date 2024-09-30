@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, UploadFile, Toast, FormStep, LabelFieldPair, SubmitBar, DeleteIcon} from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabel, UploadFile, Toast, FormStep, LabelFieldPair, SubmitBar, DeleteIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/EWASTETimeline";
 
 const EWASTEDocuments = ({ t, config, onSelect, formData }) => {
@@ -8,20 +8,22 @@ const EWASTEDocuments = ({ t, config, onSelect, formData }) => {
   const [error, setError] = useState(null);
   const [ind, setInd] = useState(1);
 
-
   const tenantId = Digit.ULBService.getStateId();
+  const stateId = Digit.ULBService.getStateId();
   const [documents, setDocuments] = useState(formData?.documents?.documents || []);
 
-  const stateId = Digit.ULBService.getStateId();
-  console.log("documents ::", documents)
-  console.log("formdata ::", formData)
-  console.log("uploadedFiles ::", uploadedFiles)
-
+useEffect(() => {
+  if(formData?.documents?.documents){
+    setUploadedFiles(formData.documents.documents);
+    setInd(formData.documents.documents.length);
+    setFiles(new Array(formData.documents.documents.length).fill(null))
+  }
+}, [formData])
 
   const handleSubmit = () => {
     let document = formData.documents;
     let documentStep;
-    documentStep = { ...document, documents: uploadedFiles.filter(file => file !== null) };
+    documentStep = { ...document, documents: uploadedFiles.filter((file) => file !== null) };
     onSelect(config.key, documentStep);
   };
 
@@ -37,7 +39,7 @@ const EWASTEDocuments = ({ t, config, onSelect, formData }) => {
           const fileStoreId = response.data.files[0].fileStoreId;
           setUploadedFiles((prev) => {
             const updatedFiles = [...prev];
-            updatedFiles[index] = { filestoreId: fileStoreId, documentuuid: fileStoreId, documentType: "Photo" + (index+1) };
+            updatedFiles[index] = { filestoreId: fileStoreId, documentuuid: fileStoreId, documentType: "Photo" + (index + 1) };
             return updatedFiles;
           });
         } else {
@@ -65,7 +67,6 @@ const EWASTEDocuments = ({ t, config, onSelect, formData }) => {
     setUploadedFiles((prev) => [...prev, null]);
   };
 
-
   const removeFileField = (index) => {
     setInd(ind - 1);
 
@@ -85,24 +86,26 @@ const EWASTEDocuments = ({ t, config, onSelect, formData }) => {
   return (
     <div>
       <Timeline currentStep={2} />
-      <FormStep 
-      t={t} 
-      config={config} 
-      onSelect={handleSubmit} 
-      onSkip={onSkip} 
-      isDisabled={uploadedFiles.some(file => file === null) && documents.some(file => file === null)}
+      <FormStep
+        t={t}
+        config={config}
+        onSelect={handleSubmit}
+        onSkip={onSkip}
+        isDisabled={uploadedFiles.some((file) => file === null) && files.some((file) => file === null)}
       >
         {files.map((file, index) => (
           <LabelFieldPair key={index} style={{ marginBottom: "24px" }}>
-            <CardLabel className="card-label-smaller">{t("EWASTE_PR_DOCUMENT ") + (index !== 0 ? index : "")}</CardLabel>
+            <CardLabel className="card-label-smaller">{t("EWASTE_PR_DOCUMENT") + (index !== 0 ? index : "")}</CardLabel>
             <div className="field" style={{ display: "flex", alignItems: "center" }}>
               <UploadFile
                 onUpload={(e) => handleFileSelect(e, index)}
-                onDelete={() => setUploadedFiles((prev) => {
-                  const updatedFiles = [...prev];
-                  updatedFiles[index] = null;
-                  return updatedFiles;
-                })}
+                onDelete={() =>
+                  setUploadedFiles((prev) => {
+                    const updatedFiles = [...prev];
+                    updatedFiles[index] = null;
+                    return updatedFiles;
+                  })
+                }
                 id={`file-upload-${index}`}
                 message={uploadedFiles[index] ? `1 ${t("CS_ACTION_FILEUPLOADED")}` : t("CS_ACTION_NO_FILEUPLOADED")}
                 textStyles={{ width: "100%" }}
@@ -113,13 +116,15 @@ const EWASTEDocuments = ({ t, config, onSelect, formData }) => {
               />
 
               {index > 0 && (
-                <button style={{ marginLeft: "10px" }} onClick={() => removeFileField(index)} ><DeleteIcon className="delete" fill="#a82227" style={{ cursor: "pointer", marginLeft: "20px" }} /></button>
+                <button style={{ marginLeft: "10px" }} onClick={() => removeFileField(index)}>
+                  <DeleteIcon className="delete" fill="#a82227" style={{ cursor: "pointer", marginLeft: "20px" }} />
+                </button>
               )}
             </div>
           </LabelFieldPair>
         ))}
 
-        <SubmitBar label={t("CS_COMMON_ADD")} style={{ marginBottom: "10px" }} onSubmit={addFileField} disabled={ind > 4}/>
+        <SubmitBar label={t("CS_COMMON_ADD")} style={{ marginBottom: "10px" }} onSubmit={addFileField} disabled={ind > 4} />
 
         {error && <Toast label={error} onClose={() => setError(null)} error />}
       </FormStep>

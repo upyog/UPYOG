@@ -4,7 +4,7 @@ import { Link, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 
-import getAssetAcknowledgementData from "../getAssetAcknowledgementData";
+
 
 const GetMessage = (type, action, isSuccess, isEmployee, t) => {
   return t(`${isEmployee ? "E" : "C"}S_ASSET_RESPONSE_${action ? action : "ASSIGN"}_${type}${isSuccess ? "" : "_ERROR"}`);
@@ -23,7 +23,6 @@ const DisplayText = (action, isSuccess, isEmployee, t) => {
 };
 
 const BannerPicker = (props) => {
-  console.log("resssss propsss",props);
   return (
     <Banner
       message={GetActionMessage(props?.data?.Asset?.[0]?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
@@ -33,8 +32,6 @@ const BannerPicker = (props) => {
     />
   );
 };
-
-
 
 const Response = (props) => {
   const { t } = useTranslation();
@@ -51,30 +48,14 @@ const Response = (props) => {
     setError(null);
   };
   
-    console.log("this page is rendering ")
-  
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { state } = props.location;
 
-  console.log("statststs",state);
-
-  
-
-
   const mutation = Digit.Hooks.asset.useAssignCreateAPI(tenantId, state.key !== "UPDATE");
   const mutation1 = Digit.Hooks.asset.useAssignCreateAPI(tenantId, false);
 
-  const { data: storeData } = Digit.Hooks.useStore.getInitData();
-  const { tenants } = storeData || {};
-
-  const { isLoading: auditDataLoading, isError: isAuditError, data: auditData } = Digit.Hooks.asset.useASSETSearch(
-    {
-      tenantId,
-      filters: { applicationNumber: state.Asset.applicationNo, audit: true },
-    },
-    { enabled: enableAudit, select: (data) => data.Asset?.filter((e) => e.status === "ACTIVE") }
-  );
+  
 
   useEffect(() => {
     if (mutation1.data && mutation1.isSuccess) setsuccessData(mutation1.data);
@@ -86,7 +67,6 @@ const Response = (props) => {
 
   useEffect(() => {
     const onSuccess = async (successRes) => {
-      console.log("hhhhhhhhhhhhhhhh",successRes)
       setMutationHappened(true);
       queryClient.clear();
       if (successRes?.ResponseInfo?.status === "successful") {
@@ -101,7 +81,7 @@ const Response = (props) => {
     if (!mutationHappened) {
       mutation.mutate(
         {
-          Asset: state?.Asset,
+          Asset: state?.Assets,
         },
         {
           onError,
@@ -111,17 +91,6 @@ const Response = (props) => {
     }
   }, []);
 
-  const handleDownloadPdf = async () => {
-    const { Assets = [] } = mutation.data || successData;
-    const Ast = (Assets && Assets[0]) || {};
-    const tenantInfo = tenants.find((tenant) => tenant.code === Ast.tenantId);
-
-    let tenantId = Ast.tenantId || tenantId;
-    
-
-    const data = await getAssetAcknowledgementData({ ...Ast, auditData }, tenantInfo, t);
-    Digit.Utils.pdf.generate(data);
-  };
 
   if (mutation.isLoading || (mutation.isIdle && !mutationHappened)) {
     return <Loader />;
@@ -138,12 +107,7 @@ const Response = (props) => {
           isLoading={(mutation.isIdle && !mutationHappened) || mutation?.isLoading}
           isEmployee={props.parentRoute.includes("employee")}
         />
-        <CardText>
-          {DisplayText(state.action, (mutation.isSuccess || !!successData) && !mutation.isError, props.parentRoute.includes("employee"), t)}
-        </CardText>
-        {/* {(mutation.isSuccess || !!successData) && !mutation.isError && (
-          <SubmitBar style={{ overflow: "hidden" }} label={t("AST_REPORT")} onSubmit={handleDownloadPdf} />
-        )} */}
+       
       </Card>
       {showToast && <Toast error={showToast.key === "error" ? true : false} label={error} onClose={closeToast} />}
       <ActionBar>

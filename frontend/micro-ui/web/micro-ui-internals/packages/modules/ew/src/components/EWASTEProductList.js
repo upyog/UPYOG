@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-// import ProductListElement from "./EWASTEProductListElement";
+import React from "react";
 import ApplicationTable from "./inbox/ApplicationTable";
-import { Header, Button } from "@nudmcdgnpm/digit-ui-react-components";
-import { LinkButton, SubmitBar, DeleteIcon, StatusTable, Row } from "@nudmcdgnpm/digit-ui-react-components";
+import { DeleteIcon, StatusTable, Row } from "@nudmcdgnpm/digit-ui-react-components";
 
 const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQuantity, setCalculatedAmount }) => {
   const handleDelete = (e) => {
@@ -68,15 +65,6 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
           text={totalPrice}
         />
       </StatusTable>
-
-      {/* {prlistName?.map((p, index) => (
-                <ProductListElement 
-                key = {index}
-                p = {p}
-                quantity = {prlistQuantity[index]}
-                price = {prlistTotalprice[index]}
-                />
-            ))} */}
     </div>
   );
 };

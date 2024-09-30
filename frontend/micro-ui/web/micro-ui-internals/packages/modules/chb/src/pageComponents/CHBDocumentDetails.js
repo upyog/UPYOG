@@ -62,7 +62,7 @@ const CHBDocumentDetails = ({ t, config, onSelect, userType, formData, setError:
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
         </CardSubHeader>
-        <ChbCancellationPolicy count={value?.bookingSlotDetails.length}/>
+        <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails}/>
       </Card>
       {!isLoading ? (
         <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={enableSubmit} onAdd={onAdd}>
@@ -203,7 +203,7 @@ function CHBSelectDocument({
     <div style={{ marginBottom: "24px" }}>
       {doc?.hasDropdown ? (
         <LabelFieldPair>
-          <CardLabel className="card-label-smaller">{t("CHB_"+(doc?.code.replaceAll(".", "_"))) } <span style={{ color: 'red' }}>*</span></CardLabel>
+          <CardLabel className="card-label-smaller">{t("CHB_"+(doc?.code.replaceAll(".", "_"))) } <span className="check-page-link-button">*</span></CardLabel>
           <Dropdown
             className="form-field"
             selected={selectedDocument}

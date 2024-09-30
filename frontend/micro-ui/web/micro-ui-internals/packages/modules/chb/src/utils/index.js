@@ -25,13 +25,13 @@ export const sethallDetails = (data) => {
   let { slotlist } = data;
   let hallDetails = slotlist?.bookingSlotDetails.map((slot) => {
     return { 
-      hallName:slot.name,
-      bookingId:slot.slotId,
-      hallCode: slot.hallCode,
+      communityHallCode:slot.code,
+      hallCode: slot.hallCode1,
       bookingDate:slot.bookingDate,
       bookingFromTime:"10:00",
-      bookingToTime:"11:59",
-      status:"BOOKED",
+      bookingToTime:"23:59",
+      status:"BOOKING_CREATED",
+      capacity:slot.capacity
     };
 
   }) || [];
@@ -62,6 +62,8 @@ export const setaddressDetails = (data) => {
   let addressdetails = {
     pincode: address?.pincode,
     city: address?.city?.city?.name,
+    cityCode:address?.city?.city?.code,
+    locality:address?.locality?.name,
     localityCode: address?.locality?.code,
     streetName: address?.streetName,
     houseNo: address?.houseNo,
@@ -135,10 +137,9 @@ const formdata={
     },
     address:data.address,
     purposeDescription:data.slots?.purposeDescription,
-    communityHallId:data.slotlist[0]?.bookingId,
     ...data.documents,
     bookingStatus:"BOOKING_CREATED",
-    communityHallCode:data.slotlist[0]?.hallName,
+    communityHallCode:data.slotlist[0]?.communityHallCode,
     specialCategory:{
       category:data.slots?.specialCategory?.value
     },
@@ -147,11 +148,13 @@ const formdata={
     },
     bookingSlotDetails:data?.slotlist,
 
-  workflow : {
-      businessService: "chb-services",
-      action : "APPLY",
-      moduleName: "chb-services"
-    }
+    workflow:null
+
+  // workflow : {
+  //     businessService: "chb-services",
+  //     action : "APPLY",
+  //     moduleName: "chb-services"
+  //   }
   }
 }
 

@@ -58,7 +58,7 @@ const ChbCommunityHallDetails = ({ hallId }) => {
     <div>
       {showPopup && selectedHall && (
         <Modal
-          headerBarMain={<CardSubHeader style={{ color: '#FE7A51', margin: '35px' }}>Community Hall Details</CardSubHeader>}
+          headerBarMain={<CardSubHeader style={{ color: '#a82227', margin: '35px' }}>Community Hall Details</CardSubHeader>}
           headerBarEnd={<CloseBtn onClick={handleClosePopup} />}
           popupStyles={{ backgroundColor: "#fff", position: 'relative', width: '90%', maxWidth: '1200px', maxHeight: '90vh', overflowY: 'auto' }}
           children={

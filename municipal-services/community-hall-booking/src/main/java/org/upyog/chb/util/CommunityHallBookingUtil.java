@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
@@ -15,16 +16,18 @@ import org.upyog.chb.web.models.ResponseInfo.StatusEnum;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
+
 public class CommunityHallBookingUtil {
 
 	public static ResponseInfo createReponseInfo(final RequestInfo requestInfo, String resMsg, StatusEnum status) {
 
-		final String apiId = requestInfo != null ? requestInfo.getApiId() : "";
-		final String ver = requestInfo != null ? requestInfo.getVer() : "";
+		final String apiId = requestInfo != null ? requestInfo.getApiId() : StringUtils.EMPTY;
+		final String ver = requestInfo != null ? requestInfo.getVer() : StringUtils.EMPTY;
 		Long ts = null;
 		if (requestInfo != null)
 			ts = requestInfo.getTs();
-		final String msgId = requestInfo != null ? requestInfo.getMsgId() : "";
+		final String msgId = requestInfo != null ? requestInfo.getMsgId() : StringUtils.EMPTY;
 
 		ResponseInfo responseInfo = ResponseInfo.builder().apiId(apiId).ver(ver).ts(ts).msgId(msgId).resMsgId(resMsg)
 				.status(status).build();
@@ -32,12 +35,16 @@ public class CommunityHallBookingUtil {
 		return responseInfo;
 	}
 
-	public static Long getCurrentDateTime() {
+	public static Long getCurrentTimestamp() {
 		return Instant.now().toEpochMilli();
+	}
+	
+	public static LocalDate getCurrentDate() {
+		return LocalDate.now();
 	}
 
 	public static AuditDetails getAuditDetails(String by, Boolean isCreate) {
-		Long time = System.currentTimeMillis();
+		Long time = getCurrentTimestamp();
 		if (isCreate)
 			// TODO: check if we can set lastupdated details to empty
 			return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time)
@@ -45,6 +52,11 @@ public class CommunityHallBookingUtil {
 		else
 			return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
 	}
+	
+	/*Commented and used Instant
+	 * public static Long getCurrentTimestamp() { return System.currentTimeMillis();
+	 * }
+	 */
 
 	public static String getRandonUUID() {
 		return UUID.randomUUID().toString();
@@ -56,21 +68,24 @@ public class CommunityHallBookingUtil {
 		return localDate;
 	}
 
+	public static Long minusOneDay(LocalDate date) {
+		return date.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+	}
+
 	public static String parseLocalDateToString(LocalDate date) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		// Format the LocalDate
 		String formattedDate = date.format(formatter);
 		return formattedDate;
 	}
-	
+
 	public static AuditDetails getAuditDetails(ResultSet rs) throws SQLException {
 		AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("createdBy"))
-				.createdTime(rs.getLong("createdTime"))
-				.lastModifiedBy(rs.getString("lastModifiedBy"))
+				.createdTime(rs.getLong("createdTime")).lastModifiedBy(rs.getString("lastModifiedBy"))
 				.lastModifiedTime(rs.getLong("lastModifiedTime")).build();
 		return auditdetails;
 	}
-	
+
 	public static String beuatifyJson(Object result) {
 		ObjectMapper mapper = new ObjectMapper();
 		String data = null;
@@ -81,6 +96,10 @@ public class CommunityHallBookingUtil {
 			e.printStackTrace();
 		}
 		return data;
+	}
+
+	public static String getTenantId(String tenantId) {
+		return tenantId.split("\\.")[0];
 	}
 
 }

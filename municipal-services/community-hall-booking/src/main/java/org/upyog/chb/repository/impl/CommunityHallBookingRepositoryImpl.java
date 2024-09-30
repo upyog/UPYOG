@@ -23,12 +23,12 @@ import org.upyog.chb.repository.rowmapper.CommunityHallSlotAvailabilityRowMapper
 import org.upyog.chb.repository.rowmapper.DocumentDetailsRowMapper;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.BookingSlotDetail;
-import org.upyog.chb.web.models.CommunityHallBokingInitDetail;
+import org.upyog.chb.web.models.CommunityHallBookingInitDetail;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingRequestInit;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
-import org.upyog.chb.web.models.CommunityHallSlotAvailabiltityDetail;
+import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 import org.upyog.chb.web.models.DocumentDetail;
 
@@ -72,9 +72,9 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 				.bookingId(bookingDetail.getBookingId()).tenantId(bookingDetail.getTenantId())
 				.bookingStatus(bookingDetail.getBookingStatus())
 				.bookingDetails(bookingRequest.getHallsBookingApplication()).createdBy(requestInfo.getUserInfo().getUuid())
-				.createdDate(CommunityHallBookingUtil.getCurrentDateTime()).lastModifiedBy(requestInfo.getUserInfo().getUuid())
-				.lastModifiedDate(CommunityHallBookingUtil.getCurrentDateTime()).build();
-		CommunityHallBokingInitDetail bookingPersiter = CommunityHallBokingInitDetail.builder()
+				.createdDate(CommunityHallBookingUtil.getCurrentTimestamp()).lastModifiedBy(requestInfo.getUserInfo().getUuid())
+				.lastModifiedDate(CommunityHallBookingUtil.getCurrentTimestamp()).build();
+		CommunityHallBookingInitDetail bookingPersiter = CommunityHallBookingInitDetail.builder()
 				.hallsBookingApplication(testPersist).build();
 		producer.push(bookingConfiguration.getCommunityHallBookingInitSaveTopic(), bookingPersiter);
 
@@ -86,7 +86,8 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = queryBuilder.getCommunityHallBookingSearchQuery(bookingSearchCriteria, preparedStmtList);
 
-		log.info("getBookingDetails : Final query: " + query + "preparedStmtList :  " + preparedStmtList);
+		log.info("getBookingDetails : Final query: " + query );
+		log.info("preparedStmtList :  " + preparedStmtList);
 		List<CommunityHallBookingDetail> bookingDetails = jdbcTemplate.query(query, preparedStmtList.toArray(),
 				bookingRowmapper);
 		
@@ -126,7 +127,7 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 	}
 
 	@Override
-	public List<CommunityHallSlotAvailabiltityDetail> getCommunityHallSlotAvailability(
+	public List<CommunityHallSlotAvailabilityDetail> getCommunityHallSlotAvailability(
 			CommunityHallSlotSearchCriteria criteria) {
 		List<Object> paramsList = new ArrayList<>();
 		
@@ -156,7 +157,7 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 
 		log.info("getBookingDetails : Final query: " + query);
 		log.info("paramsList : " + paramsList);
-		List<CommunityHallSlotAvailabiltityDetail> availabiltityDetails = jdbcTemplate.query(query.toString(), paramsList.toArray(),
+		List<CommunityHallSlotAvailabilityDetail> availabiltityDetails = jdbcTemplate.query(query.toString(), paramsList.toArray(),
 				availabilityRowMapper);
 		
 		log.info("Fetched slot availabilty details : " + availabiltityDetails);

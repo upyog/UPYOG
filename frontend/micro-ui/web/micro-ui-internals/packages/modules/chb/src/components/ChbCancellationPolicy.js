@@ -17,11 +17,12 @@ const CloseBtn = (props) => {
   );
 };
 
-const ChbCancellationPolicy = ({ count }) => {
+const ChbCancellationPolicy = ({ slotDetail }) => {
   const [showCancellationPolicy, setShowCancellationPolicy] = useState(false);
   const [showPriceBreakup, setShowPriceBreakup] = useState(false);
+  const [showdemandEstimation,setShowDemandEstimation]=useState(false);
   const stateId = Digit.ULBService.getStateId();
-
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const { data: cancelpolicyData } = Digit.Hooks.useCustomMDMS(stateId, "CHB", [{ name: "CommunityHalls" }],
     {
       select: (data) => {
@@ -29,15 +30,27 @@ const ChbCancellationPolicy = ({ count }) => {
         return formattedData;
       },
   });
+  let hallDetails = slotDetail.map((slot) => {
+    return { 
+      hallCode: slot.hallCode1,
+      bookingDate:slot.bookingDate,
+      bookingFromTime:"10:00",
+      bookingToTime:"23:59",
+      status:"BOOKING_CREATED",
+      capacity:slot.capacity
+    }; });
+  const mutation = Digit.Hooks.chb.useDemandEstimation();
+      let formdata = {
+        tenantId:tenantId,
+        bookingSlotDetails:hallDetails,
+        communityHallCode:slotDetail[0].code
+        
+      };
 
-  const { data: CalculationType } = Digit.Hooks.useCustomMDMS(stateId, "CHB", [{ name: "CalculationType" }],
-    {
-      select: (data) => {
-        const formattedData = data?.["CHB"]?.["CalculationType"];
-        return formattedData;
-      },
-  });
-
+  if(showdemandEstimation===false){
+    mutation.mutate(formdata);
+    setShowDemandEstimation(true);
+  }
   const handleCancellationPolicyClick = () => {
     setShowCancellationPolicy(!showCancellationPolicy);
   };
@@ -62,27 +75,26 @@ const ChbCancellationPolicy = ({ count }) => {
   };
 
   const calculateTotalAmount = (CalculationType) => {
-    return CalculationType.reduce((total, item) => total + item.amount * count, 0);
+    return CalculationType.reduce((total, item) => total + item.taxAmount, 0);
   };
-
   return (
     <div>
-      <CardSubHeader style={{ color: '#FE7A51', fontSize: '18px'}}>
+      <CardSubHeader style={{ color: '#a82227', fontSize: '18px'}}>
         Total Booking Amount
       </CardSubHeader>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{ marginLeft: '30px', marginRight: '60px', fontSize: '16px', fontWeight: 'bold' }}>
-          Rs {CalculationType ? calculateTotalAmount(CalculationType) : 'Loading...'} /-
+          Rs {mutation.data?.demands[0]?.demandDetails ? calculateTotalAmount(mutation.data?.demands[0]?.demandDetails) : 'Loading...'} /-
         </div>
         <div 
           onClick={handlePriceBreakupClick} 
-          style={{ cursor: 'pointer', margin: '0 20px', color: '#FE7A51', fontSize: '16px', textDecoration: 'none' }}
+          style={{ cursor: 'pointer', margin: '0 20px', color: '#a82227', fontSize: '16px', textDecoration: 'none' }}
         >
           VIEW ESTIMATE PRICE BREAKUP
         </div>
         <div 
           onClick={handleCancellationPolicyClick} 
-          style={{ cursor: 'pointer', color: '#FE7A51', fontSize: '16px', textDecoration: 'none' }}
+          style={{ cursor: 'pointer', color: '#a82227', fontSize: '16px', textDecoration: 'none' }}
         >
           VIEW CANCELLATION POLICY
         </div>
@@ -90,7 +102,7 @@ const ChbCancellationPolicy = ({ count }) => {
 
       {showCancellationPolicy && (
         <Modal
-          headerBarMain={<CardSubHeader style={{ color: '#FE7A51', margin: '25px' }}>Cancellation Policy</CardSubHeader>}
+          headerBarMain={<CardSubHeader style={{ color: '#a82227', margin: '25px' }}>Cancellation Policy</CardSubHeader>}
           headerBarEnd={<CloseBtn onClick={handleCancellationPolicyClick} />}
           popupStyles={{ backgroundColor: "#fff", position: 'relative', maxHeight: '90vh', width: '80%', overflowY: 'auto' }}
           children={
@@ -126,24 +138,24 @@ const ChbCancellationPolicy = ({ count }) => {
       )}
       {showPriceBreakup && (
         <Modal
-          headerBarMain={<CardSubHeader style={{ color: '#FE7A51', margin: '25px' }}>Price Breakup</CardSubHeader>}
+          headerBarMain={<CardSubHeader style={{ color: '#a82227', margin: '25px' }}>Price Breakup</CardSubHeader>}
           headerBarEnd={<CloseBtn onClick={handlePriceBreakupClick} />}
           popupStyles={{ backgroundColor: "#fff", position: 'relative', maxHeight: '90vh', width: '60%', overflowY: 'auto' }}
           children={
             <div>
               <CardText style={{ marginBottom: '15px' }}>Estimate Price Details</CardText>
               <ul>
-                {CalculationType && CalculationType.map((finance, index) => (
+                {mutation.data?.demands[0]?.demandDetails && mutation.data?.demands[0]?.demandDetails.map((demands, index) => (
                   <li key={index} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <CardLabelDesc>{finance.feeType}</CardLabelDesc>
-                    <CardLabelDesc>Rs {finance.amount * count}</CardLabelDesc>
+                    <CardLabelDesc>{demands.taxHeadMasterCode}</CardLabelDesc>
+                    <CardLabelDesc>Rs {demands.taxAmount}</CardLabelDesc>
                   </li>
                 ))}
               </ul>
               <hr />
               <div style={{ fontWeight: 'bold', marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
                 <CardLabelDesc>Total</CardLabelDesc>
-                <CardLabelDesc>Rs {CalculationType && calculateTotalAmount(CalculationType)}</CardLabelDesc>
+                <CardLabelDesc>Rs {mutation.data?.demands[0]?.demandDetails && calculateTotalAmount(mutation.data?.demands[0]?.demandDetails)}</CardLabelDesc>
               </div>
             </div>
           }

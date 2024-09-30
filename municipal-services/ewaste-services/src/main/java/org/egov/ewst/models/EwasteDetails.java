@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@ApiModel(description = "Details of the pet for pet registration")
+@ApiModel(description = "Details of the ewaste request application")
 @Validated
 
 @Getter

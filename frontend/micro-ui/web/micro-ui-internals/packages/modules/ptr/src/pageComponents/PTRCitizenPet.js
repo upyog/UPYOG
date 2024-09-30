@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, Dropdown, RadioOrSelect } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, MobileNumber, Dropdown, RadioOrSelect } from "@nudmcdgnpm/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/PTRTimeline";
@@ -179,7 +179,7 @@ const PTRCitizenPet
           isDisabled={!petType || !breedType || !petGender || !petName || !petAge || !doctorName || !clinicName || !lastVaccineDate || !vaccinationNumber}
         >
           <div>
-            <CardLabel>{`${t("PTR_SEARCH_PET_TYPE")}`}</CardLabel>
+            <CardLabel>{`${t("PTR_SEARCH_PET_TYPE")}`} <span className="astericColor">*</span></CardLabel>
             <Controller
               control={control}
               name={"petType"}
@@ -187,23 +187,17 @@ const PTRCitizenPet
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
               render={(props) => (
                 <Dropdown
-
                   className="form-field"
                   selected={petType}
                   select={setPetType}
                   option={menu}
                   optionKey="i18nKey"
                   t={t}
+                  placeholder={"Select"}
                 />
-
               )}
-
             />
-
-
-            <CardLabel>{`${t("PTR_SEARCH_BREED_TYPE")}`}</CardLabel>
-
-
+            <CardLabel>{`${t("PTR_SEARCH_BREED_TYPE")}`} <span className="astericColor">*</span></CardLabel>
             <Controller
               control={control}
               name={"breedType"}
@@ -211,21 +205,19 @@ const PTRCitizenPet
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
               render={(props) => (
                 <Dropdown
-
                   className="form-field"
                   selected={breedType}
                   select={setBreedType}
                   option={breed_type}
                   optionKey="i18nKey"
                   t={t}
+                  placeholder={"Select"}
                 />
-
               )}
-
             />
 
 
-            <CardLabel>{`${t("PTR_PET_NAME")}`}</CardLabel>
+            <CardLabel>{`${t("PTR_PET_NAME")}`} <span className="astericColor">*</span></CardLabel>
             <TextInput
               t={t}
               type={"text"}
@@ -238,15 +230,13 @@ const PTRCitizenPet
               ValidationRequired={false}
               {...(validation = {
                 isRequired: true,
-                pattern: "^[a-zA-Z-.`' ]*$",
+                pattern: "^[a-zA-Z ]+$",
                 type: "text",
                 title: t("PT_NAME_ERROR_MESSAGE"),
               })}
             />
 
-            <CardLabel>{`${t("PTR_PET_SEX")}`}</CardLabel>
-
-
+            <CardLabel>{`${t("PTR_PET_SEX")}`} <span className="astericColor">*</span></CardLabel>
             <Controller
               control={control}
               name={"petGender"}
@@ -254,20 +244,18 @@ const PTRCitizenPet
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
               render={(props) => (
                 <Dropdown
-
                   className="form-field"
                   selected={petGender}
                   select={setPetGender}
                   option={pet_sex}
                   optionKey="i18nKey"
                   t={t}
+                  placeholder={"Select"}
                 />
-
               )}
-
             />
 
-            <CardLabel>{`${t("PTR_PET_AGE") + " (in months)"}`}</CardLabel>
+            <CardLabel>{`${t("PTR_PET_AGE") + " (in months)"}`} <span className="astericColor">*</span></CardLabel>
             <TextInput
               t={t}
               type={"text"}
@@ -278,12 +266,15 @@ const PTRCitizenPet
               onChange={setpetage}
               style={{ width: "86%" }}
               placeholder="in months"
-              rules={{
-                required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                validate: (v) => (/^[0123456789]\d{2}$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
-              }}
-
+              ValidationRequired = {true}
+              {...(validation = {
+                isRequired: true,
+                pattern: "[0-9]{1}[0-9]{2}",
+                type: "tel",
+                title: t("PT_NAME_ERROR_MESSAGE"),
+              })}
             />
+            
             <div>
             {Math.floor(petAge / 12)}&nbsp;&nbsp;
             {Math.floor(petAge / 12) === 1 ? "YEAR" : "YEARS"}
@@ -294,7 +285,7 @@ const PTRCitizenPet
 
             <br></br>
 
-            <CardLabel>{`${t("PTR_DOCTOR_NAME")}`}</CardLabel>
+            <CardLabel>{`${t("PTR_DOCTOR_NAME")}`} <span className="astericColor">*</span></CardLabel>
             <TextInput
               t={t}
               type={"text"}
@@ -307,13 +298,13 @@ const PTRCitizenPet
               ValidationRequired={false}
               {...(validation = {
                 isRequired: true,
-                pattern: "^[a-zA-Z-.`' ]*$",
+                pattern: "^[a-zA-Z ]+$",
                 type: "text",
                 title: t("PT_NAME_ERROR_MESSAGE"),
               })}
             />
 
-            <CardLabel>{`${t("PTR_CLINIC_NAME")}`}</CardLabel>
+            <CardLabel>{`${t("PTR_CLINIC_NAME")}`} <span className="astericColor">*</span></CardLabel>
             <TextInput
               t={t}
               type={"text"}
@@ -326,13 +317,13 @@ const PTRCitizenPet
               ValidationRequired={false}
               {...(validation = {
                 isRequired: true,
-                pattern: "^[a-zA-Z-.`' ]*$",
+                pattern: "^[a-zA-Z ]+$",
                 type: "text",
                 title: t("PT_NAME_ERROR_MESSAGE"),
               })}
             />
 
-            <CardLabel>{`${t("PTR_VACCINATED_DATE")}`}</CardLabel>
+            <CardLabel>{`${t("PTR_VACCINATED_DATE")}`} <span className="astericColor">*</span></CardLabel>
             <TextInput
               t={t}
               type={"date"}
@@ -350,7 +341,7 @@ const PTRCitizenPet
 
             />
 
-            <CardLabel>{`${t("PTR_VACCINATION_NUMBER")}`}</CardLabel>
+            <CardLabel>{`${t("PTR_VACCINATION_NUMBER")}`} <span className="astericColor">*</span></CardLabel>
             <TextInput
               t={t}
               type={"text"}

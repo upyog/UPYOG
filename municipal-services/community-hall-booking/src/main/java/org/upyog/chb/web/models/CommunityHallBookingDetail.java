@@ -1,6 +1,5 @@
 package org.upyog.chb.web.models;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +60,12 @@ public class CommunityHallBookingDetail {
 	
 	@NotBlank
 	private String purposeDescription;
+	
+	private String receiptNo;
+	
+	private String permissionLetterFilestoreId;
+	
+	private String paymentReceiptFilestoreId;
 
 	@NotNull
 	@Valid

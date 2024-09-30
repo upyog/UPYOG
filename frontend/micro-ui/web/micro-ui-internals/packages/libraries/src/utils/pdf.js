@@ -158,6 +158,101 @@ const defaultLogo =
 
 
 /**
+ * This function is created to create tables in the pdf
+ * packages\modules\ew\src\utils\getEwAcknowledgementData.js
+ * @author khalid rashid
+ *
+ * @example
+ * Digit.Utils.pdf.generateTable()
+ *
+ * @returns Downloads a pdf  
+ */
+const jsPdfGeneratorForTable = async ({ breakPageLimit = null, tenantId, logo, name, email, phoneNumber, heading, details, tableData, applicationNumber, t = (text) => text }) => {
+  const emailLeftMargin =
+    email.length <= 15
+      ? 190
+      : email.length <= 20
+      ? 150
+      : email.length <= 25
+      ? 130
+      : email.length <= 30
+      ? 90
+      : email.length <= 35
+      ? 50
+      : email.length <= 40
+      ? 10
+      : email.length <= 45
+      ? 0
+      : email.length <= 50
+      ? -20
+      : email.length <= 55
+      ? -70
+      : email.length <= 60
+      ? -100
+      : -60;
+ 
+  const dd = {
+
+    background:[{
+      image: AcknowledgmentPage,
+      width:595,
+      height:842
+    }],
+    margin:[20,20,20,20],
+  
+    header: {
+     
+    },
+
+    footer: function (currentPage, pageCount) {
+            return {
+        columns: [
+         
+          { text: `Page ${currentPage}`, alignment: "right", margin: [0, -17, 50, 0], fontSize: 11, color: "#6f777c", font: "Hind" },
+        ],
+      };
+    },
+    content: [
+      ...createHeaderDetails(details,name, phoneNumber, email, logo, tenantId, heading, applicationNumber),
+      ...tableContent(t, details),
+      {
+        text: t("PDF_SYSTEM_GENERATED_ACKNOWLEDGEMENT"),
+        font: "Hind",
+        fontSize: 11,
+        color: "#6f777c",
+        margin: [10, 10],
+      },
+      {
+        text:"TERMS_AND_CONDITIONS_OF_LICENSE",
+        fontSize:16, 
+        bold:true, 
+        alignment:"center",
+        decoration:"underline",
+        pageBreak:'before',
+        margin:[0, 25, 0, 0],
+      },
+      {
+        text:"TERMS_AND_CONDITIONS_OF_LICENSE_CONTENT",
+        fontSize:8,
+        margin:[10, 20, 10,0] 
+      },
+              
+    ],
+    defaultStyle: {
+      font: "Hind",
+      margin:[20, 10, 20,10]
+    },
+  };
+  pdfMake.vfs = Fonts;
+  let locale = Digit.SessionStorage.get("locale") || "en_IN";
+  let Hind = pdfFonts[locale] || pdfFonts["Hind"];
+  pdfMake.fonts = { Hind: { ...Hind } };
+  const generatedPDF = pdfMake.createPdf(dd);
+  downloadPDFFileUsingBase64(generatedPDF, "acknowledgement.pdf");
+};
+
+
+/**
  * Util function that can be used
  * to download WS connection acknowledgement pdfs
  * Data is passed to this function from this file
@@ -333,7 +428,7 @@ const generateBillAmendPDF = async ({ tenantId, bodyDetails, headerDetails, logo
   downloadPDFFileUsingBase64(generatedPDF, "acknowledgement.pdf");
 }
 
-export default { generate: jsPdfGenerator, generatev1: jsPdfGeneratorv1, generateModifyPdf: jsPdfGeneratorForModifyPDF, generateBillAmendPDF };
+export default { generate: jsPdfGenerator, generateTable: jsPdfGeneratorForTable, generatev1: jsPdfGeneratorv1, generateModifyPdf: jsPdfGeneratorForModifyPDF, generateBillAmendPDF };
 
 const createBodyContentBillAmend = (table,t) => {
   let bodyData = []
@@ -961,7 +1056,6 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
   let counter=1;
   details.forEach((detail, index) => {
     if (detail?.values?.length > 0) {
-      console.log("lennn", detail?.title.length)
       detailsHeaders.push({
         style: 'tableExample',
         margin:[10,20,10,0],
@@ -1038,6 +1132,160 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
     }
   });
  
+
+  return detailsHeaders;
+}
+
+/* This function is created to create table in pdf and is a completely   
+ * separate entity which doesn't affect any other function or element etc.  
+ * in any way possible
+ * @author khalid rashid
+ */
+function tableContent(t, details) {
+
+  let tableBody = [
+    [t("S_NO"), t("PRODUCT_NAME"), t("PRODUCT_QUANTITY"), t("UNIT_PRICE"), t("TOTAL_PRODUCT_PRICE") ]
+  ]
+
+  const detailsHeaders = []; 
+  let counter=1;
+  details.forEach((detail) => {
+    if (detail?.values?.length > 0) {
+      detailsHeaders.push({
+        style: 'tableExample',
+        margin:[10,20,10,0],
+        layout:"noBorders",
+        table: {
+          widths: ['101.8%', '*'],
+          body: [
+              [
+                {
+                  text:  `${counter}. ${detail?.title}`, 
+                  border:[true, true, true, false],
+                  color: "#454545",                 
+                  style: "header",
+                  fontSize: 14,
+                  bold: true
+                }
+              ]
+          ]
+        }
+      })
+      counter++;
+    }
+    if (detail?.tableData?.rows) {
+      detailsHeaders.push({
+        style: 'tableExample',
+        margin:[10,20,10,0],
+        layout:"noBorders",
+        table: {
+          widths: ['101.8%', '*'],
+          body: [
+              [
+                {
+                  text:  `${counter}. ${detail?.tableData?.title}`, 
+                  border:[true, true, true, false],
+                  color: "#454545",                 
+                  style: "header",
+                  fontSize: 14,
+                  bold: true
+                }
+              ]
+          ]
+        }
+      })
+      counter++;
+    }
+    if (detail?.isAttachments && detail.values) {
+      detailsHeaders.push({
+        style: 'tableExample',
+        
+        margin:[10,0,10,0],
+        table: {
+          widths: ['40%', '*'],
+          body: [
+            [
+              {
+               ul: detail?.values,
+               style: "header",
+                fontSize: 10,
+                //bold: true
+              },
+            ]
+          ]
+    }})
+    } else {
+      detail?.values?.map((indData, index) => {
+        detailsHeaders.push({
+          style: 'tableExample',
+          layout: "noBorders", 
+          margin:[10,0,10,0],
+          table: {
+            widths: ['40%', '*'],
+            body: [
+              [
+                {
+                  text: indData?.title,
+                  style: "header",
+                  fontSize: 10,
+                },
+
+                {
+                  text: `:  ${indData?.value}`,
+                  fontSize: 10,
+                }
+              ]
+            ]
+          }
+        })
+      })
+    
+    }
+
+  
+    if(detail.tableData){
+      if(detail?.tableData?.rows){
+        tableBody.push(
+          ...detail.tableData.rows.map((d,index) => {
+          return [
+            {
+              text: index+1, 
+              fontSize: 10,
+            },
+            {
+              text: d.productName, 
+              fontSize: 10,
+            },
+            {
+              text: d.quantity, 
+              fontSize: 10,
+            },
+            {
+              text: d.price/d.quantity, 
+              fontSize: 10,
+            },
+            {
+              text: d.price, 
+              fontSize: 10,
+            }
+
+           ]
+        }))
+      }
+
+      detailsHeaders.push({
+        style: 'tableExample',
+        margin:[10,0,10,0],
+        table: {
+          headerRows: 1,
+          widths: ['12%', '22%', '22%', '22%','22%'],
+          body: tableBody,
+        }
+      }
+    )
+    }
+
+  });
 
   return detailsHeaders;
 }

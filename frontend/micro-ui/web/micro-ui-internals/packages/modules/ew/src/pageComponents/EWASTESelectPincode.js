@@ -27,7 +27,7 @@ const EWASTESelectPincode = ({ t, config, onSelect, formData = {}, userType, reg
         maxlength: 7,
         pattern: "[0-9]+",
         max: "9999999",
-        title: t("EWASTE_ADDRESS_PINCODE_INVALID"),
+        // title: t("EWASTE_ADDRESS_PINCODE_INVALID"),
       },
     },
   ];

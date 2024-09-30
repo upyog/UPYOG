@@ -14,38 +14,21 @@ const EWDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
     const com = Digit.ComponentRegistryService?.getComponent(props.EmptyResultInboxComp);
     return com;
   });
-
-  // const [modifiedData, setModifiedData] = useState(null);
  
   const [clearSearchCalled, setClearSearchCalled] = useState(false);
 
   const columns = React.useMemo(() => (props.isSearch ? tableConfig.searchColumns(props) : tableConfig.inboxColumns(props) || []), []);
 
-  const Session = Digit.SessionStorage.get("User");
-  const uuid = Session?.info?.uuid;
-  console.log("Session", Session, uuid);
-
-  let modData = [];
-  data?.map((smallData) => {
-    if((smallData?.searchData?.auditDetails?.lastModifiedBy) === uuid || !smallData?.searchData?.auditDetails?.lastModifiedBy){
-      modData.push(smallData);
-    }
-  })
-  // const modified = searchData?.auditDetails?.lastModifiedBy;
-  let modifiedData = data;
-
-  console.log("modiefirdsd datea", modData)
-  console.log("data in ewdesktop inbox", data);
   let result;
   if (props.isLoading) {
     result = <Loader />;
   } else 
   if (clearSearchCalled) {
     result = null;
-  } else if (!modifiedData || modifiedData?.length === 0 || (useNewInboxAPI && modifiedData?.[0].dataEmpty)) {
+  } else if (!data || data?.length === 0 || (useNewInboxAPI && data?.[0].dataEmpty)) {
     result =
       (EmptyInboxComp && <EmptyInboxComp data={data} />) ||
-      (modifiedData?.length === 0 || (useNewInboxAPI && modifiedData?.[0].dataEmpty) ? (
+      (data?.length === 0 || (useNewInboxAPI && data?.[0].dataEmpty) ? (
         <Card style={{ marginTop: 20 }}>
           {t("CS_MYAPPLICATIONS_NO_APPLICATION")
             .split("\\n")
@@ -63,7 +46,7 @@ const EWDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
     result = (
       <ApplicationTable
         t={t}
-        data={modifiedData}
+        data={data}
         columns={columns}
         getCellProps={(cellInfo) => {
           return {

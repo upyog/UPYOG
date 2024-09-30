@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { useGlobalFilter, usePagination, useRowSelect, useSortBy, useTable } from "react-table";
+import { useGlobalFilter, usePagination, useRowSelect, useSortBy } from "react-table";
+import { useTable } from "react-table";
 import { ArrowBack, ArrowForward, ArrowToFirst, ArrowToLast, SortDown, SortUp } from "./svgindex";
 
 const noop = () => {};

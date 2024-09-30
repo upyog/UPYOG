@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.enums.BookingStatusEnum;
-import org.upyog.chb.enums.SlotStatusEnum;
 import org.upyog.chb.repository.IdGenRepository;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.AuditDetails;
@@ -48,7 +47,7 @@ public class EnrichmentService {
 			slot.setBookingId(bookingId);
 			slot.setSlotId(CommunityHallBookingUtil.getRandonUUID());
 			//Check Slot staus before setting TODO: booking_created
-			slot.setStatus(SlotStatusEnum.valueOf(slot.getStatus()).toString());
+			slot.setStatus(BookingStatusEnum.valueOf(slot.getStatus()).toString());
 			slot.setAuditDetails(auditDetails);
 		});
 		
@@ -98,10 +97,19 @@ public class EnrichmentService {
 		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
 	}
 
-	public void enrichUpdateBookingRequest(CommunityHallBookingRequest communityHallsBookingRequest) {
+	public void enrichUpdateBookingRequest(CommunityHallBookingRequest communityHallsBookingRequest, BookingStatusEnum statusEnum) {
 		AuditDetails auditDetails = CommunityHallBookingUtil.getAuditDetails(communityHallsBookingRequest.getRequestInfo().getUserInfo().getUuid(), false);
-		communityHallsBookingRequest.getHallsBookingApplication().setPaymentDate(auditDetails.getCreatedTime());
+		CommunityHallBookingDetail bookingDetail = communityHallsBookingRequest.getHallsBookingApplication();
+		if(statusEnum != null) {
+			bookingDetail.setBookingStatus(statusEnum.toString());
+			//bookingDetail.setReceiptNo(paymentRequest.getPayment().getTransactionNumber());;
+			bookingDetail.getBookingSlotDetails().stream().forEach(slot -> {
+				slot.setStatus(statusEnum.toString());
+			});
+		}
+		communityHallsBookingRequest.getHallsBookingApplication().setPaymentDate(auditDetails.getLastModifiedTime());
 		communityHallsBookingRequest.getHallsBookingApplication().setAuditDetails(auditDetails);
+		
 	}
 
 }

@@ -154,7 +154,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
         </CardSubHeader>
-        <ChbCancellationPolicy count={value?.bookingSlotDetails.length} />
+        <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails} />
       </Card>
       <FormStep
         config={config}
@@ -164,7 +164,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
         isDisabled={!pincode || !city || !streetName || !houseNo || !landmark || !locality}
       >
         <div>
-          <CardLabel>{`${t("CHB_PINCODE")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+          <CardLabel>{`${t("CHB_PINCODE")}`} <span className="check-page-link-button">*</span></CardLabel>
           <TextInput
             t={t}
             type="text"
@@ -184,7 +184,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             minLength={6}
             maxLength={6}
           />
-          <CardLabel>{`${t("CHB_CITY")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+          <CardLabel>{`${t("CHB_CITY")}`} <span className="check-page-link-button">*</span></CardLabel>
           <TextInput
             t={t}
             type={"text"}
@@ -197,7 +197,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             onChange={setCity}
             disabled={true}
           />
-          <CardLabel>{`${t("CHB_LOCALITY")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+          <CardLabel>{`${t("CHB_LOCALITY")}`} <span className="check-page-link-button">*</span></CardLabel>
           <TextInput
             t={t}
             type={"text"}
@@ -210,7 +210,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             onChange={selectLocality}
             disabled={true}
           />
-          <CardLabel>{`${t("CHB_STREET_NAME")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+          <CardLabel>{`${t("CHB_STREET_NAME")}`} <span className="check-page-link-button">*</span></CardLabel>
           <TextInput
             t={t}
             type={"text"}
@@ -228,7 +228,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
               title: t("CHB_STREET_NAME_ERROR_MESSAGE"),
             })}
           />
-          <CardLabel>{`${t("CHB_HOUSE_NO")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+          <CardLabel>{`${t("CHB_HOUSE_NO")}`} <span className="check-page-link-button">*</span></CardLabel>
           <TextInput
             t={t}
             type={"text"}
@@ -247,7 +247,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
               title: t("CHB_HOUSE_NO_ERROR_MESSAGE"),
             })}
           />
-          <CardLabel>{`${t("CHB_LANDMARK")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+          <CardLabel>{`${t("CHB_LANDMARK")}`} <span className="check-page-link-button">*</span></CardLabel>
           <TextArea
             t={t}
             type={"textarea"}

@@ -3,7 +3,7 @@ import React from "react";
   import { Link } from "react-router-dom";
 
   const GetCell = (value) => <span className="cell-text">{value}</span>;
-  //console.log("cell value", GetCell.value)
+  
 
   const GetSlaCell = (value) => {
     if (isNaN(value)) return <span className="sla-cell-success">0</span>;
@@ -72,19 +72,27 @@ import React from "react";
 
           },
           mobileCell: (original) => GetMobCell(t(`AST_COMMON_STATUS_${original?.searchData?.["department"]}`)),
-        
-
+  
         },
         {
-          Header: t("AST_TRANSFER"),
+          Header: t("AST_ACTION"),
           Cell: ({ row }) => {
+            
             return (
               <div>
-                
                 <span className="link">
-                <Link to={`${props.parentRoute}/assetservice/assign-assets/`+ `${row?.original?.searchData?.["applicationNo"]}`}>
-                    {t('AST_TRANSFER '+`${row?.original?.searchData?.["assetParentCategory"]}`)}
-                  </Link>
+                {row?.original?.searchData?.status==="APPROVED" ?
+                (row?.original?.searchData?.assetAssignment?.isAssigned  ? 
+                        <Link to={`${props.parentRoute}/assetservice/return-assets/`+ `${row?.original?.searchData?.["applicationNo"]}`}>
+                            {t('AST_RETURN')}
+                        </Link>
+                      :
+                      <Link to={`${props.parentRoute}/assetservice/assign-assets/`+ `${row?.original?.searchData?.["applicationNo"]}`}>
+                      {t('AST_ASSIGN')}
+                    </Link>)
+                    :
+                    t('AST_SHOULD_BE_APPROVED_FIRST')
+                    }
                 </span>
               </div>
             );

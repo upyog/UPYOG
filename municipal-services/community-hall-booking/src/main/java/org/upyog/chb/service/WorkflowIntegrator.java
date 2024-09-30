@@ -45,7 +45,7 @@ public class WorkflowIntegrator {
 	private static final String ASSIGNEEKEY = "assignes";
 
 	private static final String MODULENAMEVALUE = "chb";
-	
+
 	private static final String UUIDKEY = "uuid";
 
 	private static final String WORKFLOWREQUESTARRAYKEY = "ProcessInstances";
@@ -121,8 +121,8 @@ public class WorkflowIntegrator {
 		}
 
 		/*
-		 * on success result from work-flow read the data and set the status
-		 * back to CHB object
+		 * on success result from work-flow read the data and set the status back to CHB
+		 * object
 		 */
 		DocumentContext responseContext = JsonPath.parse(response);
 		List<Map<String, Object>> responseArray = responseContext.read(PROCESSINSTANCESJOSNKEY);

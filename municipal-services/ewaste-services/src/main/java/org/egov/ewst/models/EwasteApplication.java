@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * A Object holds the basic data for a Pet Registration Application
+ * A Object holds the basic data for a Ewaste Application
  */
 @ApiModel(description = "A Object holds the basic data for a E-waste Application")
 @Validated
@@ -48,7 +48,7 @@ public class EwasteApplication {
 
 	@JsonProperty("pickUpDate")
 	private String pickUpDate = null;
-	
+
 	@JsonProperty("transactionId")
 	private String transactionId = null;
 

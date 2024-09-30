@@ -1,14 +1,20 @@
 package org.upyog.chb.service;
 
+
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Optional;
+
+import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
+import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.repository.ServiceRequestRepository;
-import org.upyog.chb.util.NotificationUtil;
+import org.upyog.chb.web.models.CommunityHallBookingDetail;
+import org.upyog.chb.web.models.CommunityHallBookingRequest;
+import org.upyog.chb.web.models.transaction.Transaction;
+import org.upyog.chb.web.models.transaction.TransactionRequest;
 import org.upyog.chb.web.models.workflow.ProcessInstance;
 import org.upyog.chb.web.models.workflow.ProcessInstanceRequest;
 import org.upyog.chb.web.models.workflow.ProcessInstanceResponse;
@@ -25,9 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 public class PaymentNotificationService {
 
 	@Autowired
-	private NotificationUtil util;
-
-	@Autowired
 	private ObjectMapper mapper;
 
 	@Value("${egov.mdms.host}")
@@ -41,7 +44,7 @@ public class PaymentNotificationService {
 
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
-	
+
 	@Autowired
 	private CommunityHallBookingService bookingService;
 
@@ -54,25 +57,38 @@ public class PaymentNotificationService {
 		log.info(" Receipt consumer class entry " + record.toString());
 		try {
 			PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
+			log.info("paymentRequest : " + paymentRequest);
 			String businessService = paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService();
 			log.info("Payment request processing in CHB method for businessService : " + businessService);
-			String businessServiceName = configs.getBusinessServiceName();
-			if (businessServiceName
+			if (configs.getBusinessServiceName()
 					.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
 				String bookingNo = paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode();
 				log.info("Updating payment status for CHB booking : " + bookingNo);
 				/**
-				 * Workflow will come into picture once hall location is changes or
-				 * booking is cancelled
-				 * otherwise after payment booking will be auto approved
+				 * Workflow will come into picture once hall location is changes or booking is
+				 * cancelled otherwise after payment booking will be auto approved
 				 * 
 				 */
-				//updateWorkflowStatus(paymentRequest);
+				// String tenantId = paymentRequest.getPayment().getTenantId();
+				// CommunityHallBookingSearchCriteria bookingSearchCriteria =
+				// CommunityHallBookingSearchCriteria.builder()
+				// .bookingNo(bookingNo)
+				// .tenantId(tenantId).build();
+				// updateWorkflowStatus(paymentRequest);
+				// List<CommunityHallBookingDetail> bookingDetail =
+				// bookingService.getBookingDetails(bookingSearchCriteria, null);
+				log.info("Reciept no of payment : " + paymentRequest.getPayment().getPaymentDetails().get(0).getReceiptNumber());
+				log.info("Payment date of payment : " + paymentRequest.getPayment().getPaymentDetails().get(0).getReceiptDate());
+				CommunityHallBookingDetail bookingDetail = CommunityHallBookingDetail.builder().bookingNo(bookingNo)
+						.build();
+				CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder()
+						.requestInfo(paymentRequest.getRequestInfo()).hallsBookingApplication(bookingDetail).build();
+				bookingService.updateBooking(bookingRequest, paymentRequest.getPayment().getPaymentDetails().get(0), BookingStatusEnum.BOOKED);
 			}
 		} catch (IllegalArgumentException e) {
-			log.error("Illegal argument exception occurred pet: " + e.getMessage());
+			log.error("Illegal argument exception occured while sending notification CHB : " + e.getMessage());
 		} catch (Exception e) {
-			log.error("An unexpected exception occurred pet: " + e.getMessage());
+			log.error("An unexpected exception occurred while sending notification CHB : ", e);
 		}
 
 	}
@@ -113,5 +129,30 @@ public class PaymentNotificationService {
 		response = mapper.convertValue(workflow, ProcessInstanceResponse.class);
 		return response.getProcessInstances().get(0).getState();
 	}
+	
+	
+   	public void processTransaction(HashMap<String, Object> record, String topic, BookingStatusEnum status){
+
+        TransactionRequest transactionRequest = mapper.convertValue(record, TransactionRequest.class);
+
+        RequestInfo requestInfo = transactionRequest.getRequestInfo();
+        Transaction transaction = transactionRequest.getTransaction();
+        
+        if(configs.getBusinessServiceName()
+				.equals(transaction.getModule()) && (transaction.getTxnStatus().equals(Transaction.TxnStatusEnum.FAILURE) ||
+						transaction.getTxnStatus().equals(Transaction.TxnStatusEnum.PENDING))){
+        	if(transaction.getTxnStatus().equals(Transaction.TxnStatusEnum.FAILURE)){
+        		status = BookingStatusEnum.PAYMENT_FAILED;
+        	}
+        	String bookingNo = transactionRequest.getTransaction().getConsumerCode();
+        	log.info("For booking no : " + bookingNo + " transaction status : " + transaction.getTxnStatus());
+        	CommunityHallBookingDetail bookingDetail = CommunityHallBookingDetail.builder().bookingNo(bookingNo)
+					.build();
+			CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder()
+					.requestInfo(requestInfo).hallsBookingApplication(bookingDetail).build();
+			bookingService.updateBooking(bookingRequest, null, status);
+            
+        }
+    }
 
 }

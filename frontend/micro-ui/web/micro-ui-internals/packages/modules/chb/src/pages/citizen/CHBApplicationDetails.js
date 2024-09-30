@@ -19,7 +19,6 @@ import { format } from "date-fns";
 
 import { useHistory, useParams, Link } from "react-router-dom";
 import getChbAcknowledgementData from "../../getChbAcknowledgementData";
-import getChbPaymentReceipt from "../../getChbPaymentReceipt";
 import CHBWFApplicationTimeline from "../../pageComponents/CHBWFApplicationTimeline";
 import CHBDocument from "../../pageComponents/CHBDocument";
 import ApplicationTable from "../../components/inbox/ApplicationTable";
@@ -40,10 +39,11 @@ const CHBApplicationDetails = () => {
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
 
-  const { isLoading, isError, error, data } = Digit.Hooks.chb.useChbSearch({
+  const { isLoading, isError, error, data,refetch } = Digit.Hooks.chb.useChbSearch({
     tenantId,
     filters: { bookingNo: acknowledgementIds },
   });
+  const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
 
   const [billData, setBillData] = useState(null);
 
@@ -88,40 +88,30 @@ const CHBApplicationDetails = () => {
     },
     { enabled: acknowledgementIds ? true : false }
   );
-  console.log("reciept_data-->",reciept_data);
-  console.log("reciept_data1234-->",acknowledgementIds);
   //WorkFlow
-  if (!chb_details.workflow) {
-    let workflow = {
-      id: null,
-      tenantId: tenantId,
-      businessService: "chb-services",
-      businessId: application?.bookingNo,
-      action: "",
-      moduleName: "chb-services",
-      state: null,
-      comment: null,
-      documents: null,
-      assignes: null,
-    };
-    chb_details.workflow = workflow;
-  }
+  // if (!chb_details.workflow) {
+  //   let workflow = {
+  //     id: null,
+  //     tenantId: tenantId,
+  //     businessService: "chb-services",
+  //     businessId: application?.bookingNo,
+  //     action: "",
+  //     moduleName: "chb-services",
+  //     state: null,
+  //     comment: null,
+  //     documents: null,
+  //     assignes: null,
+  //   };
+  //   chb_details.workflow = workflow;
+  // }
 
   let docs = [];
   docs = application?.documents;
-  console.log("docs", docs);
 
   if (isLoading || auditDataLoading) {
     return <Loader />;
   }
 
-  // for Generating Payment Receipt
-  const getPaymentReceiptData = async () => {
-    const applications = application || {}; // getting application details
-    const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
-    const acknowldgementDataAPI = await getChbPaymentReceipt({ ...applications }, tenantInfo, t);
-    Digit.Utils.pdf.generate(acknowldgementDataAPI);
-  };
   const getChbAcknowledgement = async () => {
     const applications = application || {}; // getting application details
     const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
@@ -137,10 +127,45 @@ const CHBApplicationDetails = () => {
   }
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
+    let application = data?.hallsBookingApplication?.[0];
+    let fileStoreId = application?.paymentReceiptFilestoreId
+    if (!fileStoreId) {
     let response = { filestoreIds: [payments?.fileStoreId] };
     response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "chbservice-receipt");
-    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-    window.open(fileStore[response?.filestoreIds[0]], "_blank");
+    const updatedApplication = {
+      ...application,
+      paymentReceiptFilestoreId: response?.filestoreIds[0]
+    };
+    await mutation.mutateAsync({
+      hallsBookingApplication: updatedApplication
+    });
+    fileStoreId = response?.filestoreIds[0];
+    refetch();
+    }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+    window.open(fileStore[fileStoreId], "_blank");
+  }
+  async function getPermissionLetter({ tenantId, payments, ...params }) {
+    let application = data?.hallsBookingApplication?.[0];
+    let fileStoreId = application?.permissionLetterFilestoreId;
+    if (!fileStoreId) {
+      const response = await Digit.PaymentService.generatePdf(
+        tenantId,
+        { hallsBookingApplication: [application] }, 
+        "chbpermissionletter"
+      );
+      const updatedApplication = {
+        ...application,
+        permissionLetterFilestoreId: response?.filestoreIds[0]
+      };
+      await mutation.mutateAsync({
+        hallsBookingApplication: updatedApplication
+      });
+      fileStoreId = response?.filestoreIds[0];
+      refetch();
+    }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+    window.open(fileStore[fileStoreId], "_blank");
   }
 
   const handleDownload = async (document, tenantid) => {
@@ -150,34 +175,25 @@ const CHBApplicationDetails = () => {
     window.open(documentLink, "_blank");
   };
 
-  const printCertificate = async () => {
-    let response = await Digit.PaymentService.generatePdf(
-      tenantId,
-      { hallsBookingApplication: [data?.hallsBookingApplication?.[0]] },
-      "petservicecertificate"
-    );
-    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-    window.open(fileStore[response?.filestoreIds[0]], "_blank");
-  };
-
   let dowloadOptions = [];
 
-  // Payment Receipt Button on Acknowledgement Page
-  dowloadOptions.push({
-    label: t("CHB_DOWNLOAD_ACK_FORM"),
-    onClick: () => getChbAcknowledgement(),
-  });
+  // // Payment Receipt Button on Acknowledgement Page
+  // if (reciept_data?.Payments[0]?.paymentStatus !== "DEPOSITED")
   // dowloadOptions.push({
-  //   label: t("CHB_PAYMENT_RECEIPT"),
-  //   onClick: () => getPaymentReceiptData(),
+  //   label: t("CHB_DOWNLOAD_ACK_FORM"),
+  //   onClick: () => getChbAcknowledgement(),
   // });
- 
 
   //commented out, need later for download receipt and certificate
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
     dowloadOptions.push({
-      label: t("CHB_FEE_RECIEPT"),
+      label: t("CHB_FEE_RECEIPT"),
       onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+    });
+  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+    dowloadOptions.push({
+      label: t("CHB_PERMISSION_LETTER"),
+      onClick: () => getPermissionLetter({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
     });
 
   // if (reciept_data?.Payments[0]?.paymentStatus === "DEPOSITED")
@@ -223,8 +239,8 @@ const CHBApplicationDetails = () => {
     ];
     const slotlistRows = chb_details?.bookingSlotDetails?.map((slot) => (
       {
-        communityHallCode: chb_details?.communityHallCode,
-        hallCode:slot.hallCode,
+        communityHallCode: `${t(chb_details?.communityHallCode)}`,
+        hallCode:slot.hallCode + " - " + slot.capacity,
         bookingDate:slot.bookingDate + " (" + slot.bookingFromTime + " - " + slot.bookingToTime + ")",
         bookingStatus:slot.status
       }
@@ -273,7 +289,7 @@ const CHBApplicationDetails = () => {
             <StatusTable>
               <Row className="border-none" label={t("CHB_PINCODE")} text={chb_details?.address?.pincode || t("CS_NA")} />
               <Row className="border-none" label={t("CHB_CITY")} text={chb_details?.address?.city || t("CS_NA")}/>
-              <Row className="border-none" label={t("CHB_LOCALITY")} text={chb_details?.address?.localityCode || t("CS_NA")} />
+              <Row className="border-none" label={t("CHB_LOCALITY")} text={chb_details?.address?.locality || t("CS_NA")} />
               <Row className="border-none" label={t("CHB_STREET_NAME")} text={chb_details?.address?.streetName || t("CS_NA")} />
               <Row className="border-none" label={t("CHB_HOUSE_NO")} text={chb_details?.address?.houseNo || t("CS_NA")} />
               <Row className="border-none" label={t("CHB_LANDMARK")} text={chb_details?.address?.landmark || t("CS_NA")} />
@@ -316,7 +332,7 @@ const CHBApplicationDetails = () => {
             </Card>
          </StatusTable>
 
-          <CHBWFApplicationTimeline application={application} id={application?.bookingNo} userType={"citizen"} />
+          {/* <CHBWFApplicationTimeline application={application} id={application?.bookingNo} userType={"citizen"} />
           {showToast && (
             <Toast
               error={showToast.key}
@@ -326,10 +342,10 @@ const CHBApplicationDetails = () => {
                 setShowToast(null);
               }}
             />
-          )}
+          )} */}
         </Card>
 
-        {popup && <PTCitizenFeedbackPopUp setpopup={setpopup} setShowToast={setShowToast} data={data} />}
+        {/* {popup && <PTCitizenFeedbackPopUp setpopup={setpopup} setShowToast={setShowToast} data={data} />} */}
       </div>
     </React.Fragment>
   );

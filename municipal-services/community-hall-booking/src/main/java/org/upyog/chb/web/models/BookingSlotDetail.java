@@ -31,6 +31,9 @@ public class BookingSlotDetail {
 	private String hallCode;
 	
 	@NotBlank
+	private String capacity;
+	
+	@NotBlank
 	private String bookingDate = null;
 	
 	@NotBlank
@@ -43,5 +46,5 @@ public class BookingSlotDetail {
 	private String status = null;
 	
 	private AuditDetails auditDetails;
-
+	
 }

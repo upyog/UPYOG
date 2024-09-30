@@ -101,10 +101,10 @@ public class CommonUtils {
 	/**
 	 * Fetches all the values of particular attribute as map of fieldname to list
 	 *
-	 * @param tenantId    tenantId from pet request
+	 * @param tenantId    tenantId from ewaste request
 	 * @param names       List of String containing the names of all masterdata
 	 *                    whose code has to be extracted
-	 * @param requestInfo RequestInfo of the received Pet request
+	 * @param requestInfo RequestInfo of the received Ewaste request
 	 * @return Map of MasterData name to the list of code in the MasterData
 	 *
 	 */

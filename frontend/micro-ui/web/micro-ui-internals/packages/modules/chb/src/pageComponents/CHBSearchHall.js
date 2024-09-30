@@ -45,6 +45,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     ""
   );
   const stateId = Digit.ULBService.getStateId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const [dateRange, setDateRange] = useState([{
     startDate: null,
     endDate: null,
@@ -60,22 +61,23 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     HallName.push({ i18nKey: `${slot.code}`, code: `${slot.code}`, value: `${slot.name}`, communityHallId: slot.communityHallId,address: slot.address});
   });
   Hall && Hall.map((slot) => {
-    HallId.push({ i18nKey: `${slot.code}`, code: `${slot.code}`, value: `${slot.code}`, communityHallId: slot.communityHallId });
+    HallId.push({ i18nKey: `${slot.HallCode}`, code: `${slot.HallCode}`, value: `${slot.HallCode}`, communityHallId: slot.communityHallId ,capacity:`${slot.capacity}`});
   });
   const hallCodeId = HallId.map((slot) => {
     if (selectedHall.communityHallId === slot.communityHallId) {
       return {
-        i18nKey: slot.code,
-        code: slot.code,
+        i18nKey: slot.code + " - " + slot.capacity + " Person",
+        code: slot.code ,
         value: slot.code,
-        communityHallId: slot.communityHallId
+        communityHallId: slot.communityHallId,
+        capacity:slot.capacity + " Person"
       };
     }
   }).filter(item => item !== undefined);
 
   // Define the slot_search hook to refetch data on search
   const { data: slotSearchData, refetch } = Digit.Hooks.chb.useChbSlotSearch({
-    tenantId: "pg.citya",
+    tenantId:tenantId,
     filters: {
       communityHallCode:Searchdata.communityHallCode,
       bookingStartDate:Searchdata.bookingStartDate,
@@ -88,9 +90,12 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     if (slotSearchData && slotSearchData.hallSlotAvailabiltityDetails) {
       const newData = slotSearchData.hallSlotAvailabiltityDetails.map((slot, index) => ({
         slotId: index + 1,
-        name: slot.communityHallCode,
+        name: `${t(slot.communityHallCode)}`,
+        code:slot.communityHallCode,
+        hallCode1:slot.hallCode,
         address: Searchdata.hallAddress,
-        hallCode: slot.hallCode,
+        hallCode: slot.hallCode + " - " + Searchdata.capacity,
+        capacity:Searchdata.capacity,
         bookingDate: slot.bookingDate,
         status: slot.slotStaus === "AVAILABLE" ? (
           <div className="sla-cell-success">Available</div>
@@ -134,21 +139,21 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     let owner = formData.slotlist && formData.slotlist[index];
     let ownerStep;
     if (userType === "citizen") {
-      ownerStep = { ...owner, bookingSlotDetails, selectedHall, hallCode };
+      ownerStep = { ...owner, bookingSlotDetails, selectedHall, hallCode,Searchdata };
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
     } else {
-      ownerStep = { ...owner, bookingSlotDetails, selectedHall, hallCode };
+      ownerStep = { ...owner, bookingSlotDetails, selectedHall, hallCode,Searchdata };
       onSelect(config.key, ownerStep, false, index);
     }
   };
-
+  
   const onSkip = () => onSelect();
 
   useEffect(() => {
     if (userType === "citizen") {
       goNext();
     }
-  }, [bookingSlotDetails, selectedHall, hallCode]);
+  }, [bookingSlotDetails, selectedHall, hallCode,Searchdata]);
   
   const handleViewReportClick = () => {
     if (selectedHall) {
@@ -156,7 +161,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
       setShowDetails(prevShowDetails => !prevShowDetails); 
     } else {
       // Show toast message
-      setShowToast({ error: true, label: 'Please select a hall name.' });
+      setShowToast({ error: true, label: t("CHB_SELECT_HALL_NAME") });
     }
   };
 
@@ -179,6 +184,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
         <input
           type="checkbox"
           checked={bookingSlotDetails.length === data.length}
+          disabled={data.every(row => row.status.props.children !== "Available")} 
           onChange={() => {
             if (bookingSlotDetails.length === data.length) {
               setBookingSlotDetails([]);
@@ -186,7 +192,9 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
             } else {
               const allRows = data.filter(row => row.status.props.children === "Available");
               setBookingSlotDetails(allRows);
+              if(data.length>0){
               setIsCheckboxSelected(true);
+              }
             }
           }}
         />
@@ -250,38 +258,40 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
         setShowDateRangePicker(false); // Close date range picker when both dates are selected
       }
     } else {
-      setShowToast({ error: true, label: 'You can only select a date range of up to 3 days.' });
+      setShowToast({ error: true, label: t("CHB_DATE_RANGE_LIMIT") });
     }
   };
 
-  const handleSearch = () => {
-    const selectedHallName = selectedHall?.value || "";
-    const startDate = dateRange[0].startDate ? format(dateRange[0].startDate, 'dd-MM-yyyy') : "";
-    const endDate = dateRange[0].endDate ? format(dateRange[0].endDate, 'dd-MM-yyyy') : "";
-    const selectedHallCode = hallCode?.code || "";
-  
-    if (selectedHallName && startDate && endDate) {
-      const filters = {
-        communityHallCode: selectedHallName,
-        bookingStartDate: startDate,
-        bookingEndDate: endDate,
-        hallAddress:selectedHall?.address,
-        hallCode:selectedHall?.hallCode || "1001"
-      };
-  
-      if (selectedHallCode) {
-        filters.hallCode = selectedHallCode;
-      }
-      setSearchData(filters);
-    } else {
-      setShowToast({ error: true, label: 'Please select either Community Hall Name with Date or both.' });
-    }
-  };
+ const handleSearch = () => {
+  const selectedHallName = selectedHall?.code || "";
+  const startDate = dateRange[0].startDate ? format(dateRange[0].startDate, 'dd-MM-yyyy') : "";
+  const endDate = dateRange[0].endDate ? format(dateRange[0].endDate, 'dd-MM-yyyy') : "";
+  const selectedHallCode = hallCode?.code || "";
+
+  if (selectedHallName && startDate && endDate && selectedHallCode) {
+    // Find hallCodeId based on selectedHall.communityHallId
+    // const hallCodeIds = hallCodeId.find(slot => selectedHall.communityHallId === slot.communityHallId);
+
+    const filters = {
+      communityHallCode: selectedHallName,
+      bookingStartDate: startDate,
+      bookingEndDate: endDate,
+      hallAddress: selectedHall?.address,
+      hallCode: selectedHallCode,
+      capacity:hallCode?.capacity
+    };
+
+    setSearchData(filters);
+  } else {
+    setShowToast({ error: true, label: t("CHB_SELECT_COMMUNITY_HALL_DATE_HALLCODE")});
+  }
+};
+
   
 
   const handleBookClick = () => {
     if (!isCheckboxSelected) {
-      setShowToast({ error: true, label: 'Please select at least one hall slot to book.' });
+      setShowToast({ error: true, label:t("CHB_SELECT_AT_LEAST_ONE_SLOT")});
     } else {
       goNext();
     }
@@ -300,6 +310,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
       if (Searchdata.communityHallCode) {
         refetch();
         setBookingSlotDetails([]);
+        setIsCheckboxSelected(false);
       }
     }, [Searchdata]);
   return (
@@ -313,7 +324,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
       >
         <CardHeader>{`${t("CHB_SEARCH_COMMUNITY_HALL_HEADER")}`}/{`${t("CHB_PARK")}`}</CardHeader>
         <div>
-          <CardLabel>{`${t("CHB_SELECT_HALL_NAME")}`} <span style={{ color: 'red' }}>*</span></CardLabel>
+          <CardLabel>{`${t("CHB_SELECT_HALL_NAME")}`} <span className="check-page-link-button">*</span></CardLabel>
           <div style={{ display: "flex", flexDirection: "row", gap: "10px"}}>
             <Controller
               control={control}
@@ -324,7 +335,10 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
                 <Dropdown
                   className="form-field"
                   selected={selectedHall}
-                  select={setSelectedHall}
+                  select={(selected) => {
+                    setSelectedHall(selected);
+                    setHallCode("");  // Clear hallCode when a new hall is selected
+                  }}
                   placeholder={"Select Community Hall"}
                   option={HallName}
                   optionKey="i18nKey"
@@ -339,7 +353,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
               )}
             </div>
           </div>
-          <div className="filter-label"><CardLabel>{`${t("CHB_SELECT_DATE")}`} <span style={{ color: 'red' }}>*</span></CardLabel></div>
+          <div className="filter-label"><CardLabel>{`${t("CHB_SELECT_DATE")}`} <span className="check-page-link-button">*</span></CardLabel></div>
           <div className="employee-select-wrap" style={{ width: "50%" }}>
             <div className="select">
               <input
@@ -378,7 +392,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
               </div>
             )}
           </div>
-          <CardLabel>{`${t("CHB_HALL_CODE")}`}</CardLabel>
+          <CardLabel>{`${t("CHB_HALL_CODE")}`} <span className="check-page-link-button">*</span></CardLabel>
           <Controller
             control={control}
             name={"hallCode"}

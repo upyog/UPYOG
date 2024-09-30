@@ -1,9 +1,7 @@
 import React, { useState } from "react"
 import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Toast } from "@nudmcdgnpm/digit-ui-react-components";
-import { useForm, Controller } from "react-hook-form";
 import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next";
-// import ASSETSearchApplication from "../../components/SearchApplication";
 import ASSETSearchApplication from "../../components/SearchApplication"
 
 
@@ -16,7 +14,6 @@ const SearchApp = ({path}) => {
     const [showToast, setShowToast] = useState(null);
 
     function onSubmit (_data) {
-      console.log("serachchchhd",_data);
         var fromDate = new Date(_data?.fromDate)
         fromDate?.setSeconds(fromDate?.getSeconds() - 19800 )
         var toDate = new Date(_data?.toDate)
@@ -48,7 +45,9 @@ const SearchApp = ({path}) => {
         },
        config,
       );
-      console.log("searchReult",searchReult);
+
+      console.log("searchReult",searchReult)
+      console.log("countonAPI",count);
     return <React.Fragment>
         <ASSETSearchApplication t={t} isLoading={isLoading} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={  isSuccess && !isLoading ? (searchReult.length>0? searchReult : { display: "ES_COMMON_NO_DATA" } ):""} count={count} /> 
         {showToast && (

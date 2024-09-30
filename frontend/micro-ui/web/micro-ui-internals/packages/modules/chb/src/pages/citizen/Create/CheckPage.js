@@ -286,7 +286,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <CheckBox
           label={t("CHB_FINAL_DECLARATION_MESSAGE")}
           onChange={setdeclarationhandler}
-          styles={{marginBottom: "25px"}}
+          styles={{ height: "auto" }}
           //disabled={!agree}
         />
       </div>

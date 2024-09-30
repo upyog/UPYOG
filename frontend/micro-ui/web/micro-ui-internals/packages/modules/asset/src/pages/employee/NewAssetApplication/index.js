@@ -13,6 +13,7 @@ const NewAssetApplication = () => {
   const history = useHistory();
   const { id: applicationNo } = useParams();
   const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
+  
    const [_formData, setFormData,_clear] = Digit.Hooks.useSessionStorage("store-data",null);
    const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", { });
@@ -39,23 +40,21 @@ const NewAssetApplication = () => {
 
   const onSubmit = (data) => {
     const assignedDateEpoch = convertToEpoch(data?.assigndetails?.[0]?.transferDate);
-    const returnDateEpoch = convertToEpoch(data?.assigndetails?.[0]?.returnDate);
     const formData = {
-      id: "",
+      id: applicationDetails?.applicationData?.applicationData?.id,
       tenantId: tenantId,
       applicationNo: applicationDetails?.applicationData?.applicationData?.applicationNo,
       assetAssignment: {
-        id: "",
+        assignmentId: "",
+        assetApplicaltionNo:"",
         assetId: "",
         assignedUserName: data?.assigndetails?.[0]?.assignedUser,
         designation: data?.assigndetails?.[0]?.designation,
-        department: data?.assigndetails?.[0]?.department,
+        department: data?.assigndetails?.[0]?.allocatedDepartment?.code,    //later we need to send the procured department here.
         assignedDate: assignedDateEpoch,
         isAssigned: true,
-        returnDate: returnDateEpoch,
         allocatedDepartment:data?.assigndetails?.[0]?.allocatedDepartment?.code, 
         employeeCode:data?.assigndetails?.[0]?.employeeCode,
-        returnValue:data?.assigndetails?.[0]?.returnValue?.code,
         auditDetails: {
           createdBy: "",
           lastModifiedBy: "",
@@ -65,7 +64,7 @@ const NewAssetApplication = () => {
       },   
     };
 
-    history.replace("/digit-ui/employee/asset/assetservice/assign-response", { Asset: formData }); 
+    history.replace("/digit-ui/employee/asset/assetservice/assign-response", { Assets: formData }); 
     
 
   };

@@ -7,16 +7,12 @@ import ASSETCard from "./components/ASSETCard";
 import InboxFilter from "./components/inbox/NewInboxFilter";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import Response from "./pages/Response";
+import ReturnResponse from "./pages/ReturnResponse";
 import { TableConfig } from "./config/inbox-table-config";
 import NewAssetApplication from "./pages/employee/NewAssetApplication";
-import AssetClassification from "./pageComponents/AssetClassification";
 import AssetDocuments from "./pageComponents/AssetDocuments";
-import AssetCommonDetails from "./pageComponents/AssetCommonDetails";
 import AssetPincode from "./pageComponents/AssetPincode";
 import AssetAddress from "./pageComponents/AssetAddress";
-import AssetCommonSelection from "./pageComponents/AssetCommonSelection";
-import AssetLand from "./pageComponents/AssetLand";
-import AssetBuildings from "./pageComponents/AssetBuildings";
 import AssetStreets from "./pageComponents/AssetStreets";
 import ServiceDoc from "./pageComponents/ServiceDoc";
 import ASSETCreate from "./pages/employee/TestApplication/Create";
@@ -26,18 +22,22 @@ import NewDocument from "./pageComponents/NewDocument";
 import ASTCheckPage from "./pages/employee/TestApplication/Create/CheckPage"
 import NewResponse from "./pages/employee/TestApplication/Create/NewResponse";
 import AssetAssign from "./pageComponents/AssetAssign";
+import ReturnAsset from "./pages/employee/ReturnAsset";
+import ReturnAssignedAsset from "./pageComponents/ReturnAssignedAsset";
+// import EditAsset from "./pages/employee/EditAsset";
+import EditAsset from "./pages/employee/EditAsset/EditAsset";
+import EditGeneralDetails from "./pageComponents/EditGeneralDetails";
+import EditAssetDetails from "./pageComponents/EditAssetDetails";
+import EditResponse from "./pages/employee/EditResponse";
+
+
 
 
 const componentsToRegister = {
   AssignAssetApplication: NewAssetApplication,
-  AssetClassification,
   AssetDocuments,
-  AssetCommonDetails,
-  AssetCommonSelection,
   AssetPincode,
   AssetAddress,
-  AssetLand,
-  AssetBuildings,
   AssetStreets,
   ServiceDoc,
   AssetCreateNew: ASSETCreate,
@@ -48,7 +48,16 @@ const componentsToRegister = {
   NewResponse,
   ApplicationDetails: ApplicationDetails,
   AssetResponse: Response, 
-  AssetAssign
+  returnResponse:ReturnResponse,
+  AssetAssign,
+  returnAssets:ReturnAsset,
+  ReturnAssignedAsset,
+  editAsset:EditAsset,
+  EditGeneralDetails,
+  EditAssetDetails,
+  editResponse:EditResponse
+  
+  
 };
 
 const addComponentsToRegistry = () => {

@@ -245,6 +245,7 @@ const ApplicationDetails = (props) => {
             forcedActionPrefix={forcedActionPrefix}
             ActionBarStyle={ActionBarStyle}
             MenuStyle={MenuStyle}
+            applicationDetails={applicationDetails}
           />
         </React.Fragment>
       ) : (

@@ -277,6 +277,8 @@ import useTenantsASSET from "./asset/useTenants"
 import useASSETApplicationAction from "./asset/useASSETApplicationAction";
 import useAssetparentSubType from "./asset/useAssetparentSubType";
 import useAssignCreateAPI from "./asset/useAssignCreateAPI";
+import useReturnAPI from "./asset/useReturnAPI";
+import useEditUpdateAPI from "./asset/useEditUpdateAPI";
 
 import useProductPriceMDMS from "./ew/useProductPriceMDMS";
 import useSpecialCategory from "./chb/useSpecialCategory";
@@ -299,6 +301,7 @@ import useServiceSearchCHB from "./chb/useServiceSearchCHB";
 import useChbCommunityHalls from "./chb/useChbCommunityHalls";
 import useChbHallCode from "./chb/useChbHallCode"
 import useChbSlotSearch from "./chb/useChbSlotSearch";
+import useDemandEstimation from "./chb/useDemandEstimation"
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
 
@@ -342,7 +345,9 @@ const asset = {
   useASSETSearch,
   useAssetparentSubType,
   useTenants: useTenantsASSET,
-  useAssignCreateAPI
+  useAssignCreateAPI,
+  useReturnAPI,
+  useEditUpdateAPI
 };
 
 const chb={
@@ -359,7 +364,8 @@ const chb={
   useServiceSearchCHB,
   useChbCommunityHalls,
   useChbHallCode,
-  useChbSlotSearch
+  useChbSlotSearch,
+  useDemandEstimation
 }
 
 const fsm = {

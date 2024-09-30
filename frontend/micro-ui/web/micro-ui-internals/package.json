@@ -8,13 +8,11 @@
     "example",
     "packages/react-components",
     "packages/modules/core",
+    "packages/modules/common",
+    "packages/modules/dss",
     "packages/modules/asset", 
     "packages/modules/ew",
-    "packages/modules/chb",
-    "packages/modules/common",
-    "packages/modules/dss"
-
-
+    "packages/modules/chb"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",

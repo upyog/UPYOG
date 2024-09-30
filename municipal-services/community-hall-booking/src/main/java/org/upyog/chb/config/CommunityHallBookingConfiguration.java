@@ -111,10 +111,7 @@ public class CommunityHallBookingConfiguration {
 	private String emailNotifTopic;
 
 	@Value("${kafka.topics.receipt.create}")
-	private String receiptTopic;
-
-	@Value("${kafka.topics.notification.pg.save.txns}")
-	private String pgTopic;
+	private String receiptCreateTopic;
 
 	@Value("${egov.localization.statelevel}")
 	private Boolean isStateLevel;
@@ -124,11 +121,6 @@ public class CommunityHallBookingConfiguration {
 
 	@Value("${notif.email.enabled}")
 	private Boolean isEmailNotificationEnabled;
-
-	// Notif variables
-
-	@Value("${egov.usr.events.download.receipt.link}")
-	private String userEventReceiptDownloadLink;
 
 	// Localization
 	@Value("${egov.localization.host}")
@@ -150,17 +142,15 @@ public class CommunityHallBookingConfiguration {
 	@Value("${egov.usr.events.create.topic}")
 	private String saveUserEventsTopic;
 
-	@Value("${egov.usr.events.pay.code}")
-	private String payCode;
-
 	@Value("${egov.user.event.notification.enabled}")
 	private Boolean isUserEventsNotificationEnabled;
-
-	@Value("${egov.msg.download.receipt.link}")
-	private String receiptDownloadLink;
-
+	
+	
 	@Value("${egov.msg.pay.link}")
 	private String payLinkSMS;
+	
+	@Value("${egov.chb.download.permission.letter.link}")
+	private String permissionLetterLink;
 
 	// Billing-Service
 
@@ -188,11 +178,31 @@ public class CommunityHallBookingConfiguration {
 	@Value("${egov.bill.gen.endpoint}")
 	private String billGenerateEndpoint;
 	
+	
+	//Module and business name
 	@Value("${chb.module.name}")
 	private String moduleName;
 	
 	@Value("${chb.business.service.name}")
 	private String businessServiceName;
+	
+	//url shortener
+	@Value("${egov.url.shortner.host}")
+	private String urlShortnerHost;
+
+	@Value("${egov.url.shortner.endpoint}")
+	private String shortenerEndpoint;
+	
+	//Notification Template
+	@Value("${chb.notification.booking.created.template}")
+	private String bookingCreatedTemplate;
+
+	@Value("${chb.notification.booked.template}")
+	private String bookedTemplate;
+	
+	@Value("${chb.claculation.tax.applicable}")
+	private String applicableTaxes;
+	
 
 	/*
 	 * @Bean public ObjectMapper objectMapper() { return new

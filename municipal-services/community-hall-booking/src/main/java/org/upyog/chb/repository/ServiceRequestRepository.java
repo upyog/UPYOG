@@ -37,6 +37,7 @@ public class ServiceRequestRepository {
         	log.info("request info : "+ request + " uri : " + uri);
             response = restTemplate.postForObject(uri.toString(), request, Map.class);
             log.info("response info : "+ response);
+            
         }catch(HttpClientErrorException e) {
             log.error("External Service threw an Exception: ",e);
             throw new ServiceCallException(e.getResponseBodyAsString());
@@ -46,4 +47,27 @@ public class ServiceRequestRepository {
 
         return response;
     }
+    
+    public String getShorteningURL(StringBuilder uri, Object request) {
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		String response = null;
+		/*
+		 * StringBuilder strq = new
+		 * StringBuilder(this.getClass().getCanonicalName()).append(".fetchResult:")
+		 * .append(System.lineSeparator());
+		 * str.append("URI: ").append(uri.toString()).append(System.lineSeparator());
+		 */
+		try {
+			//log.info("Url shortener url : " +  str.toString());
+			log.info("request info : "+ request + " uri : " + uri);
+			response = restTemplate.postForObject(uri.toString(), request, String.class);
+			log.info("response info : "+ response);
+		} catch (HttpClientErrorException e) {
+			log.error("External Service threw an Exception: ", e);
+			throw new ServiceCallException(e.getResponseBodyAsString());
+		} catch (Exception e) {
+			log.error("Exception while fetching from searcher: ", e);
+		}
+		return response;
+	}
 }

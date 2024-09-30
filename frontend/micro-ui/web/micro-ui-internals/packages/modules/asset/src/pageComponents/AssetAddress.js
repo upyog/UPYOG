@@ -33,6 +33,8 @@ const AssetAddress = ({ t, config, onSelect, userType, formData, formState }) =>
     t
   );
 
+ 
+
   const [localities, setLocalities] = useState();
 
   const [selectedLocality, setSelectedLocality] = useState();
