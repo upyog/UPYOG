@@ -418,7 +418,7 @@ const ApplicationDetails = () => {
   const appFeeDownloadReceipt = {
     order: 4,
     label: t("DOWNLOAD_RECEIPT_HEADER"),
-    onClick: () => getRecieptSearch(applicationDetails?.applicationData?.tenantId ? applicationDetails?.applicationData?.tenantId : Digit.ULBService.getCurrentTenantId(), reciept_data?.Payments?.[0], applicationDetails?.applicationData?.applicationNo, receiptKey ),
+    onClick: () => getRecieptSearch(Digit.ULBService.getStateId(), reciept_data?.Payments?.[0], applicationDetails?.applicationData?.applicationNo, receiptKey ),
   };
   const handleViewTimeline=()=>{
     setViewTimeline(true);
@@ -431,8 +431,9 @@ const ApplicationDetails = () => {
     order: 4,
     label: t("WS_APLICATION_RECEIPT"),
     onClick: async () => {
+      const tenant = Digit.ULBService.getStateId();
       const ConnectionDetailsfile = await Digit.PaymentService.generatePdf(tenantId, { WaterConnection: [applicationDetails?.applicationData] }, "ws-consolidatedacknowlegment");
-      const file = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: ConnectionDetailsfile.filestoreIds[0] });
+      const file = await Digit.PaymentService.printReciept(tenant, { fileStoreIds: ConnectionDetailsfile.filestoreIds[0] });
       window.open(file[ConnectionDetailsfile.filestoreIds[0]], "_blank");
     }
   };
