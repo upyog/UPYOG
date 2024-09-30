@@ -770,7 +770,7 @@ public class BillServicev2 {
 
 		String paymentPeriod = null;
 		String expiryDate = null;
-		BigDecimal newTotalAmountForModeOfPayment = new BigDecimal(0);
+		//BigDecimal newTotalAmountForModeOfPayment = new BigDecimal(0);
 
 		BillSearchCriteria billCriteria = new BillSearchCriteria();
 		billCriteria.setTenantId(demand.getTenantId());
@@ -976,7 +976,7 @@ public class BillServicev2 {
 		switch (Paymentmode) {
 		case QUARTERLY:
 			//calcualtion of all quaterly ammount
-			BigDecimal failedquaterammount=BigDecimal.ZERO;
+			BigDecimal amountwithpastdue=BigDecimal.ZERO;
 			BigDecimal allquaterammount=BigDecimal.ZERO;
 			BigDecimal quaterlyammount=BigDecimal.ZERO;
 			/*
@@ -993,7 +993,7 @@ public class BillServicev2 {
 			if(q1.contains(cuurentMonth)) {
 				paymentPeriod=Q1;
 				expiryDate= "30-06-"+currentyear;
-				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+				//newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
 				totalAmountForDemand = amountforquaterly.add(allquaterammount).add(pastDue);
 				mpdObj = new ModeOfPaymentDetails();
 				mpdObj = getModeOfPaymentDetails(totalAmountForDemand,"01-04-"+currentyear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),pastDue);
@@ -1006,11 +1006,11 @@ public class BillServicev2 {
 			{
 				if(!quaterly.contains("Q1"))
 				{
-					amountforquaterly=amountforquaterly.add(pastDue);
+					amountwithpastdue=amountforquaterly.add(pastDue);
 					String expiryDateQ1 = "30-06-"+currentyear;
 					String startDateQ1 ="01-04-"+currentyear;
 					mpdObj = new ModeOfPaymentDetails();
-					mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
+					mpdObj = getModeOfPaymentDetails(amountwithpastdue,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
 					mpdObj.setPastAmount(pastDue);
 					mpdList.add(mpdObj);
@@ -1021,7 +1021,7 @@ public class BillServicev2 {
 				String firstDayAfterexpiryDateQ1 = "01-07-"+nextYear;
 
 				//150
-				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+				//newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4)).setScale(0,RoundingMode.HALF_UP);
 				//750
 				quaterlyammount=ammountForTransactionperiod(Q1,amountforquaterly);
 				//750
@@ -1112,11 +1112,11 @@ public class BillServicev2 {
 			{
 				if(!quaterly.contains("Q1"))
 				{
-					amountforquaterly=amountforquaterly.add(pastDue);
+					amountwithpastdue=amountforquaterly.add(pastDue);
 					String expiryDateQ1 = "30-06-"+currentyear;
 					String startDateQ1 ="01-04-"+currentyear;
 					mpdObj = new ModeOfPaymentDetails();
-					mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
+					mpdObj = getModeOfPaymentDetails(amountwithpastdue,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
 					mpdObj.setPastAmount(pastDue);
 					mpdList.add(mpdObj);
@@ -1137,7 +1137,7 @@ public class BillServicev2 {
 				String firstDayAfterexpiryDateQ2 = "01-10-"+currentyear;
 
 
-				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+				//newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
 				quaterlyammount=ammountForTransactionperiod(Q2,amountforquaterly); 
 				quaterlyammount=quaterlyammount.add(pastDue); 
 
@@ -1235,11 +1235,11 @@ public class BillServicev2 {
 			{
 				if(!quaterly.contains("Q1"))
 				{
-					amountforquaterly=amountforquaterly.add(pastDue);
+					amountwithpastdue=amountforquaterly.add(pastDue);
 					String expiryDateQ1 = "30-06-"+currentyear;
 					String startDateQ1 ="01-04-"+currentyear;
 					mpdObj = new ModeOfPaymentDetails();
-					mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
+					mpdObj = getModeOfPaymentDetails(amountwithpastdue,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
 					mpdObj.setPastAmount(pastDue);
 					mpdList.add(mpdObj);
@@ -1266,7 +1266,7 @@ public class BillServicev2 {
 				expiryDate="31-03-"+nextYear;
 
 				String firstDayAfterexpiryDateQ3 = "01-01-"+nextYear;
-				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+				//newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
 
 				//450
 				quaterlyammount=ammountForTransactionperiod(Q3,amountforquaterly);
@@ -1387,6 +1387,7 @@ public class BillServicev2 {
 			BigDecimal failedhalfyearammount=BigDecimal.ZERO;
 			BigDecimal allhalfyearammount=BigDecimal.ZERO;
 			BigDecimal halfyearlyammount=BigDecimal.ZERO;
+			BigDecimal amountwithpastduehalf=BigDecimal.ZERO;
 			/*
 			 * for(BigDecimal
 			 * failedhalfyearvalue:failedtransactionMapForHalfYearly.values()) {
@@ -1402,7 +1403,7 @@ public class BillServicev2 {
 				paymentPeriod=H1;
 				expiryDate="30-09-"+currentyear;
 
-				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(2));
+				//newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(2));
 				totalAmountForDemand = ammountforhalfyearly.add(allhalfyearammount);
 
 				mpdObj = new ModeOfPaymentDetails();
@@ -1414,11 +1415,11 @@ public class BillServicev2 {
 			{
 				if( !halfyearly.contains("H1"))
 				{
-					ammountforhalfyearly=ammountforhalfyearly.add(pastDue);
+					amountwithpastduehalf=ammountforhalfyearly.add(pastDue);
 					String startDateh1="01-04-"+currentyear;
 					String expiryDateh1="30-09-"+currentyear;
 					mpdObj = new ModeOfPaymentDetails();
-					mpdObj = getModeOfPaymentDetails(ammountforhalfyearly,startDateh1, expiryDateh1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
+					mpdObj = getModeOfPaymentDetails(amountwithpastduehalf,startDateh1, expiryDateh1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
 					mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_1);
 					mpdList.add(mpdObj);
 				}
@@ -1427,7 +1428,7 @@ public class BillServicev2 {
 				expiryDate="31-03-"+nextYear;
 				String firstDayAfterexpiryDateH1 = "01-10-"+currentyear;
 
-				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(2));
+				//newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(2));
 				halfyearlyammount=ammountForTransactionperiod(H1,ammountforhalfyearly);
 				halfyearlyammount=halfyearlyammount.add(pastDue);
 				if(halfyearlyammount.compareTo(paidBillAmount)==0)
