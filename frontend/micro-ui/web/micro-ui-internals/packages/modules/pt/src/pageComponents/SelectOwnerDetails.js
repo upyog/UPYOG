@@ -65,7 +65,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
     } else {
       if (mutationScreen) {
-        ownerStep = { ...owner, name, gender, mobileNumber, fatherOrHusbandName, relationship };
+        ownerStep = { ...owner, name, gender, mobileNumber, fatherOrHusbandName, relationship,emailId: email };
         onSelect("", ownerStep);
         return;
       }
