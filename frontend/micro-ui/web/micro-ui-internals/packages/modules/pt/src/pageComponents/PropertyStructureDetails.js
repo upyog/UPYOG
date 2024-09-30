@@ -92,13 +92,13 @@ console.log("formaDataPropertyStructureDetails",formData)
      ]
      let structureType =[
       {
-        "i18nKey": "PERMANENT",
+        "i18nKey": "Permanent",
         "name": "Permanent",
         "code": "permanent",
        "active": true
        },
        {
-        "i18nKey": "TEMPORARY",
+        "i18nKey": "Temporary",
         "name": "Temporary",
         "code": "temporary",
        "active": true

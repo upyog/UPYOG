@@ -928,7 +928,7 @@ export const DownloadReceipt = async (consumerCode, tenantId, businessService, r
     let assessmentYear="",assessmentYearForReceipt="";
     let count=0;
     let toDate,fromDate;
-  if(payments.paymentDetails[0].businessService=="PT"){
+  if(payments.paymentDetails[0].businessService=="PT" || payments.paymentDetails[0].businessService=="PT.MUTATION"){
      let arrearRow={};  let arrearArray=[];
         let taxRow={};  let taxArray=[];
        
