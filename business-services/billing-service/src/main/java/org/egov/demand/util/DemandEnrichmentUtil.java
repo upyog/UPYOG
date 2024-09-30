@@ -67,12 +67,13 @@ public class DemandEnrichmentUtil {
 
 		for (Demand demand : demands) {
 			
-			if (null == demand.getPayer())
-				continue;
-
+			//if (null == demand.getPayer())
+			//	continue;
+			if (null != demand.getPayer()) {
 			String payerUuid = demand.getPayer().getUuid();
 			if (map.containsKey(payerUuid)) {
 				demand.setPayer(map.get(payerUuid));
+			}
 			}
 			rsDemands.add(demand);
 		}
