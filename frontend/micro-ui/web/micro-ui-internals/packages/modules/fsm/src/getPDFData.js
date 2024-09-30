@@ -40,6 +40,15 @@ const getAdvanceAmount = (advanceAmount) => {
   if (advanceAmount === null) return "N/A";
   return `₹ ${advanceAmount}`;
 };
+const getMohalaName= (application, t)=>{
+  console.log("application",application?.address.additionalDetails)
+  if(application?.address.additionalDetails?.village !=="" && application?.address.additionalDetails?.village !==undefined)
+  {
+   return  t(`${application?.tenantId?.toUpperCase().split(".").join("_")}_REVENUE_${application?.address?.locality?.code}`) +" "+t(`${application?.address.additionalDetails?.village?.name}`) || "N/A"
+  }
+  return t(`${application?.tenantId?.toUpperCase().split(".").join("_")}_REVENUE_${application?.address?.locality?.code}`)  || "N/A"
+
+}
 
 const getPDFData = (application, tenantInfo, t) => {
   const { additionalDetails } = application;
@@ -47,7 +56,7 @@ const getPDFData = (application, tenantInfo, t) => {
   const amountPerTrip = additionalDetails?.tripAmount;
   const totalAmount = amountPerTrip * application?.noOfTrips;
   const advanceAmountDue = application?.advanceAmount;
-
+console.log("applicationapplication",application)
   return {
     t: t,
     tenantId: tenantInfo?.code,
@@ -94,7 +103,7 @@ const getPDFData = (application, tenantInfo, t) => {
           { title: t("CS_APPLICATION_DETAILS_CITY"), value: application?.address?.city || "N/A" },
           {
             title: t("CS_APPLICATION_DETAILS_MOHALLA"),
-            value: t(`${application?.tenantId?.toUpperCase().split(".").join("_")}_REVENUE_${application?.address?.locality?.code}`) || "N/A",
+            value:getMohalaName(application, t)
           },
           {
             title: t("CS_APPLICATION_DETAILS_SLUM_NAME"),

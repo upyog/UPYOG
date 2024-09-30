@@ -103,7 +103,7 @@ const Response = ({ data, onSuccess }) => {
               },
               street: street?.trim(),
               doorNo: doorNo?.trim(),
-              landmark: landmark?.trim(),
+              landmark: landmark,
               slumName: slum,
               city: city?.name,
               pincode,
@@ -141,6 +141,7 @@ const Response = ({ data, onSuccess }) => {
           },
           workflow: null,
         };
+        console.log("formdata212",formdata,address,data)
         mutation.mutate(formdata, {
           onError,
           onSuccess: () => {

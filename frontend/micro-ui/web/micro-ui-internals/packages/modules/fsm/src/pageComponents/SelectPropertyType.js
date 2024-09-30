@@ -19,7 +19,8 @@ if (property !== "undefined")
   property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
 }
   const usageType = property?.propertyDetails?.usageCategory || property?.usageCategory
-  const [propertyType, setPropertyType] = useState();
+  console.log("formData",formData)
+  const [propertyType, setPropertyType] = useState(formData?.propertyType || "" );
 useEffect(()=>{
  if(userType === "employee" && property && propertyTypesData.data)
     {
@@ -36,17 +37,28 @@ useEffect(()=>{
         }
      
     }
+    if(property){
+      console.log("property",property,propertyTypesData)
+      if(property?.propertyDetails?.usageCategory == "COMMERCIAL" || property?.propertyDetails?.usageCategory == 
+      "RESIDENTIAL" ||property?.propertyDetails?.usageCategory == "INSTITUTIONAL")
+      {
+        setPropertyType(usageType)
+      }
+     
+    }
 },[])
   useEffect(() => {
-    if(property){
-      setPropertyType(usageType)
-    }
-    
-    if (!propertyTypesData.isLoading && propertyTypesData.data) {
+    console.log("usageType",usageType)
+    if (!propertyTypesData.isLoading && propertyTypesData.data && usageType) {
       const preFilledPropertyType = propertyTypesData.data.filter(
         (propertyType) => propertyType.code === (usageType||formData?.propertyType?.code || formData?.propertyType)
       )[0];
-      setPropertyType(preFilledPropertyType);
+      console.log("preFilledPropertyType",preFilledPropertyType)
+      if(preFilledPropertyType !== undefined)
+      {
+        setPropertyType(preFilledPropertyType);
+      }
+     
     }
   }, [property, formData?.propertyType, propertyTypesData.data]);
 
@@ -55,6 +67,7 @@ useEffect(()=>{
     onSelect(config.key, propertyType);
   };
   function selectedValue(value) {
+    console.log("vvv",value)
     setPropertyType(value);
   }
   function selectedType(value) {
@@ -70,7 +83,7 @@ useEffect(()=>{
     }
     return content;
   };
-
+console.log("propertyType",propertyType)
   if (propertyTypesData.isLoading) {
     return <Loader />;
   }
@@ -83,7 +96,7 @@ useEffect(()=>{
         selected={propertyType}
         select={selectedType}
         t={t}
-        disable={url.includes("/modify-application/") || url.includes("/new-application") ? false : true}
+        disable={url.includes("/modify-application/") || (url.includes("/new-application") && propertyType !== undefined) ? false : true}
       />
     );
   } else {

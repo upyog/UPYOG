@@ -270,7 +270,7 @@ let newConfig=[
           "header": "CS_FILE_APPLICATION_PROPERTY_LOCATION_PROVIDE_LANDMARK_TITLE",
           "cardText": "CS_FILE_APPLICATION_PROPERTY_LOCATION_PROVIDE_LANDMARK_TEXT",
           "submitBarLabel": "CS_COMMON_NEXT",
-          "skipText": "CORE_COMMON_SKIP_CONTINUE"
+          //"skipText": "CORE_COMMON_SKIP_CONTINUE"
       },
       "key": "address",
       "nextStep": "pit-type"
