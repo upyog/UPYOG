@@ -49,6 +49,7 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
     try {
       let tenantId = isPropertyMutation ? data.Property?.address.tenantId : data?.address?.city ? data.address?.city?.code : tenantId;
       data.tenantId = tenantId;
+      console.log("isPropertyMutation",isPropertyMutation,data)
       let formdata = !window.location.href.includes("edit-application")
         ? isPropertyMutation
           ? data
