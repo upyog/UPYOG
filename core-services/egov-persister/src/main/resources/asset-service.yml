@@ -1,0 +1,191 @@
+serviceMaps:
+ serviceName: AssetService
+ mappings:
+ - version: 1.0
+   name: asset-service
+   description: Save Asset Details
+   fromTopic: save-asset-assetdetails
+   isTransaction: true
+   queryMaps:
+     - query: INSERT INTO eg_asset_assetdetails (id, bookrefno, name, description, classification, parentcategory, category, subcategory, department, applicationno, approvalno, tenantid, status, action, businessservice, additionaldetails, createdtime, lastmodifiedtime, approvaldate, applicationdate, accountid, createdby, lastmodifiedby, remarks, asset_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+       basePath: Asset
+       jsonMaps:
+
+        - jsonPath: $.Asset.id
+
+        - jsonPath: $.Asset.assetBookRefNo
+
+        - jsonPath: $.Asset.assetName
+
+        - jsonPath: $.Asset.description
+
+        - jsonPath: $.Asset.assetClassification
+
+        - jsonPath: $.Asset.assetParentCategory
+
+        - jsonPath: $.Asset.assetCategory
+
+        - jsonPath: $.Asset.assetSubCategory
+
+        - jsonPath: $.Asset.department
+
+        - jsonPath: $.Asset.applicationNo
+
+        - jsonPath: $.Asset.approvalNo
+
+        - jsonPath: $.Asset.addressDetails.tenantId
+
+        - jsonPath: $.Asset.status
+
+        - jsonPath: $.Asset.workflow.action
+
+        - jsonPath: $.Asset.workflow.businessService
+
+        - jsonPath: $.Asset.additionalDetails
+          type: JSON
+          dbType: JSONB
+
+        - jsonPath: $.Asset.auditDetails.createdTime
+
+        - jsonPath: $.Asset.auditDetails.lastModifiedTime
+
+        - jsonPath: $.Asset.approvalDate
+
+        - jsonPath: $.Asset.applicationDate
+
+        - jsonPath: $.Asset.accountId
+
+        - jsonPath: $.Asset.auditDetails.createdBy
+
+        - jsonPath: $.Asset.auditDetails.lastModifiedBy
+
+        - jsonPath: $.Asset.remarks
+
+        - jsonPath: $.Asset.assetId
+
+
+     - query: INSERT INTO eg_asset_addressdetails (tenantid, doorno, latitude, longitude, addressid, addressnumber, type, addressline1, addressline2, landmark, city, pincode, detail, buildingname, street, locality_code, locality_name, locality_label, locality_latitude, locality_longitude, locality_materializedpath, asset_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+       basePath: Asset.addressDetails
+       jsonMaps:
+
+        - jsonPath: $.Asset.addressDetails.tenantId
+
+        - jsonPath: $.Asset.addressDetails.doorNo
+
+        - jsonPath: $.Asset.addressDetails.latitude
+
+        - jsonPath: $.Asset.addressDetails.longitude
+
+        - jsonPath: $.Asset.addressDetails.addressId
+
+        - jsonPath: $.Asset.addressDetails.addressNumber
+
+        - jsonPath: $.Asset.addressDetails.type
+
+        - jsonPath: $.Asset.addressDetails.addressLine1
+
+        - jsonPath: $.Asset.addressDetails.addressLine2
+
+        - jsonPath: $.Asset.addressDetails.landmark
+
+        - jsonPath: $.Asset.addressDetails.city
+
+        - jsonPath: $.Asset.addressDetails.pincode
+
+        - jsonPath: $.Asset.addressDetails.detail
+
+        - jsonPath: $.Asset.addressDetails.buildingName
+
+        - jsonPath: $.Asset.addressDetails.street
+
+        - jsonPath: $.Asset.addressDetails.locality.code
+
+        - jsonPath: $.Asset.addressDetails.locality.name
+
+        - jsonPath: $.Asset.addressDetails.locality.label
+
+        - jsonPath: $.Asset.addressDetails.locality.latitude
+
+        - jsonPath: $.Asset.addressDetails.locality.longitude
+
+#        - jsonPath: $.Asset.addressDetails.locality.*.children
+#          type: JSON
+#          dbType: JSONB
+
+        - jsonPath: $.Asset.addressDetails.locality.materializedPath
+
+        - jsonPath: $.Asset.id
+
+
+
+     - query: INSERT INTO eg_asset_auditdetails (id, bookrefno, name, description, classification, parentcategory, category, subcategory, department, applicationno, approvalno, tenantid, status, action, businessservice, additionaldetails, createdtime, lastmodifiedtime, approvaldate, applicationdate, accountid, createdby, lastmodifiedby) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+
+       basePath: Asset
+       jsonMaps:
+
+        - jsonPath: $.Asset.id
+
+        - jsonPath: $.Asset.assetBookRefNo
+
+        - jsonPath: $.Asset.assetName
+
+        - jsonPath: $.Asset.description
+
+        - jsonPath: $.Asset.assetClassification
+
+        - jsonPath: $.Asset.assetParentCategory
+
+        - jsonPath: $.Asset.assetCategory
+
+        - jsonPath: $.Asset.assetSubCategory
+
+        - jsonPath: $.Asset.department
+
+        - jsonPath: $.Asset.applicationNo
+
+        - jsonPath: $.Asset.approvalNo
+
+        - jsonPath: $.Asset.tenantId
+
+        - jsonPath: $.Asset.status
+
+        - jsonPath: $.Asset.workflow.action
+
+        - jsonPath: $.Asset.workflow.businessService
+
+        - jsonPath: $.Asset.additionalDetails
+          type: JSON
+          dbType: JSONB
+
+        - jsonPath: $.Asset.auditDetails.createdTime
+
+        - jsonPath: $.Asset.auditDetails.lastModifiedTime
+
+        - jsonPath: $.Asset.approvalDate
+
+        - jsonPath: $.Asset.applicationDate
+
+        - jsonPath: $.Asset.accountId
+
+        - jsonPath: $.Asset.auditDetails.createdBy
+
+        - jsonPath: $.Asset.auditDetails.lastModifiedBy
+
+
+
+
+ - version: 1.0
+   description: Update Asset Details
+   fromTopic: update-asset-assetdetails
+   isTransaction: true
+   queryMaps:
+
+    - query: UPDATE eg_site_application SET site_description = ?, gps_location = ?, site_address = ?, site_cost = ?, site_photograph = ?, structure = ?, size_length = ?, size_width = ?, led_selection = ?, security_amount = ?, powered = ?, others = ?, district_name = ?, ulb_name = ?, ulb_type = ?, ward_number = ?, pincode = ?, additional_detail = ?::JSONB, last_modified_by = ?, last_modified_date = ?, site_type = ?, status = ?, is_active = ?, booking_start_date = ?, booking_end_date = ?, application_start_date = ?, application_end_date = ? WHERE uuid = ? AND id = ?;
+
+      basePath: Asset
+      jsonMaps:
+
+       - jsonPath: $.Asset.id

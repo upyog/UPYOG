@@ -56,7 +56,6 @@ public class SiteRepository {
 
 	public void create(SiteCreationData siteCreation) {
 		siteCreation.setId(getNextSequence());
-		
 
 		jdbcTemplate.update(queryBuilder.CREATE_QUERY, siteCreation.getId(), siteCreation.getUuid(),
 				siteCreation.getSiteID(), siteCreation.getSiteName(), siteCreation.getSiteDescription(),
@@ -72,8 +71,9 @@ public class SiteRepository {
 				siteCreation.getAuditDetails().getLastModifiedBy(),
 				siteCreation.getAuditDetails().getLastModifiedDate(), siteCreation.getSiteType(),
 				siteCreation.getAccountId(), siteCreation.getStatus(), siteCreation.isActive(),
-				siteCreation.getTenantId(),siteCreation.getBookingPeriodStartDate(),siteCreation.getBookingPeriodEndDate(),
-				siteCreation.getApplicationStartDate(),siteCreation.getApplicationEndDate());
+				siteCreation.getTenantId(), siteCreation.getBookingPeriodStartDate(),
+				siteCreation.getBookingPeriodEndDate(), siteCreation.getApplicationStartDate(),
+				siteCreation.getApplicationEndDate());
 	}
 
 	public List<SiteCreationData> searchSiteIds(String siteName, String districtName, String ulbName,
@@ -155,6 +155,39 @@ public class SiteRepository {
 		return resultList;
 	}
 
+	/*
+	 * public List<SiteCreationData> `(SiteSearchRequest searchSiteRequest) {
+	 * StringBuilder siteSearchQuery = null; final List preparedStatementValues =
+	 * new ArrayList<>(); List<SiteCreationData> resultList = new ArrayList<>(); try
+	 * { siteSearchQuery = getSiteSearchQueryByCriteriaForCitzens(searchSiteRequest,
+	 * siteSearchQuery, preparedStatementValues); } catch (Exception e) {
+	 * 
+	 * throw new RuntimeException(e.getMessage()); } return null; }
+	 */
+
+	/*
+	 * private StringBuilder
+	 * getSiteSearchQueryByCriteriaForCitzens(SiteSearchRequest searchSiteRequest,
+	 * StringBuilder siteSearchQuery, List preparedStatementValues) { String query =
+	 * queryBuilder.SELECT_SITE_FOR_CITIZEN; boolean isActive = true; final
+	 * List<Object> parametersMap = new ArrayList<Object>();
+	 * preparedStatementValues.add(searchSiteRequest);
+	 * preparedStatementValues.add(true); // StringBuilder siteSearchQuery, List
+	 * preparedStatementValues) { siteSearchQuery = new
+	 * StringBuilder(queryBuilder.SELECT_SITE_FOR_CITIZEN); siteSearchQuery =
+	 * addWhereClauseForCitizens(siteSearchQuery, preparedStatementValues,
+	 * siteApplicationRowMapper); return siteSearchQuery; }
+	 */
+
+	/*
+	 * private StringBuilder addWhereClauseForCitizens(StringBuilder
+	 * siteSearchQuery, List preparedStatementValues, SiteApplicationRowMapper
+	 * siteApplicationRowMapper) { boolean isAppendAndClause = false; try {
+	 * siteSearchQuery.append(" WHERE");
+	 * 
+	 * } catch (Exception e) { // TODO: handle exception } return null; }
+	 */
+
 	private StringBuilder getSiteSearchQueryByCriteria(SiteSearchRequest searchSiteRequest,
 			StringBuilder siteSearchQuery, List preparedStatementValues) {
 		siteSearchQuery = new StringBuilder(queryBuilder.SELECT_SITE_QUERY);
@@ -172,6 +205,8 @@ public class SiteRepository {
 							&& StringUtils.isEmpty(searchSiteRequest.getSiteSearchData().getStatus())
 							&& StringUtils.isEmpty(searchSiteRequest.getSiteSearchData().getUlbName())
 							&& StringUtils.isEmpty(searchSiteRequest.getSiteSearchData().getWardNumber())
+							&& CollectionUtils.isEmpty(searchSiteRequest.getSiteSearchData().getUuids())
+							&& CollectionUtils.isEmpty(searchSiteRequest.getRequestInfo().getUserInfo().getRoles())
 							&& BooleanUtils.isFalse(searchSiteRequest.getSiteSearchData().isActive()))) {
 				return siteSearchQuery;
 			}
@@ -215,11 +250,35 @@ public class SiteRepository {
 			}
 
 			if (!CollectionUtils.isEmpty(searchSiteRequest.getSiteSearchData().getUuids())) {
-	            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, siteSearchQuery);
-	            siteSearchQuery.append(" eg_site_application.uuid IN ( ").append(getQueryForCollection(searchSiteRequest.getSiteSearchData().getUuids(),
-	                    preparedStatementValues)).append(" )");
-	        }
+				isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, siteSearchQuery);
+				siteSearchQuery.append(" eg_site_application.uuid IN ( ")
+						.append(getQueryForCollection(searchSiteRequest.getSiteSearchData().getUuids(),
+								preparedStatementValues))
+						.append(" )");
+			}
 
+			if (!CollectionUtils.isEmpty(searchSiteRequest.getSiteSearchData().getWorkflowStatus())) {
+				isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, siteSearchQuery);
+				siteSearchQuery.append(" eg_site_application.workflow_status IN ( ")
+						.append(getQueryForCollection(searchSiteRequest.getSiteSearchData().getWorkflowStatus(),
+								preparedStatementValues))
+						.append(" )");
+			}
+			/*
+			 * if (!searchSiteRequest.getSiteSearchData().getWorkflowStatus().isEmpty() &&
+			 * null != searchSiteRequest.getSiteSearchData().getWorkflowStatus()) {
+			 * isAppendAndClause = addAndClauseIfRequired(isAppendAndClause,
+			 * siteSearchQuery);
+			 * siteSearchQuery.append(" eg_site_application.workflow_status IN ( ")
+			 * .append(getQueryForCollection(searchSiteRequest.getSiteSearchData().getUuids(
+			 * ), preparedStatementValues)) .append(" )"); }
+			 */
+//			if (!CollectionUtils.isEmpty(searchSiteRequest.getSiteSearchData().getWorkflowStatus())) {
+//				isAppendAndClause=addAndClauseIfRequired(isAppendAndClause, siteSearchQuery);
+//				siteSearchQuery.append(" eg_site_application.workflow_status IN ( ")
+//				.append(getQueryForCollection(searchSiteRequest.getSiteSearchData().getWorkflowStatus())).append(" ) ");
+//				addToPreparedStatement(preparedStatementValues, searchSiteRequest.getSiteSearchData().getWorkflowStatus());
+//			}
 
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
@@ -233,19 +292,19 @@ public class SiteRepository {
 
 		return true;
 	}
-	
-	private String getQueryForCollection(List<?> ids, List<Object> preparedStmtList) {
-        StringBuilder builder = new StringBuilder();
-        Iterator<?> iterator = ids.iterator();
-        while (iterator.hasNext()) {
-            builder.append(" ?");
-            preparedStmtList.add(iterator.next());
 
-            if (iterator.hasNext())
-                builder.append(",");
-        }
-        return builder.toString();
-    }
+	private String getQueryForCollection(List<?> ids, List<Object> preparedStmtList) {
+		StringBuilder builder = new StringBuilder();
+		Iterator<?> iterator = ids.iterator();
+		while (iterator.hasNext()) {
+			builder.append(" ?");
+			preparedStmtList.add(iterator.next());
+
+			if (iterator.hasNext())
+				builder.append(",");
+		}
+		return builder.toString();
+	}
 
 	public int siteCount(String ulbName) {
 		String query = queryBuilder.SELECT_SITE_COUNT;

@@ -38,7 +38,7 @@ public class BusinessServiceController {
      * @param businessServiceRequest The BusinessService request for create
      * @return The created object
      */
-    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+    @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://localhost:443"}, allowedHeaders = "*", allowCredentials = "true")
     @RequestMapping(value="/businessservice/_create", method = RequestMethod.POST)
     public ResponseEntity<BusinessServiceResponse> create(@Valid @RequestBody BusinessServiceRequest businessServiceRequest) {
         List<BusinessService> businessServices = businessMasterService.create(businessServiceRequest);
@@ -55,7 +55,7 @@ public class BusinessServiceController {
      * @param requestInfoWrapper The requestInfoWrapper object containing requestInfo
      * @return List of businessServices from db based on search params
      */
-    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+    @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://localhost:443"}, allowedHeaders = "*", allowCredentials = "true")
     @RequestMapping(value="/businessservice/_search", method = RequestMethod.POST)
     public ResponseEntity<BusinessServiceResponse> search(@Valid @ModelAttribute BusinessServiceSearchCriteria searchCriteria,
                                                           @Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
@@ -67,7 +67,7 @@ public class BusinessServiceController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+    @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://localhost:443"}, allowedHeaders = "*", allowCredentials = "true")
     @RequestMapping(value="/businessservice/_update", method = RequestMethod.POST)
     public ResponseEntity<BusinessServiceResponse> update(@Valid @RequestBody BusinessServiceRequest businessServiceRequest) {
         List<BusinessService> businessServices = businessMasterService.update(businessServiceRequest);

@@ -126,6 +126,17 @@ public class GarbageAccountService {
 				createGarbageAccountObjects(garbageAccount);
 
 			});
+			
+			createGarbageRequest.getGarbageAccounts().forEach(garbageAccount -> {
+				if(!CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
+					garbageAccount.getChildGarbageAccounts().stream().forEach(subAccount -> {
+						// create garbage sub account
+						garbageAccountRepository.create(subAccount);
+						// create garbage objects
+						createGarbageAccountObjects(subAccount);
+					});
+				}
+			});
 		}
 		
 		GarbageAccountResponse garbageAccountResponse = GarbageAccountResponse.builder()
@@ -180,6 +191,41 @@ public class GarbageAccountService {
 
 		// enrich garbage unit
 		enrichCreateGarbageUnit(garbageAccount);
+
+		// enrich garbage sub accounts
+		enrichCreateGarbageSubAccounts(garbageAccount);
+
+		// enrich garbage sub account unit
+		enrichCreateSubGarbageAccountUnits(garbageAccount);
+	}
+	
+	
+
+	private void enrichCreateSubGarbageAccountUnits(GarbageAccount garbageAccount) {
+
+		if (!CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
+			garbageAccount.getChildGarbageAccounts().forEach(subAccount -> {
+				if (!CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
+					garbageAccount.getGrbgCollectionUnits().stream().forEach(unit -> {
+						unit.setUuid(UUID.randomUUID().toString());
+						unit.setIsActive(true);
+						unit.setGarbageId(subAccount.getGarbageId());
+					});
+				}
+			});
+		}
+	}
+
+
+	private void enrichCreateGarbageSubAccounts(GarbageAccount garbageAccount) {
+		if (!CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
+			garbageAccount.getChildGarbageAccounts().stream().forEach(subAccount -> {
+				subAccount.setUuid(UUID.randomUUID().toString());
+				subAccount.setIsOwner(false);
+				subAccount.setGarbageId(System.currentTimeMillis());
+				subAccount.setStatus(GrbgConstants.STATUS_INITIATED);
+			});
+		}
 	}
 
 
@@ -809,10 +855,10 @@ public class GarbageAccountService {
 			        null == searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getIsOwner()) {
 	
 					if(null != requestInfo && null != requestInfo.getUserInfo()
-							&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_ROLE_CITIZEN)) {
+							&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_TYPE_CITIZEN)) {
 						searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setCreatedBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()));
 					}else if(null != requestInfo && null != requestInfo.getUserInfo()
-							&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_ROLE_EMPLOYEE)) {
+							&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_TYPE_EMPLOYEE)) {
 						
 						List<String> listOfStatus = getAccountStatusListByRoles(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getTenantId(), requestInfo.getUserInfo().getRoles());
 						if(CollectionUtils.isEmpty(listOfStatus)) {
@@ -824,7 +870,7 @@ public class GarbageAccountService {
 					}
 			}
 		}else if(null != requestInfo && null != requestInfo.getUserInfo()
-				&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_ROLE_CITIZEN)) {
+				&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_TYPE_CITIZEN)) {
 			searchCriteriaGarbageAccountRequest.setSearchCriteriaGarbageAccount(
 					SearchCriteriaGarbageAccount.builder().createdBy(Collections.singletonList(
 									requestInfo.getUserInfo().getUuid())).build());

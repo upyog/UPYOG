@@ -53,4 +53,8 @@ public class SiteCreationData {
 	private Long applicationEndDate;
 	private Long bookingPeriodStartDate;
 	private Long bookingPeriodEndDate;
+	private String workflowAction;
+	private String comments;
+	private Boolean isOnlyWorkflowCall = false;
+	private String workFlowStatus;
 }

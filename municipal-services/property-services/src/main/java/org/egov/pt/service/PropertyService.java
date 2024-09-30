@@ -518,9 +518,9 @@ public class PropertyService {
 				properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false);
 			}
 
-//			properties.forEach(property -> {
-//				enrichmentService.enrichBoundary(property, requestInfo);
-//			});
+			properties.forEach(property -> {
+				enrichmentService.enrichBoundary(property, requestInfo);
+			});
 		}
 
 		/* Decrypt here */

@@ -7,7 +7,7 @@ serviceMaps:
    fromTopic: create-site-booking
    isTransaction: true
    queryMaps:
-    - query: INSERT INTO eg_site_booking (uuid, application_no, site_uuid, applicant_name, applicant_father_name, gender, mobile_number, email_id, advertisement_type, from_date, to_date, period_in_days, hoarding_type, structure, is_active, status, tenant_id, additional_detail, created_by, created_date, last_modified_by, last_modified_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_site_booking (uuid, application_no, site_uuid, applicant_name, applicant_father_name, gender, mobile_number, email_id, advertisement_type, from_date, to_date, period_in_days, hoarding_type, structure, is_active, status, tenant_id, additional_detail, created_by, created_date, last_modified_by, last_modified_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
       basePath: SiteBookings.*
       jsonMaps:
@@ -125,7 +125,7 @@ serviceMaps:
    isTransaction: true
    queryMaps:
 
-    - query: INSERT INTO eg_site_application (id, uuid, site_id, site_name, site_description, gps_location, site_address, site_cost, site_photograph, structure, size_length, size_width, led_selection, security_amount, powered, others, district_name, ulb_name, ulb_type, ward_number, pincode, additional_detail, created_by, created_date, last_modified_by, last_modified_date, site_type, account_id, status, is_active, tenant_id, booking_start_date, booking_end_date, application_start_date, application_end_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::JSONB, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_site_application (id, uuid, site_id, site_name, site_description, gps_location, site_address, site_cost, site_photograph, structure, size_length, size_width, led_selection, security_amount, powered, others, district_name, ulb_name, ulb_type, ward_number, pincode, additional_detail, created_by, created_date, last_modified_by, last_modified_date, site_type, account_id, status, is_active, tenant_id, booking_start_date, booking_end_date, application_start_date, application_end_date, workflow_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::JSONB, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
       basePath: siteCreationData
       jsonMaps:
@@ -201,6 +201,8 @@ serviceMaps:
        - jsonPath: $.siteCreationData.applicationStartDate
        
        - jsonPath: $.siteCreationData.applicationEndDate
+
+       - jsonPath: $.siteCreationData.workFlowStatus
        
        
        
@@ -210,7 +212,7 @@ serviceMaps:
    isTransaction: true
    queryMaps:
 
-    - query: UPDATE eg_site_application SET site_description = ?, gps_location = ?, site_address = ?, site_cost = ?, site_photograph = ?, structure = ?, size_length = ?, size_width = ?, led_selection = ?, security_amount = ?, powered = ?, others = ?, district_name = ?, ulb_name = ?, ulb_type = ?, ward_number = ?, pincode = ?, additional_detail = ?::JSONB, last_modified_by = ?, last_modified_date = ?, site_type = ?, status = ?, is_active = ?, booking_start_date = ?, booking_end_date = ?, application_start_date = ?, application_end_date = ? WHERE uuid = ? AND id = ?;
+    - query: UPDATE eg_site_application SET site_description = ?, gps_location = ?, site_address = ?, site_cost = ?, site_photograph = ?, structure = ?, size_length = ?, size_width = ?, led_selection = ?, security_amount = ?, powered = ?, others = ?, district_name = ?, ulb_name = ?, ulb_type = ?, ward_number = ?, pincode = ?, additional_detail = ?::JSONB, last_modified_by = ?, last_modified_date = ?, site_type = ?, status = ?, is_active = ?, booking_start_date = ?, booking_end_date = ?, application_start_date = ?, application_end_date = ?, workflow_status = ? WHERE uuid = ? AND id = ?;
 
       basePath: siteUpdationData
       jsonMaps:
@@ -270,6 +272,8 @@ serviceMaps:
        - jsonPath: $.siteUpdationData.applicationStartDate
        
        - jsonPath: $.siteUpdationData.applicationEndDate
+
+       - jsonPath: $.siteUpdationData.workFlowStatus
        
        - jsonPath: $.siteUpdationData.uuid
 
