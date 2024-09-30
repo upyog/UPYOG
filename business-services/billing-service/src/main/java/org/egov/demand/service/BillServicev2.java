@@ -1023,7 +1023,7 @@ public class BillServicev2 {
 				//150
 				//newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4)).setScale(0,RoundingMode.HALF_UP);
 				//750
-				quaterlyammount=ammountForTransactionperiod(Q1,amountforquaterly);
+				quaterlyammount=ammountForTransactionperiod(Q1,newTotalAmountForModeOfPayment);
 				//750
 				quaterlyammount=quaterlyammount.add(pastDue);
 				if(quaterlyammount.compareTo(paidBillAmount)==0)
@@ -1090,7 +1090,7 @@ public class BillServicev2 {
 				mpdObj = getModeOfPaymentDetails(amountforquaterly,"01-07-"+currentyear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),BigDecimal.ZERO);
 				mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2);
 				mpdList.add(mpdObj);
-				totalAmountForDemand = amountforquaterly.add(quaterlyammount).add(interestPercentOntaxAmount);
+				totalAmountForDemand = newTotalAmountForModeOfPayment.add(quaterlyammount).add(interestPercentOntaxAmount);
 
 				if(advancedBillAmount.compareTo(totalAmountForDemand)>0) {
 					advancedBillAmount = advancedBillAmount.subtract(totalAmountForDemand);
