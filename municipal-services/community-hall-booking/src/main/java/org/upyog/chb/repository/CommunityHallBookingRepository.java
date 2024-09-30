@@ -22,4 +22,6 @@ public interface CommunityHallBookingRepository {
 
 	List<CommunityHallSlotAvailabilityDetail> getCommunityHallSlotAvailability(
 			CommunityHallSlotSearchCriteria criteria);
+
+	Integer getBookingCount(@Valid CommunityHallBookingSearchCriteria criteria);
 }

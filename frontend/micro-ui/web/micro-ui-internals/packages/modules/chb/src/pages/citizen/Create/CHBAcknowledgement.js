@@ -36,15 +36,15 @@ const BannerPicker = (props) => {
 const CHBAcknowledgement = ({ data, onSuccess }) => {
   const { t } = useTranslation();
 
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.chb.useChbCreateAPI(data?.address?.city?.code);
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
+  const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId);
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const match = useRouteMatch();
   const { tenants } = storeData || {};
 
   useEffect(() => {
     try {
-      data.tenantId = data?.address?.city?.code;
+      data.tenantId = tenantId;
       let formdata = CHBDataConvert(data);
       mutation.mutate(formdata, {
         onSuccess,

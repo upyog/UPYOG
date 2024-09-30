@@ -1,5 +1,6 @@
 package org.upyog.chb.service.impl;
 
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.enums.BookingStatusEnum;
-import org.upyog.chb.enums.SlotStatusEnum;
 import org.upyog.chb.repository.CommunityHallBookingRepository;
+import org.upyog.chb.service.CHBEncryptionService;
 import org.upyog.chb.service.CommunityHallBookingService;
 import org.upyog.chb.service.DemandService;
 import org.upyog.chb.service.EnrichmentService;
@@ -30,6 +31,7 @@ import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 
 import digit.models.coremodels.PaymentDetail;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -54,6 +56,10 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	@Autowired
 	private MdmsUtil mdmsUtil;
 	
+	@Autowired
+	private CHBEncryptionService encryptionService;
+	
+	
 	@Override
 	public CommunityHallBookingDetail createBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest) {
 		log.info("Create community hall booking for user : "
@@ -70,7 +76,10 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		// 1. Validate request master data to confirm it has only valid data in records
 		hallBookingValidator.validateCreate(communityHallsBookingRequest, mdmsData);
 		// 2. Add fields that has custom logic like booking no, ids using UUID
-		enrichmentService.enrichCreateBookingRequest(communityHallsBookingRequest, communityHallsBookingRequest);
+		enrichmentService.enrichCreateBookingRequest(communityHallsBookingRequest);
+		
+		//ENcrypt PII data of applicant
+		encryptionService.encryptObject(communityHallsBookingRequest);
 
 		/**
 		 * Workflow will come into picture once hall location changes or booking is
@@ -89,7 +98,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 		return communityHallsBookingRequest.getHallsBookingApplication();
 	}
-
+	
 	@Override
 	public CommunityHallBookingDetail createInitBooking(
 			@Valid CommunityHallBookingRequest communityHallsBookingRequest) {
@@ -104,34 +113,48 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			RequestInfo info) {
 		hallBookingValidator.validateSearch(info, bookingSearchCriteria);
 		List<CommunityHallBookingDetail> bookingDetails = new ArrayList<CommunityHallBookingDetail>();
-		List<String> roles = new ArrayList<>();
-		for (Role role : info.getUserInfo().getRoles()) {
-			roles.add(role.getCode());
-		}
-		log.info("user roles for searching : " + roles);
-		if ((bookingSearchCriteria.tenantIdOnly() || bookingSearchCriteria.isEmpty())
-				&& roles.contains(CommunityHallBookingConstants.CITIZEN)) {
-			log.debug("loading data of created and by me");
-			bookingDetails = this.getBookingCreatedByMe(bookingSearchCriteria, info);
-		} else {
-			bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
-		}
+		bookingSearchCriteria  = addCreatedByMeToCriteria(bookingSearchCriteria, info);
+		log.info("loading data based on criteria" + bookingSearchCriteria);
+		
+		bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
+		bookingDetails = encryptionService.decryptObject(bookingDetails, info);
 
 		return bookingDetails;
 	}
+	
+	@Override
+	public Integer getBookingCount(@Valid CommunityHallBookingSearchCriteria criteria,
+			@NonNull RequestInfo requestInfo) {
+		criteria.setCountCall(true);
+		Integer bookingCount = 0;
+		
+		criteria  = addCreatedByMeToCriteria(criteria, requestInfo);
+		bookingCount = bookingRepository.getBookingCount(criteria);
+		
+		return bookingCount;
+	}
 
-	private List<CommunityHallBookingDetail> getBookingCreatedByMe(CommunityHallBookingSearchCriteria criteria,
-			RequestInfo requestInfo) {
-		List<CommunityHallBookingDetail> bookingDetails = new ArrayList<CommunityHallBookingDetail>();
-
+	
+	private CommunityHallBookingSearchCriteria addCreatedByMeToCriteria(CommunityHallBookingSearchCriteria criteria, RequestInfo requestInfo) {
+		if(requestInfo.getUserInfo() == null) {
+			log.info("Request info is null returning criteira");
+			return criteria;
+		}
+		List<String> roles = new ArrayList<>();
+		for (Role role : requestInfo.getUserInfo().getRoles()) {
+			roles.add(role.getCode());
+		}
+		log.info("user roles for searching : " + roles);
+		/**
+		 * Citizen can see booking details only booked by him
+		 */
 		List<String> uuids = new ArrayList<>();
-		if (requestInfo.getUserInfo() != null && !StringUtils.isEmpty(requestInfo.getUserInfo().getUuid())) {
+		if (roles.contains(CommunityHallBookingConstants.CITIZEN) && !StringUtils.isEmpty(requestInfo.getUserInfo().getUuid())) {
 			uuids.add(requestInfo.getUserInfo().getUuid());
 			criteria.setCreatedBy(uuids);
+			log.debug("loading data of created and by me" + uuids.toString());
 		}
-		log.debug("loading data of created and by me" + uuids.toString());
-		bookingDetails = bookingRepository.getBookingDetails(criteria);
-		return bookingDetails;
+		return criteria;
 	}
 
 	@Override
@@ -153,6 +176,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		convertBookingRequest(communityHallsBookingRequest, bookingDetails.get(0));
 
 		enrichmentService.enrichUpdateBookingRequest(communityHallsBookingRequest, status);
+		//Update payment date and receipt no on successful payment when payment detail object is received
 		if (paymentDetail != null) {
 			communityHallsBookingRequest.getHallsBookingApplication().setReceiptNo(paymentDetail.getReceiptNumber());
 			communityHallsBookingRequest.getHallsBookingApplication().setPaymentDate(paymentDetail.getReceiptDate());
@@ -232,7 +256,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		//Setting hall status to booked if it is already booked by checking in the database entry
 		availabiltityDetailsResponse.stream().forEach(detail -> {
 			if (availabiltityDetails.contains(detail)) {
-				detail.setSlotStaus(SlotStatusEnum.BOOKED.toString());
+				detail.setSlotStaus(BookingStatusEnum.BOOKED.toString());
 			}
 		});
 
@@ -244,9 +268,10 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		CommunityHallSlotAvailabilityDetail availabiltityDetail = CommunityHallSlotAvailabilityDetail.builder()
 				.communityHallCode(criteria.getCommunityHallCode()).hallCode(hallCode)
 			//Setting slot status available for every hall and hall code
-				.slotStaus(SlotStatusEnum.AVAILABLE.toString()).tenantId(criteria.getTenantId())
+				.slotStaus(BookingStatusEnum.AVAILABLE.toString()).tenantId(criteria.getTenantId())
 				.bookingDate(CommunityHallBookingUtil.parseLocalDateToString(date)).build();
 		return availabiltityDetail;
 	}
+
 
 }

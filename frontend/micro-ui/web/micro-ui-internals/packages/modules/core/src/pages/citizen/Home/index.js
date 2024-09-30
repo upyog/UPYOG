@@ -14,6 +14,7 @@ import {
   WhatsNewCard,
   OBPSIcon,
   WSICon,
+  CHBIcon,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -84,13 +85,13 @@ const Home = () => {
       },
       {
           name: t("ACTION_TEST_CHB"),
-          Icon: <DropIcon/>,
-          onClick: () => history.push("/digit-ui/citizen/chb-home")
+          Icon: <CHBIcon className="fill-path-primary-main"/>,
+          onClick: () => history.push(citizenServicesObj?.props?.[3]?.navigationUrl)
       },
       {
-        name: t(citizenServicesObj?.props?.[3]?.label),
+        name: t(citizenServicesObj?.props?.[4]?.label),
         Icon: <WSICon />,
-        onClick: () => history.push(citizenServicesObj?.props?.[3]?.navigationUrl),
+        onClick: () => history.push(citizenServicesObj?.props?.[4]?.navigationUrl),
       },
     ],
     styles: { display: "flex", flexWrap: "wrap", justifyContent: "flex-start", width: "100%" },

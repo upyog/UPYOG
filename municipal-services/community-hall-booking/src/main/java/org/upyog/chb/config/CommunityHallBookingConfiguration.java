@@ -5,9 +5,15 @@ import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 
 import org.egov.tracer.config.TracerConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -193,27 +199,8 @@ public class CommunityHallBookingConfiguration {
 	@Value("${egov.url.shortner.endpoint}")
 	private String shortenerEndpoint;
 	
-	//Notification Template
-	@Value("${chb.notification.booking.created.template}")
-	private String bookingCreatedTemplate;
-
-	@Value("${chb.notification.booked.template}")
-	private String bookedTemplate;
-	
 	@Value("${chb.claculation.tax.applicable}")
 	private String applicableTaxes;
 	
-
-	/*
-	 * @Bean public ObjectMapper objectMapper() { return new
-	 * ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-	 * .setTimeZone(TimeZone.getTimeZone(timeZone)); }
-	 * 
-	 * @Autowired public MappingJackson2HttpMessageConverter
-	 * jacksonConverter(ObjectMapper objectMapper) {
-	 * MappingJackson2HttpMessageConverter converter = new
-	 * MappingJackson2HttpMessageConverter();
-	 * converter.setObjectMapper(objectMapper); return converter; }
-	 */
 
 }

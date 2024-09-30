@@ -1,4 +1,4 @@
-import { Header, CitizenHomeCard, PTIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { Header, CitizenHomeCard,CHBIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
@@ -108,7 +108,7 @@ export const CHBLinks = ({ matchPath, userType }) => {
     
   ];
 
-  return <CitizenHomeCard header={t("COMMUNITY_HALL_BOOKING")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
+  return <CitizenHomeCard header={t("COMMUNITY_HALL_BOOKING")} links={links} Icon={() => <CHBIcon className="fill-path-primary-main" />} />;
 };
 
 export const CHBComponents = {

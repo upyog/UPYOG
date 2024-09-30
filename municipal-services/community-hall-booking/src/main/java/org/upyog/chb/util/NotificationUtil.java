@@ -1,6 +1,7 @@
 package org.upyog.chb.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +38,13 @@ public class NotificationUtil {
 	private Producer producer;
 
 	private final String URL = "url";
+	private static final String PAYMENT_LINK = "PAYMENT_LINK";
+
+	private static final String PERMISSION_LETTER_LINK = "PERMISSION_LETTER_LINK";
+
+	
+	public static final String MESSAGE_TEXT = "MESSAGE_TEXT";
+	public static final String ACTION_LINK = "ACTION_LINK";
 
 	@Autowired
 	public NotificationUtil(ServiceRequestRepository serviceRequestRepository, CommunityHallBookingConfiguration config,
@@ -149,10 +157,22 @@ public class NotificationUtil {
 		producer.push(config.getSaveUserEventsTopic(), request);
 	}
 
-	public String getCustomizedMsg(CommunityHallBookingDetail bookingDetail, String localizationMessage, String actionStatus) {
-		String message = null, messageTemplate = null;
+	/**
+	 * 
+	 * Get message from {@code localizationMessage} for particular event
+	 * Replace dynamic values of messages
+	 * 
+	 * @param bookingDetail
+	 * @param localizationMessage
+	 * @param actionStatus
+	 * @return
+	 */
+	public Map<String, String> getCustomizedMsg(CommunityHallBookingDetail bookingDetail, String localizationMessage, String actionStatus, String eventType) {
+		String messageTemplate = null, link = null;
+		String notificationEventType = actionStatus + "_" + eventType;
 		log.info(" booking status : " + bookingDetail.getBookingStatus());
 		log.info(" booking status ACTION_STATUS : " + actionStatus); 
+		log.info("notificationEventType  : " + notificationEventType);
 		
 		BookingStatusEnum notificationType = BookingStatusEnum.valueOf(actionStatus);
 
@@ -160,85 +180,68 @@ public class NotificationUtil {
 
 		case BOOKING_CREATED:
 			//Fetch message template from localization message for localization code
-			messageTemplate = getMessageTemplate(config.getBookingCreatedTemplate(), localizationMessage);
+			messageTemplate = getMessageTemplate(notificationEventType, localizationMessage);
+			
+			link = getActionLink(bookingDetail, actionStatus);
 			//Update placeholder in messages
-			message = populateDynamicValues(bookingDetail, messageTemplate);
+		//	message = populateDynamicValues(bookingDetail, messageTemplate);
 			//Shorten URL part of notification message
-			String shortUrl = getActionLink(bookingDetail, actionStatus);
+		//	String shortUrl = getActionLink(bookingDetail, actionStatus);
 			//Update payment link placeholder in message
-			message = message.replace(CommunityHallBookingConstants.CHB_PAYMENT_LINK, shortUrl);
+		//	message = message.replace(CommunityHallBookingConstants.CHB_PAYMENT_LINK, shortUrl);
 			break;
 
 		case BOOKED:
-			messageTemplate = getMessageTemplate(config.getBookedTemplate(), localizationMessage);
-			message = populateDynamicValues(bookingDetail, messageTemplate);
-			String permissionLetterShortUrl = getActionLink(bookingDetail, actionStatus);
-			message = message.replace(CommunityHallBookingConstants.CHB_PERMISSION_LETTER_LINK, permissionLetterShortUrl);
-			break;
-
-		case CANCELLATION_REQUESTED:
-			// TODO: Implement
-			messageTemplate = getMessageTemplate("", localizationMessage);
-			message = populateDynamicValues(bookingDetail, messageTemplate);
+			messageTemplate = getMessageTemplate(notificationEventType, localizationMessage);
+			link = getActionLink(bookingDetail, actionStatus);
+			
+		//	message = populateDynamicValues(bookingDetail, messageTemplate);
+		//	String permissionLetterShortUrl = getActionLink(bookingDetail, actionStatus);
+		//	message = message.replace(CommunityHallBookingConstants.CHB_PERMISSION_LETTER_LINK, permissionLetterShortUrl);
 			break;
 
 		case CANCELLED:
 			// TODO: Implement
-			messageTemplate = getMessageTemplate("", localizationMessage);
-			message = populateDynamicValues(bookingDetail, messageTemplate);
+			messageTemplate = getMessageTemplate(notificationEventType, localizationMessage);
+		//	message = populateDynamicValues(bookingDetail, messageTemplate);
 			break;
 			
 		case PAYMENT_FAILED:
-			messageTemplate = getMessageTemplate(config.getBookingCreatedTemplate(), localizationMessage);
-			break;
-			
-		case PENDING_FOR_PAYMENT:
-			//Notification not required in this case
+			messageTemplate = getMessageTemplate(notificationEventType, localizationMessage);
+			link = getActionLink(bookingDetail, actionStatus);
 			break;
 			
 		default:
-			message = "Localization message not available for  status : " + actionStatus;
+			messageTemplate = "Localization message not available for  status : " + actionStatus;
 			break;
 			
 		}
-		log.info("getCustomizedMsg messageTemplate : " + messageTemplate);
-		log.info("getCustomizedMsg  message : " + message);
-		return message;
-	}
-
-	// Hi {APPLICANT_NAME} your booking no {BOOKING_NO} for community hall
-	// {COMMUNITY_HALL_NAME} is created. Please pay using link {CHB_PAYMENT_LINK}
-	// Hi {APPLICANT_NAME} your booking no {BOOKING_NO} for community hall
-	// {COMMUNITY_HALL_NAME} is confirmed. Please download permission letter using
-	// link {CHB_PERMISSION_LETTER_LINK}
-	private String populateDynamicValues(CommunityHallBookingDetail bookingDetail, String message) {
-		message = message.replace(CommunityHallBookingConstants.APPLICANT_NAME,
-				bookingDetail.getApplicantDetail().getApplicantName());
-		message = message.replace(CommunityHallBookingConstants.BOOKING_NO, bookingDetail.getBookingNo());
-		message = message.replace(CommunityHallBookingConstants.COMMUNITY_HALL_NAME,
-				bookingDetail.getCommunityHallCode());
 		
-		return message;
+		Map<String, String> messageMap = new HashMap<String, String>();
+		messageMap.put(ACTION_LINK, link);
+		messageMap.put(MESSAGE_TEXT, messageTemplate);
+		
+		log.info("getCustomizedMsg messageTemplate : " + messageTemplate);
+		return messageMap;
 	}
 	
-	private String getActionLink(CommunityHallBookingDetail bookingDetail, String status) {
+	public String getActionLink(CommunityHallBookingDetail bookingDetail, String action) {
 		String link = null;
-		if(BookingStatusEnum.BOOKING_CREATED.toString().equals(status)) {
+		if(PAYMENT_LINK.equals(action)) {
 			//Payment Link
 			link = config.getUiAppHost() + config.getPayLinkSMS().replace("$consumerCode", bookingDetail.getBookingNo())
 					.replace("$mobile", bookingDetail.getApplicantDetail().getApplicantMobileNo()).replace("$tenantId", bookingDetail.getTenantId())
 					.replace("$businessService", config.getBusinessServiceName());
-		} else if(BookingStatusEnum.BOOKING_CREATED.toString().equals(status)) {
+		} else if(PERMISSION_LETTER_LINK.toString().equals(action)) {
 			//Permission letter link
 			link = config.getUiAppHost() + config.getPermissionLetterLink().replace("$consumerCode", bookingDetail.getBookingNo())
 					.replace("$mobile", bookingDetail.getApplicantDetail().getApplicantMobileNo()).replace("$tenantId", bookingDetail.getTenantId())
 					.replace("$businessService", config.getBusinessServiceName());
 		}
-		String shortUrl =  "";
 		if (null != link) {
-			shortUrl = getShortnerURL(link);
+			link = getShortnerURL(link);
 		}
-		return shortUrl;
+		return link;
 	}
 
 	private String getShortnerURL(String actualURL) {
@@ -249,5 +252,6 @@ public class NotificationUtil {
 		Object response = serviceRequestRepository.getShorteningURL(new StringBuilder(url), obj);
 		return response.toString();
 	}
+	
 
 }
