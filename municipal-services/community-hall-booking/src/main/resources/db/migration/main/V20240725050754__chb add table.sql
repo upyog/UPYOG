@@ -60,39 +60,41 @@ create table eg_chb_booking_detail_audit(
   payment_receipt_filestore_id character varying(64)
 );
 
-create table eg_chb_slot_detail(
-   slot_id character varying(64) NOT NULL,
-   booking_id character varying(64) NOT NULL,
-   hall_code character varying(64) NOT NULL,
-   capacity character varying(20) NOT NULL,
-   booking_date character varying(20) NOT NULL,
-   booking_from_time character varying(20) NOT NULL,
-   booking_to_time character varying(20) NOT NULL,
-   status character varying(30) NOT NULL,
-   createdBy character varying(64) NOT NULL,
-   createdTime bigint  NOT NULL,
-   lastModifiedBy character varying(64),
-   lastModifiedTime bigint,
-   constraint eg_chb_slot_detail_slot_id_pk PRIMARY KEY (slot_id),
-   constraint eg_chb_slot_detail_booking_id_fk 
-   FOREIGN KEY (booking_id) REFERENCES eg_chb_booking_detail (booking_id)
-     ON UPDATE NO ACTION
-     ON DELETE NO ACTION
+CREATE TABLE IF NOT EXISTS public.eg_chb_slot_detail
+(
+    slot_id character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    booking_id character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    hall_code character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    capacity character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    booking_date date NOT NULL,
+    booking_from_time time without time zone NOT NULL,
+    booking_to_time time without time zone NOT NULL,
+    status character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    createdby character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    createdtime bigint NOT NULL,
+    lastmodifiedby character varying(64) COLLATE pg_catalog."default",
+    lastmodifiedtime bigint,
+    CONSTRAINT eg_chb_slot_detail_slot_id_pk PRIMARY KEY (slot_id),
+    CONSTRAINT eg_chb_slot_detail_booking_id_fk FOREIGN KEY (booking_id)
+        REFERENCES public.eg_chb_booking_detail (booking_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
 );
 
-create table eg_chb_slot_detail_audit(
-   slot_id character varying(64) NOT NULL,
-   booking_id character varying(64) NOT NULL,
-   hall_code character varying(64) NOT NULL,
-   capacity character varying(20) NOT NULL,
-   booking_date character varying(20) NOT NULL,
-   booking_from_time character varying(20) NOT NULL,
-   booking_to_time character varying(20) NOT NULL,
-   status character varying(30) NOT NULL,
-   createdBy character varying(64) NOT NULL,
-   createdTime bigint  NOT NULL,
-   lastModifiedBy character varying(64),
-   lastModifiedTime bigint
+CREATE TABLE IF NOT EXISTS public.eg_chb_slot_detail_audit
+(
+    slot_id character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    booking_id character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    hall_code character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    capacity character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    booking_date date NOT NULL,
+    booking_from_time time without time zone NOT NULL,
+    booking_to_time time without time zone NOT NULL,
+    status character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    createdby character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    createdtime bigint NOT NULL,
+    lastmodifiedby character varying(64) COLLATE pg_catalog."default",
+    lastmodifiedtime bigint
 );
 
 CREATE INDEX IF NOT EXISTS idx_eg_chb_slot_detail_status ON eg_chb_slot_detail(status);
