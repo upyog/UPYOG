@@ -36,17 +36,23 @@ useEffect(()=>{
         }
      
     }
-},[])
-  useEffect(() => {
     if(property){
+      console.log("property",property)
       setPropertyType(usageType)
     }
-    
-    if (!propertyTypesData.isLoading && propertyTypesData.data) {
+},[])
+  useEffect(() => {
+    console.log("usageType",usageType)
+    if (!propertyTypesData.isLoading && propertyTypesData.data && usageType) {
       const preFilledPropertyType = propertyTypesData.data.filter(
         (propertyType) => propertyType.code === (usageType||formData?.propertyType?.code || formData?.propertyType)
       )[0];
-      setPropertyType(preFilledPropertyType);
+      console.log("preFilledPropertyType",preFilledPropertyType)
+      if(preFilledPropertyType !== undefined)
+      {
+        setPropertyType(preFilledPropertyType);
+      }
+     
     }
   }, [property, formData?.propertyType, propertyTypesData.data]);
 
@@ -55,6 +61,7 @@ useEffect(()=>{
     onSelect(config.key, propertyType);
   };
   function selectedValue(value) {
+    console.log("vvv",value)
     setPropertyType(value);
   }
   function selectedType(value) {
@@ -70,7 +77,7 @@ useEffect(()=>{
     }
     return content;
   };
-
+console.log("propertyType",propertyType)
   if (propertyTypesData.isLoading) {
     return <Loader />;
   }
@@ -83,7 +90,7 @@ useEffect(()=>{
         selected={propertyType}
         select={selectedType}
         t={t}
-        disable={url.includes("/modify-application/") || url.includes("/new-application") ? false : true}
+        disable={url.includes("/modify-application/") || (url.includes("/new-application") && propertyType !== undefined) ? false : true}
       />
     );
   } else {

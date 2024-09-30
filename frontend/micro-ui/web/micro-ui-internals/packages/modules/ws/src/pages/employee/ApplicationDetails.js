@@ -476,7 +476,7 @@ const ApplicationDetails = () => {
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
           <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
           <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
-          <div style={{zIndex: "10",  position: "relative"}}>
+          <div style={{zIndex: "10",  position: "relative", maxWidth:"100% !important"}}>
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper"
