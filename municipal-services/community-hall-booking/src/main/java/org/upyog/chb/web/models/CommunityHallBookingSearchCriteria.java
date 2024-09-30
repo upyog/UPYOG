@@ -41,10 +41,10 @@ public class CommunityHallBookingSearchCriteria {
 	private Integer limit;
 
 	@JsonProperty("fromDate")
-	private Long fromDate;
+	private String fromDate;
 
 	@JsonProperty("toDate")
-	private Long toDate;
+	private String toDate;
 	
 	private boolean isCountCall;
 

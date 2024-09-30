@@ -2,6 +2,7 @@ package org.upyog.chb.repository.rowmapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +23,9 @@ public class BookingSlotDetailRowmapper implements ResultSetExtractor<List<Booki
 
 			BookingSlotDetail slotDetail = BookingSlotDetail.builder().slotId(rs.getString("slot_id"))
 					.bookingId(rs.getString("booking_id")).hallCode(rs.getString("hall_code"))
-					.bookingDate(rs.getString("booking_date"))
-					.bookingFromTime(rs.getString("booking_from_time")).bookingToTime(rs.getString("booking_to_time"))
+					.bookingDate(CommunityHallBookingUtil.parseStringToLocalDate(rs.getString("booking_date")))
+					.bookingFromTime(LocalTime.parse(rs.getString("booking_from_time")))
+					.bookingToTime(LocalTime.parse(rs.getString("booking_to_time")))
 					.status(rs.getString("status"))
 					.capacity(rs.getString("capacity"))
 					.auditDetails(CommunityHallBookingUtil.getAuditDetails(rs)).build();

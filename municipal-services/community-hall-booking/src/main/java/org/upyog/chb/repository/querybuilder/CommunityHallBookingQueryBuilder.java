@@ -39,7 +39,7 @@ public class CommunityHallBookingQueryBuilder {
 			+ "	FROM eg_chb_booking_detail ecbd, eg_chb_slot_detail ecsd\n"
 			+ "where ecbd.booking_id = ecsd.booking_id and ecbd.tenant_id= ? and ecbd.community_hall_code = ?\n"
 			+ " and ecsd.status in ('BOOKED', 'PENDING_FOR_PAYMENT') and \n"
-			+ "	ecsd.booking_date >= ? and ecsd.booking_date <=  ? ";
+			+ "	ecsd.booking_date >= ?::DATE and ecsd.booking_date <=  ?::DATE ";
 		//	+ "	AND ecsd.hall_code in (?)";
 	
 	//private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";

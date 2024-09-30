@@ -1,7 +1,7 @@
 package org.upyog.chb.validator;
 
+import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
+import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.BookingSlotDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
@@ -29,19 +30,25 @@ public class CommunityHallBookingValidator {
 	private CommunityHallBookingConfiguration config;
 
 	/**
-	 * TODO: uncomment validation after adding data to MDMS
 	 * 
 	 * @param bookingRequest
 	 * @param mdmsData
 	 */
 	public void validateCreate(CommunityHallBookingRequest bookingRequest, Object mdmsData) {
-		log.info("validating master data for create booking request for applicant mobile no : " + bookingRequest.getHallsBookingApplication()
-		.getApplicantDetail().getApplicantMobileNo());
-		if(!isSameHallCode(bookingRequest.getHallsBookingApplication().getBookingSlotDetails())) {
-			throw new CustomException(CommunityHallBookingConstants.MULTIPLE_HALL_CODES_ERROR, "Booking of multiple halls are not allowed");
+		log.info("validating master data for create booking request for applicant mobile no : "
+				+ bookingRequest.getHallsBookingApplication().getApplicantDetail().getApplicantMobileNo());
+		if (!isSameHallCode(bookingRequest.getHallsBookingApplication().getBookingSlotDetails())) {
+			throw new CustomException(CommunityHallBookingConstants.MULTIPLE_HALL_CODES_ERROR,
+					"Booking of multiple halls are not allowed");
 		}
-		 mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
-		 validateDuplicateDocuments(bookingRequest);
+		
+		if(!validateBookingDate(bookingRequest.getHallsBookingApplication().getBookingSlotDetails())) {
+			throw new CustomException(CommunityHallBookingConstants.INVALID_BOOKING_DATE,
+					"Booking date is not valid.");
+		}
+
+		mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
+		validateDuplicateDocuments(bookingRequest);
 	}
 
 	public void validateUpdate(CommunityHallBookingRequest bookingRequest, Object mdmsData) {
@@ -49,9 +56,15 @@ public class CommunityHallBookingValidator {
 		.getApplicantDetail().getApplicantMobileNo());
 		mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
 	}
+	
+	private boolean validateBookingDate(List<BookingSlotDetail> bookingSlotDetails) {
+		LocalDate currentDate = CommunityHallBookingUtil.getCurrentDate();
+		boolean isBookingDateValid = bookingSlotDetails.stream().anyMatch(slotDetail ->
+		currentDate.isBefore(slotDetail.getBookingDate()));
+		return isBookingDateValid;
+	}
 
 	/**
-	 * TODO: add slot and document validation here
 	 * 
 	 * @param bookingRequest
 	 */
@@ -64,6 +77,8 @@ public class CommunityHallBookingValidator {
 				else
 					documentFileStoreIds.add(document.getFileStoreId());
 			});
+		} else {
+			throw new CustomException(CommunityHallBookingConstants.EMPTY_DOCUMENT_ERROR, "Documents are mandatory for booking.");
 		}
 	}
 
@@ -138,14 +153,17 @@ public class CommunityHallBookingValidator {
 		if (criteria.getMobileNumber() != null && !allowedParams.contains("mobileNumber"))
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Search on mobiloe number is not allowed");
 
-		if (criteria.getFromDate() != null  && (criteria.getFromDate() > new Date().getTime()))
-			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
-					"From date cannot be a future date");
-
-		if (criteria.getToDate() != null && criteria.getFromDate() != null
-				&& (criteria.getFromDate() > criteria.getToDate()))
-			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
-					"To date cannot be prior to from date");
+		/*
+		 * if (criteria.getFromDate() != null &&
+		 * (criteria.getFromDate().isBefore(LocalDate.now()))) throw new
+		 * CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
+		 * "From date cannot be a future date");
+		 * 
+		 * if (criteria.getToDate() != null && criteria.getFromDate() != null &&
+		 * (criteria.getToDate().isBefore(criteria.getFromDate()))) throw new
+		 * CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
+		 * "To date cannot be prior to from date");
+		 */
 	}
 	
 	public boolean isSameHallCode(List<BookingSlotDetail> bookingSlotDetails) {

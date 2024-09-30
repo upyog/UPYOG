@@ -16,6 +16,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 
 @Import({
@@ -49,7 +50,8 @@ public class CommunityHallBookingApplication {
 	@Bean
 	public ObjectMapper objectMapper() {
 		return new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-				.setTimeZone(TimeZone.getTimeZone(timeZone));
+				.setTimeZone(TimeZone.getTimeZone(timeZone))//.registerModule(new JavaTimeModule())
+				.findAndRegisterModules();
 	}
 
 	@Autowired
