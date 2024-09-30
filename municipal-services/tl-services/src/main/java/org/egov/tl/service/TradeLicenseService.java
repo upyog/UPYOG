@@ -720,6 +720,7 @@ public class TradeLicenseService {
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_VERIFY, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR, license.getAction())
+							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_APPROVER, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_VERIFIER, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_APPROVER, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_APPROVE, license.getAction())
