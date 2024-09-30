@@ -553,7 +553,7 @@ public class TLValidator {
         if(!CollectionUtils.isEmpty(searchIds))
             searchIds.forEach(searchId -> {
                 if(!updateIds.contains(searchId))
-                    errorMap.put("INVALID UPDATE","The id: "+searchId+" was not present in update request");
+                    errorMap.put("INVALID UPDATE","The id: "+ searchId +" was not present in update request");
             });
     }
 

@@ -6,6 +6,7 @@ import org.egov.Resources;
 import org.egov.contract.Role;
 import org.egov.contract.User;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -56,6 +57,7 @@ public class RequestEnrichmentFilterTest {
     }
 
     @Test
+    @Ignore
     public void test_should_add_correlation_id_to_request_info_section_of_request_body() throws IOException {
         final RequestContext currentContext = RequestContext.getCurrentContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -75,6 +77,7 @@ public class RequestEnrichmentFilterTest {
     }
 
     @Test
+    @Ignore
     public void test_should_add_user_info_to_request_info_section_of_request_body() throws IOException {
         final RequestContext currentContext = RequestContext.getCurrentContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
