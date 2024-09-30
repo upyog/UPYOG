@@ -128,7 +128,7 @@ const defaultLogo =
         margin: [10, 10],
       },
       {
-        text:"TERMS_AND_CONDITIONS_OF_LICENSE",
+        text:t("TERMS_AND_CONDITIONS_OF_LICENSE"),
         fontSize:16, 
         bold:true, 
         alignment:"center",
@@ -137,7 +137,7 @@ const defaultLogo =
         margin:[0, 25, 0, 0],
       },
       {
-        text:"TERMS_AND_CONDITIONS_OF_LICENSE_CONTENT",
+        text:t("TERMS_AND_CONDITIONS_OF_LICENSE_CONTENT"),
         fontSize:8,
         margin:[10, 20, 10,0] 
       },
@@ -265,7 +265,7 @@ const jsPdfGeneratorv1 = async ({ breakPageLimit = null, tenantId, logo, name, e
         margin: [10, 32],
       },
       {
-        text:"TERMS_AND_CONDITIONS_OF_LICENSE",
+        text: t("TERMS_AND_CONDITIONS_OF_LICENSE"),
         fontSize:16, 
         bold:true, 
         alignment:"center",
@@ -274,7 +274,7 @@ const jsPdfGeneratorv1 = async ({ breakPageLimit = null, tenantId, logo, name, e
         margin:[0, 25, 0, 0],
       },
       {
-        text:"TERMS_AND_CONDITIONS_OF_LICENSE_CONTENT",
+        text: t("TERMS_AND_CONDITIONS_OF_LICENSE_CONTENT"),
         fontSize:8,
         margin:[10, 20, 10,0] 
         
@@ -1007,6 +1007,7 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
   const detailsHeaders = []; 
   let counter=1;
   details.forEach((detail, index) => {
+    console.log("detail",detail)
     if (detail?.values?.length > 0) {
       console.log("lennn", detail?.title.length)
       detailsHeaders.push({
@@ -1051,7 +1052,7 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
           ]
     }})
     } else {
-      detail?.values?.map((indData, index) => {
+      Array.isArray(detail?.values)&& detail?.values?.map((indData, index) => {
         detailsHeaders.push({
           style: 'tableExample',
           layout: "noBorders", 

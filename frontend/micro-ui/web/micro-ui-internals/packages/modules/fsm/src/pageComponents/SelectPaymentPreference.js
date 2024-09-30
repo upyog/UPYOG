@@ -150,6 +150,7 @@ console.log("advance",advanceAmount,totalAmount,MinAmount)
             {t("FSM_TOTAL_AMOUNT_NOTE")}
           </CardLabelError>
         )}
+
         {/* <KeyNote keyValue={t("FSM_ADV_MIN_PAY") + " (₹)"} note={min} /> */}
         {/* <KeyNote keyValue={t("ADV_TOTAL_AMOUNT") + " (₹)"} note={max} /> */}
         <KeyNote keyValue={t("FSM_ADV_MIN_PAY") + " (₹)"} note={Math.ceil(min)} />
