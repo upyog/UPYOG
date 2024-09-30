@@ -19,7 +19,8 @@ if (property !== "undefined")
   property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
 }
   const usageType = property?.propertyDetails?.usageCategory || property?.usageCategory
-  const [propertyType, setPropertyType] = useState();
+  console.log("formData",formData)
+  const [propertyType, setPropertyType] = useState(formData?.propertyType || "" );
 useEffect(()=>{
  if(userType === "employee" && property && propertyTypesData.data)
     {
@@ -37,8 +38,13 @@ useEffect(()=>{
      
     }
     if(property){
-      console.log("property",property)
-      setPropertyType(usageType)
+      console.log("property",property,propertyTypesData)
+      if(property?.propertyDetails?.usageCategory == "COMMERCIAL" || property?.propertyDetails?.usageCategory == 
+      "RESIDENTIAL" ||property?.propertyDetails?.usageCategory == "INSTITUTIONAL")
+      {
+        setPropertyType(usageType)
+      }
+     
     }
 },[])
   useEffect(() => {
