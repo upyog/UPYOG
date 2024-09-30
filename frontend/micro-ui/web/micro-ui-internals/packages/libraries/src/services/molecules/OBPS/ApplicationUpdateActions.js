@@ -1,4 +1,4 @@
-import React,{ useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { OBPSService } from "../../elements/OBPS";
 import { PTService } from "../../elements/PT";
 import { useTranslation } from "react-i18next";

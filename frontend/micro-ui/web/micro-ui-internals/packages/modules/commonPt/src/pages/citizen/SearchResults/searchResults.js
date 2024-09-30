@@ -68,7 +68,7 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
   const searchArgs = scity ? { tenantId: scity, filters, auth } : { filters, auth };
   const result = Digit.Hooks.pt.usePropertySearch(searchArgs,{privacy: Digit.Utils.getPrivacyObject()});
   const consumerCode = result?.data?.Properties?.map((a) => a.propertyId).join(",");
-
+console.log("result",result)
   const fetchBillParams = mobileNumber ? { mobileNumber, consumerCode } : { consumerCode };
 
   const paymentDetails = Digit.Hooks.useFetchBillsForBuissnessService(
@@ -118,8 +118,8 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
     }
   });
 
-  const arr = isMutation ? result?.data?.Properties?.filter((e) => e.status === "ACTIVE") : result?.data?.Properties;
-
+  const arr = result?.data?.Properties?.filter((e) => e.status === "ACTIVE");
+console.log("arrarr",arr)
   const searchResults = arr?.map((property) => {
    
     let addr = property?.address || {};

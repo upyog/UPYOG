@@ -4,7 +4,6 @@ import EmployeeApp from "./pages/employee";
 import CitizenApp from "./pages/citizen";
 
 export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData }) => {
-  console.log("DigitApp", stateCode, modules)
   const history = useHistory();
   const { pathname } = useLocation();
   const innerWidth = window.innerWidth;

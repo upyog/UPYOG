@@ -41,7 +41,7 @@ import { ComplaintDetails } from "../pages/employee/ComplaintDetails";
 const capitalize = (text) => text.substr(0, 1).toUpperCase() + text.substr(1);
 const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ");
 const getPGRcknowledgementData = async (complaintDetails,tenantInfo, t) => {
-   
+   console.log("complaintDetails?.details?.CS_ADDCOMPLAINT_COMPLAINT_TYPE",complaintDetails?.details?.CS_ADDCOMPLAINT_COMPLAINT_TYPE)
       return {
         t: t,
         tenantId: tenantInfo?.code,
@@ -60,15 +60,15 @@ const getPGRcknowledgementData = async (complaintDetails,tenantInfo, t) => {
               },
               {
                 title: t("CS_COMPLAINT_TYPE"),
-                value: complaintDetails?.details?.CS_ADDCOMPLAINT_COMPLAINT_TYPE,
+                value: t(complaintDetails?.details?.CS_ADDCOMPLAINT_COMPLAINT_TYPE),
               },
               {
                 title: t("CS_COMPLAINT_SUB_TYPE"),
-                value: complaintDetails?.details?.CS_ADDCOMPLAINT_COMPLAINT_SUB_TYPE,
+                value: t(complaintDetails?.details?.CS_ADDCOMPLAINT_COMPLAINT_SUB_TYPE),
               },
               {
                 title: t("CS_COMPLAINT_PRIORITY_LEVEL"),
-                value: complaintDetails?.service?.priority,
+                value: t(complaintDetails?.service?.priority),
               },
               {
                 title: t("CS_COMPLAINT_ADDITIONAL_DETAILS"),
@@ -86,8 +86,8 @@ const getPGRcknowledgementData = async (complaintDetails,tenantInfo, t) => {
                 value: t(`${getMohallaLocale(complaintDetails?.service?.address?.locality?.code, tenantInfo?.code)}`) || t("CS_NA"),
               },
               { title: t("PGR_ADDRESS_STREET_NAME"), value: complaintDetails?.service?.address?.street || t("CS_NA") },
-              { title: t("PGR_ADDRESS_HOUSE_NO"), value: complaintDetails?.service?.address?.doorNo || t("CS_NA") },
-              { title: t("PGR_ADDRESS_LANDMARK"), value: complaintDetails?.service?.address?.landmark || t("CS_NA") },
+              // { title: t("PGR_ADDRESS_HOUSE_NO"), value: complaintDetails?.service?.address?.doorNo || t("CS_NA") },
+              // { title: t("PGR_ADDRESS_LANDMARK"), value: complaintDetails?.service?.address?.landmark || t("CS_NA") },
             ],
           },
          

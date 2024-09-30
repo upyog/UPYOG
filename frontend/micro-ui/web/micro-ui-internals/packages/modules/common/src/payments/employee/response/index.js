@@ -196,7 +196,7 @@ export const SuccessfulPayment = (props) => {
       let businessServ=payments.Payments[0].paymentDetails[0].businessService;
       let count=0;
       let toDate,fromDate;
-	  if(payments.Payments[0].paymentDetails[0].businessService=="PT"){
+	  if(payments.Payments[0].paymentDetails[0].businessService=="PT" || payments.Payments[0].paymentDetails[0].businessService=="PT.MUTATION"){
        
       payments.Payments[0].paymentDetails[0].bill.billDetails.map(element => {
 
