@@ -118,10 +118,7 @@ const NewApplication = () => {
         };
         if (_owner.ownerType !== "NONE") {
           const { documentType, documentUid } = owner?.documents;
-          _owner.documents = [
-            { documentUid: documentUid, documentType: documentType.code, fileStoreId: documentUid },
-            data?.documents?.documents?.find((e) => e.documentType?.includes("OWNER.IDENTITYPROOF")),
-          ];
+          _owner.documents = [data?.documents?.documents?.find((e) => e.documentType?.includes("OWNER.IDENTITYPROOF"))];
         } else {
           _owner.documents = [data?.documents?.documents?.find((e) => e.documentType?.includes("OWNER.IDENTITYPROOF"))];
         }
