@@ -63,7 +63,7 @@ export const externalAPIMapping = async function (
     //to convert queryparam and uri into properURI
 
     //for PT module
-    if (pdfKey == "pt-receipt") {
+    if (pdfKey == "ptt-receipt") {
       for (let j = 0; j < externalAPIArray[i].queryParams.length; j++) {
         if (externalAPIArray[i].queryParams[j] == "$") {
           flag = 1;
