@@ -25,11 +25,11 @@ const SelectLocalityOrGramPanchayat = ({ t, config, onSelect, userType, formData
   const [localities, setLocalities] = useState();
   const [gramPanchayats, setGramPanchayats] = useState();
   const [selectedGp, setSelectedGp] = useState(() =>
-    formData?.address?.additionalDetails?.gramPanchayat ? formData?.address?.additionalDetails?.gramPanchayat : {}
+    formData?.address?.gramPanchayat ? formData?.address?.gramPanchayat : {}
   );
   const [villages, setVillages] = useState([]);
   const [selectedVillage, setSelectedVillage] = useState(() =>
-    formData?.address?.additionalDetails?.village ? formData?.address?.additionalDetails?.village : {}
+    formData?.address?.village ? formData?.address?.village : {}
   );
   const [newVillage, setNewVillage] = useState();
   const [newGp, setNewGp] = useState();
