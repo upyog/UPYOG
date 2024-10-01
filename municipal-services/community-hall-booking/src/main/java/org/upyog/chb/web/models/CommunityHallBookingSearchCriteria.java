@@ -2,6 +2,8 @@ package org.upyog.chb.web.models;
 
 import java.util.List;
 
+import org.upyog.chb.validator.ValidDate;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -40,9 +42,11 @@ public class CommunityHallBookingSearchCriteria {
 	@JsonProperty("limit")
 	private Integer limit;
 
+	@ValidDate
 	@JsonProperty("fromDate")
 	private String fromDate;
 
+	@ValidDate
 	@JsonProperty("toDate")
 	private String toDate;
 	

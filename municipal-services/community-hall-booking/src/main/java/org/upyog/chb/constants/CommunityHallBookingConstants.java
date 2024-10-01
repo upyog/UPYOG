@@ -47,6 +47,7 @@ public class CommunityHallBookingConstants {
 	public static final String MULTIPLE_HALL_CODES_ERROR = "MULTIPLE_HALL_CODES_ERROR";
 	public static final String EMPTY_DOCUMENT_ERROR = "EMPTY_DOCUMENT_ERROR";
 	public static final String INVALID_BOOKING_DATE = "INVALID_BOOKING_DATE";
+	public static final String INVALID_BOOKING_DATE_RANGE= "INVALID_BOOKING_DATE_RANGE";
 	
 	
 	// NOTIFICATION PLACEHOLDER

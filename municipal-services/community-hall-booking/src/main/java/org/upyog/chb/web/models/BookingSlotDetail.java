@@ -5,6 +5,8 @@ import java.time.LocalTime;
 
 import javax.validation.constraints.NotBlank;
 
+import org.upyog.chb.util.CommunityHallBookingUtil;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -39,7 +41,7 @@ public class BookingSlotDetail {
 	private String capacity;
 	
 	@NonNull
-	@JsonFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = CommunityHallBookingUtil.DATE_FORMAT)
 	private LocalDate bookingDate;
 	
 	@NonNull

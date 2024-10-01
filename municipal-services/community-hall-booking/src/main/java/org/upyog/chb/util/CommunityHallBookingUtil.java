@@ -74,8 +74,11 @@ public class CommunityHallBookingUtil {
 		return date.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
 	}
 
-	public static String parseLocalDateToString(LocalDate date) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+	public static String parseLocalDateToString(LocalDate date, String dateFormat) {
+		if(dateFormat == null) {
+			dateFormat = DATE_FORMAT;
+		}
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
 		// Format the LocalDate
 		String formattedDate = date.format(formatter);
 		return formattedDate;
