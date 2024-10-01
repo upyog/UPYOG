@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -197,21 +198,77 @@ public class GarbageAccountService {
 
 		// enrich garbage sub account unit
 		enrichCreateSubGarbageAccountUnits(garbageAccount);
+
+		// enrich garbage sub account application
+		enrichCreateSubGarbageAccountAddress(garbageAccount);
+
+		// enrich garbage sub account address
+		enrichCreateSubGarbageAccountApplication(garbageAccount);
 	}
 	
 	
+
+	private void enrichCreateSubGarbageAccountApplication(GarbageAccount garbageAccount) {
+		
+		if (!CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
+			garbageAccount.getChildGarbageAccounts().forEach(subAccount -> {
+				GrbgApplication grbgApplication = GrbgApplication.builder()
+						.uuid(UUID.randomUUID().toString())
+						.applicationNo(GrbgConstants.APPLICATION_PREFIX.concat(subAccount.getGarbageId().toString()))
+						.status(GrbgConstants.STATUS_INITIATED)
+						.garbageId(subAccount.getGarbageId())
+						.build();
+				
+				subAccount.setGrbgApplication(grbgApplication);
+			});
+		}
+		
+		
+	}
+
+
+	private void enrichCreateSubGarbageAccountAddress(GarbageAccount garbageAccount) {
+
+		if (!CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())
+				&& !CollectionUtils.isEmpty(garbageAccount.getAddresses())) {
+			garbageAccount.getChildGarbageAccounts().forEach(subAccount -> {
+				
+				List<GrbgAddress> grbgAddresses = new ArrayList<>();
+						for(GrbgAddress tempG : garbageAccount.getAddresses()) {
+							grbgAddresses.add(objectMapper.convertValue(tempG, GrbgAddress.class));
+						}
+				subAccount.setAddresses(grbgAddresses);
+				subAccount.getAddresses().stream().forEach(address -> {
+					address.setUuid(UUID.randomUUID().toString());
+//					address.setIsActive(true);
+					address.setGarbageId(subAccount.getGarbageId());
+//					address.setAddress1(garbageAccount.getAddresses().get(0).getAddress1());
+//					address.setAddress2(garbageAccount.getAddresses().get(0).getAddress2());
+//					address.setCity(garbageAccount.getAddresses().get(0).getCity());
+//					address.setState(garbageAccount.getAddresses().get(0).getState());
+//					address.setPincode(garbageAccount.getAddresses().get(0).getPincode());
+//					address.setZone(garbageAccount.getAddresses().get(0).getZone());
+//					address.setUlbName(garbageAccount.getAddresses().get(0).getUlbName());
+//					address.setUlbType(garbageAccount.getAddresses().get(0).getUlbType());
+//					address.setWardName(garbageAccount.getAddresses().get(0).getWardName());
+//					address.setAdditionalDetail(garbageAccount.getAddresses().get(0).getAdditionalDetail());
+				});
+			});
+		}
+	}
+
 
 	private void enrichCreateSubGarbageAccountUnits(GarbageAccount garbageAccount) {
 
 		if (!CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
 			garbageAccount.getChildGarbageAccounts().forEach(subAccount -> {
-				if (!CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
-					garbageAccount.getGrbgCollectionUnits().stream().forEach(unit -> {
+//				if (!CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
+				subAccount.getGrbgCollectionUnits().stream().forEach(unit -> {
 						unit.setUuid(UUID.randomUUID().toString());
 						unit.setIsActive(true);
 						unit.setGarbageId(subAccount.getGarbageId());
 					});
-				}
+//				}
 			});
 		}
 	}
@@ -219,11 +276,15 @@ public class GarbageAccountService {
 
 	private void enrichCreateGarbageSubAccounts(GarbageAccount garbageAccount) {
 		if (!CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
+			AtomicInteger counter = new AtomicInteger(1);
 			garbageAccount.getChildGarbageAccounts().stream().forEach(subAccount -> {
 				subAccount.setUuid(UUID.randomUUID().toString());
+				subAccount.setPropertyId(garbageAccount.getPropertyId());
 				subAccount.setIsOwner(false);
-				subAccount.setGarbageId(System.currentTimeMillis());
+				subAccount.setGarbageId(System.currentTimeMillis()+(counter.getAndAdd(1)));
 				subAccount.setStatus(GrbgConstants.STATUS_INITIATED);
+				subAccount.setAuditDetails(garbageAccount.getAuditDetails());
+				subAccount.setIsParentAccount(false);
 			});
 		}
 	}
@@ -370,6 +431,7 @@ public class GarbageAccountService {
 		garbageAccount.setGarbageId(System.currentTimeMillis());
 		garbageAccount.setStatus(GrbgConstants.STATUS_INITIATED);
 		garbageAccount.setWorkflowAction(GrbgConstants.ACTION_INITIATE);
+		garbageAccount.setIsParentAccount(true);
 
 	}
 
