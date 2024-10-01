@@ -66,7 +66,7 @@ public class RequestEnrichmentFilter extends ZuulFilter {
 
     @Override
     public Object run() {
-//        modifyRequestBody();
+        modifyRequestBody();
         addRequestHeaders();
         return null;
     }
