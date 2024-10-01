@@ -1,7 +1,7 @@
-  import React, { useCallback, useMemo, useEffect } from "react"
+  import React, { useCallback, useMemo, useEffect,useRef,useState } from "react"
   import { useForm, Controller } from "react-hook-form";
   import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@nudmcdgnpm/digit-ui-react-components";
-  import { Link } from "react-router-dom";
+  import { Link,useHistory} from "react-router-dom";
 
   const CHBSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
     
@@ -22,10 +22,8 @@
       },[register])
       
 
-      const stateId = Digit.ULBService.getStateId();
-
-
-      const { data: Menu } = Digit.Hooks.chb.useResidentType(stateId, "CHB", "ChbResidentType");
+      const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
+      const { data: Menu } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "ChbCommunityHalls");
     
       let menu = [];
 
@@ -33,7 +31,7 @@
 
       Menu &&
     Menu.map((one) => {
-      menu.push({ i18nKey: `CHB_${one.code}`, code: `${one.code}`, value: `${one.name}` });
+      menu.push({ i18nKey: `${one.code}`, code: `${one.code}`, value: `${one.name}` });
     });
 
       const GetCell = (value) => <span className="cell-text">{value}</span>;
@@ -41,14 +39,14 @@
       const columns = useMemo( () => ([
           
           {
-              Header: t("CHB_APPLICATION_NUMBER"),
+              Header: t("CHB_BOOKING_NO"),
               accessor: "bookingNo",
               disableSortBy: true,
               Cell: ({ row }) => {
                 return (
                   <div>
                     <span className="link">
-                      <Link to={`/digit-ui/employee/chb/bookHall/applicationsearch/application-details/${row.original["bookingNo"]}`}>
+                      <Link to={`/digit-ui/employee/chb/applicationsearch/application-details/${row.original["bookingNo"]}`}>
                         {row.original["bookingNo"]}
                       </Link>
                     </span>
@@ -61,35 +59,139 @@
             {
               Header: t("CHB_APPLICANT_NAME"),
               Cell: ( row ) => {
-                return GetCell(`${row?.row?.original?.["applicantName"]}`)
+                return GetCell(`${row?.row?.original?.applicantDetail?.["applicantName"]}`)
                 
               },
               disableSortBy: true,
             },
             {
-              Header: t("CHB_HALL_NAME"),
+              Header: t("CHB_COMMUNITY_HALL_NAME"),
               Cell: ({ row }) => {
-                return GetCell(`${row.original?.residentType?.["residentType"]}`)
+                return GetCell(`${t(row.original["communityHallCode"])}`)
               },
               disableSortBy: true,
             
             },
             {
-              Header: t("CHB_HALL_CODE"),
+              Header: t("CHB_BOOKING_DATE"),
               Cell: ({ row }) => {
-                return GetCell(`${row.original?.petDetails?.["breedType"]}`)
+                return row?.original?.bookingSlotDetails.length > 1 
+                ? GetCell(`${row?.original?.bookingSlotDetails[0]?.["bookingDate"]}` + " - " + `${row?.original?.bookingSlotDetails[row?.original?.bookingSlotDetails.length-1]?.["bookingDate"]}`) 
+                : GetCell(`${row?.original?.bookingSlotDetails[0]?.["bookingDate"]}`);
               },
               disableSortBy: true,
+
             },
             {
-              Header: t("CHB_MOBILE_NUMBER"),
+              Header: t("PT_COMMON_TABLE_COL_STATUS_LABEL"),
               Cell: ({ row }) => {
-                return GetCell(`${row?.original?.["mobileNumber"]}`)
+                return GetCell(`${t(row?.original["bookingStatus"])}`)
               },
               disableSortBy: true,
             },
-        ]), [] )
+            
+            {
+              Header: t("CHB_ACTIONS"),
+              Cell: ({ row }) => {
+                const [isMenuOpen, setIsMenuOpen] = useState(false);
+                const menuRef = useRef();
+                const history = useHistory(); // Initialize history
 
+                const toggleMenu = () => {
+                  setIsMenuOpen(!isMenuOpen);
+                };
+
+                const closeMenu = (e) => {
+                  if (menuRef.current && !menuRef.current.contains(e.target)) {
+                    setIsMenuOpen(false);
+                  }
+                };
+
+                React.useEffect(() => {
+                  document.addEventListener("mousedown", closeMenu);
+                  return () => {
+                    document.removeEventListener("mousedown", closeMenu);
+                  };
+                }, []);
+
+                let application = row?.original;
+                
+                const handleCancel = async () => {
+                  const updatedApplication = {
+                    ...application,
+                    bookingStatus: "CANCELLED"
+                  };
+                  await mutation.mutateAsync({
+                    hallsBookingApplication: updatedApplication
+                  });
+                  setIsMenuOpen(false);
+                };
+
+                const handleNavigate = (url) => {
+                  history.push(url); // Use history.push for navigation
+                };
+
+                const actionOptions = [
+                  {
+                    label: application?.bookingStatus === "BOOKED" ? t("CHB_CANCEL") : t("CHB_COLLECT_PAYEMENT"),
+                    action: application?.bookingStatus === "BOOKED" ? handleCancel : () => {
+                      handleNavigate(`/digit-ui/employee/payment/collect/chb-services/${row?.original?.bookingNo}`);
+                    },
+                    disabled: application?.bookingStatus === "CANCELLED",
+                  },
+                ];
+
+                return (
+                  <div ref={menuRef}>
+                    <React.Fragment>
+                      <SubmitBar 
+                        label={t("WF_TAKE_ACTION")} 
+                        onSubmit={toggleMenu} 
+                        disabled={application?.bookingStatus === "CANCELLED" || application?.bookingStatus === "EXPIRED"} // Disable button
+                      />
+                      {isMenuOpen && (
+                        <div style={{
+                          position: 'absolute',
+                          backgroundColor: 'white',
+                          border: '1px solid #ccc',
+                          borderRadius: '4px',
+                          padding: '8px',
+                          zIndex: 1000,
+                        }}>
+                          {actionOptions.map((option, index) => (
+                            <div key={index}>
+                              <Link 
+                                to={option.disabled ? '#' : option.link} 
+                                onClick={(e) => {
+                                  if (option.disabled) {
+                                    e.preventDefault(); // Prevent action if disabled
+                                  } else {
+                                    option.action(); // Trigger the action for the selected option
+                                  }
+                                }}
+                                style={{
+                                  display: 'block',
+                                  padding: '8px',
+                                  textDecoration: option.disabled ? 'none' : 'underline',
+                                  color: option.disabled ? 'grey' : 'black',
+                                }}
+                              >
+                                {option.label}
+                              </Link>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </React.Fragment>
+                  </div>
+                );
+              },
+            }
+        ]), [] )
+        const statusOptions = [
+          { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") },
+          { i18nKey: "Booking in Progres", code: "BOOKING_CREATED", value: t("CHB_BOOKING_IN_PROGRES") }
+        ];
       const onSort = useCallback((args) => {
           if (args.length === 0) return
           setValue("sortBy", args.id)
@@ -114,21 +216,20 @@
       return <React.Fragment>
                   
                   <div>
-                  <Header>{t("CHB_SEARCH_APPLICATIONS")}</Header>
+                  <Header>{t("CHB_SEARCH_BOOKINGS")}</Header>
                   < Card className={"card-search-heading"}>
                       <span style={{color:"#505A5F"}}>{t("Provide at least one parameter to search for an application")}</span>
                   </Card>
                   <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                   <SearchField>
-                      <label>{t("CHB_APPLICATION_NO_LABEL")}</label>
-                      <TextInput name="applicationNumber" inputRef={register({})} />
+                      <label>{t("CHB_BOOKING_NO")}</label>
+                      <TextInput name="bookingNo" inputRef={register({})} />
                   </SearchField>
                   <SearchField>
-                      <label>{t("CHB_SEARCH_RESIDENT_TYPE")}</label>
-                      {/* <TextInput name="petType" inputRef={register({})} /> */}
+                      <label>{t("CHB_COMMUNITY_HALL_NAME")}</label>
                       <Controller
                               control={control}
-                              name="petType"
+                              name="communityHallCode"
                               render={(props) => (
 
                                   <Dropdown
@@ -145,7 +246,26 @@
                               />
                   </SearchField>
                   <SearchField>
-                  <label>{t("CHB_OWNER_MOBILE_NO")}</label>
+                      <label>{t("PT_COMMON_TABLE_COL_STATUS_LABEL")}</label>
+                      <Controller
+                              control={control}
+                              name="status"
+                              render={(props) => (
+                                  <Dropdown
+                                  selected={props.value}
+                                  select={props.onChange}
+                                  onBlur={props.onBlur}
+                                  option={statusOptions}
+                                  optionKey="i18nKey"
+                                  t={t}
+                                  disable={false}
+                                  />
+                                  
+                              )}
+                              />
+                  </SearchField>
+                  {/* <SearchField>
+                  <label>{t("CHB_MOBILE_NUMBER")}</label>
                   <MobileNumber
                       name="mobileNumber"
                       inputRef={register({
@@ -168,17 +288,17 @@
                   //maxlength={10}
                   />
                   <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
-                  </SearchField> 
+                  </SearchField>  */}
                   <SearchField>
-                      <label>{t("CHB_FROM_DATE")}</label>
+                      <label>{t("FROM_DATE")}</label>
                       <Controller
                           render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
                           name="fromDate"
                           control={control}
                           />
                   </SearchField>
-                  <SearchField>
-                      <label>{t("CHB_TO_DATE")}</label>
+                  <SearchField style={{marginTop : "0px" }}>
+                      <label>{t("TO_DATE")}</label>
                       <Controller
                           render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
                           name="toDate"
@@ -190,13 +310,12 @@
                       <p style={{marginTop:"10px"}}
                       onClick={() => {
                           reset({ 
-                              applicationNumber: "", 
+                              bookingNo: "", 
+                              communityHallCode: "",
                               fromDate: "", 
                               toDate: "",
-                              petType: "",
-                              mobileNumber:"",
+                              // mobileNumber:"",
                               status: "",
-                              breedType: "",
                               offset: 0,
                               limit: 10,
                               sortBy: "commencementDate",
