@@ -321,7 +321,7 @@ public class SiteBookingService {
 				
 				List<Demand> savedDemands = new ArrayList<>();
             	// generate demand
-				savedDemands = demandService.generateDemand(siteBookingRequest.getRequestInfo(), booking, AdvtConstants.BUSINESS_SERVICE);
+				savedDemands = demandService.generateDemand(siteBookingRequest.getRequestInfo(), booking, AdvtConstants.BUSINESS_SERVICE_SITE_BOOKING);
 	            
 
 		        if(CollectionUtils.isEmpty(savedDemands)) {
@@ -331,7 +331,7 @@ public class SiteBookingService {
 				// fetch/create bill
 	            GenerateBillCriteria billCriteria = GenerateBillCriteria.builder()
 	            									.tenantId(booking.getTenantId())
-	            									.businessService(AdvtConstants.BUSINESS_SERVICE)
+	            									.businessService(AdvtConstants.BUSINESS_SERVICE_SITE_BOOKING)
 	            									.consumerCode(booking.getApplicationNo()).build();
 	            BillResponse billResponse = billService.generateBill(siteBookingRequest.getRequestInfo(),billCriteria);
 	            
@@ -535,25 +535,55 @@ public class SiteBookingService {
 
 	public SiteBookingActionResponse getActionsOnApplication(SiteBookingActionRequest siteBookingActionRequest) {
 		
-		if(CollectionUtils.isEmpty(siteBookingActionRequest.getApplicationNumbers())) {
-			throw new CustomException("INVALID REQUEST","Provide Application Number.");
+		if(CollectionUtils.isEmpty(siteBookingActionRequest.getApplicationNumbers())
+				|| StringUtils.isEmpty(siteBookingActionRequest.getBusinessService())) {
+			throw new CustomException("INVALID REQUEST","Provide Application Number and Business Service.");
 		}
 		
 		Map<String, List<String>> applicationActionMaps = new HashMap<>();
+		String applicationTenantId = StringUtils.EMPTY;
+		String applicationBusinessId = StringUtils.EMPTY;
+		Map<String, SiteBooking> mapBookings = new HashMap<>();
+		Map<String, SiteCreationData> mapSites = new HashMap<>();
 		
-		// search garbage accounts by application numbers
-		SiteBookingSearchCriteria criteria = SiteBookingSearchCriteria.builder()
-				.applicationNumbers(siteBookingActionRequest.getApplicationNumbers())
-				.build();
-		List<SiteBooking> accounts = siteBookingRepository.search(criteria);
-		if(CollectionUtils.isEmpty(accounts)) {	
-			throw new CustomException("SITE_BOOKING_NOT_FOUND","No Site Bookings found with given application number.");
+		if(StringUtils.equalsIgnoreCase(siteBookingActionRequest.getBusinessService(), AdvtConstants.BUSINESS_SERVICE_SITE_CREATION)) {
+			
+			List<SiteCreationData> siteSearchDatas = new ArrayList<>();
+			
+			siteBookingActionRequest.getApplicationNumbers().stream().forEach(appNo -> {
+				SiteSearchRequest searchSiteRequest = SiteSearchRequest.builder()
+						.requestInfo(siteBookingActionRequest.getRequestInfo())
+						.siteSearchData(SiteSearchData.builder()
+										.siteID(siteBookingActionRequest.getApplicationNumbers().get(0))
+										.build())
+						.build();
+				siteSearchDatas.add(siteRepository.searchSites(searchSiteRequest).get(0));
+			});
+			
+			
+			if(CollectionUtils.isEmpty(siteSearchDatas)) {
+				throw new CustomException("SITE_APPLICATION_NOT_FOUND","No Site found with given application number.");
+			}
+			mapSites = siteSearchDatas.stream().collect(Collectors.toMap(site->site.getSiteID(), site->site));
+			applicationTenantId = siteSearchDatas.get(0).getTenantId();
+			applicationBusinessId = AdvtConstants.BUSINESS_SERVICE_SITE_CREATION;
+			
+		}else if(StringUtils.equalsIgnoreCase(siteBookingActionRequest.getBusinessService(), AdvtConstants.BUSINESS_SERVICE_SITE_BOOKING)) {
+
+			// search site bookings by application numbers
+			SiteBookingSearchCriteria criteria = SiteBookingSearchCriteria.builder()
+					.applicationNumbers(siteBookingActionRequest.getApplicationNumbers())
+					.build();
+			List<SiteBooking> siteBookings = siteBookingRepository.search(criteria);
+			if(CollectionUtils.isEmpty(siteBookings)) {	
+				throw new CustomException("SITE_BOOKING_NOT_FOUND","No Site Bookings found with given application number.");
+			}
+			mapBookings = siteBookings.stream().collect(Collectors.toMap(acc->acc.getApplicationNo(), acc->acc));
+			applicationTenantId = siteBookings.get(0).getTenantId();
+			applicationBusinessId = AdvtConstants.BUSINESS_SERVICE_SITE_BOOKING;
+			
 		}
-		Map<String, SiteBooking> mapAccounts = accounts.stream().collect(Collectors.toMap(acc->acc.getApplicationNo(), acc->acc));
 		
-		
-		String applicationTenantId = accounts.get(0).getTenantId();
-		String applicationBusinessId = AdvtConstants.BUSINESS_SERVICE;
 		
 		// fetch business service search
 		BusinessServiceResponse businessServiceResponse = workflowService.businessServiceSearch(siteBookingActionRequest, applicationTenantId,
@@ -567,10 +597,19 @@ public class SiteBookingService {
 		List<String> rolesWithinTenant = getRolesWithinTenant(applicationTenantId, siteBookingActionRequest.getRequestInfo().getUserInfo().getRoles());
 		
 		
+		for(int i=0; i<siteBookingActionRequest.getApplicationNumbers().size(); i++) {
+			String applicationNumber = siteBookingActionRequest.getApplicationNumbers().get(i);
+//		siteBookingActionRequest.getApplicationNumbers().stream().forEach(applicationNumber -> {
 		
-		siteBookingActionRequest.getApplicationNumbers().stream().forEach(applicationNumber -> {
-		
-			String status = mapAccounts.get(applicationNumber).getStatus();
+			final String status; // = StringUtils.EMPTY;
+			if(StringUtils.equalsIgnoreCase(siteBookingActionRequest.getBusinessService(), AdvtConstants.BUSINESS_SERVICE_SITE_CREATION)) {
+				status = mapSites.get(applicationNumber).getStatus();
+			}else if(StringUtils.equalsIgnoreCase(siteBookingActionRequest.getBusinessService(), AdvtConstants.BUSINESS_SERVICE_SITE_BOOKING)) {
+				status = mapBookings.get(applicationNumber).getStatus();
+			}else {
+				throw new CustomException("UNKNOWN_BUSINESS_SERVICE","Provide the correct business service id.");
+			}
+			
 			List<State> stateList = businessServiceResponse.getBusinessServices().get(0).getStates().stream()
 					.filter(state -> StringUtils.equalsIgnoreCase(state.getApplicationStatus(), status)
 										&& !StringUtils.equalsAnyIgnoreCase(state.getApplicationStatus(), AdvtConstants.STATUS_APPROVED)
@@ -588,17 +627,18 @@ public class SiteBookingService {
 			
 			
 			applicationActionMaps.put(applicationNumber, actions);
-		});
+//		});
+		}
 		
-		List<SiteBookingDetail> garbageDetailList = new ArrayList<>();
+		List<SiteBookingDetail> siteBookingDetailList = new ArrayList<>();
 		applicationActionMaps.entrySet().stream().forEach(entry -> {
-			garbageDetailList.add(SiteBookingDetail.builder().applicationNumber(entry.getKey()).action(entry.getValue()).build());
+			siteBookingDetailList.add(SiteBookingDetail.builder().applicationNumber(entry.getKey()).action(entry.getValue()).build());
 		});
 		
 		// build response
 		SiteBookingActionResponse garbageAccountActionResponse = SiteBookingActionResponse.builder()
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(siteBookingActionRequest.getRequestInfo(), true))
-				.applicationDetails(garbageDetailList).build();
+				.applicationDetails(siteBookingDetailList).build();
 		return garbageAccountActionResponse;
 	
 	}

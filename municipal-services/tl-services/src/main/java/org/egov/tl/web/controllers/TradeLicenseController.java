@@ -74,7 +74,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 
-    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+    @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://localhost:443"}, allowedHeaders = "*", allowCredentials = "true")
     @PostMapping({"/{servicename}/_create", "/_create"})
     public ResponseEntity<TradeLicenseResponse> create(@Valid @RequestBody TradeLicenseRequest tradeLicenseRequest,
                                                        @PathVariable(required = false) String servicename) {
@@ -85,7 +85,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+    @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://localhost:443"}, allowedHeaders = "*", allowCredentials = "true")
     @RequestMapping(value = {"/{servicename}/_search", "/_search"}, method = RequestMethod.POST)
     public ResponseEntity<TradeLicenseResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                        @Valid @ModelAttribute TradeLicenseSearchCriteria criteria,
@@ -106,7 +106,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+    @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://localhost:443"}, allowedHeaders = "*", allowCredentials = "true")
     @RequestMapping(value = {"/{servicename}/_update", "/_update"}, method = RequestMethod.POST)
     public ResponseEntity<TradeLicenseResponse> update(@RequestBody TradeLicenseRequest tradeLicenseRequest,
                                                        @PathVariable(required = false) String servicename) {
@@ -180,7 +180,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
     }
 
 
-    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+    @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://localhost:443"}, allowedHeaders = "*", allowCredentials = "true")
     @PostMapping({"/fetch","/fetch/{value}"})
     public ResponseEntity<?> calculateTLFee(@RequestBody TradeLicenseActionRequest tradeLicenseActionRequest
     										, @PathVariable String value){

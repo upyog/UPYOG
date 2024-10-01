@@ -29,6 +29,7 @@ public class SiteController {
 	@Autowired
 	SiteService siteService;
 
+
 	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
 	@PostMapping("/_create")
 	public ResponseEntity<SiteCreationResponse> create(@RequestBody SiteCreationRequest createSiteRequest) {
@@ -66,5 +67,6 @@ public class SiteController {
     	}
 		return  new ResponseEntity(response, HttpStatus.OK);
 	}
+
 
 }
