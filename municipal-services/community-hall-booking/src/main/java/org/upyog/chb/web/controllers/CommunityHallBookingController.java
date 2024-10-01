@@ -1,18 +1,13 @@
 package org.upyog.chb.web.controllers;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,28 +39,12 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/booking")
 public class CommunityHallBookingController {
 
-	/*
-	 * private final ObjectMapper objectMapper;
-	 * 
-	 * private final HttpServletRequest request;
-	 * 
-	 * @Autowired public CommunityHallBookingController(ObjectMapper objectMapper,
-	 * HttpServletRequest request) { this.objectMapper = objectMapper; this.request
-	 * = request; }
-	 */
 	@Autowired
 	private CommunityHallBookingService bookingService;
 	
 	@Autowired
 	private DemandService demandService;
 	
-	
-	/*
-	 * @InitBinder public void initBinder(WebDataBinder binder) {
-	 * binder.registerCustomEditor(LocalDate.class, new CustomDateEditor(new
-	 * SimpleDateFormat("yyyy-MM-dd"), true)); }
-	 */
-
 	@RequestMapping(value = "/v1/_create", method = RequestMethod.POST) 
 	public ResponseEntity<CommunityHallBookingResponse> createBooking(
 			@ApiParam(value = "Details for the community halls booking time payment and documents", required = true) @Valid @RequestBody CommunityHallBookingRequest communityHallsBookingRequest) {
