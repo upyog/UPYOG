@@ -1,6 +1,9 @@
 package org.egov.wf.service;
 
 import com.jayway.jsonpath.JsonPath;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
@@ -18,6 +21,7 @@ import java.util.*;
 
 import static org.egov.wf.util.WorkflowConstants.*;
 
+@Slf4j
 @Service
 public class MDMSService {
 
@@ -48,7 +52,10 @@ public class MDMSService {
 
         Object mdmsData = getBusinessServiceMDMS();
         List<HashMap<String, Object>> configs = JsonPath.read(mdmsData,JSONPATH_BUSINESSSERVICE_STATELEVEL);
-
+log.info("####### value from mdms $.MdmsRes.Workflow.BusinessServiceMasterConfig : "+config.toString());
+for (HashMap<String, Object> config : configs) {
+    log.info("Config: {}", config.toString());
+}
 
         for (Map map : configs){
 
