@@ -24,25 +24,25 @@ public class SiteBookingController {
 	@Autowired
 	private SiteBookingService service;
 
-	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+	@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://localhost:443"}, allowedHeaders = "*", allowCredentials = "true")
 	@PostMapping("/_create")
 	public ResponseEntity<?> createBooking(@RequestBody SiteBookingRequest siteBookingRequest) {
 		return new ResponseEntity<SiteBookingResponse>(service.createBooking(siteBookingRequest), HttpStatus.OK);
 	}
 	
-	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+	@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://localhost:443"}, allowedHeaders = "*", allowCredentials = "true")
 	@PostMapping("/_search")
 	public ResponseEntity<?> searchBooking(@RequestBody SiteBookingSearchRequest siteBookingSearchRequest) {
 		return new ResponseEntity<SiteBookingResponse>(service.searchBooking(siteBookingSearchRequest), HttpStatus.OK);
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+	@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://localhost:443"}, allowedHeaders = "*", allowCredentials = "true")
 	@PostMapping("/_update")
 	public ResponseEntity<?> updateBooking(@RequestBody SiteBookingRequest siteBookingRequest) {
 		return new ResponseEntity<SiteBookingResponse>(service.updateBooking(siteBookingRequest), HttpStatus.OK);
 	}
 
-    @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+    @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://localhost:443"}, allowedHeaders = "*", allowCredentials = "true")
     @PostMapping({"/fetch","/fetch/{value}"})
     public ResponseEntity<?> calculateFee(@RequestBody SiteBookingActionRequest siteBookingActionRequest
     										, @PathVariable String value){

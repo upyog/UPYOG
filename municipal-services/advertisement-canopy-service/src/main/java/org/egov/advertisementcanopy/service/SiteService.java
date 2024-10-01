@@ -176,7 +176,7 @@ public class SiteService {
 	private void updateExistingSiteData(SiteUpdateRequest updateSiteRequest, List<SiteCreationData> list) {
 		try {
 			if (updateSiteRequest.getSiteUpdationData().getIsOnlyWorkflowCall()) {
-				for (SiteCreationData i : list) {
+				list.forEach(i -> {
 					updateSiteRequest.getSiteUpdationData().setSiteDescription(i.getSiteDescription());
 					updateSiteRequest.getSiteUpdationData().setGpsLocation(i.getGpsLocation());
 					updateSiteRequest.getSiteUpdationData().setSiteAddress(i.getSiteAddress());
@@ -202,7 +202,7 @@ public class SiteService {
 					updateSiteRequest.getSiteUpdationData().setApplicationEndDate(i.getApplicationEndDate());
 					updateSiteRequest.getSiteUpdationData().setBookingPeriodStartDate(i.getBookingPeriodStartDate());
 					updateSiteRequest.getSiteUpdationData().setBookingPeriodEndDate(i.getBookingPeriodEndDate());
-				}
+				});
 			}
 
 		} catch (Exception e) {

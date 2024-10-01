@@ -25,24 +25,24 @@ public class SiteController {
 	@Autowired
 	SiteService siteService;
 	
-	 @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+	 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://localhost:443"}, allowedHeaders = "*", allowCredentials = "true")
 	    @PostMapping("/_create")
 	    public ResponseEntity<SiteCreationResponse> create(@RequestBody SiteCreationRequest createSiteRequest) {
 	        return ResponseEntity.ok(siteService.create(createSiteRequest));
 	    }
 	 
-	 @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+	 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://localhost:443"}, allowedHeaders = "*", allowCredentials = "true")
 	    @PostMapping("/_update")
 	    public ResponseEntity<SiteUpdationResponse> update(@RequestBody SiteUpdateRequest updateSiteRequest) {
 	        return ResponseEntity.ok(siteService.update(updateSiteRequest));
 	    }
 	 
-	 @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+	 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://localhost:443"}, allowedHeaders = "*", allowCredentials = "true")
 	    @PostMapping("/_search")
 	    public ResponseEntity<SiteSearchResponse> search(@RequestBody SiteSearchRequest searchSiteRequest) {
 	        return ResponseEntity.ok(siteService.search(searchSiteRequest));
 	    }
-	 @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+	 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://localhost:443"}, allowedHeaders = "*", allowCredentials = "true")
 	    @PostMapping("/_count")
 	    public ResponseEntity<SiteCountResponse> siteCount(@RequestBody SiteCountRequest siteCountRequest) {
 	        return ResponseEntity.ok(siteService.totalCount(siteCountRequest));
