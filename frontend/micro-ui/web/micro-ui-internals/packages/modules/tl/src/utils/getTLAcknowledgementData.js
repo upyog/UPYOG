@@ -98,14 +98,14 @@ const getTradeUnitsDetails = (application, t) => {
   });
 
   return {
-    title: "TRADE_UNIT_DETAILS",
+    title: t("TRADE_UNIT_DETAILS"),
     values: values,
   };
 };
 
 const getAddressDetails = (application, t) => {
   return {
-    title: "PROPERTY_DETAILS",
+    title: t("PROPERTY_DETAILS"),
     values: [
       { title: t("TL_PROPERTY_ID"), value: application?.tradeLicenseDetail?.additionalDetail?.propertyId || t("CS_NA") },
       { title: t("CORE_COMMON_PINCODE"), value: application?.tradeLicenseDetail?.address?.pincode || t("CS_NA") },
