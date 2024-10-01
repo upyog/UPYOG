@@ -40,15 +40,28 @@ const getAdvanceAmount = (advanceAmount) => {
   if (advanceAmount === null) return "N/A";
   return `₹ ${advanceAmount}`;
 };
-const getMohalaName= (application, t)=>{
-  console.log("application",application?.address.additionalDetails)
-  if(application?.address.additionalDetails?.village !=="" && application?.address.additionalDetails?.village !==undefined)
-  {
-   return  t(`${application?.tenantId?.toUpperCase().split(".").join("_")}_REVENUE_${application?.address?.locality?.code}`) +" "+t(`${application?.address.additionalDetails?.village?.name}`) || "N/A"
-  }
-  return t(`${application?.tenantId?.toUpperCase().split(".").join("_")}_REVENUE_${application?.address?.locality?.code}`)  || "N/A"
+const getMohalaName = (application, t) => {
+  const tenantPrefix = application?.tenantId?.toUpperCase().split(".").join("_");
+  const localityCode = application?.address?.locality?.code;
+  const village = application?.address?.additionalDetails?.village;
+  const newGramPanchayat = application?.address?.additionalDetails?.newGramPanchayat;
 
-}
+  // Check if village code is non-empty and village is defined
+  if (village?.code) {
+    return (
+      t(`${tenantPrefix}_REVENUE_${localityCode}`) + " " + t(village?.name) || "N/A"
+    );
+  }
+
+  // Check if "newGramPanchayat" exists
+  if (newGramPanchayat) {
+    return t(newGramPanchayat) + " " + t(village?.name) || "N/A";
+  }
+
+  // Default case
+  return t(`${tenantPrefix}_REVENUE_${localityCode}`) || "N/A";
+};
+
 
 const getPDFData = (application, tenantInfo, t) => {
   const { additionalDetails } = application;

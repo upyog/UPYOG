@@ -288,9 +288,12 @@ const showActionRestoration = ["RESTORATION_BUTTON"]
   }`
 }
 </style>
+<div style={{display:"flex"}}>
+  <div style={{width:"80%"}}>
           <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WS_CONNECTION_DETAILS")}</Header>
+          </div>
           {dowloadOptions && dowloadOptions.length > 0 && (
-            <div style={{maxWidth:"100% !imnportant"}}>
+            <div style={{maxWidth:"100% !imnportant", zIndex:"10"}}>
             <MultiLink
               className="multilinkWrapper employee-mulitlink-main-divNew"
               onHeadClick={() => setShowOptions(!showOptions)}
@@ -303,6 +306,7 @@ const showActionRestoration = ["RESTORATION_BUTTON"]
             />
             </div>
           )}
+          </div>
         </div>
         <ApplicationDetailsTemplate
           applicationDetails={applicationDetails}
