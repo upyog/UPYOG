@@ -75,4 +75,6 @@ public class GarbageAccount {
 
 	private List<GarbageAccount> childGarbageAccounts;
 	
+	private Boolean isParentAccount = false;
+	
 }
