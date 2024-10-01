@@ -62,17 +62,17 @@ public class Jurisdiction {
     private String id;
 
     @SafeHtml
-    @NotNull
+    //@NotNull
     @Size(min=2, max=100)
     private String hierarchy;
 
     @SafeHtml
-    @NotNull
+   // @NotNull
     @Size(min=2, max=100)
     private String boundary;
 
     @SafeHtml
-    @NotNull
+    //@NotNull
     @Size(max=256)
     private String boundaryType;
 

@@ -13,6 +13,7 @@ import org.egov.advertisementcanopy.contract.workflow.State;
 import org.egov.advertisementcanopy.model.SiteBooking;
 import org.egov.advertisementcanopy.model.SiteBookingActionRequest;
 import org.egov.advertisementcanopy.model.SiteBookingRequest;
+import org.egov.advertisementcanopy.model.SiteCreationActionRequest;
 import org.egov.advertisementcanopy.model.SiteCreationData;
 import org.egov.advertisementcanopy.model.SiteCreationRequest;
 import org.egov.advertisementcanopy.model.SiteUpdateRequest;
@@ -250,6 +251,20 @@ public class WorkflowService {
 		BusinessServiceResponse businessServiceResponse = mapper.convertValue(responseObject
 																				, BusinessServiceResponse.class);
 		return businessServiceResponse;
+	}
+
+	public BusinessServiceResponse businessServiceSearchForSites(SiteCreationActionRequest siteCreationActionRequest,
+			String siteTenantId, String siteBusinessId) {
+			StringBuilder uri = new StringBuilder(configs.getWorkflowHost());
+			uri.append(configs.getWorkflowBusinessServiceSearchPath());
+			uri.append("?tenantId=").append(siteTenantId);
+			uri.append("&businessServices=").append(siteBusinessId);
+			RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
+					.requestInfo(siteCreationActionRequest.getRequestInfo()).build();
+			LinkedHashMap<String, Object> responseObject = (LinkedHashMap<String, Object>) restCallRepository.fetchResult(uri, requestInfoWrapper);
+			BusinessServiceResponse businessServiceResponse = mapper.convertValue(responseObject
+																					, BusinessServiceResponse.class);
+			return businessServiceResponse;
 	}
 
 }
