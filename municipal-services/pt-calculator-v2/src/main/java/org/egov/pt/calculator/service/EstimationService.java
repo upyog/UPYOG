@@ -269,7 +269,7 @@ public class EstimationService {
 		if(request.getRequestInfo().getUserInfo().getType().equals("EMPLOYEE")&&checkAssessmentDoneForEmployee(request)) {
 			//get the values directly from demand and return 
 			CalculationRes clr = getDemandDataForEstimation(request);
-			//return clr;
+			return clr;
 		}
 		
 		CalculationCriteria criteria = request.getCalculationCriteria().get(0);
@@ -326,8 +326,13 @@ public class EstimationService {
 		}
 		
 		cl.setTaxHeadEstimates(txl);
+		Map<String,List<String>> additionaldetail=objectmapper.convertValue(oldDemand.getAdditionalDetails(), Map.class);
+		cl.setBillingSlabIds(additionaldetail.get("calculationDescription"));
+		cl.setExemption(BigDecimal.ZERO);
+		cl.setRebate(BigDecimal.ZERO);
+		cl.setPenalty(BigDecimal.ZERO);
 		clr.setCalculation(Collections.singletonList(cl));
-		return clr;;
+		return clr;
 	}
 
 	public void checkAssessmentIsDone(CalculationReq request)
