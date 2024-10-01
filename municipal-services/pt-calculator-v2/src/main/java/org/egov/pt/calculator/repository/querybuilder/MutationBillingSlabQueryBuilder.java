@@ -38,37 +38,37 @@ public class MutationBillingSlabQueryBuilder {
 
         if (!StringUtils.isEmpty(billingSlabSearcCriteria.getPropertyType())) {
 
-            queryBuilder.append(" AND propertyType = ?");
+            queryBuilder.append(" AND (propertyType = ? or propertyType='ALL')");
             preparedStmtList.add(billingSlabSearcCriteria.getPropertyType());
         }
 
         if (!StringUtils.isEmpty(billingSlabSearcCriteria.getPropertySubType())) {
 
-            queryBuilder.append(" AND propertySubType = ?");
+            queryBuilder.append(" AND (propertySubType = ? or propertySubType='ALL')");
             preparedStmtList.add(billingSlabSearcCriteria.getPropertySubType());
         }
 
         if (!StringUtils.isEmpty(billingSlabSearcCriteria.getUsageCategoryMajor())) {
 
-            queryBuilder.append(" AND usageCategoryMajor = ?");
+            queryBuilder.append(" AND (usageCategoryMajor = ? or usageCategoryMajor='ALL')");
             preparedStmtList.add(billingSlabSearcCriteria.getUsageCategoryMajor());
         }
 
         if (!StringUtils.isEmpty(billingSlabSearcCriteria.getUsageCategoryMinor())) {
 
-            queryBuilder.append(" AND usageCategoryMinor = ?");
+            queryBuilder.append(" AND (usageCategoryMinor = ? or usageCategoryMinor='ALL')");
             preparedStmtList.add(billingSlabSearcCriteria.getUsageCategoryMinor());
         }
 
         if (!StringUtils.isEmpty(billingSlabSearcCriteria.getOwnerShipCategory())) {
 
-            queryBuilder.append(" AND ownerShipCategory = ?");
+            queryBuilder.append(" AND (ownerShipCategory = ? or ownerShipCategory='ALL')");
             preparedStmtList.add(billingSlabSearcCriteria.getOwnerShipCategory());
         }
 
         if (!StringUtils.isEmpty(billingSlabSearcCriteria.getSubOwnerShipCategory())) {
 
-            queryBuilder.append(" AND subOwnerShipCategory = ?");
+            queryBuilder.append(" AND (subOwnerShipCategory = ? or subOwnerShipCategory='ALL')");
             preparedStmtList.add(billingSlabSearcCriteria.getSubOwnerShipCategory());
         }
         if (billingSlabSearcCriteria.getMarketValue() != null) {
