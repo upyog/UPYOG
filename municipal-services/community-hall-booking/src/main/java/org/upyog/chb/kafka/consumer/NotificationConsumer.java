@@ -34,8 +34,7 @@ public class NotificationConsumer {
 		try {
 
 			log.info("Consuming record in CHB for notification: " + record.toString() + " from topic: " + topic);
-			//TODO: need to remove after testing
-			log.info("Strigifed json : " + CommunityHallBookingUtil.beuatifyJson(record));
+			//log.info("Strigifed json : " + CommunityHallBookingUtil.beuatifyJson(record));
 			bookingRequest = mapper.convertValue(record, CommunityHallBookingRequest.class);
 		} catch (final Exception e) {
 			log.error("Error while processing CHB notification to value: " + record + " on topic: " + topic + ": " + e);
