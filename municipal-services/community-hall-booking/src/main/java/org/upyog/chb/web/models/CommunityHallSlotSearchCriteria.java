@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
+import org.upyog.chb.validator.ValidDate;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -29,9 +31,11 @@ public class CommunityHallSlotSearchCriteria {
 	private List<String> hallCodes;
 
 	@NotBlank
+	@ValidDate
 	private String bookingStartDate;
 
 	@NotBlank
+	@ValidDate
 	private String bookingEndDate;
 
 	// This flag will be true if multiple slots are available in hall/park

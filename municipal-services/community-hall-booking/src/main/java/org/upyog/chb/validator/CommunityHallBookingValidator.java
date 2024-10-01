@@ -14,6 +14,7 @@ import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.BookingSlotDetail;
+import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 
@@ -39,7 +40,7 @@ public class CommunityHallBookingValidator {
 				+ bookingRequest.getHallsBookingApplication().getApplicantDetail().getApplicantMobileNo());
 		if (!isSameHallCode(bookingRequest.getHallsBookingApplication().getBookingSlotDetails())) {
 			throw new CustomException(CommunityHallBookingConstants.MULTIPLE_HALL_CODES_ERROR,
-					"Booking of multiple halls are not allowed");
+					"Booking of multiple halls are not allowed.");
 		}
 		
 		if(!validateBookingDate(bookingRequest.getHallsBookingApplication().getBookingSlotDetails())) {
@@ -51,10 +52,9 @@ public class CommunityHallBookingValidator {
 		validateDuplicateDocuments(bookingRequest);
 	}
 
-	public void validateUpdate(CommunityHallBookingRequest bookingRequest, Object mdmsData) {
-		log.info("validating master data for update  booking request for  applicant mobile no : " + bookingRequest.getHallsBookingApplication()
-		.getApplicantDetail().getApplicantMobileNo());
-		mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
+	public void validateUpdate(CommunityHallBookingDetail bookingDetailFromRequest, CommunityHallBookingDetail bookingDetailFromDB) {
+		log.info("validating master data for update  booking request for  booking no : " + bookingDetailFromRequest.getBookingNo());
+		//TODO: Add condition for status from to 
 	}
 	
 	private boolean validateBookingDate(List<BookingSlotDetail> bookingSlotDetails) {

@@ -172,6 +172,8 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			throw new CustomException("INVALID_BOOKING_CODE",
 					"Booking no not valid. Failed to update booking status for : " + bookingNo);
 		}
+		
+		hallBookingValidator.validateUpdate(communityHallsBookingRequest.getHallsBookingApplication(), bookingDetails.get(0));
 
 		convertBookingRequest(communityHallsBookingRequest, bookingDetails.get(0));
 
@@ -240,6 +242,12 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			totalDates.add(startDate);
 			startDate = startDate.plusDays(1);
 		}
+		
+		//Move the no of days to application properties File
+		if(totalDates.size() > 3) {
+			throw new CustomException(CommunityHallBookingConstants.INVALID_BOOKING_DATE_RANGE,
+					"Booking is not allowed for this no of days.");
+		}
 
 		totalDates.stream().forEach(date -> {
 			List<String> hallCodes = new ArrayList<>();
@@ -269,7 +277,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 				.communityHallCode(criteria.getCommunityHallCode()).hallCode(hallCode)
 			//Setting slot status available for every hall and hall code
 				.slotStaus(BookingStatusEnum.AVAILABLE.toString()).tenantId(criteria.getTenantId())
-				.bookingDate(CommunityHallBookingUtil.parseLocalDateToString(date)).build();
+				.bookingDate(CommunityHallBookingUtil.parseLocalDateToString(date, "dd-MM-yyyy")).build();
 		return availabiltityDetail;
 	}
 
