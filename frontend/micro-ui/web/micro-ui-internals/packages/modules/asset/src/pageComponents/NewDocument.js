@@ -166,7 +166,7 @@ function ASSETSelectDocument({
       {doc?.hasDropdown && (
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t(doc?.code.replaceAll(".", "_")) + "  *"}</CardLabel>
-          <Dropdown
+          {/* <Dropdown
             className="form-field"
             selected={selectedDocument}
             style={{ width: "50%" }}
@@ -175,11 +175,11 @@ function ASSETSelectDocument({
             optionKey="i18nKey"
             t={t}
             placeholder={"Select"}
-          />
+          /> */}
         </LabelFieldPair>
       )}
       <LabelFieldPair>
-        <CardLabel className="card-label-smaller"></CardLabel>
+        {/* <CardLabel className="card-label-smaller"></CardLabel> */}
         <div className="field">
           <UploadFile
             onUpload={handleFileUpload}

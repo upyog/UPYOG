@@ -42,10 +42,10 @@ const AssetAssign = ({ config, onSelect, formData, setError, formState, clearErr
 
 
 
-    const { data: departmentName } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Department" }],
+    const { data: departmentName } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "Department" }],
         {
             select: (data) => {
-                const formattedData = data?.["ASSET"]?.["Department"]
+                const formattedData = data?.["common-masters"]?.["Department"]
                 const activeData = formattedData?.filter(item => item.active === true);
                 return activeData;
             },

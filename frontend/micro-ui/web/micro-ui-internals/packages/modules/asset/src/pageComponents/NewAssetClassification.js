@@ -97,10 +97,10 @@
 
 
 
-    const { data: departmentName } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Department" }],
+    const { data: departmentName } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "Department" }],
       {
         select: (data) => {
-            const formattedData = data?.["ASSET"]?.["Department"]
+            const formattedData = data?.["common-masters"]?.["Department"]
             const activeData = formattedData?.filter(item => item.active === true);
             return activeData;
         },
@@ -111,12 +111,9 @@
       departNamefromMDMS.push({i18nKey: `${departmentname.name}`, code: `${departmentname.code}`, value: `${departmentname.name}`})
     }) 
    let menu_Asset = [];   //variable name for assetCalssification
-
-      let asset_type = [];  //variable name for asset type
-
-      let asset_sub_type = [];  //variable name for asset sub  parent caregory
-
-      let asset_parent_sub_category = [];
+   let asset_type = [];  //variable name for asset type
+   let asset_sub_type = [];  //variable name for asset sub  parent caregory
+   let asset_parent_sub_category = [];
 
       
 
