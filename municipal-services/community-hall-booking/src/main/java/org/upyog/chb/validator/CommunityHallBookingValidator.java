@@ -151,7 +151,10 @@ public class CommunityHallBookingValidator {
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Search on limit is not allowed");
 		
 		if (criteria.getMobileNumber() != null && !allowedParams.contains("mobileNumber"))
-			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Search on mobiloe number is not allowed");
+			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Search on mobile number is not allowed");
+		
+		if (criteria.getCommunityHallCode() != null && !allowedParams.contains("communityHallCode"))
+			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Search on community hall name is not allowed");
 
 		if (criteria.getFromDate() != null) {
 			LocalDate fromDate = CommunityHallBookingUtil.parseStringToLocalDate(criteria.getFromDate());

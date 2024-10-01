@@ -105,6 +105,12 @@ public class CommunityHallBookingQueryBuilder {
 			preparedStmtList.add(status);
 		}
 		
+		if (criteria.getCommunityHallCode() != null) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" ecbd.community_hall_code =  ? ");
+			preparedStmtList.add(criteria.getCommunityHallCode());
+		}
+		
 		String mobileNo = criteria.getMobileNumber();
 		if (mobileNo != null) {
 			List<String> mobileNos = Arrays.asList(mobileNo.split(","));

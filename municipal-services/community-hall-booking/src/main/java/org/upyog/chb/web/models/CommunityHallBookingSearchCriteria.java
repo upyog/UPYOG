@@ -29,6 +29,8 @@ public class CommunityHallBookingSearchCriteria {
 
 	@JsonProperty("status")
 	private String status;
+	
+	private String communityHallCode;
 
 	@JsonProperty("bookingNo")
 	private String bookingNo;
