@@ -264,11 +264,12 @@ public class EstimationService {
 	 */
 	public CalculationRes getTaxCalculation(CalculationReq request) {
 		boolean asmtFound = false;
+		Map<String,Object> masterMap = mDataService.getMasterMap(request);
 		if(request.getRequestInfo().getUserInfo().getType().equals("CITIZEN"))
 			checkAssessmentIsDone(request);
 		if(request.getRequestInfo().getUserInfo().getType().equals("EMPLOYEE")&&checkAssessmentDoneForEmployee(request)) {
 			//get the values directly from demand and return 
-			CalculationRes clr = getDemandDataForEstimation(request);
+			CalculationRes clr = getDemandDataForEstimation(request,masterMap);
 			return clr;
 		}
 		
@@ -277,17 +278,20 @@ public class EstimationService {
 		PropertyDetail detail = property.getPropertyDetails().get(0);
 		calcValidator.validatePropertyForCalculation(detail);
 		//call for demand in case employee is calling 
-		Map<String,Object> masterMap = mDataService.getMasterMap(request);
+		
 		return new CalculationRes(new ResponseInfo(), Collections.singletonList(getCalculation(request.getRequestInfo(), criteria, masterMap)));
 	}
 	
 	
-	public CalculationRes getDemandDataForEstimation(CalculationReq request) {
+	public CalculationRes getDemandDataForEstimation(CalculationReq request,Map<String,Object> masterMap) {
 		Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(request.getRequestInfo(),request.getCalculationCriteria().get(0));
 		
 		Map<String, BigDecimal> taxHeadMap = new HashMap<>();
 		Map<String, String> taxHeadMapType = new HashMap<>();
 		BigDecimal totalAmount = BigDecimal.ZERO;
+		Map<String, Category> taxHeadCategoryMap = ((List<TaxHeadMaster>)masterMap.get(TAXHEADMASTER_MASTER_KEY)).stream()
+				.collect(Collectors.toMap(TaxHeadMaster::getCode, TaxHeadMaster::getCategory));
+
 		for(DemandDetail d:oldDemand.getDemandDetails()) {
 			BigDecimal currentValue=BigDecimal.ZERO;
 			if(taxHeadMap.containsKey(d.getTaxHeadMasterCode())) {
@@ -306,6 +310,10 @@ public class EstimationService {
 			}	
 			;
 		}
+		
+	
+
+		
 		CalculationRes clr = new CalculationRes();
 		clr.setResponseInfo(new ResponseInfo());
 		Calculation cl = new Calculation();
@@ -322,6 +330,8 @@ public class EstimationService {
 			tx = new TaxHeadEstimate();
 			tx.setEstimateAmount(entry.getValue());
 			tx.setTaxHeadCode(entry.getKey());
+			
+			tx.setCategory(null!=taxHeadCategoryMap.get(entry.getKey())?taxHeadCategoryMap.get(entry.getKey()):null);
 			txl.add(tx);
 		}
 		
