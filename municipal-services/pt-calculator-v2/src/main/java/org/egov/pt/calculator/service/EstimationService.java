@@ -263,14 +263,71 @@ public class EstimationService {
 	 * @return CalculationRes calculation object containing all the tax for the given criteria.
 	 */
 	public CalculationRes getTaxCalculation(CalculationReq request) {
+		boolean asmtFound = false;
 		if(request.getRequestInfo().getUserInfo().getType().equals("CITIZEN"))
 			checkAssessmentIsDone(request);
+		if(request.getRequestInfo().getUserInfo().getType().equals("EMPLOYEE")&&checkAssessmentDoneForEmployee(request)) {
+			//get the values directly from demand and return 
+			CalculationRes clr = getDemandDataForEstimation(request);
+			//return clr;
+		}
+		
 		CalculationCriteria criteria = request.getCalculationCriteria().get(0);
 		Property property = criteria.getProperty();
 		PropertyDetail detail = property.getPropertyDetails().get(0);
 		calcValidator.validatePropertyForCalculation(detail);
+		//call for demand in case employee is calling 
 		Map<String,Object> masterMap = mDataService.getMasterMap(request);
 		return new CalculationRes(new ResponseInfo(), Collections.singletonList(getCalculation(request.getRequestInfo(), criteria, masterMap)));
+	}
+	
+	
+	public CalculationRes getDemandDataForEstimation(CalculationReq request) {
+		Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(request.getRequestInfo(),request.getCalculationCriteria().get(0));
+		
+		Map<String, BigDecimal> taxHeadMap = new HashMap<>();
+		Map<String, String> taxHeadMapType = new HashMap<>();
+		BigDecimal totalAmount = BigDecimal.ZERO;
+		for(DemandDetail d:oldDemand.getDemandDetails()) {
+			BigDecimal currentValue=BigDecimal.ZERO;
+			if(taxHeadMap.containsKey(d.getTaxHeadMasterCode())) {
+				currentValue =taxHeadMap.get(d.getTaxHeadMasterCode());
+				currentValue = currentValue.add( d.getTaxAmount());
+				taxHeadMap.put(d.getTaxHeadMasterCode(), currentValue);
+				//System.out.println(d.getTaxHeadMasterCode());
+				totalAmount= totalAmount.add(d.getTaxAmount());
+			}
+			else {
+				//System.out.println(d.getTaxHeadMasterCode());
+				currentValue=  d.getTaxAmount();
+				taxHeadMap.put(d.getTaxHeadMasterCode(), d.getTaxAmount());
+				totalAmount= totalAmount.add(d.getTaxAmount());
+				//taxHeadMapType.put(d.getTaxHeadMasterCode(), d.get)	
+			}	
+			;
+		}
+		CalculationRes clr = new CalculationRes();
+		clr.setResponseInfo(new ResponseInfo());
+		Calculation cl = new Calculation();
+		//clr.setCalculation();
+		TaxHeadEstimate tx = null;
+		List<TaxHeadEstimate>txl = new ArrayList<>();
+		cl.setBillingSlabIds(null);
+		cl.setTaxAmount(taxHeadMap.get("PT_TAX"));
+		cl.setFromDate(oldDemand.getTaxPeriodFrom());
+		cl.setToDate(oldDemand.getTaxPeriodTo());
+		cl.setTotalAmount(totalAmount);
+		cl.setServiceNumber(oldDemand.getConsumerCode());
+		for(Map.Entry<String, BigDecimal> entry:taxHeadMap.entrySet()) {
+			tx = new TaxHeadEstimate();
+			tx.setEstimateAmount(entry.getValue());
+			tx.setTaxHeadCode(entry.getKey());
+			txl.add(tx);
+		}
+		
+		cl.setTaxHeadEstimates(txl);
+		clr.setCalculation(Collections.singletonList(cl));
+		return clr;;
 	}
 
 	public void checkAssessmentIsDone(CalculationReq request)
@@ -285,6 +342,23 @@ public class EstimationService {
 		List<AssessmentV2> propertylist=assessmentResponseV2.getAssessments().stream().filter(t->t.getFinancialYear().equalsIgnoreCase(criteria.getFinancialYear())).collect(Collectors.toList());
 		if(propertylist.size()>0)
 			throw new CustomException("ASESSMENT_ERROR","Property assessment is already completed for this property for the financial year "+criteria.getFinancialYear());
+	}
+	
+	
+	public boolean checkAssessmentDoneForEmployee(CalculationReq request)
+	{
+		CalculationCriteria criteria = request.getCalculationCriteria().get(0);
+		Property property = criteria.getProperty();
+		String authURL = new StringBuilder().append(configs.getAssessmentServiceHost()).append(configs.getAssessmentSearchEndpoint())
+				.append(URL_PARAMS_SEPARATER).append("propertyIds=").append(property.getPropertyId()).append(SEPARATER)
+				.append("tenantId=").append(property.getTenantId()).toString();
+		RequestInfoWrapper requestInfoWrapper=RequestInfoWrapper.builder().requestInfo(request.getRequestInfo()).build();
+		AssessmentResponseV2 assessmentResponseV2=restTemplate.postForObject(authURL,requestInfoWrapper,AssessmentResponseV2.class);
+		List<AssessmentV2> propertylist=assessmentResponseV2.getAssessments().stream().filter(t->t.getFinancialYear().equalsIgnoreCase(criteria.getFinancialYear())).collect(Collectors.toList());
+		if(propertylist.size()>0)
+			return true;
+		
+		return false;
 	}
 
 	/**

@@ -544,6 +544,7 @@ public class CalculatorUtils {
 		BigDecimal pastDue= BigDecimal.ZERO;
 		BigDecimal totalAfterPastDueDeduct= BigDecimal.ZERO;
 		BigDecimal unpaidbillAmount=BigDecimal.ZERO;
+		Boolean demandAdjusted = true;
 		
 		for (DemandDetail detail : demand.getDemandDetails()) 
 		{
@@ -556,8 +557,12 @@ public class CalculatorUtils {
 			 */ 
 			
 			if(detail.getTaxHeadMasterCode().equalsIgnoreCase("PT_PASTDUE_CARRYFORWARD"))
+				
 				pastDue=pastDue.add(detail.getTaxAmount());
 		}
+		System.out.println(totalAmountForDemand);
+		System.out.println(pastDue);
+		
 		
 		totalAmountForDemand = totalAmountForDemand.setScale(0, RoundingMode.HALF_UP);
 		totalAfterPastDueDeduct = totalAmountForDemand.subtract(pastDue);
@@ -601,13 +606,21 @@ public class CalculatorUtils {
 				}
 				else
 					unpaidbillAmount=unpaidbillAmount.add(bill.getBillDetails().get(0).getAmount());
+				System.out.println(unpaidbillAmount);
 				
 			}
 
 		}
 		
+//		if(demandAdjusted) {
+//			totalAmountForDemand = totalAmountForDemand.subtract(pastDue);
+//		}
+		
+		
 		if(unpaidbillAmount.compareTo(totalAmountForDemand)>0)
 			totalAmountForDemand=unpaidbillAmount;
+		
+		
 		carryForward=totalpaidAmountFromPayment.subtract(totalAmountForDemand);
 		System.out.println(res);
 		return carryForward;

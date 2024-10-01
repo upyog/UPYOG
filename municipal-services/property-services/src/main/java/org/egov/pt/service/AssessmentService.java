@@ -192,10 +192,17 @@ public class AssessmentService {
 	
 	
 	public void deactivateOldDemandsForPreiousYears(AssessmentRequest request) {
-		
+		AssessmentRequest request2 = new AssessmentRequest();
 		String assemtmentyearFromRequest = request.getAssessment().getFinancialYear().split("-")[1].toString();
 		assemtmentyearFromRequest = "31-03-20"+assemtmentyearFromRequest;
-		DemandResponse dmr = billingService.fetchDemand(request);
+		request2.setRequestInfo(request.getRequestInfo());
+		Assessment asmt = new Assessment();
+		asmt.setTenantId(request.getAssessment().getTenantId());
+		asmt.setStatus(Status.ACTIVE);
+		asmt.setPropertyId(request.getAssessment().getPropertyId());;
+		request2.setAssessment(asmt);
+		//request.getAssessment().seta
+		DemandResponse dmr = billingService.fetchDemand(request2);
 		DemandRequest demRequest = new DemandRequest();
 		List<Demand>demaListToBeUpdated = null;
 		
@@ -214,6 +221,10 @@ public class AssessmentService {
 		if(null!=dmr.getDemands() &&!dmr.getDemands().isEmpty()) {
 			demaListToBeUpdated = new ArrayList<>();
 			for(Demand dm:dmr.getDemands()) {
+				
+				System.out.println(dm.getTaxPeriodTo());
+				System.out.println(datexp.getTimeInMillis());
+				System.out.println(dm.getTaxPeriodTo().compareTo(datexp.getTimeInMillis()) < 0);
 				if(dm.getTaxPeriodTo().compareTo(datexp.getTimeInMillis()) < 0) {
 					dm.setStatus(StatusEnum.CANCELLED);
 					demaListToBeUpdated.add(dm);

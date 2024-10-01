@@ -770,7 +770,7 @@ public class BillServicev2 {
 
 		String paymentPeriod = null;
 		String expiryDate = null;
-		BigDecimal newTotalAmountForModeOfPayment = new BigDecimal(0);
+		//BigDecimal newTotalAmountForModeOfPayment = new BigDecimal(0);
 
 		BillSearchCriteria billCriteria = new BillSearchCriteria();
 		billCriteria.setTenantId(demand.getTenantId());
@@ -976,7 +976,7 @@ public class BillServicev2 {
 		switch (Paymentmode) {
 		case QUARTERLY:
 			//calcualtion of all quaterly ammount
-			BigDecimal failedquaterammount=BigDecimal.ZERO;
+			BigDecimal amountwithpastdue=BigDecimal.ZERO;
 			BigDecimal allquaterammount=BigDecimal.ZERO;
 			BigDecimal quaterlyammount=BigDecimal.ZERO;
 			/*
@@ -993,8 +993,23 @@ public class BillServicev2 {
 			if(q1.contains(cuurentMonth)) {
 				paymentPeriod=Q1;
 				expiryDate= "30-06-"+currentyear;
-				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
-				totalAmountForDemand = amountforquaterly.add(allquaterammount).add(pastDue);
+				//newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+				totalAmountForDemand = amountforquaterly.add(pastDue);
+				
+				if(advancedBillAmount.compareTo(totalAmountForDemand)>0) {
+					advancedBillAmount = advancedBillAmount.subtract(totalAmountForDemand);
+					totalAmountForDemand = new BigDecimal(0);
+
+				}
+				else if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
+					totalAmountForDemand = totalAmountForDemand.subtract(advancedBillAmount);
+					advancedBillAmount = new BigDecimal(0);
+				}
+				else if(totalAmountForDemand.compareTo(advancedBillAmount)==0) {
+					totalAmountForDemand = new BigDecimal(0);
+					advancedBillAmount = new BigDecimal(0);
+				}
+				
 				mpdObj = new ModeOfPaymentDetails();
 				mpdObj = getModeOfPaymentDetails(totalAmountForDemand,"01-04-"+currentyear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),pastDue);
 				mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
@@ -1006,11 +1021,11 @@ public class BillServicev2 {
 			{
 				if(!quaterly.contains("Q1"))
 				{
-					amountforquaterly=amountforquaterly.add(pastDue);
+					amountwithpastdue=amountforquaterly.add(pastDue);
 					String expiryDateQ1 = "30-06-"+currentyear;
 					String startDateQ1 ="01-04-"+currentyear;
 					mpdObj = new ModeOfPaymentDetails();
-					mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
+					mpdObj = getModeOfPaymentDetails(amountwithpastdue,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
 					mpdObj.setPastAmount(pastDue);
 					mpdList.add(mpdObj);
@@ -1021,7 +1036,7 @@ public class BillServicev2 {
 				String firstDayAfterexpiryDateQ1 = "01-07-"+nextYear;
 
 				//150
-				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+				//newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4)).setScale(0,RoundingMode.HALF_UP);
 				//750
 				quaterlyammount=ammountForTransactionperiod(Q1,amountforquaterly);
 				//750
@@ -1086,10 +1101,6 @@ public class BillServicev2 {
 				 * quaterlyammount=quaterlyammount.add(pastDue);
 				 * allquaterammount=allquaterammount.add(quaterlyammount);
 				 */
-				mpdObj = new ModeOfPaymentDetails();
-				mpdObj = getModeOfPaymentDetails(amountforquaterly,"01-07-"+currentyear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),BigDecimal.ZERO);
-				mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2);
-				mpdList.add(mpdObj);
 				totalAmountForDemand = amountforquaterly.add(quaterlyammount).add(interestPercentOntaxAmount);
 
 				if(advancedBillAmount.compareTo(totalAmountForDemand)>0) {
@@ -1097,7 +1108,6 @@ public class BillServicev2 {
 					totalAmountForDemand = new BigDecimal(0);
 
 				}
-
 				else if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
 					totalAmountForDemand = totalAmountForDemand.subtract(advancedBillAmount);
 					advancedBillAmount = new BigDecimal(0);
@@ -1106,17 +1116,22 @@ public class BillServicev2 {
 					totalAmountForDemand = new BigDecimal(0);
 					advancedBillAmount = new BigDecimal(0);
 				}
+				
+				mpdObj = new ModeOfPaymentDetails();
+				mpdObj = getModeOfPaymentDetails(totalAmountForDemand,"01-07-"+currentyear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),BigDecimal.ZERO);
+				mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2);
+				mpdList.add(mpdObj);
 
 			}
 			else if(q3.contains(cuurentMonth))
 			{
 				if(!quaterly.contains("Q1"))
 				{
-					amountforquaterly=amountforquaterly.add(pastDue);
+					amountwithpastdue=amountforquaterly.add(pastDue);
 					String expiryDateQ1 = "30-06-"+currentyear;
 					String startDateQ1 ="01-04-"+currentyear;
 					mpdObj = new ModeOfPaymentDetails();
-					mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
+					mpdObj = getModeOfPaymentDetails(amountwithpastdue,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
 					mpdObj.setPastAmount(pastDue);
 					mpdList.add(mpdObj);
@@ -1137,7 +1152,7 @@ public class BillServicev2 {
 				String firstDayAfterexpiryDateQ2 = "01-10-"+currentyear;
 
 
-				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+				//newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
 				quaterlyammount=ammountForTransactionperiod(Q2,amountforquaterly); 
 				quaterlyammount=quaterlyammount.add(pastDue); 
 
@@ -1208,11 +1223,6 @@ public class BillServicev2 {
 				 * expiryDateQ2,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(),pastDue);
 				 * mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2); mpdList.add(mpdObj); }
 				 */
-
-				mpdObj = new ModeOfPaymentDetails();
-				mpdObj = getModeOfPaymentDetails(amountforquaterly,"01-10-"+currentyear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),BigDecimal.ZERO);
-				mpdObj.setPeriod(TxnPeriodEnum.QUARTER_3);
-				mpdList.add(mpdObj);
 				//allquaterammount=allquaterammount.add(quaterlyammount);
 				totalAmountForDemand = amountforquaterly.add(quaterlyammount).add(interestPercentOntaxAmount);
 
@@ -1220,7 +1230,6 @@ public class BillServicev2 {
 					totalAmountForDemand = new BigDecimal(0);
 					advancedBillAmount = advancedBillAmount.subtract(totalAmountForDemand);
 				}
-
 				else if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
 					totalAmountForDemand = totalAmountForDemand.subtract(advancedBillAmount);
 					advancedBillAmount = new BigDecimal(0);
@@ -1229,17 +1238,22 @@ public class BillServicev2 {
 					totalAmountForDemand = new BigDecimal(0);
 					advancedBillAmount = new BigDecimal(0);
 				}
+				
+				mpdObj = new ModeOfPaymentDetails();
+				mpdObj = getModeOfPaymentDetails(totalAmountForDemand,"01-10-"+currentyear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),BigDecimal.ZERO);
+				mpdObj.setPeriod(TxnPeriodEnum.QUARTER_3);
+				mpdList.add(mpdObj);
 
 			}
 			else if(q4.contains(cuurentMonth))
 			{
 				if(!quaterly.contains("Q1"))
 				{
-					amountforquaterly=amountforquaterly.add(pastDue);
+					amountwithpastdue=amountforquaterly.add(pastDue);
 					String expiryDateQ1 = "30-06-"+currentyear;
 					String startDateQ1 ="01-04-"+currentyear;
 					mpdObj = new ModeOfPaymentDetails();
-					mpdObj = getModeOfPaymentDetails(amountforquaterly,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
+					mpdObj = getModeOfPaymentDetails(amountwithpastdue,startDateQ1, expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
 					mpdObj.setPastAmount(pastDue);
 					mpdList.add(mpdObj);
@@ -1266,7 +1280,7 @@ public class BillServicev2 {
 				expiryDate="31-03-"+nextYear;
 
 				String firstDayAfterexpiryDateQ3 = "01-01-"+nextYear;
-				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
+				//newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(4));
 
 				//450
 				quaterlyammount=ammountForTransactionperiod(Q3,amountforquaterly);
@@ -1358,10 +1372,6 @@ public class BillServicev2 {
 				 * expiryDateQ3,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(),pastDue);
 				 * mpdObj.setPeriod(TxnPeriodEnum.QUARTER_3); mpdList.add(mpdObj); }
 				 */	
-				mpdObj = new ModeOfPaymentDetails();
-				mpdObj = getModeOfPaymentDetails(amountforquaterly,"01-01-"+nextYear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),BigDecimal.ZERO);
-				mpdObj.setPeriod(TxnPeriodEnum.QUARTER_4);
-				mpdList.add(mpdObj);
 				//allquaterammount=allquaterammount.add(quaterlyammount);
 				totalAmountForDemand = amountforquaterly.add(quaterlyammount).add(interestPercentOntaxAmount);
 
@@ -1369,42 +1379,50 @@ public class BillServicev2 {
 					totalAmountForDemand = new BigDecimal(0);
 					advancedBillAmount = advancedBillAmount.subtract(totalAmountForDemand);
 				}
-
-				if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
+				else if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
 					totalAmountForDemand = totalAmountForDemand.subtract(advancedBillAmount);
 					advancedBillAmount = new BigDecimal(0);
 				}
-				if(totalAmountForDemand.compareTo(advancedBillAmount)==0) {
+				else if(totalAmountForDemand.compareTo(advancedBillAmount)==0) {
 					totalAmountForDemand = new BigDecimal(0);
 					advancedBillAmount = new BigDecimal(0);
 				}
+				
+				mpdObj = new ModeOfPaymentDetails();
+				mpdObj = getModeOfPaymentDetails(totalAmountForDemand,"01-01-"+nextYear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),BigDecimal.ZERO);
+				mpdObj.setPeriod(TxnPeriodEnum.QUARTER_4);
+				mpdList.add(mpdObj);
 			}
 
 			break;
 
 		case HALFYEARLY:
 			//calcualtion of all halfyearly ammount
-			BigDecimal failedhalfyearammount=BigDecimal.ZERO;
-			BigDecimal allhalfyearammount=BigDecimal.ZERO;
 			BigDecimal halfyearlyammount=BigDecimal.ZERO;
-			/*
-			 * for(BigDecimal
-			 * failedhalfyearvalue:failedtransactionMapForHalfYearly.values()) {
-			 * failedhalfyearammount=failedhalfyearammount.add(failedhalfyearvalue); }
-			 * 
-			 * for(BigDecimal allhalfyearvalue:alltransactionForHalfYearly.values()) {
-			 * allhalfyearammount=allhalfyearammount.add(allhalfyearvalue); }
-			 */
+			BigDecimal amountwithpastduehalf=BigDecimal.ZERO;
 
-			allhalfyearammount=allhalfyearammount.add(failedhalfyearammount);
 
 			if(h1.contains(cuurentMonth)) {
 				paymentPeriod=H1;
 				expiryDate="30-09-"+currentyear;
 
-				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(2));
-				totalAmountForDemand = ammountforhalfyearly.add(allhalfyearammount);
+				//newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(2));
+				totalAmountForDemand = ammountforhalfyearly.add(pastDue);
 
+				if(advancedBillAmount.compareTo(totalAmountForDemand)>0) {
+					advancedBillAmount = advancedBillAmount.subtract(totalAmountForDemand);
+					totalAmountForDemand = new BigDecimal(0);
+
+				}
+				else if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
+					totalAmountForDemand = totalAmountForDemand.subtract(advancedBillAmount);
+					advancedBillAmount = new BigDecimal(0);
+				}
+				else if(totalAmountForDemand.compareTo(advancedBillAmount)==0) {
+					totalAmountForDemand = new BigDecimal(0);
+					advancedBillAmount = new BigDecimal(0);
+				}
+				
 				mpdObj = new ModeOfPaymentDetails();
 				mpdObj = getModeOfPaymentDetails(totalAmountForDemand,"01-04-"+currentyear, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),pastDue);
 				mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_1);
@@ -1414,11 +1432,11 @@ public class BillServicev2 {
 			{
 				if( !halfyearly.contains("H1"))
 				{
-					ammountforhalfyearly=ammountforhalfyearly.add(pastDue);
+					amountwithpastduehalf=ammountforhalfyearly.add(pastDue);
 					String startDateh1="01-04-"+currentyear;
 					String expiryDateh1="30-09-"+currentyear;
 					mpdObj = new ModeOfPaymentDetails();
-					mpdObj = getModeOfPaymentDetails(ammountforhalfyearly,startDateh1, expiryDateh1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
+					mpdObj = getModeOfPaymentDetails(amountwithpastduehalf,startDateh1, expiryDateh1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),pastDue);
 					mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_1);
 					mpdList.add(mpdObj);
 				}
@@ -1427,7 +1445,7 @@ public class BillServicev2 {
 				expiryDate="31-03-"+nextYear;
 				String firstDayAfterexpiryDateH1 = "01-10-"+currentyear;
 
-				newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(2));
+				//newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new BigDecimal(2));
 				halfyearlyammount=ammountForTransactionperiod(H1,ammountforhalfyearly);
 				halfyearlyammount=halfyearlyammount.add(pastDue);
 				if(halfyearlyammount.compareTo(paidBillAmount)==0)
@@ -1489,25 +1507,25 @@ public class BillServicev2 {
 				 */
 				//allhalfyearammount=allhalfyearammount.add(halfyearlyammount);
 				totalAmountForDemand = ammountforhalfyearly.add(halfyearlyammount);
-				mpdObj = new ModeOfPaymentDetails();
-				mpdObj = getModeOfPaymentDetails(totalAmountForDemand,startDateh2, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),BigDecimal.ZERO);
-				mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_2);
-				mpdList.add(mpdObj);
-
+			
 				if(advancedBillAmount.compareTo(totalAmountForDemand)>0) {
 					advancedBillAmount = advancedBillAmount.subtract(totalAmountForDemand);
 					totalAmountForDemand = new BigDecimal(0);
 
 				}
-
-				if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
+				else if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
 					totalAmountForDemand = totalAmountForDemand.subtract(advancedBillAmount);
 					advancedBillAmount = new BigDecimal(0);
 				}
-				if(totalAmountForDemand.compareTo(advancedBillAmount)==0) {
+				else if(totalAmountForDemand.compareTo(advancedBillAmount)==0) {
 					totalAmountForDemand = new BigDecimal(0);
 					advancedBillAmount = new BigDecimal(0);
 				}
+				
+				mpdObj = new ModeOfPaymentDetails();
+				mpdObj = getModeOfPaymentDetails(totalAmountForDemand,startDateh2, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),BigDecimal.ZERO);
+				mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_2);
+				mpdList.add(mpdObj);
 			}
 
 			break;
@@ -1516,27 +1534,27 @@ public class BillServicev2 {
 			paymentPeriod=YR;
 			String startDateh1="01-04-"+currentyear;
 			expiryDate="31-03-"+nextYear;
-			mpdObj = new ModeOfPaymentDetails();
-			mpdObj = getModeOfPaymentDetails(totalAmountForDemand,startDateh1, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),pastDue);
-			mpdObj.setPeriod(TxnPeriodEnum.YEARLY);
-			mpdList.add(mpdObj);
-
+			
 			totalAmountForDemand=totalAmountForDemand.add(pastDue);
-
 			if(advancedBillAmount.compareTo(totalAmountForDemand)>0) {
 				totalAmountForDemand = new BigDecimal(0);
 				advancedBillAmount = advancedBillAmount.subtract(totalAmountForDemand);
 
 			}
-
-			if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
+			else if(totalAmountForDemand.compareTo(advancedBillAmount)>0) {
 				totalAmountForDemand = totalAmountForDemand.subtract(advancedBillAmount);
 				advancedBillAmount = new BigDecimal(0);
 			}
-			if(totalAmountForDemand.compareTo(advancedBillAmount)==0) {
+			else if(totalAmountForDemand.compareTo(advancedBillAmount)==0) {
 				totalAmountForDemand = new BigDecimal(0);
 				advancedBillAmount = new BigDecimal(0);
 			}
+			
+			mpdObj = new ModeOfPaymentDetails();
+			mpdObj = getModeOfPaymentDetails(totalAmountForDemand,startDateh1, expiryDate,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(),pastDue);
+			mpdObj.setPeriod(TxnPeriodEnum.YEARLY);
+			mpdList.add(mpdObj);
+			
 			break;
 		default:
 			break;
