@@ -83,7 +83,7 @@ const CHBSlotDetails
         {
           window.location.href.includes("/citizen") ?
             <Timeline currentStep={2} />
-            : null
+            :<Timeline currentStep={2} />
         }
         <Card>
         <CardSubHeader>

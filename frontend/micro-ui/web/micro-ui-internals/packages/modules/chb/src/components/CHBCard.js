@@ -28,14 +28,18 @@ const CHBCard = () => {
     return null;
   }
   const links=[
+    // {
+    //   count: isLoading ? "-" : total?.totalCount,
+    //   label: t("ES_COMMON_INBOX"),
+    //   link: `/digit-ui/employee/chb/inbox`,
+    // },
     {
-      count: isLoading ? "-" : total?.totalCount,
-      label: t("ES_COMMON_INBOX"),
-      link: `/digit-ui/employee/chb/bookHall/inbox`,
+      label: t("ES_NEW_COMMUNITY_HALL_BOOKING"),
+      link: `/digit-ui/employee/chb/bookHall/searchhall`,
     },
     {
       label: t("ES_COMMON_APPLICATION_SEARCH"),
-      link: `/digit-ui/employee/chb/bookHall/my-applications`,
+      link: `/digit-ui/employee/chb/my-applications`,
     },
   ]
   const CHB_CEMP = Digit.UserService.hasAccess(["CHB_APPROVER","CHB_VERIFIER"]) || false;
@@ -43,11 +47,11 @@ const CHBCard = () => {
     Icon: <CHBIcon/>,
     moduleName: t("ACTION_TEST_CHB"),
     kpis: [
-      {
-        count: total?.totalCount,
-        label: t("ES_TITLE_INBOX"),
-        link: `/digit-ui/employee/chb/searchHall/inbox`,
-      },
+      // {
+      //   count: total?.totalCount,
+      //   label: t("ES_TITLE_INBOX"),
+      //   link: `/digit-ui/employee/chb/searchHall/inbox`,
+      // },
     ],
     links:links.filter(link=>!link?.role||CHB_CEMP),
   };

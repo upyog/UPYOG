@@ -263,8 +263,8 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
 
  const handleSearch = () => {
   const selectedHallName = selectedHall?.code || "";
-  const startDate = dateRange[0].startDate ? format(dateRange[0].startDate, 'dd-MM-yyyy') : "";
-  const endDate = dateRange[0].endDate ? format(dateRange[0].endDate, 'dd-MM-yyyy') : "";
+  const startDate = dateRange[0].startDate ? format(dateRange[0].startDate, 'yyyy-MM-dd') : "";
+  const endDate = dateRange[0].endDate ? format(dateRange[0].endDate, 'yyyy-MM-dd') : "";
   const selectedHallCode = hallCode?.code || "";
 
   if (selectedHallName && startDate && endDate && selectedHallCode) {
