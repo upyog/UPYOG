@@ -131,22 +131,22 @@ public class SiteRepository {
         
         if (!CollectionUtils.isEmpty(criteria.getUuids())) {
             isAppendAndClause = addAndClauseIfRequired(false, searchQuery);
-            searchQuery.append(" booking.uuid IN ( ").append(getQueryForCollection(criteria.getUuids(),
+            searchQuery.append(" eg_site_application.uuid IN ( ").append(getQueryForCollection(criteria.getUuids(),
                     preparedStatementValues)).append(" )");
         }
         if(!CollectionUtils.isEmpty(criteria.getSiteId())) {
         	isAppendAndClause = addAndClauseIfRequired(false, searchQuery);
-        	 searchQuery.append(" booking.uuid IN ( ").append(getQueryForCollection(criteria.getSiteId(),
+        	 searchQuery.append(" eg_site_application.site_id IN ( ").append(getQueryForCollection(criteria.getSiteId(),
                      preparedStatementValues)).append(" )");
         }
         if(!CollectionUtils.isEmpty(criteria.getCreatedBy())) {
         	isAppendAndClause = addAndClauseIfRequired(false, searchQuery);
-        	 searchQuery.append(" booking.uuid IN ( ").append(getQueryForCollection(criteria.getCreatedBy(),
+        	 searchQuery.append(" eg_site_application.created_by IN ( ").append(getQueryForCollection(criteria.getCreatedBy(),
                      preparedStatementValues)).append(" )");
         }
         if(!ObjectUtils.isEmpty(criteria.getTenantId())) {
         	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
-			searchQuery.append(" booking.tenant_id = ? ");
+			searchQuery.append(" eg_site_application.tenant_id = ? ");
 			preparedStatementValues.add(criteria.getTenantId());
         }
 

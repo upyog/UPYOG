@@ -20,5 +20,7 @@ public class SiteCreationActionRequest {
 	
 	@JsonProperty("siteID")
 	private List<String> siteId;
+	
+	private String businessService;
 
 }

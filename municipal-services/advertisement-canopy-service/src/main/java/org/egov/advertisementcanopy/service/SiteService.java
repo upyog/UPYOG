@@ -400,7 +400,7 @@ public class SiteService {
 		Map<String, SiteCreationData> mapSites = sites.stream()
 				.collect(Collectors.toMap(acc -> acc.getSiteID(), acc -> acc));
 		String siteTenantId = sites.get(0).getTenantId();
-		String siteBusinessId = AdvtConstants.SITE_SERVICE;
+		String siteBusinessId = AdvtConstants.BUSINESS_SERVICE_SITE_CREATION;
 
 		// fetch business service search
 		BusinessServiceResponse businessServiceResponse = workflowService
