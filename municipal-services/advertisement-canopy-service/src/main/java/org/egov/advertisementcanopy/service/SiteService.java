@@ -3,6 +3,7 @@ package org.egov.advertisementcanopy.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -11,13 +12,22 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.advertisementcanopy.contract.workflow.BusinessServiceResponse;
+import org.egov.advertisementcanopy.contract.workflow.State;
 import org.egov.advertisementcanopy.model.AuditDetails;
+import org.egov.advertisementcanopy.model.SiteBooking;
+import org.egov.advertisementcanopy.model.SiteBookingDetail;
+import org.egov.advertisementcanopy.model.SiteBookingSearchCriteria;
 import org.egov.advertisementcanopy.model.SiteCountData;
 import org.egov.advertisementcanopy.model.SiteCountRequest;
 import org.egov.advertisementcanopy.model.SiteCountResponse;
+import org.egov.advertisementcanopy.model.SiteCreationActionRequest;
+import org.egov.advertisementcanopy.model.SiteCreationActionResponse;
 import org.egov.advertisementcanopy.model.SiteCreationData;
+import org.egov.advertisementcanopy.model.SiteCreationDetail;
 import org.egov.advertisementcanopy.model.SiteCreationRequest;
 import org.egov.advertisementcanopy.model.SiteCreationResponse;
+import org.egov.advertisementcanopy.model.SiteSearchCriteria;
 import org.egov.advertisementcanopy.model.SiteSearchRequest;
 import org.egov.advertisementcanopy.model.SiteSearchResponse;
 import org.egov.advertisementcanopy.model.SiteUpdateRequest;
@@ -33,6 +43,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Service
 public class SiteService {
 
@@ -47,6 +59,9 @@ public class SiteService {
 
 	@Autowired
 	WorkflowService workflowService;
+
+	@Autowired
+	ObjectMapper objectMapper;
 
 	public static final String ADVERTISEMENT_HOARDING = "Advertising Hoarding";
 	public static final String CANOPY = "Canopy";
@@ -295,11 +310,10 @@ public class SiteService {
 								.filter(license -> StringUtils.equalsIgnoreCase(
 										PTRConstants.APPLICATION_STATUS_APPROVED, license.getWorkFlowStatus()))
 								.count());
-				siteSearchResponse
-						.setReturnToInitiator((int) siteSearchResponse.getSiteCreationData().stream()
-								.filter(license -> StringUtils.equalsIgnoreCase(
-										PTRConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION, license.getWorkFlowStatus()))
-								.count());
+				siteSearchResponse.setReturnToInitiator((int) siteSearchResponse.getSiteCreationData().stream()
+						.filter(license -> StringUtils.equalsIgnoreCase(
+								PTRConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION, license.getWorkFlowStatus()))
+						.count());
 			}
 
 		} catch (Exception e) {
@@ -370,6 +384,74 @@ public class SiteService {
 		 * } catch (Exception e) { throw new RuntimeException(e.getMessage()); }
 		 */
 		return countResponse;
+	}
+
+	public SiteCreationActionResponse siteActionStatus(SiteCreationActionRequest siteCreationActionRequest) {
+		if (CollectionUtils.isEmpty(siteCreationActionRequest.getSiteId())) {
+			throw new CustomException("INVALID REQUEST", "SiteId must not be Empty!!!");
+		}
+		Map<String, List<String>> siteActionMaps = new HashMap<>();
+		SiteSearchCriteria criteria = SiteSearchCriteria.builder().siteId(siteCreationActionRequest.getSiteId())
+				.build();
+		List<SiteCreationData> sites = siteRepository.fetchSites(criteria);
+		if (CollectionUtils.isEmpty(sites)) {
+			throw new CustomException("SITE_DATA_NOT_FOUND", "No Site Data found with given Site Ids.");
+		}
+		Map<String, SiteCreationData> mapSites = sites.stream()
+				.collect(Collectors.toMap(acc -> acc.getSiteID(), acc -> acc));
+		String siteTenantId = sites.get(0).getTenantId();
+		String siteBusinessId = AdvtConstants.SITE_SERVICE;
+
+		// fetch business service search
+		BusinessServiceResponse businessServiceResponse = workflowService
+				.businessServiceSearchForSites(siteCreationActionRequest, siteTenantId, siteBusinessId);
+
+		if (null == businessServiceResponse || CollectionUtils.isEmpty(businessServiceResponse.getBusinessServices())) {
+			throw new CustomException("NO_BUSINESS_SERVICE_FOUND",
+					"Business service not found for Site Ids: " + siteCreationActionRequest.getSiteId().toString());
+		}
+
+		List<String> rolesWithinTenant = getRolesWithinTenant(siteTenantId,
+				siteCreationActionRequest.getRequestInfo().getUserInfo().getRoles());
+
+		siteCreationActionRequest.getSiteId().stream().forEach(siteId -> {
+
+			String status = mapSites.get(siteId).getStatus();
+			List<State> stateList = businessServiceResponse.getBusinessServices().get(0).getStates().stream()
+					.filter(state -> StringUtils.equalsIgnoreCase(state.getApplicationStatus(), status) && !StringUtils
+							.equalsAnyIgnoreCase(state.getApplicationStatus(), AdvtConstants.STATUS_APPROVED))
+					.collect(Collectors.toList());
+
+			// filtering actions based on roles
+			List<String> actions = new ArrayList<>();
+			stateList.stream().forEach(state -> {
+				state.getActions().stream()
+						.filter(action -> action.getRoles().stream().anyMatch(role -> rolesWithinTenant.contains(role)))
+						.forEach(action -> {
+							actions.add(action.getAction());
+						});
+			});
+
+			siteActionMaps.put(siteId, actions);
+		});
+
+		List<SiteCreationDetail> siteDetailList = new ArrayList<>();
+		siteActionMaps.entrySet().stream().forEach(entry -> {
+			siteDetailList.add(SiteCreationDetail.builder().siteId(entry.getKey()).action(entry.getValue()).build());
+		});
+
+		SiteCreationActionResponse siteCreationResponse = SiteCreationActionResponse.builder()
+				.responseInfo(responseInfoFactory
+						.createResponseInfoFromRequestInfo(siteCreationActionRequest.getRequestInfo(), true))
+				.siteCreationDetail(siteDetailList).build();
+		return siteCreationResponse;
+	}
+
+	private List<String> getRolesWithinTenant(String tenantId, List<Role> roles) {
+		List<String> roleCodes = roles.stream()
+				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(role -> role.getCode())
+				.collect(Collectors.toList());
+		return roleCodes;
 	}
 
 }

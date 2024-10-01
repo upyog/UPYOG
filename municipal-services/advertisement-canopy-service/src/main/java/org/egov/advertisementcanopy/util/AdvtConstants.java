@@ -75,6 +75,8 @@ public class AdvtConstants {
 	public static final String STATUS_APPROVED = "APPROVED";
 
 	public static final String BUSINESS_SERVICE = "ADVT";
+	
+	public static final String SITE_SERVICE = "SITE";
 
     public static final String BILLING_TAX_HEAD_MASTER_CODE = "LCF.Advertisement_Canopy_Fee";
 
