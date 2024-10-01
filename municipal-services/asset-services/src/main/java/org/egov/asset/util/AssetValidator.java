@@ -18,68 +18,69 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class AssetValidator {
-	
+
 	@Autowired
 	private MDMSValidator mdmsValidator;
-	
+
 	@Autowired
 	AssetConfiguration config;
 
 	public void validateCreate(AssetRequest assetRequest, Object mdmsData) {
 		mdmsValidator.validateMdmsData(assetRequest, mdmsData);
-		//validateApplicationDocuments();
+		// validateApplicationDocuments();
 	}
 
 	private void validateApplicationDocuments() {
-		
+
 	}
-	
+
 	/**
 	 * Validates if the search parameters are valid
 	 * 
-	 * @param requestInfo
-	 *            The requestInfo of the incoming request
-	 * @param criteria
-	 *            The BPASearch Criteria
+	 * @param requestInfo The requestInfo of the incoming request
+	 * @param criteria    The BPASearch Criteria
 	 */
-	 //TODO need to make the changes in the data
-	public void validateSearch(RequestInfo requestInfo, AssetSearchCriteria criteria) { 
-		if (!requestInfo.getUserInfo().getType().equalsIgnoreCase(AssetConstants.EMPLOYEE) && criteria.isEmpty())
-			throw new CustomException(AssetConstants.INVALID_SEARCH, "Search without any paramters is not allowed");
-
-		if (!requestInfo.getUserInfo().getType().equalsIgnoreCase(AssetConstants.EMPLOYEE) && !criteria.tenantIdOnly()
-				&& criteria.getTenantId() == null)
-			throw new CustomException(AssetConstants.INVALID_SEARCH, "TenantId is mandatory in search");
-
-		if (requestInfo.getUserInfo().getType().equalsIgnoreCase(AssetConstants.EMPLOYEE) && !criteria.isEmpty()
-				&& !criteria.tenantIdOnly() && criteria.getTenantId() == null)
-			throw new CustomException(AssetConstants.INVALID_SEARCH, "TenantId is mandatory in search");
-
+	// TODO need to make the changes in the data
+	public void validateSearch(RequestInfo requestInfo, AssetSearchCriteria criteria) {
 		String allowedParamStr = null;
+		if (requestInfo.getUserInfo() != null) {
 
-		if (requestInfo.getUserInfo().getType().equalsIgnoreCase(AssetConstants.EMPLOYEE))
-			allowedParamStr = config.getAllowedEmployeeSearchParameters();
-		else if (requestInfo.getUserInfo().getType().equalsIgnoreCase(AssetConstants.EMPLOYEE))
-			allowedParamStr = config.getAllowedEmployeeSearchParameters();
-		else
-			throw new CustomException(AssetConstants.INVALID_SEARCH,
-					"The userType: " + requestInfo.getUserInfo().getType() + " does not have any search config");
+			if (!requestInfo.getUserInfo().getType().equalsIgnoreCase(AssetConstants.EMPLOYEE) && criteria.isEmpty())
+				throw new CustomException(AssetConstants.INVALID_SEARCH, "Search without any paramters is not allowed");
 
-		if (StringUtils.isEmpty(allowedParamStr) && !criteria.isEmpty())
-			throw new CustomException(AssetConstants.INVALID_SEARCH, "No search parameters are expected");
-		else {
-			List<String> allowedParams = Arrays.asList(allowedParamStr.split(","));
-			validateSearchParams(criteria, allowedParams);
+			if (!requestInfo.getUserInfo().getType().equalsIgnoreCase(AssetConstants.EMPLOYEE)
+					&& !criteria.tenantIdOnly() && criteria.getTenantId() == null)
+				throw new CustomException(AssetConstants.INVALID_SEARCH, "TenantId is mandatory in search");
+
+			if (requestInfo.getUserInfo().getType().equalsIgnoreCase(AssetConstants.EMPLOYEE) && !criteria.isEmpty()
+					&& !criteria.tenantIdOnly() && criteria.getTenantId() == null)
+				throw new CustomException(AssetConstants.INVALID_SEARCH, "TenantId is mandatory in search");
+
+			
+
+			if (requestInfo.getUserInfo().getType().equalsIgnoreCase(AssetConstants.EMPLOYEE))
+				allowedParamStr = config.getAllowedEmployeeSearchParameters();
+			else if (requestInfo.getUserInfo().getType().equalsIgnoreCase(AssetConstants.EMPLOYEE))
+				allowedParamStr = config.getAllowedEmployeeSearchParameters();
+			else
+				throw new CustomException(AssetConstants.INVALID_SEARCH,
+						"The userType: " + requestInfo.getUserInfo().getType() + " does not have any search config");
+		} else {
+			allowedParamStr = config.getAllowedEmployeeSearchParameters();
+			if (StringUtils.isEmpty(allowedParamStr) && !criteria.isEmpty())
+				throw new CustomException(AssetConstants.INVALID_SEARCH, "No search parameters as expected");
+			else {
+				List<String> allowedParams = Arrays.asList(allowedParamStr.split(","));
+				validateSearchParams(criteria, allowedParams);
+			}
 		}
 	}
-	
+
 	/**
 	 * Validates if the paramters coming in search are allowed
 	 * 
-	 * @param criteria
-	 *            BPA search criteria
-	 * @param allowedParams
-	 *            Allowed Params for search
+	 * @param criteria      BPA search criteria
+	 * @param allowedParams Allowed Params for search
 	 */
 	private void validateSearchParams(AssetSearchCriteria criteria, List<String> allowedParams) {
 
@@ -97,10 +98,11 @@ public class AssetValidator {
 
 		if (criteria.getLimit() != null && !allowedParams.contains("limit"))
 			throw new CustomException(AssetConstants.INVALID_SEARCH, "Search on limit is not allowed");
-		
+
 		if (criteria.getApprovalDate() != null && (criteria.getApprovalDate() > new Date().getTime()))
-			throw new CustomException(AssetConstants.INVALID_SEARCH, "Permit Order Genarated date cannot be a future date");
-		
+			throw new CustomException(AssetConstants.INVALID_SEARCH,
+					"Permit Order Genarated date cannot be a future date");
+
 		if (criteria.getFromDate() != null && (criteria.getFromDate() > new Date().getTime()))
 			throw new CustomException(AssetConstants.INVALID_SEARCH, "From date cannot be a future date");
 
@@ -108,5 +110,5 @@ public class AssetValidator {
 				&& (criteria.getFromDate() > criteria.getToDate()))
 			throw new CustomException(AssetConstants.INVALID_SEARCH, "To date cannot be prior to from date");
 	}
-	
+
 }

@@ -32,6 +32,9 @@ import { ASSETComponents, ASSETLinks, ASSETModule } from "@nudmcdgnpm/upyog-ui-m
 
 import { COMMONMODULELinks, COMMONMODULEModule, COMMONMODULEComponents } from "@nudmcdgnpm/upyog-ui-module-cm";
 
+import { FNOCComponents, FNOCLinks, FNOCModule } from "@nudmcdgnpm/upyog-ui-module-fnoc";
+
+
 
 // import {initCustomisationComponents} from "./customisations";
 
@@ -76,7 +79,8 @@ const enabledModules = [
   "ASSET",
   "EW",
   "CHB",
-  "COMMONMODULE"
+  "COMMONMODULE",
+  "FNOC",
 ];
 
 const initTokens = (stateCode) => {
@@ -137,6 +141,9 @@ const initDigitUI = () => {
     COMMONMODULELinks,
     COMMONMODULEModule,
     ...COMMONMODULEComponents,
+    FNOCLinks,
+    FNOCModule,
+    ...FNOCComponents,
   });
 
   initFSMComponents();

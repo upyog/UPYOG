@@ -11,14 +11,15 @@
     "micro-ui-internals/packages/modules/dss",
     "micro-ui-internals/packages/modules/ew",
     "micro-ui-internals/packages/modules/cm",
-    "micro-ui-internals/packages/modules/chb"
-
+    "micro-ui-internals/packages/modules/chb",
+    "micro-ui-internals/packages/modules/asset",
+    "micro-ui-internals/packages/modules/fnoc"
   ],
   "engines": {
     "node": ">=14"
   },
   "dependencies": {
-    "@nudmcdgnpm/upyog-css": "1.2.1",
+    "@nudmcdgnpm/upyog-css": "1.2.2",
     "@nudmcdgnpm/digit-ui-libraries": "1.2.0",
     "@nudmcdgnpm/digit-ui-module-bills": "1.2.0",
     "@nudmcdgnpm/digit-ui-module-common": "1.2.0",
@@ -36,12 +37,14 @@
     "@nudmcdgnpm/digit-ui-module-tl": "1.2.1",
     "@nudmcdgnpm/digit-ui-module-ws": "1.2.1",
     "@nudmcdgnpm/digit-ui-module-commonpt":"1.2.1",
-    "@nudmcdgnpm/digit-ui-react-components": "1.2.0",
+    "@nudmcdgnpm/digit-ui-react-components": "1.2.1",
     "@nudmcdgnpm/upyog-ui-module-ptr": "1.2.3",
     "@nudmcdgnpm/upyog-ui-module-asset": "1.2.1",
     "@nudmcdgnpm/upyog-ui-module-ew":"1.2.0",
     "@nudmcdgnpm/upyog-ui-module-chb":"1.2.0",
     "@nudmcdgnpm/upyog-ui-module-cm":"1.2.0",
+    "@nudmcdgnpm/upyog-ui-module-fnoc":"1.2.0",
+
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
