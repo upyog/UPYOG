@@ -1,6 +1,7 @@
 import { requestInfoToResponseInfo, upadteForAuditDetails } from "../utils";
 import { validateBillingSlabSearch } from "../utils/modelValidation";
 import { replaceSchemaPlaceholder } from "../utils/index";
+import logger from "./logger";
 
 const search = async (req, res, pool, next) => {
   console.log("search");
@@ -36,6 +37,9 @@ export default search;
 
 export const searchService = async (reqestCriteria, searchResponse, pool) => {
   var querystring = generateQuery(reqestCriteria);
+
+  logger.info('query for Billing service fetch is  ${querystring}');
+
   querystring = replaceSchemaPlaceholder(querystring, reqestCriteria.tenantId);
   let billingSlabs = [];
   billingSlabs = await pool
