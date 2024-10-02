@@ -1,7 +1,7 @@
 import { requestInfoToResponseInfo, upadteForAuditDetails } from "../utils";
 import { validateBillingSlabSearch } from "../utils/modelValidation";
 import { replaceSchemaPlaceholder } from "../utils/index";
-import logger from "./logger";
+import logger from "../config/logger";
 
 const search = async (req, res, pool, next) => {
   console.log("search");
