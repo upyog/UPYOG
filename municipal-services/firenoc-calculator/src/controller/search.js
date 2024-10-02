@@ -38,7 +38,7 @@ export default search;
 export const searchService = async (reqestCriteria, searchResponse, pool) => {
   var querystring = generateQuery(reqestCriteria);
 
-  logger.info('query for Billing service fetch is  ${querystring}');
+  logger.info("query for Billing service fetch is"+querystring);
 
   querystring = replaceSchemaPlaceholder(querystring, reqestCriteria.tenantId);
   let billingSlabs = [];
