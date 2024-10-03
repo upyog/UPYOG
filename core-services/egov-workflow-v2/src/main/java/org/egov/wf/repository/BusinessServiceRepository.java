@@ -50,10 +50,19 @@ public class BusinessServiceRepository {
     public List<BusinessService> getBusinessServices(BusinessServiceSearchCriteria criteria){
         String query;
 
+        log.info("#### criteria tenantid: "+criteria.getTenantId()+"");
+        criteria.getActionUuids().stream().forEach(uuid -> {log.info("#### uuid : "+uuid);});
+        criteria.getStateUuids().stream().forEach(uuid -> {log.info("#### getStateUuids : "+uuid);});
+        criteria.getBusinessServices().stream().forEach(uuid -> {log.info("#### getBusinessServices : "+uuid);});
+        
         List<String> stateLevelBusinessServices = new LinkedList<>();
         List<String> tenantBusinessServices = new LinkedList<>();
 
         Map<String, Boolean> stateLevelMapping = mdmsService.getStateLevelMapping();
+        log.info("####### stateLevelMapping : "+stateLevelMapping.toString());
+        stateLevelMapping.entrySet().stream().forEach(map -> {
+        	log.info("## stateLevelMapping key :"+map.getKey()+" ## value : "+map.getValue());
+        });
 
         if(!CollectionUtils.isEmpty(criteria.getBusinessServices())){
 
@@ -74,6 +83,7 @@ public class BusinessServiceRepository {
             List<Object> stateLevelPreparedStmtList = new ArrayList<>();
             query = queryBuilder.getBusinessServices(stateLevelCriteria, stateLevelPreparedStmtList);
             searchResults.addAll(jdbcTemplate.query(query, stateLevelPreparedStmtList.toArray(), rowMapper));
+            log.info("####### query 1 : "+query.toString());
         }
         if(!CollectionUtils.isEmpty(tenantBusinessServices)){
             BusinessServiceSearchCriteria tenantLevelCriteria = new BusinessServiceSearchCriteria();
@@ -82,8 +92,8 @@ public class BusinessServiceRepository {
             List<Object> tenantLevelPreparedStmtList = new ArrayList<>();
             query = queryBuilder.getBusinessServices(tenantLevelCriteria, tenantLevelPreparedStmtList);
             searchResults.addAll(jdbcTemplate.query(query, tenantLevelPreparedStmtList.toArray(), rowMapper));
+            log.info("####### query 2 : "+query.toString());
         }
-
         return searchResults;
     }
 
