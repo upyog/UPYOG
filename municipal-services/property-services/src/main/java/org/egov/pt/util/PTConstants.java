@@ -153,6 +153,7 @@ public class PTConstants {
 	
 	public static final String WF_STATUS_REJECTED = "REJECTED";
 	
+	
 	public static final String WF_STATUS_FIELDVERIFIED = "FIELDVERIFIED";
 	
 	public static final String WF_STATUS_DOCVERIFIED = "DOCVERIFIED";
@@ -162,6 +163,8 @@ public class PTConstants {
 	public static final String WF_STATUS_APPROVED = "APPROVED";
 	
 	public static final String WF_STATUS_OPEN = "OPEN";
+	
+	public static final String WF_STATUS_VERIFY = "VERIFY";
 	
 	public static final String WF_NO_WORKFLOW = "NO_WORKFLOW";
 
@@ -264,6 +267,7 @@ public class PTConstants {
 
 
     public static final String NOTIFICATION_PROPERTYID = "{PROPERTYID}";
+    public static final String NOTIFICATION_UPIN = "{UPIN}";
     
     public static final String PT_OWNER_NAME = "{ownername}";
     
@@ -469,6 +473,16 @@ public class PTConstants {
     public static final String CREATED_FROM_PROPERTY = "createdFromProperty";
     
     public static final String AMALGAMATED_CREATED_IDS_PROPERTY = "amagamtedFromPropertyIds";
+    
+    /////////////////////////UPDATE MESSAGES FOR MNPT////////////////////////////////
+    
+    public static final String CREATE_OPEN_STATE_MESSAGE_MNPT= "CREATE_OPEN_STATE_MESSAGE_MNPT";
+    public static final String CREATE_PT_DOC_VERIFIER_VERIFY_STATE_MESSAGE_MNPT="CREATE_PT_DOC_VERIFIER_VERIFY_STATE_MESSAGE_MNPT";
+    public static final String CREATE_PT_DOC_VERIFIER_REJECT_STATE_MESSAGE_MNPT="CREATE_PT_DOC_VERIFIER_REJECT_STATE_MESSAGE_MNPT";
+    public static final String CREATE_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT="CREATE_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT";
+    public static final String CREATE_PT_FIELD_INSPECTOR_FORWARD_STATE_MESSAGE_MNPT="CREATE_PT_FIELD_INSPECTOR_FORWARD_STATE_MESSAGE_MNPT";
+    public static final String CREATE_PT_APPROVER_APPROVE_STATE_MNPT="CREATE_PT_APPROVER_APPROVE_STATE_MESSAGE_MNPT";
+    public static final String CREATE_PT_APPROVER_REJECT_STATE_MESSAGE_MNPT="CREATE_PT_APPROVER_REJECT_STATE_MESSAGE_MNPT";
 
 
 }
