@@ -1,4 +1,4 @@
-FROM egovio/alpine-node-builder-14:yarn AS build  
+FROM egovio/alpine-node-builder-12:yarn AS build  
 ARG WORK_DIR
 ENV npm_config_cache=/tmp
 WORKDIR /app
@@ -11,7 +11,7 @@ RUN npm install
 RUN npm run build
 
 # Create runtime image
-FROM node:14-alpine
+FROM node:12-alpine
 
 
 WORKDIR /opt/egov
