@@ -2,6 +2,9 @@ package org.egov.wf.web.controllers;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.egov.wf.service.BusinessMasterService;
 import org.egov.wf.util.ResponseInfoFactory;
 import org.egov.wf.web.models.*;
@@ -15,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@Slf4j
 @RequestMapping("/egov-wf")
 public class BusinessServiceController {
 
@@ -61,6 +65,7 @@ public class BusinessServiceController {
                                                           @Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
 
         List<BusinessService> businessServices = businessMasterService.search(searchCriteria);
+        log.info("#### main businessServices.size() :"+ businessServices.size());
         BusinessServiceResponse response = BusinessServiceResponse.builder().businessServices(businessServices)
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(),true))
                 .build();
