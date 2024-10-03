@@ -1,6 +1,8 @@
 package org.egov.pt.service;
 
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Notice;
@@ -63,6 +65,8 @@ public class NoticeService {
 		
 		else
 			notice=noticeRepository.getnotices(noticeCriteria);
+		
+		notice=notice.stream().sorted((x,y)->x.getAuditDetails().getCreatedTime().compareTo(y.getAuditDetails().getCreatedTime())).collect(Collectors.toList());
 		return notice;
 	}
 
