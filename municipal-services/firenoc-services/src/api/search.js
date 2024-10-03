@@ -249,7 +249,7 @@ export const searchApiResponse = async (request, next = {}) => {
 }else if(isEmpty(queryObj)){
   sqlQuery = `${sqlQuery}  ) s`;
 }else if(!isEmpty(queryObj)){
-  sqlQuery = `${sqlQuery.substring(0, sqlQuery.length - 3)}) s ORDER BY fid `;
+  sqlQuery = `${sqlQuery} ) s ORDER BY fid `;
 }
 
   console.log("SQL QUery:" +sqlQuery);
