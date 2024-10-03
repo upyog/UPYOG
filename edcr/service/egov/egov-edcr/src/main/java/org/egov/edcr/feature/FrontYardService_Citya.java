@@ -338,7 +338,7 @@ public class FrontYardService_Citya extends GeneralRule {
 //			   occupancyName = "Government/Semi Government";
 //		}
 		valid = processFrontYardService(blockName, level, min, mean, mostRestrictiveOccupancy, frontYardResult, valid,
-				subRule, rule, minVal, meanVal, depthOfPlot, errors, pl,  occupancyName, pl.getEdcrRulesFeatures1()
+				subRule, rule, minVal, meanVal, depthOfPlot, errors, pl,  occupancyName, pl.getEdcrRulesFeatures()
 				);
 		return valid;
 	}
@@ -350,13 +350,13 @@ public class FrontYardService_Citya extends GeneralRule {
 	   BigDecimal  plotArea = pl.getPlot().getArea();
 		System.out.println("plotarea" + plotArea);
 	
-		String feature = "SetBack";
-		String featureName = "FrontSetBack";
+		
+		String feature = "FrontSetBack";
 			
 		Map<String, Object> params = new HashMap<>();
 		
 		params.put("feature", feature);
-		params.put("featureName", featureName);
+		
 		params.put("occupancy", occupancyName);
 		params.put("depthOfPlot", depthOfPlot);
 		params.put("plotArea", plotArea);
@@ -375,11 +375,11 @@ public class FrontYardService_Citya extends GeneralRule {
 		try {
 			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
 			LOG.info("permissibleValue" + permissibleValue);
-			System.out.println("permis___ for Frontyard+++" + permissibleValue);
+		
 
 		} catch (NullPointerException e) {
 
-			LOG.error("Permissible Front Yard service not found--------", e);
+			LOG.error("Permissible Value for Front Yard service not found--------", e);
 			return null;
 		}
 

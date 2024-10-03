@@ -199,13 +199,11 @@ public class Far_Citya extends FeatureProcess {
 		}
 		
 		// ArrayList<Map<String, Object>> edcrRulesFeatures = edcrRestService.getEdcrRules();
-		 Map<String, List<Map<String, Object>>> edcrRulesFeatures1 = fetchEdcrRulesMdms.getEdcrRules1();
+		 Map<String, List<Map<String, Object>>> edcrRulesFeatures = fetchEdcrRulesMdms.getEdcrRules();
 	   
 	        // Set this list to the pl object
-	      // pl.setEdcrRulesFeatures(edcrRulesFeatures);
-	       pl.setEdcrRulesFeatures1(edcrRulesFeatures1);
+	       pl.setEdcrRulesFeatures(edcrRulesFeatures);
 	       
-	       System.out.println("Mapppp+++" + pl.getEdcrRulesFeatures1());
 	       
 	   
 		return pl;
@@ -1127,7 +1125,7 @@ public class Far_Citya extends FeatureProcess {
 //	
 	
 	private void processFarResidential(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
-			BigDecimal roadWidth, HashMap<String, String> errors, String feature, String occupancyName, ArrayList<Map<String, Object>> edcrRuleList) {
+			BigDecimal roadWidth, HashMap<String, String> errors, String feature, String occupancyName, Map<String, List<Map<String, Object>>> edcrRuleList) {
 		
 		System.out.println("under processFarResidentoal");
 		System.out.println("+++++" );
@@ -1153,7 +1151,7 @@ public class Far_Citya extends FeatureProcess {
 		System.out.println("listt" + pl.getEdcrRulesFeatures());
 		try {
 		 //permissibleValue = edcrRestService.getPermissibleValue1(pl.getEdcrRulesFeatures(), params, valueFromColumn);
-		 permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(pl.getEdcrRulesFeatures1(), params, valueFromColumn);
+		 permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(pl.getEdcrRulesFeatures(), params, valueFromColumn);
 
 			LOG.info("permissibleValue" + permissibleValue);
 			System.out.println("permis___+++" + permissibleValue);

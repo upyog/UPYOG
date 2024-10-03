@@ -25,7 +25,7 @@ public class FetchEdcrRulesMdms {
 	  private static Logger LOG = LogManager.getLogger(EdcrApplicationService.class);
 
 	  
-	 public Map<String, List<Map<String, Object>>> getEdcrRules1() {
+	 public Map<String, List<Map<String, Object>>> getEdcrRules() {
 	        LOG.info("Entered getEdcrRules method");
 
 	        Object mdmsData = bpaMdmsUtil.mDMSCall(new RequestInfo(), "pg");
@@ -146,20 +146,7 @@ public class FetchEdcrRulesMdms {
 	                featureNameMatches = paramsFeatureName.equalsIgnoreCase(ruleFeatureName);
 	            }
 
-	            // Case 1: Both plotArea and featureName are required, and both match
-	            if (paramsPlotArea != null && paramsFeatureName != null) {
-	                if (plotAreaMatches && featureNameMatches) {
-	                    Map<String, Object> value = new HashMap<>();
-	                    if (valueFromColumn.size() == 1) {
-	                        value.put("permissibleValue", ruleItem.get("permissible"));
-	                    } else if (valueFromColumn.size() > 1 && ruleItem.containsKey("min_value")) {
-	                        value.put("minValue", ruleItem.get("min_value"));
-	                        value.put("maxValue", ruleItem.get("max_value"));
-	                    }
-	                    result.add(value);
-	                    break; // Exit after finding the first matching rule
-	                }
-	            }
+	            
 	            // Case 2: Only plotArea is required, and it matches
 	            else if (paramsPlotArea != null && paramsFeatureName == null) {
 	                if (plotAreaMatches) {
@@ -174,20 +161,7 @@ public class FetchEdcrRulesMdms {
 	                    break; // Exit after finding the first matching rule
 	                }
 	            }
-	            // Case 3: Only featureName is required, and it matches
-	            else if (paramsFeatureName != null && paramsPlotArea == null) {
-	                if (featureNameMatches) {
-	                    Map<String, Object> value = new HashMap<>();
-	                    if (valueFromColumn.size() == 1) {
-	                        value.put("permissibleValue", ruleItem.get("permissible"));
-	                    } else if (valueFromColumn.size() > 1 && ruleItem.containsKey("min_value")) {
-	                        value.put("minValue", ruleItem.get("min_value"));
-	                        value.put("maxValue", ruleItem.get("max_value"));
-	                    }
-	                    result.add(value);
-	                    break; // Exit after finding the first matching rule
-	                }
-	            }
+	            
 	            // Case 4: Neither plotArea nor featureName is required, get permissible value
 	            else {
 	                Map<String, Object> value = new HashMap<>();

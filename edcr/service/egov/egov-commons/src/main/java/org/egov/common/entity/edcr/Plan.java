@@ -182,16 +182,16 @@ public class Plan implements Serializable {
     // Trees and plant defined in the plan
     private transient Plantation plantation;
     
-    private ArrayList<Map<String, Object>> edcrRulesFeatures;
+  
     
-    private  Map<String, List<Map<String, Object>>> edcrRulesFeatures1;
+    private  Map<String, List<Map<String, Object>>> edcrRulesFeatures;
     
-    public Map<String, List<Map<String, Object>>> getEdcrRulesFeatures1() {
-		return edcrRulesFeatures1;
+    public Map<String, List<Map<String, Object>>> getEdcrRulesFeatures() {
+		return edcrRulesFeatures;
 	}
 
-	public void setEdcrRulesFeatures1(Map<String, List<Map<String, Object>>> edcrRulesFeatures1) {
-		this.edcrRulesFeatures1 = edcrRulesFeatures1;
+	public void setEdcrRulesFeatures(Map<String, List<Map<String, Object>>> edcrRulesFeatures) {
+		this.edcrRulesFeatures = edcrRulesFeatures;
 	}
 
 	
@@ -406,14 +406,7 @@ public class Plan implements Serializable {
         this.errors = errors;
     }
     
-    public ArrayList<Map<String, Object>> getEdcrRulesFeatures() {
-        return edcrRulesFeatures;
-    }
-
-    public void setEdcrRulesFeatures(ArrayList<Map<String, Object>> edcrRulesFeatures) {
-        this.edcrRulesFeatures = edcrRulesFeatures;
-    }
-
+   
 
     public PlanInformation getPlanInformation() {
         return planInformation;

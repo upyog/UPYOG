@@ -225,10 +225,10 @@ public class GeneralStair_Citya extends FeatureProcess {
                
                String occupancyName = "";
         		String subOccupancyName = "";
-        		String featureName = "GeneralStair";
-        		String featureName1 = "riserHeight";
+        		String featureName = "RiserHeight";
+        		//String featureName1 = "riserHeight";
         		BigDecimal value = BigDecimal.ZERO;
-        		 Map<String, List<Map<String, Object>>>   edcrRuleList =  plan.getEdcrRulesFeatures1();
+        		 Map<String, List<Map<String, Object>>>   edcrRuleList =  plan.getEdcrRulesFeatures();
         		
         		if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getSubtype() != null
         				&& DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
@@ -244,7 +244,7 @@ public class GeneralStair_Citya extends FeatureProcess {
 
         		params.put("feature", featureName);
         		params.put("occupancy", occupancyName);
-        		params.put("featureName", featureName1);
+        		//params.put("featureName", featureName1);
         		if (!subOccupancyName.equals("")) {
         			params.put("subOccupancy", subOccupancyName);
         		}
@@ -254,8 +254,17 @@ public class GeneralStair_Citya extends FeatureProcess {
 
         		List<Map<String, Object>> permissibleValue = new ArrayList<>();
 
-        		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-        		LOG.info("permissibleValue" + permissibleValue);
+        		try {
+        			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+        			LOG.info("permissibleValue" + permissibleValue);
+        		
+
+        		} catch (NullPointerException e) {
+
+        			LOG.error("Permissible Value for General Stairs Riser height not found--------", e);
+        			return null;
+        		}
+
 
         		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
         			value = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
@@ -314,7 +323,7 @@ public class GeneralStair_Citya extends FeatureProcess {
             BigDecimal landingWidth = widths.stream().reduce(BigDecimal::min).get();
             BigDecimal minWidth = BigDecimal.ZERO;
             boolean valid = false;
-            Map<String, List<Map<String, Object>>>   edcrRuleList =  plan.getEdcrRulesFeatures1();
+            Map<String, List<Map<String, Object>>>   edcrRuleList =  plan.getEdcrRulesFeatures();
 
 
             if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
@@ -461,7 +470,7 @@ public class GeneralStair_Citya extends FeatureProcess {
             List<BigDecimal> flightWidths, BigDecimal minFlightWidth,
             OccupancyTypeHelper mostRestrictiveOccupancyType) {
         BigDecimal flightPolyLine = flightWidths.stream().reduce(BigDecimal::min).get();
-        Map<String, List<Map<String, Object>>>   edcrRuleList =  plan.getEdcrRulesFeatures1();
+        Map<String, List<Map<String, Object>>>   edcrRuleList =  plan.getEdcrRulesFeatures();
         boolean valid = false;
 
         if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
@@ -523,8 +532,8 @@ public class GeneralStair_Citya extends FeatureProcess {
 
 		String occupancyName = "";
 		String subOccupancyName = "";
-		String featureName = "GeneralStair";
-		String featureName1 = "requiredWidth";
+		String featureName = "RequiredWidth";
+		
 		BigDecimal value = BigDecimal.ZERO;
 
 		if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
@@ -566,7 +575,7 @@ public class GeneralStair_Citya extends FeatureProcess {
 		Map<String, Object> params = new HashMap<>();
 
 		params.put("feature", featureName);
-		params.put("featureName", featureName1);
+		//params.put("featureName", featureName1);
 		params.put("occupancy", occupancyName);
 		if (!subOccupancyName.equals("")) {
 			params.put("subOccupancy", subOccupancyName);
@@ -576,9 +585,19 @@ public class GeneralStair_Citya extends FeatureProcess {
 		valueFromColumn.add("permissibleValue");
 
 		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+		try {
+			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+			LOG.info("permissibleValue" + permissibleValue);
+		
 
-		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-		LOG.info("permissibleValue" + permissibleValue);
+		} catch (NullPointerException e) {
+
+			LOG.error("Permissible Value for General Stairs Required Width not found--------", e);
+			return null;
+		}
+
+
+		
 
 		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
 			value = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
@@ -605,7 +624,7 @@ public class GeneralStair_Citya extends FeatureProcess {
             BigDecimal minTread,
             OccupancyTypeHelper mostRestrictiveOccupancyType) {
         BigDecimal totalLength = flightLengths.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-        Map<String, List<Map<String, Object>>>   edcrRuleList =  plan.getEdcrRulesFeatures1();
+        Map<String, List<Map<String, Object>>>   edcrRuleList =  plan.getEdcrRulesFeatures();
 
         totalLength = Util.roundOffTwoDecimal(totalLength);
 
@@ -678,8 +697,8 @@ public class GeneralStair_Citya extends FeatureProcess {
 		
 		String occupancyName = "";
 		String subOccupancyName = "";
-		String featureName = "GeneralStair";
-		String featureName1 = "requiredTread";
+		String featureName = "RequiredTread";
+		//String featureName1 = "requiredTread";
 		BigDecimal value = BigDecimal.ZERO;
 		
 		if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getSubtype() != null
@@ -696,7 +715,7 @@ public class GeneralStair_Citya extends FeatureProcess {
 
 		params.put("feature", featureName);
 		params.put("occupancy", occupancyName);
-		params.put("featureName", featureName1);
+		//params.put("featureName", featureName1);
 		if (!subOccupancyName.equals("")) {
 			params.put("subOccupancy", subOccupancyName);
 		}
@@ -706,8 +725,17 @@ public class GeneralStair_Citya extends FeatureProcess {
 
 		List<Map<String, Object>> permissibleValue = new ArrayList<>();
 
-		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-		LOG.info("permissibleValue" + permissibleValue);
+		try {
+			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+			LOG.info("permissibleValue" + permissibleValue);
+		
+
+		} catch (NullPointerException e) {
+
+			LOG.error("Permissible Value for General Stairs Required Tread not found--------", e);
+			return null;
+		}
+
 
 		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
 			value = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
@@ -749,17 +777,17 @@ public class GeneralStair_Citya extends FeatureProcess {
 		
 		if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
 			
-			Map<String, List<Map<String, Object>>> edcrRuleList = plan.getEdcrRulesFeatures1();
+			Map<String, List<Map<String, Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
 			String occupancyName = "Residential";
 //			String subOccupancyName = "";
-			String featureName = "GeneralStair";
-			String featureName1 = "noOfRiser";
+			String featureName = "NoOfRiser";
+			//String featureName1 = "noOfRiser";
 			BigDecimal noOfRisersValue = BigDecimal.ZERO;
 			
 			Map<String, Object> params = new HashMap<>();
 
 			params.put("feature", featureName);
-			params.put("featureName", featureName1);
+			//params.put("featureName", featureName1);
 			params.put("occupancy", occupancyName);
 //			if (!subOccupancyName.equals("")) {
 //				params.put("subOccupancy", subOccupancyName);
@@ -770,8 +798,17 @@ public class GeneralStair_Citya extends FeatureProcess {
 
 			List<Map<String, Object>> permissibleValue = new ArrayList<>();
 
-			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-			LOG.info("permissibleValue" + permissibleValue);
+			try {
+				permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+				LOG.info("permissibleValue" + permissibleValue);
+			
+
+			} catch (NullPointerException e) {
+
+				LOG.error("Permissible Value for General Stairs No of riser not found--------", e);
+				return;
+			}
+
 
 			if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
 				noOfRisersValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));

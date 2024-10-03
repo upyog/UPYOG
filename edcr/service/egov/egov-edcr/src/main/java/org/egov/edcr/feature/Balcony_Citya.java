@@ -132,15 +132,25 @@ public class Balcony_Citya extends FeatureProcess {
        						params.put("occupancy", occupancyName);
        						
 
-       						Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures1();
+       						Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
        						
        						ArrayList<String> valueFromColumn = new ArrayList<>();
        						valueFromColumn.add("permissibleValue");
 
        						List<Map<String, Object>> permissibleValue = new ArrayList<>();
+       						try {
+       							permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+       							LOG.info("permissibleValue" + permissibleValue);
+       						
 
-       						permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-       						System.out.println("permissibleValue");
+       						} catch (NullPointerException e) {
+
+       							LOG.error("Permissible Value for Balcony not found--------", e);
+       							return null;
+       						}
+
+
+       						
 
        						if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
        							balconyValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));

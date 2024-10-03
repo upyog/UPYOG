@@ -159,7 +159,7 @@ public class Plantation_Citya extends FeatureProcess {
 					params.put("occupancy", occupancyName);
 					
 
-					Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures1();
+					Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
 					
 					ArrayList<String> valueFromColumn = new ArrayList<>();
 					valueFromColumn.add("permissibleValue");

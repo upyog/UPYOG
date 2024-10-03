@@ -345,17 +345,21 @@ public class Parking_Citya extends FeatureProcess {
 
 		List<Map<String, Object>> permissibleValue = new ArrayList<>();
 		
-		Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures1();
+		Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
 		
 		double requiredEcs = 0d;
 		
-//		
-		LOGGER.info("Params: " + params);
-		LOGGER.info("Value from column: " + valueFromColumn);
-		LOGGER.info("edcrRuleList: " + edcrRuleList);
 		
-		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-		LOGGER.info("permissibleValue" + permissibleValue);
+		try {
+			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+			LOGGER.info("permissibleValue" + permissibleValue);
+			
+
+		} catch (NullPointerException e) {
+
+			LOGGER.error("Permissible Value for Parking not found--------", e);
+			return;
+		}
 
 //		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
 //			noOfrequiredParking = Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString());

@@ -533,15 +533,5 @@ public class RestEdcrApplicationController {
         return true;
     }
     
-    @PostMapping(value = "/getEdcrRules")
-    public ResponseEntity<?> getEdcrRules() {
-    	
-        LOGGER.info("Entered getEdcrRules controller method");
-        Object mdmsData = fetchEdcrRulesMdms.getEdcrRules1();
-        LOGGER.info("mdmsData" + mdmsData);
-        return new ResponseEntity<>(mdmsData, HttpStatus.OK);
-   
-    	
-    }
-
+ 
 }

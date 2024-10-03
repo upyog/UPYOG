@@ -56,6 +56,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Lift;
@@ -83,6 +85,7 @@ public class LiftService_Citya extends FeatureProcess {
     private static final String SUBRULE_118 = "118";
     private static final String SUBRULE_118_DESCRIPTION = "Dimension Of lift";
     private static final String SUBRULE_118_DESC = "Minimum dimension Of lift";
+    private static final Logger LOG = LogManager.getLogger(Coverage_Citya.class);
   
 
     @Override
@@ -156,15 +159,23 @@ public class LiftService_Citya extends FeatureProcess {
 						params.put("occupancy", occupancyName);
 						
 
-						Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures1();
+						Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
 						
 						ArrayList<String> valueFromColumn = new ArrayList<>();
 						valueFromColumn.add("permissibleValue");
 
 						List<Map<String, Object>> permissibleValue = new ArrayList<>();
 
-						permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-						System.out.println("permissibleValue");
+						try {
+							permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+							LOG.info("permissibleValue" + permissibleValue);
+							
+
+						} catch (NullPointerException e) {
+
+							LOG.error("Permissible Value for Lift Service not found--------", e);
+							return null;
+						}
 
 						if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
 							noOfLiftsRqrd = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));

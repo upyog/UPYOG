@@ -130,7 +130,7 @@ public class ToiletDetails_Citya extends FeatureProcess {
                						params.put("occupancy", occupancyName);
                						
 
-               						Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures1();
+               						Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
                						
                						ArrayList<String> valueFromColumn = new ArrayList<>();
                						valueFromColumn.add("permissibleValue");
@@ -141,8 +141,16 @@ public class ToiletDetails_Citya extends FeatureProcess {
 
                						List<Map<String, Object>> permissibleValue = new ArrayList<>();
 
-               						permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-               						System.out.println("permissibleValue");
+               						try {
+               							permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+               							LOG.info("permissibleValue" + permissibleValue);
+               							
+
+               						} catch (NullPointerException e) {
+
+               							LOG.error("Permissible Value for ToiletDetails not found--------", e);
+               							return null;
+               						}
 
                						if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("minToiletArea")) {
                							minToiletArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("minToiletArea").toString()));

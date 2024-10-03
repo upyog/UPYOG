@@ -129,7 +129,7 @@ public class HeightOfRoom_Citya extends FeatureProcess {
 
 	@Override
 	public Plan process(Plan pl) {
-		Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures1();
+		Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
 		
 		Map<String, Integer> heightOfRoomFeaturesColor = pl.getSubFeatureColorCodesMaster().get("HeightOfRoom");
 		validate(pl);
@@ -396,8 +396,17 @@ public class HeightOfRoom_Citya extends FeatureProcess {
 
 										List<Map<String, Object>> permissibleValue = new ArrayList<>();
 
-										permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-										System.out.println("permissibleValue");
+										try {
+											permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+											LOG.info("permissibleValue" + permissibleValue);
+										
+
+										} catch (NullPointerException e) {
+
+											LOG.error("Permissible Value for Room area not found--------", e);
+											return null;
+										}
+
 
 										if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("roomArea2")) {
 											roomArea2 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("roomArea2").toString()));
@@ -565,7 +574,7 @@ public class HeightOfRoom_Citya extends FeatureProcess {
 										List<Map<String, Object>> permissibleValue = new ArrayList<>();
 
 										try {
-											permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(pl.getEdcrRulesFeatures1(), params, valueFromColumn);
+											permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(pl.getEdcrRulesFeatures(), params, valueFromColumn);
 											LOG.info("permissibleValue" + permissibleValue);
 											System.out.println("permis___ for doorsd+++" + permissibleValue);
 
@@ -603,7 +612,7 @@ public class HeightOfRoom_Citya extends FeatureProcess {
 								for (Door door : floor.getNonaHabitationalDoors()) {
 									if (door != null) {
 										BigDecimal doorHeight = door.getNonHabitationDoorHeight().setScale(2, BigDecimal.ROUND_HALF_UP);
-										BigDecimal doorWidth = door.getNonHabitationDoorWidth();
+										BigDecimal doorWidth = door.getNonHabitationDoorWidth().setScale(2, BigDecimal.ROUND_HALF_UP);
 										// BigDecimal minDoorHeight = BigDecimal.valueOf(2.0);
 										
 										subRule = SUBRULE_41_II_B;
@@ -638,7 +647,7 @@ public class HeightOfRoom_Citya extends FeatureProcess {
 
 										} catch (NullPointerException e) {
 
-											LOG.error("Permissible doors not found--------", e);
+											LOG.error("Permissible value for nonhabitational doors not found--------", e);
 											return null;
 										}
 
@@ -670,7 +679,7 @@ public class HeightOfRoom_Citya extends FeatureProcess {
 							if (floor.getWindows() != null && floor.getWindows().size() > 0) {
 								for (Window window : floor.getWindows()) {
 									BigDecimal windowHeight = window.getWindowHeight().setScale(2, BigDecimal.ROUND_HALF_UP);
-									BigDecimal windowWidth = window.getWindowWidth();
+									BigDecimal windowWidth = window.getWindowWidth().setScale(2, BigDecimal.ROUND_HALF_UP);
 									BigDecimal minWindowHeight = BigDecimal.valueOf(.50);
 									BigDecimal minWindowWidth = BigDecimal.valueOf(.50);
 									subRule = SUBRULE_41_II_B;
@@ -716,8 +725,17 @@ public class HeightOfRoom_Citya extends FeatureProcess {
 
 								List<Map<String, Object>> permissibleValue = new ArrayList<>();
 
-								permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-								LOG.info("permissibleValue" + permissibleValue);
+								try {
+									permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+									LOG.info("permissibleValue" + permissibleValue);
+								
+
+								} catch (NullPointerException e) {
+
+									LOG.error("Permissible Value for Roomwise ventilation not found--------", e);
+									return null;
+								}
+
 
 								if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
 									ventilationPercentage = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
@@ -785,7 +803,7 @@ public class HeightOfRoom_Citya extends FeatureProcess {
 								if (room.getWindows() != null && !room.getWindows().isEmpty()) {
 									for (Window window : room.getWindows()) {
 										BigDecimal windowHeight = window.getWindowHeight().setScale(2, BigDecimal.ROUND_HALF_UP);
-										BigDecimal windowWidth = window.getWindowWidth();
+										BigDecimal windowWidth = window.getWindowWidth().setScale(2, BigDecimal.ROUND_HALF_UP);
 
 										// Check each window's dimensions
 										setReportOutputDetails(pl, subRule, subRuleDesc2, floor.getNumber().toString(), room.getNumber(),
@@ -854,7 +872,7 @@ public class HeightOfRoom_Citya extends FeatureProcess {
 									if (room.getDoors() != null && !room.getDoors().isEmpty()) {
 										for (Door door : room.getDoors()) {
 											BigDecimal doorHeight = door.getDoorHeight().setScale(2, BigDecimal.ROUND_HALF_UP);
-											BigDecimal doorWidth = door.getDoorWidth();
+											BigDecimal doorWidth = door.getDoorWidth().setScale(2, BigDecimal.ROUND_HALF_UP);
 											System.out.println("rum number" + room.getNumber());
 											
 											Map<String, Object> params = new HashMap<>();

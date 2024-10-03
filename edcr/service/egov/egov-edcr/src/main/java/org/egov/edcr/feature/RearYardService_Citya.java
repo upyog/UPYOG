@@ -317,14 +317,13 @@ public class RearYardService_Citya extends GeneralRule {
 		
 		System.out.println("000" + edcrRuleList);
 
-		String feature = "SetBack";
-		String featureName = "RearSetBack";
+		
+		String feature = "RearSetBack";
 
 		Map<String, Object> params = new HashMap<>();
 		
 
 		params.put("feature", feature);
-		params.put("featureName", featureName);
 		params.put("occupancy", occupancyName);
 		params.put("depthOfPlot", depthOfPlot);
 
@@ -340,7 +339,7 @@ public class RearYardService_Citya extends GeneralRule {
 
 		} catch (NullPointerException e) {
 
-			LOG.error("Permissible Front Yard service not found--------", e);
+			LOG.error("Permissible Value for Rear Yard service not found--------", e);
 			return null;
 		}
 
@@ -910,7 +909,7 @@ public class RearYardService_Citya extends GeneralRule {
 //			   occupancyName = "Government/Semi Government";
 //		}
 		valid = processRearYard1(block, level, min, mean, mostRestrictiveOccupancy, rearYardResult, subRule, rule, minVal,
-				meanVal, depthOfPlot, valid, occupancyName, pl.getEdcrRulesFeatures1());
+				meanVal, depthOfPlot, valid, occupancyName, pl.getEdcrRulesFeatures());
 		return valid;
 	}
 

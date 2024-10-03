@@ -58,6 +58,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Measurement;
@@ -97,6 +99,7 @@ public class Kitchen_Citya extends FeatureProcess {
     private static final String KITCHEN = "kitchen";
     private static final String KITCHEN_STORE = "kitchen with store room";
     private static final String KITCHEN_DINING = "kitchen with dining hall";
+    private static final Logger LOG = LogManager.getLogger(Kitchen_Citya.class);
 
     @Override
     public Plan validate(Plan pl) {
@@ -190,7 +193,7 @@ public class Kitchen_Citya extends FeatureProcess {
                                 }
 
                                 if (!kitchenHeights.isEmpty()) {
-                                    BigDecimal minHeight = kitchenHeights.stream().reduce(BigDecimal::min).get();
+                                    BigDecimal minHeight = kitchenHeights.stream().reduce(BigDecimal::min).get().setScale(2, BigDecimal.ROUND_HALF_UP);
                                     
                                     String occupancyName = null;
                 					
@@ -206,7 +209,7 @@ public class Kitchen_Citya extends FeatureProcess {
                						params.put("occupancy", occupancyName);
                						
 
-               						Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures1();
+               						Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
                						
                						ArrayList<String> valueFromColumn = new ArrayList<>();
                						valueFromColumn.add("permissibleValue");
@@ -221,8 +224,17 @@ public class Kitchen_Citya extends FeatureProcess {
 
                						List<Map<String, Object>> permissibleValue = new ArrayList<>();
 
-               						permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-               						System.out.println("permissibleValue");
+               						try {
+               							permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+               							LOG.info("permissibleValue" + permissibleValue);
+               						
+
+               						} catch (NullPointerException e) {
+
+               							LOG.error("Permissible Value for Kitchen not found--------", e);
+               							return null;
+               						}
+
 
                						if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("kitchenHeight")) {
                							kitchenHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("kitchenHeight").toString()));

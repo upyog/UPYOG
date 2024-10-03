@@ -215,7 +215,7 @@ public class Coverage_Citya extends FeatureProcess {
 			}
 
 			permissibleCoverageValue = getPermissibleCoverage(plotArea, feature, occupancyName,
-					pl.getEdcrRulesFeatures1());
+					pl.getEdcrRulesFeatures());
 		}
 
 		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0) {
@@ -294,11 +294,11 @@ public class Coverage_Citya extends FeatureProcess {
 		try {
 			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
 			LOG.info("permissibleValue" + permissibleValue);
-			System.out.println("permis___ for coverage+++" + permissibleValue);
+			
 
 		} catch (NullPointerException e) {
 
-			LOG.error("Permissible Coverage not found--------", e);
+			LOG.error("Permissible Value for Coverage not found--------", e);
 			return null;
 		}
 

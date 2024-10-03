@@ -629,9 +629,18 @@ public class AdditionalFeature_Citya extends FeatureProcess {
 
 				List<Map<String, Object>> permissibleValue = new ArrayList<>();
 
-				Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures1();
-				permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-				System.out.println("permissibleValue");
+				Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+				try {
+					permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+					LOG.info("permissibleValue" + permissibleValue);
+				
+
+				} catch (NullPointerException e) {
+
+					LOG.error("Permissible Value for Plinth height not found--------", e);
+					return;
+				}
+
 
 				if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
 					plintHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
@@ -639,7 +648,7 @@ public class AdditionalFeature_Citya extends FeatureProcess {
 	
 
             if (!plinthHeights.isEmpty()) {
-                minPlinthHeight = plinthHeights.stream().reduce(BigDecimal::min).get();
+                minPlinthHeight = plinthHeights.stream().reduce(BigDecimal::min).get().setScale(2, BigDecimal.ROUND_HALF_UP);
                 if (minPlinthHeight.compareTo(plintHeight) >= 0) {
                     isAccepted = true;
                 }
