@@ -40,7 +40,7 @@ export const searchService = async (reqestCriteria, searchResponse, pool) => {
 
   logger.info("query for Billing service fetch is"+querystring);
 
-  querystring = replaceSchemaPlaceholder(querystring, reqestCriteria.tenantId);
+  //querystring = replaceSchemaPlaceholder(querystring, reqestCriteria.tenantId);
   let billingSlabs = [];
   billingSlabs = await pool
     .query(querystring)
@@ -82,7 +82,7 @@ const popolateSearchResponse = result => {
 
 const generateQuery = params => {
   let queryString =
-    "select tenantid, id, isactive , firenoctype, buildingusagetype, calculationtype, uom, fromuom, touom, fromdate, todate, rate, createdby, createddate, lastmodifiedby, lastmodifieddate from {schema}.eg_firenoc_billingslab where ";
+    "select tenantid, id, isactive , firenoctype, buildingusagetype, calculationtype, uom, fromuom, touom, fromdate, todate, rate, createdby, createddate, lastmodifiedby, lastmodifieddate from eg_firenoc_billingslab where ";
   queryString = `${queryString} tenantid = '${params.tenantId}'`;
   if (params.hasOwnProperty("isActive")) {
     queryString = `${queryString} and isactive = ${params.isActive}`;
