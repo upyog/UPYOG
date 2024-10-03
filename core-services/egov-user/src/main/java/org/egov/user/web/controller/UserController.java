@@ -5,6 +5,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -34,7 +35,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -228,11 +228,19 @@ public class UserController {
 
 	@PostMapping("/_landingPage")
 	@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://localhost:443"}, allowedHeaders = "*", allowCredentials = "true")
-    private ResponseEntity<?> landingPage(@RequestParam(value = "token") String token){
-    	log.info("## landing page token : "+token);
-    	ResponseEntity<?> response = ssoService.getHpSsoValidateTokenResponse(token);
+    private ResponseEntity<?> landingPage(@RequestBody Map<String, String> tokenMap){
+    	log.info("## landing page token : "+tokenMap.get("token"));
+    	ResponseEntity<?> response = ssoService.getHpSsoValidateTokenResponse(tokenMap.get("token"));
     	return response;
     }
+	
+//	@PostMapping("/_landingPage")
+//	@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://localhost:443"}, allowedHeaders = "*", allowCredentials = "true")
+//    private ResponseEntity<?> landingPage(@RequestParam(value = "token") String token){
+//    	log.info("## landing page token : "+token);
+//    	ResponseEntity<?> response = ssoService.getHpSsoValidateTokenResponse(token);
+//    	return response;
+//    }
 	
 	
 	@PostMapping("/_login")
