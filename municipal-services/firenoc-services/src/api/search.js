@@ -244,7 +244,7 @@ export const searchApiResponse = async (request, next = {}) => {
   offset = offset+1;
 }
  if(keys(queryObj).length!=2){
-  sqlQuery = `${sqlQuery.substring(0, sqlQuery.length - 3)} ) s WHERE s.rn  BETWEEN ${offset} AND ${limit+offset}   `;
+  sqlQuery = `${sqlQuery} ) s WHERE s.rn  BETWEEN ${offset} AND ${limit+offset}   `;
  }else{
   sqlQuery = `${sqlQuery}  ) s WHERE s.rn  BETWEEN ${offset} AND ${limit} ORDER BY fid `;
  }
@@ -252,7 +252,7 @@ export const searchApiResponse = async (request, next = {}) => {
 }else if(isEmpty(queryObj)){
   sqlQuery = `${sqlQuery}  ) s`;
 }else if(!isEmpty(queryObj)){
-  sqlQuery = `${sqlQuery.substring(0, sqlQuery.length - 3)}) s ORDER BY fid `;
+  sqlQuery = `${sqlQuery}) s ORDER BY fid `;
 }
 
   console.log("SQL QUery:" +sqlQuery);
