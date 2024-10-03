@@ -59,7 +59,7 @@ const MyChallanResult = ({ template, header, actionButtonLabel }) => {
         new Date(bill.billDetails[0].expiryDate).getFullYear().toString()
       }`,
       ChannelNo: bill?.consumerCode || t("CS_NA"),
-      ServiceCategory: bill.businessService ? bill.businessService.split(".")[bill.businessService.split(".").length - 1] : t("CS_NA"),
+       ServiceCategory: bill.businessService ? t(bill.businessService.split(".")[bill.businessService.split(".").length - 1]) : t("CS_NA"),
     };
   });
 

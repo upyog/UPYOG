@@ -281,17 +281,27 @@ const showActionRestoration = ["RESTORATION_BUTTON"]
     <Fragment>
       <div>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
+        <style>{`
+  .multilinkWrapper employee-mulitlink-main-divNew {
+   max-width:100%;
+   maegin-top:-20px
+  }`
+}
+</style>
           <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WS_CONNECTION_DETAILS")}</Header>
           {dowloadOptions && dowloadOptions.length > 0 && (
+            <div style={{maxWidth:"100% !imnportant"}}>
             <MultiLink
-              className="multilinkWrapper employee-mulitlink-main-div"
+              className="multilinkWrapper employee-mulitlink-main-divNew"
               onHeadClick={() => setShowOptions(!showOptions)}
               displayOptions={showOptions}
               options={dowloadOptions}
               downloadBtnClassName={"employee-download-btn-className"}
               optionsClassName={"employee-options-btn-className"}
               ref={menuRef}
+              style={{maxWidth:"100%"}}
             />
+            </div>
           )}
         </div>
         <ApplicationDetailsTemplate
