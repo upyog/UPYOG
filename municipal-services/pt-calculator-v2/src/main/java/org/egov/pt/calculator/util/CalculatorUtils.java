@@ -543,6 +543,9 @@ public class CalculatorUtils {
 		consumercode.add(demand.getConsumerCode());
 		BigDecimal pastDue= BigDecimal.ZERO;
 		BigDecimal totalAfterPastDueDeduct= BigDecimal.ZERO;
+		BigDecimal unpaidbillAmount=BigDecimal.ZERO;
+		Boolean demandAdjusted = true;
+		
 		for (DemandDetail detail : demand.getDemandDetails()) 
 		{
 			BigDecimal amountForAccDeatil = detail.getTaxAmount();
@@ -556,6 +559,9 @@ public class CalculatorUtils {
 			if(detail.getTaxHeadMasterCode().equalsIgnoreCase("PT_PASTDUE_CARRYFORWARD"))
 				pastDue=pastDue.add(detail.getTaxAmount());
 		}
+		System.out.println(totalAmountForDemand);
+		System.out.println(pastDue);
+		
 		
 		totalAmountForDemand = totalAmountForDemand.setScale(0, RoundingMode.HALF_UP);
 		totalAfterPastDueDeduct = totalAmountForDemand.subtract(pastDue);
@@ -597,10 +603,22 @@ public class CalculatorUtils {
 					totalBillAmount = totalBillAmount.add(bill.getBillDetails().get(0).getAmount());
 					
 				}
+				else
+					unpaidbillAmount=unpaidbillAmount.add(bill.getBillDetails().get(0).getAmount());
+				System.out.println(unpaidbillAmount);
 				
 			}
 
 		}
+		
+//		if(demandAdjusted) {
+//			totalAmountForDemand = totalAmountForDemand.subtract(pastDue);
+//		}
+		
+		
+		if(unpaidbillAmount.compareTo(totalAmountForDemand)>0)
+			totalAmountForDemand=unpaidbillAmount;
+		
 		
 		carryForward=totalpaidAmountFromPayment.subtract(totalAmountForDemand);
 		System.out.println(res);
@@ -621,6 +639,8 @@ public class CalculatorUtils {
 		consumercode.add(demand.getConsumerCode());
 		BigDecimal pastDue= BigDecimal.ZERO;
 		BigDecimal totalAfterPastDueDeduct= BigDecimal.ZERO;
+		BigDecimal unpaidbillAmount=BigDecimal.ZERO;
+		
 		for (DemandDetail detail : demand.getDemandDetails()) 
 		{
 			BigDecimal amountForAccDeatil = detail.getTaxAmount();
@@ -678,17 +698,21 @@ public class CalculatorUtils {
 					totalBillAmount = totalBillAmount.add(bill.getBillDetails().get(0).getAmount());
 					
 				}
+				else
+					unpaidbillAmount=unpaidbillAmount.add(bill.getBillDetails().get(0).getAmount());
 				
 			}
 
 		}
+		if(unpaidbillAmount.compareTo(totalAmountForDemand)>0)
+			totalAmountForDemand=unpaidbillAmount;
 		//ADVANCE CASE
 		if(totalpaidAmountFromPayment.compareTo(totalAmountForDemand)>0) {
 			collectedMap.put("PT_ADVANCE_CARRYFORWARD",totalpaidAmountFromPayment.subtract(totalAmountForDemand));
 		}
 		else if(totalpaidAmountFromPayment.compareTo(totalAmountForDemand)<=0) {
 			carryForward=totalAmountForDemand.subtract(totalpaidAmountFromPayment);
-			collectedMap.put("PT_PASTDUE_CARRYFORWARD",BigDecimal.ZERO );
+			collectedMap.put("PT_PASTDUE_CARRYFORWARD",carryForward);
 		}
 		
 		

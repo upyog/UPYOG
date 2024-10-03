@@ -77,6 +77,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -260,14 +263,86 @@ public class EstimationService {
 	 * @return CalculationRes calculation object containing all the tax for the given criteria.
 	 */
 	public CalculationRes getTaxCalculation(CalculationReq request) {
+		boolean asmtFound = false;
+		Map<String,Object> masterMap = mDataService.getMasterMap(request);
 		if(request.getRequestInfo().getUserInfo().getType().equals("CITIZEN"))
 			checkAssessmentIsDone(request);
+		if(request.getRequestInfo().getUserInfo().getType().equals("EMPLOYEE")&&checkAssessmentDoneForEmployee(request)) {
+			//get the values directly from demand and return 
+			CalculationRes clr = getDemandDataForEstimation(request,masterMap);
+			return clr;
+		}
+		
 		CalculationCriteria criteria = request.getCalculationCriteria().get(0);
 		Property property = criteria.getProperty();
 		PropertyDetail detail = property.getPropertyDetails().get(0);
 		calcValidator.validatePropertyForCalculation(detail);
-		Map<String,Object> masterMap = mDataService.getMasterMap(request);
+		//call for demand in case employee is calling 
+		
 		return new CalculationRes(new ResponseInfo(), Collections.singletonList(getCalculation(request.getRequestInfo(), criteria, masterMap)));
+	}
+	
+	
+	public CalculationRes getDemandDataForEstimation(CalculationReq request,Map<String,Object> masterMap) {
+		Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(request.getRequestInfo(),request.getCalculationCriteria().get(0));
+		
+		Map<String, BigDecimal> taxHeadMap = new HashMap<>();
+		Map<String, String> taxHeadMapType = new HashMap<>();
+		BigDecimal totalAmount = BigDecimal.ZERO;
+		Map<String, Category> taxHeadCategoryMap = ((List<TaxHeadMaster>)masterMap.get(TAXHEADMASTER_MASTER_KEY)).stream()
+				.collect(Collectors.toMap(TaxHeadMaster::getCode, TaxHeadMaster::getCategory));
+
+		for(DemandDetail d:oldDemand.getDemandDetails()) {
+			BigDecimal currentValue=BigDecimal.ZERO;
+			if(taxHeadMap.containsKey(d.getTaxHeadMasterCode())) {
+				currentValue =taxHeadMap.get(d.getTaxHeadMasterCode());
+				currentValue = currentValue.add( d.getTaxAmount());
+				taxHeadMap.put(d.getTaxHeadMasterCode(), currentValue);
+				//System.out.println(d.getTaxHeadMasterCode());
+				totalAmount= totalAmount.add(d.getTaxAmount());
+			}
+			else {
+				//System.out.println(d.getTaxHeadMasterCode());
+				currentValue=  d.getTaxAmount();
+				taxHeadMap.put(d.getTaxHeadMasterCode(), d.getTaxAmount());
+				totalAmount= totalAmount.add(d.getTaxAmount());
+				//taxHeadMapType.put(d.getTaxHeadMasterCode(), d.get)	
+			}	
+			;
+		}
+		
+	
+
+		
+		CalculationRes clr = new CalculationRes();
+		clr.setResponseInfo(new ResponseInfo());
+		Calculation cl = new Calculation();
+		//clr.setCalculation();
+		TaxHeadEstimate tx = null;
+		List<TaxHeadEstimate>txl = new ArrayList<>();
+		cl.setBillingSlabIds(null);
+		cl.setTaxAmount(taxHeadMap.get("PT_TAX"));
+		cl.setFromDate(oldDemand.getTaxPeriodFrom());
+		cl.setToDate(oldDemand.getTaxPeriodTo());
+		cl.setTotalAmount(totalAmount);
+		cl.setServiceNumber(oldDemand.getConsumerCode());
+		for(Map.Entry<String, BigDecimal> entry:taxHeadMap.entrySet()) {
+			tx = new TaxHeadEstimate();
+			tx.setEstimateAmount(entry.getValue());
+			tx.setTaxHeadCode(entry.getKey());
+			
+			tx.setCategory(null!=taxHeadCategoryMap.get(entry.getKey())?taxHeadCategoryMap.get(entry.getKey()):null);
+			txl.add(tx);
+		}
+		
+		cl.setTaxHeadEstimates(txl);
+		Map<String,List<String>> additionaldetail=objectmapper.convertValue(oldDemand.getAdditionalDetails(), Map.class);
+		cl.setBillingSlabIds(additionaldetail.get("calculationDescription"));
+		cl.setExemption(BigDecimal.ZERO);
+		cl.setRebate(BigDecimal.ZERO);
+		cl.setPenalty(BigDecimal.ZERO);
+		clr.setCalculation(Collections.singletonList(cl));
+		return clr;
 	}
 
 	public void checkAssessmentIsDone(CalculationReq request)
@@ -282,6 +357,23 @@ public class EstimationService {
 		List<AssessmentV2> propertylist=assessmentResponseV2.getAssessments().stream().filter(t->t.getFinancialYear().equalsIgnoreCase(criteria.getFinancialYear())).collect(Collectors.toList());
 		if(propertylist.size()>0)
 			throw new CustomException("ASESSMENT_ERROR","Property assessment is already completed for this property for the financial year "+criteria.getFinancialYear());
+	}
+	
+	
+	public boolean checkAssessmentDoneForEmployee(CalculationReq request)
+	{
+		CalculationCriteria criteria = request.getCalculationCriteria().get(0);
+		Property property = criteria.getProperty();
+		String authURL = new StringBuilder().append(configs.getAssessmentServiceHost()).append(configs.getAssessmentSearchEndpoint())
+				.append(URL_PARAMS_SEPARATER).append("propertyIds=").append(property.getPropertyId()).append(SEPARATER)
+				.append("tenantId=").append(property.getTenantId()).toString();
+		RequestInfoWrapper requestInfoWrapper=RequestInfoWrapper.builder().requestInfo(request.getRequestInfo()).build();
+		AssessmentResponseV2 assessmentResponseV2=restTemplate.postForObject(authURL,requestInfoWrapper,AssessmentResponseV2.class);
+		List<AssessmentV2> propertylist=assessmentResponseV2.getAssessments().stream().filter(t->t.getFinancialYear().equalsIgnoreCase(criteria.getFinancialYear())).collect(Collectors.toList());
+		if(propertylist.size()>0)
+			return true;
+		
+		return false;
 	}
 
 	/**
@@ -1115,6 +1207,7 @@ public class EstimationService {
 		BigDecimal remainAdvanceAmount=BigDecimal.ZERO;
 		BigDecimal pastdue=BigDecimal.ZERO;
 		BigDecimal advanceRebate=taxAmt.multiply(new BigDecimal(75).divide(new BigDecimal(100)));
+		BigDecimal pastduePenalty=BigDecimal.ZERO;
 		
 		if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
 		{
@@ -1155,6 +1248,15 @@ public class EstimationService {
 			estimates.add(TaxHeadEstimate.builder()
 					.taxHeadCode(PT_PASTDUE_CARRYFORWARD)
 					.estimateAmount(collectedAmtForOldDemand).build());
+			
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MM yyyy");
+			String date = "31 03 ";
+			LocalDate endDate = LocalDate.now();
+			date=date.concat(String.valueOf(endDate.getYear()));
+			LocalDate startDate = LocalDate.parse(date, dtf);
+			BigDecimal daysdiff=new BigDecimal(ChronoUnit.DAYS.between(startDate, endDate));
+			
+			pastduePenalty=collectedAmtForOldDemand.multiply(new BigDecimal(0.027).divide(new BigDecimal(100)).multiply(daysdiff));
 			
 			totalAmount=totalAmount.add(collectedAmtForOldDemand);
 		}
