@@ -100,6 +100,7 @@ public class BusinessServiceRepository {
             stateLevelCriteria.setBusinessServices(stateLevelBusinessServices);
             List<Object> stateLevelPreparedStmtList = new ArrayList<>();
             query = queryBuilder.getBusinessServices(stateLevelCriteria, stateLevelPreparedStmtList);
+//            query = "SELECT bs.*,st.*,ac.*,bs.uuid as bs_uuid, bs.lastModifiedTime as bs_lastModifiedTime,bs.createdTime as bs_createdTime,bs.createdBy as bs_createdBy,bs.lastModifiedBy as bs_lastModifiedBy,bs.tenantId as bs_tenantId, st.lastModifiedTime as st_lastModifiedTime,st.createdTime as st_createdTime,st.tenantId as st_tenantId,st.createdBy as st_createdBy,st.uuid as st_uuid, st.lastModifiedBy as st_lastModifiedBy, ac.lastModifiedTime as ac_lastModifiedTime,ac.createdTime as ac_createdTime,ac.createdBy as ac_createdBy,ac.lastModifiedBy as ac_lastModifiedBy,ac.uuid as ac_uuid,ac.tenantId as ac_tenantId,ac.active as ac_active  FROM eg_wf_businessService_v2 bs  INNER JOIN  eg_wf_state_v2 st ON st.businessServiceId = bs.uuid  LEFT OUTER JOIN  eg_wf_action_v2 ac ON ac.currentState = st.uuid AND ac.active=TRUE  WHERE  bs.tenantId = 'hp.Shimla'  AND  bs.businessService IN ( 'NewTL') ORDER BY seq;";
             searchResults.addAll(jdbcTemplate.query(query, stateLevelPreparedStmtList.toArray(), rowMapper));
             log.info("####### query 1 : "+query.toString());
         }
