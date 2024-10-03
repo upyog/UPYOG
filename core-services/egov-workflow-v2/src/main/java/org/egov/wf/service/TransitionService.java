@@ -162,6 +162,7 @@ public class TransitionService {
         criteria.setTenantId(tenantId);
         criteria.setBusinessServices(Collections.singletonList(businessService));
         List<BusinessService> businessServices = businessServiceRepository.getBusinessServices(criteria);
+        log.info("#### businessServices.size() :"+ businessServices.size());
         if(CollectionUtils.isEmpty(businessServices))
             throw new CustomException("BUSINESSSERVICE ERROR","No bussinessService object found for businessSerice: "+
                     businessService + " and tenantId: "+tenantId);
