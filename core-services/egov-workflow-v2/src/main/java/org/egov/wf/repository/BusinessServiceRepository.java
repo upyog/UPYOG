@@ -50,12 +50,30 @@ public class BusinessServiceRepository {
     public List<BusinessService> getBusinessServices(BusinessServiceSearchCriteria criteria){
         String query;
 
-        log.info("#### criteria tenantid: "+criteria.getTenantId()+"");
-        criteria.getActionUuids().stream().forEach(uuid -> {log.info("#### uuid : "+uuid);});
-        criteria.getStateUuids().stream().forEach(uuid -> {log.info("#### getStateUuids : "+uuid);});
-        criteria.getBusinessServices().stream().forEach(uuid -> {log.info("#### getBusinessServices : "+uuid);});
-        
-        List<String> stateLevelBusinessServices = new LinkedList<>();
+        if (null != criteria) {
+			log.info("#### criteria tenantid: " + criteria.getTenantId() + "");
+			
+			if(!CollectionUtils.isEmpty(criteria.getActionUuids())) {
+				criteria.getActionUuids().stream().forEach(uuid -> {
+					log.info("#### uuid : " + uuid);
+				});
+			}
+			if(!CollectionUtils.isEmpty(criteria.getStateUuids())) {
+				criteria.getStateUuids().stream().forEach(uuid -> {
+					log.info("#### getStateUuids : " + uuid);
+				});
+			}
+			if(!CollectionUtils.isEmpty(criteria.getBusinessServices())) {
+				criteria.getBusinessServices().stream().forEach(uuid -> {
+					log.info("#### getBusinessServices : " + uuid);
+				});
+			}
+			
+			
+		}else {
+			log.info("#### criteria is null : " + criteria);
+		}
+		List<String> stateLevelBusinessServices = new LinkedList<>();
         List<String> tenantBusinessServices = new LinkedList<>();
 
         Map<String, Boolean> stateLevelMapping = mdmsService.getStateLevelMapping();
