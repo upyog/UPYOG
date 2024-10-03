@@ -74,7 +74,7 @@ public class BusinessMasterService {
      * @param criteria The search criteria
      * @return Data fetched from db
      */
-    @Cacheable(value = "businessService")
+//    @Cacheable(value = "businessService")
     public List<BusinessService> search(BusinessServiceSearchCriteria criteria){
         String tenantId = criteria.getTenantId();
         List<BusinessService> businessServices = repository.getBusinessServices(criteria);
