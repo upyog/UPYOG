@@ -8,23 +8,24 @@ const NoticeToFileReturn = (props) => {
 
   const { t } = useTranslation();
   const [financialYears, setFinancialYears] = useState([]);
-  const [selectedFinancialYear, setSelectedFinancialYear] = useState(null);
-  const [submissionDate, setSubmissionDate] = useState();
-  const [name, setName] = useState();
+  const [selectedFinancialYear, setSelectedFinancialYear] = useState(props?.noticeData && props?.noticeData.assessmentYear? {code: props?.noticeData.assessmentYear, name: props?.noticeData.assessmentYear} : null);
+  const [dateOfAnnualRet, setDateOfAnnualRet] = useState(props?.noticeData?.dateOfAnnualRet ? props?.noticeData?.dateOfAnnualRet : props?.noticeData?.dateOfOrder ? props?.noticeData?.dateOfOrder : null);
+
+  const [name, setName] = useState(props?.noticeData?.ownerName ? props?.noticeData?.ownerName : props?.noticeData?.name ? props?.noticeData?.name : null);
   const onChangeName = (e) => {
     setName(e.target?.value)
   }
-  const [propertyAddress, setPropertyAddress] = useState();
+  const [address, setAddress] = useState(props?.noticeData?.address ? props?.noticeData?.address : null);
   const onChangePtAddress = (e) => {
-    setPropertyAddress(e.target?.value)
+    setAddress(e.target?.value)
   }
-  const [propertyId, setPropertyId] = useState();
+  const [propertyId, setPropertyId] = useState(props?.noticeData?.propertyId ? props?.noticeData?.propertyId : null);
   const onChangePtId = (e) => {
     setPropertyId(e.target?.value)
   }
-  const [acknowledgementNo, setAcknowledgementNo] = useState();
+  const [acknowledgementNumber, setAcknowledgementNumber] = useState(props?.noticeData?.acknowledgementNumber ? props?.noticeData?.acknowledgementNumber : null);
   const onChangeAcknowledgementNo=(e)=>{
-    setAcknowledgementNo(e.target.value)
+    setAcknowledgementNumber(e.target.value)
   }
 
   const { isLoading: financialYearsLoading, data: financialYearsData } = Digit.Hooks.pt.useMDMS(
@@ -68,10 +69,10 @@ const NoticeToFileReturn = (props) => {
     e.preventDefault();
     let noticeDetails = {
       name: name,
-      propertyAddress: propertyAddress,
+      address: address,
       "propertyId": propertyId,
-      "acknowledgementNumber": acknowledgementNo,
-      assessmentDate: submissionDate,
+      "acknowledgementNumber": acknowledgementNumber,
+      dateOfAnnualRet: dateOfAnnualRet,
       "assessmentYear": selectedFinancialYear?.code,
       "noticeType": "Notice to file Return",      
       "tenantId": tenantId,      
@@ -101,19 +102,19 @@ const NoticeToFileReturn = (props) => {
                       value={name}
                       onChange={(e) => onChangeName(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
                   <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
                     <CardLabel>{`${t("Property Address")}`}</CardLabel>
                     <TextInput
                       style={{ background: "#FAFAFA" }}
-                      key={'propertyAddress'}
-                      name={'propertyAddress'}
-                      value={propertyAddress}
+                      key={'address'}
+                      name={'address'}
+                      value={address}
                       onChange={(e) => onChangePtAddress(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
                 </div>
@@ -127,19 +128,19 @@ const NoticeToFileReturn = (props) => {
                       value={propertyId}
                       onChange={(e) => onChangePtId(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
                   <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
                     <CardLabel>{`${t("Return Acknowledgement Number")}`}</CardLabel>
                     <TextInput
                       style={{ background: "#FAFAFA" }}
-                      key={'acknowledgementNo'}
-                      name={'acknowledgementNo'}
-                      value={acknowledgementNo}
+                      key={'acknowledgementNumber'}
+                      name={'acknowledgementNumber'}
+                      value={acknowledgementNumber}
                       onChange={(e) => onChangeAcknowledgementNo(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
 
@@ -159,17 +160,22 @@ const NoticeToFileReturn = (props) => {
                       // className={`${props.disabled ? "disabled" : ""}`}
                       style={{ width: "calc(100%-62px)" }}
                       // style={{ right: "6px", zIndex: "100", top: 6, position: "absolute", opacity: 0, width: "100%" }}
-                      value={submissionDate ? submissionDate : ""}
+                      value={dateOfAnnualRet ? dateOfAnnualRet : ""}
                       type="date"
                       onChange={(d) => {
-                        setSubmissionDate(d.target.value);
+                        setDateOfAnnualRet(d.target.value);
                       }}
                       required={false}
+                      readOnly={props?.isCitizen ? true : false}
+                      disabled={props?.isCitizen ? true : false}
                     />
                   </div>
                   <div className="col-sm-4 assment-yr-cls" style={{ width: '48%', display: 'inline-block', position: 'relative', top: '0px' }}>
                     <CardLabel>{`${t("Assessment Year")}`}</CardLabel>
-                    <Dropdown isMandatory optionCardStyles={{ zIndex: 111111 }} selected={selectedFinancialYear} optionKey="name" option={financialYears} select={setSelectedFinancialYear} t={t} />
+                    <Dropdown isMandatory optionCardStyles={{ zIndex: 111111 }} selected={selectedFinancialYear} optionKey="name" option={financialYears} select={setSelectedFinancialYear} t={t} 
+                    isDisabled={props?.isCitizen ? true : false}
+                    disable={props?.isCitizen ? true : false}
+                    />
 
                   </div>
                 </div>
@@ -191,7 +197,7 @@ const NoticeToFileReturn = (props) => {
               <div className="card" style={{ maxWidth: '100%' }}>
                 <div className="row">
                     <div className="" style={{display: "inline-block", width: "90%", paddingLeft: "15px"}}>
-                        <span>Date</span>
+                        <span>Date(mm/dd/yyyy)</span>
                         <div>{new Date().toLocaleDateString()}</div>
                     </div>
                     <div className="" style={{display: "inline-block", width: "10%"}}>

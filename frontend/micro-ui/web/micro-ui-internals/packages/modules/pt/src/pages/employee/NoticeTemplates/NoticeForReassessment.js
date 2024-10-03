@@ -20,13 +20,13 @@ const NoticeForReassessment = (props) => {
   }
   const [address, setAddress] = useState(props?.noticeData?.address ? props?.noticeData?.address : props?.noticeData?.propertyAddress ? props?.noticeData?.propertyAddress : null);
   const onChangePtAddress = (e) => {
-    setPropertyAddress(e.target?.value)
+    setAddress(e.target?.value)
   }
   const [propertyId, setPropertyId] = useState(props?.noticeData?.propertyId ? props?.noticeData?.propertyId : null);
   const onChangePtId = (e) => {
     setPropertyId(e.target?.value)
   }
-  const [acknowledgementNumber, setAcknowledgementNumber] = useState(props?.noticeData?.acknowledgementNumber ? props?.noticeData?.acknowledgementNumber : props?.noticeData?.acknowldgementNumber ? props?.noticeData?.acknowldgementNumber : null);
+  const [acknowledgementNumber, setAcknowledgementNumber] = useState(props?.noticeData?.acknowledgementNumber ? props?.noticeData?.acknowledgementNumber : null);
   const onChangeAcknowledgementNo=(e)=>{
     setAcknowledgementNumber(e.target.value)
   }
@@ -37,12 +37,12 @@ const NoticeForReassessment = (props) => {
     remarks: props?.noticeData?.remarks ? props?.noticeData?.remarks : null,
   });
   const [returnTimeFormData, setReturnTimeFormData] = useState({
-    resolutionNo: null,
-    resolutionDate: null,
+    resolutionOn: props?.noticeData?.resolutionOn ? props?.noticeData?.resolutionOn : null,
+    dated: props?.noticeData?.dated ? props?.noticeData?.dated : null,
     entryTime: props?.noticeData?.entryTime ? props?.noticeData?.entryTime : null,
     entryDate: props?.noticeData?.entryDate ? props?.noticeData?.entryDate : null
   });
-  const [tableList, setTableList] = useState([]);
+  const [tableList, setTableList] = useState(props?.noticeData?.NoticeComment?.length>0 ? props?.noticeData?.NoticeComment : []);
   const { isLoading: financialYearsLoading, data: financialYearsData } = Digit.Hooks.pt.useMDMS(
     Digit.ULBService.getStateId(),
     '',
@@ -201,22 +201,22 @@ const NoticeForReassessment = (props) => {
     return false;
     
   }
-  const onSubmit = () => {
+  const onSubmit = (e) => {
     e.preventDefault();
     let noticeDetails = {
       name: name,
-      propertyAddress: propertyAddress,
+      address: address,
       "propertyId": propertyId,
-      "acknowledgementNumber": acknowledgementNo,
-      assessmentDate: submissionDate,
+      "acknowledgementNumber": acknowledgementNumber,
+      dateOfAnnualRet: dateOfAnnualRet,
       "assessmentYear": selectedFinancialYear?.code,
       "noticeType": "Notice for Re-Assessment",      
       "tenantId": tenantId,      
       "channel": "CITIZEN",
       "noticeComment": tableList,
-      resolutionNo: returnTimeFormData.resolutionNo,
-      resolutionDate: returnTimeFormData.resolutionDate,
-      noticeDate: returnTimeFormData?.date,
+      resolutionOn: returnTimeFormData.resolutionOn,
+      dated: returnTimeFormData.dated,
+      entryDate: returnTimeFormData?.entryDate,
       entryTime: returnTimeFormData?.entryTime
     }
     props.submit(noticeDetails)
@@ -224,6 +224,8 @@ const NoticeForReassessment = (props) => {
   const onCancelNotice = () => {
     
   }
+  const citizenStyle = props?.isCitizen ? { width: "100%" } : {};
+  const citizenStyleMaxWidth = props?.isCitizen ? {  } : {maxWidth: "100%"};
   return (
     <div>
       
@@ -232,7 +234,7 @@ const NoticeForReassessment = (props) => {
           <form>
             <div id="form-print">
             {<Header>{t("Notice For Re-Assessment")}</Header>}
-              <div className="row card" style={{ maxWidth: '100%' }}>
+              <div className="row card" style={{ ...citizenStyleMaxWidth }}>
                 <div >
                   <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
                     <CardLabel>{`${t("Name")}`}</CardLabel>
@@ -243,19 +245,19 @@ const NoticeForReassessment = (props) => {
                       value={name}
                       onChange={(e) => onChangeName(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
                   <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
                     <CardLabel>{`${t("Property Address")}`}</CardLabel>
                     <TextInput
                       style={{ background: "#FAFAFA" }}
-                      key={'propertyAddress'}
-                      name={'propertyAddress'}
-                      value={propertyAddress}
+                      key={'address'}
+                      name={'address'}
+                      value={address}
                       onChange={(e) => onChangePtAddress(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
                 </div>
@@ -269,19 +271,19 @@ const NoticeForReassessment = (props) => {
                       value={propertyId}
                       onChange={(e) => onChangePtId(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
                   <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
                     <CardLabel>{`${t("Return Acknowledgement Number")}`}</CardLabel>
                     <TextInput
                       style={{ background: "#FAFAFA" }}
-                      key={'acknowledgementNo'}
-                      name={'acknowledgementNo'}
-                      value={acknowledgementNo}
+                      key={'acknowledgementNumber'}
+                      name={'acknowledgementNumber'}
+                      value={acknowledgementNumber}
                       onChange={(e) => onChangeAcknowledgementNo(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
 
@@ -290,7 +292,7 @@ const NoticeForReassessment = (props) => {
                   <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
                     <CardLabel>{`${t("Date of Submission of Annual Return")}`}</CardLabel>
                    
-                    <input
+                    {/* <input
                       className={`employee-card-input ${props.disabled ? "disabled" : ""}`}
                       style={{ width: "calc(100%-62px)" }}
                       value={submissionDate ? submissionDate : ""}
@@ -299,11 +301,28 @@ const NoticeForReassessment = (props) => {
                         setSubmissionDate(d.target.value);
                       }}
                       required={false}
+                    /> */}
+                    <input
+                      className={`employee-card-input ${props.disabled ? "disabled" : ""}`}
+                      // className={`${props.disabled ? "disabled" : ""}`}
+                      style={{ width: "calc(100%-62px)" }}
+                      // style={{ right: "6px", zIndex: "100", top: 6, position: "absolute", opacity: 0, width: "100%" }}
+                      value={dateOfAnnualRet ? dateOfAnnualRet : ""}
+                      type="date"
+                      onChange={(d) => {
+                        setDateOfAnnualRet(d.target.value);
+                      }}
+                      required={false}
+                      readOnly={props?.isCitizen ? true : false}
+                      disabled={props?.isCitizen ? true : false}
                     />
                   </div>
                   <div className="col-sm-4 assment-yr-cls" style={{ width: '48%', display: 'inline-block', position: 'relative', top: '0px' }}>
                     <CardLabel>{`${t("Assessment Year")}`}</CardLabel>
-                    <Dropdown isMandatory optionCardStyles={{ zIndex: 111111 }} selected={selectedFinancialYear} optionKey="name" option={financialYears} select={setSelectedFinancialYear} t={t} />
+                    <Dropdown isMandatory optionCardStyles={{ zIndex: 111111 }} selected={selectedFinancialYear} optionKey="name" option={financialYears} select={setSelectedFinancialYear} t={t} 
+                    isDisabled={props?.isCitizen ? true : false}
+                    disable={props?.isCitizen ? true : false}
+                    />
 
                   </div>
                 </div>
@@ -311,15 +330,15 @@ const NoticeForReassessment = (props) => {
                 <div style={{ marginTop: '20px' }}>
                   <p><span style={{ fontWeight: 600 }}>Sub: Notice under Rule 35 of Manipur Municipalities (Property Tax) Rules, 2019 </span>
                     <ul style={{ marginTop: '10px' }} className="notice-txt">
-                      <li style={{ width: '60%', listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
+                      <li style={{ width: '60%', listStyle: 'auto', marginLeft: '16px', padding: '6px', ...citizenStyle  }}>
                         This is reference to the completion of assessment and order passed under Rule 31/Rule 32/Rule 33/Rule 34 nevertheless, it had been detected there are instance of willful supperssion of information.
                       </li>
                       <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
-                        <div style={{ width: '60%', display: 'inline-flex' }}>
+                        <div style={{ width: '60%',...citizenStyle }}>
                           The following information in the return found to be incorrect / No return has been filed under Rule 17/ Rule 18/ Rule 19:
                         </div>
                         
-                        <div style={{ width: '40%', display: 'inline' }}>
+                        {!props?.isCitizen && <div style={{ width: '40%', display: 'inline' }}>
                           <button id="printPageButton" onClick={(e) => onAddTabData(e)} className="submit-bar"
                             style={{
                               color: 'white',
@@ -329,7 +348,7 @@ const NoticeForReassessment = (props) => {
                           >
                             + {t("Add")}
                           </button>
-                        </div>
+                        </div>}
                       </li>
                       {tableList && tableList.length>0 && <li style={{ marginLeft: '16px', padding: '6px' }}>
                         <div style={{ width: '100%' }}>
@@ -352,10 +371,10 @@ const NoticeForReassessment = (props) => {
                         </div>
                       </li>}
                       <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
-                        <div style={{ width: '60%' }}>
-                          If therefore purpose to initiate a re-assessment under Rule 35, which has the consent of the Board of Councilors vide Resolution no: {returnTimeFormData?.resolutionNo && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.resolutionNo}</span>}{!returnTimeFormData?.resolutionNo && <span>__________________</span>} dated {returnTimeFormData?.resolutionDate && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.resolutionDate}</span>} {!returnTimeFormData?.resolutionDate && <span>________________ </span>}. If therefore processed to the open the earlier assessment and modify the Annual Property Value(APV) and the Property tax on the basis of the information available with the municipality. In case, you disagree with the re-assessment and the proposed increase, you may present your case with all available records either in person or through an authorized representative on {returnTimeFormData?.date && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.date}</span>}{!returnTimeFormData?.date && <span>__________________</span>} at {returnTimeFormData?.entryTime && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.entryTime}</span>} {!returnTimeFormData?.entryTime && <span>________________ </span>} in the chamber of the undersigned.
+                        <div style={{ width: '60%',...citizenStyle  }}>
+                          If therefore purpose to initiate a re-assessment under Rule 35, which has the consent of the Board of Councilors vide Resolution no: {returnTimeFormData?.resolutionOn && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.resolutionOn}</span>}{!returnTimeFormData?.resolutionOn && <span>__________________</span>} dated {returnTimeFormData?.dated && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.dated}</span>} {!returnTimeFormData?.dated && <span>________________ </span>}. If therefore processed to the open the earlier assessment and modify the Annual Property Value(APV) and the Property tax on the basis of the information available with the municipality. In case, you disagree with the re-assessment and the proposed increase, you may present your case with all available records either in person or through an authorized representative on {returnTimeFormData?.entryDate && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.entryDate}</span>}{!returnTimeFormData?.entryDate && <span>__________________</span>} at {returnTimeFormData?.entryTime && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.entryTime}</span>} {!returnTimeFormData?.entryTime && <span>________________ </span>} in the chamber of the undersigned.
                         </div>
-                        <div style={{ width: '40%', display: 'inline' }}>
+                        {!props?.isCitizen && <div style={{ width: '40%', display: 'inline' }}>
                           <button id="printPageButton" onClick={(e) => onEditDate(e)} className="submit-bar"
                             style={{
                               color: 'white',
@@ -366,19 +385,19 @@ const NoticeForReassessment = (props) => {
                           >
                             {t("Edit")}
                           </button>
-                        </div>
+                        </div>}
                       </li>
-                      <li style={{ width: '60%', listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
+                      <li style={{ width: '60%', listStyle: 'auto', marginLeft: '16px', padding: '6px',...citizenStyle  }}>
                         In case you fail to appear on the appointed date and time or otherwise explain why the earlier assessment would not be re-openedand the APV and tax should not be assessed as above, the assessment will be frames under Rule 35 on the basis of the information available with the municipality as indicated above.
                       </li>
                     </ul>
                   </p>
                 </div>
               </div>
-              <div className="card" style={{ maxWidth: '100%' }}>
+              <div className="card" style={{ ...citizenStyleMaxWidth }}>
                 <div className="row">
                     <div className="" style={{display: "inline-block", width: "90%", paddingLeft: "15px"}}>
-                        <span>Date</span>
+                        <span>Date(mm/dd/yyyy)</span>
                         <div>{new Date().toLocaleDateString()}</div>
                     </div>
                     <div className="" style={{display: "inline-block", width: "10%"}}>
@@ -389,7 +408,7 @@ const NoticeForReassessment = (props) => {
               </div>
             </div>
             
-            <div className="card" style={{ maxWidth: '100%' }}>
+            <div className="card" style={{ ...citizenStyleMaxWidth }}>
               <div style={{display: 'inline-flex'}}>
                 <div style={{ width: '100%', display: 'inline' }}>
                   <button onClick={(e) => printDiv(e,'form-print')} className="submit-bar"
@@ -401,7 +420,7 @@ const NoticeForReassessment = (props) => {
                     {t("Print")}
                   </button>
                 </div>
-                <div style={{  display: 'inline' }}>
+                {!props?.isCitizen && <div style={{  display: 'inline' }}>
                   <button onClick={() => onCancelNotice()} className="submit-bar"
                     style={{
                       color: 'white',
@@ -410,8 +429,8 @@ const NoticeForReassessment = (props) => {
                   >
                     {t("Cancel")}
                   </button>
-                </div>
-                <div style={{ display: 'inline' }}>
+                </div>}
+                {!props?.isCitizen &&  <div style={{ display: 'inline' }}>
                   <button onClick={onSubmit} className="submit-bar"
                     style={{
                       color: 'white',
@@ -421,7 +440,7 @@ const NoticeForReassessment = (props) => {
                   >
                     {t("Submit")}
                   </button>
-                </div>
+                </div>}
               </div>
             </div>
           </form>
@@ -527,31 +546,31 @@ const NoticeForReassessment = (props) => {
             <div className="row" style={{padding: "10px"}}>
                 <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
                     
-                    <label for="formControlInputResolutionNo" class="form-label">Resolution No.*</label>
-                    <input type="text" className={fieldError.resolutionNo ? "form-control error-message" : "form-control"} id="formControlInputResolutionNo" name="resolutionNo" placeholder="Enter Resolution No." value={returnTimeFormData.resolutionNo} onChange={handleChangeTimeReturn} required />
-                    {fieldError.resolutionNo &&
+                    <label for="formControlInputresolutionOn" class="form-label">Resolution No.*</label>
+                    <input type="text" className={fieldError.resolutionOn ? "form-control error-message" : "form-control"} id="formControlInputresolutionOn" name="resolutionOn" placeholder="Enter Resolution No." value={returnTimeFormData.resolutionOn} onChange={handleChangeTimeReturn} required />
+                    {fieldError.resolutionOn &&
                         <span className="error-message">
-                            {fieldError.resolutionNo}
+                            {fieldError.resolutionOn}
                         </span>
                     }
                 </div>
                 <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
                     
-                    <label for="formControlInputResolutionDate" class="form-label">Resolution Date*</label>
-                    <input type="date" className={fieldError.resolutionDate ? "form-control error-message" : "form-control"} id="formControlInputResolutionDate" name="resolutionDate" placeholder="Enter Resolution Date" value={returnTimeFormData.resolutionDate} onChange={handleChangeTimeReturn} required />
-                    {fieldError.resolutionDate &&
+                    <label for="formControlInputdated" class="form-label">Resolution Date*</label>
+                    <input type="date" className={fieldError.dated ? "form-control error-message" : "form-control"} id="formControlInputdated" name="dated" placeholder="Enter Resolution Date" value={returnTimeFormData.dated} onChange={handleChangeTimeReturn} required />
+                    {fieldError.dated &&
                         <span className="error-message">
-                            {fieldError.resolutionDate}
+                            {fieldError.dated}
                         </span>
                     }
                 </div>
               <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
                 
                 <label for="formControlInputReturnDate" class="form-label">Date*</label>
-                <input type="date" className={fieldError.date ? "form-control error-message" : "form-control"} id="formControlInputReturnDate" name="date" placeholder="Enter Date" value={returnTimeFormData.date} onChange={handleChangeTimeReturn} required />
-                {fieldError.date &&
+                <input type="date" className={fieldError.entryDate ? "form-control error-message" : "form-control"} id="formControlInputReturnDate" name="entryDate" placeholder="Enter Date" value={returnTimeFormData.entryDate} onChange={handleChangeTimeReturn} required />
+                {fieldError.entryDate &&
                     <span className="error-message">
-                        {fieldError.date}
+                        {fieldError.entryDate}
                     </span>
                 }
               </div>

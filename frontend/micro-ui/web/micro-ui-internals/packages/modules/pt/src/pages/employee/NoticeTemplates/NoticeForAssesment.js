@@ -40,7 +40,7 @@ const NoticeForAssesment = (props) => {
     entryTime: props?.noticeData?.entryTime ? props?.noticeData?.entryTime : null,
     entryDate: props?.noticeData?.entryDate ? props?.noticeData?.entryDate : null
   });
-  const [tableList, setTableList] = useState([]);
+  const [tableList, setTableList] = useState(props?.noticeData?.NoticeComment?.length>0 ? props?.noticeData?.NoticeComment : []);
 
 
   const { isLoading: financialYearsLoading, data: financialYearsData } = Digit.Hooks.pt.useMDMS(
@@ -183,13 +183,6 @@ const NoticeForAssesment = (props) => {
   };
   const printDiv = (e,divId)=> {
     e.preventDefault();
-    // var printContent = document.getElementById(divId);
-    // var WinPrint = window.open('', '', 'width=900,height=650');
-    // WinPrint.document.write(printContent.innerHTML);
-    // WinPrint.document.close();
-    // WinPrint.focus();
-    // WinPrint.print();
-    // WinPrint.close();
     var printContents = document.getElementById(divId).innerHTML;
     var originalContents = document.body.innerHTML;
 
@@ -392,7 +385,7 @@ const NoticeForAssesment = (props) => {
               <div className="card" style={{ ...citizenStyleMaxWidth }}>
                 <div className="row">
                   <div className="" style={{display: "inline-block", width: "90%", paddingLeft: "15px"}}>
-                      <span>Date</span>
+                      <span>Date(mm/dd/yyyy)</span>
                       <div>{new Date().toLocaleDateString()}</div>
                   </div>
                   <div className="" style={{display: "inline-block", width: "10%"}}>

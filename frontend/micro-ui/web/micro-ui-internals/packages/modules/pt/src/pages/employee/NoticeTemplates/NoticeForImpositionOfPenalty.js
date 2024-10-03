@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CardLabel, DatePicker, Dropdown, Header, Modal, TextInput } from "@upyog/digit-ui-react-components";
+import { CardLabel, CheckBox, DatePicker, Dropdown, Header, Modal, TextInput } from "@upyog/digit-ui-react-components";
 
 
 const NoticeForImpositionOfPenalty = (props) => {
@@ -8,8 +8,8 @@ const NoticeForImpositionOfPenalty = (props) => {
 
   const { t } = useTranslation();
   const [financialYears, setFinancialYears] = useState([]);
-  const [selectedFinancialYear, setSelectedFinancialYear] = useState(null);
-  const [submissionDate, setSubmissionDate] = useState();
+  const [selectedFinancialYear, setSelectedFinancialYear] = useState(props?.noticeData && props?.noticeData.assessmentYear? {code: props?.noticeData.assessmentYear, name: props?.noticeData.assessmentYear} : null);
+  const [dateOfAnnualRet, setDateOfAnnualRet] = useState(props?.noticeData?.dateOfAnnualRet ? props?.noticeData?.dateOfAnnualRet : props?.noticeData?.dateOfOrder ? props?.noticeData?.dateOfOrder : null);
 
   const [notice, setNotice] = useState();
   const [showModal, setShowModal] = useState(false)
@@ -17,54 +17,43 @@ const NoticeForImpositionOfPenalty = (props) => {
   const handleChangeNotice = (value) => {
 
   }
-  const [name, setName] = useState();
+  const [name, setName] = useState(props?.noticeData?.ownerName ? props?.noticeData?.ownerName : props?.noticeData?.name ? props?.noticeData?.name : null);
   const onChangeName = (e) => {
     setName(e.target?.value)
   }
-  const [propertyAddress, setPropertyAddress] = useState();
+  const [address, setAddress] = useState(props?.noticeData?.address ? props?.noticeData?.address : null);
   const onChangePtAddress = (e) => {
-    setPropertyAddress(e.target?.value)
+    setAddress(e.target?.value)
   }
-  const [propertyId, setPropertyId] = useState();
+  const [propertyId, setPropertyId] = useState(props?.noticeData?.propertyId ? props?.noticeData?.propertyId : null);
   const onChangePtId = (e) => {
     setPropertyId(e.target?.value)
   }
-  const [acknowledgementNo, setAcknowledgementNo] = useState();
+  const [acknowledgementNumber, setAcknowledgementNumber] = useState(props?.noticeData?.acknowledgementNumber ? props?.noticeData?.acknowledgementNumber : null);
   const onChangeAcknowledgementNo=(e)=>{
-    setAcknowledgementNo(e.target.value)
+    setAcknowledgementNumber(e.target.value)
   }
-  const [returnFormData, setReturnFormData] = useState({
-    particulars: null,
-    asPerReturnFiled: null,
-    asPerMunicipality: null,
-    remarks: null
-  });
   const [returnTimeFormData, setReturnTimeFormData] = useState({
-    time: null,
-    date: null
-  });
-  // const [particulars, setParticulars] = useState();
-  // const [asPerReturnFiled, setAsPerReturnFiled] = useState();
-  // const [asPerMunicipality, setAsPerMunicipality] = useState();
-  // const [remarks, setRemarks] = useState();
-  const [tableList, setTableList] = useState([]);
-  const [timeMeridian, setTimeMeridian] = useState('');
-  const [time, setTime] = useState();
-  const [editDate, setEditDate] = useState();
-
-  const onChangeParticulars = (e)=>{
-    setParticulars(e.target.value)
-  }
-  const onChangeAsPerReturnFiled = (e)=>{
-    setAsPerReturnFiled(e.target.value)
-  }
-  const onChangeMunicipality = (e)=>{
-    setAsPerMunicipality(e.target.value)
-  }
-  const onChangeRemarks = (e)=>{
-    setRemarks(e.target.value)
-  }
-
+    entryTime: props?.noticeData?.entryTime ? props?.noticeData?.entryTime : null,
+    entryDate: props?.noticeData?.entryDate ? props?.noticeData?.entryDate : null
+  }); 
+  const [rulesOfPenalty, setRulesOfPenalty] = useState({
+    Rule_23: props?.noticeData?.Rule_23 ? props?.noticeData?.Rule_23 : false,
+    Rule_33: props?.noticeData?.Rule_33 ? props?.noticeData?.Rule_33 : false,
+    Rule_34: props?.noticeData?.Rule_34 ? props?.noticeData?.Rule_34 : false,
+    Rule_36: props?.noticeData?.Rule_36 ? props?.noticeData?.Rule_36 : false,
+    Failedtoproducenecessarydocuments: props?.noticeData?.Failedtoproducenecessarydocuments ? props?.noticeData?.Failedtoproducenecessarydocuments : false,
+    Willfullyfurnishesincorrectinformation: props?.noticeData?.Willfullyfurnishesincorrectinformation ? props?.noticeData?.Willfullyfurnishesincorrectinformation : false,
+    Obstructanyauthorityappointed: props?.noticeData?.Obstructanyauthorityappointed ? props?.noticeData?.Obstructanyauthorityappointed : false
+  }); 
+const onChangeRuleOfPenalty=(e)=>{
+  console.log("====",e)
+  const { name, checked } = e.target;
+  setRulesOfPenalty({
+        ...rulesOfPenalty,
+        [name]: checked || false,
+    });
+}
   const { isLoading: financialYearsLoading, data: financialYearsData } = Digit.Hooks.pt.useMDMS(
     Digit.ULBService.getStateId(),
     '',
@@ -82,16 +71,10 @@ const NoticeForImpositionOfPenalty = (props) => {
       setFinancialYears(financialYearsData["egf-master"]?.["FinancialYear"]);
     }
   }, [financialYearsData]);
-  const onAddTabData = (e) => {
-    e.preventDefault();
-    setShowModal(true)
-  }
+  
   const onEditDate = (e) => {
     e.preventDefault();
     setShowDateModal(true)
-  }
-  const closeModal=()=>{
-    setShowModal(false)
   }
   const closeDateModal=()=>{
     setShowDateModal(false)
@@ -126,19 +109,7 @@ const NoticeForImpositionOfPenalty = (props) => {
   });
     setFieldError(newErrors);
   };
-  const handleChangeReturn = (e) => {
-    const { name, value } = e.target;
-    setReturnFormData({
-        ...returnFormData,
-        [name]: value,
-    });
-    // validateForm(formData)
-    const newErrors = validateForm({
-      ...returnFormData,
-      [name]: value,
-  });
-    setFieldError(newErrors);
-  };
+ 
   const validateForm = (data) => {
     const errors = {};
 
@@ -150,49 +121,6 @@ const NoticeForImpositionOfPenalty = (props) => {
 
     return errors;
   };
-  const onSaveAndAdd = ()=>{
-    const newErrors = validateForm(returnFormData);
-    setFieldError(newErrors);
-    if (Object.keys(newErrors).length === 0) {
-        let obj = {
-          ...returnFormData
-        };
-        let list = tableList || [];
-        list.push(obj)
-        setTableList(list);
-        setReturnFormData({
-          particulars: null,
-          asPerReturnFiled: null,
-          asPerMunicipality: null,
-          remarks: null
-        });
-        // setShowModal(false);
-    } else {
-      return;
-    }
-  };
-  const onSave = ()=>{
-    const newErrors = validateForm(returnFormData);
-    setFieldError(newErrors);
-    if (Object.keys(newErrors).length === 0) {
-        let obj = {
-          ...returnFormData
-        };
-        let list = tableList || [];
-        list.push(obj)
-        setTableList(list);
-        setReturnFormData({
-          particulars: null,
-          asPerReturnFiled: null,
-          asPerMunicipality: null,
-          remarks: null
-        });
-        setShowModal(false);
-    } else {
-      return;
-    }
-   
-  };
   const onSaveDateTime = ()=>{
     const newErrors = validateForm(returnTimeFormData);
     setFieldError(newErrors);
@@ -203,41 +131,60 @@ const NoticeForImpositionOfPenalty = (props) => {
     }
    
   };
+  let [count, setCount] = useState(0);
   const printDiv = (e,divId)=> {
     e.preventDefault();
-    // var printContent = document.getElementById(divId);
-    // var WinPrint = window.open('', '', 'width=900,height=650');
-    // WinPrint.document.write(printContent.innerHTML);
-    // WinPrint.document.close();
-    // WinPrint.focus();
-    // WinPrint.print();
-    // WinPrint.close();
     var printContents = document.getElementById(divId).innerHTML;
     var originalContents = document.body.innerHTML;
 
     document.body.innerHTML = printContents;
 
     window.print();
-
+    
     document.body.innerHTML = originalContents;
+    setCount(1)
     return false;
     
   }
-  const onSubmit = () => {
-
+  const onSubmit = (e) => {
+    e.preventDefault();
+    let noticeDetails = {
+      name: name,
+      address: address,
+      "propertyId": propertyId,
+      "acknowledgementNumber": acknowledgementNumber,
+      dateOfAnnualRet: dateOfAnnualRet,
+      "assessmentYear": selectedFinancialYear?.code,
+      "noticeType": "Notice for Imposition of Penalty",  
+      "tenantId": tenantId,      
+      "channel": "CITIZEN",
+      "noticeComment": [],
+      entryDate: returnTimeFormData?.entryDate,
+      entryTime: returnTimeFormData?.entryTime,
+      Rule_23: rulesOfPenalty?.Rule_23 || false,
+      Rule_33: rulesOfPenalty?.Rule_33 || false,
+      Rule_34: rulesOfPenalty?.Rule_34 || false,
+      Rule_36: rulesOfPenalty?.Rule_36 || false,
+      Failedtoproducenecessarydocuments: rulesOfPenalty?.Failedtoproducenecessarydocuments || false,
+      Willfullyfurnishesincorrectinformation: rulesOfPenalty?.Willfullyfurnishesincorrectinformation || false,
+      Obstructanyauthorityappointed: rulesOfPenalty?.Obstructanyauthorityappointed || false
+    }
+    props.submit(noticeDetails)
   }
   const onCancelNotice = () => {
     
   }
+  const citizenStyle = props?.isCitizen ? { width: "100%" } : {};
+  const citizenStyleMaxWidth = props?.isCitizen ? {  } : {maxWidth: "100%"};
   return (
     <div>
       
       <div  >
         <div className="row">
           <form>
-            <div id="form-print">
+            <div id="form-print-impositionofpenalty">
             {<Header>{t("Notice For Imposition of Penalty")}</Header>}
-              <div className="row card" style={{ maxWidth: '100%' }}>
+              <div className="row card" style={{ ...citizenStyleMaxWidth }}>
                 <div >
                   <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
                     <CardLabel>{`${t("Name")}`}</CardLabel>
@@ -248,19 +195,19 @@ const NoticeForImpositionOfPenalty = (props) => {
                       value={name}
                       onChange={(e) => onChangeName(e)}
                       isMandatory={false}
-                      disable={false}
+                      disabled={props?.isCitizen ? true : false}
                     />
                   </div>
                   <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
                     <CardLabel>{`${t("Property Address")}`}</CardLabel>
                     <TextInput
                       style={{ background: "#FAFAFA" }}
-                      key={'propertyAddress'}
-                      name={'propertyAddress'}
-                      value={propertyAddress}
+                      key={'address'}
+                      name={'address'}
+                      value={address}
                       onChange={(e) => onChangePtAddress(e)}
                       isMandatory={false}
-                      disable={false}
+                      disabled={props?.isCitizen ? true : false}
                     />
                   </div>
                 </div>
@@ -274,19 +221,19 @@ const NoticeForImpositionOfPenalty = (props) => {
                       value={propertyId}
                       onChange={(e) => onChangePtId(e)}
                       isMandatory={false}
-                      disable={false}
+                      disabled={props?.isCitizen ? true : false}
                     />
                   </div>
                   <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
                     <CardLabel>{`${t("Return Acknowledgement Number")}`}</CardLabel>
                     <TextInput
                       style={{ background: "#FAFAFA" }}
-                      key={'acknowledgementNo'}
-                      name={'acknowledgementNo'}
-                      value={acknowledgementNo}
+                      key={'acknowledgementNumber'}
+                      name={'acknowledgementNumber'}
+                      value={acknowledgementNumber}
                       onChange={(e) => onChangeAcknowledgementNo(e)}
                       isMandatory={false}
-                      disable={false}
+                      disabled={props?.isCitizen ? true : false}
                     />
                   </div>
 
@@ -294,29 +241,26 @@ const NoticeForImpositionOfPenalty = (props) => {
                 <div>
                   <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
                     <CardLabel>{`${t("Date of Submission of Annual Return")}`}</CardLabel>
-                    {/* <DatePicker
-                      isRequired={true}
-                      date={submissionDate}
-                      onChange={(d) => {
-                        setSubmissionDate(d);
-                      }}
-                    /> */}
+                    
                     <input
                       className={`employee-card-input ${props.disabled ? "disabled" : ""}`}
-                      // className={`${props.disabled ? "disabled" : ""}`}
                       style={{ width: "calc(100%-62px)" }}
-                      // style={{ right: "6px", zIndex: "100", top: 6, position: "absolute", opacity: 0, width: "100%" }}
-                      value={submissionDate ? submissionDate : ""}
+                      value={dateOfAnnualRet  ? dateOfAnnualRet  : ""}
                       type="date"
                       onChange={(d) => {
-                        setSubmissionDate(d.target.value);
+                        setDateOfAnnualRet(d.target.value);
                       }}
                       required={false}
+                      readOnly={props?.isCitizen ? true : false}
+                      disabled={props?.isCitizen ? true : false}
                     />
                   </div>
                   <div className="col-sm-4 assment-yr-cls" style={{ width: '48%', display: 'inline-block', position: 'relative', top: '0px' }}>
                     <CardLabel>{`${t("Assessment Year")}`}</CardLabel>
-                    <Dropdown isMandatory optionCardStyles={{ zIndex: 111111 }} selected={selectedFinancialYear} optionKey="name" option={financialYears} select={setSelectedFinancialYear} t={t} />
+                    <Dropdown isMandatory optionCardStyles={{ zIndex: 111111 }} selected={selectedFinancialYear} optionKey="name" option={financialYears} select={setSelectedFinancialYear} t={t} 
+                    isDisabled={props?.isCitizen ? true : false}
+                    disable={props?.isCitizen ? true : false}
+                    />
 
                   </div>
                 </div>
@@ -326,15 +270,92 @@ const NoticeForImpositionOfPenalty = (props) => {
                     <ul style={{ marginTop: '10px' }} className="notice-txt">
                       <li style={{ width: '60%', listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
                         Penalty under Rule is leviable for the following reasons: (Tick whichever is applicable)
-                        <div>
+                        <div style={{marginTop: "10px"}}>
                             <ul>
-                                <li>In the event, the person failed to pay the dues as per Rule 23 penalty may be levied;</li>
-                                <li>Where a regular assessment is made under Rule 33 and the Tax reassessed exceeds the tax paid under self-assessment by more than 20 percent thereof, penalty may be levied on the additional tax charged;</li>
-                                <li>Where a best judgement assessment is made under Rule 34, penalty may be levied;</li>
-                                <li>In the event of failure of the person to comply with the notice under Rule 36, penalty may be levied;</li>
-                                <li>In the event, when person failed to produce necessary documents and evidence called by the assessing officer or the appellate authority, penalty may be levied;</li>
-                                <li>In the event the person knowingly or willfully furnishes incorrect information or documentation;</li>
-                                <li>In the event obstruct any authority appointed under Act and these rules in exercise of his powers;</li>
+                                <li>
+                                  <CheckBox
+                                    className="form-field"
+                                    name="Rule_23"
+                                    label={`${t("In the event, the person failed to pay the dues as per Rule 23 penalty may be levied;")}`}
+                                    onChange={(e) => onChangeRuleOfPenalty(e)}
+                                    value={rulesOfPenalty?.Rule_23}
+                                    checked={rulesOfPenalty?.Rule_23 || false}
+                                    disable={props?.isCitizen ? true : false}
+                                    // style={window.location.href.includes("/citizen/") ? { paddingTop: "10px" } : {}}
+                                  />
+                                </li>
+                                <li>
+                                  <CheckBox
+                                    className="form-field"
+                                    name="Rule_33"
+                                    label={`${t("Where a regular assessment is made under Rule 33 and the Tax reassessed exceeds the tax paid under self-assessment by more than 20 percent thereof, penalty may be levied on the additional tax charged;")}`}
+                                    onChange={(e) => onChangeRuleOfPenalty(e)}
+                                    value={rulesOfPenalty?.Rule_33}
+                                    checked={rulesOfPenalty?.Rule_33 || false}
+                                    disable={props?.isCitizen ? true : false}
+                                    // style={window.location.href.includes("/citizen/") ? { paddingTop: "10px" } : {}}
+                                  />
+                                </li>
+                                <li>
+                                  <CheckBox
+                                    className="form-field"
+                                    name="Rule_34"
+                                    label={`${t("Where a best judgement assessment is made under Rule 34, penalty may be levied;")}`}
+                                    onChange={(e) => onChangeRuleOfPenalty(e)}
+                                    value={rulesOfPenalty?.Rule_34}
+                                    checked={rulesOfPenalty?.Rule_34 || false}
+                                    disable={props?.isCitizen ? true : false}
+                                    // style={window.location.href.includes("/citizen/") ? { paddingTop: "10px" } : {}}
+                                  />
+                                </li>
+                                <li>
+                                  <CheckBox
+                                    className="form-field"
+                                    name="Rule_36"
+                                    label={`${t("In the event of failure of the person to comply with the notice under Rule 36, penalty may be levied;")}`}
+                                    onChange={(e) => onChangeRuleOfPenalty(e)}
+                                    value={rulesOfPenalty?.Rule_36}
+                                    checked={rulesOfPenalty?.Rule_36 || false}
+                                    disable={props?.isCitizen ? true : false}
+                                    // style={window.location.href.includes("/citizen/") ? { paddingTop: "10px" } : {}}
+                                  />
+                                </li>
+                                <li>
+                                  <CheckBox
+                                    className="form-field"
+                                    name="Failedtoproducenecessarydocuments"
+                                    label={`${t("In the event, when person failed to produce necessary documents and evidence called by the assessing officer or the appellate authority, penalty may be levied;")}`}
+                                    onChange={(e) => onChangeRuleOfPenalty(e)}
+                                    value={rulesOfPenalty?.Failedtoproducenecessarydocuments}
+                                    checked={rulesOfPenalty?.Failedtoproducenecessarydocuments || false}
+                                    disable={props?.isCitizen ? true : false}
+                                    // style={window.location.href.includes("/citizen/") ? { paddingTop: "10px" } : {}}
+                                  />
+                                </li>
+                                <li>
+                                  <CheckBox
+                                    className="form-field"
+                                    name="Willfullyfurnishesincorrectinformation"
+                                    label={`${t("In the event the person knowingly or willfully furnishes incorrect information or documentation;")}`}
+                                    onChange={(e) => onChangeRuleOfPenalty(e)}
+                                    value={rulesOfPenalty?.Willfullyfurnishesincorrectinformation}
+                                    checked={rulesOfPenalty?.Willfullyfurnishesincorrectinformation || false}
+                                    disable={props?.isCitizen ? true : false}
+                                    // style={window.location.href.includes("/citizen/") ? { paddingTop: "10px" } : {}}
+                                  />
+                                </li>
+                                <li>
+                                  <CheckBox
+                                    className="form-field"
+                                    name="Obstructanyauthorityappointed"
+                                    label={`${t("In the event obstruct any authority appointed under Act and these rules in exercise of his powers;")}`}
+                                    onChange={(e) => onChangeRuleOfPenalty(e)}
+                                    value={rulesOfPenalty?.Obstructanyauthorityappointed}
+                                    checked={rulesOfPenalty?.Obstructanyauthorityappointed || false}
+                                    disable={props?.isCitizen ? true : false}
+                                    // style={window.location.href.includes("/citizen/") ? { paddingTop: "10px" } : {}}
+                                  />
+                                </li>
                             </ul>
                         </div>
                       </li>
@@ -344,9 +365,9 @@ const NoticeForImpositionOfPenalty = (props) => {
                       
                       <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
                         <div style={{ width: '60%' }}>
-                            You may present your case with all available records either in person or through an authorized representative on {returnTimeFormData?.date && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.date}</span>}{!returnTimeFormData?.date && <span>__________________</span>} at {returnTimeFormData?.time && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.time}</span>} {!returnTimeFormData?.time && <span>________________ </span>} in the chamber of the undersigned.
+                            You may present your case with all available records either in person or through an authorized representative on {returnTimeFormData?.entryDate && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.entryDate}</span>}{!returnTimeFormData?.entryDate && <span>__________________</span>} at {returnTimeFormData?.entryTime && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.entryTime}</span>} {!returnTimeFormData?.entryTime && <span>________________ </span>} in the chamber of the undersigned.
                         </div>
-                        <div style={{ width: '40%', display: 'inline' }}>
+                        {!props?.isCitizen && <div style={{ width: '40%', display: 'inline' }}>
                           <button id="printPageButton" onClick={(e) => onEditDate(e)} className="submit-bar"
                             style={{
                               color: 'white',
@@ -357,7 +378,7 @@ const NoticeForImpositionOfPenalty = (props) => {
                           >
                             {t("Edit")}
                           </button>
-                        </div>
+                        </div>}
                       </li>
                       <li style={{ width: '60%', listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
                         In case you fail to appear on the appointed date and time or otherwise explain why the penalty should not be levied as above, the penalty shall be levied without any further intimation.
@@ -366,10 +387,10 @@ const NoticeForImpositionOfPenalty = (props) => {
                   </p>
                 </div>
               </div>
-              <div className="card" style={{ maxWidth: '100%' }}>
+              <div className="card" style={{ ...citizenStyleMaxWidth }}>
                 <div className="row">
                     <div className="" style={{display: "inline-block", width: "90%", paddingLeft: "15px"}}>
-                        <span>Date</span>
+                        <span>Date(mm/dd/yyyy)</span>
                         <div>{new Date().toLocaleDateString()}</div>
                     </div>
                     <div className="" style={{display: "inline-block", width: "10%"}}>
@@ -380,10 +401,10 @@ const NoticeForImpositionOfPenalty = (props) => {
               </div>
             </div>
             
-            <div className="card" style={{ maxWidth: '100%' }}>
+            <div className="card" style={{ ...citizenStyleMaxWidth }}>
               <div style={{display: 'inline-flex'}}>
                 <div style={{ width: '100%', display: 'inline' }}>
-                  <button onClick={(e) => printDiv(e,'form-print')} className="submit-bar"
+                  <button onClick={(e) => printDiv(e,'form-print-impositionofpenalty')} className="submit-bar"
                     style={{
                       color: 'white',
                       float: 'left'
@@ -392,7 +413,7 @@ const NoticeForImpositionOfPenalty = (props) => {
                     {t("Print")}
                   </button>
                 </div>
-                <div style={{  display: 'inline' }}>
+                {!props?.isCitizen && <div style={{  display: 'inline' }}>
                   <button onClick={() => onCancelNotice()} className="submit-bar"
                     style={{
                       color: 'white',
@@ -401,9 +422,9 @@ const NoticeForImpositionOfPenalty = (props) => {
                   >
                     {t("Cancel")}
                   </button>
-                </div>
-                <div style={{ display: 'inline' }}>
-                  <button onClick={() => onSubmit()} className="submit-bar"
+                </div>}
+                {!props?.isCitizen && <div style={{ display: 'inline' }}>
+                  <button onClick={onSubmit} className="submit-bar"
                     style={{
                       color: 'white',
                       float: 'right',
@@ -412,138 +433,17 @@ const NoticeForImpositionOfPenalty = (props) => {
                   >
                     {t("Submit")}
                   </button>
-                </div>
+                </div>}
               </div>
             </div>
           </form>
         </div>
       </div>
-      {showModal && <Modal
-          headerBarMain={<Heading label={t('Return found to be incorrect')} />}
-          headerBarEnd={<CloseBtn onClick={closeModal} />}
-          actionCancelOnSubmit={closeModal}
-          hideSubmit={true}
-          actionSaveOnSubmit={() => {}}
-          formId="modal-action"
-          isDisabled={false}
-          width={'60%'}
-          popupStyles={{width: "50%"}}
-        >
-          <div >
-          <div className="row" style={{padding: "10px"}}>
-              <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
-                {/* <CardLabel>{`${t("Particulars")}`}</CardLabel>
-                <TextInput
-                  style={{ background: "#FAFAFA" }}
-                  key={'particulars'}
-                  name={'particulars'}
-                  value={particulars}
-                  onChange={(e) => onChangeParticulars(e)}
-                  isMandatory={true}
-                  disable={false}
-                /> */}
-                <label for="formControlInputParticulars" class="form-label">Particulars*</label>
-                <input type="text" className={fieldError.particulars ? "form-control error-message" : "form-control"} id="formControlInputParticulars" name="particulars" placeholder="Enter Particulars" value={returnFormData.particulars} onChange={handleChangeReturn} required />
-                {fieldError.particulars &&
-                        <span className="error-message">
-                            {fieldError.particulars}
-                        </span>
-                    }
-              </div>
-              <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
-                {/* <CardLabel>{`${t("As per Return Filed")}`}</CardLabel>
-                <TextInput
-                  style={{ background: "#FAFAFA" }}
-                  key={'asPerReturnFiled'}
-                  name={'asPerReturnFiled'}
-                  value={asPerReturnFiled}
-                  onChange={(e) => onChangeAsPerReturnFiled(e)}
-                  isMandatory={true}
-                  disable={false}
-                /> */}
-                <label for="formControlInputAsPerReturnFiled" class="form-label">As per Return Filed*</label>
-                <input type="text" className={fieldError.asPerReturnFiled ? "form-control error-message" : "form-control"} id="formControlInputAsPerReturnFiled" name="asPerReturnFiled" placeholder="Enter As per Return Filed" value={returnFormData.asPerReturnFiled} onChange={handleChangeReturn} required />
-                {fieldError.asPerReturnFiled &&
-                    <span className="error-message">
-                        {fieldError.asPerReturnFiled}
-                    </span>
-                }
-              </div>
-              <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
-                {/* <CardLabel>{`${t("As per Municipality")}`}</CardLabel>
-                <TextInput
-                  style={{ background: "#FAFAFA" }}
-                  key={'asPerMunicipality'}
-                  name={'asPerMunicipality'}
-                  value={asPerMunicipality}
-                  onChange={(e) => onChangeMunicipality(e)}
-                  isMandatory={true}
-                  disable={false}
-                /> */}
-                <label for="formControlInputAsPerMunicipality" class="form-label">As per Municipality*</label>
-                <input type="text" className={fieldError.asPerMunicipality ? "form-control error-message" : "form-control"} id="formControlInputAsPerMunicipality" name="asPerMunicipality" placeholder="Enter As per Municipality" value={returnFormData.asPerMunicipality} onChange={handleChangeReturn} required />
-                {fieldError.asPerMunicipality &&
-                    <span className="error-message">
-                        {fieldError.asPerMunicipality}
-                    </span>
-                }
-              </div>
-              <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
-                {/* <CardLabel>{`${t("Remarks")}`}</CardLabel>
-                <TextInput
-                  style={{ background: "#FAFAFA" }}
-                  key={'remarks'}
-                  name={'remarks'}
-                  value={remarks}
-                  onChange={(e) => onChangeRemarks(e)}
-                  isMandatory={true}
-                  disable={false}
-                /> */}
-                <label for="formControlInputReturnRemarks" class="form-label">Remarks*</label>
-                <input type="text" className={fieldError.remarks ? "form-control error-message" : "form-control"} id="formControlInputReturnRemarks" name="remarks" placeholder="Enter Remarks" value={returnFormData.remarks} onChange={handleChangeReturn} required />
-                {fieldError.remarks &&
-                    <span className="error-message">
-                        {fieldError.remarks}
-                    </span>
-                }
-              </div>
-
-            </div>
-            <div className="footer" style={{height: '30px', background: '#ebebeb'}}>
-              <div style={{padding: '10px'}}>
-                <div style={{ width: '40%', display: 'inline' }}>
-                  <button onClick={() => onSave()} className="submit-bar"
-                    style={{
-                      color: 'white',
-                      float: 'right',
-                      width: '20%',
-                      marginLeft: '10px'
-                    }}
-                  >
-                    {t("Save")}
-                  </button>
-                </div>
-                <div style={{ width: '40%', display: 'inline' }}>
-                  <button onClick={() => onSaveAndAdd()} className="submit-bar"
-                    style={{
-                      color: 'white',
-                      float: 'right',
-                      width: '30%'
-                    }}
-                  >
-                    {t("Save & Add")}
-                  </button>
-                </div>
-              </div>
-              
-            </div>
-          </div>
-        </Modal> }
 
         {showDateModal && <Modal
           headerBarMain={<Heading label={t('Select Date & Time')} />}
-          headerBarEnd={<CloseBtn onClick={closeModal} />}
-          actionCancelOnSubmit={closeModal}
+          headerBarEnd={<CloseBtn onClick={closeDateModal} />}
+          actionCancelOnSubmit={closeDateModal}
           hideSubmit={true}
           actionSaveOnSubmit={() => {}}
           formId="modal-action"
@@ -553,44 +453,22 @@ const NoticeForImpositionOfPenalty = (props) => {
           <div>
             <div className="row" style={{padding: "10px"}}>
               <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
-                {/* <CardLabel>{`${t("Date")}`}</CardLabel>
-                <input
-                  className={`employee-card-input ${props.disabled ? "disabled" : ""}`}
-                  // className={`${props.disabled ? "disabled" : ""}`}
-                  style={{ width: "calc(100%-62px)" }}
-                  // style={{ right: "6px", zIndex: "100", top: 6, position: "absolute", opacity: 0, width: "100%" }}
-                  value={editDate ? editDate : ""}
-                  type="date"
-                  onChange={(d) => {
-                    setEditDate(d.target.value);
-                  }}
-                  required={false}
-                /> */}
+                
                 <label for="formControlInputReturnDate" class="form-label">Date*</label>
-                <input type="date" className={fieldError.date ? "form-control error-message" : "form-control"} id="formControlInputReturnDate" name="date" placeholder="Enter Date" value={returnTimeFormData.date} onChange={handleChangeTimeReturn} required />
-                {fieldError.date &&
+                <input type="date" className={fieldError.entryDate ? "form-control error-message" : "form-control"} id="formControlInputReturnDate" name="entryDate" placeholder="Enter Date" value={returnTimeFormData.entryDate} onChange={handleChangeTimeReturn} required />
+                {fieldError.entryDate &&
                     <span className="error-message">
-                        {fieldError.date}
+                        {fieldError.entryDate}
                     </span>
                 }
               </div>
               <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
-                {/* <CardLabel>{`${t("Time")}`}</CardLabel>
-                <TextInput
-                  style={{ background: "#FAFAFA" }}
-                  key={'time'}
-                  name={'time'}
-                  value={time}
-                  onChange={(e) => setTime(e.target.value)}
-                  isMandatory={true}
-                  disable={false}
-                  type={'number'}
-                /> */}
+                
                 <label for="formControlInputReturnTime" class="form-label">Time*</label>
-                <input type="time" className={fieldError.time ? "form-control error-message" : "form-control"} id="formControlInputReturnTime" name="time" placeholder="Enter Time" value={returnTimeFormData.time} onChange={handleChangeTimeReturn} required />
-                {fieldError.time &&
+                <input type="time" className={fieldError.entryTime ? "form-control error-message" : "form-control"} id="formControlInputReturnTime" name="entryTime" placeholder="Enter Time" value={returnTimeFormData.entryTime} onChange={handleChangeTimeReturn} required />
+                {fieldError.entryTime &&
                     <span className="error-message">
-                        {fieldError.time}
+                        {fieldError.entryTime}
                     </span>
                 }
               </div>

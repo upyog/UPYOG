@@ -395,7 +395,7 @@ const NoticeForRectification = (props) => {
               <div className="card" style={{...citizenStyleMaxWidth}}>
                 <div className="row">
                     <div className="" style={{display: "inline-block", width: "90%", paddingLeft: "15px"}}>
-                        <span>Date</span>
+                        <span>Date(mm/dd/yyyy)</span>
                         <div>{new Date().toLocaleDateString()}</div>
                     </div>
                     <div className="" style={{display: "inline-block", width: "10%"}}>
