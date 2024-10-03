@@ -192,7 +192,7 @@ export const searchApiResponse = async (request, next = {}) => {
       return response;
     }
 
-    if (ids.length > 1) sqlQuery = `${sqlQuery} ) AND`;
+    if (ids.length >= 1) sqlQuery = `${sqlQuery} ) `;
     }
 
   if (queryKeys) {
