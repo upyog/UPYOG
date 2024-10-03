@@ -1,6 +1,9 @@
 package org.egov.wf.service;
 
 import com.jayway.jsonpath.JsonPath;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.egov.wf.config.WorkflowConfig;
 import org.egov.wf.producer.Producer;
 import org.egov.wf.repository.BusinessServiceRepository;
@@ -24,6 +27,7 @@ import java.util.Map;
 import static org.egov.wf.util.WorkflowConstants.JSONPATH_BUSINESSSERVICE_STATELEVEL;
 
 @Service
+@Slf4j
 public class BusinessMasterService {
 
     private Producer producer;
@@ -74,6 +78,7 @@ public class BusinessMasterService {
     public List<BusinessService> search(BusinessServiceSearchCriteria criteria){
         String tenantId = criteria.getTenantId();
         List<BusinessService> businessServices = repository.getBusinessServices(criteria);
+        log.info("#### main2 businessServices.size() :"+ businessServices.size());
         enrichmentService.enrichTenantIdForStateLevel(tenantId,businessServices);
 
         return businessServices;
