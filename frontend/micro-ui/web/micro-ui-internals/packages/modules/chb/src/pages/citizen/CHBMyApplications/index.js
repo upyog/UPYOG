@@ -122,7 +122,7 @@ export const CHBMyApplications = () => {
           </p>
         )}
 
-        {filteredApplications.length !== 0 && (
+        {filteredApplications.length !== 0 && data?.count>t1 && (
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
               <span className="link">

@@ -11,7 +11,10 @@
               offset: 0,
               limit: !isMobile && 10,
               sortBy: "commencementDate",
-              sortOrder: "DESC"
+              sortOrder: "DESC",
+              fromDate: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString().split('T')[0], // Default to one month ago
+              toDate: new Date().toISOString().split('T')[0], // Default to today's date
+              status: { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") }
           }
       })
       useEffect(() => {
@@ -19,6 +22,7 @@
         register("limit", 10)
         register("sortBy", "commencementDate")
         register("sortOrder", "DESC")
+        handleSubmit(onSubmit)();
       },[register])
       
 
@@ -125,61 +129,66 @@
                     hallsBookingApplication: updatedApplication
                   });
                   setIsMenuOpen(false);
+                  handleSubmit(onSubmit)();
                 };
 
                 const handleNavigate = (url) => {
                   history.push(url); // Use history.push for navigation
                 };
 
-                const actionOptions = [
-                  {
-                    label: application?.bookingStatus === "BOOKED" ? t("CHB_CANCEL") : t("CHB_COLLECT_PAYEMENT"),
-                    action: application?.bookingStatus === "BOOKED" ? handleCancel : () => {
-                      handleNavigate(`/digit-ui/employee/payment/collect/chb-services/${row?.original?.bookingNo}`);
-                    },
-                    disabled: application?.bookingStatus === "CANCELLED",
-                  },
-                ];
-
                 return (
                   <div ref={menuRef}>
                     <React.Fragment>
-                      <SubmitBar 
-                        label={t("WF_TAKE_ACTION")} 
-                        onSubmit={toggleMenu} 
-                        disabled={application?.bookingStatus === "CANCELLED" || application?.bookingStatus === "EXPIRED"} // Disable button
+                      <SubmitBar
+                        label={t("WF_TAKE_ACTION")}
+                        onSubmit={toggleMenu}
+                        disabled={
+                          application?.bookingStatus === "CANCELLED" ||
+                          application?.bookingStatus === "EXPIRED"
+                        } // Disable button
                       />
                       {isMenuOpen && (
-                        <div style={{
-                          position: 'absolute',
-                          backgroundColor: 'white',
-                          border: '1px solid #ccc',
-                          borderRadius: '4px',
-                          padding: '8px',
-                          zIndex: 1000,
-                        }}>
-                          {actionOptions.map((option, index) => (
-                            <div key={index}>
-                              <Link 
-                                to={option.disabled ? '#' : option.link} 
-                                onClick={(e) => {
-                                  if (option.disabled) {
-                                    e.preventDefault(); // Prevent action if disabled
-                                  } else {
-                                    option.action(); // Trigger the action for the selected option
-                                  }
-                                }}
-                                style={{
-                                  display: 'block',
-                                  padding: '8px',
-                                  textDecoration: option.disabled ? 'none' : 'underline',
-                                  color: option.disabled ? 'grey' : 'black',
-                                }}
-                              >
-                                {option.label}
-                              </Link>
+                        <div
+                          style={{
+                            position: 'absolute',
+                            backgroundColor: 'white',
+                            border: '1px solid #ccc',
+                            borderRadius: '4px',
+                            padding: '8px',
+                            zIndex: 1000,
+                          }}
+                        >
+                          {/* Action for Cancel */}
+                          {application?.bookingStatus === "BOOKED" && (
+                            <div
+                              onClick={handleCancel}
+                              style={{
+                                display: 'block',
+                                padding: '8px',
+                                textDecoration: 'none',
+                                color: 'black',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              {t("CHB_CANCEL")}
                             </div>
-                          ))}
+                          )}
+            
+                          {/* Action for Collect Payment */}
+                          {application?.bookingStatus !== "BOOKED" && (
+                            <div
+                              onClick={() => handleNavigate(`/digit-ui/employee/payment/collect/chb-services/${row?.original?.bookingNo}`)}
+                              style={{
+                                display: 'block',
+                                padding: '8px',
+                                textDecoration: 'none',
+                                color: 'black',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              {t("CHB_COLLECT_PAYMENT")}
+                            </div>
+                          )}
                         </div>
                       )}
                     </React.Fragment>
@@ -264,7 +273,7 @@
                               )}
                               />
                   </SearchField>
-                  {/* <SearchField>
+                  <SearchField>
                   <label>{t("CHB_MOBILE_NUMBER")}</label>
                   <MobileNumber
                       name="mobileNumber"
@@ -288,16 +297,16 @@
                   //maxlength={10}
                   />
                   <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
-                  </SearchField>  */}
+                  </SearchField> 
                   <SearchField>
                       <label>{t("FROM_DATE")}</label>
                       <Controller
-                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange}  max={new Date().toISOString().split('T')[0]}/>}
                           name="fromDate"
                           control={control}
                           />
                   </SearchField>
-                  <SearchField style={{marginTop : "0px" }}>
+                  <SearchField>
                       <label>{t("TO_DATE")}</label>
                       <Controller
                           render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
@@ -305,6 +314,7 @@
                           control={control}
                           />
                   </SearchField>
+                  <SearchField></SearchField>
                   <SearchField className="submit">
                       <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
                       <p style={{marginTop:"10px"}}
@@ -314,7 +324,7 @@
                               communityHallCode: "",
                               fromDate: "", 
                               toDate: "",
-                              // mobileNumber:"",
+                              mobileNumber:"",
                               status: "",
                               offset: 0,
                               limit: 10,
