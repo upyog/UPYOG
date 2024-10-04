@@ -2,12 +2,14 @@ package org.egov.pt.service;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
@@ -109,7 +111,136 @@ public class NotificationService {
 			prepareMsgAndSend(propertyRequest, msg,"");
 	}
 	
+	public void sendNotificationForCreate(PropertyRequest propertyRequest) {
+
+		Property property = propertyRequest.getProperty();
+		ProcessInstance wf = property.getWorkflow();
+		String createOrUpdate = null;
+		String msg = null;
+		
+		Boolean isCreate =  CreationReason.CREATE.equals(property.getCreationReason());
+		String state = getStateFromWf(wf, configs.getIsWorkflowEnabled());
+		String completeMsgs = notifUtil.getLocalizationMessages(property.getTenantId(), propertyRequest.getRequestInfo());
+		String localisedState = getLocalisedState(wf, completeMsgs);
+		boolean replace=false;
+		switch (state) {
+
+		case WF_NO_WORKFLOW:
+			createOrUpdate = isCreate ? CREATED_STRING : UPDATED_STRING;
+			msg = getMsgForUpdate(property, UPDATE_NO_WORKFLOW, completeMsgs, createOrUpdate);
+			break;
+
+		case WF_STATUS_OPEN:
+			createOrUpdate = isCreate ? CREATE_STRING : UPDATE_STRING;
+			msg = getMsgForCreate(property, CREATE_OPEN_STATE_MESSAGE_MNPT, completeMsgs,createOrUpdate,propertyRequest,state);
+			break;
+			
+		case WF_STATUS_DOCVERIFIED:
+			createOrUpdate = isCreate ? CREATE_STRING : UPDATE_STRING;
+			msg = getMsgForCreate(property, CREATE_PT_DOC_VERIFIER_VERIFY_STATE_MESSAGE_MNPT, completeMsgs,createOrUpdate,propertyRequest,state);
+			break;
+		
+		case WF_STATUS_REJECTED:
+			createOrUpdate = isCreate ? CREATE_STRING : UPDATE_STRING;
+			msg = getMsgForCreate(property, "REJECT", completeMsgs,createOrUpdate,propertyRequest,state);
+			break;
+			
+		case PT_CORRECTION_PENDING:
+			createOrUpdate = isCreate ? CREATE_STRING : UPDATE_STRING;
+			msg = getMsgForCreate(property, CREATE_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT, completeMsgs,createOrUpdate,propertyRequest,state);
+			break;
+			
+		case WF_STATUS_FIELDVERIFIED:
+			createOrUpdate = isCreate ? CREATE_STRING : UPDATE_STRING;
+			msg = getMsgForCreate(property, CREATE_PT_FIELD_INSPECTOR_FORWARD_STATE_MESSAGE_MNPT, completeMsgs,createOrUpdate,propertyRequest,state);
+			break;
+
+		case WF_STATUS_APPROVED:
+			createOrUpdate = isCreate ? CREATED_STRING : UPDATED_STRING;
+			msg = getMsgForCreate(property, CREATE_PT_APPROVER_APPROVE_STATE_MNPT, completeMsgs, createOrUpdate,propertyRequest,state);
+			replace=true;
+			//sendNotificationForCitizenFeedback(property,completeMsgs,createOrUpdate);
+			break;
+
+		default:
+			createOrUpdate = isCreate ? CREATE_STRING : UPDATE_STRING;
+			msg = getMsgForUpdate(property, WF_UPDATE_STATUS_CHANGE_CODE, completeMsgs, createOrUpdate);
+			break;
+		}
+
+		msg = replaceCommonValuesForManipur(property, msg, localisedState,replace);
+		System.out.println("message------------------->"+msg);
+		prepareMsgAndSend(propertyRequest, msg,state);
+	}
+	
+	
+	
 	public void sendNotificationForUpdate(PropertyRequest propertyRequest) {
+
+		Property property = propertyRequest.getProperty();
+		ProcessInstance wf = property.getWorkflow();
+		String createOrUpdate = null;
+		String msg = null;
+		
+		Boolean isCreate =  CreationReason.CREATE.equals(property.getCreationReason());
+		String state = getStateFromWf(wf, configs.getIsWorkflowEnabled());
+		String completeMsgs = notifUtil.getLocalizationMessages(property.getTenantId(), propertyRequest.getRequestInfo());
+		String localisedState = getLocalisedState(wf, completeMsgs);
+		boolean replace=false;
+		switch (state) {
+
+		case WF_NO_WORKFLOW:
+			createOrUpdate = isCreate ? CREATED_STRING : UPDATED_STRING;
+			msg = getMsgForUpdate(property, UPDATE_NO_WORKFLOW, completeMsgs, createOrUpdate);
+			break;
+
+		case WF_STATUS_OPEN:
+			createOrUpdate = isCreate ? CREATE_STRING : UPDATE_STRING;
+			msg = getMsgForUpdate(property, UPDATE_OPEN_STATE_MESSAGE_MNPT, completeMsgs,createOrUpdate,propertyRequest,state);
+			break;
+			
+		case WF_STATUS_DOCVERIFIED:
+			createOrUpdate = isCreate ? CREATE_STRING : UPDATE_STRING;
+			msg = getMsgForUpdate(property, UPDATE_PT_DOC_VERIFIER_VERIFY_STATE_MESSAGE_MNPT, completeMsgs,createOrUpdate,propertyRequest,state);
+			break;
+		
+		case WF_STATUS_REJECTED:
+			createOrUpdate = isCreate ? CREATE_STRING : UPDATE_STRING;
+			msg = getMsgForUpdate(property, "REJECT", completeMsgs,createOrUpdate,propertyRequest,state);
+			break;
+			
+		case PT_CORRECTION_PENDING:
+			createOrUpdate = isCreate ? CREATE_STRING : UPDATE_STRING;
+			msg = getMsgForUpdate(property, UPDATE_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT, completeMsgs,createOrUpdate,propertyRequest,state);
+			break;
+			
+		case WF_STATUS_FIELDVERIFIED:
+			createOrUpdate = isCreate ? CREATE_STRING : UPDATE_STRING;
+			msg = getMsgForUpdate(property, UPDATE_PT_FIELD_INSPECTOR_FORWARD_STATE_MESSAGE_MNPT, completeMsgs,createOrUpdate,propertyRequest,state);
+			break;
+
+		case WF_STATUS_APPROVED:
+			createOrUpdate = isCreate ? CREATED_STRING : UPDATED_STRING;
+			msg = getMsgForCreate(property, UPDATE_PT_APPROVER_APPROVE_STATE_MNPT, completeMsgs, createOrUpdate,propertyRequest,state);
+			//replace=true;
+			//sendNotificationForCitizenFeedback(property,completeMsgs,createOrUpdate);
+			break;
+
+		default:
+			createOrUpdate = isCreate ? CREATE_STRING : UPDATE_STRING;
+			msg = getMsgForUpdate(property, WF_UPDATE_STATUS_CHANGE_CODE, completeMsgs, createOrUpdate);
+			break;
+		}
+
+		msg = replaceCommonValuesForManipur(property, msg, localisedState,replace);
+		System.out.println("message------------------->"+msg);
+		prepareMsgAndSend(propertyRequest, msg,state);
+	}
+	
+	
+	
+	
+	public void sendNotificationForCreateUpdate(PropertyRequest propertyRequest) {
 
 		Property property = propertyRequest.getProperty();
 		ProcessInstance wf = property.getWorkflow();
@@ -161,13 +292,72 @@ public class NotificationService {
 	private String getMsgForUpdate(Property property, String msgCode, String completeMsgs, String createUpdateReplaceString) {
 
 		String url = notifUtil.getShortenedUrl(
-					   configs.getUiAppHost().concat(configs.getViewPropertyLink()
-					  .replace(NOTIFICATION_PROPERTYID, property.getPropertyId())
-					  .replace(NOTIFICATION_TENANTID, property.getTenantId())));
+							  configs.getUiAppHost().concat(configs.getViewPropertyLink()
+							  .replace(NOTIFICATION_PROPERTYID, property.getPropertyId())
+							  .replace(NOTIFICATION_TENANTID, property.getTenantId())));
+							 
 		
 		return notifUtil.getMessageTemplate(msgCode, completeMsgs)
 				.replace(NOTIFICATION_PROPERTY_LINK, url)
 				.replace(NOTIFICATION_UPDATED_CREATED_REPLACE, createUpdateReplaceString);
+	}
+	
+	private String getMsgForCreate(Property property, String msgCode, String completeMsgs, 
+			String createUpdateReplaceString,PropertyRequest propertyRequest,String state) {
+		String return_message = "";
+		
+		Set<String> role = propertyRequest.getRequestInfo().getUserInfo().getRoles().stream().map(x->x.getCode()).collect(Collectors.toSet());
+		 if(state.equalsIgnoreCase(WF_STATUS_REJECTED) ||state.equalsIgnoreCase(PT_CORRECTION_PENDING)) {
+				
+			if(state.equalsIgnoreCase(WF_STATUS_REJECTED)) {
+				if(role.contains("PT_DOC_VERIFIER"))
+				{
+					return_message = notifUtil.getMessageTemplate(CREATE_PT_DOC_VERIFIER_REJECT_STATE_MESSAGE_MNPT, completeMsgs);
+					
+				}
+				else if(role.contains("PT_APPROVER")) {
+					return_message = notifUtil.getMessageTemplate(CREATE_PT_APPROVER_REJECT_STATE_MESSAGE_MNPT, completeMsgs);
+				}
+			 }
+			
+			else if(state.equalsIgnoreCase(PT_CORRECTION_PENDING)) {
+				return_message = notifUtil.getMessageTemplate(CREATE_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT, completeMsgs);	
+			}
+		}
+		 else {
+				 return_message = notifUtil.getMessageTemplate(msgCode, completeMsgs);
+		 }
+		return return_message;
+	}
+	
+	
+	
+	private String getMsgForUpdate(Property property, String msgCode, String completeMsgs, 
+			String createUpdateReplaceString,PropertyRequest propertyRequest,String state) {
+		String return_message = "";
+		
+		Set<String> role = propertyRequest.getRequestInfo().getUserInfo().getRoles().stream().map(x->x.getCode()).collect(Collectors.toSet());
+		 if(state.equalsIgnoreCase(WF_STATUS_REJECTED) ||state.equalsIgnoreCase(PT_CORRECTION_PENDING)) {
+				
+			if(state.equalsIgnoreCase(WF_STATUS_REJECTED)) {
+				if(role.contains("PT_DOC_VERIFIER"))
+				{
+					return_message = notifUtil.getMessageTemplate(UPDATE_PT_DOC_VERIFIER_REJECT_STATE_MESSAGE_MNPT, completeMsgs);					
+				}
+				else if(role.contains("PT_APPROVER")) {
+					return_message = notifUtil.getMessageTemplate(UPDATE_PT_APPROVER_REJECT_STATE_MESSAGE_MNPT, completeMsgs);
+				}
+			 }
+			else if(state.equalsIgnoreCase(PT_CORRECTION_PENDING)) {
+				
+					return_message = notifUtil.getMessageTemplate(UPDATE_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT, completeMsgs);					
+				
+			}
+		}
+		 else {
+				 return_message = notifUtil.getMessageTemplate(msgCode, completeMsgs);
+		 }
+		return return_message;
 	}
 	
 	
@@ -201,6 +391,13 @@ public class NotificationService {
 
 		if (configs.getIsWorkflowEnabled())
 			msg = msg.replace(NOTIFICATION_STATUS, localisedState);
+		return msg;
+	}
+	
+	private String replaceCommonValuesForManipur(Property property, String msg, String localisedState,boolean replace) {
+		if(replace)
+		msg = msg.replace(NOTIFICATION_UPIN, property.getPropertyId());
+		
 		return msg;
 	}
 	
