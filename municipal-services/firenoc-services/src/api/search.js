@@ -94,7 +94,7 @@ export const searchApiResponse = async (request, next = {}) => {
       header
     );
 
-    console.log("User Search Response-> " + userSearchResponse);
+    //console.log("User Search Response-> " + userSearchResponse);
     //let searchUserUUID = get(userSearchResponse, "user.0.uuid");
     // if (searchUserUUID) {
     //   // console.log(searchUserUUID);
@@ -155,7 +155,7 @@ export const searchApiResponse = async (request, next = {}) => {
     //const dbResponse={"rows":[],"err":null};
 
     let firenocIds = [];
-    console.log("dbResponse" + JSON.stringify(dbResponse));
+    //console.log("dbResponse" + JSON.stringify(dbResponse));
     if (dbResponse.err) {
       console.log(err.stack);
     } else {
@@ -257,7 +257,7 @@ export const searchApiResponse = async (request, next = {}) => {
 
   console.log("SQL QUery:" +sqlQuery);
   const dbResponse = await db.query(sqlQuery);
-  console.log("dbResponse"+JSON.stringify(dbResponse));
+  //console.log("dbResponse"+JSON.stringify(dbResponse));
   if (dbResponse.err) {
     console.log(err.stack);
   } else {
