@@ -2,6 +2,7 @@
   import { useForm, Controller } from "react-hook-form";
   import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@nudmcdgnpm/digit-ui-react-components";
   import { Link,useHistory} from "react-router-dom";
+   import CHBCancelBooking from "./CHBCancelBooking";
 
   const CHBSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
     
@@ -24,8 +25,8 @@
         register("sortOrder", "DESC")
         handleSubmit(onSubmit)();
       },[register])
-      
-
+      const [bookingDetails,setBookingDetails]=useState("");
+      const [showModal,setShowModal] = useState(false)
       const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
       const { data: Menu } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "ChbCommunityHalls");
     
@@ -37,9 +38,18 @@
     Menu.map((one) => {
       menu.push({ i18nKey: `${one.code}`, code: `${one.code}`, value: `${one.name}` });
     });
-
       const GetCell = (value) => <span className="cell-text">{value}</span>;
-      
+      const handleCancelBooking=async()=>{
+        setShowModal(false)
+        const updatedApplication = {
+          ...bookingDetails,
+          bookingStatus: "CANCELLED"
+        };
+        await mutation.mutateAsync({
+          hallsBookingApplication: updatedApplication
+        });
+        handleSubmit(onSubmit)();
+      }
       const columns = useMemo( () => ([
           
           {
@@ -121,15 +131,8 @@
                 let application = row?.original;
                 
                 const handleCancel = async () => {
-                  const updatedApplication = {
-                    ...application,
-                    bookingStatus: "CANCELLED"
-                  };
-                  await mutation.mutateAsync({
-                    hallsBookingApplication: updatedApplication
-                  });
-                  setIsMenuOpen(false);
-                  handleSubmit(onSubmit)();
+                  setShowModal(true);
+                  setBookingDetails(row?.original);
                 };
 
                 const handleNavigate = (url) => {
@@ -199,7 +202,8 @@
         ]), [] )
         const statusOptions = [
           { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") },
-          { i18nKey: "Booking in Progres", code: "BOOKING_CREATED", value: t("CHB_BOOKING_IN_PROGRES") }
+          { i18nKey: "Booking in Progress", code: "BOOKING_CREATED", value: t("CHB_BOOKING_IN_PROGRES") },
+          { i18nKey: "Cancelled", code: "CANCELLED", value: t("CANCELLED") }
         ];
       const onSort = useCallback((args) => {
           if (args.length === 0) return
@@ -371,6 +375,17 @@
                   sortParams={[{id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false}]}
               />: data !== "" || isLoading && <Loader/>)}
               </div>
+              {showModal && <CHBCancelBooking 
+                t={t}
+                //surveyTitle={surveyData.title}
+                closeModal={() => setShowModal(false)}
+                actionCancelLabel={"BACK"}
+                actionCancelOnSubmit={() => setShowModal(false)}
+                actionSaveLabel={"CHB_CANCEL"}
+                actionSaveOnSubmit={handleCancelBooking}   
+                onSubmit={handleCancelBooking} 
+                >
+            </CHBCancelBooking> }
           </React.Fragment>
   }
 
