@@ -66,7 +66,7 @@ public class NoticeService {
 		else
 			notice=noticeRepository.getnotices(noticeCriteria);
 		
-		notice=notice.stream().sorted((x,y)->x.getAuditDetails().getCreatedTime().compareTo(y.getAuditDetails().getCreatedTime())).collect(Collectors.toList());
+		notice=notice.stream().sorted((x,y)->y.getNoticeNumber().compareTo(x.getNoticeNumber())).collect(Collectors.toList());
 		return notice;
 	}
 
