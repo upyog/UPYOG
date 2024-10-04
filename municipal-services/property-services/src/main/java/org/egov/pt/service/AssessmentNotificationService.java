@@ -78,7 +78,7 @@ public class AssessmentNotificationService {
         BillResponse billResponse=null;
         billResponse = billingService.fetchBill(property, requestInfo,assessment);
         BigDecimal dueAmount=BigDecimal.ZERO;
-        if(billResponse!=null)
+        if(billResponse!=null &&!billResponse.getBill().isEmpty())
         dueAmount = billResponse.getBill().get(0).getTotalAmount();
 
         List<String> configuredChannelNamesForAssessment =  util.fetchChannelList(new RequestInfo(), tenantId, PT_BUSINESSSERVICE, ACTION_FOR_ASSESSMENT);
@@ -299,16 +299,14 @@ private String getStateFromWf(ProcessInstance wf, Boolean isWorkflowEnabled) {
             messageTemplate = messageTemplate.replace(NOTIFICATION_PAYMENT_LINK,util.getShortenedUrl(finalPath));
         }
         
-		if(messageTemplate.contains(NOTIFICATION_OWNERNAME))
-		{
-			String ownernames = null;
-        	for (OwnerInfo string : property.getOwners()) {
-				
-        		ownernames=ownernames.concat(string.getName())+",";
-			}
-        	messageTemplate=messageTemplate.replace(NOTIFICATION_OWNERNAME, ownernames);
-		}
-	
+		/*
+		 * if(messageTemplate.contains(NOTIFICATION_OWNERNAME)) { String ownernames =
+		 * ""; for (OwnerInfo string : property.getOwners()) {
+		 * 
+		 * ownernames=ownernames.concat(string.getName())+","; }
+		 * messageTemplate=messageTemplate.replace(NOTIFICATION_OWNERNAME, ownernames);
+		 * }
+		 */
         System.out.println("messageTemplate::"+messageTemplate);
         return messageTemplate;
     }
