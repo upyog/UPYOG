@@ -55,6 +55,12 @@ public class NoticeRowMapper implements ResultSetExtractor<List<Notice>>{
 						.penaltyAmount(rs.getString("penaltyamount"))
 						.appealNo(rs.getString("appealno"))
 						.rule_23(rs.getBoolean("rule_23"))
+						.rule_33(rs.getBoolean("rule_33"))
+						.rule_34(rs.getBoolean("rule_34"))
+						.rule_36(rs.getBoolean("rule_36"))
+						.failedtoproducenecessarydocuments(rs.getBoolean("failedto_produce_necessary_documents"))
+						.willfullyfurnishesincorrectinformation(rs.getBoolean("willfully_furnishes_incorrect_information"))
+						.obstructanyauthorityappointed(rs.getBoolean("obstruct_any_authority_appointed"))
 						.noticeComment(new ArrayList<>()).build();
 
 
