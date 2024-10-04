@@ -267,11 +267,12 @@ public class EstimationService {
 		Map<String,Object> masterMap = mDataService.getMasterMap(request);
 		if(request.getRequestInfo().getUserInfo().getType().equals("CITIZEN"))
 			checkAssessmentIsDone(request);
-		if(request.getRequestInfo().getUserInfo().getType().equals("EMPLOYEE")&&checkAssessmentDoneForEmployee(request)) {
-			//get the values directly from demand and return 
-			CalculationRes clr = getDemandDataForEstimation(request,masterMap);
-			return clr;
-		}
+		/*
+		 * if(request.getRequestInfo().getUserInfo().getType().equals("EMPLOYEE")&&
+		 * checkAssessmentDoneForEmployee(request)) { //get the values directly from
+		 * demand and return CalculationRes clr =
+		 * getDemandDataForEstimation(request,masterMap); return clr; }
+		 */
 		
 		CalculationCriteria criteria = request.getCalculationCriteria().get(0);
 		Property property = criteria.getProperty();
@@ -308,7 +309,6 @@ public class EstimationService {
 				totalAmount= totalAmount.add(d.getTaxAmount());
 				//taxHeadMapType.put(d.getTaxHeadMasterCode(), d.get)	
 			}	
-			;
 		}
 		
 	
