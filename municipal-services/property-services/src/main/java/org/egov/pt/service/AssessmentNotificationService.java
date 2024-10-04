@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Assessment;
+import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.collection.BillResponse;
@@ -74,8 +75,11 @@ public class AssessmentNotificationService {
         Property property = properties.get(0);
         unmaskingUtil.getOwnerDetailsUnmasked(property,requestInfo);
         System.out.println("assessment:"+assessment);
-        BillResponse billResponse = billingService.fetchBill(property, requestInfo,assessment);
-        BigDecimal dueAmount = billResponse.getBill().get(0).getTotalAmount();
+        BillResponse billResponse=null;
+        billResponse = billingService.fetchBill(property, requestInfo,assessment);
+        BigDecimal dueAmount=BigDecimal.ZERO;
+        if(billResponse!=null)
+        dueAmount = billResponse.getBill().get(0).getTotalAmount();
 
         List<String> configuredChannelNamesForAssessment =  util.fetchChannelList(new RequestInfo(), tenantId, PT_BUSINESSSERVICE, ACTION_FOR_ASSESSMENT);
 
@@ -294,7 +298,17 @@ private String getStateFromWf(ProcessInstance wf, Boolean isWorkflowEnabled) {
 
             messageTemplate = messageTemplate.replace(NOTIFICATION_PAYMENT_LINK,util.getShortenedUrl(finalPath));
         }
-
+        
+		if(messageTemplate.contains(NOTIFICATION_OWNERNAME))
+		{
+			String ownernames = null;
+        	for (OwnerInfo string : property.getOwners()) {
+				
+        		ownernames=ownernames.concat(string.getName())+",";
+			}
+        	messageTemplate=messageTemplate.replace(NOTIFICATION_OWNERNAME, ownernames);
+		}
+	
         System.out.println("messageTemplate::"+messageTemplate);
         return messageTemplate;
     }
