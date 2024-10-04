@@ -555,7 +555,7 @@ export const newConfig =[
                     "key": "owners",
                     "withoutLabel": true,
                     "nextStep": null,
-                    // "nextStep": 'exemption-details',
+                    "nextStep": 'exemption-details',
                     "hideInEmployee": true
                 },
                 {

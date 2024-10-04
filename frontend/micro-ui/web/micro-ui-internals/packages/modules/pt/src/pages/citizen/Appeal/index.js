@@ -398,7 +398,7 @@ const CitizenAppeal = (props) => {
             </div>
             <div className="col-sm-4">
                 <label for="formControlInputPtAssessmentYear" class="form-label">Assessment Year*</label>
-                <input type="text" className={fieldError.assessmentYear ? "form-control error-message" : "form-control"} id="formControlInputPtAssessmentYear" name="assessmentYear" placeholder="Enter Assessment Year" value={formData.assessmentYear} onChange={handleChange} required />
+                <input type="text" className={fieldError.assessmentYear ? "form-control error-message" : "form-control"} id="formControlInputPtAssessmentYear" name="assessmentYear" placeholder="Enter Assessment Year(Ex: 0000-00)" value={formData.assessmentYear} onChange={handleChange} required />
                 {fieldError.assessmentYear &&
                         <span className="error-message">
                             {fieldError.assessmentYear}
