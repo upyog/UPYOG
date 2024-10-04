@@ -42,7 +42,7 @@ const CHBCard = () => {
       link: `/digit-ui/employee/chb/my-applications`,
     },
   ]
-  const CHB_CEMP = Digit.UserService.hasAccess(["CHB_APPROVER","CHB_VERIFIER"]) || false;
+  const CHB_CEMP = Digit.UserService.hasAccess(["CHB_CEMP"]) || false;
   const propsForModuleCard = {
     Icon: <CHBIcon/>,
     moduleName: t("ACTION_TEST_CHB"),

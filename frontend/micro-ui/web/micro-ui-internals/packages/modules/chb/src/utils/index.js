@@ -35,8 +35,8 @@ export const sethallDetails = (data) => {
       communityHallName:slot.name,
       hallCode: slot.hallCode1,
       bookingDate:DateConvert(slot.bookingDate),
-      bookingFromTime:"10:00",
-      bookingToTime:"23:59",
+      bookingFromTime:slot.fromTime,
+      bookingToTime:slot.toTime,
       status:"BOOKING_CREATED",
       capacity:slot.capacity
     };
