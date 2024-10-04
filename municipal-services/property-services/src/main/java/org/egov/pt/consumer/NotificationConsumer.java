@@ -56,13 +56,7 @@ public class NotificationConsumer {
 					if (PTConstants.MUTATION_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())) {
 
 						notifService.sendNotificationForMutation(request);
-					} else if(PTConstants.CREATE_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())||
-							PTConstants.AMALGAMATION_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())||
-							PTConstants.BIFURCATION_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())){
-
-						notifService.sendNotificationForCreate(request);
-					}
-					else if(PTConstants.UPDATE_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())){
+					} else {
 
 						notifService.sendNotificationForUpdate(request);
 					}
