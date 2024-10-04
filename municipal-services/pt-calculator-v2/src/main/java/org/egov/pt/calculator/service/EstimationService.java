@@ -370,7 +370,7 @@ public class EstimationService {
 		RequestInfoWrapper requestInfoWrapper=RequestInfoWrapper.builder().requestInfo(request.getRequestInfo()).build();
 		AssessmentResponseV2 assessmentResponseV2=restTemplate.postForObject(authURL,requestInfoWrapper,AssessmentResponseV2.class);
 		List<AssessmentV2> propertylist=assessmentResponseV2.getAssessments().stream().filter(t->t.getFinancialYear().equalsIgnoreCase(criteria.getFinancialYear())).collect(Collectors.toList());
-		if(propertylist.size()>0)
+		if(propertylist.size()>0 && propertylist.get(0).getStatus().equalsIgnoreCase(OWNER_STATUS_ACTIVE))
 			return true;
 		
 		return false;
