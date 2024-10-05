@@ -176,7 +176,6 @@ public class AssessmentService {
 			calculationService.calculateTax(request, property);
 		}
 		
-		deactivateOldDemandsForPreiousYears(request);
 		producer.push(props.getCreateAssessmentTopic(), request);
 
 		return request.getAssessment();
@@ -273,7 +272,10 @@ public class AssessmentService {
 			//assessmentEnrichmentService.enrichStatus(status, assessment, businessService);
 			assessment.setStatus(Status.fromValue(status));
 			if(assessment.getWorkflow().getState().getState().equalsIgnoreCase(config.getDemandTriggerState()))
+			{
 				calculationService.calculateTax(request, property);
+				deactivateOldDemandsForPreiousYears(request);
+			}
 
 			producer.push(props.getUpdateAssessmentTopic(), request);
 
