@@ -224,10 +224,10 @@ public class AssessmentService {
 				System.out.println(dm.getTaxPeriodTo());
 				System.out.println(datexp.getTimeInMillis());
 				System.out.println(dm.getTaxPeriodTo().compareTo(datexp.getTimeInMillis()) < 0);
-				//if(dm.getTaxPeriodTo().compareTo(datexp.getTimeInMillis()) < 0) {
+				if(dm.getTaxPeriodTo().compareTo(datexp.getTimeInMillis()) < 0) {
 					dm.setStatus(StatusEnum.CANCELLED);
 					demaListToBeUpdated.add(dm);
-				//}
+				}
 				
 			}
 			if(null!=demaListToBeUpdated&&demaListToBeUpdated.size()>0 && !demaListToBeUpdated.isEmpty()) {
@@ -273,8 +273,8 @@ public class AssessmentService {
 			assessment.setStatus(Status.fromValue(status));
 			if(assessment.getWorkflow().getState().getState().equalsIgnoreCase(config.getDemandTriggerState()))
 			{
-				deactivateOldDemandsForPreiousYears(request);
 				calculationService.calculateTax(request, property);
+				deactivateOldDemandsForPreiousYears(request);
 			}
 
 			producer.push(props.getUpdateAssessmentTopic(), request);
