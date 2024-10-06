@@ -84,6 +84,9 @@ let serverport = envVariables.SERVER_PORT;
 
 let dataConfigUrls = envVariables.DATA_CONFIG_URLS;
 let formatConfigUrls = envVariables.FORMAT_CONFIG_URLS;
+console.log("envVariables==",JSON.stringify(envVariables));
+console.log("dataConfigUrls==",dataConfigUrls);
+console.log("formatConfigUrls==",formatConfigUrls);
 
 let dataConfigMap = {};
 let formatConfigMap = {};
