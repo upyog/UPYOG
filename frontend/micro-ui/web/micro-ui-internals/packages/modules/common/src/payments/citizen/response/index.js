@@ -217,7 +217,7 @@ export const convertEpochToDate = (dateEpoch) => {
           else if(businessServ.includes("BPA")){
             let queryObj = { applicationNo: payments.Payments[0].paymentDetails[0]?.bill?.consumerCode };
             let bpaResponse = await Digit.OBPSService.BPASearch( payments.Payments[0].tenantId, queryObj);
-            console.log("bpppp", bpaResponse)
+            const formattedStakeholderType=bpaResponse?.BPA[0]?.additionalDetails?.typeOfArchitect
             const updatedpayments={
               ...paymentData,
              
@@ -227,6 +227,7 @@ export const convertEpochToDate = (dateEpoch) => {
                       additionalDetails:{
                         ...paymentData.paymentDetails[0].additionalDetails,
                         "propertyID":bpaResponse?.BPA[0]?.additionalDetails?.propertyID,
+                        "stakeholderType":formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase()
                       },
                     },
                   ],  

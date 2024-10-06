@@ -66,9 +66,9 @@ export const searchApiResponse = async (request, next = {}) => {
     queryObj.tenantId = queryObj.tenantId ? queryObj.tenantId : tenantId;
 
     if(queryObj.tenantId == envVariables.EGOV_DEFAULT_STATE_ID)
-      text = `${text} where FN.tenantid LIKE '${queryObj.tenantId}%' AND`;
+      text = `${text} where FN.tenantid LIKE '${queryObj.tenantId}%' `;
     else
-      text = `${text} where FN.tenantid = '${queryObj.tenantId}' AND`;
+      text = `${text} where FN.tenantid = '${queryObj.tenantId}' `;
   } else {
     if (!isEmpty(queryObj) && !(keys(queryObj).length==2 && 
     queryObj.hasOwnProperty("offset") && queryObj.hasOwnProperty("limit"))) {
@@ -76,9 +76,9 @@ export const searchApiResponse = async (request, next = {}) => {
     }
     if (queryObj.tenantId) {
       if(queryObj.tenantId == envVariables.EGOV_DEFAULT_STATE_ID)
-        text = `${text} FN.tenantid LIKE '${queryObj.tenantId}%' AND`;
+        text = `${text} FN.tenantid LIKE '${queryObj.tenantId}%' `;
       else
-        text = `${text} FN.tenantid = '${queryObj.tenantId}' AND`;
+        text = `${text} FN.tenantid = '${queryObj.tenantId}' `;
     }
   }
   // if (queryObj.status) {
@@ -94,7 +94,7 @@ export const searchApiResponse = async (request, next = {}) => {
       header
     );
 
-    console.log("User Search Response-> " + userSearchResponse);
+    //console.log("User Search Response-> " + userSearchResponse);
     //let searchUserUUID = get(userSearchResponse, "user.0.uuid");
     // if (searchUserUUID) {
     //   // console.log(searchUserUUID);
@@ -155,7 +155,7 @@ export const searchApiResponse = async (request, next = {}) => {
     //const dbResponse={"rows":[],"err":null};
 
     let firenocIds = [];
-    console.log("dbResponse" + JSON.stringify(dbResponse));
+    //console.log("dbResponse" + JSON.stringify(dbResponse));
     if (dbResponse.err) {
       console.log(err.stack);
     } else {
@@ -181,7 +181,7 @@ export const searchApiResponse = async (request, next = {}) => {
     let ids = queryObj.ids.split(",");
     if(ids!=null && (ids.length>0 && ids[0]!=''))
     {
-    sqlQuery = `${sqlQuery} FN.uuid IN ( `;
+    sqlQuery = `${sqlQuery} AND FN.uuid IN ( `;
     for (var i = 0; i < ids.length; i++) {
       sqlQuery = `${sqlQuery} '${ids[i]}' `;
       if (i != ids.length - 1) sqlQuery = `${sqlQuery} ,`;
@@ -192,7 +192,7 @@ export const searchApiResponse = async (request, next = {}) => {
       return response;
     }
 
-    if (ids.length > 1) sqlQuery = `${sqlQuery} ) AND`;
+    if (ids.length >= 1) sqlQuery = `${sqlQuery} ) `;
     }
 
   if (queryKeys) {
@@ -209,7 +209,7 @@ export const searchApiResponse = async (request, next = {}) => {
           item != "limit"
         ) {
           queryObj[item]=queryObj[item].toUpperCase();
-          sqlQuery = `${sqlQuery} ${item}='${queryObj[item]}' AND`;
+          sqlQuery = `${sqlQuery} AND ${item}='${queryObj[item]}' `;
         }
       }
     });
@@ -219,12 +219,12 @@ export const searchApiResponse = async (request, next = {}) => {
     queryObj.hasOwnProperty("fromDate") &&
     queryObj.hasOwnProperty("toDate")
   ) {
-    sqlQuery = `${sqlQuery} FN.createdtime >= ${queryObj.fromDate} AND FN.createdtime <= ${queryObj.toDate} AND`;
+    sqlQuery = `${sqlQuery} AND FN.createdtime >= ${queryObj.fromDate} AND FN.createdtime <= ${queryObj.toDate} `;
   } else if (
     queryObj.hasOwnProperty("fromDate") &&
     !queryObj.hasOwnProperty("toDate")
   ) {
-    sqlQuery = `${sqlQuery} FN.createdtime >= ${queryObj.fromDate} AND`;
+    sqlQuery = `${sqlQuery} AND FN.createdtime >= ${queryObj.fromDate} `;
   }
 
   
@@ -244,7 +244,7 @@ export const searchApiResponse = async (request, next = {}) => {
   offset = offset+1;
 }
  if(keys(queryObj).length!=2){
-  sqlQuery = `${sqlQuery.substring(0, sqlQuery.length - 3)} ) s WHERE s.rn  BETWEEN ${offset} AND ${limit+offset}   `;
+  sqlQuery = `${sqlQuery} ) s WHERE s.rn  BETWEEN ${offset} AND ${limit+offset}   `;
  }else{
   sqlQuery = `${sqlQuery}  ) s WHERE s.rn  BETWEEN ${offset} AND ${limit} ORDER BY fid `;
  }
@@ -252,12 +252,12 @@ export const searchApiResponse = async (request, next = {}) => {
 }else if(isEmpty(queryObj)){
   sqlQuery = `${sqlQuery}  ) s`;
 }else if(!isEmpty(queryObj)){
-  sqlQuery = `${sqlQuery.substring(0, sqlQuery.length - 3)}) s ORDER BY fid `;
+  sqlQuery = `${sqlQuery}) s ORDER BY fid `;
 }
 
   console.log("SQL QUery:" +sqlQuery);
   const dbResponse = await db.query(sqlQuery);
-  console.log("dbResponse"+JSON.stringify(dbResponse));
+  //console.log("dbResponse"+JSON.stringify(dbResponse));
   if (dbResponse.err) {
     console.log(err.stack);
   } else {
