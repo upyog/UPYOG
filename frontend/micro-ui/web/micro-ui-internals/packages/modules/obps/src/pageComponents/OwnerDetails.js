@@ -36,9 +36,9 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     useEffect(() => {
         var flag=0;
         fields?.map((ob) => {
-            if(ob.isPrimaryOwner)
+            if(ob?.isPrimaryOwner)
             flag=1;
-            if (ob.name && ob.mobileNumber && ob.gender) {
+            if (ob?.name && ob?.mobileNumber && ob?.gender) {
                 setCanmovenext(false);
             }
             else {
@@ -53,6 +53,18 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             setCanmovenext(true);
         }
     }, [fields])
+    const validateEmail=(value)=>{
+        const emailPattern=/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/;
+        if(value===""){
+          setError("");
+        }
+        else if(emailPattern.test(value)){
+          setError("");
+        }
+        else{
+          setError(t("CORE_INVALID_EMAIL_ID_PATTERN"));
+        }
+      }
 
     useEffect(() => {
         const values = cloneDeep(fields);
@@ -133,7 +145,23 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         if (units[i].gender && units[i].mobileNumber && units[i].name) {
             setCanmovenext(false);
         }
+    }   
+    const handleEmailChange=(i, e)=>{
+        const value=e.target.value;
+        let units = [...fields];
+        units[i].emailId = value;
+        setEmail(value);
+        setFeilds(units);
+        validateEmail(value);
+        if (units[i].gender && units[i].mobileNumber && units[i].name ) {
+            setCanmovenext(false);
+        }
     }
+    useEffect(() => {
+        if(emailId){
+          validateEmail(emailId);
+        }
+    }, [emailId])
     function setGenderName(i, value) {
         let units = [...fields];
         units[i].gender = value;
@@ -284,7 +312,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     }
 
     const goNext = async () => {
-        setError(null);
+    if(!error){
         const moveforward = await getUserData();
        if(moveforward){
         if (ismultiple == true && fields.length == 1) {
@@ -308,6 +336,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         mobileNumber: owner.mobileNumber,
                         isPrimaryOwner: owner.isPrimaryOwner,
                         gender: owner.gender.code,
+                        emailId:owner.emailId!==null?owner.emailId:emailId,
                         fatherOrHusbandName: "NAME"
                     })
                 });
@@ -420,6 +449,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         }
     }
     };
+}
 
     const onSkip = () => onSelect();
 
@@ -451,7 +481,7 @@ fields =propertyData?.owners.map((owner) =>{
             "active": true,
             "i18nKey": "COMMON_GENDER_FEMALE"
         }
-        return {"name":owner.name, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner}
+        return {"name":owner.name, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner, "emailId":owner.emailId}
     }
     else if (owner.gender =="MALE")
     {
@@ -460,7 +490,7 @@ fields =propertyData?.owners.map((owner) =>{
             "active": true,
             "i18nKey": "COMMON_GENDER_MALE"
         }
-        return {"name":owner.name, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner}
+        return {"name":owner.name, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner, "emailId":owner.emailId}
     }
 
 })
@@ -528,7 +558,7 @@ useEffect(()=>{
                                                 isMandatory={false}
                                                 optionKey="i18nKey"
                                                 name="mobileNumber"
-                                                value={field.mobileNumber}
+                                                value={field?.mobileNumber}
                                                 onChange={(e) => setMobileNo(index, e)}
                                                 {...(validation = {
                                                     isRequired: true,
@@ -549,7 +579,7 @@ useEffect(()=>{
                                         isMandatory={false}
                                         optionKey="i18nKey"
                                         name="name"
-                                        value={field.name}
+                                        value={field?.name}
                                         onChange={(e) => setOwnerName(index, e)}
                                         {...(validation = {
                                             isRequired: true,
@@ -563,12 +593,13 @@ useEffect(()=>{
                                     <RadioOrSelect
                                     name="gender"
                                     options={genderList}
-                                    selectedOption={field.gender}
+                                    selectedOption={field?.gender}
                                     optionKey="i18nKey"
                                     onSelect={(e) => setGenderName(index, e)}
                                     t={t}
                                     disabled={propertyData?.owners ? true:false}
                                     />
+                                    <div>
                                      <CardLabel>{`${t("CORE_EMAIL_ID")}`}</CardLabel>
                                     <TextInput
                                         style={{ background: "#FAFAFA" }}
@@ -578,7 +609,7 @@ useEffect(()=>{
                                         optionKey="i18nKey"
                                         name="emailId"
                                         value={field.emailId}
-                                        onChange={(e) => setOwnerEmail(index, e)}
+                                        onChange={(e)=>handleEmailChange(index,e)}
                                         {...(validation = {
                                             //isRequired: true,
                                             pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$",
@@ -587,12 +618,14 @@ useEffect(()=>{
                                         })}
                                         //disabled={propertyData?.address ?true:false}
                                     />
+                                    {error && <span style={{color:"red"}}>{error}</span>}
+                                    </div>
                                     {ismultiple && (
                                         <CheckBox
                                             label={t("BPA_IS_PRIMARY_OWNER_LABEL")}
                                             onChange={(e) => setPrimaryOwner(index, e)}
-                                            value={field.isPrimaryOwner}
-                                            checked={field.isPrimaryOwner}
+                                            value={field?.isPrimaryOwner}
+                                            checked={field?.isPrimaryOwner}
                                             style={{ paddingTop: "10px" }}
                                         />
                                     )}

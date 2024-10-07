@@ -226,7 +226,7 @@ export const SuccessfulPayment = (props) => {
           let queryObj = { applicationNo: payments.Payments[0].paymentDetails[0]?.bill?.consumerCode };
           const paymentData=payments.Payments[0];
           let bpaResponse = await Digit.OBPSService.BPASearch( payments.Payments[0].tenantId, queryObj);
-          console.log("bpppp", bpaResponse)
+          const formattedStakeholderType=bpaResponse?.BPA[0]?.additionalDetails?.typeOfArchitect
           const updatedpayments={
             ...paymentData,
            
@@ -236,6 +236,7 @@ export const SuccessfulPayment = (props) => {
                     additionalDetails:{
                       ...paymentData.paymentDetails[0].additionalDetails,
                       "propertyID":bpaResponse?.BPA[0]?.additionalDetails?.propertyID,
+                      "stakeholderType":formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase()
                     },
                   },
                 ],  

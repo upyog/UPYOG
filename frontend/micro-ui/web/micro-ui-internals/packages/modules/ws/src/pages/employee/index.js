@@ -219,6 +219,12 @@ const BILLSBreadCrumbs = ({ location }) => {
       content: t("CS_TITLE_GENERATE_NOTE"),
       show: location.pathname.includes("/generate-note-bill-amendment") ? true : false,
       //isclickable : false,
+    },
+    {
+      path: "/digit-ui/employee/ws/water/bulk-bil",
+      content: t("CS_TITLE_BULK_BILL"),
+      show: location.pathname.includes("/ws/water/bulk-bill") ? true : false,
+      //isclickable : false,
     }
   ];
 
@@ -271,9 +277,8 @@ const App = ({ path }) => {
   window.location.href.includes("/employee/ws/consumption-details") || 
   window.location.href.includes("/employee/ws/edit-disconnection-application") ||
   window.location.href.includes("/employee/ws/config-by-disconnection-application")||
- 
-  window.location.href.includes("/employee/ws/resubmit-disconnection-application");
-  
+  window.location.href.includes("/employee/ws/resubmit-disconnection-application")||
+  window.location.href.includes("/employee/ws/water/bulk-bill");
   
 
 
