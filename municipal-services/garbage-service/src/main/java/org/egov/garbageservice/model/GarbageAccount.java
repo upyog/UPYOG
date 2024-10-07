@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@EqualsAndHashCode(exclude = {"id","grbgApplication","grbgCommercialDetails","auditDetails","garbageBills","childGarbageAccounts"})
+@EqualsAndHashCode(exclude = {"id","uuid","garbageId","propertyId","isOnlyWorkflowCall","workflowAction","workflowComment","grbgApplication","grbgCommercialDetails","auditDetails","garbageBills","childGarbageAccounts"})
 public class GarbageAccount {
 
 	private Long id;
@@ -75,6 +75,10 @@ public class GarbageAccount {
 
 	private List<GarbageAccount> childGarbageAccounts;
 	
-	private Boolean isParentAccount = false;
+	private String parentAccount;
+	
+	private Boolean isActive = false;
+	
+	private Long subAccountCount;
 	
 }
