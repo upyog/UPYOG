@@ -29,7 +29,7 @@ console.log("formaDataPropertyStructureDetails",formData)
     
   };
 
-  const { data: mdmsData, isLoading } = Digit.Hooks.useCommonMDMS(
+  const { data: mdmsData, isLoading } = Digit.Hooks.useCommonMDMSV2(
     Digit.ULBService.getStateId(),
     "PropertyTax",
     ["Floor", "OccupancyType", "UsageCategory"],
