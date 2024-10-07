@@ -71,7 +71,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
   const [errors, setErrors] = React.useState({});
   const isMobile = window.Digit.Utils.browser.isMobile();
-
+  
   const getUserInfo = async () => {
     const uuid = userInfo?.uuid;
     if (uuid) {
@@ -124,16 +124,18 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
       setErrors({...errors, userName : null})
     }
   }
-
+  
   const setUserEmailAddress = (value) => {
     setEmail(value);
-    if(value.length && /*!(value.includes("@") && value.includes("."))*/ !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value))){
+    const emailPattern=/^[a-zA-Z0-9._%+-]+@gmail\.com$/
+    if(value.length && !emailPattern.test(value)){
       setErrors({...errors, emailAddress: {type: "pattern", message: t("CORE_COMMON_PROFILE_EMAIL_INVALID")}})
     }else{
+      setEmail(value);
       setErrors({...errors, emailAddress : null})
-    }
+      }
   }
-
+  
   const setUserMobileNumber = (value) => {
     setMobileNo(value);
 
@@ -206,7 +208,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
         throw JSON.stringify({ type: "error", message: t("CORE_COMMON_PROFILE_MOBILE_NUMBER_INVALID") });
       }
 
-      if (email.length && !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))) {
+      if (email.length && !(/^[a-zA-Z0-9._%+-]+@gmail\.com$/).test(email)) {
         throw JSON.stringify({ type: "error", message: t("CORE_COMMON_PROFILE_EMAIL_INVALID") });
       }     
 

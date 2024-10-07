@@ -84,6 +84,19 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         ];
     }
   };
+  const validateEmail=(value)=>{
+    
+    const emailPattern=/^[a-zA-Z0-9._%+-]+@gmail\.com$/
+    if(value===""){
+      setError("");
+    }
+    else if(emailPattern.test(value)){
+      setError("");  
+    }
+    else{
+      setError(t("CORE_INVALID_EMAIL_ID_PATTERN"));  
+    }
+  }
   const reducer = (state, action) => {
     switch (action.type) {
       case "ADD_NEW_OWNER":
@@ -164,6 +177,12 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
   }
 
   const [error, setError] = useState(null);
+  const handleEmailChange=(index,e, key)=>{
+    console.log("eeee",e)
+    const value=e.target.value;
+    handleTextInputField(index, e, key);
+    validateEmail(value);   
+  }
 
   function checkMandatoryFieldsForEachOwner(ownersData) {
     if (typeOfOwner === "INSTITUTIONAL") {
@@ -187,6 +206,7 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
   }
 
   const goNext = () => {
+    if(!error){
     if (!checkMandatoryFieldsForEachOwner(formState)) {
       let owner = formData.owners;
       let ownerStep;
@@ -194,6 +214,7 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
       onSelect(config.key, ownerStep);
     }
   };
+};
 
   const onSkip = () => onSelect();
 
@@ -493,6 +514,22 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                   labelKey=""
                   isPTFlow={true}
                 />
+                <CardLabel>{`${t("NOC_APPLICANT_EMAIL_LABEL")}`}</CardLabel>
+                <div>
+                  <TextInput
+                    t={t}
+                    type={"text"}
+                    isMandatory={false}
+                    name="emailId"
+                    value={field.emailId}
+                    onChange={(e)=>handleEmailChange(index, e, "emailId")}
+                    ValidationRequired={true}
+                    //disable={isUpdateProperty || isEditProperty}
+                    
+
+                  />
+                  {error && <span style={{color:"red"}}>{error}</span>}
+                  </div>
                 {typeOfOwner === "MULTIOWNER" && (
                   <CheckBox
                     label={t("TL_PRIMARY_OWNER_LABEL")}
