@@ -676,7 +676,7 @@ password
 			HttpClient client=new DefaultHttpClient();
 			client.getConnectionManager().getSchemeRegistry().register(scheme); 
 			HttpPost post=new
-					HttpPost("https://msdgweb.mgov.gov.in/esms/sendsmsrequestDLT");
+					HttpPost(smsProperties.getUrl());
 			encryptedPassword = MD5(smsProperties.getPassword()); 
 			String message = sms.getMessage().trim();//message.trim();
 			String genratedhashKey = hashGenerator(smsProperties.getUsername(), smsProperties.getSenderid(), 
@@ -690,7 +690,9 @@ password
 			nameValuePairs.add(new BasicNameValuePair("username",smsProperties.getUsername()));
 			nameValuePairs.add(new BasicNameValuePair("password",encryptedPassword));
 			nameValuePairs.add(new BasicNameValuePair("key",genratedhashKey));
-			
+			nameValuePairs.add(new BasicNameValuePair("templateid",sms.getTemplateId()));
+			System.out.println(message);
+
 			post.setEntity(new UrlEncodedFormEntity(nameValuePairs)); 
 			HttpResponse response=client.execute(post); BufferedReader bf=new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 			String line=""; 
