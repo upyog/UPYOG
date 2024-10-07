@@ -1,13 +1,15 @@
   import React, { useCallback, useMemo, useEffect, useState, useRef } from "react"
   import { useForm, Controller } from "react-hook-form";
   import { TextInput, SubmitBar, ActionBar, DatePicker, SearchForm, Dropdown, SearchField, Table, Card, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
-  import { Link } from "react-router-dom";
+  import { useRouteMatch, Link } from "react-router-dom";
   import jsPDF from 'jspdf';
   import QRCode from 'qrcode';
   import * as XLSX from 'xlsx';
-  
+ 
 
-  const ASSETSearchApplication = ({isLoading, t, onSubmit, data, count, setShowToast, ActionBarStyle = {}, MenuStyle = {}, }) => {
+
+
+  const ASSETSearchApplication = ({isLoading, t, onSubmit, data, count, setShowToast, ActionBarStyle = {}, MenuStyle = {}, parentRoute, tenantId }) => {
       const isMobile = window.Digit.Utils.browser.isMobile();
       const todaydate = new Date();
       const today = todaydate.toISOString().split("T")[0];
@@ -30,11 +32,9 @@
         setValue("toDate", today);
       },[register, setValue, today])
 
-
-      
-
-
-      const { data: actionState } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Action" }],
+// Get base path
+      var base_url = window.location.origin;
+ const { data: actionState } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Action" }],
       {
         select: (data) => {
             const formattedData = data?.["ASSET"]?.["Action"]
@@ -236,7 +236,8 @@
         for (let i = 0; i < data.length; i += batchSize) {
           const batch = data.slice(i, i + batchSize);
           const qrPromises = batch.map(async (row, index) => {
-            const url = `https://niuatt.niua.in/digit-ui/employee/asset/assetservice/applicationsearch/application-details/${row.applicationNo}`;
+            // const url = `https://niuatt.niua.in/digit-ui/employee/asset/assetservice/applicationsearch/application-details/${row.applicationNo}`;
+            const url = `${base_url}/digit-ui/citizen/assets/services?tenantId=${tenantId}&applicationNo=${row.applicationNo}`;
             const qrCodeURL = await generateQRCode(url);
             const yOffset = (index % batchSize) * 90;
       
