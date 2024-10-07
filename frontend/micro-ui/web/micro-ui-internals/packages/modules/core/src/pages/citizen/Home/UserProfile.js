@@ -127,7 +127,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   
   const setUserEmailAddress = (value) => {
     setEmail(value);
-    const emailPattern=/^[a-zA-Z0-9._%+-]+@gmail\.com$/
+    const emailPattern=/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/
     if(value.length && !emailPattern.test(value)){
       setErrors({...errors, emailAddress: {type: "pattern", message: t("CORE_COMMON_PROFILE_EMAIL_INVALID")}})
     }else{

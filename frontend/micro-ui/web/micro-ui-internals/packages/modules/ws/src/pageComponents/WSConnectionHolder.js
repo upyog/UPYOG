@@ -54,7 +54,7 @@ const WSConnectionHolder = ({ t, config, onSelect, userType, formData, ownerInde
       menu.push({ i18nKey: `COMMON_GENDER_${genderDetails.code}`, code: `${genderDetails.code}`, value: `${genderDetails.code}` });
     });
     const validateEmail=(value)=>{  
-      const emailPattern=/^[a-zA-Z0-9._%+-]+@gmail\.com$/
+      const emailPattern=/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/;
       if(value===""){
         setError("");
       }

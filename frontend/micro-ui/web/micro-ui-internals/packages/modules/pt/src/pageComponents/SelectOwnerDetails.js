@@ -30,7 +30,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const validateEmail=(value)=>{
-    const emailPattern=/^[a-zA-Z0-9._%+-]+@gmail\.com$/
+    const emailPattern=/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/;
     if(value===""){
       setError("");
     }

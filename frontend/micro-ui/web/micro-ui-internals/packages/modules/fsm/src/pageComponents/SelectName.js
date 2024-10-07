@@ -41,7 +41,7 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
       name: "emailId",
       validation: {
         //isRequired: true,
-        pattern: "/^[a-zA-Z0-9._%+-]+@gmail\.com$/",
+        pattern: "/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/",
         title: t("CORE_COMMON_EMAIL_ID_INVALID"),
       },
       isMandatory:false,
@@ -56,7 +56,7 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
 
   const setValue=(value, input)=> {
     if(input==="emailId"){
-      const emailRegex=/^[A-Za-z0-9._%+-]+@gmail\.com$/;
+      const emailRegex=/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/;
       if(!emailRegex.test(value)){
         setError(t("CORE_INVALID_EMAIL_ID_PATTERN"))
       }
