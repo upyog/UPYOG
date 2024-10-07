@@ -52,7 +52,8 @@ export const CHBMyApplications = () => {
 
   const statusOptions = [
     { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") },
-    { i18nKey: "Booking in Progres", code: "BOOKING_CREATED", value: t("CHB_BOOKING_IN_PROGRES") }
+    { i18nKey: "Booking in Progres", code: "BOOKING_CREATED", value: t("CHB_BOOKING_IN_PROGRES") },
+    { i18nKey: "Cancelled", code: "CANCELLED", value: t("CANCELLED") }
   ];
 
   const filteredApplications = data?.hallsBookingApplication || [];
@@ -122,7 +123,7 @@ export const CHBMyApplications = () => {
           </p>
         )}
 
-        {filteredApplications.length !== 0 && (
+        {filteredApplications.length !== 0 && data?.count>t1 && (
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
               <span className="link">

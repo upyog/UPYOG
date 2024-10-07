@@ -14,49 +14,75 @@ export const CHBSearch = {
     const response = await CHBServices.search({ tenantId, filters });
     return response.hallsBookingApplication[0];
   },
-  RegistrationDetails: ({ hallsBookingApplication: response, t }) => {
+  BookingDetails: ({ hallsBookingApplication: response, t }) => {
+    const slotlistRows = response?.bookingSlotDetails?.map((slot) => (
+      [
+        response?.communityHallCode,
+        slot.hallCode + " - " + slot.capacity,
+        slot.bookingDate,
+        // slot.bookingDate + " (" + slot.bookingFromTime + " - " + slot.bookingToTime + ")",
+        `${t(slot.status)}`
+      ]
+    )) || [];
     return [
-
       {
-        title: "CHB_APPLICANT_DETAILS_HEADER",
+        title: "CHB_BOOKING_NO", 
+        values:[{title: "CHB_BOOKING_NO", value: response?.bookingNo || t("CS_NA")}],
+      },
+      {
+        title: "CHB_APPLICANT_DETAILS",
+
         asSectionHeader: true,
         values: [
-          { title: "CHB_APPLICATION_NUMBER", value: response?.applicationNumber },
-          { title: "CHB_APPLICANT_NAME", value: response?.applicantName },
-          { title: "CHB_APPLICANT_MOBILE_NO", value: response?.mobileNumber },
-          { title: "CHB_APPLICANT_EMAIL_ID", value: response?.emailId },
+          { title: "CHB_APPLICANT_NAME", value: response?.applicantDetail?.applicantName || t("CS_NA")},
+          { title: "CHB_MOBILE_NUMBER", value: response?.applicantDetail?.applicantMobileNo || t("CS_NA")},
+          { title: "CHB_ALT_MOBILE_NUMBER", value: response?.applicantDetail?.applicantAlternateMobileNo || t("CS_NA")}, 
+          { title: "CHB_EMAIL_ID", value: response?.applicantDetail?.applicantEmailId || t("CS_NA")} ,
         ],
       },
 
       {
-        title: "CHB_SLOT_DETAILS_HEADER",
+        title: "CHB_EVENT_DETAILS",
         asSectionHeader: true,
         values: [
-          { title: "SELECT_SLOT", value: response?.slots?.selectslot },
-          { title: "RESIDENT_TYPE", value: response?.slots?.residentType },
-          { title: "SPECIAL_CATEGORY", value: response?.slots?.specialCategory },
-          { title: "PURPOSE", value: response?.slots?.purpose },
+          { title: "CHB_SPECIAL_CATEGORY", value: response?.specialCategory?.category || t("CS_NA")},
+          { title: "CHB_PURPOSE", value: response?.purpose?.purpose || t("CS_NA")},
+          { title: "CHB_PURPOSE_DESCRIPTION", value: response?.purposeDescription || t("CS_NA")},
 
         ],
       },
-
       {
-        title: "CHB_BANK_DETAILS_HEADER",
+        title: "CHB_ADDRESS_DETAILS",
         asSectionHeader: true,
         values: [
-          { title: "ACCOUNT_NUMBER", value: response?.bankdetails?.accountNumber },
-          { title: "CONFIRM_ACCOUNT_NUMBER", value: response?.bankdetails?.confirmAccountNumbers },
-          { title: "IFSC_CODE",value: response?.bankdetails?.ifscCode },
-          { title: "BANK_NAME",value: response?.bankdetails?.bankName},
-          { title: "BANK_BRANCH_NAME",value: response?.bankdetails?.bankBranchName},
-          { title: "ACCOUNT_HOLDER_NAME",value: response?.bankdetails?.accountHolderName},
-          
-  
+          { title: "CHB_PINCODE", value: response?.address?.pincode || t("CS_NA")},
+          { title: "CHB_CITY", value: response?.address?.city  || t("CS_NA")},
+          { title: "CHB_LOCALITY", value: response?.address?.locality  || t("CS_NA")},
+          { title: "CHB_STREET_NAME", value: response?.address?.streetName  || t("CS_NA")},
+          { title: "CHB_HOUSE_NO", value: response?.address?.houseNo  || t("CS_NA")},
+          { title: "CHB_LANDMARK", value: response?.address?.landmark  || t("CS_NA")},
         ],
+      },
+      {
+        title: "CHB_BANK_DETAILS",
+        asSectionHeader: true,
+        values: [
+          { title: "CHB_ACCOUNT_NUMBER", value: response?.applicantDetail?.accountNumber || t("CS_NA")},
+          { title: "CHB_IFSC_CODE", value: response?.applicantDetail?.ifscCode || t("CS_NA")},
+          { title: "CHB_BANK_NAME",value: response?.applicantDetail?.bankName || t("CS_NA")},
+          { title: "CHB_BANK_BRANCH_NAME",value: response?.applicantDetail?.bankBranchName || t("CS_NA")},
+          { title: "CHB_ACCOUNT_HOLDER_NAME",value: response?.applicantDetail?.accountHolderName || t("CS_NA")},        ],
+      },
+      {
+        title:"SLOT_DETAILS",
+        asSectionHeader: true,
+        isTable: true,
+        headers: [`${t("CHB_HALL_NAME")}` + "/" + `${t("CHB_PARK")}`, "CHB_HALL_CODE", "CHB_BOOKING_DATE", "PT_COMMON_TABLE_COL_STATUS_LABEL"],
+        tableRows: slotlistRows,
       },
 
       {
-        title: "CHB_DOCUMENT_DETAILS",
+        title: "CHB_DOCUMENTS_DETAILS",
         additionalDetails: {
           
           documents: [
@@ -66,10 +92,10 @@ export const CHBSearch = {
                 ?.map((document) => {
 
                   return {
-                    title: `CHB_${document?.documentType.replace(".", "_")}`,
+                    title: `CHB_${document?.documentType?.split('.').slice(0,2).join('_')}`,
                     documentType: document?.documentType,
                     documentUid: document?.documentUid,
-                    fileStoreId: document?.filestoreId,
+                    fileStoreId: document?.fileStoreId,
                     status: document.status,
                   };
                 }),
@@ -79,15 +105,15 @@ export const CHBSearch = {
       },
     ];
   },
-  applicationDetails: async (t, tenantId, applicationNumber, userType, args) => {
-    const filter = { applicationNumber, ...args };
+  applicationDetails: async (t, tenantId, BookingNo, userType, args) => {
+    const filter = { BookingNo, ...args };
     const response = await CHBSearch.application(tenantId, filter);
 
     return {
       tenantId: response.tenantId,
-      applicationDetails: CHBSearch.RegistrationDetails({ hallsBookingApplication: response, t }),
+      applicationDetails: CHBSearch.BookingDetails({ hallsBookingApplication: response, t }),
       applicationData: response,
-      transformToAppDetailsForEmployee: CHBSearch.RegistrationDetails,
+      transformToAppDetailsForEmployee: CHBSearch.BookingDetails,
       
     };
   },

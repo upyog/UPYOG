@@ -31,12 +31,17 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
         return formattedData;
       },
   });
+  const DateConvert = (date) => {
+    if (!date) return "";
+    const [day, month, year] = date.split("-");
+    return `${year}-${month}-${day}`; // For the <input type="date" /> format
+  };
   let hallDetails = slotDetail.map((slot) => {
     return { 
       hallCode: slot.hallCode1,
-      bookingDate:slot.bookingDate,
-      bookingFromTime:"10:00",
-      bookingToTime:"23:59",
+      bookingDate:DateConvert(slot.bookingDate),
+      bookingFromTime:slot.fromTime,
+      bookingToTime:slot.toTime,
       status:"BOOKING_CREATED",
       capacity:slot.capacity
     }; });

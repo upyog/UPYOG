@@ -60,7 +60,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     HallName.push({ i18nKey: `${slot.code}`, code: `${slot.code}`, value: `${slot.name}`, communityHallId: slot.communityHallId,address: slot.address});
   });
   Hall && Hall.map((slot) => {
-    HallId.push({ i18nKey: `${slot.HallCode}`, code: `${slot.HallCode}`, value: `${slot.HallCode}`, communityHallId: slot.communityHallId ,capacity:`${slot.capacity}`});
+    HallId.push({ i18nKey: `${slot.HallCode}`, code: `${slot.HallCode}`, value: `${slot.HallCode}`, communityHallId: slot.communityHallId ,capacity:`${slot.capacity}`,fromTime:slot?.timeSlots[0].from,toTime:slot?.timeSlots[0].to});
   });
   const hallCodeId = HallId.map((slot) => {
     if (selectedHall.communityHallId === slot.communityHallId) {
@@ -69,7 +69,9 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
         code: slot.code ,
         value: slot.code,
         communityHallId: slot.communityHallId,
-        capacity:slot.capacity + " Person"
+        capacity:slot.capacity + " Person",
+        toTime:slot.toTime,
+        fromTime:slot.fromTime
       };
     }
   }).filter(item => item !== undefined);
@@ -94,6 +96,8 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
         hallCode1:slot.hallCode,
         address: Searchdata.hallAddress,
         hallCode: slot.hallCode + " - " + Searchdata.capacity,
+        toTime:hallCode.toTime,
+        fromTime:hallCode.fromTime,
         capacity:Searchdata.capacity,
         bookingDate: slot.bookingDate,
         status: slot.slotStaus === "AVAILABLE" ? (
@@ -263,8 +267,8 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
 
  const handleSearch = () => {
   const selectedHallName = selectedHall?.code || "";
-  const startDate = dateRange[0].startDate ? format(dateRange[0].startDate, 'dd-MM-yyyy') : "";
-  const endDate = dateRange[0].endDate ? format(dateRange[0].endDate, 'dd-MM-yyyy') : "";
+  const startDate = dateRange[0].startDate ? format(dateRange[0].startDate, 'yyyy-MM-dd') : "";
+  const endDate = dateRange[0].endDate ? format(dateRange[0].endDate, 'yyyy-MM-dd') : "";
   const selectedHallCode = hallCode?.code || "";
 
   if (selectedHallName && startDate && endDate && selectedHallCode) {

@@ -10,7 +10,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
   let index = window.location.href.charAt(window.location.href.length - 1);
   const allCities = Digit.Hooks.chb.useTenants();
   let validation = {};
-
+  const user = Digit.UserService.getUser().info;
   const [pincode, setPincode] = useState((formData.address && formData.address[index] && formData.address[index].pincode) || formData?.address?.pincode || "");
   const [city, setCity] = useState((formData.address && formData.address[index] && formData.address[index].city) || formData?.address?.city || "");
   const [locality, setLocality] = useState((formData.address && formData.address[index] && formData.address[index].locality) || formData?.address?.locality || "");
@@ -20,7 +20,6 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
 
   const [localities, setLocalities] = useState([]);
   const [showToast, setShowToast] = useState(null);  // State for Toast
-
   const { data: fetchedLocalities, isLoading: isLoadingLocalities } = Digit.Hooks.useBoundaryLocalities(
     city?.code,
     "revenue",
@@ -147,7 +146,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
 
   return (
     <React.Fragment>
-      {window.location.href.includes("/citizen") ? <Timeline currentStep={3} /> : null}
+      {window.location.href.includes("/citizen") ? <Timeline currentStep={3} /> : <Timeline currentStep={3} />}
       <Card>
         <CardSubHeader>
           {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
@@ -174,7 +173,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             value={pincode}
             onChange={setAddressPincode}
             placeholder="Enter Pincode"
-            style={{ width: "86%" }}
+            style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
             ValidationRequired={true}
             validation={{
               pattern: "[0-9]{6}",
@@ -193,7 +192,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             name="city"
             value={city?.name || ""}
             placeholder={"City Auto Select"}
-            style={{ width: "86%" }}
+            style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
             onChange={setCity}
             disabled={true}
           />
@@ -206,7 +205,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             name="locality"
             value={locality?.name || ""}
             placeholder={"Locality Auto Select"}
-            style={{ width: "86%" }}
+            style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
             onChange={selectLocality}
             disabled={true}
           />
@@ -220,7 +219,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             value={streetName}
             placeholder={"Enter Street Name"}
             onChange={setApplicantStreetName}
-            style={{ width: "86%" }}
+            style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
             ValidationRequired={true}
             {...(validation = {
               pattern: "^[a-zA-Z0-9 ,\\-]+$",
@@ -238,7 +237,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             value={houseNo}
             placeholder={"Enter House No"}
             onChange={setApplicantHouseNo}
-            style={{ width: "86%" }}
+            style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,

@@ -12,19 +12,15 @@
       const { data: storeData } = Digit.Hooks.useStore.getInitData();
       const tenantId = Digit.ULBService.getCurrentTenantId();
       const { tenants } = storeData || {};
-      const { id: applicationNumber } = useParams();
+      const { id: bookingNo } = useParams();
       const [showToast, setShowToast] = useState(null);
       const [appDetailsToShow, setAppDetailsToShow] = useState({});
       const [showOptions, setShowOptions] = useState(false);
       const [enableAudit, setEnableAudit] = useState(false);
-      const [businessService, setBusinessService] = useState("chb");
-
-      console.log("gggggg",appDetailsToShow);
-
-
-
-      sessionStorage.setItem("applicationNoinAppDetails", applicationNumber);
-      const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.chb.useChbApplicationDetail(t, tenantId, applicationNumber);
+      const [businessService, setBusinessService] = useState("chb-services");
+    
+      sessionStorage.setItem("chb", bookingNo);
+      const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.chb.useChbApplicationDetail(t, tenantId, bookingNo);
       
       const {
         isLoading: updatingApplication,
@@ -33,20 +29,18 @@
         error: updateError,
         mutate,
       } = Digit.Hooks.chb.useChbApplicationAction(tenantId);
-
       let workflowDetails = Digit.Hooks.useWorkflowDetails({
         tenantId: applicationDetails?.applicationData?.tenantId || tenantId,
-        id: applicationDetails?.applicationData?.applicationData?.applicationNumber,
+        id: applicationDetails?.applicationData?.applicationData?.bookingNo,
         moduleCode: businessService,
         role: "CHB_APPROVER",
       });
 
-      console.log("workkkkflooowowow",workflowDetails);
-
-      const { isLoading: auditDataLoading, isError: isAuditError, data: auditData } = Digit.Hooks.chb.useChbSearch(
+      const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
+      const { isLoading: auditDataLoading, isError: isAuditError, data,refetch} = Digit.Hooks.chb.useChbSearch(
         {
           tenantId,
-          filters: { applicationNumber: applicationNumber, audit: true },
+          filters: { bookingNo: bookingNo, audit: true },
         },
         // { enabled: enableAudit, select: (data) => data.PetRegistrationApplications?.filter((e) => e.status === "ACTIVE") }
       );
@@ -64,88 +58,116 @@
 
 
 
-      useEffect(() => {
+      // useEffect(() => {
 
-        if (workflowDetails?.data?.applicationBusinessService && !(workflowDetails?.data?.applicationBusinessService === "chb" && businessService === "chb")) {
-          setBusinessService(workflowDetails?.data?.applicationBusinessService);
-        }
-      }, [workflowDetails.data]);
+      //   if (workflowDetails?.data?.applicationBusinessService && !(workflowDetails?.data?.applicationBusinessService === "chb" && businessService === "chb")) {
+      //     setBusinessService(workflowDetails?.data?.applicationBusinessService);
+      //   }
+      // }, [workflowDetails.data]);
 
 
-      const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
-      if (
-        PT_CEMP &&
-        workflowDetails?.data?.applicationBusinessService === "ptr" &&
-        workflowDetails?.data?.actionState?.nextActions?.find((act) => act.action === "PAY")
-      ) {
-        workflowDetails.data.actionState.nextActions = workflowDetails?.data?.actionState?.nextActions.map((act) => {
-          if (act.action === "PAY") {
-            return {
-              action: "PAY",
-              forcedName: "WF_PAY_APPLICATION",
-              redirectionUrl: { pathname: `/digit-ui/employee/payment/collect/pet-services/${appDetailsToShow?.applicationData?.applicationData?.applicationNumber}` },
-            };
-          }
-          return act;
-        });
-      }
+      // const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
+      // if (
+      //   PT_CEMP &&
+      //   workflowDetails?.data?.applicationBusinessService === "ptr" &&
+      //   workflowDetails?.data?.actionState?.nextActions?.find((act) => act.action === "PAY")
+      // ) {
+      //   workflowDetails.data.actionState.nextActions = workflowDetails?.data?.actionState?.nextActions.map((act) => {
+      //     if (act.action === "PAY") {
+      //       return {
+      //         action: "PAY",
+      //         forcedName: "WF_PAY_APPLICATION",
+      //         redirectionUrl: { pathname: `/digit-ui/employee/payment/collect/pet-services/${appDetailsToShow?.applicationData?.applicationData?.bookingNo}` },
+      //       };
+      //     }
+      //     return act;
+      //   });
+      // }
 
-      const handleDownloadPdf = async () => {
-        const hallsBookingApplication = appDetailsToShow?.applicationData;
-        const tenantInfo = tenants.find((tenant) => tenant.code === hallsBookingApplication.tenantId);
-        const data = await getChbAcknowledgementData(hallsBookingApplication.applicationData, tenantInfo, t);
-        Digit.Utils.pdf.generate(data);
-      };
+      // const handleDownloadPdf = async () => {
+      //   const hallsBookingApplication = appDetailsToShow?.applicationData;
+      //   const tenantInfo = tenants.find((tenant) => tenant.code === hallsBookingApplication.tenantId);
+      //   const data = await getChbAcknowledgementData(hallsBookingApplication.applicationData, tenantInfo, t);
+      //   Digit.Utils.pdf.generate(data);
+      // };
 
-      const petDetailsPDF = {
-        order: 1,
-        label: t("CHB_APPLICATION"),
-        onClick: () => handleDownloadPdf(),
-      };
-      let dowloadOptions = [petDetailsPDF];
+      // const CHBDetailsPDF = {
+      //   order: 1,
+      //   label: t("CHB_FEE_RECIEPT"),
+      //   onClick: () => getRecieptSearch(),
+      // };
+      // console.log("appDetailsToShow?.applicationData?.applicationData?.bookingNo",appDetailsToShow?.applicationData?.applicationData?.bookingNo);
 
       const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
         {
           tenantId: tenantId,
           businessService: "chb-services",
-          consumerCodes: appDetailsToShow?.applicationData?.applicationData?.applicationNumber,
+          consumerCodes: appDetailsToShow?.applicationData?.applicationData?.bookingNo,
           isEmployee: false,
         },
-        { enabled: appDetailsToShow?.applicationData?.applicationData?.applicationNumber ? true : false }
+        { enabled: appDetailsToShow?.applicationData?.applicationData?.bookingNo ? true : false }
       );
-      
-
       async function getRecieptSearch({ tenantId, payments, ...params }) {
+        let application = data?.hallsBookingApplication?.[0];
+        let fileStoreId = application?.paymentReceiptFilestoreId
+        if (!fileStoreId) {
         let response = { filestoreIds: [payments?.fileStoreId] };
-        response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "petservice-receipt");
-        const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-        window.open(fileStore[response?.filestoreIds[0]], "_blank");
+        response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "chbservice-receipt");
+        const updatedApplication = {
+          ...application,
+          paymentReceiptFilestoreId: response?.filestoreIds[0]
+        };
+        await mutation.mutateAsync({
+          hallsBookingApplication: updatedApplication
+        });
+        fileStoreId = response?.filestoreIds[0];
+        refetch();
+        }
+        const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+        window.open(fileStore[fileStoreId], "_blank");
       };
 
+      async function getPermissionLetter({ tenantId, payments, ...params }) {
+        let application = data?.hallsBookingApplication?.[0];
+        let fileStoreId = application?.permissionLetterFilestoreId;
+        if (!fileStoreId) {
+          const response = await Digit.PaymentService.generatePdf(
+            tenantId,
+            { hallsBookingApplication: [application] }, 
+            "chbpermissionletter"
+          );
+          const updatedApplication = {
+            ...application,
+            permissionLetterFilestoreId: response?.filestoreIds[0]
+          };
+          await mutation.mutateAsync({
+            hallsBookingApplication: updatedApplication
+          });
+          fileStoreId = response?.filestoreIds[0];
+          refetch();
+        }
+        const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+        window.open(fileStore[fileStoreId], "_blank");
+      }
+    
+      let dowloadOptions = [];
       if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
       dowloadOptions.push({
         label: t("CHB_FEE_RECIEPT"),
         onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
       });
 
-      const printCertificate = async () => {
-        let response = await Digit.PaymentService.generatePdf(tenantId, { hallsBookingApplication: [applicationDetails?.applicationData?.applicationData] }, "petservicecertificate");
-        const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-        window.open(fileStore[response?.filestoreIds[0]], "_blank");
-      };
-
-
-      if (reciept_data?.Payments[0]?.instrumentStatus === "APPROVED")
-      dowloadOptions.push({
-        label: t("CHB_CERTIFICATE"),
-        onClick: () => printCertificate(),
-      });
-
+      if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+        dowloadOptions.push({
+          label: t("CHB_PERMISSION_LETTER"),
+          onClick: () => getPermissionLetter({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+        });
+    
 
       return (
         <div>
           <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-            <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("CHB_APPLICATION_DETAILS")}</Header>
+            <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("CHB_BOOKING_DETAILS")}</Header>
             {dowloadOptions && dowloadOptions.length > 0 && (
               <MultiLink
                 className="multilinkWrapper employee-mulitlink-main-div"
@@ -167,7 +189,7 @@
             mutate={mutate}
             workflowDetails={workflowDetails}
             businessService={businessService}
-            moduleCode="chb-services"
+            moduleCode="CHB"
             showToast={showToast}
             setShowToast={setShowToast}
             closeToast={closeToast}
