@@ -111,7 +111,8 @@ const Urls = {
     search: "/asset-services/v1/assets/_search",
     update: "/asset-services/v1/assets/_update",
     assign: "/asset-services/v1/assets/assignment/_create",
-    return_asset: "/asset-services/v1/assets/assignment/_update"
+    return_asset: "/asset-services/v1/assets/assignment/_update",
+    assets_Reciept_Search: "/asset-services/v1/assets/_search",     //This url use for  Assets Recipt Detail QR Code 
   },
 
   chb: {
