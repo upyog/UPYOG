@@ -10,6 +10,7 @@ import FNOCCommonDetails from "./pageComponents/FNOCCommonDetails";
 import FNOCApplicationDetails from "./pageComponents/FNOCApplicationDetails";
 import FNOCDocuments from "./pageComponents/FNOCDocuments";
 import FNOCPropertyDetails from "./pageComponents/FNOCPropertyDetails";
+import CheckPage from "./pages/citizen/Create/CheckPage";
 
 
 const componentsToRegister = {
@@ -20,7 +21,8 @@ const componentsToRegister = {
     FNOCApplicationDetails,
     PropertySearch,
     FNOCDocuments,
-    FNOCPropertyDetails
+    FNOCPropertyDetails,
+    CheckPage
    
   };
   

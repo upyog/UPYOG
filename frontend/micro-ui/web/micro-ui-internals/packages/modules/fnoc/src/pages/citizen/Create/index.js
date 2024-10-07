@@ -123,7 +123,7 @@ const FNOCCreate = ({ parentRoute }) => {
   
   config.indexRoute = "info";
 
-  const CheckPage = Digit?.ComponentRegistryService?.getComponent("PTRCheckPage");
+  const CheckPage = Digit?.ComponentRegistryService?.getComponent("CheckPage");
   const PTRAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTRAcknowledgement");
 
   

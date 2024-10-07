@@ -10,6 +10,13 @@ const FNOCCommonDetails = ({ config, formData,onSelect }) => {
   let index=0;
 const [nocNumber, setnocNumber] = useState(formData?.commonDetails?.nocNumber || ""
 );
+// const handleSearchClick = () => {
+//   if (nocNumber) {
+//     setShouldFetchDetails(true);
+//   } else {
+//     console.log("Property ID is required");
+//   }
+// };
 
   let SearchTypes = [ 
       {
@@ -75,7 +82,7 @@ const [nocNumber, setnocNumber] = useState(formData?.commonDetails?.nocNumber ||
         <CardLabel>{`${t("NOC_PROVISIONAL_FIRE_NOC_NO_LABEL")}`}
           
         </CardLabel>
-        <TextInput
+            <TextInput
               t={t}
               type="text"
               isMandatory={false}
@@ -92,6 +99,7 @@ const [nocNumber, setnocNumber] = useState(formData?.commonDetails?.nocNumber ||
                 title: t("CHB_NAME_ERROR_MESSAGE"),
               }}
             />
+            
              
         </div>}
       </FormStep>
@@ -110,4 +118,9 @@ const [nocNumber, setnocNumber] = useState(formData?.commonDetails?.nocNumber ||
 };
 
 export default FNOCCommonDetails;
+
+
+
+
+
 
