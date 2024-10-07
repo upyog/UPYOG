@@ -493,54 +493,60 @@
 
 
 
+import { CardLabel, Dropdown, FormStep, LinkButton, Loader, RadioButtons, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, InfoBannerIcon, RadioButtons, Dropdown, Label } from "@nudmcdgnpm/digit-ui-react-components";
-import { useLocation } from "react-router-dom";
-// import Timeline from "../components/ASTTimeline";
-import { Controller, useForm } from "react-hook-form";
 
-/*
-This Component  is used to render the building details form for Fire NOC applications using  the react-UI components library.
-we are using hooks to fetch the data from MDMS and using states to save the details
-*/
-const FNOCBuildingDetails = ({config, onSelect, userType, formData }) => {
-  const { control } = useForm();
-  const { pathname: url } = useLocation();
-  let index = 0
+
+const FNOCBuildingDetails = ({ t, config, onSelect, userType, formData }) => {
+  console.log("formdatata",formData);
   let validation = {};
+  const [noOfBuildings, setnoOfBuildings] = useState(formData?.buildings?.units?.noOfBuildings||formData?.buildings?.noOfBuildings||"");
+  const [name, setname] = useState(formData?.buildings?.units?.name ||formData?.buildings?.name || "");
+  const [usageTypeMajor, setusageTypeMajor] = useState(formData?.buildings?.units?.usageTypeMajor||formData?.buildings?.usageTypeMajor || "");
+  const [usageType, setusageType] = useState(formData?.buildings?.units?.usageType ||formData?.buildings?.usageType|| "");
+  const [noOfFloors, setnoOfFloors] = useState(formData?.buildings?.units?.noOfFloors || formData?.buildings?.noOfFloors|| "");
 
-    
-  const [noOfBuildings, setnoOfBuildings] = useState((formData.buildings && formData.buildings[index] && formData.buildings[index].noOfBuildings) || formData?.buildings?.noOfBuildings || "");
-  const [name, setname] = useState((formData.buildings && formData.buildings[index] && formData.buildings[index].name) || formData?.buildings?.name || "");
-  const [usageTypeMajor, setusageTypeMajor] = useState((formData.buildings && formData.buildings[index] && formData.buildings[index].usageTypeMajor) || formData?.buildings?.usageTypeMajor || "");
-  const [usageType, setusageType] = useState((formData.buildings && formData.buildings[index] && formData.buildings[index].usageType) || formData?.buildings?.usageType || "");  
-  const [noOfFloors, setnoOfFloors] = useState((formData.buildings && formData.buildings[index] && formData.buildings[index].noOfFloors) || formData?.buildings?.noOfFloors || "");
-  const [noOfBasements, setnoOfBasements] = useState((formData.buildings && formData.buildings[index] && formData.buildings[index].noOfBasements) || formData?.buildings?.noOfBasements || "");
-  const [plotSize, setplotSize] = useState((formData.buildings && formData.buildings[index] && formData.buildings[index].plotSize) || formData?.buildings?.plotSize || "");
-  const [builtArea, setbuiltArea] = useState((formData.buildings && formData.buildings[index] && formData.buildings[index].builtArea) || formData?.buildings?.builtArea || "");
-  const [heightOfBuilding, setheightOfBuilding] = useState((formData.buildings && formData.buildings[index] && formData.buildings[index].heightOfBuilding) || formData?.buildings?.heightOfBuilding || "");
-  const [noOfStudents, setnoOfStudents] = useState((formData.buildings && formData.buildings[index] && formData.buildings[index].noOfStudents) || formData?.buildings?.noOfStudents || "");
+  const [noOfBasements, setnoOfBasements] = useState(formData?.buildings?.units?.noOfBasements||formData?.buildings?.noOfBasements||"");
+  const [plotSize, setplotSize] = useState(formData?.buildings?.units?.plotSize ||formData?.buildings?.plotSize|| "");
+  const [builtArea, setbuiltArea] = useState(formData?.buildings?.units?.builtArea ||formData?.buildings?.builtArea|| "");
+  const [heightOfBuilding, setheightOfBuilding] = useState(formData?.buildings?.units?.heightOfBuilding ||formData?.buildings?.heightOfBuilding|| "");
+  const [noOfStudents, setnoOfStudents] = useState(formData?.buildings?.units?.noOfStudents||formData?.buildings?.noOfStudents || "");
 
+  const [error, setError] = useState(null);
+  const [fields, setFeilds] = useState(
+    (formData?.buildings && formData?.buildings?.units) || [{ noOfBuildings: "", name: "", usageTypeMajor: "", usageType: "", noOfFloors: "", noOfBasements: "", plotSize: "", builtArea: "", heightOfBuilding: "", noOfStudents: "" }]
+  );
 
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const stateId = Digit.ULBService.getStateId();
-  console.log("noOfBuildingsnoOfBuildings",noOfBuildings);
+  function handleAdd() {
+    const values = [...fields];
+    values.push({ noOfBuildings: "", name: "", usageTypeMajor: "", usageType: "", noOfFloors: "", noOfBasements: "", plotSize: "", builtArea: "", heightOfBuilding: "", noOfStudents: ""  });
+    setFeilds(values);
+  }
 
-    const common = [
-      {
-        code: "SINGLE",
-        i18nKey: "Single Building",
-        value:"SINGLE"
-      },
-      {
-        code: "MULTIPLE",
-        i18nKey: "Multiple Building",
-        value:"MULTIPLE"
-      },
-    ]
+  function handleRemove(index) {
+    const values = [...fields];
+    if (values.length != 1) {
+      values.splice(index, 1);
+      setFeilds(values);
+    }
+  }
 
+  const common = [
+    {
+      code: "SINGLE",
+      i18nKey: "Single Building",
+      value:"NOC_NO_OF_BUILDINGS_SINGLE_RADIOBUTTON"
+    },
+    {
+      code: "MULTIPLE",
+      i18nKey: "Multiple Building",
+      value:"NOC_NO_OF_BUILDINGS_SINGLE_RADIOBUTTON"
+    },
+  ]
 
-    const { data: usageMajorType } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "firenoc", [{ name: "BuildingType" }],
+  const { data: usageMajorType } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "firenoc", [{ name: "BuildingType" }],
     {
       select: (data) => {
           const formattedData = data?.["firenoc"]?.["BuildingType"]
@@ -574,9 +580,9 @@ const FNOCBuildingDetails = ({config, onSelect, userType, formData }) => {
   let buildingType = [];
   
 
-  if (usageTypeMajor?.code) {
+  if (fields?.[0]?.usageTypeMajor?.code) {
     usageTypes && usageTypes.forEach((buildingUsage) => {
-        if (buildingUsage.code.startsWith(usageTypeMajor?.code)) { // Check if it matches the selected major type
+        if (buildingUsage.code.startsWith(fields?.[0]?.usageTypeMajor?.code)) { // Check if it matches the selected major type
             buildingType.push({ 
                 i18nKey: `${buildingUsage.code}`, 
                 code: `${buildingUsage.code}`, 
@@ -591,298 +597,302 @@ const dropdownOptionsforfloor = [];
 
 for (let i = 1; i <= 20; i++) {
   dropdownOptionsforfloor.push({
-        i18nKey: `${i}`,  // Unique i18n key
-        code: `${i}`,      // Code for the dropdown item
-        value: `${i}`           // Display value (1-20)
+        i18nKey: `${i}`,  
+        code: `${i}`,      
+        value: `${i}`,           
     });
 }
 
 const dropdownOptionsForBasements = [];
 for (let i = 1; i <= 5; i++) {
   dropdownOptionsForBasements.push({
-        i18nKey: `${i}`,  // Unique i18n key
-        code: `${i}`,      // Code for the dropdown item
-        value: `${i}`           // Display value (1-20)
+        i18nKey: `${i}`,  
+        code: `${i}`,      
+        value: `${i}`,
     });
 }
 
-  
 
-  function setName(e) {
+  function selectnoOfBuildings(i, value) {
+    let units = [...fields];
+    units[i].noOfBuildings = value;
+    setnoOfBuildings(value);
+    setFeilds(units);
+  }
+  function selectname(i, e) {
+    let units = [...fields];
+    units[i].name = e.target.value;
     setname(e.target.value);
+    setFeilds(units);
   }
-  function setBuiltArea(e) {
-    setbuiltArea(e.target.value);
+  function selectusageTypeMajor(i, value) {
+    let units = [...fields];
+    units[i].usageTypeMajor = value;
+    setusageTypeMajor(value);
+    setFeilds(units);
   }
+  function selectusageType(i, value) {
+    let units = [...fields];
+    units[i].usageType = value;
+    setusageType(value);
+    setFeilds(units);
+  }
+  function selectnoOfFloors(i, value) {
+    let units = [...fields];
+    units[i].noOfFloors = value;
+    setnoOfFloors(value);
+    setFeilds(units);
+}
 
-  function setPlotSize(e) {
+function selectnoOfBasements(i, value) {
+    let units = [...fields];
+    units[i].noOfBasements = value;
+    setnoOfBasements(value);
+    setFeilds(units);
+  }
+  function selectplotSize(i, e) {
+    let units = [...fields];
+    units[i].plotSize = e.target.value;
     setplotSize(e.target.value);
+    setFeilds(units);
   }
 
-  function setHeightOfBuilding(e) {
+  function selectheightOfBuilding(i, e) {
+    let units = [...fields];
+    units[i].heightOfBuilding = e.target.value;
     setheightOfBuilding(e.target.value);
-  }
+    setFeilds(units);
+}
 
-  
-  function setNoOfStudents(e) {
-    setnoOfStudents(e.target.value);
+function selectbuiltArea(i, e) {
+    let units = [...fields];
+    units[i].builtArea = e.target.value;
+    setbuiltArea(e.target.value);
+    setFeilds(units);
   }
+  function selectnoOfStudents(i, e) {
+    let units = [...fields];
+    units[i].noOfStudents = e.target.value;
+    setnoOfStudents(e.target.value);
+    setFeilds(units);
+  }
+  
   const goNext = () => {
-    let buildingDetails = formData.buildings && formData.buildings[index];
-    let buildingStep;
-    
-      buildingStep = { ...buildingDetails, noOfBuildings,noOfFloors, name, usageType, usageTypeMajor,noOfBasements, plotSize, builtArea,heightOfBuilding, noOfStudents};
-      onSelect(config.key, { ...formData[config.key], ...buildingStep }, false, index);
+      let buildingDetails = formData.buildings || {};
+      let buildingStep = { 
+        ...buildingDetails, 
+        units: fields
+      };
+      onSelect(config.key, { ...formData[config.key], ...buildingStep }, false);
     
   };
-
   const onSkip = () => onSelect();
-
-
-  useEffect(() => {
-    if (userType === "citizen") {
-      goNext();
-    }
-  }, [noOfBuildings, usageType, usageTypeMajor, noOfFloors,noOfBasements, name, plotSize, builtArea,heightOfBuilding]);
-
-
-
   return (
     <React.Fragment>
-    {
-    //   window.location.href.includes("/employee") ? <Timeline currentStep={1} /> : null
-    }
-
-    <FormStep
-      config={config}
-      onSelect={goNext}
-      onSkip={onSkip}
-      t={t}
-      isDisabled={ formData?.buildings?.usageTypeMajor?.code==="GROUP_B_EDUCATIONAL" && formData?.buildings?.usageType?.code==="GROUP_B_EDUCATIONAL.SUBDIVISIONB-1" ? !noOfBuildings || !usageType || !usageTypeMajor || !name || !noOfBasements || !noOfFloors || !noOfStudents : !noOfBuildings || !usageType || !usageTypeMajor || !name || !noOfBasements || !noOfFloors}
-
-    >
-
-      <div>
-      <style>
-        {`
-        .select-wrap .options-card {
-                width: 100% !important;
-                -webkit-box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
-                box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
-                position: absolute;
-                z-index: 20;
-                margin-top: 4px;
-                --bg-opacity: 1;
-                background-color: #fff;
-                background-color: rgba(255, 255, 255, var(--bg-opacity));
-                overflow: scroll;
-                max-height: 250px; 
-                min-height:50px;
-         } `
-        }
-      </style>
-            <CardLabel>{`${t("NOC_NO_OF_BUILDINGS_LABEL")}`}</CardLabel>
-            <Controller
-              control={control}
-              name={"noOfBuildings"}
-              defaultValue={noOfBuildings}
-              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
-                <Dropdown
-                  className="form-field"
-                  selected={noOfBuildings}
-                  select={setnoOfBuildings}
-                  option={common}
-                  optionKey="i18nKey"
-                  placeholder={"Select"}
-                  t={t}
-                />
-              )}
-            />
-            <CardLabel>{`${t("NOC_PROPERTY_DETAILS_NAME_OF_BUILDING_LABEL")}`}</CardLabel>
-            <TextInput
-              t={t}
-              type={"text"}
-              isMandatory={false}
-              optionKey="i18nKey"
-              name="name"
-              value={name}
-              onChange={setName}
-              style={{ width: "86%" }}
-              ValidationRequired={false}
-              {...(validation = {
-                isRequired: true,
-                pattern: "^[a-zA-Z]*$",
-                type: "text",
-                title: t("PT_NAME_ERROR_MESSAGE"),
-              })}
-            />
-
-            <CardLabel>{`${t("FIRENOC_BUILDINGUSAGETYPE_LABEL ")}`}</CardLabel>
-            <Controller
-              control={control}
-              name={"usageTypeMajor"}
-              defaultValue={usageTypeMajor}
-              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
-                <Dropdown
-                  className="form-field"
-                  selected={usageTypeMajor}
-                  select={setusageTypeMajor}
-                  option={buildingUsageType}
-                  optionKey="i18nKey"
-                  placeholder={"Select"}
-                  t={t}
-                />
-
-              )}
-            />
-            <CardLabel>{`${t("FIRENOC_BUILDINGSUBUSAGETYPE_LABEL")}`}</CardLabel>
-            <Controller
-              control={control}
-              name={"usageType"}
-              defaultValue={usageType}
-              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
-                <Dropdown
-                  className="form-field"
-                  selected={usageType}
-                  select={setusageType}
-                  option={buildingType}
-                  optionKey="i18nKey"
-                  placeholder={"Select"}
-
-                  t={t}
-                />
-
-              )}
-
-            />
-
-            <CardLabel>{`${t("NOC_PROPERTY_DETAILS_NO_OF_FLOORS_LABEL")}`}</CardLabel>
-            <Controller
-              control={control}
-              name={"noOfFloors"}
-              defaultValue={noOfFloors}
-              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
-                <Dropdown
-                  className="form-field"
-                  selected={noOfFloors}
-                  select={setnoOfFloors}
-                  option={dropdownOptionsforfloor}
-                  optionKey="i18nKey"
-                  placeholder={"Select"}
-                  t={t}
-                />
-              )}
-            />
-            <CardLabel>{`${t("NOC_PROPERTY_DETAILS_NO_OF_BASEMENTS_LABEL")}`}</CardLabel>
-            <Controller
-              control={control}
-              name={"noOfBasements"}
-              defaultValue={noOfBasements}
-              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
-                <Dropdown
-                  className="form-field"
-                  selected={noOfBasements}
-                  select={setnoOfBasements}
-                  option={dropdownOptionsForBasements}
-                  optionKey="i18nKey"
-                  placeholder={"Select"}
-                  t={t}
-                />
-              )}
-            />
-            
-            <CardLabel>{`${t("NOC_PROPERTY_DETAILS_PLOT_SIZE_LABEL")}`}</CardLabel>
-            <TextInput
-              t={t}
-              type={"textarea"}
-              isMandatory={false}
-              optionKey="i18nKey"
-              name="plotSize"
-              value={plotSize}
-              onChange={setPlotSize}
-              style={{ width: "86%" }}
-              ValidationRequired={false}
-              {...(validation = {
-                isRequired: false,
-                pattern: "^[0-9]*$",
-                type: "text",
-                title: t("PT_NAME_ERROR_MESSAGE"),
-              })}
-            />
-            <CardLabel>{`${t("NOC_PROPERTY_DETAILS_BUILTUP_AREA_LABEL")}`}</CardLabel>
-            <TextInput
-              t={t}
-              type={"textarea"}
-              isMandatory={false}
-              optionKey="i18nKey"
-              name="builtArea"
-              value={builtArea}
-              onChange={setBuiltArea}
-              style={{ width: "86%" }}
-              ValidationRequired={false}
-              {...(validation = {
-                isRequired: false,
-                pattern: "^[0-9]*$",
-                type: "text",
-                title: t("PT_NAME_ERROR_MESSAGE"),
-              })}
-            />
-            <CardLabel>{`${t("NOC_PROPERTY_DETAILS_HEIGHT_OF_BUILDING_LABEL")}`}</CardLabel>
-            <TextInput
-              t={t}
-              type={"textarea"}
-              isMandatory={false}
-              optionKey="i18nKey"
-              name="heightOfBuilding"
-              value={heightOfBuilding}
-              onChange={setHeightOfBuilding}
-              style={{ width: "86%" }}
-              ValidationRequired={false}
-              {...(validation = {
-                isRequired: false,
-                pattern: "^[0-9]*$",
-                type: "text",
-                title: t("PT_NAME_ERROR_MESSAGE"),
-              })}
-            />
-            {usageTypeMajor?.code==="GROUP_B_EDUCATIONAL" && usageType?.code==="GROUP_B_EDUCATIONAL.SUBDIVISIONB-1" && (
-            <React.Fragment>
-            <CardLabel>{`${t("NOC_PROPERTY_DETAILS_NO_OF_STUDENTS_LABEL")}`}</CardLabel>
-            <TextInput
-              t={t}
-              type={"textarea"}
-              isMandatory={false}
-              optionKey="i18nKey"
-              name="noOfStudents"
-              value={noOfStudents}
-              onChange={setNoOfStudents}
-              style={{ width: "86%" }}
-              ValidationRequired={false}
-              {...(validation = {
-                isRequired: true,
-                pattern: "^[0-9]*$",
-                type: "text",
-                title: t("PT_NAME_ERROR_MESSAGE"),
-              })}
-            />
-            </React.Fragment>
-            )}
-            {/* {noOfBuildings?.code==="MULTIPLE" && (
-              <React.Fragment>
-                <div className="astericColor"  style={{ justifyContent: "left", display: "flex", paddingBottom: "15px"}}>
-                <button type="button" style={{ paddingTop: "10px" }} onClick={() => FNOCBuildingDetails()}>
-                  {`${t("PT_ADD_UNIT")}`}
-                </button>
+      {/* {window.location.href.includes("/citizen") ? <Timeline /> : null} */}
+        <FormStep
+          config={config}
+          onSelect={goNext}
+          onSkip={onSkip}
+          t={t}
+          forcedError={t(error)}
+          isDisabled={!fields[0].noOfBuildings || !fields[0].name || !fields[0].usageTypeMajor || !fields[0].usageType||!fields[0].noOfFloors||!fields[0].noOfBasements}
+        >
+          {fields.map((field, index) => {
+            return (
+              <div key={`${field}-${index}`}>
+                <div
+                  style={{
+                    border: "solid",
+                    borderRadius: "5px",
+                    padding: "10px",
+                    paddingTop: "20px",
+                    marginTop: "10px",
+                    borderColor: "#f3f3f3",
+                    background: "#FAFAFA",
+                  }}
+                >
+                  <CardLabel>{`${t("NOC_NO_OF_BUILDINGS_LABEL")}`}</CardLabel>
+                  <LinkButton
+                    label={
+                      <div>
+                        <span>
+                          <svg
+                            style={{ float: "right", position: "relative", bottom: "32px" }}
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM14 1H10.5L9.5 0H4.5L3.5 1H0V3H14V1Z"
+                              fill={!(fields.length == 1) ? "#494848" : "#FAFAFA"}
+                            />
+                          </svg>
+                        </span>
+                      </div>
+                    }
+                    style={{ width: "100px", display: "inline" }}
+                    onClick={(e) => handleRemove(index)}
+                  />
+                    <RadioButtons
+                      t={t}
+                      options={common}
+                      optionsKey="i18nKey"
+                      name={`noOfBuildings-${index}`}
+                      value={field?.noOfBuildings}
+                      selectedOption={field?.noOfBuildings}
+                      onSelect={(e) => selectnoOfBuildings(index, e)}
+                      labelKey="i18nKey"
+                      isPTFlow={true}
+                    />
+                  <CardLabel>{`${t("NOC_PROPERTY_DETAILS_NAME_OF_BUILDING_LABEL")}`}</CardLabel>
+                  <TextInput
+                    style={{ background: "#FAFAFA" }}
+                    t={t}
+                    type={"text"}
+                    isMandatory={false}
+                    optionKey="i18nKey"
+                    name="name"
+                    value={field?.name}
+                    onChange={(e) => selectname(index, e)}
+                    disable={false}
+                  />
+                  <CardLabel>{`${t("FIRENOC_BUILDINGUSAGETYPE_LABEL ")}`}</CardLabel>
+                    <Dropdown
+                      t={t}
+                      optionKey="i18nKey"
+                      isMandatory={config.isMandatory}
+                      option={buildingUsageType}
+                      selected={field?.usageTypeMajor}
+                      optionCardStyles={{maxHeight:"125px",overflow:"scroll"}}
+                      select={(e) => selectusageTypeMajor(index, e)}
+                    />
+                    <CardLabel>{`${t("FIRENOC_BUILDINGSUBUSAGETYPE_LABEL")}`}</CardLabel>
+                    <Dropdown
+                      t={t}
+                      optionKey="i18nKey"
+                      isMandatory={config.isMandatory}
+                      option={buildingType}
+                      selected={field?.usageType}
+                      optionCardStyles={{maxHeight:"125px",overflow:"scroll"}}
+                      select={(e) => selectusageType(index, e)}
+                    />
+                    <CardLabel>{`${t("NOC_PROPERTY_DETAILS_NO_OF_FLOORS_LABEL")}`}</CardLabel>
+                    <Dropdown
+                      t={t}
+                      optionKey="i18nKey"
+                      isMandatory={config.isMandatory}
+                      option={dropdownOptionsforfloor}
+                      selected={field?.noOfFloors}
+                      optionCardStyles={{maxHeight:"125px",overflow:"scroll"}}
+                      select={(e) => selectnoOfFloors(index, e)}
+                    />
+                    <CardLabel>{`${t("NOC_PROPERTY_DETAILS_NO_OF_BASEMENTS_LABEL")}`}</CardLabel>
+                    <Dropdown
+                      t={t}
+                      optionKey="i18nKey"
+                      isMandatory={config.isMandatory}
+                      option={dropdownOptionsForBasements}
+                      selected={field?.noOfBasements}
+                      optionCardStyles={{maxHeight:"125px",overflow:"scroll"}}
+                      select={(e) => selectnoOfBasements(index, e)}
+                    />
+                  <CardLabel>{`${t("NOC_PROPERTY_DETAILS_PLOT_SIZE_LABEL")}`}</CardLabel>
+                  <TextInput
+                    style={{ background: "#FAFAFA" }}
+                    t={t}
+                    type={"text"}
+                    isMandatory={false}
+                    optionKey="i18nKey"
+                    name="plotSize"
+                    value={field?.plotSize}
+                    onChange={(e) => selectplotSize(index, e)}
+                    disable={false}
+                    ValidationRequired={false}
+                    {...(validation = {
+                      isRequired: false,
+                      pattern: "^[0-9]*$",
+                      type: "text",
+                      title: t("PT_NAME_ERROR_MESSAGE"),
+                    })}
+                  />
+                  <CardLabel>{`${t("NOC_PROPERTY_DETAILS_BUILTUP_AREA_LABEL")}`}</CardLabel>
+                  <TextInput
+                    style={{ background: "#FAFAFA" }}
+                    t={t}
+                    type={"text"}
+                    isMandatory={false}
+                    optionKey="i18nKey"
+                    name="builtArea"
+                    value={field?.builtArea}
+                    onChange={(e) => selectbuiltArea(index, e)}
+                    disable={false}
+                    ValidationRequired={false}
+                    {...(validation = {
+                      isRequired: false,
+                      pattern: "^[0-9]*$",
+                      type: "text",
+                      title: t("PT_NAME_ERROR_MESSAGE"),
+                    })}
+                  />
+                  <CardLabel>{`${t("NOC_PROPERTY_DETAILS_HEIGHT_OF_BUILDING_LABEL")}`}</CardLabel>
+                  <TextInput
+                    style={{ background: "#FAFAFA" }}
+                    t={t}
+                    type={"text"}
+                    isMandatory={false}
+                    optionKey="i18nKey"
+                    name="heightOfBuilding"
+                    value={field?.heightOfBuilding}
+                    onChange={(e) => selectheightOfBuilding(index, e)}
+                    disable={false}
+                    ValidationRequired={false}
+                    {...(validation = {
+                      isRequired: false,
+                      pattern: "^[0-9]*$",
+                      type: "text",
+                      title: t("PT_NAME_ERROR_MESSAGE"),
+                    })}
+                  />
+                  {fields?.[0]?.usageTypeMajor?.code==="GROUP_B_EDUCATIONAL" && fields?.[0]?.usageType?.code==="GROUP_B_EDUCATIONAL.SUBDIVISIONB-1" && (
+                    <React.Fragment>
+                  <CardLabel>{`${t("NOC_PROPERTY_DETAILS_NO_OF_STUDENTS_LABEL")}`}</CardLabel>
+                  <TextInput
+                    style={{ background: "#FAFAFA" }}
+                    t={t}
+                    type={"text"}
+                    isMandatory={false}
+                    optionKey="i18nKey"
+                    name="noOfStudents"
+                    value={field?.noOfStudents}
+                    onChange={(e) => selectnoOfStudents(index, e)}
+                    disable={false}
+                    ValidationRequired={false}
+                    {...(validation = {
+                      isRequired: false,
+                      pattern: "^[0-9]*$",
+                      type: "text",
+                      title: t("PT_NAME_ERROR_MESSAGE"),
+                    })}
+                  />
+                    </React.Fragment>
+                  )}
                 </div>
-              </React.Fragment>
-            )} */}
-      </div>
-    </FormStep>
+              </div>
+            );
+          })}
+          {fields?.[0]?.noOfBuildings?.code==="MULTIPLE" && (
+            <div className="astericColor"  style={{ display: "flex", paddingBottom: "15px", color: "#FF8C00" }}>
+            <button type="button" style={{ paddingTop: "10px" }} onClick={() => handleAdd()}>
+              {`${t("FNOC_ADD_BUTTON")}`}
+            </button>
+          </div>
+          )}
+          
+        </FormStep>
+      
     </React.Fragment>
   );
 };

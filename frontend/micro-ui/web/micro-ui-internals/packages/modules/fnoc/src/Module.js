@@ -5,16 +5,22 @@ import { useRouteMatch } from "react-router-dom";
 import CitizenApp from "./pages/citizen"
 import FNOCServiceDoc from "./pageComponents/FNOCServiceDoc";
 import FNOCCreate from "./pages/citizen/Create";
-// import FNOCPropertyDetails from "./pageComponents/FNOCPropertyDetails";
 import FNOCBuildingDetails from "./pageComponents/FNOCBuildingDetails";
-// import FNOCPropertyDetails from "./pageComponents/FNOCPropertyDetails";
+import FNOCCommonDetails from "./pageComponents/FNOCCommonDetails";
+import FNOCApplicationDetails from "./pageComponents/FNOCApplicationDetails";
+import FNOCDocuments from "./pageComponents/FNOCDocuments";
+import FNOCPropertyDetails from "./pageComponents/FNOCPropertyDetails";
+
 
 const componentsToRegister = {
     FNOCServiceDoc,
     Create:FNOCCreate,
     FNOCBuildingDetails,
-    // FNOCPropertyDetails,
-    PropertySearch
+    FNOCCommonDetails,
+    FNOCApplicationDetails,
+    PropertySearch,
+    FNOCDocuments,
+    FNOCPropertyDetails
    
   };
   
