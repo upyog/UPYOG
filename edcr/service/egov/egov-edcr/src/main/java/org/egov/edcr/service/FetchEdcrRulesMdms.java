@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.commons.mdms.BpaMdmsUtil;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.infra.microservice.models.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -116,7 +117,7 @@ public class FetchEdcrRulesMdms {
 
 	            if (ruleType.equals(paramsFeature)) { // Filter by feature
 	                for (Map<String, Object> ruleItem : ruleList) {
-	                    String ruleOccupancy = ruleItem.get("occupancy").toString().toLowerCase(); 
+	                    String ruleOccupancy = ruleItem.get(EdcrRulesMdmsConstants.OCCUPANCY).toString().toLowerCase(); 
 	                    if (ruleOccupancy.equals(paramsOccupancy)) { // Filter by occupancy
 	                        filteredRules.add(ruleItem);
 	                    }
@@ -127,8 +128,8 @@ public class FetchEdcrRulesMdms {
 	     // Step 2: Process the filtered rules
 	        for (Map<String, Object> ruleItem : filteredRules) {
 	            // Extract area and feature name from the rule
-	            BigDecimal ruleFromArea = ruleItem.containsKey("fromPlotArea") ? getBigDecimal(ruleItem.get("fromPlotArea")) : null;
-	            BigDecimal ruleToArea = ruleItem.containsKey("toPlotArea") ? getBigDecimal(ruleItem.get("toPlotArea")) : null;
+	            BigDecimal ruleFromArea = ruleItem.containsKey(EdcrRulesMdmsConstants.FROMPLOTAREA) ? getBigDecimal(ruleItem.get(EdcrRulesMdmsConstants.FROMPLOTAREA)) : null;
+	            BigDecimal ruleToArea = ruleItem.containsKey(EdcrRulesMdmsConstants.TOPLOTAREA) ? getBigDecimal(ruleItem.get(EdcrRulesMdmsConstants.TOPLOTAREA)) : null;
 	            String ruleFeatureName = ruleItem.containsKey("featureName") ? ruleItem.get("featureName").toString() : null;
 
 	            // Initialize flags for whether plotArea and featureName match
@@ -152,10 +153,10 @@ public class FetchEdcrRulesMdms {
 	                if (plotAreaMatches) {
 	                    Map<String, Object> value = new HashMap<>();
 	                    if (valueFromColumn.size() == 1) {
-	                        value.put("permissibleValue", ruleItem.get("permissible"));
-	                    } else if (valueFromColumn.size() > 1 && ruleItem.containsKey("min_value")) {
-	                        value.put("minValue", ruleItem.get("min_value"));
-	                        value.put("maxValue", ruleItem.get("max_value"));
+	                        value.put("permissibleValue", ruleItem.get(EdcrRulesMdmsConstants.PERMISSIBLE));
+	                    } else if (valueFromColumn.size() > 1 && ruleItem.containsKey(EdcrRulesMdmsConstants.MIN_VALUE)) {
+	                        value.put("minValue", ruleItem.get(EdcrRulesMdmsConstants.MIN_VALUE));
+	                        value.put("maxValue", ruleItem.get(EdcrRulesMdmsConstants.MAX_VALUE));
 	                    }
 	                    result.add(value);
 	                    break; // Exit after finding the first matching rule
@@ -166,10 +167,10 @@ public class FetchEdcrRulesMdms {
 	            else {
 	                Map<String, Object> value = new HashMap<>();
 	                if (valueFromColumn.size() == 1) {
-	                    value.put("permissibleValue", ruleItem.get("permissible"));
+	                    value.put("permissibleValue", ruleItem.get(EdcrRulesMdmsConstants.PERMISSIBLE));
 	                } else if (valueFromColumn.size() > 1  && ruleItem.containsKey("min_value")) {
-	                    value.put("minValue", ruleItem.get("min_value"));
-	                    value.put("maxValue", ruleItem.get("max_value"));
+	                    value.put("minValue", ruleItem.get(EdcrRulesMdmsConstants.MIN_VALUE));
+	                    value.put("maxValue", ruleItem.get(EdcrRulesMdmsConstants.MAX_VALUE));
 	                }else if (valueFromColumn.size() > 1 && ruleItem.containsKey("minDoorWidth")) {
 	                    value.put("minDoorWidth", ruleItem.get("minDoorWidth"));
 	                    value.put("minDoorHeight", ruleItem.get("minDoorHeight"));
@@ -181,7 +182,7 @@ public class FetchEdcrRulesMdms {
 	                }
 	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("percent")) {
 	                    value.put("percent", ruleItem.get("percent"));
-	                    value.put("permissibleValue", ruleItem.get("permissible"));
+	                    value.put("permissibleValue", ruleItem.get(EdcrRulesMdmsConstants.PERMISSIBLE));
 	                   
 	                }
 	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("kitchenHeight")) {
