@@ -19,6 +19,7 @@ import AcknowledgementCF from "../../components/AcknowledgementCF";
 import CitizenFeedback from "../../components/CitizenFeedback";
 import Search from "./SearchApp";
 import QRCode from "./QRCode";
+import AssetsQRCode from "./AssetsQRCode";
 import ChallanQRCode from "./ChallanQRCode";
 const sidebarHiddenFor = [
   "digit-ui/citizen/register/name",
@@ -214,7 +215,10 @@ const Home = ({
             <Search/>
           </Route>
           <Route path={`${path}/payment/verification`}>
-         <QRCode></QRCode>
+            <QRCode></QRCode>
+          </Route>
+          <Route path={`${path}/assets/services`}>
+            <AssetsQRCode></AssetsQRCode>
           </Route>
           <Route path={`${path}/challan/details`}>
          <ChallanQRCode></ChallanQRCode>

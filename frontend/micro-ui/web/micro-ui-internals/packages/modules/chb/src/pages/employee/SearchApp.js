@@ -13,21 +13,21 @@ const SearchApp = ({path}) => {
     const [showToast, setShowToast] = useState(null);
 
     function onSubmit (_data) {
-        var fromDate = new Date(_data?.fromDate)
-        fromDate?.setSeconds(fromDate?.getSeconds() - 19800 )
-        var toDate = new Date(_data?.toDate)
-        toDate?.setSeconds(toDate?.getSeconds() + 86399 - 19800)
+        var fromDate=_data?.fromDate
+        var toDate=_data?.toDate
+        // var fromDate = new Date(_data?.fromDate)
+        // fromDate?.setSeconds(fromDate?.getSeconds() - 19800 )
+        // var toDate = new Date(_data?.toDate)
+        // toDate?.setSeconds(toDate?.getSeconds() + 86399 - 19800)
         const data = {
             ..._data,
-            ...(_data.toDate ? {toDate: toDate?.getTime()} : {}),
-            ...(_data.fromDate ? {fromDate: fromDate?.getTime()} : {})
+            ...(_data.toDate ? {toDate:toDate} : {}),
+            ...(_data.fromDate ? {fromDate:fromDate} : {})
         }
 
         let payload = Object.keys(data).filter( k => data[k] ).reduce( (acc, key) => ({...acc,  [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {} );
-        if(Object.entries(payload).length>0 && !payload.applicationNumber && !payload.creationReason && !payload.fromDate && !payload.mobileNumber && !payload.applicationNumber && !payload.status && !payload.toDate)
-        setShowToast({ warning: true, label: "ERR_CHB_FILL_VALID_FIELDS" });
-        else if(Object.entries(payload).length>0 && (payload.creationReason || payload.status ) && (!payload.applicationNumber && !payload.fromDate && !payload.mobileNumber && !payload.applicationNumber && !payload.toDate))
-        setShowToast({ warning: true, label: "ERR_PROVIDE_MORE_PARAM_WITH_TYPE_STATUS" });
+        if(Object.entries(payload).length>0 && (!payload.bookingNo && !payload.fromDate && !payload.status && !payload.communityHallCode && !payload.toDate && !payload.mobileNumber))
+        setShowToast({ warning: true, label: "ERR_PROVIDE_ONE_PARAMETERS" });
         else if(Object.entries(payload).length>0 && (payload.fromDate && !payload.toDate) || (!payload.fromDate && payload.toDate))
         setShowToast({ warning: true, label: "ERR_PROVIDE_BOTH_FORM_TO_DATE" });
         else
