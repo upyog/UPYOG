@@ -307,6 +307,8 @@ public class CalculatorUtils {
                     .append(SEPARATER)
                     .append(CONSUMER_CODE_SEARCH_FIELD_NAME).append(StringUtils.join(getBillCriteria.getConsumerCodes(), ","))
                     .append(SEPARATER)
+		    .append(paymentcompleted)
+                    .append(SEPARATER)
                     .append(DEMAND_STATUS_PARAM).append(DEMAND_STATUS_ACTIVE);
 
         }
