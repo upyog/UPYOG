@@ -56,7 +56,7 @@ public class AssessmentNotificationService {
 
     public void process(String topicName, AssessmentRequest assessmentRequest){
     	
-    	String state = getStateFromWf(assessmentRequest.getAssessment().getWorkflow(), true);
+    	String state = getStateFromWf(assessmentRequest.getAssessment().getWorkflow(), config.getIsAssessmentWorkflowEnabled());
         RequestInfo requestInfo = assessmentRequest.getRequestInfo();
         Assessment assessment = assessmentRequest.getAssessment();
         String tenantId = assessment.getTenantId();
