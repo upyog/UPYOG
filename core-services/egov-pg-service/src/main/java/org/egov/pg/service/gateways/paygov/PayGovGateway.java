@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
@@ -13,11 +14,13 @@ import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.pg.config.AppProperties;
 import org.egov.pg.constants.PgConstants;
 import org.egov.pg.models.PgDetail;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.repository.PgDetailRepository;
 import org.egov.pg.service.Gateway;
+import org.egov.pg.utils.CommonUtils;
 import org.egov.pg.utils.Utils;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +52,12 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class PayGovGateway implements Gateway {
+	
+	@Autowired
+	CommonUtils pgutils;
+	
+	@Autowired
+	AppProperties configs;
 
     private static final String UNABLE_TO_FETCH_STATUS_FROM_PAY_GOV_GATEWAY = "Unable to fetch status from PayGov gateway";
     private static final String UNABLE_TO_FETCH_STATUS = "UNABLE_TO_FETCH_STATUS";
@@ -226,6 +235,13 @@ public class PayGovGateway implements Gateway {
 
     private String getModuleCode(Transaction transaction) {
         String moduleCode =transaction.getModule();
+        
+        List<String> masterNames = new ArrayList<>(
+				Arrays.asList("tenants"));
+        
+        Map<String, List<String>> codes = pgutils.getAttributeValues(configs.getStateLevelTenantId(), "tenant", masterNames,
+				"[?(@.city.districtTenantCode== '"+transaction.getTenantId()+"')].city.code", "$.MdmsRes.tenant", requestInfo);
+        
         if(!StringUtils.isEmpty(moduleCode)) {
             /*
              * if(transaction.getModule().length() < 6) { moduleCode= transaction.getModule() +
@@ -239,7 +255,8 @@ public class PayGovGateway implements Gateway {
             
             if (moduleCode.startsWith("PT"))
             {
-                moduleCode = "MMPTBTEST01";
+                //moduleCode = "MMPTBTEST01";
+            	moduleCode = "MNPTB";
             }
             else if (moduleCode.startsWith("SW"))
             {
@@ -270,7 +287,11 @@ public class PayGovGateway implements Gateway {
         {
             moduleCode = "MCS001";
         } 	
-	log.info("Module::::"+moduleCode);    
+	log.info("Module::::"+moduleCode);
+	
+	if(moduleCode.equalsIgnoreCase("MNPTB"))
+		moduleCode=moduleCode.concat(codes.get("tenants").get(0));
+		
         return moduleCode;
     }
 
