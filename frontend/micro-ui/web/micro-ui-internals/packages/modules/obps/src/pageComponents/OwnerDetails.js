@@ -36,9 +36,9 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     useEffect(() => {
         var flag=0;
         fields?.map((ob) => {
-            if(ob.isPrimaryOwner)
+            if(ob?.isPrimaryOwner)
             flag=1;
-            if (ob.name && ob.mobileNumber && ob.gender) {
+            if (ob?.name && ob?.mobileNumber && ob?.gender) {
                 setCanmovenext(false);
             }
             else {
@@ -558,7 +558,7 @@ useEffect(()=>{
                                                 isMandatory={false}
                                                 optionKey="i18nKey"
                                                 name="mobileNumber"
-                                                value={field.mobileNumber}
+                                                value={field?.mobileNumber}
                                                 onChange={(e) => setMobileNo(index, e)}
                                                 {...(validation = {
                                                     isRequired: true,
@@ -579,7 +579,7 @@ useEffect(()=>{
                                         isMandatory={false}
                                         optionKey="i18nKey"
                                         name="name"
-                                        value={field.name}
+                                        value={field?.name}
                                         onChange={(e) => setOwnerName(index, e)}
                                         {...(validation = {
                                             isRequired: true,
@@ -593,7 +593,7 @@ useEffect(()=>{
                                     <RadioOrSelect
                                     name="gender"
                                     options={genderList}
-                                    selectedOption={field.gender}
+                                    selectedOption={field?.gender}
                                     optionKey="i18nKey"
                                     onSelect={(e) => setGenderName(index, e)}
                                     t={t}
@@ -624,8 +624,8 @@ useEffect(()=>{
                                         <CheckBox
                                             label={t("BPA_IS_PRIMARY_OWNER_LABEL")}
                                             onChange={(e) => setPrimaryOwner(index, e)}
-                                            value={field.isPrimaryOwner}
-                                            checked={field.isPrimaryOwner}
+                                            value={field?.isPrimaryOwner}
+                                            checked={field?.isPrimaryOwner}
                                             style={{ paddingTop: "10px" }}
                                         />
                                     )}
