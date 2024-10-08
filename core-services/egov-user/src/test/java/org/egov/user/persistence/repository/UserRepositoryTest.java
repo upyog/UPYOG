@@ -92,14 +92,14 @@ public class UserRepositoryTest {
     @Test
     @Sql(scripts = {"/sql/clearUserRoles.sql", "/sql/clearUsers.sql", "/sql/createUsers.sql"})
     public void test_should_return_true_when_user_exists_with_given_user_name_and_tenant() {
-        boolean isPresent = userRepository.isUserPresent("bigcat399", "ap.public", UserType.EMPLOYEE);
+        boolean isPresent = userRepository.isUserPresent("bigcat399", "ap.public", UserType.EMPLOYEE,"name");
 
         assertTrue(isPresent);
     }
 
     @Test
     public void test_should_return_false_when_user_does_not_exist_with_given_user_name_and_tenant() {
-        boolean isPresent = userRepository.isUserPresent("userName", "ap.public", UserType.EMPLOYEE);
+        boolean isPresent = userRepository.isUserPresent("userName", "ap.public", UserType.EMPLOYEE,"name");
 
         assertFalse(isPresent);
     }

@@ -1,4 +1,4 @@
-import { CardLabel, CitizenInfoLabel, Dropdown, FormStep, LabelFieldPair, RadioButtons } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CitizenInfoLabel, Dropdown, FormStep, LabelFieldPair, RadioButtons, RadioOrSelect } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import Timeline from "../components/TLTimeline";
 
@@ -22,6 +22,26 @@ const PropertyFloorsDetails = ({ t, config, onSelect, formData, userType }) => {
       //i18nKey: "Ground +2",
       i18nKey: "PT_GROUND_PLUS_TWO_OPTION",
       code: 2,
+    },
+    {
+      //i18nKey: "Ground +2",
+      i18nKey: "PT_GROUND_PLUS_THREE_OPTION",
+      code: 3,
+    },
+    {
+      //i18nKey: "Ground +2",
+      i18nKey: "PT_GROUND_PLUS_FOUR_OPTION",
+      code: 4,
+    },
+    {
+      //i18nKey: "Ground +2",
+      i18nKey: "PT_GROUND_PLUS_FIVE_OPTION",
+      code: 5,
+    },
+    {
+      //i18nKey: "Ground +2",
+      i18nKey: "PT_GROUND_PLUS_SIX_OPTION",
+      code: 6,
     },
     /* {
       i18nKey: "NONE",
@@ -56,9 +76,17 @@ const PropertyFloorsDetails = ({ t, config, onSelect, formData, userType }) => {
     <React.Fragment>
           {window.location.href.includes("/citizen") ? <Timeline currentStep={1}/> : null}
       <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!FloorDetails} isMultipleAllow={true}>
-        <RadioButtons
+        {/* <RadioButtons
           t={t}
           optionsKey="i18nKey"
+          isMandatory={config.isMandatory}
+          options={menu}
+          selectedOption={FloorDetails}
+          onSelect={selectFloorDetails}
+        /> */}
+        <RadioOrSelect
+          t={t}
+          optionKey="i18nKey"
           isMandatory={config.isMandatory}
           options={menu}
           selectedOption={FloorDetails}

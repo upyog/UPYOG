@@ -1,5 +1,5 @@
 // import React from "react";
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
@@ -504,7 +504,7 @@ const EditProperty = ({ parentRoute }) => {
     if (typeof nextStep == "object" && nextStep != null && isMultiple == false) {
       if (
         nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")] &&
-        (nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")] == "map" ||
+        (nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")] == "pincode" ||
           nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")] == "un-occupied-area")
       ) {
         nextStep = `${nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")]}`;
@@ -536,7 +536,7 @@ const EditProperty = ({ parentRoute }) => {
     if (!isNaN(nextStep.split("/").pop())) {
       nextPage = `${match.path}/${nextStep}`;
     } else {
-      nextPage = isMultiple && nextStep !== "map" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
+      nextPage = isMultiple && nextStep !== "pincode" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
     }
 
     redirectWithHistory(nextPage);

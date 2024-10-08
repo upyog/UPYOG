@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CardHeader } from "@egovernments/digit-ui-react-components";
+import { CardHeader } from "@upyog/digit-ui-react-components";
 import { businessServiceList } from "../../../utils";
 import cloneDeep from "lodash/cloneDeep";
 
@@ -63,7 +63,7 @@ const Search = ({ path }) => {
   const { data, isLoading, isSuccess, error } = Digit.Hooks.noc.useNOCSearchApplication(tenantId,filters,{});
   return (
     <div>
-      <CardHeader styles={!isMobile ? {fontSize: "32px", fontWeight: "700"} : {fontSize: "32px", fontWeight: "700", paddingLeft: "10px"}}>{t("ACTION_TEST_SEARCH_NOC_APPLICATION")}</CardHeader>
+      <CardHeader styles={!isMobile ? {fontSize: "16px", fontWeight: "700"} : {fontSize: "16px", fontWeight: "700", paddingLeft: "10px"}}>{t("ACTION_TEST_SEARCH_NOC_APPLICATION")}</CardHeader>
       <Search
         t={t}
         tenantId={tenantId}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Loader, Modal, FormComposer, ButtonSelector, ActionBar,ApplyFilterBar  } from "@egovernments/digit-ui-react-components";
+import { Loader, Modal, FormComposer, ButtonSelector, ActionBar,ApplyFilterBar  } from "@upyog/digit-ui-react-components";
 import { configAcceptApplication } from "../config/Approve";
 import { configTermsAndConditions } from "../config/TermsAndConditions";
 
@@ -8,7 +8,7 @@ const Heading = (props) => {
 };
 
 const Close = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF" xmlns="http://www.w3.org/2000/svg">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="red" xmlns="http://www.w3.org/2000/svg">
     <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="#0B0C0C" />
   </svg>
 );

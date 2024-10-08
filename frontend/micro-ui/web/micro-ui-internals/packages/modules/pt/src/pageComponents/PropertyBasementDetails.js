@@ -1,4 +1,4 @@
-import { CitizenInfoLabel, FormStep, RadioButtons } from "@egovernments/digit-ui-react-components";
+import { CitizenInfoLabel, FormStep, RadioButtons, RadioOrSelect } from "@upyog/digit-ui-react-components";
 import React, { useState } from "react";
 import Timeline from "../components/TLTimeline";
 
@@ -21,6 +21,21 @@ const PropertyBasementsDetails = ({ t, config, onSelect, userType, formData }) =
       code: 2,
       i18nKey: "PT_TWO_BASEMENT_OPTION",
     },
+    {
+      //i18nKey: "2 Basement",
+      code: 3,
+      i18nKey: "PT_THREE_BASEMENT_OPTION",
+    },
+    {
+      //i18nKey: "2 Basement",
+      code: 4,
+      i18nKey: "PT_FOUR_BASEMENT_OPTION",
+    },
+    {
+      //i18nKey: "2 Basement",
+      code: 5,
+      i18nKey: "PT_FIVE_BASEMENT_OPTION",
+    },
   ];
 
   const onSkip = () => onSelect();
@@ -40,14 +55,22 @@ const PropertyBasementsDetails = ({ t, config, onSelect, userType, formData }) =
     <React.Fragment>
           {window.location.href.includes("/citizen") ? <Timeline currentStep={1}/> : null}
       <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!BasementDetails} isMultipleAllow={true}>
-        <RadioButtons
+      <RadioOrSelect
+        t={t}
+        optionKey="i18nKey"
+        isMandatory={config.isMandatory}
+        options={menu}
+        selectedOption={BasementDetails}
+        onSelect={setBasementDetails}
+      />
+        {/* <RadioButtons
           t={t}
           optionsKey="i18nKey"
           isMandatory={config.isMandatory}
           options={menu}
           selectedOption={BasementDetails}
           onSelect={setBasementDetails}
-        />
+        /> */}
       </FormStep>
       {<CitizenInfoLabel info={t("CS_FILE_APPLICATION_INFO_LABEL")} text={t("PT_BASEMENT_NUMBER_INFO_MSG", BasementDetails)} />}
     </React.Fragment>

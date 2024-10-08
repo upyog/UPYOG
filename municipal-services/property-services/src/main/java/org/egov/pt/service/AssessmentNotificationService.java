@@ -5,11 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Assessment;
+import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.collection.BillResponse;
+import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.event.Event;
 import org.egov.pt.models.event.EventRequest;
+import org.egov.pt.models.workflow.Action;
 import org.egov.pt.models.workflow.ProcessInstance;
 import org.egov.pt.util.NotificationUtil;
 import org.egov.pt.util.UnmaskingUtil;
@@ -22,6 +25,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.egov.pt.util.PTConstants.*;
 
@@ -51,7 +55,8 @@ public class AssessmentNotificationService {
     }
 
     public void process(String topicName, AssessmentRequest assessmentRequest){
-
+    	
+    	String state = getStateFromWf(assessmentRequest.getAssessment().getWorkflow(), config.getIsAssessmentWorkflowEnabled());
         RequestInfo requestInfo = assessmentRequest.getRequestInfo();
         Assessment assessment = assessmentRequest.getAssessment();
         String tenantId = assessment.getTenantId();
@@ -61,7 +66,7 @@ public class AssessmentNotificationService {
                                     .isSearchInternal(Boolean.TRUE)
                                     .build();
 
-
+        
         List<Property> properties = propertyService.searchProperty(criteria, requestInfo);
 
         if(CollectionUtils.isEmpty(properties))
@@ -69,9 +74,12 @@ public class AssessmentNotificationService {
 
         Property property = properties.get(0);
         unmaskingUtil.getOwnerDetailsUnmasked(property,requestInfo);
-
-        BillResponse billResponse = billingService.fetchBill(property, requestInfo);
-        BigDecimal dueAmount = billResponse.getBill().get(0).getTotalAmount();
+        System.out.println("assessment:"+assessment);
+        BillResponse billResponse=null;
+        billResponse = billingService.fetchBill(property, requestInfo,assessment);
+        BigDecimal dueAmount=BigDecimal.ZERO;
+        if(billResponse!=null &&!billResponse.getBill().isEmpty())
+        dueAmount = billResponse.getBill().get(0).getTotalAmount();
 
         List<String> configuredChannelNamesForAssessment =  util.fetchChannelList(new RequestInfo(), tenantId, PT_BUSINESSSERVICE, ACTION_FOR_ASSESSMENT);
 
@@ -117,6 +125,34 @@ public class AssessmentNotificationService {
             }
 
     }
+    
+private String getStateFromWf(ProcessInstance wf, Boolean isWorkflowEnabled) {
+		
+		String state;
+		if (isWorkflowEnabled) {
+
+			Boolean isPropertyActive = wf.getState().getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString());
+			Boolean isTerminateState = wf.getState().getIsTerminateState();
+			Set<String> actions = null != wf.getState().getActions()
+					? actions = wf.getState().getActions().stream().map(Action::getAction).collect(Collectors.toSet())
+					: Collections.emptySet();
+
+			if (isTerminateState && CollectionUtils.isEmpty(actions)) {
+
+				state = isPropertyActive ? WF_STATUS_APPROVED : WF_STATUS_REJECTED;
+			} else if (actions.contains(ACTION_PAY)) {
+
+				state = WF_STATUS_PAYMENT_PENDING;
+			} else {
+
+				state = wf.getState().getState();
+			}
+
+		} else {
+			state = WF_NO_WORKFLOW;
+		}
+		return state;
+	}
 
 
 
@@ -233,6 +269,7 @@ public class AssessmentNotificationService {
     private String customize(Assessment assessment, Property property, String msgCode, String localizationMessages){
 
         String messageTemplate = util.getMessageTemplate(msgCode, localizationMessages);
+        System.out.println("messageTemplate::"+messageTemplate);
 
         if(messageTemplate.contains(NOTIFICATION_ASSESSMENTNUMBER))
             messageTemplate = messageTemplate.replace(NOTIFICATION_ASSESSMENTNUMBER, assessment.getAssessmentNumber());
@@ -261,7 +298,16 @@ public class AssessmentNotificationService {
 
             messageTemplate = messageTemplate.replace(NOTIFICATION_PAYMENT_LINK,util.getShortenedUrl(finalPath));
         }
-
+        
+		/*
+		 * if(messageTemplate.contains(NOTIFICATION_OWNERNAME)) { String ownernames =
+		 * ""; for (OwnerInfo string : property.getOwners()) {
+		 * 
+		 * ownernames=ownernames.concat(string.getName())+","; }
+		 * messageTemplate=messageTemplate.replace(NOTIFICATION_OWNERNAME, ownernames);
+		 * }
+		 */
+        System.out.println("messageTemplate::"+messageTemplate);
         return messageTemplate;
     }
 

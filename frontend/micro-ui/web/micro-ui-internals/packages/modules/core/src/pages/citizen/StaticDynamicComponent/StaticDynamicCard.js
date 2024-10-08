@@ -13,7 +13,7 @@ import {
   ComplaintIcon,
   BPAHomeIcon,
   WSICon
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -127,7 +127,7 @@ const StaticDynamicCard = ({moduleCode}) => {
     }
     return mdmsConfigResult ? (
       <React.Fragment>
-        { mdmsConfigResult && mdmsConfigResult?.payViaWhatsApp ? 
+        {/* { mdmsConfigResult && mdmsConfigResult?.payViaWhatsApp ? 
           <Card style={{margin: "16px", padding: "16px", maxWidth: "unset"}}>
             <div className="pay-whatsapp-card" onClick={() => handleClickOnWhatsApp(mdmsConfigResult?.payViaWhatsApp)}>
               <div className="pay-whatsapp-text">{t("PAY_VIA_WHATSAPP")}</div>
@@ -135,7 +135,7 @@ const StaticDynamicCard = ({moduleCode}) => {
                 <WhatsappIconGreen />
               </div>
             </div>
-          </Card> : null }
+          </Card> : null } */}
           { mdmsConfigResult && mdmsConfigResult?.helpline ?
             <Card style={{margin: "16px", padding: "16px", maxWidth: "unset"}}>
           <div className="static-home-Card">
@@ -154,7 +154,7 @@ const StaticDynamicCard = ({moduleCode}) => {
           </div>
           </Card> : null
           }
-          { mdmsConfigResult && mdmsConfigResult?.serviceCenter ?
+          {/* { mdmsConfigResult && mdmsConfigResult?.serviceCenter ?
           <Card style={{margin: "16px", padding: "16px", maxWidth: "unset"}}>
           <div className="static-home-Card">
               <div className="static-home-Card-header">{t("CITIZEN_SERVICE_CENTER")}</div>
@@ -170,7 +170,7 @@ const StaticDynamicCard = ({moduleCode}) => {
           { mdmsConfigResult?.viewMapLocation ? <div className="link">
             <a href={mdmsConfigResult?.viewMapLocation}>{t("VIEW_ON_MAP")}</a>
           </div> : null}
-          </Card> : <div/> }
+          </Card> : <div/> } */}
       <Card style={{margin: "16px", padding: "16px", maxWidth: "unset"}}>
       { error || dynamicData == null || dynamicData?.dynamicDataOne === null ? (
         <div/>

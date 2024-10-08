@@ -1,5 +1,5 @@
 import React, { Fragment,useState } from 'react'
-import { Card, CardSectionHeader, Header, Loader, RadioButtons, Row, StatusTable, TextInput,ActionBar,SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Card, CardSectionHeader, Header, Loader, RadioButtons, Row, StatusTable, TextInput,ActionBar,SubmitBar } from "@upyog/digit-ui-react-components";
 import { Link, useLocation } from "react-router-dom"
 import { useTranslation } from "react-i18next";
 import { BillDetailsConfig } from './BillDetailsConfig';
@@ -74,7 +74,7 @@ const BillDetailsv1 = (props) => {
     return (
         <>
             <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-                <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("ABG_BILL_DETAILS_HEADER")}</Header>
+                <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "16px" }}>{t("ABG_BILL_DETAILS_HEADER")}</Header>
             </div>
             {fetchedBill && !isLoading ?<Card style={{ position: "relative" }} className={"employeeCard-override"}>
                 <>
@@ -128,14 +128,14 @@ const BillDetailsv1 = (props) => {
                     <React.Fragment key={index}>
                         <div >
                             {index === 0 && !detail.asSectionHeader ? (
-                                <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(detail.title)}</CardSubHeader>
+                                <CardSubHeader style={{ marginBottom: "16px", fontSize: "16px" }}>{t(detail.title)}</CardSubHeader>
                             ) : (
                                 <React.Fragment>
                                     <CardSectionHeader
                                         style={
                                             index == 0 && checkLocation
-                                                ? { marginBottom: "16px", fontSize: "24px" }
-                                                : { marginBottom: "16px", marginTop: "32px", fontSize: "24px" }
+                                                ? { marginBottom: "16px", fontSize: "16px" }
+                                                : { marginBottom: "16px", marginTop: "32px", fontSize: "16px" }
                                         }
                                     >
                                         {isNocLocation ? `${t(detail.title)}` : t(detail.title)}
@@ -170,7 +170,7 @@ const BillDetailsv1 = (props) => {
                                                         window.location.href.includes("tl") || window.location.href.includes("ws") || window.location.href.includes("bills") ? (
                                                             <div style={{ width: "200%" }}>
                                                                 <Link to={value?.to}>
-                                                                    <span className="link" style={{ color: "#a82227" }}>
+                                                                    <span className="link" style={{ color: "#0f4f9e" }}>
                                                                         {t(value?.title)}
                                                                     </span>
                                                                 </Link>
@@ -184,7 +184,7 @@ const BillDetailsv1 = (props) => {
                                                     text={
                                                         <div>
                                                             <Link to={value?.to}>
-                                                                <span className="link" style={{ color: "#a82227" }}>
+                                                                <span className="link" style={{ color: "#0f4f9e" }}>
                                                                     {value?.value}
                                                                 </span>
                                                             </Link>

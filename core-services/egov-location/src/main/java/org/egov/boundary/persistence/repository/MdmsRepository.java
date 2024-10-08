@@ -69,7 +69,7 @@ public class MdmsRepository {
 
 	@Autowired
 	public MdmsRepository(final RestTemplate restTemplate,
-			@Value("${egov.services.egov_mdms.hostname}") final String mdmsServiceHostname,
+			@Value("${egov.services.egov.mdms.hostname}") final String mdmsServiceHostname,
 			@Value("${egov.services.egov_mdms.searchpath}") final String mdmsBySearchCriteriaUrl,
 			@Value("${egov.service.egov.mdms.moduleName}") final String moduleName,
 			@Value("${egov.service.egov.mdms.masterName}") final String masterName) {
@@ -99,6 +99,7 @@ public class MdmsRepository {
 		request = MdmsRequest.builder()
 				.mdmsCriteria(MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId).build())
 				.requestInfo(requestInfo).build();
+		
 		try{
 		response = restTemplate.postForObject(mdmsBySearchCriteriaUrl, request, MdmsResponse.class);
 		}catch(Exception e){

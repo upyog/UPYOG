@@ -9,7 +9,7 @@ import {
   MobileNumber,
   CardSectionHeader,
   TextInput,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -771,7 +771,7 @@ const TLOwnerDetailsEmployee = ({ config, onSelect, userType, formData, setError
       ))}
       {formData?.ownershipCategory?.code === "INDIVIDUAL.MULTIPLEOWNERS" ? (
         <div>
-          <LinkButton label={t("TL_NEW_OWNER_DETAILS_ADD_OWN")} onClick={addNewOwner} style={{ color: "#a82227", width: "fit-content" }} />
+          <LinkButton label={t("TL_NEW_OWNER_DETAILS_ADD_OWN")} onClick={addNewOwner} style={{ color: "#0f4f9e", width: "fit-content" }} />
           <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-24px" }}>
             {t(formState.errors?.mulipleOwnerError?.message || "")}
           </CardLabelError>

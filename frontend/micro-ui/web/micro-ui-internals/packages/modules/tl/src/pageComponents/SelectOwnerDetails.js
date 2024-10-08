@@ -10,7 +10,7 @@ import {
   LinkButton,
   CardHeader,
   Loader,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 import Timeline from "../components/TLTimeline";
 
