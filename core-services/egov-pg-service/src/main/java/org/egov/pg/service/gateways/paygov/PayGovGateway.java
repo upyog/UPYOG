@@ -243,16 +243,7 @@ public class PayGovGateway implements Gateway {
 				"[?(@.city.districtTenantCode== '"+transaction.getTenantId()+"')].city.code", "$.MdmsRes.tenant", requestInfo);
         
         if(!StringUtils.isEmpty(moduleCode)) {
-            /*
-             * if(transaction.getModule().length() < 6) { moduleCode= transaction.getModule() +
-             * moduleCode.substring(transaction.getModule().length()-1); }else { moduleCode =transaction.getModule(); }
-             */
-            /*if (transaction.getModule().equals("BPAREG")) {
-                moduleCode = "BPA001";
-            } else {
-                moduleCode = transaction.getModule().concat("001").toUpperCase();
-            }*/
-            
+          
             if (moduleCode.startsWith("PT"))
             {
                 //moduleCode = "MMPTBTEST01";

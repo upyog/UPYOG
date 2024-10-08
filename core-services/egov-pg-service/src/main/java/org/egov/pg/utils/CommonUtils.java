@@ -15,11 +15,14 @@ import org.egov.pg.constants.PgConstants;
 import org.egov.pg.repository.ServiceCallRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.Getter;
 
 @Getter
+@Service
 public class CommonUtils {
 	
 	@Autowired
