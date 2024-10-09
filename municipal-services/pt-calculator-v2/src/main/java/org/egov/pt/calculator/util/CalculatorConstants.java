@@ -221,7 +221,7 @@ public class CalculatorConstants {
 	 */
 
 	public static final String CONSUMER_CODE_SEARCH_FIELD_NAME = "consumerCode=";
-
+	public static final String paymentcompleted = "isPaymentCompleted=false";
 	public static final String CONSUMER_CODE_SEARCH_FIELD_NAME_PAYMENT = "consumerCodes=";
 	public static final String BUSINESS_SERVICE_SEARCH_FIELD_NAME = "businessService=";
 
