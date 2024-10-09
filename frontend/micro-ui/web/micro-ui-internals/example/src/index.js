@@ -46,7 +46,7 @@ import "@nudmcdgnpm/upyog-css"
 
 // import { subFormRegistry } from "@nudmcdgnpm/digit-ui-libraries";
 import { CHBModule, CHBLinks, CHBComponents } from "@nudmcdgnpm/upyog-ui-module-chb";
-import { ADSModule, ADSLinks, ADSComponents } from "@nudmcdgnpm/upyog-ui-module-ads";
+import { ADSModule, ADSLinks, ADSComponents } from "@nudmcdgnpm/upyog-ui-module-ads"; // Importing the advertisement module and its components
 
 import { pgrCustomizations, pgrComponents } from "./pgr";
 
@@ -82,7 +82,7 @@ const enabledModules = [
   "CHB",
   "COMMONMODULE",
   "FNOC",
-  "ADS",
+  "ADS",  //Enable Advertisement Module
 ];
 
 const initTokens = (stateCode) => {

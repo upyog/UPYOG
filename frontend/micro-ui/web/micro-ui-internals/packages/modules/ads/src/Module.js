@@ -11,13 +11,14 @@ const componentsToRegister = {
  
 };
 
+// Function to add components to the registry
 const addComponentsToRegistry = () => {
   Object.entries(componentsToRegister).forEach(([key, value]) => {
     Digit.ComponentRegistryService.setComponent(key, value);
   });
 };
 
-
+// Main ADSModule component
 export const ADSModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
 
@@ -29,6 +30,7 @@ export const ADSModule = ({ stateCode, userType, tenants }) => {
 
   Digit.SessionStorage.set("ADS_TENANTS", tenants);
 
+  // Fetch localization data if the user is an employee
   useEffect(
     () =>
       userType === "employee" &&
@@ -40,14 +42,16 @@ export const ADSModule = ({ stateCode, userType, tenants }) => {
     []
   );
 
+  // Render different apps based on user type
   if (userType === "employee") {
     return <EmployeeApp path={path} url={url} userType={userType} />;
   } else return <CitizenApp />;
 };
 
+// ADSLinks component for rendering links in the UI
 export const ADSLinks = ({ matchPath, userType }) => {
   const { t } = useTranslation();
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("CHB", {});
+  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("ADS", {});
 
   useEffect(() => {
     clearParams();
