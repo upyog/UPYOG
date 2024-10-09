@@ -640,7 +640,7 @@ const OwnerForm = (_props) => {
           ) : null}
           <div>
           <LabelFieldPair>
-            <CardLabel className="card-label-smaller">{t("PT_OWNERSHIP_INFO_EMAIL_ID67")}</CardLabel>
+            <CardLabel className="card-label-smaller">{t("PT_OWNERSHIP_INFO_EMAIL_ID")}</CardLabel>
             <div className="field">
               <Controller
                 control={control}
