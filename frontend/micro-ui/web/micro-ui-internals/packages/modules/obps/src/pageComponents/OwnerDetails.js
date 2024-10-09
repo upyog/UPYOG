@@ -358,10 +358,14 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                    // ...data.propertyDetails,
                    Property.ownershipCategory= ownershipCategory.code,
                    Property.usageCategory= formData?.data?.occupancyType.toUpperCase();
-                   Property.owners= conversionOwners.map(owner=>({
+                   Property.owners= conversionOwners.map((owner, index)=>({
                         ...owner,
                      ownerType:"NONE",
                       permanentaddress:"",
+                      additionalDetails:{
+                        ownerSequence: index,
+                        ownerName: owner.name
+                      }
                     })),
                     Property.landArea=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea.toFixed(2);
                     Property.noOfFloors=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalFloors;
