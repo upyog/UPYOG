@@ -14,7 +14,9 @@
     "packages/modules/cm",
     "packages/modules/chb",
     "packages/modules/fnoc",
-    "packages/modules/asset"
+    "packages/modules/asset",
+    "packages/modules/ads"
+
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
@@ -49,6 +51,7 @@
     "dev:hrms": "cd packages/modules/hrms && yarn start",
     "dev:obps": "cd packages/modules/obps && yarn start",
     "dev:chb": "cd packages/modules/chb && yarn start",
+    "dev:ads": "cd packages/modules/ads && yarn start",
     "dev:engagement": "cd packages/modules/engagement && yarn start",
     "dev:noc": "cd packages/modules/noc && yarn start",
     "dev:ws": "cd packages/modules/ws && yarn start",
@@ -78,6 +81,7 @@
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
     "buildD:noc": "cd packages/modules/noc && yarn build",
     "build:chb": "cd packages/modules/chb && yarn build",
+    "build:ads": "cd packages/modules/ads && yarn build",
     "buildD:ws": "cd packages/modules/ws && yarn build",
     "buildD:bills": "cd packages/modules/bills && yarn build",
     "buildR:reports": "cd packages/modules/reports && yarn build",

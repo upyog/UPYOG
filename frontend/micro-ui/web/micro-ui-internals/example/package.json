@@ -28,6 +28,7 @@
     "@nudmcdgnpm/digit-ui-module-commonpt":"1.2.1",
     "@nudmcdgnpm/upyog-ui-module-ew": "1.2.0",
     "@nudmcdgnpm/upyog-ui-module-chb": "1.2.0",
+    "@nudmcdgnpm/upyog-ui-module-ads": "1.2.0",
     "@nudmcdgnpm/upyog-ui-module-cm": "1.2.0",
     "@nudmcdgnpm/upyog-ui-module-fnoc": "1.2.0",
     "http-proxy-middleware": "^1.0.5",
