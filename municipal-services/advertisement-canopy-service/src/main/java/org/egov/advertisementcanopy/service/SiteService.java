@@ -170,6 +170,9 @@ public class SiteService {
 				enrichUpdatedSite(updateSiteRequest);
 				State state = workflowService.createWorkflowStatusForUpdate(updateSiteRequest);
 				updateSiteRequest.getSiteUpdationData().setWorkFlowStatus(state.getApplicationStatus());
+				if(StringUtils.equalsIgnoreCase(state.getApplicationStatus(), AdvtConstants.STATUS_APPROVED)) {
+					updateSiteRequest.getSiteUpdationData().setActive(true);
+				}
 				updateExistingSiteData(updateSiteRequest, list1);
 				updateSiteData(updateSiteRequest);
 			} else {
@@ -255,7 +258,7 @@ public class SiteService {
 			if (null != searchSiteRequest.getRequestInfo()
 					&& searchSiteRequest.getRequestInfo().getUserInfo().getType().equalsIgnoreCase("CITIZEN")) {
 				searchSiteRequest.getSiteSearchData().setStatus("Available");
-				searchSiteRequest.getSiteSearchData().setWorkflowStatus(Collections.singletonList("Approved"));
+				searchSiteRequest.getSiteSearchData().setWorkflowStatus(Collections.singletonList("APPROVED"));
 				searchSiteRequest.getSiteSearchData().setActive(true);
 				siteSearchData = siteRepository.searchSites(searchSiteRequest);
 			} else if (null != searchSiteRequest.getRequestInfo()
