@@ -148,7 +148,7 @@ const initDigitUI = () => {
     ...FNOCComponents,
     ADSLinks,
     ADSModule,
-    ...ADSComponents,
+    ...ADSComponents, //Initialization of advertisement module
   });
 
   initFSMComponents();

@@ -9,7 +9,7 @@ const hideBackButtonConfig = [];
 const App = () => {
   const { path, url, ...match } = useRouteMatch();
   const { t } = useTranslation();
- 
+//  to show back button on top left of the page in order to go back to previous page
   return (
     <span className={"ads-citizen"}style={{width:"100%"}}>
       <Switch>
