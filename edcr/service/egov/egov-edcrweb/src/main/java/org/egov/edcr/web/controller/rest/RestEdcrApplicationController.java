@@ -72,6 +72,7 @@ import org.egov.edcr.contract.PlanResponse;
 import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.service.EdcrRestService;
 import org.egov.edcr.service.EdcrValidator;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.service.OcComparisonService;
 import org.egov.edcr.service.PlanService;
 import org.egov.infra.microservice.contract.RequestInfoWrapper;
@@ -117,6 +118,9 @@ public class RestEdcrApplicationController {
 
     @Autowired
     private EdcrRestService edcrRestService;
+    
+    @Autowired
+    private FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
     @Autowired
     private PlanService planService;
@@ -528,4 +532,6 @@ public class RestEdcrApplicationController {
         }
         return true;
     }
+    
+ 
 }
