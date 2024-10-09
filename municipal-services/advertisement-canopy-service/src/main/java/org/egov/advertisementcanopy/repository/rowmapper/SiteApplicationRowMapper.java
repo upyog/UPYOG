@@ -72,6 +72,7 @@ public class SiteApplicationRowMapper implements ResultSetExtractor<List<SiteCre
 						    .applicationEndDate(rs.getLong("application_end_date"))
 						    .bookingPeriodStartDate(rs.getLong("booking_start_date"))
 						    .bookingPeriodEndDate(rs.getLong("booking_end_date"))
+						    .workFlowStatus(rs.getString("workflow_status"))
 						    .build();
 					
 					

@@ -55,7 +55,7 @@ public class WorkflowService {
 		
 	}
 	
-	public void createWorkflowStatus(SiteCreationRequest siteCreationRequest ) {
+	public State createWorkflowStatus(SiteCreationRequest siteCreationRequest ) {
 		List<ProcessInstance> processInstances = new ArrayList<>();
 		
 			ProcessInstance processInstance = getProcessInstanceForSite(siteCreationRequest.getCreationData(),
@@ -64,10 +64,10 @@ public class WorkflowService {
 		ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(siteCreationRequest.getRequestInfo(),
 				processInstances);
 		//workflowRequest.setProcessInstances(Collections.singletonList(processInstance));
-		callWorkFlow(workflowRequest);
-		
+		State state = callWorkFlow(workflowRequest);
+		return state;
 	}
-	public void createWorkflowStatusForUpdate(SiteUpdateRequest siteCreationRequest ) {
+	public State createWorkflowStatusForUpdate(SiteUpdateRequest siteCreationRequest ) {
 		List<ProcessInstance> processInstances = new ArrayList<>();
 		
 			ProcessInstance processInstance = getProcessInstanceForSite(siteCreationRequest.getSiteUpdationData(),
@@ -76,8 +76,8 @@ public class WorkflowService {
 		ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(siteCreationRequest.getRequestInfo(),
 				processInstances);
 		//workflowRequest.setProcessInstances(Collections.singletonList(processInstance));
-		callWorkFlow(workflowRequest);
-		
+		State state = callWorkFlow(workflowRequest);
+		return state;
 	}
 
 	private ProcessInstance getProcessInstanceForAdvt(SiteBooking siteBooking, RequestInfo requestInfo) {
@@ -86,9 +86,9 @@ public class WorkflowService {
 			ProcessInstance processInstance = new ProcessInstance();
 			processInstance.setBusinessId(siteBooking.getApplicationNo());
 			processInstance.setAction(siteBooking.getWorkflowAction());
-			processInstance.setModuleName("ADVT");
+			processInstance.setModuleName(AdvtConstants.WORKFLOW_SITE_BOOKING_MODULE);
 			processInstance.setTenantId(siteBooking.getTenantId());
-			processInstance.setBusinessService("ADVT");
+			processInstance.setBusinessService(AdvtConstants.BUSINESS_SERVICE_SITE_BOOKING);
 			processInstance.setComment(siteBooking.getComments());
 //			processInstance.setAssignes(Collections.singletonList(User.builder().uuid(requestInfo.getUserInfo().getUuid()).build()));
 
@@ -104,9 +104,9 @@ public class WorkflowService {
 			ProcessInstance processInstance = new ProcessInstance();
 			processInstance.setBusinessId(siteCreationData.getSiteID());
 			processInstance.setAction(siteCreationData.getWorkflowAction());
-			processInstance.setModuleName("SITE");
-			processInstance.setTenantId(siteCreationData.getTenantId());
-			processInstance.setBusinessService("SITE");
+			processInstance.setModuleName(AdvtConstants.WORKFLOW_SITE_CREATION_MODULE);
+			processInstance.setTenantId(AdvtConstants.STATE_LEVEL_TEENENT_ID);
+			processInstance.setBusinessService(AdvtConstants.WORKFLOW_SITE_CREATION_BUSINESSSERVICE);
 			processInstance.setComment(siteCreationData.getComments());
 //			processInstance.setAssignes(Collections.singletonList(User.builder().uuid(requestInfo.getUserInfo().getUuid()).build()));
 

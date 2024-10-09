@@ -39,6 +39,11 @@ public class AdvtConstants {
     @Value("${egov.demand.update.endpoint}")
     public String demandUpdateEndpoint;
 
+    public static final String STATE_LEVEL_TEENENT_ID = "hp";
+    
+    public static final String WORKFLOW_SITE_CREATION_MODULE = "SITE";
+    public static final String WORKFLOW_SITE_CREATION_BUSINESSSERVICE = "SITE";
+    
 	public static final String ADVERTISEMENT_HOARDING = "Advertising Hoarding";
 	public static final String CANOPY = "Canopy";
 	
@@ -73,6 +78,8 @@ public class AdvtConstants {
 	public static final String STATUS_PENDINGFORAPPROVAL = "PENDINGFORAPPROVAL";
 
 	public static final String STATUS_APPROVED = "APPROVED";
+
+    public static final String WORKFLOW_SITE_BOOKING_MODULE = "ADVT";
 
 	public static final String BUSINESS_SERVICE_SITE_BOOKING = "ADVT";
 

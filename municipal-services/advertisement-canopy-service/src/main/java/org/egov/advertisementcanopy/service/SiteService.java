@@ -15,9 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.advertisementcanopy.contract.workflow.BusinessServiceResponse;
 import org.egov.advertisementcanopy.contract.workflow.State;
 import org.egov.advertisementcanopy.model.AuditDetails;
-import org.egov.advertisementcanopy.model.SiteBooking;
-import org.egov.advertisementcanopy.model.SiteBookingDetail;
-import org.egov.advertisementcanopy.model.SiteBookingSearchCriteria;
 import org.egov.advertisementcanopy.model.SiteCountData;
 import org.egov.advertisementcanopy.model.SiteCountRequest;
 import org.egov.advertisementcanopy.model.SiteCountResponse;
@@ -35,13 +32,14 @@ import org.egov.advertisementcanopy.model.SiteUpdationResponse;
 import org.egov.advertisementcanopy.producer.Producer;
 import org.egov.advertisementcanopy.repository.SiteRepository;
 import org.egov.advertisementcanopy.util.AdvtConstants;
-import org.egov.advertisementcanopy.util.PTRConstants;
+import org.egov.advertisementcanopy.util.SiteConstants;
 import org.egov.advertisementcanopy.util.ResponseInfoFactory;
 import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -89,9 +87,11 @@ public class SiteService {
 			}
 			// enrich Site
 			enrichSiteWhileCreation(createSiteRequest);
+			State state = workflowService.createWorkflowStatus(createSiteRequest);
+			createSiteRequest.getCreationData().setWorkFlowStatus(state.getApplicationStatus());
 			// Create Sites
 			createSiteObjects(createSiteRequest);
-			workflowService.createWorkflowStatus(createSiteRequest);
+						
 			siteCreationResponse = SiteCreationResponse.builder()
 					.responseInfo(responseInfoFactory
 							.createResponseInfoFromRequestInfo(createSiteRequest.getRequestInfo(), false))
@@ -160,18 +160,21 @@ public class SiteService {
 	public SiteUpdationResponse update(SiteUpdateRequest updateSiteRequest) {
 		SiteUpdationResponse siteupdationResponse = null;
 		List<SiteCreationData> list = new ArrayList<>();
+		List<SiteCreationData> list1 = new ArrayList<>();
 		try {
 			if (null != updateSiteRequest.getSiteUpdationData()) {
 				list = siteRepository.searchSites(updateSiteRequest.getSiteUpdationData());
+				list1 = objectMapper.convertValue(list, new TypeReference<List<SiteCreationData>>() {});
 			}
-			if (!CollectionUtils.isEmpty(list)) {
+			if (!CollectionUtils.isEmpty(list1)) {
 				enrichUpdatedSite(updateSiteRequest);
-				updateExistingSiteData(updateSiteRequest, list);
+				State state = workflowService.createWorkflowStatusForUpdate(updateSiteRequest);
+				updateSiteRequest.getSiteUpdationData().setWorkFlowStatus(state.getApplicationStatus());
+				updateExistingSiteData(updateSiteRequest, list1);
 				updateSiteData(updateSiteRequest);
 			} else {
 				throw new RuntimeException("No Site exists with the Details Provided!!!");
 			}
-			workflowService.createWorkflowStatusForUpdate(updateSiteRequest);
 			siteupdationResponse = SiteUpdationResponse.builder()
 					.responseInfo(responseInfoFactory
 							.createResponseInfoFromRequestInfo(updateSiteRequest.getRequestInfo(), false))
@@ -180,11 +183,11 @@ public class SiteService {
 				siteupdationResponse.setResponseInfo(responseInfoFactory
 						.createResponseInfoFromRequestInfo(updateSiteRequest.getRequestInfo(), true));
 			}
-
+ 
 		} catch (Exception e) {
 			throw new RuntimeException("Details provided for Site Updation are invalid!!!");
 		}
-
+ 
 		return siteupdationResponse;
 	}
 
@@ -259,7 +262,9 @@ public class SiteService {
 					&& searchSiteRequest.getRequestInfo().getUserInfo().getType().equalsIgnoreCase("EMPLOYEE")) {
 
 				List<String> wfStatus = getAccountStatusListByRoles(
-						searchSiteRequest.getRequestInfo().getUserInfo().getRoles().get(0).getTenantId(),
+						searchSiteRequest.getRequestInfo().getUserInfo().getRoles().stream()
+						.filter(r -> StringUtils.equalsAnyIgnoreCase(r.getCode(), "SITE_CREATOR", "SITE_APPROVER"))
+						.findFirst().get().getTenantId(),
 						searchSiteRequest.getRequestInfo().getUserInfo().getRoles());
 				searchSiteRequest.getSiteSearchData().setWorkflowStatus(wfStatus);
 				siteSearchData = siteRepository.searchSites(searchSiteRequest);
@@ -294,25 +299,25 @@ public class SiteService {
 				siteSearchResponse
 						.setInitiate((int) siteSearchResponse.getSiteCreationData().stream()
 								.filter(license -> StringUtils.equalsIgnoreCase(
-										PTRConstants.APPLICATION_STATUS_INITIATED, license.getWorkFlowStatus()))
+										SiteConstants.APPLICATION_STATUS_INITIATED, license.getWorkFlowStatus()))
 								.count());
 				siteSearchResponse.setPendingForModification((int) siteSearchResponse.getSiteCreationData().stream()
 						.filter(license -> StringUtils.equalsIgnoreCase(
-								PTRConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION, license.getWorkFlowStatus()))
+								SiteConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION, license.getWorkFlowStatus()))
 						.count());
 				siteSearchResponse
 						.setReject((int) siteSearchResponse.getSiteCreationData().stream()
 								.filter(license -> StringUtils.equalsIgnoreCase(
-										PTRConstants.APPLICATION_STATUS_REJECTED, license.getWorkFlowStatus()))
+										SiteConstants.APPLICATION_STATUS_REJECTED, license.getWorkFlowStatus()))
 								.count());
 				siteSearchResponse
 						.setApprove((int) siteSearchResponse.getSiteCreationData().stream()
 								.filter(license -> StringUtils.equalsIgnoreCase(
-										PTRConstants.APPLICATION_STATUS_APPROVED, license.getWorkFlowStatus()))
+										SiteConstants.APPLICATION_STATUS_APPROVED, license.getWorkFlowStatus()))
 								.count());
 				siteSearchResponse.setReturnToInitiator((int) siteSearchResponse.getSiteCreationData().stream()
 						.filter(license -> StringUtils.equalsIgnoreCase(
-								PTRConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION, license.getWorkFlowStatus()))
+								SiteConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION, license.getWorkFlowStatus()))
 						.count());
 			}
 
@@ -327,17 +332,19 @@ public class SiteService {
 		Set<String> statusWithRoles = new HashSet();
 		rolesWithinTenant.stream().forEach(role -> {
 
-			if (StringUtils.equalsIgnoreCase(role, PTRConstants.USER_ROLE_SITE_REVIEWER)) {
-				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION);
-				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_INITIATED);
-				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORVERIFICATION);
-				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_APPROVED);
-				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_REJECTED);
-				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORAPPROVAL);
-			} else if (StringUtils.equalsIgnoreCase(role, PTRConstants.USER_ROLE_SITE_APPROVER)) {
-				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_APPROVED);
-				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_REJECTED);
-				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORAPPROVAL);
+			if (StringUtils.equalsIgnoreCase(role, SiteConstants.USER_ROLE_SITE_CREATOR)) {
+				statusWithRoles.add(SiteConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION);
+				statusWithRoles.add(SiteConstants.APPLICATION_STATUS_INITIATED);
+				statusWithRoles.add(SiteConstants.APPLICATION_STATUS_PENDINGFORVERIFICATION);
+				statusWithRoles.add(SiteConstants.APPLICATION_STATUS_APPROVED);
+				statusWithRoles.add(SiteConstants.APPLICATION_STATUS_REJECTED);
+				statusWithRoles.add(SiteConstants.APPLICATION_STATUS_PENDINGFORAPPROVAL);
+			}
+			
+			if (StringUtils.equalsIgnoreCase(role, SiteConstants.USER_ROLE_SITE_APPROVER)) {
+				statusWithRoles.add(SiteConstants.APPLICATION_STATUS_APPROVED);
+				statusWithRoles.add(SiteConstants.APPLICATION_STATUS_REJECTED);
+				statusWithRoles.add(SiteConstants.APPLICATION_STATUS_PENDINGFORAPPROVAL);
 			}
 
 		});
