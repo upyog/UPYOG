@@ -67,7 +67,7 @@ public class WorkflowService {
 		State state = callWorkFlow(workflowRequest);
 		return state;
 	}
-	public void createWorkflowStatusForUpdate(SiteUpdateRequest siteCreationRequest ) {
+	public State createWorkflowStatusForUpdate(SiteUpdateRequest siteCreationRequest ) {
 		List<ProcessInstance> processInstances = new ArrayList<>();
 		
 			ProcessInstance processInstance = getProcessInstanceForSite(siteCreationRequest.getSiteUpdationData(),
@@ -76,8 +76,8 @@ public class WorkflowService {
 		ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(siteCreationRequest.getRequestInfo(),
 				processInstances);
 		//workflowRequest.setProcessInstances(Collections.singletonList(processInstance));
-		callWorkFlow(workflowRequest);
-		
+		State state = callWorkFlow(workflowRequest);
+		return state;
 	}
 
 	private ProcessInstance getProcessInstanceForAdvt(SiteBooking siteBooking, RequestInfo requestInfo) {

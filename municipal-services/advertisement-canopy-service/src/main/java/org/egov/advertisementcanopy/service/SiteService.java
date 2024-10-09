@@ -168,12 +168,13 @@ public class SiteService {
 			}
 			if (!CollectionUtils.isEmpty(list1)) {
 				enrichUpdatedSite(updateSiteRequest);
+				State state = workflowService.createWorkflowStatusForUpdate(updateSiteRequest);
+				updateSiteRequest.getSiteUpdationData().setWorkFlowStatus(state.getApplicationStatus());
 				updateExistingSiteData(updateSiteRequest, list1);
 				updateSiteData(updateSiteRequest);
 			} else {
 				throw new RuntimeException("No Site exists with the Details Provided!!!");
 			}
-			workflowService.createWorkflowStatusForUpdate(updateSiteRequest);
 			siteupdationResponse = SiteUpdationResponse.builder()
 					.responseInfo(responseInfoFactory
 							.createResponseInfoFromRequestInfo(updateSiteRequest.getRequestInfo(), false))
