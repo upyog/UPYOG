@@ -603,7 +603,7 @@ public class SiteBookingService {
 		
 			final String status; // = StringUtils.EMPTY;
 			if(StringUtils.equalsIgnoreCase(siteBookingActionRequest.getBusinessService(), AdvtConstants.BUSINESS_SERVICE_SITE_CREATION)) {
-				status = mapSites.get(applicationNumber).getStatus();
+				status = mapSites.get(applicationNumber).getWorkFlowStatus();
 			}else if(StringUtils.equalsIgnoreCase(siteBookingActionRequest.getBusinessService(), AdvtConstants.BUSINESS_SERVICE_SITE_BOOKING)) {
 				status = mapBookings.get(applicationNumber).getStatus();
 			}else {
