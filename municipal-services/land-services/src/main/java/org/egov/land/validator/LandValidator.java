@@ -25,7 +25,7 @@ public class LandValidator {
 		mdmsValidator.validateMdmsData(landRequest, mdmsData);
 		validateApplicationDocuments(landRequest, null);
 //		validateUser(landRequest);
-		validateDuplicateUser(landRequest);
+		//validateDuplicateUser(landRequest);
 	}
 	
 	
