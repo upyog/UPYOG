@@ -116,6 +116,9 @@ var fontDescriptors = {
   BalooPaaji:{
     normal: "src/fonts/BalooPaaji2-Regular.ttf",
     bold: "src/fonts/BalooPaaji2-Bold.ttf"
+  },
+  AnmolUni:{
+    normal: "src/fonts/AnmolUni.ttf"
   }
 };
 
@@ -123,7 +126,8 @@ var defaultFontMapping = {
   en_IN: 'default',
   hi_IN: 'default',
   pn_IN: 'BalooPaaji',
-  od_IN: 'BalooBhaina'
+  od_IN: 'BalooBhaina',
+  pn_IN: 'AnmolUni'
 }
 
 const printer = new pdfMakePrinter(fontDescriptors);
