@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -170,6 +171,7 @@ public class SiteBookingService {
 				.requestInfo(siteBookingRequest.getRequestInfo())
 				.siteSearchData(SiteSearchData.builder()
 								.uuids(siteUuids)
+								.isActive(true)
 								.build())
 				.build();
 		List<SiteCreationData> siteSearchDatas = siteRepository.searchSites(searchSiteRequest);
@@ -594,7 +596,7 @@ public class SiteBookingService {
 		}
 		
 		
-		List<String> rolesWithinTenant = getRolesWithinTenant(applicationTenantId, siteBookingActionRequest.getRequestInfo().getUserInfo().getRoles());
+		List<String> rolesWithinTenant = getRolesWithinTenant(applicationTenantId, siteBookingActionRequest.getRequestInfo().getUserInfo().getRoles(), siteBookingActionRequest.getBusinessService());
 		
 		
 		for(int i=0; i<siteBookingActionRequest.getApplicationNumbers().size(); i++) {
@@ -643,10 +645,42 @@ public class SiteBookingService {
 	
 	}
 
-	private List<String> getRolesWithinTenant(String tenantId, List<Role> roles) {
-		List<String> roleCodes = roles.stream()
-				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(role -> role.getCode())
-				.collect(Collectors.toList());
+	private List<String> getRolesWithinTenant(String tenantId, List<Role> roles, String businessService) {
+
+		List<String> roleCodes = new ArrayList<>();
+		
+		if (StringUtils.equalsAnyIgnoreCase(businessService, AdvtConstants.BUSINESS_SERVICE_SITE_BOOKING)) {
+			
+			for (Role role : roles) {
+	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_CITIZEN)) {
+	                roleCodes.add("CITIZEN");
+	            }
+	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_SITE_WF_CREATOR)) {
+	                roleCodes.add("SITE_WF_CREATOR");
+	            }
+	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_SITE_WF_APPROVER)) {
+	                roleCodes.add("SITE_WF_APPROVER");
+	            }
+	        }
+			
+		}else if(StringUtils.equalsAnyIgnoreCase(businessService, AdvtConstants.BUSINESS_SERVICE_SITE_CREATION)){
+			
+			for (Role role : roles) {
+	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_CITIZEN)) {
+	                roleCodes.add("CITIZEN");
+	            }
+	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_SITE_WF_CREATOR)) {
+	                roleCodes.add("SITE_WF_CREATOR");
+	            }
+	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_SITE_WF_APPROVER)) {
+	                roleCodes.add("SITE_WF_APPROVER");
+	            }
+	        }
+			
+//			roleCodes = roles.stream().filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(role -> role.getCode())
+//					.collect(Collectors.toList());
+		}
+		
 		return roleCodes;
 	}
 
