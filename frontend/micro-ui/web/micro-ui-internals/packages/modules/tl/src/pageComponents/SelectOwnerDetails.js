@@ -344,7 +344,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     type={"text"}
                     isMandatory={false}
                     name="emailId"
-                    value={field.emailId}
+                    value={field?.emailId}
                     onChange={(e) => handleTextInputField(index, e, "emailId")}
                     ValidationRequired={true}
                     //disable={isUpdateProperty || isEditProperty}
@@ -516,7 +516,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                   t={t}
                   isMandatory={false}
                   name="emailId"
-                  value={field.emailId}
+                  value={field?.emailId}
                   onChange={(e) => handleTextInputField(index, e, "emailId")}
                   {...{ required: true, pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", title: t("CORE_COMMON_APPLICANT_EMAILI_ID_INVALID") }}
                 />
@@ -524,8 +524,8 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                   <CheckBox
                     label={t("TL_PRIMARY_OWNER_LABEL")}
                     onChange={(e) => dispatch({ type: "SET_PRIMARY_OWNER", payload: { index } })}
-                    value={field.isprimaryowner}
-                    checked={field.isprimaryowner}
+                    value={field?.isprimaryowner}
+                    checked={field?.isprimaryowner}
                     style={{ paddingTop: "10px" }}
                     name={`multiowner-checkbox-${index}`}
                     //disable={isUpdateProperty || isEditProperty}

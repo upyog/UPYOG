@@ -714,7 +714,7 @@ const TLOwnerDetailsEmployee = ({ config, onSelect, userType, formData, setError
   useEffect(() => {
     if (window.location.href.includes("tl/new-application")) {
       setOwners([createOwnerDetails()]);
-      if (formData?.ownershipCategory?.code == "INDIVIDUAL.MULTIPLEOWNERS")
+      if (formData?.ownershipCategory?.code == "INDIVIDUAL.MULTIPLEOWNERS" && owners.length == 1)
         setError("mulipleOwnerError", { type: "owner_missing", message: `TL_ERROR_MULTIPLE_OWNER` });
     }
   }, [formData?.ownershipCategory?.code]);
