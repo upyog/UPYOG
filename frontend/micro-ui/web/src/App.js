@@ -53,6 +53,7 @@ import { initCustomisationComponents } from "./Customisations";
 import { initCommonPTComponents } from "@nudmcdgnpm/digit-ui-module-commonpt";
 import { initBillsComponents } from "@nudmcdgnpm/digit-ui-module-bills";
 import {CHBModule,CHBLinks,CHBComponents} from "@nudmcdgnpm/upyog-ui-module-chb";
+import {ADSModule,ADSLinks,ADSComponents} from "@nudmcdgnpm/upyog-ui-module-ads";
 import { COMMONMODULEModule, COMMONMODULELinks, COMMONMODULEComponents } from "@nudmcdgnpm/upyog-ui-module-cm";
 import { FNOCComponents, FNOCLinks, FNOCModule } from "@nudmcdgnpm/upyog-ui-module-fnoc";
 
@@ -88,6 +89,7 @@ const enabledModules = [
   "CHB",
   "COMMONMODULE",
   "FNOC",
+  "ADS"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -120,6 +122,9 @@ window.Digit.ComponentRegistryService.setupRegistry({
   FNOCLinks,
   FNOCModule,
   ...FNOCComponents,
+  ADSLinks,
+  ADSModule,
+  ...ADSComponents,
 });
 
 initPGRComponents();
