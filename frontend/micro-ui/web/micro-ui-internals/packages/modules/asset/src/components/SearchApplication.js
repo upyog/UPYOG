@@ -7,9 +7,9 @@
   import * as XLSX from 'xlsx';
  
 
-
-
   const ASSETSearchApplication = ({isLoading, t, onSubmit, data, count, setShowToast, ActionBarStyle = {}, MenuStyle = {}, parentRoute, tenantId }) => {
+    console.log('TESTING :- ', data);
+    //  const updatedData =[];
       const isMobile = window.Digit.Utils.browser.isMobile();
       const todaydate = new Date();
       const today = todaydate.toISOString().split("T")[0];
@@ -34,13 +34,15 @@
 
 // Get base path
       var base_url = window.location.origin;
- const { data: actionState } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Action" }],
+    const { data: actionState } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Action" }],
       {
         select: (data) => {
             const formattedData = data?.["ASSET"]?.["Action"]
             return formattedData;
         },
     }); 
+
+
     let action = [];
 
     actionState && actionState.map((actionstate) => {
@@ -48,7 +50,8 @@
     }) 
 
 
-      const GetCell = (value) => <span className="cell-text">{value}</span>;
+  const GetCell = (value) => <span className="cell-text">{value}</span>;
+
       const columns = useMemo( () => ([
           {
               Header: t("ES_ASSET_RESPONSE_CREATE_LABEL"),
@@ -93,7 +96,7 @@
             {
               Header: t("AST_DEPARTMENT_LABEL"),
               Cell: ({ row }) => {
-                return GetCell(`${row?.original?.["department"]}`)
+                return GetCell(`${t(row?.original?.["department"])}`)
               },
               disableSortBy: true,
             },
@@ -148,6 +151,7 @@
                     document.removeEventListener("mousedown", closeMenu);
                   };
                 }, []);
+
                 const actionOptions = [
                   {
                     label: row?.original?.assetAssignment?.isAssigned ? t("AST_RETURN") : t("AST_ASSIGN"),
@@ -358,7 +362,8 @@
             : "" }
 
             <br></br>
-              {!isLoading && data?.display ? <Card style={{ marginTop: 20 }}>
+              {!isLoading && data?.display ? 
+              <Card style={{ marginTop: 20 }}>
                   {
                   t(data.display)
                       .split("\\n")
@@ -369,7 +374,9 @@
                       ))
                   }
               </Card>
-              :(!isLoading && data !== ""? <Table
+              :
+              (!isLoading && data !== ""? 
+              <Table
                   t={t}
                   data={data}
                   totalRecords={count}
