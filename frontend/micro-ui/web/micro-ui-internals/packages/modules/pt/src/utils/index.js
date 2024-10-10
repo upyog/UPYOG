@@ -594,7 +594,7 @@ export const convertToProperty = (data = {}) => {
         uid:data.uid.uid,
         ageOfProperty: data.propertyStructureDetails.ageOfProperty,
         structureType:data?.propertyStructureDetails?.structureType,
-
+        owners: data.owners,
       },
 
       creationReason: getCreationReason(data),

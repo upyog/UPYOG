@@ -646,7 +646,10 @@ const OwnerForm = (_props) => {
                 control={control}
                 name={"emailId"}
                 defaultValue={owner?.emailId}
-                rules={{ validate: (e) => /^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/.test(e)|| t("CORE_INVALID_EMAIL_ID_PATTERN")}}
+                rules={{ validate: (e) => {
+                    if (!e) return true;
+                    return /^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/.test(e) || t("CORE_INVALID_EMAIL_ID_PATTERN")}}
+                }
                 render={(props) => (
                   <TextInput
                     value={props.value}
