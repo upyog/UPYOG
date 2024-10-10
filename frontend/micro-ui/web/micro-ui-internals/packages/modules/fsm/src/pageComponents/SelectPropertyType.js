@@ -28,12 +28,13 @@ useEffect(()=>{
       let propertyType = []
       
       propertyType = propertyTypesData?.data.filter((city) => {
-          return city.code == usageType
+          return city.code == formData?.propertyType
         })
-        console.log("SSSSSS",propertyType)
+        console.log("SSSSSS",propertyType,propertyTypesData)
         if(propertyType.length >0)
         {
           onSelect(config.key, propertyType[0].code)
+          setPropertyType(propertyType[0])
         }
      
     }
@@ -46,7 +47,7 @@ useEffect(()=>{
       }
      
     }
-},[])
+},[propertyTypesData.isLoading])
   useEffect(() => {
     console.log("usageType",usageType)
     if (!propertyTypesData.isLoading && propertyTypesData.data && usageType) {
@@ -125,4 +126,3 @@ console.log("propertyType",propertyType)
 };
 
 export default SelectPropertyType;
-

@@ -53,7 +53,18 @@ const WSConnectionHolder = ({ t, config, onSelect, userType, formData, ownerInde
     genderTypeData["common-masters"].GenderType.filter(data => data.active).map((genderDetails) => {
       menu.push({ i18nKey: `COMMON_GENDER_${genderDetails.code}`, code: `${genderDetails.code}`, value: `${genderDetails.code}` });
     });
-
+    const validateEmail=(value)=>{  
+      const emailPattern=/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/;
+      if(value===""){
+        setError("");
+      }
+      else if(emailPattern.test(value)){
+        setError(""); 
+      }
+      else{
+        setError(t("CORE_INVALID_EMAIL_ID_PATTERN"));  
+      }
+    }
 
   useEffect(() => {
     (async () => {
@@ -112,6 +123,17 @@ const WSConnectionHolder = ({ t, config, onSelect, userType, formData, ownerInde
   function setOwnerEmail(e) {
     setEmail(e.target.value);
   }
+  const handleEmailChange=(e)=>{
+    const value=e.target.value;
+    setEmail(value);
+    validateEmail(value);   
+  }
+  useEffect(() => {
+    if(emailId){
+      validateEmail(emailId);
+    } 
+  }, [emailId])
+  
   function selectfile(e) {
     setFile(e.target.files[0]);
   }
@@ -119,6 +141,7 @@ const WSConnectionHolder = ({ t, config, onSelect, userType, formData, ownerInde
 const reversedOwners= Array.isArray(formData?.cpt?.details?.owners) ? formData?.cpt?.details?.owners.slice().reverse():[];
 
   const goNext = () => {
+    if(!error){
 
     if(isOwnerSame == true)
     {
@@ -145,6 +168,7 @@ const reversedOwners= Array.isArray(formData?.cpt?.details?.owners) ? formData?.
       onSelect(config.key, ConnectionDet);
     }
   };
+}
 
   const onSkip = () => onSelect();
 
@@ -267,13 +291,14 @@ const reversedOwners= Array.isArray(formData?.cpt?.details?.owners) ? formData?.
                 optionKey="i18nKey"
                 t={t}
             />
+            <div>
             <CardLabel>{`${t("WS_EMAIL_ID")}`}</CardLabel>
             <TextInput
               t={t}
               isMandatory={false}
               name="emailId"
               value={emailId}
-              onChange={setOwnerEmail}
+              onChange={handleEmailChange}
               {...(validation = {
                 //isRequired: true,
                 pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$",
@@ -281,6 +306,8 @@ const reversedOwners= Array.isArray(formData?.cpt?.details?.owners) ? formData?.
                 title: t("CORE_COMMON_APPLICANT_EMAILI_ID_INVALID"),
               })}
             />
+            {error && <span style={{color:"red"}}>{error}</span>}
+            </div>
             {/* {ownerType && Object.entries(ownerType).length>0 && ownerType?.code !== "NONE" && <div>
                 <CardLabel>{`${t("WS_DOCUMENT_ID_LABEL")}`}</CardLabel>
                 <TextInput

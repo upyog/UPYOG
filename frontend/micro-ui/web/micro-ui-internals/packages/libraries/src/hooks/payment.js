@@ -4,11 +4,12 @@ import { PaymentService } from "../services/elements/Payment";
 export const useFetchCitizenBillsForBuissnessService = ({ businessService, ...filters }, config = {}) => {
   const queryClient = useQueryClient();
   const { mobileNumber, tenantId } = Digit.UserService.getUser()?.info || {};
+  const tenant = Digit.ULBService.getCitizenCurrentTenant()
   const params = { mobileNumber, businessService, ...filters };
   if (!params["mobileNumber"]) delete params["mobileNumber"];
   const { isLoading, error, isError, data, status } = useQuery(
     ["citizenBillsForBuisnessService", businessService, { ...params }],
-    () => Digit.PaymentService.fetchBill(tenantId, { ...params }),
+    () => Digit.PaymentService.fetchBill(window.location.href.includes("mcollect")?tenant:tenantId, { ...params }),
     {
       refetchOnMount: true,
       retry: false,

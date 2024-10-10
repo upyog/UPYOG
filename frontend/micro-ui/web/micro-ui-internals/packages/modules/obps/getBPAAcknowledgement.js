@@ -162,6 +162,10 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                 title : t("BPA_NEW_TRADE_DETAILS_HEADER_DETAILS"),
                 values:[
                     { 
+                        title: t("BPA_DETAILS_PROPERTYID"), 
+                        value: application?.additionalDetails?.propertyID ||"NA"
+                    },
+                    { 
                         title: t("BPA_DETAILS_PIN_LABEL"), 
                         value: application?.landInfo?.address?.pincode || "NA"
                     },
