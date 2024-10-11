@@ -369,7 +369,12 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         ownerName: owner.name
                       }
                     })) || [],
-                    Property.additionalDetails.owners=conversionOwners?.map((owner, index)=>({
+                    //Property.additionalDetails.owners=Property.owners;
+                    Property.landArea=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea.toFixed(2);
+                    Property.noOfFloors=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalFloors;
+                    Property.additionalDetails= {
+                      isRainwaterHarvesting:false,
+                      owners:conversionOwners?.map((owner, index)=>({
                         ...owner,
                      ownerType:"NONE",
                       permanentaddress:"",
@@ -378,10 +383,6 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         ownerName: owner.name
                       }
                     })) || [],
-                    Property.landArea=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea.toFixed(2);
-                    Property.noOfFloors=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalFloors;
-                    Property.additionalDetails= {
-                      isRainwaterHarvesting:false,
                     },
                     Property.creationReason= "CREATE";
                     Property.source= "MUNICIPAL_RECORDS";
