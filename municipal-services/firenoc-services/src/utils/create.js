@@ -4,9 +4,11 @@ import get from "lodash/get";
 import userService from "../services/userService";
 import isEmpty from "lodash/isEmpty";
 import { status } from "./search";
+import { application } from "express";
 
 export const addUUIDAndAuditDetails = async (request, method = "_update") => {
   let { FireNOCs, RequestInfo } = request;
+  let applicationAssignee ;
   //for loop should be replaced new alternative
   for (var i = 0; i < FireNOCs.length; i++) {
     let id = get(FireNOCs[i], "id");
@@ -83,40 +85,63 @@ export const addUUIDAndAuditDetails = async (request, method = "_update") => {
       !isEmpty(FireNOCs[i].fireNOCDetails.applicantDetails.owners)
     ) {
       let owners = FireNOCs[i].fireNOCDetails.applicantDetails.owners;
-      for (var owneriter = 0; owneriter < owners.length; owneriter++) {
+
+      console.log("Owner"+JSON.stringify(owners))
+      //Owner[{"mobileNumber":"9915299990","name":"Test User first","gender":"MALE","dob":641932199000,"fatherOrHusbandName":"fdfdfd","relationship":"Father","correspondenceAddress":"sdhsd","isPrimaryowner":true}]
+      for (var owneriter = 0; owneriter < owners.length; owneriter++) {         
         let userResponse = {};
         let userSearchReqCriteria = {};
         let userSearchResponse = {};
-
-        userSearchReqCriteria.mobileNumber = owners[owneriter].mobileNumber;
-        userSearchReqCriteria.name = owners[owneriter].name;
-        userSearchReqCriteria.tenantId = envVariables.EGOV_DEFAULT_STATE_ID;
-
-        userSearchResponse = await userService.searchUser(
-          RequestInfo,
-          userSearchReqCriteria
-        );
         
-        if (get(userSearchResponse, "user", []).length > 0) {
-        userResponse = await userService.updateUser(RequestInfo, {
-        ...userSearchResponse.user[0],
-        ...owners[owneriter]
-        });
-        }
-        else{
-          userResponse = await createUser(
+          userSearchReqCriteria.userName = owners[owneriter].mobileNumber;
+          userSearchReqCriteria.mobileNumber = owners[owneriter].mobileNumber;
+          userSearchReqCriteria.name = owners[owneriter].name;
+          userSearchReqCriteria.tenantId = envVariables.EGOV_DEFAULT_STATE_ID;
+          userSearchResponse = await userService.searchUser(
             RequestInfo,
-            owners[owneriter],
-            envVariables.EGOV_DEFAULT_STATE_ID
+            userSearchReqCriteria
           );
-        }
-
-        let ownerUUID = get(owners[owneriter], "ownerUUID");
-        owners[owneriter] = {
-          ...owners[owneriter],
-          ...get(userResponse, "user.0", []),
-          ownerUUID: ownerUUID && method != "_create" ? ownerUUID : uuidv1()
-        };
+          if (get(userSearchResponse, "user", []).length > 0) {
+                let userlegalName = userSearchResponse.user[0].name;
+                let userFatherName = userSearchResponse.user[0].fatherOrHusbandName
+                if(userlegalName === owners[owneriter].name && userFatherName ===owners[owneriter].fatherOrHusbandName){
+                      userResponse = await userService.updateUser(RequestInfo, 
+                       {
+                        ...userSearchResponse.user[0],
+                        ...owners[owneriter]
+                       }
+                      );
+                }else{
+                      let  owner = addDeactiveUserDetails(tenantId, owners[owneriter]);
+                    userResponse =await userService.createUser(RequestInfo, {
+                      ...userSearchResponse.user[0],
+                    });
+                }
+          }else{
+            userResponse = await createUser(
+              RequestInfo,
+             // owners[owneriter],
+              owners[owneriter]={
+                ...owners[owneriter], "userName":owners[owneriter].mobileNumber
+              },
+              envVariables.EGOV_DEFAULT_STATE_ID
+            );
+          }
+          let ownerUUID = get(owners[owneriter], "ownerUUID");
+          owners[owneriter] = {
+            ...owners[owneriter],
+            ...get(userResponse, "user.0", []),
+            ownerUUID: ownerUUID && method != "_create" ? ownerUUID : uuidv1()
+          };
+          if(get(owners[owneriter], "isPrimaryowner")=== true){
+            applicationAssignee=get(owners[owneriter], "uuid")
+          }
+      }
+    }
+    let ownervar= FireNOCs[i].fireNOCDetails.applicantDetails.owners.length
+    for(var j=0; j<ownervar; j++){
+      FireNOCs[i].fireNOCDetails.applicantDetails.owners[j]={
+        ...FireNOCs[i].fireNOCDetails.applicantDetails.owners[j], "applicationAssignee":applicationAssignee
       }
     }
     FireNOCs[i].dateOfApplied = FireNOCs[i].dateOfApplied
@@ -136,6 +161,7 @@ export const addUUIDAndAuditDetails = async (request, method = "_update") => {
     FireNOCs[i] = await checkApproveRecord(FireNOCs[i], RequestInfo);
   }
   request.FireNOCs = FireNOCs;
+  console.log("Final Request"+ JSON.stringify(request))
   return request;
 };
 
@@ -163,8 +189,8 @@ const createUser = async (requestInfo, owner, tenantId) => {
       // console.log("user not found");
 
       owner = addDefaultUserDetails(tenantId, owner);
-      // console.log("userSearchResponse.user[0]", userSearchResponse.user[0]);
-      // console.log("owner", owner);
+       console.log("userSearchResponse.user[0]", userSearchResponse.user[0]);
+       console.log("owner", owner);
       userCreateResponse = await userService.createUser(requestInfo, {
         ...userSearchResponse.user[0],
         ...owner
@@ -215,6 +241,22 @@ const addDefaultUserDetails = (tenantId, owner) => {
   if (!owner.userName || isEmpty(owner.userName))
     owner.userName = owner.mobileNumber;
   owner.active = true;
+  owner.tenantId = envVariables.EGOV_DEFAULT_STATE_ID;
+  owner.type = "CITIZEN";
+  owner.roles = [
+    {
+      code: "CITIZEN",
+      name: "Citizen",
+      tenantId: envVariables.EGOV_DEFAULT_STATE_ID
+    }
+  ];
+  return owner;
+};
+
+const addDeactiveUserDetails = (tenantId, owner) => {
+  if (!owner.userName || isEmpty(owner.userName))
+    owner.userName = uuidv1();
+  owner.active = false;
   owner.tenantId = envVariables.EGOV_DEFAULT_STATE_ID;
   owner.type = "CITIZEN";
   owner.roles = [
