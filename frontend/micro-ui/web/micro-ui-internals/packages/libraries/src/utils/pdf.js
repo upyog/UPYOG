@@ -1053,8 +1053,12 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
     }})}
     else {
       if (Array.isArray(detail?.values)) {
-          // Checking if title is "Owner Details"
-          if (detail?.title === "Owner Details" || detail?.title ==="Ownership Details") {
+          // Check if the title is "Owner Details" and if there are multiple owners
+          const hasMultipleOwners = detail?.values.some(
+              indData => indData?.title === "Ownership" && indData?.value === "Multiple Owners"
+          );
+  
+          if ((detail?.title === "Owner Details" ||detail?.title ==="Transferor Details" ||detail?.title ==="Mutation")&& hasMultipleOwners) {
               // Creating a new table for owner details with borders
               const ownerDetailsTable = {
                   style: 'tableExample',
@@ -1076,14 +1080,7 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
               };
   
               // Populating the body of the table with owner details
-              let hasMultipleOwners = false; // Flag to check if "Multiple Owners" exists
-  
-              detail.values.forEach((indData, index) => {
-                  // Checking if "Ownership" has "Multiple Owners"
-                  // if (indData?.title === "Ownership" && indData?.value === "Multiple Owners") {
-                  //     hasMultipleOwners = true;
-                  // }
-  
+              detail.values.forEach((indData) => {
                   ownerDetailsTable.table.body.push([
                       {
                           text: indData?.title,
@@ -1099,8 +1096,8 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
                   ]);
   
                   // After "Owner Address", check for the flag
-                  if (indData?.title === "Owner Address"|| indData?.title ==="Correspondence Address" ) {
-                      // Add an empty row after "Owner Address so that we get 2 different table for multiple owner"
+                  if (indData?.title === "Owner Address") {
+                      // Add an empty row after "Owner Address"
                       ownerDetailsTable.table.body.push([
                           {
                               text: '', // Empty cell
@@ -1118,7 +1115,7 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
               detailsHeaders.push(ownerDetailsTable);
           } else {
               // Default behavior for other titles
-              detail.values.map((indData, index) => {
+              detail.values.forEach((indData) => {
                   detailsHeaders.push({
                       style: 'tableExample',
                       layout: "noBorders",
@@ -1146,6 +1143,7 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
           }
       }
   }
+  
   });
  
 
