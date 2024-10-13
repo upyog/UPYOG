@@ -348,7 +348,7 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     type={"text"}
                     isMandatory={false}
                     name="emailId"
-                    value={field.emailId}
+                    value={field?.emailId}
                     onChange={(e) => handleTextInputField(index, e, "emailId")}
                     ValidationRequired={true}
                     //disable={isUpdateProperty || isEditProperty}
@@ -521,7 +521,7 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     type={"text"}
                     isMandatory={false}
                     name="emailId"
-                    value={field.emailId}
+                    value={field?.emailId}
                     onChange={(e)=>handleEmailChange(index, e, "emailId")}
                     ValidationRequired={true}
                     //disable={isUpdateProperty || isEditProperty}

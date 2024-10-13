@@ -1050,40 +1050,100 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
               },
             ]
           ]
-    }})
-    } else {
-      Array.isArray(detail?.values)&& detail?.values?.map((indData, index) => {
-        detailsHeaders.push({
-          style: 'tableExample',
-          layout: "noBorders", 
-          margin:[10,0,10,0],
-          table: {
-            widths: ['40%', '*'],
-            body: [
-              [
-                
-                {
-                  text: indData?.title,
-                  style: "header",
-                  fontSize: 10,
-                 //border:  index< detail?.values?.length-1  ?  [true, false, false,false]:index===detail?.values?.length-1 ? [true, false, false, true]:[] ,
-                 
-                },
-
-                {
-                  text: `:  ${indData?.value}`,
-                  //border: index< detail?.values?.length-1    ?  [false, false, true, false]:index===detail?.values?.length-1? [false, false, true, true] :[],
-                  //borderColor:borderColor,
-                  fontSize: 10,
-                 
-                }
-              ]
-            ]
+    }})}
+    else {
+      if (Array.isArray(detail?.values)) {
+          // Check if the title is "Owner Details" and if there are multiple owners
+          const hasMultipleOwners = detail?.values.some(
+              indData => indData?.title === "Ownership" && indData?.value === "Multiple Owners"
+          );
+  
+          if ((detail?.title === "Owner Details" ||detail?.title ==="Transferor Details" ||detail?.title ==="Mutation")&& hasMultipleOwners) {
+              // Creating a new table for owner details with borders
+              const ownerDetailsTable = {
+                  style: 'tableExample',
+                  layout: {
+                      hLineWidth: () => 1,
+                      vLineWidth: () => 1,
+                      hLineColor: () => '#000',
+                      vLineColor: () => '#000',
+                      paddingLeft: () => 10,
+                      paddingRight: () => 10,
+                      paddingTop: () => 5,
+                      paddingBottom: () => 5
+                  },
+                  margin: [10, 0, 10, 0],
+                  table: {
+                      widths: ['40%', '*'],
+                      body: []
+                  }
+              };
+  
+              // Populating the body of the table with owner details
+              detail.values.forEach((indData) => {
+                  ownerDetailsTable.table.body.push([
+                      {
+                          text: indData?.title,
+                          style: "header",
+                          fontSize: 10,
+                          border: [true, true, false, true], 
+                      },
+                      {
+                          text: `:  ${indData?.value}`,
+                          fontSize: 10,
+                          border: [false, true, true, true], 
+                      }
+                  ]);
+  
+                  // After "Owner Address", check for the flag
+                  if (indData?.title === "Owner Address") {
+                      // Add an empty row after "Owner Address"
+                      ownerDetailsTable.table.body.push([
+                          {
+                              text: '', // Empty cell
+                              border: [false, false, false, false], 
+                          },
+                          {
+                              text: '', // Empty cell
+                              border: [false, false, false, false], 
+                          }
+                      ]);
+                  }
+              });
+  
+              // Push the owner details table to detailsHeaders
+              detailsHeaders.push(ownerDetailsTable);
+          } else {
+              // Default behavior for other titles
+              detail.values.forEach((indData) => {
+                  detailsHeaders.push({
+                      style: 'tableExample',
+                      layout: "noBorders",
+                      margin: [10, 0, 10, 0],
+                      table: {
+                          widths: ['40%', '*'],
+                          body: [
+                              [
+                                  {
+                                      text: indData?.title,
+                                      style: "header",
+                                      fontSize: 10,
+                                      border: [true, true, false, true], 
+                                  },
+                                  {
+                                      text: `:  ${indData?.value}`,
+                                      fontSize: 10,
+                                      border: [false, true, true, true], 
+                                  }
+                              ]
+                          ]
+                      }
+                  });
+              });
           }
-        })
-      })
-    
-    }
+      }
+  }
+  
   });
  
 

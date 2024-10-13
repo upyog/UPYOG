@@ -192,6 +192,23 @@ export const convertToPropertyLightWeight = (data = {}) => {
       noOfFloors: noOfFloors,
       additionalDetails: {
         isRainwaterHarvesting: false,
+        owners: [
+          ...data.owners.map((owner, index)=>({
+            ...owner,
+            additionalDetails : { ownerSequence: index, ownerName:owner?.name},
+            documents : Object.keys(owner.documents).map((key) => {
+              const { documentType, fileStoreId } = owner.documents[key];
+              return { documentType: documentType.code, fileStoreId };
+            }),
+             gender: owner.gender?.code,
+              ownerType: owner.ownerType?.code || "NONE",
+              relationship: owner.relationship?.code,
+              inistitutetype: owner?.inistitutetype?.value,
+              landlineNumber: owner?.altContactNumber,
+              status: "ACTIVE",
+            
+          })),
+        ],
       },
       creationReason: "CREATE",
       source: "MUNICIPAL_RECORDS",
@@ -244,6 +261,23 @@ export const convertToUpdatePropertyLightWeight = (data = {}) => {
       noOfFloors: noOfFloors,
       additionalDetails: {
         isRainwaterHarvesting: false,
+        owners:  [
+          ...data.owners.map((owner, index)=>({
+            ...owner,
+            additionalDetails : { ownerSequence: index, ownerName:owner?.name},
+            documents : Object.keys(owner.documents).map((key) => {
+              const { documentType, fileStoreId } = owner.documents[key];
+              return { documentType: documentType.code, fileStoreId };
+            }),
+             gender: owner.gender?.code,
+              ownerType: owner.ownerType?.code || "NONE",
+              relationship: owner.relationship?.code,
+              inistitutetype: owner?.inistitutetype?.value,
+              landlineNumber: owner?.altContactNumber,
+              status: "ACTIVE",
+            
+          })),
+        ],
       },
       ...data.propertyDetails,
       creationReason: getCreationReason(data),

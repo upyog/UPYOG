@@ -45,6 +45,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 setCanmovenext(true);
             }
         })
+        console.log("fields",fields,canmovenext,ownershipCategory)
         if(!canmovenext && ownershipCategory && !(ownershipCategory?.code.includes("SINGLEOWNER")))
         {
             if(flag==1)
@@ -188,6 +189,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         units[i].isPrimaryOwner = ismultiple ? e.target.checked : true;
         setisPrimaryOwner(e.target.checked);
         setFeilds(units);
+        console.log("units",units)
     }
     const [error, setError] = useState(null);
 
@@ -358,15 +360,29 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                    // ...data.propertyDetails,
                    Property.ownershipCategory= ownershipCategory.code,
                    Property.usageCategory= formData?.data?.occupancyType.toUpperCase();
-                   Property.owners= conversionOwners.map(owner=>({
+                   Property.owners= conversionOwners?.map((owner, index)=>({
                         ...owner,
                      ownerType:"NONE",
                       permanentaddress:"",
-                    })),
+                      additionalDetails:{
+                        ownerSequence: index,
+                        ownerName: owner.name
+                      }
+                    })) || [],
+                    //Property.additionalDetails.owners=Property.owners;
                     Property.landArea=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea.toFixed(2);
                     Property.noOfFloors=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalFloors;
                     Property.additionalDetails= {
                       isRainwaterHarvesting:false,
+                      owners:conversionOwners?.map((owner, index)=>({
+                        ...owner,
+                     ownerType:"NONE",
+                      permanentaddress:"",
+                      additionalDetails:{
+                        ownerSequence: index,
+                        ownerName: owner.name
+                      }
+                    })) || [],
                     },
                     Property.creationReason= "CREATE";
                     Property.source= "MUNICIPAL_RECORDS";
@@ -464,6 +480,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             if(flag !== 1 && (!ob?.name || !ob?.mobileNumber || !ob?.gender?.code) )
             flag = 1;
         })
+        console.log("flag",flag)
         if(flag == 0)
         return false;
         else
@@ -472,6 +489,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"))
 if(propertyData?.owners)
 {
+    console.log("propertyData",propertyData)
 fields =propertyData?.owners.map((owner) =>{
     let gender
     if (owner.gender =="FEMALE")
@@ -608,7 +626,7 @@ useEffect(()=>{
                                         isMandatory={false}
                                         optionKey="i18nKey"
                                         name="emailId"
-                                        value={field.emailId}
+                                        value={field?.emailId}
                                         onChange={(e)=>handleEmailChange(index,e)}
                                         {...(validation = {
                                             //isRequired: true,

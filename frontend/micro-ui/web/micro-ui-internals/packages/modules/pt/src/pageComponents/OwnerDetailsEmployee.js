@@ -640,13 +640,16 @@ const OwnerForm = (_props) => {
           ) : null}
           <div>
           <LabelFieldPair>
-            <CardLabel className="card-label-smaller">{t("PT_OWNERSHIP_INFO_EMAIL_ID67")}</CardLabel>
+            <CardLabel className="card-label-smaller">{t("PT_OWNERSHIP_INFO_EMAIL_ID")}</CardLabel>
             <div className="field">
               <Controller
                 control={control}
                 name={"emailId"}
                 defaultValue={owner?.emailId}
-                rules={{ validate: (e) => /^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/.test(e)|| t("CORE_INVALID_EMAIL_ID_PATTERN")}}
+                rules={{ validate: (e) => {
+                    if (!e) return true;
+                    return /^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/.test(e) || t("CORE_INVALID_EMAIL_ID_PATTERN")}}
+                }
                 render={(props) => (
                   <TextInput
                     value={props.value}

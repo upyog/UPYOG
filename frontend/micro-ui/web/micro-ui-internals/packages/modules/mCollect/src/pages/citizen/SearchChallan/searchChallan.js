@@ -22,7 +22,7 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
   const [mobileNumberError, setmobileNumberError] = useState(null);
   // moduleCode, type, config = {}, payload = []
 
-  const { data: Menu, isLoading } = Digit.Hooks.mcollect.useMCollectMDMS(tenantId, "BillingService", "BusinessService");
+  const { data: Menu, isLoading } = Digit.Hooks.mcollect.useMCollectMDMS(tenantId, "BillingService", "BusinessService", "[?(@.type=='Adhoc' && @.isActive==true)]");
   if (isLoading) {
     return <Loader />;
   }

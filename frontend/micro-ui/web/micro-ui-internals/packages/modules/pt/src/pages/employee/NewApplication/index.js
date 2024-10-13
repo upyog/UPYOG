@@ -73,6 +73,7 @@ const NewApplication = () => {
       noOfFloors: Number(data?.noOfFloors),
       ownershipCategory: data?.ownershipCategory?.code,
       additionalDetails:{
+        primaryOwner:data?.owners[0]?.name,
         unit: unitValues,
       //RentedMonths: data?.units[0]?.RentedMonths,
       //NonRentedMonthsUsage: data?.units[0]?.NonRentedMonthsUsage,
@@ -96,7 +97,7 @@ const NewApplication = () => {
         let __owner;
 
         if (!data?.ownershipCategory?.code.includes("INDIVIDUAL")) {
-          __owner = { name, mobileNumber, designation, altContactNumber, emailId, correspondenceAddress, isCorrespondenceAddress, ownerType };
+          __owner = { name, mobileNumber, designation, altContactNumber, emailId, correspondenceAddress, isCorrespondenceAddress, ownerType, additionalDetails:{ownerSequence:index, ownerName:name} };
         } else {
           __owner = {
             name,
@@ -107,6 +108,7 @@ const NewApplication = () => {
             fatherOrHusbandName,
             gender: owner?.gender.code,
             emailId,
+            additionalDetails:{ownerSequence:index, ownerName:name}
           };
         }
 
@@ -132,6 +134,10 @@ const NewApplication = () => {
       documents: data?.documents?.documents,
       applicationStatus: "CREATE",
     };
+    let sortedOwners=formData.owners.sort((a,b)=>{
+        a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence
+    })
+    formData.additionalDetails.owners=sortedOwners;
 
     if (!data?.ownershipCategory?.code.includes("INDIVIDUAL")) {
       formData.institution = {
