@@ -22,6 +22,7 @@ const convertEpochToDate = dateEpoch => {
 // };
 const printReciept = async (tenantId, payments) => { 
   console.log("pay",payments)
+  const stateTenant = Digit.ULBService.getStateId();
   let response = { filestoreIds: [payments?.fileStoreId] };
   const stateTenant = Digit.ULBService.getStateId();
   if (!payments?.fileStoreId) {
