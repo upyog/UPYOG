@@ -569,12 +569,14 @@ List<String> allowedParams = null;
 		User user = requestInfo.getUserInfo();
 		String userType = user.getType();
 		Boolean isUserCitizen = "CITIZEN".equalsIgnoreCase(userType);
-		
-		if(propertyUtil.isPropertySearchOpen(user)) {
+
+
+	    //Commenting this down as while searching in ws for without auth its giving error
+		// if(propertyUtil.isPropertySearchOpen(user)) {
 			
-			if(StringUtils.isEmpty(criteria.getLocality()))
-					throw new CustomException("EG_PT_INVALID_SEARCH"," locality is mandatory for open search");
-		}
+		// 	if(StringUtils.isEmpty(criteria.getLocality()))
+		// 			throw new CustomException("EG_PT_INVALID_SEARCH"," locality is mandatory for open search");
+		// }
 		
 		
 		Boolean isCriteriaEmpty = CollectionUtils.isEmpty(criteria.getOldpropertyids())
