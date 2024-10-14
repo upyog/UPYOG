@@ -24,10 +24,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class EmployeeDashboardResponse   {
-        @JsonProperty("ResponseInfo")
+        @JsonProperty("responseInfo")
         private ResponseInfo responseInfo = null;
 
-        @JsonProperty("EmployeeDashbaord")
+        @JsonProperty("employeeDashboard")
         private EmployeeDashboardDetails employeeDashbaord = null;
 
 

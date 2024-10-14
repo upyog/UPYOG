@@ -16,3 +16,9 @@ You can view the api documentation in swagger-ui by pointing to
 http://localhost:8080/  
 
 Change default port value in application.properties
+
+
+This service provides comprehensive details for the Employee Dashboard. It contains data for each module individually, as well as aggregated data for all modules.
+
+List of modules available :
+OBPAS, ASSET, FSM, PGR, CHB, PETSERVICES, TL, EWASTE, WATER, PT, SEWERAGE, ALL.

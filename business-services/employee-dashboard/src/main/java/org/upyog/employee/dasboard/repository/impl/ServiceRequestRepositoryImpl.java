@@ -80,9 +80,5 @@ public class ServiceRequestRepositoryImpl implements ServiceRequestRepository {
 		return jdbcTemplate.queryForObject(query.toString(), new EmployeeDashboardDetailsRowMapper(moduleName));
 	}
 
-	@Override
-	public EmployeeDashboardDetails fetchModuleData(String moduleName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 }

@@ -15,12 +15,15 @@ import lombok.NonNull;
 public class EmployeeDashboardRequest {
 
 	@Valid
+	@NonNull
 	@JsonProperty("RequestInfo")
 	private RequestInfo requestInfo;
 
+	@NonNull
 	@JsonProperty("moduleName")
 	private ModuleName ModuleName;
 
+	@NonNull
 	@JsonProperty("tenantId")
 	private String tenantId;
 
