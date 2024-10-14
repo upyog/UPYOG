@@ -442,7 +442,7 @@ const Penality_menu=[
                   { title: "PT_ASSESMENT_INFO_USAGE_TYPE", value: getPropertySubtypeLocale(applicationDetails?.applicationData?.usageCategory) },
                   { title: "PT_ASSESMENT_INFO_PLOT_SIZE", value: applicationDetails?.applicationData?.landArea },
                   { title: "PT_ASSESMENT_INFO_NO_OF_FLOOR", value: applicationDetails?.applicationData?.noOfFloors },
-                  { title: "Vacant Land Usage Type", value: "COMMON_PROPUSGTYPE_NONRESIDENTIAL_"+ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandtype },
+                  { title: "Vacant Land Usage Type", value: (ptCalculationEstimateData?.Calculation[0]?.vacantland[0] && ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandtype) ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_"+ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandtype : ''},
                   { title: "Vacant Land Tax Amount", value: ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandamount }
                 ],
                 additionalDetails: {

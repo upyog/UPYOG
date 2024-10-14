@@ -781,7 +781,6 @@ formatConfigUrls &&
             );
           } else {
             data = JSON.parse(data);
-            console.log("formatConfigMap--data===",data)
             formatConfigMap[data.key] = data.config;
             logger.info("loaded formatconfig: file:///" + item);
           }
@@ -1104,8 +1103,6 @@ const validateRequest = (req, res, key, tenantId, requestInfo) => {
   if (requestInfo && requestInfo.userInfo == undefined) {
     errorMessage += " userInfo is missing,";
   }
-  console.log("formatConfigMap[key]==",formatConfigMap[key])
-  console.log("dataConfigMap[key]==",dataConfigMap[key])
   if (formatConfigMap[key] == undefined || dataConfigMap[key] == undefined) {
     errorMessage += ` no config found for key ${key}`;
   }

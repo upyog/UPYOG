@@ -224,7 +224,7 @@ const { isLoading: assessmentLoading, mutate: assessmentMutate } = Digit.Hooks.p
   let dowloadOptions = [propertyDetailsPDF];
   const getPropertyTypeLocale = (value) => {
     // return `PROPERTYTAX_${value?.split(".")[1]}`;
-    return `${value?.split(".")[1]}`.toLocaleLowerCase();
+    return value ? value == 'VACANT' ? 'Vacant' :`${value?.split(".")[1]}`.toLocaleLowerCase() : '';
   };
   
   const getPropertySubtypeLocale = (value) => `PROPERTYTAX_${value}`;  
@@ -241,7 +241,24 @@ const { isLoading: assessmentLoading, mutate: assessmentMutate } = Digit.Hooks.p
     let convertedDate = new Date(date).toDateString()
     return convertedDate
   }
-
+  let propertyDetailsValuse = [];
+  if(applicationDetails?.applicationData?.propertyType=='BUILTUP.INDEPENDENTPROPERTY') {
+    propertyDetailsValuse = [
+      { title: "PT_ASSESMENT_INFO_TYPE_OF_BUILDING", value: getPropertyTypeLocale(applicationDetails?.applicationData?.propertyType) },
+      { title: "PT_ASSESMENT_INFO_USAGE_TYPE", value: getPropertySubtypeLocale(applicationDetails?.applicationData?.usageCategory) },
+      { title: "PT_ASSESMENT_INFO_PLOT_SIZE", value: applicationDetails?.applicationData?.landArea },
+      { title: "PT_ASSESMENT_INFO_NO_OF_FLOOR", value: applicationDetails?.applicationData?.noOfFloors },
+      { title: "Vacant Land Usage Type", value: (ptCalculationEstimateData?.Calculation[0]?.vacantland[0] && ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandtype) ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_"+ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandtype : ''},
+      { title: "Vacant Land Tax Amount", value: ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandamount }
+    ]
+  } else {
+    propertyDetailsValuse = [
+      { title: "PT_ASSESMENT_INFO_TYPE_OF_BUILDING", value: getPropertyTypeLocale(applicationDetails?.applicationData?.propertyType) },
+      { title: "PT_ASSESMENT_INFO_USAGE_TYPE", value: getPropertySubtypeLocale(applicationDetails?.applicationData?.usageCategory) },
+      { title: "PT_ASSESMENT_INFO_PLOT_SIZE", value: applicationDetails?.applicationData?.landArea },
+      { title: "PT_ASSESMENT_INFO_NO_OF_FLOOR", value: applicationDetails?.applicationData?.noOfFloors },
+    ]
+  }
   return (
     <div>
       <Header>{t("PT_TX_ASSESSMENT")}</Header>
@@ -330,14 +347,15 @@ const { isLoading: assessmentLoading, mutate: assessmentMutate } = Digit.Hooks.p
               // },
               {
                 title: "PT_ASSESMENT_INFO_SUB_HEADER",
-                values: [
-                  { title: "PT_ASSESMENT_INFO_TYPE_OF_BUILDING", value: getPropertyTypeLocale(applicationDetails?.applicationData?.propertyType) },
-                  { title: "PT_ASSESMENT_INFO_USAGE_TYPE", value: getPropertySubtypeLocale(applicationDetails?.applicationData?.usageCategory) },
-                  { title: "PT_ASSESMENT_INFO_PLOT_SIZE", value: applicationDetails?.applicationData?.landArea },
-                  { title: "PT_ASSESMENT_INFO_NO_OF_FLOOR", value: applicationDetails?.applicationData?.noOfFloors },
-                  { title: "Vacant Land Usage Type", value: "COMMON_PROPUSGTYPE_NONRESIDENTIAL_"+ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandtype },
-                  { title: "Vacant Land Tax Amount", value: ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandamount }
-                ],
+                values: propertyDetailsValuse,
+                // [
+                //   { title: "PT_ASSESMENT_INFO_TYPE_OF_BUILDING", value: getPropertyTypeLocale(applicationDetails?.applicationData?.propertyType) },
+                //   { title: "PT_ASSESMENT_INFO_USAGE_TYPE", value: getPropertySubtypeLocale(applicationDetails?.applicationData?.usageCategory) },
+                //   { title: "PT_ASSESMENT_INFO_PLOT_SIZE", value: applicationDetails?.applicationData?.landArea },
+                //   { title: "PT_ASSESMENT_INFO_NO_OF_FLOOR", value: applicationDetails?.applicationData?.noOfFloors },
+                //   applicationDetails?.applicationData?.propertyType!='VACANT' && { title: "Vacant Land Usage Type", value: (ptCalculationEstimateData?.Calculation[0]?.vacantland[0] && ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandtype) ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_"+ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandtype : ''},
+                //   { title: "Vacant Land Tax Amount", value: ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandamount }
+                // ],
                 additionalDetails: {
                   floors: ptCalculationEstimateData?.Calculation[0]?.units
                     // ?.filter((e) => e.active)
