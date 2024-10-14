@@ -7,12 +7,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -37,6 +38,7 @@ import org.egov.advertisementcanopy.model.SiteBookingSearchRequest;
 import org.egov.advertisementcanopy.model.SiteCreationData;
 import org.egov.advertisementcanopy.model.SiteSearchData;
 import org.egov.advertisementcanopy.model.SiteSearchRequest;
+import org.egov.advertisementcanopy.model.SiteUpdateRequest;
 import org.egov.advertisementcanopy.producer.Producer;
 import org.egov.advertisementcanopy.repository.SiteBookingRepository;
 import org.egov.advertisementcanopy.repository.SiteRepository;
@@ -84,13 +86,16 @@ public class SiteBookingService {
 	@Autowired
 	private SiteBookingRepository siteBookingRepository;
 
+	@Autowired
+	private SiteService siteService;
+
 	public SiteBookingResponse createBooking(SiteBookingRequest siteBookingRequest) {
 		
 		// validate request
 		validateCreateBooking(siteBookingRequest);
 
 		// validate site occupancy
-		searchValidateSiteAndEnrichSiteBooking(siteBookingRequest);
+		Map<String, SiteCreationData> siteMap = searchValidateSiteAndEnrichSiteBooking(siteBookingRequest);
 		
 		// enrich create request
 		enrichCreateBooking(siteBookingRequest);
@@ -104,10 +109,31 @@ public class SiteBookingService {
 		// call workflow
 		workflowService.updateWorkflowStatus(siteBookingRequest);
 		
+		// update site status BOOKED
+		updateSiteDataAfterBookingCreate(siteBookingRequest, siteMap);
+		
 		SiteBookingResponse siteBookingResponse = SiteBookingResponse.builder()
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(siteBookingRequest.getRequestInfo(), true))
 				.siteBookings(siteBookingRequest.getSiteBookings()).build();
 		return siteBookingResponse;
+	}
+
+	private void updateSiteDataAfterBookingCreate(SiteBookingRequest siteBookingRequest,
+			Map<String, SiteCreationData> siteMap) {
+		
+		siteMap.entrySet().stream().forEach(entry -> {
+			entry.getValue().setStatus(AdvtConstants.SITE_STATUS_BOOKED);
+			if(null != entry.getValue().getAuditDetails()
+					&& null != siteBookingRequest.getRequestInfo()
+							&& null != siteBookingRequest.getRequestInfo().getUserInfo()) {
+				entry.getValue().getAuditDetails().setLastModifiedBy(siteBookingRequest.getRequestInfo().getUserInfo().getUuid());
+				entry.getValue().getAuditDetails().setLastModifiedDate(new Date().getTime());
+			}
+			SiteUpdateRequest siteUpdateRequest = SiteUpdateRequest.builder()
+					.siteUpdationData(entry.getValue())
+					.requestInfo(siteBookingRequest.getRequestInfo()).build();
+			siteService.updateSiteData(siteUpdateRequest);
+		});
 	}
 
 	private void enrichCreateBooking(SiteBookingRequest siteBookingRequest) {
@@ -281,10 +307,40 @@ public class SiteBookingService {
 									.setCreatedBy(Arrays.asList(siteBookingSearchRequest.getRequestInfo()
 																				.getUserInfo().getUuid()));
 		}
+		else if(null != siteBookingSearchRequest.getSiteBookingSearchCriteria()
+				&& null != siteBookingSearchRequest.getRequestInfo()
+				&& null != siteBookingSearchRequest.getRequestInfo().getUserInfo()
+				&& StringUtils.equalsIgnoreCase(siteBookingSearchRequest.getRequestInfo().getUserInfo().getType(), "EMPLOYEE")) {
+			
+			List<String> listOfStatus = getBookingStatusListByRoles(siteBookingSearchRequest.getSiteBookingSearchCriteria().getTenantId(), siteBookingSearchRequest.getRequestInfo().getUserInfo().getRoles());
+			if(CollectionUtils.isEmpty(listOfStatus)) {
+				throw new CustomException("SEARCH_BOOKING_BY_ROLES","Search can't be performed by this Employee due to lack of roles.");
+			}
+			siteBookingSearchRequest.getSiteBookingSearchCriteria().setStatus(listOfStatus);
+		}
 		
 	}
 
 
+
+	private List<String> getBookingStatusListByRoles(String tenantId, List<Role> roles) {
+	
+	List<String> rolesWithinTenant = advtConstants.getRolesByTenantId(tenantId, roles);	
+	Set<String> statusWithRoles = new HashSet();
+	
+	rolesWithinTenant.stream().forEach(role -> {
+		
+		if(StringUtils.equalsIgnoreCase(role, AdvtConstants.ROLE_CODE_SITE_WF_CREATOR)) {
+			statusWithRoles.add(AdvtConstants.STATUS_PENDINGFORVERIFICATION);
+		}else if(StringUtils.equalsIgnoreCase(role, AdvtConstants.ROLE_CODE_SITE_WF_APPROVER)) {
+			statusWithRoles.add(AdvtConstants.STATUS_PENDINGFORAPPROVAL);
+		}
+		
+	});
+	
+	return new ArrayList<>(statusWithRoles);
+}
+	
 	
 	public SiteBookingResponse updateBooking(SiteBookingRequest siteBookingRequest) {
 

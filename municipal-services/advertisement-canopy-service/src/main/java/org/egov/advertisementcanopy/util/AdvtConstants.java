@@ -1,8 +1,12 @@
 package org.egov.advertisementcanopy.util;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.request.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -94,6 +98,8 @@ public class AdvtConstants {
 
     public static final String BILLING_TAX_HEAD_MASTER_CODE = "LCF.Advertisement_Canopy_Fee";
 
+    public static final String SITE_STATUS_BOOKED = "BOOKED";
+
 	public String getStatusOrAction(String action, Boolean fetchValue) {
 
 		Map<String, String> map = new HashMap<>();
@@ -115,5 +121,14 @@ public class AdvtConstants {
 		}
 		// return value
 		return map.get(action);
+	}
+	
+	
+	public List<String> getRolesByTenantId(String tenantId, List<Role> roles) {
+
+		List<String> roleCodes = roles.stream()
+				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(role -> role.getCode())
+				.collect(Collectors.toList());
+		return roleCodes;
 	}
 }
