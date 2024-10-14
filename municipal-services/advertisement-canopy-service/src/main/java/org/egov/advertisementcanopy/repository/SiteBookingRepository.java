@@ -63,6 +63,12 @@ public class SiteBookingRepository {
                     preparedStatementValues)).append(" )");
         }
 
+        if (!CollectionUtils.isEmpty(siteBookingSearchCriteria.getStatus())) {
+            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
+            searchQuery.append(" booking.status IN ( ").append(getQueryForCollection(siteBookingSearchCriteria.getStatus(),
+                    preparedStatementValues)).append(" )");
+        }
+
         if (!CollectionUtils.isEmpty(siteBookingSearchCriteria.getCreatedBy())) {
             isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
             searchQuery.append(" booking.created_by IN ( ").append(getQueryForCollection(siteBookingSearchCriteria.getCreatedBy(),
