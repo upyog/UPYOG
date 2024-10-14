@@ -18,6 +18,8 @@ public class SiteBookingSearchCriteria {
 	private List<String> uuids;
 
 	private List<String> createdBy;
+
+	private List<String> status;
 	
 	private String tenantId;
 

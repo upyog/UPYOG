@@ -59,6 +59,9 @@ public class SiteService {
 	WorkflowService workflowService;
 
 	@Autowired
+	AdvtConstants advtConstants;
+
+	@Autowired
 	ObjectMapper objectMapper;
 
 	public static final String ADVERTISEMENT_HOARDING = "Advertising Hoarding";
@@ -232,7 +235,7 @@ public class SiteService {
 
 	}
 
-	private void updateSiteData(SiteUpdateRequest updateSiteRequest) {
+	void updateSiteData(SiteUpdateRequest updateSiteRequest) {
 		// siteRepository.updateSiteData(updateSiteRequest);
 		producer.push(AdvtConstants.SITE_UPDATION, updateSiteRequest);
 	}
@@ -281,6 +284,9 @@ public class SiteService {
 			if (CollectionUtils.isEmpty(siteSearchResponse.getSiteCreationData())) {
 				siteSearchResponse.setResponseInfo(responseInfoFactory
 						.createResponseInfoFromRequestInfo(searchSiteRequest.getRequestInfo(), false));
+			} else {
+				siteSearchResponse.setResponseInfo(responseInfoFactory
+						.createResponseInfoFromRequestInfo(searchSiteRequest.getRequestInfo(), true));
 			}
 			processSiteResponse(siteSearchResponse);
 			/*
@@ -331,7 +337,7 @@ public class SiteService {
 	}
 
 	private List<String> getAccountStatusListByRoles(String tenantId, List<Role> roles) {
-		List<String> rolesWithinTenant = getRolesByTenantId(tenantId, roles);
+		List<String> rolesWithinTenant = advtConstants.getRolesByTenantId(tenantId, roles);
 		Set<String> statusWithRoles = new HashSet();
 		rolesWithinTenant.stream().forEach(role -> {
 
@@ -354,12 +360,6 @@ public class SiteService {
 		return new ArrayList<>(statusWithRoles);
 	}
 
-	private List<String> getRolesByTenantId(String tenantId, List<Role> roles) {
-		List<String> roleCodes = roles.stream()
-				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(role -> role.getCode())
-				.collect(Collectors.toList());
-		return roleCodes;
-	}
 
 	private SiteSearchResponse getSearchResponseFromAccounts(List<SiteCreationData> siteSearchData) {
 		SiteSearchResponse responseFromDB = SiteSearchResponse.builder().siteCreationData(siteSearchData).build();
