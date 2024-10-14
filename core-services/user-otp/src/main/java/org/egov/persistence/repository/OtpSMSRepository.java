@@ -25,8 +25,8 @@ public class OtpSMSRepository {
     private static final String LOCALIZATION_KEY_LOGIN_SMS = "sms.login.otp.msg";
     private static final String LOCALIZATION_KEY_PWD_RESET_SMS = "sms.pwd.reset.otp.msg";
 
-    @Value("${expiry.time.for.otp: 4000}")
-    private long maxExecutionTime=2000L;
+    @Value("${expiry.time.for.otp}")
+    private long maxExecutionTime;
 
     @Value("${egov.localisation.tenantid.strip.suffix.count}")
     private int tenantIdStripSuffixCount;
