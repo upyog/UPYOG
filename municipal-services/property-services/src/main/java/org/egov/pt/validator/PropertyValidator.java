@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.swing.Spring;
@@ -943,9 +944,11 @@ public class PropertyValidator {
 			
 			Set<String> multiDocPresent = new HashSet<>();
 			
-			multiDocPresent = property.getDocuments().stream().map(doc -> doc.getDocumentType().toUpperCase())
+			multiDocPresent = property.getDocuments().stream().filter(x->null!=x.getDocumentType() && !x.getDocumentType().isEmpty()).map(doc -> doc.getDocumentType().toUpperCase())
 					.collect(Collectors.toSet());
 			Set<String> a = new HashSet <String>( Arrays.asList(reasonForTransfer.split(",")));
+
+			a = a.stream().map(x->x.trim()).collect(Collectors.toSet());
 			isTransferDocPresent = multiDocPresent.containsAll(a);	
 		}
 
