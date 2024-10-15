@@ -55,8 +55,14 @@ public class NotificationConsumer {
 				if (!request.getProperty().isOldDataEncryptionRequest()) {
 					if (PTConstants.MUTATION_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())) {
 
-						notifService.sendNotificationForMutation(request);
-					} else {
+						notifService.sendNotificationForMutationNew(request);
+					} else if(PTConstants.CREATE_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())||
+							PTConstants.AMALGAMATION_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())||
+							PTConstants.BIFURCATION_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())){
+
+						notifService.sendNotificationForCreate(request);
+					}
+					else if(PTConstants.UPDATE_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())){
 
 						notifService.sendNotificationForUpdate(request);
 					}
