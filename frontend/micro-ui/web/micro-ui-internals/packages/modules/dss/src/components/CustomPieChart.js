@@ -154,9 +154,9 @@ const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleC
   }, [id]);
   const CustomLegend=({payload, totalValue})=>{
     return (
-      <div>
+      <div style={{display:"flex",flexWrap:"wrap"}}>
         {payload.map((entry, index)=>(
-          <div key={`legend-${index}`} style={{display:'flex', alignItems:'center', marginBottom: 5}}>
+          <div key={`legend-${index}`} style={{display:'flex', alignItems:'center', marginBottom: "5px", width:"50%"}}>
             <div style={{width: 10, height:10, backgroundColor: entry.color, marginRight: 5}}/>
             <span style={{fontSize: 14, color: '#505ASF', marginRight: 10}}>
               {`${entry.value}:${(entry?.payload?.percent  * 100).toFixed(1)}% (${Digit.Utils.dss.formatter(entry?.payload?.value, entry?.payload?.payload?.symbol, value?.denomination, true, t)} )`}
@@ -203,7 +203,7 @@ const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleC
               outerRadius={checkChartID(id) && !mobileView ? 110 : 90}
               margin={{ top: isPieClicked ? 0 : 5 }}
               fill="#8884d8"
-              label={renderCustomLabel}
+              //label={renderCustomLabel}
 
               labelLine={false}
               isAnimationActive={false}
