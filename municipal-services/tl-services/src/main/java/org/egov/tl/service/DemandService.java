@@ -16,6 +16,7 @@ import org.egov.tl.web.models.TradeLicense;
 import org.egov.tl.web.models.contract.Demand;
 import org.egov.tl.web.models.contract.DemandDetail;
 import org.egov.tl.web.models.contract.DemandResponse;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -59,6 +60,10 @@ public class DemandService {
     	List<Demand> demands = Arrays.asList(demandOne);
     	
     	List<Demand> savedDemands =demandRepository.saveDemand(requestInfo,demands);
+    	
+    	if(CollectionUtils.isEmpty(savedDemands)) {
+    		throw new CustomException("SAVE_DEMAND_FAILED","Failed to save Demand.");
+    	}
     	
     	return savedDemands;
     }
