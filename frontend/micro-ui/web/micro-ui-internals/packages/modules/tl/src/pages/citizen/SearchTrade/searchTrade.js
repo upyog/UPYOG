@@ -1,4 +1,4 @@
-import { FormComposer,Dropdown } from "@egovernments/digit-ui-react-components";
+import { FormComposer,Dropdown } from "@upyog/digit-ui-react-components";
 import PropTypes from "prop-types";
 import React, { useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -138,7 +138,7 @@ const SearchTrade = ({ config: propsConfig, onSelect }) => {
         heading={propsConfig.texts.header}
         text={propsConfig.texts.text}
         cardStyle={{ margin: "auto" }}
-        headingStyle={{ fontSize: "32px", marginBottom: "16px", fontFamily: "Roboto Condensed,sans-serif" }}
+        headingStyle={{ fontSize: "16px", marginBottom: "16px", fontFamily: "Roboto Condensed,sans-serif" }}
         isDisabled={!canSubmit}
         defaultValues={{mobileNumber:defaultMobileno}}
         onFormValueChange={onFormValueChange}

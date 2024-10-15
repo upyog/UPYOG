@@ -1,4 +1,4 @@
-import { CardLabelError, SearchField, SearchForm, SubmitBar, TextInput,Localities,MobileNumber } from "@egovernments/digit-ui-react-components";
+import { CardLabelError, SearchField, SearchForm, SubmitBar, TextInput,Localities,MobileNumber } from "@upyog/digit-ui-react-components";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
@@ -83,7 +83,7 @@ const SearchPTID = ({ tenantId, t, onSubmit, onReset, searchBy, PTSearchFields, 
 
        <div className="pt-search-action" >
          <SearchField  className="pt-search-action-reset">
-         <p style={{color:"#a82227"}}
+         <p style={{color:"#0f4f9e"}}
             onClick={() => {
               onReset({});
             }}

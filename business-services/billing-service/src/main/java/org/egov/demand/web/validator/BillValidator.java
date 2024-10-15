@@ -64,6 +64,17 @@ public class BillValidator {
 					" the consumerCode & Service values should be given together or mobilenumber/email can be given ");
 		}
 	}
+	
+	public void validateNoduesBillSearchCriteria(BillSearchCriteria billCriteria, RequestInfo requestInfo) {
+
+		
+		if (CollectionUtils.isEmpty(billCriteria.getConsumerCode())
+				&& billCriteria.getTenantId() == null ) {
+
+			throw new CustomException("EGBS_MANDATORY_FIELDS_ERROR",
+					"BILL_SEARCH_MANDATORY_FIELDS_MISSING Any one of the fields additional to tenantId is mandatory like consumerCode");
+		}
+	}
 
 	public void validateBillSearchRequest(UpdateBillCriteria cancelBillCriteria) {
 

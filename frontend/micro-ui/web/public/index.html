@@ -2,15 +2,73 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <link rel="icon" href="%PUBLIC_URL%/browser-icon.png">
+    <link rel="icon" href="https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/trlogo2.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel='stylesheet' type='text/css'>
-    <!-- <link rel="stylesheet" href="https://unpkg.com/@egovernments/digit-ui-css@1.6.0/dist/index.css"/> -->
-    <link rel="stylesheet" href="https://unpkg.com/@upyog-niua/upyog-css@1.0.6/dist/index.css"/>
-    <!-- <link rel="stylesheet" href="https://unpkg.com/@egovernments/digit-ui-css/dist/index.css"/> -->
+    <!-- <link rel="stylesheet" href="https://unpkg.com/@upyog/digit-ui-css@1.6.0/dist/index.css"/> -->
+    <!-- <link rel="stylesheet" href="https://unpkg.com/@upyog-niua/upyog-css@1.0.6/dist/index.css"/> -->
+    <!-- <link rel="stylesheet" href="https://unpkg.com/@upyog/digit-ui-css/dist/index.css"/> -->
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="%PUBLIC_URL%/index.css"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta name="theme-color" content="#00bcd1"/>
-    <title>UPYOG</title>
+    <title>Manipur PropertyTax</title>
     <!-- <script src="https://s3.ap-south-1.amazonaws.com/egov-dev-assets/globalConfigs.js"></script> -->
+    <script>
+      var globalConfigs = (function () {
+      var contextPath = "digit-ui";
+      var stateTenantId = "mn";
+      var gmaps_api_key = "AIzaSyAASfCFja6YxwDzEAzhHFc8B-17TNTCV0g";
+      var configModuleName = "commonUiConfig";
+      var centralInstanceEnabled = false;
+      var localeRegion = "IN";
+      var localeDefault = "en";
+      var mdmsContext = "mdms-v2";
+      var footerBWLogoURL =
+        "https://unified-dev.digit.org/egov-dev-assets/digit-footer-bw.png";
+      var footerLogoURL =
+        "https://unified-dev.digit.org/egov-dev-assets/digit-footer.png";
+      var digitHomeURL = "https://www.digit.org/";
+      var assetS3Bucket = "egov-dev-assets";
+      var invalidEmployeeRoles = ["CBO_ADMIN", "ORG_ADMIN", "ORG_STAFF", "SYSTEM"];
+
+      var getConfig = function (key) {
+        if (key === "STATE_LEVEL_TENANT_ID") {
+          return stateTenantId;
+        } else if (key === "GMAPS_API_KEY") {
+          return gmaps_api_key;
+        } else if (key === "ENABLE_SINGLEINSTANCE") {
+          return centralInstanceEnabled;
+        } else if (key === "DIGIT_FOOTER_BW") {
+          return footerBWLogoURL;
+        } else if (key === "DIGIT_FOOTER") {
+          return footerLogoURL;
+        } else if (key === "DIGIT_HOME_URL") {
+          return digitHomeURL;
+        } else if (key === "S3BUCKET") {
+          return assetS3Bucket;
+        } else if (key === "CONTEXT_PATH") {
+          return contextPath;
+        } else if (key === "UICONFIG_MODULENAME") {
+          return configModuleName;
+        } else if (key === "LOCALE_REGION") {
+          return localeRegion;
+        } else if (key === "LOCALE_DEFAULT") {
+          return localeDefault;
+        } else if (key === "MDMS_CONTEXT_PATH") {
+          return mdmsContext;
+        } else if (key === "INVALIDROLES") {
+          return invalidEmployeeRoles;
+        }
+      };
+
+      return {
+        getConfig,
+      };
+    })();
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

@@ -1,5 +1,6 @@
 package org.egov.pt.models;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -61,6 +62,10 @@ public class Assessment {
 
 	@JsonProperty("source")
 	private Source source ;
+	
+	@NotNull
+	@JsonProperty("modeOfPayment")
+	private ModeOfPayment modeOfPayment; 
 
 	@JsonProperty("unitUsageList")
 	@Valid
@@ -76,6 +81,9 @@ public class Assessment {
 	@JsonProperty("channel")
 	private Channel channel ;
 
+	@JsonProperty("owners")
+	@Valid
+	private List<OwnerInfo> owners;
 
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails ;
@@ -116,12 +124,54 @@ public class Assessment {
 			return null;
 		}
 	}
+	
+	public enum ModeOfPayment {
 
+		YEARLY("YEARLY"),
+
+		QUARTERLY("QUARTERLY"),
+
+		HALFYEARLY("HALFYEARLY"),
+
+		FIELD_SURVEY("FIELD_SURVEY");
+
+		private String value;
+
+		ModeOfPayment(String value) {
+			this.value = value;
+		}
+
+		@Override
+		@JsonValue
+		public String toString() {
+			return String.valueOf(value);
+		}
+
+		@JsonCreator
+		public static ModeOfPayment fromValue(String text) {
+			for (ModeOfPayment b : ModeOfPayment.values()) {
+				if (String.valueOf(b.value).equalsIgnoreCase(text)) {
+					return b;
+				}
+			}
+			return null;
+		}
+	}
 	public Assessment addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {
 			this.documents = new HashSet<>();
 		}
 		this.documents.add(documentsItem);
+		return this;
+	}
+	
+	public Assessment addOwnersItem(OwnerInfo ownersItem) {
+		if (this.owners == null) {
+			this.owners = new ArrayList<>();
+		}
+
+		if (null != ownersItem)
+			this.owners.add(ownersItem);
 		return this;
 	}
 

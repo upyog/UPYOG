@@ -1,4 +1,4 @@
-import { Card, Loader } from "@egovernments/digit-ui-react-components";
+import { Card, Loader } from "@upyog/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationTable from "./inbox/ApplicationTable";
@@ -14,9 +14,38 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
     return com;
   });
 
+  const parseValue = (value) => {
+    try {
+      return JSON.parse(value)
+    } catch (e) {
+      return value
+    }
+  }
+  const getFromStorage = (key) => {
+    const value = window.localStorage.getItem(key);
+    return value && value !== "undefined" ? parseValue(value) : null;
+  }
+  const employeeToken = getFromStorage("Employee.token")
+  const employeeInfo = getFromStorage("Employee.user-info")
+  const getUserDetails = (access_token, info) => ({ token: access_token, access_token, info })
+
+  const userDetails = getUserDetails(employeeToken, employeeInfo)
+  
+  console.log("userDetailsPTCard===",userDetails)
+  let userRole='';
+  if(userDetails && userDetails.info && userDetails.info?.roles) {
+    userDetails.info.roles.map((role)=>{
+      if(role?.code == "ASSIGNING_OFFICER") {
+        userRole = role.code;
+      } else if(role?.code == "EXECUTING_OFFICER") {
+        userRole = role.code;
+      }
+    })
+  }
+
   const [clearSearchCalled, setClearSearchCalled] = useState(false);
 
-  const columns = React.useMemo(() => (props.isSearch ? tableConfig.searchColumns(props) : tableConfig.inboxColumns(props) || []), []);
+  const columns = React.useMemo(() => userRole && userRole=='ASSIGNING_OFFICER' ? (tableConfig.inboxColumnsAssessment(props) || []) : userRole && userRole=='EXECUTING_OFFICER' ? (tableConfig.inboxColumnsAppeal(props) || []) : (props.isSearch ? tableConfig.searchColumns(props) : tableConfig.inboxColumns(props) || []), []);
 
   let result;
   if (props.isLoading) {
@@ -49,7 +78,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
           return {
             style: {
               minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
-              padding: "20px 18px",
+              // padding: "20px 18px",
               fontSize: "16px",
             },
           };
@@ -100,7 +129,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
           searchParams={props.searchParams}
           clearSearch={() => setClearSearchCalled(true)}
         />
-        <div className="result" style={{ marginLeft: !props?.isSearch ? "24px" : "", flex: 1 }}>
+        <div className="result" style={{ marginLeft: !props?.isSearch ? "24px" : "", flex: 1, width: "100%" }}>
           {result}
         </div>
       </div>

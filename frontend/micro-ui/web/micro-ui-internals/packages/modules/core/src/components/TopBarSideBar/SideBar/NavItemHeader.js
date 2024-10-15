@@ -16,7 +16,7 @@ import {
   CollectionsBookmarIcons,
   FinanceChartIcon,
   CollectionIcon,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import ReactTooltip from "react-tooltip";
 import { useTranslation } from 'react-i18next';
 
@@ -50,7 +50,7 @@ const NavItemHeader = props => {
   const leftIcon = IconsObject[leftIconArray] || IconsObject.collections;
   const iconArr=item?.icon?.leftIcon?.split?.(":")|| item?.leftIcon?.split?.(":");
   if(iconArr?.[0]=='dynamic'){
-    var IconComp = require("@egovernments/digit-ui-react-components")?.[iconArr?.[1]];
+    var IconComp = require("@upyog/digit-ui-react-components")?.[iconArr?.[1]];
     leftIcon=IconComp?<IconComp/>:leftIcon;
   }
   const getModuleName = label?.replace(/[ -]/g, "_").toUpperCase();
@@ -72,7 +72,7 @@ const NavItemHeader = props => {
          <div className={`sidebar-link ${expanded ? "active": ""}`} style={{width:item?.nested ?"240px":"260px",overflow:"auto"}}>{!item?.nested && leftIcon}
          <div className='actions' style={{padding:"0px",marginRight:"auto"}}>
          <div data-tip="React-tooltip" data-for={`jk-side-${getModuleName}`}>
-        <span style={{color:expanded ? "#a82227":""}}>{trimModuleName}</span>
+        <span style={{color:expanded ? "#0f4f9e":""}}>{trimModuleName}</span>
         {trimModuleName?.includes("...") && <ReactTooltip textColor="white" backgroundColor="grey" place="right" type="info" effect="solid" id={`jk-side-${getModuleName}`}>
                     {t(`ACTION_TEST_${getModuleName}`)}
                   </ReactTooltip>}

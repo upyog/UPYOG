@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, CardLabelError, MobileNumber,MultiSelectDropdown,FilterFormField } from "@egovernments/digit-ui-react-components";
+import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, CardLabelError, MobileNumber,MultiSelectDropdown,FilterFormField } from "@upyog/digit-ui-react-components";
 import { useWatch } from "react-hook-form";
 
 

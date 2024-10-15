@@ -9,7 +9,7 @@ export const config = [
         label: "UC_AMOUNT_DUE_LABEL",
         key: "total_due",
         noteStyle: {
-          fontSize: "24px",
+          fontSize: "16px",
           fontWeight: "bold",
         },
         notePrefix: "₹ ",

@@ -1,4 +1,4 @@
-import { Card, CardSubHeader, Header, Row, StatusTable, SubmitBar, ActionBar, Menu, Toast,MultiLink,DownloadBtnCommon} from "@egovernments/digit-ui-react-components";
+import { Card, CardSubHeader, Header, Row, StatusTable, SubmitBar, ActionBar, Menu, Toast,MultiLink,DownloadBtnCommon} from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory, useRouteMatch } from "react-router-dom";
@@ -146,10 +146,10 @@ const EmployeeChallan = (props) => {
             <Row
               label={<b style={{ padding: "10px 0px" }}>{t("UC_TOTAL_DUE_AMOUT_LABEL")}</b>}
               text={`₹${totalDueAmount}`}
-              textStyle={{ fontSize: "24px", padding: "10px 0px", fontWeight: "700" }}
+              textStyle={{ fontSize: "16px", padding: "10px 0px", fontWeight: "700" }}
             />
           </StatusTable>
-          <div style={{ fontSize: "24px", padding: "10px 0px", fontWeight: "700" }}>{t("UC_SERVICE_DETAILS_LABEL")}</div>
+          <div style={{ fontSize: "16px", padding: "10px 0px", fontWeight: "700" }}>{t("UC_SERVICE_DETAILS_LABEL")}</div>
           <StatusTable>
             <Row
               label={`${t("UC_SERVICE_CATEGORY_LABEL")}`}
@@ -161,7 +161,7 @@ const EmployeeChallan = (props) => {
             <Row label={`${t("UC_COMMENT_LABEL")}`} text={`${challanDetails?.description || t("CS_NA")}`} />
             <Row label={`${t("CS_INBOX_STATUS_FILTER")}`} text={t(`UC_${challanDetails?.applicationStatus || t("CS_NA")}`)} />
           </StatusTable>
-          <div style={{ fontSize: "24px", padding: "10px 0px", fontWeight: "700" }}>{t("UC_CONSUMER_DETAILS_LABEL")}</div>
+          <div style={{ fontSize: "16px", padding: "10px 0px", fontWeight: "700" }}>{t("UC_CONSUMER_DETAILS_LABEL")}</div>
           <StatusTable>
             <Row label={`${t("UC_CONS_NAME_LABEL")}`} text={challanDetails?.citizen.name || t("CS_NA")} />
             <Row label={`${t("UC_MOBILE_NUMBER")}`} text={challanDetails?.citizen.mobileNumber || t("CS_NA")} />

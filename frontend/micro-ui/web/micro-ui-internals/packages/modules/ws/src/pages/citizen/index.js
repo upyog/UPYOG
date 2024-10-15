@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Switch, useLocation, Route } from "react-router-dom";
-import { PrivateRoute, BackButton } from "@egovernments/digit-ui-react-components";
+import { PrivateRoute, BackButton } from "@upyog/digit-ui-react-components";
 import TestAcknowledgment from "./TestAcknowledgment";
 import { WSMyApplications } from "./WSMyApplications";
 

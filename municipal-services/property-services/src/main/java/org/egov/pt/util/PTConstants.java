@@ -24,12 +24,18 @@ public class PTConstants {
     public static final String MDMS_PT_MUTATIONREASON = "MutationReason";
     
     public static final String MDMS_PT_USAGECATEGORY = "UsageCategory";
+    
+    public static final String MDMS_PT_VACANTUSAGECATEGORY = "VacantLandUsageCategory";
 
     public static final String MDMS_PT_PROPERTYSUBTYPE = "PropertySubType";
-
+   
     public static final String MDMS_PT_OCCUPANCYTYPE = "OccupancyType";
 
     public static final String MDMS_PT_CONSTRUCTIONTYPE = "ConstructionType";
+    
+    public static final String MDMS_PT_ROADTYPE = "TypeOfRoad";
+    
+    public static final String MDMS_PT_EXEMPTION = "SpecialExemption";
 
     public static final String MDMS_PT_CONSTRUCTIONSUBTYPE = "ConstructionSubType";
 
@@ -129,6 +135,8 @@ public class PTConstants {
     public static final String ASMT_MODULENAME = "PT";
 
 	public static final String CREATE_PROCESS_CONSTANT = "CREATE";
+	public static final String AMALGAMATION_PROCESS_CONSTANT = "AMALGAMATION";
+	public static final String BIFURCATION_PROCESS_CONSTANT = "BIFURCATION";
 	
 	public static final String UPDATE_PROCESS_CONSTANT = "UPDATE";
 	
@@ -147,6 +155,7 @@ public class PTConstants {
 	
 	public static final String WF_STATUS_REJECTED = "REJECTED";
 	
+	
 	public static final String WF_STATUS_FIELDVERIFIED = "FIELDVERIFIED";
 	
 	public static final String WF_STATUS_DOCVERIFIED = "DOCVERIFIED";
@@ -156,6 +165,8 @@ public class PTConstants {
 	public static final String WF_STATUS_APPROVED = "APPROVED";
 	
 	public static final String WF_STATUS_OPEN = "OPEN";
+	
+	public static final String WF_STATUS_VERIFY = "VERIFY";
 	
 	public static final String WF_NO_WORKFLOW = "NO_WORKFLOW";
 
@@ -258,6 +269,7 @@ public class PTConstants {
 
 
     public static final String NOTIFICATION_PROPERTYID = "{PROPERTYID}";
+    public static final String NOTIFICATION_UPIN = "{UPIN}";
     
     public static final String PT_OWNER_NAME = "{ownername}";
     
@@ -457,6 +469,43 @@ public class PTConstants {
     public static final String CREATIONREASON_REPLACE = "$creationReason";
 
     public static final String TRANSACTIONID_REPLACE = "{TRANSACTION_ID}";
+    
+    public static final String AMALGAMATED_PROPERTY = "amalgamatedProperty";
+
+    public static final String CREATED_FROM_PROPERTY = "createdFromProperty";
+    
+    public static final String AMALGAMATED_CREATED_IDS_PROPERTY = "amagamtedFromPropertyIds";
+    
+    /////////////////////////CREATE MESSAGES FOR MNPT////////////////////////////////
+    
+    public static final String CREATE_OPEN_STATE_MESSAGE_MNPT= "CREATE_OPEN_STATE_MESSAGE_MNPT";
+    public static final String CREATE_PT_DOC_VERIFIER_VERIFY_STATE_MESSAGE_MNPT="CREATE_PT_DOC_VERIFIER_VERIFY_STATE_MESSAGE_MNPT";
+    public static final String CREATE_PT_DOC_VERIFIER_REJECT_STATE_MESSAGE_MNPT="CREATE_PT_DOC_VERIFIER_REJECT_STATE_MESSAGE_MNPT";
+    public static final String CREATE_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT="CREATE_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT";
+    public static final String CREATE_PT_FIELD_INSPECTOR_FORWARD_STATE_MESSAGE_MNPT="CREATE_PT_FIELD_INSPECTOR_FORWARD_STATE_MESSAGE_MNPT";
+    public static final String CREATE_PT_APPROVER_APPROVE_STATE_MNPT="CREATE_PT_APPROVER_APPROVE_STATE_MESSAGE_MNPT";
+    public static final String CREATE_PT_APPROVER_REJECT_STATE_MESSAGE_MNPT="CREATE_PT_APPROVER_REJECT_STATE_MESSAGE_MNPT";
+    
+    ////////////////////////////UPDATE MESSAGES FOR MNPT////////////////////////////
+    
+    public static final String UPDATE_OPEN_STATE_MESSAGE_MNPT= "UPDATE_OPEN_STATE_MESSAGE_MNPT";
+    public static final String UPDATE_PT_DOC_VERIFIER_VERIFY_STATE_MESSAGE_MNPT="UPDATE_PT_DOC_VERIFIER_VERIFY_STATE_MESSAGE_MNPT";
+    public static final String UPDATE_PT_DOC_VERIFIER_REJECT_STATE_MESSAGE_MNPT="UPDATE_PT_DOC_VERIFIER_REJECT_STATE_MESSAGE_MNPT";
+    public static final String UPDATE_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT="UPDATE_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT";
+    public static final String UPDATE_PT_FIELD_INSPECTOR_FORWARD_STATE_MESSAGE_MNPT="UPDATE_PT_FIELD_INSPECTOR_FORWARD_STATE_MESSAGE_MNPT";
+    public static final String UPDATE_PT_APPROVER_APPROVE_STATE_MNPT="UPDATE_PT_APPROVER_APPROVE_STATE_MESSAGE_MNPT";
+    public static final String UPDATE_PT_APPROVER_REJECT_STATE_MESSAGE_MNPT="UPDATE_PT_APPROVER_REJECT_STATE_MESSAGE_MNPT";
+    
+    
+    /////////////////////////////////////MUTATION MESSAGE FOR MNPT/////////////////////////////
+    
+    public static final String MUTATION_OPEN_STATE_MESSAGE_MNPT= "MUTATION_OPEN_STATE_MESSAGE_MNPT";
+    public static final String MUTATION_PT_DOC_VERIFIER_VERIFY_STATE_MESSAGE_MNPT="MUTATION_PT_DOC_VERIFIER_VERIFY_STATE_MESSAGE_MNPT";
+    public static final String MUTATION_PT_DOC_VERIFIER_REJECT_STATE_MESSAGE_MNPT="MUTATION_PT_DOC_VERIFIER_REJECT_STATE_MESSAGE_MNPT";
+    public static final String MUTATION_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT="MUTATION_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT";
+    public static final String MUTATION_PT_FIELD_INSPECTOR_FORWARD_STATE_MESSAGE_MNPT="MUTATION_PT_FIELD_INSPECTOR_FORWARD_STATE_MESSAGE_MNPT";
+    public static final String MUTATION_PT_DOC_VERIFIER_STATUS_UPDATE_STATE_MESSAGE_MNPT="MUTATION_PT_DOC_VERIFIER_STATUS_UPDATE_STATE_MESSAGE_MNPT";
+
 
 }
 

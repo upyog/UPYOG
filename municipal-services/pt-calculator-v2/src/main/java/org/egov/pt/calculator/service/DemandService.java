@@ -135,17 +135,27 @@ public class DemandService {
 				.findAny();
 			if(advanceCarryforwardEstimate.isPresent())
 				newTax = advanceCarryforwardEstimate.get().getEstimateAmount();
-
+			
+		
+			
 			Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(request.getRequestInfo(),criteria);
 
 			// true represents that the demand should be updated from this call
-			BigDecimal carryForwardCollectedAmount = getCarryForwardAndCancelOldDemand(newTax, criteria,
-					request.getRequestInfo(),oldDemand, true);
-
-			if (carryForwardCollectedAmount.doubleValue() >= 0.0) {
-
+			
+			
+			//BigDecimal carryForwardCollectedAmount = getCarryForwardAndCancelOldDemand(newTax, criteria,
+			//		request.getRequestInfo(),oldDemand, true);
+		
+			Map<String,BigDecimal>collectedAmountForLastFinYear = getCarryForwardAndCancelOldDemandMap(newTax, criteria,request.getRequestInfo(),oldDemand, true);
+			//Current_demand --->1500 advance 500
+			//amount = amount-advance adjusted amount --500 , current 1000 advance 0
+			//
+			if (collectedAmountForLastFinYear.containsKey("PT_PASTDUE_CARRYFORWARD") || 
+					collectedAmountForLastFinYear.containsKey("PT_ADVANCE_CARRYFORWARD"))
+				//collectedAmountForLastFinYear.containsKey(propertyCalculationMap) carryForwardCollectedAmount.doubleValue() >= 0.0) {
+			{
 				Demand demand = prepareDemand(property, calculation ,oldDemand);
-
+				
 				// Add billingSLabs in demand additionalDetails as map with key calculationDescription
 				demand.setAdditionalDetails(Collections.singletonMap(BILLINGSLAB_KEY, calculation.getBillingSlabIds()));
 
@@ -336,31 +346,62 @@ public class DemandService {
 	//	Demand demand = getLatestDemandForCurrentFinancialYear(requestInfo, property);
 		
 		if(null == demand) return carryForward;
-
-		carryForward = utils.getTotalCollectedAmountAndPreviousCarryForward(demand);
 		
-		for (DemandDetail detail : demand.getDemandDetails()) {
-			if (detail.getTaxHeadMasterCode().equalsIgnoreCase(CalculatorConstants.PT_TAX))
-				oldTaxAmt = oldTaxAmt.add(detail.getTaxAmount());
-		}			
-
-		log.debug("The old tax amount in string : " + oldTaxAmt.toPlainString());
-		log.debug("The new tax amount in string : " + newTax.toPlainString());
+		Map<String, BigDecimal> collectedMap = utils.getTotalCollectedAmountAndPreviousCarryForwardMap(demand,requestInfo);
+		carryForward = utils.getTotalCollectedAmountAndPreviousCarryForward(demand,requestInfo);
 		
-		if (oldTaxAmt.compareTo(newTax) > 0) {
-			boolean isDepreciationAllowed = utils.isAssessmentDepreciationAllowed(demand,new RequestInfoWrapper(requestInfo));
-			if (!isDepreciationAllowed)
-				carryForward = BigDecimal.valueOf(-1);
-		}
+		/*
+		 * for (DemandDetail detail : demand.getDemandDetails()) { if
+		 * (detail.getTaxHeadMasterCode().equalsIgnoreCase(CalculatorConstants.PT_TAX))
+		 * oldTaxAmt = oldTaxAmt.add(detail.getTaxAmount()); }
+		 * 
+		 * log.debug("The old tax amount in string : " + oldTaxAmt.toPlainString());
+		 * log.debug("The new tax amount in string : " + newTax.toPlainString());
+		 * 
+		 * if (oldTaxAmt.compareTo(newTax) > 0) { boolean isDepreciationAllowed =
+		 * utils.isAssessmentDepreciationAllowed(demand,new
+		 * RequestInfoWrapper(requestInfo)); if (!isDepreciationAllowed) carryForward =
+		 * BigDecimal.valueOf(-1); }
+		 */
 
-		if (BigDecimal.ZERO.compareTo(carryForward) > 0 || !cancelDemand) return carryForward;
-		
-		demand.setStatus(Demand.DemandStatusEnum.CANCELLED);
-		DemandRequest request = DemandRequest.builder().demands(Arrays.asList(demand)).requestInfo(requestInfo).build();
-		StringBuilder updateDemandUrl = utils.getUpdateDemandUrl();
-		repository.fetchResult(updateDemandUrl, request);
+		//need to check for manipur
+		/*
+		 * if (BigDecimal.ZERO.compareTo(carryForward) > 0 || !cancelDemand) return
+		 * carryForward;
+		 * 
+		 * demand.setStatus(Demand.DemandStatusEnum.CANCELLED);
+		 * demand.setAdvanceAmount(carryForward); DemandRequest request =
+		 * DemandRequest.builder().demands(Arrays.asList(demand)).requestInfo(
+		 * requestInfo).build(); StringBuilder updateDemandUrl =
+		 * utils.getUpdateDemandUrl(); repository.fetchResult(updateDemandUrl, request);
+		 */
 
 		return carryForward;
+	}
+	
+	
+	
+	protected Map<String,BigDecimal> getCarryForwardAndCancelOldDemandMap(BigDecimal newTax, CalculationCriteria criteria, RequestInfo requestInfo
+			,Demand demand, boolean cancelDemand) {
+
+		Property property = criteria.getProperty();
+		
+		Map<String, BigDecimal> collectedMap = new HashMap<>();
+		BigDecimal carryForward = BigDecimal.ZERO;
+		BigDecimal oldTaxAmt = BigDecimal.ZERO;
+		collectedMap.put("PT_PASTDUE_CARRYFORWARD",BigDecimal.ZERO );
+		collectedMap.put("PT_ADVANCE_CARRYFORWARD",BigDecimal.ZERO );
+		if(null == property.getPropertyId()) return null;
+
+	//	Demand demand = getLatestDemandForCurrentFinancialYear(requestInfo, property);
+		
+		if(null == demand) return collectedMap;
+		
+		 collectedMap = utils.getTotalCollectedAmountAndPreviousCarryForwardMap(demand,requestInfo);
+		
+		
+		
+		return collectedMap;
 	}
 
 /*	*//**
@@ -431,6 +472,7 @@ public class DemandService {
 				.consumerCode(consumerCode).payer(owner.toCommonUser()).taxPeriodFrom(calculation.getFromDate())
 				.taxPeriodTo(calculation.getToDate()).status(Demand.DemandStatusEnum.ACTIVE)
 				.minimumAmountPayable(BigDecimal.valueOf(configs.getPtMinAmountPayable())).demandDetails(details)
+				.advanceAmount(calculation.getRemainAdvanceamount())
 				.build();
 	}
 
@@ -658,7 +700,9 @@ public class DemandService {
 					.collectionAmount(BigDecimal.ZERO)
 					.tenantId(tenantId).build());
 		}
-
+		
+		
+		
 		return details;
 	}
 
