@@ -17,9 +17,7 @@ public class ServiceRequestRepositoryImpl implements ServiceRequestRepository {
 
 	private JdbcTemplate jdbcTemplate;
 
-	@Autowired
-	DashboardQueryConstant dashboardQueryConstant;
-
+	
 	@Autowired
 	public ServiceRequestRepositoryImpl(JdbcTemplate jdbcTemplate) {
 
@@ -36,41 +34,41 @@ public class ServiceRequestRepositoryImpl implements ServiceRequestRepository {
 
 		switch (moduleName) {
 		case OBPAS:
-			query = dashboardQueryConstant.OBPAS_DASHBOARD_QUERY_;
+			query = DashboardQueryConstant.OBPAS_DASHBOARD_QUERY_;
 
 			break;
 		case ASSET:
-			query = dashboardQueryConstant.ASSET_DASHBOARD_QUERY_;
+			query = DashboardQueryConstant.ASSET_DASHBOARD_QUERY_;
 			break;
 		case FSM:
-			query = dashboardQueryConstant.FSM_DASHBOARD_QUERY_;
+			query = DashboardQueryConstant.FSM_DASHBOARD_QUERY_;
 			break;
 		case PGR:
-			query = dashboardQueryConstant.PGR_DASHBOARD_QUERY_;
+			query = DashboardQueryConstant.PGR_DASHBOARD_QUERY_;
 			break;
 		case CHB:
-			query = dashboardQueryConstant.CHB_DASHBOARD_QUERY_;
+			query = DashboardQueryConstant.CHB_DASHBOARD_QUERY_;
 			break;
 		case PT:
-			query = dashboardQueryConstant.PT_DASHBOARD_QUERY_;
+			query = DashboardQueryConstant.PT_DASHBOARD_QUERY_;
 			break;
 		case SEWERAGE:
-			query = dashboardQueryConstant.SEWERAGE_DASHBOARD_QUERY_;
+			query = DashboardQueryConstant.SEWERAGE_DASHBOARD_QUERY_;
 			break;	
 		case PETSERVICES:
-			query = dashboardQueryConstant.PETSERVICES_DASHBOARD_QUERY_;
+			query = DashboardQueryConstant.PETSERVICES_DASHBOARD_QUERY_;
 			break;
 		case TL:
-			query = dashboardQueryConstant.TL_DASHBOARD_QUERY_;
+			query = DashboardQueryConstant.TL_DASHBOARD_QUERY_;
 			break;
 		case WATER:
-			query = dashboardQueryConstant.WATER_DASHBOARD_QUERY_;
+			query = DashboardQueryConstant.WATER_DASHBOARD_QUERY_;
 			break;		
 		case EWASTE:
-			query = dashboardQueryConstant.EWASTE_DASHBOARD_QUERY_;
+			query = DashboardQueryConstant.EWASTE_DASHBOARD_QUERY_;
 			break;
 		case ALL:
-			query = dashboardQueryConstant.DASHBOARD_QUERY_ALL;
+			query = DashboardQueryConstant.DASHBOARD_QUERY_ALL;
 			break;
 		default:
 			throw new IllegalArgumentException("Module Not found");
