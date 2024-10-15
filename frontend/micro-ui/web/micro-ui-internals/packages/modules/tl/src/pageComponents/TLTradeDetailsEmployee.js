@@ -351,7 +351,7 @@ const OwnerForm1 = (_props) => {
                 control={control}
                 name={"tradeName"}
                 defaultValue={tradedetail?.tradeName}
-                rules={{ required: t("REQUIRED_FIELD"), validate: {pattern: (val) => (/^[a-zA-Z0-9\s]*$/.test(val) ? true : t("INVALID_NAME")) } }}
+                rules={{ required: t("REQUIRED_FIELD"), validate: {pattern: (val) => (/.*$/.test(val) ? true : t("INVALID_NAME")) } }}
                 render={(props) => (
                   <TextInput
                     value={props.value}
