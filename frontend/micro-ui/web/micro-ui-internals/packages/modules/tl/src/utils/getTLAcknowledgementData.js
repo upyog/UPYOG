@@ -77,7 +77,7 @@ const getAccessoriesDetails = (application, t) => {
   });
 
   return {
-    title: "ACCESSORIES_DETAILS",
+    title: t("ACCESSORIES_DETAILS"),
     values: values,
   };
 };

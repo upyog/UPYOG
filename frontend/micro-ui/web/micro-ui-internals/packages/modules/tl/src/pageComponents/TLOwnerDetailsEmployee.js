@@ -696,16 +696,27 @@ const TLOwnerDetailsEmployee = ({ config, onSelect, userType, formData, setError
       setOwners([...JSON.parse(sessionStorage.getItem("ownersFromProperty"))]);
     }
   },[formData, formData?.cpt?.details?.propertyId])
-
   useEffect(() => {
-    if ((formData?.ownershipCategory?.code == "INDIVIDUAL.MULTIPLEOWNERS" && owners.length > 1) || (formData?.ownershipCategory?.code!="INDIVIDUAL.MULTIPLEOWNERS"))
-    if (formData?.ownershipCategory?.code == "INDIVIDUAL.MULTIPLEOWNERS" && owners.length == 1)
-      setError("mulipleOwnerError", { type: "owner_missing", message: `TL_ERROR_MULTIPLE_OWNER` });
+    if (formData?.ownershipCategory?.code === "INDIVIDUAL.MULTIPLEOWNERS") {
+      if (owners.length > 1) {
+        // Multiple owners, clear the error if it exists
+        clearErrors("mulipleOwnerError");
+      } else if (owners.length === 1) {
+        // Only one owner, set the error
+        setError("mulipleOwnerError", { type: "owner_missing", message: `TL_ERROR_MULTIPLE_OWNER` });
+      }
+    } else {
+      // Not a multiple owner case, clear any errors
+      clearErrors("mulipleOwnerError");
+    }
+  
+    // Map the owners data and trigger onSelect
     const data = owners?.map((e) => {
       return e;
     });
     onSelect(config?.key, data);
-  }, [owners]);
+  }, [owners, clearErrors, setError, onSelect]);
+  
 
   useEffect(() => {
     onSelect("tradedetils1", previousLicenseDetails);
@@ -714,8 +725,12 @@ const TLOwnerDetailsEmployee = ({ config, onSelect, userType, formData, setError
   useEffect(() => {
     if (window.location.href.includes("tl/new-application")) {
       setOwners([createOwnerDetails()]);
-      if (formData?.ownershipCategory?.code == "INDIVIDUAL.MULTIPLEOWNERS" && owners.length == 1)
+      console.log("ownersowners",owners)
+      if (formData?.ownershipCategory?.code == "INDIVIDUAL.MULTIPLEOWNERS" && owners.length < 2)
+      {
         setError("mulipleOwnerError", { type: "owner_missing", message: `TL_ERROR_MULTIPLE_OWNER` });
+      }
+        
     }
   }, [formData?.ownershipCategory?.code]);
 
