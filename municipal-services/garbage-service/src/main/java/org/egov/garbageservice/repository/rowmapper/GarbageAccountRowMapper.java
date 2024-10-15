@@ -72,7 +72,7 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                         .status(rs.getString("status"))
                         .additionalDetail(getAdditionalDetail(rs, "additional_detail"))
                         .tenantId(rs.getString("tenant_id"))
-                        .isParentAccount(rs.getBoolean("is_parent_account"))
+                        .parentAccount(rs.getString("parent_account"))
                         .documents(new ArrayList<>())
                         .garbageBills(new ArrayList<>())
                         .childGarbageAccounts(new ArrayList<>())
@@ -144,9 +144,9 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
             }
 
             
-            if (BooleanUtils.isTrue(garbageAccount.getIsParentAccount())
+            if (StringUtils.isEmpty(garbageAccount.getParentAccount())
             		&& null != rs.getString("sub_acc_id")
-            		&& BooleanUtils.isNotTrue(rs.getBoolean("sub_acc_is_parent_account"))) {
+            		&& !StringUtils.isEmpty(rs.getString("sub_acc_parent_account"))) {
                 Long subAccId = rs.getLong("sub_acc_id");
                 GarbageAccount subGarbageAccount = findSubAccById(garbageAccount.getChildGarbageAccounts(), subAccId);
                 if (null == subGarbageAccount) {
@@ -363,7 +363,7 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                 .status(rs.getString(prefix + "status"))
                 .additionalDetail(getAdditionalDetail(rs, prefix + "additional_detail"))
                 .tenantId(rs.getString(prefix + "tenant_id"))
-                .isParentAccount(rs.getBoolean(prefix + "is_parent_account"))
+                .parentAccount(rs.getString(prefix + "parent_account"))
                 .documents(new ArrayList<>())
                 .garbageBills(new ArrayList<>())
                 .grbgCollectionUnits(new ArrayList<>())
