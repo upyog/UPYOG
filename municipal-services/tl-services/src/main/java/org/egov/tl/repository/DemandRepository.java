@@ -16,8 +16,11 @@ import org.springframework.stereotype.Repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
 
 @Repository
+@Slf4j
 public class DemandRepository {
 
 
@@ -38,9 +41,13 @@ public class DemandRepository {
      * @return The list of demand created
      */
     public List<Demand> saveDemand(RequestInfo requestInfo, List<Demand> demands){
+    	log.info("#### saveDemand demands: "+demands);
         StringBuilder url = new StringBuilder(config.getBillingHost());
         url.append(config.getDemandCreateEndpoint());
         DemandRequest request = new DemandRequest(requestInfo,demands);
+        log.info("#### Url: "+url);
+        log.info("#### requestInfo: "+requestInfo);
+        log.info("#### request: "+request);
         Object result = serviceRequestRepository.fetchResult(url,request);
         DemandResponse response = null;
         try{

@@ -681,6 +681,7 @@ public class TradeLicenseService {
 				List<Demand> savedDemands = new ArrayList<>();
 //				if(CollectionUtils.isEmpty(exisitingDemands)) {
 	            	// generate demand
+				log.info("#### create deand license: "+license);
 					savedDemands = demandService.generateDemand(tradeLicenseRequest.getRequestInfo(), license, businessService_TL);
 //	            }
 	            

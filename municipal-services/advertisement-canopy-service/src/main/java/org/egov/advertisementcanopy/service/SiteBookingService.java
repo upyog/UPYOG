@@ -712,10 +712,10 @@ public class SiteBookingService {
 	                roleCodes.add("CITIZEN");
 	            }
 	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_SITE_WF_CREATOR)) {
-	                roleCodes.add("SITE_WF_CREATOR");
+	                roleCodes.add("SITE_CREATOR");
 	            }
 	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_SITE_WF_APPROVER)) {
-	                roleCodes.add("SITE_WF_APPROVER");
+	                roleCodes.add("SITE_APPROVER");
 	            }
 	        }
 			

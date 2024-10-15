@@ -20,7 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class DemandService {
 
     @Autowired
@@ -35,6 +38,7 @@ public class DemandService {
 
     public List<Demand> generateDemand(RequestInfo requestInfo,TradeLicense license, String businessService){
 
+    	log.info("#### generateDemand license: "+license);
     	// get total Tax
     	ApplicationDetail applicationDetail = tradeLicenseService.getApplicationBillUserDetail(license, requestInfo);
 		
@@ -57,8 +61,12 @@ public class DemandService {
                 .build();
     	
     	List<Demand> demands = Arrays.asList(demandOne);
-    	
+
+    	log.info("#### demandRepository.saveDemand(requestInfo,demands) : "+demands);
+    	log.info("Demand Details: Consumer Code: {}, Demand Details: {}, Minimum Amount Payable: {}, Tenant ID: {}, Tax Period From: {}, Tax Period To: {}, Consumer Type: {}, Business Service: {}", 
+    	         demandOne.getConsumerCode(), demandOne.getDemandDetails(), demandOne.getMinimumAmountPayable(), demandOne.getTenantId(), demandOne.getTaxPeriodFrom(), demandOne.getTaxPeriodTo(), demandOne.getConsumerType(), demandOne.getBusinessService());
     	List<Demand> savedDemands =demandRepository.saveDemand(requestInfo,demands);
+        log.info("#### savedDemands: "+savedDemands);
     	
     	return savedDemands;
     }
