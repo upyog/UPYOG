@@ -16,6 +16,7 @@ import org.egov.tl.web.models.TradeLicense;
 import org.egov.tl.web.models.contract.Demand;
 import org.egov.tl.web.models.contract.DemandDetail;
 import org.egov.tl.web.models.contract.DemandResponse;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -67,6 +68,10 @@ public class DemandService {
     	         demandOne.getConsumerCode(), demandOne.getDemandDetails(), demandOne.getMinimumAmountPayable(), demandOne.getTenantId(), demandOne.getTaxPeriodFrom(), demandOne.getTaxPeriodTo(), demandOne.getConsumerType(), demandOne.getBusinessService());
     	List<Demand> savedDemands =demandRepository.saveDemand(requestInfo,demands);
         log.info("#### savedDemands: "+savedDemands);
+    	
+    	if(CollectionUtils.isEmpty(savedDemands)) {
+    		throw new CustomException("SAVE_DEMAND_FAILED","Failed to save Demand.");
+    	}
     	
     	return savedDemands;
     }

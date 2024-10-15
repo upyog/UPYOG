@@ -330,9 +330,9 @@ public class SiteBookingService {
 	
 	rolesWithinTenant.stream().forEach(role -> {
 		
-		if(StringUtils.equalsIgnoreCase(role, AdvtConstants.ROLE_CODE_SITE_WF_CREATOR)) {
+		if(StringUtils.equalsIgnoreCase(role, AdvtConstants.ROLE_CODE_SITE_CREATOR)) {
 			statusWithRoles.add(AdvtConstants.STATUS_PENDINGFORVERIFICATION);
-		}else if(StringUtils.equalsIgnoreCase(role, AdvtConstants.ROLE_CODE_SITE_WF_APPROVER)) {
+		}else if(StringUtils.equalsIgnoreCase(role, AdvtConstants.ROLE_CODE_SITE_APPROVER)) {
 			statusWithRoles.add(AdvtConstants.STATUS_PENDINGFORAPPROVAL);
 		}
 		
@@ -711,11 +711,11 @@ public class SiteBookingService {
 	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_CITIZEN)) {
 	                roleCodes.add("CITIZEN");
 	            }
-	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_SITE_WF_CREATOR)) {
-	                roleCodes.add("SITE_CREATOR");
+	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_SITE_CREATOR)) {
+	                roleCodes.add("SITE_WF_CREATOR");
 	            }
-	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_SITE_WF_APPROVER)) {
-	                roleCodes.add("SITE_APPROVER");
+	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_SITE_APPROVER)) {
+	                roleCodes.add("SITE_WF_APPROVER");
 	            }
 	        }
 			
@@ -725,10 +725,10 @@ public class SiteBookingService {
 	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_CITIZEN)) {
 	                roleCodes.add("CITIZEN");
 	            }
-	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_SITE_WF_CREATOR)) {
+	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_SITE_CREATOR)) {
 	                roleCodes.add("SITE_WF_CREATOR");
 	            }
-	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_SITE_WF_APPROVER)) {
+	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_SITE_APPROVER)) {
 	                roleCodes.add("SITE_WF_APPROVER");
 	            }
 	        }

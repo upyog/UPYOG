@@ -211,7 +211,13 @@ public class TradeLicenseService {
 //                   wfIntegrator.callWorkFlow(tradeLicenseRequest);
 //               break;
 //       }
-       
+       try {
+		log.info("add det : "+tradeLicenseRequest.getLicenses().get(0).getTradeLicenseDetail().getAddress().getAdditionalDetail());
+		   log.info("add det : "+tradeLicenseRequest.getLicenses().get(0).getTradeLicenseDetail().getAddress().getAddressLine1());
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
        repository.save(tradeLicenseRequest);
 
        //trigger wf 
@@ -1418,14 +1424,19 @@ public class TradeLicenseService {
 		
 		// enrich userDetails
 		Map<Object, Object> userDetails = new HashMap<>();
-		userDetails.put("UserName", license.getTradeName());
-		userDetails.put("MobileNo", license.getTradeLicenseDetail().getOwners().get(0).getMobileNumber());
-		userDetails.put("Email", license.getTradeLicenseDetail().getOwners().get(0).getEmailId());
-		userDetails.put("Address", new String(license.getTradeLicenseDetail().getAddress().getAddressLine1().concat(", "))
-									.concat(license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("wardName").asText().concat(", "))
-									.concat(license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("ulbName").asText().concat(", "))
-									.concat(license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("district").asText().concat(", "))
-									.concat(license.getTradeLicenseDetail().getAddress().getPincode()));
+		try {
+			userDetails.put("UserName", license.getTradeName());
+			userDetails.put("MobileNo", license.getTradeLicenseDetail().getOwners().get(0).getMobileNumber());
+			userDetails.put("Email", license.getTradeLicenseDetail().getOwners().get(0).getEmailId());
+			userDetails.put("Address", new String(license.getTradeLicenseDetail().getAddress().getAddressLine1().concat(", "))
+										.concat(license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("wardName").asText().concat(", "))
+										.concat(license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("ulbName").asText().concat(", "))
+										.concat(license.getTradeLicenseDetail().getAddress().getAdditionalDetail().get("district").asText().concat(", "))
+										.concat(license.getTradeLicenseDetail().getAddress().getPincode()));
+		} catch (Exception e) {
+			userDetails.put("Address", null);
+			log.info("Some mendatory fields are missing for user details: "+ e.getMessage());
+		}
 
 		applicationDetail.setUserDetails(userDetails);
 		
