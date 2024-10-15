@@ -211,8 +211,13 @@ public class TradeLicenseService {
 //                   wfIntegrator.callWorkFlow(tradeLicenseRequest);
 //               break;
 //       }
-       log.info("add det : "+tradeLicenseRequest.getLicenses().get(0).getTradeLicenseDetail().getAddress().getAdditionalDetail());
-       log.info("add det : "+tradeLicenseRequest.getLicenses().get(0).getTradeLicenseDetail().getAddress().getAddressLine1());
+       try {
+		log.info("add det : "+tradeLicenseRequest.getLicenses().get(0).getTradeLicenseDetail().getAddress().getAdditionalDetail());
+		   log.info("add det : "+tradeLicenseRequest.getLicenses().get(0).getTradeLicenseDetail().getAddress().getAddressLine1());
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
        repository.save(tradeLicenseRequest);
 
        //trigger wf 
