@@ -724,5 +724,14 @@ public class NotificationUtil {
                         property.getAcknowldgementNumber()).replace(FEEDBACK_URL, getShortenedUrl(feedbackUrl));
 
     }
+    
+    
+    public String getMsgForMutaiotnNotification(Property property, String completeMsgs, String serviceType,String msgCode) {
+
+        String feedbackUrl = config.getUiAppHost()+config.getCitizenFeedbackLink();
+        return getMessageTemplate(msgCode, completeMsgs);
+        
+
+    }
 
 }
