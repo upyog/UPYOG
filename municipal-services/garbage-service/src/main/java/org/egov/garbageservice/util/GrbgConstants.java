@@ -32,17 +32,21 @@ public class GrbgConstants {
 
     public static final String STATUS_CANCELLED  = "CANCELLED";
 
-    public static final String ACTION_INITIATE  = "INITIATE";
+    public static final String WORKFLOW_ACTION_INITIATE  = "INITIATE";
 
-    public static final String ACTION_FORWARD_TO_VERIFIER  = "FORWARD_TO_VERIFIER";
+    public static final String WORKFLOW_ACTION_VERIFY  = "VERIFY";
 
-    public static final String ACTION_FORWARD_TO_APPROVER  = "FORWARD_TO_APPROVER";
+    public static final String WORKFLOW_ACTION_FORWARD_TO_VERIFIER  = "FORWARD_TO_VERIFIER";
 
-    public static final String ACTION_RETURN_TO_INITIATOR  = "RETURN_TO_INITIATOR";
+    public static final String WORKFLOW_ACTION_APPROVE  = "APPROVE";
 
-    public static final String ACTION_RETURN_TO_VERIFIER  = "RETURN_TO_VERIFIER";
+    public static final String WORKFLOW_ACTION_FORWARD_TO_APPROVER  = "FORWARD_TO_APPROVER";
 
-    public static final String ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT = "RETURN_TO_INITIATOR_FOR_PAYMENT";
+    public static final String WORKFLOW_ACTION_RETURN_TO_INITIATOR  = "RETURN_TO_INITIATOR";
+
+    public static final String WORKFLOW_ACTION_RETURN_TO_VERIFIER  = "RETURN_TO_VERIFIER";
+
+    public static final String WORKFLOW_ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT = "RETURN_TO_INITIATOR_FOR_PAYMENT";
 
     public static final String WORKFLOW_BUSINESS_SERVICE = "GB";
 

@@ -27,7 +27,6 @@ import java.util.Map;
 import static org.egov.wf.util.WorkflowConstants.JSONPATH_BUSINESSSERVICE_STATELEVEL;
 
 @Service
-@Slf4j
 public class BusinessMasterService {
 
     private Producer producer;
@@ -74,11 +73,10 @@ public class BusinessMasterService {
      * @param criteria The search criteria
      * @return Data fetched from db
      */
-//    @Cacheable(value = "businessService")
+    @Cacheable(value = "businessService")
     public List<BusinessService> search(BusinessServiceSearchCriteria criteria){
         String tenantId = criteria.getTenantId();
         List<BusinessService> businessServices = repository.getBusinessServices(criteria);
-        log.info("#### main2 businessServices.size() :"+ businessServices.size());
         enrichmentService.enrichTenantIdForStateLevel(tenantId,businessServices);
 
         return businessServices;
