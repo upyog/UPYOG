@@ -36,9 +36,11 @@ export const formatter = (value, symbol, unit, commaSeparated = true, t, isDecim
 
       const Nformatter = new Intl.NumberFormat("en-IN");
       return Nformatter.format(Math.round(value));
-    case "percentage":
-      const Pformatter = new Intl.NumberFormat("en-IN", { maximumSignificantDigits: 3 });
-      return `${Pformatter.format(value.toFixed(2))} %`;
+      case "percentage":
+        const Pformatter = new Intl.NumberFormat("en-IN", { maximumSignificantDigits: 3 });
+        const formattedValue = Pformatter.format(Math.max(0, value).toFixed(2)); // Ensures value is non-negative
+        return `${formattedValue} %`;
+      
     default:
       return "";
   }
