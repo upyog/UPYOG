@@ -49,6 +49,11 @@ public class DemandRepository {
         catch(IllegalArgumentException e){
             throw new CustomException("PARSING ERROR","Failed to parse response of create demand");
         }
+        
+        if(null == response || null == response.getDemands()) {
+        	return null;
+        }
+        
         return response.getDemands();
     }
 
