@@ -173,7 +173,6 @@ config:
         image-name: "fsm-db"
 
 
-
   - name: "builds/municipal-services/vehicle"
     build:
       - work-dir: "vehicle"
@@ -200,6 +199,7 @@ config:
         image-name: "fsm-calculator-db"
         
   - name: "builds/digit-impel-builds/municipal-services/turn-io-adapter"
+    build:
       - work-dir: "turn-io-adapter"
         image-name: "turn-io-adapter"
         dockerfile: "build/maven/Dockerfile"
@@ -211,7 +211,7 @@ config:
         dockerfile: "build/maven/Dockerfile"
 
   - name: "builds/municipal-services/pet-services"
-      build:
+    build:
         - work-dir: "pet-services"
           image-name: "pet-services"
           dockerfile: "build/maven/Dockerfile"
@@ -219,9 +219,17 @@ config:
           image-name: "pet-services-db"        
 
   - name: "builds/municipal-services/garbage-service"
-      build:
+    build:
         - work-dir: "garbage-service"
           image-name: "garbage-service"
           dockerfile: "build/maven/Dockerfile"
         - work-dir: "garbage-service/src/main/resources/db"
           image-name: "garbage-service-db"
+
+  - name: "builds/municipal-services/advertisement-canopy-service"
+    build:
+      - work-dir: "advertisement-canopy-service"
+        image-name: "advertisement-canopy-service"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "advertisement-canopy-service/src/main/resources/db"
+        image-name: "advertisement-canopy-service-db" 
