@@ -236,18 +236,20 @@ public class PayGovGateway implements Gateway {
     private String getModuleCode(Transaction transaction) {
         String moduleCode =transaction.getModule();
         
-        List<String> masterNames = new ArrayList<>(
-				Arrays.asList("tenants"));
-        
-        Map<String, List<String>> codes = pgutils.getAttributeValues(configs.getStateLevelTenantId(), "tenant", masterNames,
-				"[?(@.city.districtTenantCode== '"+transaction.getTenantId()+"')].city.code", "$.MdmsRes.tenant", requestInfo);
-        
         if(!StringUtils.isEmpty(moduleCode)) {
           
             if (moduleCode.startsWith("PT"))
             {
                 //moduleCode = "MMPTBTEST01";
             	moduleCode = "MNPTB";
+            	
+            	 List<String> masterNames = new ArrayList<>(
+         				Arrays.asList("tenants"));
+                 
+                 Map<String, List<String>> codes = pgutils.getAttributeValues(configs.getStateLevelTenantId(), "tenant", masterNames,
+         				"[?(@.city.districtTenantCode== '"+transaction.getTenantId()+"')].city.code", "$.MdmsRes.tenant", requestInfo);
+                 
+                 moduleCode=moduleCode.concat(codes.get("tenants").get(0));
             }
             else if (moduleCode.startsWith("SW"))
             {
@@ -279,9 +281,6 @@ public class PayGovGateway implements Gateway {
             moduleCode = "MCS001";
         } 	
 	log.info("Module::::"+moduleCode);
-	
-	if(moduleCode.equalsIgnoreCase("MNPTB"))
-		moduleCode=moduleCode.concat(codes.get("tenants").get(0));
 		
         return moduleCode;
     }

@@ -451,6 +451,14 @@ public class EstimationService {
 			taxAmt=getApplicableTaxForRoadType(taxAmt,propertyBasedExemptionMasterMap,detail,detail.getPropertyType());
 			taxAmt = getApplicableTaxForAgeOfProperty(taxAmt,propertyBasedExemptionMasterMap,detail,detail.getPropertyType(),null);
 			taxAmt=getApplicableTaxForOwnerUsageCategory(taxAmt, propertyBasedExemptionMasterMap, detail,null);
+			
+			String[] vacantusagecategoryMasterData  = detail.getUsageCategoryMajor().split("\\_");
+			String vacantusagecategory = vacantusagecategoryMasterData[1];
+			if(!vacantusagecategory.equalsIgnoreCase("COMMERCIAL"))
+			{
+				taxAmt = BigDecimal.ZERO;
+				iscommercial=true;
+			}
 
 		} else {
 
@@ -532,7 +540,7 @@ public class EstimationService {
 
 			unbuiltAmount = getApplicableTaxForAgeOfProperty(unbuiltAmount,propertyBasedExemptionMasterMap,detail,"UNBUILT",null);
 
-			unbuiltAmount=getApplicableTaxForOwnerUsageCategory(unbuiltarea, propertyBasedExemptionMasterMap, detail,null);
+			unbuiltAmount=getApplicableTaxForOwnerUsageCategory(unbuiltAmount, propertyBasedExemptionMasterMap, detail,null);
 
 			vctland.setVacantlandamount(unbuiltAmount);
 			vctland.setVacantlandtype(detail.getVacantusagecategory());
@@ -1110,7 +1118,7 @@ public class EstimationService {
 		BigDecimal modeofpayment_rebate=BigDecimal.ZERO;
 		BigDecimal updatedtaxammount=BigDecimal.ZERO;
 		BigDecimal complementary_rebate=BigDecimal.ZERO;
-		if(exemption.compareTo(BigDecimal.ZERO)==0 && taxAmt.compareTo(BigDecimal.ZERO)>0)
+		if(detail.getExemption().isEmpty() || detail.getExemption().equalsIgnoreCase(null))
 		{
 
 			switch (criteria.getModeOfPayment()) {
@@ -1160,7 +1168,7 @@ public class EstimationService {
 		BigDecimal totalAmount = taxAmt.add(penalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
 		BigDecimal mandatorypay=BigDecimal.ZERO;
 		Map<String, BigDecimal> lowervalue=lowervaluemap();
-		if(exemption.compareTo(BigDecimal.ZERO)==0 && taxAmt.compareTo(BigDecimal.ZERO)>0) {
+		if(detail.getExemption().isEmpty() || detail.getExemption().equalsIgnoreCase(null)) {
 			if(tenantId.equalsIgnoreCase("mn.imphal"))
 			{
 				if(totalAmount.compareTo(new BigDecimal(600)) < 0)
