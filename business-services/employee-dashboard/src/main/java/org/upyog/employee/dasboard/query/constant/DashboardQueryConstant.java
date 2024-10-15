@@ -4,12 +4,11 @@ import org.springframework.stereotype.Component;
 
 import lombok.Data;
 
-@Data
-@Component
+
 public class DashboardQueryConstant {
 
-	// Dashbiard query constants
-	public final StringBuilder DASHBOARD_QUERY_ALL = new StringBuilder("WITH Today_Collection AS ("
+	// Dashboard query constants
+	public static StringBuilder DASHBOARD_QUERY_ALL = new StringBuilder("WITH Today_Collection AS ("
 			+ "    SELECT CAST(SUM(amountpaid) AS BIGINT) AS Today_Collection " + "    FROM egcl_paymentdetail "
 			+ "    WHERE createdtime >= EXTRACT(EPOCH FROM CURRENT_DATE) * 1000 "
 			+ "    AND createdtime < EXTRACT(EPOCH FROM (CURRENT_DATE + INTERVAL '1 day')) * 1000"
@@ -56,7 +55,7 @@ public class DashboardQueryConstant {
 			+ "FROM Today_Collection tc, " + "    Total_Collection tcc, " + "    Total_Applications_Received tar, "
 			+ "    Total_Applications_Approved taa, " + "    Total_Applications_Pending tap;");
 
-	public final StringBuilder OBPAS_DASHBOARD_QUERY_ = new StringBuilder("SELECT "
+	public static StringBuilder OBPAS_DASHBOARD_QUERY_ = new StringBuilder("SELECT "
 			+ "(SELECT COUNT(DISTINCT applicationno) " + "FROM eg_bpa_buildingplan " + "WHERE businessservice = 'BPA' "
 			+ "AND createdtime >= EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '3 months') * 1000 "
 			+ "AND createdtime < EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year') * 1000) AS Total_Applications_Received, "
@@ -76,7 +75,7 @@ public class DashboardQueryConstant {
 			+ "AND b.createdtime >= EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '3 months') * 1000 "
 			+ "AND b.createdtime < EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year')) AS Total_Amount;");
 
-	public final StringBuilder ASSET_DASHBOARD_QUERY_ = new StringBuilder("SELECT "
+	public static StringBuilder ASSET_DASHBOARD_QUERY_ = new StringBuilder("SELECT "
 			+ "COUNT(DISTINCT pi.businessid) AS Total_Applications_Received, "
 			+ "SUM(CASE WHEN pi.action = 'APPROVE' THEN 1 ELSE 0 END) AS Total_Applications_Approved, "
 			+ "COUNT(DISTINCT CASE "
@@ -91,7 +90,7 @@ public class DashboardQueryConstant {
 			+ "AND pi.createdtime >= EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '3 months') * 1000 "
 			+ "AND pi.createdtime < EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year');");
 
-	public final StringBuilder FSM_DASHBOARD_QUERY_ = new StringBuilder("SELECT "
+	public static StringBuilder FSM_DASHBOARD_QUERY_ = new StringBuilder("SELECT "
 			+ "COUNT(DISTINCT pi.businessid) AS Total_Applications_Received, "
 			+ "SUM(CASE WHEN pi.action = 'COMPLETED' THEN 1 ELSE 0 END) AS Total_Applications_Approved, "
 			+ "COUNT(DISTINCT CASE "
@@ -106,7 +105,7 @@ public class DashboardQueryConstant {
 			+ "AND pi.createdtime >= EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '3 months') * 1000 "
 			+ "AND pi.createdtime < EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year');");
 
-	public final StringBuilder PGR_DASHBOARD_QUERY_ = new StringBuilder("SELECT \n"
+	public static StringBuilder PGR_DASHBOARD_QUERY_ = new StringBuilder("SELECT \n"
 			+ "    COUNT(DISTINCT pi.businessid) AS Total_Applications_Received,\n"
 			+ "    SUM(CASE WHEN pi.action = 'RESOLVE' THEN 1 ELSE 0 END) AS Total_Applications_Approved,\n"
 			+ "    COUNT(DISTINCT CASE \n"
@@ -123,7 +122,7 @@ public class DashboardQueryConstant {
 			+ "    AND pi.createdtime >= EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '3 months') * 1000  \n"
 			+ "    AND pi.createdtime < EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year') * 1000;");
 
-	public final StringBuilder CHB_DASHBOARD_QUERY_ = new StringBuilder(
+	public static StringBuilder CHB_DASHBOARD_QUERY_ = new StringBuilder(
 			"SELECT COUNT(DISTINCT wf.booking_no) AS Total_Applications_Received, "
 					+ "SUM(CASE WHEN wf.booking_status = 'BOOKED' THEN 1 ELSE 0 END) AS Total_Applications_Approved, "
 					+ "COUNT(DISTINCT wf.booking_no) - SUM(CASE WHEN wf.booking_status = 'BOOKED' THEN 1 ELSE 0 END) AS Total_Applications_Pending, "
@@ -135,7 +134,7 @@ public class DashboardQueryConstant {
 					+ "WHERE wf.createdtime >= EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '3 months') * 1000 "
 					+ "AND wf.createdtime < EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year');");
 
-	public final StringBuilder PT_DASHBOARD_QUERY_ = new StringBuilder(
+	public static StringBuilder PT_DASHBOARD_QUERY_ = new StringBuilder(
 			"SELECT COUNT(DISTINCT wf.propertyid) AS Total_Applications_Received, "
 					+ "SUM(CASE WHEN wf.status = 'ACTIVE' THEN 1 ELSE 0 END) AS Total_Applications_Approved, "
 					+ "COUNT(DISTINCT CASE WHEN wf.status = 'INWORKFLOW' THEN wf.propertyid END) AS Total_Applications_Pending, "
@@ -147,7 +146,7 @@ public class DashboardQueryConstant {
 					+ "WHERE wf.createdtime >= EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '3 months') * 1000 "
 					+ "AND wf.createdtime < EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year');");
 
-	public final StringBuilder PETSERVICES_DASHBOARD_QUERY_ = new StringBuilder(
+	public static StringBuilder PETSERVICES_DASHBOARD_QUERY_ = new StringBuilder(
 			"SELECT COUNT(DISTINCT pi.businessid) AS Total_Applications_Received, "
 					+ "SUM(CASE WHEN pi.action = 'APPROVE' THEN 1 ELSE 0 END) AS Total_Applications_Approved, "
 					+ "COUNT(DISTINCT CASE WHEN pi.action IN ('APPLY', 'VERIFY', 'PAY') AND pi.businessid NOT IN "
@@ -160,7 +159,7 @@ public class DashboardQueryConstant {
 					+ "AND pi.createdtime >= EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '3 months') * 1000 "
 					+ "AND pi.createdtime < EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year');");
 
-	public final StringBuilder EWASTE_DASHBOARD_QUERY_ = new StringBuilder(
+	public static StringBuilder EWASTE_DASHBOARD_QUERY_ = new StringBuilder(
 			"SELECT COUNT(DISTINCT pi.businessid) AS Total_Applications_Received, "
 					+ "SUM(CASE WHEN pi.action = 'COMPLETEREQUEST' THEN 1 ELSE 0 END) AS Total_Applications_Approved, "
 					+ "COUNT(DISTINCT CASE WHEN pi.action IN ('SENDPICKUPALERT', 'CREATE', 'VERIFYPRODUCT') AND pi.businessid NOT IN "
@@ -173,7 +172,7 @@ public class DashboardQueryConstant {
 					+ "AND pi.createdtime >= EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '3 months') * 1000 "
 					+ "AND pi.createdtime < EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year');");
 
-	public final StringBuilder TL_DASHBOARD_QUERY_ = new StringBuilder(
+	public static StringBuilder TL_DASHBOARD_QUERY_ = new StringBuilder(
 			"SELECT COUNT(DISTINCT wf.applicationnumber) AS Total_Applications_Received, "
 					+ "SUM(CASE WHEN wf.status = 'APPROVED' THEN 1 ELSE 0 END) AS Total_Applications_Approved, "
 					+ "COUNT(DISTINCT CASE WHEN wf.action IN ('SENDBACKTOCITIZEN', 'APPLY', 'INITIATE', 'FORWARD', 'NOWORKFLOW', 'RESUBMIT', 'SENDBACK') THEN wf.applicationnumber END) AS Total_Applications_Pending, "
@@ -185,7 +184,7 @@ public class DashboardQueryConstant {
 					+ "WHERE wf.createdtime >= EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '3 months') * 1000 "
 					+ "AND wf.createdtime < EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year');");
 
-	public final StringBuilder WATER_DASHBOARD_QUERY_ = new StringBuilder(
+	public static StringBuilder WATER_DASHBOARD_QUERY_ = new StringBuilder(
 			"SELECT COUNT(DISTINCT pi.businessid) AS Total_Applications_Received, "
 					+ "SUM(CASE WHEN pi.action = 'ACTIVATE_CONNECTION' THEN 1 ELSE 0 END) AS Total_Applications_Approved, "
 					+ "COUNT(DISTINCT CASE WHEN pi.action IN ('SEND_BACK_TO_CITIZEN', 'SEND_BACK_FOR_DOCUMENT_VERIFICATION', 'SUBMIT_APPLICATION', 'APPROVE_FOR_CONNECTION', 'SEND_BACK_FOR_FIELD_INSPECTION', 'VERIFY_AND_FORWARD', 'INITIATE', 'PAY', 'RESUBMIT_APPLICATION') "
@@ -198,7 +197,7 @@ public class DashboardQueryConstant {
 					+ "AND pi.createdtime >= EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '3 months') * 1000 "
 					+ "AND pi.createdtime < EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year');");
 
-	public final StringBuilder SEWERAGE_DASHBOARD_QUERY_ = new StringBuilder("SELECT "
+	public static StringBuilder SEWERAGE_DASHBOARD_QUERY_ = new StringBuilder("SELECT "
 			+ "COUNT(DISTINCT pi.businessid) AS Total_Applications_Received, "
 			+ "SUM(CASE WHEN pi.action = 'ACTIVATE_CONNECTION' THEN 1 ELSE 0 END) AS Total_Applications_Approved, "
 			+ "COUNT(DISTINCT CASE "
