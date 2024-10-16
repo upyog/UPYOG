@@ -44,7 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController	
-@CrossOrigin(origins="*")
+
     @RequestMapping("/v1")
     public class TradeLicenseController {
 
