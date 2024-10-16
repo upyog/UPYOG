@@ -91,7 +91,7 @@ const enabledModules = [
   "CHB",
   "COMMONMODULE",
   "FNOC",
-  "ADS"
+  "ADS",
   "SV"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({

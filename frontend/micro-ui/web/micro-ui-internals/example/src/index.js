@@ -84,7 +84,7 @@ const enabledModules = [
   "CHB",
   "COMMONMODULE",
   "FNOC",
-  "ADS",  //Enable Advertisement Module
+  "ADS",
   "SV"
 ];
 
