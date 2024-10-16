@@ -3,9 +3,10 @@ import React ,{Fragment}from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
-import { citizenConfig } from "../../../config/Create/citizenconfig";
+// import { citizenConfig } from "../../../config/Create/citizenconfig";
+import { Config } from "../../../config/config";
 
-const FNOCCreate = ({ parentRoute }) => {
+const SVCreate = ({ parentRoute }) => {
 
   const queryClient = useQueryClient();
   const match = useRouteMatch();
@@ -14,21 +15,9 @@ const FNOCCreate = ({ parentRoute }) => {
   const history = useHistory();
   const stateId = Digit.ULBService.getStateId();
   let config = [];
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("FNOC_CREATES", {});
+  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("SV_CREATES", {});
   
-//   let { data: commonFields, isLoading } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "CommonFieldsConfig" }],
-//     {
-//       select: (data) => {
-//           const formattedData = data?.["PetService"]?.["CommonFieldsConfigEmp"]
-//           return formattedData;
-//       },
-//   });
-  
-  
-  const goNext = (skipStep, index, isAddMultiple, key) => {
-
-    
-    
+  const goNext = (skipStep, index, isAddMultiple, key) => {  
     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
       isMultiple = false,
@@ -49,11 +38,9 @@ const FNOCCreate = ({ parentRoute }) => {
     if (!isNaN(lastchar)) {
       isMultiple = true;
     }
-    // let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
-    let { nextStep = {} } = config.find((routeObj) => routeObj.route === (currentPath || '0'));
+    let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
 
 
-    
     let redirectWithHistory = history.push;
     if (skipStep) {
       redirectWithHistory = history.replace;
@@ -78,10 +65,10 @@ const FNOCCreate = ({ parentRoute }) => {
   if(params && Object.keys(params).length>0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true")
     {
       clearParams();
-      queryClient.invalidateQueries("FNOC_CREATE");
+      queryClient.invalidateQueries("SV_CREATE");
     }
 
-  const ptrcreate = async () => {
+  const svcreate = async () => {
     history.push(`${match.path}/acknowledgement`);
   };
 
@@ -107,22 +94,22 @@ const FNOCCreate = ({ parentRoute }) => {
 
   const onSuccess = () => {
     clearParams();
-    queryClient.invalidateQueries("FNOC_CREATE");
+    queryClient.invalidateQueries("SV_CREATE");
   };
 //   if (isLoading) {
 //     return <Loader />;
 //   }
 
   
-  let commonFields = citizenConfig;
+  let commonFields = Config;
   commonFields.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });
   
   config.indexRoute = "info";
 
-  const CheckPage = Digit?.ComponentRegistryService?.getComponent("CheckPage");
-  const PTRAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTRAcknowledgement");
+  const SVCheckPage = Digit?.ComponentRegistryService?.getComponent("CheckPage");
+  // const PTRAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTRAcknowledgement");
 
   
   
@@ -131,20 +118,21 @@ const FNOCCreate = ({ parentRoute }) => {
       {config.map((routeObj, index) => {
         const { component, texts, inputs, key } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
+        const user = Digit.UserService.getUser().info.type;
         return (
           <Route path={`${match.path}/${routeObj.route}`} key={index}>
-            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} />
+            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} userType={user} />
           </Route>
         );
       })}
 
       
       <Route path={`${match.path}/check`}>
-        <CheckPage onSubmit={ptrcreate} value={params} />
+        <SVCheckPage onSubmit={svcreate} value={params} />
       </Route>
-      <Route path={`${match.path}/acknowledgement`}>
+      {/* <Route path={`${match.path}/acknowledgement`}>
         <PTRAcknowledgement data={params} onSuccess={onSuccess} />
-      </Route>
+      </Route> */}
       <Route>
         <Redirect to={`${match.path}/${config.indexRoute}`} />
       </Route>
@@ -152,4 +140,4 @@ const FNOCCreate = ({ parentRoute }) => {
   );
 };
 
-export default FNOCCreate;
+export default SVCreate;

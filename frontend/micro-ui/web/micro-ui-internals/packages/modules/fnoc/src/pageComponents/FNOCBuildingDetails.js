@@ -679,6 +679,7 @@ function selectbuiltArea(i, e) {
   
   const goNext = () => {
       let buildingDetails = formData.buildings || {};
+      console.log("buildingDetailsbuildingDetails",buildingDetails);
       let buildingStep = { 
         ...buildingDetails, 
         units: fields
