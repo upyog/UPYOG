@@ -1,11 +1,9 @@
-import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+
 import React ,{Fragment}from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
-// import { newConfig } from "../../../config/Create/config";
 import { citizenConfig } from "../../../config/Create/citizenconfig";
-import { data } from "jquery";
 
 const FNOCCreate = ({ parentRoute }) => {
 
@@ -123,7 +121,7 @@ const FNOCCreate = ({ parentRoute }) => {
   
   config.indexRoute = "info";
 
-  const CheckPage = Digit?.ComponentRegistryService?.getComponent("PTRCheckPage");
+  const CheckPage = Digit?.ComponentRegistryService?.getComponent("CheckPage");
   const PTRAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTRAcknowledgement");
 
   

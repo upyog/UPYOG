@@ -56,6 +56,8 @@ import {CHBModule,CHBLinks,CHBComponents} from "@nudmcdgnpm/upyog-ui-module-chb"
 import {ADSModule,ADSLinks,ADSComponents} from "@nudmcdgnpm/upyog-ui-module-ads";
 import { COMMONMODULEModule, COMMONMODULELinks, COMMONMODULEComponents } from "@nudmcdgnpm/upyog-ui-module-cm";
 import { FNOCComponents, FNOCLinks, FNOCModule } from "@nudmcdgnpm/upyog-ui-module-fnoc";
+import { SVComponents, SVLinks, SVModule } from "@nudmcdgnpm/upyog-ui-module-sv";
+
 
 initLibraries();
 
@@ -89,7 +91,8 @@ const enabledModules = [
   "CHB",
   "COMMONMODULE",
   "FNOC",
-  "ADS"
+  "ADS",
+  "SV"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -125,6 +128,9 @@ window.Digit.ComponentRegistryService.setupRegistry({
   ADSLinks,
   ADSModule,
   ...ADSComponents,
+  SVModule,
+  SVLinks,
+  ...SVComponents  
 });
 
 initPGRComponents();
