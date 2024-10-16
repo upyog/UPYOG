@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @RestController
-@CrossOrigin(origins="*")
+
 @RequestMapping("/egov-wf")
 public class WorkflowController {
 
