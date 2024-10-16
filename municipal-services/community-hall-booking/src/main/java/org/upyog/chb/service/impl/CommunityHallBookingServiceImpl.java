@@ -24,6 +24,7 @@ import org.upyog.chb.service.EnrichmentService;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.util.MdmsUtil;
 import org.upyog.chb.validator.CommunityHallBookingValidator;
+import org.upyog.chb.web.models.ApplicantDetail;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
@@ -114,9 +115,30 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		hallBookingValidator.validateSearch(info, bookingSearchCriteria);
 		List<CommunityHallBookingDetail> bookingDetails = new ArrayList<CommunityHallBookingDetail>();
 		bookingSearchCriteria  = addCreatedByMeToCriteria(bookingSearchCriteria, info);
+		
 		log.info("loading data based on criteria" + bookingSearchCriteria);
 		
+		if(bookingSearchCriteria.getMobileNumber() != null && bookingSearchCriteria.getMobileNumber().trim().length() >9){
+		
+		ApplicantDetail applicantDetail = ApplicantDetail.builder().applicantMobileNo(bookingSearchCriteria.getMobileNumber())
+				.build();
+		CommunityHallBookingDetail communityHallBookingDetail = CommunityHallBookingDetail.builder().applicantDetail(applicantDetail)
+				.build();
+		CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder()
+				.hallsBookingApplication(communityHallBookingDetail).requestInfo(info).build();
+		
+		communityHallBookingDetail = encryptionService.encryptObject(bookingRequest);
+		
+		bookingSearchCriteria.setMobileNumber(communityHallBookingDetail.getApplicantDetail().getApplicantMobileNo());
+		
+		log.info("loading data based on criteria after encrypting mobile no : " + bookingSearchCriteria);
+		
+		}
+		
 		bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
+		if(CollectionUtils.isEmpty(bookingDetails)) {
+			return bookingDetails;
+		}
 		bookingDetails = encryptionService.decryptObject(bookingDetails, info);
 
 		return bookingDetails;
