@@ -18,7 +18,7 @@ import net.minidev.json.JSONArray;
 
 @RestController
 @Slf4j
-@CrossOrigin(origins="*")
+
 @RequestMapping(value = "/v1")
 public class MDMSController {
 
