@@ -13,9 +13,11 @@
     "packages/modules/ew",
     "packages/modules/cm",
     "packages/modules/chb",
-    "packages/modules/fnoc",
+    "packages/modules/sv",
     "packages/modules/asset",
     "packages/modules/ads"
+,
+    "packages/modules/fnoc"
 
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
@@ -46,6 +48,7 @@
     "dev:receipts": "cd packages/modules/receipts && yarn start",
     "dev:tl": "cd packages/modules/tl && yarn start",
     "dev:fnoc": "cd packages/modules/fnoc && yarn start",
+    "dev:sv": "cd packages/modules/sv && yarn start",
     "dev:ptr": "cd packages/modules/ptr && yarn start",
     "dev:asset": "cd packages/modules/asset && yarn start",
     "dev:hrms": "cd packages/modules/hrms && yarn start",
@@ -77,6 +80,7 @@
     "build:asset": "cd packages/modules/asset && yarn build",
     "build:fnoc": "cd packages/modules/fnoc && yarn build",
     "build:ew": "cd packages/modules/ew && yarn build",
+    "build:sv": "cd packages/modules/sv && yarn build",
     "build:cm": "cd packages/modules/cm && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
     "buildD:noc": "cd packages/modules/noc && yarn build",

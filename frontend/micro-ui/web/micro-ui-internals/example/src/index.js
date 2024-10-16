@@ -34,6 +34,8 @@ import { COMMONMODULELinks, COMMONMODULEModule, COMMONMODULEComponents } from "@
 
 import { FNOCComponents, FNOCLinks, FNOCModule } from "@nudmcdgnpm/upyog-ui-module-fnoc";
 
+import { SVComponents, SVLinks, SVModule } from "@nudmcdgnpm/upyog-ui-module-sv";
+
 
 
 // import {initCustomisationComponents} from "./customisations";
@@ -83,6 +85,7 @@ const enabledModules = [
   "COMMONMODULE",
   "FNOC",
   "ADS",  //Enable Advertisement Module
+  "SV"
 ];
 
 const initTokens = (stateCode) => {
@@ -149,6 +152,9 @@ const initDigitUI = () => {
     ADSLinks,
     ADSModule,
     ...ADSComponents, //Initialization of advertisement module
+    SVModule,
+    SVLinks,
+    ...SVComponents  
   });
 
   initFSMComponents();

@@ -22,7 +22,8 @@ const FNOCPropertyDetails = ({ t, config, onSelect, userType,formData }) => {
   let cities = [];
   allCities &&
   allCities.map((cityData) => {
-       cities.push({ i18nKey: `${cityData.name}`, code: `${cityData.code}`, value: `${cityData.name}`, pinCode:`${cityData.pincode}` });
+    console.log("cityDatacityData",cityData);
+       cities.push({ i18nKey: `${cityData.i18nKey}`, code: `${cityData.code}`, value: `${cityData.name}`, pinCode:`${cityData.pincode}` });
   });
   const {data:fetchedLocalities}  = Digit.Hooks.useBoundaryLocalities(
     tenantId,
@@ -35,7 +36,8 @@ const FNOCPropertyDetails = ({ t, config, onSelect, userType,formData }) => {
   let newLocalityData  = [];
   fetchedLocalities &&
   fetchedLocalities.map((localityData) => {
-    newLocalityData.push({ i18nKey: `${localityData.name}`, code: `${localityData.code}`, value: `${localityData.name}`});
+    console.log("localityDatalocalityData",localityData);
+    newLocalityData.push({ i18nKey: `${localityData?.i18nkey}`, code: `${localityData?.code}`, value: `${localityData?.name}`});
   });
   
   function setBuildingName(e) {
@@ -74,7 +76,7 @@ const FNOCPropertyDetails = ({ t, config, onSelect, userType,formData }) => {
       if (propertyId) {
         setShouldFetchDetails(true);
       } else {
-        console.log("Property ID is required");
+        alert("Property ID is required");
       }
     };
     // Effect to handle the fetched data

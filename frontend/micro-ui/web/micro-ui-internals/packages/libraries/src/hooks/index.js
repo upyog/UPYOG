@@ -308,7 +308,11 @@ import useCMSearch from "./cm/useCMSearch";
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
 import useFnocDoc from "./fnoc/useFnocDoc";
-import useTenantsFNOC from "./fnoc/useTenants"
+import useTenantsFNOC from "./fnoc/useTenants";
+
+import useSVDoc from "./sv/useSVDoc";
+import useTenantsSV from "./sv/useTenants";
+
 
 const pgr = {
   useComplaintDetails,
@@ -332,6 +336,11 @@ const fnoc = {
   useFnocDoc,
   useTenants: useTenantsFNOC,
 };
+
+const sv = {
+  useSVDoc,
+  useTenants:useTenantsSV
+}
 
 const ew = {
   useProductPriceMDMS,
@@ -690,7 +699,8 @@ const Hooks = {
   useBulkPdfDetails,
   useBillAmendmentInbox,
   useAudit,
-  createTokenAPI
+  createTokenAPI,
+  sv
 };
 
 export default Hooks;
