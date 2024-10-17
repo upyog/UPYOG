@@ -90,8 +90,8 @@ public class PGRQueryBuilder {
 
         if (criteria.getServiceRequestId() != null) {
             addClauseIfRequired(preparedStmtList, builder);
-            builder.append(" ser.serviceRequestId=? ");
-            preparedStmtList.add(criteria.getServiceRequestId());
+            builder.append(" LOWER(ser.serviceRequestId) LIKE ? ");
+            preparedStmtList.add("%" + criteria.getServiceRequestId() + "%");
         }
 
         Set<String> ids = criteria.getIds();
