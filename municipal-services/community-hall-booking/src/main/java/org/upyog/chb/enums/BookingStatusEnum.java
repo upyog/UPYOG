@@ -1,7 +1,7 @@
 package org.upyog.chb.enums;
 
 public enum BookingStatusEnum {
-	
+	AVAILABLE,
 	BOOKING_CREATED,
 	BOOKED,
 	CANCELLATION_REQUESTED,

@@ -12,6 +12,7 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.service.PaymentNotificationService;
+import org.upyog.chb.util.CommunityHallBookingUtil;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jayway.jsonpath.DocumentContext;
@@ -31,6 +32,8 @@ public class PaymentUpdateConsumer {
 			@Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
 		log.info("CHB Appplication Received to update workflow after PAY for topic : " + topic);
+		//TODO: need to remove after testing
+		log.info("Strigifed json : " + CommunityHallBookingUtil.beuatifyJson(record));
 		try {
 			paymentNotificationService.process(record, topic);
 		} catch (JsonProcessingException e) {
@@ -44,6 +47,8 @@ public class PaymentUpdateConsumer {
 			@Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
 		log.info("CHB Appplication payment status update for  : " + topic + " and record : " + record);
+		//TODO: need to remove after testing
+		log.info("Strigifed json : " + CommunityHallBookingUtil.beuatifyJson(record));
 		paymentNotificationService.processTransaction(record, topic, null);
 
 	}
@@ -54,6 +59,8 @@ public class PaymentUpdateConsumer {
 			@Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
 		log.info("CHB Appplication payment started for topic  : " + topic + " and record : " + record);
+		//TODO: need to remove after testing
+		log.info("Strigifed json : " + CommunityHallBookingUtil.beuatifyJson(record));
 		paymentNotificationService.processTransaction(record, topic, BookingStatusEnum.PENDING_FOR_PAYMENT);
 
 	}

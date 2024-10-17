@@ -107,7 +107,7 @@ function CHBSelectDocument({
 }) {
   const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0];
   
-
+  const user = Digit.UserService.getUser().info;
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [selectedDocument, setSelectedDocument] = useState(
     filteredDocument
@@ -207,7 +207,7 @@ function CHBSelectDocument({
           <Dropdown
             className="form-field"
             selected={selectedDocument}
-            style={{ width: "100%" }}
+            style={{width:user.type==="EMPLOYEE"?"50%":"100%"}}
             placeholder={"Select " + t("CHB_"+(doc?.code.replaceAll(".", "_"))) }
             option={dropDownData.map((e) => ({ ...e, i18nKey:"CHB_" + e.code?.replaceAll(".", "_") }))}
             select={handleCHBSelectDocument}

@@ -12,7 +12,7 @@ const CHBBankDetails
   
    
   let validation = {};
-
+  const user = Digit.UserService.getUser().info;
   const [accountNumber , setAccountNumber ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].accountNumber) || formData?.bankdetails?.accountNumber || "");
   const [confirmAccountNumber , setConfirmAccountNumber ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].confirmAccountNumber) || formData?.bankdetails?.confirmAccountNumber || "");
   const [ifscCode , setIfscCode ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].ifscCode) || formData?.bankdetails?.ifscCode || "");
@@ -25,7 +25,7 @@ const CHBBankDetails
   const [showToast, setShowToast] = useState(null);
 
   useEffect(() => {
-    if (ifscCode.length === 11) {
+    if (ifscCode.length === 11 && !bankName && !bankBranchName) {
       fetch(`https://ifsc.razorpay.com/${ifscCode}`)
         .then(response => response.json())
         .then(data => {
@@ -42,8 +42,14 @@ const CHBBankDetails
         });
       }
     else {
+      if(ifscCode.length === 11 && bankName && bankBranchName){
+        setBankName(bankName);
+        setBankBranchName(bankBranchName);
+      }
+      else{
       setBankName("");
       setBankBranchName("");
+      }
     }
   }, [ifscCode]);
 
@@ -138,7 +144,7 @@ const CHBBankDetails
     {
       window.location.href.includes("/citizen") ?
  <Timeline currentStep={4} />
-    : null
+    : <Timeline currentStep={4} />
     }
    <Card>
         <CardSubHeader>
@@ -158,6 +164,7 @@ const CHBBankDetails
     >
       
       <div>
+        <CardSubHeader>{t(`CHB_BANK_DETAILS_FOR_REFUND`)}</CardSubHeader>
         <CardLabel>{`${t("CHB_ACCOUNT_NUMBER")}`} <span className="check-page-link-button">*</span></CardLabel>
         <TextInput
           t={t}
@@ -169,6 +176,7 @@ const CHBBankDetails
           onChange={setApplicantAccountNumber}
           minLength={8}
           maxLength={16}
+          style={{width:user.type==="EMPLOYEE"?"50%":null}}
           placeholder={"Enter Account Number"}
           ValidationRequired = {true}
           {...(validation = {
@@ -189,6 +197,7 @@ const CHBBankDetails
           optionKey="i18nKey"
           name="confirmAccountNumber"
           value={confirmAccountNumber}
+          style={{width:user.type==="EMPLOYEE"?"50%":null}}
           placeholder={"Enter Confirm Account Number"}
           onChange={setApplicantConfirmAccountNumber}
           minLength={8}
@@ -213,6 +222,7 @@ const CHBBankDetails
             name="ifscCode"
             value={ifscCode}
             placeholder={"Enter IFSC Code"}
+            style={{width:user.type==="EMPLOYEE"?"50%":null}}
             onChange={setApplicantIfscCode}
             maxLength={11}
             ValidationRequired={true}
@@ -231,6 +241,7 @@ const CHBBankDetails
             optionKey="i18nKey"
             name="bankName"
             placeholder={"Bank Name Auto Select"}
+            style={{width:user.type==="EMPLOYEE"?"50%":null}}
             value={bankName}
             onChange={setApplicantBankName}
             disabled={true}
@@ -244,6 +255,7 @@ const CHBBankDetails
             optionKey="i18nKey"
             name="bankBranchName"
             value={bankBranchName}
+            style={{width:user.type==="EMPLOYEE"?"50%":null}}
             placeholder={"Bank Branch Name Auto Select"}
             onChange={setApplicantBankBranchName}
             disabled={true}
@@ -256,6 +268,7 @@ const CHBBankDetails
           optionKey="i18nKey"
           name="accountHolderName"
           value={accountHolderName}
+          style={{width:user.type==="EMPLOYEE"?"50%":null}}
           placeholder={"Enter Account Holder Name"}
           onChange={setApplicantAccountHolderName}
           ValidationRequired = {true}

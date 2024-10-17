@@ -193,27 +193,8 @@ public class CommunityHallBookingConfiguration {
 	@Value("${egov.url.shortner.endpoint}")
 	private String shortenerEndpoint;
 	
-	//Notification Template
-	@Value("${chb.notification.booking.created.template}")
-	private String bookingCreatedTemplate;
-
-	@Value("${chb.notification.booked.template}")
-	private String bookedTemplate;
-	
 	@Value("${chb.claculation.tax.applicable}")
 	private String applicableTaxes;
 	
-
-	/*
-	 * @Bean public ObjectMapper objectMapper() { return new
-	 * ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-	 * .setTimeZone(TimeZone.getTimeZone(timeZone)); }
-	 * 
-	 * @Autowired public MappingJackson2HttpMessageConverter
-	 * jacksonConverter(ObjectMapper objectMapper) {
-	 * MappingJackson2HttpMessageConverter converter = new
-	 * MappingJackson2HttpMessageConverter();
-	 * converter.setObjectMapper(objectMapper); return converter; }
-	 */
 
 }

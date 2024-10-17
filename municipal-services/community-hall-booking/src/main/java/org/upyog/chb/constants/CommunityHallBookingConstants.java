@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 
 public class CommunityHallBookingConstants {
 
-
 	public static final String COMMUNITY_HALL_BOOKING_INIT_CREATED = "Your community hall booking details saved successfully";
 	
 	public static final String COMMUNITY_HALL_BOOKING_CREATED = "Your community hall booking created successfully";
@@ -41,10 +40,14 @@ public class CommunityHallBookingConstants {
 
 	public static final String EMPLOYEE = "EMPLOYEE";
 	public static final String CITIZEN = "CITIZEN";
+	
 	public static final String INVALID_SEARCH = "INVALID SEARCH";
 	public static final String CHB_WORKFLOW_ERROR = "CHB_WORKFLOW_ERROR";
 	public static final String DUPLICATE_DOCUMENT_UPLOADED = "DUPLICATE_DOCUMENT_UPLOADED";
 	public static final String MULTIPLE_HALL_CODES_ERROR = "MULTIPLE_HALL_CODES_ERROR";
+	public static final String EMPTY_DOCUMENT_ERROR = "EMPTY_DOCUMENT_ERROR";
+	public static final String INVALID_BOOKING_DATE = "INVALID_BOOKING_DATE";
+	public static final String INVALID_BOOKING_DATE_RANGE= "INVALID_BOOKING_DATE_RANGE";
 	
 	
 	// NOTIFICATION PLACEHOLDER
@@ -69,7 +72,7 @@ public class CommunityHallBookingConstants {
 	public static final String CHANNEL_NAME_EVENT = "EVENT";
 
 	public static final String CHANNEL_NAME_EMAIL = "EMAIL";
-
+	
 	public static final String MODULE = "module";
 
 	public static final String ACTION = "action";
@@ -108,5 +111,11 @@ public class CommunityHallBookingConstants {
 	
 	public static final String SECURITY_DEPOSIT = "SECURITY_DEPOSIT";
 	
+	
+	public static final String CHB_APPLICANT_DETAIL_ENCRYPTION_KEY = "CHBApplicantDetail";
+	
+	public static final String CHB_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY = "CHBApplicantDetailDecrypDisabled";
+
+	public static final String CHB_APPLICANT_DETAIL_PLAIN_DECRYPTION_PURPOSE = "CHBApplicantDetailDecryptionDisabled";
 
 }

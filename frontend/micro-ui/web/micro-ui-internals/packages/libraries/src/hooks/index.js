@@ -14,6 +14,7 @@ import {
   useDemandSearch,
   useRecieptSearch,
   useRecieptSearchNew,
+  useAssetQrCode,
   usePaymentSearch,
   useBulkPdfDetails,
 } from "./payment";
@@ -303,7 +304,15 @@ import useChbHallCode from "./chb/useChbHallCode"
 import useChbSlotSearch from "./chb/useChbSlotSearch";
 import useDemandEstimation from "./chb/useDemandEstimation"
 
+import useCMSearch from "./cm/useCMSearch";
+
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
+import useFnocDoc from "./fnoc/useFnocDoc";
+import useTenantsFNOC from "./fnoc/useTenants";
+
+import useSVDoc from "./sv/useSVDoc";
+import useTenantsSV from "./sv/useTenants";
+
 
 const pgr = {
   useComplaintDetails,
@@ -323,6 +332,15 @@ const pgr = {
   useTradeLicenseBillingslab,
   useMDMS: usePGRMDMS,
 };
+const fnoc = {
+  useFnocDoc,
+  useTenants: useTenantsFNOC,
+};
+
+const sv = {
+  useSVDoc,
+  useTenants:useTenantsSV
+}
 
 const ew = {
   useProductPriceMDMS,
@@ -563,6 +581,10 @@ const noc = {
   useNOCSearchApplication,
 };
 
+const cm = {
+  useCMSearch
+}
+
 const ws = {
   WSSearchMdmsTypes,
   usewsTenants,
@@ -629,6 +651,7 @@ const Hooks = {
   useModuleTenants,
   useRecieptSearch,
   useRecieptSearchNew,
+  useAssetQrCode,
   usePaymentSearch,
   useNewInboxGeneral,
   useEvents,
@@ -650,6 +673,7 @@ const Hooks = {
   ptr,
   ew,
   dss,
+  fnoc,
   mcollect,
   hrms,
   tl,
@@ -662,6 +686,7 @@ const Hooks = {
   noc,
   ws,
   asset,
+  cm,
   useCustomMDMS,
   useCustomAPIHook,
   reports,
@@ -674,7 +699,8 @@ const Hooks = {
   useBulkPdfDetails,
   useBillAmendmentInbox,
   useAudit,
-  createTokenAPI
+  createTokenAPI,
+  sv
 };
 
 export default Hooks;

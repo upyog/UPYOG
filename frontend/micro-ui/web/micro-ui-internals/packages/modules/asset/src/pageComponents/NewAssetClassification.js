@@ -97,10 +97,10 @@
 
 
 
-    const { data: departmentName } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Department" }],
+    const { data: departmentName } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "Department" }],
       {
         select: (data) => {
-            const formattedData = data?.["ASSET"]?.["Department"]
+            const formattedData = data?.["common-masters"]?.["Department"]
             const activeData = formattedData?.filter(item => item.active === true);
             return activeData;
         },
@@ -110,20 +110,10 @@
     departmentName && departmentName.map((departmentname) => {
       departNamefromMDMS.push({i18nKey: `${departmentname.name}`, code: `${departmentname.code}`, value: `${departmentname.name}`})
     }) 
-
-    
-
-
-
-
-
-      let menu_Asset = [];   //variable name for assetCalssification
-
-      let asset_type = [];  //variable name for asset type
-
-      let asset_sub_type = [];  //variable name for asset sub  parent caregory
-
-      let asset_parent_sub_category = [];
+   let menu_Asset = [];   //variable name for assetCalssification
+   let asset_type = [];  //variable name for asset type
+   let asset_sub_type = [];  //variable name for asset sub  parent caregory
+   let asset_parent_sub_category = [];
 
       
 
@@ -131,12 +121,6 @@
       Menu_Asset.map((asset_mdms) => {
           menu_Asset.push({ i18nKey: `${asset_mdms.name}`, code: `${asset_mdms.code}`, value: `${asset_mdms.name}` });
       });
-    
-      
-
-        
-    
-    
     
       Asset_Type &&
       Asset_Type.map((asset_type_mdms) => {
@@ -175,16 +159,7 @@
       
           });
     
-
-      
-
-
-
-    
-
-
-
-    function setAssetClassification(e) {
+  function setAssetClassification(e) {
       setassetclassification(e.target.value);
     }
     function setAssetType(e) {

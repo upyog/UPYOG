@@ -36,15 +36,15 @@ const BannerPicker = (props) => {
 const CHBAcknowledgement = ({ data, onSuccess }) => {
   const { t } = useTranslation();
 
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.chb.useChbCreateAPI(data?.address?.city?.code);
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
+  const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId);
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const match = useRouteMatch();
   const { tenants } = storeData || {};
-
+  const user = Digit.UserService.getUser().info;
   useEffect(() => {
     try {
-      data.tenantId = data?.address?.city?.code;
+      data.tenantId = tenantId;
       let formdata = CHBDataConvert(data);
       mutation.mutate(formdata, {
         onSuccess,
@@ -72,20 +72,33 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
       </StatusTable>
       {mutation.isSuccess && (
       <div style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
-         <Link to={`/digit-ui/citizen`}>
+        {user.type==="EMPLOYEE" &&(<Link to={`/digit-ui/employee`}>
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
-         </Link>
+         </Link>)}
+         {user.type==="CITIZEN" &&(<Link to={`/digit-ui/citizen`}>
+        <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+         </Link>)}
         {/* <SubmitBar
           label={t("CHB_DOWNLOAD_ACK_FORM")}
           onSubmit={handleDownloadPdf}
         /> */}
+        {user.type==="EMPLOYEE" &&(
+         <Link to={`/digit-ui/employee/payment/collect/${"chb-services"}/${mutation.data?.hallsBookingApplication[0].bookingNo}`}>
+          <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
+          </Link> )}
+          {user.type==="CITIZEN" &&(
         <Link to={`/digit-ui/citizen/payment/my-bills/${"chb-services"}/${mutation.data?.hallsBookingApplication[0].bookingNo}`}>
           <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
-        </Link>
+        </Link>)}
       </div>
     )}
-    {!mutation.isSuccess && (
+    {!mutation.isSuccess && user.type==="CITIZEN" &&(
       <Link to={`/digit-ui/citizen`}>
+      <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+       </Link>
+     )}
+     {!mutation.isSuccess && user.type==="EMPLOYEE" &&(
+      <Link to={`/digit-ui/employee`}>
       <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
        </Link>
      )}

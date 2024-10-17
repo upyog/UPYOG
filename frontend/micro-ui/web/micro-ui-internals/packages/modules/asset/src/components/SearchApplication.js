@@ -1,13 +1,15 @@
   import React, { useCallback, useMemo, useEffect, useState, useRef } from "react"
   import { useForm, Controller } from "react-hook-form";
   import { TextInput, SubmitBar, ActionBar, DatePicker, SearchForm, Dropdown, SearchField, Table, Card, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
-  import { Link } from "react-router-dom";
+  import { useRouteMatch, Link } from "react-router-dom";
   import jsPDF from 'jspdf';
   import QRCode from 'qrcode';
-  
-  
+  import * as XLSX from 'xlsx';
+ 
 
-  const ASSETSearchApplication = ({isLoading, t, onSubmit, data, count, setShowToast, ActionBarStyle = {}, MenuStyle = {}, }) => {
+  const ASSETSearchApplication = ({isLoading, t, onSubmit, data, count, setShowToast, ActionBarStyle = {}, MenuStyle = {}, parentRoute, tenantId }) => {
+    console.log('TESTING :- ', data);
+    //  const updatedData =[];
       const isMobile = window.Digit.Utils.browser.isMobile();
       const todaydate = new Date();
       const today = todaydate.toISOString().split("T")[0];
@@ -30,17 +32,17 @@
         setValue("toDate", today);
       },[register, setValue, today])
 
-
-      
-
-
-      const { data: actionState } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Action" }],
+// Get base path
+      var base_url = window.location.origin;
+    const { data: actionState } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Action" }],
       {
         select: (data) => {
             const formattedData = data?.["ASSET"]?.["Action"]
             return formattedData;
         },
     }); 
+
+
     let action = [];
 
     actionState && actionState.map((actionstate) => {
@@ -48,7 +50,8 @@
     }) 
 
 
-      const GetCell = (value) => <span className="cell-text">{value}</span>;
+  const GetCell = (value) => <span className="cell-text">{value}</span>;
+
       const columns = useMemo( () => ([
           {
               Header: t("ES_ASSET_RESPONSE_CREATE_LABEL"),
@@ -93,7 +96,7 @@
             {
               Header: t("AST_DEPARTMENT_LABEL"),
               Cell: ({ row }) => {
-                return GetCell(`${row?.original?.["department"]}`)
+                return GetCell(`${t(row?.original?.["department"])}`)
               },
               disableSortBy: true,
             },
@@ -148,6 +151,7 @@
                     document.removeEventListener("mousedown", closeMenu);
                   };
                 }, []);
+
                 const actionOptions = [
                   {
                     label: row?.original?.assetAssignment?.isAssigned ? t("AST_RETURN") : t("AST_ASSIGN"),
@@ -236,7 +240,8 @@
         for (let i = 0; i < data.length; i += batchSize) {
           const batch = data.slice(i, i + batchSize);
           const qrPromises = batch.map(async (row, index) => {
-            const url = `https://niuatt.niua.in/digit-ui/employee/asset/assetservice/applicationsearch/application-details/${row.applicationNo}`;
+            // const url = `https://niuatt.niua.in/digit-ui/employee/asset/assetservice/applicationsearch/application-details/${row.applicationNo}`;
+            const url = `${base_url}/digit-ui/citizen/assets/services?tenantId=${tenantId}&applicationNo=${row.applicationNo}`;
             const qrCodeURL = await generateQRCode(url);
             const yOffset = (index % batchSize) * 90;
       
@@ -264,6 +269,20 @@
       
         doc.save("Asset-QR-Reports.pdf");
       };
+      const downloadXLS = () => {
+        const tableColumn = columns.map(col => t(col.Header));
+        const tableRows = data.map(row => [
+            row.applicationNo,
+            row.assetClassification,
+            row.assetParentCategory,
+            row.assetName,
+            row.department
+        ]);
+        const worksheet = XLSX.utils.aoa_to_sheet([tableColumn, ...tableRows]);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Asset Report");
+        XLSX.writeFile(workbook, "Asset-Reports.xlsx");
+    };
   
 
       return <React.Fragment>
@@ -336,13 +355,15 @@
               <br></br>
            { data !== "" ? 
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: "10px" }}>
+            <button onClick={downloadXLS} style = {{ color: "maroon", border: "2px solid #333", padding: "10px 20px",cursor: "pointer"}}>Download XLS</button> 
             <button onClick={downloadQRReport} style = {{ color: "maroon", border: "2px solid #333", padding: "10px 20px",cursor: "pointer", marginLeft:"15px"}}>Download QR Report</button> 
 
             </div>
             : "" }
 
             <br></br>
-              {!isLoading && data?.display ? <Card style={{ marginTop: 20 }}>
+              {!isLoading && data?.display ? 
+              <Card style={{ marginTop: 20 }}>
                   {
                   t(data.display)
                       .split("\\n")
@@ -353,7 +374,9 @@
                       ))
                   }
               </Card>
-              :(!isLoading && data !== ""? <Table
+              :
+              (!isLoading && data !== ""? 
+              <Table
                   t={t}
                   data={data}
                   totalRecords={count}

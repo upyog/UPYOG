@@ -19,6 +19,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 
 public class CommunityHallBookingUtil {
+	
+	public final static String DATE_FORMAT = "yyyy-MM-dd";
 
 	public static ResponseInfo createReponseInfo(final RequestInfo requestInfo, String resMsg, StatusEnum status) {
 
@@ -63,7 +65,7 @@ public class CommunityHallBookingUtil {
 	}
 
 	public static LocalDate parseStringToLocalDate(String date) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 		LocalDate localDate = LocalDate.parse(date, formatter);
 		return localDate;
 	}
@@ -72,8 +74,11 @@ public class CommunityHallBookingUtil {
 		return date.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
 	}
 
-	public static String parseLocalDateToString(LocalDate date) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+	public static String parseLocalDateToString(LocalDate date, String dateFormat) {
+		if(dateFormat == null) {
+			dateFormat = DATE_FORMAT;
+		}
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
 		// Format the LocalDate
 		String formattedDate = date.format(formatter);
 		return formattedDate;
@@ -100,6 +105,14 @@ public class CommunityHallBookingUtil {
 
 	public static String getTenantId(String tenantId) {
 		return tenantId.split("\\.")[0];
+	}
+	
+	public static LocalDate getMonthsAgo(int month) {
+		LocalDate currentDate = LocalDate.now();
+		// Calculate the date given months ago
+		LocalDate monthsAgo = currentDate.minusMonths(month);
+		
+        return monthsAgo;
 	}
 
 }

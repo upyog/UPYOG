@@ -173,6 +173,7 @@ import {
   FirenocIcon,
   InfoIcon,
   LoginIcon,
+  CHBIcon
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -195,6 +196,7 @@ import ResponseComposer from "./hoc/ResponseComposer";
 import InboxComposer from "./hoc/InboxComposer";
 
 import CityMohalla from "./molecules/CityMohalla";
+import PropertySearch from "./molecules/PropertySearch";
 import DashboardBox from "./molecules/DashboardBox";
 import DetailsCard from "./molecules/DetailsCard";
 import FilterAction from "./molecules/FilterAction";
@@ -456,5 +458,7 @@ export {
   FirenocIcon,
   InfoIcon,
   LoginIcon,
-  CitizenConsentForm
+  CitizenConsentForm,
+  CHBIcon,
+  PropertySearch,
 };

@@ -23,13 +23,20 @@ export const shouldHideBackButton = (config = []) => {
 
 export const sethallDetails = (data) => {
   let { slotlist } = data;
+  //TODO
+  const DateConvert = (date) => {
+    if (!date) return "";
+    const [day, month, year] = date.split("-");
+    return `${year}-${month}-${day}`; // For the <input type="date" /> format
+  };
   let hallDetails = slotlist?.bookingSlotDetails.map((slot) => {
     return { 
       communityHallCode:slot.code,
+      communityHallName:slot.name,
       hallCode: slot.hallCode1,
-      bookingDate:slot.bookingDate,
-      bookingFromTime:"10:00",
-      bookingToTime:"23:59",
+      bookingDate:DateConvert(slot.bookingDate),
+      bookingFromTime:slot.fromTime,
+      bookingToTime:slot.toTime,
       status:"BOOKING_CREATED",
       capacity:slot.capacity
     };
@@ -140,6 +147,7 @@ const formdata={
     ...data.documents,
     bookingStatus:"BOOKING_CREATED",
     communityHallCode:data.slotlist[0]?.communityHallCode,
+    communityHallName:data.slotlist[0]?.communityHallName,
     specialCategory:{
       category:data.slots?.specialCategory?.value
     },

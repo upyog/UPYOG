@@ -17,10 +17,10 @@ const CHBSlotDetails
     const [purposeDescription, setPurposeDescription] = useState((formData.slots && formData.slots[index] && formData.slots[index].purposeDescription) || formData?.slots?.purposeDescription || "");
 
     let validation = {};
-    const tenantId = Digit.ULBService.getCurrentTenantId();
+    const tenantId =  Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
-    const { data: Category } = Digit.Hooks.chb.useSpecialCategory(stateId, "CHB", "ChbSpecialCategory");
-    const { data: Purposes } = Digit.Hooks.chb.usePurpose(stateId, "CHB", "ChbPurpose");
+    const { data: Category } = Digit.Hooks.chb.useSpecialCategory(tenantId, "CHB", "ChbSpecialCategory");
+    const { data: Purposes } = Digit.Hooks.chb.usePurpose(tenantId, "CHB", "ChbPurpose");
     
     let category=[];
     let purposes=[];
@@ -83,7 +83,7 @@ const CHBSlotDetails
         {
           window.location.href.includes("/citizen") ?
             <Timeline currentStep={2} />
-            : null
+            :<Timeline currentStep={2} />
         }
         <Card>
         <CardSubHeader>

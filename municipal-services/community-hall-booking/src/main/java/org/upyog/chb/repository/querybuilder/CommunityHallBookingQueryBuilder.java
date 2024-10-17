@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
-import org.upyog.chb.enums.SlotStatusEnum;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 
@@ -20,13 +19,13 @@ public class CommunityHallBookingQueryBuilder {
 	private static final StringBuilder bookingDetailsQuery = new StringBuilder(
 			"SELECT ecbd.booking_id, booking_no, payment_date, application_date, tenant_id, community_hall_code, \n"
 					+ "booking_status, special_category, purpose, purpose_description, receipt_no, ecbd.createdby, ecbd.createdtime, \n"
-					+ "ecbd.lastmodifiedby, ecbd.lastmodifiedtime,ecbd.permission_letter_filestore_id, ecbd.payment_receipt_filestore_id, \n" + "	\n"
+					+ "ecbd.lastmodifiedby, ecbd.lastmodifiedtime,ecbd.permission_letter_filestore_id, ecbd.payment_receipt_filestore_id, \n" 
 					+ "appl.applicant_detail_id, applicant_name, applicant_email_id, applicant_mobile_no,\n"
 					+ "applicant_alternate_mobile_no, account_no, ifsc_code, bank_name, bank_branch_name, \n"
-					+ "account_holder_name, \n" + "\n" + "address_id, door_no, house_no, address_line_1, \n"
-					+ "landmark, city, city_code, pincode, street_name, locality, locality_code\n" + "	\n"
+					+ "account_holder_name, address_id, door_no, house_no, address_line_1, \n"
+					+ "landmark, city, city_code, pincode, street_name, locality, locality_code \n" 
 					+ "FROM public.eg_chb_booking_detail ecbd \n"
-					+ "join public.eg_chb_applicant_detail appl on ecbd.booking_id = appl.booking_id\n"
+					+ "join public.eg_chb_applicant_detail appl on ecbd.booking_id = appl.booking_id \n"
 					+ "join public.eg_chb_address_detail addr on appl.applicant_detail_id = addr.applicant_detail_id ");
 
 	private static final String slotDetailsQuery = "select * from public.eg_chb_slot_detail where booking_id in (";
@@ -39,9 +38,15 @@ public class CommunityHallBookingQueryBuilder {
 	private static final String COMMUNITY_HALL_SLOTS_AVAIALABILITY_QUERY = " SELECT ecbd.tenant_id, ecbd.community_hall_code, ecsd.capacity, ecsd.hall_code, ecsd.status,ecsd.booking_date \n"
 			+ "	FROM eg_chb_booking_detail ecbd, eg_chb_slot_detail ecsd\n"
 			+ "where ecbd.booking_id = ecsd.booking_id and ecbd.tenant_id= ? and ecbd.community_hall_code = ?\n"
-			+ " and ecsd.status = ? and \n"
-			+ "	ecsd.booking_date >= ? and ecsd.booking_date <=  ? ";
+			+ " and ecsd.status in ('BOOKED', 'PENDING_FOR_PAYMENT') and \n"
+			+ "	ecsd.booking_date >= ?::DATE and ecsd.booking_date <=  ?::DATE ";
 		//	+ "	AND ecsd.hall_code in (?)";
+	
+	//private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
+	
+	private static final String bookingDetailsCountCount = "SELECT count(ecbd.booking_id) \n" 
+			+ "FROM public.eg_chb_booking_detail ecbd \n"
+	+ "join public.eg_chb_applicant_detail appl on ecbd.booking_id = appl.booking_id \n";
 	
 
 	/**
@@ -53,8 +58,18 @@ public class CommunityHallBookingQueryBuilder {
 	 */
 	public String getCommunityHallBookingSearchQuery(CommunityHallBookingSearchCriteria criteria,
 			List<Object> preparedStmtList) {
-		StringBuilder builder = new StringBuilder(bookingDetailsQuery);
-
+		StringBuilder builder;
+		
+		if(criteria.isCountCall()) {
+			builder = new StringBuilder(bookingDetailsCountCount);
+		}else {
+			builder = new StringBuilder(bookingDetailsQuery);
+		}
+		
+		if(criteria.getFromDate() != null || criteria.getToDate() != null) {
+			builder.append(" join public.eg_chb_slot_detail ecsd ON ecsd.booking_id = ecbd.booking_id ");
+		}
+		
 		if (criteria.getTenantId() != null) {
 			if (criteria.getTenantId().split("\\.").length == 1) {
 
@@ -90,6 +105,12 @@ public class CommunityHallBookingQueryBuilder {
 			preparedStmtList.add(status);
 		}
 		
+		if (criteria.getCommunityHallCode() != null) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" ecbd.community_hall_code =  ? ");
+			preparedStmtList.add(criteria.getCommunityHallCode());
+		}
+		
 		String mobileNo = criteria.getMobileNumber();
 		if (mobileNo != null) {
 			List<String> mobileNos = Arrays.asList(mobileNo.split(","));
@@ -98,7 +119,7 @@ public class CommunityHallBookingQueryBuilder {
 			addToPreparedStatement(preparedStmtList, mobileNos);
 		}
 
-		// createdby search criteria
+		//createdby search criteria
 		List<String> createdBy = criteria.getCreatedBy();
 		if (!CollectionUtils.isEmpty(createdBy)) {
 
@@ -107,22 +128,37 @@ public class CommunityHallBookingQueryBuilder {
 			addToPreparedStatement(preparedStmtList, createdBy);
 		}
 
-		// From payment_date and to payment_date search criteria
-		//TODO: check payment date between condition
+		//From booking date to booking date search criteria
+		final String DATE_CAST = " ?::DATE ";
 		if (criteria.getFromDate() != null && criteria.getToDate() != null) {
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" ecbd.payment_date BETWEEN ").append(criteria.getFromDate()).append(" AND ")
-					.append(criteria.getToDate());
+			builder.append(" ecsd.booking_date BETWEEN ").append(DATE_CAST).append(" AND ")
+					.append(DATE_CAST);
+			preparedStmtList.add(criteria.getFromDate());
+			preparedStmtList.add(criteria.getToDate());
 		} else if (criteria.getFromDate() != null && criteria.getToDate() == null) {
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" ecbd.payment_date >= ").append(criteria.getFromDate());
+			builder.append(" ecsd.booking_date >= ").append(DATE_CAST);
+			preparedStmtList.add(criteria.getFromDate());
 		} else if (criteria.getFromDate() == null && criteria.getToDate() != null) {
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" ecbd.payment_date < ").append(criteria.getToDate());
+			builder.append(" ecsd.booking_date <= ").append(DATE_CAST);
+			preparedStmtList.add(criteria.getToDate());
 		}
 		
-		return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
+		String query = null;
+		
+		if(criteria.isCountCall()) {
+			//pagination attributes not required for count query
+			query = builder.toString();
+		} else {
+			//Add pagination attributes for booking details query
+			query = addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
+		}
+		
+		return query;
 	}
+	
 
 	/**
 	 * add if clause to the Statement if required or else AND
@@ -243,7 +279,7 @@ public class CommunityHallBookingQueryBuilder {
 
 		paramsList.add(searchCriteria.getTenantId());
 		paramsList.add(searchCriteria.getCommunityHallCode());
-		paramsList.add(SlotStatusEnum.BOOKED.toString());
+//		paramsList.add(SlotStatusEnum.BOOKED.toString());
 		paramsList.add(searchCriteria.getBookingStartDate());
 		paramsList.add(searchCriteria.getBookingEndDate());
 

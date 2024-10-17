@@ -82,7 +82,7 @@ const CHBCitizenDetails
     {
       window.location.href.includes("/citizen") ?
  <Timeline currentStep={1} />
-    : null
+    : <Timeline currentStep={1} />
     }
     <Card>
         <CardSubHeader>
@@ -111,6 +111,7 @@ const CHBCitizenDetails
           placeholder={"Enter Applicant Name"}
           value={applicantName}
           onChange={setOwnerName}
+          style={{width:user.type==="EMPLOYEE"?"51.6%":null}}
           ValidationRequired = {true}
           {...(validation = {
             // isRequired: true,
@@ -126,6 +127,7 @@ const CHBCitizenDetails
         <MobileNumber
           value={mobileNumber}
           name="mobileNumber"
+          style={{width:user.type==="EMPLOYEE"?"50%":null}}
           placeholder={"Enter Applicant Register Mobile Number"}
           onChange={(value) => setMobileNo({ target: { value } })}
           {...{ pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
@@ -135,6 +137,7 @@ const CHBCitizenDetails
           <MobileNumber
             value={alternateNumber}
             name="alternateNumber"
+            style={{width:user.type==="EMPLOYEE"?"50%":null}}
             placeholder={"Enter Alternate Mobile Number"}
             onChange={(value) => setAltMobileNo({ target: { value } })}
             {...{ required: false, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
@@ -149,6 +152,7 @@ const CHBCitizenDetails
           name="emailId"
           value={emailId}
           placeholder={"Enter Applicant Email Id"}
+          style={{width:user.type==="EMPLOYEE"?"51.6%":null}}
           onChange={setOwnerEmail}
           ValidationRequired = {true}
           {...(validation = {

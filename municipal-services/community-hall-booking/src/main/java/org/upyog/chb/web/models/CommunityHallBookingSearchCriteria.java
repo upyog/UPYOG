@@ -2,6 +2,8 @@ package org.upyog.chb.web.models;
 
 import java.util.List;
 
+import org.upyog.chb.validator.ValidDate;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -27,6 +29,8 @@ public class CommunityHallBookingSearchCriteria {
 
 	@JsonProperty("status")
 	private String status;
+	
+	private String communityHallCode;
 
 	@JsonProperty("bookingNo")
 	private String bookingNo;
@@ -40,11 +44,15 @@ public class CommunityHallBookingSearchCriteria {
 	@JsonProperty("limit")
 	private Integer limit;
 
+	@ValidDate
 	@JsonProperty("fromDate")
-	private Long fromDate;
+	private String fromDate;
 
+	@ValidDate
 	@JsonProperty("toDate")
-	private Long toDate;
+	private String toDate;
+	
+	private boolean isCountCall;
 
 	@JsonProperty("createdBy")
 	@JsonIgnore
@@ -52,13 +60,15 @@ public class CommunityHallBookingSearchCriteria {
 	
 	public boolean isEmpty() {
 		return (this.tenantId == null && this.status == null && this.bookingIds == null && this.bookingNo == null
-				&& this.mobileNumber == null && this.offset == null && this.limit == null
+				&& this.mobileNumber == null 
+				//&& this.offset == null && this.limit == null
 				&& this.fromDate == null && this.toDate == null && this.createdBy == null);
 	}
 
 	public boolean tenantIdOnly() {
 		return (this.tenantId != null && this.status == null && this.bookingIds == null && this.bookingNo == null
-				&& this.mobileNumber == null && this.offset == null && this.limit == null
+				&& this.mobileNumber == null 
+				//&& this.offset == null && this.limit == null
 				&& this.fromDate == null && this.toDate == null && this.createdBy == null);
 	}
 

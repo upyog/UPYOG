@@ -51,9 +51,8 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     endDate: null,
     key: 'selection'
   }]);
-  const { data: hallList } = Digit.Hooks.chb.useChbCommunityHalls(stateId, "CHB", "ChbCommunityHalls");
-  const { data: Hall } = Digit.Hooks.chb.useChbHallCode(stateId, "CHB", "ChbHallCode");
-  
+  const { data: hallList } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "ChbCommunityHalls");
+  const { data: Hall } = Digit.Hooks.chb.useChbHallCode(tenantId, "CHB", "ChbHallCode");
   let HallName = [];
   let HallId = [];
 
@@ -61,7 +60,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     HallName.push({ i18nKey: `${slot.code}`, code: `${slot.code}`, value: `${slot.name}`, communityHallId: slot.communityHallId,address: slot.address});
   });
   Hall && Hall.map((slot) => {
-    HallId.push({ i18nKey: `${slot.HallCode}`, code: `${slot.HallCode}`, value: `${slot.HallCode}`, communityHallId: slot.communityHallId ,capacity:`${slot.capacity}`});
+    HallId.push({ i18nKey: `${slot.HallCode}`, code: `${slot.HallCode}`, value: `${slot.HallCode}`, communityHallId: slot.communityHallId ,capacity:`${slot.capacity}`,fromTime:slot?.timeSlots[0].from,toTime:slot?.timeSlots[0].to});
   });
   const hallCodeId = HallId.map((slot) => {
     if (selectedHall.communityHallId === slot.communityHallId) {
@@ -70,7 +69,9 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
         code: slot.code ,
         value: slot.code,
         communityHallId: slot.communityHallId,
-        capacity:slot.capacity + " Person"
+        capacity:slot.capacity + " Person",
+        toTime:slot.toTime,
+        fromTime:slot.fromTime
       };
     }
   }).filter(item => item !== undefined);
@@ -95,6 +96,8 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
         hallCode1:slot.hallCode,
         address: Searchdata.hallAddress,
         hallCode: slot.hallCode + " - " + Searchdata.capacity,
+        toTime:hallCode.toTime,
+        fromTime:hallCode.fromTime,
         capacity:Searchdata.capacity,
         bookingDate: slot.bookingDate,
         status: slot.slotStaus === "AVAILABLE" ? (
@@ -158,7 +161,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
   const handleViewReportClick = () => {
     if (selectedHall) {
       // Trigger the popup
-      setShowDetails(prevShowDetails => !prevShowDetails); 
+      setShowDetails(true); 
     } else {
       // Show toast message
       setShowToast({ error: true, label: t("CHB_SELECT_HALL_NAME") });
@@ -264,8 +267,8 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
 
  const handleSearch = () => {
   const selectedHallName = selectedHall?.code || "";
-  const startDate = dateRange[0].startDate ? format(dateRange[0].startDate, 'dd-MM-yyyy') : "";
-  const endDate = dateRange[0].endDate ? format(dateRange[0].endDate, 'dd-MM-yyyy') : "";
+  const startDate = dateRange[0].startDate ? format(dateRange[0].startDate, 'yyyy-MM-dd') : "";
+  const endDate = dateRange[0].endDate ? format(dateRange[0].endDate, 'yyyy-MM-dd') : "";
   const selectedHallCode = hallCode?.code || "";
 
   if (selectedHallName && startDate && endDate && selectedHallCode) {
@@ -347,11 +350,11 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
               )}
             />
             <div onClick={handleViewReportClick} style={{ cursor: "pointer",display: "flex", marginTop:"10px"}}>
-              <InfoIcon/>
-              {showDetails &&(
-              <ChbCommunityHallDetails hallId={selectedHall.communityHallId} />
-              )}
+               <InfoIcon/>
             </div>
+            {showDetails &&(
+              <ChbCommunityHallDetails hallId={selectedHall.communityHallId} setShowDetails={setShowDetails}/>
+              )}
           </div>
           <div className="filter-label"><CardLabel>{`${t("CHB_SELECT_DATE")}`} <span className="check-page-link-button">*</span></CardLabel></div>
           <div className="employee-select-wrap" style={{ width: "50%" }}>

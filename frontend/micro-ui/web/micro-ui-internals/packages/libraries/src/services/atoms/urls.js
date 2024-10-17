@@ -78,50 +78,54 @@ const Urls = {
     update: "/property-services/property/_update",
     pt_calculation_estimate: "/pt-calculator-v2/propertytax/v2/_estimate",
     assessment_create: "/property-services/assessment/_create",
-    assessment_createUlb:"/pt-calculator-v2/assessment/_jobscheduler",
+    assessment_createUlb: "/pt-calculator-v2/assessment/_jobscheduler",
     assessment_search: "/property-services/assessment/_search",
     payment_search: "/collection-services/payments/PT/_search",
     pt_calculate_mutation: "/pt-calculator-v2/propertytax/mutation/_calculate",
     cfcreate: "/service-request/service/v1/_create",
     cfdefinitionsearch: "/service-request/service/definition/v1/_search",
     cfsearch: "/service-request/service/v1/_search",
-    defaulterNotice:"/egov-pdf/download/PT/ptdefaulternotice",
-    getDefaulterNoticeStatus:"/pdf-service/v1/_getBulkDefaulterNoticeRecordsDetails"
-    
+    defaulterNotice: "/egov-pdf/download/PT/ptdefaulternotice",
+    getDefaulterNoticeStatus: "/pdf-service/v1/_getBulkDefaulterNoticeRecordsDetails"
+
   },
 
-  ptr: {  
-    
-    create:"/pet-services/pet-registration/_create",
-    search:"/pet-services/pet-registration/_search",
-    update:"/pet-services/pet-registration/_update",
+  ptr: {
+
+    create: "/pet-services/pet-registration/_create",
+    search: "/pet-services/pet-registration/_search",
+    update: "/pet-services/pet-registration/_update",
     fetch_payment_details: "/billing-service/bill/v2/_fetchbill",
     payment_search: "/collection-services/payments/pet-services/_search",
-    
+
   },
 
   ew: {
-    create:"/ewaste-services/ewaste-request/_create",
-    search:"/ewaste-services/ewaste-request/_search",
-    update:"/ewaste-services/ewaste-request/_update",
+    create: "/ewaste-services/ewaste-request/_create",
+    search: "/ewaste-services/ewaste-request/_search",
+    update: "/ewaste-services/ewaste-request/_update",
   },
 
-  asset:{
-    create:"/asset-services/v1/assets/_create",
-    search:"/asset-services/v1/assets/_search",
-    update:"/asset-services/v1/assets/_update",
-    assign:"/asset-services/v1/assets/assignment/_create",
-    return_asset:"/asset-services/v1/assets/assignment/_update"
+  asset: {
+    create: "/asset-services/v1/assets/_create",
+    search: "/asset-services/v1/assets/_search",
+    update: "/asset-services/v1/assets/_update",
+    assign: "/asset-services/v1/assets/assignment/_create",
+    return_asset: "/asset-services/v1/assets/assignment/_update",
+    assets_Reciept_Search: "/asset-services/v1/assets/_search",     //This url use for  Assets Recipt Detail QR Code 
   },
 
-  chb: {    
-    create:"/chb-services/booking/v1/_create",
-    search:"/chb-services/booking/v1/_search",
-    update:"/chb-services/booking/v1/_update",
-    slot_search:"/chb-services/booking/v1/_slot-search",
-    estimateCreate:"/chb-services/booking/v1/_estimate"
+  chb: {
+    create: "/chb-services/booking/v1/_create",
+    search: "/chb-services/booking/v1/_search",
+    update: "/chb-services/booking/v1/_update",
+    slot_search: "/chb-services/booking/v1/_slot-search",
+    estimateCreate: "/chb-services/booking/v1/_estimate"
   },
 
+  fnoc:{
+    create:"/firenoc-services/v1/_create"
+  },
 
 
   dss: {
@@ -217,15 +221,15 @@ const Urls = {
     sewerage_applyAdhocTax: "/sw-calculator/sewerageCalculator/_applyAdhocTax",
     getSearchDetails: "/inbox/v1/dss/_search",
     disconnection_notice: "/pdf-service/v1/_createnosave",
-    meter_search:"/ws-calculator/meterConnection/_search"
+    meter_search: "/ws-calculator/meterConnection/_search"
   },
-digiLocker:{
-  authorization:"/requester-services-dx/user/authorization/url",
-  register :"/requester-services-dx/user/authorization/url/citizen",
-  token:"/requester-services-dx/user/token",
-  issueDoc:"/requester-services-dx/user/issuedfiles",
-  uri:"/requester-services-dx/user/file"
-},
+  digiLocker: {
+    authorization: "/requester-services-dx/user/authorization/url",
+    register: "/requester-services-dx/user/authorization/url/citizen",
+    token: "/requester-services-dx/user/token",
+    issueDoc: "/requester-services-dx/user/issuedfiles",
+    uri: "/requester-services-dx/user/file"
+  },
   engagement: {
     document: {
       search: "/egov-document-uploader/egov-du/document/_search",
@@ -241,6 +245,14 @@ digiLocker:{
       submitResponse: "/egov-survey-services/egov-ss/survey/response/_submit",
       showResults: "/egov-survey-services/egov-ss/survey/response/_results",
     },
+  },
+
+  // Urls defined for birth and death services
+  bnd: {
+    // url for birth
+    bsearch: "/birth-death-services/birth/_search",
+    // url for death
+    dsearch: "/birth-death-services/death/_search",
   },
 
   noc: {

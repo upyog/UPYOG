@@ -24,13 +24,18 @@ import { DigitUI } from "@nudmcdgnpm/digit-ui-module-core";
 import { initCommonPTComponents } from "@nudmcdgnpm/digit-ui-module-commonpt";
 import { initBillsComponents, BillsModule } from "@nudmcdgnpm/digit-ui-module-bills";
 
-
-
 import { PTRModule, PTRLinks, PTRComponents } from "@nudmcdgnpm/upyog-ui-module-ptr";
 
 import { EWModule, EWLinks, EWComponents } from "@nudmcdgnpm/upyog-ui-module-ew";
 
 import { ASSETComponents, ASSETLinks, ASSETModule } from "@nudmcdgnpm/upyog-ui-module-asset";
+
+import { COMMONMODULELinks, COMMONMODULEModule, COMMONMODULEComponents } from "@nudmcdgnpm/upyog-ui-module-cm";
+
+import { FNOCComponents, FNOCLinks, FNOCModule } from "@nudmcdgnpm/upyog-ui-module-fnoc";
+
+import { SVComponents, SVLinks, SVModule } from "@nudmcdgnpm/upyog-ui-module-sv";
+
 
 
 // import {initCustomisationComponents} from "./customisations";
@@ -43,6 +48,7 @@ import "@nudmcdgnpm/upyog-css"
 
 // import { subFormRegistry } from "@nudmcdgnpm/digit-ui-libraries";
 import { CHBModule, CHBLinks, CHBComponents } from "@nudmcdgnpm/upyog-ui-module-chb";
+import { ADSModule, ADSLinks, ADSComponents } from "@nudmcdgnpm/upyog-ui-module-ads"; // Importing the advertisement module and its components
 
 import { pgrCustomizations, pgrComponents } from "./pgr";
 
@@ -75,7 +81,11 @@ const enabledModules = [
   "PTR",
   "ASSET",
   "EW",
-  "CHB"
+  "CHB",
+  "COMMONMODULE",
+  "FNOC",
+  "ADS",
+  "SV"
 ];
 
 const initTokens = (stateCode) => {
@@ -132,7 +142,19 @@ const initDigitUI = () => {
     ...EWComponents,
     CHBModule, 
     CHBLinks, 
-    ...CHBComponents
+    ...CHBComponents,
+    COMMONMODULELinks,
+    COMMONMODULEModule,
+    ...COMMONMODULEComponents,
+    FNOCLinks,
+    FNOCModule,
+    ...FNOCComponents,
+    ADSLinks,
+    ADSModule,
+    ...ADSComponents, //Initialization of advertisement module
+    SVModule,
+    SVLinks,
+    ...SVComponents  
   });
 
   initFSMComponents();
