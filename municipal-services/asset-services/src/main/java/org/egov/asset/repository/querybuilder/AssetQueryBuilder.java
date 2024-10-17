@@ -63,7 +63,7 @@ public class AssetQueryBuilder {
 
     
     private final String paginationWrapper = "SELECT * FROM "
-            + "(SELECT *, DENSE_RANK() OVER (ORDER BY result.applicationno) AS offset_ FROM " + "({})"
+            + "(SELECT *, DENSE_RANK() OVER (ORDER BY result.applicationno DESC) AS offset_ FROM " + "({})"
             + " result) result_offset " + "WHERE offset_ > ? AND offset_ <= ?";
     
     //private final String countWrapper = "SELECT COUNT(DISTINCT(bpa_id)) FROM ({INTERNAL_QUERY}) as asset_count";
