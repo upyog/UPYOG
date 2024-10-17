@@ -32,6 +32,7 @@ public class DemandService {
 	public List<Demand> createDemand(PetRegistrationRequest petReq) {
 		String tenantId = petReq.getPetRegistrationApplications().get(0).getTenantId();
 		String consumerCode = petReq.getPetRegistrationApplications().get(0).getApplicationNumber();
+		Integer amountPayableInteger = getAmountPayableMdms();
 		PetRegistrationApplication petApplication = petReq.getPetRegistrationApplications().get(0);
 		User owner = User.builder().name(petApplication.getApplicantName()).emailId(petApplication.getEmailId())
 				.mobileNumber(petApplication.getMobileNumber()).tenantId(petApplication.getTenantId()).build();
@@ -47,6 +48,11 @@ public class DemandService {
 		demands.add(demand);
 
 		return demandRepository.saveDemand(petReq.getRequestInfo(), demands);
+	}
+
+	private Integer getAmountPayableMdms() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

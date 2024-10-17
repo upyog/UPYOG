@@ -33,19 +33,41 @@ public class PetApplicationRowMapper implements ResultSetExtractor<List<PetRegis
 				AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("pcreatedBy"))
 						.createdTime(rs.getLong("pcreatedTime")).lastModifiedBy(rs.getString("plastModifiedBy"))
 						.lastModifiedTime(lastModifiedTime).build();
-				PetDetails petdetails = PetDetails.builder().id(rs.getString("ptid")).petName(rs.getString("ptpetName"))
-						.petType(rs.getString("ptpetType")).breedType(rs.getString("ptbreedType"))
-						.clinicName(rs.getString("ptclinicName")).doctorName(rs.getString("ptdoctorName"))
-						.lastVaccineDate(rs.getString("ptlastVaccineDate"))
-						.vaccinationNumber(rs.getString("ptvaccinationNumber")).petAge(rs.getString("ptpetAge"))
-						.petGender(rs.getString("ptpetGender")).build();
+				PetDetails petdetails = PetDetails.builder()
+					    .id(rs.getString("ptid"))
+					    .petName(rs.getString("ptpetname"))
+					    .petType(rs.getString("ptpettype"))
+					    .breedType(rs.getString("ptbreedtype"))
+					    .clinicName(rs.getString("ptclinicname"))
+					    .doctorName(rs.getString("ptdoctorname"))
+					    .lastVaccineDate(rs.getString("ptlastvaccinedate"))
+					    .vaccinationNumber(rs.getString("ptvaccinationnumber"))
+					    .petAge(rs.getString("ptpetage"))
+					    .petGender(rs.getString("ptpetgender"))
+					    .petColor(rs.getString("ptpetcolor"))
+					    .adoptionDate(rs.getLong("ptadoptiondate"))  
+					    .birthDate(rs.getLong("ptbirthdate"))        
+					    .identificationMark(rs.getString("ptidentificationmark"))
+					    .build();
 
-				petRegistrationApplication = PetRegistrationApplication.builder()
-						.applicationNumber(rs.getString("papplicationnumber")).tenantId(rs.getString("ptenantid"))
-						.id(rs.getString("pid")).applicantName(rs.getString("papplicantname"))
-						.fatherName(rs.getString("pfathername")).emailId(rs.getString("pemailId"))
-						.mobileNumber(rs.getString("pmobileNumber")).petDetails(petdetails).auditDetails(auditdetails)
-						.build();
+					petRegistrationApplication = PetRegistrationApplication.builder()
+					    .applicationNumber(rs.getString("papplicationnumber"))
+					    .tenantId(rs.getString("ptenantid"))
+					    .id(rs.getString("pid"))
+					    .applicantName(rs.getString("papplicantname"))
+					    .fatherName(rs.getString("pfathername"))
+					    .emailId(rs.getString("pemailid"))
+					    .mobileNumber(rs.getString("pmobilenumber"))
+					    .applicationType(rs.getString("papplicationtype"))
+					    .validityDate(rs.getLong("pvaliditydate"))  
+					    .status(rs.getString("pstatus"))
+					    .expireFlag(rs.getBoolean("pexpireflag"))
+					    .petToken(rs.getString("ppettoken"))
+					    .previousApplicationNumber(rs.getString("ppreviousapplicationnumber"))
+					    .petDetails(petdetails)
+					    .auditDetails(auditdetails)
+					    .build();
+
 				addDocToPetApplication(rs, petRegistrationApplication);
 
 			} else {
