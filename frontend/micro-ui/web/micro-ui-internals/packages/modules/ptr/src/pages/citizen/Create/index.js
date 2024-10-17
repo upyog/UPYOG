@@ -1,11 +1,12 @@
 import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
-import React ,{Fragment}from "react";
+import React, { Fragment, useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
 // import { newConfig } from "../../../config/Create/config";
 import { citizenConfig } from "../../../config/Create/citizenconfig";
 import { data } from "jquery";
+import { ApplicationContext } from "../../../Module";
 
 const PTRCreate = ({ parentRoute }) => {
 
@@ -15,22 +16,35 @@ const PTRCreate = ({ parentRoute }) => {
   const { pathname } = useLocation();
   const history = useHistory();
   const stateId = Digit.ULBService.getStateId();
+
+  const { apptype, applicationId } = useContext(ApplicationContext)
+
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PTR_CREATE_PET", {});
-  
+
   let { data: commonFields, isLoading } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "CommonFieldsConfig" }],
     {
       select: (data) => {
-          const formattedData = data?.["PetService"]?.["CommonFieldsConfigEmp"]
-          return formattedData;
+        const formattedData = data?.["PetService"]?.["CommonFieldsConfigEmp"]
+        return formattedData;
       },
-  });
-  
-  
+    });
+
+  // added applicationnumber and application type in the formData before adding other fields from the form
+  useEffect(() => {
+    const applicationType = apptype;
+    const previousapplicationnumber = applicationId;
+    if (!(params.applicationType === applicationType)) {
+      setParams({ ...params, applicationType, previousapplicationnumber });
+    }
+  }, [params.applicationType]);
+
+
+
   const goNext = (skipStep, index, isAddMultiple, key) => {
 
-    
-    
+
+
     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
       isMultiple = false,
@@ -55,7 +69,7 @@ const PTRCreate = ({ parentRoute }) => {
     let { nextStep = {} } = config.find((routeObj) => routeObj.route === (currentPath || '0'));
 
 
-    
+
     let redirectWithHistory = history.push;
     if (skipStep) {
       redirectWithHistory = history.replace;
@@ -69,19 +83,27 @@ const PTRCreate = ({ parentRoute }) => {
     if (!isNaN(nextStep.split("/").pop())) {
       nextPage = `${match.path}/${nextStep}`;
     }
-     else {
+    else {
       nextPage = isMultiple && nextStep !== "map" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
     }
 
     redirectWithHistory(nextPage);
   };
 
+  // Maybe needed to use later based on requirement
+  // useEffect(() => {
+  //   if(apptype === "NEWAPPLICATION"){
+  //     clearParams();
+  //     // queryClient.invalidateQueries("PTR_CREATE_PET");
+  //   }
+  // }, [apptype])
 
-  if(params && Object.keys(params).length>0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true")
-    {
-      clearParams();
-      queryClient.invalidateQueries("PTR_CREATE_PET");
-    }
+  // if(params && Object.keys(params).length>0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true")
+  //   {
+  //     clearParams();
+  //     queryClient.invalidateQueries("PTR_CREATE_PET");
+
+  //   }
 
   const ptrcreate = async () => {
     history.push(`${match.path}/acknowledgement`);
@@ -104,8 +126,8 @@ const PTRCreate = ({ parentRoute }) => {
     goNext(skipStep, index, isAddMultiple, key);
   }
 
-  const handleSkip = () => {};
-  const handleMultiple = () => {};
+  const handleSkip = () => { };
+  const handleMultiple = () => { };
 
   const onSuccess = () => {
     clearParams();
@@ -115,19 +137,16 @@ const PTRCreate = ({ parentRoute }) => {
     return <Loader />;
   }
 
-  
-  commonFields = commonFields? commonFields:citizenConfig;
+
+  commonFields = commonFields ? commonFields : citizenConfig;
   commonFields.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });
-  
+
   config.indexRoute = "info";
 
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("PTRCheckPage");
   const PTRAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTRAcknowledgement");
-
-  
-  
   return (
     <Switch>
       {config.map((routeObj, index) => {
@@ -140,7 +159,7 @@ const PTRCreate = ({ parentRoute }) => {
         );
       })}
 
-      
+
       <Route path={`${match.path}/check`}>
         <CheckPage onSubmit={ptrcreate} value={params} />
       </Route>

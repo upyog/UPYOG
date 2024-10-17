@@ -1,10 +1,11 @@
   import { CardLabel, CardLabelError, Dropdown, LabelFieldPair, LinkButton, MobileNumber, TextInput, Toast } from "@nudmcdgnpm/digit-ui-react-components";
   import _ from "lodash";
-  import React, { useEffect, useMemo, useState } from "react";
+  import React, { useContext, useEffect, useMemo, useState } from "react";
   import { Controller, useForm } from "react-hook-form";
   import { useTranslation } from "react-i18next";
-  import { useLocation } from "react-router-dom";
+  import { useLocation, useParams } from "react-router-dom";
   import { stringReplaceAll, CompareTwoObjects } from "../utils";
+  import { ApplicationContext } from "../Module";
 
   const createOwnerDetails = () => ({
     applicantName: "",
@@ -22,18 +23,20 @@
     const [owners, setOwners] = useState(formData?.owners || [createOwnerDetails()]);
     const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
 
+    const {applicationNumber} = useParams();
+
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
 
-
-
-
-
+    const { isLoading: auditDataLoading, isError: isAuditError, data: app_data } = Digit.Hooks.ptr.usePTRSearch(
+      {
+        tenantId,
+        filters: { applicationNumber: applicationNumber, audit: true },
+      },
+    );
 
     useEffect(() => {
       onSelect(config?.key, owners);
-
-
     }, [owners]);
 
 
@@ -54,7 +57,7 @@
     return (
       <React.Fragment>
         {owners.map((owner, index) => (
-          <OwnerForm key={owner.key} index={index} owner={owner} {...commonProps} />
+          <OwnerForm key={owner.key} index={index} owner={owner} appData = {app_data?.PetRegistrationApplications[0]} {...commonProps} />
         ))}
 
       </React.Fragment>
@@ -75,6 +78,7 @@
       setError,
       clearErrors,
       formState,
+      appData
     } = _props;
 
     const [showToast, setShowToast] = useState(null);
@@ -82,14 +86,6 @@
     const formValue = watch();
     const { errors } = localFormState;
     const tenantId = Digit.ULBService.getCurrentTenantId();
-
-
-
-
-
-
-    
-
 
 
     useEffect(() => {
@@ -143,7 +139,7 @@
                 <Controller
                   control={control}
                   name={"applicantName"}
-                  defaultValue={owner?.applicantName}
+                  defaultValue={owner?.applicantName || appData?.applicantName}
                   rules={{
                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                     validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
@@ -175,7 +171,7 @@
                 <Controller
                   control={control}
                   name={"fatherName"}
-                  defaultValue={owner?.fatherName}
+                  defaultValue={owner?.fatherName || appData?.fatherName}
                   rules={{
                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                     validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
@@ -207,7 +203,7 @@
                 <Controller
                   control={control}
                   name={"mobileNumber"}
-                  defaultValue={owner?.mobileNumber}
+                  defaultValue={owner?.mobileNumber || appData?.mobileNumber}
                   rules={{
                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                     validate: (v) => (/^[6789]\d{9}$/.test(v) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
@@ -265,10 +261,10 @@
                 <Controller
                   control={control}
                   name={"emailId"}
-                  defaultValue={owner?.emailId}
+                  defaultValue={owner?.emailId || appData?.emailId}
                   rules={{
                     validate: (value) => {
-                      const normalized = value.trim().toLowerCase();  
+                      const normalized = value?.trim().toLowerCase();  
                       const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
                   
                       return emailRegex.test(normalized) || 'TL_EMAIL_ID_ERROR_MESSAGE';

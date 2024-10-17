@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   CardLabel,
   LabelFieldPair,
@@ -9,17 +9,24 @@ import {
   CardHeader,
   CardSectionHeader,
 } from "@nudmcdgnpm/digit-ui-react-components";
+import { useLocation, useParams } from "react-router-dom";
 
-import { useLocation } from "react-router-dom";
 const PTRDocumentUpload = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const [documents, setDocuments] = useState(formData?.documents?.documents || []);
   const [error, setError] = useState(null);
+  const {applicationNumber} = useParams();
 
   let action = "create";
-
   const { pathname } = useLocation();
+
+  const { isLoading: auditDataLoading, isError: isAuditError, data: app_data } = Digit.Hooks.ptr.usePTRSearch(
+    {
+      tenantId,
+      filters: { applicationNumber: applicationNumber, audit: true },
+    },
+  );
   
 
   const { isLoading, data } = Digit.Hooks.ptr.usePetMDMS(stateId, "PetService", "Documents");   
@@ -64,6 +71,7 @@ const PTRDocumentUpload = ({ t, config, onSelect, userType, formData, setError: 
             clearFormErrors={clearFormErrors}
             config={config}
             formState={formState}
+            appData = {app_data?.PetRegistrationApplications[0]}
           />
           
         );
@@ -88,7 +96,8 @@ function PTRSelectDocument({
   config,
   formState,
   fromRawData,
-  id
+  id,
+  appData
 }) {
   const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0];
 
@@ -102,6 +111,7 @@ function PTRSelectDocument({
       : {}
   );
 
+  console.log("appDAtA inc document of employee side :: ", appData)
   
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(() => filteredDocument?.fileStoreId || null);
@@ -138,6 +148,12 @@ function PTRSelectDocument({
       }
     }
   };
+
+  useEffect(() => {
+    appData?.documents?.map((row, index) => {
+      row?.documentType.includes(doc?.code) ? setUploadedFile(row) : null;
+    } )
+  }, [appData?.documents])
 
   useEffect(() => {
     if (selectedDocument?.code) {

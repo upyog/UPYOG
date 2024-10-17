@@ -1,5 +1,5 @@
-import { Header, CitizenHomeCard, PTIcon } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useEffect } from "react";
+import { Header, CitizenHomeCard, PTIcon, PropertySearch } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useEffect, useState, createContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
 import PTRPetdetails from "./pageComponents/PTRPetdetails";
@@ -26,10 +26,11 @@ import PTRCard from "./components/PTRCard";
 import InboxFilter from "./components/inbox/NewInboxFilter";
 import { TableConfig } from "./config/inbox-table-config";
 import NewApplication from "./pages/employee/NewApplication";
+import RenewApplication from "./pages/employee/RenewApplication";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import Response from "./pages/Response";
-
-
+import PTREditDetails from "./pageComponents/PTREditDetails";
+import EditDocumentPTR from "./pageComponents/EditDocumentPTR";
 
 
 const componentsToRegister = {
@@ -53,9 +54,15 @@ const componentsToRegister = {
   PTRSelectAddress,
   PTRSelectProofIdentity,
   PTRServiceDoc,
-  PTRWFApplicationTimeline
-
+  PTRWFApplicationTimeline,
+  PTREditDetails,
+  EditDocumentPTR,
+  PropertySearch,
+  PTRRenewApplication: RenewApplication
 };
+
+// used context for renewApplication
+export const ApplicationContext = createContext();
 
 const addComponentsToRegistry = () => {
   Object.entries(componentsToRegister).forEach(([key, value]) => {
@@ -66,6 +73,33 @@ const addComponentsToRegistry = () => {
 
 export const PTRModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
+  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PTR_APPLICATION_ID", {});
+
+  // These usestates are for the applicationcontext
+  const [applicationId, setApplicationId] = useState("");
+  const [applicationData, setApplicationData] = useState()
+  const [apptype, setApptype] = useState("NEWAPPLICATION")
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
+
+
+  const { isError, error, data: app_data } = Digit.Hooks.ptr.usePTRSearch(
+    {
+      tenantId,
+      filters: { applicationNumber: applicationId },
+    },
+  );
+
+  useEffect(() => {
+    if (!applicationId) setApplicationId(params) // to set applicationid from params after refresh of page so pass in search hook
+    if (app_data && apptype === "RENEWAPPLICATION") {
+      setParams(applicationId)
+      setApplicationData(app_data?.PetRegistrationApplications[0] || {});
+    }
+     else {
+      setApplicationData({})
+    }
+  }, [app_data, apptype, applicationId]);
+
 
   const moduleCode = "PTR";
   const language = Digit.StoreData.getCurrentLanguage();
@@ -86,9 +120,15 @@ export const PTRModule = ({ stateCode, userType, tenants }) => {
     []
   );
 
-  if (userType === "employee") {
-    return <EmployeeApp path={path} url={url} userType={userType} />;
-  } else return <CitizenApp />;
+  return ( //application context provider to pass context data to all child components
+    <ApplicationContext.Provider value={{ applicationId, setApplicationId, applicationData, apptype, setApptype}}>
+      {userType === "employee" ? (
+        <EmployeeApp path={path} url={url} userType={userType} />
+      ) : (
+        <CitizenApp />
+      )}
+    </ApplicationContext.Provider>
+  )
 };
 
 export const PTRLinks = ({ matchPath, userType }) => {
@@ -100,17 +140,17 @@ export const PTRLinks = ({ matchPath, userType }) => {
   }, []);
 
   const links = [
-    
+
     {
       link: `${matchPath}/ptr/petservice/new-application`,
       i18nKey: t("PTR_CREATE_PET_APPLICATION"),
     },
-    
+
     {
       link: `${matchPath}/ptr/petservice/my-application`,
       i18nKey: t("PTR_MY_APPLICATIONS_HEADER"),
     },
-    
+
     {
       link: `${matchPath}/howItWorks`,
       i18nKey: t("PTR_HOW_IT_WORKS"),

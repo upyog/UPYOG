@@ -66,7 +66,6 @@
     // });
 
 
-
       
       const GetCell = (value) => <span className="cell-text">{value}</span>;
       
@@ -117,6 +116,14 @@
               Header: t("PTR_MOBILE_NUMBER"),
               Cell: ({ row }) => {
                 return GetCell(`${row?.original?.["mobileNumber"]}`)
+              },
+              disableSortBy: true,
+            },
+            // field added for status of application
+            {
+              Header: t("PTR_APPLICATION_STATUS"),
+              Cell: ({ row }) => {
+                return GetCell(`${row?.original?.["status"]}`)
               },
               disableSortBy: true,
             },

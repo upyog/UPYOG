@@ -7,12 +7,13 @@ import {
   //MobileNumber,
   TextInput,
   Toast,
+  RadioButtons
 } from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { stringReplaceAll, CompareTwoObjects } from "../utils";
 
 const createPtrDetails = () => ({
@@ -26,6 +27,10 @@ const createPtrDetails = () => ({
   clinicName: "",
   petName: "",
   petGender: "",
+  birthDate: "",
+  adoptionDate: "",
+  petColor: "",
+  identificationmark: "",
 
   key: Date.now(),
 });
@@ -40,23 +45,31 @@ const PTRPetdetails = ({ config, onSelect, userType, formData, setError, formSta
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
 
+  const { applicationNumber } = useParams();
+
+
+  const { isLoading: auditDataLoading, isError: isAuditError, data: app_data } = Digit.Hooks.ptr.usePTRSearch(
+    {
+      tenantId,
+      filters: { applicationNumber: applicationNumber, audit: true },
+    },
+  );
 
 
 
   const { data: Menu } = Digit.Hooks.ptr.usePTRPetMDMS(stateId, "PetService", "PetType");
 
   const { data: Breed_Type } = Digit.Hooks.ptr.useBreedTypeMDMS(stateId, "PetService", "BreedType");  // hooks for breed type
-  
+
   let menu = [];   //variable name for pettype
-  let breed_type = [];
-  // variable name for breedtype
+  let breed_type = [];  // variable name for breedtype
 
   Menu &&
     Menu.map((petone) => {
       menu.push({ i18nKey: `PTR_PET_${petone.code}`, code: `${petone.code}`, value: `${petone.name}` });
     });
 
-  
+
 
 
 
@@ -86,6 +99,19 @@ const PTRPetdetails = ({ config, onSelect, userType, formData, setError, formSta
     });
 
 
+  // used the custom hook for getting petcolor data from mdms and format it according to the dropdown need
+  let { data: pet_color, isLoading } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "PetColor" }],
+    {
+      select: (data) => {
+        const formattedData = data?.["PetService"]?.["PetColor"].map((petone) => {
+          return { i18nKey: `${petone.colourName}`, colourCode: `${petone.colourCode}`, code: `${petone.colourName}`, active: `${petone.active}` };
+        })
+        return formattedData;
+      },
+    });
+
+
+
   useEffect(() => {
     onSelect(config?.key, pets);
   }, [pets]);
@@ -106,13 +132,14 @@ const PTRPetdetails = ({ config, onSelect, userType, formData, setError, formSta
     config,
     menu,
     breed_type,
-    pet_sex
+    pet_sex,
+    pet_color
   };
 
   return (
     <React.Fragment>
       {pets.map((pets, index) => (
-        <OwnerForm key={pets.key} index={index} pets={pets} {...commonProps} />
+        <OwnerForm key={pets.key} index={index} pets={pets} appData={app_data?.PetRegistrationApplications[0]} {...commonProps} />
       ))}
 
     </React.Fragment>
@@ -135,13 +162,14 @@ const OwnerForm = (_props) => {
     formState,
     menu,
     breed_type,
-    pet_sex
+    pet_sex,
+    appData,
+    pet_color
 
   } = _props;
 
   const [showToast, setShowToast] = useState(null);
-  const {
-    control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, } = useForm();
+  const {control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, } = useForm();
   const formValue = watch();
   const { errors } = localFormState;
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -153,6 +181,12 @@ const OwnerForm = (_props) => {
 
   const [part, setPart] = React.useState({});
 
+  const [selectBirthAdoption, setSelectBirthAdoption] = useState([{i18nKey: "", code: "" }] || "" );
+
+  const [birthDate, setBirthDate] = useState("");
+  const [adoptionDate, setAdoptionDate] = useState("");
+
+
   useEffect(() => {
     let _ownerType = isIndividualTypeOwner
 
@@ -163,6 +197,7 @@ const OwnerForm = (_props) => {
     }
   }, [formValue]);
 
+
   useEffect(() => {
     if (Object.keys(errors).length && !_.isEqual(formState.errors[config.key]?.type || {}, errors))
       setError(config.key, { type: errors });
@@ -170,6 +205,29 @@ const OwnerForm = (_props) => {
   }, [errors]);
 
   const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
+
+
+
+  useEffect(() => {
+    if (birthDate) {
+      setAdoptionDate(null);
+    }
+  }, [birthDate])
+
+  useEffect(() => {
+    if (adoptionDate) {
+      setBirthDate(null)
+    }
+  }, [adoptionDate])
+
+
+  function setbirthDate(e) {
+    setBirthDate(e.target.value)
+  }
+
+  function setadoptionDate(e) {
+    setAdoptionDate(e.target.value)
+  }
 
   return (
     <React.Fragment>
@@ -186,11 +244,10 @@ const OwnerForm = (_props) => {
             <Controller
               control={control}
               name={"petType"}
-              defaultValue={pets?.petType}
+              defaultValue={pets?.petType || menu.find(option => option.code === appData?.petDetails?.petType)}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
               render={(props) => (
                 <Dropdown
-
                   className="form-field"
                   selected={props.value}
                   select={props.onChange}
@@ -211,7 +268,7 @@ const OwnerForm = (_props) => {
             <Controller
               control={control}
               name={"breedType"}
-              defaultValue={pets?.breedType}
+              defaultValue={pets?.breedType || (breed_type.find(option => option.code === appData?.petDetails.breedType))}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
               render={(props) => (
                 <Dropdown
@@ -229,12 +286,88 @@ const OwnerForm = (_props) => {
           <CardLabelError style={errorStyle}>{localFormState.touched.breedType ? errors?.breedType?.message : ""}</CardLabelError>
 
           <LabelFieldPair>
+
+            <CardLabel>{`${t("PTR_SELECT_BIRTH_ADOPTION")}`} <span className="astericColor">*</span></CardLabel>
+            <RadioButtons
+              t={t}
+              options={[{i18nKey: "Birth",code: "Birth"}, {i18nKey: "Adoption",code: "Adoption"}]}
+              optionsKey="code"
+              name="selectBirthAdoption"
+              value={selectBirthAdoption}
+              selectedOption={selectBirthAdoption}
+              innerStyles={{ display: "inline-block", marginLeft: "20px", paddingBottom: "2px", marginBottom: "2px" }}
+              onSelect={setSelectBirthAdoption}
+              isDependent={true}
+            />
+
+          </LabelFieldPair>
+          <CardLabelError style={errorStyle}>{localFormState.touched.selectBirthAdoption ? errors?.selectBirthAdoption?.message : ""}</CardLabelError>
+
+          {(selectBirthAdoption?.code === "Birth" || appData?.petDetails?.birth) && (
+            <LabelFieldPair>
+              <CardLabel>{`${t("PTR_BIRTH")}`} <span className="astericColor">*</span></CardLabel>
+              <div className="field">
+                <Controller
+                  control={control}
+                  name={"birthDate"}
+                  defaultValue={pets?.birthDate || appData?.petDetails?.birthDate}
+
+                  render={(props) => (
+                    <TextInput
+                    type="date"
+                      value={props.value}
+                      // disable={isEditScreen}
+                      autoFocus={focusIndex.index === pets?.key && focusIndex.type === "birthDate"}
+                      onChange={(e) => {
+                        props.onChange(e.target.value);
+                        setFocusIndex({ index: pets.key, type: "birthDate" });
+                        setbirthDate
+                      }}
+                      onBlur={props.onBlur}
+                    />
+                  )}
+                />
+              </div>
+            </LabelFieldPair>
+          )}
+          <CardLabelError style={errorStyle}>{localFormState.touched.birthDate ? errors?.birthDate?.message : ""}</CardLabelError>
+
+          {(selectBirthAdoption?.code === "Adoption" || appData?.petDetails?.adoption) && (
+            <LabelFieldPair>
+              <CardLabel>{`${t("PTR_ADOPTION")}`} <span className="astericColor">*</span></CardLabel>
+              <div className="field">
+                <Controller
+                  control={control}
+                  name={"adoptionDate"}
+                  defaultValue={pets?.adoptionDate || appData?.petDetails?.adoptionDate}
+
+                  render={(props) => (
+                    <TextInput
+                      type="date"
+                      value={props.value}
+                      onChange={(e) => {
+                        props.onChange(e.target.value);
+                        setFocusIndex({ index: pets.key, type: "adoptionDate" });
+                        setadoptionDate
+                      }}
+                      max={new Date().toISOString().split('T')[0]}
+                    />
+                  )}
+                />
+              </div>
+            </LabelFieldPair>
+          )}
+          <CardLabelError style={errorStyle}>{localFormState.touched.adoptionDate ? errors?.adoptionDate?.message : ""}</CardLabelError>
+
+
+
+          <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("PTR_PET_NAME") + " *"}</CardLabel>
             <div className="field">
               <Controller
                 control={control}
                 name={"petName"}
-                defaultValue={pets?.petName}
+                defaultValue={pets?.petName || appData?.petDetails?.petName}
                 rules={{
                   required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                   validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
@@ -265,7 +398,7 @@ const OwnerForm = (_props) => {
               <Controller
                 control={control}
                 name={"petAge"}
-                defaultValue={pets?.petAge}
+                defaultValue={pets?.petAge || appData?.petDetails?.petAge}
                 rules={{
                   required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                   validate: (v) => (/^\d{1,4}$/.test(v) && parseInt(v, 10) >= 0 && parseInt(v, 10) <= 1440 ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
@@ -291,15 +424,15 @@ const OwnerForm = (_props) => {
             </div>
 
           </LabelFieldPair>
-          <div style={{textAlign: 'center'}}>
+          <div style={{ textAlign: 'center' }}>
 
-        {Math.floor(watch('petAge') / 12)}&nbsp;
-        {Math.floor(watch('petAge') / 12) === 1 ? "YEAR" : "YEARS"}
-        &nbsp;&nbsp;
-        {watch('petAge') % 12}&nbsp;
-        {watch('petAge') % 12 === 1 ? "MONTH" : "MONTHS"}
+            {Math.floor(watch('petAge') / 12)}&nbsp;
+            {Math.floor(watch('petAge') / 12) === 1 ? "YEAR" : "YEARS"}
+            &nbsp;&nbsp;
+            {watch('petAge') % 12}&nbsp;
+            {watch('petAge') % 12 === 1 ? "MONTH" : "MONTHS"}
 
-      </div>
+          </div>
           <br></br>
           <CardLabelError style={errorStyle}>{localFormState.touched.petAge ? errors?.petAge?.message : ""}</CardLabelError>
 
@@ -309,7 +442,7 @@ const OwnerForm = (_props) => {
             <Controller
               control={control}
               name={"petGender"}
-              defaultValue={pets?.petGender}
+              defaultValue={pets?.petGender || pet_sex.find(option => option.name === appData?.petDetails?.petGender)}
               // rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
               render={(props) => (
                 <Dropdown
@@ -327,13 +460,69 @@ const OwnerForm = (_props) => {
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.petGender ? errors?.petGender?.message : ""}</CardLabelError>
 
+
+          <LabelFieldPair>
+            <CardLabel className="card-label-smaller">{t("PTR_PET_COLOR") + " *"}</CardLabel>
+            <Controller
+              control={control}
+              name={"petColor"}
+              defaultValue={pets?.petColor}
+              // rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+              render={(props) => (
+                <Dropdown
+                  className="form-field"
+                  selected={props.value}
+                  select={props.onChange}
+                  onBlur={props.onBlur}
+                  // disable={isEditScreen}
+                  option={pet_color}
+                  optionKey="i18nKey"
+                  t={t}
+                />
+              )}
+            />
+          </LabelFieldPair>
+          <CardLabelError style={errorStyle}>{localFormState.touched.petColor ? errors?.petColor?.message : ""}</CardLabelError>
+
+
+          <LabelFieldPair>
+            <CardLabel className="card-label-smaller">{t("PTR_IDENTIFICATION_MARK") + " *"}</CardLabel>
+            <div className="field">
+              <Controller
+                control={control}
+                name={"identificationmark"}
+                defaultValue={pets?.identificationmark}
+                rules={{
+                  required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                  validate: { pattern: (val) => (/^\w+( +\w+)*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
+                }}
+                render={(props) => (
+                  <TextInput
+                    value={props.value}
+                    // disable={isEditScreen}
+                    autoFocus={focusIndex.index === pets?.key && focusIndex.type === "identificationmark"}
+                    onChange={(e) => {
+                      props.onChange(e.target.value);
+                      setFocusIndex({ index: pets.key, type: "identificationmark" });
+                    }}
+                    onBlur={props.onBlur}
+                  />
+                )}
+              />
+            </div>
+          </LabelFieldPair>
+          <CardLabelError style={errorStyle}>
+            {localFormState.touched.identificationmark ? errors?.identificationmark?.message : ""}
+          </CardLabelError>
+
+
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("PTR_DOCTOR_NAME") + " *"}</CardLabel>
             <div className="field">
               <Controller
                 control={control}
                 name={"doctorName"}
-                defaultValue={pets?.doctorName}
+                defaultValue={pets?.doctorName || appData?.petDetails?.doctorName}
                 rules={{
                   required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                   validate: { pattern: (val) => (/^\w+( +\w+)*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
@@ -362,7 +551,7 @@ const OwnerForm = (_props) => {
               <Controller
                 control={control}
                 name={"clinicName"}
-                defaultValue={pets?.clinicName}
+                defaultValue={pets?.clinicName || appData?.petDetails?.clinicName}
                 rules={{
                   required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                   validate: { pattern: (val) => (/^\w+( +\w+)*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
@@ -392,7 +581,7 @@ const OwnerForm = (_props) => {
               <Controller
                 control={control}
                 name={"lastVaccineDate"}
-                defaultValue={pets?.lastVaccineDate}
+                defaultValue={pets?.lastVaccineDate || appData?.petDetails?.lastVaccineDate}
                 rules={{
                   required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                   validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
@@ -418,7 +607,7 @@ const OwnerForm = (_props) => {
               <Controller
                 control={control}
                 name={"vaccinationNumber"}
-                defaultValue={pets?.vaccinationNumber}
+                defaultValue={pets?.vaccinationNumber || appData?.petDetails?.vaccinationNumber}
                 // rules={{
                 //  // required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                 //   //validate: { pattern: (val) => (/^\w+( +\w+)*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
@@ -441,6 +630,8 @@ const OwnerForm = (_props) => {
           <CardLabelError style={errorStyle}>
             {localFormState.touched.vaccinationNumber ? errors?.vaccinationNumber?.message : ""}
           </CardLabelError>
+
+
 
 
 
