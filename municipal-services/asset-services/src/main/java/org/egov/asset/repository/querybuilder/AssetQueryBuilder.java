@@ -18,11 +18,27 @@ public class AssetQueryBuilder {
 
 	private static final String LEFT_OUTER_JOIN_STRING = " LEFT OUTER JOIN ";
 
-    private static final String QUERY = "SELECT * FROM eg_asset_assetdetails asset" 
-    		+ LEFT_OUTER_JOIN_STRING + "eg_asset_addressdetails address on asset.id = address.asset_id"
-    		+ LEFT_OUTER_JOIN_STRING + "eg_asset_document doc on asset.id = doc.assetid"
-    		+ LEFT_OUTER_JOIN_STRING + "eg_asset_assignmentdetails assign on asset.id = assign.assetid ";
-    		//+ " ORDER BY eg_asset_assetdetails.createdtime DESC";
+    private static final String QUERY = "SELECT asset.id, "
+            + "asset.bookrefno, asset.name, asset.description, asset.classification, "
+            + "asset.parentcategory, asset.category, asset.subcategory, asset.department, "
+            + "asset.applicationno, asset.approvalno, asset.tenantid, asset.status, "
+            + "asset.businessservice, asset.additionaldetails, asset.createdtime, "
+            + "asset.lastmodifiedtime, asset.approvaldate, asset.applicationdate, "
+            + "asset.accountid, asset.createdby, asset.lastmodifiedby, asset.remarks, "
+            + "asset.financialyear, asset.sourceoffinance, "
+            + "address.doorno, address.latitude, address.longitude, address.addressid, "
+            + "address.addressnumber, address.type, address.addressline1, address.addressline2, "
+            + "address.landmark, address.city, address.pincode, address.detail, "
+            + "address.buildingname, address.street, address.locality_code, address.locality_name, "
+            + "address.locality_label, address.locality_latitude, address.locality_longitude, "
+            + "doc.documentid, doc.documenttype, doc.filestoreid, doc.documentuid, doc.docdetails, "
+            + "assign.isassigned, assign.assignedusername, assign.employeecode, assign.designation, "
+            + "assign.department, assign.assigneddate, assign.returndate, assign.assignmentId "
+            + "FROM eg_asset_assetdetails asset "
+    	    + LEFT_OUTER_JOIN_STRING + "eg_asset_addressdetails address on asset.id = address.asset_id"
+    	    + LEFT_OUTER_JOIN_STRING + "eg_asset_document doc on asset.id = doc.assetid"
+    	    + LEFT_OUTER_JOIN_STRING + "eg_asset_assignmentdetails assign on asset.id = assign.assetid ";
+    	    //+ " ORDER BY eg_asset_assetdetails.createdtime DESC";
 
     private static final String LIMITED_DATA_QUERY = "SELECT asset.id, "
     		+ "asset.tenantid, "
@@ -47,7 +63,7 @@ public class AssetQueryBuilder {
 
     
     private final String paginationWrapper = "SELECT * FROM "
-            + "(SELECT *, DENSE_RANK() OVER (ORDER BY result.applicationno) AS offset_ FROM " + "({})"
+            + "(SELECT *, DENSE_RANK() OVER (ORDER BY result.applicationno DESC) AS offset_ FROM " + "({})"
             + " result) result_offset " + "WHERE offset_ > ? AND offset_ <= ?";
     
     //private final String countWrapper = "SELECT COUNT(DISTINCT(bpa_id)) FROM ({INTERNAL_QUERY}) as asset_count";
