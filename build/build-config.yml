@@ -91,6 +91,8 @@ config:
       - work-dir: "business-services/employee-dashboard"
         image-name: "employee-dashboard"
         dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/employee-dashboard/src/main/resources/db"
+        image-name: "employee-dashboard-db" 
 
         
   - name: "builds/upyog/core-services/egov-accesscontrol"
