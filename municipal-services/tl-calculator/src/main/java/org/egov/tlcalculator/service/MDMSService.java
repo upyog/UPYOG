@@ -14,6 +14,7 @@ import org.egov.tlcalculator.web.models.enums.CalculationType;
 import org.egov.tlcalculator.web.models.tradelicense.TradeLicense;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -156,6 +157,7 @@ public class MDMSService {
     }
 
 
+    @Cacheable(value = "mdmsCache", key = "'tenantId'", sync = true)
     public Object mDMSCall(RequestInfo requestInfo,String tenantId){
         MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo,tenantId);
         StringBuilder url = getMdmsSearchUrl();
