@@ -6,6 +6,7 @@ import ErrorBoundary from "../../components/ErrorBoundaries";
 import { AppHome, processLinkData } from "../../components/Home";
 import TopBarSideBar from "../../components/TopBarSideBar";
 import StaticCitizenSideBar from "../../components/TopBarSideBar/SideBar/StaticCitizenSideBar";
+import { AdvertisementModuleCard } from "../../../../ads/src/components/AdvertisementModuleCard";
 import CitizenHome from "./Home";
 import LanguageSelection from "./Home/LanguageSelection";
 import LocationSelection from "./Home/LocationSelection";
@@ -71,6 +72,16 @@ const Home = ({
       },
     }
   );
+  // for showing advertisement image and its detail in first page
+  const { data: advertisement } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Advertisement", [{ name: "Unipole_12_8" }], {
+    select: (data) => {
+      const formattedData = data?.["Advertisement"]?.["Unipole_12_8"].map((details) => {
+        return { imageSrc: `${details.imageSrc}`, light: `${details.light}`, title: `${details.title}`, location: `${details.location}`, poleNo:`${details.poleNo}`,price:`${details.price}` };
+      });
+      return formattedData;
+    },
+  });
+  const Advertisement=advertisement||[];
   const isMobile = window.Digit.Utils.browser.isMobile();
   const classname = Digit.Hooks.fsm.useRouteSubscription(pathname);
   const { t } = useTranslation();
@@ -130,6 +141,21 @@ const Home = ({
               )}
               {/* <Links key={index} matchPath={`/digit-ui/citizen/${code.toLowerCase()}`} userType={"citizen"} /> */}
             </div>
+            {code?.toUpperCase()==="ADS" && (
+              <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between" }}>
+              {Advertisement.map((ad) => (
+                <AdvertisementModuleCard
+                  imageSrc={ad.imageSrc} 
+                  poleNo={ad.poleNo} 
+                  light={ad.light} 
+                  title={ad.title} 
+                  location={ad.location} 
+                  price={ad.price} 
+                  path={`${path}/${code.toLowerCase()}/`}
+                />
+              ))}
+            </div>
+            )}
             <StaticDynamicCard moduleCode={code?.toUpperCase()}/>
           </div>
         </Route>
