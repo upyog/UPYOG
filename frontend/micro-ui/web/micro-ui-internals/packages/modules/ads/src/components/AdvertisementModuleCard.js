@@ -1,9 +1,12 @@
-// this code shows the image and the detail of the advertisement
 import React from "react";
+
+// this code shows the image and the detail of the advertisement
+
 const AdvertisementModuleCard = ({ imageSrc, title, location, poleNo, price, path, light }) => {
   const handleViewAvailability = () => {
     window.location.href = `${path}bookad/searchads`;
   };
+
   const handleBookNow = () => {
     window.location.href = `${path}bookad/searchads`;
   };
