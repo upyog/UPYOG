@@ -17,8 +17,25 @@
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <lombok.version>1.18.8</lombok.version>
+    <cache2k-version>1.2.0.Final</cache2k-version>
   </properties>
   <dependencies>
+    <dependency>
+      <groupId>org.cache2k</groupId>
+      <artifactId>cache2k-api</artifactId>
+      <version>${cache2k-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.cache2k</groupId>
+      <artifactId>cache2k-core</artifactId>
+      <version>${cache2k-version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.cache2k</groupId>
+      <artifactId>cache2k-spring</artifactId>
+      <version>${cache2k-version}</version>
+    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
@@ -59,6 +76,16 @@
       <groupId>com.jayway.jsonpath</groupId>
       <artifactId>json-path</artifactId>
       <version>2.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+      <version>2.7.9</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.7.9</version>
     </dependency>
     <dependency>
       <groupId>org.postgresql</groupId>
