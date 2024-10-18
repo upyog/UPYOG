@@ -4,6 +4,11 @@ import { useLocation } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import Timeline from "../components/ADSTimeline";
 
+/*
+ * ADSAddress component for capturing address details.
+ * Integrates with hooks for fetching cities and localities.
+ */
+
 const ADSAddress = ({ t, config, onSelect, userType, formData}) => {
   const { pathname: url } = useLocation();
   let index = window.location.href.charAt(window.location.href.length - 1);
