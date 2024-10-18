@@ -733,7 +733,7 @@ public class InboxService {
 				}
 			}
 			if (businessObjects.length() > 0 && processInstances.size() > 0) {
-				if (CollectionUtils.isEmpty(businessKeys)) {
+				if (!CollectionUtils.isEmpty(businessKeys)) {
 					businessMap.keySet().forEach(businessKey -> {
 						if (null != processInstanceMap.get(businessKey)) {
 							if (!isBusinessServiceWSOrSW) {
