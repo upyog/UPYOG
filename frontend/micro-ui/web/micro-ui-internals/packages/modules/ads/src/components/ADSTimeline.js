@@ -1,6 +1,3 @@
-
-
-//this file is made to add timeline
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { TickMark } from "@nudmcdgnpm/digit-ui-react-components";
@@ -16,6 +13,11 @@ const getAction = (flow) => {
       actions = ["ADS_APPLICANT_DETAILS","ADS_ADDRESS_DETAILS","ADS_UPLOAD_DOCUMENTS","ADS_SUMMARY"];
   }
 };
+/*
+ * Timeline component to display progress in a multi-step process.
+ * Displays checkpoints based on the current step and specified flow.
+ */
+
 const Timeline = ({ currentStep = 1, flow = "" }) => {
   const { t } = useTranslation();
   const isMobile = window.Digit.Utils.browser.isMobile();
