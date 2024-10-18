@@ -3,6 +3,12 @@ import { FormStep, TextInput, CardLabel, MobileNumber, Card, CardSubHeader } fro
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/ADSTimeline";
 
+/*
+ * The ADSCitizenDetails component is responsible for gathering and validating 
+ * applicant information, including name, mobile number, alternate number, 
+ * and email address. It provides a structured form step for user input.
+ */
+
 const ADSCitizenDetails = ({ t, config, onSelect, userType, formData}) => {
   const { pathname: url } = useLocation();
 
