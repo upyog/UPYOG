@@ -1,3 +1,8 @@
+/*
+ * citizenConfig outlines the routing,
+ * detailing steps for applicant, address, and document details, along with their configurations.
+ */
+
 export const citizenConfig = [
   {
     head: "ES_TITILE_APPLICANT_DETAILS",
