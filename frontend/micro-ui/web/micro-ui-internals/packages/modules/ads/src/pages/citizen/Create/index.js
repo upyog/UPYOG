@@ -7,6 +7,14 @@ import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from 
 
 import { citizenConfig } from "../../../config/Create/citizenconfig";
 import { data } from "jquery";
+
+/**
+ * ADSCreate component manages the flow of the ADS creation process,
+ * including rendering the appropriate form components based on the current route.
+ * It handles user input, navigates between steps, and manages session storage for form data.
+ */
+
+
 const ADSCreate = ({ parentRoute }) => {
   const queryClient = useQueryClient();
   const match = useRouteMatch();
