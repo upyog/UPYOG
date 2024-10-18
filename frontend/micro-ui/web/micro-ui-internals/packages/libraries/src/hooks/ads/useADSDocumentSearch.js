@@ -1,5 +1,9 @@
-// made hook for getting documents from mdms
 import { useQuery, useQueryClient } from "react-query";
+/**
+ * Custom hook to search and fetch specific documents for an application 
+ * based on a document type code. It filters documents from the provided 
+ * configuration, retrieves their fileStoreIds.
+ */
 
 const useADSDocumentSearch = ({ application }, config = {}, Code, index) => {
   const client = useQueryClient();
