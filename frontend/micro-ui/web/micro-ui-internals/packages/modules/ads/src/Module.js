@@ -10,7 +10,8 @@ import ADSCitizenDetails from "./pageComponents/ADSCitizenDetails";
 import ADSAddress from "./pageComponents/ADSAddress";
 import ADSDocumentDetails from "./pageComponents/ADSDocumentDetails";
 import ADSCheckPage from "./pages/citizen/Create/CheckPage";
-
+// Component registry for the ADS module, mapping component names to their implementations.
+// Enables dynamic registration and access of components in the application.
 const componentsToRegister = {
  ADSCreate: ADSCreate,
  ADSSearch,
