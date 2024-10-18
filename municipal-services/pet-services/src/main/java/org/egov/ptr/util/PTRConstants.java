@@ -22,7 +22,6 @@ public class PTRConstants {
 	public static final String NOTIFICATION_LOCALE = "en_IN";
 
 //    
-	public static final String ACTION_PAY = "PAY";
 
 	public static final String ACTION_PAID = "PAID";
 
@@ -230,5 +229,33 @@ public class PTRConstants {
 	public static final String USREVENTS_EVENT_NAME = "PTR";
 
 	public static final String USREVENTS_EVENT_POSTEDBY = "SYSTEM-PTR";
+
+	public static final String PET_NEW_REGISTRATION = "ptr";
+
+	public static final String STATUS_APPLIED = "APPLIED";
+
+	public static final String STATUS_DOCVERIFIED = "DOCVERIFIED";
+
+	public static final String STATUS_APPROVED = "APPROVED";
+
+	public static final String STATUS_REGISTRATIONCOMPLETED = "REGISTRATIONCOMPLETED";
+
+	public static final String STATUS_EXPIRED = "EXPIRED";
+
+	public static final String STATUS_REJECTED = "REJECTED";
+
+	public static final String ACTION_APPROVE = "APPROVE";
+
+	public static final String ACTION_APPLY = "APPLY";
+
+	public static final String ACTION_VERIFY = "VERIFY";
+
+	public static final String ACTION_REJECT = "REJECT";
+
+	public static final String ACTION_PAY = "PAY";
+
+	public static final String NEW_PET_APPLICATION = "NEWAPPLICATION";
+
+	public static final String RENEW_PET_APPLICATION = "RENEWAPPLICATION";
 
 }

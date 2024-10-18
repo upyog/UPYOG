@@ -1,5 +1,7 @@
 package org.egov.ptr.service;
 
+import static org.egov.ptr.util.PTRConstants.*;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,6 +48,9 @@ public class PetRegistrationService {
 	@Autowired
 	private PetRegistrationRepository petRegistrationRepository;
 
+	@Autowired
+	private PTRBatchService ptrBatchService;
+
 	/**
 	 * Enriches the Request and pushes to the Queue
 	 *
@@ -55,10 +60,14 @@ public class PetRegistrationService {
 		validator.validatePetApplication(petRegistrationRequest);
 		enrichmentService.enrichPetApplication(petRegistrationRequest);
 
-		// Enrich/Upsert user in upon pet registration
-		// userService.callUserService(petRegistrationRequest); need to build the method
 		wfService.updateWorkflowStatus(petRegistrationRequest);
-		producer.push(config.getCreatePtrTopic(), petRegistrationRequest);
+		petRegistrationRequest.getPetRegistrationApplications().forEach(application -> {
+			if (application.getApplicationType().equals(RENEW_PET_APPLICATION)) {
+				producer.push(config.getRenewPtrTopic(), petRegistrationRequest);
+			} else if (application.getApplicationType().equals(NEW_PET_APPLICATION)) {
+				producer.push(config.getCreatePtrTopic(), petRegistrationRequest);
+			}
+		});
 
 		return petRegistrationRequest.getPetRegistrationApplications();
 	}
@@ -84,13 +93,21 @@ public class PetRegistrationService {
 		enrichmentService.enrichPetApplicationUponUpdate(petRegistrationRequest);
 
 		if (petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction()
-				.equals("APPROVE")) {
+				.equals(ACTION_APPROVE)) {
 			demandService.createDemand(petRegistrationRequest);
 		}
 		wfService.updateWorkflowStatus(petRegistrationRequest);
-		producer.push(config.getUpdatePtrTopic(), petRegistrationRequest);
 
+		producer.push(config.getUpdatePtrTopic(), petRegistrationRequest);
 		return petRegistrationRequest.getPetRegistrationApplications().get(0);
+	}
+
+	public void runJob(String servicename, String jobname, RequestInfo requestInfo) {
+		if (servicename == null)
+			servicename = PET_NEW_REGISTRATION;
+
+		ptrBatchService.getPetApplicationsAndPerformAction(servicename, jobname, requestInfo);
+
 	}
 
 }

@@ -1,5 +1,6 @@
 package org.egov.ptr.models;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -55,9 +56,6 @@ public class PetRegistrationApplication {
 	@JsonProperty("emailId")
 	private String emailId = null;
 
-	@JsonProperty("aadharNumber")
-	private String aadharNumber = null;
-
 	@JsonProperty("address")
 	private Address address = null;
 
@@ -69,6 +67,29 @@ public class PetRegistrationApplication {
 
 	@JsonProperty("petDetails")
 	private PetDetails petDetails = null;
+
+	private PetRenewalAuditDetails renewalAuditDetails = null;
+
+	@JsonProperty("applicationType")
+	private String applicationType = null;
+
+	@JsonProperty("validityDate")
+	private Long validityDate = null;
+
+	@JsonProperty("status")
+	private String status = null;
+
+	@JsonProperty("expireFlag")
+	private Boolean expireFlag = null;
+
+	@JsonProperty("petToken")
+	private String petToken = null;
+
+	@JsonProperty("previousApplicationNumber")
+	private String previousApplicationNumber = null;
+
+	@JsonProperty("propertyId")
+	private String propertyId = null;
 
 	@JsonProperty("documents")
 	@Valid
