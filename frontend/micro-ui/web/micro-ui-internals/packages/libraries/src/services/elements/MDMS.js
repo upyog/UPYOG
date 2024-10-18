@@ -755,7 +755,21 @@ const getChbDocumentsCategory = (tenantId, moduleCode) => ({
   },
 });
 
-
+const getADSDocumentsCategory = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Documents",
+          },
+        ],
+      },
+    ],
+  },
+});
 
 //##############################################
 const getPetDocumentsRequiredScreen = (MdmsRes) => {
@@ -796,6 +810,14 @@ const getChbDocuments = (MdmsRes) => {
   });
 };
 
+const getADSDocuments = (MdmsRes) => {
+  MdmsRes["Advertisement"].Documents.filter((Documents) => Documents.active).map((dropdownData) => {
+    return {
+      ...Documents,
+      i18nKey: `${dropdownData.code}`,
+    };
+  });
+};
 
 const getDefaultMapConfig = (tenantId, moduleCode) => ({
   details: {
@@ -2073,6 +2095,9 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
     
     case "Documents":
       return getChbDocuments(MdmsRes);
+    
+    case "Documents":
+      return getADSDocuments(MdmsRes);
 
      
     default:
@@ -2286,6 +2311,9 @@ export const MdmsService = {
 
   getChbDocuments: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getChbDocumentsCategory(tenantId, moduleCode), moduleCode);
+  },
+  getADSDocuments: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getADSDocumentsCategory(tenantId, moduleCode), moduleCode);
   },
 
   //////////////////////////////////////////////

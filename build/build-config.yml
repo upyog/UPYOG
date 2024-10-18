@@ -85,6 +85,16 @@ config:
       - work-dir: "business-services/dashboard-ingest"
         image-name: "dashboard-ingest"
         dockerfile: "build/maven/Dockerfile"
+
+  - name: "builds/upyog/business-services/employee-dashboard"
+    build:
+      - work-dir: "business-services/employee-dashboard"
+        image-name: "employee-dashboard"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "business-services/employee-dashboard/src/main/resources/db"
+        image-name: "employee-dashboard-db" 
+
+        
   - name: "builds/upyog/core-services/egov-accesscontrol"
     build:
       - work-dir: "core-services/egov-accesscontrol"

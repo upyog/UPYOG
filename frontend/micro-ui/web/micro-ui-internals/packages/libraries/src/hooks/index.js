@@ -303,7 +303,9 @@ import useChbCommunityHalls from "./chb/useChbCommunityHalls";
 import useChbHallCode from "./chb/useChbHallCode"
 import useChbSlotSearch from "./chb/useChbSlotSearch";
 import useDemandEstimation from "./chb/useDemandEstimation"
-
+import useTenantsADS from "./ads/useTenants"
+import useADSDocumentsMDMS from "./ads/useADSDocumentsMDMS";
+import useADSDocumentSearch from "./ads/useADSDocumentSearch";
 import useCMSearch from "./cm/useCMSearch";
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
@@ -384,6 +386,12 @@ const chb={
   useChbHallCode,
   useChbSlotSearch,
   useDemandEstimation
+}
+// for using tenant for city and document and search 
+const ads={
+  useTenants:useTenantsADS,
+  useADSDocumentsMDMS,
+  useADSDocumentSearch
 }
 
 const fsm = {
@@ -681,6 +689,7 @@ const Hooks = {
   obps,
   events,
   chb,
+  ads,
   engagement,
   survey,
   noc,
