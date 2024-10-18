@@ -18,7 +18,15 @@ import {
   } from "../../../utils";
   import Timeline from "../../../components/ADSTimeline";
   import ADSDocument from "../../../pageComponents/ADSDocument";
-  
+
+/**
+ * CheckPage component displays a summary of the applicant's details,
+ * address information, and uploaded documents for the ADS application.
+ * Users can review their inputs and confirm their declaration before 
+ * submitting the application. Navigation buttons allow editing of any section.
+ */
+
+
   const ActionButton = ({ jumpTo }) => {
     const { t } = useTranslation();
     const history = useHistory();
