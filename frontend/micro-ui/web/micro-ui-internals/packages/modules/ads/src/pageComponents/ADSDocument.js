@@ -3,6 +3,15 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { pdfDownloadLink } from "../utils";
 
+/* 
+  ADSDocument Component
+
+  This component is used for uploading and displaying documents.
+  It fetches documents based on the provided type.
+*/
+
+
+
 function ADSDocument({ value = {}, Code, index,showFileName= false }) {
   const { t } = useTranslation();
   const { isLoading, isError, error, data } = Digit.Hooks.ads.useADSDocumentSearch(
