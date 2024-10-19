@@ -42,9 +42,8 @@
 	<name>e-governments edcr</name>
 	<repositories>
 		<repository>
-			<id>AsposeJavaAPI</id>
-			<name>Aspose Java API</name>
-			<url>https://repository.aspose.com/repo/</url>
+			<id>aspose-maven-repository</id>
+                        <url>https://repository.aspose.com/repo/</url>
 		</repository>
 		
 	</repositories>
