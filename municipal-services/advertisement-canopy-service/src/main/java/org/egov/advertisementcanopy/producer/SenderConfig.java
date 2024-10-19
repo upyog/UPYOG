@@ -59,26 +59,26 @@ public class SenderConfig {
 		return AdminClient.create(kafkaAdmin().getConfigurationProperties());
 	}
 
-	@Bean
-	public void createTopicsIfNotExist() throws ExecutionException, InterruptedException {
-		AdminClient adminClient = kafkaAdminClient();
-
-		String[] topics = { AdvtConstants.SITE_BOOKING_CREATE_KAFKA_TOPIC,
-				AdvtConstants.SITE_BOOKING_UPDATE_KAFKA_TOPIC, AdvtConstants.SITE_CREATION,
-				AdvtConstants.SITE_UPDATION };
-
-		for (String topic : topics) {
-			Map<String, TopicListing> topicListingMap = adminClient.listTopics().namesToListings().get();
-			if (!topicListingMap.containsKey(topic)) {
-				NewTopic newTopic = new NewTopic(topic, 1, (short) 1); // 1 partition, 1 replication factor
-				adminClient.createTopics(Collections.singleton(newTopic)).all().get();
-				System.out.println("Created Kafka topic: " + topic);
-			} else {
-				System.out.println("Kafka topic already exists: " + topic);
-			}
-		}
-
-		adminClient.close();
-	}
+//	@Bean
+//	public void createTopicsIfNotExist() throws ExecutionException, InterruptedException {
+//		AdminClient adminClient = kafkaAdminClient();
+//
+//		String[] topics = { AdvtConstants.SITE_BOOKING_CREATE_KAFKA_TOPIC,
+//				AdvtConstants.SITE_BOOKING_UPDATE_KAFKA_TOPIC, AdvtConstants.SITE_CREATION,
+//				AdvtConstants.SITE_UPDATION };
+//
+//		for (String topic : topics) {
+//			Map<String, TopicListing> topicListingMap = adminClient.listTopics().namesToListings().get();
+//			if (!topicListingMap.containsKey(topic)) {
+//				NewTopic newTopic = new NewTopic(topic, 1, (short) 1); // 1 partition, 1 replication factor
+//				adminClient.createTopics(Collections.singleton(newTopic)).all().get();
+//				System.out.println("Created Kafka topic: " + topic);
+//			} else {
+//				System.out.println("Kafka topic already exists: " + topic);
+//			}
+//		}
+//
+//		adminClient.close();
+//	}
 
 }
