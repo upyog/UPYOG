@@ -45,19 +45,13 @@
 			<id>AsposeJavaAPI</id>
 			<name>Aspose Java API</name>
 			<url>https://repository.aspose.com/repo/</url>
-			<releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
 		</repository>		
 	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>com.aspose</groupId>
 			<artifactId>aspose-cad</artifactId>
-			<version>20.12</version>
+			<version>22.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
