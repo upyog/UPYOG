@@ -3,6 +3,7 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
                           https://maven.apache.org/xsd/settings-1.0.0.xsd">
+    
     <mirrors>
         <mirror>
             <id>nexus</id>
@@ -10,12 +11,26 @@
             <url>http://repo.egovernments.org/nexus/content/groups/public/</url>
         </mirror>
     </mirrors>
-	
-	<servers>
+
+    <servers>
         <server>
             <id>repo.egovernments.org</id>
             <username>${nexus.user}</username>
             <password>${nexus.password}</password>
         </server>
     </servers>
+
+    <profiles>
+        <profile>
+            <id>disable-ssl-check</id>
+            <properties>
+                <maven.wagon.http.ssl.insecure>true</maven.wagon.http.ssl.insecure>
+                <maven.wagon.http.ssl.allowall>true</maven.wagon.http.ssl.allowall>
+            </properties>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>disable-ssl-check</activeProfile>
+    </activeProfiles>
 </settings>
