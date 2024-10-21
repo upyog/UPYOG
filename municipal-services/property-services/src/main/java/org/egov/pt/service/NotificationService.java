@@ -170,7 +170,7 @@ public class NotificationService {
 
 		msg = replaceCommonValuesForManipur(property, msg, localisedState,replace);
 		System.out.println("message------------------->"+msg);
-		prepareMsgAndSend(propertyRequest, msg,state);
+		prepareMsgAndSendNew(propertyRequest, msg,state);
 	}
 	
 	
@@ -222,7 +222,7 @@ public class NotificationService {
 
 		msg = replaceCommonValuesForManipur(property, msg, localisedState,replace);
 		System.out.println("message------------------->"+msg);
-		prepareMsgAndSend(propertyRequest, msg,state);
+		prepareMsgAndSendNew(propertyRequest, msg,state);
 	}
 	
 	
@@ -286,7 +286,7 @@ public class NotificationService {
 
 		msg = replaceCommonValuesForManipur(property, msg, localisedState,replace);
 		System.out.println("message------------------->"+msg);
-		prepareMsgAndSend(propertyRequest, msg,state);
+		prepareMsgAndSendNew(propertyRequest, msg,state);
 	}
 	
 	
@@ -547,6 +547,49 @@ public class NotificationService {
 
 
 		List<SMSRequest> smsRequests = notifUtil.createSMSRequest(msg, mobileNumberToOwner);
+
+		if(configuredChannelNames.contains(CHANNEL_NAME_SMS)){
+			notifUtil.sendSMS(smsRequests);
+
+			Boolean isActionReq = false;
+			if(state.equalsIgnoreCase(PT_CORRECTION_PENDING))
+				isActionReq = true;
+
+			List<Event> events = notifUtil.enrichEvent(smsRequests, requestInfo, property.getTenantId(), property, isActionReq);
+			notifUtil.sendEventNotification(new EventRequest(requestInfo, events));
+		}
+		if(configuredChannelNames.contains(CHANNEL_NAME_EMAIL)){
+			List<EmailRequest> emailRequests = notifUtil.createEmailRequestFromSMSRequests(requestInfo,smsRequests, tenantId);
+			notifUtil.sendEmail(emailRequests);
+		}
+	}
+	
+	
+	private void prepareMsgAndSendNew(PropertyRequest request, String msg, String state) {
+
+		Property property = request.getProperty();
+		RequestInfo requestInfo = request.getRequestInfo();
+		Map<String, String> mobileNumberToOwner = new HashMap<>();
+		String tenantId = request.getProperty().getTenantId();
+		String moduleName = request.getProperty().getWorkflow().getModuleName();
+
+		String action;
+		if(request.getProperty().getWorkflow()!=null)
+			action = request.getProperty().getWorkflow().getAction();
+		else
+			action = WF_NO_WORKFLOW;
+
+		List<String> configuredChannelNames =  notifUtil.fetchChannelList(new RequestInfo(), tenantId, moduleName, action);
+		Set<String> mobileNumbers = new HashSet<>();
+
+		property.getOwners().forEach(owner -> {
+			if (owner.getMobileNumber() != null)
+				mobileNumberToOwner.put(owner.getMobileNumber(), owner.getName());
+			    mobileNumbers.add(owner.getMobileNumber());
+		});
+
+
+		List<SMSRequest> smsRequests = notifUtil.createSMSRequestNew(msg, mobileNumberToOwner);
 
 		if(configuredChannelNames.contains(CHANNEL_NAME_SMS)){
 			notifUtil.sendSMS(smsRequests);
