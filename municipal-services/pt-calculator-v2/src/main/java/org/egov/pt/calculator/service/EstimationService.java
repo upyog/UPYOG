@@ -1064,7 +1064,7 @@ public class EstimationService {
 		String assessmentYear = detail.getFinancialYear();
 		String assessmentNumber = null != detail.getAssessmentNumber() ? detail.getAssessmentNumber() : criteria.getAssessmentNumber();
 		String tenantId = null != property.getTenantId() ? property.getTenantId() : criteria.getTenantId();
-
+		boolean isHeritage=false;
 
 		log.info("masterMap::::"+masterMap);
 		//Map<String, Category> taxHeadCategoryMap=objectmapper.convertValue(masterMap.get(TAXHEADMASTER_MASTER_KEY), Map.class);
@@ -1168,7 +1168,11 @@ public class EstimationService {
 		BigDecimal totalAmount = taxAmt.add(penalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
 		BigDecimal mandatorypay=BigDecimal.ZERO;
 		Map<String, BigDecimal> lowervalue=lowervaluemap();
-		if(detail.getExemption().isEmpty() || detail.getExemption().equalsIgnoreCase(null)) {
+		if(units.size()==1)
+			if(units.get(0).getAgeOfProperty().equalsIgnoreCase("HERITAGE_PROPERTY"))
+				isHeritage=true;
+		
+		if(detail.getExemption().isEmpty() && !isHeritage) {
 			if(tenantId.equalsIgnoreCase("mn.imphal"))
 			{
 				if(totalAmount.compareTo(new BigDecimal(600)) < 0)
