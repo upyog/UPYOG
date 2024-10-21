@@ -1,4 +1,5 @@
 import { update } from "lodash";
+import Create from "../molecules/WS/Create";
 
 const Urls = {
   MDMS: `/egov-mdms-service/v1/_search`,
@@ -33,6 +34,8 @@ const Urls = {
   UserLogout: "/user/_logout",
 
   Shortener: "/egov-url-shortening/shortener",
+
+  employeeDashboardSearch: "/employee-dashboard/_search",
 
   fsm: {
     search: "/fsm/v1/_search",

@@ -58,6 +58,8 @@ import { EwService } from "./services/elements/EW";
 import {CustomService} from "./services/elements/CustomService";  
 // imported Birth and Death service  
 import { BnDService } from "./services/elements/BnD";
+
+import { EmployeeDashboardService } from "./services/elements/EMPDASHBOARD";
    
 
 
@@ -126,7 +128,7 @@ const initLibraries = () => {
   setupLibraries("CHBServices", CHBServices);
   setupLibraries("EwService", EwService);
   setupLibraries("BnDService", BnDService);
-
+  setupLibraries("EmployeeDashboardService", EmployeeDashboardService);
   return new Promise((resolve) => {
     initI18n(resolve);
   });
