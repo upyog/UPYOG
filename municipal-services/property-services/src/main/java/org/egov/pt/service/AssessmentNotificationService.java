@@ -220,7 +220,7 @@ private String getStateFromWf(ProcessInstance wf, Boolean isWorkflowEnabled) {
             	mobileNumberToOwner.put(owner.getAlternatemobilenumber() ,owner.getName());
             }
         });
-        return util.createSMSRequest(message,mobileNumberToOwner);
+        return util.createSMSRequestNew(message,mobileNumberToOwner);
     }
 
 

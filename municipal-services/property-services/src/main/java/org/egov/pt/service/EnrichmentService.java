@@ -142,8 +142,11 @@ public class EnrichmentService {
 
 		if (!CollectionUtils.isEmpty(property.getDocuments()))
 			property.getDocuments().forEach(doc -> {
+				//Added BY Bikash For Empty doc issue
+				if(null!=doc.getDocumentType() && !doc.getDocumentType().isEmpty()) {
 				doc.setId(UUID.randomUUID().toString());
 				doc.setStatus(Status.ACTIVE);
+				}
 			});
 
 		property.getAddress().setTenantId(property.getTenantId());
@@ -166,6 +169,7 @@ public class EnrichmentService {
 			owner.setOwnerInfoUuid(UUID.randomUUID().toString());
 			if (!CollectionUtils.isEmpty(owner.getDocuments()))
 				owner.getDocuments().forEach(doc -> {
+					System.out.println(doc.getDocumentUid());
 					if(null!=doc.getDocumentType() && !doc.getDocumentType().isEmpty()) {
 						doc.setId(UUID.randomUUID().toString());
 						doc.setStatus(Status.ACTIVE);

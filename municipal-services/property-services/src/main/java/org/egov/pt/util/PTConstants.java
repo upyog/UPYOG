@@ -235,6 +235,8 @@ public class PTConstants {
 	public static final String BILL_NO_DEMAND_ERROR_CODE = "EG_BS_BILL_NO_DEMANDS_FOUND";
 	
 	public static final String BILL_NO_PAYABLE_DEMAND_ERROR_CODE = "EG_BS_BILL_ZERO_TAX";
+	
+	public static final String BILL_STATUS_PATH = "/Bill/0/status";
 
 
 

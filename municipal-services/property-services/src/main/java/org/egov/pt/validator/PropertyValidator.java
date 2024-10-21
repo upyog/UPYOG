@@ -791,6 +791,7 @@ public class PropertyValidator {
 		// only editable field in mutation other than owners, additional details.
 	//	System.out.println(fieldsUpdated);
 		fieldsUpdated.remove("ownershipCategory");
+		fieldsUpdated.remove("additionalDetails");
 
 		if (configs.getIsMutationWorkflowEnabled()) {
 			if (request.getProperty().getWorkflow() == null)

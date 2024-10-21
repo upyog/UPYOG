@@ -316,6 +316,9 @@ public class PropertyUtil extends CommonUtils {
 
 		if (res != null) {
 			JsonNode node = mapper.convertValue(res, JsonNode.class);
+			String status =  node.at(PTConstants.BILL_STATUS_PATH).asText();
+			if(!status.equalsIgnoreCase("ACTIVE"))
+				return false;
 			Double amount = node.at(BILL_AMOUNT_PATH).asDouble();
 			return amount > 0;
 		}
