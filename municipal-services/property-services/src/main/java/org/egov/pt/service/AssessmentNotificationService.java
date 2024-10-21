@@ -208,7 +208,7 @@ private String getStateFromWf(ProcessInstance wf, Boolean isWorkflowEnabled) {
     	
         String tenantId = request.getAssessment().getTenantId();
         String localizationMessages = util.getLocalizationMessages(tenantId,request.getRequestInfo());
-        String message = getCustomizedMsg(topicName, request, property, localizationMessages);
+        Map<String,String> message = getCustomizedMsgMap(topicName, request, property, localizationMessages);
         if(message==null)
             return Collections.emptyList();
 
@@ -220,7 +220,7 @@ private String getStateFromWf(ProcessInstance wf, Boolean isWorkflowEnabled) {
             	mobileNumberToOwner.put(owner.getAlternatemobilenumber() ,owner.getName());
             }
         });
-        return util.createSMSRequestNew(message,mobileNumberToOwner);
+        return util.createSMSRequestNew(message.get("message"),mobileNumberToOwner,message.get("templateId"));
     }
 
 
@@ -256,6 +256,40 @@ private String getStateFromWf(ProcessInstance wf, Boolean isWorkflowEnabled) {
         }
 
         return messageTemplate;
+
+    }
+    
+    private Map<String,String> getCustomizedMsgMap(String topicName, AssessmentRequest request, Property property, String localizationMessages){
+
+        Assessment assessment = request.getAssessment();
+        Map<String,String> message = new HashMap<>();
+        ProcessInstance processInstance = assessment.getWorkflow();
+
+        String msgCode = null,messageTemplate = null;
+
+        if(processInstance==null){
+
+            if(topicName.equalsIgnoreCase(config.getCreateAssessmentTopic()))
+                msgCode = NOTIFICATION_ASSESSMENT_CREATE;
+
+            else msgCode = NOTIFICATION_ASSESSMENT_UPDATE;
+
+            messageTemplate = customize(assessment, property, msgCode, localizationMessages);
+            message.put("message", messageTemplate);
+            
+
+        }
+        else{
+            msgCode = NOTIFICATION_ASMT_PREFIX + assessment.getWorkflow().getState().getState();
+            if(assessment.getWorkflow().getState().getState().equals("INITIATED")) {
+            	  message.put("templateId", ASMT_MSG_INITIATED_TEMPLATE_ID);
+            }
+          
+            messageTemplate = customize(assessment, property, msgCode, localizationMessages);
+            message.put("message", messageTemplate);
+        }
+
+        return message;
 
     }
 
