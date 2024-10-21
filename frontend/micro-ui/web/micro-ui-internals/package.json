@@ -13,6 +13,7 @@
     "packages/modules/ew",
     "packages/modules/cm",
     "packages/modules/chb",
+    "packages/modules/ptr",
     "packages/modules/sv",
     "packages/modules/asset",
     "packages/modules/ads"
@@ -76,7 +77,7 @@
     "buildD:tl": "cd packages/modules/tl && yarn build",
     "buildD:hrms": "cd packages/modules/hrms && yarn build",
     "buildD:obps": "cd packages/modules/obps && yarn build",
-    "buildD:ptr": "cd packages/modules/ptr && yarn build",
+    "build:ptr": "cd packages/modules/ptr && yarn build",
     "build:asset": "cd packages/modules/asset && yarn build",
     "build:fnoc": "cd packages/modules/fnoc && yarn build",
     "build:ew": "cd packages/modules/ew && yarn build",

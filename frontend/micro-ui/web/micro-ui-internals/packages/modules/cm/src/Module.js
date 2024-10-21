@@ -22,6 +22,11 @@ const addComponentsToRegistry = () => {
 
 // Main module function to get to the routes file of citizen or employee module
 export const COMMONMODULEModule = ({ stateCode, userType, tenants }) => {
+
+  const moduleCode = "COMMONMODULE";
+  const language = Digit.StoreData.getCurrentLanguage();
+  const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
+
   // function for component registry called here
   addComponentsToRegistry();
   // setting a value in a session storage object

@@ -1,4 +1,4 @@
-import { Header, CitizenHomeCard, PTIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { CitizenHomeCard, PTIcon, PropertySearch } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
@@ -26,10 +26,9 @@ import PTRCard from "./components/PTRCard";
 import InboxFilter from "./components/inbox/NewInboxFilter";
 import { TableConfig } from "./config/inbox-table-config";
 import NewApplication from "./pages/employee/NewApplication";
+import RenewApplication from "./pages/employee/RenewApplication";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import Response from "./pages/Response";
-
-
 
 
 const componentsToRegister = {
@@ -53,28 +52,30 @@ const componentsToRegister = {
   PTRSelectAddress,
   PTRSelectProofIdentity,
   PTRServiceDoc,
-  PTRWFApplicationTimeline
-
+  PTRWFApplicationTimeline,
+  PropertySearch, // component added for property search
+  PTRRenewApplication: RenewApplication //component added for renewapplication
 };
 
+// function of component registry to add entries in the registry
 const addComponentsToRegistry = () => {
   Object.entries(componentsToRegister).forEach(([key, value]) => {
     Digit.ComponentRegistryService.setComponent(key, value);
   });
 };
 
-
+// Main module function to get to the routes file of citizen or employee module
 export const PTRModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
-
   const moduleCode = "PTR";
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
 
   addComponentsToRegistry();
 
-  Digit.SessionStorage.set("PTR_TENANTS", tenants);
+  Digit.SessionStorage.set("PTR_TENANTS", tenants);  // setting a value in a session storage object
 
+  // loads localization settings for an employee based on the current tenant and language when the component mounts
   useEffect(
     () =>
       userType === "employee" &&
@@ -99,31 +100,13 @@ export const PTRLinks = ({ matchPath, userType }) => {
     clearParams();
   }, []);
 
-  const links = [
-    
-    {
-      link: `${matchPath}/ptr/petservice/new-application`,
-      i18nKey: t("PTR_CREATE_PET_APPLICATION"),
-    },
-    
-    {
-      link: `${matchPath}/ptr/petservice/my-application`,
-      i18nKey: t("PTR_MY_APPLICATIONS_HEADER"),
-    },
-    
-    {
-      link: `${matchPath}/howItWorks`,
-      i18nKey: t("PTR_HOW_IT_WORKS"),
-    },
-    {
-      link: `${matchPath}/faqs`,
-      i18nKey: t("PTR_FAQ_S"),
-    },
-  ];
-
+  const links = [];
+  
+  // returns CitizenHomeCard component while passing links to be used in card and an Icon to display
   return <CitizenHomeCard header={t("ACTION_TEST_PTR")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
 };
 
+// Components Exported
 export const PTRComponents = {
   PTRCard,
   PTRModule,

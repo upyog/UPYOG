@@ -82,7 +82,8 @@ module.exports = function (app) {
     "/billing-service/bill/v2/_fetchbill",
     "/collection-services/payments/pet-services/_search",
     "/requester-services-dx",
-    "/firenoc-services/v1/_create"
+    "/firenoc-services/v1/_create",
+    "/employee-dashboard/_search"
    
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));

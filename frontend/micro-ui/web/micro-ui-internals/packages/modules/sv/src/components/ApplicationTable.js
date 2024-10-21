@@ -1,7 +1,7 @@
 import React from "react";
 import { Table } from "@nudmcdgnpm/digit-ui-react-components";
 
-import { useTranslation } from "react-i18next";
+// custom componnent to render the table, it is used in Summary page of Citizen side to show the days and hours of operation
 
 const ApplicationTable = ({
   t,

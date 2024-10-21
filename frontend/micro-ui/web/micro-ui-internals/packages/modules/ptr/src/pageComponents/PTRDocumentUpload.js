@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   CardLabel,
   LabelFieldPair,
@@ -9,18 +9,29 @@ import {
   CardHeader,
   CardSectionHeader,
 } from "@nudmcdgnpm/digit-ui-react-components";
+import { useLocation, useParams } from "react-router-dom";
 
-import { useLocation } from "react-router-dom";
 const PTRDocumentUpload = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const [documents, setDocuments] = useState(formData?.documents?.documents || []);
   const [error, setError] = useState(null);
+  const {applicationNumber} = useParams();
 
   let action = "create";
-
   const { pathname } = useLocation();
-  
+
+  // Hook to get data of pet according to the applicationNumber
+  const { isLoading: auditDataLoading, isError: isAuditError, data: app_data_f } = Digit.Hooks.ptr.usePTRSearch(
+    {
+      tenantId,
+      filters: { applicationNumber: applicationNumber, audit: true },
+    },
+  );
+  let app_data;
+  if (applicationNumber) {
+    app_data = app_data_f;
+  }
 
   const { isLoading, data } = Digit.Hooks.ptr.usePetMDMS(stateId, "PetService", "Documents");   
 
@@ -64,6 +75,7 @@ const PTRDocumentUpload = ({ t, config, onSelect, userType, formData, setError: 
             clearFormErrors={clearFormErrors}
             config={config}
             formState={formState}
+            appData = {app_data?.PetRegistrationApplications[0]}
           />
           
         );
@@ -88,7 +100,8 @@ function PTRSelectDocument({
   config,
   formState,
   fromRawData,
-  id
+  id,
+  appData
 }) {
   const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0];
 
@@ -101,7 +114,6 @@ function PTRSelectDocument({
       ? doc?.dropdownData[0]
       : {}
   );
-
   
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(() => filteredDocument?.fileStoreId || null);
@@ -138,6 +150,13 @@ function PTRSelectDocument({
       }
     }
   };
+
+  // field to upload the pictures from the appData which comes if the application is renew application
+  useEffect(() => {
+    appData?.documents?.map((row, index) => {
+      row?.documentType.includes(doc?.code) ? setUploadedFile(row) : null;
+    } )
+  }, [appData?.documents])
 
   useEffect(() => {
     if (selectedDocument?.code) {
