@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { FormStep, TextInput, CardLabel, Dropdown, TextArea } from "@nudmcdgnpm/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import Timeline from "../components/Timeline";
-import { forwardRef } from "react";
 
 const SVAdrressDetails = ({ t, config, onSelect, userType, formData }) => {
   console.log("formdatatattata",formData)
@@ -17,7 +16,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData }) => {
   const [addressline1, setAddressline1] = useState(formData?.address?.addressline1 || "");
   const [addressline2, setAddressline2] = useState(formData?.address?.addressline2 || "");
   const { control } = useForm();
-
+  const inputStyles = {width:user.type === "EMPLOYEE" ? "50%" : "86%"};
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
     city?.code,
     "revenue",
@@ -72,7 +71,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData }) => {
 
   return (
     <React.Fragment>
-      {window.location.href.includes("/citizen") ? <Timeline currentStep={3} /> : null}
+      {<Timeline currentStep={3} />}
       <FormStep
         config={config}
         onSelect={goNext}
@@ -91,7 +90,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData }) => {
             value={houseNo}
             placeholder={"Enter House No"}
             onChange={sethouseNo}
-            style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
+            style={inputStyles}
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
@@ -111,7 +110,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData }) => {
             value={addressline1}
             placeholder={"Enter Address"}
             onChange={setaddressline1}
-            style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
+            style={inputStyles}
             ValidationRequired={true}
             {...(validation = {
               isRequired: false,
@@ -132,7 +131,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData }) => {
             value={addressline2}
             placeholder={"Enter Address"}
             onChange={setaddressline2}
-            style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
+            style={inputStyles}
             ValidationRequired={true}
             {...(validation = {
               isRequired: false,
@@ -142,21 +141,21 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData }) => {
             })}
           />
           <CardLabel>{`${t("SV_LANDMARK")}`}</CardLabel>
-          <TextArea
+          <TextInput
             t={t}
-            type={"textarea"}
+            type={"text"}
             isMandatory={false}
             optionKey="i18nKey"
             name="landmark"
             value={landmark}
             placeholder={"Enter Landmark"}
             onChange={setlandmark}
-            style={{ width: "50%" }}
+            style={inputStyles}
             ValidationRequired={true}
             {...(validation = {
               isRequired: false,
               pattern: "^[a-zA-Z ]*$",
-              type: "textarea",
+              type: "text",
               title: t("SV_LANDMARK_ERROR_MESSAGE"),
             })}
           />
@@ -208,7 +207,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData }) => {
             value={pincode}
             onChange={setAddressPincode}
             placeholder="Enter Pincode"
-            style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
+            style={inputStyles}
             ValidationRequired={true}
             validation={{
               required:false,

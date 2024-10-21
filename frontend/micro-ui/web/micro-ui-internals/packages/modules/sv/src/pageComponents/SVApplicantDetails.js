@@ -6,7 +6,6 @@ import Timeline from "../components/Timeline";
 const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
   let validation = {};
   const user = Digit.UserService.getUser().info;
-  console.log("userrrrr",user);
   const [vendorName, setvendorName] = useState(formData?.owner?.units?.vendorName||formData?.owner?.vendorName||"");
   const [vendorDateOfBirth, setvendorDateOfBirth] = useState(formData?.owner?.units?.vendorDateOfBirth ||formData?.owner?.vendorDateOfBirth || "");
   const [gender, setgender] = useState(formData?.owner?.units?.gender||formData?.owner?.gender || "");
@@ -25,7 +24,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
   const [spouseDependentChecked, setSpouseDependentChecked] = useState(formData?.owner?.spouseDependentChecked || false);
   const [dependentNameChecked, setDependentNameChecked] = useState(formData?.owner?.dependentNameChecked || false);
 
-  
+  const inputStyles = user.type === "EMPLOYEE" ? "50%" : "86%";
 
 
 
@@ -181,10 +180,11 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false);
     
   };
+
   const onSkip = () => onSelect();
   return (
     <React.Fragment>
-      {window.location.href.includes("/citizen") ? <Timeline currentStep={1}/> : null}
+      {<Timeline currentStep={1}/>}
         <FormStep
           config={config}
           onSelect={goNext}
@@ -204,6 +204,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
                     marginTop: "10px",
                     borderColor: "#f3f3f3",
                     background: "#FAFAFA",
+                    width:inputStyles,
                   }}
                 >
                 <CardLabel>{`${t("SV_VENDOR_NAME")}`} <span className="astericColor">*</span></CardLabel>
@@ -231,8 +232,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
                 onClick={(e) => handleRemove(index)}
                 />
                 <TextInput
-                style={{ background: "#FAFAFA" }}
-                t={t}
+                style={{ background: "#FAFAFA"}}
                 type={"text"}
                 isMandatory={false}
                 optionKey="i18nKey"
