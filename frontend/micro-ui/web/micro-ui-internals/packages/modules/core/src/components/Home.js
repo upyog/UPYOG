@@ -12,9 +12,11 @@ import {
   PTIcon,
   TLIcon,
   WSICon,
+  SVIcon
 } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import EmployeeDashboard from "./EmployeeDashboard";
 
 /* 
 Feature :: Citizen All service screen cards
@@ -76,6 +78,8 @@ const iconSelector = (code) => {
       return <OBPSIcon className="fill-path-primary-main" />;
     case "CHB":
       return <CHBIcon className="fill-path-primary-main" />;
+    case "SV":
+      return <SVIcon className="fill-path-primary-main" />;
     case "Bills":
       return <BillsIcon className="fill-path-primary-main" />;
     default:
@@ -130,35 +134,15 @@ const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => 
 };
 
 
+const EmployeeHome = ({ modules }) => {
+  if(window.Digit.SessionStorage.get("PT_CREATE_EMP_TRADE_NEW_FORM")) {
+    window.Digit.SessionStorage.set("PT_CREATE_EMP_TRADE_NEW_FORM", {});
+  }
 
-const cardData = [
-  { title: "Initiated", count: 0, color: "blue" }, // Add respective values
-  { title: "Payments Due", count: 0, color: "teal" },
-  { title: "Submitted", count: 0, color: "purple" },
-  { title: "Approved", count: 0, color: "green" },
-];
-
-const EmployeeHome = ({ modules}) => {
-  const { t } = useTranslation();
-  if(window.Digit.SessionStorage.get("PT_CREATE_EMP_TRADE_NEW_FORM")) window.Digit.SessionStorage.set("PT_CREATE_EMP_TRADE_NEW_FORM",{})
   return (
     <div className="employee-app-container">
-      {/* This Code is written for ULB Level Dashboard */}
-      <br></br>
-      <div style={{marginLeft:"42%",fontWeight:"bold", fontSize:"20px", marginBottom:"5px"}}>
-        {t("COMMON_ULB_DASHBOARD")}
-      </div>
-      <div className="ground-container moduleCardWrapper gridModuleWrapper">
-        {cardData.map(({ title, count, color }, index) => (
-          <div key={index} className={`status-card ${color}`}>
-            <div className="card-content">
-              <span className="count">{count}</span>
-              <span className="title">{title}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-
+      <br />
+      <EmployeeDashboard modules={modules} />
       <div className="ground-container moduleCardWrapper gridModuleWrapper">
         {modules.map(({ code }, index) => {
           const Card = Digit.ComponentRegistryService.getComponent(`${code}Card`) || (() => <React.Fragment />);
@@ -168,6 +152,8 @@ const EmployeeHome = ({ modules}) => {
     </div>
   );
 };
+
+export default EmployeeHome;
 
 export const AppHome = ({ userType, modules, getCitizenMenu, fetchedCitizen, isLoading }) => {
   if (userType === "citizen") {
