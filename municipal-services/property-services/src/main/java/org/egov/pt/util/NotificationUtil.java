@@ -178,12 +178,12 @@ public class NotificationUtil {
         return smsRequest;
     }
     
-  public List<SMSRequest> createSMSRequestNew(String message, Map<String, String> mobileNumberToOwnerName) {
+  public List<SMSRequest> createSMSRequestNew(String message, Map<String, String> mobileNumberToOwnerName,String templateId) {
     	
         List<SMSRequest> smsRequest = new LinkedList<>();
         for (Map.Entry<String, String> entryset : mobileNumberToOwnerName.entrySet()) {
             String customizedMsg = message.replace(NOTIFICATION_OWNERNAME, entryset.getValue());
-            smsRequest.add(new SMSRequest(entryset.getKey(), customizedMsg,"templateId"));
+            smsRequest.add(new SMSRequest(entryset.getKey(), customizedMsg,templateId));
         }
         return smsRequest;
     }

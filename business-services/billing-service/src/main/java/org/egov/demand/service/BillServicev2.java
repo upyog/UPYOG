@@ -711,9 +711,11 @@ public class BillServicev2 {
 		Integer currentYearOfAssesment = crd.get(Calendar.YEAR);
 		//get current financial year
 		currentyear = assesmentDoneForYearStart;
+		boolean previousYear = false;
 
 		if(appProps.getFinYearStart()>assesmentDoneForYearStart && appProps.getFinYearEnd()>assesmentDoneForYearEnd) {
 			cuurentMonth= 3;
+			previousYear= true;
 		}
 		Integer nextYear =assesmentDoneForYearEnd ;
 

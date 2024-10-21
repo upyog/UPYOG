@@ -488,6 +488,9 @@ public class PTConstants {
     public static final String CREATE_PT_APPROVER_APPROVE_STATE_MNPT="CREATE_PT_APPROVER_APPROVE_STATE_MESSAGE_MNPT";
     public static final String CREATE_PT_APPROVER_REJECT_STATE_MESSAGE_MNPT="CREATE_PT_APPROVER_REJECT_STATE_MESSAGE_MNPT";
     
+    public static final String CREATE_OPEN_STATE_MESSAGE_MNPT_TEMPLATE_ID="1007763120507938750";
+    
+    
     ////////////////////////////UPDATE MESSAGES FOR MNPT////////////////////////////
     
     public static final String UPDATE_OPEN_STATE_MESSAGE_MNPT= "UPDATE_OPEN_STATE_MESSAGE_MNPT";

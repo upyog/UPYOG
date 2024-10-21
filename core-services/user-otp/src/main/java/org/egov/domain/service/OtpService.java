@@ -1,5 +1,7 @@
 package org.egov.domain.service;
 
+import lombok.Getter;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.domain.exception.UserAlreadyExistInSystemException;
 import org.egov.domain.exception.UserMobileNumberNotFoundException;
@@ -16,12 +18,19 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@Getter
+
 public class OtpService {
+	
+	  @org.springframework.beans.factory.annotation.Value("${registration.otp.sms.template}")
+	    private String registrationSmsTemplateId;
 
     private OtpRepository otpRepository;
     private OtpSMSRepository otpSMSSender;
     private OtpEmailRepository otpEmailRepository;
     private UserRepository userRepository;
+    
+  
 
     @Autowired
     public OtpService(OtpRepository otpRepository, OtpSMSRepository otpSMSSender, OtpEmailRepository otpEmailRepository,
@@ -33,8 +42,10 @@ public class OtpService {
     }
 
     public void sendOtp(OtpRequest otpRequest) {
+    	
         otpRequest.validate();
         if (otpRequest.isRegistrationRequestType() || otpRequest.isLoginRequestType()) {
+        	otpRequest.setTemplateId(registrationSmsTemplateId);
             sendOtpForUserRegistration(otpRequest);
         } else {
             sendOtpForPasswordReset(otpRequest);
@@ -52,7 +63,7 @@ public class OtpService {
 
         final String otpNumber = otpRepository.fetchOtp(otpRequest);
         System.out.println("otpNumber----------->"+otpNumber);
-        otpSMSSender.send(otpRequest, otpNumber);
+        otpSMSSender.sendNew(otpRequest, otpNumber);
     }
 
     private void sendOtpForPasswordReset(OtpRequest otpRequest) {

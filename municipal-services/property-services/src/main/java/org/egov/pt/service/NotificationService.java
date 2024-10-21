@@ -122,17 +122,20 @@ public class NotificationService {
 		String state = getStateFromWf(wf, configs.getIsWorkflowEnabled());
 		String completeMsgs = notifUtil.getLocalizationMessages(property.getTenantId(), propertyRequest.getRequestInfo());
 		String localisedState = getLocalisedState(wf, completeMsgs);
+		String templateId=null;
 		boolean replace=false;
 		switch (state) {
 
 		case WF_NO_WORKFLOW:
 			createOrUpdate = isCreate ? CREATED_STRING : UPDATED_STRING;
 			msg = getMsgForUpdate(property, UPDATE_NO_WORKFLOW, completeMsgs, createOrUpdate);
+			
 			break;
 
 		case WF_STATUS_OPEN:
 			createOrUpdate = isCreate ? CREATE_STRING : UPDATE_STRING;
 			msg = getMsgForCreate(property, CREATE_OPEN_STATE_MESSAGE_MNPT, completeMsgs,createOrUpdate,propertyRequest,state);
+			templateId=CREATE_OPEN_STATE_MESSAGE_MNPT_TEMPLATE_ID;
 			break;
 			
 		case WF_STATUS_DOCVERIFIED:
@@ -170,7 +173,7 @@ public class NotificationService {
 
 		msg = replaceCommonValuesForManipur(property, msg, localisedState,replace);
 		System.out.println("message------------------->"+msg);
-		prepareMsgAndSendNew(propertyRequest, msg,state);
+		prepareMsgAndSendNew(propertyRequest, msg,state,templateId);
 	}
 	
 	
@@ -222,7 +225,7 @@ public class NotificationService {
 
 		msg = replaceCommonValuesForManipur(property, msg, localisedState,replace);
 		System.out.println("message------------------->"+msg);
-		prepareMsgAndSendNew(propertyRequest, msg,state);
+		prepareMsgAndSendNew(propertyRequest, msg,state,"templateId");
 	}
 	
 	
@@ -286,7 +289,7 @@ public class NotificationService {
 
 		msg = replaceCommonValuesForManipur(property, msg, localisedState,replace);
 		System.out.println("message------------------->"+msg);
-		prepareMsgAndSendNew(propertyRequest, msg,state);
+		prepareMsgAndSendNew(propertyRequest, msg,state,"templateID");
 	}
 	
 	
@@ -565,7 +568,7 @@ public class NotificationService {
 	}
 	
 	
-	private void prepareMsgAndSendNew(PropertyRequest request, String msg, String state) {
+	private void prepareMsgAndSendNew(PropertyRequest request, String msg, String state,String templateId) {
 
 		Property property = request.getProperty();
 		RequestInfo requestInfo = request.getRequestInfo();
@@ -589,7 +592,7 @@ public class NotificationService {
 		});
 
 
-		List<SMSRequest> smsRequests = notifUtil.createSMSRequestNew(msg, mobileNumberToOwner);
+		List<SMSRequest> smsRequests = notifUtil.createSMSRequestNew(msg, mobileNumberToOwner,templateId);
 
 		if(configuredChannelNames.contains(CHANNEL_NAME_SMS)){
 			notifUtil.sendSMS(smsRequests);

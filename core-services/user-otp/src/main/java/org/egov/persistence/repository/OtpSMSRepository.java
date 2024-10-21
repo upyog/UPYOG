@@ -48,7 +48,13 @@ public class OtpSMSRepository {
     public void send(OtpRequest otpRequest, String otpNumber) {
 		Long currentTime = System.currentTimeMillis() + maxExecutionTime;
 		final String message = getMessage(otpNumber, otpRequest);
-        kafkaTemplate.send(smsTopic, new SMSRequest(otpRequest.getMobileNumber(), message, Category.OTP, currentTime));
+        kafkaTemplate.send(smsTopic, new SMSRequest(otpRequest.getMobileNumber(), message, Category.OTP, currentTime,"templateId"));
+    }
+    
+    public void sendNew(OtpRequest otpRequest, String otpNumber) {
+		Long currentTime = System.currentTimeMillis() + maxExecutionTime;
+		final String message = getMessage(otpNumber, otpRequest);
+        kafkaTemplate.send(smsTopic, new SMSRequest(otpRequest.getMobileNumber(), message, Category.OTP, currentTime,otpRequest.getTemplateId()));
     }
 
     private String getMessage(String otpNumber, OtpRequest otpRequest) {

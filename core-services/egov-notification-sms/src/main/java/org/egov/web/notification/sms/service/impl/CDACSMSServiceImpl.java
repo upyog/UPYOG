@@ -1,17 +1,26 @@
 package org.egov.web.notification.sms.service.impl;
 import java.io.BufferedReader; 
-import java.io.IOException; 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException; 
-import java.security.KeyManagementException; 
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException; 
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.annotation.PostConstruct;
-import javax.net.ssl.SSLContext; 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 import javax.net.ssl.SSLContext;
 import org.apache.http.HttpResponse; 
 import org.apache.http.NameValuePair;	
@@ -58,14 +67,68 @@ public class CDACSMSServiceImpl extends BaseSMSService{
 	
 
 	//@PostConstruct
+	@PostConstruct
 	private void postConstruct() {
 		log.info("postConstruct() start");
 		try {
 			context = SSLContext.getInstance("TLSv1.2");
-		}catch (Exception e) {
+			if (smsProperties.isVerifyCertificate()) {
+				log.info("checking certificate");
+				/*
+				 * KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType()); //File
+				 * file = new File(System.getenv("JAVA_HOME")+"/lib/security/cacerts"); File
+				 * file = ResourceUtils.getFile("classpath:smsgwsmsgovin.cer"); InputStream is =
+				 * new FileInputStream(file); trustStore.load(is, "changeit".toCharArray());
+				 * TrustManagerFactory trustFactory = TrustManagerFactory
+				 * .getInstance(TrustManagerFactory.getDefaultAlgorithm());
+				 * trustFactory.init(trustStore);
+				 * 
+				 * TrustManager[] trustManagers = trustFactory.getTrustManagers();
+				 * sslContext.init(null, trustManagers, null);
+				 */
+
+				try (InputStream is = getClass().getClassLoader().getResourceAsStream("msdbweb_new.cer")) {
+					CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+					X509Certificate caCert = (X509Certificate) certFactory.generateCertificate(is);
+
+					KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+					trustStore.load(null);
+					trustStore.setCertificateEntry("caCert", caCert);
+
+					TrustManagerFactory trustFactory = TrustManagerFactory
+							.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+					trustFactory.init(trustStore);
+
+					TrustManager[] trustManagers = trustFactory.getTrustManagers();
+					context.init(null, trustManagers, null);
+				} catch (KeyManagementException | IllegalStateException | CertificateException | KeyStoreException | IOException e) {
+					log.error("Not able to load SMS certificate from the specified path {}", e.getMessage());
+				}
+			} else {
+				log.info("not checking certificate");
+				TrustManager tm = new X509TrustManager() {
+					@Override
+					public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType)
+							throws java.security.cert.CertificateException {
+					}
+
+					@Override
+					public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType)
+							throws java.security.cert.CertificateException {
+					}
+
+					@Override
+					public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+						return null;
+					}
+				};
+				context.init(null, new TrustManager[] { tm }, null);
+			}
+			SSLContext.setDefault(context);
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 	public String sendSingleSMS(String username, String password , String 
@@ -73,10 +136,10 @@ public class CDACSMSServiceImpl extends BaseSMSService{
 			templateid){
 		String responseString = ""; 
 		SSLSocketFactory sf=null; 
-		SSLContext context=null; 
+		//SSLContext context=null; 
 		String encryptedPassword; 
 		try {
-			context=SSLContext.getInstance("TLSv1.2"); 
+			//context=SSLContext.getInstance("TLSv1.2"); 
 			context.init(null, null, null);
 			sf=new SSLSocketFactory(context, 
 					SSLSocketFactory.STRICT_HOSTNAME_VERIFIER);
@@ -680,7 +743,7 @@ password
 			encryptedPassword = MD5(smsProperties.getPassword()); 
 			String message = sms.getMessage().trim();//message.trim();
 			String genratedhashKey = hashGenerator(smsProperties.getUsername(), smsProperties.getSenderid(), 
-					message, smsProperties.getSecureKey());
+					message, smsProperties.getPassword());
 			List<NameValuePair> nameValuePairs=new 
 					ArrayList<NameValuePair>(1);
 			nameValuePairs.add(new BasicNameValuePair("mobileno",sms.getMobileNumber())); 
