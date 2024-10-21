@@ -47,8 +47,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
    
   } = value;
 
-
-
+  
   const typeOfApplication = !isEditPET && !isUpdatePET ? `new-application` : `edit-application`;
 
 
@@ -156,6 +155,30 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
 
         />
+                <Row
+            label={t("PTR_SEARCH_IDENTIFICATION_MARK")}
+            text={`${t(checkForNA(pets?.identificationmark))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+
+        />
+                <Row
+            label={t("PTR_SEARCH_PETCOLOR")}
+            text={`${t(checkForNA(pets?.petColor?.code))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+
+        />
+                <Row
+            label={t("PTR_SEARCH_PET_VACCINATION_NUMBER")}
+            text={`${t(checkForNA(pets?.vaccinationNumber))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+
+        />
+                <Row
+            label={t("PTR_SEARCH_BIRTH_ADOPTION")}
+            text={`${t(checkForNA(pets?.adoptionDate ? pets?.adoptionDate : pets?.birthDate))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+
+        />
 
         </StatusTable>
         <br></br>
@@ -164,19 +187,19 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <StatusTable>
         <Row
             label={t("PTR_HOUSE_NO")}
-            text={`${t(checkForNA(address?.doorNo))}`}
+            text={`${t(checkForNA(address?.houseNo))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/street`} />}
 
         />
          <Row
             label={t("PTR_STREET_NAME")}
-            text={`${t(checkForNA(address?.street))}`}
+            text={`${t(checkForNA(address?.streetName))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/street`} />}
 
         />
          <Row
             label={t("PTR_ADDRESS_LINE1")}
-            text={`${t(checkForNA(address?.addressLine1))}`}
+            text={`${t(checkForNA(address?.addressline1))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/street`} />}
 
         />
@@ -193,7 +216,12 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         />
          <Row
             label={t("PTR_LOCALITY")}
-            text={`${t(checkForNA(address?.locality?.name))}`}
+            text={`${t(checkForNA(address?.locality?.i18nKey))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
+        />
+                 <Row
+            label={t("PTR_LANDMARK")}
+            text={`${t(checkForNA(address?.landmark))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />
 

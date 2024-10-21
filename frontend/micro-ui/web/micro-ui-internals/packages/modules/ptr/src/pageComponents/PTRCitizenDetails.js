@@ -1,22 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber } from "@nudmcdgnpm/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/PTRTimeline";
 
 const PTRCitizenDetails
- = ({ t, config, onSelect, userType, formData, ownerIndex }) => {
+ = ({ t, config, onSelect, userType, formData, renewApplication }) => {
   const { pathname: url } = useLocation();
-
   let index = 0
-  
-   
+
   let validation = {};
 
-  const [applicantName, setName] = useState((formData.ownerss && formData.ownerss[index] && formData.ownerss[index].applicantName) || formData?.ownerss?.applicantName || "");
-  const [emailId, setEmail] = useState((formData.ownerss && formData.ownerss[index] && formData.ownerss[index].emailId) || formData?.ownerss?.emailId || "");
+  // added data from renewapplication, renders data if there is data in renewapplication
+  const [applicantName, setName] = useState((formData.ownerss && formData.ownerss[index] && formData.ownerss[index].applicantName) || renewApplication?.applicantName || formData?.ownerss?.applicantName || "");
+  const [emailId, setEmail] = useState((formData.ownerss && formData.ownerss[index] && formData.ownerss[index].emailId) || renewApplication?.emailId || formData?.ownerss?.emailId || "");
   const [mobileNumber, setMobileNumber] = useState(
-    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].mobileNumber) || formData?.ownerss?.mobileNumber || ""
+    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].mobileNumber) || renewApplication?.mobileNumber || formData?.ownerss?.mobileNumber || ""
   );
   const [alternateNumber, setAltMobileNumber] = useState(
     (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].alternateNumber) || formData?.ownerss?.alternateNumber || ""
@@ -24,13 +23,14 @@ const PTRCitizenDetails
 
   
   const [fatherName, setFatherOrHusbandName] = useState(
-    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].fatherName) || formData?.ownerss?.fatherName || ""
+    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].fatherName) || renewApplication?.fatherName || formData?.ownerss?.fatherName || ""
   );
   
  
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
+ 
 
   
 

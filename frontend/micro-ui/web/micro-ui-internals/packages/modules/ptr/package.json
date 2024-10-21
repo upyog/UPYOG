@@ -1,6 +1,6 @@
 {
   "name": "@nudmcdgnpm/upyog-ui-module-ptr",
-  "author": "Shivank Shukla & Abhijeet Verma",
+  "author": "Shivank Shukla, Abhijeet Verma & Khalid Rashid",
   "version": "1.2.3",
   "license": "MIT",
   "main": "dist/index.js",

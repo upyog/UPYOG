@@ -13,8 +13,11 @@ import SVAdrressDetails from "./pageComponents/SVAdrressDetails";
 import SVBankDetails from "./pageComponents/SVBankDetails";
 import SVDocumentsDetail from "./pageComponents/SVDocumentsDetail";
 import SVCheckPage from "./pages/citizen/Create/SVCheckPage";
-
-
+import SVCard from "./components/SVCard";
+import SVEmpCreate from "./pages/employee/Create";
+import EmployeeApp from "./pages/employee";
+import { TableConfig } from "./config/inbox-table-config";
+import InboxFilter from "./components/inbox/NewInboxFilter";
 
 const componentsToRegister = {
    Create:SVCreate,
@@ -26,16 +29,18 @@ const componentsToRegister = {
    SVAdrressDetails,
    SVBankDetails,
    SVDocumentsDetail,
-   CheckPage:SVCheckPage
-   
+   CheckPage:SVCheckPage,
+   SVEmpCreate
   };
   
+  // function to register the component as per standard 
   const addComponentsToRegistry = () => {
     Object.entries(componentsToRegister).forEach(([key, value]) => {
       Digit.ComponentRegistryService.setComponent(key, value);
     });
   };
 
+  // Parent component of module
   export const SVModule = ({ stateCode, userType, tenants }) => {
     const { path, url } = useRouteMatch();
     const moduleCode = "SV";
@@ -67,7 +72,7 @@ const componentsToRegister = {
       clearParams();
     }, []);
   
-    const links = [
+    const links = [ // need to check the links, will be removed later if not needed
       
       {
         link: `${matchPath}/sv/apply`,
@@ -82,7 +87,11 @@ const componentsToRegister = {
     return <CitizenHomeCard header={t("STREET_VENDING_SERVICES")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
   };
   
+  // export the components outside of module to enable and access of module
   export const SVComponents = {
     SVModule, 
     SVLinks,
+    SVCard,
+    SV_INBOX_FILTER: (props) => <InboxFilter {...props} />,
+    SVInboxTableConfig: TableConfig
   };

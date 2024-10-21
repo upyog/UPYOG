@@ -3,7 +3,7 @@
   import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@nudmcdgnpm/digit-ui-react-components";
   import { Link } from "react-router-dom";
 
-  const PTRSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
+  const SVSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
     
       const isMobile = window.Digit.Utils.browser.isMobile();
       const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
@@ -52,18 +52,6 @@
     Menu.map((petone) => {
       menu.push({ i18nKey: `PTR_PET_${petone.code}`, code: `${petone.code}`, value: `${petone.name}` });
     });
-
-    // Breed_Type &&
-    // Breed_Type.map((breedss) => {
-    //   if (breedss.PetType == menu?.code) {
-    //     breed_type.push({
-    //       i18nKey: `PTR_BREED_TYPE_${breedss.code}`,
-    //       code: `${breedss.code}`,
-    //       value: `${breedss.name}`
-    //     });
-    //   }
-
-    // });
 
 
       
@@ -300,4 +288,4 @@
           </React.Fragment>
   }
 
-  export default PTRSearchApplication
+  export default SVSearchApplication
