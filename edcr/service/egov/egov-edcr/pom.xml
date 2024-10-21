@@ -49,7 +49,7 @@
 	</repositories>
 	<dependencies>
 		<dependency>
-			<groupId>repo.egovernments.org</groupId>
+			<groupId>com.aspose</groupId>
 			<artifactId>aspose-cad</artifactId>
 			<version>20.10</version>
 		</dependency>
