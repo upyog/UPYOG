@@ -1,4 +1,4 @@
-import { Header, MultiLink, Toast } from "@egovernments/digit-ui-react-components";
+import { Header, MultiLink, Toast } from "@upyog/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
@@ -98,7 +98,7 @@ const ApplicationDetailsBillAmendment = () => {
     <Fragment>
       <div className={"employee-main-application-details"}>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-          <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("CS_TITLE_GENERATE_NOTE")}</Header>
+          <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "16px" }}>{t("CS_TITLE_GENERATE_NOTE")}</Header>
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper employee-mulitlink-main-div"

@@ -124,12 +124,20 @@ public class UserRepository {
      * @param tenantId
      * @return
      */
-    public boolean isUserPresent(String userName, String tenantId, UserType userType) {
+    public boolean isUserPresent(String userName, String tenantId, UserType userType,String checkfor ) {
 
-        String query = userTypeQueryBuilder.getUserPresentByUserNameAndTenant();
-
+        String query = null;
+      
         final Map<String, Object> parametersMap = new HashMap<String, Object>();
-        parametersMap.put("userName", userName);
+        if(checkfor.equalsIgnoreCase("username")) {
+        	query=  userTypeQueryBuilder.getUserPresentByUserNameAndTenant();
+        	 parametersMap.put("userName", userName);
+        }
+        	
+        else if(checkfor.equalsIgnoreCase("mobilenumber")) {
+        	query=  userTypeQueryBuilder.getUserPresentByMobileAndTenant();
+        	 parametersMap.put("mobileNumber", userName);
+        }
         parametersMap.put("tenantId", tenantId);
         parametersMap.put("userType", userType.toString());
 

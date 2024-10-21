@@ -392,9 +392,12 @@ public class PaymentValidator {
             errorMap.put("INVALID_PAYMENTDETAIL", "The amount to be paid is less than amount due");
 
         // In case of advance payment checks if it is allowed in bill
-        if ((bill.getIsAdvanceAllowed() == null || !bill.getIsAdvanceAllowed())
-                && paymentDetail.getTotalAmountPaid().compareTo(bill.getTotalAmount()) == 1)
-            errorMap.put("INVALID_PAYMENTDETAIL", "The amount to be paid is more than amount due");
+		/*
+		 * if ((bill.getIsAdvanceAllowed() == null || !bill.getIsAdvanceAllowed()) &&
+		 * paymentDetail.getTotalAmountPaid().compareTo(bill.getTotalAmount()) == 1)
+		 * errorMap.put("INVALID_PAYMENTDETAIL",
+		 * "The amount to be paid is more than amount due");
+		 */
 
         // Checks if the payment mode is allowed by the bill
         if (!CollectionUtils.isEmpty(bill.getCollectionModesNotAllowed())

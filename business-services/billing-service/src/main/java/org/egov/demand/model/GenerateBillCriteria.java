@@ -83,6 +83,10 @@ public class GenerateBillCriteria {
 
 	@Email
 	private String email;
+	
+	@SafeHtml
+	@Size(max = 256)
+	private String modeOfPayment;
 
 	@Pattern(regexp = "^[0-9]{10}$", message = "MobileNumber should be 10 digit number")
 	private String mobileNumber;

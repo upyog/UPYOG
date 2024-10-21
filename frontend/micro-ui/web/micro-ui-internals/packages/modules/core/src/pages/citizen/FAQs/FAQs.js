@@ -1,4 +1,4 @@
-import { Header, TextInput, SearchIconSvg, ArrowForward, Loader, BackButton} from "@egovernments/digit-ui-react-components";
+import { Header, TextInput, SearchIconSvg, ArrowForward, Loader, BackButton} from "@upyog/digit-ui-react-components";
 import React, { useState, Fragment, useRef, useEffect}from "react";
 import { useTranslation } from "react-i18next";
 import FaqComponent from "./FaqComponent";
@@ -25,7 +25,7 @@ const FAQsSection = ({module}) => {
     <div className="faq-page">
       <BackButton style={{marginLeft : "unset"}}></BackButton>
         <div style={{ marginBottom: "15px" }}>
-          <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px"}}>{t("FAQ_S")}</Header>
+          <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "16px"}}>{t("FAQ_S")}</Header>
         </div>
         <div className="faq-list">
         {moduleFaqs.map((faq, i) => (

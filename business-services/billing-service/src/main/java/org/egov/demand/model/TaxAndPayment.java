@@ -33,5 +33,8 @@ public class TaxAndPayment {
 
 	@JsonProperty("amountPaid")
 	private BigDecimal amountPaid;
+	
+	@JsonProperty("billId")
+	private String billId;
 
 }

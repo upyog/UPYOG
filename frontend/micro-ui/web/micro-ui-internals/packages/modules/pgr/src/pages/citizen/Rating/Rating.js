@@ -4,11 +4,11 @@ import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 
-import { Card, CardHeader, CardLabel, Rating, CheckBox, TextArea, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Card, CardHeader, CardLabel, Rating, CheckBox, TextArea, SubmitBar } from "@upyog/digit-ui-react-components";
 import { updateComplaints } from "../../../redux/actions/index";
 
 import { LOCALIZATION_KEY } from "../../../constants/Localization";
-//import { Storage } from "../../@egovernments/digit-utils/services/Storage";
+//import { Storage } from "../../@upyog/digit-utils/services/Storage";
 
 const RatingAndFeedBack = () => {
   const { id } = useParams();

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 
 import ActionModal from "./Modal";
 
@@ -26,6 +26,8 @@ const ApplicationDetails = (props) => {
 
   const {
     applicationDetails,
+    assmentSearchData,
+    userRole,
     showToast,
     setShowToast,
     isLoading,
@@ -56,6 +58,7 @@ const ApplicationDetails = (props) => {
   }, [showToast]);
 
   function onActionSelect(action) {
+    console.log("onActionSelect==",action)
     if (action) {
       if(action?.isToast){
         setShowToast({ key: "error", error: { message: action?.toastMessage } });
@@ -208,6 +211,8 @@ const ApplicationDetails = (props) => {
               state={state}
               id={applicationNumber}
               applicationDetails={applicationDetails}
+              assmentSearchData={assmentSearchData}
+              userRole={userRole}
               applicationData={applicationDetails?.applicationData}
               closeModal={closeModal}
               submitAction={submitAction}

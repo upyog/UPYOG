@@ -1,4 +1,4 @@
-import { Header, ActionBar, SubmitBar, ExternalLinkIcon, Menu, GenericFileIcon, LinkButton } from '@egovernments/digit-ui-react-components';
+import { Header, ActionBar, SubmitBar, ExternalLinkIcon, Menu, GenericFileIcon, LinkButton } from '@upyog/digit-ui-react-components';
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import { openDocumentLink, openUploadedDocument } from '../../utils';

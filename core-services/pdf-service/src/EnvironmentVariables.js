@@ -29,7 +29,7 @@ const envVariables = {
     process.env.DEFAULT_LOCALISATION_LOCALE || "en_IN",
     DEFAULT_LOCALISATION_TENANT:
     process.env.DEFAULT_LOCALISATION_TENANT || "pg",
-    DATA_CONFIG_URLS: process.env.DATA_CONFIG_URLS,
-    FORMAT_CONFIG_URLS: process.env.FORMAT_CONFIG_URLS
+    DATA_CONFIG_URLS: process.env.DATA_CONFIG_URLS || "file:///xampp/htdocs/deloitte/mnpt/upyog-configs/configs/pdf-service/data-config/property-receipt.json",
+    FORMAT_CONFIG_URLS: process.env.FORMAT_CONFIG_URLS || "file:///xampp/htdocs/deloitte/mnpt/upyog-configs/configs/pdf-service/format-config/property-receipt.json",
 };
 export default envVariables;

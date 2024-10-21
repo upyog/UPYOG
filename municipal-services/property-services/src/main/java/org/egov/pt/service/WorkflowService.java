@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.models.Appeal;
 import org.egov.pt.models.Assessment;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.enums.CreationReason;
@@ -15,6 +16,7 @@ import org.egov.pt.models.workflow.ProcessInstanceResponse;
 import org.egov.pt.models.workflow.State;
 import org.egov.pt.repository.ServiceRequestRepository;
 import org.egov.pt.util.PropertyUtil;
+import org.egov.pt.web.contracts.AppealRequest;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
@@ -125,6 +127,28 @@ public class WorkflowService {
 		request.getProperty().getWorkflow().setState(state);
 		return state;
 	}
+	
+	
+	public State updateWorkflowForAppeal(AppealRequest request, CreationReason creationReasonForWorkflow) {
+
+		Appeal appeal = request.getAppeal();
+		
+		ProcessInstanceRequest workflowReq = utils.getWfForAppealRegistry(request, creationReasonForWorkflow);
+		State state = callWorkFlow(workflowReq);
+		
+		if (state.getApplicationStatus().equalsIgnoreCase(configs.getWfStatusActive()) && appeal.getAppealId() == null) {
+			
+			String pId = utils.getIdList(request.getRequestInfo(), appeal.getTenantId(), configs.getPropertyIdGenName(), configs.getPropertyIdGenFormat(), 1).get(0);
+			request.getAppeal().setAppealId(pId);
+		}
+		
+		request.getAppeal().setStatus(Status.fromValue(state.getApplicationStatus()));
+		request.getAppeal().getWorkflow().setState(state);
+		return state;
+	}
+	
+	
+	
 
 
 	/**

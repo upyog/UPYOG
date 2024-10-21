@@ -11,7 +11,7 @@ import {
   MobileNumber,
   Dropdown,
   Localities,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 import { useTranslation } from "react-i18next";
 
@@ -118,7 +118,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
-        <div className="search-container" style={{ width: "auto", marginLeft: isInboxPage ? "24px" : "revert" }}>
+        <div className="search-container" style={{ width: "100%", marginLeft: isInboxPage ? "24px" : "revert" }}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">

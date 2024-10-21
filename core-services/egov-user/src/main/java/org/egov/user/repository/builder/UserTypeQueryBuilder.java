@@ -303,5 +303,9 @@ public class UserTypeQueryBuilder {
     public String getUserPresentByUserNameAndTenant() {
         return "select count(*) from eg_user where username =:userName and tenantId =:tenantId and type = :userType ";
     }
+    
+    public String getUserPresentByMobileAndTenant() {
+        return "select count(*) from eg_user where mobilenumber =:mobileNumber and tenantId =:tenantId and type = :userType ";
+    }
 
 }

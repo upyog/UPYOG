@@ -11,12 +11,14 @@ import static org.springframework.util.StringUtils.isEmpty;
 @Builder
 @EqualsAndHashCode
 @NoArgsConstructor
+@Setter
 public class OtpRequest {
 	@Setter
     private String mobileNumber;
     private String tenantId;
     private OtpRequestType type;
     private String userType;
+    private String templateId;
 
     public void validate() {
         if(isTenantIdAbsent()
