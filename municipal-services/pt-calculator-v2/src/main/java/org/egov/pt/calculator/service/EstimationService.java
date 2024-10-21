@@ -1272,13 +1272,21 @@ public class EstimationService {
 		TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(totalAmount, BigDecimal.ZERO);
 		//TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(taxAmt.add(penalty).add(collectedAmtForOldDemand), rebate.add(exemption).add(complementary_rebate).add(modeofpayment_rebate));
 
+		//BigDecimal roundofpos=BigDecimal.ZERO;
+		//BigDecimal roundofneg=BigDecimal.ZERO;
+		
 		if (null != decimalEstimate) {
 			decimalEstimate.setCategory(taxHeadCategoryMap.get(decimalEstimate.getTaxHeadCode()));
 			estimates.add(decimalEstimate);
-			if (decimalEstimate.getEstimateAmount().compareTo(BigDecimal.ZERO)>=0)
-				taxAmt = taxAmt.add(decimalEstimate.getEstimateAmount());
-			else
-				rebate = rebate.add(decimalEstimate.getEstimateAmount());
+			totalAmount=totalAmount.add(decimalEstimate.getEstimateAmount());
+			/*
+			 * if (decimalEstimate.getEstimateAmount().compareTo(BigDecimal.ZERO)>=0) {
+			 * roundofpos=decimalEstimate.getEstimateAmount();
+			 * totalAmount=totalAmount.add(roundofpos); } else {
+			 * roundofneg=decimalEstimate.getEstimateAmount();
+			 * totalAmount=totalAmount.add(roundofneg); }
+			 */
+				
 		}
 
 
