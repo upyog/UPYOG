@@ -402,8 +402,8 @@ public class InboxService {
 				if (!CollectionUtils.isEmpty(applicationNumbers)) {
 					moduleSearchCriteria.put(ACKNOWLEDGEMENT_IDS_PARAM, applicationNumbers);
 					businessKeys.addAll(applicationNumbers);
-					moduleSearchCriteria.remove(LOCALITY_PARAM);
-					moduleSearchCriteria.remove(OFFSET_PARAM);
+					//moduleSearchCriteria.remove(LOCALITY_PARAM);
+					//moduleSearchCriteria.remove(OFFSET_PARAM);
 				} else {
 					isSearchResultEmpty = true;
 				}
