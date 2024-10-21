@@ -149,12 +149,9 @@ public class TLRenewalCalculation {
    
         }
         BigDecimal applicableDays = new BigDecimal(totalDays);
-        if (cal.getTimeInMillis() < currentIST)
+        if (totalDays>30 && cal.getTimeInMillis() < currentIST) {
             penaltyAmt = calculateApplicables(applicableDays, penalty);
-        
-        
-        
-        
+        }
         return penaltyAmt;
     }
 

@@ -1,8 +1,6 @@
 package org.egov.tlcalculator.service;
 
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tlcalculator.config.TLCalculatorConfigs;
 import org.egov.tlcalculator.kafka.broker.TLCalculatorProducer;
@@ -180,13 +178,7 @@ public class CalculationService {
       if(totalTax.compareTo(BigDecimal.ZERO)==-1)
           throw new CustomException("INVALID AMOUNT","Tax amount is negative");
 
-       if(license.getTradeLicenseDetail().getAdditionalDetail().get("validityYears").asInt()==1)
       estimate.setEstimateAmount(totalTax);
-      else if(license.getTradeLicenseDetail().getAdditionalDetail().get("validityYears").asInt()==2)
-    	estimate.setEstimateAmount(totalTax.multiply(BigDecimal.valueOf(2)));
-      else if(license.getTradeLicenseDetail().getAdditionalDetail().get("validityYears").asInt()==3)
-      	estimate.setEstimateAmount(totalTax.multiply(BigDecimal.valueOf(3)));
-    // estimate.setEstimateAmount(totalTax);
       estimate.setCategory(Category.TAX);
       if(license.getApplicationType() != null && license.getApplicationType().toString().equals(TLCalculatorConstants.APPLICATION_TYPE_RENEWAL)){
           estimate.setTaxHeadCode(config.getRenewTaxHead());
