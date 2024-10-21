@@ -72,7 +72,7 @@ public class CDACSMSServiceImpl extends BaseSMSService{
 		log.info("postConstruct() start");
 		try {
 			context = SSLContext.getInstance("TLSv1.2");
-			if (smsProperties.isVerifyCertificate()) {
+			if (!smsProperties.isVerifyCertificate()) {
 				log.info("checking certificate");
 				/*
 				 * KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType()); //File
@@ -732,15 +732,15 @@ password
 		//SSLContext context=null; 
 		String encryptedPassword; 
 		try {
-			context=SSLContext.getInstance("TLSv1.2"); 
-			context.init(null, null, null);
+		//	context=SSLContext.getInstance("TLSv1.2"); 
+		//	context.init(null, null, null);
 			sf=new SSLSocketFactory(context, SSLSocketFactory.STRICT_HOSTNAME_VERIFIER);
 			Scheme scheme=new Scheme("https",443,sf); 
 			HttpClient client=new DefaultHttpClient();
 			client.getConnectionManager().getSchemeRegistry().register(scheme); 
 			HttpPost post=new
 					HttpPost(smsProperties.getUrl());
-			encryptedPassword = MD5(smsProperties.getPassword()); 
+			encryptedPassword = smsProperties.getPassword(); 
 			String message = sms.getMessage().trim();//message.trim();
 			String genratedhashKey = hashGenerator(smsProperties.getUsername(), smsProperties.getSenderid(), 
 					message, smsProperties.getPassword());
@@ -753,7 +753,9 @@ password
 			nameValuePairs.add(new BasicNameValuePair("username",smsProperties.getUsername()));
 			nameValuePairs.add(new BasicNameValuePair("password",encryptedPassword));
 			nameValuePairs.add(new BasicNameValuePair("key",genratedhashKey));
+			System.out.println(sms.getTemplateId());
 			nameValuePairs.add(new BasicNameValuePair("templateid",sms.getTemplateId()));
+			//nameValuePairs.add(new BasicNameValuePair("entityid",sms.getTemplateId()));
 			System.out.println(message);
 
 			post.setEntity(new UrlEncodedFormEntity(nameValuePairs)); 
@@ -763,12 +765,6 @@ password
 				responseString = responseString+line;
 			}
 			System.out.println(responseString);
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block 
-			e.printStackTrace();
-		} catch (KeyManagementException e) {
-			// TODO Auto-generated catch block 
-			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block 
 			e.printStackTrace();
