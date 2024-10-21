@@ -24,8 +24,8 @@
         <profile>
             <id>disable-ssl-check</id>
             <properties>
-                <maven.wagon.http.ssl.insecure>true</maven.wagon.http.ssl.insecure>
-                <maven.wagon.http.ssl.allowall>true</maven.wagon.http.ssl.allowall>
+                <maven.wagon.http.ssl.insecure>false</maven.wagon.http.ssl.insecure>
+                <maven.wagon.http.ssl.allowall>false</maven.wagon.http.ssl.allowall>
             </properties>
         </profile>
     </profiles>
