@@ -40,10 +40,6 @@
 	</parent>
 	<artifactId>egov-edcr</artifactId>
 	<name>e-governments edcr</name>
-	<properties>
-        <!-- Define the path to the Aspose CAD JAR file -->
-        <aspose.cad.jar.path>${project.basedir}/edcr/service/egov/jarfile/aspose-cad-20.10.jar</aspose.cad.jar.path>
-        </properties>
 	<repositories>
 		<repository>
 			<id>AsposeJavaAPI</id>
@@ -53,11 +49,9 @@
 	</repositories>
 	<dependencies>
 		<dependency>
-			<groupId>com.aspose</groupId>
+			<groupId>repo.egovernments.org</groupId>
 			<artifactId>aspose-cad</artifactId>
 			<version>20.10</version>
-			<scope>system</scope>
-                        <systemPath>${aspose.cad.jar.path}</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
