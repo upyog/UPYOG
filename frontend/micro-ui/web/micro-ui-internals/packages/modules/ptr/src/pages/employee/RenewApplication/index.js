@@ -10,7 +10,6 @@ const RenewApplication = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const tenants = Digit.Hooks.ptr.useTenants();
   const configs = newConfig;
-  const {pathname} = useLocation();
   const [canSubmit, setSubmitValve] = useState(false);
   const defaultValues = {};
   const history = useHistory();
@@ -32,10 +31,7 @@ const RenewApplication = () => {
     setSubmitValve(!Object.keys(formState.errors).length);
   };
 
-  // Maybe needed to be used later:
-  // let appType;
-  // pathname && pathname.includes("renew-application") ? appType = "RENEWAPPLICATION" : appType = "NEWAPPLICATION"
-
+  // data is set in a structure to be sent in payload
   const onPetSubmit = (data) => {
 
     const formData = [{
@@ -71,7 +67,7 @@ const RenewApplication = () => {
   };
 
   return ( 
-    // component used for rendering screens 
+    // component used for rendering registration form screens 
     <FormComposer
       heading={t("ES_TITLE_RENEW_PET_REGISTARTION")}
       isDisabled={canSubmit}

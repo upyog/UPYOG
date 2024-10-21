@@ -16,7 +16,8 @@ import SVCheckPage from "./pages/citizen/Create/SVCheckPage";
 import SVCard from "./components/SVCard";
 import SVEmpCreate from "./pages/employee/Create";
 import EmployeeApp from "./pages/employee";
-
+import { TableConfig } from "./config/inbox-table-config";
+import InboxFilter from "./components/inbox/NewInboxFilter";
 
 const componentsToRegister = {
    Create:SVCreate,
@@ -90,5 +91,7 @@ const componentsToRegister = {
   export const SVComponents = {
     SVModule, 
     SVLinks,
-    SVCard
+    SVCard,
+    SV_INBOX_FILTER: (props) => <InboxFilter {...props} />,
+    SVInboxTableConfig: TableConfig
   };

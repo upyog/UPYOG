@@ -21,13 +21,17 @@ const PTRDocumentUpload = ({ t, config, onSelect, userType, formData, setError: 
   let action = "create";
   const { pathname } = useLocation();
 
-  const { isLoading: auditDataLoading, isError: isAuditError, data: app_data } = Digit.Hooks.ptr.usePTRSearch(
+  // Hook to get data of pet according to the applicationNumber
+  const { isLoading: auditDataLoading, isError: isAuditError, data: app_data_f } = Digit.Hooks.ptr.usePTRSearch(
     {
       tenantId,
       filters: { applicationNumber: applicationNumber, audit: true },
     },
   );
-  
+  let app_data;
+  if (applicationNumber) {
+    app_data = app_data_f;
+  }
 
   const { isLoading, data } = Digit.Hooks.ptr.usePetMDMS(stateId, "PetService", "Documents");   
 
@@ -110,8 +114,6 @@ function PTRSelectDocument({
       ? doc?.dropdownData[0]
       : {}
   );
-
-  console.log("appDAtA inc document of employee side :: ", appData)
   
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(() => filteredDocument?.fileStoreId || null);
@@ -149,6 +151,7 @@ function PTRSelectDocument({
     }
   };
 
+  // field to upload the pictures from the appData which comes if the application is renew application
   useEffect(() => {
     appData?.documents?.map((row, index) => {
       row?.documentType.includes(doc?.code) ? setUploadedFile(row) : null;

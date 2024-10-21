@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { useParams, Link, useHistory } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 import getPetAcknowledgementData from "../../getPetAcknowledgementData";
-import { ApplicationContext } from "../../Module";
 
 
 const ApplicationDetails = () => {
@@ -20,7 +19,6 @@ const ApplicationDetails = () => {
   const [enableAudit, setEnableAudit] = useState(false);
   const [businessService, setBusinessService] = useState("ptr");
 
-  const {setApplicationId, setApptype} = useContext(ApplicationContext)
   const history = useHistory();
 
   // isAction is added to enable or disable the actionbar
@@ -145,8 +143,6 @@ const ApplicationDetails = () => {
       onClick: () => printCertificate(),
     });
 
-    console.log("------------------this is appdetails to show data :: ", appDetailsToShow)
-
   return (
     <div>
       <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
@@ -183,7 +179,7 @@ const ApplicationDetails = () => {
         MenuStyle={{ color: "#FFFFFF", fontSize: "18px" }}
       />
 
-      {/* link added to the renewal application */}
+      {/* link added for the renewal application */}
       <Link to={`/digit-ui/employee/ptr/petservice/renew-application/${appDetailsToShow?.applicationData?.applicationData?.applicationNumber}`}  >
         <SubmitBar style={{ marginBottom: "5px" }} label={"Renewal"} />
       </Link>

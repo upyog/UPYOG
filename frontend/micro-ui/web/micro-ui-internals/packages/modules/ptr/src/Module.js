@@ -1,5 +1,5 @@
-import { Header, CitizenHomeCard, PTIcon, PropertySearch } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useEffect, useState, createContext } from "react";
+import { CitizenHomeCard, PTIcon, PropertySearch } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
 import PTRPetdetails from "./pageComponents/PTRPetdetails";
@@ -29,8 +29,6 @@ import NewApplication from "./pages/employee/NewApplication";
 import RenewApplication from "./pages/employee/RenewApplication";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import Response from "./pages/Response";
-import PTREditDetails from "./pageComponents/PTREditDetails";
-import EditDocumentPTR from "./pageComponents/EditDocumentPTR";
 
 
 const componentsToRegister = {
@@ -55,60 +53,29 @@ const componentsToRegister = {
   PTRSelectProofIdentity,
   PTRServiceDoc,
   PTRWFApplicationTimeline,
-  PTREditDetails,
-  EditDocumentPTR,
-  PropertySearch,
-  PTRRenewApplication: RenewApplication
+  PropertySearch, // component added for property search
+  PTRRenewApplication: RenewApplication //component added for renewapplication
 };
 
-// used context for renewApplication
-export const ApplicationContext = createContext();
-
+// function of component registry to add entries in the registry
 const addComponentsToRegistry = () => {
   Object.entries(componentsToRegister).forEach(([key, value]) => {
     Digit.ComponentRegistryService.setComponent(key, value);
   });
 };
 
-
+// Main module function to get to the routes file of citizen or employee module
 export const PTRModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PTR_APPLICATION_ID", {});
-
-  // These usestates are for the applicationcontext
-  const [applicationId, setApplicationId] = useState("");
-  const [applicationData, setApplicationData] = useState()
-  const [apptype, setApptype] = useState("NEWAPPLICATION")
-  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
-
-
-  const { isError, error, data: app_data } = Digit.Hooks.ptr.usePTRSearch(
-    {
-      tenantId,
-      filters: { applicationNumber: applicationId },
-    },
-  );
-
-  useEffect(() => {
-    if (!applicationId) setApplicationId(params) // to set applicationid from params after refresh of page so pass in search hook
-    if (app_data && apptype === "RENEWAPPLICATION") {
-      setParams(applicationId)
-      setApplicationData(app_data?.PetRegistrationApplications[0] || {});
-    }
-     else {
-      setApplicationData({})
-    }
-  }, [app_data, apptype, applicationId]);
-
-
   const moduleCode = "PTR";
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
 
   addComponentsToRegistry();
 
-  Digit.SessionStorage.set("PTR_TENANTS", tenants);
+  Digit.SessionStorage.set("PTR_TENANTS", tenants);  // setting a value in a session storage object
 
+  // loads localization settings for an employee based on the current tenant and language when the component mounts
   useEffect(
     () =>
       userType === "employee" &&
@@ -120,15 +87,9 @@ export const PTRModule = ({ stateCode, userType, tenants }) => {
     []
   );
 
-  return ( //application context provider to pass context data to all child components
-    <ApplicationContext.Provider value={{ applicationId, setApplicationId, applicationData, apptype, setApptype}}>
-      {userType === "employee" ? (
-        <EmployeeApp path={path} url={url} userType={userType} />
-      ) : (
-        <CitizenApp />
-      )}
-    </ApplicationContext.Provider>
-  )
+  if (userType === "employee") {
+    return <EmployeeApp path={path} url={url} userType={userType} />;
+  } else return <CitizenApp />;
 };
 
 export const PTRLinks = ({ matchPath, userType }) => {
@@ -139,31 +100,13 @@ export const PTRLinks = ({ matchPath, userType }) => {
     clearParams();
   }, []);
 
-  const links = [
-
-    {
-      link: `${matchPath}/ptr/petservice/new-application`,
-      i18nKey: t("PTR_CREATE_PET_APPLICATION"),
-    },
-
-    {
-      link: `${matchPath}/ptr/petservice/my-application`,
-      i18nKey: t("PTR_MY_APPLICATIONS_HEADER"),
-    },
-
-    {
-      link: `${matchPath}/howItWorks`,
-      i18nKey: t("PTR_HOW_IT_WORKS"),
-    },
-    {
-      link: `${matchPath}/faqs`,
-      i18nKey: t("PTR_FAQ_S"),
-    },
-  ];
-
+  const links = [];
+  
+  // returns CitizenHomeCard component while passing links to be used in card and an Icon to display
   return <CitizenHomeCard header={t("ACTION_TEST_PTR")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
 };
 
+// Components Exported
 export const PTRComponents = {
   PTRCard,
   PTRModule,

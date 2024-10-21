@@ -64,19 +64,6 @@ export const citizenConfig =
                             "header": "PROPERTY_DETAILS_HEADER",
                         }
                     },
-                    // {
-                    //     "route": "pincode",
-                    //     "component": "PTRSelectPincode",
-                    //     "texts": {
-
-                    //         "submitBarLabel": "PTR_COMMON_NEXT",
-                    //         "skipText": "CORE_COMMON_SKIP_CONTINUE",
-                    //     },
-                    //     "withoutLabel": true,
-                    //     "key": "address",
-                    //     "nextStep": "address",
-                    //     "type": "component",
-                    // },
 
                     {
                         "route": "address",
@@ -91,20 +78,6 @@ export const citizenConfig =
                         "isMandatory": true,
                         "type": "component",
                     },
-
-                    // {
-                    //     "type": "component",
-                    //     "route": "street",
-                    //     "component": "PTRCitizenAddress",
-                    //     "key": "address",
-                    //     "withoutLabel": true,
-                    //     "texts": {
-                    //         "submitBarLabel": "PTR_COMMON_NEXT",
-                    //     },
-                    //     "nextStep": "documents",
-                    // },
-
-
                 ],
         },
 

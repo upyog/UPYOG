@@ -3,11 +3,10 @@ import { FormStep, TextInput, CardLabel, Dropdown, TextArea, Toast } from "@nudm
 import { useLocation, useParams } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import Timeline from "../components/PTRTimeline";
-import { ApplicationContext } from "../Module";
 
-const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = formData.slotlist }) => {
+const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = formData.slotlist, renewApplication }) => {
   const { pathname: url } = useLocation();
-  let index = window.location.href.charAt(window.location.href.length - 1);
+  const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
   const allCities = Digit.Hooks.ptr.useTenants();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const {pathname} = useLocation();
@@ -16,21 +15,33 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = for
   const user = Digit.UserService.getUser().info;
 
 
-  let appData = null;
-  const { applicationData } = useContext(ApplicationContext)
+  let appData; // appData is used to get data from employee or citizen side and pass into fields
+
+  // On citizen side appData takes data of renewapplication
   if(pathname.includes("citizen")){
-    appData = applicationData
+    appData = renewApplication || null;
+  } else {
+    // On employee side appData takes data from the hook while 
+    const {applicationNumber} = useParams();
+    const { isLoading: auditDataLoading, isError: isAuditError, data: app_data } = Digit.Hooks.ptr.usePTRSearch(
+      {
+        tenantId,
+        filters: { applicationNumber: applicationNumber, audit: true },
+      },
+    );
+
+    appData = app_data && app_data?.PetRegistrationApplications[0];
   }
 
-  const [pincode, setPincode] = useState((formData.address && formData.address[index] && formData.address[index].pincode) || formData?.address?.pincode || "");
-  const [city, setCity] = useState((formData.address && formData.address[index] && formData.address[index].city) || formData?.address?.city || "");
-  const [locality, setLocality] = useState((formData.address && formData.address[index] && formData.address[index].locality) || formData?.address?.locality || "");
-  const [streetName, setStreetName] = useState((formData.address && formData.address[index] && formData.address[index].streetName) || formData?.address?.streetName || "");
-  const [houseNo, setHouseNo] = useState((formData.address && formData.address[index] && formData.address[index].houseNo) || formData?.address?.houseNo || "");
-  const [landmark, setLandmark] = useState((formData.address && formData.address[index] && formData.address[index].landmark) || formData?.address?.landmark || "");
-  const [houseName, setHouseName] = useState((formData.address && formData.address[index] && formData.address[index].houseName) || formData?.address?.houseName || "");
-  const [addressline1, setAddressline1] = useState((formData.address && formData.address[index] && formData.address[index].addressline1) || formData?.address?.addressline1 || "");
-  const [addressline2, setAddressline2] = useState((formData.address && formData.address[index] && formData.address[index].addressline2) || formData?.address?.addressline2 || "");
+  const [pincode, setPincode] = useState(appData?.address?.pincode|| formData?.address?.pincode || "");
+  const [city, setCity] = useState(convertToObject(appData?.address?.city) || formData?.address?.city || "");
+  const [locality, setLocality] = useState(convertToObject(appData?.address?.locality) || formData?.address?.locality || "");
+  const [streetName, setStreetName] = useState(appData?.address?.street || formData?.address?.street || "");
+  const [houseNo, setHouseNo] = useState(appData?.address?.houseNo || formData?.address?.houseNo || "");
+  const [landmark, setLandmark] = useState(appData?.address?.landmark || formData?.address?.landmark || "");
+  const [houseName, setHouseName] = useState(appData?.address?.buildingName || formData?.address?.buildingName || "");
+  const [addressline1, setAddressline1] = useState(appData?.address?.addressLine1 || formData?.address?.addressLine1 || "");
+  const [addressline2, setAddressline2] = useState(appData?.address?.addressLine2 || formData?.address?.addressLine2 || "");
 
 
   const [localities, setLocalities] = useState([]);
@@ -49,33 +60,6 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = for
   fetchedLocalities && fetchedLocalities.map((local, index) => {
     structuredLocality.push({i18nKey: local.i18nkey, code: local.code, label: local.label, area: local.area, boundaryNum: local.boundaryNum})
   })
-
-  if(pathname.includes("employee")){
-    const {applicationNumber} = useParams();
-
-    const { isLoading: auditDataLoading, isError: isAuditError, data: app_data } = Digit.Hooks.ptr.usePTRSearch(
-      {
-        tenantId,
-        filters: { applicationNumber: applicationNumber, audit: true },
-      },
-    );
-    appData = app_data?.PetRegistrationApplications[0];
-  }
-
-  
-  useEffect(() => {
-    if (!pincode && !city && appData?.address?.pincode) {
-      setPincode(appData?.address?.pincode)
-      setStreetName(appData?.address?.street)
-      setHouseNo(appData?.address?.doorNo)
-      setHouseName(appData?.address?.buildingName)
-      setAddressline1(appData?.address?.addressLine1)
-      setAddressline2(appData?.address?.addressLine2)
-      setLandmark(appData?.address?.landmark)
-      setCity(allCities?.find(option => option.name === appData?.address?.city) || "")
-      setLocality(fetchedLocalities?.find(option => option.name === appData?.address?.locality) || "")
-    }
-  }, [appData, allCities])
 
 
   const setAddressPincode = (e) => {
@@ -108,9 +92,9 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = for
   }
 
   const goNext = () => {
-    let owner = formData.address && formData.address[index];
+    let owner = formData.address ;
     let ownerStep = { ...owner, pincode, city, locality, streetName, houseNo, landmark, houseName, addressline1, addressline2 };
-    onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
+    onSelect(config.key, { ...formData[config.key], ...ownerStep }, false);
   };
 
   const { control } = useForm();

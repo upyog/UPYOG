@@ -9,19 +9,19 @@ const SVCard = () => {
   if (!Digit.Utils.ewAccess()) {
     return null;
   }
-  const links=[
-     {
-       label: t("SV_CREATE_APPLICATION"),
-       link: `/digit-ui/employee/sv/apply`,
-     },
-    //  {
-    //   label: t("SV_VIEW_APPLICATION"),
-    //   link: `/digit-ui/employee/sv/inbox`,
-    // },
-     {
+  const links = [
+    {
+      label: t("SV_INBOX"),
+      link: `/digit-ui/employee/sv/inbox`,
+    },
+    {
+      label: t("SV_CREATE_APPLICATION"),
+      link: `/digit-ui/employee/sv/apply`,
+    },
+    {
       label: t("ES_COMMON_APPLICATION_SEARCH"),
-      link: `/digit-ui/employee/sv/search`,
-   },
+      link: `/digit-ui/employee/sv/my-applications`,
+    },
   ]
   const SV_CEMP = Digit.UserService.hasAccess(["EW_VENDOR"]) || false;
 
@@ -29,7 +29,7 @@ const SVCard = () => {
     Icon: <PropertyHouse />,
     moduleName: t("MODULE_SV"),
     kpis: [],
-    links:links.filter(link=>!link?.role || SV_CEMP),
+    links: links.filter(link => !link?.role || SV_CEMP),
   };
 
   return <EmployeeModuleCard {...propsForModuleCard} />;

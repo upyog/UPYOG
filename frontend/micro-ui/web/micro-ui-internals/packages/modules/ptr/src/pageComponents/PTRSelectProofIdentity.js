@@ -3,11 +3,10 @@ import React, { useEffect, useState, useContext } from "react";
 import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair, ImageUploadHandler } from "@nudmcdgnpm/digit-ui-react-components";
 // Importing Timeline component
 import Timeline from "../components/PTRTimeline";
-import { ApplicationContext } from "../Module";
 
-const PTRSelectProofIdentity = ({ t, config, onSelect, formData }) => {
+const PTRSelectProofIdentity = ({ t, config, onSelect, formData, renewApplication }) => {
   // Initialize state for documents, error, enabling submit, and tracking required fields
-  const [documents, setDocuments] = useState(formData?.documents?.documents || []);
+  const [documents, setDocuments] = useState( formData?.documents?.documents || []);
   const [error, setError] = useState(null);
   const [enableSubmit, setEnableSubmit] = useState(true);
   const [checkRequiredFields, setCheckRequiredFields] = useState(false);
@@ -15,17 +14,8 @@ const PTRSelectProofIdentity = ({ t, config, onSelect, formData }) => {
   // Get the state ID (tenant) from Digit service
   const stateId = Digit.ULBService.getStateId();
 
-  const { applicationData } = useContext(ApplicationContext);
-
   // Fetch data from MDMS service related to documents for PetService
   const { isLoading, data } = Digit.Hooks.ptr.usePetMDMS(stateId, "PetService", "Documents");
-
-    // Update documents when applicationData becomes available and contains documents
-    useEffect(() => {
-      if (applicationData?.documents) {
-        setDocuments(applicationData.documents);
-      }
-    }, [applicationData, formData]); // Runs whenever applicationData changes
 
   // Handle form submission
   const handleSubmit = () => {
@@ -112,7 +102,7 @@ const PTRSelectProofIdentity = ({ t, config, onSelect, formData }) => {
                   setDocuments={setDocuments}
                   documents={documents}
                   setCheckRequiredFields={setCheckRequiredFields}
-                  applicationData={applicationData}
+                  renewApplication={renewApplication}
                 />
               );
             }
@@ -141,7 +131,7 @@ function PTRSelectDocument({
   action,
   formData,
   id,
-  applicationData
+  renewApplication
 }) {
   // Filter documents to find the one matching the current document code
   const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0];
@@ -175,11 +165,12 @@ function PTRSelectDocument({
   // State to handle hidden state of the document field
   const [isHidden, setHidden] = useState(false);
 
+  // field to upload the pictures from the renewapplication which comes if the application is renew application
   useEffect(() => {
-    applicationData && applicationData?.documents?.map((row, index) => {
+    renewApplication?.documents?.map((row, index) => {
       row?.documentType.includes(doc?.code) ? setUploadedFile(row) : null;
     } )
-  }, [applicationData?.documents])
+  }, [renewApplication?.documents])
 
   // Effect to update documents when selected document or file changes
   useEffect(() => {

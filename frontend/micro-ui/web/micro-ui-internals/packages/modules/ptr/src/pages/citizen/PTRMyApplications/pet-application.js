@@ -2,19 +2,15 @@ import { Card, KeyNote, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components"
 import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory } from "react-router-dom";
-import { ApplicationContext } from "../../../Module";
 
 const PetApplication = ({ application, tenantId, buttonLabel }) => {
-  const { setApplicationId, setApptype } = useContext(ApplicationContext)
   const { t } = useTranslation();
   const history = useHistory();
 
   // Function to handle the click event, setting the applicationId and redirecting
   const handleRenewalClick = () => {
-    setApplicationId(application?.applicationNumber);
-    setApptype("RENEWAPPLICATION")
-    // Redirect to new application page after setting the applicationId
-    history.push(`/digit-ui/citizen/ptr/petservice/renew-application`);
+    sessionStorage.setItem("petId", application?.applicationNumber)
+    history.push(`/digit-ui/citizen/ptr/petservice/revised-application`);
   };
 
   return (
@@ -24,9 +20,8 @@ const PetApplication = ({ application, tenantId, buttonLabel }) => {
       <KeyNote keyValue={t("PTR_APPLICATION_CATEGORY")} note={t("PTR_APPLICATION")} />
       <KeyNote keyValue={t("PTR_SEARCH_PET_TYPE")} note={application?.petDetails?.petType} />
       {/* <KeyNote keyValue={t("PT_COMMON_TABLE_COL_STATUS_LABEL")} note={t(`PTR_COMMON_${application?.status}`)} /> */}
-      <Link to={`/digit-ui/citizen/ptr/petservice/new-application`} onClick={handleRenewalClick} >
-        <SubmitBar style={{marginBottom: "5px"}} label={"Renewal"} />
-      </Link>
+
+      <SubmitBar style={{ marginBottom: "5px" }} label={"Renewal"} onSubmit={handleRenewalClick} />
       <Link to={`/digit-ui/citizen/ptr/petservice/application/${application?.applicationNumber}/${application?.tenantId}`}>
         <SubmitBar label={buttonLabel} />
       </Link>

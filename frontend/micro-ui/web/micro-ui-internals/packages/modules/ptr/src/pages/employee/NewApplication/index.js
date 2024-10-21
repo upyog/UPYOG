@@ -72,7 +72,7 @@ const NewApplication = () => {
     
   };
   
-  const configs = newConfig;
+  const configs = commonFields ? commonFields : newConfig;
 
 
   

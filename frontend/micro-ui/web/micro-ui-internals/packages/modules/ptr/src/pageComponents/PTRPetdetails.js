@@ -48,13 +48,17 @@ const PTRPetdetails = ({ config, onSelect, userType, formData, setError, formSta
   const { applicationNumber } = useParams();
 
 
-  const { isLoading: auditDataLoading, isError: isAuditError, data: app_data } = Digit.Hooks.ptr.usePTRSearch(
+  // Hook to get data of pet according to the applicationNumber
+  const { isLoading: auditDataLoading, isError: isAuditError, data: app_data_f } = Digit.Hooks.ptr.usePTRSearch(
     {
       tenantId,
       filters: { applicationNumber: applicationNumber, audit: true },
     },
   );
-
+  let app_data;
+  if (applicationNumber) {
+    app_data = app_data_f
+  }
 
 
   const { data: Menu } = Digit.Hooks.ptr.usePTRPetMDMS(stateId, "PetService", "PetType");
@@ -88,7 +92,7 @@ const PTRPetdetails = ({ config, onSelect, userType, formData, setError, formSta
 
 
 
-  const { data: Pet_Sex } = Digit.Hooks.ptr.usePTRGenderMDMS(stateId, "common-masters", "GenderType");       // this hook is for Pet gender type { male, female}
+  const { data: Pet_Sex } = Digit.Hooks.ptr.usePTRGenderMDMS(stateId, "common-masters", "GenderType"); // this hook is for Pet gender type { male, female}
 
   let pet_sex = [];    //for pet gender 
 
@@ -169,10 +173,11 @@ const OwnerForm = (_props) => {
   } = _props;
 
   const [showToast, setShowToast] = useState(null);
-  const {control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, } = useForm();
+  const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, } = useForm();
   const formValue = watch();
   const { errors } = localFormState;
   const tenantId = Digit.ULBService.getCurrentTenantId();
+  const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
 
   const isIndividualTypeOwner = useMemo(
     () => formData?.ownershipCategory?.code.includes("INDIVIDUAL"),
@@ -181,11 +186,7 @@ const OwnerForm = (_props) => {
 
   const [part, setPart] = React.useState({});
 
-  const [selectBirthAdoption, setSelectBirthAdoption] = useState([{i18nKey: "", code: "" }] || "" );
-
-  const [birthDate, setBirthDate] = useState("");
-  const [adoptionDate, setAdoptionDate] = useState("");
-
+  const [selectBirthAdoption, setSelectBirthAdoption] = useState([{ i18nKey: "", code: "" }] || "");
 
   useEffect(() => {
     let _ownerType = isIndividualTypeOwner
@@ -206,29 +207,6 @@ const OwnerForm = (_props) => {
 
   const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
 
-
-
-  useEffect(() => {
-    if (birthDate) {
-      setAdoptionDate(null);
-    }
-  }, [birthDate])
-
-  useEffect(() => {
-    if (adoptionDate) {
-      setBirthDate(null)
-    }
-  }, [adoptionDate])
-
-
-  function setbirthDate(e) {
-    setBirthDate(e.target.value)
-  }
-
-  function setadoptionDate(e) {
-    setAdoptionDate(e.target.value)
-  }
-
   return (
     <React.Fragment>
       <div style={{ marginBottom: "16px" }}>
@@ -244,7 +222,7 @@ const OwnerForm = (_props) => {
             <Controller
               control={control}
               name={"petType"}
-              defaultValue={pets?.petType || menu.find(option => option.code === appData?.petDetails?.petType)}
+              defaultValue={pets?.petType || convertToObject(appData?.petDetails?.petType)}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
               render={(props) => (
                 <Dropdown
@@ -268,7 +246,7 @@ const OwnerForm = (_props) => {
             <Controller
               control={control}
               name={"breedType"}
-              defaultValue={pets?.breedType || (breed_type.find(option => option.code === appData?.petDetails.breedType))}
+              defaultValue={pets?.breedType || convertToObject(appData?.petDetails?.breedType)}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
               render={(props) => (
                 <Dropdown
@@ -290,7 +268,7 @@ const OwnerForm = (_props) => {
             <CardLabel>{`${t("PTR_SELECT_BIRTH_ADOPTION")}`} <span className="astericColor">*</span></CardLabel>
             <RadioButtons
               t={t}
-              options={[{i18nKey: "Birth",code: "Birth"}, {i18nKey: "Adoption",code: "Adoption"}]}
+              options={[{ i18nKey: "Birth", code: "Birth" }, { i18nKey: "Adoption", code: "Adoption" }]}
               optionsKey="code"
               name="selectBirthAdoption"
               value={selectBirthAdoption}
@@ -314,14 +292,13 @@ const OwnerForm = (_props) => {
 
                   render={(props) => (
                     <TextInput
-                    type="date"
+                      type="date"
                       value={props.value}
                       // disable={isEditScreen}
                       autoFocus={focusIndex.index === pets?.key && focusIndex.type === "birthDate"}
                       onChange={(e) => {
                         props.onChange(e.target.value);
                         setFocusIndex({ index: pets.key, type: "birthDate" });
-                        setbirthDate
                       }}
                       onBlur={props.onBlur}
                     />
@@ -348,7 +325,6 @@ const OwnerForm = (_props) => {
                       onChange={(e) => {
                         props.onChange(e.target.value);
                         setFocusIndex({ index: pets.key, type: "adoptionDate" });
-                        setadoptionDate
                       }}
                       max={new Date().toISOString().split('T')[0]}
                     />
@@ -442,7 +418,7 @@ const OwnerForm = (_props) => {
             <Controller
               control={control}
               name={"petGender"}
-              defaultValue={pets?.petGender || pet_sex.find(option => option.name === appData?.petDetails?.petGender)}
+              defaultValue={pets?.petGender || convertToObject(appData?.petDetails?.petGender)}
               // rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
               render={(props) => (
                 <Dropdown

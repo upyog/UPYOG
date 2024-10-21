@@ -3,10 +3,8 @@ import React, { Fragment, useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
-// import { newConfig } from "../../../config/Create/config";
 import { citizenConfig } from "../../../config/Create/citizenconfig";
-import { data } from "jquery";
-import { ApplicationContext } from "../../../Module";
+
 
 const PTRCreate = ({ parentRoute }) => {
 
@@ -16,8 +14,6 @@ const PTRCreate = ({ parentRoute }) => {
   const { pathname } = useLocation();
   const history = useHistory();
   const stateId = Digit.ULBService.getStateId();
-
-  const { apptype, applicationId } = useContext(ApplicationContext)
 
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PTR_CREATE_PET", {});
@@ -30,21 +26,20 @@ const PTRCreate = ({ parentRoute }) => {
       },
     });
 
-  // added applicationnumber and application type in the formData before adding other fields from the form
-  useEffect(() => {
-    const applicationType = apptype;
-    const previousapplicationnumber = applicationId;
-    if (!(params.applicationType === applicationType)) {
-      setParams({ ...params, applicationType, previousapplicationnumber });
-    }
-  }, [params.applicationType]);
+  const applicationId = sessionStorage.getItem("petId") ?sessionStorage.getItem("petId") : null
+  sessionStorage.setItem("applicationType",pathname.includes("new-application") ? "NEWAPPLICATION":"RENEWAPPLICATION")
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
+  const { isError, error, data: ApplicationData } = Digit.Hooks.ptr.usePTRSearch(
+    {
+      tenantId,
+      filters: { applicationNumber: applicationId },
+    },
+  );
 
+  let dataComingfromAPI = ApplicationData?.PetRegistrationApplications[0];
 
 
   const goNext = (skipStep, index, isAddMultiple, key) => {
-
-
-
     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
       isMultiple = false,
@@ -90,20 +85,14 @@ const PTRCreate = ({ parentRoute }) => {
     redirectWithHistory(nextPage);
   };
 
-  // Maybe needed to use later based on requirement
-  // useEffect(() => {
-  //   if(apptype === "NEWAPPLICATION"){
-  //     clearParams();
-  //     // queryClient.invalidateQueries("PTR_CREATE_PET");
-  //   }
-  // }, [apptype])
+ 
 
-  // if(params && Object.keys(params).length>0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true")
-  //   {
-  //     clearParams();
-  //     queryClient.invalidateQueries("PTR_CREATE_PET");
+  if(params && Object.keys(params).length>0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true")
+    {
+      clearParams();
+      queryClient.invalidateQueries("PTR_CREATE_PET");
 
-  //   }
+    }
 
   const ptrcreate = async () => {
     history.push(`${match.path}/acknowledgement`);
@@ -132,6 +121,7 @@ const PTRCreate = ({ parentRoute }) => {
   const onSuccess = () => {
     clearParams();
     queryClient.invalidateQueries("PTR_CREATE_PET");
+    sessionStorage.removeItem(["applicationType","petId"]);
   };
   if (isLoading) {
     return <Loader />;
@@ -147,6 +137,10 @@ const PTRCreate = ({ parentRoute }) => {
 
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("PTRCheckPage");
   const PTRAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTRAcknowledgement");
+
+
+
+
   return (
     <Switch>
       {config.map((routeObj, index) => {
@@ -154,7 +148,7 @@ const PTRCreate = ({ parentRoute }) => {
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
           <Route path={`${match.path}/${routeObj.route}`} key={index}>
-            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} />
+            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} renewApplication={pathname.includes("new-application") ? {} : dataComingfromAPI} />
           </Route>
         );
       })}

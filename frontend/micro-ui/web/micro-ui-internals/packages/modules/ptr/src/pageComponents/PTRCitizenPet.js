@@ -8,77 +8,37 @@ import { ApplicationContext } from "../Module";
 
 
 const PTRCitizenPet
-  = ({ t, config, onSelect, userType, formData, ownerIndex }) => {
+  = ({ t, config, onSelect, userType, formData, renewApplication }) => {
     const { pathname: url } = useLocation();
-    let index = window.location.href.charAt(window.location.href.length - 1);
+    const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null; // function to convert an a single string value into an object for dropdowns
     let validation = {};
 
-
-    const { applicationData } = useContext(ApplicationContext)
-
-    const [petType, setPetType] = useState((formData.pets && formData.pets[index] && formData.pets[index].petType) || formData?.pets?.petType || "");
-    const [breedType, setBreedType] = useState((formData.pets && formData.pets[index] && formData.pets[index].breedType) || formData?.pets?.breedType || "");
-    const [petGender, setPetGender] = useState((formData.pets && formData.pets[index] && formData.pets[index].petGender) || formData?.pets?.petGender || "");
-
-    const [petName, setPetName] = useState(
-      (formData.pets && formData.pets[index] && formData.pets[index].petName) || formData?.pets?.petName || ""
-    );
-
-    const [petAge, setPetAge] = useState(
-      (formData.pets && formData.pets[index] && formData.pets[index].petAge) || formData?.pets?.petAge || ""
-    );
-
-    const [doctorName, setDoctorName] = useState(
-      (formData.pets && formData.pets[index] && formData.pets[index].doctorName) || formData?.pets?.doctorName || ""
-    );
-
-    const [clinicName, setClinicName] = useState(
-      (formData.pets && formData.pets[index] && formData.pets[index].clinicName) || formData?.pets?.clinicName || ""
-    );
-
-    const [vaccinationNumber, setVaccinationNumber] = useState(
-      (formData.pets && formData.pets[index] && formData.pets[index].vaccinationNumber) || formData?.pets?.vaccinationNumber || ""
-    );
-
-    const [lastVaccineDate, setVaccinationDate] = useState(
-      (formData.pets && formData.pets[index] && formData.pets[index].lastVaccineDate) || formData?.pets?.lastVaccineDate || ""
-    );
-
-    const [petColor, setpetColor] = useState(
-      (formData.pets && formData.pets[index] && formData.pets[index].petColor) || formData?.pets?.petColor || ""
-    );
-
-    const [identificationmark, setidentificationmark] = useState(
-      (formData.pets && formData.pets[index] && formData.pets[index].identificationmark) || formData?.pets?.identificationmark || ""
-    );
-
-    const [selectBirthAdoption, setSelectBirthAdoption] = useState(
-      (formData.pets && formData.pets[index] && formData.pets[index].selectBirthAdoption) || formData?.pets?.selectBirthAdoption || [{i18nKey: "", code: ""}]
-    );
-
-    const [birthDate, setBirthDate] = useState(
-      (formData.pets && formData.pets[index] && formData.pets[index].birth) || formData?.pets?.birth || ""
-    );
-
-    const [adoptionDate, setAdoptionDate] = useState(
-      (formData.pets && formData.pets[index] && formData.pets[index].adoption) || formData?.pets?.adoption || ""
-    );
-
-
-
-
-
+  // added data from renewapplication, renders data if there is data in renewapplication
+    const [petType, setPetType] = useState(convertToObject(renewApplication?.petDetails?.petType) || formData?.pets?.petType || "");
+    const [breedType, setBreedType] = useState(convertToObject(renewApplication?.petDetails?.breedType) || formData?.pets?.breedType || "");
+    const [petGender, setPetGender] = useState(convertToObject(renewApplication?.petDetails?.petGender) || formData?.pets?.petGender || "");
+    const [petName, setPetName] = useState(renewApplication?.petDetails?.petName || formData?.pets?.petName || "");
+    const [petAge, setPetAge] = useState(renewApplication?.petDetails?.petAge || formData?.pets?.petAge || "");
+    const [doctorName, setDoctorName] = useState(renewApplication?.petDetails?.petName || formData?.pets?.doctorName || "");
+    const [clinicName, setClinicName] = useState(renewApplication?.petDetails?.clinicName || formData?.pets?.clinicName || "");
+    const [vaccinationNumber, setVaccinationNumber] = useState(renewApplication?.petDetails?.vaccinationNumber || formData?.pets?.vaccinationNumber || "");
+    const [lastVaccineDate, setVaccinationDate] = useState(renewApplication?.petDetails?.lastVaccineDate || formData?.pets?.lastVaccineDate || "");
+    const [petColor, setpetColor] = useState(renewApplication?.petDetails?.petColor || formData?.pets?.petColor || "");
+    const [identificationmark, setidentificationmark] = useState(renewApplication?.petDetails?.identificationmark || formData?.pets?.identificationmark || "");
+    const [selectBirthAdoption, setSelectBirthAdoption] = useState(renewApplication?.petDetails?.selectBirthAdoption || formData?.pets?.selectBirthAdoption || [{ i18nKey: "", code: "" }]);
+    const [birthDate, setBirthDate] = useState(renewApplication?.petDetails?.birthDate || formData?.pets?.birth || "");
+    const [adoptionDate, setAdoptionDate] = useState(renewApplication?.petDetails?.adoptionDate || formData?.pets?.adoption || "");
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
 
 
-    const { data: Menu, isLoading: pettype_load } = Digit.Hooks.ptr.usePTRPetMDMS(stateId, "PetService", "PetType");
+    const { data: Menu } = Digit.Hooks.ptr.usePTRPetMDMS(stateId, "PetService", "PetType"); // hook for pettype data
+    const { data: Breed_Type} = Digit.Hooks.ptr.useBreedTypeMDMS(stateId, "PetService", "BreedType");  // hook for breed type data
 
-    const { data: Breed_Type, isLoading: Loading_breed } = Digit.Hooks.ptr.useBreedTypeMDMS(stateId, "PetService", "BreedType");  // hooks for breed type
+    let menu = [];   // array to store pettype data
+    let breed_type = [];    // array to store  breedtype data
 
-    let menu = [];   //variable name for pettype
-    let breed_type = [];    // variable name for breedtype
-
+    // setting petType data into a structure for pettype input field
     Menu &&
       Menu.map((petone) => {
         menu.push({ i18nKey: `PTR_PET_${petone.code}`, code: `${petone.code}`, value: `${petone.name}` });
@@ -86,6 +46,7 @@ const PTRCitizenPet
 
     const { control } = useForm();
 
+    // setting breedType data into a structure for breedtype input field
     Breed_Type &&
       Breed_Type.map((breedss) => {
         if (breedss.PetType == petType?.code) {
@@ -99,7 +60,7 @@ const PTRCitizenPet
 
     const { data: Pet_Sex } = Digit.Hooks.ptr.usePTRGenderMDMS(stateId, "common-masters", "GenderType");       // this hook is for Pet gender type { male, female}
 
-    let pet_sex = [];    //for pet gender 
+    let pet_sex = [];    // array to store data of pet sex
 
     Pet_Sex &&
       Pet_Sex.map((ptrgenders) => {
@@ -120,57 +81,18 @@ const PTRCitizenPet
       });
 
 
-// useeffect used to fill previousapplication details
-    useEffect(() => {
-      setPetType(menu.find(option => option.code === applicationData?.petDetails?.petType) || "");
-      setPetName(applicationData?.petDetails?.petName || "")
-      setPetAge(applicationData?.petDetails?.petAge)
-      setDoctorName(applicationData?.petDetails?.doctorName)
-      setClinicName(applicationData?.petDetails?.clinicName)
-      setVaccinationDate(applicationData?.petDetails?.lastVaccineDate)
-      setVaccinationNumber(applicationData?.petDetails?.vaccinationNumber)
-    }, [applicationData])
-
-
-    // used to handle the fields which depend on other fields
-    useEffect(() => {
-
-      if (applicationData.petDetails && breed_type?.length > 0) {
-        const _breedType = breed_type.find(option => option.code === applicationData?.petDetails.breedType) || "";
-        const _gender = pet_sex.find(option => option.name === applicationData?.petDetails?.petGender) || "";
-
-        if (_breedType != breedType) setBreedType(_breedType)
-        if (_gender != petGender) setPetGender(_gender)
-      }
-    }, [ petType, applicationData])
-
-    // running this can cause error breed_type not defined
-    // console.log("breedtyp data in :: ", breed_type, breed_type.find(option => option.code === applicationData?.petDetails.breedType))
-
-
-
-    function setpettype(e) {
-      setPetType(e.target.value);
-    }
-
-    function setbreedtype(e) {
-      setBreedType(e.target.value);
-    }
-
-    function setpetgender(e) {
-      setPetGender(e.target.value);
-    }
-
     function setbirthDate(e) {
-      setBirthDate(e.target.value)
+      setAdoptionDate(null); // set adoption field null if data filled in the birthdata field
+      setBirthDate(e.target.value);
     }
 
     function setadoptionDate(e) {
-      setAdoptionDate(e.target.value)
+      setBirthDate(null); // set birth field null if data filled in the adoption field
+      setAdoptionDate(e.target.value);
     }
 
     function setIdentificationmark(e) {
-      setidentificationmark(e.target.value)
+      setidentificationmark(e.target.value);
     }
 
     function setpetage(e) {
@@ -196,36 +118,20 @@ const PTRCitizenPet
       setPetName(e.target.value);
     }
 
-
-    useEffect(() => {
-      if (birthDate) {
-        setAdoptionDate(null);
-      }
-    }, [birthDate])
-
-    useEffect(() => {
-      if (adoptionDate) {
-        setBirthDate(null)
-      }
-    }, [adoptionDate])
-
-
+    /* 
+    @function: goNext()
+    @description: To save data in the sessionStorage of each update of the provided fields
+    */
     const goNext = () => {
-      let owner = formData.pets && formData.pets[index];
+      let owner = formData.pets;
       let ownerStep;
-      if (userType === "citizen") {
-        ownerStep = { ...owner, petType, breedType, petGender, petName, petAge, doctorName, clinicName, lastVaccineDate, vaccinationNumber, birthDate, adoptionDate, identificationmark, petColor };
-        onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
-      } else {
-
-        ownerStep = { ...owner, petType, breedType, petGender, petName, petAge, doctorName, clinicName, lastVaccineDate, vaccinationNumber, birthDate, adoptionDate, identificationmark, petColor };
-        onSelect(config.key, ownerStep, false, index);
-      }
+      ownerStep = { ...owner, petType, breedType, petGender, petName, petAge, doctorName, clinicName, lastVaccineDate, vaccinationNumber, birthDate, adoptionDate, identificationmark, petColor };
+      onSelect(config.key, ownerStep, false);
     };
 
     const onSkip = () => onSelect();
 
-
+    // run goNext function on the updation of the provided fields
     useEffect(() => {
       if (userType === "citizen") {
         goNext();
@@ -286,10 +192,11 @@ const PTRCitizenPet
               )}
             />
 
+            {/* Radio field to select one of the two options: birth or adoption */}
             <CardLabel>{`${t("PTR_SELECT_BIRTH_ADOPTION")}`} <span className="astericColor">*</span></CardLabel>
             <RadioButtons
               t={t}
-              options={[{i18nKey: "Birth",code: "Birth"}, {i18nKey: "Adoption",code: "Adoption"}]}
+              options={[{ i18nKey: "Birth", code: "Birth" }, { i18nKey: "Adoption", code: "Adoption" }]}
               optionsKey="code"
               name="selectBirthAdoption"
               value={selectBirthAdoption}
@@ -299,7 +206,8 @@ const PTRCitizenPet
               isDependent={true}
             />
 
-            {(selectBirthAdoption?.code === "Birth" || applicationData?.petDetails?.birth) && (
+            {/* On selecting birth or renewapplication having data the following field will render */}
+            {(selectBirthAdoption?.code === "Birth" || renewApplication?.petDetails?.birth) && (
               <div>
                 <CardLabel>{`${t("PTR_BIRTH")}`} <span className="astericColor">*</span></CardLabel>
                 <TextInput
@@ -321,7 +229,8 @@ const PTRCitizenPet
               </div>
             )}
 
-            {(selectBirthAdoption?.code === "Adoption" || applicationData?.petDetails?.adoption) && (
+            {/* On selecting adoption or renewapplication having data the following field will render */}
+            {(selectBirthAdoption?.code === "Adoption" || renewApplication?.petDetails?.adoption) && (
               <div>
                 <CardLabel>{`${t("PTR_ADOPTION")}`} <span className="astericColor">*</span></CardLabel>
                 <TextInput
