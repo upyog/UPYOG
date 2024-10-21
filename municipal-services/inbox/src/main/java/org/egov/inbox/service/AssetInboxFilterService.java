@@ -103,7 +103,7 @@ public class AssetInboxFilterService {
             searchCriteria.put(OFFSET_PARAM, criteria.getOffset());
             searchCriteria.put(NO_OF_RECORDS_PARAM, criteria.getLimit());
             moduleSearchCriteria.put(LIMIT_PARAM, criteria.getLimit());
-
+            moduleSearchCriteria.put(OFFSET_PARAM, criteria.getOffset());
             searcherRequest.put(REQUESTINFO_PARAM, requestInfo);
             searcherRequest.put(SEARCH_CRITERIA_PARAM, searchCriteria);
 
