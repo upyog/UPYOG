@@ -11,8 +11,7 @@ import {
   PGRIcon,
   PTIcon,
   TLIcon,
-  WSICon,
-  SVIcon
+  WSICon
 } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -78,8 +77,6 @@ const iconSelector = (code) => {
       return <OBPSIcon className="fill-path-primary-main" />;
     case "CHB":
       return <CHBIcon className="fill-path-primary-main" />;
-    case "SV":
-      return <SVIcon className="fill-path-primary-main" />;
     case "Bills":
       return <BillsIcon className="fill-path-primary-main" />;
     default:

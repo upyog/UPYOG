@@ -92,7 +92,7 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData }) => {
 
   return (
     <React.Fragment>
-      {window.location.href.includes("/citizen") ? <Timeline currentStep={4} /> : null}
+      {<Timeline currentStep={4} />}
 
       <FormStep
         config={config}

@@ -5,15 +5,24 @@ import GIS from "./GIS";
 import SVDayAndTimeSlot from "./SVDayAndTimeSlot";
 import Timeline from "../components/Timeline";
 
+/**
+ * SVBusinessDetails component handles the business details form for street vending applications.
+ * It manages state for vending type, zones, location, area required, authority name, license, and days of operation.
+ * Includes validation for selected days and time slots, and integrates GIS for location selection.
+ * Utilizes react-hook-form for form handling and custom dropdowns for user selections.
+ * The goNext function validates input and passes the collected data to the parent component.
+ */
+
 const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
     let validation = {};
-    console.log("formdatataaa",formData);
+    const user = Digit.UserService.getUser().info;
     const [vendingType, setvendingType] = useState(formData?.businessDetails?.vendingType || "");
     const [vendingZones, setvendingZones] = useState(formData?.businessDetails?.vendingZones || "");
     const [location, setlocation] = useState( formData?.businessDetails?.location || "");
     const [areaRequired, setareaRequired] = useState( formData?.businessDetails?.areaRequired || "" );
     const [nameOfAuthority, setnameOfAuthority] = useState(formData?.businessDetails?.nameOfAuthority || "");
     const [vendingLiscence, setvendingLiscence] = useState(formData?.businessDetails?.vendingLiscence || "");
+    const inputStyles = {width:user.type === "EMPLOYEE" ? "50%" : "86%"};
     const [daysOfOperation, setDaysOfOperation] = useState(
         formData?.businessDetails?.daysOfOperation || [
           { name: "Monday", isSelected: false, startTime: "", endTime: "" },
@@ -44,12 +53,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
         updatedDays[index].isSelected = !updatedDays[index].isSelected;
         setDaysOfOperation(updatedDays);
       };
-    
-      // const handleTimeChange = (index, field, value) => {
-      //   const updatedDays = [...daysOfOperation];
-      //   updatedDays[index] = { ...updatedDays[index], [field]: value };
-      //   setDaysOfOperation(updatedDays);
-      // };
+  
       const handleTimeChange = (index, field, value) => {
         const updatedDays = [...daysOfOperation];
         
@@ -65,13 +69,6 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
       
         setDaysOfOperation(updatedDays);
       };
-
-      const onAmPmChange = (index, field, value) => {
-        const updatedDays = [...daysOfOperation];
-        updatedDays[index] = { ...updatedDays[index], [field]: value };
-        setDaysOfOperation(updatedDays);
-      };
-    
     
     const { control } = useForm();
     const [isOpen, setIsOpen] = useState(false);
@@ -161,7 +158,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
     return (
       <React.Fragment>
         {
-          window.location.href.includes("/citizen") ? !isOpen &&<Timeline currentStep={2} />: null
+         <Timeline currentStep={2} />
         } 
         <div>
         {isOpen && <GIS t={t} onSelect={onSelect} formData={formData} handleRemove={handleRemove} onSave={onSave} />}
@@ -218,7 +215,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
             isMandatory={false}
             optionKey="i18nKey"
             t={t}
-            style={{ width: "86%" }}
+            style={inputStyles}
             name="location"
             value={location}
             onChange={selectlocation}
@@ -247,7 +244,6 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
                 onDayToggle={() => handleDayToggle(index)}
                 onDayChange={() => {}} // No need to change the day name since all days are shown
                 onTimeChange={(field, value) => handleTimeChange(index, field, value)}
-                onAmPmChange={(field, value) => onAmPmChange(index, field, value)}
                 ValidationRequired={true}
                 {...(validation = {
                   isRequired: true,
@@ -265,7 +261,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
               name="areaRequired"
               value={areaRequired}
               onChange={setAreaRequired}
-              style={{ width: "86%" }}
+              style={inputStyles}
               ValidationRequired={false}
               {...(validation = {
                 isRequired: true,
@@ -284,7 +280,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
               name="nameOfAuthority"
               value={nameOfAuthority}
               onChange={setNameOfAuthority}
-              style={{ width: "86%" }}
+              style={inputStyles}
               ValidationRequired={false}
               {...(validation = {
                 isRequired: true,
@@ -303,7 +299,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
               name="vendingLiscence"
               value={vendingLiscence}
               onChange={setVendingLiscence}
-              style={{ width: "86%" }}
+              style={inputStyles}
               ValidationRequired={false}
               {...(validation = {
                 isRequired: false,

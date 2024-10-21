@@ -10,7 +10,8 @@ function DocumentsPreview({ documents, svgStyles = {}, isSendBackFlow = false, i
         <div style={{ marginTop: "19px",display:"flex",flexWrap:"wrap" }}>
             {!isStakeholderApplication && documents?.map((document, index) => (
                 <React.Fragment key={index}>
-                    <div className="street" >
+                    <div className="documentWidth"  style={{width:"50%"}}>
+
                     {document?.title ? <CardSubHeader style={titleStyles ? titleStyles : { marginTop: "32px", marginBottom: "8px", color: "#505A5F", fontSize: "24px" }}>{t(document?.title)}</CardSubHeader> : null}
                     <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start" }}>
                         {document?.values && document?.values.length > 0 ? document?.values?.map((value, index) => (

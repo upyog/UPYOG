@@ -2,23 +2,20 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { TickMark } from "@nudmcdgnpm/digit-ui-react-components";
 
-let actions = [];
+/* 
+Custom component to show the timeline in the UI forms for both citizen and employee side 
+It uses an array of predefined actions based on the flow type, and renders each action as 
+a checkpoint in the timeline, showing progress through tick marks or numbers.
+*/
 
-const getAction = (flow) => {
-  switch (flow) {
-    case "STAKEHOLDER":
-      actions = [];
-      break;
-    default:
-      actions = ["SV_VENDOR_PERSONAL_DETAILS", "SV_VENDOR_BUSINESS_DETAILS", "SV_ADDRESS_DETAILS", "SV_BANK_DETAILS","SV_DOCUMENT_DETAILS_LABEL", "SV_SUMMARY_PAGE"];
-  }
-};
-const Timeline = ({ currentStep = 1, flow = "" }) => {
+let actions = ["SV_VENDOR_PERSONAL_DETAILS", "SV_VENDOR_BUSINESS_DETAILS", "SV_ADDRESS_DETAILS", "SV_BANK_DETAILS","SV_DOCUMENT_DETAILS_LABEL", "SV_SUMMARY_PAGE"];
+
+const Timeline = ({ currentStep = 1 }) => {
   const { t } = useTranslation();
+  const user = Digit.UserService.getUser().info;
   const isMobile = window.Digit.Utils.browser.isMobile();
-  getAction(flow);
   return (
-    <div className="timeline-container" style={isMobile ? {} : { maxWidth: "960px", minWidth: "640px", marginRight: "auto", display: "flex", justifyContent: "center" }}>
+    <div className="timeline-container" style={isMobile ? {} : user?.type==="EMPLOYEE"?{maxWidth: "960px", minWidth: "640px", marginRight: "auto", marginLeft: "auto", display: "flex", justifyContent: "center"}:{maxWidth: "960px", minWidth: "640px", marginRight: "auto", display: "flex", justifyContent: "center"} }>
       {actions.map((action, index, arr) => (
         <div className="timeline-checkpoint" key={index}>
           <div className="timeline-content">

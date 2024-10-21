@@ -2,6 +2,15 @@ import React, { useEffect, useState } from "react";
 import { CardLabel, Dropdown, UploadFile,MultiUploadWrapper, Toast, Loader, FormStep, LabelFieldPair } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 
+/**
+ * 
+ * SVDocumentsDetail component manages the document upload process for street vending applications.
+ * It fetches document requirements from the server and allows users to select and upload files.
+ * The component maintains state for the uploaded documents, handles file size validation, and updates the parent component with selected documents on submission.
+ * The SVDocuments sub-component handles individual document selection and file uploads, displaying appropriate messages based on the upload status.
+ * Error handling is implemented to inform users of any issues during file upload.
+ */
+
 const SVDocumentsDetail = ({ t, config, onSelect, formData }) => {
   const [documents, setDocuments] = useState(formData?.documents?.documents || []);
   const [error, setError] = useState(null);
@@ -65,10 +74,12 @@ function SVDocuments({
   id,
 }) {
   const filteredDocument = documents?.find((item) => item?.documentType?.includes(doc?.code));
+  const user = Digit.UserService.getUser().info;
+  
 
   const [selectedDocument, setSelectedDocument] = useState(
     filteredDocument
-      ? { ...filteredDocument, active: doc?.active === true, code: filteredDocument?.documentType }
+      ? { ...filteredDocument, active: doc?.active === true, code: filteredDocument?.documentType, i18nKey: filteredDocument?.documentType}
       : doc?.dropdownData?.length === 1
       ? doc?.dropdownData[0]
       : {}
@@ -140,7 +151,7 @@ function SVDocuments({
             className="form-field"
             selected={selectedDocument}
             select={handleSVSelectDocument}
-            style={{ width: "80%" }}
+            style={{width: user?.type==="EMPLOYEE"?"50%":"100%"}}
             option={dropDownData.map((e) => ({ ...e, i18nKey: e.code?.replaceAll(".", "_")}))}
             optionKey="i18nKey"
             t={t}
@@ -149,7 +160,7 @@ function SVDocuments({
         </LabelFieldPair>
       )}
       <LabelFieldPair>
-        <div className="field">
+        <div className="field" style={{marginLeft:user?.type==="EMPLOYEE"?"30%":null}}>
           <UploadFile
             onUpload={handleFileUpload}
             onDelete={() => {
