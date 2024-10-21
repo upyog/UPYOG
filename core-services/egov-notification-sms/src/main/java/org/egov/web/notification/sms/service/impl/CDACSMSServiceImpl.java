@@ -139,7 +139,7 @@ public class CDACSMSServiceImpl extends BaseSMSService{
 		//SSLContext context=null; 
 		String encryptedPassword; 
 		try {
-			//context=SSLContext.getInstance("TLSv1.2"); 
+			context=SSLContext.getInstance("TLSv1.2"); 
 			context.init(null, null, null);
 			sf=new SSLSocketFactory(context, 
 					SSLSocketFactory.STRICT_HOSTNAME_VERIFIER);
