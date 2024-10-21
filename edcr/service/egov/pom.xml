@@ -60,7 +60,7 @@
 		<repository>
 			<id>AsposeJavaAPI</id>
 			<name>Aspose Java API</name>
-			<url>https://repository.aspose.com/repo/</url>
+			<url>https://repository.aspose.com/repo</url>
 		</repository>
 		<repository>
 			<id>javaxt.com</id>
