@@ -42,7 +42,7 @@
 	<name>e-governments edcr</name>
 	<properties>
         <!-- Define the path to the Aspose CAD JAR file -->
-        <aspose.cad.jar.path>/app/egov/edcr/service/egov/jarfile/aspose-cad-20.10.jar</aspose.cad.jar.path>
+        <aspose.cad.jar.path>edcr/service/egov/jarfile/aspose-cad-20.10.jar</aspose.cad.jar.path>
         </properties>
 	<repositories>
 		<repository>
