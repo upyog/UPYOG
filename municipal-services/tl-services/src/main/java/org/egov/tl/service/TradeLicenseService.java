@@ -356,6 +356,22 @@ public class TradeLicenseService {
 			.collect(Collectors.toList());
 			}
 			
+			if(CollectionUtils.isEmpty(criteria.getStatus())) {
+				List<TradeLicense> tempLicenses1 = new ArrayList<>();
+				if(rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_VERIFIER)) {
+					tempLicenses1.addAll(tempLicenses.stream().filter(license -> 
+					StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORVERIFICATION))
+							.collect(Collectors.toList()));
+				}
+				if(rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_APPROVER)) {
+					tempLicenses1.addAll(tempLicenses.stream().filter(license -> 
+					StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORAPPROVAL))
+							.collect(Collectors.toList()));
+				}
+				tempLicenses = tempLicenses1;
+			}
+			
+			
 		}
 		return tempLicenses;
 	}
