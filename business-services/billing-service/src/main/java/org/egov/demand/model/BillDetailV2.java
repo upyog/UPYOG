@@ -69,7 +69,19 @@ public class BillDetailV2 {
 	@JsonProperty("penalty")
 	private InterestAndPenalty interestAndPenalty;
 	
+	private BigDecimal interestonamount;
 	
+	private String adjusmentfromdate;
+	
+	private String assesmentyear;
+	
+	private String adjustedtosession;
+	
+	private String interestcalculatedsession;
+	
+	private int interestpercentage;
+	
+	private int interestfornoofdays;
 
 	public BillDetailV2 addBillAccountDetailsItem(BillAccountDetailV2 billAccountDetailsItem) {
 		if (this.billAccountDetails == null) {
