@@ -132,7 +132,6 @@ public class GenerateBillCriteria {
 				.tenantId(tenantId)
 				.isOrderBy(true)
 				.email(email)
-				.retrieveOldest(retrieveOldest)
 				.build();
 	}
 
