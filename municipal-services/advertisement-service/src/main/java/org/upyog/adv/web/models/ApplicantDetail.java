@@ -33,7 +33,7 @@ public class ApplicantDetail   {
 	
 	private String bookingId;
 	
-	@NotBlank(message = "CHB_BLANK_APPLICANT_NAME")
+	@NotBlank(message = "ADV_BLANK_APPLICANT_NAME")
 	@Size(max = 100, message = "COMMON_MAX_VALIDATION")
 	private String applicantName;
 	
@@ -47,26 +47,6 @@ public class ApplicantDetail   {
 	@Email
 	private String applicantEmailId;
 	
-    @NotBlank
-    @Size(min = 8, max = 18)
-    private String accountNumber;
-
-    @NotBlank
-    private String ifscCode;
-
-    @NotBlank
-    private String bankName;
-
-    @NotBlank
-    private String bankBranchName;
-
-    @NotBlank
-    private String accountHolderName;
-    
-    private String refundType;
-    
-    private String refundStatus;
-    
     private AuditDetails auditDetails;
     
 }

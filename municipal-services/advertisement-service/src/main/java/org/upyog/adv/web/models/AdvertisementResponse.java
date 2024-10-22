@@ -32,10 +32,9 @@ public class AdvertisementResponse   {
         @JsonProperty("ResponseInfo")
         private ResponseInfo responseInfo = null;
 
-        @JsonProperty("EmployeeDashbaord")
-        private Object employeeDashbaord = null;
+    
 
-		@JsonProperty("bookingApplication")
+	@JsonProperty("bookingApplication")
 	@Valid
 	private List<BookingDetail> bookingApplication; 
 	
