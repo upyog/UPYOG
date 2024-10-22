@@ -1,6 +1,8 @@
 package org.egov.dx.service;
 
 import java.io.ByteArrayOutputStream;
+
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,17 +12,29 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.dx.producer.Producer;
 import org.egov.dx.util.Configurations;
 import org.egov.dx.util.Utilities;
 import org.egov.dx.web.models.FileResponse;
+import org.egov.dx.web.models.IdGenerationResponse;
 import org.egov.dx.web.models.RequestInfoWrapper;
+import org.egov.dx.web.models.TransactionRequest;
+import org.egov.dx.repository.TransactionRepository;
+import org.egov.dx.web.models.Transaction;
+import org.egov.dx.web.models.TransactionCriteria;
+import org.egov.tracer.model.CustomException;
+import org.egov.dx.service.IdGenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +49,8 @@ import com.emudhra.esign.eSignInput;
 import com.emudhra.esign.eSignInputBuilder;
 import com.emudhra.esign.eSignServiceReturn;
 import com.google.gson.Gson;
-
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -50,7 +64,12 @@ public class eSignService {
 	@Autowired
 	Configurations configurations;
 	
-
+	@Autowired
+    private IdGenService idGenService;
+    @Autowired
+	private Producer producer;
+    @Autowired
+    private TransactionRepository transactionRepository;
     private final RestTemplate restTemplate = new RestTemplate();
     
     private byte[] readInputStreamToByteArray(InputStream inputStream) throws IOException {
@@ -74,18 +93,28 @@ public class eSignService {
         }
     }
     
-    public String processPDF(RequestInfoWrapper requestInfoWrapper) throws IOException {
+    String generateTxnId(TransactionRequest transactionRequest) {
+    	
+        RequestInfo requestInfo = transactionRequest.getRequestInfo();
+        Transaction transaction = transactionRequest.getTransaction();
+//        
+//        IdGenerationResponse response = idGenRepository.getId(requestInfo, transaction.getTenantId(),
+//                config.getIdGenName(), config.getIdGenFormat(), 1);
 
+        //String txnId = response.getIdResponses().get(0).getId();
+        //log.info("Transaction ID Generated: " + txnId);
 
-         String pdfBase64 = getPdfAsBase64(requestInfoWrapper.getPdfUrl());
-////         InputStream openStream = u.openStream();
-//         byte[] binaryData = new byte[contentLength];
-         //String pdfBase64 = new String(Base64.getEncoder().encode(binaryData), StandardCharsets.UTF_8);
-         //String pdfBase64 = new String (Files.readAllBytes(Paths.get("C:/Users/Administrator/Downloads/Base64.txt")));
+        return "dd";
+
+    }
+    
+    public String processPDF(TransactionRequest transactionRequest) throws IOException {
+    	String txnId=null;
+        String pdfBase64 = getPdfAsBase64(transactionRequest.getTransaction().getPdfUrl());
         eSignInput signInput = eSignInputBuilder.init()
                 .setDocBase64(pdfBase64)
                 .setDocInfo("1723479092483kqKfUdtnch.pdf")//pdf name
-                .setDocURL(requestInfoWrapper.getPdfUrl()) //for v3 only pdf view purpose
+                .setDocURL(transactionRequest.getTransaction().getPdfUrl())//for v3 only pdf view purpose
                 .setLocation("") // reason or signed (optional)
                 .setReason("")	//(optional)
                 .setSignedBy("Manvi") //(mandatory)
@@ -99,36 +128,40 @@ public class eSignService {
         inputList.add(signInput);
         
         eSign eSignObj = new eSign(configurations.getLicenceFile(), configurations.getPfxPath(),configurations.getPfxPassword(), configurations.getPfxAllias());
-        System.out.println("Object passed");
-        System.out.println("Path is" + configurations.getLicenceFile());
-
-
+        
+        
+        txnId = idGenService.generateTxnId(transactionRequest);
+        transactionRequest.getTransaction().setTxnId(txnId);
+        Long time = System.currentTimeMillis();
+        String uuid = transactionRequest.getRequestInfo().getUserInfo().getUuid();
+        Transaction transaction = transactionRequest.getTransaction();
+	    transaction.setCreatedTime(time);
+	    transaction.setCreatedBy(uuid);
+	    transaction.setLastModifiedTime(time);
+	    transaction.setLastModifiedBy(uuid);
+		
+        producer.push(configurations.getSaveTLEsignTxnTopic(), transactionRequest);
+        
         // Obtain the gateway parameter
         eSignServiceReturn serviceReturn = eSignObj.getGatewayParameter(
-                inputList, "Manvi", "", configurations.getRedirectUrl(),configurations.getRedirectUrl(), configurations.getTempFolder(), eSign.eSignAPIVersion.V2, eSign.AuthMode.OTP);
-        
-        System.out.println("Error is" + serviceReturn.getErrorCode());
-        System.out.println("Error is" + serviceReturn.getErrorMessage());
+                inputList, "Manvi", (txnId+"-"+ transactionRequest.getTransaction().getModule()) , configurations.getRedirectUrl(),configurations.getRedirectUrl(), configurations.getTempFolder(), eSign.eSignAPIVersion.V2, eSign.AuthMode.OTP);
 
-//        return serviceReturn.getErrorMessage() + "-" + serviceReturn.getErrorCode() + "-" + serviceReturn;
         String gatewayParam = serviceReturn.getGatewayParameter();
         String gatewayURL = "https://authenticate.sandbox.emudhra.com/AadhaareSign.jsp"; // Adjust if needed
 
-        // Return the constructed URL with parameters
         return gatewayURL + "?txnref=" + gatewayParam;
     }
     
     public String getEsignedPDF(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-       System.out.println("getsignedPdf");
         InputStream xmlStream;
         String xml = "";
         String txnref = null;
         byte[] signedBytes = null;
         String pdfPath=null;
+        String txnId=null;
 
         try {
-            // Get response from gateway
             xmlStream = request.getInputStream();
             txnref = Utilities.getStringFromInputStream(xmlStream);
 
@@ -136,7 +169,7 @@ public class eSignService {
 
             String txn = new String(java.util.Base64.getDecoder().decode(txns.getBytes()));
             String[] strArr = txn.split("\\|");
-            String txnId = strArr[0];
+            txnId = strArr[0];
  
             String xmlString = URLDecoder.decode(txnref);
             xml = xmlString.split("&XML=")[1];
@@ -161,7 +194,6 @@ public class eSignService {
                         System.out.println("Print" +pdfBase64);
                         signedBytes = esign.text.pdf.codec.Base64.decode(pdfBase64);
                         pdfPath = configurations.getOutputFolder() + File.separator + txnId + "_" + i + ".pdf";
-                        //String pdfPath = configurations.getS3Bucket() + File.separator + txnId + "_" + i + ".pdf";
                         try (FileOutputStream fos = new FileOutputStream(pdfPath)) {
                             fos.write(signedBytes);
                         }
@@ -193,10 +225,37 @@ public class eSignService {
         log.info(responsee);
         Gson gson = new Gson();
 		FileResponse files = gson.fromJson(responsee , FileResponse.class);
+		String fileStoreId= files.getFiles().get(0).getFileStoreId();
+
+
+        txnId = txnId.split("-")[0];
+		TransactionCriteria criteria = new TransactionCriteria();
+		criteria.setTxnId(txnId);
 		
-		return files.getFiles().get(0).getFileStoreId();
+		//Search function --> with txn id and update signed filestore id 
+
+		Long time = System.currentTimeMillis();
+        List<Transaction> transactions = this.getTransactions(criteria);
+		TransactionRequest transactionRequest= new TransactionRequest();
+		transactionRequest.setTransaction(transactions.get(0));
+		
+		transactionRequest.getTransaction().setSignedFilestoreId(fileStoreId);
+		transactionRequest.getTransaction().setLastModifiedTime(time);
+		
+        producer.push(configurations.getUpdateTLEsignTxnTopic(), transactionRequest);
+        return fileStoreId;
 
     }
-
+    
+    
+    public List<Transaction> getTransactions(TransactionCriteria transactionCriteria) {
+        log.info(transactionCriteria.toString());
+        try {
+            return transactionRepository.fetchTransactions(transactionCriteria);
+        } catch (DataAccessException e) {
+            log.error("Unable to fetch data from the database for criteria: " + transactionCriteria.toString(), e);
+            throw new CustomException("FETCH_TXNS_FAILED", "Unable to fetch transactions from store");
+        }
+    }
 
 }

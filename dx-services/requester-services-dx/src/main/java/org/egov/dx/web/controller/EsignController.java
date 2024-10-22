@@ -40,7 +40,6 @@
 
 package org.egov.dx.web.controller;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
@@ -48,30 +47,22 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import org.springframework.http.MediaType;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.dx.service.eSignService;
 import org.egov.dx.util.Configurations;
 import org.egov.dx.web.models.ResponseInfoFactory;
-import org.egov.dx.web.models.RequestInfoWrapper;
+import org.egov.dx.web.models.TransactionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
-
-
-import lombok.extern.slf4j.Slf4j;
 
 
 
 @RestController
-@Slf4j
 @RequestMapping("/eSign")
 public class EsignController {
 	
@@ -86,19 +77,17 @@ public class EsignController {
 	Configurations configurations;
 	
     @RequestMapping("/process")
-    public ResponseEntity<String> processPDF(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) throws URISyntaxException {
+    public ResponseEntity<String> processPDF(@Valid @RequestBody TransactionRequest transactionRequest) throws URISyntaxException {
         try {
-            String responseUrl = esignService.processPDF(requestInfoWrapper);
+            String responseUrl = esignService.processPDF(transactionRequest);
             return new ResponseEntity<>(responseUrl, HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>("Error processing PDF: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     @RequestMapping("/redirect")
-    public ResponseEntity<Object> getEsignedPDF(HttpServletRequest request, HttpServletResponse response, @RequestParam("module") String module) throws ServletException {
+    public ResponseEntity<Object> getEsignedPDF(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         try {
-            //byte[] byteArray = esignService.getEsignedPDF( request, response);
-            log.info("MOdule is===================" + module);
            String ff = esignService.getEsignedPDF( request, response);
 
             HttpHeaders httpHeaders = new HttpHeaders();
