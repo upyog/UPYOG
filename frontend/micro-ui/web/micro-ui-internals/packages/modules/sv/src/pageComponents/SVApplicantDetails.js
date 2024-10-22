@@ -1,6 +1,7 @@
 import { CardLabel, FormStep, RadioButtons, TextInput, CheckBox, LinkButton, MobileNumber } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState,useEffect } from "react";
 import Timeline from "../components/Timeline";
+import { calculateAge } from "../utils";
 
 
 const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
@@ -23,7 +24,6 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
 
   const [spouseDependentChecked, setSpouseDependentChecked] = useState(formData?.owner?.spouseDependentChecked || false);
   const [dependentNameChecked, setDependentNameChecked] = useState(formData?.owner?.dependentNameChecked || false);
-
   const inputStyles = user.type === "EMPLOYEE" ? "50%" : "86%";
 
 
@@ -55,6 +55,29 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
       setFeilds(values);
     }
   }
+
+  /**
+   * Single function to validate age for vendor, spouse, and dependent
+   * Returns false if validation fails, true if passes
+   */
+  const validateAge = (date, type) => {
+    if (!date) return true;
+    
+    const age = calculateAge(date);
+    if (age < 18) {
+      const errorMessages = {
+        vendor: "VENDOR_AGE_ERROR",
+        spouse: "SPOUSE_AGE_ERROR",
+        dependent: "DEPENDENT_AGE_ERROR"
+      };
+      
+      alert(t(errorMessages[type]));
+      return false;
+    }
+    
+    return true;
+  };
+
 
   const common = [
     {
@@ -93,6 +116,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
     units[i].vendorDateOfBirth = e.target.value;
     setvendorDateOfBirth(e.target.value);
     setFeilds(units);
+    validateAge(e.target.value, "vendor");
   }
   function selectgender(i, value) {
     let units = [...fields];
@@ -126,6 +150,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
     units[i].spouseDateBirth = e.target.value;
     setspouseDateBirth(e.target.value);
     setFeilds(units);
+    validateAge(e.target.value, "spouse");
   }
 
   function selectdependentDateBirth(i, e) {
@@ -133,14 +158,15 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
     units[i].dependentDateBirth = e.target.value;
     setdependentDateBirth(e.target.value);
     setFeilds(units);
+    validateAge(e.target.value, "dependent");
     }   
 
-    function selectdependentName(i, e) {
-        let units = [...fields];
-        units[i].dependentName = e.target.value;
-        setdependentName(e.target.value);
-        setFeilds(units);
-    }
+  function selectdependentName(i, e) {
+      let units = [...fields];
+      units[i].dependentName = e.target.value;
+      setdependentName(e.target.value);
+      setFeilds(units);
+  }
 
   function selectdependentGender(i, value) {
     let units = [...fields];
@@ -169,7 +195,19 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
         settradeNumber(e.target.value);
         setFeilds(units);
     }
-  const goNext = () => {
+
+    console.log("fielfsdssss",fields);
+    const goNext = () => {
+
+     // Validate all applicable dates before proceeding
+     const isVendorAgeValid = validateAge(fields[0].vendorDateOfBirth, "vendor");
+     const isSpouseAgeValid = !spouseDependentChecked || validateAge(fields[0].spouseDateBirth, "spouse");
+     const isDependentAgeValid = !dependentNameChecked || validateAge(fields[0].dependentDateBirth, "dependent");
+ 
+     if (!isVendorAgeValid || !isSpouseAgeValid || !isDependentAgeValid) {
+       return;
+     }
+
       let ownerDetails = formData.owner || {};
       let ownerStep = { 
         ...ownerDetails, 
