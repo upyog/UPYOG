@@ -5,7 +5,7 @@ WORKDIR /app
 # copy the project files
 
 COPY ${WORK_DIR} ./${WORK_DIR}
-ENV MAVEN_OPTS="-Dmaven.wagon.http.pool=false"
+
 RUN cd ${WORK_DIR} \
     && mvn clean package -DskipTests
                                  
