@@ -55,7 +55,7 @@ export const DigiLockerService = {
       method: "POST",
       auth: true,
       userService: true,
-      data:{pdfUrl:data?.TokenReq?.pdfUrl,redirectUrl:""}
+      data:{ "Transaction":{pdfUrl:data?.TokenReq?.pdfUrl,redirectUrl:"",fileStoreId:data?.TokenReq?.fileStoreId,module:data?.TokenReq?.module,tenantId:data?.TokenReq?.tenantId}}
     })
 };
 

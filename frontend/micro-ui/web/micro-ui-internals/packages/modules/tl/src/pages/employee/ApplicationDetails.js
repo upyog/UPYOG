@@ -241,11 +241,14 @@ const ApplicationDetails = () => {
       window.open(fileStore[newResponse.filestoreIds[0]], "_blank");
     }
   };
-  const fetchDigiLockerDocuments  = async (file) => {
+  const fetchDigiLockerDocuments  = async (file,id) => {
    
           let TokenReq = {
             pdfUrl:file,
-            redirectUrl:""
+            tenantId: "pg.citya",
+            module:"TL",
+            redirectUrl:"",
+            "fileStoreId":id
           }
           const res1 = await Digit.DigiLockerService.pdfUrl({TokenReq})
           console.log("res1res1res1res1res1",res1)
@@ -255,7 +258,7 @@ const ApplicationDetails = () => {
      let res = await Digit.TLService.TLsearch({ tenantId: applicationDetails?.tenantId, filters: { applicationNumber:applicationDetails?.applicationData?.applicationNumber } });
      const TLcertificatefile = await Digit.PaymentService.generatePdf(tenantId, { Licenses: res?.Licenses }, "tlcertificate");
      const receiptFile = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: TLcertificatefile.filestoreIds[0] });
-     fetchDigiLockerDocuments(receiptFile[TLcertificatefile.filestoreIds[0]])
+     fetchDigiLockerDocuments(receiptFile[TLcertificatefile.filestoreIds[0]],TLcertificatefile.filestoreIds[0])
      //window.open(receiptFile[TLcertificatefile.filestoreIds[0]], "_blank");
      setIsDisplayDownloadMenu(false)
   }
