@@ -28,3 +28,25 @@ export const getOrderDocuments = (appUploadedDocumnets, isNoc = false) => {
   }
   return finalDocs;
 }
+
+
+
+ /**
+  * @author Shivank 
+  *  Utility function to calculate that accurately calculates age from a birth date
+   * Calculates age from a given birth date
+   * 
+   * @param {string} birthDate - Date of birth in YYYY-MM-DD format
+   * @returns {number} - Age in years
+   */
+export const calculateAge = (birthDate) => {
+  const today = new Date();
+  const birth = new Date(birthDate);
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+  // Adjust age if birthday hasn't occurred this year
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age;
+};
