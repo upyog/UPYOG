@@ -1,11 +1,13 @@
 FROM egovio/alpine-maven-builder-jdk-8:gcp AS build
+
+ENV MAVEN_OPTS="-Dmaven.wagon.http.pool=false"
+
 ARG WORK_DIR
 WORKDIR /app
 
 # copy the project files
 
 COPY ${WORK_DIR} ./${WORK_DIR}
-
 RUN cd ${WORK_DIR} \
     && mvn clean package -DskipTests
                                  
