@@ -142,7 +142,6 @@
 			<url>https://nexus-repo.egovernments.org/nexus/content/groups/public/</url>
 		</repository>
 	</repositories>
-
 	<build>
 		<plugins>
 			<plugin>

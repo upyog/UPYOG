@@ -72,7 +72,7 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                         .status(rs.getString("status"))
                         .additionalDetail(getAdditionalDetail(rs, "additional_detail"))
                         .tenantId(rs.getString("tenant_id"))
-//                        .parentId(rs.getLong("parent_id"))
+                        .parentAccount(rs.getString("parent_account"))
                         .documents(new ArrayList<>())
                         .garbageBills(new ArrayList<>())
                         .childGarbageAccounts(new ArrayList<>())
@@ -144,9 +144,9 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
             }
 
             
-            if (BooleanUtils.isTrue(garbageAccount.getIsOwner())
+            if (StringUtils.isEmpty(garbageAccount.getParentAccount())
             		&& null != rs.getString("sub_acc_id")
-            		&& BooleanUtils.isNotTrue(rs.getBoolean("sub_acc_is_owner"))) {
+            		&& !StringUtils.isEmpty(rs.getString("sub_acc_parent_account"))) {
                 Long subAccId = rs.getLong("sub_acc_id");
                 GarbageAccount subGarbageAccount = findSubAccById(garbageAccount.getChildGarbageAccounts(), subAccId);
                 if (null == subGarbageAccount) {
@@ -203,7 +203,7 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                 
                 if (null != rs.getString("sub_address_uuid")) {
                     String addressUuid = rs.getString("sub_address_uuid");
-                    GrbgAddress grbgAddress = findAddressByUuid(garbageAccount.getAddresses(), addressUuid);
+                    GrbgAddress grbgAddress = findAddressByUuid(subGarbageAccount.getAddresses(), addressUuid);
                     if (null == grbgAddress) {
                     	GrbgAddress grbgAddress1 = populateAddress(rs, "sub_address_");
                     	subGarbageAccount.getAddresses().add(grbgAddress1);
@@ -363,7 +363,7 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                 .status(rs.getString(prefix + "status"))
                 .additionalDetail(getAdditionalDetail(rs, prefix + "additional_detail"))
                 .tenantId(rs.getString(prefix + "tenant_id"))
-//                .parentId(rs.getLong(prefix + "parent_id"))
+                .parentAccount(rs.getString(prefix + "parent_account"))
                 .documents(new ArrayList<>())
                 .garbageBills(new ArrayList<>())
                 .grbgCollectionUnits(new ArrayList<>())

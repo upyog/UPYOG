@@ -6,20 +6,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class SiteBookingSearchCriteria {
-
-	private List<String> applicationNumbers;
+@AllArgsConstructor
+@Builder
+public class SiteSearchCriteria {
+	private List<String> siteId;
 
 	private List<String> uuids;
 
 	private List<String> createdBy;
-
-	private List<String> status;
 	
 	private String tenantId;
 

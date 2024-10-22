@@ -9,7 +9,9 @@ import java.util.Map;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.advertisementcanopy.model.SiteCreationActionRequest;
 import org.egov.advertisementcanopy.model.SiteCreationData;
+import org.egov.advertisementcanopy.model.SiteSearchCriteria;
 import org.egov.advertisementcanopy.model.SiteSearchRequest;
 import org.egov.advertisementcanopy.model.SiteUpdateRequest;
 import org.egov.advertisementcanopy.repository.builder.SiteApplicationQueryBuilder;
@@ -21,6 +23,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -109,6 +112,48 @@ public class SiteRepository {
 
 		return list;
 	}
+
+	public List<SiteCreationData> fetchSites(SiteSearchCriteria criteria) {
+		List<String> preparedStatementValues = new ArrayList<>();
+		StringBuilder searchQuery = new StringBuilder(queryBuilder.SELECT_SITE_FOR_CITIZEN);
+		searchQuery = addWhereClauseforSites(searchQuery, preparedStatementValues, criteria);
+		return jdbcTemplate.query(searchQuery.toString(), preparedStatementValues.toArray(), siteApplicationRowMapper);
+	}
+
+	private StringBuilder addWhereClauseforSites(StringBuilder searchQuery, List preparedStatementValues,
+			SiteSearchCriteria criteria) {
+		if (CollectionUtils.isEmpty(criteria.getUuids()) && CollectionUtils.isEmpty(criteria.getSiteId())
+				&& StringUtils.isEmpty(criteria.getTenantId()) && CollectionUtils.isEmpty(criteria.getCreatedBy())) {
+			return searchQuery;
+		}
+		searchQuery.append(" WHERE");
+        boolean isAppendAndClause = false;
+        
+        if (!CollectionUtils.isEmpty(criteria.getUuids())) {
+            isAppendAndClause = addAndClauseIfRequired(false, searchQuery);
+            searchQuery.append(" eg_site_application.uuid IN ( ").append(getQueryForCollection(criteria.getUuids(),
+                    preparedStatementValues)).append(" )");
+        }
+        if(!CollectionUtils.isEmpty(criteria.getSiteId())) {
+        	isAppendAndClause = addAndClauseIfRequired(false, searchQuery);
+        	 searchQuery.append(" eg_site_application.site_id IN ( ").append(getQueryForCollection(criteria.getSiteId(),
+                     preparedStatementValues)).append(" )");
+        }
+        if(!CollectionUtils.isEmpty(criteria.getCreatedBy())) {
+        	isAppendAndClause = addAndClauseIfRequired(false, searchQuery);
+        	 searchQuery.append(" eg_site_application.created_by IN ( ").append(getQueryForCollection(criteria.getCreatedBy(),
+                     preparedStatementValues)).append(" )");
+        }
+        if(!ObjectUtils.isEmpty(criteria.getTenantId())) {
+        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
+			searchQuery.append(" eg_site_application.tenant_id = ? ");
+			preparedStatementValues.add(criteria.getTenantId());
+        }
+
+			return searchQuery;
+	}
+	
+	 
 
 	public void updateSiteData(SiteUpdateRequest updateSiteRequest) {
 		jdbcTemplate.update(queryBuilder.UPDATE_QUERY, updateSiteRequest.getSiteUpdationData().getSiteDescription(),

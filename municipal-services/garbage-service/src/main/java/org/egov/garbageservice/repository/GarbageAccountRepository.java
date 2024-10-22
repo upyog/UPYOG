@@ -48,7 +48,7 @@ public class GarbageAccountRepository {
 			+ ", sub_acc.name as sub_acc_name, sub_acc.mobile_number as sub_acc_mobile_number, sub_acc.gender as sub_acc_gender, sub_acc.email_id as sub_acc_email_id, sub_acc.is_owner as sub_acc_is_owner"
 			+ ", sub_acc.user_uuid as sub_acc_user_uuid, sub_acc.declaration_uuid as sub_acc_declaration_uuid, sub_acc.status as sub_acc_status"
 			+ ", sub_acc.created_by as sub_acc_created_by, sub_acc.created_date as sub_acc_created_date, sub_acc.last_modified_by as sub_acc_last_modified_by"
-			+ ", sub_acc.last_modified_date as sub_acc_last_modified_date, sub_acc.additional_detail as sub_acc_additional_detail, sub_acc.tenant_id as sub_acc_tenant_id"
+			+ ", sub_acc.last_modified_date as sub_acc_last_modified_date, sub_acc.additional_detail as sub_acc_additional_detail, sub_acc.tenant_id as sub_acc_tenant_id, sub_acc.parent_account as sub_acc_parent_account"
 			+ ", sub_acc_bill.id as sub_acc_bill_id, sub_acc_bill.bill_ref_no as sub_acc_bill_bill_ref_no, sub_acc_bill.garbage_id as sub_acc_bill_garbage_id " 
 			+ ", sub_doc.uuid as sub_doc_uuid, sub_doc.doc_ref_id as sub_doc_doc_ref_id, sub_doc.doc_name as sub_doc_doc_name, sub_doc.doc_type as sub_doc_doc_type, sub_doc.doc_category as sub_doc_doc_category, sub_doc.tbl_ref_uuid as sub_doc_tbl_ref_uuid "
 		    + ", sub_acc_bill.bill_amount as sub_acc_bill_bill_amount, sub_acc_bill.arrear_amount as sub_acc_bill_arrear_amount, sub_acc_bill.panelty_amount as sub_acc_bill_panelty_amount " 
@@ -76,7 +76,7 @@ public class GarbageAccountRepository {
 		    + " LEFT OUTER JOIN eg_grbg_address as address ON address.garbage_id = acc.garbage_id"
 			+ " LEFT OUTER JOIN eg_grbg_document doc ON (acc.uuid = doc.tbl_ref_uuid"
 			+ " OR app.uuid = doc.tbl_ref_uuid)"// Don't include bill docs
-			+ " LEFT OUTER JOIN eg_grbg_account sub_acc ON acc.property_id = sub_acc.property_id"
+			+ " LEFT OUTER JOIN eg_grbg_account sub_acc ON acc.uuid = sub_acc.parent_account"
 		    + " LEFT OUTER JOIN eg_grbg_bill as sub_acc_bill ON sub_acc.garbage_id = sub_acc_bill.garbage_id"
 		    + " LEFT OUTER JOIN eg_grbg_application as sub_app ON sub_app.garbage_id = sub_acc.garbage_id"
 		    + " LEFT OUTER JOIN eg_grbg_commercial_details as sub_comm ON sub_comm.garbage_id = sub_acc.garbage_id"
@@ -88,9 +88,9 @@ public class GarbageAccountRepository {
 
     
     private static final String INSERT_ACCOUNT = "INSERT INTO eg_grbg_account (id, uuid, garbage_id, property_id, type, name"
-    		+ ", mobile_number, gender, email_id, is_owner, user_uuid, declaration_uuid, status, additional_detail, created_by, created_date, last_modified_by, last_modified_date, tenant_id) "
+    		+ ", mobile_number, gender, email_id, is_owner, user_uuid, declaration_uuid, status, additional_detail, created_by, created_date, last_modified_by, last_modified_date, tenant_id, parent_account) "
     		+ "VALUES (:id, :uuid, :garbageId, :propertyId, :type, :name, :mobileNumber, :gender, :emailId, :isOwner, :userUuid, :declarationUuid, :status, :additionalDetail :: JSONB, :createdBy, :createdDate, "
-    		+ ":lastModifiedBy, :lastModifiedDate, :tenantId)";
+    		+ ":lastModifiedBy, :lastModifiedDate, :tenantId, :parentAccount)";
     
     private static final String UPDATE_ACCOUNT_BY_ID = "UPDATE eg_grbg_account SET garbage_id = :garbageId, uuid =:uuid"
     		+ ", property_id = :propertyId, type = :type, name = :name, mobile_number = :mobileNumber, is_owner = :isOwner"
@@ -133,6 +133,7 @@ public class GarbageAccountRepository {
         accountInputs.put("lastModifiedBy", account.getAuditDetails().getLastModifiedBy());
         accountInputs.put("lastModifiedDate", account.getAuditDetails().getLastModifiedDate());
         accountInputs.put("tenantId", account.getTenantId());
+        accountInputs.put("parentAccount", account.getParentAccount());
 
         namedParameterJdbcTemplate.update(INSERT_ACCOUNT, accountInputs);
         return account;
@@ -275,6 +276,11 @@ public class GarbageAccountRepository {
         if (null != searchCriteriaGarbageAccount.getIsOwner()) {
         	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
             searchQuery.append(" acc.is_owner = ").append(searchCriteriaGarbageAccount.getIsOwner());
+        }
+        
+        if (null != searchCriteriaGarbageAccount.getParentAccount()) {
+        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
+            searchQuery.append(" acc.parent_account = ").append(searchCriteriaGarbageAccount.getParentAccount());
         }
 		
         return searchQuery;
