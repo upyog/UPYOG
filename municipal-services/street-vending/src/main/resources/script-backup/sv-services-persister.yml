@@ -1,5 +1,5 @@
  serviceMaps:
-  serviceName: sv-service
+  serviceName: sv-services
   mappings:
   - version: 1.0
     description: Persists street venbding application detail
