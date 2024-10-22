@@ -325,13 +325,13 @@ public class BillServicev2 {
 		 * search result
 		 */
 		if (CollectionUtils.isEmpty(cosnumerCodesToBeExpired) && CollectionUtils.isEmpty(cosnumerCodesNotFoundInBill)) {
-			BillSearchCriteria bscr = billCriteria.toBillSearchCriteria();
-			if (bscr.getRetrieveOldest())
+			//BillSearchCriteria bscr = billCriteria.toBillSearchCriteria();
+			if (billCriteria.getAllBill())
 				return res;
 			else {
 				List<BillV2> billToBeReturned = res.getBill();
 
-				billToBeReturned = billToBeReturned.stream().filter(x -> x.getStatus().equals(BillStatus.EXPIRED))
+				billToBeReturned = billToBeReturned.stream().filter(x -> x.getStatus().equals(BillStatus.ACTIVE))
 						.collect(Collectors.toList());
 				res.setBill(null);
 				res.setBill(billToBeReturned);
