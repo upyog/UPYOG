@@ -325,7 +325,7 @@ public class BillServicev2 {
 		 * search result
 		 */
 		if (CollectionUtils.isEmpty(cosnumerCodesToBeExpired) && CollectionUtils.isEmpty(cosnumerCodesNotFoundInBill)) {
-			//BillSearchCriteria bscr = billCriteria.toBillSearchCriteria();
+			// BillSearchCriteria bscr = billCriteria.toBillSearchCriteria();
 			if (billCriteria.getAllBill())
 				return res;
 			else {
@@ -678,7 +678,7 @@ public class BillServicev2 {
 		Calendar crd = Calendar.getInstance();
 		crd.setTime(currentDate);
 		Integer cuurentMonth = crd.get(Calendar.MONTH) + 1;
-		// cuurentMonth =5;
+		// cuurentMonth =7;
 		// currentYear reference the year for which assesment is done to changed to
 		// different variable
 		Integer currentyear = c.get(Calendar.YEAR);
@@ -1052,9 +1052,9 @@ public class BillServicev2 {
 				 * 
 				 * 
 				 * }
-				 */
-
-				/*
+				 * 
+				 * 
+				 * 
 				 * if(!successtransactionMapForQuater.containsKey(Q1)) {
 				 * if(!failedtransactionMapForQuater.containsKey(Q1) ||
 				 * failedtransactionMapForQuater.containsKey(Q1)) {
@@ -1102,8 +1102,17 @@ public class BillServicev2 {
 				}
 
 			} else if (q3.contains(cuurentMonth)) {
+				BigDecimal totalAMountForInterest = BigDecimal.ZERO;
+				String calculationFinalDateForInterest=null;
+				BigDecimal noFODays =  BigDecimal.ZERO;
+				String firstDayAfterexpiryDateQ2 = "01-10-" + currentyear;
+				BigDecimal totalInterestAmunt = BigDecimal.ZERO;
+				
+				Map<String, BigDecimal> interestMap = new HashMap<>();
 				if (!quaterly.contains("Q1")) {
+					
 					amountwithpastdue = amountforquaterly.add(pastDue);
+					//90*150*0.15% add
 					String expiryDateQ1 = "30-06-" + currentyear;
 					String startDateQ1 = "01-04-" + currentyear;
 					mpdObj = new ModeOfPaymentDetails();
@@ -1121,84 +1130,48 @@ public class BillServicev2 {
 							ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(), BigDecimal.ZERO);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2);
 					mpdList.add(mpdObj);
+					
+					if(!quaterly.contains("Q1")) {
+						totalAMountForInterest = totalAMountForInterest.add(amountwithpastdue).multiply(new BigDecimal(90)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+						interestMap.put("Q1",totalAMountForInterest );
+						totalAMountForInterest = BigDecimal.ZERO;
+					}
+					
+					 calculationFinalDateForInterest = currentDateWithAssesmentYear(currentyear.toString());
+					 noFODays = 	getDateDifference(firstDayAfterexpiryDateQ2,currentDateWithAssesmentYear(currentyear.toString()));
+					 totalAMountForInterest = totalAMountForInterest.add(amountforquaterly).multiply(noFODays).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+					 interestMap.put("Q2",totalAMountForInterest );
+					
 				}
 
 				paymentPeriod = Q3;
 				expiryDate = "31-12-" + currentyear;
 
-				String firstDayAfterexpiryDateQ2 = "01-10-" + currentyear;
+			
 
 				// newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new
 				// BigDecimal(4));
+				
 				quaterlyammount = ammountForTransactionperiod(Q2, amountforquaterly);
 				quaterlyammount = quaterlyammount.add(pastDue);
-
+				
 				if (quaterlyammount.compareTo(paidBillAmount) == 0) {
 					quaterlyammount = BigDecimal.ZERO;
 				} else if (quaterlyammount.compareTo(paidBillAmount) > 0) {
 					quaterlyammount = quaterlyammount.subtract(paidBillAmount);
 				}
-
-				/*
-				 * if(advancedBillAmount.compareTo(quaterlyammount)>0) { advancedBillAmount =
-				 * advancedBillAmount.subtract(quaterlyammount); quaterlyammount = new
-				 * BigDecimal(0);
-				 * 
-				 * } else if(quaterlyammount.compareTo(advancedBillAmount)>0) { quaterlyammount
-				 * = quaterlyammount.subtract(advancedBillAmount); advancedBillAmount = new
-				 * BigDecimal(0); } else if(quaterlyammount.compareTo(quaterlyammount)==0) {
-				 * quaterlyammount = new BigDecimal(0); advancedBillAmount = new BigDecimal(0);
-				 * }
-				 */
-
-				/*
-				 * if(quaterlyammount.compareTo(BigDecimal.ZERO)>0) { dayDifference=
-				 * getDateDifference(firstDayAfterexpiryDateQ2,currentDateWithAssesmentYear(
-				 * currentyear.toString())); if(dayDifference.compareTo(zeroAmount)>0) {
-				 * interestPercentOntaxAmount =
-				 * appProps.getInterestPercent().divide(divideValue).multiply(quaterlyammount).
-				 * multiply(dayDifference); inp= getInterestPenalty("",
-				 * interestPercentOntaxAmount, interestPercentOntaxAmount, "INTEREST",
-				 * getDateInMilisec(firstDayAfterexpiryDateQ2,true),
-				 * getDateInMilisec(currentDateWithAssesmentYear(nextYear.toString()),false),
-				 * Long.parseLong(dayDifference.toString()),quaterlyammount); }
-				 * 
-				 * }
-				 */
-
-				/*
-				 * if(!successtransactionMapForQuater.containsKey(Q1)) {
-				 * if(!failedtransactionMapForQuater.containsKey(Q1) &&
-				 * !alltransactionForQuater.containsKey(Q1)) {
-				 * quaterlyammount=ammountForTransactionperiod(Q1,amountforquaterly); mpdObj =
-				 * new ModeOfPaymentDetails(); mpdObj =
-				 * getModeOfPaymentDetails(quaterlyammount,startDateQ1,
-				 * expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),
-				 * pastDue); mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1); mpdList.add(mpdObj); } }
-				 * else { mpdObj = new ModeOfPaymentDetails(); mpdObj =
-				 * getModeOfPaymentDetails(newTotalAmountForModeOfPayment,startDateQ1,
-				 * expiryDateQ1,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(),pastDue);
-				 * mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1); mpdList.add(mpdObj); }
-				 * 
-				 * 
-				 * if(!successtransactionMapForQuater.containsKey(Q2)) {
-				 * if(!failedtransactionMapForQuater.containsKey(Q2) ||
-				 * failedtransactionMapForQuater.containsKey(Q2)) {
-				 * quaterlyammount=ammountForTransactionperiod(Q2,amountforquaterly);
-				 * //quaterlyammount=quaterlyammount.add(pastDue); mpdObj = new
-				 * ModeOfPaymentDetails(); mpdObj =
-				 * getModeOfPaymentDetails(quaterlyammount,startDateQ2,
-				 * expiryDateQ2,ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),
-				 * pastDue); mpdObj.setPastAmount(pastDue);
-				 * mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2); mpdList.add(mpdObj);
-				 * 
-				 * } } else { mpdObj = new ModeOfPaymentDetails(); mpdObj =
-				 * getModeOfPaymentDetails(newTotalAmountForModeOfPayment,startDateQ2,
-				 * expiryDateQ2,ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(),pastDue);
-				 * mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2); mpdList.add(mpdObj); }
-				 */
-				// allquaterammount=allquaterammount.add(quaterlyammount);
-				totalAmountForDemand = amountforquaterly.add(quaterlyammount).add(interestPercentOntaxAmount);
+			
+			
+			
+			
+			
+			//totalAMountForInterest = BigDecimal.ZERO;
+			for(Map.Entry<String, BigDecimal> intmap : interestMap.entrySet()) {
+				totalInterestAmunt= totalInterestAmunt.add(intmap.getValue());
+			}
+			
+				totalInterestAmunt = 	totalInterestAmunt.setScale(0, RoundingMode.HALF_UP);
+				totalAmountForDemand = amountforquaterly.add(quaterlyammount).add(totalInterestAmunt);
 
 				if (advancedBillAmount.compareTo(totalAmountForDemand) > 0) {
 					advancedBillAmount = advancedBillAmount.subtract(totalAmountForDemand);
@@ -1600,10 +1573,14 @@ public class BillServicev2 {
 	private String currentDateWithAssesmentYear(String year) {
 		Date currentDate = new Date(System.currentTimeMillis());
 		Calendar crd = Calendar.getInstance();
+		String updatedDate =null;
 		crd.setTime(currentDate);
 		Integer date = crd.get(Calendar.DAY_OF_MONTH);
 		Integer cuurentMonth = crd.get(Calendar.MONTH) + 1;
-		String updatedDate = date.toString() + "-0" + cuurentMonth.toString() + "-" + year;
+		if(cuurentMonth>9)
+		 updatedDate = date.toString()+"-"  + cuurentMonth.toString() + "-" + year;
+		else
+			updatedDate = date.toString() + "-0" + cuurentMonth.toString() + "-" + year;
 		return updatedDate;
 	}
 
