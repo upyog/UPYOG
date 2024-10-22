@@ -37,40 +37,41 @@ create table eg_adv_booking_detail_audit(
   payment_receipt_filestore_id character varying(64)
 );
 
-CREATE TABLE IF NOT EXISTS public.eg_adv_slot_detail
+
+CREATE TABLE IF NOT EXISTS public.eg_adv_cart_detail
 (
-    slot_id character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    cart_id character varying(64) COLLATE pg_catalog."default" NOT NULL,
     booking_id character varying(64) COLLATE pg_catalog."default" NOT NULL,
-    adv_type character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    add_type character varying(64) COLLATE pg_catalog."default" NOT NULL,
     location character varying(64) COLLATE pg_catalog."default" NOT NULL,
     face_area character varying(64) COLLATE pg_catalog."default" NOT NULL,
-    adv_site character varying(64) COLLATE pg_catalog."default" NOT NULL,
     booking_date date NOT NULL,
     booking_from_time time without time zone NOT NULL,
     booking_to_time time without time zone NOT NULL,
     status character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    night_light BOOLEAN DEFAULT FALSE, 
     createdby character varying(64) COLLATE pg_catalog."default" NOT NULL,
     createdtime bigint NOT NULL,
     lastmodifiedby character varying(64) COLLATE pg_catalog."default",
     lastmodifiedtime bigint,
-    CONSTRAINT eg_adv_slot_detail_slot_id_pk PRIMARY KEY (slot_id),
-    CONSTRAINT eg_adv_slot_detail_booking_id_fk FOREIGN KEY (booking_id)
+    CONSTRAINT eg_adv_cart_detail_cart_id_pk PRIMARY KEY (cart_id),
+    CONSTRAINT eg_adv_cart_detail_booking_id_fk FOREIGN KEY (booking_id)
         REFERENCES public.eg_adv_booking_detail (booking_id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 );
 
-CREATE TABLE IF NOT EXISTS public.eg_adv_slot_detail_audit
+CREATE TABLE IF NOT EXISTS public.eg_adv_cart_detail_audit
 (
-    slot_id character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    cart_id character varying(64) COLLATE pg_catalog."default" NOT NULL,
     booking_id character varying(64) COLLATE pg_catalog."default" NOT NULL,
     booking_date date NOT NULL,
     booking_from_time time without time zone NOT NULL,
     booking_to_time time without time zone NOT NULL,
-    adv_type character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    add_type character varying(64) COLLATE pg_catalog."default" NOT NULL,
     location character varying(20) COLLATE pg_catalog."default" NOT NULL,
     face_area character varying(20) COLLATE pg_catalog."default" NOT NULL,
-    adv_site character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    night_light BOOLEAN DEFAULT FALSE, 
     status character varying(30) COLLATE pg_catalog."default" NOT NULL,
     createdby character varying(64) COLLATE pg_catalog."default" NOT NULL,
     createdtime bigint NOT NULL,
@@ -78,9 +79,10 @@ CREATE TABLE IF NOT EXISTS public.eg_adv_slot_detail_audit
     lastmodifiedtime bigint
 );
 
-CREATE INDEX IF NOT EXISTS idx_eg_adv_slot_detail_status ON eg_adv_slot_detail(status);
-CREATE INDEX IF NOT EXISTS idx_eg_adv_slot_detail_booking_date ON eg_adv_slot_detail(booking_date);
-CREATE INDEX IF NOT EXISTS idx_eg_adv_slot_detail_booking_id ON eg_adv_slot_detail(booking_id);
+
+CREATE INDEX IF NOT EXISTS idx_eg_adv_cart_detail_status ON eg_adv_cart_detail(status);
+CREATE INDEX IF NOT EXISTS idx_eg_adv_cart_detail_booking_date ON eg_adv_cart_detail(booking_date);
+CREATE INDEX IF NOT EXISTS idx_eg_adv_cart_detail_booking_id ON eg_adv_cart_detail(booking_id);
 
 
 create table eg_adv_applicant_detail(
@@ -90,13 +92,6 @@ create table eg_adv_applicant_detail(
    applicant_email_id  character varying(300) NOT NULL,
    applicant_mobile_no  character varying(150) NOT NULL,
    applicant_alternate_mobile_no  character varying(150),
-   account_no character varying(200) NOT NULL,
-   ifsc_code character varying(200) NOT NULL,
-   bank_name character varying(300) NOT NULL,
-   bank_branch_name character varying(300) NOT NULL,
-   account_holder_name character varying(300) NOT NULL,
-   refund_status  character varying(30),
-   refund_type  character varying(15),-- SECURITY, CANCELLATION
    createdby character varying(64),
    lastmodifiedby character varying(64),
    createdtime bigint,
@@ -136,6 +131,7 @@ create table eg_adv_address_detail (
     house_no character varying(100),
     street_name character varying(150),
     address_line_1 character varying(150),
+    address_line_2 character varying(150),
     landmark character varying(150),
     city character varying(100)  NOT NULL,
     city_code character varying(10)  NOT NULL,

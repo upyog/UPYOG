@@ -55,7 +55,7 @@ public class BookingDetail {
 
 	@NotNull
 	@Valid
-	private List<BookingSlotDetail> bookingSlotDetails;
+	private List<CartDetail> CartDetails;
 	
 	@JsonProperty("documents")
 	@Valid
@@ -81,11 +81,11 @@ public class BookingDetail {
 	}
 
 
-	public BookingDetail addBookingSlots(BookingSlotDetail bookingSlotDetail) {
-		if(bookingSlotDetails == null){
-			bookingSlotDetails = new ArrayList<BookingSlotDetail>();
+	public BookingDetail addBookingSlots(CartDetail CartDetail) {
+		if(CartDetails == null){
+			CartDetails = new ArrayList<CartDetail>();
 		}
-		bookingSlotDetails.add(bookingSlotDetail);
+		CartDetails.add(CartDetail);
 		return this;
 	}
 }

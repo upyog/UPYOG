@@ -24,12 +24,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 /**
- * Keeping slot details separately because it will be treated as booking item in booking
+ * Keeping cart details separately because it will be treated as booking item in booking
  */
-public class BookingSlotDetail {
+public class CartDetail {
 	
-	@JsonProperty("slotId")
-	private String slotId = null;
+	@JsonProperty("cartId")
+	private String cartId = null;
 	
 	@JsonProperty("bookingId")
 	private String bookingId = null; //foreign key
@@ -43,9 +43,8 @@ public class BookingSlotDetail {
 	@NotBlank
 	private String faceArea;
 	
-	//@NotBlank
-	@JsonProperty("advSite")
-	private String advSite;  
+	@JsonProperty("nightLight")
+    private Boolean nightLight;  
 	
 	
 	//@NonNull

@@ -36,6 +36,8 @@ public class Address   {
         private String streetName;
 
         private String addressLine1;
+        
+        private String addressLine2;
 
         private String landmark;
 
