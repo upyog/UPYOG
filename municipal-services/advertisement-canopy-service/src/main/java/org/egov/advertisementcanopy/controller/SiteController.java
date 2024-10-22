@@ -30,31 +30,26 @@ public class SiteController {
 	SiteService siteService;
 
 
-	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
 	@PostMapping("/_create")
 	public ResponseEntity<SiteCreationResponse> create(@RequestBody SiteCreationRequest createSiteRequest) {
 		return ResponseEntity.ok(siteService.create(createSiteRequest));
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
 	@PostMapping("/_update")
 	public ResponseEntity<SiteUpdationResponse> update(@RequestBody SiteUpdateRequest updateSiteRequest) {
 		return ResponseEntity.ok(siteService.update(updateSiteRequest));
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
 	@PostMapping("/_search")
 	public ResponseEntity<SiteSearchResponse> search(@RequestBody SiteSearchRequest searchSiteRequest) {
 		return ResponseEntity.ok(siteService.search(searchSiteRequest));
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
 	@PostMapping("/_count")
 	public ResponseEntity<SiteCountResponse> siteCount(@RequestBody SiteCountRequest siteCountRequest) {
 		return ResponseEntity.ok(siteService.totalCount(siteCountRequest));
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
 	@PostMapping({ "/fetch", "/fetch/{value}" })
 	public ResponseEntity<?> siteWorkFlowFetch(@RequestBody SiteCreationActionRequest siteCreationActionRequest,
 			@PathVariable String value) {

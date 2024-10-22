@@ -1,8 +1,12 @@
 package org.egov.advertisementcanopy.util;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.request.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -39,7 +43,23 @@ public class AdvtConstants {
     @Value("${egov.demand.update.endpoint}")
     public String demandUpdateEndpoint;
 
+    public static final String STATE_LEVEL_TEENENT_ID = "hp";
+    
+    public static final String WORKFLOW_SITE_CREATION_MODULE = "SITE";
+    public static final String WORKFLOW_SITE_CREATION_BUSINESSSERVICE = "SITE";
+    
 	public static final String ADVERTISEMENT_HOARDING = "Advertising Hoarding";
+    
+	public static final String ROLE_CODE_CITIZEN = "CITIZEN";
+    
+	public static final String ROLE_CODE_SITE_WF_CREATOR = "SITE_CREATOR";
+    
+	public static final String ROLE_CODE_SITE_WF_APPROVER = "SITE_APPROVER";
+
+	public static final String ROLE_CODE_SITE_CREATOR = "SITE_CREATOR";
+    
+	public static final String ROLE_CODE_SITE_APPROVER = "SITE_APPROVER";
+	
 	public static final String CANOPY = "Canopy";
 	
 	public static final String SITE_CREATION = "create-site";
@@ -74,11 +94,15 @@ public class AdvtConstants {
 
 	public static final String STATUS_APPROVED = "APPROVED";
 
+    public static final String WORKFLOW_SITE_BOOKING_MODULE = "ADVT";
+
 	public static final String BUSINESS_SERVICE_SITE_BOOKING = "ADVT";
 
 	public static final String BUSINESS_SERVICE_SITE_CREATION = "SITE";
 
     public static final String BILLING_TAX_HEAD_MASTER_CODE = "LCF.Advertisement_Canopy_Fee";
+
+    public static final String SITE_STATUS_BOOKED = "BOOKED";
 
 	public String getStatusOrAction(String action, Boolean fetchValue) {
 
@@ -101,5 +125,14 @@ public class AdvtConstants {
 		}
 		// return value
 		return map.get(action);
+	}
+	
+	
+	public List<String> getRolesByTenantId(String tenantId, List<Role> roles) {
+
+		List<String> roleCodes = roles.stream()
+				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(role -> role.getCode())
+				.collect(Collectors.toList());
+		return roleCodes;
 	}
 }

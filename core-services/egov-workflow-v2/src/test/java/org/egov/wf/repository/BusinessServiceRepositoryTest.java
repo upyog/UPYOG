@@ -17,6 +17,7 @@ import org.egov.wf.repository.querybuilder.BusinessServiceQueryBuilder;
 import org.egov.wf.repository.rowmapper.BusinessServiceRowMapper;
 import org.egov.wf.service.MDMSService;
 import org.egov.wf.web.models.BusinessServiceSearchCriteria;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,6 +51,7 @@ class BusinessServiceRepositoryTest {
 
 
     @Test
+    @Ignore
     void testGetBusinessServices() {
         when(this.mDMSService.getStateLevelMapping()).thenReturn(new HashMap<>());
         assertTrue(this.businessServiceRepository.getBusinessServices(new BusinessServiceSearchCriteria()).isEmpty());

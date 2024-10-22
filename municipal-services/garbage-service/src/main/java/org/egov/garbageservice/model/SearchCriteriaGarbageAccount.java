@@ -34,4 +34,6 @@ public class SearchCriteriaGarbageAccount {
     private List<String> status;
     
     private Boolean isOwner;
+    
+    private String parentAccount;
 }

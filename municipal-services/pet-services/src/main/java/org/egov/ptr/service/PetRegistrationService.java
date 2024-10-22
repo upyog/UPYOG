@@ -500,7 +500,7 @@ public class PetRegistrationService {
 			
 			String applicationStatus = application.getStatus();
 			String applicationTenantId = application.getTenantId();
-			String applicationBusinessId = "PTR";
+			String applicationBusinessId = PTRConstants.WORKFLOW_BUSINESS_SERVICE;
 			List<String> rolesWithinTenant = getRolesWithinTenant(applicationTenantId, ptradeLicenseActionRequest.getRequestInfo().getUserInfo().getRoles());
 			
 			

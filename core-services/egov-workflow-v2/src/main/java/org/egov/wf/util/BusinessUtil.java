@@ -8,10 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Collections;
 import java.util.List;
 
 @Component
+@Slf4j
 public class BusinessUtil {
 
     private BusinessServiceRepository businessServiceRepository;
@@ -32,6 +35,7 @@ public class BusinessUtil {
         criteria.setTenantId(tenantId);
         criteria.setBusinessServices(Collections.singletonList(businessService));
         List<BusinessService> businessServices = businessServiceRepository.getBusinessServices(criteria);
+        log.info("#### businessServices.size(): "+businessServices.size());
         if(CollectionUtils.isEmpty(businessServices))
             throw new CustomException("INVALID REQUEST","No BusinessService found for businessService: "+criteria.getBusinessServices());
         return businessServices.get(0);
