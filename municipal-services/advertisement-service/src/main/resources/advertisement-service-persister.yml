@@ -1,0 +1,158 @@
+serviceMaps:
+ serviceName: advertisement-service
+ mappings:
+ - version: 1.0
+   description: Persists advertiement booking details after application is completed advertisement  table
+   fromTopic: save-advertisement-booking
+   isTransaction: true
+   queryMaps:
+
+       - query: INSERT INTO public.eg_adv_booking_detail(booking_id, booking_no, payment_date, application_date, tenant_id, booking_status, special_category, purpose, purpose_description, receipt_no, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+         basePath: bookingApplication
+         jsonMaps:
+          - jsonPath: $.bookingApplication.bookingId
+          
+          - jsonPath: $.bookingApplication.bookingNo
+
+          - jsonPath: $.bookingApplication.paymentDate
+          
+          - jsonPath: $.bookingApplication.applicationDate
+
+          - jsonPath: $.bookingApplication.tenantId
+          
+          - jsonPath: $.bookingApplication.bookingStatus
+        
+          - jsonPath: $.bookingApplication.receiptNo
+
+          - jsonPath: $.bookingApplication.auditDetails.createdBy
+          
+          - jsonPath: $.bookingApplication.auditDetails.createdTime
+          
+          - jsonPath: $.bookingApplication.auditDetails.lastModifiedBy
+
+          - jsonPath: $.bookingApplication.auditDetails.lastModifiedTime
+          
+       - query: INSERT INTO public.eg_adv_slot_detail(slot_id, booking_id, adv_type, location, face_area, adv_site, booking_date, booking_from_time, booking_to_time, status, 
+               createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?::DATE, ?::TIME, ?::TIME, ?, ?, ?, ?, ?);
+         basePath: bookingApplication.bookingSlotDetails.*
+         jsonMaps:
+          - jsonPath: $.bookingApplication.bookingSlotDetails.*.slotId
+
+          - jsonPath: $.bookingApplication.bookingSlotDetails.*.bookingId
+
+          - jsonPath: $.bookingApplication.bookingSlotDetails.*.advType
+
+          - jsonPath: $.bookingApplication.bookingSlotDetails.*.location
+
+          - jsonPath: $.bookingApplication.bookingSlotDetails.*.faceArea
+
+          - jsonPath: $.bookingApplication.bookingSlotDetails.*.advSite
+          
+          - jsonPath: $.bookingApplication.bookingSlotDetails.*.bookingDate
+
+          - jsonPath: $.bookingApplication.bookingSlotDetails.*.bookingFromTime
+
+          - jsonPath: $.bookingApplication.bookingSlotDetails.*.bookingToTime
+
+          - jsonPath: $.bookingApplication.bookingSlotDetails.*.status
+
+          - jsonPath: $.bookingApplication.auditDetails.createdBy
+          
+          - jsonPath: $.bookingApplication.auditDetails.createdTime
+
+          - jsonPath: $.bookingApplication.auditDetails.lastModifiedBy
+
+          - jsonPath: $.bookingApplication.auditDetails.lastModifiedTime
+          
+       - query: INSERT INTO public.eg_adv_document_detail(document_detail_id, booking_id, document_type, filestore_id, createdby,
+               lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+         basePath: bookingApplication.documents.*
+         jsonMaps:
+          - jsonPath: $.bookingApplication.documents.*.documentDetailId
+
+          - jsonPath: $.bookingApplication.documents.*.bookingId
+
+          - jsonPath: $.bookingApplication.documents.*.documentType
+
+          - jsonPath: $.bookingApplication.documents.*.fileStoreId
+
+          - jsonPath: $.bookingApplication.auditDetails.createdBy
+
+          - jsonPath: $.bookingApplication.auditDetails.lastModifiedBy
+
+          - jsonPath: $.bookingApplication.auditDetails.createdTime
+
+          - jsonPath: $.bookingApplication.auditDetails.lastModifiedTime
+          
+       - query: INSERT INTO public.eg_adv_applicant_detail(applicant_detail_id, booking_id, applicant_name, applicant_email_id, applicant_mobile_no, applicant_alternate_mobile_no, account_no, ifsc_code, bank_name, bank_branch_name, account_holder_name, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+         basePath: bookingApplication.applicantDetail
+         jsonMaps:
+          - jsonPath: $.bookingApplication.applicantDetail.applicantDetailId
+
+          - jsonPath: $.bookingApplication.applicantDetail.bookingId
+
+          - jsonPath: $.bookingApplication.applicantDetail.applicantName
+
+          - jsonPath: $.bookingApplication.applicantDetail.applicantEmailId
+          
+          - jsonPath: $.bookingApplication.applicantDetail.applicantMobileNo
+
+          - jsonPath: $.bookingApplication.applicantDetail.applicantAlternateMobileNo
+          
+          - jsonPath: $.bookingApplication.applicantDetail.accountNumber
+          
+          - jsonPath: $.bookingApplication.applicantDetail.ifscCode
+
+          - jsonPath: $.bookingApplication.applicantDetail.bankName
+          
+          - jsonPath: $.bookingApplication.applicantDetail.bankBranchName
+
+          - jsonPath: $.bookingApplication.applicantDetail.accountHolderName
+
+          - jsonPath: $.bookingApplication.applicantDetail.auditDetails.createdBy
+
+          - jsonPath: $.bookingApplication.applicantDetail.auditDetails.lastModifiedBy
+
+          - jsonPath: $.bookingApplication.applicantDetail.auditDetails.createdTime
+
+          - jsonPath: $.bookingApplication.applicantDetail.auditDetails.lastModifiedTime
+       
+       - query: INSERT INTO public.eg_adv_address_detail(address_id, applicant_detail_id, door_no, house_no, street_name, address_line_1, landmark, city, city_code, locality, locality_code, pincode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+         basePath: bookingApplication.address
+
+         jsonMaps:
+          - jsonPath: $.bookingApplication.address.addressId
+
+          - jsonPath: $.bookingApplication.address.applicantDetailId
+
+          - jsonPath: $.bookingApplication.address.doorNo
+
+          - jsonPath: $.bookingApplication.address.houseNo
+
+          - jsonPath: $.bookingApplication.address.streetName
+
+          - jsonPath: $.bookingApplication.address.addressLine1
+
+          - jsonPath: $.bookingApplication.address.landmark
+
+          - jsonPath: $.bookingApplication.address.city
+
+          - jsonPath: $.bookingApplication.address.cityCode
+
+          - jsonPath: $.bookingApplication.address.locality
+
+          - jsonPath: $.bookingApplication.address.localityCode
+
+          - jsonPath: $.bookingApplication.address.pincode
+          
+       - query: INSERT INTO public.eg_adv_booking_detail_audit SELECT * FROM public.eg_adv_booking_detail WHERE booking_id = ?;
+         basePath: bookingApplication
+         jsonMaps:
+            - jsonPath: $.bookingApplication.bookingId
+
+       - query: INSERT INTO public.eg_adv_slot_detail_audit SELECT * FROM public.eg_adv_slot_detail WHERE slot_id = ?;
+         basePath: bookingApplication.bookingSlotDetails.*
+         jsonMaps:
+            - jsonPath: $.bookingApplication.bookingSlotDetails.*.slotId
+
+ 
