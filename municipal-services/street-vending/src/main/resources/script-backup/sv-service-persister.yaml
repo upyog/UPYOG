@@ -1,0 +1,183 @@
+ serviceMaps:
+  serviceName: sv-service
+  mappings:
+  - version: 1.0
+    description: Persists street venbding application detail
+    fromTopic: create-street-vending
+    isTransaction: true
+    queryMaps:
+
+       - query: INSERT INTO public.eg_sv_street_vending_detail(application_id, tenant_id, application_no, application_date, certificate_no, approval_date, application_status, trade_license_no, vending_activity, vending_zone, cart_latitude, cart_longitude, vending_area, vending_license_certificate_id, local_authority_name, disability_status,beneficiary_of_social_schemes, terms_and_condition, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+         basePath: streetVendingDetail
+         jsonMaps:
+          - jsonPath: $.streetVendingDetail.applicationId
+          
+          - jsonPath: $.streetVendingDetail.tenantId
+
+          - jsonPath: $.streetVendingDetail.applicationNo
+          
+          - jsonPath: $.streetVendingDetail.applicationDate
+
+          - jsonPath: $.streetVendingDetail.certificateNo
+          
+          - jsonPath: $.streetVendingDetail.approvalDate
+          
+          - jsonPath: $.streetVendingDetail.applicationStatus
+        
+          - jsonPath: $.streetVendingDetail.tradeLicenseNo
+          
+          - jsonPath: $.streetVendingDetail.vendingActivity
+          
+          - jsonPath: $.streetVendingDetail.vendingZone
+
+          - jsonPath: $.streetVendingDetail.cartLatitude
+          
+          - jsonPath: $.streetVendingDetail.cartLongitude
+
+          - jsonPath: $.streetVendingDetail.vendingArea
+          
+          - jsonPath: $.streetVendingDetail.vendingLicenseCertificateId
+
+          - jsonPath: $.streetVendingDetail.localAuthorityName
+          
+          - jsonPath: $.streetVendingDetail.disabilityStatus
+          
+          - jsonPath: $.streetVendingDetail.benificiaryOfSocialSchemes
+        
+          - jsonPath: $.streetVendingDetail.termsAndCondition
+          
+          - jsonPath: $.streetVendingDetail.auditDetails.createdBy
+          
+          - jsonPath: $.streetVendingDetail.auditDetails.createdTime
+          
+          - jsonPath: $.streetVendingDetail.auditDetails.lastModifiedBy
+          
+          - jsonPath: $.streetVendingDetail.auditDetails.lastModifiedTime
+          
+
+       - query: INSERT INTO public.eg_sv_document_detail(document_detail_id, application_id, document_type, filestore_id, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+         basePath: streetVendingDetail.documentDetails.*
+         jsonMaps:
+          - jsonPath: $.streetVendingDetail.documentDetails.*.documentDetailId
+
+          - jsonPath: $.streetVendingDetail.documentDetails.*.applicationId
+
+          - jsonPath: $.streetVendingDetail.documentDetails.*.documentType
+
+          - jsonPath: $.streetVendingDetail.documentDetails.*.fileStoreId
+
+          - jsonPath: $.streetVendingDetail.auditDetails.createdBy
+
+          - jsonPath: $.streetVendingDetail.auditDetails.lastModifiedBy
+
+          - jsonPath: $.streetVendingDetail.auditDetails.createdTime
+
+          - jsonPath: $.streetVendingDetail.auditDetails.lastModifiedTime
+
+
+          
+       - query: INSERT INTO public.eg_sv_vendor_detail(id, application_id, vendor_id, name, father_name, date_of_birth, email_id, mobile_no, gender, relationship_type, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?::DATE, ?, ?, ?, ?, ?, ?, ?, ?);
+         basePath: streetVendingDetail.vendorDetail.*
+         jsonMaps:
+          - jsonPath: $.streetVendingDetail.vendorDetail.*.id
+
+          - jsonPath: $.streetVendingDetail.vendorDetail.*.applicationId
+
+          - jsonPath: $.streetVendingDetail.vendorDetail.*.vendorId
+
+          - jsonPath: $.streetVendingDetail.vendorDetail.*.name
+
+          - jsonPath: $.streetVendingDetail.vendorDetail.*.fatherName
+          
+          - jsonPath: $.streetVendingDetail.vendorDetail.*.dob
+
+          - jsonPath: $.streetVendingDetail.vendorDetail.*.emailId
+          
+          - jsonPath: $.streetVendingDetail.vendorDetail.*.mobileNo
+
+          - jsonPath: $.streetVendingDetail.vendorDetail.*.gender
+          
+          - jsonPath: $.streetVendingDetail.vendorDetail.*.relationshipType
+
+          - jsonPath: $.streetVendingDetail.auditDetails.createdBy
+
+          - jsonPath: $.streetVendingDetail.auditDetails.lastModifiedBy
+
+          - jsonPath: $.streetVendingDetail.auditDetails.createdTime
+
+          - jsonPath: $.streetVendingDetail.auditDetails.lastModifiedTime
+          
+       - query: INSERT INTO public.eg_sv_address_detail(address_id, address_type, vendor_id, house_no, address_line_1,  address_line_2, landmark, city, city_code, locality, locality_code, pincode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+         basePath: streetVendingDetail.addressDetails.*
+         jsonMaps:
+          - jsonPath: $.streetVendingDetail.addressDetails.*.addressId
+
+          - jsonPath: $.streetVendingDetail.addressDetails.*.addressType
+
+          - jsonPath: $.streetVendingDetail.addressDetails.*.vendorId
+          
+          - jsonPath: $.streetVendingDetail.addressDetails.*.houseNo
+
+          - jsonPath: $.streetVendingDetail.addressDetails.*.addressLine1
+
+          - jsonPath: $.streetVendingDetail.addressDetails.*.addressLine2
+
+          - jsonPath: $.streetVendingDetail.addressDetails.*.landmark
+
+          - jsonPath: $.streetVendingDetail.addressDetails.*.city
+          
+          - jsonPath: $.streetVendingDetail.addressDetails.*.cityCode
+
+          - jsonPath: $.streetVendingDetail.addressDetails.*.locality
+
+          - jsonPath: $.streetVendingDetail.addressDetails.*.localityCode
+
+          - jsonPath: $.streetVendingDetail.addressDetails.*.pincode
+      
+       - query: INSERT INTO public.eg_sv_bank_detail(bank_detail_id, application_id, account_no, ifsc_code, bank_name, bank_branch_name, account_holder_name, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+         basePath: streetVendingDetail.bankDetail
+         jsonMaps:
+          - jsonPath: $.streetVendingDetail.bankDetail.id
+
+          - jsonPath: $.streetVendingDetail.bankDetail.applicationId
+
+          - jsonPath: $.streetVendingDetail.bankDetail.accountNumber
+
+          - jsonPath: $.streetVendingDetail.bankDetail.ifscCode
+          
+          - jsonPath: $.streetVendingDetail.bankDetail.bankName
+
+          - jsonPath: $.streetVendingDetail.bankDetail.bankBranchName
+          
+          - jsonPath: $.streetVendingDetail.bankDetail.accountHolderName
+
+          - jsonPath: $.streetVendingDetail.auditDetails.createdBy
+
+          - jsonPath: $.streetVendingDetail.auditDetails.lastModifiedBy
+
+          - jsonPath: $.streetVendingDetail.auditDetails.createdTime
+
+          - jsonPath: $.streetVendingDetail.auditDetails.lastModifiedTime
+          
+       
+       - query: INSERT INTO public.eg_sv_operation_time_detail(id, application_id, day_of_week, from_time, to_time, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?::TIME, ?::TIME, ?, ?, ?, ?);
+         basePath: streetVendingDetail.vendingOperationTimeDetails.*
+         jsonMaps:
+          - jsonPath: $.streetVendingDetail.vendingOperationTimeDetails.*.id
+
+          - jsonPath: $.streetVendingDetail.vendingOperationTimeDetails.*.applicationId
+
+          - jsonPath: $.streetVendingDetail.vendingOperationTimeDetails.*.dayOfWeek
+
+          - jsonPath: $.streetVendingDetail.vendingOperationTimeDetails.*.fromTime
+
+          - jsonPath: $.streetVendingDetail.vendingOperationTimeDetails.*.toTime
+
+          - jsonPath: $.streetVendingDetail.auditDetails.createdBy
+
+          - jsonPath: $.streetVendingDetail.auditDetails.lastModifiedBy
+
+          - jsonPath: $.streetVendingDetail.auditDetails.createdTime
+
+          - jsonPath: $.streetVendingDetail.auditDetails.lastModifiedTime
+          
