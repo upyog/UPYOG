@@ -122,6 +122,7 @@ import org.egov.demand.producer.Producer;
 import org.egov.demand.repository.BillRepositoryV2;
 import org.egov.demand.repository.IdGenRepo;
 import org.egov.demand.repository.ServiceRequestRepository;
+import org.egov.demand.repository.querybuilder.BillQueryBuilder;
 import org.egov.demand.util.Util;
 import org.egov.demand.web.contract.BillRequestV2;
 import org.egov.demand.web.contract.BillResponseV2;
@@ -140,6 +141,7 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -206,6 +208,11 @@ public class BillServicev2 {
 	private String notifTopicName;
 
 	private static List<String> ownerPlainRequestFieldsList;
+	
+	@Autowired
+	private BillQueryBuilder billQueryBuilder;
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 
 	/**
 	 * Cancell bill operation can be carried by this method, based on consumerCodes
@@ -335,19 +342,49 @@ public class BillServicev2 {
 						.collect(Collectors.toList());
 				res.setBill(null);
 				res.setBill(billToBeReturned);
-				if(billToBeReturned!=null || billToBeReturned.isEmpty())
+				List<BillDetailV2> updatedbills = null;
+				if(billToBeReturned!=null && !billToBeReturned.isEmpty())
+				updatedbills = billToBeReturned.get(0).getBillDetails();
 				{
-					DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MM yyyy");
-					String date = billToBeReturned.get(0).getBillDetails().get(0).getAdjusmentfromdate();
-					LocalDate endDate = LocalDate.now();
-					date=date.concat(String.valueOf(endDate.getYear()));
-					LocalDate startDate = LocalDate.parse(date, dtf);
-					BigDecimal daysdiff=new BigDecimal(ChronoUnit.DAYS.between(startDate, endDate));
-					daysdiff=daysdiff.subtract(BigDecimal.ONE);
-					BigDecimal interestonamount=billToBeReturned.get(0).getBillDetails().get(0).getInterestonamount();
-					BigDecimal noOfDays=daysdiff.subtract(new BigDecimal(billToBeReturned.get(0).getBillDetails().get(0).getInterestfornoofdays()));
-					BigDecimal interestamount=interestonamount.multiply(noOfDays).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-					BigDecimal totalAmount=interestamount.add(billToBeReturned.get(0).getBillDetails().get(0).getAmount());
+					if(!updatedbills.get(0).isPreviousYearAssesment()) {
+						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MM yyyy");
+						DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+						BigDecimal totalAmount;
+						String date = updatedbills.get(0).getAdjusmentfromdate();
+						LocalDate endDate = LocalDate.now();
+						date = date.replace("-"," ");
+						LocalDate startDate = LocalDate.parse(date, dtf);
+						BigDecimal daysdiff=new BigDecimal(ChronoUnit.DAYS.between(startDate, endDate));
+						BigDecimal interestonamount=updatedbills.get(0).getTotalAmountForIntCal();
+						BigDecimal extraNoOfDays=daysdiff.subtract(new BigDecimal(updatedbills.get(0).getInterestfornoofdays()));
+						BigDecimal interestamount=interestonamount.multiply(extraNoOfDays).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+					
+						//if(extraNoOfDays.compareTo(new BigDecimal(0))>0 && interestamount.compareTo(new BigDecimal(0))>0) {
+							totalAmount=interestamount.add(updatedbills.get(0).getAmount()).add(new BigDecimal(10));
+							totalAmount= totalAmount.setScale(0,RoundingMode.HALF_UP);
+							extraNoOfDays = extraNoOfDays.add(new BigDecimal(updatedbills.get(0).getInterestfornoofdays()));
+							
+							List<Object> preparedStmtList = new ArrayList<>();
+							preparedStmtList.add(interestamount);
+							preparedStmtList.add(extraNoOfDays);
+							preparedStmtList.add(totalAmount);
+							preparedStmtList.add(updatedbills.get(0).getId());
+						
+							jdbcTemplate.update(BillQueryBuilder.BILL_DETAIL_UPDATE_BASE_QUERY, preparedStmtList.toArray());
+							updatedbills.get(0).setAmount(totalAmount); 
+							updatedbills.get(0).setInterestfornoofdays(Integer.parseInt(extraNoOfDays.toString()));
+							updatedbills.get(0).setInterestonamount(interestonamount);
+							
+							res.setBill(null);
+							billToBeReturned.get(0).setBillDetails(null);
+							billToBeReturned.get(0).setBillDetails(updatedbills);
+							res.setBill(billToBeReturned);
+							
+							
+							
+							return res;
+					//}
+					}
 				}
 				return res;
 			}
@@ -1190,6 +1227,12 @@ public class BillServicev2 {
 
 					calculationFinalDateForInterest = currentDateWithAssesmentYear(currentyear.toString());
 					noFODays = 	getDateDifference(firstDayAfterexpiryDateQ2,currentDateWithAssesmentYear(currentyear.toString()));
+					if(previousYear) {
+						noFODays=new BigDecimal(90);
+						totalAMountForInterest = totalAMountForInterest.add(amountforquaterly).multiply(noFODays).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+					}
+					
+					else
 					totalAMountForInterest = totalAMountForInterest.add(amountforquaterly).multiply(noFODays).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
 					interestMap.put("Q3",totalAMountForInterest );
 				}
