@@ -335,6 +335,20 @@ public class BillServicev2 {
 						.collect(Collectors.toList());
 				res.setBill(null);
 				res.setBill(billToBeReturned);
+				if(billToBeReturned!=null || billToBeReturned.isEmpty())
+				{
+					DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MM yyyy");
+					String date = billToBeReturned.get(0).getBillDetails().get(0).getAdjusmentfromdate();
+					LocalDate endDate = LocalDate.now();
+					date=date.concat(String.valueOf(endDate.getYear()));
+					LocalDate startDate = LocalDate.parse(date, dtf);
+					BigDecimal daysdiff=new BigDecimal(ChronoUnit.DAYS.between(startDate, endDate));
+					daysdiff=daysdiff.subtract(BigDecimal.ONE);
+					BigDecimal interestonamount=billToBeReturned.get(0).getBillDetails().get(0).getInterestonamount();
+					BigDecimal noOfDays=daysdiff.subtract(new BigDecimal(billToBeReturned.get(0).getBillDetails().get(0).getInterestfornoofdays()));
+					BigDecimal interestamount=interestonamount.multiply(noOfDays).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+					BigDecimal totalAmount=interestamount.add(billToBeReturned.get(0).getBillDetails().get(0).getAmount());
+				}
 				return res;
 			}
 		}
