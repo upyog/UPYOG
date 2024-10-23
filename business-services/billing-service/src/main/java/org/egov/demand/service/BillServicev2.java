@@ -1259,7 +1259,6 @@ public class BillServicev2 {
 					mpdList.add(mpdObj);
 
 
-
 					if(!quaterly.contains("Q2")) {
 						if(!quaterly.contains("Q1")) {
 							totalAMountForInterest = totalAMountForInterest.add(amountwithpastdue).multiply(new BigDecimal(90)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
