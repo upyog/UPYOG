@@ -836,3 +836,19 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/ewaste-services/src/main/resources/db"
         image-name: "ewaste-services-db"
+
+  - name: "builds/upyog/municipal-services/sv-services"
+    build:
+      - work-dir: "municipal-services/street-vending"
+        image-name: "sv-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/street-vending/src/main/resources/db"
+        image-name: "sv-services-db"
+
+  - name: "builds/upyog/municipal-services/adv-services"
+    build:
+      - work-dir: "municipal-services/advertisement-service"
+        image-name: "adv-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/advertisement-service/src/main/resources/db"
+        image-name: "adv-services-db" 
