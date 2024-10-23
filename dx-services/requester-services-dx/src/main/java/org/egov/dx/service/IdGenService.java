@@ -8,7 +8,6 @@ import org.egov.dx.web.models.IdGenerationResponse;
 import org.egov.dx.web.models.RequestInfoWrapper;
 import org.egov.dx.web.models.Transaction;
 import org.egov.dx.repository.TransactionRepository;
-import org.egov.dx.web.models.TransactionRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.dx.repository.IdGenRepository;
 import org.springframework.beans.factory.annotation.Autowired;

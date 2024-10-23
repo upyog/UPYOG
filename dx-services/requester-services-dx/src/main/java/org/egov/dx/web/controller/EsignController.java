@@ -51,7 +51,6 @@ import org.egov.dx.service.eSignService;
 import org.egov.dx.util.Configurations;
 import org.egov.dx.web.models.RequestInfoWrapper;
 import org.egov.dx.web.models.ResponseInfoFactory;
-import org.egov.dx.web.models.TransactionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

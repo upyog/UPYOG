@@ -30,7 +30,6 @@ import org.egov.dx.web.models.RequestInfoWrapper;
 import org.egov.dx.repository.TransactionRepository;
 import org.egov.dx.web.models.Transaction;
 import org.egov.dx.web.models.TransactionCriteria;
-import org.egov.dx.web.models.TransactionRequest;
 import org.egov.tracer.model.CustomException;
 import org.egov.dx.service.IdGenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -237,13 +236,13 @@ public class eSignService {
 
 		Long time = System.currentTimeMillis();
         List<Transaction> transactions = this.getTransactions(criteria);
-		TransactionRequest transactionRequest= new TransactionRequest();
-		transactionRequest.setTransaction(transactions.get(0));
+		RequestInfoWrapper requestInfoWrapper= new RequestInfoWrapper();
+		requestInfoWrapper.setTransaction(transactions.get(0));
 		
-		transactionRequest.getTransaction().setSignedFilestoreId(fileStoreId);
-		transactionRequest.getTransaction().setLastModifiedTime(time);
+		requestInfoWrapper.getTransaction().setSignedFilestoreId(fileStoreId);
+		requestInfoWrapper.getTransaction().setLastModifiedTime(time);
 		
-        producer.push(configurations.getUpdateTLEsignTxnTopic(), transactionRequest);
+        producer.push(configurations.getUpdateTLEsignTxnTopic(), requestInfoWrapper);
         return fileStoreId;
 
     }
