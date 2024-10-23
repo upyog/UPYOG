@@ -49,6 +49,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.egov.dx.service.eSignService;
 import org.egov.dx.util.Configurations;
+import org.egov.dx.web.models.RequestInfoWrapper;
 import org.egov.dx.web.models.ResponseInfoFactory;
 import org.egov.dx.web.models.TransactionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,9 +78,9 @@ public class EsignController {
 	Configurations configurations;
 	
     @RequestMapping("/process")
-    public ResponseEntity<String> processPDF(@Valid @RequestBody TransactionRequest transactionRequest) throws URISyntaxException {
+    public ResponseEntity<String> processPDF(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) throws URISyntaxException {
         try {
-            String responseUrl = esignService.processPDF(transactionRequest);
+            String responseUrl = esignService.processPDF(requestInfoWrapper);
             return new ResponseEntity<>(responseUrl, HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>("Error processing PDF: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

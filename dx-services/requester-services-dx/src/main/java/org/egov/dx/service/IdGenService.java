@@ -41,10 +41,10 @@ public class IdGenService {
      * @param transactionRequest Request for which ID should be generated
      * @return Transaction ID
      */
-    String generateTxnId(TransactionRequest transactionRequest) {
+    String generateTxnId(RequestInfoWrapper requestInfoWrapper) {
     	
-        RequestInfo requestInfo = transactionRequest.getRequestInfo();
-        Transaction transaction = transactionRequest.getTransaction();
+        RequestInfo requestInfo = requestInfoWrapper.getRequestInfo();
+        Transaction transaction = requestInfoWrapper.getTransaction();
         
         IdGenerationResponse response = idGenRepository.getId(requestInfo, transaction.getTenantId(),
                 config.getIdGenName(), config.getIdGenFormat(), 1);

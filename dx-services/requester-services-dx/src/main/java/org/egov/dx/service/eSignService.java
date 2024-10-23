@@ -27,10 +27,10 @@ import org.egov.dx.util.Utilities;
 import org.egov.dx.web.models.FileResponse;
 import org.egov.dx.web.models.IdGenerationResponse;
 import org.egov.dx.web.models.RequestInfoWrapper;
-import org.egov.dx.web.models.TransactionRequest;
 import org.egov.dx.repository.TransactionRepository;
 import org.egov.dx.web.models.Transaction;
 import org.egov.dx.web.models.TransactionCriteria;
+import org.egov.dx.web.models.TransactionRequest;
 import org.egov.tracer.model.CustomException;
 import org.egov.dx.service.IdGenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,10 +93,11 @@ public class eSignService {
         }
     }
     
-    String generateTxnId(TransactionRequest transactionRequest) {
+    String generateTxnId(RequestInfoWrapper requestInfoWrapper) {
     	
-        RequestInfo requestInfo = transactionRequest.getRequestInfo();
-        Transaction transaction = transactionRequest.getTransaction();
+        Transaction transaction = requestInfoWrapper.getTransaction();
+        RequestInfo requestInfo = requestInfoWrapper.getRequestInfo();
+
 //        
 //        IdGenerationResponse response = idGenRepository.getId(requestInfo, transaction.getTenantId(),
 //                config.getIdGenName(), config.getIdGenFormat(), 1);
@@ -108,13 +109,13 @@ public class eSignService {
 
     }
     
-    public String processPDF(TransactionRequest transactionRequest) throws IOException {
+    public String processPDF(RequestInfoWrapper requestInfoWrapper) throws IOException {
     	String txnId=null;
-        String pdfBase64 = getPdfAsBase64(transactionRequest.getTransaction().getPdfUrl());
+        String pdfBase64 = getPdfAsBase64(requestInfoWrapper.getTransaction().getPdfUrl());
         eSignInput signInput = eSignInputBuilder.init()
                 .setDocBase64(pdfBase64)
                 .setDocInfo("1723479092483kqKfUdtnch.pdf")//pdf name
-                .setDocURL(transactionRequest.getTransaction().getPdfUrl())//for v3 only pdf view purpose
+                .setDocURL(requestInfoWrapper.getTransaction().getPdfUrl())//for v3 only pdf view purpose
                 .setLocation("") // reason or signed (optional)
                 .setReason("")	//(optional)
                 .setSignedBy("Manvi") //(mandatory)
@@ -130,21 +131,21 @@ public class eSignService {
         eSign eSignObj = new eSign(configurations.getLicenceFile(), configurations.getPfxPath(),configurations.getPfxPassword(), configurations.getPfxAllias());
         
         
-        txnId = idGenService.generateTxnId(transactionRequest);
-        transactionRequest.getTransaction().setTxnId(txnId);
+        txnId = idGenService.generateTxnId(requestInfoWrapper);
+        requestInfoWrapper.getTransaction().setTxnId(txnId);
         Long time = System.currentTimeMillis();
-        String uuid = transactionRequest.getRequestInfo().getUserInfo().getUuid();
-        Transaction transaction = transactionRequest.getTransaction();
+        String uuid = requestInfoWrapper.getRequestInfo().getUserInfo().getUuid();
+        Transaction transaction = requestInfoWrapper.getTransaction();
 	    transaction.setCreatedTime(time);
 	    transaction.setCreatedBy(uuid);
 	    transaction.setLastModifiedTime(time);
 	    transaction.setLastModifiedBy(uuid);
 		
-        producer.push(configurations.getSaveTLEsignTxnTopic(), transactionRequest);
+        producer.push(configurations.getSaveTLEsignTxnTopic(), requestInfoWrapper);
         
         // Obtain the gateway parameter
         eSignServiceReturn serviceReturn = eSignObj.getGatewayParameter(
-                inputList, "Manvi", (txnId+"-"+ transactionRequest.getTransaction().getModule()) , configurations.getRedirectUrl(),configurations.getRedirectUrl(), configurations.getTempFolder(), eSign.eSignAPIVersion.V2, eSign.AuthMode.OTP);
+                inputList, "Manvi", (txnId+"-"+ requestInfoWrapper.getTransaction().getModule()) , configurations.getRedirectUrl(),configurations.getRedirectUrl(), configurations.getTempFolder(), eSign.eSignAPIVersion.V2, eSign.AuthMode.OTP);
 
         String gatewayParam = serviceReturn.getGatewayParameter();
         String gatewayURL = "https://authenticate.sandbox.emudhra.com/AadhaareSign.jsp"; // Adjust if needed
