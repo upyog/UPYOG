@@ -743,7 +743,7 @@ password
 			encryptedPassword = smsProperties.getPassword(); 
 			String message = sms.getMessage().trim();//message.trim();
 			String genratedhashKey = hashGenerator(smsProperties.getUsername(), smsProperties.getSenderid(), 
-					message, smsProperties.getPassword());
+					message, smsProperties.getSecureKey());
 			List<NameValuePair> nameValuePairs=new 
 					ArrayList<NameValuePair>(1);
 			nameValuePairs.add(new BasicNameValuePair("mobileno",sms.getMobileNumber())); 

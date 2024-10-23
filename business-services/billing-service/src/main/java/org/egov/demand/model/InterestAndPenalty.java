@@ -13,19 +13,15 @@ import lombok.Setter;
 @Getter
 
 public class InterestAndPenalty {
-	private String billDetailsId;
-	private BigDecimal initialTotalAmountCalculated;
-	private BigDecimal updatedTotalAmountCalculated;
-	private String type;
-	private Long fromDate;
-	//For Reference
-	private Long IntialToDate;
-	//To date will be calculated form updatetoDate
-	private Long updatedToDate;
-	private Long noOfdays;
-	private BigDecimal interestPercentage;
-	private BigDecimal billAmountInterestCalculated;
-	
+	private BigDecimal interestonamount;
+	private String adjusmentfromdate;
+	private String assesmentyear;
+	private String adjustedtosession;
+	private String interestcalculatedsession;
+	private BigDecimal interestpercentage;
+	private int interestfornoofdays;
+	private BigDecimal  totalAMountForInterest;
+	private boolean previousYear;
 	
 
 }

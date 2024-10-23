@@ -64,24 +64,15 @@ public class BillDetailV2 {
 	
 	@JsonProperty("paymentModeStatus")
 	private List<ModeOfPaymentDetails> modeOfPaymentDetails;
-	
-	
-	@JsonProperty("penalty")
-	private InterestAndPenalty interestAndPenalty;
-	
 	private BigDecimal interestonamount;
-	
 	private String adjusmentfromdate;
-	
 	private String assesmentyear;
-	
 	private String adjustedtosession;
-	
 	private String interestcalculatedsession;
-	
-	private int interestpercentage;
-	
+	private BigDecimal interestpercentage;
 	private int interestfornoofdays;
+	private boolean previousYearAssesment;
+	private BigDecimal totalAmountForIntCal;
 
 	public BillDetailV2 addBillAccountDetailsItem(BillAccountDetailV2 billAccountDetailsItem) {
 		if (this.billAccountDetails == null) {

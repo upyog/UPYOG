@@ -158,8 +158,11 @@ public class BillRepositoryV2 {
 				ps.setString(29, billDetail.getAssesmentyear());
 				ps.setString(30, billDetail.getAdjustedtosession());
 				ps.setString(31, billDetail.getInterestcalculatedsession());
-				ps.setInt(32, billDetail.getInterestpercentage());
+				ps.setBigDecimal(32,billDetail.getInterestpercentage() );
 				ps.setInt(33, billDetail.getInterestfornoofdays());
+				ps.setBoolean(34, billDetail.isPreviousYearAssesment());
+				ps.setBigDecimal(35, billDetail.getTotalAmountForIntCal());
+				
 			}
 
 			@Override
