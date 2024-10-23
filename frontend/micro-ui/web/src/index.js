@@ -30,14 +30,14 @@ if (!user || !user.access_token || !user.info) {
     return value && value !== "undefined" ? parseValue(value) : null;
   }
 
-  const token = getFromStorage("token")
+  const token = sessionStorage.getItem("token")
 
-  const citizenToken = getFromStorage("Citizen.token")
-  const citizenInfo = getFromStorage("Citizen.user-info")
-  const citizenTenantId = getFromStorage("Citizen.tenant-id")
+  const citizenToken = sessionStorage.getItem("Citizen.token")
+  const citizenInfo = sessionStorage.getItem("Citizen.user-info")
+  const citizenTenantId = sessionStorage.getItem("Citizen.tenant-id")
 
-  const employeeToken = getFromStorage("Employee.token")
-  const employeeInfo = getFromStorage("Employee.user-info")
+  const employeeToken = sessionStorage.getItem("Employee.token")
+  const employeeInfo = sessionStorage.getItem("Employee.user-info")
   const employeeTenantId = getFromStorage("Employee.tenant-id")
 
   const userType = token === citizenToken ? "citizen" : "employee";
