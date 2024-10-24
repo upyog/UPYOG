@@ -203,4 +203,13 @@ public class Constants {
 	
 	public static final String YEARLY="YEARLY";
 	public static final String YR="YR";
+	
+	//For interest calculation
+	public static final String Q1FlatDays="91";
+	public static final String Q2FlatDays="92";
+	public static final String Q3FlatDays="91";
+	public static final String H1FlatDays="182";
+	public static final String InterestPrecentage="0.014";
+	
+	
 }

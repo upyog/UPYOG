@@ -59,6 +59,11 @@ import static org.egov.demand.util.Constants.H1;
 import static org.egov.demand.util.Constants.H2;
 import static org.egov.demand.util.Constants.YEARLY;
 import static org.egov.demand.util.Constants.YR;
+import static org.egov.demand.util.Constants.Q1FlatDays;
+import static org.egov.demand.util.Constants.Q2FlatDays;
+import static org.egov.demand.util.Constants.Q3FlatDays;
+import static org.egov.demand.util.Constants.H1FlatDays;
+import static org.egov.demand.util.Constants.InterestPrecentage;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -1018,7 +1023,7 @@ public class BillServicev2 {
 
 					calculationFinalDateForInterest = currentDateWithAssesmentYear(currentyear.toString());
 					noFODays = getDateDifference(firstDayAfterexpiryDateQ2,currentDateWithAssesmentYear(currentyear.toString()));
-					totalAMountForInterest = totalAMountForInterest.add(amountwithpastdue).multiply(noFODays).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+					totalAMountForInterest = totalAMountForInterest.add(amountwithpastdue).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
 					totalAMountForInterest=totalAMountForInterest.setScale(2,2);
 					totalAmountForInterestCal=amountforquaterly;
 					interestMap.put("Q1",totalAMountForInterest );
@@ -1113,7 +1118,7 @@ public class BillServicev2 {
 					mpdList.add(mpdObj);
 
 					if(!quaterly.contains("Q1")) {
-						totalAMountForInterest = totalAMountForInterest.add(amountwithpastdue).multiply(new BigDecimal(90)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+						totalAMountForInterest = totalAMountForInterest.add(amountwithpastdue).multiply(new BigDecimal(Q1FlatDays)).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
 						totalAMountForInterest=totalAMountForInterest.setScale(2,2);
 						interestMap.put("Q1",totalAMountForInterest );
 						totalAMountForInterest = BigDecimal.ZERO;
@@ -1121,7 +1126,7 @@ public class BillServicev2 {
 
 					calculationFinalDateForInterest = currentDateWithAssesmentYear(currentyear.toString());
 					noFODays = 	getDateDifference(firstDayAfterexpiryDateQ2,currentDateWithAssesmentYear(currentyear.toString()));
-					totalAMountForInterest = totalAMountForInterest.add(amountforquaterly).multiply(noFODays).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+					totalAMountForInterest = totalAMountForInterest.add(amountforquaterly).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
 					totalAMountForInterest=totalAMountForInterest.setScale(2,2);
 					interestMap.put("Q2",totalAMountForInterest );
 					totalAmountForInterestCal = amountforquaterly;
@@ -1219,12 +1224,12 @@ public class BillServicev2 {
 
 					if(!quaterly.contains("Q2")) {
 						if(!quaterly.contains("Q1")) {
-							totalAMountForInterest = totalAMountForInterest.add(amountwithpastdue).multiply(new BigDecimal(90)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+							totalAMountForInterest = totalAMountForInterest.add(amountwithpastdue).multiply(new BigDecimal(Q1FlatDays)).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
 							totalAMountForInterest=totalAMountForInterest.setScale(2,2);
 							interestMap.put("Q1",totalAMountForInterest );
 							totalAMountForInterest = BigDecimal.ZERO;
 						}
-						totalAMountForInterest = totalAMountForInterest.add(amountforquaterly).multiply(new BigDecimal(90)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+						totalAMountForInterest = totalAMountForInterest.add(amountforquaterly).multiply(new BigDecimal(Q2FlatDays)).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
 						totalAMountForInterest=totalAMountForInterest.setScale(2,2);
 						interestMap.put("Q2",totalAMountForInterest );
 						totalAMountForInterest = BigDecimal.ZERO;
@@ -1233,8 +1238,8 @@ public class BillServicev2 {
 					calculationFinalDateForInterest = currentDateWithAssesmentYear(currentyear.toString());
 					noFODays = 	getDateDifference(firstDayAfterexpiryDateQ3,currentDateWithAssesmentYear(currentyear.toString()));
 					if(previousYear) {
-						noFODays=new BigDecimal(90);
-						totalAMountForInterest = totalAMountForInterest.add(amountforquaterly).multiply(noFODays).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+						noFODays=new BigDecimal(Q3FlatDays);
+						totalAMountForInterest = totalAMountForInterest.add(amountforquaterly).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
 						totalAmountForInterestCal=amountforquaterly;
 					}
 
