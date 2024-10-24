@@ -1,8 +1,12 @@
 package org.egov.filestore.persistence.repository;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -11,10 +15,12 @@ import org.egov.filestore.domain.model.FileLocation;
 import org.egov.filestore.domain.model.Resource;
 import org.egov.filestore.persistence.entity.Artifact;
 import org.egov.filestore.repository.CloudFilesManager;
+import org.egov.filestore.repository.impl.AlfrescoStorage;
 import org.egov.filestore.repository.impl.minio.MinioRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,13 +45,16 @@ public class ArtifactRepository {
 	}
 
 	public List<String> save(List<org.egov.filestore.domain.model.Artifact> artifacts, RequestInfo requestInfo) {
-		cloudFilesManager.saveFiles(artifacts);
+		
 		List<Artifact> artifactEntities = new ArrayList<>();
 		artifacts.forEach(artifact -> {
 			artifactEntities.add(mapToEntity(artifact, requestInfo));
 		});
-		return fileStoreJpaRepository.saveAll(artifactEntities).stream().map(Artifact::getFileStoreId)
+		List<String> savedData = fileStoreJpaRepository.saveAll(artifactEntities).stream().map(Artifact::getFileStoreId)
 				.collect(Collectors.toList());
+		Set<String> listOfUUids = new HashSet<>();
+		cloudFilesManager.saveFiles(artifacts);
+		return savedData;
 	}
 
 	/**
@@ -103,7 +112,7 @@ public class ArtifactRepository {
 		Artifact artifact = fileStoreJpaRepository.findByFileStoreIdAndTenantId(fileStoreId, tenantId);
 		if (artifact == null)
 			throw new CustomException("NOT_FOUND", "Invalid filestoreid or tenantid");
-
+		String fileBytes =null;
 		org.springframework.core.io.Resource resource = null;
 	
 		if (artifact.getFileLocation().getFileSource().equals("minio")) {
@@ -111,10 +120,22 @@ public class ArtifactRepository {
 		MinioRepository repo = (MinioRepository) cloudFilesManager;
 		resource = repo.read(artifact.getFileLocation());
 	}
+		
+		if (artifact.getFileLocation().getFileSource().equals("alfresco")) {
+			AlfrescoStorage repo = (AlfrescoStorage)cloudFilesManager;
+			Map<String,Object> res = repo.getFileFromAlfresco(artifact.getAlfrescoId());
+			resource = (org.springframework.core.io.Resource) res.get("resource");
+			
+			 fileBytes = (String) res.get("fileBytes");
+//			/File f = (File) res.get("file");
+			//f.delete();
+		}
 		 
-      if(null!=resource)
-		return new Resource(artifact.getContentType(), artifact.getFileName(), resource, artifact.getTenantId(),
-				"" + resource.getFile().length() + " bytes");
+      if(null!=resource) {
+  		return new Resource(artifact.getContentType(), artifact.getFileName(), resource, artifact.getTenantId(),
+  				"" + fileBytes + " bytes");
+      }
+    	 
       else
     	  return null;
 	}
@@ -126,7 +147,7 @@ public class ArtifactRepository {
 
 	private FileInfo mapArtifactToFileInfo(Artifact artifact) {
 		FileLocation fileLocation = new FileLocation(artifact.getFileStoreId(), artifact.getModule(), artifact.getTag(),
-				artifact.getTenantId(), artifact.getFileName(), artifact.getFileSource());
+				artifact.getTenantId(), artifact.getFileName(), artifact.getFileSource(),null);
 
 		return new FileInfo(artifact.getContentType(), fileLocation, artifact.getTenantId());
 	}

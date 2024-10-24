@@ -121,6 +121,12 @@ public class ApplicationProperties {
 
     @Value("${egov.services.billing_service.search}")
     private String searchBill;
+    
+    
+    @Value("${egov.demand.update.endpoint}")
+    private String updateDemandEndpoint;
+    @Value("egov.demand.search.endpoint}")
+    private String searchDemandEndpoint;
 
     @Value("${kafka.topics.update.receipt.workflowdetails}")
     private String kafkaUpdateWorkFlowDetailsTopic;

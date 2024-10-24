@@ -42,12 +42,13 @@ public class PaymentsService {
 		payment.setInstrumentDate(request.getTransaction().getAuditDetails().getCreatedTime());
 		payment.setInstrumentNumber(request.getTransaction().getTxnId());
 		payment.setTransactionNumber(request.getTransaction().getTxnId());
-		payment.setAdditionalDetails((JsonNode) request.getTransaction().getAdditionalDetails());
+		payment.setAdditionalDetails(mapper.convertValue(request.getTransaction().getAdditionalDetails(), JsonNode.class));
+		//payment.setAdditionalDetails((JsonNode) request.getTransaction().getAdditionalDetails());
 
 		CollectionPaymentRequest paymentRequest = CollectionPaymentRequest.builder()
 				.requestInfo(request.getRequestInfo()).payment(payment).build();
 		String uri = props.getCollectionServiceHost() + props.getPaymentCreatePath();
-		Optional<Object> response =  repository.fetchResult(uri, paymentRequest);
+		Optional<Object> response =  repository.fetchResultNew(uri, paymentRequest);
 		if(response.isPresent()) {
 			try {
 				CollectionPaymentResponse paymentResponse = mapper.convertValue(response.get(), CollectionPaymentResponse.class);

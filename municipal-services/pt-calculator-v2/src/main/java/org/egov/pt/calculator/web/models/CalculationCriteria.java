@@ -4,6 +4,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.pt.calculator.web.models.property.Property;
+import org.egov.pt.calculator.web.models.propertyV2.AssessmentV2.ModeOfPayment;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -51,5 +52,9 @@ public class CalculationCriteria   {
         
         @JsonProperty("financialYear")
         private String financialYear;
+        
+        @NotNull
+    	@JsonProperty("modeOfPayment")
+    	private String modeOfPayment;
 }
 

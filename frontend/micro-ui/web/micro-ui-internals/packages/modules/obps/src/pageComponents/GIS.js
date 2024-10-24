@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LocationSearchCard, LinkButton, Card } from "@egovernments/digit-ui-react-components";
+import { LocationSearchCard, LinkButton, Card } from "@upyog/digit-ui-react-components";
 
 const GIS = ({ t, config, onSelect, formData = {},handleRemove,onSave }) => {
   const [pincode, setPincode] = useState(formData?.address?.pincode || "");

@@ -1,5 +1,5 @@
 import React from "react";
-import { Dropdown, SearchIconSvg } from "@egovernments/digit-ui-react-components";
+import { Dropdown, SearchIconSvg } from "@upyog/digit-ui-react-components";
 
 const middleWare_1 = async (data, _break, _next) => {
   data.a = "a";

@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { Card, Loader } from "@egovernments/digit-ui-react-components";
+import { Card, Loader } from "@upyog/digit-ui-react-components";
 import FSMLink from "./inbox/FSMLink";
 import ApplicationTable from "./inbox/ApplicationTable";
 import Filter from "./inbox/Filter";

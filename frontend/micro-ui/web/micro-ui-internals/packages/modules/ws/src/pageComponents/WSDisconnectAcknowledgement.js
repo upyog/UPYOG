@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Banner, Card, CardSectionHeader, CardText, LinkButton, SubmitBar, successSvg } from "@egovernments/digit-ui-react-components";
+import { Banner, Card, CardSectionHeader, CardText, LinkButton, SubmitBar, successSvg } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { pdfDocumentName, pdfDownloadLink } from "../utils";
@@ -10,7 +10,7 @@ const BannerPicker = (props) => {
   message={props.message} 
   applicationNumber={props?.applicationNumber}
   successful={props.isSuccess} style={{ padding: "10px" }}
-  headerStyles={{ fontSize: "32px" }}
+  headerStyles={{ fontSize: "16px" }}
   infoOneStyles={{ paddingTop: "20px" }}/>;
 };
 

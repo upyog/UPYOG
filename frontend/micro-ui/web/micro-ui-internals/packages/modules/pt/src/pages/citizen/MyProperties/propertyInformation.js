@@ -9,13 +9,15 @@ import {
   Row,
   StatusTable,
   SubmitBar,
-} from "@egovernments/digit-ui-react-components";
+  LinkLabel
+} from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory, useParams } from "react-router-dom";
 import PropertyDocument from "../../../pageComponents/PropertyDocument";
 import { getCityLocale, getPropertyTypeLocale, stringReplaceAll } from "../../../utils";
-
+import ActionModal from "../../../../../templates/ApplicationDetails/Modal/index"
+import ArrearSummary from "../../../../../common/src/payments/citizen/bills/routes/bill-details/arrear-summary";
 const setBillData = async (tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData) => {
   const assessmentData = await Digit.PTService.assessmentSearch({ tenantId, filters: { propertyIds } });
   let billData = {};
@@ -41,10 +43,27 @@ const getBillAmount = (fetchBillData = null) => {
 const PropertyInformation = () => {
   const { t } = useTranslation();
   const { propertyIds } = useParams();
-
+const [showModal,setshowModal] = useState(false)
   var isMobile = window.Digit.Utils.browser.isMobile();
   const [enableAudit, setEnableAudit] = useState(false);
-
+const moduleCode="PT"
+const history = useHistory();
+const selectedAction =    {
+  action: "ASSESS_PROPERTY",
+  forcedName: "PT_ASSESS",
+  showFinancialYearsModal: true,
+  customFunctionToExecute: (data) => {
+    //const history = useHistory();
+    delete data.customFunctionToExecute;
+    history.replace({ pathname: `/digit-ui/citizen/pt/assessment-details/${property.propertyId}`, state: { ...data } });
+  },
+  tenantId: Digit.ULBService.getStateId(),
+}
+const { id: applicationNumber } = useParams();
+const [isEnableLoader, setIsEnableLoader] = useState(false);
+const [isWarningPop, setWarningPopUp] = useState(false);
+const businessService="PT"
+const state = Digit.ULBService.getStateId();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { data: UpdateNumberConfig } = Digit.Hooks.useCommonMDMS(Digit.ULBService.getStateId(),"PropertyTax",["UpdateNumber"],{
     select: (data) => {
@@ -99,7 +118,18 @@ const PropertyInformation = () => {
       setProperty(property);
     }
   }, [enableAudit, auditData]);
+const handleClick=()=>{
 
+  setshowModal(true)
+}
+const onBifurcate = () =>{
+  console.log("property.onBifurcate==",property.length,property)
+  history.push({pathname: "/digit-ui/citizen/pt/property/new-application", state: {propertyDetails: property, action: 'BIFURCATION'}})
+}
+const onAppeal =()=>{
+  history.push(`/digit-ui/citizen/pt/property/appeal/${property?.propertyId}`);
+
+}
   sessionStorage.setItem("pt-property", JSON.stringify(property));
   let docs = [];
   docs = property?.documents;
@@ -156,6 +186,112 @@ const PropertyInformation = () => {
     return <LinkButton style={style} label={t("PT_OWNER_HISTORY")} className="check-page-link-button" onClick={routeTo} />;
   };
   const UpdatePropertyNumberComponent = Digit?.ComponentRegistryService?.getComponent("UpdateNumber");
+ 
+  const submitAction = async (data, nocData = false, isOBPS = {}) => {
+
+      setIsEnableLoader(true);
+      if (typeof data?.customFunctionToExecute === "function") {
+        console.log("customFunctionToExecute")
+       
+        data?.customFunctionToExecute({ ...data });
+       
+      }
+      if (nocData !== false && nocMutation) {
+        const nocPrmomises = nocData?.map((noc) => {
+          return nocMutation?.mutateAsync(noc);
+        });
+        try {
+          setIsEnableLoader(true);
+          const values = await Promise.all(nocPrmomises);
+          values &&
+            values.map((ob) => {
+              Digit.SessionStorage.del(ob?.Noc?.[0]?.nocType);
+            });
+        } catch (err) {
+          setIsEnableLoader(false);
+          let errorValue = err?.response?.data?.Errors?.[0]?.code
+            ? t(err?.response?.data?.Errors?.[0]?.code)
+            : err?.response?.data?.Errors?.[0]?.message || err;
+          closeModal();
+          setShowToast({ key: "error", error: { message: errorValue } });
+          setTimeout(closeToast, 5000);
+          return;
+        }
+      }
+      // if (mutate) {
+      //   setIsEnableLoader(true);
+      //   mutate(data, {
+      //     onError: (error, variables) => {
+      //       setIsEnableLoader(false);
+      //       setShowToast({ key: "error", error });
+      //       setTimeout(closeToast, 5000);
+      //     },
+      //     onSuccess: (data, variables) => {
+      //       sessionStorage.removeItem("WS_SESSION_APPLICATION_DETAILS");
+      //       setIsEnableLoader(false);
+      //       if (isOBPS?.bpa) {
+      //         data.selectedAction = selectedAction;
+      //         history.replace(`/digit-ui/employee/obps/response`, { data: data });
+      //       }
+      //       if (isOBPS?.isStakeholder) {
+      //         data.selectedAction = selectedAction;
+      //         history.push(`/digit-ui/employee/obps/stakeholder-response`, { data: data });
+      //       }
+      //       if (isOBPS?.isNoc) {
+      //         history.push(`/digit-ui/employee/noc/response`, { data: data });
+      //       }
+      //       if (data?.Amendments?.length > 0 ){
+      //         //RAIN-6981 instead just show a toast here with appropriate message
+      //       //show toast here and return 
+      //         //history.push("/digit-ui/employee/ws/response-bill-amend", { status: true, state: data?.Amendments?.[0] })
+              
+      //         if(variables?.AmendmentUpdate?.workflow?.action.includes("SEND_BACK")){
+      //           setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_SEND_BACK_UPDATE_SUCCESS")})
+      //         } else if (variables?.AmendmentUpdate?.workflow?.action.includes("RE-SUBMIT")){
+      //           setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_RE_SUBMIT_UPDATE_SUCCESS") })
+      //         } else if (variables?.AmendmentUpdate?.workflow?.action.includes("APPROVE")){
+      //           setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_APPROVE_UPDATE_SUCCESS") })
+      //         }
+      //         else if (variables?.AmendmentUpdate?.workflow?.action.includes("REJECT")){
+      //           setShowToast({ key: "success", label: t("ES_MODIFYWSCONNECTION_REJECT_UPDATE_SUCCESS") })
+      //         }            
+      //         return
+      //       }
+      //       setShowToast({ key: "success", action: selectedAction });
+      //       clearDataDetails && setTimeout(clearDataDetails, 3000);
+      //       setTimeout(closeToast, 5000);
+      //       queryClient.clear();
+      //       queryClient.refetchQueries("APPLICATION_SEARCH");
+      //       //push false status when reject
+            
+      //     },
+      //   });
+      // }
+  
+      closeModal();
+ 
+  };
+  if (isLoading || isEnableLoader) {
+    return <Loader />;
+  }
+  const closeModal = () => {
+    console.log("closeModal")
+    setshowModal(false)
+  };
+
+  const closeWarningPopup = () => {
+    setWarningPopUp(false);
+  };
+  const handleClickOnPtPgr=()=>{
+  sessionStorage.setItem("type","PT" );
+  sessionStorage.setItem("pincode", data.Properties[0].address.pincode);
+  sessionStorage.setItem("tenantId", data.Properties[0].address.tenantId);
+  sessionStorage.setItem("localityCode", data.Properties[0].address.locality.code);
+  sessionStorage.setItem("landmark", data.Properties[0].address.landmark); 
+  sessionStorage.setItem("propertyid",data.Properties[0].propertyId)  ;
+  history.push(`/digit-ui/citizen/pgr/create-complaint/complaint-type?propertyId=${property.propertyId}`);
+  }
+  console.log("data78", data)
   return (
     <React.Fragment>
       <Header>{t("PT_PROPERTY_INFORMATION")}</Header>
@@ -164,7 +300,14 @@ const PropertyInformation = () => {
           <StatusTable>
             <Row className="border-none" label={t("PT_PROPERTY_PTUID")} text={`${property.propertyId || t("CS_NA")}`} /* textStyle={{ whiteSpace: "pre" }} */ />
             <Row className="border-none" label={t("CS_COMMON_TOTAL_AMOUNT_DUE")} text={`₹${t(getBillAmount(fetchBillData))}`} />
+            <LinkLabel
+            onClick={() => history.push({ pathname: `/digit-ui/citizen/pt/payment-details/${property?.propertyId}`})}
+            style={isMobile ? { marginTop: "15px", marginLeft: "0px" } : { marginTop: "15px" }}
+          >
+            {t("PT_VIEW_PAYMENT")}
+          </LinkLabel>
           </StatusTable>
+          <ArrearSummary bill={fetchBillData.Bill?.[0]} />
           <CardSubHeader>{t("PT_PROPERTY_ADDRESS_SUB_HEADER")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_PINCODE")} text={`${property.address?.pincode || t("CS_NA")}`} />
@@ -188,6 +331,8 @@ const PropertyInformation = () => {
             <Row className="border-none" label={t("PT_COMMON_PROPERTY_TYPE")} text={`${t(getPropertyTypeLocale(property?.propertyType))}` || t("CS_NA")} />
             <Row className="border-none" label={t("PT_ASSESMENT1_PLOT_SIZE")} text={`${property.landArea} sq.ft` || t("CS_NA")} />
             <Row className="border-none" label={t("PT_ASSESMENT_INFO_NO_OF_FLOOR")} text={`${property.noOfFloors || t("CS_NA")}`} />
+            {/* <Row className="border-none" label={t("PT_ASSESSMENT1_ELECTRICITY")} text={`${property?.additionalDetails?.electricity || t("CS_NA")}`} />
+            <Row className="border-none" label={t("PT_ASSESSMENT1_UID")} text={`${property?.additionalDetails?.uid || t("CS_NA")}`} /> */}
           </StatusTable>
           <div>
             {Array.isArray(units) &&
@@ -197,7 +342,7 @@ const PropertyInformation = () => {
                   {(flrno !== unit?.floorNo ? (i = 1) : (i = i + 1)) && i === 1 && (
                     <CardSubHeader>{t(`PROPERTYTAX_FLOOR_${unit?.floorNo}`)}</CardSubHeader>
                   )}
-                  <div style={{ border: "groove", marginBottom:"10px" }}>
+                  <div style={{ border: "groove", marginBottom:"10px", borderRadius: "6px" }}>
                     <CardSubHeader>
                       {t("ES_APPLICATION_DETAILS_UNIT")} {i}
                     </CardSubHeader>
@@ -226,10 +371,10 @@ const PropertyInformation = () => {
               ))}
           </div>
           <CardSubHeader>{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
-          <div>
+          <div className="owner-details">
             {Array.isArray(owners) &&
-              owners.map((owner, index) => (
-                <div key={index}>
+              owners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
+                <div key={index} className="owner-details-child">
                   <CardSubHeader>
                     {owners.length != 1 && (
                       <span>
@@ -274,8 +419,8 @@ const PropertyInformation = () => {
                     {specialCategoryDoc && specialCategoryDoc.length>0 && <Row className="border-none" label={t("PT_SPL_CAT_DOC_TYPE")} text={`${t(stringReplaceAll(specialCategoryDoc[index]?.documentType,".","_"))}` || t("NA")} />}
                     {specialCategoryDoc && specialCategoryDoc.length>0 && <Row className="border-none" label={t("PT_SPL_CAT_DOC_ID")} text={`${t(specialCategoryDoc[index]?.id)}` || t("CS_NA")} />}
                     <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={owner?.emailId ? owner?.emailId:`${(t("CS_NA"))}`} />
-                    <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={`${t(owner?.correspondenceAddress)}` || t("CS_NA")} />
-                    {specialCategoryDoc?.length == 0 && <Row className="border-none"  label={t("PT_SPL_CAT")} text={t("CS_NONE")} /> }
+                    <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={`${t(owner?.permanentAddress)}` || t("CS_NA")} />
+                    {specialCategoryDoc?.length == 0 && <Row className="border-none"  label={t("PT_SPL_CAT")} text={(owner?.ownerType || t("CS_NA"))} /> }
                   </StatusTable>
                 </div>
               ))}
@@ -291,11 +436,40 @@ const PropertyInformation = () => {
             )}
           </div>
           <div>
+          {/* {property?.status === "ACTIVE" && !enableAudit && (
+            <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>               
+            <button className="submit-bar" type="button" onClick={handleClickOnPtPgr} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("PT_PGR")}</button>
+            </div>              
+            )} */}
             {property?.status === "ACTIVE" && !enableAudit && (
               <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
                 <Link to={{ pathname: `/digit-ui/citizen/pt/property/edit-application/action=UPDATE/${property.propertyId}` }}>
                   <SubmitBar label={t("PT_UPDATE_PROPERTY_BUTTON")} />
                 </Link>
+              </div>
+            )}
+            {property?.status === "ACTIVE" && !enableAudit && (
+              <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
+               
+                  {/* <SubmitBar label="Asses Property" onClick={handleClick} /> */}
+                  <button className="submit-bar" type="button" onClick={handleClick} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("PT_SELF_ASSES_PROPERTY")}</button>
+               
+              </div>
+            )}
+            {property?.status === "ACTIVE" && !enableAudit && getBillAmount(fetchBillData)==0 && (
+              <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
+               
+                  {/* <SubmitBar label="Asses Property" onClick={handleClick} /> */}
+                  <button className="submit-bar" type="button" onClick={onBifurcate} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("Separation of Ownership")}</button>
+               
+              </div>
+            )}
+            {property?.status === "ACTIVE" && !enableAudit && getBillAmount(fetchBillData)==0 && (
+              <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
+               
+                  {/* <SubmitBar label="Asses Property" onClick={handleClick} /> */}
+                  <button className="submit-bar" type="button" onClick={onAppeal} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("Appeal")}</button>
+               
               </div>
             )}
           </div>
@@ -330,6 +504,23 @@ const PropertyInformation = () => {
               ></UpdatePropertyNumberComponent>
             </PopUp>
           )}
+           {showModal ? (
+            <ActionModal
+              t={t}
+              action={selectedAction}
+              tenantId={tenantId}
+              state={state}
+              id={property.propertyId}
+              applicationDetails={property}
+              applicationData={property}
+              closeModal={closeModal}
+              submitAction={submitAction}
+         
+              businessService={businessService}
+             
+              moduleCode={moduleCode}
+            />
+          ) : null}
         </Card>
       </div>
     </React.Fragment>

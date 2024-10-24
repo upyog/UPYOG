@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { EditPencilIcon, LogoutIcon } from "@egovernments/digit-ui-react-components";
+import { EditPencilIcon, LogoutIcon } from "@upyog/digit-ui-react-components";
 import TopBar from "./TopBar";
 import { useHistory } from "react-router-dom";
 import SideBar from "./SideBar";
@@ -40,6 +40,7 @@ const TopBarSideBar = ({
     { name: t("EDIT_PROFILE"), icon: <EditPencilIcon className="icon" />, func: userProfile },
     { name: t("CORE_COMMON_LOGOUT"), icon: <LogoutIcon className="icon" />, func: handleLogout },
   ];
+  console.log("TopBarSideBar--mobileView==",mobileView,showSidebar)
   return (
     <React.Fragment>
       <TopBar

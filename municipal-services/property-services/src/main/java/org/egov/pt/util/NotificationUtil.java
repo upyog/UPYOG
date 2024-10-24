@@ -177,6 +177,16 @@ public class NotificationUtil {
         }
         return smsRequest;
     }
+    
+  public List<SMSRequest> createSMSRequestNew(String message, Map<String, String> mobileNumberToOwnerName,String templateId) {
+    	
+        List<SMSRequest> smsRequest = new LinkedList<>();
+        for (Map.Entry<String, String> entryset : mobileNumberToOwnerName.entrySet()) {
+            String customizedMsg = message.replace(NOTIFICATION_OWNERNAME, entryset.getValue());
+            smsRequest.add(new SMSRequest(entryset.getKey(), customizedMsg,templateId));
+        }
+        return smsRequest;
+    }
 
 
     /**
@@ -722,6 +732,15 @@ public class NotificationUtil {
         return getMessageTemplate(msgCode, completeMsgs)
                 .replace(NOTIFICATION_PROPERTYID, property.getPropertyId()).replace(NOTIFICATION_APPID,
                         property.getAcknowldgementNumber()).replace(FEEDBACK_URL, getShortenedUrl(feedbackUrl));
+
+    }
+    
+    
+    public String getMsgForMutaiotnNotification(Property property, String completeMsgs, String serviceType,String msgCode) {
+
+        String feedbackUrl = config.getUiAppHost()+config.getCitizenFeedbackLink();
+        return getMessageTemplate(msgCode, completeMsgs);
+        
 
     }
 

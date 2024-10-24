@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
@@ -13,11 +14,13 @@ import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.pg.config.AppProperties;
 import org.egov.pg.constants.PgConstants;
 import org.egov.pg.models.PgDetail;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.repository.PgDetailRepository;
 import org.egov.pg.service.Gateway;
+import org.egov.pg.utils.CommonUtils;
 import org.egov.pg.utils.Utils;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +52,12 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class PayGovGateway implements Gateway {
+	
+	@Autowired
+	CommonUtils pgutils;
+	
+	@Autowired
+	AppProperties configs;
 
     private static final String UNABLE_TO_FETCH_STATUS_FROM_PAY_GOV_GATEWAY = "Unable to fetch status from PayGov gateway";
     private static final String UNABLE_TO_FETCH_STATUS = "UNABLE_TO_FETCH_STATUS";
@@ -92,6 +101,7 @@ public class PayGovGateway implements Gateway {
     private final String PAYGOV_MERCHENT_SECERET_KEY;
     private final String PAYGOV_MERCHENT_USER;
     private final String PAYGOV_MERCHENT_PASSWORD;
+    private final String EGOV_SERVER_HOSTNAME;
 
     /**
      * Initialize by populating all required config parameters
@@ -123,6 +133,7 @@ public class PayGovGateway implements Gateway {
 
         requestInfo = new RequestInfo("", "", 0L, "", "", "", "", "", "", null, userInfo);
         this.pgDetailRepository=pgDetailRepository;
+        EGOV_SERVER_HOSTNAME = environment.getRequiredProperty("egov.server.hostname");
     }
 
     @Override
@@ -151,6 +162,7 @@ public class PayGovGateway implements Gateway {
         queryMap.put(SERVICE_ID_KEY, getModuleCode(transaction));
         String domainName =  returnUrl.replaceAll("http(s)?://|www\\.|/.*", "");
         String citizenReturnURL = returnUrl.split(domainName)[1];
+       // citizenReturnURL = EGOV_SERVER_HOSTNAME+citizenReturnURL;
         log.info("returnUrl::::"+getReturnUrl(citizenReturnURL, REDIRECT_URL));
         queryMap.put(SUCCESS_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
         queryMap.put(FAIL_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
@@ -223,20 +235,21 @@ public class PayGovGateway implements Gateway {
 
     private String getModuleCode(Transaction transaction) {
         String moduleCode =transaction.getModule();
+        
         if(!StringUtils.isEmpty(moduleCode)) {
-            /*
-             * if(transaction.getModule().length() < 6) { moduleCode= transaction.getModule() +
-             * moduleCode.substring(transaction.getModule().length()-1); }else { moduleCode =transaction.getModule(); }
-             */
-            /*if (transaction.getModule().equals("BPAREG")) {
-                moduleCode = "BPA001";
-            } else {
-                moduleCode = transaction.getModule().concat("001").toUpperCase();
-            }*/
-            
+          
             if (moduleCode.startsWith("PT"))
             {
-                moduleCode = "PT001";
+                //moduleCode = "MMPTBTEST01";
+            	moduleCode = "MNPTB";
+            	
+            	 List<String> masterNames = new ArrayList<>(
+         				Arrays.asList("tenants"));
+                 
+                 Map<String, List<String>> codes = pgutils.getAttributeValues(configs.getStateLevelTenantId(), "tenant", masterNames,
+         				"[?(@.city.districtTenantCode== '"+transaction.getTenantId()+"')].city.code", "$.MdmsRes.tenant", requestInfo);
+                 
+                 moduleCode=moduleCode.concat(codes.get("tenants").get(0));
             }
             else if (moduleCode.startsWith("SW"))
             {
@@ -267,7 +280,8 @@ public class PayGovGateway implements Gateway {
         {
             moduleCode = "MCS001";
         } 	
-	log.info("Module::::"+moduleCode);    
+	log.info("Module::::"+moduleCode);
+		
         return moduleCode;
     }
 
@@ -366,6 +380,7 @@ public class PayGovGateway implements Gateway {
 
 
     private String getReturnUrl(String callbackUrl, String baseurl) {
+    	
         return UriComponentsBuilder.fromHttpUrl(baseurl).queryParam(ORIGINAL_RETURN_URL_KEY, callbackUrl).build().toUriString();
     }
 
@@ -668,5 +683,184 @@ public class PayGovGateway implements Gateway {
             throw new CustomException(UNABLE_TO_FETCH_STATUS, UNABLE_TO_FETCH_STATUS_FROM_PAY_GOV_GATEWAY);
         }
     }
+    
+    
+    public Transaction getTransformedTransaction(String resp, Transaction currentStatus, String secretKey ) 
+    		throws JsonParseException, JsonMappingException, IOException{
+
+    	
+    	
+        log.debug("Response Data "+resp);
+        if (resp!=null) {
+
+            //Validate the response against the checksum
+            PayGovUtils.validateTransaction(resp, secretKey);
+
+            String[] splitArray = resp.split("[|]");
+            Transaction txStatus=null;
+            PayGovGatewayStatusResponse statusResponse = new PayGovGatewayStatusResponse(splitArray[0]);
+            int index =0;
+            switch (statusResponse.getTxFlag()) {
+                case "S":
+    			/*For Success :
+    			SuccessFlag|MessageType|SurePayMerchantId|ServiceId|OrderId|CustomerId|TransactionAmount|
+    			CurrencyCode|PaymentMode|ResponseDateTime|SurePayTxnId|
+    			BankTransactionNo|TransactionStatus|AdditionalInfo1|AdditionalInfo2|AdditionalInfo3|
+    			AdditionalInfo4|AdditionalInfo5|ErrorCode|ErrorDescription|CheckSum*/
+                    /*
+                     * Sample Response :
+                     * S|0100|UATSCBSG0000000207|SecuChhawani|PB_PG_2020_07_20_000153_16|
+                     * 9eb6f880-c22f-4c1e-8f99-106bb3e0e60a|600.00|INR|UPI|20-07-2020|13557|pay_FGkHC8M8edSAmW|A|111111|111111|111111|111111|111111|||
+                     */
+
+                    statusResponse.setMessageType(splitArray[++index]);
+                    statusResponse.setSurePayMerchantId(splitArray[++index]);
+                    statusResponse.setServiceId(splitArray[++index]);
+                    statusResponse.setOrderId(splitArray[++index]);
+                    statusResponse.setCustomerId(splitArray[++index]);
+                    statusResponse.setTransactionAmount(splitArray[++index]);
+                    statusResponse.setCurrencyCode(splitArray[++index]);
+                    statusResponse.setPaymentMode(splitArray[++index]);
+                    statusResponse.setResponseDateTime(splitArray[++index]);
+                    statusResponse.setSurePayTxnId(splitArray[++index]);
+                    statusResponse.setBankTransactionNo(splitArray[++index]);
+                    statusResponse.setTransactionStatus(splitArray[++index]);
+                    statusResponse.setAdditionalInfo1(splitArray[++index]);
+                    statusResponse.setAdditionalInfo2(splitArray[++index]);
+                    statusResponse.setAdditionalInfo3(splitArray[++index]);
+                    statusResponse.setAdditionalInfo4(splitArray[++index]);
+                    statusResponse.setAdditionalInfo5(splitArray[++index]);
+                    statusResponse.setErrorCode(splitArray[++index]);
+                    statusResponse.setErrorDescription(splitArray[++index]);
+                    statusResponse.setCheckSum(splitArray[++index]);
+                    //Build tx Response object
+                    txStatus = Transaction.builder().txnId(currentStatus.getTxnId())
+                            .txnAmount(Utils.formatAmtAsRupee(statusResponse.getTransactionAmount()))
+                            .txnStatus(Transaction.TxnStatusEnum.SUCCESS)
+                            .txnStatusMsg(PgConstants.TXN_SUCCESS)
+                            .gatewayTxnId(statusResponse.getSurePayTxnId())
+                            .bankTransactionNo(statusResponse.getBankTransactionNo())
+                            .gatewayPaymentMode(statusResponse.getPaymentMode())
+                            .gatewayStatusCode(statusResponse.getTransactionStatus()).gatewayStatusMsg(statusResponse.getTransactionStatus())
+                            .responseJson(resp).build();
+
+                    break;
+                case "F":
+    			/*
+    			 * FailureFlag|SurePayMerchantId|OrderId|ServiceId|PaymentMode|BankTransactionNo|
+    			 ErrorCode|ErrorMessage|ErrorDescription|ResponseDateTime|CheckSum
+
+    			 F|UATSCBSG0000000207|PB_PG_2020_07_22_000183_35|SecuChhawani|Wallet|
+    			 pay_FHWjr1cdBNUt7y|400|PAYMENT_DECLINED_A|Payment failed|2020-07-22 17:06:06.366|1326393779
+    			 */
+                    statusResponse.setSurePayMerchantId(splitArray[++index]);
+                    statusResponse.setOrderId(splitArray[++index]);
+                    statusResponse.setServiceId(splitArray[++index]);
+                    statusResponse.setPaymentMode(splitArray[++index]);
+                    statusResponse.setBankTransactionNo(splitArray[++index]);
+                    statusResponse.setErrorCode(splitArray[++index]);
+                    statusResponse.setErrorMessage(splitArray[++index]);
+                    statusResponse.setErrorDescription(splitArray[++index]);
+                    statusResponse.setResponseDateTime(splitArray[++index]);
+                    statusResponse.setCheckSum(splitArray[++index]);
+                    statusResponse.setTransactionAmount(currentStatus.getTxnAmount());
+                    String txStatusMsg =PgConstants.TXN_FAILURE_GATEWAY;
+                    if(statusResponse.getErrorMessage().equalsIgnoreCase("PAYMENT_DECLINED_A")) {
+                        txStatusMsg="Transaction Failed At Aggregator";
+                    }else if(statusResponse.getErrorMessage().equalsIgnoreCase("PAYMENT_DECLINED_M")) {
+                        txStatusMsg="Transaction Failed At Merchant ";
+                    }else if(statusResponse.getErrorMessage().equalsIgnoreCase("PAYMENT_DECLINED_S")) {
+                        txStatusMsg="Transaction Failed At Surepay";
+                    }
+
+                    //Build tx Response object
+                    txStatus = Transaction.builder().txnId(currentStatus.getTxnId())
+                            .txnStatus(Transaction.TxnStatusEnum.FAILURE)
+                            .txnStatusMsg(txStatusMsg)
+                            .gatewayTxnId(statusResponse.getSurePayTxnId())
+                            .gatewayPaymentMode(statusResponse.getPaymentMode())
+                            .bankTransactionNo(statusResponse.getBankTransactionNo())
+                            .gatewayStatusCode(statusResponse.getErrorCode()).gatewayStatusMsg(statusResponse.getErrorMessage())
+                            .responseJson(resp).build();
+                    break;
+
+                case "D":
+                    index =0;
+    			/*For Failure :
+    			 FailureFlag|SurePayMerchantId|OrderId|ServiceId|PaymentMode|BankTransactionNo|
+    			 ErrorCode|ErrorMessage|ErrorDescription|ResponseDateTime|CheckSum
+
+    			 D|UATCBLSG0000000205|PB_PG_2020_07_22_000167_61|
+    			 LuckChhawani||PAYMENT_DECLINED_M|2020-07-22 09:55:56.236|1250432021
+
+    			 */
+                    statusResponse.setSurePayMerchantId(splitArray[++index]);
+                    statusResponse.setOrderId(splitArray[++index]);
+                    statusResponse.setServiceId(splitArray[++index]);
+                    statusResponse.setPaymentMode(splitArray[++index]);
+                    //statusResponse.setBankTransactionNo(splitArray[++index]);
+                    //statusResponse.setErrorCode(splitArray[++index]);
+                    statusResponse.setErrorMessage(splitArray[++index]);
+                    //statusResponse.setErrorDescription(splitArray[++index]);
+                    statusResponse.setResponseDateTime(splitArray[++index]);
+                    statusResponse.setCheckSum(splitArray[++index]);
+                    //Build tx Response object
+                    String txStatusMsgDecline =PgConstants.TXN_FAILURE_GATEWAY;
+                    if(statusResponse.getErrorMessage().equalsIgnoreCase("PAYMENT_DECLINED_A")) {
+                        txStatusMsgDecline="Transaction Failed At Aggregator";
+                    }else if(statusResponse.getErrorMessage().equalsIgnoreCase("PAYMENT_DECLINED_M")) {
+                        txStatusMsgDecline="Transaction Failed At Merchant ";
+                    }else if(statusResponse.getErrorMessage().equalsIgnoreCase("PAYMENT_DECLINED_S")) {
+                        txStatusMsgDecline="Transaction Failed At Surepay";
+                    }
+                    txStatus = Transaction.builder().txnId(currentStatus.getTxnId())
+                            .txnStatus(Transaction.TxnStatusEnum.FAILURE)
+                            .txnStatusMsg(txStatusMsgDecline)
+                            .gatewayTxnId(statusResponse.getSurePayTxnId())
+                            .gatewayPaymentMode(statusResponse.getPaymentMode())
+                            .bankTransactionNo(statusResponse.getBankTransactionNo())
+                            .gatewayStatusCode(statusResponse.getTxFlag()).gatewayStatusMsg(statusResponse.getErrorMessage())
+                            .responseJson(resp).build();
+                    break;
+                case "I":
+    			/* For Initiated :
+    			 InitiatedFlag|SurePayMerchantId|OrderId|ServiceId|PaymentMode|ErrorDescription|
+    			 ResponseDateTime|CheckSum
+
+    			 I|UATSCBSG0000000207|PB_PG_2020_07_22_000168_45|SecuChhawani||
+    			 ORDER_INITIATED|2020-07-22 10:27:28.312|481313839
+    			 */
+                    statusResponse.setSurePayMerchantId(splitArray[++index]);
+                    statusResponse.setOrderId(splitArray[++index]);
+                    statusResponse.setServiceId(splitArray[++index]);
+                    statusResponse.setPaymentMode(splitArray[++index]);
+                    statusResponse.setErrorDescription(splitArray[++index]);
+                    statusResponse.setResponseDateTime(splitArray[++index]);
+                    statusResponse.setCheckSum(splitArray[++index]);
+                    //Build tx Response object
+                    txStatus = Transaction.builder().txnId(currentStatus.getTxnId())
+                            .txnStatus(Transaction.TxnStatusEnum.PENDING)
+                            .gatewayPaymentMode(statusResponse.getPaymentMode())
+                            .gatewayStatusCode(statusResponse.getTxFlag())
+                            .gatewayStatusMsg(statusResponse.getErrorDescription())
+                            .responseJson(resp).build();
+                    break;
+                default :
+                    throw new CustomException(UNABLE_TO_FETCH_STATUS, "Unable to fetch Status of transaction");
+            }
+            log.info("Encoded value "+resp);
+            log.info("PayGovGatewayStatusResponse --> "+statusResponse);
+            log.info("Transaction --> "+txStatus);
+            return txStatus;
+        } else {
+            log.error("Received error response from status call : " + resp);
+            throw new CustomException(UNABLE_TO_FETCH_STATUS, UNABLE_TO_FETCH_STATUS_FROM_PAY_GOV_GATEWAY);
+        }
+    
+    	
+    }
+
+   
+
 
 }

@@ -968,7 +968,8 @@ public class MigrationService {
                 PTConstants.MDMS_PT_PROPERTYTYPE,
                 PTConstants.MDMS_PT_OWNERSHIPCATEGORY,
                 PTConstants.MDMS_PT_OWNERTYPE,
-                PTConstants.MDMS_PT_USAGECATEGORY
+                PTConstants.MDMS_PT_USAGECATEGORY,
+                PTConstants.MDMS_PT_VACANTUSAGECATEGORY,
         };
 
         Map<String, List<String>> codes = getAttributeValues(tenantId, PTConstants.MDMS_PT_MOD_NAME,

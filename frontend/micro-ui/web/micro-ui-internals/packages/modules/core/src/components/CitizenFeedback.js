@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { RatingAndFeedBack } from "../config/RatingAndFeedback";
 
-import { Card, CardHeader, CardLabel, CheckBox, TextArea, SubmitBar, Rating, CloseSvg, Loader, CardText, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { Card, CardHeader, CardLabel, CheckBox, TextArea, SubmitBar, Rating, CloseSvg, Loader, CardText, CardLabelError } from "@upyog/digit-ui-react-components";
 
 const CitizenFeedback = ({popup = false, onClose, setShowToast, data}) => {
   const { t } = useTranslation();

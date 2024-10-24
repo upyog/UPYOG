@@ -5,7 +5,7 @@ import getRootReducer from "./redux/reducers";
 import CitizenApp from "./pages/citizen";
 
 import EmployeeApp from "./EmployeeApp";
-import { ComplaintIcon, CitizenHomeCard, Loader } from "@egovernments/digit-ui-react-components";
+import { ComplaintIcon, CitizenHomeCard, Loader } from "@upyog/digit-ui-react-components";
 import { PGR_CITIZEN_CREATE_COMPLAINT } from "./constants/Citizen";
 import { useTranslation } from "react-i18next";
 import { LOCALE } from "./constants/Localization";
