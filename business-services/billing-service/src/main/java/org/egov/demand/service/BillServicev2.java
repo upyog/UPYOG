@@ -84,6 +84,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
@@ -329,8 +330,8 @@ public class BillServicev2 {
 				billsToBeReturned.add(bill);
 			else {
 				if(bill.getBillDetails().get(0).isPreviousYearAssesment())
+			//	oldBillToBeExpired.put(bill.getId(), bill);
 				cosnumerCodesToBeExpired.add(bill.getConsumerCode());
-				oldBillToBeExpired.put(bill.getId(), bill);
 				
 			}
 				
@@ -428,7 +429,8 @@ public class BillServicev2 {
 				billsToBeReturned.add(b.getValue());
 			}
 			
-			
+			if(null==finalResponse)
+			finalResponse = new BillResponseV2();
 			finalResponse.setBill(billsToBeReturned);
 			return finalResponse;
 		}
@@ -539,11 +541,26 @@ public class BillServicev2 {
 
 		/* Fetching demands for the given bill search criteria */
 		List<Demand> demands = demandService.getDemands(demandCriteria, requestInfo);
-
+		List<Demand> udpdatedDemands = new ArrayList<>();
+		for(Demand d:demands) {
+			
+			Date startDate = new Date(d.getTaxPeriodFrom());
+			Date endDate = new Date(d.getTaxPeriodTo());
+			Calendar c = Calendar.getInstance();
+			c.setTime(startDate);
+			Integer assesmentDoneForYearStart = c.get(Calendar.YEAR);
+			c = Calendar.getInstance();
+			c.setTime(endDate);
+			Integer assesmentDoneForYearEnd = c.get(Calendar.YEAR);
+			if(Long.parseLong(appProps.getFinYearStart().toString())==assesmentDoneForYearStart && Long.parseLong(appProps.getFinYearEnd().toString())==assesmentDoneForYearEnd) {
+				
+				udpdatedDemands.add(d);
+			}
+		}
 		List<BillV2> bills;
 
-		if (!demands.isEmpty())
-			bills = prepareBill(demands, requestInfo, billCriteria.getModeOfPayment());
+		if (!udpdatedDemands.isEmpty() )
+			bills = prepareBill(udpdatedDemands, requestInfo, billCriteria.getModeOfPayment());
 		else
 			return getBillResponse(Collections.emptyList());
 
