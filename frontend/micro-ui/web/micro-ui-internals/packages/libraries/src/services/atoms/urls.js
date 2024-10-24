@@ -125,6 +125,12 @@ const Urls = {
     slot_search: "/chb-services/booking/v1/_slot-search",
     estimateCreate: "/chb-services/booking/v1/_estimate"
   },
+  ads: {
+    create: "/adv-services/booking/v1/_create",
+    search: "/adv-services/booking/v1/_search",
+    update: "/adv-services/booking/v1/_update",
+    slot_search: "/adv-services/booking/v1/_slot-search",
+  },
 
   fnoc:{
     create:"/firenoc-services/v1/_create"

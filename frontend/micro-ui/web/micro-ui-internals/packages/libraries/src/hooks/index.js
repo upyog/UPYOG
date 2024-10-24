@@ -286,6 +286,7 @@ import useSpecialCategory from "./chb/useSpecialCategory";
 import useResidentType from "./chb/useResidentType";
 import usePurpose from "./chb/usePurpose";
 import useChbCreateAPI from "./chb/useChbCreateAPI";
+import useADSCreateAPI from "./ads/useADSCreateAPI";
 import useChbDocumentsMDMS from "./chb/useChbDocumentsMDMS";
 import useEWCreateAPI from "./ew/useEWCreateAPI";
 import useTenantsEW from "./ew/useTenants";
@@ -391,7 +392,8 @@ const chb={
 const ads={
   useTenants:useTenantsADS,
   useADSDocumentsMDMS,
-  useADSDocumentSearch
+  useADSDocumentSearch,
+  useADSCreateAPI
 }
 
 const fsm = {

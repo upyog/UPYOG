@@ -71,7 +71,7 @@ const ADSCreate = ({ parentRoute }) => {
   if (
     params &&
     Object.keys(params).length > 0 &&
-    window.location.href.includes("/searchads") &&
+    window.location.href.includes("/info") &&
     sessionStorage.getItem("docReqScreenByBack") !== "true"
   ) {
     clearParams();
@@ -112,6 +112,7 @@ const ADSCreate = ({ parentRoute }) => {
   });
   config.indexRoute = "searchads";
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("ADSCheckPage");
+  const ADSAcknowledgement = Digit?.ComponentRegistryService?.getComponent("ADSAcknowledgement");
   return (
     <Switch>
       {config.map((routeObj, index) => {
@@ -127,9 +128,9 @@ const ADSCreate = ({ parentRoute }) => {
       <Route path={`${match.path}/check`}>
         <CheckPage onSubmit={chbcreate} value={params} />
       </Route>
-      {/* <Route path={`${match.path}/acknowledgement`}>
-<CHBAcknowledgement data={params} onSuccess={onSuccess} />
-</Route> */}
+      <Route path={`${match.path}/acknowledgement`}>
+      <ADSAcknowledgement data={params} onSuccess={onSuccess} />
+      </Route>
       <Route>
         <Redirect to={`${match.path}/${config.indexRoute}`} />
       </Route>

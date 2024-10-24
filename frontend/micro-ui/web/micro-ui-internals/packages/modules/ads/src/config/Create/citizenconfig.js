@@ -37,7 +37,7 @@ export const citizenConfig = [
         hideInEmployee: true,
         isMandatory: true,
         texts: {
-          submitBarLabel: "CHB_COMMON_NEXT",
+          submitBarLabel: "ADS_COMMON_NEXT",
         },
       },
       {

@@ -22,7 +22,7 @@ const AdvertisementModuleCard = ({ imageSrc, title, location, poleNo, price, pat
         minWidth: "24%",
       }}
     >
-      <div style={{ width: "100%", height: "180px", position: "relative",padding: "10px"}}>
+      <div style={{ width: "100%", height: "200px", position: "relative",padding: "10px"}}>
         <img
           src={imageSrc}
           alt="Advertisement"
@@ -37,11 +37,11 @@ const AdvertisementModuleCard = ({ imageSrc, title, location, poleNo, price, pat
         />
       </div>
       <div style={{ padding: "10px" }}>
-        <p style={{ margin: "0", color: "red" }}>{light}</p>
+        <p style={{ margin: "0", color: "#a82227" }}>{light}</p>
         <h3 style={{ margin: "5px 0", fontWeight: "bold" }}>{title}</h3>
         <p>
           {location} (
-          <button type="button" style={{ marginLeft: "5px", color: "red" }}>
+          <button type="button" style={{ marginLeft: "5px", color: "#a82227" }}>
             View Map
           </button>
           )
@@ -61,7 +61,7 @@ const AdvertisementModuleCard = ({ imageSrc, title, location, poleNo, price, pat
           <button
             type="button"
             onClick={handleBookNow}
-            style={{ backgroundColor: "red", color: "white", border: "1px solid #ccc", padding: "5px 10px", borderRadius: "4px" }}
+            style={{ backgroundColor: "#a82227", color: "white", border: "1px solid #ccc", padding: "5px 10px", borderRadius: "4px" }}
           >
             Book Now
           </button>
