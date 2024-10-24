@@ -42,21 +42,29 @@ package org.egov.dx.web.controller;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.dx.service.eSignService;
 import org.egov.dx.util.Configurations;
 import org.egov.dx.web.models.RequestInfoWrapper;
 import org.egov.dx.web.models.ResponseInfoFactory;
+import org.egov.dx.web.models.Transaction;
+import org.egov.dx.web.models.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -104,5 +112,18 @@ public class EsignController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }  
+    
+    
+    @RequestMapping(value = "/filestoreId/v1/_search", method = RequestMethod.POST)
+    public ResponseEntity<TransactionResponse> searchSignedFilestore(@RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam Map<String, String> params) {
+
+		List<Transaction> transactions = esignService.getSignedFilestore(requestInfoWrapper.getRequestInfo(), requestInfoWrapper.getTransaction());
+		ResponseInfo responseInfo=ResponseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), null);
+
+		TransactionResponse response = new TransactionResponse(responseInfo, transactions);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
 }
     
