@@ -315,6 +315,7 @@ public class BillServicev2 {
 		Set<String> cosnumerCodesToBeExpired = new HashSet<>();
 		List<BillV2> billsToBeReturned = new ArrayList<>();
 		Boolean isBillExpired = false;
+		Map<String, BillV2> oldBillToBeExpired=new HashMap<>();
 
 		for (Entry<String, BillV2> entry : consumerCodeAndBillMap.entrySet()) {
 			BillV2 bill = entry.getValue();
@@ -326,8 +327,13 @@ public class BillServicev2 {
 			}
 			if (!isBillExpired)
 				billsToBeReturned.add(bill);
-			else
+			else {
+				if(bill.getBillDetails().get(0).isPreviousYearAssesment())
 				cosnumerCodesToBeExpired.add(bill.getConsumerCode());
+				oldBillToBeExpired.put(bill.getId(), bill);
+				
+			}
+				
 			cosnumerCodesNotFoundInBill.remove(entry.getKey());
 			isBillExpired = false;
 		}
@@ -401,9 +407,28 @@ public class BillServicev2 {
 			billRepository.updateBillStatus(UpdateBillCriteria.builder().statusToBeUpdated(BillStatus.EXPIRED)
 					.businessService(billCriteria.getBusinessService()).consumerCodes(cosnumerCodesToBeExpired)
 					.tenantId(billCriteria.getTenantId()).build());
-			BillResponseV2 finalResponse = generateBill(billCriteria, requestInfo);
+			
+			for(String s: cosnumerCodesToBeExpired) {
+				BillV2 b =   consumerCodeAndBillMap.get(s);
+				if(oldBillToBeExpired.containsKey(b.getId())) {
+					
+					billCriteria.getConsumerCode().remove(s);
+				}
+			}
+			
+			BillResponseV2 finalResponse =null;
+			if(null!=billCriteria.getConsumerCode() && !billCriteria.getConsumerCode().isEmpty()) {
+				finalResponse = generateBill(billCriteria, requestInfo);
+				if(null!=finalResponse)
+				billsToBeReturned.addAll(finalResponse.getBill());
+			}
+			
 			// gen bill returns immutable empty list incase of zero bills
-			billsToBeReturned.addAll(finalResponse.getBill());
+			for(Map.Entry<String, BillV2> b: oldBillToBeExpired.entrySet()) {
+				billsToBeReturned.add(b.getValue());
+			}
+			
+			
 			finalResponse.setBill(billsToBeReturned);
 			return finalResponse;
 		}
