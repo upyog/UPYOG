@@ -46,14 +46,14 @@ public class EnrichmentService {
 		bookingDetail.setBookingStatus(BookingStatusEnum.valueOf(bookingDetail.getBookingStatus()).toString());
 		
 		
-		//Updating id and status for slot details
-		bookingDetail.getBookingSlotDetails().stream().forEach(slot -> {
-			slot.setBookingId(bookingId);
+		//Updating id and status for cart details
+		bookingDetail.getCartDetails().stream().forEach(cart -> {
+			cart.setBookingId(bookingId);
 			
-			slot.setSlotId(BookingUtil.getRandonUUID());
-			//Check Slot staus before setting TODO: booking_created
-			slot.setStatus(BookingStatusEnum.valueOf(slot.getStatus()).toString());
-			slot.setAuditDetails(auditDetails);
+			cart.setCartId(BookingUtil.getRandonUUID());
+			//Check cart staus before setting TODO: booking_created
+			cart.setStatus(BookingStatusEnum.valueOf(cart.getStatus()).toString());
+			cart.setAuditDetails(auditDetails);
 			
 			
 		});
@@ -120,8 +120,8 @@ public class EnrichmentService {
 		if(statusEnum != null) {
 			bookingDetail.setBookingStatus(statusEnum.toString());
 			//bookingDetail.setReceiptNo(paymentRequest.getPayment().getTransactionNumber());;
-			bookingDetail.getBookingSlotDetails().stream().forEach(slot -> {
-				slot.setStatus(statusEnum.toString());
+			bookingDetail.getCartDetails().stream().forEach(cart -> {
+				cart.setStatus(statusEnum.toString());
 			});
 		}
 		bookingRequest.getBookingApplication().setPaymentDate(auditDetails.getLastModifiedTime());

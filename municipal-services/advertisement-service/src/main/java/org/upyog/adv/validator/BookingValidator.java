@@ -11,7 +11,7 @@ import org.upyog.adv.config.BookingConfiguration;
 import org.upyog.adv.constants.BookingConstants;
 import org.upyog.adv.util.BookingUtil;
 import org.upyog.adv.web.models.BookingRequest;
-import org.upyog.adv.web.models.BookingSlotDetail;
+import org.upyog.adv.web.models.CartDetail;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,12 +36,9 @@ public class BookingValidator {
 		public void validateCreate(BookingRequest bookingRequest, Object mdmsData) {
 			log.info("validating master data for create booking request for applicant mobile no : "
 					+ bookingRequest.getBookingApplication().getApplicantDetail().getApplicantMobileNo());
-//			if (!isSameHallCode(bookingRequest.getBookingApplication().getBookingSlotDetails())) {
-//				throw new CustomException(BookingConstants.MULTIPLE_HALL_CODES_ERROR,
-//						"Booking of multiple halls are not allowed.");
-//			}
+
 			
-			if(!validateBookingDate(bookingRequest.getBookingApplication().getBookingSlotDetails())) {
+			if(!validateBookingDate(bookingRequest.getBookingApplication().getCartDetails())) {
 				throw new CustomException(BookingConstants.INVALID_BOOKING_DATE,
 						"Booking date is not valid.");
 			}
@@ -50,9 +47,9 @@ public class BookingValidator {
 			validateDuplicateDocuments(bookingRequest);
 		}
 
-		private boolean validateBookingDate(List<BookingSlotDetail> bookingSlotDetails) {
+		private boolean validateBookingDate(List<CartDetail> CartDetails) {
 			LocalDate currentDate = BookingUtil.getCurrentDate();
-			boolean isBookingDateValid = bookingSlotDetails.stream().anyMatch(slotDetail ->
+			boolean isBookingDateValid = CartDetails.stream().anyMatch(slotDetail ->
 			currentDate.isBefore(slotDetail.getBookingDate()));
 			return isBookingDateValid;
 		}
@@ -78,13 +75,6 @@ public class BookingValidator {
 
 		
 		
-		
-//		public boolean isSameHallCode(List<BookingSlotDetail> bookingSlotDetails) {
-//			String hallCode = bookingSlotDetails.get(0).getHallCode();
-//			boolean allSameCode = bookingSlotDetails.stream().allMatch(x -> x.getHallCode().equals(hallCode));
-//			return allSameCode;
-//
-//		}
 
 
 }
