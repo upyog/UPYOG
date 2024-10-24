@@ -38,7 +38,7 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		
 		streetVendingRepository.save(vendingRequest);
 		
-		return null;
+		return vendingRequest.getStreetVendingDetail();
 	}
 
 }
