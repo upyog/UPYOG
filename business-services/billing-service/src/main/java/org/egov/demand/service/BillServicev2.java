@@ -330,7 +330,7 @@ public class BillServicev2 {
 				billsToBeReturned.add(bill);
 			else {
 				if(bill.getBillDetails().get(0).isPreviousYearAssesment())
-			//	oldBillToBeExpired.put(bill.getId(), bill);
+					oldBillToBeExpired.put(bill.getId(), bill);
 				cosnumerCodesToBeExpired.add(bill.getConsumerCode());
 				
 			}
@@ -413,7 +413,28 @@ public class BillServicev2 {
 				BillV2 b =   consumerCodeAndBillMap.get(s);
 				if(oldBillToBeExpired.containsKey(b.getId())) {
 					
-					billCriteria.getConsumerCode().remove(s);
+					DemandCriteria OlddemandCriteria = DemandCriteria.builder()
+							.businessService(billCriteria.getBusinessService())
+							.tenantId(billCriteria.getTenantId())
+							.consumerCode(Stream.of(b.getConsumerCode()).collect(Collectors.toSet()))
+							.isPaymentCompleted(false).receiptRequired(false).demandId(Stream.of(b.getBillDetails().get(0).getDemandId()).collect(Collectors.toSet())).build();
+					
+					
+					DemandCriteria demandCriteriaNewDemand = DemandCriteria.builder()
+							.status(org.egov.demand.model.Demand.StatusEnum.ACTIVE.toString())
+							.businessService(billCriteria.getBusinessService())
+							.tenantId(billCriteria.getTenantId())
+							.consumerCode(Stream.of(b.getConsumerCode()).collect(Collectors.toSet()))
+							.isPaymentCompleted(false).receiptRequired(false).build();
+
+					/* Fetching demands for the given bill search criteria */
+					List<Demand> demandsOld = demandService.getDemands(OlddemandCriteria, requestInfo);
+					List<Demand> demandsnew = demandService.getDemands(demandCriteriaNewDemand, requestInfo);
+					
+					if(demandsnew.get(0).getTaxPeriodFrom()<=demandsOld.get(0).getTaxPeriodFrom()) {
+						billCriteria.getConsumerCode().remove(s);
+					}
+					
 				}
 			}
 			
@@ -542,25 +563,25 @@ public class BillServicev2 {
 		/* Fetching demands for the given bill search criteria */
 		List<Demand> demands = demandService.getDemands(demandCriteria, requestInfo);
 		List<Demand> udpdatedDemands = new ArrayList<>();
-		for(Demand d:demands) {
-			
-			Date startDate = new Date(d.getTaxPeriodFrom());
-			Date endDate = new Date(d.getTaxPeriodTo());
-			Calendar c = Calendar.getInstance();
-			c.setTime(startDate);
-			Integer assesmentDoneForYearStart = c.get(Calendar.YEAR);
-			c = Calendar.getInstance();
-			c.setTime(endDate);
-			Integer assesmentDoneForYearEnd = c.get(Calendar.YEAR);
-			if(Long.parseLong(appProps.getFinYearStart().toString())==assesmentDoneForYearStart && Long.parseLong(appProps.getFinYearEnd().toString())==assesmentDoneForYearEnd) {
-				
-				udpdatedDemands.add(d);
-			}
-		}
+		/*
+		 * for(Demand d:demands) {
+		 * 
+		 * Date startDate = new Date(d.getTaxPeriodFrom()); Date endDate = new
+		 * Date(d.getTaxPeriodTo()); Calendar c = Calendar.getInstance();
+		 * c.setTime(startDate); Integer assesmentDoneForYearStart =
+		 * c.get(Calendar.YEAR); c = Calendar.getInstance(); c.setTime(endDate); Integer
+		 * assesmentDoneForYearEnd = c.get(Calendar.YEAR);
+		 * if(Long.parseLong(appProps.getFinYearStart().toString())==
+		 * assesmentDoneForYearStart &&
+		 * Long.parseLong(appProps.getFinYearEnd().toString())==assesmentDoneForYearEnd)
+		 * {
+		 * 
+		 * udpdatedDemands.add(d); } }
+		 */
 		List<BillV2> bills;
 
-		if (!udpdatedDemands.isEmpty() )
-			bills = prepareBill(udpdatedDemands, requestInfo, billCriteria.getModeOfPayment());
+		if (!demands.isEmpty() )
+			bills = prepareBill(demands, requestInfo, billCriteria.getModeOfPayment());
 		else
 			return getBillResponse(Collections.emptyList());
 
