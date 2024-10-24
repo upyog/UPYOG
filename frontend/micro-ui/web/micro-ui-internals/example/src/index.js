@@ -70,13 +70,13 @@ const enabledModules = [
 const initTokens = (stateCode) => {
   const userType = window.sessionStorage.getItem("userType") || process.env.REACT_APP_USER_TYPE || "CITIZEN";
 
-  const token = window.localStorage.getItem("token")|| process.env[`REACT_APP_${userType}_TOKEN`];
+  const token = sessionStorage.getItem("token")|| process.env[`REACT_APP_${userType}_TOKEN`];
  
-  const citizenInfo = window.localStorage.getItem("Citizen.user-info")
+  const citizenInfo = JSON.parse(sessionStorage.getItem("Citizen.user-info"));
  
   const citizenTenantId = window.localStorage.getItem("Citizen.tenant-id") || stateCode;
 
-  const employeeInfo = window.localStorage.getItem("Employee.user-info");
+  const employeeInfo = JSON.parse(sessionStorage.getItem("Employee.user-info"));
   const employeeTenantId = window.localStorage.getItem("Employee.tenant-id");
 
   const userTypeInfo = userType === "CITIZEN" || userType === "QACT" ? "citizen" : "employee";
