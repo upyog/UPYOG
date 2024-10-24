@@ -3,7 +3,7 @@ import ApplicationTable from "./ApplicationTable";
 import { CardSubHeader, DeleteIcon, Modal } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-
+//Todo: Work in progress for cart details.
 const Close = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
     <path d="M0 0h24v24H0V0z" fill="none" />

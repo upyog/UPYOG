@@ -1,7 +1,7 @@
 import Urls from "../atoms/urls";
 import { Request } from "../atoms/Utils/Request";
 
- 
+// This file defines the ADSServices object, providing methods for creating, searching, and updating ADS resources through structured API requests.
 export const ADSServices= {
   
   create: (details, tenantId) =>

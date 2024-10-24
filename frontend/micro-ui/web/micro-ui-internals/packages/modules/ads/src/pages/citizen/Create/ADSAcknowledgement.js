@@ -3,12 +3,7 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
 import { ADSDataConvert } from "../../../utils";
-/**
- * ADSAcknowledgement component displays the acknowledgment of an advertisement 
- * booking request. It shows the status of the booking operation, including 
- * success or failure messages.The component handles the mutation of 
- * booking data and manages loading states effectively.
- */
+
 const GetActionMessage = (props) => {
   const { t } = useTranslation();
   if (props.isSuccess) {
@@ -36,7 +31,12 @@ const BannerPicker = (props) => {
   );
 };
 
-
+/**
+ * ADSAcknowledgement component displays the acknowledgment of an advertisement 
+ * booking request. It shows the status of the booking operation, including 
+ * success or failure messages.The component handles the mutation of 
+ * booking data and manages loading states effectively.
+ */
 const ADSAcknowledgement = ({ data, onSuccess }) => {
   const { t } = useTranslation();
 

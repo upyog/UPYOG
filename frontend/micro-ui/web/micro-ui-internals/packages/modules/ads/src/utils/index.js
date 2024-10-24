@@ -85,7 +85,7 @@ export const setApplicantDetails = (data) => {
   };
 
 
-
+// ADSDataConvert(data)`: Combines all details into a structured bookingApplication object for submission.
 export const ADSDataConvert = (data) => {
  
   data = setDocumentDetails(data);

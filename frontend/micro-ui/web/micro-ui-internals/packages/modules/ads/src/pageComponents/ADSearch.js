@@ -279,7 +279,7 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
       setShowToast({ error: true, label: t("CHB_SELECT_COMMUNITY_HALL_DATE_HALLCODE") });
     }
   };
-
+//Todo: Work in progress for Show Cart.
   const handleCartClick= () => {
     if (!isCheckboxSelected) {
       setShowToast({ error: true, label: t("CHB_SELECT_AT_LEAST_ONE_SLOT") });
