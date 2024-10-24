@@ -156,11 +156,27 @@ export const Request = async ({
   if (!params["tenantId"] && window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")) {
     params["tenantId"] = tenantInfo;
   }
+console.log("datadata",data,_url)
+let Newdata
+let res
+if(url.includes("/requester-services-dx/eSign/process"))
 
-  const res = userDownload
+{
+Newdata = {RequestInfo:data?.RequestInfo, Transaction :{fileStoreId:data?.fileStoreId,pdfUrl
+:data?.pdfUrl, module:data?.module, tenantId:data?.tenantId,redirectUrl:data?.redirectUrl,consumerCode:data?.consumerCode}}
+
+ res = userDownload
+    ? await Axios({ method, url: _url, data:Newdata, params, headers, responseType: "arraybuffer" })
+    : await Axios({ method, url: _url, data:Newdata, params, headers });
+
+}
+else{
+   res = userDownload
     ? await Axios({ method, url: _url, data, params, headers, responseType: "arraybuffer" })
     : await Axios({ method, url: _url, data, params, headers });
 
+}
+  
   if (userDownload) return res;
   const returnData = res?.data || res?.response?.data || {};
   if (useCache && res?.data && Object.keys(returnData).length !== 0) {
@@ -197,6 +213,7 @@ export const ServiceRequest = async ({
   console.log("resDataresData",preHookName,postHookName)
   let reqParams = params;
   let reqData = data;
+  console.log("reqData",reqData,url)
   if (window[preHookName] && typeof window[preHookName] === "function") {
     let preHookRes = await window[preHookName]({ params, data });
     reqParams = preHookRes.params;
