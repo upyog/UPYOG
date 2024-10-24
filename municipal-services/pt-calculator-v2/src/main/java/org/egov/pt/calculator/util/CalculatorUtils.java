@@ -547,6 +547,7 @@ public class CalculatorUtils {
 		BigDecimal totalAfterPastDueDeduct= BigDecimal.ZERO;
 		BigDecimal unpaidbillAmount=BigDecimal.ZERO;
 		Boolean demandAdjusted = true;
+		BigDecimal interestAmount=BigDecimal.ZERO;
 		
 		for (DemandDetail detail : demand.getDemandDetails()) 
 		{
@@ -605,12 +606,45 @@ public class CalculatorUtils {
 					totalBillAmount = totalBillAmount.add(bill.getBillDetails().get(0).getAmount());
 					
 				}
-				else
-					unpaidbillAmount=unpaidbillAmount.add(bill.getBillDetails().get(0).getAmount());
-				System.out.println(unpaidbillAmount);
-				
 			}
 
+		}
+		
+		List<Bill> sortedBills=res.getBill();
+		sortedBills=sortedBills.stream().sorted((x,y)->y.getAuditDetails().getCreatedTime().compareTo(x.getAuditDetails().getCreatedTime())).collect(Collectors.toList());
+		sortedBills=sortedBills.stream().filter(x->x.getStatus().equals(BillStatusEnum.ACTIVE) || x.getStatus().equals(BillStatusEnum.EXPIRED)).collect(Collectors.toList());
+		
+		if(sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q4"))
+		{
+			interestAmount=amountforquaterly.multiply(new BigDecimal(90)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+			unpaidbillAmount=interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+		}
+		else if(sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q3"))
+		{
+			interestAmount=amountforquaterly.multiply(new BigDecimal(91)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+			unpaidbillAmount=interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+			interestAmount=amountforquaterly.multiply(new BigDecimal(90)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
+		}
+		else if(sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q2"))
+		{
+			interestAmount=amountforquaterly.multiply(new BigDecimal(92)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+			unpaidbillAmount=interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+			interestAmount=amountforquaterly.multiply(new BigDecimal(91)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
+			interestAmount=amountforquaterly.multiply(new BigDecimal(90)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
+		}
+		else if(sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q1"))
+		{
+			interestAmount=amountforquaterly.multiply(new BigDecimal(91)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+			unpaidbillAmount=interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+			interestAmount=amountforquaterly.multiply(new BigDecimal(92)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
+			interestAmount=amountforquaterly.multiply(new BigDecimal(91)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
+			interestAmount=amountforquaterly.multiply(new BigDecimal(90)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
 		}
 		
 //		if(demandAdjusted) {
