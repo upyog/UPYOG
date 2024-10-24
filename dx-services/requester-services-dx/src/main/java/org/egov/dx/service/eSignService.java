@@ -227,8 +227,8 @@ public class eSignService {
 		FileResponse files = gson.fromJson(responsee , FileResponse.class);
 		String fileStoreId= files.getFiles().get(0).getFileStoreId();
 
-
-        txnId = txnId.split("-")[0];
+		txnId = txnId.substring(0, txnId.lastIndexOf('-'));
+        //txnId = txnId.split("-")[0];
 		TransactionCriteria criteria = new TransactionCriteria();
 		criteria.setTxnId(txnId);
 		
