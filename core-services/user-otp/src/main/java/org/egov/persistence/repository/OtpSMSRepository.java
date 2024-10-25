@@ -77,10 +77,10 @@ public class OtpSMSRepository {
         }
         String message = null;
 
-        if (otpRequest.isRegistrationRequestType())
+        if (otpRequest.isRegistrationRequestType() || otpRequest.isLoginRequestType() || otpRequest.isOwnerValidate())
             message = localisedMsgs.get(LOCALIZATION_KEY_REGISTER_SMS);
-        else if (otpRequest.isLoginRequestType())
-            message = localisedMsgs.get(LOCALIZATION_KEY_LOGIN_SMS);
+        //else if (otpRequest.isLoginRequestType())
+           // message = localisedMsgs.get(LOCALIZATION_KEY_LOGIN_SMS);
         else
             message = localisedMsgs.get(LOCALIZATION_KEY_PWD_RESET_SMS);
 

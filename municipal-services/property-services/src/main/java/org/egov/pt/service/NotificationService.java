@@ -412,7 +412,7 @@ public class NotificationService {
 		else {
 			return_message = notifUtil.getMessageTemplate(msgCode, completeMsgs);
 		}
-		return return_message;
+		return return_message+" Thank you!MMPTBhttps://www.propertytax.mn.gov.in";
 	}
 
 

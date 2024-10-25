@@ -51,6 +51,10 @@ public class OtpRequest {
 	public boolean isLoginRequestType() {
     	return OtpRequestType.LOGIN.equals(getType());
 	}
+	
+	public boolean isOwnerValidate() {
+    	return OtpRequestType.OWNER_VALIDATE.equals(getType());
+	}
 
 	public boolean isInvalidType() {
     	return isEmpty(type);

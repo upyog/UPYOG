@@ -44,7 +44,7 @@ public class OtpService {
     public void sendOtp(OtpRequest otpRequest) {
     	
         otpRequest.validate();
-        if (otpRequest.isRegistrationRequestType() || otpRequest.isLoginRequestType()) {
+        if (otpRequest.isRegistrationRequestType() || otpRequest.isLoginRequestType() || otpRequest.isOwnerValidate()) {
         	otpRequest.setTemplateId(registrationSmsTemplateId);
             sendOtpForUserRegistration(otpRequest);
         } else {
