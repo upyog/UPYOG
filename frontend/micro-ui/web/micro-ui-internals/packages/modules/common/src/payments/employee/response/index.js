@@ -115,12 +115,49 @@ export const SuccessfulPayment = (props) => {
     const generatePdfKeyForTL = "tlcertificate";
 
     if (applicationDetails) {
-      let response = await Digit.PaymentService.generatePdf(state, { Licenses: applicationDetails?.Licenses }, generatePdfKeyForTL);
-      const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
-      window.open(fileStore[response.filestoreIds[0]], "_blank");
+      console.log("applicationapplication",applicationDetails)
+      let res = await Digit.TLService.TLsearch({ tenantId: applicationDetails?.Licenses?.[0]?.tenantId, filters: { applicationNumber:applicationDetails?.Licenses?.[0]?.applicationNumber } });
+      let TokenReq = {
+       module:"TL",
+       "consumerCode": res?.Licenses?.[0]?.licenseNumber
+     }
+     const res1 = await Digit.DigiLockerService.fileStoreSearch({TokenReq})
+  console.log("res1res1res1",res1)
+     if(res1?.Transaction.length > 0 && res1?.Transaction?.[0]?.signedFilestoreId!==null)
+      {
+       const tenant = Digit.ULBService.getStateId()
+       const resneww = await Digit.UploadServices.Filefetch([res1?.Transaction?.[0]?.signedFilestoreId], tenant);
+     console.log("resneww11",resneww,resneww?.data?.fileStoreIds?.[0]?.url)
+     window.open(resneww?.data?.fileStoreIds?.[0]?.url, "_blank");
+     }
+     else{
+       const TLcertificatefile = await Digit.PaymentService.generatePdf(tenantId, { Licenses: res?.Licenses }, "tlcertificate");
+       const receiptFile = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: TLcertificatefile.filestoreIds[0] });
+       console.log("resres",res)
+       fetchDigiLockerDocuments(receiptFile[TLcertificatefile.filestoreIds[0]],TLcertificatefile.filestoreIds[0],res)
+     }
+      
+
+      // let response = await Digit.PaymentService.generatePdf(state, { Licenses: applicationDetails?.Licenses }, generatePdfKeyForTL);
+      // const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
+      // window.open(fileStore[response.filestoreIds[0]], "_blank");
     }
   };
-  
+  const fetchDigiLockerDocuments  = async (file,id,res) => {
+    console.log("res",res)
+   
+          let TokenReq = {
+            pdfUrl:file,
+            tenantId: "pg.citya",
+            module:"TL",
+            redirectUrl:"",
+            "fileStoreId":id,
+            "consumerCode": res?.Licenses?.[0]?.licenseNumber
+          }
+          const res1 = await Digit.DigiLockerService.pdfUrl({TokenReq})
+          console.log("res1res1res1res1res1",res1)
+          window.location.href=res1
+}
   // const printpetCertificate = async () => {
   //   const tenantId = Digit.ULBService.getCurrentTenantId();
   //   const state = Digit.ULBService.getStateId();

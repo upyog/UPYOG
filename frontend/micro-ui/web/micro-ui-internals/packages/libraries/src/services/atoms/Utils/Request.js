@@ -170,6 +170,14 @@ Newdata = {RequestInfo:data?.RequestInfo, Transaction :{fileStoreId:data?.fileSt
     : await Axios({ method, url: _url, data:Newdata, params, headers });
 
 }
+else if(url.includes("/requester-services-dx/eSign/filestoreId/v1/_search"))
+{
+  Newdata = {RequestInfo:data?.RequestInfo, Transaction :{module:data?.module,consumerCode:data?.consumerCode}}
+    
+     res = userDownload
+        ? await Axios({ method, url: _url, data:Newdata, params, headers, responseType: "arraybuffer" })
+        : await Axios({ method, url: _url, data:Newdata, params, headers });
+}
 else{
    res = userDownload
     ? await Axios({ method, url: _url, data, params, headers, responseType: "arraybuffer" })

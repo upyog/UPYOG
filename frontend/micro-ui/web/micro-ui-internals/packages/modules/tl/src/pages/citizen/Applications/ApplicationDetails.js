@@ -134,10 +134,36 @@ const TLApplicationDetails = () => {
   };
 
   const downloadTLcertificate = async () => {
-    const TLcertificatefile = await Digit.PaymentService.generatePdf(tenantId, { Licenses: application }, "tlcertificate");
+    console.log("applicationapplication",application)
+    let res = await Digit.TLService.TLsearch({ tenantId: application?.[0]?.tenantId, filters: { applicationNumber:application[0]?.applicationNumber } });
+    let TokenReq = {
+     module:"TL",
+     "consumerCode": res?.Licenses?.[0]?.licenseNumber
+   }
+   const res1 = await Digit.DigiLockerService.fileStoreSearch({TokenReq})
+console.log("res1res1res1",res1)
+   if(res1?.Transaction.length > 0 && res1?.Transaction?.[0]?.signedFilestoreId!==null)
+    {
+     const tenant = Digit.ULBService.getStateId()
+     const resneww = await Digit.UploadServices.Filefetch([res1?.Transaction?.[0]?.signedFilestoreId], tenant);
+   console.log("resneww11",resneww,resneww?.data?.fileStoreIds?.[0]?.url)
+   window.open(resneww?.data?.fileStoreIds?.[0]?.url, "_blank");
+   }
+   else{
+        const TLcertificatefile = await Digit.PaymentService.generatePdf(tenantId, { Licenses: application }, "tlcertificate");
     const receiptFile = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: TLcertificatefile.filestoreIds[0] });
     window.open(receiptFile[TLcertificatefile.filestoreIds[0]], "_blank");
     setShowOptions(false);
+    //  const TLcertificatefile = await Digit.PaymentService.generatePdf(tenantId, { Licenses: res?.Licenses }, "tlcertificate");
+    //  const receiptFile = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: TLcertificatefile.filestoreIds[0] });
+    //  console.log("resres",res)
+    //  fetchDigiLockerDocuments(receiptFile[TLcertificatefile.filestoreIds[0]],TLcertificatefile.filestoreIds[0],res)
+   }
+    
+    // const TLcertificatefile = await Digit.PaymentService.generatePdf(tenantId, { Licenses: application }, "tlcertificate");
+    // const receiptFile = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: TLcertificatefile.filestoreIds[0] });
+    // window.open(receiptFile[TLcertificatefile.filestoreIds[0]], "_blank");
+    // setShowOptions(false);
   };
 
   let propertyAddress = "";
