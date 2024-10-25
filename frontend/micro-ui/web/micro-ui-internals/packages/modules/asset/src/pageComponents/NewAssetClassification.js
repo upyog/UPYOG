@@ -26,7 +26,7 @@
     
       const initialFinancialYear = calculateCurrentFinancialYear();
       
-
+// data set priveis
     const [assetclassification, setassetclassification] = useState((formData.asset && formData.asset[index] && formData.asset[index].assetclassification) || formData?.asset?.assetclassification || "");
     const [assettype, setassettype] = useState((formData.asset && formData.asset[index] && formData.asset[index].assettype) || formData?.asset?.assettype || "");
     const [assetsubtype, setassetsubtype] = useState((formData.asset && formData.asset[index] && formData.asset[index].assetsubtype) || formData?.asset?.assetsubtype || "");
@@ -108,7 +108,7 @@
     let departNamefromMDMS = [];
 
     departmentName && departmentName.map((departmentname) => {
-      departNamefromMDMS.push({i18nKey: `${departmentname.name}`, code: `${departmentname.code}`, value: `${departmentname.name}`})
+      departNamefromMDMS.push({i18nKey: `COMMON_MASTERS_DEPARTMENT_${departmentname.code}`, code: `COMMON_MASTERS_DEPARTMENT_${departmentname.code}`, value: `${departmentname.code}`})
     }) 
    let menu_Asset = [];   //variable name for assetCalssification
    let asset_type = [];  //variable name for asset type
