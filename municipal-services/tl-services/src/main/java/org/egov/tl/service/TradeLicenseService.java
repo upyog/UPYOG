@@ -322,9 +322,9 @@ public class TradeLicenseService {
         
         // filter role based search TL
         List<TradeLicense> tempLicenses = licenses;
-		if (StringUtils.isEmpty(criteria.getApplicationNumber())) {
-			tempLicenses = filterLicensesBasedOnRolesWithinTenantId(licenses, requestInfo, criteria);
-		}
+//		if (StringUtils.isEmpty(criteria.getApplicationNumber())) {
+//			tempLicenses = filterLicensesBasedOnRolesWithinTenantId(licenses, requestInfo, criteria);
+//		}
 		
 		return tempLicenses;
 
@@ -338,18 +338,22 @@ public class TradeLicenseService {
 		
 		if(StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), TLConstants.ROLE_CODE_EMPLOYEE)) {
 			
+			// remove INITIATED applications for EMPLOYEE
 			tempLicenses = licenses.stream().filter(license -> 
 						!StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_INITIATED))
 					.collect(Collectors.toList());
 			
+			// fetch all ROLES within tenant
 			List<String> rolesWithinTenant = getRolesWithinTenant(criteria.getTenantId(), requestInfo.getUserInfo().getRoles());
 			
+			// if !TL_VERIFIER remove PENDINGFORVERIFICATION
 			if(!rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_VERIFIER)) {
 				tempLicenses = tempLicenses.stream().filter(license -> 
 				!StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORVERIFICATION))
 			.collect(Collectors.toList());
 			}
 			
+			// if !TL_APPROVER remove PENDINGFORAPPROVAL
 			if(!rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_APPROVER)) {
 				tempLicenses = tempLicenses.stream().filter(license -> 
 				!StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORAPPROVAL))
@@ -358,11 +362,13 @@ public class TradeLicenseService {
 			
 			if(CollectionUtils.isEmpty(criteria.getStatus())) {
 				List<TradeLicense> tempLicenses1 = new ArrayList<>();
+				// if no status filter provided in search criteria, show only PENDINGFORVERIFICATION to TL_VERIFIER
 				if(rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_VERIFIER)) {
 					tempLicenses1.addAll(tempLicenses.stream().filter(license -> 
 					StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORVERIFICATION))
 							.collect(Collectors.toList()));
 				}
+				// if no status filter provided in search criteria, show only PENDINGFORAPPROVAL to TL_APPROVER
 				if(rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_APPROVER)) {
 					tempLicenses1.addAll(tempLicenses.stream().filter(license -> 
 					StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORAPPROVAL))
