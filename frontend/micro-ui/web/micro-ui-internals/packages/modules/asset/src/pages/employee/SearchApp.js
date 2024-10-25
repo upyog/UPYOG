@@ -4,8 +4,6 @@ import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next";
 import ASSETSearchApplication from "../../components/SearchApplication"
 
-
-
 const SearchApp = ({path, parentRoute}) => {
     const { variant } = useParams();
     const { t } = useTranslation();
@@ -14,6 +12,7 @@ const SearchApp = ({path, parentRoute}) => {
     const [showToast, setShowToast] = useState(null);
 
     function onSubmit (_data) {
+      // console.log('Coming data after submit:- ', _data);
         var fromDate = new Date(_data?.fromDate)
         fromDate?.setSeconds(fromDate?.getSeconds() - 19800 )
         var toDate = new Date(_data?.toDate)
@@ -24,7 +23,22 @@ const SearchApp = ({path, parentRoute}) => {
             ...(_data.fromDate ? {fromDate: fromDate?.getTime()} : {})
         }
 
-        let payload = Object.keys(data).filter( k => data[k] ).reduce( (acc, key) => ({...acc,  [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {} );
+        let payload = Object.keys(data)
+                      .filter( k => data[k] )
+                      .reduce( (acc, key) => ({...acc,  [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {} );
+
+        // let payload = Object.keys(data)
+        // .filter(k => data[k] !== null && data[k] !== undefined) 
+        // .reduce(
+        //   (acc, key) => ({
+        //     ...acc,
+        //     [key]: typeof data[key] === "object" ? data[key].code : data[key]
+        //   }),
+        //   {}
+        // );
+
+        console.log('Comming made url testing', payload);
+
         if(Object.entries(payload).length>0 && !payload.applicationNo && !payload.creationReason && !payload.fromDate && !payload.mobileNumber && !payload.applicationNo && !payload.status && !payload.toDate)
         setShowToast({ warning: true, label: "ERR_VALID_FIELDS" });
         else if(Object.entries(payload).length>0 && (payload.creationReason || payload.status ) && (!payload.applicationNo && !payload.fromDate && !payload.mobileNumber && !payload.applicationNo && !payload.toDate))
@@ -46,8 +60,8 @@ const SearchApp = ({path, parentRoute}) => {
        config,
       );
 
-      // console.log("searchReult",searchReult)
-      // console.log("countonAPI",count);
+      console.log("searchReult",searchReult)
+      console.log("countonAPI",count);
     return <React.Fragment>
         <ASSETSearchApplication t={t} isLoading={isLoading} parentRoute={parentRoute} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={  isSuccess && !isLoading ? (searchReult.length>0? searchReult : { display: "ES_COMMON_NO_DATA" } ):""} count={count} /> 
         {showToast && (
