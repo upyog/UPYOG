@@ -202,7 +202,8 @@ digiLocker:{
   uri:"/requester-services-dx/user/file"
 },
 eSign:{
-pdfUrl:"/requester-services-dx/eSign/process"
+pdfUrl:"/requester-services-dx/eSign/process",
+fileStoreSearch:"/requester-services-dx/eSign/filestoreId/v1/_search"
 },
   engagement: {
     document: {
