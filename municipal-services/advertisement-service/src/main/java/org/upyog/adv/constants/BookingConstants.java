@@ -15,6 +15,9 @@ public class BookingConstants {
 	
 	public static final String COMMON_MASTERS_MODULE = "common-masters";
 	
+	public static final String ADVERTISEMENT_AVAILABILITY_SEARCH = "Advertisement booking availability details fetched sussessfully";
+	
+	
 	//mdms json paths
 	public static final String ADV_JSONPATH_CODE = "$.MdmsRes.Advertisement";
 	public static final String COMMON_MASTER_JSONPATH_CODE = "$.MdmsRes.common-masters";
@@ -29,7 +32,7 @@ public class BookingConstants {
 	public static final String DUPLICATE_DOCUMENT_UPLOADED = "DUPLICATE_DOCUMENT_UPLOADED";
 	
 	
-public static final String ADV_APPLICANT_DETAIL_ENCRYPTION_KEY = "ADVApplicantDetail";
+    public static final String ADV_APPLICANT_DETAIL_ENCRYPTION_KEY = "ADVApplicantDetail";
 	
 	public static final String ADV_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY = "ADVApplicantDetailDecrypDisabled";
 
