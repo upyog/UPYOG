@@ -19,7 +19,7 @@
     "node": ">=14"
   },
   "dependencies": {
-    "@upyog-niua/upyog-css": "1.0.3",
+    "@upyog-niua/upyog-css": "1.0.6",
     "@egovernments/digit-ui-libraries": "1.7.0-beta.2",
     "@egovernments/digit-ui-module-bills": "1.7.0-beta.2",
     "@egovernments/digit-ui-module-common": "1.7.0-beta.2",
