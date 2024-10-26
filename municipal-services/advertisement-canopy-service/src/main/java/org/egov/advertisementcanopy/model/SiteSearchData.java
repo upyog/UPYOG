@@ -27,4 +27,5 @@ public class SiteSearchData {
 	private boolean isActive;
 	private String siteID;
 	private List<String> workflowStatus;
+	private String tenantId;
 }
