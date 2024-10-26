@@ -1294,8 +1294,8 @@ public class TradeLicenseService {
 				throw new CustomException("NO_BUSINESS_SERVICE_FOUND","Business service not found for application number: "+applicationNumber);
 			}
 			List<State> stateList = businessServiceResponse.getBusinessServices().get(0).getStates().stream()
-					.filter(state -> StringUtils.equalsIgnoreCase(state.getApplicationStatus(), applicationStatus)
-										&& !StringUtils.equalsAnyIgnoreCase(state.getApplicationStatus(), TLConstants.STATUS_APPROVED)).collect(Collectors.toList());
+					.filter(state -> StringUtils.equalsIgnoreCase(state.getApplicationStatus(), applicationStatus))
+					.collect(Collectors.toList());
 			
 			// filtering actions based on roles
 			List<String> actions = new ArrayList<>();
