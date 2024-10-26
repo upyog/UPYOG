@@ -296,13 +296,10 @@ public class TLConstants {
     public static final String ACTION_CLOSE  = "CLOSE";
 
 
-    public static final String STATUS_INITIATED = "INITIATED";
 
     public static final String STATUS_APPLIED  = "APPLIED";
 
     public static final String STATUS_VERIFIED  = "VERIFIED";
-
-    public static final String STATUS_APPROVED  = "APPROVED";
 
     public static final String STATUS_REJECTED  = "REJECTED";
 
@@ -317,6 +314,14 @@ public class TLConstants {
     public static final String STATUS_MANUALLYEXPIRED = "MANUALEXPIRED";
 
     public static final String BILL_AMOUNT_JSONPATH = "$.Bill[0].totalAmount";
+
+    public static final String STATUS_INITIATED = "INITIATED";
+
+    public static final String STATUS_APPROVED  = "APPROVED";
+
+    public static final String STATUS_CLOSED  = "CLOSED";
+
+    public static final String STATUS_REVOKED  = "REVOKED";
     
     public static final String STATUS_PENDINGFORMODIFICATION = "PENDINGFORMODIFICATION";
     
