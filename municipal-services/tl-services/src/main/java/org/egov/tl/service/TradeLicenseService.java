@@ -49,6 +49,7 @@ import org.egov.tl.web.models.Difference;
 import org.egov.tl.web.models.OwnerInfo;
 import org.egov.tl.web.models.RequestInfoWrapper;
 import org.egov.tl.web.models.TradeLicense;
+import org.egov.tl.web.models.TradeLicense.ApplicationTypeEnum;
 import org.egov.tl.web.models.TradeLicenseActionRequest;
 import org.egov.tl.web.models.TradeLicenseActionResponse;
 import org.egov.tl.web.models.TradeLicenseRequest;
@@ -761,6 +762,7 @@ public class TradeLicenseService {
 			TradeLicense license = tradeLicenseRequest.getLicenses().get(i);
 			String action = license.getAction();
 			String comment = license.getComment();
+			ApplicationTypeEnum applicationType = license.getApplicationType();
 			
 			if(null == license.getTradeLicenseDetail()
 					&& (StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_VERIFIER, license.getAction())
@@ -771,7 +773,8 @@ public class TradeLicenseService {
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_VERIFIER, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_APPROVER, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_APPROVE, license.getAction())
-							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_CLOSE, license.getAction()))
+							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_CLOSE, license.getAction())
+							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_REVOKE, license.getAction()))
 					&& StringUtils.isNotEmpty(license.getApplicationNumber())) {
 				// search TL by application number
 				TradeLicenseSearchCriteria tradeLicenseSearchCriteria = TradeLicenseSearchCriteria.builder()
@@ -784,6 +787,8 @@ public class TradeLicenseService {
 				//enrich input fields
 				licenses.get(0).setAction(action);
 				licenses.get(0).setComment(comment);
+				licenses.get(0).setApplicationType(applicationType);
+				
 				if(StringUtils.equalsIgnoreCase(TLConstants.STATUS_APPROVED, licenses.get(0).getStatus())
 						&& ( StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR, license.getAction())
 								|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, license.getAction())
@@ -813,6 +818,29 @@ public class TradeLicenseService {
 		return tempTradeLicenseRequest;
 		
 	}
+
+
+//	private ApplicationTypeEnum getApplicationTypeBasedOnOldStatusAndCurrentAction(ApplicationTypeEnum applicationType,
+//			TradeLicense tradeLicense, String action) {
+//		
+//		if(StringUtils.equalsIgnoreCase(tradeLicense.getStatus(), TLConstants.STATUS_APPROVED)
+//				&& StringUtils.equalsIgnoreCase(action, TLConstants.ACTION_REVOKE)) {
+//			applicationType = ApplicationTypeEnum.REVOKE;
+//		}else if(StringUtils.equalsIgnoreCase(tradeLicense.getStatus(), TLConstants.STATUS_APPROVED)
+//				&& StringUtils.equalsAnyIgnoreCase(action, TLConstants.ACTION_RETURN_TO_INITIATOR
+////														 , TLConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT
+//														 , TLConstants.ACTION_FORWARD_TO_VERIFIER)) {
+//			applicationType = ApplicationTypeEnum.MODIFICATION;
+//		}else if(StringUtils.equalsIgnoreCase(tradeLicense.getStatus(), TLConstants.STATUS_APPROVED)
+//				&& StringUtils.equalsAnyIgnoreCase(action, TLConstants.ACTION_CLOSE)) {
+//			applicationType = ApplicationTypeEnum.CLOSURE;
+//		}
+//		
+//		return applicationType;
+//	}
+
+
+
 
 
 	private void validateInputObjectAndConstraints(TradeLicense license) {
