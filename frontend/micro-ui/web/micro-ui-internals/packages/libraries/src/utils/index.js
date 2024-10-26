@@ -235,6 +235,16 @@ const ewAccess = () => {
   return EW_ACCESS?.length > 0;
 };
 
+const svAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const svRoles = ["SVCEMP", "TV CEMPLOYEE", "INSPECTION_OFFICER"];
+  const SV_ACCESS = userRoles?.filter((role) => svRoles?.includes(role));
+  return SV_ACCESS?.length > 0;
+};
+
+
+
 const chbAccess = () => {
   const userInfo = Digit.UserService.getUser();
   
@@ -348,7 +358,6 @@ export default {
   wsAccess,
   swAccess,
   ewAccess,
-
-
+  svAccess,
   ...privacy
 };
