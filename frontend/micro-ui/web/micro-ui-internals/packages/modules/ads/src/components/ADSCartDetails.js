@@ -23,38 +23,24 @@ const CloseBtn = (props) => {
  * allowing users to view, delete items, and see the total price of the cart.
  */
 
-const ADSCartDetails = ({ onClose }) => {
+const ADSCartDetails = ({ onClose,cartDetails, setCartDetails }) => {
   const { t } = useTranslation();
   const { pathname: url } = useLocation();
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    const datalist = [
-      { name: "UNIPOLE_12_8", fromDate: "15-11-2024", toDate: "25-11-2024", total_price: 4600 },
-      { name: "UNIPOLE_12_8", fromDate: "15-11-2024", toDate: "25-11-2024", total_price: 4600 },
-      { name: "UNIPOLE_12_8", fromDate: "15-11-2024", toDate: "25-11-2024", total_price: 4600 },
-      { name: "UNIPOLE_12_8", fromDate: "15-11-2024", toDate: "25-11-2024", total_price: 4600 },
-      { name: "UNIPOLE_12_8", fromDate: "15-11-2024", toDate: "25-11-2024", total_price: 4600 },
-      { name: "UNIPOLE_12_8", fromDate: "15-11-2024", toDate: "25-11-2024", total_price: 4600 }
-      // Add more data as needed
-    ];
-    setData(datalist);
-  }, []);
 
   const handleDelete = (index) => {
-    const updatedList = data.filter((_, idx) => idx !== index);
-    setData(updatedList);
+    const updatedList = cartDetails.filter((_, idx) => idx !== index);
+    setCartDetails(updatedList);
   };
 
   const calculateTotalPrice = () => {
-    return data.reduce((total, item) => total + Number(item.total_price), 0);
+    return cartDetails.reduce((total, item) => total + Number(item.total_price), 0);
   };
 
   const columns = [
     { Header: t("ADVERTISEMENT_NAME"), accessor: "name" },
-    { Header: t("FROM_DATE"), accessor: "fromDate" },
-    { Header: t("TO_DATE"), accessor: "toDate" },
-    { Header: t("TOTAL_PRICE"), accessor: "total_price" },
+    { Header: t("FROM_DATE"), accessor: "address" },
+    { Header: t("TO_DATE"), accessor: "bookingDate" },
+    { Header: t("TOTAL_PRICE"), accessor: "hallCode" },
     {
       Header: t("DELETE_KEY"),
       accessor: "delete",
@@ -78,7 +64,7 @@ const ADSCartDetails = ({ onClose }) => {
     >
       <ApplicationTable
         t={t}
-        data={data}
+        data={cartDetails}
         columns={columns}
         getCellProps={(cellInfo) => ({
           style: {
@@ -88,7 +74,7 @@ const ADSCartDetails = ({ onClose }) => {
           },
         })}
         isPaginationRequired={false}
-        totalRecords={data.length}
+        totalRecords={cartDetails.length}
       />
       <div style={{ padding: "20px", fontSize: "18px", fontWeight: "bold" }}>
         Total Price: {calculateTotalPrice()} 

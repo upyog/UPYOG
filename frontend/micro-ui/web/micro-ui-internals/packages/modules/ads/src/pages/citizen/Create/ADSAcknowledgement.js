@@ -73,14 +73,14 @@ const ADSAcknowledgement = ({ data, onSuccess }) => {
          {user.type==="CITIZEN" &&(<Link to={`/digit-ui/citizen`}>
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
          </Link>)}
-        {/* {user.type==="EMPLOYEE" &&(
-         <Link to={`/digit-ui/employee/payment/collect/${"chb-services"}/${mutation.data?.hallsBookingApplication[0].bookingNo}`}>
+        {user.type==="EMPLOYEE" &&(
+         <Link to={`/digit-ui/employee/payment/collect/${"ads-services"}/${mutation.data?.bookingApplication[0].bookingNo}`}>
           <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
           </Link> )}
           {user.type==="CITIZEN" &&(
-        <Link to={`/digit-ui/citizen/payment/my-bills/${"chb-services"}/${mutation.data?.hallsBookingApplication[0].bookingNo}`}>
+        <Link to={`/digit-ui/citizen/payment/my-bills/${"ads-services"}/${mutation.data?.bookingApplication[0].bookingNo}`}>
           <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
-        </Link>)} */}
+        </Link>)}
       </div>
     )}
     {!mutation.isSuccess && user.type==="CITIZEN" &&(

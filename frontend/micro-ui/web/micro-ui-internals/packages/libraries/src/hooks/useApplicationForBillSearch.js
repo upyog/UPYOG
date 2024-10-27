@@ -4,6 +4,7 @@ import { useQuery } from "react-query";
 import { MCollectService } from "../services/elements/MCollect";
 import { PTRService } from "../services/elements/PTR";
 import { CHBServices } from "../services/elements/CHB";
+import {ADSServices} from "../services/elements/ADS"
 
 const fsmApplications = async (tenantId, filters) => {
   return (await FSMService.search(tenantId, { ...filters, limit: 10000 })).fsm;
@@ -18,6 +19,9 @@ const chbApplications = async (tenantId, filters) => {
   return (await CHBServices.search({ tenantId, filters })).hallsBookingApplication;
 };
 
+const adsBookings = async (tenantId, filters) => {
+  return (await ADSServices.search({ tenantId, filters })).bookingApplication;
+};
 const ptApplications = async (tenantId, filters) => {
   return (await PTService.search({ tenantId, filters })).Properties;
 };
@@ -48,6 +52,11 @@ const refObj = (tenantId, filters) => {
       searchFn: () => chbApplications(null, { ...filters, bookingNo: consumerCodes }),
       key: "bookingNo",
       label: "CHB_BOOKING_NO",
+    },
+    ads: {
+      searchFn: () => adsBookings(null, { ...filters, bookingNo: consumerCodes }),
+      key: "bookingNo",
+      label: "ADS_BOOKING_NO",
     },
     fsm: {
       searchFn: () => fsmApplications(tenantId, filters),
@@ -106,6 +115,9 @@ export const useApplicationsForBusinessServiceSearch = ({ tenantId, businessServ
   } 
   if (window.location.href.includes("chb-services")) {
     _key = "chb"
+  } 
+  if (window.location.href.includes("ads-services")) {
+    _key = "ads"
   } 
 
   /* key from application ie being used as consumer code in bill */
