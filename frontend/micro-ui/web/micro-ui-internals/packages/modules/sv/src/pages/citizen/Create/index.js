@@ -16,6 +16,7 @@ const SVCreate = ({ parentRoute }) => {
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("SV_CREATES", {});
   
+  // function used for traversing through form screens 
   const goNext = (skipStep, index, isAddMultiple, key) => {  
     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
@@ -60,7 +61,7 @@ const SVCreate = ({ parentRoute }) => {
     redirectWithHistory(nextPage);
   };
 
-
+  // to clear formdata if the data is present before coming to first page of form
   if(params && Object.keys(params).length>0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true")
     {
       clearParams();
@@ -91,6 +92,12 @@ const SVCreate = ({ parentRoute }) => {
   const handleSkip = () => {};
   const handleMultiple = () => {};
 
+
+  /**
+   * this onSuccess dunction will execute once the application submitted successfully 
+   * it will clear all the params from the session storage  and also invalidate the query client
+   * as well as remove the beneficiary & disabilityStatus from the session storage
+   */
   const onSuccess = () => {
     clearParams();
     queryClient.invalidateQueries("SV_CREATES");

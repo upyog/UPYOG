@@ -31,6 +31,8 @@ const GetActionMessage = (props) => {
     return props.isSuccess  ? t("SV_SUBMIT_SUCCESSFULL") : t("SV_APPLICATION_FAILED");
   };
 
+
+//style object to pass inside row container which shows the application ID and status of application of banner image
 const rowContainerStyle = {
   padding: "4px 0px",
   justifyContent: "space-between",
