@@ -314,6 +314,7 @@ import useFnocDoc from "./fnoc/useFnocDoc";
 import useTenantsFNOC from "./fnoc/useTenants";
 
 import useSVDoc from "./sv/useSVDoc";
+import useSvCreateApi from "./sv/useSvCreateApi";
 import useTenantsSV from "./sv/useTenants";
 
 
@@ -342,6 +343,7 @@ const fnoc = {
 
 const sv = {
   useSVDoc,
+  useSvCreateApi,
   useTenants:useTenantsSV
 }
 

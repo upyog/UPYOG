@@ -108,6 +108,7 @@ const SVEmpCreate = ({ parentRoute }) => {
   config.indexRoute = "info";
 
   const SVCheckPage = Digit?.ComponentRegistryService?.getComponent("CheckPage");  
+  const SVAcknowledgement = Digit?.ComponentRegistryService?.getComponent("SVAcknowledgement");
   
   return (
     <Switch>
@@ -126,9 +127,9 @@ const SVEmpCreate = ({ parentRoute }) => {
       <Route path={`${match.path}/check`}>
         <SVCheckPage onSubmit={svcreate} value={params} />
       </Route>
-      {/* <Route path={`${match.path}/acknowledgement`}>
-        <PTRAcknowledgement data={params} onSuccess={onSuccess} />
-      </Route> */}
+      <Route path={`${match.path}/acknowledgement`}>
+        <SVAcknowledgement data={params} onSuccess={onSuccess} />
+      </Route>
       <Route>
         <Redirect to={`${match.path}/${config.indexRoute}`} />
       </Route>

@@ -6,9 +6,10 @@ import { EmployeeModuleCard, PropertyHouse } from "@nudmcdgnpm/digit-ui-react-co
 const SVCard = () => {
   const { t } = useTranslation();
 
-  if (!Digit.Utils.ewAccess()) {
+  if (!Digit.Utils.svAccess()) {
     return null;
   }
+
   const links = [
     {
       label: t("SV_INBOX"),
@@ -23,7 +24,7 @@ const SVCard = () => {
       link: `/digit-ui/employee/sv/my-applications`,
     },
   ]
-  const SV_CEMP = Digit.UserService.hasAccess(["EW_VENDOR"]) || false;
+  const SV_CEMP = Digit.UserService.hasAccess(["SV_VENDOR"]) || false;
 
   const propsForModuleCard = {
     Icon: <PropertyHouse />,
@@ -34,5 +35,6 @@ const SVCard = () => {
 
   return <EmployeeModuleCard {...propsForModuleCard} />;
 };
+
 
 export default SVCard;

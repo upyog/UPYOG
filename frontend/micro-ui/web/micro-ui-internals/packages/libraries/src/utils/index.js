@@ -235,6 +235,22 @@ const ewAccess = () => {
   return EW_ACCESS?.length > 0;
 };
 
+//function to get the Street vending user access
+const svAccess = () => {
+  // Retrieve the current user's information using the Digit.UserService
+  const userInfo = Digit.UserService.getUser();
+  // Extract the roles of the user, mapping them to their respective codes
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+   // Define the specific roles that have access to the service
+  const svRoles = ["SVCEMP", "TVC_EMPLOYEE", "INSPECTION_OFFICER"];
+  // Filter the user's roles to see if any match the defined service roles
+  const SV_ACCESS = userRoles?.filter((role) => svRoles?.includes(role));
+   // Return true if the user has at least one of the required roles, indicating access
+  return SV_ACCESS?.length > 0;
+};
+
+
+
 const chbAccess = () => {
   const userInfo = Digit.UserService.getUser();
   
@@ -348,7 +364,6 @@ export default {
   wsAccess,
   swAccess,
   ewAccess,
-
-
+  svAccess,
   ...privacy
 };

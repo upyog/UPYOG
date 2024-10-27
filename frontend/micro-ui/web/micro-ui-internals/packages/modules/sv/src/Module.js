@@ -18,6 +18,7 @@ import SVEmpCreate from "./pages/employee/Create";
 import EmployeeApp from "./pages/employee";
 import { TableConfig } from "./config/inbox-table-config";
 import InboxFilter from "./components/inbox/NewInboxFilter";
+import SVAcknowledgement from "./pages/citizen/Create/SVAcknowledgement";
 
 const componentsToRegister = {
    Create:SVCreate,
@@ -30,7 +31,8 @@ const componentsToRegister = {
    SVBankDetails,
    SVDocumentsDetail,
    CheckPage:SVCheckPage,
-   SVEmpCreate
+   SVEmpCreate,
+   SVAcknowledgement
   };
   
   // function to register the component as per standard 

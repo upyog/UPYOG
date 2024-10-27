@@ -1,4 +1,4 @@
-import { update } from "lodash";
+import { create, update } from "lodash";
 import Create from "../molecules/WS/Create";
 
 const Urls = {
@@ -116,6 +116,10 @@ const Urls = {
     assign: "/asset-services/v1/assets/assignment/_create",
     return_asset: "/asset-services/v1/assets/assignment/_update",
     assets_Reciept_Search: "/asset-services/v1/assets/_search",     //This url use for  Assets Recipt Detail QR Code 
+  },
+
+  sv:{
+    create: "/sv-services/street-vending/_create"
   },
 
   chb: {

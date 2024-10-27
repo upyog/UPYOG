@@ -39,10 +39,15 @@ import Timeline from "../../../components/Timeline";
     };
     function setDisabilityStatus(value) {
       setdisabilityStatus(value);
-    }
+    };
+    
     function setBeneficiary(value) {
       setbeneficiary(value);
-    }
+    };
+
+
+    disabilityStatus!==null?sessionStorage.setItem("disabilityStatus",disabilityStatus?.code):null;
+    beneficiary!==null?sessionStorage.setItem("beneficiary",beneficiary?.code):null;
 
     const columnName = [
         { Header: t("SV_WEEK_DAYS"), accessor: "name" },

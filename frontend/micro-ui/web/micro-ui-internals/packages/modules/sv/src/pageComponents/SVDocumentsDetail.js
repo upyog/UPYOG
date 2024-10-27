@@ -90,7 +90,6 @@ function SVDocuments({
 
   const handleSVSelectDocument = (value) => 
     {
-      console.log("valueeeeeee",value)
       setSelectedDocument(value);
     }
 
@@ -108,7 +107,6 @@ function SVDocuments({
         setUploadedFile(null);
         Digit.UploadServices.Filestorage("StreetVending", file, Digit.ULBService.getStateId())
           .then(response => {
-            console.log("responseresponse",response);
             if (response?.data?.files?.length > 0) {
               setUploadedFile(response.data.files[0].fileStoreId);
             } else {

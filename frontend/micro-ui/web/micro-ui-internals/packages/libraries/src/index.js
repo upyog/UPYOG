@@ -61,6 +61,7 @@ import {CustomService} from "./services/elements/CustomService";
 import { BnDService } from "./services/elements/BnD";
 
 import { EmployeeDashboardService } from "./services/elements/EMPDASHBOARD";
+import { SVService } from "./services/elements/SV";
    
 
 
@@ -131,6 +132,7 @@ const initLibraries = () => {
   setupLibraries("EwService", EwService);
   setupLibraries("BnDService", BnDService);
   setupLibraries("EmployeeDashboardService", EmployeeDashboardService);
+  setupLibraries("SVService", SVService);
   return new Promise((resolve) => {
     initI18n(resolve);
   });
