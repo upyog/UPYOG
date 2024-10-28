@@ -406,6 +406,8 @@ public class TLQueryBuilder {
     	else if(criteria.getTenantId()!=null) {
     		query.append("select count(*) from eg_tl_tradelicense where tenantid = ? and createdtime > ? AND applicationtype= ? ");
     		preparedStmtList.add(criteria.getTenantId());
+    	}else if((criteria.getTenantId()== null && criteria.getTenantIdCopy()== null) && criteria.getAccountId()== null) {
+    		throw new CustomException("NO_CRITERIA_FOUND","Must be provided either tenant id or account id.");
     	}
     	
     	// In order to get data of last 12 months, the months variables is pre-configured in application properties

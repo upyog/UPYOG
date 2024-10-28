@@ -18,6 +18,9 @@ public class TradeLicenseSearchCriteria {
     @JsonProperty("tenantId")
     private String tenantId;
 
+    @JsonProperty("tenantIdCopy")
+    private String tenantIdCopy;
+
     @JsonProperty("status")
     private List<String> status;
 
