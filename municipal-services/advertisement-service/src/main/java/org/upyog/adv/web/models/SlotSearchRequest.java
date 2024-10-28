@@ -26,15 +26,15 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BookingRequest {
+public class SlotSearchRequest {
 	
 	@Valid
 	@JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
 
 	@Valid
-	@JsonProperty("bookingApplication")
-	private  BookingDetail bookingApplication; 
+	@JsonProperty("advertisementSlotSearchCriteria")
+	private  AdvertisementSlotSearchCriteria criteria; 
 	
 
 	
