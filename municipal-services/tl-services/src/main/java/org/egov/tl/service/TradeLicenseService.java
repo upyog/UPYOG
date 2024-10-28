@@ -1517,4 +1517,31 @@ public class TradeLicenseService {
 		return applicationDetail;
 	}
 
+
+
+
+
+	public TradeLicenseActionResponse getCountOfAllApplicationTypes(TradeLicenseActionRequest tradeLicenseActionRequest) {
+		TradeLicenseActionResponse tradeLicenseActionResponse = TradeLicenseActionResponse.builder().build();
+		List<String> statusList = null;
+		
+		// validate request if required
+		
+		// fetch data
+		try {
+			if(null != tradeLicenseActionRequest) {
+				statusList = tlRepository.getStatusOfAllApplications(tradeLicenseActionRequest.getTenantId());
+			}
+			if (!CollectionUtils.isEmpty(statusList)) {
+				tradeLicenseActionResponse
+						.setApplicationTypesCount(statusList.stream().filter(status -> StringUtils.isNotEmpty(status))
+								.collect(Collectors.groupingBy(String::toString, Collectors.counting())));
+			}
+		} catch (Exception e) {
+			throw new CustomException("FAILED_TO_FETCH","Failed to fetch Application types.");
+		}
+		
+		return tradeLicenseActionResponse;
+	}
+
 }

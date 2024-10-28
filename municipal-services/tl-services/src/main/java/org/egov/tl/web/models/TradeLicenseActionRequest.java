@@ -23,4 +23,6 @@ public class TradeLicenseActionRequest {
     private RequestInfo requestInfo = null;
     
 	private List<String> applicationNumbers;
+	
+	private String tenantId;
 }
