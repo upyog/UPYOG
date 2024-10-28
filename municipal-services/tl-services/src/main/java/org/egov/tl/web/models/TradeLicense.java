@@ -83,7 +83,9 @@ public class  TradeLicense   {
 
         CLOSURE(TLConstants.APPLICATION_TYPE_CLOSURE),
 
-        MODIFICATION(TLConstants.APPLICATION_TYPE_MODIFICATION);
+        MODIFICATION(TLConstants.APPLICATION_TYPE_MODIFICATION),
+
+    	REVOKE(TLConstants.APPLICATION_TYPE_REVOKE);
 
         private String value;
 
