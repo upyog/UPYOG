@@ -248,6 +248,8 @@ public class TLConstants {
     public static final String APPLICATION_TYPE_MODIFICATION = "MODIFICATION";
 
     public static final String APPLICATION_TYPE_CLOSURE = "CLOSURE";
+
+    public static final String APPLICATION_TYPE_REVOKE = "REVOKE";
     
     // error constants
 
@@ -294,6 +296,8 @@ public class TLConstants {
     public static final String ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT = "RETURN_TO_INITIATOR_FOR_PAYMENT";
 
     public static final String ACTION_CLOSE  = "CLOSE";
+
+    public static final String ACTION_REVOKE  = "REVOKE";
 
 
 
