@@ -693,15 +693,6 @@ public class EnrichmentService {
         	criteria.setOnlyMobileNumber(true);
         	
         }
-        
-        if(!criteria.isEmpty() && requestInfo.getUserInfo().getType().equalsIgnoreCase("EMPLOYEE")){
-            if(StringUtils.equalsIgnoreCase(criteria.getTenantId(), "hp")) {
-            	criteria.setTenantIdCopy(criteria.getTenantId());
-            	criteria.setTenantId(null);
-            }else if(null == criteria.getTenantId() && null != criteria.getTenantIdCopy()) {
-            	criteria.setTenantId(criteria.getTenantIdCopy());
-            }
-        }
 
     }
 

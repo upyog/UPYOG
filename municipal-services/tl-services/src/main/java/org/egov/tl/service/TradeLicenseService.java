@@ -1128,6 +1128,12 @@ public class TradeLicenseService {
 			response.setApplicationApproved((int) response.getLicenses().stream()
 					.filter(license -> StringUtils.equalsIgnoreCase(STATUS_APPROVED, license.getStatus()))
 					.count());
+			response.setApplicationRevoked((int) response.getLicenses().stream()
+					.filter(license -> StringUtils.equalsIgnoreCase(TLConstants.STATUS_REVOKED, license.getStatus()))
+					.count());
+			response.setApplicationClosed((int) response.getLicenses().stream()
+					.filter(license -> StringUtils.equalsIgnoreCase(TLConstants.STATUS_CLOSED, license.getStatus()))
+					.count());
 		}
 		
 		
