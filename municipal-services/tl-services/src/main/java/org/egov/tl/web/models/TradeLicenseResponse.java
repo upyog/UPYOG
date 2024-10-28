@@ -67,6 +67,12 @@ public class TradeLicenseResponse   {
         
         @JsonProperty("applicationApproved")
         private int applicationApproved;
+        
+        @JsonProperty("applicationRevoked")
+        private int applicationRevoked;
+        
+        @JsonProperty("applicationClosed")
+        private int applicationClosed;
 
 
         public TradeLicenseResponse addLicensesItem(TradeLicense licensesItem) {
