@@ -805,7 +805,7 @@ public class BillServicev2 {
 
 		if (appProps.getFinYearStart() > assesmentDoneForYearStart
 				&& appProps.getFinYearEnd() > assesmentDoneForYearEnd) {
-			cuurentMonth = 3;
+			cuurentMonth = 7;
 			previousYear = true;
 		}
 		Integer nextYear = assesmentDoneForYearEnd;
@@ -1115,8 +1115,8 @@ public class BillServicev2 {
 				}
 				
 				totalInterestAmunt = 	totalInterestAmunt.setScale(0, RoundingMode.HALF_UP);
-				totalAmountForDemand = amountforquaterly.add(quaterlyammount).add(totalInterestAmunt);
-				
+				//totalAmountForDemand = amountforquaterly.add(quaterlyammount).add(totalInterestAmunt);
+				totalAmountForDemand = amountforquaterly.add(quaterlyammount);
 				inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateQ1, financialYearFromDemand.toString() ,"Q2", "Q1" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 
 
@@ -1212,9 +1212,9 @@ public class BillServicev2 {
 				}
 
 				totalInterestAmunt = 	totalInterestAmunt.setScale(0, RoundingMode.HALF_UP);
-				totalAmountForDemand = amountforquaterly.add(quaterlyammount).add(totalInterestAmunt);
+				//totalAmountForDemand = amountforquaterly.add(quaterlyammount).add(totalInterestAmunt);
 				//Calculation is done interest 
-
+				totalAmountForDemand = amountforquaterly.add(quaterlyammount);
 				inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateQ2, financialYearFromDemand.toString() ,"Q3", "Q2" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 
 
@@ -1338,8 +1338,8 @@ public class BillServicev2 {
 				}
 
 				totalInterestAmunt = 	totalInterestAmunt.setScale(0, RoundingMode.HALF_UP);
-				totalAmountForDemand = amountforquaterly.add(quaterlyammount).add(totalInterestAmunt);
-				
+				//totalAmountForDemand = amountforquaterly.add(quaterlyammount).add(totalInterestAmunt);
+				totalAmountForDemand = amountforquaterly.add(quaterlyammount);
 				inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateQ3, financialYearFromDemand.toString() ,"Q4", "Q3" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 
 				if (advancedBillAmount.compareTo(totalAmountForDemand) > 0) {
@@ -1462,7 +1462,8 @@ public class BillServicev2 {
 				}
 				
 				totalInterestAmunt = 	totalInterestAmunt.setScale(0, RoundingMode.HALF_UP);
-				totalAmountForDemand = ammountforhalfyearly.add(halfyearlyammount).add(totalInterestAmunt);
+				//totalAmountForDemand = ammountforhalfyearly.add(halfyearlyammount).add(totalInterestAmunt);
+				totalAmountForDemand = ammountforhalfyearly.add(halfyearlyammount);
 				inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateH1, financialYearFromDemand.toString() ,"H2", "H1" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 
 				if (advancedBillAmount.compareTo(totalAmountForDemand) > 0) {
