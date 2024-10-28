@@ -211,27 +211,27 @@ public class NotificationService {
 
 		case WF_STATUS_OPEN:
 			createOrUpdate = isCreate ? CREATE_STRING : UPDATE_STRING;
-			msg = getMsgForCreate(property, MUTATION_OPEN_STATE_MESSAGE_MNPT, completeMsgs,createOrUpdate,propertyRequest,state);
+			msg = getMsgForCreateMutationNew(property, MUTATION_OPEN_STATE_MESSAGE_MNPT, completeMsgs,createOrUpdate,propertyRequest,state);
 			templateId=MUTATION_OPEN_STATE_MESSAGE_MNPT_TEMPLATE_ID;
 			break;
 
 		case WF_STATUS_DOCVERIFIED:
 			createOrUpdate = isCreate ? CREATE_STRING : UPDATE_STRING;
-			msg = getMsgForCreate(property, MUTATION_PT_DOC_VERIFIER_VERIFY_STATE_MESSAGE_MNPT, completeMsgs,createOrUpdate,propertyRequest,state);
+			msg = getMsgForCreateMutationNew(property, MUTATION_PT_DOC_VERIFIER_VERIFY_STATE_MESSAGE_MNPT, completeMsgs,createOrUpdate,propertyRequest,state);
 			templateId=MUTATION_PT_DOC_VERIFIER_VERIFY_STATE_MESSAGE_MNPT_TEMPLATE_ID;
 			sendNotificationUpdateForMutation(property,completeMsgs,createOrUpdate,MUTATION_PT_DOC_VERIFIER_STATUS_UPDATE_STATE_MESSAGE_MNPT,MUTATION_PT_DOC_VERIFIER_STATUS_UPDATE_STATE_MESSAGE_MNPT_TEMPLATE_ID);
 			break;
 
 		case WF_STATUS_REJECTED:
 			createOrUpdate = isCreate ? CREATE_STRING : UPDATE_STRING;
-			msg = getMsgForCreate(property, "REJECT", completeMsgs,createOrUpdate,propertyRequest,state);
+			msg = getMsgForCreateMutationNew(property, "REJECT", completeMsgs,createOrUpdate,propertyRequest,state);
 			templateId=MUTATION_PT_DOC_VERIFIER_REJECT_STATE_MESSAGE_MNPT_TEMPLATE_ID;
 			sendNotificationUpdateForMutation(property,completeMsgs,createOrUpdate,MUTATION_PT_DOC_VERIFIER_STATUS_UPDATE_STATE_MESSAGE_MNPT,MUTATION_PT_DOC_VERIFIER_STATUS_UPDATE_STATE_MESSAGE_MNPT_TEMPLATE_ID);
 			break;
 
 		case PT_CORRECTION_PENDING:
 			createOrUpdate = isCreate ? CREATE_STRING : UPDATE_STRING;
-			msg = getMsgForCreate(property, MUTATION_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT, completeMsgs,createOrUpdate,propertyRequest,state);
+			msg = getMsgForCreateMutationNew(property, MUTATION_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT, completeMsgs,createOrUpdate,propertyRequest,state);
 			templateId=MUTATION_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT_TEMPLATE_ID;
 			sendNotificationUpdateForMutation(property,completeMsgs,createOrUpdate,MUTATION_PT_DOC_VERIFIER_STATUS_UPDATE_STATE_MESSAGE_MNPT,MUTATION_PT_DOC_VERIFIER_STATUS_UPDATE_STATE_MESSAGE_MNPT_TEMPLATE_ID);
 			break;
@@ -394,15 +394,18 @@ public class NotificationService {
 		Set<String> role = propertyRequest.getRequestInfo().getUserInfo().getRoles().stream().map(x->x.getCode()).collect(Collectors.toSet());
 		if(state.equalsIgnoreCase(WF_STATUS_REJECTED) ||state.equalsIgnoreCase(PT_CORRECTION_PENDING)) {
 
-			if(state.equalsIgnoreCase(WF_STATUS_REJECTED)) {
+			if(state.equalsIgnoreCase(WF_STATUS_REJECTED)) {	
 				if(role.contains("PT_DOC_VERIFIER"))
 				{
-					return_message = notifUtil.getMessageTemplate(MUTATION_PT_DOC_VERIFIER_REJECT_STATE_MESSAGE_MNPT, completeMsgs);
+					return_message = notifUtil.getMessageTemplate(CREATE_PT_DOC_VERIFIER_REJECT_STATE_MESSAGE_MNPT, completeMsgs);
 
 				}
+				//MUTATION_PT_DOC_VERIFIER_REJECT_STATE_MESSAGE_MNPT
 				else if(role.contains("PT_APPROVER")) {
-					return_message = notifUtil.getMessageTemplate(MUTATION_PT_DOC_VERIFIER_REJECT_STATE_MESSAGE_MNPT, completeMsgs);
+					return_message = notifUtil.getMessageTemplate(CREATE_PT_APPROVER_REJECT_STATE_MESSAGE_MNPT, completeMsgs);
 				}
+			
+				
 			}
 
 			else if(state.equalsIgnoreCase(PT_CORRECTION_PENDING)) {
@@ -412,7 +415,36 @@ public class NotificationService {
 		else {
 			return_message = notifUtil.getMessageTemplate(msgCode, completeMsgs);
 		}
-		return return_message+" Thank you!MMPTBhttps://www.propertytax.mn.gov.in";
+		return return_message;
+	}
+	
+	
+	
+	
+	private String getMsgForCreateMutationNew(Property property, String msgCode, String completeMsgs, 
+			String createUpdateReplaceString,PropertyRequest propertyRequest,String state) {
+		String return_message = "";
+
+		Set<String> role = propertyRequest.getRequestInfo().getUserInfo().getRoles().stream().map(x->x.getCode()).collect(Collectors.toSet());
+		if(state.equalsIgnoreCase(WF_STATUS_REJECTED) ||state.equalsIgnoreCase(PT_CORRECTION_PENDING)) {
+
+			if(state.equalsIgnoreCase(WF_STATUS_REJECTED)) {
+				if(role.contains("PT_DOC_VERIFIER"))
+				{
+					return_message = notifUtil.getMessageTemplate(MUTATION_PT_DOC_VERIFIER_REJECT_STATE_MESSAGE_MNPT, completeMsgs);
+
+				}
+				
+			}
+
+			else if(state.equalsIgnoreCase(PT_CORRECTION_PENDING)) {
+				return_message = notifUtil.getMessageTemplate(MUTATION_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT, completeMsgs);	
+			}
+		}
+		else {
+			return_message = notifUtil.getMessageTemplate(msgCode, completeMsgs);
+		}
+		return return_message;
 	}
 
 

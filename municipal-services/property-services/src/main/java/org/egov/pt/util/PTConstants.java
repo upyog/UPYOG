@@ -478,6 +478,12 @@ public class PTConstants {
     
     public static final String AMALGAMATED_CREATED_IDS_PROPERTY = "amagamtedFromPropertyIds";
     
+    
+    //////////////////////////////////MSN FOR ASMT///////////
+    public static final String ASMT_MSG_INITIATED_TEMPLATE_ID="1007071694610956961";
+    public static final String ASMT_MSG_INITIATED_SUBMITTED_STATUS="ASMT_MSG_INITIATED_SUBMITTED_STATUS";
+    public static final String ASMT_MSG_INITIATED_SUBMITTED_STATUS_TEMPLATE_ID =  "1007432643125157179";
+    
     /////////////////////////CREATE MESSAGES FOR MNPT////////////////////////////////
     
     public static final String CREATE_OPEN_STATE_MESSAGE_MNPT= "CREATE_OPEN_STATE_MESSAGE_MNPT";
@@ -530,7 +536,8 @@ public class PTConstants {
     public static final String MUTATION_PT_DOC_VERIFIER_STATUS_UPDATE_STATE_MESSAGE_MNPT_TEMPLATE_ID="1007717363657011766";
     public static final String MUTATION_PT_DOC_VERIFIER_REJECT_STATE_MESSAGE_MNPT_TEMPLATE_ID="1007234047060705501";
     public static final String MUTATION_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT_TEMPLATE_ID="1007470788781376589";
-    public static final String ASMT_MSG_INITIATED_TEMPLATE_ID="1007432643125157179";
+    
+   
     
     
 
