@@ -452,10 +452,10 @@ const handleCloseCart = () => {
           <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
           <SubmitBar label={t("ADS_ADD_TO_CART")} onSubmit={handleCartClick} disabled={!isCheckboxSelected} />
           <SubmitBar label={t("ADS_VIEW_CART")} onSubmit={handleViewCart} />
-          {showCartDetails && <ADSCartDetails onClose={handleCloseCart} />}
+          {showCartDetails && <ADSCartDetails onClose={handleCloseCart} cartDetails={cartDetails} setCartDetails={setCartDetails} />}
           {/* <SubmitBar label={t("ADS_BOOK_NOW")} onSubmit={handleBookClick} disabled=
 {!isCheckboxSelected} /> */}
-          <SubmitBar label={t("ADS_BOOK_NOW")} onSubmit={goNext} />
+          <SubmitBar label={t("ADS_BOOK_NOW")} onSubmit={goNext}  disabled={cartDetails.length === 0}/>
         </div>
       </FormStep>
       {showTable && ( // Only show table when showTable is true
