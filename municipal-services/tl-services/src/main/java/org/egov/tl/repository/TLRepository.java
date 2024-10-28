@@ -248,10 +248,7 @@ public class TLRepository {
 			preparedStmtList.add(tenantId);
 		}
 		
-		
-//        Object applicationStatusCount 
         statusList = jdbcTemplate.query(query,preparedStmtList.toArray(),(rs, rowNum) -> rs.getString("applicationtype"));
-//        statusList = objectMapper.convertValue(applicationStatusCount, List.class);
 		
 		return statusList;
 	}
