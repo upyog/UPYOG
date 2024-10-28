@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.producer.Producer;
@@ -33,6 +34,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -54,6 +57,9 @@ public class TLRepository {
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     public TLRepository(JdbcTemplate jdbcTemplate, TLQueryBuilder queryBuilder, TLRowMapper rowMapper,
@@ -227,6 +233,27 @@ public class TLRepository {
 		String updateQuery = "UPDATE eg_tl_tradelicense set status =:status WHERE applicationnumber =:applicationNumber ";
 		
 		namedParameterJdbcTemplate.update(updateQuery,inputs);
+	}
+
+
+	public List<String> getStatusOfAllApplications(String tenantId) {
+		List<String> statusList = null;
+		String query = null;
+    	List<Object> preparedStmtList = new ArrayList<>();
+		
+		if (StringUtils.isEmpty(tenantId)) {
+			query = "select applicationtype from eg_tl_tradelicense";
+		}else{
+			query = "select applicationtype from eg_tl_tradelicense WHERE tenantid = ?";
+			preparedStmtList.add(tenantId);
+		}
+		
+		
+//        Object applicationStatusCount 
+        statusList = jdbcTemplate.query(query,preparedStmtList.toArray(),(rs, rowNum) -> rs.getString("applicationtype"));
+//        statusList = objectMapper.convertValue(applicationStatusCount, List.class);
+		
+		return statusList;
 	}
     
 
