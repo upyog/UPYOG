@@ -164,6 +164,7 @@ public class AssessmentService {
 			throw new CustomException("ASSESMENT_EXCEPTION","Property assessment is already completed for this property for the financial year "+crt.getFinancialYear());
 
 		//Call For Previous Year Demand Deactivation
+		//deactivateOldDemandsForPreiousYears(request);
 		
 		if(config.getIsAssessmentWorkflowEnabled()){
 			assessmentEnrichmentService.enrichWorkflowForInitiation(request);

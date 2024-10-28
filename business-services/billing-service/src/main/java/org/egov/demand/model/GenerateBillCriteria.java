@@ -56,6 +56,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.Builder.Default;
 
 @Setter
 @Getter
@@ -87,6 +88,12 @@ public class GenerateBillCriteria {
 	@SafeHtml
 	@Size(max = 256)
 	private String modeOfPayment;
+	
+	@Default
+	private Boolean retrieveOldest = false;
+	
+	@Default
+	private Boolean allBill = false;
 
 	@Pattern(regexp = "^[0-9]{10}$", message = "MobileNumber should be 10 digit number")
 	private String mobileNumber;

@@ -86,7 +86,15 @@ public class BillRowMapperV2 implements ResultSetExtractor<List<BillV2>>{
 					.expiryDate(rs.getLong("bd_expirydate"))
 					.paymentPeriod(rs.getString("bd_paymentperiod"))
 					.additionalDetails(util.getJsonValue((PGobject) rs.getObject("bd_additionaldetails")))
-					
+					.interestonamount(rs.getBigDecimal("interestonamount"))
+					.adjusmentfromdate(rs.getString("adjusmentfromdate"))
+					.assesmentyear(rs.getString("assesmentyear"))
+					.adjustedtosession(rs.getString("adjustedtosession"))
+					.interestcalculatedsession(rs.getString("interestcalculatedsession"))
+					.interestpercentage(rs.getBigDecimal("interestpercentage"))
+					.interestfornoofdays(rs.getInt("interestfornoofdays"))
+					.previousYearAssesment(rs.getBoolean("previousyear"))
+					.totalAmountForIntCal(rs.getBigDecimal("totalamountforintcal"))
 					.build();
 
 				billDetailMap.put(billDetail.getId(), billDetail);

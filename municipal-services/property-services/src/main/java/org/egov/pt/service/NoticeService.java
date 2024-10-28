@@ -1,12 +1,19 @@
 package org.egov.pt.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Notice;
 import org.egov.pt.models.NoticeCriteria;
+import org.egov.pt.models.OwnerInfo;
+import org.egov.pt.models.Property;
+import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.producer.PropertyProducer;
 import org.egov.pt.repository.NoticeRepository;
 import org.egov.pt.web.contracts.NoticeRequest;
@@ -20,8 +27,6 @@ import org.springframework.util.StringUtils;
 @Service
 public class NoticeService {
 	
-
-
 	@Autowired
 	EnrichmentService enrichmentService;
 
@@ -33,6 +38,10 @@ public class NoticeService {
 	
 	@Autowired
 	NoticeRepository noticeRepository;
+	
+	@Autowired
+	PropertyService propertyService;
+	
 
 	public Notice saveNoticeData(NoticeRequest noticeRequest)
 	{
@@ -57,6 +66,13 @@ public class NoticeService {
 	public List<Notice> searchNotice(NoticeCriteria noticeCriteria, RequestInfoWrapper requestInfoWrapper)
 	{
 		List<Notice> notice;
+		Set<String> propertyIds=new HashSet<String>();
+		Set<String> noticePropertyIds=new HashSet<String>();
+		List<Property> properties = null;
+		List<Property> FilterProperties = new ArrayList<Property>();
+		RequestInfo requestInfo=requestInfoWrapper.getRequestInfo();
+		PropertyCriteria propertyCriteria=new PropertyCriteria();
+		
 		if(noticeCriteria.isAudit() && CollectionUtils.isEmpty(noticeCriteria.getNoticenumber()))
 			throw new CustomException("EG_PT_NOTICE_AUDIT_ERROR", "Audit can only be provided for Noticenumbers");
 		
@@ -67,6 +83,20 @@ public class NoticeService {
 			notice=noticeRepository.getnotices(noticeCriteria);
 		
 		notice=notice.stream().sorted((x,y)->y.getNoticeNumber().compareTo(x.getNoticeNumber())).collect(Collectors.toList());
+		propertyIds=notice.stream().map(Notice::getPropertyId).collect(Collectors.toSet());
+		propertyCriteria.setPropertyIds(propertyIds);
+		properties=propertyService.searchProperty(propertyCriteria, requestInfo);
+		for (Property property : properties) {
+			for (OwnerInfo owner : property.getOwners()) {
+				if(owner.getMobileNumber().equalsIgnoreCase(requestInfo.getUserInfo().getMobileNumber()))
+					FilterProperties.add(property);
+			}
+		}
+		noticePropertyIds=FilterProperties.stream().map(Property::getPropertyId).collect(Collectors.toSet());
+		noticeCriteria.setPropertyIds(noticePropertyIds);
+		notice=noticeRepository.getnotices(noticeCriteria);
+		notice=notice.stream().sorted((x,y)->y.getNoticeNumber().compareTo(x.getNoticeNumber())).collect(Collectors.toList());
+		
 		return notice;
 	}
 
