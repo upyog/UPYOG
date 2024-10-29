@@ -45,14 +45,14 @@ public class BookingUtil {
 		return LocalDate.now();
 	}
 
-	public static AuditDetails getAuditDetails(Long long1, Boolean isCreate) {
+	public static AuditDetails getAuditDetails(String by, Boolean isCreate) {
 		Long time = getCurrentTimestamp();
 		if (isCreate)
 			// TODO: check if we can set lastupdated details to empty
-			return AuditDetails.builder().createdBy(long1).lastModifiedBy(long1).createdTime(time).lastModifiedTime(time)
+			return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time)
 					.build();
 		else
-			return AuditDetails.builder().lastModifiedBy(long1).lastModifiedTime(time).build();
+			return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
 	}
 	
 	/*Commented and used Instant
@@ -84,12 +84,12 @@ public class BookingUtil {
 		return formattedDate;
 	}
 
-//	public static AuditDetails getAuditDetails(ResultSet rs) throws SQLException {
-//		AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("createdBy"))
-//				.createdTime(rs.getLong("createdTime")).lastModifiedBy(rs.getString("lastModifiedBy"))
-//				.lastModifiedTime(rs.getLong("lastModifiedTime")).build();
-//		return auditdetails;
-//	}
+	public static AuditDetails getAuditDetails(ResultSet rs) throws SQLException {
+		AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("createdBy"))
+				.createdTime(rs.getLong("createdTime")).lastModifiedBy(rs.getString("lastModifiedBy"))
+				.lastModifiedTime(rs.getLong("lastModifiedTime")).build();
+		return auditdetails;
+	}
 
 	public static String beuatifyJson(Object result) {
 		ObjectMapper mapper = new ObjectMapper();

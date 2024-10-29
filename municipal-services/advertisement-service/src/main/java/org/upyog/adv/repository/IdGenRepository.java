@@ -1,11 +1,6 @@
 package org.upyog.adv.repository;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
@@ -14,10 +9,14 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.upyog.adv.config.BookingConfiguration;
+import org.upyog.adv.web.models.idgen.IdGenerationRequest;
+import org.upyog.adv.web.models.idgen.IdGenerationResponse;
+import org.upyog.adv.web.models.idgen.IdRequest;
 
-import digit.models.coremodels.IdGenerationRequest;
-import digit.models.coremodels.IdGenerationResponse;
-import digit.models.coremodels.IdRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class IdGenRepository {
