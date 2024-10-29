@@ -142,9 +142,11 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 	 */
 	private void addChildrenToProperty(ResultSet rs, Property currentProperty)
 			throws SQLException {
+		
 		addDocToProperty(rs, currentProperty);
 		addOwnerToProperty(rs, currentProperty);
 		addUnitsToProperty(rs, currentProperty);
+		
 	}
 
 
