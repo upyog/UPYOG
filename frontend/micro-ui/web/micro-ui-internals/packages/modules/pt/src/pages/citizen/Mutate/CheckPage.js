@@ -274,7 +274,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         )}
       </div>
       <CheckBox
-        label={t("PT_MUTATION_FINAL_DECLARATION_MESSAGE")}
+        label={t("I hereby declare and affirm that the above-furnished information is true and correct and nothing has been concealed therefrom. I am also aware of the fact that in case this information is found false/incorrect, the authorities are at liberty to initiate recovery of amount / interest / penalty / fine as provided in Manipur Municipality Act 1994 or Manipur Municipality (Property Tax) Rules 2019.")}
         onChange={setdeclarationhandler}
         styles={{ height: "auto", margin: '2rem 0' }}
       />

@@ -237,12 +237,12 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
       });
       // console.log("totalBuiltupArea==",totalBuiltupArea,formData)
     }
-    if(totalBuiltupArea > +formData?.landArea?.floorarea) {
-      setBuilUpAreaError(true);
-      return;
-    } else {
-      setBuilUpAreaError(false);
-    }
+    // if(totalBuiltupArea > +formData?.landArea?.floorarea) {
+    //   setBuilUpAreaError(true);
+    //   return;
+    // } else {
+    //   setBuilUpAreaError(false);
+    // }
     if (currentFloor === formData?.noOfFloors?.code || !isFloor) {
       // if(formData?.noOofBasements?.code==1){
       //   onSelect(config.key, unitsdata,false,-1,true);
@@ -437,9 +437,9 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
           {`${t("PT_ADD_UNIT")}`}
         </button>
       </div>
-      {builtUpAreaError && <div style={{ justifyContent: "left", display: "flex", paddingBottom: "15px", color: "red" }}>
+      {/* {builtUpAreaError && <div style={{ justifyContent: "left", display: "flex", paddingBottom: "15px", color: "red" }}>
           Total Built-up area of a floor can not be more than the Land Area({formData?.landArea?.floorarea} Sq.Ft.)
-      </div>}
+      </div>} */}
     </FormStep>
     </React.Fragment>
   );

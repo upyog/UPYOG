@@ -11,6 +11,10 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
 
   let index = mutationScreen ? ownerIndex : window.location.href.charAt(window.location.href.length - 1);
   let validation = {};
+  const [otp, setOtp] = useState();
+  const [isOtpValid, setIsOtpValid] = useState(false);
+  const [otpError, setOtpError] = useState("");
+  const [sentOtp, setSentOtp] = useState("123456");
   const [name, setName] = useState((formData.owners && formData.owners[index] && formData.owners[index].name) || formData?.owners?.name || "");
   const [email, setEmail] = useState((formData.owners && formData.owners[index] && formData.owners[index].email) || formData?.owners?.emailId || "");
   const [gender, setGender] = useState((formData.owners && formData.owners[index] && formData.owners[index].gender) || formData?.owners?.gender);
@@ -49,12 +53,16 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
 
   function setMobileNo(e) {
     setMobileNumber(e.target.value);
+    setIsOtpValid(false)
   }
   function setGuardiansName(e) {
     setFatherOrHusbandName(e.target.value);
   }
   function setGuardianName(value) {
     setRelationship(value);
+  }
+  function onChangeOtp(e) {
+    setOtp(e.target.value);
   }
 
   const goNext = () => {
@@ -73,6 +81,20 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
       onSelect(config.key, ownerStep, false, index);
     }
   };
+  const validateOtp = (e) => {
+    e.preventDefault();
+    if(sentOtp == otp) {
+      setOtpError("");
+      setIsOtpValid(true);
+    } else {
+      setOtpError("Invalid OTP");
+      setIsOtpValid(false);
+    }
+  }
+  const sendOtp = (e) => {
+    e.preventDefault();
+    console.log("sendOtp==",e)
+  }
 
   const onSkip = () => onSelect();
   // As Ticket RAIN-2619 other option in gender and gaurdian will be enhance , dont uncomment it
@@ -104,7 +126,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
     return (
       <div>
         <LabelFieldPair>
-          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_FORM3_MOBILE_NUMBER")}`}</CardLabel>
+          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_FORM3_MOBILE_NUMBER")} *On change Mobile number, you need to verify the OTP every time.`}</CardLabel>
           <div className="field">
             <TextInput
               type={"text"}
@@ -223,10 +245,10 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
       onSelect={goNext}
       onSkip={onSkip}
       t={t}
-      isDisabled={!name || !mobileNumber || !gender || !relationship || !fatherOrHusbandName}
+      isDisabled={!name || !mobileNumber || !gender || !relationship || !fatherOrHusbandName || !isOtpValid}
     >
       <div>
-        <CardLabel>{`${t("PT_OWNER_NAME")}`}</CardLabel>
+        <CardLabel>{`${t("PT_OWNER_NAME")} *`}</CardLabel>
         <TextInput
           t={t}
           type={"text"}
@@ -244,7 +266,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
         />
-        <CardLabel>{`${t("PT_FORM3_GENDER")}`}</CardLabel>
+        <CardLabel>{`${t("PT_FORM3_GENDER")} *`}</CardLabel>
         <RadioButtons
           t={t}
           options={menu}
@@ -257,15 +279,50 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
           labelKey="PT_COMMON_GENDER"
           disabled={isUpdateProperty || isEditProperty}
         />
-        <CardLabel>{`${t("PT_FORM3_MOBILE_NUMBER")}`}</CardLabel>
-        <MobileNumber
-          value={mobileNumber}
-          name="mobileNumber"
-          onChange={(value) => setMobileNo({ target: { value } })}
-          disable={isUpdateProperty || isEditProperty}
-          {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
-        />
-        <CardLabel>{`${t("PT_FORM3_GUARDIAN_NAME")}`}</CardLabel>
+        
+        <CardLabel>{`${t("PT_FORM3_MOBILE_NUMBER")} *`}</CardLabel>
+        <div>
+          <MobileNumber
+            value={mobileNumber}
+            name="mobileNumber"
+            onChange={(value) => setMobileNo({ target: { value } })}
+            disable={isUpdateProperty || isEditProperty}
+            {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
+          />
+          <small>N.B: On change mobile number, you need to verify the OTP every time.</small>
+          <div>
+            <button className="submit-bar" onClick={sendOtp} type="submit" style={{display: "inline", marginRight: "10px"}}><header>Send OTP</header></button>
+            <TextInput
+              t={t}
+              type={"text"}
+              isMandatory={false}
+              optionKey="i18nKey"
+              placeholder={"Enter OTP"}
+              name="otp"
+              value={otp}
+              onChange={onChangeOtp}
+              textInputStyle={{width: "fit-content", display: "inline-flex"}}
+              disable={isUpdateProperty || isEditProperty}
+              ValidationRequired = {true}
+              {...(validation = {
+                isRequired: true,
+                pattern: "[0-9]{6}",
+                type: "text",
+                title: t("This field is required"),
+              })}
+            />
+           
+            <button className="submit-bar" type="submit" style={{display: "inline", marginLeft: "10px"}} onClick={validateOtp}><header>Validate OTP</header></button>
+            
+          </div>
+          <div style={{position: "relative", top: "-10px"}}>          
+            {isOtpValid && <small style={{color: "green"}}>OTP validate successfully.</small>}
+            {!isOtpValid && otpError && <small style={{color: "red"}}>Invalid OTP.</small>}
+          </div>
+
+          
+        </div>
+        <CardLabel>{`${t("PT_FORM3_GUARDIAN_NAME")} *`}</CardLabel>
         <TextInput
           t={t}
           type={"text"}
@@ -283,7 +340,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
         />
-        <CardLabel>{`${t("PT_FORM3_RELATIONSHIP")}`}</CardLabel>
+        <CardLabel>{`${t("PT_FORM3_RELATIONSHIP")} *`}</CardLabel>
         <RadioButtons
           t={t}
           optionsKey="i18nKey"

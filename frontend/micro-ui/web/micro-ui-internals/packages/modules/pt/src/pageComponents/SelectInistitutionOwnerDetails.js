@@ -11,6 +11,10 @@ const SelectInistitutionOwnerDetails = ({ t, config, onSelect, userType, formDat
   let index = 0;
   let validation = {};
   const tenantId = Digit.ULBService.getCurrentTenantId();
+  const [otp, setOtp] = useState();
+  const [isOtpValid, setIsOtpValid] = useState(false);
+  const [otpError, setOtpError] = useState("");
+  const [sentOtp, setSentOtp] = useState("123456");
   const [inistitutionName, setInistitutionName] = useState(formData.owners && formData.owners[index] && formData.owners[index].inistitutionName);
   const [inistitutetype, setInistitutetype] = useState(formData.owners && formData.owners[index] && formData.owners[index].inistitutetype);
   const [name, setName] = useState(formData.owners && formData.owners[index] && formData.owners[index].name);
@@ -35,12 +39,16 @@ const SelectInistitutionOwnerDetails = ({ t, config, onSelect, userType, formDat
   }
   function setMobileNo(e) {
     setMobileNumber(e.target.value);
+    setIsOtpValid(false)
   }
   function setAltContactNo(e) {
     setAltContactNumber(e.target.value);
   }
   function setEmail(e) {
     setEmailId(e.target.value);
+  }
+  function onChangeOtp(e) {
+    setOtp(e.target.value);
   }
 
   const formDropdown = (category) => {
@@ -97,6 +105,24 @@ const SelectInistitutionOwnerDetails = ({ t, config, onSelect, userType, formDat
     <Timeline currentStep={2} />
   );
 
+  const validateOtp = (e) => {
+    e.preventDefault();
+    console.log("validateOtp==",e,otp)
+    
+    if(sentOtp == otp) {
+      setOtpError("");
+      setIsOtpValid(true);
+    } else {
+      setOtpError("Invalid OTP");
+      setIsOtpValid(false);
+    }
+    
+  }
+  const sendOtp = (e) => {
+    e.preventDefault();
+    console.log("sendOtp==",e)
+  }
+
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? checkMutatePT : null}
@@ -104,7 +130,7 @@ const SelectInistitutionOwnerDetails = ({ t, config, onSelect, userType, formDat
         config={config}
         t={t}
         onSelect={goNext}
-        isDisabled={!inistitutionName || !inistitutetype || !name || !designation || !mobileNumber }
+        isDisabled={!inistitutionName || !inistitutetype || !name || !designation || !mobileNumber || !isOtpValid }
       >
         <div>
           <CardLabel>{`${t("PT_COMMON_INSTITUTION_NAME")}*`}</CardLabel>
@@ -164,22 +190,55 @@ const SelectInistitutionOwnerDetails = ({ t, config, onSelect, userType, formDat
             })}
           />
           <CardLabel>{`${t("PT_FORM3_MOBILE_NUMBER")}*`}</CardLabel>
-          <TextInput
-            isMandatory={false}
-            optionKey="i18nKey"
-            t={t}
-            name="setMobileNo"
-            onChange={setMobileNo}
-            value={mobileNumber}
-            type={"tel"}
-            disable={isUpdateProperty || isEditProperty}
-            {...(validation = {
-              isRequired: true,
-              pattern: "[6-9]{1}[0-9]{9}",
-              type: "tel",
-              title: t("CORE_COMMON_APPLICANT_ALT_NUMBER_INVALID"),
-            })}
-          />
+          
+          <div>
+            <TextInput
+              isMandatory={false}
+              optionKey="i18nKey"
+              t={t}
+              name="setMobileNo"
+              onChange={setMobileNo}
+              value={mobileNumber}
+              type={"tel"}
+              disable={isUpdateProperty || isEditProperty}
+              {...(validation = {
+                isRequired: true,
+                pattern: "[6-9]{1}[0-9]{9}",
+                type: "tel",
+                title: t("CORE_COMMON_APPLICANT_ALT_NUMBER_INVALID"),
+              })}
+            />
+              <small>N.B: On change mobile number, you need to verify the OTP every time.</small>
+            <div>
+            <button className="submit-bar" onClick={sendOtp} type="submit" style={{display: "inline", marginRight: "10px"}}><header>Send OTP</header></button>
+            <TextInput
+              t={t}
+              type={"text"}
+              isMandatory={false}
+              optionKey="i18nKey"
+              placeholder={"Enter OTP"}
+              name="otp"
+              value={otp}
+              onChange={onChangeOtp}
+              textInputStyle={{width: "fit-content", display: "inline-flex"}}
+              disable={isUpdateProperty || isEditProperty}
+              ValidationRequired = {true}
+              {...(validation = {
+                isRequired: true,
+                pattern: "[0-9]{6}",
+                type: "text",
+                title: t("This field is required"),
+              })}
+            />
+            <button className="submit-bar" type="submit" style={{display: "inline", marginLeft: "10px"}} onClick={validateOtp}><header>Validate OTP</header></button>
+
+          </div>
+          <div style={{position: "relative", top: "-10px"}}>          
+            {isOtpValid && <small style={{color: "green"}}>OTP validate successfully.</small>}
+            {!isOtpValid && otpError && <small style={{color: "red"}}>Invalid OTP.</small>}
+          </div>
+          </div>
+          
           <CardLabel>{`${t("PT_OWNERSHIP_INFO_TEL_PHONE_NO")}*`}</CardLabel>
           <TextInput
             isMandatory={false}

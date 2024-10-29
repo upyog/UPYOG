@@ -50,7 +50,8 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   const [name, setName] = useState(userInfo?.name ? userInfo.name : "");
   const [email, setEmail] = useState(userInfo?.emailId ? userInfo.emailId : "");
   const [gender, setGender] = useState(userDetails?.gender);
-  const [city, setCity] = useState(userInfo?.permanentCity ? userInfo.permanentCity : cityDetails.name);
+  console.log("cityDetails===",cityDetails)
+  const [city, setCity] = useState(userInfo?.permanentCity ? userInfo.permanentCity : cityDetails?.name ? cityDetails.name : '');
   const [mobileNumber, setMobileNo] = useState(userInfo?.mobileNumber ? userInfo.mobileNumber : "");
   const [profilePic, setProfilePic] = useState(null);
   const [profileImg, setProfileImg] = useState("");
@@ -303,7 +304,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   if (loading) return <Loader></Loader>;
 
   return (
-    <div className="user-profile">
+    <div className="user-profile container" style={{marginTop: "50px"}}>
       <section style={{ margin: userType === "citizen" ? "8px" : "24px",position:"relative" }}>
         {userType === "citizen" ? (
           <BackButton></BackButton>
