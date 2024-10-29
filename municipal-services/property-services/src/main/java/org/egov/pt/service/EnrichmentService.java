@@ -148,6 +148,7 @@ public class EnrichmentService {
 				doc.setStatus(Status.ACTIVE);
 				}
 			});
+		property.setDocuments(property.getDocuments().stream().filter(x->null!=x.getId() && !x.getId().isEmpty()).collect(Collectors.toList()));
 
 		property.getAddress().setTenantId(property.getTenantId());
 		property.getAddress().setId(UUID.randomUUID().toString());
@@ -176,7 +177,7 @@ public class EnrichmentService {
 					}
 					
 				});
-
+			owner.setDocuments(owner.getDocuments().stream().filter(x->null!=x.getId() && !x.getId().isEmpty()).collect(Collectors.toList()));
 			owner.setStatus(Status.ACTIVE);
 		});
 	}
