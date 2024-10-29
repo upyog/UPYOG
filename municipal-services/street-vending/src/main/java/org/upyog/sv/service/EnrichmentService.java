@@ -83,7 +83,7 @@ public class EnrichmentService {
 			timedetails.setApplicationId(applicationId);
 			timedetails.setId(StreetVendingUtil.getRandonUUID());
 		});
-		
+
 		log.info("Enriched application request data :" + streetVendingDetail);
 
 	}

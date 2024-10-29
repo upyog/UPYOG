@@ -4,9 +4,10 @@ public class StreetVendingConstants {
 
 	public static final String CITIZEN = null;
 	public static final String EMPLOYEE = null;
-	public static final String APPLICATION_CREATED = null;
+	public static final String APPLICATION_CREATED = "Application Created";
 	public static final String INVALID_TENANT = null;
 	public static final String INVALID_SEARCH = null;
+	public static final String APPLICATIONS_FOUND = "Applications Found";
 	
 	
 	public static final String DUPLICATE_DOCUMENT_UPLOADED = null;

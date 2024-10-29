@@ -1,147 +1,145 @@
 package org.upyog.sv.web.models.common;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.validation.annotation.Validated;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import javax.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Builder;
 
 /**
  * User
  */
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-19T11:17:29.419+05:30")
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-08-20T09:30:27.617+05:30")
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class User   {
-        @JsonProperty("id")
-        private Long id = null;
+public class User {
+	@JsonProperty("id")
+	private Long id = null;
 
-        @JsonProperty("userName")
-        private String userName = null;
+	@JsonProperty("uuid")
+	private String uuid;
 
-        @JsonProperty("password")
-        private String password = null;
+	@JsonProperty("userName")
+	private String userName = null;
 
-        @JsonProperty("salutation")
-        private String salutation = null;
+	@JsonProperty("password")
+	private String password = null;
 
-        @JsonProperty("name")
-        private String name = null;
+	@JsonProperty("salutation")
+	private String salutation = null;
 
-        @JsonProperty("gender")
-        private String gender = null;
+	@JsonProperty("name")
+	private String name = null;
 
-        @JsonProperty("mobileNumber")
-        private String mobileNumber = null;
+	@JsonProperty("gender")
+	private String gender = null;
 
-        @JsonProperty("emailId")
-        private String emailId = null;
+	@JsonProperty("mobileNumber")
+	private String mobileNumber = null;
 
-        @JsonProperty("altContactNumber")
-        private String altContactNumber = null;
+	@JsonProperty("emailId")
+	private String emailId = null;
 
-        @JsonProperty("pan")
-        private String pan = null;
+	@JsonProperty("altContactNumber")
+	private String altContactNumber = null;
 
-        @JsonProperty("aadhaarNumber")
-        private String aadhaarNumber = null;
+	@JsonProperty("pan")
+	private String pan = null;
 
-        @JsonProperty("permanentAddress")
-        private String permanentAddress = null;
+	@JsonProperty("aadhaarNumber")
+	private String aadhaarNumber = null;
 
-        @JsonProperty("permanentCity")
-        private String permanentCity = null;
+	@JsonProperty("permanentAddress")
+	private String permanentAddress = null;
 
-        @JsonProperty("permanentPincode")
-        private String permanentPincode = null;
+	@JsonProperty("permanentCity")
+	private String permanentCity = null;
 
-        @JsonProperty("correspondenceCity")
-        private String correspondenceCity = null;
+	@JsonProperty("permanentPincode")
+	private String permanentPincode = null;
 
-        @JsonProperty("correspondencePincode")
-        private String correspondencePincode = null;
+	@JsonProperty("correspondenceCity")
+	private String correspondenceCity = null;
 
-        @JsonProperty("correspondenceAddress")
-        private String correspondenceAddress = null;
+	@JsonProperty("correspondencePincode")
+	private String correspondencePincode = null;
 
-        @JsonProperty("active")
-        private Boolean active = null;
+	@JsonProperty("correspondenceAddress")
+	private String correspondenceAddress = null;
 
-        @JsonProperty("dob")
-        private LocalDate dob = null;
+	@JsonProperty("active")
+	private Boolean active = null;
 
-        @JsonProperty("pwdExpiryDate")
-        private LocalDate pwdExpiryDate = null;
+	@JsonProperty("dob")
+	private LocalDate dob = null;
 
-        @JsonProperty("locale")
-        private String locale = null;
+	@JsonProperty("pwdExpiryDate")
+	private LocalDate pwdExpiryDate = null;
 
-        @JsonProperty("type")
-        private String type = null;
+	@JsonProperty("locale")
+	private String locale = null;
 
-        @JsonProperty("signature")
-        private String signature = null;
+	@JsonProperty("type")
+	private String type = null;
 
-        @JsonProperty("accountLocked")
-        private Boolean accountLocked = null;
+	@JsonProperty("signature")
+	private String signature = null;
 
-        @JsonProperty("roles")
-        @Valid
-        private List<Role> roles = null;
+	@JsonProperty("accountLocked")
+	private Boolean accountLocked = null;
 
-        @JsonProperty("fatherOrHusbandName")
-        private String fatherOrHusbandName = null;
+	@JsonProperty("roles")
+	@Valid
+	private List<Role> roles = null;
 
-        @JsonProperty("bloodGroup")
-        private String bloodGroup = null;
+	@JsonProperty("fatherOrHusbandName")
+	private String fatherOrHusbandName = null;
 
-        @JsonProperty("identificationMark")
-        private String identificationMark = null;
+	@JsonProperty("bloodGroup")
+	private String bloodGroup = null;
 
-        @JsonProperty("photo")
-        private String photo = null;
+	@JsonProperty("identificationMark")
+	private String identificationMark = null;
 
-        @JsonProperty("createdBy")
-        private Long createdBy = null;
+	@JsonProperty("photo")
+	private String photo = null;
 
-        @JsonProperty("createdDate")
-        private LocalDate createdDate = null;
+	@JsonProperty("createdBy")
+	private Long createdBy = null;
 
-        @JsonProperty("lastModifiedBy")
-        private Long lastModifiedBy = null;
+	@JsonProperty("createdDate")
+	private LocalDate createdDate = null;
 
-        @JsonProperty("lastModifiedDate")
-        private LocalDate lastModifiedDate = null;
+	@JsonProperty("lastModifiedBy")
+	private Long lastModifiedBy = null;
 
-        @JsonProperty("otpReference")
-        private String otpReference = null;
+	@JsonProperty("lastModifiedDate")
+	private LocalDate lastModifiedDate = null;
 
-        @JsonProperty("tenantId")
-        private String tenantId = null;
+	@JsonProperty("otpReference")
+	private String otpReference = null;
 
+	@JsonProperty("tenantId")
+	private String tenantId = null;
 
-        public User addRolesItem(Role rolesItem) {
-            if (this.roles == null) {
-            this.roles = new ArrayList<>();
-            }
-        this.roles.add(rolesItem);
-        return this;
-        }
+	public User addRolesItem(Role rolesItem) {
+		if (this.roles == null) {
+			this.roles = new ArrayList<>();
+		}
+		this.roles.add(rolesItem);
+		return this;
+	}
 
 }
-
