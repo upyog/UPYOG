@@ -19,6 +19,11 @@ public class SWCalculatorQueryBuilder {
 			+ " FROM eg_sw_connection conn INNER JOIN eg_sw_service sw ON conn.id = sw.connection_id"
 			+ " inner join eg_pt_property pt on conn.property_id= pt.propertyid ";
 	
+	private static final String connectionNoCommercialListSewerageQuery = "SELECT distinct(conn.connectionno),sw.connectionexecutiondate "
+			+ " FROM eg_sw_connection conn LEFT JOIN eg_ws_connection ws ON conn.property_id = ws.property_id"
+			+ " INNER JOIN eg_sw_service sw ON conn.id = sw.connection_id"
+			+ " inner join eg_pt_property pt on conn.property_id= pt.propertyid ";
+	
 	private static final String distinctTenantIdsCriteria = "SELECT distinct(tenantid) FROM eg_sw_connection sw";
 
 	private  static final String countQuery = "select count(*) from eg_sw_connection";
@@ -492,6 +497,56 @@ public class SWCalculatorQueryBuilder {
 		
 		query.append(fetchConnectionsToBeGenerate(tenantId, taxPeriodFrom, taxPeriodTo, preparedStatement));
 
+		return query.toString();
+	}
+	
+	public String getConnectionNumberListForCommercialOnlySewerage(String tenantId, String connectionType, String status, Long taxPeriodFrom, Long taxPeriodTo, String cone, List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(connectionNoCommercialListSewerageQuery);
+		// Add connection type
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" sw.connectiontype = ? ");
+		preparedStatement.add(connectionType);
+		
+		//Add status
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.status = ? ");
+		preparedStatement.add(status);
+		
+		//Get the activated connections status	
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.applicationstatus = ? ");
+		preparedStatement.add(SWCalculationConstant.CONNECTION_ACTIVATED);
+		
+
+		// add tenantid
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.tenantid = ? ");
+		preparedStatement.add(tenantId);
+		
+		
+		// add Not commercial for amritsar
+		addClauseIfRequired(preparedStatement, query);
+		query.append("pt.usagecategory = ? ");
+		preparedStatement.add("NONRESIDENTIAL.COMMERCIAL");
+		
+		//Added connection number for testing Anonymous User issue
+//		addClauseIfRequired(preparedStatement, query);
+//		query.append(" conn.connectionno ='0603001817' ");
+		
+		//Add not null condition
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.connectionno is not null");
+
+                if(cone!=null && cone!="")
+		{
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" conn.connectionno = ? ");
+			preparedStatement.add(cone);
+		}
+        query.append("AND ws.property_id IS NULL");
+
+		query.append(fetchConnectionsToBeGenerate(tenantId, taxPeriodFrom, taxPeriodTo, preparedStatement));
+		
 		return query.toString();
 	}
 	

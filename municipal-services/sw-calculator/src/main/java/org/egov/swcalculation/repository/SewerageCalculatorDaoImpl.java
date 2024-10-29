@@ -2,6 +2,7 @@ package org.egov.swcalculation.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.egov.swcalculation.constants.SWCalculationConstant;
 import org.egov.swcalculation.repository.builder.SWCalculatorQueryBuilder;
@@ -58,17 +59,31 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 	@Override
 	public List<SewerageDetails> getConnectionsNoListsingle(String tenantId, String connectionType,Long fromDate, Long toDate, String Connectionno) {
 		List<Object> preparedStatement = new ArrayList<>();
+		List<Object> preparedStatementTwo = new ArrayList<>();
 		//String query = queryBuilder.getConnectionNumberListsingle(tenantId, connectionType, preparedStatement, fromDate, toDate,Connectionno);
-		String query = "";	
+		String query = "";
+		String queryTwo = "";
 		if((tenantId.equals("pb.amritsar"))) {
 			 query = queryBuilder.getConnectionNumberListForNonCommercial(tenantId, connectionType,SWCalculationConstant.ACTIVE, fromDate, toDate, Connectionno, preparedStatement);
-		         log.info("Demand will not generate for water metered connections in Amritsar: "+query);
+		     queryTwo = queryBuilder.getConnectionNumberListForCommercialOnlySewerage(tenantId, connectionType,SWCalculationConstant.ACTIVE, fromDate, toDate, Connectionno, preparedStatementTwo);  
+			 log.info("Demand will not generate for water metered connections in Amritsar: "+query);
 		}else {
 			query = queryBuilder.getConnectionNumberListsingle(tenantId, connectionType, preparedStatement, fromDate, toDate,Connectionno);
 		}
 		
-		log.info(query.toString());	log.info(preparedStatement.toString());
-		return jdbcTemplate.query(query, preparedStatement.toArray(), demandSchedulerRowMapper);
+		log.info(query.toString());	
+		log.info(preparedStatement.toString());
+		log.info(queryTwo.toString());
+		log.info(preparedStatementTwo.toString());
+
+		List<SewerageDetails> sewerageDetails = jdbcTemplate.query(query, preparedStatement.toArray(), demandSchedulerRowMapper);
+		List<SewerageDetails> sewerageDetailsTwo = jdbcTemplate.query(queryTwo, preparedStatement.toArray(), demandSchedulerRowMapper);
+
+		sewerageDetails.addAll(sewerageDetailsTwo);
+		List<SewerageDetails> deDuplSewerageList = sewerageDetails.stream().distinct().collect(Collectors.toList());
+
+		
+		return deDuplSewerageList;
 	}
 	@Override
 	public List<String> getConnectionsNoByLocality(String tenantId, String connectionType, String locality) {
