@@ -31,17 +31,22 @@ public class StreetVendingConfiguration {
 	 * @Value("${egov.chb.max.limit}") private Integer maxSearchLimit;
 	 * 
 	 * // Workflow configs
-	 * 
-	 * @Value("${workflow.host}") private String wfHost;
-	 * 
-	 * @Value("${workflow.transition.path}") private String wfTransitionPath;
-	 * 
-	 * @Value("${workflow.businessservice.search.path}") private String
-	 * wfBusinessServiceSearchPath;
-	 * 
-	 * @Value("${workflow.processinstance.search.path}") private String
-	 * wfProcessSearchPath;
-	 * 
+	 */
+	@Value("${egov.workflow.host}")
+	private String wfHost;
+
+	@Value("${egov.workflow.transition.path}")
+	private String wfTransitionPath;
+
+	@Value("${egov.workflow.businessservice.search.path}")
+	private String wfBusinessServiceSearchPath;
+
+	@Value("${egov.workflow.processinstance.search.path}")
+	private String wfProcessSearchPath;
+	
+	@Value("${egov.workflow.processinstance.search.path}")
+	private String wfProcessInstanceSearchPath;
+	/*
 	 * // User Config
 	 * 
 	 * @Value("${egov.user.host}") private String userHost;
