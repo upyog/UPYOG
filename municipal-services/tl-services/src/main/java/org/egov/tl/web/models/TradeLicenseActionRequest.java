@@ -25,4 +25,5 @@ public class TradeLicenseActionRequest {
 	private List<String> applicationNumbers;
 	
 	private String tenantId;
+	private Boolean isHistoryCall = false;
 }

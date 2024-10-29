@@ -1530,7 +1530,7 @@ public class TradeLicenseService {
 		// fetch data
 		try {
 			if(null != tradeLicenseActionRequest) {
-				statusList = tlRepository.getStatusOfAllApplications(tradeLicenseActionRequest.getTenantId());
+				statusList = tlRepository.getTypesOfAllApplications(tradeLicenseActionRequest.getIsHistoryCall(),tradeLicenseActionRequest.getTenantId());
 			}
 			if (!CollectionUtils.isEmpty(statusList)) {
 				tradeLicenseActionResponse

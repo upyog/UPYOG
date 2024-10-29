@@ -236,19 +236,22 @@ public class TLRepository {
 	}
 
 
-	public List<String> getStatusOfAllApplications(String tenantId) {
+	public List<String> getTypesOfAllApplications(Boolean isHistoryCall, String tenantId) {
 		List<String> statusList = null;
 		String query = null;
     	List<Object> preparedStmtList = new ArrayList<>();
 		
-		if (StringUtils.isEmpty(tenantId)) {
-			query = "select applicationtype from eg_tl_tradelicense";
-		}else{
-			query = "select applicationtype from eg_tl_tradelicense WHERE tenantid = ?";
-			preparedStmtList.add(tenantId);
+		if (BooleanUtils.isTrue(isHistoryCall)) {
+			query = "select applicationtype from eg_tl_tradelicense_audit where \"action\" = 'APPROVE' and  status = 'APPROVED'";
+		}else {
+			if (StringUtils.isEmpty(tenantId)) {
+				query = "select applicationtype from eg_tl_tradelicense";
+			} else {
+				query = "select applicationtype from eg_tl_tradelicense WHERE tenantid = ?";
+				preparedStmtList.add(tenantId);
+			} 
 		}
-		
-        statusList = jdbcTemplate.query(query,preparedStmtList.toArray(),(rs, rowNum) -> rs.getString("applicationtype"));
+		statusList = jdbcTemplate.query(query,preparedStmtList.toArray(),(rs, rowNum) -> rs.getString("applicationtype"));
 		
 		return statusList;
 	}
