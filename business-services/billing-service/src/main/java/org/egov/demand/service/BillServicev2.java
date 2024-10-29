@@ -356,9 +356,11 @@ public class BillServicev2 {
 				res.setBill(billToBeReturned);
 				List<BillDetailV2> updatedbills = null;
 				if(billToBeReturned!=null && !billToBeReturned.isEmpty())
-					//updatedbills = billToBeReturned.get(0).getBillDetails();
 				{
-					if(!billToBeReturned.get(0).getBillDetails().get(0).isPreviousYearAssesment()) {
+					if(billsToBeReturned.get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("YR"))
+						return res;
+		
+					else if(!billToBeReturned.get(0).getBillDetails().get(0).isPreviousYearAssesment()) {
 						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MM yyyy");
 						BigDecimal totalAmount;
 						String date = billToBeReturned.get(0).getBillDetails().get(0).getAdjusmentfromdate();
@@ -1520,6 +1522,9 @@ public class BillServicev2 {
 					ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(), pastDue);
 			mpdObj.setPeriod(TxnPeriodEnum.YEARLY);
 			mpdList.add(mpdObj);
+			
+			inp = getInterestPenalty( BigDecimal.ZERO,  null, null,null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
+
 
 			break;
 		default:
