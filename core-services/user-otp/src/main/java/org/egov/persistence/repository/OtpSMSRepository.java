@@ -48,7 +48,13 @@ public class OtpSMSRepository {
     public void send(OtpRequest otpRequest, String otpNumber) {
 		Long currentTime = System.currentTimeMillis() + maxExecutionTime;
 		final String message = getMessage(otpNumber, otpRequest);
-        kafkaTemplate.send(smsTopic, new SMSRequest(otpRequest.getMobileNumber(), message, Category.OTP, currentTime));
+        kafkaTemplate.send(smsTopic, new SMSRequest(otpRequest.getMobileNumber(), message, Category.OTP, currentTime,"templateId"));
+    }
+    
+    public void sendNew(OtpRequest otpRequest, String otpNumber) {
+		Long currentTime = System.currentTimeMillis() + maxExecutionTime;
+		final String message = getMessage(otpNumber, otpRequest);
+        kafkaTemplate.send(smsTopic, new SMSRequest(otpRequest.getMobileNumber(), message, Category.OTP, currentTime,otpRequest.getTemplateId()));
     }
 
     private String getMessage(String otpNumber, OtpRequest otpRequest) {
@@ -61,16 +67,20 @@ public class OtpSMSRepository {
         Map<String, String> localisedMsgs = localizationService.getLocalisedMessages(tenantId, "en_IN", "egov-user");
         if (localisedMsgs.isEmpty()) {
             log.info("Localization Service didn't return any msgs so using default...");
-            localisedMsgs.put(LOCALIZATION_KEY_REGISTER_SMS, "Dear Citizen, Your OTP to complete your mSeva Registration is %s.");
+            
+           String registerOtpMsg =  "OTP for registering your property with the concerned "
+           		+ "Municipality is %s. Please use this code within the next 10 minutes "
+           		+ "to complete your Registration Process. Thank you!MMPTBhttps://www.propertytax.mn.gov.in";
+            localisedMsgs.put(LOCALIZATION_KEY_REGISTER_SMS,registerOtpMsg );
             localisedMsgs.put(LOCALIZATION_KEY_LOGIN_SMS, "Dear Citizen, Your Login OTP is %s.");
             localisedMsgs.put(LOCALIZATION_KEY_PWD_RESET_SMS, "Dear Citizen, Your OTP for recovering password is %s.");
         }
         String message = null;
 
-        if (otpRequest.isRegistrationRequestType())
+        if (otpRequest.isRegistrationRequestType() || otpRequest.isLoginRequestType() || otpRequest.isOwnerValidate())
             message = localisedMsgs.get(LOCALIZATION_KEY_REGISTER_SMS);
-        else if (otpRequest.isLoginRequestType())
-            message = localisedMsgs.get(LOCALIZATION_KEY_LOGIN_SMS);
+        //else if (otpRequest.isLoginRequestType())
+           // message = localisedMsgs.get(LOCALIZATION_KEY_LOGIN_SMS);
         else
             message = localisedMsgs.get(LOCALIZATION_KEY_PWD_RESET_SMS);
 

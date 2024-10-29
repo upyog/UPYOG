@@ -153,6 +153,16 @@ public class BillRepositoryV2 {
 				ps.setLong(24, billDetail.getExpiryDate());
 				ps.setObject(25,util.getPGObject(billDetail.getAdditionalDetails()));
 				ps.setObject(26,billDetail.getPaymentPeriod());
+				ps.setBigDecimal(27, billDetail.getInterestonamount());
+				ps.setString(28, billDetail.getAdjusmentfromdate());
+				ps.setString(29, billDetail.getAssesmentyear());
+				ps.setString(30, billDetail.getAdjustedtosession());
+				ps.setString(31, billDetail.getInterestcalculatedsession());
+				ps.setBigDecimal(32,billDetail.getInterestpercentage() );
+				ps.setInt(33, billDetail.getInterestfornoofdays());
+				ps.setBoolean(34, billDetail.isPreviousYearAssesment());
+				ps.setBigDecimal(35, billDetail.getTotalAmountForIntCal());
+				
 			}
 
 			@Override

@@ -142,9 +142,13 @@ public class EnrichmentService {
 
 		if (!CollectionUtils.isEmpty(property.getDocuments()))
 			property.getDocuments().forEach(doc -> {
+				//Added BY Bikash For Empty doc issue
+				if(null!=doc.getDocumentType() && !doc.getDocumentType().isEmpty()) {
 				doc.setId(UUID.randomUUID().toString());
 				doc.setStatus(Status.ACTIVE);
+				}
 			});
+		property.setDocuments(property.getDocuments().stream().filter(x->null!=x.getId() && !x.getId().isEmpty()).collect(Collectors.toList()));
 
 		property.getAddress().setTenantId(property.getTenantId());
 		property.getAddress().setId(UUID.randomUUID().toString());
@@ -166,10 +170,14 @@ public class EnrichmentService {
 			owner.setOwnerInfoUuid(UUID.randomUUID().toString());
 			if (!CollectionUtils.isEmpty(owner.getDocuments()))
 				owner.getDocuments().forEach(doc -> {
-					doc.setId(UUID.randomUUID().toString());
-					doc.setStatus(Status.ACTIVE);
+					System.out.println(doc.getDocumentUid());
+					if(null!=doc.getDocumentType() && !doc.getDocumentType().isEmpty()) {
+						doc.setId(UUID.randomUUID().toString());
+						doc.setStatus(Status.ACTIVE);
+					}
+					
 				});
-
+			owner.setDocuments(owner.getDocuments().stream().filter(x->null!=x.getId() && !x.getId().isEmpty()).collect(Collectors.toList()));
 			owner.setStatus(Status.ACTIVE);
 		});
 	}
@@ -588,7 +596,7 @@ public class EnrichmentService {
 
 			if (!CollectionUtils.isEmpty(owner.getDocuments()))
 				owner.getDocuments().forEach(doc -> {
-					if (doc.getId() == null) {
+					if (doc.getId() == null && null!=doc.getDocumentType() && !doc.getDocumentType().isEmpty() ) {
 						doc.setId(UUID.randomUUID().toString());
 						doc.setStatus(Status.ACTIVE);
 					}

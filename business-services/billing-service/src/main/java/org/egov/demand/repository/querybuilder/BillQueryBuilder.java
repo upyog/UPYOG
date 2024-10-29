@@ -22,6 +22,8 @@ public class BillQueryBuilder {
 	
 	public static final String BILL_STATUS_UPDATE_BASE_QUERY = "UPDATE egbs_bill_v1 SET status=? {replace} WHERE status='ACTIVE' AND tenantId = ? ";
 	
+	public static final String BILL_DETAIL_UPDATE_BASE_QUERY = "UPDATE egbs_billdetail_v1 SET interestonamount =? ,interestfornoofdays = ?, totalamount=? where id =? ";
+	
 	public static final String INSERT_BILL_QUERY = "INSERT into egbs_bill_v1 "
 			+"(id, tenantid, payername, payeraddress, payeremail, isactive, iscancelled, createdby, createddate, lastmodifiedby, lastmodifieddate,"
 			+" mobilenumber, status, additionaldetails, payerid, consumercode)"
@@ -30,8 +32,9 @@ public class BillQueryBuilder {
 	public static final String INSERT_BILLDETAILS_QUERY = "INSERT into egbs_billdetail_v1 "
 			+"(id, tenantid, billid, demandid, fromperiod, toperiod, businessservice, billno, billdate, consumercode, consumertype, billdescription, displaymessage, "
 			+ "minimumamount, totalamount, callbackforapportioning, partpaymentallowed, collectionmodesnotallowed, "
-			+ "createdby, createddate, lastmodifiedby, lastmodifieddate, isadvanceallowed, expirydate,additionaldetails,paymentPeriod)"
-			+"values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			+ "createdby, createddate, lastmodifiedby, lastmodifieddate, isadvanceallowed, expirydate,additionaldetails,paymentPeriod,interestonamount,"
+			+"adjusmentfromdate,assesmentyear,adjustedtosession,interestcalculatedsession,interestpercentage,interestfornoofdays,previousyear,totalamountforintcal)"
+			+"values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	
 	public static final String INSERT_BILLACCOUNTDETAILS_QUERY = "INSERT into egbs_billaccountdetail_v1 "
 			+"(id, tenantid, billdetail, demanddetailid, orderno, amount, adjustedamount, isactualdemand, purpose, "
@@ -60,6 +63,9 @@ public class BillQueryBuilder {
 			+ " bd.billdescription AS bd_billdescription, bd.displaymessage AS bd_displaymessage, bd.minimumamount AS bd_minimumamount,"
 			+ " bd.totalamount AS bd_totalamount, bd.callbackforapportioning AS bd_callbackforapportioning,bd.expirydate AS bd_expirydate,"
 			+ " bd.partpaymentallowed AS bd_partpaymentallowed, bd.isadvanceallowed as bd_isadvanceallowed,bd.collectionmodesnotallowed AS bd_collectionmodesnotallowed,bd.paymentperiod as bd_paymentperiod,"
+			+ " bd.interestonamount as interestonamount,bd.adjusmentfromdate as adjusmentfromdate,bd.assesmentyear as assesmentyear,"
+			+ "bd.adjustedtosession as adjustedtosession ,bd.interestcalculatedsession as interestcalculatedsession,bd.interestpercentage as interestpercentage,"
+			+ "	bd.interestfornoofdays as interestfornoofdays,bd.previousyear as previousyear,totalamountforintcal as totalamountforintcal,"
 			+ " ad.id AS ad_id, ad.tenantid AS ad_tenantid, ad.billdetail AS ad_billdetail, ad.glcode AS ad_glcode,"
 			+ " ad.orderno AS ad_orderno, ad.accountdescription AS ad_accountdescription,"
 			+ " ad.amount AS ad_amount, ad.adjustedamount AS ad_adjustedamount, ad.taxheadcode AS ad_taxheadcode, ad.demanddetailid,"
