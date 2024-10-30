@@ -22,14 +22,14 @@ public class Consumer {
 	 * Value of the variable kafka.topics.consumer should be overwritten in
 	 * application.properties
 	 */
-	@KafkaListener(topics = { 	"${persister.update.assetdetails.topic}", 
-								"${persister.save.assetdetails.topic}",
-								"${persister.update.assetdetails.workflow.topic}" })
+	@KafkaListener(topics = { 	"${persister.save.assetdetails.topic}", 
+								"${persister.update.assetdetails.topic}",
+								"${persister.save.assetassignment.topic}",
+								"${persister.update.assetassignment.topic}"})
 	public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 		ObjectMapper mapper = new ObjectMapper();
 		AssetRequest assetRequest = new AssetRequest();
 		Asset asset = new Asset();
-		
 
 		try {
 			log.info("Consuming record: " + record.toString());
