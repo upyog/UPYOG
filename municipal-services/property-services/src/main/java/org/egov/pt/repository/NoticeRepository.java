@@ -35,7 +35,6 @@ public class NoticeRepository {
 	{
 		List<Notice> notice;
 		notice=getnoticedata(noticeCriteria);
-		System.out.println("notice"+notice);
 		if(notice.isEmpty())
 		notice=getnoticewitoutcommentdata(noticeCriteria);
 		return notice;
