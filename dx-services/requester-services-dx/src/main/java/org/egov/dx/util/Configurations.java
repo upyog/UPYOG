@@ -60,5 +60,64 @@ public class Configurations {
 	@Value("${dl.flow}")
 	private String dlFlow;
 
+	@Value("${esign.democontent}")
+	private String demoContent;
 	
+	@Value("${esign.responseurl}")
+	private String responseUrl;
+	
+	@Value("${esign.redirecturl}")
+	private String redirectUrl;
+	
+	@Value("${esign.licencefile}" )
+	private String licenceFile;
+	
+	@Value("${esign.pfxpath}")
+	private String pfxPath;
+	
+	@Value("${esign.pfxpassword}")
+	private String pfxPassword;
+	
+	@Value("${esign.pfxallias}")
+	private String pfxAllias;
+	
+	@Value("${esign.pdf}")
+	private String pdf;
+	
+	@Value("${esign.tempfolder}")
+	private String tempFolder;
+	
+	@Value("${esign.outputfolder}")
+	private String outputFolder;
+	
+	@Value("${esign.UIURL}")
+	private String uIURL;
+		
+	@Value("${persister.save.tl.esign.txns}")
+	private String saveTLEsignTxnTopic;
+	
+	@Value("${persister.update.tl.esign.txns}")
+	private String updateTLEsignTxnTopic;
+	
+//	@Value("${esign.tlredirecturl}")
+//	private String tlRedirectUrl;
+	
+//	@Value("${eSign.s3bucket}")
+//	private String s3Bucket;
+//	
+//	@Value("${api.documenthost}")
+//	private String documentHost;
+	
+	@Value("${egov.idgen.host}")
+	private String IdGenHost;
+	
+	@Value("${egov.idgen.path}")
+	private String IdGenPath;
+	
+	@Value("${egov.idgen.ack.format}")
+	private String IdGenFormat;
+	
+	@Value("${egov.idgen.ack.name}")
+	private String IdGenName;
+
 }

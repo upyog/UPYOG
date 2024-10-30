@@ -142,10 +142,10 @@ public class TLQueryBuilder {
             }
 
             if (criteria.getApplicationNumber() != null) {
-                List<String> applicationNumber = Arrays.asList(criteria.getApplicationNumber().split(","));
+                String searchPattern="%" + criteria.getApplicationNumber().toLowerCase() + "%";
                 addClauseIfRequired(preparedStmtList, builder);
-                builder.append(" LOWER(tl.applicationnumber) IN (").append(createQuery(applicationNumber)).append(")");
-                addToPreparedStatement(preparedStmtList, applicationNumber);
+                builder.append(" LOWER(tl.applicationnumber) like ? ");
+                preparedStmtList.add(searchPattern);
             }
 
             List<String> status = criteria.getStatus();

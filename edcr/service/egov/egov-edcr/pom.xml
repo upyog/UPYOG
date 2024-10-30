@@ -36,24 +36,32 @@
 	<parent>
 		<groupId>org.egov.edcr</groupId>
 		<artifactId>egov-erp</artifactId>
-		<version>2.1.2-SNAPSHOT</version>
+		<version>2.1.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>egov-edcr</artifactId>
 	<name>e-governments edcr</name>
-	<repositories>
+<!--	<repositories>
 		<repository>
 			<id>AsposeJavaAPI</id>
 			<name>Aspose Java API</name>
 			<url>https://repository.aspose.com/java/repo/</url>
 		</repository>
 		
-	</repositories>
+	</repositories>-->
 	<dependencies>
-		<dependency>
+	<!--	<dependency>
 			<groupId>com.aspose</groupId>
 			<artifactId>aspose-cad</artifactId>
 			<version>20.10</version>
-		</dependency>
+		</dependency>-->
+		<!--<dependency>
+			<groupId>com.aspose</groupId>
+			<artifactId>aspose-cad</artifactId>
+			<version>20.10</version>
+			<scope>system</scope>
+			<systemPath>/Users/nehasharma/upyog-21may/UPYOG/edcr/service/egov/egov-edcr/library/aspose-cad-20.10.jar</systemPath>
+
+		</dependency>-->
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
@@ -81,7 +89,7 @@
 		<dependency>
 			<groupId>org.egov.edcr</groupId>
 			<artifactId>egov-edcr-extract</artifactId>  
-			<version>2.1.2-SNAPSHOT</version>
+			<version>2.1.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

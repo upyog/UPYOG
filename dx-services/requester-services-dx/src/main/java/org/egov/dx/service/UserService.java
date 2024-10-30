@@ -29,6 +29,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 
 @Service
 @Slf4j
