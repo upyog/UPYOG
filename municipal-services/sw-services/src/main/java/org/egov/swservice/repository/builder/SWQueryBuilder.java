@@ -1,10 +1,11 @@
 package org.egov.swservice.repository.builder;
 
-import static org.egov.swservice.util.SWConstants.SEARCH_TYPE_CONNECTION;
+
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -17,6 +18,7 @@ import org.egov.swservice.web.models.SearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import static org.egov.swservice.util.SWConstants.SEARCH_TYPE_CONNECTION;
 
 @Component
 public class SWQueryBuilder {

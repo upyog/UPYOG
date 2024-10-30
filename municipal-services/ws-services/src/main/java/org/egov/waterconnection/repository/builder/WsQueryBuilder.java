@@ -1,10 +1,9 @@
 package org.egov.waterconnection.repository.builder;
 
-import static org.egov.waterconnection.constants.WCConstants.SEARCH_TYPE_CONNECTION;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.utils.MultiStateInstanceUtil;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import static org.egov.waterconnection.constants.WCConstants.SEARCH_TYPE_CONNECTION;
 @Component
 public class WsQueryBuilder {
 
