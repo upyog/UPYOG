@@ -1,6 +1,7 @@
 package org.egov.tl.web.models;
 
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -18,4 +19,5 @@ public class TradeLicenseActionResponse {
 
 	private List<ApplicationDetail> applicationDetails;
 	
+	private Map<String, Long> applicationTypesCount;
 }

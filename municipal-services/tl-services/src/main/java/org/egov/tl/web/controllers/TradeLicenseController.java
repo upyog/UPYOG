@@ -191,6 +191,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
     		response = tradeLicenseService.getApplicationDetails(tradeLicenseActionRequest);
     	}else if(StringUtils.equalsIgnoreCase(value, "ACTIONS")){
     		response = tradeLicenseService.getActionsOnApplication(tradeLicenseActionRequest);
+    	}else if(StringUtils.equalsIgnoreCase(value, "APPLICATIONDETAILS")){
+    		response = tradeLicenseService.getCountOfAllApplicationTypes(tradeLicenseActionRequest);
     	}else {
     		return new ResponseEntity("Provide parameter to be fetched in URL.", HttpStatus.BAD_REQUEST);
     	}
