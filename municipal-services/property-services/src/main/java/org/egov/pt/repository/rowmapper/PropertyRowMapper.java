@@ -220,10 +220,6 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 	 * @throws SQLException
 	 */
 	private void addDocToProperty(ResultSet rs, Property property) throws SQLException {
-		int i=0;
-		
-		//while( rs.next()) {
-			i++;
 		String docId = rs.getString("pdocid");
 		String entityId = rs.getString("pdocentityid");
 		List<Document> docs = property.getDocuments();
@@ -246,7 +242,6 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 			.build();
 		
 		property.addDocumentsItem(doc);
-		//}
 	}
 	
 	/**
@@ -256,6 +251,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 	 * @return
 	 * @throws SQLException
 	 */
+	
 	private void addOwnerToProperty(ResultSet rs, Property property) throws SQLException {
 		
 		String uuid = rs.getString("userid");
