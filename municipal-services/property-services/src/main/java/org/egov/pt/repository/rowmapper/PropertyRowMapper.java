@@ -46,20 +46,23 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 
 	@Override
 	public List<Property> extractData(ResultSet rs) throws SQLException, DataAccessException {
-
+		int i =0;
 		Map<String, Property> propertyMap = new LinkedHashMap<>();
+	//	rs.
 		while (rs.next()) {
+			
 			
 			String propertyUuId = rs.getString("pid");
 			Property currentProperty = propertyMap.get(propertyUuId);
 			String tenanId = rs.getString("ptenantid");
 
 			if (null == currentProperty) {
-
+				
+				System.out.println("INSIDE------>"+i);
 				Address address = getAddress(rs, tenanId);
 
 				AuditDetails auditdetails = getAuditDetail(rs, "property");
-
+				
 				String institutionId = rs.getString("institutionid");
 				Institution institute = null;
 				
@@ -119,14 +122,21 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 				
 				
 				setPropertyInfo(currentProperty, rs, tenanId, propertyUuId, linkedProperties, address);
-
+				//addDocToProperty(rs, currentProperty);
 				addChildrenToProperty(rs, currentProperty);
+				
+				
 				
 				propertyMap.put(propertyUuId, currentProperty);
 				
 			}
+			i++;
+			addDocToProperty(rs, currentProperty);
 			
+			
+			System.out.println("OUTSIDE------>"+i);
 			addChildrenToProperty(rs, currentProperty);
+			i++;
 		}
 
 		return new ArrayList<>(propertyMap.values());
@@ -143,9 +153,9 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 	private void addChildrenToProperty(ResultSet rs, Property currentProperty)
 			throws SQLException {
 		addDocToProperty(rs, currentProperty);
-		
 		addUnitsToProperty(rs, currentProperty);
 		addOwnerToProperty(rs, currentProperty);
+		
 		
 		
 		
@@ -217,12 +227,15 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 	 * @throws SQLException
 	 */
 	private void addDocToProperty(ResultSet rs, Property property) throws SQLException {
-
+		int i=0;
+		
+		//while( rs.next()) {
+			i++;
 		String docId = rs.getString("pdocid");
 		String entityId = rs.getString("pdocentityid");
 		List<Document> docs = property.getDocuments();
 		
-		if (!(docId != null && entityId.equals(property.getId())))
+		if (docId != null && !entityId.equals(property.getId()))
 			return;
 
 		if (!CollectionUtils.isEmpty(docs))
@@ -240,6 +253,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 			.build();
 		
 		property.addDocumentsItem(doc);
+		//}
 	}
 	
 	/**
@@ -253,12 +267,14 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 		
 		String uuid = rs.getString("userid");
 		List<OwnerInfo> owners = property.getOwners();
-		
-
+		boolean contains =false;
+		int i=0;
 		if (!CollectionUtils.isEmpty(owners))
 			for (OwnerInfo owner : owners) {
-				if (owner.getUuid().equals(uuid))
+				if (owner.getUuid().equals(uuid)) {
+					addDocToOwner(rs, owner);
 					return;
+				}
 			}
 
 		Double ownerShipPercentage = rs.getDouble("ownerShipPercentage");
@@ -284,7 +300,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 				.build();
 		
 		addDocToOwner(rs, owner);
-		
+		if(!contains)
 		property.addOwnersItem(owner);
 	}
 	
@@ -299,9 +315,6 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 	 */
 	private void addDocToOwner(ResultSet rs, OwnerInfo owner) throws SQLException {
 		
-		
-		
-		while(rs.next()) {
 			String docId = rs.getString("owndocid");
 			String 	entityId = rs.getString("owndocentityId");
 			List<Document> docs = owner.getDocuments();
@@ -324,11 +337,6 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 				.build();
 			
 			owner.addDocumentsItem(doc);
-			
-		}
-		
-		//System.out.println("Entity ID"+entityId);
-		
 	}
 
 	
