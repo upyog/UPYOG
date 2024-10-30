@@ -94,10 +94,11 @@ public class NoticeService {
 		}
 		noticePropertyIds=FilterProperties.stream().map(Property::getPropertyId).collect(Collectors.toSet());
 		noticeCriteria.setPropertyIds(noticePropertyIds);
-		notice=noticeRepository.getnotices(noticeCriteria);
-		notice=notice.stream().sorted((x,y)->y.getNoticeNumber().compareTo(x.getNoticeNumber())).collect(Collectors.toList());
+		List<Notice> FilterNotice=new ArrayList<Notice>();
+		FilterNotice=noticeRepository.getnotices(noticeCriteria);
+		FilterNotice=FilterNotice.stream().sorted((x,y)->y.getNoticeNumber().compareTo(x.getNoticeNumber())).collect(Collectors.toList());
 		
-		return notice;
+		return FilterNotice;
 	}
 
 
