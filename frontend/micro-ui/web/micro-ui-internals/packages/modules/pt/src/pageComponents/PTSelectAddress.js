@@ -190,7 +190,7 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
           <CardLabel>{`${t("MYCITY_CODE_LABEL")} `}</CardLabel>
           <span className={"form-pt-dropdown-only"}>
             <RadioOrSelect
-              options={cities.sort((a, b) => a.name.localeCompare(b.name))}
+              options={cities.sort((a, b) => a.i18nKey.localeCompare(b.i18nKey))}
               selectedOption={selectedCity}
               optionKey="i18nKey"
               onSelect={selectCity}
