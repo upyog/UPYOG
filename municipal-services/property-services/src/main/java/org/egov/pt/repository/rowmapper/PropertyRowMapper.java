@@ -46,9 +46,8 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 
 	@Override
 	public List<Property> extractData(ResultSet rs) throws SQLException, DataAccessException {
-		int i =0;
+		
 		Map<String, Property> propertyMap = new LinkedHashMap<>();
-	//	rs.
 		while (rs.next()) {
 			
 			
@@ -57,8 +56,6 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 			String tenanId = rs.getString("ptenantid");
 
 			if (null == currentProperty) {
-				
-				System.out.println("INSIDE------>"+i);
 				Address address = getAddress(rs, tenanId);
 
 				AuditDetails auditdetails = getAuditDetail(rs, "property");
@@ -130,13 +127,9 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 				propertyMap.put(propertyUuId, currentProperty);
 				
 			}
-			i++;
-			addDocToProperty(rs, currentProperty);
 			
-			
-			System.out.println("OUTSIDE------>"+i);
+			//addDocToProperty(rs, currentProperty);
 			addChildrenToProperty(rs, currentProperty);
-			i++;
 		}
 
 		return new ArrayList<>(propertyMap.values());
