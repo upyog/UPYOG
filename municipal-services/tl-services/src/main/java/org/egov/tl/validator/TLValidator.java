@@ -321,6 +321,7 @@ public class TLValidator {
         if (searchResult.size() != licenses.size())
             throw new CustomException("INVALID UPDATE", "The license to be updated is not in database");
         validateAllIds(searchResult, licenses);
+        validateApplicationTypeAndAction(licenses);
         String businessService = request.getLicenses().isEmpty()?null:licenses.get(0).getBusinessService();
         if(licenses.get(0).getApplicationType() != null && licenses.get(0).getApplicationType().toString().equals(TLConstants.APPLICATION_TYPE_RENEWAL)){
             validateRenewal(request);
@@ -346,7 +347,19 @@ public class TLValidator {
     }
 
 
-    /**
+    private void validateApplicationTypeAndAction(List<TradeLicense> licenses) {
+
+    	licenses.stream().forEach(license -> {
+    		if(StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_REVOKE)
+    				&& !StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_APPROVED)) {
+    			throw new CustomException("CANNOT_REVOKE","Can't Revoke in this status.");
+    		}
+    	});
+    	
+	}
+
+
+	/**
      * Validates that atleast one tradeUnit is active equal true or new tradeUnit
      * @param request The input TradeLicenseRequest Object
      */
