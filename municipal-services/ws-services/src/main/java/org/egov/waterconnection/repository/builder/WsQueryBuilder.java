@@ -1,10 +1,9 @@
 package org.egov.waterconnection.repository.builder;
 
-import static org.egov.waterconnection.constants.WCConstants.SEARCH_TYPE_CONNECTION;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.utils.MultiStateInstanceUtil;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import static org.egov.waterconnection.constants.WCConstants.SEARCH_TYPE_CONNECTION;
 @Component
 public class WsQueryBuilder {
 
@@ -212,7 +212,7 @@ public class WsQueryBuilder {
 		// Added clause to support multiple connectionNumbers search
 		if (!CollectionUtils.isEmpty(criteria.getConnectionNumber())) {
 			addClauseIfRequired(preparedStatement, query);
-			query.append("  conn.connectionno IN (").append(createQuery(criteria.getConnectionNumber())).append(")");
+			query.append("  LOWERconn.connectionno IN (").append(createQuery(criteria.getConnectionNumber())).append(")");
 			addToPreparedStatement(preparedStatement, criteria.getConnectionNumber());
 		}
 		if (!StringUtils.isEmpty(criteria.getStatus())) {
@@ -222,10 +222,13 @@ public class WsQueryBuilder {
 		}
 		
 		// Added clause to support multiple applicationNumbers search
-		if (!CollectionUtils.isEmpty(criteria.getApplicationNumber())) {
+		Set<String> applicationNumbers= criteria.getApplicationNumber();
+		if (!CollectionUtils.isEmpty(applicationNumbers)) {
 			addClauseIfRequired(preparedStatement, query);
-			query.append("  conn.applicationno IN (").append(createQuery(criteria.getApplicationNumber())).append(")");
-			addToPreparedStatement(preparedStatement, criteria.getApplicationNumber());
+			List <String> patterns = applicationNumbers.stream().filter(appNo -> appNo!=null && !appNo.isEmpty()).map(appNo-> "%" + appNo.toLowerCase() + "%").collect(Collectors.toList());
+			String condition = patterns.stream().map(p-> "LOWER(conn.applicationno) LIKE ?").collect(Collectors.joining("OR"," (", ") "));
+			query.append(condition);
+			preparedStatement.addAll(patterns);
 		}
 		// Added clause to support multiple applicationStatuses search
 		if (!CollectionUtils.isEmpty(criteria.getApplicationStatus())) {

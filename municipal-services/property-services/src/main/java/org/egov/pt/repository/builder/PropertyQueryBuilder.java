@@ -301,18 +301,38 @@ public class PropertyQueryBuilder {
 		if (!CollectionUtils.isEmpty(propertyIds)) {
 
 			addClauseIfRequired(preparedStmtList,builder);
-			builder.append("property.propertyid IN (").append(createQuery(propertyIds)).append(")");
-			addToPreparedStatementWithUpperCase(preparedStmtList, propertyIds);
-		}
-
+			int ind=0;
+			StringBuilder likeCondition = new StringBuilder();
+			for(String pId : propertyIds) {
+				if(ind > 0) {
+					likeCondition.append(" OR ");
+				}
+				likeCondition.append("property.propertyid LIKE ?");
+				ind++;
+		    }
+		 	builder.append("(").append(likeCondition).append(")");
+		 	for(String pId : propertyIds) {
+		 		preparedStmtList.add("%" + pId + "%"); 
+		 	}
+		 }
 		Set<String> acknowledgementIds = criteria.getAcknowledgementIds();
 		if (!CollectionUtils.isEmpty(acknowledgementIds)) {
-
-			addClauseIfRequired(preparedStmtList,builder);
-			builder.append("property.acknowldgementnumber IN (").append(createQuery(acknowledgementIds)).append(")");
-			addToPreparedStatementWithUpperCase(preparedStmtList, acknowledgementIds);
-		}
-
+			addClauseIfRequired(preparedStmtList, builder);
+			int index=0;
+			StringBuilder likeConditions = new StringBuilder();
+			for(String ackId : acknowledgementIds) {
+				if(index > 0) {
+					likeConditions.append(" OR ");
+				}
+				likeConditions.append("property.acknowldgementnumber LIKE ?");
+				index++;
+			}
+			builder.append("(").append(likeConditions).append(")");
+			for(String ackId : acknowledgementIds) {
+				preparedStmtList.add("%" + ackId + "%"); 
+			}
+		}	
+		
 		Set<String> uuids = criteria.getUuids();
 		if (!CollectionUtils.isEmpty(uuids)) {
 
