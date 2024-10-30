@@ -41,7 +41,11 @@
 	<artifactId>egov-edcr</artifactId>
 	<name>e-governments edcr</name>
 	<dependencies>
-	
+	<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>2.0.28</version>
+		</dependency>
 	
 		<dependency>
 			<groupId>org.egov.edcr</groupId>
