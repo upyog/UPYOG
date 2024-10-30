@@ -12,7 +12,17 @@
     "packages/modules/commonPt",
     "packages/modules/dss",
     "packages/modules/pt",
-    "packages/modules/tl"
+    "packages/modules/tl",
+    "packages/modules/bills",
+    "packages/modules/engagement",
+    "packages/modules/fsm",
+    "packages/modules/hrms",
+    "packages/modules/mCollect",
+    "packages/modules/noc",
+    "packages/modules/obps",
+    "packages/modules/pgr",
+    "packages/modules/receipts",
+    "packages/modules/ws"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",

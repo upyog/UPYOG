@@ -101,7 +101,7 @@ if(window.location.href.includes("code"))
     code_verifier: sessionStorage.getItem("code_verfier"),
     code: code, module: "PT"
   }
-  console.log("token",code,TokenReq,sessionStorage.getItem("code_verfier"))
+  // console.log("token",code,TokenReq,sessionStorage.getItem("code_verfier"))
   const data = await Digit.DigiLockerService.token({TokenReq })
   sessionStorage.setItem("DigiLocker.token1",data?.TokenRes?.access_token)
   //sessionStorage.setItem("DigiLocker.token1",data?.)

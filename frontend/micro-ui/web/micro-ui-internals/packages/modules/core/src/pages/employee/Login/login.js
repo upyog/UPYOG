@@ -10,13 +10,13 @@ const setEmployeeDetail = (userObject, token) => {
   let locale = JSON.parse(sessionStorage.getItem("Digit.locale"))?.value || "en_IN";
   localStorage.setItem("Employee.tenant-id", userObject?.tenantId);
   localStorage.setItem("tenant-id", userObject?.tenantId);
-  localStorage.setItem("citizen.userRequestObject", JSON.stringify(userObject));
+  sessionStorage.setItem("citizen.userRequestObject", JSON.stringify(userObject));
   localStorage.setItem("locale", locale);
   localStorage.setItem("Employee.locale", locale);
-  localStorage.setItem("token", token);
-  localStorage.setItem("Employee.token", token);
-  localStorage.setItem("user-info", JSON.stringify(userObject));
-  localStorage.setItem("Employee.user-info", JSON.stringify(userObject));
+  sessionStorage.setItem("token", token);
+  sessionStorage.setItem("Employee.token", token);
+  sessionStorage.setItem("user-info", JSON.stringify(userObject));
+  sessionStorage.setItem("Employee.user-info", JSON.stringify(userObject));
 };
 
 const Login = ({ config: propsConfig, t, isDisabled }) => {

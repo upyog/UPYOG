@@ -23,7 +23,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
       code_verifier: sessionStorage.getItem("code_verfier_register"),
       code: code, module: "REGISTER"
     }
-    console.log("token",code,TokenReq,sessionStorage.getItem("code_verfier_register"))
+    //console.log("token",code,TokenReq,sessionStorage.getItem("code_verfier_register"))
    // const data = await Digit.DigiLockerService.token({TokenReq })
 
   fetch('https://api.digitallocker.gov.in/public/oauth2/1/token', {
