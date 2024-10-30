@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -28,8 +27,6 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.egov.common.entity.edcr.Plan;
@@ -40,7 +37,6 @@ import org.egov.edcr.entity.SearchBuildingPlanScrutinyForm;
 import org.egov.edcr.repository.EdcrApplicationDetailRepository;
 import org.egov.edcr.repository.EdcrApplicationRepository;
 import org.egov.edcr.service.es.EdcrIndexService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -57,11 +53,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.aspose.cad.Color;
-import com.aspose.cad.Image;
-import com.aspose.cad.fileformats.cad.CadDrawTypeMode;
-import com.aspose.cad.imageoptions.CadRasterizationOptions;
-import com.aspose.cad.imageoptions.PdfOptions;
+//import com.aspose.cad.Color;
+//import com.aspose.cad.Image;
+//import com.aspose.cad.fileformats.cad.CadDrawTypeMode;
+//import com.aspose.cad.imageoptions.CadRasterizationOptions;
+//import com.aspose.cad.imageoptions.PdfOptions;
 
 @Service
 @Transactional(readOnly = true)
@@ -138,10 +134,8 @@ public class EdcrApplicationService {
 
     private Plan callDcrProcess(EdcrApplication edcrApplication, String applicationType){
         Plan planDetail = new Plan();
-        planDetail.setTenantId(ApplicationThreadLocals.getFullTenantID());
         planDetail = planService.process(edcrApplication, applicationType);
         updateFile(planDetail, edcrApplication);
-        edcrApplication.getEdcrApplicationDetails().get(0).setTenantId(ApplicationThreadLocals.getFullTenantID());
         edcrApplicationDetailService.saveAll(edcrApplication.getEdcrApplicationDetails());
         return planDetail;
     }
@@ -292,6 +286,8 @@ public class EdcrApplicationService {
   }
 }
     
+  
+
     
 //    private void updateFile(Plan pl, EdcrApplication edcrApplication) {
 //        String filePath = edcrApplication.getSavedDxfFile().getAbsolutePath();
