@@ -22,7 +22,6 @@
     "micro-ui-internals/packages/modules/pgr",
     "micro-ui-internals/packages/modules/receipts",
     "micro-ui-internals/packages/modules/ws"
-
   ],
   "engines": {
     "node": ">=14"

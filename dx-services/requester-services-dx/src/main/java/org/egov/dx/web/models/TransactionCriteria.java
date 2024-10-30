@@ -16,5 +16,9 @@ public class TransactionCriteria {
     private String tenantId;
 
     private String txnId;
+    
+    private String module;
+
+    private String consumerCode;
 
 }

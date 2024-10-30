@@ -13,6 +13,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -117,7 +118,7 @@ public class eSignService {
                 .setDocURL(requestInfoWrapper.getTransaction().getPdfUrl())//for v3 only pdf view purpose
                 .setLocation("") // reason or signed (optional)
                 .setReason("")	//(optional)
-                .setSignedBy("Manvi") //(mandatory)
+                .setSignedBy("NIUA") //(mandatory)
                 .setCoSign(true) 
                 .setAppearanceType(eSign.AppearanceType.StandardSignature)
                 .setPageTobeSigned(eSign.PageTobeSigned.First)
@@ -144,7 +145,7 @@ public class eSignService {
         
         // Obtain the gateway parameter
         eSignServiceReturn serviceReturn = eSignObj.getGatewayParameter(
-                inputList, "Manvi", (txnId+"-"+ requestInfoWrapper.getTransaction().getModule()) , configurations.getRedirectUrl(),configurations.getRedirectUrl(), configurations.getTempFolder(), eSign.eSignAPIVersion.V2, eSign.AuthMode.OTP);
+                inputList, "NIUA", (txnId+"-"+ requestInfoWrapper.getTransaction().getModule()) , configurations.getRedirectUrl(),configurations.getRedirectUrl(), configurations.getTempFolder(), eSign.eSignAPIVersion.V2, eSign.AuthMode.OTP);
 
         String gatewayParam = serviceReturn.getGatewayParameter();
         String gatewayURL = "https://authenticate.sandbox.emudhra.com/AadhaareSign.jsp"; // Adjust if needed
@@ -227,8 +228,8 @@ public class eSignService {
 		FileResponse files = gson.fromJson(responsee , FileResponse.class);
 		String fileStoreId= files.getFiles().get(0).getFileStoreId();
 
-
-        txnId = txnId.split("-")[0];
+		txnId = txnId.substring(0, txnId.lastIndexOf('-'));
+        //txnId = txnId.split("-")[0];
 		TransactionCriteria criteria = new TransactionCriteria();
 		criteria.setTxnId(txnId);
 		
@@ -257,5 +258,16 @@ public class eSignService {
             throw new CustomException("FETCH_TXNS_FAILED", "Unable to fetch transactions from store");
         }
     }
+    
+    public List<Transaction> getSignedFilestore(RequestInfo requestInfo, Transaction transaction) {
+    	{
+        try {
+            return transactionRepository.fetchSignedFile(transaction);
+        } catch (DataAccessException e) {
+            log.error("Unable to fetch data from the database for criteria: " + transaction.toString(), e);
+            throw new CustomException("FETCH_TXNS_FAILED", "Unable to fetch transactions from store");
+        }
+    }
 
+    }
 }

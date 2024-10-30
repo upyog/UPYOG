@@ -24,6 +24,12 @@ public class TransactionQueryBuilder {
         return query;
     }
     
+    
+    public String getEsignedFileQueryByConsumerCode(TransactionCriteria transactionCriteria, List<Object> preparedStmtList) {
+        String query = buildQuery(transactionCriteria, preparedStmtList);
+        query = addOrderByClause(query);
+        return query;
+    }
     private String buildQuery(TransactionCriteria transactionCriteria, List<Object> preparedStmtList) {
         StringBuilder builder = new StringBuilder(TransactionQueryBuilder.SEARCH_TXN_SQL);
         Map<String, Object> queryParams = new HashMap<>();
@@ -31,6 +37,14 @@ public class TransactionQueryBuilder {
 
         if (!Objects.isNull(transactionCriteria.getTxnId())) {
             queryParams.put("tlf.txn_id", transactionCriteria.getTxnId());
+        }
+
+        if (!Objects.isNull(transactionCriteria.getConsumerCode())) {
+            queryParams.put("tlf.consumerCode", transactionCriteria.getConsumerCode());
+        }
+
+        if (!Objects.isNull(transactionCriteria.getModule())) {
+            queryParams.put("tlf.module", transactionCriteria.getModule());
         }
 
         if (!queryParams.isEmpty()) {

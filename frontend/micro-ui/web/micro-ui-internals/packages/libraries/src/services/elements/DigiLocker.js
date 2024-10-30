@@ -55,8 +55,18 @@ export const DigiLockerService = {
       method: "POST",
       auth: true,
       userService: true,
-      data:{ "Transaction":{pdfUrl:data?.TokenReq?.pdfUrl,redirectUrl:"",fileStoreId:data?.TokenReq?.fileStoreId,module:data?.TokenReq?.module,tenantId:data?.TokenReq?.tenantId}}
+      data:{ pdfUrl:data?.TokenReq?.pdfUrl,redirectUrl:"",fileStoreId:data?.TokenReq?.fileStoreId,module:data?.TokenReq?.module,tenantId:data?.TokenReq?.tenantId,consumerCode:data?.TokenReq?.consumerCode}
+    }),
+    fileStoreSearch:(data) =>
+    Request({
+      url: Urls.eSign.fileStoreSearch,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      data:{module:data?.TokenReq?.module,consumerCode:data?.TokenReq?.consumerCode}
     })
+    
 };
 
 
