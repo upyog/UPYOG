@@ -22,6 +22,15 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
 
 
     function setApplicantName(e) {
+        const value=e.target.value;
+        setError(null);
+        if(!/^[a-zA-Z ]+$/.test(value)){
+
+            setError(t("APPLICANT_NAME_INVALID_PATTERN"))
+        }
+        else{
+            setError(null);
+        }
         setName(e.target.value);
     }
 
@@ -92,6 +101,7 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
             onSkip={onSkip}
             isDisabled={!tenantIdData || !name || !file || isSubmitBtnDisable}
             onAdd={onAdd}
+            forcedError={error}
             isMultipleAllow={true}
         >
             <CardLabel>{`${t("EDCR_SCRUTINY_CITY")} *`}</CardLabel>
