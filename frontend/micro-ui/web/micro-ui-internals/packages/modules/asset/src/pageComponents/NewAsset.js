@@ -3,7 +3,6 @@ import { FormStep, TextInput, CardLabel, Dropdown, InfoBannerIcon, LocationIcon 
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/ASTTimeline";
 import { Controller, useForm } from "react-hook-form";
-// import catagoriesWiseData from "./sample";
 
 const NewAsset = ({ t, config, onSelect, formData }) => {
   const [assetDetails, setAssetDetails] = useState(
@@ -11,18 +10,47 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
       ? formData.assetDetails
       : { assetParentCategory: formData?.asset?.assettype?.code }
   );
+  const [categoriesWiseData, setCategoriesWiseData] = useState();
 
-  // fetching master data from MDMS
-  const { data: categoriesWiseData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetParentCategoryColumns" }], {
-    select: (data) => {
-      const formattedData = data?.["ASSET"]?.["AssetParentCategoryColumns"];
-      return formattedData;
-    },
-  });
 
-  let formJson = [];
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const stateTenantId  = Digit.ULBService.getStateId();
  
-  if (Array.isArray(categoriesWiseData)) {
+ // This call with tenantId (Get city-level data)
+ const  cityResponseObject = Digit.Hooks.useCustomMDMS(tenantId, "ASSET", [{ name: "AssetParentCategoryColumns" }],
+    { 
+          select: (data) => {
+            const formattedData = data?.["ASSET"]?.["AssetParentCategoryColumns"]
+          return formattedData;         
+      },
+    });
+
+  // This call with stateTenantId (Get state-level data)
+  const stateResponseObject  = Digit.Hooks.useCustomMDMS(stateTenantId, "ASSET", [{ name: "AssetParentCategoryColumns" }],
+        { 
+              select: (data) => {
+                const formattedData = data?.["ASSET"]?.["AssetParentCategoryColumns"]
+              return formattedData;         
+          },
+        });
+ 
+  useEffect(()=> {
+    let combinedData;
+    // if city level master is not available then fetch  from state-level
+    if (cityResponseObject?.data) {
+      combinedData = cityResponseObject.data;
+    } else if (stateResponseObject?.data) {
+      combinedData = stateResponseObject.data;
+    } else {
+      combinedData = []; // Or an appropriate default value for empty data
+      console.log("Both cityResponseObject and stateResponseObject data are unavailable.");
+    }
+    setCategoriesWiseData(combinedData);
+  }, [cityResponseObject, stateResponseObject]); 
+
+  
+  let formJson = [];
+ if (Array.isArray(categoriesWiseData)) {
     // Filter the array based on the selected asset type and active status
     formJson = categoriesWiseData.filter((item) => {
       return item["assetParentCategory"] === formData?.asset?.assettype?.code && item.active === true;
@@ -57,7 +85,6 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
       const diffInDays = today.getDate() - purchaseDatetime.getDate();
       age = diffInDays + " " + t("DAY");
     }
-    //  console.log('testing age is :- ',age);
     setAssetDetails((prevDetails) => ({
       ...prevDetails,
       assetAge: age,
@@ -196,7 +223,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                   onChange={handleInputChange}
                   {...(validation = {
                     isRequired: true,
-                    pattern: "^[a-zA-Z/-]*$",
+                    pattern: "^[a-zA-Z ]+$",
                     type: "text",
                     title: t("PT_NAME_ERROR_MESSAGE"),
                   })}

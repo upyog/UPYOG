@@ -108,7 +108,7 @@
     let departNamefromMDMS = [];
 
     departmentName && departmentName.map((departmentname) => {
-      departNamefromMDMS.push({i18nKey: `COMMON_MASTERS_DEPARTMENT_${departmentname.code}`, code: `COMMON_MASTERS_DEPARTMENT_${departmentname.code}`, value: `${departmentname.code}`})
+      departNamefromMDMS.push({i18nKey: `COMMON_MASTERS_DEPARTMENT_${departmentname.code}`, code: `COMMON_MASTERS_DEPARTMENT_${departmentname.code}`, value: `COMMON_MASTERS_DEPARTMENT_${departmentname.code}`})
     }) 
    let menu_Asset = [];   //variable name for assetCalssification
    let asset_type = [];  //variable name for asset type
