@@ -30,7 +30,7 @@ import lombok.Setter;
 @Builder
 public class AdvertisementResponse   {
         @JsonProperty("ResponseInfo")
-        private ResponseInfo responseInfo = null;
+        private ResponseInfo responseInfo;
 
     
 

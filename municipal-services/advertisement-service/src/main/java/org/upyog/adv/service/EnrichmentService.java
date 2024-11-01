@@ -37,8 +37,10 @@ public class EnrichmentService {
 		
 		BookingDetail bookingDetail = bookingRequest.getBookingApplication();
 		RequestInfo requestInfo = bookingRequest.getRequestInfo();
-		AuditDetails auditDetails = BookingUtil.getAuditDetails(requestInfo.getUserInfo().getId(), true);
-		
+		AuditDetails auditDetails = BookingUtil.getAuditDetails(
+			    String.valueOf(requestInfo.getUserInfo().getId()), 
+			    Boolean.TRUE
+			);
 		
 		bookingDetail.setAuditDetails(auditDetails);
 		bookingDetail.setBookingId(bookingId);
@@ -75,14 +77,14 @@ public class EnrichmentService {
 		bookingDetail.getAddress().setAddressId(BookingUtil.getRandonUUID());
 		bookingDetail.getAddress().setApplicantDetailId(bookingDetail.getApplicantDetail().getApplicantDetailId());
 
-//		List<String> customIds = getIdList(requestInfo, bookingDetail.getTenantId(),
-//				config.getAdvertisementBookingIdKey(), config.getAdvertisementBookingIdFromat(), 1);
+		List<String> customIds = getIdList(requestInfo, bookingDetail.getTenantId(),
+				config.getAdvertisementBookingIdKey(), config.getAdvertisementBookingIdFromat(), 1);
 		
-		List<String> customIds = Arrays.asList(
-			    "ADV-" + UUID.randomUUID().toString(),
-			    "CITY-" + UUID.randomUUID().toString()
-			  
-			);
+//		List<String> customIds = Arrays.asList(
+//			    "ADV-" + UUID.randomUUID().toString(),
+//			    "CITY-" + UUID.randomUUID().toString()
+//			  
+//			);
 
 		
 		
@@ -104,18 +106,23 @@ public class EnrichmentService {
 	 * @return List of ids generated using idGen service
 	 */
 	private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idKey, String idformat, int count) {
-		List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count)
+		/* List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count)
 				.getIdResponses();
 		
 
 		if (CollectionUtils.isEmpty(idResponses))
 			throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
 
-		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
+		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList()); */
+		return null;
 	}
 
 	public void enrichUpdateBookingRequest(BookingRequest bookingRequest, BookingStatusEnum statusEnum) {
-		AuditDetails auditDetails = BookingUtil.getAuditDetails(bookingRequest.getRequestInfo().getUserInfo().getId(), false);
+		AuditDetails auditDetails = BookingUtil.getAuditDetails(
+			    String.valueOf(bookingRequest.getRequestInfo().getUserInfo().getId()), 
+			    Boolean.FALSE
+			);
+
 		BookingDetail bookingDetail = bookingRequest.getBookingApplication();
 		if(statusEnum != null) {
 			bookingDetail.setBookingStatus(statusEnum.toString());
