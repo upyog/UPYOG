@@ -7,24 +7,38 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.upyog.adv.constants.BookingConstants;
 import org.upyog.adv.enums.BookingStatusEnum;
 import org.upyog.adv.repository.BookingRepository;
 import org.upyog.adv.service.BookingService;
+import org.upyog.adv.validator.BookingValidator;
 //import org.upyog.adv.service.EncryptionService;
 import org.upyog.adv.service.EnrichmentService;
 import org.upyog.adv.util.BookingUtil;
 import org.upyog.adv.util.MdmsUtil;
-import org.upyog.adv.validator.BookingValidator;
+import org.upyog.adv.web.models.AdvertisementResponse;
+import org.upyog.adv.web.models.AdvertisementSearchCriteria;
 import org.upyog.adv.web.models.AdvertisementSlotAvailabilityDetail;
 import org.upyog.adv.web.models.AdvertisementSlotSearchCriteria;
 import org.upyog.adv.web.models.BookingDetail;
 import org.upyog.adv.web.models.BookingRequest;
+import org.upyog.adv.web.models.RequestInfoWrapper;
+import org.upyog.adv.web.models.ResponseInfo;
+import org.upyog.adv.web.models.ResponseInfo.StatusEnum;
+import org.upyog.adv.web.models.ApplicantDetail;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -83,6 +97,53 @@ public class BookingServiceImpl implements BookingService {
 
 		return bookingRequest.getBookingApplication();
 	}
+
+@Override
+public List<BookingDetail> getBookingDetails(AdvertisementSearchCriteria bookingSearchCriteria, RequestInfo info) {
+//	BookingValidator.validateSearch(info, bookingSearchCriteria);
+	List<BookingDetail> bookingDetails = new ArrayList<BookingDetail>();
+//	bookingSearchCriteria  = addCreatedByMeToCriteria(bookingSearchCriteria, info);
+	
+	log.info("loading data based on criteria" + bookingSearchCriteria);
+	
+	if(bookingSearchCriteria.getMobileNumber() != null){
+	
+	ApplicantDetail applicantDetail = ApplicantDetail.builder().applicantMobileNo(bookingSearchCriteria.getMobileNumber())
+			.build();
+	BookingDetail bookingDetail = BookingDetail.builder().applicantDetail(applicantDetail)
+			.build();
+	BookingRequest bookingRequest = BookingRequest.builder()
+			.bookingApplication(bookingDetail).requestInfo(info).build();
+	
+//	BookingDetail = encryptionService.encryptObject(bookingRequest);
+	
+	bookingSearchCriteria.setMobileNumber(bookingDetail.getApplicantDetail().getApplicantMobileNo());
+	
+	log.info("loading data based on criteria after encrypting mobile no : " + bookingSearchCriteria);
+	
+	}
+	
+	bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
+	if(CollectionUtils.isEmpty(bookingDetails)) {
+		return bookingDetails;
+	}
+//	bookingDetails = encryptionService.decryptObject(bookingDetails, info);
+
+	return bookingDetails;
+}
+
+	@Override
+	public Integer getBookingCount(@Valid AdvertisementSearchCriteria criteria,
+			@NonNull RequestInfo requestInfo) {
+		criteria.setCountCall(true);
+		Integer bookingCount = 0;
+		
+	//	criteria  = addCreatedByMeToCriteria(criteria, requestInfo);
+		bookingCount = bookingRepository.getBookingCount(criteria);
+		
+		return bookingCount;
+	}
+		
 
 	@Override
 	public List<AdvertisementSlotAvailabilityDetail> getAdvertisementSlotAvailability(
@@ -146,3 +207,4 @@ public class BookingServiceImpl implements BookingService {
 	}
 
 }
+
