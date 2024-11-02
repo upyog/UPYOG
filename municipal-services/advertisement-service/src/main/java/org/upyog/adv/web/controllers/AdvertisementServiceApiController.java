@@ -17,6 +17,7 @@ import org.upyog.adv.constants.BookingConstants;
 import org.upyog.adv.service.BookingService;
 import org.upyog.adv.util.BookingUtil;
 import org.upyog.adv.web.models.AdvertisementResponse;
+import org.upyog.adv.web.models.AdvertisementSearchCriteria;
 import org.upyog.adv.web.models.AdvertisementSlotAvailabilityDetail;
 import org.upyog.adv.web.models.AdvertisementSlotAvailabilityResponse;
 import org.upyog.adv.web.models.AdvertisementSlotSearchCriteria;
@@ -62,6 +63,19 @@ public class AdvertisementServiceApiController {
 		AdvertisementResponse response = AdvertisementResponse.builder().responseInfo(info).build();
 		response.addNewBookingApplication(bookingDetail);
 		return new ResponseEntity<AdvertisementResponse>(response, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
+	public ResponseEntity<AdvertisementResponse> v1SearchAdvertisement(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+	        @Valid @ModelAttribute AdvertisementSearchCriteria criteria) {
+		List<BookingDetail> applications = bookingService.getBookingDetails(criteria, requestInfoWrapper.getRequestInfo());
+		Integer count = bookingService.getBookingCount(criteria, requestInfoWrapper.getRequestInfo());
+		
+		ResponseInfo info = BookingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(), BookingConstants.ADVERTISEMENT_BOOKING_LIST,
+				StatusEnum.SUCCESSFUL);
+		AdvertisementResponse response = AdvertisementResponse.builder().bookingApplication(applications).count(count)
+				.responseInfo(info).build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/v1/_slot-search", method = RequestMethod.POST)
