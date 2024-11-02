@@ -44,11 +44,11 @@ public class StreetVendingSearchCriteria {
 	@JsonProperty("limit")
 	private Integer limit;
 
-	@ValidDate
+	// @ValidDate
 	@JsonProperty("fromDate")
 	private String fromDate;
 
-	@ValidDate
+	// @ValidDate
 	@JsonProperty("toDate")
 	private String toDate;
 	
