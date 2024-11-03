@@ -33,14 +33,23 @@ const ADSCartDetails = ({ onClose,cartDetails, setCartDetails }) => {
   };
 
   const calculateTotalPrice = () => {
-    return cartDetails.reduce((total, item) => total + Number(item.total_price), 0);
+    return cartDetails.reduce((total, item) => total + Number(item.price), 0);
   };
 
   const columns = [
-    { Header: t("ADVERTISEMENT_NAME"), accessor: "name" },
-    { Header: t("FROM_DATE"), accessor: "address" },
-    { Header: t("TO_DATE"), accessor: "bookingDate" },
-    { Header: t("TOTAL_PRICE"), accessor: "hallCode" },
+    {
+      Header: () => <div style={{ paddingLeft: "50px" }}>{t("S_NO")}</div>, // Use a function to render header with padding
+      accessor: "sNo",
+      Cell: ({ row }) => (
+        <div style={{ paddingLeft: "50px" }}>
+          {row.index + 1} {/* Display the row index + 1 for S.No */}
+        </div>
+      ),
+    },
+    { Header: t("ADD_TYPE"), accessor: "addType" },
+    { Header: t("FACE_AREA"), accessor: "faceArea" },
+    { Header: t("BOOKING_DATE"), accessor: "bookingDate" },
+    { Header: t("TOTAL_PRICE"), accessor: "price" },
     {
       Header: t("DELETE_KEY"),
       accessor: "delete",

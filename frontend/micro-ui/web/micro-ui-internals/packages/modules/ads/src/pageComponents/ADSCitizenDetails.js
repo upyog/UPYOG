@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FormStep, TextInput, CardLabel, MobileNumber, Card, CardSubHeader } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/ADSTimeline";
+import ADSCartAndCancellationPolicyDetails from "../components/ADSCartAndCancellationPolicyDetails";
 
 /*
  * The ADSCitizenDetails component is responsible for gathering and validating 
@@ -69,6 +70,9 @@ const ADSCitizenDetails = ({ t, config, onSelect, userType, formData}) => {
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={1} /> : null}
+      <Card>
+       <ADSCartAndCancellationPolicyDetails/>
+      </Card>
       <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={!applicantName || !mobileNumber || !emailId}>
         <div>
           <CardLabel>

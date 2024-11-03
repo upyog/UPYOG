@@ -26,15 +26,17 @@ export const ADSServices= {
       params: { tenantId, ...filters },
     }),
 
-    slot_search: ({ tenantId, filters, auth }) =>
-    Request({
-      url: Urls.ads.slot_search,
-      useCache: false,
-      method: "POST",
-      auth: auth === false ? auth : true,
-      userService: auth === false ? auth : true,
-      params: { tenantId, ...filters },
-    }),
+    slot_search: (details, tenantId) =>
+      Request({
+        url: Urls.ads.slot_search,
+        data: details,
+        useCache: false,
+        setTimeParam: false,
+        userService: true,
+        method: "POST",
+        params: {},
+        auth: true,
+      }),
     update: (details, tenantId) =>
     Request({
       url: Urls.ads.update,

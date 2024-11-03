@@ -29,31 +29,19 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
   const [cartDetails, setCartDetails] = useState(
     (formData.adslist && formData.adslist[index] && formData.adslist[index].cartDetails) || formData?.adslist?.cartDetails || []
   );
-  const [adsType, setAdsType] = useState(
-    (formData.adslist && formData.adslist[index] && formData.adslist[index].adsType) || formData?.adslist?.adsType || ""
-  );
-  const [selectedLocation, setSelectedLocation] = useState(
-    (formData.adslist && formData.adslist[index] && formData.adslist[index].selectedLocation) || formData?.adslist?.selectedLocation || ""
-  );
-  const [selectedFace, setSelectedFace] = useState(
-    (formData.adslist && formData.adslist[index] && formData.adslist[index].selectedFace) || formData?.adslist?.selectedFace || ""
-  );
-  const [fromDate, setFromDate] = useState(
-    (formData.adslist && formData.adslist[index] && formData.adslist[index].fromDate) || formData?.adslist?.fromDate || ""
-  );
-  const [toDate, setToDate] = useState(
-    (formData.adslist && formData.adslist[index] && formData.adslist[index].toDate) || formData?.adslist?.toDate || ""
-  );
+  const [adsType, setAdsType] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [selectedFace, setSelectedFace] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  // State to manage selected checkboxes
+  const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+  const [toDate, setToDate] = useState("");
   const [Searchdata, setSearchData] = useState(
     (formData.adslist && formData.adslist[index] && formData.adslist[index].Searchdata) || formData?.adslist?.Searchdata || []
   );
   const [showToast, setShowToast] = useState(null);
-  // const [hallCode, setHallCode] = useState(
-  //   (formData.adslist && formData.adslist[index] && formData.adslist[index].hallCode) || formData?.adslist?.hallCode || ""
-  // );
-  const [selectNight, setselectNight] = useState(
-    (formData.adslist && formData.adslist[index] && formData.adslist[index].selectNight) || formData?.adslist?.selectNight || ""
-  );
+
+  const [selectNight, setselectNight] = useState("");
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const [showCartDetails, setShowCartDetails] = useState(false);
 
@@ -98,77 +86,54 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
       FaceId.push({ i18nKey: `${slot.name}`, code: `${slot.code}`, value: `${slot.name}` });
     });
 
-  // const { data: slotSearchData, refetch } = Digit.Hooks.chb.useChbSlotSearch({
-  //   tenantId: tenantId,
-  //   filters: {
-  //     communityHallCode: Searchdata.communityHallCode,
-  //     bookingStartDate: Searchdata.bookingStartDate,
-  //     bookingEndDate: Searchdata.bookingEndDate,
-  //     hallCode: Searchdata.hallCode,
-  //   },
-  // });
-  // useEffect(() => {
-  //   if (slotSearchData && slotSearchData.hallSlotAvailabiltityDetails) {
-  //     const newData = slotSearchData.hallSlotAvailabiltityDetails.map((slot, index) => ({
-  //       slotId: index + 1,
 
-  //       name: `${t(slot.communityHallCode)}`,
-  //       code: slot.communityHallCode,
-  //       hallCode1: slot.hallCode,
-  //       address: Searchdata.hallAddress,
-  //       hallCode: slot.hallCode + " - " + Searchdata.capacity,
-  //       toTime: hallCode.toTime,
-  //       fromTime: hallCode.fromTime,
-  //       capacity: Searchdata.capacity,
-  //       bookingDate: slot.bookingDate,
-  //       status: slot.slotStaus === "AVAILABLE" ? <div className="sla-cell-success">Available</div> : <div className="sla-cell-error">Booked</div>,
-  //     }));
-  //     // Only update state if newData is different from current state
-  //     setData((prevData) => {
-  //       if (JSON.stringify(prevData) !== JSON.stringify(newData)) {
-  //         return newData;
-  //       }
-  //       return prevData;
-  //     });
-  //     setShowTable((prevShowTable) => {
-  //       if (!prevShowTable) {
-  //         return true;
-  //       }
-  //       return prevShowTable;
-  //     });
-  //   }
-  // }, [slotSearchData, Searchdata]);
-
-  const data = [
-  {
-    slotId:1,
-    name: "Unipolar", 
-    address: "Green Unipole 18 X 8",
-    hallCode: "Yes",
-    bookingDate: "10-05-2024",
-    status:<div className="sla-cell-success">Available</div>
-  },
-  {
-    slotId:2,
-    name: "Unipolar1", 
-    address: "Unipole 12 X 8",
-    hallCode: "Yes",
-    bookingDate: "10-05-2025",
-    status:<div className="sla-cell-success">Available</div>
-  }
-]
+    const mutation = Digit.Hooks.ads.useADSSlotSearch();
+    let formdata = {
+      advertisementSlotSearchCriteria: {
+        addType: Searchdata.addType,
+        bookingStartDate: Searchdata.bookingStartDate,
+        bookingEndDate:Searchdata.bookingEndDate,
+        faceArea:Searchdata.faceArea,
+        tenantId: tenantId,
+        location:Searchdata.location,
+        nightLight:Searchdata.nightLight,
+      }
+    };
+    
+  useEffect(() => {
+    if (mutation.data && mutation.data?.advertisementSlotAvailabiltityDetails) {
+      const newData = mutation.data?.advertisementSlotAvailabiltityDetails.map((slot, index) => ({
+        slotId: index + 1,
+        addType: `${t(slot.addType)}`,
+        faceArea:`${t(slot.faceArea)}`,
+        location: `${t(slot.location)}`,
+        nightLight: `${t(slot.nightLight)}`,
+        bookingDate: slot.bookingDate,
+        price:"979",
+        status: slot.slotStaus === "AVAILABLE" ? <div className="sla-cell-success">Available</div> : <div className="sla-cell-error">Booked</div>,
+      }));
+      // Only update state if newData is different from current state
+      setData((prevData) => {
+        if (JSON.stringify(prevData) !== JSON.stringify(newData)) {
+          return newData;
+        }
+        return prevData;
+      });
+      setShowTable((prevShowTable) => {
+        if (!prevShowTable) {
+          return true;
+        }
+        return prevShowTable;
+      });
+    }
+  }, [mutation.data, Searchdata]);
   
-
-
-  // const [data, setData] = useState("");
-
- const [showTable, setShowTable] = useState(true); // State to control table visibility
-
-  const [isCheckboxSelected, setIsCheckboxSelected] = useState(false);
+  const [data, setData] = useState("");
+ const [showTable, setShowTable] = useState(false); // State to control table visibility
   const columns = [
-    { Header: `${t("ADS_TYPE")}`, accessor: "name" },
-    { Header: `${t("ADS_FACE_AREA")}`, accessor: "address" },
-    { Header: `${t("ADS_NIGHT_LIGHT")}`, accessor: "hallCode" },
+    { Header: `${t("ADS_TYPE")}`, accessor: "addType" },
+    { Header: `${t("ADS_FACE_AREA")}`, accessor: "faceArea" },
+    { Header: `${t("ADS_NIGHT_LIGHT")}`, accessor: "nightLight" },
     { Header: `${t("ADS_DATE")}`, accessor: "bookingDate" },
     { Header: `${t("ADS_STATUS")}`, accessor: "status" },
   ];
@@ -189,12 +154,12 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
     {
       i18nKey: "Yes",
       code: "Yes",
-      value: "Yes",
+      value: "true",
     },
     {
       i18nKey: "No",
       code: "No",
-      value: "No",
+      value: "false",
     },
   ];
   function SetFromDate(e) {
@@ -212,105 +177,122 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
     }
   }, [cartDetails, adsType, selectNight,selectedFace,selectedLocation, Searchdata]);
  
-  const handleRowSelection = (rowIndex) => {
-    setCartDetails((prevSelectedRows) => {
-      const updatedSelectedRows = prevSelectedRows.some((row) => row.slotId === data[rowIndex].slotId)
-        ? prevSelectedRows.filter((row) => row.slotId !== data[rowIndex].slotId)
-        : [...prevSelectedRows, data[rowIndex]];
-      const sortedSelectedRows = updatedSelectedRows.sort((a, b) => a.slotId - b.slotId);
-      setIsCheckboxSelected(sortedSelectedRows.length > 0);
-      return sortedSelectedRows;
-    });
-  };
-  const checkboxColumn = {
-    id: "selection",
-    Header: ({ getToggleAllRowsSelectedProps }) => (
-      <div style={{ paddingLeft: "50px" }}>
-        <input
-          type="checkbox"
-          checked={cartDetails.length === data.length}
-          disabled={data.every((row) => row.status.props.children !== "Available")}
-          onChange={() => {
-            if (cartDetails.length === data.length) {
-              setCartDetails([]);
-              setIsCheckboxSelected(false);
-            } else {
-              const allRows = data.filter((row) => row.status.props.children === "Available");
-              setCartDetails(allRows);
-              if (data.length > 0) {
-                setIsCheckboxSelected(true);
-              }
-            }
-          }}
-        />
-      </div>
-    ),
-    Cell: ({ row }) => (
-      <div style={{ paddingLeft: "50px" }}>
-        <input
-          type="checkbox"
-          checked={cartDetails.some((selectedRow) => selectedRow.slotId === row.original.slotId)}
-          onChange={() => handleRowSelection(row.index)}
-          disabled={row.original.status.props.children !== "Available"} // Disable checkbox if status
-          // is
-        />
-      </div>
-    ),
-  };
+
+// Handle row selection
+const handleRowSelection = (rowIndex) => {
+  const currentRowId = data[rowIndex].slotId;
+  setSelectedCheckboxes((prevSelected) => {
+    if (prevSelected.includes(currentRowId)) {
+      return prevSelected.filter(id => id !== currentRowId);
+    } else {
+      return [...prevSelected, currentRowId];
+    }
+  });
+};
+
+// Checkbox column setup
+const checkboxColumn = {
+  id: "selection",
+  Header: ({ getToggleAllRowsSelectedProps }) => (
+    <div style={{ paddingLeft: "50px" }}>
+      <input
+        type="checkbox"
+        checked={selectedCheckboxes.length === data.length}
+        onChange={() => {
+          if (selectedCheckboxes.length === data.length) {
+            setSelectedCheckboxes([]);
+          } else {
+            const allAvailableRows = data
+              .filter(row => row.status.props.children === "Available")
+              .map(row => row.slotId);
+            setSelectedCheckboxes(allAvailableRows);
+          }
+        }}
+      />
+    </div>
+  ),
+  Cell: ({ row }) => (
+    <div style={{ paddingLeft: "50px" }}>
+      <input
+        type="checkbox"
+        checked={selectedCheckboxes.includes(row.original.slotId)}
+        onChange={() => handleRowSelection(row.index)}
+        disabled={row.original.status.props.children !== "Available"}
+      />
+    </div>
+  ),
+};
+
+const handleCartClick = () => {
+  if (selectedCheckboxes.length === 0) {
+    setShowToast({ error: true, label: t("ADS_SELECT_AT_LEAST_ONE_SLOT") });
+  } else {
+    // Get selected rows based on selectedCheckboxes
+    const selectedRows = data.filter(row => selectedCheckboxes.includes(row.slotId));
+
+    // Create a unique identifier for each row
+    const newlyAddedRows = selectedRows.filter(selectedRow => 
+      !cartDetails.some(cartRow => 
+        cartRow.slotId === selectedRow.slotId && cartRow.addType === selectedRow.addType
+      )
+    );
+
+    if (newlyAddedRows.length > 0) {
+      setCartDetails(prevCart => [...prevCart, ...newlyAddedRows]);
+      setShowToast({ success: true, label: `${newlyAddedRows.length} item(s) added to cart.` });
+    } else {
+      setShowToast({ error: true, label: t("ADS_ITEM_ALREADY_IN_CART") });
+    }
+
+    // Clear selected checkboxes
+    setSelectedCheckboxes([]);
+  }
+};
   const enhancedColumns = [checkboxColumn, ...columns];
  
   const handleSearch = () => {
-    const adsType = adsType?.code || "";
+    const addType = adsType?.code;
     const startDate = fromDate;
     const endDate = toDate;
-  
-    if (adsType && startDate && endDate) {
-     
+    const faceArea=selectedFace?.code;
+    const location=selectedLocation?.code;
+    const nightLight=selectNight?.value;
+    if (adsType && startDate && endDate && faceArea && location && nightLight) {
       const filters = {
-        communityHallCode: selectedHallName,
+        addType: addType,
+        faceArea:faceArea,
+        location:location,
+        nightLight:nightLight,
         bookingStartDate: startDate,
         bookingEndDate: endDate,
-        hallAddress: adsType?.address,
-        hallCode: selectedHallCode,
-        capacity: hallCode?.capacity,
       };
       setSearchData(filters);
-    } else {
-      setShowToast({ error: true, label: t("CHB_SELECT_COMMUNITY_HALL_DATE_HALLCODE") });
+    }
+    else{
+      setShowToast({ 
+        error: true, 
+        label: t("PLEASE_FILL_ALL_FIELDS_TO_SEARCH") 
+      });
     }
   };
 //Todo: Work in progress for Show Cart.
-  const handleCartClick= () => {
-    if (!isCheckboxSelected) {
-      setShowToast({ error: true, label: t("CHB_SELECT_AT_LEAST_ONE_SLOT") });
+
+  const handleViewCart = () => {
+    if (cartDetails.length > 0) {
+      setShowCartDetails(true); // Show the cart details only if there are items
     } else {
-      // Add selected rows to cart
-      const selectedRows = data.filter(row => 
-        cartDetails.some(cartRow => cartRow.slotId === row.slotId)
-      );
-      
-      // Update the cartDetails state with selected rows
-      setCartDetails(prevCart => [...prevCart, ...selectedRows]);
-  
-      // Optionally, you can also clear the current selection after adding to cart
-      setIsCheckboxSelected(false);
-      setCartDetails((prev) => {
-        return prev.filter(row => !selectedRows.some(selectedRow => selectedRow.slotId === row.slotId));
-      });
+      setShowToast({ error: true, label: t("ADS_NO_ITEMS_IN_CART") }); // Provide feedback if cart is empty
     }
   };
   
   const handleBookClick = () => {
-    if (!isCheckboxSelected) {
-      setShowToast({ error: true, label: t("CHB_SELECT_AT_LEAST_ONE_SLOT") });
+    if (cartDetails.length === 0) {
+      setShowToast({ error: true, label: t("ADS_SELECT_AT_LEAST_ONE_SLOT") });
     } else {
-      goNext();
+      goNext(); // Proceed to the next step
     }
   };
-  const handleViewCart = () => {
-    setShowCartDetails(true); // Show the cart details
-};
-
+  
 const handleCloseCart = () => {
     setShowCartDetails(false); // Close the cart details
 };
@@ -323,10 +305,8 @@ const handleCloseCart = () => {
     }
   }, [showToast]);
   useEffect(() => {
-    if (Searchdata.communityHallCode) {
-      refetch();
-      setCartDetails([]);
-      setIsCheckboxSelected(false);
+    if (Searchdata.addType) {
+      mutation.mutate(formdata);
     }
   }, [Searchdata]);
   return (
@@ -448,15 +428,28 @@ const handleCloseCart = () => {
           onSelect={setselectNight}
           isDependent={true}
         />
-        <div style={{ display: "flex", flexDirection: "row", gap: "15px" }}>
-          <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
-          <SubmitBar label={t("ADS_ADD_TO_CART")} onSubmit={handleCartClick} disabled={!isCheckboxSelected} />
-          <SubmitBar label={t("ADS_VIEW_CART")} onSubmit={handleViewCart} />
-          {showCartDetails && <ADSCartDetails onClose={handleCloseCart} cartDetails={cartDetails} setCartDetails={setCartDetails} />}
-          {/* <SubmitBar label={t("ADS_BOOK_NOW")} onSubmit={handleBookClick} disabled=
-{!isCheckboxSelected} /> */}
-          <SubmitBar label={t("ADS_BOOK_NOW")} onSubmit={goNext}  disabled={cartDetails.length === 0}/>
-        </div>
+       <div style={{ display: "flex", flexDirection: "row", gap: "15px" }}>
+        <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
+        <SubmitBar 
+          label={t("ADS_ADD_TO_CART")} 
+          onSubmit={handleCartClick} 
+        />
+        <SubmitBar 
+          label={t("ADS_VIEW_CART")} 
+          onSubmit={handleViewCart} 
+        />
+        {showCartDetails && (
+          <ADSCartDetails 
+            onClose={handleCloseCart} 
+            cartDetails={cartDetails} 
+            setCartDetails={setCartDetails} 
+          />
+        )}
+        <SubmitBar 
+          label={t("ADS_BOOK_NOW")} 
+          onSubmit={handleBookClick} 
+        />
+      </div>
       </FormStep>
       {showTable && ( // Only show table when showTable is true
         <Card>
@@ -473,6 +466,7 @@ const handleCloseCart = () => {
             })}
             isPaginationRequired={false}
             totalRecords={data.length}
+            style={{ width: "100%", overflowX: "auto" }} // Make table responsive
           />
         </Card>
       )}

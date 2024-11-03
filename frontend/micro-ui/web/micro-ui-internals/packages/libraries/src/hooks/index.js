@@ -316,6 +316,8 @@ import useTenantsFNOC from "./fnoc/useTenants";
 import useSVDoc from "./sv/useSVDoc";
 import useSvCreateApi from "./sv/useSvCreateApi";
 import useTenantsSV from "./sv/useTenants";
+import useADSSlotSearch from "./ads/useADSSlotSearch";
+import useADSSearch from "./ads/useADSSearch";
 
 
 const pgr = {
@@ -395,7 +397,9 @@ const ads={
   useTenants:useTenantsADS,
   useADSDocumentsMDMS,
   useADSDocumentSearch,
-  useADSCreateAPI
+  useADSCreateAPI,
+  useADSSlotSearch,
+  useADSSearch
 }
 
 const fsm = {
