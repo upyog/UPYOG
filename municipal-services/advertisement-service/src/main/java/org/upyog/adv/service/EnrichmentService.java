@@ -77,14 +77,14 @@ public class EnrichmentService {
 		bookingDetail.getAddress().setAddressId(BookingUtil.getRandonUUID());
 		bookingDetail.getAddress().setApplicantDetailId(bookingDetail.getApplicantDetail().getApplicantDetailId());
 
-		List<String> customIds = getIdList(requestInfo, bookingDetail.getTenantId(),
-				config.getAdvertisementBookingIdKey(), config.getAdvertisementBookingIdFromat(), 1);
-		
-//		List<String> customIds = Arrays.asList(
-//			    "ADV-" + UUID.randomUUID().toString(),
-//			    "CITY-" + UUID.randomUUID().toString()
-//			  
-//			);
+//		List<String> customIds = getIdList(requestInfo, bookingDetail.getTenantId(),
+//				config.getAdvertisementBookingIdKey(), config.getAdvertisementBookingIdFromat(), 1);
+//		
+		List<String> customIds = Arrays.asList(
+			    "ADV-" + UUID.randomUUID().toString(),
+			    "CITY-" + UUID.randomUUID().toString()
+			  
+			);
 
 		
 		

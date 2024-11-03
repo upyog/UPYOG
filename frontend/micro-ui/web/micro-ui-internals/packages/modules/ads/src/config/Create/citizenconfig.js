@@ -24,6 +24,7 @@ export const citizenConfig = [
         hideInEmployee: true,
         isMandatory: true,
         texts: {
+          header:"APPLICANT_PERSONAL_DETAILS",
           submitBarLabel: "ADS_COMMON_NEXT",
         },
       },
@@ -37,6 +38,7 @@ export const citizenConfig = [
         hideInEmployee: true,
         isMandatory: true,
         texts: {
+          header:"APPLICANT_ADDRESS_DETAILS",
           submitBarLabel: "ADS_COMMON_NEXT",
         },
       },

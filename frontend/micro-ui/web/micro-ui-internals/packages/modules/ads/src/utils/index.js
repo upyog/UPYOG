@@ -56,7 +56,26 @@ export const setaddressDetails = (data) => {
   return data;
 
 };
+export const setCartDetails = (data) => {
+  let { adslist } = data;
+  console.log("scartDetails-->",adslist);
+  let cartDetails = adslist?.cartDetails.map((slot) => {
+    return { 
+      addType:slot.addType,
+      faceArea: slot.faceArea,
+      location:slot.location,
+      nightLight:slot.nightLight,
+      bookingDate:slot.bookingDate,
+      bookingFromTime: "06:00",
+      bookingToTime: "05:59",
+      status:"BOOKING_CREATED"
+    };
 
+  }) || [];
+
+  data.adslist = cartDetails;
+  return data;
+}
 export const setApplicantDetails = (data) => {
     let { applicant } = data;
   
@@ -91,6 +110,7 @@ export const ADSDataConvert = (data) => {
   data = setDocumentDetails(data);
   data = setApplicantDetails(data);
   data=setaddressDetails(data);
+  data=setCartDetails(data);
 const formdata={
   bookingApplication: {
     tenantId: data.tenantId,
@@ -100,17 +120,7 @@ const formdata={
     address:data.address,
     ...data.documents,
     bookingStatus:"BOOKING_CREATED",
-    bookingSlotDetails:data?.slotlist,
-    cartDetails:[ {
-                "addType": "Unipolar",
-                "faceArea": "Unipole 12 X 8",
-                "location": "Green Park",
-                "nightLight": false,
-                "bookingDate": "2024-11-30",
-                "bookingFromTime": "06:00",
-                "bookingToTime": "05:59",
-                "status": "BOOKING_CREATED"
-                },],
+    cartDetails:data.adslist,
 
     workflow:null
   }

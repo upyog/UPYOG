@@ -18,6 +18,7 @@ import {
   } from "../../../utils";
   import Timeline from "../../../components/ADSTimeline";
   import ADSDocument from "../../../pageComponents/ADSDocument";
+  import ApplicationTable from "../../../components/ApplicationTable";
 
 /**
  * CheckPage component displays a summary of the applicant's details,
@@ -43,6 +44,7 @@ import {
     
     const {
       applicant,
+      adslist,
       index,    
       isEditADS,
       isUpdateADS,
@@ -52,8 +54,20 @@ import {
     } = value;
   
     const typeOfApplication = !isEditADS && !isUpdateADS ? `bookad` : `editbookad`;
-
-
+    const columns = [
+      { Header: `${t("ADS_TYPE")}`, accessor: "addType" },
+      { Header: `${t("ADS_FACE_AREA")}`, accessor: "faceArea" },
+      { Header: `${t("ADS_NIGHT_LIGHT")}`, accessor: "nightLight" },
+      { Header: `${t("ADS_DATE")}`, accessor: "bookingDate" }
+    ];
+    const adslistRows = adslist?.cartDetails?.map((slot) => (
+      {
+        addType: slot.addType,
+        faceArea:slot.faceArea,
+        nightLight:slot.nightLight,
+        bookingDate:slot.bookingDate,
+      }
+    )) || [];
     const [agree, setAgree] = useState(false);
     const setdeclarationhandler = () => {
       setAgree(!agree);
@@ -150,6 +164,22 @@ import {
   
           />
           </StatusTable>
+          <CardSubHeader style={{ fontSize: "24px" }}>{t("ADS_CART_DETAILS")}</CardSubHeader>
+          <ApplicationTable
+                t={t}
+                data={adslistRows}
+                columns={columns}
+                getCellProps={(cellInfo) => ({
+                  style: {
+                    minWidth: "150px",
+                    padding: "10px",
+                    fontSize: "16px",
+                    paddingLeft: "20px",
+                  },
+                })}
+                isPaginationRequired={false}
+                totalRecords={adslistRows.length}
+              />
           <CardSubHeader style={{ fontSize: "24px" }}>{t("ADS_DOCUMENTS_DETAILS")}</CardSubHeader>
           <StatusTable>
           <Card style={{display: "flex", flexDirection: "row" }}>

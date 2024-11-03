@@ -1,8 +1,9 @@
 import React, { useEffect, useState} from "react";
-import { FormStep, TextInput, CardLabel, Dropdown, TextArea } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, Dropdown, TextArea,Card } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import Timeline from "../components/ADSTimeline";
+import ADSCartAndCancellationPolicyDetails from "../components/ADSCartAndCancellationPolicyDetails";
 
 /*
  * ADSAddress component for capturing address details.
@@ -91,6 +92,9 @@ const ADSAddress = ({ t, config, onSelect, userType, formData}) => {
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={2} /> : null}
+      <Card>
+       <ADSCartAndCancellationPolicyDetails/>
+      </Card>
       <FormStep
         config={config}
         onSelect={goNext}
