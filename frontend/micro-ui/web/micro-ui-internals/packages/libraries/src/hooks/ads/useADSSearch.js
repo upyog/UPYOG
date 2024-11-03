@@ -1,5 +1,12 @@
 import { useQuery, useQueryClient } from "react-query";
 
+/**
+ * Custom hook for executing an ADS search using React Query.
+ * 
+ * This hook takes in tenant ID, filters, and authentication details to fetch
+ * search results. It handles loading states and errors, and includes a
+ * method to refetch data. The hook also allows for custom configurations 
+ */
 const useADSSearch = ({ tenantId, filters, auth,searchedFrom="" }, config = {}) => {
   const client = useQueryClient();
 

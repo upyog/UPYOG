@@ -22,6 +22,14 @@ const CloseBtn = ({ onClick }) => (
   </div>
 );
 
+/**
+ * ADSCartAndCancellationPolicyDetails Component
+ * 
+ * This component displays cart details and cancellation policy information for an ADS booking. 
+ * It features a toggle for viewing the cart and another for displaying the terms and conditions 
+ * associated with the booking. The component uses modals to present detailed information and 
+ */
+
 const ADSCartAndCancellationPolicyDetails = () => {
   const [showCancellationPolicy, setShowCancellationPolicy] = useState(false);
   const [showViewCart, setShowViewCart] = useState(false);
