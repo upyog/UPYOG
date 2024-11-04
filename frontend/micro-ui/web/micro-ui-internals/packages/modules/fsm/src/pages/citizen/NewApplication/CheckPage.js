@@ -16,6 +16,7 @@ import {
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Timeline from "../../../components/TLTimelineInFSM";
+import { getAddress } from "@upyog/digit-ui-module-ws/src/utils";
 
 const ActionButton = ({ jumpTo }) => {
   const { t } = useTranslation();
@@ -43,6 +44,26 @@ const CheckPage = ({ onSubmit, value }) => {
       return previous + current + "m x ";
     }
   }, "");
+
+  const getAddress=(address,t)=>{
+    console.log("address",address)
+    if(address?.gramPanchayat?.code =="OTH1")
+    {
+      return   `${address?.doorNo?.trim() ? `${address?.doorNo?.trim()}, ` : ""} ${address?.street?.trim() ? `${address?.street?.trim()}, ` : ""}${
+        address?.propertyLocation?.code === "WITHIN_ULB_LIMITS" ? t(address?.locality?.i18nkey) : address?.newGramPanchayat
+      },${t(address?.village?.code)}, ${t(address?.city.code)}`
+    }
+    else if(address?.propertyLocation?.code === "WITHIN_ULB_LIMITS" )
+    {
+      console.log("trueee", `${t(address?.locality?.code)}`)
+    return `${t(address?.locality?.code)}`
+    }
+    else {
+      return `${address?.doorNo?.trim() ? `${address?.doorNo?.trim()}, ` : ""} ${address?.street?.trim() ? `${address?.street?.trim()}, ` : ""}${
+        address?.propertyLocation?.code === "WITHIN_ULB_LIMITS" ? t(address?.locality?.i18nkey) : address?.gramPanchayat?.i18nkey
+      },${t(address?.village?.code)}, ${t(address?.city.code)}`
+    }
+  }
   return (
     <React.Fragment>
       <Timeline currentStep={4} flow="APPLY" />
@@ -89,9 +110,7 @@ const CheckPage = ({ onSubmit, value }) => {
           />
           <Row
             label={t("CS_CHECK_ADDRESS")}
-            text={`${address?.doorNo?.trim() ? `${address?.doorNo?.trim()}, ` : ""} ${address?.street?.trim() ? `${address?.street?.trim()}, ` : ""}${
-              address?.propertyLocation?.code === "WITHIN_ULB_LIMITS" ? t(address?.locality?.i18nkey) : address?.gramPanchayat?.i18nkey
-            }, ${t(address?.city.code)}`}
+            text={getAddress(address,t)}
             actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/pincode" />}
           />
           {address?.landmark?.trim() && (

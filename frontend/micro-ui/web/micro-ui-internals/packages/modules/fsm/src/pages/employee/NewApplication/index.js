@@ -48,8 +48,6 @@ export const NewApplication = ({ parentUrl, heading }) => {
       formData?.tripData?.vehicleType &&
       formData?.tripData?.roadWidth!==undefined &&
       formData?.tripData?.distancefromroad!==undefined &&
-      formData?. address?.street &&
-      formData?.address?.doorNo &&
       formData?.propertyType &&
       formData?.subtype &&
       formData?.address?.locality?.code || formData?.cpt?.details?.address?.locality?.code &&
@@ -62,6 +60,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
       formData?.address?.doorNo &&
       (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0)
     ) {
+      console.log("formDataformData",formData)
       setSubmitValve(true);
       const pitDetailValues = formData?.pitDetail ? Object.values(formData?.pitDetail).filter((value) => value > 0) : null;
       let max = Digit.SessionStorage.get("total_amount");
@@ -145,7 +144,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
           tripAmount: typeof amount === "number" ? JSON.stringify(amount) : amount,
           distancefromroad: distancefromroad,
           roadWidth: roadWidth,
-          propertyID: propertyID,
+          propertyID : data?.cpt?.details?.propertyId
         },
         propertyUsage: data?.subtype,
         vehicleCapacity: data?.tripData?.vehicleType?.capacity,
@@ -207,25 +206,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
 
   const configs = [...preFields, ...commonFields];
   let conf = [
-    {
-      "head": "ES_TITLE_APPLICANT_DETAILS",
-      "body": [
-        {
-          "label": "ES_NEW_APPLICATION_APPLICATION_CHANNEL",
-          "isMandatory": true,
-          "type": "component",
-          "key": "channel",
-          "component": "SelectChannel",
-          "nextStep": "applicantName"
-        },
-        {
-          "type": "component",
-          "key": "applicationData",
-          "withoutLabel": true,
-          "component": "SelectName"
-        }
-      ]
-    },
+   
     {
       "head": "ES_NEW_APPLICATION_PROPERTY_DETAILS",
       "body": [
@@ -267,6 +248,25 @@ export const NewApplication = ({ parentUrl, heading }) => {
             "submitBarLabel": "CS_COMMON_NEXT"
           },
           "nextStep": "map"
+        }
+      ]
+    },
+    {
+      "head": "ES_TITLE_APPLICANT_DETAILS",
+      "body": [
+        {
+          "label": "ES_NEW_APPLICATION_APPLICATION_CHANNEL",
+          "isMandatory": true,
+          "type": "component",
+          "key": "channel",
+          "component": "SelectChannel",
+          "nextStep": "applicantName"
+        },
+        {
+          "type": "component",
+          "key": "applicationData",
+          "withoutLabel": true,
+          "component": "SelectName"
         }
       ]
     },

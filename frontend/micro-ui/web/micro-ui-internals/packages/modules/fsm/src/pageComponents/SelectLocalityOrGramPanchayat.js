@@ -21,15 +21,15 @@ const SelectLocalityOrGramPanchayat = ({ t, config, onSelect, userType, formData
       : pincode
       ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode))
       : allCities;
-  const [selectedLocality, setSelectedLocality] = useState(localitySelected?.address?.locality || "");
+  const [selectedLocality, setSelectedLocality] = useState(formData?.cpt?.details?.address?.locality||localitySelected?.address?.locality || "");
   const [localities, setLocalities] = useState();
   const [gramPanchayats, setGramPanchayats] = useState();
   const [selectedGp, setSelectedGp] = useState(() =>
-    formData?.address?.additionalDetails?.gramPanchayat ? formData?.address?.additionalDetails?.gramPanchayat : {}
+    formData?.address?.gramPanchayat ? formData?.address?.gramPanchayat : {}
   );
   const [villages, setVillages] = useState([]);
   const [selectedVillage, setSelectedVillage] = useState(() =>
-    formData?.address?.additionalDetails?.village ? formData?.address?.additionalDetails?.village : {}
+    formData?.address?.village ? formData?.address?.village : {}
   );
   const [newVillage, setNewVillage] = useState();
   const [newGp, setNewGp] = useState();
@@ -58,6 +58,12 @@ const SelectLocalityOrGramPanchayat = ({ t, config, onSelect, userType, formData
     },
     t
   );
+  useEffect(()=>{
+    if(formData?.cpt?.details?.address?.locality && userType === "employee"){
+      setSelectedLocality(formData?.cpt?.details?.address?.locality)
+        onSelect(config.key, { ...formData[config.key], locality: formData?.cpt?.details?.address?.locality });
+    }
+  },[formData?.cpt?.details?.address?.locality])
 
   useEffect(() => {
     if (selectedCity && fetchedLocalities) {
@@ -86,7 +92,12 @@ const SelectLocalityOrGramPanchayat = ({ t, config, onSelect, userType, formData
       }
     }
   }, [selectedCity, fetchedLocalities]);
-
+useEffect(()=>{
+if(formData?.address?.gramPanchayat)
+{
+  selectGramPanchayat(formData?.address?.gramPanchayat)
+}
+},[fetchedGramPanchayats])
   useEffect(() => {
     if (fetchedGramPanchayats) {
       if (fetchedGramPanchayats && fetchedGramPanchayats.length > 0) {
@@ -122,7 +133,7 @@ const SelectLocalityOrGramPanchayat = ({ t, config, onSelect, userType, formData
 
   function selectGramPanchayat(value) {
     setSelectedGp(value);
-    const filteredVillages = fetchedGramPanchayats.filter((items) => items?.code === value?.code)[0].children;
+    const filteredVillages = fetchedGramPanchayats?.filter((items) => items?.code === value?.code)[0].children;
     const localitiesWithLocalizationKeys = filteredVillages?.map((obj) => ({
       ...obj,
       i18nkey: tenantId.replace(".", "_").toUpperCase() + "_REVENUE_" + obj?.code,

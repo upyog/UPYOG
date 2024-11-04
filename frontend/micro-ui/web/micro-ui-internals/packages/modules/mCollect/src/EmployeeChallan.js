@@ -121,17 +121,30 @@ const EmployeeChallan = (props) => {
   return (
     <React.Fragment>
       <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
+      <style>{`
+  .multilinkWrapper employee-mulitlink-main-divNew {
+   max-width:100%;
+   margin-top:-20px
+  }`
+}
+
+        </style>
+        <div style={{display:"flex"}}>
+          <div style={{width:"80%"}}>
         <Header>{`${t("CHALLAN_DETAILS")}`} </Header>
+        </div>
+        <div style={{width:"20%"}}>
           <MultiLink
-              className="multilinkWrapper employee-mulitlink-main-div"
+              className="multilinkWrapper employee-mulitlink-main-divNew"
               onHeadClick={() => setIsDisplayDownloadMenu(!isDisplayDownloadMenu)}
               displayOptions={isDisplayDownloadMenu}
               options={challanDetails?.applicationStatus === "PAID" ? [challanDownload , receiptDownload] : [challanDownload]}
               downloadBtnClassName={"employee-download-btn-className"}
               optionsClassName={"employee-options-btn-className"}
             />
+         </div>
       </div>
-
+</div>
       <div>
         <Card>
           <StatusTable style={{ padding: "10px 0px" }}>

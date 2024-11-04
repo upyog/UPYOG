@@ -128,7 +128,7 @@ const defaultLogo =
         margin: [10, 10],
       },
       {
-        text:"TERMS_AND_CONDITIONS_OF_LICENSE",
+        text:t("TERMS_AND_CONDITIONS_OF_LICENSE"),
         fontSize:16, 
         bold:true, 
         alignment:"center",
@@ -137,7 +137,7 @@ const defaultLogo =
         margin:[0, 25, 0, 0],
       },
       {
-        text:"TERMS_AND_CONDITIONS_OF_LICENSE_CONTENT",
+        text:t("TERMS_AND_CONDITIONS_OF_LICENSE_CONTENT"),
         fontSize:8,
         margin:[10, 20, 10,0] 
       },
@@ -265,7 +265,7 @@ const jsPdfGeneratorv1 = async ({ breakPageLimit = null, tenantId, logo, name, e
         margin: [10, 32],
       },
       {
-        text:"TERMS_AND_CONDITIONS_OF_LICENSE",
+        text: t("TERMS_AND_CONDITIONS_OF_LICENSE"),
         fontSize:16, 
         bold:true, 
         alignment:"center",
@@ -274,7 +274,7 @@ const jsPdfGeneratorv1 = async ({ breakPageLimit = null, tenantId, logo, name, e
         margin:[0, 25, 0, 0],
       },
       {
-        text:"TERMS_AND_CONDITIONS_OF_LICENSE_CONTENT",
+        text: t("TERMS_AND_CONDITIONS_OF_LICENSE_CONTENT"),
         fontSize:8,
         margin:[10, 20, 10,0] 
         
@@ -1007,6 +1007,7 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
   const detailsHeaders = []; 
   let counter=1;
   details.forEach((detail, index) => {
+    console.log("detail",detail)
     if (detail?.values?.length > 0) {
       console.log("lennn", detail?.title.length)
       detailsHeaders.push({
@@ -1023,7 +1024,8 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
                   color: "#454545",                 
                   style: "header",
                   fontSize: 14,
-                  bold: true
+                  bold: true,
+                  margin:[0, 5, 0, 5]
                 }
               ]
           ]
@@ -1035,9 +1037,9 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
       detailsHeaders.push({
         style: 'tableExample',
         
-        margin:[10,0,10,0],
+        margin:[10,0,0,0],
         table: {
-          widths: ['40%', '*'],
+          widths: ['40%', '60%'],
           body: [
             [
               {
@@ -1049,40 +1051,100 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
               },
             ]
           ]
-    }})
-    } else {
-      detail?.values?.map((indData, index) => {
-        detailsHeaders.push({
-          style: 'tableExample',
-          layout: "noBorders", 
-          margin:[10,0,10,0],
-          table: {
-            widths: ['40%', '*'],
-            body: [
-              [
-                
-                {
-                  text: indData?.title,
-                  style: "header",
-                  fontSize: 10,
-                 //border:  index< detail?.values?.length-1  ?  [true, false, false,false]:index===detail?.values?.length-1 ? [true, false, false, true]:[] ,
-                 
-                },
-
-                {
-                  text: `:  ${indData?.value}`,
-                  //border: index< detail?.values?.length-1    ?  [false, false, true, false]:index===detail?.values?.length-1? [false, false, true, true] :[],
-                  //borderColor:borderColor,
-                  fontSize: 10,
-                 
-                }
-              ]
-            ]
+    }})}
+    else {
+      if (Array.isArray(detail?.values)) {
+          // Check if the title is "Owner Details" and if there are multiple owners
+          const hasMultipleOwners = detail?.values.some(
+              indData => indData?.title === "Ownership" && indData?.value === "Multiple Owners"
+          );
+  
+          if ((detail?.title === "Owner Details" ||detail?.title ==="Transferor Details" ||detail?.title ==="Mutation")&& hasMultipleOwners) {
+              // Creating a new table for owner details with borders
+              const ownerDetailsTable = {
+                  style: 'tableExample',
+                  layout: {
+                      hLineWidth: () => 1,
+                      vLineWidth: () => 1,
+                      hLineColor: () => '#000',
+                      vLineColor: () => '#000',
+                      paddingLeft: () => 10,
+                      paddingRight: () => 10,
+                      paddingTop: () => 5,
+                      paddingBottom: () => 5
+                  },
+                  margin: [10, 0, 10, 0],
+                  table: {
+                      widths: ['40%', '60%'],
+                      body: []
+                  }
+              };
+  
+              // Populating the body of the table with owner details
+              detail.values.forEach((indData) => {
+                  ownerDetailsTable.table.body.push([
+                      {
+                          text: indData?.title,
+                          style: "header",
+                          fontSize: 10,
+                          border: [true, true, false, true], 
+                      },
+                      {
+                          text: `:  ${indData?.value}`,
+                          fontSize: 10,
+                          border: [false, true, true, true], 
+                      }
+                  ]);
+  
+                  // After "Owner Address", check for the flag
+                  if (indData?.title === "Owner Address") {
+                      // Add an empty row after "Owner Address"
+                      ownerDetailsTable.table.body.push([
+                          {
+                              text: '', // Empty cell
+                              border: [false, false, false, false], 
+                          },
+                          {
+                              text: '', // Empty cell
+                              border: [false, false, false, false], 
+                          }
+                      ]);
+                  }
+              });
+  
+              // Push the owner details table to detailsHeaders
+              detailsHeaders.push(ownerDetailsTable);
+          } else {
+              // Default behavior for other titles
+              detail.values.forEach((indData) => {
+                  detailsHeaders.push({
+                      style: 'tableExample',
+                      layout: "noBorders",
+                      margin: [10, 0, 0, 0],
+                      table: {
+                          widths: ['40%', '60%'],
+                          body: [
+                              [
+                                  {
+                                      text: indData?.title,
+                                      style: "header",
+                                      fontSize: 10,
+                                      border: [true, true, false, true], 
+                                  },
+                                  {
+                                      text: `:  ${indData?.value}`,
+                                      fontSize: 10,
+                                      border: [false, true, true, true], 
+                                  }
+                              ]
+                          ]
+                      }
+                  });
+              });
           }
-        })
-      })
-    
-    }
+      }
+  }
+  
   });
  
 
