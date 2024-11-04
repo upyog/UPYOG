@@ -1024,8 +1024,7 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
                   color: "#454545",                 
                   style: "header",
                   fontSize: 14,
-                  bold: true,
-                  margin:[0, 5, 0, 5]
+                  bold: true
                 }
               ]
           ]
@@ -1037,9 +1036,9 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
       detailsHeaders.push({
         style: 'tableExample',
         
-        margin:[10,0,0,0],
+        margin:[10,0,10,0],
         table: {
-          widths: ['40%', '60%'],
+          widths: ['40%', '*'],
           body: [
             [
               {
@@ -1075,7 +1074,7 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
                   },
                   margin: [10, 0, 10, 0],
                   table: {
-                      widths: ['40%', '60%'],
+                      widths: ['40%', '*'],
                       body: []
                   }
               };
@@ -1120,9 +1119,9 @@ function createContent(details, logo, tenantId,phoneNumber, breakPageLimit = nul
                   detailsHeaders.push({
                       style: 'tableExample',
                       layout: "noBorders",
-                      margin: [10, 0, 0, 0],
+                      margin: [10, 0, 10, 0],
                       table: {
-                          widths: ['40%', '60%'],
+                          widths: ['40%', '*'],
                           body: [
                               [
                                   {
