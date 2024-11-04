@@ -10,6 +10,8 @@
   "workspaces": [
     "micro-ui-internals/packages/libraries",
     "micro-ui-internals/packages/fsm-libraries",
+    "micro-ui-internals/packages/css",
+    "micro-ui-internals/packages/fsm-css",
     "micro-ui-internals/packages/react-components",
     "micro-ui-internals/packages/modules/*"
   ],
