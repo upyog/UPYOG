@@ -1,0 +1,6 @@
+db.driver=org.postgresql.Driver
+db.url=jdbc:postgresql://localhost1:5444/edb
+db.username=erp_owner
+db.password=erp_owner
+
+search.clusterName=elasticsearch-katta

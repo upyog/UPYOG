@@ -4,7 +4,8 @@ import { PaymentService } from "../services/elements/Payment";
 export const useFetchCitizenBillsForBuissnessService = ({ businessService, ...filters }, config = {}) => {
   const queryClient = useQueryClient();
   const { mobileNumber, tenantId } = Digit.UserService.getUser()?.info || {};
-  const tenant = Digit.ULBService.getCitizenCurrentTenant()
+  const tenant = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code || "pg"
+  console.log("tenanttenant",tenant,window.location.href.includes("mcollect"),filters)
   const params = { mobileNumber, businessService, ...filters };
   if (!params["mobileNumber"]) delete params["mobileNumber"];
   const { isLoading, error, isError, data, status } = useQuery(
@@ -79,7 +80,9 @@ export const useFetchPayment = ({ tenantId, consumerCode, businessService }, con
       }
       return fetchedBill;
     } else {
-      return Digit.PaymentService.fetchBill(tenantId, { consumerCode, businessService });
+      const tenant = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code || "pg"
+      console.log("consumerCodeconsumerCode",consumerCode)
+      return Digit.PaymentService.fetchBill(window.location.href.includes("mcollect")?tenant:tenantId, { consumerCode, businessService });
     }
   };
 
