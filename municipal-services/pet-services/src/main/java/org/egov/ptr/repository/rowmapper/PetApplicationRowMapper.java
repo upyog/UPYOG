@@ -64,6 +64,7 @@ public class PetApplicationRowMapper implements ResultSetExtractor<List<PetRegis
 					    .expireFlag(rs.getBoolean("pexpireflag"))
 					    .petToken(rs.getString("ppettoken"))
 					    .previousApplicationNumber(rs.getString("ppreviousapplicationnumber"))
+					    .propertyId(rs.getString("ppropertyid"))
 					    .petDetails(petdetails)
 					    .auditDetails(auditdetails)
 					    .build();
