@@ -88,7 +88,9 @@ module.exports = function (app) {
     "/requester-services-dx",
     "/firenoc-services/v1/_create",
     "/employee-dashboard/_search",
-    "/sv-services/street-vending/_create"
+    "/sv-services/street-vending/_create",
+    "/sv-services/street-vending/_search"
+
    
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));

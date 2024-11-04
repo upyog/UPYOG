@@ -234,7 +234,7 @@ export const svPayloadData = (data) =>{
       {
         addressId: "",
         addressLine1: data?.address?.addressLine1,
-        addressLine2: data?.address?.addressLine1,
+        addressLine2: data?.address?.addressLine2,
         addressType: "",
         city: data?.address?.city?.name,
         cityCode: data?.address?.city?.code,

@@ -45,7 +45,7 @@ const InboxLinks = ({ parentRoute, businessService }) => {
       <span className="logo">
         <PropertyHouse />
       </span>{" "}
-      <span className="text">{t("PET_SERVICE")}</span>
+      <span className="text">{t("SV_INBOX_SERVICE")}</span>
     </div>
   );
 

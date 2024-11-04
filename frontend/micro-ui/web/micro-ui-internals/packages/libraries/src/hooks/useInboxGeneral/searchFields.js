@@ -120,6 +120,34 @@ EW: [
       },
     },
   ],
+
+  // Defined SV array which contains objects of input fields to be rendered in the inbox search box
+  SV: [
+    {
+      label: "SV_APPLICATION_ID",
+      name: "applicationId",
+      roles: [],
+    },
+    {
+      label: "SV_VENDOR_ID",
+      name: "vendingId",
+      roles: [],
+    },
+    {
+      label: "SV_MOBILE_NUMBER",
+      name: "mobileNumber",
+      type: "mobileNumber",
+      maxLength: 10,
+      minLength: 0,
+      roles: [],
+      pattern: "^$|[6-9][0-9]{9}",
+      errorMessages: {
+        pattern: "",
+        minLength: "",
+        maxLength: "",
+      },
+    },
+  ],
 };
 
 const searchFieldsForSearch = {

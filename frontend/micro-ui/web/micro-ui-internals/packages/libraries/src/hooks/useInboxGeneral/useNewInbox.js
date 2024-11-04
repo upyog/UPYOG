@@ -8,6 +8,7 @@ import { filterFunctions } from "./newFilterFn";
 import { getSearchFields } from "./searchFields";
 import { InboxGeneral } from "../../services/elements/InboxService";
 import { CHBServices } from "../../services/elements/CHB";
+import { SVService } from "../../services/elements/SV";
 
 const inboxConfig = (tenantId, filters) => ({
   PT: {
@@ -57,6 +58,14 @@ const inboxConfig = (tenantId, filters) => ({
     businessIdAliasForSearch: "applicationNo",
     fetchFilters: filterFunctions.FSM,
     _searchFn: () => FSMService.search(tenantId, filters),
+  },
+  SV: {
+    services: ["SV"],
+    searchResponseKey: "StreetVendingApplication",
+    businessIdsParamForSearch: "vendingZones",
+    businessIdAliasForSearch: "vendingZones",
+    fetchFilters: filterFunctions.SV,
+    _searchFn: () => SVService.search({ tenantId, filters }),
   },
 });
 
