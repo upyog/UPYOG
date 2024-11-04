@@ -49,6 +49,7 @@ import org.egov.tl.web.models.Difference;
 import org.egov.tl.web.models.OwnerInfo;
 import org.egov.tl.web.models.RequestInfoWrapper;
 import org.egov.tl.web.models.TradeLicense;
+import org.egov.tl.web.models.TradeLicense.ApplicationTypeEnum;
 import org.egov.tl.web.models.TradeLicenseActionRequest;
 import org.egov.tl.web.models.TradeLicenseActionResponse;
 import org.egov.tl.web.models.TradeLicenseRequest;
@@ -338,23 +339,63 @@ public class TradeLicenseService {
 		
 		if(StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), TLConstants.ROLE_CODE_EMPLOYEE)) {
 			
-			tempLicenses = licenses.stream().filter(license -> 
-						!StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_INITIATED))
-					.collect(Collectors.toList());
+			tempLicenses = tempLicenses.stream().filter(license -> 
+			!StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_INITIATED))
+		.collect(Collectors.toList());
 			
+			// fetch all ROLES within tenant
 			List<String> rolesWithinTenant = getRolesWithinTenant(criteria.getTenantId(), requestInfo.getUserInfo().getRoles());
 			
-			if(!rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_VERIFIER)) {
-				tempLicenses = tempLicenses.stream().filter(license -> 
-				!StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORVERIFICATION))
-			.collect(Collectors.toList());
-			}
-			
-			if(!rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_APPROVER)) {
+			if(rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_VERIFIER)) {
 				tempLicenses = tempLicenses.stream().filter(license -> 
 				!StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORAPPROVAL))
 			.collect(Collectors.toList());
 			}
+			if(rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_APPROVER)) {
+				tempLicenses = tempLicenses.stream().filter(license -> 
+				!StringUtils.equalsAnyIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORVERIFICATION, TLConstants.STATUS_PENDINGFORPAYMENT))
+			.collect(Collectors.toList());
+			}
+			
+//			// remove INITIATED applications for EMPLOYEE
+//			tempLicenses = licenses.stream().filter(license -> 
+//						!StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_INITIATED))
+//					.collect(Collectors.toList());
+//			
+//			// fetch all ROLES within tenant
+//			List<String> rolesWithinTenant = getRolesWithinTenant(criteria.getTenantId(), requestInfo.getUserInfo().getRoles());
+//			
+//			// if !TL_VERIFIER remove PENDINGFORVERIFICATION
+//			if(!rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_VERIFIER)) {
+//				tempLicenses = tempLicenses.stream().filter(license -> 
+//				!StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORVERIFICATION))
+//			.collect(Collectors.toList());
+//			}
+//			
+//			// if !TL_APPROVER remove PENDINGFORAPPROVAL
+//			if(!rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_APPROVER)) {
+//				tempLicenses = tempLicenses.stream().filter(license -> 
+//				!StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORAPPROVAL))
+//			.collect(Collectors.toList());
+//			}
+//			
+//			if(CollectionUtils.isEmpty(criteria.getStatus())) {
+//				List<TradeLicense> tempLicenses1 = new ArrayList<>();
+//				// if no status filter provided in search criteria, show only PENDINGFORVERIFICATION to TL_VERIFIER
+//				if(rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_VERIFIER)) {
+//					tempLicenses1.addAll(tempLicenses.stream().filter(license -> 
+//					StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORVERIFICATION))
+//							.collect(Collectors.toList()));
+//				}
+//				// if no status filter provided in search criteria, show only PENDINGFORAPPROVAL to TL_APPROVER
+//				if(rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_APPROVER)) {
+//					tempLicenses1.addAll(tempLicenses.stream().filter(license -> 
+//					StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORAPPROVAL))
+//							.collect(Collectors.toList()));
+//				}
+//				tempLicenses = tempLicenses1;
+//			}
+			
 			
 		}
 		return tempLicenses;
@@ -721,6 +762,7 @@ public class TradeLicenseService {
 			TradeLicense license = tradeLicenseRequest.getLicenses().get(i);
 			String action = license.getAction();
 			String comment = license.getComment();
+			ApplicationTypeEnum applicationType = license.getApplicationType();
 			
 			if(null == license.getTradeLicenseDetail()
 					&& (StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_VERIFIER, license.getAction())
@@ -731,7 +773,8 @@ public class TradeLicenseService {
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_VERIFIER, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_FORWARD_TO_APPROVER, license.getAction())
 							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_APPROVE, license.getAction())
-							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_CLOSE, license.getAction()))
+							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_CLOSE, license.getAction())
+							|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_REVOKE, license.getAction()))
 					&& StringUtils.isNotEmpty(license.getApplicationNumber())) {
 				// search TL by application number
 				TradeLicenseSearchCriteria tradeLicenseSearchCriteria = TradeLicenseSearchCriteria.builder()
@@ -744,6 +787,8 @@ public class TradeLicenseService {
 				//enrich input fields
 				licenses.get(0).setAction(action);
 				licenses.get(0).setComment(comment);
+				licenses.get(0).setApplicationType(applicationType);
+				
 				if(StringUtils.equalsIgnoreCase(TLConstants.STATUS_APPROVED, licenses.get(0).getStatus())
 						&& ( StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR, license.getAction())
 								|| StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, license.getAction())
@@ -773,6 +818,29 @@ public class TradeLicenseService {
 		return tempTradeLicenseRequest;
 		
 	}
+
+
+//	private ApplicationTypeEnum getApplicationTypeBasedOnOldStatusAndCurrentAction(ApplicationTypeEnum applicationType,
+//			TradeLicense tradeLicense, String action) {
+//		
+//		if(StringUtils.equalsIgnoreCase(tradeLicense.getStatus(), TLConstants.STATUS_APPROVED)
+//				&& StringUtils.equalsIgnoreCase(action, TLConstants.ACTION_REVOKE)) {
+//			applicationType = ApplicationTypeEnum.REVOKE;
+//		}else if(StringUtils.equalsIgnoreCase(tradeLicense.getStatus(), TLConstants.STATUS_APPROVED)
+//				&& StringUtils.equalsAnyIgnoreCase(action, TLConstants.ACTION_RETURN_TO_INITIATOR
+////														 , TLConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT
+//														 , TLConstants.ACTION_FORWARD_TO_VERIFIER)) {
+//			applicationType = ApplicationTypeEnum.MODIFICATION;
+//		}else if(StringUtils.equalsIgnoreCase(tradeLicense.getStatus(), TLConstants.STATUS_APPROVED)
+//				&& StringUtils.equalsAnyIgnoreCase(action, TLConstants.ACTION_CLOSE)) {
+//			applicationType = ApplicationTypeEnum.CLOSURE;
+//		}
+//		
+//		return applicationType;
+//	}
+
+
+
 
 
 	private void validateInputObjectAndConstraints(TradeLicense license) {
@@ -1060,6 +1128,12 @@ public class TradeLicenseService {
 			response.setApplicationApproved((int) response.getLicenses().stream()
 					.filter(license -> StringUtils.equalsIgnoreCase(STATUS_APPROVED, license.getStatus()))
 					.count());
+			response.setApplicationRevoked((int) response.getLicenses().stream()
+					.filter(license -> StringUtils.equalsIgnoreCase(TLConstants.STATUS_REVOKED, license.getStatus()))
+					.count());
+			response.setApplicationClosed((int) response.getLicenses().stream()
+					.filter(license -> StringUtils.equalsIgnoreCase(TLConstants.STATUS_CLOSED, license.getStatus()))
+					.count());
 		}
 		
 		
@@ -1254,8 +1328,8 @@ public class TradeLicenseService {
 				throw new CustomException("NO_BUSINESS_SERVICE_FOUND","Business service not found for application number: "+applicationNumber);
 			}
 			List<State> stateList = businessServiceResponse.getBusinessServices().get(0).getStates().stream()
-					.filter(state -> StringUtils.equalsIgnoreCase(state.getApplicationStatus(), applicationStatus)
-										&& !StringUtils.equalsAnyIgnoreCase(state.getApplicationStatus(), TLConstants.STATUS_APPROVED)).collect(Collectors.toList());
+					.filter(state -> StringUtils.equalsIgnoreCase(state.getApplicationStatus(), applicationStatus))
+					.collect(Collectors.toList());
 			
 			// filtering actions based on roles
 			List<String> actions = new ArrayList<>();
@@ -1441,6 +1515,33 @@ public class TradeLicenseService {
 		applicationDetail.setUserDetails(userDetails);
 		
 		return applicationDetail;
+	}
+
+
+
+
+
+	public TradeLicenseActionResponse getCountOfAllApplicationTypes(TradeLicenseActionRequest tradeLicenseActionRequest) {
+		TradeLicenseActionResponse tradeLicenseActionResponse = TradeLicenseActionResponse.builder().build();
+		List<String> statusList = null;
+		
+		// validate request if required
+		
+		// fetch data
+		try {
+			if(null != tradeLicenseActionRequest) {
+				statusList = tlRepository.getStatusOfAllApplications(tradeLicenseActionRequest.getTenantId());
+			}
+			if (!CollectionUtils.isEmpty(statusList)) {
+				tradeLicenseActionResponse
+						.setApplicationTypesCount(statusList.stream().filter(status -> StringUtils.isNotEmpty(status))
+								.collect(Collectors.groupingBy(String::toString, Collectors.counting())));
+			}
+		} catch (Exception e) {
+			throw new CustomException("FAILED_TO_FETCH","Failed to fetch Application types.");
+		}
+		
+		return tradeLicenseActionResponse;
 	}
 
 }
