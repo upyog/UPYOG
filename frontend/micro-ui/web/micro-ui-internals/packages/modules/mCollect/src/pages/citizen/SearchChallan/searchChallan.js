@@ -166,12 +166,12 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
           name="ChallanNo"
           value={challanNo}
           onChange={setchallanNo}
-          /* {...(validation = {
-            isRequired: true,
-            //pattern: "^[a-zA-Z-.`' ]*$",
-            type: "any",
-            title: t("wrong Challan No."),
-          })} */
+          {...(validation = {
+            //isRequired: true,
+            pattern: "PG-CH-\\d{4}-\\d{2}-\\d{2}-\\d{6}",
+            //type: "any",
+            title: t("Please enter a valid challan No"),
+          })} 
         />
       </FormStep>
     </div>
