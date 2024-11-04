@@ -22,6 +22,7 @@ import org.egov.pt.models.Assessment;
 import org.egov.pt.models.AssessmentSearchCriteria;
 import org.egov.pt.models.Demand;
 import org.egov.pt.models.Demand.StatusEnum;
+import org.egov.pt.models.Notice;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.enums.CreationReason;
@@ -41,6 +42,7 @@ import org.egov.pt.validator.AssessmentValidator;
 import org.egov.pt.web.contracts.AssessmentRequest;
 import org.egov.pt.web.contracts.DemandRequest;
 import org.egov.pt.web.contracts.DemandResponse;
+import org.egov.pt.web.contracts.NoticeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -121,6 +123,12 @@ public class AssessmentService {
 		String currentFinYearStart = props.getFinYearStart().toString();
 		boolean found=true;
 		StringBuilder sb = new StringBuilder("Please complete the assesment of previous years : ");
+		
+		NoticeRequest noticeRequest = new NoticeRequest();
+		Notice notice=new Notice();
+		notice.setPenaltyAmount("0");
+		notice.setPropertyId(property.getPropertyId());
+		noticeRequest.setNotice(notice);
 		/*if(props.getAssesmentStartyear()>=Integer.parseInt(propertyCreationYear))
 		{*/
 			propertyIds.add(property.getPropertyId());
@@ -175,6 +183,8 @@ public class AssessmentService {
 		}
 		else {
 			calculationService.calculateTax(request, property);
+			deactivateOldDemandsForPreiousYears(request);
+			producer.push(props.getUpdatenoticetopic(), noticeRequest);
 		}
 		
 		producer.push(props.getCreateAssessmentTopic(), request);
@@ -248,7 +258,7 @@ public class AssessmentService {
 		Assessment assessmentFromSearch = repository.getAssessmentFromDB(request.getAssessment());
 		Boolean isWorkflowTriggered = isWorkflowTriggered(request.getAssessment(),assessmentFromSearch,"");
 		validator.validateAssessmentUpdate(request, assessmentFromSearch, property, isWorkflowTriggered);
-
+		
 		if ((request.getAssessment().getStatus().equals(Status.INWORKFLOW) || isWorkflowTriggered)
 				&& config.getIsAssessmentWorkflowEnabled()){
 

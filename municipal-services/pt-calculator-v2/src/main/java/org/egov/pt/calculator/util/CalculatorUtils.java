@@ -63,6 +63,8 @@ import org.egov.pt.calculator.web.models.collections.PaymentDetail;
 import org.egov.pt.calculator.web.models.demand.*;
 import org.egov.pt.calculator.web.models.demand.Bill.BillStatusEnum;
 import org.egov.pt.calculator.web.models.property.AuditDetails;
+import org.egov.pt.calculator.web.models.property.Notice;
+import org.egov.pt.calculator.web.models.property.NoticeResponse;
 import org.egov.pt.calculator.web.models.property.OwnerInfo;
 import org.egov.pt.calculator.web.models.property.Property;
 import org.egov.pt.calculator.web.models.property.PropertyRequest;
@@ -366,6 +368,15 @@ public class CalculatorUtils {
 				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId)
 				.append(SEPARATER)
 				.append("billIds=").append(billId);
+	}
+	
+	public StringBuilder getNoticeSearchUrl(String tenantId,String propertyid) {
+
+		return new StringBuilder().append(configurations.getAssessmentServiceHost())
+				.append(configurations.getNoticeSearchEndpoint()).append(URL_PARAMS_SEPARATER)
+				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId)
+				.append(SEPARATER)
+				.append("propertyIds=").append(propertyid);
 	}
 
 	/**
@@ -946,6 +957,25 @@ public class CalculatorUtils {
 			return null;
 
 		return res.getDemands().get(0);
+	}
+	
+	public BigDecimal getNoticePenaltyAmount(RequestInfo requestInfo, CalculationCriteria calculationCriteria) {
+
+		BigDecimal penalty=BigDecimal.ZERO;
+	
+		NoticeResponse res = mapper.convertValue(
+				repository.fetchResult(getNoticeSearchUrl(calculationCriteria.getTenantId(),calculationCriteria.getProperty().getPropertyId()), new RequestInfoWrapper(requestInfo)),
+				NoticeResponse.class);
+
+		if (CollectionUtils.isEmpty(res.getNotice()))
+			return penalty;
+		
+		else
+			for (Notice notice : res.getNotice()) {
+				penalty=penalty.add(new BigDecimal(notice.getPenaltyAmount()));
+			}
+
+		return penalty;
 	}
 
 

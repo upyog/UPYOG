@@ -147,5 +147,9 @@ public class Configurations {
 	
 	@Value("${egov.bill.search.endpoint}")
 	private String BillSearchEndpoint;
+	
+	//Notice
+	@Value("${egov.notice.search.endpoint}")
+	private String noticeSearchEndpoint; 
 
 }
