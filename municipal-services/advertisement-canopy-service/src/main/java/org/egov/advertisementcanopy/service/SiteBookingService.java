@@ -708,14 +708,14 @@ public class SiteBookingService {
 		if (StringUtils.equalsAnyIgnoreCase(businessService, AdvtConstants.BUSINESS_SERVICE_SITE_BOOKING)) {
 			
 			for (Role role : roles) {
-	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_CITIZEN)) {
-	                roleCodes.add("CITIZEN");
+				if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_CITIZEN)) {
+	                roleCodes.add(AdvtConstants.ROLE_CODE_CITIZEN);
 	            }
 	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_SITE_CREATOR)) {
-	                roleCodes.add("SITE_WF_CREATOR");
+	                roleCodes.add(AdvtConstants.ROLE_CODE_SITE_CREATOR);
 	            }
 	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_SITE_APPROVER)) {
-	                roleCodes.add("SITE_WF_APPROVER");
+	                roleCodes.add(AdvtConstants.ROLE_CODE_SITE_APPROVER);
 	            }
 	        }
 			
@@ -723,13 +723,13 @@ public class SiteBookingService {
 			
 			for (Role role : roles) {
 	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_CITIZEN)) {
-	                roleCodes.add("CITIZEN");
+	                roleCodes.add(AdvtConstants.ROLE_CODE_CITIZEN);
 	            }
 	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_SITE_CREATOR)) {
-	                roleCodes.add("SITE_WF_CREATOR");
+	                roleCodes.add(AdvtConstants.ROLE_CODE_SITE_WF_CREATOR);
 	            }
 	            if (StringUtils.equalsIgnoreCase(role.getCode(), AdvtConstants.ROLE_CODE_SITE_APPROVER)) {
-	                roleCodes.add("SITE_WF_APPROVER");
+	                roleCodes.add(AdvtConstants.ROLE_CODE_SITE_WF_APPROVER);
 	            }
 	        }
 			

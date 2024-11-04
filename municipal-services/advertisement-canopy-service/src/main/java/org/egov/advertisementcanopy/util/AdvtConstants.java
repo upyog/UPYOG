@@ -51,14 +51,14 @@ public class AdvtConstants {
 	public static final String ADVERTISEMENT_HOARDING = "Advertising Hoarding";
     
 	public static final String ROLE_CODE_CITIZEN = "CITIZEN";
-    
-	public static final String ROLE_CODE_SITE_WF_CREATOR = "SITE_CREATOR";
-    
-	public static final String ROLE_CODE_SITE_WF_APPROVER = "SITE_APPROVER";
 
 	public static final String ROLE_CODE_SITE_CREATOR = "SITE_CREATOR";
     
 	public static final String ROLE_CODE_SITE_APPROVER = "SITE_APPROVER";
+
+	public static final String ROLE_CODE_SITE_WF_CREATOR = "SITE_WF_CREATOR";
+    
+	public static final String ROLE_CODE_SITE_WF_APPROVER = "SITE_WF_APPROVER";
 	
 	public static final String CANOPY = "Canopy";
 	
