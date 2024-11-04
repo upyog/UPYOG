@@ -34,7 +34,7 @@ public class PetRegistrationRepository {
 		return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
 	}
 
-	public List<String> fetchTradeLicenseTenantIds() {
+	public List<String> fetchPetApplicationTenantIds() {
 		List<Object> preparedStmtList = new ArrayList<>();
 		return jdbcTemplate.query(queryBuilder.TENANTIDQUERY, preparedStmtList.toArray(),
 				new SingleColumnRowMapper<>(String.class));

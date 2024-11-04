@@ -55,9 +55,7 @@ public class EnrichmentService {
 
 		int index = 0;
 		for (PetRegistrationApplication application : applications) {
-			if (isNewPetApplication(application)) {
-				enrichNewPetToken(application, requestInfo, tenantId);
-			}
+			
 
 			// Set common audit details, ID, and application number
 			application.setAuditDetails(commonAuditDetails);
@@ -83,7 +81,7 @@ public class EnrichmentService {
 	}
 
 	private boolean isNewPetApplication(PetRegistrationApplication application) {
-		return NEW_PET_APPLICATION.equals(application.getApplicationType()) && application.getPetToken().isEmpty();
+		return NEW_PET_APPLICATION.equals(application.getApplicationType()) && (application.getPetToken().isEmpty()||application.getPetToken()==null);
 	}
 
 	private boolean isRenewPetApplication(PetRegistrationApplication application) {
@@ -152,6 +150,9 @@ public class EnrichmentService {
 				application.setStatus(STATUS_REJECTED);
 			} else if (application.getWorkflow().getAction().equals(ACTION_PAY)) {
 				application.setStatus(STATUS_REGISTRATIONCOMPLETED);
+				if (isNewPetApplication(application)) {
+					enrichNewPetToken(application, petRegistrationRequest.getRequestInfo(), application.getTenantId());
+				}
 			}
 		}
 	}

@@ -45,59 +45,78 @@ public class PTRBatchService {
 	 */
 	public void getPetApplicationsAndPerformAction(String serviceName, String jobName, RequestInfo requestInfo) {
 
-		List<String> tenantIdsFromRepository = repository.fetchTradeLicenseTenantIds();
+		// Pre-calculate validity date outside the loop
+		LocalDate today = LocalDate.now();
+		LocalDate nextMarch31 = LocalDate.of(today.getYear(), Month.MARCH, 31);
+		if (today.isAfter(nextMarch31)) {
+			nextMarch31 = nextMarch31.plusYears(1);
+		}
+		LocalDateTime nextMarch31At8PM = LocalDateTime.of(nextMarch31, LocalTime.of(20, 0));
+		long validityDateUnix = nextMarch31At8PM.atZone(ZoneId.systemDefault()).toEpochSecond();
+
+		List<String> tenantIdsFromRepository = repository.fetchPetApplicationTenantIds();
+
 		tenantIdsFromRepository.forEach(tenantIdFromRepository -> {
 			try {
-				LocalDate today = LocalDate.now();
-				// Get this year's March 31st
-				LocalDate nextMarch31 = LocalDate.of(today.getYear(), Month.MARCH, 31);
-				// If today's date is after March 31st, use March 31st of next year
-				if (today.isAfter(nextMarch31)) {
-					nextMarch31 = nextMarch31.plusYears(1);
-				}
-				LocalDateTime nextMarch31At8PM = LocalDateTime.of(nextMarch31, LocalTime.of(20, 0));
-
-				// Convert LocalDateTime to a Unix timestamp (seconds since 1970-01-01)
-				long validityDateUnix = nextMarch31At8PM.atZone(ZoneId.systemDefault()).toEpochSecond(); // Convert to
-																											// ZonedDateTime
-																											// using
-				// the system's default timezone
-
-				PetApplicationSearchCriteria criteria = PetApplicationSearchCriteria.builder()
-						.validityDate(validityDateUnix).status(STATUS_APPROVED).tenantId(tenantIdFromRepository)
-						.build();
-				int offSet = 0;
-//				criteria.setOffset(offSet);
-				while (true) {
-					log.info("current Offset: " + offSet);
-					List<PetRegistrationApplication> petApplicationsFromRepository = repository
-							.getApplications(criteria);
-					if (CollectionUtils.isEmpty(petApplicationsFromRepository))
-						break;
-					expirePetApplications(requestInfo, petApplicationsFromRepository);
-//					offSet = offSet + config.getPaginationSize();
-//					criteria.setOffset(offSet);
-				}
+				processTenantApplications(tenantIdFromRepository, validityDateUnix, requestInfo);
 			} catch (Exception ex) {
-				log.error("The batch process could not be completed for the tenant id : " + tenantIdFromRepository);
+				log.error("Batch process failed for tenant ID: " + tenantIdFromRepository, ex);
 			}
 		});
 	}
 
-	private void expirePetApplications(RequestInfo requestInfo,
-			List<PetRegistrationApplication> petApplicationsFromRepository) {
+	private void processTenantApplications(String tenantId, long validityDateUnix, RequestInfo requestInfo) {
+		PetApplicationSearchCriteria criteria = PetApplicationSearchCriteria.builder().validityDate(validityDateUnix)
+				.status(STATUS_APPROVED).tenantId(tenantId).build();
 
-		petApplicationsFromRepository.forEach(petApplication -> {
-			try {
-				petApplication.setExpireFlag(true);
-				petApplication.setStatus(STATUS_EXPIRED);
-				producer.push(config.getUpdatePtrTopic(),
-						new PetRegistrationRequest(requestInfo, petApplicationsFromRepository));
-			} catch (Exception e) {
-				log.error("The batch process could not be completed while updating workflow or application status ");
+		int offset = 0;
+//		int pageSize = config.getPaginationSize();
+
+		while (true) {
+			// Set pagination for current batch
+//			criteria.setOffset(offset);
+//			criteria.setLimit(pageSize);
+
+			log.info("Fetching applications with offset: " + offset);
+
+			List<PetRegistrationApplication> petApplications = repository.getApplications(criteria);
+
+			// If no more applications, break the loop
+			if (CollectionUtils.isEmpty(petApplications)) {
+				break;
 			}
+
+			// Expire and update applications
+			expireAndUpdatePetApplications(requestInfo, petApplications);
+
+			// Move to the next batch
+//			offset += pageSize;
+		}
+	}
+
+	private void expireAndUpdatePetApplications(RequestInfo requestInfo,
+			List<PetRegistrationApplication> petApplications) {
+		// Expire applications
+		petApplications.forEach(petApplication -> {
+			petApplication.setExpireFlag(true);
+			petApplication.setStatus(STATUS_EXPIRED);
 		});
 
-		workflowIntegrator.updateWorkflowStatus(new PetRegistrationRequest(requestInfo, petApplicationsFromRepository));
+		try {
+			// Update applications in batch
+			PetRegistrationRequest petRegistrationRequest = new PetRegistrationRequest(requestInfo, petApplications);
+			producer.push(config.getUpdatePtrTopic(), petRegistrationRequest);
+		} catch (Exception e) {
+			log.error("Failed to update pet applications batch.", e);
+		}
+
+		try {
+			// Update workflow status in batch
+			PetRegistrationRequest petRegistrationRequest = new PetRegistrationRequest(requestInfo, petApplications);
+			workflowIntegrator.updateWorkflowStatus(petRegistrationRequest);
+		} catch (Exception e) {
+			log.error("Workflow status update failed for expiring applications.", e);
+		}
 	}
+
 }
