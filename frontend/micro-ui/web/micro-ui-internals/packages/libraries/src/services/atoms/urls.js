@@ -118,8 +118,10 @@ const Urls = {
     assets_Reciept_Search: "/asset-services/v1/assets/_search",     //This url use for  Assets Recipt Detail QR Code 
   },
 
+  // Urls for create, search and update api's for the Street Vending module
   sv:{
-    create: "/sv-services/street-vending/_create"
+    create: "/sv-services/street-vending/_create",
+    search: "/sv-services/street-vending/_search",
   },
 
   chb: {

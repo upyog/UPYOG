@@ -239,5 +239,48 @@ console.log("filtersArgss",filtersArg);
    
     return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
   },
+
+  SV: (filtersArg) => {
+    
+    console.log("filtersArgssIN NEWFILTERFN",filtersArg);
+        let { uuid } = Digit.UserService.getUser()?.info || {};
+    
+        const searchFilters = {};
+        const workflowFilters = {};
+    
+        const { applicationNo, services, requestId, mobileNumber, limit, offset, sortBy, sortOrder, total, applicationStatus } = filtersArg || {};
+        if (filtersArg?.requestId) {
+          searchFilters.requestId = filtersArg?.requestId;
+        }
+        if (filtersArg?.requestId) {
+          searchFilters.requestId = requestId;
+        }
+        if (applicationStatus && applicationStatus?.[0]?.applicationStatus) {
+          workflowFilters.status = applicationStatus.map((status) => status.uuid);
+          if (applicationStatus?.some((e) => e.nonActionableRole)) {
+            searchFilters.fetchNonActionableRecords = true;
+          }
+        }
+        if (filtersArg?.locality?.length) {
+          searchFilters.locality = filtersArg?.locality.map((item) => item.code.split("_").pop());
+        }
+        if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
+          workflowFilters.assignee = uuid;
+        }
+        if (mobileNumber) {
+          searchFilters.mobileNumber = mobileNumber;
+        }
+        if (applicationNo) {
+          searchFilters.applicationNo = applicationNo;
+        }
+        if (services) {
+          workflowFilters.businessService = services;
+        }
+        searchFilters["isInboxSearch"] = true;
+        searchFilters["creationReason"] = ["CREATE"];
+        workflowFilters["moduleName"] = "sv-services";
+       
+        return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
+      },
   
 };

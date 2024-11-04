@@ -11,7 +11,17 @@ export const SVService = {
       method: "POST",
       params: {},
       auth: true,
-    })
+    }),
+
+  search: ({ tenantId, filters, auth }) =>
+    Request({
+      url: Urls.sv.search,
+      useCache: false,
+      method: "POST",
+      auth: auth === false ? auth : true,
+      userService: auth === false ? auth : true,
+      params: { tenantId, ...filters },
+    }),
 };
 
 

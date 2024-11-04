@@ -1,3 +1,9 @@
+/** Parent component of Search application for employee side
+ * Pass the data from the hook to child components
+ * Contains onSubmit function
+ * Implemented toast for search application here
+ */
+
 import React, { useState } from "react"
 import { Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
@@ -12,6 +18,7 @@ const SearchApp = ({path}) => {
     const [payload, setPayload] = useState({})
     const [showToast, setShowToast] = useState(null);
 
+    // function to pass filters to hook on clicking submit button
     function onSubmit (_data) {
         var fromDate = new Date(_data?.fromDate)
         fromDate?.setSeconds(fromDate?.getSeconds() - 19800 )
@@ -38,15 +45,17 @@ const SearchApp = ({path}) => {
         enabled: !!( payload && Object.keys(payload).length > 0 )
     }
 
-    // const { isLoading, isSuccess, isError, error, data: {PetRegistrationApplications: searchReult, Count: count} = {} } = Digit.Hooks.ptr.usePTRSearch(
-    //     { tenantId,
-    //       filters: payload
-    //     },
-    //    config,
-    //   );
+    // Hook to fetch data for searchapplication based on the filters 
+    const { isLoading, isSuccess, isError, error, data: {SVDetail: searchResult} = {} } = Digit.Hooks.sv.useSvSearchApplication(
+        { tenantId,
+          filters: payload
+        },
+       config,
+      );
+
     return <React.Fragment>
         {/* <SVSearchApplication t={t} isLoading={isLoading} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={  isSuccess && !isLoading ? (searchReult.length>0? searchReult : { display: "ES_COMMON_NO_DATA" } ):""} count={count} />  */}
-        {/* <SVSearchApplication t={t} isLoading={isLoading} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={""} count={""} /> 
+        <SVSearchApplication t={t} isLoading={isLoading} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={isSuccess && !isLoading ? (searchResult.length>0? searchResult : { display: "ES_COMMON_NO_DATA" } ):""} count={""} /> 
         {showToast && (
         <Toast
           error={showToast.error}
@@ -56,8 +65,8 @@ const SearchApp = ({path}) => {
           onClose={() => {
             setShowToast(null);
           }}
-        /> */}
-      {/* )} */}
+        />
+       )} 
     </React.Fragment>
 
 }

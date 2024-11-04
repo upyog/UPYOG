@@ -43,12 +43,26 @@ export const Config =
                 "withoutLabel": true,
                 "key": "address",
                 "type": "component",
-                "nextStep": "bank-details",
+                "nextStep": "correspondence-address-details",
                 "hideInEmployee": true,
                 "isMandatory": true,
                 "texts": {
                     "submitBarLabel": "COMMON_SAVE_NEXT",
                     "header": "SV_ADDRESS_DETAILS",
+                }
+            },
+            {
+                "route": "correspondence-address-details",
+                "component": "SVAdrressDetails",
+                "withoutLabel": true,
+                "key": "correspondenceAddress",
+                "type": "component",
+                "nextStep": "bank-details",
+                "hideInEmployee": true,
+                "isMandatory": true,
+                "texts": {
+                    "submitBarLabel": "COMMON_SAVE_NEXT",
+                    "header": "SV_CORRESPONDENCE_ADDRESS_DETAILS",
                 }
             },
             {

@@ -1,3 +1,9 @@
+/** @description - The following component renders the fields in the filter box in left side of the inbox page
+ * Renders the filter fields
+ * filters the data based on the selected filters
+ * @status - In Development
+ */
+
 import React, { useEffect, useState } from "react";
 import { Dropdown, RadioButtons, ActionBar, RemoveableTag, CloseSvg, CheckBox, Localities, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { useQueryClient } from "react-query";
@@ -11,13 +17,15 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
   const client = useQueryClient();
 
   const [_searchParams, setSearchParams] = useState(() => ({ ...searchParams, services: [] }));
+  const [vendingType, setVendingType] = useState()
+  const [vendingZone, setVendingZone] = useState()
 
   const ApplicationTypeMenu = [
     {
       label: "SV_NEW_REGISTRATION",
       value: "sv",
     },
-    
+
   ];
 
   const localParamChange = (filterParam) => {
@@ -90,13 +98,39 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
             )}
           </div>
           <div>
-            
+
+          <div>
+              <div className="filter-label" style={{ fontWeight: "normal" }}>
+                {t("SV_VENDING_TYPE")}:
+              </div>
+              <div>
+                <Dropdown
+                  selected={vendingType}
+                  select={setVendingType}
+                  option={[{i18nKey: "vendingType1"}, {i18nKey: "vendingType2"}]}
+                  optionKey="i18nKey"
+                  t={t}
+                  placeholder={"Select"}
+                />
+
+              </div>
+            </div>
+
             <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("ES_INBOX_LOCALITY")}:
+                {t("SV_VENDING_ZONE")}:
               </div>
-              <Localities selectLocality={selectLocality} tenantId={tenantId} boundaryType="revenue" />
-              <div className="tag-container">
+              <div>
+              <Dropdown
+                  selected={vendingZone}
+                  select={setVendingZone}
+                  option={[{i18nKey: "vendingZone1"}, {i18nKey: "vendingZsype2"}]}
+                  optionKey="i18nKey"
+                  t={t}
+                  placeholder={"Select"}
+                />
+              </div>
+              {/* <div className="tag-container">
                 {_searchParams?.locality?.map((locality, index) => {
                   return (
                     <RemoveableTag
@@ -108,9 +142,28 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
                     />
                   );
                 })}
+              </div> */}
+            </div>
+
+
+            <div>
+              <div className="filter-label" style={{ fontWeight: "normal" }}>
+                {t("SV_APPLICATION_STATUS")}:
+              </div>
+              <div>
+                <Dropdown
+                  selected={vendingType}
+                  select={setVendingType}
+                  option={[{i18nKey: "vendingType1"}, {i18nKey: "vendingType2"}]}
+                  optionKey="i18nKey"
+                  t={t}
+                  placeholder={"Select"}
+                />
+
               </div>
             </div>
-            <div>
+
+            {/* <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
                 {t("ES_SV_APP_TYPE")}
               </div>
@@ -126,7 +179,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
                   />
                 );
               })}
-            </div>
+            </div> */}
             <div>
               <Status
                 searchParams={_searchParams}

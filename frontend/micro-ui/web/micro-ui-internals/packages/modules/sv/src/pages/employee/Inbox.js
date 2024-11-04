@@ -8,7 +8,7 @@ import SVDesktopInbox from "../../components/SVDesktopInbox";
 const Inbox = ({
   useNewInboxAPI,
   parentRoute,
-  moduleCode = "PTR",
+  moduleCode = "SV",
   initialStates = {},
   filterComponent,
   isInbox,
@@ -58,7 +58,6 @@ const Inbox = ({
       });
 
 
-     
 
 
 
