@@ -657,6 +657,18 @@ public class CalculatorUtils {
 			interestAmount=amountforquaterly.multiply(new BigDecimal(90)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
 			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
 		}
+		else if(sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("H2"))
+		{
+			interestAmount=ammountforhalfyearly.multiply(new BigDecimal(181)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+			unpaidbillAmount=interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+		}
+		else if(sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("H1"))
+		{
+			interestAmount=ammountforhalfyearly.multiply(new BigDecimal(182)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+			unpaidbillAmount=interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+			interestAmount=ammountforhalfyearly.multiply(new BigDecimal(181)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
+			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
+		}
 		
 //		if(demandAdjusted) {
 //			totalAmountForDemand = totalAmountForDemand.subtract(pastDue);

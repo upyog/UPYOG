@@ -332,9 +332,9 @@ public class BillServicev2 {
 				if(bill.getBillDetails().get(0).isPreviousYearAssesment())
 					oldBillToBeExpired.put(bill.getId(), bill);
 				cosnumerCodesToBeExpired.add(bill.getConsumerCode());
-				
+
 			}
-				
+
 			cosnumerCodesNotFoundInBill.remove(entry.getKey());
 			isBillExpired = false;
 		}
@@ -359,7 +359,7 @@ public class BillServicev2 {
 				{
 					if(billsToBeReturned.get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("YR"))
 						return res;
-		
+
 					else if(!billToBeReturned.get(0).getBillDetails().get(0).isPreviousYearAssesment()) {
 						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MM yyyy");
 						BigDecimal totalAmount;
@@ -410,18 +410,18 @@ public class BillServicev2 {
 			billRepository.updateBillStatus(UpdateBillCriteria.builder().statusToBeUpdated(BillStatus.EXPIRED)
 					.businessService(billCriteria.getBusinessService()).consumerCodes(cosnumerCodesToBeExpired)
 					.tenantId(billCriteria.getTenantId()).build());
-			
+
 			for(String s: cosnumerCodesToBeExpired) {
 				BillV2 b =   consumerCodeAndBillMap.get(s);
 				if(oldBillToBeExpired.containsKey(b.getId())) {
-					
+
 					DemandCriteria OlddemandCriteria = DemandCriteria.builder()
 							.businessService(billCriteria.getBusinessService())
 							.tenantId(billCriteria.getTenantId())
 							.consumerCode(Stream.of(b.getConsumerCode()).collect(Collectors.toSet()))
 							.isPaymentCompleted(false).receiptRequired(false).demandId(Stream.of(b.getBillDetails().get(0).getDemandId()).collect(Collectors.toSet())).build();
-					
-					
+
+
 					DemandCriteria demandCriteriaNewDemand = DemandCriteria.builder()
 							.status(org.egov.demand.model.Demand.StatusEnum.ACTIVE.toString())
 							.businessService(billCriteria.getBusinessService())
@@ -432,28 +432,28 @@ public class BillServicev2 {
 					/* Fetching demands for the given bill search criteria */
 					List<Demand> demandsOld = demandService.getDemands(OlddemandCriteria, requestInfo);
 					List<Demand> demandsnew = demandService.getDemands(demandCriteriaNewDemand, requestInfo);
-					
+
 					if(demandsnew.get(0).getTaxPeriodFrom()<=demandsOld.get(0).getTaxPeriodFrom()) {
 						billCriteria.getConsumerCode().remove(s);
 					}
-					
+
 				}
 			}
-			
+
 			BillResponseV2 finalResponse =null;
 			if(null!=billCriteria.getConsumerCode() && !billCriteria.getConsumerCode().isEmpty()) {
 				finalResponse = generateBill(billCriteria, requestInfo);
 				if(null!=finalResponse)
-				billsToBeReturned.addAll(finalResponse.getBill());
+					billsToBeReturned.addAll(finalResponse.getBill());
 			}
-			
+
 			// gen bill returns immutable empty list incase of zero bills
 			for(Map.Entry<String, BillV2> b: oldBillToBeExpired.entrySet()) {
 				billsToBeReturned.add(b.getValue());
 			}
-			
+
 			if(null==finalResponse)
-			finalResponse = new BillResponseV2();
+				finalResponse = new BillResponseV2();
 			finalResponse.setBill(billsToBeReturned);
 			return finalResponse;
 		}
@@ -795,7 +795,7 @@ public class BillServicev2 {
 		Calendar crd = Calendar.getInstance();
 		crd.setTime(currentDate);
 		Integer cuurentMonth = crd.get(Calendar.MONTH) + 1;
-		// cuurentMonth =7;
+		//cuurentMonth =7;
 		// currentYear reference the year for which assesment is done to changed to
 		// different variable
 		Integer currentyear = c.get(Calendar.YEAR);
@@ -809,6 +809,7 @@ public class BillServicev2 {
 				&& appProps.getFinYearEnd() > assesmentDoneForYearEnd) {
 			cuurentMonth = 3;
 			previousYear = true;
+			
 		}
 		Integer nextYear = assesmentDoneForYearEnd;
 
@@ -979,22 +980,32 @@ public class BillServicev2 {
 						mpdObj = getModeOfPaymentDetails(pay.getPayments().get(0).getTotalAmountPaid(), startDateQ1,
 								expiryDateQ1, ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(), pastDue);
 						mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
+						mpdObj.setRemaingAdvance(advancedBillAmount);
 						mpdList.add(mpdObj);
 					} else if (bl.getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q2")) {
 						String expiryDateQ2 = "30-09-" + currentyear;
 						String startDateQ2 = "01-07-" + currentyear;
+						List<TxnPeriodEnum> periodEnums=new ArrayList<ModeOfPaymentDetails.TxnPeriodEnum>();
+						periodEnums.add(TxnPeriodEnum.QUARTER_1);
 						mpdObj = new ModeOfPaymentDetails();
 						mpdObj = getModeOfPaymentDetails(pay.getPayments().get(0).getTotalAmountPaid(), startDateQ2,
 								expiryDateQ2, ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(), BigDecimal.ZERO);
 						mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2);
+						mpdObj.setAdjustedPeriods(periodEnums);
+						mpdObj.setRemaingAdvance(advancedBillAmount);
 						mpdList.add(mpdObj);
 					} else if (bl.getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q3")) {
 						String startDateQ3 = "01-10-" + currentyear;
 						String expiryDateQ3 = "31-12-" + currentyear;
+						List<TxnPeriodEnum> periodEnums=new ArrayList<ModeOfPaymentDetails.TxnPeriodEnum>();
+						periodEnums.add(TxnPeriodEnum.QUARTER_1);
+						periodEnums.add(TxnPeriodEnum.QUARTER_2);
 						mpdObj = new ModeOfPaymentDetails();
 						mpdObj = getModeOfPaymentDetails(pay.getPayments().get(0).getTotalAmountPaid(), startDateQ3,
 								expiryDateQ3, ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(), BigDecimal.ZERO);
 						mpdObj.setPeriod(TxnPeriodEnum.QUARTER_3);
+						mpdObj.setAdjustedPeriods(periodEnums);
+						mpdObj.setRemaingAdvance(advancedBillAmount);
 						mpdList.add(mpdObj);
 					} else if (bl.getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("H1")) {
 						String startDateh1 = "01-04-" + currentyear;
@@ -1003,6 +1014,7 @@ public class BillServicev2 {
 						mpdObj = getModeOfPaymentDetails(pay.getPayments().get(0).getTotalAmountPaid(), startDateh1,
 								expiryDateh1, ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(), BigDecimal.ZERO);
 						mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_1);
+						mpdObj.setRemaingAdvance(advancedBillAmount);
 						mpdList.add(mpdObj);
 					}
 				}
@@ -1064,6 +1076,8 @@ public class BillServicev2 {
 					mpdObj.setPastAmount(pastDue);
 					mpdList.add(mpdObj);
 				}
+				
+				inp = getInterestPenalty( BigDecimal.ZERO,  null, null,null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
 
 			} else if (q2.contains(cuurentMonth)) {
 
@@ -1074,9 +1088,33 @@ public class BillServicev2 {
 				BigDecimal totalInterestAmunt = BigDecimal.ZERO;
 				Map<String, BigDecimal> interestMap = new HashMap<>();
 				BigDecimal totalAmountForInterestCal=BigDecimal.ZERO;
-				
+				BigDecimal adjustedQ1Amount=BigDecimal.ZERO;
+
 				if (!quaterly.contains("Q1")) {
-					amountwithpastdue = amountforquaterly.add(pastDue);
+					if(advancedBillAmount.compareTo(amountforquaterly)>0)
+					{
+						advancedBillAmount=advancedBillAmount.subtract(amountforquaterly);
+						adjustedQ1Amount=BigDecimal.ZERO;
+					}
+					else if(advancedBillAmount.compareTo(amountforquaterly)<0)
+					{
+						adjustedQ1Amount=amountforquaterly.subtract(advancedBillAmount);
+						advancedBillAmount=BigDecimal.ZERO;
+					}
+					else if(advancedBillAmount.compareTo(amountforquaterly)==0)
+					{
+						adjustedQ1Amount=BigDecimal.ZERO;
+						advancedBillAmount=BigDecimal.ZERO;
+					}
+
+					calculationFinalDateForInterest = currentDateWithAssesmentYear(currentyear.toString());
+					noFODays = getDateDifference(firstDayAfterexpiryDateQ2,currentDateWithAssesmentYear(currentyear.toString()));
+					totalAMountForInterest = totalAMountForInterest.add(adjustedQ1Amount).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
+					totalAMountForInterest=totalAMountForInterest.setScale(2,2);
+					totalAmountForInterestCal=adjustedQ1Amount;
+					interestMap.put("Q1",totalAMountForInterest );
+
+					amountwithpastdue = adjustedQ1Amount.add(pastDue);
 					String expiryDateQ1 = "30-06-" + currentyear;
 					String startDateQ1 = "01-04-" + currentyear;
 					mpdObj = new ModeOfPaymentDetails();
@@ -1084,14 +1122,9 @@ public class BillServicev2 {
 							ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(), pastDue);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
 					mpdObj.setPastAmount(pastDue);
+					mpdObj.setInterestAmount(totalAMountForInterest);
+					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
-
-					calculationFinalDateForInterest = currentDateWithAssesmentYear(currentyear.toString());
-					noFODays = getDateDifference(firstDayAfterexpiryDateQ2,currentDateWithAssesmentYear(currentyear.toString()));
-					totalAMountForInterest = totalAMountForInterest.add(amountforquaterly).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
-					totalAMountForInterest=totalAMountForInterest.setScale(2,2);
-					totalAmountForInterestCal=amountforquaterly;
-					interestMap.put("Q1",totalAMountForInterest );
 				}
 
 				paymentPeriod = Q2;
@@ -1115,10 +1148,10 @@ public class BillServicev2 {
 				for(Map.Entry<String, BigDecimal> intmap : interestMap.entrySet()) {
 					totalInterestAmunt= totalInterestAmunt.add(intmap.getValue());
 				}
-				
+
 				totalInterestAmunt = 	totalInterestAmunt.setScale(0, RoundingMode.HALF_UP);
 				//totalAmountForDemand = amountforquaterly.add(quaterlyammount).add(totalInterestAmunt);
-				totalAmountForDemand = amountforquaterly.add(quaterlyammount);
+				totalAmountForDemand = amountforquaterly.add(amountwithpastdue).add(totalInterestAmunt);
 				inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateQ1, financialYearFromDemand.toString() ,"Q2", "Q1" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 
 
@@ -1129,6 +1162,7 @@ public class BillServicev2 {
 					mpdObj = getModeOfPaymentDetails(totalAmountForDemand, "01-07-" + currentyear, expiryDate,
 							ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(), BigDecimal.ZERO);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2);
+					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
 
 				} else if (totalAmountForDemand.compareTo(advancedBillAmount) > 0) {
@@ -1138,6 +1172,7 @@ public class BillServicev2 {
 					mpdObj = getModeOfPaymentDetails(totalAmountForDemand, "01-07-" + currentyear, expiryDate,
 							ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(), BigDecimal.ZERO);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2);
+					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
 				} else if (totalAmountForDemand.compareTo(advancedBillAmount) == 0) {
 					totalAmountForDemand = new BigDecimal(0);
@@ -1146,6 +1181,7 @@ public class BillServicev2 {
 					mpdObj = getModeOfPaymentDetails(totalAmountForDemand, "01-07-" + currentyear, expiryDate,
 							ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(), BigDecimal.ZERO);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2);
+					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
 				}
 
@@ -1159,42 +1195,79 @@ public class BillServicev2 {
 				BigDecimal totalAmountForInterestCal = BigDecimal.ZERO;
 				inp = new InterestAndPenalty();
 				Map<String, BigDecimal> interestMap = new HashMap<>();
+				BigDecimal adjustedQ1Amount=BigDecimal.ZERO;
+				BigDecimal adjustedQ2Amount=BigDecimal.ZERO;
 
-				if (!quaterly.contains("Q1")) {
-
-					amountwithpastdue = amountforquaterly.add(pastDue);
-					//90*150*0.15% add
-					String expiryDateQ1 = "30-06-" + currentyear;
-					String startDateQ1 = "01-04-" + currentyear;
-					mpdObj = new ModeOfPaymentDetails();
-					mpdObj = getModeOfPaymentDetails(amountwithpastdue, startDateQ1, expiryDateQ1,
-							ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(), pastDue);
-					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
-					mpdObj.setPastAmount(pastDue);
-					mpdList.add(mpdObj);
-				}
 				if (!quaterly.contains("Q2")) {
-					String expiryDateQ2 = "30-09-" + currentyear;
-					String startDateQ2 = "01-07-" + currentyear;
-					mpdObj = new ModeOfPaymentDetails();
-					mpdObj = getModeOfPaymentDetails(amountforquaterly, startDateQ2, expiryDateQ2,
-							ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(), BigDecimal.ZERO);
-					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2);
-					mpdList.add(mpdObj);
-
 					if(!quaterly.contains("Q1")) {
-						totalAMountForInterest = totalAMountForInterest.add(amountforquaterly).multiply(new BigDecimal(Q1FlatDays)).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
+
+						if(advancedBillAmount.compareTo(amountforquaterly)>0)
+						{
+							advancedBillAmount=advancedBillAmount.subtract(amountforquaterly);
+							adjustedQ1Amount=BigDecimal.ZERO;
+						}
+						else if(advancedBillAmount.compareTo(amountforquaterly)<0)
+						{
+							adjustedQ1Amount=amountforquaterly.subtract(advancedBillAmount);
+							advancedBillAmount=BigDecimal.ZERO;
+						}
+						else if(advancedBillAmount.compareTo(amountforquaterly)==0)
+						{
+							adjustedQ1Amount=BigDecimal.ZERO;
+							advancedBillAmount=BigDecimal.ZERO;
+						}
+
+						totalAMountForInterest = totalAMountForInterest.add(adjustedQ1Amount).multiply(new BigDecimal(Q1FlatDays)).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
 						totalAMountForInterest=totalAMountForInterest.setScale(2,2);
 						interestMap.put("Q1",totalAMountForInterest );
 						totalAMountForInterest = BigDecimal.ZERO;
+
+						amountwithpastdue = adjustedQ1Amount.add(pastDue);
+						//90*150*0.15% add
+						String expiryDateQ1 = "30-06-" + currentyear;
+						String startDateQ1 = "01-04-" + currentyear;
+						mpdObj = new ModeOfPaymentDetails();
+						mpdObj = getModeOfPaymentDetails(amountwithpastdue, startDateQ1, expiryDateQ1,
+								ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(), pastDue);
+						mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
+						mpdObj.setPastAmount(pastDue);
+						mpdObj.setInterestAmount(adjustedQ1Amount.multiply(new BigDecimal(Q1FlatDays)).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100))).setScale(2,2));
+						mpdObj.setRemaingAdvance(advancedBillAmount);
+						mpdList.add(mpdObj);
+					}
+
+					if(advancedBillAmount.compareTo(amountforquaterly)>0)
+					{
+						advancedBillAmount=advancedBillAmount.subtract(amountforquaterly);
+						adjustedQ2Amount=BigDecimal.ZERO;
+					}
+					else if(advancedBillAmount.compareTo(amountforquaterly)<0)
+					{
+						adjustedQ2Amount=amountforquaterly.subtract(advancedBillAmount);
+						advancedBillAmount=BigDecimal.ZERO;
+					}
+					else if(advancedBillAmount.compareTo(amountforquaterly)==0)
+					{
+						adjustedQ2Amount=BigDecimal.ZERO;
+						advancedBillAmount=BigDecimal.ZERO;
 					}
 
 					calculationFinalDateForInterest = currentDateWithAssesmentYear(currentyear.toString());
 					noFODays = 	getDateDifference(firstDayAfterexpiryDateQ2,currentDateWithAssesmentYear(currentyear.toString()));
-					totalAMountForInterest = totalAMountForInterest.add(amountforquaterly).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
+					totalAMountForInterest = totalAMountForInterest.add(adjustedQ2Amount).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
 					totalAMountForInterest=totalAMountForInterest.setScale(2,2);
 					interestMap.put("Q2",totalAMountForInterest );
-					totalAmountForInterestCal = amountforquaterly;
+					totalAmountForInterestCal = adjustedQ2Amount;
+
+					String expiryDateQ2 = "30-09-" + currentyear;
+					String startDateQ2 = "01-07-" + currentyear;
+					mpdObj = new ModeOfPaymentDetails();
+					mpdObj = getModeOfPaymentDetails(adjustedQ2Amount, startDateQ2, expiryDateQ2,
+							ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(), BigDecimal.ZERO);
+					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2);
+					mpdObj.setInterestAmount(adjustedQ2Amount.multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100))).setScale(2,2));
+					mpdObj.setRemaingAdvance(advancedBillAmount);
+					mpdList.add(mpdObj);
 
 				}
 
@@ -1216,7 +1289,7 @@ public class BillServicev2 {
 				totalInterestAmunt = 	totalInterestAmunt.setScale(0, RoundingMode.HALF_UP);
 				//totalAmountForDemand = amountforquaterly.add(quaterlyammount).add(totalInterestAmunt);
 				//Calculation is done interest 
-				totalAmountForDemand = amountforquaterly.add(quaterlyammount);
+				totalAmountForDemand = amountforquaterly.add(amountwithpastdue).add(adjustedQ2Amount).add(totalInterestAmunt);
 				inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateQ2, financialYearFromDemand.toString() ,"Q3", "Q2" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 
 
@@ -1227,6 +1300,7 @@ public class BillServicev2 {
 					mpdObj = getModeOfPaymentDetails(totalAmountForDemand, "01-10-" + currentyear, expiryDate,
 							ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(), BigDecimal.ZERO);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_3);
+					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
 
 				} else if (totalAmountForDemand.compareTo(advancedBillAmount) > 0) {
@@ -1236,6 +1310,7 @@ public class BillServicev2 {
 					mpdObj = getModeOfPaymentDetails(totalAmountForDemand, "01-10-" + currentyear, expiryDate,
 							ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(), BigDecimal.ZERO);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_3);
+					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
 				} else if (totalAmountForDemand.compareTo(advancedBillAmount) == 0) {
 					totalAmountForDemand = new BigDecimal(0);
@@ -1244,6 +1319,7 @@ public class BillServicev2 {
 					mpdObj = getModeOfPaymentDetails(totalAmountForDemand, "01-10-" + currentyear, expiryDate,
 							ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(), BigDecimal.ZERO);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_3);
+					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
 				}
 
@@ -1256,64 +1332,147 @@ public class BillServicev2 {
 				BigDecimal totalInterestAmunt = BigDecimal.ZERO;
 				Map<String, BigDecimal> interestMap = new HashMap<>();
 				BigDecimal totalAmountForInterestCal = BigDecimal.ZERO;
+				BigDecimal adjustedQ1Amount=BigDecimal.ZERO;
+				BigDecimal adjustedQ2Amount=BigDecimal.ZERO;
+				BigDecimal adjustedQ3Amount=BigDecimal.ZERO;
 
-				if (!quaterly.contains("Q1")) {
-					amountwithpastdue = amountforquaterly.add(pastDue);
-					String expiryDateQ1 = "30-06-" + currentyear;
-					String startDateQ1 = "01-04-" + currentyear;
-					mpdObj = new ModeOfPaymentDetails();
-					mpdObj = getModeOfPaymentDetails(amountwithpastdue, startDateQ1, expiryDateQ1,
-							ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(), pastDue);
-					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
-					mpdObj.setPastAmount(pastDue);
-					mpdList.add(mpdObj);
+				if(previousYear)
+				{
+					try {
+						SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+						String pastStartDate = dateFormat.format(startPeriod);
+						String pastEndDate = dateFormat.format(endPeriod);
+						currentyear=Integer.parseInt(pastStartDate.split("/")[2]);
+						nextYear=Integer.parseInt(pastEndDate.split("/")[2]);
+					} catch (Exception e) {
+						// TODO: handle exception
+						System.out.println("Exception is::"+e);
+					}
 				}
-				if (!quaterly.contains("Q2")) {
-					String expiryDateQ2 = "30-09-" + currentyear;
-					String startDateQ2 = "01-07-" + currentyear;
-					mpdObj = new ModeOfPaymentDetails();
-					mpdObj = getModeOfPaymentDetails(amountforquaterly, startDateQ2, expiryDateQ2,
-							ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(), BigDecimal.ZERO);
-					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2);
-					mpdList.add(mpdObj);
-				}
+
 				if (!quaterly.contains("Q3")) {
+					if(!quaterly.contains("Q2")) {
+						if(!quaterly.contains("Q1")) {
+
+							if(advancedBillAmount.compareTo(amountforquaterly)>0)
+							{
+								advancedBillAmount=advancedBillAmount.subtract(amountforquaterly);
+								adjustedQ1Amount=BigDecimal.ZERO;
+							}
+							else if(advancedBillAmount.compareTo(amountforquaterly)<0)
+							{
+								adjustedQ1Amount=amountforquaterly.subtract(advancedBillAmount);
+								advancedBillAmount=BigDecimal.ZERO;
+							}
+							else if(advancedBillAmount.compareTo(amountforquaterly)==0)
+							{
+								adjustedQ1Amount=BigDecimal.ZERO;
+								advancedBillAmount=BigDecimal.ZERO;
+							}
+
+							totalAMountForInterest = totalAMountForInterest.add(adjustedQ1Amount).multiply(new BigDecimal(Q1FlatDays)).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
+							totalAMountForInterest=totalAMountForInterest.setScale(2,2);
+							interestMap.put("Q1",totalAMountForInterest );
+							totalAMountForInterest = BigDecimal.ZERO;
+
+							amountwithpastdue = adjustedQ1Amount.add(pastDue);
+							//90*150*0.15% add
+							String expiryDateQ1 = "30-06-" + currentyear;
+							String startDateQ1 = "01-04-" + currentyear;
+							mpdObj = new ModeOfPaymentDetails();
+							mpdObj = getModeOfPaymentDetails(amountwithpastdue, startDateQ1, expiryDateQ1,
+									ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(), pastDue);
+							mpdObj.setPeriod(TxnPeriodEnum.QUARTER_1);
+							mpdObj.setPastAmount(pastDue);
+							mpdObj.setInterestAmount(adjustedQ1Amount.multiply(new BigDecimal(Q1FlatDays)).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100))).setScale(2,2));
+							mpdObj.setRemaingAdvance(advancedBillAmount);
+							mpdList.add(mpdObj);
+						}
+
+						if(advancedBillAmount.compareTo(amountforquaterly)>0)
+						{
+							advancedBillAmount=advancedBillAmount.subtract(amountforquaterly);
+							adjustedQ2Amount=BigDecimal.ZERO;
+						}
+						else if(advancedBillAmount.compareTo(amountforquaterly)<0)
+						{
+							adjustedQ2Amount=amountforquaterly.subtract(advancedBillAmount);
+							advancedBillAmount=BigDecimal.ZERO;
+						}
+						else if(advancedBillAmount.compareTo(amountforquaterly)==0)
+						{
+							adjustedQ2Amount=BigDecimal.ZERO;
+							advancedBillAmount=BigDecimal.ZERO;
+						}
+
+						totalAMountForInterest = totalAMountForInterest.add(adjustedQ2Amount).multiply(new BigDecimal(Q2FlatDays)).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
+						totalAMountForInterest=totalAMountForInterest.setScale(2,2);
+						interestMap.put("Q2",totalAMountForInterest );
+						totalAMountForInterest = BigDecimal.ZERO;
+
+						String expiryDateQ2 = "30-09-" + currentyear;
+						String startDateQ2 = "01-07-" + currentyear;
+						mpdObj = new ModeOfPaymentDetails();
+						mpdObj = getModeOfPaymentDetails(amountforquaterly, startDateQ2, expiryDateQ2,
+								ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(), BigDecimal.ZERO);
+						mpdObj.setPeriod(TxnPeriodEnum.QUARTER_2);
+						mpdObj.setInterestAmount(adjustedQ2Amount.multiply(new BigDecimal(Q2FlatDays)).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100))).setScale(2,2));				
+						mpdObj.setRemaingAdvance(advancedBillAmount);
+						mpdList.add(mpdObj);
+					}
+
+					if(advancedBillAmount.compareTo(amountforquaterly)>0)
+					{
+						advancedBillAmount=advancedBillAmount.subtract(amountforquaterly);
+						adjustedQ3Amount=BigDecimal.ZERO;
+					}
+					else if(advancedBillAmount.compareTo(amountforquaterly)<0)
+					{
+						adjustedQ3Amount=amountforquaterly.subtract(advancedBillAmount);
+						advancedBillAmount=BigDecimal.ZERO;
+					}
+					else if(advancedBillAmount.compareTo(amountforquaterly)==0)
+					{
+						adjustedQ3Amount=BigDecimal.ZERO;
+						advancedBillAmount=BigDecimal.ZERO;
+					}
+
+					calculationFinalDateForInterest = currentDateWithAssesmentYear(currentyear.toString());
+					//"01-03-2025"
+					noFODays = 	getDateDifference(firstDayAfterexpiryDateQ3,currentDateWithAssesmentYear(currentyear.toString()));
+					if(previousYear) {
+						noFODays=new BigDecimal(Q3FlatDays);
+						totalAMountForInterest = totalAMountForInterest.add(adjustedQ3Amount).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
+						totalAMountForInterest=totalAMountForInterest.setScale(2,2);
+						totalAmountForInterestCal=adjustedQ3Amount;
+						
+						String startDateQ3 = "01-10-" + currentyear;
+						String expiryDateQ3 = "31-12-" + currentyear;
+						mpdObj = new ModeOfPaymentDetails();
+						mpdObj = getModeOfPaymentDetails(amountforquaterly, startDateQ3, expiryDateQ3,
+								ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(), BigDecimal.ZERO);
+						mpdObj.setPeriod(TxnPeriodEnum.QUARTER_3);
+						mpdObj.setInterestAmount(adjustedQ3Amount.multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100))).setScale(2,2));
+						mpdObj.setRemaingAdvance(advancedBillAmount);
+						mpdList.add(mpdObj);
+
+					}
+
+					else
+						totalAMountForInterest = totalAMountForInterest.add(adjustedQ3Amount).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
+					totalAMountForInterest=totalAMountForInterest.setScale(2,2);
+					interestMap.put("Q3",totalAMountForInterest );
+					totalAmountForInterestCal=adjustedQ3Amount;
+
 					String startDateQ3 = "01-10-" + currentyear;
 					String expiryDateQ3 = "31-12-" + currentyear;
 					mpdObj = new ModeOfPaymentDetails();
 					mpdObj = getModeOfPaymentDetails(amountforquaterly, startDateQ3, expiryDateQ3,
 							ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(), BigDecimal.ZERO);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_3);
+					mpdObj.setInterestAmount(adjustedQ3Amount.multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100))).setScale(2,2));
+					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
-
-
-					if(!quaterly.contains("Q2")) {
-						if(!quaterly.contains("Q1")) {
-							totalAMountForInterest = totalAMountForInterest.add(amountforquaterly).multiply(new BigDecimal(Q1FlatDays)).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
-							totalAMountForInterest=totalAMountForInterest.setScale(2,2);
-							interestMap.put("Q1",totalAMountForInterest );
-							totalAMountForInterest = BigDecimal.ZERO;
-						}
-						totalAMountForInterest = totalAMountForInterest.add(amountforquaterly).multiply(new BigDecimal(Q2FlatDays)).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
-						totalAMountForInterest=totalAMountForInterest.setScale(2,2);
-						interestMap.put("Q2",totalAMountForInterest );
-						totalAMountForInterest = BigDecimal.ZERO;
-					}
-
-					calculationFinalDateForInterest = currentDateWithAssesmentYear(currentyear.toString());
-					noFODays = 	getDateDifference(firstDayAfterexpiryDateQ3,currentDateWithAssesmentYear(currentyear.toString()));
-					if(previousYear) {
-						noFODays=new BigDecimal(Q3FlatDays);
-						totalAMountForInterest = totalAMountForInterest.add(amountforquaterly).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
-						totalAMountForInterest=totalAMountForInterest.setScale(2,2);
-						totalAmountForInterestCal=amountforquaterly;
-					}
-
-					else
-						totalAMountForInterest = totalAMountForInterest.add(amountforquaterly).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
-					totalAMountForInterest=totalAMountForInterest.setScale(2,2);
-					interestMap.put("Q3",totalAMountForInterest );
-					totalAmountForInterestCal=amountforquaterly;
 				}
 				paymentPeriod = Q4;
 				expiryDate = "31-03-" + nextYear;
@@ -1341,7 +1500,7 @@ public class BillServicev2 {
 
 				totalInterestAmunt = 	totalInterestAmunt.setScale(0, RoundingMode.HALF_UP);
 				//totalAmountForDemand = amountforquaterly.add(quaterlyammount).add(totalInterestAmunt);
-				totalAmountForDemand = amountforquaterly.add(quaterlyammount);
+				totalAmountForDemand = amountforquaterly.add(amountwithpastdue).add(adjustedQ2Amount).add(adjustedQ3Amount).add(totalInterestAmunt);
 				inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateQ3, financialYearFromDemand.toString() ,"Q4", "Q3" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 
 				if (advancedBillAmount.compareTo(totalAmountForDemand) > 0) {
@@ -1351,6 +1510,7 @@ public class BillServicev2 {
 					mpdObj = getModeOfPaymentDetails(totalAmountForDemand, "01-01-" + nextYear, expiryDate,
 							ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(), BigDecimal.ZERO);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_4);
+					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
 				} else if (totalAmountForDemand.compareTo(advancedBillAmount) > 0) {
 					totalAmountForDemand = totalAmountForDemand.subtract(advancedBillAmount);
@@ -1359,6 +1519,7 @@ public class BillServicev2 {
 					mpdObj = getModeOfPaymentDetails(totalAmountForDemand, "01-01-" + nextYear, expiryDate,
 							ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(), BigDecimal.ZERO);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_4);
+					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
 				} else if (totalAmountForDemand.compareTo(advancedBillAmount) == 0) {
 					totalAmountForDemand = new BigDecimal(0);
@@ -1367,6 +1528,7 @@ public class BillServicev2 {
 					mpdObj = getModeOfPaymentDetails(totalAmountForDemand, "01-01-" + nextYear, expiryDate,
 							ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(), BigDecimal.ZERO);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_4);
+					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
 				}
 
@@ -1413,9 +1575,11 @@ public class BillServicev2 {
 					mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_1);
 					mpdList.add(mpdObj);
 				}
+				
+				inp = getInterestPenalty( BigDecimal.ZERO,  null, null,null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
 
 			} else if (h2.contains(cuurentMonth)) {
-				
+
 				BigDecimal totalAMountForInterest = BigDecimal.ZERO;
 				String calculationFinalDateForInterest=null;
 				BigDecimal noFODays =  BigDecimal.ZERO;
@@ -1423,25 +1587,56 @@ public class BillServicev2 {
 				BigDecimal totalInterestAmunt = BigDecimal.ZERO;
 				Map<String, BigDecimal> interestMap = new HashMap<>();
 				BigDecimal totalAmountForInterestCal=BigDecimal.ZERO;
+				BigDecimal adjustedH1Amount=BigDecimal.ZERO;
 				
+				if(previousYear)
+				{
+					try {
+						SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+						String pastStartDate = dateFormat.format(startPeriod);
+						String pastEndDate = dateFormat.format(endPeriod);
+						currentyear=Integer.parseInt(pastStartDate.split("/")[2]);
+						nextYear=Integer.parseInt(pastEndDate.split("/")[2]);
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
+				}
+
 				if (!halfyearly.contains("H1")) {
-					amountwithpastduehalf = ammountforhalfyearly.add(pastDue);
+					if(advancedBillAmount.compareTo(ammountforhalfyearly)>0)
+					{
+						advancedBillAmount=advancedBillAmount.subtract(ammountforhalfyearly);
+						adjustedH1Amount=BigDecimal.ZERO;
+					}
+					else if(advancedBillAmount.compareTo(ammountforhalfyearly)<0)
+					{
+						adjustedH1Amount=ammountforhalfyearly.subtract(advancedBillAmount);
+						advancedBillAmount=BigDecimal.ZERO;
+					}
+					else if(advancedBillAmount.compareTo(ammountforhalfyearly)==0)
+					{
+						adjustedH1Amount=BigDecimal.ZERO;
+						advancedBillAmount=BigDecimal.ZERO;
+					}
+					
+					calculationFinalDateForInterest = currentDateWithAssesmentYear(currentyear.toString());
+					noFODays = getDateDifference(firstDayAfterexpiryDateQ2,currentDateWithAssesmentYear(currentyear.toString()));
+					if(previousYear)
+						noFODays=new BigDecimal(H1FlatDays);
+					totalAMountForInterest = totalAMountForInterest.add(adjustedH1Amount).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
+					totalAMountForInterest=totalAMountForInterest.setScale(2,2);
+					totalAmountForInterestCal=adjustedH1Amount;
+					interestMap.put("H1",totalAMountForInterest );
+					
+					amountwithpastduehalf = adjustedH1Amount.add(pastDue);
 					String startDateh1 = "01-04-" + currentyear;
 					String expiryDateh1 = "30-09-" + currentyear;
 					mpdObj = new ModeOfPaymentDetails();
 					mpdObj = getModeOfPaymentDetails(amountwithpastduehalf, startDateh1, expiryDateh1,
 							ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(), pastDue);
 					mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_1);
+					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
-					
-					calculationFinalDateForInterest = currentDateWithAssesmentYear(currentyear.toString());
-					noFODays = getDateDifference(firstDayAfterexpiryDateQ2,currentDateWithAssesmentYear(currentyear.toString()));
-					if(previousYear)
-						noFODays=new BigDecimal(H1FlatDays);
-					totalAMountForInterest = totalAMountForInterest.add(ammountforhalfyearly).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
-					totalAMountForInterest=totalAMountForInterest.setScale(2,2);
-					totalAmountForInterestCal=ammountforhalfyearly;
-					interestMap.put("H1",totalAMountForInterest );
 				}
 				paymentPeriod = H2;
 				String startDateh2 = "01-10-" + currentyear;
@@ -1458,14 +1653,14 @@ public class BillServicev2 {
 				} else if (halfyearlyammount.compareTo(paidBillAmount) > 0) {
 					halfyearlyammount = halfyearlyammount.subtract(paidBillAmount);
 				}
-				
+
 				for(Map.Entry<String, BigDecimal> intmap : interestMap.entrySet()) {
 					totalInterestAmunt= totalInterestAmunt.add(intmap.getValue());
 				}
-				
+
 				totalInterestAmunt = 	totalInterestAmunt.setScale(0, RoundingMode.HALF_UP);
 				//totalAmountForDemand = ammountforhalfyearly.add(halfyearlyammount).add(totalInterestAmunt);
-				totalAmountForDemand = ammountforhalfyearly.add(halfyearlyammount);
+				totalAmountForDemand = ammountforhalfyearly.add(amountwithpastduehalf).add(totalInterestAmunt);
 				inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateH1, financialYearFromDemand.toString() ,"H2", "H1" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 
 				if (advancedBillAmount.compareTo(totalAmountForDemand) > 0) {
@@ -1475,6 +1670,7 @@ public class BillServicev2 {
 					mpdObj = getModeOfPaymentDetails(totalAmountForDemand, startDateh2, expiryDate,
 							ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(), BigDecimal.ZERO);
 					mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_2);
+					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
 
 				} else if (totalAmountForDemand.compareTo(advancedBillAmount) > 0) {
@@ -1484,6 +1680,7 @@ public class BillServicev2 {
 					mpdObj = getModeOfPaymentDetails(totalAmountForDemand, startDateh2, expiryDate,
 							ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(), BigDecimal.ZERO);
 					mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_2);
+					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
 				} else if (totalAmountForDemand.compareTo(advancedBillAmount) == 0) {
 					totalAmountForDemand = new BigDecimal(0);
@@ -1492,6 +1689,7 @@ public class BillServicev2 {
 					mpdObj = getModeOfPaymentDetails(totalAmountForDemand, startDateh2, expiryDate,
 							ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(), BigDecimal.ZERO);
 					mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_2);
+					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
 				}
 
@@ -1521,8 +1719,9 @@ public class BillServicev2 {
 			mpdObj = getModeOfPaymentDetails(totalAmountForDemand, startDateh1, expiryDate,
 					ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(), pastDue);
 			mpdObj.setPeriod(TxnPeriodEnum.YEARLY);
+			mpdObj.setRemaingAdvance(advancedBillAmount);
 			mpdList.add(mpdObj);
-			
+
 			inp = getInterestPenalty( BigDecimal.ZERO,  null, null,null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
 
 
@@ -1590,10 +1789,10 @@ public class BillServicev2 {
 			updatedDate = date.toString()+"-"  + cuurentMonth.toString() + "-" + year;
 		else
 			updatedDate = date.toString() + "-0" + cuurentMonth.toString() + "-" + year;
-		
+
 		if(date<10)
 			updatedDate = "0"+date.toString()+"-"  + cuurentMonth.toString() + "-" + year;
-			
+
 		return updatedDate;
 	}
 
