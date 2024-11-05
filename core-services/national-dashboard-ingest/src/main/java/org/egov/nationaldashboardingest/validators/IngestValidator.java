@@ -679,5 +679,57 @@ public class IngestValidator {
         converted.append(ch);
         }
         return converted.toString();
-	}
+    }
+
+    public Map < String, Map< String, String >> stateListMDMS(RequestInfo requestInfo) {
+
+
+        StringBuilder mdmsURL = new StringBuilder().append(mdmsHost).append(mdmsEndpoint);
+
+        MasterDetail mstrDetail = MasterDetail.builder().name("nationalInfoUser")
+                .filter("[?(@.active==true)]")
+                .build();
+
+
+        ModuleDetail moduleDetail = ModuleDetail.builder().moduleName("tenant").masterDetails(Arrays.asList(mstrDetail)).build();
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(moduleDetail)).tenantId("pg").build();
+        MdmsCriteriaReq mdmsConfig = MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+        Object response = null;
+        List < Map < String, String >> jsonOutput = null;
+
+        log.info("URI: " + mdmsURL.toString());
+        try {
+            log.info(objectMapper.writeValueAsString(mdmsConfig));
+            response = restTemplate.postForObject(mdmsURL.toString(), mdmsConfig, Map.class);
+            jsonOutput = JsonPath.read(response, MDMS_NATIONALTENANTUSER_PATH);
+
+
+        } catch (ResourceAccessException e) {
+
+            Map < String, String > map = new HashMap < > ();
+            map.put(null, e.getMessage());
+            throw new CustomException(map);
+        } catch (HttpClientErrorException e) {
+
+            log.info("the error is : " + e.getResponseBodyAsString());
+            throw new ServiceCallException(e.getResponseBodyAsString());
+        } catch (Exception e) {
+
+            log.error("Exception while fetching from searcher: ", e);
+        }
+
+        Map<String,Map<String , String>> stateEmailMap = new HashMap<>();
+        for (Map<String, String> state : jsonOutput) {
+            String stateCode = state.get("stateCode");
+            String email = state.get("emailId");
+            String nodalofficer = state.get("NodalOfficerName");
+            if (stateCode != null && email != null) {
+                Map<String , String> officerInfo = new HashMap<>();
+                officerInfo.put("email", email);
+                officerInfo.put("nodalOfficer", nodalofficer);
+                stateEmailMap.put(stateCode, officerInfo);
+            }
+        }
+        return stateEmailMap;
+    }
 }
