@@ -91,6 +91,8 @@ public class IngestValidator {
 	
 	public static final String MDMS_PAYMENTCHANNEL_PATH = "$.MdmsRes.common-masters.PaymentChannel";
 
+    public static final String MDMS_NATIONALTENANTUSER_PATH = "$.MdmsRes.tenant.nationalInfoUser";
+
 //    public void verifyCrossStateRequest(Data data, RequestInfo requestInfo){
 //        String employeeUlb = requestInfo.getUserInfo().getTenantId();
 //        Set<String> roles = new HashSet<>();

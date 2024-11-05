@@ -5,6 +5,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
+
 @Component
 public class NSSQueryBuilder {
 
@@ -38,5 +39,6 @@ public class NSSQueryBuilder {
             preparedStmtList.add(id);
         });
     }
+
 
 }
