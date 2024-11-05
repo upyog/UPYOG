@@ -13,9 +13,10 @@ import org.springframework.stereotype.Component;
 import org.upyog.adv.config.BookingConfiguration;
 import org.upyog.adv.constants.BookingConstants;
 import org.upyog.adv.util.BookingUtil;
+import org.upyog.adv.web.models.AdvertisementSearchCriteria;
+import org.upyog.adv.web.models.BookingDetail;
 import org.upyog.adv.web.models.BookingRequest;
 import org.upyog.adv.web.models.CartDetail;
-import org.upyog.adv.web.models.AdvertisementSearchCriteria;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -56,6 +57,11 @@ public class BookingValidator {
 			boolean isBookingDateValid = CartDetails.stream().anyMatch(slotDetail ->
 			currentDate.isBefore(slotDetail.getBookingDate()));
 			return isBookingDateValid;
+		}
+		
+		public void validateUpdate(BookingDetail bookingDetailFromRequest, BookingDetail bookingDetailFromDB) {
+			log.info("validating master data for update  booking request for  booking no : " + bookingDetailFromRequest.getBookingNo());
+			
 		}
 
 

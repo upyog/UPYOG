@@ -117,6 +117,7 @@ public class EnrichmentService {
 		return null;
 	}
 
+	//This enriches the booking request, if status is not null then it updates the booking status in booking detail and cart detail, also updates the payment date and audit details
 	public void enrichUpdateBookingRequest(BookingRequest bookingRequest, BookingStatusEnum statusEnum) {
 		AuditDetails auditDetails = BookingUtil.getAuditDetails(
 			    String.valueOf(bookingRequest.getRequestInfo().getUserInfo().getId()), 
@@ -126,7 +127,6 @@ public class EnrichmentService {
 		BookingDetail bookingDetail = bookingRequest.getBookingApplication();
 		if(statusEnum != null) {
 			bookingDetail.setBookingStatus(statusEnum.toString());
-			//bookingDetail.setReceiptNo(paymentRequest.getPayment().getTransactionNumber());;
 			bookingDetail.getCartDetails().stream().forEach(cart -> {
 				cart.setStatus(statusEnum.toString());
 			});

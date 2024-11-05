@@ -11,16 +11,26 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
+import org.egov.mdms.model.MdmsResponse;
 import org.egov.mdms.model.ModuleDetail;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.upyog.adv.config.BookingConfiguration;
 import org.upyog.adv.constants.BookingConstants;
 import org.upyog.adv.repository.ServiceRequestRepository;
+import org.upyog.adv.web.models.CalculationType;
+import org.upyog.adv.web.models.CartDetail;
+import org.upyog.adv.web.models.billing.TaxHeadMaster;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.deser.std.FromStringDeserializer;
 
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
 
 @Slf4j
 @Component
@@ -37,6 +47,8 @@ public class MdmsUtil {
 
 
 	private static Object mdmsMap = null;
+	private static List<TaxHeadMaster> headMasters = null;
+
 	
 
 	/*
@@ -148,6 +160,147 @@ public class MdmsUtil {
 
 	public static Object getMDMSDataMap() {
 		return mdmsMap;
+	}
+	
+	/**
+	 * makes mdms call with the given criteria and reutrn mdms data
+	 */
+	
+	public List<TaxHeadMaster> getTaxHeadMasterList(RequestInfo requestInfo, String tenantId, String moduleName) {
+		if(headMasters != null) {
+			log.info("Returning cached value of tax head masters");
+			return headMasters;
+		}
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getMdmsHost()).append(config.getMdmsPath());
+		
+		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestTaxHeadMaster(requestInfo, tenantId, moduleName);
+
+		try {
+			MdmsResponse mdmsResponse = mapper.convertValue(serviceRequestRepository.fetchResult(uri, mdmsCriteriaReq), MdmsResponse.class);
+			
+			JSONArray jsonArray = mdmsResponse.getMdmsRes().get("BillingService").get("TaxHeadMaster");
+			
+			headMasters = mapper.readValue(jsonArray.toJSONString(),
+					mapper.getTypeFactory().constructCollectionType(List.class, TaxHeadMaster.class));
+		} catch (JsonProcessingException e) {
+			log.info("Exception occured while converting tax haead master list : " + e);
+		} 
+
+		return headMasters;
+	}
+
+	/**
+	 * makes mdms call with the given criteria and reutrn mdms data
+	 * 
+	 * @param requestInfo
+	 * @param tenantId
+	 * @return
+	 */
+	public List<CalculationType> getcalculationType(RequestInfo requestInfo, String tenantId, String moduleName,CartDetail cartDetail) {
+		String faceArea = "";
+		List<CalculationType> calculationTypes = new ArrayList<CalculationType>();
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getMdmsHost()).append(config.getMdmsPath());
+		
+		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestCalculationType(requestInfo, tenantId, moduleName);
+		MdmsResponse mdmsResponse = mapper.convertValue(serviceRequestRepository.fetchResult(uri, mdmsCriteriaReq), MdmsResponse.class);
+		if(mdmsResponse.getMdmsRes().get(config.getModuleName()) == null) {
+			throw new CustomException("FEE_NOT_AVAILABLE", "Advertisement booking Fee not available.");
+		}
+		JSONArray jsonArray = mdmsResponse.getMdmsRes().get(config.getModuleName()).get(getCalculationTypeMasterName());
+		
+		JsonNode rootNode = null;
+		try {
+			rootNode = mapper.readTree(jsonArray.toJSONString());
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		faceArea = cartDetail.getFaceArea();
+		faceArea = faceArea.replace(" ", "_");
+		JsonNode nestedArray = rootNode.get(0).get(faceArea);
+       
+		try {
+		    // Convert nested array to List<CalculationType>
+		    calculationTypes = mapper.readValue(nestedArray.toString(),
+		            mapper.getTypeFactory().constructCollectionType(List.class, CalculationType.class));
+		} catch (JsonProcessingException e) {
+		    log.info("Exception occurred while converting calculation type: " + e);
+		}
+
+
+		return calculationTypes;
+		
+	}
+	
+	/**
+	 * makes mdms call with the given criteria and reutrn mdms data
+	 * 
+	 * @param requestInfo
+	 * @param tenantId
+	 * @return
+	 */
+	private MdmsCriteriaReq getMdmsRequestTaxHeadMaster(RequestInfo requestInfo, String tenantId, String moduleName) {
+
+		MasterDetail masterDetail = new MasterDetail();
+		masterDetail.setName("TaxHeadMaster");
+		masterDetail.setFilter("$.[?(@.service=='adv-services')]");
+		List<MasterDetail> masterDetailList = new ArrayList<>();
+		masterDetailList.add(masterDetail);
+
+		ModuleDetail moduleDetail = new ModuleDetail();
+		moduleDetail.setMasterDetails(masterDetailList);
+		moduleDetail.setModuleName(moduleName);
+		List<ModuleDetail> moduleDetailList = new ArrayList<>();
+		moduleDetailList.add(moduleDetail);
+
+		MdmsCriteria mdmsCriteria = new MdmsCriteria();
+		mdmsCriteria.setTenantId(tenantId);
+		mdmsCriteria.setModuleDetails(moduleDetailList);
+
+		MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
+		mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
+		mdmsCriteriaReq.setRequestInfo(requestInfo);
+
+		return mdmsCriteriaReq;
+	}
+	
+	/**
+	 * makes mdms call with the given criteria and reutrn mdms data
+	 * 
+	 * @param requestInfo
+	 * @param tenantId
+	 * @return
+	 */
+	private MdmsCriteriaReq getMdmsRequestCalculationType(RequestInfo requestInfo, String tenantId, String moduleName) {
+
+		MasterDetail masterDetail = new MasterDetail();
+		masterDetail.setName(getCalculationTypeMasterName());
+		List<MasterDetail> masterDetailList = new ArrayList<>();
+		masterDetailList.add(masterDetail);
+
+		ModuleDetail moduleDetail = new ModuleDetail();
+		moduleDetail.setMasterDetails(masterDetailList);
+		moduleDetail.setModuleName(moduleName);
+		List<ModuleDetail> moduleDetailList = new ArrayList<>();
+		moduleDetailList.add(moduleDetail);
+
+		MdmsCriteria mdmsCriteria = new MdmsCriteria();
+		mdmsCriteria.setTenantId(tenantId);
+		mdmsCriteria.setModuleDetails(moduleDetailList);
+
+		MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
+		mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
+		mdmsCriteriaReq.setRequestInfo(requestInfo);
+
+		return mdmsCriteriaReq;
+	}
+	
+	//Returns the Master Name Calculation Type
+	private String getCalculationTypeMasterName() {
+		return BookingConstants.ADV_CALCULATION_TYPE;
 	}
 	
 	}
