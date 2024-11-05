@@ -92,6 +92,8 @@ public class AdvtConstants {
 
 	public static final String STATUS_PENDINGFORAPPROVAL = "PENDINGFORAPPROVAL";
 
+	public static final String ACTION_VERIFY = "VERIFY";
+
 	public static final String STATUS_APPROVED = "APPROVED";
 
     public static final String WORKFLOW_SITE_BOOKING_MODULE = "ADVT";
@@ -113,6 +115,7 @@ public class AdvtConstants {
 		map.put(ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, STATUS_PENDINGFORPAYMENT);
 		map.put(ACTION_RETURN_TO_INITIATOR, STATUS_PENDINGFORMODIFICATION);
 		map.put(ACTION_FORWARD_TO_APPROVER, STATUS_PENDINGFORAPPROVAL);
+		map.put(ACTION_VERIFY, STATUS_PENDINGFORAPPROVAL);
 		map.put(STATUS_APPROVED, STATUS_APPROVED);
 
 		if (!fetchValue) {
