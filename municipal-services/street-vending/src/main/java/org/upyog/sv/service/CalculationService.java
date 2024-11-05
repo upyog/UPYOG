@@ -1,6 +1,18 @@
 package org.upyog.sv.service;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.egov.tracer.model.CustomException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.upyog.sv.constants.StreetVendingConstants;
+import org.upyog.sv.util.MdmsUtil;
+import org.upyog.sv.web.models.StreetVendingRequest;
+import org.upyog.sv.web.models.billing.CalculationType;
+import org.upyog.sv.web.models.billing.DemandDetail;
+import org.upyog.sv.web.models.billing.TaxHeadMaster;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -8,104 +20,57 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class CalculationService {
 
-	/*
-	 * @Autowired private MdmsUtil mdmsUtil;
-	 * 
-	 * @Autowired private CommunityHallBookingConfiguration config;
-	 * 
-	 *//**
-		 * @param bookingRequest
-		 * @return
-		 *//*
-			 * public List<DemandDetail> calculateDemand(CommunityHallBookingRequest
-			 * bookingRequest) {
-			 * 
-			 * String tenantId =
-			 * bookingRequest.getHallsBookingApplication().getTenantId().split("\\.")[0];
-			 * 
-			 * List<TaxHeadMaster> headMasters =
-			 * mdmsUtil.getTaxHeadMasterList(bookingRequest.getRequestInfo(), tenantId ,
-			 * CommunityHallBookingConstants.BILLING_SERVICE);
-			 * 
-			 * List<CalculationType> calculationTypes =
-			 * mdmsUtil.getcalculationType(bookingRequest.getRequestInfo(), tenantId ,
-			 * config.getModuleName(), bookingRequest.getHallsBookingApplication());
-			 * 
-			 * 
-			 * log.info("calculationTypes " + calculationTypes);
-			 * 
-			 * List<DemandDetail> demandDetails =
-			 * processCalculationForDemandGeneration(tenantId, calculationTypes,
-			 * bookingRequest, headMasters);
-			 * 
-			 * return demandDetails;
-			 * 
-			 * }
-			 * 
-			 * private List<DemandDetail> processCalculationForDemandGeneration(String
-			 * tenantId, List<CalculationType> calculationTypes, CommunityHallBookingRequest
-			 * bookingRequest, List<TaxHeadMaster> headMasters) {
-			 * 
-			 * Map<String, Long> hallCodeBookingDaysMap =
-			 * bookingRequest.getHallsBookingApplication().getBookingSlotDetails()
-			 * .stream().collect(Collectors.groupingBy(BookingSlotDetail::getHallCode,
-			 * Collectors.counting())); //GST,SGST tax codes are stored to calculate final
-			 * amount List<String> taxCodes =
-			 * Arrays.asList(config.getApplicableTaxes().split(","));
-			 * log.info("tax applicable on booking  : " + taxCodes); //Demand will be
-			 * generated using billing service for booking final List<DemandDetail>
-			 * demandDetails = new LinkedList<>();
-			 * 
-			 * List<String> taxHeadCodes = headMasters.stream().map(head ->
-			 * head.getCode()).collect(Collectors.toList());
-			 * 
-			 * log.info("tax head codes  : " + taxHeadCodes);
-			 * 
-			 * //Demand for which tax is applicable is stored List<CalculationType>
-			 * taxableFeeType = new ArrayList<>();
-			 * 
-			 * BigDecimal hallCodeBookingDays = new
-			 * BigDecimal(hallCodeBookingDaysMap.get(bookingRequest.
-			 * getHallsBookingApplication().getBookingSlotDetails().get(0).getHallCode()));
-			 * 
-			 * for (CalculationType type : calculationTypes) { if
-			 * (taxHeadCodes.contains(type.getFeeType())) { if (type.isTaxApplicable()) {
-			 * //Add taxable fee taxableFeeType.add(type); } else if
-			 * (!taxCodes.contains(type.getFeeType())) { DemandDetail data =
-			 * DemandDetail.builder().taxAmount(type.getAmount())
-			 * .taxHeadMasterCode(type.getFeeType()).tenantId(tenantId).build(); //Add fixed
-			 * fee for which tax is not applicable demandDetails.add(data); } } }
-			 * 
-			 * log.info("taxable fee type : " + taxableFeeType);
-			 * 
-			 * List<DemandDetail> taxableDemands = taxableFeeType.stream().map(data -> //
-			 * log.info("data :" + data);
-			 * DemandDetail.builder().taxAmount(data.getAmount().multiply(
-			 * hallCodeBookingDays))
-			 * .taxHeadMasterCode(data.getFeeType()).tenantId(tenantId).build()).collect(
-			 * Collectors.toList());
-			 * 
-			 * log.info("taxableDemands : " + taxableDemands);
-			 * 
-			 * BigDecimal totalTaxableAmount = taxableDemands.stream()
-			 * .map(DemandDetail::getTaxAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
-			 * 
-			 * demandDetails.addAll(taxableDemands);
-			 * 
-			 * log.info("Total Taxable amount for the booking : " + totalTaxableAmount);
-			 * 
-			 * for (CalculationType type : calculationTypes) { if
-			 * (taxCodes.contains(type.getFeeType())) { DemandDetail demandDetail =
-			 * DemandDetail.builder() .taxAmount(calculateAmount(totalTaxableAmount,
-			 * type.getAmount()))
-			 * .taxHeadMasterCode(type.getFeeType()).tenantId(tenantId).build();
-			 * demandDetails.add(demandDetail); } }
-			 * 
-			 * return demandDetails; }
-			 * 
-			 * private BigDecimal calculateAmount(BigDecimal base, BigDecimal pct) { return
-			 * base.multiply(pct).divide(CommunityHallBookingConstants.ONE_HUNDRED,
-			 * RoundingMode.FLOOR); }
-			 */
+	@Autowired
+	private MdmsUtil mdmsUtil;
+
+	/**
+	 * @param bookingRequest
+	 * @return
+	 */
+	public List<DemandDetail> calculateDemand(StreetVendingRequest bookingRequest) {
+
+		String tenantId = bookingRequest.getStreetVendingDetail().getTenantId().split("\\.")[0];
+
+		List<TaxHeadMaster> headMasters = mdmsUtil.getTaxHeadMasterList(bookingRequest.getRequestInfo(), tenantId,
+				StreetVendingConstants.BILLING_SERVICE);
+
+		List<CalculationType> calculationTypes = mdmsUtil.getcalculationType(bookingRequest.getRequestInfo(), tenantId,
+				StreetVendingConstants.SV_MASTER_MODULE_NAME);
+
+		log.info("calculationTypes " + calculationTypes);
+
+		List<DemandDetail> demandDetails = processCalculationForDemandGeneration(tenantId, calculationTypes,
+				bookingRequest, headMasters);
+
+		return demandDetails;
+
+	}
+
+	private List<DemandDetail> processCalculationForDemandGeneration(String tenantId,
+			List<CalculationType> calculationTypes, StreetVendingRequest vendingRequest,
+			List<TaxHeadMaster> headMasters) {
+
+		List<DemandDetail> demandDetails = new LinkedList<>();
+
+		List<String> taxHeadMasters = headMasters.stream().map(head -> head.getCode()).collect(Collectors.toList());
+
+		log.info("tax head masters  : " + taxHeadMasters);
+
+		for (CalculationType type : calculationTypes) {
+			if (!taxHeadMasters.contains(type.getFeeType())) {
+				throw new CustomException("TAX_HEAD_MASTER_INVALID", "Tax Header Master not found for " + type);
+			}
+		}
+
+		for (CalculationType type : calculationTypes) {
+			if (taxHeadMasters.contains(type.getFeeType())) {
+				DemandDetail demandDetail = DemandDetail.builder().taxAmount(type.getAmount())
+						.taxHeadMasterCode(type.getFeeType()).tenantId(tenantId).build();
+				demandDetails.add(demandDetail);
+			}
+		}
+		return demandDetails;
+
+	}
 
 }
