@@ -38,6 +38,9 @@
     "build:tqm": "cd packages/modules/tqm && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"
   },
+  "resolutions": {
+    "**/styled-components": "5.0.0"
+  },
   "devDependencies": {
     "husky": "7.0.4",
     "lint-staged": "12.3.7",
