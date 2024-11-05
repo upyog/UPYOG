@@ -107,7 +107,7 @@ public class EstimationService {
 
 		/// DISPOSAL DISCHARGE CHARGES
 		HashMap<String,String> add_details= ((HashMap<String,String>)connection.getAdditionalDetails());
-		if(add_details.containsKey("dischargeConnection"))
+		if(add_details.containsKey("dischargeConnection") && add_details.get("dischargeConnection")!=null)
 		{
 
 			if(add_details.get("dischargeConnection").equalsIgnoreCase("true"))
