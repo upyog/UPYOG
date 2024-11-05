@@ -9,26 +9,23 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.common.contract.request.RequestInfo;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.upyog.adv.config.BookingConfiguration;
 import org.upyog.adv.kafka.Producer;
 import org.upyog.adv.repository.BookingRepository;
+import org.upyog.adv.repository.querybuilder.AdvertisementBookingQueryBuilder;
+import org.upyog.adv.repository.rowmapper.AdvertisementSlotAvailabilityRowMapper;
 import org.upyog.adv.repository.rowmapper.BookingCartDetailRowmapper;
 import org.upyog.adv.repository.rowmapper.BookingDetailRowmapper;
 import org.upyog.adv.repository.rowmapper.DocumentDetailsRowMapper;
-import org.upyog.adv.util.BookingUtil;
-import org.upyog.adv.web.models.CartDetail;
-import org.upyog.adv.web.models.BookingDetail;
-import org.upyog.adv.repository.querybuilder.AdvertisementBookingQueryBuilder;
-import org.upyog.adv.repository.rowmapper.AdvertisementSlotAvailabilityRowMapper;
+import org.upyog.adv.web.models.AdvertisementSearchCriteria;
 import org.upyog.adv.web.models.AdvertisementSlotAvailabilityDetail;
 import org.upyog.adv.web.models.AdvertisementSlotSearchCriteria;
+import org.upyog.adv.web.models.BookingDetail;
 import org.upyog.adv.web.models.BookingRequest;
-import org.upyog.adv.web.models.AdvertisementSearchCriteria;
+import org.upyog.adv.web.models.CartDetail;
 import org.upyog.adv.web.models.DocumentDetail;
 
 import lombok.extern.slf4j.Slf4j;
@@ -112,6 +109,13 @@ public class BookingRepositoryImpl implements BookingRepository {
 
 		Integer count = jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
 		return count;
+	}
+	
+	//Upadtes booking request data for the given booking number
+	@Override
+	public void updateBooking(@Valid BookingRequest advertisementBookingRequest) {
+		log.info("Updating advertisement booking request data for booking no : " + advertisementBookingRequest.getBookingApplication().getBookingNo());
+		producer.push(bookingConfiguration.getAdvertisementBookingUpdateTopic(), advertisementBookingRequest);
 	}
 
 	@Override

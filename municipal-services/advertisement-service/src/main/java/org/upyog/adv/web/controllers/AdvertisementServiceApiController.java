@@ -14,18 +14,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.upyog.adv.constants.BookingConstants;
+import org.upyog.adv.enums.BookingStatusEnum;
 import org.upyog.adv.service.BookingService;
+import org.upyog.adv.service.DemandService;
 import org.upyog.adv.util.BookingUtil;
+import org.upyog.adv.web.models.AdvertisementDemandEstimationCriteria;
+import org.upyog.adv.web.models.AdvertisementDemandEstimationResponse;
 import org.upyog.adv.web.models.AdvertisementResponse;
 import org.upyog.adv.web.models.AdvertisementSearchCriteria;
 import org.upyog.adv.web.models.AdvertisementSlotAvailabilityDetail;
 import org.upyog.adv.web.models.AdvertisementSlotAvailabilityResponse;
-import org.upyog.adv.web.models.AdvertisementSlotSearchCriteria;
 import org.upyog.adv.web.models.BookingDetail;
 import org.upyog.adv.web.models.BookingRequest;
 import org.upyog.adv.web.models.ResponseInfo;
 import org.upyog.adv.web.models.ResponseInfo.StatusEnum;
 import org.upyog.adv.web.models.SlotSearchRequest;
+import org.upyog.adv.web.models.billing.Demand;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -52,6 +56,9 @@ public class AdvertisementServiceApiController {
 
 	@Autowired
 	private BookingService bookingService;
+	
+	@Autowired
+	private DemandService demandService;
 
 	@RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
 	public ResponseEntity<AdvertisementResponse> createBooking(
@@ -89,5 +96,40 @@ public class AdvertisementServiceApiController {
 				.advertisementSlotAvailabiltityDetails(applications).responseInfo(info).build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+	
+	 @RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
+	    public ResponseEntity<AdvertisementResponse> v1UpdateAdvertisementBooking(
+	            @ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @Valid @RequestBody BookingRequest advertisementBookingRequest) {
+	        
+	        /**
+	         * This update booking method will be called for below two tasks : 
+	         * 1.Update filestoreid for payment link and permission letter link
+	         * 2. Update status when cancelled
+	         * 
+	         */
+	        
+	        BookingDetail bookingDetail = bookingService.updateBooking(advertisementBookingRequest, null, 
+	                 BookingStatusEnum.valueOf(advertisementBookingRequest.getBookingApplication().getBookingStatus()));
+	        ResponseInfo info = BookingUtil.createReponseInfo(advertisementBookingRequest.getRequestInfo(), BookingConstants.ADVERTISEMENT_BOOKING_UPDATED,
+	                StatusEnum.SUCCESSFUL);
+	        AdvertisementResponse advResponse = AdvertisementResponse.builder().responseInfo(info)
+	                .build();
+	        advResponse.addNewBookingApplication(bookingDetail);
+	        return new ResponseEntity<AdvertisementResponse>(advResponse, HttpStatus.OK);
+	    }
+	 
+	 //This calculates the estimate amount to be paid for the advetisement booking :
+	 // Gets the demand 
+	 @RequestMapping(value = "/v1/_estimate", method = RequestMethod.POST)
+		public ResponseEntity<AdvertisementDemandEstimationResponse> v1GetEstimateDemand(
+				@ApiParam(value = "Details for the advertisement booking for demand estimation", required = true) @Valid @RequestBody AdvertisementDemandEstimationCriteria estimationCriteria) {
+			List<Demand> demands = demandService.getDemand(estimationCriteria);
+			ResponseInfo info = BookingUtil.createReponseInfo(estimationCriteria.getRequestInfo(), BookingConstants.ADVERTISEMENT_DEMAND_ESTIMATION,
+					StatusEnum.SUCCESSFUL);
+			AdvertisementDemandEstimationResponse response = AdvertisementDemandEstimationResponse.builder()
+					.demands(demands)
+					.responseInfo(info).build();
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
 
 }

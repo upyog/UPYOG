@@ -1,5 +1,7 @@
 package org.upyog.adv.constants;
 
+import java.math.BigDecimal;
+
 public class BookingConstants {
 	public static final String  BOOKING_CREATED = "Your advertisement booking created successfully";
 	public static final String ADVERTISEMENT_BOOKING_LIST = "Your advertisement booking list fetched successfully";
@@ -35,12 +37,24 @@ public class BookingConstants {
 	public static final String EMPLOYEE = "EMPLOYEE";
 	public static final String CITIZEN = "CITIZEN";
 	
+    public static final String ADVERTISEMENT_BOOKING_UPDATED = "Your advertisement booking updated successfully";
 	
     public static final String ADV_APPLICANT_DETAIL_ENCRYPTION_KEY = "ADVApplicantDetail";
 	
 	public static final String ADV_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY = "ADVApplicantDetailDecrypDisabled";
 
 	public static final String ADV_APPLICANT_DETAIL_PLAIN_DECRYPTION_PURPOSE = "ADVApplicantDetailDecryptionDisabled";
+	
+	public static final String ADV_CALCULATION_TYPE = "CalculationType";
+	
+	public static final String ADVERTISEMENT_DEMAND_ESTIMATION = "Advertisement booking amount estimation details fetched sussessfully";
+	
+	public static final BigDecimal ONE_HUNDRED = new BigDecimal(100);
+	
+	public static final String BILLING_SERVICE = "BillingService";
+
+
+
 	
 
 

@@ -34,6 +34,10 @@ public class BookingConfiguration {
 
 	@Value("${persister.save.advertisement.booking.topic}")
 	private String advertisementBookingSaveTopic;
+	
+	@Value("${persister.update.advertisement.booking.topic}")
+	private String advertisementBookingUpdateTopic;
+
 
 	// Idgen Config
 	@Value("${egov.idgen.host}")
@@ -99,6 +103,24 @@ public class BookingConfiguration {
 	
 	@Value("${adv.business.service.name}")
 	private String businessServiceName;
+	
+	@Value("${adv.calculation.tax.applicable}")
+	private String applicableTaxes;
+	
+	@Value("${egov.billingservice.host}")
+	private String billingHost;
+
+	@Value("${egov.demand.create.endpoint}")
+	private String demandCreateEndpoint;
+
+	@Value("${egov.demand.update.endpoint}")
+	private String demandUpdateEndpoint;
+
+	@Value("${egov.demand.search.endpoint}")
+	private String demandSearchEndpoint;
+
+	@Value("${egov.bill.gen.endpoint}")
+	private String billGenerateEndpoint;
 	
 	
 

@@ -14,8 +14,7 @@ import java.util.List;
  * @author VISHAL_GENIUS
  *
  */
-@Data
-@AllArgsConstructor
+ @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class IdGenerationResponse {
@@ -23,5 +22,10 @@ public class IdGenerationResponse {
     private ResponseInfo responseInfo;
 
     private List<IdResponse> idResponses;
+
+	public List<digit.models.coremodels.IdResponse> getIdResponses() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
