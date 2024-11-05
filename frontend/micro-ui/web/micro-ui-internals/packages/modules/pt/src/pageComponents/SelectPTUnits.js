@@ -320,9 +320,17 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
   }
 
   function onChangeArea(i, e) {
-    let units = [...fields];
-    units[i].builtUpArea = e.target.value;
-    setFields(units);
+    if ( parseInt(e.target.value) > parseInt(formData?.landArea?.floorarea)) {
+      alert("PT_BUILTUPAREA_PLOTSIZE_ERROR_MSG");
+    }
+    else{
+      const regex=/^(0|[1-9][0-9]{0,8}|)$/;
+      if(regex.test(e.target.value)|| e.target.value==" "){
+        let units = [...fields];
+        units[i].builtUpArea = e.target.value;
+        setFields(units);
+      }
+    }
   }
 
   const goNext = () => {

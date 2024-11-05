@@ -134,10 +134,21 @@ const SelectAccessoriesDetails = ({ t, config, onSelect, userType, formData }) =
   }
   function selectAccessoryCount(i, e) {
     setAccCountError(null);
-    if (isNaN(e.target.value)) setAccCountError("TL_ONLY_NUM_ALLOWED");
+    const value= e.target.value;
+    if (value === ""){
+      setAccCountError(null);
+      return;
+
+    } 
+    if(value.length>7 || !/^\d+$/.test(value)){
+      setAccCountError("TL_ONLY_NUM_ALLOWED");
+    }
+    else{
+      setAccCountError(null);
+    }
     let acc = [...fields];
-    acc[i].accessorycount = e.target.value;
-    setAccessoryCount(e.target.value);
+    acc[i].accessorycount = value;
+    setAccessoryCount(value);
     setFeilds(acc);
   }
   function selectUnitOfMeasure(i, e) {

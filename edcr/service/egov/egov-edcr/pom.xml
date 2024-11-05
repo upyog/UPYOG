@@ -40,6 +40,7 @@
 	</parent>
 	<artifactId>egov-edcr</artifactId>
 	<name>e-governments edcr</name>
+<<<<<<< HEAD
 	<repositories>
 		<repository>
 			<id>AsposeJavaAPI</id>
@@ -63,6 +64,10 @@
 
 		</dependency>
 		<dependency>
+=======
+	<dependencies>
+	<dependency>
+>>>>>>> 4aadee9136a29919fe2996ecffb2d2b89c181cc2
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
 			<version>2.0.28</version>

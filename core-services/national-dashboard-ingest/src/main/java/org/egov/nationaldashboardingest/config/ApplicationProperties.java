@@ -77,6 +77,9 @@ public class ApplicationProperties {
 	
 	@Value("${national.dashboard.legacy.version}")
     private Boolean isLegacyVersionES;
-	
+
+    @Value("${kafka.topics.notification.email}")
+    private String emailNotifTopic;
+
 	
 }
