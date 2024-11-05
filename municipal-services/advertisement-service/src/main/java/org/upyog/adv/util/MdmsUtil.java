@@ -220,7 +220,7 @@ public class MdmsUtil {
 		}
 		faceArea = cartDetail.getFaceArea();
 		faceArea = faceArea.replace(" ", "_");
-		JsonNode nestedArray = rootNode.get(0).get(faceArea);
+		JsonNode nestedArray = rootNode.get(0).get("CalculationType_" + faceArea);
        
 		try {
 		    // Convert nested array to List<CalculationType>
