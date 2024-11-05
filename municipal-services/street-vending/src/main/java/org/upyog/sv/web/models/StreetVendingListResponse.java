@@ -33,6 +33,7 @@ public class StreetVendingListResponse   {
         @JsonProperty("SVDetail")
         private List<StreetVendingDetail> streetVendingDetail = null;
 
+    	private Integer count;
 
 }
 

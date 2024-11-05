@@ -37,7 +37,7 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 
 	@Override
 	public void save(StreetVendingRequest streetVendingRequest) {
-		log.info("Saving community hall booking request data for booking no : "
+		log.info("Saving street vending booking request data for booking no : "
 				+ streetVendingRequest.getStreetVendingDetail().getApplicationNo());
 		producer.push(vendingConfiguration.getStreetVendingApplicationSaveTopic(), streetVendingRequest);
 	}
@@ -49,6 +49,34 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 		String query = queryBuilder.getStreetVendingSearchQuery(streetVendingSearchCriteria, preparedStmtList);
 		log.info("Final query: " + query);
 		return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+
+	}
+
+	@Override
+	public StreetVendingDetail getApplications(StreetVendingSearchCriteria searchCriteria) {
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = queryBuilder.getStreetVendingSearchQuery(searchCriteria, preparedStmtList);
+		log.info("Final query: " + query);
+		return (StreetVendingDetail) jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+	}
+
+	@Override
+	public Integer getApplicationsCount(StreetVendingSearchCriteria criteria) {
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getStreetVendingSearchQuery(criteria, preparedStatement);
+
+		if (query == null)
+			return 0;
+
+		Integer count = jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
+		return count;
+	}
+
+	@Override
+	public void update(StreetVendingRequest vendingRequest) {
+		log.info("Updating street vending request data for booking no : "
+				+ vendingRequest.getStreetVendingDetail().getApplicationNo());
+		producer.push(vendingConfiguration.getStreetVendingApplicationUpdateTopic(), vendingRequest);
 
 	}
 
