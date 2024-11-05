@@ -1,11 +1,16 @@
 package org.upyog.sv.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.sv.config.StreetVendingConfiguration;
 import org.upyog.sv.repository.DemandRepository;
-import org.upyog.sv.util.MdmsUtil;
-import org.upyog.sv.validator.StreetVendingValidator;
+import org.upyog.sv.util.StreetVendingUtil;
+import org.upyog.sv.web.models.StreetVendingRequest;
+import org.upyog.sv.web.models.billing.Demand;
+import org.upyog.sv.web.models.billing.DemandDetail;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,12 +27,6 @@ public class DemandService {
 	@Autowired
 	private DemandRepository demandRepository;
 
-	@Autowired
-	private StreetVendingValidator bookingValidator;
-
-	@Autowired
-	private MdmsUtil mdmsUtil;
-
 	/**
 	 * 1. Fetch tax heads from mdms tax-heads.json 2. Map amount to tax heads from
 	 * CalculateType.json 3. Create XDemand for particular tax heads 4. Bill will be
@@ -36,72 +35,27 @@ public class DemandService {
 	 * 
 	 * @param bookingRequest
 	 * @return
-	 *//*
-		 * 
-		 * public List<Demand> createDemand(CommunityHallBookingRequest bookingRequest,
-		 * Object mdmsData, boolean generateDemand) { String tenantId =
-		 * bookingRequest.getHallsBookingApplication().getTenantId(); String
-		 * consumerCode = bookingRequest.getHallsBookingApplication().getBookingNo();
-		 * 
-		 * CommunityHallBookingDetail bookingDetail =
-		 * bookingRequest.getHallsBookingApplication(); User user
-		 * =bookingRequest.getRequestInfo().getUserInfo();
-		 * 
-		 * User owner = User.builder().name(user.getName()).emailId(user.getEmailId())
-		 * .mobileNumber(user.getMobileNumber()).tenantId(bookingDetail.getTenantId()).
-		 * build();
-		 * 
-		 * List<DemandDetail> demandDetails =
-		 * calculationService.calculateDemand(bookingRequest);
-		 * 
-		 * LocalDate maxdate = getMaxBookingDate(bookingDetail);
-		 * 
-		 * Demand demand = Demand.builder().consumerCode(consumerCode)
-		 * .demandDetails(demandDetails).payer(owner) .tenantId(tenantId)
-		 * .taxPeriodFrom(CommunityHallBookingUtil.getCurrentTimestamp()).taxPeriodTo(
-		 * CommunityHallBookingUtil.minusOneDay(maxdate))
-		 * .consumerType(config.getModuleName()).businessService(config.
-		 * getBusinessServiceName()).additionalDetails(null).build();
-		 * 
-		 * 
-		 * List<Demand> demands = new ArrayList<>(); demands.add(demand);
-		 * if(!generateDemand) { BigDecimal totalAmount =
-		 * demandDetails.stream().map(DemandDetail::getTaxAmount).reduce(BigDecimal.
-		 * ZERO, BigDecimal::add); demand.setAdditionalDetails(totalAmount); return
-		 * demands; } log.
-		 * info("Sending call to billing service for generating demand for booking no : "
-		 * + consumerCode); return
-		 * demandRepository.saveDemand(bookingRequest.getRequestInfo(), demands); }
-		 * 
-		 * 
-		 * public List<Demand> getDemand(CommunityHallDemandEstimationCriteria
-		 * estimationCriteria){
-		 * log.info("Getting demand for request without booking no");
-		 * 
-		 * if(!bookingValidator.isSameHallCode(estimationCriteria.getBookingSlotDetails(
-		 * ))) { throw new
-		 * CustomException(CommunityHallBookingConstants.MULTIPLE_HALL_CODES_ERROR,
-		 * "Booking of multiple halls are not allowed"); }
-		 * 
-		 * String tenantId = estimationCriteria.getTenantId().split("\\.")[0]; if
-		 * (estimationCriteria.getTenantId().split("\\.").length == 1) { throw new
-		 * CustomException(CommunityHallBookingConstants.INVALID_TENANT,
-		 * "Please provide valid tenant id for booking creation"); }
-		 * CommunityHallBookingDetail bookingDetail =
-		 * CommunityHallBookingDetail.builder().tenantId(tenantId)
-		 * .bookingSlotDetails(estimationCriteria.getBookingSlotDetails())
-		 * .communityHallCode(estimationCriteria.getCommunityHallCode()).build();
-		 * CommunityHallBookingRequest bookingRequest =
-		 * CommunityHallBookingRequest.builder().hallsBookingApplication(bookingDetail)
-		 * .requestInfo(estimationCriteria.getRequestInfo()).build(); Object mdmsData =
-		 * mdmsUtil.mDMSCall(bookingRequest.getRequestInfo(), tenantId); List<Demand>
-		 * demands = createDemand(bookingRequest, mdmsData, false); return demands; }
-		 * 
-		 * private LocalDate getMaxBookingDate(CommunityHallBookingDetail bookingDetail)
-		 * {
-		 * 
-		 * return bookingDetail.getBookingSlotDetails().stream().map(detail ->
-		 * detail.getBookingDate()) .max( LocalDate :: compareTo) .get(); }
-		 */
+	 */
+
+	public List<Demand> createDemand(StreetVendingRequest streetVendingRequest, Object mdmsData) {
+		String tenantId = streetVendingRequest.getStreetVendingDetail().getTenantId();
+		String consumerCode = streetVendingRequest.getStreetVendingDetail().getApplicationNo();
+
+		org.egov.common.contract.request.User user = streetVendingRequest.getRequestInfo().getUserInfo();
+
+		List<DemandDetail> demandDetails = calculationService.calculateDemand(streetVendingRequest);
+
+		// TODO: change from date and to date from MDMS
+		Demand demand = Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(user)
+				.tenantId(tenantId).taxPeriodFrom(StreetVendingUtil.getCurrentTimestamp()).taxPeriodTo(1869676199000l)
+				.consumerType(config.getModuleName()).businessService(config.getModuleName()).additionalDetails(null)
+				.build();
+
+		List<Demand> demands = new ArrayList<>();
+		demands.add(demand);
+
+		log.info(" SV Sending call to billing service for generating demand for application no : " + consumerCode);
+		return demandRepository.saveDemand(streetVendingRequest.getRequestInfo(), demands);
+	}
 
 }

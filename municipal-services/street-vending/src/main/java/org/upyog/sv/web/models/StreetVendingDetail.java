@@ -7,6 +7,8 @@ import org.springframework.validation.annotation.Validated;
 import org.upyog.sv.enums.StreetVendingApplicationStatus;
 import org.upyog.sv.web.models.common.AuditDetails;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -58,6 +60,19 @@ public class StreetVendingDetail {
 	private String benificiaryOfSocialSchemes;
 
 	private String termsAndCondition;
+	
+	//Below fields added for certificate validity 
+	 @JsonProperty("issuedDate")
+	    private Long issuedDate = null;
+
+	    @JsonProperty("financialYear")
+	    private String financialYear = null;
+
+	    @JsonProperty("validFrom")
+	    private Long validFrom = null;
+
+	    @JsonProperty("validTo")
+	    private Long validTo = null;
 
 	private List<Address> addressDetails;
 
